@@ -1,15 +1,15 @@
 {
-  "name": "grunt-contrib-jasmine-requirejs-example",
-  "description": "Example application using grunt-contrib-jasmine and grunt-template-jasmine-requirejs",
+  "name": "billiards",
+  "description": "Billiards",
   "version": "0.1.0",
   "author": {
-    "name": "James Pamplin",
-    "email": "james@jamespamplin.com",
-    "url": "http://jamespamplin.com/"
+    "name": "tailuge",
+    "email": "",
+    "url": "https://github.com/tailuge/billiards"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/jsoverson/grunt-contrib-jasmine-example.git"
+    "url": "git://github.com/tailuge/billiards.git"
   },
   "scripts": {
     "test": "grunt test"
