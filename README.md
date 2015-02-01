@@ -9,3 +9,7 @@ billiards
  *   git status
  *   git add .
  *   git diff --stat origin/master
+
+## CI
+
+https://travis-ci.org/tailuge/billiards/
