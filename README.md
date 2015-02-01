@@ -1,6 +1,10 @@
 # billiards
 billiards
 
+### Status
+[![Build Status](https://travis-ci.org/tailuge/billiards/)](https://travis-ci.org/tailuge/billiards/)
+
+
 ## useful
 
  *   git rm test.txt
