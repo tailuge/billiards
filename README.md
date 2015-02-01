@@ -2,7 +2,7 @@
 billiards
 
 ### Status
-[![Build Status](https://travis-ci.org/tailuge/billiards/)](https://travis-ci.org/tailuge/billiards/)
+[![Build Status](https://travis-ci.org/tailuge/billiards.svg?branch=master)](https://travis-ci.org/tailuge/billiards/)
 
 
 ## useful
