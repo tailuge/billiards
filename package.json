@@ -1,0 +1,25 @@
+{
+  "name": "grunt-contrib-jasmine-requirejs-example",
+  "description": "Example application using grunt-contrib-jasmine and grunt-template-jasmine-requirejs",
+  "version": "0.1.0",
+  "author": {
+    "name": "James Pamplin",
+    "email": "james@jamespamplin.com",
+    "url": "http://jamespamplin.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jsoverson/grunt-contrib-jasmine-example.git"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "grunt-contrib-jasmine": "~0.5.3",
+    "grunt-contrib-jshint": "~0.2.0",
+    "grunt-template-jasmine-requirejs": "~0.1.2",
+    "three": "^0.69.0"
+  },
+  "dependencies": {}
+}
