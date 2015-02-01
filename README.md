@@ -1,4 +1,4 @@
-# billiards [![Build Status](https://travis-ci.org/tailuge/billiards.svg?branch=master)](https://travis-ci.org/tailuge/billiards/)
+# billiards [![Build Status](https://travis-ci.org/tailuge/billiards.svg?branch=master)](https://travis-ci.org/tailuge/billiards/) [![Coverage Status](https://coveralls.io/repos/tailuge/billiards/badge.svg)](https://coveralls.io/r/tailuge/billiards)
 
 Unsophisticated billiards physics.
 
