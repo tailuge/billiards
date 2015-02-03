@@ -2,6 +2,7 @@
 logs
 *.log
 .c9
+dist
 
 # Runtime data
 pids
