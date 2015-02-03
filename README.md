@@ -2,6 +2,8 @@
 
 Unsophisticated billiards physics.
 
+http://tailuge.github.io/billiards/
+
 ## useful
 
  *   git rm test.txt
