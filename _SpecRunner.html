@@ -28,6 +28,10 @@
   
   <script src=".grunt/grunt-contrib-jasmine/jasmine-html.js"></script>
   
+  <script src=".grunt/grunt-contrib-jasmine/json2.js"></script>
+  
+  <script src=".grunt/grunt-contrib-jasmine/boot.js"></script>
+  
   
 
   <script>
@@ -41,31 +45,33 @@
   </script>
 
   <script>
+    // Delay onLoad function until we are ready
+    var startTests = window.onload;
+    window.onload = null;
+
     function launchTest() {
     require([
       
         
-        'src/arrow' ,
+        '.grunt/grunt-contrib-jasmine/src/arrow' ,
       
         
-        'src/ball' ,
+        '.grunt/grunt-contrib-jasmine/src/ball' ,
       
         
-        'src/mythree' ,
+        '.grunt/grunt-contrib-jasmine/src/mythree' ,
       
         
-        'src/renderBall' ,
+        '.grunt/grunt-contrib-jasmine/src/renderBall' ,
       
         
-        'src/requestAnimationFrame' 
+        '.grunt/grunt-contrib-jasmine/src/requestAnimationFrame' 
       
     ],
     function(){
-      require(['spec/ball.spec.js','.grunt/grunt-contrib-jasmine/reporter.js'], function(){
-        require(['.grunt/grunt-contrib-jasmine/jasmine-helper.js'], function(){
-          // good to go! Our tests should already be running.
-        })
-      })
+      require(['spec/ball.spec.js','.grunt/grunt-contrib-jasmine/grunt-template-jasmine-istanbul/reporter.js','.grunt/grunt-contrib-jasmine/reporter.js'], function(){
+        startTests();
+      });
     }
     )
   }

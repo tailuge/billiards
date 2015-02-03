@@ -15,11 +15,13 @@
     "test": "grunt test"
   },
   "devDependencies": {
-    "grunt": "~0.4.0",
-    "grunt-contrib-jasmine": "~0.5.3",
-    "grunt-contrib-jshint": "~0.2.0",
+    "grunt": "~0.4.5",
+    "grunt-contrib-jasmine": "~0.8.2",
+    "grunt-contrib-jshint": "~0.11.0",
     "grunt-contrib-requirejs": "^0.4.4",
-    "grunt-template-jasmine-requirejs": "~0.1.2",
+    "grunt-coveralls": "^1.0.0",
+    "grunt-template-jasmine-istanbul": "^0.3.3",
+    "grunt-template-jasmine-requirejs": "~0.2.0",
     "three": "^0.69.0"
   },
   "dependencies": {}
