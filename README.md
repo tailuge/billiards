@@ -2,9 +2,9 @@
 
 Unsophisticated billiards physics.
 
-http://tailuge.github.io/billiards/
+[demo](http://tailuge.github.io/billiards/)
 
-https://ide.c9.io/tailuge/billiards
+[edit](https://ide.c9.io/tailuge/billiards)
 
 ## useful
 
@@ -14,4 +14,6 @@ https://ide.c9.io/tailuge/billiards
  *   git status
  *   git add .
  *   git diff --stat origin/master
-
+ *   git fetch origin
+ *   git rebase origin/master
+ *   
