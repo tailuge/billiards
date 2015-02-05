@@ -3,6 +3,17 @@ module.exports = function(grunt) {
 
     // Project configuration.
     grunt.initConfig({
+        copy: {
+            main: {
+                src: 'index.html',
+                dest: 'dist/index.html',
+                options: {
+                    process: function(content, srcpath) {
+                        return content.replace(/specific thing/g, "_");
+                    },
+                },
+            },
+        },
         coveralls: {
             options: {
                 // LCOV coverage file relevant to every target
@@ -65,7 +76,7 @@ module.exports = function(grunt) {
                 options: {
                     baseUrl: ".",
                     // mainConfigFile: "path/to/config.js",
-                    name: "main/main.js", // assumes a production build using almond
+                    name: "main/main.js",
                     out: "dist/js/optimized.js"
                 }
             }
@@ -76,8 +87,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-coveralls');
-    grunt.registerTask('test', ['jshint', 'jasmine']);
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
+    grunt.registerTask('test', ['jshint', 'jasmine']);
     grunt.registerTask('default', ['test']);
 
 };
