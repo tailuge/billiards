@@ -5,13 +5,11 @@ module.exports = function(grunt) {
     grunt.initConfig({
         copy: {
             main: {
-                src: 'index.html',
-                dest: 'dist/index.html',
-                options: {
-                    process: function(content, srcpath) {
-                        return content.replace(/specific thing/g, "_");
-                    },
-                },
+                cwd: 'src/',
+                expand: true,
+                src: ['index.html', 'lib/**', 'css/**', 'img/**'],
+                dest: 'dist/',
+
             },
         },
         coveralls: {
@@ -27,7 +25,7 @@ module.exports = function(grunt) {
         },
         jasmine: {
             coverage: {
-                src: 'src/**/*.js',
+                src: 'src/js/**/*.js',
                 options: {
                     specs: 'spec/**/*.js',
                     template: require('grunt-template-jasmine-istanbul'),
@@ -50,11 +48,11 @@ module.exports = function(grunt) {
                         template: require('grunt-template-jasmine-requirejs'),
                         templateOptions: {
                             requireConfig: {
-                                baseUrl: ''
+                                baseUrl: '.'
                             }
                         },
                         requireConfig: {
-                            baseUrl: ''
+                            baseUrl: '.'
                         }
                     },
                     keepRunner: true
@@ -64,7 +62,7 @@ module.exports = function(grunt) {
         jshint: {
             all: [
                 'Gruntfile.js',
-                'src/**/*.js',
+                'src/js/**/*.js',
                 'spec/**/*.js'
             ],
             options: {
@@ -75,9 +73,8 @@ module.exports = function(grunt) {
             compile: {
                 options: {
                     baseUrl: ".",
-                    // mainConfigFile: "path/to/config.js",
-                    name: "main/main.js",
-                    out: "dist/js/optimized.js"
+                    name: "src/main.js",
+                    out: "dist/main.js"
                 }
             }
         }

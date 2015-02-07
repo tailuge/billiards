@@ -4,7 +4,7 @@
  *
  */
 define([
-    'vendor/three'
+    'src/lib/three'
 ], function(INPUT) {
     return this.THREE;
 });

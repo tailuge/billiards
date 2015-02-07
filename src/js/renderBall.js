@@ -5,8 +5,8 @@
  */
 
 define([
-    'src/mythree',
-    'src/arrow'
+    'src/js/mythree',
+    'src/js/arrow'
 ], function(THREE, Arrow) {
 
     'use strict';

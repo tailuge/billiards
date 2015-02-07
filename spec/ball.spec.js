@@ -2,7 +2,7 @@
 
 'use strict';
 
-define(['src/ball'], function(Ball) {
+define(['../src/js/ball'], function(Ball) {
 
     describe('Ball Tests', function() {
         var ball;

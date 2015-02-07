@@ -1,11 +1,11 @@
 /* globals window, document, requestAnimationFrame, animate */
 require({
-    baseUrl: '',
+    baseUrl: '../',
 }, [
-    'src/mythree',
-    'src/ball',
-    'src/renderBall',
-    'src/requestAnimationFrame'
+    'src/js/mythree',
+    'src/js/ball',
+    'src/js/renderBall',
+    'src/js/requestAnimationFrame'
 ], function(THREE, Ball, RenderBall, requestAnimationFrame) {
 
     'use strict';
