@@ -37,15 +37,18 @@ require({
 
         var ball1 = new Ball();
         ball1.pos.setX(-3);
+        ball1.vel.setX(1);
         renderBall1 = new RenderBall(ball1, 0xffffff);
         renderBall1.debug();
-    
+
+
         var ball2 = new Ball();
         ball2.pos.setX(3);
         renderBall2 = new RenderBall(ball2, 0xff0000);
- 
+
         var ball3 = new Ball();
         ball3.pos.setY(3);
+        ball3.rvel.setX(1);
         renderBall3 = new RenderBall(ball3, 0xffff00);
 
         scene.add(renderBall1.getMesh());
@@ -68,22 +71,16 @@ require({
     }
 
     function animate() {
-
         requestAnimationFrame(animate);
-renderBall1.ball.pos.x += 0.01;
-renderBall1.update();
-
-        //camera.position.x -= 0.001;
-        //mesh.rotation.z += 0.01;
-        //mesh.rotation.y += 0.02;
-        //renderBall1.getMesh().rotation.y += 0.01;
-        //renderBall1.getMesh().position.x += 0.01;
+        var t = 0.1;
+        renderBall1.update(t);
+        renderBall2.update(t);
+        renderBall3.update(t);
         renderer.render(scene, camera);
-
     }
 
     function addSpotlight(scene) {
-        
+
         // add subtle ambient lighting
         var ambientLight = new THREE.AmbientLight(0x222266);
         scene.add(ambientLight);

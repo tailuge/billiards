@@ -63,6 +63,7 @@ module.exports = function(grunt) {
             all: [
                 'Gruntfile.js',
                 'src/js/**/*.js',
+                'src/main.',
                 'spec/**/*.js'
             ],
             options: {

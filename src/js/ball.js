@@ -18,7 +18,6 @@ define( [
     function Ball() {
         this.pos = new THREE.Vector3(0, 0, 0);
         this.vel = new THREE.Vector3(0, 0, 0);
-        this.rpos = new THREE.Vector3(1, 0, 0);
         this.rvel = new THREE.Vector3(0, 0, 0);
     }
 
@@ -33,8 +32,8 @@ define( [
      * Advance all properties by delta t.
      */
     Ball.prototype.advance = function(t) {
-        this.pos.add(this.vel.clone().multiplyScalar(t));
         this.vel.add(this.acceleration());
+        this.pos.add(this.vel.clone().multiplyScalar(t));
         this.checkStopped();
     };
 
@@ -42,7 +41,7 @@ define( [
      * detect end of motion
      */
     Ball.prototype.checkStopped = function() {
-        if ((this.vel.length() < MIN_SPEED) && (this.vel.length() < MIN_SPEED)) {
+        if ((this.vel.length() < MIN_SPEED) && (this.rvel.length() < MIN_SPEED)) {
             this.vel.set(0,0,0);
         }
     };
@@ -52,12 +51,31 @@ define( [
      * Acceleration
      */ 
     Ball.prototype.acceleration = function() {
+        var slidingForce = this.forceDueToSliding();
+        var spinForce = this.forceDueToSpin();
+        var combined = (new THREE.Vector3()).addVectors(slidingForce,spinForce);
+        return combined;
+    };
+
+    /**
+     * Force due to friction opposing the translational motion.
+     */ 
+    Ball.prototype.forceDueToSliding = function() {
         var acc = new THREE.Vector3();
         acc.copy(this.vel);
         acc.negate();
         acc.normalize();
         acc.multiplyScalar(0.01);
         return acc;
+    };
+
+    /**
+     * Force due to spining of ball.
+     */ 
+    Ball.prototype.forceDueToSpin = function() {
+        var spinForce = this.spinForceDirection();
+        spinForce.multiplyScalar(0.01);
+        return spinForce;
     };
 
     /**

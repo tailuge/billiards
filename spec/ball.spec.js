@@ -33,13 +33,19 @@ define(['../src/js/ball'], function(Ball) {
         it('ball with low speed stops', function() {
             ball.vel.setX(0.01);
             ball.advance(0.1);
-            expect(ball.vel.length()).toEqual(0.0);
+            expect(ball.speed()).toEqual(0.0);
         });
 
         it('spinning ball force is normalised', function() {
             ball.rvel.setX(1);
             var f = ball.spinForceDirection(); 
             expect(f.length()).toEqual(1);
+        });
+
+        it('spinning ball begins to move', function() {
+            ball.rvel.setX(1);
+            ball.advance(0.1);
+            expect(ball.speed()).not.toEqual(0.0);
         });
 
 

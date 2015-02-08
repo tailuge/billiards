@@ -60,9 +60,12 @@ define([
     /**
      * Update rendered ball with underlying balls properties. 
      */
-    RenderBall.prototype.update = function() {
+    RenderBall.prototype.update = function(t) {
+        this.ball.advance(t);
         this.group.position.copy(this.ball.pos);
-        this.ballMesh.rotateOnAxis(new THREE.Vector3(0,1,0),0.01);
+        var axis = this.ball.rvel.clone();
+        axis.normalize();
+        this.ballMesh.rotateOnAxis(axis,0.01);
         
     };
     
