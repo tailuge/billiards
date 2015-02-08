@@ -8,11 +8,10 @@ Unsophisticated billiards physics.
 
 ## useful
 
- *   git rm test.txt
+ *   git status
+ *   git add -u .
  *   git commit -m 'tidyup'
  *   git push origin master
- *   git status
- *   git add .
  *   git diff --stat origin/master
  *   git fetch origin
  *   git rebase origin/master

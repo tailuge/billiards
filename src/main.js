@@ -18,8 +18,8 @@ require({
     function init() {
 
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.z = 9;
-        camera.position.y = -15;
+        camera.position.z = 19;
+        camera.position.y = -2;
         camera.position.x = 0;
         camera.lookAt(new THREE.Vector3(0, 0, 0));
 
@@ -37,19 +37,22 @@ require({
 
         var ball1 = new Ball();
         ball1.pos.setX(-3);
-        ball1.vel.setX(1);
+        ball1.rvel.set(Math.sqrt(0.7),Math.sqrt(0.7),0);
         renderBall1 = new RenderBall(ball1, 0xffffff);
         renderBall1.debug();
 
 
         var ball2 = new Ball();
         ball2.pos.setX(3);
+        ball2.vel.set(Math.sqrt(0.2),-Math.sqrt(0.2),0);
         renderBall2 = new RenderBall(ball2, 0xff0000);
+        renderBall2.debug();
 
         var ball3 = new Ball();
         ball3.pos.setY(3);
         ball3.rvel.setX(1);
         renderBall3 = new RenderBall(ball3, 0xffff00);
+        renderBall3.debug();
 
         scene.add(renderBall1.getMesh());
         scene.add(renderBall2.getMesh());
@@ -72,7 +75,7 @@ require({
 
     function animate() {
         requestAnimationFrame(animate);
-        var t = 0.1;
+        var t = 0.3;
         renderBall1.update(t);
         renderBall2.update(t);
         renderBall3.update(t);

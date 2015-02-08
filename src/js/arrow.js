@@ -10,24 +10,24 @@ define([
 
     'use strict';
 
+
     /**
-     *  Constructor. Creates vectors.
+     *  Constructor. Creates arrow with given properties.
      */
-    function Arrow(dir, origin, color) {
-        var normalisedDir = new THREE.Vector3();
-        normalisedDir.copy(dir);
-        normalisedDir.normalize();
-        
-        this.arrowHelper = new THREE.ArrowHelper(normalisedDir, origin, dir.length(), color, 1,0.5);
-        //this.update(dir,origin);
+    function Arrow(color) {
+        this.arrowHelper = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, 0), 1, color, 1, 0.5);
     }
 
-    Arrow.prototype.update = function(dir, origin) {
+    Arrow.prototype.update = function(dir) {
+        if (dir.length() === 0) {
+            return;
+        }
+
         var normalisedDir = new THREE.Vector3();
         normalisedDir.copy(dir);
         normalisedDir.normalize();
         this.arrowHelper.setDirection(dir);
-        this.arrowHelper.setLength(dir.length());
+        this.arrowHelper.setLength(4 /*dir.length()*/ );
     };
 
     /**
