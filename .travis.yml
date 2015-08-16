@@ -4,5 +4,5 @@ node_js:
 before_script:
   - npm install -g grunt-cli
 after_success:
-  - npm run coveralls
+  - cat coverage/lcov.info | node_modules/grunt-coveralls/node_modules/coveralls/bin/coveralls.js
   
