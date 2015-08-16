@@ -8,9 +8,14 @@ module.exports = function(grunt) {
                 cwd: 'src/',
                 expand: true,
                 src: ['index.html', 'lib/**', 'css/**', 'img/**'],
-                dest: 'dist/',
-
+                dest: 'dist/'
             },
+            copyvendor: {
+                cwd: 'src/lib',
+                expand: true,
+                src: ['three.js'],
+                dest: '.grunt/grunt-contrib-jasmine/src/lib'
+            }
         },
         coveralls: {
             options: {
@@ -25,8 +30,8 @@ module.exports = function(grunt) {
         },
         jasmine: {
             coverage: {
-                src: ['src/js/ball.js','src/js/table.js','!src/js/three.js'],
-                excludes: ['src/js/three.js'],
+                src: ['src/js/*.js'],
+                vendor: ['src/lib/three.js'],
                 options: {
                     specs: 'spec/**/*.js',
                     template: require('grunt-template-jasmine-istanbul'),
@@ -77,19 +82,7 @@ module.exports = function(grunt) {
                     out: "dist/main.js"
                 }
             }
-        },
-        bower: {
-
-            install: {
-                options: {
-                    targetDir: './lib',
-                    layout: 'byType',
-                    verbose: true
-                }
-                //just run 'grunt bower:install'
-            }
         }
-
     });
 
     grunt.loadNpmTasks('grunt-contrib-jasmine');
@@ -97,8 +90,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-bower-task');
-    grunt.registerTask('test', ['jshint', 'jasmine']);
+    grunt.registerTask('test', ['copy:copyvendor', 'jshint', 'jasmine']);
     grunt.registerTask('default', ['test']);
 
 };
