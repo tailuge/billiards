@@ -8,19 +8,11 @@
   <link rel="stylesheet" type="text/css" href=".grunt/grunt-contrib-jasmine/jasmine.css">
   
 
-  <script src=".grunt/grunt-contrib-jasmine/require.js"></script>
-  <script>
-    require.onError = function(error) {
-      var message = error.requireType + ': ';
-      if (error.requireType === 'scripterror' || error.requireType === 'notloaded' && error.requireModules) {
-        message += 'Illegal path or script error: ' + '[\'' + error.requireModules.join("', '") + '\']';
-      } else {
-        message += error.message;
-      }
+  
+  
+  
 
-      throw Error(message);
-    };
-  </script>
+  <script src=".grunt/grunt-contrib-jasmine/require.js"></script>
 
   
   
@@ -35,11 +27,24 @@
   
 
   <script>
+    require.onError = function(error) {
+      var message = error.requireType + ': ';
+      if (error.requireType === 'scripterror' || error.requireType === 'notloaded' && error.requireModules) {
+        message += 'Illegal path or script error: ' + '[\'' + error.requireModules.join("', '") + '\']';
+      } else {
+        message += error.message;
+      }
+
+      throw Error(message);
+    };
+  </script>
+
+  <script>
     
 
     
       require.config({
-  "baseUrl": "."
+  "baseUrl": ".grunt/grunt-contrib-jasmine/"
 });
     
   </script>
@@ -53,19 +58,19 @@
     require([
       
         
-        '.grunt/grunt-contrib-jasmine/src/js/ball' ,
+        'src/js/ball' ,
       
         
-        '.grunt/grunt-contrib-jasmine/src/js/mythree' ,
+        'src/js/mythree' ,
       
         
-        '.grunt/grunt-contrib-jasmine/src/js/renderBall' ,
+        'src/js/renderBall' ,
       
         
-        '.grunt/grunt-contrib-jasmine/src/js/requestAnimationFrame' ,
+        'src/js/requestAnimationFrame' ,
       
         
-        '.grunt/grunt-contrib-jasmine/src/js/table' 
+        'src/js/table' 
       
     ],
     function(){

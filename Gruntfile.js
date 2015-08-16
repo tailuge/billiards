@@ -26,6 +26,9 @@ module.exports = function(grunt) {
         jasmine: {
             coverage: {
                 src: 'src/js/**/*.js',
+                vendor: 'src/lib/three.js',
+                excludes: ['lib/*.js', 'src/lib/*.js', '**/*three.js', '*three.js'],
+                exclude: ['lib/*.js', 'src/lib/*.js', '**/*three.js', '*three.js'],
                 options: {
                     specs: 'spec/**/*.js',
                     template: require('grunt-template-jasmine-istanbul'),
@@ -35,24 +38,32 @@ module.exports = function(grunt) {
                         report: [{
                             type: 'html',
                             options: {
+                                excludes: ['lib/*.js', 'src/lib/*.js', '**/*three.js', '*three.js'],
+                                exclude: ['lib/*.js', 'src/lib/*.js', '**/*three.js', '*three.js'],
                                 dir: 'coverage'
                             }
                         }, {
-                            type: 'text-summary'
+                            type: 'text-summary',
+                            options: {
+                                excludes: ['lib/*.js', 'src/lib/*.js', '**/*three.js', '*three.js'],
+                                exclude: ['lib/*.js', 'src/lib/*.js', '**/*three.js', '*three.js'],
+                            }
                         }, {
                             type: 'lcov',
                             options: {
+                                excludes: ['lib/*.js', 'src/lib/*.js', '**/*three.js', '*three.js'],
+                                exclude: ['lib/*.js', 'src/lib/*.js', '**/*three.js', '*three.js'],
                                 dir: 'coverage'
                             }
                         }],
                         template: require('grunt-template-jasmine-requirejs'),
                         templateOptions: {
                             requireConfig: {
-                                baseUrl: '.'
-                            }
-                        },
-                        requireConfig: {
-                            baseUrl: '.'
+                                baseUrl: '.grunt/grunt-contrib-jasmine/'
+                            },
+                            excludes: ['lib/*.js', 'src/lib/*.js', '**/*three.js', '*three.js'],
+                            exclude: ['lib/*.js', 'src/lib/*.js', '**/*three.js', '*three.js'],
+
                         }
                     },
                     keepRunner: true
