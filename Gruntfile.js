@@ -78,7 +78,19 @@ module.exports = function(grunt) {
                     out: "dist/main.js"
                 }
             }
+        },
+        bower: {
+
+            install: {
+                options: {
+                    targetDir: './lib',
+                    layout: 'byType',
+                    verbose: true
+                }
+                //just run 'grunt bower:install'
+            }
         }
+
     });
 
     grunt.loadNpmTasks('grunt-contrib-jasmine');
@@ -86,7 +98,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-coveralls');
     grunt.loadNpmTasks('grunt-contrib-copy');
-
+    grunt.loadNpmTasks('grunt-bower-task');
     grunt.registerTask('test', ['jshint', 'jasmine']);
     grunt.registerTask('default', ['test']);
 

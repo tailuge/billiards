@@ -53,9 +53,6 @@
     require([
       
         
-        '.grunt/grunt-contrib-jasmine/src/js/arrow' ,
-      
-        
         '.grunt/grunt-contrib-jasmine/src/js/ball' ,
       
         
@@ -68,11 +65,11 @@
         '.grunt/grunt-contrib-jasmine/src/js/requestAnimationFrame' ,
       
         
-        '.grunt/grunt-contrib-jasmine/src/js/text' 
+        '.grunt/grunt-contrib-jasmine/src/js/table' 
       
     ],
     function(){
-      require(['spec/arrow.spec.js','spec/ball.spec.js','.grunt/grunt-contrib-jasmine/grunt-template-jasmine-istanbul/reporter.js','.grunt/grunt-contrib-jasmine/reporter.js'], function(){
+      require(['spec/ball.spec.js','spec/table.spec.js','.grunt/grunt-contrib-jasmine/grunt-template-jasmine-istanbul/reporter.js','.grunt/grunt-contrib-jasmine/reporter.js'], function(){
         startTests();
       });
     }

@@ -11,6 +11,7 @@ define( [
     'use strict';
 
     var MIN_SPEED = 0.1;
+    var UP = new THREE.Vector3(0,0,1);
     
     /**
      *  Constructor. Creates vectors.
@@ -74,7 +75,7 @@ define( [
      */ 
     Ball.prototype.forceDueToSpin = function() {
         var spinForce = this.spinForceDirection();
-        spinForce.multiplyScalar(0.01);
+        spinForce.multiplyScalar(this.rvel.length()*0.01);
         return spinForce;
     };
 
@@ -85,9 +86,8 @@ define( [
      * \frac{\vec{\omega} \times \vec{k}}{|\vec{\omega} \times \vec{k}|}
      */ 
     Ball.prototype.spinForceDirection = function() {
-        var up = new THREE.Vector3(0,0,1);
         var f = new THREE.Vector3();
-        f.crossVectors(this.rvel,up);
+        f.crossVectors(this.rvel,UP);
         f.normalize();
         return f;
     };
