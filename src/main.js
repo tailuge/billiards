@@ -5,9 +5,10 @@ require({
     'src/js/mythree',
     'src/js/ball',
     'src/js/table',
+    'src/js/cushion',
     'src/js/renderBall',
     'src/js/requestAnimationFrame'
-], function(THREE, Ball, Table, RenderBall, requestAnimationFrame) {
+], function(THREE, Ball, Table, Cushion, RenderBall, requestAnimationFrame) {
 
     'use strict';
 
@@ -15,6 +16,7 @@ require({
     var geometry, material, mesh;
     var tablegeom, tablemat;
     var renderBall1, renderBall2, renderBall3;
+    var cushion, table;
 
     function init() {
 
@@ -26,8 +28,10 @@ require({
 
         scene = new THREE.Scene();
 
-        var table = new Table();
-        tablegeom = new THREE.BoxGeometry(table.getWidth()/2, table.getLength()/2, 0.01);
+        table = new Table();
+        cushion = new Cushion();
+
+        tablegeom = new THREE.BoxGeometry(table.getWidth(), table.getLength(), 0.01);
         tablemat = new THREE.MeshLambertMaterial({
             color: 0x444499
         });
@@ -39,12 +43,12 @@ require({
 
         var ball1 = new Ball();
         ball1.pos.setX(-3);
-        ball1.rvel.set(0.8,0.8,0);
+        ball1.rvel.set(0.8, 0.8, 0);
         renderBall1 = new RenderBall(ball1, 0xffffff);
 
         var ball2 = new Ball();
         ball2.pos.setX(3);
-        ball2.vel.set(Math.sqrt(0.0),-Math.sqrt(0.2),0);
+        ball2.vel.set(Math.sqrt(0.0), -Math.sqrt(0.2), 0);
         renderBall2 = new RenderBall(ball2, 0xff0000);
 
         var ball3 = new Ball();
@@ -77,6 +81,15 @@ require({
         renderBall1.update(t);
         renderBall2.update(t);
         renderBall3.update(t);
+
+        var balls = [renderBall1.ball, renderBall2.ball, renderBall3.ball];
+        balls.forEach(function(ball) {
+            if (table.collidesWithX(ball)) {
+                cushion.collideWithX(ball);
+            }
+        });
+
+
         renderer.render(scene, camera);
     }
 
