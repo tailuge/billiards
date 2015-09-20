@@ -21,7 +21,7 @@ require({
     function init() {
 
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.z = 39;
+        camera.position.z = 30;
         camera.position.y = -2;
         camera.position.x = 0;
         camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -42,18 +42,21 @@ require({
         scene.add(mesh);
 
         var ball1 = new Ball();
-        ball1.pos.setX(-3);
-        ball1.rvel.set(0.8, 0.8, 0);
+        ball1.pos.set(5.5,-2,0);
+        ball1.vel.set(0,0, 0);
+        ball1.rvel.set(0,0,0);
         renderBall1 = new RenderBall(ball1, 0xffffff);
 
         var ball2 = new Ball();
-        ball2.pos.setX(3);
-        ball2.vel.set(Math.sqrt(0.0), -Math.sqrt(0.2), 0);
+        ball2.pos.set(3,-8,0);
+        ball2.vel.set(0,2, 0);
         renderBall2 = new RenderBall(ball2, 0xff0000);
 
         var ball3 = new Ball();
-        ball3.pos.setY(3);
-        ball3.rvel.setX(1);
+        ball3.pos.set(6,-8,0);
+        ball3.vel.set(0,2,0);
+        ball3.rvel.set(4,0,0);
+
         renderBall3 = new RenderBall(ball3, 0xffff00);
 
         scene.add(renderBall1.getMesh());
@@ -83,13 +86,23 @@ require({
         renderBall3.update(t);
 
         var balls = [renderBall1.ball, renderBall2.ball, renderBall3.ball];
-        balls.forEach(function(ball) {
-            if (table.collidesWithX(ball)) {
-                cushion.collideWithX(ball);
-            }
+        balls.forEach(table.bounceCushions);
+        
+        balls.forEach( function (a) {
+            balls.forEach( function (b) {
+                if (a === b) {
+                    return;
+                }
+                table.collideBalls(a,b);
+            });
         });
-
-
+        
+        document.getElementById("debugDiv").innerHTML = "<pre>"+JSON.stringify(renderBall1.ball,null,2)+"</pre>";
+        
+        if (balls.every(function (a) {return a.checkStopped();})) {
+            // all stopped
+        }
+        
         renderer.render(scene, camera);
     }
 

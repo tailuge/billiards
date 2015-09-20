@@ -19,11 +19,12 @@ define([
 
         this.ball = ballref;
         var texture = THREE.ImageUtils.loadTexture('img/whiteball.png');
+        texture.mapping = THREE.CubeReflectionMapping;
         var geometry = new THREE.SphereGeometry(1, DETAIL, DETAIL);
         var material = new THREE.MeshPhongMaterial({
-            ambient: 0x222222,
+            ambient: 0,//0x222222,
             color: colour,
-            specular: 0xaaaaaa,
+            specular: 0,//0xaaaaaa,
             shininess: 200,
             shading: THREE.SmoothShading,
             map: texture
@@ -32,16 +33,17 @@ define([
         this.ballMesh = new THREE.Mesh(geometry, material);
         this.ballMesh.castShadow = true;
 
-        this.group = new THREE.Object3D();
-        this.group.add(this.ballMesh);
-        this.group.position.copy(this.ball.pos);
+        //        this.group = new THREE.Group();
+        //        this.group.add(this.ballMesh);
+        //        this.group.position.copy(this.ball.pos);
     }
 
     /**
      * return the mesh (for addition to scene).
      */
     RenderBall.prototype.getMesh = function() {
-        return this.group;
+        return this.ballMesh;
+        //return this.group;
     };
 
     /**
@@ -49,9 +51,17 @@ define([
      */
     RenderBall.prototype.update = function(t) {
         this.ball.advance(t);
-        this.group.position.copy(this.ball.pos);
-        var axis = this.ball.rvel.clone();
-        axis.normalize();
+        if (this.ball.state !== 'stationary') {
+            var axis = this.ball.rvel.clone();
+            var thetaPerSec = axis.length();
+            axis.normalize();
+            var m = new THREE.Matrix4();
+            m.identity().makeRotationAxis(axis, thetaPerSec * 1.5 * t);
+            this.ballMesh.geometry.applyMatrix(m);
+        }
+
+        this.ballMesh.position.copy(this.ball.pos);
+
     };
 
     RenderBall.prototype.asString = function(v) {

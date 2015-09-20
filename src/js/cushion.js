@@ -27,5 +27,14 @@ define( [
         return ball;
     };
 
+    /**
+     * Update ball with new velocity after collision with cushion in Y direction.
+     */
+    Cushion.prototype.collideWithY = function(ball) {
+        ball.vel.y *= -VEL_COEF;
+        ball.rvel.y *= SPIN_COEF;
+        return ball;
+    };
+
     return Cushion;
 });
