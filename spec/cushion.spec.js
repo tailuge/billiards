@@ -28,6 +28,12 @@ define(['../src/js/table', '../src/js/cushion', '../src/js/ball'], function(Tabl
       expect(ball.vel.x).toBeLessThan(0);
     });
 
+    it('collision reversed velocity', function() {
+      ball.vel.setY(1);
+      cushion.collideWithY(ball);
+      expect(ball.vel.y).toBeLessThan(0);
+    });
+
     it('collision does not reverse spin', function() {
       ball.vel.setX(1);
       ball.rvel.setX(1);

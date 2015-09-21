@@ -20,10 +20,6 @@ define(['../src/js/ball', '../src/js/mythree.js'], function (Ball, THREE) {
             expect(ball.pos.length()).toEqual(0.0);
         });
 
-        it('stationary ball has no acceleration', function () {
-            expect(ball.acceleration().length()).toEqual(0.0);
-        });
-
         it('ball with velocity moves', function () {
             ball.vel.setX(1.0);
             ball.advance(0.1);
@@ -34,12 +30,6 @@ define(['../src/js/ball', '../src/js/mythree.js'], function (Ball, THREE) {
             ball.vel.setX(0.001);
             ball.advance(0.1);
             expect(ball.speed()).toBeCloseTo(0, 5);
-        });
-
-        it('spinning ball force is normalised', function () {
-            ball.rvel.setX(1);
-            var f = ball.spinForceDirection();
-            expect(f.length()).toEqual(1);
         });
 
         it('spinning ball begins to move', function () {

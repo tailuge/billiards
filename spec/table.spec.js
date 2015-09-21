@@ -32,6 +32,20 @@ define(['../src/js/table', '../src/js/ball'], function(Table, Ball) {
       expect(table.collidesWithX(ball)).toBeTruthy();
     });
 
+    it('collision computed for cushions', function() {
+      ball.pos.setY(table.getLength() / 2 - 0.1);
+      ball.vel.setY(0.1);
+      expect(table.collidesWithY(ball)).not.toBeTruthy();
+      
+      ball.pos.setY(table.getLength() / 2);
+      ball.vel.setY(0.1);
+      expect(table.collidesWithY(ball)).toBeTruthy();
+      
+      ball.pos.setY(table.getLength() / 2 + 0.1);
+      ball.vel.setY(0.1);
+      expect(table.collidesWithY(ball)).toBeTruthy();
+    });
+
     it('does not collide when travelling away from cushion', function() {
       ball.pos.setX(table.getWidth() / 2 + 0.1);
       ball.vel.setX(-0.1);
@@ -97,8 +111,6 @@ define(['../src/js/table', '../src/js/ball'], function(Table, Ball) {
       a.vel.set(0,0.5,0);
       b.vel.set(0,-0.5,0);
       expect(table.collideBalls(a,b)).toBeTruthy();
-//      console.log(JSON.stringify(a, null, 2));
-//      console.log(JSON.stringify(b, null, 2));
     });
 
 

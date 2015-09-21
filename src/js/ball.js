@@ -58,28 +58,12 @@ define([
     };
 
     Ball.prototype.changeToAngularEquilibrium = function () {
-        return (new THREE.Vector3()).crossVectors(this.naturalEqilibrium(), UP).sub(this.rvel);
+        return (new THREE.Vector3()).crossVectors(this.changeToEquilibrium(), UP);
     };
-
-    /**
-     * Acceleration
-     */
-    Ball.prototype.acceleration = function () {
-        return this.changeToEquilibrium().normalize().multiplyScalar(-SLIDING_COEFF);
-    };
-
-    /**
-     * Angular Acceleration
-     */
-    Ball.prototype.angularAcceleration = function () {
-        return (new THREE.Vector3()).crossVectors(this.acceleration(), UP);
-    };
-
-
 
     Ball.prototype.advanceSliding = function (t) {
         this.vel.add(this.changeToEquilibrium().multiplyScalar(t * SLIDING_COEFF));
-        this.rvel.add((new THREE.Vector3()).crossVectors(this.changeToEquilibrium(), UP).multiplyScalar(SLIDING_COEFF * 5.0 * t / 2.0));
+        this.rvel.add(this.changeToAngularEquilibrium().multiplyScalar(SLIDING_COEFF * 5.0 * t / 2.0));
         this.pos.add(this.vel.clone().multiplyScalar(t));
         this.state = "sliding";
     };
@@ -91,15 +75,6 @@ define([
         this.state = "rolling";
         return;
     };
-
-
-    /**
-     * Force due to friction opposing the translational motion.
-     */
-    Ball.prototype.angularAcceleration = function () {
-        return (new THREE.Vector3()).crossVectors(this.vel, UP).normalize();
-    };
-
 
     Ball.prototype.isRolling = function () {
         this.diff = (new THREE.Vector3()).crossVectors(this.rvel, UP).sub(this.vel).length();
@@ -116,40 +91,6 @@ define([
             return true;
         }
         return false;
-    };
-
-    /**
-     * Force due to friction opposing the translational motion.
-     */
-    Ball.prototype.forceDueToSliding = function () {
-        var acc = new THREE.Vector3();
-        acc.copy(this.vel);
-        acc.negate();
-        acc.normalize();
-        acc.multiplyScalar(FRICTION_COEFF);
-        return acc;
-    };
-
-    /**
-     * Force due to spining of ball.
-     */
-    Ball.prototype.forceDueToSpin = function () {
-        var spinForce = this.spinForceDirection();
-        spinForce.multiplyScalar(this.rvel.length() * 0.01);
-        return spinForce;
-    };
-
-    /**
-     * Normalised direction of force at contact point of ball and table
-     * due to the rotation of the ball.
-     * 
-     * \frac{\vec{\omega} \times \vec{k}}{|\vec{\omega} \times \vec{k}|}
-     */
-    Ball.prototype.spinForceDirection = function () {
-        var f = new THREE.Vector3();
-        f.crossVectors(this.rvel, UP);
-        f.normalize();
-        return f;
     };
 
     return Ball;
