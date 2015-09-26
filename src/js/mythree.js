@@ -6,6 +6,7 @@
 define([
     'src/lib/three'
 ], function(INPUT) {
+    
     return this.THREE;
 });
 

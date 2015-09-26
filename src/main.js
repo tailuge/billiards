@@ -7,8 +7,9 @@ require({
     'src/js/table',
     'src/js/cushion',
     'src/js/renderBall',
-    'src/js/requestAnimationFrame'
-], function(THREE, Ball, Table, Cushion, RenderBall, requestAnimationFrame) {
+    'src/js/requestAnimationFrame',
+    'src/lib/OBJLoader'
+], function(THREE, Ball, Table, Cushion, RenderBall, requestAnimationFrame, OBJLoader) {
 
     'use strict';
 
@@ -22,9 +23,9 @@ require({
 
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
         camera.position.z = 30;
-        camera.position.y = -2;
+        camera.position.y = -10;
         camera.position.x = 0;
-        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        camera.lookAt(new THREE.Vector3(0, -5, 0));
 
         scene = new THREE.Scene();
 
@@ -42,20 +43,20 @@ require({
         scene.add(mesh);
 
         var ball1 = new Ball();
-        ball1.pos.set(5.5,-2,0);
+        ball1.pos.set(5.2,-2,0);
         ball1.vel.set(0,0, 0);
         ball1.rvel.set(0,0,0);
         renderBall1 = new RenderBall(ball1, 0xffffff);
 
         var ball2 = new Ball();
-        ball2.pos.set(3,-8,0);
-        ball2.vel.set(0,2, 0);
+        ball2.pos.set(-2.0,0,0);
+        ball2.vel.set(0,0, 0);
         renderBall2 = new RenderBall(ball2, 0xff0000);
 
         var ball3 = new Ball();
-        ball3.pos.set(6,-8,0);
-        ball3.vel.set(0,2,0);
-        ball3.rvel.set(4,0,0);
+        ball3.pos.set(6,-16,0);
+        ball3.vel.set(0,5,0);
+        ball3.rvel.set(-7,0,0);
 
         renderBall3 = new RenderBall(ball3, 0xffff00);
 
@@ -65,6 +66,18 @@ require({
 
         addSpotlight(scene);
 
+console.log("OBJLoader="+OBJLoader);
+
+
+var loader = new THREE.OBJLoader();
+console.log(loader);
+  loader.load( 'img/model.obj', function ( object ) {
+    console.log(object);
+   // scene.add( object );
+    //object.rotation.x =  Math.PI /2;
+   
+  } );
+  
         initialiseRenderer();
     }
 
@@ -97,7 +110,7 @@ require({
             });
         });
         
-        document.getElementById("debugDiv").innerHTML = "<pre>"+JSON.stringify(renderBall1.ball,null,2)+"</pre>";
+        //document.getElementById("debugDiv").innerHTML = "<pre>"+JSON.stringify(renderBall1.ball,null,2)+"</pre>";
         
         if (balls.every(function (a) {return a.checkStopped();})) {
             // all stopped
