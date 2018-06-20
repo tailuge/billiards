@@ -3,7 +3,6 @@
   "description": "Billiards",
   "version": "0.2.0",
   "author": "tailuge",
-  "repository": "git://github.com/tailuge/billiards.git",
   "main": "dist/main.js",
   "license": "GPL-3.0",
   "scripts": {
