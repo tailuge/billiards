@@ -1,8 +1,8 @@
 language: node_js
 node_js:
-  - "0.10"
+  - "9.11.1"
 before_script:
-  - npm install -g grunt-cli
+
 after_success:
-  - cat coverage/lcov.info | node_modules/grunt-coveralls/node_modules/coveralls/bin/coveralls.js
+
   
