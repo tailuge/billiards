@@ -1,4 +1,6 @@
 export { Ball } from "./ball"
+export * from "three"
+
 import * as THREE from "three"
 
 // set the scene size

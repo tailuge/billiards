@@ -8,6 +8,7 @@
     <meta name="description" content="billiards">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <script src="dist/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/93/three.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -20,15 +21,40 @@
     </style>
 </head>
 
+
 <body>
-    billiards
-    <div id="view"></div>
+
+    <script>
+        /* global bundle, THREE */
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        var light = new THREE.DirectionalLight(0xffffff, 1.0);
+        light.position.set(100, 100, 100);
+        scene.add(light);
+
+
+        var ball = new bundle.Ball(new THREE.Vector3(0, 1, 2));
+        scene.add(ball.mesh);
+        camera.position.z = 5;
+
+        var animate = function() {
+            requestAnimationFrame(animate);
+            ball.update(0.05);
+            renderer.render(scene, camera);
+        };
+
+        animate();
+    </script>
 </body>
 
 <script defer>
-    /* global bundle */
-    var elt = document.getElementById('view');
-    var main = new bundle.Main(elt);
+    //   var elt = document.getElementById('view');
+    //   var main = new bundle.Main(elt);
 </script>
 
 </html>

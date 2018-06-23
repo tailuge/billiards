@@ -1,11 +1,13 @@
 import { Vector3, Matrix4 } from "three"
-import { Mesh, IcosahedronBufferGeometry, MeshBasicMaterial } from "three"
+import { Mesh, IcosahedronBufferGeometry, MeshPhongMaterial, DoubleSide } from "three"
 
 export class Ball {
   static material = {
-    color: 0xff0808,
-    wireframe: true
-  }
+					color: 0x156289,
+					emissive: 0x072534,
+					side: DoubleSide,
+					flatShading: true
+				}
 
   pos: Vector3
   vel: Vector3
@@ -42,7 +44,7 @@ export class Ball {
 
   private initialiseMesh() {
     var geometry = new IcosahedronBufferGeometry(1.0, 2)
-    var material = new MeshBasicMaterial(Ball.material)
+    var material = new MeshPhongMaterial(Ball.material)
     this.mesh = new Mesh(geometry, material)
   }
 }
