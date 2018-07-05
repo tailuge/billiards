@@ -1,5 +1,6 @@
 export { Ball } from "./ball"
 export * from "three"
+export * from 'three-orbitcontrols'
 
 import * as THREE from "three"
 
