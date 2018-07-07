@@ -1,4 +1,5 @@
 export { Ball } from "./ball"
+export { GameState } from "./gamestate"
 export * from "three"
 export * from "three-orbitcontrols"
 

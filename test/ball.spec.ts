@@ -37,7 +37,7 @@ describe("Ball", () => {
     expect(ball.vel.x).to.be.below(0)
     done()
   })
-  
+
   it("bounces off Y cushion", done => {
     let pos = new Vector3(0, Cushion.tableY, 0)
     let ball = new Ball(pos)
@@ -46,5 +46,4 @@ describe("Ball", () => {
     expect(ball.vel.y).to.be.below(0)
     done()
   })
-
 })
