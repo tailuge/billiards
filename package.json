@@ -11,7 +11,7 @@
     "prettify": "prettier --write --no-semi {src,test}/*"
   },
   "dependencies": {
-    "@types/three": "^0.92.11",
+    "@types/three": "^0.92.12",
     "three": "^0.94.0",
     "three-orbitcontrols": "^2.1.2"
   },
@@ -23,7 +23,7 @@
     "gulp": "^3",
     "gulp-mocha": "^6.0.0",
     "gulp-sourcemaps": "^2.6.4",
-    "gulp-typescript": "^5.0.0-alpha.1",
+    "gulp-typescript": "^5.0.0-alpha.3",
     "gulp-uglify": "^3.0.0",
     "gulp-util": "^3",
     "jsdom": "11.11.0",
@@ -31,7 +31,7 @@
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",
     "prettier": "^1.13.7",
-    "sinon": "^6.0.1",
+    "sinon": "^6.1.2",
     "ts-node": "^7.0.0",
     "tsify": "^4.0.0",
     "typescript": "^2.9.2",

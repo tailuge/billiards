@@ -27,7 +27,12 @@
         var xs = [0, -40, -20, 20, 40];
         var ys = [0, -20, 20];
         var balls = [];
-        xs.forEach(x => ys.forEach(y => balls.push(new bundle.Ball(new THREE.Vector3(x, y, 0)))));
+        xs.forEach(x => ys.forEach(y => {
+            var b = new bundle.Ball(new THREE.Vector3(x, y, 0));
+            b.vel.x = Math.random() - 0.5;
+            b.vel.y = Math.random() - 0.5;
+            balls.push(b);
+        }));
 
         var container;
         var scene, renderer;
