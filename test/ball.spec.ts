@@ -38,12 +38,30 @@ describe("Ball", () => {
     done()
   })
 
+  it("bounces off -X cushion", done => {
+    let pos = new Vector3(-Cushion.tableX, 0, 0)
+    let ball = new Ball(pos)
+    ball.vel.x = -1
+    ball.update(0.1)
+    expect(ball.vel.x).to.be.above(0)
+    done()
+  })
+
   it("bounces off Y cushion", done => {
     let pos = new Vector3(0, Cushion.tableY, 0)
     let ball = new Ball(pos)
     ball.vel.y = 1
     ball.update(0.1)
     expect(ball.vel.y).to.be.below(0)
+    done()
+  })
+
+  it("bounces off -Y cushion", done => {
+    let pos = new Vector3(0, -Cushion.tableY, 0)
+    let ball = new Ball(pos)
+    ball.vel.y = -1
+    ball.update(0.1)
+    expect(ball.vel.y).to.be.above(0)
     done()
   })
 })

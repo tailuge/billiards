@@ -46,5 +46,4 @@ describe("Collision", () => {
     expect(b.vel.x).to.be.equal(1)
     done()
   })
-
 })
