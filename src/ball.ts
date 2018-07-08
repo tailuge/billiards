@@ -15,7 +15,7 @@ export class Ball {
   mesh: Mesh
 
   constructor(pos) {
-    this.pos = pos
+    this.pos = pos.clone()
     this.vel = new Vector3(0, 0, 0)
     this.rpos = new Vector3(0, 0, 1)
     this.rvel = new Vector3(0, 0, 0)

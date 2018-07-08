@@ -1,8 +1,8 @@
 import { Ball } from "./ball"
 
 export class Cushion {
-  static tableX = 41
-  static tableY = 21
+  static tableX = 21
+  static tableY = 11
   static elasticity = 0.8
 
   static willBounce(ball: Ball, t: number): boolean {

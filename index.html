@@ -24,15 +24,12 @@
     <script>
         /* global bundle, THREE */
 
-        var xs = [0, -40, -20, 20, 40];
-        var ys = [0, -20, 20];
-        var balls = [];
-        xs.forEach(x => ys.forEach(y => {
-            var b = new bundle.Ball(new THREE.Vector3(x, y, 0));
-            b.vel.x = Math.random() - 0.5;
-            b.vel.y = Math.random() - 0.5;
-            balls.push(b);
-        }));
+        var balls = bundle.Rack.diamond();
+        var b = new bundle.Ball(new THREE.Vector3(-10, 0.1, 0));
+        b.vel.x = 2;
+        balls.push(b);
+
+        var table = new bundle.Table(balls);
 
         var container;
         var scene, renderer;
@@ -49,10 +46,10 @@
                 up: [0, 0, 1],
                 fov: 30,
                 updateCamera: function(camera, scene, mouseX, mouseY) {
-                    var d = 100;
-                    camera.position.x = balls[0].pos.x + Math.sin(mouseX * 0.01) * d;
-                    camera.position.y = balls[0].pos.y + Math.cos(mouseX * 0.01) * d;
-                    camera.lookAt(balls[0].pos);
+                    var d = 50;
+                    camera.position.x = 0 + Math.sin(mouseX * 0.01) * d;
+                    camera.position.y = 0 + Math.cos(mouseX * 0.01) * d;
+                    camera.lookAt(new THREE.Vector3(0, 0, 0));
                 }
             },
             {
@@ -61,7 +58,7 @@
                 width: 0.25,
                 height: 0.25,
                 background: new THREE.Color(0.07, 0.07, 0.07),
-                eye: [0, 0, 120],
+                eye: [0, 0, 50],
                 up: [0, 1, 0],
                 fov: 35,
                 updateCamera: function(camera, scene, mouseX, mouseY) {}
@@ -83,8 +80,8 @@
             var light = new THREE.DirectionalLight(0xffffff);
             light.position.set(0, 0, 1000);
             scene.add(light);
-
-            balls.forEach(b => scene.add(b.mesh));
+            addTable(scene);
+            table.balls.forEach(b => scene.add(b.mesh));
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setPixelRatio(window.devicePixelRatio);
@@ -114,12 +111,7 @@
 
         function render() {
             updateSize();
-            balls.forEach(b => b.update(0.1));
-            balls.forEach(a => {
-                balls.forEach(b => {
-                    (a != b) && bundle.Collision.collide(a, b);
-                });
-            });
+            table.advance(0.1);
 
             for (var ii = 0; ii < views.length; ++ii) {
                 var view = views[ii];
@@ -137,6 +129,18 @@
                 camera.updateProjectionMatrix();
                 renderer.render(scene, camera);
             }
+        }
+
+        function addTable(scene) {
+            var geometry = new THREE.BoxGeometry(2*21, 2*11, 0.1);
+            var material = new THREE.MeshPhongMaterial({
+                color: 0x111144,
+                emissive: 0x111111,
+                flatShading: true
+            });
+            var mesh = new THREE.Mesh(geometry, material);
+            mesh.position.z=-0.5;
+            scene.add(mesh);
         }
     </script>
 </body>
