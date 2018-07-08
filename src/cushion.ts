@@ -5,27 +5,29 @@ export class Cushion {
   static tableY = 21
   static elasticity = 0.8
 
-  static bounce(ball: Ball): boolean {
-    let bx = Cushion.bounceX(ball)
-    let by = Cushion.bounceY(ball)
-    return bx || by
+  static willBounce(ball: Ball, t: number): boolean {
+    let futurePosition = ball.futurePosition(t)
+    return (
+      Math.abs(futurePosition.x) > Cushion.tableX ||
+      Math.abs(futurePosition.y) > Cushion.tableY
+    )
+  }
+
+  static bounce(ball: Ball, t: number) {
+    let futurePosition = ball.futurePosition(t)
+    if (Math.abs(futurePosition.x) > Cushion.tableX) {
+      Cushion.bounceX(ball)
+    }
+    if (Math.abs(futurePosition.y) > Cushion.tableY) {
+      Cushion.bounceY(ball)
+    }
   }
 
   private static bounceX(ball) {
-    if (Math.abs(ball.pos.x) > Cushion.tableX) {
-      ball.pos.x = ball.pos.x > 0 ? Cushion.tableX : -Cushion.tableX
-      ball.vel.x *= -Cushion.elasticity
-      return true
-    }
-    return false
+    ball.vel.x *= -Cushion.elasticity
   }
 
   private static bounceY(ball) {
-    if (Math.abs(ball.pos.y) > Cushion.tableY) {
-      ball.pos.y = ball.pos.y > 0 ? Cushion.tableY : -Cushion.tableY
-      ball.vel.y *= -Cushion.elasticity
-      return true
-    }
-    return false
+    ball.vel.y *= -Cushion.elasticity
   }
 }

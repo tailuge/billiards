@@ -50,8 +50,8 @@
                 fov: 30,
                 updateCamera: function(camera, scene, mouseX, mouseY) {
                     var d = 100;
-                    camera.position.x = balls[0].pos.x + Math.sin(mouseX * 0.01)*d;
-                    camera.position.y = balls[0].pos.y + Math.cos(mouseX * 0.01)*d;
+                    camera.position.x = balls[0].pos.x + Math.sin(mouseX * 0.01) * d;
+                    camera.position.y = balls[0].pos.y + Math.cos(mouseX * 0.01) * d;
                     camera.lookAt(balls[0].pos);
                 }
             },
@@ -64,8 +64,7 @@
                 eye: [0, 0, 120],
                 up: [0, 1, 0],
                 fov: 35,
-                updateCamera: function(camera, scene, mouseX, mouseY) {
-                }
+                updateCamera: function(camera, scene, mouseX, mouseY) {}
             }
         ];
         init();
@@ -115,7 +114,12 @@
 
         function render() {
             updateSize();
-            balls.forEach(b => b.update(0.05));
+            balls.forEach(b => b.update(0.1));
+            balls.forEach(a => {
+                balls.forEach(b => {
+                    (a != b) && bundle.Collision.collide(a, b);
+                });
+            });
 
             for (var ii = 0; ii < views.length; ++ii) {
                 var view = views[ii];

@@ -1,4 +1,3 @@
-import { Cushion } from "./cushion"
 import { Vector3, Matrix4 } from "three"
 import { Mesh, IcosahedronBufferGeometry, MeshPhongMaterial } from "three"
 
@@ -28,9 +27,12 @@ export class Ball {
     this.updateRotation(t)
   }
 
+  futurePosition(t) {
+    return this.pos.clone().addScaledVector(this.vel, t)
+  }
+
   private updatePosition(t: number) {
     this.pos.addScaledVector(this.vel, t)
-    Cushion.bounce(this)
     this.mesh.position.copy(this.pos)
   }
 
@@ -44,7 +46,7 @@ export class Ball {
   }
 
   private initialiseMesh() {
-    var geometry = new IcosahedronBufferGeometry(1.0, 2)
+    var geometry = new IcosahedronBufferGeometry(0.5, 2)
     var material = new MeshPhongMaterial(this.material)
     this.mesh = new Mesh(geometry, material)
   }
