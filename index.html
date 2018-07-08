@@ -46,7 +46,7 @@
                 up: [0, 0, 1],
                 fov: 30,
                 updateCamera: function(camera, scene, mouseX, mouseY) {
-                    var d = 50;
+                    var d = 30;
                     camera.position.x = 0 + Math.sin(mouseX * 0.01) * d;
                     camera.position.y = 0 + Math.cos(mouseX * 0.01) * d;
                     camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -77,15 +77,18 @@
                 view.camera = camera;
             }
             scene = new THREE.Scene();
-            var light = new THREE.DirectionalLight(0xffffff);
-            light.position.set(0, 0, 1000);
-            scene.add(light);
+            //            var light = new THREE.DirectionalLight(0xffffff);
+            //            light.position.set(0, 0, 1000);
+            //            scene.add(light);
+            addSpotlight(scene);
             addTable(scene);
             table.balls.forEach(b => scene.add(b.mesh));
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMapEnabled = true;
+            renderer.shadowMap.type = THREE.PCFShadowMap;
             container.appendChild(renderer.domElement);
 
             document.addEventListener('mousemove', onDocumentMouseMove, false);
@@ -132,15 +135,35 @@
         }
 
         function addTable(scene) {
-            var geometry = new THREE.BoxGeometry(2*21, 2*11, 0.1);
-            var material = new THREE.MeshPhongMaterial({
-                color: 0x111144,
-                emissive: 0x111111,
-                flatShading: true
+            var geometry = new THREE.BoxGeometry(2 * 21, 2 * 11, 0.1);
+            var material = new THREE.MeshLambertMaterial({
+                color: 0x111133
             });
             var mesh = new THREE.Mesh(geometry, material);
-            mesh.position.z=-0.5;
+            mesh.receiveShadow = true;
+            
+            mesh.position.z = -0.5;
             scene.add(mesh);
+        }
+
+        function addSpotlight(scene) {
+
+            // add subtle ambient lighting
+            var ambientLight = new THREE.AmbientLight(0x222266);
+            scene.add(ambientLight);
+
+            // add spotlights for the shadows
+            var spotLight = new THREE.SpotLight(0xffffff);
+            spotLight.position.set(1, 15, 50);
+            spotLight.castShadow = true;
+            spotLight.shadowDarkness = 0.6;
+            scene.add(spotLight);
+
+            spotLight = new THREE.SpotLight(0xffffff);
+            spotLight.position.set(1, -15, 50);
+            spotLight.castShadow = true;
+            spotLight.shadowDarkness = 0.6;
+            scene.add(spotLight);
         }
     </script>
 </body>

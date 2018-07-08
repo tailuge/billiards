@@ -4,7 +4,7 @@ import { Mesh, IcosahedronBufferGeometry, MeshPhongMaterial } from "three"
 export class Ball {
   material = {
     color: Math.random() * 0xffffff,
-    emissive: Math.random() * 0xffffff,
+    emissive: Math.random() * 0x000000,
     flatShading: true
   }
 
@@ -37,8 +37,8 @@ export class Ball {
   }
 
   private updateRotation(t: number) {
-    let axis = new Vector3(0, 0, 1)
-    let angle = 0.05 * t
+    let axis = new Vector3(0, 0, 1).cross(this.vel).normalize()
+    let angle = this.vel.length() * t * Math.PI / 2
     this.rpos.applyAxisAngle(axis, angle)
     let m = new Matrix4()
     m.identity().makeRotationAxis(axis, angle)
@@ -49,5 +49,6 @@ export class Ball {
     var geometry = new IcosahedronBufferGeometry(0.5, 2)
     var material = new MeshPhongMaterial(this.material)
     this.mesh = new Mesh(geometry, material)
+    this.mesh.castShadow = true
   }
 }
