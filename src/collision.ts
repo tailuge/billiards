@@ -6,7 +6,7 @@ export class Collision {
   static up = new Vector3(0, 0, 1)
 
   static willCollide(a: Ball, b: Ball, t: number): boolean {
-    return a.futurePosition(t).distanceTo(b.pos) < 1
+    return a.futurePosition(t).distanceTo(b.futurePosition(t)) < 1
   }
 
   static collide(a: Ball, b: Ball) {

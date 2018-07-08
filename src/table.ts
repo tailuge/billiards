@@ -4,23 +4,31 @@ import { Ball } from "./ball"
 
 export class Table {
   balls: Ball[]
+  pairs: any[] = []
 
   constructor(balls) {
     this.balls = balls
-  }
-
-  advance(t) {
     this.balls.forEach(a => {
       this.balls.forEach(b => {
         if (a != b) {
-          this.canAdvance(a, b, t)
-          a.update(t)
+          this.pairs.push({ a: a, b: b })
         }
       })
     })
   }
 
-  canAdvance(a, b, t) {
+  advance(t) {
+    while (!this.prepareAdvanceAll(t)) {}
+    this.balls.forEach(a => {
+      a.update(t)
+    })
+  }
+
+  prepareAdvanceAll(t) {
+    return !this.pairs.some(pair => !this.prepareAdvancePair(pair.a, pair.b, t))
+  }
+
+  private prepareAdvancePair(a, b, t) {
     if (Collision.willCollide(a, b, t)) {
       Collision.collide(a, b)
       return false
