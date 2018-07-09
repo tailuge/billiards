@@ -77,11 +77,11 @@
                 view.camera = camera;
             }
             scene = new THREE.Scene();
-            //            var light = new THREE.DirectionalLight(0xffffff);
-            //            light.position.set(0, 0, 1000);
-            //            scene.add(light);
+
+            (new bundle.TableGeometry()).addToScene(scene);
             addSpotlight(scene);
             addTable(scene);
+
             table.balls.forEach(b => scene.add(b.mesh));
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -114,7 +114,10 @@
 
         function render() {
             updateSize();
-            table.advance(0.1);
+            table.advance(0.025);
+            table.advance(0.025);
+            table.advance(0.025);
+            table.advance(0.025);
 
             for (var ii = 0; ii < views.length; ++ii) {
                 var view = views[ii];
@@ -141,7 +144,7 @@
             });
             var mesh = new THREE.Mesh(geometry, material);
             mesh.receiveShadow = true;
-            
+
             mesh.position.z = -0.5;
             scene.add(mesh);
         }
@@ -164,6 +167,7 @@
             spotLight.castShadow = true;
             spotLight.shadowDarkness = 0.6;
             scene.add(spotLight);
+
         }
     </script>
 </body>

@@ -3,6 +3,7 @@ export { GameState } from "./gamestate"
 export { Collision } from "./collision"
 export { Table } from "./table"
 export { Rack } from "./rack"
+export { TableGeometry } from "./tablegeometry"
 export * from "three"
 export * from "three-orbitcontrols"
 

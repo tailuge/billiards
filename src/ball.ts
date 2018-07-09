@@ -38,7 +38,7 @@ export class Ball {
 
   private updateRotation(t: number) {
     let axis = new Vector3(0, 0, 1).cross(this.vel).normalize()
-    let angle = this.vel.length() * t * Math.PI / 2
+    let angle = (this.vel.length() * t * Math.PI) / 2
     this.rpos.applyAxisAngle(axis, angle)
     let m = new Matrix4()
     m.identity().makeRotationAxis(axis, angle)
@@ -46,7 +46,7 @@ export class Ball {
   }
 
   private initialiseMesh() {
-    var geometry = new IcosahedronBufferGeometry(0.5, 2)
+    var geometry = new IcosahedronBufferGeometry(0.5, 1)
     var material = new MeshPhongMaterial(this.material)
     this.mesh = new Mesh(geometry, material)
     this.mesh.castShadow = true
