@@ -3,8 +3,8 @@ import { Mesh, CylinderGeometry, BoxGeometry, MeshPhongMaterial } from "three"
 import { Knuckle } from "./knuckle"
 
 export class TableGeometry {
-  static tableX = 21 * 2/3
-  static tableY = 11 * 2/3
+  static tableX = (21 * 2) / 3
+  static tableY = (11 * 2) / 3
   static X = TableGeometry.tableX + 0.5
   static Y = TableGeometry.tableY + 0.5
   static knuckleInset = 1.2
@@ -143,7 +143,10 @@ export class TableGeometry {
     TableGeometry.addCushions(scene)
   }
 
-  private static material = new MeshPhongMaterial({ color: 0x445599,wireframe: true })
+  private static material = new MeshPhongMaterial({
+    color: 0x445599,
+    wireframe: true
+  })
 
   private static cylinder(knuckle, scene) {
     var geometry = new CylinderGeometry(knuckle.radius, knuckle.radius, 0.5, 8)
@@ -167,7 +170,7 @@ export class TableGeometry {
     )
     let d = 0.1
     let h = 0.75
-    let e = -0.25/2 
+    let e = -0.25 / 2
     let lengthN = Math.abs(
       TableGeometry.pockets.pocketNW.knuckleNE.pos.x -
         TableGeometry.pockets.pocketN.knuckleNW.pos.x

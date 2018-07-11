@@ -20,11 +20,15 @@ export class Main {
   })
 
   table: Table
-
+  t = 0
   animate(): void {
     requestAnimationFrame(() => {
       this.animate()
     })
+    if (this.t++ > 500) {
+      console.log(JSON.stringify(this.table.serialise()))
+      this.t = 0
+    }
     this.table.advance(0.02)
     this.table.advance(0.02)
     this.table.advance(0.02)

@@ -51,4 +51,18 @@ export class Ball {
     this.mesh = new Mesh(geometry, material)
     this.mesh.castShadow = true
   }
+
+  serialise() {
+    return { pos: this.pos, vel: this.vel }
+  }
+
+  static fromSerialised(data) {
+    let b = new Ball(this.vec(data.pos))
+    b.vel.copy(this.vec(data.vel))
+    return b
+  }
+
+  static vec(v) {
+    return new Vector3(v.x, v.y, v.z)
+  }
 }

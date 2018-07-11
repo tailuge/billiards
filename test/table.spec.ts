@@ -43,4 +43,17 @@ describe("Table", () => {
     expect(table.prepareAdvanceAll(t)).to.be.true
     done()
   })
+
+  it("serialise/deserialise", done => {
+    let a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
+    let b = new Ball(new Vector3(-TableGeometry.tableX + 1, 0, 0))
+    let c = new Ball(new Vector3(-TableGeometry.tableX + 2, 0, 0))
+    a.vel.x = -1
+    let table = new Table([a, b, c])
+    let data = JSON.stringify(table.serialise())
+    let obj = JSON.parse(data)
+    let table2 = Table.fromSerialised(obj)
+    expect(table2.balls.length).to.be.equal(3)
+    done()
+  })
 })

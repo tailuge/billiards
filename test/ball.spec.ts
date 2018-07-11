@@ -27,4 +27,16 @@ describe("Ball", () => {
     expect(ball.rvel).to.deep.equal(zero)
     done()
   })
+
+  it("serialise/deserialise", done => {
+    let pos = new Vector3(1, 2, 0)
+    let vel = new Vector3(3, 4, 0)
+    let ball = new Ball(pos)
+    ball.vel.copy(vel)
+    let data = ball.serialise()
+    let ball2 = Ball.fromSerialised(data)
+    expect(ball2.pos).to.deep.equal(pos)
+    expect(ball2.vel).to.deep.equal(vel)
+    done()
+  })
 })

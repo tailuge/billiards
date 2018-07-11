@@ -46,4 +46,12 @@ export class Table {
 
     return true
   }
+
+  serialise() {
+    return this.balls.map(b => b.serialise())
+  }
+
+  static fromSerialised(data) {
+    return new Table(data.map(b => Ball.fromSerialised(b)))
+  }
 }
