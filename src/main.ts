@@ -25,9 +25,9 @@ export class Main {
     requestAnimationFrame(() => {
       this.animate()
     })
-    this.table.advance(0.01)
-    this.table.advance(0.01)
-    this.table.advance(0.01)
+    this.table.advance(0.02)
+    this.table.advance(0.02)
+    this.table.advance(0.02)
     this.render()
   }
 
@@ -43,21 +43,21 @@ export class Main {
     document.body.appendChild(this.renderer.domElement)
 
     let light = new THREE.DirectionalLight(0xffffff, 1.0)
-    light.position.set(100, 100, 100)
+    light.position.set(100, -10, 100)
     this.scene.add(light)
     let light2 = new THREE.DirectionalLight(0xffffff, 1.0)
-    light2.position.set(-100, 100, -100)
+    light2.position.set(-100, 100, 100)
     this.scene.add(light2)
 
     this.camera.up = new THREE.Vector3(0, 0, 1)
-    this.camera.position.x = 25
-    this.camera.position.y = 25
-    this.camera.position.z = 15
+    this.camera.position.x = 0
+    this.camera.position.y = 0.1
+    this.camera.position.z = 20
     this.camera.lookAt(this.scene.position)
 
     let balls = Rack.diamond()
     let b = new Ball(new THREE.Vector3(-10, 0.1, 0))
-    b.vel.x = 2
+    b.vel.x = 3
     balls.push(b)
     this.table = new Table(balls)
     this.table.balls.forEach(b => this.scene.add(b.mesh))
@@ -65,14 +65,6 @@ export class Main {
   }
 
   addTable() {
-    var geometry = new THREE.BoxGeometry(2 * 21, 2 * 11, 0.1)
-    var material = new THREE.MeshLambertMaterial({
-      color: 0x111133
-    })
-    var mesh = new THREE.Mesh(geometry, material)
-    mesh.receiveShadow = true
-    mesh.position.z = -0.5
-    this.scene.add(mesh)
     TableGeometry.addToScene(this.scene)
   }
 }

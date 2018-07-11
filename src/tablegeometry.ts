@@ -1,30 +1,31 @@
 import { Vector3, Matrix4 } from "three"
-import { Mesh, CylinderGeometry, MeshPhongMaterial } from "three"
+import { Mesh, CylinderGeometry, BoxGeometry, MeshPhongMaterial } from "three"
 import { Knuckle } from "./knuckle"
 
 export class TableGeometry {
-  static tableX = 21
-  static tableY = 11
-
-  static knuckleInset = 1
+  static tableX = 21 * 2/3
+  static tableY = 11 * 2/3
+  static X = TableGeometry.tableX + 0.5
+  static Y = TableGeometry.tableY + 0.5
+  static knuckleInset = 1.2
   static knuckleRadius = 0.5
-  static middleKnuckleInset = 1
+  static middleKnuckleInset = 1.2
   static middleKnuckleRadius = 0.5
 
   static readonly pockets = {
     pocketNW: {
       knuckleNE: new Knuckle(
         new Vector3(
-          -TableGeometry.tableX + TableGeometry.knuckleInset,
-          TableGeometry.tableY + TableGeometry.knuckleRadius,
+          -TableGeometry.X + TableGeometry.knuckleInset,
+          TableGeometry.Y + TableGeometry.knuckleRadius,
           0
         ),
         TableGeometry.knuckleRadius
       ),
       knuckleSW: new Knuckle(
         new Vector3(
-          -TableGeometry.tableX - TableGeometry.knuckleRadius,
-          TableGeometry.tableY - TableGeometry.knuckleInset,
+          -TableGeometry.X - TableGeometry.knuckleRadius,
+          TableGeometry.Y - TableGeometry.knuckleInset,
           0
         ),
         TableGeometry.knuckleRadius
@@ -34,7 +35,7 @@ export class TableGeometry {
       knuckleNE: new Knuckle(
         new Vector3(
           TableGeometry.knuckleInset,
-          TableGeometry.tableY + TableGeometry.middleKnuckleRadius,
+          TableGeometry.Y + TableGeometry.middleKnuckleRadius,
           0
         ),
         TableGeometry.knuckleRadius
@@ -42,7 +43,7 @@ export class TableGeometry {
       knuckleNW: new Knuckle(
         new Vector3(
           -TableGeometry.middleKnuckleInset,
-          TableGeometry.tableY + TableGeometry.middleKnuckleRadius,
+          TableGeometry.Y + TableGeometry.middleKnuckleRadius,
           0
         ),
         TableGeometry.knuckleRadius
@@ -52,7 +53,7 @@ export class TableGeometry {
       knuckleSE: new Knuckle(
         new Vector3(
           TableGeometry.knuckleInset,
-          -TableGeometry.tableY - TableGeometry.middleKnuckleRadius,
+          -TableGeometry.Y - TableGeometry.middleKnuckleRadius,
           0
         ),
         TableGeometry.knuckleRadius
@@ -60,7 +61,7 @@ export class TableGeometry {
       knuckleSW: new Knuckle(
         new Vector3(
           -TableGeometry.middleKnuckleInset,
-          -TableGeometry.tableY - TableGeometry.middleKnuckleRadius,
+          -TableGeometry.Y - TableGeometry.middleKnuckleRadius,
           0
         ),
         TableGeometry.knuckleRadius
@@ -69,16 +70,16 @@ export class TableGeometry {
     pocketNE: {
       knuckleNW: new Knuckle(
         new Vector3(
-          TableGeometry.tableX - TableGeometry.knuckleInset,
-          TableGeometry.tableY + TableGeometry.knuckleRadius,
+          TableGeometry.X - TableGeometry.knuckleInset,
+          TableGeometry.Y + TableGeometry.knuckleRadius,
           0
         ),
         TableGeometry.knuckleRadius
       ),
       knuckleSE: new Knuckle(
         new Vector3(
-          TableGeometry.tableX + TableGeometry.knuckleRadius,
-          TableGeometry.tableY - TableGeometry.knuckleInset,
+          TableGeometry.X + TableGeometry.knuckleRadius,
+          TableGeometry.Y - TableGeometry.knuckleInset,
           0
         ),
         TableGeometry.knuckleRadius
@@ -87,16 +88,16 @@ export class TableGeometry {
     pocketSE: {
       knuckleNE: new Knuckle(
         new Vector3(
-          TableGeometry.tableX + TableGeometry.knuckleRadius,
-          -TableGeometry.tableY + TableGeometry.knuckleInset,
+          TableGeometry.X + TableGeometry.knuckleRadius,
+          -TableGeometry.Y + TableGeometry.knuckleInset,
           0
         ),
         TableGeometry.knuckleRadius
       ),
       knuckleSW: new Knuckle(
         new Vector3(
-          TableGeometry.tableX - TableGeometry.knuckleInset,
-          -TableGeometry.tableY - TableGeometry.knuckleRadius,
+          TableGeometry.X - TableGeometry.knuckleInset,
+          -TableGeometry.Y - TableGeometry.knuckleRadius,
           0
         ),
         TableGeometry.knuckleRadius
@@ -105,16 +106,16 @@ export class TableGeometry {
     pocketSW: {
       knuckleSE: new Knuckle(
         new Vector3(
-          -TableGeometry.tableX + TableGeometry.knuckleInset,
-          -TableGeometry.tableY - TableGeometry.knuckleRadius,
+          -TableGeometry.X + TableGeometry.knuckleInset,
+          -TableGeometry.Y - TableGeometry.knuckleRadius,
           0
         ),
         TableGeometry.knuckleRadius
       ),
       knuckleNW: new Knuckle(
         new Vector3(
-          -TableGeometry.tableX - TableGeometry.knuckleRadius,
-          -TableGeometry.tableY + TableGeometry.knuckleInset,
+          -TableGeometry.X - TableGeometry.knuckleRadius,
+          -TableGeometry.Y + TableGeometry.knuckleInset,
           0
         ),
         TableGeometry.knuckleRadius
@@ -139,16 +140,94 @@ export class TableGeometry {
 
   static addToScene(scene) {
     TableGeometry.knuckles.forEach(k => this.cylinder(k, scene))
+    TableGeometry.addCushions(scene)
   }
+
+  private static material = new MeshPhongMaterial({ color: 0x445599,wireframe: true })
 
   private static cylinder(knuckle, scene) {
     var geometry = new CylinderGeometry(knuckle.radius, knuckle.radius, 0.5, 8)
-    var material = new MeshPhongMaterial({ color: 0x444400 })
-    var mesh = new Mesh(geometry, material)
+    var mesh = new Mesh(geometry, TableGeometry.material)
     mesh.position.copy(knuckle.pos)
-    let m = new Matrix4()
-    m.identity().makeRotationAxis(new Vector3(1, 0, 0), Math.PI / 2)
-    mesh.geometry.applyMatrix(m)
+    mesh.geometry.applyMatrix(
+      new Matrix4()
+        .identity()
+        .makeRotationAxis(new Vector3(1, 0, 0), Math.PI / 2)
+    )
+    scene.add(mesh)
+  }
+
+  private static addCushions(scene) {
+    TableGeometry.plane(
+      new Vector3(0, 0, -0.5),
+      2 * TableGeometry.X,
+      2 * TableGeometry.Y,
+      0.01,
+      scene
+    )
+    let d = 0.1
+    let h = 0.75
+    let e = -0.25/2 
+    let lengthN = Math.abs(
+      TableGeometry.pockets.pocketNW.knuckleNE.pos.x -
+        TableGeometry.pockets.pocketN.knuckleNW.pos.x
+    )
+    let lengthE = Math.abs(
+      TableGeometry.pockets.pocketNW.knuckleSW.pos.y -
+        TableGeometry.pockets.pocketSW.knuckleNW.pos.y
+    )
+
+    TableGeometry.plane(
+      new Vector3(TableGeometry.X, 0, e),
+      d,
+      lengthE,
+      h,
+      scene
+    )
+    TableGeometry.plane(
+      new Vector3(-TableGeometry.X, 0, e),
+      d,
+      lengthE,
+      h,
+      scene
+    )
+
+    TableGeometry.plane(
+      new Vector3(-TableGeometry.X / 2, TableGeometry.Y, e),
+      lengthN,
+      d,
+      h,
+      scene
+    )
+    TableGeometry.plane(
+      new Vector3(-TableGeometry.X / 2, -TableGeometry.Y, e),
+      lengthN,
+      d,
+      h,
+      scene
+    )
+
+    TableGeometry.plane(
+      new Vector3(TableGeometry.X / 2, TableGeometry.Y, e),
+      lengthN,
+      d,
+      h,
+      scene
+    )
+    TableGeometry.plane(
+      new Vector3(TableGeometry.X / 2, -TableGeometry.Y, e),
+      lengthN,
+      d,
+      h,
+      scene
+    )
+  }
+
+  private static plane(pos, x, y, z, scene) {
+    var geometry = new BoxGeometry(x, y, z)
+    var mesh = new Mesh(geometry, TableGeometry.material)
+    mesh.receiveShadow = true
+    mesh.position.copy(pos)
     scene.add(mesh)
   }
 }
