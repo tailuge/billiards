@@ -1,66 +1,78 @@
-export { Ball } from "./ball"
-export { GameState } from "./gamestate"
-export { Collision } from "./collision"
-export { Table } from "./table"
-export { Rack } from "./rack"
-export { TableGeometry } from "./tablegeometry"
-export * from "three"
-export * from "three-orbitcontrols"
+import { Ball } from "./ball"
+import { Table } from "./table"
+import { Rack } from "./rack"
+import { TableGeometry } from "./tablegeometry"
 
 import * as THREE from "three"
 
-// set the scene size
-let WIDTH = 250
-let HEIGHT = 250
-
-// set some camera attributes
-let VIEW_ANGLE = 75
-let ASPECT = WIDTH / HEIGHT
-let NEAR = 0.1
-let FAR = 1000
-
 export class Main {
-  renderer: THREE.WebGLRenderer
-  scene: THREE.Scene
-  camera: THREE.PerspectiveCamera
-  geometry: THREE.BoxGeometry
-  material: THREE.MeshNormalMaterial
+  scene = new THREE.Scene()
+  camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  )
+  renderer = new THREE.WebGLRenderer()
+  material = new THREE.MeshBasicMaterial({
+    color: 0xaaaaaa,
+    wireframe: true
+  })
 
-  cube: THREE.Mesh
+  table: Table
 
-  constructor(element) {
-    console.log(element)
-    this.renderer = new THREE.WebGLRenderer()
-    this.renderer.setSize(400, 400)
-    document.body.appendChild(this.renderer.domElement)
-    this.scene = new THREE.Scene()
-    this.camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR)
-
-    var geometry = new THREE.BoxBufferGeometry(200, 200, 200)
-    var material = new THREE.MeshBasicMaterial({
-      color: 0xff0000,
-      wireframe: true
+  animate(): void {
+    requestAnimationFrame(() => {
+      this.animate()
     })
+    this.table.advance(0.01)
+    this.table.advance(0.01)
+    this.table.advance(0.01)
+    this.render()
+  }
 
-    this.cube = new THREE.Mesh(geometry, material)
-    this.scene.add(this.cube)
-    this.scene.add(this.camera)
+  render(): void {
+    this.renderer.render(this.scene, this.camera)
+  }
+
+  run() {
+    this.renderer.setSize(window.innerWidth, window.innerHeight)
+    this.renderer.shadowMapEnabled = true
+    this.renderer.shadowMap.type = THREE.PCFShadowMap
+
+    document.body.appendChild(this.renderer.domElement)
+
     let light = new THREE.DirectionalLight(0xffffff, 1.0)
     light.position.set(100, 100, 100)
     this.scene.add(light)
     let light2 = new THREE.DirectionalLight(0xffffff, 1.0)
     light2.position.set(-100, 100, -100)
     this.scene.add(light2)
-    this.camera.position.z = 2
-    this.renderer.setSize(WIDTH, HEIGHT)
-    this.animate()
+
+    this.camera.up = new THREE.Vector3(0, 0, 1)
+    this.camera.position.x = 25
+    this.camera.position.y = 25
+    this.camera.position.z = 15
+    this.camera.lookAt(this.scene.position)
+
+    let balls = Rack.diamond()
+    let b = new Ball(new THREE.Vector3(-10, 0.1, 0))
+    b.vel.x = 2
+    balls.push(b)
+    this.table = new Table(balls)
+    this.table.balls.forEach(b => this.scene.add(b.mesh))
+    this.addTable()
   }
 
-  animate() {
-    requestAnimationFrame(() => {
-      this.animate()
+  addTable() {
+    var geometry = new THREE.BoxGeometry(2 * 21, 2 * 11, 0.1)
+    var material = new THREE.MeshLambertMaterial({
+      color: 0x111133
     })
-    this.renderer.render(this.scene, this.camera)
-    console.log("t")
+    var mesh = new THREE.Mesh(geometry, material)
+    mesh.receiveShadow = true
+    mesh.position.z = -0.5
+    this.scene.add(mesh)
+    TableGeometry.addToScene(this.scene)
   }
 }

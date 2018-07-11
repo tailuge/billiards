@@ -1,7 +1,7 @@
 import "mocha"
 import { expect } from "chai"
 import { Ball } from "../src/ball"
-import { Cushion } from "../src/cushion"
+import { TableGeometry } from "../src/tablegeometry"
 import { Table } from "../src/table"
 import { Vector3 } from "three"
 
@@ -32,9 +32,9 @@ describe("Table", () => {
   })
 
   it("c bounces by transfering momentum through b and a", done => {
-    let a = new Ball(new Vector3(-Cushion.tableX, 0, 0))
-    let b = new Ball(new Vector3(-Cushion.tableX + 1, 0, 0))
-    let c = new Ball(new Vector3(-Cushion.tableX + 2, 0, 0))
+    let a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
+    let b = new Ball(new Vector3(-TableGeometry.tableX + 1, 0, 0))
+    let c = new Ball(new Vector3(-TableGeometry.tableX + 2, 0, 0))
     a.vel.x = -1
     let table = new Table([a, b, c])
     expect(table.prepareAdvanceAll(t)).to.be.false

@@ -1,5 +1,6 @@
 import { Cushion } from "./cushion"
 import { Collision } from "./collision"
+import { Knuckle } from "./knuckle"
 import { Ball } from "./ball"
 
 export class Table {
@@ -37,6 +38,12 @@ export class Table {
       Cushion.bounce(a, t)
       return false
     }
+    let k = Knuckle.willBounceAny(a, t)
+    if (k) {
+      k.bounce(a)
+      return false
+    }
+
     return true
   }
 }
