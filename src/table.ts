@@ -21,7 +21,7 @@ export class Table {
   advance(t) {
     let depth = 0
     while (!this.prepareAdvanceAll(t)) {
-      if (depth++>100) {
+      if (depth++ > 100) {
         console.log(JSON.stringify(this.serialise()))
         throw new Error("Table event depth exceeded")
       }

@@ -3,6 +3,7 @@ import { expect } from "chai"
 import { Ball } from "../src/ball"
 import { TableGeometry } from "../src/tablegeometry"
 import { Cushion } from "../src/cushion"
+import { Knuckle } from "../src/knuckle"
 import { Vector3 } from "three"
 
 let t = 0.1
@@ -57,6 +58,19 @@ describe("Cushion", () => {
     let ball = new Ball(pos)
     ball.vel.y = -1
     expect(Cushion.willBounce(ball, t)).to.be.false
+    done()
+  })
+
+  it("bounces off knuckle", done => {
+    let pos = new Vector3(TableGeometry.middleKnuckleInset-0.1, -TableGeometry.tableY, 0)
+    let ball = new Ball(pos)
+    ball.vel.y = -1
+    expect(Cushion.willBounce(ball, t)).to.be.false
+    let k = Knuckle.willBounceAny(ball, t) 
+    expect(k).to.be.deep.equal(TableGeometry.pockets.pocketS.knuckleSE)
+    k && k.bounce(ball)
+    expect(ball.vel.x).to.be.below(0)
+    expect(ball.vel.y).to.be.above(0)
     done()
   })
 
