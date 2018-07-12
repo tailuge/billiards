@@ -8,22 +8,24 @@ export class Ball {
     flatShading: true
   }
 
+  froll = 0.02
   pos: Vector3
   vel: Vector3
   rpos: Vector3
   rvel: Vector3
   mesh: Mesh
-
+  zero = new Vector3(0, 0, 0)
   constructor(pos) {
     this.pos = pos.clone()
-    this.vel = new Vector3(0, 0, 0)
+    this.vel = this.zero.clone()
     this.rpos = new Vector3(0, 0, 1)
-    this.rvel = new Vector3(0, 0, 0)
+    this.rvel = this.zero.clone()
     this.initialiseMesh()
   }
 
   update(t) {
     this.updatePosition(t)
+    this.updateVelocity(t)
     this.updateRotation(t)
   }
 
@@ -34,6 +36,18 @@ export class Ball {
   private updatePosition(t: number) {
     this.pos.addScaledVector(this.vel, t)
     this.mesh.position.copy(this.pos)
+  }
+
+  private updateVelocity(t: number) {
+    let deltaV = this.vel
+      .clone()
+      .normalize()
+      .multiplyScalar(-t * this.froll)
+    if (this.vel.length() < deltaV.length()) {
+      this.vel.copy(this.zero)
+    } else {
+      this.vel.add(deltaV)
+    }
   }
 
   private updateRotation(t: number) {

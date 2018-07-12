@@ -26,7 +26,7 @@ describe("Table", () => {
     let table = new Table([a, b, c])
     expect(table.prepareAdvanceAll(t)).to.be.false
     table.advance(t)
-    expect(c.vel.x).to.be.equal(1)
+    expect(c.vel.x).to.be.closeTo(1, 0.1)
     expect(table.prepareAdvanceAll(t)).to.be.true
     done()
   })

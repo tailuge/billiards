@@ -28,6 +28,14 @@ describe("Ball", () => {
     done()
   })
 
+  it("friction stops ball", done => {
+    let ball = new Ball(new Vector3())
+    ball.vel.x = 0.01
+    ball.update(1)
+    expect(ball.vel).to.deep.equal(zero)
+    done()
+  })
+
   it("serialise/deserialise", done => {
     let pos = new Vector3(1, 2, 0)
     let vel = new Vector3(3, 4, 0)

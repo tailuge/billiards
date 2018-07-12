@@ -183,7 +183,8 @@ export class TableGeometry {
 
   private static material = new MeshPhongMaterial({
     color: 0x445599,
-    wireframe: true
+    wireframe: false,
+    flatShading: true
   })
 
   private static knuckleCylinder(knuckle, scene) {
