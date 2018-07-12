@@ -52,15 +52,36 @@ export class Main {
 
     let balls = Rack.diamond()
     let b = new Ball(new THREE.Vector3(-10, 0.1, 0))
-    b.vel.x = 3
-    balls.push(b)
+    b.vel.x = 0
+    balls.unshift(b)
+
     this.table = new Table(balls)
     this.table.balls.forEach(b => this.scene.add(b.mesh))
     this.addTable()
     this.camera = new Camera(this.table)
+
+    this.keyboardSetup()
   }
 
   addTable() {
     TableGeometry.addToScene(this.scene)
+  }
+
+  keyboardSetup() {
+    document.addEventListener("keydown", event => {
+      if (event.keyCode == 37) {
+        this.table.rotateAim(0.2)
+        event.preventDefault()
+      } else if (event.keyCode == 39) {
+        this.table.rotateAim(-0.2)
+        event.preventDefault()
+      } else if (event.keyCode == 32) {
+        this.table.hit(3)
+        event.preventDefault()
+      } else if (event.keyCode == 84) {
+        this.camera.mode = this.camera.topView
+        event.preventDefault()
+      }
+    })
   }
 }

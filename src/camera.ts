@@ -5,6 +5,7 @@ import * as THREE from "three"
 export class Camera {
   constructor(table: Table) {
     this.table = table
+    this.camera.up = this.up
   }
 
   camera = new THREE.PerspectiveCamera(
@@ -16,28 +17,27 @@ export class Camera {
 
   table: Table
   up = new THREE.Vector3(0, 0, 1)
+  topViewPoint = new THREE.Vector3(0, 0.1, 20)
   centre = new THREE.Vector3()
-  mode = this.topView
+  mode = this.aimView
 
   update(t) {
-    this.mode(t)
+    this.t += t
+    this.mode()
   }
 
   t = 0
-  topView(t) {
-    this.t += t
-    this.camera.up = this.up
-    this.camera.position.x = 0
-    this.camera.position.y = 0.1
-    this.camera.position.z = 20
+  topView() {
+    this.camera.position.lerp(this.topViewPoint, 0.5)
     this.camera.lookAt(this.centre)
   }
 
-  aimView(t) {
-    this.camera.up = new THREE.Vector3(0, 0, 1)
-    this.camera.position.x = 0
-    this.camera.position.y = 0.1
-    this.camera.position.z = 20 + t
-    this.camera.lookAt(this.centre)
+  aimView() {
+    this.camera.position.lerp(
+      this.table.balls[0].pos.clone().addScaledVector(this.table.aim, -10),
+      0.5
+    )
+    this.camera.position.z = 2
+    this.camera.lookAt(this.table.balls[0].pos)
   }
 }

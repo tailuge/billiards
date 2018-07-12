@@ -168,7 +168,7 @@ export class TableGeometry {
       0.01,
       scene
     )
-    let d = 0.1
+    let d = 0.01
     let h = 0.75
     let e = -0.25 / 2
     let lengthN = Math.abs(

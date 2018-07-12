@@ -2,9 +2,12 @@ import { Cushion } from "./cushion"
 import { Collision } from "./collision"
 import { Knuckle } from "./knuckle"
 import { Ball } from "./ball"
+import { Vector3 } from "three"
 
 export class Table {
   balls: Ball[]
+  aim = new Vector3(1, 0, 0)
+  up = new Vector3(0, 0, 1)
   pairs: any[] = []
 
   constructor(balls) {
@@ -23,7 +26,7 @@ export class Table {
     while (!this.prepareAdvanceAll(t)) {
       if (depth++ > 100) {
         console.log(JSON.stringify(this.serialise()))
-        throw new Error("Table event depth exceeded")
+        throw new Error("Depth exceeded resolving collisions")
       }
     }
     this.balls.forEach(a => {
@@ -59,5 +62,13 @@ export class Table {
 
   static fromSerialised(data) {
     return new Table(data.map(b => Ball.fromSerialised(b)))
+  }
+
+  rotateAim(t) {
+    this.aim.applyAxisAngle(this.up, t)
+  }
+
+  hit(speed) {
+    this.balls[0].vel.copy(this.aim.clone().multiplyScalar(speed))
   }
 }
