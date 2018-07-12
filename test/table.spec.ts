@@ -56,4 +56,5 @@ describe("Table", () => {
     expect(table2.balls.length).to.be.equal(3)
     done()
   })
+
 })

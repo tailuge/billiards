@@ -19,7 +19,13 @@ export class Table {
   }
 
   advance(t) {
-    while (!this.prepareAdvanceAll(t)) {}
+    let depth = 0
+    while (!this.prepareAdvanceAll(t)) {
+      if (depth++>100) {
+        console.log(JSON.stringify(this.serialise()))
+        throw new Error("Table event depth exceeded")
+      }
+    }
     this.balls.forEach(a => {
       a.update(t)
     })
