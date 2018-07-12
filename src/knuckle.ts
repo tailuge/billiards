@@ -27,8 +27,9 @@ export class Knuckle {
 
   static willBounceAny(ball: Ball, t: number) {
     let futurePosition = ball.futurePosition(t)
-    return TableGeometry.knuckles.find(k =>
-      Knuckle.willBounce(k, futurePosition)
+    return (
+      ball.onTable() &&
+      TableGeometry.knuckles.find(k => Knuckle.willBounce(k, futurePosition))
     )
   }
 }

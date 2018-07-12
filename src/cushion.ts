@@ -9,21 +9,22 @@ export class Cushion {
     let futurePosition = ball.futurePosition(t)
 
     return (
-      Cushion.willBounceLongSegment(
+      ball.onTable() &&
+      (Cushion.willBounceLongSegment(
         TableGeometry.pockets.pocketNW.knuckleNE.pos.x,
         TableGeometry.pockets.pocketN.knuckleNW.pos.x,
         futurePosition
       ) ||
-      Cushion.willBounceLongSegment(
-        TableGeometry.pockets.pocketN.knuckleNE.pos.x,
-        TableGeometry.pockets.pocketNE.knuckleNW.pos.x,
-        futurePosition
-      ) ||
-      Cushion.willBounceShortSegment(
-        TableGeometry.pockets.pocketNW.knuckleSW.pos.y,
-        TableGeometry.pockets.pocketSW.knuckleNW.pos.y,
-        futurePosition
-      )
+        Cushion.willBounceLongSegment(
+          TableGeometry.pockets.pocketN.knuckleNE.pos.x,
+          TableGeometry.pockets.pocketNE.knuckleNW.pos.x,
+          futurePosition
+        ) ||
+        Cushion.willBounceShortSegment(
+          TableGeometry.pockets.pocketNW.knuckleSW.pos.y,
+          TableGeometry.pockets.pocketSW.knuckleNW.pos.y,
+          futurePosition
+        ))
     )
   }
 

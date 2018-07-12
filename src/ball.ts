@@ -1,25 +1,36 @@
 import { Vector3, Matrix4 } from "three"
 import { Mesh, IcosahedronBufferGeometry, MeshPhongMaterial } from "three"
 
+export enum State {
+  Stationary,
+  Rolling,
+  Sliding,
+  Falling
+}
+
 export class Ball {
+  zero = new Vector3(0, 0, 0)
+  up = new Vector3(0, 0, 1)
+
+  pos: Vector3
+  vel: Vector3 = this.zero.clone()
+  rpos: Vector3 = this.up.clone()
+  rvel: Vector3 = this.zero.clone()
+  state: State = State.Stationary
+
+  froll = 0.02
+  mesh: Mesh
   material = {
     color: Math.random() * 0xffffff,
     emissive: Math.random() * 0x000000,
     flatShading: true
   }
 
-  froll = 0.02
-  pos: Vector3
-  vel: Vector3
-  rpos: Vector3
-  rvel: Vector3
-  mesh: Mesh
-  zero = new Vector3(0, 0, 0)
   constructor(pos) {
     this.pos = pos.clone()
-    this.vel = this.zero.clone()
-    this.rpos = new Vector3(0, 0, 1)
-    this.rvel = this.zero.clone()
+    this.vel
+    this.rpos
+    this.rvel
     this.initialiseMesh()
   }
 
@@ -51,12 +62,19 @@ export class Ball {
   }
 
   private updateRotation(t: number) {
-    let axis = new Vector3(0, 0, 1).cross(this.vel).normalize()
+    let axis = this.up
+      .clone()
+      .cross(this.vel)
+      .normalize()
     let angle = (this.vel.length() * t * Math.PI) / 2
     this.rpos.applyAxisAngle(axis, angle)
     let m = new Matrix4()
     m.identity().makeRotationAxis(axis, angle)
     this.mesh.geometry.applyMatrix(m)
+  }
+
+  onTable() {
+    return this.state != State.Falling
   }
 
   private initialiseMesh() {

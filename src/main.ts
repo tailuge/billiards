@@ -71,13 +71,18 @@ export class Main {
     TableGeometry.addToScene(this.scene)
   }
 
+  rate = 0
+  rateInc = 0.001
+
   keyboardSetup() {
     document.addEventListener("keydown", event => {
       if (event.keyCode == 37) {
-        this.table.rotateAim(0.2)
+        this.rate += this.rateInc
+        this.table.rotateAim(this.rate)
         event.preventDefault()
       } else if (event.keyCode == 39) {
-        this.table.rotateAim(-0.2)
+        this.rate += this.rateInc
+        this.table.rotateAim(-this.rate)
         event.preventDefault()
       } else if (event.keyCode == 32) {
         this.table.hit(3)
@@ -85,7 +90,13 @@ export class Main {
       } else if (event.keyCode == 84) {
         this.camera.mode = this.camera.topView
         event.preventDefault()
+      } else if (event.keyCode == 65) {
+        this.camera.mode = this.camera.aimView
+        event.preventDefault()
       }
+    })
+    document.addEventListener("keyup", ({}) => {
+      this.rate = 0
     })
   }
 }

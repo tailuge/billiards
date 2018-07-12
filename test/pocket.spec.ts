@@ -15,6 +15,7 @@ describe("Pocket", () => {
     let p = Pocket.willFallAny(ball, t)
     expect(p).to.be.not.null
     p && p.fall(ball, t)
+    expect(Pocket.willFallAny(ball, t)).to.be.false
     done()
   })
 })

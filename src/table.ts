@@ -1,6 +1,7 @@
 import { Cushion } from "./cushion"
 import { Collision } from "./collision"
 import { Knuckle } from "./knuckle"
+import { Pocket } from "./pocket"
 import { Ball } from "./ball"
 import { Vector3 } from "three"
 
@@ -50,6 +51,11 @@ export class Table {
     let k = Knuckle.willBounceAny(a, t)
     if (k) {
       k.bounce(a)
+      return false
+    }
+    let p = Pocket.willFallAny(a, t)
+    if (p) {
+      p.fall(a, t)
       return false
     }
 

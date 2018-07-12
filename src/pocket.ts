@@ -1,4 +1,4 @@
-import { Ball } from "./ball"
+import { Ball, State } from "./ball"
 import { TableGeometry } from "./tablegeometry"
 import { Vector3 } from "three"
 
@@ -21,13 +21,15 @@ export class Pocket {
       .sub(this.pos)
       .normalize()
     ball.vel.addScaledVector(kb, 1 * t)
-    ball.vel.z = 1
+    ball.vel.z = -1
+    ball.state = State.Falling
   }
 
   static willFallAny(ball: Ball, t: number) {
     let futurePosition = ball.futurePosition(t)
-    return TableGeometry.pocketCenters.find(p =>
-      Pocket.willFall(p, futurePosition)
+    return (
+      ball.onTable() &&
+      TableGeometry.pocketCenters.find(p => Pocket.willFall(p, futurePosition))
     )
   }
 }

@@ -44,6 +44,18 @@ describe("Table", () => {
     done()
   })
 
+  it("a pots b", done => {
+    let a = new Ball(new Vector3(0, -TableGeometry.tableY+1, 0))
+    let b = new Ball(new Vector3(0, -TableGeometry.tableY, 0))
+    a.vel.y = 1
+    let table = new Table([a, b])
+    expect(table.prepareAdvanceAll(t)).to.be.false
+    table.advance(t)
+    expect(table.prepareAdvanceAll(t)).to.be.true
+    expect(b.onTable()).to.be.false
+    done()
+  })
+
   it("collides with knuckle", done => {
     let a = new Ball(
       new Vector3(
