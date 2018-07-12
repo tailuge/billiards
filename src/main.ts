@@ -12,23 +12,27 @@ export class Main {
   renderer = new THREE.WebGLRenderer()
   material = new THREE.MeshBasicMaterial({
     color: 0xaaaaaa,
-    wireframe: true
+    wireframe: false
   })
 
   table: Table
   t = 0
   animate(): void {
-    requestAnimationFrame(() => {
-      this.animate()
-    })
     if (this.t++ > 500) {
       console.log(JSON.stringify(this.table.serialise()))
       this.t = 0
     }
-    this.table.advance(0.02)
-    this.table.advance(0.02)
-    this.table.advance(0.02)
-    this.camera.update(0.06)
+    try {
+      this.table.advance(0.02)
+      this.table.advance(0.02)
+      this.table.advance(0.02)
+      this.camera.update(0.06)
+      requestAnimationFrame(() => {
+        this.animate()
+      })
+    } catch (error) {
+      console.log(error)
+    }
     this.render()
   }
 
