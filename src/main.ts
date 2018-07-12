@@ -1,18 +1,14 @@
 import { Ball } from "./ball"
 import { Table } from "./table"
 import { Rack } from "./rack"
+import { Camera } from "./camera"
 import { TableGeometry } from "./tablegeometry"
 
 import * as THREE from "three"
 
 export class Main {
   scene = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  )
+  camera: Camera
   renderer = new THREE.WebGLRenderer()
   material = new THREE.MeshBasicMaterial({
     color: 0xaaaaaa,
@@ -32,11 +28,12 @@ export class Main {
     this.table.advance(0.02)
     this.table.advance(0.02)
     this.table.advance(0.02)
+    this.camera.update(0.06)
     this.render()
   }
 
   render(): void {
-    this.renderer.render(this.scene, this.camera)
+    this.renderer.render(this.scene, this.camera.camera)
   }
 
   run() {
@@ -53,12 +50,6 @@ export class Main {
     light2.position.set(-100, 100, 100)
     this.scene.add(light2)
 
-    this.camera.up = new THREE.Vector3(0, 0, 1)
-    this.camera.position.x = 0
-    this.camera.position.y = 0.1
-    this.camera.position.z = 20
-    this.camera.lookAt(this.scene.position)
-
     let balls = Rack.diamond()
     let b = new Ball(new THREE.Vector3(-10, 0.1, 0))
     b.vel.x = 3
@@ -66,6 +57,7 @@ export class Main {
     this.table = new Table(balls)
     this.table.balls.forEach(b => this.scene.add(b.mesh))
     this.addTable()
+    this.camera = new Camera(this.table)
   }
 
   addTable() {

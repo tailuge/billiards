@@ -1,4 +1,5 @@
 import { Ball } from "./ball"
+import { TableGeometry } from "./tablegeometry"
 import { Vector3 } from "three"
 
 export class Rack {
@@ -21,7 +22,7 @@ export class Rack {
   static diamond() {
     let across = new Vector3(0, Rack.gap, 0)
     let diagonal = across.clone().applyAxisAngle(Rack.up, (Math.PI * 1) / 3)
-    let pos = new Vector3()
+    let pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
     let diamond: Ball[] = []
     diamond.push(new Ball(Rack.jitter(pos)))
     pos.add(diagonal)
