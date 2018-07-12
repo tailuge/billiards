@@ -285,7 +285,7 @@ export class TableGeometry {
   }
 
   private static plane(pos, x, y, z, scene) {
-    var geometry = new BoxGeometry(x, y, z)
+    var geometry = new BoxGeometry(x, y, z, 4, 4, 4)
     var mesh = new Mesh(geometry, TableGeometry.material)
     mesh.receiveShadow = true
     mesh.position.copy(pos)

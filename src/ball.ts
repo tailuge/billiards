@@ -82,6 +82,7 @@ export class Ball {
     var material = new MeshPhongMaterial(this.material)
     this.mesh = new Mesh(geometry, material)
     this.mesh.castShadow = true
+    this.mesh.receiveShadow = true
   }
 
   serialise() {

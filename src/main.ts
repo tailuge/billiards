@@ -48,10 +48,12 @@ export class Main {
     document.body.appendChild(this.renderer.domElement)
 
     let light = new THREE.DirectionalLight(0xffffff, 1.0)
-    light.position.set(100, -10, 100)
+    light.position.set(100, -10, 20)
+    light.castShadow = true
     this.scene.add(light)
-    let light2 = new THREE.DirectionalLight(0xffffff, 1.0)
-    light2.position.set(-100, 100, 100)
+    let light2 = new THREE.DirectionalLight(0xeeeeee, 1.0)
+    light2.position.set(-50, 100, 20)
+    light2.castShadow = true
     this.scene.add(light2)
 
     let balls = Rack.diamond()
