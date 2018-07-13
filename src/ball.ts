@@ -86,7 +86,7 @@ export class Ball {
   }
 
   serialise() {
-    return { pos: this.pos, vel: this.vel }
+    return { pos: this.pos, vel: this.vel, state: this.state }
   }
 
   static fromSerialised(data) {

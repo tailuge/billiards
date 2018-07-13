@@ -8,14 +8,14 @@ export class TableGeometry {
   static tableY = (11 * 2) / 3
   static X = TableGeometry.tableX + 0.5
   static Y = TableGeometry.tableY + 0.5
-  static PX = TableGeometry.tableX + 1.5
-  static PY = TableGeometry.tableY + 1.5
-  static knuckleInset = 1.3
+  static PX = TableGeometry.tableX + 1.6
+  static PY = TableGeometry.tableY + 1.6
+  static knuckleInset = 1.4
   static knuckleRadius = 0.5
   static middleKnuckleInset = 1.3
   static middleKnuckleRadius = 0.5
-  static cornerRadius = 1.5
-  static middleRadius = 1
+  static cornerRadius = 1.0
+  static middleRadius = 0.4
   static readonly pockets = {
     pocketNW: {
       pocket: new Pocket(
@@ -178,7 +178,7 @@ export class TableGeometry {
   static addToScene(scene) {
     TableGeometry.knuckles.forEach(k => TableGeometry.knuckleCylinder(k, scene))
     TableGeometry.addCushions(scene)
-    TableGeometry.addPockets(scene)
+    //    TableGeometry.addPockets(scene)
   }
 
   private static material = new MeshPhongMaterial({
@@ -226,6 +226,7 @@ export class TableGeometry {
       0.01,
       scene
     )
+
     let d = 0.01
     let h = 0.75
     let e = -0.25 / 2
@@ -285,7 +286,7 @@ export class TableGeometry {
   }
 
   private static plane(pos, x, y, z, scene) {
-    var geometry = new BoxGeometry(x, y, z, 4, 4, 4)
+    var geometry = new BoxGeometry(x, y, z)
     var mesh = new Mesh(geometry, TableGeometry.material)
     mesh.receiveShadow = true
     mesh.position.copy(pos)

@@ -9,7 +9,8 @@ let t = 0.1
 
 describe("Pocket", () => {
   it("willFall", done => {
-    let pos = new Vector3(0, -TableGeometry.tableY, 0)
+    let edge = -TableGeometry.PY + TableGeometry.middleRadius + 0.5
+    let pos = new Vector3(0, edge, 0)
     let ball = new Ball(pos)
     ball.vel.y = -1
     let p = Pocket.willFallAny(ball, t)

@@ -45,11 +45,13 @@ describe("Table", () => {
   })
 
   it("a pots b", done => {
-    let a = new Ball(new Vector3(0, -TableGeometry.tableY + 1, 0))
-    let b = new Ball(new Vector3(0, -TableGeometry.tableY, 0))
-    a.vel.y = 1
+    let edge = -TableGeometry.PY + TableGeometry.middleRadius + 0.5
+    let a = new Ball(new Vector3(0, edge + 1, 0))
+    let b = new Ball(new Vector3(0, edge, 0))
+    a.vel.y = -1
     let table = new Table([a, b])
-    expect(table.prepareAdvanceAll(t)).to.be.false
+    let s = table.prepareAdvanceAll(t)
+    expect(s).to.be.false
     table.advance(t)
     expect(table.prepareAdvanceAll(t)).to.be.true
     expect(b.onTable()).to.be.false

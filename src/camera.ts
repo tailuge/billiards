@@ -28,7 +28,7 @@ export class Camera {
 
   t = 0
   topView() {
-    this.camera.position.lerp(this.topViewPoint, 0.05)
+    this.camera.position.lerp(this.topViewPoint, 0.09)
     this.camera.lookAt(this.centre)
   }
 
@@ -37,7 +37,7 @@ export class Camera {
       this.table.balls[0].pos.clone().addScaledVector(this.table.aim, -10),
       0.05
     )
-    this.camera.position.z = 2
+    this.camera.position.z = 3
     this.camera.lookAt(this.table.balls[0].pos)
   }
 }
