@@ -93,6 +93,7 @@ export class Main {
 
   keyboardSetup() {
     document.addEventListener("keydown", event => {
+      console.log(this.table.cue.intersectsAnything(this.table))
       if (event.keyCode == 39) {
         this.rate += this.rateInc
         this.table.cue.setPosition(this.table.balls[0].pos)
@@ -105,6 +106,12 @@ export class Main {
         this.table.cue.setPosition(this.table.balls[0].pos)
         this.table.cue.rotateAim(-this.rate)
         this.camera.mode = this.camera.aimView
+        event.preventDefault()
+      } else if (event.keyCode == 38) {
+        this.table.cue.adjustHeight(0.1)
+        event.preventDefault()
+      } else if (event.keyCode == 40) {
+        this.table.cue.adjustHeight(-0.1)
         event.preventDefault()
       } else if (event.keyCode == 32) {
         this.table.hit(3)

@@ -8,6 +8,7 @@ export class Cue {
   aim = new Vector3(1, 0, 0)
   angle = 0
   up = new Vector3(0, 0, 1)
+  height = 0
   length = TableGeometry.tableX * 1
 
   private static material = new MeshPhongMaterial({
@@ -40,8 +41,20 @@ export class Cue {
     this.mesh.rotation.z = this.angle
   }
 
+  adjustHeight(delta) {
+    this.height += delta
+    let limit = 0.4
+    if (this.height > limit) {
+      this.height = limit
+    } else if (this.height < -limit) {
+      this.height = -limit
+    }
+    this.mesh.position.z = this.height
+  }
+  
   setPosition(pos) {
     this.mesh.position.copy(pos)
+    this.mesh.position.z = this.height
   }
 
   showPointer(table, scene) {
@@ -64,12 +77,15 @@ export class Cue {
     let origin = table.balls[0].pos
       .clone()
       .addScaledVector(this.aim, -this.length / 2)
+    origin.z = this.height  
     let direction = this.aim.clone().normalize()
-    let raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 1)
+    let raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
     let intersections = raycaster.intersectObjects(table.balls.map(b => b.mesh))
+    /*
     console.log(raycaster.ray)
     console.log(table.balls.map(b => b.mesh.position))
     console.log(raycaster.far, intersections.map(o => o.distance))
+    */
     return intersections.length > 0
   }
 }
