@@ -32,6 +32,7 @@ export class Ball {
     this.rpos
     this.rvel
     this.initialiseMesh()
+    this.mesh.name = "ball"
   }
 
   update(t) {

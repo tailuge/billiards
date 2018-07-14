@@ -3,6 +3,7 @@ import { Table } from "./table"
 import { Rack } from "./rack"
 import { Camera } from "./camera"
 import { TableGeometry } from "./tablegeometry"
+//import { Vector3 } from "three"
 
 import * as THREE from "three"
 
@@ -26,10 +27,10 @@ export class Main {
       let step = 0.01
       let steps = 10
       let i = 0
-      while(i++ < steps) {
+      while (i++ < steps) {
         this.table.advance(step)
       }
-      this.camera.update(steps*step)
+      this.camera.update(steps * step)
       requestAnimationFrame(() => {
         this.animate()
       })
@@ -69,10 +70,16 @@ export class Main {
     this.scene.add(light)
     this.scene.add(new THREE.AmbientLight(0x404040, 1.0))
   }
-  
+
   addTable() {
     let balls = Rack.diamond()
     balls.unshift(new Ball(new THREE.Vector3(-10, 0.1, 0)))
+
+/*
+    let a = new Ball(new Vector3(0, 0, 0))
+    let b = new Ball(new Vector3(-1, 0, 0))
+    this.table = new Table([a, b])
+*/
     this.table = new Table(balls)
     this.table.balls.forEach(b => this.scene.add(b.mesh))
     this.scene.add(this.table.cue.mesh)
@@ -90,6 +97,7 @@ export class Main {
         this.rate += this.rateInc
         this.table.cue.setPosition(this.table.balls[0].pos)
         this.table.cue.rotateAim(this.rate)
+  //      this.table.cue.showPointer(this.table, this.scene)
         this.camera.mode = this.camera.aimView
         event.preventDefault()
       } else if (event.keyCode == 37) {
