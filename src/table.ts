@@ -2,13 +2,12 @@ import { Cushion } from "./cushion"
 import { Collision } from "./collision"
 import { Knuckle } from "./knuckle"
 import { Pocket } from "./pocket"
+import { Cue } from "./cue"
 import { Ball } from "./ball"
-import { Vector3 } from "three"
 
 export class Table {
   balls: Ball[]
-  aim = new Vector3(1, 0, 0)
-  up = new Vector3(0, 0, 1)
+  cue = new Cue()
   pairs: any[] = []
 
   constructor(balls) {
@@ -70,11 +69,7 @@ export class Table {
     return new Table(data.map(b => Ball.fromSerialised(b)))
   }
 
-  rotateAim(t) {
-    this.aim.applyAxisAngle(this.up, t)
-  }
-
   hit(speed) {
-    this.balls[0].vel.copy(this.aim.clone().multiplyScalar(speed))
+    this.balls[0].vel.copy(this.cue.aim.clone().multiplyScalar(speed))
   }
 }

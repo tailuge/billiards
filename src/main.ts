@@ -16,17 +16,20 @@ export class Main {
   })
 
   table: Table
-  t = 0
+  frame = 0
   animate(): void {
-    if (this.t++ > 500) {
+    if (this.frame++ > 500) {
       console.log(JSON.stringify(this.table.serialise()))
-      this.t = 0
+      this.frame = 0
     }
     try {
-      this.table.advance(0.02)
-      this.table.advance(0.02)
-      this.table.advance(0.02)
-      this.camera.update(0.06)
+      let step = 0.01
+      let steps = 10
+      let i = 0
+      while(i++ < steps) {
+        this.table.advance(step)
+      }
+      this.camera.update(steps*step)
       requestAnimationFrame(() => {
         this.animate()
       })
@@ -44,8 +47,13 @@ export class Main {
     this.renderer.setSize(window.innerWidth, window.innerHeight)
     this.renderer.shadowMap.enabled = true
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
-
     document.body.appendChild(this.renderer.domElement)
+    this.addLights()
+    this.addTable()
+    this.keyboardSetup()
+  }
+
+  addLights() {
     let s = 1.3
     let light = new THREE.DirectionalLight(0xffffff, 1.0)
     light.position.set(0.1, -0.01, 10)
@@ -58,44 +66,41 @@ export class Main {
     light.shadow.mapSize.width = 1024
     light.shadow.mapSize.height = 1024
     light.castShadow = true
-
     this.scene.add(light)
-    //this.scene.add( new THREE.CameraHelper( light.shadow.camera ) );
-
-    let light2 = new THREE.AmbientLight(0x404040, 1.0)
-    this.scene.add(light2)
-
+    this.scene.add(new THREE.AmbientLight(0x404040, 1.0))
+  }
+  
+  addTable() {
     let balls = Rack.diamond()
-    let b = new Ball(new THREE.Vector3(-10, 0.1, 0))
-    b.vel.x = 0
-    balls.unshift(b)
+    balls.unshift(new Ball(new THREE.Vector3(-10, 0.1, 0)))
     this.table = new Table(balls)
     this.table.balls.forEach(b => this.scene.add(b.mesh))
-    this.addTable()
-    this.camera = new Camera(this.table)
-
-    this.keyboardSetup()
-  }
-
-  addTable() {
+    this.scene.add(this.table.cue.mesh)
+    this.table.cue.setPosition(this.table.balls[0].pos)
     TableGeometry.addToScene(this.scene)
+    this.camera = new Camera(this.table)
   }
 
   rate = 0
-  rateInc = 0.001
+  rateInc = 0.0025
 
   keyboardSetup() {
     document.addEventListener("keydown", event => {
-      if (event.keyCode == 37) {
+      if (event.keyCode == 39) {
         this.rate += this.rateInc
-        this.table.rotateAim(this.rate)
+        this.table.cue.setPosition(this.table.balls[0].pos)
+        this.table.cue.rotateAim(this.rate)
+        this.camera.mode = this.camera.aimView
         event.preventDefault()
-      } else if (event.keyCode == 39) {
+      } else if (event.keyCode == 37) {
         this.rate += this.rateInc
-        this.table.rotateAim(-this.rate)
+        this.table.cue.setPosition(this.table.balls[0].pos)
+        this.table.cue.rotateAim(-this.rate)
+        this.camera.mode = this.camera.aimView
         event.preventDefault()
       } else if (event.keyCode == 32) {
         this.table.hit(3)
+        this.camera.mode = this.camera.afterHitView
         event.preventDefault()
       } else if (event.keyCode == 84) {
         this.camera.mode = this.camera.topView

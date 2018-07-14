@@ -98,18 +98,6 @@ describe("Table", () => {
     done()
   })
 
-  it("aims", done => {
-    let a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
-    let b = new Ball(new Vector3(-TableGeometry.tableX + 2, 0, 0))
-
-    let table = new Table([a, b])
-
-    expect(table.aim.x).to.be.equal(1)
-    table.rotateAim(0.1)
-    expect(table.aim.x).to.be.below(1)
-    done()
-  })
-
   it("hits", done => {
     let a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
     let b = new Ball(new Vector3(-TableGeometry.tableX + 2, 0, 0))
