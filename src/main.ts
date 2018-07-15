@@ -75,7 +75,7 @@ export class Main {
     let balls = Rack.diamond()
     balls.unshift(new Ball(new THREE.Vector3(-10, 0.1, 0)))
 
-/*
+    /*
     let a = new Ball(new Vector3(0, 0, 0))
     let b = new Ball(new Vector3(-1, 0, 0))
     this.table = new Table([a, b])
@@ -98,7 +98,7 @@ export class Main {
         this.rate += this.rateInc
         this.table.cue.setPosition(this.table.balls[0].pos)
         this.table.cue.rotateAim(this.rate)
-  //      this.table.cue.showPointer(this.table, this.scene)
+        //      this.table.cue.showPointer(this.table, this.scene)
         this.camera.mode = this.camera.aimView
         event.preventDefault()
       } else if (event.keyCode == 37) {

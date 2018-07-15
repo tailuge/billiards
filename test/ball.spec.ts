@@ -2,9 +2,7 @@ import "mocha"
 import { expect } from "chai"
 import { Ball } from "../src/ball"
 import { Vector3 } from "three"
-
-let epsilon = 0.0001
-let zero = new Vector3()
+import { zero } from "../src/utils"
 
 describe("Ball", () => {
   it("initialises and is stationary", done => {
@@ -12,7 +10,6 @@ describe("Ball", () => {
     let ball = new Ball(pos)
     expect(ball.pos).to.deep.equal(pos)
     expect(ball.vel).to.deep.equal(zero)
-    expect(ball.rpos).to.deep.equal(new Vector3(0, 0, 1))
     expect(ball.rvel).to.deep.equal(zero)
     done()
   })
@@ -23,7 +20,6 @@ describe("Ball", () => {
     ball.update(1)
     expect(ball.pos).to.deep.equal(pos)
     expect(ball.vel).to.deep.equal(zero)
-    expect(ball.rpos.distanceTo(new Vector3(0, 0, 1))).to.be.below(epsilon)
     expect(ball.rvel).to.deep.equal(zero)
     done()
   })

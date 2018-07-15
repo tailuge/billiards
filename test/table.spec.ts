@@ -4,8 +4,8 @@ import { Ball } from "../src/ball"
 import { TableGeometry } from "../src/tablegeometry"
 import { Table } from "../src/table"
 import { Vector3 } from "three"
+import { zero } from "../src/utils"
 
-let zero = new Vector3()
 let t = 0.1
 
 describe("Table", () => {

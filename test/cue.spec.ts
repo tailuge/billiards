@@ -4,12 +4,10 @@ import { Ball } from "../src/ball"
 import { Table } from "../src/table"
 import { Cue } from "../src/cue"
 import { Vector3 } from "three"
-
-let zero = new Vector3()
+import { zero } from "../src/utils"
 
 let t = 0.1
 describe("Cue", () => {
-  
   it("no intersection with cue ball", done => {
     let a = new Ball(zero)
     let b = new Ball(new Vector3(0, 1, 0))

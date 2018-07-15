@@ -1,10 +1,6 @@
 import { Ball } from "./ball"
-import { Vector3 } from "three"
 
 export class Collision {
-  static epsilon = 0.001
-  static up = new Vector3(0, 0, 1)
-
   static willCollide(a: Ball, b: Ball, t: number): boolean {
     return (
       a.onTable() &&

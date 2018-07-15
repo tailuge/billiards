@@ -2,12 +2,12 @@ import { TableGeometry } from "./tablegeometry"
 import { Table } from "./table"
 import { Vector3, Matrix4, ArrowHelper } from "three"
 import { Mesh, CylinderGeometry, MeshPhongMaterial, Raycaster } from "three"
+import { up } from "./utils"
 
 export class Cue {
   mesh: Mesh
   aim = new Vector3(1, 0, 0)
   angle = 0
-  up = new Vector3(0, 0, 1)
   height = 0
   length = TableGeometry.tableX * 1
 
@@ -26,9 +26,7 @@ export class Cue {
     this.mesh = new Mesh(geometry, Cue.material)
     this.mesh.castShadow = true
     this.mesh.geometry
-      .applyMatrix(
-        new Matrix4().identity().makeRotationAxis(this.up, -Math.PI / 2)
-      )
+      .applyMatrix(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
       .applyMatrix(
         new Matrix4().identity().makeTranslation(-length / 2 - 1, 0, 0)
       )
@@ -37,7 +35,7 @@ export class Cue {
 
   rotateAim(angle) {
     this.angle += angle
-    this.aim.applyAxisAngle(this.up, angle)
+    this.aim.applyAxisAngle(up, angle)
     this.mesh.rotation.z = this.angle
   }
 
@@ -51,7 +49,7 @@ export class Cue {
     }
     this.mesh.position.z = this.height
   }
-  
+
   setPosition(pos) {
     this.mesh.position.copy(pos)
     this.mesh.position.z = this.height
@@ -61,7 +59,6 @@ export class Cue {
     let origin = table.balls[0].pos
       .clone()
       .addScaledVector(this.aim, -this.length / 2)
-    console.log(origin)
     let direction = this.aim.clone().normalize()
     scene.add(
       new ArrowHelper(direction, origin, this.length / 2 - 0.5, 0xffff00)
@@ -77,15 +74,10 @@ export class Cue {
     let origin = table.balls[0].pos
       .clone()
       .addScaledVector(this.aim, -this.length / 2)
-    origin.z = this.height  
+    origin.z = this.height
     let direction = this.aim.clone().normalize()
     let raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
     let intersections = raycaster.intersectObjects(table.balls.map(b => b.mesh))
-    /*
-    console.log(raycaster.ray)
-    console.log(table.balls.map(b => b.mesh.position))
-    console.log(raycaster.far, intersections.map(o => o.distance))
-    */
     return intersections.length > 0
   }
 }

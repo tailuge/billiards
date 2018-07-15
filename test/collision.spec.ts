@@ -3,8 +3,8 @@ import { expect } from "chai"
 import { Ball } from "../src/ball"
 import { Collision } from "../src/collision"
 import { Vector3 } from "three"
+import { zero } from "../src/utils"
 
-let zero = new Vector3()
 let epsilon = 0.001
 let t = 0.1
 
