@@ -8,7 +8,6 @@
     <meta name="description" content="billiards">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <script src="dist/main.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/94/three.min.js"></script>
     <style>
         #container {
             width: 50%;
@@ -20,155 +19,11 @@
 
 <body>
     <div id="container"></div>
-
     <script>
-        /* global bundle, THREE */
-
-        var balls = bundle.Rack.diamond();
-        var b = new bundle.Ball(new THREE.Vector3(-10, 0.1, 0));
-        b.vel.x = 2;
-        balls.push(b);
-
-        var table = new bundle.Table(balls);
-
-        var container;
-        var scene, renderer;
-        var mouseX = 0,
-            mouseY = 0;
-        var windowWidth, windowHeight;
-        var views = [{
-                left: 0,
-                top: 0,
-                width: 1.0,
-                height: 1.0,
-                background: new THREE.Color(0.05, 0.05, 0.05),
-                eye: [0, 300, 20],
-                up: [0, 0, 1],
-                fov: 30,
-                updateCamera: function(camera, scene, mouseX, mouseY) {
-                    var d = 30;
-                    camera.position.x = 0 + Math.sin(mouseX * 0.01) * d;
-                    camera.position.y = 0 + Math.cos(mouseX * 0.01) * d;
-                    camera.lookAt(new THREE.Vector3(0, 0, 0));
-                }
-            },
-            {
-                left: 0.75,
-                top: 0.75,
-                width: 0.25,
-                height: 0.25,
-                background: new THREE.Color(0.07, 0.07, 0.07),
-                eye: [0, 0, 50],
-                up: [0, 1, 0],
-                fov: 35,
-                updateCamera: function(camera, scene, mouseX, mouseY) {}
-            }
-        ];
-        init();
-        animate();
-
-        function init() {
-            container = document.getElementById('container');
-            for (var ii = 0; ii < views.length; ++ii) {
-                var view = views[ii];
-                var camera = new THREE.PerspectiveCamera(view.fov, window.innerWidth / window.innerHeight, 1, 10000);
-                camera.position.fromArray(view.eye);
-                camera.up.fromArray(view.up);
-                view.camera = camera;
-            }
-            scene = new THREE.Scene();
-
-            (new bundle.TableGeometry()).addToScene(scene);
-            addSpotlight(scene);
-            addTable(scene);
-
-            table.balls.forEach(b => scene.add(b.mesh));
-
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.shadowMapEnabled = true;
-            renderer.shadowMap.type = THREE.PCFShadowMap;
-            container.appendChild(renderer.domElement);
-
-            document.addEventListener('mousemove', onDocumentMouseMove, false);
-        }
-
-        function onDocumentMouseMove(event) {
-            mouseX = (event.clientX - windowWidth / 2);
-            mouseY = (event.clientY - windowHeight / 2);
-        }
-
-        function updateSize() {
-            if (windowWidth != window.innerWidth || windowHeight != window.innerHeight) {
-                windowWidth = window.innerWidth;
-                windowHeight = window.innerHeight;
-                renderer.setSize(windowWidth, windowHeight);
-            }
-        }
-
-        function animate() {
-            render();
-            requestAnimationFrame(animate);
-        }
-
-        function render() {
-            updateSize();
-            table.advance(0.025);
-            table.advance(0.025);
-            table.advance(0.025);
-            table.advance(0.025);
-
-            for (var ii = 0; ii < views.length; ++ii) {
-                var view = views[ii];
-                var camera = view.camera;
-                view.updateCamera(camera, scene, mouseX, mouseY);
-                var left = Math.floor(windowWidth * view.left);
-                var top = Math.floor(windowHeight * view.top);
-                var width = Math.floor(windowWidth * view.width);
-                var height = Math.floor(windowHeight * view.height);
-                renderer.setViewport(left, top, width, height);
-                renderer.setScissor(left, top, width, height);
-                renderer.setScissorTest(true);
-                renderer.setClearColor(view.background);
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
-                renderer.render(scene, camera);
-            }
-        }
-
-        function addTable(scene) {
-            var geometry = new THREE.BoxGeometry(2 * 21, 2 * 11, 0.1);
-            var material = new THREE.MeshLambertMaterial({
-                color: 0x111133
-            });
-            var mesh = new THREE.Mesh(geometry, material);
-            mesh.receiveShadow = true;
-
-            mesh.position.z = -0.5;
-            scene.add(mesh);
-        }
-
-        function addSpotlight(scene) {
-
-            // add subtle ambient lighting
-            var ambientLight = new THREE.AmbientLight(0x222266);
-            scene.add(ambientLight);
-
-            // add spotlights for the shadows
-            var spotLight = new THREE.SpotLight(0xffffff);
-            spotLight.position.set(1, 15, 50);
-            spotLight.castShadow = true;
-            spotLight.shadowDarkness = 0.6;
-            scene.add(spotLight);
-
-            spotLight = new THREE.SpotLight(0xffffff);
-            spotLight.position.set(1, -15, 50);
-            spotLight.castShadow = true;
-            spotLight.shadowDarkness = 0.6;
-            scene.add(spotLight);
-
-        }
+        /* global bundle*/
+        var main = new bundle.Main();
+        main.run();
+        main.animate();
     </script>
 </body>
 
