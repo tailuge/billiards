@@ -1,5 +1,5 @@
 import { Vector3, Matrix4 } from "three"
-import { Mesh, IcosahedronBufferGeometry, MeshPhongMaterial } from "three"
+import { Mesh, IcosahedronGeometry, MeshPhongMaterial } from "three"
 import { zero, vec, crossUp, upCross, norm } from "./utils"
 
 export enum State {
@@ -21,7 +21,7 @@ export class Ball {
 
   mesh: Mesh
   material = {
-    color: Math.random() * 0xffffff,
+    color: 0x555555,
     emissive: 0,
     flatShading: true
   }
@@ -48,27 +48,40 @@ export class Ball {
     this.mesh.position.copy(this.pos)
   }
 
+  private color(hex) {
+    ;(<MeshPhongMaterial>this.mesh.material).emissive.setHex(hex)
+  }
+
   private updateVelocity(t: number) {
+    if (this.state == State.Falling) {
+      this.color(0x000000)
+      return
+    }
+    if (this.vel.length() == 0 && this.rvel.length() == 0) {
+      this.color(0x222222)
+      this.state = State.Stationary
+      return
+    }
     if (this.isRolling()) {
-      console.log("is rolling")
       let deltaV = norm(this.vel).multiplyScalar(-t * this.froll)
       if (this.vel.length() < deltaV.length()) {
-        console.log("is stopping")
+        this.color(0x333333)
         this.vel.copy(zero)
         this.rvel.copy(zero)
         this.state = State.Stationary
       } else {
-        console.log("rolling update")
+        this.color(0x881111)
         this.vel.add(deltaV)
         this.rvel.copy(upCross(this.vel))
         this.state = State.Rolling
         return
       }
     } else {
+      this.color(0x0000ff)
       let deltaV = this.velocityEquilibrium()
         .sub(this.vel)
         .multiplyScalar(t * this.fslide)
-      let deltaRV = crossUp(this.velocityEquilibrium())
+      let deltaRV = upCross(this.velocityEquilibrium())
         .sub(this.rvel)
         .multiplyScalar(t * this.fslide)
       this.vel.add(deltaV)
@@ -116,7 +129,7 @@ export class Ball {
   }
 
   private initialiseMesh() {
-    var geometry = new IcosahedronBufferGeometry(0.5, 1)
+    var geometry = new IcosahedronGeometry(0.5, 1)
     var material = new MeshPhongMaterial(this.material)
     this.mesh = new Mesh(geometry, material)
     this.mesh.castShadow = true

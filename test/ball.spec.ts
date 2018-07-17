@@ -2,7 +2,7 @@ import "mocha"
 import { expect } from "chai"
 import { Ball } from "../src/ball"
 import { Vector3 } from "three"
-import { zero, crossUp } from "../src/utils"
+import { zero } from "../src/utils"
 
 let t = 0.1
 
@@ -92,7 +92,7 @@ describe("Ball", () => {
   it("topspin ball eventualy starts to roll", done => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0
-    ball.rvel.y = 0.25
+    ball.rvel.y = 0.1
     let maxiter = 100
     let i = 0
     while (i++ < maxiter && !ball.isRolling()) {
@@ -106,14 +106,11 @@ describe("Ball", () => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0.025
     ball.rvel.y = 0.025
-    console.log(crossUp(ball.rvel))
     let maxiter = 100
     let i = 0
     while (i++ < maxiter && ball.isRolling()) {
       ball.update(t)
-      console.log(ball.serialise())
     }
-    console.log(i)
     expect(i).to.be.below(maxiter)
     done()
   })
