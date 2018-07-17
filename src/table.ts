@@ -4,6 +4,7 @@ import { Knuckle } from "./knuckle"
 import { Pocket } from "./pocket"
 import { Cue } from "./cue"
 import { Ball } from "./ball"
+import { crossUp } from "./utils"
 
 export class Table {
   balls: Ball[]
@@ -70,6 +71,9 @@ export class Table {
   }
 
   hit(speed) {
-    this.balls[0].vel.copy(this.cue.aim.clone().multiplyScalar(speed))
+    this.balls[0].vel.copy(this.cue.aim.clone().multiplyScalar(speed / 2))
+    this.balls[0].rvel.copy(
+      crossUp(this.cue.aim).multiplyScalar(speed * -this.cue.height * 3)
+    )
   }
 }

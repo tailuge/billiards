@@ -72,8 +72,9 @@ export class Main {
   }
 
   addTable() {
-    let balls = Rack.diamond()
-    balls.unshift(new Ball(new THREE.Vector3(-10, 0.1, 0)))
+    //    let balls = Rack.diamond()
+    let balls = Rack.testSpin()
+    balls.unshift(new Ball(new THREE.Vector3(-11, 0.0, 0)))
 
     /*
     let a = new Ball(new Vector3(0, 0, 0))
@@ -86,6 +87,7 @@ export class Main {
     this.table.cue.setPosition(this.table.balls[0].pos)
     TableGeometry.addToScene(this.scene)
     this.camera = new Camera(this.table)
+    this.camera.mode = this.camera.topView
   }
 
   rate = 0

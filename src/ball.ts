@@ -1,12 +1,12 @@
 import { Vector3, Matrix4 } from "three"
 import { Mesh, IcosahedronBufferGeometry, MeshPhongMaterial } from "three"
-import { up, zero, vec } from "./utils"
+import { zero, vec, crossUp, upCross, norm } from "./utils"
 
 export enum State {
-  Stationary,
-  Rolling,
-  Sliding,
-  Falling
+  Stationary = "Stationary",
+  Rolling = "Rolling",
+  Sliding = "Sliding",
+  Falling = "Falling"
 }
 
 export class Ball {
@@ -49,30 +49,53 @@ export class Ball {
   }
 
   private updateVelocity(t: number) {
-    let deltaV = this.vel
-      .clone()
-      .normalize()
-      .multiplyScalar(-t * this.froll)
-    if (this.vel.length() < deltaV.length()) {
-      this.vel.copy(zero)
+    if (this.isRolling()) {
+      console.log("is rolling")
+      let deltaV = norm(this.vel).multiplyScalar(-t * this.froll)
+      if (this.vel.length() < deltaV.length()) {
+        console.log("is stopping")
+        this.vel.copy(zero)
+        this.rvel.copy(zero)
+        this.state = State.Stationary
+      } else {
+        console.log("rolling update")
+        this.vel.add(deltaV)
+        this.rvel.copy(upCross(this.vel))
+        this.state = State.Rolling
+        return
+      }
     } else {
+      let deltaV = this.velocityEquilibrium()
+        .sub(this.vel)
+        .multiplyScalar(t * this.fslide)
+      let deltaRV = crossUp(this.velocityEquilibrium())
+        .sub(this.rvel)
+        .multiplyScalar(t * this.fslide)
       this.vel.add(deltaV)
+      this.rvel.add(deltaRV)
+      this.state = State.Sliding
     }
   }
 
-  equilibrium() {
+  isRolling() {
+    return (
+      this.vel
+        .clone()
+        .sub(crossUp(this.rvel))
+        .length() < this.transition && this.vel.length() != 0
+    )
+  }
+
+  velocityEquilibrium() {
     return this.vel
       .clone()
       .multiplyScalar(5 / 7)
-      .addScaledVector(this.rvel, 2 / 7)
+      .addScaledVector(crossUp(this.rvel), 2 / 7)
   }
 
   private updateRotation(t: number) {
-    let axis = up
-      .clone()
-      .cross(this.vel)
-      .normalize()
-    let angle = (this.vel.length() * t * Math.PI) / 2
+    let axis = norm(this.rvel)
+    let angle = (this.rvel.length() * t * Math.PI) / 2
     let m = new Matrix4()
     m.identity().makeRotationAxis(axis, angle)
     this.mesh.geometry.applyMatrix(m)
@@ -83,7 +106,7 @@ export class Ball {
   }
 
   serialise() {
-    return { pos: this.pos, vel: this.vel, state: this.state }
+    return { pos: this.pos, vel: this.vel, rvel: this.rvel, state: this.state }
   }
 
   static fromSerialised(data) {

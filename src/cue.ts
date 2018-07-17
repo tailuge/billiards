@@ -8,7 +8,8 @@ export class Cue {
   mesh: Mesh
   aim = new Vector3(1, 0, 0)
   angle = 0
-  height = 0
+  limit = 0.4
+  height = this.limit
   length = TableGeometry.tableX * 1
 
   private static material = new MeshPhongMaterial({
@@ -41,7 +42,7 @@ export class Cue {
 
   adjustHeight(delta) {
     this.height += delta
-    let limit = 0.4
+    let limit = this.limit
     if (this.height > limit) {
       this.height = limit
     } else if (this.height < -limit) {

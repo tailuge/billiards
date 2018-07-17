@@ -1,4 +1,5 @@
 import { Ball } from "./ball"
+import { norm } from "./utils"
 
 export class Collision {
   static willCollide(a: Ball, b: Ball, t: number): boolean {
@@ -14,10 +15,7 @@ export class Collision {
   }
 
   private static updateVelocities(a: Ball, b: Ball) {
-    const ab = b.pos
-      .clone()
-      .sub(a.pos)
-      .normalize()
+    const ab = norm(b.pos.clone().sub(a.pos))
     let aDotCenters = ab.dot(a.vel)
     let bDotCenters = ab.dot(b.vel)
     a.vel.addScaledVector(ab, bDotCenters).addScaledVector(ab, -aDotCenters)

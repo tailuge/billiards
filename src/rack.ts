@@ -44,4 +44,18 @@ export class Rack {
     diamond.push(new Ball(Rack.jitter(pos)))
     return diamond
   }
+
+  static testSpin() {
+    let test: Ball[] = []
+    let m = TableGeometry.tableX / 3
+    //let v = 0.5
+    let ys = [3, 2, 1, 0, -1, -2, -3]
+    ys.forEach(y => {
+      let b = new Ball(new Vector3(m, y, 0))
+      b.vel.z = 0 //-v
+      b.rvel.y = 1 * y
+      test.push(b)
+    })
+    return test
+  }
 }
