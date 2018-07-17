@@ -16,7 +16,7 @@
     "three-orbitcontrols": "^2.1.2"
   },
   "devDependencies": {
-    "@types/mocha": "^5.2.4",
+    "@types/mocha": "^5.2.5",
     "browserify": "^16.2.2",
     "chai": "^4.1.2",
     "coveralls": "^3.0.2",
