@@ -20,11 +20,6 @@ export class Ball {
   transition = 0.05
 
   mesh: Mesh
-  material = {
-    color: 0x555555,
-    emissive: 0,
-    flatShading: true
-  }
 
   constructor(pos) {
     this.pos = pos.clone()
@@ -39,10 +34,6 @@ export class Ball {
     this.updateRotation(t)
   }
 
-  futurePosition(t) {
-    return this.pos.clone().addScaledVector(this.vel, t)
-  }
-
   private updatePosition(t: number) {
     this.pos.addScaledVector(this.vel, t)
     this.mesh.position.copy(this.pos)
@@ -53,41 +44,41 @@ export class Ball {
   }
 
   private updateVelocity(t: number) {
-    if (this.state == State.Falling) {
-      this.color(0x000000)
-      return
-    }
-    if (this.vel.length() == 0 && this.rvel.length() == 0) {
-      this.color(0x222222)
-      this.state = State.Stationary
-      return
-    }
-    if (this.isRolling()) {
-      let deltaV = norm(this.vel).multiplyScalar(-t * this.froll)
-      if (this.vel.length() < deltaV.length()) {
-        this.color(0x333333)
-        this.vel.copy(zero)
-        this.rvel.copy(zero)
-        this.state = State.Stationary
+    if (this.inMotion()) {
+      if (this.isRolling()) {
+        this.updateVelocityRolling(t)
       } else {
-        this.color(0x881111)
-        this.vel.add(deltaV)
-        this.rvel.copy(upCross(this.vel))
-        this.state = State.Rolling
-        return
+        this.updateVelocitySliding(t)
       }
-    } else {
-      this.color(0x0000ff)
-      let deltaV = this.velocityEquilibrium()
-        .sub(this.vel)
-        .multiplyScalar(t * this.fslide)
-      let deltaRV = upCross(this.velocityEquilibrium())
-        .sub(this.rvel)
-        .multiplyScalar(t * this.fslide)
-      this.vel.add(deltaV)
-      this.rvel.add(deltaRV)
-      this.state = State.Sliding
     }
+  }
+
+  private updateVelocityRolling(t) {
+    let deltaV = norm(this.vel).multiplyScalar(-t * this.froll)
+    if (this.vel.length() < deltaV.length()) {
+      this.color(0x000000)
+      this.vel.copy(zero)
+      this.rvel.copy(zero)
+      this.state = State.Stationary
+    } else {
+      this.color(0x881111)
+      this.vel.add(deltaV)
+      this.rvel.copy(upCross(this.vel))
+      this.state = State.Rolling
+    }
+  }
+
+  private updateVelocitySliding(t) {
+    this.color(0x0000ff)
+    let deltaV = this.velocityEquilibrium()
+      .sub(this.vel)
+      .multiplyScalar(t * this.fslide)
+    let deltaRV = upCross(this.velocityEquilibrium())
+      .sub(this.rvel)
+      .multiplyScalar(5/2 * t * this.fslide)
+    this.vel.add(deltaV)
+    this.rvel.add(deltaRV)
+    this.state = State.Sliding
   }
 
   isRolling() {
@@ -118,6 +109,14 @@ export class Ball {
     return this.state != State.Falling
   }
 
+  inMotion() {
+    return this.onTable() && (this.vel.length() != 0 || this.rvel.length() != 0)
+  }
+
+  futurePosition(t) {
+    return this.pos.clone().addScaledVector(this.vel, t)
+  }
+
   serialise() {
     return { pos: this.pos, vel: this.vel, rvel: this.rvel, state: this.state }
   }
@@ -130,7 +129,11 @@ export class Ball {
 
   private initialiseMesh() {
     var geometry = new IcosahedronGeometry(0.5, 1)
-    var material = new MeshPhongMaterial(this.material)
+    var material = new MeshPhongMaterial({
+      color: 0x555555,
+      emissive: 0,
+      flatShading: true
+    })
     this.mesh = new Mesh(geometry, material)
     this.mesh.castShadow = true
     this.mesh.receiveShadow = true

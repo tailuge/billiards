@@ -54,7 +54,7 @@ export class Rack {
     ys.forEach(y => {
       let b = new Ball(new Vector3(m, y, 0))
       b.vel.z = 0 //-v
-      b.rvel.y = 2 * y
+      b.rvel.y = y
       test.push(b)
     })
     return test
