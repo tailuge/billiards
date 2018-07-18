@@ -14,12 +14,11 @@ export class Ball {
   vel: Vector3 = zero.clone()
   rvel: Vector3 = zero.clone()
   state: State = State.Stationary
-
-  froll = 0.02
-  fslide = 0.1
-  transition = 0.05
-
   mesh: Mesh
+
+  fRoll = 0.02
+  fSlide = 0.1
+  transition = 0.05
 
   constructor(pos) {
     this.pos = pos.clone()
@@ -39,10 +38,6 @@ export class Ball {
     this.mesh.position.copy(this.pos)
   }
 
-  private color(hex) {
-    ;(<MeshPhongMaterial>this.mesh.material).emissive.setHex(hex)
-  }
-
   private updateVelocity(t: number) {
     if (this.inMotion()) {
       if (this.isRolling()) {
@@ -54,7 +49,7 @@ export class Ball {
   }
 
   private updateVelocityRolling(t) {
-    let deltaV = norm(this.vel).multiplyScalar(-t * this.froll)
+    let deltaV = norm(this.vel).multiplyScalar(-t * this.fRoll)
     if (this.vel.length() < deltaV.length()) {
       this.color(0x000000)
       this.vel.copy(zero)
@@ -70,12 +65,12 @@ export class Ball {
 
   private updateVelocitySliding(t) {
     this.color(0x0000ff)
-    let deltaV = this.velocityEquilibrium()
+    let deltaV = this.equilibrium()
       .sub(this.vel)
-      .multiplyScalar(t * this.fslide)
-    let deltaRV = upCross(this.velocityEquilibrium())
+      .multiplyScalar(t * this.fSlide)
+    let deltaRV = upCross(this.equilibrium())
       .sub(this.rvel)
-      .multiplyScalar(5/2 * t * this.fslide)
+      .multiplyScalar((5 / 2) * t * this.fSlide)
     this.vel.add(deltaV)
     this.rvel.add(deltaRV)
     this.state = State.Sliding
@@ -90,7 +85,7 @@ export class Ball {
     )
   }
 
-  velocityEquilibrium() {
+  equilibrium() {
     return this.vel
       .clone()
       .multiplyScalar(5 / 7)
@@ -98,10 +93,8 @@ export class Ball {
   }
 
   private updateRotation(t: number) {
-    let axis = norm(this.rvel)
     let angle = (this.rvel.length() * t * Math.PI) / 2
-    let m = new Matrix4()
-    m.identity().makeRotationAxis(axis, angle)
+    let m = new Matrix4().identity().makeRotationAxis(norm(this.rvel), angle)
     this.mesh.geometry.applyMatrix(m)
   }
 
@@ -124,6 +117,8 @@ export class Ball {
   static fromSerialised(data) {
     let b = new Ball(vec(data.pos))
     b.vel.copy(vec(data.vel))
+    b.rvel.copy(vec(data.rvel))
+    b.state = data.state
     return b
   }
 
@@ -138,5 +133,9 @@ export class Ball {
     this.mesh.castShadow = true
     this.mesh.receiveShadow = true
     this.mesh.name = "ball"
+  }
+
+  private color(hex) {
+    ;(<MeshPhongMaterial>this.mesh.material).emissive.setHex(hex)
   }
 }
