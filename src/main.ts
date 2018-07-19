@@ -82,7 +82,7 @@ export class Main {
     this.table = new Table([a, b])
 */
     this.table = new Table(balls)
-    this.table.balls.forEach(b => this.scene.add(b.mesh))
+    this.table.balls.forEach(b => this.scene.add(b.mesh.mesh))
     this.scene.add(this.table.cue.mesh)
     this.table.cue.setPosition(this.table.balls[0].pos)
     TableGeometry.addToScene(this.scene)

@@ -8,7 +8,7 @@ export class GameState {
     this.balls.forEach(b => {
       let ball = new Ball(b.pos)
       ball.vel = b.vel
-      scene.add(ball.mesh)
+      scene.add(ball.mesh.mesh)
     })
   }
 }

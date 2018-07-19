@@ -1,6 +1,6 @@
-import { Vector3, Matrix4 } from "three"
-import { Mesh, IcosahedronGeometry, MeshPhongMaterial } from "three"
+import { Vector3 } from "three"
 import { zero, vec, norm, sliding, surfaceVelocity } from "./utils"
+import { BallMesh } from "./ballmesh"
 
 export enum State {
   Stationary = "Stationary",
@@ -14,7 +14,8 @@ export class Ball {
   vel: Vector3 = zero.clone()
   rvel: Vector3 = zero.clone()
   state: State = State.Stationary
-  mesh: Mesh
+
+  mesh: BallMesh
 
   fRoll = 0.02
   fSlide = 0.1
@@ -22,20 +23,18 @@ export class Ball {
 
   constructor(pos) {
     this.pos = pos.clone()
-    this.vel
-    this.rvel
-    this.initialiseMesh()
+    this.mesh = new BallMesh()
   }
 
   update(t) {
     this.updatePosition(t)
     this.updateVelocity(t)
-    this.updateRotation(t)
+    this.mesh.updateRotation(this.rvel,t)
   }
 
   private updatePosition(t: number) {
     this.pos.addScaledVector(this.vel, t)
-    this.mesh.position.copy(this.pos)
+    this.mesh.updatePosition(this.pos)
   }
 
   private updateVelocity(t: number) {
@@ -52,12 +51,10 @@ export class Ball {
     let deltaV = norm(this.vel).multiplyScalar(-t * this.fRoll)
     let deltaW = norm(this.rvel).multiplyScalar(-t * this.fRoll)
     if (this.vel.length() < deltaV.length()) {
-      this.color(0x000000)
       this.vel.copy(zero)
       this.rvel.copy(zero)
       this.state = State.Stationary
     } else {
-      this.color(0x881111)
       this.vel.add(deltaV)
       this.rvel.add(deltaW)
       this.state = State.Rolling
@@ -65,7 +62,6 @@ export class Ball {
   }
 
   private updateVelocitySliding(t) {
-    this.color(0x0000ff)
     let dv = new Vector3()
     let dw = new Vector3()
     sliding(this.vel, this.rvel, dv, dw)
@@ -79,12 +75,6 @@ export class Ball {
       surfaceVelocity(this.vel, this.rvel).length() < this.transition &&
       this.vel.length() != 0
     )
-  }
-
-  private updateRotation(t: number) {
-    let angle = (this.rvel.length() * t * Math.PI) / 2
-    let m = new Matrix4().identity().makeRotationAxis(norm(this.rvel), angle)
-    this.mesh.geometry.applyMatrix(m)
   }
 
   onTable() {
@@ -109,22 +99,5 @@ export class Ball {
     b.rvel.copy(vec(data.rvel))
     b.state = data.state
     return b
-  }
-
-  private initialiseMesh() {
-    var geometry = new IcosahedronGeometry(0.5, 1)
-    var material = new MeshPhongMaterial({
-      color: 0x555555,
-      emissive: 0,
-      flatShading: true
-    })
-    this.mesh = new Mesh(geometry, material)
-    this.mesh.castShadow = true
-    this.mesh.receiveShadow = true
-    this.mesh.name = "ball"
-  }
-
-  private color(hex) {
-    ;(<MeshPhongMaterial>this.mesh.material).emissive.setHex(hex)
   }
 }
