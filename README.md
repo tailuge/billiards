@@ -21,6 +21,14 @@ yarn test
 
 ### Demo
 
-[demo](http://tailuge.github.io/billiards/)
+In browser WebGL [demo](http://tailuge.github.io/billiards/)
 
-[edit](https://ide.c9.io/tailuge/billiards)
+[Edit](https://ide.c9.io/tailuge/billiards) and compile in browser on cloud9
+
+
+###### Reference
+
+3D graphics uses [three.js](https://threejs.org/docs/index.html#api/math/Vector3)
+
+Useful paper on [ball sliding physics](http://billiards.colostate.edu/physics/Han_paper.pdf)
+
