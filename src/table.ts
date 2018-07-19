@@ -71,7 +71,7 @@ export class Table {
   }
 
   hit(speed) {
-    this.balls[0].vel.copy(this.cue.aim.clone().multiplyScalar(speed / 2))
+    this.balls[0].vel.copy(this.cue.aim.clone().multiplyScalar(speed))
     this.balls[0].rvel.copy(
       crossUp(this.cue.aim).multiplyScalar(speed * -this.cue.height * 3)
     )

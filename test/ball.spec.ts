@@ -2,7 +2,7 @@ import "mocha"
 import { expect } from "chai"
 import { Ball } from "../src/ball"
 import { Vector3 } from "three"
-import { zero } from "../src/utils"
+import { zero, sliding, slidingFull } from "../src/utils"
 
 let t = 0.1
 
@@ -112,6 +112,38 @@ describe("Ball", () => {
       ball.update(t)
     }
     expect(i).to.be.below(maxiter)
+    done()
+  })
+
+  it("up cross v", done => {
+    let v = new Vector3(1, 2, 0)
+    let w = new Vector3(3, 4, 5)
+    let dv = new Vector3()
+    let dw = new Vector3()
+    let fdv = new Vector3()
+    let fdw = new Vector3()
+
+    sliding(v, w, dv, dw)
+    slidingFull(v, w, fdv, fdw)
+
+    console.log("dv:")
+    console.log(dv)
+    console.log(fdv)
+
+    console.log("dw:")
+    console.log(dw)
+    console.log(fdw)
+
+    expect(dv.distanceTo(fdv)).to.be.below(0.001)
+    expect(dw.distanceTo(fdw)).to.be.below(0.001)
+
+    let i = 0
+    while (i++ < 100) {
+      sliding(v, w, dv, dw)
+      v.addScaledVector(dv, t)
+      w.addScaledVector(dw, t)
+      //      console.log("v=", v, "w=", w, "dv=",dv,"dw=",dw)
+    }
     done()
   })
 })

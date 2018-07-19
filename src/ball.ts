@@ -1,6 +1,6 @@
 import { Vector3, Matrix4 } from "three"
 import { Mesh, IcosahedronGeometry, MeshPhongMaterial } from "three"
-import { zero, vec, crossUp, upCross, norm } from "./utils"
+import { zero, vec, norm, sliding, surfaceVelocity } from "./utils"
 
 export enum State {
   Stationary = "Stationary",
@@ -50,6 +50,7 @@ export class Ball {
 
   private updateVelocityRolling(t) {
     let deltaV = norm(this.vel).multiplyScalar(-t * this.fRoll)
+    let deltaW = norm(this.rvel).multiplyScalar(-t * this.fRoll)
     if (this.vel.length() < deltaV.length()) {
       this.color(0x000000)
       this.vel.copy(zero)
@@ -58,38 +59,26 @@ export class Ball {
     } else {
       this.color(0x881111)
       this.vel.add(deltaV)
-      this.rvel.copy(upCross(this.vel))
+      this.rvel.add(deltaW)
       this.state = State.Rolling
     }
   }
 
   private updateVelocitySliding(t) {
     this.color(0x0000ff)
-    let deltaV = this.equilibrium()
-      .sub(this.vel)
-      .multiplyScalar(t * this.fSlide)
-    let deltaRV = upCross(this.equilibrium())
-      .sub(this.rvel)
-      .multiplyScalar((5 / 2) * t * this.fSlide)
-    this.vel.add(deltaV)
-    this.rvel.add(deltaRV)
+    let dv = new Vector3()
+    let dw = new Vector3()
+    sliding(this.vel, this.rvel, dv, dw)
+    this.vel.addScaledVector(dv, t)
+    this.rvel.addScaledVector(dw, t)
     this.state = State.Sliding
   }
 
   isRolling() {
     return (
-      this.vel
-        .clone()
-        .sub(crossUp(this.rvel))
-        .length() < this.transition && this.vel.length() != 0
+      surfaceVelocity(this.vel, this.rvel).length() < this.transition &&
+      this.vel.length() != 0
     )
-  }
-
-  equilibrium() {
-    return this.vel
-      .clone()
-      .multiplyScalar(5 / 7)
-      .addScaledVector(crossUp(this.rvel), 2 / 7)
   }
 
   private updateRotation(t: number) {
