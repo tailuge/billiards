@@ -3,7 +3,6 @@ import { Mesh, IcosahedronGeometry, MeshPhongMaterial } from "three"
 import { norm } from "./utils"
 
 export class BallMesh {
-
   mesh: Mesh
 
   constructor() {

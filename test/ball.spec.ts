@@ -2,7 +2,8 @@ import "mocha"
 import { expect } from "chai"
 import { Ball } from "../src/ball"
 import { Vector3 } from "three"
-import { zero, sliding, slidingFull } from "../src/utils"
+import { zero, passesThroughZero } from "../src/utils"
+import { sliding, slidingFull } from "../src/physics"
 
 let t = 0.1
 
@@ -126,14 +127,6 @@ describe("Ball", () => {
     sliding(v, w, dv, dw)
     slidingFull(v, w, fdv, fdw)
 
-    console.log("dv:")
-    console.log(dv)
-    console.log(fdv)
-
-    console.log("dw:")
-    console.log(dw)
-    console.log(fdw)
-
     expect(dv.distanceTo(fdv)).to.be.below(0.001)
     expect(dw.distanceTo(fdw)).to.be.below(0.001)
 
@@ -142,8 +135,29 @@ describe("Ball", () => {
       sliding(v, w, dv, dw)
       v.addScaledVector(dv, t)
       w.addScaledVector(dw, t)
-      //      console.log("v=", v, "w=", w, "dv=",dv,"dw=",dw)
     }
+    done()
+  })
+
+  it("halts at close to zero", done => {
+    expect(passesThroughZero(new Vector3(1, 1, 0), new Vector3(-0.5, -0.5, 0)))
+      .to.be.false
+    expect(passesThroughZero(new Vector3(1, 1, 0), new Vector3(-2, -2, 0))).to
+      .be.true
+    expect(passesThroughZero(new Vector3(1, 1, 0), new Vector3(-1, -1, 0))).to
+      .be.true
+    done()
+  })
+
+  it("slightly rolling ball halts", done => {
+    let b = Ball.fromSerialised({
+      pos: { x: 0, y: 0, z: 0 },
+      vel: { x: 0.0026704887947856175, y: -0.04722559231618879, z: 0 },
+      rvel: { x: 0.00001806789773622572, y: -0.00008182140227559905, z: 0 },
+      state: "Rolling"
+    })
+    b.update(0.01)
+    expect(b.inMotion()).to.be.false
     done()
   })
 })

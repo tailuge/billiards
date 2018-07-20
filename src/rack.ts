@@ -48,7 +48,6 @@ export class Rack {
   static testSpin() {
     let test: Ball[] = []
     let m = TableGeometry.tableX / 3
-    //let v = 0.5
     let ys = [3, 2, 1, 0, -1, -2, -3]
 
     ys.forEach(y => {

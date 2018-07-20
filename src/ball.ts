@@ -1,5 +1,6 @@
 import { Vector3 } from "three"
-import { zero, vec, norm, sliding, surfaceVelocity } from "./utils"
+import { zero, vec, passesThroughZero } from "./utils"
+import { sliding, surfaceVelocity, rollingFull } from "./physics"
 import { BallMesh } from "./ballmesh"
 
 export enum State {
@@ -29,7 +30,7 @@ export class Ball {
   update(t) {
     this.updatePosition(t)
     this.updateVelocity(t)
-    this.mesh.updateRotation(this.rvel,t)
+    this.mesh.updateRotation(this.rvel, t)
   }
 
   private updatePosition(t: number) {
@@ -48,15 +49,18 @@ export class Ball {
   }
 
   private updateVelocityRolling(t) {
-    let deltaV = norm(this.vel).multiplyScalar(-t * this.fRoll)
-    let deltaW = norm(this.rvel).multiplyScalar(-t * this.fRoll)
-    if (this.vel.length() < deltaV.length()) {
+    let dv = new Vector3()
+    let dw = new Vector3()
+    rollingFull(this.rvel, dv, dw)
+    dv.multiplyScalar(t)
+    dw.multiplyScalar(t)
+    if (passesThroughZero(this.rvel, dw)) {
       this.vel.copy(zero)
       this.rvel.copy(zero)
       this.state = State.Stationary
     } else {
-      this.vel.add(deltaV)
-      this.rvel.add(deltaW)
+      this.vel.add(dv)
+      this.rvel.add(dw)
       this.state = State.Rolling
     }
   }

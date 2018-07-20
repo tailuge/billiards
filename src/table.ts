@@ -13,6 +13,7 @@ export class Table {
 
   constructor(balls) {
     this.balls = balls
+    this.cue.setCueBall(balls[0])
     this.balls.forEach(a => {
       this.balls.forEach(b => {
         if (a != b) {

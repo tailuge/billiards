@@ -1,15 +1,18 @@
 import { TableGeometry } from "./tablegeometry"
 import { Table } from "./table"
-import { Vector3, Matrix4, ArrowHelper } from "three"
+import { Ball } from "./ball"
+import { Math as Math2, Vector3, Matrix4 } from "three"
 import { Mesh, CylinderGeometry, MeshPhongMaterial, Raycaster } from "three"
-import { up } from "./utils"
+import { up, upCross } from "./utils"
 
 export class Cue {
   mesh: Mesh
+  ball: Ball
   aim = new Vector3(1, 0, 0)
   angle = 0
   limit = 0.4
   height = this.limit
+  side = 0
   length = TableGeometry.tableX * 1
 
   private static material = new MeshPhongMaterial({
@@ -20,6 +23,10 @@ export class Cue {
 
   constructor() {
     this.initialise(0.05, 0.1, this.length)
+  }
+
+  setCueBall(ball) {
+    this.ball = ball
   }
 
   private initialise(tip, but, length) {
@@ -41,29 +48,20 @@ export class Cue {
   }
 
   adjustHeight(delta) {
-    this.height += delta
-    let limit = this.limit
-    if (this.height > limit) {
-      this.height = limit
-    } else if (this.height < -limit) {
-      this.height = -limit
-    }
+    this.height = Math2.clamp(this.height + delta, -this.limit, this.limit)
     this.mesh.position.z = this.height
   }
 
-  setPosition(pos) {
-    this.mesh.position.copy(pos)
-    this.mesh.position.z = this.height
+  adjustSide(delta) {
+    this.side = Math2.clamp(this.side + delta, -this.limit, this.limit)
+    this.moveToCueBall()
   }
 
-  showPointer(table, scene) {
-    let origin = table.balls[0].pos
-      .clone()
-      .addScaledVector(this.aim, -this.length / 2)
-    let direction = this.aim.clone().normalize()
-    scene.add(
-      new ArrowHelper(direction, origin, this.length / 2 - 0.5, 0xffff00)
-    )
+  moveToCueBall() {
+    let offset = upCross(this.aim)
+      .multiplyScalar(this.side)
+      .setZ(this.height)
+    this.mesh.position.copy(this.ball.pos.clone().add(offset))
   }
 
   t = 0
@@ -78,7 +76,9 @@ export class Cue {
     origin.z = this.height
     let direction = this.aim.clone().normalize()
     let raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
-    let intersections = raycaster.intersectObjects(table.balls.map(b => b.mesh.mesh))
+    let intersections = raycaster.intersectObjects(
+      table.balls.map(b => b.mesh.mesh)
+    )
     return intersections.length > 0
   }
 }

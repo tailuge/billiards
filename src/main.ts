@@ -18,7 +18,13 @@ export class Main {
 
   table: Table
   frame = 0
-  animate(): void {
+  elapsed
+  last = performance.now()
+  animate(timestamp?): void {
+    if (timestamp) {
+      this.elapsed = timestamp - this.last
+      this.last = timestamp
+    }
     if (this.frame++ > 500) {
       console.log(JSON.stringify(this.table.serialise()))
       this.frame = 0
@@ -84,7 +90,7 @@ export class Main {
     this.table = new Table(balls)
     this.table.balls.forEach(b => this.scene.add(b.mesh.mesh))
     this.scene.add(this.table.cue.mesh)
-    this.table.cue.setPosition(this.table.balls[0].pos)
+    this.table.cue.moveToCueBall()
     TableGeometry.addToScene(this.scene)
     this.camera = new Camera(this.table)
     this.camera.mode = this.camera.topView
@@ -98,14 +104,13 @@ export class Main {
       console.log(this.table.cue.intersectsAnything(this.table))
       if (event.keyCode == 39) {
         this.rate += this.rateInc
-        this.table.cue.setPosition(this.table.balls[0].pos)
+        this.table.cue.moveToCueBall()
         this.table.cue.rotateAim(this.rate)
-        //      this.table.cue.showPointer(this.table, this.scene)
         this.camera.mode = this.camera.aimView
         event.preventDefault()
       } else if (event.keyCode == 37) {
         this.rate += this.rateInc
-        this.table.cue.setPosition(this.table.balls[0].pos)
+        this.table.cue.moveToCueBall()
         this.table.cue.rotateAim(-this.rate)
         this.camera.mode = this.camera.aimView
         event.preventDefault()
