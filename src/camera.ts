@@ -11,7 +11,7 @@ export class Camera {
   table: Table
   mode = this.aimView
 
-  private topViewPoint = new THREE.Vector3(0, 0.1, 20)
+  private topViewPoint = new THREE.Vector3(0, 0.1, 17)
 
   camera = new THREE.PerspectiveCamera(
     75,
@@ -27,17 +27,17 @@ export class Camera {
 
   t = 0
   topView() {
-    this.camera.position.lerp(this.topViewPoint, 0.09)
+    this.camera.position.lerp(this.topViewPoint, 0.1)
     this.camera.up = up
     this.camera.lookAt(zero)
   }
 
   aimView() {
     this.camera.position.lerp(
-      this.table.balls[0].pos.clone().addScaledVector(this.table.cue.aim, -10),
-      0.05
+      this.table.balls[0].pos.clone().addScaledVector(this.table.cue.aim, -9),
+      0.07
     )
-    this.camera.position.z = 3
+    this.camera.position.z = 2.7
     this.camera.up = up
     this.camera.lookAt(this.table.balls[0].pos)
   }

@@ -57,6 +57,13 @@ export class Cue {
     this.moveToCueBall()
   }
 
+  hit(speed) {
+    this.ball.vel.copy(this.aim.clone().multiplyScalar(speed))
+    let rvel = upCross(this.aim).multiplyScalar(speed * this.height * 3)
+    rvel.z = -this.side * 2
+    this.ball.rvel.copy(rvel)
+  }
+
   moveToCueBall() {
     let offset = upCross(this.aim)
       .multiplyScalar(this.side)

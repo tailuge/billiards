@@ -7,10 +7,6 @@ export function vec(v) {
   return new Vector3(v.x, v.y, v.z)
 }
 
-export function crossUp(v) {
-  return v.clone().cross(up)
-}
-
 export function upCross(v) {
   return up.clone().cross(v)
 }

@@ -15,6 +15,7 @@ describe("Table", () => {
     let c = new Ball(new Vector3(2, 0, 0))
     let table = new Table([a, b, c])
     expect(table.prepareAdvanceAll(t)).to.be.true
+    expect(table.allStationary()).to.be.true
     done()
   })
 
@@ -24,6 +25,7 @@ describe("Table", () => {
     let b = new Ball(new Vector3(1, 0, 0))
     let c = new Ball(new Vector3(2, 0, 0))
     let table = new Table([a, b, c])
+    expect(table.allStationary()).to.be.false
     expect(table.prepareAdvanceAll(t)).to.be.false
     table.advance(t)
     expect(c.vel.x).to.be.closeTo(1, 0.1)
@@ -94,17 +96,6 @@ describe("Table", () => {
     expect(() => {
       table.advance(t)
     }).to.throw()
-    done()
-  })
-
-  it("hits", done => {
-    let a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
-    let b = new Ball(new Vector3(-TableGeometry.tableX + 2, 0, 0))
-
-    let table = new Table([a, b])
-
-    table.hit(0.1)
-    expect(table.balls[0].vel.x).to.be.above(0)
     done()
   })
 })

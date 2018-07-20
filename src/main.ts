@@ -3,7 +3,7 @@ import { Table } from "./table"
 import { Rack } from "./rack"
 import { Camera } from "./camera"
 import { TableGeometry } from "./tablegeometry"
-//import { Vector3 } from "three"
+import { Keyboard } from "./keyboard"
 
 import * as THREE from "three"
 
@@ -15,10 +15,11 @@ export class Main {
     color: 0xaaaaaa,
     wireframe: false
   })
+  keyboard = new Keyboard()
 
   table: Table
   frame = 0
-  elapsed
+  elapsed = 1
   last = performance.now()
   animate(timestamp?): void {
     if (timestamp) {
@@ -37,8 +38,9 @@ export class Main {
         this.table.advance(step)
       }
       this.camera.update(steps * step)
-      requestAnimationFrame(() => {
-        this.animate()
+      this.keyboard.applyKeys(this.elapsed, this.table, this.camera)
+      requestAnimationFrame(t => {
+        this.animate(t)
       })
     } catch (error) {
       console.log(error)
@@ -57,7 +59,6 @@ export class Main {
     document.body.appendChild(this.renderer.domElement)
     this.addLights()
     this.addTable()
-    this.keyboardSetup()
   }
 
   addLights() {
@@ -94,46 +95,5 @@ export class Main {
     TableGeometry.addToScene(this.scene)
     this.camera = new Camera(this.table)
     this.camera.mode = this.camera.topView
-  }
-
-  rate = 0
-  rateInc = 0.0025
-
-  keyboardSetup() {
-    document.addEventListener("keydown", event => {
-      console.log(this.table.cue.intersectsAnything(this.table))
-      if (event.keyCode == 39) {
-        this.rate += this.rateInc
-        this.table.cue.moveToCueBall()
-        this.table.cue.rotateAim(this.rate)
-        this.camera.mode = this.camera.aimView
-        event.preventDefault()
-      } else if (event.keyCode == 37) {
-        this.rate += this.rateInc
-        this.table.cue.moveToCueBall()
-        this.table.cue.rotateAim(-this.rate)
-        this.camera.mode = this.camera.aimView
-        event.preventDefault()
-      } else if (event.keyCode == 38) {
-        this.table.cue.adjustHeight(0.1)
-        event.preventDefault()
-      } else if (event.keyCode == 40) {
-        this.table.cue.adjustHeight(-0.1)
-        event.preventDefault()
-      } else if (event.keyCode == 32) {
-        this.table.hit(3)
-        this.camera.mode = this.camera.afterHitView
-        event.preventDefault()
-      } else if (event.keyCode == 84) {
-        this.camera.mode = this.camera.topView
-        event.preventDefault()
-      } else if (event.keyCode == 65) {
-        this.camera.mode = this.camera.aimView
-        event.preventDefault()
-      }
-    })
-    document.addEventListener("keyup", ({}) => {
-      this.rate = 0
-    })
   }
 }
