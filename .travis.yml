@@ -4,5 +4,3 @@ node_js:
 before_script:
 after_success:
   - nyc report --reporter=text-lcov | coveralls
-
-  

@@ -116,6 +116,33 @@ describe("Ball", () => {
     done()
   })
 
+  it("spinning ball eventualy stops", done => {
+    let ball = new Ball(new Vector3())
+    ball.rvel.z = 0.01
+    ball.rvel.y = -0.001
+    let maxiter = 20
+    let i = 0
+    while (i++ < maxiter && ball.inMotion()) {
+      ball.update(t)
+      //console.log(ball.rvel.z,ball.state)
+    }
+    expect(i).to.be.below(maxiter)
+    done()
+  })
+
+  it("stun ball does not roll back at end", done => {
+    let ball = new Ball(new Vector3())
+    ball.rvel.y = 0.1
+    let maxiter = 100
+    let i = 0
+    while (i++ < maxiter && ball.inMotion()) {
+      ball.update(t)
+      expect(ball.vel.x).to.be.at.least(0)
+    }
+    expect(i).to.be.below(maxiter)
+    done()
+  })
+
   it("up cross v", done => {
     let v = new Vector3(1, 2, 0)
     let w = new Vector3(3, 4, 5)
@@ -129,13 +156,6 @@ describe("Ball", () => {
 
     expect(dv.distanceTo(fdv)).to.be.below(0.001)
     expect(dw.distanceTo(fdw)).to.be.below(0.001)
-
-    let i = 0
-    while (i++ < 100) {
-      sliding(v, w, dv, dw)
-      v.addScaledVector(dv, t)
-      w.addScaledVector(dw, t)
-    }
     done()
   })
 

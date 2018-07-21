@@ -1,9 +1,9 @@
 import { Vector3 } from "three"
 import { norm, upCross } from "./utils"
 
-let mu = 0.005
+let mu = 0.004
 let g = 9.8
-let rho = 0.2
+let rho = 0.4
 let m = 1
 let Mz = ((mu * m * g * 2) / 3) * rho
 let Mxy = (7 / (5 * Math.sqrt(2))) * mu * m * g

@@ -54,7 +54,7 @@ export class Ball {
     rollingFull(this.rvel, dv, dw)
     dv.multiplyScalar(t)
     dw.multiplyScalar(t)
-    if (passesThroughZero(this.rvel, dw)) {
+    if (passesThroughZero(this.rvel, dw) || passesThroughZero(this.vel, dv)) {
       this.vel.copy(zero)
       this.rvel.copy(zero)
       this.state = State.Stationary
@@ -69,8 +69,10 @@ export class Ball {
     let dv = new Vector3()
     let dw = new Vector3()
     sliding(this.vel, this.rvel, dv, dw)
-    this.vel.addScaledVector(dv, t)
-    this.rvel.addScaledVector(dw, t)
+    dv.multiplyScalar(t)
+    dw.multiplyScalar(t)
+    this.vel.add(dv)
+    this.rvel.add(dw)
     this.state = State.Sliding
   }
 
