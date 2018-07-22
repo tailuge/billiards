@@ -32,6 +32,8 @@ In browser WebGL [demo](http://tailuge.github.io/billiards/)
 
 Useful paper on [ball sliding physics](http://billiards.colostate.edu/physics/Han_paper.pdf)
 
+![equation](http://latex.codecogs.com/gif.latex?\vec{F}=m\vec{a})
+
 ### Progress snapshots
 
 July 2018
