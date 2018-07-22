@@ -32,3 +32,8 @@ In browser WebGL [demo](http://tailuge.github.io/billiards/)
 
 Useful paper on [ball sliding physics](http://billiards.colostate.edu/physics/Han_paper.pdf)
 
+### Progress snapshots
+
+July 2018
+
+<img src="https://raw.githubusercontent.com/tailuge/billiards/master/dist/t1.png">
