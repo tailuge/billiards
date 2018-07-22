@@ -30,9 +30,20 @@ In browser WebGL [demo](http://tailuge.github.io/billiards/)
 
 3D graphics uses [three.js](https://threejs.org/docs/index.html#api/math/Vector3)
 
-Useful paper on [ball sliding physics](http://billiards.colostate.edu/physics/Han_paper.pdf)
+Papers on [ball mechanics](http://billiards.colostate.edu/physics/Han_paper.pdf)
+and [max spin](http://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf)
 
-![equation](http://latex.codecogs.com/gif.latex?\vec{F}=m\vec{a})
+surface velocity at contact point of ball on table
+
+![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}\cdot%20(\vec{z}%20\times%20\vec{\omega})) 
+
+https://github.com/tailuge/billiards/blob/master/src/physics.ts#L11-L16
+
+rolling motion
+
+![equation](http://latex.codecogs.com/png.latex?{v}%27%20=%20-\mu%20g%20\frac{\vec{v}}{\left%20|%20\vec{v}%20\right%20|}) 
+
+sliding motion
 
 ### Progress snapshots
 
