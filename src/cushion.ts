@@ -1,5 +1,6 @@
 import { Ball } from "./ball"
 import { TableGeometry } from "./tablegeometry"
+//import { cushionAtXWithGrip } from "./physics"
 import { Vector3 } from "three"
 
 export class Cushion {
@@ -64,6 +65,13 @@ export class Cushion {
 
   private static bounceX(ball) {
     ball.vel.x *= -Cushion.elasticity
+    /*
+    let dv = new Vector3()
+    cushionAtXWithGrip(ball.vel, ball.rvel, dv)
+    console.log(dv)
+    ball.vel.add(dv)
+    console.log(ball.vel)
+    */
   }
 
   private static bounceY(ball) {

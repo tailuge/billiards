@@ -188,7 +188,8 @@ export class TableGeometry {
   })
 
   private static knuckleCylinder(knuckle, scene) {
-    TableGeometry.cylinder(knuckle.pos, knuckle.radius, 0.5, scene)
+    let k = TableGeometry.cylinder(knuckle.pos, knuckle.radius, 0.75, scene)
+    k.position.setZ(-0.25 / 2)
   }
 
   private static pocketCylinder(pocket, scene) {
@@ -201,7 +202,7 @@ export class TableGeometry {
   }
 
   private static cylinder(pos, radius, depth, scene) {
-    var geometry = new CylinderGeometry(radius, radius, depth, 8)
+    var geometry = new CylinderGeometry(radius, radius, depth, 16)
     var mesh = new Mesh(geometry, TableGeometry.material)
     mesh.position.copy(pos)
     mesh.geometry.applyMatrix(
@@ -210,6 +211,7 @@ export class TableGeometry {
         .makeRotationAxis(new Vector3(1, 0, 0), Math.PI / 2)
     )
     scene.add(mesh)
+    return mesh
   }
 
   static addPockets(scene) {
@@ -227,7 +229,7 @@ export class TableGeometry {
       scene
     )
 
-    let d = 0.01
+    let d = 1
     let h = 0.75
     let e = -0.25 / 2
     let lengthN = Math.abs(
@@ -240,14 +242,14 @@ export class TableGeometry {
     )
 
     TableGeometry.plane(
-      new Vector3(TableGeometry.X, 0, e),
+      new Vector3(TableGeometry.X + d / 2, 0, e),
       d,
       lengthE,
       h,
       scene
     )
     TableGeometry.plane(
-      new Vector3(-TableGeometry.X, 0, e),
+      new Vector3(-TableGeometry.X - d / 2, 0, e),
       d,
       lengthE,
       h,
@@ -255,14 +257,14 @@ export class TableGeometry {
     )
 
     TableGeometry.plane(
-      new Vector3(-TableGeometry.X / 2, TableGeometry.Y, e),
+      new Vector3(-TableGeometry.X / 2, TableGeometry.Y + d / 2, e),
       lengthN,
       d,
       h,
       scene
     )
     TableGeometry.plane(
-      new Vector3(-TableGeometry.X / 2, -TableGeometry.Y, e),
+      new Vector3(-TableGeometry.X / 2, -TableGeometry.Y - d / 2, e),
       lengthN,
       d,
       h,
@@ -270,14 +272,14 @@ export class TableGeometry {
     )
 
     TableGeometry.plane(
-      new Vector3(TableGeometry.X / 2, TableGeometry.Y, e),
+      new Vector3(TableGeometry.X / 2, TableGeometry.Y + d / 2, e),
       lengthN,
       d,
       h,
       scene
     )
     TableGeometry.plane(
-      new Vector3(TableGeometry.X / 2, -TableGeometry.Y, e),
+      new Vector3(TableGeometry.X / 2, -TableGeometry.Y - d / 2, e),
       lengthN,
       d,
       h,

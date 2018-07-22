@@ -3,7 +3,12 @@ import { expect } from "chai"
 import { Ball } from "../src/ball"
 import { Vector3 } from "three"
 import { zero, passesThroughZero } from "../src/utils"
-import { sliding, slidingFull } from "../src/physics"
+import {
+  sliding,
+  slidingFull,
+  forceRoll,
+  surfaceVelocity
+} from "../src/physics"
 
 let t = 0.1
 
@@ -39,11 +44,11 @@ describe("Ball", () => {
     done()
   })
 
-  it("friction stops ball", done => {
+  it("friction slows ball", done => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0.01
     ball.update(1)
-    expect(ball.vel).to.deep.equal(zero)
+    expect(ball.vel.x).to.be.below(0.01)
     done()
   })
 
@@ -119,12 +124,11 @@ describe("Ball", () => {
   it("spinning ball eventualy stops", done => {
     let ball = new Ball(new Vector3())
     ball.rvel.z = 0.01
-    ball.rvel.y = -0.001
+    ball.rvel.y = 0
     let maxiter = 20
     let i = 0
     while (i++ < maxiter && ball.inMotion()) {
       ball.update(t)
-      //console.log(ball.rvel.z,ball.state)
     }
     expect(i).to.be.below(maxiter)
     done()
@@ -143,7 +147,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("up cross v", done => {
+  it("alternate sliding calc equivalent", done => {
     let v = new Vector3(1, 2, 0)
     let w = new Vector3(3, 4, 5)
     let dv = new Vector3()
@@ -176,8 +180,35 @@ describe("Ball", () => {
       rvel: { x: 0.00001806789773622572, y: -0.00008182140227559905, z: 0 },
       state: "Rolling"
     })
-    b.update(0.01)
+    forceRoll(b.vel, b.rvel)
+    b.update(1)
     expect(b.inMotion()).to.be.false
+    done()
+  })
+
+  it("force roll leaves roll unaffected", done => {
+    let b = Ball.fromSerialised({
+      pos: { x: 0, y: 0, z: 0 },
+      vel: { x: 1, y: 0, z: 0 },
+      rvel: { x: 0, y: 1, z: 0 },
+      state: "Rolling"
+    })
+    forceRoll(b.vel, b.rvel)
+    expect(surfaceVelocity(b.vel, b.rvel)).to.be.deep.equal(zero)
+    expect(b.vel.x).to.be.equal(1)
+    done()
+  })
+
+  it("force roll is at midpoint", done => {
+    let b = Ball.fromSerialised({
+      pos: { x: 0, y: 0, z: 0 },
+      vel: { x: 1, y: 0, z: 0 },
+      rvel: { x: 0, y: 2, z: 0 },
+      state: "Rolling"
+    })
+    forceRoll(b.vel, b.rvel)
+    expect(surfaceVelocity(b.vel, b.rvel)).to.be.deep.equal(zero)
+    expect(b.vel.x).to.be.equal(1.5)
     done()
   })
 })

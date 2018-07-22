@@ -10,12 +10,14 @@ export class Keyboard {
     document.addEventListener("keydown", e => {
       e = e || window.event
       this.pressed[e.keyCode] = true
+      e.stopImmediatePropagation()
     })
 
     document.addEventListener("keyup", e => {
       e = e || window.event
       delete this.pressed[e.keyCode]
       this.rate = 0
+      e.stopImmediatePropagation()
     })
   }
 

@@ -11,7 +11,7 @@ export class Camera {
   table: Table
   mode = this.aimView
 
-  private topViewPoint = new THREE.Vector3(0, 0.1, 17)
+  private topViewPoint = new THREE.Vector3(0, -0.1, 17)
 
   camera = new THREE.PerspectiveCamera(
     75,
