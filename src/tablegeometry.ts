@@ -221,11 +221,12 @@ export class TableGeometry {
   }
 
   private static addCushions(scene) {
+    let th = 10
     TableGeometry.plane(
-      new Vector3(0, 0, -0.5),
+      new Vector3(0, 0, -0.5-th/2),
       2 * TableGeometry.X,
       2 * TableGeometry.Y,
-      0.01,
+      th,
       scene
     )
 
