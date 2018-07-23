@@ -52,9 +52,9 @@ rolling motion
 
 sliding motion
 
-![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\vec{z}\times\vec{\omega})
+![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\frac{\vec{z}\times\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
-![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR^2}\vec{\omega})
+![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR^2}\frac{\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
 [code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L18-L23)
 
