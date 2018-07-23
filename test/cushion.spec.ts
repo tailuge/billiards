@@ -53,6 +53,73 @@ describe("Cushion", () => {
     done()
   })
 
+  function bounceInXWithSpin(rvel) {
+    let pos = new Vector3(TableGeometry.tableX, 0, 0)
+    let ball = new Ball(pos)
+    ball.vel.x = 1
+    ball.rvel.copy(rvel)
+    Cushion.bounce(ball, t)
+    return ball
+  }
+
+  it("bounces off X cushion with rhs spins", done => {
+    let ball = bounceInXWithSpin(new Vector3(0, 0, 1))
+    expect(ball.vel.x).to.be.below(0)
+    expect(ball.vel.y).to.be.below(0)
+    done()
+  })
+
+  it("bounces off X cushion with lhs spins", done => {
+    let ball = bounceInXWithSpin(new Vector3(0, 0, -1))
+    expect(ball.vel.x).to.be.below(0)
+    expect(ball.vel.y).to.be.above(0)
+    done()
+  })
+
+  it("bounces off X cushion with rolling spin", done => {
+    let ball = bounceInXWithSpin(new Vector3(0, 1, 0))
+    expect(ball.vel.x).to.be.below(0)
+    expect(ball.vel.y).to.be.approximately(0, 0.01)
+    done()
+  })
+
+  it("bounces off X cushion with top spin", done => {
+    let ball = bounceInXWithSpin(new Vector3(0, 2, 0))
+    expect(ball.vel.x).to.be.below(0)
+    expect(ball.vel.y).to.be.approximately(0, 0.01)
+    done()
+  })
+
+  it("bounces off X cushion with back spin", done => {
+    let ball = bounceInXWithSpin(new Vector3(0, -2, 0))
+    expect(ball.vel.x).to.be.below(0)
+    expect(ball.vel.y).to.be.approximately(0, 0.01)
+    done()
+  })
+
+  it("bounces off X cushion with top and rhs", done => {
+    let ball = bounceInXWithSpin(new Vector3(0, 2, 1))
+    expect(ball.vel.x).to.be.below(0)
+    expect(ball.vel.y).to.be.below(0)
+    done()
+  })
+
+  it("bounces off X cushion with corkscrew spin", done => {
+    let ball = bounceInXWithSpin(new Vector3(1, 0, 0))
+    expect(ball.vel.x).to.be.below(0)
+    expect(ball.vel.y).to.be.approximately(0, 0.1)
+    done()
+  })
+
+  it("bounces off X cushion 45 in 45 out", done => {
+    let pos = new Vector3(TableGeometry.tableX, 0, 0)
+    let ball = new Ball(pos)
+    ball.vel.set(1, 1, 0)
+    Cushion.bounce(ball, t)
+    expect(ball.vel.y).to.be.approximately(-ball.vel.x, 0.2)
+    done()
+  })
+
   it("does not bounce off pocket area", done => {
     let pos = new Vector3(0, -TableGeometry.tableY, 0)
     let ball = new Ball(pos)

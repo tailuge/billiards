@@ -56,32 +56,24 @@ export class Cushion {
   static bounce(ball: Ball, t: number) {
     let futurePosition = ball.futurePosition(t)
     if (futurePosition.x > TableGeometry.tableX) {
-      Cushion.bounceIn(new Vector3(1,0,0),ball)
+      Cushion.bounceIn(new Vector3(1, 0, 0), ball)
     }
     if (futurePosition.x < -TableGeometry.tableX) {
-      Cushion.bounceIn(new Vector3(-1,0,0),ball)
+      Cushion.bounceIn(new Vector3(-1, 0, 0), ball)
     }
     if (futurePosition.y > TableGeometry.tableY) {
-      Cushion.bounceIn(new Vector3(0,1,0),ball)
+      Cushion.bounceIn(new Vector3(0, 1, 0), ball)
     }
     if (futurePosition.y < -TableGeometry.tableY) {
-      Cushion.bounceIn(new Vector3(0,-1,0),ball)
+      Cushion.bounceIn(new Vector3(0, -1, 0), ball)
     }
   }
 
-  static bounceIn(normalTowardsCushion, ball) {
+  private static bounceIn(normalTowardsCushion, ball) {
     let dv = new Vector3()
     let dw = new Vector3()
     bounceWithoutSlipInNormal(normalTowardsCushion, ball.vel, ball.rvel, dv, dw)
     ball.vel.add(dv)
     ball.rvel.add(dw)
-  }
-
-   static bounceX(ball) {
-    ball.vel.x *= -Cushion.elasticity
-  }
-
-   static bounceY(ball) {
-    ball.vel.y *= -Cushion.elasticity
   }
 }
