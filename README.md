@@ -32,15 +32,18 @@ yarn test
 Papers on [ball mechanics](http://billiards.colostate.edu/physics/Han_paper.pdf)
 and [max spin](http://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf)
 
+Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_blank">LaTeX</a> editor
+
 ### Key equations
 
-surface velocity at contact point of ball on table
+##### surface velocity at contact point of ball on table [code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L11-L16)
+
 
 ![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20\vec{\omega})) 
 
-[code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L11-L16)
 
-rolling motion
+##### rolling motion [code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L35-L40)
+
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\mu%20g%20\frac{\vec{v}}{\left%20|%20\vec{v}%20\right%20|}) 
 
@@ -48,15 +51,25 @@ rolling motion
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{\omega}_{z}%20=%20-\frac{5}{2}\frac{M_{z}}{mR^2}sgn(\omega_{z}))
 
-[code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L35-L40)
 
-sliding motion
+
+##### sliding motion [code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L18-L23)
+
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\frac{\vec{up}\times\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR^2}\frac{\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
-[code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L18-L23)
+
+##### cushion bounce [code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L56-L72)
+
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})" title="\dot{v}_{x} = -v_{x0}(\frac{2}{7}sin^2\theta_{a} + (1+e)cos^2\theta_{a})" /></a>
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\dot{v}_{y}&space;=&space;\frac{2}{7}v_{y0}&plus;\frac{2}{7}R(\omega_{x0}sin\theta_{a}&space;-&space;\omega_{z0}cos\theta_{a})&space;-&space;v_{y0}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{v}_{y}&space;=&space;\frac{2}{7}v_{y0}&plus;\frac{2}{7}R(\omega_{x0}sin\theta_{a}&space;-&space;\omega_{z0}cos\theta_{a})&space;-&space;v_{y0}" title="\dot{v}_{y} = \frac{2}{7}v_{y0}+\frac{2}{7}R(\omega_{x0}sin\theta_{a} - \omega_{z0}cos\theta_{a}) - v_{y0}" /></a>
+
+
+
 
 ### Progress snapshots
 
