@@ -53,18 +53,20 @@ let cos_a2 = cos_a * cos_a
 let e = 0.8
 let unitx = new Vector3(1, 0, 0)
 
-export function bounceWithoutSlipInNormal(n, v, w, dv) {
+export function bounceWithoutSlipInNormal(n, v, w, dv, dw) {
   let theta = n.angleTo(unitx)
   let vr = v.clone().applyAxisAngle(up, theta)
   let wr = w.clone().applyAxisAngle(up, theta)
-  bounceWithoutSlipX(vr, wr, dv)
+  bounceWithoutSlipX(vr, wr, dv, dw)
   dv.applyAxisAngle(up, -theta)
+  dw.applyAxisAngle(up, -theta)
 }
 
-export function bounceWithoutSlipX(v, w, dv) {
+export function bounceWithoutSlipX(v, w, dv, dw) {
   dv.set(
     -v.x * ((2 / 7) * sin_a2 + (1 + e) * cos_a2) - (2 / 7) * w.y * sin_a,
-    5 * 7 * v.y + (2 / 7) * (w.x * sin_a - w.z * cos_a),
+    5 * 7 * v.y + (2 / 7) * (w.x * sin_a - w.z * cos_a) - v.y,
     0
   )
+  dw.set(0,0,0)
 }

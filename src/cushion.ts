@@ -1,6 +1,6 @@
 import { Ball } from "./ball"
 import { TableGeometry } from "./tablegeometry"
-//import { cushionAtXWithGrip } from "./physics"
+import { bounceWithoutSlipInNormal } from "./physics"
 import { Vector3 } from "three"
 
 export class Cushion {
@@ -55,26 +55,33 @@ export class Cushion {
 
   static bounce(ball: Ball, t: number) {
     let futurePosition = ball.futurePosition(t)
-    if (Math.abs(futurePosition.x) > TableGeometry.tableX) {
-      Cushion.bounceX(ball)
+    if (futurePosition.x > TableGeometry.tableX) {
+      Cushion.bounceIn(new Vector3(1,0,0),ball)
     }
-    if (Math.abs(futurePosition.y) > TableGeometry.tableY) {
-      Cushion.bounceY(ball)
+    if (futurePosition.x < -TableGeometry.tableX) {
+      Cushion.bounceIn(new Vector3(-1,0,0),ball)
+    }
+    if (futurePosition.y > TableGeometry.tableY) {
+      Cushion.bounceIn(new Vector3(0,1,0),ball)
+    }
+    if (futurePosition.y < -TableGeometry.tableY) {
+      Cushion.bounceIn(new Vector3(0,-1,0),ball)
     }
   }
 
-  private static bounceX(ball) {
-    ball.vel.x *= -Cushion.elasticity
-    /*
+  static bounceIn(normalTowardsCushion, ball) {
     let dv = new Vector3()
-    cushionAtXWithGrip(ball.vel, ball.rvel, dv)
-    console.log(dv)
+    let dw = new Vector3()
+    bounceWithoutSlipInNormal(normalTowardsCushion, ball.vel, ball.rvel, dv, dw)
     ball.vel.add(dv)
-    console.log(ball.vel)
-    */
+    ball.rvel.add(dw)
   }
 
-  private static bounceY(ball) {
+   static bounceX(ball) {
+    ball.vel.x *= -Cushion.elasticity
+  }
+
+   static bounceY(ball) {
     ball.vel.y *= -Cushion.elasticity
   }
 }
