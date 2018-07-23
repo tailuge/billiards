@@ -3,6 +3,9 @@
 
 Unsophisticated billiards physics.
 
+### Demo
+
+In browser WebGL [demo](http://tailuge.github.io/billiards/)
 
 
 ### Setup
@@ -19,29 +22,31 @@ yarn watch
 yarn test
 ```
 
-### Demo
-
-In browser WebGL [demo](http://tailuge.github.io/billiards/)
-
 [Edit](https://ide.c9.io/tailuge/billiards) and compile in browser on cloud9
 
 
-###### Reference
+### Reference
 
 3D graphics uses [three.js](https://threejs.org/docs/index.html#api/math/Vector3)
 
 Papers on [ball mechanics](http://billiards.colostate.edu/physics/Han_paper.pdf)
 and [max spin](http://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf)
 
+### Key equations
+
 surface velocity at contact point of ball on table
 
 ![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}\cdot%20(\vec{z}%20\times%20\vec{\omega})) 
 
-https://github.com/tailuge/billiards/blob/master/src/physics.ts#L11-L16
+[code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L11-L16)
 
 rolling motion
 
-![equation](http://latex.codecogs.com/png.latex?{v}%27%20=%20-\mu%20g%20\frac{\vec{v}}{\left%20|%20\vec{v}%20\right%20|}) 
+![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\mu%20g%20\frac{\vec{v}}{\left%20|%20\vec{v}%20\right%20|}) 
+
+![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{2}\frac{\mu%20g}{R}%20\frac{\vec{v}}{\left%20|%20\vec{v}%20\right%20|}) 
+
+[code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L35-L40)
 
 sliding motion
 

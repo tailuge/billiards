@@ -1,5 +1,5 @@
 import { Vector3 } from "three"
-import { norm, upCross } from "./utils"
+import { norm, upCross, up } from "./utils"
 
 let mu = 0.006
 let g = 9.8
@@ -47,13 +47,23 @@ export function forceRoll(v, w) {
 let sin_a = Math.sin(9.25 / 32.5)
 let cos_a = Math.cos(9.25 / 32.5)
 
-let e = 0.8
+let sin_a2 = sin_a * sin_a
+let cos_a2 = cos_a * cos_a
 
-export function cushionAtXWithGrip(v, w, dv) {
+let e = 0.8
+let unitx = new Vector3(1, 0, 0)
+
+export function bounceWithoutSlipInNormal(n, v, w, dv) {
+  let theta = n.angleTo(unitx)
+  let vr = v.clone().applyAxisAngle(up, theta)
+  let wr = w.clone().applyAxisAngle(up, theta)
+  bounceWithoutSlipX(vr, wr, dv)
+  dv.applyAxisAngle(up, -theta)
+}
+
+export function bounceWithoutSlipX(v, w, dv) {
   dv.set(
-    0 -
-      v.x * ((2 / 7) * sin_a * sin_a + (1 + e) * cos_a * cos_a) -
-      (2 / 7) * w.y * sin_a,
+    -v.x * ((2 / 7) * sin_a2 + (1 + e) * cos_a2) - (2 / 7) * w.y * sin_a,
     5 * 7 * v.y + (2 / 7) * (w.x * sin_a - w.z * cos_a),
     0
   )
