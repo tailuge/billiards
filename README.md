@@ -42,7 +42,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 ![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20\vec{\omega})) 
 
 
-##### rolling motion [code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L35-L40)
+##### rolling motion [:arrow_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L35-L40)
 
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\mu%20g%20\frac{\vec{v}}{\left%20|%20\vec{v}%20\right%20|}) 
