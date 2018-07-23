@@ -36,7 +36,7 @@ and [max spin](http://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf)
 
 surface velocity at contact point of ball on table
 
-![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}\cdot%20(\vec{z}%20\times%20\vec{\omega})) 
+![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20\vec{\omega})) 
 
 [code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L11-L16)
 
@@ -52,7 +52,7 @@ rolling motion
 
 sliding motion
 
-![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\frac{\vec{z}\times\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
+![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\frac{\vec{up}\times\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR^2}\frac{\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
