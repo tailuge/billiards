@@ -46,9 +46,17 @@ rolling motion
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{2}\frac{\mu%20g}{R}%20\frac{\vec{v}}{\left%20|%20\vec{v}%20\right%20|}) 
 
+![equation](http://latex.codecogs.com/png.latex?\dot{\omega}_{z}%20=%20-\frac{5}{2}\frac{M_{z}}{mR^2}sgn(\omega_{z}))
+
 [code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L35-L40)
 
 sliding motion
+
+![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\vec{z}\times\vec{\omega})
+
+![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR^2}\vec{\omega})
+
+[code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L18-L23)
 
 ### Progress snapshots
 
