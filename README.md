@@ -36,13 +36,13 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 
 ### Key equations
 
-##### surface velocity at contact point of ball on table [code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L11-L16)
+##### surface velocity [:arrow_upper_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L11-L16)
 
 
 ![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20\vec{\omega})) 
 
 
-##### rolling motion [:arrow_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L35-L40)
+##### rolling motion [:arrow_upper_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L35-L40)
 
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\mu%20g%20\frac{\vec{v}}{\left%20|%20\vec{v}%20\right%20|}) 
@@ -53,7 +53,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 
 
 
-##### sliding motion [code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L18-L23)
+##### sliding motion [:arrow_upper_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L18-L23)
 
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\frac{\vec{up}\times\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
@@ -61,14 +61,18 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 ![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR^2}\frac{\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
 
-##### cushion bounce [code](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L56-L72)
+##### cushion bounce [:arrow_upper_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L56-L72)
 
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})" title="\dot{v}_{x} = -v_{x0}(\frac{2}{7}sin^2\theta_{a} + (1+e)cos^2\theta_{a})" /></a>
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{v}_{y}&space;=&space;\frac{2}{7}v_{y0}&plus;\frac{2}{7}R(\omega_{x0}sin\theta_{a}&space;-&space;\omega_{z0}cos\theta_{a})&space;-&space;v_{y0}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{v}_{y}&space;=&space;\frac{2}{7}v_{y0}&plus;\frac{2}{7}R(\omega_{x0}sin\theta_{a}&space;-&space;\omega_{z0}cos\theta_{a})&space;-&space;v_{y0}" title="\dot{v}_{y} = \frac{2}{7}v_{y0}+\frac{2}{7}R(\omega_{x0}sin\theta_{a} - \omega_{z0}cos\theta_{a}) - v_{y0}" /></a>
 
+<a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_y}&space;=&space;\frac{5}{2mR}\Big(\frac{-S_x_0}{A}&space;&plus;&space;sin\theta_a&space;\frac{C_0}{B}(1&plus;e)(cos\theta_a-sin\theta_a)\Big)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_y}&space;=&space;\frac{5}{2mR}\Big(\frac{-S_x_0}{A}&space;&plus;&space;sin\theta_a&space;\frac{C_0}{B}(1&plus;e)(cos\theta_a-sin\theta_a)\Big)" title="\dot{\omega_y} = \frac{5}{2mR}\Big(\frac{-S_x_0}{A} + sin\theta_a \frac{C_0}{B}(1+e)(cos\theta_a-sin\theta_a)\Big)" /></a>
 
+<a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_x}&space;=&space;\frac{5S_y_0}{2mRA}sin\theta_a" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_x}&space;=&space;\frac{5S_y_0}{2mRA}sin\theta_a" title="\dot{\omega_x} = \frac{5S_y_0}{2mRA}sin\theta_a" /></a>
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" title="\dot{\omega_z} = \frac{5S_y_0}{2mRA}cos\theta_a" /></a>
 
 
 ### Progress snapshots
