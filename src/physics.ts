@@ -55,11 +55,38 @@ let unitx = new Vector3(1, 0, 0)
 
 export function bounceWithoutSlipInNormal(n, v, w, dv, dw) {
   let theta = unitx.angleTo(n)
-  let vr = v.clone().applyAxisAngle(up, -theta)
-  let wr = w.clone().applyAxisAngle(up, -theta)
+  let vr = v.clone().applyAxisAngle(up, theta)
+  let wr = w.clone().applyAxisAngle(up, theta)
   bounceWithoutSlipX(vr, wr, dv, dw)
-  dv.applyAxisAngle(up, theta)
-  dw.applyAxisAngle(up, theta)
+  dv.applyAxisAngle(up, -theta)
+  dw.applyAxisAngle(up, -theta)
+}
+
+function s0(v, w) {
+  return new Vector3(
+    v.x * sin_a - v.z * cos_a + w.y,
+    -v.y - w.z * cos_a + w.x * sin_a
+  )
+}
+
+function c0(v) {
+  return v.x * cos_a - v.z * cos_a
+}
+
+let A = 7 / (2 * m)
+let B = 1 / m
+
+
+function Pzs(s0) {
+  return s0.length() / A
+}
+
+function Pze(c0) {
+  return ((1 + e) * c0) / B
+}
+
+export function isCushionXGrip(v, w) {
+  return Pze(c0(v)) <= Pzs(s0(v, w))
 }
 
 export function bounceWithoutSlipX(v, w, dv, dw) {
@@ -68,5 +95,11 @@ export function bounceWithoutSlipX(v, w, dv, dw) {
     (5 / 7) * v.y + (2 / 7) * (w.x * sin_a - w.z * cos_a) - v.y,
     0
   )
-  dw.set(0, 0, 0)
+  
+  let s = s0(v,w)
+  let k  = 5 * s.y / (2*m*A)
+  
+  dw.set(k*sin_a, 
+  5/(2*m)*(-s.x/A + sin_a*c0(v)*(1+e)/B*(cos_a-sin_a)),
+  k*cos_a)
 }

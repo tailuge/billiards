@@ -59,8 +59,8 @@ export class Cue {
 
   hit(speed) {
     this.ball.vel.copy(this.aim.clone().multiplyScalar(speed))
-    let rvel = upCross(this.aim).multiplyScalar(speed * this.height * 3)
-    rvel.z = -this.side * 2
+    let rvel = upCross(this.aim).multiplyScalar((speed * this.height * 5) / 2)
+    rvel.z = (-this.side * 5) / 2
     this.ball.rvel.copy(rvel)
   }
 

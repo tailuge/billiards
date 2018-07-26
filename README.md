@@ -61,7 +61,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 ![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR^2}\frac{\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
 
-##### cushion bounce [:arrow_upper_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L56-L72)
+##### cushion bounce [:arrow_upper_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L56-L105)
 
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})" title="\dot{v}_{x} = -v_{x0}(\frac{2}{7}sin^2\theta_{a} + (1+e)cos^2\theta_{a})" /></a>
