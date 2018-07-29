@@ -37,6 +37,7 @@ export class Main {
       while (i++ < steps) {
         this.table.advance(step)
       }
+      //this.showAxis()
       this.camera.update(steps * step)
       this.keyboard.applyKeys(this.elapsed, this.table, this.camera)
       requestAnimationFrame(t => {
@@ -89,7 +90,7 @@ export class Main {
     this.table = new Table([a, b])
 */
     this.table = new Table(balls)
-    this.table.balls.forEach(b => this.scene.add(b.mesh.mesh))
+    this.table.balls.forEach(b => b.mesh.addToScene(this.scene))
     this.scene.add(this.table.cue.mesh)
     this.table.cue.moveToCueBall()
     TableGeometry.addToScene(this.scene)

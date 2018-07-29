@@ -31,7 +31,8 @@ function bundle() {
     .pipe(source('main.js'))
     .pipe(buffer())
     .pipe(uglify())
-    .pipe(gulp.dest(destination));
+    .pipe(gulp.dest(destination))
+    .on('end', function(){ console.log('Done!'); });
 }
 
 gulp.task("default", [], bundle);

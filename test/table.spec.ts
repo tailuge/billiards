@@ -42,7 +42,7 @@ describe("Table", () => {
     expect(table.prepareAdvanceAll(t)).to.be.false
     table.advance(t)
     expect(c.vel.x).to.be.above(0)
-//    expect(table.prepareAdvanceAll(t)).to.be.true
+    //    expect(table.prepareAdvanceAll(t)).to.be.true
     done()
   })
 

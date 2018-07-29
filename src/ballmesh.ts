@@ -1,9 +1,15 @@
 import { Matrix4 } from "three"
-import { Mesh, IcosahedronGeometry, MeshPhongMaterial } from "three"
-import { norm } from "./utils"
+import {
+  Mesh,
+  IcosahedronGeometry,
+  MeshPhongMaterial,
+  ArrowHelper
+} from "three"
+import { norm, up, zero } from "./utils"
 
 export class BallMesh {
   mesh: Mesh
+  arrow: ArrowHelper
 
   constructor() {
     this.initialiseMesh()
@@ -17,6 +23,9 @@ export class BallMesh {
     let angle = (rvel.length() * t * Math.PI) / 2
     let m = new Matrix4().identity().makeRotationAxis(norm(rvel), angle)
     this.mesh.geometry.applyMatrix(m)
+    this.arrow.setDirection(norm(rvel))
+    this.arrow.position.copy(this.mesh.position)
+    this.arrow.setLength(rvel.length() * 1 + 0.4)
   }
 
   initialiseMesh() {
@@ -30,5 +39,11 @@ export class BallMesh {
     this.mesh.castShadow = true
     this.mesh.receiveShadow = true
     this.mesh.name = "ball"
+    this.arrow = new ArrowHelper(up, zero, 2, 0xcc0000)
+  }
+
+  addToScene(scene) {
+    scene.add(this.mesh)
+    scene.add(this.arrow)
   }
 }

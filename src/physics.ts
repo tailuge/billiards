@@ -76,7 +76,6 @@ function c0(v) {
 let A = 7 / (2 * m)
 let B = 1 / m
 
-
 function Pzs(s0) {
   return s0.length() / A
 }
@@ -95,11 +94,14 @@ export function bounceWithoutSlipX(v, w, dv, dw) {
     (5 / 7) * v.y + (2 / 7) * (w.x * sin_a - w.z * cos_a) - v.y,
     0
   )
-  
-  let s = s0(v,w)
-  let k  = 5 * s.y / (2*m*A)
-  
-  dw.set(k*sin_a, 
-  5/(2*m)*(-s.x/A + sin_a*c0(v)*(1+e)/B*(cos_a-sin_a)),
-  k*cos_a)
+
+  let s = s0(v, w)
+  let k = (5 * s.y) / (2 * m * A)
+
+  dw.set(
+    k * sin_a,
+    (5 / (2 * m)) *
+      (-s.x / A + ((sin_a * c0(v) * (1 + e)) / B) * (cos_a - sin_a)),
+    k * cos_a
+  )
 }
