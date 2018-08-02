@@ -4,7 +4,7 @@ import { Rack } from "./rack"
 import { Camera } from "./camera"
 import { TableGeometry } from "./tablegeometry"
 import { Keyboard } from "./keyboard"
-
+export * from "./plots"
 import * as THREE from "three"
 
 export class Main {

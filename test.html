@@ -1,31 +1,36 @@
-<!doctype html>
-<html lang="en">
-
 <head>
-    <title>billiards</title>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="description" content="billiards">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="dist/main.js"></script>
-    <style>
-        #container {
-            width: 50%;
-            height: 50%
-        }
-    </style>
+
 </head>
 
+<p>
+    Simulation results
+</p>
 
-<body>
-    <div id="container"></div>
-    <script>
-        /* global bundle*/
-        var main = new bundle.Main();
-        main.run();
-        main.animate();
-    </script>
-</body>
+<p>graph0</p>
+<div id="graph0" style="width:90%;height:350px;"></div>
+
+<p>graph1</p>
+<div id="graph1" style="width:90%;height:350px;"></div>
+
+<p>graph2</p>
+<div id="graph2" style="width:90%;height:350px;"></div>
 
 
-</html>
+<script>
+    /* global bundle,Plotly*/
+
+    var id = 0;
+    bundle.graphs.forEach(data => {
+        Plotly.plot(document.getElementById('graph' + id++),
+            data, {
+                margin: { t: 0 }
+            });
+
+    });
+
+    /* Current Plotly.js version */
+    console.log(Plotly.BUILD);
+</script>
