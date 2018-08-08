@@ -51,13 +51,11 @@ let sin_a2 = sin_a * sin_a
 let cos_a2 = cos_a * cos_a
 
 let e = 0.8
-let unitx = new Vector3(1, 0, 0)
 
-export function bounceWithoutSlipInNormal(n, v, w, dv, dw) {
-  let theta = unitx.angleTo(n)
+export function rotateApplyUnrotate(theta, v, w, dv, dw, f) {
   let vr = v.clone().applyAxisAngle(up, theta)
   let wr = w.clone().applyAxisAngle(up, theta)
-  bounceWithoutSlipX(vr, wr, dv, dw)
+  f(vr, wr, dv, dw)
   dv.applyAxisAngle(up, -theta)
   dw.applyAxisAngle(up, -theta)
 }
@@ -104,4 +102,10 @@ export function bounceWithoutSlipX(v, w, dv, dw) {
       (-s.x / A + ((sin_a * c0(v) * (1 + e)) / B) * (cos_a - sin_a)),
     k * cos_a
   )
+}
+
+export function bounceWithOmegaZ(v, w, dv, dw) {
+  dv.set(-v.x * 1.9, -w.z, 0)
+
+  dw.set(0, 0, 0)
 }

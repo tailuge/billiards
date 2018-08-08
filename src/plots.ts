@@ -47,4 +47,19 @@ export function sideSpin() {
   return [{ x: x, y: y, name: "vel.y" }]
 }
 
-export const graphs = [stunToRoll(), sideSpin()]
+export function angleTo() {
+  let x: Array<number> = []
+  let y: Array<number> = []
+  let wz = 0
+  while (wz <= Math.PI) {
+    let theta = new Vector3(1, 0, 0).angleTo(
+      new Vector3(Math.sin(wz), Math.cos(wz), 0)
+    )
+    y.push(theta)
+    x.push(wz)
+    wz += 0.1
+  }
+  return [{ x: x, y: y, name: "theta" }]
+}
+
+export const graphs = [stunToRoll(), sideSpin(), angleTo()]

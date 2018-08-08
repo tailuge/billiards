@@ -1,6 +1,6 @@
 import { Ball } from "./ball"
 import { TableGeometry } from "./tablegeometry"
-import { bounceWithoutSlipInNormal } from "./physics"
+import { rotateApplyUnrotate, bounceWithoutSlipX } from "./physics"
 import { Vector3 } from "three"
 
 export class Cushion {
@@ -56,23 +56,30 @@ export class Cushion {
   static bounce(ball: Ball, t: number) {
     let futurePosition = ball.futurePosition(t)
     if (futurePosition.x > TableGeometry.tableX) {
-      Cushion.bounceIn(new Vector3(1, 0, 0), ball)
+      Cushion.bounceIn(0, ball)
     }
     if (futurePosition.x < -TableGeometry.tableX) {
-      Cushion.bounceIn(new Vector3(-1, 0, 0), ball)
+      Cushion.bounceIn(Math.PI, ball)
     }
     if (futurePosition.y > TableGeometry.tableY) {
-      Cushion.bounceIn(new Vector3(0, 1, 0), ball)
+      Cushion.bounceIn(-Math.PI / 2, ball)
     }
     if (futurePosition.y < -TableGeometry.tableY) {
-      Cushion.bounceIn(new Vector3(0, -1, 0), ball)
+      Cushion.bounceIn(Math.PI / 2, ball)
     }
   }
 
-  private static bounceIn(normalTowardsCushion, ball) {
+  private static bounceIn(rotationOfCushionToXCushion, ball) {
     let dv = new Vector3()
     let dw = new Vector3()
-    bounceWithoutSlipInNormal(normalTowardsCushion, ball.vel, ball.rvel, dv, dw)
+    rotateApplyUnrotate(
+      rotationOfCushionToXCushion,
+      ball.vel,
+      ball.rvel,
+      dv,
+      dw,
+      bounceWithoutSlipX
+    )
     ball.vel.add(dv)
     ball.rvel.add(dw)
   }
