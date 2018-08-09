@@ -36,13 +36,13 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 
 ### Key equations
 
-##### surface velocity [:arrow_upper_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L11-L16)
+##### surface velocity [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L11-L16)
 
 
 ![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20\vec{\omega})) 
 
 
-##### rolling motion [:arrow_upper_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L35-L40)
+##### rolling motion [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L35-L40)
 
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\mu%20g%20\frac{\vec{v}}{\left%20|%20\vec{v}%20\right%20|}) 
@@ -53,7 +53,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 
 
 
-##### sliding motion [:arrow_upper_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L18-L23)
+##### sliding motion [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L18-L23)
 
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\frac{\vec{up}\times\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
@@ -61,7 +61,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 ![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR^2}\frac{\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
 
-##### cushion bounce [:arrow_upper_right:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L56-L105)
+##### cushion bounce [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/physics.ts#L56-L105)
 
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" title="\dot{v}_{x} = -v_{x0}(\frac{2}{7}sin^2\theta_{a} + (1+e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" /></a>
