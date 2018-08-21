@@ -114,8 +114,8 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.5.tgz#8a4accfc403c124a0bafe8a9fc61a05ec1032073"
 
 "@types/three@^0.92.14":
-  version "0.92.14"
-  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.92.14.tgz#a9a4febad61b9e6ef6446b8151f1398ac6524dea"
+  version "0.92.16"
+  resolved "https://registry.yarnpkg.com/@types/three/-/three-0.92.16.tgz#1669a2be80a584035c2a29d3e5782887e90346a2"
   dependencies:
     "@types/webvr-api" "*"
 
@@ -3446,8 +3446,8 @@ preserve@^0.2.0:
   resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
 
 prettier@^1.14.0:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.14.0.tgz#847c235522035fd988100f1f43cf20a7d24f9372"
+  version "1.14.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.14.2.tgz#0ac1c6e1a90baa22a62925f41963c841983282f9"
 
 pretty-hrtime@^1.0.0:
   version "1.0.3"

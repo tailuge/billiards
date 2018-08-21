@@ -5,7 +5,7 @@ Unsophisticated billiards physics.
 
 ### Demo
 
-In browser WebGL [demo](http://tailuge.github.io/billiards/)
+In browser WebGL [demo](http://tailuge.github.io/billiards/dist)
 
 
 ### Setup

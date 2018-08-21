@@ -1,7 +1,7 @@
 import { Vector3 } from "three"
 import { norm, upCross, up } from "./utils"
 
-let mu = 0.006
+let mu = 0.005
 let g = 9.8
 let rho = 0.4
 let m = 1

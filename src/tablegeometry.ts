@@ -10,9 +10,9 @@ export class TableGeometry {
   static Y = TableGeometry.tableY + 0.5
   static PX = TableGeometry.tableX + 1.6
   static PY = TableGeometry.tableY + 1.6
-  static knuckleInset = 1.4
+  static knuckleInset = 1.5
   static knuckleRadius = 0.5
-  static middleKnuckleInset = 1.3
+  static middleKnuckleInset = 1.5
   static middleKnuckleRadius = 0.5
   static cornerRadius = 1.0
   static middleRadius = 0.4

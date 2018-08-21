@@ -69,11 +69,11 @@ export class Cushion {
     }
   }
 
-  private static bounceIn(rotationOfCushionToXCushion, ball) {
+  private static bounceIn(rotation, ball) {
     let dv = new Vector3()
     let dw = new Vector3()
     rotateApplyUnrotate(
-      rotationOfCushionToXCushion,
+      rotation,
       ball.vel,
       ball.rvel,
       dv,

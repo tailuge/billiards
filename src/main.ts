@@ -8,19 +8,15 @@ export * from "./plots"
 import * as THREE from "three"
 
 export class Main {
-  scene = new THREE.Scene()
-  camera: Camera
-  renderer = new THREE.WebGLRenderer()
-  material = new THREE.MeshBasicMaterial({
-    color: 0xaaaaaa,
-    wireframe: false
-  })
-  keyboard = new Keyboard()
-
   table: Table
+  camera: Camera
+  scene = new THREE.Scene()
+  renderer = new THREE.WebGLRenderer()
+  keyboard = new Keyboard()
   frame = 0
   elapsed = 1
   last = performance.now()
+
   animate(timestamp?): void {
     if (timestamp) {
       this.elapsed = timestamp - this.last
@@ -37,7 +33,6 @@ export class Main {
       while (i++ < steps) {
         this.table.advance(step)
       }
-      //this.showAxis()
       this.camera.update(steps * step)
       this.keyboard.applyKeys(this.elapsed, this.table, this.camera)
       requestAnimationFrame(t => {
@@ -53,13 +48,18 @@ export class Main {
     this.renderer.render(this.scene, this.camera.camera)
   }
 
-  run() {
-    this.renderer.setSize(window.innerWidth, window.innerHeight)
+  initialise(element) {
+    this.renderer.setSize(element.offsetWidth, element.offsetHeight)
     this.renderer.shadowMap.enabled = true
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
-    document.body.appendChild(this.renderer.domElement)
+    element.appendChild(this.renderer.domElement)
     this.addLights()
     this.addTable()
+    this.camera = new Camera(
+      this.table,
+      element.offsetWidth / element.offsetHeight
+    )
+    this.camera.mode = this.camera.topView
   }
 
   addLights() {
@@ -76,7 +76,7 @@ export class Main {
     light.shadow.mapSize.height = 1024
     light.castShadow = true
     this.scene.add(light)
-    this.scene.add(new THREE.AmbientLight(0x404040, 1.0))
+    this.scene.add(new THREE.AmbientLight(0x505050, 1.0))
   }
 
   addTable() {
@@ -84,17 +84,19 @@ export class Main {
     let balls = Rack.testSpin()
     balls.unshift(new Ball(new THREE.Vector3(-11, 0.0, 0)))
 
-    /*
-    let a = new Ball(new Vector3(0, 0, 0))
-    let b = new Ball(new Vector3(-1, 0, 0))
-    this.table = new Table([a, b])
-*/
     this.table = new Table(balls)
     this.table.balls.forEach(b => b.mesh.addToScene(this.scene))
     this.scene.add(this.table.cue.mesh)
     this.table.cue.moveToCueBall()
     TableGeometry.addToScene(this.scene)
-    this.camera = new Camera(this.table)
-    this.camera.mode = this.camera.topView
+  }
+
+  static start() {
+    let elt = document.getElementById("container")
+    let main = new Main()
+    main.initialise(elt)
+    main.animate()
   }
 }
+
+Main.start()

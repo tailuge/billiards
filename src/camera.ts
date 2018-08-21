@@ -4,21 +4,16 @@ import { up, zero } from "./utils"
 import * as THREE from "three"
 
 export class Camera {
-  constructor(table: Table) {
+  constructor(table: Table, aspectRatio) {
     this.table = table
+    this.camera = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000)
   }
 
+  camera
   table: Table
   mode = this.aimView
 
   private topViewPoint = new THREE.Vector3(0, -0.1, 17)
-
-  camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  )
 
   update(t) {
     this.t += t
