@@ -31,7 +31,7 @@ p {
 /* make a grid */
 
 .wrapper {
-  max-width: 940px;
+  max-width: 1600px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 3fr;
