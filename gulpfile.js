@@ -30,12 +30,15 @@ function bundle() {
     .on('error', onError)
     .pipe(source('main.js'))
     .pipe(buffer())
-    .pipe(uglify())
+//    .pipe(uglify())
     .pipe(gulp.dest(destination))
     .on('end', function(){ console.log('Done!'); });
 }
 
-gulp.task("default", [], bundle);
+//gulp.task("default", gulp.series([]), bundle);
+gulp.task('default', function() {
+  return bundle();
+});
 watchedBrowserify.on("update", bundle);
 watchedBrowserify.on("log", gutil.log);
 
