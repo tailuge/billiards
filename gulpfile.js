@@ -4,7 +4,6 @@ const source = require('vinyl-source-stream');
 const tsify = require("tsify");
 const watchify = require("watchify");
 const gutil = require("gulp-util");
-const uglify = require("gulp-uglify");
 const buffer = require('vinyl-buffer');
 const mocha = require('gulp-mocha');
 
