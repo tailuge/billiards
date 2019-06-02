@@ -3,4 +3,4 @@ node_js:
   - "10.4.1"
 before_script:
 after_success:
-  - nyc report --reporter=text-lcov | coveralls
+  - jest --coverage --coverageReporters text-lcov | coveralls

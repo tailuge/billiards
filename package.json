@@ -6,8 +6,8 @@
   "main": "dist/main.js",
   "license": "GPL-3.0",
   "scripts": {
-    "test": "nyc mocha --require ts-node/register -r jsdom-global/register ./test/*.spec.ts",
-    "watch": "gulp",
+    "test": "jest",
+    "coverage": "jest --coverage --coverageReporters text",
     "dev": "gulp",
     "prettify": "prettier --write --no-semi {src,test}/*"
   },
@@ -16,6 +16,7 @@
     "three-orbitcontrols": "^2.96.3"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.13",
     "@types/mocha": "^5.2.5",
     "browserify": "^16.2.3",
     "chai": "^4.2.0",
@@ -28,6 +29,7 @@
     "gulp-terser": "^1.2.0",
     "gulp-typescript": "^5.0.0-alpha.3",
     "gulp-util": "^3",
+    "jest": "^24.8.0",
     "jsdom": "15.1.0",
     "jsdom-global": "3.0.2",
     "mocha": "^6.1.4",
@@ -35,10 +37,11 @@
     "prettier": "^1.17.1",
     "sinon": "^7.3.2",
     "source-map-support": "^0.5.12",
+    "ts-jest": "^24.0.2",
     "ts-mocha": "^6.0.0",
     "ts-node": "^8.2.0",
     "tsify": "^4.0.0",
-    "typescript": "^3.4.5",
+    "typescript": "^3.5.1",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0",
     "watchify": "^3.11.0"

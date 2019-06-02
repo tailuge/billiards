@@ -15,12 +15,13 @@ In browser WebGL [demo](http://tailuge.github.io/billiards/dist)
 nvm use v9.11.1
 npm install gulp-cli -g
 yarn install
-yarn watch
+yarn dev
 ```
 ### Test
 
 ```
 yarn test
+yarn coverage
 ```
 
 
