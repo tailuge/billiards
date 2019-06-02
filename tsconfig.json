@@ -13,8 +13,7 @@
     "noImplicitThis": true,
     "noUnusedParameters": true,
     "moduleResolution": "Node",
-    "target": "ES2017"
-
-
+    "target": "ES2018",
+    "sourceMap": true
   }
 }
