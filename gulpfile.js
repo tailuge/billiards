@@ -1,52 +1,33 @@
-const gulp = require("gulp");
-const browserify = require("browserify");
-const source = require('vinyl-source-stream');
-const tsify = require("tsify");
-const watchify = require("watchify");
-const gutil = require("gulp-util");
-const buffer = require('vinyl-buffer');
-const mocha = require('gulp-mocha');
+var gulp = require("gulp");
+var browserify = require("browserify");
+var source = require('vinyl-source-stream');
+var tsify = require("tsify");
+var terser = require('gulp-terser');
+var sourcemaps = require('gulp-sourcemaps');
+var buffer = require('vinyl-buffer');
+var paths = {
+    pages: ['src/*.html','src/*.css']
+};
 
-const destination = './dist';
+gulp.task("copy-html", function () {
+    return gulp.src(paths.pages)
+        .pipe(gulp.dest("dist"));
+});
 
-function onError(error) {
-  return gutil.log(gutil.colors.red(error.message));
-}
-
-function build(debug) {
-  return browserify('src/main.ts', {
-      standalone: 'bundle',
-      debug: debug
+gulp.task("default", gulp.series(gulp.parallel('copy-html'), function () {
+    return browserify({
+        basedir: '.',
+        debug: true,
+        entries: ['src/main.ts'],
+        cache: {},
+        packageCache: {}
     })
-    .plugin(tsify);
-}
-
-const watchedBrowserify = watchify(build(true));
-
-function bundle() {
-  return watchedBrowserify
+    .plugin(tsify)
     .bundle()
-    .on('error', onError)
     .pipe(source('main.js'))
     .pipe(buffer())
-    .pipe(gulp.dest(destination))
-    .on('end', function(){ console.log('Done!'); });
-}
-
-gulp.task('default', function() {
-  return bundle();
-});
-
-watchedBrowserify.on("update", bundle);
-watchedBrowserify.on("log", gutil.log);
-
-gulp.task('dev', function() {
-  return bundle();
-});
-
-gulp.task('run-tests', function() {
-  return gulp.src('test/*.spec.ts')
-    .pipe(mocha({
-      require: ['ts-node/register']
-    }));
-});
+    .pipe(sourcemaps.init({loadMaps: true}))
+    .pipe(terser())
+    .pipe(sourcemaps.write('./'))
+    .pipe(gulp.dest("dist"));
+}));

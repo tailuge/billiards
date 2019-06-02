@@ -4,6 +4,7 @@
   ],
   "compilerOptions": {
     "outDir": "./dist",
+    "module": "commonjs",
     "noImplicitAny": false,
     "strictNullChecks": true,
     "noUnusedLocals": true,
@@ -13,7 +14,7 @@
     "noImplicitThis": true,
     "noUnusedParameters": true,
     "moduleResolution": "Node",
-    "target": "ES2018",
+    "target": "es2018",
     "sourceMap": true
   }
 }
