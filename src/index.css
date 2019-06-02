@@ -6,7 +6,7 @@
 
 body {
   margin: 40px;
-  font-family: 'Open Sans', 'sans-serif';
+  font-family: "Open Sans", "sans-serif";
   background-color: #000;
   color: #444;
 }
@@ -38,7 +38,7 @@ p {
   grid-gap: 2px;
 }
 
-.wrapper>* {
+.wrapper > * {
   background-color: #444;
   color: #fff;
   border-radius: 2px;
@@ -65,7 +65,7 @@ p {
 /* We need to set the widths used on floated items back to auto, and remove the bottom margin as when we have grid we have gaps. */
 
 @supports (display: grid) {
-  .wrapper>* {
+  .wrapper > * {
     width: auto;
     margin: 0;
   }
