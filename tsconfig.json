@@ -11,10 +11,10 @@
     "alwaysStrict": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noUnusedParameters": true
-    ,
+    "noUnusedParameters": true,
+    "moduleResolution": "Node",
     "target": "ES2017"
-    //,
-    //"lib": [ "es2016", "dom" ]
+
+
   }
 }

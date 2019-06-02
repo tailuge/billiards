@@ -11,8 +11,7 @@
     "prettify": "prettier --write --no-semi {src,test}/*"
   },
   "dependencies": {
-    "@types/three": "^0.103.2",
-    "three": "^0.104.0",
+    "three": "^0.105.1",
     "three-orbitcontrols": "^2.96.3"
   },
   "devDependencies": {
