@@ -17,7 +17,6 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.13",
-    "@types/mocha": "^5.2.7",
     "browserify": "^16.2.3",
     "chai": "^4.2.0",
     "coveralls": "^3.0.4",
