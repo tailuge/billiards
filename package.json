@@ -12,15 +12,15 @@
     "prettify": "prettier --write --no-semi {src,test}/*"
   },
   "dependencies": {
-    "three": "^0.105.1",
+    "three": "^0.105.2",
     "three-orbitcontrols": "^2.96.3"
   },
   "devDependencies": {
     "@types/jest": "^24.0.13",
-    "@types/mocha": "^5.2.5",
+    "@types/mocha": "^5.2.7",
     "browserify": "^16.2.3",
     "chai": "^4.2.0",
-    "coveralls": "^3.0.2",
+    "coveralls": "^3.0.4",
     "fancy-log": "^1.3.3",
     "gulp": "^4.0.2",
     "gulp-cli": "^2.2.0",
@@ -30,11 +30,11 @@
     "gulp-typescript": "^5.0.0-alpha.3",
     "gulp-util": "^3",
     "jest": "^24.8.0",
-    "jsdom": "15.1.0",
+    "jsdom": "15.1.1",
     "jsdom-global": "3.0.2",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
-    "prettier": "^1.17.1",
+    "prettier": "^1.18.2",
     "sinon": "^7.3.2",
     "source-map-support": "^0.5.12",
     "ts-jest": "^24.0.2",
