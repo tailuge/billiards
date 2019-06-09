@@ -13,7 +13,6 @@ In browser WebGL [demo](http://tailuge.github.io/billiards/dist)
 
 ```
 nvm use v10.15.3
-npm install gulp-cli -g
 yarn install
 yarn dev
 ```
@@ -22,6 +21,9 @@ yarn dev
 ```
 yarn test
 yarn coverage
+yarn devserver
+yarn dependencies
+yarn prettify
 ```
 
 
