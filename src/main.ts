@@ -91,12 +91,8 @@ export class Main {
     TableGeometry.addToScene(this.scene)
   }
 
-  static start() {
-    let elt = document.getElementById("container")
-    let main = new Main()
-    main.initialise(elt)
-    main.animate()
+  start(elt) {
+    this.initialise(elt)
+    this.animate()
   }
 }
-
-Main.start()

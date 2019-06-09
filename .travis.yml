@@ -1,6 +1,5 @@
 language: node_js
 node_js:
-  - "10.4.1"
-before_script:
+  - "10.15.3"
 after_success:
   - jest --coverage --coverageReporters text-lcov | coveralls

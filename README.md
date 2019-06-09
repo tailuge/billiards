@@ -12,7 +12,7 @@ In browser WebGL [demo](http://tailuge.github.io/billiards/dist)
 ### Setup
 
 ```
-nvm use v9.11.1
+nvm use v10.15.3
 npm install gulp-cli -g
 yarn install
 yarn dev

@@ -1,2 +1,5 @@
 tasks:
-- command: yarn
+- command: npm install -g npm; yarn
+ports:
+- port: 8080
+  onOpen: open-browser

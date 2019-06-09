@@ -1,14 +1,9 @@
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 40px;
-  font-family: "Open Sans", "sans-serif";
+body, html {
+  margin: 2px;
   background-color: #000;
   color: #444;
+  width: 100%;
+  height: 100%;
 }
 
 h1,
@@ -16,57 +11,30 @@ p {
   margin: 0 0 1em 0;
 }
 
-/* no grid support? */
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-gap: 10px;
+  background-color: rgb(0, 0, 0);
+  padding: 2px;
+  width: 100%;
+  height: 100%;
+}
+
+.grid-container > div {
+  background-color: rgb(35, 32, 44);
+  text-align: center;
+  padding: 2px 0;
+  width: 100%;
+  height: 100%;
+}
+
+.view3d {
+    width: 100%;
+    height: 50%;
+}
 
 .sidebar {
-  float: left;
-  width: 19.1489%;
-}
-
-.content {
-  float: right;
-  width: 79.7872%;
-}
-
-/* make a grid */
-
-.wrapper {
-  max-width: 1600px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 3fr;
-  grid-gap: 2px;
-}
-
-.wrapper > * {
-  background-color: #444;
-  color: #fff;
-  border-radius: 2px;
-  padding: 10px;
-  font-size: 75%;
-  /* needed for the floated layout*/
-  margin-bottom: 10px;
-}
-
-.header,
-.footer {
-  grid-column: 1 / -1;
-  /* needed for the floated layout */
-  clear: both;
-}
-
-#container {
-  width: 100%;
-  height: 100%px;
-  min-width: 512px;
-  min-height: 512px;
-}
-
-/* We need to set the widths used on floated items back to auto, and remove the bottom margin as when we have grid we have gaps. */
-
-@supports (display: grid) {
-  .wrapper > * {
-    width: auto;
-    margin: 0;
-  }
+    width: 100%;
+    height: 100%;
 }
