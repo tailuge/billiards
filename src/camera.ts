@@ -11,7 +11,7 @@ export class Camera {
 
   camera
   table: Table
-  mode = this.aimView
+  mode = this.topView
 
   private topViewPoint = new THREE.Vector3(0, -0.1, 17)
 

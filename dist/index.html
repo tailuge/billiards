@@ -10,8 +10,8 @@
     <script src="library.js"></script>
 	<script>
 		window.onload = function() {
-          var main = new library.Main();
-          main.start(document.getElementById("view3d"));
+          var gameClient = new library.GameClient(document.getElementById("view3d"));
+          gameClient.begin();
         };
 	</script>
   </head>

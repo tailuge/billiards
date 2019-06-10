@@ -1,11 +1,10 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/main.ts',
+  entry: './src/gameclient.ts',
     module: {
     rules: [
       {
-        test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/
       }
