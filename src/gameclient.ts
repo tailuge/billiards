@@ -40,7 +40,7 @@ export class GameClient {
       let i = 0
       while (i++ < steps) {
         this.table.advance(step)
-        console.log(elapsed, steps,i)
+        //console.log(elapsed, steps,i)
       }
       this.camera.update(steps * step)
       this.keyboard.applyKeys(elapsed, this.table, this.camera)

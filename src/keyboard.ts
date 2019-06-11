@@ -1,6 +1,7 @@
 export class Keyboard {
   pressed = {}
   rate = 0
+  scale = 0.01
 
   constructor() {
     this.addHandlers()
@@ -52,20 +53,20 @@ export class Keyboard {
   }
 
   aim(t, table, camera, dir) {
-    this.rate += t / 50000
+    this.rate += t * this.scale
     table.cue.moveToCueBall()
     table.cue.rotateAim(dir * this.rate)
     camera.mode = camera.aimView
   }
 
   upDown(t, table, camera, dir) {
-    this.rate += t / 50000
+    this.rate += t * this.scale
     table.cue.adjustHeight(dir * this.rate)
     camera.mode = camera.aimView
   }
 
   side(t, table, camera, dir) {
-    this.rate += t / 50000
+    this.rate += t * this.scale
     table.cue.adjustSide(-dir * this.rate)
     camera.mode = camera.aimView
   }

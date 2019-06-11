@@ -22,7 +22,7 @@ export class Cue {
   })
 
   constructor() {
-    this.initialise(0.05, 0.1, this.length)
+    this.initialise(0.05, 0.15, this.length)
   }
 
   setCueBall(ball) {
