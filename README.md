@@ -31,8 +31,8 @@ yarn prettify
 
 3D graphics uses [three.js](https://threejs.org/docs/index.html#api/math/Vector3)
 
-Papers on [ball mechanics](http://billiards.colostate.edu/physics/Han_paper.pdf), [cushions](http://billiards.colostate.edu/physics/Mathavan_IMechE_2010.pdf)
-and [max spin](http://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf)
+Papers on [ball mechanics](https://billiards.colostate.edu/physics_articles/Han_paper.pdf), [cushions](https://billiards.colostate.edu/physics/Mathavan_IMechE_2010.pdf)
+and [max spin](https://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf)
 
 Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_blank">LaTeX</a> editor
 
