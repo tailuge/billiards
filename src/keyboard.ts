@@ -1,7 +1,12 @@
 export class Keyboard {
   pressed = {}
   rate = 0
-  scale = 0.01
+  scale = 0.02
+  public reportState: (state: String) => void
+
+  public registerCallback(stateCallback) {
+      this.reportState = stateCallback
+  }
 
   constructor() {
     this.addHandlers()
@@ -44,6 +49,7 @@ export class Keyboard {
     if (this.pressed[32]) {
       if (table.allStationary()) {
         table.cue.hit(3)
+        this.reportState(table.serialise())
         camera.mode = camera.afterHitView
       }
     }

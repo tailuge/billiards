@@ -12,7 +12,7 @@ export class GameClient {
 
   table: Table
   camera: Camera
-  keyboard = new Keyboard()
+  public keyboard = new Keyboard()
   last = performance.now()
 
   constructor(element) {

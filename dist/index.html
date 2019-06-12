@@ -11,8 +11,14 @@
 	<script>
 		window.onload = function() {
           var gameClient = new library.GameClient(document.getElementById("view3d"));
+          gameClient.keyboard.registerCallback(recordShot);
           gameClient.begin();
         };
+
+        function recordShot(a) {
+            document.getElementById("sidebar").innerHTML += a
+        }
+
 	</script>
   </head>
 
