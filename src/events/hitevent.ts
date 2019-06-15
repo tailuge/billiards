@@ -1,6 +1,6 @@
 
 import { GameEvent } from "./gameevent"
 
-export class AimEvent implements GameEvent {
-    // must send state of cue
+export class AimEvent extends GameEvent {
+    // must hold state of cue
 }
