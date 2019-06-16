@@ -4,15 +4,19 @@ import { Ball } from "./ball"
 import { Math as Math2, Vector3, Matrix4 } from "three"
 import { Mesh, CylinderGeometry, MeshPhongMaterial, Raycaster } from "three"
 import { up, upCross } from "./utils"
+import { AimEvent } from "./events/aimevent"
 
 export class Cue {
   mesh: Mesh
   ball: Ball
-  aim = new Vector3(1, 0, 0)
-  angle = 0
   limit = 0.4
-  height = this.limit
-  side = 0
+
+  event: AimEvent
+  aimdir = new Vector3(1, 0, 0)
+  verticalOffset = this.limit
+  sideOffset = 0
+
+  angle = 0
   length = TableGeometry.tableX * 1
 
   private static material = new MeshPhongMaterial({
@@ -43,31 +47,31 @@ export class Cue {
 
   rotateAim(angle) {
     this.angle += angle
-    this.aim.applyAxisAngle(up, angle)
+    this.aimdir.applyAxisAngle(up, angle)
     this.mesh.rotation.z = this.angle
   }
 
   adjustHeight(delta) {
-    this.height = Math2.clamp(this.height + delta, -this.limit, this.limit)
-    this.mesh.position.z = this.height
+    this.verticalOffset = Math2.clamp(this.verticalOffset + delta, -this.limit, this.limit)
+    this.mesh.position.z = this.verticalOffset
   }
 
   adjustSide(delta) {
-    this.side = Math2.clamp(this.side + delta, -this.limit, this.limit)
+    this.sideOffset = Math2.clamp(this.sideOffset + delta, -this.limit, this.limit)
     this.moveToCueBall()
   }
 
   hit(speed) {
-    this.ball.vel.copy(this.aim.clone().multiplyScalar(speed))
-    let rvel = upCross(this.aim).multiplyScalar((speed * this.height * 5) / 2)
-    rvel.z = (-this.side * 5) / 2
+    this.ball.vel.copy(this.aimdir.clone().multiplyScalar(speed))
+    let rvel = upCross(this.aimdir).multiplyScalar((speed * this.verticalOffset * 5) / 2)
+    rvel.z = (-this.sideOffset * 5) / 2
     this.ball.rvel.copy(rvel)
   }
 
   moveToCueBall() {
-    let offset = upCross(this.aim)
-      .multiplyScalar(this.side)
-      .setZ(this.height)
+    let offset = upCross(this.aimdir)
+      .multiplyScalar(this.sideOffset)
+      .setZ(this.verticalOffset)
     this.mesh.position.copy(this.ball.pos.clone().add(offset))
   }
 
@@ -79,9 +83,9 @@ export class Cue {
   intersectsAnything(table: Table) {
     let origin = table.balls[0].pos
       .clone()
-      .addScaledVector(this.aim, -this.length / 2)
-    origin.z = this.height
-    let direction = this.aim.clone().normalize()
+      .addScaledVector(this.aimdir, -this.length / 2)
+    origin.z = this.verticalOffset
+    let direction = this.aimdir.clone().normalize()
     let raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
     let intersections = raycaster.intersectObjects(
       table.balls.map(b => b.mesh.mesh)

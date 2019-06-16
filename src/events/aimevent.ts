@@ -2,13 +2,18 @@
 import { GameEvent } from "./gameevent"
 import { EventType } from "./eventtype"
 import { Base } from "../controller/base"
+import { Vector3 } from "three"
+import { vec } from "../utils"
 
 export class AimEvent extends GameEvent {
-    x: Number
+    pos: Vector3 = new Vector3(1,0,0)
+    dir: Vector3 = new Vector3(1,0,0)
+    verticalOffset = 0
+    sideOffset = 0
+
     constructor() {
         super()
         this.type = EventType.AIM
-        this.x = 1;
     }
 
     applyToController(controller: Base) {
@@ -17,7 +22,10 @@ export class AimEvent extends GameEvent {
 
     static fromJson(json) {
         let event = new AimEvent()
-        event.x = json.x
+        event.pos = vec(json.pos)
+        event.dir = vec(json.dir)
+        event.verticalOffset = json.verticalOffset
+        event.sideOffset = json.sideOffset
         return event
     }
 }

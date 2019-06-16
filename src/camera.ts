@@ -29,7 +29,7 @@ export class Camera {
 
   aimView() {
     this.camera.position.lerp(
-      this.table.balls[0].pos.clone().addScaledVector(this.table.cue.aim, -9),
+      this.table.balls[0].pos.clone().addScaledVector(this.table.cue.aimdir, -9),
       0.07
     )
     this.camera.position.z = 2.7

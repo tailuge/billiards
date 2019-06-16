@@ -9,7 +9,7 @@ export class EventUtil {
         return JSON.stringify(event)
     }
 
-    static fromSerialised(data: string): GameEvent {
+    static fromSerialised(data: string) {
         let json = JSON.parse(data);
         switch (json.type) {
             case EventType.AIM:
