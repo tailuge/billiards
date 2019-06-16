@@ -13,6 +13,6 @@ export class Aim extends Base {
         console.log(event)
     }
     handleAbort(event: AbortEvent): void {
-        console.log(event)
+        console.log("ignoring "+event)
     }
 }

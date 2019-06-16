@@ -7,8 +7,11 @@ import { EventType } from "../../src/events/eventtype";
 
 describe("EventUtil", () => {
     it("Serialise and deserialise AimEvent", done => {
-        let event: GameEvent = new AimEvent()
-        expect(EventUtil.fromSerialised(EventUtil.serialise(event)).type).to.equal(EventType.AIM)
+        let aim = new AimEvent()
+        let event: GameEvent = aim
+        aim.x = 5;
+        let serialised = EventUtil.serialise(event)
+        expect(EventUtil.fromSerialised(serialised).type).to.equal(EventType.AIM)
         done()
     })
 

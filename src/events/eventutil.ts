@@ -9,11 +9,11 @@ export class EventUtil {
         return JSON.stringify(event)
     }
 
-    static fromSerialised(data: string) {
+    static fromSerialised(data: string): GameEvent {
         let json = JSON.parse(data);
         switch (json.type) {
             case EventType.AIM:
-                return new AimEvent()
+                return AimEvent.fromJson(json)
             case EventType.ABORT:
                 return new AbortEvent()
             default:
