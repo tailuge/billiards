@@ -1,7 +1,7 @@
 
 import { GameEvent } from "./gameevent"
 import { EventType } from "./eventtype"
-import { Controller } from "../controller/base"
+import { Controller } from "../controller/controller"
 import { Vector3 } from "three"
 import { vec } from "../utils"
 

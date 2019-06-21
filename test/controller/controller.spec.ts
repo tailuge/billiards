@@ -1,6 +1,6 @@
 import "mocha"
 import { expect } from "chai"
-import { Controller } from "../../src/controller/base";
+import { Controller } from "../../src/controller/controller";
 import { Aim } from "../../src/controller/aim";
 import { AimEvent } from "../../src/events/aimevent";
 import { AbortEvent } from "../../src/events/abortevent";

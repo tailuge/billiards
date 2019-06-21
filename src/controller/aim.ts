@@ -1,4 +1,4 @@
-import { Controller } from "./base"
+import { Controller } from "./controller"
 import { AimEvent } from "../events/aimevent"
 import { AbortEvent } from "../events/abortevent"
 
