@@ -1,4 +1,4 @@
-import { Base } from "./base"
+import { Controller } from "./base"
 import { AimEvent } from "../events/aimevent"
 import { AbortEvent } from "../events/abortevent"
 
@@ -8,11 +8,13 @@ import { AbortEvent } from "../events/abortevent"
  * Transitions to PlayShot.
  * Game events are ignored besides chat and abort messages.
  */
-export class Aim extends Base {
-    handleAim(event: AimEvent): void {
-        console.log(event)
+export class Aim extends Controller {
+    handleAim(event: AimEvent): Controller {
+        console.log("handling "+event)
+        return this
     }
-    handleAbort(event: AbortEvent): void {
+    handleAbort(event: AbortEvent): Controller {
         console.log("ignoring "+event)
+        return this
     }
 }

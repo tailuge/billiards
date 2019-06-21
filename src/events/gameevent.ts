@@ -1,7 +1,7 @@
 import { EventType } from "./eventtype"
-import { Base } from "../controller/base"
+import { Controller } from "../controller/base"
 
 export abstract class GameEvent {
     type: EventType
-    abstract applyToController(controller: Base): void
+    abstract applyToController(controller: Controller): Controller
 }

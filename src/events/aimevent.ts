@@ -1,7 +1,7 @@
 
 import { GameEvent } from "./gameevent"
 import { EventType } from "./eventtype"
-import { Base } from "../controller/base"
+import { Controller } from "../controller/base"
 import { Vector3 } from "three"
 import { vec } from "../utils"
 
@@ -16,7 +16,7 @@ export class AimEvent extends GameEvent {
         this.type = EventType.AIM
     }
 
-    applyToController(controller: Base) {
+    applyToController(controller: Controller) {
         return controller.handleAim(this)
     }
 

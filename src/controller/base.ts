@@ -2,12 +2,12 @@ import { GameEvent } from "../events/gameevent"
 import { AimEvent } from "../events/aimevent"
 import { AbortEvent } from "../events/abortevent"
 
-export abstract class Base {
+export abstract class Controller {
 
-    handleEvent(event: GameEvent) {
-        event.applyToController(this)
+    handleEvent(event: GameEvent): Controller {
+        return event.applyToController(this)
     }
 
-    abstract handleAim(event: AimEvent): void
-    abstract handleAbort(event: AbortEvent): void
+    abstract handleAim(event: AimEvent): Controller
+    abstract handleAbort(event: AbortEvent): Controller
 }

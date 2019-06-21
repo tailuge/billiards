@@ -1,6 +1,6 @@
 import { GameEvent } from "./gameevent"
 import { EventType } from "./eventtype"
-import { Base } from "../controller/base"
+import { Controller } from "../controller/base"
 
 export class AbortEvent extends GameEvent {
     constructor() {
@@ -8,7 +8,7 @@ export class AbortEvent extends GameEvent {
         this.type = EventType.ABORT
     }
 
-    applyToController(controller: Base) {
+    applyToController(controller: Controller): Controller {
         return controller.handleAbort(this)
     }
 }
