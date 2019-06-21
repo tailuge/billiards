@@ -24,5 +24,6 @@ module.exports = {
     host: '0.0.0.0',
     compress: true,
     port: 8080
-  }
+  },
+  performance: { hints: false }
 };

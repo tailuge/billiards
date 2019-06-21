@@ -1,14 +1,14 @@
-import { Ball } from "./ball"
-import { Table } from "./table"
-import { Rack } from "./rack"
-import { Camera } from "./camera"
-import { TableGeometry } from "./tablegeometry"
-import { Keyboard } from "./keyboard"
-import * as THREE from "three"
+import { AmbientLight, DirectionalLight, PCFSoftShadowMap, Scene, Vector3, WebGLRenderer } from "three";
+import { Ball } from "./ball";
+import { Camera } from "./camera";
+import { Keyboard } from "./keyboard";
+import { Rack } from "./rack";
+import { Table } from "./table";
+import { TableGeometry } from "./tablegeometry";
 
 export class GameClient {
-  scene = new THREE.Scene()
-  renderer = new THREE.WebGLRenderer()
+  scene = new Scene()
+  renderer = new WebGLRenderer()
 
   table: Table
   camera: Camera
@@ -56,7 +56,7 @@ export class GameClient {
   private initialiseScene(element) {
     this.renderer.setSize(element.offsetWidth, element.offsetHeight)
     this.renderer.shadowMap.enabled = true
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    this.renderer.shadowMap.type = PCFSoftShadowMap
     element.appendChild(this.renderer.domElement)
   }
 
@@ -69,7 +69,7 @@ export class GameClient {
 
   private addLights() {
     let s = 1.3
-    let light = new THREE.DirectionalLight(0xffffff, 1.0)
+    let light = new DirectionalLight(0xffffff, 1.0)
     light.position.set(0.1, -0.01, 10)
     light.shadow.camera.near = 4
     light.shadow.camera.far = 12
@@ -81,12 +81,12 @@ export class GameClient {
     light.shadow.mapSize.height = 1024
     light.castShadow = true
     this.scene.add(light)
-    this.scene.add(new THREE.AmbientLight(0x505050, 1.0))
+    this.scene.add(new AmbientLight(0x505050, 1.0))
   }
 
   private addTable() {
     let balls = Rack.testSpin()
-    balls.unshift(new Ball(new THREE.Vector3(-11, 0.0, 0)))
+    balls.unshift(new Ball(new Vector3(-11, 0.0, 0)))
     this.table = new Table(balls)
     this.table.balls.forEach(b => b.mesh.addToScene(this.scene))
     this.scene.add(this.table.cue.mesh)
