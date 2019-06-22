@@ -10,22 +10,28 @@
     <script src="library.js"></script>
 	<script>
 		window.onload = function() {
-          var gameClient = new library.GameClient(document.getElementById("view3d"));
-          gameClient.keyboard.registerCallback(recordShot);
-          gameClient.begin();
+          var gameClientP1 = new library.GameClient(document.getElementById("view3dP1"));
+          gameClientP1.keyboard.registerCallback(x => {document.getElementById("sidebarP1").innerHTML += a});
+          gameClientP1.begin();
+
+          var gameClientP2 = new library.GameClient(document.getElementById("view3dP2"));
+          gameClientP2.keyboard.registerCallback(x => {document.getElementById("sidebarP2").innerHTML += a});
+          gameClientP2.begin();
+
         };
 
-        function recordShot(a) {
-            document.getElementById("sidebar").innerHTML += a
-        }
 
 	</script>
   </head>
 
   <body>
     <div class="flex-container">
-      <div id="view3d" style="flex-grow: 8"></div>
-      <div id="sidebar" style="flex-grow: 1">Shot history:</div>
+      <div id="view3dP1" style="flex-grow: 8"></div>
+      <div id="sidebarP1" style="flex-grow: 1">Shot history:</div>
+    </div>
+    <div class="flex-container">
+      <div id="sidebarP2" style="flex-grow: 1">Shot history:</div>
+      <div id="view3dP2" style="flex-grow: 8"></div>
     </div>
   </body>
 </html>

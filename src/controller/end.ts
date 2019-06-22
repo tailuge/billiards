@@ -1,7 +1,6 @@
 import { Controller } from "./controller"
 import { AimEvent } from "../events/aimevent"
 import { AbortEvent } from "../events/abortevent"
-import { Input } from "../events/input"
 
 export class End extends Controller {
 
@@ -14,9 +13,4 @@ export class End extends Controller {
         console.log("ignoring "+event)
         return this
     }
-
-    handleInput(input: Input) {
-        console.log(input)
-    }
-
 }

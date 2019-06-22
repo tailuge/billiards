@@ -5,13 +5,18 @@ import { AbortEvent } from "../events/abortevent"
 
 export abstract class Controller {
 
+    inputQueue: [Input]
+
+    handleInput(input: Input): void {
+        this.inputQueue.push(input)
+    }
+
     broadcast: (event: GameEvent)=>void
 
     handleEvent(event: GameEvent): Controller {
         return event.applyToController(this)
     }
 
-    abstract handleInput(input: Input): void
     abstract handleAim(event: AimEvent): Controller
     abstract handleAbort(event: AbortEvent): Controller
 }

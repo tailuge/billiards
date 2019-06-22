@@ -2,7 +2,6 @@ import { AbortEvent } from "../events/abortevent";
 import { AimEvent } from "../events/aimevent";
 import { Controller } from "./controller";
 import { End } from "./end";
-import { Input } from "../events/input";
 
 /**
  * Aim using input events.
@@ -20,9 +19,5 @@ export class Aim extends Controller {
     handleAbort(event: AbortEvent): Controller {
         console.log("ignoring "+event)
         return new End()
-    }
-
-    handleInput(input: Input) {
-        console.log(input)
     }
 }
