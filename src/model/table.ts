@@ -7,7 +7,7 @@ import { Ball } from "./ball"
 
 export class Table {
   balls: Ball[]
-  cue = new Cue()
+  readonly cue = new Cue()
   pairs: any[] = []
 
   constructor(balls) {
