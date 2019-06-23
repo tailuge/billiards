@@ -1,7 +1,7 @@
 import { Vector3 } from "three"
-import { zero, vec, passesThroughZero } from "./utils"
-import { sliding, surfaceVelocity, rollingFull, forceRoll } from "./physics"
-import { BallMesh } from "./ballmesh"
+import { zero, vec, passesThroughZero } from "../utils/utils"
+import { sliding, surfaceVelocity, rollingFull, forceRoll } from "../model/physics/physics"
+import { BallMesh } from "../view/ballmesh"
 
 export enum State {
   Stationary = "Stationary",

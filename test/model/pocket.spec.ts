@@ -1,8 +1,8 @@
 import "mocha"
 import { expect } from "chai"
-import { Ball } from "../src/ball"
-import { TableGeometry } from "../src/tablegeometry"
-import { Pocket } from "../src/pocket"
+import { Ball } from "../../src/model/ball"
+import { TableGeometry } from "../../src/view/tablegeometry"
+import { Pocket } from "../../src/model/physics/pocket"
 import { Vector3 } from "three"
 
 let t = 0.1

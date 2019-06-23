@@ -1,5 +1,5 @@
-import { Ball } from "./ball"
-import { TableGeometry } from "./tablegeometry"
+import { Ball } from "../ball"
+import { TableGeometry } from "../../view/tablegeometry"
 import { rotateApplyUnrotate, bounceWithoutSlipX } from "./physics"
 import { Vector3 } from "three"
 

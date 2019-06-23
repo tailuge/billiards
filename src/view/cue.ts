@@ -1,10 +1,10 @@
-import { TableGeometry } from "./tablegeometry"
-import { Table } from "./table"
-import { Ball } from "./ball"
+import { TableGeometry } from "../view/tablegeometry"
+import { Table } from "../model/table"
+import { Ball } from "../model/ball"
 import { Math as Math2, Vector3, Matrix4 } from "three"
 import { Mesh, CylinderGeometry, MeshPhongMaterial, Raycaster } from "three"
-import { up, upCross } from "./utils"
-import { AimEvent } from "./events/aimevent"
+import { up, upCross } from "../utils/utils"
+import { AimEvent } from "../events/aimevent"
 
 export class Cue {
   mesh: Mesh

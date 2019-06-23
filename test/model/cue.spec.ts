@@ -1,10 +1,10 @@
 import "mocha"
 import { expect } from "chai"
-import { Ball } from "../src/ball"
-import { Table } from "../src/table"
-import { Cue } from "../src/cue"
+import { Ball } from "../../src/model/ball"
+import { Table } from "../../src/model/table"
+import { Cue } from "../../src/view/cue"
 import { Vector3 } from "three"
-import { zero } from "../src/utils"
+import { zero } from "../../src/utils/utils"
 
 let t = 0.1
 describe("Cue", () => {

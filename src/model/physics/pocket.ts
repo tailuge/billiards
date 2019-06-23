@@ -1,5 +1,5 @@
-import { Ball, State } from "./ball"
-import { TableGeometry } from "./tablegeometry"
+import { Ball, State } from "../ball"
+import { TableGeometry } from "../../view/tablegeometry"
 import { Vector3 } from "three"
 
 export class Pocket {

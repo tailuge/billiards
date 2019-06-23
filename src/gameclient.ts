@@ -1,10 +1,10 @@
 import { AmbientLight, DirectionalLight, PCFSoftShadowMap, Scene, Vector3, WebGLRenderer } from "three";
-import { Ball } from "./ball";
-import { Camera } from "./camera";
+import { Ball } from "./model/ball";
+import { Camera } from "./view/camera";
 import { Keyboard } from "./keyboard";
-import { Rack } from "./rack";
-import { Table } from "./table";
-import { TableGeometry } from "./tablegeometry";
+import { Rack } from "./utils/rack";
+import { Table } from "./model/table";
+import { TableGeometry } from "./view/tablegeometry";
 
 export class GameClient {
   scene = new Scene()

@@ -1,5 +1,5 @@
-import { Ball } from "./ball"
-import { norm } from "./utils"
+import { Ball } from "../ball"
+import { norm } from "../../utils/utils"
 
 export class Collision {
   static willCollide(a: Ball, b: Ball, t: number): boolean {

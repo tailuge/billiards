@@ -1,5 +1,5 @@
-import { Table } from "./table"
-import { up, zero } from "./utils"
+import { Table } from "../model/table"
+import { up, zero } from "../utils/utils"
 
 import * as THREE from "three"
 

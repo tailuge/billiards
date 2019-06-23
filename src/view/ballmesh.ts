@@ -5,7 +5,7 @@ import {
   MeshPhongMaterial,
   ArrowHelper
 } from "three"
-import { norm, up, zero } from "./utils"
+import { norm, up, zero } from "./../utils/utils"
 
 export class BallMesh {
   mesh: Mesh

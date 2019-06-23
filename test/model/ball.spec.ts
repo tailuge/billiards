@@ -1,14 +1,14 @@
 import "mocha"
 import { expect } from "chai"
-import { Ball } from "../src/ball"
+import { Ball } from "../../src/model/ball"
 import { Vector3 } from "three"
-import { zero, passesThroughZero } from "../src/utils"
+import { zero, passesThroughZero } from "../../src/utils/utils"
 import {
   sliding,
   slidingFull,
   forceRoll,
   surfaceVelocity
-} from "../src/physics"
+} from "../../src/model/physics/physics"
 
 let t = 0.1
 

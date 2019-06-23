@@ -1,9 +1,9 @@
 import "mocha"
 import { expect } from "chai"
-import { Ball } from "../src/ball"
-import { Collision } from "../src/collision"
+import { Ball } from "../../src/model/ball"
+import { Collision } from "../../src/model/physics/collision"
 import { Vector3 } from "three"
-import { zero } from "../src/utils"
+import { zero } from "../../src/utils/utils"
 
 let epsilon = 0.001
 let t = 0.1

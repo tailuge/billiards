@@ -1,8 +1,8 @@
-import { Cushion } from "./cushion"
-import { Collision } from "./collision"
-import { Knuckle } from "./knuckle"
-import { Pocket } from "./pocket"
-import { Cue } from "./cue"
+import { Cushion } from "./physics/cushion"
+import { Collision } from "./physics/collision"
+import { Knuckle } from "./physics/knuckle"
+import { Pocket } from "./physics/pocket"
+import { Cue } from "../view/cue"
 import { Ball } from "./ball"
 
 export class Table {

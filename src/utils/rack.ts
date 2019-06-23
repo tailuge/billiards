@@ -1,5 +1,5 @@
-import { Ball } from "./ball"
-import { TableGeometry } from "./tablegeometry"
+import { Ball } from "../model/ball"
+import { TableGeometry } from "../view/tablegeometry"
 import { Vector3 } from "three"
 
 export class Rack {

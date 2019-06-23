@@ -1,10 +1,10 @@
 import "mocha"
 import { expect } from "chai"
-import { Ball } from "../src/ball"
-import { TableGeometry } from "../src/tablegeometry"
-import { Table } from "../src/table"
+import { Ball } from "../../src/model/ball"
+import { TableGeometry } from "../../src/view/tablegeometry"
+import { Table } from "../../src/model/table"
 import { Vector3 } from "three"
-import { zero } from "../src/utils"
+import { zero } from "../../src/utils/utils"
 
 let t = 0.1
 

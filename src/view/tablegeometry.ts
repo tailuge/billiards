@@ -1,7 +1,7 @@
 import { Vector3, Matrix4 } from "three"
 import { Mesh, CylinderGeometry, BoxGeometry, MeshPhongMaterial } from "three"
-import { Knuckle } from "./knuckle"
-import { Pocket } from "./pocket"
+import { Knuckle } from "../model/physics/knuckle"
+import { Pocket } from "../model/physics/pocket"
 
 export class TableGeometry {
   static tableX = (21 * 2) / 3
