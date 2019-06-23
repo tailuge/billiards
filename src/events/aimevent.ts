@@ -10,6 +10,7 @@ export class AimEvent extends GameEvent {
     dir: Vector3 = new Vector3(1,0,0)
     verticalOffset = 0
     sideOffset = 0
+    angle = 0
 
     constructor() {
         super()
@@ -24,6 +25,7 @@ export class AimEvent extends GameEvent {
         let event = new AimEvent()
         event.pos = vec(json.pos)
         event.dir = vec(json.dir)
+        event.angle = json.angle
         event.verticalOffset = json.verticalOffset
         event.sideOffset = json.sideOffset
         return event

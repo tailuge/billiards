@@ -1,95 +1,90 @@
 import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
 import { Ball } from "../model/ball"
-import { Math as Math2, Vector3, Matrix4 } from "three"
-import { Mesh, CylinderGeometry, MeshPhongMaterial, Raycaster } from "three"
+import { Math as Math2, Matrix4, Mesh, CylinderGeometry, MeshPhongMaterial, Raycaster } from "three"
 import { up, upCross } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 
 export class Cue {
-  mesh: Mesh
-  ball: Ball
-  limit = 0.4
+    mesh: Mesh
+    ball: Ball
+    limit = 0.4
 
-  event: AimEvent
-  aimdir = new Vector3(1, 0, 0)
-  verticalOffset = this.limit
-  sideOffset = 0
+    aim: AimEvent = new AimEvent()
 
-  angle = 0
-  length = TableGeometry.tableX * 1
+    length = TableGeometry.tableX * 1
 
-  private static material = new MeshPhongMaterial({
-    color: 0x885577,
-    wireframe: false,
-    flatShading: false
-  })
+    private static material = new MeshPhongMaterial({
+        color: 0x885577,
+        wireframe: false,
+        flatShading: false
+    })
 
-  constructor() {
-    this.initialise(0.05, 0.15, this.length)
-  }
+    constructor() {
+        this.initialise(0.05, 0.15, this.length)
+    }
 
-  setCueBall(ball) {
-    this.ball = ball
-  }
+    setCueBall(ball) {
+        this.ball = ball
+    }
 
-  private initialise(tip, but, length) {
-    var geometry = new CylinderGeometry(tip, but, length, 16)
-    this.mesh = new Mesh(geometry, Cue.material)
-    this.mesh.castShadow = true
-    this.mesh.geometry
-      .applyMatrix(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
-      .applyMatrix(
-        new Matrix4().identity().makeTranslation(-length / 2 - 1, 0, 0)
-      )
-    this.mesh.rotation.z = this.angle
-  }
+    private initialise(tip, but, length) {
+        var geometry = new CylinderGeometry(tip, but, length, 16)
+        this.mesh = new Mesh(geometry, Cue.material)
+        this.mesh.castShadow = true
+        this.mesh.geometry
+            .applyMatrix(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
+            .applyMatrix(
+                new Matrix4().identity().makeTranslation(-length / 2 - 1, 0, 0)
+            )
+        this.mesh.rotation.z = this.aim.angle
+    }
 
-  rotateAim(angle) {
-    this.angle += angle
-    this.aimdir.applyAxisAngle(up, angle)
-    this.mesh.rotation.z = this.angle
-  }
+    rotateAim(angle) {
+        this.aim.angle += angle
+        this.aim.dir.applyAxisAngle(up, angle)
+        this.mesh.rotation.z = this.aim.angle
+    }
 
-  adjustHeight(delta) {
-    this.verticalOffset = Math2.clamp(this.verticalOffset + delta, -this.limit, this.limit)
-    this.mesh.position.z = this.verticalOffset
-  }
+    adjustHeight(delta) {
+        this.aim.verticalOffset = Math2.clamp(this.aim.verticalOffset + delta, -this.limit, this.limit)
+        this.mesh.position.z = this.aim.verticalOffset
+    }
 
-  adjustSide(delta) {
-    this.sideOffset = Math2.clamp(this.sideOffset + delta, -this.limit, this.limit)
-    this.moveToCueBall()
-  }
+    adjustSide(delta) {
+        this.aim.sideOffset = Math2.clamp(this.aim.sideOffset + delta, -this.limit, this.limit)
+        this.moveToCueBall()
+    }
 
-  hit(speed) {
-    this.ball.vel.copy(this.aimdir.clone().multiplyScalar(speed))
-    let rvel = upCross(this.aimdir).multiplyScalar((speed * this.verticalOffset * 5) / 2)
-    rvel.z = (-this.sideOffset * 5) / 2
-    this.ball.rvel.copy(rvel)
-  }
+    hit(speed) {
+        this.ball.vel.copy(this.aim.dir.clone().multiplyScalar(speed))
+        let rvel = upCross(this.aim.dir).multiplyScalar((speed * this.aim.verticalOffset * 5) / 2)
+        rvel.z = (-this.aim.sideOffset * 5) / 2
+        this.ball.rvel.copy(rvel)
+    }
 
-  moveToCueBall() {
-    let offset = upCross(this.aimdir)
-      .multiplyScalar(this.sideOffset)
-      .setZ(this.verticalOffset)
-    this.mesh.position.copy(this.ball.pos.clone().add(offset))
-  }
+    moveToCueBall() {
+        let offset = upCross(this.aim.dir)
+            .multiplyScalar(this.aim.sideOffset)
+            .setZ(this.aim.verticalOffset)
+        this.mesh.position.copy(this.ball.pos.clone().add(offset))
+    }
 
-  t = 0
-  update(t) {
-    this.t += t
-  }
+    t = 0
+    update(t) {
+        this.t += t
+    }
 
-  intersectsAnything(table: Table) {
-    let origin = table.balls[0].pos
-      .clone()
-      .addScaledVector(this.aimdir, -this.length / 2)
-    origin.z = this.verticalOffset
-    let direction = this.aimdir.clone().normalize()
-    let raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
-    let intersections = raycaster.intersectObjects(
-      table.balls.map(b => b.mesh.mesh)
-    )
-    return intersections.length > 0
-  }
+    intersectsAnything(table: Table) {
+        let origin = table.balls[0].pos
+            .clone()
+            .addScaledVector(this.aim.dir, -this.length / 2)
+        origin.z = this.aim.verticalOffset
+        let direction = this.aim.dir.clone().normalize()
+        let raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
+        let intersections = raycaster.intersectObjects(
+            table.balls.map(b => b.mesh.mesh)
+        )
+        return intersections.length > 0
+    }
 }
