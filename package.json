@@ -10,15 +10,16 @@
         "coverage": "jest --coverage --coverageReporters text",
         "dev": "webpack -p",
         "prettify": "prettier --write --no-semi {src,test}/*",
-        "devserver": "webpack-dev-server",
-        "dependencies": "npx yarn-check"
+        "server": "webpack-dev-server",
+        "deps": "npx yarn-check --skip-unused"
     },
     "dependencies": {
-        "@types/three": "^0.103.2",
         "three": "^0.105.2"
     },
     "devDependencies": {
+        "@types/chai": "^4.1.7",
         "@types/jest": "^24.0.15",
+        "@types/three": "^0.103.2",
         "chai": "^4.2.0",
         "coveralls": "^3.0.4",
         "jest": "^24.8.0",
