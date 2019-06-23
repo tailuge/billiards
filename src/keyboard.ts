@@ -5,7 +5,7 @@ export class Keyboard {
   public reportState: (state: String) => void
 
   public registerCallback(stateCallback) {
-      this.reportState = stateCallback
+    this.reportState = stateCallback
   }
 
   constructor() {

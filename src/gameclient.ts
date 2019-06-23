@@ -1,10 +1,17 @@
-import { AmbientLight, DirectionalLight, PCFSoftShadowMap, Scene, Vector3, WebGLRenderer } from "three";
-import { Ball } from "./model/ball";
-import { Camera } from "./view/camera";
-import { Keyboard } from "./keyboard";
-import { Rack } from "./utils/rack";
-import { Table } from "./model/table";
-import { TableGeometry } from "./view/tablegeometry";
+import {
+  AmbientLight,
+  DirectionalLight,
+  PCFSoftShadowMap,
+  Scene,
+  Vector3,
+  WebGLRenderer
+} from "three"
+import { Ball } from "./model/ball"
+import { Camera } from "./view/camera"
+import { Keyboard } from "./keyboard"
+import { Rack } from "./utils/rack"
+import { Table } from "./model/table"
+import { TableGeometry } from "./view/tablegeometry"
 
 export class GameClient {
   scene = new Scene()
@@ -22,10 +29,12 @@ export class GameClient {
     this.addCamera(element)
   }
 
-  begin() {this.animate(performance.now())}
+  begin() {
+    this.animate(performance.now())
+  }
 
   animate(timestamp): void {
-    this.advance((timestamp - this.last)/1000)
+    this.advance((timestamp - this.last) / 1000)
     this.last = timestamp
     this.render()
     requestAnimationFrame(t => {
@@ -36,7 +45,7 @@ export class GameClient {
   private advance(elapsed) {
     try {
       let step = 0.01
-      let steps = Math.max(15,Math.floor(elapsed / step))
+      let steps = Math.max(15, Math.floor(elapsed / step))
       let i = 0
       while (i++ < steps) {
         this.table.advance(step)
