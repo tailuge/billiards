@@ -7,7 +7,8 @@ export enum State {
   Stationary = "Stationary",
   Rolling = "Rolling",
   Sliding = "Sliding",
-  Falling = "Falling"
+  Falling = "Falling",
+  InPocket = "InPocket"
 }
 
 export class Ball {
@@ -18,8 +19,6 @@ export class Ball {
 
   mesh: BallMesh
 
-  fRoll = 0.02
-  fSlide = 0.1
   transition = 0.05
 
   constructor(pos) {

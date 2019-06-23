@@ -12,19 +12,22 @@ export class Keyboard {
     this.addHandlers()
   }
 
-  private addHandlers() {
-    document.addEventListener("keydown", e => {
+  keydown = (e) => {
       e = e || window.event
       this.pressed[e.keyCode] = true
       e.stopImmediatePropagation()
-    })
+    }
 
-    document.addEventListener("keyup", e => {
+  keyup = (e) => {
       e = e || window.event
       delete this.pressed[e.keyCode]
       this.rate = 0
       e.stopImmediatePropagation()
-    })
+    }
+
+  private addHandlers() {
+    document.addEventListener("keydown", this.keydown)
+    document.addEventListener("keyup", this.keyup)
   }
 
   applyKeys(t, table, camera) {
