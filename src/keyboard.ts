@@ -12,18 +12,18 @@ export class Keyboard {
     this.addHandlers()
   }
 
-  keydown = (e) => {
-      e = e || window.event
-      this.pressed[e.keyCode] = true
-      e.stopImmediatePropagation()
-    }
+  keydown = e => {
+    e = e || window.event
+    this.pressed[e.keyCode] = true
+    e.stopImmediatePropagation()
+  }
 
-  keyup = (e) => {
-      e = e || window.event
-      delete this.pressed[e.keyCode]
-      this.rate = 0
-      e.stopImmediatePropagation()
-    }
+  keyup = e => {
+    e = e || window.event
+    delete this.pressed[e.keyCode]
+    this.rate = 0
+    e.stopImmediatePropagation()
+  }
 
   private addHandlers() {
     document.addEventListener("keydown", this.keydown)

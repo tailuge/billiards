@@ -21,8 +21,9 @@ yarn dev
 ```
 yarn test
 yarn coverage
-yarn devserver
-yarn dependencies
+yarn server
+yarn deps
+yarn upgrade -L
 yarn prettify
 ```
 

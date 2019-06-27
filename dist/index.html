@@ -11,11 +11,11 @@
 	<script>
 		window.onload = function() {
           var gameClientP1 = new library.GameClient(document.getElementById("view3dP1"));
-          gameClientP1.keyboard.registerCallback(x => {document.getElementById("sidebarP1").innerHTML += a});
+          gameClientP1.keyboard.registerCallback(x => {document.getElementById("sidebarP1").innerHTML += x});
           gameClientP1.begin();
 
           var gameClientP2 = new library.GameClient(document.getElementById("view3dP2"));
-          gameClientP2.keyboard.registerCallback(x => {document.getElementById("sidebarP2").innerHTML += a});
+          gameClientP2.keyboard.registerCallback(x => {document.getElementById("sidebarP2").innerHTML += x});
           gameClientP2.begin();
 
         };
