@@ -1,5 +1,5 @@
 export enum EventType {
-    MASTER,
+    BEGIN,
     SLAVE,
     CHAT,
     ABORT,

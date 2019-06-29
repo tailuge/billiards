@@ -1,29 +1,20 @@
 import { AbortEvent } from "../events/abortevent";
 import { AimEvent } from "../events/aimevent";
-import { BeginEvent } from "../events/beginevent";
 import { Controller } from "./controller";
-import { PlaceBall } from "./placeball";
 import { End } from "./end";
+import { Table } from "../model/table";
 import { View } from "../view/view";
 
 /**
- * Initial state of controller.
+ * Place cue ball using input events.
  *
- * Transitions into active player and watcher.
  */
-export class Init extends Controller {
+export class PlaceBall extends Controller {
 
-    constructor(element) {
+    constructor(table: Table, view: View) {
         super()
-        this.view = new View(element)
-    }
-
-    handleBegin(event: BeginEvent): Controller {
-        console.log("handling " + event)
-
-        //rack
-        // send rack
-        return new PlaceBall(this.table, this.view)
+        this.table = table
+        this.view = view
     }
 
     handleAim(event: AimEvent): Controller {

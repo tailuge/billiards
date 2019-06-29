@@ -3,6 +3,7 @@ import { GameEvent } from "../events/gameevent"
 import { AimEvent } from "../events/aimevent"
 import { AbortEvent } from "../events/abortevent"
 import { Table } from "../model/table";
+import { View } from "../view/view";
 
 /**
  * Controller manages the state of the system reacting input and network events.
@@ -11,7 +12,8 @@ import { Table } from "../model/table";
  */
 export abstract class Controller {
 
-    table:Table
+    table: Table
+    view: View
 
     inputQueue: [Input]
 
@@ -19,7 +21,7 @@ export abstract class Controller {
         this.inputQueue.push(input)
     }
 
-    broadcast: (event: GameEvent)=>void
+    broadcast: (event: GameEvent) => void
 
     handleEvent(event: GameEvent): Controller {
         return event.applyToController(this)
