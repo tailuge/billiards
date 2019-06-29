@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   entry: './src/gameclient.ts',
-    module: {
+  module: {
     rules: [
       {
         use: 'ts-loader',

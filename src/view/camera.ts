@@ -1,16 +1,13 @@
 import { PerspectiveCamera, Vector3 } from "three";
-import { Table } from "../model/table";
 import { up, zero } from "../utils/utils";
 
 
 export class Camera {
-    constructor(table: Table, aspectRatio) {
-        this.table = table
+    constructor(aspectRatio) {
         this.camera = new PerspectiveCamera(75, aspectRatio, 0.1, 1000)
     }
 
     camera: PerspectiveCamera
-    table: Table
     mode = this.topView
 
     private topViewPoint = new Vector3(0, -0.1, 17)
@@ -27,19 +24,19 @@ export class Camera {
         this.camera.lookAt(zero)
     }
 
-    aimView() {
+    aimView(cueBallPos, dir) {
         this.camera.position.lerp(
-            this.table.balls[0].pos.clone().addScaledVector(this.table.cue.aim.dir, -9),
+            cueBallPos.clone().addScaledVector(dir, -9),
             0.07
         )
         this.camera.position.z = 2.7
         this.camera.up = up
-        this.camera.lookAt(this.table.balls[0].pos)
+        this.camera.lookAt(cueBallPos)
     }
 
-    afterHitView() {
+    afterHitView(cueBallPos) {
         this.camera.position.addScaledVector(up, 0.01)
         this.camera.up = up
-        this.camera.lookAt(this.table.balls[0].pos)
+        this.camera.lookAt(cueBallPos)
     }
 }
