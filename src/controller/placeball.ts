@@ -17,6 +17,10 @@ export class PlaceBall extends Controller {
         this.view = view
     }
 
+    advance(t: number): void {
+        console.log(t)
+    }
+
     handleAim(event: AimEvent): Controller {
         console.log("handling " + event)
         return this

@@ -18,6 +18,10 @@ export class Init extends Controller {
         this.view = new View(element)
     }
 
+    advance(t: number): void {
+        console.log(t)
+    }
+
     handleBegin(event: BeginEvent): Controller {
         console.log("handling " + event)
 

@@ -1,38 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>billiards</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="description" content="billiards" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <link rel="stylesheet" type="text/css" href="index.css" />
-    <script src="library.js"></script>
+
+<head>
+	<title>billiards</title>
+	<link rel="icon" type="image/png" href="favicon.png">
+	<meta charset="utf-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="description" content="billiards" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<link rel="stylesheet" type="text/css" href="index.css" />
+	<script src="library.js">
+	</script>
 	<script>
 		window.onload = function() {
-          var gameClientP1 = new library.GameClient(document.getElementById("view3dP1"));
-          gameClientP1.keyboard.registerCallback(x => {document.getElementById("sidebarP1").innerHTML += x});
-          gameClientP1.begin();
+          var controller1 = new library.Init(document.getElementById("view3dP1"))
+          var controller2 = new library.Init(document.getElementById("view3dP2"))
 
-          var gameClientP2 = new library.GameClient(document.getElementById("view3dP2"));
-          gameClientP2.keyboard.registerCallback(x => {document.getElementById("sidebarP2").innerHTML += x});
-          gameClientP2.begin();
+          controller1.broadcast = e => controller2.eventQueue.push(e)
+          controller2.broadcast = e => controller1.eventQueue.push(e)
 
-        };
-
-
+          controller1.eventQueue.push(new library.BeginEvent())
+        }
 	</script>
-  </head>
+</head>
 
-  <body>
-    <div class="flex-container">
-      <div id="view3dP1" style="flex-grow: 8"></div>
-      <div id="sidebarP1" style="flex-grow: 1">Shot history:</div>
-    </div>
-    <div class="flex-container">
-      <div id="sidebarP2" style="flex-grow: 1">Shot history:</div>
-      <div id="view3dP2" style="flex-grow: 8"></div>
-    </div>
-  </body>
+<body>
+	<div class="flex-container">
+		<div id="view3dP1" style="flex-grow: 8"></div>
+		<div id="sidebarP1" style="flex-grow: 1">Shot history:</div>
+	</div>
+	<div class="flex-container">
+		<div id="sidebarP2" style="flex-grow: 1">Shot history:</div>
+		<div id="view3dP2" style="flex-grow: 8"></div>
+	</div>
+</body>
+
 </html>

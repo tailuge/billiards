@@ -14,19 +14,16 @@ export abstract class Controller {
 
     table: Table
     view: View
-
-    inputQueue: [Input]
-
-    handleInput(input: Input): void {
-        this.inputQueue.push(input)
-    }
+    inputQueue: Input[] = []
+    eventQueue: GameEvent[] = []
 
     broadcast: (event: GameEvent) => void
 
+    abstract advance(t: number): void
+    abstract handleAim(event: AimEvent): Controller
+    abstract handleAbort(event: AbortEvent): Controller
     handleEvent(event: GameEvent): Controller {
         return event.applyToController(this)
     }
 
-    abstract handleAim(event: AimEvent): Controller
-    abstract handleAbort(event: AbortEvent): Controller
 }
