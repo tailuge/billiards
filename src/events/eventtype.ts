@@ -1,6 +1,6 @@
 export enum EventType {
     BEGIN,
-    SLAVE,
+    RACK,
     CHAT,
     ABORT,
     REPOSITION,

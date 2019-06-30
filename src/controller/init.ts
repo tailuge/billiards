@@ -1,10 +1,13 @@
 import { AbortEvent } from "../events/abortevent";
 import { AimEvent } from "../events/aimevent";
 import { BeginEvent } from "../events/beginevent";
+import { RackEvent } from "../events/rackevent";
 import { Controller } from "./controller";
 import { PlaceBall } from "./placeball";
 import { End } from "./end";
 import { View } from "../view/view";
+import { Rack } from "../utils/rack";
+import { Table } from "../model/table";
 
 /**
  * Initial state of controller.
@@ -24,9 +27,8 @@ export class Init extends Controller {
 
     handleBegin(event: BeginEvent): Controller {
         console.log("handling " + event)
-
-        //rack
-        // send rack
+        this.table = new Table(Rack.testSpin())
+        this.broadcast(new RackEvent(this.table))
         return new PlaceBall(this.table, this.view)
     }
 

@@ -7,12 +7,16 @@ import { Ball } from "./ball"
 
 export class Table {
   balls: Ball[]
-  readonly cue = new Cue()
-  pairs: any[] = []
+  cue = new Cue()
+  pairs: any[]
 
   constructor(balls) {
+      this.initialiseBalls(balls)
+  }
+
+  initialiseBalls(balls) {
     this.balls = balls
-    this.cue.setCueBall(balls[0])
+    this.pairs = []
     this.balls.forEach(a => {
       this.balls.forEach(b => {
         if (a != b) {
