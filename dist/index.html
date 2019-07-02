@@ -20,6 +20,10 @@
           controller2.broadcast = e => controller1.eventQueue.push(e)
 
           controller1.eventQueue.push(new library.BeginEvent())
+
+          // trigger animation loops
+          controller1.animate(performance.now())
+          controller2.animate(performance.now())
         }
 	</script>
 </head>

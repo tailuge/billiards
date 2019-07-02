@@ -16,6 +16,7 @@ export abstract class Controller {
     view: View
     inputQueue: Input[] = []
     eventQueue: GameEvent[] = []
+    last = performance.now()
 
     broadcast: (event: GameEvent) => void
 
@@ -24,6 +25,14 @@ export abstract class Controller {
     abstract handleAbort(event: AbortEvent): Controller
     handleEvent(event: GameEvent): Controller {
         return event.applyToController(this)
+    }
+
+    animate(timestamp): void {
+        console.log((timestamp-this.last) / 1000.0)
+        this.last = timestamp
+        requestAnimationFrame(t => {
+            this.animate(t)
+        })
     }
 
 }
