@@ -11,7 +11,7 @@ describe("Controller", () => {
   it("Abort takes Aim to End", done => {
       let controller:Controller = new Aim()
       let event:GameEvent = new AbortEvent()
-      expect(controller.handleEvent(event)).to.be.an.instanceof(End)
+      expect(event.applyToController(controller)).to.be.an.instanceof(End)
     done()
   })
 })

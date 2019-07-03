@@ -18,7 +18,7 @@ export class Init extends Controller {
 
     constructor(element) {
         super()
-        this.view = new View(element)
+        this.container.view = new View(element)
     }
 
     advance(t: number): void {
@@ -27,9 +27,9 @@ export class Init extends Controller {
 
     handleBegin(event: BeginEvent): Controller {
         console.log("handling " + event)
-        this.table = new Table(Rack.testSpin())
-        this.broadcast(new RackEvent(this.table))
-        return new PlaceBall(this.table, this.view)
+        this.container.table = new Table(Rack.testSpin())
+        this.container.broadcast(new RackEvent(this.container.table))
+        return new PlaceBall()
     }
 
     handleAim(event: AimEvent): Controller {

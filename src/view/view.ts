@@ -8,12 +8,16 @@ export class View {
     private renderer = new WebGLRenderer()
     private camera: Camera
 
-// will also take model table ref to add geometry only
+    // will also take model table ref to add geometry only
     constructor(element) {
         this.initialiseScene(element)
         this.addLights()
         this.addTable()
         this.addCamera(element)
+    }
+
+    update(t) {
+        this.camera.update(t)
     }
 
     render() {

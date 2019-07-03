@@ -1,0 +1,48 @@
+import { Input } from "../events/input"
+import { GameEvent } from "../events/gameevent"
+import { Controller } from "./controller"
+import { Table } from "../model/table";
+import { View } from "../view/view";
+
+/**
+ * Model, View, Controller container.
+ */
+export class Container {
+
+    table: Table
+    view: View
+    controller: Controller
+
+    inputQueue: Input[] = []
+    eventQueue: GameEvent[] = []
+
+    last = performance.now()
+
+    broadcast: (event: GameEvent) => void
+
+    animate(timestamp): void {
+        this.advance((timestamp - this.last) / 1000.0)
+        this.view.render()
+        this.last = timestamp
+        let event = this.eventQueue.pop()
+        if (event != null) {
+            this.controller = event.applyToController(this.controller)
+        }
+        requestAnimationFrame(t => { this.animate(t) })
+    }
+
+    advance(elapsed) {
+        try {
+            let step = 0.01
+            let steps = Math.max(15, Math.floor(elapsed / step))
+            let i = 0
+            while (i++ < steps) {
+                this.table.advance(step)
+            }
+            this.view.update(steps * step)
+            // this.keyboard.applyKeys(elapsed, this.table, this.camera)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+}
