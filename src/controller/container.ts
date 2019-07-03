@@ -3,6 +3,8 @@ import { GameEvent } from "../events/gameevent"
 import { Controller } from "./controller"
 import { Table } from "../model/table";
 import { View } from "../view/view";
+import { Init } from "./init";
+import { Rack } from "../utils/rack";
 
 /**
  * Model, View, Controller container.
@@ -20,15 +22,10 @@ export class Container {
 
     broadcast: (event: GameEvent) => void
 
-    animate(timestamp): void {
-        this.advance((timestamp - this.last) / 1000.0)
-        this.view.render()
-        this.last = timestamp
-        let event = this.eventQueue.pop()
-        if (event != null) {
-            this.controller = event.applyToController(this.controller)
-        }
-        requestAnimationFrame(t => { this.animate(t) })
+    constructor(element) {
+        this.view = new View(element)
+        this.table = new Table(Rack.diamond())
+        this.controller = new Init()
     }
 
     advance(elapsed) {
@@ -45,4 +42,16 @@ export class Container {
             console.log(error)
         }
     }
+
+    animate(timestamp): void {
+        this.advance((timestamp - this.last) / 1000.0)
+        this.view.render()
+        this.last = timestamp
+        let event = this.eventQueue.pop()
+        if (event != null) {
+            this.controller = event.applyToController(this.controller)
+        }
+        requestAnimationFrame(t => { this.animate(t) })
+    }
+
 }

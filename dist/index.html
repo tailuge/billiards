@@ -13,8 +13,8 @@
 	</script>
 	<script>
 		window.onload = function() {
-          var controller1 = new library.Init(document.getElementById("view3dP1"))
-          var controller2 = new library.Init(document.getElementById("view3dP2"))
+          var controller1 = new library.Container(document.getElementById("view3dP1"))
+          var controller2 = new library.Container(document.getElementById("view3dP2"))
 
           controller1.broadcast = e => controller2.eventQueue.push(e)
           controller2.broadcast = e => controller1.eventQueue.push(e)
