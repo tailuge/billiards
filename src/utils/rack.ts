@@ -19,11 +19,16 @@ export class Rack {
       )
   }
 
+  static cueBall() {
+      return new Ball(new Vector3(-11, 0.0, 0));
+  }
+
   static diamond() {
     let across = new Vector3(0, Rack.gap, 0)
     let diagonal = across.clone().applyAxisAngle(Rack.up, (Math.PI * 1) / 3)
     let pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
     let diamond: Ball[] = []
+    diamond.push(Rack.cueBall())
     diamond.push(new Ball(Rack.jitter(pos)))
     pos.add(diagonal)
     diamond.push(new Ball(Rack.jitter(pos)))
@@ -47,6 +52,7 @@ export class Rack {
 
   static testSpin() {
     let test: Ball[] = []
+    test.push(Rack.cueBall())
     let m = TableGeometry.tableX / 9
     //    let ys = [3, 2, 1, 0, -1, -2, -3]
     let ys = [5, 3, 1, -1, -3, -5]

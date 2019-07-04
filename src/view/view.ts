@@ -55,4 +55,8 @@ export class View {
     private addTable() {
         TableGeometry.addToScene(this.scene)
     }
+
+    addMesh(mesh) {
+        this.scene.add(mesh)
+    }
 }
