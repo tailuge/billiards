@@ -1,5 +1,6 @@
 import { AbortEvent } from "../events/abortevent";
 import { AimEvent } from "../events/aimevent";
+import { Input } from "../events/input"
 import { Controller } from "./controller";
 import { End } from "./end";
 
@@ -11,8 +12,8 @@ import { End } from "./end";
  */
 export class Aim extends Controller {
 
-    advance(t: number): void {
-        console.log(t)
+    handleInput(input: Input): void {
+        console.log(input)
     }
 
     handleAim(event: AimEvent): Controller {

@@ -1,10 +1,11 @@
 import { AbortEvent } from "../events/abortevent";
 import { AimEvent } from "../events/aimevent";
 import { BeginEvent } from "../events/beginevent";
-import { RackEvent } from "../events/rackevent";
+//import { RackEvent } from "../events/rackevent";
 import { Controller } from "./controller";
 import { PlaceBall } from "./placeball";
 import { End } from "./end";
+import { Input } from "../events/input"
 
 /**
  * Initial state of controller.
@@ -13,13 +14,13 @@ import { End } from "./end";
  */
 export class Init extends Controller {
 
-    advance(t: number): void {
-        console.log(t)
+    handleInput(input: Input): void {
+        console.log(input)
     }
 
     handleBegin(event: BeginEvent): Controller {
         console.log("handling " + event)
-        this.container.broadcast(new RackEvent(this.container.table))
+        //this.container.broadcast(new RackEvent(this.container.table))
         return new PlaceBall()
     }
 
