@@ -20,7 +20,7 @@
         "@types/chai": "^4.1.7",
         "@types/jest": "^24.0.15",
         "chai": "^4.2.0",
-        "coveralls": "^3.0.4",
+        "coveralls": "^3.0.5",
         "jest": "^24.8.0",
         "mocha": "^6.1.4",
         "prettier": "^1.18.2",

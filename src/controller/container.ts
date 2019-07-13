@@ -22,13 +22,18 @@ export class Container {
     step = 0.01
 
     broadcast: (event: GameEvent) => void
+    log: (text: string) => void
 
-    constructor(element) {
-        this.table = new Table(Rack.diamond())
-        this.view = new View(element)
-        this.table.balls.forEach(b => this.view.addMesh(b.mesh.mesh))
-        this.view.addMesh(this.table.cue.mesh)
-        this.controller = new Init()
+    constructor(element, log) {
+        this.log = log
+        if (element != "") {
+            this.table = new Table(Rack.diamond())
+            this.view = new View(element)
+            this.table.balls.forEach(b => this.view.addMesh(b.mesh.mesh))
+            this.view.addMesh(this.table.cue.mesh)
+            this.controller = new Init(this)
+            this.log("Initialised")
+        }
     }
 
 
@@ -51,7 +56,11 @@ export class Container {
         }
         let event = this.eventQueue.pop()
         if (event != null) {
+            let c = this.controller
             this.controller = event.applyToController(this.controller)
+            if (c != this.controller) {
+                this.log("Transition to " + this.controller.constructor.name)
+            }
         }
         requestAnimationFrame(t => { this.animate(t) })
     }

@@ -22,6 +22,6 @@ export class PlaceBall extends Controller {
 
     handleAbort(event: AbortEvent): Controller {
         console.log("ignoring " + event)
-        return new End()
+        return new End(this.container)
     }
 }

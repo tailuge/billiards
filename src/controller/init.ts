@@ -1,9 +1,9 @@
 import { AbortEvent } from "../events/abortevent";
 import { AimEvent } from "../events/aimevent";
 import { BeginEvent } from "../events/beginevent";
-//import { RackEvent } from "../events/rackevent";
+import { RackEvent } from "../events/rackevent";
 import { Controller } from "./controller";
-import { PlaceBall } from "./placeball";
+import { Aim } from "./aim";
 import { End } from "./end";
 import { Input } from "../events/input"
 
@@ -20,8 +20,8 @@ export class Init extends Controller {
 
     handleBegin(event: BeginEvent): Controller {
         console.log("handling " + event)
-        //this.container.broadcast(new RackEvent(this.container.table))
-        return new PlaceBall()
+        this.container.broadcast(new RackEvent(this.container.table))
+        return new Aim(this.container)
     }
 
     handleAim(event: AimEvent): Controller {
@@ -31,6 +31,6 @@ export class Init extends Controller {
 
     handleAbort(event: AbortEvent): Controller {
         console.log("ignoring " + event)
-        return new End()
+        return new End(this.container)
     }
 }
