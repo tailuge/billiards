@@ -53,7 +53,6 @@ export class Cue {
 
     adjustSide(delta) {
         this.aim.sideOffset = Math2.clamp(this.aim.sideOffset + delta, -this.limit, this.limit)
-        this.moveToCueBall()
     }
 
     hit(speed) {

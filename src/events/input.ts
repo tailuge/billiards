@@ -1,5 +1,5 @@
 export class Input {
-    t: Number
+    t: number
     key: string
 
     constructor(t, key) {

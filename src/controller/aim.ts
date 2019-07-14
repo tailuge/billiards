@@ -13,9 +13,32 @@ import { End } from "./end";
  */
 export class Aim extends Controller {
 
+    readonly scale = 0.1
+
     handleInput(input: Input): void {
-        if (input.key == "ArrowLeft") {
-            this.container.table.cue.rotateAim(input.t)
+        switch (input.key) {
+            case "ArrowLeft":
+                this.container.table.cue.rotateAim(-input.t * this.scale)
+                break
+            case "ArrowRight":
+                this.container.table.cue.rotateAim(input.t * this.scale)
+                break
+            case "ArrowDown":
+                this.container.table.cue.adjustHeight(-input.t * this.scale)
+                break
+            case "ArrowUp":
+                this.container.table.cue.adjustHeight(input.t * this.scale)
+                break
+            case "ShiftArrowLeft":
+                this.container.table.cue.adjustSide(-input.t * this.scale)
+                break
+            case "ShiftArrowRight":
+                this.container.table.cue.adjustSide(input.t * this.scale)
+                break
+            case "Space":
+                this.container.table.cue.hit(2)
+                break
+            default:
         }
     }
 
