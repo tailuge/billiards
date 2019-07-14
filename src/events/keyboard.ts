@@ -7,11 +7,15 @@ import { Input } from "./input"
  */
 export class Keyboard {
   pressed = {}
+  released = {}
 
   getEvents(t: number) {
       let keys = Object.keys(this.pressed).filter(key => !/.*Shift.*/.test(key))
       let shift = Object.keys(this.pressed).some(key => /.*Shift.*/.test(key))
-      return keys.map(key => new Input(t, shift ? "Shift"+key: key))
+      let result = keys.map(key => new Input(t, shift ? "Shift"+key: key))
+      Object.keys(this.released).forEach(key => result.push(new Input(t, key+"Up")))
+      this.released = {}
+      return result
   }
 
   constructor() {
@@ -27,6 +31,7 @@ export class Keyboard {
   keyup = e => {
     e = e || window.event
     delete this.pressed[e.code]
+    this.released[e.code] = true
     e.stopImmediatePropagation()
   }
 

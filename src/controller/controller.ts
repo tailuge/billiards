@@ -15,7 +15,7 @@ export abstract class Controller {
         this.container = container
     }
 
-    abstract handleInput(input: Input): void
+    abstract handleInput(input: Input): Controller
 
     abstract handleBegin(event: BeginEvent): Controller
     abstract handleAim(event: AimEvent): Controller

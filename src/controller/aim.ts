@@ -3,6 +3,7 @@ import { AimEvent } from "../events/aimevent";
 import { BeginEvent } from "../events/beginevent"
 import { Input } from "../events/input"
 import { Controller } from "./controller";
+import { PlayShot } from "./playshot";
 import { End } from "./end";
 
 /**
@@ -13,9 +14,14 @@ import { End } from "./end";
  */
 export class Aim extends Controller {
 
-    readonly scale = 0.1
+    readonly scale = 0.000001
 
-    handleInput(input: Input): void {
+    constructor(container) {
+        super(container)
+        this.container.table.cue.moveTo(this.container.table.balls[0].pos)
+    }
+
+    handleInput(input: Input): Controller {
         switch (input.key) {
             case "ArrowLeft":
                 this.container.table.cue.rotateAim(-input.t * this.scale)
@@ -36,10 +42,21 @@ export class Aim extends Controller {
                 this.container.table.cue.adjustSide(input.t * this.scale)
                 break
             case "Space":
-                this.container.table.cue.hit(2)
+                this.container.table.cue.adjustPower(input.t * this.scale)
+                break
+            case "SpaceUp":
+                return this.hit()
                 break
             default:
+                console.log(JSON.stringify(input))
         }
+        return this
+    }
+
+    hit() {
+        // broadcast hit
+        // return new state
+        return new PlayShot(this.container)
     }
 
     handleBegin(event: BeginEvent): Controller {

@@ -11,8 +11,8 @@ import { Input } from "../events/input"
  */
 export class PlaceBall extends Controller {
 
-    handleInput(input: Input): void {
-        console.log(input)
+    handleInput(_: Input) {
+        return this
     }
 
     handleBegin(event: BeginEvent): Controller {

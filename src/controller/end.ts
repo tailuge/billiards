@@ -6,7 +6,8 @@ import { Input } from "../events/input"
 
 export class End extends Controller {
 
-    handleInput(_: Input): void {
+    handleInput(_: Input) {
+        return this
     }
 
     handleBegin(event: BeginEvent): Controller {

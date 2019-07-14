@@ -26,14 +26,13 @@ export class Container {
 
     constructor(element, log) {
         this.log = log
+        this.table = new Table(Rack.diamond())
         if (element != "") {
-            this.table = new Table(Rack.diamond())
             this.view = new View(element)
             this.table.balls.forEach(b => this.view.addMesh(b.mesh.mesh))
             this.view.addMesh(this.table.cue.mesh)
-            this.controller = new Init(this)
-            this.log("Initialised")
         }
+        this.setController(new Init(this))
     }
 
 
@@ -49,19 +48,23 @@ export class Container {
         this.advance((timestamp - this.last) / 1000.0)
         this.view.render()
         this.last = timestamp
+
         let inputEvent = this.inputQueue.pop()
         if (inputEvent != null) {
-            this.controller.handleInput(inputEvent)
+            this.setController(this.controller.handleInput(inputEvent))
         }
+
         let event = this.eventQueue.pop()
         if (event != null) {
-            let c = this.controller
-            this.controller = event.applyToController(this.controller)
-            if (c != this.controller) {
-                this.log("Transition to " + this.controller.constructor.name)
-            }
+            this.setController(event.applyToController(this.controller))
         }
         requestAnimationFrame(t => { this.animate(t) })
     }
 
+    setController(controller) {
+        if (controller != this.controller) {
+            this.log("Transition to " + controller.constructor.name)
+        }
+        this.controller = controller
+    }
 }

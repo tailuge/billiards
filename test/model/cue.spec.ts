@@ -14,8 +14,7 @@ describe("Cue", () => {
     let table = new Table([a, b])
     table.advance(t)
     let cue = new Cue()
-    cue.setCueBall(table.balls[0])
-    cue.moveToCueBall()
+    cue.moveTo(table.balls[0].pos)
     expect(cue.intersectsAnything(table)).to.be.false
     done()
   })

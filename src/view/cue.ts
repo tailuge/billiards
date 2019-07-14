@@ -9,6 +9,7 @@ export class Cue {
     mesh: Mesh
     ball: Ball
     limit = 0.4
+    maxPower = 3.0
 
     aim: AimEvent = new AimEvent()
 
@@ -22,10 +23,6 @@ export class Cue {
 
     constructor() {
         this.initialise(0.05, 0.15, this.length)
-    }
-
-    setCueBall(ball) {
-        this.ball = ball
     }
 
     private initialise(tip, but, length) {
@@ -55,6 +52,10 @@ export class Cue {
         this.aim.sideOffset = Math2.clamp(this.aim.sideOffset + delta, -this.limit, this.limit)
     }
 
+    adjustPower(delta) {
+        this.aim.power = Math.min(this.maxPower, this.aim.power + delta)
+    }
+
     hit(speed) {
         this.ball.vel.copy(this.aim.dir.clone().multiplyScalar(speed))
         let rvel = upCross(this.aim.dir).multiplyScalar((speed * this.aim.verticalOffset * 5) / 2)
@@ -62,11 +63,11 @@ export class Cue {
         this.ball.rvel.copy(rvel)
     }
 
-    moveToCueBall() {
+    moveTo(pos) {
         let offset = upCross(this.aim.dir)
             .multiplyScalar(this.aim.sideOffset)
             .setZ(this.aim.verticalOffset)
-        this.mesh.position.copy(this.ball.pos.clone().add(offset))
+        this.mesh.position.copy(pos.clone().add(offset))
     }
 
     t = 0

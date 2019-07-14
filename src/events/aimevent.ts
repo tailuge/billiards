@@ -11,6 +11,7 @@ export class AimEvent extends GameEvent {
     verticalOffset = 0
     sideOffset = 0
     angle = 0
+    power = 0
 
     constructor() {
         super()
@@ -28,6 +29,7 @@ export class AimEvent extends GameEvent {
         event.angle = json.angle
         event.verticalOffset = json.verticalOffset
         event.sideOffset = json.sideOffset
+        event.power = json.power
         return event
     }
 }
