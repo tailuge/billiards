@@ -1,6 +1,6 @@
 export class Input {
     t: Number
-    key: Number
+    key: string
 
     constructor(t, key) {
         this.t = t

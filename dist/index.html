@@ -36,8 +36,8 @@
 
           function sampleInputs(t) {
               var inputs = keyboard.getEvents(t)
-              controller1.inputQueue.push(inputs)
-              controller2.inputQueue.push(inputs)
+              inputs.forEach(i => controller1.inputQueue.push(i))
+              inputs.forEach(i => controller2.inputQueue.push(i))
               requestAnimationFrame(t => { sampleInputs(t) })
           }
 

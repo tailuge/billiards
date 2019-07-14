@@ -1,12 +1,17 @@
 import { Controller } from "./controller"
 import { AimEvent } from "../events/aimevent"
 import { AbortEvent } from "../events/abortevent"
+import { BeginEvent } from "../events/beginevent"
 import { Input } from "../events/input"
 
 export class End extends Controller {
 
-    handleInput(input: Input): void {
-        console.log(input)
+    handleInput(_: Input): void {
+    }
+
+    handleBegin(event: BeginEvent): Controller {
+        console.log("handling " + event)
+        return this
     }
 
     handleAim(event: AimEvent): Controller {

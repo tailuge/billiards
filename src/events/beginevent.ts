@@ -8,7 +8,8 @@ export class BeginEvent extends GameEvent {
         this.type = EventType.BEGIN
     }
 
-    applyToController(controller: Controller): Controller {
-        return controller.handleAbort(this)
+    applyToController(controller: Controller) {
+        return controller.handleBegin(this)
     }
+
 }

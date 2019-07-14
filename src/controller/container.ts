@@ -43,7 +43,6 @@ export class Container {
             this.table.advance(this.step)
         }
         this.view.update(steps * this.step)
-        // this.keyboard.applyKeys(elapsed, this.table, this.camera)
     }
 
     animate(timestamp): void {

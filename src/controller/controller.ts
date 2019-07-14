@@ -1,3 +1,4 @@
+import { BeginEvent } from "../events/beginevent"
 import { AimEvent } from "../events/aimevent"
 import { Input } from "../events/input"
 import { AbortEvent } from "../events/abortevent"
@@ -15,6 +16,8 @@ export abstract class Controller {
     }
 
     abstract handleInput(input: Input): void
+
+    abstract handleBegin(event: BeginEvent): Controller
     abstract handleAim(event: AimEvent): Controller
     abstract handleAbort(event: AbortEvent): Controller
 

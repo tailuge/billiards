@@ -1,5 +1,6 @@
 import { AbortEvent } from "../events/abortevent";
 import { AimEvent } from "../events/aimevent";
+import { BeginEvent } from "../events/beginevent"
 import { Input } from "../events/input"
 import { Controller } from "./controller";
 import { End } from "./end";
@@ -13,7 +14,14 @@ import { End } from "./end";
 export class Aim extends Controller {
 
     handleInput(input: Input): void {
-        console.log(input)
+        if (input.key == "ArrowLeft") {
+            this.container.table.cue.rotateAim(input.t)
+        }
+    }
+
+    handleBegin(event: BeginEvent): Controller {
+        console.log("handling " + event)
+        return this
     }
 
     handleAim(event: AimEvent): Controller {

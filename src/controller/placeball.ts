@@ -1,5 +1,6 @@
 import { AbortEvent } from "../events/abortevent";
 import { AimEvent } from "../events/aimevent";
+import { BeginEvent } from "../events/beginevent"
 import { Controller } from "./controller";
 import { End } from "./end";
 import { Input } from "../events/input"
@@ -14,6 +15,10 @@ export class PlaceBall extends Controller {
         console.log(input)
     }
 
+    handleBegin(event: BeginEvent): Controller {
+        console.log("handling " + event)
+        return this
+    }
 
     handleAim(event: AimEvent): Controller {
         console.log("handling " + event)
