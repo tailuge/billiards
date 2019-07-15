@@ -1,9 +1,7 @@
-import { AbortEvent } from "../events/abortevent";
-import { AimEvent } from "../events/aimevent";
-import { BeginEvent } from "../events/beginevent"
 import { Input } from "../events/input"
 import { Controller } from "./controller";
 import { PlayShot } from "./playshot";
+import { AbortEvent } from "../events/abortevent"
 import { End } from "./end";
 
 /**
@@ -59,18 +57,11 @@ export class Aim extends Controller {
         return new PlayShot(this.container)
     }
 
-    handleBegin(event: BeginEvent): Controller {
-        console.log("handling " + event)
-        return this
-    }
-
-    handleAim(event: AimEvent): Controller {
-        console.log("handling " + event)
-        return this
-    }
-
-    handleAbort(event: AbortEvent): Controller {
-        console.log("ignoring " + event)
+    handleBegin(_) { return this }
+    handleAim(_) { return this }
+    handleHit(_) { return this }
+    handleAbort(_: AbortEvent): Controller {
         return new End(this.container)
     }
+
 }

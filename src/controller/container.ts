@@ -32,7 +32,7 @@ export class Container {
             this.table.balls.forEach(b => this.view.addMesh(b.mesh.mesh))
             this.view.addMesh(this.table.cue.mesh)
         }
-        this.setController(new Init(this))
+        this.updateController(new Init(this))
     }
 
 
@@ -51,17 +51,17 @@ export class Container {
 
         let inputEvent = this.inputQueue.pop()
         if (inputEvent != null) {
-            this.setController(this.controller.handleInput(inputEvent))
+            this.updateController(this.controller.handleInput(inputEvent))
         }
 
         let event = this.eventQueue.pop()
         if (event != null) {
-            this.setController(event.applyToController(this.controller))
+            this.updateController(event.applyToController(this.controller))
         }
         requestAnimationFrame(t => { this.animate(t) })
     }
 
-    setController(controller) {
+    updateController(controller) {
         if (controller != this.controller) {
             this.log("Transition to " + controller.constructor.name)
         }

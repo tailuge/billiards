@@ -1,10 +1,10 @@
 export enum EventType {
     BEGIN,
     RACK,
+    AIM,
+    HIT,
     CHAT,
     ABORT,
-    REPOSITION,
-    AIM,
-    SHOT
+    REPOSITION
 }
 

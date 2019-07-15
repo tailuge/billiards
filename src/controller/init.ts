@@ -1,11 +1,9 @@
-import { AbortEvent } from "../events/abortevent";
-import { AimEvent } from "../events/aimevent";
 import { BeginEvent } from "../events/beginevent";
 import { RackEvent } from "../events/rackevent";
 import { Controller } from "./controller";
 import { Aim } from "./aim";
+import { AbortEvent } from "../events/abortevent"
 import { End } from "./end";
-import { Input } from "../events/input"
 
 /**
  * Initial state of controller.
@@ -14,23 +12,17 @@ import { Input } from "../events/input"
  */
 export class Init extends Controller {
 
-    handleInput(_: Input){
-        return this
-    }
-
     handleBegin(event: BeginEvent): Controller {
         console.log("handling " + event)
         this.container.broadcast(new RackEvent(this.container.table))
         return new Aim(this.container)
     }
 
-    handleAim(event: AimEvent): Controller {
-        console.log("handling " + event)
-        return this
-    }
-
-    handleAbort(event: AbortEvent): Controller {
-        console.log("ignoring " + event)
+    handleInput(_) { return this }
+    handleAim(_) { return this }
+    handleHit(_) { return this }
+        handleAbort(_: AbortEvent): Controller {
         return new End(this.container)
     }
+
 }

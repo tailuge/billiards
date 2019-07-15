@@ -11,22 +11,13 @@ import { Input } from "../events/input"
  */
 export class PlaceBall extends Controller {
 
-    handleInput(_: Input) {
-        return this
-    }
-
-    handleBegin(event: BeginEvent): Controller {
-        console.log("handling " + event)
-        return this
-    }
-
-    handleAim(event: AimEvent): Controller {
-        console.log("handling " + event)
-        return this
-    }
-
-    handleAbort(event: AbortEvent): Controller {
-        console.log("ignoring " + event)
+    handleInput(_) { return this }
+    handleBegin(_) { return this }
+    handleAim(_) { return this }
+    handleHit(_) { return this }
+    handleAbort(_: AbortEvent): Controller {
         return new End(this.container)
     }
+
+
 }
