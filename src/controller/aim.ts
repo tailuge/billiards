@@ -3,6 +3,7 @@ import { Controller } from "./controller";
 import { PlayShot } from "./playshot";
 import { AbortEvent } from "../events/abortevent"
 import { End } from "./end";
+import { HitEvent } from "../events/hitevent";
 
 /**
  * Aim using input events.
@@ -40,11 +41,10 @@ export class Aim extends Controller {
                 this.container.table.cue.adjustSide(input.t * this.scale)
                 break
             case "Space":
-                this.container.table.cue.adjustPower(input.t * this.scale)
+                this.container.table.cue.adjustPower(input.t * this.scale * 100)
                 break
             case "SpaceUp":
                 return this.hit()
-                break
             default:
                 console.log(JSON.stringify(input))
         }
@@ -52,8 +52,7 @@ export class Aim extends Controller {
     }
 
     hit() {
-        // broadcast hit
-        // return new state
+        this.container.broadcast(new HitEvent(this.container))
         return new PlayShot(this.container)
     }
 

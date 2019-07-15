@@ -1,13 +1,11 @@
 import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
-import { Ball } from "../model/ball"
 import { Math as Math2, Matrix4, Mesh, CylinderGeometry, MeshPhongMaterial, Raycaster } from "three"
 import { up, upCross } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 
 export class Cue {
     mesh: Mesh
-    ball: Ball
     limit = 0.4
     maxPower = 3.0
 
@@ -54,13 +52,6 @@ export class Cue {
 
     adjustPower(delta) {
         this.aim.power = Math.min(this.maxPower, this.aim.power + delta)
-    }
-
-    hit(speed) {
-        this.ball.vel.copy(this.aim.dir.clone().multiplyScalar(speed))
-        let rvel = upCross(this.aim.dir).multiplyScalar((speed * this.aim.verticalOffset * 5) / 2)
-        rvel.z = (-this.aim.sideOffset * 5) / 2
-        this.ball.rvel.copy(rvel)
     }
 
     moveTo(pos) {
