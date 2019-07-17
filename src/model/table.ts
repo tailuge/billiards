@@ -76,4 +76,10 @@ export class Table {
   static fromSerialised(data) {
     return new Table(data.map(b => Ball.fromSerialised(b)))
   }
+
+  static updateFromSerialised(table, data) {
+      table.balls.forEach((b,i) => Ball.updateFromSerialised(b,data[i]))
+      return table
+  }
+
 }

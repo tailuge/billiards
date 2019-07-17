@@ -108,10 +108,15 @@ export class Ball {
   }
 
   static fromSerialised(data) {
-    let b = new Ball(vec(data.pos))
+    return Ball.updateFromSerialised(new Ball(vec(data.pos)), data)
+  }
+
+  static updateFromSerialised(b, data) {
+    b.pos.copy(data.pos)
     b.vel.copy(vec(data.vel))
     b.rvel.copy(vec(data.rvel))
     b.state = data.state
     return b
   }
+
 }
