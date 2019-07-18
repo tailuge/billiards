@@ -4,6 +4,7 @@ import { Knuckle } from "./physics/knuckle"
 import { Pocket } from "./physics/pocket"
 import { Cue } from "../view/cue"
 import { Ball } from "./ball"
+import { AimEvent } from "../events/aimevent";
 
 export class Table {
   balls: Ball[]
@@ -70,16 +71,21 @@ export class Table {
   }
 
   serialise() {
-    return this.balls.map(b => b.serialise())
+    return {
+        balls: this.balls.map(b => b.serialise()),
+        aim: this.cue.aim
+    }
   }
 
   static fromSerialised(data) {
-    return new Table(data.map(b => Ball.fromSerialised(b)))
+    let table = new Table(data.balls.map(b => Ball.fromSerialised(b)))
+    table.cue.aim = AimEvent.fromJson(data.aim)
+    return table
   }
 
-  static updateFromSerialised(table, data) {
-      table.balls.forEach((b,i) => Ball.updateFromSerialised(b,data[i]))
-      return table
+  updateFromSerialised(data) {
+      this.balls.forEach((b,i) => Ball.updateFromSerialised(b,data.balls[i]))
+      this.cue.aim = AimEvent.fromJson(data.aim)
   }
 
 }

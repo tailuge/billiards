@@ -89,6 +89,20 @@ describe("Table", () => {
     done()
   })
 
+  it("serialise/updateFromDeserialise", done => {
+    let a = new Ball(new Vector3(0, 0, 0))
+    let b = new Ball(new Vector3(1, 0, 0))
+    let c = new Ball(new Vector3(2, 0, 0))
+    a.vel.x = -1
+    let table = new Table([a, b, c])
+    let data = JSON.stringify(table.serialise())
+    table.balls[0].pos.x = 4
+    let obj = JSON.parse(data)
+    table.updateFromSerialised(obj)
+    expect(table.balls[0].pos.x).to.be.equal(0)
+    done()
+  })
+
   it("illegal state throws", done => {
     let a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
     let b = new Ball(new Vector3(-TableGeometry.tableX + 0.5, 0, 0))
