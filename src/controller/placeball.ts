@@ -11,6 +11,7 @@ import { Input } from "../events/input"
  */
 export class PlaceBall extends Controller {
 
+    handleRack(_) { return this }
     handleInput(_) { return this }
     handleBegin(_) { return this }
     handleAim(_) { return this }

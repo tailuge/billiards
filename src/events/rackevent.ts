@@ -6,13 +6,18 @@ export class RackEvent extends GameEvent {
 
     table
 
-    constructor(table) {
+    constructor(json) {
         super()
         this.type = EventType.RACK
-        this.table = table.serialise()
+        this.table = json
     }
 
     applyToController(controller: Controller): Controller {
-        return controller.handleAbort(this)
+        return controller.handleRack(this)
+    }
+
+    static fromJson(json) {
+        let event = new RackEvent(json)
+        return event
     }
 }

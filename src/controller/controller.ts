@@ -22,6 +22,7 @@ export abstract class Controller {
     abstract handleAim(event: AimEvent): Controller
     abstract handleHit(event: HitEvent): Controller
     abstract handleAbort(event: AbortEvent): Controller
+    abstract handleRack(event: AbortEvent): Controller
 
 
 

@@ -47,7 +47,9 @@ export class Aim extends Controller {
                 return this.hit()
             default:
                 console.log(JSON.stringify(input))
+                return this
         }
+        this.container.broadcast(this.container.table.cue.aim)
         return this
     }
 
@@ -59,6 +61,7 @@ export class Aim extends Controller {
     handleBegin(_) { return this }
     handleAim(_) { return this }
     handleHit(_) { return this }
+    handleRack(_) { return this }
     handleAbort(_: AbortEvent): Controller {
         return new End(this.container)
     }

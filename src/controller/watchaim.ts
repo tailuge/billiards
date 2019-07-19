@@ -1,16 +1,9 @@
 import { Input } from "../events/input"
 import { Controller } from "./controller";
-import { PlayShot } from "./playshot";
 import { AbortEvent } from "../events/abortevent"
 import { End } from "./end";
-import { HitEvent } from "../events/hitevent";
 
-/**
- * Aim using input events.
- *
- * Transitions to PlayShot.
- * Game events are ignored besides chat and abort messages.
- */
+
 export class WatchAim extends Controller {
 
     readonly scale = 0.000001
@@ -25,9 +18,11 @@ export class WatchAim extends Controller {
     }
 
     handleAim(event) {
+        this.container.table.cue.aim = event
         return this
     }
 
+    handleRack(_) { return this }
     handleBegin(_) { return this }
     handleHit(_) { return this }
     handleAbort(_: AbortEvent): Controller {

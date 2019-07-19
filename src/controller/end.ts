@@ -6,6 +6,7 @@ export class End extends Controller {
     handleBegin(_) { return this }
     handleAim(_) { return this }
     handleHit(_) { return this }
+    handleRack(_) { return this }
     handleAbort(_) { return this }
 
 }
