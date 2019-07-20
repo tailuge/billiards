@@ -42,6 +42,7 @@ export class Container {
             this.table.advance(this.step)
         }
         this.view.update(steps * this.step)
+        this.table.cue.update(steps * this.step)
     }
 
     animate(timestamp): void {

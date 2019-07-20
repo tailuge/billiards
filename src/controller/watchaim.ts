@@ -1,6 +1,7 @@
 import { Input } from "../events/input"
 import { Controller } from "./controller";
 import { AbortEvent } from "../events/abortevent"
+import { AimEvent } from "../events/aimevent"
 import { End } from "./end";
 
 
@@ -17,7 +18,8 @@ export class WatchAim extends Controller {
         return this
     }
 
-    handleAim(event) {
+    handleAim(event: AimEvent) {
+        console.log(event)
         this.container.table.cue.aim = event
         return this
     }

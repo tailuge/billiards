@@ -55,6 +55,8 @@ export class Cue {
     }
 
     moveTo(pos) {
+        this.aim.pos.copy(pos)
+        this.mesh.rotation.z = this.aim.angle
         let offset = upCross(this.aim.dir)
             .multiplyScalar(this.aim.sideOffset)
             .setZ(this.aim.verticalOffset)
@@ -64,6 +66,7 @@ export class Cue {
     t = 0
     update(t) {
         this.t += t
+        this.moveTo(this.aim.pos)
     }
 
     intersectsAnything(table: Table) {
