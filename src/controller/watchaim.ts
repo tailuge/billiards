@@ -2,7 +2,9 @@ import { Input } from "../events/input"
 import { Controller } from "./controller";
 import { AbortEvent } from "../events/abortevent"
 import { AimEvent } from "../events/aimevent"
+import { HitEvent } from "../events/hitevent"
 import { End } from "./end";
+import { PlayShot } from "./playshot";
 
 
 export class WatchAim extends Controller {
@@ -26,7 +28,11 @@ export class WatchAim extends Controller {
 
     handleRack(_) { return this }
     handleBegin(_) { return this }
-    handleHit(_) { return this }
+    handleHit(event :HitEvent) {
+        this.container.table.updateFromSerialised(event.table)
+        return new PlayShot(this.container)
+    }
+
     handleAbort(_: AbortEvent): Controller {
         return new End(this.container)
     }

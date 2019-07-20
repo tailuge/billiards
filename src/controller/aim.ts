@@ -54,7 +54,7 @@ export class Aim extends Controller {
     }
 
     hit() {
-        this.container.broadcast(new HitEvent(this.container))
+        this.container.broadcast(new HitEvent(this.container.table.serialise()))
         return new PlayShot(this.container)
     }
 

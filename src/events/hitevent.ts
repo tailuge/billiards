@@ -5,16 +5,19 @@ import { Controller } from "../controller/controller"
 export class HitEvent extends GameEvent {
 
     table
-    aim
 
-    constructor(container) {
+    constructor(json) {
         super()
-        this.type = EventType.HIT
-        this.table = container.table.serialise()
-        this.aim = container.table.cue.aim
+        this.type = EventType.RACK
+        this.table = json
     }
 
     applyToController(controller: Controller): Controller {
         return controller.handleHit(this)
+    }
+
+    static fromJson(json) {
+        let event = new HitEvent(json)
+        return event
     }
 }
