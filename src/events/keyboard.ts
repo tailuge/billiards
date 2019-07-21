@@ -10,12 +10,14 @@ export class Keyboard {
   released = {}
 
   getEvents(t: number) {
-      let keys = Object.keys(this.pressed).filter(key => !/.*Shift.*/.test(key))
-      let shift = Object.keys(this.pressed).some(key => /.*Shift.*/.test(key))
-      let result = keys.map(key => new Input(t, shift ? "Shift"+key: key))
-      Object.keys(this.released).forEach(key => result.push(new Input(t, key+"Up")))
-      this.released = {}
-      return result
+    let keys = Object.keys(this.pressed).filter(key => !/.*Shift.*/.test(key))
+    let shift = Object.keys(this.pressed).some(key => /.*Shift.*/.test(key))
+    let result = keys.map(key => new Input(t, shift ? "Shift" + key : key))
+    Object.keys(this.released).forEach(key =>
+      result.push(new Input(t, key + "Up"))
+    )
+    this.released = {}
+    return result
   }
 
   constructor() {
@@ -39,6 +41,4 @@ export class Keyboard {
     document.addEventListener("keydown", this.keydown)
     document.addEventListener("keyup", this.keyup)
   }
-
-
 }

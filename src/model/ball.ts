@@ -1,6 +1,11 @@
 import { Vector3 } from "three"
 import { zero, vec, passesThroughZero } from "../utils/utils"
-import { sliding, surfaceVelocity, rollingFull, forceRoll } from "../model/physics/physics"
+import {
+  sliding,
+  surfaceVelocity,
+  rollingFull,
+  forceRoll
+} from "../model/physics/physics"
 import { BallMesh } from "../view/ballmesh"
 
 export enum State {
@@ -118,5 +123,4 @@ export class Ball {
     b.state = data.state
     return b
   }
-
 }

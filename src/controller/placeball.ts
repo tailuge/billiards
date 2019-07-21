@@ -1,8 +1,8 @@
-import { AbortEvent } from "../events/abortevent";
-import { AimEvent } from "../events/aimevent";
+import { AbortEvent } from "../events/abortevent"
+import { AimEvent } from "../events/aimevent"
 import { BeginEvent } from "../events/beginevent"
-import { Controller } from "./controller";
-import { End } from "./end";
+import { Controller } from "./controller"
+import { End } from "./end"
 import { Input } from "../events/input"
 
 /**
@@ -10,10 +10,7 @@ import { Input } from "../events/input"
  *
  */
 export class PlaceBall extends Controller {
-
-    handleAbort(_: AbortEvent): Controller {
-        return new End(this.container)
-    }
-
-
+  handleAbort(_: AbortEvent): Controller {
+    return new End(this.container)
+  }
 }

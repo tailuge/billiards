@@ -20,7 +20,7 @@ export class Rack {
   }
 
   static cueBall() {
-      return new Ball(new Vector3(-11, 0.0, 0));
+    return new Ball(new Vector3(-11, 0.0, 0))
   }
 
   static diamond() {
