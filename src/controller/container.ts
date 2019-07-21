@@ -43,7 +43,7 @@ export class Container {
         for (var i = 0; i < steps; i++) {
             this.table.advance(this.step)
         }
-        this.view.update(steps * this.step)
+        this.view.update(steps * this.step, this.table.cue.aim)
         this.table.cue.update(steps * this.step)
         if (!stateBefore && this.table.allStationary()) {
             // transitioned to all all stationary

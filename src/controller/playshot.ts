@@ -1,9 +1,9 @@
 import { Controller } from "./controller";
 import { AbortEvent } from "../events/abortevent"
-import { HitEvent } from "../events/hitevent"
 import { Aim } from "./aim";
 import { End } from "./end";
 import { upCross } from "../utils/utils"
+import { WatchAim } from "./watchaim";
 
 /**
  * PlayShot starts balls rolling using cue state.
@@ -11,21 +11,21 @@ import { upCross } from "../utils/utils"
  */
 export class PlayShot extends Controller {
 
-    constructor(controller) {
+    isWatch: boolean
+
+    constructor(controller, isWatch: boolean) {
         super(controller)
+        this.isWatch = isWatch
         this.hit()
-    }
-    static fromEvent(_: HitEvent, controller) {
-        return new PlayShot(controller)
     }
 
     handleInput(_) { return this }
     handleBegin(_) { return this }
-    handleAim(_) { return this }
+    handleAim(_) { return new WatchAim(this.container) }
     handleHit(_) { return this }
     handleRack(_) { return this }
     handleStationary(_) {
-        return new Aim(this.container)
+        return this.isWatch ? this : new Aim(this.container)
     }
     handleAbort(_: AbortEvent): Controller {
         return new End(this.container)

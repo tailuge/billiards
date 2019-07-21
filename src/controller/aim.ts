@@ -1,9 +1,6 @@
-import { Input } from "../events/input"
-import { Controller } from "./controller";
+import { Controller, HitEvent, Input, AbortEvent } from "./controller";
 import { PlayShot } from "./playshot";
-import { AbortEvent } from "../events/abortevent"
 import { End } from "./end";
-import { HitEvent } from "../events/hitevent";
 
 /**
  * Aim using input events.
@@ -18,6 +15,9 @@ export class Aim extends Controller {
     constructor(container) {
         super(container)
         this.container.table.cue.moveTo(this.container.table.balls[0].pos)
+        if (this.container.view) {
+            this.container.view.camera.mode = this.container.view.camera.aimView
+        }
     }
 
     handleInput(input: Input): Controller {
@@ -46,7 +46,6 @@ export class Aim extends Controller {
             case "SpaceUp":
                 return this.hit()
             default:
-                console.log(JSON.stringify(input))
                 return this
         }
         this.container.broadcast(this.container.table.cue.aim)
@@ -55,7 +54,7 @@ export class Aim extends Controller {
 
     hit() {
         this.container.broadcast(new HitEvent(this.container.table.serialise()))
-        return new PlayShot(this.container)
+        return new PlayShot(this.container, false)
     }
 
     handleBegin(_) { return this }

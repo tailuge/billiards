@@ -1,12 +1,13 @@
 import { AmbientLight, DirectionalLight, PCFSoftShadowMap, Scene, WebGLRenderer } from "three";
 import { Camera } from "./camera";
 import { TableGeometry } from "./tablegeometry";
+import { AimEvent } from "../events/aimevent";
 
 export class View {
 
     private scene = new Scene()
     private renderer = new WebGLRenderer()
-    private camera: Camera
+    camera: Camera
 
     // will also take model table ref to add geometry only
     constructor(element) {
@@ -16,8 +17,8 @@ export class View {
         this.addCamera(element)
     }
 
-    update(t) {
-        this.camera.update(t)
+    update(t, aim: AimEvent) {
+        this.camera.update(t, aim)
     }
 
     render() {

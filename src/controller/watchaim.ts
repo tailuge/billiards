@@ -14,6 +14,7 @@ export class WatchAim extends Controller {
     constructor(container) {
         super(container)
         this.container.table.cue.moveTo(this.container.table.balls[0].pos)
+        this.container.view.camera.mode = this.container.view.camera.topView
     }
 
     handleInput(_: Input): Controller {
@@ -31,7 +32,7 @@ export class WatchAim extends Controller {
     handleStationary(_) { return this }
     handleHit(event :HitEvent) {
         this.container.table.updateFromSerialised(event.table)
-        return new PlayShot(this.container)
+        return new PlayShot(this.container, true)
     }
 
     handleAbort(_: AbortEvent): Controller {

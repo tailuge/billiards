@@ -1,6 +1,6 @@
 import { PerspectiveCamera, Vector3 } from "three";
 import { up, zero } from "../utils/utils";
-
+import { AimEvent } from "../events/aimevent"
 
 export class Camera {
     constructor(aspectRatio) {
@@ -12,26 +12,24 @@ export class Camera {
 
     private topViewPoint = new Vector3(0, -0.1, 17)
 
-    update(t) {
-        this.t += t
-        this.mode()
+    update(_, aim) {
+        this.mode(aim)
     }
 
-    t = 0
-    topView() {
+    topView(_: AimEvent) {
         this.camera.position.lerp(this.topViewPoint, 0.1)
         this.camera.up = up
         this.camera.lookAt(zero)
     }
 
-    aimView(cueBallPos, dir) {
+    aimView(aim: AimEvent) {
         this.camera.position.lerp(
-            cueBallPos.clone().addScaledVector(dir, -9),
+            aim.pos.clone().addScaledVector(aim.dir, -9),
             0.07
         )
         this.camera.position.z = 2.7
         this.camera.up = up
-        this.camera.lookAt(cueBallPos)
+        this.camera.lookAt(aim.pos)
     }
 
     afterHitView(cueBallPos) {
