@@ -19,14 +19,12 @@ export class PlayShot extends Controller {
         this.hit()
     }
 
-    handleInput(_) { return this }
-    handleBegin(_) { return this }
     handleAim(_) { return new WatchAim(this.container) }
-    handleHit(_) { return this }
-    handleRack(_) { return this }
+
     handleStationary(_) {
         return this.isWatch ? this : new Aim(this.container)
     }
+
     handleAbort(_: AbortEvent): Controller {
         return new End(this.container)
     }

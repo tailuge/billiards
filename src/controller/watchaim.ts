@@ -1,4 +1,3 @@
-import { Input } from "../events/input"
 import { Controller } from "./controller";
 import { AbortEvent } from "../events/abortevent"
 import { AimEvent } from "../events/aimevent"
@@ -17,19 +16,12 @@ export class WatchAim extends Controller {
         this.container.view.camera.mode = this.container.view.camera.topView
     }
 
-    handleInput(_: Input): Controller {
-        return this
-    }
-
     handleAim(event: AimEvent) {
         console.log(event)
         this.container.table.cue.aim = event
         return this
     }
 
-    handleRack(_) { return this }
-    handleBegin(_) { return this }
-    handleStationary(_) { return this }
     handleHit(event :HitEvent) {
         this.container.table.updateFromSerialised(event.table)
         return new PlayShot(this.container, true)

@@ -19,13 +19,10 @@ export class Init extends Controller {
         return new Aim(this.container)
     }
 
-    handleInput(_) { return this }
-    handleAim(_) { return this }
-    handleHit(_) { return this }
-    handleStationary(_) { return this }
     handleAbort(_: AbortEvent): Controller {
         return new End(this.container)
     }
+
     handleRack(event: RackEvent): Controller {
         this.container.table.updateFromSerialised(event.table)
         return new WatchAim(this.container)

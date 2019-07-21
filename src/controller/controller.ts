@@ -19,11 +19,11 @@ export abstract class Controller {
         this.container = container
     }
 
-    abstract handleInput(input: Input): Controller
-    abstract handleBegin(event: BeginEvent): Controller
-    abstract handleAim(event: AimEvent): Controller
-    abstract handleHit(event: HitEvent): Controller
-    abstract handleAbort(event: AbortEvent): Controller
-    abstract handleRack(event: AbortEvent): Controller
-    abstract handleStationary(event: StationaryEvent): Controller
+    handleInput(_: Input): Controller { return this }
+    handleBegin(_: BeginEvent): Controller { return this }
+    handleAim(_: AimEvent): Controller { return this }
+    handleHit(_: HitEvent): Controller { return this }
+    handleAbort(_: AbortEvent): Controller { return this }
+    handleRack(_: AbortEvent): Controller { return this }
+    handleStationary(_: StationaryEvent): Controller { return this }
 }
