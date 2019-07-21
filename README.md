@@ -21,8 +21,9 @@ yarn dev
 ```
 yarn test
 yarn coverage
-yarn devserver
-yarn dependencies
+yarn server
+yarn deps
+yarn upgrade -L
 yarn prettify
 ```
 
@@ -82,3 +83,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 July 2018
 
 <img src="https://raw.githubusercontent.com/tailuge/billiards/master/dist/t1.png">
+
+July 2019
+
+<img src="https://raw.githubusercontent.com/tailuge/billiards/master/dist/t2.png">

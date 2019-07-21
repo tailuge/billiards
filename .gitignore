@@ -15,6 +15,7 @@ pids
 lib-cov
 .c9
 .theia
+.vscode
 
 # Coverage directory used by tools like istanbul
 coverage

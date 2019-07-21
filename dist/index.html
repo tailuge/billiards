@@ -1,31 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>billiards</title>
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="description" content="billiards" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <link rel="stylesheet" type="text/css" href="index.css" />
-    <script src="library.js"></script>
-	<script>
-		window.onload = function() {
-          var gameClient = new library.GameClient(document.getElementById("view3d"));
-          gameClient.keyboard.registerCallback(recordShot);
-          gameClient.begin();
-        };
 
-        function recordShot(a) {
-            document.getElementById("sidebar").innerHTML += a
-        }
+<head>
+	<title>billiards</title>
+	<link rel="icon" type="image/png" href="favicon.png">
+	<meta charset="utf-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="description" content="billiards" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<link rel="stylesheet" type="text/css" href="index.css" />
+	<script src="library.js">
 
 	</script>
-  </head>
+	<script>
+		window.onload = function() {
 
-  <body>
-    <div class="flex-container">
-      <div id="view3d" style="flex-grow: 8"></div>
-      <div id="sidebar" style="flex-grow: 1">Shot history:</div>
-    </div>
-  </body>
+          function log(element, text) {
+              var elt = document.getElementById(element)
+              elt.innerHTML += "<div>" + text + "</div>"
+          }
+
+          var controller1 = new library.Container(
+              document.getElementById("viewP1"),
+              text => log("sidebarP1",text))
+          var controller2 = new library.Container(
+              document.getElementById("viewP2"),
+              text => log("sidebarP2",text))
+
+          controller1.broadcast = e => controller2.eventQueue.push(e)
+          controller2.broadcast = e => controller1.eventQueue.push(e)
+
+          controller1.eventQueue.push(new library.BeginEvent())
+
+          var keyboard = new library.Keyboard()
+
+          function sampleInputs(t) {
+              var inputs = keyboard.getEvents(t)
+              inputs.forEach(i => controller1.inputQueue.push(i))
+              inputs.forEach(i => controller2.inputQueue.push(i))
+              requestAnimationFrame(t => { sampleInputs(t) })
+          }
+
+          // trigger input polling
+          sampleInputs(1)
+
+          // trigger animation loops
+          controller1.animate(performance.now())
+          controller2.animate(performance.now())
+
+        }
+	</script>
+</head>
+
+<body>
+	<div class="flex-container">
+		<div id="viewP1" style="flex-grow: 8"></div>
+		<div id="sidebarP1" style="flex-grow: 1">Player 1 shot history:</div>
+	</div>
+	<div class="flex-container">
+		<div id="sidebarP2" style="flex-grow: 1">Player 2 shot history:</div>
+		<div id="viewP2" style="flex-grow: 8"></div>
+	</div>
+</body>
+
 </html>

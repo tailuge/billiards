@@ -6,29 +6,29 @@
     "main": "dist/main.js",
     "license": "GPL-3.0",
     "scripts": {
-        "test": "jest",
+        "test": "jest --verbose",
         "coverage": "jest --coverage --coverageReporters text",
         "dev": "webpack -p",
         "prettify": "prettier --write --no-semi {src,test}/*",
-        "devserver": "webpack-dev-server",
-        "dependencies": "npx yarn-check"
+        "server": "webpack-dev-server",
+        "deps": "npx yarn-check --skip-unused"
     },
     "dependencies": {
-        "@types/three": "^0.103.2",
-        "three": "^0.105.2"
+        "three": "^0.106.2"
     },
     "devDependencies": {
-        "@types/jest": "^24.0.13",
+        "@types/chai": "^4.1.7",
+        "@types/jest": "^24.0.15",
         "chai": "^4.2.0",
-        "coveralls": "^3.0.4",
+        "coveralls": "^3.0.5",
         "jest": "^24.8.0",
-        "mocha": "^6.1.4",
+        "mocha": "^6.2.0",
         "prettier": "^1.18.2",
         "ts-jest": "^24.0.2",
-        "ts-loader": "^6.0.2",
-        "typescript": "^3.5.1",
-        "webpack": "^4.33.0",
-        "webpack-cli": "^3.3.4",
-        "webpack-dev-server": "^3.7.1"
+        "ts-loader": "^6.0.4",
+        "typescript": "^3.5.3",
+        "webpack": "^4.36.1",
+        "webpack-cli": "^3.3.6",
+        "webpack-dev-server": "^3.7.2"
     }
 }
