@@ -3,6 +3,7 @@ export enum EventType {
     RACK,
     AIM,
     HIT,
+    STATIONARY,
     CHAT,
     ABORT,
     REPOSITION

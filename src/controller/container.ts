@@ -1,5 +1,6 @@
 import { Input } from "../events/input"
 import { GameEvent } from "../events/gameevent"
+import { StationaryEvent } from "../events/stationaryevent";
 import { Controller } from "./controller"
 import { Table } from "../model/table";
 import { View } from "../view/view";
@@ -38,11 +39,16 @@ export class Container {
 
     advance(elapsed) {
         let steps = Math.max(15, Math.floor(elapsed / this.step))
+        let stateBefore = this.table.allStationary()
         for (var i = 0; i < steps; i++) {
             this.table.advance(this.step)
         }
         this.view.update(steps * this.step)
         this.table.cue.update(steps * this.step)
+        if (!stateBefore && this.table.allStationary()) {
+            // transitioned to all all stationary
+            this.eventQueue.push(new StationaryEvent())
+        }
     }
 
     animate(timestamp): void {

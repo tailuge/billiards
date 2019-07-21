@@ -8,5 +8,6 @@ export class End extends Controller {
     handleHit(_) { return this }
     handleRack(_) { return this }
     handleAbort(_) { return this }
+    handleStationary(_) { return this }
 
 }

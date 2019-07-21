@@ -28,6 +28,7 @@ export class WatchAim extends Controller {
 
     handleRack(_) { return this }
     handleBegin(_) { return this }
+    handleStationary(_) { return this }
     handleHit(event :HitEvent) {
         this.container.table.updateFromSerialised(event.table)
         return new PlayShot(this.container)

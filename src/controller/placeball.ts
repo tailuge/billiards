@@ -16,6 +16,7 @@ export class PlaceBall extends Controller {
     handleBegin(_) { return this }
     handleAim(_) { return this }
     handleHit(_) { return this }
+    handleStationary(_) { return this }
     handleAbort(_: AbortEvent): Controller {
         return new End(this.container)
     }

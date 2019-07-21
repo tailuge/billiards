@@ -1,6 +1,7 @@
 import { Controller } from "./controller";
 import { AbortEvent } from "../events/abortevent"
 import { HitEvent } from "../events/hitevent"
+import { Aim } from "./aim";
 import { End } from "./end";
 import { upCross } from "../utils/utils"
 
@@ -15,7 +16,6 @@ export class PlayShot extends Controller {
         this.hit()
     }
     static fromEvent(_: HitEvent, controller) {
-        //  copy state from event into table
         return new PlayShot(controller)
     }
 
@@ -24,6 +24,9 @@ export class PlayShot extends Controller {
     handleAim(_) { return this }
     handleHit(_) { return this }
     handleRack(_) { return this }
+    handleStationary(_) {
+        return new Aim(this.container)
+    }
     handleAbort(_: AbortEvent): Controller {
         return new End(this.container)
     }
