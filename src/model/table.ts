@@ -73,7 +73,7 @@ export class Table {
   serialise() {
     return {
         balls: this.balls.map(b => b.serialise()),
-        aim: this.cue.aim
+        aim: this.cue.aim.copy()
     }
   }
 

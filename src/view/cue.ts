@@ -60,7 +60,8 @@ export class Cue {
         let offset = upCross(this.aim.dir)
             .multiplyScalar(this.aim.sideOffset)
             .setZ(this.aim.verticalOffset)
-        this.mesh.position.copy(pos.clone().add(offset))
+        let swing = this.aim.dir.clone().multiplyScalar(-this.aim.power)
+        this.mesh.position.copy(pos.clone().add(offset).add(swing))
     }
 
     t = 0

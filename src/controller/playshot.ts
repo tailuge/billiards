@@ -19,7 +19,9 @@ export class PlayShot extends Controller {
         this.hit()
     }
 
-    handleAim(_) { return new WatchAim(this.container) }
+    handleAim(_) {
+        return new WatchAim(this.container)
+    }
 
     handleStationary(_) {
         return this.isWatch ? this : new Aim(this.container)
@@ -36,6 +38,7 @@ export class PlayShot extends Controller {
         let rvel = upCross(aim.dir).multiplyScalar((aim.power * aim.verticalOffset * 5) / 2)
         rvel.z = (-aim.sideOffset * 5) / 2
         table.balls[0].rvel.copy(rvel)
+        table.cue.aim.power = 0
     }
 
 }

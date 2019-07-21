@@ -83,3 +83,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 July 2018
 
 <img src="https://raw.githubusercontent.com/tailuge/billiards/master/dist/t1.png">
+
+July 2019
+
+<img src="https://raw.githubusercontent.com/tailuge/billiards/master/dist/t2.png">

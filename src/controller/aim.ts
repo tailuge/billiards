@@ -10,11 +10,12 @@ import { End } from "./end";
  */
 export class Aim extends Controller {
 
-    readonly scale = 0.000001
+    readonly scale = 0.0000005
 
     constructor(container) {
         super(container)
         this.container.table.cue.moveTo(this.container.table.balls[0].pos)
+        this.container.table.cue.aim.power = 0
         if (this.container.view) {
             this.container.view.camera.mode = this.container.view.camera.aimView
         }
@@ -41,7 +42,7 @@ export class Aim extends Controller {
                 this.container.table.cue.adjustSide(input.t * this.scale)
                 break
             case "Space":
-                this.container.table.cue.adjustPower(input.t * this.scale * 100)
+                this.container.table.cue.adjustPower(input.t * this.scale * 10)
                 break
             case "SpaceUp":
                 return this.hit()

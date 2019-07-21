@@ -32,4 +32,9 @@ export class AimEvent extends GameEvent {
         event.power = json.power
         return event
     }
+
+    copy(): AimEvent {
+        let event = AimEvent.fromJson(this)
+        return event
+    }
 }
