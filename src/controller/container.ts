@@ -27,8 +27,8 @@ export class Container {
   constructor(element, log) {
     this.log = log
     this.table = new Table(Rack.diamond())
-    if (element != "") {
-      this.view = new View(element)
+    this.view = new View(element)
+    if (element !== undefined) {
       this.table.balls.forEach(b => this.view.addMesh(b.mesh.mesh))
       this.view.addMesh(this.table.cue.mesh)
     }
@@ -49,11 +49,7 @@ export class Container {
     }
   }
 
-  animate(timestamp): void {
-    this.advance((timestamp - this.last) / 1000.0)
-    this.view.render()
-    this.last = timestamp
-
+  processEvents() {
     let inputEvent = this.inputQueue.pop()
     if (inputEvent != null) {
       this.updateController(this.controller.handleInput(inputEvent))
@@ -63,6 +59,15 @@ export class Container {
     if (event != null) {
       this.updateController(event.applyToController(this.controller))
     }
+  }
+
+  animate(timestamp): void {
+    this.advance((timestamp - this.last) / 1000.0)
+    this.view.render()
+    this.last = timestamp
+
+    this.processEvents()
+
     requestAnimationFrame(t => {
       this.animate(t)
     })

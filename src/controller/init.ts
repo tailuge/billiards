@@ -12,8 +12,7 @@ import { End } from "./end"
  * Transitions into active player and watcher.
  */
 export class Init extends Controller {
-  handleBegin(event: BeginEvent): Controller {
-    console.log("handling " + event)
+  handleBegin(_: BeginEvent): Controller {
     this.container.broadcast(new RackEvent(this.container.table.serialise()))
     return new Aim(this.container)
   }

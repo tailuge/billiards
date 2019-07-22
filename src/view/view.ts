@@ -11,15 +11,19 @@ import { AimEvent } from "../events/aimevent"
 
 export class View {
   private scene = new Scene()
-  private renderer = new WebGLRenderer()
+  private renderer
   camera: Camera
 
-  // will also take model table ref to add geometry only
   constructor(element) {
-    this.initialiseScene(element)
+    if (element !== undefined) {
+      this.renderer = new WebGLRenderer()
+      this.initialiseScene(element, element.offsetWidth, element.offsetHeight)
+      this.addCamera(element.offsetWidth, element.offsetHeight)
+    } else {
+      this.addCamera(1, 1)
+    }
     this.addLights()
     this.addTable()
-    this.addCamera(element)
   }
 
   update(t, aim: AimEvent) {
@@ -30,15 +34,15 @@ export class View {
     this.renderer.render(this.scene, this.camera.camera)
   }
 
-  private initialiseScene(element) {
-    this.renderer.setSize(element.offsetWidth, element.offsetHeight)
+  private initialiseScene(element, width, height) {
+    this.renderer.setSize(width, height)
     this.renderer.shadowMap.enabled = true
     this.renderer.shadowMap.type = PCFSoftShadowMap
     element.appendChild(this.renderer.domElement)
   }
 
-  private addCamera(element) {
-    this.camera = new Camera(element.offsetWidth / element.offsetHeight)
+  private addCamera(width, height) {
+    this.camera = new Camera(width / height)
   }
 
   private addLights() {

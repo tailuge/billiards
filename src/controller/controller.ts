@@ -30,9 +30,11 @@ export abstract class Controller {
   handleHit(_: HitEvent): Controller {
     return this
   }
+
   handleAbort(_: AbortEvent): Controller {
     return this
   }
+
   handleRack(_: AbortEvent): Controller {
     return this
   }

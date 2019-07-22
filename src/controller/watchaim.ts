@@ -15,7 +15,6 @@ export class WatchAim extends Controller {
   }
 
   handleAim(event: AimEvent) {
-    console.log(event)
     this.container.table.cue.aim = event
     return this
   }
