@@ -50,9 +50,9 @@ export class Container {
   }
 
   processEvents() {
-    let inputEvent = this.inputQueue.pop()
-    if (inputEvent != null) {
-      this.updateController(this.controller.handleInput(inputEvent))
+    let input = this.inputQueue.shift()
+    if (input !== undefined) {
+      this.updateController(this.controller.handleInput(input))
     }
 
     let event = this.eventQueue.pop()

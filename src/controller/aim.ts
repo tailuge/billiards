@@ -15,9 +15,7 @@ export class Aim extends Controller {
     super(container)
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
     this.container.table.cue.aim.power = 0
-    if (this.container.view) {
-      this.container.view.camera.mode = this.container.view.camera.aimView
-    }
+    this.container.view.camera.mode = this.container.view.camera.aimView
   }
 
   handleInput(input: Input): Controller {
@@ -35,10 +33,10 @@ export class Aim extends Controller {
         this.container.table.cue.adjustHeight(input.t * this.scale)
         break
       case "ShiftArrowLeft":
-        this.container.table.cue.adjustSide(-input.t * this.scale)
+        this.container.table.cue.adjustSide(input.t * this.scale)
         break
       case "ShiftArrowRight":
-        this.container.table.cue.adjustSide(input.t * this.scale)
+        this.container.table.cue.adjustSide(-input.t * this.scale)
         break
       case "Space":
         this.container.table.cue.adjustPower(input.t * this.scale * 10)

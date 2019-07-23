@@ -63,11 +63,10 @@ describe("Controller", () => {
 
   it("Aim handles all inputs", done => {
     let container = new Container(undefined, _ => {})
+    container.controller = new Aim(container)
     let broadcastEvents: GameEvent[] = []
     container.broadcast = x => broadcastEvents.push(x)
 
-    container.eventQueue.push(new BeginEvent())
-    container.processEvents()
     container.inputQueue.push(new Input(0.1, "ArrowLeft"))
     container.inputQueue.push(new Input(0.1, "ArrowRight"))
     container.inputQueue.push(new Input(0.1, "ShiftArrowLeft"))
