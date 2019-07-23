@@ -49,21 +49,4 @@ export class Rack {
     diamond.push(new Ball(Rack.jitter(pos)))
     return diamond
   }
-
-  static testSpin() {
-    let test: Ball[] = []
-    test.push(Rack.cueBall())
-    let m = TableGeometry.tableX / 9
-    //    let ys = [3, 2, 1, 0, -1, -2, -3]
-    let ys = [5, 3, 1, -1, -3, -5]
-
-    ys.forEach(y => {
-      let b = new Ball(new Vector3(m, y, 0))
-      b.vel.x = 2 //y/2
-      b.rvel.y = 0
-      b.rvel.z = -y / 2.5
-      test.push(b)
-    })
-    return test
-  }
 }

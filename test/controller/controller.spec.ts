@@ -2,6 +2,7 @@ import "mocha"
 import { expect } from "chai"
 import { Controller, Input } from "../../src/controller/controller"
 import { Container } from "../../src/controller/container"
+import { Init } from "../../src/controller/init"
 import { Aim } from "../../src/controller/aim"
 import { WatchAim } from "../../src/controller/watchaim"
 import { PlayShot } from "../../src/controller/playshot"
@@ -11,6 +12,7 @@ import { AimEvent } from "../../src/events/aimevent"
 import { BeginEvent } from "../../src/events/beginevent"
 import { RackEvent } from "../../src/events/rackevent"
 import { HitEvent } from "../../src/events/hitevent"
+import { StationaryEvent } from "../../src/events/stationaryevent"
 import { GameEvent } from "../../src/events/gameevent"
 
 describe("Controller", () => {
@@ -61,6 +63,60 @@ describe("Controller", () => {
     done()
   })
 
+  it("AimEvent takes PlayShot to WatchAim", done => {
+    let container = new Container(undefined, _ => {})
+    container.controller = new PlayShot(container, true)
+    container.eventQueue.push(new AimEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(WatchAim)
+    done()
+  })
+
+  it("StationaryEvent takes isWatching PlayShot to PlayShot", done => {
+    let container = new Container(undefined, _ => {})
+    container.controller = new PlayShot(container, true)
+    container.eventQueue.push(new StationaryEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(PlayShot)
+    done()
+  })
+
+  it("StationaryEvent takes active PlayShot to Aim", done => {
+    let container = new Container(undefined, _ => {})
+    container.controller = new PlayShot(container, false)
+    container.eventQueue.push(new StationaryEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Aim)
+    done()
+  })
+
+  it("End handles all events", done => {
+    let container = new Container(undefined, _ => {})
+    container.controller = new End(container)
+    container.eventQueue.push(new AbortEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    container.eventQueue.push(new AimEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    container.eventQueue.push(new BeginEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    container.eventQueue.push(new HitEvent(container.table))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    container.eventQueue.push(new RackEvent(container.table))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    container.eventQueue.push(new StationaryEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    container.inputQueue.push(new Input(0.1, "ArrowLeft"))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    done()
+  })
+
   it("Aim handles all inputs", done => {
     let container = new Container(undefined, _ => {})
     container.controller = new Aim(container)
@@ -86,4 +142,12 @@ describe("Controller", () => {
     expect(container.inputQueue.length).to.equal(0)
     done()
   })
+
+  it("Aim handles all inputs", done => {
+    let container = new Container(undefined, _ => {})
+    container.advance(1)
+    expect(container.controller).to.be.an.instanceof(Init)
+    done()
+  })
+
 })
