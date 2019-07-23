@@ -3,6 +3,7 @@ import { AimEvent } from "../events/aimevent"
 import { HitEvent } from "../events/hitevent"
 import { Input } from "../events/input"
 import { AbortEvent } from "../events/abortevent"
+import { RackEvent } from "../events/rackevent"
 import { StationaryEvent } from "../events/stationaryevent"
 import { Container } from "./container"
 
@@ -30,12 +31,10 @@ export abstract class Controller {
   handleHit(_: HitEvent): Controller {
     return this
   }
-
   handleAbort(_: AbortEvent): Controller {
     return this
   }
-
-  handleRack(_: AbortEvent): Controller {
+  handleRack(_: RackEvent): Controller {
     return this
   }
   handleStationary(_: StationaryEvent): Controller {

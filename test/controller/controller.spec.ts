@@ -2,7 +2,6 @@ import "mocha"
 import { expect } from "chai"
 import { Controller, Input } from "../../src/controller/controller"
 import { Container } from "../../src/controller/container"
-import { Init } from "../../src/controller/init"
 import { Aim } from "../../src/controller/aim"
 import { WatchAim } from "../../src/controller/watchaim"
 import { PlayShot } from "../../src/controller/playshot"
@@ -123,6 +122,7 @@ describe("Controller", () => {
     let broadcastEvents: GameEvent[] = []
     container.broadcast = x => broadcastEvents.push(x)
 
+    container.inputQueue.push(new Input(0.1, "A"))
     container.inputQueue.push(new Input(0.1, "ArrowLeft"))
     container.inputQueue.push(new Input(0.1, "ArrowRight"))
     container.inputQueue.push(new Input(0.1, "ShiftArrowLeft"))
@@ -139,14 +139,24 @@ describe("Controller", () => {
     container.processEvents()
     container.processEvents()
     container.processEvents()
+    container.processEvents()
     expect(container.inputQueue.length).to.equal(0)
     done()
   })
 
-  it("Aim handles all inputs", done => {
+  it("advance generates no event", done => {
     let container = new Container(undefined, _ => {})
-    container.advance(1)
-    expect(container.controller).to.be.an.instanceof(Init)
+    container.advance(0.1)
+    expect(container.eventQueue.length).to.equal(0)
+    done()
+  })
+
+  it("advance generates StationaryEvent and end of shot", done => {
+    let container = new Container(undefined, _ => {})
+    container.controller = new PlayShot(container, true)
+    container.table.balls[0].vel.x = 0.001
+    container.advance(0.01)
+    expect(container.eventQueue.length).to.equal(1)
     done()
   })
 

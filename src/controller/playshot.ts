@@ -12,8 +12,8 @@ import { WatchAim } from "./watchaim"
 export class PlayShot extends Controller {
   isWatch: boolean
 
-  constructor(controller, isWatch: boolean) {
-    super(controller)
+  constructor(container, isWatch: boolean) {
+    super(container)
     this.isWatch = isWatch
     this.hit()
   }

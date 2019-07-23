@@ -51,14 +51,9 @@ export class Container {
 
   processEvents() {
     let input = this.inputQueue.shift()
-    if (input !== undefined) {
-      this.updateController(this.controller.handleInput(input))
-    }
-
-    let event = this.eventQueue.pop()
-    if (event != null) {
-      this.updateController(event.applyToController(this.controller))
-    }
+    input && this.updateController(this.controller.handleInput(input))
+    let event = this.eventQueue.shift()
+    event && this.updateController(event.applyToController(this.controller))
   }
 
   animate(timestamp): void {
