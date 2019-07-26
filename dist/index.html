@@ -34,15 +34,18 @@
 
           var keyboard = new library.Keyboard()
 
-          function sampleInputs(t) {
+          var lastTime = performance.now()
+          function sampleInputs() {
+              var t = performance.now() - lastTime
+              lastTime = performance.now()
               var inputs = keyboard.getEvents(t)
               inputs.forEach(i => controller1.inputQueue.push(i))
               inputs.forEach(i => controller2.inputQueue.push(i))
-              requestAnimationFrame(t => { sampleInputs(t) })
+              requestAnimationFrame(t => { sampleInputs() })
           }
 
           // trigger input polling
-          sampleInputs(1)
+          sampleInputs()
 
           // trigger animation loops
           controller1.animate(performance.now())

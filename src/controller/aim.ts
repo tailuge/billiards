@@ -9,7 +9,7 @@ import { End } from "./end"
  * Game events are ignored besides chat and abort messages.
  */
 export class Aim extends Controller {
-  readonly scale = 0.0000005
+  readonly scale = 0.001
 
   constructor(container) {
     super(container)

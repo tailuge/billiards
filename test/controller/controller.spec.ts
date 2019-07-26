@@ -159,5 +159,4 @@ describe("Controller", () => {
     expect(container.eventQueue.length).to.equal(1)
     done()
   })
-
 })

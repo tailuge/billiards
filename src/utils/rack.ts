@@ -3,7 +3,7 @@ import { TableGeometry } from "../view/tablegeometry"
 import { Vector3 } from "three"
 
 export class Rack {
-  static readonly noise = 0.01
+  static readonly noise = 0.02
   static readonly gap = 1.0 + 2 * Rack.noise
   static readonly up = new Vector3(0, 0, -1)
 
