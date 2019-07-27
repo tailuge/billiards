@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { norm, upCross, up } from "../../utils/utils"
-import { mu, g, m, Mz, Mxy } from "./constants"
+import { mu, g, m, e, Mz, Mxy } from "./constants"
 
 export function surfaceVelocity(v, w) {
   return v
@@ -43,8 +43,6 @@ let cos_a = Math.cos(9.25 / 32.5)
 
 let sin_a2 = sin_a * sin_a
 let cos_a2 = cos_a * cos_a
-
-let e = 0.8
 
 export function rotateApplyUnrotate(theta, v, w, dv, dw, f) {
   let vr = v.clone().applyAxisAngle(up, theta)

@@ -39,7 +39,7 @@ export class Aim extends Controller {
         this.container.table.cue.adjustSide(-input.t * this.scale)
         break
       case "Space":
-        this.container.table.cue.adjustPower(input.t * this.scale * 10)
+        this.container.table.cue.adjustPower(input.t * this.scale * 3)
         break
       case "SpaceUp":
         return this.hit()

@@ -84,9 +84,7 @@ export class Cue {
     )
   }
 
-  t = 0
-  update(t) {
-    this.t += t
+  update(_) {
     this.moveTo(this.aim.pos)
   }
 
