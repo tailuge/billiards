@@ -6,7 +6,8 @@ import {
   Mesh,
   CylinderGeometry,
   MeshPhongMaterial,
-  Raycaster
+  Raycaster,
+  Vector3
 } from "three"
 import { up, upCross } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
@@ -14,7 +15,7 @@ import { AimEvent } from "../events/aimevent"
 export class Cue {
   mesh: Mesh
   limit = 0.4
-  maxPower = 3.0
+  maxPower = 5.0
 
   aim: AimEvent = new AimEvent()
 
@@ -35,9 +36,14 @@ export class Cue {
     this.mesh = new Mesh(geometry, Cue.material)
     this.mesh.castShadow = true
     this.mesh.geometry
+      .applyMatrix(
+        new Matrix4()
+          .identity()
+          .makeRotationAxis(new Vector3(1.0, 0.0, 0.0), -0.1)
+      )
       .applyMatrix(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
       .applyMatrix(
-        new Matrix4().identity().makeTranslation(-length / 2 - 1, 0, 0)
+        new Matrix4().identity().makeTranslation(-length / 2 - 1, 0, 1)
       )
     this.mesh.rotation.z = this.aim.angle
   }
@@ -75,7 +81,7 @@ export class Cue {
     let offset = upCross(this.aim.dir)
       .multiplyScalar(this.aim.sideOffset)
       .setZ(this.aim.verticalOffset)
-    let swing = this.aim.dir.clone().multiplyScalar(-this.aim.power)
+    let swing = this.aim.dir.clone().multiplyScalar(-this.aim.power / 2)
     this.mesh.position.copy(
       pos
         .clone()
