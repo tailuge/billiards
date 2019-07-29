@@ -10,6 +10,7 @@ export class Table {
   balls: Ball[]
   cue = new Cue()
   pairs: any[]
+  outcome: any[] = []
 
   constructor(balls) {
     this.initialiseBalls(balls)
@@ -43,23 +44,27 @@ export class Table {
     return !this.pairs.some(pair => !this.prepareAdvancePair(pair.a, pair.b, t))
   }
 
-  private prepareAdvancePair(a, b, t) {
+  private prepareAdvancePair(a: Ball, b: Ball, t) {
     if (Collision.willCollide(a, b, t)) {
       Collision.collide(a, b)
+      this.outcome.push({ type: "collision", a: a, b: b })
       return false
     }
     if (Cushion.willBounce(a, t)) {
       Cushion.bounce(a, t)
+      this.outcome.push({ type: "cushion", a: a })
       return false
     }
     let k = Knuckle.willBounceAny(a, t)
     if (k) {
       k.bounce(a)
+      this.outcome.push({ type: "cushion", a: a })
       return false
     }
     let p = Pocket.willFallAny(a, t)
     if (p) {
       p.fall(a, t)
+      this.outcome.push({ type: "pot", a: a })
       return false
     }
 

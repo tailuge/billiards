@@ -15,6 +15,7 @@ export class PlayShot extends Controller {
   constructor(container, isWatch: boolean) {
     super(container)
     this.isWatch = isWatch
+    this.container.table.outcome = []
     this.hit()
   }
 
@@ -23,6 +24,7 @@ export class PlayShot extends Controller {
   }
 
   handleStationary(_) {
+    console.log(this.container.table.outcome)
     return this.isWatch ? this : new Aim(this.container)
   }
 
