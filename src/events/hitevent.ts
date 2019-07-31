@@ -7,7 +7,7 @@ export class HitEvent extends GameEvent {
 
   constructor(json) {
     super()
-    this.type = EventType.RACK
+    this.type = EventType.HIT
     this.table = json
   }
 

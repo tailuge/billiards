@@ -9,7 +9,7 @@ import { End } from "../../src/controller/end"
 import { AbortEvent } from "../../src/events/abortevent"
 import { AimEvent } from "../../src/events/aimevent"
 import { BeginEvent } from "../../src/events/beginevent"
-import { RackEvent } from "../../src/events/rackevent"
+import { WatchEvent } from "../../src/events/watchevent"
 import { HitEvent } from "../../src/events/hitevent"
 import { StationaryEvent } from "../../src/events/stationaryevent"
 import { GameEvent } from "../../src/events/gameevent"
@@ -36,12 +36,12 @@ describe("Controller", () => {
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
-    expect(broadcastEvents.pop()).to.be.an.instanceof(RackEvent)
+    expect(broadcastEvents.pop()).to.be.an.instanceof(WatchEvent)
     done()
   })
 
-  it("RackEvent takes Init to WatchAim", done => {
-    container.eventQueue.push(new RackEvent(container.table.serialise()))
+  it("WatchEvent takes Init to WatchAim", done => {
+    container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
     done()
@@ -63,11 +63,21 @@ describe("Controller", () => {
     done()
   })
 
-  it("AimEvent takes PlayShot to Aim", done => {
-    container.controller = new PlayShot(container, true)
+  it("AimEvent takes PlayShot to Aim when all stationary", done => {
+    let playShot = new PlayShot(container, true)
+    playShot.allStationary = true
+    container.controller = playShot
     container.eventQueue.push(new AimEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
+    done()
+  })
+
+  it("AimEvent does not take PlayShot to Aim when not stationary", done => {
+    container.controller = new PlayShot(container, true)
+    container.eventQueue.push(new AimEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(PlayShot)
     done()
   })
 
@@ -90,7 +100,7 @@ describe("Controller", () => {
   it("StationaryEvent takes active PlayShot to Aim if pot", done => {
     container.controller = new PlayShot(container, false)
     container.eventQueue.push(new StationaryEvent())
-    container.table.outcome.push({ outcome: "pot" })
+    container.table.outcome.push({ type: "pot" })
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
     done()
@@ -110,7 +120,7 @@ describe("Controller", () => {
     container.eventQueue.push(new HitEvent(container.table))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
-    container.eventQueue.push(new RackEvent(container.table))
+    container.eventQueue.push(new WatchEvent(container.table))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new StationaryEvent())

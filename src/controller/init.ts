@@ -1,5 +1,5 @@
 import { BeginEvent } from "../events/beginevent"
-import { RackEvent } from "../events/rackevent"
+import { WatchEvent } from "../events/watchevent"
 import { Controller } from "./controller"
 import { Aim } from "./aim"
 import { WatchAim } from "./watchaim"
@@ -13,7 +13,7 @@ import { End } from "./end"
  */
 export class Init extends Controller {
   handleBegin(_: BeginEvent): Controller {
-    this.container.broadcast(new RackEvent(this.container.table.serialise()))
+    this.container.broadcast(new WatchEvent(this.container.table.serialise()))
     return new Aim(this.container)
   }
 
@@ -21,7 +21,7 @@ export class Init extends Controller {
     return new End(this.container)
   }
 
-  handleRack(event: RackEvent): Controller {
+  handleWatch(event: WatchEvent): Controller {
     this.container.table.updateFromSerialised(event.table)
     return new WatchAim(this.container)
   }

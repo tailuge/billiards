@@ -1,6 +1,6 @@
 export enum EventType {
   BEGIN,
-  RACK,
+  WATCHAIM,
   AIM,
   HIT,
   STATIONARY,
