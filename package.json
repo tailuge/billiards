@@ -14,7 +14,7 @@
         "deps": "npx yarn-check --skip-unused"
     },
     "dependencies": {
-        "three": "^0.106.2"
+        "three": "^0.107.0"
     },
     "devDependencies": {
         "@types/chai": "^4.1.7",

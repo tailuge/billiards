@@ -15,8 +15,17 @@ import { StationaryEvent } from "../../src/events/stationaryevent"
 import { GameEvent } from "../../src/events/gameevent"
 
 describe("Controller", () => {
+  var container: Container
+  var broadcastEvents: GameEvent[]
+
+  beforeEach(function(done) {
+    container = new Container(undefined, _ => {})
+    broadcastEvents = []
+    container.broadcast = x => broadcastEvents.push(x)
+    done()
+  })
+
   it("Abort takes Aim to End", done => {
-    let container = new Container(undefined, _ => {})
     let controller: Controller = new Aim(container)
     let event: GameEvent = new AbortEvent()
     expect(event.applyToController(controller)).to.be.an.instanceof(End)
@@ -24,10 +33,6 @@ describe("Controller", () => {
   })
 
   it("Begin takes Init to Aim", done => {
-    let container = new Container(undefined, _ => {})
-    let broadcastEvents: GameEvent[] = []
-    container.broadcast = x => broadcastEvents.push(x)
-
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
@@ -36,8 +41,6 @@ describe("Controller", () => {
   })
 
   it("RackEvent takes Init to WatchAim", done => {
-    let container = new Container(undefined, _ => {})
-
     container.eventQueue.push(new RackEvent(container.table.serialise()))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
@@ -45,7 +48,6 @@ describe("Controller", () => {
   })
 
   it("HitEvent takes WatchAim to PlayShot", done => {
-    let container = new Container(undefined, _ => {})
     container.controller = new WatchAim(container)
     container.eventQueue.push(new HitEvent(container.table.serialise()))
     container.processEvents()
@@ -54,7 +56,6 @@ describe("Controller", () => {
   })
 
   it("AimEvent takes WatchAim to WatchAim", done => {
-    let container = new Container(undefined, _ => {})
     container.controller = new WatchAim(container)
     container.eventQueue.push(new AimEvent())
     container.processEvents()
@@ -62,17 +63,15 @@ describe("Controller", () => {
     done()
   })
 
-  it("AimEvent takes PlayShot to WatchAim", done => {
-    let container = new Container(undefined, _ => {})
+  it("AimEvent takes PlayShot to Aim", done => {
     container.controller = new PlayShot(container, true)
     container.eventQueue.push(new AimEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchAim)
+    expect(container.controller).to.be.an.instanceof(Aim)
     done()
   })
 
   it("StationaryEvent takes isWatching PlayShot to PlayShot", done => {
-    let container = new Container(undefined, _ => {})
     container.controller = new PlayShot(container, true)
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
@@ -80,17 +79,24 @@ describe("Controller", () => {
     done()
   })
 
-  it("StationaryEvent takes active PlayShot to Aim", done => {
-    let container = new Container(undefined, _ => {})
+  it("StationaryEvent takes active PlayShot to WatchAim if no pot", done => {
     container.controller = new PlayShot(container, false)
     container.eventQueue.push(new StationaryEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(WatchAim)
+    done()
+  })
+
+  it("StationaryEvent takes active PlayShot to Aim if pot", done => {
+    container.controller = new PlayShot(container, false)
+    container.eventQueue.push(new StationaryEvent())
+    container.table.outcome.push({ outcome: "pot" })
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
     done()
   })
 
   it("End handles all events", done => {
-    let container = new Container(undefined, _ => {})
     container.controller = new End(container)
     container.eventQueue.push(new AbortEvent())
     container.processEvents()
@@ -117,11 +123,7 @@ describe("Controller", () => {
   })
 
   it("Aim handles all inputs", done => {
-    let container = new Container(undefined, _ => {})
     container.controller = new Aim(container)
-    let broadcastEvents: GameEvent[] = []
-    container.broadcast = x => broadcastEvents.push(x)
-
     container.inputQueue.push(new Input(0.1, "A"))
     container.inputQueue.push(new Input(0.1, "ArrowLeft"))
     container.inputQueue.push(new Input(0.1, "ArrowRight"))
@@ -145,14 +147,12 @@ describe("Controller", () => {
   })
 
   it("advance generates no event", done => {
-    let container = new Container(undefined, _ => {})
     container.advance(0.1)
     expect(container.eventQueue.length).to.equal(0)
     done()
   })
 
   it("advance generates StationaryEvent and end of shot", done => {
-    let container = new Container(undefined, _ => {})
     container.controller = new PlayShot(container, true)
     container.table.balls[0].vel.x = 0.001
     container.advance(0.01)

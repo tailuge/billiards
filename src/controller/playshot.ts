@@ -20,12 +20,20 @@ export class PlayShot extends Controller {
   }
 
   handleAim(_) {
-    return new WatchAim(this.container)
+    return new Aim(this.container)
   }
 
   handleStationary(_) {
-    console.log(this.container.table.outcome)
-    return this.isWatch ? this : new Aim(this.container)
+    if (this.isWatch) {
+      return this
+    }
+    if (this.container.table.outcome.some(x => x.outcome == "pot")) {
+      console.log("pot!")
+      return new Aim(this.container)
+    }
+    // if no pot switch to other player
+    this.container.broadcast(this.container.table.cue.aim)
+    return new WatchAim(this.container)
   }
 
   handleAbort(_: AbortEvent): Controller {

@@ -1,4 +1,4 @@
-export const mu = 0.008
+export const mu = 0.006
 export const g = 9.8
 export const rho = 0.4
 export const m = 1
