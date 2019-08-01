@@ -27,8 +27,8 @@
               document.getElementById("viewP2"),
               text => log("sidebarP2",text))
 
-          controller1.broadcast = e => controller2.eventQueue.push(e)
-          controller2.broadcast = e => controller1.eventQueue.push(e)
+          controller1.broadcast = e => controller2.eventQueue.push(library.EventUtil.fromSerialised(e))
+          controller2.broadcast = e => controller1.eventQueue.push(library.EventUtil.fromSerialised(e))
 
           controller1.eventQueue.push(new library.BeginEvent())
 

@@ -13,7 +13,7 @@ import { End } from "./end"
  */
 export class Init extends Controller {
   handleBegin(_: BeginEvent): Controller {
-    this.container.broadcast(new WatchEvent(this.container.table.serialise()))
+    this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
     return new Aim(this.container)
   }
 
@@ -22,7 +22,7 @@ export class Init extends Controller {
   }
 
   handleWatch(event: WatchEvent): Controller {
-    this.container.table.updateFromSerialised(event.table)
+    this.container.table.updateFromSerialised(event.json)
     return new WatchAim(this.container)
   }
 }

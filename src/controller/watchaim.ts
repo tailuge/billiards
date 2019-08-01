@@ -20,7 +20,7 @@ export class WatchAim extends Controller {
   }
 
   handleHit(event: HitEvent) {
-    this.container.table.updateFromSerialised(event.table)
+    this.container.table.updateFromSerialised(event.json)
     return new PlayShot(this.container, true)
   }
 

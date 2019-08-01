@@ -7,6 +7,7 @@ import { WatchAim } from "../../src/controller/watchaim"
 import { PlayShot } from "../../src/controller/playshot"
 import { End } from "../../src/controller/end"
 import { AbortEvent } from "../../src/events/abortevent"
+import { EventUtil } from "../../src/events/eventutil"
 import { AimEvent } from "../../src/events/aimevent"
 import { BeginEvent } from "../../src/events/beginevent"
 import { WatchEvent } from "../../src/events/watchevent"
@@ -21,7 +22,7 @@ describe("Controller", () => {
   beforeEach(function(done) {
     container = new Container(undefined, _ => {})
     broadcastEvents = []
-    container.broadcast = x => broadcastEvents.push(x)
+    container.broadcast = x => broadcastEvents.push(EventUtil.fromSerialised(x))
     done()
   })
 

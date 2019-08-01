@@ -46,12 +46,12 @@ export class Aim extends Controller {
       default:
         return this
     }
-    this.container.broadcast(this.container.table.cue.aim)
+    this.container.sendEvent(this.container.table.cue.aim)
     return this
   }
 
   hit() {
-    this.container.broadcast(new HitEvent(this.container.table.serialise()))
+    this.container.sendEvent(new HitEvent(this.container.table.serialise()))
     return new PlayShot(this.container, false)
   }
 

@@ -3,12 +3,12 @@ import { EventType } from "./eventtype"
 import { Controller } from "../controller/controller"
 
 export class WatchEvent extends GameEvent {
-  table
+  json
 
   constructor(json) {
     super()
     this.type = EventType.WATCHAIM
-    this.table = json
+    this.json = json
   }
 
   applyToController(controller: Controller): Controller {

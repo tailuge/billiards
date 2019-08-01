@@ -6,6 +6,7 @@ import { Table } from "../model/table"
 import { View } from "../view/view"
 import { Init } from "./init"
 import { Rack } from "../utils/rack"
+import { EventUtil } from "../events/eventutil"
 
 /**
  * Model, View, Controller container.
@@ -21,7 +22,7 @@ export class Container {
   last = performance.now()
   step = 0.01
 
-  broadcast: (event: GameEvent) => void
+  broadcast: (event: string) => void
   log: (text: string) => void
 
   constructor(element, log) {
@@ -31,6 +32,10 @@ export class Container {
     this.table.balls.forEach(b => this.view.addMesh(b.mesh.mesh))
     this.view.addMesh(this.table.cue.mesh)
     this.updateController(new Init(this))
+  }
+
+  sendEvent(event) {
+    this.broadcast(EventUtil.serialise(event))
   }
 
   advance(elapsed) {

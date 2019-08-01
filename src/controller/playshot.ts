@@ -55,12 +55,12 @@ export class PlayShot extends Controller {
     }
     if (this.container.table.outcome.some(x => x.type == "pot")) {
       this.container.log("pot! transition to Aim")
-      this.container.broadcast(new WatchEvent(this.container.table.serialise()))
+      this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
       return new Aim(this.container)
     }
     // if no pot switch to other player
     this.container.log("no pot")
-    this.container.broadcast(this.container.table.cue.aim)
+    this.container.sendEvent(this.container.table.cue.aim)
     return new WatchAim(this.container)
   }
 
