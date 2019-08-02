@@ -16,6 +16,7 @@ export class Cue {
   mesh: Mesh
   limit = 0.4
   maxPower = 5.0
+  t = 0
 
   aim: AimEvent = new AimEvent()
 
@@ -81,16 +82,18 @@ export class Cue {
     let offset = upCross(this.aim.dir)
       .multiplyScalar(this.aim.sideOffset)
       .setZ(this.aim.verticalOffset)
-    let swing = this.aim.dir.clone().multiplyScalar(-this.aim.power / 2)
+    let swing = Math.sin(this.t/3) * 0.5;
+    let distanceToBall = this.aim.dir.clone().multiplyScalar(swing - this.aim.power / 2)
     this.mesh.position.copy(
       pos
         .clone()
         .add(offset)
-        .add(swing)
+        .add(distanceToBall)
     )
   }
 
-  update(_) {
+  update(t) {
+    this.t += t
     this.moveTo(this.aim.pos)
   }
 

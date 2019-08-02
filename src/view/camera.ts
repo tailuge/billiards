@@ -4,13 +4,13 @@ import { AimEvent } from "../events/aimevent"
 
 export class Camera {
   constructor(aspectRatio) {
-    this.camera = new PerspectiveCamera(75, aspectRatio, 0.1, 1000)
+    this.camera = new PerspectiveCamera(35, aspectRatio, 0.1, 1000)
   }
 
   camera: PerspectiveCamera
   mode = this.topView
 
-  private topViewPoint = new Vector3(0, -0.1, 17)
+  private topViewPoint = new Vector3(0, -0.1, 29)
 
   update(_, aim) {
     this.mode(aim)

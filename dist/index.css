@@ -20,7 +20,7 @@ p {
 .flex-container > div {
   background-color: #0c0c22;
   color: grey;
-  width: 100px;
+  width: 800px;
   height: 400px;
   margin: 2px;
   text-align: left;
@@ -28,8 +28,8 @@ p {
 }
 
 .view3d {
-    width: 98%;
-    height: 98%;
+  width: 400px;
+  height: 250px;
 }
 
 .chat {
