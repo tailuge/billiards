@@ -11,9 +11,4 @@ export class StationaryEvent extends GameEvent {
   applyToController(controller: Controller): Controller {
     return controller.handleStationary(this)
   }
-
-  static fromJson(_) {
-    let event = new StationaryEvent()
-    return event
-  }
 }

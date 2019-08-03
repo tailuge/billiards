@@ -16,12 +16,9 @@ export class View {
 
   constructor(element) {
     if (element !== undefined) {
-      this.renderer = new WebGLRenderer()
       this.initialiseScene(element, element.offsetWidth, element.offsetHeight)
-      this.addCamera(element.offsetWidth, element.offsetHeight)
-    } else {
-      this.addCamera(1, 1)
     }
+    this.camera = new Camera(element ? element.offsetWidth / element.offsetHeight : 1)
     this.addLights()
     this.addTable()
   }
@@ -35,14 +32,11 @@ export class View {
   }
 
   private initialiseScene(element, width, height) {
+    this.renderer = new WebGLRenderer()
     this.renderer.setSize(width, height)
     this.renderer.shadowMap.enabled = true
     this.renderer.shadowMap.type = PCFSoftShadowMap
     element.appendChild(this.renderer.domElement)
-  }
-
-  private addCamera(width, height) {
-    this.camera = new Camera(width / height)
   }
 
   private addLights() {
