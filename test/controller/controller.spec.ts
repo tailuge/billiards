@@ -75,6 +75,16 @@ describe("Controller", () => {
     done()
   })
 
+  it("WatchEvent takes WatchShot to WatchAim when all stationary", done => {
+    let watchShot = new WatchShot(container)
+    watchShot.allStationary = true
+    container.controller = watchShot
+    container.eventQueue.push(new WatchEvent(container.table.serialise()))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(WatchAim)
+    done()
+  })
+
   it("AimEvent does not take WatchShot to Aim when not stationary", done => {
     container.controller = new WatchShot(container)
     container.eventQueue.push(new AimEvent())
@@ -193,6 +203,10 @@ describe("Controller", () => {
     container.table.balls[0].vel.x = 0.001
     container.advance(0.01)
     expect(container.eventQueue.length).to.equal(1)
+    container.table.outcome.push({ type: "pot" })
+    container.processEvents()
+    container.advance(0.01)
+    expect(container.eventQueue.length).to.equal(0)
     done()
   })
 })
