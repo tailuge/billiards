@@ -22,24 +22,24 @@ export class Ball {
   rvel: Vector3 = zero.clone()
   state: State = State.Stationary
 
-  mesh: BallMesh
+  ballmesh: BallMesh
 
   transition = 0.05
 
   constructor(pos) {
     this.pos = pos.clone()
-    this.mesh = new BallMesh()
+    this.ballmesh = new BallMesh()
   }
 
   update(t) {
     this.updatePosition(t)
     this.updateVelocity(t)
-    this.mesh.updateRotation(this.rvel, t)
+    this.ballmesh.updateRotation(this.rvel, t)
   }
 
   private updatePosition(t: number) {
     this.pos.addScaledVector(this.vel, t)
-    this.mesh.updatePosition(this.pos)
+    this.ballmesh.updatePosition(this.pos)
   }
 
   private updateVelocity(t: number) {

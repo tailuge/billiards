@@ -16,6 +16,7 @@ export class PlayShot extends ControllerBase {
     super(container)
     this.container.table.outcome = []
     this.container.table.hit()
+    this.container.view.camera.mode = this.container.view.camera.afterHitView
   }
 
   handleStationary(_) {

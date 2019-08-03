@@ -32,9 +32,12 @@ export class Camera {
     this.camera.lookAt(aim.pos)
   }
 
-  afterHitView(cueBallPos) {
-    this.camera.position.addScaledVector(up, 0.01)
+  afterHitView(aim: AimEvent) {
+    this.camera.position.lerp(
+      this.camera.position.clone().addScaledVector(up, 1),
+      0.005
+    )
     this.camera.up = up
-    this.camera.lookAt(cueBallPos)
+    this.camera.lookAt(aim.pos)
   }
 }

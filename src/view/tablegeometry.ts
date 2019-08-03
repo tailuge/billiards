@@ -192,15 +192,6 @@ export class TableGeometry {
     k.position.setZ(-0.25 / 2)
   }
 
-  private static pocketCylinder(pocket, scene) {
-    TableGeometry.cylinder(
-      pocket.pos.clone().setZ(-0.5),
-      pocket.radius,
-      0.1,
-      scene
-    )
-  }
-
   private static cylinder(pos, radius, depth, scene) {
     var geometry = new CylinderGeometry(radius, radius, depth, 16)
     var mesh = new Mesh(geometry, TableGeometry.material)
@@ -212,12 +203,6 @@ export class TableGeometry {
     )
     scene.add(mesh)
     return mesh
-  }
-
-  static addPockets(scene) {
-    TableGeometry.pocketCenters.forEach(p =>
-      TableGeometry.pocketCylinder(p, scene)
-    )
   }
 
   private static addCushions(scene) {

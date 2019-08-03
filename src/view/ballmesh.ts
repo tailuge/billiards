@@ -30,8 +30,4 @@ export class BallMesh {
     this.mesh.receiveShadow = true
     this.mesh.name = "ball"
   }
-
-  addToScene(scene) {
-    scene.add(this.mesh)
-  }
 }

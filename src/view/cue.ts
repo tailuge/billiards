@@ -107,7 +107,7 @@ export class Cue {
     let direction = this.aim.dir.clone().normalize()
     let raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
     let intersections = raycaster.intersectObjects(
-      table.balls.map(b => b.mesh.mesh)
+      table.balls.map(b => b.ballmesh.mesh)
     )
     return intersections.length > 0
   }

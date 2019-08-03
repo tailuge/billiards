@@ -29,7 +29,7 @@ export class Container {
     this.log = log
     this.table = new Table(Rack.diamond())
     this.view = new View(element)
-    this.table.balls.forEach(b => this.view.addMesh(b.mesh.mesh))
+    this.table.balls.forEach(b => this.view.addMesh(b.ballmesh.mesh))
     this.view.addMesh(this.table.cue.mesh)
     this.updateController(new Init(this))
   }
