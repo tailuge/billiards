@@ -14,7 +14,7 @@ import { AimEvent } from "../events/aimevent"
 
 export class Cue {
   mesh: Mesh
-  limit = 0.4
+  limit = 0.3
   maxPower = 5.0
   t = 0
 
@@ -44,7 +44,7 @@ export class Cue {
       )
       .applyMatrix(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
       .applyMatrix(
-        new Matrix4().identity().makeTranslation(-length / 2 - 1, 0, 1)
+        new Matrix4().identity().makeTranslation(-length / 2 - 0.5, 0, 0.75)
       )
     this.mesh.rotation.z = this.aim.angle
   }
@@ -82,7 +82,7 @@ export class Cue {
     let offset = upCross(this.aim.dir)
       .multiplyScalar(this.aim.sideOffset)
       .setZ(this.aim.verticalOffset)
-    let swing = Math.sin(this.t/3) * 0.5;
+    let swing = (Math.sin(this.t/3) - 1) * 0.25;
     let distanceToBall = this.aim.dir.clone().multiplyScalar(swing - this.aim.power / 2)
     this.mesh.position.copy(
       pos
