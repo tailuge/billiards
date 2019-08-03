@@ -20,7 +20,7 @@ export class Container {
   eventQueue: GameEvent[] = []
 
   last = performance.now()
-  step = 0.01
+  readonly step = 0.01
 
   broadcast: (event: string) => void
   log: (text: string) => void
@@ -39,32 +39,30 @@ export class Container {
   }
 
   advance(elapsed) {
-    let steps = Math.max(15, Math.floor(elapsed / this.step))
-    let stateBefore = this.table.allStationary()
+    const steps = Math.max(15, Math.floor(elapsed / this.step))
+    const stateBefore = this.table.allStationary()
     for (var i = 0; i < steps; i++) {
       this.table.advance(this.step)
     }
     this.view.update(steps * this.step, this.table.cue.aim)
     this.table.cue.update(steps * this.step)
     if (!stateBefore && this.table.allStationary()) {
-      // transitioned to all all stationary
       this.eventQueue.push(new StationaryEvent())
     }
   }
 
   processEvents() {
-    let input = this.inputQueue.shift()
+    const input = this.inputQueue.shift()
     input && this.updateController(this.controller.handleInput(input))
-    let event = this.eventQueue.shift()
+    const event = this.eventQueue.shift()
     event && this.updateController(event.applyToController(this.controller))
   }
 
   animate(timestamp): void {
-    this.advance((timestamp - this.last) / 1000.0)
-    this.view.render()
+    this.advance((timestamp - this.last) / 1000)
     this.last = timestamp
-
     this.processEvents()
+    this.view.render()
 
     requestAnimationFrame(t => {
       this.animate(t)

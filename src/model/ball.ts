@@ -24,7 +24,7 @@ export class Ball {
 
   ballmesh: BallMesh
 
-  transition = 0.05
+  readonly transition = 0.05
 
   constructor(pos) {
     this.pos = pos.clone()

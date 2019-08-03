@@ -3,7 +3,7 @@ import { Container } from "./container"
 import { Controller } from "./controller"
 import { End } from "./end"
 
-export class ControllerBase extends Controller {
+export abstract class ControllerBase extends Controller {
   container: Container
 
   constructor(container: Container) {

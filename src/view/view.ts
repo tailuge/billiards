@@ -15,8 +15,11 @@ export class View {
   camera: Camera
 
   constructor(element) {
-    element && this.initialiseScene(element, element.offsetWidth, element.offsetHeight)
-    this.camera = new Camera(element ? element.offsetWidth / element.offsetHeight : 1)
+    element &&
+      this.initialiseScene(element, element.offsetWidth, element.offsetHeight)
+    this.camera = new Camera(
+      element ? element.offsetWidth / element.offsetHeight : 1
+    )
     this.addLights()
     this.addTable()
   }
