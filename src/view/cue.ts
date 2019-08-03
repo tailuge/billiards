@@ -82,8 +82,10 @@ export class Cue {
     let offset = upCross(this.aim.dir)
       .multiplyScalar(this.aim.sideOffset)
       .setZ(this.aim.verticalOffset)
-    let swing = (Math.sin(this.t/3) - 1) * 0.25;
-    let distanceToBall = this.aim.dir.clone().multiplyScalar(swing - this.aim.power / 2)
+    let swing = (Math.sin(this.t / 3) - 1) * 0.25
+    let distanceToBall = this.aim.dir
+      .clone()
+      .multiplyScalar(swing - this.aim.power / 2)
     this.mesh.position.copy(
       pos
         .clone()

@@ -5,6 +5,7 @@ import { Pocket } from "./physics/pocket"
 import { Cue } from "../view/cue"
 import { Ball } from "./ball"
 import { AimEvent } from "../events/aimevent"
+import { upCross } from "../utils/utils"
 
 export class Table {
   balls: Ball[]
@@ -73,6 +74,17 @@ export class Table {
 
   allStationary() {
     return this.balls.every(b => !b.inMotion() || !b.onTable())
+  }
+
+  hit() {
+    let aim = this.cue.aim
+    this.balls[0].vel.copy(aim.dir.clone().multiplyScalar(aim.power))
+    let rvel = upCross(aim.dir).multiplyScalar(
+      (aim.power * aim.verticalOffset * 5) / 2
+    )
+    rvel.z = (-aim.sideOffset * 5) / 2
+    this.balls[0].rvel.copy(rvel)
+    aim.power = 0
   }
 
   serialise() {

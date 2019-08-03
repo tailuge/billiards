@@ -1,9 +1,4 @@
-import {
-  IcosahedronGeometry,
-  Matrix4,
-  Mesh,
-  MeshPhongMaterial
-} from "three"
+import { IcosahedronGeometry, Matrix4, Mesh, MeshPhongMaterial } from "three"
 import { norm } from "./../utils/utils"
 
 export class BallMesh {

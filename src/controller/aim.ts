@@ -1,14 +1,12 @@
-import { Controller, HitEvent, Input, AbortEvent } from "./controller"
+import { Controller, HitEvent, Input } from "./controller"
+import { ControllerBase } from "./controllerbase"
 import { PlayShot } from "./playshot"
-import { End } from "./end"
 
 /**
  * Aim using input events.
  *
- * Transitions to PlayShot.
- * Game events are ignored besides chat and abort messages.
  */
-export class Aim extends Controller {
+export class Aim extends ControllerBase {
   readonly scale = 0.001
 
   constructor(container) {
@@ -52,10 +50,6 @@ export class Aim extends Controller {
 
   hit() {
     this.container.sendEvent(new HitEvent(this.container.table.serialise()))
-    return new PlayShot(this.container, false)
-  }
-
-  handleAbort(_: AbortEvent): Controller {
-    return new End(this.container)
+    return new PlayShot(this.container)
   }
 }

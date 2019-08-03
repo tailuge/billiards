@@ -17,7 +17,7 @@ export class Camera {
   }
 
   topView(_: AimEvent) {
-    this.camera.position.lerp(this.topViewPoint, 0.1)
+    this.camera.position.lerp(this.topViewPoint, 0.2)
     this.camera.up = up
     this.camera.lookAt(zero)
   }

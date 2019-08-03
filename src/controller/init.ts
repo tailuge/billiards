@@ -3,22 +3,17 @@ import { WatchEvent } from "../events/watchevent"
 import { Controller } from "./controller"
 import { Aim } from "./aim"
 import { WatchAim } from "./watchaim"
-import { AbortEvent } from "../events/abortevent"
-import { End } from "./end"
+import { ControllerBase } from "./controllerbase"
 
 /**
  * Initial state of controller.
  *
  * Transitions into active player and watcher.
  */
-export class Init extends Controller {
+export class Init extends ControllerBase {
   handleBegin(_: BeginEvent): Controller {
     this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
     return new Aim(this.container)
-  }
-
-  handleAbort(_: AbortEvent): Controller {
-    return new End(this.container)
   }
 
   handleWatch(event: WatchEvent): Controller {

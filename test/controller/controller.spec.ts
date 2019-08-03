@@ -14,6 +14,7 @@ import { WatchEvent } from "../../src/events/watchevent"
 import { HitEvent } from "../../src/events/hitevent"
 import { StationaryEvent } from "../../src/events/stationaryevent"
 import { GameEvent } from "../../src/events/gameevent"
+import { WatchShot } from "../../src/controller/watchshot"
 
 describe("Controller", () => {
   var container: Container
@@ -52,7 +53,7 @@ describe("Controller", () => {
     container.controller = new WatchAim(container)
     container.eventQueue.push(new HitEvent(container.table.serialise()))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(PlayShot)
+    expect(container.controller).to.be.an.instanceof(WatchShot)
     done()
   })
 
@@ -64,34 +65,34 @@ describe("Controller", () => {
     done()
   })
 
-  it("AimEvent takes PlayShot to Aim when all stationary", done => {
-    let playShot = new PlayShot(container, true)
-    playShot.allStationary = true
-    container.controller = playShot
+  it("AimEvent takes WatchShot to Aim when all stationary", done => {
+    let watchShot = new WatchShot(container)
+    watchShot.allStationary = true
+    container.controller = watchShot
     container.eventQueue.push(new AimEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
     done()
   })
 
-  it("AimEvent does not take PlayShot to Aim when not stationary", done => {
-    container.controller = new PlayShot(container, true)
+  it("AimEvent does not take WatchShot to Aim when not stationary", done => {
+    container.controller = new WatchShot(container)
     container.eventQueue.push(new AimEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(PlayShot)
+    expect(container.controller).to.be.an.instanceof(WatchShot)
     done()
   })
 
-  it("StationaryEvent takes isWatching PlayShot to PlayShot", done => {
-    container.controller = new PlayShot(container, true)
+  it("StationaryEvent takes WatchShot to PlayShot", done => {
+    container.controller = new WatchShot(container)
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(PlayShot)
+    expect(container.controller).to.be.an.instanceof(WatchShot)
     done()
   })
 
   it("StationaryEvent takes active PlayShot to WatchAim if no pot", done => {
-    container.controller = new PlayShot(container, false)
+    container.controller = new PlayShot(container)
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
@@ -99,7 +100,7 @@ describe("Controller", () => {
   })
 
   it("StationaryEvent takes active PlayShot to Aim if pot", done => {
-    container.controller = new PlayShot(container, false)
+    container.controller = new PlayShot(container)
     container.eventQueue.push(new StationaryEvent())
     container.table.outcome.push({ type: "pot" })
     container.processEvents()
@@ -163,8 +164,8 @@ describe("Controller", () => {
     done()
   })
 
-  it("advance generates StationaryEvent and end of shot", done => {
-    container.controller = new PlayShot(container, true)
+  it("advance generates StationaryEvent at end of shot", done => {
+    container.controller = new PlayShot(container)
     container.table.balls[0].vel.x = 0.001
     container.advance(0.01)
     expect(container.eventQueue.length).to.equal(1)

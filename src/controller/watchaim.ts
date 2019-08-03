@@ -1,11 +1,9 @@
-import { Controller } from "./controller"
-import { AbortEvent } from "../events/abortevent"
 import { AimEvent } from "../events/aimevent"
 import { HitEvent } from "../events/hitevent"
-import { End } from "./end"
-import { PlayShot } from "./playshot"
+import { WatchShot } from "./watchshot"
+import { ControllerBase } from "./controllerbase"
 
-export class WatchAim extends Controller {
+export class WatchAim extends ControllerBase {
   readonly scale = 0.000001
 
   constructor(container) {
@@ -21,10 +19,6 @@ export class WatchAim extends Controller {
 
   handleHit(event: HitEvent) {
     this.container.table.updateFromSerialised(event.json)
-    return new PlayShot(this.container, true)
-  }
-
-  handleAbort(_: AbortEvent): Controller {
-    return new End(this.container)
+    return new WatchShot(this.container)
   }
 }
