@@ -83,7 +83,31 @@ describe("Controller", () => {
     done()
   })
 
-  it("StationaryEvent takes WatchShot to PlayShot", done => {
+  it("AimEvent takes WatchShot to enqueued Aim after all stationary", done => {
+    let watchShot = new WatchShot(container)
+    watchShot.allStationary = false
+    container.controller = watchShot
+    container.eventQueue.push(new AimEvent())
+    container.processEvents()
+    container.eventQueue.push(new StationaryEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Aim)
+    done()
+  })
+
+  it("WatchEvent takes WatchShot to enqueued WatchAim after all stationary", done => {
+    let watchShot = new WatchShot(container)
+    watchShot.allStationary = false
+    container.controller = watchShot
+    container.eventQueue.push(new WatchEvent(container.table.serialise()))
+    container.processEvents()
+    container.eventQueue.push(new StationaryEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(WatchAim)
+    done()
+  })
+
+  it("StationaryEvent takes WatchShot to WatchShot", done => {
     container.controller = new WatchShot(container)
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
