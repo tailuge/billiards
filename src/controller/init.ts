@@ -1,9 +1,10 @@
 import { BeginEvent } from "../events/beginevent"
 import { WatchEvent } from "../events/watchevent"
-import { Controller } from "./controller"
+import { Controller, HitEvent } from "./controller"
 import { Aim } from "./aim"
 import { WatchAim } from "./watchaim"
 import { ControllerBase } from "./controllerbase"
+import { WatchShot } from "./watchshot";
 
 /**
  * Initial state of controller.
@@ -20,4 +21,10 @@ export class Init extends ControllerBase {
     this.container.table.updateFromSerialised(event.json)
     return new WatchAim(this.container)
   }
+
+  handleHit(event: HitEvent) {
+    this.container.table.updateFromSerialised(event.json)
+    return new WatchShot(this.container)
+  }
+
 }

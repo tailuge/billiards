@@ -4,13 +4,13 @@ import { AimEvent } from "../events/aimevent"
 
 export class Camera {
   constructor(aspectRatio) {
-    this.camera = new PerspectiveCamera(35, aspectRatio, 0.1, 1000)
+    this.camera = new PerspectiveCamera(30, aspectRatio, 0.1, 10000)
   }
 
   camera: PerspectiveCamera
   mode = this.topView
 
-  private topViewPoint = new Vector3(0, -0.1, 29)
+  private topViewPoint = new Vector3(0, -0.1, 59)
 
   update(_, aim) {
     this.mode(aim)
@@ -29,7 +29,7 @@ export class Camera {
     )
     this.camera.position.z = 2.7
     this.camera.up = up
-    this.camera.lookAt(aim.pos)
+    this.camera.lookAt(aim.pos.clone().addScaledVector(up, 1))
   }
 
   afterHitView(aim: AimEvent) {
@@ -38,6 +38,6 @@ export class Camera {
       0.005
     )
     this.camera.up = up
-    this.camera.lookAt(aim.pos)
+    this.camera.lookAt(aim.pos.clone().addScaledVector(up, 1))
   }
 }

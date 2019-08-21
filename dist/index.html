@@ -13,6 +13,15 @@
 
 	</script>
 	<script>
+        var controller1
+        var controller2
+
+        function clickb(a) {
+            controller1.eventQueue.push(new library.AbortEvent())
+            controller1.eventQueue.push(new library.BeginEvent())
+            controller1.eventQueue.push(library.EventUtil.fromSerialised(JSON.stringify(a)))
+        }
+
 		window.onload = function() {
 
           function log(element, text) {
@@ -20,14 +29,21 @@
               elt.innerHTML += "<div>" + text + "</div>"
           }
 
-          var controller1 = new library.Container(
+          controller1 = new library.Container(
               document.getElementById("viewP1"),
               text => log("sidebarP1",text))
-          var controller2 = new library.Container(
+          controller2 = new library.Container(
               document.getElementById("viewP2"),
               text => log("sidebarP2",text))
 
-          controller1.broadcast = e => controller2.eventQueue.push(library.EventUtil.fromSerialised(e))
+          controller1.broadcast = e => {
+              controller2.eventQueue.push(library.EventUtil.fromSerialised(e))
+              if (/.*type..3.*/.test(e)) {
+                  var button = "<button onclick='clickb(" + e + ");'>shot</button>"
+                  console.log(button)
+                  log("sidebarP1",button)
+              }
+          }
           controller2.broadcast = e => controller1.eventQueue.push(library.EventUtil.fromSerialised(e))
 
           controller1.eventQueue.push(new library.BeginEvent())

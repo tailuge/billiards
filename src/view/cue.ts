@@ -40,7 +40,7 @@ export class Cue {
       .applyMatrix(
         new Matrix4()
           .identity()
-          .makeRotationAxis(new Vector3(1.0, 0.0, 0.0), -0.1)
+          .makeRotationAxis(new Vector3(1.0, 0.0, 0.0), -0.075)
       )
       .applyMatrix(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
       .applyMatrix(

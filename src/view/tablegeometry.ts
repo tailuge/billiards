@@ -4,8 +4,8 @@ import { Knuckle } from "../model/physics/knuckle"
 import { Pocket } from "../model/physics/pocket"
 
 export class TableGeometry {
-  static tableX = (21 * 2) / 3
-  static tableY = (11 * 2) / 3
+  static tableX = 21.5
+  static tableY = 10.5
   static X = TableGeometry.tableX + 0.5
   static Y = TableGeometry.tableY + 0.5
   static PX = TableGeometry.tableX + 1.6
