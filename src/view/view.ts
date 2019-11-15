@@ -1,15 +1,8 @@
-import {
-    AmbientLight,
-    DirectionalLight,
-    PCFSoftShadowMap,
-    Scene,
-    WebGLRenderer,
-    Mesh
-} from "three"
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
+import { AmbientLight, DirectionalLight, PCFSoftShadowMap, Scene, WebGLRenderer, Mesh } from "three"
 import { Camera } from "./camera"
 import { TableGeometry } from "./tablegeometry"
 import { AimEvent } from "../events/aimevent"
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 export class View {
     private scene = new Scene()
@@ -56,11 +49,11 @@ export class View {
         light.shadow.mapSize.height = 1024
         light.castShadow = true
         this.scene.add(light)
-        this.scene.add(new AmbientLight(0x333333, 1.0))
+        this.scene.add(new AmbientLight(0x111111, 1.0))
     }
 
     private addTable() {
-         //       TableGeometry.addToScene(this.scene)
+        //       TableGeometry.addToScene(this.scene)
         const loader = new GLTFLoader()
         const scene = this.scene
         loader.load('models/p3.gltf', function(gltf) {

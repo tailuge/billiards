@@ -14,21 +14,21 @@
         "deps": "npx yarn-check --skip-unused"
     },
     "dependencies": {
-        "three": "^0.107.0"
+        "three": "^0.110.0"
     },
     "devDependencies": {
-        "@types/chai": "^4.2.0",
-        "@types/jest": "^24.0.18",
+        "@types/chai": "^4.2.5",
+        "@types/jest": "^24.0.23",
         "chai": "^4.2.0",
-        "coveralls": "^3.0.6",
+        "coveralls": "^3.0.7",
         "jest": "^24.9.0",
-        "mocha": "^6.2.0",
-        "prettier": "^1.18.2",
-        "ts-jest": "^24.0.2",
-        "ts-loader": "^6.0.4",
-        "typescript": "^3.5.3",
-        "webpack": "^4.39.2",
-        "webpack-cli": "^3.3.7",
-        "webpack-dev-server": "^3.8.0"
+        "mocha": "^6.2.2",
+        "prettier": "^1.19.1",
+        "ts-jest": "^24.1.0",
+        "ts-loader": "^6.2.1",
+        "typescript": "^3.7.2",
+        "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.10",
+        "webpack-dev-server": "^3.9.0"
     }
 }

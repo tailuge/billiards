@@ -1,6 +1,6 @@
 {
   "include": [
-    "src/*.ts", "src/view/camera.ts", "src/view/tablegeometry.ts", "src/model/gamestate.ts", "src/utils/utils.ts", "src/model/table.ts"
+    "src/**.ts"
   ],
   "compilerOptions": {
     "outDir": "./dist",
