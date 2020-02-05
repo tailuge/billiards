@@ -1,7 +1,6 @@
 import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
 import {
-  Math as Math2,
   Matrix4,
   Mesh,
   CylinderGeometry,
@@ -37,13 +36,13 @@ export class Cue {
     this.mesh = new Mesh(geometry, Cue.material)
     this.mesh.castShadow = true
     this.mesh.geometry
-      .applyMatrix(
+      .applyMatrix4(
         new Matrix4()
           .identity()
           .makeRotationAxis(new Vector3(1.0, 0.0, 0.0), -0.1)
       )
-      .applyMatrix(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
-      .applyMatrix(
+      .applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
+      .applyMatrix4(
         new Matrix4().identity().makeTranslation(-length / 2 - 0.5, 0, 0.75)
       )
     this.mesh.rotation.z = this.aim.angle
@@ -55,8 +54,12 @@ export class Cue {
     this.mesh.rotation.z = this.aim.angle
   }
 
+  clamp(num, min, max) {
+    return num <= min ? min : num >= max ? max : num
+  }
+
   adjustHeight(delta) {
-    this.aim.verticalOffset = Math2.clamp(
+    this.aim.verticalOffset = this.clamp(
       this.aim.verticalOffset + delta,
       -this.limit,
       this.limit
@@ -65,7 +68,7 @@ export class Cue {
   }
 
   adjustSide(delta) {
-    this.aim.sideOffset = Math2.clamp(
+    this.aim.sideOffset = this.clamp(
       this.aim.sideOffset + delta,
       -this.limit,
       this.limit
