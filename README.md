@@ -24,6 +24,10 @@ In browser WebGL [demo](http://tailuge.github.io/billiards/dist)
 
 <kbd style="border: 1px solid #aaa; border-radius: 0.2em; padding: 0.1em 0.3em; font-size: 0.85em;">Space</kbd> Hit - hold for more power
 
+### Diagrams
+
+Inspect physics using [diagrams](http://tailuge.github.io/billiards/dist/graph.html)
+
 ### Setup
 
 ```

@@ -10,32 +10,25 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	<link rel="stylesheet" type="text/css" href="index.css" />
 	<script src="library.js">
-
 	</script>
-	<script>
-		window.onload = function() {
-            var table = new library.Table([]);
-            var canvas = document.getElementById("diagram1");
-            var ctx = canvas.getContext("2d");
-            ctx.fillStyle = "#555500";
-            ctx.fillRect(0, 0, 150, 75);
-            ctx.moveTo(0, 0);
-            ctx.lineTo(200, 100);
-            ctx.stroke();
 
+	<script>
+        function elt(id) {
+            return document.getElementById(id);
+        }
+
+        window.onload = function() {
             var data = `{"balls":[{"pos":{"x":-14,"y":0,"z":0},"vel":{"x":-1,"y":0,"z":0},"rvel":{"x":0,"y":0,"z":0},"state":"Stationary"},{"pos":{"x":-13,"y":0,"z":0},"vel":{"x":0,"y":0,"z":0},"rvel":{"x":
 0,"y":0,"z":0},"state":"Stationary"},{"pos":{"x":-12,"y":0,"z":0},"vel":{"x":0,"y":0,"z":0},"rvel":{"x":0,"y":0,"z":0},"state":"Stationary"}],"aim":{"pos":{"x":1,"y":0,"z":0},"dir":{"x":
 1,"y":0,"z":0},"verticalOffset":0,"sideOffset":0,"angle":0,"power":0,"type":2}}`;
-            let obj = JSON.parse(data);
-            library.Table.fromSerialised(obj);
-            console.log(table.balls[0]);
-
+            new library.Diagram(JSON.parse(data),elt("diagram1"),elt("control1"))
         }
 	</script>
 </head>
 
 <body>
-	<canvas id="diagram1" width="400" height="200" style="border:1px solid #c3c3c3;">
+	<canvas id="diagram1" width="200" height="100" style="border:1px solid #c3c3c3;"></canvas>
+	<div id="control1">diagram1</div>
 </body>
 
 </html>

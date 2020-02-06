@@ -6,6 +6,9 @@ body, html {
   height: 98%;
 }
 
+div {
+    color: antiquewhite;
+}
 h1,
 p {
   margin: 0 0 1em 0;
