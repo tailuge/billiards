@@ -26,7 +26,7 @@ In browser WebGL [demo](http://tailuge.github.io/billiards/dist)
 
 ### Diagrams
 
-Inspect physics using [diagrams](http://tailuge.github.io/billiards/dist/graph.html)
+Inspect physics using [diagrams](http://tailuge.github.io/billiards/dist/diagrams.html)
 
 ### Setup
 
