@@ -4,8 +4,6 @@ import { rotateApplyUnrotate, bounceWithoutSlipX } from "./physics"
 import { Vector3 } from "three"
 
 export class Cushion {
-  static elasticity = 0.8
-
   static willBounce(ball: Ball, t: number): boolean {
     let futurePosition = ball.futurePosition(t)
 

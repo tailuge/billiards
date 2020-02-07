@@ -1,7 +1,7 @@
 import { Ball } from "../ball"
 import { TableGeometry } from "../../view/tablegeometry"
-import { Cushion } from "./cushion"
 import { Vector3 } from "three"
+import { e } from "./constants"
 
 export class Knuckle {
   pos: Vector3
@@ -22,7 +22,7 @@ export class Knuckle {
       .sub(this.pos)
       .normalize()
     let velDotCenters = kb.dot(ball.vel)
-    ball.vel.addScaledVector(kb, -2 * Cushion.elasticity * velDotCenters)
+    ball.vel.addScaledVector(kb, -2 * e * velDotCenters)
   }
 
   static willBounceAny(ball: Ball, t: number) {
