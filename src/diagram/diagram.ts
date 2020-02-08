@@ -10,21 +10,35 @@ export class Diagram {
     this.table = Table.fromSerialised(state)
     this.diagram = diagram
     this.control = control
+    this.drawTable()
+  }
+
+  scale() {
+    let scale = (0.8 * this.diagram.canvas.clientWidth) / TableGeometry.X
+    this.diagram.setTransform(
+      scale,
+      0,
+      0,
+      scale,
+      this.diagram.canvas.clientWidth * 0.9,
+      this.diagram.canvas.clientHeight * 0.9
+    )
   }
 
   drawTable() {
-    let scale = (0.9 * this.diagram.canvas.clientWidth) / TableGeometry.X
-    this.control.innerHTML = "w" + scale
-
-    this.diagram.fillStyle = "#555500"
+    this.scale()
+    this.diagram.fillStyle = "#0a5c5c"
     this.diagram.fillRect(
-      0,
-      0,
-      TableGeometry.X * scale,
-      TableGeometry.Y * scale
+      -TableGeometry.X,
+      -TableGeometry.Y,
+      TableGeometry.X,
+      TableGeometry.Y
     )
+
+    this.diagram.fillStyle = "#aa0000"
     this.diagram.moveTo(0, 0)
-    this.diagram.lineTo(200, 100)
-    this.diagram.stroke()
+    this.diagram.beginPath()
+    this.diagram.ellipse(0, 0, 0.5, 0.5, 0, 0, 7)
+    this.diagram.fill()
   }
 }
