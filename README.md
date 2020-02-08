@@ -31,7 +31,7 @@ Inspect physics using [diagrams](http://tailuge.github.io/billiards/dist/diagram
 ### Setup
 
 ```
-nvm use v10.15.3
+nvm use v10.18.0
 yarn install
 yarn dev
 ```

@@ -14,14 +14,14 @@ export class Diagram {
   }
 
   scale() {
-    let scale = (0.8 * this.diagram.canvas.clientWidth) / TableGeometry.X
+    let scale = (0.45 * this.diagram.canvas.clientWidth) / TableGeometry.X
     this.diagram.setTransform(
       scale,
       0,
       0,
       scale,
-      this.diagram.canvas.clientWidth * 0.9,
-      this.diagram.canvas.clientHeight * 0.9
+      this.diagram.canvas.clientWidth * 0.5,
+      this.diagram.canvas.clientHeight * 0.5
     )
   }
 
@@ -31,14 +31,19 @@ export class Diagram {
     this.diagram.fillRect(
       -TableGeometry.X,
       -TableGeometry.Y,
-      TableGeometry.X,
-      TableGeometry.Y
+      TableGeometry.X * 2,
+      TableGeometry.Y * 2
     )
 
+    this.drawBalls()
+  }
+
+  drawBalls() {
     this.diagram.fillStyle = "#aa0000"
-    this.diagram.moveTo(0, 0)
-    this.diagram.beginPath()
-    this.diagram.ellipse(0, 0, 0.5, 0.5, 0, 0, 7)
-    this.diagram.fill()
+    this.table.balls.forEach(ball => {
+      this.diagram.beginPath()
+      this.diagram.ellipse(ball.pos.x, ball.pos.y, 0.5, 0.5, 0, 0, 7)
+      this.diagram.fill()
+    })
   }
 }
