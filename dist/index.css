@@ -9,6 +9,7 @@ body, html {
 div {
     color: antiquewhite;
 }
+
 h1,
 p {
   margin: 0 0 1em 0;
@@ -37,7 +38,10 @@ p {
 
 input {
     margin: .1rem 0;
-    width: 6ch
+    width: 6ch;
+    background-color: transparent;
+    border: 0.1px solid;
+    color: grey;    
 }
 
 .chat {

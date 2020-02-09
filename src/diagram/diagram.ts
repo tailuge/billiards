@@ -14,18 +14,14 @@ export class Diagram {
     this.control = control
     this.drawTable()
     this.animate(this.last)
+    this.addControls(control)
   }
 
   scale() {
-    let scale = (0.45 * this.diagram.canvas.clientWidth) / TableGeometry.X
-    this.diagram.setTransform(
-      scale,
-      0,
-      0,
-      scale,
-      this.diagram.canvas.clientWidth * 0.5,
-      this.diagram.canvas.clientHeight * 0.5
-    )
+    const x = this.diagram.canvas.clientWidth
+    const y = this.diagram.canvas.clientHeight
+    let scale = (0.45 * x) / TableGeometry.X
+    this.diagram.setTransform(scale, 0, 0, scale, x * 0.5, y * 0.5)
   }
 
   drawTable() {
@@ -65,5 +61,26 @@ export class Diagram {
         this.animate(t)
       })
     }
+  }
+
+  addControls(elt: HTMLElement) {
+    elt.innerHTML = `
+        x
+		<input id="x" type="number" step="0.1" value="4.0">
+		<input id="y" type="number" step="0.1" value="0.1">
+        ẋ
+		<input id="vx" type="number" step="0.1" value="-3.0">
+		<input id="vy" type="number" step="0.1" value="0.0">
+        ω
+		<input id="wx" type="number" step="0.1" value="0.0">
+		<input id="wy" type="number" step="0.1" value="0.0">
+        <input id="wz" type="number" step="0.1" value="0.0">
+        <button id="restart">↻</button>`
+    var button = elt.getElementsByTagName("button")
+    button[0].onclick = () => this.restart()
+  }
+
+  restart() {
+    console.log("restart")
   }
 }
