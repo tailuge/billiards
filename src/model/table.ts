@@ -96,7 +96,9 @@ export class Table {
 
   static fromSerialised(data) {
     let table = new Table(data.balls.map(b => Ball.fromSerialised(b)))
-    table.cue.aim = AimEvent.fromJson(data.aim)
+    if (data.aim) {
+      table.cue.aim = AimEvent.fromJson(data.aim)
+    }
     return table
   }
 
