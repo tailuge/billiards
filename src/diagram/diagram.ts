@@ -54,7 +54,7 @@ export class Diagram {
   }
 
   animate(timestamp): void {
-    this.drawBalls("#0a5050")
+    this.drawBalls("#083030")
     this.advance((timestamp - this.last) / 1000)
     this.last = timestamp
     this.drawBalls("#aaaaaa")
@@ -84,16 +84,13 @@ export class Diagram {
   addControls(elt: HTMLElement) {
     var b = this.state.balls[0]
     elt.innerHTML = `
-        x
-		<input id="x" type="number" step="0.1" value="${b.pos.x}">
-		<input id="y" type="number" step="0.1" value="${b.pos.y}">
-        ẋ
-		<input id="vx" type="number" step="0.1" value="${b.vel.x}">
-		<input id="vy" type="number" step="0.1" value="${b.vel.y}">
-        ω
-		<input id="wx" type="number" step="0.1" value="${b.rvel.x}">
-		<input id="wy" type="number" step="0.1" value="${b.rvel.y}">
-        <input id="wz" type="number" step="0.1" value="${b.rvel.z}">
+        x <input id="x" type="number" step="0.1" value="${b.pos.x}">
+		  <input id="y" type="number" step="0.1" value="${b.pos.y}">
+        ẋ <input id="vx" type="number" step="0.1" value="${b.vel.x}">
+		  <input id="vy" type="number" step="0.1" value="${b.vel.y}">
+        ω <input id="wx" type="number" step="0.1" value="${b.rvel.x}">
+		  <input id="wy" type="number" step="0.1" value="${b.rvel.y}">
+          <input id="wz" type="number" step="0.1" value="${b.rvel.z}">
         <button id="restart">↻</button>`
 
     var button = elt.getElementsByTagName("button")
@@ -103,6 +100,7 @@ export class Diagram {
   restart() {
     this.readControls()
     this.drawTable()
+    this.last = performance.now()
     this.animate(this.last)
   }
 }

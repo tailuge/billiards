@@ -18,16 +18,16 @@
         }
 
         window.onload = function() {
-            makeDiagram("diagram1",8,0.1,  -3,0, 0,0,0);
-            makeDiagram("diagram2",8,0.11, -3,0, 0,0,0);
+            makeDiagram("diagram1",[makeBall(8,0.1,  -3,0, 0,0,0),makeBall(0,0,  0,0, 0,0,0)]);
+            makeDiagram("diagram2",[makeBall(8,0.11, -3,0, 0,2,0),makeBall(0,0,  0,0, 0,0,0)]);
         }
 
-        function makeDiagram(id,x,y,vx,vy,wx,wy,wz) {
-            var ball1 = {pos:{x:x,y:y,z:0},vel:{x:vx,y:vy,z:0},rvel:{x:wx,y:wy,z:wz},state:"Stationary"}; 
-            var ball2 = {pos:{x:-3,y:0,z:0},vel:{x:0,y:0,z:0},rvel:{x:0,y:0,z:0},state:"Stationary"};
-            var ball3 = {pos:{x:-12,y:0,z:0},vel:{x:0,y:0,z:0},rvel:{x:0,y:0,z:0},state:"Stationary"}; 
-            var data = {balls:[ball1,ball2,ball3]};
-            new library.Diagram(data,elt(id,"canvas").getContext("2d"),elt(id,"control"));
+        function makeDiagram(id,balls) {
+            new library.Diagram({balls:balls}, elt(id,"canvas").getContext("2d"), elt(id,"control"));
+        }
+
+        function makeBall(x,y,vx,vy,wx,wy,wz) {
+            return {pos:{x:x,y:y,z:0},vel:{x:vx,y:vy,z:0},rvel:{x:wx,y:wy,z:wz},state:"Stationary"}; 
         }
 	</script>
 </head>
