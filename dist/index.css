@@ -35,6 +35,11 @@ p {
   height: 250px;
 }
 
+input {
+    margin: .1rem 0;
+    width: 6ch
+}
+
 .chat {
     overflow: auto;
 }

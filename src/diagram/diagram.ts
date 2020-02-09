@@ -56,7 +56,7 @@ export class Diagram {
   }
 
   animate(timestamp): void {
-    this.drawBalls("#0a5c5c")
+    this.drawBalls("#0a5050")
     this.advance((timestamp - this.last) / 1000)
     this.last = timestamp
     this.drawBalls("#aaaaaa")

@@ -14,16 +14,21 @@
 
 
 	<script>
-        function elt(id) {
+		function elt(id) {
             return document.getElementById(id);
+        }
+   		function value(id) {
+            return new Number(document.getElementById(id).value);
         }
 
         window.onload = function() {
-            var ball1 = {pos:{x:4,y:0.075,z:0},vel:{x:-3,y:0,z:0},rvel:{x:0,y:0,z:0},state:"Stationary"}; 
+            var ball1 = {pos:{x:value("x"),y:value("y"),z:0},vel:{x:value("vx"),y:value("vy"),z:0},rvel:{x:0,y:0,z:0},state:"Stationary"}; 
+            console.log(JSON.stringify(ball1))
+
             var ball2 = {pos:{x:-3,y:0,z:0},vel:{x:0,y:0,z:0},rvel:{x:0,y:0,z:0},state:"Stationary"};
             var ball3 = {pos:{x:-12,y:0,z:0},vel:{x:0,y:0,z:0},rvel:{x:0,y:0,z:0},state:"Stationary"}; 
             var data = {balls:[ball1,ball2,ball3]};
-            new library.Diagram(data,elt("diagram1").getContext("2d"),elt("control1"))
+            var diagram1 = new library.Diagram(data,elt("diagram1").getContext("2d"),elt("control1"))
         }
 	</script>
 </head>
@@ -31,7 +36,15 @@
 <body>
 	<canvas id="diagram1" width="200" height="105" style="border:1px solid #111111;"></canvas>
 	<div id="control1">diagram1</div>
-    <button onClick="window.location.reload();">Refresh Page</button>
+	<div id="ball1">b1
+		<label for="x">x:</label><input id="x" type="number" step="0.1" value="4.0">
+		<label for="y">y:</label><input id="y" type="number" step="0.1" value="0.1">
+		<label for="vx">vx:</label><input id="vx" type="number" step="0.1" value="-3.0">
+		<label for="vy">vy:</label><input id="vy" type="number" step="0.1" value="0.0">
+    </div>
+		<button onClick="window.location.reload();">↻</button>
+
+		<button onClick="window.location.reload();">Refresh Page</button>
 </body>
 
 </html>
