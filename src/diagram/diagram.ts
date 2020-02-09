@@ -8,7 +8,10 @@ export class Diagram {
   diagramInputs: DiagramInputs
 
   last = performance.now()
+
   readonly step = 0.01
+  readonly tablecolor = "#0a5c5c"
+  readonly colors = ["#aaaaaa", "#ff0000", "#ffff00"]
 
   constructor(state, diagram, control) {
     this.table = Table.fromSerialised(state)
@@ -30,23 +33,8 @@ export class Diagram {
   drawTable() {
     const x = TableGeometry.X
     const y = TableGeometry.Y
-    this.diagram.fillStyle = "#0a5c5c"
+    this.diagram.fillStyle = this.tablecolor
     this.diagram.fillRect(-x, -y, x * 2, y * 2)
-  }
-
-  readonly colors = ["#aaaaaa", "#ff0000", "#ffff00"]
-
-  drawBalls() {
-    var index = 0
-    this.table.balls.forEach(ball => {
-      this.drawBall(ball.pos.x, ball.pos.y, this.colors[index++])
-    })
-  }
-
-  clearBalls() {
-    this.table.balls.forEach(ball => {
-      this.drawBall(ball.pos.x, ball.pos.y, "#0a5c5c")
-    })
   }
 
   drawBall(x, y, style) {
@@ -54,6 +42,19 @@ export class Diagram {
     this.diagram.beginPath()
     this.diagram.ellipse(x, y, 0.5, 0.5, 0, 0, Math.PI * 2)
     this.diagram.fill()
+  }
+
+  drawBalls() {
+    var index = 0
+    this.table.balls.forEach(ball =>
+      this.drawBall(ball.pos.x, ball.pos.y, this.colors[index++])
+    )
+  }
+
+  clearBalls() {
+    this.table.balls.forEach(ball =>
+      this.drawBall(ball.pos.x, ball.pos.y, this.tablecolor)
+    )
   }
 
   advance(elapsed) {
