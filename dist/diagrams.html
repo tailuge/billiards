@@ -20,8 +20,8 @@
 
         window.onload = function() {
             var data = `{"balls":[
-                {"pos":{"x":-14,"y":0,"z":0},"vel":{"x":-1,"y":0,"z":0},"rvel":{"x":0,"y":0,"z":0},"state":"Stationary"},
-                {"pos":{"x":-13,"y":0,"z":0},"vel":{"x":0,"y":0,"z":0},"rvel":{"x":0,"y":0,"z":0},"state":"Stationary"},
+                {"pos":{"x":4,"y":0.075,"z":0},"vel":{"x":-3,"y":0,"z":0},"rvel":{"x":0,"y":0,"z":0},"state":"Stationary"},
+                {"pos":{"x":-3,"y":0,"z":0},"vel":{"x":0,"y":0,"z":0},"rvel":{"x":0,"y":0,"z":0},"state":"Stationary"},
                 {"pos":{"x":-12,"y":0,"z":0},"vel":{"x":0,"y":0,"z":0},"rvel":{"x":0,"y":0,"z":0},"state":"Stationary"}],
                 "aim":{"pos":{"x":1,"y":0,"z":0},"dir":{"x":1,"y":0,"z":0},"verticalOffset":0,"sideOffset":0,"angle":0,"power":0,"type":2}}`;
             new library.Diagram(JSON.parse(data),elt("diagram1").getContext("2d"),elt("control1"))
