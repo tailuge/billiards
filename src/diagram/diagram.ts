@@ -2,6 +2,7 @@ import { Table } from "../model/table"
 import { TableGeometry } from "../view/tablegeometry"
 
 export class Diagram {
+  state
   table: Table
   diagram: CanvasRenderingContext2D
   control: HTMLElement
@@ -9,12 +10,13 @@ export class Diagram {
   readonly step = 0.01
 
   constructor(state, diagram, control) {
-    this.table = Table.fromSerialised(state)
+    this.state = state
+    this.table = Table.fromSerialised(this.state)
     this.diagram = diagram
     this.control = control
+    this.addControls(control)
     this.drawTable()
     this.animate(this.last)
-    this.addControls(control)
   }
 
   scale() {
@@ -63,24 +65,44 @@ export class Diagram {
     }
   }
 
+  readValue(id: string) {
+    var input = this.control.querySelector<HTMLInputElement>(id)
+    return input ? input.valueAsNumber : 0
+  }
+
+  readControls() {
+    this.state.balls[0].pos.x = this.readValue("#x")
+    this.state.balls[0].pos.y = this.readValue("#y")
+    this.state.balls[0].vel.x = this.readValue("#vx")
+    this.state.balls[0].vel.y = this.readValue("#vy")
+    this.state.balls[0].rvel.x = this.readValue("#wx")
+    this.state.balls[0].rvel.y = this.readValue("#wy")
+    this.state.balls[0].rvel.z = this.readValue("#wz")
+    this.table.updateFromSerialised(this.state)
+  }
+
   addControls(elt: HTMLElement) {
+    var b = this.state.balls[0]
     elt.innerHTML = `
         x
-		<input id="x" type="number" step="0.1" value="4.0">
-		<input id="y" type="number" step="0.1" value="0.1">
+		<input id="x" type="number" step="0.1" value="${b.pos.x}">
+		<input id="y" type="number" step="0.1" value="${b.pos.y}">
         ẋ
-		<input id="vx" type="number" step="0.1" value="-3.0">
-		<input id="vy" type="number" step="0.1" value="0.0">
+		<input id="vx" type="number" step="0.1" value="${b.vel.x}">
+		<input id="vy" type="number" step="0.1" value="${b.vel.y}">
         ω
-		<input id="wx" type="number" step="0.1" value="0.0">
-		<input id="wy" type="number" step="0.1" value="0.0">
-        <input id="wz" type="number" step="0.1" value="0.0">
+		<input id="wx" type="number" step="0.1" value="${b.rvel.x}">
+		<input id="wy" type="number" step="0.1" value="${b.rvel.y}">
+        <input id="wz" type="number" step="0.1" value="${b.rvel.z}">
         <button id="restart">↻</button>`
+
     var button = elt.getElementsByTagName("button")
     button[0].onclick = () => this.restart()
   }
 
   restart() {
-    console.log("restart")
+    this.readControls()
+    this.drawTable()
+    this.animate(this.last)
   }
 }

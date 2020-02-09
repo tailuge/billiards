@@ -96,14 +96,14 @@ export class Table {
 
   static fromSerialised(data) {
     let table = new Table(data.balls.map(b => Ball.fromSerialised(b)))
-    if (data.aim) {
-      table.cue.aim = AimEvent.fromJson(data.aim)
-    }
+    table.updateFromSerialised(data)
     return table
   }
 
   updateFromSerialised(data) {
     this.balls.forEach((b, i) => Ball.updateFromSerialised(b, data.balls[i]))
-    this.cue.aim = AimEvent.fromJson(data.aim)
+    if (data.aim) {
+      this.cue.aim = AimEvent.fromJson(data.aim)
+    }
   }
 }
