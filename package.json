@@ -17,7 +17,7 @@
         "three": "^0.113.2"
     },
     "devDependencies": {
-        "@types/chai": "^4.2.8",
+        "@types/chai": "^4.2.9",
         "@types/jest": "^25.1.2",
         "chai": "^4.2.0",
         "coveralls": "^3.0.6",
@@ -27,8 +27,8 @@
         "ts-jest": "^25.2.0",
         "ts-loader": "^6.0.4",
         "typescript": "^3.5.3",
-        "webpack": "^4.39.1",
-        "webpack-cli": "^3.3.6",
+        "webpack": "^4.41.6",
+        "webpack-cli": "^3.3.11",
         "webpack-dev-server": "^3.10.3"
     }
 }
