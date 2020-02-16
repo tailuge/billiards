@@ -25,18 +25,18 @@ export class DiagramInputs {
   }
 
   addControls(elt: HTMLElement, onRestart) {
-    var b = this.state.balls[0]
+    const b = this.state.balls[0]
+    const attr = 'type="number" step="0.1"'
     elt.innerHTML = `
-        x <input id="x" type="number" step="0.1" value="${b.pos.x}">
-		  <input id="y" type="number" step="0.1" value="${b.pos.y}">
-        ẋ <input id="vx" type="number" step="0.1" value="${b.vel.x}">
-		  <input id="vy" type="number" step="0.1" value="${b.vel.y}">
-        ω <input id="wx" type="number" step="0.1" value="${b.rvel.x}">
-		  <input id="wy" type="number" step="0.1" value="${b.rvel.y}">
-          <input id="wz" type="number" step="0.1" value="${b.rvel.z}">
-        <button id="restart">↻</button>`
+        x <input id="x" ${attr} value="${b.pos.x}">
+		  <input id="y" ${attr} value="${b.pos.y}">
+        ẋ <input id="vx" ${attr} value="${b.vel.x}">
+		  <input id="vy" ${attr} value="${b.vel.y}">
+        ω <input id="wx" ${attr} value="${b.rvel.x}">
+		  <input id="wy" ${attr} value="${b.rvel.y}">
+          <input id="wz" ${attr} value="${b.rvel.z}">
+        <div id="restart">↻</dev>`
 
-    var button = elt.getElementsByTagName("button")
-    button[0].onclick = onRestart
+    elt.getElementsByTagName("div")[0].onclick = onRestart
   }
 }
