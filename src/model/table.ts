@@ -13,11 +13,11 @@ export class Table {
   pairs: any[]
   outcome: any[] = []
 
-  constructor(balls) {
+  constructor(balls: Ball[]) {
     this.initialiseBalls(balls)
   }
 
-  initialiseBalls(balls) {
+  initialiseBalls(balls: Ball[]) {
     this.balls = balls
     this.pairs = []
     this.balls.forEach(a => {
@@ -29,7 +29,7 @@ export class Table {
     })
   }
 
-  advance(t) {
+  advance(t: number) {
     let depth = 0
     while (!this.prepareAdvanceAll(t)) {
       if (depth++ > 100) {
@@ -41,16 +41,22 @@ export class Table {
     })
   }
 
-  prepareAdvanceAll(t) {
-    return !this.pairs.some(pair => !this.prepareAdvancePair(pair.a, pair.b, t))
+  prepareAdvanceAll(t: number) {
+    return this.pairs.length > 0
+      ? !this.pairs.some(pair => !this.prepareAdvancePair(pair.a, pair.b, t))
+      : !this.balls.some(ball => !this.prepareAdvanceToCushions(ball, t))
   }
 
-  private prepareAdvancePair(a: Ball, b: Ball, t) {
+  private prepareAdvancePair(a: Ball, b: Ball, t: number) {
     if (Collision.willCollide(a, b, t)) {
       Collision.collide(a, b)
       this.outcome.push({ type: "collision", a: a, b: b })
       return false
     }
+    return this.prepareAdvanceToCushions(a, t)
+  }
+
+  private prepareAdvanceToCushions(a: Ball, t: number): boolean {
     if (Cushion.willBounce(a, t)) {
       Cushion.bounce(a, t)
       this.outcome.push({ type: "cushion", a: a })

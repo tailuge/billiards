@@ -19,6 +19,13 @@ describe("Table", () => {
     done()
   })
 
+  it("updates when single ball stationary", done => {
+    let table = new Table([new Ball(zero)])
+    expect(table.prepareAdvanceAll(t)).to.be.true
+    expect(table.allStationary()).to.be.true
+    done()
+  })
+
   it("a momentum transferes to c", done => {
     let a = new Ball(zero)
     a.vel.x = 1
