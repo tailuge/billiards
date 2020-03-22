@@ -7,13 +7,13 @@ import {
   sliding,
   slidingFull,
   forceRoll,
-  surfaceVelocity
+  surfaceVelocity,
 } from "../../src/model/physics/physics"
 
 let t = 0.1
 
 describe("Ball", () => {
-  it("serialise/deserialise", done => {
+  it("serialise/deserialise", (done) => {
     let pos = new Vector3(1, 2, 0)
     let vel = new Vector3(3, 4, 0)
     let ball = new Ball(pos)
@@ -25,7 +25,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("initialises and is stationary", done => {
+  it("initialises and is stationary", (done) => {
     let pos = new Vector3(1, 2, 0)
     let ball = new Ball(pos)
     expect(ball.pos).to.deep.equal(pos)
@@ -34,7 +34,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("stationary remains stationary after time step", done => {
+  it("stationary remains stationary after time step", (done) => {
     let pos = new Vector3(1, 2, 0)
     let ball = new Ball(pos)
     ball.update(1)
@@ -44,7 +44,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("friction slows ball", done => {
+  it("friction slows ball", (done) => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0.01
     ball.update(1)
@@ -52,14 +52,14 @@ describe("Ball", () => {
     done()
   })
 
-  it("ball moving with no spin is not rolling", done => {
+  it("ball moving with no spin is not rolling", (done) => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 1
     expect(ball.isRolling()).to.be.false
     done()
   })
 
-  it("ball with matched rotational vel is rolling", done => {
+  it("ball with matched rotational vel is rolling", (done) => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 1
     ball.rvel.y = 1
@@ -67,7 +67,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("ball close to matched rotational vel is rolling", done => {
+  it("ball close to matched rotational vel is rolling", (done) => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 1
     ball.rvel.y = 1.0001
@@ -75,7 +75,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("topspin accelerates ball", done => {
+  it("topspin accelerates ball", (done) => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0
     ball.rvel.y = 1
@@ -85,7 +85,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("topspin spins less over time", done => {
+  it("topspin spins less over time", (done) => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0
     ball.rvel.y = 1
@@ -95,7 +95,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("topspin ball eventualy starts to roll", done => {
+  it("topspin ball eventualy starts to roll", (done) => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0
     ball.rvel.y = 0.1
@@ -108,7 +108,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("rolling ball eventualy stops", done => {
+  it("rolling ball eventualy stops", (done) => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0.025
     ball.rvel.y = 0.025
@@ -121,7 +121,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("spinning ball eventualy stops", done => {
+  it("spinning ball eventualy stops", (done) => {
     let ball = new Ball(new Vector3())
     ball.rvel.z = 0.01
     ball.rvel.y = 0
@@ -134,7 +134,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("stun ball does not roll back at end", done => {
+  it("stun ball does not roll back at end", (done) => {
     let ball = new Ball(new Vector3())
     ball.rvel.y = 0.1
     let maxiter = 100
@@ -147,7 +147,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("alternate sliding calc equivalent", done => {
+  it("alternate sliding calc equivalent", (done) => {
     let v = new Vector3(1, 2, 0)
     let w = new Vector3(3, 4, 5)
     let dv = new Vector3()
@@ -163,7 +163,7 @@ describe("Ball", () => {
     done()
   })
 
-  it("halts at close to zero", done => {
+  it("halts at close to zero", (done) => {
     expect(passesThroughZero(new Vector3(1, 1, 0), new Vector3(-0.5, -0.5, 0)))
       .to.be.false
     expect(passesThroughZero(new Vector3(1, 1, 0), new Vector3(-2, -2, 0))).to
@@ -173,12 +173,12 @@ describe("Ball", () => {
     done()
   })
 
-  it("slightly rolling ball halts", done => {
+  it("slightly rolling ball halts", (done) => {
     let b = Ball.fromSerialised({
       pos: { x: 0, y: 0, z: 0 },
       vel: { x: 0.0026704887947856175, y: -0.04722559231618879, z: 0 },
       rvel: { x: 0.00001806789773622572, y: -0.00008182140227559905, z: 0 },
-      state: "Rolling"
+      state: "Rolling",
     })
     forceRoll(b.vel, b.rvel)
     b.update(1)
@@ -186,12 +186,12 @@ describe("Ball", () => {
     done()
   })
 
-  it("force roll leaves roll unaffected", done => {
+  it("force roll leaves roll unaffected", (done) => {
     let b = Ball.fromSerialised({
       pos: { x: 0, y: 0, z: 0 },
       vel: { x: 1, y: 0, z: 0 },
       rvel: { x: 0, y: 1, z: 0 },
-      state: "Rolling"
+      state: "Rolling",
     })
     forceRoll(b.vel, b.rvel)
     expect(surfaceVelocity(b.vel, b.rvel)).to.be.deep.equal(zero)
@@ -199,12 +199,12 @@ describe("Ball", () => {
     done()
   })
 
-  it("force roll is at midpoint", done => {
+  it("force roll is at midpoint", (done) => {
     let b = Ball.fromSerialised({
       pos: { x: 0, y: 0, z: 0 },
       vel: { x: 1, y: 0, z: 0 },
       rvel: { x: 0, y: 2, z: 0 },
-      state: "Rolling"
+      state: "Rolling",
     })
     forceRoll(b.vel, b.rvel)
     expect(surfaceVelocity(b.vel, b.rvel)).to.be.deep.equal(zero)

@@ -46,13 +46,13 @@ export class Diagram {
 
   drawBalls() {
     var index = 0
-    this.table.balls.forEach(ball =>
+    this.table.balls.forEach((ball) =>
       this.drawBall(ball.pos.x, ball.pos.y, this.colors[index++])
     )
   }
 
   clearBalls() {
-    this.table.balls.forEach(ball =>
+    this.table.balls.forEach((ball) =>
       this.drawBall(ball.pos.x, ball.pos.y, this.tablecolor)
     )
   }
@@ -70,7 +70,7 @@ export class Diagram {
     this.last = timestamp
     this.drawBalls()
     if (!this.table.allStationary()) {
-      requestAnimationFrame(t => {
+      requestAnimationFrame((t) => {
         this.animate(t)
       })
     }

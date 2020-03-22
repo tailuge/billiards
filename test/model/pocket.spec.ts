@@ -8,7 +8,7 @@ import { Vector3 } from "three"
 let t = 0.1
 
 describe("Pocket", () => {
-  it("willFall", done => {
+  it("willFall", (done) => {
     let edge = -TableGeometry.PY + TableGeometry.middleRadius + 0.5
     let pos = new Vector3(0, edge, 0)
     let ball = new Ball(pos)

@@ -8,7 +8,7 @@ import { zero } from "../../src/utils/utils"
 
 let t = 0.1
 describe("Cue", () => {
-  it("no intersection with cue ball", done => {
+  it("no intersection with cue ball", (done) => {
     let a = new Ball(zero)
     let b = new Ball(new Vector3(0, 1, 0))
     let table = new Table([a, b])

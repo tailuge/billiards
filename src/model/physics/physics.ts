@@ -3,10 +3,7 @@ import { norm, upCross, up } from "../../utils/utils"
 import { mu, g, m, e, Mz, Mxy } from "./constants"
 
 export function surfaceVelocity(v, w) {
-  return v
-    .clone()
-    .add(upCross(w))
-    .setZ(0)
+  return v.clone().add(upCross(w)).setZ(0)
 }
 
 export function sliding(v, w, dv, dw) {

@@ -9,7 +9,7 @@ let epsilon = 0.001
 let t = 0.1
 
 describe("Collision", () => {
-  it("seperated balls do not collide", done => {
+  it("seperated balls do not collide", (done) => {
     let pos = new Vector3(1, 1, 0)
     let a = new Ball(zero)
     let b = new Ball(pos)
@@ -17,7 +17,7 @@ describe("Collision", () => {
     done()
   })
 
-  it("balls travelling towards each other collide", done => {
+  it("balls travelling towards each other collide", (done) => {
     let pos = new Vector3(1, 0, 0)
     let a = new Ball(zero)
     a.vel.x = 1
@@ -26,7 +26,7 @@ describe("Collision", () => {
     done()
   })
 
-  it("x velocity transfered from a to b", done => {
+  it("x velocity transfered from a to b", (done) => {
     let pos = new Vector3(1, 0, 0)
     let a = new Ball(zero)
     a.vel.x = 1
@@ -38,7 +38,7 @@ describe("Collision", () => {
     done()
   })
 
-  it("y velocity transfered between a and b", done => {
+  it("y velocity transfered between a and b", (done) => {
     let pos = new Vector3(0.9, 0, 0)
     let a = new Ball(zero)
     a.vel.x = 1

@@ -23,7 +23,7 @@ export class BallMesh {
     var material = new MeshPhongMaterial({
       color: 0x555555 * Math.random(),
       emissive: 0,
-      flatShading: true
+      flatShading: true,
     })
     this.mesh = new Mesh(geometry, material)
     this.mesh.castShadow = true

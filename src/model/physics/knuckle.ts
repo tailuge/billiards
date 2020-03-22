@@ -17,10 +17,7 @@ export class Knuckle {
   }
 
   public bounce(ball) {
-    const kb = ball.pos
-      .clone()
-      .sub(this.pos)
-      .normalize()
+    const kb = ball.pos.clone().sub(this.pos).normalize()
     let velDotCenters = kb.dot(ball.vel)
     ball.vel.addScaledVector(kb, -2 * e * velDotCenters)
   }
@@ -29,7 +26,7 @@ export class Knuckle {
     const futurePosition = ball.futurePosition(t)
     return (
       ball.onTable() &&
-      TableGeometry.knuckles.find(k => Knuckle.willBounce(k, futurePosition))
+      TableGeometry.knuckles.find((k) => Knuckle.willBounce(k, futurePosition))
     )
   }
 }

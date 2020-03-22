@@ -9,7 +9,7 @@ import { Vector3 } from "three"
 let t = 0.1
 
 describe("Cushion", () => {
-  it("bounces off X cushion", done => {
+  it("bounces off X cushion", (done) => {
     let pos = new Vector3(TableGeometry.tableX, 0, 0)
     let ball = new Ball(pos)
     ball.vel.x = 1
@@ -20,7 +20,7 @@ describe("Cushion", () => {
     done()
   })
 
-  it("bounces off -X cushion", done => {
+  it("bounces off -X cushion", (done) => {
     let pos = new Vector3(-TableGeometry.tableX, 0, 0)
     let ball = new Ball(pos)
     ball.vel.x = -1
@@ -31,7 +31,7 @@ describe("Cushion", () => {
     done()
   })
 
-  it("bounces off Y cushion", done => {
+  it("bounces off Y cushion", (done) => {
     let pos = new Vector3(TableGeometry.tableX / 2, TableGeometry.tableY, 0)
     let ball = new Ball(pos)
     ball.vel.y = 1
@@ -42,7 +42,7 @@ describe("Cushion", () => {
     done()
   })
 
-  it("bounces off -Y cushion", done => {
+  it("bounces off -Y cushion", (done) => {
     let pos = new Vector3(TableGeometry.tableX / 2, -TableGeometry.tableY, 0)
     let ball = new Ball(pos)
     ball.vel.y = -1
@@ -62,56 +62,56 @@ describe("Cushion", () => {
     return ball
   }
 
-  it("bounces off X cushion with rhs spins", done => {
+  it("bounces off X cushion with rhs spins", (done) => {
     let ball = bounceInXWithSpin(new Vector3(0, 0, 1))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.below(0)
     done()
   })
 
-  it("bounces off X cushion with lhs spins", done => {
+  it("bounces off X cushion with lhs spins", (done) => {
     let ball = bounceInXWithSpin(new Vector3(0, 0, -1))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.above(0)
     done()
   })
 
-  it("bounces off X cushion with rolling spin", done => {
+  it("bounces off X cushion with rolling spin", (done) => {
     let ball = bounceInXWithSpin(new Vector3(0, 1, 0))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.approximately(0, 0.01)
     done()
   })
 
-  it("bounces off X cushion with top spin", done => {
+  it("bounces off X cushion with top spin", (done) => {
     let ball = bounceInXWithSpin(new Vector3(0, 2, 0))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.approximately(0, 0.01)
     done()
   })
 
-  it("bounces off X cushion with back spin", done => {
+  it("bounces off X cushion with back spin", (done) => {
     let ball = bounceInXWithSpin(new Vector3(0, -2, 0))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.approximately(0, 0.01)
     done()
   })
 
-  it("bounces off X cushion with top and rhs", done => {
+  it("bounces off X cushion with top and rhs", (done) => {
     let ball = bounceInXWithSpin(new Vector3(0, 2, 1))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.below(0)
     done()
   })
 
-  it("bounces off X cushion with corkscrew spin", done => {
+  it("bounces off X cushion with corkscrew spin", (done) => {
     let ball = bounceInXWithSpin(new Vector3(1, 0, 0))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.approximately(0, 0.1)
     done()
   })
 
-  it("bounces off X cushion 45 in 45 out", done => {
+  it("bounces off X cushion 45 in 45 out", (done) => {
     let pos = new Vector3(TableGeometry.tableX, 0, 0)
     let ball = new Ball(pos)
     ball.vel.set(1, 1, 0)
@@ -120,7 +120,7 @@ describe("Cushion", () => {
     done()
   })
 
-  it("does not bounce off pocket area", done => {
+  it("does not bounce off pocket area", (done) => {
     let pos = new Vector3(0, -TableGeometry.tableY, 0)
     let ball = new Ball(pos)
     ball.vel.y = -1
@@ -128,7 +128,7 @@ describe("Cushion", () => {
     done()
   })
 
-  it("bounces off knuckle", done => {
+  it("bounces off knuckle", (done) => {
     let pos = new Vector3(
       TableGeometry.middleKnuckleInset - 0.1,
       -TableGeometry.tableY,
@@ -145,7 +145,7 @@ describe("Cushion", () => {
     done()
   })
 
-  it("geometry present", done => {
+  it("geometry present", (done) => {
     var scene = { add: ({}) => {} }
     TableGeometry.addToScene(scene)
     done()

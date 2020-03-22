@@ -9,7 +9,7 @@ import { zero } from "../../src/utils/utils"
 let t = 0.1
 
 describe("Table", () => {
-  it("updates when all stationary", done => {
+  it("updates when all stationary", (done) => {
     let a = new Ball(zero)
     let b = new Ball(new Vector3(1, 0, 0))
     let c = new Ball(new Vector3(2, 0, 0))
@@ -19,14 +19,14 @@ describe("Table", () => {
     done()
   })
 
-  it("updates when single ball stationary", done => {
+  it("updates when single ball stationary", (done) => {
     let table = new Table([new Ball(zero)])
     expect(table.prepareAdvanceAll(t)).to.be.true
     expect(table.allStationary()).to.be.true
     done()
   })
 
-  it("a momentum transferes to c", done => {
+  it("a momentum transferes to c", (done) => {
     let a = new Ball(zero)
     a.vel.x = 1
     let b = new Ball(new Vector3(1, 0, 0))
@@ -40,7 +40,7 @@ describe("Table", () => {
     done()
   })
 
-  it("c bounces by transfering momentum through b and a", done => {
+  it("c bounces by transfering momentum through b and a", (done) => {
     let a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
     let b = new Ball(new Vector3(-TableGeometry.tableX + 1, 0, 0))
     let c = new Ball(new Vector3(-TableGeometry.tableX + 2, 0, 0))
@@ -53,7 +53,7 @@ describe("Table", () => {
     done()
   })
 
-  it("a pots b", done => {
+  it("a pots b", (done) => {
     let edge = -TableGeometry.PY + TableGeometry.middleRadius + 0.5
     let a = new Ball(new Vector3(0, edge + 1, 0))
     let b = new Ball(new Vector3(0, edge, 0))
@@ -66,7 +66,7 @@ describe("Table", () => {
     done()
   })
 
-  it("collides with knuckle", done => {
+  it("collides with knuckle", (done) => {
     let a = new Ball(
       new Vector3(
         TableGeometry.middleKnuckleInset - 0.1,
@@ -83,7 +83,7 @@ describe("Table", () => {
     done()
   })
 
-  it("serialise/deserialise", done => {
+  it("serialise/deserialise", (done) => {
     let a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
     let b = new Ball(new Vector3(-TableGeometry.tableX + 1, 0, 0))
     let c = new Ball(new Vector3(-TableGeometry.tableX + 2, 0, 0))
@@ -96,7 +96,7 @@ describe("Table", () => {
     done()
   })
 
-  it("serialise/updateFromDeserialise", done => {
+  it("serialise/updateFromDeserialise", (done) => {
     let a = new Ball(new Vector3(0, 0, 0))
     let b = new Ball(new Vector3(1, 0, 0))
     let c = new Ball(new Vector3(2, 0, 0))
@@ -110,7 +110,7 @@ describe("Table", () => {
     done()
   })
 
-  it("illegal state throws", done => {
+  it("illegal state throws", (done) => {
     let a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
     let b = new Ball(new Vector3(-TableGeometry.tableX + 0.5, 0, 0))
     let table = new Table([a, b])

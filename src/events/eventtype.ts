@@ -6,5 +6,5 @@ export enum EventType {
   STATIONARY,
   CHAT,
   ABORT,
-  REPOSITION
+  REPOSITION,
 }

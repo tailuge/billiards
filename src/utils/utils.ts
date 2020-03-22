@@ -16,10 +16,5 @@ export function norm(v) {
 }
 
 export function passesThroughZero(v, dv) {
-  return (
-    v
-      .clone()
-      .add(dv)
-      .dot(v) <= 0
-  )
+  return v.clone().add(dv).dot(v) <= 0
 }

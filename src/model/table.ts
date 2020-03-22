@@ -20,8 +20,8 @@ export class Table {
   initialiseBalls(balls: Ball[]) {
     this.balls = balls
     this.pairs = []
-    this.balls.forEach(a => {
-      this.balls.forEach(b => {
+    this.balls.forEach((a) => {
+      this.balls.forEach((b) => {
         if (a != b) {
           this.pairs.push({ a: a, b: b })
         }
@@ -36,15 +36,15 @@ export class Table {
         throw new Error("Depth exceeded resolving collisions")
       }
     }
-    this.balls.forEach(a => {
+    this.balls.forEach((a) => {
       a.update(t)
     })
   }
 
   prepareAdvanceAll(t: number) {
     return this.pairs.length > 0
-      ? !this.pairs.some(pair => !this.prepareAdvancePair(pair.a, pair.b, t))
-      : !this.balls.some(ball => !this.prepareAdvanceToCushions(ball, t))
+      ? !this.pairs.some((pair) => !this.prepareAdvancePair(pair.a, pair.b, t))
+      : !this.balls.some((ball) => !this.prepareAdvanceToCushions(ball, t))
   }
 
   private prepareAdvancePair(a: Ball, b: Ball, t: number) {
@@ -79,7 +79,7 @@ export class Table {
   }
 
   allStationary() {
-    return this.balls.every(b => !b.inMotion() || !b.onTable())
+    return this.balls.every((b) => !b.inMotion() || !b.onTable())
   }
 
   hit() {
@@ -95,13 +95,13 @@ export class Table {
 
   serialise() {
     return {
-      balls: this.balls.map(b => b.serialise()),
-      aim: this.cue.aim.copy()
+      balls: this.balls.map((b) => b.serialise()),
+      aim: this.cue.aim.copy(),
     }
   }
 
   static fromSerialised(data) {
-    let table = new Table(data.balls.map(b => Ball.fromSerialised(b)))
+    let table = new Table(data.balls.map((b) => Ball.fromSerialised(b)))
     table.updateFromSerialised(data)
     return table
   }

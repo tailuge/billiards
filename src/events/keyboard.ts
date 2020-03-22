@@ -11,14 +11,16 @@ export class Keyboard {
 
   getEvents(t: number) {
     let keys = Object.keys(this.pressed)
-      .filter(key => !/.*Shift.*/.test(key))
-      .filter(key => !/.*Control.*/.test(key))
-    let shift = Object.keys(this.pressed).some(key => /.*Shift.*/.test(key))
-    let control = Object.keys(this.pressed).some(key => /.*Control.*/.test(key))
-    let result = keys.map(
-      key => new Input(control ? t / 3 : t, shift ? "Shift" + key : key)
+      .filter((key) => !/.*Shift.*/.test(key))
+      .filter((key) => !/.*Control.*/.test(key))
+    let shift = Object.keys(this.pressed).some((key) => /.*Shift.*/.test(key))
+    let control = Object.keys(this.pressed).some((key) =>
+      /.*Control.*/.test(key)
     )
-    Object.keys(this.released).forEach(key =>
+    let result = keys.map(
+      (key) => new Input(control ? t / 3 : t, shift ? "Shift" + key : key)
+    )
+    Object.keys(this.released).forEach((key) =>
       result.push(new Input(t, key + "Up"))
     )
     this.released = {}
@@ -29,13 +31,13 @@ export class Keyboard {
     this.addHandlers()
   }
 
-  keydown = e => {
+  keydown = (e) => {
     e = e || window.event
     this.pressed[e.code] = true
     e.stopImmediatePropagation()
   }
 
-  keyup = e => {
+  keyup = (e) => {
     e = e || window.event
     delete this.pressed[e.code]
     this.released[e.code] = true

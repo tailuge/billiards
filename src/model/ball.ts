@@ -4,7 +4,7 @@ import {
   sliding,
   surfaceVelocity,
   rollingFull,
-  forceRoll
+  forceRoll,
 } from "../model/physics/physics"
 import { BallMesh } from "../view/ballmesh"
 
@@ -13,7 +13,7 @@ export enum State {
   Rolling = "Rolling",
   Sliding = "Sliding",
   Falling = "Falling",
-  InPocket = "InPocket"
+  InPocket = "InPocket",
 }
 
 export class Ball {

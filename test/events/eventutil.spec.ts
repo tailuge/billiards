@@ -10,7 +10,7 @@ import { Table } from "../../src/model/table"
 import { Rack } from "../../src/utils/rack"
 
 describe("EventUtil", () => {
-  it("Serialise and deserialise AimEvent", done => {
+  it("Serialise and deserialise AimEvent", (done) => {
     let aim = new AimEvent()
     aim.dir.x = 0.5
     let event: GameEvent = aim
@@ -21,14 +21,14 @@ describe("EventUtil", () => {
     done()
   })
 
-  it("Serialise and deserialise AbortEvent", done => {
+  it("Serialise and deserialise AbortEvent", (done) => {
     let serialised = EventUtil.serialise(new AbortEvent())
     let deserialised = EventUtil.fromSerialised(serialised)
     expect(deserialised.type).to.equal(EventType.ABORT)
     done()
   })
 
-  it("Serialise and deserialise WatchEvent", done => {
+  it("Serialise and deserialise WatchEvent", (done) => {
     let table = new Table(Rack.diamond())
     let serialised = EventUtil.serialise(new WatchEvent(table.serialise()))
     let deserialised = EventUtil.fromSerialised(serialised)
@@ -36,7 +36,7 @@ describe("EventUtil", () => {
     done()
   })
 
-  it("Throw on unknown event", done => {
+  it("Throw on unknown event", (done) => {
     expect(() => EventUtil.fromSerialised("{}")).to.throw()
     done()
   })

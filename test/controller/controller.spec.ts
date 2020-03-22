@@ -20,21 +20,22 @@ describe("Controller", () => {
   var container: Container
   var broadcastEvents: GameEvent[]
 
-  beforeEach(function(done) {
-    container = new Container(undefined, _ => {})
+  beforeEach(function (done) {
+    container = new Container(undefined, (_) => {})
     broadcastEvents = []
-    container.broadcast = x => broadcastEvents.push(EventUtil.fromSerialised(x))
+    container.broadcast = (x) =>
+      broadcastEvents.push(EventUtil.fromSerialised(x))
     done()
   })
 
-  it("Abort takes Aim to End", done => {
+  it("Abort takes Aim to End", (done) => {
     let controller: Controller = new Aim(container)
     let event: GameEvent = new AbortEvent()
     expect(event.applyToController(controller)).to.be.an.instanceof(End)
     done()
   })
 
-  it("Begin takes Init to Aim", done => {
+  it("Begin takes Init to Aim", (done) => {
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
@@ -42,14 +43,14 @@ describe("Controller", () => {
     done()
   })
 
-  it("WatchEvent takes Init to WatchAim", done => {
+  it("WatchEvent takes Init to WatchAim", (done) => {
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
     done()
   })
 
-  it("HitEvent takes WatchAim to PlayShot", done => {
+  it("HitEvent takes WatchAim to PlayShot", (done) => {
     container.controller = new WatchAim(container)
     container.eventQueue.push(new HitEvent(container.table.serialise()))
     container.processEvents()
@@ -57,7 +58,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("AimEvent takes WatchAim to WatchAim", done => {
+  it("AimEvent takes WatchAim to WatchAim", (done) => {
     container.controller = new WatchAim(container)
     container.eventQueue.push(new AimEvent())
     container.processEvents()
@@ -65,7 +66,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("AimEvent takes WatchShot to Aim when all stationary", done => {
+  it("AimEvent takes WatchShot to Aim when all stationary", (done) => {
     let watchShot = new WatchShot(container)
     watchShot.allStationary = true
     container.controller = watchShot
@@ -75,7 +76,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("WatchEvent takes WatchShot to WatchAim when all stationary", done => {
+  it("WatchEvent takes WatchShot to WatchAim when all stationary", (done) => {
     let watchShot = new WatchShot(container)
     watchShot.allStationary = true
     container.controller = watchShot
@@ -85,7 +86,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("AimEvent does not take WatchShot to Aim when not stationary", done => {
+  it("AimEvent does not take WatchShot to Aim when not stationary", (done) => {
     container.controller = new WatchShot(container)
     container.eventQueue.push(new AimEvent())
     container.processEvents()
@@ -93,7 +94,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("AimEvent takes WatchShot to enqueued Aim after all stationary", done => {
+  it("AimEvent takes WatchShot to enqueued Aim after all stationary", (done) => {
     let watchShot = new WatchShot(container)
     watchShot.allStationary = false
     container.controller = watchShot
@@ -105,7 +106,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("WatchEvent takes WatchShot to enqueued WatchAim after all stationary", done => {
+  it("WatchEvent takes WatchShot to enqueued WatchAim after all stationary", (done) => {
     let watchShot = new WatchShot(container)
     watchShot.allStationary = false
     container.controller = watchShot
@@ -117,7 +118,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("StationaryEvent takes WatchShot to WatchShot", done => {
+  it("StationaryEvent takes WatchShot to WatchShot", (done) => {
     container.controller = new WatchShot(container)
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
@@ -125,7 +126,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("StationaryEvent takes active PlayShot to WatchAim if no pot", done => {
+  it("StationaryEvent takes active PlayShot to WatchAim if no pot", (done) => {
     container.controller = new PlayShot(container)
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
@@ -133,7 +134,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("StationaryEvent takes active PlayShot to Aim if pot", done => {
+  it("StationaryEvent takes active PlayShot to Aim if pot", (done) => {
     container.controller = new PlayShot(container)
     container.eventQueue.push(new StationaryEvent())
     container.table.outcome.push({ type: "pot" })
@@ -142,7 +143,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("End handles all events", done => {
+  it("End handles all events", (done) => {
     container.controller = new End(container)
     container.eventQueue.push(new AbortEvent())
     container.processEvents()
@@ -168,7 +169,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("Aim handles all inputs", done => {
+  it("Aim handles all inputs", (done) => {
     container.controller = new Aim(container)
     container.inputQueue.push(new Input(0.1, "A"))
     container.inputQueue.push(new Input(0.1, "ArrowLeft"))
@@ -192,13 +193,13 @@ describe("Controller", () => {
     done()
   })
 
-  it("advance generates no event", done => {
+  it("advance generates no event", (done) => {
     container.advance(0.1)
     expect(container.eventQueue.length).to.equal(0)
     done()
   })
 
-  it("advance generates StationaryEvent at end of shot", done => {
+  it("advance generates StationaryEvent at end of shot", (done) => {
     container.controller = new PlayShot(container)
     container.table.balls[0].vel.x = 0.001
     container.advance(0.01)

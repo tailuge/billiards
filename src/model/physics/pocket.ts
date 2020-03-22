@@ -16,10 +16,7 @@ export class Pocket {
   }
 
   public fall(ball, t) {
-    const kb = ball.pos
-      .clone()
-      .sub(this.pos)
-      .normalize()
+    const kb = ball.pos.clone().sub(this.pos).normalize()
     ball.vel.addScaledVector(kb, 1 * t)
     ball.vel.z = -1
     ball.state = State.Falling
@@ -29,7 +26,9 @@ export class Pocket {
     const futurePosition = ball.futurePosition(t)
     return (
       ball.onTable() &&
-      TableGeometry.pocketCenters.find(p => Pocket.willFall(p, futurePosition))
+      TableGeometry.pocketCenters.find((p) =>
+        Pocket.willFall(p, futurePosition)
+      )
     )
   }
 }

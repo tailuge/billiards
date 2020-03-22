@@ -6,7 +6,7 @@ import {
   CylinderGeometry,
   MeshPhongMaterial,
   Raycaster,
-  Vector3
+  Vector3,
 } from "three"
 import { up, upCross } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
@@ -24,7 +24,7 @@ export class Cue {
   private static material = new MeshPhongMaterial({
     color: 0x885577,
     wireframe: false,
-    flatShading: false
+    flatShading: false,
   })
 
   constructor() {
@@ -89,12 +89,7 @@ export class Cue {
     let distanceToBall = this.aim.dir
       .clone()
       .multiplyScalar(swing - this.aim.power / 2)
-    this.mesh.position.copy(
-      pos
-        .clone()
-        .add(offset)
-        .add(distanceToBall)
-    )
+    this.mesh.position.copy(pos.clone().add(offset).add(distanceToBall))
   }
 
   update(t) {
@@ -110,7 +105,7 @@ export class Cue {
     let direction = this.aim.dir.clone().normalize()
     let raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
     let intersections = raycaster.intersectObjects(
-      table.balls.map(b => b.ballmesh.mesh)
+      table.balls.map((b) => b.ballmesh.mesh)
     )
     return intersections.length > 0
   }

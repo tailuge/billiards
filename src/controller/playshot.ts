@@ -23,7 +23,7 @@ export class PlayShot extends ControllerBase {
     this.allStationary = true
     this.container.log("stationary event")
 
-    if (this.container.table.outcome.some(x => x.type == "pot")) {
+    if (this.container.table.outcome.some((x) => x.type == "pot")) {
       this.container.log("pot! transition to Aim")
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
       return new Aim(this.container)

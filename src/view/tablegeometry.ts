@@ -37,7 +37,7 @@ export class TableGeometry {
           0
         ),
         TableGeometry.knuckleRadius
-      )
+      ),
     },
     pocketN: {
       pocket: new Pocket(
@@ -59,7 +59,7 @@ export class TableGeometry {
           0
         ),
         TableGeometry.knuckleRadius
-      )
+      ),
     },
     pocketS: {
       pocket: new Pocket(
@@ -81,7 +81,7 @@ export class TableGeometry {
           0
         ),
         TableGeometry.knuckleRadius
-      )
+      ),
     },
     pocketNE: {
       pocket: new Pocket(
@@ -103,7 +103,7 @@ export class TableGeometry {
           0
         ),
         TableGeometry.knuckleRadius
-      )
+      ),
     },
     pocketSE: {
       pocket: new Pocket(
@@ -125,7 +125,7 @@ export class TableGeometry {
           0
         ),
         TableGeometry.knuckleRadius
-      )
+      ),
     },
     pocketSW: {
       pocket: new Pocket(
@@ -147,8 +147,8 @@ export class TableGeometry {
           0
         ),
         TableGeometry.knuckleRadius
-      )
-    }
+      ),
+    },
   }
 
   static readonly knuckles = [
@@ -163,7 +163,7 @@ export class TableGeometry {
     TableGeometry.pockets.pocketSE.knuckleNE,
     TableGeometry.pockets.pocketSE.knuckleSW,
     TableGeometry.pockets.pocketSW.knuckleSE,
-    TableGeometry.pockets.pocketSW.knuckleNW
+    TableGeometry.pockets.pocketSW.knuckleNW,
   ]
 
   static readonly pocketCenters = [
@@ -172,11 +172,13 @@ export class TableGeometry {
     TableGeometry.pockets.pocketN.pocket,
     TableGeometry.pockets.pocketS.pocket,
     TableGeometry.pockets.pocketNE.pocket,
-    TableGeometry.pockets.pocketSE.pocket
+    TableGeometry.pockets.pocketSE.pocket,
   ]
 
   static addToScene(scene) {
-    TableGeometry.knuckles.forEach(k => TableGeometry.knuckleCylinder(k, scene))
+    TableGeometry.knuckles.forEach((k) =>
+      TableGeometry.knuckleCylinder(k, scene)
+    )
     TableGeometry.addCushions(scene)
     //    TableGeometry.addPockets(scene)
   }
@@ -184,7 +186,7 @@ export class TableGeometry {
   private static material = new MeshPhongMaterial({
     color: 0x445599,
     wireframe: false,
-    flatShading: true
+    flatShading: true,
   })
 
   private static knuckleCylinder(knuckle, scene) {
