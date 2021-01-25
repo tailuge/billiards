@@ -18,11 +18,19 @@
         }
 
         window.onload = function() {
-            makeDiagram("diagram1",[makeBall(0,0, -2,0, 0,0,0),
-                                    makeBall(0,2, -2,0, 0,0,1),
-                                    makeBall(0,-2,-2,0, 0,0,-1)]);
-            var y=0.45
-            makeDiagram("diagram2",[makeBall(8.6,5.8, -3.5,y,  0,0,3)]);
+            var maxSpeed = 2
+            makeDiagram("diagram1",[makeBall(0,0, -maxSpeed,0, 0,0,0),
+                                    makeBall(0,2, -maxSpeed,0, 0,0,1),
+                                    makeBall(0,-2,-maxSpeed,0, 0,0,-1)]);
+            makeDiagram("diagram2",[makeBall(0,0,  maxSpeed,0, 0,0,0),
+                                    makeBall(0,-2, maxSpeed,0, 0,0,1),
+                                    makeBall(0,2,  maxSpeed,0, 0,0,-1)]);
+            makeDiagram("diagram3",[makeBall(4,0, 0,-maxSpeed*0.7, 0,0,0),
+                                    makeBall(2,0, 0,-maxSpeed*0.7, 0,0,1),
+                                    makeBall(6,0, 0,-maxSpeed*0.7, 0,0,-1)]);
+            makeDiagram("diagram4",[makeBall(4,0, 0,maxSpeed*0.7, 0,0,0),
+                                    makeBall(2,0, 0,maxSpeed*0.7, 0,0,-1),
+                                    makeBall(6,0, 0,maxSpeed*0.7, 0,0,1)]);
 
 
         }
@@ -38,20 +46,28 @@
 </head>
 
 <body>
+  <div class="flex-container">
 	<div id="diagram1">
-		<canvas id="canvas" width="400" height="210" style="border:1px solid #111111;"></canvas>
+		<canvas id="canvas" width="200" height="105" style="border:1px solid #111111;"></canvas>
 		<div id="control"></div>
 	</div>
-
 	<div id="diagram2">
 		<canvas id="canvas" width="200" height="105" style="border:1px solid #111111;"></canvas>
 		<div id="control"></div>
-        <p>white ball should return to cushion
 	</div>
+    <div id="diagram3">
+		<canvas id="canvas" width="200" height="105" style="border:1px solid #111111;"></canvas>
+		<div id="control"></div>
+	</div>
+    <div id="diagram4">
+		<canvas id="canvas" width="200" height="105" style="border:1px solid #111111;"></canvas>
+		<div id="control"></div>
+	</div>
+  </div>
 
-	<footer>
-		<button onClick="window.location.reload();" style="font-size:xx-small; background-color: grey; border:1px solid;">Refresh Page</button>
-	</footer>
+  <footer>
+	<button onClick="window.location.reload();" style="font-size:xx-small; background-color: grey; border:1px solid;">Refresh Page</button>
+  </footer>    
 </body>
 
 </html>

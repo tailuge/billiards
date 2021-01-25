@@ -42,6 +42,12 @@ input {
     background-color: transparent;
     border: 0.1px solid;
     color: grey;    
+    font-size: 3px;
+}
+
+.control {
+    font-size: 3px;
+    display: none;
 }
 
 .chat {
