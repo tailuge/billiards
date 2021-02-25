@@ -97,3 +97,20 @@ export function bounceWithOmegaZ(v, w, dv, dw) {
   dv.set(-v.x * 1.9, -w.z, 0)
   dw.set(0, 0, 0)
 }
+
+// algorithm as per paper
+
+//inputs v0, wt0, ws0, alpha
+
+export function computeBounce(v0, wt0, ws0, alpha) {
+    const xg = v0 * Math.cos(alpha);
+    const yg = v0 * Math.sin(alpha);
+    const zg = 0;
+    
+    const thetax = -wt0 * Math.sin(alpha);
+    const thetay = -wt0 * Math.cos(alpha);
+    const thetaz =  ws0;
+
+    return {xg,yg,zg,thetax,thetay,thetaz}
+}
+
