@@ -41,10 +41,18 @@ const cos_a = Math.cos(9.25 / 32.5)
 const sin_a2 = sin_a * sin_a
 const cos_a2 = cos_a * cos_a
 
-export function rotateApplyUnrotate(theta, v, w, dv, dw, f) {
+export function rotateApplyUnrotate(theta, v, w, dv, dw) {
   const vr = v.clone().applyAxisAngle(up, theta)
   const wr = w.clone().applyAxisAngle(up, theta)
-  f(vr, wr, dv, dw)
+
+  if (isCushionXGrip(vr, wr)) {
+    console.log("isGrip = true")
+    bounceWithoutSlipX(vr, wr, dv, dw)
+  } else {
+    console.log("isGrip = false")
+    bounceWithSlipX(vr, wr, dv, dw)
+  }
+
   dv.applyAxisAngle(up, -theta)
   dw.applyAxisAngle(up, -theta)
 }
@@ -77,8 +85,8 @@ export function isCushionXGrip(v, w) {
 
 export function bounceWithoutSlipX(v, w, dv, dw) {
   var newVx =
-    v.x +
-    -v.x * ((2 / 7) * sin_a2 + (1 + e) * cos_a2) -
+    v.x -
+    v.x * ((2 / 7) * sin_a2 + (1 + e) * cos_a2) -
     (2 / 7) * R * w.y * sin_a
   var newVy = (5 / 7) * v.y + (2 / 7) * R * (w.x * sin_a - w.z * cos_a)
 
@@ -93,19 +101,18 @@ export function bounceWithoutSlipX(v, w, dv, dw) {
   dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
 }
 
-// algorithm as per paper
+export function bounceWithSlipX(v, w, dv, dw) {
+  var newVx = v.x - v.x * (1 + e) * cos_a * (mu * cos_a * sin_a + cos_a)
+  var newVy = v.y + mu * (1 + e) * cos_a * sin_a * v.x
 
-//inputs v0, wt0, ws0, alpha
+  var Py = m * (newVy - v.y)
+  var Px = m * (newVx - v.x)
+  var Pz = 0
+  var newWx = w.x - (R / I) * Py * sin_a
+  var newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
+  var newWz = w.z + (R / I) * Py * cos_a
 
-export function computeBounce(v0, wt0, ws0, alpha) {
-    const xg = v0 * Math.cos(alpha);
-    const yg = v0 * Math.sin(alpha);
-    const zg = 0;
-    
-    const thetax = -wt0 * Math.sin(alpha);
-    const thetay = -wt0 * Math.cos(alpha);
-    const thetaz =  ws0;
-
-    return {xg,yg,zg,thetax,thetay,thetaz}
+  dv.set(newVx - v.x, newVy - v.y, 0)
+  dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
 }
 

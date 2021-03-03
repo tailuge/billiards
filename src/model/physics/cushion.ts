@@ -1,6 +1,6 @@
 import { Ball } from "../ball"
 import { TableGeometry } from "../../view/tablegeometry"
-import { rotateApplyUnrotate, bounceWithoutSlipX } from "./physics"
+import { rotateApplyUnrotate } from "./physics"
 import { Vector3 } from "three"
 
 export class Cushion {
@@ -70,13 +70,13 @@ export class Cushion {
   private static bounceIn(rotation, ball) {
     let dv = new Vector3()
     let dw = new Vector3()
+
     rotateApplyUnrotate(
       rotation,
       ball.vel,
       ball.rvel,
       dv,
-      dw,
-      bounceWithoutSlipX
+      dw
     )
     ball.vel.add(dv)
     ball.rvel.add(dw)
