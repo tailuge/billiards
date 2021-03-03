@@ -5,3 +5,5 @@ export const m = 1
 export const Mz = ((mu * m * g * 2) / 3) * rho
 export const Mxy = (7 / (5 * Math.sqrt(2))) * mu * m * g
 export const e = 0.8
+export const R = 0.5
+export const I = (2 / 5) * m * R * R

@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { norm, upCross, up } from "../../utils/utils"
-import { mu, g, m, e, Mz, Mxy } from "./constants"
+import { mu, g, m, e, Mz, Mxy, R, I } from "./constants"
 
 export function surfaceVelocity(v, w) {
   return v.clone().add(upCross(w)).setZ(0)
@@ -76,24 +76,19 @@ export function isCushionXGrip(v, w) {
 }
 
 export function bounceWithoutSlipX(v, w, dv, dw) {
-  dv.set(
-    -v.x * ((2 / 7) * sin_a2 + (1 + e) * cos_a2) - (2 / 7) * w.y * sin_a,
-    (5 / 7) * v.y + (2 / 7) * (w.x * sin_a - w.z * cos_a) - v.y,
-    0
-  )
+  var newVx =
+    v.x +
+    -v.x * ((2 / 7) * sin_a2 + (1 + e) * cos_a2) -
+    (2 / 7) * R * w.y * sin_a
+  var newVy = (5 / 7) * v.y + (2 / 7) * R * (w.x * sin_a - w.z * cos_a)
 
-  const s = s0(v, w)
-  const k = (5 * s.y) / (2 * m * A)
+  var Py = m * (newVy - v.y)
+  var Px = m * (newVx - v.x)
+  var Pz = 0
+  var newWx = w.x - (R / I) * Py * sin_a
+  var newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
+  var newWz = w.z + (R / I) * Py * cos_a
 
-  dw.set(
-    k * sin_a,
-    (5 / (2 * m)) *
-      (-s.x / A + ((sin_a * c0(v) * (1 + e)) / B) * (cos_a - sin_a)),
-    k * cos_a
-  )
-}
-
-export function bounceWithOmegaZ(v, w, dv, dw) {
-  dv.set(-v.x * 1.9, -w.z, 0)
-  dw.set(0, 0, 0)
+  dv.set(newVx - v.x, newVy - v.y, 0)
+  dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
 }
