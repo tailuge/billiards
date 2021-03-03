@@ -92,3 +92,20 @@ export function bounceWithoutSlipX(v, w, dv, dw) {
   dv.set(newVx - v.x, newVy - v.y, 0)
   dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
 }
+
+// algorithm as per paper
+
+//inputs v0, wt0, ws0, alpha
+
+export function computeBounce(v0, wt0, ws0, alpha) {
+    const xg = v0 * Math.cos(alpha);
+    const yg = v0 * Math.sin(alpha);
+    const zg = 0;
+    
+    const thetax = -wt0 * Math.sin(alpha);
+    const thetay = -wt0 * Math.cos(alpha);
+    const thetaz =  ws0;
+
+    return {xg,yg,zg,thetax,thetay,thetaz}
+}
+
