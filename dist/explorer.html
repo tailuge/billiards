@@ -32,6 +32,8 @@
         function makeBall(x, y, vx, vy, wx, wy, wz) {
             return { pos: { x: x, y: y, z: 0 }, vel: { x: vx, y: vy, z: 0 }, rvel: { x: wx, y: wy, z: wz }, state: "Stationary" };
         }
+
+       
     </script>
 </head>
 
@@ -45,6 +47,9 @@
         <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
     </div>
 
+    <div id="log"></div>
 </body>
+    <script src="log.js">
+    </script>
 
 </html>

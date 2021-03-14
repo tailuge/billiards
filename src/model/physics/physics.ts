@@ -59,13 +59,13 @@ export function rotateApplyUnrotate(theta, v, w, dv, dw) {
 
 function s0(v, w) {
   return new Vector3(
-    v.x * sin_a - v.z * cos_a + w.y,
-    -v.y - w.z * cos_a + w.x * sin_a
+    v.x * sin_a - v.z * cos_a + R * w.y,
+    -v.y - R * w.z * cos_a + R * w.x * sin_a
   )
 }
 
 function c0(v) {
-  return v.x * cos_a - v.z * cos_a
+  return - v.x * cos_a - v.z * cos_a
 }
 
 const A = 7 / (2 * m)
@@ -80,7 +80,7 @@ function Pze(c0) {
 }
 
 export function isCushionXGrip(v, w) {
-  return Pze(c0(v)) <= Pzs(s0(v, w))
+  return Pze(c0(v)) < Pzs(s0(v, w))
 }
 
 export function bounceWithoutSlipX(v, w, dv, dw) {
@@ -92,7 +92,7 @@ export function bounceWithoutSlipX(v, w, dv, dw) {
 
   var Py = m * (newVy - v.y)
   var Px = m * (newVx - v.x)
-  var Pz = 0
+  var Pz = -m
   var newWx = w.x - (R / I) * Py * sin_a
   var newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
   var newWz = w.z + (R / I) * Py * cos_a
@@ -107,7 +107,7 @@ export function bounceWithSlipX(v, w, dv, dw) {
 
   var Py = m * (newVy - v.y)
   var Px = m * (newVx - v.x)
-  var Pz = 0
+  var Pz = -m
   var newWx = w.x - (R / I) * Py * sin_a
   var newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
   var newWz = w.z + (R / I) * Py * cos_a
