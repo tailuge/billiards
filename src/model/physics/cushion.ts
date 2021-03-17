@@ -79,6 +79,6 @@ export class Cushion {
       dw
     )
     ball.vel.add(dv)
-    ball.rvel.add(dw)
+//    ball.rvel.add(dw)
   }
 }
