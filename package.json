@@ -29,8 +29,8 @@
         "ts-jest": "^26.5.4",
         "ts-loader": "^8.0.18",
         "typescript": "^4.2.3",
-        "webpack": "^4.44.2",
-        "webpack-cli": "^3.3.12",
-        "webpack-dev-server": "^3.11.2"
+        "webpack": "^4",
+        "webpack-cli": "^3",
+        "webpack-dev-server": "^3"
     }
 }
