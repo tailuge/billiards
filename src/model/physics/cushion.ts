@@ -71,14 +71,8 @@ export class Cushion {
     let dv = new Vector3()
     let dw = new Vector3()
 
-    rotateApplyUnrotate(
-      rotation,
-      ball.vel,
-      ball.rvel,
-      dv,
-      dw
-    )
+    rotateApplyUnrotate(rotation, ball.vel, ball.rvel, dv, dw)
     ball.vel.add(dv)
-//    ball.rvel.add(dw)
+    //    ball.rvel.add(dw)
   }
 }
