@@ -10,7 +10,7 @@
         "coverage": "jest --coverage --coverageReporters text",
         "dev": "webpack ",
         "prettify": "prettier --write --no-semi {src,test}/**",
-        "server": "webpack serve",
+        "serve": "webpack serve",
         "deps": "npx yarn-check --skip-unused"
     },
     "dependencies": {
@@ -31,6 +31,6 @@
         "typescript": "^4.2.3",
         "webpack": "^5.27.1",
         "webpack-cli": "^4.5.0",
-        "webpack-dev-server": "^3"
+        "webpack-dev-server": "^3.11.2"
     }
 }

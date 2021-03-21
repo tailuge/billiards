@@ -21,5 +21,9 @@ module.exports = {
     port: 8080
   },
   performance: { hints: false },
-  mode: 'production'
+  mode: 'production',
+  optimization: {
+     usedExports: true,
+     moduleIds: 'named'
+ },
 };
