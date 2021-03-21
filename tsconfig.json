@@ -1,7 +1,6 @@
 {
-  "include": [
-    "src/*.ts", "src/view/camera.ts", "src/view/tablegeometry.ts", "src/model/gamestate.ts", "src/utils/utils.ts", "src/model/table.ts"
-  ],
+"include": ["src/**/*"],
+"exclude": ["**/*.spec.ts"],
   "compilerOptions": {
     "outDir": "./dist",
     "module": "commonjs",

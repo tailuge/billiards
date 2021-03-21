@@ -9,46 +9,14 @@
 	<meta name="description" content="billiards" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	<link rel="stylesheet" type="text/css" href="index.css" />
-	<script src="library.js">
-
-	</script>
-	<script>
-		window.onload = function() {
-
-          var controller1 = new library.Container(
-              document.getElementById("viewP1"),
-              text => {})
-
-          controller1.broadcast = x => {}    
-          controller1.eventQueue.push(new library.BeginEvent())
-
-          var keyboard = new library.Keyboard()
-
-          var lastTime = performance.now()
-          function sampleInputs() {
-              var t = performance.now() - lastTime
-              lastTime = performance.now()
-              var inputs = keyboard.getEvents(t)
-              inputs.forEach(i => controller1.inputQueue.push(i))
-              requestAnimationFrame(t => { sampleInputs() })
-          }
-
-          // trigger input polling
-          sampleInputs()
-
-          // trigger animation loops
-          controller1.animate(performance.now())
-
-        }
-	</script>
 </head>
 
 <body>
-	<div class="flex-container">
-		<div id="viewP1"></div>
-	</div>
-    <div id="log"></div>
-</body>
+	<script src="main.js">
+	</script>
     <script src="log.js">
     </script>
+	<div></div>
+    <div id="log"></div>
+</body>
 </html>

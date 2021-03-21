@@ -8,9 +8,9 @@
     "scripts": {
         "test": "jest --verbose",
         "coverage": "jest --coverage --coverageReporters text",
-        "dev": "webpack -p",
+        "dev": "webpack ",
         "prettify": "prettier --write --no-semi {src,test}/**",
-        "server": "webpack-dev-server",
+        "server": "webpack serve",
         "deps": "npx yarn-check --skip-unused"
     },
     "dependencies": {
@@ -29,8 +29,8 @@
         "ts-jest": "^26.5.4",
         "ts-loader": "^8.0.18",
         "typescript": "^4.2.3",
-        "webpack": "^4",
-        "webpack-cli": "^3",
+        "webpack": "^5.27.1",
+        "webpack-cli": "^4.5.0",
         "webpack-dev-server": "^3"
     }
 }
