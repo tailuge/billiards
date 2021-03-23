@@ -1,7 +1,7 @@
-//import { Container } from "./controller/container"
-//import { BeginEvent } from "./events/beginevent"
-//import { Keyboard } from "./events/keyboard"
-
+import { Container } from "./controller/container"
+import { BeginEvent } from "./events/beginevent"
+import { Keyboard } from "./events/keyboard"
+/*
 import {
   Color,
   PerspectiveCamera,
@@ -16,16 +16,7 @@ import {
   MeshPhongMaterial,
   WebGLRenderer,
 } from "three"
-/*
-function component() {
-  const element = document.createElement("div")
-var e = document.getElementById("viewP1")
-  element.innerHTML = "Hi Hello world" + e
-
-  return element
-}
-
-document.body.appendChild(component())
+*/
 
 var controller1 = new Container(document.getElementById("viewP1"), (_) => {})
 
@@ -51,8 +42,8 @@ sampleInputs()
 
 // trigger animation loops
 controller1.animate(performance.now())
-*/
 
+/*
 let scene, renderer
 
 let mouseX = 0
@@ -91,7 +82,7 @@ const views = [
       camera.position.x = Math.max(Math.min(camera.position.x, 1000), -1000)
       camera.lookAt(camera.position.clone().setY(0))
     },
-  }
+  },
 ]
 
 init()
@@ -282,3 +273,4 @@ function render() {
     renderer.render(scene, camera)
   }
 }
+*/

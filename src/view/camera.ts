@@ -12,7 +12,7 @@ export class Camera {
 
   private topViewPoint = new Vector3(0, -0.1, 29)
 
-  update(_, aim) {
+  update(aim) {
     this.mode(aim)
   }
 
