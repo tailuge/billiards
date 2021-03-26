@@ -20,5 +20,5 @@ export function passesThroughZero(v, dv) {
 }
 
 export function unitAtAngle(theta) {
-      return (new Vector3(1, 0, 0)).applyAxisAngle(up,theta)
+  return new Vector3(1, 0, 0).applyAxisAngle(up, theta)
 }

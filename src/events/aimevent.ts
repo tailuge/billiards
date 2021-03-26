@@ -2,7 +2,7 @@ import { GameEvent } from "./gameevent"
 import { EventType } from "./eventtype"
 import { Controller } from "../controller/controller"
 import { vec } from "../utils/utils"
-import {Vector3 } from "three"
+import { Vector3 } from "three"
 
 export class AimEvent extends GameEvent {
   verticalOffset = 0

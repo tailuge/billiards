@@ -3,7 +3,7 @@ import {
   DirectionalLight,
   PCFSoftShadowMap,
   Scene,
-  WebGLRenderer
+  WebGLRenderer,
 } from "three"
 import { Camera } from "./camera"
 import { OverheadCamera } from "./overheadcamera"

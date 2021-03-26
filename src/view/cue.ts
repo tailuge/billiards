@@ -1,6 +1,6 @@
 import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
-import { up, upCross,unitAtAngle } from "../utils/utils"
+import { up, upCross, unitAtAngle } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import {
   Matrix4,
@@ -49,13 +49,10 @@ export class Cue {
     this.mesh.rotation.z = this.aim.angle
   }
 
-  
-
   rotateAim(angle) {
     this.aim.angle += angle
     this.mesh.rotation.z = this.aim.angle
   }
-
 
   adjustHeight(delta) {
     this.aim.verticalOffset = MathUtils.clamp(
