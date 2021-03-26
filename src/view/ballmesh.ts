@@ -4,8 +4,8 @@ import { norm } from "./../utils/utils"
 export class BallMesh {
   mesh: Mesh
 
-  constructor() {
-    this.initialiseMesh()
+  constructor(color) {
+    this.initialiseMesh(color)
   }
 
   updatePosition(pos) {
@@ -18,10 +18,10 @@ export class BallMesh {
     this.mesh.geometry.applyMatrix4(m)
   }
 
-  initialiseMesh() {
+  initialiseMesh(color) {
     var geometry = new IcosahedronGeometry(0.5, 1)
     var material = new MeshPhongMaterial({
-      color: 0x555555 * Math.random(),
+      color: color,
       emissive: 0,
       flatShading: true,
     })

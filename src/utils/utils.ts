@@ -22,3 +22,14 @@ export function passesThroughZero(v, dv) {
 export function unitAtAngle(theta) {
   return new Vector3(1, 0, 0).applyAxisAngle(up, theta)
 }
+
+export function round(num) {
+  return Math.round((num + Number.EPSILON) * 1000) / 1000
+}
+
+export function roundVec(v) {
+  v.x = round(v.x)
+  v.y = round(v.y)
+  v.z = round(v.z)
+  return v
+}

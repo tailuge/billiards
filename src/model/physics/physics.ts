@@ -81,6 +81,7 @@ function Pze(c0) {
 export function isCushionXGrip(v, w) {
   var Pze_val = Pze(c0(v))
   var Pzs_val = Pzs(s0(v, w))
+  /*
   console.log(
     Pze_val +
       " < " +
@@ -88,6 +89,7 @@ export function isCushionXGrip(v, w) {
       " isGrip = " +
       (Pze_val < Pzs_val ? "true" : "false")
   )
+  */
   return Pze_val < Pzs_val
 }
 
