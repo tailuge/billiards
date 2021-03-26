@@ -10,10 +10,11 @@
         "coverage": "jest --coverage --coverageReporters text",
         "dev": "webpack ",
         "prettify": "prettier --write --no-semi {src,test}/**",
-        "serve": "webpack serve",
+        "serve": "webpack serve --public $(gp url 8080)",
         "deps": "npx yarn-check --skip-unused"
     },
     "dependencies": {
+        "query-string": "^7.0.0",
         "three": "^0.126.1"
     },
     "devDependencies": {

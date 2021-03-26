@@ -6,7 +6,12 @@ import { EventType } from "./events/eventtype"
 
 var controller1 = new Container(document.getElementById("viewP1"), (_) => {})
 
-//console.log(JSON.stringify(controller1.table.serialise()))
+let a = /init=([^&]*)&shots=([^&]*)/.exec(location.search)
+if (a !== null) {
+  console.log("Replaymode")
+  console.log(a[1])
+  console.log(a[2])
+}
 
 controller1.broadcast = (e: string) => {
   let event = EventUtil.fromSerialised(e)
