@@ -12,12 +12,10 @@ import { Rack } from "../../src/utils/rack"
 describe("EventUtil", () => {
   it("Serialise and deserialise AimEvent", (done) => {
     let aim = new AimEvent()
-    aim.dir.x = 0.5
     let event: GameEvent = aim
     let serialised = EventUtil.serialise(event)
     let deserialised = <AimEvent>EventUtil.fromSerialised(serialised)
     expect(deserialised.type).to.equal(EventType.AIM)
-    expect(deserialised.dir).to.deep.equal(aim.dir)
     done()
   })
 

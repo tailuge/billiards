@@ -11,5 +11,5 @@ export class OverheadCamera {
 
   camera: PerspectiveCamera
 
-  private topViewPoint = new Vector3(0, -0.1, 29)
+  private topViewPoint = new Vector3(0, -0.1, 30)
 }

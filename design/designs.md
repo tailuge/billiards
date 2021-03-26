@@ -35,3 +35,22 @@ scene
 camera
 chat
 ```
+
+playbreak and playback
+
+
+?shots=[{a:2.1,s:0.1,h0.0,p=0.5,t=12},{},{},...]
+&init=[{x:,y:,z:},{},{},...]
+
+set up at init
+while shot
+ animate to aim
+ animate power
+ animate shot
+
+halt
+
+state machine
+
+initplayback
+animate to

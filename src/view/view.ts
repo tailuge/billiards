@@ -3,7 +3,7 @@ import {
   DirectionalLight,
   PCFSoftShadowMap,
   Scene,
-  WebGLRenderer,
+  WebGLRenderer
 } from "three"
 import { Camera } from "./camera"
 import { OverheadCamera } from "./overheadcamera"
@@ -31,7 +31,7 @@ export class View {
     this.addTable()
   }
 
-  update(_, aim: AimEvent) {
+  update(aim: AimEvent) {
     this.camera.update(aim)
   }
 
@@ -78,7 +78,6 @@ export class View {
     this.renderer.setScissor(left, bottom, width, height)
     this.renderer.setScissorTest(true)
 
-    console.log(cam.left)
     cam.camera.aspect = width / height
     cam.camera!.updateProjectionMatrix()
 

@@ -18,3 +18,7 @@ export function norm(v) {
 export function passesThroughZero(v, dv) {
   return v.clone().add(dv).dot(v) <= 0
 }
+
+export function unitAtAngle(theta) {
+      return (new Vector3(1, 0, 0)).applyAxisAngle(up,theta)
+}

@@ -1,5 +1,7 @@
 import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
+import { up, upCross,unitAtAngle } from "../utils/utils"
+import { AimEvent } from "../events/aimevent"
 import {
   Matrix4,
   Mesh,
@@ -7,9 +9,8 @@ import {
   MeshPhongMaterial,
   Raycaster,
   Vector3,
+  MathUtils,
 } from "three"
-import { up, upCross } from "../utils/utils"
-import { AimEvent } from "../events/aimevent"
 
 export class Cue {
   mesh: Mesh
@@ -48,18 +49,16 @@ export class Cue {
     this.mesh.rotation.z = this.aim.angle
   }
 
+  
+
   rotateAim(angle) {
     this.aim.angle += angle
-    this.aim.dir.applyAxisAngle(up, angle)
     this.mesh.rotation.z = this.aim.angle
   }
 
-  clamp(num, min, max) {
-    return num <= min ? min : num >= max ? max : num
-  }
 
   adjustHeight(delta) {
-    this.aim.verticalOffset = this.clamp(
+    this.aim.verticalOffset = MathUtils.clamp(
       this.aim.verticalOffset + delta,
       -this.limit,
       this.limit
@@ -68,7 +67,7 @@ export class Cue {
   }
 
   adjustSide(delta) {
-    this.aim.sideOffset = this.clamp(
+    this.aim.sideOffset = MathUtils.clamp(
       this.aim.sideOffset + delta,
       -this.limit,
       this.limit
@@ -82,11 +81,11 @@ export class Cue {
   moveTo(pos) {
     this.aim.pos.copy(pos)
     this.mesh.rotation.z = this.aim.angle
-    let offset = upCross(this.aim.dir)
+    let offset = upCross(unitAtAngle(this.aim.angle))
       .multiplyScalar(this.aim.sideOffset)
       .setZ(this.aim.verticalOffset)
     let swing = (Math.sin(this.t / 3) - 1) * 0.25
-    let distanceToBall = this.aim.dir
+    let distanceToBall = unitAtAngle(this.aim.angle)
       .clone()
       .multiplyScalar(swing - this.aim.power / 2)
     this.mesh.position.copy(pos.clone().add(offset).add(distanceToBall))
@@ -100,9 +99,9 @@ export class Cue {
   intersectsAnything(table: Table) {
     let origin = table.balls[0].pos
       .clone()
-      .addScaledVector(this.aim.dir, -this.length / 2)
+      .addScaledVector(unitAtAngle(this.aim.angle), -this.length / 2)
     origin.z = this.aim.verticalOffset
-    let direction = this.aim.dir.clone().normalize()
+    let direction = unitAtAngle(this.aim.angle)
     let raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
     let intersections = raycaster.intersectObjects(
       table.balls.map((b) => b.ballmesh.mesh)
