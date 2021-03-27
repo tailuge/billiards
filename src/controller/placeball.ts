@@ -4,6 +4,7 @@ import { Aim } from "./aim"
 import { MathUtils } from "three"
 import { TableGeometry } from "../view/tablegeometry"
 import { BreakEvent } from "../events/breakevent"
+import { round } from "../utils/utils"
 
 /**
  * Place cue ball using input events.
@@ -24,14 +25,14 @@ export class PlaceBall extends ControllerBase {
     switch (input.key) {
       case "ArrowLeft":
         this.container.table.balls[0].pos.y = MathUtils.clamp(
-          this.container.table.balls[0].pos.y + input.t * this.scale,
+          round(this.container.table.balls[0].pos.y + input.t * this.scale),
           -TableGeometry.tableY,
           TableGeometry.tableY
         )
         break
       case "ArrowRight":
         this.container.table.balls[0].pos.y = MathUtils.clamp(
-          this.container.table.balls[0].pos.y - input.t * this.scale,
+          round(this.container.table.balls[0].pos.y - input.t * this.scale),
           -TableGeometry.tableY,
           TableGeometry.tableY
         )
