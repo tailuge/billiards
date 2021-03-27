@@ -41,6 +41,9 @@ export class PlaceBall extends ControllerBase {
       default:
         return this
     }
+    this.container.table.cue.moveTo(this.container.table.balls[0].pos)
+    this.container.view.camera.aimView(this.container.table.cue.aim, 1)
+
     return this
   }
 

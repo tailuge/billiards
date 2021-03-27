@@ -22,10 +22,10 @@ export class Camera {
     this.camera.lookAt(zero)
   }
 
-  aimView(aim: AimEvent) {
+  aimView(aim: AimEvent, fraction = 0.08) {
     this.camera.position.lerp(
       aim.pos.clone().addScaledVector(unitAtAngle(aim.angle), -9),
-      0.07
+      fraction
     )
     this.camera.position.z = 2.7
     this.camera.up = up

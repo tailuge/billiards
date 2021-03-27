@@ -22,6 +22,11 @@ controller1.broadcast = (e: string) => {
   let event = EventUtil.fromSerialised(e)
   if (event.type === EventType.BREAK) {
     console.log(JSON.stringify(event), null, 2)
+    let uri = encodeURI(
+      window.location + "?init=[" + (<BreakEvent>event).init + "]"
+    )
+    console.log(uri)
+    console.log(uri.length)
   }
 }
 

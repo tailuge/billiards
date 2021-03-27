@@ -63,6 +63,12 @@ export class View {
   render() {
     this.updateSize()
     this.renderCamera(this.camera, this.views[0])
+    let aspect = this.overheadCamera.aspect(this.windowWidth, this.windowHeight)
+    this.views[1].width = aspect.x
+    this.views[1].height = aspect.y
+    this.views[1].left = 1 - aspect.x * 1.01
+    this.views[1].bottom = aspect.y * 0.01
+
     this.renderCamera(this.overheadCamera, this.views[1])
   }
 

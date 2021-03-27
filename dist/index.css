@@ -1,9 +1,11 @@
 body, html {
-  margin: 2px;
+  margin: 1px;
   background-color: #000;
   color: #444;
-  width: 98%;
-  height: 98%;
+  width: 99.5%;
+  height: 100%;
+    border: 1px solid black;
+    overflow:hidden;
 }
 
 div {
