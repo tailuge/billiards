@@ -1,6 +1,7 @@
 import { Ball } from "../model/ball"
 import { TableGeometry } from "../view/tablegeometry"
 import { Vector3 } from "three"
+import { roundVec } from "./utils"
 
 export class Rack {
   static readonly noise = 0.02
@@ -8,15 +9,17 @@ export class Rack {
   static readonly up = new Vector3(0, 0, -1)
 
   private static jitter(pos) {
-    return pos
-      .clone()
-      .add(
-        new Vector3(
-          Rack.noise * (Math.random() - 0.5),
-          Rack.noise * (Math.random() - 0.5),
-          0
+    return roundVec(
+      pos
+        .clone()
+        .add(
+          new Vector3(
+            Rack.noise * (Math.random() - 0.5),
+            Rack.noise * (Math.random() - 0.5),
+            0
+          )
         )
-      )
+    )
   }
 
   static cueBall() {
