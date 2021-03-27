@@ -35,9 +35,7 @@ export class Keyboard {
     e = e || window.event
     this.pressed[e.code] = true
     e.stopImmediatePropagation()
-    if (e.key == " ") {
-      e.preventDefault()
-    }
+    e.preventDefault()
   }
 
   keyup = (e) => {
@@ -45,9 +43,7 @@ export class Keyboard {
     delete this.pressed[e.code]
     this.released[e.code] = true
     e.stopImmediatePropagation()
-    if (e.key == " ") {
-      e.preventDefault()
-    }
+    e.preventDefault()
   }
 
   private addHandlers() {

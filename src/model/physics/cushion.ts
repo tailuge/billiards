@@ -73,6 +73,7 @@ export class Cushion {
 
     rotateApplyUnrotate(rotation, ball.vel, ball.rvel, dv, dw)
     ball.vel.add(dv)
+    ball.rvel.setLength(ball.rvel.length() / 2.0)
     //    ball.rvel.add(dw)
   }
 }
