@@ -195,7 +195,7 @@ export class TableGeometry {
   }
 
   private static cylinder(pos, radius, depth, scene) {
-    var geometry = new CylinderGeometry(radius, radius, depth, 16)
+    var geometry = new CylinderGeometry(radius, radius, depth, 8)
     var mesh = new Mesh(geometry, TableGeometry.material)
     mesh.position.copy(pos)
     mesh.geometry.applyMatrix4(

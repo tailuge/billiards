@@ -31,8 +31,7 @@ export class AimEvent extends GameEvent {
   }
 
   copy(): AimEvent {
-    let event = AimEvent.fromJson(this)
-    return event
+    return AimEvent.fromJson(this)
   }
 
   round() {

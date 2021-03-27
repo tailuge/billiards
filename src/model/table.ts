@@ -112,4 +112,16 @@ export class Table {
       this.cue.aim = AimEvent.fromJson(data.aim)
     }
   }
+
+  shortSerialise() {
+    return this.balls
+      .map((b) => [b.pos.x, b.pos.y])
+      .reduce((acc, val) => acc.concat(val), [])
+  }
+
+  updateFromShortSerialised(data) {
+    this.balls.forEach((b, i) => {
+      ;(b.pos.x = data[i * 2]), (b.pos.y = data[i * 2 + 1])
+    })
+  }
 }

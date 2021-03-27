@@ -4,6 +4,8 @@ import { Controller } from "./controller"
 import { Aim } from "./aim"
 import { WatchAim } from "./watchaim"
 import { ControllerBase } from "./controllerbase"
+import { BreakEvent } from "../events/breakevent"
+import { PlaceBall } from "./placeball"
 
 /**
  * Initial state of controller.
@@ -19,5 +21,9 @@ export class Init extends ControllerBase {
   handleWatch(event: WatchEvent): Controller {
     this.container.table.updateFromSerialised(event.json)
     return new WatchAim(this.container)
+  }
+
+  handleBreak(_: BreakEvent): Controller {
+    return new PlaceBall(this.container)
   }
 }

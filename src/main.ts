@@ -1,26 +1,29 @@
 import { Container } from "./controller/container"
-import { BeginEvent } from "./events/beginevent"
 import { Keyboard } from "./events/keyboard"
 import { EventUtil } from "./events/eventutil"
 import { EventType } from "./events/eventtype"
+import { BreakEvent } from "./events/breakevent"
 
 var controller1 = new Container(document.getElementById("viewP1"), (_) => {})
 
-let a = /init=([^&]*)&shots=([^&]*)/.exec(location.search)
-if (a !== null) {
-  console.log("Replaymode")
-  console.log(a[1])
-  console.log(a[2])
+console.log(controller1.table.shortSerialise())
+
+let args = /init=([^&]*)&shots=([^&]*)/.exec(location.search)
+if (args !== null) {
+  let init = JSON.parse(args[1])
+  let shots = JSON.parse(args[2])
+  console.log("Replay mode", args[1], args[2])
+  controller1.eventQueue.push(new BreakEvent(init, shots))
+} else {
+  controller1.eventQueue.push(new BreakEvent())
 }
 
 controller1.broadcast = (e: string) => {
   let event = EventUtil.fromSerialised(e)
-  if (event.type == EventType.HIT) {
+  if (event.type !== EventType.AIM) {
     console.log(event)
   }
 }
-
-controller1.eventQueue.push(new BeginEvent())
 
 var keyboard = new Keyboard()
 
