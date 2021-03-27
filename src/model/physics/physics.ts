@@ -64,7 +64,6 @@ function s0(v, w) {
 
 function c0(v) {
   return -v.y
-  //  return - v.x * cos_a - v.z * cos_a
 }
 
 const A = 7 / (2 * m)

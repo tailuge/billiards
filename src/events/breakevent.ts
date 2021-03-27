@@ -17,7 +17,6 @@ export class BreakEvent extends GameEvent {
   }
 
   static fromJson(json) {
-    let event = new BreakEvent(json.init, json.shots)
-    return event
+    return new BreakEvent(json.init, json.shots)
   }
 }
