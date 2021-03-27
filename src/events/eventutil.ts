@@ -4,6 +4,7 @@ import { AimEvent } from "./aimevent"
 import { WatchEvent } from "./watchevent"
 import { HitEvent } from "./hitevent"
 import { AbortEvent } from "./abortevent"
+import { BreakEvent } from "./breakevent"
 
 export class EventUtil {
   static serialise(event: GameEvent) {
@@ -15,6 +16,8 @@ export class EventUtil {
     switch (parsed.type) {
       case EventType.AIM:
         return AimEvent.fromJson(parsed)
+      case EventType.BREAK:
+        return BreakEvent.fromJson(parsed)
       case EventType.WATCHAIM:
         return WatchEvent.fromJson(parsed.json)
       case EventType.HIT:

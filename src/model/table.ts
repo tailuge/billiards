@@ -121,7 +121,10 @@ export class Table {
 
   updateFromShortSerialised(data) {
     this.balls.forEach((b, i) => {
-      ;(b.pos.x = data[i * 2]), (b.pos.y = data[i * 2 + 1])
+      {
+        b.pos.x = data[i * 2]
+        b.pos.y = data[i * 2 + 1]
+      }
     })
   }
 }

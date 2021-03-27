@@ -20,8 +20,8 @@ if (args !== null) {
 
 controller1.broadcast = (e: string) => {
   let event = EventUtil.fromSerialised(e)
-  if (event.type !== EventType.AIM) {
-    console.log(event)
+  if (event.type === EventType.BREAK) {
+    console.log(JSON.stringify(event), null, 2)
   }
 }
 

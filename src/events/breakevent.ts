@@ -15,4 +15,9 @@ export class BreakEvent extends GameEvent {
   applyToController(controller: Controller) {
     return controller.handleBreak(this)
   }
+
+  static fromJson(json) {
+    let event = new BreakEvent(json.init, json.shots)
+    return event
+  }
 }

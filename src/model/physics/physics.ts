@@ -70,12 +70,12 @@ function c0(v) {
 const A = 7 / (2 * m)
 const B = 1 / m
 
-function Pzs(s0) {
-  return s0.length() / A
+function Pzs(s) {
+  return s.length() / A
 }
 
-function Pze(c0) {
-  return ((1 + e) * c0) / B
+function Pze(c) {
+  return ((1 + e) * c) / B
 }
 
 export function isCushionXGrip(v, w) {

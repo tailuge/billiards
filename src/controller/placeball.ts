@@ -3,6 +3,7 @@ import { Controller, Input } from "./controller"
 import { Aim } from "./aim"
 import { MathUtils } from "three"
 import { TableGeometry } from "../view/tablegeometry"
+import { BreakEvent } from "../events/breakevent"
 
 /**
  * Place cue ball using input events.
@@ -47,6 +48,9 @@ export class PlaceBall extends ControllerBase {
     this.container.table.cue.mesh.visible = true
     this.container.table.cue.aim.round()
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
+    this.container.sendEvent(
+      new BreakEvent(this.container.table.shortSerialise())
+    )
     return new Aim(this.container)
   }
 }
