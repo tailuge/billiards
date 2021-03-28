@@ -62,7 +62,6 @@ export class Container {
     this.last = timestamp
     this.processEvents()
     this.view.render()
-
     requestAnimationFrame((t) => {
       this.animate(t)
     })

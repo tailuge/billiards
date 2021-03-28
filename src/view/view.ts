@@ -4,6 +4,8 @@ import {
   PCFSoftShadowMap,
   Scene,
   WebGLRenderer,
+  Frustum,
+  Matrix4,
 } from "three"
 import { Camera } from "./camera"
 import { OverheadCamera } from "./overheadcamera"
@@ -121,5 +123,21 @@ export class View {
 
   addMesh(mesh) {
     this.scene.add(mesh)
+  }
+
+  isVisible(o) {
+    var frustum = new Frustum()
+    var cameraViewProjectionMatrix = new Matrix4()
+    var c = this.camera.camera
+    // every time the camera or objects change position (or every frame)
+
+    c.updateMatrixWorld() // make sure the camera matrix is updated
+    c.matrixWorldInverse.getInverse(c.matrixWorld)
+    cameraViewProjectionMatrix.multiplyMatrices(
+      c.projectionMatrix,
+      c.matrixWorldInverse
+    )
+    frustum.setFromMatrix(cameraViewProjectionMatrix)
+    console.log(frustum.intersectsObject(o))
   }
 }
