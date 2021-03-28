@@ -17,7 +17,7 @@ export class OverheadCamera {
    * Work out percentage of screen to use to get fixed aspect ratio overhead view.
    **/
   aspect(windowWidth, windowHeight) {
-    const bigWidth = 600
+    const bigWidth = 500
     const smallWidth = Math.min(bigWidth, windowWidth * 0.4)
     const frameRatio = 0.59
     const cx = 1 / windowWidth

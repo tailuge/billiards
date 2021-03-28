@@ -15,7 +15,6 @@ export class Container {
   table: Table
   view: View
   controller: Controller
-
   inputQueue: Input[] = []
   eventQueue: GameEvent[] = []
 

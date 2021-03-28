@@ -6,6 +6,7 @@ import { WatchAim } from "./watchaim"
 import { ControllerBase } from "./controllerbase"
 import { BreakEvent } from "../events/breakevent"
 import { PlaceBall } from "./placeball"
+import { Replay } from "./replay"
 
 /**
  * Initial state of controller.
@@ -23,7 +24,13 @@ export class Init extends ControllerBase {
     return new WatchAim(this.container)
   }
 
-  handleBreak(_: BreakEvent): Controller {
+  handleBreak(event: BreakEvent): Controller {
+    if (event.init) {
+      console.log("ReplayMode")
+      this.container.table.updateFromShortSerialised(event.init)
+      return new Replay(this.container, event.shots)
+    }
+    // not replay so record a new game
     return new PlaceBall(this.container)
   }
 }

@@ -35,7 +35,7 @@ export class Camera {
   afterHitView(aim: AimEvent) {
     this.camera.position.lerp(
       this.camera.position.clone().addScaledVector(up, 1),
-      0.005
+      0.001
     )
     this.camera.up = up
     this.camera.lookAt(aim.pos)
