@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/gameclient.ts',
+  entry: ['./src/index.ts','./src/diagrams.ts'],
   module: {
     rules: [
       {
@@ -13,11 +13,6 @@ module.exports = {
   resolve: {
     extensions: [ '.ts', '.js' ]
   },
-  output: {
-    filename: 'library.js',
-    path: path.resolve(__dirname, 'dist'),
-    library: 'library'
-  },
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     disableHostCheck: true,
@@ -25,5 +20,10 @@ module.exports = {
     compress: true,
     port: 8080
   },
-  performance: { hints: false }
+  performance: { hints: false },
+  mode: 'production',
+  optimization: {
+     usedExports: true,
+     moduleIds: 'named'
+ },
 };

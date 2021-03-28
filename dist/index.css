@@ -1,9 +1,11 @@
 body, html {
-  margin: 2px;
+  margin: 1px;
   background-color: #000;
   color: #444;
-  width: 98%;
-  height: 98%;
+  width: 99.5%;
+  height: 100%;
+    border: 1px solid black;
+    overflow:hidden;
 }
 
 div {
@@ -42,6 +44,12 @@ input {
     background-color: transparent;
     border: 0.1px solid;
     color: grey;    
+    font-size: 3px;
+}
+
+.control {
+    font-size: 3px;
+    display: none;
 }
 
 .chat {
@@ -65,4 +73,8 @@ input {
 {
     background-color: #000000;
     border: 2px solid #555555;
+}
+
+.slidecontainer {
+  width: 100%;
 }

@@ -5,7 +5,7 @@ import { Pocket } from "./physics/pocket"
 import { Cue } from "../view/cue"
 import { Ball } from "./ball"
 import { AimEvent } from "../events/aimevent"
-import { upCross } from "../utils/utils"
+import { upCross, unitAtAngle } from "../utils/utils"
 
 export class Table {
   balls: Ball[]
@@ -84,8 +84,8 @@ export class Table {
 
   hit() {
     let aim = this.cue.aim
-    this.balls[0].vel.copy(aim.dir.clone().multiplyScalar(aim.power))
-    let rvel = upCross(aim.dir).multiplyScalar(
+    this.balls[0].vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
+    let rvel = upCross(unitAtAngle(aim.angle)).multiplyScalar(
       (aim.power * aim.verticalOffset * 5) / 2
     )
     rvel.z = (-aim.sideOffset * 5) / 2
@@ -111,5 +111,20 @@ export class Table {
     if (data.aim) {
       this.cue.aim = AimEvent.fromJson(data.aim)
     }
+  }
+
+  shortSerialise() {
+    return this.balls
+      .map((b) => [b.pos.x, b.pos.y])
+      .reduce((acc, val) => acc.concat(val), [])
+  }
+
+  updateFromShortSerialised(data) {
+    this.balls.forEach((b, i) => {
+      {
+        b.pos.x = data[i * 2]
+        b.pos.y = data[i * 2 + 1]
+      }
+    })
   }
 }

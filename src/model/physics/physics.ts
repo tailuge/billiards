@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { norm, upCross, up } from "../../utils/utils"
-import { mu, g, m, e, Mz, Mxy } from "./constants"
+import { mu, g, m, e, Mz, Mxy, R, I } from "./constants"
 
 export function surfaceVelocity(v, w) {
   return v.clone().add(upCross(w)).setZ(0)
@@ -41,59 +41,86 @@ const cos_a = Math.cos(9.25 / 32.5)
 const sin_a2 = sin_a * sin_a
 const cos_a2 = cos_a * cos_a
 
-export function rotateApplyUnrotate(theta, v, w, dv, dw, f) {
+export function rotateApplyUnrotate(theta, v, w, dv, dw) {
   const vr = v.clone().applyAxisAngle(up, theta)
   const wr = w.clone().applyAxisAngle(up, theta)
-  f(vr, wr, dv, dw)
+
+  if (isCushionXGrip(vr, wr)) {
+    bounceWithoutSlipX(vr, wr, dv, dw)
+  } else {
+    bounceWithSlipX(vr, wr, dv, dw)
+  }
+
   dv.applyAxisAngle(up, -theta)
   dw.applyAxisAngle(up, -theta)
 }
 
 function s0(v, w) {
   return new Vector3(
-    v.x * sin_a - v.z * cos_a + w.y,
-    -v.y - w.z * cos_a + w.x * sin_a
+    v.x * sin_a - v.z * cos_a + R * w.y,
+    -v.y - R * w.z * cos_a + R * w.x * sin_a
   )
 }
 
 function c0(v) {
-  return v.x * cos_a - v.z * cos_a
+  return -v.y
 }
 
 const A = 7 / (2 * m)
 const B = 1 / m
 
-function Pzs(s0) {
-  return s0.length() / A
+function Pzs(s) {
+  return s.length() / A
 }
 
-function Pze(c0) {
-  return ((1 + e) * c0) / B
+function Pze(c) {
+  return ((1 + e) * c) / B
 }
 
 export function isCushionXGrip(v, w) {
-  return Pze(c0(v)) <= Pzs(s0(v, w))
+  var Pze_val = Pze(c0(v))
+  var Pzs_val = Pzs(s0(v, w))
+  /*
+  console.log(
+    Pze_val +
+      " < " +
+      Pzs_val +
+      " isGrip = " +
+      (Pze_val < Pzs_val ? "true" : "false")
+  )
+  */
+  return Pze_val < Pzs_val
 }
 
 export function bounceWithoutSlipX(v, w, dv, dw) {
-  dv.set(
-    -v.x * ((2 / 7) * sin_a2 + (1 + e) * cos_a2) - (2 / 7) * w.y * sin_a,
-    (5 / 7) * v.y + (2 / 7) * (w.x * sin_a - w.z * cos_a) - v.y,
-    0
-  )
+  var newVx =
+    v.x -
+    v.x * ((2 / 7) * sin_a2 + (1 + e) * cos_a2) -
+    (2 / 7) * R * w.y * sin_a
+  var newVy = (5 / 7) * v.y + (2 / 7) * R * (w.x * sin_a - w.z * cos_a)
 
-  const s = s0(v, w)
-  const k = (5 * s.y) / (2 * m * A)
+  var Py = m * (newVy - v.y)
+  var Px = m * (newVx - v.x)
+  var Pz = -m
+  var newWx = w.x - (R / I) * Py * sin_a
+  var newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
+  var newWz = w.z + (R / I) * Py * cos_a
 
-  dw.set(
-    k * sin_a,
-    (5 / (2 * m)) *
-      (-s.x / A + ((sin_a * c0(v) * (1 + e)) / B) * (cos_a - sin_a)),
-    k * cos_a
-  )
+  dv.set(newVx - v.x, newVy - v.y, 0)
+  dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
 }
 
-export function bounceWithOmegaZ(v, w, dv, dw) {
-  dv.set(-v.x * 1.9, -w.z, 0)
-  dw.set(0, 0, 0)
+export function bounceWithSlipX(v, w, dv, dw) {
+  var newVx = v.x - v.x * (1 + e) * cos_a * (mu * cos_a * sin_a + cos_a)
+  var newVy = v.y + mu * (1 + e) * cos_a * sin_a * v.x
+
+  var Py = m * (newVy - v.y)
+  var Px = m * (newVx - v.x)
+  var Pz = -m
+  var newWx = w.x - (R / I) * Py * sin_a
+  var newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
+  var newWz = w.z + (R / I) * Py * cos_a
+
+  dv.set(newVx - v.x, newVy - v.y, 0)
+  dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
 }

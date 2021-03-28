@@ -1,4 +1,5 @@
 import { BeginEvent } from "../events/beginevent"
+import { BreakEvent } from "../events/breakevent"
 import { AimEvent } from "../events/aimevent"
 import { HitEvent } from "../events/hitevent"
 import { Input } from "../events/input"
@@ -23,6 +24,9 @@ export abstract class Controller {
     return this
   }
   handleBegin(_: BeginEvent): Controller {
+    return this
+  }
+  handleBreak(_: BreakEvent): Controller {
     return this
   }
   handleAim(_: AimEvent): Controller {

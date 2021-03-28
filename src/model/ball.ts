@@ -26,9 +26,9 @@ export class Ball {
 
   readonly transition = 0.05
 
-  constructor(pos) {
+  constructor(pos, color?) {
     this.pos = pos.clone()
-    this.ballmesh = new BallMesh()
+    this.ballmesh = new BallMesh(color ? color : 0x555555 * Math.random())
   }
 
   update(t) {

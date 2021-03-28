@@ -2,68 +2,18 @@
 <html lang="en">
 
 <head>
-	<title>billiards</title>
+	<title>break builder</title>
 	<link rel="icon" type="image/png" href="favicon.png">
 	<meta charset="utf-8" />
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="description" content="billiards" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	<link rel="stylesheet" type="text/css" href="index.css" />
-	<script src="library.js">
-
-	</script>
-	<script>
-		window.onload = function() {
-
-          function log(element, text) {
-              var elt = document.getElementById(element)
-              elt.innerHTML += "<div>" + text + "</div>"
-          }
-
-          var controller1 = new library.Container(
-              document.getElementById("viewP1"),
-              text => log("sidebarP1",text))
-          var controller2 = new library.Container(
-              document.getElementById("viewP2"),
-              text => log("sidebarP2",text))
-
-          controller1.broadcast = e => controller2.eventQueue.push(library.EventUtil.fromSerialised(e))
-          controller2.broadcast = e => controller1.eventQueue.push(library.EventUtil.fromSerialised(e))
-
-          controller1.eventQueue.push(new library.BeginEvent())
-
-          var keyboard = new library.Keyboard()
-
-          var lastTime = performance.now()
-          function sampleInputs() {
-              var t = performance.now() - lastTime
-              lastTime = performance.now()
-              var inputs = keyboard.getEvents(t)
-              inputs.forEach(i => controller1.inputQueue.push(i))
-              inputs.forEach(i => controller2.inputQueue.push(i))
-              requestAnimationFrame(t => { sampleInputs() })
-          }
-
-          // trigger input polling
-          sampleInputs()
-
-          // trigger animation loops
-          controller1.animate(performance.now())
-          controller2.animate(performance.now())
-
-        }
-	</script>
 </head>
 
 <body>
-	<div class="flex-container">
-		<div id="viewP1"></div>
-		<div id="sidebarP1" class="chat" style="flex-grow: 1">Player 1 shot history:</div>
-	</div>
-	<div class="flex-container">
-		<div id="sidebarP2" class="chat" style="flex-grow: 1">Player 2 shot history:</div>
-		<div id="viewP2"></div>
-	</div>
+    <div id="viewP1"></div>
+    <script src="main.js">
+    </script>
 </body>
-
 </html>

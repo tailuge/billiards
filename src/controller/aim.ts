@@ -49,7 +49,8 @@ export class Aim extends ControllerBase {
   }
 
   hit() {
-    this.container.sendEvent(new HitEvent(this.container.table.serialise()))
+    this.container.table.cue.aim.round()
+    this.container.sendEvent(new HitEvent(this.container.table.cue.aim))
     return new PlayShot(this.container)
   }
 }

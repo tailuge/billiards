@@ -1,5 +1,6 @@
 export enum EventType {
   BEGIN,
+  BREAK,
   WATCHAIM,
   AIM,
   HIT,
