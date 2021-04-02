@@ -3,12 +3,16 @@ import {
   Scene,
   WebGLRenderer,
   Frustum,
-  Matrix4
+  Matrix4,
+  AmbientLight,
 } from "three"
 import { Camera } from "./camera"
 import { OverheadCamera } from "./overheadcamera"
 import { AimEvent } from "../events/aimevent"
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js"
+import { downloadObjectAsJson } from "../utils/utils"
+
 export class View {
   private scene = new Scene()
   private renderer
@@ -101,8 +105,11 @@ export class View {
   private addTable() {
     this.loader.load(
       "models/p8.gltf",
-      (gltf) => this.scene.add(gltf.scene),
-      (xhr) => console.log((xhr.loaded / xhr.total) * 100 + "% loaded"),
+      (gltf) => {
+          gltf.scene.add(new AmbientLight(0x505050, 1.0))
+          this.scene.add(gltf.scene)
+        },
+      (xhr) => console.log(xhr.loaded + " bytes loaded"),
       (error) => console.log(error)
     )
   }
@@ -115,7 +122,7 @@ export class View {
     var frustum = new Frustum()
     var cameraViewProjectionMatrix = new Matrix4()
     var c = this.camera.camera
-    c.updateMatrixWorld() 
+    c.updateMatrixWorld()
     c.matrixWorldInverse.getInverse(c.matrixWorld)
     cameraViewProjectionMatrix.multiplyMatrices(
       c.projectionMatrix,
@@ -123,5 +130,13 @@ export class View {
     )
     frustum.setFromMatrix(cameraViewProjectionMatrix)
     return frustum.intersectsObject(o)
+  }
+
+  exportGltf() {
+    const exporter = new GLTFExporter()
+    exporter.parse(this.scene, (gltf) => {
+      console.log(gltf)
+      downloadObjectAsJson(gltf, "scene.gltf")
+    })
   }
 }

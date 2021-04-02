@@ -11,7 +11,7 @@ export class OverheadCamera {
 
   camera: PerspectiveCamera
 
-  private topViewPoint = new Vector3(0, -0.1, 30)
+  private topViewPoint = new Vector3(0, -0.1, 48)
 
   /**
    * Work out percentage of screen to use to get fixed aspect ratio overhead view.

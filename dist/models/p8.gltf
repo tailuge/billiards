@@ -18,9 +18,9 @@
                         1,
                         1
                     ],
-                    "intensity" : 6.059999942779541,
-                    "type" : "directional",
-                    "name" : "Sun"
+                    "intensity" : 10,
+                    "type" : "point",
+                    "name" : "Point"
                 }
             ]
         }
@@ -161,11 +161,11 @@
                     "light" : 0
                 }
             },
-            "name" : "Sun",
+            "name" : "Point",
             "translation" : [
-                -0.006176173686981201,
+                2.3336000442504883,
                 -11.89818000793457,
-                59.57930374145508
+                29.00644302368164
             ]
         },
         {
@@ -267,51 +267,39 @@
             "name" : "Material.001",
             "pbrMetallicRoughness" : {
                 "baseColorFactor" : [
-                    0.476980060338974,
-                    0.476980060338974,
-                    0.476980060338974,
+                    0.3672735393047333,
+                    0.3672735393047333,
+                    0.3887026607990265,
                     1
                 ],
-                "metallicFactor" : 0,
-                "roughnessFactor" : 0
+                "metallicFactor" : 0.553398072719574,
+                "roughnessFactor" : 0.1912621408700943
             }
         },
         {
-            "doubleSided" : true,
-            "emissiveFactor" : [
-                0.05497490242123604,
-                0.05497490242123604,
-                0.05497490242123604
-            ],
             "name" : "floor",
             "pbrMetallicRoughness" : {
                 "baseColorFactor" : [
-                    0.3844054341316223,
-                    0.17746351659297943,
+                    0.0009045351180247962,
+                    0.012221204116940498,
                     0,
                     1
                 ],
                 "metallicFactor" : 0,
-                "roughnessFactor" : 0
+                "roughnessFactor" : 0.6572815179824829
             }
         },
         {
-            "doubleSided" : true,
-            "emissiveFactor" : [
-                0.05497490242123604,
-                0.05497490242123604,
-                0.05497490242123604
-            ],
             "name" : "wall1",
             "pbrMetallicRoughness" : {
                 "baseColorFactor" : [
-                    0.5814504623413086,
-                    0.021142547950148582,
-                    0.029083501547574997,
+                    0.006954209879040718,
+                    0.021964136511087418,
+                    0,
                     1
                 ],
                 "metallicFactor" : 0,
-                "roughnessFactor" : 0
+                "roughnessFactor" : 0.5650485754013062
             }
         },
         {
@@ -319,13 +307,13 @@
             "name" : "Material",
             "pbrMetallicRoughness" : {
                 "baseColorFactor" : [
-                    0.32636725902557373,
-                    0.0017927074804902077,
+                    0.031071046367287636,
+                    0.01257290318608284,
                     0,
                     1
                 ],
                 "metallicFactor" : 0,
-                "roughnessFactor" : 0
+                "roughnessFactor" : 0.477669894695282
             }
         },
         {

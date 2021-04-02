@@ -1,17 +1,11 @@
-import {
-  Mesh,
-  CylinderGeometry,
-  BoxGeometry,
-  MeshLambertMaterial,
-  Vector3,
-  Matrix4,
-} from "three"
+import { Vector3, Matrix4 } from "three"
+import { Mesh, CylinderGeometry, BoxGeometry, MeshPhongMaterial } from "three"
 import { Knuckle } from "../model/physics/knuckle"
 import { Pocket } from "../model/physics/pocket"
 
 export class TableGeometry {
-  static tableX = (21 * 2) / 3
-  static tableY = (11 * 2) / 3
+  static tableX = 21.5
+  static tableY = 10.5
   static X = TableGeometry.tableX + 0.5
   static Y = TableGeometry.tableY + 0.5
   static PX = TableGeometry.tableX + 1.6
@@ -189,7 +183,7 @@ export class TableGeometry {
     //    TableGeometry.addPockets(scene)
   }
 
-  private static material = new MeshLambertMaterial({
+  private static material = new MeshPhongMaterial({
     color: 0x445599,
     wireframe: false,
     flatShading: true,
@@ -201,10 +195,10 @@ export class TableGeometry {
   }
 
   private static cylinder(pos, radius, depth, scene) {
-    var geometry = new CylinderGeometry(radius, radius, depth, 8)
+    var geometry = new CylinderGeometry(radius, radius, depth, 16)
     var mesh = new Mesh(geometry, TableGeometry.material)
     mesh.position.copy(pos)
-    mesh.geometry.applyMatrix4(
+    mesh.geometry.applyMatrix(
       new Matrix4()
         .identity()
         .makeRotationAxis(new Vector3(1, 0, 0), Math.PI / 2)

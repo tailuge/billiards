@@ -1,7 +1,7 @@
 import { Controller } from "./controller"
 import { WatchEvent } from "../events/watchevent"
 import { Aim } from "./aim"
-import { WatchAim } from "./watchaim"
+//import { WatchAim } from "./watchaim"
 import { ControllerBase } from "./controllerbase"
 
 /**
@@ -30,7 +30,10 @@ export class PlayShot extends ControllerBase {
     }
     // if no pot switch to other player
     this.container.log("no pot")
-    this.container.sendEvent(this.container.table.cue.aim)
-    return new WatchAim(this.container)
+//    this.container.sendEvent(this.container.table.cue.aim)
+  //  return new WatchAim(this.container)
+          this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
+      return new Aim(this.container)
+
   }
 }
