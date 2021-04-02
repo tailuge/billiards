@@ -1,17 +1,14 @@
 import {
-  AmbientLight,
-  DirectionalLight,
   PCFSoftShadowMap,
   Scene,
   WebGLRenderer,
   Frustum,
-  Matrix4,
+  Matrix4
 } from "three"
 import { Camera } from "./camera"
 import { OverheadCamera } from "./overheadcamera"
-import { TableGeometry } from "./tablegeometry"
 import { AimEvent } from "../events/aimevent"
-
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 export class View {
   private scene = new Scene()
   private renderer
@@ -29,7 +26,6 @@ export class View {
     this.overheadCamera = new OverheadCamera(
       element ? element.offsetWidth / element.offsetHeight : 1
     )
-    this.addLights()
     this.addTable()
   }
 
@@ -100,25 +96,15 @@ export class View {
     element.appendChild(this.renderer.domElement)
   }
 
-  private addLights() {
-    let s = 1.3
-    let light = new DirectionalLight(0xffffff, 1.0)
-    light.position.set(0.1, -0.01, 10)
-    light.shadow.camera.near = 4
-    light.shadow.camera.far = 12
-    light.shadow.camera.right = TableGeometry.X * s
-    light.shadow.camera.left = -TableGeometry.X * s
-    light.shadow.camera.top = TableGeometry.Y * s
-    light.shadow.camera.bottom = -TableGeometry.Y * s
-    light.shadow.mapSize.width = 512
-    light.shadow.mapSize.height = 512
-    light.castShadow = true
-    this.scene.add(light)
-    this.scene.add(new AmbientLight(0x505050, 1.0))
-  }
+  loader = new GLTFLoader()
 
   private addTable() {
-    TableGeometry.addToScene(this.scene)
+    this.loader.load(
+      "models/p8.gltf",
+      (gltf) => this.scene.add(gltf.scene),
+      (xhr) => console.log((xhr.loaded / xhr.total) * 100 + "% loaded"),
+      (error) => console.log(error)
+    )
   }
 
   addMesh(mesh) {
@@ -129,15 +115,13 @@ export class View {
     var frustum = new Frustum()
     var cameraViewProjectionMatrix = new Matrix4()
     var c = this.camera.camera
-    // every time the camera or objects change position (or every frame)
-
-    c.updateMatrixWorld() // make sure the camera matrix is updated
+    c.updateMatrixWorld() 
     c.matrixWorldInverse.getInverse(c.matrixWorld)
     cameraViewProjectionMatrix.multiplyMatrices(
       c.projectionMatrix,
       c.matrixWorldInverse
     )
     frustum.setFromMatrix(cameraViewProjectionMatrix)
-    console.log(frustum.intersectsObject(o))
+    return frustum.intersectsObject(o)
   }
 }
