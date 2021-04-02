@@ -110,8 +110,8 @@ export class View {
     light.shadow.camera.left = -TableGeometry.X * s
     light.shadow.camera.top = TableGeometry.Y * s
     light.shadow.camera.bottom = -TableGeometry.Y * s
-    light.shadow.mapSize.width = 1024
-    light.shadow.mapSize.height = 1024
+    light.shadow.mapSize.width = 512
+    light.shadow.mapSize.height = 512
     light.castShadow = true
     this.scene.add(light)
     this.scene.add(new AmbientLight(0x505050, 1.0))

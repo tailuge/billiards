@@ -2,7 +2,7 @@ import {
   Mesh,
   CylinderGeometry,
   BoxGeometry,
-  MeshPhongMaterial,
+  MeshLambertMaterial,
   Vector3,
   Matrix4,
 } from "three"
@@ -189,7 +189,7 @@ export class TableGeometry {
     //    TableGeometry.addPockets(scene)
   }
 
-  private static material = new MeshPhongMaterial({
+  private static material = new MeshLambertMaterial({
     color: 0x445599,
     wireframe: false,
     flatShading: true,
