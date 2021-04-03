@@ -1,6 +1,7 @@
 import { Controller, HitEvent, Input } from "./controller"
 import { ControllerBase } from "./controllerbase"
 import { PlayShot } from "./playshot"
+import { exportGltf } from "../utils/gltf"
 
 /**
  * Aim using input events.
@@ -38,6 +39,9 @@ export class Aim extends ControllerBase {
         break
       case "Space":
         this.container.table.cue.adjustPower(input.t * this.scale * 3)
+        break
+      case "KeySUp":
+        exportGltf(this.container.view.scene)
         break
       case "SpaceUp":
         return this.hit()

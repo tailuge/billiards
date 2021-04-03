@@ -10,7 +10,7 @@ export class Camera {
   camera: PerspectiveCamera
   mode = this.topView
 
-  private topViewPoint = new Vector3(0, -0.1, 29)
+  private topViewPoint = new Vector3(0, -0.1, 49)
 
   update(aim: AimEvent) {
     this.mode(aim)

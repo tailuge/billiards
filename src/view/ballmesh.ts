@@ -1,15 +1,23 @@
-import { IcosahedronGeometry, Matrix4, Mesh, MeshPhongMaterial } from "three"
+import {
+  IcosahedronGeometry,
+  Matrix4,
+  Mesh,
+  MeshPhongMaterial,
+  CircleGeometry,
+  MeshBasicMaterial,
+} from "three"
 import { norm } from "./../utils/utils"
 
 export class BallMesh {
   mesh: Mesh
-
+  shadow: Mesh
   constructor(color) {
     this.initialiseMesh(color)
   }
 
   updatePosition(pos) {
     this.mesh.position.copy(pos)
+    this.shadow.position.copy(pos)
   }
 
   updateRotation(rvel, t) {
@@ -26,8 +34,13 @@ export class BallMesh {
       flatShading: true,
     })
     this.mesh = new Mesh(geometry, material)
-    this.mesh.castShadow = true
-    this.mesh.receiveShadow = true
     this.mesh.name = "ball"
+
+    const shadowGeometry = new CircleGeometry(0.45, 9)
+    shadowGeometry.applyMatrix4(
+      new Matrix4().identity().makeTranslation(0, 0, -0.49)
+    )
+    const shadowMaterial = new MeshBasicMaterial({ color: 0x111122 })
+    this.shadow = new Mesh(shadowGeometry, shadowMaterial)
   }
 }

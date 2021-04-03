@@ -1,17 +1,11 @@
-import {
-  Mesh,
-  CylinderGeometry,
-  BoxGeometry,
-  MeshPhongMaterial,
-  Vector3,
-  Matrix4,
-} from "three"
+import { Vector3, Matrix4 } from "three"
+import { Mesh, CylinderGeometry, BoxGeometry, MeshPhongMaterial } from "three"
 import { Knuckle } from "../model/physics/knuckle"
 import { Pocket } from "../model/physics/pocket"
 
 export class TableGeometry {
-  static tableX = (21 * 2) / 3
-  static tableY = (11 * 2) / 3
+  static tableX = 21.5
+  static tableY = 10.5
   static X = TableGeometry.tableX + 0.5
   static Y = TableGeometry.tableY + 0.5
   static PX = TableGeometry.tableX + 1.6
@@ -19,8 +13,8 @@ export class TableGeometry {
   static knuckleInset = 1.5
   static knuckleRadius = 0.5
   static middleKnuckleInset = 1.5
-  static middleKnuckleRadius = 0.5
-  static cornerRadius = 1.0
+  static middleKnuckleRadius = 0.25
+  static cornerRadius = 1.3
   static middleRadius = 0.4
   static readonly pockets = {
     pocketNW: {
@@ -56,7 +50,7 @@ export class TableGeometry {
           TableGeometry.Y + TableGeometry.middleKnuckleRadius,
           0
         ),
-        TableGeometry.knuckleRadius
+        TableGeometry.middleKnuckleRadius
       ),
       knuckleNW: new Knuckle(
         new Vector3(
@@ -64,7 +58,7 @@ export class TableGeometry {
           TableGeometry.Y + TableGeometry.middleKnuckleRadius,
           0
         ),
-        TableGeometry.knuckleRadius
+        TableGeometry.middleKnuckleRadius
       ),
     },
     pocketS: {
@@ -78,7 +72,7 @@ export class TableGeometry {
           -TableGeometry.Y - TableGeometry.middleKnuckleRadius,
           0
         ),
-        TableGeometry.knuckleRadius
+        TableGeometry.middleKnuckleRadius
       ),
       knuckleSW: new Knuckle(
         new Vector3(
@@ -86,7 +80,7 @@ export class TableGeometry {
           -TableGeometry.Y - TableGeometry.middleKnuckleRadius,
           0
         ),
-        TableGeometry.knuckleRadius
+        TableGeometry.middleKnuckleRadius
       ),
     },
     pocketNE: {
@@ -185,8 +179,9 @@ export class TableGeometry {
     TableGeometry.knuckles.forEach((k) =>
       TableGeometry.knuckleCylinder(k, scene)
     )
-    TableGeometry.addCushions(scene)
-    //    TableGeometry.addPockets(scene)
+    TableGeometry.pocketCenters.forEach((p) =>
+      TableGeometry.knuckleCylinder(p, scene)
+    )
   }
 
   private static material = new MeshPhongMaterial({
@@ -201,7 +196,7 @@ export class TableGeometry {
   }
 
   private static cylinder(pos, radius, depth, scene) {
-    var geometry = new CylinderGeometry(radius, radius, depth, 8)
+    var geometry = new CylinderGeometry(radius, radius, depth, 16)
     var mesh = new Mesh(geometry, TableGeometry.material)
     mesh.position.copy(pos)
     mesh.geometry.applyMatrix4(
@@ -213,7 +208,7 @@ export class TableGeometry {
     return mesh
   }
 
-  private static addCushions(scene) {
+  static addCushions(scene) {
     let th = 10
     TableGeometry.plane(
       new Vector3(0, 0, -0.5 - th / 2),

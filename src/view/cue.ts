@@ -44,7 +44,7 @@ export class Cue {
       )
       .applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
       .applyMatrix4(
-        new Matrix4().identity().makeTranslation(-length / 2 - 0.5, 0, 0.75)
+        new Matrix4().identity().makeTranslation(-length / 2 - 0.5, 0, 1)
       )
     this.mesh.rotation.z = this.aim.angle
   }
