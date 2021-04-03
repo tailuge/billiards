@@ -34,11 +34,9 @@ export class BallMesh {
       flatShading: true,
     })
     this.mesh = new Mesh(geometry, material)
-    this.mesh.castShadow = true
-    this.mesh.receiveShadow = true
     this.mesh.name = "ball"
 
-    const shadowGeometry = new CircleGeometry(0.4, 9)
+    const shadowGeometry = new CircleGeometry(0.45, 9)
     shadowGeometry.applyMatrix4(
       new Matrix4().identity().makeTranslation(0, 0, -0.49)
     )

@@ -4,7 +4,7 @@ import { Vector3 } from "three"
 import { roundVec } from "./utils"
 
 export class Rack {
-  static readonly noise = 0.02
+  static readonly noise = 0.05
   static readonly gap = 1.0 + 2 * Rack.noise
   static readonly up = new Vector3(0, 0, -1)
 
