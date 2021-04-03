@@ -1,9 +1,5 @@
 import "mocha"
 import { expect } from "chai"
-
-jest.mock("../../src/utils/gltf")
-jest.mock("three/examples/jsm/exporters/GLTFExporter.js")
-
 import { Controller, Input } from "../../src/controller/controller"
 import { Container } from "../../src/controller/container"
 import { Aim } from "../../src/controller/aim"
@@ -19,7 +15,6 @@ import { HitEvent } from "../../src/events/hitevent"
 import { StationaryEvent } from "../../src/events/stationaryevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { WatchShot } from "../../src/controller/watchshot"
-
 
 describe("Controller", () => {
   var container: Container

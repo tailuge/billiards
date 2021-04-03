@@ -38,11 +38,11 @@ export class BallMesh {
     this.mesh.receiveShadow = true
     this.mesh.name = "ball"
 
-    const shadowGeometry = new CircleGeometry(0.5, 9)
+    const shadowGeometry = new CircleGeometry(0.4, 9)
     shadowGeometry.applyMatrix4(
       new Matrix4().identity().makeTranslation(0, 0, -0.49)
     )
-    const shadowMaterial = new MeshBasicMaterial({ color: 0x222222 })
+    const shadowMaterial = new MeshBasicMaterial({ color: 0x111122 })
     this.shadow = new Mesh(shadowGeometry, shadowMaterial)
   }
 }
