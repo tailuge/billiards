@@ -33,16 +33,3 @@ export function roundVec(v) {
   v.z = round(v.z)
   return v
 }
-
-export function downloadObjectAsJson(exportObj, exportName) {
-  var downloadAnchorNode = document.createElement("a")
-  downloadAnchorNode.setAttribute(
-    "href",
-    "data:text/json;charset=utf-8," +
-      encodeURIComponent(JSON.stringify(exportObj))
-  )
-  downloadAnchorNode.setAttribute("download", exportName)
-  document.body.appendChild(downloadAnchorNode)
-  downloadAnchorNode.click()
-  downloadAnchorNode.remove()
-}
