@@ -198,7 +198,7 @@ export class TableGeometry {
     var geometry = new CylinderGeometry(radius, radius, depth, 16)
     var mesh = new Mesh(geometry, TableGeometry.material)
     mesh.position.copy(pos)
-    mesh.geometry.applyMatrix(
+    mesh.geometry.applyMatrix4(
       new Matrix4()
         .identity()
         .makeRotationAxis(new Vector3(1, 0, 0), Math.PI / 2)

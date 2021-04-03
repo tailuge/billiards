@@ -106,9 +106,9 @@ export class View {
     this.loader.load(
       "models/p8.gltf",
       (gltf) => {
-          gltf.scene.add(new AmbientLight(0x505050, 1.0))
-          this.scene.add(gltf.scene)
-        },
+        gltf.scene.add(new AmbientLight(0x505050, 1.0))
+        this.scene.add(gltf.scene)
+      },
       (xhr) => console.log(xhr.loaded + " bytes loaded"),
       (error) => console.log(error)
     )
