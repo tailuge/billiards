@@ -50,8 +50,15 @@ export class Keyboard {
     }
   }
 
+  mousemove = (e) => {
+    if (e.buttons === 1) {
+      console.log(e.movementX)
+    }
+  }
+
   private addHandlers() {
     document.addEventListener("keydown", this.keydown)
     document.addEventListener("keyup", this.keyup)
+    document.addEventListener("mousemove", this.mousemove)
   }
 }

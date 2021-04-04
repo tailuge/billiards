@@ -33,7 +33,7 @@ export class Cue {
   }
 
   private initialise(tip, but, length) {
-    var geometry = new CylinderGeometry(tip, but, length, 16)
+    var geometry = new CylinderGeometry(tip, but, length, 11)
     this.mesh = new Mesh(geometry, Cue.material)
     this.mesh.castShadow = true
     this.mesh.geometry
