@@ -34,7 +34,6 @@ export class Ball {
   update(t) {
     this.updatePosition(t)
     this.updateVelocity(t)
-    this.ballmesh.updateRotation(this.rvel, t)
   }
 
   private updatePosition(t: number) {
@@ -49,6 +48,7 @@ export class Ball {
       } else {
         this.updateVelocitySliding(t)
       }
+      this.ballmesh.updateRotation(this.rvel, t)
     }
   }
 
