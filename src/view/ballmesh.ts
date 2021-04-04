@@ -20,9 +20,11 @@ export class BallMesh {
     this.shadow.position.copy(pos)
   }
 
+  m = new Matrix4()
+
   updateRotation(rvel, t) {
     let angle = (rvel.length() * t * Math.PI) / 2
-    let m = new Matrix4().identity().makeRotationAxis(norm(rvel), angle)
+    let m = this.m.identity().makeRotationAxis(norm(rvel), angle)
     this.mesh.geometry.applyMatrix4(m)
   }
 
