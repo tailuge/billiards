@@ -9,7 +9,7 @@
         "test": "jest --verbose",
         "coverage": "jest --coverage --coverageReporters text",
         "dev": "webpack ",
-        "prettify": "prettier --write --no-semi {src,test}/**/*.ts",
+        "prettify": "prettier --write --no-semi {src,test}/**/*.[jt]s",
         "serve": "webpack serve --public $(gp url 8080)",
         "deps": "npx yarn-check --skip-unused"
     },
