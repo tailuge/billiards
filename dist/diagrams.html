@@ -48,6 +48,8 @@
         <button onClick="window.location.reload();"
             style="font-size:xx-small; background-color: grey; border:1px solid;">Refresh Page</button>
     </footer>
+    <script src="vendor.js">
+    </script>
     <script src="diagram.js">
     </script>
     <script>
@@ -81,7 +83,7 @@
 
         function makeDiagram(id, balls) {
 
-           // new EntryPoint.Diagram({ balls: balls }, elt(id, "canvas").getContext("2d"), elt(id, "control"));
+            // new EntryPoint.Diagram({ balls: balls }, elt(id, "canvas").getContext("2d"), elt(id, "control"));
         }
 
         function makeBall(x, y, vx, vy, wx, wy, wz) {
