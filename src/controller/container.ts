@@ -73,7 +73,7 @@ export class Container {
   }
 
   updateController(controller) {
-    if (controller != this.controller) {
+    if (controller !== this.controller) {
       this.log("Transition to " + controller.constructor.name)
     }
     this.controller = controller

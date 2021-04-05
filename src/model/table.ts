@@ -22,7 +22,7 @@ export class Table {
     this.pairs = []
     this.balls.forEach((a) => {
       this.balls.forEach((b) => {
-        if (a != b) {
+        if (a !== b) {
           this.pairs.push({ a: a, b: b })
         }
       })
