@@ -102,7 +102,7 @@ export class Ball {
   }
 
   onTable() {
-    return this.state != State.Falling
+    return this.state !== State.Falling
   }
 
   inMotion() {

@@ -15,7 +15,7 @@ export class TableGeometry {
   static middleKnuckleInset = 1.5
   static middleKnuckleRadius = 0.25
   static cornerRadius = 1.3
-  static middleRadius = 0.4
+  static middleRadius = 0.5
   static readonly pockets = {
     pocketNW: {
       pocket: new Pocket(
