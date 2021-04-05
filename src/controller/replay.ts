@@ -3,7 +3,7 @@ import { ControllerBase } from "./controllerbase"
 import { AimEvent } from "../events/aimevent"
 
 export class Replay extends ControllerBase {
-  readonly delay = 1000
+  readonly delay = 1500
   shots: AimEvent[]
 
   constructor(container, shots) {

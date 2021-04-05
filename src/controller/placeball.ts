@@ -11,7 +11,7 @@ import { round } from "../utils/utils"
  *
  */
 export class PlaceBall extends ControllerBase {
-  readonly scale = 0.01
+  readonly scale = 0.002
 
   constructor(container) {
     super(container)

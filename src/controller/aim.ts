@@ -8,7 +8,7 @@ import { exportGltf } from "../utils/gltf"
  *
  */
 export class Aim extends ControllerBase {
-  readonly scale = 0.001
+  readonly scale = 0.0005
 
   constructor(container) {
     super(container)

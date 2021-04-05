@@ -13,7 +13,6 @@ var state = {
   shots: Array<any>(),
 }
 var keyboard = new Keyboard()
-var lastTime = performance.now()
 
 playReplay(/state=(.*)/.exec(location.search))
 
@@ -48,9 +47,7 @@ function playReplay(args) {
 }
 
 function sampleInputs() {
-  var t = performance.now() - lastTime
-  lastTime = performance.now()
-  var inputs = keyboard.getEvents(t)
+  var inputs = keyboard.getEvents()
   inputs.forEach((i) => controller1.inputQueue.push(i))
   requestAnimationFrame((_) => {
     sampleInputs()
