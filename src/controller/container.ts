@@ -24,10 +24,10 @@ export class Container {
   broadcast: (event: string) => void
   log: (text: string) => void
 
-  constructor(element, log) {
+  constructor(element, log, ready?) {
     this.log = log
     this.table = new Table(Rack.diamond())
-    this.view = new View(element)
+    this.view = new View(element, ready)
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
       this.view.addMesh(b.ballmesh.shadow)

@@ -19,7 +19,7 @@ export class View {
   windowWidth = 1
   windowHeight = 1
 
-  constructor(element) {
+  constructor(element, ready?) {
     element &&
       this.initialiseScene(element, element.offsetWidth, element.offsetHeight)
     this.camera = new Camera(
@@ -28,7 +28,7 @@ export class View {
     this.overheadCamera = new OverheadCamera(
       element ? element.offsetWidth / element.offsetHeight : 1
     )
-    this.addTable()
+    this.addTable(ready)
   }
 
   update(aim: AimEvent) {
@@ -98,9 +98,9 @@ export class View {
     element.appendChild(this.renderer.domElement)
   }
 
-  private addTable() {
+  private addTable(ready) {
     this.scene.add(new AmbientLight(0x303030, 1.0))
-    importGltf("models/p8.gltf", this.scene)
+    importGltf("models/p8.gltf", this.scene, ready)
   }
 
   addMesh(mesh) {

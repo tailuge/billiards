@@ -9,11 +9,16 @@ export function exportGltf(scene) {
   })
 }
 
-export function importGltf(path, scene) {
+export function importGltf(path, scene, ready) {
   const loader = new GLTFLoader()
   loader.load(
     path,
-    (gltf) => scene.add(gltf.scene),
+    (gltf) => {
+      scene.add(gltf.scene)
+      if (ready !== null) {
+        ready()
+      }
+    },
     (xhr) => console.log(xhr.loaded + " bytes loaded"),
     (error) => console.log(error)
   )

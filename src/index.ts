@@ -5,8 +5,6 @@ import { EventType } from "./events/eventtype"
 import { BreakEvent } from "./events/breakevent"
 import { HitEvent } from "./events/hitevent"
 
-console.log(window.location + "/?&state=")
-
 var controller1
 var state = {
   init: null,
@@ -14,11 +12,19 @@ var state = {
 }
 var keyboard = new Keyboard()
 
-playReplay(/state=(.*)/.exec(location.search))
+playReplay()
 
-function playReplay(args) {
-  controller1 = new Container(document.getElementById("viewP1"), (_) => {})
+function playReplay() {
+  controller1 = new Container(
+    document.getElementById("viewP1"),
+    (_) => {},
+    onAssetsReady
+  )
+}
 
+function onAssetsReady() {
+  console.log("Assets loaded")
+  const args = /state=(.*)/.exec(location.search)
   if (args !== null) {
     state = JSON.parse(decodeURI(args[1]))
     controller1.eventQueue.push(new BreakEvent(state.init, state.shots))

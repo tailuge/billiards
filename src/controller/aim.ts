@@ -8,7 +8,7 @@ import { exportGltf } from "../utils/gltf"
  *
  */
 export class Aim extends ControllerBase {
-  readonly scale = 0.0005
+  readonly scale = 0.001
 
   constructor(container) {
     super(container)
@@ -38,7 +38,7 @@ export class Aim extends ControllerBase {
         this.container.table.cue.adjustSide(-input.t * this.scale)
         break
       case "Space":
-        this.container.table.cue.adjustPower(input.t * this.scale * 3)
+        this.container.table.cue.adjustPower(input.t * this.scale * 0.25)
         break
       case "KeySUp":
         exportGltf(this.container.view.scene)
