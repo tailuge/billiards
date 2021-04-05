@@ -112,6 +112,7 @@ describe("Table", () => {
 
   it("illegal state throws", (done) => {
     let a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
+    a.vel.x = 0.1
     let b = new Ball(new Vector3(-TableGeometry.tableX + 0.5, 0, 0))
     let table = new Table([a, b])
     expect(() => {
@@ -119,6 +120,4 @@ describe("Table", () => {
     }).to.throw()
     done()
   })
-
-  // crash  {"pos":{"x":-13.999910173197184,"y":0.9674842540866305,"z":0},"vel":{"x":-0.06767024082189936,"y":0.30078369071593314,"z":0},"rvel":{"x":1.0712115095804875,"y":1.417600310070316,"z":0},"state":"Sliding"}
 })

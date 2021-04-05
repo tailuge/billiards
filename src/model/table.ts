@@ -41,6 +41,12 @@ export class Table {
     })
   }
 
+  updateBallMesh(t) {
+    this.balls.forEach((a) => {
+      a.updateMesh(t)
+    })
+  }
+
   prepareAdvanceAll(t: number) {
     return this.pairs.length > 0
       ? !this.pairs.some((pair) => !this.prepareAdvancePair(pair.a, pair.b, t))
@@ -48,6 +54,9 @@ export class Table {
   }
 
   private prepareAdvancePair(a: Ball, b: Ball, t: number) {
+    if (!a.inMotion() && !b.inMotion()) {
+      return true
+    }
     if (Collision.willCollide(a, b, t)) {
       Collision.collide(a, b)
       this.outcome.push({ type: "collision", a: a, b: b })

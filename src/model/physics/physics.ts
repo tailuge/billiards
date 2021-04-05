@@ -14,11 +14,11 @@ export function sliding(v, w, dv, dw) {
 }
 
 export function slidingFull(v, w, dv, dw) {
-  const va = new Vector3(v.x - w.y, v.y + w.x, 0)
-  dv.set(-mu * g * norm(va).x, -mu * g * norm(va).y, 0)
+  const normva = new Vector3(v.x - w.y, v.y + w.x, 0).normalize()
+  dv.set(-mu * g * normva.x, -mu * g * normva.y, 0)
   dw.set(
-    (-5 / 2) * mu * g * norm(va).y,
-    (5 / 2) * mu * g * norm(va).x,
+    (-5 / 2) * mu * g * normva.y,
+    (5 / 2) * mu * g * normva.x,
     -(5 / 2) * Mz * Math.sign(w.z)
   )
 }
