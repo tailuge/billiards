@@ -1,12 +1,11 @@
 import { Ball } from "../ball"
-import { norm } from "../../utils/utils"
 
 export class Collision {
   static willCollide(a: Ball, b: Ball, t: number): boolean {
     return (
       a.onTable() &&
       b.onTable() &&
-      a.futurePosition(t).distanceTo(b.futurePosition(t)) < 1
+      a.futurePosition(t).distanceToSquared(b.futurePosition(t)) < 1
     )
   }
 
@@ -15,9 +14,9 @@ export class Collision {
   }
 
   private static updateVelocities(a: Ball, b: Ball) {
-    const ab = norm(b.pos.clone().sub(a.pos))
-    let aDotCenters = ab.dot(a.vel)
-    let bDotCenters = ab.dot(b.vel)
+    const ab = b.pos.clone().sub(a.pos).normalize()
+    const aDotCenters = ab.dot(a.vel)
+    const bDotCenters = ab.dot(b.vel)
     a.vel.addScaledVector(ab, bDotCenters).addScaledVector(ab, -aDotCenters)
     b.vel.addScaledVector(ab, aDotCenters).addScaledVector(ab, -bDotCenters)
   }

@@ -42,12 +42,14 @@ export class Container {
 
   advance(elapsed) {
     const steps = Math.max(15, Math.floor(elapsed / this.step))
+    const computedElapsed = steps * this.step
     const stateBefore = this.table.allStationary()
     for (var i = 0; i < steps; i++) {
       this.table.advance(this.step)
     }
+    this.table.updateBallMesh(computedElapsed)
     this.view.update(this.table.cue.aim)
-    this.table.cue.update(steps * this.step)
+    this.table.cue.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())
     }

@@ -36,9 +36,15 @@ export class Ball {
     this.updateVelocity(t)
   }
 
+  updateMesh(t) {
+    this.ballmesh.updatePosition(this.pos)
+    if (this.rvel.lengthSq() != 0) {
+      this.ballmesh.updateRotation(this.rvel, t)
+    }
+  }
+
   private updatePosition(t: number) {
     this.pos.addScaledVector(this.vel, t)
-    this.ballmesh.updatePosition(this.pos)
   }
 
   private updateVelocity(t: number) {
@@ -48,7 +54,6 @@ export class Ball {
       } else {
         this.updateVelocitySliding(t)
       }
-      this.ballmesh.updateRotation(this.rvel, t)
     }
   }
 
@@ -92,7 +97,7 @@ export class Ball {
   isRolling() {
     return (
       surfaceVelocity(this.vel, this.rvel).length() < this.transition &&
-      this.vel.length() != 0
+      this.vel.lengthSq() != 0
     )
   }
 
@@ -101,7 +106,9 @@ export class Ball {
   }
 
   inMotion() {
-    return this.onTable() && (this.vel.length() != 0 || this.rvel.length() != 0)
+    return (
+      this.onTable() && (this.vel.lengthSq() != 0 || this.rvel.lengthSq() != 0)
+    )
   }
 
   futurePosition(t) {
