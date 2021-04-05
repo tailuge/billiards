@@ -41,7 +41,7 @@ export class Keyboard {
   keydown = (e) => {
     e = e || window.event
     if (this.pressed[e.code] == null) {
-      this.pressed[e.code] = e.timeStamp
+      this.pressed[e.code] = performance.now()
     }
     e.stopImmediatePropagation()
     if (e.key !== "F12") {
@@ -51,7 +51,7 @@ export class Keyboard {
 
   keyup = (e) => {
     e = e || window.event
-    this.released[e.code] = e.timeStamp - this.pressed[e.code]
+    this.released[e.code] = performance.now() - this.pressed[e.code]
     delete this.pressed[e.code]
     e.stopImmediatePropagation()
     if (e.key !== "F12") {
