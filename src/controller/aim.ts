@@ -38,7 +38,7 @@ export class Aim extends ControllerBase {
         this.container.table.cue.adjustSide(-input.t * this.scale)
         break
       case "Space":
-        this.container.table.cue.adjustPower(input.t * this.scale * 0.25)
+        this.container.table.cue.adjustPower(input.t * this.scale * 0.5)
         break
       case "KeySUp":
         exportGltf(this.container.view.scene)
