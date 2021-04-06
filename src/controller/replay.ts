@@ -32,6 +32,9 @@ export class Replay extends ControllerBase {
 
   handleStationary(_) {
     console.log("stationary event")
+    if (this.container.table.outcome.some((x) => x.type == "pot")) {
+      console.log(this.container.table.outcome.filter((x) => x.type == "pot"))
+    }
     if (this.shots.length > 0) {
       setTimeout(() => {
         this.playNextShot()

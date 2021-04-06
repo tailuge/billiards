@@ -19,7 +19,7 @@ export class Container {
   eventQueue: GameEvent[] = []
 
   last = performance.now()
-  readonly step = 0.01
+  readonly step = 0.001
 
   broadcast: (event: string) => void
   log: (text: string) => void
@@ -41,7 +41,9 @@ export class Container {
   }
 
   advance(elapsed) {
-    const steps = Math.max(15, Math.floor(elapsed / this.step))
+    //    const steps = Math.min(15, Math.floor(elapsed / this.step))
+    const steps = Math.floor(elapsed / this.step)
+    //    console.log(steps)
     const computedElapsed = steps * this.step
     const stateBefore = this.table.allStationary()
     for (var i = 0; i < steps; i++) {

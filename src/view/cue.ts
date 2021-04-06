@@ -14,8 +14,8 @@ import {
 
 export class Cue {
   mesh: Mesh
-  limit = 0.3
-  maxPower = 5.0
+  limit = 0.4
+  maxPower = 60.0
   t = 0
 
   aim: AimEvent = new AimEvent()
@@ -84,7 +84,7 @@ export class Cue {
     let swing = (Math.sin(this.t / 3) - 1) * 0.25
     let distanceToBall = unitAtAngle(this.aim.angle)
       .clone()
-      .multiplyScalar(swing - this.aim.power / 2)
+      .multiplyScalar(swing - (this.aim.power / this.maxPower) * 3)
     this.mesh.position.copy(pos.clone().add(offset).add(distanceToBall))
   }
 
