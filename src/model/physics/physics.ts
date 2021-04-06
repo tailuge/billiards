@@ -45,11 +45,11 @@ export function rotateApplyUnrotate(theta, v, w, dv, dw) {
   const vr = v.clone().applyAxisAngle(up, theta)
   const wr = w.clone().applyAxisAngle(up, theta)
 
-  if (isCushionXGrip(vr, wr)) {
-    bounceWithoutSlipX(vr, wr, dv, dw)
-  } else {
-    bounceWithSlipX(vr, wr, dv, dw)
-  }
+  //  if (isCushionXGrip(vr, wr)) {
+  bounceWithoutSlipX(vr, wr, dv, dw)
+  //  } else {
+  //    bounceWithSlipX(vr, wr, dv, dw)
+  //  }
 
   dv.applyAxisAngle(up, -theta)
   dw.applyAxisAngle(up, -theta)
@@ -80,7 +80,7 @@ function Pze(c) {
 export function isCushionXGrip(v, w) {
   var Pze_val = Pze(c0(v))
   var Pzs_val = Pzs(s0(v, w))
-  /*
+
   console.log(
     Pze_val +
       " < " +
@@ -88,7 +88,7 @@ export function isCushionXGrip(v, w) {
       " isGrip = " +
       (Pze_val < Pzs_val ? "true" : "false")
   )
-  */
+
   return Pze_val < Pzs_val
 }
 

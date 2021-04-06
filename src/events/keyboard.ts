@@ -30,6 +30,7 @@ export class Keyboard {
     Object.keys(this.released).forEach((key) =>
       result.push(new Input(this.released[key], key + "Up"))
     )
+
     this.released = {}
     return result
   }
@@ -61,7 +62,11 @@ export class Keyboard {
 
   mousemove = (e) => {
     if (e.buttons === 1) {
-      console.log(e)
+      if (this.released["movementX"]) {
+        this.released["movementX"] += e.movementX
+      } else {
+        this.released["movementX"] = e.movementX
+      }
     }
   }
 

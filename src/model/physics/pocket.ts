@@ -18,7 +18,7 @@ export class Pocket {
   public fall(ball, t) {
     const kb = ball.pos.clone().sub(this.pos).normalize()
     ball.vel.addScaledVector(kb, 1 * t)
-    ball.vel.z = -1
+    ball.vel.z = -10
     ball.state = State.Falling
   }
 
