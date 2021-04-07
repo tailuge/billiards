@@ -10,6 +10,7 @@ body, html {
 
 div {
     color: antiquewhite;
+    touch-action: none;
 }
 
 h1,
