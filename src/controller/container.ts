@@ -7,6 +7,7 @@ import { View } from "../view/view"
 import { Init } from "./init"
 import { Rack } from "../utils/rack"
 import { EventUtil } from "../events/eventutil"
+import { AimInputs } from "../view/aiminputs"
 
 /**
  * Model, View, Controller container.
@@ -17,6 +18,7 @@ export class Container {
   controller: Controller
   inputQueue: Input[] = []
   eventQueue: GameEvent[] = []
+  aimInputs: AimInputs
 
   last = performance.now()
   readonly step = 0.001
@@ -28,6 +30,8 @@ export class Container {
     this.log = log
     this.table = new Table(Rack.diamond())
     this.view = new View(element, ready)
+    this.aimInputs = new AimInputs(this)
+
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
       this.view.addMesh(b.ballmesh.shadow)

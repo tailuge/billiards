@@ -8,15 +8,26 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="description" content="billiards" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
 	<link rel="stylesheet" type="text/css" href="index.css" />
 </head>
 
 <body>
-    <div id="viewP1"></div>
-    <script src="vendor.js">
-    </script>
-    <script src="index.js">
-    </script>
+	<div id="viewP1" class="view3d"></div>
+	<div class="inputs">
+		<div id="cueBall" class="cueBall">
+			<div id="cueTip" class="cueTip">
+			</div>
+		</div>
+	</div>
+	<div class="cuePowerAndHit">
+		<input type="range" min="10" max="100" value="50" id="cuePower" name="cuePower"/>
+		<button id="cueHit">hit</button>
+	</div>
+<script src="vendor.js">
+	</script>
+	<script src="index.js">
+	</script>
 </body>
+
 </html>
