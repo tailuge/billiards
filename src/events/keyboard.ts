@@ -35,8 +35,8 @@ export class Keyboard {
     return result
   }
 
-  constructor() {
-    this.addHandlers()
+  constructor(element) {
+    this.addHandlers(element)
   }
 
   keydown = (e) => {
@@ -70,9 +70,9 @@ export class Keyboard {
     }
   }
 
-  private addHandlers() {
+  private addHandlers(element) {
     document.addEventListener("keydown", this.keydown)
     document.addEventListener("keyup", this.keyup)
-    document.addEventListener("pointermove", this.mousemove)
+    element.addEventListener("pointermove", this.mousemove)
   }
 }

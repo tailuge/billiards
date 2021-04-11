@@ -1,11 +1,4 @@
-import {
-  PCFSoftShadowMap,
-  Scene,
-  WebGLRenderer,
-  Frustum,
-  Matrix4,
-  AmbientLight,
-} from "three"
+import { Scene, WebGLRenderer, Frustum, Matrix4, AmbientLight } from "three"
 import { Camera } from "./camera"
 import { OverheadCamera } from "./overheadcamera"
 import { AimEvent } from "../events/aimevent"
@@ -18,8 +11,11 @@ export class View {
   overheadCamera: OverheadCamera
   windowWidth = 1
   windowHeight = 1
+  element
 
   constructor(element, ready?) {
+    this.element = element
+
     element &&
       this.initialiseScene(element, element.offsetWidth, element.offsetHeight)
     this.camera = new Camera(
@@ -37,11 +33,11 @@ export class View {
 
   updateSize() {
     if (
-      this.windowWidth != window.innerWidth ||
-      this.windowHeight != window.innerHeight
+      this.windowWidth != this.element.offsetWidth ||
+      this.windowHeight != this.element.offsetHeight
     ) {
-      this.windowWidth = window.innerWidth
-      this.windowHeight = window.innerHeight
+      this.windowWidth = this.element.offsetWidth
+      this.windowHeight = this.element.offsetHeight
       this.renderer.setSize(this.windowWidth, this.windowHeight)
     }
   }
@@ -93,8 +89,7 @@ export class View {
   private initialiseScene(element, width, height) {
     this.renderer = new WebGLRenderer()
     this.renderer.setSize(width, height)
-    this.renderer.shadowMap.enabled = true
-    this.renderer.shadowMap.type = PCFSoftShadowMap
+    this.renderer.shadowMap.enabled = false
     element.appendChild(this.renderer.domElement)
   }
 

@@ -10,7 +10,7 @@ var state = {
   init: null,
   shots: Array<any>(),
 }
-var keyboard = new Keyboard()
+var keyboard = new Keyboard(document.getElementById("viewP1"))
 
 playReplay()
 

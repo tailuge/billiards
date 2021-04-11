@@ -10,11 +10,11 @@ export class TableGeometry {
   static Y = TableGeometry.tableY + 0.5
   static PX = TableGeometry.tableX + 1.6
   static PY = TableGeometry.tableY + 1.6
-  static knuckleInset = 1.5
+  static knuckleInset = 1.6
   static knuckleRadius = 0.5
   static middleKnuckleInset = 1.5
   static middleKnuckleRadius = 0.25
-  static cornerRadius = 1.3
+  static cornerRadius = 1.4
   static middleRadius = 0.5
   static readonly pockets = {
     pocketNW: {
@@ -46,7 +46,7 @@ export class TableGeometry {
       ),
       knuckleNE: new Knuckle(
         new Vector3(
-          TableGeometry.knuckleInset,
+          TableGeometry.middleKnuckleInset,
           TableGeometry.Y + TableGeometry.middleKnuckleRadius,
           0
         ),
@@ -68,7 +68,7 @@ export class TableGeometry {
       ),
       knuckleSE: new Knuckle(
         new Vector3(
-          TableGeometry.knuckleInset,
+          TableGeometry.middleKnuckleInset,
           -TableGeometry.Y - TableGeometry.middleKnuckleRadius,
           0
         ),

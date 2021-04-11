@@ -35,47 +35,41 @@ p {
 }
 
 .view3d {
-  width: 400px;
-  height: 250px;
-}
-
-input {
-    margin: .1rem 0;
-    width: 6ch;
-    background-color: transparent;
-    border: 0.1px solid;
-    color: grey;    
-    font-size: 3px;
-}
-
-.control {
-    font-size: 3px;
-    display: none;
-}
-
-.chat {
-    overflow: auto;
-}
-
-.chat::-webkit-scrollbar-track
-{
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    background-color: rgba(119, 118, 118, 0.719);
-}
-
-.chat::-webkit-scrollbar
-{
-    width: 10px;
-    background-color: rgb(124, 122, 122);
-}
-
-.chat::-webkit-scrollbar-thumb
-{
-    background-color: #000000;
-    border: 2px solid #555555;
-}
-
-.slidecontainer {
   width: 100%;
+  height: 100%;
 }
+
+.inputs{
+  position: absolute;
+  height: 15vmin;
+  width: 15vmin;
+  left: 10px;
+  bottom: 40px;
+}
+
+.cueBall {
+  height: 15vmin;
+  width: 15vmin;
+  background-color: grey;
+  border-radius: 50%;
+  float: left;
+}
+
+.cueTip {
+  height: 3vmin;
+  width: 3vmin;
+  background-color: blue;
+  border-radius: 50%;
+  top: 30%;
+  left: 40%;
+  z-index: 10;
+  position: relative;
+  pointer-events: none;
+}
+
+.cuePowerAndHit {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+}
+

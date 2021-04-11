@@ -75,6 +75,17 @@ export class Cue {
     this.aim.power = Math.min(this.maxPower, this.aim.power + delta)
   }
 
+  setPower(value) {
+    this.aim.power = value * this.maxPower
+  }
+
+  setSpin(x, y) {
+    console.log(x, y)
+    this.aim.verticalOffset = MathUtils.clamp(y, -this.limit, this.limit)
+    this.aim.sideOffset = MathUtils.clamp(x, -this.limit, this.limit)
+    return { x: this.aim.sideOffset, y: this.aim.verticalOffset }
+  }
+
   moveTo(pos) {
     this.aim.pos.copy(pos)
     this.mesh.rotation.z = this.aim.angle
