@@ -80,7 +80,6 @@ export class Cue {
   }
 
   setSpin(x, y) {
-    console.log(x, y)
     this.aim.verticalOffset = MathUtils.clamp(y, -this.limit, this.limit)
     this.aim.sideOffset = MathUtils.clamp(x, -this.limit, this.limit)
     return { x: this.aim.sideOffset, y: this.aim.verticalOffset }
