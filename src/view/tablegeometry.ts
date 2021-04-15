@@ -17,8 +17,8 @@ export class TableGeometry {
   static PY = TableGeometry.tableY + 0.8
   static knuckleInset = 1.7
   static knuckleRadius = 0.5
-  static middleKnuckleInset = 1.4
-  static middleKnuckleRadius = 0.15
+  static middleKnuckleInset = 1.385
+  static middleKnuckleRadius = 0.2
   static cornerRadius = 1.05
   static middleRadius = 0.9
   static readonly pockets = {

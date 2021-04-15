@@ -44,7 +44,7 @@ p {
   height: 15vmin;
   width: 15vmin;
   left: 10px;
-  bottom: 40px;
+  bottom: 7vmin;
 }
 
 .cueBall {
@@ -73,3 +73,11 @@ p {
   bottom: 10px;
 }
 
+.powerSlider {
+  width: 100%;
+}
+
+.hitButton {
+  width: 100%;
+  height: 4vmin;
+}
