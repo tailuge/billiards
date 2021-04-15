@@ -20,6 +20,7 @@ export class AimInputs {
 
     this.cueHitElement = document.getElementById("cueHit")
     this.cueHitElement?.addEventListener("click", this.hit)
+    document.addEventListener("dblclick", this.hit)
   }
 
   mousemove = (e) => {
