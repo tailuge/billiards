@@ -1,4 +1,4 @@
-import { PerspectiveCamera, Vector3 } from "three"
+import { PerspectiveCamera, Vector3, MathUtils } from "three"
 import { up, zero, unitAtAngle } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 
@@ -11,6 +11,7 @@ export class Camera {
   mode = this.topView
 
   private topViewPoint = new Vector3(0, -0.1, 49)
+  private height = 2.8
 
   update(aim: AimEvent) {
     this.mode(aim)
@@ -27,7 +28,7 @@ export class Camera {
       aim.pos.clone().addScaledVector(unitAtAngle(aim.angle), -9),
       fraction
     )
-    this.camera.position.z = 2.7
+    this.camera.position.z = this.height
     this.camera.up = up
     this.camera.lookAt(aim.pos)
   }
@@ -39,5 +40,9 @@ export class Camera {
     )
     this.camera.up = up
     this.camera.lookAt(aim.pos)
+  }
+
+  adjustHeight(delta) {
+    this.height = MathUtils.clamp(this.height + delta, 1, 4)
   }
 }

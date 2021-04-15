@@ -45,6 +45,12 @@ export class Ball {
 
   private updatePosition(t: number) {
     this.pos.addScaledVector(this.vel, t)
+    if (this.state == State.Falling) {
+      if (this.pos.z < -2) {
+        this.setStationary()
+        this.state = State.InPocket
+      }
+    }
   }
 
   private updateVelocity(t: number) {
@@ -102,7 +108,7 @@ export class Ball {
   }
 
   onTable() {
-    return this.state !== State.Falling
+    return (this.state !== State.Falling) && (this.state !== State.InPocket)
   }
 
   inMotion() {

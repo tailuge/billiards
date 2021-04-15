@@ -46,6 +46,12 @@ export class Aim extends ControllerBase {
       case "KeySUp":
         exportGltf(this.container.view.scene)
         break
+      case "NumpadAdd":
+        this.container.view.camera.adjustHeight(input.t * this.scale)
+        break
+      case "NumpadSubtract":
+        this.container.view.camera.adjustHeight(-input.t * this.scale)
+        break
       case "SpaceUp":
         return this.hit()
       default:
