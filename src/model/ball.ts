@@ -1,5 +1,5 @@
 import { Vector3 } from "three"
-import { zero, vec, passesThroughZero } from "../utils/utils"
+import { zero, vec, passesThroughZero, up } from "../utils/utils"
 import {
   sliding,
   surfaceVelocity,
@@ -7,6 +7,8 @@ import {
   forceRoll,
 } from "../model/physics/physics"
 import { BallMesh } from "../view/ballmesh"
+import { g } from "./physics/constants"
+import { Pocket } from "./physics/pocket"
 
 export enum State {
   Stationary = "Stationary",
@@ -21,6 +23,7 @@ export class Ball {
   vel: Vector3 = zero.clone()
   rvel: Vector3 = zero.clone()
   state: State = State.Stationary
+  pocket: Pocket
 
   ballmesh: BallMesh
 
@@ -34,6 +37,9 @@ export class Ball {
   update(t) {
     this.updatePosition(t)
     this.updateVelocity(t)
+    if (this.state == State.Falling) {
+      this.updateFalling(t)
+    }
   }
 
   updateMesh(t) {
@@ -45,10 +51,24 @@ export class Ball {
 
   private updatePosition(t: number) {
     this.pos.addScaledVector(this.vel, t)
-    if (this.state == State.Falling) {
-      if (this.pos.z < -2) {
-        this.setStationary()
-        this.state = State.InPocket
+  }
+
+  private updateFalling(t: number) {
+    this.vel.addScaledVector(up, -10 * t * g)
+    if (this.pos.z < -2) {
+      this.setStationary()
+      this.state = State.InPocket
+    }
+
+    if (this.pos.distanceTo(this.pocket.pos) > this.pocket.radius - 0.5) {
+      const toCentre = this.pocket.pos
+        .clone()
+        .sub(this.pos)
+        .normalize()
+        .multiplyScalar(this.vel.length() * 0.5)
+      if (this.vel.dot(toCentre) < 0) {
+        this.vel.x = toCentre.x
+        this.vel.y = toCentre.y
       }
     }
   }
@@ -108,7 +128,7 @@ export class Ball {
   }
 
   onTable() {
-    return (this.state !== State.Falling) && (this.state !== State.InPocket)
+    return this.state !== State.Falling && this.state !== State.InPocket
   }
 
   inMotion() {

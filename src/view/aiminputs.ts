@@ -16,7 +16,7 @@ export class AimInputs {
     this.cueBallElement?.addEventListener("pointermove", this.mousemove)
 
     this.cuePowerElement = document.getElementById("cuePower")
-    document.addEventListener("wheel", this.mousewheel);
+    document.addEventListener("wheel", this.mousewheel)
 
     this.cueHitElement = document.getElementById("cueHit")
     this.cueHitElement?.addEventListener("click", this.hit)
@@ -42,9 +42,7 @@ export class AimInputs {
     this.container.inputQueue.push(new Input(0, "SpaceUp"))
   }
 
-  mousewheel = (e) => {  
+  mousewheel = (e) => {
     this.cuePowerElement.value -= Math.sign(e.deltaY) * 10
-    console.log(e.deltaY)
   }
-  
 }

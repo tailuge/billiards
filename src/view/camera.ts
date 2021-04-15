@@ -43,6 +43,6 @@ export class Camera {
   }
 
   adjustHeight(delta) {
-    this.height = MathUtils.clamp(this.height + delta, 1, 4)
+    this.height = MathUtils.clamp(this.height + delta, 1, 6)
   }
 }

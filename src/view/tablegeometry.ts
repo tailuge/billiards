@@ -3,19 +3,24 @@ import { Mesh, CylinderGeometry, BoxGeometry, MeshPhongMaterial } from "three"
 import { Knuckle } from "../model/physics/knuckle"
 import { Pocket } from "../model/physics/pocket"
 
+/*
+NW 1.05 Qn {x: -22.3, y: 11.3, z: 0}
+N 1 0.9 Qn {x: 0, y: 12.0, z: 0}
+*/
+
 export class TableGeometry {
   static tableX = 21.5
   static tableY = 10.5
   static X = TableGeometry.tableX + 0.5
   static Y = TableGeometry.tableY + 0.5
-  static PX = TableGeometry.tableX + 1.6
-  static PY = TableGeometry.tableY + 1.6
-  static knuckleInset = 1.6
+  static PX = TableGeometry.tableX + 0.8
+  static PY = TableGeometry.tableY + 0.8
+  static knuckleInset = 1.7
   static knuckleRadius = 0.5
-  static middleKnuckleInset = 1.5
-  static middleKnuckleRadius = 0.25
-  static cornerRadius = 1.4
-  static middleRadius = 0.5
+  static middleKnuckleInset = 1.4
+  static middleKnuckleRadius = 0.15
+  static cornerRadius = 1.05
+  static middleRadius = 0.9
   static readonly pockets = {
     pocketNW: {
       pocket: new Pocket(
@@ -41,7 +46,7 @@ export class TableGeometry {
     },
     pocketN: {
       pocket: new Pocket(
-        new Vector3(0, TableGeometry.PY, 0),
+        new Vector3(0, TableGeometry.PY + 0.7, 0),
         TableGeometry.middleRadius
       ),
       knuckleNE: new Knuckle(
@@ -63,7 +68,7 @@ export class TableGeometry {
     },
     pocketS: {
       pocket: new Pocket(
-        new Vector3(0, -TableGeometry.PY, 0),
+        new Vector3(0, -TableGeometry.PY - 0.7, 0),
         TableGeometry.middleRadius
       ),
       knuckleSE: new Knuckle(
