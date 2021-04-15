@@ -1,6 +1,7 @@
 import { Ball, State } from "../ball"
 import { TableGeometry } from "../../view/tablegeometry"
 import { Vector3 } from "three"
+import { g } from "./constants"
 
 export class Pocket {
   pos: Vector3
@@ -12,14 +13,13 @@ export class Pocket {
   }
 
   private static willFall(pocket, futurePosition) {
-    return futurePosition.distanceTo(pocket.pos) < 0.5 + pocket.radius
+    return futurePosition.distanceTo(pocket.pos) < pocket.radius
   }
 
   public fall(ball, t) {
-    const kb = ball.pos.clone().sub(this.pos).normalize()
-    ball.vel.addScaledVector(kb, 1 * t)
-    ball.vel.z = -10
+    ball.vel.z = -g * t
     ball.state = State.Falling
+    ball.pocket = this
   }
 
   static willFallAny(ball: Ball, t: number) {

@@ -96,6 +96,7 @@ export class View {
   private addTable(ready) {
     this.scene.add(new AmbientLight(0x303030, 1.0))
     importGltf("models/p8.gltf", this.scene, ready)
+    //TableGeometry.addToScene(this.scene)
   }
 
   addMesh(mesh) {
