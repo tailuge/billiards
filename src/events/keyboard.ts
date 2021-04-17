@@ -62,10 +62,16 @@ export class Keyboard {
 
   mousemove = (e) => {
     if (e.buttons === 1) {
-      if (this.released["movementX"]) {
+      if (this.released["movementY"]) {
         this.released["movementX"] += e.movementX
       } else {
         this.released["movementX"] = e.movementX
+      }
+
+      if (this.released["movementY"]) {
+        this.released["movementY"] += e.movementY
+      } else {
+        this.released["movementY"] = e.movementY
       }
     }
   }

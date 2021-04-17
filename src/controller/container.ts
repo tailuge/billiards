@@ -62,8 +62,11 @@ export class Container {
   }
 
   processEvents() {
-    const input = this.inputQueue.shift()
-    input && this.updateController(this.controller.handleInput(input))
+    while (this.inputQueue.length > 0) {
+      const input = this.inputQueue.shift()
+      input && this.updateController(this.controller.handleInput(input))
+    }
+
     const event = this.eventQueue.shift()
     event && this.updateController(event.applyToController(this.controller))
   }

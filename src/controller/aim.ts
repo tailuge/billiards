@@ -25,9 +25,6 @@ export class Aim extends ControllerBase {
       case "ArrowRight":
         this.container.table.cue.rotateAim(input.t * this.scale)
         break
-      case "movementXUp":
-        this.container.table.cue.rotateAim(input.t * this.scale * 2)
-        break
       case "ArrowDown":
         this.container.table.cue.adjustHeight(-input.t * this.scale)
         break
@@ -46,7 +43,14 @@ export class Aim extends ControllerBase {
       case "KeySUp":
         exportGltf(this.container.view.scene)
         break
+      case "movementXUp":
+        this.container.table.cue.rotateAim(input.t * this.scale * 2)
+        break
+      case "movementYUp":
+        this.container.view.camera.adjustHeight(-input.t * this.scale * 10)
+        break
       case "NumpadAdd":
+        console.log(input.t)
         this.container.view.camera.adjustHeight(input.t * this.scale * 10)
         break
       case "NumpadSubtract":

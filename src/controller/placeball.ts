@@ -44,6 +44,14 @@ export class PlaceBall extends ControllerBase {
           TableGeometry.tableY
         )
         break
+      case "NumpadAdd":
+        console.log(input.t)
+        this.container.view.camera.adjustHeight(input.t * this.scale * 10)
+        break
+      case "NumpadSubtract":
+        this.container.view.camera.adjustHeight(-input.t * this.scale * 10)
+        break
+
       case "SpaceUp":
         return this.placed()
       default:
