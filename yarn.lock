@@ -619,9 +619,9 @@
   integrity sha512-1z8k4wzFnNjVK/tlxvrWuK5WMt6mydWWP7+zvH5eFep4oj+UkrfiJTRtjCeBXNpwaA/FYqqtb4/QS4ianFpIRA==
 
 "@types/node@*":
-  version "14.14.39"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.39.tgz#9ef394d4eb52953d2890e4839393c309aa25d2d1"
-  integrity sha512-Qipn7rfTxGEDqZiezH+wxqWYR8vcXq5LRpZrETD19Gs4o8LbklbmqotSUsMU+s5G3PJwMRDfNEYoxrcBwIxOuw==
+  version "14.14.41"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.41.tgz#d0b939d94c1d7bd53d04824af45f1139b8c45615"
+  integrity sha512-dueRKfaJL4RTtSa7bWeTK1M+VH+Gns73oCgzvYfHZywRCoPSd8EkXBL0mZ9unPTveBn+D9phZBaxuzpwjWkW0g==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -1310,9 +1310,9 @@ camelcase@^6.0.0:
   integrity sha512-c7wVvbw3f37nuobQNtgsgG9POC9qMbNuMQmTCqZv23b6MIz0fcYpBiOlv9gEN/hdLdnZTDQhg6e9Dq5M1vKvfg==
 
 caniuse-lite@^1.0.30001208:
-  version "1.0.30001208"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001208.tgz#a999014a35cebd4f98c405930a057a0d75352eb9"
-  integrity sha512-OE5UE4+nBOro8Dyvv0lfx+SRtfVIOM9uhKqFmJeUbGriqhhStgp1A0OyBpgy3OUF8AhYCT+PVwPC1gMl2ZcQMA==
+  version "1.0.30001209"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001209.tgz#1bb4be0bd118e98e21cfb7ef617b1ef2164622f4"
+  integrity sha512-2Ktt4OeRM7EM/JaOZjuLzPYAIqmbwQMNnYbgooT+icoRGrKOyAxA1xhlnotBD1KArRSPsuJp3TdYcZYrL7qNxA==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -5335,10 +5335,10 @@ tr46@^2.0.2:
   dependencies:
     punycode "^2.1.1"
 
-ts-jest@^26.5.4:
-  version "26.5.4"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-26.5.4.tgz#207f4c114812a9c6d5746dd4d1cdf899eafc9686"
-  integrity sha512-I5Qsddo+VTm94SukBJ4cPimOoFZsYTeElR2xy6H2TOVs+NsvgYglW8KuQgKoApOKuaU/Ix/vrF9ebFZlb5D2Pg==
+ts-jest@^26.5.5:
+  version "26.5.5"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-26.5.5.tgz#e40481b6ee4dd162626ba481a2be05fa57160ea5"
+  integrity sha512-7tP4m+silwt1NHqzNRAPjW1BswnAhopTdc2K3HEkRZjF0ZG2F/e/ypVH0xiZIMfItFtD3CX0XFbwPzp9fIEUVg==
   dependencies:
     bs-logger "0.x"
     buffer-from "1.x"
