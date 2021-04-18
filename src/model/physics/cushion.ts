@@ -7,6 +7,13 @@ export class Cushion {
   static willBounce(ball: Ball, t: number): boolean {
     let futurePosition = ball.futurePosition(t)
 
+    if (
+      Math.abs(futurePosition.y) < TableGeometry.tableY &&
+      Math.abs(futurePosition.x) < TableGeometry.tableX
+    ) {
+      return false
+    }
+
     return (
       ball.onTable() &&
       (Cushion.willBounceLongSegment(

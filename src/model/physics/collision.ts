@@ -1,4 +1,4 @@
-import { Ball } from "../ball"
+import { Ball, State } from "../ball"
 
 export class Collision {
   static willCollide(a: Ball, b: Ball, t: number): boolean {
@@ -19,5 +19,7 @@ export class Collision {
     const bDotCenters = ab.dot(b.vel)
     a.vel.addScaledVector(ab, bDotCenters).addScaledVector(ab, -aDotCenters)
     b.vel.addScaledVector(ab, aDotCenters).addScaledVector(ab, -bDotCenters)
+    a.state = State.Sliding
+    b.state = State.Sliding
   }
 }

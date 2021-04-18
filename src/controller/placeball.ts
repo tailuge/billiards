@@ -45,7 +45,6 @@ export class PlaceBall extends ControllerBase {
         )
         break
       case "NumpadAdd":
-        console.log(input.t)
         this.container.view.camera.adjustHeight(input.t * this.scale * 10)
         break
       case "NumpadSubtract":
