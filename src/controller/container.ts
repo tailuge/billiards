@@ -8,6 +8,7 @@ import { Init } from "./init"
 import { Rack } from "../utils/rack"
 import { EventUtil } from "../events/eventutil"
 import { AimInputs } from "../view/aiminputs"
+import { Keyboard } from "../events/keyboard"
 
 /**
  * Model, View, Controller container.
@@ -19,6 +20,7 @@ export class Container {
   inputQueue: Input[] = []
   eventQueue: GameEvent[] = []
   aimInputs: AimInputs
+  keyboard: Keyboard
 
   last = performance.now()
   readonly step = 0.001
@@ -26,11 +28,12 @@ export class Container {
   broadcast: (event: string) => void
   log: (text: string) => void
 
-  constructor(element, log, ready?) {
+  constructor(element, log, keyboard?, ready?) {
     this.log = log
     this.table = new Table(Rack.diamond())
     this.view = new View(element, ready)
     this.aimInputs = new AimInputs(this)
+    this.keyboard = keyboard
 
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
@@ -62,6 +65,11 @@ export class Container {
   }
 
   processEvents() {
+    if (this.keyboard) {
+      var inputs = this.keyboard.getEvents()
+      inputs.forEach((i) => this.inputQueue.push(i))
+    }
+
     while (this.inputQueue.length > 0) {
       const input = this.inputQueue.shift()
       input && this.updateController(this.controller.handleInput(input))
