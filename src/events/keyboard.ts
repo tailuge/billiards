@@ -67,12 +67,6 @@ export class Keyboard {
       } else {
         this.released["movementX"] = e.movementX
       }
-
-      if (this.released["movementY"]) {
-        this.released["movementY"] += e.movementY
-      } else {
-        this.released["movementY"] = e.movementY
-      }
     }
   }
 

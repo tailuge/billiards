@@ -3,9 +3,10 @@ import { Collision } from "./physics/collision"
 import { Knuckle } from "./physics/knuckle"
 import { Pocket } from "./physics/pocket"
 import { Cue } from "../view/cue"
-import { Ball } from "./ball"
+import { Ball, State } from "./ball"
 import { AimEvent } from "../events/aimevent"
 import { upCross, unitAtAngle } from "../utils/utils"
+import { TableGeometry } from "../view/tablegeometry"
 
 export class Table {
   balls: Ball[]
@@ -66,6 +67,14 @@ export class Table {
   }
 
   private prepareAdvanceToCushions(a: Ball, t: number): boolean {
+    let futurePosition = a.futurePosition(t)
+    if (
+      Math.abs(futurePosition.y) < TableGeometry.tableY &&
+      Math.abs(futurePosition.x) < TableGeometry.tableX
+    ) {
+      return true
+    }
+
     if (Cushion.willBounce(a, t)) {
       Cushion.bounce(a, t)
       this.outcome.push({ type: "cushion", a: a })
@@ -94,6 +103,8 @@ export class Table {
   hit() {
     let aim = this.cue.aim
     this.balls[0].vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
+    this.balls[0].state = State.Sliding
+
     let rvel = upCross(unitAtAngle(aim.angle)).multiplyScalar(
       (aim.power * aim.verticalOffset * 5) / 2
     )

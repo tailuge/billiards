@@ -24,6 +24,7 @@ export class Ball {
   rvel: Vector3 = zero.clone()
   state: State = State.Stationary
   pocket: Pocket
+  futurePos: Vector3 = zero.clone()
 
   ballmesh: BallMesh
 
@@ -122,8 +123,8 @@ export class Ball {
 
   isRolling() {
     return (
-      surfaceVelocity(this.vel, this.rvel).length() < this.transition &&
-      this.vel.lengthSq() != 0
+      this.vel.lengthSq() != 0 &&
+      surfaceVelocity(this.vel, this.rvel).length() < this.transition
     )
   }
 
@@ -132,13 +133,12 @@ export class Ball {
   }
 
   inMotion() {
-    return (
-      this.onTable() && (this.vel.lengthSq() != 0 || this.rvel.lengthSq() != 0)
-    )
+    return this.state == State.Rolling || this.state == State.Sliding
   }
 
   futurePosition(t) {
-    return this.pos.clone().addScaledVector(this.vel, t)
+    this.futurePos.copy(this.pos).addScaledVector(this.vel, t)
+    return this.futurePos
   }
 
   serialise() {
