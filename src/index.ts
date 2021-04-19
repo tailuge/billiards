@@ -10,7 +10,7 @@ var state = {
   init: null,
   shots: Array<any>(),
 }
-var keyboard = new Keyboard(document.getElementById("viewP1"))
+//var keyboard = new Keyboard(document.getElementById("viewP1"))
 
 playReplay()
 
@@ -18,6 +18,7 @@ function playReplay() {
   controller1 = new Container(
     document.getElementById("viewP1"),
     (_) => {},
+    new Keyboard(document.getElementById("viewP1")),
     onAssetsReady
   )
 }
@@ -46,12 +47,12 @@ function onAssetsReady() {
   }
 
   // trigger input polling
-  sampleInputs()
+  //  sampleInputs()
 
   // trigger animation loops
   controller1.animate(performance.now())
 }
-
+/*
 function sampleInputs() {
   var inputs = keyboard.getEvents()
   inputs.forEach((i) => controller1.inputQueue.push(i))
@@ -59,3 +60,4 @@ function sampleInputs() {
     sampleInputs()
   })
 }
+*/
