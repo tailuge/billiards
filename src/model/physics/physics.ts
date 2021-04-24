@@ -10,7 +10,8 @@ export function sliding(v, w, dv, dw) {
   const va = surfaceVelocity(v, w)
   dv.copy(norm(va).multiplyScalar(-mu * g))
   dw.copy(norm(upCross(va)).multiplyScalar((5 / 2) * mu * g))
-  dw.setZ(-(5 / 2) * Mz * Math.sign(w.z))
+  //  dw.setZ(-(5 / 2) * Mz * Math.sign(w.z))
+  dw.setZ(-w.z * 0.01)
 }
 
 export function slidingFull(v, w, dv, dw) {
@@ -46,7 +47,7 @@ export function rotateApplyUnrotate(theta, v, w, dv, dw) {
   const wr = w.clone().applyAxisAngle(up, theta)
 
   //  if (isCushionXGrip(vr, wr)) {
-  bounceWithoutSlipX(vr, wr, dv, dw)
+  bounceWithSideX(vr, wr, dv, dw)
   //  } else {
   //    bounceWithSlipX(vr, wr, dv, dw)
   //  }
@@ -90,6 +91,21 @@ export function isCushionXGrip(v, w) {
   )
 
   return Pze_val < Pzs_val
+}
+
+/**
+ * Own version
+ */
+export function bounceWithSideX(v, w, dv, dw) {
+  var newVx = -v.x * e
+  var newVy = v.y + R * (w.x * sin_a - w.z * cos_a)
+
+  var newWx = 0
+  var newWy = w.x
+  var newWz = w.z
+
+  dv.set(newVx - v.x, newVy - v.y, 0)
+  dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
 }
 
 export function bounceWithoutSlipX(v, w, dv, dw) {

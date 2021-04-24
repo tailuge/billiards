@@ -38,6 +38,8 @@ export class Container {
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
       this.view.addMesh(b.ballmesh.shadow)
+      this.view.addMesh(b.ballmesh.velocityArrow)
+      this.view.addMesh(b.ballmesh.spinAxisArrow)
     })
     this.view.addMesh(this.table.cue.mesh)
     this.updateController(new Init(this))
@@ -48,9 +50,7 @@ export class Container {
   }
 
   advance(elapsed) {
-    //    const steps = Math.min(15, Math.floor(elapsed / this.step))
     const steps = Math.floor(elapsed / this.step)
-    //    console.log(steps)
     const computedElapsed = steps * this.step
     const stateBefore = this.table.allStationary()
     for (var i = 0; i < steps; i++) {

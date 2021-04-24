@@ -1,9 +1,9 @@
-export const mu = 1.7
+export const mu = 0.2
 export const g = 9.8
 export const rho = 0.3
 export const m = 1
 export const Mz = ((mu * m * g * 2) / 3) * rho
-export const Mxy = (7 / (5 * Math.sqrt(2))) * mu * m * g * 0.1
-export const e = 0.95
+export const Mxy = (7 / (5 * Math.sqrt(2))) * mu * m * g
+export const e = 0.85
 export const R = 0.5
 export const I = (2 / 5) * m * R * R
