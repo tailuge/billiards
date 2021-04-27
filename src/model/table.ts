@@ -5,7 +5,7 @@ import { Pocket } from "./physics/pocket"
 import { Cue } from "../view/cue"
 import { Ball, State } from "./ball"
 import { AimEvent } from "../events/aimevent"
-import { upCross, unitAtAngle } from "../utils/utils"
+import { upCross, unitAtAngle, zero } from "../utils/utils"
 import { TableGeometry } from "../view/tablegeometry"
 
 export class Table {
@@ -103,13 +103,21 @@ export class Table {
   hit() {
     let aim = this.cue.aim
     this.balls[0].vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
+    if (aim.spinOnly) {
+      this.balls[0].vel.copy(zero)
+    }
     this.balls[0].state = State.Sliding
 
-    let rvel = upCross(unitAtAngle(aim.angle)).multiplyScalar(
-      (aim.power * aim.verticalOffset * 5) / 2
-    )
-    rvel.z = (-aim.sideOffset * 5) / 2
-    this.balls[0].rvel.copy(rvel)
+    let angle = Math.atan2(-aim.sideOffset,aim.verticalOffset)
+    if (angle == 0) {
+      this.balls[0].rvel.copy(zero)
+    } else {
+      let spinPower = Math.sqrt(aim.verticalOffset*aim.verticalOffset + aim.sideOffset*aim.sideOffset)
+      let dir = unitAtAngle(aim.angle)
+      let rvel = upCross(dir).applyAxisAngle(dir,angle).multiplyScalar(spinPower*20)
+      console.log(angle*57.2958, spinPower)
+      this.balls[0].rvel.copy(rvel)  
+    }
     aim.power = 0
   }
 

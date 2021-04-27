@@ -3,7 +3,11 @@ import { norm, upCross, up } from "../../utils/utils"
 import { mu, g, m, e, Mz, Mxy, R, I } from "./constants"
 
 export function surfaceVelocity(v, w) {
-  return v.clone().add(upCross(w)).setZ(0)
+  return surfaceVelocityFull(v,w).setZ(0)
+}
+
+export function surfaceVelocityFull(v, w) {
+  return v.clone().add(upCross(w))
 }
 
 export function sliding(v, w, dv, dw) {
@@ -11,7 +15,7 @@ export function sliding(v, w, dv, dw) {
   dv.copy(norm(va).multiplyScalar(-mu * g))
   dw.copy(norm(upCross(va)).multiplyScalar((5 / 2) * mu * g))
   //  dw.setZ(-(5 / 2) * Mz * Math.sign(w.z))
-  dw.setZ(-w.z * 0.01)
+  dw.setZ(-w.z * 0.4)
 }
 
 export function slidingFull(v, w, dv, dw) {

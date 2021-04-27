@@ -1,10 +1,10 @@
 import { Vector3 } from "three"
 import { zero, vec, passesThroughZero, up } from "../utils/utils"
 import {
-  surfaceVelocity,
   rollingFull,
   forceRoll,
   sliding,
+  surfaceVelocityFull,
 } from "../model/physics/physics"
 import { BallMesh } from "../view/ballmesh"
 import { g } from "./physics/constants"
@@ -130,7 +130,8 @@ export class Ball {
   isRolling() {
     return (
       this.vel.lengthSq() != 0 &&
-      surfaceVelocity(this.vel, this.rvel).length() < this.transition
+      surfaceVelocityFull(this.vel, this.rvel).length() < this.transition &&
+      Math.abs(this.rvel.z) < Math.abs(this.rvel.length() * 0.1)
     )
   }
 
