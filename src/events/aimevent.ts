@@ -10,6 +10,7 @@ export class AimEvent extends GameEvent {
   angle = 0
   power = 0
   pos = new Vector3(1, 0, 0)
+  spinOnly: boolean = false
 
   constructor() {
     super()
@@ -27,6 +28,7 @@ export class AimEvent extends GameEvent {
     event.verticalOffset = json.verticalOffset
     event.sideOffset = json.sideOffset
     event.power = json.power
+    event.spinOnly = json.spinOnly
     return event
   }
 

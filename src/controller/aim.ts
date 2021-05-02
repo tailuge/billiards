@@ -55,6 +55,8 @@ export class Aim extends ControllerBase {
       case "NumpadSubtract":
         this.container.view.camera.adjustHeight(-input.t * this.scale * 10)
         break
+      case "KeyHUp":
+        return this.hitSpinOnly()
       case "SpaceUp":
         return this.hit()
       default:
@@ -66,6 +68,14 @@ export class Aim extends ControllerBase {
 
   hit() {
     this.container.table.cue.aim.round()
+    this.container.sendEvent(new HitEvent(this.container.table.cue.aim))
+    return new PlayShot(this.container)
+  }
+
+  hitSpinOnly() {
+    this.container.table.cue.setPower(1)
+    this.container.table.cue.aim.round()
+    this.container.table.cue.aim.spinOnly = true
     this.container.sendEvent(new HitEvent(this.container.table.cue.aim))
     return new PlayShot(this.container)
   }

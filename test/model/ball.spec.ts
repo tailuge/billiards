@@ -1,6 +1,6 @@
 import "mocha"
 import { expect } from "chai"
-import { Ball } from "../../src/model/ball"
+import { Ball, State } from "../../src/model/ball"
 import { Vector3 } from "three"
 import { zero, passesThroughZero } from "../../src/utils/utils"
 import {
@@ -47,7 +47,8 @@ describe("Ball", () => {
   it("friction slows ball", (done) => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0.01
-    ball.update(1)
+    ball.state = State.Sliding
+    ball.update(0.01)
     expect(ball.vel.x).to.be.below(0.01)
     done()
   })
@@ -71,6 +72,7 @@ describe("Ball", () => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 1
     ball.rvel.y = 1.0001
+    ball.state = State.Sliding
     expect(ball.isRolling()).to.be.true
     done()
   })
@@ -79,6 +81,7 @@ describe("Ball", () => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0
     ball.rvel.y = 1
+    ball.state = State.Sliding
     expect(ball.isRolling()).to.be.false
     ball.update(t)
     expect(ball.vel.x).to.be.above(0)
@@ -89,6 +92,7 @@ describe("Ball", () => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0
     ball.rvel.y = 1
+    ball.state = State.Sliding
     expect(ball.isRolling()).to.be.false
     ball.update(t)
     expect(ball.rvel.y).to.be.below(1)
@@ -98,7 +102,8 @@ describe("Ball", () => {
   it("topspin ball eventualy starts to roll", (done) => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0
-    ball.rvel.y = 0.1
+    ball.rvel.y = 0.5
+    ball.state = State.Sliding
     let maxiter = 100
     let i = 0
     while (i++ < maxiter && !ball.isRolling()) {
@@ -112,6 +117,7 @@ describe("Ball", () => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0.025
     ball.rvel.y = 0.025
+    ball.state = State.Rolling
     let maxiter = 100
     let i = 0
     while (i++ < maxiter && ball.isRolling()) {
