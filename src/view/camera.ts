@@ -13,12 +13,15 @@ export class Camera {
   private topViewPoint = new Vector3(0, -0.1, 49)
   private height = 2.8
 
-  update(aim: AimEvent) {
+  elapsed
+
+  update(elapsed, aim: AimEvent) {
+    this.elapsed = elapsed
     this.mode(aim)
   }
 
   topView(_: AimEvent) {
-    this.camera.position.lerp(this.topViewPoint, 0.2)
+    this.camera.position.lerp(this.topViewPoint, 0.9)
     this.camera.up = up
     this.camera.lookAt(zero)
   }
@@ -31,13 +34,17 @@ export class Camera {
     this.camera.position.z = this.height
     this.camera.up = up
     this.camera.lookAt(aim.pos)
+    this.standback = 9
   }
+
+  standback = 9
 
   afterHitView(aim: AimEvent) {
     this.camera.position.lerp(
-      this.camera.position.clone().addScaledVector(up, 1),
-      0.001
+      aim.pos.clone().addScaledVector(unitAtAngle(aim.angle), -this.standback),
+      0.5
     )
+    this.camera.position.z = this.height + (this.standback-9)
     this.camera.up = up
     this.camera.lookAt(aim.pos)
   }

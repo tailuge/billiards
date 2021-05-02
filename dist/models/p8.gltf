@@ -270,11 +270,14 @@
         {
             "name" : "Material.002",
             "pbrMetallicRoughness" : {
-                "baseColorTexture" : {
-                    "index" : 0
-                },
+                "baseColorFactor" : [
+                    0,
+                    0.011963303200900555,
+                    0.8000000715255737,
+                    1
+                ],
                 "metallicFactor" : 0,
-                "roughnessFactor" : 0.5
+                "roughnessFactor" : 0.8358974456787109
             }
         },
         {
@@ -540,19 +543,6 @@
                     "material" : 6
                 }
             ]
-        }
-    ],
-    "textures" : [
-        {
-            "sampler" : 0,
-            "source" : 0
-        }
-    ],
-    "images" : [
-        {
-            "mimeType" : "image/png",
-            "name" : "newcloth",
-            "uri" : "newcloth.png"
         }
     ],
     "accessors" : [
@@ -1259,12 +1249,6 @@
             "buffer" : 0,
             "byteLength" : 708,
             "byteOffset" : 60816
-        }
-    ],
-    "samplers" : [
-        {
-            "magFilter" : 9729,
-            "minFilter" : 9987
         }
     ],
     "buffers" : [

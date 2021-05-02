@@ -42,6 +42,7 @@ export class Container {
       this.view.addMesh(b.ballmesh.spinAxisArrow)
     })
     this.view.addMesh(this.table.cue.mesh)
+    this.view.table = this.table
     this.updateController(new Init(this))
   }
 
@@ -57,7 +58,7 @@ export class Container {
       this.table.advance(this.step)
     }
     this.table.updateBallMesh(computedElapsed)
-    this.view.update(this.table.cue.aim)
+    this.view.update(computedElapsed, this.table.cue.aim)
     this.table.cue.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())

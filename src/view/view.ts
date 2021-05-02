@@ -12,6 +12,7 @@ export class View {
   windowWidth = 1
   windowHeight = 1
   element
+  table: any
 
   constructor(element, ready?) {
     this.element = element
@@ -27,8 +28,8 @@ export class View {
     this.addTable(ready)
   }
 
-  update(aim: AimEvent) {
-    this.camera.update(aim)
+  update(elapsed, aim: AimEvent) {
+    this.camera.update(elapsed, aim)
   }
 
   updateSize() {
@@ -56,8 +57,15 @@ export class View {
       height: 0.3,
     },
   ]
+
+
   render() {
     this.updateSize()
+    if (this.isInMotionNotVisible()) {
+      this.camera.mode = this.camera.topView
+      this.camera.standback +=0.1
+    }
+
     this.renderCamera(this.camera, this.views[0])
     let aspect = this.overheadCamera.aspect(this.windowWidth, this.windowHeight)
     this.views[1].width = aspect.x
@@ -65,7 +73,7 @@ export class View {
     this.views[1].left = 1 - aspect.x * 1.01
     this.views[1].bottom = aspect.y * 0.01
 
-    this.renderCamera(this.overheadCamera, this.views[1])
+    //this.renderCamera(this.overheadCamera, this.views[1])
   }
 
   renderCamera(cam, v) {
@@ -103,17 +111,19 @@ export class View {
     this.scene.add(mesh)
   }
 
-  isVisible(o) {
-    var frustum = new Frustum()
-    var cameraViewProjectionMatrix = new Matrix4()
+  isInMotionNotVisible() {
+    var frustrum = this.viewFrustrum()
+    return this.table.balls.some(b=>b.inMotion() && !frustrum.intersectsObject(b.ballmesh.mesh))
+  }
+
+  viewFrustrum() {
     var c = this.camera.camera
+    c.updateMatrix()
     c.updateMatrixWorld()
-    c.matrixWorldInverse.getInverse(c.matrixWorld)
-    cameraViewProjectionMatrix.multiplyMatrices(
-      c.projectionMatrix,
-      c.matrixWorldInverse
+    var frustum = new Frustum()
+    frustum.setFromProjectionMatrix(
+      new Matrix4().multiplyMatrices(c.projectionMatrix, c.matrixWorldInverse)
     )
-    frustum.setFromMatrix(cameraViewProjectionMatrix)
-    return frustum.intersectsObject(o)
+    return frustum
   }
 }

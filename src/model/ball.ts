@@ -2,7 +2,7 @@ import { Vector3 } from "three"
 import { zero, vec, passesThroughZero, up } from "../utils/utils"
 import {
   rollingFull,
-  forceRoll,
+  // forceRoll,
   sliding,
   surfaceVelocityFull,
 } from "../model/physics/physics"
@@ -89,7 +89,7 @@ export class Ball {
   dw = new Vector3()
 
   private updateVelocityRolling(t) {
-    forceRoll(this.vel, this.rvel)
+    //    forceRoll(this.vel, this.rvel)
     rollingFull(this.rvel, this.dv, this.dw)
     this.dv.multiplyScalar(t)
     this.dw.multiplyScalar(t)
@@ -130,8 +130,9 @@ export class Ball {
   isRolling() {
     return (
       this.vel.lengthSq() != 0 &&
-      surfaceVelocityFull(this.vel, this.rvel).length() < this.transition &&
-      Math.abs(this.rvel.z) < Math.abs(this.rvel.length() * 0.1)
+      surfaceVelocityFull(this.vel, this.rvel).length() < this.transition
+      // &&
+      //Math.abs(this.rvel.z) < Math.abs(this.rvel.length() * 0.1)
     )
   }
 

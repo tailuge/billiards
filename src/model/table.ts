@@ -108,15 +108,19 @@ export class Table {
     }
     this.balls[0].state = State.Sliding
 
-    let angle = Math.atan2(-aim.sideOffset,aim.verticalOffset)
+    let angle = Math.atan2(-aim.sideOffset, aim.verticalOffset)
     if (angle == 0) {
       this.balls[0].rvel.copy(zero)
     } else {
-      let spinPower = Math.sqrt(aim.verticalOffset*aim.verticalOffset + aim.sideOffset*aim.sideOffset)
+      let spinPower = Math.sqrt(
+        aim.verticalOffset * aim.verticalOffset +
+          aim.sideOffset * aim.sideOffset
+      )
       let dir = unitAtAngle(aim.angle)
-      let rvel = upCross(dir).applyAxisAngle(dir,angle).multiplyScalar(spinPower*20)
-      console.log(angle*57.2958, spinPower)
-      this.balls[0].rvel.copy(rvel)  
+      let rvel = upCross(dir)
+        .applyAxisAngle(dir, angle)
+        .multiplyScalar(spinPower * aim.power * 2)
+      this.balls[0].rvel.copy(rvel)
     }
     aim.power = 0
   }
