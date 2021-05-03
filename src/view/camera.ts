@@ -44,7 +44,7 @@ export class Camera {
       aim.pos.clone().addScaledVector(unitAtAngle(aim.angle), -this.standback),
       0.5
     )
-    this.camera.position.z = this.height + (this.standback-9)
+    this.camera.position.z = this.height + (this.standback - 9)
     this.camera.up = up
     this.camera.lookAt(aim.pos)
   }

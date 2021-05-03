@@ -1,5 +1,11 @@
 import { Vector3 } from "three"
-import { zero, vec, passesThroughZero, up } from "../utils/utils"
+import {
+  zero,
+  vec,
+  passesThroughZero,
+  up,
+  assertNotNaNVec,
+} from "../utils/utils"
 import {
   rollingFull,
   // forceRoll,
@@ -17,6 +23,8 @@ export enum State {
   Falling = "Falling",
   InPocket = "InPocket",
 }
+
+// https://8080-lime-shark-3ky1mi9h.ws-eu03.gitpod.io/?&state=%7B%22init%22:%5B-11,0,10.74,0.024,11.722,0.556,11.697,-0.548,12.677,-0.022,12.631,-1.084,12.633,1.089,13.61,0.549,13.63,-0.533,14.558,-0.015%5D,%22shots%22:%5B%7B%22verticalOffset%22:0.212,%22sideOffset%22:-0.4,%22angle%22:0,%22power%22:60,%22pos%22:%7B%22x%22:-11,%22y%22:0,%22z%22:0%7D,%22spinOnly%22:true,%22type%22:3%7D,%7B%22verticalOffset%22:0.212,%22sideOffset%22:-0.4,%22angle%22:0,%22power%22:60,%22pos%22:%7B%22x%22:9.894,%22y%22:-0.012,%22z%22:0%7D,%22spinOnly%22:true,%22type%22:3%7D%5D%7D
 
 export class Ball {
   pos: Vector3
@@ -38,6 +46,9 @@ export class Ball {
   update(t) {
     this.updatePosition(t)
     this.updateVelocity(t)
+    assertNotNaNVec(this.vel)
+    assertNotNaNVec(this.rvel)
+
     if (this.state == State.Falling) {
       this.updateFalling(t)
     }
@@ -45,7 +56,7 @@ export class Ball {
 
   updateMesh(t) {
     this.ballmesh.updatePosition(this.pos)
-    this.ballmesh.updateArrows(this.pos, this.vel, this.rvel, this.state)
+    this.ballmesh.updateArrows(this.pos, this.rvel, this.state)
     if (this.rvel.lengthSq() != 0) {
       this.ballmesh.updateRotation(this.rvel, t)
     }
@@ -53,6 +64,7 @@ export class Ball {
 
   private updatePosition(t: number) {
     this.pos.addScaledVector(this.vel, t)
+    assertNotNaNVec(this.pos)
   }
 
   private updateFalling(t: number) {
@@ -79,8 +91,10 @@ export class Ball {
     if (this.inMotion()) {
       if (this.isRolling()) {
         this.updateVelocityRolling(t)
+        assertNotNaNVec(this.vel, this)
       } else {
         this.updateVelocitySliding(t)
+        assertNotNaNVec(this.vel)
       }
     }
   }
@@ -91,6 +105,8 @@ export class Ball {
   private updateVelocityRolling(t) {
     //    forceRoll(this.vel, this.rvel)
     rollingFull(this.rvel, this.dv, this.dw)
+    assertNotNaNVec(this.dv, this)
+    assertNotNaNVec(this.dw, this)
     this.dv.multiplyScalar(t)
     this.dw.multiplyScalar(t)
     if (
@@ -130,9 +146,8 @@ export class Ball {
   isRolling() {
     return (
       this.vel.lengthSq() != 0 &&
+      this.rvel.lengthSq() != 0 &&
       surfaceVelocityFull(this.vel, this.rvel).length() < this.transition
-      // &&
-      //Math.abs(this.rvel.z) < Math.abs(this.rvel.length() * 0.1)
     )
   }
 
