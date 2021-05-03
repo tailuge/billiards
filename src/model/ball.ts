@@ -1,11 +1,5 @@
 import { Vector3 } from "three"
-import {
-  zero,
-  vec,
-  passesThroughZero,
-  up,
-  assertNotNaNVec,
-} from "../utils/utils"
+import { zero, vec, passesThroughZero, up } from "../utils/utils"
 import {
   rollingFull,
   // forceRoll,
@@ -46,8 +40,6 @@ export class Ball {
   update(t) {
     this.updatePosition(t)
     this.updateVelocity(t)
-    assertNotNaNVec(this.vel)
-    assertNotNaNVec(this.rvel)
 
     if (this.state == State.Falling) {
       this.updateFalling(t)
@@ -64,7 +56,6 @@ export class Ball {
 
   private updatePosition(t: number) {
     this.pos.addScaledVector(this.vel, t)
-    assertNotNaNVec(this.pos)
   }
 
   private updateFalling(t: number) {
@@ -91,10 +82,8 @@ export class Ball {
     if (this.inMotion()) {
       if (this.isRolling()) {
         this.updateVelocityRolling(t)
-        assertNotNaNVec(this.vel, this)
       } else {
         this.updateVelocitySliding(t)
-        assertNotNaNVec(this.vel)
       }
     }
   }
@@ -103,10 +92,7 @@ export class Ball {
   dw = new Vector3()
 
   private updateVelocityRolling(t) {
-    //    forceRoll(this.vel, this.rvel)
     rollingFull(this.rvel, this.dv, this.dw)
-    assertNotNaNVec(this.dv, this)
-    assertNotNaNVec(this.dw, this)
     this.dv.multiplyScalar(t)
     this.dw.multiplyScalar(t)
     if (
