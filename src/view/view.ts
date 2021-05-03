@@ -58,12 +58,12 @@ export class View {
     },
   ]
 
-
   render() {
     this.updateSize()
+
     if (this.isInMotionNotVisible()) {
       this.camera.mode = this.camera.topView
-      this.camera.standback +=0.1
+      this.camera.standback += 1
     }
 
     this.renderCamera(this.camera, this.views[0])
@@ -111,15 +111,16 @@ export class View {
     this.scene.add(mesh)
   }
 
+  ballToCheck = 0
+
   isInMotionNotVisible() {
     var frustrum = this.viewFrustrum()
-    return this.table.balls.some(b=>b.inMotion() && !frustrum.intersectsObject(b.ballmesh.mesh))
+    var b = this.table.balls[this.ballToCheck++ % this.table.balls.length]
+    return b.inMotion() && !frustrum.intersectsObject(b.ballmesh.mesh)
   }
 
   viewFrustrum() {
     var c = this.camera.camera
-    c.updateMatrix()
-    c.updateMatrixWorld()
     var frustum = new Frustum()
     frustum.setFromProjectionMatrix(
       new Matrix4().multiplyMatrices(c.projectionMatrix, c.matrixWorldInverse)

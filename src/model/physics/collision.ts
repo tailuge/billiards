@@ -1,3 +1,4 @@
+import { assertNotNaNVec } from "../../utils/utils"
 import { Ball, State } from "../ball"
 
 export class Collision {
@@ -11,6 +12,8 @@ export class Collision {
 
   static collide(a: Ball, b: Ball) {
     Collision.updateVelocities(a, b)
+    assertNotNaNVec(a.vel)
+    assertNotNaNVec(b.vel)
   }
 
   private static updateVelocities(a: Ball, b: Ball) {

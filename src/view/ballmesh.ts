@@ -13,7 +13,6 @@ import { norm, up, zero } from "./../utils/utils"
 export class BallMesh {
   mesh: Mesh
   shadow: Mesh
-  velocityArrow: ArrowHelper
   spinAxisArrow: ArrowHelper
   constructor(color) {
     this.initialiseMesh(color)
@@ -32,11 +31,7 @@ export class BallMesh {
     this.mesh.geometry.applyMatrix4(m)
   }
 
-  updateArrows(pos, vel, rvel, state) {
-    this.velocityArrow.setLength(0.4 + vel.length() / 2, 0.1, 0.1)
-    this.velocityArrow.position.copy(pos)
-    this.velocityArrow.setDirection(norm(vel))
-
+  updateArrows(pos, rvel, state) {
     this.spinAxisArrow.setLength(0.4 + rvel.length() / 2, 0.1, 0.1)
     this.spinAxisArrow.position.copy(pos)
     this.spinAxisArrow.setDirection(norm(rvel))
@@ -63,7 +58,6 @@ export class BallMesh {
     )
     const shadowMaterial = new MeshBasicMaterial({ color: 0x111122 })
     this.shadow = new Mesh(shadowGeometry, shadowMaterial)
-    this.velocityArrow = new ArrowHelper(up, zero, 2, 0x000088)
     this.spinAxisArrow = new ArrowHelper(up, zero, 2, 0x000000)
   }
 }

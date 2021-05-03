@@ -33,3 +33,14 @@ export function roundVec(v) {
   v.z = round(v.z)
   return v
 }
+
+export function assertNotNaNVec(v, logObject?) {
+  if (isNaN(v.x) || isNaN(v.y) || isNaN(v.z)) {
+    if (logObject) {
+      console.log(logObject)
+    } else {
+      console.log(v)
+    }
+    throw new Error("Error vector contains NaN")
+  }
+}

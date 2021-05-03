@@ -51,11 +51,11 @@ export function rotateApplyUnrotate(theta, v, w, dv, dw) {
   const wr = w.clone().applyAxisAngle(up, theta)
 
   bounceWithSideX(vr, wr, dv, dw)
-//  if (isCushionXGrip(vr, wr)) {
-//    bounceWithoutSlipX(vr, wr, dv, dw)
-//  } else {
-//    bounceWithSlipX(vr, wr, dv, dw)
-//  }
+  //  if (isCushionXGrip(vr, wr)) {
+  //    bounceWithoutSlipX(vr, wr, dv, dw)
+  //  } else {
+  //    bounceWithSlipX(vr, wr, dv, dw)
+  //  }
 
   dv.applyAxisAngle(up, -theta)
   dw.applyAxisAngle(up, -theta)
@@ -103,7 +103,7 @@ export function isCushionXGrip(v, w) {
  */
 export function bounceWithSideX(v, w, dv, dw) {
   var newVx = -v.x * e
-  var newVy = v.y + R * (- w.z * cos_a)
+  var newVy = v.y + R * (-w.z * cos_a)
 
   var newWx = 0
   var newWy = w.y / 2
