@@ -14,6 +14,7 @@ import {
 
 export class Cue {
   mesh: Mesh
+  helperMesh: Mesh
   limit = 0.4
   maxPower = 60.0
   t = 0
@@ -28,14 +29,31 @@ export class Cue {
     flatShading: false,
   })
 
+  private static helpermaterial = new MeshPhongMaterial({
+    color: 0x885577,
+    wireframe: false,
+    flatShading: true,
+    transparent: true,
+    opacity: 0.3,
+  })
+
   constructor() {
     this.initialise(0.05, 0.15, this.length)
+  }
+
+  private createHelper() {
+    var geometry = new CylinderGeometry(0.5, 0.5, 30, 12)
+    this.helperMesh = new Mesh(geometry, Cue.helpermaterial)
+    this.helperMesh.geometry
+      .applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
+      .applyMatrix4(new Matrix4().identity().makeTranslation(15, 0, 0))
+    this.helperMesh.visible = false
   }
 
   private initialise(tip, but, length) {
     var geometry = new CylinderGeometry(tip, but, length, 11)
     this.mesh = new Mesh(geometry, Cue.material)
-    this.mesh.castShadow = true
+    this.mesh.castShadow = false
     this.mesh.geometry
       .applyMatrix4(
         new Matrix4()
@@ -47,11 +65,13 @@ export class Cue {
         new Matrix4().identity().makeTranslation(-length / 2 - 0.5, 0, 1)
       )
     this.mesh.rotation.z = this.aim.angle
+    this.createHelper()
   }
 
   rotateAim(angle) {
     this.aim.angle += angle
     this.mesh.rotation.z = this.aim.angle
+    this.helperMesh.rotation.z = this.aim.angle
   }
 
   adjustHeight(delta) {
@@ -96,6 +116,7 @@ export class Cue {
       .clone()
       .multiplyScalar(swing - (this.aim.power / this.maxPower) * 3)
     this.mesh.position.copy(pos.clone().add(offset).add(distanceToBall))
+    this.helperMesh.position.copy(pos)
   }
 
   update(t) {
