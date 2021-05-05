@@ -40,7 +40,7 @@ export class Aim extends ControllerBase {
       case "Space":
         this.container.table.cue.adjustPower(input.t * this.scale * 0.7)
         break
-      case "KeySUp":
+      case "KeyPUp":
         exportGltf(this.container.view.scene)
         break
       case "KeyHUp":
@@ -59,8 +59,8 @@ export class Aim extends ControllerBase {
       case "NumpadSubtract":
         this.container.view.camera.adjustHeight(-input.t * this.scale * 10)
         break
-      case "KeyHUp":
-        return this.hitSpinOnly()
+//      case "KeySUp":
+//        return this.hitSpinOnly()
       case "SpaceUp":
         return this.hit()
       default:
