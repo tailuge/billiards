@@ -41,6 +41,7 @@ export class Container {
       this.view.addMesh(b.ballmesh.spinAxisArrow)
     })
     this.view.addMesh(this.table.cue.mesh)
+    this.view.addMesh(this.table.cue.helperMesh)
     this.view.table = this.table
     this.updateController(new Init(this))
   }

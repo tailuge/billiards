@@ -1,6 +1,7 @@
 import { HitEvent } from "../events/hitevent"
 import { ControllerBase } from "./controllerbase"
 import { AimEvent } from "../events/aimevent"
+import { Controller, Input } from "./controller"
 
 export class Replay extends ControllerBase {
   readonly delay = 1500
@@ -41,6 +42,15 @@ export class Replay extends ControllerBase {
       }, this.delay)
     }
 
+    return this
+  }
+
+  handleInput(input: Input): Controller {
+    switch (input.key) {
+      case "KeyOUp":
+        this.container.view.camera.mode = this.container.view.camera.topView
+        break
+    }
     return this
   }
 }
