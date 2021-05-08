@@ -14,9 +14,13 @@ export class PlayShot extends ControllerBase {
 
   constructor(container) {
     super(container)
-    this.container.table.outcome = []
+    this.container.table.outcome = [
+      { type: "hit", incidentSpeed: this.container.table.cue.aim.power },
+    ]
     this.container.table.hit()
-    this.container.view.camera.mode = this.container.view.camera.afterHitView
+    this.container.view.camera.suggestMode(
+      this.container.view.camera.afterHitView
+    )
   }
 
   handleStationary(_) {

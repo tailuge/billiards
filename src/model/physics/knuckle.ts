@@ -20,6 +20,7 @@ export class Knuckle {
     const kb = ball.pos.clone().sub(this.pos).normalize()
     let velDotCenters = kb.dot(ball.vel)
     ball.vel.addScaledVector(kb, -2 * e * velDotCenters)
+    return Math.abs(velDotCenters)
   }
 
   static willBounceAny(ball: Ball, t: number) {

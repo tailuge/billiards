@@ -10,7 +10,7 @@ export class Collision {
   }
 
   static collide(a: Ball, b: Ball) {
-    Collision.updateVelocities(a, b)
+    return Collision.updateVelocities(a, b)
   }
 
   private static updateVelocities(a: Ball, b: Ball) {
@@ -21,5 +21,6 @@ export class Collision {
     b.vel.addScaledVector(ab, aDotCenters).addScaledVector(ab, -bDotCenters)
     a.state = State.Sliding
     b.state = State.Sliding
+    return Math.abs(aDotCenters) + Math.abs(bDotCenters)
   }
 }

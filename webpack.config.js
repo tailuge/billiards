@@ -38,4 +38,7 @@ module.exports = {
         usedExports: true,
         moduleIds: 'named'
     },
+    stats: {
+        errorDetails: true
+    }
 };

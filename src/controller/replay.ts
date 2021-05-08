@@ -18,7 +18,7 @@ export class Replay extends ControllerBase {
     var aim = AimEvent.fromJson(this.shots.shift())
     this.container.table.cue.aim = aim
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
-    this.container.view.camera.mode = this.container.view.camera.aimView
+    this.container.view.camera.suggestMode(this.container.view.camera.aimView)
     setTimeout(() => {
       this.container.eventQueue.push(new HitEvent({}))
     }, this.delay)
@@ -27,7 +27,9 @@ export class Replay extends ControllerBase {
   handleHit(_: HitEvent) {
     this.container.table.outcome = []
     this.container.table.hit()
-    this.container.view.camera.mode = this.container.view.camera.afterHitView
+    this.container.view.camera.suggestMode(
+      this.container.view.camera.afterHitView
+    )
     return this
   }
 
@@ -48,7 +50,7 @@ export class Replay extends ControllerBase {
   handleInput(input: Input): Controller {
     switch (input.key) {
       case "KeyOUp":
-        this.container.view.camera.mode = this.container.view.camera.topView
+        this.container.view.camera.toggleMode()
         break
     }
     return this

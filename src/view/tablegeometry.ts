@@ -193,6 +193,8 @@ export class TableGeometry {
     color: 0x445599,
     wireframe: false,
     flatShading: true,
+    transparent: true,
+    opacity: 0.4,
   })
 
   private static knuckleCylinder(knuckle, scene) {

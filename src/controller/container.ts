@@ -9,6 +9,7 @@ import { Rack } from "../utils/rack"
 import { EventUtil } from "../events/eventutil"
 import { AimInputs } from "../view/aiminputs"
 import { Keyboard } from "../events/keyboard"
+import { Sound } from "../view/sound"
 
 /**
  * Model, View, Controller container.
@@ -21,7 +22,7 @@ export class Container {
   eventQueue: GameEvent[] = []
   aimInputs: AimInputs
   keyboard: Keyboard
-
+  sound: Sound
   last = performance.now()
   readonly step = 0.001
 
@@ -34,6 +35,7 @@ export class Container {
     this.view = new View(element, ready)
     this.aimInputs = new AimInputs(this)
     this.keyboard = keyboard
+    this.sound = new Sound(this.view.camera.camera)
 
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
@@ -62,6 +64,10 @@ export class Container {
     this.table.cue.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())
+    } else {
+      if (this.table.outcome.length > 0) {
+        this.sound.eventToSounds(this.table.outcome.shift())
+      }
     }
   }
 

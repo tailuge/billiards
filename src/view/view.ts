@@ -62,7 +62,7 @@ export class View {
     this.updateSize()
 
     if (this.isInMotionNotVisible()) {
-      this.camera.mode = this.camera.topView
+      this.camera.suggestMode(this.camera.topView)
       this.camera.standback += 1
     }
 

@@ -61,16 +61,16 @@ export class Cushion {
   static bounce(ball: Ball, t: number) {
     const futurePosition = ball.futurePosition(t)
     if (futurePosition.x > TableGeometry.tableX) {
-      Cushion.bounceIn(0, ball)
+      return Cushion.bounceIn(0, ball)
     }
     if (futurePosition.x < -TableGeometry.tableX) {
-      Cushion.bounceIn(Math.PI, ball)
+      return Cushion.bounceIn(Math.PI, ball)
     }
     if (futurePosition.y > TableGeometry.tableY) {
-      Cushion.bounceIn(-Math.PI / 2, ball)
+      return Cushion.bounceIn(-Math.PI / 2, ball)
     }
     if (futurePosition.y < -TableGeometry.tableY) {
-      Cushion.bounceIn(Math.PI / 2, ball)
+      return Cushion.bounceIn(Math.PI / 2, ball)
     }
   }
 
@@ -80,7 +80,7 @@ export class Cushion {
 
     rotateApplyUnrotate(rotation, ball.vel, ball.rvel, dv, dw)
     ball.vel.add(dv)
-    //ball.rvel.setLength(ball.rvel.length() / 4.0)
     ball.rvel.add(dw)
+    return dv.length()
   }
 }

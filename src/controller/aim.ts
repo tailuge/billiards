@@ -14,7 +14,7 @@ export class Aim extends ControllerBase {
     super(container)
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
     this.container.table.cue.aim.power = 0
-    this.container.view.camera.mode = this.container.view.camera.aimView
+    this.container.view.camera.suggestMode(this.container.view.camera.aimView)
   }
 
   handleInput(input: Input): Controller {
@@ -59,8 +59,11 @@ export class Aim extends ControllerBase {
       case "NumpadSubtract":
         this.container.view.camera.adjustHeight(-input.t * this.scale * 10)
         break
-//      case "KeySUp":
-//        return this.hitSpinOnly()
+      case "KeySUp":
+        return this.hitSpinOnly()
+      case "KeyOUp":
+        this.container.view.camera.toggleMode()
+        break
       case "SpaceUp":
         return this.hit()
       default:

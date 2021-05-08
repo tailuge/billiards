@@ -17,7 +17,7 @@ export class PlaceBall extends ControllerBase {
     super(container)
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
     this.container.table.cue.aim.power = 0
-    this.container.view.camera.mode = this.container.view.camera.aimView
+    this.container.view.camera.forceMode(this.container.view.camera.aimView)
     this.container.table.cue.mesh.visible = false
   }
 

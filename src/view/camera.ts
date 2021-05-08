@@ -8,7 +8,8 @@ export class Camera {
   }
 
   camera: PerspectiveCamera
-  mode = this.topView
+  private mode = this.topView
+  private mainMode = this.aimView
 
   private topViewPoint = new Vector3(0, -0.1, 49)
   private height = 2.8
@@ -51,5 +52,25 @@ export class Camera {
 
   adjustHeight(delta) {
     this.height = MathUtils.clamp(this.height + delta, 1, 6)
+  }
+
+  suggestMode(mode) {
+    if (this.mainMode === this.aimView) {
+      this.mode = mode
+    }
+  }
+
+  forceMode(mode) {
+    this.mode = mode
+    this.mainMode = mode
+  }
+
+  toggleMode() {
+    if (this.mode === this.topView) {
+      this.mode = this.aimView
+    } else {
+      this.mode = this.topView
+    }
+    this.mainMode = this.mode
   }
 }

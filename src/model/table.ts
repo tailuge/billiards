@@ -59,8 +59,13 @@ export class Table {
       return true
     }
     if (Collision.willCollide(a, b, t)) {
-      Collision.collide(a, b)
-      this.outcome.push({ type: "collision", a: a, b: b })
+      var incidentSpeed = Collision.collide(a, b)
+      this.outcome.push({
+        type: "collision",
+        a: a,
+        b: b,
+        incidentSpeed: incidentSpeed,
+      })
       return false
     }
     return this.prepareAdvanceToCushions(a, t)
@@ -76,14 +81,18 @@ export class Table {
     }
 
     if (Cushion.willBounce(a, t)) {
-      Cushion.bounce(a, t)
-      this.outcome.push({ type: "cushion", a: a })
+      var incidentSpeed = Cushion.bounce(a, t)
+      this.outcome.push({ type: "cushion", a: a, incidentSpeed: incidentSpeed })
       return false
     }
     let k = Knuckle.willBounceAny(a, t)
     if (k) {
-      k.bounce(a)
-      this.outcome.push({ type: "cushion", a: a })
+      var knuckleIncidentSpeed = k.bounce(a)
+      this.outcome.push({
+        type: "cushion",
+        a: a,
+        incidentSpeed: knuckleIncidentSpeed,
+      })
       return false
     }
     let p = Pocket.willFallAny(a, t)

@@ -9,7 +9,7 @@ export class WatchAim extends ControllerBase {
   constructor(container) {
     super(container)
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
-    this.container.view.camera.mode = this.container.view.camera.topView
+    this.container.view.camera.suggestMode(this.container.view.camera.topView)
   }
 
   handleAim(event: AimEvent) {
