@@ -7,6 +7,7 @@ export class Sound {
   ballcollision
   cue
   cushion
+  pot
 
   constructor(camera) {
     camera.add(this.listener)
@@ -19,6 +20,9 @@ export class Sound {
 
     this.cushion = new Audio(this.listener)
     this.load("sounds/cushion.ogg", this.cushion)
+
+    this.pot = new Audio(this.listener)
+    this.load("sounds/pot.ogg", this.pot)
   }
 
   load(path, audio) {
@@ -39,6 +43,7 @@ export class Sound {
       this.play(this.ballcollision, outcome.incidentSpeed / 60)
     }
     if (outcome.type === "pot") {
+      this.play(this.pot, 1)
     }
     if (outcome.type === "cushion") {
       this.play(this.cushion, outcome.incidentSpeed / 60)
