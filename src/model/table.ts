@@ -97,8 +97,12 @@ export class Table {
     }
     let p = Pocket.willFallAny(a, t)
     if (p) {
-      p.fall(a, t)
-      this.outcome.push({ type: "pot", a: a })
+      var pocketIncidentSpeed = p.fall(a, t)
+      this.outcome.push({
+        type: "pot",
+        a: a,
+        incidentSpeed: pocketIncidentSpeed,
+      })
       return false
     }
 

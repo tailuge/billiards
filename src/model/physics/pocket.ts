@@ -20,6 +20,7 @@ export class Pocket {
     ball.vel.z = -g * t
     ball.state = State.Falling
     ball.pocket = this
+    return ball.vel.length()
   }
 
   static willFallAny(ball: Ball, t: number) {

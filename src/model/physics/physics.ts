@@ -15,7 +15,6 @@ export function sliding(v, w, dv, dw) {
   dv.copy(norm(va).multiplyScalar(-mu * g))
   dw.copy(norm(upCross(va)).multiplyScalar((5 / 2) * mu * g))
   dw.setZ(-(5 / 2) * Mz * Math.sign(w.z))
-  //dw.setZ(-w.z * 0.4)
 }
 
 export function slidingFull(v, w, dv, dw) {
@@ -102,15 +101,25 @@ export function isCushionXGrip(v, w) {
  * Own version
  */
 export function bounceWithSideX(v, w, dv, dw) {
-  var newVx = -v.x * e
-  var newVy = v.y + R * (-w.z * cos_a)
+  //gripInXCushion(v,w)
 
-  var newWx = 0
-  var newWy = w.y / 2
+  var newVx = -v.x * e
+  var newVy = v.y + R * ((-w.z * cos_a * Math.abs(v.x)) / 50)
+
+  var newWx = w.x * 0.9
+  var newWy = 0
   var newWz = w.z / 2
 
   dv.set(newVx - v.x, newVy - v.y, 0)
   dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
+}
+
+export function gripInXCushion(v, w) {
+  var ballCushionSurfaceVelocity = Math.abs(v.y + w.z * R)
+  console.log(
+    ballCushionSurfaceVelocity,
+    ballCushionSurfaceVelocity > 20 ? "slip" : "grip"
+  )
 }
 
 export function bounceWithoutSlipX(v, w, dv, dw) {
