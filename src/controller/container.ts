@@ -40,7 +40,7 @@ export class Container {
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
       this.view.addMesh(b.ballmesh.shadow)
-      this.view.addMesh(b.ballmesh.spinAxisArrow)
+//      this.view.addMesh(b.ballmesh.spinAxisArrow)
     })
     this.view.addMesh(this.table.cue.mesh)
     this.view.addMesh(this.table.cue.helperMesh)

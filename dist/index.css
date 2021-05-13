@@ -50,7 +50,7 @@ p {
 .cueBall {
   height: 15vmin;
   width: 15vmin;
-  background-color: grey;
+  background-color: rgba(165, 165, 165, 0.582);
   border-radius: 50%;
   float: left;
 }

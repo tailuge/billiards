@@ -104,7 +104,7 @@ export function bounceWithSideX(v, w, dv, dw) {
   //gripInXCushion(v,w)
 
   var newVx = -v.x * e
-  var newVy = v.y + R * ((-w.z * cos_a * Math.abs(v.x)) / 50)
+  var newVy = v.y + R * ((-w.z * cos_a * Math.abs(v.x)) / 30)
 
   var newWx = w.x * 0.9
   var newWy = 0

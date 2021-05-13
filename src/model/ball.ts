@@ -46,7 +46,7 @@ export class Ball {
 
   updateMesh(t) {
     this.ballmesh.updatePosition(this.pos)
-    this.ballmesh.updateArrows(this.pos, this.rvel, this.state)
+//    this.ballmesh.updateArrows(this.pos, this.rvel, this.state)
     if (this.rvel.lengthSq() != 0) {
       this.ballmesh.updateRotation(this.rvel, t)
     }

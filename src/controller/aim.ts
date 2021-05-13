@@ -44,8 +44,8 @@ export class Aim extends ControllerBase {
         exportGltf(this.container.view.scene)
         break
       case "KeyHUp":
-        this.container.table.cue.helperMesh.visible = !this.container.table.cue
-          .helperMesh.visible
+        this.container.table.cue.helperMesh.visible =
+          !this.container.table.cue.helperMesh.visible
         break
       case "movementXUp":
         this.container.table.cue.rotateAim(input.t * this.scale * 2)
