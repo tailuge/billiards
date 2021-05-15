@@ -15,11 +15,11 @@ export class TableGeometry {
   static Y = TableGeometry.tableY + 0.5
   static PX = TableGeometry.tableX + 0.8
   static PY = TableGeometry.tableY + 0.8
-  static knuckleInset = 1.7
-  static knuckleRadius = 0.5
+  static knuckleInset = 1.6
+  static knuckleRadius = 0.31
   static middleKnuckleInset = 1.385
   static middleKnuckleRadius = 0.2
-  static cornerRadius = 1.05
+  static cornerRadius = 1.1
   static middleRadius = 0.9
   static readonly pockets = {
     pocketNW: {
@@ -187,6 +187,11 @@ export class TableGeometry {
     TableGeometry.pocketCenters.forEach((p) =>
       TableGeometry.knuckleCylinder(p, scene)
     )
+    /*
+    const p = TableGeometry.pockets.pocketNW.pocket
+    const k = TableGeometry.pockets.pocketNW.knuckleNE
+    console.log("knuckle-pocket gap = " + (p.pos.distanceTo(k.pos) - p.radius - k.radius))
+    */
   }
 
   private static material = new MeshPhongMaterial({

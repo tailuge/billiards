@@ -9,7 +9,7 @@ export class Diagram {
 
   last = performance.now()
 
-  readonly step = 0.01
+  readonly step = 0.001
   readonly tablecolor = "#0a5c5c"
   readonly colors = ["#aaaaaa", "#ff0000", "#ffff00"]
 
@@ -58,7 +58,7 @@ export class Diagram {
   }
 
   advance(elapsed) {
-    const steps = Math.max(15, Math.floor(elapsed / this.step))
+    const steps = Math.floor(elapsed / this.step)
     for (var i = 0; i < steps; i++) {
       this.table.advance(this.step)
     }
@@ -73,6 +73,8 @@ export class Diagram {
       requestAnimationFrame((t) => {
         this.animate(t)
       })
+    } else {
+      console.log("diagram complete")
     }
   }
 

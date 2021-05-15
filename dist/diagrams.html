@@ -8,88 +8,26 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="description" content="billiards diagrams" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <link rel="stylesheet" type="text/css" href="index.css" />
-
+    <link rel="stylesheet" type="text/css" href="diagrams.css" />
 </head>
 
 <body>
-    <h1>WIP</h1>
 
-    spin perpendicular to cushion
-    <div id="section1" class="flex-container">
-
-        <div id="diagram1_1">
-            <canvas id="canvas" width="200" height="105" style="border:1px solid #111111;"></canvas>
+    <div id="diagram1">
+            <canvas id="canvas" width="400" height="210" style="border:1px solid #111111;"></canvas>
             <div id="control"></div>
-        </div>
-        <div id="diagram1_2">
-            <canvas id="canvas" width="200" height="105" style="border:1px solid #111111;"></canvas>
-            <div id="control"></div>
-        </div>
-        <div id="diagram1_3">
-            <canvas id="canvas" width="200" height="105" style="border:1px solid #111111;"></canvas>
-            <div id="control"></div>
-        </div>
-        <div id="diagram1_4">
-            <canvas id="canvas" width="200" height="105" style="border:1px solid #111111;"></canvas>
-            <div id="control"></div>
-        </div>
     </div>
 
-    spin near perpendicular to cushion
-    <div id="section2" class="flex-container">
-        <div id="diagram2_1">
-            <canvas id="canvas" width="200" height="105" style="border:1px solid #111111;"></canvas>
-            <div id="control"></div>
-        </div>
+    <div id="diagram2">
+        <canvas id="canvas" width="400" height="210" style="border:1px solid #111111;"></canvas>
+        <div id="control"></div>
     </div>
 
-    <footer>
-        <button onClick="window.location.reload();"
-            style="font-size:xx-small; background-color: grey; border:1px solid;">Refresh Page</button>
-    </footer>
     <script src="vendor.js">
     </script>
     <script src="diagram.js">
     </script>
-    <script>
-        function elt(diagram, id) {
-            return document.querySelector("#" + diagram + " #" + id);
-        }
-
-        window.onload = function () {
-
-            var maxSpeed = 2
-            var lowSpeed = maxSpeed * 0.1
-            makeDiagram("diagram1_1", [makeBall(0, 0, -maxSpeed, 0, 0, 0, 0),
-            makeBall(2, 2, -maxSpeed, 0, 0, 0, 1),
-            makeBall(-2, -2, -maxSpeed, 0, 0, 0, -1)]);
-            makeDiagram("diagram1_2", [makeBall(0, 0, maxSpeed, 0, 0, 0, 0),
-            makeBall(-2, -2, maxSpeed, 0, 0, 0, 1),
-            makeBall(2, 2, maxSpeed, 0, 0, 0, -1)]);
-            makeDiagram("diagram1_3", [makeBall(4, 0, 0, -maxSpeed * 0.7, 0, 0, 0),
-            makeBall(2, -2, 0, -maxSpeed * 0.7, 0, 0, 1),
-            makeBall(6, 2, 0, -maxSpeed * 0.7, 0, 0, -1)]);
-            makeDiagram("diagram1_4", [makeBall(4, 0, 0, maxSpeed * 0.7, 0, 0, 0),
-            makeBall(2, -2, 0, maxSpeed * 0.7, 0, 0, -1),
-            makeBall(6, 2, 0, maxSpeed * 0.7, 0, 0, 1)]);
-
-            makeDiagram("diagram2_1", [makeBall(0, 0, -maxSpeed, lowSpeed, 0, 0, 0),
-            makeBall(0, 2, -maxSpeed, lowSpeed, 0, 0, 1),
-            makeBall(0, -2, -maxSpeed, lowSpeed, 0, 0, -1)]);
-
-            document.getElementById("section2").scrollIntoView();
-        }
-
-        function makeDiagram(id, balls) {
-
-            // new EntryPoint.Diagram({ balls: balls }, elt(id, "canvas").getContext("2d"), elt(id, "control"));
-        }
-
-        function makeBall(x, y, vx, vy, wx, wy, wz) {
-            return { pos: { x: x, y: y, z: 0 }, vel: { x: vx, y: vy, z: 0 }, rvel: { x: wx, y: wy, z: wz }, state: "Stationary" };
-        }
-    </script>
+ 
 </body>
 
 </html>

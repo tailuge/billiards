@@ -31,7 +31,7 @@ export function rollingFull(w, dv, dw) {
   const mag = new Vector3(w.x, w.y, 0).length()
   const k = ((5 / 7) * Mxy) / mag
   dv.set(-k * w.y, k * w.x, 0)
-  dw.set(-k * w.x, -k * w.y, -k * w.z)
+  dw.set(-k * w.x, -k * w.y, -(5 / 2) * Mz * Math.sign(w.z))
 }
 
 export function forceRoll(v, w) {
