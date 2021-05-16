@@ -11,7 +11,7 @@ import { round } from "../utils/utils"
  *
  */
 export class PlaceBall extends ControllerBase {
-  readonly scale = 0.01
+  readonly placescale = 0.01
 
   constructor(container) {
     super(container)
@@ -25,39 +25,40 @@ export class PlaceBall extends ControllerBase {
     switch (input.key) {
       case "ArrowLeft":
         this.container.table.balls[0].pos.y = MathUtils.clamp(
-          round(this.container.table.balls[0].pos.y + input.t * this.scale),
+          round(
+            this.container.table.balls[0].pos.y + input.t * this.placescale
+          ),
           -TableGeometry.tableY,
           TableGeometry.tableY
         )
         break
       case "ArrowRight":
         this.container.table.balls[0].pos.y = MathUtils.clamp(
-          round(this.container.table.balls[0].pos.y - input.t * this.scale),
+          round(
+            this.container.table.balls[0].pos.y - input.t * this.placescale
+          ),
           -TableGeometry.tableY,
           TableGeometry.tableY
         )
         break
       case "movementXUp":
         this.container.table.balls[0].pos.y = MathUtils.clamp(
-          round(this.container.table.balls[0].pos.y - input.t * this.scale * 2),
+          round(
+            this.container.table.balls[0].pos.y - input.t * this.placescale * 2
+          ),
           -TableGeometry.tableY,
           TableGeometry.tableY
         )
-        break
-      case "NumpadAdd":
-        this.container.view.camera.adjustHeight(input.t * this.scale * 10)
-        break
-      case "NumpadSubtract":
-        this.container.view.camera.adjustHeight(-input.t * this.scale * 10)
         break
 
       case "SpaceUp":
         return this.placed()
       default:
-        return this
+        this.commonKeyHandler(input)
     }
+
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
-    this.container.view.camera.aimView(this.container.table.cue.aim, 1)
+    this.container.view.camera.forceMove(this.container.table.cue.aim)
 
     return this
   }

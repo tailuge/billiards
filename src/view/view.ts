@@ -3,6 +3,7 @@ import { Camera } from "./camera"
 import { OverheadCamera } from "./overheadcamera"
 import { AimEvent } from "../events/aimevent"
 import { importGltf } from "../utils/gltf"
+import { Grid } from "./grid"
 
 export class View {
   scene = new Scene()
@@ -105,6 +106,7 @@ export class View {
     this.scene.add(new AmbientLight(0x303030, 1.0))
     importGltf("models/p8.gltf", this.scene, ready)
     //TableGeometry.addToScene(this.scene)
+    this.scene.add(new Grid().generateLineSegments())
   }
 
   addMesh(mesh) {

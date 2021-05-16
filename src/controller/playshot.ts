@@ -1,4 +1,4 @@
-import { Controller } from "./controller"
+import { Controller, Input } from "./controller"
 import { WatchEvent } from "../events/watchevent"
 import { Aim } from "./aim"
 //import { WatchAim } from "./watchaim"
@@ -38,5 +38,10 @@ export class PlayShot extends ControllerBase {
     //  return new WatchAim(this.container)
     this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
     return new Aim(this.container)
+  }
+
+  handleInput(input: Input): Controller {
+    this.commonKeyHandler(input)
+    return this
   }
 }

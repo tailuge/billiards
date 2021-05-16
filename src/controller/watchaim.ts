@@ -4,8 +4,6 @@ import { WatchShot } from "./watchshot"
 import { ControllerBase } from "./controllerbase"
 
 export class WatchAim extends ControllerBase {
-  readonly scale = 0.000001
-
   constructor(container) {
     super(container)
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)

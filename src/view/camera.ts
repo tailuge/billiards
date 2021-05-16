@@ -34,7 +34,7 @@ export class Camera {
     )
     this.camera.position.z = this.height
     this.camera.up = up
-    this.camera.lookAt(aim.pos.clone().addScaledVector(up,1))
+    this.camera.lookAt(aim.pos.clone().addScaledVector(up, 1))
     this.standback = 9
   }
 
@@ -47,7 +47,7 @@ export class Camera {
     )
     this.camera.position.z = this.height + (this.standback - 9)
     this.camera.up = up
-    this.camera.lookAt(aim.pos.clone().addScaledVector(up,1))
+    this.camera.lookAt(aim.pos.clone().addScaledVector(up, 1))
   }
 
   adjustHeight(delta) {
@@ -63,6 +63,12 @@ export class Camera {
   forceMode(mode) {
     this.mode = mode
     this.mainMode = mode
+  }
+
+  forceMove(aim: AimEvent) {
+    if (this.mode === this.aimView) {
+      this.aimView(aim, 1)
+    }
   }
 
   toggleMode() {
