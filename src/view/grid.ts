@@ -5,7 +5,7 @@ import { TableGeometry } from "./tablegeometry"
 export class Grid {
   readonly z = -0.49
   readonly material = new LineBasicMaterial({
-    color: 0x000044,
+    color: 0x000084,
     opacity: 0.3,
     transparent: true,
   })
