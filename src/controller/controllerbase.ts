@@ -5,7 +5,6 @@ import { End } from "./end"
 import { exportGltf } from "../utils/gltf"
 
 export abstract class ControllerBase extends Controller {
-
   readonly scale = 0.001
 
   constructor(container: Container) {
