@@ -28,7 +28,7 @@ describe("Table", () => {
 
   it("a momentum transferes to c", (done) => {
     let a = new Ball(zero)
-    a.vel.x = 1
+    a.vel.x = 2
     a.state = State.Sliding
     let b = new Ball(new Vector3(1, 0, 0))
     let c = new Ball(new Vector3(2, 0, 0))
@@ -36,7 +36,7 @@ describe("Table", () => {
     expect(table.allStationary()).to.be.false
     expect(table.prepareAdvanceAll(t)).to.be.false
     table.advance(t)
-    expect(c.vel.x).to.be.closeTo(1, 0.1)
+    expect(c.vel.x).to.be.closeTo(1, 0.5)
     expect(table.prepareAdvanceAll(t)).to.be.true
     done()
   })
@@ -56,10 +56,10 @@ describe("Table", () => {
   })
 
   it("a pots b", (done) => {
-    let edge = -TableGeometry.PY + TableGeometry.middleRadius + 0.5
+    let edge = TableGeometry.pockets.pocketS.pocket.pos.y + TableGeometry.middleRadius + 0.01
     let a = new Ball(new Vector3(0, edge + 1, 0))
     let b = new Ball(new Vector3(0, edge, 0))
-    a.vel.y = -10
+    a.vel.y = -2
     a.state = State.Sliding
     let table = new Table([a, b])
     let s = table.prepareAdvanceAll(t)
@@ -114,14 +114,4 @@ describe("Table", () => {
     done()
   })
 
-  it("illegal state throws", (done) => {
-    let a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
-    a.vel.x = 0.1
-    let b = new Ball(new Vector3(-TableGeometry.tableX + 0.5, 0, 0))
-    let table = new Table([a, b])
-    expect(() => {
-      table.advance(t)
-    }).to.throw()
-    done()
-  })
 })
