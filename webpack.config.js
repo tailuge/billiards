@@ -20,8 +20,10 @@ module.exports = {
         extensions: ['.ts', '.js']
     },
     devServer: {
-        contentBase: path.join(__dirname, 'dist'),
-        disableHostCheck: true,
+        static: {
+            directory: path.join(__dirname, 'dist'),
+          },
+        allowedHosts: ['.gitpod.io'],
         host: '0.0.0.0',
         compress: true,
         port: 8080
