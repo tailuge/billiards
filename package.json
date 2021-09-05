@@ -11,8 +11,19 @@
         "dev": "webpack ",
         "prettify": "prettier --write --no-semi {src,test}/**/*.[jt]s",
         "serve": "webpack serve --port $(gp url 8080)",
-        "deps": "npx yarn-check --skip-unused"
+        "deps": "npx yarn-check --skip-unused",
+        "websocket": "nodemon src/server/server.ts"
     },
+    "nodemonConfig": {
+        "watch": [
+          "src/server"
+        ],
+        "ext": "ts",
+        "delay": "2",
+        "execMap": {
+          "ts": "ts-node"
+        }
+      },
     "dependencies": {
         "three": "^0.132.2"
     },
@@ -25,9 +36,11 @@
         "jest": "^27.1.0",
         "mocha": "^9.1.1",
         "node-notifier": "^10.0.0",
+        "nodemon": "^2.0.12",
         "prettier": "^2.3.2",
         "ts-jest": "^27.0.5",
         "ts-loader": "^9.2.5",
+        "ts-node": "^10.2.1",
         "typescript": "^4.4.2",
         "webpack": "^5.52.0",
         "webpack-cli": "^4.8.0",

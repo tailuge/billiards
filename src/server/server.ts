@@ -1,23 +1,21 @@
-import { WebSocketServer } from 'ws';
+import { WebSocketServer } from 'ws'
+import { execSync } from 'child_process'
 
-const wss = new WebSocketServer({ port: 8888 });
+const port = 8888
+const wss = new WebSocketServer({ port: port })
 
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-    ws.send('something');
-  });
+    console.log('received: %s', message)
+    ws.send('something')
+  })
 
-});
+})
 
-
-console.log('WebSocketServer is running');
+const exposedPort = execSync(`echo $(gp url ${port})`)
+console.log(`WebSocketServer on localhost:${port} is exposed through gitpod at ${exposedPort}`)
 
 /*
-server:
-
-tsc src/server/server.ts 
-node src/server/server.js 
 
 client:
 
