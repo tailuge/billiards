@@ -4,18 +4,21 @@ import { EventUtil } from "./events/eventutil"
 import { EventType } from "./events/eventtype"
 import { BreakEvent } from "./events/breakevent"
 import { HitEvent } from "./events/hitevent"
+import { SocketConnection } from "./events/socketconnection"
 
-var controller1
+var sc: SocketConnection | null
+var container: Container
 var state = {
   init: null,
   shots: Array<any>(),
 }
-var ws
 
-playReplay()
+initialise()
 
-function playReplay() {
-  controller1 = new Container(
+function initialise() {
+  const websocketserver = /websocketserver=([^ &?]*)/.exec(location.search)
+  sc = websocketserver ? new SocketConnection(websocketserver[1]) : null
+  container = new Container(
     document.getElementById("viewP1"),
     (_) => {},
     new Keyboard(document.getElementById("viewP1")),
@@ -24,33 +27,16 @@ function playReplay() {
 }
 
 function onAssetsReady() {
-  const wss = /websocketserver=([^ &?]*)/.exec(location.search)
-  if (wss !== null) {
-    console.log(`Websocket server is ${wss[1]}`)
-    ws = new WebSocket(wss[1])
-    ws.onclose = function () {
-      console.log("connection closed")
-    }
-    ws.onerror = function (e) {
-      console.log("error", e)
-    }
-    ws.onmessage = function (e) {
-      console.log("received:", e)
-    }
-    ws.onopen = function () {
-      console.log("connected ok")
-    }
-  }
   const args = /state=(.*)/.exec(location.search)
 
   if (args !== null) {
     state = JSON.parse(decodeURI(args[1]))
-    controller1.eventQueue.push(new BreakEvent(state.init, state.shots))
+    container.eventQueue.push(new BreakEvent(state.init, state.shots))
   } else {
-    controller1.eventQueue.push(new BreakEvent())
+    container.eventQueue.push(new BreakEvent())
   }
 
-  controller1.broadcast = (e: string) => {
+  container.broadcast = (e: string) => {
     let event = EventUtil.fromSerialised(e)
     if (event.type === EventType.BREAK) {
       state.init = (<BreakEvent>event).init
@@ -61,12 +47,10 @@ function onAssetsReady() {
       let uri = encodeURI(`${window.location}?&state=${JSON.stringify(state)}`)
       console.log(uri)
 
-      if (ws) {
-        ws.send(e)
-      }
+      sc?.send(e)
     }
   }
 
   // trigger animation loops
-  controller1.animate(performance.now())
+  container.animate(performance.now())
 }
