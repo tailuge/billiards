@@ -10,6 +10,7 @@ var state = {
   init: null,
   shots: Array<any>(),
 }
+var ws
 
 playReplay()
 
@@ -23,8 +24,25 @@ function playReplay() {
 }
 
 function onAssetsReady() {
-  console.log("Assets loaded")
+  const wss = /websocketserver=([^ &?]*)/.exec(location.search)
+  if (wss !== null) {
+    console.log(`Websocket server is ${wss[1]}`)
+    ws = new WebSocket(wss[1])
+    ws.onclose = function () {
+      console.log("connection closed")
+    }
+    ws.onerror = function (e) {
+      console.log("error", e)
+    }
+    ws.onmessage = function (e) {
+      console.log("received:", e)
+    }
+    ws.onopen = function () {
+      console.log("connected ok")
+    }
+  }
   const args = /state=(.*)/.exec(location.search)
+
   if (args !== null) {
     state = JSON.parse(decodeURI(args[1]))
     controller1.eventQueue.push(new BreakEvent(state.init, state.shots))
@@ -42,6 +60,10 @@ function onAssetsReady() {
       console.log("break of " + state.shots.length)
       let uri = encodeURI(`${window.location}?&state=${JSON.stringify(state)}`)
       console.log(uri)
+
+      if (ws) {
+        ws.send(e)
+      }
     }
   }
 

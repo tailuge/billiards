@@ -56,7 +56,10 @@ describe("Table", () => {
   })
 
   it("a pots b", (done) => {
-    let edge = TableGeometry.pockets.pocketS.pocket.pos.y + TableGeometry.middleRadius + 0.01
+    let edge =
+      TableGeometry.pockets.pocketS.pocket.pos.y +
+      TableGeometry.middleRadius +
+      0.01
     let a = new Ball(new Vector3(0, edge + 1, 0))
     let b = new Ball(new Vector3(0, edge, 0))
     a.vel.y = -2
@@ -113,5 +116,4 @@ describe("Table", () => {
     expect(table.balls[0].pos.x).to.be.equal(0)
     done()
   })
-
 })

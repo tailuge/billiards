@@ -98,7 +98,7 @@ describe("Ball", () => {
     expect(ball.rvel.y).to.be.below(1)
     done()
   })
-/*
+  /*
   it("topspin ball eventualy starts to roll", (done) => {
     let ball = new Ball(new Vector3())
     ball.vel.x = 0
