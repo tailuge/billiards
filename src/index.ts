@@ -15,6 +15,12 @@ var state = {
 
 initialise()
 
+function netEvent(e) {
+  console.log(e)
+  let event = EventUtil.fromSerialised(e)
+  container.eventQueue.push(event)
+}
+
 function initialise() {
   const websocketserver = /websocketserver=([^ &?]*)/.exec(location.search)
   sc = websocketserver ? new SocketConnection(websocketserver[1]) : null
@@ -24,6 +30,11 @@ function initialise() {
     new Keyboard(document.getElementById("viewP1")),
     onAssetsReady
   )
+  if (sc) {
+    sc.eventHandler = netEvent
+    console.log("set eventhandler")
+    console.log(sc.eventHandler)
+  }
 }
 
 function onAssetsReady() {
