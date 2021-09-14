@@ -5,6 +5,10 @@ const port = 8888
 const wss = new WebSocketServer({ port: port })
 
 wss.on("connection", function connection(ws) {
+  if (wss.clients.size == 2) {
+    console.log("Two connections, sending start")
+    ws.send("start")
+  }
   ws.on("message", function incoming(message) {
     console.log("received: %s", message)
     sendToOther(ws, message)

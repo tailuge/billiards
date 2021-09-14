@@ -31,8 +31,6 @@ function initialise() {
   )
   if (sc) {
     sc.eventHandler = netEvent
-    console.log("set eventhandler")
-    console.log(sc.eventHandler)
   }
 }
 
