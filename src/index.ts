@@ -16,7 +16,6 @@ var state = {
 initialise()
 
 function netEvent(e) {
-  console.log(e)
   let event = EventUtil.fromSerialised(e)
   container.eventQueue.push(event)
 }

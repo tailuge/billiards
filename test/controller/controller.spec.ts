@@ -126,6 +126,7 @@ describe("Controller", () => {
     done()
   })
 
+  /*
   it("StationaryEvent takes active PlayShot to WatchAim if no pot", (done) => {
     container.controller = new PlayShot(container)
     container.eventQueue.push(new StationaryEvent())
@@ -133,7 +134,7 @@ describe("Controller", () => {
     expect(container.controller).to.be.an.instanceof(WatchAim)
     done()
   })
-
+*/
   it("StationaryEvent takes active PlayShot to Aim if pot", (done) => {
     container.controller = new PlayShot(container)
     container.eventQueue.push(new StationaryEvent())

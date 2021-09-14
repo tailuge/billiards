@@ -41,4 +41,13 @@ ws.onopen = function() { console.log("open"); };
 ws.send("hi")
 ws.close()
 
+
+create game
+{p1:guid, p2:guid, spectator:guid}
+
+join guid
+
+only listen to p1,p2
+broadcast to all
+
 */
