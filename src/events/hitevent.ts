@@ -1,14 +1,15 @@
 import { GameEvent } from "./gameevent"
 import { EventType } from "./eventtype"
-import { Controller } from "../controller/controller"
+import { AimEvent, Controller } from "../controller/controller"
 
 export class HitEvent extends GameEvent {
   json
-
+  aim
   constructor(json) {
     super()
     this.type = EventType.HIT
     this.json = json
+    this.aim = AimEvent.fromJson(json)
   }
 
   applyToController(controller: Controller): Controller {

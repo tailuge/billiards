@@ -11,7 +11,6 @@ import { EventUtil } from "../../src/events/eventutil"
 import { AimEvent } from "../../src/events/aimevent"
 import { BeginEvent } from "../../src/events/beginevent"
 import { WatchEvent } from "../../src/events/watchevent"
-import { HitEvent } from "../../src/events/hitevent"
 import { StationaryEvent } from "../../src/events/stationaryevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { WatchShot } from "../../src/controller/watchshot"
@@ -50,9 +49,12 @@ describe("Controller", () => {
     done()
   })
 
+  const hitevent = `{"type":"HIT","json":{"type":"AIM","verticalOffset":0,"sideOffset":0,"angle":0.006,"power":30,"pos":{"x":-11,"y":0,"z":0},"spinOnly":false}}`
+
   it("HitEvent takes WatchAim to PlayShot", (done) => {
     container.controller = new WatchAim(container)
-    container.eventQueue.push(new HitEvent(container.table.serialise()))
+    //container.eventQueue.push(new HitEvent(container.table.serialise()))
+    container.eventQueue.push(EventUtil.fromSerialised(hitevent))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchShot)
     done()
@@ -155,7 +157,7 @@ describe("Controller", () => {
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
-    container.eventQueue.push(new HitEvent(container.table))
+    container.eventQueue.push(EventUtil.fromSerialised(hitevent))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new WatchEvent(container.table))

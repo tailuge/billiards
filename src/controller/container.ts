@@ -10,6 +10,7 @@ import { EventUtil } from "../events/eventutil"
 import { AimInputs } from "../view/aiminputs"
 import { Keyboard } from "../events/keyboard"
 import { Sound } from "../view/sound"
+import { controllerName } from "./util"
 
 /**
  * Model, View, Controller container.
@@ -66,7 +67,7 @@ export class Container {
       this.eventQueue.push(new StationaryEvent())
     } else {
       if (this.table.outcome.length > 0) {
-        this.sound.eventToSounds(this.table.outcome.shift())
+        //this.sound.eventToSounds(this.table.outcome.shift())
       }
     }
   }
@@ -98,7 +99,7 @@ export class Container {
 
   updateController(controller) {
     if (controller !== this.controller) {
-      this.log("Transition to " + controller.constructor.name)
+      this.log("Transition to " + controllerName(controller))
     }
     this.controller = controller
   }

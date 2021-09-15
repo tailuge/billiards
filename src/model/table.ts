@@ -152,7 +152,9 @@ export class Table {
   }
 
   updateFromSerialised(data) {
-    this.balls.forEach((b, i) => Ball.updateFromSerialised(b, data.balls[i]))
+    if (data.balls) {
+      this.balls.forEach((b, i) => Ball.updateFromSerialised(b, data.balls[i]))
+    }
     if (data.aim) {
       this.cue.aim = AimEvent.fromJson(data.aim)
     }

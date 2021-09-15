@@ -29,7 +29,9 @@ function initialise() {
   sc = websocketserver ? new SocketConnection(websocketserver[1]) : null
   container = new Container(
     document.getElementById("viewP1"),
-    (_) => {},
+    (message) => {
+      console.log(`${id} ${message}`)
+    },
     new Keyboard(document.getElementById("viewP1")),
     onAssetsReady
   )
@@ -65,6 +67,7 @@ function onAssetsReady() {
       let uri = encodeURI(`${window.location}?&state=${JSON.stringify(state)}`)
       console.log(uri)
     }
+    console.log(`${id} sending ${e}`)
     sc?.send(e)
   }
 
