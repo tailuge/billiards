@@ -29,6 +29,7 @@ export class SocketConnection {
 
   log(e) {
     console.log("socket:", e.type)
+    console.log(e)
     if (e.data) {
       e.data.text().then((text) => console.log(text))
     }
