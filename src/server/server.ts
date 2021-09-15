@@ -1,5 +1,7 @@
 import { WebSocketServer } from "ws"
 import { execSync } from "child_process"
+import { BeginEvent } from "../events/beginevent"
+import { EventUtil } from "../events/eventutil"
 
 const port = 8888
 const wss = new WebSocketServer({ port: port })
@@ -7,11 +9,12 @@ const wss = new WebSocketServer({ port: port })
 wss.on("connection", function connection(ws) {
   if (wss.clients.size == 2) {
     console.log("Two connections, sending start")
-    ws.send("start")
+    console.log(EventUtil.serialise(new BeginEvent()))
+    ws.send(EventUtil.serialise(new BeginEvent()))
   }
   ws.on("message", function incoming(message) {
     console.log("received: %s", message)
-    sendToOther(ws, message)
+    sendToOther(ws, message.toString())
   })
 })
 

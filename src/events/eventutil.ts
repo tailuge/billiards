@@ -5,6 +5,7 @@ import { WatchEvent } from "./watchevent"
 import { HitEvent } from "./hitevent"
 import { AbortEvent } from "./abortevent"
 import { BreakEvent } from "./breakevent"
+import { BeginEvent } from "./beginevent"
 
 export class EventUtil {
   static serialise(event: GameEvent) {
@@ -14,6 +15,8 @@ export class EventUtil {
   static fromSerialised(data: string) {
     let parsed = JSON.parse(data)
     switch (parsed.type) {
+      case EventType.BEGIN:
+        return new BeginEvent()
       case EventType.AIM:
         return AimEvent.fromJson(parsed)
       case EventType.BREAK:

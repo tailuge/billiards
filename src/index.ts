@@ -12,15 +12,19 @@ var state = {
   init: null,
   shots: Array<any>(),
 }
+var id
 
 initialise()
 
 function netEvent(e) {
+  console.log(`${id} received ${e}`)
   let event = EventUtil.fromSerialised(e)
   container.eventQueue.push(event)
 }
 
 function initialise() {
+  id = /id=([^& ?]*)/.exec(location.search)
+  id = id ? id[1] : ""
   const websocketserver = /websocketserver=([^ &?]*)/.exec(location.search)
   sc = websocketserver ? new SocketConnection(websocketserver[1]) : null
   container = new Container(
@@ -34,14 +38,20 @@ function initialise() {
   }
 }
 
+/**
+ * If websocket server present wait for message to start otherwise start 1 player game (play or replay)
+ */
 function onAssetsReady() {
-  const args = /state=(.*)/.exec(location.search)
+  console.log(`${id} ready`)
+  const replay = /state=(.*)/.exec(location.search)
 
-  if (args !== null) {
-    state = JSON.parse(decodeURI(args[1]))
+  if (replay !== null) {
+    state = JSON.parse(decodeURI(replay[1]))
     container.eventQueue.push(new BreakEvent(state.init, state.shots))
   } else {
-    container.eventQueue.push(new BreakEvent())
+    if (!sc) {
+      container.eventQueue.push(new BreakEvent())
+    }
   }
 
   container.broadcast = (e: string) => {
@@ -54,9 +64,8 @@ function onAssetsReady() {
       console.log("break of " + state.shots.length)
       let uri = encodeURI(`${window.location}?&state=${JSON.stringify(state)}`)
       console.log(uri)
-
-      sc?.send(e)
     }
+    sc?.send(e)
   }
 
   // trigger animation loops
