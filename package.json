@@ -12,7 +12,8 @@
         "prettify": "prettier --write --no-semi {src,test}/**/*.[jt]s",
         "serve": "webpack serve --port $(gp url 8080) --client-web-socket-url $(gp url 8080 | sed 's/http/ws/' | sed 's#$#/ws#')",
         "deps": "npx yarn-check --skip-unused",
-        "websocket": "nodemon src/server/server.ts"
+        "websocket": "nodemon src/server/server.ts",
+        "start": "ts-node src/server/server.ts"
     },
     "nodemonConfig": {
         "watch": [

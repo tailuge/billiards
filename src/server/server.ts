@@ -3,7 +3,8 @@ import { execSync } from "child_process"
 import { BeginEvent } from "../events/beginevent"
 import { EventUtil } from "../events/eventutil"
 
-const port = 8888
+const port = process.env.PORT || 8888
+console.log(`Starting websocketserver on port ${port}`)
 const wss = new WebSocketServer({ port: port })
 
 wss.on("connection", function connection(ws) {
