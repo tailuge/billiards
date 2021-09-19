@@ -5,6 +5,9 @@
     "author": "tailuge",
     "main": "dist/main.js",
     "license": "GPL-3.0",
+    "engines": {
+        "yarn": "1.x"
+      },
     "scripts": {
         "test": "jest --verbose",
         "coverage": "jest --coverage --coverageReporters text",
