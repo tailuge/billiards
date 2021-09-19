@@ -17,8 +17,8 @@ var id
 initialise()
 
 function netEvent(e) {
-  console.log(`${id} received ${e}`)
   let event = EventUtil.fromSerialised(e)
+  console.log(`${id} received ${event.type}`)
   container.eventQueue.push(event)
 }
 
@@ -67,7 +67,7 @@ function onAssetsReady() {
       let uri = encodeURI(`${window.location}?&state=${JSON.stringify(state)}`)
       console.log(uri)
     }
-    console.log(`${id} sending ${e}`)
+    console.log(`${id} sending ${event.type}`)
     sc?.send(e)
   }
 

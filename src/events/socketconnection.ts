@@ -10,7 +10,9 @@ export class SocketConnection {
     this.ws = new WebSocket(url)
     this.ws.onopen = this.log
     this.ws.onclose = this.log
-    this.ws.onerror = (e) => {console.log(e)}
+    this.ws.onerror = (e) => {
+      console.log(e)
+    }
     this.ws.onmessage = (event) => {
       if (event.data instanceof ArrayBuffer) {
         // binary frame

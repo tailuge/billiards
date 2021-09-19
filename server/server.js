@@ -9,7 +9,7 @@ const start=`{"type":"BEGIN"}`;
 const clientToRoom = [];
 const rooms = [[]];
 var pendingRoom = 0;
-var idFountain = 3000;
+var idFountain = 300;
 wss.on("connection", function connection(ws) {
 
   ws.id = idFountain++;
@@ -19,8 +19,7 @@ wss.on("connection", function connection(ws) {
   
   if (rooms[pendingRoom].length == 2) {
 
-    // create pair and mkae new pending room
-    console.log(`Room ${pendingRoom} has ${rooms[pendingRoom].length} partcipants`);
+    // create pair and make new pending room
     pendingRoom++;
     rooms[pendingRoom] = [];
 
@@ -35,6 +34,12 @@ wss.on("connection", function connection(ws) {
     console.log(`received: ${m.type} from ${ws.id}`);
     sendToOthersInRoom(ws, message.toString());
   });
+
+  ws.on("close", function incoming(message) {
+    console.log(`close from ${ws.id}, closing room ${clientToRoom[ws.id]}`);
+    rooms[clientToRoom[ws.id]] = [];
+  });
+
 });
 
 function sendToOthersInRoom(ws, data) {
