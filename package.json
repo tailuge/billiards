@@ -14,7 +14,7 @@
         "deps": "npx yarn-check --skip-unused",
         "websocket": "nodemon src/server/server.ts",
         "build": "pwd; cd server; pwd; yarn install",
-        "start": "pwd; cd server; pwd; yarn start"
+        "start": "pwd; cd server; pwd; yarn install; yarn start"
     },
     "nodemonConfig": {
         "watch": [
