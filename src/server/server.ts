@@ -7,21 +7,42 @@ const port = process.env.PORT || 8888
 console.log(`Starting websocketserver on port ${port}`)
 const wss = new WebSocketServer({ port: port })
 
+const clientToRoom: Array<any> = []
+const rooms: Array<Array<any>> = [[]]
+var pendingRoom = 0
+var idFountain = 3000
 wss.on("connection", function connection(ws) {
-  if (wss.clients.size == 2) {
-    console.log("Two connections, sending start")
-    console.log(EventUtil.serialise(new BeginEvent()))
+
+  ws.id = idFountain++
+  rooms[pendingRoom].push(ws)
+  clientToRoom[ws.id] = pendingRoom 
+  
+  if (rooms[pendingRoom].length == 1) {
+    // create new room
+    console.log(`Room ${pendingRoom} has ${rooms[pendingRoom].length} partcipants`)
+  } else if (rooms[pendingRoom].length == 2) {
+    // create pair and mkae new pending room
+    console.log(`Room ${pendingRoom} has ${rooms[pendingRoom].length} partcipants`)
+    pendingRoom++
+    rooms[pendingRoom] = [];
+    // send begin event
+    console.log("Sending begin event")
     ws.send(EventUtil.serialise(new BeginEvent()))
-  }
+  } 
+
+
   ws.on("message", function incoming(message) {
-    console.log("received: %s", message)
-    sendToOther(ws, message.toString())
+    const m = JSON.parse(message)
+    console.log(`received: ${m.type} from ${ws.id}`)
+    sendToOthersInRoom(ws, message.toString())
   })
 })
 
-function sendToOther(ws, data: string): void {
-  wss.clients.forEach((client) => {
-    if (client !== ws) {
+function sendToOthersInRoom(ws, data: string): void {
+  const room = rooms[clientToRoom[ws.id]]
+  room.forEach((client) => {
+    if (client.id !== ws.id) {
+      console.log(`Sending message in room ${clientToRoom[ws.id]} to ${client.id}`)
       client.send(data)
     }
   })
@@ -31,31 +52,3 @@ const exposedPort = execSync(`echo $(gp url ${port})`)
 console.log(
   `WebSocketServer on localhost:${port} is exposed through gitpod at ${exposedPort}`
 )
-
-/*
-
-client:
-
-echo $(gp url 8888)
-
-use url in:
-
-var ws = new WebSocket("wss://8888-beige-bobcat-bxbv4rs0.ws-eu16.gitpod.io/ws");
-ws.onclose = function() { console.log("close"); };
-ws.onerror = function() { console.log("error"); };
-ws.onmessage = function(e) { console.log("received:",e); };
-ws.onopen = function() { console.log("open"); };
-
-ws.send("hi")
-ws.close()
-
-
-create game
-{p1:guid, p2:guid, spectator:guid}
-
-join guid
-
-only listen to p1,p2
-broadcast to all
-
-*/
