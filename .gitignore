@@ -20,8 +20,8 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
-# build for heroku
-build
+# ts-node for heroku
+server/node_modules
 
 # nyc test coverage
 .nyc_output

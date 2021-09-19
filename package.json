@@ -13,8 +13,8 @@
         "serve": "webpack serve --port $(gp url 8080) --client-web-socket-url $(gp url 8080 | sed 's/http/ws/' | sed 's#$#/ws#')",
         "deps": "npx yarn-check --skip-unused",
         "websocket": "nodemon src/server/server.ts",
-        "build": "tsc --outDir ./build",
-        "start": "node ./build/server/server.js"
+        "build": "pwd; cd server; pwd; yarn install",
+        "start": "pwd; cd server; pwd; yarn start"
     },
     "nodemonConfig": {
         "watch": [
