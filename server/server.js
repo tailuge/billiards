@@ -26,5 +26,5 @@ function sendToOther(ws, data) {
 }
 
 console.log("WebsocketServer started")
-
+console.log("https://tailuge.github.io/billiards/dist/?websocketserver=wss://billiardsserver.herokuapp.com/ws")
 
