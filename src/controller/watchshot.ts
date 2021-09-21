@@ -39,6 +39,7 @@ export class WatchShot extends ControllerBase {
 
     if (this.pendingState) {
       this.container.log("go to pending state now")
+      this.container.table.cue.moveTo(this.container.table.balls[0].pos)
       return this.pendingState
     }
     this.container.log("no pending state")
