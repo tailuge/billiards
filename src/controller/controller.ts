@@ -7,6 +7,7 @@ import { AbortEvent } from "../events/abortevent"
 import { WatchEvent } from "../events/watchevent"
 import { StationaryEvent } from "../events/stationaryevent"
 import { Container } from "./container"
+import { ChatEvent } from "../events/chatevent"
 
 export { BeginEvent, AimEvent, HitEvent, Input, AbortEvent, StationaryEvent }
 
@@ -42,6 +43,9 @@ export abstract class Controller {
     return this
   }
   handleStationary(_: StationaryEvent): Controller {
+    return this
+  }
+  handleChat(_: ChatEvent): Controller {
     return this
   }
 }

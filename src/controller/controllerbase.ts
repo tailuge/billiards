@@ -3,6 +3,7 @@ import { Container } from "./container"
 import { Controller } from "./controller"
 import { End } from "./end"
 import { exportGltf } from "../utils/gltf"
+import { ChatEvent } from "../events/chatevent"
 
 export abstract class ControllerBase extends Controller {
   readonly scale = 0.001
@@ -13,6 +14,11 @@ export abstract class ControllerBase extends Controller {
 
   handleAbort(_: AbortEvent): Controller {
     return new End(this.container)
+  }
+
+  handleChat(chatevent: ChatEvent): Controller {
+    this.container.chat.showMessage(chatevent.message)
+    return this
   }
 
   commonKeyHandler(input) {

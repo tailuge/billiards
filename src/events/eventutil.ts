@@ -6,6 +6,7 @@ import { HitEvent } from "./hitevent"
 import { AbortEvent } from "./abortevent"
 import { BreakEvent } from "./breakevent"
 import { BeginEvent } from "./beginevent"
+import { ChatEvent } from "./chatevent"
 
 export class EventUtil {
   static serialise(event: GameEvent) {
@@ -25,6 +26,8 @@ export class EventUtil {
         return WatchEvent.fromJson(parsed.json)
       case EventType.HIT:
         return HitEvent.fromJson(parsed.json)
+      case EventType.CHAT:
+        return ChatEvent.fromJson(parsed)
       case EventType.ABORT:
         return new AbortEvent()
       default:

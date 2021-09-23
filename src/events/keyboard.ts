@@ -40,6 +40,7 @@ export class Keyboard {
   }
 
   keydown = (e) => {
+    console.log(e)
     e = e || window.event
     if (this.pressed[e.code] == null) {
       this.pressed[e.code] = performance.now()
@@ -71,8 +72,8 @@ export class Keyboard {
   }
 
   private addHandlers(element) {
-    document.addEventListener("keydown", this.keydown)
-    document.addEventListener("keyup", this.keyup)
+    element.addEventListener("keydown", this.keydown)
+    element.addEventListener("keyup", this.keyup)
     element.addEventListener("pointermove", this.mousemove)
   }
 }

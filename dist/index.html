@@ -14,17 +14,29 @@
 
 <body>
 	<div id="viewP1" class="view3d"></div>
-	<div class="inputs">
-		<div id="cueBall" class="cueBall">
-			<div id="cueTip" class="cueTip">
+	<div style="display: flex">
+			<div>
+				<div class="inputs">
+					<div id="cueBall" class="cueBall">
+						<div id="cueTip" class="cueTip">
+						</div>
+					</div>
+				</div>
+				<div class="cuePowerAndHit">
+					<input class="powerSlider" type="range" min="10" max="100" value="50" id="cuePower" name="cuePower"/>
+					<button class="hitButton" id="cueHit">hit</button>
+				</div>
 			</div>
-		</div>
+			<div>
+				<div id="chat" class="chatarea">
+				</div>
+				<div id="chatinput" class="chatinput">
+					<input id="chatinputtext" type="text" class="msger-input" placeholder="Enter your message...">
+				    <button id="chatsend" type="submit" class="msger-send-btn">Send</button>
+				</div>	
+			</div>
 	</div>
-	<div class="cuePowerAndHit">
-		<input class="powerSlider" type="range" min="10" max="100" value="50" id="cuePower" name="cuePower"/>
-		<button class="hitButton" id="cueHit">hit</button>
-	</div>
-<script src="vendor.js">
+	<script src="vendor.js">
 	</script>
 	<script src="index.js">
 	</script>

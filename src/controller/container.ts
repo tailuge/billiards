@@ -11,6 +11,8 @@ import { AimInputs } from "../view/aiminputs"
 import { Keyboard } from "../events/keyboard"
 import { Sound } from "../view/sound"
 import { controllerName } from "./util"
+import { Chat } from "../view/chat"
+import { ChatEvent } from "../events/chatevent"
 
 /**
  * Model, View, Controller container.
@@ -24,8 +26,10 @@ export class Container {
   aimInputs: AimInputs
   keyboard: Keyboard
   sound: Sound
+  chat: Chat
+
   last = performance.now()
-  readonly step = 0.001
+  readonly step = 0.002
 
   broadcast: (event: string) => void
   log: (text: string) => void
@@ -37,7 +41,7 @@ export class Container {
     this.aimInputs = new AimInputs(this)
     this.keyboard = keyboard
     this.sound = new Sound(this.view.camera.camera)
-
+    this.chat = new Chat(this.sendChat)
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
       this.view.addMesh(b.ballmesh.shadow)
@@ -47,6 +51,10 @@ export class Container {
     this.view.addMesh(this.table.cue.helperMesh)
     this.view.table = this.table
     this.updateController(new Init(this))
+  }
+
+  sendChat = (msg) => {
+    this.sendEvent(new ChatEvent("->", msg))
   }
 
   sendEvent(event) {

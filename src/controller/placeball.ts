@@ -9,6 +9,7 @@ import { round } from "../utils/utils"
 /**
  * Place cue ball using input events.
  *
+ * Needs to be configurable to break place ball and post foul place ball anywhere legal.
  */
 export class PlaceBall extends ControllerBase {
   readonly placescale = 0.01
