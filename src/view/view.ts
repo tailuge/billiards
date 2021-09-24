@@ -95,11 +95,12 @@ export class View {
     this.renderer.render(this.scene, cam.camera)
   }
 
-  private initialiseScene(element, width, height) {
+  private initialiseScene(element: HTMLElement, width, height) {
     this.renderer = new WebGLRenderer({ antialias: true })
     this.renderer.setSize(width, height)
     this.renderer.shadowMap.enabled = false
     element.appendChild(this.renderer.domElement)
+//    element.parentNode?.replaceChild(this.renderer.domElement,element)
   }
 
   private addTable(ready) {

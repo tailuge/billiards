@@ -52,6 +52,7 @@ function onAssetsReady() {
     container.eventQueue.push(new BreakEvent(state.init, state.shots))
   } else {
     if (!sc) {
+      container.isSinglePlayer = true
       container.eventQueue.push(new BreakEvent())
     }
   }

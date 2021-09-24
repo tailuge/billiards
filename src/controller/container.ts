@@ -27,6 +27,7 @@ export class Container {
   keyboard: Keyboard
   sound: Sound
   chat: Chat
+  isSinglePlayer: boolean
 
   last = performance.now()
   readonly step = 0.002

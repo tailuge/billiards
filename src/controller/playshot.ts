@@ -34,9 +34,11 @@ export class PlayShot extends ControllerBase {
     // if no pot switch to other player
     this.container.log("no pot")
     this.container.sendEvent(this.container.table.cue.aim)
+    if (this.container.isSinglePlayer) {
+      this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
+      return new Aim(this.container)
+    }
     return new WatchAim(this.container)
-    //this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
-    //return new Aim(this.container)
   }
 
   handleInput(input: Input): Controller {
