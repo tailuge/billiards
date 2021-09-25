@@ -122,7 +122,7 @@ export class Ball {
     }
   }
 
-  private setStationary() {
+  setStationary() {
     this.vel.copy(zero)
     this.rvel.copy(zero)
     this.state = State.Stationary

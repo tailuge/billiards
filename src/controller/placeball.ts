@@ -5,6 +5,7 @@ import { MathUtils } from "three"
 import { TableGeometry } from "../view/tablegeometry"
 import { BreakEvent } from "../events/breakevent"
 import { round } from "../utils/utils"
+import { Vector3 } from "three"
 
 /**
  * Place cue ball using input events.
@@ -20,6 +21,14 @@ export class PlaceBall extends ControllerBase {
     this.container.table.cue.aim.power = 0
     this.container.view.camera.forceMode(this.container.view.camera.aimView)
     this.container.table.cue.mesh.visible = false
+  }
+
+  onFirst() {
+    var cueBall = this.container.table.balls[0]
+    cueBall.pos = new Vector3(-11, 0, 0)
+    cueBall.setStationary()
+    cueBall.updateMesh(0)
+    this.container.table.cue.moveTo(this.container.table.balls[0].pos)
   }
 
   handleInput(input: Input): Controller {

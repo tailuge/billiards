@@ -109,6 +109,8 @@ export class Container {
   updateController(controller) {
     if (controller !== this.controller) {
       this.log("Transition to " + controllerName(controller))
+      this.controller = controller
+      this.controller.onFirst()
     }
     this.controller = controller
   }

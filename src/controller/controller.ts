@@ -52,4 +52,7 @@ export abstract class Controller {
   handleChat(_: ChatEvent): Controller {
     return this
   }
+  onFirst() {    
+  }
+
 }
