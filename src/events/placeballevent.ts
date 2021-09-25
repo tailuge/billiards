@@ -9,6 +9,6 @@ export class PlaceBallEvent extends GameEvent {
   }
 
   applyToController(controller: Controller) {
-    return controller.handleBegin(this)
+    return controller.handlePlaceBall(this)
   }
 }

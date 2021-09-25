@@ -8,6 +8,7 @@ import { WatchEvent } from "../events/watchevent"
 import { StationaryEvent } from "../events/stationaryevent"
 import { Container } from "./container"
 import { ChatEvent } from "../events/chatevent"
+import { PlaceBallEvent } from "../events/placeballevent"
 
 export { BeginEvent, AimEvent, HitEvent, Input, AbortEvent, StationaryEvent }
 
@@ -40,6 +41,9 @@ export abstract class Controller {
     return this
   }
   handleWatch(_: WatchEvent): Controller {
+    return this
+  }
+  handlePlaceBall(_: PlaceBallEvent): Controller {
     return this
   }
   handleStationary(_: StationaryEvent): Controller {
