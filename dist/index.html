@@ -15,17 +15,15 @@
 <body>
 	<div id="viewP1" class="view3d"></div>
 	<div style="display: flex">
-			<div>
-				<div class="inputs">
+			<div style="display: flex; flex-direction: column-reverse">
+				<div class="inputs flex-item" >
 					<div id="cueBall" class="cueBall">
 						<div id="cueTip" class="cueTip">
 						</div>
 					</div>
 				</div>
-				<div class="cuePowerAndHit">
-					<input class="powerSlider" type="range" min="10" max="100" value="50" id="cuePower" name="cuePower"/>
-					<button class="hitButton" id="cueHit">hit</button>
-				</div>
+				<button class="hitButton flex-item" id="cueHit">hit</button>
+				<input class="powerSlider flex-item" type="range" min="10" max="100" value="50" id="cuePower" name="cuePower"/>
 			</div>
 			<div>
 				<div id="chat" class="chatarea">

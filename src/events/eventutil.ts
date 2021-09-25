@@ -32,7 +32,7 @@ export class EventUtil {
       case EventType.ABORT:
         return new AbortEvent()
       case EventType.PLACEBALL:
-        return new PlaceBallEvent()
+        return PlaceBallEvent.fromJson(parsed)
       default:
         throw Error("Unknown GameEvent :" + data)
     }
