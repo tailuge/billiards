@@ -7,5 +7,5 @@ export enum EventType {
   STATIONARY = "STATIONARY",
   CHAT = "CHAT",
   ABORT = "ABORT",
-  REPOSITION = "REPOSITION",
+  PLACEBALL = "PLACEBALL",
 }

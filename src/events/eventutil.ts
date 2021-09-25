@@ -7,6 +7,7 @@ import { AbortEvent } from "./abortevent"
 import { BreakEvent } from "./breakevent"
 import { BeginEvent } from "./beginevent"
 import { ChatEvent } from "./chatevent"
+import { PlaceBallEvent } from "./placeballevent"
 
 export class EventUtil {
   static serialise(event: GameEvent) {
@@ -30,6 +31,8 @@ export class EventUtil {
         return ChatEvent.fromJson(parsed)
       case EventType.ABORT:
         return new AbortEvent()
+      case EventType.PLACEBALL:
+        return new PlaceBallEvent()
       default:
         throw Error("Unknown GameEvent :" + data)
     }

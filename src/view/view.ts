@@ -100,7 +100,7 @@ export class View {
     this.renderer.setSize(width, height)
     this.renderer.shadowMap.enabled = false
     element.appendChild(this.renderer.domElement)
-//    element.parentNode?.replaceChild(this.renderer.domElement,element)
+    //    element.parentNode?.replaceChild(this.renderer.domElement,element)
   }
 
   private addTable(ready) {

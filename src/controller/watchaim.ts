@@ -12,6 +12,7 @@ export class WatchAim extends ControllerBase {
 
   handleAim(event: AimEvent) {
     this.container.table.cue.aim = event
+    this.container.table.balls[0].pos = event.pos
     return this
   }
 

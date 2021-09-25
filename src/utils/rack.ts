@@ -49,6 +49,11 @@ export class Rack {
     diamond.push(new Ball(Rack.jitter(pos), 0x087300))
     pos.add(diagonal)
     diamond.push(new Ball(Rack.jitter(pos), 0x3e009c))
+    Rack.initialiseIndicies(diamond)
     return diamond
+  }
+
+  static initialiseIndicies(balls: Ball[]) {
+    balls.forEach((x, i) => (x.index = i))
   }
 }

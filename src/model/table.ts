@@ -7,12 +7,13 @@ import { Ball, State } from "./ball"
 import { AimEvent } from "../events/aimevent"
 import { upCross, unitAtAngle, zero } from "../utils/utils"
 import { TableGeometry } from "../view/tablegeometry"
+import { Outcome } from "./outcome"
 
 export class Table {
   balls: Ball[]
   cue = new Cue()
   pairs: any[]
-  outcome: any[] = []
+  outcome: Outcome[] = []
 
   constructor(balls: Ball[]) {
     this.initialiseBalls(balls)
@@ -60,12 +61,7 @@ export class Table {
     }
     if (Collision.willCollide(a, b, t)) {
       var incidentSpeed = Collision.collide(a, b)
-      this.outcome.push({
-        type: "collision",
-        a: a,
-        b: b,
-        incidentSpeed: incidentSpeed,
-      })
+      this.outcome.push(Outcome.collision(a, b, incidentSpeed))
       return false
     }
     return this.prepareAdvanceToCushions(a, t)
@@ -82,27 +78,19 @@ export class Table {
 
     if (Cushion.willBounce(a, t)) {
       var incidentSpeed = Cushion.bounce(a, t)
-      this.outcome.push({ type: "cushion", a: a, incidentSpeed: incidentSpeed })
+      this.outcome.push(Outcome.cushion(a, incidentSpeed))
       return false
     }
     let k = Knuckle.willBounceAny(a, t)
     if (k) {
       var knuckleIncidentSpeed = k.bounce(a)
-      this.outcome.push({
-        type: "cushion",
-        a: a,
-        incidentSpeed: knuckleIncidentSpeed,
-      })
+      this.outcome.push(Outcome.cushion(a, knuckleIncidentSpeed))
       return false
     }
     let p = Pocket.willFallAny(a, t)
     if (p) {
       var pocketIncidentSpeed = p.fall(a, t)
-      this.outcome.push({
-        type: "pot",
-        a: a,
-        incidentSpeed: pocketIncidentSpeed,
-      })
+      this.outcome.push(Outcome.pot(a, pocketIncidentSpeed))
       return false
     }
 

@@ -60,6 +60,8 @@ export class PlaceBall extends ControllerBase {
 
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
     this.container.view.camera.forceMove(this.container.table.cue.aim)
+    // rate limit this?
+    this.container.sendEvent(this.container.table.cue.aim)
 
     return this
   }

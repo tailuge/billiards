@@ -25,7 +25,7 @@ export class Ball {
   state: State = State.Stationary
   pocket: Pocket
   futurePos: Vector3 = zero.clone()
-
+  index: number
   ballmesh: BallMesh
 
   readonly transition = 0.05

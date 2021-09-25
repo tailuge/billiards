@@ -1,7 +1,6 @@
 import { BeginEvent } from "../events/beginevent"
 import { WatchEvent } from "../events/watchevent"
 import { Controller } from "./controller"
-import { Aim } from "./aim"
 import { WatchAim } from "./watchaim"
 import { ControllerBase } from "./controllerbase"
 import { BreakEvent } from "../events/breakevent"
@@ -16,7 +15,7 @@ import { Replay } from "./replay"
 export class Init extends ControllerBase {
   handleBegin(_: BeginEvent): Controller {
     this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
-    return new Aim(this.container)
+    return new PlaceBall(this.container)
   }
 
   handleWatch(event: WatchEvent): Controller {

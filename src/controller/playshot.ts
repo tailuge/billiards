@@ -3,6 +3,8 @@ import { WatchEvent } from "../events/watchevent"
 import { Aim } from "./aim"
 import { WatchAim } from "./watchaim"
 import { ControllerBase } from "./controllerbase"
+import { Outcome } from "../model/outcome"
+import { PlaceBallEvent } from "../events/placeballevent"
 
 /**
  * PlayShot starts balls rolling using cue state.
@@ -15,7 +17,10 @@ export class PlayShot extends ControllerBase {
   constructor(container) {
     super(container)
     this.container.table.outcome = [
-      { type: "hit", incidentSpeed: this.container.table.cue.aim.power },
+      Outcome.hit(
+        this.container.table.balls[0],
+        this.container.table.cue.aim.power
+      ),
     ]
     this.container.table.hit()
     this.container.view.camera.suggestMode(
@@ -26,12 +31,19 @@ export class PlayShot extends ControllerBase {
   handleStationary(_) {
     this.allStationary = true
     this.container.log("stationary event")
-    if (this.container.table.outcome.some((x) => x.type == "pot")) {
-      this.container.log("pot! transition to Aim")
+
+    // if white potted switch to other player
+    if (Outcome.pottedCueBall(this.container.table.outcome)) {
+      this.container.log("in off")
+      this.container.sendEvent(new PlaceBallEvent())
+      return new WatchAim(this.container)
+    }
+    if (Outcome.pottedBallNoFoul(this.container.table.outcome)) {
+      this.container.log("pot")
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
       return new Aim(this.container)
     }
-    // if no pot switch to other player
+    // if no pot and no foul switch to other player
     this.container.log("no pot")
     this.container.sendEvent(this.container.table.cue.aim)
     if (this.container.isSinglePlayer) {

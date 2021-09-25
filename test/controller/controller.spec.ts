@@ -14,6 +14,8 @@ import { WatchEvent } from "../../src/events/watchevent"
 import { StationaryEvent } from "../../src/events/stationaryevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { WatchShot } from "../../src/controller/watchshot"
+import { Outcome } from "../../src/model/outcome"
+import { PlaceBall } from "../../src/controller/placeball"
 
 describe("Controller", () => {
   var container: Container
@@ -37,7 +39,7 @@ describe("Controller", () => {
   it("Begin takes Init to Aim", (done) => {
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(Aim)
+    expect(container.controller).to.be.an.instanceof(PlaceBall)
     expect(broadcastEvents.pop()).to.be.an.instanceof(WatchEvent)
     done()
   })
@@ -140,7 +142,7 @@ describe("Controller", () => {
   it("StationaryEvent takes active PlayShot to Aim if pot", (done) => {
     container.controller = new PlayShot(container)
     container.eventQueue.push(new StationaryEvent())
-    container.table.outcome.push({ type: "pot" })
+    container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
     done()
@@ -207,7 +209,7 @@ describe("Controller", () => {
     container.table.balls[0].vel.x = 0.001
     container.advance(0.01)
     expect(container.eventQueue.length).to.equal(1)
-    container.table.outcome.push({ type: "pot" })
+    container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
     container.processEvents()
     container.advance(0.01)
     expect(container.eventQueue.length).to.equal(0)
