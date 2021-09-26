@@ -74,6 +74,7 @@ describe("Controller", () => {
     let watchShot = new WatchShot(container)
     watchShot.allStationary = true
     container.controller = watchShot
+    container.table.balls[0].setStationary()
     container.eventQueue.push(new AimEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
@@ -84,6 +85,7 @@ describe("Controller", () => {
     let watchShot = new WatchShot(container)
     watchShot.allStationary = true
     container.controller = watchShot
+    container.table.balls[0].setStationary()
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
@@ -102,6 +104,7 @@ describe("Controller", () => {
     let watchShot = new WatchShot(container)
     watchShot.allStationary = false
     container.controller = watchShot
+    container.table.balls[0].setStationary()
     container.eventQueue.push(new AimEvent())
     container.processEvents()
     container.eventQueue.push(new StationaryEvent())
@@ -114,6 +117,7 @@ describe("Controller", () => {
     let watchShot = new WatchShot(container)
     watchShot.allStationary = false
     container.controller = watchShot
+    container.table.balls[0].setStationary()
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()
     container.eventQueue.push(new StationaryEvent())
@@ -141,6 +145,7 @@ describe("Controller", () => {
 */
   it("StationaryEvent takes active PlayShot to Aim if pot", (done) => {
     container.controller = new PlayShot(container)
+    container.table.balls[0].setStationary()
     container.eventQueue.push(new StationaryEvent())
     container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
     container.processEvents()

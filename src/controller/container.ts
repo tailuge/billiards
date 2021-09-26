@@ -92,8 +92,11 @@ export class Container {
       input && this.updateController(this.controller.handleInput(input))
     }
 
-    const event = this.eventQueue.shift()
-    event && this.updateController(event.applyToController(this.controller))
+    // only process events when stationary
+    if (this.table.allStationary()) {
+      const event = this.eventQueue.shift()
+      event && this.updateController(event.applyToController(this.controller))
+    }
   }
 
   animate(timestamp): void {

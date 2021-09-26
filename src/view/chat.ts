@@ -1,11 +1,11 @@
 export class Chat {
-  chat: HTMLElement | null
+  chatoutput: HTMLElement | null
   chatInput: HTMLElement | null
   chatSend: HTMLElement | null
   chatInputText: HTMLInputElement | null
   send
   constructor(send) {
-    this.chat = document.getElementById("chat")
+    this.chatoutput = document.getElementById("chatoutput")
     this.chatInputText = document.getElementById(
       "chatinputtext"
     ) as HTMLInputElement
@@ -16,9 +16,16 @@ export class Chat {
 
   sendClicked = (_) => {
     this.send(this.chatInputText?.value)
+    this.showMessage(this.chatInputText?.value)
   }
 
   showMessage(msg) {
-    this.chat && (this.chat.innerHTML += msg + "<br>")
+    this.chatoutput && (this.chatoutput.innerHTML += msg + "<br>")
+    this.updateScroll()
+  }
+
+  updateScroll() {
+    this.chatoutput &&
+      (this.chatoutput.scrollTop = this.chatoutput.scrollHeight)
   }
 }

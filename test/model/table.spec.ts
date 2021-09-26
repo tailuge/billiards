@@ -5,6 +5,7 @@ import { TableGeometry } from "../../src/view/tablegeometry"
 import { Table } from "../../src/model/table"
 import { Vector3 } from "three"
 import { zero } from "../../src/utils/utils"
+import { Rack } from "../../src/utils/rack"
 
 let t = 0.1
 
@@ -114,6 +115,12 @@ describe("Table", () => {
     let obj = JSON.parse(data)
     table.updateFromSerialised(obj)
     expect(table.balls[0].pos.x).to.be.equal(0)
+    done()
+  })
+
+  it("starts stationary", (done) => {
+    let table = new Table(Rack.diamond())
+    expect(table.allStationary()).to.be.true
     done()
   })
 })
