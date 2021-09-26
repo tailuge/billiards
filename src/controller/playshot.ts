@@ -6,6 +6,7 @@ import { ControllerBase } from "./controllerbase"
 import { Outcome } from "../model/outcome"
 import { PlaceBallEvent } from "../events/placeballevent"
 import { zero } from "../utils/utils"
+import { PlaceBall } from "./placeball"
 
 /**
  * PlayShot starts balls rolling using cue state.
@@ -36,6 +37,9 @@ export class PlayShot extends ControllerBase {
     // if white potted switch to other player
     if (Outcome.pottedCueBall(this.container.table.outcome)) {
       this.container.log("in off")
+      if (this.container.isSinglePlayer) {
+        return new PlaceBall(this.container)
+      }
       this.container.sendEvent(new PlaceBallEvent(zero, true))
       return new WatchAim(this.container)
     }

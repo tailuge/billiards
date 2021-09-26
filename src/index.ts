@@ -48,6 +48,7 @@ function onAssetsReady() {
   const replay = /state=(.*)/.exec(location.search)
 
   if (replay !== null) {
+    container.isSinglePlayer = true
     state = JSON.parse(decodeURI(replay[1]))
     container.eventQueue.push(new BreakEvent(state.init, state.shots))
   } else {

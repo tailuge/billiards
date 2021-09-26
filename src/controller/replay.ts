@@ -10,8 +10,12 @@ export class Replay extends ControllerBase {
   constructor(container, shots) {
     super(container)
     this.shots = shots
-    this.playNextShot()
+    console.log(JSON.stringify(shots))
     return this
+  }
+
+  onFirst() {
+    this.playNextShot()
   }
 
   playNextShot() {
@@ -20,7 +24,7 @@ export class Replay extends ControllerBase {
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
     this.container.view.camera.suggestMode(this.container.view.camera.aimView)
     setTimeout(() => {
-      this.container.eventQueue.push(new HitEvent({}))
+      this.container.eventQueue.push(new HitEvent(this.container.table.cue.aim))
     }, this.delay)
   }
 
