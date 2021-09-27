@@ -92,27 +92,18 @@ p {
   clear:both;
 }
 
-
-.msger-inputarea {
+.chatinput {
   display: flex;
-  padding: 10px;
-  border-top: var(--border);
-  background: #eee;
-  color: grey;
 }
 
-.msger-inputarea * {
-  padding: 10px;
-  border-radius: 3px;
-  font-size: 1em;
-}
 .msger-input {
   flex: 1;
-  background: #ddd;
+  flex-grow: 1;
+  background: rgb(129, 129, 129);
 }
 .msger-send-btn {
   margin-left: 10px;
-  background: rgb(0, 196, 65);
+  background: rgb(93, 113, 124);
   color: #fff;
   font-weight: bold;
   cursor: pointer;
@@ -122,9 +113,10 @@ p {
 }
 
 .chatoutput {
-  height: 4em;
+  flex-grow: 1;
   overflow-y: scroll;
-  width: 80%;
+  overflow-x: hidden;
+  background-color: rgba(47, 79, 79, 0.486);
 }
 
 .chatoutput::-webkit-scrollbar {
