@@ -115,6 +115,5 @@ export class Container {
       this.controller = controller
       this.controller.onFirst()
     }
-    this.controller = controller
   }
 }
