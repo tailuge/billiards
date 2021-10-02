@@ -5,7 +5,7 @@ import { Pocket } from "./physics/pocket"
 import { Cue } from "../view/cue"
 import { Ball, State } from "./ball"
 import { AimEvent } from "../events/aimevent"
-import { upCross, unitAtAngle, zero } from "../utils/utils"
+import { upCross, unitAtAngle, zero, round8 } from "../utils/utils"
 import { TableGeometry } from "../view/tablegeometry"
 import { Outcome } from "./outcome"
 
@@ -101,6 +101,10 @@ export class Table {
     return this.balls.every((b) => !b.inMotion() || !b.onTable())
   }
 
+  overlapping() {
+    this.pairs.some((pair) => Collision.willCollide(pair.a,pair.b,0))  
+  }
+
   hit() {
     let aim = this.cue.aim
     this.balls[0].vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
@@ -124,7 +128,8 @@ export class Table {
       this.balls[0].rvel.copy(rvel)
     }
     aim.power = 0
-    console.log(this.balls[0].pos)
+    console.log(this.balls[0].pos.x)
+    console.log(round8(this.balls[0].pos.x))
   }
 
   serialise() {
@@ -163,4 +168,6 @@ export class Table {
       }
     })
   }
+
+
 }

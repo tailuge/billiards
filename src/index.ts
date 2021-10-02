@@ -65,11 +65,11 @@ function onAssetsReady() {
     }
     if (event.type === EventType.HIT) {
       state.shots.push((<HitEvent>event).json)
-      console.log("break of " + state.shots.length)
-      let uri = encodeURI(`${window.location}?&state=${JSON.stringify(state)}`)
-      console.log(uri)
+//      console.log("break of " + state.shots.length)
+//      let uri = encodeURI(`${window.location}?&state=${JSON.stringify(state)}`)
+//      console.log(uri)
     }
-    console.log(`${id} sending ${event.type}`)
+//    console.log(`${id} sending ${event.type}`)
     sc?.send(e)
   }
 

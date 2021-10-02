@@ -23,4 +23,5 @@ export class Collision {
     b.state = State.Sliding
     return Math.abs(aDotCenters) + Math.abs(bDotCenters)
   }
+
 }
