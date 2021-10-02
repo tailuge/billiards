@@ -13,6 +13,7 @@ import { Sound } from "../view/sound"
 import { controllerName } from "./util"
 import { Chat } from "../view/chat"
 import { ChatEvent } from "../events/chatevent"
+import { Throttle } from "../events/throttle"
 
 /**
  * Model, View, Controller container.
@@ -58,8 +59,12 @@ export class Container {
     this.sendEvent(new ChatEvent("->", msg))
   }
 
-  sendEvent(event) {
+  throttle = new Throttle(250, (event) => {
     this.broadcast(EventUtil.serialise(event))
+  })
+
+  sendEvent(event) {
+    this.throttle.send(event)
   }
 
   advance(elapsed) {

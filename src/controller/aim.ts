@@ -26,7 +26,7 @@ export class Aim extends ControllerBase {
           return this
         }
     }
-    // rate limit this?
+
     this.container.sendEvent(this.container.table.cue.aim)
     return this
   }
