@@ -124,6 +124,7 @@ export class Table {
       this.balls[0].rvel.copy(rvel)
     }
     aim.power = 0
+    console.log(this.balls[0].pos)
   }
 
   serialise() {
