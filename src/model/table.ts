@@ -102,7 +102,7 @@ export class Table {
   }
 
   overlapping() {
-    this.pairs.some((pair) => Collision.willCollide(pair.a,pair.b,0))  
+    this.pairs.some((pair) => Collision.willCollide(pair.a, pair.b, 0))
   }
 
   hit() {
@@ -168,6 +168,4 @@ export class Table {
       }
     })
   }
-
-
 }

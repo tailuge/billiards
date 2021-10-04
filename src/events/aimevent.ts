@@ -9,7 +9,7 @@ export class AimEvent extends GameEvent {
   sideOffset = 0
   angle = 0
   power = 0
-  pos = new Vector3(1, 0, 0)
+  pos = new Vector3(0, 0, 0)
   spinOnly: boolean = false
 
   constructor() {

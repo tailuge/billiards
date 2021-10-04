@@ -17,8 +17,7 @@ export class WatchAim extends ControllerBase {
   }
 
   handleHit(event: HitEvent) {
-    this.container.table.cue.aim = event.aim
-    this.container.table.updateFromSerialised(event.json)
+    this.container.table.updateFromSerialised(event.tablejson)
     return new WatchShot(this.container)
   }
 }

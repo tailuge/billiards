@@ -3,7 +3,6 @@ import { Keyboard } from "./events/keyboard"
 import { EventUtil } from "./events/eventutil"
 import { EventType } from "./events/eventtype"
 import { BreakEvent } from "./events/breakevent"
-import { HitEvent } from "./events/hitevent"
 import { SocketConnection } from "./events/socketconnection"
 
 var sc: SocketConnection | null
@@ -64,12 +63,12 @@ function onAssetsReady() {
       state.init = (<BreakEvent>event).init
     }
     if (event.type === EventType.HIT) {
-      state.shots.push((<HitEvent>event).json)
-//      console.log("break of " + state.shots.length)
-//      let uri = encodeURI(`${window.location}?&state=${JSON.stringify(state)}`)
-//      console.log(uri)
+      //      state.shots.push((<HitEvent>event).json)
+      //      console.log("break of " + state.shots.length)
+      //      let uri = encodeURI(`${window.location}?&state=${JSON.stringify(state)}`)
+      //      console.log(uri)
     }
-//    console.log(`${id} sending ${event.type}`)
+    //    console.log(`${id} sending ${event.type}`)
     sc?.send(e)
   }
 

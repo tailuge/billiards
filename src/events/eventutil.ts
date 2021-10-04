@@ -26,7 +26,7 @@ export class EventUtil {
       case EventType.WATCHAIM:
         return WatchEvent.fromJson(parsed.json)
       case EventType.HIT:
-        return HitEvent.fromJson(parsed.json)
+        return HitEvent.fromJson(parsed)
       case EventType.CHAT:
         return ChatEvent.fromJson(parsed)
       case EventType.ABORT:

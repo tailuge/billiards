@@ -1,6 +1,6 @@
 import "mocha"
 import { expect } from "chai"
-import { Controller, Input } from "../../src/controller/controller"
+import { Controller, HitEvent, Input } from "../../src/controller/controller"
 import { Container } from "../../src/controller/container"
 import { Aim } from "../../src/controller/aim"
 import { WatchAim } from "../../src/controller/watchaim"
@@ -51,12 +51,9 @@ describe("Controller", () => {
     done()
   })
 
-  const hitevent = `{"type":"HIT","json":{"type":"AIM","verticalOffset":0,"sideOffset":0,"angle":0.006,"power":30,"pos":{"x":-11,"y":0,"z":0},"spinOnly":false}}`
-
   it("HitEvent takes WatchAim to PlayShot", (done) => {
     container.controller = new WatchAim(container)
-    //container.eventQueue.push(new HitEvent(container.table.serialise()))
-    container.eventQueue.push(EventUtil.fromSerialised(hitevent))
+    container.eventQueue.push(new HitEvent(container.table.serialise()))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchShot)
     done()
@@ -164,7 +161,7 @@ describe("Controller", () => {
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
-    container.eventQueue.push(EventUtil.fromSerialised(hitevent))
+    container.eventQueue.push(new HitEvent(container.table.serialise()))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new WatchEvent(container.table))
