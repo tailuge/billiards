@@ -5,7 +5,7 @@ import { Pocket } from "./physics/pocket"
 import { Cue } from "../view/cue"
 import { Ball, State } from "./ball"
 import { AimEvent } from "../events/aimevent"
-import { upCross, unitAtAngle, zero, round8 } from "../utils/utils"
+import { upCross, unitAtAngle, zero } from "../utils/utils"
 import { TableGeometry } from "../view/tablegeometry"
 import { Outcome } from "./outcome"
 
@@ -22,13 +22,13 @@ export class Table {
   initialiseBalls(balls: Ball[]) {
     this.balls = balls
     this.pairs = []
-    this.balls.forEach((a) => {
-      this.balls.forEach((b) => {
-        if (a !== b) {
-          this.pairs.push({ a: a, b: b })
+    for (var a = 0; a < balls.length; a++) {
+      for (var b = 0; b < balls.length; b++) {
+        if (a < b) {
+          this.pairs.push({ a: balls[a], b: balls[b] })
         }
-      })
-    })
+      }
+    }
   }
 
   advance(t: number) {
@@ -55,6 +55,10 @@ export class Table {
       : !this.balls.some((ball) => !this.prepareAdvanceToCushions(ball, t))
   }
 
+  /**
+   * Returns true is balls can advance by t without any collision (with other balls or cushions).
+   * If there is a collision, adjust velocity appropriately.
+   */
   private prepareAdvancePair(a: Ball, b: Ball, t: number) {
     if (!a.inMotion() && !b.inMotion()) {
       return true
@@ -64,7 +68,9 @@ export class Table {
       this.outcome.push(Outcome.collision(a, b, incidentSpeed))
       return false
     }
-    return this.prepareAdvanceToCushions(a, t)
+    return (
+      this.prepareAdvanceToCushions(a, t) && this.prepareAdvanceToCushions(b, t)
+    )
   }
 
   private prepareAdvanceToCushions(a: Ball, t: number): boolean {
@@ -101,10 +107,6 @@ export class Table {
     return this.balls.every((b) => !b.inMotion() || !b.onTable())
   }
 
-  overlapping() {
-    this.pairs.some((pair) => Collision.willCollide(pair.a, pair.b, 0))
-  }
-
   hit() {
     let aim = this.cue.aim
     this.balls[0].vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
@@ -128,8 +130,6 @@ export class Table {
       this.balls[0].rvel.copy(rvel)
     }
     aim.power = 0
-    console.log(this.balls[0].pos.x)
-    console.log(round8(this.balls[0].pos.x))
   }
 
   serialise() {

@@ -27,10 +27,6 @@ export function round(num) {
   return Math.round((num + Number.EPSILON) * 1000) / 1000
 }
 
-export function round8(num) {
-  return Math.round((num + Number.EPSILON) * 100000000) / 100000000
-}
-
 export function roundVec(v) {
   v.x = round(v.x)
   v.y = round(v.y)

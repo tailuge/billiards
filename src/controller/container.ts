@@ -31,7 +31,7 @@ export class Container {
   isSinglePlayer: boolean
 
   last = performance.now()
-  readonly step = 0.002
+  readonly step = 0.001953125
 
   broadcast: (event: string) => void
   log: (text: string) => void
