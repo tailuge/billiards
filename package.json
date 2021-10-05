@@ -30,7 +30,7 @@
         }
     },
     "dependencies": {
-        "three": "^0.133.0"
+        "three": "^0.133.1"
     },
     "devDependencies": {
         "@types/chai": "^4.2.22",
@@ -48,6 +48,6 @@
         "typescript": "^4.4.3",
         "webpack": "^5.56.1",
         "webpack-cli": "^4.8.0",
-        "webpack-dev-server": "^4.3.0"
+        "webpack-dev-server": "^4.3.1"
     }
 }
