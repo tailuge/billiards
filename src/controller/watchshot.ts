@@ -13,34 +13,20 @@ export class WatchShot extends ControllerBase {
   }
 
   handleAim(_) {
-    return this.transitionTo(
-      new Aim(this.container),
-      "stationary so transition to Aim"
-    )
+    return new Aim(this.container)
   }
 
   handlePlaceBall(_) {
-    return this.transitionTo(
-      new PlaceBall(this.container),
-      "stationary so transition to PlaceBall"
-    )
+    return new PlaceBall(this.container)
   }
 
   handleWatch(_) {
-    return this.transitionTo(
-      new WatchAim(this.container),
-      "stationary so transition to WatchAim"
-    )
+    return new WatchAim(this.container)
   }
 
   handleStationary(_) {
     this.allStationary = true
     this.container.log("stationary event")
     return this
-  }
-
-  transitionTo(state, message) {
-    this.container.log(message)
-    return state
   }
 }

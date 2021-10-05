@@ -1,6 +1,6 @@
 import "mocha"
 import { expect } from "chai"
-import { Ball } from "../../src/model/ball"
+import { Ball, State } from "../../src/model/ball"
 import { Collision } from "../../src/model/physics/collision"
 import { Vector3 } from "three"
 import { zero } from "../../src/utils/utils"
@@ -21,6 +21,7 @@ describe("Collision", () => {
     let pos = new Vector3(1, 0, 0)
     let a = new Ball(zero)
     a.vel.x = 1
+    a.state = State.Sliding
     let b = new Ball(pos)
     expect(Collision.willCollide(a, b, t)).to.be.true
     done()
@@ -30,6 +31,7 @@ describe("Collision", () => {
     let pos = new Vector3(1, 0, 0)
     let a = new Ball(zero)
     a.vel.x = 1
+    a.state = State.Sliding
     let b = new Ball(pos)
     expect(Collision.willCollide(a, b, t)).to.be.true
     Collision.collide(a, b)
@@ -42,8 +44,10 @@ describe("Collision", () => {
     let pos = new Vector3(0.9, 0, 0)
     let a = new Ball(zero)
     a.vel.x = 1
+    a.state = State.Sliding
     let b = new Ball(pos)
     b.vel.x = -1
+    b.state = State.Sliding
     expect(Collision.willCollide(a, b, t)).to.be.true
     Collision.collide(a, b)
     expect(Collision.willCollide(a, b, t)).to.be.false

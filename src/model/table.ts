@@ -31,6 +31,12 @@ export class Table {
     }
   }
 
+  updateBallMesh(t) {
+    this.balls.forEach((a) => {
+      a.updateMesh(t)
+    })
+  }
+
   advance(t: number) {
     let depth = 0
     while (!this.prepareAdvanceAll(t)) {
@@ -43,36 +49,36 @@ export class Table {
     })
   }
 
-  updateBallMesh(t) {
-    this.balls.forEach((a) => {
-      a.updateMesh(t)
-    })
-  }
-
+  /**
+   * Returns true if all balls can advance by t without collision
+   *
+   */
   prepareAdvanceAll(t: number) {
-    return this.pairs.length > 0
-      ? !this.pairs.some((pair) => !this.prepareAdvancePair(pair.a, pair.b, t))
-      : !this.balls.some((ball) => !this.prepareAdvanceToCushions(ball, t))
+    return (
+      !this.pairs.some((pair) => !this.prepareAdvancePair(pair.a, pair.b, t)) &&
+      !this.balls.some((ball) => !this.prepareAdvanceToCushions(ball, t))
+    )
   }
 
   /**
-   * Returns true is balls can advance by t without any collision (with other balls or cushions).
+   * Returns true if a pair of balls can advance by t without any collision.
    * If there is a collision, adjust velocity appropriately.
+   *
    */
   private prepareAdvancePair(a: Ball, b: Ball, t: number) {
-    if (!a.inMotion() && !b.inMotion()) {
-      return true
-    }
     if (Collision.willCollide(a, b, t)) {
       var incidentSpeed = Collision.collide(a, b)
       this.outcome.push(Outcome.collision(a, b, incidentSpeed))
       return false
     }
-    return (
-      this.prepareAdvanceToCushions(a, t) && this.prepareAdvanceToCushions(b, t)
-    )
+    return true
   }
 
+  /**
+   * Returns true if ball can advance by t without hitting cushion, knuckle or pocket.
+   * If there is a collision, adjust velocity appropriately.
+   *
+   */
   private prepareAdvanceToCushions(a: Ball, t: number): boolean {
     let futurePosition = a.futurePosition(t)
     if (

@@ -3,6 +3,7 @@ import { Ball, State } from "../ball"
 export class Collision {
   static willCollide(a: Ball, b: Ball, t: number): boolean {
     return (
+      (a.inMotion() || b.inMotion()) &&
       a.onTable() &&
       b.onTable() &&
       a.futurePosition(t).distanceToSquared(b.futurePosition(t)) < 1
