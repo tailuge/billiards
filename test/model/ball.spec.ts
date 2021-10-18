@@ -217,4 +217,19 @@ describe("Ball", () => {
     expect(b.vel.x).to.be.equal(1.5)
     done()
   })
+/*
+  it.only("sliding ball at rolling conditions transitions to rolling", (done) => {
+    let b = Ball.fromSerialised({
+      pos: { x: 0, y: 0, z: 0 },
+      vel: {x: -0.568691179646577, y: 0.19917980334600546, z: 0},
+      rvel: {x: -0.2807500477302739, y: -0.4961088936915536, z: 0},
+      state: "Sliding",
+    })
+    b.update(0.001953125 * 3)
+    b.update(0.001953125 * 3)
+    b.update(0.001953125 * 3)
+    expect(b.isRolling()).to.be.true
+    done()
+  })
+*/
 })
