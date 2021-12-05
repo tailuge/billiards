@@ -217,7 +217,7 @@ describe("Ball", () => {
     expect(b.vel.x).to.be.equal(1.5)
     done()
   })
-/*
+  /*
   it.only("sliding ball at rolling conditions transitions to rolling", (done) => {
     let b = Ball.fromSerialised({
       pos: { x: 0, y: 0, z: 0 },
