@@ -3,18 +3,22 @@ import { execSync } from "child_process"
 import { BeginEvent } from "../events/beginevent"
 import { EventUtil } from "../events/eventutil"
 
-const port = process.env.PORT || 8888
+const port = Number(process.env.PORT || 8888)
 console.log(`Starting websocketserver on port ${port}`)
 const wss = new WebSocketServer({ port: port })
 
-const clientToRoom: Array<any> = []
+const clientId = new Map<Object, number>()
+const clientToRoom = new Map<Object, number>()
 const rooms: Array<Array<any>> = [[]]
 var pendingRoom = 0
-var idFountain = 300
+var clientIdFountain = 0
+
 wss.on("connection", function connection(ws) {
-  ws.id = idFountain++
+  var id = clientIdFountain++
+  clientId.set(ws, id)
+  console.log(`Client with id:${id} has joined`)
   rooms[pendingRoom].push(ws)
-  clientToRoom[ws.id] = pendingRoom
+  clientToRoom.set(ws, pendingRoom)
   console.log(
     `Room ${pendingRoom} has ${rooms[pendingRoom].length} partcipants`
   )
@@ -24,32 +28,41 @@ wss.on("connection", function connection(ws) {
     pendingRoom++
     rooms[pendingRoom] = []
     // send begin event
-    console.log("Sending begin event")
+    console.log(`Sending begin event to client id:${clientId.get(ws)}`)
     ws.send(EventUtil.serialise(new BeginEvent()))
   }
 
   ws.on("message", function incoming(message) {
-    const m = JSON.parse(message)
-    console.log(`received: ${m.type} from ${ws.id}`)
+    const m = JSON.parse(message.toString())
+    console.log(`received: ${m.type} from client id:${clientId.get(ws)}`)
     sendToOthersInRoom(ws, message.toString())
   })
 
   ws.on("close", function incoming(_) {
-    console.log(`close from ${ws.id}, closing room ${clientToRoom[ws.id]}`)
-    rooms[clientToRoom[ws.id]] = []
+    console.log(
+      `close from ${clientId.get(ws)}, closing room ${clientToRoom.get(ws)}`
+    )
+    var roomId = clientToRoom.get(ws)
+    if (roomId) {
+      rooms[roomId] = []
+    }
   })
 })
 
 function sendToOthersInRoom(ws, data: string): void {
-  const room = rooms[clientToRoom[ws.id]]
-  room.forEach((client) => {
-    if (client.id !== ws.id) {
-      console.log(
-        `Sending message in room ${clientToRoom[ws.id]} to ${client.id}`
-      )
-      client.send(data)
-    }
-  })
+  var roomId = clientToRoom.get(ws)
+  console.log(`Sending message in room ${roomId}`)
+
+  if (roomId !== undefined) {
+    const room = rooms[roomId]
+    room.forEach((client) => {
+      var participantId = clientId.get(client)
+      if (participantId !== clientId.get(ws)) {
+        console.log(`Sending message in room ${roomId} to ${participantId}`)
+        client.send(data)
+      }
+    })
+  }
 }
 
 const exposedPort = execSync(`echo $(gp url ${port})`)
