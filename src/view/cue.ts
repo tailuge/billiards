@@ -42,7 +42,7 @@ export class Cue {
   }
 
   private createHelper() {
-    var geometry = new CylinderGeometry(0.5, 0.5, 30, 12)
+    const geometry = new CylinderGeometry(0.5, 0.5, 30, 12)
     this.helperMesh = new Mesh(geometry, Cue.helpermaterial)
     this.helperMesh.geometry
       .applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
@@ -51,7 +51,7 @@ export class Cue {
   }
 
   private initialise(tip, but, length) {
-    var geometry = new CylinderGeometry(tip, but, length, 11)
+    const geometry = new CylinderGeometry(tip, but, length, 11)
     this.mesh = new Mesh(geometry, Cue.material)
     this.mesh.castShadow = false
     this.mesh.geometry
@@ -108,11 +108,11 @@ export class Cue {
   moveTo(pos) {
     this.aim.pos.copy(pos)
     this.mesh.rotation.z = this.aim.angle
-    let offset = upCross(unitAtAngle(this.aim.angle))
+    const offset = upCross(unitAtAngle(this.aim.angle))
       .multiplyScalar(this.aim.sideOffset)
       .setZ(this.aim.verticalOffset)
-    let swing = (Math.sin(this.t / 3) - 1) * 0.25
-    let distanceToBall = unitAtAngle(this.aim.angle)
+    const swing = (Math.sin(this.t / 3) - 1) * 0.25
+    const distanceToBall = unitAtAngle(this.aim.angle)
       .clone()
       .multiplyScalar(swing - (this.aim.power / this.maxPower) * 3)
     this.mesh.position.copy(pos.clone().add(offset).add(distanceToBall))
@@ -125,13 +125,13 @@ export class Cue {
   }
 
   intersectsAnything(table: Table) {
-    let origin = table.balls[0].pos
+    const origin = table.balls[0].pos
       .clone()
       .addScaledVector(unitAtAngle(this.aim.angle), -this.length / 2)
     origin.z = this.aim.verticalOffset
-    let direction = unitAtAngle(this.aim.angle)
-    let raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
-    let intersections = raycaster.intersectObjects(
+    const direction = unitAtAngle(this.aim.angle)
+    const raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
+    const intersections = raycaster.intersectObjects(
       table.balls.map((b) => b.ballmesh.mesh)
     )
     return intersections.length > 0

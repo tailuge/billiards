@@ -10,17 +10,17 @@ export class Keyboard {
   released = {}
 
   getEvents() {
-    let keys = Object.keys(this.pressed)
+    const keys = Object.keys(this.pressed)
       .filter((key) => !/.*Shift.*/.test(key))
       .filter((key) => !/.*Control.*/.test(key))
-    let shift = Object.keys(this.pressed).some((key) => /.*Shift.*/.test(key))
-    let control = Object.keys(this.pressed).some((key) =>
+    const shift = Object.keys(this.pressed).some((key) => /.*Shift.*/.test(key))
+    const control = Object.keys(this.pressed).some((key) =>
       /.*Control.*/.test(key)
     )
-    let result: Input[] = []
+    const result: Input[] = []
 
     keys.forEach((k) => {
-      let t = performance.now() - this.pressed[k]
+      const t = performance.now() - this.pressed[k]
       result.push(new Input(control ? t / 3 : t, shift ? "Shift" + k : k))
       if (k != "Space") {
         this.pressed[k] = performance.now()

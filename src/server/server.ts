@@ -10,11 +10,11 @@ const wss = new WebSocketServer({ port: port })
 const clientId = new Map<Object, number>()
 const clientToRoom = new Map<Object, number>()
 const rooms: Array<Array<any>> = [[]]
-var pendingRoom = 0
-var clientIdFountain = 0
+let pendingRoom = 0
+let clientIdFountain = 0
 
 wss.on("connection", function connection(ws) {
-  var id = clientIdFountain++
+  const id = clientIdFountain++
   clientId.set(ws, id)
   console.log(`Client with id:${id} has joined`)
   rooms[pendingRoom].push(ws)
@@ -42,7 +42,7 @@ wss.on("connection", function connection(ws) {
     console.log(
       `close from ${clientId.get(ws)}, closing room ${clientToRoom.get(ws)}`
     )
-    var roomId = clientToRoom.get(ws)
+    const roomId = clientToRoom.get(ws)
     if (roomId) {
       rooms[roomId] = []
     }
@@ -50,13 +50,13 @@ wss.on("connection", function connection(ws) {
 })
 
 function sendToOthersInRoom(ws, data: string): void {
-  var roomId = clientToRoom.get(ws)
+  const roomId = clientToRoom.get(ws)
   console.log(`Sending message in room ${roomId}`)
 
   if (roomId !== undefined) {
     const room = rooms[roomId]
     room.forEach((client) => {
-      var participantId = clientId.get(client)
+      const participantId = clientId.get(client)
       if (participantId !== clientId.get(ws)) {
         console.log(`Sending message in room ${roomId} to ${participantId}`)
         client.send(data)
