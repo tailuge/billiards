@@ -11,25 +11,25 @@ import { Rack } from "../../src/utils/rack"
 
 describe("EventUtil", () => {
   it("Serialise and deserialise AimEvent", (done) => {
-    let aim = new AimEvent()
-    let event: GameEvent = aim
-    let serialised = EventUtil.serialise(event)
-    let deserialised = <AimEvent>EventUtil.fromSerialised(serialised)
+    const aim = new AimEvent()
+    const event: GameEvent = aim
+    const serialised = EventUtil.serialise(event)
+    const deserialised = <AimEvent>EventUtil.fromSerialised(serialised)
     expect(deserialised.type).to.equal(EventType.AIM)
     done()
   })
 
   it("Serialise and deserialise AbortEvent", (done) => {
-    let serialised = EventUtil.serialise(new AbortEvent())
-    let deserialised = EventUtil.fromSerialised(serialised)
+    const serialised = EventUtil.serialise(new AbortEvent())
+    const deserialised = EventUtil.fromSerialised(serialised)
     expect(deserialised.type).to.equal(EventType.ABORT)
     done()
   })
 
   it("Serialise and deserialise WatchEvent", (done) => {
-    let table = new Table(Rack.diamond())
-    let serialised = EventUtil.serialise(new WatchEvent(table.serialise()))
-    let deserialised = EventUtil.fromSerialised(serialised)
+    const table = new Table(Rack.diamond())
+    const serialised = EventUtil.serialise(new WatchEvent(table.serialise()))
+    const deserialised = EventUtil.fromSerialised(serialised)
     expect(deserialised.type).to.equal(EventType.WATCHAIM)
     done()
   })
