@@ -22,8 +22,8 @@ export class Table {
   initialiseBalls(balls: Ball[]) {
     this.balls = balls
     this.pairs = []
-    for (var a = 0; a < balls.length; a++) {
-      for (var b = 0; b < balls.length; b++) {
+    for (let a = 0; a < balls.length; a++) {
+      for (let b = 0; b < balls.length; b++) {
         if (a < b) {
           this.pairs.push({ a: balls[a], b: balls[b] })
         }
@@ -67,7 +67,7 @@ export class Table {
    */
   private prepareAdvancePair(a: Ball, b: Ball, t: number) {
     if (Collision.willCollide(a, b, t)) {
-      var incidentSpeed = Collision.collide(a, b)
+      const incidentSpeed = Collision.collide(a, b)
       this.outcome.push(Outcome.collision(a, b, incidentSpeed))
       return false
     }
@@ -80,7 +80,7 @@ export class Table {
    *
    */
   private prepareAdvanceToCushions(a: Ball, t: number): boolean {
-    let futurePosition = a.futurePosition(t)
+    const futurePosition = a.futurePosition(t)
     if (
       Math.abs(futurePosition.y) < TableGeometry.tableY &&
       Math.abs(futurePosition.x) < TableGeometry.tableX
@@ -89,19 +89,19 @@ export class Table {
     }
 
     if (Cushion.willBounce(a, t)) {
-      var incidentSpeed = Cushion.bounce(a, t)
+      const incidentSpeed = Cushion.bounce(a, t)
       this.outcome.push(Outcome.cushion(a, incidentSpeed))
       return false
     }
-    let k = Knuckle.willBounceAny(a, t)
+    const k = Knuckle.willBounceAny(a, t)
     if (k) {
-      var knuckleIncidentSpeed = k.bounce(a)
+      const knuckleIncidentSpeed = k.bounce(a)
       this.outcome.push(Outcome.cushion(a, knuckleIncidentSpeed))
       return false
     }
-    let p = Pocket.willFallAny(a, t)
+    const p = Pocket.willFallAny(a, t)
     if (p) {
-      var pocketIncidentSpeed = p.fall(a, t)
+      const pocketIncidentSpeed = p.fall(a, t)
       this.outcome.push(Outcome.pot(a, pocketIncidentSpeed))
       return false
     }
@@ -114,23 +114,23 @@ export class Table {
   }
 
   hit() {
-    let aim = this.cue.aim
+    const aim = this.cue.aim
     this.balls[0].vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
     if (aim.spinOnly) {
       this.balls[0].vel.copy(zero)
     }
     this.balls[0].state = State.Sliding
 
-    let angle = Math.atan2(-aim.sideOffset, aim.verticalOffset)
+    const angle = Math.atan2(-aim.sideOffset, aim.verticalOffset)
     if (angle == 0) {
       this.balls[0].rvel.copy(zero)
     } else {
-      let spinPower = Math.sqrt(
+      const spinPower = Math.sqrt(
         aim.verticalOffset * aim.verticalOffset +
           aim.sideOffset * aim.sideOffset
       )
-      let dir = unitAtAngle(aim.angle)
-      let rvel = upCross(dir)
+      const dir = unitAtAngle(aim.angle)
+      const rvel = upCross(dir)
         .applyAxisAngle(dir, angle)
         .multiplyScalar(spinPower * aim.power * 2)
       this.balls[0].rvel.copy(rvel)
@@ -146,7 +146,7 @@ export class Table {
   }
 
   static fromSerialised(data) {
-    let table = new Table(data.balls.map((b) => Ball.fromSerialised(b)))
+    const table = new Table(data.balls.map((b) => Ball.fromSerialised(b)))
     table.updateFromSerialised(data)
     return table
   }

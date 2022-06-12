@@ -203,13 +203,13 @@ export class TableGeometry {
   })
 
   private static knuckleCylinder(knuckle, scene) {
-    let k = TableGeometry.cylinder(knuckle.pos, knuckle.radius, 0.75, scene)
+    const k = TableGeometry.cylinder(knuckle.pos, knuckle.radius, 0.75, scene)
     k.position.setZ(-0.25 / 2)
   }
 
   private static cylinder(pos, radius, depth, scene) {
-    var geometry = new CylinderGeometry(radius, radius, depth, 16)
-    var mesh = new Mesh(geometry, TableGeometry.material)
+    const geometry = new CylinderGeometry(radius, radius, depth, 16)
+    const mesh = new Mesh(geometry, TableGeometry.material)
     mesh.position.copy(pos)
     mesh.geometry.applyMatrix4(
       new Matrix4()
@@ -221,7 +221,7 @@ export class TableGeometry {
   }
 
   static addCushions(scene) {
-    let th = 10
+    const th = 10
     TableGeometry.plane(
       new Vector3(0, 0, -0.5 - th / 2),
       2 * TableGeometry.X,
@@ -230,14 +230,14 @@ export class TableGeometry {
       scene
     )
 
-    let d = 1
-    let h = 0.75
-    let e = -0.25 / 2
-    let lengthN = Math.abs(
+    const d = 1
+    const h = 0.75
+    const e = -0.25 / 2
+    const lengthN = Math.abs(
       TableGeometry.pockets.pocketNW.knuckleNE.pos.x -
         TableGeometry.pockets.pocketN.knuckleNW.pos.x
     )
-    let lengthE = Math.abs(
+    const lengthE = Math.abs(
       TableGeometry.pockets.pocketNW.knuckleSW.pos.y -
         TableGeometry.pockets.pocketSW.knuckleNW.pos.y
     )
@@ -289,8 +289,8 @@ export class TableGeometry {
   }
 
   private static plane(pos, x, y, z, scene) {
-    var geometry = new BoxGeometry(x, y, z)
-    var mesh = new Mesh(geometry, TableGeometry.material)
+    const geometry = new BoxGeometry(x, y, z)
+    const mesh = new Mesh(geometry, TableGeometry.material)
     mesh.receiveShadow = true
     mesh.position.copy(pos)
     scene.add(mesh)

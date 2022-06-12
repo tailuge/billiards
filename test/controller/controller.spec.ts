@@ -18,8 +18,8 @@ import { Outcome } from "../../src/model/outcome"
 import { PlaceBall } from "../../src/controller/placeball"
 
 describe("Controller", () => {
-  var container: Container
-  var broadcastEvents: GameEvent[]
+  let container: Container
+  let broadcastEvents: GameEvent[]
 
   beforeEach(function (done) {
     container = new Container(undefined, (_) => {})
@@ -30,8 +30,8 @@ describe("Controller", () => {
   })
 
   it("Abort takes Aim to End", (done) => {
-    let controller: Controller = new Aim(container)
-    let event: GameEvent = new AbortEvent()
+    const controller: Controller = new Aim(container)
+    const event: GameEvent = new AbortEvent()
     expect(event.applyToController(controller)).to.be.an.instanceof(End)
     done()
   })
@@ -68,7 +68,7 @@ describe("Controller", () => {
   })
 
   it("AimEvent takes WatchShot to Aim when all stationary", (done) => {
-    let watchShot = new WatchShot(container)
+    const watchShot = new WatchShot(container)
     watchShot.allStationary = true
     container.controller = watchShot
     container.table.balls[0].setStationary()
@@ -79,7 +79,7 @@ describe("Controller", () => {
   })
 
   it("WatchEvent takes WatchShot to WatchAim when all stationary", (done) => {
-    let watchShot = new WatchShot(container)
+    const watchShot = new WatchShot(container)
     watchShot.allStationary = true
     container.controller = watchShot
     container.table.balls[0].setStationary()
@@ -98,7 +98,7 @@ describe("Controller", () => {
   })
 
   it("AimEvent takes WatchShot to enqueued Aim after all stationary", (done) => {
-    let watchShot = new WatchShot(container)
+    const watchShot = new WatchShot(container)
     watchShot.allStationary = false
     container.controller = watchShot
     container.table.balls[0].setStationary()
@@ -111,7 +111,7 @@ describe("Controller", () => {
   })
 
   it("WatchEvent takes WatchShot to enqueued WatchAim after all stationary", (done) => {
-    let watchShot = new WatchShot(container)
+    const watchShot = new WatchShot(container)
     watchShot.allStationary = false
     container.controller = watchShot
     container.table.balls[0].setStationary()
