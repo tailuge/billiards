@@ -10,8 +10,8 @@ let t = 0.1
 
 describe("Cushion", () => {
   it("bounces off X cushion", (done) => {
-    let pos = new Vector3(TableGeometry.tableX, 0, 0)
-    let ball = new Ball(pos)
+    const pos = new Vector3(TableGeometry.tableX, 0, 0)
+    const ball = new Ball(pos)
     ball.vel.x = 1
     expect(Cushion.willBounce(ball, t)).to.be.true
     Cushion.bounce(ball, t)
@@ -21,8 +21,8 @@ describe("Cushion", () => {
   })
 
   it("bounces off -X cushion", (done) => {
-    let pos = new Vector3(-TableGeometry.tableX, 0, 0)
-    let ball = new Ball(pos)
+    const pos = new Vector3(-TableGeometry.tableX, 0, 0)
+    const ball = new Ball(pos)
     ball.vel.x = -1
     expect(Cushion.willBounce(ball, t)).to.be.true
     Cushion.bounce(ball, t)
@@ -32,8 +32,8 @@ describe("Cushion", () => {
   })
 
   it("bounces off Y cushion", (done) => {
-    let pos = new Vector3(TableGeometry.tableX / 2, TableGeometry.tableY, 0)
-    let ball = new Ball(pos)
+    const pos = new Vector3(TableGeometry.tableX / 2, TableGeometry.tableY, 0)
+    const ball = new Ball(pos)
     ball.vel.y = 1
     expect(Cushion.willBounce(ball, t)).to.be.true
     Cushion.bounce(ball, t)
@@ -43,8 +43,8 @@ describe("Cushion", () => {
   })
 
   it("bounces off -Y cushion", (done) => {
-    let pos = new Vector3(TableGeometry.tableX / 2, -TableGeometry.tableY, 0)
-    let ball = new Ball(pos)
+    const pos = new Vector3(TableGeometry.tableX / 2, -TableGeometry.tableY, 0)
+    const ball = new Ball(pos)
     ball.vel.y = -1
     expect(Cushion.willBounce(ball, t)).to.be.true
     Cushion.bounce(ball, t)
@@ -54,8 +54,8 @@ describe("Cushion", () => {
   })
 
   function bounceInXWithSpin(rvel) {
-    let pos = new Vector3(TableGeometry.tableX, 0, 0)
-    let ball = new Ball(pos)
+    const pos = new Vector3(TableGeometry.tableX, 0, 0)
+    const ball = new Ball(pos)
     ball.vel.x = 1
     ball.rvel.copy(rvel)
     Cushion.bounce(ball, t)
@@ -63,57 +63,57 @@ describe("Cushion", () => {
   }
 
   it("bounces off X cushion with rhs spins", (done) => {
-    let ball = bounceInXWithSpin(new Vector3(0, 0, 1))
+    const ball = bounceInXWithSpin(new Vector3(0, 0, 1))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.below(0)
     done()
   })
 
   it("bounces off X cushion with lhs spins", (done) => {
-    let ball = bounceInXWithSpin(new Vector3(0, 0, -1))
+    const ball = bounceInXWithSpin(new Vector3(0, 0, -1))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.above(0)
     done()
   })
 
   it("bounces off X cushion with rolling spin", (done) => {
-    let ball = bounceInXWithSpin(new Vector3(0, 1, 0))
+    const ball = bounceInXWithSpin(new Vector3(0, 1, 0))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.approximately(0, 0.01)
     done()
   })
 
   it("bounces off X cushion with top spin", (done) => {
-    let ball = bounceInXWithSpin(new Vector3(0, 2, 0))
+    const ball = bounceInXWithSpin(new Vector3(0, 2, 0))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.approximately(0, 0.01)
     done()
   })
 
   it("bounces off X cushion with back spin", (done) => {
-    let ball = bounceInXWithSpin(new Vector3(0, -2, 0))
+    const ball = bounceInXWithSpin(new Vector3(0, -2, 0))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.approximately(0, 0.01)
     done()
   })
 
   it("bounces off X cushion with top and rhs", (done) => {
-    let ball = bounceInXWithSpin(new Vector3(0, 2, 1))
+    const ball = bounceInXWithSpin(new Vector3(0, 2, 1))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.below(0)
     done()
   })
 
   it("bounces off X cushion with corkscrew spin", (done) => {
-    let ball = bounceInXWithSpin(new Vector3(1, 0, 0))
+    const ball = bounceInXWithSpin(new Vector3(1, 0, 0))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.approximately(0, 0.1)
     done()
   })
 
   it("bounces off X cushion 45 in 45 out", (done) => {
-    let pos = new Vector3(TableGeometry.tableX, 0, 0)
-    let ball = new Ball(pos)
+    const pos = new Vector3(TableGeometry.tableX, 0, 0)
+    const ball = new Ball(pos)
     ball.vel.set(1, 1, 0)
     Cushion.bounce(ball, t)
     expect(ball.vel.y).to.be.approximately(-ball.vel.x, 0.2)
@@ -121,23 +121,23 @@ describe("Cushion", () => {
   })
 
   it("does not bounce off pocket area", (done) => {
-    let pos = new Vector3(0, -TableGeometry.tableY, 0)
-    let ball = new Ball(pos)
+    const pos = new Vector3(0, -TableGeometry.tableY, 0)
+    const ball = new Ball(pos)
     ball.vel.y = -1
     expect(Cushion.willBounce(ball, t)).to.be.false
     done()
   })
 
   it("bounces off knuckle", (done) => {
-    let pos = new Vector3(
+    const pos = new Vector3(
       TableGeometry.middleKnuckleInset - 0.1,
       -TableGeometry.tableY,
       0
     )
-    let ball = new Ball(pos)
+    const ball = new Ball(pos)
     ball.vel.y = -1
     expect(Cushion.willBounce(ball, t)).to.be.false
-    let k = Knuckle.willBounceAny(ball, t)
+    const k = Knuckle.willBounceAny(ball, t)
     expect(k).to.be.deep.equal(TableGeometry.pockets.pocketS.knuckleSE)
     k && k.bounce(ball)
     expect(ball.vel.x).to.be.below(0)
@@ -146,7 +146,7 @@ describe("Cushion", () => {
   })
 
   it("geometry present", (done) => {
-    var scene = { add: ({}) => {} }
+    const scene = { add: ({}) => {} }
     TableGeometry.addToScene(scene)
     done()
   })

@@ -26,8 +26,8 @@ export class BallMesh {
   m = new Matrix4()
 
   updateRotation(rvel, t) {
-    let angle = (rvel.length() * t * Math.PI) / 2
-    let m = this.m.identity().makeRotationAxis(norm(rvel), angle)
+    const angle = (rvel.length() * t * Math.PI) / 2
+    const m = this.m.identity().makeRotationAxis(norm(rvel), angle)
     this.mesh.geometry.applyMatrix4(m)
   }
 
@@ -43,8 +43,8 @@ export class BallMesh {
   }
 
   initialiseMesh(color) {
-    var geometry = new IcosahedronGeometry(0.5, 1)
-    var material = new MeshPhongMaterial({
+    const geometry = new IcosahedronGeometry(0.5, 1)
+    const material = new MeshPhongMaterial({
       color: color,
       emissive: 0,
       flatShading: true,
