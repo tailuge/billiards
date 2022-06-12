@@ -71,7 +71,7 @@ export class Container {
     const steps = Math.floor(elapsed / this.step)
     const computedElapsed = steps * this.step
     const stateBefore = this.table.allStationary()
-    for (var i = 0; i < steps; i++) {
+    for (let i = 0; i < steps; i++) {
       this.table.advance(this.step)
     }
     this.table.updateBallMesh(computedElapsed)
@@ -88,7 +88,7 @@ export class Container {
 
   processEvents() {
     if (this.keyboard) {
-      var inputs = this.keyboard.getEvents()
+      const inputs = this.keyboard.getEvents()
       inputs.forEach((i) => this.inputQueue.push(i))
     }
 

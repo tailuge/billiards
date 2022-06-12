@@ -5,18 +5,18 @@ import { EventType } from "./events/eventtype"
 import { BreakEvent } from "./events/breakevent"
 import { SocketConnection } from "./events/socketconnection"
 
-var sc: SocketConnection | null
-var container: Container
-var state = {
+let sc: SocketConnection | null
+let container: Container
+let state = {
   init: null,
   shots: Array<any>(),
 }
-var id
+let id
 
 initialise()
 
 function netEvent(e) {
-  let event = EventUtil.fromSerialised(e)
+  const event = EventUtil.fromSerialised(e)
   console.log(`${id} received ${event.type}`)
   container.eventQueue.push(event)
 }
@@ -58,7 +58,7 @@ function onAssetsReady() {
   }
 
   container.broadcast = (e: string) => {
-    let event = EventUtil.fromSerialised(e)
+    const event = EventUtil.fromSerialised(e)
     if (event.type === EventType.BREAK) {
       state.init = (<BreakEvent>event).init
     }

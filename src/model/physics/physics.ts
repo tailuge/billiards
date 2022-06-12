@@ -83,8 +83,8 @@ function Pze(c) {
 }
 
 export function isCushionXGrip(v, w) {
-  var Pze_val = Pze(c0(v))
-  var Pzs_val = Pzs(s0(v, w))
+  const Pze_val = Pze(c0(v))
+  const Pzs_val = Pzs(s0(v, w))
 
   console.log(
     Pze_val +
@@ -103,19 +103,19 @@ export function isCushionXGrip(v, w) {
 export function bounceWithSideX(v, w, dv, dw) {
   //gripInXCushion(v,w)
 
-  var newVx = -v.x * e
-  var newVy = v.y + R * ((-w.z * cos_a * Math.abs(v.x)) / 30)
+  const newVx = -v.x * e
+  const newVy = v.y + R * ((-w.z * cos_a * Math.abs(v.x)) / 30)
 
-  var newWx = w.x * 0.9
-  var newWy = 0
-  var newWz = w.z / 2
+  const newWx = w.x * 0.9
+  const newWy = 0
+  const newWz = w.z / 2
 
   dv.set(newVx - v.x, newVy - v.y, 0)
   dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
 }
 
 export function gripInXCushion(v, w) {
-  var ballCushionSurfaceVelocity = Math.abs(v.y + w.z * R)
+  const ballCushionSurfaceVelocity = Math.abs(v.y + w.z * R)
   console.log(
     ballCushionSurfaceVelocity,
     ballCushionSurfaceVelocity > 20 ? "slip" : "grip"
@@ -123,33 +123,33 @@ export function gripInXCushion(v, w) {
 }
 
 export function bounceWithoutSlipX(v, w, dv, dw) {
-  var newVx =
+  const newVx =
     v.x -
     v.x * ((2 / 7) * sin_a2 + (1 + e) * cos_a2) -
     (2 / 7) * R * w.y * sin_a
-  var newVy = (5 / 7) * v.y + (2 / 7) * R * (w.x * sin_a - w.z * cos_a)
+  const newVy = (5 / 7) * v.y + (2 / 7) * R * (w.x * sin_a - w.z * cos_a)
 
-  var Py = m * (newVy - v.y)
-  var Px = m * (newVx - v.x)
-  var Pz = -m
-  var newWx = w.x - (R / I) * Py * sin_a
-  var newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
-  var newWz = w.z + (R / I) * Py * cos_a
+  const Py = m * (newVy - v.y)
+  const Px = m * (newVx - v.x)
+  const Pz = -m
+  const newWx = w.x - (R / I) * Py * sin_a
+  const newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
+  const newWz = w.z + (R / I) * Py * cos_a
 
   dv.set(newVx - v.x, newVy - v.y, 0)
   dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
 }
 
 export function bounceWithSlipX(v, w, dv, dw) {
-  var newVx = v.x - v.x * (1 + e) * cos_a * (mu * cos_a * sin_a + cos_a)
-  var newVy = v.y + mu * (1 + e) * cos_a * sin_a * v.x
+  const newVx = v.x - v.x * (1 + e) * cos_a * (mu * cos_a * sin_a + cos_a)
+  const newVy = v.y + mu * (1 + e) * cos_a * sin_a * v.x
 
-  var Py = m * (newVy - v.y)
-  var Px = m * (newVx - v.x)
-  var Pz = -m
-  var newWx = w.x - (R / I) * Py * sin_a
-  var newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
-  var newWz = w.z + (R / I) * Py * cos_a
+  const Py = m * (newVy - v.y)
+  const Px = m * (newVx - v.x)
+  const Pz = -m
+  const newWx = w.x - (R / I) * Py * sin_a
+  const newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
+  const newWz = w.z + (R / I) * Py * cos_a
 
   dv.set(newVx - v.x, newVy - v.y, 0)
   dw.set(newWx - w.x, newWy - w.y, newWz - w.z)

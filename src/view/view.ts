@@ -68,7 +68,10 @@ export class View {
     }
 
     this.renderCamera(this.camera, this.views[0])
-    let aspect = this.overheadCamera.aspect(this.windowWidth, this.windowHeight)
+    const aspect = this.overheadCamera.aspect(
+      this.windowWidth,
+      this.windowHeight
+    )
     this.views[1].width = aspect.x
     this.views[1].height = aspect.y
     this.views[1].left = 1 - aspect.x * 1.01
@@ -117,14 +120,14 @@ export class View {
   ballToCheck = 0
 
   isInMotionNotVisible() {
-    var frustrum = this.viewFrustrum()
-    var b = this.table.balls[this.ballToCheck++ % this.table.balls.length]
+    const frustrum = this.viewFrustrum()
+    const b = this.table.balls[this.ballToCheck++ % this.table.balls.length]
     return b.inMotion() && !frustrum.intersectsObject(b.ballmesh.mesh)
   }
 
   viewFrustrum() {
-    var c = this.camera.camera
-    var frustum = new Frustum()
+    const c = this.camera.camera
+    const frustum = new Frustum()
     frustum.setFromProjectionMatrix(
       new Matrix4().multiplyMatrices(c.projectionMatrix, c.matrixWorldInverse)
     )

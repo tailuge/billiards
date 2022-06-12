@@ -3,10 +3,8 @@ import { Mesh, CylinderGeometry, BoxGeometry, MeshPhongMaterial } from "three"
 import { Knuckle } from "../model/physics/knuckle"
 import { Pocket } from "../model/physics/pocket"
 
-/*
-NW 1.05 Qn {x: -22.3, y: 11.3, z: 0}
-N 1 0.9 Qn {x: 0, y: 12.0, z: 0}
-*/
+// NW 1.05 Qn{x: -22.3, y: 11.3, z: 0}
+// N 1 0.9 Qn{x: 0, y: 12.0, z: 0}
 
 export class TableGeometry {
   static tableX = 21.5
