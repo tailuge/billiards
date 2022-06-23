@@ -1,4 +1,5 @@
 import { WebSocketServer } from "ws"
+import { WebSocket } from "ws"
 import { execSync } from "child_process"
 import { BeginEvent } from "../events/beginevent"
 import { EventUtil } from "../events/eventutil"
@@ -7,9 +8,9 @@ const port = Number(process.env.PORT || 8888)
 console.log(`Starting websocketserver on port ${port}`)
 const wss = new WebSocketServer({ port: port })
 
-const clientId = new Map<Object, number>()
-const clientToRoom = new Map<Object, number>()
-const rooms: Array<Array<any>> = [[]]
+const clientId = new Map<WebSocket, number>()
+const clientToRoom = new Map<WebSocket, number>()
+const rooms: Array<Array<WebSocket>> = [[]]
 let pendingRoom = 0
 let clientIdFountain = 0
 
