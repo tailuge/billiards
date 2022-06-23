@@ -65,7 +65,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 ![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20\vec{\omega}))
 
 
-##### rolling motion [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L35-L40)
+##### sliding motion [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L18-L23)
 
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\mu%20g%20\frac{\vec{v}}{\left%20|%20\vec{v}%20\right%20|})
@@ -75,8 +75,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 ![equation](http://latex.codecogs.com/png.latex?\dot{\omega}_{z}%20=%20-\frac{5}{2}\frac{M_{z}}{mR^2}sgn(\omega_{z}))
 
 
-
-##### sliding motion [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L18-L23)
+##### rolling motion [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L35-L40)
 
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\frac{\vec{up}\times\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
