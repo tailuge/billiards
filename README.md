@@ -62,7 +62,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 ##### surface velocity [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L11-L16)
 
 
-![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20\vec{\omega}))
+![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20R\vec{\omega}))
 
 
 ##### sliding motion [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L18-L23)
@@ -82,6 +82,9 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR^2}\frac{\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
+where
+
+![equation](https://latex.codecogs.com/svg.image?M_{xy}=\frac{7}{5\sqrt{2}}R\mu&space;m&space;g)
 
 ##### cushion bounce [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L41-L105)
 

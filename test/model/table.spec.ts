@@ -29,10 +29,10 @@ describe("Table", () => {
 
   it("a momentum transferes to c", (done) => {
     const a = new Ball(zero)
-    a.vel.x = 2
+    a.vel.x = 1.5
     a.state = State.Sliding
-    const b = new Ball(new Vector3(1, 0, 0))
-    const c = new Ball(new Vector3(2, 0, 0))
+    const b = new Ball(new Vector3(1.1, 0, 0))
+    const c = new Ball(new Vector3(2.2, 0, 0))
     const table = new Table([a, b, c])
     expect(table.allStationary()).to.be.false
     expect(table.prepareAdvanceAll(t)).to.be.false

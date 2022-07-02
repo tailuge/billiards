@@ -7,36 +7,27 @@ export function surfaceVelocity(v, w) {
 }
 
 export function surfaceVelocityFull(v, w) {
-  return v.clone().add(upCross(w))
+  return v.clone().addScaledVector(upCross(w), R)
 }
 
 export function sliding(v, w, dv, dw) {
   const va = surfaceVelocity(v, w)
   dv.copy(norm(va).multiplyScalar(-mu * g))
-  dw.copy(norm(upCross(va)).multiplyScalar((5 / 2) * mu * g))
-  dw.setZ(-(5 / 2) * Mz * Math.sign(w.z))
-}
-
-export function slidingFull(v, w, dv, dw) {
-  const normva = new Vector3(v.x - w.y, v.y + w.x, 0).normalize()
-  dv.set(-mu * g * normva.x, -mu * g * normva.y, 0)
-  dw.set(
-    (-5 / 2) * mu * g * normva.y,
-    (5 / 2) * mu * g * normva.x,
-    -(5 / 2) * Mz * Math.sign(w.z)
-  )
+  dw.copy(norm(upCross(va)).multiplyScalar(((5 / 2) * mu * g) / R))
+  dw.setZ(-(5 / 2) * (Mz / (R * R)) * Math.sign(w.z))
 }
 
 export function rollingFull(w, dv, dw) {
   const mag = new Vector3(w.x, w.y, 0).length()
-  const k = ((5 / 7) * Mxy) / mag
+  const k = ((5 / 7) * Mxy) / (m * R) / mag
+  const kw = ((5 / 7) * Mxy) / (m * R * R) / mag
   dv.set(-k * w.y, k * w.x, 0)
-  dw.set(-k * w.x, -k * w.y, -(5 / 2) * Mz * Math.sign(w.z))
+  dw.set(-kw * w.x, -kw * w.y, -(5 / 2) * (Mz / (m * R * R)) * Math.sign(w.z))
 }
 
 export function forceRoll(v, w) {
-  v.sub(surfaceVelocity(v, w).multiplyScalar(0.5))
-  w.copy(upCross(v))
+  v.sub(surfaceVelocity(v, w).multiplyScalar(1))
+  w.copy(upCross(v).multiplyScalar(2))
 }
 
 const sin_a = Math.sin(9.25 / 32.5)

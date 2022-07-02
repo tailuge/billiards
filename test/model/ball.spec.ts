@@ -3,12 +3,7 @@ import { expect } from "chai"
 import { Ball, State } from "../../src/model/ball"
 import { Vector3 } from "three"
 import { zero, passesThroughZero } from "../../src/utils/utils"
-import {
-  sliding,
-  slidingFull,
-  forceRoll,
-  surfaceVelocity,
-} from "../../src/model/physics/physics"
+import { forceRoll, surfaceVelocity } from "../../src/model/physics/physics"
 
 const t = 0.1
 
@@ -63,7 +58,7 @@ describe("Ball", () => {
   it("ball with matched rotational vel is rolling", (done) => {
     const ball = new Ball(new Vector3())
     ball.vel.x = 1
-    ball.rvel.y = 1
+    ball.rvel.y = 2
     expect(ball.isRolling()).to.be.true
     done()
   })
@@ -71,7 +66,7 @@ describe("Ball", () => {
   it("ball close to matched rotational vel is rolling", (done) => {
     const ball = new Ball(new Vector3())
     ball.vel.x = 1
-    ball.rvel.y = 1.0001
+    ball.rvel.y = 2.0001
     ball.state = State.Sliding
     expect(ball.isRolling()).to.be.true
     done()
@@ -153,22 +148,6 @@ describe("Ball", () => {
     done()
   })
 
-  it("alternate sliding calc equivalent", (done) => {
-    const v = new Vector3(1, 2, 0)
-    const w = new Vector3(3, 4, 5)
-    const dv = new Vector3()
-    const dw = new Vector3()
-    const fdv = new Vector3()
-    const fdw = new Vector3()
-
-    sliding(v, w, dv, dw)
-    slidingFull(v, w, fdv, fdw)
-
-    expect(dv.distanceTo(fdv)).to.be.below(0.001)
-    expect(dw.distanceTo(fdw)).to.be.below(0.001)
-    done()
-  })
-
   it("halts at close to zero", (done) => {
     expect(passesThroughZero(new Vector3(1, 1, 0), new Vector3(-0.5, -0.5, 0)))
       .to.be.false
@@ -196,7 +175,7 @@ describe("Ball", () => {
     const b = Ball.fromSerialised({
       pos: { x: 0, y: 0, z: 0 },
       vel: { x: 1, y: 0, z: 0 },
-      rvel: { x: 0, y: 1, z: 0 },
+      rvel: { x: 0, y: 2, z: 0 },
       state: "Rolling",
     })
     forceRoll(b.vel, b.rvel)
@@ -209,7 +188,7 @@ describe("Ball", () => {
     const b = Ball.fromSerialised({
       pos: { x: 0, y: 0, z: 0 },
       vel: { x: 1, y: 0, z: 0 },
-      rvel: { x: 0, y: 2, z: 0 },
+      rvel: { x: 0, y: 3, z: 0 },
       state: "Rolling",
     })
     forceRoll(b.vel, b.rvel)
