@@ -1,7 +1,7 @@
-export const mu = 0.2
+export const mu = 0.29
 export const g = 9.8
 export const rho = 0.1
-export const m = 1
+export const m = 0.1
 export const R = 0.5
 export const Mz = ((mu * m * g * 2) / 3) * rho
 export const Mxy = (7 / (5 * Math.sqrt(2))) * R * mu * m * g

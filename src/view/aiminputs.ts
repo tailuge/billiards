@@ -35,16 +35,17 @@ export class AimInputs {
   }
 
   adjustSpin(e) {
-    const ballDiameter = this.cueBallElement.offsetWidth
+    const ballWidth = this.cueBallElement.offsetWidth
+    const ballHeight = this.cueBallElement.offsetHeight
     const tipRadius = this.cueTipElement.offsetWidth / 2
     let clamped = this.container.table.cue.setSpin(
-      -(e.offsetX - ballDiameter / 2) / ballDiameter,
-      -(e.offsetY - ballDiameter / 2) / ballDiameter
+      -(e.offsetX - ballWidth / 2) / ballWidth,
+      -(e.offsetY - ballHeight / 2) / ballHeight
     )
     this.cueTipElement.style.left =
-      (-clamped.x + 0.5) * ballDiameter - tipRadius + "px"
+      (-clamped.x + 0.5) * ballWidth - tipRadius + "px"
     this.cueTipElement.style.top =
-      (-clamped.y + 0.5) * ballDiameter - tipRadius + "px"
+      (-clamped.y + 0.5) * ballHeight - tipRadius + "px"
   }
 
   hit = (_) => {

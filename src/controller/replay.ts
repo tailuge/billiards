@@ -19,7 +19,11 @@ export class Replay extends ControllerBase {
   }
 
   playNextShot() {
-    var aim = AimEvent.fromJson(this.shots.shift())
+    console.log("Extract aim for next shot")
+    var shot = this.shots.shift()
+    console.log(JSON.stringify(shot))
+    var aim = AimEvent.fromJson(shot)
+    console.log(aim)
     this.container.table.cue.aim = aim
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
     this.container.view.camera.suggestMode(this.container.view.camera.aimView)
