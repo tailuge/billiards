@@ -75,5 +75,7 @@ export class Keyboard {
     element.addEventListener("keydown", this.keydown)
     element.addEventListener("keyup", this.keyup)
     element.addEventListener("pointermove", this.mousemove)
+    element.contentEditable = true
+    element.focus()
   }
 }

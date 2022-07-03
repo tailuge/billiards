@@ -13,7 +13,7 @@ import { PlaceBallEvent } from "../events/placeballevent"
 export { BeginEvent, AimEvent, HitEvent, Input, AbortEvent, StationaryEvent }
 
 /**
- * Controller manages the state of the system reacting input and network events in the animation loop.
+ * Controller manages the state of the system reacting to input and network events in the animation loop.
  */
 export abstract class Controller {
   container: Container

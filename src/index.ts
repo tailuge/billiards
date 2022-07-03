@@ -5,6 +5,7 @@ import { EventType } from "./events/eventtype"
 import { BreakEvent } from "./events/breakevent"
 import { HitEvent } from "./events/hitevent"
 import { SocketConnection } from "./events/socketconnection"
+import { ChatEvent } from "./events/chatevent"
 
 let sc: SocketConnection | null
 let container: Container
@@ -65,10 +66,7 @@ function onAssetsReady() {
       state.init = (<BreakEvent>event).init
     }
     if (event.type === EventType.HIT) {
-      state.shots.push((<HitEvent>event).tablejson.aim)
-      console.log("break of " + state.shots.length)
-      let uri = encodeURI(`${window.location}?state=${JSON.stringify(state)}`)
-      console.log(uri)
+      recordBreak((<HitEvent>event).tablejson.aim)
     }
     //    console.log(`${id} sending ${event.type}`)
     sc?.send(e)
@@ -76,4 +74,15 @@ function onAssetsReady() {
 
   // trigger animation loops
   container.animate(performance.now())
+}
+
+function recordBreak(e) {
+  state.shots.push(e)
+  let uri = encodeURI(`${window.location}?state=${JSON.stringify(state)}`)
+  container.eventQueue.push(
+    new ChatEvent(
+      id,
+      `<a class="pill" target="_blank" href="${uri}">break of ${state.shots.length}</a>`
+    )
+  )
 }
