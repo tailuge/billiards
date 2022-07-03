@@ -85,6 +85,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 where
 
 ![equation](https://latex.codecogs.com/svg.image?M_{xy}=\frac{7}{5\sqrt{2}}R\mu&space;m&space;g)
+,![equation](https://latex.codecogs.com/svg.image?M_{z}=\frac{2}{3}\mu&space;m&space;g\rho)
 
 ##### cushion bounce [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L41-L105)
 
