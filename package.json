@@ -10,7 +10,7 @@
     },
     "scripts": {
         "test": "jest --verbose",
-        "coverage": "jest --coverage --coverageReporters text",
+        "coverage": "jest --coverage --coverageReporters json",
         "dev": "webpack ",
         "prettify": "prettier --write --no-semi {src,test}/**/*.[jt]s",
         "serve": "webpack serve --client-web-socket-url $(gp url 8080 | sed 's/http/ws/' | sed 's#$#/ws#')",
