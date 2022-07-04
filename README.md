@@ -1,5 +1,5 @@
 # billiards
-[![Coverage Status](https://coveralls.io/repos/github/tailuge/billiards/badge.svg?branch=master)](https://coveralls.io/github/tailuge/billiards?branch=master) [![CodeFactor](https://www.codefactor.io/repository/github/tailuge/billiards/badge)](https://www.codefactor.io/repository/github/tailuge/billiards) [![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards) ![visitors](https://visitor-badge.glitch.me/badge?page_id=tailuge.billiards)
+[[![codecov](https://codecov.io/gh/tailuge/billiards/branch/master/graph/badge.svg?token=BH11KRAEL0)](https://codecov.io/gh/tailuge/billiards) [![CodeFactor](https://www.codefactor.io/repository/github/tailuge/billiards/badge)](https://www.codefactor.io/repository/github/tailuge/billiards) [![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards) ![visitors](https://visitor-badge.glitch.me/badge?page_id=tailuge.billiards)
 
 
 Unsophisticated billiards physics.
