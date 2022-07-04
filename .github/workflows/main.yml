@@ -33,7 +33,6 @@ jobs:
       - name: Run a multi-line script
         run: |
           node -v
-          nvm list
           yarn -v
           yarn install
           yarn coverage
