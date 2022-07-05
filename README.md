@@ -4,15 +4,11 @@
 
 Unsophisticated billiards spinning ball physics.
 
-<img src="https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png" height="128">
+<img src="https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png" height="192">
 
 ### Demo
 
-In browser WebGL [demo](http://tailuge.github.io/billiards/dist)
-
-### Diagrams
-
-Inspect physics using [diagrams](http://tailuge.github.io/billiards/dist/diagrams.html)
+In browser WebGL [demo](http://tailuge.github.io/billiards/dist). Inspect physics using [diagrams](http://tailuge.github.io/billiards/dist/diagrams.html)
 
 
 ### Reference
@@ -95,7 +91,7 @@ yarn prettify
 
 Backspin and sidespin well modeled. Presentation in 2d or 3d in any modern borwser. Record and playback breaks. Two player mode with node websocket server.
 
-### Contorls
+### Controls
 
 Use mouse or keyboard:
 
