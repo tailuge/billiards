@@ -24,14 +24,12 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 
 ### Key equations
 
-##### surface velocity [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L11-L16)
-
+#### surface velocity 
 
 ![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20R\vec{\omega}))
 
 
-##### sliding motion [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L18-L23)
-
+#### sliding motion 
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\mu%20g%20\frac{\vec{v_{a}}}{\left%20|%20\vec{v_{a}}%20\right%20|})
 
@@ -40,8 +38,7 @@ Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_bla
 ![equation](http://latex.codecogs.com/png.latex?\dot{\omega}_{z}%20=%20-\frac{5}{2}\frac{M_{z}}{mR^2}sgn(\omega_{z}))
 
 
-##### rolling motion [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L35-L40)
-
+#### rolling motion 
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\frac{\vec{up}\times\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
@@ -52,8 +49,7 @@ where
 ![equation](https://latex.codecogs.com/svg.image?M_{xy}=\frac{7}{5\sqrt{2}}R\mu&space;m&space;g)
 ,![equation](https://latex.codecogs.com/svg.image?M_{z}=\frac{2}{3}\mu&space;m&space;g\rho)
 
-##### cushion bounce [:page_with_curl:](https://github.com/tailuge/billiards/blob/master/src/model/physics/physics.ts#L41-L105)
-
+#### cushion bounce 
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" title="\dot{v}_{x} = -v_{x0}(\frac{2}{7}sin^2\theta_{a} + (1+e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" /></a>
 
@@ -72,7 +68,7 @@ nvm use v14.15.1
 yarn install
 yarn dev
 ```
-### Test
+#### Test
 
 ```
 yarn test
@@ -80,16 +76,24 @@ yarn coverage
 yarn serve
 ```
 
-### Maintain 
+#### Maintain 
 ```
 yarn deps
 yarn upgrade -L
 yarn prettify
 ```
 
+#### Two player
+
+```
+yarn websocket
+yarn serve
+```
+add query parameter to url ?websocketserver=wss://host
+
 ### Features
 
-Backspin and sidespin well modeled. Presentation in 2d or 3d in any modern borwser. Record and playback breaks. Two player mode with node websocket server.
+Backspin and sidespin well modeled. Presentation in 2d or 3d in any modern browser. Record and playback breaks. Two player mode with node websocket server.
 
 ### Controls
 
