@@ -38,7 +38,7 @@ export class AimInputs {
     const ballWidth = this.cueBallElement.offsetWidth
     const ballHeight = this.cueBallElement.offsetHeight
     const tipRadius = this.cueTipElement.offsetWidth / 2
-    let clamped = this.container.table.cue.setSpin(
+    const clamped = this.container.table.cue.setSpin(
       -(e.offsetX - ballWidth / 2) / ballWidth,
       -(e.offsetY - ballHeight / 2) / ballHeight
     )

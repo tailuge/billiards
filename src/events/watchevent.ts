@@ -16,7 +16,7 @@ export class WatchEvent extends GameEvent {
   }
 
   static fromJson(json) {
-    let event = new WatchEvent(json)
+    const event = new WatchEvent(json)
     return event
   }
 }

@@ -16,7 +16,7 @@ export class HitEvent extends GameEvent {
   }
 
   static fromJson(json) {
-    let event = new HitEvent(json.tablejson)
+    const event = new HitEvent(json.tablejson)
     return event
   }
 }

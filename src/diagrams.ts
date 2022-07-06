@@ -33,8 +33,8 @@ function makeBall(x, y, vx, vy, wx, wy, wz) {
 }
 
 function elt(diagram, id) {
-  let selector = "#" + diagram + " #" + id
-  let e = document.querySelector(selector)
+  const selector = "#" + diagram + " #" + id
+  const e = document.querySelector(selector)
   if (e == null) {
     throw new Error("Element not found " + selector)
   }

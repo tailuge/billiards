@@ -9,14 +9,14 @@ const t = 0.1
 
 describe("Pocket", () => {
   it("willFall", (done) => {
-    let edge =
+    const edge =
       TableGeometry.pockets.pocketS.pocket.pos.y +
       TableGeometry.middleRadius +
       0.01
-    let pos = new Vector3(0, edge, 0)
-    let ball = new Ball(pos)
+    const pos = new Vector3(0, edge, 0)
+    const ball = new Ball(pos)
     ball.vel.y = -1
-    let p = Pocket.willFallAny(ball, t)
+    const p = Pocket.willFallAny(ball, t)
     expect(p).to.be.not.null
     done()
   })
