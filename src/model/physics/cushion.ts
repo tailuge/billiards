@@ -5,7 +5,7 @@ import { Vector3 } from "three"
 
 export class Cushion {
   static willBounce(ball: Ball, t: number): boolean {
-    let futurePosition = ball.futurePosition(t)
+    const futurePosition = ball.futurePosition(t)
 
     if (
       Math.abs(futurePosition.y) < TableGeometry.tableY &&

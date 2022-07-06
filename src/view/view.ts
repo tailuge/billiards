@@ -4,6 +4,7 @@ import { OverheadCamera } from "./overheadcamera"
 import { AimEvent } from "../events/aimevent"
 import { importGltf } from "../utils/gltf"
 import { Grid } from "./grid"
+import { Table } from "../model/table"
 
 export class View {
   scene = new Scene()
@@ -13,7 +14,7 @@ export class View {
   windowWidth = 1
   windowHeight = 1
   element
-  table: any
+  table: Table
 
   constructor(element, ready?) {
     this.element = element

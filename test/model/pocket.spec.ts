@@ -5,7 +5,7 @@ import { TableGeometry } from "../../src/view/tablegeometry"
 import { Pocket } from "../../src/model/physics/pocket"
 import { Vector3 } from "three"
 
-let t = 0.1
+const t = 0.1
 
 describe("Pocket", () => {
   it("willFall", (done) => {

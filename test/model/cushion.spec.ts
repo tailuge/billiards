@@ -6,7 +6,7 @@ import { Cushion } from "../../src/model/physics/cushion"
 import { Knuckle } from "../../src/model/physics/knuckle"
 import { Vector3 } from "three"
 
-let t = 0.1
+const t = 0.1
 
 describe("Cushion", () => {
   it("bounces off X cushion", (done) => {

@@ -76,7 +76,7 @@ function onAssetsReady() {
 
 function recordBreak(e) {
   state.shots.push(e)
-  let uri = encodeURI(`${window.location}?state=${JSON.stringify(state)}`)
+  const uri = encodeURI(`${window.location}?state=${JSON.stringify(state)}`)
   container.eventQueue.push(
     new ChatEvent(
       id,

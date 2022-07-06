@@ -6,7 +6,7 @@ import { Cue } from "../../src/view/cue"
 import { Vector3 } from "three"
 import { zero } from "../../src/utils/utils"
 
-let t = 0.1
+const t = 0.1
 describe("Cue", () => {
   it("no intersection with cue ball", (done) => {
     let a = new Ball(zero)

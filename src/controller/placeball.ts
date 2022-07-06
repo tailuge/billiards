@@ -24,7 +24,7 @@ export class PlaceBall extends ControllerBase {
   }
 
   onFirst() {
-    var cueBall = this.container.table.balls[0]
+    const cueBall = this.container.table.balls[0]
     cueBall.pos = new Vector3(-11, 0, 0)
     cueBall.setStationary()
     cueBall.updateMesh(0)
