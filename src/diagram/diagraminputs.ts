@@ -1,5 +1,7 @@
+import { Ball } from "../model/ball"
+
 export class DiagramInputs {
-  state: { balls: any[] }
+  state: { balls: Ball[] }
   control: HTMLElement
 
   constructor(state, control, onRestart) {
