@@ -28,7 +28,6 @@ wss.on("connection", function connection(ws) {
     // create pair and make new pending room
     pendingRoom++
     rooms[pendingRoom] = []
-    // send begin event
     console.log(`Sending begin event to client id:${clientId.get(ws)}`)
     ws.send(EventUtil.serialise(new BeginEvent()))
   }

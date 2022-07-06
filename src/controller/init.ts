@@ -25,11 +25,9 @@ export class Init extends ControllerBase {
 
   handleBreak(event: BreakEvent): Controller {
     if (event.init) {
-      console.log("ReplayMode")
       this.container.table.updateFromShortSerialised(event.init)
       return new Replay(this.container, event.shots)
     }
-    // not replay so record a new game
     return new PlaceBall(this.container)
   }
 }

@@ -2,7 +2,6 @@ import { Vector3, MathUtils } from "three"
 import { zero, vec, passesThroughZero, up } from "../utils/utils"
 import {
   rollingFull,
-  // forceRoll,
   sliding,
   surfaceVelocityFull,
 } from "../model/physics/physics"

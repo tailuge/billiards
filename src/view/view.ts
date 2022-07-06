@@ -76,8 +76,6 @@ export class View {
     this.views[1].height = aspect.y
     this.views[1].left = 1 - aspect.x * 1.01
     this.views[1].bottom = aspect.y * 0.01
-
-    //this.renderCamera(this.overheadCamera, this.views[1])
   }
 
   renderCamera(cam, v) {
@@ -103,7 +101,6 @@ export class View {
     this.renderer.setSize(width, height)
     this.renderer.shadowMap.enabled = false
     element.appendChild(this.renderer.domElement)
-    //    element.parentNode?.replaceChild(this.renderer.domElement,element)
   }
 
   private addTable(ready) {
