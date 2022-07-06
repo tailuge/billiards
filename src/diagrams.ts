@@ -2,7 +2,7 @@ import { Diagram } from "./diagram/diagram"
 
 console.log("Diagrams")
 
-var maxSpeed = 20
+const maxSpeed = 20
 
 makeDiagram("diagram1", [
   makeBall(0, 0, -maxSpeed, 0, 0, 0, 0),

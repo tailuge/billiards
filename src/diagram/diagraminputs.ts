@@ -9,12 +9,12 @@ export class DiagramInputs {
   }
 
   readValue(id: string) {
-    var input = this.control.querySelector<HTMLInputElement>(id)
+    const input = this.control.querySelector<HTMLInputElement>(id)
     return input ? input.valueAsNumber : 0
   }
 
   readControls() {
-    var b = this.state.balls[0]
+    const b = this.state.balls[0]
     b.pos.x = this.readValue("#x")
     b.pos.y = this.readValue("#y")
     b.vel.x = this.readValue("#vx")

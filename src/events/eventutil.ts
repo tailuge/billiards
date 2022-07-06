@@ -15,7 +15,7 @@ export class EventUtil {
   }
 
   static fromSerialised(data: string) {
-    let parsed = JSON.parse(data)
+    const parsed = JSON.parse(data)
     switch (parsed.type) {
       case EventType.BEGIN:
         return new BeginEvent()

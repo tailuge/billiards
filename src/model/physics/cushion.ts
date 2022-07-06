@@ -75,8 +75,8 @@ export class Cushion {
   }
 
   private static bounceIn(rotation, ball) {
-    let dv = new Vector3()
-    let dw = new Vector3()
+    const dv = new Vector3()
+    const dw = new Vector3()
 
     rotateApplyUnrotate(rotation, ball.vel, ball.rvel, dv, dw)
     ball.vel.add(dv)

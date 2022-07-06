@@ -22,7 +22,7 @@ export class AimEvent extends GameEvent {
   }
 
   static fromJson(json) {
-    let event = new AimEvent()
+    const event = new AimEvent()
     event.pos = vec(json.pos)
     event.angle = json.angle
     event.verticalOffset = json.verticalOffset

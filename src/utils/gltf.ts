@@ -25,7 +25,7 @@ export function importGltf(path, scene, ready) {
 }
 
 export function downloadObjectAsJson(exportObj, exportName) {
-  var downloadAnchorNode = document.createElement("a")
+  const downloadAnchorNode = document.createElement("a")
   downloadAnchorNode.setAttribute(
     "href",
     "data:text/json;charset=utf-8," +

@@ -45,7 +45,7 @@ export class Diagram {
   }
 
   drawBalls() {
-    var index = 0
+    let index = 0
     this.table.balls.forEach((ball) =>
       this.drawBall(ball.pos.x, ball.pos.y, this.colors[index++])
     )
@@ -59,7 +59,7 @@ export class Diagram {
 
   advance(elapsed) {
     const steps = Math.floor(elapsed / this.step)
-    for (var i = 0; i < steps; i++) {
+    for (let i = 0; i < steps; i++) {
       this.table.advance(this.step)
     }
   }
