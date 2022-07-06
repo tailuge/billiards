@@ -70,6 +70,10 @@ describe("Table", () => {
     expect(s).to.be.false
     table.advance(t)
     expect(b.onTable()).to.be.false
+    expect(b.isFalling()).to.be.true
+    expect(table.prepareAdvanceAll(t)).to.be.true
+    table.advance(t)
+    expect(b.isFalling()).to.be.true
     done()
   })
 

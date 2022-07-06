@@ -4,6 +4,7 @@ import { Ball, State } from "../../src/model/ball"
 import { Vector3 } from "three"
 import { zero, passesThroughZero } from "../../src/utils/utils"
 import { forceRoll, surfaceVelocity } from "../../src/model/physics/physics"
+import { R } from "../../src/model/physics/constants"
 
 const t = 0.1
 
@@ -93,25 +94,11 @@ describe("Ball", () => {
     expect(ball.rvel.y).to.be.below(1)
     done()
   })
-  /*
-  it("topspin ball eventualy starts to roll", (done) => {
-    let ball = new Ball(new Vector3())
-    ball.vel.x = 0
-    ball.rvel.y = 2
-    ball.state = State.Sliding
-    let maxiter = 100
-    let i = 0
-    while (i++ < maxiter && !ball.isRolling()) {
-      ball.update(t)
-    }
-    expect(i).to.be.below(maxiter)
-    done()
-  })
-*/
+
   it("rolling ball eventualy stops", (done) => {
     const ball = new Ball(new Vector3())
-    ball.vel.x = 0.025
-    ball.rvel.y = 0.025
+    ball.vel.x = 1
+    ball.rvel.y = ball.vel.x * (1 / R)
     ball.state = State.Rolling
     const maxiter = 100
     let i = 0
@@ -196,19 +183,4 @@ describe("Ball", () => {
     expect(b.vel.x).to.be.equal(1.5)
     done()
   })
-  /*
-  it.only("sliding ball at rolling conditions transitions to rolling", (done) => {
-    let b = Ball.fromSerialised({
-      pos: { x: 0, y: 0, z: 0 },
-      vel: {x: -0.568691179646577, y: 0.19917980334600546, z: 0},
-      rvel: {x: -0.2807500477302739, y: -0.4961088936915536, z: 0},
-      state: "Sliding",
-    })
-    b.update(0.001953125 * 3)
-    b.update(0.001953125 * 3)
-    b.update(0.001953125 * 3)
-    expect(b.isRolling()).to.be.true
-    done()
-  })
-*/
 })
