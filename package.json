@@ -41,7 +41,7 @@
         "jest-environment-jsdom": "^28.1.2",
         "mocha": "^10.0.0",
         "node-notifier": "^10.0.1",
-        "nodemon": "^2.0.18",
+        "nodemon": "^2.0.19",
         "prettier": "^2.7.1",
         "ts-jest": "^28.0.5",
         "ts-loader": "^9.3.1",

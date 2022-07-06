@@ -27,7 +27,7 @@ export function rollingFull(w, dv, dw) {
 
 export function forceRoll(v, w) {
   v.sub(surfaceVelocity(v, w).multiplyScalar(1))
-  w.copy(upCross(v).multiplyScalar(2))
+  w.copy(upCross(v).multiplyScalar(1/R))
 }
 
 const sin_a = Math.sin(9.25 / 32.5)
