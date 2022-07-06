@@ -71,9 +71,14 @@ describe("Table", () => {
     table.advance(t)
     expect(b.onTable()).to.be.false
     expect(b.isFalling()).to.be.true
-    expect(table.prepareAdvanceAll(t)).to.be.true
-    table.advance(t)
-    expect(b.isFalling()).to.be.true
+
+    const maxiter = 10
+    let i = 0
+    while (i++ < maxiter && b.state != State.InPocket) {
+      table.advance(t)
+    }
+    expect(b.isFalling()).to.be.false
+    expect(b.state).to.be.equal(State.InPocket)
     done()
   })
 
