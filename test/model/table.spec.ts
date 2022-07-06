@@ -64,6 +64,7 @@ describe("Table", () => {
     const a = new Ball(new Vector3(0, edge + 1, 0))
     const b = new Ball(new Vector3(0, edge, 0))
     a.vel.y = -2
+    a.rvel.x = 0.2
     a.state = State.Sliding
     const table = new Table([a, b])
     const s = table.prepareAdvanceAll(t)
