@@ -35,7 +35,7 @@ wss.on("connection", function connection(ws) {
     sendToOthersInRoom(ws, message.toString());
   });
 
-  ws.on("close", function incoming(_) {
+  ws.on("close", function incoming() {
     console.log(`close from ${ws.id}, closing room ${clientToRoom[ws.id]}`);
     rooms[clientToRoom[ws.id]] = [];
   });
