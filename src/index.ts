@@ -11,7 +11,7 @@ let sc: SocketConnection | null
 let container: Container
 let state = {
   init: null,
-  shots: Array<any>(),
+  shots: Array<string>(),
 }
 let id
 
