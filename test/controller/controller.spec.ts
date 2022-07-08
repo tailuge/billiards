@@ -16,6 +16,7 @@ import { GameEvent } from "../../src/events/gameevent"
 import { WatchShot } from "../../src/controller/watchshot"
 import { Outcome } from "../../src/model/outcome"
 import { PlaceBall } from "../../src/controller/placeball"
+import { ChatEvent } from "../../src/events/chatevent"
 
 describe("Controller", () => {
   let container: Container
@@ -168,6 +169,9 @@ describe("Controller", () => {
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new StationaryEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    container.eventQueue.push(new ChatEvent("", ""))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
     container.inputQueue.push(new Input(0.1, "ArrowLeft"))
