@@ -187,15 +187,18 @@ describe("Controller", () => {
     container.inputQueue.push(new Input(0.1, "ArrowDown"))
     container.inputQueue.push(new Input(0.1, "Space"))
     container.inputQueue.push(new Input(0.1, "SpaceUp"))
-    container.processEvents()
-    container.processEvents()
-    container.processEvents()
-    container.processEvents()
-    container.processEvents()
-    container.processEvents()
-    container.processEvents()
-    container.processEvents()
-    container.processEvents()
+    container.inputQueue.push(new Input(0.1, "KeyPUp"))
+    container.inputQueue.push(new Input(0.1, "KeyHUp"))
+    container.inputQueue.push(new Input(0.1, "KeyOUp"))
+    container.inputQueue.push(new Input(0.1, "NumpadAdd"))
+    container.inputQueue.push(new Input(0.1, "NumpadSubtract"))
+    container.inputQueue.push(new Input(0.1, "movementXUp"))
+    container.inputQueue.push(new Input(0.1, "movementYUp"))
+
+    let count = container.inputQueue.length
+    while (count-- > 0) {
+      container.processEvents()
+    }
     expect(container.inputQueue.length).to.equal(0)
     done()
   })
