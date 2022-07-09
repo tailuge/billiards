@@ -132,7 +132,6 @@ describe("Controller", () => {
     done()
   })
 
-  
   it("StationaryEvent takes active PlayShot to WatchAim if no pot", (done) => {
     container.controller = new PlayShot(container)
     container.table.balls[0].setStationary()
@@ -223,6 +222,17 @@ describe("Controller", () => {
     container.processEvents()
     container.advance(0.01)
     expect(container.eventQueue.length).to.equal(0)
+    done()
+  })
+
+  it("ChatEvent handled with no change of state", (done) => {
+    const watchShot = new WatchShot(container)
+    watchShot.allStationary = false
+    container.controller = watchShot
+    container.table.balls[0].setStationary()
+    container.eventQueue.push(new ChatEvent("", ""))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(WatchShot)
     done()
   })
 })
