@@ -8,6 +8,9 @@ import { EventUtil } from "../../src/events/eventutil"
 import { EventType } from "../../src/events/eventtype"
 import { Table } from "../../src/model/table"
 import { Rack } from "../../src/utils/rack"
+import { BreakEvent } from "../../src/events/breakevent"
+import { PlaceBallEvent } from "../../src/events/placeballevent"
+import { zero } from "../../src/utils/utils"
 
 describe("EventUtil", () => {
   it("Serialise and deserialise AimEvent", (done) => {
@@ -31,6 +34,20 @@ describe("EventUtil", () => {
     const serialised = EventUtil.serialise(new WatchEvent(table.serialise()))
     const deserialised = EventUtil.fromSerialised(serialised)
     expect(deserialised.type).to.equal(EventType.WATCHAIM)
+    done()
+  })
+
+  it("Serialise and deserialise BreakEvent", (done) => {
+    const serialised = EventUtil.serialise(new BreakEvent())
+    const deserialised = EventUtil.fromSerialised(serialised)
+    expect(deserialised.type).to.equal(EventType.BREAK)
+    done()
+  })
+
+  it("Serialise and deserialise PlaceBallEvent", (done) => {
+    const serialised = EventUtil.serialise(new PlaceBallEvent(zero, true))
+    const deserialised = EventUtil.fromSerialised(serialised)
+    expect(deserialised.type).to.equal(EventType.PLACEBALL)
     done()
   })
 
