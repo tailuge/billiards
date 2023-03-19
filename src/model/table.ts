@@ -60,8 +60,8 @@ export class Table {
    */
   prepareAdvanceAll(t: number) {
     return (
-      !this.pairs.some((pair) => !this.prepareAdvancePair(pair.a, pair.b, t)) &&
-      !this.balls.some((ball) => !this.prepareAdvanceToCushions(ball, t))
+      this.pairs.every((pair) => this.prepareAdvancePair(pair.a, pair.b, t)) &&
+      this.balls.every((ball) => this.prepareAdvanceToCushions(ball, t))
     )
   }
 
