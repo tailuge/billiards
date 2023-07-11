@@ -3,16 +3,17 @@ import { WebSocket } from "ws"
 import { execSync } from "child_process"
 import { BeginEvent } from "../events/beginevent"
 import { EventUtil } from "../events/eventutil"
-import * as express from 'express';
+import * as express from "express"
 
 const port = Number(process.env.PORT || 8888)
 
-const app = express();
+const app = express()
 
-const server = app.listen(port, () => console.log(`Webserver app listening on port ${port}!`));
-server.keepAliveTimeout = 60 * 1000;
-server.headersTimeout = 60 * 1000;
-
+const server = app.listen(port, () =>
+  console.log(`Webserver app listening on port ${port}!`)
+)
+server.keepAliveTimeout = 60 * 1000
+server.headersTimeout = 60 * 1000
 
 console.log(`Starting websocketserver on port ${port}`)
 const wss = new WebSocketServer({ noServer: true })
@@ -23,11 +24,11 @@ const rooms: Array<Array<WebSocket>> = [[]]
 let pendingRoom = 0
 let clientIdFountain = 0
 
-server.on('upgrade', (request, socket, head) => {
+server.on("upgrade", (request, socket, head) => {
   wss.handleUpgrade(request, socket, head, (ws) => {
-    wss.emit('connection', ws, request);
-  });
-});
+    wss.emit("connection", ws, request)
+  })
+})
 
 const exposedPort = execSync(`echo $(gp url ${port})`)
 console.log(
@@ -35,13 +36,13 @@ console.log(
 )
 
 app.get("/", (req, res) => {
-  const host = req.headers.host;
+  const host = req.headers.host
   const html = `<p>Billiards</p>
   <ul>
     <li><a href="https://tailuge.github.io/billiards/dist/">single player</a></li>
     <li><a href="https://tailuge.github.io/billiards/dist/?websocketserver=wss://${host}/ws">wait for pairing</a></li>
   </ul>`
-  res.type('html').send(html);
+  res.type("html").send(html)
 })
 
 wss.on("connection", function connection(ws) {
@@ -94,4 +95,3 @@ function sendToOthersInRoom(ws, data: string): void {
     })
   }
 }
-
