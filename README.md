@@ -1,8 +1,13 @@
 # billiards
 [![codecov](https://codecov.io/gh/tailuge/billiards/branch/master/graph/badge.svg?token=BH11KRAEL0)](https://codecov.io/gh/tailuge/billiards) [![CodeFactor](https://www.codefactor.io/repository/github/tailuge/billiards/badge)](https://www.codefactor.io/repository/github/tailuge/billiards) [![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards)
 
+### Features
 
-Unsophisticated billiards with spinning ball physics.
+Unsophisticated billiards with spinning ball physics. 
+* Backspin and sidespin well modeled.
+* Presentation in 2d or 3d in any modern browser.
+* Record and playback breaks.
+* Two player mode with node websocket server.
 
 [![Demo](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png)](http://tailuge.github.io/billiards/dist)
 
@@ -11,7 +16,7 @@ Unsophisticated billiards with spinning ball physics.
 In browser WebGL [demo](http://tailuge.github.io/billiards/dist). Inspect physics using [diagrams](http://tailuge.github.io/billiards/dist/diagrams.html)
 
 
-### Reference
+### Reference material for physics
 
 
 Papers on [ball mechanics](https://billiards.colostate.edu/physics_articles/Han_paper.pdf), [cushions](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)
@@ -61,23 +66,25 @@ where
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" title="\dot{\omega_z} = \frac{5S_y_0}{2mRA}cos\theta_a" /></a>
 
-### Setup
+### Install
 
-```
+```shell
 nvm use v14.15.1
 yarn install
 yarn dev
 ```
+
 #### Test
 
-```
+```shell
 yarn test
 yarn coverage
 yarn serve
 ```
 
 #### Maintain 
-```
+
+```shell
 yarn deps
 yarn upgrade -L
 yarn prettify
@@ -85,15 +92,12 @@ yarn prettify
 
 #### Two player
 
-```
+```shell
 yarn websocket
 yarn serve
 ```
-add query parameter to url ?websocketserver=wss://host
+add query parameter to url ``?websocketserver=wss://host``
 
-### Features
-
-Backspin and sidespin well modeled. Presentation in 2d or 3d in any modern browser. Record and playback breaks. Two player mode with node websocket server.
 
 ### Controls
 
@@ -121,15 +125,15 @@ Use mouse or keyboard:
 
 July 2018
 
-<img src="https://raw.githubusercontent.com/tailuge/billiards/master/dist/t1.png">
+![2018](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t1.png)
 
 July 2019
 
-<img src="https://raw.githubusercontent.com/tailuge/billiards/master/dist/t2.png">
+![2019](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t2.png)
 
 March 2021
 
-<img src="https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png">
+![2021](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png)
 
 
 Star History
