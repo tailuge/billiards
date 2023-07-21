@@ -8,8 +8,8 @@ const wss = new WebSocket.Server({ port: port });
 const start=`{"type":"BEGIN"}`;
 const clientToRoom = [];
 const rooms = [[]];
-var pendingRoom = 0;
-var idFountain = 300;
+let pendingRoom = 0;
+let idFountain = 300;
 wss.on("connection", function connection(ws) {
 
   ws.id = idFountain++;

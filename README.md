@@ -73,13 +73,14 @@ nvm use v14.15.1
 yarn install
 yarn dev
 ```
+This generates artefacts in /dist for prod deployment (e.g. on github static pages)
 
 #### Run
 
 ```shell
 yarn serve
 ```
-Then open local host web page in browser
+Then open http://localhost:8080/ in your browser
 
 #### Test
 

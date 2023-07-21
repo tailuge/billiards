@@ -1,5 +1,4 @@
 import { AbortEvent } from "../events/abortevent"
-import { Container } from "./container"
 import { Controller } from "./controller"
 import { End } from "./end"
 import { exportGltf } from "../utils/gltf"
@@ -7,10 +6,6 @@ import { ChatEvent } from "../events/chatevent"
 
 export abstract class ControllerBase extends Controller {
   readonly scale = 0.001
-
-  constructor(container: Container) {
-    super(container)
-  }
 
   handleAbort(_: AbortEvent): Controller {
     return new End(this.container)
