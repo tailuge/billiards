@@ -2,9 +2,9 @@
 [![codecov](https://codecov.io/gh/tailuge/billiards/branch/master/graph/badge.svg?token=BH11KRAEL0)](https://codecov.io/gh/tailuge/billiards) [![CodeFactor](https://www.codefactor.io/repository/github/tailuge/billiards/badge)](https://www.codefactor.io/repository/github/tailuge/billiards) [![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards)
 
 
-Unsophisticated billiards spinning ball physics.
+Unsophisticated billiards with spinning ball physics.
 
-<img src="https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png" height="192">
+[![Demo](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png)](http://tailuge.github.io/billiards/dist)
 
 ### Demo
 
