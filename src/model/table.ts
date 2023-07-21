@@ -9,7 +9,7 @@ import { upCross, unitAtAngle, zero } from "../utils/utils"
 import { TableGeometry } from "../view/tablegeometry"
 import { Outcome } from "./outcome"
 
-interface pair {
+interface Pair {
   a: Ball
   b: Ball
 }
@@ -17,7 +17,7 @@ interface pair {
 export class Table {
   balls: Ball[]
   cue = new Cue()
-  pairs: pair[]
+  pairs: Pair[]
   outcome: Outcome[] = []
 
   constructor(balls: Ball[]) {

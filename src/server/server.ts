@@ -1,5 +1,4 @@
-import { WebSocketServer } from "ws"
-import { WebSocket } from "ws"
+import { WebSocketServer, WebSocket } from "ws"
 import { execSync } from "child_process"
 import { BeginEvent } from "../events/beginevent"
 import { EventUtil } from "../events/eventutil"

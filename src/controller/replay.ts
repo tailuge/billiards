@@ -11,7 +11,6 @@ export class Replay extends ControllerBase {
     super(container)
     this.shots = shots
     console.log(JSON.stringify(shots))
-    return this
   }
 
   onFirst() {

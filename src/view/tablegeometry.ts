@@ -1,5 +1,11 @@
-import { Vector3, Matrix4 } from "three"
-import { Mesh, CylinderGeometry, BoxGeometry, MeshPhongMaterial } from "three"
+import {
+  Vector3,
+  Matrix4,
+  Mesh,
+  CylinderGeometry,
+  BoxGeometry,
+  MeshPhongMaterial,
+} from "three"
 import { Knuckle } from "../model/physics/knuckle"
 import { Pocket } from "../model/physics/pocket"
 
