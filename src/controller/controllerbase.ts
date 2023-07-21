@@ -47,13 +47,11 @@ export abstract class ControllerBase extends Controller {
         this.container.table.cue.rotateAim(input.t * this.scale * 2)
         return true
       case "movementYUp":
+      case "NumpadSubtract":
         this.container.view.camera.adjustHeight(-input.t * this.scale * 10)
         return true
       case "NumpadAdd":
         this.container.view.camera.adjustHeight(input.t * this.scale * 10)
-        return true
-      case "NumpadSubtract":
-        this.container.view.camera.adjustHeight(-input.t * this.scale * 10)
         return true
       case "KeyOUp":
         this.container.view.camera.toggleMode()
