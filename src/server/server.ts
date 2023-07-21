@@ -1,5 +1,5 @@
 import { WebSocketServer, WebSocket } from "ws"
-import { execSync } from "child_process"
+import { spawnSync } from "child_process"
 import { BeginEvent } from "../events/beginevent"
 import { EventUtil } from "../events/eventutil"
 import * as express from "express"
@@ -29,10 +29,14 @@ server.on("upgrade", (request, socket, head) => {
   })
 })
 
-const exposedPort = execSync(`echo $(gp url ${port})`)
-console.log(
-  `WebSocketServer on localhost:${port} is exposed through gitpod at ${exposedPort}`
-)
+console.log(`WebSocketServer on https://localhost:${port}`)
+const gitpodCommand = spawnSync(`gp`, ["url", `${port}`], {
+  shell: false,
+}).stdout
+if (gitpodCommand !== null) {
+  const gitpodUrl = gitpodCommand.toString()
+  console.log(`WebSocketServer is exposed on gitpod at ${gitpodUrl}`)
+}
 
 app.get("/", (req, res) => {
   const host = req.headers.host
