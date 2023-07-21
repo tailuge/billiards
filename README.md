@@ -3,7 +3,7 @@
 
 ### Features
 
-Unsophisticated billiards with spinning ball physics. 
+Unsophisticated billiards with spinning ball physics written in typescript.
 * Backspin and sidespin well modeled.
 * Presentation in 2d or 3d in any modern browser.
 * Record and playback breaks.
@@ -15,15 +15,15 @@ In browser WebGL [demo](http://tailuge.github.io/billiards/dist). Inspect physic
 
 [![Demo](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png)](http://tailuge.github.io/billiards/dist)
 
-### Reference material for physics
+### Reference material
 
-Papers on [ball mechanics](https://billiards.colostate.edu/physics_articles/Han_paper.pdf), [cushions](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)
+* Papers on [ball mechanics](https://billiards.colostate.edu/physics_articles/Han_paper.pdf), [cushions](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)
 and [max spin](https://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf) simulation [1](https://savoirs.usherbrooke.ca/bitstream/handle/11143/6598/MR91690.pdf?sequence=1) [2](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.89.4627&rep=rep1&type=pdf)
  [3](https://www.researchgate.net/publication/228634093_Bounce_of_a_spinning_ball_near_normal_incidence)
 
-3D graphics uses [three.js](https://threejs.org/docs/index.html#api/math/Vector3)
+* 3D graphics uses [three.js](https://threejs.org/docs/index.html#api/math/Vector3)
 
-Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_blank">LaTeX</a> editor
+* Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_blank">LaTeX</a> editor for equations in README.md
 
 ### Key equations
 
@@ -64,7 +64,9 @@ where
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" title="\dot{\omega_z} = \frac{5S_y_0}{2mRA}cos\theta_a" /></a>
 
-### Install
+### Useful commands
+
+#### Install
 
 ```shell
 nvm use v14.15.1
@@ -72,12 +74,18 @@ yarn install
 yarn dev
 ```
 
+#### Run
+
+```shell
+yarn serve
+```
+Then open local host web page in browser
+
 #### Test
 
 ```shell
 yarn test
 yarn coverage
-yarn serve
 ```
 
 #### Maintain 

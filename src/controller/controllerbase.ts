@@ -66,6 +66,5 @@ export abstract class ControllerBase extends Controller {
       default:
         return false
     }
-    return false
   }
 }

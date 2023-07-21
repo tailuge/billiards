@@ -16,7 +16,7 @@ makeDiagram("diagram2", [
 ])
 
 function makeDiagram(id, balls) {
-  new Diagram(
+  return new Diagram(
     { balls: balls },
     (<HTMLCanvasElement>elt(id, "canvas")).getContext("2d"),
     elt(id, "control")
