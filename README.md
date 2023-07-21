@@ -9,15 +9,13 @@ Unsophisticated billiards with spinning ball physics.
 * Record and playback breaks.
 * Two player mode with node websocket server.
 
-[![Demo](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png)](http://tailuge.github.io/billiards/dist)
-
 ### Demo
 
 In browser WebGL [demo](http://tailuge.github.io/billiards/dist). Inspect physics using [diagrams](http://tailuge.github.io/billiards/dist/diagrams.html)
 
+[![Demo](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png)](http://tailuge.github.io/billiards/dist)
 
 ### Reference material for physics
-
 
 Papers on [ball mechanics](https://billiards.colostate.edu/physics_articles/Han_paper.pdf), [cushions](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)
 and [max spin](https://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf) simulation [1](https://savoirs.usherbrooke.ca/bitstream/handle/11143/6598/MR91690.pdf?sequence=1) [2](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.89.4627&rep=rep1&type=pdf)
