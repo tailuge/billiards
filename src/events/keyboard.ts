@@ -14,9 +14,7 @@ export class Keyboard {
       .filter((key) => !/Shift/.test(key))
       .filter((key) => !/Control/.test(key))
     const shift = Object.keys(this.pressed).some((key) => /Shift/.test(key))
-    const control = Object.keys(this.pressed).some((key) =>
-      /Control/.test(key)
-    )
+    const control = Object.keys(this.pressed).some((key) => /Control/.test(key))
     const result: Input[] = []
 
     keys.forEach((k) => {

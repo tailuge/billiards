@@ -1,4 +1,6 @@
 /* istanbul ignore file */
 export class Sound {
-  eventToSounds() {}
+  eventToSounds() {
+    // for mocks
+  }
 }

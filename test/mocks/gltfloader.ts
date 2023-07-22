@@ -1,4 +1,6 @@
 /* istanbul ignore file */
 export class GLTFLoader {
-  load() {}
+  load() {
+    // for mocks
+  }
 }

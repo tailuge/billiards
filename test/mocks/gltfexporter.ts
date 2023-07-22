@@ -1,4 +1,6 @@
 /* istanbul ignore file */
 export class GLTFExporter {
-  parse() {}
+  parse() {
+    // for mocks
+  }
 }
