@@ -7,6 +7,7 @@ import * as express from "express"
 const port = Number(process.env.PORT || 8888)
 
 const app = express()
+app.use("/dist", express.static("dist"))
 
 const server = app.listen(port, () =>
   console.log(`Webserver app listening on port ${port}!`)
@@ -38,12 +39,11 @@ if (gitpodCommand !== null) {
   console.log(`WebSocketServer is exposed on gitpod at ${gitpodUrl}`)
 }
 
-app.get("/", (req, res) => {
-  const host = req.headers.host
+app.get("/", (_, res) => {
   const html = `<p>Billiards</p>
   <ul>
-    <li><a href="https://tailuge.github.io/billiards/dist/">single player</a></li>
-    <li><a href="https://tailuge.github.io/billiards/dist/?websocketserver=wss://${host}/ws">wait for pairing</a></li>
+  <li><a href="/dist/">launch single player</a></li>
+  <li><a href="/dist/multi.html">multiplayer options</a></li>
   </ul>`
   res.type("html").send(html)
 })

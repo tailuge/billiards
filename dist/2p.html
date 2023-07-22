@@ -24,8 +24,7 @@
 <script>
 	const urlParams = new URLSearchParams(window.location.search);
 	const websocketserver = urlParams.get('websocketserver');
-	const address = websocketserver ? "wss://billiardsserver.herokuapp.com/ws" : `wss://8888${window.location.host.slice(4)}/ws`;
-	document.getElementById('P1').src = `index.html?id=P1&websocketserver=${address}/ws`
-	document.getElementById('P2').src = `index.html?id=P2&websocketserver=${address}/ws`
+	document.getElementById('P1').src = `index.html?id=P1&websocketserver=${websocketserver}/ws`
+	document.getElementById('P2').src = `index.html?id=P2&websocketserver=${websocketserver}/ws`
 </script>
 </html>
