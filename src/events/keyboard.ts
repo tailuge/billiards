@@ -11,11 +11,11 @@ export class Keyboard {
 
   getEvents() {
     const keys = Object.keys(this.pressed)
-      .filter((key) => !/.*Shift.*/.test(key))
-      .filter((key) => !/.*Control.*/.test(key))
-    const shift = Object.keys(this.pressed).some((key) => /.*Shift.*/.test(key))
+      .filter((key) => !/Shift/.test(key))
+      .filter((key) => !/Control/.test(key))
+    const shift = Object.keys(this.pressed).some((key) => /Shift/.test(key))
     const control = Object.keys(this.pressed).some((key) =>
-      /.*Control.*/.test(key)
+      /Control/.test(key)
     )
     const result: Input[] = []
 
@@ -41,7 +41,6 @@ export class Keyboard {
 
   keydown = (e) => {
     console.log(e)
-    e = e || window.event
     if (this.pressed[e.code] == null) {
       this.pressed[e.code] = performance.now()
     }
@@ -52,7 +51,6 @@ export class Keyboard {
   }
 
   keyup = (e) => {
-    e = e || window.event
     this.released[e.code] = performance.now() - this.pressed[e.code]
     delete this.pressed[e.code]
     e.stopImmediatePropagation()
