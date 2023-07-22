@@ -103,7 +103,7 @@ yarn prettify
 yarn websocket
 yarn serve
 ```
-the client uses query parameter ``?websocketserver=wss://some-host`` to locate a websocket server, e.g. open http://localhost:8080/dist/multi.html to see options
+the client uses query parameter ``?websocketserver=wss://some-host`` to locate a websocket server, e.g. open http://localhost:8888/dist/multi.html to see options
 
 ### Controls
 

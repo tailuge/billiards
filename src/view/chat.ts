@@ -10,7 +10,7 @@ export class Chat {
       "chatinputtext"
     ) as HTMLInputElement
     this.chatSend = document.getElementById("chatsend")
-    this.chatSend && this.chatSend.addEventListener("click", this.sendClicked)
+    this.chatSend?.addEventListener("click", this.sendClicked)
     this.send = send
   }
 

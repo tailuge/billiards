@@ -31,7 +31,7 @@ export class Ball {
 
   constructor(pos, color?) {
     this.pos = pos.clone()
-    this.ballmesh = new BallMesh(color ? color : 0x555555 * Math.random())
+    this.ballmesh = new BallMesh(color || 0x555555 * Math.random())
   }
 
   update(t) {
