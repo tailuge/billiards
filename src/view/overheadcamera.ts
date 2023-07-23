@@ -22,10 +22,12 @@ export class OverheadCamera {
     const frameRatio = 0.59
     const cx = 1 / windowWidth
     const cy = (1 / windowHeight) * frameRatio
-    return windowHeight > 1.5 * windowWidth
-      ? { x: cx * windowWidth, y: cy * windowWidth }
-      : windowWidth * 0.4 > bigWidth
-      ? { x: cx * bigWidth, y: cy * bigWidth }
-      : { x: cx * smallWidth, y: cy * smallWidth }
+    if (windowHeight > 1.5 * windowWidth) {
+      return { x: cx * windowWidth, y: cy * windowWidth }
+    }
+    if (windowWidth * 0.4 > bigWidth) {
+      return { x: cx * bigWidth, y: cy * bigWidth }
+    }
+    return { x: cx * smallWidth, y: cy * smallWidth }
   }
 }

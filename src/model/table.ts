@@ -98,7 +98,7 @@ export class Table {
       this.outcome.push(Outcome.cushion(a, incidentSpeed))
       return false
     }
-    const k = Knuckle.willBounceAny(a, t)
+    const k = Knuckle.findBouncing(a, t)
     if (k) {
       const knuckleIncidentSpeed = k.bounce(a)
       this.outcome.push(Outcome.cushion(a, knuckleIncidentSpeed))

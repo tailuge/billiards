@@ -48,10 +48,8 @@ export class Replay extends ControllerBase {
   }
 
   handleInput(input: Input): Controller {
-    switch (input.key) {
-      case "KeyOUp":
-        this.container.view.camera.toggleMode()
-        break
+    if (input.key == "KeyOUp") {
+      this.container.view.camera.toggleMode()
     }
     return this
   }

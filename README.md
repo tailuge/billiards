@@ -7,7 +7,7 @@ Unsophisticated billiards with spinning ball physics written in typescript.
 * Backspin and sidespin well modeled.
 * Presentation in 2d or 3d in any modern browser.
 * Record and playback breaks.
-* Two player mode with node websocket server.
+* Two player online mode with node websocket server.
 
 ### Demo
 
@@ -80,7 +80,7 @@ This generates artefacts in /dist for prod deployment (e.g. on github static pag
 ```shell
 yarn serve
 ```
-Then open http://localhost:8080/ in your browser
+Then open http://localhost:8080/ in your browser to play
 
 #### Test
 
@@ -103,7 +103,7 @@ yarn prettify
 yarn websocket
 yarn serve
 ```
-the client uses query parameter ``?websocketserver=wss://some-host`` to locate a websocket server, e.g. open http://localhost:8888/dist/multi.html to see options
+the client uses query parameter ``?websocketserver=wss://some-host`` to locate a websocket server, open http://localhost:8888/dist/multi.html to see options
 
 ### Controls
 

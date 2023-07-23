@@ -23,11 +23,13 @@ export class Knuckle {
     return Math.abs(velDotCenters)
   }
 
-  static willBounceAny(ball: Ball, t: number) {
+  static findBouncing(ball: Ball, t: number): Knuckle | undefined {
+    if (!ball.onTable) {
+      return undefined
+    }
     const futurePosition = ball.futurePosition(t)
-    return (
-      ball.onTable() &&
-      TableGeometry.knuckles.find((k) => Knuckle.willBounce(k, futurePosition))
+    return TableGeometry.knuckles.find((k) =>
+      Knuckle.willBounce(k, futurePosition)
     )
   }
 }

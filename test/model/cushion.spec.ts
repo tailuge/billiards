@@ -137,11 +137,9 @@ describe("Cushion", () => {
     const ball = new Ball(pos)
     ball.vel.y = -1
     expect(Cushion.willBounce(ball, t)).to.be.false
-    const k = Knuckle.willBounceAny(ball, t)
+    const k = Knuckle.findBouncing(ball, t)
     expect(k).to.be.deep.equal(TableGeometry.pockets.pocketS.knuckleSE)
-    if (k !== false) {
-      k?.bounce(ball)
-    }
+    k?.bounce(ball)
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.above(0)
     done()
