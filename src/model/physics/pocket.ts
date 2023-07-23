@@ -23,13 +23,10 @@ export class Pocket {
     return ball.vel.length()
   }
 
-  static willFallAny(ball: Ball, t: number) {
+  static findPocket(ball: Ball, t: number) {
     const futurePosition = ball.futurePosition(t)
-    return (
-      ball.onTable() &&
-      TableGeometry.pocketCenters.find((p) =>
-        Pocket.willFall(p, futurePosition)
-      )
+    return TableGeometry.pocketCenters.find((p) =>
+      Pocket.willFall(p, futurePosition)
     )
   }
 }

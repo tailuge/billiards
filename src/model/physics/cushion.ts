@@ -15,22 +15,21 @@ export class Cushion {
     }
 
     return (
-      ball.onTable() &&
-      (Cushion.willBounceLongSegment(
+      Cushion.willBounceLongSegment(
         TableGeometry.pockets.pocketNW.knuckleNE.pos.x,
         TableGeometry.pockets.pocketN.knuckleNW.pos.x,
         futurePosition
       ) ||
-        Cushion.willBounceLongSegment(
-          TableGeometry.pockets.pocketN.knuckleNE.pos.x,
-          TableGeometry.pockets.pocketNE.knuckleNW.pos.x,
-          futurePosition
-        ) ||
-        Cushion.willBounceShortSegment(
-          TableGeometry.pockets.pocketNW.knuckleSW.pos.y,
-          TableGeometry.pockets.pocketSW.knuckleNW.pos.y,
-          futurePosition
-        ))
+      Cushion.willBounceLongSegment(
+        TableGeometry.pockets.pocketN.knuckleNE.pos.x,
+        TableGeometry.pockets.pocketNE.knuckleNW.pos.x,
+        futurePosition
+      ) ||
+      Cushion.willBounceShortSegment(
+        TableGeometry.pockets.pocketNW.knuckleSW.pos.y,
+        TableGeometry.pockets.pocketSW.knuckleNW.pos.y,
+        futurePosition
+      )
     )
   }
 

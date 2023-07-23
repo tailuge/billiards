@@ -85,6 +85,9 @@ export class Table {
    *
    */
   private prepareAdvanceToCushions(a: Ball, t: number): boolean {
+    if (!a.onTable()) {
+      return true
+    }
     const futurePosition = a.futurePosition(t)
     if (
       Math.abs(futurePosition.y) < TableGeometry.tableY &&
@@ -104,7 +107,7 @@ export class Table {
       this.outcome.push(Outcome.cushion(a, knuckleIncidentSpeed))
       return false
     }
-    const p = Pocket.willFallAny(a, t)
+    const p = Pocket.findPocket(a, t)
     if (p) {
       const pocketIncidentSpeed = p.fall(a, t)
       this.outcome.push(Outcome.pot(a, pocketIncidentSpeed))

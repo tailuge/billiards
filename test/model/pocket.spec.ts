@@ -16,7 +16,7 @@ describe("Pocket", () => {
     const pos = new Vector3(0, edge, 0)
     const ball = new Ball(pos)
     ball.vel.y = -1
-    const p = Pocket.willFallAny(ball, t)
+    const p = Pocket.findPocket(ball, t)
     expect(p).to.be.not.null
     done()
   })
