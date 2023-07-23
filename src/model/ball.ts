@@ -86,8 +86,8 @@ export class Ball {
     }
   }
 
-  dv = new Vector3()
-  dw = new Vector3()
+  private dv = new Vector3()
+  private dw = new Vector3()
 
   private updateVelocityRolling(t) {
     rollingFull(this.rvel, this.dv, this.dw)
