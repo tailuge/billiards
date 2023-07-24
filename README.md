@@ -1,38 +1,45 @@
 # billiards
-[![codecov](https://codecov.io/gh/tailuge/billiards/branch/master/graph/badge.svg?token=BH11KRAEL0)](https://codecov.io/gh/tailuge/billiards) [![CodeFactor](https://www.codefactor.io/repository/github/tailuge/billiards/badge)](https://www.codefactor.io/repository/github/tailuge/billiards) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=tailuge_billiards&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=tailuge_billiards) [![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards)
 
-### Features
+[![codecov](https://codecov.io/gh/tailuge/billiards/branch/master/graph/badge.svg?token=BH11KRAEL0)](https://codecov.io/gh/tailuge/billiards)
+[![CodeFactor](https://www.codefactor.io/repository/github/tailuge/billiards/badge)](https://www.codefactor.io/repository/github/tailuge/billiards)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=tailuge_billiards&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=tailuge_billiards)
+[![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards)
+
+## Features
 
 Unsophisticated billiards with spinning ball physics written in typescript.
+
 * Backspin and sidespin well modeled.
 * Presentation in 2d or 3d in any modern browser.
 * Record and playback breaks.
 * Two player online mode with node websocket server.
 
-### Demo
+## Demo
 
-In browser WebGL [demo](http://tailuge.github.io/billiards/dist). Inspect physics using [diagrams](http://tailuge.github.io/billiards/dist/diagrams.html)
+In browser WebGL [demo](http://tailuge.github.io/billiards/dist).
+Inspect physics using [diagrams](http://tailuge.github.io/billiards/dist/diagrams.html)
 
 [![Demo](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png)](http://tailuge.github.io/billiards/dist)
 
-### Reference material
+## Reference material
 
-* Papers on [ball mechanics](https://billiards.colostate.edu/physics_articles/Han_paper.pdf), [cushions](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)
-and [max spin](https://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf) simulation [1](https://savoirs.usherbrooke.ca/bitstream/handle/11143/6598/MR91690.pdf?sequence=1) [2](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.89.4627&rep=rep1&type=pdf)
- [3](https://www.researchgate.net/publication/228634093_Bounce_of_a_spinning_ball_near_normal_incidence)
-
+* Papers on [ball mechanics](https://billiards.colostate.edu/physics_articles/Han_paper.pdf),
+[cushions](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)
+and [max spin](https://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf)
+simulation [1](https://savoirs.usherbrooke.ca/bitstream/handle/11143/6598/MR91690.pdf?sequence=1)
+[2](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.89.4627&rep=rep1&type=pdf)
+[3](https://www.researchgate.net/publication/228634093_Bounce_of_a_spinning_ball_near_normal_incidence)
 * 3D graphics uses [three.js](https://threejs.org/docs/index.html#api/math/Vector3)
-
-* Inline <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{a}" target="_blank">LaTeX</a> editor for equations in README.md
+* Inline [LaTeX](https://www.codecogs.com/eqnedit.php?latex=\dot{a}) editor
+for equations in README.md
 
 ### Key equations
 
-#### surface velocity 
+#### surface velocity
 
 ![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20R\vec{\omega}))
 
-
-#### sliding motion 
+#### sliding motion
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\mu%20g%20\frac{\vec{v_{a}}}{\left%20|%20\vec{v_{a}}%20\right%20|})
 
@@ -40,8 +47,7 @@ and [max spin](https://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf)
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{\omega}_{z}%20=%20-\frac{5}{2}\frac{M_{z}}{mR^2}sgn(\omega_{z}))
 
-
-#### rolling motion 
+#### rolling motion
 
 ![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\frac{\vec{up}\times\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
 
@@ -52,7 +58,7 @@ where
 ![equation](https://latex.codecogs.com/svg.image?M_{xy}=\frac{7}{5\sqrt{2}}R\mu&space;m&space;g)
 ,![equation](https://latex.codecogs.com/svg.image?M_{z}=\frac{2}{3}\mu&space;m&space;g\rho)
 
-#### cushion bounce 
+#### cushion bounce
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" title="\dot{v}_{x} = -v_{x0}(\frac{2}{7}sin^2\theta_{a} + (1+e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" /></a>
 
@@ -64,32 +70,34 @@ where
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" title="\dot{\omega_z} = \frac{5S_y_0}{2mRA}cos\theta_a" /></a>
 
-### Useful commands
+## Useful commands
 
-#### Install
+### Install
 
 ```shell
 nvm use v18.15.0
 yarn install
 yarn dev
 ```
+
 This generates artefacts in /dist for prod deployment (e.g. on github static pages)
 
-#### Run
+### Run
 
 ```shell
 yarn serve
 ```
-Then open http://localhost:8080/ in your browser to play
 
-#### Test
+Then open <http://localhost:8080/> in your browser to play
+
+### Test
 
 ```shell
 yarn test
 yarn coverage
 ```
 
-#### Maintain 
+### Maintain
 
 ```shell
 yarn deps
@@ -97,15 +105,17 @@ yarn upgrade -L
 yarn prettify
 ```
 
-#### Two player
+### Two player
 
 ```shell
 yarn websocket
 yarn serve
 ```
-the client uses query parameter ``?websocketserver=wss://some-host`` to locate a websocket server, open http://localhost:8888/dist/multi.html to see options
 
-### Controls
+the client uses query parameter ``?websocketserver=wss://some-host`` to locate
+a websocket server, open <http://localhost:8888/dist/multi.html> to see options
+
+## Controls
 
 Use mouse or keyboard:
 
@@ -125,9 +135,7 @@ Use mouse or keyboard:
 
 <kbd style="border: 1px solid #aaa; border-radius: 0.2em; padding: 0.1em 0.3em; font-size: 0.85em;">Space</kbd> Hit - hold for more power
 
-
-
-### Progress snapshots
+## Progress snapshots
 
 July 2018
 
@@ -140,7 +148,6 @@ July 2019
 March 2021
 
 ![2021](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png)
-
 
 Star History
 
