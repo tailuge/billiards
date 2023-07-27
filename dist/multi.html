@@ -1,36 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <title>multi player billiards hosting</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="billiards" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+  </head>
 
-<head>
-	<title>multi player billiards hosting</title>
-	<link rel="icon" type="image/png" href="favicon.png">
-	<meta charset="utf-8" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="description" content="billiards" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
-</head>
+  <body>
+    <h1>tailuge/billiards multiplayer test page</h1>
+    local assets (for dev)
+    <ul>
+      <li><a href="/dist/">single player</a></li>
+      <li><a id="local">wait for pairing</a></li>
+      <li>
+        <a id="local2p">two players in single window</a> for quick testing
+      </li>
+    </ul>
+    github assets and local websocket server:
+    <ul>
+      <li>
+        <a href="https://tailuge.github.io/billiards/dist/">single player</a>
+      </li>
+      <li><a id="github">wait for pairing</a></li>
+    </ul>
+  </body>
 
-<body>
-	<h1>tailuge/billiards multiplayer test page</h1>
-	local assets (for dev)
-	<ul>
-		<li><a href="/dist/">single player</a></li>
-		<li><a id="local">wait for pairing</a></li>
-		<li><a id="local2p">two players in single window</a> for quick testing</li>
-	</ul>
-	github assets and local websocket server:
-	<ul>
-		<li><a href="https://tailuge.github.io/billiards/dist/">single player</a></li>
-		<li><a id="github">wait for pairing</a></li>
-	</ul>
-</body>
-
-<script>
-	const server = window.location.href
-	const wss = server.replace(/^https?:\/\//, 'wss://') + "/ws"
-	document.getElementById('local').href = `/dist/?websocketserver=${wss}`
-	document.getElementById('local2p').href = `/dist/2p.html?websocketserver=${wss}`
-	document.getElementById('github').href = `https://tailuge.github.io/billiards/dist/?websocketserver=${wss}`
-</script>
+  <script>
+    const server = window.location.href
+    const wss = server.replace(/^https?:\/\//, "wss://") + "/ws"
+    document.getElementById("local").href = `/dist/?websocketserver=${wss}`
+    document.getElementById(
+      "local2p"
+    ).href = `/dist/2p.html?websocketserver=${wss}`
+    document.getElementById(
+      "github"
+    ).href = `https://tailuge.github.io/billiards/dist/?websocketserver=${wss}`
+  </script>
 </html>

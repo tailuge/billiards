@@ -36,8 +36,8 @@ export class DiagramInputs {
 		  <input id="vy" ${attr} value="${b.vel.y}">
         ω <input id="wx" ${attr} value="${b.rvel.x}">
 		  <input id="wy" ${attr} value="${b.rvel.y}">
-          <input id="wz" ${attr} value="${b.rvel.z}"><div id="restart">↻</div>`
+          <input id="wz" ${attr} value="${b.rvel.z}"><button type="button">replay</button>`
 
-    elt.getElementsByTagName("div")[0].onclick = onRestart
+    elt.getElementsByTagName("button")[0].onclick = onRestart
   }
 }
