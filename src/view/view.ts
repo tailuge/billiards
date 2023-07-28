@@ -8,7 +8,7 @@ import { Table } from "../model/table"
 
 export class View {
   scene = new Scene()
-  private renderer
+  private renderer: WebGLRenderer
   camera: Camera
   overheadCamera: OverheadCamera
   windowWidth = 1
@@ -99,6 +99,7 @@ export class View {
 
   private initialiseScene(element: HTMLElement, width, height) {
     this.renderer = new WebGLRenderer({ antialias: true })
+    this.renderer.useLegacyLights = true
     this.renderer.setSize(width, height)
     this.renderer.shadowMap.enabled = false
     element.appendChild(this.renderer.domElement)

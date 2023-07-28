@@ -31,7 +31,7 @@
         }
     },
     "dependencies": {
-        "three": "^0.154.0"
+        "three": "^0.155.0"
     },
     "devDependencies": {
         "@types/chai": "^4.3.5",
