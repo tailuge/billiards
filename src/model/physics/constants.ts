@@ -1,4 +1,5 @@
 export const mu = 0.29
+export const muSlide = 0.89
 export const g = 9.8
 export const rho = 0.1
 export const m = 0.1

@@ -7,12 +7,20 @@ export class AimInputs {
   cuePowerElement
   cueHitElement
 
+  readonly ballWidth
+  readonly ballHeight
+  readonly tipRadius
+
   container: Container
 
   constructor(container) {
     this.container = container
     this.cueBallElement = document.getElementById("cueBall")
     this.cueTipElement = document.getElementById("cueTip")
+    this.ballWidth = this.cueBallElement?.offsetWidth
+    this.ballHeight = this.cueBallElement?.offsetHeight
+    this.tipRadius = this.cueTipElement?.offsetWidth / 2
+
     this.cueBallElement?.addEventListener("pointermove", this.mousemove)
     this.cueBallElement?.addEventListener("click", this.click)
 
@@ -35,17 +43,18 @@ export class AimInputs {
   }
 
   adjustSpin(e) {
-    const ballWidth = this.cueBallElement.offsetWidth
-    const ballHeight = this.cueBallElement.offsetHeight
-    const tipRadius = this.cueTipElement.offsetWidth / 2
-    const clamped = this.container.table.cue.setSpin(
-      -(e.offsetX - ballWidth / 2) / ballWidth,
-      -(e.offsetY - ballHeight / 2) / ballHeight
+    this.container.table.cue.setSpin(
+      -(e.offsetX - this.ballWidth / 2) / this.ballWidth,
+      -(e.offsetY - this.ballHeight / 2) / this.ballHeight
     )
-    this.cueTipElement.style.left =
-      (-clamped.x + 0.5) * ballWidth - tipRadius + "px"
-    this.cueTipElement.style.top =
-      (-clamped.y + 0.5) * ballHeight - tipRadius + "px"
+  }
+
+  updateVisualState(x, y) {
+    let elt = this.cueTipElement?.style
+    if (elt) {
+      elt.left = (-x + 0.5) * this.ballWidth - this.tipRadius + "px"
+      elt.top = (-y + 0.5) * this.ballHeight - this.tipRadius + "px"
+    }
   }
 
   hit = (_) => {

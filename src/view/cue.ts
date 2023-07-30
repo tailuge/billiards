@@ -2,6 +2,7 @@ import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
 import { up, upCross, unitAtAngle } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
+import { AimInputs } from "./aiminputs"
 import {
   Matrix4,
   Mesh,
@@ -18,7 +19,7 @@ export class Cue {
   limit = 0.4
   maxPower = 60.0
   t = 0
-
+  aimInputs: AimInputs
   aim: AimEvent = new AimEvent()
 
   length = TableGeometry.tableX * 1
@@ -81,6 +82,10 @@ export class Cue {
       this.limit
     )
     this.mesh.position.z = this.aim.verticalOffset
+    this.aimInputs.updateVisualState(
+      this.aim.sideOffset,
+      this.aim.verticalOffset
+    )
   }
 
   adjustSide(delta) {
@@ -89,20 +94,27 @@ export class Cue {
       -this.limit,
       this.limit
     )
+    this.aimInputs.updateVisualState(
+      this.aim.sideOffset,
+      this.aim.verticalOffset
+    )
   }
 
   adjustPower(delta) {
     this.aim.power = Math.min(this.maxPower, this.aim.power + delta)
   }
 
-  setPower(value) {
+  setPower(value: number) {
     this.aim.power = value * this.maxPower
   }
 
-  setSpin(x, y) {
+  setSpin(x: number, y: number) {
     this.aim.verticalOffset = MathUtils.clamp(y, -this.limit, this.limit)
     this.aim.sideOffset = MathUtils.clamp(x, -this.limit, this.limit)
-    return { x: this.aim.sideOffset, y: this.aim.verticalOffset }
+    this.aimInputs.updateVisualState(
+      this.aim.sideOffset,
+      this.aim.verticalOffset
+    )
   }
 
   moveTo(pos) {

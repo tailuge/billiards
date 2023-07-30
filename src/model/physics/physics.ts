@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { norm, upCross, up } from "../../utils/utils"
-import { mu, g, m, e, Mz, Mxy, R, I } from "./constants"
+import { mu, muSlide, g, m, e, Mz, Mxy, R, I } from "./constants"
 
 export function surfaceVelocity(v, w) {
   return surfaceVelocityFull(v, w).setZ(0)
@@ -12,8 +12,8 @@ export function surfaceVelocityFull(v, w) {
 
 export function sliding(v, w, dv, dw) {
   const va = surfaceVelocity(v, w)
-  dv.copy(norm(va).multiplyScalar(-mu * g))
-  dw.copy(norm(upCross(va)).multiplyScalar(((5 / 2) * mu * g) / R))
+  dv.copy(norm(va).multiplyScalar(-muSlide * g))
+  dw.copy(norm(upCross(va)).multiplyScalar(((5 / 2) * muSlide * g) / R))
   dw.setZ(-(5 / 2) * (Mz / (R * R)) * Math.sign(w.z))
 }
 

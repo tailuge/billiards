@@ -140,7 +140,7 @@ export class Table {
       const dir = unitAtAngle(aim.angle)
       const rvel = upCross(dir)
         .applyAxisAngle(dir, angle)
-        .multiplyScalar(spinPower * aim.power * 2)
+        .multiplyScalar(spinPower * aim.power * 4)
       this.balls[0].rvel.copy(rvel)
     }
     aim.power = 0

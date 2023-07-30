@@ -24,7 +24,6 @@ export class Container {
   controller: Controller
   inputQueue: Input[] = []
   eventQueue: GameEvent[] = []
-  aimInputs: AimInputs
   keyboard: Keyboard
   sound: Sound
   chat: Chat
@@ -40,7 +39,7 @@ export class Container {
     this.log = log
     this.table = new Table(Rack.diamond())
     this.view = new View(element, ready)
-    this.aimInputs = new AimInputs(this)
+    this.table.cue.aimInputs = new AimInputs(this)
     this.keyboard = keyboard
     this.sound = new Sound(this.view.camera.camera)
     this.chat = new Chat(this.sendChat)

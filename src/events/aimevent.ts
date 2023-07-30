@@ -5,8 +5,8 @@ import { vec, round } from "../utils/utils"
 import { Vector3 } from "three"
 
 export class AimEvent extends GameEvent {
-  verticalOffset = 0.0
-  sideOffset = 0
+  verticalOffset: number = 0
+  sideOffset: number = 0
   angle = 0
   power = 0
   pos = new Vector3(0, 0, 0)

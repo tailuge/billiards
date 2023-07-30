@@ -46,7 +46,7 @@ describe("Table", () => {
     const a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
     const b = new Ball(new Vector3(-TableGeometry.tableX + 1, 0, 0))
     const c = new Ball(new Vector3(-TableGeometry.tableX + 2, 0, 0))
-    a.vel.x = -1
+    a.vel.x = -2
     a.state = State.Sliding
     const table = new Table([a, b, c])
     expect(table.prepareAdvanceAll(t)).to.be.false
