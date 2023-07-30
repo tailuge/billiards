@@ -49,8 +49,8 @@ export class AimInputs {
     )
   }
 
-  updateVisualState(x, y) {
-    let elt = this.cueTipElement?.style
+  updateVisualState(x: number, y: number) {
+    const elt = this.cueTipElement?.style
     if (elt) {
       elt.left = (-x + 0.5) * this.ballWidth - this.tipRadius + "px"
       elt.top = (-y + 0.5) * this.ballHeight - this.tipRadius + "px"

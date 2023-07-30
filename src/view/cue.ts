@@ -82,10 +82,7 @@ export class Cue {
       this.limit
     )
     this.mesh.position.z = this.aim.verticalOffset
-    this.aimInputs.updateVisualState(
-      this.aim.sideOffset,
-      this.aim.verticalOffset
-    )
+    this.updateAimInput()
   }
 
   adjustSide(delta) {
@@ -94,10 +91,7 @@ export class Cue {
       -this.limit,
       this.limit
     )
-    this.aimInputs.updateVisualState(
-      this.aim.sideOffset,
-      this.aim.verticalOffset
-    )
+    this.updateAimInput()
   }
 
   adjustPower(delta) {
@@ -111,6 +105,10 @@ export class Cue {
   setSpin(x: number, y: number) {
     this.aim.verticalOffset = MathUtils.clamp(y, -this.limit, this.limit)
     this.aim.sideOffset = MathUtils.clamp(x, -this.limit, this.limit)
+    this.updateAimInput()
+  }
+
+  updateAimInput() {
     this.aimInputs.updateVisualState(
       this.aim.sideOffset,
       this.aim.verticalOffset
