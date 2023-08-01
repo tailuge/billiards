@@ -3,9 +3,8 @@ import { Collision } from "./physics/collision"
 import { Knuckle } from "./physics/knuckle"
 import { Pocket } from "./physics/pocket"
 import { Cue } from "../view/cue"
-import { Ball, State } from "./ball"
+import { Ball } from "./ball"
 import { AimEvent } from "../events/aimevent"
-import { upCross, unitAtAngle, zero } from "../utils/utils"
 import { TableGeometry } from "../view/tablegeometry"
 import { Outcome } from "./outcome"
 
@@ -122,28 +121,7 @@ export class Table {
   }
 
   hit() {
-    const aim = this.cue.aim
-    this.balls[0].vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
-    if (aim.spinOnly) {
-      this.balls[0].vel.copy(zero)
-    }
-    this.balls[0].state = State.Sliding
-
-    if (aim.verticalOffset == 0 && aim.sideOffset == 0) {
-      this.balls[0].rvel.copy(zero)
-    } else {
-      const spinAxis = Math.atan2(-aim.sideOffset, aim.verticalOffset)
-      const spinPower = Math.sqrt(
-        aim.verticalOffset * aim.verticalOffset +
-          aim.sideOffset * aim.sideOffset
-      )
-      const dir = unitAtAngle(aim.angle)
-      const rvel = upCross(dir)
-        .applyAxisAngle(dir, spinAxis)
-        .multiplyScalar(spinPower * aim.power * 4)
-      this.balls[0].rvel.copy(rvel)
-    }
-    aim.power = 0
+    this.cue.hit(this.balls[0])
   }
 
   serialise() {

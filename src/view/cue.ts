@@ -1,8 +1,9 @@
 import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
-import { up, upCross, unitAtAngle } from "../utils/utils"
+import { up, upCross, unitAtAngle, zero } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import { AimInputs } from "./aiminputs"
+import { State } from "../model/ball"
 import {
   Matrix4,
   Mesh,
@@ -12,6 +13,7 @@ import {
   Vector3,
   MathUtils,
 } from "three"
+import { Ball } from "../model/ball"
 
 export class Cue {
   mesh: Mesh
@@ -100,6 +102,31 @@ export class Cue {
 
   setPower(value: number) {
     this.aim.power = value * this.maxPower
+  }
+
+  hit(ball: Ball) {
+    const aim = this.aim
+    ball.vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
+    if (aim.spinOnly) {
+      ball.vel.copy(zero)
+    }
+    ball.state = State.Sliding
+
+    if (aim.verticalOffset == 0 && aim.sideOffset == 0) {
+      ball.rvel.copy(zero)
+    } else {
+      const spinAxis = Math.atan2(-aim.sideOffset, aim.verticalOffset)
+      const spinPower = Math.sqrt(
+        aim.verticalOffset * aim.verticalOffset +
+          aim.sideOffset * aim.sideOffset
+      )
+      const dir = unitAtAngle(aim.angle)
+      const rvel = upCross(dir)
+        .applyAxisAngle(dir, spinAxis)
+        .multiplyScalar(spinPower * aim.power * 4)
+      ball.rvel.copy(rvel)
+    }
+    aim.power = 0
   }
 
   setSpin(x: number, y: number) {
