@@ -135,7 +135,7 @@ export class Cue {
   }
 
   updateAimInput() {
-    this.aimInputs.updateVisualState(
+    this.aimInputs?.updateVisualState(
       this.aim.sideOffset,
       this.aim.verticalOffset
     )
