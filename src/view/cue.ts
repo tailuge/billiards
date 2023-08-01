@@ -3,7 +3,7 @@ import { Table } from "../model/table"
 import { up, upCross, unitAtAngle, zero } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import { AimInputs } from "./aiminputs"
-import { State } from "../model/ball"
+import { Ball, State } from "../model/ball"
 import {
   Matrix4,
   Mesh,
@@ -13,7 +13,6 @@ import {
   Vector3,
   MathUtils,
 } from "three"
-import { Ball } from "../model/ball"
 
 export class Cue {
   mesh: Mesh
