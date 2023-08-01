@@ -11,7 +11,7 @@ makeDiagram("diagram1", [
 ])
 
 makeDiagram("diagram2", [
-  makeBall(-17, +2, 0, -maxSpeed * 1.8, -35, 0, -5),
+  makeBall(-17, 2, 0, -maxSpeed * 2, -85, 0, -5),
   makeBall(-17.38, -2, 0, 0, 0, 0, 0),
 ])
 
