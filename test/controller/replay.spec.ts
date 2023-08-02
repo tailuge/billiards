@@ -13,7 +13,7 @@ describe("Controller Replay", () => {
   let container: Container
   let broadcastEvents: GameEvent[]
 
-  let state = {
+  const state = {
     init: [
       -11, 0, 10.727, 0.007, 11.721, 0.532, 11.683, -0.536, 12.632, -0.008,
       12.672, -1.114, 12.677, 1.108, 13.613, 0.572, 13.593, -0.57, 14.547,
@@ -79,6 +79,8 @@ describe("Controller Replay", () => {
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlaceBall)
     container.inputQueue.push(new Input(0.1, "movementXUp"))
+    container.processEvents()
+    container.inputQueue.push(new Input(0.1, "ShiftArrowLeft"))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlaceBall)
     done()
