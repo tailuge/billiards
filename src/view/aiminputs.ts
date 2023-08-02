@@ -2,14 +2,14 @@ import { Container } from "../controller/container"
 import { Input } from "../events/input"
 
 export class AimInputs {
-  cueBallElement
-  cueTipElement
-  cuePowerElement
-  cueHitElement
+  readonly cueBallElement
+  readonly cueTipElement
+  readonly cuePowerElement
+  readonly cueHitElement
 
-  readonly ballWidth
-  readonly ballHeight
-  readonly tipRadius
+  ballWidth
+  ballHeight
+  tipRadius
 
   container: Container
 
@@ -17,23 +17,19 @@ export class AimInputs {
     this.container = container
     this.cueBallElement = document.getElementById("cueBall")
     this.cueTipElement = document.getElementById("cueTip")
-    this.ballWidth = this.cueBallElement?.offsetWidth
-    this.ballHeight = this.cueBallElement?.offsetHeight
-    this.tipRadius = this.cueTipElement?.offsetWidth / 2
-
-    this.cueBallElement?.addEventListener("pointermove", this.mousemove)
-    this.cueBallElement?.addEventListener("click", this.click)
-
     this.cuePowerElement = document.getElementById("cuePower")
-    document.addEventListener("wheel", this.mousewheel)
-
     this.cueHitElement = document.getElementById("cueHit")
-    this.cueHitElement?.addEventListener("click", this.hit)
-    document.addEventListener("dblclick", this.hit)
+    this.addListeners()
   }
 
-  click = (e) => {
-    this.adjustSpin(e)
+  addListeners() {
+    this.cueBallElement?.addEventListener("pointermove", this.mousemove)
+    this.cueBallElement?.addEventListener("click", (e) => {
+      this.adjustSpin(e)
+    })
+    this.cueHitElement?.addEventListener("click", this.hit)
+    document.addEventListener("dblclick", this.hit)
+    document.addEventListener("wheel", this.mousewheel)
   }
 
   mousemove = (e) => {
@@ -42,7 +38,14 @@ export class AimInputs {
     }
   }
 
+  readDimensions() {
+    this.ballWidth = this.cueBallElement?.offsetWidth
+    this.ballHeight = this.cueBallElement?.offsetHeight
+    this.tipRadius = this.cueTipElement?.offsetWidth / 2
+  }
+
   adjustSpin(e) {
+    this.readDimensions()
     this.container.table.cue.setSpin(
       -(e.offsetX - this.ballWidth / 2) / this.ballWidth,
       -(e.offsetY - this.ballHeight / 2) / this.ballHeight
@@ -52,6 +55,7 @@ export class AimInputs {
   updateVisualState(x: number, y: number) {
     const elt = this.cueTipElement?.style
     if (elt) {
+      this.readDimensions()
       elt.left = (-x + 0.5) * this.ballWidth - this.tipRadius + "px"
       elt.top = (-y + 0.5) * this.ballHeight - this.tipRadius + "px"
     }

@@ -46,15 +46,15 @@ p {
   padding: 0px;
 }
 
-.inputs {
-  height: 100%;
-  width: 100%;
+.ballContainer {
+  height: 70%;
+  padding: 1px;
 }
-
 .cueBall {
   height: 100%;
-  width: 100%;
-  background-color: rgba(165, 165, 165, 0.582);
+  margin: auto;
+  aspect-ratio: 1;
+  background-color: rgba(165, 165, 165, 1);
   border-radius: 50%;
 }
 
@@ -78,6 +78,7 @@ p {
 
 .powerSlider {
   width: 100%;
+  height: 10%;
 }
 
 .hitButton {

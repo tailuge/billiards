@@ -18,15 +18,15 @@
   <body>
     <div id="viewP1" class="view3d"></div>
     <div class="panel" style="display: flex">
-      <div style="display: flex; flex-direction: column">
-        <div class="inputs flex-item">
+      <div style="display: flex; flex-direction: column; aspect-ratio: 1">
+        <div class="ballContainer">
           <div id="cueBall" class="cueBall">
             <div id="cueTip" class="cueTip"></div>
           </div>
         </div>
-        <button class="hitButton flex-item" id="cueHit">hit</button>
+        <button class="hitButton" id="cueHit">hit</button>
         <input
-          class="powerSlider flex-item"
+          class="powerSlider"
           type="range"
           min="10"
           max="100"
