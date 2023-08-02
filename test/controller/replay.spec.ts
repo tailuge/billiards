@@ -6,18 +6,38 @@ import { BreakEvent } from "../../src/events/breakevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { Replay } from "../../src/controller/replay"
 import { PlaceBall } from "../../src/controller/placeball"
+import { Controller, HitEvent } from "../../src/controller/controller"
 
 describe("Controller Replay", () => {
   let container: Container
   let broadcastEvents: GameEvent[]
 
+  let state = {
+    init: [
+      -11, 0, 10.727, 0.007, 11.721, 0.532, 11.683, -0.536, 12.632, -0.008,
+      12.672, -1.114, 12.677, 1.108, 13.613, 0.572, 13.593, -0.57, 14.547,
+      0.007,
+    ],
+    shots: [
+      {
+        type: "AIM",
+        verticalOffset: 0,
+        sideOffset: 0,
+        angle: 0,
+        power: 3.996,
+        pos: { x: -11, y: 0, z: 0 },
+        spinOnly: false,
+      },
+    ],
+  }
+
   beforeEach(function (done) {
     container = new Container(undefined, (_) => {})
+    container.isSinglePlayer = true
     broadcastEvents = []
     container.broadcast = (x) =>
       broadcastEvents.push(EventUtil.fromSerialised(x))
     done()
-    container.isSinglePlayer = true
   })
 
   it("BreakEvent takes Init to PlaceBall", (done) => {
@@ -28,28 +48,16 @@ describe("Controller Replay", () => {
   })
 
   it("BreakEvent with state takes Init to Replay", (done) => {
-    const state = {
-      init: [
-        -11, 0, 10.727, 0.007, 11.721, 0.532, 11.683, -0.536, 12.632, -0.008,
-        12.672, -1.114, 12.677, 1.108, 13.613, 0.572, 13.593, -0.57, 14.547,
-        0.007,
-      ],
-      shots: [
-        {
-          type: "AIM",
-          verticalOffset: 0,
-          sideOffset: 0,
-          angle: 0,
-          power: 3.996,
-          pos: [Object],
-          spinOnly: false,
-        },
-      ],
-    }
-
     container.eventQueue.push(new BreakEvent(state.init, state.shots))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Replay)
+    done()
+  })
+
+  it("HitEvent takes Replay to Replay", (done) => {
+    const controller: Controller = new Replay(container, state.shots, 0)
+    const event: GameEvent = new HitEvent(container.table.serialise())
+    expect(event.applyToController(controller)).to.be.an.instanceof(Replay)
     done()
   })
 })
