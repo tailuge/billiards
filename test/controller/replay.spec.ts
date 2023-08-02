@@ -5,6 +5,7 @@ import { EventUtil } from "../../src/events/eventutil"
 import { BreakEvent } from "../../src/events/breakevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { Replay } from "../../src/controller/replay"
+import { PlaceBall } from "../../src/controller/placeball"
 
 describe("Controller Replay", () => {
   let container: Container
@@ -19,7 +20,14 @@ describe("Controller Replay", () => {
     container.isSinglePlayer = true
   })
 
-  it("BreakEvent takes Init to Replay", (done) => {
+  it("BreakEvent takes Init to PlaceBall", (done) => {
+    container.eventQueue.push(new BreakEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(PlaceBall)
+    done()
+  })
+
+  it("BreakEvent with state takes Init to Replay", (done) => {
     const state = {
       init: [
         -11, 0, 10.727, 0.007, 11.721, 0.532, 11.683, -0.536, 12.632, -0.008,

@@ -10,7 +10,7 @@ import { Replay } from "./replay"
 /**
  * Initial state of controller.
  *
- * Transitions into active player and watcher.
+ * Transitions into active player or watcher or replay mode.
  */
 export class Init extends ControllerBase {
   handleBegin(_: BeginEvent): Controller {
