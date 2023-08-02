@@ -61,6 +61,10 @@ export class AimInputs {
     }
   }
 
+  updatePowerSlider(power) {
+    this.cuePowerElement?.value && (this.cuePowerElement.value = power * 100)
+  }
+
   hit = (_) => {
     this.container.table.cue.setPower(this.cuePowerElement.value / 100)
     this.container.inputQueue.push(new Input(0, "SpaceUp"))
