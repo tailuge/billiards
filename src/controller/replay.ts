@@ -4,12 +4,13 @@ import { AimEvent } from "../events/aimevent"
 import { Controller, Input } from "./controller"
 
 export class Replay extends ControllerBase {
-  readonly delay = 1500
+  delay: number
   shots: AimEvent[]
 
-  constructor(container, shots) {
+  constructor(container, shots, delay = 1500) {
     super(container)
     this.shots = shots
+    this.delay = delay
     console.log(JSON.stringify(shots))
   }
 
