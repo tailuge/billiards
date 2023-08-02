@@ -131,7 +131,7 @@ describe("Table", () => {
     expect(table.allStationary()).to.be.true
     done()
   })
-  
+
   it("shortSerialise", (done) => {
     const table = new Table(Rack.diamond())
     expect(table.shortSerialise()).to.be.length((9 + 1) * 2)

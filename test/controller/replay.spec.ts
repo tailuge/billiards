@@ -6,7 +6,8 @@ import { BreakEvent } from "../../src/events/breakevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { Replay } from "../../src/controller/replay"
 import { PlaceBall } from "../../src/controller/placeball"
-import { Controller, HitEvent } from "../../src/controller/controller"
+import { Controller, HitEvent, Input } from "../../src/controller/controller"
+import { Aim } from "../../src/controller/aim"
 
 describe("Controller Replay", () => {
   let container: Container
@@ -24,7 +25,7 @@ describe("Controller Replay", () => {
         verticalOffset: 0,
         sideOffset: 0,
         angle: 0,
-        power: 3.996,
+        power: 1,
         pos: { x: -11, y: 0, z: 0 },
         spinOnly: false,
       },
@@ -58,6 +59,28 @@ describe("Controller Replay", () => {
     const controller: Controller = new Replay(container, state.shots, 0)
     const event: GameEvent = new HitEvent(container.table.serialise())
     expect(event.applyToController(controller)).to.be.an.instanceof(Replay)
+    done()
+  })
+
+  it("PlaceBall moves to Aim on spacebar", (done) => {
+    container.controller = new PlaceBall(container)
+    container.inputQueue.push(new Input(0.1, "SpaceUp"))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Aim)
+    done()
+  })
+
+  it("PlaceBall handles inputs", (done) => {
+    container.controller = new PlaceBall(container)
+    container.inputQueue.push(new Input(0.1, "ArrowLeft"))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(PlaceBall)
+    container.inputQueue.push(new Input(0.1, "ArrowRight"))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(PlaceBall)
+    container.inputQueue.push(new Input(0.1, "movementXUp"))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(PlaceBall)
     done()
   })
 })
