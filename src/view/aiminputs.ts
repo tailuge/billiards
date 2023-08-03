@@ -62,15 +62,16 @@ export class AimInputs {
   }
 
   updatePowerSlider(power) {
-    this.cuePowerElement?.value && (this.cuePowerElement.value = power * 100)
+    this.cuePowerElement?.value && (this.cuePowerElement.value = power)
   }
 
   hit = (_) => {
-    this.container.table.cue.setPower(this.cuePowerElement.value / 100)
+    this.container.table.cue.setPower(this.cuePowerElement.value)
     this.container.inputQueue.push(new Input(0, "SpaceUp"))
   }
 
   mousewheel = (e) => {
-    this.cuePowerElement.value -= Math.sign(e.deltaY) * 10
+    this.cuePowerElement.value -= Math.sign(e.deltaY) / 10
+    this.container.table.cue.setPower(this.cuePowerElement.value)
   }
 }

@@ -97,7 +97,7 @@ export class Cue {
 
   adjustPower(delta) {
     this.aim.power = Math.min(this.maxPower, this.aim.power + delta)
-    this.aimInputs.updatePowerSlider(this.aim.power / this.maxPower)
+    this.updateAimInput()
   }
 
   setPower(value: number) {
@@ -140,6 +140,7 @@ export class Cue {
       this.aim.sideOffset,
       this.aim.verticalOffset
     )
+    this.aimInputs?.updatePowerSlider(this.aim.power / this.maxPower)
   }
 
   moveTo(pos) {
