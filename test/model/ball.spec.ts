@@ -117,6 +117,7 @@ describe("Ball", () => {
     let i = 0
     while (i++ < maxiter && ball.inMotion()) {
       ball.update(t)
+      ball.updateMesh(t)
     }
     expect(i).to.be.below(maxiter)
     done()
