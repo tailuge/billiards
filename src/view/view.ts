@@ -1,6 +1,5 @@
 import { Scene, WebGLRenderer, Frustum, Matrix4, AmbientLight } from "three"
 import { Camera } from "./camera"
-import { OverheadCamera } from "./overheadcamera"
 import { AimEvent } from "../events/aimevent"
 import { importGltf } from "../utils/gltf"
 import { Grid } from "./grid"
@@ -10,7 +9,6 @@ export class View {
   scene = new Scene()
   private renderer: WebGLRenderer
   camera: Camera
-  overheadCamera: OverheadCamera
   windowWidth = 1
   windowHeight = 1
   element
@@ -22,9 +20,6 @@ export class View {
     element &&
       this.initialiseScene(element, element.offsetWidth, element.offsetHeight)
     this.camera = new Camera(
-      element ? element.offsetWidth / element.offsetHeight : 1
-    )
-    this.overheadCamera = new OverheadCamera(
       element ? element.offsetWidth / element.offsetHeight : 1
     )
     this.addTable(ready)
@@ -69,14 +64,6 @@ export class View {
     }
 
     this.renderCamera(this.camera, this.views[0])
-    const aspect = this.overheadCamera.aspect(
-      this.windowWidth,
-      this.windowHeight
-    )
-    this.views[1].width = aspect.x
-    this.views[1].height = aspect.y
-    this.views[1].left = 1 - aspect.x * 1.01
-    this.views[1].bottom = aspect.y * 0.01
   }
 
   renderCamera(cam, v) {
