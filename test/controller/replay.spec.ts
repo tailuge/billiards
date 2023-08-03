@@ -8,6 +8,8 @@ import { Replay } from "../../src/controller/replay"
 import { PlaceBall } from "../../src/controller/placeball"
 import { Controller, HitEvent, Input } from "../../src/controller/controller"
 import { Aim } from "../../src/controller/aim"
+import { controllerName } from "../../src/controller/util"
+import { End } from "../../src/controller/end"
 
 describe("Controller Replay", () => {
   let container: Container
@@ -38,6 +40,12 @@ describe("Controller Replay", () => {
     broadcastEvents = []
     container.broadcast = (x) =>
       broadcastEvents.push(EventUtil.fromSerialised(x))
+    done()
+  })
+
+  it("controllerName", (done) => {
+    expect(controllerName(new End(container))).to.be.equals("End")
+    expect(controllerName(undefined)).to.be.equals("UNKNOWN")
     done()
   })
 
