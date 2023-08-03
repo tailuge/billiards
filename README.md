@@ -110,7 +110,6 @@ yarn prettify
 
 ```shell
 yarn websocket
-yarn serve
 ```
 
 the client uses query parameter ``?websocketserver=wss://some-host`` to locate

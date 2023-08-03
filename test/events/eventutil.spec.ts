@@ -11,6 +11,8 @@ import { Rack } from "../../src/utils/rack"
 import { BreakEvent } from "../../src/events/breakevent"
 import { PlaceBallEvent } from "../../src/events/placeballevent"
 import { zero } from "../../src/utils/utils"
+import { ChatEvent } from "../../src/events/chatevent"
+import { BeginEvent } from "../../src/events/beginevent"
 
 describe("EventUtil", () => {
   it("Serialise and deserialise AimEvent", (done) => {
@@ -53,6 +55,20 @@ describe("EventUtil", () => {
 
   it("Throw on unknown event", (done) => {
     expect(() => EventUtil.fromSerialised("{}")).to.throw()
+    done()
+  })
+
+  it("Serialise and deserialise ChatEvent", (done) => {
+    const serialised = EventUtil.serialise(new ChatEvent("a", "m"))
+    const deserialised = EventUtil.fromSerialised(serialised)
+    expect(deserialised.type).to.equal(EventType.CHAT)
+    done()
+  })
+
+  it("Serialise and deserialise BeginEvent", (done) => {
+    const serialised = EventUtil.serialise(new BeginEvent())
+    const deserialised = EventUtil.fromSerialised(serialised)
+    expect(deserialised.type).to.equal(EventType.BEGIN)
     done()
   })
 })
