@@ -17,10 +17,10 @@ Unsophisticated billiards with spinning ball physics written in typescript.
 
 ## Demo
 
-In browser WebGL [demo](http://tailuge.github.io/billiards/dist).
-Inspect physics using [diagrams](http://tailuge.github.io/billiards/dist/diagrams.html)
+In browser WebGL [demo](https://tailuge.github.io/billiards/dist).
+Inspect physics using [diagrams](https://tailuge.github.io/billiards/dist/diagrams.html)
 
-[![Demo](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png)](http://tailuge.github.io/billiards/dist)
+[![Demo](https://raw.githubusercontent.com/tailuge/billiards/master/dist/t3.png)](https://tailuge.github.io/billiards/dist)
 
 ## Reference material
 
