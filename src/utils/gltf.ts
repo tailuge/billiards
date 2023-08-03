@@ -24,6 +24,7 @@ export function importGltf(path, scene, ready) {
   )
 }
 
+/* istanbul ignore next */
 export function downloadObjectAsJson(exportObj, exportName) {
   const downloadAnchorNode = document.createElement("a")
   downloadAnchorNode.setAttribute(
