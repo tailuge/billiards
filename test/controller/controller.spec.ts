@@ -17,6 +17,8 @@ import { WatchShot } from "../../src/controller/watchshot"
 import { Outcome } from "../../src/model/outcome"
 import { PlaceBall } from "../../src/controller/placeball"
 import { ChatEvent } from "../../src/events/chatevent"
+import { PlaceBallEvent } from "../../src/events/placeballevent"
+import { zero } from "../../src/utils/utils"
 
 describe("Controller", () => {
   let container: Container
@@ -95,6 +97,17 @@ describe("Controller", () => {
     container.eventQueue.push(new AimEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchShot)
+    done()
+  })
+
+  it("PlaceBall takes WatchShot to PlaceBall", (done) => {
+    const watchShot = new WatchShot(container)
+    watchShot.allStationary = true
+    container.controller = watchShot
+    container.table.balls[0].setStationary()
+    container.eventQueue.push(new PlaceBallEvent(zero, true))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(PlaceBall)
     done()
   })
 
