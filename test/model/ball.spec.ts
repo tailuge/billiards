@@ -111,8 +111,8 @@ describe("Ball", () => {
 
   it("spinning ball eventualy stops", (done) => {
     const ball = new Ball(new Vector3())
-    ball.rvel.z = 0.01
-    ball.rvel.y = 0
+    ball.rvel.z = 0.05
+    ball.state = State.Sliding
     const maxiter = 20
     let i = 0
     while (i++ < maxiter && ball.inMotion()) {
@@ -125,11 +125,12 @@ describe("Ball", () => {
 
   it("stun ball does not roll back at end", (done) => {
     const ball = new Ball(new Vector3())
-    ball.rvel.y = 0.1
+    ball.rvel.y = 0.2
+    ball.state = State.Sliding
     const maxiter = 100
     let i = 0
     while (i++ < maxiter && ball.inMotion()) {
-      ball.update(t)
+      ball.update(t / 10)
       expect(ball.vel.x).to.be.at.least(0)
     }
     expect(i).to.be.below(maxiter)
