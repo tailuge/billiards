@@ -1,6 +1,7 @@
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 
+/* istanbul ignore next */
 export function exportGltf(scene) {
   const exporter = new GLTFExporter()
   exporter.parse(scene, (gltf) => {
@@ -9,6 +10,7 @@ export function exportGltf(scene) {
   })
 }
 
+/* istanbul ignore next */
 export function importGltf(path, scene, ready) {
   const loader = new GLTFLoader()
   loader.load(

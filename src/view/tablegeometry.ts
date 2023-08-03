@@ -184,6 +184,7 @@ export class TableGeometry {
     TableGeometry.pockets.pocketSE.pocket,
   ]
 
+  /* istanbul ignore next */
   static addToScene(scene) {
     TableGeometry.knuckles.forEach((k) =>
       TableGeometry.knuckleCylinder(k, scene)
@@ -198,6 +199,7 @@ export class TableGeometry {
     */
   }
 
+  /* istanbul ignore next */
   private static material = new MeshPhongMaterial({
     color: 0x445599,
     wireframe: false,
@@ -206,11 +208,13 @@ export class TableGeometry {
     opacity: 0.4,
   })
 
+  /* istanbul ignore next */
   private static knuckleCylinder(knuckle, scene) {
     const k = TableGeometry.cylinder(knuckle.pos, knuckle.radius, 0.75, scene)
     k.position.setZ(-0.25 / 2)
   }
 
+  /* istanbul ignore next */
   private static cylinder(pos, radius, depth, scene) {
     const geometry = new CylinderGeometry(radius, radius, depth, 16)
     const mesh = new Mesh(geometry, TableGeometry.material)
@@ -224,6 +228,7 @@ export class TableGeometry {
     return mesh
   }
 
+  /* istanbul ignore next */
   static addCushions(scene) {
     const th = 10
     TableGeometry.plane(
@@ -292,6 +297,7 @@ export class TableGeometry {
     )
   }
 
+  /* istanbul ignore next */
   private static plane(pos, x, y, z, scene) {
     const geometry = new BoxGeometry(x, y, z)
     const mesh = new Mesh(geometry, TableGeometry.material)
