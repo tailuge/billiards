@@ -19,6 +19,7 @@ import { PlaceBall } from "../../src/controller/placeball"
 import { ChatEvent } from "../../src/events/chatevent"
 import { PlaceBallEvent } from "../../src/events/placeballevent"
 import { zero } from "../../src/utils/utils"
+import { BreakEvent } from "../../src/events/breakevent"
 
 describe("Controller", () => {
   let container: Container
@@ -185,6 +186,12 @@ describe("Controller", () => {
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new ChatEvent("", ""))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    container.eventQueue.push(new BreakEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    container.eventQueue.push(new PlaceBallEvent(zero, true))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
     container.inputQueue.push(new Input(0.1, "ArrowLeft"))
