@@ -4,17 +4,10 @@ import { rotateApplyUnrotate } from "./physics"
 import { Vector3 } from "three"
 
 export class Cushion {
-  static willBounce(ball: Ball, t: number): boolean {
+  static bounceAny(ball: Ball, t: number): number | undefined {
     const futurePosition = ball.futurePosition(t)
 
-    if (
-      Math.abs(futurePosition.y) < TableGeometry.tableY &&
-      Math.abs(futurePosition.x) < TableGeometry.tableX
-    ) {
-      return false
-    }
-
-    return (
+    const willBounce =
       Cushion.willBounceLongSegment(
         TableGeometry.pockets.pocketNW.knuckleNE.pos.x,
         TableGeometry.pockets.pocketN.knuckleNW.pos.x,
@@ -30,7 +23,11 @@ export class Cushion {
         TableGeometry.pockets.pocketSW.knuckleNW.pos.y,
         futurePosition
       )
-    )
+
+    if (willBounce) {
+      return Cushion.bounce(ball, t)
+    }
+    return undefined
   }
 
   private static willBounceLongSegment(
@@ -57,7 +54,7 @@ export class Cushion {
     )
   }
 
-  static bounce(ball: Ball, t: number) {
+  private static bounce(ball: Ball, t: number) {
     const futurePosition = ball.futurePosition(t)
     if (futurePosition.x > TableGeometry.tableX) {
       return Cushion.bounceIn(0, ball)
@@ -71,8 +68,7 @@ export class Cushion {
     if (futurePosition.y < -TableGeometry.tableY) {
       return Cushion.bounceIn(Math.PI / 2, ball)
     }
-
-    return null;
+    return undefined
   }
 
   private static bounceIn(rotation, ball) {

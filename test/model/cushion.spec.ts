@@ -13,9 +13,8 @@ describe("Cushion", () => {
     const pos = new Vector3(TableGeometry.tableX, 0, 0)
     const ball = new Ball(pos)
     ball.vel.x = 1
-    expect(Cushion.willBounce(ball, t)).to.be.true
-    Cushion.bounce(ball, t)
-    expect(Cushion.willBounce(ball, t)).to.be.false
+    expect(Cushion.bounceAny(ball, t)).to.be.greaterThan(0)
+    expect(Cushion.bounceAny(ball, t)).to.be.undefined
     expect(ball.vel.x).to.be.below(0)
     done()
   })
@@ -24,9 +23,8 @@ describe("Cushion", () => {
     const pos = new Vector3(-TableGeometry.tableX, 0, 0)
     const ball = new Ball(pos)
     ball.vel.x = -1
-    expect(Cushion.willBounce(ball, t)).to.be.true
-    Cushion.bounce(ball, t)
-    expect(Cushion.willBounce(ball, t)).to.be.false
+    expect(Cushion.bounceAny(ball, t)).to.be.greaterThan(0)
+    expect(Cushion.bounceAny(ball, t)).to.be.undefined
     expect(ball.vel.x).to.be.above(0)
     done()
   })
@@ -35,9 +33,8 @@ describe("Cushion", () => {
     const pos = new Vector3(TableGeometry.tableX / 2, TableGeometry.tableY, 0)
     const ball = new Ball(pos)
     ball.vel.y = 1
-    expect(Cushion.willBounce(ball, t)).to.be.true
-    Cushion.bounce(ball, t)
-    expect(Cushion.willBounce(ball, t)).to.be.false
+    expect(Cushion.bounceAny(ball, t)).to.be.greaterThan(0)
+    expect(Cushion.bounceAny(ball, t)).to.be.undefined
     expect(ball.vel.y).to.be.below(0)
     done()
   })
@@ -46,9 +43,8 @@ describe("Cushion", () => {
     const pos = new Vector3(TableGeometry.tableX / 2, -TableGeometry.tableY, 0)
     const ball = new Ball(pos)
     ball.vel.y = -1
-    expect(Cushion.willBounce(ball, t)).to.be.true
-    Cushion.bounce(ball, t)
-    expect(Cushion.willBounce(ball, t)).to.be.false
+    expect(Cushion.bounceAny(ball, t)).to.be.greaterThan(0)
+    expect(Cushion.bounceAny(ball, t)).to.be.undefined
     expect(ball.vel.y).to.be.above(0)
     done()
   })
@@ -58,7 +54,7 @@ describe("Cushion", () => {
     const ball = new Ball(pos)
     ball.vel.x = 1
     ball.rvel.copy(rvel)
-    Cushion.bounce(ball, t)
+    Cushion.bounceAny(ball, t)
     return ball
   }
 
@@ -115,7 +111,7 @@ describe("Cushion", () => {
     const pos = new Vector3(TableGeometry.tableX, 0, 0)
     const ball = new Ball(pos)
     ball.vel.set(1, 1, 0)
-    Cushion.bounce(ball, t)
+    Cushion.bounceAny(ball, t)
     expect(ball.vel.y).to.be.approximately(-ball.vel.x, 0.2)
     done()
   })
@@ -124,7 +120,7 @@ describe("Cushion", () => {
     const pos = new Vector3(0, -TableGeometry.tableY, 0)
     const ball = new Ball(pos)
     ball.vel.y = -1
-    expect(Cushion.willBounce(ball, t)).to.be.false
+    expect(Cushion.bounceAny(ball, t)).to.be.undefined
     done()
   })
 
@@ -136,7 +132,7 @@ describe("Cushion", () => {
     )
     const ball = new Ball(pos)
     ball.vel.y = -1
-    expect(Cushion.willBounce(ball, t)).to.be.false
+    expect(Cushion.bounceAny(ball, t)).to.be.undefined
     const k = Knuckle.findBouncing(ball, t)
     expect(k).to.be.deep.equal(TableGeometry.pockets.pocketS.knuckleSE)
     k?.bounce(ball)
