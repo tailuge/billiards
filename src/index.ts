@@ -13,24 +13,24 @@ let state = {
   init: null,
   shots: Array<string>(),
 }
-let id
+let id: string
 
 initialise()
 
-function netEvent(e) {
+function netEvent(e: string) {
   const event = EventUtil.fromSerialised(e)
   console.log(`${id} received ${event.type}`)
   container.eventQueue.push(event)
 }
 
 function initialise() {
-  id = /id=([^& ?]*)/.exec(location.search)
-  id = id ? id[1] : ""
+  const result = /id=([^& ?]*)/.exec(location.search)
+  id = result ? result[1] : ""
   const websocketserver = /websocketserver=([^ &?]*)/.exec(location.search)
   sc = websocketserver ? new SocketConnection(websocketserver[1]) : null
   container = new Container(
     document.getElementById("viewP1"),
-    (message) => {
+    (message: string) => {
       console.log(`${id} ${message}`)
     },
     new Keyboard(document.getElementById("viewP1")),
@@ -74,7 +74,7 @@ function onAssetsReady() {
   container.animate(performance.now())
 }
 
-function recordBreak(e) {
+function recordBreak(e: string) {
   state.shots.push(e)
   const uri = encodeURI(`${window.location}?state=${JSON.stringify(state)}`)
   container.eventQueue.push(
