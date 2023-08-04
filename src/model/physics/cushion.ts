@@ -71,6 +71,8 @@ export class Cushion {
     if (futurePosition.y < -TableGeometry.tableY) {
       return Cushion.bounceIn(Math.PI / 2, ball)
     }
+
+    return null;
   }
 
   private static bounceIn(rotation, ball) {
