@@ -1,13 +1,19 @@
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 
+const onError = console.error
+
 /* istanbul ignore next */
 export function exportGltf(scene) {
   const exporter = new GLTFExporter()
-  exporter.parse(scene, (gltf) => {
-    console.log(gltf)
-    downloadObjectAsJson(gltf, "scene.gltf")
-  })
+  exporter.parse(
+    scene,
+    (gltf) => {
+      console.log(gltf)
+      downloadObjectAsJson(gltf, "scene.gltf")
+    },
+    onError
+  )
 }
 
 /* istanbul ignore next */
@@ -22,7 +28,7 @@ export function importGltf(path, scene, ready) {
       }
     },
     (xhr) => console.log(xhr.loaded + " bytes loaded"),
-    (error) => console.log(error)
+    onError
   )
 }
 
