@@ -4,10 +4,15 @@ import { rotateApplyUnrotate } from "./physics"
 import { Vector3 } from "three"
 
 export class Cushion {
+  /**
+   * Reflect ball in cushion if it impacts in time t else undefined
+   *
+   * Knuckle impacts are not part of this and handled elsewhere.
+   */
   static bounceAny(ball: Ball, t: number): number | undefined {
     const futurePosition = ball.futurePosition(t)
 
-    const willBounce =
+    const willBounceLong =
       Cushion.willBounceLongSegment(
         TableGeometry.pockets.pocketNW.knuckleNE.pos.x,
         TableGeometry.pockets.pocketN.knuckleNW.pos.x,
@@ -17,19 +22,32 @@ export class Cushion {
         TableGeometry.pockets.pocketN.knuckleNE.pos.x,
         TableGeometry.pockets.pocketNE.knuckleNW.pos.x,
         futurePosition
-      ) ||
-      Cushion.willBounceShortSegment(
-        TableGeometry.pockets.pocketNW.knuckleSW.pos.y,
-        TableGeometry.pockets.pocketSW.knuckleNW.pos.y,
-        futurePosition
       )
 
-    if (willBounce) {
-      return Cushion.bounce(ball, t)
+    if (willBounceLong) {
+      const dir =
+        futurePosition.y > TableGeometry.tableY ? -Math.PI / 2 : Math.PI / 2
+      return Cushion.bounceIn(dir, ball)
     }
+
+    const willBounceShort = Cushion.willBounceShortSegment(
+      TableGeometry.pockets.pocketNW.knuckleSW.pos.y,
+      TableGeometry.pockets.pocketSW.knuckleNW.pos.y,
+      futurePosition
+    )
+
+    if (willBounceShort) {
+      const dir = futurePosition.x > TableGeometry.tableX ? 0 : Math.PI
+      return Cushion.bounceIn(dir, ball)
+    }
+
     return undefined
   }
 
+  /**
+   * Long Cushion refers to longest dimention of table (skipping middle pocket),
+   * in this model that is oriented along the X axis.
+   */
   private static willBounceLongSegment(
     left: number,
     right: number,
@@ -52,23 +70,6 @@ export class Cushion {
       futurePosition.y < top &&
       Math.abs(futurePosition.x) > TableGeometry.tableX
     )
-  }
-
-  private static bounce(ball: Ball, t: number) {
-    const futurePosition = ball.futurePosition(t)
-    if (futurePosition.x > TableGeometry.tableX) {
-      return Cushion.bounceIn(0, ball)
-    }
-    if (futurePosition.x < -TableGeometry.tableX) {
-      return Cushion.bounceIn(Math.PI, ball)
-    }
-    if (futurePosition.y > TableGeometry.tableY) {
-      return Cushion.bounceIn(-Math.PI / 2, ball)
-    }
-    if (futurePosition.y < -TableGeometry.tableY) {
-      return Cushion.bounceIn(Math.PI / 2, ball)
-    }
-    return undefined
   }
 
   private static bounceIn(rotation, ball) {
