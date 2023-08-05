@@ -36,6 +36,8 @@ for equations in README.md
 
 ### Key equations
 
+Based on [Han 2005](https://billiards.colostate.edu/physics_articles/Han_paper.pdf) paper
+
 #### surface velocity
 
 ![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20R\vec{\omega}))

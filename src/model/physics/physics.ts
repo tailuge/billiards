@@ -30,12 +30,6 @@ export function forceRoll(v, w) {
   w.copy(upCross(v).multiplyScalar(1 / R))
 }
 
-const sin_a = Math.sin(9.25 / 32.5)
-const cos_a = Math.cos(9.25 / 32.5)
-
-const sin_a2 = sin_a * sin_a
-const cos_a2 = cos_a * cos_a
-
 export function rotateApplyUnrotate(theta, v, w, dv, dw) {
   const vr = v.clone().applyAxisAngle(up, theta)
   const wr = w.clone().applyAxisAngle(up, theta)
@@ -51,6 +45,18 @@ export function rotateApplyUnrotate(theta, v, w, dv, dw) {
   dw.applyAxisAngle(up, -theta)
 }
 
+// Han paper cushion physics
+
+// cushion contact point epsilon above ball centre
+
+const epsilon = R / 2
+const theta_a = Math.asin(epsilon / R)
+
+const sin_a = Math.sin(theta_a)
+const cos_a = Math.cos(theta_a)
+const sin_a2 = sin_a * sin_a
+const cos_a2 = cos_a * cos_a
+
 function s0(v, w) {
   return new Vector3(
     v.x * sin_a - v.z * cos_a + R * w.y,
@@ -59,7 +65,7 @@ function s0(v, w) {
 }
 
 function c0(v) {
-  return -v.y
+  return -v.x * cos_a - v.z * sin_a
 }
 
 const A = 7 / (2 * m)
@@ -76,16 +82,7 @@ function Pze(c) {
 export function isCushionXGrip(v, w) {
   const Pze_val = Pze(c0(v))
   const Pzs_val = Pzs(s0(v, w))
-
-  console.log(
-    Pze_val +
-      " < " +
-      Pzs_val +
-      " isGrip = " +
-      (Pze_val < Pzs_val ? "true" : "false")
-  )
-
-  return Pze_val < Pzs_val
+  return Pzs_val < Pze_val
 }
 
 /**
