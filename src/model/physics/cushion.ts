@@ -5,7 +5,8 @@ import { Vector3 } from "three"
 
 export class Cushion {
   /**
-   * Reflect ball in cushion if it impacts in time t else undefined
+   * Modify ball state reflecting in cushion if it impacts in time t.
+   * Returns impact speed else undefined.
    *
    * Knuckle impacts are not part of this and handled elsewhere.
    */
