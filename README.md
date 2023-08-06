@@ -24,9 +24,9 @@ Inspect physics using [diagrams](https://tailuge.github.io/billiards/dist/diagra
 
 ## Reference material
 
-* Papers on [ball mechanics](https://billiards.colostate.edu/physics_articles/Han_paper.pdf),
-[cushions](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)
-and [max spin](https://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf)
+* Papers on ball mechanics [Han 2005](https://billiards.colostate.edu/physics_articles/Han_paper.pdf) 
+with important fixes by [Kiefl](https://ekiefl.github.io/2020/04/24/pooltool-theory/#3-han-2005").
+* [cushions](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf), [max spin](https://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf),
 simulation [1](https://savoirs.usherbrooke.ca/bitstream/handle/11143/6598/MR91690.pdf?sequence=1)
 [2](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.89.4627&rep=rep1&type=pdf)
 [3](https://www.researchgate.net/publication/228634093_Bounce_of_a_spinning_ball_near_normal_incidence)
