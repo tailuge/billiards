@@ -79,35 +79,10 @@ export function Pze(c) {
   return ((1 + e) * c) / B
 }
 
-export function isCushionXGrip(v, w) {
+export function isGripCushion(v, w) {
   const Pze_val = Pze(c0(v))
   const Pzs_val = Pzs(s0(v, w))
   return Pzs_val <= Pze_val
-}
-
-/**
- * Own version
- */
-export function bounceWithSideX(v, w, dv, dw) {
-  //gripInXCushion(v,w)
-
-  const newVx = -v.x * e
-  const newVy = v.y + R * ((-w.z * cos_a * Math.abs(v.x)) / 30)
-
-  const newWx = w.x * 0.9
-  const newWy = 0
-  const newWz = w.z / 2
-
-  dv.set(newVx - v.x, newVy - v.y, 0)
-  dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
-}
-
-export function gripInXCushion(v, w) {
-  const ballCushionSurfaceVelocity = Math.abs(v.y + w.z * R)
-  console.log(
-    ballCushionSurfaceVelocity,
-    ballCushionSurfaceVelocity > 20 ? "slip" : "grip"
-  )
 }
 
 export function bounceWithoutSlipX(v, w, dv, dw) {
@@ -138,6 +113,21 @@ export function bounceWithSlipX(v, w, dv, dw) {
   const newWx = w.x - (R / I) * Py * sin_a
   const newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
   const newWz = w.z + (R / I) * Py * cos_a
+
+  dv.set(newVx - v.x, newVy - v.y, 0)
+  dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
+}
+
+/**
+ * Own version
+ */
+export function bounceWithSideX(v, w, dv, dw) {
+  const newVx = -v.x * e
+  const newVy = v.y + R * ((-w.z * cos_a * Math.abs(v.x)) / 30)
+
+  const newWx = w.x * 0.9
+  const newWy = 0
+  const newWz = w.z / 2
 
   dv.set(newVx - v.x, newVy - v.y, 0)
   dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
