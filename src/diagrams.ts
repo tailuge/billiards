@@ -1,4 +1,7 @@
 import { Diagram } from "./diagram/diagram"
+import { Chart } from "chart.js/auto"
+import { Pze, Pzs, c0, s0 } from "./model/physics/physics"
+import { Vector3 } from "three"
 
 console.log("Diagrams")
 
@@ -14,6 +17,50 @@ makeDiagram("diagram2", [
   makeBall(-17, 2, 0, -maxSpeed * 2, -85, 0, -5),
   makeBall(-17.38, -2, 0, 0, 0, 0, 0),
 ])
+
+plot1()
+
+function plot1() {
+  let x: number[] = []
+  let y1: number[] = []
+  let y2: number[] = []
+
+  const yDataset = [
+    {
+      label: "Pze",
+      data: y1,
+    },
+    {
+      label: "Pzs",
+      data: y2,
+    },
+  ]
+
+  for (let i = -20; i <= 20; i += 1) {
+    x.push(i)
+    let v = new Vector3(1.0, 0.0, 0)
+    let w = new Vector3(0.0, 0.0, i)
+    y1.push(Pze(c0(v)))
+    y2.push(Pzs(s0(v, w)))
+  }
+
+  plotOnCanvas("plot1", x, yDataset, "Side spin w.z")
+}
+
+function plotOnCanvas(elementId, x, yDataset, yAxis) {
+  new Chart(document.getElementById(elementId) as HTMLCanvasElement, {
+    type: "line",
+    data: {
+      labels: x,
+      datasets: yDataset,
+    },
+    options: {
+      responsive: false,
+      maintainAspectRatio: true,
+      scales: { x: { title: { text: yAxis, display: true } } },
+    },
+  })
+}
 
 function makeDiagram(id, balls) {
   return new Diagram(

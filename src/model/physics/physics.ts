@@ -49,7 +49,7 @@ export function rotateApplyUnrotate(theta, v, w, dv, dw) {
 
 // cushion contact point epsilon above ball centre
 
-const epsilon = R / 2
+const epsilon = R * 0.2
 const theta_a = Math.asin(epsilon / R)
 
 const sin_a = Math.sin(theta_a)
@@ -57,32 +57,32 @@ const cos_a = Math.cos(theta_a)
 const sin_a2 = sin_a * sin_a
 const cos_a2 = cos_a * cos_a
 
-function s0(v, w) {
+export function s0(v, w) {
   return new Vector3(
     v.x * sin_a - v.z * cos_a + R * w.y,
     -v.y - R * w.z * cos_a + R * w.x * sin_a
   )
 }
 
-function c0(v) {
-  return -v.x * cos_a - v.z * sin_a
+export function c0(v) {
+  return v.x * cos_a
 }
 
-const A = 7 / (2 * m)
+const A = 7 / 2 / m
 const B = 1 / m
 
-function Pzs(s) {
+export function Pzs(s) {
   return s.length() / A
 }
 
-function Pze(c) {
+export function Pze(c) {
   return ((1 + e) * c) / B
 }
 
 export function isCushionXGrip(v, w) {
   const Pze_val = Pze(c0(v))
   const Pzs_val = Pzs(s0(v, w))
-  return Pzs_val < Pze_val
+  return Pzs_val <= Pze_val
 }
 
 /**
