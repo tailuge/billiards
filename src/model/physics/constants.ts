@@ -1,7 +1,7 @@
 export const mu = 0.29
 export const muSlide = 0.89
 export const g = 9.8
-export const rho = 0.1
+export const rho = 0.15
 export const m = 0.1
 export const R = 0.5
 export const Mz = ((mu * m * g * 2) / 3) * rho

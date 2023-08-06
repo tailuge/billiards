@@ -21,13 +21,14 @@ describe("Physics", () => {
     done()
   })
 
-  it("bounceWithoutSlipX with right side makes ball move right on bounce", (done) => {
+  it("bounceWithoutSlipX with right side makes ball move right on bounce and reduces spin", (done) => {
     const v = new Vector3(1.0, 0, 0)
     const w = new Vector3(0, 0, -5)
     const dv = new Vector3()
     const dw = new Vector3()
     bounceWithoutSlipX(v, w, dv, dw)
     expect(dv.y).to.be.greaterThan(0)
+    expect(dw.z).to.be.greaterThan(0).and.lessThan(5)
     done()
   })
 })

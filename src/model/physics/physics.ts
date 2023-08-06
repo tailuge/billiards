@@ -34,12 +34,11 @@ export function rotateApplyUnrotate(theta, v, w, dv, dw) {
   const vr = v.clone().applyAxisAngle(up, theta)
   const wr = w.clone().applyAxisAngle(up, theta)
 
-  bounceWithSideX(vr, wr, dv, dw)
-  //  if (isCushionXGrip(vr, wr)) {
-  //    bounceWithoutSlipX(vr, wr, dv, dw)
-  //  } else {
-  //    bounceWithSlipX(vr, wr, dv, dw)
-  //  }
+  if (isGripCushion(vr, wr)) {
+    bounceWithoutSlipX(vr, wr, dv, dw)
+  } else {
+    bounceWithSlipX(vr, wr, dv, dw)
+  }
 
   dv.applyAxisAngle(up, -theta)
   dw.applyAxisAngle(up, -theta)
@@ -113,21 +112,6 @@ export function bounceWithSlipX(v, w, dv, dw) {
   const newWx = w.x - (R / I) * Py * sin_a
   const newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
   const newWz = w.z + (R / I) * Py * cos_a
-
-  dv.set(newVx - v.x, newVy - v.y, 0)
-  dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
-}
-
-/**
- * Own version
- */
-export function bounceWithSideX(v, w, dv, dw) {
-  const newVx = -v.x * e
-  const newVy = v.y + R * ((-w.z * cos_a * Math.abs(v.x)) / 30)
-
-  const newWx = w.x * 0.9
-  const newWy = 0
-  const newWz = w.z / 2
 
   dv.set(newVx - v.x, newVy - v.y, 0)
   dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
