@@ -116,6 +116,19 @@ describe("Cushion", () => {
     done()
   })
 
+  it("shallow angle slips, retains sidespin, retain y speed", (done) => {
+    const pos = new Vector3(TableGeometry.tableX, 0, 0)
+    const ball = new Ball(pos)
+    ball.vel.set(0.1, -1, 0)
+    ball.rvel.set(0, 0, -10)
+    Cushion.bounceAny(ball, t)
+    expect(ball.rvel.z).to.be.approximately(-10, 1)
+    expect(ball.vel.y).to.be.approximately(-1, 0.1).and.greaterThan(-1)
+    console.log(ball.vel)
+    console.log(ball.rvel)
+    done()
+  })
+
   it("does not bounce off pocket area", (done) => {
     const pos = new Vector3(0, -TableGeometry.tableY, 0)
     const ball = new Ball(pos)
