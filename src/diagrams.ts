@@ -48,18 +48,22 @@ function plot1() {
 }
 
 function plotOnCanvas(elementId, x, yDataset, yAxis) {
-  new Chart(document.getElementById(elementId) as HTMLCanvasElement, {
-    type: "line",
-    data: {
-      labels: x,
-      datasets: yDataset,
-    },
-    options: {
-      responsive: false,
-      maintainAspectRatio: true,
-      scales: { x: { title: { text: yAxis, display: true } } },
-    },
-  })
+  const chart = new Chart(
+    document.getElementById(elementId) as HTMLCanvasElement,
+    {
+      type: "line",
+      data: {
+        labels: x,
+        datasets: yDataset,
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: true,
+        scales: { x: { title: { text: yAxis, display: true } } },
+      },
+    }
+  )
+  console.log("Chart done", chart)
 }
 
 function makeDiagram(id, balls) {
