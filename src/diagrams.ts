@@ -21,9 +21,9 @@ makeDiagram("diagram2", [
 plot1()
 
 function plot1() {
-  let x: number[] = []
-  let y1: number[] = []
-  let y2: number[] = []
+  const x: number[] = []
+  const y1: number[] = []
+  const y2: number[] = []
 
   const yDataset = [
     {
@@ -38,8 +38,8 @@ function plot1() {
 
   for (let i = -20; i <= 20; i += 1) {
     x.push(i)
-    let v = new Vector3(1.0, 0.0, 0)
-    let w = new Vector3(0.0, 0.0, i)
+    const v = new Vector3(1.0, 0.0, 0)
+    const w = new Vector3(0.0, 0.0, i)
     y1.push(Pze(c0(v)))
     y2.push(Pzs(s0(v, w)))
   }
