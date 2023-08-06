@@ -20,40 +20,58 @@ makeDiagram("diagram2", [
 
 plot1()
 plot2()
+plot3()
 
 function plot1() {
   const x: number[] = []
-  const y1: number[] = []
-  const y2: number[] = []
-
-  const yDataset = [
-    {
-      label: "Pze",
-      data: y1,
-    },
-    {
-      label: "Pzs",
-      data: y2,
-    },
-  ]
-
+  const yDataset = dataset()
   for (let i = -20; i <= 20; i += 1) {
     x.push(i)
     const v = new Vector3(1.0, 0.0, 0)
     const w = new Vector3(0.0, 0.0, i)
-    y1.push(Pze(c0(v)))
-    y2.push(Pzs(s0(v, w)))
+    yDataset[0].data.push(Pze(c0(v)))
+    yDataset[1].data.push(Pzs(s0(v, w)))
   }
-
   plotOnCanvas("plot1", x, yDataset, "Side spin w.z")
 }
 
 function plot2() {
   const x: number[] = []
+  const yDataset = dataset()
+  for (let i = -20; i <= 20; i += 1) {
+    x.push(i)
+    const v = new Vector3(1.0, 0, 0)
+    const w = new Vector3(0.0, i, 0)
+    yDataset[0].data.push(Pze(c0(v)))
+    yDataset[1].data.push(Pzs(s0(v, w)))
+  }
+  plotOnCanvas("plot2", x, yDataset, "Top/back spin w.y")
+}
+
+function plot3() {
+  const x: number[] = []
+  const yDataset = dataset()
+  for (let i = -80; i <= 80; i += 10) {
+    x.push(i)
+    const rad = (i * Math.PI) / 180
+    const v = new Vector3(Math.cos(rad), Math.sin(rad), 0)
+    const w = new Vector3(0.0, 0, -10)
+    yDataset[0].data.push(Pze(c0(v)))
+    yDataset[1].data.push(Pzs(s0(v, w)))
+  }
+  plotOnCanvas(
+    "plot3",
+    x,
+    yDataset,
+    "Incident angle (degrees) of ball to cushion with right side"
+  )
+}
+
+function dataset() {
   const y1: number[] = []
   const y2: number[] = []
 
-  const yDataset = [
+  return [
     {
       label: "Pze",
       data: y1,
@@ -63,16 +81,6 @@ function plot2() {
       data: y2,
     },
   ]
-
-  for (let i = -20; i <= 20; i += 1) {
-    x.push(i)
-    const v = new Vector3(1.0, 0, 0)
-    const w = new Vector3(0.0, i, 0)
-    y1.push(Pze(c0(v)))
-    y2.push(Pzs(s0(v, w)))
-  }
-
-  plotOnCanvas("plot2", x, yDataset, "Top/back spin w.y")
 }
 
 function plotOnCanvas(elementId, x, yDataset, yAxis) {
