@@ -19,6 +19,7 @@ makeDiagram("diagram2", [
 ])
 
 plot1()
+plot2()
 
 function plot1() {
   const x: number[] = []
@@ -45,6 +46,33 @@ function plot1() {
   }
 
   plotOnCanvas("plot1", x, yDataset, "Side spin w.z")
+}
+
+function plot2() {
+  const x: number[] = []
+  const y1: number[] = []
+  const y2: number[] = []
+
+  const yDataset = [
+    {
+      label: "Pze",
+      data: y1,
+    },
+    {
+      label: "Pzs",
+      data: y2,
+    },
+  ]
+
+  for (let i = -20; i <= 20; i += 1) {
+    x.push(i)
+    const v = new Vector3(1.0, 0, 0)
+    const w = new Vector3(0.0, i, 0)
+    y1.push(Pze(c0(v)))
+    y2.push(Pzs(s0(v, w)))
+  }
+
+  plotOnCanvas("plot2", x, yDataset, "Top/back spin w.y")
 }
 
 function plotOnCanvas(elementId, x, yDataset, yAxis) {
