@@ -52,11 +52,9 @@ function onAssetsReady() {
     container.isSinglePlayer = true
     state = JSON.parse(decodeURI(replay[1]))
     container.eventQueue.push(new BreakEvent(state.init, state.shots))
-  } else {
-    if (!sc) {
-      container.isSinglePlayer = true
-      container.eventQueue.push(new BreakEvent())
-    }
+  } else if (!sc) {
+    container.isSinglePlayer = true
+    container.eventQueue.push(new BreakEvent())
   }
 
   container.broadcast = (e: string) => {

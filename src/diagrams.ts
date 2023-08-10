@@ -1,6 +1,6 @@
 import { Diagram } from "./diagram/diagram"
 import { Chart } from "chart.js/auto"
-import { Pze, Pzs, c0, s0 } from "./model/physics/physics"
+import { Pze, Pzs, c0, s0, muCushion } from "./model/physics/physics"
 import { Vector3 } from "three"
 
 console.log("Diagrams")
@@ -21,6 +21,7 @@ makeDiagram("diagram2", [
 plot1()
 plot2()
 plot3()
+plot4()
 
 function plot1() {
   const x: number[] = []
@@ -64,6 +65,25 @@ function plot3() {
     x,
     yDataset,
     "Incident angle (degrees) of ball to cushion with right side"
+  )
+}
+
+function plot4() {
+  const x: number[] = []
+  const yDataset = dataset()
+  for (let i = -80; i <= 80; i += 10) {
+    x.push(i)
+    const rad = (i * Math.PI) / 180
+    const v = new Vector3(Math.cos(rad), Math.sin(rad), 0)
+    const mu = muCushion(v)
+    yDataset[0].data.push(mu)
+    yDataset[1].data.push(mu)
+  }
+  plotOnCanvas(
+    "plot4",
+    x,
+    yDataset,
+    "Incident angle (degrees) of ball to cushion "
   )
 }
 

@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { norm, upCross, up } from "../../utils/utils"
-import { mu, muSlide, g, m, e, Mz, Mxy, R, I } from "./constants"
+import { muSlide, g, m, e, Mz, Mxy, R, I } from "./constants"
 
 export function surfaceVelocity(v, w) {
   return surfaceVelocityFull(v, w).setZ(0)
@@ -102,7 +102,13 @@ export function bounceWithoutSlipX(v, w, dv, dw) {
   dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
 }
 
+export function muCushion(v: Vector3) {
+  const theta = Math.atan2(Math.abs(v.y), v.x)
+  return 0.471 - 0.241 * theta
+}
+
 export function bounceWithSlipX(v, w, dv, dw) {
+  const mu = muCushion(v)
   const newVx = v.x - v.x * (1 + e) * cos_a * (mu * cos_a * sin_a + cos_a)
   const newVy = v.y + mu * (1 + e) * cos_a * sin_a * v.x
 

@@ -78,10 +78,8 @@ export class Container {
     this.table.cue.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())
-    } else {
-      if (this.table.outcome.length > 0) {
-        //this.sound.eventToSounds(this.table.outcome.shift())
-      }
+    } else if (this.table.outcome.length > 0) {
+      //this.sound.eventToSounds(this.table.outcome.shift())
     }
   }
 
