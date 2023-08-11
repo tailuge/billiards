@@ -13,23 +13,13 @@
   <h1>Diagrams</h1>
   <h2>Table plots</h2>
   <body>
-    <div id="diagram1">
-      <canvas
-        id="canvas"
-        width="400"
-        height="210"
-        style="border: 1px solid #111111"
-      ></canvas>
+    <div id="diagram1" class="diagram">
+      <canvas id="canvas" width="400" height="210"></canvas>
       <div id="control"></div>
     </div>
 
-    <div id="diagram2">
-      <canvas
-        id="canvas"
-        width="400"
-        height="210"
-        style="border: 1px solid #111111"
-      ></canvas>
+    <div id="diagram2" class="diagram">
+      <canvas id="canvas" width="400" height="210"></canvas>
       <div id="control"></div>
     </div>
 
@@ -46,39 +36,41 @@
       >Evan Kiefl</a
     >
 
-    <h3>Spinning ball played slowly directly into cushion</h3>
-    <canvas id="plot1"></canvas>
+    <div class="diagram">
+      <p>Spinning ball played slowly directly into cushion</p>
+      <canvas id="plot1"></canvas>
+    </div>
 
-    <h3>Topspin/backspin ball played slowly directly into cushion</h3>
-    <canvas id="plot2"></canvas>
+    <div class="diagram">
+      <p>Topspin/backspin ball played slowly directly into cushion</p>
+      <canvas id="plot2"></canvas>
+    </div>
 
-    <h3>Right hand spinning ball with varying incident angle</h3>
-    <canvas id="plot3"></canvas>
+    <div class="diagram">
+      <p>Right hand spinning ball with varying incident angle</p>
+      <canvas id="plot3"></canvas>
+    </div>
 
-    <h3>Cushion friction mu varies with incident angle</h3>
-    <canvas id="plot4"></canvas>
+    <div class="diagram">
+      <p>Cushion friction mu varies with incident angle</p>
+      <canvas id="plot4"></canvas>
+    </div>
 
-    <h3>In / out angles for ball with stun</h3>
-    <canvas
-      id="vectorPlot1"
-      width="200"
-      height="200"
-      style="border: 1px solid #111111"
-    ></canvas>
-    <h3>In / out angles for ball with running side</h3>
-    <canvas
-      id="vectorPlot2"
-      width="200"
-      height="200"
-      style="border: 1px solid #111111"
-    ></canvas>
-    <h3>In / out angles for ball with check side</h3>
-    <canvas
-      id="vectorPlot3"
-      width="200"
-      height="200"
-      style="border: 1px solid #111111"
-    ></canvas>
+    <div class="diagram">
+      <p>In / out angles for ball with stun</p>
+      <canvas id="vectorPlot1" width="200" height="200"></canvas>
+    </div>
+
+    <div class="diagram">
+      <p>In / out angles for ball with running side</p>
+      <canvas id="vectorPlot2" width="200" height="200"></canvas>
+    </div>
+
+    <div class="diagram">
+      <p>In / out angles for ball with check side</p>
+
+      <canvas id="vectorPlot3" width="200" height="200"></canvas>
+    </div>
 
     <script src="vendor.js"></script>
     <script src="diagram.js"></script>

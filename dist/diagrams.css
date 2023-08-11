@@ -1,4 +1,25 @@
 input {
-  width: 5ch;
+  width: 6ch;
   block-size: fit-content;
+  font-size: xx-small;
+}
+
+.diagram {
+  display: flex;
+  flex-wrap: wrap;
+  width: 400px;
+  border: 1px solid black;
+  border-radius: 4px;
+  padding: 4px;
+  margin: 4px;
+  background-color: rgb(245, 245, 245);
+  box-shadow: 2px 2px 2px lightgray;
+}
+
+p {
+  margin: 0 auto;
+}
+
+canvas {
+  margin: 0 auto;
 }
