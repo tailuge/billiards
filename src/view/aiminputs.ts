@@ -53,17 +53,17 @@ export class AimInputs {
   }
 
   updateVisualState(x: number, y: number) {
+    this.readDimensions()
     const elt = this.cueTipElement?.style
     if (elt) {
-      this.readDimensions()
       elt.left = (-x + 0.5) * this.ballWidth - this.tipRadius + "px"
       elt.top = (-y + 0.5) * this.ballHeight - this.tipRadius + "px"
     }
   }
 
   updatePowerSlider(power) {
-    this.cuePowerElement?.value &&
-      power > 0 &&
+    power > 0 &&
+      this.cuePowerElement?.value &&
       (this.cuePowerElement.value = power)
   }
 
