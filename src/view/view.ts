@@ -40,20 +40,12 @@ export class View {
     }
   }
 
-  views = [
-    {
-      left: 0,
-      bottom: 0,
-      width: 1,
-      height: 1.0,
-    },
-    {
-      left: 0.7,
-      bottom: 0,
-      width: 0.3,
-      height: 0.3,
-    },
-  ]
+  readonly geom = {
+    left: 0,
+    bottom: 0,
+    width: 1,
+    height: 1.0,
+  }
 
   render() {
     this.updateSize()
@@ -63,7 +55,7 @@ export class View {
       this.camera.standback += 1
     }
 
-    this.renderCamera(this.camera, this.views[0])
+    this.renderCamera(this.camera, this.geom)
   }
 
   renderCamera(cam, v) {
