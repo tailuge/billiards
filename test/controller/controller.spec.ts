@@ -33,6 +33,12 @@ describe("Controller", () => {
     done()
   })
 
+  it("Container animation loop ok", (done) => {
+    container.animate(0)
+    expect(container).to.be.not.null
+    done()
+  })
+
   it("Abort takes Aim to End", (done) => {
     const controller: Controller = new Aim(container)
     const event: GameEvent = new AbortEvent()

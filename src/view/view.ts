@@ -31,12 +31,12 @@ export class View {
 
   updateSize() {
     if (
-      this.windowWidth != this.element.offsetWidth ||
-      this.windowHeight != this.element.offsetHeight
+      this.windowWidth != this.element?.offsetWidth ||
+      this.windowHeight != this.element?.offsetHeight
     ) {
-      this.windowWidth = this.element.offsetWidth
-      this.windowHeight = this.element.offsetHeight
-      this.renderer.setSize(this.windowWidth, this.windowHeight)
+      this.windowWidth = this.element?.offsetWidth
+      this.windowHeight = this.element?.offsetHeight
+      this.renderer?.setSize(this.windowWidth, this.windowHeight)
     }
   }
 
@@ -66,14 +66,14 @@ export class View {
     const width = Math.floor(this.windowWidth * v.width)
     const height = Math.floor(this.windowHeight * v.height)
 
-    this.renderer.setViewport(left, bottom, width, height)
-    this.renderer.setScissor(left, bottom, width, height)
-    this.renderer.setScissorTest(true)
+    this.renderer?.setViewport(left, bottom, width, height)
+    this.renderer?.setScissor(left, bottom, width, height)
+    this.renderer?.setScissorTest(true)
 
     cam.camera.aspect = width / height
-    cam.camera!.updateProjectionMatrix()
+    cam.camera.updateProjectionMatrix()
 
-    this.renderer.render(this.scene, cam.camera)
+    this.renderer?.render(this.scene, cam.camera)
   }
 
   private initialiseScene(element: HTMLElement, width, height) {
