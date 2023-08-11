@@ -4,6 +4,11 @@ input {
   font-size: xx-small;
 }
 
+body {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .diagram {
   display: flex;
   flex-wrap: wrap;
