@@ -73,7 +73,6 @@ describe("Controller", () => {
 
   it("AimEvent takes WatchShot to Aim when all stationary", (done) => {
     const watchShot = new WatchShot(container)
-    watchShot.allStationary = true
     container.controller = watchShot
     container.table.balls[0].setStationary()
     container.eventQueue.push(new AimEvent())
@@ -84,7 +83,6 @@ describe("Controller", () => {
 
   it("WatchEvent takes WatchShot to WatchAim when all stationary", (done) => {
     const watchShot = new WatchShot(container)
-    watchShot.allStationary = true
     container.controller = watchShot
     container.table.balls[0].setStationary()
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
@@ -103,7 +101,6 @@ describe("Controller", () => {
 
   it("PlaceBall takes WatchShot to PlaceBall", (done) => {
     const watchShot = new WatchShot(container)
-    watchShot.allStationary = true
     container.controller = watchShot
     container.table.balls[0].setStationary()
     container.eventQueue.push(new PlaceBallEvent(zero, true))
@@ -114,7 +111,6 @@ describe("Controller", () => {
 
   it("AimEvent takes WatchShot to enqueued Aim after all stationary", (done) => {
     const watchShot = new WatchShot(container)
-    watchShot.allStationary = false
     container.controller = watchShot
     container.table.balls[0].setStationary()
     container.eventQueue.push(new AimEvent())
@@ -127,7 +123,6 @@ describe("Controller", () => {
 
   it("WatchEvent takes WatchShot to enqueued WatchAim after all stationary", (done) => {
     const watchShot = new WatchShot(container)
-    watchShot.allStationary = false
     container.controller = watchShot
     container.table.balls[0].setStationary()
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
@@ -257,7 +252,6 @@ describe("Controller", () => {
 
   it("ChatEvent handled with no change of state", (done) => {
     const watchShot = new WatchShot(container)
-    watchShot.allStationary = false
     container.controller = watchShot
     container.table.balls[0].setStationary()
     container.eventQueue.push(new ChatEvent("", ""))

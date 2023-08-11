@@ -32,7 +32,6 @@ export class PlayShot extends ControllerBase {
 
   handleStationary(_) {
     this.allStationary = true
-    this.container.log("stationary event")
 
     // if white potted switch to other player
     if (Outcome.pottedCueBall(this.container.table.outcome)) {

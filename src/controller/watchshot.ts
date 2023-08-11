@@ -4,8 +4,6 @@ import { ControllerBase } from "./controllerbase"
 import { PlaceBall } from "./placeball"
 
 export class WatchShot extends ControllerBase {
-  allStationary = false
-
   constructor(container) {
     super(container)
     this.container.table.outcome = []
@@ -25,8 +23,6 @@ export class WatchShot extends ControllerBase {
   }
 
   handleStationary(_) {
-    this.allStationary = true
-    this.container.log("stationary event")
     return this
   }
 }
