@@ -6,7 +6,12 @@ import { BreakEvent } from "../../src/events/breakevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { Replay } from "../../src/controller/replay"
 import { PlaceBall } from "../../src/controller/placeball"
-import { Controller, HitEvent, Input } from "../../src/controller/controller"
+import {
+  Controller,
+  HitEvent,
+  Input,
+  StationaryEvent,
+} from "../../src/controller/controller"
 import { Aim } from "../../src/controller/aim"
 import { controllerName } from "../../src/controller/util"
 import { End } from "../../src/controller/end"
@@ -73,6 +78,15 @@ describe("Controller Replay", () => {
   it("Replay handles inputs", (done) => {
     container.controller = new Replay(container, state.shots, 0)
     container.inputQueue.push(new Input(0.1, "KeyOUp"))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Replay)
+    done()
+  })
+
+  it("Stationary takes Replay to Replay", (done) => {
+    container.controller = new Replay(container, state.shots, 0)
+    container.table.balls[0].setStationary()
+    container.eventQueue.push(new StationaryEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Replay)
     done()

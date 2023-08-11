@@ -155,6 +155,16 @@ describe("Controller", () => {
     done()
   })
 
+  it("StationaryEvent takes active PlayShot to Aim if no pot singleplayer", (done) => {
+    container.controller = new PlayShot(container)
+    container.isSinglePlayer = true
+    container.table.balls[0].setStationary()
+    container.eventQueue.push(new StationaryEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Aim)
+    done()
+  })
+
   it("StationaryEvent takes active PlayShot to Aim if pot", (done) => {
     container.controller = new PlayShot(container)
     container.table.balls[0].setStationary()
