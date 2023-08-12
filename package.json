@@ -14,7 +14,8 @@
         "dev": "webpack ",
         "prettify": "prettier --write --trailing-comma es5 --no-semi {src,test}/**/*.[jt]s dist/*.{css,html}",
         "markdownlint": "npx markdownlint-cli2 README.md --fix",
-        "serve": "webpack serve --client-web-socket-url $(gp url 8080 | sed 's/http/ws/' | sed 's#$#/ws#')",
+        "serve": "webpack serve",
+        "servegitpod": "webpack serve --client-web-socket-url $(gp url 8080 | sed 's/http/ws/' | sed 's#$#/ws#')",
         "deps": "npx yarn-check --skip-unused",
         "websocket": "nodemon src/server/server.ts"
     },

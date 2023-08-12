@@ -3,7 +3,8 @@ import { Chart } from "chart.js/auto"
 import { Pze, Pzs, c0, s0, muCushion } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { CushionPlot } from "./diagram/cushionplot"
-import { R, updateR } from "./model/physics/constants"
+import { setR, setm } from "./model/physics/constants"
+
 const maxSpeed = 20
 
 makeDiagram("diagram1", [
@@ -29,10 +30,17 @@ const sin = (a) => Math.sin((a * Math.PI) / 180)
 const cos = (a) => Math.cos((a * Math.PI) / 180)
 const aimAtAngle = (a) => new Vector3(cos(a), sin(a), 0)
 
-const sliderR = id("grip") as HTMLInputElement
+const sliderR = id("R") as HTMLInputElement
+const sliderm = id("m") as HTMLInputElement
 
 sliderR.oninput = (e) => {
-  plotCushionDiagrams((e.target as HTMLInputElement).value)
+  setR((e.target as HTMLInputElement).value)
+  plotCushionDiagrams()
+}
+
+sliderm.oninput = (e) => {
+  setm((e.target as HTMLInputElement).value)
+  plotCushionDiagrams()
 }
 
 const p1 = new CushionPlot(id("cushion1"), "stun shot")
@@ -40,10 +48,9 @@ const p2 = new CushionPlot(id("cushion2"), "running side")
 const p3 = new CushionPlot(id("cushion3"), "check side")
 const p4 = new CushionPlot(id("cushion4"), "varying side")
 
-plotCushionDiagrams(R)
+plotCushionDiagrams()
 
-function plotCushionDiagrams(R) {
-  updateR(R)
+function plotCushionDiagrams() {
   p1.plot(10, 80, 10, aimAtAngle, (_) => new Vector3(0, 0, 0))
   p2.plot(10, 80, 10, aimAtAngle, spin(-3))
   p3.plot(10, 80, 10, aimAtAngle, spin(3))

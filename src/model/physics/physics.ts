@@ -67,14 +67,13 @@ export function c0(v) {
   return v.x * cos_a
 }
 
-const A = 7 / 2 / m
-const B = 1 / m
-
 export function Pzs(s) {
+  const A = 7 / 2 / m
   return s.length() / A
 }
 
 export function Pze(c) {
+  const B = 1 / m
   return ((1 + e) * c) / B
 }
 
