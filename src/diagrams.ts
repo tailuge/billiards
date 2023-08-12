@@ -3,7 +3,7 @@ import { Chart } from "chart.js/auto"
 import { Pze, Pzs, c0, s0, muCushion } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { CushionPlot } from "./diagram/cushionplot"
-
+import { R, updateR } from "./model/physics/constants"
 const maxSpeed = 20
 
 makeDiagram("diagram1", [
@@ -22,41 +22,39 @@ plot2()
 plot3()
 plot4()
 
+function spin(w) {
+  return (_) => new Vector3(0, 0, w)
+}
 const sin = (a) => Math.sin((a * Math.PI) / 180)
 const cos = (a) => Math.cos((a * Math.PI) / 180)
 const aimAtAngle = (a) => new Vector3(cos(a), sin(a), 0)
 
-new CushionPlot(document.getElementById("cushion1")!, "stun shot").plot(
-  20,
-  80,
-  20,
-  aimAtAngle,
-  (_) => new Vector3(0, 0, 0)
-)
+const sliderR = id("grip") as HTMLInputElement
 
-new CushionPlot(document.getElementById("cushion2")!, "running side").plot(
-  20,
-  80,
-  20,
-  aimAtAngle,
-  (_) => new Vector3(0, 0, -3)
-)
+sliderR.oninput = (e) => {
+  plotCushionDiagrams((e.target as HTMLInputElement).value)
+}
 
-new CushionPlot(document.getElementById("cushion3")!, "check side").plot(
-  20,
-  80,
-  20,
-  aimAtAngle,
-  (_) => new Vector3(0, 0, 3)
-)
+const p1 = new CushionPlot(id("cushion1"), "stun shot")
+const p2 = new CushionPlot(id("cushion2"), "running side")
+const p3 = new CushionPlot(id("cushion3"), "check side")
+const p4 = new CushionPlot(id("cushion4"), "varying side")
 
-new CushionPlot(document.getElementById("cushion4")!, "varying side").plot(
-  -6,
-  6,
-  2,
-  (_) => new Vector3(0.7, 0.7, 0),
-  (z) => new Vector3(0, 0, z)
-)
+plotCushionDiagrams(R)
+
+function plotCushionDiagrams(R) {
+  updateR(R)
+  p1.plot(10, 80, 10, aimAtAngle, (_) => new Vector3(0, 0, 0))
+  p2.plot(10, 80, 10, aimAtAngle, spin(-3))
+  p3.plot(10, 80, 10, aimAtAngle, spin(3))
+  p4.plot(
+    -6,
+    6,
+    1,
+    (_) => new Vector3(0.7, 0.7, 0),
+    (z) => new Vector3(0, 0, z)
+  )
+}
 
 function plot1() {
   const x: number[] = []
@@ -172,6 +170,10 @@ function makeBall(x, y, vx, vy, wx, wy, wz) {
     rvel: { x: wx, y: wy, z: wz },
     state: "Sliding",
   }
+}
+
+function id(id: string): HTMLElement {
+  return document.getElementById(id)!
 }
 
 function elt(diagram, id) {

@@ -14,7 +14,11 @@ body {
   box-shadow: 2px 2px 2px lightgray;
 }
 
-.cushion canvas {
+#grip {
+  width: 80%;
+}
+
+canvas {
   margin: auto;
   display: block;
 }

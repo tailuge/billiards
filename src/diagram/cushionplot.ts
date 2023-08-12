@@ -2,6 +2,7 @@ import { rotateApplyUnrotate, isGripCushion } from "../model/physics/physics"
 import { Vector3 } from "three"
 
 export class CushionPlot {
+  canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   readonly endx = 100
   readonly endy = 100
@@ -11,9 +12,8 @@ export class CushionPlot {
 
   constructor(div: HTMLElement, title: string) {
     div.firstElementChild!.innerHTML = title
-    this.context = (div.lastElementChild as HTMLCanvasElement).getContext(
-      "2d"
-    ) as CanvasRenderingContext2D
+    this.canvas = div.lastElementChild as HTMLCanvasElement
+    this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D
   }
 
   plot(
@@ -23,6 +23,7 @@ export class CushionPlot {
     fv: (a: number) => Vector3,
     fw: (a: number) => Vector3
   ) {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
     for (let i = angleStart; i <= angleEnd; i += angleStep) {
       const v: Vector3 = fv(i)
       const w: Vector3 = fw(i)
