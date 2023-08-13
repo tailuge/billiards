@@ -3,7 +3,14 @@ import { Chart } from "chart.js/auto"
 import { Pze, Pzs, c0, s0, muCushion } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { CushionPlot } from "./diagram/cushionplot"
-import { setR, setm } from "./model/physics/constants"
+import {
+  setR,
+  setm,
+  sete,
+  setmu,
+  setmuS,
+  setrho,
+} from "./model/physics/constants"
 
 const maxSpeed = 20
 
@@ -32,15 +39,24 @@ const aimAtAngle = (a) => new Vector3(cos(a), sin(a), 0)
 
 const sliderR = id("R") as HTMLInputElement
 const sliderm = id("m") as HTMLInputElement
+const slidere = id("e") as HTMLInputElement
+const slidermu = id("mu") as HTMLInputElement
+const slidermuS = id("muS") as HTMLInputElement
+const sliderrho = id("rho") as HTMLInputElement
+sliderR.oninput = sliderUpdate("R", setR)
+sliderm.oninput = sliderUpdate("m", setm)
+slidere.oninput = sliderUpdate("e", sete)
+slidermu.oninput = sliderUpdate("mu", setmu)
+slidermuS.oninput = sliderUpdate("muS", setmuS)
+sliderrho.oninput = sliderUpdate("rho", setrho)
 
-sliderR.oninput = (e) => {
-  setR((e.target as HTMLInputElement).value)
-  plotCushionDiagrams()
-}
-
-sliderm.oninput = (e) => {
-  setm((e.target as HTMLInputElement).value)
-  plotCushionDiagrams()
+function sliderUpdate(id, setter) {
+  return (e) => {
+    const val = parseFloat((e.target as HTMLInputElement).value)
+    setter(val)
+    document.querySelector(`label[for=${id}]`)!.innerHTML = `${id}=${val}`
+    plotCushionDiagrams()
+  }
 }
 
 const p1 = new CushionPlot(id("cushion1"), "stun shot")

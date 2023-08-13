@@ -1,6 +1,7 @@
 import { LineBasicMaterial, LineSegments, Vector3, BufferGeometry } from "three"
-import { R } from "../model/physics/constants"
 import { TableGeometry } from "./tablegeometry"
+
+const R = 0.5
 
 export class Grid {
   readonly z = -0.49

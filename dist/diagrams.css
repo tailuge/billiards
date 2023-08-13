@@ -15,7 +15,11 @@ body {
 }
 
 #R,
-#m {
+#m,
+#e,
+#mu,
+#muS,
+#rho {
   width: 80%;
 }
 
