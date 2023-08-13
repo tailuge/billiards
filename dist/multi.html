@@ -33,8 +33,8 @@
   </body>
 
   <script>
-    const server = window.location.href
-    const wss = server.replace(/^https?:\/\//, "wss://") + "/ws"
+    const server = window.location.origin
+    const wss = server.replace(/^http/, "ws") + "/ws"
     document.getElementById("local").href = `/dist/?websocketserver=${wss}`
     document.getElementById(
       "local2p"

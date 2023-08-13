@@ -10,7 +10,9 @@ const app = express()
 app.use("/dist", express.static("dist"))
 
 const server = app.listen(port, () =>
-  console.log(`Webserver app listening on port ${port}!`)
+  console.log(
+    `Webserver app started, try http://localhost:${port}/dist/multi.html`
+  )
 )
 server.keepAliveTimeout = 60 * 1000
 server.headersTimeout = 60 * 1000
@@ -25,6 +27,7 @@ let pendingRoom = 0
 let clientIdFountain = 0
 
 server.on("upgrade", (request, socket, head) => {
+  console.log("upgrade request for websocket")
   wss.handleUpgrade(request, socket, head, (ws) => {
     wss.emit("connection", ws, request)
   })

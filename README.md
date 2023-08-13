@@ -78,7 +78,7 @@ where
 ### Install
 
 ```shell
-nvm use v18.15.0
+nvm use v18.17.1
 yarn install
 yarn dev
 ```
