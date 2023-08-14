@@ -41,5 +41,5 @@ export function sete(val) {
   e = val
 }
 export function setmuC(val) {
-  e = val
+  muC = val
 }
