@@ -34,7 +34,6 @@ describe("Controller Replay", () => {
         angle: 0,
         power: 1,
         pos: { x: -11, y: 0, z: 0 },
-        spinOnly: false,
       },
     ],
   }

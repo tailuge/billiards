@@ -1,7 +1,11 @@
 import "mocha"
 import { expect } from "chai"
 import { Vector3 } from "three"
-import { isGripCushion, bounceHan } from "../../src/model/physics/physics"
+import {
+  isGripCushion,
+  bounceHan,
+  cueToSpin,
+} from "../../src/model/physics/physics"
 
 describe("Physics", () => {
   it("isCushionGrip slow direct into cushion should grip", (done) => {
@@ -26,6 +30,14 @@ describe("Physics", () => {
     bounceHan(v, w, dv, dw)
     expect(dv.y).to.be.greaterThan(0)
     expect(dw.z).to.be.greaterThan(0).and.lessThan(5)
+    done()
+  })
+
+  it("cueToSpin with no offset has now angular velocity", (done) => {
+    const v = new Vector3(10, 0, 0)
+    const offset = new Vector3(0, 0, 0)
+    const w = cueToSpin(offset, v)
+    expect(w.length()).to.be.equals(0)
     done()
   })
 })

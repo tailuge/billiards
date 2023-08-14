@@ -122,11 +122,13 @@ export function muCushion(v: Vector3) {
  * @returns angular velocity
  */
 export function cueToSpin(offset: Vector3, v: Vector3) {
+  console.log(v)
   const spinAxis = Math.atan2(-offset.x, offset.y)
-  const spinRate = ((5 / 2) * (offset.length() * R)) / (R * R)
+  const spinRate = ((5 / 2) * v.length() * (offset.length() * R)) / (R * R)
   const dir = v.clone().normalize()
   const rvel = upCross(dir)
     .applyAxisAngle(dir, spinAxis)
     .multiplyScalar(spinRate)
+  console.log(rvel)
   return rvel
 }

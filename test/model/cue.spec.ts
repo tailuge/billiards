@@ -22,7 +22,6 @@ describe("Cue", () => {
   it("topspin applied", (done) => {
     const ball = new Ball(new Vector3(0, 1, 0))
     const cue = new Cue()
-    cue.aim.spinOnly = true
     cue.setPower(1)
     cue.setSpin(0, 0.4)
     cue.hit(ball)
