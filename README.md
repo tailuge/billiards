@@ -27,9 +27,11 @@ Inspect physics using [diagrams](https://tailuge.github.io/billiards/dist/diagra
 * Papers on ball mechanics [Han 2005](https://billiards.colostate.edu/physics_articles/Han_paper.pdf) 
 with important corrections by [Kiefl](https://ekiefl.github.io/2020/04/24/pooltool-theory/#3-han-2005").
 * [cushions](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf), [max spin](https://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf),
-simulation [1](https://savoirs.usherbrooke.ca/bitstream/handle/11143/6598/MR91690.pdf?sequence=1)
+simulation and constants [1](https://savoirs.usherbrooke.ca/bitstream/handle/11143/6598/MR91690.pdf?sequence=1)
 [2](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.89.4627&rep=rep1&type=pdf)
 [3](https://www.researchgate.net/publication/228634093_Bounce_of_a_spinning_ball_near_normal_incidence)
+[4](https://billiards.colostate.edu/technical_proofs/new/TP_B-6.pdf)
+[5](https://billiards.colostate.edu/faq/physics/physical-properties/)
 * 3D graphics uses [three.js](https://threejs.org/docs/index.html#api/math/Vector3)
 * Inline [LaTeX](https://www.codecogs.com/eqnedit.php?latex=\dot{a}) editor
 for equations in README.md

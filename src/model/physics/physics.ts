@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { norm, upCross, up } from "../../utils/utils"
-import { muS, g, m, e, Mz, Mxy, R, I } from "./constants"
+import { muS, muC, g, m, e, Mz, Mxy, R, I } from "./constants"
 
 export function surfaceVelocity(v, w) {
   return surfaceVelocityFull(v, w).setZ(0)
@@ -34,11 +34,7 @@ export function rotateApplyUnrotate(theta, v, w, dv, dw) {
   const vr = v.clone().applyAxisAngle(up, theta)
   const wr = w.clone().applyAxisAngle(up, theta)
 
-  if (isGripCushion(vr, wr)) {
-    bounceWithoutSlipX(vr, wr, dv, dw)
-  } else {
-    bounceWithSlipX(vr, wr, dv, dw)
-  }
+  bounceHan(vr, wr, dv, dw)
 
   dv.applyAxisAngle(up, -theta)
   dw.applyAxisAngle(up, -theta)
@@ -53,8 +49,6 @@ const theta_a = Math.asin(epsilon / R)
 
 const sin_a = Math.sin(theta_a)
 const cos_a = Math.cos(theta_a)
-const sin_a2 = sin_a * sin_a
-const cos_a2 = cos_a * cos_a
 
 export function s0(v, w) {
   return new Vector3(
@@ -83,41 +77,56 @@ export function isGripCushion(v, w) {
   return Pzs_val <= Pze_val
 }
 
-export function bounceWithoutSlipX(v, w, dv, dw) {
-  const newVx =
-    v.x -
-    v.x * ((2 / 7) * sin_a2 + (1 + e) * cos_a2) -
-    (2 / 7) * R * w.y * sin_a
-  const newVy = (5 / 7) * v.y + (2 / 7) * R * (w.x * sin_a - w.z * cos_a)
+export function bounceHan(v, w, dv, dw) {
+  const c = c0(v)
+  const s = s0(v, w)
+  const Pze_val = Pze(c)
+  const Pzs_val = Pzs(s)
+  const A = 7 / 2 / m
+  const B = 1 / m
+  let PX,
+    PY,
+    PZ = 0
+  if (Pzs_val < Pze_val) {
+    PX = (-s.x / A) * sin_a - (1 + e) * (c / B) * cos_a
+    PY = s.y / A
+    PZ = (s.x / A) * cos_a - (1 + e) * (c / B) * sin_a
+  } else {
+    const mu = muCushion(v)
+    const phi = Math.abs(Math.atan2(v.y, v.x))
+    const cos_phi = Math.cos(phi)
+    const sin_phi = Math.sin(phi)
 
-  const Py = m * (newVy - v.y)
-  const Px = m * (newVx - v.x)
-  const Pz = -m
-  const newWx = w.x - (R / I) * Py * sin_a
-  const newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
-  const newWz = w.z + (R / I) * Py * cos_a
-
-  dv.set(newVx - v.x, newVy - v.y, 0)
-  dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
+    PX = -mu * (1 + e) * (c / B) * cos_phi * cos_a - (1 + e) * (c / B) * cos_a
+    PY = mu * (1 + e) * (c / B) * sin_phi
+    PZ = mu * (1 + e) * (c / B) * cos_phi * cos_a - (1 + e) * (c / B) * sin_a
+  }
+  dv.x = PX / m
+  dv.y = PY / m
+  dw.x = (-R / I) * PY * sin_a
+  dw.y = (R / I) * (PX * sin_a - PZ * cos_a)
+  dw.z = (R / I) * PY * cos_a
 }
 
 export function muCushion(v: Vector3) {
   const theta = Math.atan2(Math.abs(v.y), v.x)
-  return 0.471 - 0.241 * theta
+  return muC - theta * 0.1
 }
 
-export function bounceWithSlipX(v, w, dv, dw) {
-  const mu = muCushion(v)
-  const newVx = v.x - v.x * (1 + e) * cos_a * (mu * cos_a * sin_a + cos_a)
-  const newVy = v.y + mu * (1 + e) * cos_a * sin_a * v.x
-
-  const Py = m * (newVy - v.y)
-  const Px = m * (newVx - v.x)
-  const Pz = -m
-  const newWx = w.x - (R / I) * Py * sin_a
-  const newWy = w.y + (R / I) * (Px * sin_a - Pz * cos_a)
-  const newWz = w.z + (R / I) * Py * cos_a
-
-  dv.set(newVx - v.x, newVy - v.y, 0)
-  dw.set(newWx - w.x, newWy - w.y, newWz - w.z)
+/**
+ * Spin on ball after strike with cue
+ * https://billiards.colostate.edu/technical_proofs/new/TP_A-12.pdf
+ *
+ * @param offset (x,y,0) from center strike where x,y range from -0.5 to 0.5 the fraction of R from center.
+ * @param v velocity of ball after strike
+ * @returns angular velocity
+ */
+export function cueToSpin(offset: Vector3, v: Vector3) {
+  const spinAxis = Math.atan2(-offset.x, offset.y)
+  const spinRate = ((5 / 2) * (offset.length() * R)) / (R * R)
+  const dir = v.clone().normalize()
+  const rvel = upCross(dir)
+    .applyAxisAngle(dir, spinAxis)
+    .multiplyScalar(spinRate)
+  return rvel
 }

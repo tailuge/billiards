@@ -48,7 +48,7 @@
     </div>
 
     <div class="diagram">
-      <p>Contants</p>
+      <p>Physical Contants</p>
       <input id="R" type="range" value="0.5" min="0.03" max="1.0" step="0.01" />
       <label for="R">R</label>
       <input id="m" type="range" value="0.1" min="0.01" max="0.5" step="0.01" />
@@ -81,6 +81,15 @@
       />
       <label for="muS">muS</label>
       <input
+        id="muC"
+        type="range"
+        value="0.2"
+        min="0.01"
+        max="1.0"
+        step="0.01"
+      />
+      <label for="muC">muC</label>
+      <input
         id="rho"
         type="range"
         value="0.15"
@@ -107,6 +116,11 @@
     </div>
 
     <div class="cushion diagram" id="cushion4">
+      <p></p>
+      <canvas width="200" height="200"></canvas>
+    </div>
+
+    <div class="cushion diagram" id="cushion5">
       <p></p>
       <canvas width="200" height="200"></canvas>
     </div>

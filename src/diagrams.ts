@@ -10,6 +10,7 @@ import {
   setmu,
   setmuS,
   setrho,
+  setmuC,
 } from "./model/physics/constants"
 
 const maxSpeed = 20
@@ -42,12 +43,14 @@ const sliderm = id("m") as HTMLInputElement
 const slidere = id("e") as HTMLInputElement
 const slidermu = id("mu") as HTMLInputElement
 const slidermuS = id("muS") as HTMLInputElement
+const slidermuC = id("muC") as HTMLInputElement
 const sliderrho = id("rho") as HTMLInputElement
 sliderR.oninput = sliderUpdate("R", setR)
 sliderm.oninput = sliderUpdate("m", setm)
 slidere.oninput = sliderUpdate("e", sete)
 slidermu.oninput = sliderUpdate("mu", setmu)
 slidermuS.oninput = sliderUpdate("muS", setmuS)
+slidermuC.oninput = sliderUpdate("muC", setmuC)
 sliderrho.oninput = sliderUpdate("rho", setrho)
 
 function sliderUpdate(id, setter) {
@@ -63,6 +66,7 @@ const p1 = new CushionPlot(id("cushion1"), "stun shot")
 const p2 = new CushionPlot(id("cushion2"), "running side")
 const p3 = new CushionPlot(id("cushion3"), "check side")
 const p4 = new CushionPlot(id("cushion4"), "varying side")
+const p5 = new CushionPlot(id("cushion5"), "varying side high vel")
 
 plotCushionDiagrams()
 
@@ -75,6 +79,13 @@ function plotCushionDiagrams() {
     6,
     1,
     (_) => new Vector3(0.7, 0.7, 0),
+    (z) => new Vector3(0, 0, z)
+  )
+  p5.plot(
+    -6,
+    6,
+    1,
+    (_) => new Vector3(2, 2, 0),
     (z) => new Vector3(0, 0, z)
   )
 }

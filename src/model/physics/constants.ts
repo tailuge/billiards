@@ -1,8 +1,9 @@
 export const g = 9.8
 export let mu = 0.29
 export let muS = 0.89
-export let rho = 0.15
-export let m = 0.1
+export let muC = 0.2
+export let rho = 0.1
+export let m = 0.2
 export let R = 0.5
 export let e = 0.85
 export let Mz: number
@@ -37,5 +38,8 @@ export function setmuS(val) {
   muS = val
 }
 export function sete(val) {
+  e = val
+}
+export function setmuC(val) {
   e = val
 }
