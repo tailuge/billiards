@@ -6,8 +6,8 @@ import { GameEvent } from "./gameevent"
  */
 export class Throttle {
   period: number
-  pending: GameEvent | null
-  sentTime: number
+  pending: GameEvent | null = null
+  sentTime: number = 0
   apply = (_) => {}
 
   constructor(period, apply) {

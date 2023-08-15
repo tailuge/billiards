@@ -10,13 +10,13 @@ export class WatchAim extends ControllerBase {
     this.container.view.camera.suggestMode(this.container.view.camera.topView)
   }
 
-  handleAim(event: AimEvent) {
+  override handleAim(event: AimEvent) {
     this.container.table.cue.aim = event
     this.container.table.balls[0].pos = event.pos
     return this
   }
 
-  handleHit(event: HitEvent) {
+  override handleHit(event: HitEvent) {
     this.container.table.updateFromSerialised(event.tablejson)
     return new WatchShot(this.container)
   }

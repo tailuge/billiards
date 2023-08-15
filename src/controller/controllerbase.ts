@@ -7,11 +7,11 @@ import { ChatEvent } from "../events/chatevent"
 export abstract class ControllerBase extends Controller {
   readonly scale = 0.001
 
-  handleAbort(_: AbortEvent): Controller {
+  override handleAbort(_: AbortEvent): Controller {
     return new End(this.container)
   }
 
-  handleChat(chatevent: ChatEvent): Controller {
+  override handleChat(chatevent: ChatEvent): Controller {
     this.container.chat.showMessage(chatevent.message)
     return this
   }

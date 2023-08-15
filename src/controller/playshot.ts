@@ -30,7 +30,7 @@ export class PlayShot extends ControllerBase {
     )
   }
 
-  handleStationary(_) {
+  override handleStationary(_) {
     this.allStationary = true
 
     // if white potted switch to other player
@@ -57,7 +57,7 @@ export class PlayShot extends ControllerBase {
     return new WatchAim(this.container)
   }
 
-  handleInput(input: Input): Controller {
+  override handleInput(input: Input): Controller {
     this.commonKeyHandler(input)
     return this
   }

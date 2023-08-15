@@ -13,17 +13,17 @@ import { Replay } from "./replay"
  * Transitions into active player or watcher or replay mode.
  */
 export class Init extends ControllerBase {
-  handleBegin(_: BeginEvent): Controller {
+  override handleBegin(_: BeginEvent): Controller {
     this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
     return new PlaceBall(this.container)
   }
 
-  handleWatch(event: WatchEvent): Controller {
+  override handleWatch(event: WatchEvent): Controller {
     this.container.table.updateFromSerialised(event.json)
     return new WatchAim(this.container)
   }
 
-  handleBreak(event: BreakEvent): Controller {
+  override handleBreak(event: BreakEvent): Controller {
     if (event.init) {
       this.container.table.updateFromShortSerialised(event.init)
       return new Replay(this.container, event.shots)

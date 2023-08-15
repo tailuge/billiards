@@ -10,19 +10,19 @@ export class WatchShot extends ControllerBase {
     this.container.table.hit()
   }
 
-  handleAim(_) {
+  override handleAim(_) {
     return new Aim(this.container)
   }
 
-  handlePlaceBall(_) {
+  override handlePlaceBall(_) {
     return new PlaceBall(this.container)
   }
 
-  handleWatch(_) {
+  override handleWatch(_) {
     return new WatchAim(this.container)
   }
 
-  handleStationary(_) {
+  override handleStationary(_) {
     return this
   }
 }

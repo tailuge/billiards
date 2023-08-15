@@ -14,7 +14,7 @@ export class Replay extends ControllerBase {
     console.log(JSON.stringify(shots))
   }
 
-  onFirst() {
+  override onFirst() {
     this.playNextShot()
   }
 
@@ -30,7 +30,7 @@ export class Replay extends ControllerBase {
     }, this.delay)
   }
 
-  handleHit(_: HitEvent) {
+  override handleHit(_: HitEvent) {
     this.container.table.outcome = []
     this.container.table.hit()
     this.container.view.camera.suggestMode(
@@ -39,7 +39,7 @@ export class Replay extends ControllerBase {
     return this
   }
 
-  handleStationary(_) {
+  override handleStationary(_) {
     if (this.shots.length > 0) {
       setTimeout(() => {
         this.playNextShot()
@@ -49,7 +49,7 @@ export class Replay extends ControllerBase {
     return this
   }
 
-  handleInput(input: Input): Controller {
+  override handleInput(input: Input): Controller {
     if (input.key == "KeyOUp") {
       this.container.view.camera.toggleMode()
     }

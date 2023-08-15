@@ -10,14 +10,14 @@ export enum OutcomeType {
 export class Outcome {
   type: OutcomeType
   timestamp: number
-  ballA: number
-  ballB: number
+  ballA: Ball | null = null
+  ballB: Ball | null = null
   incidentSpeed: number
 
   constructor(type, ballA: Ball, ballB: Ball, incidentSpeed) {
     this.type = type
-    this.ballA = ballA.index
-    this.ballB = ballB.index
+    this.ballA = ballA
+    this.ballB = ballB
     this.incidentSpeed = incidentSpeed
     this.timestamp = Date.now()
   }
@@ -39,12 +39,12 @@ export class Outcome {
   }
 
   static pottedCueBall(outcomes: Outcome[]) {
-    return outcomes.some((o) => o.type == OutcomeType.Pot && o.ballA == 0)
+    return outcomes.some((o) => o.type == OutcomeType.Pot && o.ballA === null)
   }
 
   static pottedBallNoFoul(outcomes: Outcome[]) {
     return (
-      outcomes.some((o) => o.type == OutcomeType.Pot && o.ballA != 0) &&
+      outcomes.some((o) => o.type == OutcomeType.Pot && o.ballA !== null) &&
       !Outcome.pottedCueBall(outcomes)
     )
   }

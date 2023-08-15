@@ -22,7 +22,7 @@ export class PlaceBall extends ControllerBase {
     this.container.table.cue.mesh.visible = false
   }
 
-  onFirst() {
+  override onFirst() {
     const cueBall = this.container.table.balls[0]
     cueBall.pos = new Vector3(-11, 0, 0)
     cueBall.setStationary()
@@ -30,7 +30,7 @@ export class PlaceBall extends ControllerBase {
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
   }
 
-  handleInput(input: Input): Controller {
+  override handleInput(input: Input): Controller {
     switch (input.key) {
       case "ArrowLeft":
         this.container.table.balls[0].pos.y = MathUtils.clamp(

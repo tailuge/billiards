@@ -14,7 +14,7 @@ export class Aim extends ControllerBase {
     this.container.view.camera.suggestMode(this.container.view.camera.aimView)
   }
 
-  handleInput(input: Input): Controller {
+  override handleInput(input: Input): Controller {
     switch (input.key) {
       case "Space":
         this.container.table.cue.adjustPower(input.t * this.scale * 0.7)
