@@ -12,8 +12,10 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedParameters": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
     "moduleResolution": "Node",
     "target": "ESNext",
-    "sourceMap": true
+    "sourceMap": false
   }
 }

@@ -18,28 +18,28 @@ function refresh() {
   I = (2 / 5) * m * R * R
 }
 
-export function setR(val) {
+export function setR(val: number) {
   R = val
   refresh()
 }
-export function setm(val) {
+export function setm(val: number) {
   m = val
   refresh()
 }
-export function setmu(val) {
+export function setmu(val: number) {
   mu = val
   refresh()
 }
-export function setrho(val) {
+export function setrho(val: number) {
   rho = val
   refresh()
 }
-export function setmuS(val) {
+export function setmuS(val: number) {
   muS = val
 }
-export function sete(val) {
+export function sete(val: number) {
   e = val
 }
-export function setmuC(val) {
+export function setmuC(val: number) {
   muC = val
 }

@@ -16,7 +16,10 @@ export class SocketConnection {
     this.ws.onmessage = (event) => {
       if (event.data instanceof ArrayBuffer) {
         // binary frame
-        const s = String.fromCharCode.apply(null, new Uint16Array(event.data))
+        const s = String.fromCharCode.apply(
+          null,
+          Array.from(new Uint16Array(event.data))
+        )
         console.log(s)
       } else {
         // text frame
