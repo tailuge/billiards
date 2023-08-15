@@ -11,7 +11,6 @@ export class Replay extends ControllerBase {
     super(container)
     this.shots = shots
     this.delay = delay
-    console.log(JSON.stringify(shots))
   }
 
   override onFirst() {

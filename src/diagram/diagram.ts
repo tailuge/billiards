@@ -73,8 +73,6 @@ export class Diagram {
       requestAnimationFrame((t) => {
         this.animate(t)
       })
-    } else {
-      console.log("diagram complete")
     }
   }
 

@@ -26,39 +26,31 @@ makeDiagram("diagram2", [
   makeBall(-17.38, -2, 0, 0, 0, 0, 0),
 ])
 
-plot1()
-plot2()
-plot3()
-plot4()
-
-function spin(w) {
-  return (_) => new Vector3(0, 0, w)
+function plotLineGraphs() {
+  plot1()
+  plot2()
+  plot3()
+  plot4()
 }
-const sin = (a) => Math.sin((a * Math.PI) / 180)
-const cos = (a) => Math.cos((a * Math.PI) / 180)
-const aimAtAngle = (a) => new Vector3(cos(a), sin(a), 0)
 
-const sliderR = id("R") as HTMLInputElement
-const sliderm = id("m") as HTMLInputElement
-const slidere = id("e") as HTMLInputElement
-const slidermu = id("mu") as HTMLInputElement
-const slidermuS = id("muS") as HTMLInputElement
-const slidermuC = id("muC") as HTMLInputElement
-const sliderrho = id("rho") as HTMLInputElement
-sliderR.oninput = sliderUpdate("R", setR)
-sliderm.oninput = sliderUpdate("m", setm)
-slidere.oninput = sliderUpdate("e", sete)
-slidermu.oninput = sliderUpdate("mu", setmu)
-slidermuS.oninput = sliderUpdate("muS", setmuS)
-slidermuC.oninput = sliderUpdate("muC", setmuC)
-sliderrho.oninput = sliderUpdate("rho", setrho)
+sliderUpdate("R", setR)
+sliderUpdate("m", setm)
+sliderUpdate("e", sete)
+sliderUpdate("mu", setmu)
+sliderUpdate("muS", setmuS)
+sliderUpdate("muC", setmuC)
+sliderUpdate("rho", setrho)
 
-function sliderUpdate(id, setter) {
-  return (e) => {
+function sliderUpdate(element, setter) {
+  const slider = id(element) as HTMLInputElement
+  slider.oninput = (e) => {
     const val = parseFloat((e.target as HTMLInputElement).value)
     setter(val)
-    document.querySelector(`label[for=${id}]`)!.innerHTML = `${id}=${val}`
+    document.querySelector(
+      `label[for=${element}]`
+    )!.innerHTML = `${element}=${val}`
     plotCushionDiagrams()
+    plotLineGraphs()
   }
 }
 
@@ -68,9 +60,17 @@ const p3 = new CushionPlot(id("cushion3"), "check side")
 const p4 = new CushionPlot(id("cushion4"), "varying side")
 const p5 = new CushionPlot(id("cushion5"), "varying side high vel")
 
+plotLineGraphs()
 plotCushionDiagrams()
 
 function plotCushionDiagrams() {
+  function spin(w) {
+    return (_) => new Vector3(0, 0, w)
+  }
+  const sin = (a) => Math.sin((a * Math.PI) / 180)
+  const cos = (a) => Math.cos((a * Math.PI) / 180)
+  const aimAtAngle = (a) => new Vector3(cos(a), sin(a), 0)
+
   p1.plot(10, 80, 10, aimAtAngle, (_) => new Vector3(0, 0, 0))
   p2.plot(10, 80, 10, aimAtAngle, spin(-3))
   p3.plot(10, 80, 10, aimAtAngle, spin(3))
@@ -171,22 +171,24 @@ function dataset() {
 }
 
 function plotOnCanvas(elementId, x, yDataset, yAxis) {
-  const chart = new Chart(
-    document.getElementById(elementId) as HTMLCanvasElement,
-    {
-      type: "line",
-      data: {
-        labels: x,
-        datasets: yDataset,
-      },
-      options: {
-        responsive: false,
-        maintainAspectRatio: true,
-        scales: { x: { title: { text: yAxis, display: true } } },
-      },
-    }
-  )
-  console.log("Chart done", chart)
+  let canvas = document.getElementById(elementId) as HTMLCanvasElement
+  canvas.insertAdjacentHTML("afterend", canvas.outerHTML)
+  canvas.remove()
+  canvas = document.getElementById(elementId) as HTMLCanvasElement
+
+  const chart = new Chart(canvas, {
+    type: "line",
+    data: {
+      labels: x,
+      datasets: yDataset,
+    },
+    options: {
+      responsive: false,
+      maintainAspectRatio: true,
+      scales: { x: { title: { text: yAxis, display: true } } },
+    },
+  })
+  chart.clear()
 }
 
 function makeDiagram(id, balls) {
