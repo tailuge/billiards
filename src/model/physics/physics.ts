@@ -84,22 +84,22 @@ export function bounceHan(v, w, dv, dw) {
   const Pzs_val = Pzs(s)
   const A = 7 / 2 / m
   const B = 1 / m
+  const ecB = (1 + e) * (c / B)
   let PX,
     PY,
     PZ = 0
   if (Pzs_val < Pze_val) {
-    PX = (-s.x / A) * sin_a - (1 + e) * (c / B) * cos_a
+    PX = (-s.x / A) * sin_a - ecB * cos_a
     PY = s.y / A
-    PZ = (s.x / A) * cos_a - (1 + e) * (c / B) * sin_a
+    PZ = (s.x / A) * cos_a - ecB * sin_a
   } else {
     const mu = muCushion(v)
     const phi = Math.abs(Math.atan2(v.y, v.x))
     const cos_phi = Math.cos(phi)
     const sin_phi = Math.sin(phi)
-
-    PX = -mu * (1 + e) * (c / B) * cos_phi * cos_a - (1 + e) * (c / B) * cos_a
-    PY = mu * (1 + e) * (c / B) * sin_phi
-    PZ = mu * (1 + e) * (c / B) * cos_phi * cos_a - (1 + e) * (c / B) * sin_a
+    PX = -mu * ecB * cos_phi * cos_a - ecB * cos_a
+    PY = mu * ecB * sin_phi
+    PZ = mu * ecB * cos_phi * cos_a - ecB * sin_a
   }
   dv.x = PX / m
   dv.y = PY / m
