@@ -6,7 +6,24 @@ import {
   bounceHan,
   cueToSpin,
 } from "../../src/model/physics/physics"
-import { R } from "../../src/model/physics/constants"
+import {
+  I,
+  Mz,
+  R,
+  e,
+  m,
+  mu,
+  muC,
+  muS,
+  rho,
+  setR,
+  sete,
+  setm,
+  setmu,
+  setmuC,
+  setmuS,
+  setrho,
+} from "../../src/model/physics/constants"
 
 describe("Physics", () => {
   it("isCushionGrip slow direct into cushion should grip", (done) => {
@@ -47,6 +64,45 @@ describe("Physics", () => {
     const offset = new Vector3(0, 2 / 5, 0)
     const w = cueToSpin(offset, v)
     expect(w.length()).to.be.approximately(v.length() / R, 0.01)
+    done()
+  })
+
+  it("Constants modify dependent", (done) => {
+    const Ibefore = I
+    setR(R + 0.1)
+    expect(I).to.be.not.equal(Ibefore)
+    done()
+  })
+
+  it("Constants modify dependent", (done) => {
+    const Ibefore = I
+    setm(m + 0.1)
+    expect(I).to.be.not.equal(Ibefore)
+    done()
+  })
+
+  it("Constants modify dependent", (done) => {
+    const Mzbefore = Mz
+    setmu(mu + 0.1)
+    expect(Mz).to.be.not.equal(Mzbefore)
+    done()
+  })
+
+  it("Constants modify dependent", (done) => {
+    const Mzbefore = Mz
+    setrho(rho + 0.1)
+    expect(Mz).to.be.not.equal(Mzbefore)
+    done()
+  })
+
+  it("Setters working", (done) => {
+    const k = 0.12345
+    sete(k)
+    setmuC(k)
+    setmuS(k)
+    expect(e).to.be.equal(k)
+    expect(muC).to.be.equal(k)
+    expect(muS).to.be.equal(k)
     done()
   })
 })

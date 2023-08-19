@@ -40,6 +40,12 @@ sliderUpdate("mu", setmu)
 sliderUpdate("muS", setmuS)
 sliderUpdate("muC", setmuC)
 sliderUpdate("rho", setrho)
+sliderUpdate("s", sets)
+
+let s = 1
+function sets(v) {
+  s = v
+}
 
 function sliderUpdate(element, setter) {
   const slider = id(element) as HTMLInputElement
@@ -123,6 +129,7 @@ function plot3() {
     x.push(i)
     const rad = (i * Math.PI) / 180
     const v = new Vector3(Math.cos(rad), Math.sin(rad), 0)
+    v.multiplyScalar(s)
     const w = new Vector3(0.0, 0, -10)
     yDataset[0].data.push(Pze(c0(v)))
     yDataset[1].data.push(Pzs(s0(v, w)))
@@ -183,6 +190,7 @@ function plotOnCanvas(elementId, x, yDataset, yAxis) {
       datasets: yDataset,
     },
     options: {
+      animation: { duration: 1 },
       responsive: false,
       maintainAspectRatio: true,
       scales: { x: { title: { text: yAxis, display: true } } },

@@ -68,7 +68,7 @@ export function Pzs(s) {
 
 export function Pze(c) {
   const B = 1 / m
-  return ((1 + e) * c) / B
+  return (muC * ((1 + e) * c)) / B
 }
 
 export function isGripCushion(v, w) {
@@ -110,7 +110,7 @@ export function bounceHan(v, w, dv, dw) {
 
 export function muCushion(v: Vector3) {
   const theta = Math.atan2(Math.abs(v.y), v.x)
-  return muC - theta * 0.1
+  return 0.2 - theta * 0.1
 }
 
 /**
