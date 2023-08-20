@@ -18,7 +18,7 @@
     "noImplicitOverride": true,
     "exactOptionalPropertyTypes":true,
     "moduleResolution": "Node",
-    "target": "ESNext",
+    "target": "ES5",
     "sourceMap": false
   }
 }
