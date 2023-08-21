@@ -9,6 +9,10 @@ html {
   overflow: hidden;
 }
 
+::selection {
+  color: white;
+}
+
 div {
   color: antiquewhite;
   touch-action: none;
