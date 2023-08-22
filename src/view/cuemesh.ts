@@ -1,4 +1,3 @@
-import { TableGeometry } from "../view/tablegeometry"
 import { up } from "../utils/utils"
 import {
   Matrix4,
@@ -9,8 +8,6 @@ import {
 } from "three"
 
 export class CueMesh {
-  length = TableGeometry.tableX * 1
-
   private static readonly material = new MeshPhongMaterial({
     color: 0x885577,
     wireframe: false,
@@ -22,7 +19,7 @@ export class CueMesh {
     wireframe: false,
     flatShading: true,
     transparent: true,
-    opacity: 0.3,
+    opacity: 0.25,
   })
 
   static createHelper() {
@@ -31,6 +28,20 @@ export class CueMesh {
     mesh.geometry
       .applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
       .applyMatrix4(new Matrix4().identity().makeTranslation(15, 0, 0))
+    mesh.visible = false
+    return mesh
+  }
+
+  static createPlacer() {
+    const geometry = new CylinderGeometry(0.01, 0.5, 0.5, 4)
+    const mesh = new Mesh(geometry, CueMesh.helpermaterial)
+    mesh.geometry
+      .applyMatrix4(
+        new Matrix4()
+          .identity()
+          .makeRotationAxis(new Vector3(1, 0, 0), -Math.PI / 2)
+      )
+      .applyMatrix4(new Matrix4().identity().makeTranslation(0, 0, 0.7))
     mesh.visible = false
     return mesh
   }

@@ -50,6 +50,7 @@ export class Container {
     })
     this.view.addMesh(this.table.cue.mesh)
     this.view.addMesh(this.table.cue.helperMesh)
+    this.view.addMesh(this.table.cue.placerMesh)
     this.view.table = this.table
     this.updateController(new Init(this))
   }

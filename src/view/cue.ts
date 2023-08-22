@@ -11,6 +11,7 @@ import { Mesh, Raycaster, Vector3, MathUtils } from "three"
 export class Cue {
   mesh: Mesh
   helperMesh: Mesh
+  placerMesh: Mesh
   limit = 0.5
   maxPower = 60.0
   t = 0
@@ -22,6 +23,7 @@ export class Cue {
   constructor() {
     this.mesh = CueMesh.createCue(0.05, 0.15, this.length)
     this.helperMesh = CueMesh.createHelper()
+    this.placerMesh = CueMesh.createPlacer()
   }
 
   rotateAim(angle) {
@@ -92,6 +94,8 @@ export class Cue {
       .multiplyScalar(swing - (this.aim.power / this.maxPower) * 3)
     this.mesh.position.copy(pos.clone().add(offset).add(distanceToBall))
     this.helperMesh.position.copy(pos)
+    this.placerMesh.position.copy(pos)
+    this.placerMesh.rotation.z = this.t
   }
 
   update(t) {
