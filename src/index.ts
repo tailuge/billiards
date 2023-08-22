@@ -7,15 +7,59 @@ import { HitEvent } from "./events/hitevent"
 import { SocketConnection } from "./events/socketconnection"
 import { ChatEvent } from "./events/chatevent"
 
-let sc: SocketConnection | null
+let id: string
+let replay: string | null
+let sc: SocketConnection | null = null
 let container: Container
-let state = {
+let breakState = {
   init: null,
   shots: Array<string>(),
 }
-let id: string
 
 initialise()
+
+function parseParams(url) {
+  const id = /id=([^& ?]*)/.exec(url)
+  const wss = /websocketserver=([^ &?]*)/.exec(url)
+  const replay = /state=(.*)/.exec(location.search)
+  return {
+    id: id ? id[1] : "",
+    wss: wss ? wss[1] : null,
+    replay: replay ? replay[1] : null,
+  }
+}
+
+function initialise() {
+  const params = parseParams(location.search)
+  id = params.id
+  replay = params.replay
+
+  const canvas3d = document.getElementById("viewP1") as HTMLCanvasElement
+  const keyboard = new Keyboard(canvas3d)
+  container = new Container(canvas3d, console.log, keyboard, onAssetsReady)
+  container.broadcast = recordingBroadcast
+  if (params.wss) {
+    sc = new SocketConnection(params.wss)
+    sc.eventHandler = netEvent
+    container.isSinglePlayer = false
+  }
+}
+
+function onAssetsReady() {
+  console.log(`${id} ready`)
+
+  if (replay) {
+    breakState = JSON.parse(decodeURI(replay))
+    container.eventQueue.push(new BreakEvent(breakState.init, breakState.shots))
+  }
+
+  if (!sc) {
+    container.eventQueue.push(new BreakEvent())
+  }
+
+  // trigger animation loops
+  container.animate(performance.now())
+}
 
 function netEvent(e: string) {
   const event = EventUtil.fromSerialised(e)
@@ -23,62 +67,21 @@ function netEvent(e: string) {
   container.eventQueue.push(event)
 }
 
-function initialise() {
-  const result = /id=([^& ?]*)/.exec(location.search)
-  id = result ? result[1] : ""
-  const websocketserver = /websocketserver=([^ &?]*)/.exec(location.search)
-  sc = websocketserver ? new SocketConnection(websocketserver[1]) : null
-  container = new Container(
-    document.getElementById("viewP1"),
-    (message: string) => {
-      console.log(`${id} ${message}`)
-    },
-    new Keyboard(document.getElementById("viewP1") as HTMLCanvasElement),
-    onAssetsReady
-  )
-  if (sc) {
-    sc.eventHandler = netEvent
+function recordingBroadcast(e: string) {
+  const event = EventUtil.fromSerialised(e)
+  if (event.type === EventType.BREAK) {
+    breakState.init = (<BreakEvent>event).init
   }
+  if (event.type === EventType.HIT) {
+    recordShot((<HitEvent>event).tablejson.aim)
+  }
+  sc?.send(e)
 }
 
-/**
- * If websocket server present wait for message to start otherwise start 1 player game (play or replay)
- */
-function onAssetsReady() {
-  console.log(`${id} ready`)
-  const replay = /state=(.*)/.exec(location.search)
-
-  if (replay !== null) {
-    container.isSinglePlayer = true
-    state = JSON.parse(decodeURI(replay[1]))
-    container.eventQueue.push(new BreakEvent(state.init, state.shots))
-  } else if (!sc) {
-    container.isSinglePlayer = true
-    container.eventQueue.push(new BreakEvent())
-  }
-
-  container.broadcast = (e: string) => {
-    const event = EventUtil.fromSerialised(e)
-    if (event.type === EventType.BREAK) {
-      state.init = (<BreakEvent>event).init
-    }
-    if (event.type === EventType.HIT) {
-      recordBreak((<HitEvent>event).tablejson.aim)
-    }
-    sc?.send(e)
-  }
-
-  // trigger animation loops
-  container.animate(performance.now())
-}
-
-function recordBreak(e: string) {
-  state.shots.push(e)
-  const uri = encodeURI(`${window.location}?state=${JSON.stringify(state)}`)
-  container.eventQueue.push(
-    new ChatEvent(
-      id,
-      `<a class="pill" target="_blank" href="${uri}">break of ${state.shots.length}</a>`
-    )
-  )
+function recordShot(e: string) {
+  breakState.shots.push(e)
+  const serialisedBreak = JSON.stringify(breakState)
+  const uri = encodeURI(`${window.location}?state=${serialisedBreak}`)
+  const link = `<a class="pill" target="_blank" href="${uri}">break of ${breakState.shots.length}</a>`
+  container.eventQueue.push(new ChatEvent(id, link))
 }

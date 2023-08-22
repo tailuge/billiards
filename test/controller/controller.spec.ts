@@ -148,6 +148,7 @@ describe("Controller", () => {
   })
 
   it("StationaryEvent takes active PlayShot to WatchAim if no pot", (done) => {
+    container.isSinglePlayer = false
     container.controller = new PlayShot(container)
     container.table.balls[0].setStationary()
     container.eventQueue.push(new StationaryEvent())
