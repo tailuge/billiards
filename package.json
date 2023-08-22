@@ -31,6 +31,7 @@
     },
     "dependencies": {
         "chart.js": "^4.3.3",
+        "interactjs": "^1.10.18",
         "three": "^0.155.0"
     },
     "devDependencies": {

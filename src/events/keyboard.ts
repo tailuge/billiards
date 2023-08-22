@@ -1,4 +1,5 @@
 import { Input } from "./input"
+import interact from "interactjs"
 
 /**
  * Maintains a map of pressed keys.
@@ -33,7 +34,7 @@ export class Keyboard {
     return result
   }
 
-  constructor(element) {
+  constructor(element: HTMLDivElement) {
     this.addHandlers(element)
   }
 
@@ -56,21 +57,26 @@ export class Keyboard {
     }
   }
 
-  mousemove = (e) => {
-    if (e.buttons === 1) {
-      if (this.released["movementY"]) {
-        this.released["movementX"] += e.movementX
-      } else {
-        this.released["movementX"] = e.movementX
-      }
+  mousetouch = (e) => {
+    const dx = e.delta.x
+    if (this.released["movementX"]) {
+      this.released["movementX"] += dx
+    } else {
+      this.released["movementX"] = dx
     }
   }
 
-  private addHandlers(element) {
+  private addHandlers(element: HTMLDivElement) {
     element.addEventListener("keydown", this.keydown)
     element.addEventListener("keyup", this.keyup)
-    element.addEventListener("pointermove", this.mousemove)
-    element.contentEditable = true
+    element.contentEditable = "true"
     element.focus()
+    interact(element).draggable({
+      listeners: {
+        move: (e) => {
+          this.mousetouch(e)
+        },
+      },
+    })
   }
 }

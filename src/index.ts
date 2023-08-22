@@ -33,7 +33,7 @@ function initialise() {
     (message: string) => {
       console.log(`${id} ${message}`)
     },
-    new Keyboard(document.getElementById("viewP1")),
+    new Keyboard(document.getElementById("viewP1") as HTMLDivElement),
     onAssetsReady
   )
   if (sc) {

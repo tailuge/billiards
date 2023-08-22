@@ -1,11 +1,10 @@
 const path = require('path');
 const TerserPlugin = require("terser-webpack-plugin");
 let packagedeps = require('./package.json');
-
 module.exports = {
     entry: {
         vendordiagram: Object.keys(packagedeps.dependencies),
-        vendor: ["three"],
+        vendor: ["three","interactjs"],
         index: { dependOn: 'vendor', import: './src/index.ts' },
         diagram: { dependOn: 'vendordiagram', import: './src/diagrams.ts' }
     },
