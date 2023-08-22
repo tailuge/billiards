@@ -1,6 +1,6 @@
 {
-"include": ["src/**/*"],
-"exclude": ["**/*.spec.ts"],
+  "include": ["src/**/*"],
+  "exclude": ["**/*.spec.ts"],
   "compilerOptions": {
     "outDir": "./dist",
     "module": "commonjs",
@@ -16,7 +16,7 @@
     "strictFunctionTypes": true,
     "strictPropertyInitialization": false,
     "noImplicitOverride": true,
-    "exactOptionalPropertyTypes":true,
+    "exactOptionalPropertyTypes": true,
     "moduleResolution": "Node",
     "target": "ES5",
     "sourceMap": true
