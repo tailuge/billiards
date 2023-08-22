@@ -36,6 +36,9 @@ export class Keyboard {
 
   constructor(element: HTMLCanvasElement) {
     this.addHandlers(element)
+    if (!/Android|iPhone/i.test(navigator.userAgent)) {
+      element.contentEditable = "true"
+    }
   }
 
   keydown = (e) => {
@@ -70,15 +73,20 @@ export class Keyboard {
     element.addEventListener("keydown", this.keydown)
     element.addEventListener("keyup", this.keyup)
     element.focus()
-    element.contentEditable = "true"
+
     if ("virtualKeyboard" in navigator) {
       const virtualKeyboard = navigator.virtualKeyboard as any
       virtualKeyboard.overlaysContent = true
     }
+
     interact(element).draggable({
       listeners: {
+        down: (e) => {
+          console.log(e)
+        },
         move: (e) => {
           this.mousetouch(e)
+          e.preventDefault()
         },
       },
     })
