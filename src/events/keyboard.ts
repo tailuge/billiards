@@ -74,16 +74,8 @@ export class Keyboard {
     element.addEventListener("keyup", this.keyup)
     element.focus()
 
-    if ("virtualKeyboard" in navigator) {
-      const virtualKeyboard = navigator.virtualKeyboard as any
-      virtualKeyboard.overlaysContent = true
-    }
-
     interact(element).draggable({
       listeners: {
-        down: (e) => {
-          console.log(e)
-        },
         move: (e) => {
           this.mousetouch(e)
           e.preventDefault()
