@@ -77,11 +77,10 @@ export class View {
   }
 
   private initialiseScene(element: HTMLElement, width, height) {
-    this.renderer = new WebGLRenderer({ antialias: true })
+    this.renderer = new WebGLRenderer({ antialias: true, canvas: element })
     this.renderer.useLegacyLights = true
     this.renderer.setSize(width, height)
     this.renderer.shadowMap.enabled = false
-    element.appendChild(this.renderer.domElement)
   }
 
   private addTable(ready) {

@@ -34,7 +34,7 @@ export class Keyboard {
     return result
   }
 
-  constructor(element: HTMLDivElement) {
+  constructor(element: HTMLCanvasElement) {
     this.addHandlers(element)
   }
 
@@ -66,11 +66,11 @@ export class Keyboard {
     }
   }
 
-  private addHandlers(element: HTMLDivElement) {
+  private addHandlers(element: HTMLCanvasElement) {
     element.addEventListener("keydown", this.keydown)
     element.addEventListener("keyup", this.keyup)
-    element.contentEditable = "true"
     element.focus()
+    element.contentEditable = "true"
     interact(element).draggable({
       listeners: {
         move: (e) => {
