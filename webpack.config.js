@@ -39,6 +39,9 @@ module.exports = {
         minimizer: [
             new TerserPlugin({
                 extractComments: false,
+                terserOptions: {
+                    safari10: true   
+                }
             }),
         ],
         usedExports: true,
