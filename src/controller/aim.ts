@@ -9,6 +9,7 @@ import { PlayShot } from "./playshot"
 export class Aim extends ControllerBase {
   constructor(container) {
     super(container)
+    this.container.table.cue.aimMode()
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
     this.container.table.cue.aim.power = 0
     this.container.view.camera.suggestMode(this.container.view.camera.aimView)

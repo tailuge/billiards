@@ -19,7 +19,6 @@ export class PlaceBall extends ControllerBase {
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
     this.container.table.cue.aim.power = 0
     this.container.view.camera.forceMode(this.container.view.camera.aimView)
-    this.container.table.cue.mesh.visible = false
   }
 
   override onFirst() {
@@ -32,30 +31,25 @@ export class PlaceBall extends ControllerBase {
   }
 
   override handleInput(input: Input): Controller {
+    const ballPos = this.container.table.balls[0].pos
     switch (input.key) {
       case "ArrowLeft":
-        this.container.table.balls[0].pos.y = MathUtils.clamp(
-          round(
-            this.container.table.balls[0].pos.y + input.t * this.placescale
-          ),
+        ballPos.y = MathUtils.clamp(
+          round(ballPos.y + input.t * this.placescale),
           -TableGeometry.tableY,
           TableGeometry.tableY
         )
         break
       case "ArrowRight":
-        this.container.table.balls[0].pos.y = MathUtils.clamp(
-          round(
-            this.container.table.balls[0].pos.y - input.t * this.placescale
-          ),
+        ballPos.y = MathUtils.clamp(
+          round(ballPos.y - input.t * this.placescale),
           -TableGeometry.tableY,
           TableGeometry.tableY
         )
         break
       case "movementXUp":
-        this.container.table.balls[0].pos.y = MathUtils.clamp(
-          round(
-            this.container.table.balls[0].pos.y - input.t * this.placescale * 2
-          ),
+        ballPos.y = MathUtils.clamp(
+          round(ballPos.y - input.t * this.placescale * 2),
           -TableGeometry.tableY,
           TableGeometry.tableY
         )
@@ -67,7 +61,7 @@ export class PlaceBall extends ControllerBase {
         this.commonKeyHandler(input)
     }
 
-    this.container.table.cue.moveTo(this.container.table.balls[0].pos)
+    this.container.table.cue.moveTo(ballPos)
     this.container.view.camera.forceMove(this.container.table.cue.aim)
     this.container.sendEvent(this.container.table.cue.aim)
 
@@ -76,8 +70,6 @@ export class PlaceBall extends ControllerBase {
 
   placed() {
     this.container.table.cue.aim.round()
-    this.container.table.cue.aimMode()
-    this.container.table.cue.moveTo(this.container.table.balls[0].pos)
     this.container.sendEvent(
       new BreakEvent(this.container.table.shortSerialise())
     )

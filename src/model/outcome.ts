@@ -38,14 +38,16 @@ export class Outcome {
     return new Outcome(OutcomeType.Hit, ballA, ballA, incidentSpeed)
   }
 
-  static pottedCueBall(outcomes: Outcome[]) {
-    return outcomes.some((o) => o.type == OutcomeType.Pot && o.ballA === null)
+  static isCueBallPotted(cueBall, outcomes: Outcome[]) {
+    return outcomes.some(
+      (o) => o.type == OutcomeType.Pot && o.ballA === cueBall
+    )
   }
 
-  static pottedBallNoFoul(outcomes: Outcome[]) {
+  static isBallPottedNoFoul(cueBall, outcomes: Outcome[]) {
     return (
       outcomes.some((o) => o.type == OutcomeType.Pot && o.ballA !== null) &&
-      !Outcome.pottedCueBall(outcomes)
+      !Outcome.isCueBallPotted(cueBall, outcomes)
     )
   }
 }

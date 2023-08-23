@@ -32,9 +32,9 @@ export class PlayShot extends ControllerBase {
 
   override handleStationary(_) {
     this.allStationary = true
-
+    const table = this.container.table
     // if white potted switch to other player
-    if (Outcome.pottedCueBall(this.container.table.outcome)) {
+    if (Outcome.isCueBallPotted(table.balls[0], table.outcome)) {
       this.container.log("in off")
       if (this.container.isSinglePlayer) {
         return new PlaceBall(this.container)
@@ -42,16 +42,16 @@ export class PlayShot extends ControllerBase {
       this.container.sendEvent(new PlaceBallEvent(zero, true))
       return new WatchAim(this.container)
     }
-    if (Outcome.pottedBallNoFoul(this.container.table.outcome)) {
+    if (Outcome.isBallPottedNoFoul(table.balls[0], table.outcome)) {
       this.container.log("pot")
-      this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
+      this.container.sendEvent(new WatchEvent(table.serialise()))
       return new Aim(this.container)
     }
     // if no pot and no foul switch to other player
     this.container.log("no pot")
-    this.container.sendEvent(this.container.table.cue.aim)
+    this.container.sendEvent(table.cue.aim)
     if (this.container.isSinglePlayer) {
-      this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
+      this.container.sendEvent(new WatchEvent(table.serialise()))
       return new Aim(this.container)
     }
     return new WatchAim(this.container)

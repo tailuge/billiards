@@ -226,6 +226,7 @@ describe("Controller", () => {
     container.inputQueue.push(new Input(0.1, "KeyPUp"))
     container.inputQueue.push(new Input(0.1, "KeyHUp"))
     container.inputQueue.push(new Input(0.1, "KeyOUp"))
+    container.inputQueue.push(new Input(0.1, "KeyDUp"))
     container.inputQueue.push(new Input(0.1, "NumpadAdd"))
     container.inputQueue.push(new Input(0.1, "NumpadSubtract"))
     container.inputQueue.push(new Input(0.1, "movementXUp"))
