@@ -27,6 +27,7 @@ export class PlaceBall extends ControllerBase {
     cueBall.pos = new Vector3(-11, 0, 0)
     cueBall.setStationary()
     cueBall.updateMesh(0)
+    this.container.table.cue.placeBallMode()
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
   }
 
@@ -74,8 +75,8 @@ export class PlaceBall extends ControllerBase {
   }
 
   placed() {
-    this.container.table.cue.mesh.visible = true
     this.container.table.cue.aim.round()
+    this.container.table.cue.aimMode()
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
     this.container.sendEvent(
       new BreakEvent(this.container.table.shortSerialise())

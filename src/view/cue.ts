@@ -103,6 +103,16 @@ export class Cue {
     this.moveTo(this.aim.pos)
   }
 
+  placeBallMode() {
+    this.mesh.visible = false
+    this.placerMesh.visible = true
+  }
+
+  aimMode() {
+    this.mesh.visible = true
+    this.placerMesh.visible = false
+  }
+
   intersectsAnything(table: Table) {
     const origin = table.balls[0].pos
       .clone()
