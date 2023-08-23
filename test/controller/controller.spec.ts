@@ -177,6 +177,27 @@ describe("Controller", () => {
     done()
   })
 
+  it("StationaryEvent takes active PlayShot to PlaceBall if in off", (done) => {
+    container.controller = new PlayShot(container)
+    container.table.balls[0].setStationary()
+    container.eventQueue.push(new StationaryEvent())
+    container.table.outcome.push(Outcome.pot(container.table.balls[0], 1))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(PlaceBall)
+    done()
+  })
+
+  it("StationaryEvent takes active PlayShot to WatchAim if in off 2p", (done) => {
+    container.isSinglePlayer = false
+    container.controller = new PlayShot(container)
+    container.table.balls[0].setStationary()
+    container.eventQueue.push(new StationaryEvent())
+    container.table.outcome.push(Outcome.pot(container.table.balls[0], 1))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(WatchAim)
+    done()
+  })
+
   it("End handles all events", (done) => {
     container.controller = new End(container)
     container.eventQueue.push(new AbortEvent())
