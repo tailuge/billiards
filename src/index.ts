@@ -39,7 +39,7 @@ function initialise() {
   container = new Container(canvas3d, console.log, keyboard, onAssetsReady)
   container.broadcast = recordingBroadcast
   if (params.wss) {
-    sc = new SocketConnection(params.wss)
+    sc = new SocketConnection(`${params.wss}?name=${id}`)
     sc.eventHandler = netEvent
     container.isSinglePlayer = false
   }

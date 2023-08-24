@@ -1,8 +1,10 @@
 import { WebSocketServer, WebSocket } from "ws"
 import { spawnSync } from "child_process"
-import { BeginEvent } from "../events/beginevent"
 import { EventUtil } from "../events/eventutil"
+import { Client, Lobby } from "./lobby"
 import * as express from "express"
+
+const lobby = new Lobby()
 
 const port = Number(process.env.PORT || 8888)
 
@@ -19,12 +21,6 @@ server.headersTimeout = 60 * 1000
 
 console.log(`Starting websocketserver on port ${port}`)
 const wss = new WebSocketServer({ noServer: true })
-
-const clientId = new Map<WebSocket, number>()
-const clientToRoom = new Map<WebSocket, number>()
-const rooms: Array<Array<WebSocket>> = [[]]
-let pendingRoom = 0
-let clientIdFountain = 0
 
 server.on("upgrade", (request, socket, head) => {
   console.log("upgrade request for websocket")
@@ -51,53 +47,28 @@ app.get("/", (_, res) => {
   res.type("html").send(html)
 })
 
-wss.on("connection", function connection(ws) {
-  const id = clientIdFountain++
-  clientId.set(ws, id)
-  console.log(`Client with id:${id} has joined`)
-  rooms[pendingRoom].push(ws)
-  clientToRoom.set(ws, pendingRoom)
-  console.log(
-    `Room ${pendingRoom} has ${rooms[pendingRoom].length} partcipants`
-  )
+function parse(url) {
+  const params = url.split("?").pop()
+  return new URLSearchParams(params)
+}
 
-  if (rooms[pendingRoom].length == 2) {
-    // create pair and make new pending room
-    pendingRoom++
-    rooms[pendingRoom] = []
-    console.log(`Sending begin event to client id:${clientId.get(ws)}`)
-    ws.send(EventUtil.serialise(new BeginEvent()))
-  }
+wss.on("connection", function connection(ws: WebSocket, req) {
+  const params = parse(req.url)
+  const tableId = params.get("table") || "default"
+  const name = params.get("name") || "anonymous"
+  const client: Client = { ws: ws, name: name }
 
-  ws.on("message", function incoming(message) {
-    const m = JSON.parse(message.toString())
-    console.log(`received: ${m.type} from client id:${clientId.get(ws)}`)
-    sendToOthersInRoom(ws, message.toString())
+  console.log(`Client ${name} has joined table ${tableId}`)
+  const event = lobby.joinTable(client, tableId)
+  ws.send(EventUtil.serialise(event))
+
+  ws.on("message", (message) => {
+    const info = lobby.handleTableMessage(client, tableId, message)
+    console.log(info)
   })
 
-  ws.on("close", function incoming(_) {
-    console.log(
-      `close from ${clientId.get(ws)}, closing room ${clientToRoom.get(ws)}`
-    )
-    const roomId = clientToRoom.get(ws)
-    if (roomId) {
-      rooms[roomId] = []
-    }
+  ws.on("close", (_) => {
+    lobby.handleLeaveTable(client, tableId)
+    console.log(`${client.name} left table ${tableId}`)
   })
 })
-
-function sendToOthersInRoom(ws, data: string): void {
-  const roomId = clientToRoom.get(ws)
-  console.log(`Sending message in room ${roomId}`)
-
-  if (roomId !== undefined) {
-    const room = rooms[roomId]
-    room.forEach((client) => {
-      const participantId = clientId.get(client)
-      if (participantId !== clientId.get(ws)) {
-        console.log(`Sending message in room ${roomId} to ${participantId}`)
-        client.send(data)
-      }
-    })
-  }
-}
