@@ -54,8 +54,8 @@ function parse(url) {
 
 wss.on("connection", function connection(ws: WebSocket, req) {
   const params = parse(req.url)
-  const tableId = params.get("table") || "default"
-  const name = params.get("name") || "anonymous"
+  const tableId = params.get("table") ?? "default"
+  const name = params.get("name") ?? "anonymous"
   const client: Client = { ws: ws, name: name }
 
   console.log(`Client ${name} has joined table ${tableId}`)
