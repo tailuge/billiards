@@ -18,28 +18,18 @@ let breakState = {
 
 initialise()
 
-function parseParams(url) {
-  const id = /id=([^& ?]*)/.exec(url)
-  const wss = /websocketserver=([^ &?]*)/.exec(url)
-  const replay = /state=(.*)/.exec(location.search)
-  return {
-    id: id ? id[1] : "",
-    wss: wss ? wss[1] : null,
-    replay: replay ? replay[1] : null,
-  }
-}
-
 function initialise() {
-  const params = parseParams(location.search)
-  id = params.id
-  replay = params.replay
-
+  const params = new URLSearchParams(location.search)
+  const wss = params.get("websocketserver")
+  const table = params.get("table")
+  id = params.get("id") ?? ""
+  replay = params.get("state")
   const canvas3d = document.getElementById("viewP1") as HTMLCanvasElement
   const keyboard = new Keyboard(canvas3d)
   container = new Container(canvas3d, console.log, keyboard, onAssetsReady)
   container.broadcast = recordingBroadcast
-  if (params.wss) {
-    sc = new SocketConnection(`${params.wss}?name=${id}`)
+  if (wss) {
+    sc = new SocketConnection(`${wss}?name=${id}&table=${table}`)
     sc.eventHandler = netEvent
     container.isSinglePlayer = false
   }
