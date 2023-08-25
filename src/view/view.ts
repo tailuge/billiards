@@ -49,12 +49,9 @@ export class View {
 
   render() {
     this.updateSize()
-
     if (this.isInMotionNotVisible()) {
       this.camera.suggestMode(this.camera.topView)
-      this.camera.standback += 1
     }
-
     this.renderCamera(this.camera, this.geom)
   }
 
@@ -77,10 +74,11 @@ export class View {
   }
 
   private initialiseScene(element: HTMLElement, width, height) {
-    this.renderer = new WebGLRenderer({ antialias: true, canvas: element })
+    this.renderer = new WebGLRenderer({ antialias: true })
     this.renderer.useLegacyLights = true
     this.renderer.setSize(width, height)
     this.renderer.shadowMap.enabled = false
+    element.appendChild(this.renderer.domElement)
   }
 
   private addTable(ready) {

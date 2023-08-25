@@ -32,9 +32,7 @@ export class Replay extends ControllerBase {
   override handleHit(_: HitEvent) {
     this.container.table.outcome = []
     this.container.table.hit()
-    this.container.view.camera.suggestMode(
-      this.container.view.camera.afterHitView
-    )
+    this.container.view.camera.suggestMode(this.container.view.camera.aimView)
     return this
   }
 

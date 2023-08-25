@@ -1,6 +1,7 @@
 import { PerspectiveCamera, Vector3, MathUtils } from "three"
 import { up, zero, unitAtAngle } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
+import { TableGeometry } from "./tablegeometry"
 
 export class Camera {
   constructor(aspectRatio) {
@@ -10,11 +11,9 @@ export class Camera {
   camera: PerspectiveCamera
   private mode = this.topView
   private mainMode = this.aimView
-
-  private topViewPoint = new Vector3(0, -0.1, 49)
   private height = 4
 
-  elapsed
+  elapsed: number
 
   update(elapsed, aim: AimEvent) {
     this.elapsed = elapsed
@@ -22,7 +21,14 @@ export class Camera {
   }
 
   topView(_: AimEvent) {
-    this.camera.position.lerp(this.topViewPoint, 0.9)
+    let dist = 1 / (2 * Math.tan((this.camera.fov * Math.PI) / 360))
+    if (this.camera.aspect > 1.78) {
+      dist = dist * 2.75 * TableGeometry.tableY
+    } else {
+      dist = (dist * 2.4 * TableGeometry.tableX) / this.camera.aspect
+    }
+    const top = new Vector3(0, -0.1, dist)
+    this.camera.position.lerp(top, 0.9)
     this.camera.up = up
     this.camera.lookAt(zero)
   }
@@ -33,19 +39,6 @@ export class Camera {
       fraction
     )
     this.camera.position.z = this.height
-    this.camera.up = up
-    this.camera.lookAt(aim.pos.clone().addScaledVector(up, 1))
-    this.standback = 9
-  }
-
-  standback = 9
-
-  afterHitView(aim: AimEvent) {
-    this.camera.position.lerp(
-      aim.pos.clone().addScaledVector(unitAtAngle(aim.angle), -this.standback),
-      0.5
-    )
-    this.camera.position.z = this.height + (this.standback - 9)
     this.camera.up = up
     this.camera.lookAt(aim.pos.clone().addScaledVector(up, 1))
   }

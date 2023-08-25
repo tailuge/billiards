@@ -38,6 +38,8 @@ p {
 .view3d {
   width: 100%;
   height: 83%;
+  cursor: none;
+  caret-color: transparent;
 }
 .view3d:focus {
   outline-width: 0;
