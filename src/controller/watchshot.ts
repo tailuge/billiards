@@ -21,8 +21,4 @@ export class WatchShot extends ControllerBase {
   override handleWatch(_) {
     return new WatchAim(this.container)
   }
-
-  override handleStationary(_) {
-    return this
-  }
 }

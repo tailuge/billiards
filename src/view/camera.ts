@@ -21,12 +21,11 @@ export class Camera {
   }
 
   topView(_: AimEvent) {
-    let dist = 1 / (2 * Math.tan((this.camera.fov * Math.PI) / 360))
-    if (this.camera.aspect > 1.78) {
-      dist = dist * 2.75 * TableGeometry.tableY
-    } else {
-      dist = (dist * 2.4 * TableGeometry.tableX) / this.camera.aspect
-    }
+    const factor =
+      this.camera.aspect > 1.78
+        ? 2.75 * TableGeometry.tableY
+        : (2.4 * TableGeometry.tableX) / this.camera.aspect
+    const dist = factor / (2 * Math.tan((this.camera.fov * Math.PI) / 360))
     const top = new Vector3(0, -0.1, dist)
     this.camera.position.lerp(top, 0.9)
     this.camera.up = up
