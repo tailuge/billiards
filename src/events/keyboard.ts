@@ -61,7 +61,7 @@ export class Keyboard {
   }
 
   mousetouch = (e) => {
-    const dx = e.delta.x
+    const dx = e.dx
     if (this.released["movementX"]) {
       this.released["movementX"] += dx
     } else {
@@ -78,7 +78,6 @@ export class Keyboard {
       listeners: {
         move: (e) => {
           this.mousetouch(e)
-          e.preventDefault()
         },
       },
     })

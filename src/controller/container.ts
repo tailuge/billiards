@@ -27,6 +27,7 @@ export class Container {
   keyboard: Keyboard
   sound: Sound
   chat: Chat
+  id: string = ""
   isSinglePlayer: boolean = true
 
   last = performance.now()
@@ -35,7 +36,7 @@ export class Container {
   broadcast: (event: string) => void
   log: (text: string) => void
 
-  constructor(element, log, keyboard?, ready?) {
+  constructor(element, log, keyboard?, ready?, id?) {
     this.log = log
     this.table = new Table(Rack.diamond())
     this.view = new View(element, ready)
@@ -43,6 +44,7 @@ export class Container {
     this.keyboard = keyboard
     this.sound = new Sound(this.view.camera.camera)
     this.chat = new Chat(this.sendChat)
+    this.id = id
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
       this.view.addMesh(b.ballmesh.shadow)
@@ -56,7 +58,7 @@ export class Container {
   }
 
   sendChat = (msg) => {
-    this.sendEvent(new ChatEvent("->", msg))
+    this.sendEvent(new ChatEvent(this.id, msg))
   }
 
   throttle = new Throttle(250, (event) => {

@@ -21,12 +21,12 @@ initialise()
 function initialise() {
   const params = new URLSearchParams(location.search)
   const wss = params.get("websocketserver")
-  const table = params.get("table")
+  const table = params.get("table") ?? "default"
   id = params.get("id") ?? ""
   replay = params.get("state")
   const canvas3d = document.getElementById("viewP1") as HTMLCanvasElement
   const keyboard = new Keyboard(canvas3d)
-  container = new Container(canvas3d, console.log, keyboard, onAssetsReady)
+  container = new Container(canvas3d, console.log, keyboard, onAssetsReady, id)
   container.broadcast = recordingBroadcast
   if (wss) {
     sc = new SocketConnection(`${wss}?name=${id}&table=${table}`)

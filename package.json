@@ -37,7 +37,7 @@
   "devDependencies": {
     "@types/chai": "^4.3.5",
     "@types/jest": "^29.5.4",
-    "@types/node": "^20.5.4",
+    "@types/node": "^20.5.6",
     "@types/three": "^0.155.1",
     "chai": "^4.3.8",
     "ini": "^4.1.1",

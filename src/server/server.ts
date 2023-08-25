@@ -39,12 +39,7 @@ if (gitpodCommand !== null) {
 }
 
 app.get("/", (_, res) => {
-  const html = `<p>Billiards</p>
-  <ul>
-  <li><a href="/dist/">launch single player</a></li>
-  <li><a href="/dist/multi.html">multiplayer options</a></li>
-  </ul>`
-  res.type("html").send(html)
+  res.redirect("/dist/multi.html")
 })
 
 function parse(url) {
@@ -58,7 +53,7 @@ wss.on("connection", function connection(ws: WebSocket, req) {
   const name = params.get("name") ?? "anonymous"
   const client: Client = { ws: ws, name: name }
 
-  console.log(`Client ${name} has joined table ${tableId}`)
+  console.log(`'${name}' joined table '${tableId}'`)
   const event = lobby.joinTable(client, tableId)
   ws.send(EventUtil.serialise(event))
 
@@ -69,6 +64,6 @@ wss.on("connection", function connection(ws: WebSocket, req) {
 
   ws.on("close", (_) => {
     lobby.handleLeaveTable(client, tableId)
-    console.log(`${client.name} left table ${tableId}`)
+    console.log(`'${name}' left table '${tableId}'`)
   })
 })
