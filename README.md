@@ -11,11 +11,11 @@
 Unsophisticated billiards with spinning ball physics written in typescript.
 
 * Backspin and sidespin well modeled.
-* Presentation in 2d or 3d in any modern browser.
+* Presentation in 2d or 3d in any modern browser or mobile.
 * Record and playback breaks.
 * Two player online mode with node websocket server.
 
-## Demo
+## Online Demo
 
 In browser WebGL [demo](https://tailuge.github.io/billiards/dist).
 Inspect physics using [diagrams](https://tailuge.github.io/billiards/dist/diagrams.html)

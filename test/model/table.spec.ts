@@ -6,6 +6,7 @@ import { Table } from "../../src/model/table"
 import { Vector3 } from "three"
 import { zero } from "../../src/utils/utils"
 import { Rack } from "../../src/utils/rack"
+import { R } from "../../src/model/physics/constants"
 
 const t = 0.1
 
@@ -24,6 +25,18 @@ describe("Table", () => {
     const table = new Table([new Ball(zero)])
     expect(table.prepareAdvanceAll(t)).to.be.true
     expect(table.allStationary()).to.be.true
+    done()
+  })
+
+  it("overlap balls thows exception", (done) => {
+    const a = new Ball(zero)
+    a.vel.x = 1
+    a.state = State.Sliding
+    const b = new Ball(new Vector3(R, 0, 0))
+    const table = new Table([a, b])
+    expect(() => {
+      table.advance(t)
+    }).to.throw(Error)
     done()
   })
 
