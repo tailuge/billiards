@@ -32,6 +32,10 @@ export class AimInputs {
     document.addEventListener("wheel", this.mousewheel)
   }
 
+  setButtonText(text) {
+    this.cueHitElement && (this.cueHitElement.innerText = text)
+  }
+
   mousemove = (e) => {
     if (e.buttons === 1) {
       this.adjustSpin(e)

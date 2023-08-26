@@ -28,6 +28,7 @@ export class PlaceBall extends ControllerBase {
     cueBall.updateMesh(0)
     this.container.table.cue.placeBallMode()
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
+    this.container.table.cue.aimInputs.setButtonText("Place\nBall")
   }
 
   override handleInput(input: Input): Controller {
@@ -70,6 +71,7 @@ export class PlaceBall extends ControllerBase {
 
   placed() {
     this.container.table.cue.aim.round()
+    this.container.table.cue.aimInputs.setButtonText("Hit")
     this.container.sendEvent(
       new BreakEvent(this.container.table.shortSerialise())
     )

@@ -168,7 +168,13 @@ input[type="range"] {
 
 a.pill {
   outline: none;
-  background: rgb(156, 156, 156);
+  background: linear-gradient(#888686, #b0b0b3);
   border-radius: 4px;
   text-decoration: none;
+  border-color: white;
+  border-width: 1px;
+  margin: 1px;
+  padding: 1px;
+  font-size: x-small;
+  border-top-style: groove;
 }
