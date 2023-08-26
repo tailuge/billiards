@@ -12,7 +12,8 @@ export abstract class ControllerBase extends Controller {
   }
 
   override handleChat(chatevent: ChatEvent): Controller {
-    const message = `${chatevent.sender}: ${chatevent.message}`
+    const sender = chatevent.sender ? `${chatevent.sender}:` : ""
+    const message = `${sender} ${chatevent.message}`
     this.container.chat.showMessage(message)
     return this
   }

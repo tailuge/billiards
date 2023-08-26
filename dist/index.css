@@ -54,7 +54,9 @@ p {
 
 .ballContainer {
   height: 70%;
-  padding: 10px;
+  margin: auto;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 .cueBall {
   height: 100%;
@@ -89,23 +91,30 @@ p {
 }
 
 .powerSlider {
-  width: 80%;
-  height: 5%;
+  width: 10px;
+  height: 70%;
   margin: auto;
+  margin-right: 10px;
+}
+
+input[type="range"] {
+  writing-mode: bt-lr;
+  appearance: slider-vertical;
+  -webkit-appearance: slider-vertical;
 }
 
 .hitButton {
-  height: 100%;
+  height: 70%;
   margin: auto;
   aspect-ratio: 1;
-  border-radius: 8px;
+  border-radius: 10px;
   border: double;
   border-width: 6px;
   font-size: x-large;
 }
 
 .hitButton:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .box {
@@ -114,6 +123,12 @@ p {
 }
 .clear {
   clear: both;
+}
+
+.chatarea {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .chatinput {
