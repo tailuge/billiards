@@ -7,7 +7,7 @@ import { HitEvent } from "./events/hitevent"
 import { SocketConnection } from "./events/socketconnection"
 import { ChatEvent } from "./events/chatevent"
 
-let id: string
+let name: string
 let replay: string | null
 let sc: SocketConnection | null = null
 let container: Container
@@ -22,21 +22,27 @@ function initialise() {
   const params = new URLSearchParams(location.search)
   const wss = params.get("websocketserver")
   const table = params.get("table") ?? "default"
-  id = params.get("id") ?? ""
+  name = params.get("name") ?? ""
   replay = params.get("state")
   const canvas3d = document.getElementById("viewP1") as HTMLCanvasElement
   const keyboard = new Keyboard(canvas3d)
-  container = new Container(canvas3d, console.log, keyboard, onAssetsReady, id)
+  container = new Container(
+    canvas3d,
+    console.log,
+    keyboard,
+    onAssetsReady,
+    name
+  )
   container.broadcast = recordingBroadcast
   if (wss) {
-    sc = new SocketConnection(`${wss}?name=${id}&table=${table}`)
+    sc = new SocketConnection(`${wss}?name=${name}&table=${table}`)
     sc.eventHandler = netEvent
     container.isSinglePlayer = false
   }
 }
 
 function onAssetsReady() {
-  console.log(`${id} ready`)
+  console.log(`${name} ready`)
 
   if (replay) {
     breakState = JSON.parse(decodeURI(replay))
@@ -53,7 +59,7 @@ function onAssetsReady() {
 
 function netEvent(e: string) {
   const event = EventUtil.fromSerialised(e)
-  console.log(`${id} received ${event.type}`)
+  console.log(`${name} received ${event.type}`)
   container.eventQueue.push(event)
 }
 
@@ -73,5 +79,5 @@ function recordShot(e: string) {
   const serialisedBreak = JSON.stringify(breakState)
   const uri = encodeURI(`${window.location}?state=${serialisedBreak}`)
   const link = `<a class="pill" target="_blank" href="${uri}">break of ${breakState.shots.length}</a>`
-  container.eventQueue.push(new ChatEvent(id, link))
+  container.eventQueue.push(new ChatEvent(name, link))
 }

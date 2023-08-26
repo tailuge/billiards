@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>billiards lobby</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="billiards" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link rel="stylesheet" type="text/css" href="lobby.css" />
+  </head>
+
+  <body>
+    <h1>billiards lobby</h1>
+    create a new table and wait for opponent to join.
+    <br />
+
+    <div>
+      <label for="table">Table:</label>
+      <input type="text" id="table" value="table1" size="8" />
+      <br />
+      <label for="player1">You:</label>
+      <input type="text" id="player1" value="alice" size="8" />
+      <label for="player2">Opponent:</label>
+      <input type="text" id="player2" value="bob" size="8" />
+      <br />
+      <button type="button" onclick="createTable()">Create Table</button>
+    </div>
+    <br />
+    <div id="info2" style="visibility: hidden">
+      First share table link to your opponent
+      <button type="button" onclick="share()">Share 🔗</button>
+    </div>
+    <br />
+    <div id="info1" style="visibility: hidden">
+      Then <a href="#" id="link1" target="_blank">join table</a> and wait for
+      the game to begin.
+    </div>
+    <div class="status">
+      <code>Server status: </code>
+      <code id="spinner" class="spinner"></code>
+    </div>
+  </body>
+
+  <script>
+    let link2 = ""
+
+    const server = window.location.origin
+    const player1 = document.getElementById("player1")
+    const player2 = document.getElementById("player2")
+    const table = document.getElementById("table")
+    const info1 = document.getElementById("info1")
+    const info2 = document.getElementById("info2")
+    const spinner = document.getElementById("spinner")
+
+    const renderwss = "wss://billiards.onrender.com/ws"
+    const github = "https://tailuge.github.io/billiards/dist/"
+
+    let statusPage = "https://billiards.onrender.com"
+    let wss = renderwss
+    let assets = github
+
+    if (location.search.includes("?")) {
+      // local dev mode
+      wss = server.replace(/^http/, "ws") + "/ws"
+      assets = "./"
+      statusPage = "./"
+    }
+
+    fetch(statusPage, { mode: "no-cors" })
+      .then((response) => {
+        const message = response.statusText ? response.statusText : "Fine"
+        spinner.innerText = `${message}    (${statusPage})`
+      })
+      .catch((error) => {
+        spinner.innerText = error
+      })
+      .finally(() => {
+        spinner.classList.remove("spinner")
+      })
+
+    function share() {
+      const shareData = {
+        title: "Billiards",
+        text: `${player1.value} is inviting you to play billiards`,
+        url: link2,
+      }
+      console.log(shareData)
+      if (share in navigator) {
+        navigator
+          .share(shareData)
+          .then(() => console.log("shared successfully"))
+          .catch((e) => {
+            console.log("Error: " + e)
+            showLink()
+          })
+      } else {
+        showLink()
+      }
+    }
+
+    function showLink() {
+      const showLink = document.createTextNode(link2)
+      info2.appendChild(showLink)
+      navigator.clipboard.writeText(link2)
+    }
+
+    function createTable() {
+      info1.style.visibility = "visible"
+      info2.style.visibility = "visible"
+      const params1 = new URLSearchParams({
+        websocketserver: wss,
+        table: table.value,
+        name: player1.value,
+      })
+      const params2 = new URLSearchParams({
+        websocketserver: wss,
+        table: table.value,
+        name: player2.value,
+      })
+      link2 = `${assets}?${params2.toString()}`
+      const link1 = `${assets}?${params1.toString()}`
+      document.getElementById("link1").href = link1
+    }
+  </script>
+</html>
