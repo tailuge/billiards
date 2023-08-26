@@ -57,6 +57,7 @@ p {
   margin: auto;
   margin-left: 10px;
   margin-right: 10px;
+  min-width: 100px;
 }
 .cueBall {
   height: 100%;
@@ -91,38 +92,29 @@ p {
 }
 
 .powerSlider {
-  width: 10px;
+  width: 20px;
   height: 70%;
   margin: auto;
   margin-right: 10px;
 }
 
 input[type="range"] {
-  writing-mode: bt-lr;
-  appearance: slider-vertical;
   -webkit-appearance: slider-vertical;
 }
 
 .hitButton {
   height: 70%;
   margin: auto;
-  aspect-ratio: 1;
+  aspect-ratio: 0.4;
   border-radius: 10px;
   border: double;
   border-width: 6px;
   font-size: x-large;
+  min-width: 80px;
 }
 
 .hitButton:active {
   transform: scale(0.97);
-}
-
-.box {
-  float: left;
-  margin-right: 20px;
-}
-.clear {
-  clear: both;
 }
 
 .chatarea {
@@ -139,12 +131,13 @@ input[type="range"] {
   flex: 1;
   flex-grow: 1;
   background: rgb(129, 129, 129);
+  margin: 1px;
 }
 .msger-send-btn {
   background: rgb(93, 113, 124);
   color: #fff;
-  font-weight: bold;
   cursor: pointer;
+  margin: 1px;
 }
 .msger-send-btn:hover {
   background: rgb(0, 180, 50);
@@ -155,6 +148,9 @@ input[type="range"] {
   overflow-y: scroll;
   overflow-x: hidden;
   background-color: rgba(47, 79, 79, 0.486);
+  padding: 5px;
+  margin: 2px;
+  border-radius: 5px;
 }
 
 .chatoutput::-webkit-scrollbar {
