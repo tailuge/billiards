@@ -7,6 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="description" content="billiards" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="lobby.css" />
   </head>
 
@@ -86,21 +87,21 @@
         url: link2,
       }
       console.log(shareData)
-      if (share in navigator) {
+      if (navigator.canShare) {
         navigator
           .share(shareData)
           .then(() => console.log("shared successfully"))
           .catch((e) => {
             console.log("Error: " + e)
-            showLink()
+            showLink(`${link2} Error: ${e}`)
           })
       } else {
-        showLink()
+        showLink(link2)
       }
     }
 
-    function showLink() {
-      const showLink = document.createTextNode(link2)
+    function showLink(text) {
+      const showLink = document.createTextNode(text)
       info2.appendChild(showLink)
       navigator.clipboard.writeText(link2)
     }
