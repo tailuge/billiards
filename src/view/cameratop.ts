@@ -3,8 +3,9 @@ import { TableGeometry } from "./tablegeometry"
 
 export class CameraTop {
   static aspectLimit = 1.78
-  static portrait = 0.75
+  static portrait = 0.95
   static viewPoint(aspectRatio, fov) {
+    console.log(aspectRatio)
     const dist = 1 / (2 * Math.tan((fov * Math.PI) / 360))
     if (aspectRatio > this.portrait) {
       const factor =
