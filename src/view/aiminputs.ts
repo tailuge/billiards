@@ -6,12 +6,11 @@ export class AimInputs {
   readonly cueTipElement
   readonly cuePowerElement
   readonly cueHitElement
+  readonly container: Container
 
   ballWidth
   ballHeight
   tipRadius
-
-  container: Container
 
   constructor(container) {
     this.container = container
@@ -37,9 +36,7 @@ export class AimInputs {
   }
 
   mousemove = (e) => {
-    if (e.buttons === 1) {
-      this.adjustSpin(e)
-    }
+    (e.buttons === 1) && this.adjustSpin(e)    
   }
 
   readDimensions() {

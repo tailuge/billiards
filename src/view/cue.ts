@@ -69,8 +69,12 @@ export class Cue {
   }
 
   setSpin(x: number, y: number) {
-    this.aim.verticalOffset = MathUtils.clamp(y, -this.limit, this.limit)
-    this.aim.sideOffset = MathUtils.clamp(x, -this.limit, this.limit)
+    const offset = new Vector3(x,y)
+    if (offset.length() > 0.26) {
+      offset.normalize().multiplyScalar(0.25)
+    }
+    this.aim.verticalOffset = offset.y
+    this.aim.sideOffset = offset.x
     this.updateAimInput()
   }
 
