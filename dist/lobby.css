@@ -2,13 +2,18 @@
   display: flex;
   gap: 20px;
   align-items: baseline;
-  padding: 20px;
+  margin: auto;
 }
 
 @keyframes spinner {
   to {
     transform: rotate(360deg);
   }
+}
+
+.info {
+  font-size: xx-small;
+  padding: 5px;
 }
 
 .spinner:before {

@@ -69,7 +69,7 @@ export class Cue {
   }
 
   setSpin(x: number, y: number) {
-    const offset = new Vector3(x,y)
+    const offset = new Vector3(x, y)
     if (offset.length() > 0.26) {
       offset.normalize().multiplyScalar(0.25)
     }

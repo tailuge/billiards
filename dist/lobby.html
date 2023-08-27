@@ -13,115 +13,31 @@
 
   <body>
     <h1>billiards lobby</h1>
-    create a new table and wait for opponent to join.
-    <br />
-
-    <div>
-      <label for="table">Table:</label>
-      <input type="text" id="table" value="table1" size="8" />
-      <br />
-      <label for="player1">You:</label>
-      <input type="text" id="player1" value="alice" size="8" />
-      <label for="player2">Opponent:</label>
-      <input type="text" id="player2" value="bob" size="8" />
-      <br />
-      <button type="button" onclick="createTable()">Create Table</button>
-    </div>
-    <br />
-    <div id="info2" style="visibility: hidden">
-      First share table link to your opponent
-      <button type="button" onclick="share()">Share 🔗</button>
-    </div>
-    <br />
-    <div id="info1" style="visibility: hidden">
-      Then <a href="#" id="link1" target="_blank">join table</a> and wait for
-      the game to begin.
-    </div>
+    Wait for server status to report OK, then create a new table, share link
+    with opponent and join.
+    <hr />
     <div class="status">
-      <code>Server status: </code>
-      <code id="spinner" class="spinner"></code>
+      <code>Server status: </code><code id="spinner" class="spinner"></code>
     </div>
+    <pre>
+      <label for="table">Table:   </label
+      ><input type="text" id="table" value="table1" size="8" />
+      <label for="player1">You:     </label
+      ><input type="text" id="player1" value="alice" size="8" />
+      <label for="player2">Opponent:</label
+      ><input type="text" id="player2" value="bob" size="8" />
+    </pre>
+    <button type="button" onclick="createTable()">Create Table</button>
+    <hr />
+    <div id="detail" style="visibility: hidden">
+      Share table link with your opponent
+      <button type="button" onclick="share()">Share 🔗</button>
+      <div id="info2" class="info"></div>
+      <br />
+      Join table and wait for the game to begin.
+      <button type="button" onclick="join()">Join</button>
+      <div id="info1" class="info"></div>
+    </div>
+    <script src="lobby.js"></script>
   </body>
-
-  <script>
-    let link2 = ""
-
-    const server = window.location.origin
-    const player1 = document.getElementById("player1")
-    const player2 = document.getElementById("player2")
-    const table = document.getElementById("table")
-    const info1 = document.getElementById("info1")
-    const info2 = document.getElementById("info2")
-    const spinner = document.getElementById("spinner")
-
-    const renderwss = "wss://billiards.onrender.com/ws"
-    const github = "https://tailuge.github.io/billiards/dist/"
-
-    let statusPage = "https://billiards.onrender.com"
-    let wss = renderwss
-    let assets = github
-
-    if (location.search.includes("?")) {
-      // local dev mode
-      wss = server.replace(/^http/, "ws") + "/ws"
-      assets = "./"
-      statusPage = "./"
-    }
-
-    fetch(statusPage, { mode: "no-cors" })
-      .then((response) => {
-        const message = response.statusText ? response.statusText : "Fine"
-        spinner.innerText = `${message}    (${statusPage})`
-      })
-      .catch((error) => {
-        spinner.innerText = error
-      })
-      .finally(() => {
-        spinner.classList.remove("spinner")
-      })
-
-    function share() {
-      const shareData = {
-        title: "Billiards",
-        text: `${player1.value} is inviting you to play billiards`,
-        url: link2,
-      }
-      console.log(shareData)
-      if (navigator.canShare) {
-        navigator
-          .share(shareData)
-          .then(() => console.log("shared successfully"))
-          .catch((e) => {
-            console.log("Error: " + e)
-            showLink(`${link2} Error: ${e}`)
-          })
-      } else {
-        showLink(link2)
-      }
-    }
-
-    function showLink(text) {
-      const showLink = document.createTextNode(text)
-      info2.appendChild(showLink)
-      navigator.clipboard.writeText(link2)
-    }
-
-    function createTable() {
-      info1.style.visibility = "visible"
-      info2.style.visibility = "visible"
-      const params1 = new URLSearchParams({
-        websocketserver: wss,
-        table: table.value,
-        name: player1.value,
-      })
-      const params2 = new URLSearchParams({
-        websocketserver: wss,
-        table: table.value,
-        name: player2.value,
-      })
-      link2 = `${assets}?${params2.toString()}`
-      const link1 = `${assets}?${params1.toString()}`
-      document.getElementById("link1").href = link1
-    }
-  </script>
 </html>

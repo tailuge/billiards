@@ -36,7 +36,7 @@ export class AimInputs {
   }
 
   mousemove = (e) => {
-    (e.buttons === 1) && this.adjustSpin(e)    
+    e.buttons === 1 && this.adjustSpin(e)
   }
 
   readDimensions() {
