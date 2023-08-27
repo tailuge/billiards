@@ -1,0 +1,29 @@
+import "mocha"
+import { expect } from "chai"
+import { CameraTop } from "../../src/view/cameratop"
+
+describe("View", () => {
+  const fov = 35
+  it("wide screen render rable horizontally", (done) => {
+    const distance = CameraTop.viewPoint(2, fov)
+    expect(distance.x).to.equal(0)
+    done()
+  })
+  it("wide screen scale to height", (done) => {
+    const distance = CameraTop.viewPoint(1, fov)
+    expect(distance.z).to.be.approximately(82, 0.5)
+    done()
+  })
+  it("mobile device render table vertically", (done) => {
+    const distance = CameraTop.viewPoint(0.7, fov)
+    console.log(distance.z)
+    expect(distance.x).to.equal(-0.1)
+    done()
+  })
+  it("mobile device scale to width", (done) => {
+    const distance = CameraTop.viewPoint(0.4, fov)
+    console.log(distance.z)
+    expect(distance.z).to.be.approximately(115, 0.5)
+    done()
+  })
+})

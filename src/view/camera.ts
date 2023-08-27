@@ -1,7 +1,7 @@
-import { PerspectiveCamera, Vector3, MathUtils } from "three"
+import { PerspectiveCamera, MathUtils } from "three"
 import { up, zero, unitAtAngle } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
-import { TableGeometry } from "./tablegeometry"
+import { CameraTop } from "./cameratop"
 
 export class Camera {
   constructor(aspectRatio) {
@@ -21,13 +21,10 @@ export class Camera {
   }
 
   topView(_: AimEvent) {
-    const factor =
-      this.camera.aspect > 1.78
-        ? 2.75 * TableGeometry.tableY
-        : (2.4 * TableGeometry.tableX) / this.camera.aspect
-    const dist = factor / (2 * Math.tan((this.camera.fov * Math.PI) / 360))
-    const top = new Vector3(0, -0.1, dist)
-    this.camera.position.lerp(top, 0.9)
+    this.camera.position.lerp(
+      CameraTop.viewPoint(this.camera.aspect, this.camera.fov),
+      0.9
+    )
     this.camera.up = up
     this.camera.lookAt(zero)
   }
