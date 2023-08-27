@@ -105,6 +105,10 @@ canvas {
   margin-right: 10px;
 }
 
+input[type="range"] {
+  appearance: slider-vertical;
+}
+
 .hitButton {
   height: 70%;
   margin: auto;
