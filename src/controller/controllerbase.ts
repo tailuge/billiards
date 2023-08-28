@@ -43,7 +43,7 @@ export abstract class ControllerBase extends Controller {
         exportGltf(this.container.view.scene)
         return true
       case "KeyHUp":
-        cue.helperMesh.visible = !cue.helperMesh.visible
+        cue.toggleHelper()
         return true
       case "movementXUp":
         cue.rotateAim(input.t * this.scale * 2)

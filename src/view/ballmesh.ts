@@ -59,5 +59,6 @@ export class BallMesh {
     const shadowMaterial = new MeshBasicMaterial({ color: 0x111122 })
     this.shadow = new Mesh(shadowGeometry, shadowMaterial)
     this.spinAxisArrow = new ArrowHelper(up, zero, 2, 0x000000)
+    this.spinAxisArrow.visible = false
   }
 }

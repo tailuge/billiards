@@ -26,6 +26,7 @@ export class PlayShot extends ControllerBase {
     ]
     this.container.table.hit()
     this.container.view.camera.suggestMode(this.container.view.camera.aimView)
+    this.container.table.cue.showHelper(false)
   }
 
   override handleStationary(_) {

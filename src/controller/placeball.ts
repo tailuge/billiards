@@ -27,6 +27,7 @@ export class PlaceBall extends ControllerBase {
     cueBall.setStationary()
     cueBall.updateMesh(0)
     this.container.table.cue.placeBallMode()
+    this.container.table.cue.showHelper(false)
     this.container.table.cue.moveTo(this.container.table.balls[0].pos)
     this.container.table.cue.aimInputs.setButtonText("Place\nBall")
   }

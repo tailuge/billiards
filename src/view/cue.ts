@@ -129,4 +129,12 @@ export class Cue {
     )
     return intersections.length > 0
   }
+
+  showHelper(b) {
+    this.helperMesh.visible = b
+  }
+
+  toggleHelper() {
+    this.showHelper(!this.helperMesh.visible)
+  }
 }
