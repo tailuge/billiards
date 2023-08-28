@@ -39,6 +39,7 @@ function checkStatus(options) {
     })
 }
 
+/* exported share */
 function share() {
   const shareData = {
     title: "Billiards",
@@ -59,10 +60,12 @@ function share() {
   }
 }
 
+/* exported join */
 function join() {
   window.open(link1, "_blank").focus()
 }
 
+/* exported createTable */
 function createTable() {
   detail.style.visibility = "visible"
 

@@ -5,7 +5,7 @@ import { CameraTop } from "./cameratop"
 
 export class Camera {
   constructor(aspectRatio) {
-    this.camera = new PerspectiveCamera(35, aspectRatio, 0.1, 1000)
+    this.camera = new PerspectiveCamera(45, aspectRatio, 0.1, 1000)
   }
 
   camera: PerspectiveCamera
