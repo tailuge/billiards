@@ -89,6 +89,7 @@ export class Cue {
   moveTo(pos) {
     this.aim.pos.copy(pos)
     this.mesh.rotation.z = this.aim.angle
+    this.helperMesh.rotation.z = this.aim.angle
     const offset = upCross(unitAtAngle(this.aim.angle))
       .multiplyScalar(this.aim.sideOffset)
       .setZ(this.aim.verticalOffset)

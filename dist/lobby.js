@@ -1,5 +1,3 @@
-let link1 = ""
-let link2 = ""
 
 const server = window.location.origin
 const player1 = document.getElementById("player1")
@@ -16,6 +14,8 @@ const github = "https://tailuge.github.io/billiards/dist/"
 let statusPage = "https://billiards.onrender.com"
 let wss = renderwss
 let assets = github
+let link1 = ""
+let link2 = ""
 
 if (location.search.includes("?mode=local")) {
   wss = server.replace(/^http/, "ws") + "/ws"
@@ -39,7 +39,6 @@ function checkStatus(options) {
     })
 }
 
-/* exported share */
 function share() {
   const shareData = {
     title: "Billiards",
@@ -60,12 +59,10 @@ function share() {
   }
 }
 
-/* exported join */
 function join() {
   window.open(link1, "_blank").focus()
 }
 
-/* exported createTable */
 function createTable() {
   detail.style.visibility = "visible"
 
