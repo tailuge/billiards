@@ -157,7 +157,7 @@ August 2023 (mobile)
 
 top | aim  
 :--:|:--:
-![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile1.jpg) | ![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile2.jpg)
+<kbd>![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile1.jpg)</kbd> | <kbd>![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile2.jpg)</kbd>
 
 
 
