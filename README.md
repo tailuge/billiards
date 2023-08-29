@@ -155,9 +155,12 @@ March 2021
 
 August 2023 (mobile)
 
-![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile1.jpg)
+top | aim  
+:--:|:--:
+![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile1.jpg) | ![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile2.jpg)
 
-![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile2.jpg)
+
+
 
 Star History
 
