@@ -22,34 +22,6 @@
     </div>
 
     <div class="diagram">
-      <p>
-        <a href="https://billiards.colostate.edu/physics_articles/Han_paper.pdf"
-          >Han 2005</a
-        >
-        predicts ball grips cushion when Pzs &le; Pze.
-      </p>
-      <p>Spinning ball played slowly directly into cushion</p>
-      <canvas id="plot1"></canvas>
-    </div>
-
-    <div class="diagram">
-      <p>Topspin/backspin ball played slowly directly into cushion</p>
-      <canvas id="plot2"></canvas>
-    </div>
-
-    <div class="diagram">
-      <p>Right hand spinning ball with varying incident angle</p>
-      <canvas id="plot3"></canvas>
-      <input id="s" type="range" value="1" min="0.1" max="20" step="0.5" />
-      <label for="s">speed</label>
-    </div>
-
-    <div class="diagram">
-      <p>Cushion friction mu varies with incident angle</p>
-      <canvas id="plot4"></canvas>
-    </div>
-
-    <div class="diagram">
       <p>Physical Constants</p>
       <br />
       <input id="R" type="range" value="0.5" min="0.03" max="1.0" step="0.01" />
@@ -101,6 +73,42 @@
         step="0.01"
       />
       <label for="rho">rho</label>
+      <p>
+        <a href="https://billiards.colostate.edu/physics_articles/Han_paper.pdf"
+          >Han 2005</a
+        >
+        predicts ball grips cushion when
+        <code style="color: red">Pzs</code> &le;
+        <code style="color: blue">Pze</code>.
+      </p>
+    </div>
+
+    <div class="diagram">
+      <p class="title"></p>
+      <canvas id="plot1"></canvas>
+      <p class="label"></p>
+    </div>
+
+    <div class="diagram">
+      <p class="title">
+        Topspin/backspin ball played slowly directly into cushion
+      </p>
+      <canvas id="plot2"></canvas>
+      <p class="label"></p>
+    </div>
+
+    <div class="diagram">
+      <p class="title">Right hand spinning ball with varying incident angle</p>
+      <canvas id="plot3"></canvas>
+      <p class="label"></p>
+      <input id="s" type="range" value="1" min="0.1" max="20" step="0.5" />
+      <label for="s">speed</label>
+    </div>
+
+    <div class="diagram">
+      <p class="title">Cushion friction mu varies with incident angle</p>
+      <canvas id="plot4"></canvas>
+      <p class="label"></p>
     </div>
 
     <div class="cushion diagram" id="cushion1">

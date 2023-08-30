@@ -1,5 +1,4 @@
 import { Diagram } from "./diagram/diagram"
-import { Chart } from "chart.js/auto"
 import { Pze, Pzs, c0, s0, muCushion } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { CushionPlot } from "./diagram/cushionplot"
@@ -12,6 +11,7 @@ import {
   setrho,
   setmuC,
 } from "./model/physics/constants"
+import { Graph } from "./diagram/graph"
 
 const maxSpeed = 20
 
@@ -66,6 +66,30 @@ const p3 = new CushionPlot(id("cushion3"), "check side")
 const p4 = new CushionPlot(id("cushion4"), "varying side")
 const p5 = new CushionPlot(id("cushion5"), "varying side high vel")
 
+const linegraph1 = new Graph(
+  "plot1",
+  "Spinning ball played slowly directly into cushion",
+  "top/back spin w.y"
+)
+
+const linegraph2 = new Graph(
+  "plot2",
+  "Spinning ball played hard directly into cushion",
+  "top/back spin w.y"
+)
+
+const linegraph3 = new Graph(
+  "plot3",
+  "Right hand spinning ball with varying incident angle",
+  "Incident angle (degrees) of ball to cushion with right side"
+)
+
+const linegraph4 = new Graph(
+  "plot4",
+  "Cushion friction (mu) varies with incident angle",
+  "Incident angle (degrees) of ball to cushion"
+)
+
 plotLineGraphs()
 plotCushionDiagrams()
 
@@ -98,105 +122,62 @@ function plotCushionDiagrams() {
 
 function plot1() {
   const x: number[] = []
-  const yDataset = dataset()
+  const y1: number[] = []
+  const y2: number[] = []
+
   for (let i = -20; i <= 20; i += 1) {
     x.push(i)
     const v = new Vector3(1.0, 0.0, 0)
     const w = new Vector3(0.0, 0.0, i)
-    yDataset[0].data.push(Pze(c0(v)))
-    yDataset[1].data.push(Pzs(s0(v, w)))
+    y1.push(Pze(c0(v)))
+    y2.push(Pzs(s0(v, w)))
   }
-  plotOnCanvas("plot1", x, yDataset, "Side spin w.z")
+  linegraph1.plot(x, y1, y2)
 }
 
 function plot2() {
   const x: number[] = []
-  const yDataset = dataset()
+  const y1: number[] = []
+  const y2: number[] = []
+
   for (let i = -20; i <= 20; i += 1) {
     x.push(i)
     const v = new Vector3(1.0, 0, 0)
     const w = new Vector3(0.0, i, 0)
-    yDataset[0].data.push(Pze(c0(v)))
-    yDataset[1].data.push(Pzs(s0(v, w)))
+    y1.push(Pze(c0(v)))
+    y2.push(Pzs(s0(v, w)))
   }
-  plotOnCanvas("plot2", x, yDataset, "Top/back spin w.y")
+  linegraph2.plot(x, y1, y2)
 }
 
 function plot3() {
   const x: number[] = []
-  const yDataset = dataset()
+  const y1: number[] = []
+  const y2: number[] = []
+
   for (let i = -80; i <= 80; i += 10) {
     x.push(i)
     const rad = (i * Math.PI) / 180
     const v = new Vector3(Math.cos(rad), Math.sin(rad), 0)
     v.multiplyScalar(s)
     const w = new Vector3(0.0, 0, -10)
-    yDataset[0].data.push(Pze(c0(v)))
-    yDataset[1].data.push(Pzs(s0(v, w)))
+    y1.push(Pze(c0(v)))
+    y2.push(Pzs(s0(v, w)))
   }
-  plotOnCanvas(
-    "plot3",
-    x,
-    yDataset,
-    "Incident angle (degrees) of ball to cushion with right side"
-  )
+  linegraph3.plot(x, y1, y2)
 }
 
 function plot4() {
   const x: number[] = []
-  const yDataset = dataset().slice(1)
-  yDataset[0].label = "mu"
+  const y: number[] = []
   for (let i = -80; i <= 80; i += 10) {
     x.push(i)
     const rad = (i * Math.PI) / 180
     const v = new Vector3(Math.cos(rad), Math.sin(rad), 0)
     const mu = muCushion(v)
-    yDataset[0].data.push(mu)
+    y.push(mu)
   }
-  plotOnCanvas(
-    "plot4",
-    x,
-    yDataset,
-    "Incident angle (degrees) of ball to cushion "
-  )
-}
-
-function dataset() {
-  const y1: number[] = []
-  const y2: number[] = []
-
-  return [
-    {
-      label: "Pze",
-      data: y1,
-    },
-    {
-      label: "Pzs",
-      data: y2,
-    },
-  ]
-}
-
-function plotOnCanvas(elementId, x, yDataset, yAxis) {
-  let canvas = document.getElementById(elementId) as HTMLCanvasElement
-  canvas.insertAdjacentHTML("afterend", canvas.outerHTML)
-  canvas.remove()
-  canvas = document.getElementById(elementId) as HTMLCanvasElement
-
-  const chart = new Chart(canvas, {
-    type: "line",
-    data: {
-      labels: x,
-      datasets: yDataset,
-    },
-    options: {
-      animation: { duration: 1 },
-      responsive: false,
-      maintainAspectRatio: true,
-      scales: { x: { title: { text: yAxis, display: true } } },
-    },
-  })
-  chart.clear()
+  linegraph4.plot(x, y, y)
 }
 
 function makeDiagram(id, balls) {
