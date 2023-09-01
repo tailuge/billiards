@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "interactjs": "^1.10.18",
-    "three": "^0.155.0"
+    "three": "^0.156.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",

@@ -20,7 +20,7 @@ describe("Cue", () => {
   })
 
   it("topspin applied", (done) => {
-    const ball = new Ball(new Vector3(0, 1, 0))
+    const ball = new Ball(new Vector3())
     const cue = new Cue()
     cue.setPower(1)
     cue.setSpin(0, 0.4)
