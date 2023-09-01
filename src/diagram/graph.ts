@@ -72,7 +72,7 @@ export class Graph {
   axisInfo(values: number[], pixels) {
     const min = Math.min(...values)
     const max = Math.max(...values)
-    let range = max - min || 1
+    const range = max - min || 1
     return { min: min, max: max, scale: pixels / range }
   }
 }
