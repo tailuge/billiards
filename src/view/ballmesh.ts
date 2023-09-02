@@ -6,6 +6,8 @@ import {
   CircleGeometry,
   MeshBasicMaterial,
   ArrowHelper,
+  Color,
+  BufferAttribute,
 } from "three"
 import { State } from "../model/ball"
 import { norm, up, zero } from "./../utils/utils"
@@ -45,10 +47,12 @@ export class BallMesh {
   initialiseMesh(color) {
     const geometry = new IcosahedronGeometry(0.5, 1)
     const material = new MeshPhongMaterial({
-      color: color,
+      //      color: color,
       emissive: 0,
       flatShading: true,
+      vertexColors: true,
     })
+    this.addDots(geometry, color)
     this.mesh = new Mesh(geometry, material)
     this.mesh.name = "ball"
 
@@ -59,6 +63,30 @@ export class BallMesh {
     const shadowMaterial = new MeshBasicMaterial({ color: 0x111122 })
     this.shadow = new Mesh(shadowGeometry, shadowMaterial)
     this.spinAxisArrow = new ArrowHelper(up, zero, 2, 0x000000)
-    this.spinAxisArrow.visible = true
+    this.spinAxisArrow.visible = false
+  }
+
+  addDots(geometry, baseColor) {
+    const count = geometry.attributes.position.count
+    const color = new Color(baseColor)
+
+    geometry.setAttribute(
+      "color",
+      new BufferAttribute(new Float32Array(count * 3), 3)
+    )
+    const verticies = geometry.attributes.color
+    const sixth = 15
+    for (let i = 0; i < count / 3; i++) {
+      this.colorVerticesForFace(i, verticies, color.r, color.g, color.b)
+      if (i % sixth === 0) {
+        this.colorVerticesForFace(i, verticies, 1.0, 0, 0)
+      }
+    }
+  }
+
+  colorVerticesForFace(face, verticies, r, g, b) {
+    verticies.setXYZ(face * 3 + 0, r, g, b)
+    verticies.setXYZ(face * 3 + 1, r, g, b)
+    verticies.setXYZ(face * 3 + 2, r, g, b)
   }
 }

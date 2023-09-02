@@ -22,6 +22,7 @@ export function importGltf(path, scene, ready) {
   loader.load(
     path,
     (gltf) => {
+      gltf.scene.matrixAutoUpdate = false
       scene.add(gltf.scene)
       if (ready !== null) {
         ready()
