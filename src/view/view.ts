@@ -29,11 +29,15 @@ export class View {
     this.camera.update(elapsed, aim)
   }
 
-  updateSize() {
-    if (
+  sizeChanged() {
+    return (
       this.windowWidth != this.element?.offsetWidth ||
       this.windowHeight != this.element?.offsetHeight
-    ) {
+    )
+  }
+
+  updateSize() {
+    if (this.sizeChanged()) {
       this.windowWidth = this.element?.offsetWidth
       this.windowHeight = this.element?.offsetHeight
       return true

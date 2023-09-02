@@ -51,6 +51,7 @@ export class AimInputs {
       -(e.offsetX - this.ballWidth / 2) / this.ballWidth,
       -(e.offsetY - this.ballHeight / 2) / this.ballHeight
     )
+    this.container.lastEventTime = performance.now()
   }
 
   updateVisualState(x: number, y: number) {
@@ -76,5 +77,6 @@ export class AimInputs {
   mousewheel = (e) => {
     this.cuePowerElement.value -= Math.sign(e.deltaY) / 10
     this.container.table.cue.setPower(this.cuePowerElement.value)
+    this.container.lastEventTime = performance.now()
   }
 }

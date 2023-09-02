@@ -93,6 +93,7 @@ export class Container {
     }
 
     while (this.inputQueue.length > 0) {
+      this.lastEventTime = this.last
       const input = this.inputQueue.shift()
       input && this.updateController(this.controller.handleInput(input))
     }
@@ -100,15 +101,26 @@ export class Container {
     // only process events when stationary
     if (this.table.allStationary()) {
       const event = this.eventQueue.shift()
-      event && this.updateController(event.applyToController(this.controller))
+      if (event) {
+        this.lastEventTime = performance.now()
+        this.updateController(event.applyToController(this.controller))
+      }
     }
   }
+
+  lastEventTime = performance.now()
 
   animate(timestamp): void {
     this.advance((timestamp - this.last) / 1000)
     this.last = timestamp
     this.processEvents()
-    this.view.render()
+    const needsRender =
+      timestamp < this.lastEventTime + 10000 ||
+      !this.table.allStationary() ||
+      this.view.sizeChanged()
+    if (needsRender) {
+      this.view.render()
+    }
     requestAnimationFrame((t) => {
       this.animate(t)
     })
