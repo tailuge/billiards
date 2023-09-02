@@ -8,6 +8,7 @@ import {
   ArrowHelper,
   Color,
   BufferAttribute,
+  Vector3,
 } from "three"
 import { State } from "../model/ball"
 import { norm, up, zero } from "./../utils/utils"
@@ -47,7 +48,6 @@ export class BallMesh {
   initialiseMesh(color) {
     const geometry = new IcosahedronGeometry(0.5, 1)
     const material = new MeshPhongMaterial({
-      //      color: color,
       emissive: 0,
       flatShading: true,
       vertexColors: true,
@@ -55,6 +55,7 @@ export class BallMesh {
     this.addDots(geometry, color)
     this.mesh = new Mesh(geometry, material)
     this.mesh.name = "ball"
+    this.updateRotation(new Vector3().random(), 1)
 
     const shadowGeometry = new CircleGeometry(0.45, 9)
     shadowGeometry.applyMatrix4(
@@ -69,19 +70,23 @@ export class BallMesh {
   addDots(geometry, baseColor) {
     const count = geometry.attributes.position.count
     const color = new Color(baseColor)
+    const red = new Color(0xaa2222)
 
     geometry.setAttribute(
       "color",
       new BufferAttribute(new Float32Array(count * 3), 3)
     )
+
     const verticies = geometry.attributes.color
-    const sixth = 15
+
     for (let i = 0; i < count / 3; i++) {
       this.colorVerticesForFace(i, verticies, color.r, color.g, color.b)
-      if (i % sixth === 0) {
-        this.colorVerticesForFace(i, verticies, 1.0, 0, 0)
-      }
     }
+
+    const dots = [0, 96, 111, 156, 186, 195]
+    dots.forEach((i) => {
+      this.colorVerticesForFace(i / 3, verticies, red.r, red.g, red.b)
+    })
   }
 
   colorVerticesForFace(face, verticies, r, g, b) {
