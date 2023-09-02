@@ -36,8 +36,9 @@ export class View {
     ) {
       this.windowWidth = this.element?.offsetWidth
       this.windowHeight = this.element?.offsetHeight
-      this.renderer?.setSize(this.windowWidth, this.windowHeight)
+      return true
     }
+    return false
   }
 
   readonly geom = {
@@ -48,7 +49,6 @@ export class View {
   }
 
   render() {
-    this.updateSize()
     if (this.isInMotionNotVisible()) {
       this.camera.suggestMode(this.camera.topView)
     }
@@ -56,28 +56,30 @@ export class View {
   }
 
   renderCamera(cam, v) {
-    this.updateSize()
+    if (this.updateSize()) {
+      const left = Math.floor(this.windowWidth * v.left)
+      const bottom = Math.floor(this.windowHeight * v.bottom)
+      const width = Math.floor(this.windowWidth * v.width)
+      const height = Math.floor(this.windowHeight * v.height)
 
-    const left = Math.floor(this.windowWidth * v.left)
-    const bottom = Math.floor(this.windowHeight * v.bottom)
-    const width = Math.floor(this.windowWidth * v.width)
-    const height = Math.floor(this.windowHeight * v.height)
+      this.renderer?.setSize(this.windowWidth, this.windowHeight)
+      this.renderer?.setViewport(left, bottom, width, height)
+      this.renderer?.setScissor(left, bottom, width, height)
+      this.renderer?.setScissorTest(true)
 
-    this.renderer?.setViewport(left, bottom, width, height)
-    this.renderer?.setScissor(left, bottom, width, height)
-    this.renderer?.setScissorTest(true)
-
-    cam.camera.aspect = width / height
+      cam.camera.aspect = width / height
+    }
     cam.camera.updateProjectionMatrix()
-
     this.renderer?.render(this.scene, cam.camera)
   }
 
   private initialiseScene(element: HTMLElement, width, height) {
-    this.renderer = new WebGLRenderer({ antialias: true })
+    this.renderer = new WebGLRenderer({ antialias: false })
     this.renderer.useLegacyLights = true
-    this.renderer.setSize(width, height)
     this.renderer.shadowMap.enabled = false
+    this.renderer.autoClear = false
+    this.renderer.setSize(width, height)
+    this.renderer.setPixelRatio(window.devicePixelRatio * 0.75)
     element.appendChild(this.renderer.domElement)
   }
 
