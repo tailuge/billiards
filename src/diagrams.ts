@@ -12,35 +12,71 @@ import {
   setmuC,
 } from "./model/physics/constants"
 import { Graph } from "./diagram/graph"
+import { RollDiagram } from "./diagram/rolldiagram"
+
+let p1, p2, p3, p4, p5
+let linegraph1, linegraph2, linegraph3, linegraph4
 
 const maxSpeed = 20
 
-makeDiagram("diagram1", [
-  makeBall(0, 0, -maxSpeed, 0, 0, 0, 0),
-  makeBall(2, 2, -maxSpeed, 0, 0, 0, maxSpeed),
-  makeBall(-2, -2, -maxSpeed, 0, 0, 0, -maxSpeed),
-])
+const rollcanvas = id("rollcanvas")
+if (rollcanvas) {
+  const rolldiagram = new RollDiagram(rollcanvas)
+  rolldiagram.draw(5)
+} else {
+  makeDiagram("diagram1", [
+    makeBall(0, 0, -maxSpeed, 0, 0, 0, 0),
+    makeBall(2, 2, -maxSpeed, 0, 0, 0, maxSpeed),
+    makeBall(-2, -2, -maxSpeed, 0, 0, 0, -maxSpeed),
+  ])
 
-makeDiagram("diagram2", [
-  makeBall(-17, 2, 0, -maxSpeed * 2, -85, 0, -35),
-  makeBall(-17.38, -2, 0, 0, 0, 0, 0),
-])
+  makeDiagram("diagram2", [
+    makeBall(-17, 2, 0, -maxSpeed * 2, -85, 0, -35),
+    makeBall(-17.38, -2, 0, 0, 0, 0, 0),
+  ])
 
-function plotLineGraphs() {
-  plot1()
-  plot2()
-  plot3()
-  plot4()
+  p1 = new CushionPlot(id("cushion1"), "stun shot")
+  p2 = new CushionPlot(id("cushion2"), "running side")
+  p3 = new CushionPlot(id("cushion3"), "check side")
+  p4 = new CushionPlot(id("cushion4"), "varying side")
+  p5 = new CushionPlot(id("cushion5"), "varying side high vel")
+
+  linegraph1 = new Graph(
+    "plot1",
+    "Spinning ball played slowly directly into cushion",
+    "top/back spin w.y"
+  )
+
+  linegraph2 = new Graph(
+    "plot2",
+    "Spinning ball played hard directly into cushion",
+    "top/back spin w.y"
+  )
+
+  linegraph3 = new Graph(
+    "plot3",
+    "Right hand spinning ball with varying incident angle",
+    "Incident angle (degrees) of ball to cushion with right side"
+  )
+
+  linegraph4 = new Graph(
+    "plot4",
+    "Cushion friction (mu) varies with incident angle",
+    "Incident angle (degrees) of ball to cushion"
+  )
+
+  plotLineGraphs()
+  plotCushionDiagrams()
+
+  sliderUpdate("R", setR)
+  sliderUpdate("m", setm)
+  sliderUpdate("e", sete)
+  sliderUpdate("mu", setmu)
+  sliderUpdate("muS", setmuS)
+  sliderUpdate("muC", setmuC)
+  sliderUpdate("rho", setrho)
+  sliderUpdate("s", sets)
 }
-
-sliderUpdate("R", setR)
-sliderUpdate("m", setm)
-sliderUpdate("e", sete)
-sliderUpdate("mu", setmu)
-sliderUpdate("muS", setmuS)
-sliderUpdate("muC", setmuC)
-sliderUpdate("rho", setrho)
-sliderUpdate("s", sets)
 
 let s = 1
 function sets(v) {
@@ -59,39 +95,6 @@ function sliderUpdate(element, setter) {
     plotLineGraphs()
   }
 }
-
-const p1 = new CushionPlot(id("cushion1"), "stun shot")
-const p2 = new CushionPlot(id("cushion2"), "running side")
-const p3 = new CushionPlot(id("cushion3"), "check side")
-const p4 = new CushionPlot(id("cushion4"), "varying side")
-const p5 = new CushionPlot(id("cushion5"), "varying side high vel")
-
-const linegraph1 = new Graph(
-  "plot1",
-  "Spinning ball played slowly directly into cushion",
-  "top/back spin w.y"
-)
-
-const linegraph2 = new Graph(
-  "plot2",
-  "Spinning ball played hard directly into cushion",
-  "top/back spin w.y"
-)
-
-const linegraph3 = new Graph(
-  "plot3",
-  "Right hand spinning ball with varying incident angle",
-  "Incident angle (degrees) of ball to cushion with right side"
-)
-
-const linegraph4 = new Graph(
-  "plot4",
-  "Cushion friction (mu) varies with incident angle",
-  "Incident angle (degrees) of ball to cushion"
-)
-
-plotLineGraphs()
-plotCushionDiagrams()
 
 function plotCushionDiagrams() {
   function spin(w) {
@@ -118,6 +121,13 @@ function plotCushionDiagrams() {
     (_) => new Vector3(2, 2, 0),
     (z) => new Vector3(0, 0, z)
   )
+}
+
+function plotLineGraphs() {
+  plot1()
+  plot2()
+  plot3()
+  plot4()
 }
 
 function plot1() {

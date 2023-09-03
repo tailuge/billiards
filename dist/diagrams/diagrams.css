@@ -4,7 +4,8 @@ body {
   background-color: rgb(245, 245, 245);
 }
 
-.diagram {
+.diagram,
+.roll {
   width: 400px;
   border: 1px solid black;
   border-radius: 4px;
@@ -12,6 +13,10 @@ body {
   margin: 4px;
   background-color: white;
   box-shadow: 2px 2px 2px lightgray;
+}
+
+.roll {
+  width: 800px;
 }
 
 .title,
