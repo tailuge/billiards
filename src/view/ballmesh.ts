@@ -12,6 +12,7 @@ import {
 } from "three"
 import { State } from "../model/ball"
 import { norm, up, zero } from "./../utils/utils"
+import { R } from "../model/physics/constants"
 
 export class BallMesh {
   mesh: Mesh
@@ -29,7 +30,7 @@ export class BallMesh {
   m = new Matrix4()
 
   updateRotation(rvel, t) {
-    const angle = rvel.length() * t
+    const angle = rvel.length() * t * 2 * R
     const m = this.m.identity().makeRotationAxis(norm(rvel), angle)
     this.mesh.geometry.applyMatrix4(m)
   }
