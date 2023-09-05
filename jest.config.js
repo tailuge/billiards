@@ -14,6 +14,8 @@ module.exports = {
       },
     ],
   },
+  coveragePathIgnorePatterns: ["node_modules", "gltf.ts"],
+  coverageReporters: ["text", "json"],
   testEnvironment: "jsdom",
   moduleNameMapper: {
     ".*GLTFExporter": "<rootDir>/test/mocks/gltfexporter.ts",
