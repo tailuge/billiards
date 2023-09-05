@@ -16,10 +16,14 @@ import {
 } from "../model/physics/constants"
 
 export class Sliders {
+  style
   notify
 
   constructor(notify?) {
     this.notify = notify
+    this.style =
+      (document.getElementById("constants") as HTMLElement)?.style ?? {}
+
     this.initialiseSider("R", R, setR)
     this.initialiseSider("m", m, setm)
     this.initialiseSider("e", e, sete)
@@ -27,6 +31,11 @@ export class Sliders {
     this.initialiseSider("muS", muS, setmuS)
     this.initialiseSider("muC", muC, setmuC)
     this.initialiseSider("rho", rho, setrho)
+  }
+
+  toggleVisibility() {
+    this.style.visibility =
+      this.style.visibility === "visible" ? "hidden" : "visible"
   }
 
   getInputElement(id) {

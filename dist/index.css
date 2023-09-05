@@ -180,9 +180,19 @@ a.pill {
 }
 
 .constants {
-  background-color: red;
+  background: linear-gradient(#495155, #0b0b0e);
+  border-radius: 5px;
   position: fixed;
   right: 0px;
   top: 0px;
   visibility: hidden;
+  padding: 5px;
+  border: double;
+  max-width: 50%;
+
+}
+
+label {
+  display: inline-block;
+  width: 9ch;
 }

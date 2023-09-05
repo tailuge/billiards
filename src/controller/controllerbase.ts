@@ -59,6 +59,7 @@ export abstract class ControllerBase extends Controller {
         this.container.view.camera.toggleMode()
         return true
       case "KeyDUp":
+        this.container.sliders.toggleVisibility()
         console.log(this.container.table.serialise())
         return true
       default:
