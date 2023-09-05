@@ -105,7 +105,7 @@ canvas {
   margin-right: 10px;
 }
 
-input[type="range"] {
+input[type="range"].powerSlider {
   appearance: slider-vertical;
 }
 
@@ -177,4 +177,12 @@ a.pill {
   padding: 1px;
   font-size: x-small;
   border-top-style: groove;
+}
+
+.constants {
+  background-color: red;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  visibility: hidden;
 }

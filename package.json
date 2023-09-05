@@ -29,6 +29,9 @@
       "ts": "ts-node"
     }
   },
+  "resolutions": {
+    "terser": "npm:@swc/core"
+  },
   "dependencies": {
     "interactjs": "^1.10.18",
     "three": "^0.156.0"

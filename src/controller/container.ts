@@ -14,6 +14,7 @@ import { controllerName } from "./util"
 import { Chat } from "../view/chat"
 import { ChatEvent } from "../events/chatevent"
 import { Throttle } from "../events/throttle"
+import { Sliders } from "../view/sliders"
 
 /**
  * Model, View, Controller container.
@@ -27,6 +28,8 @@ export class Container {
   keyboard: Keyboard
   sound: Sound
   chat: Chat
+  sliders: Sliders
+
   id: string = ""
   isSinglePlayer: boolean = true
 
@@ -44,6 +47,7 @@ export class Container {
     this.keyboard = keyboard
     this.sound = new Sound(this.view.camera.camera)
     this.chat = new Chat(this.sendChat)
+    this.sliders = new Sliders()
     this.id = id
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
