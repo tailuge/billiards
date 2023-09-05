@@ -1,7 +1,18 @@
 module.exports = {
   preset: "ts-jest",
   transform: {
-    "^.+\\.(t|j)sx?$": "@swc/jest",
+    "^.+\\.(t|j)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          minify: {
+            compress: false,
+            mangle: false,
+            format: { comments: "all" },
+          },
+        },
+      },
+    ],
   },
   testEnvironment: "jsdom",
   moduleNameMapper: {

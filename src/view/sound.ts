@@ -33,14 +33,12 @@ export class Sound {
   }
 
   play(audio, volume) {
-    console.log(volume)
     audio.setVolume(volume)
     audio.isPlaying && audio.stop()
     audio.play(MathUtils.randFloat(0, 0.01))
   }
 
   eventToSounds(outcome) {
-    console.log(outcome.type)
     if (outcome.type === "Collision") {
       this.play(this.ballcollision, outcome.incidentSpeed / 60)
       this.ballcollision.setDetune(outcome.incidentSpeed * 10)
