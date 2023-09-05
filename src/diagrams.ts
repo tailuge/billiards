@@ -2,20 +2,13 @@ import { Diagram } from "./diagram/diagram"
 import { Pze, Pzs, c0, s0, muCushion } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { CushionPlot } from "./diagram/cushionplot"
-import {
-  setR,
-  setm,
-  sete,
-  setmu,
-  setmuS,
-  setrho,
-  setmuC,
-} from "./model/physics/constants"
 import { Graph } from "./diagram/graph"
 import { RollDiagram } from "./diagram/rolldiagram"
+import { Sliders } from "./view/sliders"
 
 let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4
+let s = 1
 
 const maxSpeed = 20
 
@@ -65,35 +58,19 @@ if (rollcanvas) {
     "Incident angle (degrees) of ball to cushion"
   )
 
-  plotLineGraphs()
-  plotCushionDiagrams()
+  plotAll()
 
-  sliderUpdate("R", setR)
-  sliderUpdate("m", setm)
-  sliderUpdate("e", sete)
-  sliderUpdate("mu", setmu)
-  sliderUpdate("muS", setmuS)
-  sliderUpdate("muC", setmuC)
-  sliderUpdate("rho", setrho)
-  sliderUpdate("s", sets)
+  const sliders = new Sliders(plotAll)
+  sliders.initialiseSider("s", s, sets)
 }
 
-let s = 1
 function sets(v) {
   s = v
 }
 
-function sliderUpdate(element, setter) {
-  const slider = id(element) as HTMLInputElement
-  slider.oninput = (e) => {
-    const val = parseFloat((e.target as HTMLInputElement).value)
-    setter(val)
-    document.querySelector(
-      `label[for=${element}]`
-    )!.innerHTML = `${element}=${val}`
-    plotCushionDiagrams()
-    plotLineGraphs()
-  }
+function plotAll() {
+  plotCushionDiagrams()
+  plotLineGraphs()
 }
 
 function plotCushionDiagrams() {

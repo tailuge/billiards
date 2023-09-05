@@ -16,7 +16,10 @@ import {
 } from "../model/physics/constants"
 
 export class Sliders {
-  constructor() {
+  notify
+
+  constructor(notify?) {
+    this.notify = notify
     this.initialiseSider("R", R, setR)
     this.initialiseSider("m", m, setm)
     this.initialiseSider("e", e, sete)
@@ -27,29 +30,26 @@ export class Sliders {
   }
 
   getInputElement(id) {
-    return document.getElementById(id) as HTMLInputElement
+    return (document.getElementById(id) as HTMLInputElement) ?? {}
   }
 
-  initialiseSider(element, initialValue, setter) {
-    const slider = this.getInputElement(element)
-    if (!slider) {
-      return
-    }
+  initialiseSider(id, initialValue, setter) {
+    const slider = this.getInputElement(id)
     slider.step = "0.001"
     slider.min = "0.01"
     slider.max = "1.0"
     slider.value = initialValue
-    this.showValue(element, initialValue)
+    this.showValue(id, initialValue)
     slider.oninput = (e) => {
       const val = parseFloat((e.target as HTMLInputElement).value)
-      this.showValue(element, val)
       setter(val)
+      this.showValue(id, val)
+      this.notify && this.notify()
     }
   }
 
   showValue(element, value) {
-    document.querySelector(
-      `label[for=${element}]`
-    )!.innerHTML = `${element}=${value}`
+    const label = document.querySelector(`label[for=${element}]`)
+    label && (label.innerHTML = `${element}=${value}`)
   }
 }
