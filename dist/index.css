@@ -185,7 +185,7 @@ a.pill {
   position: fixed;
   right: 0px;
   top: 0px;
-  visibility: visible;
+  visibility: hidden;
   padding: 5px;
   border: double;
   max-width: 50%;
