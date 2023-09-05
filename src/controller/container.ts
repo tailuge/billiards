@@ -74,6 +74,7 @@ export class Container {
   }
 
   advance(elapsed) {
+    const outcomeCount = this.table.outcome.length
     const steps = Math.floor(elapsed / this.step)
     const computedElapsed = steps * this.step
     const stateBefore = this.table.allStationary()
@@ -85,9 +86,8 @@ export class Container {
     this.table.cue.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())
-    } else if (this.table.outcome.length > 0) {
-      //this.sound.eventToSounds(this.table.outcome.shift())
     }
+    this.sound.processEventsAfter(outcomeCount, this.table.outcome)
   }
 
   processEvents() {

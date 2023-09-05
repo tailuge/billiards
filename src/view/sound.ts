@@ -33,25 +33,33 @@ export class Sound {
   }
 
   play(audio, volume) {
+    console.log(volume)
     audio.setVolume(volume)
     audio.isPlaying && audio.stop()
     audio.play(MathUtils.randFloat(0, 0.01))
   }
 
   eventToSounds(outcome) {
-    if (outcome.type === "collision") {
+    console.log(outcome.type)
+    if (outcome.type === "Collision") {
       this.play(this.ballcollision, outcome.incidentSpeed / 60)
       this.ballcollision.setDetune(outcome.incidentSpeed * 10)
     }
-    if (outcome.type === "pot") {
+    if (outcome.type === "Pot") {
       this.play(this.pot, outcome.incidentSpeed / 60)
       this.pot.setDetune(-1000 + outcome.incidentSpeed * 10)
     }
-    if (outcome.type === "cushion") {
+    if (outcome.type === "Cushion") {
       this.play(this.cushion, outcome.incidentSpeed / 120)
     }
-    if (outcome.type === "hit") {
+    if (outcome.type === "Hit") {
       this.play(this.cue, outcome.incidentSpeed / 60)
+    }
+  }
+
+  processEventsAfter(outcomeCount, outcomes) {
+    for (let i = outcomeCount; i < outcomes.length; i++) {
+      this.eventToSounds(outcomes[i])
     }
   }
 }
