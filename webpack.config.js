@@ -37,6 +37,7 @@ module.exports = {
     minimize: true,
     minimizer: [
       new TerserPlugin({
+        minify: TerserPlugin.swcMinify,
         extractComments: false,
         terserOptions: {
           safari10: true,
