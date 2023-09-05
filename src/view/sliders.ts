@@ -20,7 +20,7 @@ export class Sliders {
   notify
 
   constructor(notify?) {
-    this.notify = notify
+    this.notify = notify ?? (() => {})
     this.style =
       (document.getElementById("constants") as HTMLElement)?.style ?? {}
 
@@ -53,7 +53,7 @@ export class Sliders {
       const val = parseFloat((e.target as HTMLInputElement).value)
       setter(val)
       this.showValue(id, val)
-      this.notify && this.notify()
+      this.notify()
     }
   }
 

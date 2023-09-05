@@ -185,11 +185,14 @@ a.pill {
   position: fixed;
   right: 0px;
   top: 0px;
-  visibility: hidden;
+  visibility: visible;
   padding: 5px;
   border: double;
   max-width: 50%;
+}
 
+.nw {
+  display: inline-block;
 }
 
 label {
