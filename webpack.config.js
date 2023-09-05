@@ -50,4 +50,7 @@ module.exports = {
   stats: {
     errorDetails: true,
   },
+  cache: {
+    type: "filesystem",
+  },
 }
