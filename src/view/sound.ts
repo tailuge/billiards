@@ -63,14 +63,13 @@ export class Sound {
   }
 
   processOutcomes(outcomes) {
-    outcomes.forEach((outcome) => {
-      console.log(outcome.time)
+    outcomes.every((outcome) => {
       if (outcome.timestamp > this.lastOutcomeTime) {
-        console.log(outcome.type)
         this.lastOutcomeTime = outcome.timestamp
         this.outcomeToSound(outcome)
-        return
+        return false
       }
+      return true
     })
   }
 
