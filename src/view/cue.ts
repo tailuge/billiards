@@ -62,6 +62,7 @@ export class Cue {
 
   hit(ball: Ball) {
     const aim = this.aim
+    this.t = 0
     ball.state = State.Sliding
     ball.vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
     const offset = new Vector3(aim.sideOffset, aim.verticalOffset, 0)
@@ -93,10 +94,11 @@ export class Cue {
     const offset = upCross(unitAtAngle(this.aim.angle))
       .multiplyScalar(this.aim.sideOffset)
       .setZ(this.aim.verticalOffset)
-    const swing = (Math.sin(this.t / 3) - 1) * 0.25
+    const swing =
+      (Math.sin(this.t + Math.PI / 2) - 1) * (this.aim.power / this.maxPower)
     const distanceToBall = unitAtAngle(this.aim.angle)
       .clone()
-      .multiplyScalar(swing - (this.aim.power / this.maxPower) * 3)
+      .multiplyScalar(swing)
     this.mesh.position.copy(pos.clone().add(offset).add(distanceToBall))
     this.helperMesh.position.copy(pos)
     this.placerMesh.position.copy(pos)
