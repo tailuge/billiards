@@ -10,6 +10,8 @@ export class Sound {
   pot
   success
 
+  lastOutcomeTime = 0
+
   constructor(camera) {
     camera.add(this.listener)
 
@@ -42,27 +44,34 @@ export class Sound {
     audio.play(MathUtils.randFloat(0, 0.01))
   }
 
-  eventToSounds(outcome) {
+  outcomeToSound(outcome) {
+    console.log(outcome.type)
     if (outcome.type === "Collision") {
-      this.play(this.ballcollision, outcome.incidentSpeed / 60)
-      this.ballcollision.setDetune(outcome.incidentSpeed * 10)
+      this.play(this.ballcollision, outcome.incidentSpeed / 80)
+      this.ballcollision.setDetune(outcome.incidentSpeed * 5)
     }
     if (outcome.type === "Pot") {
       this.play(this.pot, outcome.incidentSpeed / 20)
       this.pot.setDetune(-1000 + outcome.incidentSpeed * 10)
     }
     if (outcome.type === "Cushion") {
-      this.play(this.cushion, outcome.incidentSpeed / 60)
+      this.play(this.cushion, outcome.incidentSpeed / 80)
     }
     if (outcome.type === "Hit") {
       this.play(this.cue, outcome.incidentSpeed / 30)
     }
   }
 
-  processEventsAfter(outcomeCount, outcomes) {
-    for (let i = outcomeCount; i < outcomes.length; i++) {
-      this.eventToSounds(outcomes[i])
-    }
+  processOutcomes(outcomes) {
+    outcomes.forEach((outcome) => {
+      console.log(outcome.time)
+      if (outcome.timestamp > this.lastOutcomeTime) {
+        console.log(outcome.type)
+        this.lastOutcomeTime = outcome.timestamp
+        this.outcomeToSound(outcome)
+        return
+      }
+    })
   }
 
   playNotify() {
@@ -70,7 +79,7 @@ export class Sound {
   }
 
   playSuccess(pitch) {
-    this.play(this.success, 0.02)
-    this.success.setDetune(pitch * 100 - 2500)
+    this.play(this.success, 0.1)
+    this.success.setDetune(pitch * 100 - 2200)
   }
 }

@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 export class Sound {
-  processEventsAfter() {
+  processOutcomes() {
     // for mocks
   }
   playNotify() {

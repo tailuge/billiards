@@ -18,12 +18,13 @@ export class PlayShot extends ControllerBase {
 
   constructor(container) {
     super(container)
-    this.container.table.outcome = [
+    this.container.table.outcome.length = 0
+    this.container.table.outcome.push(
       Outcome.hit(
         this.container.table.balls[0],
         this.container.table.cue.aim.power
-      ),
-    ]
+      )
+    )
     this.container.table.hit()
     this.container.view.camera.suggestMode(this.container.view.camera.aimView)
     this.container.table.cue.showHelper(false)
