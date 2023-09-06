@@ -121,6 +121,10 @@ export class Table {
     return this.balls.every((b) => !b.inMotion() || !b.onTable())
   }
 
+  inPockets(): number {
+    return this.balls.reduce((acc, b) => (b.onTable() ? acc : acc + 1), 0)
+  }
+
   hit() {
     this.cue.hit(this.balls[0])
   }

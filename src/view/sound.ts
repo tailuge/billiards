@@ -8,6 +8,7 @@ export class Sound {
   cue
   cushion
   pot
+  success
 
   constructor(camera) {
     camera.add(this.listener)
@@ -23,6 +24,9 @@ export class Sound {
 
     this.pot = new Audio(this.listener)
     this.load("sounds/pot.ogg", this.pot)
+
+    this.success = new Audio(this.listener)
+    this.load("sounds/success.ogg", this.success)
   }
 
   load(path, audio) {
@@ -44,14 +48,14 @@ export class Sound {
       this.ballcollision.setDetune(outcome.incidentSpeed * 10)
     }
     if (outcome.type === "Pot") {
-      this.play(this.pot, outcome.incidentSpeed / 60)
+      this.play(this.pot, outcome.incidentSpeed / 20)
       this.pot.setDetune(-1000 + outcome.incidentSpeed * 10)
     }
     if (outcome.type === "Cushion") {
-      this.play(this.cushion, outcome.incidentSpeed / 120)
+      this.play(this.cushion, outcome.incidentSpeed / 60)
     }
     if (outcome.type === "Hit") {
-      this.play(this.cue, outcome.incidentSpeed / 60)
+      this.play(this.cue, outcome.incidentSpeed / 30)
     }
   }
 
@@ -59,5 +63,14 @@ export class Sound {
     for (let i = outcomeCount; i < outcomes.length; i++) {
       this.eventToSounds(outcomes[i])
     }
+  }
+
+  playNotify() {
+    this.play(this.pot, 1)
+  }
+
+  playSuccess(pitch) {
+    this.play(this.success, 0.02)
+    this.success.setDetune(pitch * 100 - 2500)
   }
 }

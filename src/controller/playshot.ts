@@ -42,7 +42,7 @@ export class PlayShot extends ControllerBase {
       return new WatchAim(this.container)
     }
     if (Outcome.isBallPottedNoFoul(table.balls[0], table.outcome)) {
-      this.container.log("pot")
+      this.container.sound.playSuccess(table.inPockets())
       this.container.sendEvent(new WatchEvent(table.serialise()))
       return new Aim(this.container)
     }
