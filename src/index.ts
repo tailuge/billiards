@@ -65,7 +65,7 @@ function netEvent(e: string) {
 
 function recordingBroadcast(e: string) {
   const event = EventUtil.fromSerialised(e)
-  if (event.type === EventType.BREAK) {
+  if (event.type === EventType.BREAK && !breakState.init) {
     breakState.init = (<BreakEvent>event).init
   }
   if (event.type === EventType.HIT) {

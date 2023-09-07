@@ -4,6 +4,7 @@ import { End } from "./end"
 import { exportGltf } from "../utils/gltf"
 import { ChatEvent } from "../events/chatevent"
 import { Outcome } from "../model/outcome"
+import { Vector3 } from "three"
 
 export abstract class ControllerBase extends Controller {
   readonly scale = 0.001
@@ -33,24 +34,25 @@ export abstract class ControllerBase extends Controller {
 
   commonKeyHandler(input) {
     const cue = this.container.table.cue
+    const delta = input.t * this.scale
     switch (input.key) {
       case "ArrowLeft":
-        cue.rotateAim(-input.t * this.scale)
+        cue.rotateAim(-delta)
         return true
       case "ArrowRight":
-        cue.rotateAim(input.t * this.scale)
+        cue.rotateAim(delta)
         return true
       case "ArrowDown":
-        cue.adjustHeight(-input.t * this.scale)
+        cue.adjustSpin(new Vector3(0, -delta))
         return true
       case "ArrowUp":
-        cue.adjustHeight(input.t * this.scale)
+        cue.adjustSpin(new Vector3(0, delta))
         return true
       case "ShiftArrowLeft":
-        cue.adjustSide(input.t * this.scale)
+        cue.adjustSpin(new Vector3(delta, 0))
         return true
       case "ShiftArrowRight":
-        cue.adjustSide(-input.t * this.scale)
+        cue.adjustSpin(new Vector3(-delta, 0))
         return true
       case "KeyPUp":
         exportGltf(this.container.view.scene)
@@ -59,14 +61,14 @@ export abstract class ControllerBase extends Controller {
         cue.toggleHelper()
         return true
       case "movementXUp":
-        cue.rotateAim(input.t * this.scale * 2)
+        cue.rotateAim(delta * 2)
         return true
       case "movementYUp":
       case "NumpadSubtract":
-        this.container.view.camera.adjustHeight(-input.t * this.scale * 10)
+        this.container.view.camera.adjustHeight(-delta * 10)
         return true
       case "NumpadAdd":
-        this.container.view.camera.adjustHeight(input.t * this.scale * 10)
+        this.container.view.camera.adjustHeight(delta * 10)
         return true
       case "KeyOUp":
         this.container.view.camera.toggleMode()

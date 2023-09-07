@@ -23,7 +23,7 @@ describe("Cue", () => {
     const ball = new Ball(new Vector3())
     const cue = new Cue()
     cue.setPower(1)
-    cue.setSpin(0, 0.4)
+    cue.setSpin(new Vector3(0, 0.4))
     cue.hit(ball)
     expect(ball.rvel.y).to.be.greaterThan(0)
     done()

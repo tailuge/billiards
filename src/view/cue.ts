@@ -6,7 +6,7 @@ import { AimInputs } from "./aiminputs"
 import { Ball, State } from "../model/ball"
 import { cueToSpin } from "../model/physics/physics"
 import { CueMesh } from "./cuemesh"
-import { Mesh, Raycaster, Vector3, MathUtils } from "three"
+import { Mesh, Raycaster, Vector3 } from "three"
 
 export class Cue {
   mesh: Mesh
@@ -32,25 +32,6 @@ export class Cue {
     this.helperMesh.rotation.z = this.aim.angle
   }
 
-  adjustHeight(delta) {
-    this.aim.verticalOffset = MathUtils.clamp(
-      this.aim.verticalOffset + delta,
-      -this.limit,
-      this.limit
-    )
-    this.mesh.position.z = this.aim.verticalOffset
-    this.updateAimInput()
-  }
-
-  adjustSide(delta) {
-    this.aim.sideOffset = MathUtils.clamp(
-      this.aim.sideOffset + delta,
-      -this.limit,
-      this.limit
-    )
-    this.updateAimInput()
-  }
-
   adjustPower(delta) {
     this.aim.power = Math.min(this.maxPower, this.aim.power + delta)
     this.updateAimInput()
@@ -65,25 +46,24 @@ export class Cue {
     this.t = 0
     ball.state = State.Sliding
     ball.vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
-    const offset = new Vector3(aim.sideOffset, aim.verticalOffset, 0)
-    ball.rvel.copy(cueToSpin(offset, ball.vel))
+    ball.rvel.copy(cueToSpin(aim.offset, ball.vel))
   }
 
-  setSpin(x: number, y: number) {
-    const offset = new Vector3(x, y)
-    if (offset.length() > 0.26) {
-      offset.normalize().multiplyScalar(0.25)
+  adjustSpin(delta: Vector3) {
+    const newOffset = this.aim.offset.clone().add(delta)
+    this.setSpin(newOffset)
+  }
+
+  setSpin(offset: Vector3) {
+    if (offset.length() > 0.3) {
+      offset.normalize().multiplyScalar(0.3)
     }
-    this.aim.verticalOffset = offset.y
-    this.aim.sideOffset = offset.x
+    this.aim.offset = offset
     this.updateAimInput()
   }
 
   updateAimInput() {
-    this.aimInputs?.updateVisualState(
-      this.aim.sideOffset,
-      this.aim.verticalOffset
-    )
+    this.aimInputs?.updateVisualState(this.aim.offset.x, this.aim.offset.y)
     this.aimInputs?.updatePowerSlider(this.aim.power / this.maxPower)
   }
 
@@ -92,8 +72,8 @@ export class Cue {
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle
     const offset = upCross(unitAtAngle(this.aim.angle))
-      .multiplyScalar(this.aim.sideOffset)
-      .setZ(this.aim.verticalOffset)
+      .multiplyScalar(this.aim.offset.x)
+      .setZ(this.aim.offset.y)
     const swing =
       (Math.sin(this.t + Math.PI / 2) - 1) * (this.aim.power / this.maxPower)
     const distanceToBall = unitAtAngle(this.aim.angle)
@@ -124,7 +104,7 @@ export class Cue {
     const origin = table.balls[0].pos
       .clone()
       .addScaledVector(unitAtAngle(this.aim.angle), -this.length / 2)
-    origin.z = this.aim.verticalOffset
+    origin.z = this.aim.offset.y
     const direction = unitAtAngle(this.aim.angle)
     const raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
     const intersections = raycaster.intersectObjects(

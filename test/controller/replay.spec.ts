@@ -29,8 +29,7 @@ describe("Controller Replay", () => {
     shots: [
       {
         type: "AIM",
-        verticalOffset: 0,
-        sideOffset: 0,
+        offset: { x: -0.1, y: 0.1, z: 0 },
         angle: 0,
         power: 1,
         pos: { x: -11, y: 0, z: 0 },
