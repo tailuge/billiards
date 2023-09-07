@@ -1,3 +1,6 @@
+import { ChatEvent } from "./chatevent"
+import { EventUtil } from "./eventutil"
+
 /**
  * Handle websocket connection to server
  */
@@ -26,6 +29,17 @@ export class SocketConnection {
         this.eventHandler(event.data)
       }
     }
+    this.ws.onclose = (event) => {
+      this.notifyClient(`connection closed: ${JSON.stringify(event)}`)
+    }
+    this.ws.onerror = (event) => {
+      this.notifyClient(`error with connection: ${JSON.stringify(event)}`)
+    }
+  }
+
+  notifyClient(message) {
+    console.log(message)
+    this.eventHandler(EventUtil.serialise(new ChatEvent("network", message)))
   }
 
   send(e: string) {
