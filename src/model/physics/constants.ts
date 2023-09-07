@@ -1,10 +1,10 @@
 export const g = 9.8
 export let mu = 0.29
 export let muS = 0.89
-export let muC = 0.4
-export let rho = 0.4
+export let muC = 0.9
+export let rho = 0.05
 export let m = 0.2
-export let R = 0.5
+export let R = 0.032
 export let e = 0.85
 export let Mz: number
 export let Mxy: number

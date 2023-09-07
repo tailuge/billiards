@@ -51,7 +51,7 @@ export class Sound {
       this.ballcollision.setDetune(outcome.incidentSpeed * 5)
     }
     if (outcome.type === "Pot") {
-      this.play(this.pot, outcome.incidentSpeed / 20)
+      this.play(this.pot, outcome.incidentSpeed / 10)
       this.pot.setDetune(-1000 + outcome.incidentSpeed * 10)
     }
     if (outcome.type === "Cushion") {
