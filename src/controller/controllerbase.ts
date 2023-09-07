@@ -3,6 +3,7 @@ import { Controller } from "./controller"
 import { End } from "./end"
 import { exportGltf } from "../utils/gltf"
 import { ChatEvent } from "../events/chatevent"
+import { Outcome } from "../model/outcome"
 
 export abstract class ControllerBase extends Controller {
   readonly scale = 0.001
@@ -16,6 +17,18 @@ export abstract class ControllerBase extends Controller {
     const message = `${sender} ${chatevent.message}`
     this.container.chat.showMessage(message)
     return this
+  }
+
+  hit() {
+    this.container.table.outcome = [
+      Outcome.hit(
+        this.container.table.balls[0],
+        this.container.table.cue.aim.power
+      ),
+    ]
+    this.container.table.hit()
+    this.container.view.camera.suggestMode(this.container.view.camera.aimView)
+    this.container.table.cue.showHelper(false)
   }
 
   commonKeyHandler(input) {

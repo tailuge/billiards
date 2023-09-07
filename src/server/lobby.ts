@@ -39,7 +39,20 @@ export class Lobby {
     }
 
     // both players arrived
+    this.notifyJoined(client, tableId)
     return new BeginEvent()
+  }
+
+  notifyJoined(client, tableId) {
+    const otherClient = this.otherClientsInTable(client, tableId)[0]
+    const message = EventUtil.serialise(
+      this.message(
+        "lobby",
+        `${client.name} and ${otherClient.name} have joined '${tableId}'`
+      )
+    )
+    this.send(client, message)
+    this.send(otherClient, message)
   }
 
   handleTableMessage(client, tableId, message) {
@@ -47,7 +60,7 @@ export class Lobby {
     const mtype = JSON.parse(m).type
     const info = `received: ${mtype} from ${client.name}`
     this.otherClientsInTable(client, tableId).forEach((c) => {
-      c.ws?.send(m)
+      this.send(c, m)
     })
     return info
   }
@@ -61,9 +74,13 @@ export class Lobby {
       }
       const message = this.message(client.name, `${client.name} has left`)
       this.otherClientsInTable(client, tableId).forEach((c) => {
-        c.ws?.send(EventUtil.serialise(message))
+        this.send(c, EventUtil.serialise(message))
       })
     }
+  }
+
+  send(client, message) {
+    client.ws?.send(message)
   }
 
   otherClientsInTable(client, tableId): Client[] {

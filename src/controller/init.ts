@@ -14,11 +14,13 @@ import { Replay } from "./replay"
  */
 export class Init extends ControllerBase {
   override handleBegin(_: BeginEvent): Controller {
+    this.container.chat.showMessage("Start")
     this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
     return new PlaceBall(this.container)
   }
 
   override handleWatch(event: WatchEvent): Controller {
+    this.container.chat.showMessage("Opponent to break")
     this.container.table.updateFromSerialised(event.json)
     return new WatchAim(this.container)
   }
@@ -26,6 +28,7 @@ export class Init extends ControllerBase {
   override handleBreak(event: BreakEvent): Controller {
     if (event.init) {
       this.container.table.updateFromShortSerialised(event.init)
+      this.container.chat.showMessage("Replay")
       return new Replay(this.container, event.shots)
     }
     return new PlaceBall(this.container)

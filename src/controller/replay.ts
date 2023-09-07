@@ -21,9 +21,7 @@ export class Replay extends ControllerBase {
     const shot = this.shots.shift()
     const aim = AimEvent.fromJson(shot)
     this.container.table.cue.aim = aim
-    this.container.table.cue.moveTo(this.container.table.balls[0].pos)
-    this.container.table.cue.updateAimInput()
-    this.container.view.camera.suggestMode(this.container.view.camera.aimView)
+    this.hit()
     setTimeout(() => {
       this.container.eventQueue.push(new HitEvent(this.container.table.cue.aim))
     }, this.delay)

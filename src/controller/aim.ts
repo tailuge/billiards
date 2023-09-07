@@ -21,7 +21,7 @@ export class Aim extends ControllerBase {
         this.container.table.cue.adjustPower(input.t * this.scale * 0.7)
         break
       case "SpaceUp":
-        return this.hit()
+        return this.playShot()
       default:
         if (!this.commonKeyHandler(input)) {
           return this
@@ -32,7 +32,7 @@ export class Aim extends ControllerBase {
     return this
   }
 
-  hit() {
+  playShot() {
     this.container.table.cue.aim.round()
     this.container.sendEvent(new HitEvent(this.container.table.serialise()))
     return new PlayShot(this.container)
