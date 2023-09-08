@@ -1,16 +1,15 @@
-import { Controller } from "../controller/controller"
+import { Container } from "../controller/container"
 
 export class Recorder {
-  controller: Controller
-  all: Event[] = []
-
-  constructor(controller: Controller) {
-    this.controller = controller
+  container: Container
+  events: Event[] = []
+  states = []
+  constructor(container: Container) {
+    this.container = container
   }
 
-  // some way to remove consectutive aim,placeball events
   record(event) {
-    this.all.push(event)
+    this.events.push(event)
   }
 
   replayGame() {

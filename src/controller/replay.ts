@@ -14,19 +14,20 @@ export class Replay extends ControllerBase {
   }
 
   override onFirst() {
-    this.playNextShot()
+    this.playNextShot(this.delay * 2)
   }
 
-  playNextShot() {
+  playNextShot(delay) {
     const shot = this.shots.shift()
     const aim = AimEvent.fromJson(shot)
     this.container.table.balls[0].pos.copy(aim.pos)
     this.container.table.cue.aim = aim
+    this.container.table.cue.updateAimInput()
     this.container.table.cue.t = 1
-    this.container.view.camera.suggestMode(this.container.view.camera.aimView)
+    this.container.view.camera.forceMode(this.container.view.camera.topView)
     setTimeout(() => {
       this.container.eventQueue.push(new HitEvent(this.container.table.cue.aim))
-    }, this.delay)
+    }, delay)
   }
 
   override handleHit(_: HitEvent) {
@@ -37,7 +38,7 @@ export class Replay extends ControllerBase {
   override handleStationary(_) {
     if (this.shots.length > 0) {
       setTimeout(() => {
-        this.playNextShot()
+        this.playNextShot(this.delay)
       }, this.delay)
     }
 

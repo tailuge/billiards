@@ -15,6 +15,7 @@ import { Chat } from "../view/chat"
 import { ChatEvent } from "../events/chatevent"
 import { Throttle } from "../events/throttle"
 import { Sliders } from "../view/sliders"
+import { Recorder } from "../events/recorder"
 
 /**
  * Model, View, Controller container.
@@ -29,7 +30,7 @@ export class Container {
   sound: Sound
   chat: Chat
   sliders: Sliders
-
+  recoder: Recorder
   id: string = ""
   isSinglePlayer: boolean = true
 
@@ -48,6 +49,7 @@ export class Container {
     this.sound = new Sound(this.view.camera.camera)
     this.chat = new Chat(this.sendChat)
     this.sliders = new Sliders()
+    this.recoder = new Recorder(this)
     this.id = id
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
@@ -66,6 +68,7 @@ export class Container {
   }
 
   throttle = new Throttle(250, (event) => {
+    this.recoder.record(event)
     this.broadcast(EventUtil.serialise(event))
   })
 
