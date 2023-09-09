@@ -72,8 +72,8 @@ export class View {
       this.renderer?.setScissorTest(true)
 
       cam.camera.aspect = width / height
+      cam.camera.updateProjectionMatrix()
     }
-    cam.camera.updateProjectionMatrix()
     this.renderer?.render(this.scene, cam.camera)
   }
 

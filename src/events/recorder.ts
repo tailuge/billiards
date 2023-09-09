@@ -1,24 +1,35 @@
 import { Container } from "../controller/container"
+import { EventType } from "./eventtype"
+import { HitEvent } from "./hitevent"
 
 export class Recorder {
   container: Container
-  events: Event[] = []
-  states = []
+  shots: string[] = []
+  states: number[][] = []
   constructor(container: Container) {
     this.container = container
   }
 
   record(event) {
-    this.events.push(event)
+    if (event.type === EventType.HIT) {
+      this.states.push(this.container.table.shortSerialise())
+      this.shots.push((<HitEvent>event).tablejson.aim)
+    }
   }
 
   replayGame() {
-    // generate replay data (for game/break/shot)
-    // will only be initial state + aim/placeball events
-    const replayState = {
-      init: null,
-      events: Array<Event>(),
+    return this.state(this.states[0], this.shots)
+  }
+
+  replayLastShot() {
+    const last = this.states.length - 1
+    return this.state(this.states[last], [this.shots[last]])
+  }
+
+  private state(init, events) {
+    return {
+      init: init,
+      shots: events,
     }
-    return replayState
   }
 }

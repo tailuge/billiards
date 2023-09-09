@@ -3,7 +3,6 @@ import { Keyboard } from "./events/keyboard"
 import { EventUtil } from "./events/eventutil"
 import { EventType } from "./events/eventtype"
 import { BreakEvent } from "./events/breakevent"
-import { HitEvent } from "./events/hitevent"
 import { SocketConnection } from "./events/socketconnection"
 import { ChatEvent } from "./events/chatevent"
 
@@ -65,19 +64,19 @@ function netEvent(e: string) {
 
 function recordingBroadcast(e: string) {
   const event = EventUtil.fromSerialised(e)
-  if (event.type === EventType.BREAK && !breakState.init) {
-    breakState.init = (<BreakEvent>event).init
-  }
   if (event.type === EventType.HIT) {
-    recordShot((<HitEvent>event).tablejson.aim)
+    recordShot()
   }
   sc?.send(e)
 }
 
-function recordShot(e: string) {
-  breakState.shots.push(e)
-  const serialisedBreak = JSON.stringify(breakState)
-  const uri = encodeURI(`${window.location}?state=${serialisedBreak}`)
-  const link = `<a class="pill" target="_blank" href="${uri}">break of ${breakState.shots.length}</a>`
-  container.eventQueue.push(new ChatEvent(name, link))
+function recordShot() {
+  const prefix = `${window.location}?state=`
+  const serialisedShot = JSON.stringify(container.recoder.replayLastShot())
+  const shotUri = encodeURI(`${prefix}${serialisedShot}`)
+  const serialisedBreak = JSON.stringify(container.recoder.replayGame())
+  const breakUri = encodeURI(`${prefix}${serialisedBreak}`)
+  const breakLink = `<a class="pill" target="_blank" href="${breakUri}">break ⚆...</a>`
+  const shotLink = `<a class="pill" target="_blank" href="${shotUri}">shot ⚆</a>`
+  container.eventQueue.push(new ChatEvent("share", `${shotLink} ${breakLink}`))
 }
