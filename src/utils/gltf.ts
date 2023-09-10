@@ -17,14 +17,14 @@ export function exportGltf(scene) {
 }
 
 /* istanbul ignore next */
-export function importGltf(path, scene, ready?) {
+export function importGltf(path, scene, ready = () => {}) {
   const loader = new GLTFLoader()
   loader.load(
     path,
     (gltf) => {
       gltf.scene.matrixAutoUpdate = false
       scene.add(gltf.scene)
-      ready && ready()
+      ready()
     },
     (xhr) => console.log(xhr.loaded + " bytes loaded"),
     onError

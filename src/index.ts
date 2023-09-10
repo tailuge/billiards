@@ -44,6 +44,13 @@ function onAssetsReady() {
   console.log(`${name} ready`)
 
   if (replay) {
+    container.table.cue.aimInputs.setButtonText("↻")
+    container.table.cue.aimInputs.cueHitElement?.addEventListener(
+      "click",
+      () => {
+        location.reload()
+      }
+    )
     breakState = JSON.parse(decodeURI(replay))
     container.eventQueue.push(new BreakEvent(breakState.init, breakState.shots))
   }
