@@ -79,7 +79,6 @@ export class BallMesh {
     )
 
     const verticies = geometry.attributes.color
-    console.log(color.r)
     for (let i = 0; i < count / 3; i++) {
       this.colorVerticesForFace(
         i,

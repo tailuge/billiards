@@ -17,7 +17,8 @@
     "serve": "webpack serve",
     "servegitpod": "webpack serve --client-web-socket-url $(gp url 8080 | sed 's/http/ws/' | sed 's#$#/ws#')",
     "deps": "npx yarn-check --skip-unused",
-    "websocket": "nodemon src/server/server.ts"
+    "websocket": "nodemon src/server/server.ts",
+    "gltfpack": "npx gltfpack -i dist/models/p8.gltf -o dist/models/p8.gltf"
   },
   "nodemonConfig": {
     "watch": [

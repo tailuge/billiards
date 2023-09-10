@@ -45,7 +45,6 @@ export class Sound {
   }
 
   outcomeToSound(outcome) {
-    console.log(outcome.type)
     if (outcome.type === "Collision") {
       this.play(this.ballcollision, outcome.incidentSpeed / 80)
       this.ballcollision.setDetune(outcome.incidentSpeed * 5)
