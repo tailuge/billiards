@@ -56,7 +56,7 @@ export class BallMesh {
     this.addDots(geometry, color)
     this.mesh = new Mesh(geometry, material)
     this.mesh.name = "ball"
-    this.updateRotation(new Vector3().random(), 1)
+    this.updateRotation(new Vector3().random(), 100)
 
     const shadowGeometry = new CircleGeometry(0.45, 9)
     shadowGeometry.applyMatrix4(
@@ -79,9 +79,15 @@ export class BallMesh {
     )
 
     const verticies = geometry.attributes.color
-
+    console.log(color.r)
     for (let i = 0; i < count / 3; i++) {
-      this.colorVerticesForFace(i, verticies, color.r, color.g, color.b)
+      this.colorVerticesForFace(
+        i,
+        verticies,
+        this.scaleNoise(color.r),
+        this.scaleNoise(color.g),
+        this.scaleNoise(color.b)
+      )
     }
 
     const dots = [0, 96, 111, 156, 186, 195]
@@ -90,9 +96,13 @@ export class BallMesh {
     })
   }
 
-  colorVerticesForFace(face, verticies, r, g, b) {
+  private colorVerticesForFace(face, verticies, r, g, b) {
     verticies.setXYZ(face * 3 + 0, r, g, b)
     verticies.setXYZ(face * 3 + 1, r, g, b)
     verticies.setXYZ(face * 3 + 2, r, g, b)
+  }
+
+  private scaleNoise(v) {
+    return (1.0 - Math.random() * 0.25) * v
   }
 }

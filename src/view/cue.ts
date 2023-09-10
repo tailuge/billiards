@@ -93,6 +93,7 @@ export class Cue {
   placeBallMode() {
     this.mesh.visible = false
     this.placerMesh.visible = true
+    this.aim.angle = 0
   }
 
   aimMode() {

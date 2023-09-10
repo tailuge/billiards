@@ -2,8 +2,8 @@ import { Scene, WebGLRenderer, Frustum, Matrix4, AmbientLight } from "three"
 import { Camera } from "./camera"
 import { AimEvent } from "../events/aimevent"
 import { importGltf } from "../utils/gltf"
-import { Grid } from "./grid"
 import { Table } from "../model/table"
+import { Grid } from "./grid"
 
 export class View {
   scene = new Scene()

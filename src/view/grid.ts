@@ -1,10 +1,8 @@
 import { LineBasicMaterial, LineSegments, Vector3, BufferGeometry } from "three"
 import { TableGeometry } from "./tablegeometry"
 
-const R = 0.5
-
 export class Grid {
-  readonly z = -0.49
+  readonly R = 0.5
   readonly material = new LineBasicMaterial({
     color: 0x000084,
     opacity: 0.3,
@@ -14,17 +12,17 @@ export class Grid {
   public generateLineSegments() {
     const points = [this.point(0, -11.13), this.point(0, 11.13)]
 
-    const stepx = (TableGeometry.tableX + 2 * R) / 4
+    const stepx = (TableGeometry.tableX + 2 * this.R) / 4
     const xs = [1, 2, 3, -1, -2, -3]
-    const yedge = TableGeometry.tableY + R
+    const yedge = TableGeometry.tableY + this.R
     xs.forEach((x) => {
       points.push(this.point(x * stepx, -yedge))
       points.push(this.point(x * stepx, yedge))
     })
 
-    const stepy = (TableGeometry.tableY + 2 * R) / 2
+    const stepy = (TableGeometry.tableY + 2 * this.R) / 2
     const ys = [-1, 0, 1]
-    const xedge = TableGeometry.tableX + R
+    const xedge = TableGeometry.tableX + this.R
     ys.forEach((y) => {
       points.push(this.point(-xedge, y * stepy))
       points.push(this.point(xedge, y * stepy))
