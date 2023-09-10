@@ -88,6 +88,7 @@ export class View {
 
   private addTable(ready) {
     this.scene.add(new AmbientLight(0x707070, 1.0))
+    importGltf("models/background.gltf", this.scene)
     importGltf("models/p8.gltf", this.scene, ready)
     //TableGeometry.addToScene(this.scene)
     this.scene.add(new Grid().generateLineSegments())
