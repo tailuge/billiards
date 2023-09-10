@@ -79,7 +79,6 @@ export class View {
 
   private initialiseScene(element: HTMLElement, width, height) {
     this.renderer = new WebGLRenderer({ antialias: false })
-    this.renderer.useLegacyLights = true
     this.renderer.shadowMap.enabled = false
     this.renderer.autoClear = false
     this.renderer.setSize(width, height)
@@ -88,7 +87,7 @@ export class View {
   }
 
   private addTable(ready) {
-    this.scene.add(new AmbientLight(0x303030, 1.0))
+    this.scene.add(new AmbientLight(0x707070, 1.0))
     importGltf("models/p8.gltf", this.scene, ready)
     //TableGeometry.addToScene(this.scene)
     this.scene.add(new Grid().generateLineSegments())
