@@ -1,7 +1,7 @@
 import "mocha"
 import { expect } from "chai"
 import { Controller, HitEvent, Input } from "../../src/controller/controller"
-import { Container } from "../../src/controller/container"
+import { Container } from "../../src/container/container"
 import { Aim } from "../../src/controller/aim"
 import { WatchAim } from "../../src/controller/watchaim"
 import { PlayShot } from "../../src/controller/playshot"

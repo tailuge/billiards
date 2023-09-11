@@ -1,5 +1,5 @@
 import { Vector3 } from "three"
-import { Container } from "../controller/container"
+import { Container } from "../container/container"
 import { Input } from "../events/input"
 
 export class AimInputs {

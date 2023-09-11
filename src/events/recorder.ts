@@ -1,4 +1,4 @@
-import { Container } from "../controller/container"
+import { Container } from "../container/container"
 import { EventType } from "./eventtype"
 import { HitEvent } from "./hitevent"
 

@@ -1,4 +1,4 @@
-import { Container } from "./controller/container"
+import { Container } from "./container/container"
 import { Keyboard } from "./events/keyboard"
 import { EventUtil } from "./events/eventutil"
 import { EventType } from "./events/eventtype"

@@ -6,7 +6,7 @@ import { Input } from "../events/input"
 import { AbortEvent } from "../events/abortevent"
 import { WatchEvent } from "../events/watchevent"
 import { StationaryEvent } from "../events/stationaryevent"
-import { Container } from "./container"
+import { Container } from "../container/container"
 import { ChatEvent } from "../events/chatevent"
 import { PlaceBallEvent } from "../events/placeballevent"
 

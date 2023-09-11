@@ -1,6 +1,6 @@
 import "mocha"
 import { expect } from "chai"
-import { Container } from "../../src/controller/container"
+import { Container } from "../../src/container/container"
 import { EventUtil } from "../../src/events/eventutil"
 import { BreakEvent } from "../../src/events/breakevent"
 import { GameEvent } from "../../src/events/gameevent"
