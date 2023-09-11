@@ -46,7 +46,7 @@ export class Container {
     this.log = log
     this.rules = RuleFactory.create(ruletype, this)
     this.table = this.rules.table()
-    this.view = new View(element, ready)
+    this.view = new View(element, ready, this.table)
     this.table.cue.aimInputs = new AimInputs(this)
     this.keyboard = keyboard
     this.sound = new Sound(this.view.camera.camera)
@@ -62,7 +62,6 @@ export class Container {
     this.view.addMesh(this.table.cue.mesh)
     this.view.addMesh(this.table.cue.helperMesh)
     this.view.addMesh(this.table.cue.placerMesh)
-    this.view.table = this.table
     this.updateController(new Init(this))
   }
 

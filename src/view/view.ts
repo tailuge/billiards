@@ -14,9 +14,9 @@ export class View {
   element
   table: Table
 
-  constructor(element, ready?) {
+  constructor(element, ready, table) {
     this.element = element
-
+    this.table = table
     element &&
       this.initialiseScene(element, element.offsetWidth, element.offsetHeight)
     this.camera = new Camera(
@@ -89,7 +89,10 @@ export class View {
   private addTable(ready) {
     this.scene.add(new AmbientLight(0x707070, 1.0))
     importGltf("models/background.gltf", this.scene)
-    importGltf("models/p8.gltf", this.scene, ready)
+    const tablemodel = this.table.hasPockets
+      ? "models/p8.gltf"
+      : "models/threecushion.gltf"
+    importGltf(tablemodel, this.scene, ready)
     //TableGeometry.addToScene(this.scene)
     this.scene.add(new Grid().generateLineSegments())
   }

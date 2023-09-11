@@ -5,8 +5,8 @@ import { Table } from "../../src/model/table"
 import { Rack } from "../../src/utils/rack"
 
 describe("View", () => {
-  const view = new View(null, true)
   const table = new Table(Rack.diamond())
+  const view = new View(null, () => {}, table)
 
   it("isInView", (done) => {
     view.table = table
