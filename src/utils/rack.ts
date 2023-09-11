@@ -22,8 +22,10 @@ export class Rack {
     )
   }
 
-  static cueBall() {
-    return new Ball(new Vector3(-11, 0.0, 0), 0xfaebd7)
+  static readonly spot = new Vector3(-11, 0.0, 0)
+
+  static cueBall(pos) {
+    return new Ball(pos, 0xfaebd7)
   }
 
   static diamond() {
@@ -31,7 +33,7 @@ export class Rack {
     const diagonal = across.clone().applyAxisAngle(Rack.up, (Math.PI * 1) / 3)
     const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
     const diamond: Ball[] = []
-    diamond.push(Rack.cueBall())
+    diamond.push(Rack.cueBall(Rack.spot))
     diamond.push(new Ball(Rack.jitter(pos), 0xe0de36))
     pos.add(diagonal)
     diamond.push(new Ball(Rack.jitter(pos), 0xff9d00))
@@ -50,5 +52,13 @@ export class Rack {
     pos.add(diagonal)
     diamond.push(new Ball(Rack.jitter(pos), 0x3e009c))
     return diamond
+  }
+
+  static three() {
+    const threeballs: Ball[] = []
+    threeballs.push(Rack.cueBall(new Vector3(-11, -3.0, 0)))
+    threeballs.push(new Ball(new Vector3(-11, 0.0, 0), 0xe0de36))
+    threeballs.push(new Ball(new Vector3(+11, 0.0, 0), 0xff0000))
+    return threeballs
   }
 }

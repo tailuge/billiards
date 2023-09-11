@@ -6,6 +6,7 @@ import { WatchAim } from "../controller/watchaim"
 import { PlaceBallEvent } from "../events/placeballevent"
 import { WatchEvent } from "../events/watchevent"
 import { Outcome } from "../model/outcome"
+import { Rack } from "../utils/rack"
 import { zero } from "../utils/utils"
 import { Rules } from "./rules"
 
@@ -14,6 +15,10 @@ export class NineBall implements Rules {
 
   constructor(container) {
     this.container = container
+  }
+
+  rack() {
+    return Rack.diamond()
   }
 
   update(outcome: Outcome[]): Controller {

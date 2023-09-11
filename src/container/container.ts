@@ -45,7 +45,8 @@ export class Container {
 
   constructor(element, log, ruletype?, keyboard?, ready?, id?) {
     this.log = log
-    this.table = new Table(Rack.diamond())
+    this.rules = RuleFactory.create(ruletype, this)
+    this.table = new Table(this.rules.rack())
     this.view = new View(element, ready)
     this.table.cue.aimInputs = new AimInputs(this)
     this.keyboard = keyboard
@@ -54,7 +55,6 @@ export class Container {
     this.sliders = new Sliders()
     this.recoder = new Recorder(this)
     this.id = id
-    this.rules = RuleFactory.create(ruletype, this)
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
       this.view.addMesh(b.ballmesh.shadow)
