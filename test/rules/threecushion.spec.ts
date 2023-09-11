@@ -44,9 +44,15 @@ describe("ThreeCushion", () => {
     done()
   })
 
-  it("ThreeCushion processed", (done) => {
+  it("ThreeCushion has 3 balls", (done) => {
     const rules = RuleFactory.create("threecushion", null)
     expect(rules.rack()).to.be.lengthOf(3)
+    done()
+  })
+
+  it("ThreeCushion has no pockets", (done) => {
+    const rules = RuleFactory.create("threecushion", null)
+    expect(rules.table().hasPockets).to.be.false
     done()
   })
 })

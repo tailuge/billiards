@@ -18,6 +18,7 @@ export class Table {
   cue = new Cue()
   pairs: Pair[]
   outcome: Outcome[] = []
+  hasPockets: boolean = true
 
   constructor(balls: Ball[]) {
     this.initialiseBalls(balls)
@@ -95,10 +96,14 @@ export class Table {
       return true
     }
 
-    const incidentSpeed = Cushion.bounceAny(a, t)
+    const incidentSpeed = Cushion.bounceAny(a, t, this.hasPockets)
     if (incidentSpeed) {
       this.outcome.push(Outcome.cushion(a, incidentSpeed))
       return false
+    }
+
+    if (!this.hasPockets) {
+      return true
     }
 
     const k = Knuckle.findBouncing(a, t)

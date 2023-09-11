@@ -10,10 +10,51 @@ export class Cushion {
    *
    * Knuckle impacts are not part of this and handled elsewhere.
    */
-  static bounceAny(ball: Ball, t: number): number | undefined {
+  static bounceAny(
+    ball: Ball,
+    t: number,
+    hasPockets: boolean = true
+  ): number | undefined {
     const futurePosition = ball.futurePosition(t)
 
-    const willBounceLong =
+    if (Cushion.willBounceLong(futurePosition, hasPockets)) {
+      const dir =
+        futurePosition.y > TableGeometry.tableY ? -Math.PI / 2 : Math.PI / 2
+      return Cushion.bounceIn(dir, ball)
+    }
+
+    if (Cushion.willBounceShort(futurePosition, hasPockets)) {
+      const dir = futurePosition.x > TableGeometry.tableX ? 0 : Math.PI
+      return Cushion.bounceIn(dir, ball)
+    }
+
+    return undefined
+  }
+
+  static willBounceShort(futurePosition, hasPockets) {
+    if (!hasPockets) {
+      return Cushion.willBounceShortSegment(
+        TableGeometry.tableY,
+        -TableGeometry.tableY,
+        futurePosition
+      )
+    }
+    return Cushion.willBounceShortSegment(
+      TableGeometry.pockets.pocketNW.knuckleSW.pos.y,
+      TableGeometry.pockets.pocketSW.knuckleNW.pos.y,
+      futurePosition
+    )
+  }
+
+  static willBounceLong(futurePosition, hasPockets) {
+    if (!hasPockets) {
+      return Cushion.willBounceLongSegment(
+        -TableGeometry.tableX,
+        TableGeometry.tableX,
+        futurePosition
+      )
+    }
+    return (
       Cushion.willBounceLongSegment(
         TableGeometry.pockets.pocketNW.knuckleNE.pos.x,
         TableGeometry.pockets.pocketN.knuckleNW.pos.x,
@@ -24,25 +65,7 @@ export class Cushion {
         TableGeometry.pockets.pocketNE.knuckleNW.pos.x,
         futurePosition
       )
-
-    if (willBounceLong) {
-      const dir =
-        futurePosition.y > TableGeometry.tableY ? -Math.PI / 2 : Math.PI / 2
-      return Cushion.bounceIn(dir, ball)
-    }
-
-    const willBounceShort = Cushion.willBounceShortSegment(
-      TableGeometry.pockets.pocketNW.knuckleSW.pos.y,
-      TableGeometry.pockets.pocketSW.knuckleNW.pos.y,
-      futurePosition
     )
-
-    if (willBounceShort) {
-      const dir = futurePosition.x > TableGeometry.tableX ? 0 : Math.PI
-      return Cushion.bounceIn(dir, ball)
-    }
-
-    return undefined
   }
 
   /**

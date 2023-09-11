@@ -45,7 +45,7 @@ export class Container {
   constructor(element, log, ruletype?, keyboard?, ready?, id?) {
     this.log = log
     this.rules = RuleFactory.create(ruletype, this)
-    this.table = new Table(this.rules.rack())
+    this.table = this.rules.table()
     this.view = new View(element, ready)
     this.table.cue.aimInputs = new AimInputs(this)
     this.keyboard = keyboard
