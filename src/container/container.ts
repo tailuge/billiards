@@ -16,6 +16,8 @@ import { ChatEvent } from "../events/chatevent"
 import { Throttle } from "../events/throttle"
 import { Sliders } from "../view/sliders"
 import { Recorder } from "../events/recorder"
+import { Rules } from "../rules/rules"
+import { RuleFactory } from "../rules/rulefactory"
 
 /**
  * Model, View, Controller container.
@@ -33,6 +35,7 @@ export class Container {
   recoder: Recorder
   id: string = ""
   isSinglePlayer: boolean = true
+  rules: Rules
 
   last = performance.now()
   readonly step = 0.001953125 * 1
@@ -40,7 +43,7 @@ export class Container {
   broadcast: (event: string) => void
   log: (text: string) => void
 
-  constructor(element, log, keyboard?, ready?, id?) {
+  constructor(element, log, ruletype?, keyboard?, ready?, id?) {
     this.log = log
     this.table = new Table(Rack.diamond())
     this.view = new View(element, ready)
@@ -51,6 +54,7 @@ export class Container {
     this.sliders = new Sliders()
     this.recoder = new Recorder(this)
     this.id = id
+    this.rules = RuleFactory.create(ruletype, this)
     this.table.balls.forEach((b) => {
       this.view.addMesh(b.ballmesh.mesh)
       this.view.addMesh(b.ballmesh.shadow)

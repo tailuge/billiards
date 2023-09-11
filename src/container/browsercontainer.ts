@@ -14,6 +14,7 @@ export class BrowserContainer {
   canvas3d
   tablename
   wss
+  ruletype
   playername: string
   replay: string | null
   sc: SocketConnection | null = null
@@ -22,10 +23,11 @@ export class BrowserContainer {
     shots: Array<string>(),
   }
 
-  constructor(playername, tablename, replay, wss, canvas3d) {
+  constructor(ruletype, playername, tablename, replay, wss, canvas3d) {
     this.playername = playername
     this.tablename = tablename
     this.replay = replay
+    this.ruletype = ruletype
     this.wss = wss
     this.canvas3d = canvas3d
   }
@@ -35,6 +37,7 @@ export class BrowserContainer {
     this.container = new Container(
       this.canvas3d,
       console.log,
+      this.ruletype,
       keyboard,
       () => {
         this.onAssetsReady()

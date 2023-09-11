@@ -9,7 +9,9 @@ function initialise() {
   const tablename = params.get("table") ?? "default"
   const playername = params.get("name") ?? ""
   const replay = params.get("state")
+  const ruletype = params.get("ruletype") ?? "nineball"
   const browserContainer = new BrowserContainer(
+    ruletype,
     playername,
     tablename,
     replay,
