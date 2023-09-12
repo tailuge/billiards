@@ -49,7 +49,7 @@ describe("ThreeCushion", () => {
 
   it("Valid threecushion outcome", (done) => {
     const outcomes: Outcome[] = []
-    outcomes.push(Outcome.collision(cueBall, oppononetBall, 1))
+    outcomes.push(Outcome.collision(oppononetBall, cueBall, 1))
     outcomes.push(Outcome.cushion(cueBall, 1))
     outcomes.push(Outcome.cushion(cueBall, 1))
     outcomes.push(Outcome.cushion(cueBall, 1))

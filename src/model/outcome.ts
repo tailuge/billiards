@@ -57,8 +57,7 @@ export class Outcome {
     )
     const cannons = new Set()
     let cushions = 0
-    for (let i = 0; i < outcomes.length; i++) {
-      const outcome = outcomes[i]
+    for (let outcome of outcomes) {
       if (outcome.type === OutcomeType.Cushion) {
         cushions++
       }
