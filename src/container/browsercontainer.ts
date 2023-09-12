@@ -99,7 +99,7 @@ export class BrowserContainer {
 
   shotReplayLink() {
     const url = window.location.href.split("?")[0]
-    const prefix = `${url}?state=`
+    const prefix = `${url}?ruletype=${this.ruletype}&state=`
     const serialisedShot = JSON.stringify(
       this.container.recoder.replayLastShot()
     )
