@@ -33,6 +33,22 @@ describe("ThreeCushion", () => {
     done()
   })
 
+  it("ThreeCushion valid point keep going", (done) => {
+    container.controller = new PlayShot(container)
+    container.isSinglePlayer = false
+    container.table.balls[0].setStationary()
+    container.eventQueue.push(new StationaryEvent())
+    const balls = container.table.balls
+    container.table.outcome.push(Outcome.cushion(balls[0], 1))
+    container.table.outcome.push(Outcome.cushion(balls[0], 1))
+    container.table.outcome.push(Outcome.cushion(balls[0], 1))
+    container.table.outcome.push(Outcome.collision(balls[0], balls[1], 1))
+    container.table.outcome.push(Outcome.collision(balls[0], balls[2], 1))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Aim)
+    done()
+  })
+
   it("ThreeCushion no point single player switch ball", (done) => {
     container.controller = new PlayShot(container)
     container.table.balls[0].setStationary()

@@ -40,14 +40,13 @@ export class ThreeCushion implements Rules {
       this.container.sound.playSuccess(5)
       return new Aim(this.container)
     } else {
-      if (this.container.isSinglePlayer) {
-        // switch to other ball to aim
-        const balls = this.container.table.balls
-        this.cueball = this.cueball === balls[0] ? balls[1] : balls[0]
-      } else {
+      if (!this.container.isSinglePlayer) {
         this.container.sendEvent(this.container.table.cue.aim)
         return new WatchAim(this.container)
       }
+      // switch to other ball to aim
+      const balls = this.container.table.balls
+      this.cueball = this.cueball === balls[0] ? balls[1] : balls[0]
     }
     return new Aim(this.container)
   }
