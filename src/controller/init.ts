@@ -21,6 +21,7 @@ export class Init extends ControllerBase {
 
   override handleWatch(event: WatchEvent): Controller {
     this.container.chat.showMessage("Opponent to break")
+    this.container.rules.secondToPlay()
     this.container.table.updateFromSerialised(event.json)
     return new WatchAim(this.container)
   }

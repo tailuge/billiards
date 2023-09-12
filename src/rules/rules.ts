@@ -7,4 +7,5 @@ export interface Rules {
   update(outcome: Outcome[]): Controller
   rack(): Ball[]
   table(): Table
+  secondToPlay()
 }

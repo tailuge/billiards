@@ -51,4 +51,8 @@ export class NineBall implements Rules {
     }
     return new WatchAim(this.container)
   }
+
+  secondToPlay() {
+    // nothing to note
+  }
 }
