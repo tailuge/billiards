@@ -50,4 +50,35 @@ export class Outcome {
       !Outcome.isCueBallPotted(cueBall, outcomes)
     )
   }
+
+  static isThreeCushionPoint(cueBall, outcomes: Outcome[]) {
+    outcomes = Outcome.cueBallFirst(cueBall, outcomes).filter(
+      (outcome) => outcome.ballA === cueBall
+    )
+    const cannons = new Set()
+    let cushions = 0
+    for (let i = 0; i < outcomes.length; i++) {
+      const outcome = outcomes[i]
+      if (outcome.type === OutcomeType.Cushion) {
+        cushions++
+      }
+      if (outcome.type === OutcomeType.Collision) {
+        cannons.add(outcome.ballB)
+        if (cannons.size === 2) {
+          return cushions >= 3
+        }
+      }
+    }
+    return false
+  }
+
+  static cueBallFirst(cueBall, outcomes) {
+    outcomes.forEach((o) => {
+      if (o.type === OutcomeType.Collision && o.ballB === cueBall) {
+        o.ballB = o.ballA
+        o.ballA = cueBall
+      }
+    })
+    return outcomes
+  }
 }

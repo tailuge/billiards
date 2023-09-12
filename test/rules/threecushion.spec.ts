@@ -42,4 +42,29 @@ describe("ThreeCushion", () => {
     expect(rules.table().hasPockets).to.be.false
     done()
   })
+
+  const cueBall = {}
+  const oppononetBall = {}
+  const redBall = {}
+
+  it("Valid threecushion outcome", (done) => {
+    const outcomes: Outcome[] = []
+    outcomes.push(Outcome.collision(cueBall, oppononetBall, 1))
+    outcomes.push(Outcome.cushion(cueBall, 1))
+    outcomes.push(Outcome.cushion(cueBall, 1))
+    outcomes.push(Outcome.cushion(cueBall, 1))
+    outcomes.push(Outcome.collision(cueBall, redBall, 1))
+    expect(Outcome.isThreeCushionPoint(cueBall, outcomes)).to.be.true
+    done()
+  })
+
+  it("Invalid threecushion outcome", (done) => {
+    const outcomes: Outcome[] = []
+    outcomes.push(Outcome.collision(cueBall, oppononetBall, 1))
+    outcomes.push(Outcome.cushion(cueBall, 1))
+    outcomes.push(Outcome.cushion(cueBall, 1))
+    outcomes.push(Outcome.collision(cueBall, redBall, 1))
+    expect(Outcome.isThreeCushionPoint(cueBall, outcomes)).to.be.false
+    done()
+  })
 })
