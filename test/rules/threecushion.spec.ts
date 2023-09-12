@@ -8,6 +8,7 @@ import { StationaryEvent } from "../../src/events/stationaryevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { Outcome } from "../../src/model/outcome"
 import { RuleFactory } from "../../src/rules/rulefactory"
+import { WatchAim } from "../../src/controller/watchaim"
 
 describe("ThreeCushion", () => {
   let container: Container
@@ -21,13 +22,25 @@ describe("ThreeCushion", () => {
     done()
   })
 
-  it("ThreeCushion processed", (done) => {
+  it("ThreeCushion no point switch player", (done) => {
+    container.controller = new PlayShot(container)
+    container.isSinglePlayer = false
+    container.table.balls[0].setStationary()
+    container.eventQueue.push(new StationaryEvent())
+    container.table.outcome.push(Outcome.cushion(container.table.balls[1], 1))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(WatchAim)
+    done()
+  })
+
+  it("ThreeCushion no point single player switch ball", (done) => {
     container.controller = new PlayShot(container)
     container.table.balls[0].setStationary()
     container.eventQueue.push(new StationaryEvent())
-    container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
+    container.table.outcome.push(Outcome.cushion(container.table.balls[1], 1))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
+    expect(container.rules.cueball).to.be.equal(container.table.balls[1])
     done()
   })
 

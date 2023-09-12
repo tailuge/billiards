@@ -5,6 +5,7 @@ import { PlaceBall } from "../controller/placeball"
 import { WatchAim } from "../controller/watchaim"
 import { PlaceBallEvent } from "../events/placeballevent"
 import { WatchEvent } from "../events/watchevent"
+import { Ball } from "../model/ball"
 import { Outcome } from "../model/outcome"
 import { Table } from "../model/table"
 import { Rack } from "../utils/rack"
@@ -13,6 +14,8 @@ import { Rules } from "./rules"
 
 export class NineBall implements Rules {
   readonly container: Container
+
+  cueball: Ball
 
   constructor(container) {
     this.container = container

@@ -1,6 +1,7 @@
 import { Container } from "../container/container"
 import { Aim } from "../controller/aim"
 import { Controller } from "../controller/controller"
+import { WatchAim } from "../controller/watchaim"
 import { Ball } from "../model/ball"
 import { Outcome } from "../model/outcome"
 import { Table } from "../model/table"
@@ -37,6 +38,16 @@ export class ThreeCushion implements Rules {
   update(outcomes: Outcome[]): Controller {
     if (Outcome.isThreeCushionPoint(this.cueball, outcomes)) {
       this.container.sound.playSuccess(5)
+      return new Aim(this.container)
+    } else {
+      if (this.container.isSinglePlayer) {
+        // switch to other ball to aim
+        const balls = this.container.table.balls
+        this.cueball = this.cueball === balls[0] ? balls[1] : balls[0]
+      } else {
+        this.container.sendEvent(this.container.table.cue.aim)
+        return new WatchAim(this.container)
+      }
     }
     return new Aim(this.container)
   }

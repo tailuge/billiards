@@ -20,7 +20,12 @@
       <li><a href="/dist/">single player</a></li>
       <li><a id="local">wait for pairing</a></li>
       <li>
-        <a id="local2p">two players in single window</a> for quick testing
+        <a id="local2p">two players nineball in single window</a> for quick
+        testing
+      </li>
+      <li>
+        <a id="local2p3c">two players three cushion in single window</a> for
+        quick testing
       </li>
       <li><a id="local" href="lobby.html?mode=local">local lobby</a></li>
     </ul>
@@ -44,6 +49,9 @@
     document.getElementById(
       "local2p"
     ).href = `/dist/2p.html?websocketserver=${wss}`
+    document.getElementById(
+      "local2p"
+    ).href = `/dist/2p.html?ruletype=threecushion&websocketserver=${wss}`
     document.getElementById(
       "github"
     ).href = `https://tailuge.github.io/billiards/dist/?websocketserver=${wss}`

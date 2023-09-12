@@ -4,6 +4,7 @@ import { Outcome } from "../model/outcome"
 import { Table } from "../model/table"
 
 export interface Rules {
+  cueball: Ball
   update(outcome: Outcome[]): Controller
   rack(): Ball[]
   table(): Table

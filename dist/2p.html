@@ -40,11 +40,12 @@
   <script>
     const urlParams = new URLSearchParams(window.location.search)
     const websocketserver = urlParams.get("websocketserver")
+    const ruletype = urlParams.get("ruletype")
     document.getElementById(
       "P1"
-    ).src = `index.html?name=P1&websocketserver=${websocketserver}`
+    ).src = `index.html?ruletype=${ruletype}&name=P1&websocketserver=${websocketserver}`
     document.getElementById(
       "P2"
-    ).src = `index.html?name=P2&websocketserver=${websocketserver}`
+    ).src = `index.html?ruletype=${ruletype}&name=P2&websocketserver=${websocketserver}`
   </script>
 </html>
