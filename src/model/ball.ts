@@ -48,6 +48,7 @@ export class Ball {
     if (this.rvel.lengthSq() !== 0) {
       this.ballmesh.updateRotation(this.rvel, t)
     }
+    this.ballmesh.trace.addTrace(this.pos,this.vel)
   }
 
   private updatePosition(t: number) {

@@ -41,7 +41,6 @@ export class Table {
   updateBallMesh(t) {
     this.balls.forEach((a) => {
       a.updateMesh(t)
-      a.ballmesh.trace.addPointAfterDelta(a.pos, 0.2)
     })
   }
 

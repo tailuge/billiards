@@ -11,6 +11,7 @@ export class Trace {
   readonly geometry
   readonly positions
   readonly lastPos = new Vector3()
+  readonly lastVel = new Vector3()
 
   constructor(size, colour) {
     this.geometry = new BufferGeometry()
@@ -34,10 +35,17 @@ export class Trace {
     this.geometry.setDrawRange(0, 0)
   }
 
-  addPointAfterDelta(pos, delta) {
-    if (this.lastPos.distanceTo(pos) > delta) {
+  addTrace(pos,vel) {
+    const curvature = this.lastVel.angleTo(vel)
+    const delta = (curvature>Math.PI/32) ? 0.01 : 0.5
+    this.addTraceAfterDelta(pos, vel, delta) 
+  }
+
+  addTraceAfterDelta(pos, vel, delta) {
+    if (this.lastPos.distanceTo(pos) > delta) {      
       this.addPoint(pos)
       this.lastPos.copy(pos)
+      this.lastVel.copy(vel)
     }
   }
 
