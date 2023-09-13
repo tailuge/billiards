@@ -45,6 +45,9 @@ export class ThreeCushion implements Rules {
 
     if (this.container.isSinglePlayer) {
       this.cueball = this.otherPlayersCueBall()
+      this.container.table.cue.aim.i = this.container.table.balls.indexOf(
+        this.cueball
+      )
       return new Aim(this.container)
     }
 

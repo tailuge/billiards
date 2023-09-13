@@ -21,6 +21,7 @@ export class Replay extends ControllerBase {
   playNextShot(delay) {
     const shot = this.shots.shift()
     const aim = AimEvent.fromJson(shot)
+    this.container.table.cueball = this.container.table.balls[aim.i]
     this.container.table.cueball.pos.copy(aim.pos)
     this.container.table.cue.aim = aim
     this.container.table.cue.updateAimInput()

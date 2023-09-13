@@ -186,6 +186,7 @@ export class Table {
   showTraces(bool) {
     this.balls.forEach((b) => {
       b.ballmesh.trace.line.visible = bool
+      b.ballmesh.trace.reset()
     })
   }
 }
