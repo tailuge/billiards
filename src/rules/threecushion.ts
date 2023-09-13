@@ -2,6 +2,7 @@ import { Container } from "../container/container"
 import { Aim } from "../controller/aim"
 import { Controller } from "../controller/controller"
 import { WatchAim } from "../controller/watchaim"
+import { WatchEvent } from "../events/watchevent"
 import { Ball } from "../model/ball"
 import { Outcome } from "../model/outcome"
 import { Table } from "../model/table"
@@ -27,7 +28,7 @@ export class ThreeCushion implements Rules {
     table.hasPockets = false
     TableGeometry.tableX = 21.5
     TableGeometry.tableY = 10.5
-    this.cueball = table.balls[0]
+    this.cueball = table.cueball
     return table
   }
 
@@ -37,17 +38,22 @@ export class ThreeCushion implements Rules {
 
   update(outcomes: Outcome[]): Controller {
     if (Outcome.isThreeCushionPoint(this.cueball, outcomes)) {
-      this.container.sound.playSuccess(5)
+      this.container.sound.playSuccess(outcomes.length / 3)
+      this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
       return new Aim(this.container)
-    } else {
-      if (!this.container.isSinglePlayer) {
-        this.container.sendEvent(this.container.table.cue.aim)
-        return new WatchAim(this.container)
-      }
-      // switch to other ball to aim
-      const balls = this.container.table.balls
-      this.cueball = this.cueball === balls[0] ? balls[1] : balls[0]
     }
-    return new Aim(this.container)
+
+    if (this.container.isSinglePlayer) {
+      this.cueball = this.otherPlayersCueBall()
+      return new Aim(this.container)
+    }
+
+    this.container.sendEvent(this.container.table.cue.aim)
+    return new WatchAim(this.container)
+  }
+
+  otherPlayersCueBall(): Ball {
+    const balls = this.container.table.balls
+    return this.cueball === balls[0] ? balls[1] : balls[0]
   }
 }

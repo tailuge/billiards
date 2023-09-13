@@ -25,7 +25,7 @@ describe("ThreeCushion", () => {
   it("ThreeCushion no point switch player", (done) => {
     container.controller = new PlayShot(container)
     container.isSinglePlayer = false
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
     container.table.outcome.push(Outcome.cushion(container.table.balls[1], 1))
     container.processEvents()
@@ -51,7 +51,7 @@ describe("ThreeCushion", () => {
 
   it("ThreeCushion no point single player switch ball", (done) => {
     container.controller = new PlayShot(container)
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
     container.table.outcome.push(Outcome.cushion(container.table.balls[1], 1))
     container.processEvents()

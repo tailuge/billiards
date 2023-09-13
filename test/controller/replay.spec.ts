@@ -83,7 +83,7 @@ describe("Controller Replay", () => {
 
   it("Stationary takes Replay to Replay", (done) => {
     container.controller = new Replay(container, state.shots, 0)
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Replay)

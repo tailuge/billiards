@@ -59,7 +59,9 @@ wss.on("connection", function connection(ws: WebSocket, req) {
 
   ws.on("message", (message) => {
     const info = lobby.handleTableMessage(client, tableId, message)
-    console.log(info)
+    if (!info.includes(" AIM ")) {
+      console.log(info)
+    }
   })
 
   ws.on("close", (_) => {

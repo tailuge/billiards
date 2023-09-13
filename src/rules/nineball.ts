@@ -22,7 +22,9 @@ export class NineBall implements Rules {
   }
 
   table(): Table {
-    return new Table(this.rack())
+    const table = new Table(this.rack())
+    this.cueball = table.cueball
+    return table
   }
 
   rack() {
@@ -32,7 +34,7 @@ export class NineBall implements Rules {
   update(outcome: Outcome[]): Controller {
     const table = this.container.table
     // if white potted switch to other player
-    if (Outcome.isCueBallPotted(table.balls[0], outcome)) {
+    if (Outcome.isCueBallPotted(table.cueball, outcome)) {
       this.container.log("in off")
       if (this.container.isSinglePlayer) {
         return new PlaceBall(this.container)
@@ -40,7 +42,7 @@ export class NineBall implements Rules {
       this.container.sendEvent(new PlaceBallEvent(zero, true))
       return new WatchAim(this.container)
     }
-    if (Outcome.isBallPottedNoFoul(table.balls[0], table.outcome)) {
+    if (Outcome.isBallPottedNoFoul(table.cueball, table.outcome)) {
       this.container.sound.playSuccess(table.inPockets())
       this.container.sendEvent(new WatchEvent(table.serialise()))
       return new Aim(this.container)
@@ -55,7 +57,12 @@ export class NineBall implements Rules {
     return new WatchAim(this.container)
   }
 
+  otherPlayersCueBall(): Ball {
+    // only for three cushion
+    return this.cueball
+  }
+
   secondToPlay() {
-    // nothing to note
+    // only for three cushion
   }
 }

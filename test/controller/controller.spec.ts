@@ -80,7 +80,7 @@ describe("Controller", () => {
   it("AimEvent takes WatchShot to Aim when all stationary", (done) => {
     const watchShot = new WatchShot(container)
     container.controller = watchShot
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new AimEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
@@ -90,7 +90,7 @@ describe("Controller", () => {
   it("WatchEvent takes WatchShot to WatchAim when all stationary", (done) => {
     const watchShot = new WatchShot(container)
     container.controller = watchShot
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
@@ -108,7 +108,7 @@ describe("Controller", () => {
   it("PlaceBall takes WatchShot to PlaceBall", (done) => {
     const watchShot = new WatchShot(container)
     container.controller = watchShot
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new PlaceBallEvent(zero, true))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlaceBall)
@@ -118,7 +118,7 @@ describe("Controller", () => {
   it("AimEvent takes WatchShot to enqueued Aim after all stationary", (done) => {
     const watchShot = new WatchShot(container)
     container.controller = watchShot
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new AimEvent())
     container.processEvents()
     container.eventQueue.push(new StationaryEvent())
@@ -130,7 +130,7 @@ describe("Controller", () => {
   it("WatchEvent takes WatchShot to enqueued WatchAim after all stationary", (done) => {
     const watchShot = new WatchShot(container)
     container.controller = watchShot
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()
     container.eventQueue.push(new StationaryEvent())
@@ -150,7 +150,7 @@ describe("Controller", () => {
   it("StationaryEvent takes active PlayShot to WatchAim if no pot", (done) => {
     container.isSinglePlayer = false
     container.controller = new PlayShot(container)
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
@@ -160,7 +160,7 @@ describe("Controller", () => {
   it("StationaryEvent takes active PlayShot to Aim if no pot singleplayer", (done) => {
     container.controller = new PlayShot(container)
     container.isSinglePlayer = true
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
@@ -169,7 +169,7 @@ describe("Controller", () => {
 
   it("StationaryEvent takes active PlayShot to Aim if pot", (done) => {
     container.controller = new PlayShot(container)
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
     container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
     container.processEvents()
@@ -179,9 +179,9 @@ describe("Controller", () => {
 
   it("StationaryEvent takes active PlayShot to PlaceBall if in off", (done) => {
     container.controller = new PlayShot(container)
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
-    container.table.outcome.push(Outcome.pot(container.table.balls[0], 1))
+    container.table.outcome.push(Outcome.pot(container.table.cueball, 1))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlaceBall)
     done()
@@ -190,9 +190,9 @@ describe("Controller", () => {
   it("StationaryEvent takes active PlayShot to WatchAim if in off 2p", (done) => {
     container.isSinglePlayer = false
     container.controller = new PlayShot(container)
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
-    container.table.outcome.push(Outcome.pot(container.table.balls[0], 1))
+    container.table.outcome.push(Outcome.pot(container.table.cueball, 1))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
     done()
@@ -269,7 +269,7 @@ describe("Controller", () => {
 
   it("advance generates StationaryEvent at end of shot", (done) => {
     container.controller = new PlayShot(container)
-    container.table.balls[0].vel.x = 0.001
+    container.table.cueball.vel.x = 0.001
     container.advance(0.01)
     expect(container.eventQueue.length).to.equal(1)
     container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
@@ -282,7 +282,7 @@ describe("Controller", () => {
   it("ChatEvent handled with no change of state", (done) => {
     const watchShot = new WatchShot(container)
     container.controller = watchShot
-    container.table.balls[0].setStationary()
+    container.table.cueball.setStationary()
     container.eventQueue.push(new ChatEvent("", ""))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchShot)

@@ -132,10 +132,10 @@ describe("Table", () => {
     a.vel.x = -1
     const table = new Table([a, b, c])
     const data = JSON.stringify(table.serialise())
-    table.balls[0].pos.x = 4
+    table.cueball.pos.x = 4
     const obj = JSON.parse(data)
     table.updateFromSerialised(obj)
-    expect(table.balls[0].pos.x).to.be.equal(0)
+    expect(table.cueball.pos.x).to.be.equal(0)
     done()
   })
 

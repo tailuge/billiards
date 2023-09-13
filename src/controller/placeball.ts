@@ -16,26 +16,26 @@ export class PlaceBall extends ControllerBase {
 
   constructor(container) {
     super(container)
-    this.container.table.cue.moveTo(this.container.table.balls[0].pos)
+    this.container.table.cue.moveTo(this.container.table.cueball.pos)
     this.container.table.cue.aim.power = 0
     this.container.view.camera.forceMode(this.container.view.camera.aimView)
   }
 
   override onFirst() {
-    const cueBall = this.container.table.balls[0]
-    if (!cueBall.onTable()) {
-      cueBall.pos = new Vector3(-11, 0, 0)
+    const cueball = this.container.table.cueball
+    if (!cueball.onTable()) {
+      cueball.pos = new Vector3(-11, 0, 0)
     }
-    cueBall.setStationary()
-    cueBall.updateMesh(0)
+    cueball.setStationary()
+    cueball.updateMesh(0)
     this.container.table.cue.placeBallMode()
     this.container.table.cue.showHelper(false)
-    this.container.table.cue.moveTo(this.container.table.balls[0].pos)
+    this.container.table.cue.moveTo(this.container.table.cueball.pos)
     this.container.table.cue.aimInputs.setButtonText("Place\nBall")
   }
 
   override handleInput(input: Input): Controller {
-    const ballPos = this.container.table.balls[0].pos
+    const ballPos = this.container.table.cueball.pos
     switch (input.key) {
       case "ArrowLeft":
         ballPos.y = MathUtils.clamp(

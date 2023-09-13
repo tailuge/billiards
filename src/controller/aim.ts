@@ -9,9 +9,11 @@ import { PlayShot } from "./playshot"
 export class Aim extends ControllerBase {
   constructor(container) {
     super(container)
-    this.container.table.cue.aimMode()
-    this.container.table.cue.showHelper(true)
-    this.container.table.cue.moveTo(this.container.table.balls[0].pos)
+    const table = this.container.table
+    table.cue.aimMode()
+    table.cue.showHelper(true)
+    table.cueball = this.container.rules.cueball
+    table.cue.moveTo(table.cueball.pos)
     this.container.view.camera.suggestMode(this.container.view.camera.aimView)
   }
 

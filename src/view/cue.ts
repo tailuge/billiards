@@ -102,7 +102,7 @@ export class Cue {
   }
 
   intersectsAnything(table: Table) {
-    const origin = table.balls[0].pos
+    const origin = table.cueball.pos
       .clone()
       .addScaledVector(unitAtAngle(this.aim.angle), -this.length / 2)
     origin.z = this.aim.offset.y

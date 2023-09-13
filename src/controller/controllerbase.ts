@@ -23,7 +23,7 @@ export abstract class ControllerBase extends Controller {
   hit() {
     this.container.table.outcome = [
       Outcome.hit(
-        this.container.table.balls[0],
+        this.container.table.cueball,
         this.container.table.cue.aim.power
       ),
     ]

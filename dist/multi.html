@@ -17,7 +17,10 @@
     <h1>tailuge/billiards multiplayer test page</h1>
     local assets (for dev)
     <ul>
-      <li><a href="/dist/">single player</a></li>
+      <li><a href="/dist/">single player nineball</a></li>
+      <li>
+        <a href="/dist/?ruletype=threecushion">single player three cushion</a>
+      </li>
       <li><a id="local">wait for pairing</a></li>
       <li>
         <a id="local2p">two players nineball in single window</a> for quick
@@ -50,7 +53,7 @@
       "local2p"
     ).href = `/dist/2p.html?websocketserver=${wss}`
     document.getElementById(
-      "local2p"
+      "local2p3c"
     ).href = `/dist/2p.html?ruletype=threecushion&websocketserver=${wss}`
     document.getElementById(
       "github"

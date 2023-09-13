@@ -19,8 +19,10 @@ export class Table {
   pairs: Pair[]
   outcome: Outcome[] = []
   hasPockets: boolean = true
+  cueball: Ball
 
   constructor(balls: Ball[]) {
+    this.cueball = balls[0]
     this.initialiseBalls(balls)
   }
 
@@ -131,7 +133,7 @@ export class Table {
   }
 
   hit() {
-    this.cue.hit(this.balls[0])
+    this.cue.hit(this.cueball)
   }
 
   serialise() {

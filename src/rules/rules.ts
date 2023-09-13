@@ -9,4 +9,5 @@ export interface Rules {
   rack(): Ball[]
   table(): Table
   secondToPlay()
+  otherPlayersCueBall(): Ball
 }
