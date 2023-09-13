@@ -13,11 +13,14 @@ import {
 import { State } from "../model/ball"
 import { norm, up, zero } from "./../utils/utils"
 import { R } from "../model/physics/constants"
+import { Trace } from "./trace"
 
 export class BallMesh {
   mesh: Mesh
   shadow: Mesh
   spinAxisArrow: ArrowHelper
+  trace: Trace
+
   constructor(color) {
     this.initialiseMesh(color)
   }
@@ -66,6 +69,7 @@ export class BallMesh {
     this.shadow = new Mesh(shadowGeometry, shadowMaterial)
     this.spinAxisArrow = new ArrowHelper(up, zero, 2, 0x000000)
     this.spinAxisArrow.visible = false
+    this.trace = new Trace(500, color)
   }
 
   addDots(geometry, baseColor) {
@@ -93,6 +97,13 @@ export class BallMesh {
     dots.forEach((i) => {
       this.colorVerticesForFace(i / 3, verticies, red.r, red.g, red.b)
     })
+  }
+
+  addToScene(scene) {
+    scene.add(this.mesh)
+    scene.add(this.shadow)
+    scene.add(this.spinAxisArrow)
+    scene.add(this.trace.line)
   }
 
   private colorVerticesForFace(face, verticies, r, g, b) {

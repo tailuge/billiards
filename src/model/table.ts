@@ -41,6 +41,7 @@ export class Table {
   updateBallMesh(t) {
     this.balls.forEach((a) => {
       a.updateMesh(t)
+      a.ballmesh.trace.addPointAfterDelta(a.pos, 0.2)
     })
   }
 
@@ -134,6 +135,9 @@ export class Table {
 
   hit() {
     this.cue.hit(this.cueball)
+    this.balls.forEach((b) => {
+      b.ballmesh.trace.reset()
+    })
   }
 
   serialise() {
@@ -168,6 +172,21 @@ export class Table {
     this.balls.forEach((b, i) => {
       b.pos.x = data[i * 2]
       b.pos.y = data[i * 2 + 1]
+    })
+  }
+
+  addToScene(scene) {
+    this.balls.forEach((b) => {
+      b.ballmesh.addToScene(scene)
+    })
+    scene.add(this.cue.mesh)
+    scene.add(this.cue.helperMesh)
+    scene.add(this.cue.placerMesh)
+  }
+
+  showTraces(bool) {
+    this.balls.forEach((b) => {
+      b.ballmesh.trace.line.visible = bool
     })
   }
 }

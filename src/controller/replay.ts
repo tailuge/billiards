@@ -11,6 +11,7 @@ export class Replay extends ControllerBase {
     super(container)
     this.shots = shots
     this.delay = delay
+    this.container.table.showTraces(true)
   }
 
   override onFirst() {

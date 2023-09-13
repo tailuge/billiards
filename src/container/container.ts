@@ -54,14 +54,7 @@ export class Container {
     this.sliders = new Sliders()
     this.recoder = new Recorder(this)
     this.id = id
-    this.table.balls.forEach((b) => {
-      this.view.addMesh(b.ballmesh.mesh)
-      this.view.addMesh(b.ballmesh.shadow)
-      this.view.addMesh(b.ballmesh.spinAxisArrow)
-    })
-    this.view.addMesh(this.table.cue.mesh)
-    this.view.addMesh(this.table.cue.helperMesh)
-    this.view.addMesh(this.table.cue.placerMesh)
+    this.table.addToScene(this.view.scene)
     this.updateController(new Init(this))
   }
 
