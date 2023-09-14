@@ -21,7 +21,6 @@
       <li>
         <a href="/dist/?ruletype=threecushion">single player three cushion</a>
       </li>
-      <li><a id="local">wait for pairing</a></li>
       <li>
         <a id="local2p">two players nineball in single window</a> for quick
         testing
@@ -30,33 +29,30 @@
         <a id="local2p3c">two players three cushion in single window</a> for
         quick testing
       </li>
-      <li><a id="local" href="lobby.html?mode=local">local lobby</a></li>
+      <li><a id="local" href="lobby/lobby.html?mode=local">local lobby</a></li>
     </ul>
     github assets and local websocket server:
     <ul>
       <li>
         <a href="https://tailuge.github.io/billiards/dist/">single player</a>
       </li>
-      <li><a id="github">wait for pairing</a></li>
     </ul>
     github assets and render websocket server:
     <ul>
-      <li><a id="local" href="lobby.html">lobby</a></li>
+      <li><a id="local" href="lobby/lobby.html">lobby</a></li>
     </ul>
   </body>
 
   <script>
     const server = window.location.origin
     const wss = server.replace(/^http/, "ws") + "/ws"
-    document.getElementById("local").href = `/dist/?websocketserver=${wss}`
-    document.getElementById(
-      "local2p"
-    ).href = `/dist/2p.html?websocketserver=${wss}`
+    const wssparam = `websocketserver=${wss}`
+    document.getElementById("local2p").href = `/dist/2p.html?${wssparam}`
     document.getElementById(
       "local2p3c"
-    ).href = `/dist/2p.html?ruletype=threecushion&websocketserver=${wss}`
+    ).href = `/dist/2p.html?${wssparam}&ruletype=threecushion`
     document.getElementById(
       "github"
-    ).href = `https://tailuge.github.io/billiards/dist/?websocketserver=${wss}`
+    ).href = `https://tailuge.github.io/billiards/dist/?${wssparam}`
   </script>
 </html>

@@ -7,6 +7,7 @@ import { AbortEvent } from "./abortevent"
 import { BreakEvent } from "./breakevent"
 import { BeginEvent } from "./beginevent"
 import { ChatEvent } from "./chatevent"
+import { RejoinEvent } from "./rejoinevent"
 import { PlaceBallEvent } from "./placeballevent"
 
 export class EventUtil {
@@ -29,6 +30,8 @@ export class EventUtil {
         return HitEvent.fromJson(parsed)
       case EventType.CHAT:
         return ChatEvent.fromJson(parsed)
+      case EventType.REJOIN:
+        return RejoinEvent.fromJson(parsed)
       case EventType.ABORT:
         return new AbortEvent()
       case EventType.PLACEBALL:

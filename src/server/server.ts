@@ -1,7 +1,7 @@
 import { WebSocketServer, WebSocket } from "ws"
 import { spawnSync } from "child_process"
 import { EventUtil } from "../events/eventutil"
-import { Client, Lobby } from "./lobby"
+import { Lobby } from "./lobby"
 import * as express from "express"
 
 const lobby = new Lobby()
@@ -23,7 +23,7 @@ console.log(`Starting websocketserver on port ${port}`)
 const wss = new WebSocketServer({ noServer: true })
 
 server.on("upgrade", (request, socket, head) => {
-  console.log("upgrade request for websocket")
+  console.log(`upgrade request for websocket ${request.url}`)
   wss.handleUpgrade(request, socket, head, (ws) => {
     wss.emit("connection", ws, request)
   })
@@ -49,12 +49,22 @@ function parse(url) {
 
 wss.on("connection", function connection(ws: WebSocket, req) {
   const params = parse(req.url)
-  const tableId = params.get("table") ?? "default"
+  const clientId = params.get("clientId")
+  const tableId = params.get("tableId")
   const name = params.get("name") ?? "anonymous"
-  const client: Client = { ws: ws, name: name }
+  const client = lobby.createClient(ws, tableId, clientId, name)
+  if (!client) {
+    const message =
+      "Invalid: Connection request must contain tableId and clientId"
+    ws.send(message)
+    console.log(message, params)
+    return
+  }
 
-  console.log(`'${name}' joined table '${tableId}'`)
   const event = lobby.joinTable(client, tableId)
+  console.log(
+    `'${name}':${clientId} requesting to join table '${tableId}. Response is ${event.type}`
+  )
   ws.send(EventUtil.serialise(event))
 
   ws.on("message", (message) => {

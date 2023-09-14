@@ -8,4 +8,5 @@ export enum EventType {
   CHAT = "CHAT",
   ABORT = "ABORT",
   PLACEBALL = "PLACEBALL",
+  REJOIN = "REJOIN",
 }

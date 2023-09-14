@@ -12,7 +12,7 @@
     "test": "jest --verbose",
     "coverage": "jest --coverage",
     "dev": "webpack ",
-    "prettify": "prettier --cache true --write --trailing-comma es5 --no-semi {src,test}/**/*.[jt]s dist/**/*.{css,html} *.[jt]s *.json dist/lobby.js",
+    "prettify": "prettier --cache true --write --trailing-comma es5 --no-semi {src,test}/**/*.[jt]s dist/**/*.{css,html} *.[jt]s *.json dist/lobby/*",
     "markdownlint": "npx markdownlint-cli2 README.md --fix",
     "serve": "webpack serve",
     "servegitpod": "webpack serve --client-web-socket-url $(gp url 8080 | sed 's/http/ws/' | sed 's#$#/ws#')",

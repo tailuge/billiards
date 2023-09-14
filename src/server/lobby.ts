@@ -1,93 +1,84 @@
 import { BeginEvent } from "../events/beginevent"
 import { ChatEvent } from "../events/chatevent"
 import { EventUtil } from "../events/eventutil"
-import { WebSocket } from "ws"
-
-export type Client = { ws?: WebSocket; name: string }
+import { RejoinEvent } from "../events/rejoinevent"
+import { EventType } from "../events/eventtype"
+import { Tables } from "./tables"
+import { Client } from "./tableinfo"
 
 export class Lobby {
-  readonly tables: Map<string, Client[]> = new Map()
+  readonly tables = new Tables()
 
-  randomTableId() {
-    return Math.floor(Math.random() * 0xffffff).toString(16)
+  createClient(ws, tableId, clientId, name): Client | undefined {
+    if (!tableId || !clientId) {
+      return undefined
+    }
+    return { ws: ws, name: name, clientId: clientId }
   }
 
   private message(playerId, text) {
     return new ChatEvent(playerId, text)
   }
 
-  private getOrCreateTable(tableId): Client[] {
-    const table = this.tables.get(tableId)
-    if (table) {
-      return table
-    }
-    this.tables.set(tableId, [])
-    return this.tables.get(tableId)!
-  }
-
   joinTable(client, tableId) {
-    const table = this.getOrCreateTable(tableId)
-
-    if (table.length >= 2) {
+    let tableInfo = this.tables.getTable(tableId)
+    if (tableInfo.isRejoin(client)) {
+      const rejoin: RejoinEvent = tableInfo.lastMessage
+      rejoin.fromOther = rejoin.senderId !== client.clientId
+      return rejoin
+    }
+    if (tableInfo.isFull()) {
       return this.message(client.name, "Table already full")
     }
 
-    table.push(client)
+    tableInfo.join(client)
 
-    if (table.length == 1) {
+    if (tableInfo.clients.length == 1) {
       return this.message(client.name, "Waiting for opponent...")
     }
 
     // both players arrived
-    this.notifyJoined(client, tableId)
+    this.notifyJoined(client, tableInfo)
     return new BeginEvent()
   }
 
-  notifyJoined(client, tableId) {
-    const otherClient = this.otherClientsInTable(client, tableId)[0]
+  notifyJoined(client, tableInfo) {
+    const otherClient = tableInfo.otherClients(client)[0]
     const message = EventUtil.serialise(
       this.message(
         "lobby",
-        `${client.name} and ${otherClient.name} have joined '${tableId}'`
+        `${client.name} and ${otherClient.name} have joined '${tableInfo.tableId}'`
       )
     )
     this.send(client, message)
     this.send(otherClient, message)
   }
 
-  handleTableMessage(client, tableId, message) {
+  handleTableMessage(client: Client, tableId, message) {
+    const tableInfo = this.tables.getTable(tableId)
     const m = message.toString()
-    const mtype = JSON.parse(m).type
+    const json = JSON.parse(m)
+    const mtype = json.type
+    if (mtype === EventType.HIT) {
+      tableInfo.lastMessage = new RejoinEvent(client.clientId, json)
+    }
     const info = `received: ${mtype} from ${client.name}`
-    this.otherClientsInTable(client, tableId).forEach((c) => {
+    tableInfo.otherClients(client).forEach((c) => {
       this.send(c, m)
     })
     return info
   }
 
   handleLeaveTable(client, tableId) {
-    const table = this.tables.get(tableId)
-    if (table) {
-      const index = table.indexOf(client)
-      if (index > -1) {
-        table.splice(index, 1)
-      }
-      const message = this.message(client.name, `${client.name} has left`)
-      this.otherClientsInTable(client, tableId).forEach((c) => {
-        this.send(c, EventUtil.serialise(message))
-      })
-    }
+    const tableInfo = this.tables.getTable(tableId)
+    tableInfo.leave(client)
+    const message = this.message(client.name, `${client.name} has left`)
+    tableInfo.otherClients(client).forEach((c) => {
+      this.send(c, EventUtil.serialise(message))
+    })
   }
 
   send(client, message) {
     client.ws?.send(message)
-  }
-
-  otherClientsInTable(client, tableId): Client[] {
-    return this.tableClients(tableId).filter((c) => c !== client)
-  }
-
-  tableClients(tableId) {
-    return this.tables.get(tableId) || []
   }
 }

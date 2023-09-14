@@ -12,7 +12,8 @@ import { ChatEvent } from "../events/chatevent"
 export class BrowserContainer {
   container: Container
   canvas3d
-  tablename
+  tableId
+  clientId
   wss
   ruletype
   playername: string
@@ -23,9 +24,10 @@ export class BrowserContainer {
     shots: Array<string>(),
   }
 
-  constructor(ruletype, playername, tablename, replay, wss, canvas3d) {
+  constructor(ruletype, playername, tableId, clientId, replay, wss, canvas3d) {
     this.playername = playername
-    this.tablename = tablename
+    this.tableId = tableId
+    this.clientId = clientId
     this.replay = replay
     this.ruletype = ruletype
     this.wss = wss
@@ -49,7 +51,7 @@ export class BrowserContainer {
     }
     if (this.wss) {
       this.sc = new SocketConnection(
-        `${this.wss}?name=${this.playername}&table=${this.tablename}`
+        `${this.wss}?name=${this.playername}&tableId=${this.tableId}&clientId=${this.clientId}`
       )
       this.sc.eventHandler = (e) => {
         this.netEvent(e)
