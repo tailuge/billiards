@@ -49,6 +49,16 @@ describe("Cushion", () => {
     done()
   })
 
+  it("bounces off X cushion on pocketless table", (done) => {
+    const pos = new Vector3(TableGeometry.tableX, 0, 0)
+    const ball = new Ball(pos)
+    ball.vel.x = 1
+    expect(Cushion.bounceAny(ball, t, false)).to.be.greaterThan(0)
+    expect(Cushion.bounceAny(ball, t, false)).to.be.undefined
+    expect(ball.vel.x).to.be.below(0)
+    done()
+  })
+
   function bounceInXWithSpin(rvel) {
     const pos = new Vector3(TableGeometry.tableX, 0, 0)
     const ball = new Ball(pos)

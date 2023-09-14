@@ -36,28 +36,36 @@ export class Trace {
   }
 
   addTrace(pos, vel) {
+    if (vel.length() === 0) {
+      return
+    }
     const curvature = this.lastVel.angleTo(vel)
     const delta = curvature > Math.PI / 32 ? 0.01 : 0.5
-    this.addTraceAfterDelta(pos, vel, delta)
-  }
+    const distance = this.lastPos.distanceTo(pos)
 
-  addTraceAfterDelta(pos, vel, delta) {
-    if (this.lastPos.distanceTo(pos) > delta) {
-      this.addPoint(pos)
-      this.lastPos.copy(pos)
-      this.lastVel.copy(vel)
+    if (distance < delta) {
+      return
     }
+
+    let index = this.geometry.drawRange.count
+    if (index > 2 && curvature < 0.0001) {
+      index--
+    }
+
+    this.lastPos.copy(pos)
+    this.lastVel.copy(vel)
+    this.addPoint(pos, index)
   }
 
-  addPoint(pos) {
-    let index = this.geometry.drawRange.count * 3
+  addPoint(pos, i) {
+    let index = i * 3
     if (index > this.positions.length) {
       return
     }
     this.positions[index++] = pos.x
     this.positions[index++] = pos.y
     this.positions[index] = pos.z
-    this.geometry.setDrawRange(0, this.geometry.drawRange.count + 1)
+    this.geometry.setDrawRange(0, i + 1)
     this.line.geometry.attributes.position.needsUpdate = true
   }
 }
