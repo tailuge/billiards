@@ -13,9 +13,10 @@ import { WatchAim } from "../../src/controller/watchaim"
 describe("ThreeCushion", () => {
   let container: Container
   let broadcastEvents: GameEvent[]
+  const rule = "threecushion"
 
   beforeEach(function (done) {
-    container = new Container(undefined, (_) => {}, "threecushion")
+    container = new Container(undefined, (_) => {}, rule)
     broadcastEvents = []
     container.broadcast = (x) =>
       broadcastEvents.push(EventUtil.fromSerialised(x))
@@ -33,7 +34,7 @@ describe("ThreeCushion", () => {
     done()
   })
 
-  it("ThreeCushion valid point keep going", (done) => {
+  it("ThreeCushion score point transition to Aim", (done) => {
     container.controller = new PlayShot(container)
     container.isSinglePlayer = false
     container.table.balls[0].setStationary()
@@ -61,14 +62,27 @@ describe("ThreeCushion", () => {
   })
 
   it("ThreeCushion has 3 balls", (done) => {
-    const rules = RuleFactory.create("threecushion", null)
+    const rules = RuleFactory.create(rule, container)
     expect(rules.rack()).to.be.lengthOf(3)
     done()
   })
 
   it("ThreeCushion has no pockets", (done) => {
-    const rules = RuleFactory.create("threecushion", null)
+    const rules = RuleFactory.create(rule, container)
     expect(rules.table().hasPockets).to.be.false
+    done()
+  })
+
+  it("ThreeCushion has no pockets", (done) => {
+    const rules = RuleFactory.create(rule, container)
+    expect(rules.table().hasPockets).to.be.false
+    done()
+  })
+
+  it("ThreeCushion second player uses second cueball", (done) => {
+    const rules = RuleFactory.create(rule, container)
+    rules.secondToPlay()
+    expect(rules.cueball).to.equal(container.table.balls[1])
     done()
   })
 

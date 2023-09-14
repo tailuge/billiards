@@ -94,6 +94,24 @@ describe("Table", () => {
     done()
   })
 
+  it("three cushion table has no pocket", (done) => {
+    const edge =
+      TableGeometry.pockets.pocketS.pocket.pos.y +
+      TableGeometry.middleRadius +
+      0.01
+    const a = new Ball(new Vector3(0, edge + 1, 0))
+    const b = new Ball(new Vector3(0, edge, 0))
+    a.vel.y = -2
+    a.state = State.Sliding
+    const table = new Table([a, b])
+    table.hasPockets = false
+    const s = table.prepareAdvanceAll(t)
+    expect(s).to.be.false
+    table.advance(t)
+    expect(b.onTable()).to.be.true
+    done()
+  })
+
   it("collides with knuckle", (done) => {
     const a = new Ball(
       new Vector3(
