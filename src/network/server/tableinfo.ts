@@ -19,7 +19,7 @@ export class TableInfo {
   }
 
   leave(client: Client) {
-    this.clients = this.clients.filter((c) => c === client)
+    this.clients = this.otherClients(client)
   }
 
   otherClients(client): Client[] {
@@ -27,7 +27,13 @@ export class TableInfo {
   }
 
   isRejoin(client: Client) {
-    return this.owningClientIds.includes(client.clientId)
+    return (
+      this.owningClientIds.includes(client.clientId) && !this.isActive(client)
+    )
+  }
+
+  isActive(client: Client): boolean {
+    return this.clients.some((c) => c.clientId === client.clientId)
   }
 
   isFull() {

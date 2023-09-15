@@ -52,6 +52,14 @@ describe("Lobby", () => {
     done()
   })
 
+  it("join twice gets message", (done) => {
+    lobby.joinTable(player1, tableId)
+    const event = lobby.joinTable(player1, tableId)
+    expect(event).to.be.an.instanceof(ChatEvent)
+    expect((event as ChatEvent).message).to.contain("Already")
+    done()
+  })
+
   it("Other players does not include this player", (done) => {
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)

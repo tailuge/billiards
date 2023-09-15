@@ -22,6 +22,11 @@ export class Lobby {
 
   joinTable(client, tableId) {
     const tableInfo = this.tables.getTable(tableId)
+
+    if (tableInfo.isActive(client)) {
+      return this.message(client.name, "Already joined in another window")
+    }
+
     if (tableInfo.isRejoin(client)) {
       const rejoin: RejoinEvent = tableInfo.lastMessage
       rejoin.fromOther = rejoin.senderId !== client.clientId
