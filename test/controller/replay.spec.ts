@@ -1,7 +1,6 @@
 import "mocha"
 import { expect } from "chai"
 import { Container } from "../../src/container/container"
-import { EventUtil } from "../../src/events/eventutil"
 import { BreakEvent } from "../../src/events/breakevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { Replay } from "../../src/controller/replay"
@@ -41,8 +40,7 @@ describe("Controller Replay", () => {
     container = new Container(undefined, (_) => {})
     container.isSinglePlayer = true
     broadcastEvents = []
-    container.broadcast = (x) =>
-      broadcastEvents.push(EventUtil.fromSerialised(x))
+    container.broadcast = (x) => broadcastEvents.push(x)
     done()
   })
 

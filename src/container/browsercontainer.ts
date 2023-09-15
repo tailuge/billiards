@@ -5,6 +5,7 @@ import { EventType } from "../events/eventtype"
 import { BreakEvent } from "../events/breakevent"
 import { SocketConnection } from "../network/client/socketconnection"
 import { ChatEvent } from "../events/chatevent"
+import { GameEvent } from "../events/gameevent"
 
 /**
  * Integrate game container into HTML page
@@ -50,13 +51,13 @@ export class BrowserContainer {
       this.recordingBroadcast(e)
     }
     if (this.wss) {
-      this.sc = new SocketConnection(
-        `${this.wss}?name=${this.playername}&tableId=${this.tableId}&clientId=${this.clientId}`
-      )
+      const params = `name=${this.playername}&tableId=${this.tableId}&clientId=${this.clientId}`
+      this.container.isSinglePlayer = false
+      this.sc = new SocketConnection(`${this.wss}?${params}`)
+      this.networkButton()
       this.sc.eventHandler = (e) => {
         this.netEvent(e)
       }
-      this.container.isSinglePlayer = false
     }
   }
 
@@ -91,12 +92,17 @@ export class BrowserContainer {
     this.container.eventQueue.push(event)
   }
 
-  recordingBroadcast(e: string) {
-    const event = EventUtil.fromSerialised(e)
+  networkButton() {
+    document.getElementById("network")!.onclick = () => {
+      this.sc?.close()
+    }
+  }
+
+  recordingBroadcast(event: GameEvent) {
     if (event.type === EventType.HIT) {
       this.shotReplayLink()
     }
-    this.sc?.send(e)
+    this.sc?.send(event)
   }
 
   shotReplayLink() {

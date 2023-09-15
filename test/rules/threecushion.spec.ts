@@ -3,7 +3,6 @@ import { expect } from "chai"
 import { Container } from "../../src/container/container"
 import { Aim } from "../../src/controller/aim"
 import { PlayShot } from "../../src/controller/playshot"
-import { EventUtil } from "../../src/events/eventutil"
 import { StationaryEvent } from "../../src/events/stationaryevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { Outcome } from "../../src/model/outcome"
@@ -18,8 +17,7 @@ describe("ThreeCushion", () => {
   beforeEach(function (done) {
     container = new Container(undefined, (_) => {}, rule)
     broadcastEvents = []
-    container.broadcast = (x) =>
-      broadcastEvents.push(EventUtil.fromSerialised(x))
+    container.broadcast = (x) => broadcastEvents.push(x)
     done()
   })
 

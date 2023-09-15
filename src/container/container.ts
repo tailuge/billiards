@@ -5,7 +5,6 @@ import { Controller } from "../controller/controller"
 import { Table } from "../model/table"
 import { View } from "../view/view"
 import { Init } from "../controller/init"
-import { EventUtil } from "../events/eventutil"
 import { AimInputs } from "../view/aiminputs"
 import { Keyboard } from "../events/keyboard"
 import { Sound } from "../view/sound"
@@ -39,7 +38,7 @@ export class Container {
   last = performance.now()
   readonly step = 0.001953125 * 1
 
-  broadcast: (event: string) => void
+  broadcast: (event: GameEvent) => void
   log: (text: string) => void
 
   constructor(element, log, ruletype?, keyboard?, ready?, id?) {
@@ -64,7 +63,7 @@ export class Container {
 
   throttle = new Throttle(250, (event) => {
     this.recoder.record(event)
-    this.broadcast(EventUtil.serialise(event))
+    this.broadcast(event)
   })
 
   sendEvent(event) {

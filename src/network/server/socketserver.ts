@@ -47,7 +47,7 @@ export class SocketServer {
     const event = this.lobby.joinTable(client, tableId)
     const json = JSON.stringify(event)
     console.log(
-      `'${name}':${clientId} requesting to join table => '${tableId} : ${json}`
+      `'${name}':${clientId} requesting to join table => '${tableId}' response is ${json}`
     )
     ws.send(EventUtil.serialise(event))
 

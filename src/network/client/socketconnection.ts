@@ -1,5 +1,6 @@
 import { ChatEvent } from "../../events/chatevent"
 import { EventUtil } from "../../events/eventutil"
+import { GameEvent } from "../../events/gameevent"
 
 /**
  * Handle websocket connection to server
@@ -7,15 +8,17 @@ import { EventUtil } from "../../events/eventutil"
 export class SocketConnection {
   ws: WebSocket
   eventHandler
-
+  retryCount = 0
+  retryDelay = 1000
+  readonly url
   constructor(url: string) {
-    console.log("connecting to " + url)
-    this.ws = new WebSocket(url)
-    this.ws.onopen = this.log
-    this.ws.onclose = this.log
-    this.ws.onerror = (e) => {
-      console.log(e)
-    }
+    this.url = url
+    this.connect()
+  }
+
+  connect() {
+    console.log("connecting to " + this.url)
+    this.ws = new WebSocket(this.url)
     this.ws.onmessage = (event) => {
       if (event.data instanceof ArrayBuffer) {
         // binary frame
@@ -31,9 +34,23 @@ export class SocketConnection {
     }
     this.ws.onclose = (event) => {
       this.notifyClient(`connection closed: ${JSON.stringify(event)}`)
+      this.reconnect()
     }
     this.ws.onerror = (event) => {
       this.notifyClient(`error with connection: ${JSON.stringify(event)}`)
+      this.ws.close()
+    }
+  }
+
+  reconnect() {
+    console.log(
+      `reconnecting (${this.retryCount}) after ${this.retryDelay / 1000}s`
+    )
+    if (this.retryCount++ < 25) {
+      setTimeout(() => {
+        this.connect()
+      }, this.retryDelay)
+      this.retryDelay += 1000
     }
   }
 
@@ -42,14 +59,12 @@ export class SocketConnection {
     this.eventHandler(EventUtil.serialise(new ChatEvent("network", message)))
   }
 
-  send(e: string) {
-    this.ws.send(e)
+  send(event: GameEvent) {
+    this.ws.send(EventUtil.serialise(event))
   }
 
-  log(e) {
-    console.log("socket:", e.type)
-    if (e.data) {
-      e.data.text().then((text) => console.log(text))
-    }
+  close() {
+    console.log("Force close socket")
+    this.ws.close()
   }
 }
