@@ -1,8 +1,8 @@
-import { BeginEvent } from "../events/beginevent"
-import { ChatEvent } from "../events/chatevent"
-import { EventUtil } from "../events/eventutil"
-import { RejoinEvent } from "../events/rejoinevent"
-import { EventType } from "../events/eventtype"
+import { BeginEvent } from "../../events/beginevent"
+import { ChatEvent } from "../../events/chatevent"
+import { EventUtil } from "../../events/eventutil"
+import { RejoinEvent } from "../../events/rejoinevent"
+import { EventType } from "../../events/eventtype"
 import { Tables } from "./tables"
 import { Client } from "./tableinfo"
 
@@ -21,7 +21,7 @@ export class Lobby {
   }
 
   joinTable(client, tableId) {
-    let tableInfo = this.tables.getTable(tableId)
+    const tableInfo = this.tables.getTable(tableId)
     if (tableInfo.isRejoin(client)) {
       const rejoin: RejoinEvent = tableInfo.lastMessage
       rejoin.fromOther = rejoin.senderId !== client.clientId

@@ -1,5 +1,5 @@
-import { ChatEvent } from "./chatevent"
-import { EventUtil } from "./eventutil"
+import { ChatEvent } from "../../events/chatevent"
+import { EventUtil } from "../../events/eventutil"
 
 /**
  * Handle websocket connection to server

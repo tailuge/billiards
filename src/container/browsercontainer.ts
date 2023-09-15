@@ -3,7 +3,7 @@ import { Keyboard } from "../events/keyboard"
 import { EventUtil } from "../events/eventutil"
 import { EventType } from "../events/eventtype"
 import { BreakEvent } from "../events/breakevent"
-import { SocketConnection } from "../events/socketconnection"
+import { SocketConnection } from "../network/client/socketconnection"
 import { ChatEvent } from "../events/chatevent"
 
 /**

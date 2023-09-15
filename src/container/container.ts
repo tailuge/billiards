@@ -15,8 +15,8 @@ import { ChatEvent } from "../events/chatevent"
 import { Throttle } from "../events/throttle"
 import { Sliders } from "../view/sliders"
 import { Recorder } from "../events/recorder"
-import { Rules } from "../rules/rules"
-import { RuleFactory } from "../rules/rulefactory"
+import { Rules } from "../controller/rules/rules"
+import { RuleFactory } from "../controller/rules/rulefactory"
 
 /**
  * Model, View, Controller container.

@@ -7,7 +7,7 @@ import { EventUtil } from "../../src/events/eventutil"
 import { StationaryEvent } from "../../src/events/stationaryevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { Outcome } from "../../src/model/outcome"
-import { RuleFactory } from "../../src/rules/rulefactory"
+import { RuleFactory } from "../../src/controller/rules/rulefactory"
 import { WatchAim } from "../../src/controller/watchaim"
 
 describe("ThreeCushion", () => {

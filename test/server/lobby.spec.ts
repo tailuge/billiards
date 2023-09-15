@@ -1,10 +1,10 @@
 import "mocha"
 import { expect } from "chai"
-import { Lobby } from "../../src/server/lobby"
+import { Lobby } from "../../src/network/server/lobby"
 import { ChatEvent } from "../../src/events/chatevent"
 import { BeginEvent, HitEvent } from "../../src/controller/controller"
 import { EventUtil } from "../../src/events/eventutil"
-import { Client } from "../../src/server/tableinfo"
+import { Client } from "../../src/network/server/tableinfo"
 import { RejoinEvent } from "../../src/events/rejoinevent"
 
 let lobby: Lobby

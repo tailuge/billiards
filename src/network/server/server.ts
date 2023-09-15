@@ -1,6 +1,6 @@
 import { WebSocketServer, WebSocket } from "ws"
 import { spawnSync } from "child_process"
-import { EventUtil } from "../events/eventutil"
+import { EventUtil } from "../../events/eventutil"
 import { Lobby } from "./lobby"
 import * as express from "express"
 

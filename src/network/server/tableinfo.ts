@@ -1,4 +1,4 @@
-import { RejoinEvent } from "../events/rejoinevent"
+import { RejoinEvent } from "../../events/rejoinevent"
 import { WebSocket } from "ws"
 
 export type Client = { ws?: WebSocket; name: string; clientId: string }
