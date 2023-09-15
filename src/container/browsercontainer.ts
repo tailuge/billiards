@@ -66,13 +66,16 @@ export class BrowserContainer {
 
     if (this.replay) {
       this.container.table.cue.aimInputs.setButtonText("↻")
+      this.breakState = JSON.parse(decodeURI(this.replay))
       this.container.table.cue.aimInputs.cueHitElement?.addEventListener(
         "click",
         () => {
-          location.reload()
+          //location.reload()
+          this.container.eventQueue.push(
+            new BreakEvent(this.breakState.init, this.breakState.shots)
+          )
         }
       )
-      this.breakState = JSON.parse(decodeURI(this.replay))
       this.container.eventQueue.push(
         new BreakEvent(this.breakState.init, this.breakState.shots)
       )

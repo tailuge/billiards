@@ -2,6 +2,7 @@ import { HitEvent } from "../events/hitevent"
 import { ControllerBase } from "./controllerbase"
 import { AimEvent } from "../events/aimevent"
 import { Controller, Input } from "./controller"
+import { BreakEvent } from "../events/breakevent"
 
 export class Replay extends ControllerBase {
   delay: number
@@ -9,7 +10,7 @@ export class Replay extends ControllerBase {
 
   constructor(container, shots, delay = 1500) {
     super(container)
-    this.shots = shots
+    this.shots = [...shots]
     this.delay = delay
     this.container.table.showTraces(true)
   }
@@ -50,6 +51,18 @@ export class Replay extends ControllerBase {
   override handleInput(input: Input): Controller {
     if (input.key == "KeyOUp") {
       this.container.view.camera.toggleMode()
+    }
+    if (input.key == "KeyDUp") {
+      this.container.sliders.toggleVisibility()
+    }
+    return this
+  }
+
+  override handleBreak(event: BreakEvent): Controller {
+    if (event.init) {
+      this.container.table.updateFromShortSerialised(event.init)
+      this.shots = [...event.shots]
+      this.playNextShot(this.delay)
     }
     return this
   }

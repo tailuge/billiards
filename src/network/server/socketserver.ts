@@ -1,21 +1,21 @@
 import { WebSocketServer, WebSocket } from "ws"
 import { spawnSync } from "child_process"
 import { Lobby } from "./lobby"
+import { ServerLog } from "./serverlog"
 
 export class SocketServer {
   readonly port
   readonly wss = new WebSocketServer({ noServer: true })
   readonly lobby = new Lobby()
-
   constructor(port) {
     this.port = port
-    console.log(`WebSocketServer running on port ${port}`)
+    ServerLog.log(`WebSocketServer running on port ${port}`)
     const gitpodCommand = spawnSync(`gp`, ["url", `${port}`], {
       shell: false,
     }).stdout
     if (gitpodCommand !== null) {
       const gitpodUrl = gitpodCommand.toString()
-      console.log(`WebSocketServer is exposed on gitpod at ${gitpodUrl}`)
+      ServerLog.log(`WebSocketServer is exposed on gitpod at ${gitpodUrl}`)
     }
 
     this.wss.on("connection", (ws: WebSocket, req) => {
@@ -40,13 +40,13 @@ export class SocketServer {
       const message =
         "Invalid: Connection request must contain tableId and clientId"
       ws.send(message)
-      console.log(message, params)
+      ServerLog.log(message + params)
       return
     }
 
     const event = this.lobby.joinTable(client, tableId, sent, recv)
     const json = JSON.stringify(event)
-    console.log(
+    ServerLog.log(
       `'${name}':${clientId} requesting to join table => '${tableId}' response is ${json}`
     )
     this.lobby.send(client, tableId, event)
@@ -55,13 +55,13 @@ export class SocketServer {
     ws.on("message", (message) => {
       const info = this.lobby.handleTableMessage(client, tableId, message)
       if (!info.includes(" AIM ")) {
-        console.log(info)
+        ServerLog.log(info)
       }
     })
 
     ws.on("close", (_) => {
       this.lobby.handleLeaveTable(client, tableId)
-      console.log(`'${name}' left table '${tableId}'`)
+      ServerLog.log(`'${name}' left table '${tableId}'`)
     })
   }
 }
