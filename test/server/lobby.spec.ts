@@ -99,10 +99,8 @@ describe("Lobby", () => {
     lobby.joinTable(player2, tableId)
     lobby.handleLeaveTable(player1, tableId)
     const event = lobby.joinTable(player1r, tableId, 0, 1)
-    console.log(event)
-    console.log(
-      lobby.tables.getTable(tableId).eventHistory.get(player1r.clientId)
-    )
+    //console.log(event)
+    //console.log(lobby.tables.getTable(tableId).eventHistory.get(player1r.clientId))
     expect(event).to.be.an.instanceof(RejoinEvent)
     expect((event as RejoinEvent).clientToResendLast).to.be.equals(0)
     expect((event as RejoinEvent).serverWillResendLast).to.be.equals(0)
