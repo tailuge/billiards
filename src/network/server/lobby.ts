@@ -20,18 +20,19 @@ export class Lobby {
     return new ChatEvent(playerId, text)
   }
 
-  joinTable(client, tableId) {
+  joinTable(client, tableId, clientSentCount = 0, clientRecvCount = 0) {
     const tableInfo = this.tables.getTable(tableId)
 
     if (tableInfo.isActive(client)) {
       return this.message(client.name, "Already joined in another window")
     }
 
-    if (tableInfo.isRejoin(client)) {
-      return this.rejoin(client, tableId)
-    }
     if (tableInfo.isFull()) {
       return this.message(client.name, "Table already full")
+    }
+
+    if (tableInfo.isRejoin(client)) {
+      return this.rejoin(client, tableInfo, clientSentCount, clientRecvCount)
     }
 
     tableInfo.join(client)
@@ -45,13 +46,15 @@ export class Lobby {
     return new BeginEvent()
   }
 
-  rejoin(client, tableId) {
-    const tableInfo = this.tables.getTable(tableId)
+  rejoin(client, tableInfo, clientSentCount, clientRecvCount) {
     const history = tableInfo.eventHistory.get(client.clientId)
-    console.log("sentTo  :" + history?.sentTo.length)
-    console.log("recvFrom:" + history?.recvFrom.length)
-    const rejoin: RejoinEvent = new RejoinEvent(null, null)
-    rejoin.fromOther = rejoin.senderId !== client.clientId
+    const sentToClient = history.sentTo.length
+    const recvFromClient = history.recvFrom.length
+    const rejoin: RejoinEvent = new RejoinEvent(
+      clientSentCount - recvFromClient,
+      sentToClient - clientRecvCount
+    )
+    tableInfo.rejoin(client)
     return rejoin
   }
 

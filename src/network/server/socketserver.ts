@@ -32,6 +32,8 @@ export class SocketServer {
     const params = this.parse(req.url)
     const clientId = params.get("clientId")
     const tableId = params.get("tableId")
+    const sent = Number(params.get("sent"))
+    const recv = Number(params.get("recv"))
     const name = params.get("name") ?? "anonymous"
     const client = this.lobby.createClient(ws, tableId, clientId, name)
     if (!client) {
@@ -42,7 +44,7 @@ export class SocketServer {
       return
     }
 
-    const event = this.lobby.joinTable(client, tableId)
+    const event = this.lobby.joinTable(client, tableId, sent, recv)
     const json = JSON.stringify(event)
     console.log(
       `'${name}':${clientId} requesting to join table => '${tableId}' response is ${json}`

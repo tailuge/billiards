@@ -38,6 +38,10 @@ export class TableInfo {
     this.clients.push(client)
   }
 
+  rejoin(client: Client) {
+    this.clients.push(client)
+  }
+
   leave(client: Client) {
     this.clients = this.otherClients(client)
   }
@@ -57,6 +61,6 @@ export class TableInfo {
   }
 
   isFull() {
-    return this.owningClientIds.length == 2
+    return this.clients.length == 2
   }
 }

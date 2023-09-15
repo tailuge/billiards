@@ -24,6 +24,9 @@ export class SocketConnection {
     )
     console.log("connecting to " + encoded)
     this.ws = new WebSocket(encoded)
+    this.ws.onopen = () => {
+      this.notifyClient(`connected`)
+    }
     this.ws.onmessage = (event) => {
       if (event.data instanceof ArrayBuffer) {
         // binary frame
@@ -39,7 +42,7 @@ export class SocketConnection {
       }
     }
     this.ws.onclose = (event) => {
-      this.notifyClient(`connection closed: ${JSON.stringify(event)}`)
+      console.log(`connection closed: ${JSON.stringify(event)}`)
       this.reconnect()
     }
     this.ws.onerror = (event) => {
@@ -48,6 +51,7 @@ export class SocketConnection {
   }
 
   reconnect() {
+    this.notifyClient(`reconnecting`)
     console.log(
       `reconnecting (${this.retryCount}) after ${this.retryDelay / 1000}s`
     )

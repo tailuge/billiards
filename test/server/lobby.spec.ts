@@ -2,13 +2,14 @@ import "mocha"
 import { expect } from "chai"
 import { Lobby } from "../../src/network/server/lobby"
 import { ChatEvent } from "../../src/events/chatevent"
-import { BeginEvent, HitEvent } from "../../src/controller/controller"
+import { BeginEvent } from "../../src/controller/controller"
 import { EventUtil } from "../../src/events/eventutil"
 import { Client } from "../../src/network/server/tableinfo"
 import { RejoinEvent } from "../../src/events/rejoinevent"
 
 let lobby: Lobby
 const player1: Client = { name: "p1", clientId: "id1" }
+const player1r: Client = { name: "p1rejoined", clientId: "id1" }
 const player2: Client = { name: "p2", clientId: "id2" }
 const player3: Client = { name: "p3", clientId: "id3" }
 const tableId = "tableOne"
@@ -80,42 +81,34 @@ describe("Lobby", () => {
     done()
   })
 
-  it("players leaves then rejoins", (done) => {
+  it("players leaves then rejoins, replaces old client on table", (done) => {
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)
     lobby.handleLeaveTable(player1, tableId)
-    const event = lobby.joinTable(player1, tableId)
+    const event = lobby.joinTable(player1r, tableId)
     expect(event).to.be.an.instanceof(RejoinEvent)
-    expect((event as RejoinEvent).senderId).to.be.null
-    done()
-  })
-  /*
-  it("players leaves after playing shot then rejoins", (done) => {
-    lobby.joinTable(player1, tableId)
-    lobby.joinTable(player2, tableId)
-    const message = EventUtil.serialise(new HitEvent(null))
-    lobby.handleTableMessage(player1, tableId, message)
-    lobby.handleLeaveTable(player1, tableId)
-    const event = lobby.joinTable(player1, tableId)
-    expect(event).to.be.an.instanceof(RejoinEvent)
-    expect((event as RejoinEvent).senderId).to.be.equal(player1.clientId)
-    expect((event as RejoinEvent).fromOther).to.be.false
+    expect((event as RejoinEvent).clientToResendLast).to.be.equals(0)
+    expect((event as RejoinEvent).serverWillResendLast).to.be.equals(1)
+    expect(lobby.tables.getTable(tableId).clients.includes(player1r)).to.be.true
+    expect(lobby.tables.getTable(tableId).clients.includes(player1)).to.be.false
     done()
   })
 
-  it("players leaves after opponent plays shot then rejoins", (done) => {
+  it("players leaves after receiving message", (done) => {
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)
-    const message = EventUtil.serialise(new HitEvent(null))
-    lobby.handleTableMessage(player2, tableId, message)
     lobby.handleLeaveTable(player1, tableId)
-    const event = lobby.joinTable(player1, tableId)
+    const event = lobby.joinTable(player1r, tableId, 0, 1)
+    console.log(event)
+    console.log(
+      lobby.tables.getTable(tableId).eventHistory.get(player1r.clientId)
+    )
     expect(event).to.be.an.instanceof(RejoinEvent)
-    expect((event as RejoinEvent).senderId).to.be.equal(player2.clientId)
-    expect((event as RejoinEvent).fromOther).to.be.true
+    expect((event as RejoinEvent).clientToResendLast).to.be.equals(0)
+    expect((event as RejoinEvent).serverWillResendLast).to.be.equals(0)
     done()
   })
-*/
+
   it("handle message ok", (done) => {
     const message = EventUtil.serialise(new BeginEvent())
     lobby.joinTable(player1, tableId)
