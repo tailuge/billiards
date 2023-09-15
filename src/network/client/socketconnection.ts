@@ -10,6 +10,8 @@ export class SocketConnection {
   eventHandler
   retryCount = 0
   retryDelay = 1000
+  sentCount = 0
+  recvCount = 0
   readonly url
   constructor(url: string) {
     this.url = url
@@ -17,8 +19,11 @@ export class SocketConnection {
   }
 
   connect() {
-    console.log("connecting to " + this.url)
-    this.ws = new WebSocket(this.url)
+    const encoded = encodeURI(
+      `${this.url}&sent=${this.sentCount}&recv=${this.recvCount}`
+    )
+    console.log("connecting to " + encoded)
+    this.ws = new WebSocket(encoded)
     this.ws.onmessage = (event) => {
       if (event.data instanceof ArrayBuffer) {
         // binary frame
@@ -29,6 +34,7 @@ export class SocketConnection {
         console.log(s)
       } else {
         // text frame
+        this.recvCount++
         this.eventHandler(event.data)
       }
     }
@@ -38,7 +44,6 @@ export class SocketConnection {
     }
     this.ws.onerror = (event) => {
       this.notifyClient(`error with connection: ${JSON.stringify(event)}`)
-      this.ws.close()
     }
   }
 
@@ -46,7 +51,7 @@ export class SocketConnection {
     console.log(
       `reconnecting (${this.retryCount}) after ${this.retryDelay / 1000}s`
     )
-    if (this.retryCount++ < 25) {
+    if (this.retryCount++ < 5) {
       setTimeout(() => {
         this.connect()
       }, this.retryDelay)
@@ -60,6 +65,7 @@ export class SocketConnection {
   }
 
   send(event: GameEvent) {
+    event.sequence = 1 + this.sentCount++
     this.ws.send(EventUtil.serialise(event))
   }
 

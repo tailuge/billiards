@@ -1,7 +1,5 @@
 import { WebSocketServer, WebSocket } from "ws"
 import { spawnSync } from "child_process"
-
-import { EventUtil } from "../../events/eventutil"
 import { Lobby } from "./lobby"
 
 export class SocketServer {
@@ -49,9 +47,9 @@ export class SocketServer {
     console.log(
       `'${name}':${clientId} requesting to join table => '${tableId}' response is ${json}`
     )
-    ws.send(EventUtil.serialise(event))
+    this.lobby.send(client, tableId, event)
     // needs to close if not admitted and client needs to not retry
-    
+
     ws.on("message", (message) => {
       const info = this.lobby.handleTableMessage(client, tableId, message)
       if (!info.includes(" AIM ")) {

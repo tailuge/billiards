@@ -15,8 +15,7 @@ export class EventUtil {
     return JSON.stringify(event)
   }
 
-  static fromSerialised(data: string) {
-    const parsed = JSON.parse(data)
+  private static fromJson(parsed) {
     switch (parsed.type) {
       case EventType.BEGIN:
         return new BeginEvent()
@@ -37,7 +36,16 @@ export class EventUtil {
       case EventType.PLACEBALL:
         return PlaceBallEvent.fromJson(parsed)
       default:
-        throw Error("Unknown GameEvent :" + data)
+        throw Error("Unknown GameEvent :" + parsed)
     }
+  }
+
+  static fromSerialised(data: string) {
+    const parsed = JSON.parse(data)
+    const event = EventUtil.fromJson(parsed)
+    if ("sequence" in parsed) {
+      event.sequence = Number(parsed.sequence)
+    }
+    return event
   }
 }

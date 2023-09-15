@@ -1,4 +1,4 @@
-import { RejoinEvent } from "../../events/rejoinevent"
+import { GameEvent } from "../../events/gameevent"
 import { WebSocket } from "ws"
 
 export type Client = { ws?: WebSocket; name: string; clientId: string }
@@ -7,10 +7,30 @@ export class TableInfo {
   readonly tableId: string
   readonly owningClientIds: string[] = []
   clients: Client[] = []
-  lastMessage = new RejoinEvent(null, null)
+
+  eventHistory: Map<string, { sentTo: GameEvent[]; recvFrom: GameEvent[] }> =
+    new Map()
 
   constructor(tableId) {
     this.tableId = tableId
+  }
+
+  recordSentEvent(client, event) {
+    if (!this.eventHistory.has(client.clientId)) {
+      this.eventHistory.set(client.clientId, { sentTo: [], recvFrom: [] })
+    }
+    const clientHistory = this.eventHistory.get(client.clientId)
+    clientHistory?.sentTo.push(event)
+    //    console.log(clientHistory?.sent)
+  }
+
+  recordRecvEvent(client, event) {
+    if (!this.eventHistory.has(client.clientId)) {
+      this.eventHistory.set(client.clientId, { sentTo: [], recvFrom: [] })
+    }
+    const clientHistory = this.eventHistory.get(client.clientId)
+    clientHistory?.recvFrom.push(event)
+    //  console.log(clientHistory?.recv)
   }
 
   join(client: Client) {

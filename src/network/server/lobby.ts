@@ -2,9 +2,9 @@ import { BeginEvent } from "../../events/beginevent"
 import { ChatEvent } from "../../events/chatevent"
 import { EventUtil } from "../../events/eventutil"
 import { RejoinEvent } from "../../events/rejoinevent"
-import { EventType } from "../../events/eventtype"
 import { Tables } from "./tables"
 import { Client } from "./tableinfo"
+import { GameEvent } from "../../events/gameevent"
 
 export class Lobby {
   readonly tables = new Tables()
@@ -28,9 +28,7 @@ export class Lobby {
     }
 
     if (tableInfo.isRejoin(client)) {
-      const rejoin: RejoinEvent = tableInfo.lastMessage
-      rejoin.fromOther = rejoin.senderId !== client.clientId
-      return rejoin
+      return this.rejoin(client, tableId)
     }
     if (tableInfo.isFull()) {
       return this.message(client.name, "Table already full")
@@ -47,29 +45,36 @@ export class Lobby {
     return new BeginEvent()
   }
 
+  rejoin(client, tableId) {
+    const tableInfo = this.tables.getTable(tableId)
+    const history = tableInfo.eventHistory.get(client.clientId)
+    console.log("sentTo  :" + history?.sentTo.length)
+    console.log("recvFrom:" + history?.recvFrom.length)
+    const rejoin: RejoinEvent = new RejoinEvent(null, null)
+    rejoin.fromOther = rejoin.senderId !== client.clientId
+    return rejoin
+  }
+
   notifyJoined(client, tableInfo) {
     const otherClient = tableInfo.otherClients(client)[0]
-    const message = EventUtil.serialise(
-      this.message(
-        "lobby",
-        `${client.name} and ${otherClient.name} have joined '${tableInfo.tableId}'`
-      )
+    const message = this.message(
+      "lobby",
+      `${client.name} and ${otherClient.name} have joined '${tableInfo.tableId}'`
     )
-    this.send(client, message)
-    this.send(otherClient, message)
+    this.send(client, tableInfo.tableId, message)
+    this.send(otherClient, tableInfo.tableId, message)
   }
 
   handleTableMessage(client: Client, tableId, message) {
     const tableInfo = this.tables.getTable(tableId)
     const m = message.toString()
+    const event = EventUtil.fromSerialised(m)
     const json = JSON.parse(m)
     const mtype = json.type
-    if (mtype === EventType.HIT) {
-      tableInfo.lastMessage = new RejoinEvent(client.clientId, json)
-    }
     const info = `received: ${mtype} from ${client.name}`
+    tableInfo.recordRecvEvent(client, event)
     tableInfo.otherClients(client).forEach((c) => {
-      this.send(c, m)
+      this.send(c, tableId, event)
     })
     return info
   }
@@ -79,11 +84,12 @@ export class Lobby {
     tableInfo.leave(client)
     const message = this.message(client.name, `${client.name} has left`)
     tableInfo.otherClients(client).forEach((c) => {
-      this.send(c, EventUtil.serialise(message))
+      this.send(c, tableId, message)
     })
   }
 
-  send(client, message) {
-    client.ws?.send(message)
+  send(client, tableId, event: GameEvent) {
+    this.tables.getTable(tableId).recordSentEvent(client, event)
+    client.ws?.send(EventUtil.serialise(event))
   }
 }
