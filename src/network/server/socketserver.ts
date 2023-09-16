@@ -35,33 +35,23 @@ export class SocketServer {
     const sent = Number(params.get("sent"))
     const recv = Number(params.get("recv"))
     const name = params.get("name") ?? "anonymous"
+    ServerLog.log(`${name}:${clientId} requesting to join ${tableId}`)
+
     const client = this.lobby.createClient(ws, tableId, clientId, name)
     if (!client) {
-      const message =
-        "Invalid: Connection request must contain tableId and clientId"
-      ws.send(message)
-      ServerLog.log(message + params)
       return
     }
 
-    const event = this.lobby.joinTable(client, tableId, sent, recv)
-    const json = JSON.stringify(event)
-    ServerLog.log(
-      `'${name}':${clientId} requesting to join table => '${tableId}' response is ${json}`
-    )
-    this.lobby.send(client, tableId, event)
-    // needs to close if not admitted and client needs to not retry
+    if (!this.lobby.joinTable(client, tableId, sent, recv)) {
+      return
+    }
 
     ws.on("message", (message) => {
-      const info = this.lobby.handleTableMessage(client, tableId, message)
-      if (!info.includes(" AIM ")) {
-        ServerLog.log(info)
-      }
+      this.lobby.handleTableMessage(client, tableId, message)
     })
 
     ws.on("close", (_) => {
       this.lobby.handleLeaveTable(client, tableId)
-      ServerLog.log(`'${name}' left table '${tableId}'`)
     })
   }
 }

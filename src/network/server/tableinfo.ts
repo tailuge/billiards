@@ -1,7 +1,6 @@
 import { GameEvent } from "../../events/gameevent"
-import { WebSocket } from "ws"
 
-export type Client = { ws?: WebSocket; name: string; clientId: string }
+export type Client = { ws; name: string; clientId: string }
 
 export class TableInfo {
   readonly tableId: string

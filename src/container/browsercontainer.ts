@@ -73,7 +73,7 @@ export class BrowserContainer {
           if (this.container.eventQueue.length == 0) {
             this.container.eventQueue.push(
               new BreakEvent(this.breakState.init, this.breakState.shots)
-            )  
+            )
           }
         }
       )

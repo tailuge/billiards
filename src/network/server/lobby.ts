@@ -5,12 +5,18 @@ import { RejoinEvent } from "../../events/rejoinevent"
 import { Tables } from "./tables"
 import { Client } from "./tableinfo"
 import { GameEvent } from "../../events/gameevent"
+import { ServerLog } from "./serverlog"
+import { EventType } from "../../events/eventtype"
 
 export class Lobby {
   readonly tables = new Tables()
 
   createClient(ws, tableId, clientId, name): Client | undefined {
     if (!tableId || !clientId) {
+      const message =
+        "Invalid: Connection request must contain tableId and clientId"
+      ServerLog.log(message)
+      ws.send(message)
       return undefined
     }
     return { ws: ws, name: name, clientId: clientId }
@@ -24,11 +30,13 @@ export class Lobby {
     const tableInfo = this.tables.getTable(tableId)
 
     if (tableInfo.isActive(client)) {
-      return this.message(client.name, "Already joined in another window")
+      this.sendInfo(client, tableId, "Already joined in another window")
+      return false
     }
 
     if (tableInfo.isFull()) {
-      return this.message(client.name, "Table already full")
+      this.sendInfo(client, tableId, "Table already full")
+      return false
     }
 
     if (tableInfo.isRejoin(client)) {
@@ -38,12 +46,14 @@ export class Lobby {
     tableInfo.join(client)
 
     if (tableInfo.clients.length == 1) {
-      return this.message(client.name, "Waiting for opponent...")
+      this.sendInfo(client, tableId, "Waiting for opponent...")
+      return true
     }
 
     // both players arrived
     this.notifyJoined(client, tableInfo)
-    return new BeginEvent()
+    this.send(client, tableId, new BeginEvent())
+    return true
   }
 
   rejoin(client, tableInfo, clientSentCount, clientRecvCount) {
@@ -55,7 +65,8 @@ export class Lobby {
       sentToClient - clientRecvCount
     )
     tableInfo.rejoin(client)
-    return rejoin
+    this.send(client, tableInfo.tableId, rejoin)
+    return true
   }
 
   notifyJoined(client, tableInfo) {
@@ -75,11 +86,11 @@ export class Lobby {
     const json = JSON.parse(m)
     const mtype = json.type
     const info = `received: ${mtype} from ${client.name}`
+    ServerLog.log(info)
     tableInfo.recordRecvEvent(client, event)
     tableInfo.otherClients(client).forEach((c) => {
       this.send(c, tableId, event)
     })
-    return info
   }
 
   handleLeaveTable(client, tableId) {
@@ -91,7 +102,14 @@ export class Lobby {
     })
   }
 
+  sendInfo(client, tableId, text) {
+    this.send(client, tableId, this.message("info", text))
+  }
+
   send(client, tableId, event: GameEvent) {
+    if (event.type !== EventType.AIM) {
+      ServerLog.log(`sending to ${client.name} event ${event.type}`)
+    }
     this.tables.getTable(tableId).recordSentEvent(client, event)
     client.ws?.send(EventUtil.serialise(event))
   }

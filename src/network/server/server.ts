@@ -2,6 +2,8 @@ import * as express from "express"
 import { SocketServer } from "./socketserver"
 import { ServerLog } from "./serverlog"
 
+ServerLog.enable = true
+
 const port = Number(process.env.PORT || 8888)
 const socketserver = new SocketServer(port)
 const app = express()

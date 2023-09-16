@@ -51,6 +51,10 @@ export class SocketConnection {
   }
 
   reconnect() {
+    if (this.ws.readyState === 1) {
+      console.log("connected")
+      return
+    }
     this.notifyClient(`reconnecting`)
     console.log(
       `reconnecting (${this.retryCount}) after ${this.retryDelay / 1000}s`
