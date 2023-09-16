@@ -7,6 +7,7 @@ import { BreakEvent } from "../events/breakevent"
 export class Replay extends ControllerBase {
   delay: number
   shots: AimEvent[]
+  timer
 
   constructor(container, shots, delay = 1500) {
     super(container)
@@ -28,7 +29,8 @@ export class Replay extends ControllerBase {
     this.container.table.cue.updateAimInput()
     this.container.table.cue.t = 1
     this.container.view.camera.forceMode(this.container.view.camera.topView)
-    setTimeout(() => {
+    clearTimeout(this.timer)
+    this.timer = setTimeout(() => {
       this.container.eventQueue.push(new HitEvent(this.container.table.cue.aim))
     }, delay)
   }
@@ -59,10 +61,12 @@ export class Replay extends ControllerBase {
   }
 
   override handleBreak(event: BreakEvent): Controller {
-    if (event.init) {
+    console.log("re-replay")
+    if (event.init && this.shots.length == 0) {
       this.container.table.updateFromShortSerialised(event.init)
       this.shots = [...event.shots]
       this.playNextShot(this.delay)
+      this.container.table.showSpin(true)
     }
     return this
   }

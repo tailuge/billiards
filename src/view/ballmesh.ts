@@ -39,7 +39,7 @@ export class BallMesh {
   }
 
   updateArrows(pos, rvel, state) {
-    this.spinAxisArrow.setLength(0.4 + rvel.length() / 2, 0.1, 0.1)
+    this.spinAxisArrow.setLength(0.5 + rvel.length() / 80, 0.1, 0.1)
     this.spinAxisArrow.position.copy(pos)
     this.spinAxisArrow.setDirection(norm(rvel))
     if (state == State.Rolling) {

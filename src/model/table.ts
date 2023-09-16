@@ -3,7 +3,7 @@ import { Collision } from "./physics/collision"
 import { Knuckle } from "./physics/knuckle"
 import { Pocket } from "./physics/pocket"
 import { Cue } from "../view/cue"
-import { Ball } from "./ball"
+import { Ball, State } from "./ball"
 import { AimEvent } from "../events/aimevent"
 import { TableGeometry } from "../view/tablegeometry"
 import { Outcome } from "./outcome"
@@ -171,6 +171,8 @@ export class Table {
     this.balls.forEach((b, i) => {
       b.pos.x = data[i * 2]
       b.pos.y = data[i * 2 + 1]
+      b.pos.z = 0
+      b.state = State.Stationary
     })
   }
 
@@ -187,6 +189,12 @@ export class Table {
     this.balls.forEach((b) => {
       b.ballmesh.trace.line.visible = bool
       b.ballmesh.trace.reset()
+    })
+  }
+
+  showSpin(bool) {
+    this.balls.forEach((b) => {
+      b.ballmesh.spinAxisArrow.visible = bool
     })
   }
 }

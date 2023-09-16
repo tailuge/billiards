@@ -70,10 +70,11 @@ export class BrowserContainer {
       this.container.table.cue.aimInputs.cueHitElement?.addEventListener(
         "click",
         () => {
-          //location.reload()
-          this.container.eventQueue.push(
-            new BreakEvent(this.breakState.init, this.breakState.shots)
-          )
+          if (this.container.eventQueue.length == 0) {
+            this.container.eventQueue.push(
+              new BreakEvent(this.breakState.init, this.breakState.shots)
+            )  
+          }
         }
       )
       this.container.eventQueue.push(

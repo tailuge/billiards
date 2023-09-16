@@ -75,6 +75,8 @@ export abstract class ControllerBase extends Controller {
         return true
       case "KeyDUp":
         this.container.sliders.toggleVisibility()
+        this.container.table.showSpin(true)
+        this.container.table.showTraces(true)
         console.log(this.container.table.serialise())
         return true
       default:
