@@ -8,6 +8,7 @@ import { Client } from "../../src/network/server/tableinfo"
 import { RejoinEvent } from "../../src/events/rejoinevent"
 import { BreakEvent } from "../../src/events/breakevent"
 import { ServerLog } from "../../src/network/server/serverlog"
+import { EventHistory } from "../../src/events/eventhistory"
 
 let lobby: Lobby
 
@@ -186,6 +187,17 @@ describe("Lobby", () => {
     ) as RejoinEvent
     expect(rejoin.clientResendFrom).to.be.equal("seq-001")
     expect(rejoin.serverResendFrom).to.be.equal("")
+    done()
+  })
+
+  it("history next id", (done) => {
+    const a = [new BeginEvent(), new BeginEvent(), new BeginEvent()]
+    a.forEach((e, i) => (e.sequence = `seq-${i}`))
+    const h = new EventHistory()
+    expect(h.nextId(a, "seq-2")).to.be.equal("")
+    expect(h.nextId(a, "seq-1")).to.be.equal("seq-2")
+    expect(h.nextId(a, "seq-0")).to.be.equal("seq-1")
+    expect(h.nextId(a, "*")).to.be.equal("seq-0")
     done()
   })
 

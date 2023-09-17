@@ -10,7 +10,7 @@ export class SocketConnection {
   id: string
   eventHandler
   retryCount = 0
-  retryDelay = 1000
+  retryDelay = 500
   lastSentIdentifier = ""
   lastRecvIdentifier = ""
   readonly url
@@ -27,6 +27,8 @@ export class SocketConnection {
     console.log("connecting to " + encoded)
     this.ws = new WebSocket(encoded)
     this.ws.onopen = () => {
+      this.retryCount = 0
+      this.retryDelay = 500
       this.notifyClient(`✓`)
     }
     this.ws.onmessage = (event) => {
@@ -47,31 +49,31 @@ export class SocketConnection {
       }
     }
     this.ws.onclose = (_) => {
-      console.log(`🖧🚪${this.ws.readyState}`)
+      console.log(`close`)
       this.reconnect()
     }
     this.ws.onerror = (_) => {
-      this.notifyClient(`🖧🌧${this.ws.readyState}`)
+      this.notifyClient(`🗲`)
     }
   }
 
   reconnect() {
     if (this.ws.readyState === 1) {
-      console.log("connected")
+      console.log("already connected")
       return
     }
-    this.notifyClient(`🛜${this.retryCount}`)
+    this.notifyClient(`↺`)
     if (this.retryCount++ < 5) {
       setTimeout(() => {
         this.connect()
       }, this.retryDelay)
-      this.retryDelay += 5000
+      this.retryDelay += 2000
     }
   }
 
   notifyClient(message) {
     console.log(message)
-    this.eventHandler(EventUtil.serialise(new ChatEvent("network", message)))
+    this.eventHandler(EventUtil.serialise(new ChatEvent("🛜", message)))
   }
 
   send(event: GameEvent) {

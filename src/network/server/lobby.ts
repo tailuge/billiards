@@ -64,18 +64,15 @@ export class Lobby {
   }
 
   rejoin(client: Client, tableInfo: TableInfo, clientLastSent, clientLastRecv) {
-    ServerLog.log(`Calculate rejoin actions for ${client.name} 
-      with clientLastSent=${clientLastSent}
-           clientLastRecv=${clientLastRecv}`)
     const history = tableInfo.history(client)
     const rejoin: RejoinEvent = new RejoinEvent("", "")
     const lastSent = history.lastSent()
     const lastRecv = history.lastRecv()
     ServerLog.log(`Calculate rejoin actions for ${client.name} 
       with clientLastSent=${clientLastSent}
+       lastRecvFromClient=${lastRecv?.sequence}
            clientLastRecv=${clientLastRecv}
-           lastSentToClient=${lastSent}
-           lastRecvFromClient=${lastRecv}`)
+         lastSentToClient=${lastSent?.sequence}`)
     if (lastSent) {
       if (!clientLastRecv) {
         // resend everything
@@ -91,13 +88,17 @@ export class Lobby {
       if (!lastRecv) {
         // request all messages
         rejoin.clientResendFrom = "*"
-      } else {
+      } else if (lastRecv.sequence !== clientLastSent) {
         rejoin.clientResendFrom = lastRecv.sequence
       }
     }
 
     tableInfo.leave(client)
     tableInfo.rejoin(client)
+    const otherClient = tableInfo.otherClients(client)[0]
+    if (otherClient) {
+      this.sendInfo(otherClient, tableInfo.tableId, `${client.name} rejoined`)
+    }
     this.send(client, tableInfo.tableId, rejoin)
 
     if (rejoin.serverResendFrom) {
