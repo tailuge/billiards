@@ -3,6 +3,6 @@ import { Controller } from "../controller/controller"
 
 export abstract class GameEvent {
   type: EventType
-  sequence?: number
+  sequence?: string
   abstract applyToController(controller: Controller): Controller
 }

@@ -32,8 +32,8 @@ export class SocketServer {
     const params = this.parse(req.url)
     const clientId = params.get("clientId")
     const tableId = params.get("tableId")
-    const sent = Number(params.get("sent"))
-    const recv = Number(params.get("recv"))
+    const sent = params.get("sent") ?? ""
+    const recv = params.get("recv") ?? ""
     const name = params.get("name") ?? "anonymous"
     ServerLog.log(`${name}:${clientId} requesting to join ${tableId}`)
 

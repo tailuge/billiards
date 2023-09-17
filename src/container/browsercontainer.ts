@@ -53,7 +53,7 @@ export class BrowserContainer {
     if (this.wss) {
       const params = `name=${this.playername}&tableId=${this.tableId}&clientId=${this.clientId}`
       this.container.isSinglePlayer = false
-      this.sc = new SocketConnection(`${this.wss}?${params}`)
+      this.sc = new SocketConnection(`${this.wss}?${params}`, this.clientId)
       this.networkButton()
       this.sc.eventHandler = (e) => {
         this.netEvent(e)

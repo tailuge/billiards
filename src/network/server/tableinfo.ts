@@ -14,19 +14,20 @@ export class TableInfo {
     this.tableId = tableId
   }
 
-  recordSentEvent(client, event) {
+  getClientHistory(client) {
     if (!this.eventHistory.has(client.clientId)) {
       this.eventHistory.set(client.clientId, { sentTo: [], recvFrom: [] })
     }
-    const clientHistory = this.eventHistory.get(client.clientId)
+    return this.eventHistory.get(client.clientId)
+  }
+
+  recordSentEvent(client, event) {
+    const clientHistory = this.getClientHistory(client)
     clientHistory?.sentTo.push(event)
   }
 
   recordRecvEvent(client, event) {
-    if (!this.eventHistory.has(client.clientId)) {
-      this.eventHistory.set(client.clientId, { sentTo: [], recvFrom: [] })
-    }
-    const clientHistory = this.eventHistory.get(client.clientId)
+    const clientHistory = this.getClientHistory(client)
     clientHistory?.recvFrom.push(event)
   }
 

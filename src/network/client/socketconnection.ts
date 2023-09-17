@@ -7,25 +7,27 @@ import { GameEvent } from "../../events/gameevent"
  */
 export class SocketConnection {
   ws: WebSocket
+  id: string
   eventHandler
   retryCount = 0
   retryDelay = 1000
-  sentCount = 0
-  recvCount = 0
+  lastSentIdentifier = ""
+  lastRecvIdentifier = ""
   readonly url
-  constructor(url: string) {
+  constructor(url: string, id: string) {
     this.url = url
+    this.id = id
     this.connect()
   }
 
   connect() {
     const encoded = encodeURI(
-      `${this.url}&sent=${this.sentCount}&recv=${this.recvCount}`
+      `${this.url}&sent=${this.lastSentIdentifier}&recv=${this.lastRecvIdentifier}`
     )
     console.log("connecting to " + encoded)
     this.ws = new WebSocket(encoded)
     this.ws.onopen = () => {
-      this.notifyClient(`connected`)
+      this.notifyClient(`✓`)
     }
     this.ws.onmessage = (event) => {
       if (event.data instanceof ArrayBuffer) {
@@ -37,18 +39,19 @@ export class SocketConnection {
         console.log(s)
       } else {
         // text frame
-        this.recvCount++
+        const json = JSON.parse(event.data)
+        if ("sequence" in json) {
+          this.lastRecvIdentifier = json.sequence
+        }
         this.eventHandler(event.data)
       }
     }
     this.ws.onclose = (_) => {
-      console.log(`connection closed: readystate=${this.ws.readyState}`)
+      console.log(`🖧🚪${this.ws.readyState}`)
       this.reconnect()
     }
     this.ws.onerror = (_) => {
-      this.notifyClient(
-        `error with connection: readystate=${this.ws.readyState}`
-      )
+      this.notifyClient(`🖧🌧${this.ws.readyState}`)
     }
   }
 
@@ -57,10 +60,7 @@ export class SocketConnection {
       console.log("connected")
       return
     }
-    this.notifyClient(`reconnecting ${this.retryCount}`)
-    console.log(
-      `reconnecting (${this.retryCount}) after ${this.retryDelay / 1000}s`
-    )
+    this.notifyClient(`🛜${this.retryCount}`)
     if (this.retryCount++ < 5) {
       setTimeout(() => {
         this.connect()
@@ -75,7 +75,8 @@ export class SocketConnection {
   }
 
   send(event: GameEvent) {
-    event.sequence = 1 + this.sentCount++
+    this.lastSentIdentifier = `${this.id}-${performance.now()}`
+    event.sequence = this.lastSentIdentifier
     this.ws.send(EventUtil.serialise(event))
   }
 

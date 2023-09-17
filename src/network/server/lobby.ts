@@ -22,24 +22,20 @@ export class Lobby {
     return { ws: ws, name: name, clientId: clientId }
   }
 
-  private message(playerId, text) {
-    return new ChatEvent(playerId, text)
-  }
-
-  joinTable(client, tableId, clientSentCount = 0, clientRecvCount = 0) {
+  joinTable(client, tableId, clientLastSent = "", clientLastRecv = "") {
     const tableInfo = this.tables.getTable(tableId)
 
     if (
       tableInfo.isActive(client) &&
-      clientSentCount === 0 &&
-      clientRecvCount === 0
+      clientLastSent === "" &&
+      clientLastRecv === ""
     ) {
       this.sendInfo(client, tableId, "Already joined in another window")
       return false
     }
 
     if (tableInfo.isRejoin(client)) {
-      return this.rejoin(client, tableInfo, clientSentCount, clientRecvCount)
+      return this.rejoin(client, tableInfo, clientLastSent, clientLastRecv)
     }
 
     if (tableInfo.isFull()) {
@@ -60,17 +56,31 @@ export class Lobby {
     return true
   }
 
-  rejoin(client, tableInfo, clientSentCount, clientRecvCount) {
+  lastSequenceId(list: GameEvent[]) {
+    if (list.length === 0) {
+      return ""
+    }
+    return list[list.length - 1].sequence
+  }
+
+  rejoin(client, tableInfo, clientLastSent, clientLastRecv) {
     const history = tableInfo.eventHistory.get(client.clientId)
-    const sentToClient = history.sentTo.length
-    const recvFromClient = history.recvFrom.length
+    const sent = this.lastSequenceId(history.sentTo)
+    const recv = this.lastSequenceId(history.recvFrom)
     const rejoin: RejoinEvent = new RejoinEvent(
-      clientSentCount - recvFromClient,
-      sentToClient - clientRecvCount
+      recv !== clientLastSent ? recv : "",
+      sent !== clientLastRecv ? sent : ""
     )
     tableInfo.leave(client)
     tableInfo.rejoin(client)
     this.send(client, tableInfo.tableId, rejoin)
+    if (sent) {
+      let replay = history.sentTo.find((e) => e.sequence === sent)
+      while (replay < history.sentTo.length) {
+        // should mark these to not be included in next replay
+        this.send(client, tableInfo.tableId, history.sentToClient[replay++])
+      }
+    }
     return true
   }
 
@@ -98,10 +108,16 @@ export class Lobby {
     ServerLog.log(`${client.name} closed connection`)
     const tableInfo = this.tables.getTable(tableId)
     tableInfo.leave(client)
-    const message = this.message(client.name, `${client.name} has left`)
+    const message = `${client.name} has left`
     tableInfo.otherClients(client).forEach((c) => {
-      this.send(c, tableId, message)
+      this.sendInfo(c, tableId, message)
     })
+  }
+
+  private message(playerId, text) {
+    const event = new ChatEvent(playerId, text)
+    event.sequence = `server-${performance.now()}`
+    return event
   }
 
   sendInfo(client, tableId, text) {

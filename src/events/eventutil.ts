@@ -44,7 +44,7 @@ export class EventUtil {
     const parsed = JSON.parse(data)
     const event = EventUtil.fromJson(parsed)
     if ("sequence" in parsed) {
-      event.sequence = Number(parsed.sequence)
+      event.sequence = parsed.sequence
     }
     return event
   }

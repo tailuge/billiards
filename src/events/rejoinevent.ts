@@ -3,8 +3,8 @@ import { EventType } from "./eventtype"
 import { Controller } from "../controller/controller"
 
 export class RejoinEvent extends GameEvent {
-  clientToResendLast = 0
-  serverWillResendLast = 0
+  clientToResendLast = ""
+  serverWillResendLast = ""
 
   constructor(clientToResendLast, serverWillResendLast) {
     super()

@@ -7,6 +7,7 @@ import { EventUtil } from "../../src/events/eventutil"
 import { Client } from "../../src/network/server/tableinfo"
 import { RejoinEvent } from "../../src/events/rejoinevent"
 import { BreakEvent } from "../../src/events/breakevent"
+import { ServerLog } from "../../src/network/server/serverlog"
 
 let lobby: Lobby
 
@@ -105,7 +106,7 @@ describe("Lobby", () => {
   it("second join without leaving is rejoin if has sent/recv", (done) => {
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)
-    expect(lobby.joinTable(player1r, tableId, 1, 1)).to.be.true
+    expect(lobby.joinTable(player1r, tableId, "some", "some")).to.be.true
     const tableInfo = lobby.tables.getTable(tableId)
     console.log(JSON.stringify(tableInfo))
     done()
@@ -123,14 +124,15 @@ describe("Lobby", () => {
   })
 
   it("players leaves then rejoins, replaces old client on table", (done) => {
+    ServerLog.enable = false
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)
     lobby.handleLeaveTable(player1, tableId)
     expect(lobby.joinTable(player1r, tableId)).to.be.true
     const event = EventUtil.fromSerialised(player1r.ws.messages[0])
     expect(event).to.be.an.instanceof(RejoinEvent)
-    expect((event as RejoinEvent).clientToResendLast).to.be.equals(0)
-    expect((event as RejoinEvent).serverWillResendLast).to.be.equals(2)
+    expect((event as RejoinEvent).clientToResendLast).to.be.equals("")
+    expect((event as RejoinEvent).serverWillResendLast).to.be.not.equals("")
     expect(lobby.tables.getTable(tableId).clients.includes(player1r)).to.be.true
     expect(lobby.tables.getTable(tableId).clients.includes(player1)).to.be.false
     done()
