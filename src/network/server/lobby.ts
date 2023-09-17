@@ -56,16 +56,9 @@ export class Lobby {
     return true
   }
 
-  lastSequenceId(list: GameEvent[]) {
-    if (list.length === 0) {
-      return ""
-    }
-    return list[list.length - 1].sequence
-  }
-
   rejoin(client: Client, tableInfo: TableInfo, clientLastSent, clientLastRecv) {
     const history = tableInfo.history(client)
-    const rejoin: RejoinEvent = new RejoinEvent("", "")
+    const rejoin: RejoinEvent = new RejoinEvent()
     const lastSent = history.lastSent()
     const lastRecv = history.lastRecv()
     ServerLog.log(`Calculate rejoin actions for ${client.name} 
@@ -77,14 +70,11 @@ export class Lobby {
       if (!clientLastRecv) {
         // resend everything
         rejoin.serverResendFrom = history.sent[0].sequence
-      } else {
-        if (lastSent.sequence !== clientLastRecv)
-          rejoin.serverResendFrom = history.nextId(history.sent, clientLastRecv)
+      } else if (lastSent.sequence !== clientLastRecv) {
+        rejoin.serverResendFrom = history.nextId(history.sent, clientLastRecv)
       }
     }
-    if (clientLastSent === "") {
-      rejoin.clientResendFrom = ""
-    } else {
+    if (clientLastSent !== "") {
       if (!lastRecv) {
         // request all messages
         rejoin.clientResendFrom = "*"

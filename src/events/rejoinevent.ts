@@ -6,7 +6,7 @@ export class RejoinEvent extends GameEvent {
   clientResendFrom
   serverResendFrom
 
-  constructor(clientResendFrom, serverResendFrom) {
+  constructor(clientResendFrom = "", serverResendFrom = "") {
     super()
     this.type = EventType.REJOIN
     this.clientResendFrom = clientResendFrom
