@@ -9,7 +9,7 @@ export class SocketConnection {
   ws: WebSocket
   eventHandler
   retryCount = 0
-  retryDelay = 500
+  retryDelay = 1000
   sentCount = 0
   recvCount = 0
   readonly url

@@ -71,8 +71,6 @@ export class Lobby {
     tableInfo.leave(client)
     tableInfo.rejoin(client)
     this.send(client, tableInfo.tableId, rejoin)
-    ServerLog.log(JSON.stringify(tableInfo))
-
     return true
   }
 

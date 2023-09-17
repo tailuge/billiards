@@ -102,7 +102,7 @@ describe("Lobby", () => {
     done()
   })
 
-  it.only("second join without leaving is rejoin if has sent/recv", (done) => {
+  it("second join without leaving is rejoin if has sent/recv", (done) => {
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)
     expect(lobby.joinTable(player1r, tableId, 1, 1)).to.be.true

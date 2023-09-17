@@ -160,7 +160,7 @@ input[type="range"].powerSlider {
   padding: 5px;
   margin: 2px;
   border-radius: 5px;
-  font-size: small;
+  font-size: x-small;
 }
 
 .chatoutput::-webkit-scrollbar {
