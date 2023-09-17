@@ -29,18 +29,22 @@ export class Lobby {
   joinTable(client, tableId, clientSentCount = 0, clientRecvCount = 0) {
     const tableInfo = this.tables.getTable(tableId)
 
-    if (tableInfo.isActive(client)) {
+    if (
+      tableInfo.isActive(client) &&
+      clientSentCount === 0 &&
+      clientRecvCount === 0
+    ) {
       this.sendInfo(client, tableId, "Already joined in another window")
-      return false
-    }
-
-    if (tableInfo.isFull()) {
-      this.sendInfo(client, tableId, "Table already full")
       return false
     }
 
     if (tableInfo.isRejoin(client)) {
       return this.rejoin(client, tableInfo, clientSentCount, clientRecvCount)
+    }
+
+    if (tableInfo.isFull()) {
+      this.sendInfo(client, tableId, "Table already full")
+      return false
     }
 
     tableInfo.join(client)
@@ -64,6 +68,7 @@ export class Lobby {
       clientSentCount - recvFromClient,
       sentToClient - clientRecvCount
     )
+    tableInfo.leave(client)
     tableInfo.rejoin(client)
     this.send(client, tableInfo.tableId, rejoin)
     return true
@@ -83,10 +88,6 @@ export class Lobby {
     const tableInfo = this.tables.getTable(tableId)
     const m = message.toString()
     const event = EventUtil.fromSerialised(m)
-    const json = JSON.parse(m)
-    const mtype = json.type
-    const info = `received: ${mtype} from ${client.name}`
-    ServerLog.log(info)
     tableInfo.recordRecvEvent(client, event)
     tableInfo.otherClients(client).forEach((c) => {
       this.send(c, tableId, event)
@@ -94,6 +95,7 @@ export class Lobby {
   }
 
   handleLeaveTable(client, tableId) {
+    ServerLog.log(`${client.name} closed connection`)
     const tableInfo = this.tables.getTable(tableId)
     tableInfo.leave(client)
     const message = this.message(client.name, `${client.name} has left`)
@@ -107,10 +109,15 @@ export class Lobby {
   }
 
   send(client, tableId, event: GameEvent) {
-    if (event.type !== EventType.AIM) {
-      ServerLog.log(`sending to ${client.name} event ${event.type}`)
-    }
     this.tables.getTable(tableId).recordSentEvent(client, event)
     client.ws?.send(EventUtil.serialise(event))
+    if (event.type === EventType.AIM) {
+      return
+    }
+    if (event.type === EventType.CHAT || event.type === EventType.REJOIN) {
+      ServerLog.log(`sending to ${client.name} event ${JSON.stringify(event)}`)
+      return
+    }
+    ServerLog.log(`sending to ${client.name} event ${event.type}`)
   }
 }

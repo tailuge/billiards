@@ -6,7 +6,6 @@ import { BeginEvent } from "../../src/controller/controller"
 import { EventUtil } from "../../src/events/eventutil"
 import { Client } from "../../src/network/server/tableinfo"
 import { RejoinEvent } from "../../src/events/rejoinevent"
-import { ServerLog } from "../../src/network/server/serverlog"
 import { BreakEvent } from "../../src/events/breakevent"
 
 let lobby: Lobby
@@ -93,6 +92,22 @@ describe("Lobby", () => {
     const tableInfo = lobby.tables.getTable(tableId)
     const others = tableInfo.otherClients(player1)
     expect(others).to.be.length(1).and.contains(player2)
+    done()
+  })
+
+  it("second join without leaving is table full", (done) => {
+    lobby.joinTable(player1, tableId)
+    lobby.joinTable(player2, tableId)
+    expect(lobby.joinTable(player1, tableId)).to.be.false
+    done()
+  })
+
+  it.only("second join without leaving is rejoin if has sent/recv", (done) => {
+    lobby.joinTable(player1, tableId)
+    lobby.joinTable(player2, tableId)
+    expect(lobby.joinTable(player1r, tableId, 1, 1)).to.be.true
+    const tableInfo = lobby.tables.getTable(tableId)
+    console.log(JSON.stringify(tableInfo))
     done()
   })
 

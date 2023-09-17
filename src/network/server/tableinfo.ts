@@ -20,7 +20,6 @@ export class TableInfo {
     }
     const clientHistory = this.eventHistory.get(client.clientId)
     clientHistory?.sentTo.push(event)
-    //    console.log(clientHistory?.sent)
   }
 
   recordRecvEvent(client, event) {
@@ -29,7 +28,6 @@ export class TableInfo {
     }
     const clientHistory = this.eventHistory.get(client.clientId)
     clientHistory?.recvFrom.push(event)
-    //  console.log(clientHistory?.recv)
   }
 
   join(client: Client) {
@@ -46,13 +44,11 @@ export class TableInfo {
   }
 
   otherClients(client): Client[] {
-    return this.clients.filter((c) => c !== client)
+    return this.clients.filter((c) => c.clientId !== client.clientId)
   }
 
   isRejoin(client: Client) {
-    return (
-      this.owningClientIds.includes(client.clientId) && !this.isActive(client)
-    )
+    return this.owningClientIds.includes(client.clientId)
   }
 
   isActive(client: Client): boolean {
