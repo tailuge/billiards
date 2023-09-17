@@ -123,18 +123,69 @@ describe("Lobby", () => {
     done()
   })
 
-  it("players leaves then rejoins, replaces old client on table", (done) => {
+  it("player leaves then rejoins, replaces old client on table", (done) => {
     ServerLog.enable = false
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)
     lobby.handleLeaveTable(player1, tableId)
     expect(lobby.joinTable(player1r, tableId)).to.be.true
-    const event = EventUtil.fromSerialised(player1r.ws.messages[0])
-    expect(event).to.be.an.instanceof(RejoinEvent)
-    expect((event as RejoinEvent).clientToResendLast).to.be.equals("")
-    expect((event as RejoinEvent).serverWillResendLast).to.be.not.equals("")
+    const rejoin = EventUtil.fromSerialised(
+      player1r.ws.messages[0]
+    ) as RejoinEvent
+    expect(rejoin.clientResendFrom).to.be.equal("")
+    expect(rejoin.serverResendFrom).to.be.not.equal("")
     expect(lobby.tables.getTable(tableId).clients.includes(player1r)).to.be.true
     expect(lobby.tables.getTable(tableId).clients.includes(player1)).to.be.false
+    done()
+  })
+
+  it("player leaves then rejoins, with no messages missed", (done) => {
+    lobby.joinTable(player1, tableId)
+    lobby.joinTable(player2, tableId)
+    const lastRecv = EventUtil.fromSerialised(
+      player1.ws.messages[player1.ws.messages.length - 1]
+    ).sequence
+    lobby.handleLeaveTable(player1, tableId)
+    expect(lobby.joinTable(player1r, tableId, "", lastRecv)).to.be.true
+    const rejoin = EventUtil.fromSerialised(
+      player1r.ws.messages[0]
+    ) as RejoinEvent
+    expect(rejoin.clientResendFrom).to.be.equal("")
+    expect(rejoin.serverResendFrom).to.be.equal("")
+    done()
+  })
+
+  it("player leaves then rejoins, server has no recv messages, request everything", (done) => {
+    lobby.joinTable(player1, tableId)
+    lobby.joinTable(player2, tableId)
+    const lastRecv = EventUtil.fromSerialised(
+      player1.ws.messages[player1.ws.messages.length - 1]
+    ).sequence
+    lobby.handleLeaveTable(player1, tableId)
+    expect(lobby.joinTable(player1r, tableId, "pendingId", lastRecv)).to.be.true
+    const rejoin = EventUtil.fromSerialised(
+      player1r.ws.messages[0]
+    ) as RejoinEvent
+    expect(rejoin.clientResendFrom).to.be.equal("*")
+    expect(rejoin.serverResendFrom).to.be.equal("")
+    done()
+  })
+
+  it("player sends,leaves,sends,rejoins server requests delta", (done) => {
+    lobby.joinTable(player1, tableId)
+    const lastRecv = EventUtil.fromSerialised(
+      player1.ws.messages[player1.ws.messages.length - 1]
+    ).sequence
+    const event1 = new BreakEvent()
+    event1.sequence = "seq-001"
+    lobby.handleTableMessage(player1, tableId, EventUtil.serialise(event1))
+    lobby.handleLeaveTable(player1, tableId)
+    expect(lobby.joinTable(player1r, tableId, "seq-002", lastRecv)).to.be.true
+    const rejoin = EventUtil.fromSerialised(
+      player1r.ws.messages[0]
+    ) as RejoinEvent
+    expect(rejoin.clientResendFrom).to.be.equal("seq-001")
+    expect(rejoin.serverResendFrom).to.be.equal("")
     done()
   })
 

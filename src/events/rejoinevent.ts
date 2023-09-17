@@ -3,14 +3,14 @@ import { EventType } from "./eventtype"
 import { Controller } from "../controller/controller"
 
 export class RejoinEvent extends GameEvent {
-  clientToResendLast = ""
-  serverWillResendLast = ""
+  clientResendFrom
+  serverResendFrom
 
-  constructor(clientToResendLast, serverWillResendLast) {
+  constructor(clientResendFrom, serverResendFrom) {
     super()
     this.type = EventType.REJOIN
-    this.clientToResendLast = clientToResendLast
-    this.serverWillResendLast = serverWillResendLast
+    this.clientResendFrom = clientResendFrom
+    this.serverResendFrom = serverResendFrom
   }
 
   applyToController(controller: Controller): Controller {
@@ -18,10 +18,7 @@ export class RejoinEvent extends GameEvent {
   }
 
   static fromJson(json) {
-    const event = new RejoinEvent(
-      json.clientToResendLast,
-      json.serverWillResendLast
-    )
+    const event = new RejoinEvent(json.clientResendFrom, json.serverResendFrom)
     return event
   }
 }

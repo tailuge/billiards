@@ -1,4 +1,4 @@
-import { GameEvent } from "../../events/gameevent"
+import { EventHistory } from "../../events/eventhistory"
 
 export type Client = { ws; name: string; clientId: string }
 
@@ -7,28 +7,27 @@ export class TableInfo {
   readonly owningClientIds: string[] = []
   clients: Client[] = []
 
-  eventHistory: Map<string, { sentTo: GameEvent[]; recvFrom: GameEvent[] }> =
-    new Map()
+  eventHistory: Map<string, EventHistory> = new Map()
 
   constructor(tableId) {
     this.tableId = tableId
   }
 
-  getClientHistory(client) {
+  history(client): EventHistory {
     if (!this.eventHistory.has(client.clientId)) {
-      this.eventHistory.set(client.clientId, { sentTo: [], recvFrom: [] })
+      this.eventHistory.set(client.clientId, new EventHistory())
     }
-    return this.eventHistory.get(client.clientId)
+    return this.eventHistory.get(client.clientId)!
   }
 
   recordSentEvent(client, event) {
-    const clientHistory = this.getClientHistory(client)
-    clientHistory?.sentTo.push(event)
+    const clientHistory = this.history(client)
+    clientHistory.sent.push(event)
   }
 
   recordRecvEvent(client, event) {
-    const clientHistory = this.getClientHistory(client)
-    clientHistory?.recvFrom.push(event)
+    const clientHistory = this.history(client)
+    clientHistory.recv.push(event)
   }
 
   join(client: Client) {

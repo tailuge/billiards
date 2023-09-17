@@ -3,7 +3,7 @@ import { ChatEvent } from "../../events/chatevent"
 import { EventUtil } from "../../events/eventutil"
 import { RejoinEvent } from "../../events/rejoinevent"
 import { Tables } from "./tables"
-import { Client } from "./tableinfo"
+import { Client, TableInfo } from "./tableinfo"
 import { GameEvent } from "../../events/gameevent"
 import { ServerLog } from "./serverlog"
 import { EventType } from "../../events/eventtype"
@@ -63,23 +63,51 @@ export class Lobby {
     return list[list.length - 1].sequence
   }
 
-  rejoin(client, tableInfo, clientLastSent, clientLastRecv) {
-    const history = tableInfo.eventHistory.get(client.clientId)
-    const sent = this.lastSequenceId(history.sentTo)
-    const recv = this.lastSequenceId(history.recvFrom)
-    const rejoin: RejoinEvent = new RejoinEvent(
-      recv !== clientLastSent ? recv : "",
-      sent !== clientLastRecv ? sent : ""
-    )
+  rejoin(client: Client, tableInfo: TableInfo, clientLastSent, clientLastRecv) {
+    ServerLog.log(`Calculate rejoin actions for ${client.name} 
+      with clientLastSent=${clientLastSent}
+           clientLastRecv=${clientLastRecv}`)
+    const history = tableInfo.history(client)
+    const rejoin: RejoinEvent = new RejoinEvent("", "")
+    const lastSent = history.lastSent()
+    const lastRecv = history.lastRecv()
+    ServerLog.log(`Calculate rejoin actions for ${client.name} 
+      with clientLastSent=${clientLastSent}
+           clientLastRecv=${clientLastRecv}
+           lastSentToClient=${lastSent}
+           lastRecvFromClient=${lastRecv}`)
+    if (lastSent) {
+      if (!clientLastRecv) {
+        // resend everything
+        rejoin.serverResendFrom = history.sent[0].sequence
+      } else {
+        if (lastSent.sequence !== clientLastRecv)
+          rejoin.serverResendFrom = history.nextId(history.sent, clientLastRecv)
+      }
+    }
+    if (clientLastSent === "") {
+      rejoin.clientResendFrom = ""
+    } else {
+      if (!lastRecv) {
+        // request all messages
+        rejoin.clientResendFrom = "*"
+      } else {
+        rejoin.clientResendFrom = lastRecv.sequence
+      }
+    }
+
     tableInfo.leave(client)
     tableInfo.rejoin(client)
     this.send(client, tableInfo.tableId, rejoin)
-    if (sent) {
-      let replay = history.sentTo.find((e) => e.sequence === sent)
-      while (replay < history.sentTo.length) {
+
+    if (rejoin.serverResendFrom) {
+      const toReplay = history.after(history.sent, rejoin.serverResendFrom)
+      ServerLog.log(`replaying ${toReplay} messages`)
+      toReplay.forEach((e) => {
         // should mark these to not be included in next replay
-        this.send(client, tableInfo.tableId, history.sentToClient[replay++])
-      }
+        // modify sequence, but need to deep copy
+        this.send(client, tableInfo.tableId, e)
+      })
     }
     return true
   }
