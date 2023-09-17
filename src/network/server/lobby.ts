@@ -114,9 +114,10 @@ export class Lobby {
     })
   }
 
+  seq = 1000
   private message(playerId, text) {
     const event = new ChatEvent(playerId, text)
-    event.sequence = `server-${performance.now()}`
+    event.sequence = `server-${this.seq++}`
     return event
   }
 
