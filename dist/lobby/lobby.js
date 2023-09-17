@@ -2,6 +2,7 @@ const server = window.location.origin
 const player1 = document.getElementById("player1")
 const player2 = document.getElementById("player2")
 const table = document.getElementById("table")
+const ruletype = document.getElementById("ruletype")
 const detail = document.getElementById("detail")
 const info1 = document.getElementById("info1")
 const info2 = document.getElementById("info2")
@@ -15,7 +16,7 @@ let wss = renderwss
 let assets = github
 let link1 = ""
 let link2 = ""
-table.value = "Table" + Math.floor(Math.random() * 0xffffff).toString(16)
+table.value = "Table-" + Math.floor(Math.random() * 0xffffff).toString(16)
 if (location.search.includes("?mode=local")) {
   wss = server.replace(/^http/, "ws") + "/ws"
   assets = location.origin + "/dist/"
@@ -73,12 +74,14 @@ function createTable() {
     tableId: table.value,
     name: player1.value,
     clientId: guid1,
+    ruletype: ruletype.value,
   })
   const params2 = new URLSearchParams({
     websocketserver: wss,
     tableId: table.value,
     name: player2.value,
     clientId: guid2,
+    ruletype: ruletype.value,
   })
   link1 = `${assets}?${params1.toString()}`
   link2 = `${assets}?${params2.toString()}`

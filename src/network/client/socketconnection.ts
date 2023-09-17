@@ -9,7 +9,7 @@ export class SocketConnection {
   ws: WebSocket
   eventHandler
   retryCount = 0
-  retryDelay = 2000
+  retryDelay = 500
   sentCount = 0
   recvCount = 0
   readonly url
@@ -42,11 +42,13 @@ export class SocketConnection {
       }
     }
     this.ws.onclose = (_) => {
-      console.log(`connection closed: readystate=${this.ws.readyState} `)
+      console.log(`connection closed: readystate=${this.ws.readyState}`)
       this.reconnect()
     }
-    this.ws.onerror = (event) => {
-      this.notifyClient(`error with connection: ${JSON.stringify(event)}`)
+    this.ws.onerror = (_) => {
+      this.notifyClient(
+        `error with connection: readystate=${this.ws.readyState}`
+      )
     }
   }
 
@@ -55,7 +57,7 @@ export class SocketConnection {
       console.log("connected")
       return
     }
-    this.notifyClient(`reconnecting`)
+    this.notifyClient(`reconnecting ${this.retryCount}`)
     console.log(
       `reconnecting (${this.retryCount}) after ${this.retryDelay / 1000}s`
     )
