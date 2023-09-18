@@ -2,7 +2,7 @@ import "mocha"
 import { expect } from "chai"
 import { Lobby } from "../../src/network/server/lobby"
 import { ChatEvent } from "../../src/events/chatevent"
-import { BeginEvent } from "../../src/controller/controller"
+import { AimEvent, BeginEvent } from "../../src/controller/controller"
 import { EventUtil } from "../../src/events/eventutil"
 import { Client } from "../../src/network/server/tableinfo"
 import { RejoinEvent } from "../../src/events/rejoinevent"
@@ -238,12 +238,12 @@ describe("Lobby", () => {
   })
 
   it("handle message ok", (done) => {
-    const message = EventUtil.serialise(new BreakEvent())
+    const message = EventUtil.serialise(new AimEvent())
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)
     lobby.handleTableMessage(player1, tableId, message)
     const event = EventUtil.fromSerialised(player2.ws.messages[2])
-    expect(event).to.be.an.instanceof(BreakEvent)
+    expect(event).to.be.an.instanceof(AimEvent)
     done()
   })
 })

@@ -13,11 +13,12 @@ import { PlaceBallEvent } from "../../src/events/placeballevent"
 import { zero } from "../../src/utils/utils"
 import { ChatEvent } from "../../src/events/chatevent"
 import { BeginEvent } from "../../src/events/beginevent"
+import { HitEvent } from "../../src/events/hitevent"
 
 describe("EventUtil", () => {
   it("Serialise and deserialise AimEvent", (done) => {
-    const aim = new AimEvent()
-    const event: GameEvent = aim
+    const event: AimEvent = new AimEvent()
+    event.i = 1
     const serialised = EventUtil.serialise(event)
     const deserialised = <AimEvent>EventUtil.fromSerialised(serialised)
     expect(deserialised.type).to.equal(EventType.AIM)
@@ -69,6 +70,17 @@ describe("EventUtil", () => {
     const serialised = EventUtil.serialise(new BeginEvent())
     const deserialised = EventUtil.fromSerialised(serialised)
     expect(deserialised.type).to.equal(EventType.BEGIN)
+    done()
+  })
+
+  it("Serialise and deserialise HitEvent", (done) => {
+    const table = new Table([])
+    const event = new HitEvent(table.serialise())
+    event.sequence = "seq-1000"
+    const serialised = EventUtil.serialise(event)
+    const deserialised = EventUtil.fromSerialised(serialised)
+    expect(deserialised.type).to.equal(EventType.HIT)
+    expect(deserialised.sequence).to.equal("seq-1000")
     done()
   })
 })

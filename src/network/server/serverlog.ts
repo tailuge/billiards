@@ -9,9 +9,6 @@ export class ServerLog {
     const formatted = `${new Date().toISOString()} ${text}`
     ServerLog.record += `${formatted}\n`
   }
-  static object(object) {
-    ServerLog.log(JSON.stringify(object))
-  }
 
   static logEvent(message, event: GameEvent) {
     if (event.type === EventType.AIM) {
