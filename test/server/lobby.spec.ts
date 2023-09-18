@@ -118,7 +118,6 @@ describe("Lobby", () => {
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)
     expect(lobby.joinTable(player1r, tableId, "some", "some")).to.be.true
-    const tableInfo = lobby.tables.getTable(tableId)
     done()
   })
 

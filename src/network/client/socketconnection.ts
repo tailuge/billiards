@@ -62,9 +62,8 @@ export class SocketConnection {
     const event = EventUtil.fromSerialised(data)
     this.lastRecvIdentifier = event.sequence ?? ""
     if (event instanceof RejoinEvent) {
-      const rejoin = event as RejoinEvent
-      if (rejoin.clientResendFrom) {
-        EventHistory.after(this.sent, rejoin.clientResendFrom).forEach((e) => {
+      if (event.clientResendFrom) {
+        EventHistory.after(this.sent, event.clientResendFrom).forEach((e) => {
           console.log(`Replaying ${e.sequence} ${e.type}`)
           this.ws.send(EventUtil.serialise(e))
         })

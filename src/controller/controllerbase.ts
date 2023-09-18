@@ -74,14 +74,17 @@ export abstract class ControllerBase extends Controller {
         this.container.view.camera.toggleMode()
         return true
       case "KeyDUp":
-        this.container.sliders.toggleVisibility()
-        this.container.table.showSpin(true)
-        this.container.table.showTraces(true)
-        typeof process !== "object" &&
-          console.log(this.container.table.serialise())
+        this.togglePanel()
         return true
       default:
         return false
     }
+  }
+
+  private togglePanel() {
+    this.container.sliders.toggleVisibility()
+    this.container.table.showSpin(true)
+    this.container.table.showTraces(true)
+    typeof process !== "object" && console.log(this.container.table.serialise())
   }
 }

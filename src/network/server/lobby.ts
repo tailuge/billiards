@@ -106,10 +106,6 @@ export class Lobby {
     ServerLog.log(
       `current clients: ${tableInfo.clients.map((c) => c.clientId)}`
     )
-    //tableInfo.leave(client)
-    //tableInfo.otherClients(client).forEach((c) => {
-    //  this.sendInfo(c, tableId, `${client.name} has left`)
-    //})
   }
 
   seq = 1000

@@ -1,6 +1,5 @@
 import "mocha"
 import { expect } from "chai"
-import { AimEvent } from "../../src/events/aimevent"
 import { Recorder } from "../../src/events/recorder"
 import { Container } from "../../src/container/container"
 import { HitEvent } from "../../src/events/hitevent"
