@@ -90,8 +90,8 @@ export class View {
     this.scene.add(new AmbientLight(0x707070, 1.0))
     importGltf("models/background.gltf", this.scene)
     const tablemodel = this.table.hasPockets
-      ? "models/p8.gltf"
-      : "models/threecushion.gltf"
+      ? "models/p8.min.gltf"
+      : "models/threecushion.min.gltf"
     importGltf(tablemodel, this.scene, ready)
     //TableGeometry.addToScene(this.scene)
     this.scene.add(new Grid().generateLineSegments())
