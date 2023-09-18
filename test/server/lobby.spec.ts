@@ -234,6 +234,7 @@ describe("Lobby", () => {
     expect(h.nextId(a, "seq-1")).to.be.equal("seq-2")
     expect(h.nextId(a, "seq-0")).to.be.equal("seq-1")
     expect(h.nextId(a, "*")).to.be.equal("seq-0")
+    expect(EventHistory.after(a, "seq-0")).to.be.length(2)
     done()
   })
 
