@@ -119,7 +119,6 @@ describe("Lobby", () => {
     lobby.joinTable(player2, tableId)
     expect(lobby.joinTable(player1r, tableId, "some", "some")).to.be.true
     const tableInfo = lobby.tables.getTable(tableId)
-    console.log(JSON.stringify(tableInfo))
     done()
   })
 
@@ -133,24 +132,26 @@ describe("Lobby", () => {
     lobby.joinTable(player2, tableId)
     lobby.handleLeaveTable(player1, tableId)
     const tableInfo = lobby.tables.getTable(tableId)
-    expect(tableInfo.clients).to.be.length(1)
+    expect(tableInfo.clients).to.be.length(2)
     lobby.handleLeaveTable(player2, tableId)
-    expect(tableInfo.clients).to.be.empty
+    expect(tableInfo.clients).to.be.length(2)
     done()
   })
 
-  it("player leaves then rejoins, replaces old client on table", (done) => {
+  it("player leaves then rejoins, becomes client on table", (done) => {
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)
+    const tableInfo = lobby.tables.getTable(tableId)
+    expect(tableInfo.clients).to.be.length(2)
     lobby.handleLeaveTable(player1, tableId)
-    expect(lobby.joinTable(player1r, tableId)).to.be.true
+    expect(lobby.joinTable(player1r, tableId, "", "server-1001")).to.be.true
     const rejoin = EventUtil.fromSerialised(
       player1r.ws.messages[0]
     ) as RejoinEvent
     expect(rejoin.clientResendFrom).to.be.equal("")
-    expect(rejoin.serverResendFrom).to.be.not.equal("")
-    expect(lobby.tables.getTable(tableId).clients.includes(player1r)).to.be.true
-    expect(lobby.tables.getTable(tableId).clients.includes(player1)).to.be.false
+    expect(rejoin.serverResendFrom).to.be.equal("")
+    expect(tableInfo.clients.includes(player1r)).to.be.true
+    expect(tableInfo.clients).to.be.length(2)
     done()
   })
 

@@ -55,7 +55,7 @@ export class Lobby {
     }
 
     // both players arrived
-    this.notifyJoined(client, tableInfo)
+    this.notifyJoined(tableInfo)
     this.send(client, tableId, new BeginEvent())
     return true
   }
@@ -65,7 +65,7 @@ export class Lobby {
     const rejoinEvent = rejoin.delta()
     tableInfo.leave(client)
     tableInfo.rejoin(client)
-    this.notifyOther(client, tableInfo, `${client.name} rejoined`)
+    this.notifyOthers(client, tableInfo, `${client.name} rejoined`)
     const toReplay = rejoin.replayEvents(rejoinEvent)
     this.send(client, tableInfo.tableId, rejoinEvent)
     toReplay.forEach((e) => {
@@ -75,21 +75,19 @@ export class Lobby {
     return true
   }
 
-  notifyOther(client, tableInfo, message) {
-    const otherClient = tableInfo.otherClients(client)[0]
-    if (otherClient) {
-      this.sendInfo(otherClient, tableInfo.tableId, message)
-    }
+  notifyOthers(client, tableInfo, message) {
+    tableInfo.otherClients(client).forEach((c) => {
+      this.sendInfo(c, tableInfo.tableId, message)
+    })
   }
 
-  notifyJoined(client, tableInfo) {
-    const otherClient = tableInfo.otherClients(client)[0]
-    const message = this.message(
-      "lobby",
-      `${client.name} and ${otherClient.name} have joined '${tableInfo.tableId}'`
-    )
-    this.send(client, tableInfo.tableId, message)
-    this.send(otherClient, tableInfo.tableId, message)
+  notifyJoined(tableInfo: TableInfo) {
+    const message = `${tableInfo.clients
+      .map((c) => c.name)
+      .join()} have joined ${tableInfo.tableId}`
+    tableInfo.clients.forEach((c) => {
+      this.sendInfo(c, tableInfo.tableId, message)
+    })
   }
 
   handleTableMessage(client: Client, tableId, message) {
@@ -108,10 +106,10 @@ export class Lobby {
     ServerLog.log(
       `current clients: ${tableInfo.clients.map((c) => c.clientId)}`
     )
-    tableInfo.leave(client)
-    tableInfo.otherClients(client).forEach((c) => {
-      this.sendInfo(c, tableId, `${client.name} has left`)
-    })
+    //tableInfo.leave(client)
+    //tableInfo.otherClients(client).forEach((c) => {
+    //  this.sendInfo(c, tableId, `${client.name} has left`)
+    //})
   }
 
   seq = 1000
@@ -127,6 +125,10 @@ export class Lobby {
 
   send(client, tableId, event: GameEvent) {
     this.tables.getTable(tableId).recordSentEvent(client, event)
+    if (client.ws?.readState >= 2) {
+      ServerLog.log(`not sending to ${client.name}:${client.clientId}`)
+      return
+    }
     client.ws?.send(EventUtil.serialise(event))
     ServerLog.logEvent(`sending to ${client.name}:${client.clientId}`, event)
   }

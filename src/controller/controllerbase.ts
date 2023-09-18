@@ -77,7 +77,8 @@ export abstract class ControllerBase extends Controller {
         this.container.sliders.toggleVisibility()
         this.container.table.showSpin(true)
         this.container.table.showTraces(true)
-        console.log(this.container.table.serialise())
+        typeof process !== "object" &&
+          console.log(this.container.table.serialise())
         return true
       default:
         return false
