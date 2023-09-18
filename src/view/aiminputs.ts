@@ -28,6 +28,7 @@ export class AimInputs {
       this.adjustSpin(e)
     })
     this.cueHitElement?.addEventListener("click", this.hit)
+    this.cuePowerElement?.addEventListener("change", this.powerChanged)
     document.addEventListener("dblclick", this.hit)
     document.addEventListener("wheel", this.mousewheel)
   }
@@ -64,6 +65,10 @@ export class AimInputs {
       elt.left = (-x + 0.5) * this.ballWidth - this.tipRadius + "px"
       elt.top = (-y + 0.5) * this.ballHeight - this.tipRadius + "px"
     }
+  }
+
+  powerChanged = (_) => {
+    this.container.table.cue.setPower(this.cuePowerElement.value)
   }
 
   updatePowerSlider(power) {

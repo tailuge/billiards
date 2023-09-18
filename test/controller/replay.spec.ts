@@ -88,6 +88,15 @@ describe("Controller Replay", () => {
     done()
   })
 
+  it("BreakEvent takes Replay to Replay", (done) => {
+    container.controller = new Replay(container, state.shots, 0)
+    container.table.cueball.setStationary()
+    container.eventQueue.push(new BreakEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Replay)
+    done()
+  })
+
   it("PlaceBall moves to Aim on spacebar", (done) => {
     container.controller = new PlaceBall(container)
     container.inputQueue.push(new Input(0.1, "SpaceUp"))
