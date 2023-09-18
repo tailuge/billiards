@@ -19,6 +19,7 @@ import { ChatEvent } from "../../src/events/chatevent"
 import { PlaceBallEvent } from "../../src/events/placeballevent"
 import { zero } from "../../src/utils/utils"
 import { BreakEvent } from "../../src/events/breakevent"
+import { RejoinEvent } from "../../src/events/rejoinevent"
 
 describe("Controller", () => {
   let container: Container
@@ -70,6 +71,14 @@ describe("Controller", () => {
   it("AimEvent takes WatchAim to WatchAim", (done) => {
     container.controller = new WatchAim(container)
     container.eventQueue.push(new AimEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(WatchAim)
+    done()
+  })
+
+  it("RejoinEvent takes WatchAim to WatchAim", (done) => {
+    container.controller = new WatchAim(container)
+    container.eventQueue.push(new RejoinEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
     done()

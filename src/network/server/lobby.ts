@@ -103,12 +103,14 @@ export class Lobby {
   }
 
   handleLeaveTable(client, tableId) {
-    ServerLog.log(`${client.name} closed connection`)
+    ServerLog.log(`${client.name}:${client.clientId} closed connection`)
     const tableInfo = this.tables.getTable(tableId)
+    ServerLog.log(
+      `current clients: ${tableInfo.clients.map((c) => c.clientId)}`
+    )
     tableInfo.leave(client)
-    const message = `${client.name} has left`
     tableInfo.otherClients(client).forEach((c) => {
-      this.sendInfo(c, tableId, message)
+      this.sendInfo(c, tableId, `${client.name} has left`)
     })
   }
 
@@ -126,6 +128,6 @@ export class Lobby {
   send(client, tableId, event: GameEvent) {
     this.tables.getTable(tableId).recordSentEvent(client, event)
     client.ws?.send(EventUtil.serialise(event))
-    ServerLog.logEvent(`sending to ${client.name}`, event)
+    ServerLog.logEvent(`sending to ${client.name}:${client.clientId}`, event)
   }
 }

@@ -28,4 +28,9 @@ export class EventHistory {
     }
     return ""
   }
+
+  static after(list: GameEvent[], sequenceId) {
+    const index = list.findIndex((e) => e.sequence === sequenceId)
+    return list.slice(index + 1)
+  }
 }

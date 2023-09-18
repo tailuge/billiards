@@ -1,6 +1,8 @@
 import { ChatEvent } from "../../events/chatevent"
+import { EventHistory } from "../../events/eventhistory"
 import { EventUtil } from "../../events/eventutil"
 import { GameEvent } from "../../events/gameevent"
+import { RejoinEvent } from "../../events/rejoinevent"
 
 /**
  * Handle websocket connection to server
@@ -14,6 +16,7 @@ export class SocketConnection {
   lastSentIdentifier = ""
   lastRecvIdentifier = ""
   sequenceId = 1000
+  sent: GameEvent[] = []
   readonly url
   constructor(url: string, id: string) {
     this.url = url
@@ -42,10 +45,7 @@ export class SocketConnection {
         console.log(s)
       } else {
         // text frame
-        const json = JSON.parse(event.data)
-        if ("sequence" in json) {
-          this.lastRecvIdentifier = json.sequence
-        }
+        this.preprocess(event.data)
         this.eventHandler(event.data)
       }
     }
@@ -58,29 +58,46 @@ export class SocketConnection {
     }
   }
 
+  preprocess(data) {
+    const event = EventUtil.fromSerialised(data)
+    this.lastRecvIdentifier = event.sequence ?? ""
+    if (event instanceof RejoinEvent) {
+      const rejoin = event as RejoinEvent
+      if (rejoin.clientResendFrom) {
+        EventHistory.after(this.sent, rejoin.clientResendFrom).forEach((e) => {
+          console.log(`Replaying ${e.sequence} ${e.type}`)
+          this.ws.send(EventUtil.serialise(e))
+        })
+      }
+    }
+  }
+
   reconnect() {
     if (this.ws.readyState === 1) {
       console.log("already connected")
       return
     }
     this.notifyClient(`↺`)
-    if (this.retryCount++ < 5) {
+    if (this.retryCount++ < 10) {
       setTimeout(() => {
         this.connect()
       }, this.retryDelay)
       this.retryDelay += 2000
+    } else {
+      this.notifyClient("cannot reconnect")
     }
   }
 
   notifyClient(message) {
     console.log(message)
-    this.eventHandler(EventUtil.serialise(new ChatEvent("🛜", message)))
+    this.eventHandler(EventUtil.serialise(new ChatEvent("💻", message)))
   }
 
   send(event: GameEvent) {
     this.lastSentIdentifier = `${this.id}-${this.sequenceId++}`
     event.sequence = this.lastSentIdentifier
     this.ws.send(EventUtil.serialise(event))
+    this.sent.push(event)
   }
 
   close() {

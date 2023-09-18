@@ -190,6 +190,7 @@ a.pill {
   padding: 5px;
   border: double;
   max-width: 50%;
+  font-size: small;
 }
 
 .nw {
