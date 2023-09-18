@@ -40,6 +40,16 @@ beforeEach(function (done) {
   player2.ws.reset()
 })
 
+const jestConsole = console
+
+beforeEach(() => {
+  global.console = require("console")
+})
+
+afterEach(() => {
+  global.console = jestConsole
+})
+
 describe("Lobby", () => {
   it("validate client connection request", (done) => {
     const ws = new MockWebSocket()
@@ -113,6 +123,11 @@ describe("Lobby", () => {
     done()
   })
 
+  it("rejoin empty table not valid", (done) => {
+    expect(lobby.joinTable(player1, tableId, "some", "some")).to.be.false
+    done()
+  })
+
   it("players leave", (done) => {
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)
@@ -125,7 +140,6 @@ describe("Lobby", () => {
   })
 
   it("player leaves then rejoins, replaces old client on table", (done) => {
-    ServerLog.enable = false
     lobby.joinTable(player1, tableId)
     lobby.joinTable(player2, tableId)
     lobby.handleLeaveTable(player1, tableId)
@@ -187,6 +201,28 @@ describe("Lobby", () => {
     ) as RejoinEvent
     expect(rejoin.clientResendFrom).to.be.equal("seq-001")
     expect(rejoin.serverResendFrom).to.be.equal("")
+    done()
+  })
+
+  it("player leaves, misses messages and server replays", (done) => {
+    ServerLog.enable = false
+    lobby.joinTable(player1, tableId)
+    lobby.joinTable(player2, tableId)
+    const lastRecv = EventUtil.fromSerialised(
+      player1.ws.messages[player1.ws.messages.length - 1]
+    ).sequence
+    const event1 = new BreakEvent()
+    event1.sequence = "p2-001"
+    lobby.handleTableMessage(player2, tableId, EventUtil.serialise(event1))
+    // pretend last message was before p2 sent
+    expect(lobby.joinTable(player1r, tableId, "", lastRecv)).to.be.true
+    const rejoin = EventUtil.fromSerialised(
+      player1r.ws.messages[0]
+    ) as RejoinEvent
+    expect(rejoin.clientResendFrom).to.be.equal("")
+    expect(rejoin.serverResendFrom).to.be.equal("p2-001")
+    const missed = EventUtil.fromSerialised(player1r.ws.messages[1])
+    expect(missed).to.be.instanceOf(BreakEvent)
     done()
   })
 

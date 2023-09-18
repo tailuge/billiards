@@ -1,12 +1,11 @@
 import { BeginEvent } from "../../events/beginevent"
 import { ChatEvent } from "../../events/chatevent"
 import { EventUtil } from "../../events/eventutil"
-import { RejoinEvent } from "../../events/rejoinevent"
 import { Tables } from "./tables"
 import { Client, TableInfo } from "./tableinfo"
 import { GameEvent } from "../../events/gameevent"
 import { ServerLog } from "./serverlog"
-import { EventType } from "../../events/eventtype"
+import { Rejoin } from "./rejoin"
 
 export class Lobby {
   readonly tables = new Tables()
@@ -43,6 +42,11 @@ export class Lobby {
       return false
     }
 
+    if (tableInfo.hasNoHistory(client) && clientLastRecv) {
+      this.sendInfo(client, tableId, "Cannot rejoin empty table")
+      return false
+    }
+
     tableInfo.join(client)
 
     if (tableInfo.clients.length == 1) {
@@ -57,50 +61,25 @@ export class Lobby {
   }
 
   rejoin(client: Client, tableInfo: TableInfo, clientLastSent, clientLastRecv) {
-    const history = tableInfo.history(client)
-    const rejoin: RejoinEvent = new RejoinEvent()
-    const lastSent = history.lastSent()
-    const lastRecv = history.lastRecv()
-    ServerLog.log(`Calculate rejoin actions for ${client.name} 
-      with clientLastSent=${clientLastSent}
-       lastRecvFromClient=${lastRecv?.sequence}
-           clientLastRecv=${clientLastRecv}
-         lastSentToClient=${lastSent?.sequence}`)
-    if (lastSent) {
-      if (!clientLastRecv) {
-        // resend everything
-        rejoin.serverResendFrom = history.sent[0].sequence
-      } else if (lastSent.sequence !== clientLastRecv) {
-        rejoin.serverResendFrom = history.nextId(history.sent, clientLastRecv)
-      }
-    }
-    if (clientLastSent !== "") {
-      if (!lastRecv) {
-        // request all messages
-        rejoin.clientResendFrom = "*"
-      } else if (lastRecv.sequence !== clientLastSent) {
-        rejoin.clientResendFrom = lastRecv.sequence
-      }
-    }
-
+    const rejoin = new Rejoin(client, tableInfo, clientLastSent, clientLastRecv)
+    const rejoinEvent = rejoin.delta()
     tableInfo.leave(client)
     tableInfo.rejoin(client)
+    this.notifyOther(client, tableInfo, `${client.name} rejoined`)
+    const toReplay = rejoin.replayEvents(rejoinEvent)
+    this.send(client, tableInfo.tableId, rejoinEvent)
+    toReplay.forEach((e) => {
+      ServerLog.log(`replay ${e.sequence} ${e.type}`)
+      this.send(client, tableInfo.tableId, e)
+    })
+    return true
+  }
+
+  notifyOther(client, tableInfo, message) {
     const otherClient = tableInfo.otherClients(client)[0]
     if (otherClient) {
-      this.sendInfo(otherClient, tableInfo.tableId, `${client.name} rejoined`)
+      this.sendInfo(otherClient, tableInfo.tableId, message)
     }
-    this.send(client, tableInfo.tableId, rejoin)
-
-    if (rejoin.serverResendFrom) {
-      const toReplay = history.after(history.sent, rejoin.serverResendFrom)
-      ServerLog.log(`replaying ${toReplay} messages`)
-      toReplay.forEach((e) => {
-        // should mark these to not be included in next replay
-        // modify sequence, but need to deep copy
-        this.send(client, tableInfo.tableId, e)
-      })
-    }
-    return true
   }
 
   notifyJoined(client, tableInfo) {
@@ -147,13 +126,6 @@ export class Lobby {
   send(client, tableId, event: GameEvent) {
     this.tables.getTable(tableId).recordSentEvent(client, event)
     client.ws?.send(EventUtil.serialise(event))
-    if (event.type === EventType.AIM) {
-      return
-    }
-    if (event.type === EventType.CHAT || event.type === EventType.REJOIN) {
-      ServerLog.log(`sending to ${client.name} event ${JSON.stringify(event)}`)
-      return
-    }
-    ServerLog.log(`sending to ${client.name} event ${event.type}`)
+    ServerLog.logEvent(`sending to ${client.name}`, event)
   }
 }

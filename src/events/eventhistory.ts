@@ -16,15 +16,15 @@ export class EventHistory {
     return this.last(this.recv)
   }
 
-  after(list: GameEvent[], sequenceId) {
-    const index = list.findIndex((e) => e.sequence === sequenceId) + 1
+  from(list: GameEvent[], sequenceId) {
+    const index = list.findIndex((e) => e.sequence === sequenceId)
     return list.slice(index)
   }
 
   nextId(list: GameEvent[], sequenceId) {
-    const after = this.after(list, sequenceId)
-    if (after.length > 0) {
-      return after[0].sequence
+    const index = list.findIndex((e) => e.sequence === sequenceId)
+    if (index < list.length - 1) {
+      return list[index + 1].sequence
     }
     return ""
   }

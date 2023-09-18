@@ -13,6 +13,7 @@ export class SocketConnection {
   retryDelay = 500
   lastSentIdentifier = ""
   lastRecvIdentifier = ""
+  sequenceId = 1000
   readonly url
   constructor(url: string, id: string) {
     this.url = url
@@ -77,7 +78,7 @@ export class SocketConnection {
   }
 
   send(event: GameEvent) {
-    this.lastSentIdentifier = `${this.id}-${performance.now()}`
+    this.lastSentIdentifier = `${this.id}-${this.sequenceId++}`
     event.sequence = this.lastSentIdentifier
     this.ws.send(EventUtil.serialise(event))
   }

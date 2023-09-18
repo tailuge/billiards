@@ -20,6 +20,13 @@ export class TableInfo {
     return this.eventHistory.get(client.clientId)!
   }
 
+  hasNoHistory(client) {
+    return (
+      this.history(client).sent.length == 0 &&
+      this.history(client).recv.length == 0
+    )
+  }
+
   recordSentEvent(client, event) {
     const clientHistory = this.history(client)
     clientHistory.sent.push(event)
