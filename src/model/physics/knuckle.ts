@@ -1,6 +1,6 @@
 import { Ball } from "../ball"
 import { Vector3 } from "three"
-import { e } from "./constants"
+import { R, e } from "./constants"
 import { PocketGeometry } from "../../view/pocketgeometry"
 
 export class Knuckle {
@@ -13,7 +13,7 @@ export class Knuckle {
   }
 
   private static willBounce(knuckle, futurePosition) {
-    return futurePosition.distanceTo(knuckle.pos) < 0.5 + knuckle.radius
+    return futurePosition.distanceTo(knuckle.pos) < R + knuckle.radius
   }
 
   public bounce(ball) {

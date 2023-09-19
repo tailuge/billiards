@@ -4,6 +4,7 @@ import { AimEvent } from "../events/aimevent"
 import { importGltf } from "../utils/gltf"
 import { Table } from "../model/table"
 import { Grid } from "./grid"
+import { TableMesh } from "./tablemesh"
 
 export class View {
   scene = new Scene()
@@ -87,13 +88,13 @@ export class View {
   }
 
   private addTable(ready) {
-    this.scene.add(new AmbientLight(0x707070, 1.0))
+    this.scene.add(new AmbientLight(0x515253, 3.0))
     importGltf("models/background.gltf", this.scene)
     const tablemodel = this.table.hasPockets
       ? "models/p8.min.gltf"
       : "models/threecushion.min.gltf"
     importGltf(tablemodel, this.scene, ready)
-    //new TableMesh().addToScene(this.scene)
+    new TableMesh().addToScene(this.scene)
     this.scene.add(new Grid().generateLineSegments())
   }
 

@@ -6,7 +6,7 @@ import {
   surfaceVelocityFull,
 } from "../model/physics/physics"
 import { BallMesh } from "../view/ballmesh"
-import { g } from "./physics/constants"
+import { R, g } from "./physics/constants"
 import { Pocket } from "./physics/pocket"
 
 export enum State {
@@ -56,19 +56,19 @@ export class Ball {
   }
 
   private updateFalling(t: number) {
-    this.vel.addScaledVector(up, -10 * t * g)
-    if (this.pos.z < -2) {
-      this.pos.z += MathUtils.randFloat(-0.5, 0.25)
+    this.vel.addScaledVector(up, ((-R * 10) / 0.5) * t * g)
+    if (this.pos.z < (-R * 2) / 0.5) {
+      this.pos.z += MathUtils.randFloat(-R, R * 0.25)
       this.setStationary()
       this.state = State.InPocket
     }
 
-    if (this.pos.distanceTo(this.pocket.pos) > this.pocket.radius - 0.5) {
+    if (this.pos.distanceTo(this.pocket.pos) > this.pocket.radius - R) {
       const toCentre = this.pocket.pos
         .clone()
         .sub(this.pos)
         .normalize()
-        .multiplyScalar(this.vel.length() * 0.5)
+        .multiplyScalar(this.vel.length() * R)
       if (this.vel.dot(toCentre) < 0) {
         this.vel.x = toCentre.x
         this.vel.y = toCentre.y

@@ -1,3 +1,4 @@
+import { R } from "../model/physics/constants"
 import { up } from "../utils/utils"
 import {
   Matrix4,
@@ -44,11 +45,15 @@ export class CueMesh {
   })
 
   static createHelper() {
-    const geometry = new CylinderGeometry(0.5, 0.5, 30, 12, 1, true)
+    const geometry = new CylinderGeometry(R, R, (R * 30) / 0.5, 12, 1, true)
     const mesh = new Mesh(geometry, this.helpermaterial)
     mesh.geometry
       .applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
-      .applyMatrix4(new Matrix4().identity().makeTranslation(15, 0, -0.01))
+      .applyMatrix4(
+        new Matrix4()
+          .identity()
+          .makeTranslation((R * 15) / 0.5, 0, (-R * 0.01) / 0.5)
+      )
     mesh.visible = false
     mesh.renderOrder = -1
     mesh.material.depthTest = false
@@ -56,7 +61,7 @@ export class CueMesh {
   }
 
   static createPlacer() {
-    const geometry = new CylinderGeometry(0.01, 0.5, 0.5, 4)
+    const geometry = new CylinderGeometry((R * 0.01) / 0.5, R, R, 4)
     const mesh = new Mesh(geometry, CueMesh.helpermaterial)
     mesh.geometry
       .applyMatrix4(
@@ -64,7 +69,9 @@ export class CueMesh {
           .identity()
           .makeRotationAxis(new Vector3(1, 0, 0), -Math.PI / 2)
       )
-      .applyMatrix4(new Matrix4().identity().makeTranslation(0, 0, 0.7))
+      .applyMatrix4(
+        new Matrix4().identity().makeTranslation(0, 0, (R * 0.7) / 0.5)
+      )
     mesh.visible = false
     return mesh
   }
@@ -81,7 +88,7 @@ export class CueMesh {
       )
       .applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
       .applyMatrix4(
-        new Matrix4().identity().makeTranslation(-length / 2 - 0.5, 0, 1)
+        new Matrix4().identity().makeTranslation(-length / 2 - R, 0, 2 * R)
       )
     return mesh
   }

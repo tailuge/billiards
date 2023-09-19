@@ -2,16 +2,17 @@ import { PerspectiveCamera, MathUtils } from "three"
 import { up, zero, unitAtAngle } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import { CameraTop } from "./cameratop"
+import { R } from "../model/physics/constants"
 
 export class Camera {
   constructor(aspectRatio) {
-    this.camera = new PerspectiveCamera(45, aspectRatio, 0.1, 1000)
+    this.camera = new PerspectiveCamera(45, aspectRatio, R, R * 1000)
   }
 
   camera: PerspectiveCamera
   private mode = this.topView
   private mainMode = this.aimView
-  private height = 4
+  private height = R * 8
 
   elapsed: number
 
@@ -32,12 +33,12 @@ export class Camera {
   aimView(aim: AimEvent, fraction = 0.08) {
     this.camera.fov = this.camera.aspect < 0.8 ? 65 : 45
     this.camera.position.lerp(
-      aim.pos.clone().addScaledVector(unitAtAngle(aim.angle), -9),
+      aim.pos.clone().addScaledVector(unitAtAngle(aim.angle), -R * 20),
       fraction
     )
     this.camera.position.z = this.height
     this.camera.up = up
-    this.camera.lookAt(aim.pos.clone().addScaledVector(up, 1))
+    this.camera.lookAt(aim.pos.clone().addScaledVector(up, 2 * R))
   }
 
   adjustHeight(delta) {

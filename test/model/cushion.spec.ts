@@ -7,6 +7,7 @@ import { Cushion } from "../../src/model/physics/cushion"
 import { Knuckle } from "../../src/model/physics/knuckle"
 import { Vector3 } from "three"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
+import { R } from "../../src/model/physics/constants"
 
 const t = 0.1
 
@@ -134,7 +135,7 @@ describe("Cushion", () => {
     ball.vel.set(0.1, -1, 0)
     ball.rvel.set(0, 0, -10)
     Cushion.bounceAny(ball, t)
-    expect(ball.rvel.z).to.be.approximately(-10, 1)
+    expect(ball.rvel.z).to.be.approximately(-9, 1)
     expect(ball.vel.y).to.be.approximately(-1, 0.1).and.greaterThan(-1)
     done()
   })
@@ -149,12 +150,12 @@ describe("Cushion", () => {
 
   it("bounces off knuckle", (done) => {
     const pos = new Vector3(
-      PocketGeometry.middleKnuckleInset - 0.1,
+      PocketGeometry.middleKnuckleInset - 0.1 * R,
       -TableGeometry.tableY,
       0
     )
     const ball = new Ball(pos)
-    ball.vel.y = -1
+    ball.vel.y = -10 * R
     expect(Cushion.bounceAny(ball, t)).to.be.undefined
     const k = Knuckle.findBouncing(ball, t)
     expect(k).to.be.deep.equal(PocketGeometry.pockets.pocketS.knuckleSE)

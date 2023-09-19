@@ -97,7 +97,7 @@ describe("Ball", () => {
 
   it("rolling ball eventualy stops", (done) => {
     const ball = new Ball(new Vector3())
-    ball.vel.x = 1
+    ball.vel.x = 0.1*R
     ball.rvel.y = ball.vel.x * (1 / R)
     ball.state = State.Rolling
     const maxiter = 100

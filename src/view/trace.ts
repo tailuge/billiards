@@ -5,6 +5,7 @@ import {
   Line,
   Vector3,
 } from "three"
+import { R } from "../model/physics/constants"
 
 export class Trace {
   readonly line: Line
@@ -40,7 +41,7 @@ export class Trace {
       return
     }
     const curvature = this.lastVel.angleTo(vel)
-    const delta = curvature > Math.PI / 32 ? 0.01 : 0.5
+    const delta = curvature > Math.PI / 32 ? 0.01 * R : R
     const distance = this.lastPos.distanceTo(pos)
 
     if (distance < delta) {

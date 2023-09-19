@@ -8,8 +8,9 @@ import { zero } from "../../src/utils/utils"
 import { Rack } from "../../src/utils/rack"
 import { R } from "../../src/model/physics/constants"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
+import { Collision } from "../../src/model/physics/collision"
 
-const t = 0.1
+const t = 0.01
 
 describe("Table", () => {
   it("updates when all stationary", (done) => {
@@ -33,7 +34,7 @@ describe("Table", () => {
     const a = new Ball(zero)
     a.vel.x = 1
     a.state = State.Sliding
-    const b = new Ball(new Vector3(R, 0, 0))
+    const b = new Ball(new Vector3(R * 0.9, 0, 0))
     const table = new Table([a, b])
     expect(() => {
       table.advance(t)
@@ -43,23 +44,23 @@ describe("Table", () => {
 
   it("a momentum transferes to c", (done) => {
     const a = new Ball(zero)
-    a.vel.x = 1.5
+    a.vel.x = 100 * R
     a.state = State.Sliding
-    const b = new Ball(new Vector3(1.1, 0, 0))
-    const c = new Ball(new Vector3(2.2, 0, 0))
+    const b = new Ball(new Vector3(2.0 * R, 0, 0))
+    const c = new Ball(new Vector3(4.0 * R, 0, 0))
     const table = new Table([a, b, c])
     expect(table.allStationary()).to.be.false
     expect(table.prepareAdvanceAll(t)).to.be.false
     table.advance(t)
-    expect(c.vel.x).to.be.closeTo(1, 0.5)
+    expect(c.vel.x).to.be.closeTo(100 * R, 10 * R)
     expect(table.prepareAdvanceAll(t)).to.be.true
     done()
   })
 
-  it("c bounces by transfering momentum through b and a", (done) => {
+  it("c moves by transfering momentum through b and a after bounce", (done) => {
     const a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
-    const b = new Ball(new Vector3(-TableGeometry.tableX + 1, 0, 0))
-    const c = new Ball(new Vector3(-TableGeometry.tableX + 2, 0, 0))
+    const b = new Ball(new Vector3(-TableGeometry.tableX + 2 * R, 0, 0))
+    const c = new Ball(new Vector3(-TableGeometry.tableX + 4 * R, 0, 0))
     a.vel.x = -2
     a.state = State.Sliding
     const table = new Table([a, b, c])
@@ -73,12 +74,13 @@ describe("Table", () => {
     const edge =
       PocketGeometry.pockets.pocketS.pocket.pos.y +
       PocketGeometry.middleRadius +
-      0.01
-    const a = new Ball(new Vector3(0, edge + 1, 0))
+      0.01 * R
+    const a = new Ball(new Vector3(0, edge + R * 2, 0))
     const b = new Ball(new Vector3(0, edge, 0))
-    a.vel.y = -2
+    a.vel.y = -18 * R
     a.state = State.Sliding
     const table = new Table([a, b])
+    expect(Collision.willCollide(a, b, t)).to.be.true
     const s = table.prepareAdvanceAll(t)
     expect(s).to.be.false
     table.advance(t)
@@ -88,7 +90,7 @@ describe("Table", () => {
     const maxiter = 10
     let i = 0
     while (i++ < maxiter && b.state != State.InPocket) {
-      table.advance(t)
+      table.advance(10 * t)
     }
     expect(b.isFalling()).to.be.false
     expect(b.state).to.be.equal(State.InPocket)
@@ -96,13 +98,9 @@ describe("Table", () => {
   })
 
   it("three cushion table has no pocket", (done) => {
-    const edge =
-      PocketGeometry.pockets.pocketS.pocket.pos.y +
-      PocketGeometry.middleRadius +
-      0.01
-    const a = new Ball(new Vector3(0, edge + 1, 0))
-    const b = new Ball(new Vector3(0, edge, 0))
-    a.vel.y = -2
+    const a = new Ball(new Vector3(0, TableGeometry.tableY - 0.01 * R, 0))
+    const b = new Ball(zero)
+    a.vel.y = 8 * R
     a.state = State.Sliding
     const table = new Table([a, b])
     table.hasPockets = false
@@ -116,13 +114,13 @@ describe("Table", () => {
   it("collides with knuckle", (done) => {
     const a = new Ball(
       new Vector3(
-        PocketGeometry.middleKnuckleInset - 0.1,
+        PocketGeometry.middleKnuckleInset - 0.1 * R,
         TableGeometry.tableY,
         0
       )
     )
     const b = new Ball(new Vector3())
-    a.vel.y = 10
+    a.vel.y = 10 * R
     a.state = State.Sliding
     const table = new Table([a, b])
     expect(table.prepareAdvanceAll(t)).to.be.false

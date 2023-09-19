@@ -33,13 +33,13 @@ export class BallMesh {
   m = new Matrix4()
 
   updateRotation(rvel, t) {
-    const angle = rvel.length() * t * 2 * R
+    const angle = rvel.length() * t
     const m = this.m.identity().makeRotationAxis(norm(rvel), angle)
     this.mesh.geometry.applyMatrix4(m)
   }
 
   updateArrows(pos, rvel, state) {
-    this.spinAxisArrow.setLength(0.5 + rvel.length() / 80, 0.1, 0.1)
+    this.spinAxisArrow.setLength(R + rvel.length() / 80, 0.1, 0.1)
     this.spinAxisArrow.position.copy(pos)
     this.spinAxisArrow.setDirection(norm(rvel))
     if (state == State.Rolling) {
@@ -50,7 +50,7 @@ export class BallMesh {
   }
 
   initialiseMesh(color) {
-    const geometry = new IcosahedronGeometry(0.5, 1)
+    const geometry = new IcosahedronGeometry(R, 1)
     const material = new MeshPhongMaterial({
       emissive: 0,
       flatShading: true,
@@ -61,9 +61,9 @@ export class BallMesh {
     this.mesh.name = "ball"
     this.updateRotation(new Vector3().random(), 100)
 
-    const shadowGeometry = new CircleGeometry(0.45, 9)
+    const shadowGeometry = new CircleGeometry(R * 0.9, 9)
     shadowGeometry.applyMatrix4(
-      new Matrix4().identity().makeTranslation(0, 0, -0.49)
+      new Matrix4().identity().makeTranslation(0, 0, -R * 0.99)
     )
     const shadowMaterial = new MeshBasicMaterial({ color: 0x111122 })
     this.shadow = new Mesh(shadowGeometry, shadowMaterial)

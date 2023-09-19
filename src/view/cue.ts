@@ -7,13 +7,14 @@ import { Ball, State } from "../model/ball"
 import { cueToSpin } from "../model/physics/physics"
 import { CueMesh } from "./cuemesh"
 import { Mesh, Raycaster, Vector3 } from "three"
+import { R } from "../model/physics/constants"
 
 export class Cue {
   mesh: Mesh
   helperMesh: Mesh
   placerMesh: Mesh
-  limit = 0.5
-  maxPower = 60.0
+  readonly offCenterLimit = 0.3
+  readonly maxPower = 120 * R
   t = 0
   aimInputs: AimInputs
   aim: AimEvent = new AimEvent()
@@ -21,7 +22,11 @@ export class Cue {
   length = TableGeometry.tableX * 1
 
   constructor() {
-    this.mesh = CueMesh.createCue(0.05, 0.15, this.length)
+    this.mesh = CueMesh.createCue(
+      (R * 0.05) / 0.5,
+      (R * 0.15) / 0.5,
+      this.length
+    )
     this.helperMesh = CueMesh.createHelper()
     this.placerMesh = CueMesh.createPlacer()
   }
@@ -55,8 +60,8 @@ export class Cue {
   }
 
   setSpin(offset: Vector3) {
-    if (offset.length() > 0.3) {
-      offset.normalize().multiplyScalar(0.3)
+    if (offset.length() > this.offCenterLimit) {
+      offset.normalize().multiplyScalar(this.offCenterLimit)
     }
     this.aim.offset = offset
     this.updateAimInput()
@@ -72,10 +77,13 @@ export class Cue {
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle
     const offset = upCross(unitAtAngle(this.aim.angle))
-      .multiplyScalar(this.aim.offset.x)
-      .setZ(this.aim.offset.y)
+      .multiplyScalar(this.aim.offset.x * 2 * R)
+      .setZ(this.aim.offset.y * 2 * R)
     const swing =
-      (Math.sin(this.t + Math.PI / 2) - 1) * (this.aim.power / this.maxPower)
+      (Math.sin(this.t + Math.PI / 2) - 1) *
+      5 *
+      R *
+      (this.aim.power / this.maxPower)
     const distanceToBall = unitAtAngle(this.aim.angle)
       .clone()
       .multiplyScalar(swing)

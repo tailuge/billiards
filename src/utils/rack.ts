@@ -2,10 +2,11 @@ import { Ball } from "../model/ball"
 import { TableGeometry } from "../view/tablegeometry"
 import { Vector3 } from "three"
 import { roundVec } from "./utils"
+import { R } from "../model/physics/constants"
 
 export class Rack {
-  static readonly noise = 0.05
-  static readonly gap = 1.0 + 2 * Rack.noise
+  static readonly noise = (R * 0.05) / 0.5
+  static readonly gap = 2 * R + 2 * Rack.noise
   static readonly up = new Vector3(0, 0, -1)
 
   private static jitter(pos) {
@@ -22,7 +23,7 @@ export class Rack {
     )
   }
 
-  static readonly spot = new Vector3(-11, 0.0, 0)
+  static readonly spot = new Vector3((-R * 11) / 0.5, 0.0, 0)
 
   static cueBall(pos) {
     return new Ball(pos, 0xfaebd7)
@@ -56,9 +57,11 @@ export class Rack {
 
   static three() {
     const threeballs: Ball[] = []
-    threeballs.push(Rack.cueBall(new Vector3(-11, -3.0, 0)))
-    threeballs.push(new Ball(new Vector3(-11, 0.0, 0), 0xe0de36))
-    threeballs.push(new Ball(new Vector3(+11, 0.0, 0), 0xff0000))
+    threeballs.push(
+      Rack.cueBall(new Vector3((-R * 11) / 0.5, (-R * 3.0) / 0.5, 0))
+    )
+    threeballs.push(new Ball(new Vector3((-R * 11) / 0.5, 0.0, 0), 0xe0de36))
+    threeballs.push(new Ball(new Vector3((+R * 11) / 0.5, 0.0, 0), 0xff0000))
     return threeballs
   }
 }

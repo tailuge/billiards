@@ -1,5 +1,6 @@
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
+import { R } from "../model/physics/constants"
 
 const onError = console.error
 
@@ -22,7 +23,9 @@ export function importGltf(path, scene, ready = () => {}) {
   loader.load(
     path,
     (gltf) => {
-      gltf.scene.matrixAutoUpdate = false
+      gltf.scene.scale.set(R / 0.5, R / 0.5, 1)
+      gltf.scene.matrixAutoUpdate = true
+      gltf.scene.visible = true
       scene.add(gltf.scene)
       ready()
     },

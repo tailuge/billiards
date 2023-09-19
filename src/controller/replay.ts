@@ -61,7 +61,6 @@ export class Replay extends ControllerBase {
   }
 
   override handleBreak(event: BreakEvent): Controller {
-    console.log("re-replay")
     if (event.init && this.shots.length == 0) {
       this.container.table.updateFromShortSerialised(event.init)
       this.shots = [...event.shots]

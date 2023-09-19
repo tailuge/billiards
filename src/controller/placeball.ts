@@ -5,6 +5,7 @@ import { MathUtils, Vector3 } from "three"
 import { TableGeometry } from "../view/tablegeometry"
 import { BreakEvent } from "../events/breakevent"
 import { round } from "../utils/utils"
+import { R } from "../model/physics/constants"
 
 /**
  * Place cue ball using input events.
@@ -12,7 +13,7 @@ import { round } from "../utils/utils"
  * Needs to be configurable to break place ball and post foul place ball anywhere legal.
  */
 export class PlaceBall extends ControllerBase {
-  readonly placescale = 0.01
+  readonly placescale = 0.02 * R
 
   constructor(container) {
     super(container)
@@ -24,7 +25,7 @@ export class PlaceBall extends ControllerBase {
   override onFirst() {
     const cueball = this.container.table.cueball
     if (!cueball.onTable()) {
-      cueball.pos = new Vector3(-11, 0, 0)
+      cueball.pos = new Vector3((-R * 11) / 0.5, 0, 0)
     }
     cueball.setStationary()
     cueball.updateMesh(0)

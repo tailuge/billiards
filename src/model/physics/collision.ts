@@ -1,4 +1,5 @@
 import { Ball, State } from "../ball"
+import { R } from "./constants"
 
 export class Collision {
   static willCollide(a: Ball, b: Ball, t: number): boolean {
@@ -6,7 +7,7 @@ export class Collision {
       (a.inMotion() || b.inMotion()) &&
       a.onTable() &&
       b.onTable() &&
-      a.futurePosition(t).distanceToSquared(b.futurePosition(t)) < 1
+      a.futurePosition(t).distanceToSquared(b.futurePosition(t)) < 4 * R * R
     )
   }
 

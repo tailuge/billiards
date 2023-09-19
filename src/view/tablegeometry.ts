@@ -1,3 +1,5 @@
+import { R } from "../model/physics/constants"
+
 export class TableGeometry {
   static tableX: number
   static tableY: number
@@ -5,7 +7,7 @@ export class TableGeometry {
   static Y: number
 
   static {
-    TableGeometry.scaleToRadius(0.5)
+    TableGeometry.scaleToRadius(R)
   }
 
   static scaleToRadius(R) {

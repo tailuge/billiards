@@ -2,6 +2,7 @@ import { Vector3 } from "three"
 import { Knuckle } from "../model/physics/knuckle"
 import { Pocket } from "../model/physics/pocket"
 import { TableGeometry } from "./tablegeometry"
+import { R } from "../model/physics/constants"
 
 // NW 1.05 Qn{x: -22.3, y: 11.3, z: 0}
 // N 1 0.9 Qn{x: 0, y: 12.0, z: 0}
@@ -21,19 +22,19 @@ export class PocketGeometry {
   static pocketCenters
 
   static {
-    PocketGeometry.scaleToRadius(0.5)
+    PocketGeometry.scaleToRadius(R)
   }
 
   static scaleToRadius(R) {
     PocketGeometry.PX = TableGeometry.tableX + R * (0.8 / 0.5)
     PocketGeometry.PY = TableGeometry.tableY + R * (0.8 / 0.5)
-    PocketGeometry.knuckleInset = 1.6
-    PocketGeometry.knuckleRadius = 0.31
-    PocketGeometry.middleKnuckleInset = 1.385
-    PocketGeometry.middleKnuckleRadius = 0.2
-    PocketGeometry.cornerRadius = 1.1
-    PocketGeometry.middleRadius = 0.9
-    PocketGeometry.pocketLayout()
+    PocketGeometry.knuckleInset = (R * 1.6) / 0.5
+    PocketGeometry.knuckleRadius = (R * 0.31) / 0.5
+    PocketGeometry.middleKnuckleInset = (R * 1.385) / 0.5
+    PocketGeometry.middleKnuckleRadius = (R * 0.2) / 0.5
+    PocketGeometry.cornerRadius = (R * 1.1) / 0.5
+    PocketGeometry.middleRadius = (R * 0.9) / 0.5
+    PocketGeometry.pocketLayout(R)
     PocketGeometry.enumerateCenters()
     PocketGeometry.enumerateKnuckles()
   }
@@ -66,7 +67,7 @@ export class PocketGeometry {
     ]
   }
 
-  static pocketLayout() {
+  static pocketLayout(R) {
     PocketGeometry.pockets = {
       pocketNW: {
         pocket: new Pocket(
@@ -92,7 +93,7 @@ export class PocketGeometry {
       },
       pocketN: {
         pocket: new Pocket(
-          new Vector3(0, PocketGeometry.PY + 0.7, 0),
+          new Vector3(0, PocketGeometry.PY + (R * 0.7) / 0.5, 0),
           PocketGeometry.middleRadius
         ),
         knuckleNE: new Knuckle(
@@ -114,7 +115,7 @@ export class PocketGeometry {
       },
       pocketS: {
         pocket: new Pocket(
-          new Vector3(0, -PocketGeometry.PY - 0.7, 0),
+          new Vector3(0, -PocketGeometry.PY - (R * 0.7) / 0.5, 0),
           PocketGeometry.middleRadius
         ),
         knuckleSE: new Knuckle(

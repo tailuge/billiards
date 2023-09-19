@@ -5,6 +5,7 @@ import { WatchAim } from "../../controller/watchaim"
 import { WatchEvent } from "../../events/watchevent"
 import { Ball } from "../../model/ball"
 import { Outcome } from "../../model/outcome"
+import { R } from "../../model/physics/constants"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
 import { TableGeometry } from "../../view/tablegeometry"
@@ -26,8 +27,8 @@ export class ThreeCushion implements Rules {
   table(): Table {
     const table = new Table(this.rack())
     table.hasPockets = false
-    TableGeometry.tableX = 21.5
-    TableGeometry.tableY = 10.5
+    TableGeometry.tableX = (R * 21.5) / 0.5
+    TableGeometry.tableY = (R * 10.5) / 0.5
     this.cueball = table.cueball
     return table
   }
