@@ -7,6 +7,7 @@ import { Ball, State } from "./ball"
 import { AimEvent } from "../events/aimevent"
 import { TableGeometry } from "../view/tablegeometry"
 import { Outcome } from "./outcome"
+import { PocketGeometry } from "../view/pocketgeometry"
 
 interface Pair {
   a: Ball
@@ -114,7 +115,7 @@ export class Table {
       this.outcome.push(Outcome.cushion(a, knuckleIncidentSpeed))
       return false
     }
-    const p = Pocket.findPocket(a, t)
+    const p = Pocket.findPocket(PocketGeometry.pocketCenters, a, t)
     if (p) {
       const pocketIncidentSpeed = p.fall(a, t)
       this.outcome.push(Outcome.pot(a, pocketIncidentSpeed))

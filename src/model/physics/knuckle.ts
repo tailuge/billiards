@@ -1,7 +1,7 @@
 import { Ball } from "../ball"
-import { TableGeometry } from "../../view/tablegeometry"
 import { Vector3 } from "three"
 import { e } from "./constants"
+import { PocketGeometry } from "../../view/pocketgeometry"
 
 export class Knuckle {
   pos: Vector3
@@ -25,7 +25,7 @@ export class Knuckle {
 
   static findBouncing(ball: Ball, t: number) {
     const futurePosition = ball.futurePosition(t)
-    return TableGeometry.knuckles.find((k) =>
+    return PocketGeometry.knuckles.find((k) =>
       Knuckle.willBounce(k, futurePosition)
     )
   }

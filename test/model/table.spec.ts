@@ -7,6 +7,7 @@ import { Vector3 } from "three"
 import { zero } from "../../src/utils/utils"
 import { Rack } from "../../src/utils/rack"
 import { R } from "../../src/model/physics/constants"
+import { PocketGeometry } from "../../src/view/pocketgeometry"
 
 const t = 0.1
 
@@ -70,8 +71,8 @@ describe("Table", () => {
 
   it("a pots b", (done) => {
     const edge =
-      TableGeometry.pockets.pocketS.pocket.pos.y +
-      TableGeometry.middleRadius +
+      PocketGeometry.pockets.pocketS.pocket.pos.y +
+      PocketGeometry.middleRadius +
       0.01
     const a = new Ball(new Vector3(0, edge + 1, 0))
     const b = new Ball(new Vector3(0, edge, 0))
@@ -96,8 +97,8 @@ describe("Table", () => {
 
   it("three cushion table has no pocket", (done) => {
     const edge =
-      TableGeometry.pockets.pocketS.pocket.pos.y +
-      TableGeometry.middleRadius +
+      PocketGeometry.pockets.pocketS.pocket.pos.y +
+      PocketGeometry.middleRadius +
       0.01
     const a = new Ball(new Vector3(0, edge + 1, 0))
     const b = new Ball(new Vector3(0, edge, 0))
@@ -115,7 +116,7 @@ describe("Table", () => {
   it("collides with knuckle", (done) => {
     const a = new Ball(
       new Vector3(
-        TableGeometry.middleKnuckleInset - 0.1,
+        PocketGeometry.middleKnuckleInset - 0.1,
         TableGeometry.tableY,
         0
       )

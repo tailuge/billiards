@@ -7,11 +7,12 @@ import {
   MeshPhongMaterial,
 } from "three"
 import { TableGeometry } from "./tablegeometry"
+import { PocketGeometry } from "./pocketgeometry"
 
 export class TableMesh {
   addToScene(scene) {
-    TableGeometry.knuckles.forEach((k) => this.knuckleCylinder(k, scene))
-    TableGeometry.pocketCenters.forEach((p) => this.knuckleCylinder(p, scene))
+    PocketGeometry.knuckles.forEach((k) => this.knuckleCylinder(k, scene))
+    PocketGeometry.pocketCenters.forEach((p) => this.knuckleCylinder(p, scene))
     /*
     const p = TableGeometry.pockets.pocketNW.pocket
     const k = TableGeometry.pockets.pocketNW.knuckleNE
@@ -19,7 +20,6 @@ export class TableMesh {
     */
   }
 
-  /* istanbul ignore next */
   private material = new MeshPhongMaterial({
     color: 0x445599,
     wireframe: false,
@@ -28,13 +28,11 @@ export class TableMesh {
     opacity: 0.4,
   })
 
-  /* istanbul ignore next */
   private knuckleCylinder(knuckle, scene) {
     const k = this.cylinder(knuckle.pos, knuckle.radius, 0.75, scene)
     k.position.setZ(-0.25 / 2)
   }
 
-  /* istanbul ignore next */
   private cylinder(pos, radius, depth, scene) {
     const geometry = new CylinderGeometry(radius, radius, depth, 16)
     const mesh = new Mesh(geometry, this.material)
@@ -48,7 +46,6 @@ export class TableMesh {
     return mesh
   }
 
-  /* istanbul ignore next */
   addCushions(scene) {
     const th = 10
     this.plane(
@@ -63,12 +60,12 @@ export class TableMesh {
     const h = 0.75
     const e = -0.25 / 2
     const lengthN = Math.abs(
-      TableGeometry.pockets.pocketNW.knuckleNE.pos.x -
-        TableGeometry.pockets.pocketN.knuckleNW.pos.x
+      PocketGeometry.pockets.pocketNW.knuckleNE.pos.x -
+        PocketGeometry.pockets.pocketN.knuckleNW.pos.x
     )
     const lengthE = Math.abs(
-      TableGeometry.pockets.pocketNW.knuckleSW.pos.y -
-        TableGeometry.pockets.pocketSW.knuckleNW.pos.y
+      PocketGeometry.pockets.pocketNW.knuckleSW.pos.y -
+        PocketGeometry.pockets.pocketSW.knuckleNW.pos.y
     )
 
     this.plane(new Vector3(TableGeometry.X + d / 2, 0, e), d, lengthE, h, scene)
@@ -111,7 +108,6 @@ export class TableMesh {
     )
   }
 
-  /* istanbul ignore next */
   private plane(pos, x, y, z, scene) {
     const geometry = new BoxGeometry(x, y, z)
     const mesh = new Mesh(geometry, this.material)

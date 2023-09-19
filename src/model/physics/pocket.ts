@@ -1,5 +1,4 @@
 import { Ball, State } from "../ball"
-import { TableGeometry } from "../../view/tablegeometry"
 import { Vector3 } from "three"
 import { g } from "./constants"
 
@@ -23,10 +22,8 @@ export class Pocket {
     return ball.vel.length()
   }
 
-  static findPocket(ball: Ball, t: number) {
+  static findPocket(pocketCenters, ball: Ball, t: number) {
     const futurePosition = ball.futurePosition(t)
-    return TableGeometry.pocketCenters.find((p) =>
-      Pocket.willFall(p, futurePosition)
-    )
+    return pocketCenters.find((p) => Pocket.willFall(p, futurePosition))
   }
 }

@@ -6,6 +6,7 @@ import { TableMesh } from "../../src/view/tablemesh"
 import { Cushion } from "../../src/model/physics/cushion"
 import { Knuckle } from "../../src/model/physics/knuckle"
 import { Vector3 } from "three"
+import { PocketGeometry } from "../../src/view/pocketgeometry"
 
 const t = 0.1
 
@@ -148,7 +149,7 @@ describe("Cushion", () => {
 
   it("bounces off knuckle", (done) => {
     const pos = new Vector3(
-      TableGeometry.middleKnuckleInset - 0.1,
+      PocketGeometry.middleKnuckleInset - 0.1,
       -TableGeometry.tableY,
       0
     )
@@ -156,7 +157,7 @@ describe("Cushion", () => {
     ball.vel.y = -1
     expect(Cushion.bounceAny(ball, t)).to.be.undefined
     const k = Knuckle.findBouncing(ball, t)
-    expect(k).to.be.deep.equal(TableGeometry.pockets.pocketS.knuckleSE)
+    expect(k).to.be.deep.equal(PocketGeometry.pockets.pocketS.knuckleSE)
     k?.bounce(ball)
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.above(0)

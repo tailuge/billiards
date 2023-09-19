@@ -2,6 +2,7 @@ import { Ball } from "../ball"
 import { TableGeometry } from "../../view/tablegeometry"
 import { rotateApplyUnrotate } from "./physics"
 import { Vector3 } from "three"
+import { PocketGeometry } from "../../view/pocketgeometry"
 
 export class Cushion {
   /**
@@ -40,8 +41,8 @@ export class Cushion {
       )
     }
     return Cushion.willBounceShortSegment(
-      TableGeometry.pockets.pocketNW.knuckleSW.pos.y,
-      TableGeometry.pockets.pocketSW.knuckleNW.pos.y,
+      PocketGeometry.pockets.pocketNW.knuckleSW.pos.y,
+      PocketGeometry.pockets.pocketSW.knuckleNW.pos.y,
       futurePosition
     )
   }
@@ -56,13 +57,13 @@ export class Cushion {
     }
     return (
       Cushion.willBounceLongSegment(
-        TableGeometry.pockets.pocketNW.knuckleNE.pos.x,
-        TableGeometry.pockets.pocketN.knuckleNW.pos.x,
+        PocketGeometry.pockets.pocketNW.knuckleNE.pos.x,
+        PocketGeometry.pockets.pocketN.knuckleNW.pos.x,
         futurePosition
       ) ||
       Cushion.willBounceLongSegment(
-        TableGeometry.pockets.pocketN.knuckleNE.pos.x,
-        TableGeometry.pockets.pocketNE.knuckleNW.pos.x,
+        PocketGeometry.pockets.pocketN.knuckleNE.pos.x,
+        PocketGeometry.pockets.pocketNE.knuckleNW.pos.x,
         futurePosition
       )
     )
