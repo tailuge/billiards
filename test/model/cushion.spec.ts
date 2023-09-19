@@ -2,6 +2,7 @@ import "mocha"
 import { expect } from "chai"
 import { Ball } from "../../src/model/ball"
 import { TableGeometry } from "../../src/view/tablegeometry"
+import { TableMesh } from "../../src/view/tablemesh"
 import { Cushion } from "../../src/model/physics/cushion"
 import { Knuckle } from "../../src/model/physics/knuckle"
 import { Vector3 } from "three"
@@ -164,7 +165,7 @@ describe("Cushion", () => {
 
   it("geometry present", (done) => {
     const scene = { add: () => {} }
-    TableGeometry.addToScene(scene)
+    new TableMesh().addToScene(scene)
     done()
   })
 })

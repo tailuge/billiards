@@ -93,7 +93,7 @@ export class View {
       ? "models/p8.min.gltf"
       : "models/threecushion.min.gltf"
     importGltf(tablemodel, this.scene, ready)
-    //TableGeometry.addToScene(this.scene)
+    //new TableMesh().addToScene(this.scene)
     this.scene.add(new Grid().generateLineSegments())
   }
 
