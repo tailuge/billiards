@@ -7,13 +7,14 @@ import { Grid } from "./grid"
 import { TableMesh } from "./tablemesh"
 
 export class View {
-  scene = new Scene()
+  readonly scene = new Scene()
   private renderer: WebGLRenderer
   camera: Camera
   windowWidth = 1
   windowHeight = 1
-  element
+  readonly element
   table: Table
+  showgeometry = false
 
   constructor(element, ready, table) {
     this.element = element
@@ -94,7 +95,7 @@ export class View {
       ? "models/p8.min.gltf"
       : "models/threecushion.min.gltf"
     importGltf(tablemodel, this.scene, ready)
-    false && new TableMesh().addToScene(this.scene)
+    this.showgeometry && new TableMesh().addToScene(this.scene)
     this.scene.add(new Grid().generateLineSegments())
   }
 
