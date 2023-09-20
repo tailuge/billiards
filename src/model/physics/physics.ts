@@ -35,8 +35,10 @@ export function rollingFull(w) {
 }
 
 export function forceRoll(v, w) {
-  v.sub(surfaceVelocity(v, w).multiplyScalar(1))
+  const wz = w.z
+  //  v.sub(surfaceVelocity(v, w))
   w.copy(upCross(v).multiplyScalar(1 / R))
+  w.setZ(wz)
 }
 
 export function rotateApplyUnrotate(theta, v, w, dv, dw) {

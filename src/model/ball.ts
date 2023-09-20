@@ -1,6 +1,7 @@
 import { Vector3 } from "three"
 import { zero, vec, passesThroughZero } from "../utils/utils"
 import {
+  forceRoll,
   rollingFull,
   sliding,
   surfaceVelocityFull,
@@ -56,6 +57,7 @@ export class Ball {
     if (this.inMotion()) {
       if (this.isRolling()) {
         this.state = State.Rolling
+        forceRoll(this.vel, this.rvel)
         this.addDelta(t, rollingFull(this.rvel))
       } else {
         this.state = State.Sliding
@@ -77,10 +79,11 @@ export class Ball {
     const vz = passesThroughZero(this.vel, delta.v)
     const wz = passesThroughZero(this.rvel, delta.w)
     const halts = this.state === State.Rolling ? vz || wz : vz && wz
-    if (halts) {
+    if (halts && Math.abs(this.rvel.z) < 0.01) {
       this.setStationary()
+      return true
     }
-    return halts
+    return false
   }
 
   setStationary() {

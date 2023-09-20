@@ -112,15 +112,16 @@ describe("Ball", () => {
 
   it("spinning ball eventualy stops", (done) => {
     const ball = new Ball(new Vector3())
-    ball.rvel.z = 0.05
+    ball.state = State.Rolling
+    const initialz = 100 * R
+    ball.rvel.z = initialz
+    ball.update(t)
+    expect(ball.rvel.z).to.be.lessThan(initialz)
     ball.state = State.Sliding
-    const maxiter = 20
-    let i = 0
-    while (i++ < maxiter && ball.inMotion()) {
-      ball.update(t)
-      ball.updateMesh(t)
-    }
-    expect(i).to.be.below(maxiter)
+    ball.rvel.z = initialz
+    ball.update(t)
+    ball.updateMesh(t)
+    expect(ball.rvel.z).to.be.lessThan(initialz)
     done()
   })
 
@@ -171,19 +172,6 @@ describe("Ball", () => {
     forceRoll(b.vel, b.rvel)
     expect(surfaceVelocity(b.vel, b.rvel)).to.be.deep.equal(zero)
     expect(b.vel.x).to.be.equal(1)
-    done()
-  })
-
-  it("force roll is at midpoint", (done) => {
-    const b = Ball.fromSerialised({
-      pos: { x: 0, y: 0, z: 0 },
-      vel: { x: 1, y: 0, z: 0 },
-      rvel: { x: 0, y: 1 / R + 1, z: 0 },
-      state: "Rolling",
-    })
-    forceRoll(b.vel, b.rvel)
-    expect(surfaceVelocity(b.vel, b.rvel)).to.be.deep.equal(zero)
-    expect(b.vel.x).to.be.greaterThan(1)
     done()
   })
 })

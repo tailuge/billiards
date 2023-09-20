@@ -11,11 +11,11 @@ export function upCross(v) {
   return up.clone().cross(v)
 }
 
-const vc = new Vector3()
-
 export function norm(v) {
   return v.clone(v).normalize()
 }
+
+const vc = new Vector3()
 
 export function passesThroughZero(v, dv) {
   return vc.copy(v).add(dv).dot(v) <= 0
