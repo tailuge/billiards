@@ -1,16 +1,11 @@
 import "mocha"
 import { expect } from "chai"
 import { AimInputs } from "../../src/view/aiminputs"
-describe("Trace", () => {
-  
-  document.body.innerHTML = `<button id="cueHit" type="button"></button>
-  <div>
-    <div id="cueBall">
-      <div id="cueTip"></div>
-    </div>
-  </div>
-  <input id="cuePower"/>`
+// @ts-ignore
+import html from "../../dist/index.html"
+document.body.innerHTML = html
 
+describe("Trace", () => {
   const aiminputs = new AimInputs(null)
 
   it("initialise", (done) => {

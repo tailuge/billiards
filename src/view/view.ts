@@ -19,8 +19,9 @@ export class View {
   constructor(element, ready, table) {
     this.element = element
     this.table = table
-    element &&
+    if (typeof process === "undefined") {
       this.initialiseScene(element, element.offsetWidth, element.offsetHeight)
+    }
     this.camera = new Camera(
       element ? element.offsetWidth / element.offsetHeight : 1
     )

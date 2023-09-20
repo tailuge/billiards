@@ -10,7 +10,6 @@ module.exports = {
   module: {
     rules: [
       {
-        //        use: "ts-loader",
         use: "swc-loader",
         exclude: /node_modules/,
       },
