@@ -5,12 +5,13 @@ import { CushionPlot } from "./diagram/cushionplot"
 import { Graph } from "./diagram/graph"
 import { RollDiagram } from "./diagram/rolldiagram"
 import { Sliders } from "./view/sliders"
+import { R } from "./model/physics/constants"
 
 let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4
 let s = 1
 
-const maxSpeed = 20
+const maxSpeed = 60 * R
 
 const rollcanvas = id("rollcanvas")
 if (rollcanvas) {
@@ -19,13 +20,13 @@ if (rollcanvas) {
 } else {
   makeDiagram("diagram1", [
     makeBall(0, 0, -maxSpeed, 0, 0, 0, 0),
-    makeBall(2, 2, -maxSpeed, 0, 0, 0, maxSpeed),
-    makeBall(-2, -2, -maxSpeed, 0, 0, 0, -maxSpeed),
+    makeBall(2 * R, 3 * R, -maxSpeed, 0, 0, 0, maxSpeed / R),
+    makeBall(-2 * R, -3 * R, -maxSpeed, 0, 0, 0, -maxSpeed / R),
   ])
 
   makeDiagram("diagram2", [
-    makeBall(-17, 2, 0, -maxSpeed * 2, -85, 0, -35),
-    makeBall(-17.38, -2, 0, 0, 0, 0, 0),
+    makeBall(-17 * R, 2 * R, 0, -maxSpeed * 2, -1 / R, 0, -35 / R),
+    makeBall(-17.38 * R, -2 * R, 0, 0, 0, 0, 0),
   ])
 
   p1 = new CushionPlot(id("cushion1"), "stun shot")

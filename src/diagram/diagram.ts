@@ -1,3 +1,4 @@
+import { R } from "../model/physics/constants"
 import { Table } from "../model/table"
 import { TableGeometry } from "../view/tablegeometry"
 import { DiagramInputs } from "./diagraminputs"
@@ -40,7 +41,7 @@ export class Diagram {
   drawBall(x, y, style) {
     this.diagram.fillStyle = style
     this.diagram.beginPath()
-    this.diagram.ellipse(x, y, 0.5, 0.5, 0, 0, Math.PI * 2)
+    this.diagram.ellipse(x, y, R, R, 0, 0, Math.PI * 2)
     this.diagram.fill()
   }
 
