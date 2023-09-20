@@ -1,12 +1,11 @@
-import { Vector3, MathUtils } from "three"
-import { zero, vec, passesThroughZero, up } from "../utils/utils"
+import { Vector3 } from "three"
+import { zero, vec, passesThroughZero } from "../utils/utils"
 import {
   rollingFull,
   sliding,
   surfaceVelocityFull,
 } from "../model/physics/physics"
 import { BallMesh } from "../view/ballmesh"
-import { R, g } from "./physics/constants"
 import { Pocket } from "./physics/pocket"
 
 export enum State {
@@ -18,15 +17,15 @@ export enum State {
 }
 
 export class Ball {
-  pos: Vector3
-  vel: Vector3 = zero.clone()
-  rvel: Vector3 = zero.clone()
+  readonly pos: Vector3
+  readonly vel: Vector3 = zero.clone()
+  readonly rvel: Vector3 = zero.clone()
+  readonly futurePos: Vector3 = zero.clone()
+  readonly ballmesh: BallMesh
   state: State = State.Stationary
   pocket: Pocket
-  futurePos: Vector3 = zero.clone()
-  ballmesh: BallMesh
 
-  readonly transition = 0.05
+  private readonly transition = 0.05
 
   constructor(pos, color?) {
     this.pos = pos.clone()
@@ -36,19 +35,11 @@ export class Ball {
   update(t) {
     this.updatePosition(t)
     this.updateVelocity(t)
-
-    if (this.state == State.Falling) {
-      this.updateFalling(t)
-    }
+    this.updateFalling(t)
   }
 
   updateMesh(t) {
-    this.ballmesh.updatePosition(this.pos)
-    this.ballmesh.updateArrows(this.pos, this.rvel, this.state)
-    if (this.rvel.lengthSq() !== 0) {
-      this.ballmesh.updateRotation(this.rvel, t)
-    }
-    this.ballmesh.trace.addTrace(this.pos, this.vel)
+    this.ballmesh.updateAll(this, t)
   }
 
   private updatePosition(t: number) {
@@ -56,23 +47,8 @@ export class Ball {
   }
 
   private updateFalling(t: number) {
-    this.vel.addScaledVector(up, ((-R * 10) / 0.5) * t * g)
-    if (this.pos.z < (-R * 2) / 0.5) {
-      this.pos.z += MathUtils.randFloat(-R, R * 0.25)
-      this.setStationary()
-      this.state = State.InPocket
-    }
-
-    if (this.pos.distanceTo(this.pocket.pos) > this.pocket.radius - R) {
-      const toCentre = this.pocket.pos
-        .clone()
-        .sub(this.pos)
-        .normalize()
-        .multiplyScalar(this.vel.length() * R)
-      if (this.vel.dot(toCentre) < 0) {
-        this.vel.x = toCentre.x
-        this.vel.y = toCentre.y
-      }
+    if (this.state == State.Falling) {
+      this.pocket.updateFall(this, t)
     }
   }
 

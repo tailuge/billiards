@@ -14,7 +14,7 @@ export function upCross(v) {
 const vc = new Vector3()
 
 export function norm(v) {
-  return vc.copy(v).normalize()
+  return v.clone(v).normalize()
 }
 
 export function passesThroughZero(v, dv) {

@@ -1,6 +1,7 @@
 import { Ball, State } from "../ball"
-import { Vector3 } from "three"
-import { g } from "./constants"
+import { MathUtils, Vector3 } from "three"
+import { R, g } from "./constants"
+import { up } from "../../utils/utils"
 
 export class Pocket {
   pos: Vector3
@@ -20,6 +21,27 @@ export class Pocket {
     ball.state = State.Falling
     ball.pocket = this
     return ball.vel.length()
+  }
+
+  public updateFall(ball, t) {
+    ball.vel.addScaledVector(up, ((-R * 10) / 0.5) * t * g)
+    if (ball.pos.z < (-R * 2) / 0.5) {
+      ball.pos.z += MathUtils.randFloat(-R, R * 0.25)
+      ball.setStationary()
+      ball.state = State.InPocket
+    }
+
+    if (ball.pos.distanceTo(this.pos) > this.radius - R) {
+      const toCentre = this.pos
+        .clone()
+        .sub(ball.pos)
+        .normalize()
+        .multiplyScalar(ball.vel.length() * R)
+      if (ball.vel.dot(toCentre) < 0) {
+        ball.vel.x = toCentre.x
+        ball.vel.y = toCentre.y
+      }
+    }
   }
 
   static findPocket(pocketCenters, ball: Ball, t: number) {

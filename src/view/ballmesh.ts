@@ -25,6 +25,15 @@ export class BallMesh {
     this.initialiseMesh(color)
   }
 
+  updateAll(ball, t) {
+    this.updatePosition(ball.pos)
+    this.updateArrows(ball.pos, ball.rvel, ball.state)
+    if (ball.rvel.lengthSq() !== 0) {
+      this.updateRotation(ball.rvel, t)
+    }
+    this.trace.addTrace(ball.pos, ball.vel)
+  }
+
   updatePosition(pos) {
     this.mesh.position.copy(pos)
     this.shadow.position.copy(pos)
