@@ -23,9 +23,10 @@ export function importGltf(path, scene, ready = () => {}) {
   loader.load(
     path,
     (gltf) => {
-      gltf.scene.scale.set(R / 0.5, R / 0.5, 1)
-      gltf.scene.matrixAutoUpdate = true
+      gltf.scene.scale.set(R / 0.5, R / 0.5, R / 0.5)
+      gltf.scene.matrixAutoUpdate = false
       gltf.scene.visible = true
+      gltf.scene.updateMatrix()
       scene.add(gltf.scene)
       ready()
     },

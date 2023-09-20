@@ -10,7 +10,7 @@ export class Grid {
   })
 
   public generateLineSegments() {
-    const points = [this.point(0, -11.13), this.point(0, 11.13)]
+    const points = [this.point(0, -11.13*R/0.5), this.point(0, 11.13*R/0.5)]
 
     const stepx = (TableGeometry.tableX + 2 * R) / 4
     const xs = [1, 2, 3, -1, -2, -3]

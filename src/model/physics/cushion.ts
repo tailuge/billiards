@@ -35,8 +35,8 @@ export class Cushion {
   static willBounceShort(futurePosition, hasPockets) {
     if (!hasPockets) {
       return Cushion.willBounceShortSegment(
-        TableGeometry.tableY,
-        -TableGeometry.tableY,
+        TableGeometry.Y,
+        -TableGeometry.Y,
         futurePosition
       )
     }
@@ -50,8 +50,8 @@ export class Cushion {
   static willBounceLong(futurePosition, hasPockets) {
     if (!hasPockets) {
       return Cushion.willBounceLongSegment(
-        -TableGeometry.tableX,
-        TableGeometry.tableX,
+        -TableGeometry.X,
+        TableGeometry.X,
         futurePosition
       )
     }

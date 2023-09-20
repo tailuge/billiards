@@ -39,13 +39,13 @@ export class BallMesh {
   }
 
   updateArrows(pos, rvel, state) {
-    this.spinAxisArrow.setLength(R + rvel.length() / 80, 0.1, 0.1)
+    this.spinAxisArrow.setLength(R + R*rvel.length()/2, R, R)
     this.spinAxisArrow.position.copy(pos)
     this.spinAxisArrow.setDirection(norm(rvel))
     if (state == State.Rolling) {
-      this.spinAxisArrow.setColor(0xff0000)
+      this.spinAxisArrow.setColor(0xcc0000)
     } else {
-      this.spinAxisArrow.setColor(0x00ff00)
+      this.spinAxisArrow.setColor(0x00cc00)
     }
   }
 
@@ -67,7 +67,7 @@ export class BallMesh {
     )
     const shadowMaterial = new MeshBasicMaterial({ color: 0x111122 })
     this.shadow = new Mesh(shadowGeometry, shadowMaterial)
-    this.spinAxisArrow = new ArrowHelper(up, zero, 2, 0x000000)
+    this.spinAxisArrow = new ArrowHelper(up, zero, 2, 0x000000, 0.01,0.01)
     this.spinAxisArrow.visible = false
     this.trace = new Trace(500, color)
   }
