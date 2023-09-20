@@ -11,12 +11,14 @@ export function upCross(v) {
   return up.clone().cross(v)
 }
 
+const vc = new Vector3()
+
 export function norm(v) {
-  return v.clone().normalize()
+  return vc.copy(v).normalize()
 }
 
 export function passesThroughZero(v, dv) {
-  return v.clone().add(dv).dot(v) <= 0
+  return vc.copy(v).add(dv).dot(v) <= 0
 }
 
 export function unitAtAngle(theta) {

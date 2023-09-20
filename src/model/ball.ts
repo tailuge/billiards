@@ -79,46 +79,32 @@ export class Ball {
   private updateVelocity(t: number) {
     if (this.inMotion()) {
       if (this.isRolling()) {
-        this.updateVelocityRolling(t)
+        this.state = State.Rolling
+        this.addDelta(t, rollingFull(this.rvel))
       } else {
-        this.updateVelocitySliding(t)
+        this.state = State.Sliding
+        this.addDelta(t, sliding(this.vel, this.rvel))
       }
     }
   }
 
-  private dv = new Vector3()
-  private dw = new Vector3()
-
-  private updateVelocityRolling(t) {
-    rollingFull(this.rvel, this.dv, this.dw)
-    this.dv.multiplyScalar(t)
-    this.dw.multiplyScalar(t)
-    if (
-      passesThroughZero(this.rvel, this.dw) ||
-      passesThroughZero(this.vel, this.dv)
-    ) {
-      this.setStationary()
-    } else {
-      this.vel.add(this.dv)
-      this.rvel.add(this.dw)
-      this.state = State.Rolling
+  private addDelta(t, delta) {
+    delta.v.multiplyScalar(t)
+    delta.w.multiplyScalar(t)
+    if (!this.passesZero(delta)) {
+      this.vel.add(delta.v)
+      this.rvel.add(delta.w)
     }
   }
 
-  private updateVelocitySliding(t) {
-    sliding(this.vel, this.rvel, this.dv, this.dw)
-    this.dv.multiplyScalar(t)
-    this.dw.multiplyScalar(t)
-    if (
-      passesThroughZero(this.rvel, this.dw) &&
-      passesThroughZero(this.vel, this.dv)
-    ) {
+  private passesZero(delta) {
+    const vz = passesThroughZero(this.vel, delta.v)
+    const wz = passesThroughZero(this.rvel, delta.w)
+    const halts = this.state === State.Rolling ? vz || wz : vz && wz
+    if (halts) {
       this.setStationary()
-    } else {
-      this.vel.add(this.dv)
-      this.rvel.add(this.dw)
-      this.state = State.Sliding
     }
+    return halts
   }
 
   setStationary() {
