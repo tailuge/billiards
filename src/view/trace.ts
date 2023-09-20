@@ -34,6 +34,7 @@ export class Trace {
 
   reset() {
     this.geometry.setDrawRange(0, 0)
+    this.lastVel.setZ(1)
   }
 
   addTrace(pos, vel) {
@@ -44,11 +45,12 @@ export class Trace {
     const delta = curvature > Math.PI / 32 ? 0.01 * R : R
     const distance = this.lastPos.distanceTo(pos)
 
-    if (distance < delta) {
+    let index = this.geometry.drawRange.count
+
+    if (index !== 0 && distance < delta) {
       return
     }
 
-    let index = this.geometry.drawRange.count
     if (index > 2 && curvature < 0.0001) {
       index--
     }

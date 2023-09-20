@@ -30,8 +30,8 @@ export class BallMesh {
     this.updateArrows(ball.pos, ball.rvel, ball.state)
     if (ball.rvel.lengthSq() !== 0) {
       this.updateRotation(ball.rvel, t)
+      this.trace.addTrace(ball.pos, ball.vel)
     }
-    this.trace.addTrace(ball.pos, ball.vel)
   }
 
   updatePosition(pos) {
@@ -39,7 +39,7 @@ export class BallMesh {
     this.shadow.position.copy(pos)
   }
 
-  m = new Matrix4()
+  readonly m = new Matrix4()
 
   updateRotation(rvel, t) {
     const angle = rvel.length() * t
