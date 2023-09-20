@@ -1,5 +1,6 @@
 import { Vector3 } from "three"
 import { TableGeometry } from "./tablegeometry"
+import { R } from "../model/physics/constants"
 
 export class CameraTop {
   static aspectLimit = 1.78
@@ -11,12 +12,12 @@ export class CameraTop {
         aspectRatio > CameraTop.aspectLimit
           ? 2.75 * TableGeometry.tableY
           : (2.4 * TableGeometry.tableX) / aspectRatio
-      return new Vector3(0, -0.1, dist * factor)
+      return new Vector3(0, -0.01 * R, dist * factor)
     }
     const factor =
       aspectRatio > 1 / CameraTop.aspectLimit
         ? 4.9 * TableGeometry.tableY
         : (1.35 * TableGeometry.tableX) / aspectRatio
-    return new Vector3(-0.1, 0, dist * factor)
+    return new Vector3(-0.01 * R, 0, dist * factor)
   }
 }

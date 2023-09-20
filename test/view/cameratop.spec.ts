@@ -16,7 +16,7 @@ describe("View", () => {
   })
   it("mobile device render table vertically", (done) => {
     const distance = CameraTop.viewPoint(0.7, fov)
-    expect(distance.x).to.equal(-0.1)
+    expect(distance.x).to.be.lessThan(0)
     done()
   })
   it("mobile device scale to width", (done) => {
