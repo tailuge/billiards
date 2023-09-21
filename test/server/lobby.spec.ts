@@ -204,6 +204,22 @@ describe("Lobby", () => {
     done()
   })
 
+  it("player leaves never recieving anything, requests everything", (done) => {
+    ServerLog.enable = true
+    lobby.joinTable(player1, tableId)
+    const event1 = new BreakEvent()
+    event1.sequence = "seq-001"
+    lobby.handleTableMessage(player1, tableId, EventUtil.serialise(event1))
+    lobby.handleLeaveTable(player1, tableId)
+    expect(lobby.joinTable(player1r, tableId, "seq-001", "")).to.be.true
+    const rejoin = EventUtil.fromSerialised(
+      player1r.ws.messages[0]
+    ) as RejoinEvent
+    expect(rejoin.clientResendFrom).to.be.equal("")
+    expect(rejoin.serverResendFrom).to.be.equal("server-1000")
+    done()
+  })
+
   it("player leaves, misses messages and server replays", (done) => {
     ServerLog.enable = false
     lobby.joinTable(player1, tableId)
@@ -245,6 +261,14 @@ describe("Lobby", () => {
     lobby.handleTableMessage(player1, tableId, message)
     const event = EventUtil.fromSerialised(player2.ws.messages[2])
     expect(event).to.be.an.instanceof(AimEvent)
+    done()
+  })
+
+  it("do not send if socket not ready", (done) => {
+    lobby.joinTable(player1, tableId)
+    player1.ws.readyState = 2
+    lobby.sendInfo(player1, tableId, "more info")
+    expect(player1.ws.messages).to.be.length(1)
     done()
   })
 })

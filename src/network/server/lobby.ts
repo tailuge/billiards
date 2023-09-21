@@ -120,11 +120,11 @@ export class Lobby {
   }
 
   send(client, tableId, event: GameEvent) {
-    this.tables.getTable(tableId).recordSentEvent(client, event)
-    if (client.ws?.readState >= 2) {
+    if (client.ws?.readyState >= 2) {
       ServerLog.log(`not sending to ${client.name}:${client.clientId}`)
       return
     }
+    this.tables.getTable(tableId).recordSentEvent(client, event)
     client.ws?.send(EventUtil.serialise(event))
     ServerLog.logEvent(`sending to ${client.name}:${client.clientId}`, event)
   }

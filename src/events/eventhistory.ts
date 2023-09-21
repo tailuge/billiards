@@ -2,7 +2,7 @@ import { GameEvent } from "./gameevent"
 
 export class EventHistory {
   sent: GameEvent[] = []
-  recv: GameEvent[] = []
+  recv: GameEvent
 
   private last(list: GameEvent[]): GameEvent {
     return list[list.length - 1]
@@ -13,7 +13,7 @@ export class EventHistory {
   }
 
   lastRecv() {
-    return this.last(this.recv)
+    return this.recv
   }
 
   from(list: GameEvent[], sequenceId) {

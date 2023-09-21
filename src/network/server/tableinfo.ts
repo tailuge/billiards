@@ -21,10 +21,7 @@ export class TableInfo {
   }
 
   hasNoHistory(client) {
-    return (
-      this.history(client).sent.length == 0 &&
-      this.history(client).recv.length == 0
-    )
+    return this.history(client).sent.length == 0 && !this.history(client).recv
   }
 
   recordSentEvent(client, event) {
@@ -34,7 +31,7 @@ export class TableInfo {
 
   recordRecvEvent(client, event) {
     const clientHistory = this.history(client)
-    clientHistory.recv.push(event)
+    clientHistory.recv = event
   }
 
   join(client: Client) {
