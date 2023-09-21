@@ -4,6 +4,10 @@ body {
   background-color: rgb(245, 245, 245);
 }
 
+.topview {
+  width: 400px;
+  height: 220px;
+}
 .diagram,
 .roll {
   width: 400px;

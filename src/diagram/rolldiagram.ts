@@ -15,8 +15,8 @@ export class RollDiagram {
     this.canvas = canvas
     this.ctx = this.canvas.getContext("2d")!
     this.ball = new Ball(zero)
-    this.ball.vel = new Vector3(8.5, 0, 0)
-    this.ball.rvel = new Vector3(0, (0.0 * this.ball.vel.x) / R, 0)
+    this.ball.vel.copy(new Vector3(32 * R, 0, 0))
+    this.ball.rvel.copy(new Vector3(0, -(2.0 * this.ball.vel.x) / R, 0))
     this.ball.state = State.Sliding
   }
 

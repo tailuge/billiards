@@ -11,18 +11,8 @@
   </head>
 
   <body>
-    <div id="diagram1" class="diagram">
-      <canvas id="canvas" width="400" height="210"></canvas>
-      <div id="control"></div>
-    </div>
-
-    <div id="diagram2" class="diagram">
-      <canvas id="canvas" width="400" height="210"></canvas>
-      <div id="control"></div>
-    </div>
-
     <div class="diagram">
-      <p>Physical Constants</p>
+      <p>Physical Constants<button id="replay" type="button">replay</button></p>
       <br />
       <input id="R" type="range" />
       <label for="R">R</label>
@@ -46,6 +36,10 @@
         <code style="color: red">Pzs</code> &le;
         <code style="color: blue">Pze</code>.
       </p>
+    </div>
+
+    <div class="diagram">
+      <div id="diagram1" class="topview"></div>
     </div>
 
     <div class="diagram">

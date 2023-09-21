@@ -1,33 +1,24 @@
-import { Diagram } from "./diagram/diagram"
 import { Pze, Pzs, c0, s0, muCushion } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { CushionPlot } from "./diagram/cushionplot"
 import { Graph } from "./diagram/graph"
 import { RollDiagram } from "./diagram/rolldiagram"
 import { Sliders } from "./view/sliders"
-import { R } from "./model/physics/constants"
+import { DiagramContainer } from "./diagram/diagramcontainer"
 
 let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4
 let s = 1
-
-const maxSpeed = 60 * R
 
 const rollcanvas = id("rollcanvas")
 if (rollcanvas) {
   const rolldiagram = new RollDiagram(rollcanvas)
   rolldiagram.draw(5)
 } else {
-  makeDiagram("diagram1", [
-    makeBall(0, 0, -maxSpeed, 0, 0, 0, 0),
-    makeBall(2 * R, 3 * R, -maxSpeed, 0, 0, 0, maxSpeed / R),
-    makeBall(-2 * R, -3 * R, -maxSpeed, 0, 0, 0, -maxSpeed / R),
-  ])
-
-  makeDiagram("diagram2", [
-    makeBall(-17 * R, 2 * R, 0, -maxSpeed * 2, -1 / R, 0, -35 / R),
-    makeBall(-17.38 * R, -2 * R, 0, 0, 0, 0, 0),
-  ])
+  const shot1 = `%7B"init":%5B0.23865827533735734,-0.4460993497027286,0.47645162389433243,-0.6426937018186901,0.14544064775082516,0.5127720731620581%5D,"shots":%5B%7B"type":"AIM","offset":%7B"x":-0.3,"y":0.006,"z":0%7D,"angle":0.728,"power":1.328,"pos":%7B"x":0.23865827533735734,"y":-0.4460993497027286,"z":0%7D,"i":0%7D%5D%7D`
+  const tableview = document.getElementById("diagram1")
+  const diagram1 = new DiagramContainer(tableview, "threecushion", shot1)
+  diagram1.start()
 
   p1 = new CushionPlot(id("cushion1"), "stun shot")
   p2 = new CushionPlot(id("cushion2"), "running side")
@@ -168,32 +159,6 @@ function plot4() {
   linegraph4.plot(x, y, y)
 }
 
-function makeDiagram(id, balls) {
-  return new Diagram(
-    { balls: balls },
-    (<HTMLCanvasElement>elt(id, "canvas")).getContext("2d"),
-    elt(id, "control")
-  )
-}
-
-function makeBall(x, y, vx, vy, wx, wy, wz) {
-  return {
-    pos: { x: x, y: y, z: 0 },
-    vel: { x: vx, y: vy, z: 0 },
-    rvel: { x: wx, y: wy, z: wz },
-    state: "Sliding",
-  }
-}
-
 function id(id: string): HTMLElement {
   return document.getElementById(id)!
-}
-
-function elt(diagram, id) {
-  const selector = "#" + diagram + " #" + id
-  const e = document.querySelector(selector)
-  if (e == null) {
-    throw new Error("Element not found " + selector)
-  }
-  return e
 }
