@@ -167,7 +167,8 @@ describe("Cushion", () => {
 
   it("geometry present", (done) => {
     const scene = { add: () => {} }
-    new TableMesh().addToScene(scene)
+    new TableMesh().addToScene(scene, true)
+    new TableMesh().addToScene(scene, false)
     done()
   })
 })

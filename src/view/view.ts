@@ -91,15 +91,20 @@ export class View {
 
   private addTable(ready) {
     this.scene.add(new AmbientLight(0x515253, 0.3))
-    importGltf("models/background.gltf", this.scene, true)
+    this.scene.add(new Grid().generateLineSegments())
     const tablemodel = this.table.hasPockets
       ? "models/p8.min.gltf"
       : "models/threecushion.min.gltf"
-    importGltf(tablemodel, this.scene, this.table.hasPockets, ready)
-    if (this.showgeometry && !this.table.hasPockets) {
+    const load = this.table.hasPockets
+    if (load) {
+      importGltf("models/background.gltf", this.scene, true)
+      importGltf(tablemodel, this.scene, this.table.hasPockets, ready)
+    } else {
       new TableMesh().addToScene(this.scene, this.table.hasPockets)
+      setTimeout(() => {
+        ready()
+      }, 10)
     }
-    this.scene.add(new Grid().generateLineSegments())
   }
 
   ballToCheck = 0
