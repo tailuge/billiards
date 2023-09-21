@@ -23,7 +23,7 @@ export class Rack {
     )
   }
 
-  static readonly spot = new Vector3((-R * 11) / 0.5, 0.0, 0)
+  static readonly spot = new Vector3(-TableGeometry.X / 2, 0.0, 0)
 
   static cueBall(pos) {
     return new Ball(pos, 0xfaebd7)
@@ -57,11 +57,11 @@ export class Rack {
 
   static three() {
     const threeballs: Ball[] = []
-    threeballs.push(
-      Rack.cueBall(new Vector3((-R * 11) / 0.5, (-R * 3.0) / 0.5, 0))
-    )
-    threeballs.push(new Ball(new Vector3((-R * 11) / 0.5, 0.0, 0), 0xe0de36))
-    threeballs.push(new Ball(new Vector3((+R * 11) / 0.5, 0.0, 0), 0xff0000))
+    const dx = TableGeometry.X / 2
+    const dy = TableGeometry.Y / 4
+    threeballs.push(Rack.cueBall(new Vector3(-dx, -dy, 0)))
+    threeballs.push(new Ball(new Vector3(-dx, 0, 0), 0xe0de36))
+    threeballs.push(new Ball(new Vector3(dx, 0, 0), 0xff0000))
     return threeballs
   }
 }

@@ -14,22 +14,25 @@ import { R } from "../model/physics/constants"
 export class TableMesh {
   logger = (_) => {}
 
-  addToScene(scene) {
+  addToScene(scene, hasPockets: boolean) {
     const light = new PointLight(0xf0f0f0, 9.0)
     light.position.set(0, 0, R * 30)
     scene.add(light)
+    this.addCushions(scene, hasPockets)
 
-    PocketGeometry.knuckles.forEach((k) => this.knuckleCylinder(k, scene))
-    PocketGeometry.pocketCenters.forEach((p) =>
-      this.knuckleCylinder(p, scene, this.pocket)
-    )
-    this.addCushions(scene)
+    if (hasPockets) {
+      PocketGeometry.knuckles.forEach((k) => this.knuckleCylinder(k, scene))
+      PocketGeometry.pocketCenters.forEach((p) =>
+        this.knuckleCylinder(p, scene, this.pocket)
+      )
 
-    const p = PocketGeometry.pockets.pocketNW.pocket
-    const k = PocketGeometry.pockets.pocketNW.knuckleNE
-    this.logger(
-      "knuckle-pocket gap = " + (p.pos.distanceTo(k.pos) - p.radius - k.radius)
-    )
+      const p = PocketGeometry.pockets.pocketNW.pocket
+      const k = PocketGeometry.pockets.pocketNW.knuckleNE
+      this.logger(
+        "knuckle-pocket gap = " +
+          (p.pos.distanceTo(k.pos) - p.radius - k.radius)
+      )
+    }
   }
 
   private cloth = new MeshPhongMaterial({
@@ -71,7 +74,7 @@ export class TableMesh {
     return mesh
   }
 
-  addCushions(scene) {
+  addCushions(scene, hasPockets) {
     const th = (R * 10) / 0.5
     this.plane(
       new Vector3(0, 0, -R - th / 2),
@@ -84,17 +87,23 @@ export class TableMesh {
     const d = (R * 1) / 0.5
     const h = (R * 0.75) / 0.5
     const e = (-R * 0.25) / 0.5 / 2
-    const lengthN = Math.abs(
+    const X = TableGeometry.X
+    const Y = TableGeometry.Y
+
+    let lengthN = Math.abs(
       PocketGeometry.pockets.pocketNW.knuckleNE.pos.x -
         PocketGeometry.pockets.pocketN.knuckleNW.pos.x
     )
-    const lengthE = Math.abs(
+    let lengthE = Math.abs(
       PocketGeometry.pockets.pocketNW.knuckleSW.pos.y -
         PocketGeometry.pockets.pocketSW.knuckleNW.pos.y
     )
 
-    const X = TableGeometry.X
-    const Y = TableGeometry.Y
+    if (!hasPockets) {
+      lengthN = 2 * TableGeometry.Y
+      lengthE = 2 * TableGeometry.Y + 4 * R
+    }
+
     this.plane(new Vector3(X + d / 2, 0, e), d, lengthE, h, scene)
     this.plane(new Vector3(-X - d / 2, 0, e), d, lengthE, h, scene)
 

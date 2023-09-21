@@ -81,7 +81,7 @@ export class Cue {
       .setZ(this.aim.offset.y * 2 * R)
     const swing =
       (Math.sin(this.t + Math.PI / 2) - 1) *
-      5 *
+      3 *
       R *
       (this.aim.power / this.maxPower)
     const distanceToBall = unitAtAngle(this.aim.angle)

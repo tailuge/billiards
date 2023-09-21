@@ -18,14 +18,14 @@ export function exportGltf(scene) {
 }
 
 /* istanbul ignore next */
-export function importGltf(path, scene, ready = () => {}) {
+export function importGltf(path, scene, visible, ready = () => {}) {
   const loader = new GLTFLoader()
   loader.load(
     path,
     (gltf) => {
       gltf.scene.scale.set(R / 0.5, R / 0.5, R / 0.5)
       gltf.scene.matrixAutoUpdate = false
-      gltf.scene.visible = true
+      gltf.scene.visible = visible
       gltf.scene.updateMatrix()
       scene.add(gltf.scene)
       ready()
