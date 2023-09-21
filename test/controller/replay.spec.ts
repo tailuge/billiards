@@ -77,6 +77,7 @@ describe("Controller Replay", () => {
   it("Replay handles inputs", (done) => {
     container.controller = new Replay(container, state.shots, 0)
     container.inputQueue.push(new Input(0.1, "KeyOUp"))
+    container.inputQueue.push(new Input(0.1, "KeyDUp"))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Replay)
     done()
@@ -94,7 +95,7 @@ describe("Controller Replay", () => {
   it("BreakEvent takes Replay to Replay", (done) => {
     container.controller = new Replay(container, state.shots, 0)
     container.table.cueball.setStationary()
-    container.eventQueue.push(new BreakEvent())
+    container.eventQueue.push(new BreakEvent(state.init, state.shots))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Replay)
     done()

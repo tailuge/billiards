@@ -100,10 +100,6 @@ export class View {
     this.scene.add(new Grid().generateLineSegments())
   }
 
-  addMesh(mesh) {
-    this.scene.add(mesh)
-  }
-
   ballToCheck = 0
 
   isInMotionNotVisible() {
