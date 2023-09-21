@@ -1,9 +1,9 @@
 import "mocha"
 import { expect } from "chai"
 import { AimInputs } from "../../src/view/aiminputs"
-// @ts-ignore
-import html from "../../dist/index.html"
-document.body.innerHTML = html
+import { initDom } from "./dom"
+
+initDom()
 
 describe("Trace", () => {
   const aiminputs = new AimInputs(null)

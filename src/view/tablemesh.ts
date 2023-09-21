@@ -12,6 +12,8 @@ import { PocketGeometry } from "./pocketgeometry"
 import { R } from "../model/physics/constants"
 
 export class TableMesh {
+  logger = (_) => {}
+
   addToScene(scene) {
     const light = new PointLight(0xf0f0f0, 9.0)
     light.position.set(0, 0, R * 30)
@@ -25,11 +27,9 @@ export class TableMesh {
 
     const p = PocketGeometry.pockets.pocketNW.pocket
     const k = PocketGeometry.pockets.pocketNW.knuckleNE
-    typeof process !== "object" &&
-      console.log(
-        "knuckle-pocket gap = " +
-          (p.pos.distanceTo(k.pos) - p.radius - k.radius)
-      )
+    this.logger(
+      "knuckle-pocket gap = " + (p.pos.distanceTo(k.pos) - p.radius - k.radius)
+    )
   }
 
   private cloth = new MeshPhongMaterial({

@@ -20,13 +20,16 @@ import { PlaceBallEvent } from "../../src/events/placeballevent"
 import { zero } from "../../src/utils/utils"
 import { BreakEvent } from "../../src/events/breakevent"
 import { RejoinEvent } from "../../src/events/rejoinevent"
+import { initDom } from "../view/dom"
+
+initDom()
 
 describe("Controller", () => {
   let container: Container
   let broadcastEvents: GameEvent[]
 
   beforeEach(function (done) {
-    container = new Container(undefined, (_) => {})
+    container = new Container(document.getElementById("viewP1"), (_) => {})
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
     done()

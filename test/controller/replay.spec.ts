@@ -14,6 +14,9 @@ import {
 import { Aim } from "../../src/controller/aim"
 import { controllerName } from "../../src/controller/util"
 import { End } from "../../src/controller/end"
+import { initDom } from "../view/dom"
+
+initDom()
 
 describe("Controller Replay", () => {
   let container: Container
@@ -37,7 +40,7 @@ describe("Controller Replay", () => {
   }
 
   beforeEach(function (done) {
-    container = new Container(undefined, (_) => {})
+    container = new Container(document.getElementById("viewP1"), (_) => {})
     container.isSinglePlayer = true
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)

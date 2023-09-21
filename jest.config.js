@@ -13,7 +13,6 @@ module.exports = {
         },
       },
     ],
-    "^.+\\.html?$": "jest-html-loader",
   },
   coveragePathIgnorePatterns: ["node_modules", "gltf.ts"],
   coverageReporters: ["text", "json"],
