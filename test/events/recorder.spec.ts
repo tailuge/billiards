@@ -3,12 +3,15 @@ import { expect } from "chai"
 import { Recorder } from "../../src/events/recorder"
 import { Container } from "../../src/container/container"
 import { HitEvent } from "../../src/events/hitevent"
+import { initDom, canvas3d } from "../view/dom"
+
+initDom()
 
 describe("Recorder", () => {
   let container: Container
 
   beforeEach(function (done) {
-    container = new Container(undefined, (_) => {})
+    container = new Container(canvas3d, (_) => {})
     done()
   })
 

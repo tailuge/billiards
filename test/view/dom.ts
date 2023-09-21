@@ -10,3 +10,5 @@ const html = fs.readFileSync(
 export function initDom() {
   document.body.innerHTML = html
 }
+
+export const canvas3d = document.getElementById("viewP1") as HTMLCanvasElement
