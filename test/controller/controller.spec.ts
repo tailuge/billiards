@@ -42,7 +42,7 @@ describe("Controller", () => {
   })
 
   it("Container chat enques message", (done) => {
-    container.sendChat("")
+    container.chat.sendClicked({})
     expect(broadcastEvents).to.be.lengthOf(1)
     done()
   })
