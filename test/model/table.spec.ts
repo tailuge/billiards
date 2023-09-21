@@ -100,7 +100,6 @@ describe("Table", () => {
   it("three cushion table has no pocket", (done) => {
     const a = new Ball(new Vector3(0, TableGeometry.tableY - 0.01 * R, 0))
     const b = new Ball(zero)
-    b.vel.x = R
     a.vel.y = 8 * R
     a.state = State.Sliding
     const table = new Table([a, b])

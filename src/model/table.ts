@@ -105,10 +105,6 @@ export class Table {
       return false
     }
 
-    if (!this.hasPockets) {
-      return true
-    }
-
     const k = Knuckle.findBouncing(a, t)
     if (k) {
       const knuckleIncidentSpeed = k.bounce(a)
