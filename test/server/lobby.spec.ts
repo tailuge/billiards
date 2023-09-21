@@ -205,7 +205,6 @@ describe("Lobby", () => {
   })
 
   it("player leaves never recieving anything, requests everything", (done) => {
-    ServerLog.enable = true
     lobby.joinTable(player1, tableId)
     const event1 = new BreakEvent()
     event1.sequence = "seq-001"

@@ -41,6 +41,12 @@ describe("Controller", () => {
     done()
   })
 
+  it("Container chat enques message", (done) => {
+    container.sendChat("")
+    expect(broadcastEvents).to.be.lengthOf(1)
+    done()
+  })
+
   it("Abort takes Aim to End", (done) => {
     const controller: Controller = new Aim(container)
     const event: GameEvent = new AbortEvent()
