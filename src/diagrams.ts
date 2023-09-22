@@ -15,10 +15,12 @@ if (rollcanvas) {
   const rolldiagram = new RollDiagram(rollcanvas)
   rolldiagram.draw(5)
 } else {
-  const shot1 = `%7B"init":%5B0.23865827533735734,-0.4460993497027286,0.47645162389433243,-0.6426937018186901,0.14544064775082516,0.5127720731620581%5D,"shots":%5B%7B"type":"AIM","offset":%7B"x":-0.3,"y":0.006,"z":0%7D,"angle":0.728,"power":1.328,"pos":%7B"x":0.23865827533735734,"y":-0.4460993497027286,"z":0%7D,"i":0%7D%5D%7D`
-  const tableview = document.getElementById("diagram1")
-  const diagram1 = new DiagramContainer(tableview, "threecushion", shot1)
-  diagram1.start()
+  var replaydiagrams = document.getElementsByClassName("replaydiagram")
+  for (var i = 0; i < replaydiagrams.length; i++) {
+    const diagram = replaydiagrams.item(i)
+    const diagramcontainer = DiagramContainer.fromDiamgramElement(diagram)
+    diagramcontainer.start()
+  }
 
   p1 = new CushionPlot(id("cushion1"), "stun shot")
   p2 = new CushionPlot(id("cushion2"), "running side")

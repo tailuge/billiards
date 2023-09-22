@@ -6,8 +6,10 @@ body {
 
 .topview {
   width: 400px;
-  height: 220px;
+  height: 230px;
 }
+
+.replaydiagram,
 .diagram,
 .roll {
   width: 400px;
@@ -54,4 +56,9 @@ input {
   width: 6ch;
   block-size: fit-content;
   font-size: xx-small;
+}
+
+button {
+  margin-left: 6px;
+  font-size: smaller;
 }
