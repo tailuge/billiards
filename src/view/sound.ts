@@ -11,8 +11,10 @@ export class Sound {
   success
 
   lastOutcomeTime = 0
+  loadAssets
 
-  constructor(camera) {
+  constructor(camera, loadAssets) {
+    this.loadAssets = loadAssets
     camera.add(this.listener)
 
     this.ballcollision = new Audio(this.listener)
@@ -32,10 +34,12 @@ export class Sound {
   }
 
   load(path, audio) {
-    this.audioLoader.load(path, (buffer) => {
-      audio.setBuffer(buffer)
-      audio.setLoop(false)
-    })
+    if (this.loadAssets) {
+      this.audioLoader.load(path, (buffer) => {
+        audio.setBuffer(buffer)
+        audio.setLoop(false)
+      })
+    }
   }
 
   play(audio, volume) {

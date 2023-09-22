@@ -15,8 +15,8 @@ export class TableMesh {
   logger = (_) => {}
 
   addToScene(scene, hasPockets: boolean) {
-    const light = new PointLight(0xf0f0f0, 9.0)
-    light.position.set(0, 0, R * 30)
+    const light = new PointLight(0xf0f0e8, 22.0)
+    light.position.set(0, 0, R * 50)
     scene.add(light)
     this.addCushions(scene, hasPockets)
 
@@ -36,7 +36,14 @@ export class TableMesh {
   }
 
   private cloth = new MeshPhongMaterial({
-    color: 0x445599,
+    color: 0x4455b9,
+    wireframe: false,
+    flatShading: true,
+    transparent: false,
+  })
+
+  private cushion = new MeshPhongMaterial({
+    color: 0x5465b9,
     wireframe: false,
     flatShading: true,
     transparent: false,
@@ -81,7 +88,8 @@ export class TableMesh {
       2 * TableGeometry.X,
       2 * TableGeometry.Y,
       th,
-      scene
+      scene,
+      this.cloth
     )
 
     const d = (R * 1) / 0.5
@@ -114,7 +122,7 @@ export class TableMesh {
     this.plane(new Vector3(X / 2, -Y - d / 2, e), lengthN, d, h, scene)
   }
 
-  private plane(pos, x, y, z, scene, material = this.cloth) {
+  private plane(pos, x, y, z, scene, material = this.cushion) {
     const geometry = new BoxGeometry(x, y, z)
     const mesh = new Mesh(geometry, material)
     mesh.receiveShadow = true

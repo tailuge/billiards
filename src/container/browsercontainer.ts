@@ -40,6 +40,7 @@ export class BrowserContainer {
     this.container = new Container(
       this.canvas3d,
       console.log,
+      true,
       this.ruletype,
       keyboard,
       () => {

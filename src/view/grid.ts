@@ -5,7 +5,7 @@ import { R } from "../model/physics/constants"
 export class Grid {
   readonly material = new LineBasicMaterial({
     color: 0x000084,
-    opacity: 0.3,
+    opacity: 0.15,
     transparent: true,
   })
 

@@ -26,6 +26,7 @@ export class DiagramContainer {
     this.container = new Container(
       this.canvas3d,
       console.log,
+      false,
       this.ruletype,
       keyboard,
       this.onAssetsReady,
@@ -57,7 +58,7 @@ export class DiagramContainer {
 
   static fromDiamgramElement(diagram): DiagramContainer {
     const containerDiv = diagram?.getElementsByClassName("topview")[0]
-    const stateUrl = containerDiv?.getAttribute("data-state")!
+    const stateUrl = containerDiv?.getAttribute("data-state")
     const params = new URLSearchParams(stateUrl)
     const p = diagram?.getElementsByClassName("description")[0]
     const editlink = document.createElement("a")

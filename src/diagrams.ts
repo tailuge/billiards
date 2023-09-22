@@ -15,8 +15,8 @@ if (rollcanvas) {
   const rolldiagram = new RollDiagram(rollcanvas)
   rolldiagram.draw(5)
 } else {
-  var replaydiagrams = document.getElementsByClassName("replaydiagram")
-  for (var i = 0; i < replaydiagrams.length; i++) {
+  const replaydiagrams = document.getElementsByClassName("replaydiagram")
+  for (let i = 0; i < replaydiagrams.length; i++) {
     const diagram = replaydiagrams.item(i)
     const diagramcontainer = DiagramContainer.fromDiamgramElement(diagram)
     diagramcontainer.start()

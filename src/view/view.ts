@@ -14,10 +14,11 @@ export class View {
   windowHeight = 1
   readonly element
   table: Table
-  showgeometry = true
+  loadAssets
 
-  constructor(element, ready, table) {
+  constructor(element, ready, table, loadAssets) {
     this.element = element
+    this.loadAssets = loadAssets
     this.table = table
     if (typeof process === "undefined") {
       this.initialiseScene(element, element.offsetWidth, element.offsetHeight)
@@ -92,12 +93,11 @@ export class View {
   private addTable(ready) {
     this.scene.add(new AmbientLight(0x515253, 0.3))
     this.scene.add(new Grid().generateLineSegments())
-    const tablemodel = this.table.hasPockets
-      ? "models/p8.min.gltf"
-      : "models/threecushion.min.gltf"
-    const load = this.table.hasPockets
-    if (load) {
+    if (this.loadAssets && this.table.hasPockets) {
       importGltf("models/background.gltf", this.scene, true)
+      const tablemodel = this.table.hasPockets
+        ? "models/p8.min.gltf"
+        : "models/threecushion.min.gltf"
       importGltf(tablemodel, this.scene, this.table.hasPockets, ready)
     } else {
       new TableMesh().addToScene(this.scene, this.table.hasPockets)

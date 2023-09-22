@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>nine-ball diagrams</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="billiards diagrams" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link rel="stylesheet" type="text/css" href="diagrams.css" />
+  </head>
+
+  <body>
+    <div class="diagram">
+      <p>
+        Physical Constants <button id="replay" type="button">replay</button>
+      </p>
+      <br />
+      <input id="R" type="range" />
+      <label for="R">R</label>
+      <input id="m" type="range" />
+      <label for="m">m</label>
+      <input id="e" type="range" />
+      <label for="e">e</label>
+      <input id="mu" type="range" />
+      <label for="mu">mu</label>
+      <input id="muS" type="range" />
+      <label for="muS">muS</label>
+      <input id="muC" type="range" />
+      <label for="muC">muC</label>
+      <input id="rho" type="range" />
+      <label for="rho">rho</label>
+      <p>
+        <a href="https://billiards.colostate.edu/physics_articles/Han_paper.pdf"
+          >Han 2005</a
+        >
+        predicts ball grips cushion when
+        <code style="color: red">Pzs</code> &le;
+        <code style="color: blue">Pze</code>.
+      </p>
+    </div>
+
+    <div class="replaydiagram">
+      <div
+        class="topview"
+        data-state="?ruletype=nineball&state=%7B%22init%22:%5B0.9791627774741956,-0.16712768274724346,-0.1939629326120725,-0.21500987166981342,1.3885871723848404,0.7288381689112076,0.8668492910935701,-0.15896745034377294,0.7902212948322053,0.009735382705431195,1.3804008618527324,-0.7314072289431331,0.47711787610264283,-0.5764539778418994,1.0866310387372964,0.18741224854979702,0.5939860463659818,-0.5142514865262328,1.3405179202096094,0.709637794034107%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.161,%22y%22:-0.253,%22z%22:0%7D,%22angle%22:1.314,%22power%22:3.69,%22pos%22:%7B%22x%22:0.9791627774741956,%22y%22:-0.16712768274724346,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
+      ></div>
+      <p class="description">pool</p>
+    </div>
+
+    <script src="../vendor.js"></script>
+    <script src="../diagram.js"></script>
+  </body>
+</html>

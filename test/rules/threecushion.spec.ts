@@ -15,7 +15,7 @@ describe("ThreeCushion", () => {
   const rule = "threecushion"
 
   beforeEach(function (done) {
-    container = new Container(undefined, (_) => {}, rule)
+    container = new Container(undefined, (_) => {}, false, rule)
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
     done()

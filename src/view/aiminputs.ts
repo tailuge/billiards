@@ -78,13 +78,15 @@ export class AimInputs {
   }
 
   hit = (_) => {
-    this.container.table.cue.setPower(this.cuePowerElement.value)
+    this.container.table.cue.setPower(this.cuePowerElement?.value)
     this.container.inputQueue.push(new Input(0, "SpaceUp"))
   }
 
   mousewheel = (e) => {
-    this.cuePowerElement.value -= Math.sign(e.deltaY) / 10
-    this.container.table.cue.setPower(this.cuePowerElement.value)
-    this.container.lastEventTime = performance.now()
+    if (this.cuePowerElement) {
+      this.cuePowerElement.value -= Math.sign(e.deltaY) / 10
+      this.container.table.cue.setPower(this.cuePowerElement.value)
+      this.container.lastEventTime = performance.now()
+    }
   }
 }
