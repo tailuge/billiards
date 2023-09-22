@@ -11,6 +11,16 @@ import { R } from "../../src/model/physics/constants"
 
 const t = 0.1
 
+const jestConsole = console
+
+beforeEach(() => {
+  global.console = require("console")
+})
+
+afterEach(() => {
+  global.console = jestConsole
+})
+
 describe("Cushion", () => {
   it("bounces off X cushion", (done) => {
     const pos = new Vector3(TableGeometry.tableX, 0, 0)
@@ -169,6 +179,15 @@ describe("Cushion", () => {
     const scene = { add: () => {} }
     new TableMesh().addToScene(scene, true)
     new TableMesh().addToScene(scene, false)
+    done()
+  })
+
+  it("slow with check side should slow down", (done) => {
+    const pos = new Vector3(-0.344137293519278, -0.7369484020172026, 0)
+    const ball = new Ball(pos)
+    ball.vel.set(0.5652225200494249, -0.7453744130951465, 0)
+    ball.rvel.set(24.23981831203729, 18.381220164208937, 21.852441114058152)
+    Cushion.bounceAny(ball, t)
     done()
   })
 })
