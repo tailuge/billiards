@@ -9,9 +9,18 @@ initDom()
 
 describe("View", () => {
   const table = new Table(Rack.diamond())
-  const view = new View(canvas3d, () => {}, table)
 
   it("isInView", (done) => {
+    table.hasPockets = true
+    const view = new View(canvas3d, () => {}, table, true)
+    view.table = table
+    expect(view.isInMotionNotVisible()).to.be.false
+    done()
+  })
+
+  it("without assets", (done) => {
+    table.hasPockets = false
+    const view = new View(canvas3d, () => {}, table, false)
     view.table = table
     expect(view.isInMotionNotVisible()).to.be.false
     done()
