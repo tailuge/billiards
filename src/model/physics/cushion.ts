@@ -98,12 +98,9 @@ export class Cushion {
   }
 
   private static bounceIn(rotation, ball) {
-    const dv = new Vector3()
-    const dw = new Vector3()
-
-    rotateApplyUnrotate(rotation, ball.vel, ball.rvel, dv, dw)
-    ball.vel.add(dv)
-    ball.rvel.add(dw)
-    return dv.length()
+    const delta = rotateApplyUnrotate(rotation, ball.vel, ball.rvel)
+    ball.vel.add(delta.v)
+    ball.rvel.add(delta.w)
+    return delta.v.length()
   }
 }

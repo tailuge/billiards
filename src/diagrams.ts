@@ -5,10 +5,11 @@ import { Graph } from "./diagram/graph"
 import { RollDiagram } from "./diagram/rolldiagram"
 import { Sliders } from "./view/sliders"
 import { DiagramContainer } from "./diagram/diagramcontainer"
+import { R } from "./model/physics/constants"
 
 let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4
-let s = 1
+let s = 3 * R
 
 const rollcanvas = id("rollcanvas")
 if (rollcanvas) {
@@ -69,29 +70,32 @@ function plotAll() {
 
 function plotCushionDiagrams() {
   function spin(w) {
-    return (_) => new Vector3(0, 0, w)
+    return (_) => svec(0, 0, w)
   }
   const sin = (a) => Math.sin((a * Math.PI) / 180)
   const cos = (a) => Math.cos((a * Math.PI) / 180)
-  const aimAtAngle = (a) => new Vector3(cos(a), sin(a), 0)
+  const aimAtAngle = (a) => svec(cos(a), sin(a), 0)
 
-  p1.plot(10, 80, 10, aimAtAngle, (_) => new Vector3(0, 0, 0))
-  p2.plot(10, 80, 10, aimAtAngle, spin(-3))
-  p3.plot(10, 80, 10, aimAtAngle, spin(3))
+  p1.plot(10, 80, 10, aimAtAngle, (_) => svec(0, 0, 0))
+  p2.plot(10, 80, 10, aimAtAngle, spin(-40))
+  p3.plot(10, 80, 10, aimAtAngle, spin(40))
   p4.plot(
     -6,
     6,
     1,
-    (_) => new Vector3(0.7, 0.7, 0),
-    (z) => new Vector3(0, 0, z)
+    (_) => svec(0.7, 0.7, 0),
+    (z) => svec(0, 0, z * 6)
   )
   p5.plot(
     -6,
     6,
     1,
-    (_) => new Vector3(2, 2, 0),
-    (z) => new Vector3(0, 0, z)
+    (_) => svec(2, 2, 0),
+    (z) => svec(0, 0, z * 6)
   )
+}
+function svec(x, y, z) {
+  return new Vector3(x * R, y * R, z * R)
 }
 
 function plotLineGraphs() {
@@ -108,8 +112,8 @@ function plot1() {
 
   for (let i = -20; i <= 20; i += 1) {
     x.push(i)
-    const v = new Vector3(1.0, 0.0, 0)
-    const w = new Vector3(0.0, 0.0, i)
+    const v = new Vector3(1.0 * R, 0.0, 0)
+    const w = new Vector3(0.0, 0.0, i * R)
     y1.push(Pze(c0(v)))
     y2.push(Pzs(s0(v, w)))
   }
@@ -123,8 +127,8 @@ function plot2() {
 
   for (let i = -20; i <= 20; i += 1) {
     x.push(i)
-    const v = new Vector3(1.0, 0, 0)
-    const w = new Vector3(0.0, i, 0)
+    const v = new Vector3(1.0 * R, 0, 0)
+    const w = new Vector3(0.0, i * R, 0)
     y1.push(Pze(c0(v)))
     y2.push(Pzs(s0(v, w)))
   }
@@ -139,9 +143,9 @@ function plot3() {
   for (let i = -80; i <= 80; i += 10) {
     x.push(i)
     const rad = (i * Math.PI) / 180
-    const v = new Vector3(Math.cos(rad), Math.sin(rad), 0)
+    const v = new Vector3(Math.cos(rad) * R, Math.sin(rad) * R, 0)
     v.multiplyScalar(s)
-    const w = new Vector3(0.0, 0, -10)
+    const w = new Vector3(0.0, 0, -10 * R)
     y1.push(Pze(c0(v)))
     y2.push(Pzs(s0(v, w)))
   }
@@ -154,7 +158,7 @@ function plot4() {
   for (let i = -80; i <= 80; i += 10) {
     x.push(i)
     const rad = (i * Math.PI) / 180
-    const v = new Vector3(Math.cos(rad), Math.sin(rad), 0)
+    const v = new Vector3(Math.cos(rad) * R, Math.sin(rad) * R, 0)
     const mu = muCushion(v)
     y.push(mu)
   }

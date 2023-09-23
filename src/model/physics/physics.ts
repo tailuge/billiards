@@ -36,19 +36,19 @@ export function rollingFull(w) {
 
 export function forceRoll(v, w) {
   const wz = w.z
-  //  v.sub(surfaceVelocity(v, w))
   w.copy(upCross(v).multiplyScalar(1 / R))
   w.setZ(wz)
 }
 
-export function rotateApplyUnrotate(theta, v, w, dv, dw) {
+export function rotateApplyUnrotate(theta, v, w) {
   const vr = v.clone().applyAxisAngle(up, theta)
   const wr = w.clone().applyAxisAngle(up, theta)
 
-  bounceHan(vr, wr, dv, dw)
+  const delta = bounceHan(vr, wr)
 
-  dv.applyAxisAngle(up, -theta)
-  dw.applyAxisAngle(up, -theta)
+  delta.v.applyAxisAngle(up, -theta)
+  delta.w.applyAxisAngle(up, -theta)
+  return delta
 }
 
 // Han paper cushion physics
@@ -88,7 +88,7 @@ export function isGripCushion(v, w) {
   return Pzs_val <= Pze_val
 }
 
-export function bounceHan(v, w, dv, dw) {
+export function bounceHan(v, w) {
   const c = c0(v)
   const s = s0(v, w)
   const Pze_val = Pze(c)
@@ -105,23 +105,24 @@ export function bounceHan(v, w, dv, dw) {
     PZ = (s.x / A) * cos_a - ecB * sin_a
   } else {
     const mu = muCushion(v)
-    const phi = Math.abs(Math.atan2(v.y, v.x))
+    const phi = Math.atan2(v.y, v.x)
     const cos_phi = Math.cos(phi)
     const sin_phi = Math.sin(phi)
     PX = -mu * ecB * cos_phi * cos_a - ecB * cos_a
     PY = mu * ecB * sin_phi
     PZ = mu * ecB * cos_phi * cos_a - ecB * sin_a
   }
-  dv.x = PX / m
-  dv.y = PY / m
-  dw.x = (-R / I) * PY * sin_a
-  dw.y = (R / I) * (PX * sin_a - PZ * cos_a)
-  dw.z = (R / I) * PY * cos_a
+  delta.v.x = PX / m
+  delta.v.y = PY / m
+  delta.w.x = (-R / I) * PY * sin_a
+  delta.w.y = (R / I) * (PX * sin_a - PZ * cos_a)
+  delta.w.z = (R / I) * PY * cos_a
+  return delta
 }
 
 export function muCushion(v: Vector3) {
   const theta = Math.atan2(Math.abs(v.y), v.x)
-  return 0.2 - theta * 0.1
+  return 0.2 - theta * 0.025
 }
 
 /**

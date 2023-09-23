@@ -1,7 +1,7 @@
 export const g = 9.8
 export let mu = 0.00985
 export let muS = 0.105
-export let muC = 0.3
+export let muC = 0.8
 export let rho = 0.025
 export let m = 0.22
 export let R = 0.03075

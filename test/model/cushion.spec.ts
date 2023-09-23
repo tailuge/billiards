@@ -145,8 +145,8 @@ describe("Cushion", () => {
     ball.vel.set(0.1, -1, 0)
     ball.rvel.set(0, 0, -10)
     Cushion.bounceAny(ball, t)
-    expect(ball.rvel.z).to.be.approximately(-9, 1)
-    expect(ball.vel.y).to.be.approximately(-1, 0.1).and.greaterThan(-1)
+    expect(ball.rvel.z).to.be.approximately(-12, 1)
+    expect(ball.vel.y).to.be.approximately(-1, 0.1)
     done()
   })
 

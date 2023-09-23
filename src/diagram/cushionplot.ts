@@ -6,10 +6,8 @@ export class CushionPlot {
   context: CanvasRenderingContext2D
   readonly endx = 100
   readonly endy = 100
-  readonly scale = 75
+  readonly scale = 2000
   readonly r = 20
-  readonly dv = new Vector3()
-  readonly dw = new Vector3()
 
   constructor(div: HTMLElement, title: string) {
     div.firstElementChild!.innerHTML = title
@@ -57,8 +55,8 @@ export class CushionPlot {
         this.endx,
         this.endy
       )
-      rotateApplyUnrotate(0, v, w, this.dv, this.dw)
-      v.add(this.dv)
+      const delta = rotateApplyUnrotate(0, v, w)
+      v.add(delta.v)
       this.drawArrow(
         this.endx,
         this.endy,
