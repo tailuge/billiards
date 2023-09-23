@@ -1,6 +1,7 @@
 import { Container } from "../container/container"
 import { Keyboard } from "../events/keyboard"
 import { BreakEvent } from "../events/breakevent"
+import { CameraTop } from "../view/cameratop"
 
 /**
  * Integrate container into diagram
@@ -19,6 +20,7 @@ export class DiagramContainer {
     this.replay = replay
     this.ruletype = ruletype
     this.canvas3d = canvas3d
+    CameraTop.zoomFactor = 0.88
   }
 
   start() {

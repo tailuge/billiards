@@ -22,6 +22,7 @@ export class Camera {
   }
 
   topView(_: AimEvent) {
+    this.camera.fov = CameraTop.fov
     this.camera.position.lerp(
       CameraTop.viewPoint(this.camera.aspect, this.camera.fov),
       0.9
@@ -31,6 +32,7 @@ export class Camera {
   }
 
   aimView(aim: AimEvent, fraction = 0.08) {
+    this.camera.fov = 45
     this.camera.fov = this.camera.aspect < 0.8 ? 65 : 45
     this.camera.position.lerp(
       aim.pos.clone().addScaledVector(unitAtAngle(aim.angle), -R * 20),
