@@ -14,7 +14,7 @@ export class View {
   windowHeight = 1
   readonly element
   table: Table
-  loadAssets
+  loadAssets = true
 
   constructor(element, ready, table, loadAssets) {
     this.element = element
@@ -117,10 +117,10 @@ export class View {
 
   viewFrustrum() {
     const c = this.camera.camera
-    const frustum = new Frustum()
-    frustum.setFromProjectionMatrix(
+    const frustrum = new Frustum()
+    frustrum.setFromProjectionMatrix(
       new Matrix4().multiplyMatrices(c.projectionMatrix, c.matrixWorldInverse)
     )
-    return frustum
+    return frustrum
   }
 }

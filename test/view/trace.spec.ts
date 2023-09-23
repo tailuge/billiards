@@ -45,7 +45,7 @@ describe("Trace", () => {
     trace.addTrace(point.setX(10 * R), vel)
     expect(trace.geometry.drawRange.count).to.equal(4)
     vel.add(new Vector3(0.5, 0.5))
-    trace.addTrace(point.setX(10 * R), vel)
+    trace.addTrace(point.setX(12 * R), vel)
     expect(trace.geometry.drawRange.count).to.equal(4)
     done()
   })
