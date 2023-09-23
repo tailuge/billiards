@@ -5,7 +5,7 @@ import { Vector3 } from "three"
 import { R } from "../../src/model/physics/constants"
 
 describe("Trace", () => {
-  const trace = new Trace(1, 0x001122)
+  const trace = new Trace(3, 0x001122)
 
   beforeEach(function (done) {
     trace.reset()
@@ -38,6 +38,15 @@ describe("Trace", () => {
     trace.addTrace(point.setX(4 * R), vel)
     trace.addTrace(point.setX(6 * R), vel)
     expect(trace.geometry.drawRange.count).to.equal(2)
+    vel.add(new Vector3(0.5, 0.5))
+    trace.addTrace(point.setX(8 * R), vel)
+    expect(trace.geometry.drawRange.count).to.equal(3)
+    vel.add(new Vector3(0.5, 0.5))
+    trace.addTrace(point.setX(10 * R), vel)
+    expect(trace.geometry.drawRange.count).to.equal(4)
+    vel.add(new Vector3(0.5, 0.5))
+    trace.addTrace(point.setX(10 * R), vel)
+    expect(trace.geometry.drawRange.count).to.equal(4)
     done()
   })
 })

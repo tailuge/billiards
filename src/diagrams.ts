@@ -28,7 +28,7 @@ if (rollcanvas) {
   }
 
   const sliders = new Sliders(plotAll)
-  sliders.initialiseSider("s", s, sets)
+  sliders.initialiseSlider("s", s, sets)
 }
 
 function sets(v) {

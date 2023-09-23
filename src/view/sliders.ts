@@ -24,13 +24,13 @@ export class Sliders {
     this.style =
       (document.getElementById("constants") as HTMLElement)?.style ?? {}
 
-    this.initialiseSider("R", R, setR)
-    this.initialiseSider("m", m, setm)
-    this.initialiseSider("e", e, sete)
-    this.initialiseSider("mu", mu, setmu)
-    this.initialiseSider("muS", muS, setmuS)
-    this.initialiseSider("muC", muC, setmuC)
-    this.initialiseSider("rho", rho, setrho)
+    this.initialiseSlider("R", R, setR)
+    this.initialiseSlider("m", m, setm)
+    this.initialiseSlider("e", e, sete)
+    this.initialiseSlider("mu", mu, setmu)
+    this.initialiseSlider("muS", muS, setmuS)
+    this.initialiseSlider("muC", muC, setmuC)
+    this.initialiseSlider("rho", rho, setrho)
   }
 
   toggleVisibility() {
@@ -42,7 +42,7 @@ export class Sliders {
     return (document.getElementById(id) as HTMLInputElement) ?? {}
   }
 
-  initialiseSider(id, initialValue, setter) {
+  initialiseSlider(id, initialValue, setter) {
     const slider = this.getInputElement(id)
     slider.step = "0.001"
     slider.min = "0.01"

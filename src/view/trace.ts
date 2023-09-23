@@ -51,7 +51,7 @@ export class Trace {
       return
     }
 
-    if (index > 2 && curvature < 0.0001) {
+    if (index > 1 && curvature < 0.0001) {
       index--
     }
 
