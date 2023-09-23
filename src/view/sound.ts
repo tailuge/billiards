@@ -1,8 +1,8 @@
 import { AudioListener, Audio, AudioLoader, MathUtils } from "three"
 
 export class Sound {
-  listener = new AudioListener()
-  audioLoader = new AudioLoader()
+  listener: AudioListener
+  audioLoader: AudioLoader
 
   ballcollision
   cue
@@ -15,8 +15,14 @@ export class Sound {
 
   constructor(camera, loadAssets) {
     this.loadAssets = loadAssets
-    camera.add(this.listener)
+    if (!loadAssets) {
+      return
+    }
+    this.listener = new AudioListener()
+    this.audioLoader = new AudioLoader()
 
+    camera.add(this.listener)
+    console.log(this.listener)
     this.ballcollision = new Audio(this.listener)
     this.load("sounds/ballcollision.ogg", this.ballcollision)
 
@@ -34,28 +40,35 @@ export class Sound {
   }
 
   load(path, audio) {
-    if (this.loadAssets) {
-      this.audioLoader.load(path, (buffer) => {
-        audio.setBuffer(buffer)
-        audio.setLoop(false)
-      })
-    }
+    this.audioLoader.load(path, (buffer) => {
+      audio.setBuffer(buffer)
+      audio.setLoop(false)
+    })
   }
 
-  play(audio, volume) {
-    audio.setVolume(volume)
-    audio.isPlaying && audio.stop()
-    audio.play(MathUtils.randFloat(0, 0.01))
+  play(audio, volume, detune = 0) {
+    if (this.loadAssets) {
+      audio.setVolume(volume)
+      audio.isPlaying && audio.stop()
+      audio.play(MathUtils.randFloat(0, 0.01))
+      audio.setDetune(detune)
+    }
   }
 
   outcomeToSound(outcome) {
     if (outcome.type === "Collision") {
-      this.play(this.ballcollision, outcome.incidentSpeed / 80)
-      this.ballcollision.setDetune(outcome.incidentSpeed * 5)
+      this.play(
+        this.ballcollision,
+        outcome.incidentSpeed / 80,
+        outcome.incidentSpeed * 5
+      )
     }
     if (outcome.type === "Pot") {
-      this.play(this.pot, outcome.incidentSpeed / 10)
-      this.pot.setDetune(-1000 + outcome.incidentSpeed * 10)
+      this.play(
+        this.pot,
+        outcome.incidentSpeed / 10,
+        -1000 + outcome.incidentSpeed * 10
+      )
     }
     if (outcome.type === "Cushion") {
       this.play(this.cushion, outcome.incidentSpeed / 80)
@@ -81,7 +94,6 @@ export class Sound {
   }
 
   playSuccess(pitch) {
-    this.play(this.success, 0.1)
-    this.success.setDetune(pitch * 100 - 2200)
+    this.play(this.success, 0.1, pitch * 100 - 2200)
   }
 }

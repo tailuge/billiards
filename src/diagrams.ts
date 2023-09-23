@@ -11,18 +11,31 @@ let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4
 let s = 3 * R
 
+const replaydiagrams = document.getElementsByClassName("replaydiagram")
+for (let i = 0; i < replaydiagrams.length; i++) {
+  const diagram = replaydiagrams.item(i)
+  const diagramcontainer = DiagramContainer.fromDiamgramElement(diagram)
+  diagramcontainer.start()
+}
+
 const rollcanvas = id("rollcanvas")
 if (rollcanvas) {
   const rolldiagram = new RollDiagram(rollcanvas)
   rolldiagram.draw(5)
 } else {
-  const replaydiagrams = document.getElementsByClassName("replaydiagram")
-  for (let i = 0; i < replaydiagrams.length; i++) {
-    const diagram = replaydiagrams.item(i)
-    const diagramcontainer = DiagramContainer.fromDiamgramElement(diagram)
-    diagramcontainer.start()
+  if (id("cushion1")) {
+    initialisePlots()
   }
 
+  const sliders = new Sliders(plotAll)
+  sliders.initialiseSider("s", s, sets)
+}
+
+function sets(v) {
+  s = v
+}
+
+function initialisePlots() {
   p1 = new CushionPlot(id("cushion1"), "stun shot")
   p2 = new CushionPlot(id("cushion2"), "running side")
   p3 = new CushionPlot(id("cushion3"), "check side")
@@ -54,18 +67,13 @@ if (rollcanvas) {
   )
 
   plotAll()
-
-  const sliders = new Sliders(plotAll)
-  sliders.initialiseSider("s", s, sets)
-}
-
-function sets(v) {
-  s = v
 }
 
 function plotAll() {
-  plotCushionDiagrams()
-  plotLineGraphs()
+  if (p1) {
+    plotCushionDiagrams()
+    plotLineGraphs()
+  }
 }
 
 function plotCushionDiagrams() {
