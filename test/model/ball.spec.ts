@@ -61,6 +61,10 @@ describe("Ball", () => {
     ball.vel.x = 1
     ball.rvel.y = ball.vel.x / R
     expect(ball.isRolling()).to.be.true
+    ball.state = State.Sliding
+    ball.update(t)
+    ball.updateMesh(t)
+    expect(ball.state).to.equal(State.Rolling)
     done()
   })
 
