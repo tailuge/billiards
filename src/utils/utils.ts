@@ -7,16 +7,16 @@ export function vec(v) {
   return new Vector3(v.x, v.y, v.z)
 }
 
+const upCrossVec = new Vector3()
 export function upCross(v) {
-  return up.clone().cross(v)
+  return upCrossVec.copy(up).cross(v)
 }
-
+const normVec = new Vector3()
 export function norm(v) {
-  return v.clone(v).normalize()
+  return normVec.copy(v).normalize()
 }
 
 const vc = new Vector3()
-
 export function passesThroughZero(v, dv) {
   return vc.copy(v).add(dv).dot(v) <= 0
 }

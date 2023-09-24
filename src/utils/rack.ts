@@ -1,7 +1,7 @@
 import { Ball } from "../model/ball"
 import { TableGeometry } from "../view/tablegeometry"
 import { Vector3 } from "three"
-import { roundVec } from "./utils"
+import { round, roundVec } from "./utils"
 import { R } from "../model/physics/constants"
 
 export class Rack {
@@ -57,8 +57,8 @@ export class Rack {
 
   static three() {
     const threeballs: Ball[] = []
-    const dx = TableGeometry.X / 2
-    const dy = TableGeometry.Y / 4
+    const dx = round(TableGeometry.X / 2)
+    const dy = round(TableGeometry.Y / 4)
     threeballs.push(Rack.cueBall(new Vector3(-dx, -dy, 0)))
     threeballs.push(new Ball(new Vector3(-dx, 0, 0), 0xe0de36))
     threeballs.push(new Ball(new Vector3(dx, 0, 0), 0xff0000))

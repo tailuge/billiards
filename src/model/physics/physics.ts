@@ -6,8 +6,9 @@ export function surfaceVelocity(v, w) {
   return surfaceVelocityFull(v, w).setZ(0)
 }
 
+const sv = new Vector3()
 export function surfaceVelocityFull(v, w) {
-  return v.clone().addScaledVector(upCross(w), R)
+  return sv.copy(v).addScaledVector(upCross(w), R)
 }
 
 const delta = { v: new Vector3(), w: new Vector3() }
