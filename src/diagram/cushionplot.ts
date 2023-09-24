@@ -1,6 +1,5 @@
-import { bounceHan, isGripCushion } from "../model/physics/physics"
+import { rotateApplyUnrotate, isGripCushion } from "../model/physics/physics"
 import { Vector3 } from "three"
-import { rotateApplyUnrotate } from "../utils/utils"
 
 export class CushionPlot {
   canvas: HTMLCanvasElement
@@ -56,7 +55,7 @@ export class CushionPlot {
         this.endx,
         this.endy
       )
-      const delta = rotateApplyUnrotate(bounceHan, 0, v, w)
+      const delta = rotateApplyUnrotate(0, v, w)
       v.add(delta.v)
       this.drawArrow(
         this.endx,
