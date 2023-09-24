@@ -5,10 +5,11 @@ import { importGltf } from "../utils/gltf"
 import { Table } from "../model/table"
 import { Grid } from "./grid"
 import { TableMesh } from "./tablemesh"
+import { renderer } from "../utils/webgl"
 
 export class View {
   readonly scene = new Scene()
-  private renderer: WebGLRenderer
+  private renderer: WebGLRenderer | undefined
   camera: Camera
   windowWidth = 1
   windowHeight = 1
@@ -20,9 +21,7 @@ export class View {
     this.element = element
     this.loadAssets = loadAssets
     this.table = table
-    if (typeof process === "undefined") {
-      this.initialiseScene(element, element.offsetWidth, element.offsetHeight)
-    }
+    this.renderer = renderer(element)
     this.camera = new Camera(
       element ? element.offsetWidth / element.offsetHeight : 1
     )
@@ -79,15 +78,6 @@ export class View {
     }
     cam.camera.updateProjectionMatrix()
     this.renderer?.render(this.scene, cam.camera)
-  }
-
-  private initialiseScene(element: HTMLElement, width, height) {
-    this.renderer = new WebGLRenderer({ antialias: false })
-    this.renderer.shadowMap.enabled = false
-    this.renderer.autoClear = false
-    this.renderer.setSize(width, height)
-    this.renderer.setPixelRatio(window.devicePixelRatio * 0.75)
-    element.appendChild(this.renderer.domElement)
   }
 
   private addTable(ready) {
