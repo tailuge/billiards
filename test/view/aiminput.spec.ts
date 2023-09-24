@@ -43,5 +43,4 @@ describe("AimInput", () => {
     expect(aiminputs.container.table.cue.aim.power).to.greaterThan(0)
     done()
   })
-  
 })

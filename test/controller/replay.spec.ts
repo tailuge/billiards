@@ -18,6 +18,9 @@ import { initDom } from "../view/dom"
 
 initDom()
 
+jest.useFakeTimers()
+jest.spyOn(global, "setTimeout")
+
 describe("Controller Replay", () => {
   let container: Container
   let broadcastEvents: GameEvent[]
@@ -97,6 +100,7 @@ describe("Controller Replay", () => {
     container.table.cueball.setStationary()
     container.eventQueue.push(new BreakEvent(state.init, state.shots))
     container.processEvents()
+    jest.advanceTimersByTime(1000)
     expect(container.controller).to.be.an.instanceof(Replay)
     done()
   })
