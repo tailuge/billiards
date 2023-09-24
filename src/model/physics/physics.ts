@@ -88,7 +88,15 @@ export function isGripCushion(v, w) {
   return Pzs_val <= Pze_val
 }
 
-export function bounceHan(v, w) {
+/**
+ * Based on Han2005 paper.
+ * Expects ball to be bouncing in +X plane.
+ *
+ * @param v ball velocity
+ * @param w ball spin
+ * @returns delta to apply to velocity and spin
+ */
+export function bounceHan(v: Vector3, w: Vector3) {
   const c = c0(v)
   const s = s0(v, w)
   const Pze_val = Pze(c)
@@ -99,7 +107,7 @@ export function bounceHan(v, w) {
   let PX,
     PY,
     PZ = 0
-  if (Pzs_val < Pze_val) {
+  if (Pzs_val <= Pze_val) {
     PX = (-s.x / A) * sin_a - ecB * cos_a
     PY = s.y / A
     PZ = (s.x / A) * cos_a - ecB * sin_a
@@ -112,11 +120,14 @@ export function bounceHan(v, w) {
     PY = mu * ecB * sin_phi
     PZ = mu * ecB * cos_phi * cos_a - ecB * sin_a
   }
-  delta.v.x = PX / m
-  delta.v.y = PY / m
-  delta.w.x = (-R / I) * PY * sin_a
-  delta.w.y = (R / I) * (PX * sin_a - PZ * cos_a)
-  delta.w.z = (R / I) * PY * cos_a
+  const delta = {
+    v: new Vector3(PX / m, PY / m),
+    w: new Vector3(
+      (-R / I) * PY * sin_a,
+      (R / I) * (PX * sin_a - PZ * cos_a),
+      (R / I) * PY * cos_a
+    ),
+  }
   return delta
 }
 

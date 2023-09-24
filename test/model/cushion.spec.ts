@@ -8,6 +8,7 @@ import { Knuckle } from "../../src/model/physics/knuckle"
 import { Vector3 } from "three"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
 import { R } from "../../src/model/physics/constants"
+import { bounceHan } from "../../src/model/physics/physics"
 
 const t = 0.1
 
@@ -182,12 +183,23 @@ describe("Cushion", () => {
     done()
   })
 
-  it("slow with check side should slow down", (done) => {
-    const pos = new Vector3(-0.344137293519278, -0.7369484020172026, 0)
+  function ballAtXCushion() {
+    const pos = new Vector3(TableGeometry.tableX, 0, 0)
     const ball = new Ball(pos)
-    ball.vel.set(0.5652225200494249, -0.7453744130951465, 0)
-    ball.rvel.set(24.23981831203729, 18.381220164208937, 21.852441114058152)
-    Cushion.bounceAny(ball, t)
+    return ball
+  }
+
+  it("mirror image slipping bounce into X cushion should have mirror outcome", (done) => {
+    const a = ballAtXCushion()
+    a.vel.x = 0.1
+    a.vel.y = 1
+    const b = ballAtXCushion()
+    b.vel.x = a.vel.x
+    b.vel.y = -a.vel.y
+    const deltaA = bounceHan(a.vel, a.rvel)
+    const deltaB = bounceHan(b.vel, b.rvel)
+    expect(deltaB.v.x).to.be.equal(deltaA.v.x)
+    expect(deltaB.v.y).to.be.equal(-deltaA.v.y)
     done()
   })
 })
