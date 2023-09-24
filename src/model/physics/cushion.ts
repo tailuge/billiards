@@ -1,8 +1,9 @@
 import { Ball } from "../ball"
 import { TableGeometry } from "../../view/tablegeometry"
-import { rotateApplyUnrotate } from "./physics"
 import { Vector3 } from "three"
 import { PocketGeometry } from "../../view/pocketgeometry"
+import { rotateApplyUnrotate } from "../../utils/utils"
+import { bounceHan } from "./physics"
 
 export class Cushion {
   /**
@@ -98,7 +99,7 @@ export class Cushion {
   }
 
   private static bounceIn(rotation, ball) {
-    const delta = rotateApplyUnrotate(rotation, ball.vel, ball.rvel)
+    const delta = rotateApplyUnrotate(bounceHan, rotation, ball.vel, ball.rvel)
     ball.vel.add(delta.v)
     ball.rvel.add(delta.w)
     return delta.v.length()

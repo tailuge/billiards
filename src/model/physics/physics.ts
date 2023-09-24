@@ -1,13 +1,14 @@
 import { Vector3 } from "three"
-import { norm, upCross, up } from "../../utils/utils"
+import { norm, upCross } from "../../utils/utils"
 import { muS, muC, g, m, e, Mz, Mxy, R, I } from "./constants"
 
 export function surfaceVelocity(v, w) {
   return surfaceVelocityFull(v, w).setZ(0)
 }
 
+const sv = new Vector3()
 export function surfaceVelocityFull(v, w) {
-  return v.clone().addScaledVector(upCross(w), R)
+  return sv.copy(v).addScaledVector(upCross(w), R)
 }
 
 const delta = { v: new Vector3(), w: new Vector3() }
@@ -38,17 +39,6 @@ export function forceRoll(v, w) {
   const wz = w.z
   w.copy(upCross(v).multiplyScalar(1 / R))
   w.setZ(wz)
-}
-
-export function rotateApplyUnrotate(theta, v, w) {
-  const vr = v.clone().applyAxisAngle(up, theta)
-  const wr = w.clone().applyAxisAngle(up, theta)
-
-  const delta = bounceHan(vr, wr)
-
-  delta.v.applyAxisAngle(up, -theta)
-  delta.w.applyAxisAngle(up, -theta)
-  return delta
 }
 
 // Han paper cushion physics
