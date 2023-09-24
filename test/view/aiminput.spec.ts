@@ -3,6 +3,7 @@ import { expect } from "chai"
 import { AimInputs } from "../../src/view/aiminputs"
 import { initDom, canvas3d } from "./dom"
 import { Container } from "../../src/container/container"
+import { fireEvent } from "@testing-library/dom"
 
 initDom()
 
@@ -18,8 +19,16 @@ describe("AimInput", () => {
 
   it("adjust spin", (done) => {
     const e = { buttons: 1, offsetX: 1, offsetY: 1 }
+    fireEvent.click(aiminputs.cueBallElement)
     aiminputs.mousemove(e)
     expect(aiminputs.cueHitElement).to.be.not.null
+    done()
+  })
+
+  it("adjust power", (done) => {
+    aiminputs.cuePowerElement.value = 1
+    fireEvent.change(aiminputs.cuePowerElement, { target: { value: 1 } })
+    expect(container.table.cue.aim.power).to.be.greaterThan(0)
     done()
   })
 
@@ -34,4 +43,5 @@ describe("AimInput", () => {
     expect(aiminputs.container.table.cue.aim.power).to.greaterThan(0)
     done()
   })
+  
 })

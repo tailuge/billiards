@@ -21,6 +21,7 @@ import { zero } from "../../src/utils/utils"
 import { BreakEvent } from "../../src/events/breakevent"
 import { RejoinEvent } from "../../src/events/rejoinevent"
 import { initDom } from "../view/dom"
+import { State } from "../../src/model/ball"
 
 initDom()
 
@@ -196,6 +197,7 @@ describe("Controller", () => {
   it("StationaryEvent takes active PlayShot to PlaceBall if in off", (done) => {
     container.controller = new PlayShot(container)
     container.table.cueball.setStationary()
+    container.table.cueball.state = State.InPocket
     container.eventQueue.push(new StationaryEvent())
     container.table.outcome.push(Outcome.pot(container.table.cueball, 1))
     container.processEvents()
