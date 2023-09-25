@@ -1,4 +1,4 @@
-import { Pze, Pzs, c0, s0, muCushion } from "./model/physics/physics"
+import { Pze, Pzs, c0, s0, muCushion, bounceHan } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { CushionPlot } from "./diagram/cushionplot"
 import { Graph } from "./diagram/graph"
@@ -62,8 +62,8 @@ function initialisePlots() {
 
   linegraph4 = new Graph(
     "plot4",
-    "Cushion friction (mu) varies with incident angle",
-    "Incident angle (degrees) of ball to cushion"
+    "Bounce angle of ball with check side (y-axis outward angle)",
+    "Incident angle (degrees) of ball to cushion, 0=perpendicular, 90=parallel"
   )
 
   plotAll()
@@ -161,14 +161,18 @@ function plot3() {
 }
 
 function plot4() {
+  // input vs output angle on cushion
   const x: number[] = []
   const y: number[] = []
-  for (let i = -80; i <= 80; i += 10) {
+  for (let i = 0; i <= 88; i += 2) {
     x.push(i)
     const rad = (i * Math.PI) / 180
     const v = new Vector3(Math.cos(rad) * R, Math.sin(rad) * R, 0)
-    const mu = muCushion(v)
-    y.push(mu)
+    const w = new Vector3(0, 0, 50 * R)
+    const delta = bounceHan(v, w)
+    const out = v.clone().add(delta.v)
+    const outAngle = (-Math.atan2(-out.y, -out.x) * 180) / Math.PI
+    y.push(outAngle)
   }
   linegraph4.plot(x, y, y)
 }

@@ -20,6 +20,8 @@ export class Graph {
     this.xAxis = this.axisInfo(xValues, this.canvas.width)
     this.yAxis = this.axisInfo([...y1, ...y2], this.canvas.height)
     this.drawXAxis(xValues)
+    const allY = [...y1, ...y2]
+    this.drawYAxis(allY)
     this.plotLine(xValues, y1, "blue")
     this.plotLine(xValues, y2, "red")
   }
@@ -63,6 +65,24 @@ export class Graph {
       }
       skip = !skip
     }
+  }
+
+  drawYAxis(ys) {
+    const min = Math.min(...ys)
+    const max = Math.max(...ys)
+    const maxy =
+      this.canvas.height - this.scale(max, this.yAxis) * 0.8 - this.gutter
+
+    const miny =
+      this.canvas.height - this.scale(min, this.yAxis) * 0.8 - this.gutter
+
+    this.ctx.beginPath()
+    this.ctx.moveTo(0, miny)
+    this.ctx.lineTo(0, maxy)
+    this.ctx.strokeStyle = "grey"
+    this.ctx.stroke()
+    this.ctx.fillText(`${min.toFixed(3)}`, 0, miny)
+    this.ctx.fillText(`${max.toFixed(3)}`, 0, maxy)
   }
 
   scale(p, pAxis) {
