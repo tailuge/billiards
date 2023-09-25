@@ -1,4 +1,4 @@
-import { Pze, Pzs, c0, s0, muCushion, bounceHan } from "./model/physics/physics"
+import { Pze, Pzs, c0, s0, bounceHan } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { CushionPlot } from "./diagram/cushionplot"
 import { Graph } from "./diagram/graph"
