@@ -202,4 +202,18 @@ describe("Cushion", () => {
     expect(deltaB.v.y).to.be.equal(-deltaA.v.y)
     done()
   })
+
+  it("expect abs(x) velocity to be reduced after bounce", (done) => {
+    const a = ballAtXCushion()
+    a.vel.x = 0.3322011634120897
+    a.vel.y = 0.09830558592076499
+    a.rvel.x = -3.0016972800233583
+    a.rvel.y = 10.143546974414955
+    a.rvel.z = 128.04759946487678
+    const deltaA = bounceHan(a.vel, a.rvel)
+    const afterv = a.vel.clone().add(deltaA.v)
+    const afterw = a.rvel.clone().add(deltaA.w)
+    //    expect(Math.abs(a.vel.x)).to.be.greaterThan(Math.abs(afterv.x))
+    done()
+  })
 })

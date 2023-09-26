@@ -152,7 +152,5 @@ export function cueToSpin(offset: Vector3, v: Vector3) {
   const rvel = upCross(dir)
     .applyAxisAngle(dir, spinAxis)
     .multiplyScalar(spinRate)
-
-  console.log(v.length(), rvel.length())
   return rvel
 }

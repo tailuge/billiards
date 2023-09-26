@@ -42,11 +42,11 @@ export class Sliders {
     return (document.getElementById(id) as HTMLInputElement) ?? {}
   }
 
-  initialiseSlider(id, initialValue, setter) {
+  initialiseSlider(id, initialValue, setter, max = 1) {
     const slider = this.getInputElement(id)
     slider.step = "0.001"
     slider.min = "0.01"
-    slider.max = "1.0"
+    slider.max = `${max}`
     slider.value = initialValue
     this.showValue(id, initialValue)
     slider.oninput = (e) => {

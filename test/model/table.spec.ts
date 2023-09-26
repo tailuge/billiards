@@ -59,9 +59,9 @@ describe("Table", () => {
 
   it("c moves by transfering momentum through b and a after bounce", (done) => {
     const a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
-    const b = new Ball(new Vector3(-TableGeometry.tableX + 2 * R, 0, 0))
-    const c = new Ball(new Vector3(-TableGeometry.tableX + 4 * R, 0, 0))
-    a.vel.x = -2
+    const b = new Ball(new Vector3(-TableGeometry.tableX + 2.01 * R, 0, 0))
+    const c = new Ball(new Vector3(-TableGeometry.tableX + 4.02 * R, 0, 0))
+    a.vel.x = -100 * R
     a.state = State.Sliding
     const table = new Table([a, b, c])
     expect(table.prepareAdvanceAll(t)).to.be.false

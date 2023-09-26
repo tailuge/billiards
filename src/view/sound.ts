@@ -22,7 +22,6 @@ export class Sound {
     this.audioLoader = new AudioLoader()
 
     camera.add(this.listener)
-    console.log(this.listener)
     this.ballcollision = new Audio(this.listener)
     this.load("sounds/ballcollision.ogg", this.ballcollision)
 

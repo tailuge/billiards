@@ -31,6 +31,12 @@ body {
   font-weight: lighter;
 }
 
+.small {
+  font-size: xx-small;
+  text-align: center;
+  margin: auto;
+}
+
 #R,
 #m,
 #e,
