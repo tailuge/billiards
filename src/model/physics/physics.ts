@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { norm, upCross, up } from "../../utils/utils"
-import { muS, muC, g, m, e, Mz, Mxy, R, I } from "./constants"
+import { muS, muC, g, m, Mz, Mxy, R, I, e } from "./constants"
 
 export function surfaceVelocity(v, w) {
   return surfaceVelocityFull(v, w).setZ(0)
@@ -80,7 +80,8 @@ export function Pzs(s) {
 
 export function Pze(c) {
   const B = 1 / m
-  return (muC * ((1 + e) * c)) / B
+  const coeff = restitutionCushion(new Vector3(c / cos_a, 0, 0))
+  return (muC * ((1 + coeff) * c)) / B
 }
 
 export function isGripCushion(v, w) {
@@ -135,6 +136,11 @@ export function bounceHan(v: Vector3, w: Vector3) {
 export function muCushion(v: Vector3) {
   const theta = Math.atan2(Math.abs(v.y), v.x)
   return 0.471 - theta * 0.241
+}
+
+export function restitutionCushion(v: Vector3) {
+  const e = 0.39 + 0.257 * v.x - 0.044 * v.x * v.x
+  return e
 }
 
 /**
