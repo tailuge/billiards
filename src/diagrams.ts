@@ -5,7 +5,7 @@ import { Graph } from "./diagram/graph"
 import { RollDiagram } from "./diagram/rolldiagram"
 import { Sliders } from "./view/sliders"
 import { DiagramContainer } from "./diagram/diagramcontainer"
-import { R } from "./model/physics/constants"
+import { I, Mxy, Mz, R } from "./model/physics/constants"
 
 let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4
@@ -29,6 +29,17 @@ if (rollcanvas) {
 
   const sliders = new Sliders(plotAll)
   sliders.initialiseSlider("s", s, sets)
+
+  if (id("derived")) {
+    reportConstants()
+  }
+}
+
+function reportConstants() {
+  const elt = id("derived")
+  elt.innerHTML += `Mx,My = ${Mxy.toFixed(6)}\n`
+  elt.innerHTML += `Mz    = ${Mz.toFixed(6)}\n`
+  elt.innerHTML += `I     = ${I.toFixed(6)}\n`
 }
 
 function sets(v) {
@@ -118,9 +129,9 @@ function plot1() {
   const y1: number[] = []
   const y2: number[] = []
 
-  for (let i = -20; i <= 20; i += 1) {
+  for (let i = -80; i <= 80; i += 10) {
     x.push(i)
-    const v = new Vector3(1.0 * R, 0.0, 0)
+    const v = new Vector3(0.2 * R, 0.0, 0)
     const w = new Vector3(0.0, 0.0, i * R)
     y1.push(Pze(c0(v)))
     y2.push(Pzs(s0(v, w)))
@@ -133,7 +144,7 @@ function plot2() {
   const y1: number[] = []
   const y2: number[] = []
 
-  for (let i = -20; i <= 20; i += 1) {
+  for (let i = -80; i <= 80; i += 10) {
     x.push(i)
     const v = new Vector3(1.0 * R, 0, 0)
     const w = new Vector3(0.0, i * R, 0)

@@ -14,7 +14,7 @@ export class Cue {
   helperMesh: Mesh
   placerMesh: Mesh
   readonly offCenterLimit = 0.3
-  readonly maxPower = 120 * R
+  readonly maxPower = 150 * R
   t = 0
   aimInputs: AimInputs
   aim: AimEvent = new AimEvent()

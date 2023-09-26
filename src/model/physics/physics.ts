@@ -134,7 +134,7 @@ export function bounceHan(v: Vector3, w: Vector3) {
 
 export function muCushion(v: Vector3) {
   const theta = Math.atan2(Math.abs(v.y), v.x)
-  return 0.2 - theta * 0.025
+  return 0.471 - theta * 0.241
 }
 
 /**
@@ -152,5 +152,7 @@ export function cueToSpin(offset: Vector3, v: Vector3) {
   const rvel = upCross(dir)
     .applyAxisAngle(dir, spinAxis)
     .multiplyScalar(spinRate)
+
+  console.log(v.length(), rvel.length())
   return rvel
 }
