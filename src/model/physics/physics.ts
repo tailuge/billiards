@@ -100,8 +100,8 @@ export function isGripCushion(v, w) {
  */
 export function bounceHan(v: Vector3, w: Vector3) {
   const checkSide = Math.sign(v.y) === Math.sign(w.z)
-  let factor = checkSide ? Math.cos(Math.atan2(v.y, v.x)) : 1
-  // factor = Math.cos(Math.atan2(v.y, v.x))
+  const factor = checkSide ? Math.cos(Math.atan2(v.y, v.x)) : 1
+
   const c = c0(v)
   const s = s0(v, w)
   const A = 7 / 2 / m
@@ -112,16 +112,9 @@ export function bounceHan(v: Vector3, w: Vector3) {
   let PZ = 0
 
   PX = (-s.x / A) * sin_a - ecB * cos_a
-  PY = (1 * s.y) / A
+  PY = s.y / A
   PZ = (s.x / A) * cos_a - ecB * sin_a
-  const deltaGrip = {
-    v: new Vector3(PX / m, PY / m),
-    w: new Vector3(
-      (-R / I) * PY * sin_a,
-      (R / I) * (PX * sin_a - PZ * cos_a),
-      (R / I) * PY * cos_a
-    ),
-  }
+  const deltaGrip = impulseToDelta(PX, PY, PZ)
 
   const mu = muCushion(v)
   const phi = Math.atan2(v.y, v.x)
@@ -130,15 +123,8 @@ export function bounceHan(v: Vector3, w: Vector3) {
   PX = -mu * ecB * cos_phi * cos_a - ecB * cos_a
   PY = mu * ecB * sin_phi
   PZ = mu * ecB * cos_phi * cos_a - ecB * sin_a
-  const deltaSlip = {
-    v: new Vector3(PX / m, PY / m),
-    w: new Vector3(
-      (-R / I) * PY * sin_a,
-      (R / I) * (PX * sin_a - PZ * cos_a),
-      (R / I) * PY * cos_a
-    ),
-  }
-
+  const deltaSlip = impulseToDelta(PX, PY, PZ)
+  
   const delta = {
     v: deltaGrip.v.clone().lerp(deltaSlip.v, 1 - factor),
     w: deltaGrip.w.clone().lerp(deltaSlip.w, 1 - factor),
@@ -146,6 +132,16 @@ export function bounceHan(v: Vector3, w: Vector3) {
   return delta
 }
 
+function impulseToDelta(PX, PY, PZ) {
+  return {
+    v: new Vector3(PX / m, PY / m),
+    w: new Vector3(
+      (-R / I) * PY * sin_a,
+      (R / I) * (PX * sin_a - PZ * cos_a),
+      (R / I) * PY * cos_a
+    ),
+  }
+}
 export function muCushion(v: Vector3) {
   const theta = Math.atan2(Math.abs(v.y), v.x)
   return 0.471 - theta * 0.241
