@@ -11,6 +11,7 @@ function initialise() {
   const name = params.get("name") ?? ""
   const replay = params.get("state")
   const ruletype = params.get("ruletype") ?? "nineball"
+  const cushionModel = params.get("cushionModel")
   const browserContainer = new BrowserContainer(
     ruletype,
     name,
@@ -18,7 +19,8 @@ function initialise() {
     clientId,
     replay,
     wss,
-    canvas3d
+    canvas3d,
+    cushionModel
   )
   browserContainer.start()
 }

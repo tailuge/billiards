@@ -1,4 +1,8 @@
-import { rotateApplyUnrotate, isGripCushion } from "../model/physics/physics"
+import {
+  rotateApplyUnrotate,
+  isGripCushion,
+  bounceHan,
+} from "../model/physics/physics"
 import { Vector3 } from "three"
 
 export class CushionPlot {
@@ -55,7 +59,7 @@ export class CushionPlot {
         this.endx,
         this.endy
       )
-      const delta = rotateApplyUnrotate(0, v, w)
+      const delta = rotateApplyUnrotate(0, v, w, bounceHan)
       v.add(delta.v)
       this.drawArrow(
         this.endx,

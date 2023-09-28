@@ -8,7 +8,7 @@ import { Knuckle } from "../../src/model/physics/knuckle"
 import { Vector3 } from "three"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
 import { R } from "../../src/model/physics/constants"
-import { bounceHan } from "../../src/model/physics/physics"
+import { bounceHan, bounceHanBlend } from "../../src/model/physics/physics"
 
 const t = 0.1
 
@@ -189,19 +189,39 @@ describe("Cushion", () => {
     return ball
   }
 
-  it("mirror image slipping bounce into X cushion should have mirror outcome", (done) => {
-    const a = ballAtXCushion()
-    a.vel.x = 0.1
-    a.vel.y = 1
-    const b = ballAtXCushion()
-    b.vel.x = a.vel.x
-    b.vel.y = -a.vel.y
-    const deltaA = bounceHan(a.vel, a.rvel)
-    const deltaB = bounceHan(b.vel, b.rvel)
-    expect(deltaB.v.x).to.be.equal(deltaA.v.x)
-    expect(deltaB.v.y).to.be.equal(-deltaA.v.y)
-    done()
-  })
+  it.each([
+    ["bounceHan", bounceHan],
+    ["bounceHanBlend", bounceHanBlend],
+  ])(
+    `mirror image slip bounce into X cushion should have mirror outcome %s`,
+    (_, model) => {
+      const av = new Vector3(0.1, 1)
+      const aw = new Vector3()
+      const bv = av.clone().setY(-av.y)
+      const bw = aw.clone()
+      const deltaA = model(av, aw)
+      const deltaB = model(bv, bw)
+      expect(deltaB.v.x).to.be.equal(deltaA.v.x)
+      expect(deltaB.v.y).to.be.equal(-deltaA.v.y)
+    }
+  )
+
+  it.each([
+    ["bounceHan", bounceHan],
+    ["bounceHanBlend", bounceHanBlend],
+  ])(
+    `mirror image grip bounce into X cushion should have mirror outcome %s`,
+    (_, model) => {
+      const av = new Vector3(1, 0.1)
+      const aw = new Vector3()
+      const bv = av.clone().setY(-av.y)
+      const bw = aw.clone()
+      const deltaA = model(av, aw)
+      const deltaB = model(bv, bw)
+      expect(deltaB.v.x).to.be.equal(deltaA.v.x)
+      expect(deltaB.v.y).to.be.equal(-deltaA.v.y)
+    }
+  )
 
   it("expect abs(x) velocity to be reduced after bounce", (done) => {
     const a = ballAtXCushion()

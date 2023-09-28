@@ -1,4 +1,12 @@
-import { Pze, Pzs, c0, s0, bounceHan, cueToSpin } from "./model/physics/physics"
+import {
+  Pze,
+  Pzs,
+  c0,
+  s0,
+  bounceHan,
+  cueToSpin,
+  bounceHanBlend,
+} from "./model/physics/physics"
 import { Vector3 } from "three"
 import { CushionPlot } from "./diagram/cushionplot"
 import { Graph } from "./diagram/graph"
@@ -79,7 +87,7 @@ function initialisePlots() {
   linegraph4 = new Graph(
     "plot4",
     "Bounce angle of ball with check side (y-axis outward angle)",
-    "Incident angle (degrees) of ball to cushion, 0=perpendicular, 90=parallel"
+    "Incident angle (degrees) of ball to cushion, 0=perpendicular, 90=parallel. Blue=Han2005 Red=Blend"
   )
 
   plotAll()
@@ -149,18 +157,24 @@ function lineGraph3() {
 function lineGraph4() {
   // input vs output angle on cushion
   const x: number[] = []
-  const y: number[] = []
+  const y1: number[] = []
+  const y2: number[] = []
   for (let i = 0; i <= 88; i += 2) {
     x.push(i)
     const rad = (i * Math.PI) / 180
     const v = new Vector3(Math.cos(rad) * R, Math.sin(rad) * R, 0)
     const w = new Vector3(0, 0, 50 * R)
-    const delta = bounceHan(v, w)
-    const out = v.clone().add(delta.v)
-    const outAngle = (-Math.atan2(-out.y, -out.x) * 180) / Math.PI
-    y.push(outAngle)
+    const deltaHan = bounceHan(v, w)
+    const outHan = v.clone().add(deltaHan.v)
+    const outAngleHan = (-Math.atan2(-outHan.y, -outHan.x) * 180) / Math.PI
+    y1.push(outAngleHan)
+    const deltaBlend = bounceHanBlend(v, w)
+    const outBlend = v.clone().add(deltaBlend.v)
+    const outAngleBlend =
+      (-Math.atan2(-outBlend.y, -outBlend.x) * 180) / Math.PI
+    y2.push(outAngleBlend)
   }
-  linegraph4.plot(x, y, y)
+  linegraph4.plot(x, y1, y2)
 }
 
 function id(id: string): HTMLElement {

@@ -17,10 +17,11 @@ export class Graph {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.ctx.shadowColor = "grey"
     this.ctx.shadowBlur = 2
-    this.xAxis = this.axisInfo(xValues, this.canvas.width)
-    this.yAxis = this.axisInfo([...y1, ...y2], this.canvas.height)
-    this.drawXAxis(xValues)
     const allY = [...y1, ...y2]
+    allY.push(0)
+    this.xAxis = this.axisInfo(xValues, this.canvas.width)
+    this.yAxis = this.axisInfo(allY, this.canvas.height)
+    this.drawXAxis(xValues)
     this.drawYAxis(allY)
     this.plotLine(xValues, y1, "blue")
     this.plotLine(xValues, y2, "red")
@@ -68,7 +69,7 @@ export class Graph {
   }
 
   drawYAxis(ys) {
-    const min = Math.min(...ys)
+    const min = 0
     const max = Math.max(...ys)
     const maxy =
       this.canvas.height - this.scale(max, this.yAxis) * 0.8 - this.gutter

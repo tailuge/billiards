@@ -41,11 +41,11 @@ export function forceRoll(v, w) {
   w.setZ(wz)
 }
 
-export function rotateApplyUnrotate(theta, v, w) {
+export function rotateApplyUnrotate(theta, v, w, model) {
   const vr = v.clone().applyAxisAngle(up, theta)
   const wr = w.clone().applyAxisAngle(up, theta)
 
-  const delta = bounceHan(vr, wr)
+  const delta = model(vr, wr)
 
   delta.v.applyAxisAngle(up, -theta)
   delta.w.applyAxisAngle(up, -theta)
@@ -90,8 +90,39 @@ export function isGripCushion(v, w) {
   return Pzs_val <= Pze_val
 }
 
+function basisHan(v, w) {
+  return {
+    c: c0(v),
+    s: s0(v, w),
+    A: 7 / 2 / m,
+    B: 1 / m,
+  }
+}
+
+function gripHan(v, w) {
+  const { c, s, A, B } = basisHan(v, w)
+  const ecB = (1 + e) * (c / B)
+  const PX = (-s.x / A) * sin_a - ecB * cos_a
+  const PY = s.y / A
+  const PZ = (s.x / A) * cos_a - ecB * sin_a
+  return impulseToDelta(PX, PY, PZ)
+}
+
+function slipHan(v, w) {
+  const { c, B } = basisHan(v, w)
+  const ecB = (1 + e) * (c / B)
+  const mu = muCushion(v)
+  const phi = Math.atan2(v.y, v.x)
+  const cos_phi = Math.cos(phi)
+  const sin_phi = Math.sin(phi)
+  const PX = -mu * ecB * cos_phi * cos_a - ecB * cos_a
+  const PY = mu * ecB * sin_phi
+  const PZ = mu * ecB * cos_phi * cos_a - ecB * sin_a
+  return impulseToDelta(PX, PY, PZ)
+}
+
 /**
- * Based on Han2005 paper.
+ * Based directly on Han2005 paper.
  * Expects ball to be bouncing in +X plane.
  *
  * @param v ball velocity
@@ -99,35 +130,32 @@ export function isGripCushion(v, w) {
  * @returns delta to apply to velocity and spin
  */
 export function bounceHan(v: Vector3, w: Vector3) {
-  const checkSide = Math.sign(v.y) === Math.sign(w.z)
-  const factor = checkSide ? Math.cos(Math.atan2(v.y, v.x)) : 1
+  if (isGripCushion(v, w)) {
+    return gripHan(v, w)
+  } else {
+    return slipHan(v, w)
+  }
+}
 
-  const c = c0(v)
-  const s = s0(v, w)
-  const A = 7 / 2 / m
-  const B = 1 / m
-  const ecB = (1 + e) * (c / B)
-  let PX = 0
-  let PY = 0
-  let PZ = 0
+/**
+ * Modification Han 2005 paper by Taylor to blend two bounce regimes.
+ * Motive is to remove cliff edge discontinuity in original model.
+ * Gives more realistic check side (reverse side played at steep angle)
+ *
+ * @param v ball velocity
+ * @param w ball spin
+ * @returns delta to apply to velocity and spin
+ */
+export function bounceHanBlend(v: Vector3, w: Vector3) {
+  const deltaGrip = gripHan(v, w)
+  const deltaSlip = slipHan(v, w)
 
-  PX = (-s.x / A) * sin_a - ecB * cos_a
-  PY = s.y / A
-  PZ = (s.x / A) * cos_a - ecB * sin_a
-  const deltaGrip = impulseToDelta(PX, PY, PZ)
+  const isCheckSide = Math.sign(v.y) === Math.sign(w.z)
+  const factor = isCheckSide ? Math.cos(Math.atan2(v.y, v.x)) : 1
 
-  const mu = muCushion(v)
-  const phi = Math.atan2(v.y, v.x)
-  const cos_phi = Math.cos(phi)
-  const sin_phi = Math.sin(phi)
-  PX = -mu * ecB * cos_phi * cos_a - ecB * cos_a
-  PY = mu * ecB * sin_phi
-  PZ = mu * ecB * cos_phi * cos_a - ecB * sin_a
-  const deltaSlip = impulseToDelta(PX, PY, PZ)
-  
   const delta = {
-    v: deltaGrip.v.clone().lerp(deltaSlip.v, 1 - factor),
-    w: deltaGrip.w.clone().lerp(deltaSlip.w, 1 - factor),
+    v: deltaSlip.v.lerp(deltaGrip.v, factor),
+    w: deltaSlip.w.lerp(deltaGrip.w, factor),
   }
   return delta
 }
@@ -142,6 +170,7 @@ function impulseToDelta(PX, PY, PZ) {
     ),
   }
 }
+
 export function muCushion(v: Vector3) {
   const theta = Math.atan2(Math.abs(v.y), v.x)
   return 0.471 - theta * 0.241

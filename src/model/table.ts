@@ -8,6 +8,7 @@ import { AimEvent } from "../events/aimevent"
 import { TableGeometry } from "../view/tablegeometry"
 import { Outcome } from "./outcome"
 import { PocketGeometry } from "../view/pocketgeometry"
+import { bounceHanBlend } from "./physics/physics"
 
 interface Pair {
   a: Ball
@@ -21,6 +22,7 @@ export class Table {
   outcome: Outcome[] = []
   hasPockets: boolean = true
   cueball: Ball
+  cushionModel = bounceHanBlend
 
   constructor(balls: Ball[]) {
     this.cueball = balls[0]
@@ -99,7 +101,12 @@ export class Table {
       return true
     }
 
-    const incidentSpeed = Cushion.bounceAny(a, t, this.hasPockets)
+    const incidentSpeed = Cushion.bounceAny(
+      a,
+      t,
+      this.hasPockets,
+      this.cushionModel
+    )
     if (incidentSpeed) {
       this.outcome.push(Outcome.cushion(a, incidentSpeed))
       return false

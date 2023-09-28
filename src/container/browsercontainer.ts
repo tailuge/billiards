@@ -6,6 +6,7 @@ import { BreakEvent } from "../events/breakevent"
 import { SocketConnection } from "../network/client/socketconnection"
 import { ChatEvent } from "../events/chatevent"
 import { GameEvent } from "../events/gameevent"
+import { bounceHan, bounceHanBlend } from "../model/physics/physics"
 
 /**
  * Integrate game container into HTML page
@@ -24,8 +25,18 @@ export class BrowserContainer {
     init: null,
     shots: Array<string>(),
   }
+  cushionModel
 
-  constructor(ruletype, playername, tableId, clientId, replay, wss, canvas3d) {
+  constructor(
+    ruletype,
+    playername,
+    tableId,
+    clientId,
+    replay,
+    wss,
+    canvas3d,
+    cushionModel
+  ) {
     this.playername = playername
     this.tableId = tableId
     this.clientId = clientId
@@ -33,6 +44,8 @@ export class BrowserContainer {
     this.ruletype = ruletype
     this.wss = wss
     this.canvas3d = canvas3d
+    this.cushionModel =
+      cushionModel === "bounceHan" ? bounceHan : bounceHanBlend
   }
 
   start() {
@@ -51,6 +64,7 @@ export class BrowserContainer {
     this.container.broadcast = (e) => {
       this.recordingBroadcast(e)
     }
+    this.container.table.cushionModel = this.cushionModel
     if (this.wss) {
       const params = `name=${this.playername}&tableId=${this.tableId}&clientId=${this.clientId}`
       this.container.isSinglePlayer = false

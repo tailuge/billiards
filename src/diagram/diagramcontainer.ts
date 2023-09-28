@@ -2,15 +2,17 @@ import { Container } from "../container/container"
 import { Keyboard } from "../events/keyboard"
 import { BreakEvent } from "../events/breakevent"
 import { CameraTop } from "../view/cameratop"
+import { bounceHan } from "../model/physics/physics"
 
 /**
- * Integrate container into diagram
+ * Integrate billiards container into diagram html page
  */
 export class DiagramContainer {
   container: Container
   canvas3d
   ruletype
   replay: string
+  cushionModel
   breakState = {
     init: null,
     shots: Array<string>(),
@@ -34,6 +36,9 @@ export class DiagramContainer {
       this.onAssetsReady,
       "diagram"
     )
+    if (this.cushionModel) {
+      this.container.table.cushionModel = this.cushionModel
+    }
   }
 
   onAssetsReady = () => {
@@ -76,6 +81,9 @@ export class DiagramContainer {
       params.get("state")
     )
     diagramcontainer.replayButton(replaybutton)
+    if (params.get("cushionModel") == "bounceHan") {
+      diagramcontainer.cushionModel = bounceHan
+    }
     return diagramcontainer
   }
 }
