@@ -27,25 +27,16 @@ export class BrowserContainer {
   }
   cushionModel
 
-  constructor(
-    ruletype,
-    playername,
-    tableId,
-    clientId,
-    replay,
-    wss,
-    canvas3d,
-    cushionModel
-  ) {
-    this.playername = playername
-    this.tableId = tableId
-    this.clientId = clientId
-    this.replay = replay
-    this.ruletype = ruletype
-    this.wss = wss
+  constructor(canvas3d, params) {
+    this.playername = params.get("name") ?? ""
+    this.tableId = params.get("tableId") ?? "default"
+    this.clientId = params.get("clientId") ?? "default"
+    this.replay = params.get("state")
+    this.ruletype = params.get("ruletype") ?? "nineball"
+    this.wss = params.get("websocketserver")
     this.canvas3d = canvas3d
     this.cushionModel =
-      cushionModel === "bounceHan" ? bounceHan : bounceHanBlend
+      params.get("cushionModel") === "bounceHan" ? bounceHan : bounceHanBlend
   }
 
   start() {
