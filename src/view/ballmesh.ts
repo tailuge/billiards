@@ -43,8 +43,7 @@ export class BallMesh {
 
   updateRotation(rvel, t) {
     const angle = rvel.length() * t
-    const m = this.m.identity().makeRotationAxis(norm(rvel), angle)
-    this.mesh.geometry.applyMatrix4(m)
+    this.mesh.rotateOnWorldAxis(norm(rvel), angle)
   }
 
   updateArrows(pos, rvel, state) {
