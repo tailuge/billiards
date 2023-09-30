@@ -16,6 +16,7 @@ import { Sliders } from "../view/sliders"
 import { Recorder } from "../events/recorder"
 import { Rules } from "../controller/rules/rules"
 import { RuleFactory } from "../controller/rules/rulefactory"
+import { Menu } from "../view/menu"
 
 /**
  * Model, View, Controller container.
@@ -34,6 +35,7 @@ export class Container {
   id: string = ""
   isSinglePlayer: boolean = true
   rules: Rules
+  menu: Menu
 
   last = performance.now()
   readonly step = 0.001953125 * 1
@@ -61,6 +63,7 @@ export class Container {
     this.sliders = new Sliders()
     this.recoder = new Recorder(this)
     this.id = id
+    this.menu = new Menu(this)
     this.table.addToScene(this.view.scene)
     this.updateController(new Init(this))
   }

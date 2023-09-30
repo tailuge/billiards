@@ -8,6 +8,9 @@ import { GameEvent } from "../../src/events/gameevent"
 import { Outcome } from "../../src/model/outcome"
 import { RuleFactory } from "../../src/controller/rules/rulefactory"
 import { WatchAim } from "../../src/controller/watchaim"
+import { initDom } from "../view/dom"
+
+initDom()
 
 describe("ThreeCushion", () => {
   let container: Container

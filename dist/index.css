@@ -160,7 +160,7 @@ input[type="range"].powerSlider {
   padding: 5px;
   margin: 2px;
   border-radius: 5px;
-  font-size: x-small;
+  font-size: smaller;
 }
 
 .chatoutput::-webkit-scrollbar {
@@ -176,8 +176,20 @@ a.pill {
   border-width: 1px;
   margin: 1px;
   padding: 1px;
-  font-size: x-small;
+  font-size: smaller;
   border-top-style: groove;
+}
+
+.menu {
+  background: linear-gradient(#495155, #0b0b0e);
+  border-radius: 5px;
+  position: fixed;
+  right: 0px;
+  bottom: 0px;
+  visibility: hidden;
+  padding: 5px;
+  border: double;
+  max-width: 20%;
 }
 
 .constants {
