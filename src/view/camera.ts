@@ -10,7 +10,7 @@ export class Camera {
   }
 
   camera: PerspectiveCamera
-  private mode = this.topView
+  mode = this.topView
   private mainMode = this.aimView
   private height = R * 8
 

@@ -50,9 +50,13 @@ export class Recorder {
   updateBreak(outcome: Outcome[]) {
     const isPartOfBreak = this.container.rules.isPartOfBreak(outcome)
     const isEndOfGame = this.container.rules.isEndOfGame(outcome)
+    if (!isPartOfBreak) {
+      this.replayBreakLink(isEndOfGame)
+    }
+
     this.replayLastShotLink(isPartOfBreak || isEndOfGame)
 
-    if (this.breakStart !== undefined && (!isPartOfBreak || isEndOfGame)) {
+    if (isEndOfGame) {
       this.replayBreakLink(isEndOfGame)
     }
 
@@ -74,13 +78,16 @@ export class Recorder {
 
   replayBreakLink(includeLastShot) {
     const currentBreak = this.replayCurrentBreak()
-    if (!includeLastShot) {
-      currentBreak?.shots.pop()
-    }
-    if (currentBreak?.shots.length === 1) {
+    if (!currentBreak) {
       return
     }
-    const text = `break(${currentBreak?.shots.length})`
+    if (!includeLastShot) {
+      currentBreak.shots.pop()
+    }
+    if (currentBreak.shots.length === 1) {
+      return
+    }
+    const text = `break(${currentBreak.shots.length})`
     const serialisedShot = JSON.stringify(currentBreak)
     this.generateLink(text, serialisedShot)
   }

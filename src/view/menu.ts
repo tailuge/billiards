@@ -6,7 +6,7 @@ export class Menu {
 
   constructor(container) {
     this.container = container
-    this.menu = (document.getElementById("menu") as HTMLElement)?.style ?? {}
+    this.menu = (document.getElementById("menu") as HTMLElement)?.style
 
     const togglemenu = this.getElement("togglemenu")
     const dismiss = this.getElement("dismiss")
