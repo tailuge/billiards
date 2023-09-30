@@ -69,8 +69,7 @@ export class Container {
     this.sendEvent(new ChatEvent(this.id, msg))
   }
 
-  throttle = new Throttle(250, (event) => {
-    this.recoder.record(event)
+  throttle = new Throttle(200, (event) => {
     this.broadcast(event)
   })
 

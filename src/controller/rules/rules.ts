@@ -10,4 +10,6 @@ export interface Rules {
   table(): Table
   secondToPlay()
   otherPlayersCueBall(): Ball
+  isPartOfBreak(outcome: Outcome[]): boolean
+  isEndOfGame(outcome: Outcome[]): boolean
 }

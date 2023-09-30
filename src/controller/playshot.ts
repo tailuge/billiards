@@ -12,8 +12,9 @@ export class PlayShot extends ControllerBase {
   }
 
   override handleStationary(_) {
-    const table = this.container.table
-    return this.container.rules.update(table.outcome)
+    const outcome = this.container.table.outcome
+    this.container.recoder.updateBreak(outcome)
+    return this.container.rules.update(outcome)
   }
 
   override handleInput(input: Input): Controller {

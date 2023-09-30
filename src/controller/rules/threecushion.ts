@@ -62,4 +62,12 @@ export class ThreeCushion implements Rules {
     const balls = this.container.table.balls
     return this.cueball === balls[0] ? balls[1] : balls[0]
   }
+
+  isPartOfBreak(outcome: Outcome[]) {
+    return Outcome.isThreeCushionPoint(this.cueball, outcome)
+  }
+
+  isEndOfGame(_: Outcome[]) {
+    return false
+  }
 }

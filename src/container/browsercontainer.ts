@@ -1,10 +1,8 @@
 import { Container } from "./container"
 import { Keyboard } from "../events/keyboard"
 import { EventUtil } from "../events/eventutil"
-import { EventType } from "../events/eventtype"
 import { BreakEvent } from "../events/breakevent"
 import { SocketConnection } from "../network/client/socketconnection"
-import { ChatEvent } from "../events/chatevent"
 import { GameEvent } from "../events/gameevent"
 import { bounceHan, bounceHanBlend } from "../model/physics/physics"
 
@@ -53,9 +51,10 @@ export class BrowserContainer {
       this.playername
     )
     this.container.broadcast = (e) => {
-      this.recordingBroadcast(e)
+      this.broadcast(e)
     }
     this.container.table.cushionModel = this.cushionModel
+    this.setReplayLink()
     if (this.wss) {
       const params = `name=${this.playername}&tableId=${this.tableId}&clientId=${this.clientId}`
       this.container.isSinglePlayer = false
@@ -108,26 +107,13 @@ export class BrowserContainer {
     }
   }
 
-  recordingBroadcast(event: GameEvent) {
-    if (event.type === EventType.HIT) {
-      this.shotReplayLink()
-    }
+  broadcast(event: GameEvent) {
     this.sc?.send(event)
   }
 
-  shotReplayLink() {
+  setReplayLink() {
     const url = window.location.href.split("?")[0]
     const prefix = `${url}?ruletype=${this.ruletype}&state=`
-    const serialisedShot = JSON.stringify(
-      this.container.recoder.replayLastShot()
-    )
-    const shotUri = encodeURI(`${prefix}${serialisedShot}`)
-    const serialisedBreak = JSON.stringify(this.container.recoder.replayGame())
-    const breakUri = encodeURI(`${prefix}${serialisedBreak}`)
-    const breakLink = `<a class="pill" target="_blank" href="${breakUri}">break ⚆...</a>`
-    const shotLink = `<a class="pill" target="_blank" href="${shotUri}">shot ⚆</a>`
-    this.container.eventQueue.push(
-      new ChatEvent("share", `${shotLink} ${breakLink}`)
-    )
+    this.container.recoder.replayUrl = prefix
   }
 }

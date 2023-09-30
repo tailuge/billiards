@@ -20,7 +20,7 @@ export class Chat {
   }
 
   showMessage(msg) {
-    this.chatoutput && (this.chatoutput.innerHTML += msg + ".")
+    this.chatoutput && (this.chatoutput.innerHTML += msg)
     this.updateScroll()
   }
 

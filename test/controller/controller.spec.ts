@@ -293,7 +293,8 @@ describe("Controller", () => {
     container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
     container.processEvents()
     container.advance(0.01)
-    expect(container.eventQueue.length).to.equal(0)
+    console.log(JSON.stringify(container.eventQueue))
+    expect(container.eventQueue.length).to.equal(1)
     done()
   })
 

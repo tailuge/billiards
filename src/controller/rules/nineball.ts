@@ -42,7 +42,7 @@ export class NineBall implements Rules {
       this.container.sendEvent(new PlaceBallEvent(zero, true))
       return new WatchAim(this.container)
     }
-    if (Outcome.isBallPottedNoFoul(table.cueball, table.outcome)) {
+    if (Outcome.isBallPottedNoFoul(table.cueball, outcome)) {
       this.container.sound.playSuccess(table.inPockets())
       this.container.sendEvent(new WatchEvent(table.serialise()))
       return new Aim(this.container)
@@ -55,6 +55,16 @@ export class NineBall implements Rules {
       return new Aim(this.container)
     }
     return new WatchAim(this.container)
+  }
+
+  isPartOfBreak(outcome: Outcome[]) {
+    return Outcome.isBallPottedNoFoul(this.container.table.cueball, outcome)
+  }
+
+  isEndOfGame(_: Outcome[]) {
+    return (
+      this.container.table.balls.filter((ball) => ball.onTable()).length === 1
+    )
   }
 
   otherPlayersCueBall(): Ball {
