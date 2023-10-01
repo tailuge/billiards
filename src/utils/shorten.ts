@@ -2,7 +2,7 @@ export function shorten(url, action) {
   fetch("https://gotiny.cc/api", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ input: url }),
+    body: JSON.stringify({ input: encodeURI(url) }),
   })
     .then((response) => response.json())
     .then((data) => {
@@ -22,7 +22,7 @@ export function share(url) {
     text: `Replay break`,
     url: url,
   }
-  if (!navigator.canShare || !navigator.canShare(shareData)) {
+  if (!navigator?.canShare(shareData)) {
     navigator.clipboard.writeText(url)
     return `link copied to clipboard`
   }
