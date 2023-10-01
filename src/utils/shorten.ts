@@ -22,7 +22,7 @@ export function share(url) {
     text: `Replay break`,
     url: url,
   }
-  if (!("canShare" in navigator) || !navigator.canShare(shareData)) {
+  if (!navigator.canShare || !navigator.canShare(shareData)) {
     navigator.clipboard.writeText(url)
     return `link copied to clipboard`
   }
