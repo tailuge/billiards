@@ -83,12 +83,12 @@ export class View {
   private addTable(ready) {
     this.scene.add(new AmbientLight(0x515253, 0.3))
     this.scene.add(new Grid().generateLineSegments())
-    if (this.loadAssets && this.table.hasPockets) {
+    if (this.loadAssets) {
       importGltf("models/background.gltf", this.scene, true)
       const tablemodel = this.table.hasPockets
         ? "models/p8.min.gltf"
         : "models/threecushion.min.gltf"
-      importGltf(tablemodel, this.scene, this.table.hasPockets, ready)
+      importGltf(tablemodel, this.scene, true, ready)
     } else {
       new TableMesh().addToScene(this.scene, this.table.hasPockets)
       setTimeout(() => {
