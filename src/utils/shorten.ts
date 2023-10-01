@@ -2,7 +2,7 @@ export function shorten(url, action) {
   fetch("https://gotiny.cc/api", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ input: encodeURI(url) }),
+    body: JSON.stringify({ input: url }),
   })
     .then((response) => response.json())
     .then((data) => {
