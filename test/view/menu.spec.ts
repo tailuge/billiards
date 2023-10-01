@@ -22,10 +22,9 @@ describe("Menu", () => {
       "togglemenu"
     ) as HTMLButtonElement
     fireEvent.click(togglemenu, { target: { value: 1 } })
-    expect(menu.menu.visibility).to.be.equal("visible")
-    const dismiss = document.getElementById("dismiss") as HTMLButtonElement
-    fireEvent.click(dismiss, { target: { value: 1 } })
-    expect(menu.menu.visibility).to.be.equal("hidden")
+    expect(menu.menu.display).to.be.equal("flex")
+    fireEvent.click(togglemenu, { target: { value: 1 } })
+    expect(menu.menu.display).to.be.equal("none")
     done()
   })
 

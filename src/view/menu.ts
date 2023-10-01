@@ -9,11 +9,7 @@ export class Menu {
     this.menu = (document.getElementById("menu") as HTMLElement)?.style
 
     const togglemenu = this.getElement("togglemenu")
-    const dismiss = this.getElement("dismiss")
     const toggleview = this.getElement("toggleview")
-    dismiss.onclick = (_) => {
-      this.toggleVisibility()
-    }
     togglemenu.onclick = (_) => {
       this.toggleVisibility()
     }
@@ -23,8 +19,7 @@ export class Menu {
   }
 
   toggleVisibility() {
-    this.menu.visibility =
-      this.menu.visibility === "visible" ? "hidden" : "visible"
+    this.menu.display = this.menu.display === "flex" ? "none" : "flex"
   }
 
   toggleView() {

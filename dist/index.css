@@ -181,15 +181,7 @@ a.pill {
 }
 
 .menu {
-  background: linear-gradient(#495155, #0b0b0e);
-  border-radius: 5px;
-  position: fixed;
-  right: 0px;
-  bottom: 0px;
-  visibility: hidden;
-  padding: 5px;
-  border: double;
-  max-width: 20%;
+  display: none;
 }
 
 .constants {
