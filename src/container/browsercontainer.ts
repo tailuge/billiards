@@ -70,21 +70,7 @@ export class BrowserContainer {
     console.log(`${this.playername} ready`)
 
     if (this.replay) {
-      this.container.table.cue.aimInputs.setButtonText("↻")
-      this.breakState = JSON.parse(decodeURI(this.replay))
-      this.container.table.cue.aimInputs.cueHitElement?.addEventListener(
-        "click",
-        () => {
-          if (this.container.eventQueue.length == 0) {
-            this.container.eventQueue.push(
-              new BreakEvent(this.breakState.init, this.breakState.shots)
-            )
-          }
-        }
-      )
-      this.container.eventQueue.push(
-        new BreakEvent(this.breakState.init, this.breakState.shots)
-      )
+      this.startReplay(this.replay)
     }
 
     if (!this.sc) {
@@ -115,5 +101,24 @@ export class BrowserContainer {
     const url = window.location.href.split("?")[0]
     const prefix = `${url}?ruletype=${this.ruletype}&state=`
     this.container.recoder.replayUrl = prefix
+  }
+
+  startReplay(replay) {
+    this.container.table.cue.aimInputs.setButtonText("↻")
+    this.breakState = JSON.parse(decodeURI(replay))
+    this.container.table.cue.aimInputs.cueHitElement?.addEventListener(
+      "click",
+      () => {
+        if (this.container.eventQueue.length == 0) {
+          this.container.eventQueue.push(
+            new BreakEvent(this.breakState.init, this.breakState.shots)
+          )
+        }
+      }
+    )
+    this.container.eventQueue.push(
+      new BreakEvent(this.breakState.init, this.breakState.shots)
+    )
+    this.container.menu.replayMode(window.location.href)
   }
 }

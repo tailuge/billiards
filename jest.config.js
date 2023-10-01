@@ -14,7 +14,13 @@ module.exports = {
       },
     ],
   },
-  coveragePathIgnorePatterns: ["node_modules", "gltf.ts", "webgl.ts", "dom.ts"],
+  coveragePathIgnorePatterns: [
+    "node_modules",
+    "gltf.ts",
+    "webgl.ts",
+    "dom.ts",
+    "shorten.ts",
+  ],
   coverageReporters: ["text", "json"],
   testEnvironment: "jsdom",
   moduleNameMapper: {

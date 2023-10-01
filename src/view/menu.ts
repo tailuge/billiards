@@ -1,17 +1,19 @@
 import { Container } from "../container/container"
+import { share, shorten } from "../utils/shorten"
 
 export class Menu {
   container: Container
+  togglemenu: HTMLElement
   menu
 
   constructor(container) {
     this.container = container
     this.menu = (document.getElementById("menu") as HTMLElement)?.style
 
-    const togglemenu = this.getElement("togglemenu")
+    this.togglemenu = this.getElement("togglemenu")
     const toggleview = this.getElement("toggleview")
-    if (togglemenu) {
-      togglemenu.onclick = (_) => {
+    if (this.togglemenu) {
+      this.togglemenu.onclick = (_) => {
         this.toggleVisibility()
       }
       toggleview.onclick = (_) => {
@@ -27,6 +29,13 @@ export class Menu {
   toggleView() {
     this.container.view.camera.toggleMode()
     this.container.lastEventTime = performance.now()
+  }
+
+  replayMode(url) {
+    this.togglemenu.innerHTML = "share"
+    this.togglemenu.onclick = (_) => {
+      shorten(url, share)
+    }
   }
 
   getElement(id): HTMLElement {
