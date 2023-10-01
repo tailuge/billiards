@@ -43,7 +43,7 @@ export class DiagramContainer {
 
   onAssetsReady = () => {
     console.log(`diagram ready`)
-    this.breakState = JSON.parse(decodeURI(this.replay))
+    this.breakState = JSON.parse(decodeURIComponent(this.replay))
     const replaybutton = document.getElementById("replay")! as HTMLButtonElement
     this.replayButton(replaybutton)
     this.container.eventQueue.push(

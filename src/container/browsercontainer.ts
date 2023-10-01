@@ -105,7 +105,7 @@ export class BrowserContainer {
 
   startReplay(replay) {
     this.container.table.cue.aimInputs.setButtonText("↻")
-    this.breakState = JSON.parse(decodeURI(replay))
+    this.breakState = JSON.parse(decodeURIComponent(replay))
     this.container.table.cue.aimInputs.cueHitElement?.addEventListener(
       "click",
       () => {
