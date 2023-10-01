@@ -38,7 +38,6 @@ describe("Recorder", () => {
     recorder.record(event)
     container.table.outcome.push(Outcome.pot(container.table.balls[2], 1))
     recorder.updateBreak(container.table.outcome)
-    console.log(container.eventQueue)
     expect(container.eventQueue).to.be.length(2)
     recorder.record(event)
     container.table.outcome = []

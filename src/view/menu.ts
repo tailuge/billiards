@@ -10,11 +10,13 @@ export class Menu {
 
     const togglemenu = this.getElement("togglemenu")
     const toggleview = this.getElement("toggleview")
-    togglemenu.onclick = (_) => {
-      this.toggleVisibility()
-    }
-    toggleview.onclick = (_) => {
-      this.toggleView()
+    if (togglemenu) {
+      togglemenu.onclick = (_) => {
+        this.toggleVisibility()
+      }
+      toggleview.onclick = (_) => {
+        this.toggleView()
+      }
     }
   }
 
