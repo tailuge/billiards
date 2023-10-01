@@ -1,9 +1,7 @@
 import "mocha"
 import { expect } from "chai"
 import { initDom } from "./dom"
-import { Sliders } from "../../src/view/sliders"
 import { fireEvent } from "@testing-library/dom"
-import { R } from "../../src/model/physics/constants"
 import { Container } from "../../src/container/container"
 import { Menu } from "../../src/view/menu"
 
@@ -14,13 +12,12 @@ let menu: Menu
 
 beforeEach(function (done) {
   container = new Container(document.getElementById("viewP1"), (_) => {})
-  const menu = new Menu(container)
+  menu = new Menu(container)
   done()
 })
 
 describe("Menu", () => {
   it("togglemenu", (done) => {
-    const menu = new Menu(container)
     const togglemenu = document.getElementById(
       "togglemenu"
     ) as HTMLButtonElement
