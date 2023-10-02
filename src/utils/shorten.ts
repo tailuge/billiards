@@ -1,4 +1,7 @@
 export function shorten(url, action) {
+  if (typeof process === "object") {
+    return action(url)
+  }
   fetch("https://gotiny.cc/api", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -22,15 +25,15 @@ export function share(url) {
     text: `Replay break`,
     url: url,
   }
-  if (!navigator.canShare || !navigator.canShare(shareData)) {
-    navigator.clipboard.writeText(url)
-    return `link copied to clipboard`
+  if (navigator.canShare?.(shareData)) {
+    navigator
+      .share(shareData)
+      .then(() => console.log("shared successfully"))
+      .catch((e) => {
+        console.log("Error: " + e)
+      })
+    return `link shared`
   }
-  navigator
-    .share(shareData)
-    .then(() => console.log("shared successfully"))
-    .catch((e) => {
-      console.log("Error: " + e)
-    })
-  return `link shared`
+  navigator.clipboard?.writeText(url)
+  return `link copied to clipboard`
 }

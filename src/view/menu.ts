@@ -1,4 +1,5 @@
 import { Container } from "../container/container"
+import { ChatEvent } from "../events/chatevent"
 import { share, shorten } from "../utils/shorten"
 
 export class Menu {
@@ -34,7 +35,10 @@ export class Menu {
   replayMode(url) {
     this.togglemenu.innerHTML = "share"
     this.togglemenu.onclick = (_) => {
-      shorten(url, share)
+      shorten(url, (url) => {
+        const response = share(url)
+        this.container.eventQueue.push(new ChatEvent(null, response))
+      })
     }
   }
 

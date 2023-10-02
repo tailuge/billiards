@@ -41,4 +41,14 @@ describe("Menu", () => {
     )
     done()
   })
+
+  it("replay mode", (done) => {
+    menu.replayMode("someurl")
+    const togglemenu = document.getElementById(
+      "togglemenu"
+    ) as HTMLButtonElement
+    fireEvent.click(togglemenu, { target: { value: 1 } })
+    expect(container.eventQueue).to.be.length(1)
+    done()
+  })
 })
