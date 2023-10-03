@@ -75,4 +75,8 @@ export class NineBall implements Rules {
   secondToPlay() {
     // only for three cushion
   }
+
+  allowsPlaceBall() {
+    return true
+  }
 }

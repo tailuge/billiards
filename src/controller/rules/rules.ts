@@ -12,4 +12,5 @@ export interface Rules {
   otherPlayersCueBall(): Ball
   isPartOfBreak(outcome: Outcome[]): boolean
   isEndOfGame(outcome: Outcome[]): boolean
+  allowsPlaceBall(): boolean
 }

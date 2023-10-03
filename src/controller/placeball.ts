@@ -33,6 +33,9 @@ export class PlaceBall extends ControllerBase {
     this.container.table.cue.showHelper(false)
     this.container.table.cue.moveTo(this.container.table.cueball.pos)
     this.container.table.cue.aimInputs.setButtonText("Place\nBall")
+    if (!this.container.rules.allowsPlaceBall()) {
+      this.container.inputQueue.push(new Input(1, "SpaceUp"))
+    }
   }
 
   override handleInput(input: Input): Controller {

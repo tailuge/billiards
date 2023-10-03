@@ -70,4 +70,8 @@ export class ThreeCushion implements Rules {
   isEndOfGame(_: Outcome[]) {
     return false
   }
+
+  allowsPlaceBall() {
+    return false
+  }
 }
