@@ -8,6 +8,7 @@ import { Outcome } from "../../model/outcome"
 import { R } from "../../model/physics/constants"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
+import { CameraTop } from "../../view/cameratop"
 import { TableGeometry } from "../../view/tablegeometry"
 import { Rules } from "./rules"
 
@@ -29,6 +30,8 @@ export class ThreeCushion implements Rules {
     TableGeometry.tableY = R * 24
     TableGeometry.X = TableGeometry.tableX + R
     TableGeometry.Y = TableGeometry.tableY + R
+    CameraTop.zoomFactor = 0.92
+
     const table = new Table(this.rack())
     table.hasPockets = false
     this.cueball = table.cueball

@@ -48,30 +48,21 @@ export class View {
     return false
   }
 
-  readonly geom = {
-    left: 0,
-    bottom: 0,
-    width: 1,
-    height: 1.0,
-  }
-
   render() {
     if (this.isInMotionNotVisible()) {
       this.camera.suggestMode(this.camera.topView)
     }
-    this.renderCamera(this.camera, this.geom)
+    this.renderCamera(this.camera)
   }
 
-  renderCamera(cam, v) {
+  renderCamera(cam) {
     if (this.updateSize()) {
-      const left = Math.floor(this.windowWidth * v.left)
-      const bottom = Math.floor(this.windowHeight * v.bottom)
-      const width = Math.floor(this.windowWidth * v.width)
-      const height = Math.floor(this.windowHeight * v.height)
+      const width = this.windowWidth
+      const height = this.windowHeight
 
-      this.renderer?.setSize(this.windowWidth, this.windowHeight)
-      this.renderer?.setViewport(left, bottom, width, height)
-      this.renderer?.setScissor(left, bottom, width, height)
+      this.renderer?.setSize(width, height)
+      this.renderer?.setViewport(0, 0, width, height)
+      this.renderer?.setScissor(0, 0, width, height)
       this.renderer?.setScissorTest(true)
 
       cam.camera.aspect = width / height
