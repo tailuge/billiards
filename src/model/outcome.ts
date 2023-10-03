@@ -51,6 +51,10 @@ export class Outcome {
     )
   }
 
+  static potCount(outcomes: Outcome[]) {
+    return outcomes.filter((o) => o.type == OutcomeType.Pot).length
+  }
+
   static isThreeCushionPoint(cueBall, outcomes: Outcome[]) {
     outcomes = Outcome.cueBallFirst(cueBall, outcomes).filter(
       (outcome) => outcome.ballA === cueBall

@@ -50,11 +50,12 @@ export class Recorder {
   updateBreak(outcome: Outcome[]) {
     const isPartOfBreak = this.container.rules.isPartOfBreak(outcome)
     const isEndOfGame = this.container.rules.isEndOfGame(outcome)
+    const potCount = Outcome.potCount(outcome)
     if (!isPartOfBreak) {
       this.replayBreakLink(isEndOfGame)
     }
 
-    this.replayLastShotLink(isPartOfBreak || isEndOfGame)
+    this.replayLastShotLink(isPartOfBreak || isEndOfGame, potCount)
 
     if (isEndOfGame) {
       this.replayBreakLink(isEndOfGame)
@@ -70,8 +71,9 @@ export class Recorder {
     }
   }
 
-  replayLastShotLink(isPartOfBreak) {
-    const shotIcon = isPartOfBreak ? "⚈" : "⚆"
+  replayLastShotLink(isPartOfBreak, potCount) {
+    const pots = potCount > 1 ? potCount - 1 : 0
+    const shotIcon = "⚈".repeat(pots) + (isPartOfBreak ? "⚈" : "⚆")
     const serialisedShot = JSON.stringify(this.replayLastShot())
     this.generateLink(shotIcon, serialisedShot)
   }
