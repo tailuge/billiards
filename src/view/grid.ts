@@ -15,7 +15,7 @@ export class Grid {
       this.point(0, (11.13 * R) / 0.5),
     ]
 
-    const stepx = TableGeometry.tableX / 4
+    const stepx = TableGeometry.X / 4
     const xs = [1, 2, 3, -1, -2, -3]
     const yedge = TableGeometry.tableY + R
     xs.forEach((x) => {
@@ -23,7 +23,7 @@ export class Grid {
       points.push(this.point(x * stepx, yedge))
     })
 
-    const stepy = (TableGeometry.tableY + 2 * R) / 2
+    const stepy = (TableGeometry.Y + R) / 2
     const ys = [-1, 0, 1]
     const xedge = TableGeometry.tableX + R
     ys.forEach((y) => {
