@@ -1,4 +1,10 @@
-import { AudioListener, Audio, AudioLoader, MathUtils,AudioContext } from "three"
+import {
+  AudioListener,
+  Audio,
+  AudioLoader,
+  MathUtils,
+  AudioContext,
+} from "three"
 
 export class Sound {
   listener: AudioListener
@@ -46,28 +52,25 @@ export class Sound {
         audio.setLoop(false)
       },
       (_) => {},
-      (e) => {
-        console.log(e)
-      }
+      (_) => {}
     )
   }
 
   play(audio: Audio, volume, detune = 0) {
     if (this.loadAssets) {
-      try {
-        const context = AudioContext.getContext()
-        if (context?.state === "suspended") {
-          return
+      const context = AudioContext.getContext()
+      if (context?.state === "suspended") {
+        if (navigator?.userActivation?.hasBeenActive) {
+          context.resume()
         }
-        audio.setVolume(volume)
-        if (audio.isPlaying) {
-          audio.stop()
-        }
-        audio.play(MathUtils.randFloat(0, 0.01))
-        audio.setDetune(detune)
-      } catch (_) {
-        // not working on safari 10
+        return
       }
+      audio.setVolume(volume)
+      if (audio.isPlaying) {
+        audio.stop()
+      }
+      audio.play(MathUtils.randFloat(0, 0.01))
+      audio.setDetune(detune)
     }
   }
 
@@ -87,7 +90,7 @@ export class Sound {
       )
     }
     if (outcome.type === "Cushion") {
-      this.play(this.cushion, outcome.incidentSpeed / 80)
+      this.play(this.cushion, outcome.incidentSpeed / 70)
     }
     if (outcome.type === "Hit") {
       this.play(this.cue, outcome.incidentSpeed / 30)
