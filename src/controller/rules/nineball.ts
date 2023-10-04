@@ -35,7 +35,6 @@ export class NineBall implements Rules {
     const table = this.container.table
     // if white potted switch to other player
     if (Outcome.isCueBallPotted(table.cueball, outcome)) {
-      this.container.log("in off")
       if (this.container.isSinglePlayer) {
         return new PlaceBall(this.container)
       }
@@ -48,7 +47,6 @@ export class NineBall implements Rules {
       return new Aim(this.container)
     }
     // if no pot and no foul switch to other player
-    this.container.log("no pot")
     this.container.sendEvent(table.cue.aim)
     if (this.container.isSinglePlayer) {
       this.container.sendEvent(new WatchEvent(table.serialise()))
@@ -62,9 +60,8 @@ export class NineBall implements Rules {
   }
 
   isEndOfGame(_: Outcome[]) {
-    return (
-      this.container.table.balls.filter((ball) => ball.onTable()).length === 1
-    )
+    const onTable = this.container.table.balls.filter((ball) => ball.onTable())
+    return onTable.length === 1 && onTable[0] === this.cueball
   }
 
   otherPlayersCueBall(): Ball {
