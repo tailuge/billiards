@@ -1,4 +1,4 @@
-import { AudioListener, Audio, AudioLoader, MathUtils } from "three"
+import { AudioListener, Audio, AudioLoader, MathUtils,AudioContext } from "three"
 
 export class Sound {
   listener: AudioListener
@@ -39,18 +39,35 @@ export class Sound {
   }
 
   load(path, audio) {
-    this.audioLoader.load(path, (buffer) => {
-      audio.setBuffer(buffer)
-      audio.setLoop(false)
-    })
+    this.audioLoader.load(
+      path,
+      (buffer) => {
+        audio.setBuffer(buffer)
+        audio.setLoop(false)
+      },
+      (_) => {},
+      (e) => {
+        console.log(e)
+      }
+    )
   }
 
-  play(audio, volume, detune = 0) {
+  play(audio: Audio, volume, detune = 0) {
     if (this.loadAssets) {
-      audio.setVolume(volume)
-      audio.isPlaying && audio.stop()
-      audio.play(MathUtils.randFloat(0, 0.01))
-      audio.setDetune(detune)
+      try {
+        const context = AudioContext.getContext()
+        if (context?.state === "suspended") {
+          return
+        }
+        audio.setVolume(volume)
+        if (audio.isPlaying) {
+          audio.stop()
+        }
+        audio.play(MathUtils.randFloat(0, 0.01))
+        audio.setDetune(detune)
+      } catch (_) {
+        // not working on safari 10
+      }
     }
   }
 
