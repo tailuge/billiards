@@ -15,6 +15,7 @@ export class Aim extends ControllerBase {
     table.cueball = this.container.rules.cueball
     table.cue.moveTo(table.cueball.pos)
     this.container.view.camera.suggestMode(this.container.view.camera.aimView)
+    table.cue.aimInputs.showOverlap()
   }
 
   override handleInput(input: Input): Controller {

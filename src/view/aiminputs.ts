@@ -1,13 +1,17 @@
-import { Vector3 } from "three"
+import { Color, Vector3 } from "three"
 import { Container } from "../container/container"
 import { Input } from "../events/input"
+import { Overlap } from "../utils/overlap"
+import { unitAtAngle } from "../utils/utils"
 
 export class AimInputs {
   readonly cueBallElement
   readonly cueTipElement
   readonly cuePowerElement
   readonly cueHitElement
+  readonly objectBall: HTMLElement
   readonly container: Container
+  readonly overlap: Overlap
 
   ballWidth
   ballHeight
@@ -19,6 +23,8 @@ export class AimInputs {
     this.cueTipElement = document.getElementById("cueTip")
     this.cuePowerElement = document.getElementById("cuePower")
     this.cueHitElement = document.getElementById("cueHit")
+    this.objectBall = document.getElementById("objectBall") as HTMLElement
+    this.overlap = new Overlap(this.container.table.balls)
     this.addListeners()
   }
 
@@ -64,6 +70,24 @@ export class AimInputs {
     if (elt) {
       elt.left = (-x + 0.5) * this.ballWidth - this.tipRadius + "px"
       elt.top = (-y + 0.5) * this.ballHeight - this.tipRadius + "px"
+    }
+    this.showOverlap()
+  }
+
+  showOverlap() {
+    const table = this.container.table
+    const dir = unitAtAngle(table.cue.aim.angle)
+    const elt = this.objectBall?.style
+    const closest = this.overlap.getOverlapOffset(table.cueball, dir)
+    if (closest) {
+      this.readDimensions()
+      elt.visibility = "visible"
+      elt.left = (closest.overlap * this.ballWidth) / 2 + "px"
+      elt.backgroundColor = new Color(0, 0, 0)
+        .lerp(closest.ball.ballmesh.color, 0.5)
+        .getStyle()
+    } else {
+      elt.visibility = "hidden"
     }
   }
 

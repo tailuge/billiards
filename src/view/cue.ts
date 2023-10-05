@@ -35,6 +35,7 @@ export class Cue {
     this.aim.angle += angle
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle
+    this.aimInputs.showOverlap()
   }
 
   adjustPower(delta) {

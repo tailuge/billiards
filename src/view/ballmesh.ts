@@ -20,8 +20,9 @@ export class BallMesh {
   shadow: Mesh
   spinAxisArrow: ArrowHelper
   trace: Trace
-
+  color: Color
   constructor(color) {
+    this.color = new Color(color)
     this.initialiseMesh(color)
   }
 

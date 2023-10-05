@@ -13,7 +13,7 @@ export class WatchAim extends ControllerBase {
 
   override handleAim(event: AimEvent) {
     this.container.table.cue.aim = event
-    this.container.table.cueball.pos = event.pos
+    this.container.table.cueball.pos.copy(event.pos)
     return this
   }
 

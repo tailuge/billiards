@@ -61,7 +61,8 @@ export class Keyboard {
   }
 
   mousetouch = (e) => {
-    const dx = e.dx
+    const factor = e.ctrlKey ? 0.5 : 1
+    const dx = e.dx * factor
     if (this.released["movementX"]) {
       this.released["movementX"] += dx
     } else {
