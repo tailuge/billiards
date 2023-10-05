@@ -22,6 +22,7 @@ import { BreakEvent } from "../../src/events/breakevent"
 import { RejoinEvent } from "../../src/events/rejoinevent"
 import { initDom } from "../view/dom"
 import { State } from "../../src/model/ball"
+import { RuleFactory } from "../../src/controller/rules/rulefactory"
 
 initDom()
 
@@ -55,7 +56,7 @@ describe("Controller", () => {
     done()
   })
 
-  it("Begin takes Init to Aim", (done) => {
+  it("Begin takes Init to PlaceBall", (done) => {
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlaceBall)
@@ -202,6 +203,24 @@ describe("Controller", () => {
     container.table.outcome.push(Outcome.pot(container.table.cueball, 1))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlaceBall)
+    done()
+  })
+
+  it("PlaceBall moves to Aim if threecushion", (done) => {
+    container = new Container(
+      document.getElementById("viewP1"),
+      (e) => {
+        console.log(e)
+      },
+      false,
+      "threecushion"
+    )
+    container.broadcast = (x) => broadcastEvents.push(x)
+    container.eventQueue.push(new BeginEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(PlaceBall)
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Aim)
     done()
   })
 

@@ -19,23 +19,22 @@ export class Overlap {
         .multiplyScalar(TableGeometry.X * 4)
         .add(cueball.pos)
     )
+    const res = new Vector3()
     const projected = this.balls.map((ball) => {
-      const res = new Vector3()
       this.line.closestPointToPoint(ball.pos, true, res)
-      const perpendicularDistance = res.distanceTo(ball.pos)
-      const distanceInLineOfSight = res.distanceTo(cueball.pos)
-      return { ball, perpendicularDistance, distanceInLineOfSight }
+      return {
+        ball,
+        perpendicular: res.distanceTo(ball.pos),
+        distance: res.distanceTo(cueball.pos),
+      }
     })
 
     const inPath = projected
-      .filter((info) => info.perpendicularDistance < 2 * R)
+      .filter((info) => info.perpendicular < 2 * R)
       .filter((info) => info.ball !== cueball)
 
     return inPath.reduce(
-      (best, current) =>
-        best.distanceInLineOfSight < current.distanceInLineOfSight
-          ? best
-          : current,
+      (best, current) => (best.distance < current.distance ? best : current),
       inPath[0]
     )
   }
@@ -47,8 +46,7 @@ export class Overlap {
     }
     const centers = closest.ball.pos.clone().sub(cueball.pos)
     const overlap =
-      (closest.perpendicularDistance * Math.sign(centers.cross(direction).z)) /
-      R
+      (closest.perpendicular * Math.sign(centers.cross(direction).z)) / R
     return { ball: closest.ball, overlap }
   }
 }
