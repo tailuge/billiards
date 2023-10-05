@@ -22,7 +22,6 @@ import { BreakEvent } from "../../src/events/breakevent"
 import { RejoinEvent } from "../../src/events/rejoinevent"
 import { initDom } from "../view/dom"
 import { State } from "../../src/model/ball"
-import { RuleFactory } from "../../src/controller/rules/rulefactory"
 
 initDom()
 

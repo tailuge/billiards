@@ -9,7 +9,7 @@ export class AimInputs {
   readonly cueTipElement
   readonly cuePowerElement
   readonly cueHitElement
-  readonly objectBall: HTMLElement
+  readonly objectBallStyle: CSSStyleDeclaration | undefined
   readonly container: Container
   readonly overlap: Overlap
 
@@ -23,7 +23,7 @@ export class AimInputs {
     this.cueTipElement = document.getElementById("cueTip")
     this.cuePowerElement = document.getElementById("cuePower")
     this.cueHitElement = document.getElementById("cueHit")
-    this.objectBall = document.getElementById("objectBall") as HTMLElement
+    this.objectBallStyle = document.getElementById("objectBall")?.style
     this.overlap = new Overlap(this.container.table.balls)
     this.addListeners()
   }
@@ -75,22 +75,21 @@ export class AimInputs {
   }
 
   showOverlap() {
-    const elt = this.objectBall?.style
-    if (!elt) {
-      return
-    }
-    const table = this.container.table
-    const dir = unitAtAngle(table.cue.aim.angle)
-    const closest = this.overlap.getOverlapOffset(table.cueball, dir)
-    if (closest) {
-      this.readDimensions()
-      elt.visibility = "visible"
-      elt.left = (closest.overlap * this.ballWidth) / 2 + "px"
-      elt.backgroundColor = new Color(0, 0, 0)
-        .lerp(closest.ball.ballmesh.color, 0.5)
-        .getStyle()
-    } else {
-      elt.visibility = "hidden"
+    if (this.objectBallStyle) {
+      const table = this.container.table
+      const dir = unitAtAngle(table.cue.aim.angle)
+      const closest = this.overlap.getOverlapOffset(table.cueball, dir)
+      if (closest) {
+        this.readDimensions()
+        this.objectBallStyle.visibility = "visible"
+        this.objectBallStyle.left =
+          (closest.overlap * this.ballWidth) / 2 + "px"
+        this.objectBallStyle.backgroundColor = new Color(0, 0, 0)
+          .lerp(closest.ball.ballmesh.color, 0.5)
+          .getStyle()
+      } else {
+        this.objectBallStyle.visibility = "hidden"
+      }
     }
   }
 
