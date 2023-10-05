@@ -40,12 +40,12 @@ export class View {
   }
 
   updateSize() {
-    if (this.sizeChanged()) {
+    const hasChanged = this.sizeChanged() 
+    if (hasChanged) {
       this.windowWidth = this.element?.offsetWidth
       this.windowHeight = this.element?.offsetHeight
-      return true
     }
-    return false
+    return hasChanged
   }
 
   render() {
