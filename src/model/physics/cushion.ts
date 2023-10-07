@@ -99,6 +99,7 @@ export class Cushion {
   }
 
   private static bounceIn(rotation, ball, cushionModel) {
+    ball.ballmesh.trace.forceTrace(ball.futurePos)
     const delta = rotateApplyUnrotate(
       rotation,
       ball.vel,

@@ -15,8 +15,21 @@ export class Collision {
     return Collision.updateVelocities(a, b)
   }
 
+  static positionsAtContact(a: Ball, b: Ball) {
+    const sep = a.pos.distanceTo(b.pos)
+    const rv = a.vel.clone().sub(b.vel)
+    const t = (sep - 2 * R) / rv.length() ?? 0
+    return {
+      a: a.pos.clone().addScaledVector(a.vel, t),
+      b: b.pos.clone().addScaledVector(b.vel, t),
+    }
+  }
+
   private static updateVelocities(a: Ball, b: Ball) {
-    const ab = b.pos.clone().sub(a.pos).normalize()
+    const contact = Collision.positionsAtContact(a, b)
+    a.ballmesh.trace.forceTrace(contact.a)
+    b.ballmesh.trace.forceTrace(contact.b)
+    const ab = contact.b.sub(contact.a).normalize()
     const aDotCenters = ab.dot(a.vel)
     const bDotCenters = ab.dot(b.vel)
     a.vel.addScaledVector(ab, bDotCenters).addScaledVector(ab, -aDotCenters)
