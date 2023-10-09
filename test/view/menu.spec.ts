@@ -4,6 +4,7 @@ import { initDom } from "./dom"
 import { fireEvent } from "@testing-library/dom"
 import { Container } from "../../src/container/container"
 import { Menu } from "../../src/view/menu"
+import { BreakEvent } from "../../src/events/breakevent"
 
 initDom()
 
@@ -28,10 +29,8 @@ describe("Menu", () => {
     done()
   })
 
-  it("toggleview", (done) => {
-    const toggleview = document.getElementById(
-      "toggleview"
-    ) as HTMLButtonElement
+  it("camera", (done) => {
+    const toggleview = document.getElementById("camera") as HTMLButtonElement
     expect(container.view.camera.mode).to.be.equal(
       container.view.camera.topView
     )
@@ -42,11 +41,9 @@ describe("Menu", () => {
     done()
   })
 
-  it("replay mode", (done) => {
-    menu.replayMode("someurl")
-    const togglemenu = document.getElementById(
-      "togglemenu"
-    ) as HTMLButtonElement
+  it("replay mode shorten url", (done) => {
+    menu.replayMode("someurl", new BreakEvent(null, []))
+    const togglemenu = document.getElementById("share") as HTMLButtonElement
     fireEvent.click(togglemenu, { target: { value: 1 } })
     expect(container.eventQueue).to.be.length(1)
     done()

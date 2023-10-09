@@ -30,7 +30,7 @@ export class Init extends ControllerBase {
     if (event.init) {
       this.container.table.updateFromShortSerialised(event.init)
       this.container.chat.showMessage("Replay")
-      return new Replay(this.container, event.shots)
+      return new Replay(this.container, event.init, event.shots)
     }
     return new PlaceBall(this.container)
   }

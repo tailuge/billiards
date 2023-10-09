@@ -1,6 +1,8 @@
+import { BreakEvent } from "../events/breakevent"
 import { Controller, HitEvent, Input } from "./controller"
 import { ControllerBase } from "./controllerbase"
 import { PlayShot } from "./playshot"
+import { Replay } from "./replay"
 
 /**
  * Aim using input events.
@@ -33,6 +35,10 @@ export class Aim extends ControllerBase {
 
     this.container.sendEvent(this.container.table.cue.aim)
     return this
+  }
+
+  override handleBreak(breakEvent: BreakEvent): Controller {
+    return new Replay(this.container, breakEvent.init, breakEvent.shots)
   }
 
   playShot() {

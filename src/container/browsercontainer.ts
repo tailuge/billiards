@@ -104,21 +104,12 @@ export class BrowserContainer {
   }
 
   startReplay(replay) {
-    this.container.table.cue.aimInputs.setButtonText("↻")
     this.breakState = JSON.parse(decodeURIComponent(replay))
-    this.container.table.cue.aimInputs.cueHitElement?.addEventListener(
-      "click",
-      () => {
-        if (this.container.eventQueue.length == 0) {
-          this.container.eventQueue.push(
-            new BreakEvent(this.breakState.init, this.breakState.shots)
-          )
-        }
-      }
+    const breakEvent = new BreakEvent(
+      this.breakState.init,
+      this.breakState.shots
     )
-    this.container.eventQueue.push(
-      new BreakEvent(this.breakState.init, this.breakState.shots)
-    )
-    this.container.menu.replayMode(window.location.href)
+    this.container.eventQueue.push(breakEvent)
+    this.container.menu.replayMode(window.location.href, breakEvent)
   }
 }

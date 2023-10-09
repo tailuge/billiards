@@ -40,7 +40,7 @@ export class View {
   }
 
   updateSize() {
-    const hasChanged = this.sizeChanged() 
+    const hasChanged = this.sizeChanged()
     if (hasChanged) {
       this.windowWidth = this.element?.offsetWidth
       this.windowHeight = this.element?.offsetHeight

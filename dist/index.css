@@ -54,7 +54,7 @@ canvas {
   height: 17%;
   display: flex;
   padding: 0px;
-  background: linear-gradient(#00405e, #000214);
+  background: linear-gradient(rgb(0, 64, 94), #000214);
   border-radius: 5px;
 }
 
@@ -68,6 +68,7 @@ canvas {
   overflow: hidden;
   border-radius: 5px;
   aspect-ratio: 1;
+  padding: 0 5px;
 }
 
 .cueBall {
@@ -91,7 +92,7 @@ canvas {
   height: 98%;
   margin: auto;
   aspect-ratio: 1;
-  border: 0.5px solid rgb(77, 77, 77);
+  border: 0.5px solid rgb(0, 44, 64);
   border-radius: 50%;
   z-index: 3;
   position: absolute;
@@ -140,6 +141,19 @@ input[type="range"].powerSlider {
   min-width: 80px;
 }
 
+.menuButton {
+  height: 70%;
+  width: 64px;
+  margin: auto;
+  margin-right: 4px;
+  aspect-ratio: 0.4;
+  border-radius: 10px;
+  border: double;
+  border-width: 4px;
+  font-size: large;
+}
+
+.menuButton:active,
 .hitButton:active {
   transform: scale(0.97);
 }

@@ -3,21 +3,24 @@ import { ControllerBase } from "./controllerbase"
 import { AimEvent } from "../events/aimevent"
 import { Controller, Input } from "./controller"
 import { BreakEvent } from "../events/breakevent"
+import { Aim } from "./aim"
 
 export class Replay extends ControllerBase {
   delay: number
   shots: AimEvent[]
   timer
-
-  constructor(container, shots, delay = 1500) {
+  init
+  constructor(container, init, shots, delay = 1500) {
     super(container)
+    this.init = init
     this.shots = [...shots]
     this.delay = delay
     this.container.table.showTraces(true)
   }
 
   override onFirst() {
-    this.playNextShot(this.delay * 2)
+    this.container.table.updateFromShortSerialised(this.init)
+    this.playNextShot(this.delay * 1.5)
   }
 
   playNextShot(delay) {
@@ -57,7 +60,18 @@ export class Replay extends ControllerBase {
     if (input.key == "KeyDUp") {
       this.container.sliders.toggleVisibility()
     }
+    if (input.key == "KeyRUp") {
+      return this.retry()
+    }
+    if (input.key == "KeyXUp") {
+      this.halt()
+    }
+
     return this
+  }
+
+  halt() {
+    this.container.table.updateFromShortSerialised(this.init)
   }
 
   override handleBreak(event: BreakEvent): Controller {
@@ -68,5 +82,11 @@ export class Replay extends ControllerBase {
       this.container.table.showSpin(true)
     }
     return this
+  }
+
+  retry() {
+    this.container.table.updateFromShortSerialised(this.init)
+    this.container.view.camera.forceMode(this.container.view.camera.aimView)
+    return new Aim(this.container)
   }
 }

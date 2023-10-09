@@ -9,6 +9,7 @@ import { TableGeometry } from "../view/tablegeometry"
 import { Outcome } from "./outcome"
 import { PocketGeometry } from "../view/pocketgeometry"
 import { bounceHanBlend } from "./physics/physics"
+import { zero } from "../utils/utils"
 
 interface Pair {
   a: Ball
@@ -176,6 +177,8 @@ export class Table {
       b.pos.x = data[i * 2]
       b.pos.y = data[i * 2 + 1]
       b.pos.z = 0
+      b.vel.copy(zero)
+      b.rvel.copy(zero)
       b.state = State.Stationary
     })
   }

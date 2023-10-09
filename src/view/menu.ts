@@ -1,10 +1,15 @@
 import { Container } from "../container/container"
 import { ChatEvent } from "../events/chatevent"
+import { Input } from "../events/input"
 import { share, shorten } from "../utils/shorten"
 
 export class Menu {
   container: Container
-  togglemenu: HTMLElement
+  togglemenu: HTMLButtonElement
+  redo: HTMLButtonElement
+  share: HTMLButtonElement
+  replay: HTMLButtonElement
+  camera: HTMLButtonElement
   menu
 
   constructor(container) {
@@ -12,37 +17,50 @@ export class Menu {
     this.menu = (document.getElementById("menu") as HTMLElement)?.style
 
     this.togglemenu = this.getElement("togglemenu")
-    const toggleview = this.getElement("toggleview")
+    this.replay = this.getElement("replay")
+    this.redo = this.getElement("redo")
+    this.share = this.getElement("share")
+    this.camera = this.getElement("camera")
     if (this.togglemenu) {
       this.togglemenu.onclick = (_) => {
-        this.toggleVisibility()
+        this.toggleMenu()
       }
-      toggleview.onclick = (_) => {
-        this.toggleView()
+      this.camera.onclick = (_) => {
+        this.adjustCamera()
       }
     }
   }
 
-  toggleVisibility() {
+  toggleMenu() {
     this.menu.display = this.menu.display === "flex" ? "none" : "flex"
   }
 
-  toggleView() {
+  adjustCamera() {
     this.container.view.camera.toggleMode()
     this.container.lastEventTime = performance.now()
   }
 
-  replayMode(url) {
-    this.togglemenu.innerHTML = "share"
-    this.togglemenu.onclick = (_) => {
+  replayMode(url, breakEvent) {
+    this.menu.display = "flex"
+    const queue = this.container.eventQueue
+    this.share.onclick = (_) => {
       shorten(url, (url) => {
         const response = share(url)
-        this.container.eventQueue.push(new ChatEvent(null, response))
+        queue.push(new ChatEvent(null, response))
       })
+    }
+    this.redo.onclick = (_) => {
+      this.container.inputQueue.push(new Input(1, "KeyRUp"))
+    }
+    this.replay.onclick = (_) => {
+      if (queue.length == 0) {
+        this.container.inputQueue.push(new Input(1, "KeyXUp"))
+        queue.push(breakEvent)
+      }
     }
   }
 
-  getElement(id): HTMLElement {
-    return document.getElementById(id)!
+  getElement(id): HTMLButtonElement {
+    return document.getElementById(id)! as HTMLButtonElement
   }
 }

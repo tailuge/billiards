@@ -24,6 +24,7 @@ jest.spyOn(global, "setTimeout")
 describe("Controller Replay", () => {
   let container: Container
   let broadcastEvents: GameEvent[]
+  let replayController: Replay
 
   const state = {
     init: [
@@ -55,6 +56,7 @@ describe("Controller Replay", () => {
     container.isSinglePlayer = true
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
+    replayController = new Replay(container, state.init, state.shots, 0)
     done()
   })
 
@@ -79,14 +81,14 @@ describe("Controller Replay", () => {
   })
 
   it("HitEvent takes Replay to Replay", (done) => {
-    const controller: Controller = new Replay(container, state.shots, 0)
+    const controller: Controller = replayController
     const event: GameEvent = new HitEvent(container.table.serialise())
     expect(event.applyToController(controller)).to.be.an.instanceof(Replay)
     done()
   })
 
   it("Replay handles inputs", (done) => {
-    container.controller = new Replay(container, state.shots, 0)
+    container.controller = replayController
     container.inputQueue.push(new Input(0.1, "KeyOUp"))
     container.inputQueue.push(new Input(0.1, "KeyDUp"))
     container.processEvents()
@@ -95,7 +97,7 @@ describe("Controller Replay", () => {
   })
 
   it("Stationary takes Replay to Replay", (done) => {
-    container.controller = new Replay(container, state.shots, 0)
+    container.controller = replayController
     container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
@@ -104,7 +106,7 @@ describe("Controller Replay", () => {
   })
 
   it("BreakEvent takes Replay to Replay", (done) => {
-    container.controller = new Replay(container, [], 0)
+    container.controller = new Replay(container, null, [], 0)
     container.table.cueball.setStationary()
     container.eventQueue.push(new BreakEvent(state.init, state.shots))
     container.processEvents()
