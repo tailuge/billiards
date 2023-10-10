@@ -1,6 +1,6 @@
 import { Container } from "../container/container"
+import { BreakEvent } from "../events/breakevent"
 import { ChatEvent } from "../events/chatevent"
-import { Input } from "../events/input"
 import { StationaryEvent } from "../events/stationaryevent"
 import { share, shorten } from "../utils/shorten"
 
@@ -41,7 +41,7 @@ export class Menu {
     this.container.lastEventTime = performance.now()
   }
 
-  replayMode(url, breakEvent) {
+  replayMode(url, breakEvent: BreakEvent) {
     this.menu.display = "flex"
     const queue = this.container.eventQueue
     this.share.onclick = (_) => {
@@ -51,16 +51,21 @@ export class Menu {
       })
     }
     this.redo.onclick = (_) => {
-      this.container.inputQueue.push(new Input(1, "KeyRUp"))
+      const redoEvent = new BreakEvent(breakEvent.init, breakEvent.shots)
+      redoEvent.retry = true
+      this.interuptEventQueue(redoEvent)
     }
     this.replay.onclick = (_) => {
-      if (queue.length == 0) {
-        this.container.table.halt()
-        this.container.eventQueue.length = 0
-        this.container.eventQueue.push(new StationaryEvent())
-        queue.push(breakEvent)
-      }
+      this.interuptEventQueue(breakEvent)
     }
+  }
+
+  interuptEventQueue(breakEvent: BreakEvent) {
+    this.container.table.halt()
+    const queue = this.container.eventQueue
+    queue.length = 0
+    queue.push(new StationaryEvent())
+    queue.push(breakEvent)
   }
 
   getElement(id): HTMLButtonElement {

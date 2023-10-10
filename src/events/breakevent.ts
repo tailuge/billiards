@@ -5,6 +5,7 @@ import { Controller } from "../controller/controller"
 export class BreakEvent extends GameEvent {
   init
   shots
+  retry
   constructor(init?, shots?) {
     super()
     this.init = init

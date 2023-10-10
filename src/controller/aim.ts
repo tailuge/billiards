@@ -38,7 +38,12 @@ export class Aim extends ControllerBase {
   }
 
   override handleBreak(breakEvent: BreakEvent): Controller {
-    return new Replay(this.container, breakEvent.init, breakEvent.shots)
+    return new Replay(
+      this.container,
+      breakEvent.init,
+      breakEvent.shots,
+      breakEvent.retry
+    )
   }
 
   playShot() {

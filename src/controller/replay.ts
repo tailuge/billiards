@@ -11,7 +11,7 @@ export class Replay extends ControllerBase {
   firstShot: AimEvent
   timer
   init
-  constructor(container, init, shots, delay = 1500) {
+  constructor(container, init, shots, retry = false, delay = 1500) {
     super(container)
     this.init = init
     this.shots = [...shots]
@@ -19,6 +19,11 @@ export class Replay extends ControllerBase {
     this.delay = delay
     this.container.table.showTraces(true)
     this.container.table.updateFromShortSerialised(this.init)
+    if (retry) {
+      const retryEvent = new BreakEvent(init, shots)
+      retryEvent.retry = true
+      this.container.eventQueue.push(retryEvent)
+    }
   }
 
   override onFirst() {
@@ -56,12 +61,7 @@ export class Replay extends ControllerBase {
   }
 
   override handleInput(input: Input): Controller {
-    switch (input.key) {
-      case "KeyRUp":
-        return this.retry()
-      default:
-        this.commonKeyHandler(input)
-    }
+    this.commonKeyHandler(input)
     return this
   }
 
@@ -70,6 +70,9 @@ export class Replay extends ControllerBase {
     this.shots = [...event.shots]
     this.playNextShot(this.delay)
     this.container.table.showSpin(true)
+    if (event.retry) {
+      return this.retry()
+    }
     return this
   }
 
