@@ -17,7 +17,7 @@
 
   <body>
     <div id="viewP1" class="view3d"></div>
-    <div class="panel" style="display: flex">
+    <div class="panel">
       <button class="hitButton" id="cueHit" type="button">hit</button>
       <div class="ballContainer">
         <div id="objectBall" class="objectBall"></div>
@@ -38,14 +38,16 @@
       />
       <div class="chatarea">
         <div id="chatoutput" class="chatoutput"></div>
+        <div class="outerMenu">
+          <div class="menu" id="menu">
+            <button class="menuButton" id="share" type="submit">⬀</button>
+            <button class="menuButton" id="replay" type="submit">↻</button>
+            <button class="menuButton" id="redo" type="submit">⎌</button>
+            <button class="menuButton" id="camera" type="submit">🎥</button>
+          </div>
+          <button class="menuButton" id="togglemenu" type="button">☰</button>
+        </div>
       </div>
-      <div class="menu" id="menu">
-        <button class="menuButton" id="share" type="submit">⬀</button>
-        <button class="menuButton" id="replay" type="submit">↻</button>
-        <button class="menuButton" id="redo" type="submit">⎌</button>
-        <button class="menuButton" id="camera" type="submit">🎥</button>
-      </div>
-      <button class="menuButton" id="togglemenu" type="button">☰</button>
     </div>
     <div class="constants" id="constants">
       <p>Physical Constants</p>

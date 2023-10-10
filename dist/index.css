@@ -56,6 +56,7 @@ canvas {
   padding: 0px;
   background: linear-gradient(rgb(0, 64, 94), #000214);
   border-radius: 5px;
+  align-items: center;
 }
 
 .ballContainer {
@@ -63,7 +64,6 @@ canvas {
   margin: auto;
   margin-left: 10px;
   margin-right: 10px;
-  min-width: 100px;
   position: relative;
   overflow: hidden;
   border-radius: 5px;
@@ -112,12 +112,6 @@ canvas {
   pointer-events: none;
 }
 
-.infoPanel {
-  position: absolute;
-  left: 10px;
-  bottom: 10px;
-}
-
 .powerSlider {
   width: 20px;
   height: 70%;
@@ -135,22 +129,30 @@ input[type="range"].powerSlider {
   margin-left: 5px;
   aspect-ratio: 0.4;
   border-radius: 10px;
-  border: double;
   border-width: 4px;
   font-size: x-large;
   min-width: 80px;
 }
 
-.menuButton {
+.outerMenu {
+  display: flex;
   height: 70%;
-  width: 64px;
-  margin: auto;
+  justify-content: flex-end;
+}
+
+.menu {
+  display: none;
+  width: 80%;
+}
+
+.menuButton {
+  height: 100%;
+  width: 20%;
   margin-right: 4px;
   aspect-ratio: 0.4;
   border-radius: 10px;
-  border: double;
   border-width: 4px;
-  font-size: large;
+  padding: 0;
 }
 
 .menuButton:active,
@@ -159,34 +161,15 @@ input[type="range"].powerSlider {
 }
 
 .chatarea {
+  height: 70%;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-}
-
-.chatinput {
-  display: flex;
-  margin-bottom: 4px;
-}
-
-.msger-input {
-  flex: 1;
-  flex-grow: 1;
-  background: rgb(182, 181, 181);
-  margin: 1px;
-}
-.msger-send-btn {
-  background: rgb(93, 113, 124);
-  color: #fff;
-  cursor: pointer;
-  margin: 1px;
-}
-.msger-send-btn:hover {
-  background: rgb(0, 180, 50);
+  margin-right: 5px;
 }
 
 .chatoutput {
-  flex-grow: 1;
+  height: 30%;
   overflow-y: scroll;
   overflow-x: hidden;
   background-color: rgba(47, 79, 79, 0.486);
@@ -194,6 +177,7 @@ input[type="range"].powerSlider {
   margin: 2px;
   border-radius: 5px;
   font-size: smaller;
+  text-overflow: ellipsis;
 }
 
 .chatoutput::-webkit-scrollbar {
@@ -211,10 +195,6 @@ a.pill {
   padding: 1px;
   font-size: smaller;
   border-top-style: groove;
-}
-
-.menu {
-  display: none;
 }
 
 .constants {
