@@ -1,6 +1,7 @@
 import { Container } from "../container/container"
 import { ChatEvent } from "../events/chatevent"
 import { Input } from "../events/input"
+import { StationaryEvent } from "../events/stationaryevent"
 import { share, shorten } from "../utils/shorten"
 
 export class Menu {
@@ -54,7 +55,9 @@ export class Menu {
     }
     this.replay.onclick = (_) => {
       if (queue.length == 0) {
-        this.container.inputQueue.push(new Input(1, "KeyXUp"))
+        this.container.table.halt()
+        this.container.eventQueue.length = 0
+        this.container.eventQueue.push(new StationaryEvent())
         queue.push(breakEvent)
       }
     }

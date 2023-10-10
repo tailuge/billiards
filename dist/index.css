@@ -89,7 +89,7 @@ canvas {
 }
 
 .objectBall {
-  height: 98%;
+  height: 97%;
   margin: auto;
   aspect-ratio: 1;
   border: 0.5px solid rgb(0, 44, 64);

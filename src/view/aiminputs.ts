@@ -83,7 +83,7 @@ export class AimInputs {
         this.readDimensions()
         this.objectBallStyle.visibility = "visible"
         this.objectBallStyle.left =
-          (closest.overlap * this.ballWidth) / 2 + "px"
+          5 + (closest.overlap * this.ballWidth) / 2 + "px"
         this.objectBallStyle.backgroundColor = new Color(0, 0, 0)
           .lerp(closest.ball.ballmesh.color, 0.5)
           .getStyle()

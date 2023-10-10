@@ -8,18 +8,20 @@ import { Aim } from "./aim"
 export class Replay extends ControllerBase {
   delay: number
   shots: AimEvent[]
+  firstShot: AimEvent
   timer
   init
   constructor(container, init, shots, delay = 1500) {
     super(container)
     this.init = init
     this.shots = [...shots]
+    this.firstShot = this.shots[0]
     this.delay = delay
     this.container.table.showTraces(true)
+    this.container.table.updateFromShortSerialised(this.init)
   }
 
   override onFirst() {
-    this.container.table.updateFromShortSerialised(this.init)
     this.playNextShot(this.delay * 1.5)
   }
 
@@ -44,7 +46,7 @@ export class Replay extends ControllerBase {
   }
 
   override handleStationary(_) {
-    if (this.shots.length > 0) {
+    if (this.shots.length > 0 && this.container.eventQueue.length === 0) {
       setTimeout(() => {
         this.playNextShot(this.delay)
       }, this.delay)
@@ -54,38 +56,30 @@ export class Replay extends ControllerBase {
   }
 
   override handleInput(input: Input): Controller {
-    if (input.key == "KeyOUp") {
-      this.container.view.camera.toggleMode()
+    switch (input.key) {
+      case "KeyRUp":
+        return this.retry()
+      default:
+        this.commonKeyHandler(input)
     }
-    if (input.key == "KeyDUp") {
-      this.container.sliders.toggleVisibility()
-    }
-    if (input.key == "KeyRUp") {
-      return this.retry()
-    }
-    if (input.key == "KeyXUp") {
-      this.halt()
-    }
-
     return this
   }
 
-  halt() {
-    this.container.table.updateFromShortSerialised(this.init)
-  }
-
   override handleBreak(event: BreakEvent): Controller {
-    if (event.init && this.shots.length == 0) {
-      this.container.table.updateFromShortSerialised(event.init)
-      this.shots = [...event.shots]
-      this.playNextShot(this.delay)
-      this.container.table.showSpin(true)
-    }
+    this.container.table.updateFromShortSerialised(event.init)
+    this.shots = [...event.shots]
+    this.playNextShot(this.delay)
+    this.container.table.showSpin(true)
     return this
   }
 
   retry() {
     this.container.table.updateFromShortSerialised(this.init)
+    const aim = AimEvent.fromJson(this.firstShot)
+    this.container.table.cueball = this.container.table.balls[aim.i]
+    this.container.rules.cueball = this.container.table.cueball
+    this.container.table.cueball.pos.copy(aim.pos)
+    this.container.table.cue.aim = aim
     this.container.view.camera.forceMode(this.container.view.camera.aimView)
     return new Aim(this.container)
   }

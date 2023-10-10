@@ -71,9 +71,7 @@ export class BrowserContainer {
 
     if (this.replay) {
       this.startReplay(this.replay)
-    }
-
-    if (!this.sc) {
+    } else if (!this.sc) {
       this.container.eventQueue.push(new BreakEvent())
     }
 

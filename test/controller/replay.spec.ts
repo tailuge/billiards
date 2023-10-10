@@ -106,7 +106,7 @@ describe("Controller Replay", () => {
   })
 
   it("BreakEvent takes Replay to Replay", (done) => {
-    container.controller = new Replay(container, null, [], 0)
+    container.controller = new Replay(container, state.init, state.shots, 0)
     container.table.cueball.setStationary()
     container.eventQueue.push(new BreakEvent(state.init, state.shots))
     container.processEvents()

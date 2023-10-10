@@ -204,4 +204,12 @@ export class Table {
       b.ballmesh.spinAxisArrow.visible = bool
     })
   }
+
+  halt() {
+    this.balls.forEach((b) => {
+      b.vel.copy(zero)
+      b.rvel.copy(zero)
+      b.state = State.Stationary
+    })
+  }
 }
