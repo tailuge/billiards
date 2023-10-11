@@ -56,7 +56,7 @@ describe("Controller Replay", () => {
     container.isSinglePlayer = true
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
-    replayController = new Replay(container, state.init, state.shots, 0)
+    replayController = new Replay(container, state.init, state.shots, false, 0)
     done()
   })
 
@@ -74,6 +74,22 @@ describe("Controller Replay", () => {
   })
 
   it("BreakEvent with state takes Init to Replay", (done) => {
+    container.eventQueue.push(new BreakEvent(state.init, state.shots))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Replay)
+    done()
+  })
+
+  it("Replay and retry moves to Aim", (done) => {
+    container.controller = new Replay(container, state.init, state.shots, true)
+    expect(container.eventQueue.length).to.be.equal(1)
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Aim)
+    done()
+  })
+
+  it("BreakEvent takes Aim to Replay", (done) => {
+    container.controller = new Aim(container)
     container.eventQueue.push(new BreakEvent(state.init, state.shots))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Replay)
@@ -106,7 +122,13 @@ describe("Controller Replay", () => {
   })
 
   it("BreakEvent takes Replay to Replay", (done) => {
-    container.controller = new Replay(container, state.init, state.shots, 0)
+    container.controller = new Replay(
+      container,
+      state.init,
+      state.shots,
+      false,
+      0
+    )
     container.table.cueball.setStationary()
     container.eventQueue.push(new BreakEvent(state.init, state.shots))
     container.processEvents()

@@ -48,4 +48,20 @@ describe("Menu", () => {
     expect(container.eventQueue).to.be.length(1)
     done()
   })
+
+  it("redo button", (done) => {
+    menu.replayMode("someurl", new BreakEvent(null, []))
+    const redo = document.getElementById("redo") as HTMLButtonElement
+    fireEvent.click(redo, { target: { value: 1 } })
+    expect(container.eventQueue).to.be.length(2)
+    done()
+  })
+
+  it("replay button", (done) => {
+    menu.replayMode("someurl", new BreakEvent(null, []))
+    const redo = document.getElementById("replay") as HTMLButtonElement
+    fireEvent.click(redo, { target: { value: 1 } })
+    expect(container.eventQueue).to.be.length(2)
+    done()
+  })
 })
