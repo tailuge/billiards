@@ -18,7 +18,7 @@ export class Collision {
   static positionsAtContact(a: Ball, b: Ball) {
     const sep = a.pos.distanceTo(b.pos)
     const rv = a.vel.clone().sub(b.vel)
-    const t = (sep - 2 * R) / rv.length() ?? 0
+    const t = (sep - 2 * R) / rv.length() || 0
     return {
       a: a.pos.clone().addScaledVector(a.vel, t),
       b: b.pos.clone().addScaledVector(b.vel, t),
