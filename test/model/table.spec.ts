@@ -30,6 +30,15 @@ describe("Table", () => {
     done()
   })
 
+  it("halt all", (done) => {
+    const table = new Table(Rack.diamond())
+    table.balls[0].vel.x = 10 * R
+    expect(table.prepareAdvanceAll(t)).to.be.true
+    table.halt()
+    expect(table.allStationary()).to.be.true
+    done()
+  })
+
   it("overlap balls thows exception", (done) => {
     const a = new Ball(zero)
     a.vel.x = 1
@@ -94,6 +103,8 @@ describe("Table", () => {
     }
     expect(b.isFalling()).to.be.false
     expect(b.state).to.be.equal(State.InPocket)
+    expect(table.inPockets()).to.be.equal(1)
+
     done()
   })
 

@@ -38,8 +38,11 @@ export class Ball {
 
   update(t) {
     this.updatePosition(t)
-    this.updateVelocity(t)
-    this.updateFalling(t)
+    if (this.state == State.Falling) {
+      this.pocket.updateFall(this, t)
+    } else {
+      this.updateVelocity(t)
+    }
   }
 
   updateMesh(t) {
@@ -48,12 +51,6 @@ export class Ball {
 
   private updatePosition(t: number) {
     this.pos.addScaledVector(this.vel, t)
-  }
-
-  private updateFalling(t: number) {
-    if (this.state == State.Falling) {
-      this.pocket.updateFall(this, t)
-    }
   }
 
   private updateVelocity(t: number) {
@@ -97,8 +94,8 @@ export class Ball {
 
   isRolling() {
     return (
-      this.vel.lengthSq() != 0 &&
-      this.rvel.lengthSq() != 0 &&
+      this.vel.lengthSq() !== 0 &&
+      this.rvel.lengthSq() !== 0 &&
       surfaceVelocityFull(this.vel, this.rvel).length() < this.transition
     )
   }
@@ -108,11 +105,15 @@ export class Ball {
   }
 
   inMotion() {
-    return this.state == State.Rolling || this.state == State.Sliding
+    return (
+      this.state === State.Rolling ||
+      this.state === State.Sliding ||
+      this.isFalling()
+    )
   }
 
   isFalling() {
-    return this.state == State.Falling
+    return this.state === State.Falling
   }
 
   futurePosition(t) {

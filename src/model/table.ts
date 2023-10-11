@@ -130,7 +130,7 @@ export class Table {
   }
 
   allStationary() {
-    return this.balls.every((b) => !b.inMotion() || !b.onTable())
+    return this.balls.every((b) => !b.inMotion())
   }
 
   inPockets(): number {

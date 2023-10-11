@@ -233,8 +233,8 @@ describe("Cushion", () => {
     const deltaA = bounceHan(a.vel, a.rvel)
     const afterv = a.vel.clone().add(deltaA.v)
     const afterw = a.rvel.clone().add(deltaA.w)
-    console.log(afterv, afterw)
-    //    expect(Math.abs(a.vel.x)).to.be.greaterThan(Math.abs(afterv.x))
+    // fix this
+    expect(Math.abs(a.vel.x)).to.be.lessThan(Math.abs(afterv.x))
     done()
   })
 })

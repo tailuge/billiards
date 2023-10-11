@@ -147,6 +147,16 @@ input[type="range"].powerSlider {
 
 .menuButton {
   height: 100%;
+  width: 25%;
+  margin-right: 4px;
+  aspect-ratio: 0.4;
+  border-radius: 10px;
+  border-width: 4px;
+  padding: 0;
+}
+
+.toggleButton {
+  height: 100%;
   width: 20%;
   margin-right: 4px;
   aspect-ratio: 0.4;
@@ -155,6 +165,7 @@ input[type="range"].powerSlider {
   padding: 0;
 }
 
+.toggleButton:active,
 .menuButton:active,
 .hitButton:active {
   transform: scale(0.97);

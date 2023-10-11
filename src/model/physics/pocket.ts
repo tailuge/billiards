@@ -1,7 +1,7 @@
 import { Ball, State } from "../ball"
 import { MathUtils, Vector3 } from "three"
 import { R, g } from "./constants"
-import { up } from "../../utils/utils"
+import { up, zero } from "../../utils/utils"
 
 export class Pocket {
   pos: Vector3
@@ -23,24 +23,31 @@ export class Pocket {
     return ball.vel.length()
   }
 
-  public updateFall(ball, t) {
-    ball.vel.addScaledVector(up, ((-R * 10) / 0.5) * t * g)
-    if (ball.pos.z < (-R * 2) / 0.5) {
+  public updateFall(ball: Ball, t) {
+    ball.vel.addScaledVector(up, -R * 10 * t * g)
+    const z = ball.pos.z
+    const distToCentre = ball.pos.distanceTo(this.pos)
+    if (distToCentre > this.radius - R) {
+      const toCentre = this.pos.clone().sub(ball.pos).normalize().setZ(0)
+      if (z > -R / 2) {
+        ball.vel.addScaledVector(toCentre, R * 7 * t * g)
+      }
+      if (ball.vel.dot(toCentre) < 0) {
+        ball.ballmesh.trace.forceTrace(ball.pos)
+        ball.vel.x = (toCentre.x * ball.vel.length()) / 2
+        ball.vel.y = (toCentre.y * ball.vel.length()) / 2
+      }
+    }
+
+    if (z < -3.5 * R) {
+      ball.vel.z = -R / 4
+      ball.rvel.copy(zero)
+    }
+
+    if (z < -4 * R) {
       ball.pos.z += MathUtils.randFloat(-R, R * 0.25)
       ball.setStationary()
       ball.state = State.InPocket
-    }
-
-    if (ball.pos.distanceTo(this.pos) > this.radius - R) {
-      const toCentre = this.pos
-        .clone()
-        .sub(ball.pos)
-        .normalize()
-        .multiplyScalar(ball.vel.length() * R)
-      if (ball.vel.dot(toCentre) < 0) {
-        ball.vel.x = toCentre.x
-        ball.vel.y = toCentre.y
-      }
     }
   }
 
