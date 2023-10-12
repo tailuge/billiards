@@ -23,11 +23,10 @@ export class Replay extends ControllerBase {
       const retryEvent = new BreakEvent(init, shots)
       retryEvent.retry = true
       this.container.eventQueue.push(retryEvent)
+    } else {
+      this.container.view.camera.forceMode(this.container.view.camera.topView)
+      this.playNextShot(this.delay * 1.5)
     }
-  }
-
-  override onFirst() {
-    this.playNextShot(this.delay * 1.5)
   }
 
   playNextShot(delay) {
@@ -38,10 +37,10 @@ export class Replay extends ControllerBase {
     this.container.table.cue.aim = aim
     this.container.table.cue.updateAimInput()
     this.container.table.cue.t = 1
-    this.container.view.camera.forceMode(this.container.view.camera.topView)
     clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       this.container.eventQueue.push(new HitEvent(this.container.table.cue.aim))
+      this.timer = undefined
     }, delay)
   }
 
@@ -51,12 +50,9 @@ export class Replay extends ControllerBase {
   }
 
   override handleStationary(_) {
-    if (this.shots.length > 0 && this.container.eventQueue.length === 0) {
-      setTimeout(() => {
-        this.playNextShot(this.delay)
-      }, this.delay)
+    if (this.shots.length > 0 && this.timer === undefined) {
+      this.playNextShot(this.delay)
     }
-
     return this
   }
 
@@ -68,15 +64,17 @@ export class Replay extends ControllerBase {
   override handleBreak(event: BreakEvent): Controller {
     this.container.table.updateFromShortSerialised(event.init)
     this.shots = [...event.shots]
-    this.playNextShot(this.delay)
     this.container.table.showSpin(true)
     if (event.retry) {
       return this.retry()
     }
+    this.playNextShot(this.delay)
     return this
   }
 
   retry() {
+    clearTimeout(this.timer)
+    this.timer = undefined
     this.container.table.updateFromShortSerialised(this.init)
     const aim = AimEvent.fromJson(this.firstShot)
     this.container.table.cueball = this.container.table.balls[aim.i]
