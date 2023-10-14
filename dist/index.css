@@ -153,6 +153,7 @@ input[type="range"].powerSlider {
   border-radius: 10px;
   border-width: 4px;
   padding: 0;
+  max-width: 80px;
 }
 
 .toggleButton {
@@ -163,6 +164,7 @@ input[type="range"].powerSlider {
   border-radius: 10px;
   border-width: 4px;
   padding: 0;
+  max-width: 80px;
 }
 
 .toggleButton:active,
