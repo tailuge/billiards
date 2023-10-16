@@ -1,6 +1,6 @@
 import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
-import { upCross, unitAtAngle } from "../utils/utils"
+import { upCross, unitAtAngle, norm } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import { AimInputs } from "./aiminputs"
 import { Ball, State } from "../model/ball"
@@ -53,6 +53,24 @@ export class Cue {
     ball.state = State.Sliding
     ball.vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
     ball.rvel.copy(cueToSpin(aim.offset, ball.vel))
+  }
+
+  aimAtNext(table: Table) {
+    const onTable = table.balls
+      .filter((ball) => ball.onTable())
+      .filter((ball) => ball !== table.cueball)
+    if (onTable.length === 0) {
+      return
+    }
+    const distanceToCueBall = (b) => {
+      return table.cueball.pos.distanceTo(b.pos)
+    }
+    const closest = onTable.reduce(
+      (a, b) => (distanceToCueBall(a) < distanceToCueBall(b) ? a : b),
+      onTable[0]
+    )
+    const lineTo = norm(closest.pos.clone().sub(table.cueball.pos))
+    this.aim.angle = Math.atan2(lineTo.y, lineTo.x)
   }
 
   adjustSpin(delta: Vector3) {
