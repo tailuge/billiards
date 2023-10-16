@@ -47,67 +47,67 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 20,
+            "count" : 28,
             "max" : [
                 1,
                 1,
-                1
+                0.9999999403953552
             ],
             "min" : [
                 -1,
                 -1,
-                -1
+                -0.9999999403953552
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 20,
+            "count" : 28,
             "type" : "VEC2"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 20,
+            "count" : 28,
             "type" : "VEC3"
         },
         {
             "bufferView" : 3,
             "componentType" : 5123,
-            "count" : 30,
+            "count" : 48,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 240,
+            "byteLength" : 336,
             "byteOffset" : 0,
             "target" : 34962
         },
         {
             "buffer" : 0,
-            "byteLength" : 160,
-            "byteOffset" : 240,
+            "byteLength" : 224,
+            "byteOffset" : 336,
             "target" : 34962
         },
         {
             "buffer" : 0,
-            "byteLength" : 240,
-            "byteOffset" : 400,
+            "byteLength" : 336,
+            "byteOffset" : 560,
             "target" : 34962
         },
         {
             "buffer" : 0,
-            "byteLength" : 60,
-            "byteOffset" : 640,
+            "byteLength" : 96,
+            "byteOffset" : 896,
             "target" : 34963
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 700,
+            "byteLength" : 992,
             "uri" : "background.bin"
         }
     ]
