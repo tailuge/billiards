@@ -37,6 +37,33 @@ body {
   margin: auto;
 }
 
+.child {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.child:nth-child(4) {
+  opacity: 0.25;
+}
+
+.child:nth-child(3) {
+  opacity: 0.33;
+}
+
+.child:nth-child(2) {
+  opacity: 0.5;
+}
+
+.child:nth-child(1) {
+  opacity: 1;
+}
+
+.parent {
+  width: 412px;
+  position: relative;
+}
+
 #R,
 #m,
 #e,
