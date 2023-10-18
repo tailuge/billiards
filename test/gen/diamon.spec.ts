@@ -22,14 +22,12 @@ afterEach(() => {
   global.console = jestConsole
 })
 
-
 describe("Controller", () => {
   let container: Container
   let broadcastEvents: GameEvent[]
   let stepx: number
   let stepy: number
-  //const replayUrl = "http://localhost:8080/?ruletype=threecushion&state="
-  const replayUrl = "?ruletype=threecushion&state="
+  const replayUrl = "http://localhost:8080/?ruletype=threecushion&state="
   beforeEach(function (done) {
     container = new Container(
       document.getElementById("viewP1"),
@@ -44,40 +42,40 @@ describe("Controller", () => {
     done()
   })
 
-  const toLowerRail = new Vector3(0,-3*R)
-  const toUpperRail = new Vector3(0,3*R)
-  
+  const toLowerRail = new Vector3(0, -3 * R)
+  const toUpperRail = new Vector3(0, 3 * R)
+
   it("initialise ball for diamond system shot", (done) => {
     expect(container.controller).to.be.an.instanceof(Init)
     container.table.cue.aim.power = 2
     container.table.cue.aim.offset.x = -0.3
-    shot(gridPosition(0,0),gridPosition(5,4))
-    shot(gridPosition(2,0),gridPosition(6,4))
-    shot(gridPosition(4,0),gridPosition(7,4))
-    shot(gridPosition(6,0),gridPosition(8,4))
+    shot(gridPosition(0, 0), gridPosition(5, 4))
+    shot(gridPosition(2, 0), gridPosition(6, 4))
+    shot(gridPosition(4, 0), gridPosition(7, 4))
+    shot(gridPosition(6, 0), gridPosition(8, 4))
     done()
   })
 
-  function shot(fromDiamond,toDiamond) {
+  function shot(fromDiamond, toDiamond) {
     const start = fromDiamond.add(toLowerRail)
     const target = toDiamond.add(toUpperRail)
-    playAlong(start,target)
+    playAlong(start, target)
     console.log(getURL())
   }
 
-  function playAlong(start,target) {
+  function playAlong(start, target) {
     const dir = norm(target.clone().sub(start))
-    const ballStart = start.clone().addScaledVector(dir,R*7)
+    const ballStart = start.clone().addScaledVector(dir, R * 7)
     container.table.cueball.pos.copy(ballStart)
-    container.table.cue.aim.angle = round(Math.atan2(dir.y,dir.x))
+    container.table.cue.aim.angle = round(Math.atan2(dir.y, dir.x))
   }
 
-  function gridPosition(x,y) {
-    return new Vector3((-4+x) * stepx,(-2+y) * stepy,0)
+  function gridPosition(x, y) {
+    return new Vector3((-4 + x) * stepx, (-2 + y) * stepy, 0)
   }
 
   function getURL() {
-    roundVec(container.table.cueball.pos)    
+    roundVec(container.table.cueball.pos)
     container.table.cue.moveTo(container.table.cueball.pos)
     const event: HitEvent = new HitEvent(container.table.serialise())
     container.recoder.record(event)
