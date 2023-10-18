@@ -56,7 +56,7 @@ export function rotateApplyUnrotate(theta, v, w, model) {
 
 // cushion contact point epsilon above ball centre
 
-const epsilon = R * 0.2
+const epsilon = R * 0.1
 const theta_a = Math.asin(epsilon / R)
 
 const sin_a = Math.sin(theta_a)

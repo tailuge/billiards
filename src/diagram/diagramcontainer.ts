@@ -68,11 +68,13 @@ export class DiagramContainer {
     const stateUrl = containerDiv?.getAttribute("data-state")
     const params = new URLSearchParams(stateUrl)
     const p = diagram?.getElementsByClassName("description")[0]
+    const common = document.getElementById("common")
     const editlink = document.createElement("a")
     editlink.href = `../${stateUrl}`
     editlink.innerHTML = "⬀"
     editlink.target = "_blank"
     p?.appendChild(editlink)
+    common?.appendChild(editlink)
     const replaybutton = document.createElement("button")
     p?.appendChild(replaybutton)
     const diagramcontainer = new DiagramContainer(

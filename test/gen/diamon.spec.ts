@@ -27,7 +27,7 @@ describe("Controller", () => {
   let broadcastEvents: GameEvent[]
   let stepx: number
   let stepy: number
-  const replayUrl = "http://localhost:8080/?ruletype=threecushion&state="
+  const replayUrl = "?ruletype=threecushion&state="
   beforeEach(function (done) {
     container = new Container(
       document.getElementById("viewP1"),
@@ -39,16 +39,19 @@ describe("Controller", () => {
     container.broadcast = (x) => broadcastEvents.push(x)
     stepx = TableGeometry.X / 4
     stepy = TableGeometry.Y / 2
+    container.table.balls[1].pos.x -= 1.5 * stepx
+    container.table.balls[2].pos.x = container.table.balls[1].pos.x
+    container.table.balls[2].pos.y -= 3 * R
     done()
   })
 
-  const toLowerRail = new Vector3(0, -3 * R)
-  const toUpperRail = new Vector3(0, 3 * R)
+  const toLowerRail = new Vector3(0, -2.25 * R)
+  const toUpperRail = new Vector3(0, 2.25 * R)
 
   it("initialise ball for diamond system shot", (done) => {
     expect(container.controller).to.be.an.instanceof(Init)
-    container.table.cue.aim.power = 2
-    container.table.cue.aim.offset.x = -0.3
+    container.table.cue.aim.power = 2.6
+    container.table.cue.aim.offset.x = -0.35
     shot(gridPosition(0, 0), gridPosition(5, 4))
     shot(gridPosition(2, 0), gridPosition(6, 4))
     shot(gridPosition(4, 0), gridPosition(7, 4))
@@ -60,12 +63,12 @@ describe("Controller", () => {
     const start = fromDiamond.add(toLowerRail)
     const target = toDiamond.add(toUpperRail)
     playAlong(start, target)
-    console.log(getURL())
+    console.log(diagramHTML(getURL()))
   }
 
   function playAlong(start, target) {
     const dir = norm(target.clone().sub(start))
-    const ballStart = start.clone().addScaledVector(dir, R * 7)
+    const ballStart = start.clone().addScaledVector(dir, R * 6)
     container.table.cueball.pos.copy(ballStart)
     container.table.cue.aim.angle = round(Math.atan2(dir.y, dir.x))
   }
@@ -84,5 +87,10 @@ describe("Controller", () => {
     const state = container.recoder.replayLastShot()
     const shotUri = `${replayUrl}${encodeURIComponent(JSON.stringify(state))}`
     return shotUri
+  }
+
+  function diagramHTML(uri) {
+    return `<div class="replaydiagram child"><div class="topview"
+      data-state="${uri}"></div></div>`
   }
 })
