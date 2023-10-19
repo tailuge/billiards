@@ -64,6 +64,7 @@ export class BallMesh {
       emissive: 0,
       flatShading: true,
       vertexColors: true,
+      forceSinglePass: true,
     })
     this.addDots(geometry, color)
     this.mesh = new Mesh(geometry, material)

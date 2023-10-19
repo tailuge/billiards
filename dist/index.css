@@ -143,6 +143,7 @@ input[type="range"].powerSlider {
 .menu {
   display: none;
   width: 80%;
+  justify-content: flex-end;
 }
 
 .menuButton {
