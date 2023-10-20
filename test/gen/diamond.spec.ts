@@ -83,8 +83,7 @@ describe("Controller", () => {
     const event: HitEvent = new HitEvent(container.table.serialise())
     container.recoder.record(event)
     container.recoder.updateBreak([])
-
-    const state = container.recoder.replayLastShot()
+    const state = container.recoder.lastShot()
     const shotUri = `${replayUrl}${encodeURIComponent(JSON.stringify(state))}`
     return shotUri
   }

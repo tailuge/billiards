@@ -3,6 +3,7 @@ import { Aim } from "../../controller/aim"
 import { Controller } from "../../controller/controller"
 import { PlaceBall } from "../../controller/placeball"
 import { WatchAim } from "../../controller/watchaim"
+import { ChatEvent } from "../../events/chatevent"
 import { PlaceBallEvent } from "../../events/placeballevent"
 import { WatchEvent } from "../../events/watchevent"
 import { Ball } from "../../model/ball"
@@ -10,6 +11,7 @@ import { Outcome } from "../../model/outcome"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
 import { zero } from "../../utils/utils"
+import { End } from "../end"
 import { Rules } from "./rules"
 
 export class NineBall implements Rules {
@@ -43,6 +45,12 @@ export class NineBall implements Rules {
     }
     if (Outcome.isBallPottedNoFoul(table.cueball, outcome)) {
       this.container.sound.playSuccess(table.inPockets())
+      if (this.isEndOfGame(outcome)) {
+        console.log("end of game")
+        this.container.eventQueue.push(new ChatEvent(null, `game over`))
+        this.container.recoder.wholeGameLink()
+        return new End(this.container)
+      }
       this.container.sendEvent(new WatchEvent(table.serialise()))
       return new Aim(this.container)
     }

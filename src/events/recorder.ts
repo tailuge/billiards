@@ -22,16 +22,16 @@ export class Recorder {
     }
   }
 
-  replayGame() {
+  wholeGame() {
     return this.state(this.states[0], this.shots)
   }
 
-  replayLastShot() {
+  lastShot() {
     const last = this.states.length - 1
     return this.state(this.states[last], [this.shots[last]])
   }
 
-  replayCurrentBreak() {
+  currentBreak() {
     if (this.breakStart !== undefined) {
       return this.state(
         this.states[this.breakStart],
@@ -53,13 +53,13 @@ export class Recorder {
     const isEndOfGame = this.container.rules.isEndOfGame(outcome)
     const potCount = Outcome.potCount(outcome)
     if (!isPartOfBreak) {
-      this.replayBreakLink(isEndOfGame)
+      this.breakLink(isEndOfGame)
     }
 
-    this.replayLastShotLink(isPartOfBreak || isEndOfGame, potCount)
+    this.lastShotLink(isPartOfBreak || isEndOfGame, potCount)
 
     if (isEndOfGame) {
-      this.replayBreakLink(isEndOfGame)
+      this.breakLink(isEndOfGame)
     }
 
     if (!isPartOfBreak) {
@@ -72,15 +72,15 @@ export class Recorder {
     }
   }
 
-  replayLastShotLink(isPartOfBreak, potCount) {
+  lastShotLink(isPartOfBreak, potCount) {
     const pots = potCount > 1 ? potCount - 1 : 0
     const shotIcon = "⚈".repeat(pots) + (isPartOfBreak ? "⚈" : "⚆")
-    const serialisedShot = JSON.stringify(this.replayLastShot())
+    const serialisedShot = JSON.stringify(this.lastShot())
     this.generateLink(shotIcon, serialisedShot)
   }
 
-  replayBreakLink(includeLastShot) {
-    const currentBreak = this.replayCurrentBreak()
+  breakLink(includeLastShot) {
+    const currentBreak = this.currentBreak()
     if (!currentBreak) {
       return
     }
@@ -96,7 +96,15 @@ export class Recorder {
     this.generateLink(text, compressed)
   }
 
-  generateLink(text, state) {
+  wholeGameLink() {
+    const game = this.wholeGame()
+    const text = `game(${game.shots.length})`
+    const serialisedGame = JSON.stringify(game)
+    const compressed = JSONCrush.crush(serialisedGame)
+    this.generateLink(text, compressed)
+  }
+
+  private generateLink(text, state) {
     const shotUri = `${this.replayUrl}${encodeURIComponent(state)}`
     const shotLink = `<a class="pill" target="_blank" href="${shotUri}">${text}</a>`
     this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
