@@ -77,7 +77,6 @@ export class PlaceBall extends ControllerBase {
   }
 
   placed() {
-    this.container.table.cue.aim.round()
     this.container.table.cue.aimInputs.setButtonText("Hit")
     this.container.sound.playNotify()
     this.container.sendEvent(

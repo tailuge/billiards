@@ -26,11 +26,12 @@ export function unitAtAngle(theta) {
 }
 
 export function round(num) {
-  return Math.round((num + Number.EPSILON) * 1000) / 1000
+  const sign = Math.sign(num)
+  return (sign * Math.floor((Math.abs(num) + Number.EPSILON) * 10000)) / 10000
 }
 
-export function round1(num) {
-  return Math.round((num + Number.EPSILON) * 10) / 10
+export function round2(num) {
+  return Math.round((num + Number.EPSILON) * 100) / 100
 }
 
 export function roundVec(v) {
@@ -40,9 +41,9 @@ export function roundVec(v) {
   return v
 }
 
-export function roundVec1(v) {
-  v.x = round1(v.x)
-  v.y = round1(v.y)
-  v.z = round1(v.z)
+export function roundVec2(v) {
+  v.x = round2(v.x)
+  v.y = round2(v.y)
+  v.z = round2(v.z)
   return v
 }

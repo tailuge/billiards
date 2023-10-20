@@ -3,6 +3,7 @@ import { Outcome } from "../model/outcome"
 import { ChatEvent } from "./chatevent"
 import { EventType } from "./eventtype"
 import { HitEvent } from "./hitevent"
+import JSONCrush from "jsoncrush"
 
 export class Recorder {
   container: Container
@@ -91,7 +92,8 @@ export class Recorder {
     }
     const text = `break(${currentBreak.shots.length})`
     const serialisedShot = JSON.stringify(currentBreak)
-    this.generateLink(text, serialisedShot)
+    const compressed = JSONCrush.crush(serialisedShot)
+    this.generateLink(text, compressed)
   }
 
   generateLink(text, state) {

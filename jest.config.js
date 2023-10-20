@@ -1,5 +1,6 @@
 module.exports = {
   preset: "ts-jest",
+  transformIgnorePatterns: ["node_modules/(?!jsoncrush)"],
   transform: {
     "^.+\\.(t|j)sx?$": [
       "@swc/jest",

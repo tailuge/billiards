@@ -215,13 +215,16 @@ export class Table {
   }
 
   roundCueBallPosition() {
-    const pos = roundVec(this.cueball.pos)
-    if (
-      this.balls
-        .filter((b) => b !== this.cueball)
-        .every((b) => b.pos.distanceTo(pos) > 2 * R)
-    ) {
-      this.cueball.pos.copy(pos)
+    const pos = roundVec(this.cueball.pos.clone())
+    if (this.overlapsAny(pos)) {
+      return
     }
+    this.cueball.pos.copy(pos)
+  }
+
+  overlapsAny(pos) {
+    return this.balls
+      .filter((b) => b !== this.cueball)
+      .some((b) => b.pos.distanceTo(pos) < 2 * R)
   }
 }

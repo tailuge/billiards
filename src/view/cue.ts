@@ -5,8 +5,8 @@ import {
   unitAtAngle,
   norm,
   round,
-  roundVec1,
-  round1,
+  roundVec2,
+  round2,
 } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import { AimInputs } from "./aiminputs"
@@ -46,12 +46,12 @@ export class Cue {
   }
 
   adjustPower(delta) {
-    this.aim.power = round1(Math.min(this.maxPower, this.aim.power + delta))
+    this.aim.power = round2(Math.min(this.maxPower, this.aim.power + delta))
     this.updateAimInput()
   }
 
   setPower(value: number) {
-    this.aim.power = round1(value * this.maxPower)
+    this.aim.power = round2(value * this.maxPower)
   }
 
   hit(ball: Ball) {
@@ -89,7 +89,7 @@ export class Cue {
     if (offset.length() > this.offCenterLimit) {
       offset.normalize().multiplyScalar(this.offCenterLimit)
     }
-    this.aim.offset = roundVec1(offset)
+    this.aim.offset = roundVec2(offset)
     this.updateAimInput()
   }
 

@@ -5,6 +5,7 @@ import { BreakEvent } from "../events/breakevent"
 import { SocketConnection } from "../network/client/socketconnection"
 import { GameEvent } from "../events/gameevent"
 import { bounceHan, bounceHanBlend } from "../model/physics/physics"
+import JSONCrush from "jsoncrush"
 
 /**
  * Integrate game container into HTML page
@@ -102,12 +103,20 @@ export class BrowserContainer {
   }
 
   startReplay(replay) {
-    this.breakState = JSON.parse(decodeURIComponent(replay))
+    this.breakState = this.parse(decodeURIComponent(replay))
     const breakEvent = new BreakEvent(
       this.breakState.init,
       this.breakState.shots
     )
     this.container.eventQueue.push(breakEvent)
     this.container.menu.replayMode(window.location.href, breakEvent)
+  }
+
+  parse(s) {
+    try {
+      return JSON.parse(s)
+    } catch (_) {
+      return JSON.parse(JSONCrush.uncrush(s))
+    }
   }
 }
