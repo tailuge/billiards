@@ -1,6 +1,13 @@
 import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
-import { upCross, unitAtAngle, norm } from "../utils/utils"
+import {
+  upCross,
+  unitAtAngle,
+  norm,
+  round,
+  roundVec1,
+  round1,
+} from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import { AimInputs } from "./aiminputs"
 import { Ball, State } from "../model/ball"
@@ -32,19 +39,19 @@ export class Cue {
   }
 
   rotateAim(angle) {
-    this.aim.angle += angle
+    this.aim.angle = round(this.aim.angle + angle)
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle
     this.aimInputs.showOverlap()
   }
 
   adjustPower(delta) {
-    this.aim.power = Math.min(this.maxPower, this.aim.power + delta)
+    this.aim.power = round1(Math.min(this.maxPower, this.aim.power + delta))
     this.updateAimInput()
   }
 
   setPower(value: number) {
-    this.aim.power = value * this.maxPower
+    this.aim.power = round1(value * this.maxPower)
   }
 
   hit(ball: Ball) {
@@ -82,7 +89,7 @@ export class Cue {
     if (offset.length() > this.offCenterLimit) {
       offset.normalize().multiplyScalar(this.offCenterLimit)
     }
-    this.aim.offset = offset
+    this.aim.offset = roundVec1(offset)
     this.updateAimInput()
   }
 

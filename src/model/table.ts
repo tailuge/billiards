@@ -9,7 +9,8 @@ import { TableGeometry } from "../view/tablegeometry"
 import { Outcome } from "./outcome"
 import { PocketGeometry } from "../view/pocketgeometry"
 import { bounceHanBlend } from "./physics/physics"
-import { zero } from "../utils/utils"
+import { roundVec, zero } from "../utils/utils"
+import { R } from "./physics/constants"
 
 interface Pair {
   a: Ball
@@ -211,5 +212,16 @@ export class Table {
       b.rvel.copy(zero)
       b.state = State.Stationary
     })
+  }
+
+  roundCueBallPosition() {
+    const pos = roundVec(this.cueball.pos)
+    if (
+      this.balls
+        .filter((b) => b !== this.cueball)
+        .every((b) => b.pos.distanceTo(pos) > 2 * R)
+    ) {
+      this.cueball.pos.copy(pos)
+    }
   }
 }

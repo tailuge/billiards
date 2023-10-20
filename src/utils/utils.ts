@@ -29,9 +29,20 @@ export function round(num) {
   return Math.round((num + Number.EPSILON) * 1000) / 1000
 }
 
+export function round1(num) {
+  return Math.round((num + Number.EPSILON) * 10) / 10
+}
+
 export function roundVec(v) {
   v.x = round(v.x)
   v.y = round(v.y)
   v.z = round(v.z)
+  return v
+}
+
+export function roundVec1(v) {
+  v.x = round1(v.x)
+  v.y = round1(v.y)
+  v.z = round1(v.z)
   return v
 }
