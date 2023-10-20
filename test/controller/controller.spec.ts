@@ -194,6 +194,17 @@ describe("Controller", () => {
     done()
   })
 
+  it("StationaryEvent takes active PlayShot to End if end of game", (done) => {
+    container.controller = new PlayShot(container)
+    container.table.balls.forEach((b) => (b.state = State.InPocket))
+    container.table.cueball.setStationary()
+    container.eventQueue.push(new StationaryEvent())
+    container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    done()
+  })
+
   it("StationaryEvent takes active PlayShot to PlaceBall if in off", (done) => {
     container.controller = new PlayShot(container)
     container.table.cueball.setStationary()
