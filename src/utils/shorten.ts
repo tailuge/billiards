@@ -2,10 +2,15 @@ export function shorten(url, action) {
   if (typeof process === "object") {
     return action(url)
   }
+  const cleanUrl = url
+    .replaceAll("(", "%28")
+    .replaceAll(")", "%29")
+    .replaceAll("!", "%21")
+    .replaceAll("*", "%2A")
   fetch("https://gotiny.cc/api", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ input: url }),
+    body: JSON.stringify({ input: cleanUrl }),
   })
     .then((response) => response.json())
     .then((data) => {
