@@ -222,9 +222,9 @@ export class Table {
     this.cueball.pos.copy(pos)
   }
 
-  overlapsAny(pos) {
+  overlapsAny(pos, excluding = this.cueball) {
     return this.balls
-      .filter((b) => b !== this.cueball)
+      .filter((b) => b !== excluding)
       .some((b) => b.pos.distanceTo(pos) < 2 * R)
   }
 }

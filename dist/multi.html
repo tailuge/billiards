@@ -22,11 +22,18 @@
         <a href="/dist/?ruletype=threecushion">single player three cushion</a>
       </li>
       <li>
+        <a href="/dist/?ruletype=fourteenone">single player 14-1</a>
+      </li>
+      <li>
         <a id="local2p">two players nineball in single window</a> for quick
         testing
       </li>
       <li>
         <a id="local2p3c">two players three cushion in single window</a> for
+        quick testing
+      </li>
+      <li>
+        <a id="local2p14">two players 14-1 in single window</a> for
         quick testing
       </li>
       <li><a id="local" href="lobby/lobby.html?mode=local">local lobby</a></li>
@@ -51,6 +58,9 @@
     document.getElementById(
       "local2p3c"
     ).href = `/dist/2p.html?${wssparam}&ruletype=threecushion`
+    document.getElementById(
+      "local2p14"
+    ).href = `/dist/2p.html?${wssparam}&ruletype=fourteenone`
     document.getElementById(
       "github"
     ).href = `https://tailuge.github.io/billiards/dist/?${wssparam}`

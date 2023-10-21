@@ -1,8 +1,9 @@
-import { Ball } from "../model/ball"
+import { Ball, State } from "../model/ball"
 import { TableGeometry } from "../view/tablegeometry"
 import { Vector3 } from "three"
-import { round, roundVec } from "./utils"
+import { round, roundVec, vec } from "./utils"
 import { R } from "../model/physics/constants"
+import { Table } from "../model/table"
 
 export class Rack {
   static readonly noise = (R * 0.05) / 0.5
@@ -57,32 +58,77 @@ export class Rack {
   }
 
   static triangle() {
-    const triangle = Rack.diamond()
-    const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
-    pos.addScaledVector(Rack.diagonal, 3)
-    triangle.push(new Ball(Rack.jitter(pos)))
-    pos.add(Rack.diagonal)
-    triangle.push(new Ball(Rack.jitter(pos)))
-    pos.sub(Rack.across)
-    triangle.push(new Ball(Rack.jitter(pos)))
-    pos.sub(Rack.across)
-    pos.sub(Rack.across)
-    triangle.push(new Ball(Rack.jitter(pos)))
-    pos.sub(Rack.across)
-    triangle.push(new Ball(Rack.jitter(pos)))
-    pos.sub(Rack.diagonal)
-    pos.add(Rack.across)
-    triangle.push(new Ball(Rack.jitter(pos)))
+    const tp = Rack.trianglePositions()
+    const triangle = tp.map((p) => new Ball(Rack.jitter(p)))
+    triangle.unshift(Rack.cueBall(Rack.spot))
     return triangle
+  }
+
+  static trianglePositions() {
+    const triangle: Vector3[] = []
+    const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
+    triangle.push(vec(pos))
+    //
+    pos.add(this.diagonal)
+    triangle.push(vec(pos))
+    pos.sub(this.across)
+    triangle.push(vec(pos))
+    //
+    pos.add(this.diagonal).sub(this.across)
+    triangle.push(vec(pos))
+    pos.add(this.across)
+    triangle.push(vec(pos))
+    pos.add(this.across)
+    triangle.push(vec(pos))
+    //
+    pos.add(this.diagonal)
+    triangle.push(vec(pos))
+    pos.sub(this.across)
+    triangle.push(vec(pos))
+    pos.sub(this.across)
+    triangle.push(vec(pos))
+    pos.sub(this.across)
+    triangle.push(vec(pos))
+    //
+    pos.add(this.diagonal).sub(this.across)
+    triangle.push(vec(pos))
+    pos.add(this.across)
+    triangle.push(vec(pos))
+    pos.add(this.across)
+    triangle.push(vec(pos))
+    pos.add(this.across)
+    triangle.push(vec(pos))
+    pos.add(this.across)
+    triangle.push(vec(pos))
+
+    return triangle
+  }
+
+  static rerack(key: Ball, table: Table) {
+    const tp = Rack.trianglePositions()
+    const first = tp.shift()!
+    table.balls
+      .filter((b) => b !== table.cueball)
+      .filter((b) => b !== key)
+      .forEach((b) => {
+        b.pos.copy(tp.shift()!)
+        b.state = State.Stationary
+      })
+    if (table.overlapsAny(key.pos, key)) {
+      key.pos.copy(first)
+    }
+    if (table.overlapsAny(table.cueball.pos)) {
+      table.cueball.pos.copy(Rack.spot)
+    }
   }
 
   static three() {
     const threeballs: Ball[] = []
     const dx = round(TableGeometry.X / 2)
     const dy = round(TableGeometry.Y / 4)
-    threeballs.push(Rack.cueBall(new Vector3(-dx, -dy, 0)))
-    threeballs.push(new Ball(new Vector3(-dx, 0, 0), 0xe0de36))
-    threeballs.push(new Ball(new Vector3(dx, 0, 0), 0xff0000))
+    threeballs.push(Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0))))
+    threeballs.push(new Ball(Rack.jitter(new Vector3(-dx, 0, 0)), 0xe0de36))
+    threeballs.push(new Ball(Rack.jitter(new Vector3(dx, 0, 0)), 0xff0000))
     return threeballs
   }
 }

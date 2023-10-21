@@ -11,7 +11,7 @@
 Unsophisticated billiards with spinning ball physics written in typescript.
 
 * Backspin and sidespin well modeled.
-* Presentation in 2d or 3d in any modern browser or mobile.
+* Presentation using WebGL in any modern browser or mobile.
 * Record and playback breaks.
 * Two player online mode with node websocket server.
 * Nine ball and three cushion billiards rules
@@ -22,6 +22,7 @@ Unsophisticated billiards with spinning ball physics written in typescript.
 
 * In browser WebGL [nine ball demo ⬀](https://tailuge.github.io/billiards/dist)
 * [Three cushion billiards ⬀](https://tailuge.github.io/billiards/dist?ruletype=threecushion).
+* [14-1 pool ⬀](https://tailuge.github.io/billiards/dist?ruletype=fourteenone).
 * Inspect physics using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
 * Try [two player](https://tailuge.github.io/billiards/dist/lobby/lobby.html) online hosted on render.com
 
