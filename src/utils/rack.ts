@@ -73,6 +73,9 @@ export class Rack {
     triangle.push(vec(pos))
     pos.sub(this.across)
     triangle.push(vec(pos))
+    if (triangle.length === 3) {
+      return triangle
+    }
     //
     pos.add(this.diagonal).sub(this.across)
     triangle.push(vec(pos))

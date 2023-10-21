@@ -18,10 +18,12 @@ export class FourteenOne extends NineBall implements Rules {
       if (onTable.length === 2) {
         Rack.rerack(onTable[1], table)
         this.container.recoder.wholeGameLink()
+        this.container.sound.playSuccess(table.inPockets())
+        const state = table.serialise()
+        const rerack = { ...state, rerack: true }
+        this.container.sendEvent(new WatchEvent(rerack))
+        return new Aim(this.container)
       }
-      this.container.sound.playSuccess(table.inPockets())
-      this.container.sendEvent(new WatchEvent(table.serialise()))
-      return new Aim(this.container)
     }
     return super.update(outcome)
   }

@@ -18,7 +18,10 @@ export class WatchShot extends ControllerBase {
     return new PlaceBall(this.container)
   }
 
-  override handleWatch(_) {
+  override handleWatch(event) {
+    if ("rerack" in event.json) {
+      this.container.table.updateFromSerialised(event.json)
+    }
     return new WatchAim(this.container)
   }
 }
