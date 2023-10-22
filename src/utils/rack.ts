@@ -30,7 +30,7 @@ export class Rack {
   }
 
   static cueBall(pos) {
-    return new Ball(pos, 0xfaebd7)
+    return new Ball(Rack.jitter(pos), 0xfaebd7)
   }
 
   static diamond() {
@@ -114,7 +114,7 @@ export class Rack {
       .filter((b) => b !== table.cueball)
       .filter((b) => b !== key)
       .forEach((b) => {
-        b.pos.copy(tp.shift()!)
+        b.pos.copy(Rack.jitter(tp.shift()!))
         b.state = State.Stationary
       })
     if (table.overlapsAny(key.pos, key)) {

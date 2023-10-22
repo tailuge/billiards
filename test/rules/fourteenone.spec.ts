@@ -17,6 +17,16 @@ import { RerackEvent } from "../../src/events/rerackevent"
 
 initDom()
 
+const jestConsole = console
+
+beforeEach(() => {
+  global.console = require("console")
+})
+
+afterEach(() => {
+  global.console = jestConsole
+})
+
 describe("FourteenOne", () => {
   let container: Container
   let broadcastEvents: GameEvent[]
@@ -61,15 +71,14 @@ describe("FourteenOne", () => {
   }
 
   function playShotWaitForOutcome() {
-    container.table.cue.aim.angle = -Math.PI / 4
-    container.table.cue.aim.power = 0.1
+    container.table.cue.aim.angle = -Math.PI / 2
+    container.table.cue.aim.power = 1
     container.table.cue.aim.pos.copy(container.table.balls[0].pos)
     container.inputQueue.push(new Input(0.1, "SpaceUp"))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlayShot)
     container.advance(1)
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(Aim)
   }
 
   it("Pot penultimate ball, causing rerack", (done) => {
@@ -80,6 +89,8 @@ describe("FourteenOne", () => {
     expect(container.table.balls.filter((b) => b.onTable())).to.be.length(3)
 
     playShotWaitForOutcome()
+    expect(container.controller).to.be.an.instanceof(Aim)
+
     const watchEvent = broadcastEvents[3] as WatchEvent
     expect(watchEvent.json.rerack).to.be.true
     expect(container.recoder.shots[1].type).to.be.equal("RERACK")
@@ -89,7 +100,30 @@ describe("FourteenOne", () => {
     rerack.applyToController(container.controller)
     const after = container.table.shortSerialise()
     expect(before).to.be.deep.equal(after)
+    done()
+  })
 
+  it("play shot after rerack, check recording", (done) => {
+    bringToAimMode()
+    expect(container.controller).to.be.an.instanceof(Aim)
+
+    setupTableWithTwoBallsRemaining()
+    expect(container.table.balls.filter((b) => b.onTable())).to.be.length(3)
+
+    playShotWaitForOutcome()
+    expect(container.controller).to.be.an.instanceof(Aim)
+
+    const watchEvent = broadcastEvents[3] as WatchEvent
+    expect(watchEvent.json.rerack).to.be.true
+    expect(container.recoder.shots[1].type).to.be.equal("RERACK")
+
+    // play second hit (cueball into pocket)
+    container.advance(1)
+    container.processEvents()
+    playShotWaitForOutcome()
+    container.advance(1)
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(PlaceBall)
     done()
   })
 })
