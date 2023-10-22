@@ -1,7 +1,7 @@
 import { WatchEvent } from "../../events/watchevent"
 import { Outcome } from "../../model/outcome"
+import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
-import { Aim } from "../aim"
 import { Controller } from "../controller"
 import { NineBall } from "./nineball"
 import { Rules } from "./rules"
@@ -13,19 +13,22 @@ export class FourteenOne extends NineBall implements Rules {
 
   override update(outcome: Outcome[]): Controller {
     const table = this.container.table
-    if (Outcome.isBallPottedNoFoul(table.cueball, outcome)) {
-      const onTable = table.balls.filter((b) => b.onTable())
-      if (onTable.length === 2) {
-        Rack.rerack(onTable[1], table)
-        this.container.sound.playSuccess(table.inPockets())
-        const state = table.serialise()
-        const rerack = new WatchEvent({ ...state, rerack: true })
-        this.container.sendEvent(rerack)
-        this.container.recoder.record(rerack)
-        this.container.recoder.wholeGameLink()
-        return new Aim(this.container)
-      }
-    }
+    this.checkRerack(table)
     return super.update(outcome)
+  }
+
+  checkRerack(table: Table) {
+    const onTable = table.balls
+      .filter((b) => b.onTable())
+      .filter((b) => b !== table.cueball)
+    if (onTable.length === 1) {
+      Rack.rerack(onTable[0], table)
+      this.container.sound.playSuccess(table.inPockets())
+      const state = table.serialise()
+      const rerack = new WatchEvent({ ...state, rerack: true })
+      this.container.sendEvent(rerack)
+      this.container.recoder.record(rerack)
+      this.container.recoder.wholeGameLink()
+    }
   }
 }

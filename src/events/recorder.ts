@@ -107,7 +107,7 @@ export class Recorder {
 
   wholeGameLink() {
     const game = this.wholeGame()
-    const text = `game(${game.shots.length})`
+    const text = `frame(${game.shots.length})`
     const serialisedGame = JSON.stringify(game)
     const compressed = JSONCrush.crush(serialisedGame)
     this.generateLink(text, compressed)
