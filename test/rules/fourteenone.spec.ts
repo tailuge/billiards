@@ -40,7 +40,7 @@ describe("FourteenOne", () => {
   })
 
   it("Fourteenone has 16 balls", (done) => {
-    expect(container.table.balls).to.be.length(4)
+    expect(container.table.balls).to.be.length(5)
     done()
   })
 
@@ -66,8 +66,9 @@ describe("FourteenOne", () => {
       balls[i].pos.copy(PocketGeometry.pockets.pocketS.pocket.pos)
       balls[i].state = State.InPocket
     }
-    balls[0].pos.copy(new Vector3(0, edge + R * 2, 0))
-    balls[1].pos.copy(new Vector3(0, edge, 0))
+    balls[0].pos.copy(new Vector3(0, edge + R * 4.2, 0))
+    balls[1].pos.copy(new Vector3(0, edge + R * 2.1, 0))
+    balls[2].pos.copy(new Vector3(0, edge, 0))
   }
 
   function playShotWaitForOutcome() {
@@ -117,13 +118,18 @@ describe("FourteenOne", () => {
     expect(watchEvent.json.rerack).to.be.true
     expect(container.recoder.shots[1].type).to.be.equal("RERACK")
 
-    // play second hit (cueball into pocket)
+    const before = JSON.stringify(container.recoder.shots[1])
+
+    // play second pot
     container.advance(1)
     container.processEvents()
     playShotWaitForOutcome()
     container.advance(1)
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(PlaceBall)
+    expect(container.controller).to.be.an.instanceof(Aim)
+
+    const after = JSON.stringify(container.recoder.shots[1])
+    expect(before).to.be.equal(after)
     done()
   })
 })

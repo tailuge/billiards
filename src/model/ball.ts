@@ -122,7 +122,12 @@ export class Ball {
   }
 
   serialise() {
-    return { pos: this.pos, vel: this.vel, rvel: this.rvel, state: this.state }
+    return {
+      pos: this.pos.clone(),
+      vel: this.vel,
+      rvel: this.rvel,
+      state: this.state,
+    }
   }
 
   static fromSerialised(data) {

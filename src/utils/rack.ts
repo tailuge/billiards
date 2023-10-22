@@ -68,22 +68,19 @@ export class Rack {
     const triangle: Vector3[] = []
     const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
     triangle.push(vec(pos))
-    //
+    // row 2
     pos.add(this.diagonal)
     triangle.push(vec(pos))
     pos.sub(this.across)
     triangle.push(vec(pos))
-    if (triangle.length === 3) {
-      return triangle
-    }
-
-    pos.add(this.diagonal).sub(this.across)
+    // row 3
+    pos.add(this.diagonal)
     triangle.push(vec(pos))
-    pos.add(this.across)
+    pos.sub(this.across)
     triangle.push(vec(pos))
-    pos.add(this.across)
+    pos.addScaledVector(this.across, 2)
     triangle.push(vec(pos))
-    //
+    // row 4
     pos.add(this.diagonal)
     triangle.push(vec(pos))
     pos.sub(this.across)
@@ -92,7 +89,7 @@ export class Rack {
     triangle.push(vec(pos))
     pos.sub(this.across)
     triangle.push(vec(pos))
-    //
+    // row 5
     pos.add(this.diagonal).sub(this.across)
     triangle.push(vec(pos))
     pos.add(this.across)
@@ -104,7 +101,7 @@ export class Rack {
     pos.add(this.across)
     triangle.push(vec(pos))
 
-    return triangle.slice(0, 3)
+    return triangle.slice(0, 4)
   }
 
   static rerack(key: Ball, table: Table) {

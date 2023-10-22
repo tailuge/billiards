@@ -22,7 +22,6 @@ export class Replay extends ControllerBase {
     this.delay = delay
     this.container.table.showTraces(true)
     this.container.table.updateFromShortSerialised(this.init)
-    console.log(shots)
     if (retry) {
       const retryEvent = new BreakEvent(init, shots)
       retryEvent.retry = true
@@ -38,10 +37,9 @@ export class Replay extends ControllerBase {
 
     if (shot?.type === EventType.RERACK) {
       const rerack = RerackEvent.fromJson((shot as RerackEvent).ballinfo)
-      console.log(rerack)
       rerack.applyToController(this)
       if (this.shots.length > 0) {
-        return this.playNextShot(delay)
+        this.playNextShot(delay)
       }
       return
     }
