@@ -76,7 +76,7 @@ export class Rack {
     if (triangle.length === 3) {
       return triangle
     }
-    //
+
     pos.add(this.diagonal).sub(this.across)
     triangle.push(vec(pos))
     pos.add(this.across)
@@ -104,7 +104,7 @@ export class Rack {
     pos.add(this.across)
     triangle.push(vec(pos))
 
-    return triangle
+    return triangle.slice(0, 3)
   }
 
   static rerack(key: Ball, table: Table) {
