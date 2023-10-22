@@ -4,10 +4,12 @@ import { ChatEvent } from "./chatevent"
 import { EventType } from "./eventtype"
 import { HitEvent } from "./hitevent"
 import JSONCrush from "jsoncrush"
+import { RerackEvent } from "./rerackevent"
+import { GameEvent } from "./gameevent"
 
 export class Recorder {
   container: Container
-  shots: string[] = []
+  shots: GameEvent[] = []
   states: number[][] = []
   breakStart: number | undefined
   replayUrl
@@ -16,6 +18,13 @@ export class Recorder {
   }
 
   record(event) {
+    if (event.type === EventType.WATCHAIM && "rerack" in event.json) {
+      this.states.push(this.container.table.shortSerialise())
+      const rerack = RerackEvent.fromJson({
+        balls: this.container.table.serialise().balls,
+      })
+      this.shots.push(rerack)
+    }
     if (event.type === EventType.HIT) {
       this.states.push(this.container.table.shortSerialise())
       this.shots.push((<HitEvent>event).tablejson.aim)

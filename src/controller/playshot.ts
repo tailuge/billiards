@@ -14,9 +14,10 @@ export class PlayShot extends ControllerBase {
   override handleStationary(_) {
     const table = this.container.table
     const outcome = table.outcome
-    this.container.recoder.updateBreak(outcome)
     table.cue.aimAtNext(table)
-    return this.container.rules.update(outcome)
+    const nextController = this.container.rules.update(outcome)
+    this.container.recoder.updateBreak(outcome)
+    return nextController
   }
 
   override handleInput(input: Input): Controller {

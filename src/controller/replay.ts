@@ -4,11 +4,14 @@ import { AimEvent } from "../events/aimevent"
 import { Controller, Input } from "./controller"
 import { BreakEvent } from "../events/breakevent"
 import { Aim } from "./aim"
+import { GameEvent } from "../events/gameevent"
+import { EventType } from "../events/eventtype"
+import { RerackEvent } from "../events/rerackevent"
 
 export class Replay extends ControllerBase {
   delay: number
-  shots: AimEvent[]
-  firstShot: AimEvent
+  shots: GameEvent[]
+  firstShot: GameEvent
   timer
   init
   constructor(container, init, shots, retry = false, delay = 1500) {
@@ -19,6 +22,7 @@ export class Replay extends ControllerBase {
     this.delay = delay
     this.container.table.showTraces(true)
     this.container.table.updateFromShortSerialised(this.init)
+    console.log(shots)
     if (retry) {
       const retryEvent = new BreakEvent(init, shots)
       retryEvent.retry = true
@@ -31,6 +35,16 @@ export class Replay extends ControllerBase {
 
   playNextShot(delay) {
     const shot = this.shots.shift()
+
+    if (shot?.type === EventType.RERACK) {
+      const rerack = RerackEvent.fromJson((shot as RerackEvent).ballinfo)
+      console.log(rerack)
+      rerack.applyToController(this)
+      if (this.shots.length > 0) {
+        return this.playNextShot(delay)
+      }
+      return
+    }
     const aim = AimEvent.fromJson(shot)
     this.container.table.cueball = this.container.table.balls[aim.i]
     this.container.table.cueball.pos.copy(aim.pos)

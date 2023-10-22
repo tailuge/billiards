@@ -9,4 +9,5 @@ export enum EventType {
   ABORT = "ABORT",
   PLACEBALL = "PLACEBALL",
   REJOIN = "REJOIN",
+  RERACK = "RERACK",
 }
