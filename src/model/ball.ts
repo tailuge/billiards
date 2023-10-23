@@ -124,9 +124,7 @@ export class Ball {
   serialise() {
     return {
       pos: this.pos.clone(),
-      vel: this.vel,
-      rvel: this.rvel,
-      state: this.state,
+      id: this.id,
     }
   }
 
@@ -136,9 +134,9 @@ export class Ball {
 
   static updateFromSerialised(b, data) {
     b.pos.copy(data.pos)
-    b.vel.copy(vec(data.vel))
-    b.rvel.copy(vec(data.rvel))
-    b.state = data.state
+    b.vel.copy(data?.vel ?? zero)
+    b.rvel.copy(data?.rvel ?? zero)
+    b.state = State.Stationary
     return b
   }
 }

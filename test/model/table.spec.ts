@@ -13,6 +13,11 @@ import { Collision } from "../../src/model/physics/collision"
 const t = 0.01
 
 describe("Table", () => {
+  beforeEach(function (done) {
+    Ball.id = 0
+    done()
+  })
+
   it("updates when all stationary", (done) => {
     const a = new Ball(zero)
     const b = new Ball(new Vector3(1, 0, 0))

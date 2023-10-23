@@ -11,13 +11,10 @@ const t = 0.1
 describe("Ball", () => {
   it("serialise/deserialise", (done) => {
     const pos = new Vector3(1, 2, 0)
-    const vel = new Vector3(3, 4, 0)
     const ball = new Ball(pos)
-    ball.vel.copy(vel)
     const data = ball.serialise()
     const ball2 = Ball.fromSerialised(data)
     expect(ball2.pos).to.deep.equal(pos)
-    expect(ball2.vel).to.deep.equal(vel)
     done()
   })
 

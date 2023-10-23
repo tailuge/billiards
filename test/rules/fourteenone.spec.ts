@@ -6,7 +6,7 @@ import { initDom } from "../view/dom"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
 import { R } from "../../src/model/physics/constants"
 import { Vector3 } from "three"
-import { State } from "../../src/model/ball"
+import { Ball, State } from "../../src/model/ball"
 import { Aim } from "../../src/controller/aim"
 import { BeginEvent } from "../../src/events/beginevent"
 import { PlaceBall } from "../../src/controller/placeball"
@@ -36,6 +36,7 @@ describe("FourteenOne", () => {
     container = new Container(undefined, (_) => {}, false, rule)
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
+    Ball.id = 0
     done()
   })
 

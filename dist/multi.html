@@ -29,12 +29,13 @@
         testing
       </li>
       <li>
-        <a id="local2p3c">two players three cushion in single window</a> for
-        quick testing
+        <a id="local2p3c">two players three cushion in single window</a>
       </li>
       <li>
-        <a id="local2p14">two players 14-1 in single window</a> for quick
-        testing
+        <a id="local2p14">two players 14-1 in single window</a>
+      </li>
+      <li>
+        <a id="local2ps">two players snooker in single window</a>
       </li>
       <li><a id="local" href="lobby/lobby.html?mode=local">local lobby</a></li>
     </ul>
@@ -63,6 +64,9 @@
     document.getElementById(
       "local2p14"
     ).href = `/dist/2p.html?${wssparam}&ruletype=fourteenone`
+    document.getElementById(
+      "local2ps"
+    ).href = `/dist/2p.html?${wssparam}&ruletype=snooker`
     document.getElementById(
       "github"
     ).href = `https://tailuge.github.io/billiards/dist/?${wssparam}`

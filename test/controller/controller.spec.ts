@@ -21,7 +21,7 @@ import { zero } from "../../src/utils/utils"
 import { BreakEvent } from "../../src/events/breakevent"
 import { RejoinEvent } from "../../src/events/rejoinevent"
 import { initDom } from "../view/dom"
-import { State } from "../../src/model/ball"
+import { Ball, State } from "../../src/model/ball"
 
 initDom()
 
@@ -33,6 +33,7 @@ describe("Controller", () => {
     container = new Container(document.getElementById("viewP1"), (_) => {})
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
+    Ball.id = 0
     done()
   })
 

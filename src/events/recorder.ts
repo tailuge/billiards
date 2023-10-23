@@ -20,10 +20,11 @@ export class Recorder {
   record(event) {
     if (event.type === EventType.WATCHAIM && "rerack" in event.json) {
       this.states.push(this.container.table.shortSerialise())
-      const rerack = RerackEvent.fromJson({
-        balls: this.container.table.serialise().balls,
-      })
-      this.shots.push(rerack)
+      this.shots.push(
+        RerackEvent.fromJson({
+          balls: event.json.balls,
+        })
+      )
     }
     if (event.type === EventType.HIT) {
       this.states.push(this.container.table.shortSerialise())

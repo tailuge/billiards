@@ -21,9 +21,13 @@ export class Snooker extends NineBall implements Rules {
         this.redsOnTable(table) ||
         Outcome.isCueBallPotted(table.cueball, outcome)
       ) {
-        if (this.respotAllPottedColours(outcome)) {
-          const state = table.serialise()
-          const rerack = new WatchEvent({ ...state, rerack: true })
+        const respotted = this.respotAllPottedColours(outcome)
+        if (respotted.length > 0) {
+          const changes = {
+            balls: respotted.map((b) => b.serialise()),
+            rerack: true,
+          }
+          const rerack = new WatchEvent(changes)
           this.container.sendEvent(rerack)
           this.container.recoder.record(rerack)
         }
@@ -43,7 +47,6 @@ export class Snooker extends NineBall implements Rules {
       .filter((ball) => ball.id < 7)
       .filter((ball) => ball.id !== 0)
       .map((ball) => this.respot(ball))
-      .some((e) => e === true)
   }
 
   respot(ball: Ball) {
@@ -59,7 +62,7 @@ export class Snooker extends NineBall implements Rules {
     for (let x = pos.x; x > -TableGeometry.tableX; x -= R / 4) {
       positions.push(pos.setX(x).clone())
     }
-    return positions.some((p) => {
+    positions.some((p) => {
       if (!this.container.table.overlapsAny(p, ball)) {
         ball.pos.copy(p)
         ball.state = State.Stationary
@@ -67,5 +70,6 @@ export class Snooker extends NineBall implements Rules {
       }
       return false
     })
+    return ball
   }
 }
