@@ -1,7 +1,7 @@
 import { Ball, State } from "../model/ball"
 import { TableGeometry } from "../view/tablegeometry"
 import { Vector3 } from "three"
-import { round, roundVec, vec } from "./utils"
+import { roundVec, vec } from "./utils"
 import { R } from "../model/physics/constants"
 import { Table } from "../model/table"
 
@@ -11,6 +11,7 @@ export class Rack {
   static readonly up = new Vector3(0, 0, -1)
   static readonly spot = new Vector3(-TableGeometry.X / 2, 0.0, 0)
   static readonly across = new Vector3(0, Rack.gap, 0)
+  static readonly down = new Vector3(Rack.gap, 0, 0)
   static readonly diagonal = Rack.across
     .clone()
     .applyAxisAngle(Rack.up, (Math.PI * 1) / 3)
@@ -59,14 +60,15 @@ export class Rack {
 
   static triangle() {
     const tp = Rack.trianglePositions()
+    const cueball = Rack.cueBall(Rack.spot)
     const triangle = tp.map((p) => new Ball(Rack.jitter(p)))
-    triangle.unshift(Rack.cueBall(Rack.spot))
-    return triangle
+    triangle.unshift(cueball)
+    return triangle.slice(0, 5)
   }
 
   static trianglePositions() {
     const triangle: Vector3[] = []
-    const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
+    const pos = new Vector3(TableGeometry.X / 2, 0, 0)
     triangle.push(vec(pos))
     // row 2
     pos.add(this.diagonal)
@@ -101,7 +103,7 @@ export class Rack {
     pos.add(this.across)
     triangle.push(vec(pos))
 
-    return triangle.slice(0, 4)
+    return triangle
   }
 
   static rerack(key: Ball, table: Table) {
@@ -124,11 +126,47 @@ export class Rack {
 
   static three() {
     const threeballs: Ball[] = []
-    const dx = round(TableGeometry.X / 2)
-    const dy = round(TableGeometry.Y / 4)
+    const dx = TableGeometry.X / 2
+    const dy = TableGeometry.Y / 4
     threeballs.push(Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0))))
     threeballs.push(new Ball(Rack.jitter(new Vector3(-dx, 0, 0)), 0xe0de36))
     threeballs.push(new Ball(Rack.jitter(new Vector3(dx, 0, 0)), 0xff0000))
     return threeballs
+  }
+
+  static readonly sixth = (TableGeometry.Y * 2) / 6
+  static readonly baulk = (-1.5 * TableGeometry.X * 2) / 5
+
+  static snooker() {
+    const balls: Ball[] = []
+    const dy = TableGeometry.Y / 4
+    balls.push(Rack.cueBall(Rack.jitter(new Vector3(Rack.baulk, -dy / 2, 0))))
+
+    const colours = Rack.snookerColourPositions()
+    balls.push(new Ball(Rack.jitter(colours[0]), 0xe0de36))
+    balls.push(new Ball(Rack.jitter(colours[1]), 0x006666))
+    balls.push(new Ball(Rack.jitter(colours[2]), 0x773300))
+    balls.push(new Ball(Rack.jitter(colours[3]), 0x2222dd))
+    balls.push(new Ball(Rack.jitter(colours[4]), 0xff77aa))
+    balls.push(new Ball(Rack.jitter(colours[5]), 0x010101))
+
+    const triangle = Rack.trianglePositions().slice(0, 6)
+    triangle.forEach((p) => {
+      balls.push(new Ball(Rack.jitter(p.add(Rack.down)), 0xcc0000))
+    })
+    return balls
+  }
+
+  static snookerColourPositions() {
+    const dx = TableGeometry.X / 2
+    const black = TableGeometry.X - (TableGeometry.X * 2) / 11
+    const positions: Vector3[] = []
+    positions.push(new Vector3(Rack.baulk, -Rack.sixth, 0))
+    positions.push(new Vector3(Rack.baulk, Rack.sixth, 0))
+    positions.push(new Vector3(Rack.baulk, 0, 0))
+    positions.push(new Vector3(0, 0, 0))
+    positions.push(new Vector3(dx, 0, 0))
+    positions.push(new Vector3(black, 0, 0))
+    return positions
   }
 }
