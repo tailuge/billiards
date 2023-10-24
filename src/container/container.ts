@@ -55,7 +55,13 @@ export class Container {
     this.log = log
     this.rules = RuleFactory.create(ruletype, this)
     this.table = this.rules.table()
-    this.view = new View(element, ready, this.table, loadAssets)
+    this.view = new View(
+      element,
+      ready,
+      this.table,
+      loadAssets,
+      this.rules.asset()
+    )
     this.table.cue.aimInputs = new AimInputs(this)
     this.keyboard = keyboard
     this.sound = new Sound(this.view.camera.camera, loadAssets)

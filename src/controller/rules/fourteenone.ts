@@ -7,6 +7,10 @@ import { NineBall } from "./nineball"
 import { Rules } from "./rules"
 
 export class FourteenOne extends NineBall implements Rules {
+  override asset(): string {
+    return "models/p8.min.gltf"
+  }
+
   override rack() {
     return Rack.triangle()
   }

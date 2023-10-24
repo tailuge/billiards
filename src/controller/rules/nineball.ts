@@ -23,6 +23,10 @@ export class NineBall implements Rules {
     this.container = container
   }
 
+  asset(): string {
+    return "models/p8.min.gltf"
+  }
+
   table(): Table {
     const table = new Table(this.rack())
     this.cueball = table.cueball

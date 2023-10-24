@@ -21,6 +21,10 @@ export class ThreeCushion implements Rules {
     this.container = container
   }
 
+  asset(): string {
+    return "models/threecushion.min.gltf"
+  }
+
   secondToPlay() {
     this.cueball = this.container.table.balls[1]
   }

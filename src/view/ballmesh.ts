@@ -65,6 +65,8 @@ export class BallMesh {
       flatShading: true,
       vertexColors: true,
       forceSinglePass: true,
+      shininess: 25,
+      specular: 0x555533,
     })
     this.addDots(geometry, color)
     this.mesh = new Mesh(geometry, material)

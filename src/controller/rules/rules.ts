@@ -13,4 +13,5 @@ export interface Rules {
   isPartOfBreak(outcome: Outcome[]): boolean
   isEndOfGame(outcome: Outcome[]): boolean
   allowsPlaceBall(): boolean
+  asset(): string
 }

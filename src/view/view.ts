@@ -6,6 +6,7 @@ import { Table } from "../model/table"
 import { Grid } from "./grid"
 import { TableMesh } from "./tablemesh"
 import { renderer } from "../utils/webgl"
+import { Snooker } from "../controller/rules/snooker"
 
 export class View {
   readonly scene = new Scene()
@@ -16,11 +17,12 @@ export class View {
   readonly element
   table: Table
   loadAssets = true
-
-  constructor(element, ready, table, loadAssets) {
+  asset
+  constructor(element, ready, table, loadAssets, asset) {
     this.element = element
     this.loadAssets = loadAssets
     this.table = table
+    this.asset = asset
     this.renderer = renderer(element)
     this.camera = new Camera(
       element ? element.offsetWidth / element.offsetHeight : 1
@@ -72,14 +74,13 @@ export class View {
   }
 
   private addTable(ready) {
-    this.scene.add(new AmbientLight(0x515253, 0.3))
-    this.scene.add(new Grid().generateLineSegments())
+    this.scene.add(new AmbientLight(0x009922, 0.3))
+    if (this.asset !== Snooker.tablemodel) {
+      this.scene.add(new Grid().generateLineSegments())
+    }
     if (this.loadAssets) {
       importGltf("models/background.gltf", this.scene, true)
-      const tablemodel = this.table.hasPockets
-        ? "models/p8.min.gltf"
-        : "models/threecushion.min.gltf"
-      importGltf(tablemodel, this.scene, true, ready)
+      importGltf(this.asset, this.scene, true, ready)
     } else {
       new TableMesh().addToScene(this.scene, this.table.hasPockets)
       setTimeout(() => {

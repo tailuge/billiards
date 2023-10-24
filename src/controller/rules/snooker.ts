@@ -7,6 +7,11 @@ import { NineBall } from "./nineball"
 import { Rules } from "./rules"
 
 export class Snooker extends NineBall implements Rules {
+  static readonly tablemodel = "models/snooker.min.gltf"
+  override asset(): string {
+    return Snooker.tablemodel
+  }
+
   override rack() {
     return Rack.snooker()
   }
