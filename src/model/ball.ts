@@ -29,7 +29,7 @@ export class Ball {
   static id = 0
   readonly id = Ball.id++
 
-  private readonly transition = 0.05
+  static readonly transition = 0.05
 
   constructor(pos, color?) {
     this.pos = pos.clone()
@@ -96,7 +96,7 @@ export class Ball {
     return (
       this.vel.lengthSq() !== 0 &&
       this.rvel.lengthSq() !== 0 &&
-      surfaceVelocityFull(this.vel, this.rvel).length() < this.transition
+      surfaceVelocityFull(this.vel, this.rvel).length() < Ball.transition
     )
   }
 

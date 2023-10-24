@@ -16,6 +16,8 @@
   <body>
     <h1>tailuge/billiards multiplayer test page</h1>
     local assets (for dev)
+    <br />
+    single player
     <ul>
       <li><a href="/dist/">single player nineball</a></li>
       <li>
@@ -25,24 +27,40 @@
         <a href="/dist/?ruletype=fourteenone">single player 14-1</a>
       </li>
       <li>
-        <a id="local2p">two players nineball in single window</a> for quick
-        testing
+        <a href="/dist/?ruletype=snooker">single player snooker</a>
+      </li>
+    </ul>
+    two player
+    <ul>
+      <li>
+        <a class="addwss" href="./2p.html?ruletype=nineball"
+          >two players nineball in single window</a
+        >
+        for quick testing
       </li>
       <li>
-        <a id="local2p3c">two players three cushion in single window</a>
+        <a class="addwss" href="./2p.html?ruletype=nineball"
+          >two players three cushion in single window</a
+        >
       </li>
       <li>
-        <a id="local2p14">two players 14-1 in single window</a>
+        <a class="addwss" href="./2p.html?ruletype=nineball"
+          >two players 14-1 in single window</a
+        >
       </li>
       <li>
-        <a id="local2ps">two players snooker in single window</a>
+        <a class="addwss" href="./2p.html?ruletype=nineball"
+          >two players snooker in single window</a
+        >
       </li>
-      <li><a id="local" href="lobby/lobby.html?mode=local">local lobby</a></li>
+      <li><a href="lobby/lobby.html?mode=local">local lobby</a></li>
     </ul>
     github assets and local websocket server:
     <ul>
       <li>
-        <a id="github" href="https://tailuge.github.io/billiards/dist/"
+        <a
+          class="addwss"
+          href="https://tailuge.github.io/billiards/dist/?ruletype=nineball"
           >single player</a
         >
       </li>
@@ -57,18 +75,9 @@
     const server = window.location.origin
     const wss = server.replace(/^http/, "ws") + "/ws"
     const wssparam = `websocketserver=${wss}`
-    document.getElementById("local2p").href = `/dist/2p.html?${wssparam}`
-    document.getElementById(
-      "local2p3c"
-    ).href = `/dist/2p.html?${wssparam}&ruletype=threecushion`
-    document.getElementById(
-      "local2p14"
-    ).href = `/dist/2p.html?${wssparam}&ruletype=fourteenone`
-    document.getElementById(
-      "local2ps"
-    ).href = `/dist/2p.html?${wssparam}&ruletype=snooker`
-    document.getElementById(
-      "github"
-    ).href = `https://tailuge.github.io/billiards/dist/?${wssparam}`
+    const elts = document.getElementsByClassName("addwss")
+    for (elt of elts) {
+      elt.href += `&${wssparam}`
+    }
   </script>
 </html>

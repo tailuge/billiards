@@ -169,4 +169,35 @@ export class Rack {
     positions.push(new Vector3(black, 0, 0))
     return positions
   }
+
+  static respot(ball: Ball, table: Table) {
+    const positions = Rack.snookerColourPositions()
+    positions.push(positions[ball.id - 1])
+    positions.reverse()
+
+    const placed = positions.some((p) => {
+      if (!table.overlapsAny(p, ball)) {
+        ball.pos.copy(p)
+        ball.state = State.Stationary
+        return true
+      }
+      return false
+    })
+    if (!placed) {
+      Rack.respotBehind(positions[0], ball, table)
+    }
+    return ball
+  }
+
+  static respotBehind(targetpos, ball, table) {
+    const pos = targetpos.clone()
+    while (pos.x < TableGeometry.tableX && table.overlapsAny(pos, ball)) {
+      pos.x += R / 8
+    }
+    while (pos.x > -TableGeometry.tableX && table.overlapsAny(pos, ball)) {
+      pos.x -= R / 8
+    }
+    ball.pos.copy(pos)
+    ball.state = State.Stationary
+  }
 }

@@ -36,8 +36,16 @@ export class Recorder {
     return this.state(this.states[0], this.shots)
   }
 
+  last() {
+    let last = this.states.length - 1
+    if (last > 0 && this.shots[last].type === "RERACK") {
+      last--
+    }
+    return last
+  }
+
   lastShot() {
-    const last = this.states.length - 1
+    let last = this.last()
     return this.state(this.states[last], [this.shots[last]])
   }
 
@@ -78,7 +86,7 @@ export class Recorder {
     }
 
     if (this.breakStart === undefined) {
-      this.breakStart = this.states.length - 1
+      this.breakStart = this.last()
     }
   }
 
