@@ -13,7 +13,6 @@ import { PlayShot } from "../../src/controller/playshot"
 import { Aim } from "../../src/controller/aim"
 import { PlaceBall } from "../../src/controller/placeball"
 import { Snooker } from "../../src/controller/rules/snooker"
-import { table } from "console"
 
 initDom()
 

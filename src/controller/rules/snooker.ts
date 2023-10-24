@@ -24,25 +24,24 @@ export class Snooker extends NineBall implements Rules {
         this.respot(outcome)
       } else if (Outcome.onlyRedsPotted(outcome)) {
         this.previousPotRed = true
-      } else {
+      } else if (pots === 1) {
         // out of order colour pot gets respotted
-        if (pots === 1) {
-          const id = Outcome.pots(outcome)[0].id
-          const lesserBallOnTable =
-            id > 1 &&
-            this.container.table.balls
-              .filter((b) => b.id < id)
-              .filter((b) => b.id > 0)
-              .some((b) => b.onTable())
-          if (lesserBallOnTable) {
-            this.respot(outcome)
-          }
-        } else {
-          // multiple colour pots get respotted
+        const id = Outcome.pots(outcome)[0].id
+        const lesserBallOnTable =
+          id > 1 &&
+          this.container.table.balls
+            .filter((b) => b.id < id)
+            .filter((b) => b.id > 0)
+            .some((b) => b.onTable())
+        if (lesserBallOnTable) {
           this.respot(outcome)
         }
+      } else {
+        // multiple colour pots get respotted
+        this.respot(outcome)
       }
     }
+
     return super.update(outcome)
   }
 
