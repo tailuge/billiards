@@ -45,7 +45,7 @@ export class Recorder {
   }
 
   lastShot() {
-    let last = this.last()
+    const last = this.last()
     return this.state(this.states[last], [this.shots[last]])
   }
 
