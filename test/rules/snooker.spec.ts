@@ -7,11 +7,13 @@ import { BeginEvent } from "../../src/events/beginevent"
 import { Input } from "../../src/events/input"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
 import { R } from "../../src/model/physics/constants"
-import { Ball } from "../../src/model/ball"
+import { Ball, State } from "../../src/model/ball"
 import { Vector3 } from "three"
 import { PlayShot } from "../../src/controller/playshot"
 import { Aim } from "../../src/controller/aim"
 import { PlaceBall } from "../../src/controller/placeball"
+import { Snooker } from "../../src/controller/rules/snooker"
+import { table } from "console"
 
 initDom()
 
@@ -83,17 +85,91 @@ describe("Snooker", () => {
     playShotWaitForOutcome()
     expect(container.controller).to.be.an.instanceof(Aim)
     expect(container.recoder.shots).to.be.length(1)
+    const rule = container.rules as Snooker
+    expect(rule.previousPotRed).to.be.true
     done()
   })
 
-  it("Pot colour is respotted", (done) => {
+  it("Pot colour is respotted after red", (done) => {
     bringToAimMode()
-    expect(container.controller).to.be.an.instanceof(Aim)
+    // pot red
+    setupTableWithPot(container.table.balls[7])
+    playShotWaitForOutcome()
 
+    // pot black
     setupTableWithPot(container.table.balls[6])
     playShotWaitForOutcome()
+    container.advance(1)
+    container.processEvents()
+
     expect(container.controller).to.be.an.instanceof(Aim)
-    expect(container.recoder.shots).to.be.length(2)
+    const rule = container.rules as Snooker
+    expect(rule.previousPotRed).to.be.false
+    expect(container.table.balls[6].onTable()).to.be.true
+    done()
+  })
+
+  it("Pot colour is not respotted when not after red", (done) => {
+    bringToAimMode()
+    const rule = container.rules as Snooker
+    expect(rule.previousPotRed).to.be.false
+
+    // pot yellow
+    setupTableWithPot(container.table.balls[1])
+    playShotWaitForOutcome()
+    container.advance(1)
+    container.processEvents()
+
+    expect(container.controller).to.be.an.instanceof(Aim)
+    expect(rule.previousPotRed).to.be.false
+    expect(container.table.balls[1].onTable()).to.be.false
+    done()
+  })
+
+  it("Pot black before yellow gets respotted", (done) => {
+    bringToAimMode()
+    const rule = container.rules as Snooker
+    expect(rule.previousPotRed).to.be.false
+
+    // all reds potted
+    container.table.balls
+      .filter((b) => b.id > 6)
+      .forEach((b) => b.state === State.InPocket)
+
+    // pot black
+    setupTableWithPot(container.table.balls[6])
+    playShotWaitForOutcome()
+    container.advance(1)
+    container.processEvents()
+
+    expect(container.controller).to.be.an.instanceof(Aim)
+    expect(rule.previousPotRed).to.be.false
+    expect(container.table.balls[6].onTable()).to.be.true
+    done()
+  })
+
+  it("green after yellow is not respotted", (done) => {
+    bringToAimMode()
+    const rule = container.rules as Snooker
+    expect(rule.previousPotRed).to.be.false
+
+    // all reds potted
+    container.table.balls
+      .filter((b) => b.id > 6)
+      .forEach((b) => b.state === State.InPocket)
+
+    // yellow potted
+    container.table.balls[1].state = State.InPocket
+
+    // pot green
+    setupTableWithPot(container.table.balls[2])
+    playShotWaitForOutcome()
+    container.advance(1)
+    container.processEvents()
+
+    expect(container.controller).to.be.an.instanceof(Aim)
+    expect(rule.previousPotRed).to.be.false
+    expect(container.table.balls[2].onTable()).to.be.false
     done()
   })
 })

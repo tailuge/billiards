@@ -51,8 +51,17 @@ export class Outcome {
     )
   }
 
+  static pots(outcomes: Outcome[]): Ball[] {
+    return outcomes
+      .filter((o) => o.type == OutcomeType.Pot)
+      .map((o) => o.ballA!)
+  }
   static potCount(outcomes: Outcome[]) {
-    return outcomes.filter((o) => o.type == OutcomeType.Pot).length
+    return this.pots(outcomes).length
+  }
+
+  static onlyRedsPotted(outcomes: Outcome[]) {
+    return this.pots(outcomes).every((b) => b.id > 6)
   }
 
   static isThreeCushionPoint(cueBall, outcomes: Outcome[]) {
