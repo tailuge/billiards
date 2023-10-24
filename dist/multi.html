@@ -76,7 +76,7 @@
     const wss = server.replace(/^http/, "ws") + "/ws"
     const wssparam = `websocketserver=${wss}`
     const elts = document.getElementsByClassName("addwss")
-    for (elt of elts) {
+    for (const elt of elts) {
       elt.href += `&${wssparam}`
     }
   </script>

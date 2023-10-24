@@ -7,12 +7,10 @@ import { BeginEvent } from "../../src/events/beginevent"
 import { Input } from "../../src/events/input"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
 import { R } from "../../src/model/physics/constants"
-import { Ball, State } from "../../src/model/ball"
+import { Ball } from "../../src/model/ball"
 import { Vector3 } from "three"
 import { PlayShot } from "../../src/controller/playshot"
 import { Aim } from "../../src/controller/aim"
-import { WatchEvent } from "../../src/events/watchevent"
-import { RerackEvent } from "../../src/events/rerackevent"
 import { PlaceBall } from "../../src/controller/placeball"
 
 initDom()
