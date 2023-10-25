@@ -17,8 +17,8 @@
         src="index.html"
         title="P1"
         id="P1"
-        width="500"
-        height="396"
+        width="620"
+        height="450"
         style="float: left"
       ></iframe>
     </div>
@@ -27,8 +27,8 @@
         src="index.html"
         title="P2"
         id="P2"
-        width="500"
-        height="396"
+        width="620"
+        height="450"
         style="float: right"
       ></iframe>
     </div>
@@ -38,11 +38,9 @@
     const urlParams = new URLSearchParams(window.location.search)
     const websocketserver = urlParams.get("websocketserver")
     const ruletype = urlParams.get("ruletype")
-    document.getElementById(
-      "P1"
-    ).src = `index.html?ruletype=${ruletype}&name=P1&clientId=p1id&websocketserver=${websocketserver}`
-    document.getElementById(
-      "P2"
-    ).src = `index.html?ruletype=${ruletype}&name=P2&clientId=p2id&websocketserver=${websocketserver}`
+    const unique = Math.floor(Math.random() * 0xffff).toString(16)
+    const url = `index.html?ruletype=${ruletype}&websocketserver=${websocketserver}&tableId=${unique}`
+    document.getElementById("P1").src = `${url}&clientId=p1id&name=P1`
+    document.getElementById("P2").src = `${url}&clientId=p2id&name=P2`
   </script>
 </html>

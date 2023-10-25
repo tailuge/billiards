@@ -21,6 +21,7 @@ export class WatchShot extends ControllerBase {
   override handleWatch(event) {
     if ("rerack" in event.json) {
       this.container.table.updateFromSerialised(event.json)
+      return this
     }
     return new WatchAim(this.container)
   }
