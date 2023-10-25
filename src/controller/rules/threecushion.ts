@@ -23,7 +23,7 @@ export class ThreeCushion implements Rules {
     this.container = container
   }
 
-  placeBall(_?: any): Vector3 {
+  placeBall(_?): Vector3 {
     return zero
   }
 
