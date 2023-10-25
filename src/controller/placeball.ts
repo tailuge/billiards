@@ -1,7 +1,7 @@
 import { ControllerBase } from "./controllerbase"
 import { Controller, Input } from "./controller"
 import { Aim } from "./aim"
-import { MathUtils, Vector3 } from "three"
+import { MathUtils } from "three"
 import { TableGeometry } from "../view/tablegeometry"
 import { BreakEvent } from "../events/breakevent"
 import { round } from "../utils/utils"
