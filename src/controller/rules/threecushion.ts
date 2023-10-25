@@ -1,3 +1,4 @@
+import { Vector3 } from "three"
 import { Container } from "../../container/container"
 import { Aim } from "../../controller/aim"
 import { Controller } from "../../controller/controller"
@@ -11,6 +12,7 @@ import { Rack } from "../../utils/rack"
 import { CameraTop } from "../../view/cameratop"
 import { TableGeometry } from "../../view/tablegeometry"
 import { Rules } from "./rules"
+import { zero } from "../../utils/utils"
 
 export class ThreeCushion implements Rules {
   readonly container: Container
@@ -19,6 +21,10 @@ export class ThreeCushion implements Rules {
 
   constructor(container) {
     this.container = container
+  }
+
+  placeBall(_?: any): Vector3 {
+    return zero
   }
 
   asset(): string {

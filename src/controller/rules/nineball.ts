@@ -1,3 +1,4 @@
+import { Vector3 } from "three"
 import { Container } from "../../container/container"
 import { Aim } from "../../controller/aim"
 import { Controller } from "../../controller/controller"
@@ -13,6 +14,7 @@ import { Rack } from "../../utils/rack"
 import { zero } from "../../utils/utils"
 import { End } from "../end"
 import { Rules } from "./rules"
+import { R } from "../../model/physics/constants"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -21,6 +23,13 @@ export class NineBall implements Rules {
 
   constructor(container) {
     this.container = container
+  }
+
+  placeBall(target?): Vector3 {
+    if (target) {
+      return target
+    }
+    return new Vector3((-R * 11) / 0.5, 0, 0)
   }
 
   asset(): string {

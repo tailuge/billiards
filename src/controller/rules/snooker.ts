@@ -1,3 +1,4 @@
+import { Vector3 } from "three"
 import { WatchEvent } from "../../events/watchevent"
 import { Outcome } from "../../model/outcome"
 import { Rack } from "../../utils/rack"
@@ -14,6 +15,13 @@ export class Snooker extends NineBall implements Rules {
 
   override rack() {
     return Rack.snooker()
+  }
+
+  override placeBall(target?): Vector3 {
+    if (target) {
+      return target
+    }
+    return new Vector3(Rack.baulk, -Rack.sixth / 3, 0)
   }
 
   override update(outcome: Outcome[]): Controller {

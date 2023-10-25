@@ -1,3 +1,4 @@
+import { Vector3 } from "three"
 import { Controller } from "../../controller/controller"
 import { Ball } from "../../model/ball"
 import { Outcome } from "../../model/outcome"
@@ -13,5 +14,6 @@ export interface Rules {
   isPartOfBreak(outcome: Outcome[]): boolean
   isEndOfGame(outcome: Outcome[]): boolean
   allowsPlaceBall(): boolean
+  placeBall(target?): Vector3
   asset(): string
 }
