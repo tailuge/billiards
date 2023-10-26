@@ -51,10 +51,10 @@ export class Camera {
   adjustHeight(delta) {
     delta = this.height < 10 * R ? delta / 8 : delta
     this.height = MathUtils.clamp(this.height + delta, R * 6, R * 120)
-    if (this.height > R * 100) {
+    if (this.height > R * 110) {
       this.suggestMode(this.topView)
     }
-    if (this.height < R * 70) {
+    if (this.height < R * 105) {
       this.suggestMode(this.aimView)
     }
   }
