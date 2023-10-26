@@ -65,10 +65,10 @@ export abstract class ControllerBase extends Controller {
         return true
       case "movementYUp":
       case "NumpadSubtract":
-        this.container.view.camera.adjustHeight(-delta * 10)
+        this.container.view.camera.adjustHeight(-delta * 8)
         return true
       case "NumpadAdd":
-        this.container.view.camera.adjustHeight(delta * 10)
+        this.container.view.camera.adjustHeight(delta * 8)
         return true
       case "KeyOUp":
         this.container.view.camera.toggleMode()

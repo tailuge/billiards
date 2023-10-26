@@ -32,18 +32,31 @@ export class Camera {
   }
 
   aimView(aim: AimEvent, fraction = 0.08) {
+    const h = this.height
     this.camera.fov = this.camera.aspect < 0.8 ? 60 : 40
+    if (h < 10 * R) {
+      const factor = 100 * (10 * R - h)
+      this.camera.fov -= factor
+      console.log(this.camera.fov)
+    }
     this.camera.position.lerp(
       aim.pos.clone().addScaledVector(unitAtAngle(aim.angle), -R * 18),
       fraction
     )
-    this.camera.position.z = this.height
+    this.camera.position.z = h
     this.camera.up = up
-    this.camera.lookAt(aim.pos.clone().addScaledVector(up, 2 * R))
+    this.camera.lookAt(aim.pos.clone().addScaledVector(up, h / 2))
   }
 
   adjustHeight(delta) {
-    this.height = MathUtils.clamp(this.height + delta, 1, 6)
+    delta = this.height < 10 * R ? delta / 8 : delta
+    this.height = MathUtils.clamp(this.height + delta, R * 6, R * 120)
+    if (this.height > R * 100) {
+      this.suggestMode(this.topView)
+    }
+    if (this.height < R * 70) {
+      this.suggestMode(this.aimView)
+    }
   }
 
   suggestMode(mode) {

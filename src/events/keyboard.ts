@@ -63,11 +63,14 @@ export class Keyboard {
   mousetouch = (e) => {
     const factor = e.ctrlKey ? 0.5 : 1
     const dx = e.dx * factor
-    if (this.released["movementX"]) {
-      this.released["movementX"] += dx
-    } else {
-      this.released["movementX"] = dx
+    const dy = e.dy * factor
+    if (Math.abs(dy) > 3 * Math.abs(dx)) {
+      const cy = this.released["movementY"] ?? 0.0
+      this.released["movementY"] = cy + dy
+      return
     }
+    const cx = this.released["movementX"] ?? 0.0
+    this.released["movementX"] = cx + dx
   }
 
   private addHandlers(element: HTMLCanvasElement) {
