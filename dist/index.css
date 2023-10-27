@@ -40,13 +40,20 @@ p {
   height: 83%;
   cursor: none;
   caret-color: transparent;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .view3d:focus {
   outline-width: 0;
+  outline: none;
 }
 
 canvas {
   border-radius: 5px;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .panel {

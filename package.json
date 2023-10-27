@@ -33,7 +33,7 @@
   "dependencies": {
     "interactjs": "^1.10.19",
     "jsoncrush": "^1.1.8",
-    "three": "^0.157.0"
+    "three": "^0.158.0"
   },
   "devDependencies": {
     "@swc/core": "^1.3.95",
