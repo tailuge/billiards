@@ -33,11 +33,11 @@ export class Camera {
 
   aimView(aim: AimEvent, fraction = 0.08) {
     const h = this.height
-    this.camera.fov = this.camera.aspect < 0.8 ? 60 : 40
+    const portrait = this.camera.aspect < 0.8
+    this.camera.fov = portrait ? 60 : 40
     if (h < 10 * R) {
       const factor = 100 * (10 * R - h)
-      this.camera.fov -= factor
-      console.log(this.camera.fov)
+      this.camera.fov -= factor * (portrait ? 3 : 1)
     }
     this.camera.position.lerp(
       aim.pos.clone().addScaledVector(unitAtAngle(aim.angle), -R * 18),

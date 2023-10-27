@@ -18,17 +18,6 @@ beforeEach(function (done) {
 })
 
 describe("Menu", () => {
-  it("togglemenu", (done) => {
-    const togglemenu = document.getElementById(
-      "togglemenu"
-    ) as HTMLButtonElement
-    fireEvent.click(togglemenu, { target: { value: 1 } })
-    expect(menu.menu.display).to.be.equal("flex")
-    fireEvent.click(togglemenu, { target: { value: 1 } })
-    expect(menu.menu.display).to.be.equal("none")
-    done()
-  })
-
   it("camera", (done) => {
     const toggleview = document.getElementById("camera") as HTMLButtonElement
     expect(container.view.camera.mode).to.be.equal(

@@ -16,10 +16,11 @@ export class Knuckle {
     return futurePosition.distanceTo(knuckle.pos) < R + knuckle.radius
   }
 
-  public bounce(ball) {
+  public bounce(ball: Ball) {
     const kb = ball.pos.clone().sub(this.pos).normalize()
     const velDotCenters = kb.dot(ball.vel)
     ball.vel.addScaledVector(kb, -2 * e * velDotCenters)
+    ball.rvel.multiplyScalar(0.5)
     return Math.abs(velDotCenters)
   }
 

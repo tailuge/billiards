@@ -6,34 +6,32 @@ import { share, shorten } from "../utils/shorten"
 
 export class Menu {
   container: Container
-  togglemenu: HTMLButtonElement
   redo: HTMLButtonElement
   share: HTMLButtonElement
   replay: HTMLButtonElement
   camera: HTMLButtonElement
-  menu
+
+  disabled = true
 
   constructor(container) {
     this.container = container
-    this.menu = (document.getElementById("menu") as HTMLElement)?.style
 
-    this.togglemenu = this.getElement("togglemenu")
     this.replay = this.getElement("replay")
     this.redo = this.getElement("redo")
     this.share = this.getElement("share")
     this.camera = this.getElement("camera")
-    if (this.togglemenu) {
-      this.togglemenu.onclick = (_) => {
-        this.toggleMenu()
-      }
+    if (this.camera) {
+      this.setMenu(true)
       this.camera.onclick = (_) => {
         this.adjustCamera()
       }
     }
   }
 
-  toggleMenu() {
-    this.menu.display = this.menu.display === "flex" ? "none" : "flex"
+  setMenu(disabled) {
+    this.replay.disabled = disabled
+    this.redo.disabled = disabled
+    this.share.disabled = disabled
   }
 
   adjustCamera() {
@@ -42,7 +40,7 @@ export class Menu {
   }
 
   replayMode(url, breakEvent: BreakEvent) {
-    this.menu.display = "flex"
+    this.setMenu(false)
     const queue = this.container.eventQueue
     this.share.onclick = (_) => {
       shorten(url, (url) => {
