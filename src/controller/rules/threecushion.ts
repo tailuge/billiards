@@ -23,6 +23,15 @@ export class ThreeCushion implements Rules {
     this.container = container
   }
 
+  startTurn() {}
+
+  nextCandidateBall() {
+    return Rack.closest(
+      this.container.table.cueball,
+      this.container.table.balls
+    )
+  }
+
   placeBall(_?): Vector3 {
     return zero
   }

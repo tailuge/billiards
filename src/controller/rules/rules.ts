@@ -16,4 +16,6 @@ export interface Rules {
   allowsPlaceBall(): boolean
   placeBall(target?): Vector3
   asset(): string
+  nextCandidateBall()
+  startTurn()
 }

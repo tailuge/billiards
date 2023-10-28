@@ -25,6 +25,15 @@ export class NineBall implements Rules {
     this.container = container
   }
 
+  startTurn() {}
+
+  nextCandidateBall() {
+    return Rack.closest(
+      this.container.table.cueball,
+      this.container.table.balls
+    )
+  }
+
   placeBall(target?): Vector3 {
     if (target) {
       return target
@@ -50,6 +59,7 @@ export class NineBall implements Rules {
     const table = this.container.table
     // if white potted switch to other player
     if (Outcome.isCueBallPotted(table.cueball, outcome)) {
+      this.startTurn()
       if (this.container.isSinglePlayer) {
         return new PlaceBall(this.container)
       }
@@ -71,6 +81,7 @@ export class NineBall implements Rules {
     this.container.sendEvent(table.cue.aim)
     if (this.container.isSinglePlayer) {
       this.container.sendEvent(new WatchEvent(table.serialise()))
+      this.startTurn()
       return new Aim(this.container)
     }
     return new WatchAim(this.container)

@@ -8,13 +8,39 @@ import { Rules } from "./rules"
 
 export class Snooker extends NineBall implements Rules {
   previousPotRed: boolean = false
+  currentBreak = 0
+
   static readonly tablemodel = "models/snooker.min.gltf"
   override asset(): string {
     return Snooker.tablemodel
   }
 
+  override startTurn() {
+    this.previousPotRed = false
+    this.currentBreak = 0
+  }
+
   override rack() {
     return Rack.snooker()
+  }
+
+  override nextCandidateBall() {
+    const table = this.container.table
+    const redsOnTable = table.balls.slice(7).filter((ball) => ball.onTable())
+    const coloursOnTable = table.balls
+      .slice(1, 7)
+      .filter((ball) => ball.onTable())
+    if (this.previousPotRed) {
+      return Rack.closest(table.cueball, coloursOnTable)
+    }
+    if (redsOnTable.length > 0) {
+      return Rack.closest(table.cueball, redsOnTable)
+    }
+
+    if (coloursOnTable.length > 0) {
+      return coloursOnTable[0]
+    }
+    return
   }
 
   override placeBall(target?): Vector3 {

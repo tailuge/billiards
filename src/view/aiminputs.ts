@@ -36,7 +36,7 @@ export class AimInputs {
     this.cueHitElement?.addEventListener("click", this.hit)
     this.cuePowerElement?.addEventListener("change", this.powerChanged)
     if (!("ontouchstart" in window)) {
-      document.addEventListener("dblclick", this.hit)
+      document.getElementById("viewP1")?.addEventListener("dblclick", this.hit)
     }
     document.addEventListener("wheel", this.mousewheel)
   }

@@ -15,6 +15,7 @@ import { cueToSpin } from "../model/physics/physics"
 import { CueMesh } from "./cuemesh"
 import { Mesh, Raycaster, Vector3 } from "three"
 import { R } from "../model/physics/constants"
+import { Rack } from "../utils/rack"
 
 export class Cue {
   mesh: Mesh
@@ -62,21 +63,11 @@ export class Cue {
     ball.rvel.copy(cueToSpin(aim.offset, ball.vel))
   }
 
-  aimAtNext(table: Table) {
-    const onTable = table.balls
-      .filter((ball) => ball.onTable())
-      .filter((ball) => ball !== table.cueball)
-    if (onTable.length === 0) {
+  aimAtNext(cueball, ball) {
+    if (!ball) {
       return
     }
-    const distanceToCueBall = (b) => {
-      return table.cueball.pos.distanceTo(b.pos)
-    }
-    const closest = onTable.reduce(
-      (a, b) => (distanceToCueBall(a) < distanceToCueBall(b) ? a : b),
-      onTable[0]
-    )
-    const lineTo = norm(closest.pos.clone().sub(table.cueball.pos))
+    const lineTo = norm(ball.pos.clone().sub(cueball.pos))
     this.aim.angle = Math.atan2(lineTo.y, lineTo.x)
   }
 

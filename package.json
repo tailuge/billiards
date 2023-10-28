@@ -42,7 +42,7 @@
     "@types/chai": "^4.3.9",
     "@types/jest": "^29.5.6",
     "@types/node": "^20.8.9",
-    "@types/three": "^0.157.2",
+    "@types/three": "^0.158.0",
     "chai": "^4.3.10",
     "ini": "^4.1.1",
     "jest": "^29.7.0",

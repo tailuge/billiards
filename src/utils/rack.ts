@@ -200,4 +200,20 @@ export class Rack {
     ball.pos.copy(pos)
     ball.state = State.Stationary
   }
+
+  static closest(cueball: Ball, balls: Ball[]) {
+    const onTable = balls
+      .filter((ball) => ball.onTable())
+      .filter((ball) => ball !== cueball)
+    if (onTable.length === 0) {
+      return
+    }
+    const distanceToCueBall = (b) => {
+      return cueball.pos.distanceTo(b.pos)
+    }
+    return onTable.reduce(
+      (a, b) => (distanceToCueBall(a) < distanceToCueBall(b) ? a : b),
+      onTable[0]
+    )
+  }
 }
