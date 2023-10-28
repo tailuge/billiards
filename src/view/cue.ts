@@ -15,7 +15,6 @@ import { cueToSpin } from "../model/physics/physics"
 import { CueMesh } from "./cuemesh"
 import { Mesh, Raycaster, Vector3 } from "three"
 import { R } from "../model/physics/constants"
-import { Rack } from "../utils/rack"
 
 export class Cue {
   mesh: Mesh

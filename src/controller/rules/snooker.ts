@@ -40,7 +40,7 @@ export class Snooker extends NineBall implements Rules {
     if (coloursOnTable.length > 0) {
       return coloursOnTable[0]
     }
-    return
+    return undefined
   }
 
   override placeBall(target?): Vector3 {

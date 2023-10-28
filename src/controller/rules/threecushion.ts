@@ -23,7 +23,9 @@ export class ThreeCushion implements Rules {
     this.container = container
   }
 
-  startTurn() {}
+  startTurn() {
+    // not used
+  }
 
   nextCandidateBall() {
     return Rack.closest(
