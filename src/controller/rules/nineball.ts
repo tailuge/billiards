@@ -25,7 +25,9 @@ export class NineBall implements Rules {
     this.container = container
   }
 
-  startTurn() {}
+  startTurn() {
+    // not used
+  }
 
   nextCandidateBall() {
     return Rack.closest(
