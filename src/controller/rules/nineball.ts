@@ -15,6 +15,7 @@ import { zero } from "../../utils/utils"
 import { End } from "../end"
 import { Rules } from "./rules"
 import { R } from "../../model/physics/constants"
+import { Respot } from "../../utils/respot"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -30,7 +31,7 @@ export class NineBall implements Rules {
   }
 
   nextCandidateBall() {
-    return Rack.closest(
+    return Respot.closest(
       this.container.table.cueball,
       this.container.table.balls
     )

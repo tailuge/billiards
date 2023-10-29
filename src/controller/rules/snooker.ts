@@ -5,6 +5,7 @@ import { Rack } from "../../utils/rack"
 import { Controller } from "../controller"
 import { NineBall } from "./nineball"
 import { Rules } from "./rules"
+import { Respot } from "../../utils/respot"
 
 export class Snooker extends NineBall implements Rules {
   previousPotRed: boolean = false
@@ -31,10 +32,10 @@ export class Snooker extends NineBall implements Rules {
       .slice(1, 7)
       .filter((ball) => ball.onTable())
     if (this.previousPotRed) {
-      return Rack.closest(table.cueball, coloursOnTable)
+      return Respot.closest(table.cueball, coloursOnTable)
     }
     if (redsOnTable.length > 0) {
-      return Rack.closest(table.cueball, redsOnTable)
+      return Respot.closest(table.cueball, redsOnTable)
     }
 
     if (coloursOnTable.length > 0) {
@@ -96,6 +97,6 @@ export class Snooker extends NineBall implements Rules {
     return Outcome.pots(outcome)
       .filter((ball) => ball.id < 7)
       .filter((ball) => ball.id !== 0)
-      .map((ball) => Rack.respot(ball, this.container.table))
+      .map((ball) => Respot.respot(ball, this.container.table))
   }
 }

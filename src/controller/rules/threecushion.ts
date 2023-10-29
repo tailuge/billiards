@@ -13,6 +13,7 @@ import { CameraTop } from "../../view/cameratop"
 import { TableGeometry } from "../../view/tablegeometry"
 import { Rules } from "./rules"
 import { zero } from "../../utils/utils"
+import { Respot } from "../../utils/respot"
 
 export class ThreeCushion implements Rules {
   readonly container: Container
@@ -28,7 +29,7 @@ export class ThreeCushion implements Rules {
   }
 
   nextCandidateBall() {
-    return Rack.closest(
+    return Respot.closest(
       this.container.table.cueball,
       this.container.table.balls
     )

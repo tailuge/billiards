@@ -115,6 +115,18 @@ describe("Controller", () => {
     done()
   })
 
+  it("WatchEvent rerack takes WatchShot to WatchShot", (done) => {
+    const watchShot = new WatchShot(container)
+    container.controller = watchShot
+    container.table.cueball.setStationary()
+    const state = container.table.serialise()
+    const rerack = new WatchEvent({ ...state, rerack: true })
+    container.eventQueue.push(rerack)
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(WatchShot)
+    done()
+  })
+
   it("AimEvent does not take WatchShot to Aim when not stationary", (done) => {
     container.controller = new WatchShot(container)
     container.eventQueue.push(new AimEvent())
