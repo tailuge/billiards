@@ -18,7 +18,7 @@ export function sliding(v, w) {
   const va = surfaceVelocity(v, w)
   delta.v.copy(norm(va).multiplyScalar(-muS * g))
   delta.w.copy(norm(upCross(va)).multiplyScalar(((5 / 2) * muS * g) / R))
-  delta.w.setZ(-(5 / 2) * (Mz / (R * R)) * Math.sign(w.z))
+  delta.w.setZ(-(5 / 2) * (Mz / (m * R * R)) * Math.sign(w.z))
   return delta
 }
 
