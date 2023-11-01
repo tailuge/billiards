@@ -92,9 +92,7 @@ export class Cue {
     this.aim.pos.copy(pos)
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle
-    const offset = upCross(unitAtAngle(this.aim.angle))
-      .multiplyScalar(this.aim.offset.x * 2 * R)
-      .setZ(this.aim.offset.y * 2 * R)
+    const offset = this.spinOffset()
     const swing =
       (Math.sin(this.t + Math.PI / 2) - 1) *
       3 *
@@ -125,16 +123,19 @@ export class Cue {
     this.placerMesh.visible = false
   }
 
+  spinOffset() {
+    return upCross(unitAtAngle(this.aim.angle))
+    .multiplyScalar(this.aim.offset.x * 2 * R)
+    .setZ(this.aim.offset.y * 2 * R)
+  }
+
   intersectsAnything(table: Table) {
-    const origin = table.cueball.pos
-      .clone()
-      .addScaledVector(unitAtAngle(this.aim.angle), -this.length / 2)
-    origin.z = this.aim.offset.y
-    const direction = unitAtAngle(this.aim.angle)
-    const raycaster = new Raycaster(origin, direction, 0, this.length / 2 - 0.6)
+    const offset = this.spinOffset()  
+    const origin = table.cueball.pos.clone().add(offset)      
+    const direction = norm(unitAtAngle(this.aim.angle+Math.PI).setZ(0.1))
+    const raycaster = new Raycaster(origin, direction)
     const intersections = raycaster.intersectObjects(
-      table.balls.map((b) => b.ballmesh.mesh)
-    )
+      table.balls.map((b) => b.ballmesh.mesh))
     return intersections.length > 0
   }
 
