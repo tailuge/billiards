@@ -45,7 +45,6 @@ p {
   user-select: none;
 }
 .view3d:focus {
-  outline-width: 0;
   outline: none;
 }
 
