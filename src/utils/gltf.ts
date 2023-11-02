@@ -18,7 +18,7 @@ export function exportGltf(scene) {
 }
 
 /* istanbul ignore next */
-export function importGltf(path, scene, visible, ready = () => {}) {
+export function importGltf(path, scene, visible, ready = (_) => {}) {
   const loader = new GLTFLoader()
   loader.load(
     path,
@@ -27,10 +27,12 @@ export function importGltf(path, scene, visible, ready = () => {}) {
       gltf.scene.matrixAutoUpdate = false
       gltf.scene.visible = visible
       gltf.scene.updateMatrix()
+      gltf.scene.updateMatrixWorld()
+      gltf.scene.name = path
       scene.add(gltf.scene)
-      ready()
+      ready(gltf.scene.children[0])
     },
-    (xhr) => console.log(xhr.loaded + " bytes loaded"),
+    (xhr) => console.log(path + " " + xhr.loaded + " bytes loaded"),
     onError
   )
 }

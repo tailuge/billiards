@@ -37,22 +37,22 @@ export abstract class ControllerBase extends Controller {
     const delta = input.t * this.scale
     switch (input.key) {
       case "ArrowLeft":
-        cue.rotateAim(-delta)
+        cue.rotateAim(-delta, this.container.table)
         return true
       case "ArrowRight":
-        cue.rotateAim(delta)
+        cue.rotateAim(delta, this.container.table)
         return true
       case "ArrowDown":
-        cue.adjustSpin(new Vector3(0, -delta))
+        cue.adjustSpin(new Vector3(0, -delta), this.container.table)
         return true
       case "ArrowUp":
-        cue.adjustSpin(new Vector3(0, delta))
+        cue.adjustSpin(new Vector3(0, delta), this.container.table)
         return true
       case "ShiftArrowLeft":
-        cue.adjustSpin(new Vector3(delta, 0))
+        cue.adjustSpin(new Vector3(delta, 0), this.container.table)
         return true
       case "ShiftArrowRight":
-        cue.adjustSpin(new Vector3(-delta, 0))
+        cue.adjustSpin(new Vector3(-delta, 0), this.container.table)
         return true
       case "KeyPUp":
         exportGltf(this.container.view.scene)
@@ -61,7 +61,7 @@ export abstract class ControllerBase extends Controller {
         cue.toggleHelper()
         return true
       case "movementXUp":
-        cue.rotateAim(delta * 2)
+        cue.rotateAim(delta * 2, this.container.table)
         return true
       case "movementYUp":
       case "NumpadSubtract":

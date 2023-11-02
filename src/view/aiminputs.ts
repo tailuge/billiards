@@ -61,7 +61,8 @@ export class AimInputs {
       new Vector3(
         -(e.offsetX - this.ballWidth / 2) / this.ballWidth,
         -(e.offsetY - this.ballHeight / 2) / this.ballHeight
-      )
+      ),
+      this.container.table
     )
     this.container.lastEventTime = performance.now()
   }

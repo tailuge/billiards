@@ -80,7 +80,11 @@ export class View {
     }
     if (this.loadAssets) {
       importGltf("models/background.gltf", this.scene, true)
-      importGltf(this.asset, this.scene, true, ready)
+      const setMeshReady = (m) => {
+        this.table.mesh = m
+        ready()
+      }
+      importGltf(this.asset, this.scene, true, setMeshReady)
     } else {
       new TableMesh().addToScene(this.scene, this.table.hasPockets)
       setTimeout(() => {

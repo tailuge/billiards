@@ -25,6 +25,7 @@ export class Table {
   hasPockets: boolean = true
   cueball: Ball
   cushionModel = bounceHanBlend
+  mesh
 
   constructor(balls: Ball[]) {
     this.cueball = balls[0]

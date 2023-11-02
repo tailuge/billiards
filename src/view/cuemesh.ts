@@ -80,15 +80,22 @@ export class CueMesh {
     const geometry = new CylinderGeometry(tip, but, length, 11)
     const mesh = new Mesh(geometry, CueMesh.material)
     mesh.castShadow = false
+    const tilt = 0.17
     mesh.geometry
       .applyMatrix4(
         new Matrix4()
           .identity()
-          .makeRotationAxis(new Vector3(1.0, 0.0, 0.0), -0.1)
+          .makeRotationAxis(new Vector3(1.0, 0.0, 0.0), -tilt)
       )
       .applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
       .applyMatrix4(
-        new Matrix4().identity().makeTranslation(-length / 2 - R, 0, 2 * R)
+        new Matrix4()
+          .identity()
+          .makeTranslation(
+            -length / 2 - R,
+            0,
+            (length / 2) * Math.sin(tilt) + R * 0.25
+          )
       )
     return mesh
   }
