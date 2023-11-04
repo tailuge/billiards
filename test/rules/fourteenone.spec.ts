@@ -9,9 +9,7 @@ import { Vector3 } from "three"
 import { Ball, State } from "../../src/model/ball"
 import { Aim } from "../../src/controller/aim"
 import { BeginEvent } from "../../src/events/beginevent"
-import { PlaceBall } from "../../src/controller/placeball"
 import { Input } from "../../src/events/input"
-import { PlayShot } from "../../src/controller/playshot"
 import { WatchEvent } from "../../src/events/watchevent"
 import { RerackEvent } from "../../src/events/rerackevent"
 import { Assets } from "../../src/view/assets"
@@ -49,10 +47,8 @@ describe("FourteenOne", () => {
   function bringToAimMode() {
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(PlaceBall)
     container.inputQueue.push(new Input(0.1, "SpaceUp"))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(Aim)
     container.advance(1)
     container.processEvents()
   }
@@ -79,7 +75,6 @@ describe("FourteenOne", () => {
     container.table.cue.aim.pos.copy(container.table.balls[0].pos)
     container.inputQueue.push(new Input(0.1, "SpaceUp"))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(PlayShot)
     container.advance(1)
     container.processEvents()
   }

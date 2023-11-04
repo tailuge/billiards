@@ -8,7 +8,7 @@ import { CueMesh } from "./cuemesh"
 import { TableGeometry } from "./tablegeometry"
 
 export class Assets {
-  ready: () => {}
+  ready
   rules: Rules
   background: Mesh
   table: Mesh
