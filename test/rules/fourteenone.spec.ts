@@ -14,6 +14,7 @@ import { Input } from "../../src/events/input"
 import { PlayShot } from "../../src/controller/playshot"
 import { WatchEvent } from "../../src/events/watchevent"
 import { RerackEvent } from "../../src/events/rerackevent"
+import { Assets } from "../../src/view/assets"
 
 initDom()
 
@@ -33,7 +34,7 @@ describe("FourteenOne", () => {
   const rule = "fourteenone"
 
   beforeEach(function (done) {
-    container = new Container(undefined, (_) => {}, false, rule)
+    container = new Container(undefined, (_) => {}, Assets.localAssets(), rule)
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
     Ball.id = 0

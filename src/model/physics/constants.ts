@@ -1,6 +1,6 @@
 export const g = 9.8
 export let mu = 0.00985
-export let muS = 0.105
+export let muS = 0.15
 export let muC = 0.8
 export let rho = 0.024
 export let m = 0.23

@@ -119,7 +119,7 @@ describe("Table", () => {
     a.vel.y = 8 * R
     a.state = State.Sliding
     const table = new Table([a, b])
-    table.hasPockets = false
+    TableGeometry.hasPockets = false
     const s = table.prepareAdvanceAll(t)
     expect(s).to.be.false
     table.advance(t)

@@ -5,6 +5,7 @@ import { Container } from "../../src/container/container"
 import { HitEvent } from "../../src/events/hitevent"
 import { initDom, canvas3d } from "../view/dom"
 import { Outcome } from "../../src/model/outcome"
+import { Assets } from "../../src/view/assets"
 
 initDom()
 
@@ -12,7 +13,7 @@ describe("Recorder", () => {
   let container: Container
 
   beforeEach(function (done) {
-    container = new Container(canvas3d, (_) => {})
+    container = new Container(canvas3d, (_) => {}, Assets.localAssets())
     done()
   })
 

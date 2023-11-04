@@ -1,11 +1,10 @@
 import { Scene, WebGLRenderer, Frustum, Matrix4, AmbientLight } from "three"
 import { Camera } from "./camera"
 import { AimEvent } from "../events/aimevent"
-import { importGltf } from "../utils/gltf"
 import { Table } from "../model/table"
 import { Grid } from "./grid"
-import { TableMesh } from "./tablemesh"
 import { renderer } from "../utils/webgl"
+import { Assets } from "./assets"
 import { Snooker } from "../controller/rules/snooker"
 
 export class View {
@@ -17,17 +16,16 @@ export class View {
   readonly element
   table: Table
   loadAssets = true
-  asset
-  constructor(element, ready, table, loadAssets, asset) {
+  assets: Assets
+  constructor(element, table, assets) {
     this.element = element
-    this.loadAssets = loadAssets
     this.table = table
-    this.asset = asset
+    this.assets = assets
     this.renderer = renderer(element)
     this.camera = new Camera(
       element ? element.offsetWidth / element.offsetHeight : 1
     )
-    this.addTable(ready)
+    this.initialiseScene()
   }
 
   update(elapsed, aim: AimEvent) {
@@ -73,23 +71,15 @@ export class View {
     this.renderer?.render(this.scene, cam.camera)
   }
 
-  private addTable(ready) {
+  private initialiseScene() {
     this.scene.add(new AmbientLight(0x009922, 0.3))
-    if (this.asset !== Snooker.tablemodel) {
-      this.scene.add(new Grid().generateLineSegments())
+    if (this.assets.background) {
+      this.scene.add(this.assets.background)
     }
-    if (this.loadAssets) {
-      importGltf("models/background.gltf", this.scene, true)
-      const setMeshReady = (m) => {
-        this.table.mesh = m
-        ready()
-      }
-      importGltf(this.asset, this.scene, true, setMeshReady)
-    } else {
-      new TableMesh().addToScene(this.scene, this.table.hasPockets)
-      setTimeout(() => {
-        ready()
-      }, 10)
+    this.scene.add(this.assets.table)
+    this.table.mesh = this.assets.table
+    if (this.assets.rules.asset() !== Snooker.tablemodel) {
+      this.scene.add(new Grid().generateLineSegments())
     }
   }
 

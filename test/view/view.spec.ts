@@ -5,6 +5,7 @@ import { Table } from "../../src/model/table"
 import { Rack } from "../../src/utils/rack"
 import { initDom, canvas3d } from "./dom"
 import { State } from "../../src/model/ball"
+import { Assets } from "../../src/view/assets"
 
 initDom()
 
@@ -13,21 +14,21 @@ describe("View", () => {
 
   it("isInView", (done) => {
     table.hasPockets = true
-    const view = new View(canvas3d, () => {}, table, true)
+    const view = new View(canvas3d, table, Assets.localAssets())
     expect(view.isInMotionNotVisible()).to.be.false
     done()
   })
 
   it("loads three cushion assets", (done) => {
     table.hasPockets = false
-    const view = new View(canvas3d, () => {}, table, true)
+    const view = new View(canvas3d, table, Assets.localAssets("threecushion"))
     expect(view).to.be.not.null
     done()
   })
 
   it("without assets", (done) => {
     table.hasPockets = false
-    const view = new View(canvas3d, () => {}, table, false)
+    const view = new View(canvas3d, table, Assets.localAssets())
     expect(view.isInMotionNotVisible()).to.be.false
     done()
   })
@@ -40,7 +41,7 @@ describe("View", () => {
     ball.state = State.Sliding
     ball.vel.x = 1
     ball.updateMesh(0.01)
-    const view = new View(canvas3d, () => {}, table, false)
+    const view = new View(canvas3d, table, Assets.localAssets())
     view.render()
     view.ballToCheck = 3
     expect(view.isInMotionNotVisible()).to.be.false

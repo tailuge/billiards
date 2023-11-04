@@ -9,6 +9,7 @@ import { TableGeometry } from "../../src/view/tablegeometry"
 import { Vector3 } from "three"
 import { R } from "../../src/model/physics/constants"
 import { norm, round, roundVec } from "../../src/utils/utils"
+import { Assets } from "../../src/view/assets"
 
 initDom()
 
@@ -31,8 +32,8 @@ describe("Controller", () => {
   beforeEach(function (done) {
     container = new Container(
       document.getElementById("viewP1"),
-      (_) => {},
-      false,
+      () => {},
+      Assets.localAssets("threecushion"),
       "threecushion"
     )
     broadcastEvents = []

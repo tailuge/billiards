@@ -22,7 +22,6 @@ export class Table {
   cue = new Cue()
   pairs: Pair[]
   outcome: Outcome[] = []
-  hasPockets: boolean = true
   cueball: Ball
   cushionModel = bounceHanBlend
   mesh
@@ -107,7 +106,7 @@ export class Table {
     const incidentSpeed = Cushion.bounceAny(
       a,
       t,
-      this.hasPockets,
+      TableGeometry.hasPockets,
       this.cushionModel
     )
     if (incidentSpeed) {

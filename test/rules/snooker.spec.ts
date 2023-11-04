@@ -13,6 +13,7 @@ import { PlayShot } from "../../src/controller/playshot"
 import { Aim } from "../../src/controller/aim"
 import { PlaceBall } from "../../src/controller/placeball"
 import { Snooker } from "../../src/controller/rules/snooker"
+import { Assets } from "../../src/view/assets"
 
 initDom()
 
@@ -33,7 +34,12 @@ describe("Snooker", () => {
 
   beforeEach(function (done) {
     Ball.id = 0
-    container = new Container(undefined, (_) => {}, false, rule)
+    container = new Container(
+      undefined,
+      (_) => {},
+      Assets.localAssets(rule),
+      rule
+    )
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
     done()

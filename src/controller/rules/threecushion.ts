@@ -47,15 +47,18 @@ export class ThreeCushion implements Rules {
     this.cueball = this.container.table.balls[1]
   }
 
-  table(): Table {
+  tableGeometry() {
     TableGeometry.tableX = R * 49
     TableGeometry.tableY = R * 24
     TableGeometry.X = TableGeometry.tableX + R
     TableGeometry.Y = TableGeometry.tableY + R
-    CameraTop.zoomFactor = 0.92
+    TableGeometry.hasPockets = false
+  }
 
+  table(): Table {
+    this.tableGeometry()
+    CameraTop.zoomFactor = 0.92
     const table = new Table(this.rack())
-    table.hasPockets = false
     this.cueball = table.cueball
     return table
   }

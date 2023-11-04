@@ -15,6 +15,7 @@ import { Aim } from "../../src/controller/aim"
 import { controllerName } from "../../src/controller/util"
 import { End } from "../../src/controller/end"
 import { canvas3d, initDom } from "../view/dom"
+import { Assets } from "../../src/view/assets"
 
 initDom()
 
@@ -48,7 +49,7 @@ describe("Controller Replay", () => {
     container = new Container(
       canvas3d,
       (_) => {},
-      false,
+      Assets.localAssets(),
       "nineball",
       mockKeyboard,
       () => {}

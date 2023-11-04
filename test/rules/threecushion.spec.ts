@@ -9,6 +9,8 @@ import { Outcome } from "../../src/model/outcome"
 import { RuleFactory } from "../../src/controller/rules/rulefactory"
 import { WatchAim } from "../../src/controller/watchaim"
 import { initDom } from "../view/dom"
+import { Assets } from "../../src/view/assets"
+import { TableGeometry } from "../../src/view/tablegeometry"
 
 initDom()
 
@@ -18,7 +20,7 @@ describe("ThreeCushion", () => {
   const rule = "threecushion"
 
   beforeEach(function (done) {
-    container = new Container(undefined, (_) => {}, false, rule)
+    container = new Container(undefined, (_) => {}, Assets.localAssets(), rule)
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
     done()
@@ -70,13 +72,13 @@ describe("ThreeCushion", () => {
 
   it("ThreeCushion has no pockets", (done) => {
     const rules = RuleFactory.create(rule, container)
-    expect(rules.table().hasPockets).to.be.false
+    expect(TableGeometry.hasPockets).to.be.false
     done()
   })
 
   it("ThreeCushion has no pockets", (done) => {
     const rules = RuleFactory.create(rule, container)
-    expect(rules.table().hasPockets).to.be.false
+    expect(TableGeometry.hasPockets).to.be.false
     done()
   })
 

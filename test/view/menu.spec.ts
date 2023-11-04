@@ -5,6 +5,7 @@ import { fireEvent } from "@testing-library/dom"
 import { Container } from "../../src/container/container"
 import { Menu } from "../../src/view/menu"
 import { BreakEvent } from "../../src/events/breakevent"
+import { Assets } from "../../src/view/assets"
 
 initDom()
 
@@ -12,7 +13,11 @@ let container: Container
 let menu: Menu
 
 beforeEach(function (done) {
-  container = new Container(document.getElementById("viewP1"), (_) => {})
+  container = new Container(
+    document.getElementById("viewP1"),
+    (_) => {},
+    Assets.localAssets()
+  )
   menu = new Menu(container)
   done()
 })

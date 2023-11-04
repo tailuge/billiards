@@ -43,28 +43,14 @@ export class Container {
   broadcast: (event: GameEvent) => void
   log: (text: string) => void
 
-  constructor(
-    element,
-    log,
-    loadAssets = true,
-    ruletype?,
-    keyboard?,
-    ready?,
-    id?
-  ) {
+  constructor(element, log, assets, ruletype?, keyboard?, id?) {
     this.log = log
     this.rules = RuleFactory.create(ruletype, this)
     this.table = this.rules.table()
-    this.view = new View(
-      element,
-      ready,
-      this.table,
-      loadAssets,
-      this.rules.asset()
-    )
+    this.view = new View(element, this.table, assets)
     this.table.cue.aimInputs = new AimInputs(this)
     this.keyboard = keyboard
-    this.sound = new Sound(this.view.camera.camera, loadAssets)
+    this.sound = assets.sound
     this.chat = new Chat(this.sendChat)
     this.sliders = new Sliders()
     this.recoder = new Recorder(this)

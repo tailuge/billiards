@@ -4,6 +4,7 @@ import { AimInputs } from "../../src/view/aiminputs"
 import { initDom, canvas3d } from "./dom"
 import { Container } from "../../src/container/container"
 import { fireEvent } from "@testing-library/dom"
+import { Assets } from "../../src/view/assets"
 
 initDom()
 
@@ -12,7 +13,7 @@ describe("AimInput", () => {
   let aiminputs: AimInputs
 
   beforeEach(function (done) {
-    container = new Container(canvas3d, (_) => {})
+    container = new Container(canvas3d, (_) => {}, Assets.localAssets())
     aiminputs = new AimInputs(container)
     done()
   })

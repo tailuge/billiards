@@ -6,6 +6,7 @@ import {
   BoxGeometry,
   MeshPhongMaterial,
   PointLight,
+  Group,
 } from "three"
 import { TableGeometry } from "./tablegeometry"
 import { PocketGeometry } from "./pocketgeometry"
@@ -14,16 +15,19 @@ import { R } from "../model/physics/constants"
 export class TableMesh {
   logger = (_) => {}
 
-  addToScene(scene, hasPockets: boolean) {
+  static mesh
+
+  generateTable(hasPockets: boolean) {
+    const group = new Group()
     const light = new PointLight(0xf0f0e8, 22.0)
     light.position.set(0, 0, R * 50)
-    scene.add(light)
-    this.addCushions(scene, hasPockets)
+    group.add(light)
+    this.addCushions(group, hasPockets)
 
     if (hasPockets) {
-      PocketGeometry.knuckles.forEach((k) => this.knuckleCylinder(k, scene))
+      PocketGeometry.knuckles.forEach((k) => this.knuckleCylinder(k, group))
       PocketGeometry.pocketCenters.forEach((p) =>
-        this.knuckleCylinder(p, scene, this.pocket)
+        this.knuckleCylinder(p, group, this.pocket)
       )
 
       const p = PocketGeometry.pockets.pocketNW.pocket
@@ -33,6 +37,7 @@ export class TableMesh {
           (p.pos.distanceTo(k.pos) - p.radius - k.radius)
       )
     }
+    return group
   }
 
   private cloth = new MeshPhongMaterial({

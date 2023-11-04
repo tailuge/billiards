@@ -6,6 +6,7 @@ import { SocketConnection } from "../network/client/socketconnection"
 import { GameEvent } from "../events/gameevent"
 import { bounceHan, bounceHanBlend } from "../model/physics/physics"
 import JSONCrush from "jsoncrush"
+import { Assets } from "../view/assets"
 
 /**
  * Integrate game container into HTML page
@@ -25,7 +26,7 @@ export class BrowserContainer {
     shots: Array<string>(),
   }
   cushionModel
-
+  assets: Assets
   constructor(canvas3d, params) {
     this.playername = params.get("name") ?? ""
     this.tableId = params.get("tableId") ?? "default"
@@ -39,16 +40,20 @@ export class BrowserContainer {
   }
 
   start() {
-    const keyboard = new Keyboard(this.canvas3d)
+    this.assets = new Assets(this.ruletype)
+    this.assets.loadFromWeb(() => {
+      this.onAssetsReady()
+    })
+  }
+
+  onAssetsReady() {
+    console.log(`${this.playername} assets ready`)
     this.container = new Container(
       this.canvas3d,
       console.log,
-      true,
+      this.assets,
       this.ruletype,
-      keyboard,
-      () => {
-        this.onAssetsReady()
-      },
+      new Keyboard(this.canvas3d),
       this.playername
     )
     this.container.broadcast = (e) => {
@@ -65,10 +70,6 @@ export class BrowserContainer {
         this.netEvent(e)
       }
     }
-  }
-
-  onAssetsReady() {
-    console.log(`${this.playername} ready`)
 
     if (this.replay) {
       this.startReplay(this.replay)

@@ -32,8 +32,6 @@ describe("Respot", () => {
     table.balls[7].pos.copy(behind)
     table.balls[8].pos.copy(behind.add(r3))
     Respot.respot(black, table)
-    console.log(black.pos)
-    console.log(blackSpot)
     expect(black.pos.x).to.be.lessThan(blackSpot.x)
     done()
   })

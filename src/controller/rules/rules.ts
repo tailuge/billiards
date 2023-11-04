@@ -8,6 +8,7 @@ export interface Rules {
   cueball: Ball
   update(outcome: Outcome[]): Controller
   rack(): Ball[]
+  tableGeometry()
   table(): Table
   secondToPlay()
   otherPlayersCueBall(): Ball

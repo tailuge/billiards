@@ -22,6 +22,7 @@ import { BreakEvent } from "../../src/events/breakevent"
 import { RejoinEvent } from "../../src/events/rejoinevent"
 import { initDom } from "../view/dom"
 import { Ball, State } from "../../src/model/ball"
+import { Assets } from "../../src/view/assets"
 
 initDom()
 
@@ -30,7 +31,11 @@ describe("Controller", () => {
   let broadcastEvents: GameEvent[]
 
   beforeEach(function (done) {
-    container = new Container(document.getElementById("viewP1"), (_) => {})
+    container = new Container(
+      document.getElementById("viewP1"),
+      (_) => {},
+      Assets.localAssets()
+    )
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
     Ball.id = 0
@@ -232,10 +237,8 @@ describe("Controller", () => {
   it("PlaceBall moves to Aim if threecushion", (done) => {
     container = new Container(
       document.getElementById("viewP1"),
-      (e) => {
-        console.log(e)
-      },
-      false,
+      (_) => {},
+      Assets.localAssets(),
       "threecushion"
     )
     container.broadcast = (x) => broadcastEvents.push(x)

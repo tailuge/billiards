@@ -10,6 +10,8 @@ import {
 } from "three"
 
 export class CueMesh {
+  static mesh: Mesh
+
   private static readonly material = new MeshPhongMaterial({
     color: 0x885577,
     wireframe: false,

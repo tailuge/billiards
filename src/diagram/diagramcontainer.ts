@@ -3,6 +3,7 @@ import { Keyboard } from "../events/keyboard"
 import { BreakEvent } from "../events/breakevent"
 import { CameraTop } from "../view/cameratop"
 import { bounceHan } from "../model/physics/physics"
+import { Assets } from "../view/assets"
 
 /**
  * Integrate billiards container into diagram html page
@@ -30,15 +31,15 @@ export class DiagramContainer {
     this.container = new Container(
       this.canvas3d,
       console.log,
-      false,
+      Assets.localAssets(this.ruletype),
       this.ruletype,
       keyboard,
-      this.onAssetsReady,
       "diagram"
     )
     if (this.cushionModel) {
       this.container.table.cushionModel = this.cushionModel
     }
+    this.onAssetsReady()
   }
 
   onAssetsReady = () => {

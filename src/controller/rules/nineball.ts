@@ -16,6 +16,7 @@ import { End } from "../end"
 import { Rules } from "./rules"
 import { R } from "../../model/physics/constants"
 import { Respot } from "../../utils/respot"
+import { TableGeometry } from "../../view/tablegeometry"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -48,6 +49,10 @@ export class NineBall implements Rules {
     return "models/p8.min.gltf"
   }
 
+  tableGeometry() {
+    TableGeometry.hasPockets = true
+  }
+
   table(): Table {
     const table = new Table(this.rack())
     this.cueball = table.cueball
@@ -72,7 +77,6 @@ export class NineBall implements Rules {
     if (Outcome.isBallPottedNoFoul(table.cueball, outcome)) {
       this.container.sound.playSuccess(table.inPockets())
       if (this.isEndOfGame(outcome)) {
-        console.log("end of game")
         this.container.eventQueue.push(new ChatEvent(null, `game over`))
         this.container.recoder.wholeGameLink()
         return new End(this.container)

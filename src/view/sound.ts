@@ -19,7 +19,7 @@ export class Sound {
   lastOutcomeTime = 0
   loadAssets
 
-  constructor(camera, loadAssets) {
+  constructor(loadAssets) {
     this.loadAssets = loadAssets
     if (!loadAssets) {
       return
@@ -27,7 +27,6 @@ export class Sound {
     this.listener = new AudioListener()
     this.audioLoader = new AudioLoader()
 
-    camera.add(this.listener)
     this.ballcollision = new Audio(this.listener)
     this.load("sounds/ballcollision.ogg", this.ballcollision)
 
@@ -42,6 +41,10 @@ export class Sound {
 
     this.success = new Audio(this.listener)
     this.load("sounds/success.ogg", this.success)
+  }
+
+  addCameraToListener(camera) {
+    camera.add(this.listener)
   }
 
   load(path, audio) {
