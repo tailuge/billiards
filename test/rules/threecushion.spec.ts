@@ -72,12 +72,7 @@ describe("ThreeCushion", () => {
 
   it("ThreeCushion has no pockets", (done) => {
     const rules = RuleFactory.create(rule, container)
-    expect(TableGeometry.hasPockets).to.be.false
-    done()
-  })
-
-  it("ThreeCushion has no pockets", (done) => {
-    const rules = RuleFactory.create(rule, container)
+    rules.tableGeometry()
     expect(TableGeometry.hasPockets).to.be.false
     done()
   })
