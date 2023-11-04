@@ -79,7 +79,7 @@ describe("FourteenOne", () => {
     container.processEvents()
   }
 
-  it("Pot penultimate ball, causing rerack", (done) => {
+  function setupPenultimateBallPot() {
     bringToAimMode()
     expect(container.controller).to.be.an.instanceof(Aim)
 
@@ -92,6 +92,10 @@ describe("FourteenOne", () => {
     const watchEvent = broadcastEvents[3] as WatchEvent
     expect(watchEvent.json.rerack).to.be.true
     expect(container.recoder.shots[1].type).to.be.equal("RERACK")
+  }
+
+  it("Pot penultimate ball, causing rerack", (done) => {
+    setupPenultimateBallPot()
 
     const rerack = container.recoder.shots[1] as RerackEvent
     const before = container.table.shortSerialise()
@@ -102,18 +106,7 @@ describe("FourteenOne", () => {
   })
 
   it("play shot after rerack, check recording", (done) => {
-    bringToAimMode()
-    expect(container.controller).to.be.an.instanceof(Aim)
-
-    setupTableWithTwoBallsRemaining()
-    expect(container.table.balls.filter((b) => b.onTable())).to.be.length(3)
-
-    playShotWaitForOutcome()
-    expect(container.controller).to.be.an.instanceof(Aim)
-
-    const watchEvent = broadcastEvents[3] as WatchEvent
-    expect(watchEvent.json.rerack).to.be.true
-    expect(container.recoder.shots[1].type).to.be.equal("RERACK")
+    setupPenultimateBallPot()
 
     const before = JSON.stringify(container.recoder.shots[1])
 
