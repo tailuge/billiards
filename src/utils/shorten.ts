@@ -2,20 +2,23 @@ export function shorten(url, action) {
   if (typeof process === "object") {
     return action(url)
   }
-  const cleanUrl = url
-    .replaceAll("(", "%28")
-    .replaceAll(")", "%29")
-    .replaceAll("!", "%21")
-    .replaceAll("*", "%2A")
-  fetch("https://gotiny.cc/api", {
+  const cleanUrl = new URL(
+    url
+      .replaceAll("(", "%28")
+      .replaceAll(")", "%29")
+      .replaceAll("!", "%21")
+      .replaceAll("*", "%2A")
+  ).search
+
+  fetch("https://tailuge-billiards.cyclic.app/shorten", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ input: cleanUrl }),
   })
     .then((response) => response.json())
     .then((data) => {
-      if (Array.isArray(data) && "code" in data[0]) {
-        action(`https://gotiny.cc/${data[0].code}`)
+      if ("shortUrl" in data) {
+        action(data.shortUrl)
       } else {
         console.log("Could not shorten url:")
         console.log(data)

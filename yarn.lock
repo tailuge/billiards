@@ -316,10 +316,10 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@interactjs/types@1.10.19":
-  version "1.10.19"
-  resolved "https://registry.yarnpkg.com/@interactjs/types/-/types-1.10.19.tgz#74ce9c9d528eb73db0d9ee8e7e407c47c1c5703f"
-  integrity sha512-oEqGmt9/Ob+jz0FUaBzpDXBmf+2dfdhPuEwQcMGH6nQTR2ETGtYIlAnQtADHvnCin+cVkrmqVohfHBysyQr4Lw==
+"@interactjs/types@1.10.20":
+  version "1.10.20"
+  resolved "https://registry.yarnpkg.com/@interactjs/types/-/types-1.10.20.tgz#c5cdf06f3bade6a32c6787e3c4905de0d015afa7"
+  integrity sha512-59QRmyawJCCSx9H9tE7MaIC9dYprc27vspJ+zvwfIpt1/ZmosM64c1XiqM3Z2/FZ2/C5BTGZ/bJJLEokr56aJg==
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
@@ -2682,12 +2682,12 @@ ini@^4.1.1:
   resolved "https://registry.yarnpkg.com/ini/-/ini-4.1.1.tgz#d95b3d843b1e906e56d6747d5447904ff50ce7a1"
   integrity sha512-QQnnxNyfvmHFIsj7gkPcYymR8Jdw/o7mp5ZFihxn6h8Ci6fh3Dx4E1gPjpQEpIuPo9XVNY/ZUwh4BPMjGyL01g==
 
-interactjs@^1.10.19:
-  version "1.10.19"
-  resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.10.19.tgz#b0029a3a8f1e11224fce1c7a44bd6d1f4d5753db"
-  integrity sha512-5zWXBrfLnXAyhrxKlhRiud/JxWd3GvZkvdTf8bqjeHWDx9zgiu+qFNA3nnJMszadFCig2GU5zKx9PYrkT87OKA==
+interactjs@^1.10.20:
+  version "1.10.20"
+  resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.10.20.tgz#8abf2a706c016733f3846913446ae6305a7671ca"
+  integrity sha512-jNFZiuBUL/j9Kkv6c89l+v5NpOn1m2LE8t7TrQOQBpBaYObYG6y6FHfqIMlF2XEcR6gCFLUQGQ3F0qBjqUMZvQ==
   dependencies:
-    "@interactjs/types" "1.10.19"
+    "@interactjs/types" "1.10.20"
 
 internal-slot@^1.0.4:
   version "1.0.6"
@@ -2934,9 +2934,9 @@ isobject@^3.0.1:
   integrity sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==
 
 istanbul-lib-coverage@^3.0.0, istanbul-lib-coverage@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/istanbul-lib-coverage/-/istanbul-lib-coverage-3.2.0.tgz#189e7909d0a39fa5a3dfad5b03f71947770191d3"
-  integrity sha512-eOeJ5BHCmHYvQK7xt9GkdHuzuCGS1Y6g9Gvnx3Ym33fz/HpLRYxiS0wHNr+m/MBC8B647Xt608vCDEvhl9c6Mw==
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/istanbul-lib-coverage/-/istanbul-lib-coverage-3.2.1.tgz#c680fd1544600460367af5811866c34c44c6f3b1"
+  integrity sha512-opCrKqbthmq3SKZ10mFMQG9dk3fTa3quaOLD35kJa5ejwZHd9xAr+kLuziiZz2cG32s4lMZxNdmdcEQnTDP4+g==
 
 istanbul-lib-instrument@^5.0.4:
   version "5.2.1"

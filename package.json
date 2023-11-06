@@ -31,7 +31,7 @@
     }
   },
   "dependencies": {
-    "interactjs": "^1.10.19",
+    "interactjs": "^1.10.20",
     "jsoncrush": "^1.1.8",
     "three": "^0.158.0"
   },
