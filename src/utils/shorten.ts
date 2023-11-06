@@ -12,6 +12,7 @@ export function shorten(url, action) {
 
   fetch("https://tailuge-billiards.cyclic.app/shorten", {
     method: "POST",
+    mode: "cors",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ input: cleanUrl }),
   })
