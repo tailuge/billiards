@@ -15,9 +15,7 @@ import { PlaceBall } from "../../src/controller/placeball"
 import { Snooker } from "../../src/controller/rules/snooker"
 import { Assets } from "../../src/view/assets"
 import { Outcome } from "../../src/model/outcome"
-import { table } from "console"
 import { Table } from "../../src/model/table"
-import { WatchAim } from "../../src/controller/watchaim"
 
 initDom()
 
