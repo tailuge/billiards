@@ -62,7 +62,8 @@ export class Keyboard {
 
   mousetouch = (e) => {
     const k = this.released
-    const factor = e.ctrlKey ? 0.5 : 1
+    const topHalf = e.client.y < e.rect.height / 2
+    const factor = topHalf || e.ctrlKey ? 0.5 : 1
     const dx = e.dx * factor
     const dy = e.dy * 0.8
     k["movementY"] = (k["movementY"] ?? 0.0) + dy

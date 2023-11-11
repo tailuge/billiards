@@ -14,6 +14,10 @@ import { Aim } from "../../src/controller/aim"
 import { PlaceBall } from "../../src/controller/placeball"
 import { Snooker } from "../../src/controller/rules/snooker"
 import { Assets } from "../../src/view/assets"
+import { Outcome } from "../../src/model/outcome"
+import { table } from "console"
+import { Table } from "../../src/model/table"
+import { WatchAim } from "../../src/controller/watchaim"
 
 initDom()
 
@@ -30,7 +34,9 @@ afterEach(() => {
 describe("Snooker", () => {
   let container: Container
   let broadcastEvents: GameEvent[]
+  let snooker: Snooker
   const rule = "snooker"
+  let table: Table
 
   beforeEach(function (done) {
     Ball.id = 0
@@ -40,10 +46,18 @@ describe("Snooker", () => {
       Assets.localAssets(rule),
       rule
     )
+    snooker = container.rules as Snooker
+    table = container.table
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
     done()
   })
+
+  function markAllRedsPotted() {
+    table.balls
+      .filter((b) => b.id > 6)
+      .forEach((b) => (b.state = State.InPocket))
+  }
 
   function bringToAimMode() {
     container.eventQueue.push(new BeginEvent())
@@ -62,14 +76,14 @@ describe("Snooker", () => {
     0.01 * R
 
   function setupTableWithPot(ball) {
-    container.table.cueball.pos.copy(new Vector3(0, edge + R * 2.1, 0))
+    table.cueball.pos.copy(new Vector3(0, edge + R * 2.1, 0))
     ball.pos.copy(new Vector3(0, edge, 0))
   }
 
   function playShotWaitForOutcome() {
-    container.table.cue.aim.angle = -Math.PI / 2
-    container.table.cue.aim.power = 1
-    container.table.cue.aim.pos.copy(container.table.balls[0].pos)
+    table.cue.aim.angle = -Math.PI / 2
+    table.cue.aim.power = 1
+    table.cue.aim.pos.copy(table.balls[0].pos)
     container.inputQueue.push(new Input(0.1, "SpaceUp"))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlayShot)
@@ -78,7 +92,7 @@ describe("Snooker", () => {
   }
 
   it("Snooker has 6 colours and 6 reds", (done) => {
-    expect(container.table.balls).to.be.length(13)
+    expect(table.balls).to.be.length(13)
     done()
   })
 
@@ -86,95 +100,146 @@ describe("Snooker", () => {
     bringToAimMode()
     expect(container.controller).to.be.an.instanceof(Aim)
 
-    setupTableWithPot(container.table.balls[7])
+    setupTableWithPot(table.balls[7])
     playShotWaitForOutcome()
     expect(container.controller).to.be.an.instanceof(Aim)
     expect(container.recoder.shots).to.be.length(1)
-    const rule = container.rules as Snooker
-    expect(rule.previousPotRed).to.be.true
+    expect(snooker.currentBreak).to.be.equal(1)
+    expect(snooker.targetIsRed).to.be.false
     done()
   })
 
   it("Pot colour is respotted after red", (done) => {
     bringToAimMode()
     // pot red
-    setupTableWithPot(container.table.balls[7])
+    setupTableWithPot(table.balls[7])
     playShotWaitForOutcome()
 
     // pot black
-    setupTableWithPot(container.table.balls[6])
+    setupTableWithPot(table.balls[6])
     playShotWaitForOutcome()
     container.advance(1)
     container.processEvents()
 
     expect(container.controller).to.be.an.instanceof(Aim)
-    const rule = container.rules as Snooker
-    expect(rule.previousPotRed).to.be.false
-    expect(container.table.balls[6].onTable()).to.be.true
+    expect(snooker.previousPotRed).to.be.false
+    expect(table.balls[6].onTable()).to.be.true
     done()
   })
 
   it("Pot colour is not respotted when not after red", (done) => {
     bringToAimMode()
-    const rule = container.rules as Snooker
-    expect(rule.previousPotRed).to.be.false
+    snooker.targetIsRed = false
+    snooker.previousPotRed = false
+
+    markAllRedsPotted()
 
     // pot yellow
-    setupTableWithPot(container.table.balls[1])
+    setupTableWithPot(table.balls[1])
     playShotWaitForOutcome()
     container.advance(1)
     container.processEvents()
 
     expect(container.controller).to.be.an.instanceof(Aim)
-    expect(rule.previousPotRed).to.be.false
-    expect(container.table.balls[1].onTable()).to.be.false
+    expect(snooker.targetIsRed).to.be.false
+    expect(table.balls[1].onTable()).to.be.false
     done()
   })
 
   it("Pot black before yellow gets respotted", (done) => {
     bringToAimMode()
-    const rule = container.rules as Snooker
-    expect(rule.previousPotRed).to.be.false
+    expect(snooker.previousPotRed).to.be.false
 
-    // all reds potted
-    container.table.balls
-      .filter((b) => b.id > 6)
-      .forEach((b) => b.state === State.InPocket)
+    markAllRedsPotted()
 
     // pot black
-    setupTableWithPot(container.table.balls[6])
+    setupTableWithPot(table.balls[6])
     playShotWaitForOutcome()
     container.advance(1)
     container.processEvents()
 
     expect(container.controller).to.be.an.instanceof(Aim)
-    expect(rule.previousPotRed).to.be.false
-    expect(container.table.balls[6].onTable()).to.be.true
+    expect(snooker.previousPotRed).to.be.false
+    expect(table.balls[6].onTable()).to.be.true
     done()
   })
 
   it("green after yellow is not respotted", (done) => {
     bringToAimMode()
-    const rule = container.rules as Snooker
-    expect(rule.previousPotRed).to.be.false
+    snooker.targetIsRed = false
 
-    // all reds potted
-    container.table.balls
-      .filter((b) => b.id > 6)
-      .forEach((b) => b.state === State.InPocket)
+    markAllRedsPotted()
 
     // yellow potted
-    container.table.balls[1].state = State.InPocket
+    table.balls[1].state = State.InPocket
 
     // pot green
-    setupTableWithPot(container.table.balls[2])
+    setupTableWithPot(table.balls[2])
     playShotWaitForOutcome()
     container.advance(1)
     container.processEvents()
 
     expect(container.controller).to.be.an.instanceof(Aim)
-    expect(rule.previousPotRed).to.be.false
-    expect(container.table.balls[2].onTable()).to.be.false
+    expect(snooker.targetIsRed).to.be.false
+    expect(table.balls[2].onTable()).to.be.false
+    done()
+  })
+
+  it("target red after potting colour, when reds remain", (done) => {
+    snooker.targetIsRed = false
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.collision(table.cueball, table.balls[1], 1))
+    outcome.push(Outcome.pot(table.balls[1], 1))
+    table.balls[1].state = State.InPocket
+    snooker.update(outcome)
+    expect(snooker.targetIsRed).to.be.true
+    done()
+  })
+
+  it("target colour after potting colour, when no reds remain", (done) => {
+    snooker.targetIsRed = false
+    markAllRedsPotted()
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.collision(table.cueball, table.balls[1], 1))
+    outcome.push(Outcome.pot(table.balls[1], 1))
+    table.balls[1].state = State.InPocket
+    snooker.update(outcome)
+    expect(snooker.targetIsRed).to.be.false
+    done()
+  })
+
+  it("potted white goes to placeball", (done) => {
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.pot(table.cueball, 1))
+    table.cueball.state = State.InPocket
+    expect(snooker.update(outcome)).to.be.instanceOf(PlaceBall)
+    snooker.targetIsRed = false
+    table.cueball.state = State.InPocket
+    expect(snooker.update(outcome)).to.be.instanceOf(PlaceBall)
+    done()
+  })
+
+  it("missed pot of colour results in targetRed when reds on table", (done) => {
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.collision(table.cueball, table.balls[1], 1))
+    snooker.targetIsRed = false
+    snooker.update(outcome)
+    expect(snooker.targetIsRed).to.be.true
+    done()
+  })
+
+  it("missed pot of colour results in not targetRed when no reds on table", (done) => {
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.collision(table.cueball, table.balls[1], 1))
+    markAllRedsPotted()
+    snooker.targetIsRed = false
+    snooker.update(outcome)
+    expect(snooker.targetIsRed).to.be.false
     done()
   })
 })

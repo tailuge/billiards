@@ -64,6 +64,16 @@ export class Outcome {
     return this.pots(outcomes).every((b) => b.id > 6)
   }
 
+  static firstCollision(outcome: Outcome[]) {
+    const collisions = outcome.filter((o) => o.type === OutcomeType.Collision)
+    return collisions.length > 0 ? collisions[0] : undefined
+  }
+
+  static isClearTable(table) {
+    const onTable = table.balls.filter((ball) => ball.onTable())
+    return onTable.length === 1 && onTable[0] === table.cueball
+  }
+
   static isThreeCushionPoint(cueBall, outcomes: Outcome[]) {
     outcomes = Outcome.cueBallFirst(cueBall, outcomes).filter(
       (outcome) => outcome.ballA === cueBall
