@@ -85,5 +85,11 @@ export class Keyboard {
         },
       },
     })
+    interact(element).gesturable({
+      onmove: (e) => {
+        e.dx /= 3
+        this.mousetouch(e)
+      },
+    })
   }
 }
