@@ -134,6 +134,7 @@ export class Snooker implements Rules {
     }
 
     if (info.pots > 1) {
+      this.foulPoints = this.foulCalculation(outcome, info)
       this.respot(outcome)
       return this.switchPlayer()
     }
@@ -150,6 +151,7 @@ export class Snooker implements Rules {
         ).length > 0
 
       if (!info.legalFirstCollision || lesserBallOnTable) {
+        this.foulPoints = this.foulCalculation(outcome, info)
         this.respot(outcome)
         return this.switchPlayer()
       }
@@ -191,7 +193,17 @@ export class Snooker implements Rules {
     return this.targetColourRule(outcome, info)
   }
 
+  foulCalculation(outcome, info) {
+    const potted = Outcome.pots(outcome)
+      .map((b) => b.id)
+      .filter((id) => id < 7)
+    return Math.max(3, info.firstCollision.ballB!.id, ...potted) + 1
+  }
+
   switchPlayer() {
+    if (this.foulPoints > 0) {
+      console.log(`foul, ${this.foulPoints} to opponent`)
+    }
     console.log("end of break, switch player")
     const table = this.container.table
     this.container.sendEvent(table.cue.aim)
