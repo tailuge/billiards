@@ -40,7 +40,9 @@ export class NineBall implements Rules {
 
   placeBall(target?): Vector3 {
     if (target) {
-      return target
+      const max = new Vector3(-TableGeometry.X / 2, TableGeometry.tableY)
+      const min = new Vector3(-TableGeometry.tableX, -TableGeometry.tableY)
+      return target.clamp(min, max)
     }
     return new Vector3((-R * 11) / 0.5, 0, 0)
   }

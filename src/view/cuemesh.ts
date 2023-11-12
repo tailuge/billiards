@@ -18,6 +18,18 @@ export class CueMesh {
     flatShading: false,
   })
 
+  static readonly placermaterial = new MeshPhongMaterial({
+    color: 0xccffcc,
+    wireframe: false,
+    flatShading: false,
+    transparent: true,
+    opacity: 0.5,
+  })
+
+  static indicateValid(valid) {
+    CueMesh.placermaterial.color.setHex(valid ? 0xccffcc : 0xff0000)
+  }
+
   private static readonly helpermaterial = new ShaderMaterial({
     uniforms: {
       lightDirection: { value: new Vector3(0, 0, 1) },
@@ -64,7 +76,7 @@ export class CueMesh {
 
   static createPlacer() {
     const geometry = new CylinderGeometry((R * 0.01) / 0.5, R, R, 4)
-    const mesh = new Mesh(geometry, CueMesh.helpermaterial)
+    const mesh = new Mesh(geometry, CueMesh.placermaterial)
     mesh.geometry
       .applyMatrix4(
         new Matrix4()

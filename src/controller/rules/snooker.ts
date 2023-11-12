@@ -23,6 +23,7 @@ export class Snooker implements Rules {
   targetIsRed = true
   currentBreak = 0
   previousBreak = 0
+  foulPoints = 0
 
   static readonly tablemodel = "models/snooker.min.gltf"
 
@@ -70,6 +71,7 @@ export class Snooker implements Rules {
 
   startTurn() {
     this.previousPotRed = false
+    this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     this.previousBreak = this.currentBreak
     this.currentBreak = 0
   }
@@ -95,9 +97,12 @@ export class Snooker implements Rules {
     return undefined
   }
 
-  placeBall(target?): Vector3 {
+  placeBall(target?: Vector3): Vector3 {
     if (target) {
-      return target
+      // constrain to "D" in the future
+      const max = new Vector3(Rack.baulk, Rack.sixth)
+      const min = new Vector3(Rack.baulk - Rack.sixth, -Rack.sixth)
+      return target.clamp(min, max)
     }
     return new Vector3(Rack.baulk, -Rack.sixth / 3, 0)
   }
@@ -158,6 +163,7 @@ export class Snooker implements Rules {
   }
 
   snookerrule(outcome: Outcome[]): Controller {
+    this.foulPoints = 0
     const info = SnookerUtils.shotInfo(
       this.container.table,
       outcome,
@@ -166,7 +172,7 @@ export class Snooker implements Rules {
 
     if (info.pots === 0) {
       if (!info.legalFirstCollision) {
-        // opponent gets foul points min(4,firstCollision.ballB.id+1)
+        this.foulPoints = Math.min(4, info.firstCollision!.ballB!.id + 1)
       }
       if (this.currentBreak > 0) {
         // end of break, reset break score

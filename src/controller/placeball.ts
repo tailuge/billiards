@@ -1,11 +1,11 @@
 import { ControllerBase } from "./controllerbase"
 import { Controller, Input } from "./controller"
 import { Aim } from "./aim"
-import { MathUtils } from "three"
-import { TableGeometry } from "../view/tablegeometry"
 import { BreakEvent } from "../events/breakevent"
-import { round } from "../utils/utils"
 import { R } from "../model/physics/constants"
+import { Vector3 } from "three"
+import { CueMesh } from "../view/cuemesh"
+import { roundVec } from "../utils/utils"
 
 /**
  * Place cue ball using input events.
@@ -42,25 +42,13 @@ export class PlaceBall extends ControllerBase {
     const ballPos = this.container.table.cueball.pos
     switch (input.key) {
       case "ArrowLeft":
-        ballPos.y = MathUtils.clamp(
-          round(ballPos.y + input.t * this.placescale),
-          -TableGeometry.tableY,
-          TableGeometry.tableY
-        )
+        this.moveTo(0, input.t * this.placescale)
         break
       case "ArrowRight":
-        ballPos.y = MathUtils.clamp(
-          round(ballPos.y - input.t * this.placescale),
-          -TableGeometry.tableY,
-          TableGeometry.tableY
-        )
+        this.moveTo(0, -input.t * this.placescale)
         break
       case "movementXUp":
-        ballPos.y = MathUtils.clamp(
-          round(ballPos.y - input.t * this.placescale * 2),
-          -TableGeometry.tableY,
-          TableGeometry.tableY
-        )
+        this.moveTo(0, -input.t * this.placescale * 2)
         break
 
       case "SpaceUp":
@@ -76,7 +64,17 @@ export class PlaceBall extends ControllerBase {
     return this
   }
 
+  moveTo(dx, dy) {
+    const delta = new Vector3(dx, dy)
+    const ballPos = this.container.table.cueball.pos.add(delta)
+    ballPos.copy(roundVec(this.container.rules.placeBall(ballPos)))
+    CueMesh.indicateValid(!this.container.table.overlapsAny(ballPos))
+  }
+
   placed() {
+    if (this.container.table.overlapsAny(this.container.table.cueball.pos)) {
+      return this
+    }
     this.container.table.cue.aimInputs.setButtonText("Hit")
     this.container.sound.playNotify()
     this.container.sendEvent(
