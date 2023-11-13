@@ -186,17 +186,14 @@ input[type="range"].powerSlider {
 
 .chatoutput {
   height: 30%;
-  width: 100%;
+  width: 0px;
+  min-width: 100%;
   overflow-y: scroll;
-  overflow-x: hidden;
   background-color: rgba(47, 79, 79, 0.486);
   padding: 5px;
   margin: 2px;
   border-radius: 5px;
   font-size: smaller;
-  text-overflow: ellipsis;
-  width: 0px;
-  min-width: 100%;
 }
 
 .chatoutput::-webkit-scrollbar {
