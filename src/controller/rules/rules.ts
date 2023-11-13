@@ -6,6 +6,8 @@ import { Table } from "../../model/table"
 
 export interface Rules {
   cueball: Ball
+  currentBreak: number
+  previousBreak: number
   update(outcome: Outcome[]): Controller
   rack(): Ball[]
   tableGeometry()

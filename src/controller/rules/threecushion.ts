@@ -19,6 +19,8 @@ export class ThreeCushion implements Rules {
   readonly container: Container
 
   cueball: Ball
+  currentBreak = 0
+  previousBreak = 0
 
   constructor(container) {
     this.container = container

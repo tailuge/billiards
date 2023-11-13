@@ -92,7 +92,12 @@ export class Recorder {
 
   lastShotLink(isPartOfBreak, potCount) {
     const pots = potCount > 1 ? potCount - 1 : 0
-    const shotIcon = "⚈".repeat(pots) + (isPartOfBreak ? "⚈" : "⚆")
+    const breakPoints =
+      this.container.rules.currentBreak > 0
+        ? " " + this.container.rules.currentBreak
+        : ""
+    const shotIcon =
+      "⚈".repeat(pots) + (isPartOfBreak ? "⚈" : "⚆") + breakPoints
     const serialisedShot = JSON.stringify(this.lastShot())
     this.generateLink(shotIcon, serialisedShot)
   }
@@ -108,7 +113,11 @@ export class Recorder {
     if (currentBreak.shots.length === 1) {
       return
     }
-    const text = `break(${currentBreak.shots.length})`
+    const breakScore =
+      this.container.rules.previousBreak > 0
+        ? this.container.rules.previousBreak
+        : currentBreak.shots.length
+    const text = `break(${breakScore})`
     const serialisedShot = JSON.stringify(currentBreak)
     const compressed = JSONCrush.crush(serialisedShot)
     this.generateLink(text, compressed)
@@ -116,7 +125,7 @@ export class Recorder {
 
   wholeGameLink() {
     const game = this.wholeGame()
-    const text = `frame(${game.shots.length})`
+    const text = `frame(${game.shots.length} shots)`
     const serialisedGame = JSON.stringify(game)
     const compressed = JSONCrush.crush(serialisedGame)
     this.generateLink(text, compressed)
