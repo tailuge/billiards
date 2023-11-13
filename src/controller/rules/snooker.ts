@@ -218,6 +218,7 @@ export class Snooker implements Rules {
     }
     console.log("end of break, switch player")
     const table = this.container.table
+    console.log(table.cue.aim)
     this.container.sendEvent(table.cue.aim)
     if (this.container.isSinglePlayer) {
       this.container.sendEvent(new WatchEvent(table.serialise()))

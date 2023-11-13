@@ -20,6 +20,7 @@ export class WatchShot extends ControllerBase {
 
   override handleWatch(event) {
     if ("rerack" in event.json) {
+      console.log("Respot")
       this.container.table.updateFromSerialised(event.json)
       return this
     }

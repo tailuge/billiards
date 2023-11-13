@@ -319,6 +319,7 @@ describe("Snooker", () => {
   })
 
   it("target red but pot colour", (done) => {
+    container.isSinglePlayer = false
     const outcome: Outcome[] = []
     outcome.push(Outcome.hit(table.cueball, 1))
     outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
@@ -327,6 +328,8 @@ describe("Snooker", () => {
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.true
     expect(snooker.foulPoints).to.be.equal(6)
+    console.log(broadcastEvents)
+    expect(broadcastEvents).to.be.length(2)
     done()
   })
 
