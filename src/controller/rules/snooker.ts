@@ -98,6 +98,11 @@ export class Snooker implements Rules {
       return this.switchPlayer()
     }
 
+    if (Outcome.pots(outcome)[0].id > 6) {
+      this.foulPoints = this.foulCalculation(outcome, info)
+      return this.switchPlayer()
+    }
+
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
 
     // exactly one non red potted
@@ -127,8 +132,10 @@ export class Snooker implements Rules {
     const potted = Outcome.pots(outcome)
       .map((b) => b.id)
       .filter((id) => id < 7)
-    const firstCollisionId = info.firstCollision?.ballB?.id ?? 0
-
+    let firstCollisionId = info.firstCollision?.ballB?.id ?? 0
+    if (firstCollisionId > 6) {
+      firstCollisionId = 0
+    }
     return Math.max(3, firstCollisionId, ...potted) + 1
   }
 
@@ -234,6 +241,9 @@ export class Snooker implements Rules {
   }
 
   whiteInHand(): Controller {
+    if (this.foulPoints > 0) {
+      console.log(`foul, ${this.foulPoints} to opponent`)
+    }
     this.startTurn()
     if (this.container.isSinglePlayer) {
       return new PlaceBall(this.container)

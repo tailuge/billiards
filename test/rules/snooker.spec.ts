@@ -305,6 +305,31 @@ describe("Snooker", () => {
     done()
   })
 
+  it("target colour but pot red", (done) => {
+    snooker.targetIsRed = false
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.collision(table.cueball, table.balls[8], 1))
+    outcome.push(Outcome.pot(table.balls[8], 1))
+    table.balls[8].state = State.InPocket
+    snooker.update(outcome)
+    expect(snooker.targetIsRed).to.be.true
+    expect(snooker.foulPoints).to.be.equal(4)
+    done()
+  })
+
+  it("target red but pot colour", (done) => {
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
+    outcome.push(Outcome.pot(table.balls[5], 1))
+    table.balls[6].state = State.InPocket
+    snooker.update(outcome)
+    expect(snooker.targetIsRed).to.be.true
+    expect(snooker.foulPoints).to.be.equal(6)
+    done()
+  })
+
   it("placeBall constrained to D", (done) => {
     expect(snooker.placeBall(zero).length()).to.be.greaterThan(0)
     done()
