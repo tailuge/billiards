@@ -31,7 +31,7 @@ export class Container {
   sound: Sound
   chat: Chat
   sliders: Sliders
-  recoder: Recorder
+  recorder: Recorder
   id: string = ""
   isSinglePlayer: boolean = true
   rules: Rules
@@ -53,7 +53,7 @@ export class Container {
     this.sound = assets.sound
     this.chat = new Chat(this.sendChat)
     this.sliders = new Sliders()
-    this.recoder = new Recorder(this)
+    this.recorder = new Recorder(this)
     this.id = id
     this.menu = new Menu(this)
     this.table.addToScene(this.view.scene)

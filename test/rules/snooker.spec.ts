@@ -16,6 +16,7 @@ import { Snooker } from "../../src/controller/rules/snooker"
 import { Assets } from "../../src/view/assets"
 import { Outcome } from "../../src/model/outcome"
 import { Table } from "../../src/model/table"
+import { zero } from "../../src/utils/utils"
 
 initDom()
 
@@ -101,7 +102,7 @@ describe("Snooker", () => {
     setupTableWithPot(table.balls[7])
     playShotWaitForOutcome()
     expect(container.controller).to.be.an.instanceof(Aim)
-    expect(container.recoder.shots).to.be.length(1)
+    expect(container.recorder.shots).to.be.length(1)
     expect(snooker.currentBreak).to.be.equal(1)
     expect(snooker.targetIsRed).to.be.false
     done()
@@ -256,7 +257,7 @@ describe("Snooker", () => {
     done()
   })
 
-  it("hit pink pot yellow is foul", (done) => {
+  it("hit pink but pot yellow is foul", (done) => {
     snooker.targetIsRed = false
     const outcome: Outcome[] = []
     outcome.push(Outcome.hit(table.cueball, 1))
@@ -266,6 +267,34 @@ describe("Snooker", () => {
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.true
     expect(snooker.foulPoints).to.be.equal(6)
+    done()
+  })
+
+  it("target is red but hit pink is foul", (done) => {
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
+    snooker.update(outcome)
+    expect(snooker.targetIsRed).to.be.true
+    expect(snooker.foulPoints).to.be.equal(6)
+    done()
+  })
+
+  it("no ball hit is foul", (done) => {
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    snooker.update(outcome)
+    expect(snooker.targetIsRed).to.be.true
+    expect(snooker.foulPoints).to.be.equal(4)
+    snooker.targetIsRed = false
+    snooker.update(outcome)
+    expect(snooker.targetIsRed).to.be.true
+    expect(snooker.foulPoints).to.be.equal(4)
+    done()
+  })
+
+  it("placeBall constrained to D", (done) => {
+    expect(snooker.placeBall(zero).length()).to.be.greaterThan(0)
     done()
   })
 })

@@ -80,7 +80,7 @@ export class NineBall implements Rules {
       this.container.sound.playSuccess(table.inPockets())
       if (this.isEndOfGame(outcome)) {
         this.container.eventQueue.push(new ChatEvent(null, `game over`))
-        this.container.recoder.wholeGameLink()
+        this.container.recorder.wholeGameLink()
         return new End(this.container)
       }
       this.container.sendEvent(new WatchEvent(table.serialise()))

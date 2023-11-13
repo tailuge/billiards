@@ -31,8 +31,8 @@ export class FourteenOne extends NineBall implements Rules {
       const state = table.serialise()
       const rerack = new WatchEvent({ ...state, rerack: true })
       this.container.sendEvent(rerack)
-      this.container.recoder.record(rerack)
-      this.container.recoder.wholeGameLink()
+      this.container.recorder.record(rerack)
+      this.container.recorder.wholeGameLink()
     }
   }
 }

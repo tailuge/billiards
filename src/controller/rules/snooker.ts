@@ -19,6 +19,7 @@ import { zero } from "../../utils/utils"
 import { SnookerUtils } from "./snookerutils"
 
 export class Snooker implements Rules {
+  cueball: Ball
   previousPotRed = false
   targetIsRed = true
   currentBreak = 0
@@ -32,7 +33,100 @@ export class Snooker implements Rules {
   constructor(container) {
     this.container = container
   }
-  cueball: Ball
+
+  snookerrule(outcome: Outcome[]): Controller {
+    this.foulPoints = 0
+    const info = SnookerUtils.shotInfo(
+      this.container.table,
+      outcome,
+      this.targetIsRed
+    )
+
+    if (info.pots === 0) {
+      if (!info.legalFirstCollision) {
+        const firstCollisionId = info.firstCollision?.ballB?.id ?? 0
+        this.foulPoints = Math.max(4, firstCollisionId + 1)
+      }
+      if (this.currentBreak > 0) {
+        // end of break, reset break score
+      }
+      this.targetIsRed =
+        SnookerUtils.redsOnTable(this.container.table).length > 0
+      return this.switchPlayer()
+    }
+
+    // ball has been potted
+    if (this.targetIsRed) {
+      return this.targetRedRule(outcome, info)
+    }
+
+    // non red potted
+    return this.targetColourRule(outcome, info)
+  }
+
+  targetRedRule(outcome: Outcome[], info): Controller {
+    console.log("applying target red rule")
+    if (info.legalFirstCollision && Outcome.onlyRedsPotted(outcome)) {
+      // legal pot of one or more reds
+      this.currentBreak += info.pots
+      this.targetIsRed = false
+      this.previousPotRed = true
+      return this.continueBreak()
+    }
+
+    this.respot(outcome)
+    if (info.whitePotted) {
+      return this.whiteInHand()
+    }
+
+    return this.switchPlayer()
+  }
+
+  targetColourRule(outcome: Outcome[], info): Controller {
+    console.log("applying target colour rule")
+
+    if (info.whitePotted) {
+      this.respot(outcome)
+      return this.whiteInHand()
+    }
+
+    if (info.pots > 1) {
+      this.foulPoints = this.foulCalculation(outcome, info)
+      this.respot(outcome)
+      return this.switchPlayer()
+    }
+
+    this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
+
+    // exactly one non red potted
+
+    const id = Outcome.pots(outcome)[0].id
+    if (!this.previousPotRed) {
+      const lesserBallOnTable =
+        SnookerUtils.coloursOnTable(this.container.table).filter(
+          (b) => b.id < id
+        ).length > 0
+
+      if (!info.legalFirstCollision || lesserBallOnTable) {
+        this.foulPoints = this.foulCalculation(outcome, info)
+        this.respot(outcome)
+        return this.switchPlayer()
+      }
+    }
+    if (this.previousPotRed) {
+      this.respot(outcome)
+    }
+    this.currentBreak += id + 1
+    this.previousPotRed = false
+    return this.continueBreak()
+  }
+
+  foulCalculation(outcome, info) {
+    const potted = Outcome.pots(outcome)
+      .map((b) => b.id)
+      .filter((id) => id < 7)
+    return Math.max(3, info.firstCollision.ballB!.id, ...potted) + 1
+  }
 
   tableGeometry() {
     TableGeometry.hasPockets = true
@@ -107,99 +201,6 @@ export class Snooker implements Rules {
     return new Vector3(Rack.baulk, -Rack.sixth / 3, 0)
   }
 
-  targetRedRule(outcome: Outcome[], info): Controller {
-    console.log("applying target red rule")
-    if (info.legalFirstCollision && Outcome.onlyRedsPotted(outcome)) {
-      // legal pot of one or more reds
-      this.currentBreak += info.pots
-      this.targetIsRed = false
-      this.previousPotRed = true
-      return this.continueBreak()
-    }
-
-    this.respot(outcome)
-    if (info.whitePotted) {
-      return this.whiteInHand()
-    }
-
-    return this.switchPlayer()
-  }
-
-  targetColourRule(outcome: Outcome[], info): Controller {
-    console.log("applying target colour rule")
-
-    if (info.whitePotted) {
-      this.respot(outcome)
-      return this.whiteInHand()
-    }
-
-    if (info.pots > 1) {
-      this.foulPoints = this.foulCalculation(outcome, info)
-      this.respot(outcome)
-      return this.switchPlayer()
-    }
-
-    this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
-
-    // exactly one non red potted
-
-    const id = Outcome.pots(outcome)[0].id
-    if (!this.previousPotRed) {
-      const lesserBallOnTable =
-        SnookerUtils.coloursOnTable(this.container.table).filter(
-          (b) => b.id < id
-        ).length > 0
-
-      if (!info.legalFirstCollision || lesserBallOnTable) {
-        this.foulPoints = this.foulCalculation(outcome, info)
-        this.respot(outcome)
-        return this.switchPlayer()
-      }
-    }
-    if (this.previousPotRed) {
-      this.respot(outcome)
-    }
-    this.currentBreak += id + 1
-    this.previousPotRed = false
-    return this.continueBreak()
-  }
-
-  snookerrule(outcome: Outcome[]): Controller {
-    this.foulPoints = 0
-    const info = SnookerUtils.shotInfo(
-      this.container.table,
-      outcome,
-      this.targetIsRed
-    )
-
-    if (info.pots === 0) {
-      if (!info.legalFirstCollision) {
-        this.foulPoints = Math.min(4, info.firstCollision!.ballB!.id + 1)
-      }
-      if (this.currentBreak > 0) {
-        // end of break, reset break score
-      }
-      this.targetIsRed =
-        SnookerUtils.redsOnTable(this.container.table).length > 0
-      return this.switchPlayer()
-    }
-
-    // ball has been potted
-    if (this.targetIsRed) {
-      return this.targetRedRule(outcome, info)
-    }
-
-    // non red potted
-    return this.targetColourRule(outcome, info)
-  }
-
-  foulCalculation(outcome, info) {
-    const potted = Outcome.pots(outcome)
-      .map((b) => b.id)
-      .filter((id) => id < 7)
-    return Math.max(3, info.firstCollision.ballB!.id, ...potted) + 1
-  }
-
   switchPlayer() {
     if (this.foulPoints > 0) {
       console.log(`foul, ${this.foulPoints} to opponent`)
@@ -221,7 +222,7 @@ export class Snooker implements Rules {
     console.log(this.currentBreak)
     if (Outcome.isClearTable(table)) {
       this.container.eventQueue.push(new ChatEvent(null, `game over`))
-      this.container.recoder.wholeGameLink()
+      this.container.recorder.wholeGameLink()
       return new End(this.container)
     }
     this.container.sendEvent(new WatchEvent(table.serialise()))
@@ -253,7 +254,7 @@ export class Snooker implements Rules {
       }
       const respot = new WatchEvent(changes)
       this.container.sendEvent(respot)
-      this.container.recoder.record(respot)
+      this.container.recorder.record(respot)
     }
   }
 }

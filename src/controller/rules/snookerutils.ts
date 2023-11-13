@@ -8,7 +8,7 @@ export class SnookerUtils {
     return {
       pots: Outcome.potCount(outcome),
       firstCollision: firstCollision,
-      legalFirstCollision: SnookerUtils.isLegal(
+      legalFirstCollision: SnookerUtils.isLegalFirstCollision(
         table,
         targetIsRed,
         firstCollision
@@ -17,7 +17,7 @@ export class SnookerUtils {
     }
   }
 
-  static isLegal(table: Table, targetIsRed, firstCollision) {
+  static isLegalFirstCollision(table: Table, targetIsRed, firstCollision) {
     if (!firstCollision) {
       return false
     }
