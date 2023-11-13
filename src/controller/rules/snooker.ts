@@ -74,7 +74,9 @@ export class Snooker implements Rules {
       return this.continueBreak()
     }
 
+    this.foulPoints = this.foulCalculation(outcome, info)
     this.respot(outcome)
+
     if (info.whitePotted) {
       return this.whiteInHand()
     }
@@ -125,7 +127,9 @@ export class Snooker implements Rules {
     const potted = Outcome.pots(outcome)
       .map((b) => b.id)
       .filter((id) => id < 7)
-    return Math.max(3, info.firstCollision.ballB!.id, ...potted) + 1
+    const firstCollisionId = info.firstCollision?.ballB?.id ?? 0
+
+    return Math.max(3, firstCollisionId, ...potted) + 1
   }
 
   tableGeometry() {

@@ -186,6 +186,7 @@ input[type="range"].powerSlider {
 
 .chatoutput {
   height: 30%;
+  width: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
   background-color: rgba(47, 79, 79, 0.486);
