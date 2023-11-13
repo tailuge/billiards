@@ -14,6 +14,7 @@ import { TableGeometry } from "../../view/tablegeometry"
 import { Rules } from "./rules"
 import { zero } from "../../utils/utils"
 import { Respot } from "../../utils/respot"
+import { StartAimEvent } from "../../events/startaimevent"
 
 export class ThreeCushion implements Rules {
   readonly container: Container
@@ -84,7 +85,7 @@ export class ThreeCushion implements Rules {
       return new Aim(this.container)
     }
 
-    this.container.sendEvent(this.container.table.cue.aim)
+    this.container.sendEvent(new StartAimEvent())
     return new WatchAim(this.container)
   }
 

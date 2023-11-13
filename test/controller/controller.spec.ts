@@ -23,6 +23,7 @@ import { RejoinEvent } from "../../src/events/rejoinevent"
 import { initDom } from "../view/dom"
 import { Ball, State } from "../../src/model/ball"
 import { Assets } from "../../src/view/assets"
+import { StartAimEvent } from "../../src/events/startaimevent"
 
 initDom()
 
@@ -100,11 +101,11 @@ describe("Controller", () => {
     done()
   })
 
-  it("AimEvent takes WatchShot to Aim when all stationary", (done) => {
+  it("StartAimEvent takes WatchShot to Aim when all stationary", (done) => {
     const watchShot = new WatchShot(container)
     container.controller = watchShot
     container.table.cueball.setStationary()
-    container.eventQueue.push(new AimEvent())
+    container.eventQueue.push(new StartAimEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
     done()
@@ -154,7 +155,7 @@ describe("Controller", () => {
     const watchShot = new WatchShot(container)
     container.controller = watchShot
     container.table.cueball.setStationary()
-    container.eventQueue.push(new AimEvent())
+    container.eventQueue.push(new StartAimEvent())
     container.processEvents()
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()

@@ -17,6 +17,7 @@ import { Rules } from "./rules"
 import { R } from "../../model/physics/constants"
 import { Respot } from "../../utils/respot"
 import { TableGeometry } from "../../view/tablegeometry"
+import { StartAimEvent } from "../../events/startaimevent"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -89,7 +90,7 @@ export class NineBall implements Rules {
       return new Aim(this.container)
     }
     // if no pot and no foul switch to other player
-    this.container.sendEvent(table.cue.aim)
+    this.container.sendEvent(new StartAimEvent())
     if (this.container.isSinglePlayer) {
       this.container.sendEvent(new WatchEvent(table.serialise()))
       this.startTurn()

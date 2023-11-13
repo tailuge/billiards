@@ -10,6 +10,7 @@ import { ChatEvent } from "./chatevent"
 import { RejoinEvent } from "./rejoinevent"
 import { PlaceBallEvent } from "./placeballevent"
 import { RerackEvent } from "./rerackevent"
+import { StartAimEvent } from "./startaimevent"
 
 export class EventUtil {
   static serialise(event: GameEvent) {
@@ -38,6 +39,8 @@ export class EventUtil {
         return PlaceBallEvent.fromJson(parsed)
       case EventType.RERACK:
         return RerackEvent.fromJson(parsed)
+      case EventType.STARTAIM:
+        return StartAimEvent.fromJson(parsed)
       default:
         throw Error("Unknown GameEvent :" + parsed)
     }

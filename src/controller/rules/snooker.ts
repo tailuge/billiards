@@ -17,6 +17,7 @@ import { PlaceBall } from "../placeball"
 import { PlaceBallEvent } from "../../events/placeballevent"
 import { zero } from "../../utils/utils"
 import { SnookerUtils } from "./snookerutils"
+import { StartAimEvent } from "../../events/startaimevent"
 
 export class Snooker implements Rules {
   cueball: Ball
@@ -219,7 +220,7 @@ export class Snooker implements Rules {
     console.log("end of break, switch player")
     const table = this.container.table
     console.log(table.cue.aim)
-    this.container.sendEvent(table.cue.aim)
+    this.container.sendEvent(new StartAimEvent(this.foulPoints))
     if (this.container.isSinglePlayer) {
       this.container.sendEvent(new WatchEvent(table.serialise()))
       this.startTurn()

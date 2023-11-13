@@ -10,7 +10,7 @@ export class WatchShot extends ControllerBase {
     this.container.table.hit()
   }
 
-  override handleAim(_) {
+  override handleStartAim(_) {
     return new Aim(this.container)
   }
 

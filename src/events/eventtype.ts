@@ -10,4 +10,5 @@ export enum EventType {
   PLACEBALL = "PLACEBALL",
   REJOIN = "REJOIN",
   RERACK = "RERACK",
+  STARTAIM = "STARTAIM",
 }

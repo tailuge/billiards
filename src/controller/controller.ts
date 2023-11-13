@@ -10,6 +10,7 @@ import { Container } from "../container/container"
 import { ChatEvent } from "../events/chatevent"
 import { PlaceBallEvent } from "../events/placeballevent"
 import { RejoinEvent } from "../events/rejoinevent"
+import { StartAimEvent } from "../events/startaimevent"
 
 export { BeginEvent, AimEvent, HitEvent, Input, AbortEvent, StationaryEvent }
 
@@ -30,6 +31,9 @@ export abstract class Controller {
     return this
   }
   handleBreak(_: BreakEvent): Controller {
+    return this
+  }
+  handleStartAim(_: StartAimEvent): Controller {
     return this
   }
   handleAim(_: AimEvent): Controller {
