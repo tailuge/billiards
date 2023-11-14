@@ -72,6 +72,7 @@ export class Snooker implements Rules {
       this.currentBreak += info.pots
       this.targetIsRed = false
       this.previousPotRed = true
+      this.container.hud.updateBreak(this.currentBreak)  
       return this.continueBreak()
     }
 
@@ -126,6 +127,7 @@ export class Snooker implements Rules {
     }
     this.currentBreak += id + 1
     this.previousPotRed = false
+    this.container.hud.updateBreak(this.currentBreak)  
     return this.continueBreak()
   }
 
@@ -180,6 +182,7 @@ export class Snooker implements Rules {
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     this.previousBreak = this.currentBreak
     this.currentBreak = 0
+    this.container.hud.updateBreak(this.currentBreak)
   }
 
   rack() {

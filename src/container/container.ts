@@ -17,6 +17,7 @@ import { Recorder } from "../events/recorder"
 import { Rules } from "../controller/rules/rules"
 import { RuleFactory } from "../controller/rules/rulefactory"
 import { Menu } from "../view/menu"
+import { Hud } from "../view/hud"
 
 /**
  * Model, View, Controller container.
@@ -36,6 +37,7 @@ export class Container {
   isSinglePlayer: boolean = true
   rules: Rules
   menu: Menu
+  hud: Hud
 
   last = performance.now()
   readonly step = 0.001953125 * 1
@@ -57,6 +59,7 @@ export class Container {
     this.id = id
     this.menu = new Menu(this)
     this.table.addToScene(this.view.scene)
+    this.hud = new Hud(element)
     this.updateController(new Init(this))
   }
 
