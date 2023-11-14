@@ -12,6 +12,7 @@ export class Recorder {
   shots: GameEvent[] = []
   states: number[][] = []
   breakStart: number | undefined
+  breakStartTime
   replayUrl
   constructor(container: Container) {
     this.container = container
@@ -53,16 +54,21 @@ export class Recorder {
     if (this.breakStart !== undefined) {
       return this.state(
         this.states[this.breakStart],
-        this.shots.slice(this.breakStart)
+        this.shots.slice(this.breakStart),
+        this.breakStartTime,
+        this.container.rules.previousBreak
       )
     }
     return undefined
   }
 
-  private state(init, events) {
+  private state(init, events, start = 0, score = 0) {
     return {
       init: init,
       shots: events,
+      start: start,
+      now: Date.now(),
+      score: score,
     }
   }
 
@@ -87,6 +93,7 @@ export class Recorder {
 
     if (this.breakStart === undefined) {
       this.breakStart = this.last()
+      this.breakStartTime = Date.now()
     }
   }
 

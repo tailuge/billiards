@@ -59,7 +59,7 @@ export class Container {
     this.id = id
     this.menu = new Menu(this)
     this.table.addToScene(this.view.scene)
-    this.hud = new Hud(element)
+    this.hud = new Hud()
     this.updateController(new Init(this))
   }
 

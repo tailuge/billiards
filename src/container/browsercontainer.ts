@@ -24,10 +24,14 @@ export class BrowserContainer {
   breakState = {
     init: null,
     shots: Array<string>(),
+    now: 0,
+    score: 0
   }
   cushionModel
   assets: Assets
+  now
   constructor(canvas3d, params) {
+    this.now = Date.now()
     this.playername = params.get("name") ?? ""
     this.tableId = params.get("tableId") ?? "default"
     this.clientId = params.get("clientId") ?? "default"
@@ -105,6 +109,11 @@ export class BrowserContainer {
 
   startReplay(replay) {
     this.breakState = this.parse(decodeURIComponent(replay))
+    console.log(this.breakState)
+    if (Date.now() - this.breakState.now < 5000) {
+      console.log("upload")
+      this.offerUpload()
+    }
     const breakEvent = new BreakEvent(
       this.breakState.init,
       this.breakState.shots
@@ -119,5 +128,9 @@ export class BrowserContainer {
     } catch (_) {
       return JSON.parse(JSONCrush.uncrush(s))
     }
+  }
+
+  offerUpload() {
+    this.container.chat.showMessage(`<a class="pill" target="_blank" href="https://tailuge-billiards.cyclic.app/hiscore/${location.search}"> upload high score </a`)
   }
 }
