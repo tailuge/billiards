@@ -40,6 +40,10 @@ export class Menu {
   }
 
   replayMode(url, breakEvent: BreakEvent) {
+    if (!this.replay) {
+      return
+    }
+
     this.setMenu(false)
     const queue = this.container.eventQueue
     this.share.onclick = (_) => {
