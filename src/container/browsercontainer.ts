@@ -25,7 +25,7 @@ export class BrowserContainer {
     init: null,
     shots: Array<string>(),
     now: 0,
-    score: 0
+    score: 0,
   }
   cushionModel
   assets: Assets
@@ -131,6 +131,8 @@ export class BrowserContainer {
   }
 
   offerUpload() {
-    this.container.chat.showMessage(`<a class="pill" target="_blank" href="https://tailuge-billiards.cyclic.app/hiscore/${location.search}"> upload high score </a`)
+    this.container.chat.showMessage(
+      `<a class="pill" target="_blank" href="https://tailuge-billiards.cyclic.app/hiscore.html${location.search}"> upload high score </a`
+    )
   }
 }
