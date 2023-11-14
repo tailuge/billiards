@@ -1,29 +1,27 @@
-import { Container } from "../container/container"
-
 export class Hud {
-  element: HTMLCanvasElement
+  element: HTMLDivElement
   current_break: HTMLStyleElement
 
   disabled = true
 
-  constructor(element) {
-    this.element = element
+  constructor() {
+    this.element = this.getElement("snookerScore");
+  }
 
-    //this.current_break = this.getElement("replay")
+  updateBreak(score) {
 
-    var width=100;
-    var height=100;
-
-    //var hudBitmap = element.getContext("2d");
-	//hudBitmap.font = "Normal 40px Arial";
-    //hudBitmap.textAlign = 'center';
-    //hudBitmap.fillStyle = "rgba(245,245,245,0.75)";
-    //hudBitmap.filslText('Initializing...', width / 2, height / 2);
+    if (this.element) {
+      if (score > 0) {
+      this.element.innerHTML = "Break</br>" + score;
+      } else {
+        this.element.innerHTML = "";
+      }
+    }
   }
 
   
 
-  getElement(id): HTMLButtonElement {
-    return document.getElementById(id)! as HTMLButtonElement
+  getElement(id): HTMLDivElement {
+    return document.getElementById(id)! as HTMLDivElement
   }
 }
