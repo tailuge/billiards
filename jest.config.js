@@ -21,6 +21,7 @@ module.exports = {
     "webgl.ts",
     "dom.ts",
     "shorten.ts",
+    "assets.ts",
   ],
   coverageReporters: ["text", "json"],
   testEnvironment: "jsdom",
