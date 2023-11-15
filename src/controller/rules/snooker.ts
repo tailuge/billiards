@@ -235,7 +235,6 @@ export class Snooker implements Rules {
   continueBreak() {
     const table = this.container.table
     this.container.sound.playSuccess(table.inPockets())
-    console.log(this.currentBreak)
     if (Outcome.isClearTable(table)) {
       this.container.eventQueue.push(new ChatEvent(null, `game over`))
       this.container.recorder.wholeGameLink()

@@ -1,8 +1,5 @@
 export class Hud {
   element: HTMLDivElement
-  current_break: HTMLStyleElement
-
-  disabled = true
 
   constructor() {
     this.element = this.getElement("snookerScore")
