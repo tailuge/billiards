@@ -6,6 +6,7 @@ import { HitEvent } from "./hitevent"
 import JSONCrush from "jsoncrush"
 import { RerackEvent } from "./rerackevent"
 import { GameEvent } from "./gameevent"
+import { round } from "../utils/utils"
 
 export class Recorder {
   container: Container
@@ -67,7 +68,7 @@ export class Recorder {
       init: init,
       shots: events,
       start: start,
-      now: Date.now(),
+      now: round(Date.now()),
       score: score,
     }
   }
@@ -80,7 +81,11 @@ export class Recorder {
       this.breakLink(isEndOfGame)
     }
 
-    this.lastShotLink(isPartOfBreak || isEndOfGame, potCount, Outcome.pots(outcome))
+    this.lastShotLink(
+      isPartOfBreak || isEndOfGame,
+      potCount,
+      Outcome.pots(outcome)
+    )
 
     if (isEndOfGame) {
       this.breakLink(isEndOfGame)
@@ -93,7 +98,7 @@ export class Recorder {
 
     if (this.breakStart === undefined) {
       this.breakStart = this.last()
-      this.breakStartTime = Date.now()
+      this.breakStartTime = round(Date.now())
     }
   }
 
@@ -104,11 +109,11 @@ export class Recorder {
         ? " " + this.container.rules.currentBreak
         : ""
 
-    var colourString = "#000000"    
+    var colourString = "#000000"
     if (balls.length > 0) {
-      balls.forEach(element => {
+      balls.forEach((element) => {
         colourString = "#" + element.ballmesh.color.getHexString()
-      });
+      })
     }
 
     const shotIcon =
@@ -145,7 +150,6 @@ export class Recorder {
     const compressed = JSONCrush.crush(serialisedGame)
     this.generateLink(text, compressed, "black")
   }
-
 
   private generateLink(text, state, colour) {
     const shotUri = `${this.replayUrl}${encodeURIComponent(state)}`

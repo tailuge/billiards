@@ -46,8 +46,8 @@ p {
 
 #snookerScoreOverlay {
   position: absolute;
-     bottom: 1em;
-     right: 3em;
+  bottom: 1em;
+  right: 3em;
 }
 
 .view3d {
