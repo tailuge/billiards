@@ -6,7 +6,6 @@ import { HitEvent } from "./hitevent"
 import JSONCrush from "jsoncrush"
 import { RerackEvent } from "./rerackevent"
 import { GameEvent } from "./gameevent"
-import { Ball } from '../model/ball'
 
 export class Recorder {
   container: Container
