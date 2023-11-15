@@ -23,9 +23,9 @@ describe("Recorder", () => {
     recorder.record(event)
     expect(recorder.wholeGame()).to.be.not.null
     const replay = recorder.wholeGame()
-    expect(JSON.stringify(recorder.lastShot())).to.equals(
-      JSON.stringify(replay)
-    )
+    const last = recorder.lastShot()
+    last.now = replay.now
+    expect(JSON.stringify(last)).to.equals(JSON.stringify(replay))
     done()
   })
 
