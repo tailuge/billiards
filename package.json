@@ -4,6 +4,13 @@
   "version": "0.3.1",
   "author": "tailuge",
   "homepage": "https://github.com/tailuge",
+  "keywords": [
+    "billiards",
+    "snooker",
+    "threejs",
+    "swc",
+    "physics"
+  ],
   "license": "GPL-3.0",
   "engines": {
     "yarn": "1.x"
@@ -31,7 +38,7 @@
     }
   },
   "dependencies": {
-    "interactjs": "^1.10.20",
+    "interactjs": "^1.10.21",
     "jsoncrush": "^1.1.8",
     "three": "^0.158.0"
   },

@@ -316,10 +316,10 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@interactjs/types@1.10.20":
-  version "1.10.20"
-  resolved "https://registry.yarnpkg.com/@interactjs/types/-/types-1.10.20.tgz#c5cdf06f3bade6a32c6787e3c4905de0d015afa7"
-  integrity sha512-59QRmyawJCCSx9H9tE7MaIC9dYprc27vspJ+zvwfIpt1/ZmosM64c1XiqM3Z2/FZ2/C5BTGZ/bJJLEokr56aJg==
+"@interactjs/types@1.10.21":
+  version "1.10.21"
+  resolved "https://registry.yarnpkg.com/@interactjs/types/-/types-1.10.21.tgz#22da1bd76679a5340b866893e8c6b191a9bcee0c"
+  integrity sha512-U5N3eg9m3rLO9PrQkAaLKsSlCTRxpuMyhPBdMpicPH09icW/kIjLWQcDa3tP/I57zG0yxG6zBFREAcrjyIB3Bw==
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
@@ -2029,9 +2029,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.535:
-  version "1.4.583"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.583.tgz#7b0ac4f36388da4b5485788adb92cd7dd0abffc4"
-  integrity sha512-93y1gcONABZ7uqYe/JWDVQP/Pj/sQSunF0HVAPdlg/pfBnOyBMLlQUxWvkqcljJg1+W6cjvPuYD+r1Th9Tn8mA==
+  version "1.4.586"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.586.tgz#68683163ed52a111213e2482ff847e76a5c6e891"
+  integrity sha512-qMa+E6yf1fNQbg3G66pHLXeJUP5CCCzNat1VPczOZOqgI2w4u+8y9sQnswMdGs5m4C1rOePq37EVBr/nsPQY7w==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -2682,12 +2682,12 @@ ini@^4.1.1:
   resolved "https://registry.yarnpkg.com/ini/-/ini-4.1.1.tgz#d95b3d843b1e906e56d6747d5447904ff50ce7a1"
   integrity sha512-QQnnxNyfvmHFIsj7gkPcYymR8Jdw/o7mp5ZFihxn6h8Ci6fh3Dx4E1gPjpQEpIuPo9XVNY/ZUwh4BPMjGyL01g==
 
-interactjs@^1.10.20:
-  version "1.10.20"
-  resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.10.20.tgz#8abf2a706c016733f3846913446ae6305a7671ca"
-  integrity sha512-jNFZiuBUL/j9Kkv6c89l+v5NpOn1m2LE8t7TrQOQBpBaYObYG6y6FHfqIMlF2XEcR6gCFLUQGQ3F0qBjqUMZvQ==
+interactjs@^1.10.21:
+  version "1.10.21"
+  resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.10.21.tgz#a7579bf6006ea8888fdc490f4cc33a96aa90aef0"
+  integrity sha512-85GdTHci8W7gFzSPfV26x69LA3Gnl64NbVYDTfw0Jo4rVvH4WAGBNjM5xV2UJwMvusmJLo2XkJDK5k7IsU87bA==
   dependencies:
-    "@interactjs/types" "1.10.20"
+    "@interactjs/types" "1.10.21"
 
 internal-slot@^1.0.4:
   version "1.0.6"
