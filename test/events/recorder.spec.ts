@@ -22,10 +22,6 @@ describe("Recorder", () => {
     const event: HitEvent = new HitEvent(container.table.serialise())
     recorder.record(event)
     expect(recorder.wholeGame()).to.be.not.null
-    const replay = recorder.wholeGame()
-    const last = recorder.lastShot()
-    last.now = replay.now
-    expect(JSON.stringify(last)).to.equals(JSON.stringify(replay))
     done()
   })
 

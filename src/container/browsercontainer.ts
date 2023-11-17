@@ -110,7 +110,7 @@ export class BrowserContainer {
   startReplay(replay) {
     this.breakState = this.parse(decodeURIComponent(replay))
     console.log(this.breakState)
-    if (Date.now() - this.breakState.now < 5000) {
+    if (Date.now() - this.breakState.now < 500000) {
       console.log("upload")
       this.offerUpload()
     }

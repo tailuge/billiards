@@ -11,6 +11,7 @@ export class Recorder {
   container: Container
   shots: GameEvent[] = []
   states: number[][] = []
+  start = Date.now()
   breakStart: number | undefined
   breakStartTime
   replayUrl
@@ -34,7 +35,7 @@ export class Recorder {
   }
 
   wholeGame() {
-    return this.state(this.states[0], this.shots)
+    return this.state(this.states[0], this.shots, this.start, 0, true)
   }
 
   last() {
@@ -62,13 +63,14 @@ export class Recorder {
     return undefined
   }
 
-  private state(init, events, start = 0, score = 0) {
+  private state(init, events, start = 0, score = 0, wholeGame = false) {
     return {
       init: init,
       shots: events,
       start: start,
       now: Date.now(),
       score: score,
+      wholeGame: wholeGame,
     }
   }
 
@@ -103,10 +105,6 @@ export class Recorder {
 
   lastShotLink(isPartOfBreak, potCount, balls) {
     const pots = potCount > 1 ? potCount - 1 : 0
-    const breakPoints =
-      this.container.rules.currentBreak > 0
-        ? " " + this.container.rules.currentBreak
-        : ""
 
     let colourString = "#000000"
     if (balls.length > 0) {
@@ -115,8 +113,7 @@ export class Recorder {
       })
     }
 
-    const shotIcon =
-      "⚈".repeat(pots) + (isPartOfBreak ? "⚈" : "⚆") + breakPoints
+    const shotIcon = "⚈".repeat(pots) + (isPartOfBreak ? "⚈" : "⚆")
     const serialisedShot = JSON.stringify(this.lastShot())
     this.generateLink(shotIcon, serialisedShot, colourString)
   }

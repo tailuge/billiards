@@ -31,7 +31,8 @@ export class NineBall implements Rules {
   }
 
   startTurn() {
-    // not used
+    this.previousBreak = this.currentBreak
+    this.currentBreak = 0
   }
 
   nextCandidateBall() {
@@ -80,6 +81,7 @@ export class NineBall implements Rules {
       return new WatchAim(this.container)
     }
     if (Outcome.isBallPottedNoFoul(table.cueball, outcome)) {
+      this.currentBreak += Outcome.potCount(outcome)
       this.container.sound.playSuccess(table.inPockets())
       if (this.isEndOfGame(outcome)) {
         this.container.eventQueue.push(new ChatEvent(null, `game over`))
