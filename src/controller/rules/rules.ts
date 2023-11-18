@@ -8,6 +8,7 @@ export interface Rules {
   cueball: Ball
   currentBreak: number
   previousBreak: number
+  score: number
   update(outcome: Outcome[]): Controller
   rack(): Ball[]
   tableGeometry()

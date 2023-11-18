@@ -22,6 +22,7 @@ export class ThreeCushion implements Rules {
   cueball: Ball
   currentBreak = 0
   previousBreak = 0
+  score = 0
 
   constructor(container) {
     this.container = container
@@ -74,6 +75,8 @@ export class ThreeCushion implements Rules {
     if (Outcome.isThreeCushionPoint(this.cueball, outcomes)) {
       this.container.sound.playSuccess(outcomes.length / 3)
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
+      this.currentBreak++
+      this.score++
       return new Aim(this.container)
     }
 

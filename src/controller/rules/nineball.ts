@@ -25,6 +25,7 @@ export class NineBall implements Rules {
   cueball: Ball
   currentBreak = 0
   previousBreak = 0
+  score = 0
 
   constructor(container) {
     this.container = container
@@ -81,7 +82,9 @@ export class NineBall implements Rules {
       return new WatchAim(this.container)
     }
     if (Outcome.isBallPottedNoFoul(table.cueball, outcome)) {
-      this.currentBreak += Outcome.potCount(outcome)
+      const pots = Outcome.potCount(outcome)
+      this.currentBreak += pots
+      this.score += pots
       this.container.sound.playSuccess(table.inPockets())
       if (this.isEndOfGame(outcome)) {
         this.container.eventQueue.push(new ChatEvent(null, `game over`))

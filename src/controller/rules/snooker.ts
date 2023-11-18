@@ -26,6 +26,7 @@ export class Snooker implements Rules {
   currentBreak = 0
   previousBreak = 0
   foulPoints = 0
+  score = 0
 
   static readonly tablemodel = "models/snooker.min.gltf"
 
@@ -181,6 +182,7 @@ export class Snooker implements Rules {
     this.previousPotRed = false
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     this.previousBreak = this.currentBreak
+    this.score += this.currentBreak
     this.currentBreak = 0
     this.container.hud.updateBreak(this.currentBreak)
   }

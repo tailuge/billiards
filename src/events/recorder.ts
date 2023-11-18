@@ -35,7 +35,13 @@ export class Recorder {
   }
 
   wholeGame() {
-    return this.state(this.states[0], this.shots, this.start, 0, true)
+    return this.state(
+      this.states[0],
+      this.shots,
+      this.start,
+      this.container.rules.score,
+      true
+    )
   }
 
   last() {
