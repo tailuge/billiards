@@ -80,6 +80,9 @@ export class ThreeCushion implements Rules {
       return new Aim(this.container)
     }
 
+    this.previousBreak = this.currentBreak
+    this.currentBreak = 0
+
     if (this.container.isSinglePlayer) {
       this.cueball = this.otherPlayersCueBall()
       this.container.table.cue.aim.i = this.container.table.balls.indexOf(
