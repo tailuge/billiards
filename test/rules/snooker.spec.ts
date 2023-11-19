@@ -270,6 +270,21 @@ describe("Snooker", () => {
     done()
   })
 
+  it("hit black but pot pink is foul", (done) => {
+    snooker.targetIsRed = false
+    snooker.previousPotRed = true
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.collision(table.cueball, table.balls[6], 1))
+    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
+    outcome.push(Outcome.pot(table.balls[5], 1))
+    table.balls[5].state = State.InPocket
+    snooker.update(outcome)
+    expect(snooker.targetIsRed).to.be.true
+    expect(snooker.foulPoints).to.be.equal(7)
+    done()
+  })
+
   it("target is red but hit pink is foul", (done) => {
     const outcome: Outcome[] = []
     outcome.push(Outcome.hit(table.cueball, 1))

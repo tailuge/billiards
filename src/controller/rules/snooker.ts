@@ -111,25 +111,35 @@ export class Snooker implements Rules {
     // exactly one non red potted
 
     const id = Outcome.pots(outcome)[0].id
-    if (!this.previousPotRed) {
-      const lesserBallOnTable =
-        SnookerUtils.coloursOnTable(this.container.table).filter(
-          (b) => b.id < id
-        ).length > 0
-
-      if (!info.legalFirstCollision || lesserBallOnTable) {
-        this.foulPoints = this.foulCalculation(outcome, info)
-        this.respot(outcome)
-        return this.switchPlayer()
-      }
+    console.log(info)
+    if (id !== info.firstCollision.ballB.id) {
+      return this.foul(outcome, info)
     }
+
     if (this.previousPotRed) {
       this.respot(outcome)
+      this.currentBreak += id + 1
+      this.previousPotRed = false
+      return this.continueBreak()
     }
+
+    const lesserBallOnTable =
+      SnookerUtils.coloursOnTable(this.container.table).filter((b) => b.id < id)
+        .length > 0
+
+    if (lesserBallOnTable) {
+      return this.foul(outcome, info)
+    }
+
     this.currentBreak += id + 1
     this.previousPotRed = false
-    this.container.hud.updateBreak(this.currentBreak)
     return this.continueBreak()
+  }
+
+  foul(outcome, info) {
+    this.foulPoints = this.foulCalculation(outcome, info)
+    this.respot(outcome)
+    return this.switchPlayer()
   }
 
   foulCalculation(outcome, info) {
@@ -235,6 +245,7 @@ export class Snooker implements Rules {
   }
 
   continueBreak() {
+    this.container.hud.updateBreak(this.currentBreak)
     const table = this.container.table
     this.container.sound.playSuccess(table.inPockets())
     if (Outcome.isClearTable(table)) {

@@ -22,12 +22,12 @@ export class SnookerUtils {
       return false
     }
     const id = firstCollision.ballB!.id
-    const lesserBallOnTable =
-      SnookerUtils.coloursOnTable(table).filter((b) => b.id < id).length > 0
     if (targetIsRed) {
       const isRed = id >= 7
       return isRed
     }
+    const lesserBallOnTable =
+      SnookerUtils.coloursOnTable(table).filter((b) => b.id < id).length > 0
     return !lesserBallOnTable
   }
 
