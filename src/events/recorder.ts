@@ -15,6 +15,7 @@ export class Recorder {
   breakStart: number | undefined
   breakStartTime
   replayUrl
+  hiScoreUrl = "https://tailuge-billiards.cyclic.app/hiscore.html"
   constructor(container: Container) {
     this.container = container
   }
@@ -138,11 +139,14 @@ export class Recorder {
     const breakScore =
       this.container.rules.previousBreak > 0
         ? this.container.rules.previousBreak
-        : currentBreak.shots.length
+        : currentBreak.shots.filter((shot) => shot.type !== "RERACK").length
     const text = `break(${breakScore})`
     const serialisedShot = JSON.stringify(currentBreak)
     const compressed = JSONCrush.crush(serialisedShot)
     this.generateLink(text, compressed, "black")
+    if (currentBreak.score >= 4) {
+      this.generateHiScoreLink(compressed)
+    }
   }
 
   wholeGameLink() {
@@ -156,6 +160,15 @@ export class Recorder {
   private generateLink(text, state, colour) {
     const shotUri = `${this.replayUrl}${encodeURIComponent(state)}`
     const shotLink = `<a class="pill" style="color: ${colour}" target="_blank" href="${shotUri}">${text}</a>`
+    this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
+  }
+
+  private generateHiScoreLink(state) {
+    const text = "hi score 🏆"
+    const shotUri = `${this.hiScoreUrl}?ruletype=${
+      this.container.rules.rulename
+    }&state=${encodeURIComponent(state)}`
+    const shotLink = `<a class="pill" target="_blank" href="${shotUri}">${text}</a>`
     this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
   }
 }

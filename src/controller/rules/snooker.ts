@@ -27,6 +27,7 @@ export class Snooker implements Rules {
   previousBreak = 0
   foulPoints = 0
   score = 0
+  rulename = "snooker"
 
   static readonly tablemodel = "models/snooker.min.gltf"
 

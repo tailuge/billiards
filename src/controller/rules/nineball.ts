@@ -26,6 +26,7 @@ export class NineBall implements Rules {
   currentBreak = 0
   previousBreak = 0
   score = 0
+  rulename = "nineball"
 
   constructor(container) {
     this.container = container

@@ -11,6 +11,11 @@ export class FourteenOne extends NineBall implements Rules {
     return "models/p8.min.gltf"
   }
 
+  constructor(container) {
+    super(container)
+    this.rulename = "fourteenone"
+  }
+
   override rack() {
     return Rack.triangle()
   }

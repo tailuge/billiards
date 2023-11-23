@@ -132,7 +132,7 @@ export class BrowserContainer {
 
   offerUpload() {
     this.container.chat.showMessage(
-      `<a class="pill" target="_blank" href="https://tailuge-billiards.cyclic.app/hiscore.html${location.search}"> upload high score </a`
+      `<a class="pill" target="_blank" href="https://tailuge-billiards.cyclic.app/hiscore.html${location.search}"> upload high score 🏆</a`
     )
   }
 }

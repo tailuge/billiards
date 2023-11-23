@@ -9,6 +9,7 @@ export interface Rules {
   currentBreak: number
   previousBreak: number
   score: number
+  rulename: string
   update(outcome: Outcome[]): Controller
   rack(): Ball[]
   tableGeometry()
