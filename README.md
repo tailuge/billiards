@@ -27,7 +27,7 @@ Demos run in all major browsers and use WebGL
 * 6-red [Snooker ⬀](https://tailuge.github.io/billiards/dist?ruletype=snooker).
 * [Three cushion billiards ⬀](https://tailuge.github.io/billiards/dist?ruletype=threecushion).
 * Inspect physics using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
-* Compare highest [breaks](https://tailuge-billiards.cyclic.app/)
+* Compare highest [breaks](https://tailuge-billiards.cyclic.app/leaderboard.html)
 * Try [two player](https://tailuge.github.io/billiards/dist/lobby/lobby.html) online hosted on render.com
 
 ## Reference material
