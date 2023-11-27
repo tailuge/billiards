@@ -152,7 +152,7 @@ input[type="range"].powerSlider {
   aspect-ratio: 0.4;
   border-radius: 10px;
   border-width: 4px;
-  font-size: x-large;
+  font-size: large;
   min-width: 80px;
   user-select: none;
 }
