@@ -38,7 +38,7 @@
     }
   },
   "dependencies": {
-    "interactjs": "^1.10.23",
+    "interactjs": "^1.10.25",
     "jsoncrush": "^1.1.8",
     "three": "^0.159.0"
   },
@@ -48,7 +48,7 @@
     "@testing-library/dom": "^9.3.3",
     "@types/chai": "^4.3.11",
     "@types/jest": "^29.5.10",
-    "@types/node": "^20.10.2",
+    "@types/node": "^20.10.3",
     "@types/three": "^0.159.0",
     "chai": "^4.3.10",
     "ini": "^4.1.1",
