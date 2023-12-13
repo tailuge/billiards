@@ -76,6 +76,9 @@ export abstract class ControllerBase extends Controller {
       case "KeyDUp":
         this.togglePanel()
         return true
+      case "KeyFUp":
+        this.toggleFullscreen()
+        return true
       default:
         return false
     }
@@ -86,5 +89,13 @@ export abstract class ControllerBase extends Controller {
     this.container.table.showSpin(true)
     this.container.table.showTraces(true)
     typeof process !== "object" && console.log(this.container.table.serialise())
+  }
+
+  private toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen()
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen()
+    }
   }
 }
