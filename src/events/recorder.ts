@@ -158,7 +158,7 @@ export class Recorder {
   }
 
   shotCount(shots) {
-    shots.filter((shot) => shot.type !== "RERACK").length
+    return shots.filter((shot) => shot.type !== "RERACK").length
   }
 
   private generateLink(text, state, colour) {
