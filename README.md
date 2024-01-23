@@ -6,6 +6,8 @@
 [![Tests](https://github.com/tailuge/billiards/actions/workflows/main.yml/badge.svg)](https://github.com/tailuge/billiards/actions/workflows/main.yml)
 [![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards)
 
+[![Demo](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)](https://tailuge.github.io/billiards/dist)
+
 ## Features
 
 Unsophisticated billiards with spinning ball physics written in typescript.
@@ -18,7 +20,6 @@ Unsophisticated billiards with spinning ball physics written in typescript.
 
 ## Online Demo
 
-[![Demo](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)](https://tailuge.github.io/billiards/dist)
 
 Demos run in all major browsers and use WebGL
 
