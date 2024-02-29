@@ -40,7 +40,7 @@
   "dependencies": {
     "interactjs": "^1.10.26",
     "jsoncrush": "^1.1.8",
-    "three": "^0.161.0"
+    "three": "0.162.0"
   },
   "devDependencies": {
     "@swc/core": "1.4.2",
@@ -48,7 +48,7 @@
     "@testing-library/dom": "^9.3.4",
     "@types/chai": "^4.3.12",
     "@types/jest": "^29.5.12",
-    "@types/node": "20.11.21",
+    "@types/node": "20.11.22",
     "@types/three": "^0.161.2",
     "chai": "4.3.10",
     "ini": "^4.1.1",
