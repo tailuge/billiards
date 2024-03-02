@@ -229,6 +229,9 @@ a.pill {
   border-top-style: groove;
 }
 
+a {
+  color: lightblue;
+}
 .constants {
   background: linear-gradient(#495155, #0b0b0e);
   border-radius: 5px;
