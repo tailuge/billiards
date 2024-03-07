@@ -43,15 +43,15 @@
     "three": "0.162.0"
   },
   "devDependencies": {
-    "@swc/core": "1.4.2",
+    "@swc/core": "1.4.5",
     "@swc/jest": "^0.2.36",
     "@testing-library/dom": "^9.3.4",
     "@types/chai": "^4.3.12",
     "@types/jest": "^29.5.12",
-    "@types/node": "20.11.24",
+    "@types/node": "20.11.25",
     "@types/three": "0.162.0",
     "chai": "4.3.10",
-    "ini": "^4.1.1",
+    "ini": "4.1.2",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "mocha": "^10.3.0",
@@ -62,7 +62,7 @@
     "ts-jest": "^29.1.2",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3",
+    "typescript": "5.4.2",
     "webpack": "^5.90.3",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.2"
