@@ -6,7 +6,7 @@ import { R } from "../model/physics/constants"
 import { Table } from "../model/table"
 
 export class Rack {
-  static readonly noise = R * 0.025
+  static readonly noise = R * 0.023
   static readonly gap = 2 * R + 2 * Rack.noise
   static readonly up = new Vector3(0, 0, -1)
   static readonly spot = new Vector3(-TableGeometry.X / 2, 0.0, 0)
@@ -140,7 +140,7 @@ export class Rack {
   static snooker() {
     const balls: Ball[] = []
     const dy = TableGeometry.Y / 4
-    balls.push(Rack.cueBall(Rack.jitter(new Vector3(Rack.baulk, -dy / 1.9, 0))))
+    balls.push(Rack.cueBall(Rack.jitter(new Vector3(Rack.baulk, -dy * 0.5, 0))))
 
     const colours = Rack.snookerColourPositions()
     balls.push(new Ball(Rack.jitter(colours[0]), 0xeede36))

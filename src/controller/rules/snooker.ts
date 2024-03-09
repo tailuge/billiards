@@ -226,7 +226,7 @@ export class Snooker implements Rules {
       const min = new Vector3(Rack.baulk - Rack.sixth, -Rack.sixth)
       return target.clamp(min, max)
     }
-    return new Vector3(Rack.baulk, -Rack.sixth / 3, 0)
+    return new Vector3(Rack.baulk, -Rack.sixth / 2.6, 0)
   }
 
   switchPlayer() {
