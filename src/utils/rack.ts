@@ -140,7 +140,7 @@ export class Rack {
   static snooker() {
     const balls: Ball[] = []
     const dy = TableGeometry.Y / 4
-    balls.push(Rack.cueBall(Rack.jitter(new Vector3(Rack.baulk, -dy / 2, 0))))
+    balls.push(Rack.cueBall(Rack.jitter(new Vector3(Rack.baulk, -dy / 1.9, 0))))
 
     const colours = Rack.snookerColourPositions()
     balls.push(new Ball(Rack.jitter(colours[0]), 0xeede36))
