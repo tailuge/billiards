@@ -26,7 +26,7 @@ export class Ball {
   state: State = State.Stationary
   pocket: Pocket
 
-  static id = 0
+  private static id = 0
   readonly id = Ball.id++
 
   static readonly transition = 0.05
