@@ -38,9 +38,9 @@
     }
   },
   "dependencies": {
-    "interactjs": "^1.10.26",
+    "interactjs": "1.10.27",
     "jsoncrush": "^1.1.8",
-    "three": "0.162.0"
+    "three": "0.163.0"
   },
   "devDependencies": {
     "@swc/core": "1.4.11",
