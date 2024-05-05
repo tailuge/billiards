@@ -47,10 +47,26 @@ export class PlaceBall extends ControllerBase {
       case "ArrowRight":
         this.moveTo(0, -input.t * this.placescale)
         break
+      // use cursor movement for placing cueball
       case "movementXUp":
         this.moveTo(0, -input.t * this.placescale * 2)
         break
-
+      case "movementYUp":
+        this.moveTo(-input.t * this.placescale * 2, 0)
+        break
+      // use IJKL for placing cueball
+      case "KeyI":
+        this.moveTo(0, input.t * this.placescale)
+        break
+      case "KeyK":
+        this.moveTo(0, -input.t * this.placescale)
+        break
+      case "KeyJ":
+        this.moveTo(-input.t * this.placescale, 0)
+        break
+      case "KeyL":
+        this.moveTo(input.t * this.placescale, 0)
+        break
       case "SpaceUp":
         return this.placed()
       default:
