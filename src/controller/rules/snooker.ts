@@ -29,7 +29,8 @@ export class Snooker implements Rules {
   score = 0
   rulename = "snooker"
 
-  static readonly tablemodel = "models/snooker.min.gltf"
+  // add "D" in snooker model
+  static readonly tablemodel = "models/d-snooker.gltf"
 
   readonly container: Container
 
@@ -221,10 +222,20 @@ export class Snooker implements Rules {
 
   placeBall(target?: Vector3): Vector3 {
     if (target) {
-      // constrain to "D" in the future
-      const max = new Vector3(Rack.baulk, Rack.sixth)
-      const min = new Vector3(Rack.baulk - Rack.sixth, -Rack.sixth)
-      return target.clamp(min, max)
+      // constrain to "D"
+      const centre = new Vector3(Rack.baulk, 0, 0)
+      const radius = Rack.sixth
+      const distance = target.distanceTo(centre)
+      if (target.x >= Rack.baulk) {
+        target.x = Rack.baulk
+      }
+      if (distance > radius) {
+        const direction = target.clone().sub(centre).normalize()
+        return centre.add(direction.multiplyScalar(radius))
+      }
+      else {
+        return target;
+      }
     }
     return new Vector3(Rack.baulk, -Rack.sixth / 2.6, 0)
   }

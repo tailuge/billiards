@@ -90,8 +90,8 @@ describe("Snooker", () => {
     container.processEvents()
   }
 
-  it("Snooker has 6 colours and 6 reds", (done) => {
-    expect(table.balls).to.be.length(13)
+  it("Snooker has 6 colours and 15 reds", (done) => {
+    expect(table.balls).to.be.length(22)
     done()
   })
 

@@ -150,7 +150,8 @@ export class Rack {
     balls.push(new Ball(Rack.jitter(colours[4]), 0xffaacc))
     balls.push(new Ball(Rack.jitter(colours[5]), 0x010101))
 
-    const triangle = Rack.trianglePositions().slice(0, 6)
+    // change to 15 red balls
+    const triangle = Rack.trianglePositions().slice(0, 15)
     triangle.forEach((p) => {
       balls.push(new Ball(Rack.jitter(p.add(Rack.down)), 0xee0000))
     })
