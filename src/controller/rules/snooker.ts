@@ -29,8 +29,7 @@ export class Snooker implements Rules {
   score = 0
   rulename = "snooker"
 
-  // add "D" in snooker model
-  static readonly tablemodel = "models/d-snooker.gltf"
+  static readonly tablemodel = "models/d-snooker.min.gltf"
 
   readonly container: Container
 

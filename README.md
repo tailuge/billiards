@@ -20,12 +20,11 @@ Unsophisticated billiards with spinning ball physics written in typescript.
 
 ## Online Demo
 
-
 Demos run in all major browsers and use WebGL
 
 * [Nine ball ⬀](https://tailuge.github.io/billiards/dist)
 * [Three cushion billiards ⬀](https://tailuge.github.io/billiards/dist?ruletype=threecushion).
-* 6-red [Snooker ⬀](https://tailuge.github.io/billiards/dist?ruletype=snooker).
+* [Snooker ⬀](https://tailuge.github.io/billiards/dist?ruletype=snooker).
 * 4-ball [Straight pool ⬀](https://tailuge.github.io/billiards/dist?ruletype=fourteenone).
 * Inspect physics using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
 * Compare highest [breaks](https://tailuge-billiards.cyclic.app/leaderboard.html)
@@ -171,4 +170,3 @@ top | aim
 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=tailuge/billiards&type=Date)](https://star-history.com/#tailuge/billiards&Date)
-
