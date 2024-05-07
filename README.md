@@ -91,6 +91,7 @@ where
 nvm use v18.17.1
 yarn install
 yarn dev
+yarn gltfpack
 ```
 
 This generates artefacts in /dist for prod deployment (e.g. on github static pages)
