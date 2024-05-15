@@ -1,8 +1,6 @@
 import { BrowserContainer } from "./container/browsercontainer"
-import { logusage } from "./utils/usage"
 
 initialise()
-logusage()
 
 function initialise() {
   const canvas3d = document.getElementById("viewP1") as HTMLCanvasElement

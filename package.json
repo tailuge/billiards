@@ -43,12 +43,12 @@
     "three": "0.164.1"
   },
   "devDependencies": {
-    "@swc/core": "1.5.5",
+    "@swc/core": "1.5.7",
     "@swc/jest": "^0.2.36",
     "@testing-library/dom": "10.1.0",
     "@types/chai": "4.3.16",
     "@types/jest": "^29.5.12",
-    "@types/node": "20.12.11",
+    "@types/node": "20.12.12",
     "@types/three": "0.164.0",
     "chai": "4.x",
     "ini": "4.1.2",
