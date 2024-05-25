@@ -15,7 +15,7 @@ export class Recorder {
   breakStart: number | undefined
   breakStartTime
   replayUrl
-  hiScoreUrl = "https://https://scoreboard-tailuge.vercel.app/hiscore.html"
+  hiScoreUrl = "https://scoreboard-tailuge.vercel.app/hiscore.html"
   constructor(container: Container) {
     this.container = container
   }
