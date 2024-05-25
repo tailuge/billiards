@@ -10,7 +10,7 @@ export function shorten(url, action) {
       .replaceAll("*", "%2A")
   ).search
 
-  fetch("https://scoreboard-mauve.vercel.app/api/shorten", {
+  fetch("https://scoreboard-tailuge.vercel.app/api/shorten", {
     method: "POST",
     mode: "cors",
     headers: { "Content-Type": "application/json" },

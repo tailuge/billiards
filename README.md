@@ -27,7 +27,7 @@ Demos run in all major browsers and use WebGL
 * [Snooker ⬀](https://tailuge.github.io/billiards/dist?ruletype=snooker).
 * 4-ball [Straight pool ⬀](https://tailuge.github.io/billiards/dist?ruletype=fourteenone).
 * Inspect physics using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
-* Compare highest [breaks](https://tailuge-billiards.cyclic.app/leaderboard.html)
+* Compare highest [breaks](https://https://scoreboard-tailuge.vercel.app/leaderboard.html)
 * Try [two player](https://tailuge.github.io/billiards/dist/lobby/lobby.html) online hosted on render.com
 
 ## Reference material
