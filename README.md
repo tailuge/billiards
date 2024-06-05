@@ -16,7 +16,7 @@ Unsophisticated billiards with spinning ball physics written in typescript.
 * Presentation using WebGL in any modern browser or mobile.
 * Record and playback breaks.
 * Two player online mode with node websocket server.
-* Nine ball and three cushion billiards rules
+* Nine ball and three cushion billiards rules.
 
 ## Online Demo
 
