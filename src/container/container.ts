@@ -86,7 +86,6 @@ export class Container {
     this.view.update(computedElapsed, this.table.cue.aim)
     this.table.cue.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
-      this.table.roundCueBallPosition()
       this.eventQueue.push(new StationaryEvent())
     }
     this.sound.processOutcomes(this.table.outcome)
