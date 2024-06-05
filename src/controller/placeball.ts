@@ -5,7 +5,6 @@ import { BreakEvent } from "../events/breakevent"
 import { R } from "../model/physics/constants"
 import { Vector3 } from "three"
 import { CueMesh } from "../view/cuemesh"
-import { roundVec } from "../utils/utils"
 
 /**
  * Place cue ball using input events.
@@ -83,7 +82,7 @@ export class PlaceBall extends ControllerBase {
   moveTo(dx, dy) {
     const delta = new Vector3(dx, dy)
     const ballPos = this.container.table.cueball.pos.add(delta)
-    ballPos.copy(roundVec(this.container.rules.placeBall(ballPos)))
+    ballPos.copy(this.container.rules.placeBall(ballPos))
     CueMesh.indicateValid(!this.container.table.overlapsAny(ballPos))
   }
 

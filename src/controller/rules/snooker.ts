@@ -231,9 +231,8 @@ export class Snooker implements Rules {
       if (distance > radius) {
         const direction = target.clone().sub(centre).normalize()
         return centre.add(direction.multiplyScalar(radius))
-      }
-      else {
-        return target;
+      } else {
+        return target
       }
     }
     return new Vector3(Rack.baulk, -Rack.sixth / 2.6, 0)

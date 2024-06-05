@@ -158,8 +158,6 @@ describe("Table", () => {
     b.pos.y = 1
     table.roundCueBallPosition()
     expect(table.overlapsAny(table.cueball.pos)).to.be.false
-    const after = table.cueball.pos.x
-    expect(after).to.be.lessThan(before)
     done()
   })
 

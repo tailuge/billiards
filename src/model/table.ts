@@ -9,7 +9,7 @@ import { TableGeometry } from "../view/tablegeometry"
 import { Outcome } from "./outcome"
 import { PocketGeometry } from "../view/pocketgeometry"
 import { bounceHanBlend } from "./physics/physics"
-import { roundVec, zero } from "../utils/utils"
+import { zero } from "../utils/utils"
 import { R } from "./physics/constants"
 
 interface Pair {
@@ -215,7 +215,7 @@ export class Table {
   }
 
   roundCueBallPosition() {
-    const pos = roundVec(this.cueball.pos.clone())
+    const pos = this.cueball.pos.clone()
     if (this.overlapsAny(pos)) {
       return
     }
