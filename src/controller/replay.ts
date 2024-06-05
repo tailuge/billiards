@@ -45,6 +45,7 @@ export class Replay extends ControllerBase {
     }
     const aim = AimEvent.fromJson(shot)
     this.container.table.cueball = this.container.table.balls[aim.i]
+    console.log(this.container.table.cueball.pos.distanceTo(aim.pos))
     this.container.table.cueball.pos.copy(aim.pos)
     this.container.table.cue.aim = aim
     this.container.table.cue.updateAimInput()
