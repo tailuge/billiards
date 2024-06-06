@@ -136,6 +136,7 @@ export class Recorder {
     if (currentBreak.shots.length === 1) {
       return
     }
+    console.log(this.container.rules)
     const breakScore =
       this.container.rules.currentBreak === 0
         ? this.container.rules.previousBreak
