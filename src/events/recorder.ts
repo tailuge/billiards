@@ -137,14 +137,14 @@ export class Recorder {
       return
     }
     const breakScore =
-      this.container.rules.previousBreak > 0
+      this.container.rules.currentBreak === 0
         ? this.container.rules.previousBreak
-        : this.shotCount(currentBreak.shots)
+        : this.container.rules.currentBreak
     const text = `break(${breakScore})`
     const serialisedShot = JSON.stringify(currentBreak)
     const compressed = JSONCrush.crush(serialisedShot)
     this.generateLink(text, compressed, "black")
-    if (currentBreak.score >= 4) {
+    if (breakScore >= 4) {
       this.generateHiScoreLink(compressed)
     }
   }
