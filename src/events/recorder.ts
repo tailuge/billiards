@@ -136,11 +136,11 @@ export class Recorder {
     if (currentBreak.shots.length === 1) {
       return
     }
-    console.log(this.container.rules)
     const breakScore =
       this.container.rules.currentBreak === 0
         ? this.container.rules.previousBreak
         : this.container.rules.currentBreak
+    currentBreak.score = breakScore
     const text = `break(${breakScore})`
     const serialisedShot = JSON.stringify(currentBreak)
     const compressed = JSONCrush.crush(serialisedShot)
