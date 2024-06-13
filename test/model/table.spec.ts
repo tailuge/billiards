@@ -152,7 +152,6 @@ describe("Table", () => {
     const table = new Table([a, b, c])
     table.cueball = a
     expect(table.overlapsAny(table.cueball.pos)).to.be.false
-    const before = table.cueball.pos.x
     table.roundCueBallPosition()
     expect(table.overlapsAny(table.cueball.pos)).to.be.false
     b.pos.y = 1

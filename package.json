@@ -43,7 +43,7 @@
     "three": "0.165.0"
   },
   "devDependencies": {
-    "@swc/core": "1.5.28",
+    "@swc/core": "1.5.29",
     "@swc/jest": "^0.2.36",
     "@testing-library/dom": "10.1.0",
     "@types/chai": "4.3.16",

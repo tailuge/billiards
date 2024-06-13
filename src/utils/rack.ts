@@ -113,7 +113,7 @@ export class Rack {
       .filter((b) => b !== table.cueball)
       .filter((b) => b !== key)
       .forEach((b) => {
-        b.pos.copy(Rack.jitter(tp.shift()!))
+        b.pos.copy(Rack.jitter(tp.shift()))
         b.state = State.Stationary
       })
     if (table.overlapsAny(key.pos, key)) {
