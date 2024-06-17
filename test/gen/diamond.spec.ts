@@ -1,17 +1,6 @@
 import "mocha"
 import { expect } from "chai"
-import { HitEvent } from "../../src/controller/controller"
-import { Container } from "../../src/container/container"
-import { GameEvent } from "../../src/events/gameevent"
-import { initDom } from "../view/dom"
-import { Init } from "../../src/controller/init"
-import { TableGeometry } from "../../src/view/tablegeometry"
-import { Vector3 } from "three"
-import { R } from "../../src/model/physics/constants"
-import { norm, round, roundVec } from "../../src/utils/utils"
-import { Assets } from "../../src/view/assets"
-
-initDom()
+import JSONCrush from "jsoncrush"
 
 const jestConsole = console
 
@@ -23,76 +12,14 @@ afterEach(() => {
   global.console = jestConsole
 })
 
-describe("Controller", () => {
-  let container: Container
-  let broadcastEvents: GameEvent[]
-  let stepx: number
-  let stepy: number
-  const replayUrl = "?ruletype=threecushion&state="
-  beforeEach(function (done) {
-    container = new Container(
-      document.getElementById("viewP1"),
-      () => {},
-      Assets.localAssets("threecushion"),
-      "threecushion"
-    )
-    broadcastEvents = []
-    container.broadcast = (x) => broadcastEvents.push(x)
-    stepx = TableGeometry.X / 4
-    stepy = TableGeometry.Y / 2
-    container.table.balls[1].pos.x -= 1.5 * stepx
-    container.table.balls[2].pos.x = container.table.balls[1].pos.x
-    container.table.balls[2].pos.y -= 3 * R
+describe("jsonCrush", () => {
+  const str=`('init!["O#P8646P2k5P8642O2k3P8649,0,-q147178X95878387P146988956X633uO7W9926X808k99PW056229580X7W623,q395893906X18687O0309834W456146122O7850v1321444826OW7943457746683393O8454_2104309055O03341822824u8297O8441550856490995P032X236957_79XO90u931V9k5247PW0X95v076Y56k3O8k8_10_246741P13V348623230549O0147452_1033V707P1443874k66455214O829968k8__169O1588_63v3212903O96158_Y6748612O054926Y98Wu618O9624122853032372P032284760V8649X5O9379_6790117894P09999597X507342,q107645661715287P44620987176293686,q03092u130422934P081Y68504579432,q39176k783899214O4556_91087890X,q1376920363088v4O5V9_88u113683,q1546284949v7069O6839774698702815]~shots![Z0N0Dj4396696969_9086$"NH#J!0*0N0D3.W415716V74614$H6321V2660731099Njk1k791214Y5VBS*0N0D3.167138993774994$H7723930460142693Nj1814736084u1383J!0*0N0D-2.688443315529157L4.91uWWWWW05FH179Y57774786289NH28432388628761u7BS* j299982Y845832245DH173603957109Y912L2.3088VFj3149266811670549NH315X10844_9W5J!0* H1W01734154167V7D-q13Yu687378848L4._38VFqX74810X7v8907NH5160592268528739BQ*UDH4171X21572609Y6TH7V95473V12_vNH118u0910501101J!0*UDj8218k8959429391T-q3338173Y5Y9613NH141042v566846626B%0N0Jd!4)])*H283974710158v5Nj09673863V264726D-q031V310v0Y803TH8020231743347841NH4430928130920293J!0*HW45045045045045045NH0k5k5k5k5k54Dq47611887Y484743Lq179Fq1_v960328XVNj3869310611859547BQ*j07471231X4318555Nj2905478797790549D-5.3W382623_4579Lq179Fq04X902vW64376NH1787851608026901J!0*j06V6V6V6V6V7Nju6V6V6V6V674D-q693163637X53331L2.1615FqX76_0921v9uNHk14410388Y1246BQ*j01v1v1v1v1v14Nj2Y7Y7Y7Y7Y77Dj71Y0924uu4_6Lq3V5WWWWW04FH660441524886108NH170720592u630506J!0)]~start!1718606k61k~now!171860Y8X93~score!37~wholeGame!false)*),ZBJ!0),('type!'RERACK'~ballinfo!('balls![('poD~z!0)~angle!F~po%H0.J~z!0)~iL~power!N~y!O,HP,jQ%q179N0Jd!6)])S%j8646Nj2k16666666666672Jd!1)])TLq6211uWWWW01FUH1636367Y88848386NHu14418597798Y44V75W00X19Y65Z('type!'AIM'~offset!('x!_27j-Hk40q1.u25v35 jW32u6X98342282_N"j245482363X30444#208704710v58783$L3.438VF%s!('x!␁%$#" vuqkj_ZYXWVUTSQPONLJHFDB*_`
+
+  const data=JSONCrush.uncrush(str)
+
+  it("jsonCrush", (done) => {
+    console.log(data)
+    expect(str).to.be.length(1973)
     done()
   })
-
-  const toLowerRail = new Vector3(0, -2.25 * R)
-  const toUpperRail = new Vector3(0, 2.25 * R)
-
-  it("initialise ball for diamond system shot", (done) => {
-    expect(container.controller).to.be.an.instanceof(Init)
-    container.table.cue.aim.power = 2.6
-    container.table.cue.aim.offset.x = -0.35
-    /*
-    shot(gridPosition(0, 0), gridPosition(5, 4))
-    shot(gridPosition(2, 0), gridPosition(6, 4))
-    shot(gridPosition(4, 0), gridPosition(7, 4))
-    shot(gridPosition(6, 0), gridPosition(8, 4))
-    */
-    done()
-  })
-
-  function shot(fromDiamond, toDiamond) {
-    const start = fromDiamond.add(toLowerRail)
-    const target = toDiamond.add(toUpperRail)
-    playAlong(start, target)
-    console.log(diagramHTML(getURL()))
-  }
-
-  function playAlong(start, target) {
-    const dir = norm(target.clone().sub(start))
-    const ballStart = start.clone().addScaledVector(dir, R * 6)
-    container.table.cueball.pos.copy(ballStart)
-    container.table.cue.aim.angle = round(Math.atan2(dir.y, dir.x))
-  }
-
-  function gridPosition(x, y) {
-    return new Vector3((-4 + x) * stepx, (-2 + y) * stepy, 0)
-  }
-
-  function getURL() {
-    roundVec(container.table.cueball.pos)
-    container.table.cue.moveTo(container.table.cueball.pos)
-    const event: HitEvent = new HitEvent(container.table.serialise())
-    container.recoder.record(event)
-    container.recoder.updateBreak([])
-    const state = container.recoder.lastShot()
-    const shotUri = `${replayUrl}${encodeURIComponent(JSON.stringify(state))}`
-    return shotUri
-  }
-
-  function diagramHTML(uri) {
-    return `<div class="replaydiagram child"><div class="topview"
-      data-state="${uri}"></div></div>`
-  }
 })

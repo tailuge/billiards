@@ -143,7 +143,9 @@ export class Recorder {
     currentBreak.score = breakScore
     const text = `break(${breakScore})`
     const serialisedShot = JSON.stringify(currentBreak)
+    console.log(`raw:${serialisedShot}`)
     const compressed = JSONCrush.crush(serialisedShot)
+    console.log(`crushed:${compressed}`)
     this.generateLink(text, compressed, "black")
     if (breakScore >= 4) {
       this.generateHiScoreLink(compressed)
@@ -163,7 +165,6 @@ export class Recorder {
   }
 
   private generateLink(text, state, colour) {
-    console.log(`raw:${state}`)
     const shotUri = `${this.replayUrl}${encodeURIComponent(state)}`
     console.log(`encoded:${shotUri}`)
     const shotLink = `<a class="pill" style="color: ${colour}" target="_blank" href="${shotUri}">${text}</a>`

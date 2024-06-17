@@ -112,7 +112,6 @@ export class Snooker implements Rules {
     // exactly one non red potted
 
     const id = Outcome.pots(outcome)[0].id
-    console.log(info)
     if (id !== info.firstCollision.ballB.id) {
       return this.foul(outcome, info)
     }
