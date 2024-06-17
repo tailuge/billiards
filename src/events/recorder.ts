@@ -163,7 +163,9 @@ export class Recorder {
   }
 
   private generateLink(text, state, colour) {
+    console.log(`raw:${state}`)
     const shotUri = `${this.replayUrl}${encodeURIComponent(state)}`
+    console.log(`encoded:${shotUri}`)
     const shotLink = `<a class="pill" style="color: ${colour}" target="_blank" href="${shotUri}">${text}</a>`
     this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
   }
