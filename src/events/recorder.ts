@@ -146,7 +146,10 @@ export class Recorder {
     console.log(`raw:${serialisedShot}`)
     const compressed = JSONCrush.crush(serialisedShot)
     console.log(`crushed:${compressed}`)
-    const uncompressed = JSONCrush.uncrush(compressed)
+    console.log(`encoded:${encodeURIComponent(compressed)}`)
+    console.log(`decoded:${decodeURIComponent(encodeURIComponent(compressed))}`)
+
+    const uncompressed = JSONCrush.uncrush(decodeURIComponent(encodeURIComponent(compressed)))
     console.log(`uncompressed:${uncompressed}`)
     console.log(serialisedShot == uncompressed)
     this.generateLink(text, compressed, "black")
