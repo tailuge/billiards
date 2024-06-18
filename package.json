@@ -48,7 +48,7 @@
     "@testing-library/dom": "10.1.0",
     "@types/chai": "4.3.16",
     "@types/jest": "^29.5.12",
-    "@types/node": "20.14.2",
+    "@types/node": "20.14.5",
     "@types/three": "0.165.0",
     "chai": "4.x",
     "ini": "4.1.3",

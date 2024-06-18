@@ -143,15 +143,7 @@ export class Recorder {
     currentBreak.score = breakScore
     const text = `break(${breakScore})`
     const serialisedShot = JSON.stringify(currentBreak)
-    console.log(`raw:${serialisedShot}`)
     const compressed = JSONCrush.crush(serialisedShot)
-    console.log(`crushed:${compressed}`)
-    console.log(`encoded:${encodeURIComponent(compressed)}`)
-    console.log(`decoded:${decodeURIComponent(encodeURIComponent(compressed))}`)
-
-    const uncompressed = JSONCrush.uncrush(decodeURIComponent(encodeURIComponent(compressed)))
-    console.log(`uncompressed:${uncompressed}`)
-    console.log(serialisedShot == uncompressed)
     this.generateLink(text, compressed, "black")
     if (breakScore >= 4) {
       this.generateHiScoreLink(compressed)
@@ -171,8 +163,7 @@ export class Recorder {
   }
 
   private generateLink(text, state, colour) {
-    const shotUri = `${this.replayUrl}${encodeURIComponent(state)}`
-    console.log(`encoded:${shotUri}`)
+    const shotUri = `${this.replayUrl}${this.fullyEncodeURI(state)}`
     const shotLink = `<a class="pill" style="color: ${colour}" target="_blank" href="${shotUri}">${text}</a>`
     this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
   }
@@ -181,8 +172,16 @@ export class Recorder {
     const text = "hi score 🏆"
     const shotUri = `${this.hiScoreUrl}?ruletype=${
       this.container.rules.rulename
-    }&state=${encodeURIComponent(state)}`
+    }&state=${this.fullyEncodeURI(state)}`
     const shotLink = `<a class="pill" target="_blank" href="${shotUri}">${text}</a>`
     this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
+  }
+
+  private fullyEncodeURI(uri) {
+    return encodeURIComponent(uri)
+    .replace(/\(/g,'%28')
+    .replace(/\)/g,'%29')
+    .replace(/\!/g,'%21')
+    .replace(/\*/g,'%2A')
   }
 }
