@@ -108,6 +108,7 @@ export class BrowserContainer {
   }
 
   startReplay(replay) {
+    console.log(replay)
     this.breakState = this.parse(decodeURIComponent(replay))
     console.log(this.breakState)
     if (Date.now() - this.breakState.now < 500000) {
