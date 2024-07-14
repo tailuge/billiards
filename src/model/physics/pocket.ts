@@ -1,7 +1,7 @@
 import { Ball, State } from "../ball"
 import { Vector3 } from "three"
 import { R, g } from "./constants"
-import { up, zero } from "../../utils/utils"
+import { up, upCross, zero } from "../../utils/utils"
 
 export class Pocket {
   pos: Vector3
@@ -32,6 +32,7 @@ export class Pocket {
       const toCentre = this.pos.clone().sub(ball.pos).normalize().setZ(0)
       if (z > -R / 2) {
         ball.vel.addScaledVector(toCentre, R * 7 * t * g)
+        ball.rvel.addScaledVector(upCross(toCentre), 7 * t * g)
       }
       if (ball.vel.dot(toCentre) < 0) {
         ball.ballmesh.trace.forceTrace(ball.pos)
