@@ -171,3 +171,12 @@ top | aim
 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=tailuge/billiards&type=Date)](https://star-history.com/#tailuge/billiards&Date)
+
+
+## Licence ![GitHub](https://img.shields.io/github/license/tailuge/billiards.svg)
+
+
+This project is open source and licensed under the GNU General Public License - see the [LICENSE](LICENSE) file for details.
+
+
+
