@@ -5,29 +5,31 @@
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=tailuge_billiards&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=tailuge_billiards)
 [![Tests](https://github.com/tailuge/billiards/actions/workflows/main.yml/badge.svg)](https://github.com/tailuge/billiards/actions/workflows/main.yml)
 [![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards)
+![GitHub](https://img.shields.io/github/license/tailuge/billiards.svg)
 
-[![Demo](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)](https://tailuge.github.io/billiards/dist)
+[![Demo and Screenshot](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)](https://tailuge.github.io/billiards/dist)
+
+This is an open-source project bringing unsophisticated billiards physics written in typescript to a browser near you. Play pool, snooker, or 3-cushion online for free!
 
 ## Features
 
-Unsophisticated billiards with spinning ball physics written in typescript.
-
 * Backspin and sidespin well modeled.
-* Presentation using WebGL in any modern browser or mobile.
+* Presentation using WebGL in any modern browser on mobile, linux, mac or windows.
 * Record and playback breaks.
 * Two player online mode with node websocket server.
-* Nine ball and three cushion billiards rules.
+* Nine ball, Snooker and three cushion billiards rules.
+* Deploys to github pages, vercel.com and render.com with github actions.
 
 ## Online Demo
 
-Demos run in all major browsers and use WebGL
+Demos run in all major desktop and mobile browsers and uses WebGL
 
-* [Nine ball ⬀](https://tailuge.github.io/billiards/dist)
-* [Three cushion billiards ⬀](https://tailuge.github.io/billiards/dist?ruletype=threecushion).
-* [Snooker ⬀](https://tailuge.github.io/billiards/dist?ruletype=snooker).
-* 4-ball [Straight pool ⬀](https://tailuge.github.io/billiards/dist?ruletype=fourteenone).
-* Inspect physics using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
-* Compare highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard.html)
+* [Nine ball ⬀](https://tailuge.github.io/billiards/dist) make a break and share replay link with friends
+* [Three cushion billiards ⬀](https://tailuge.github.io/billiards/dist?ruletype=threecushion) the ultimate test of physics and player (average on both counts)
+* [Snooker ⬀](https://tailuge.github.io/billiards/dist?ruletype=snooker) we await the first 147 submission to the leaderboard.
+* 4-ball [Straight pool ⬀](https://tailuge.github.io/billiards/dist?ruletype=fourteenone). 
+* Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
+* Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard.html) hosted on vercel.com
 * Try [two player](https://tailuge.github.io/billiards/dist/lobby/lobby.html) online hosted on render.com
 
 ## Reference material
@@ -130,7 +132,7 @@ a websocket server, open <http://localhost:8888/dist/multi.html> to see options
 
 ## Controls
 
-Use mouse or keyboard:
+Use mouse, touch screen or keyboard:
 
 <kbd style="border: 1px solid #aaa; border-radius: 0.2em; padding: 0.1em 0.3em; font-size: 0.85em;">⇦</kbd>
 <kbd style="border: 1px solid #aaa; border-radius: 0.2em; padding: 0.1em 0.3em; font-size: 0.85em;">⇨</kbd> Aim
@@ -173,10 +175,9 @@ Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=tailuge/billiards&type=Date)](https://star-history.com/#tailuge/billiards&Date)
 
 
-## Licence ![GitHub](https://img.shields.io/github/license/tailuge/billiards.svg)
+## Licence 
 
-
-This project is open source and licensed under the GNU General Public License - see the [LICENSE](LICENSE) file for details.
+This project is open source and licensed under the GNU General Public License - see the [LICENSE](LICENSE) file for details. Contributions welcome.
 
 
 
