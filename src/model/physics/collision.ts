@@ -32,8 +32,8 @@ export class Collision {
     const ab = contact.b.sub(contact.a).normalize()
     const aDotCenters = ab.dot(a.vel)
     const bDotCenters = ab.dot(b.vel)
-    a.vel.addScaledVector(ab, bDotCenters).addScaledVector(ab, -aDotCenters)
-    b.vel.addScaledVector(ab, aDotCenters).addScaledVector(ab, -bDotCenters)
+    a.vel.addScaledVector(ab, bDotCenters - aDotCenters)
+    b.vel.addScaledVector(ab, aDotCenters - bDotCenters)
     a.state = State.Sliding
     b.state = State.Sliding
     return Math.abs(aDotCenters) + Math.abs(bDotCenters)
