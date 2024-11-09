@@ -98,17 +98,17 @@ $$
 ẏ_C = ẏ_G + θ̇_x R
 $$
 
-#### Equation (15a): Rolling condition for the ball at the cushion (when slip speed \( s = 0 \))
+#### Equation (15a): Rolling condition for the ball at the cushion (when slip speed $s = 0$
 $$
 \Delta P_I^x = 0, \quad \Delta P_I^{y'} = 0
 $$
 
-#### Equation (15b): Rolling condition for the ball at the table (when slip speed \( s' = 0 \))
+#### Equation (15b): Rolling condition for the ball at the table when slip speed $s' = 0$
 $$
 \Delta P_C^x = 0, \quad \Delta P_C^y = 0
 $$
 
-#### Equation (16a): Work done by the normal force at contact point \( I \) along the \( Z' \)-axis
+#### Equation (16a): Work done by the normal force at contact point $I$ along the $Z'$-axis
 
 $$
 (W_{Z'}^I)_{n+1}-(W_Z'^I)_n = \Delta P_I \cdot \frac{(ż'_I)_n + (ż'_I)_m}{2}
@@ -146,7 +146,7 @@ This section outlines the numerical scheme used to simulate the motion of a bill
    - The algorithm includes logic to adjust calculations if a rolling condition (no-slip state) is reached at either the cushion or table contacts, as defined by Equations (15a) and (15b).
 
 5. **Work Done Calculation**:
-   - Work done by the normal force at the contact point \( I \) along the \( Z' \)-axis is calculated using Equation (16a) and stored for analysis
+   - Work done by the normal force at the contact point $I$ along the $Z'$-axis is calculated using Equation (16a) and stored for analysis
    
 
 This iterative algorithm captures the changes in the ball’s velocity and spin during impact, with stored values enabling further analysis of trajectory variations due to friction and cushion effects.
@@ -172,6 +172,23 @@ The numerical process of incrementing $P_I$ can resume again, and when $W_{Z'}^I
 In order to start the numerical scheme, a reasonable value for $\Delta P_I$ has to be assumed. An approximate value for $P_I^f$ can be assumed to be $(1 + e_e) M V_0 \sin \alpha$ , which is the value of the final accumulated normal impulse for a horizontally moving, non-spinning ball colliding into a solid vertical wall.
 
 Hence, approximately for $N$ iterations, $\Delta P_I = \frac{(1 + e_e) M V_0 \sin \alpha}{N}$. Obviously, the values of $P_I^c$ and $P_I^f$ will determine the actual number of iterations that take place in the scheme. An initial $N$ of 5000 worked satisfactorily for the scheme.
+
+The paper outlines an algorithm for compression phase while $ẏ_G < 0$
+
+1. **CHECK FOR** $s, \Phi, s', \Phi'$
+   **ESTIMATE** $\Delta \dot{x}_G, \ldots, \Delta \dot{\theta}_z$
+   *(Use Eqns. 15 and 17)*
+
+2. $\dot{x}_G = \dot{x}_G + \Delta \dot{x}_G$
+   $\dot{\theta}_z = \dot{\theta}_z + \Delta \dot{\theta}_z$
+
+3. **UPDATE** $s, \Phi, s', \Phi'$
+   *(Use Eqns. 12 and 13)*
+
+4. **UPDATE**
+   $\dot{X}_G , \ldots, \dot{\theta}_z$
+
+5. **ESTIMATE** $\Delta W^z$   *(Use Eqn. 16a)*   $W^z = W^z + \Delta W^z$
 
 **References:**
 
@@ -234,8 +251,10 @@ class CompressionPhase {
     this.setInitialConditions(initial);
   }
 
-  ... complete this class ...
+  public completeCompressionPhase() : State
+  ... complete this class for compression phase only ...
 }
+
 ```
 
 
