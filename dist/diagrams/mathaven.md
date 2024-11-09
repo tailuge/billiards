@@ -173,6 +173,11 @@ In order to start the numerical scheme, a reasonable value for $\Delta P_I$ has 
 
 Hence, approximately for $N$ iterations, $\Delta P_I = \frac{(1 + e_e) M V_0 \sin \alpha}{N}$. Obviously, the values of $P_I^c$ and $P_I^f$ will determine the actual number of iterations that take place in the scheme. An initial $N$ of 5000 worked satisfactorily for the scheme.
 
+**References:**
+
+- A theoretical analysis of billiard ball
+dynamics under cushion impacts [[Mathaven paper](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)].
+
 
 **Code generation**
 
@@ -180,10 +185,57 @@ Assumptions for typescript code generation - use ThreeJS library, provide minima
 
 ```typescript
 import { Vector3 } from 'vector3';
+
+interface InitialConditions {
+  V0: number;          // Initial velocity magnitude
+  alpha: number;       // Incident angle (radians)
+  w0T: number;         // Initial topspin angular velocity
+  w0S: number;         // Initial sidespin angular velocity
+}
+
+interface Constants {
+  M: number;           // Mass = 0.1406 kg
+  R: number;           // Ball radius = 26.25 mm
+  ee: number;          // Coefficient of restitution = 0.98
+  μs: number;          // Coefficient of sliding friction (table) = 0.212
+  μw: number;          // Coefficient of sliding friction (cushion) = 0.14
+  sinTheta: number;    // Fixed angle of cushion contact point above ball center
+  cosTheta: number;    // Fixed angle of cushion contact point above ball center 
+  N: number;           // Number of iterations
+}
+
+const constants: Constants = {
+  M: 0.1406,
+  R: 0.02625,
+  ee: 0.98,
+  μs: 0.212,
+  μw: 0.14,
+  sinTheta: 2/5
+  cosTheta: Math.sqrt(21)/5
+  N: 5000
+};
+
+class CompressionPhase {
+
+  // State variables during compression
+  private xG_dot: number;    // ẋG - x component of centroid velocity
+  private yG_dot: number;    // ẏG - y component of centroid velocity
+  private zG_dot: number;    // żG - z component of centroid velocity (always 0)
+  
+  private θx_dot: number;    // θ̇x - angular velocity around x-axis
+  private θy_dot: number;    // θ̇y - angular velocity around y-axis
+  private θz_dot: number;    // θ̇z - angular velocity around z-axis
+
+  private P: number;         // Accumulated impulse
+  private WzI: number;       // Work done at point I
+  private ΔP: number;        // Impulse increment
+
+  constructor(initial: InitialConditions) {
+    this.setInitialConditions(initial);
+  }
+
+  ... complete this class ...
+}
 ```
 
-**References:**
-
-- A theoretical analysis of billiard ball
-dynamics under cushion impacts [[Mathaven paper](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)].
 
