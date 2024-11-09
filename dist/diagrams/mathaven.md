@@ -151,13 +151,13 @@ This section outlines the numerical scheme used to simulate the motion of a bill
 
 This iterative algorithm captures the changes in the ball’s velocity and spin during impact, with stored values enabling further analysis of trajectory variations due to friction and cushion effects.
 
-The numerical scheme is initially stopped when 
+The numerical scheme is initially stopped when $\dot{z}_I = 0$ (i.e., when the compression phase has ended), A simpler condition is when the ball stops moving toward the cushion i.e.
 
 $$
-\dot{z}_I = 0
+ẏ_G < 0
 $$
 
-(i.e., when the compression phase has ended), and the corresponding value of work done is obtained from the array containing 
+the corresponding value of work done is obtained from the array containing 
 
 $W_{Z'}^I$ which will be $W_{Z'}^I(P_I^c)$
 
