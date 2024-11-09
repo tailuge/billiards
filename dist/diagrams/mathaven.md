@@ -112,7 +112,8 @@ $$
 
 $$
 (W_{Z'}^I)_{n+1}-(W_Z'^I)_n = \Delta P_I \cdot \frac{(ż'_I)_n + (ż'_I)_m}{2}
-$$ 
+$$
+
 *where m=n+1*
 
 
