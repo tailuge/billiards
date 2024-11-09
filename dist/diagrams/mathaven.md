@@ -109,7 +109,8 @@ $$
 $$
 
 #### Equation (16a): Work done by the normal force at contact point \( I \) along the \( Z' \)-axis
-$$(W_{Z'}^I)_{n+1} - (W_{Z'}^I)_n = \Delta P_I \cdot \frac{(ż'_I)_{n+1} + (ż'_I)_n}{2}$$
+
+$$(W_{Z'}^I)_{n+1}-(W_Z'^I)_n = \Delta P_I \cdot \frac{(ż'_I)_n + (ż'_I)_m}{2} $$ *where m=n+1*
 
 
 ### Numerical Scheme for Ball-Cushion Impact Simulation Compression Phase
