@@ -193,6 +193,17 @@ interface InitialConditions {
   w0S: number;         // Initial sidespin angular velocity
 }
 
+interface State {
+      P: number                    // Accumulated impulse 
+      WzI: number                  // Work done 
+      xG_dot: number
+      yG_dot: number
+      zG_dot: number
+      θx_dot: number
+      θy_dot: number
+      θz_dot: number
+}
+
 interface Constants {
   M: number;           // Mass = 0.1406 kg
   R: number;           // Ball radius = 26.25 mm
@@ -217,18 +228,7 @@ const constants: Constants = {
 
 class CompressionPhase {
 
-  // State variables during compression
-  private xG_dot: number;    // ẋG - x component of centroid velocity
-  private yG_dot: number;    // ẏG - y component of centroid velocity
-  private zG_dot: number;    // żG - z component of centroid velocity (always 0)
-  
-  private θx_dot: number;    // θ̇x - angular velocity around x-axis
-  private θy_dot: number;    // θ̇y - angular velocity around y-axis
-  private θz_dot: number;    // θ̇z - angular velocity around z-axis
-
-  private P: number;         // Accumulated impulse
-  private WzI: number;       // Work done at point I
-  private ΔP: number;        // Impulse increment
+  private state:State;
 
   constructor(initial: InitialConditions) {
     this.setInitialConditions(initial);
