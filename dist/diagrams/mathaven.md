@@ -110,8 +110,21 @@ $$
 
 #### Equation (16a): Work done by the normal force at contact point \( I \) along the \( Z' \)-axis
 
-$$(W_{Z'}^I)_{n+1}-(W_Z'^I)_n = \Delta P_I \cdot \frac{(ż'_I)_n + (ż'_I)_m}{2} $$ *where m=n+1*
+$$
+(W_{Z'}^I)_{n+1}-(W_Z'^I)_n = \Delta P_I \cdot \frac{(ż'_I)_n + (ż'_I)_m}{2}
+$$ 
+*where m=n+1*
 
+
+#### Equation (17a)
+
+$$
+(ẋ_G)_{n+1} - (ẋ_G)_n = - \frac{1}{M} \left[\mu_w \cos(\phi) + \mu_s \cos(\phi') \cdot (\sin \theta + \mu_w \sin(\phi) \cos \theta)\right] \Delta P_I
+$$
+
+$$
+(ẏ_G)_{n+1} - (ẏ_G)_n  = - \frac{1}{M} \left[ \cos \theta - \mu_w \sin \theta \sin \phi + \mu_s \sin \phi' \cdot \left( \sin \theta + \mu_w \sin \phi \cos \theta \right) \right] \Delta P_I
+$$
 
 ### Numerical Scheme for Ball-Cushion Impact Simulation Compression Phase
 
@@ -122,10 +135,7 @@ This section outlines the numerical scheme used to simulate the motion of a bill
 
 2. **Velocity Increments**:
    - The algorithm updates the centroidal velocities of the ball using Equation (17a) along with five additional simultaneous equations.
-   - Equation (17a) for the x-component velocity increment:
-     $$(ẋ_G)_{n+1} - (ẋ_G)_n = - \frac{1}{M} \left[\mu_w \cos(\phi) + \mu_s \cos(\phi') \cdot (\sin \theta + \mu_w \sin(\phi) \cos \theta)\right] \Delta P_I$$
-     $$(ẏ_G)_{n+1} - (ẏ_G)_n  = - \frac{1}{M} \left[ \cos \theta - \mu_w \sin \theta \sin \phi + \mu_s \sin \phi' \cdot \left( \sin \theta + \mu_w \sin \phi \cos \theta \right) \right] \Delta P_I$$
-
+   - Equation (17a) for the x-component velocity increment
    - Additional equations for z-components account for changes in these directions as the impulse accumulates. The z component is assumed zero.
 
 3. **Slip Velocities Calculation**:
