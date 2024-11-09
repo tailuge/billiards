@@ -221,8 +221,8 @@ const constants: Constants = {
   ee: 0.98,
   μs: 0.212,
   μw: 0.14,
-  sinTheta: 2/5
-  cosTheta: Math.sqrt(21)/5
+  sinTheta: 2/5,
+  cosTheta: Math.sqrt(21)/5,
   N: 5000
 };
 
