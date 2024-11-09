@@ -145,23 +145,32 @@ This section outlines the numerical scheme used to simulate the motion of a bill
    - The algorithm includes logic to adjust calculations if a rolling condition (no-slip state) is reached at either the cushion or table contacts, as defined by Equations (15a) and (15b).
 
 5. **Work Done Calculation**:
-   - Work done by the normal force at the contact point \( I \) along the \( Z' \)-axis is calculated using Equation (16a) and stored for analysis:
-     $$(W_{Z'}^I)_{n+1} - (W_{Z'}^I)_n = \Delta P_I \cdot \frac{(ż_I')_{n+1} + (ż_I')_n}{2}$$
+   - Work done by the normal force at the contact point \( I \) along the \( Z' \)-axis is calculated using Equation (16a) and stored for analysis
+   
 
 This iterative algorithm captures the changes in the ball’s velocity and spin during impact, with stored values enabling further analysis of trajectory variations due to friction and cushion effects.
 
-The numerical scheme is initially stopped when $\dot{z}_I = 0$ (i.e., when the compression phase has ended), and the corresponding value of work done is obtained from the array containing $ W_{Z'}^I $, which will be $ W_{Z'}^I(P_I^c) $.
+The numerical scheme is initially stopped when 
 
-Now, using Equation (16b), the value $ W_{Z'}^I(P_I^f) $ can be calculated, given that $ e_e $ is known:
+$$
+\dot{z}_I = 0
+$$
+
+(i.e., when the compression phase has ended), and the corresponding value of work done is obtained from the array containing 
+
+$W_{Z'}^I$ which will be $W_{Z'}^I(P_I^c)$
+
+Now, using Equation (16b), the value $W_{Z'}^I(P_I^f)$ can be calculated, given that $e_e$ is known:
+
 $$W_{Z'}^I(P_I^f) = (1 - e_e^2) W_{Z'}^I(P_I^c)$$
 
 ### Restitution Phase
 
 The numerical process of incrementing $P_I$ can resume again, and when $W_{Z'}^I = W_{Z'}^I(P_I^f)$, the process is terminated.
 
-In order to start the numerical scheme, a reasonable value for $ \Delta P_I $ has to be assumed. An approximate value for $ P_I^f $ can be assumed to be $ (1 + e_e) M V_0 \sin \alpha $, which is the value of the final accumulated normal impulse for a horizontally moving, non-spinning ball colliding into a solid vertical wall.
+In order to start the numerical scheme, a reasonable value for $\Delta P_I$ has to be assumed. An approximate value for $P_I^f$ can be assumed to be $(1 + e_e) M V_0 \sin \alpha$ , which is the value of the final accumulated normal impulse for a horizontally moving, non-spinning ball colliding into a solid vertical wall.
 
-Hence, approximately for $ N $ iterations, $ \Delta P_I = \frac{(1 + e_e) M V_0 \sin \alpha}{N} $. Obviously, the values of $ P_I^c $ and $ P_I^f $ will determine the actual number of iterations that take place in the scheme. An initial $ N $ of 5000 worked satisfactorily for the scheme.
+Hence, approximately for $N$ iterations, $\Delta P_I = \frac{(1 + e_e) M V_0 \sin \alpha}{N}$. Obviously, the values of $P_I^c$ and $P_I^f$ will determine the actual number of iterations that take place in the scheme. An initial $N$ of 5000 worked satisfactorily for the scheme.
 
 
 **Code generation**
