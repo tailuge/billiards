@@ -2,11 +2,11 @@
 ### Constants
 
 
-Coefficient of Restitution ($ e_e $): Value between the ball and cushion: 0.98
+Coefficient of Restitution $e_e$: Value between the ball and cushion: 0.98
 
-Coefficient of Sliding Friction ($μ_s$): Between the ball and table surface: 0.212
+Coefficient of Sliding Friction $μ_s$ : Between the ball and table surface: 0.212
 
-Coefficient of Sliding Friction ($μ_w$): Between the ball and cushion: 0.14
+Coefficient of Sliding Friction $μ_w$ : Between the ball and cushion: 0.14
 
 Mass (M): 0.1406 kg
 
@@ -68,9 +68,9 @@ $\Phi^{\prime}$(0) = 180° + α     when V₀ - Rω₀T < 0
 
 undefined when V₀ = Rω₀T (rolling condition)
 
-- $ P $: Accumulated impulse at any time during impact.
-- $ P_I^c $: Accumulated impulse at the termination of compression.
-- $ P_I^f $: The final accumulated value of impulse.
+- $P$: Accumulated impulse at any time during impact.
+- $P_I^c$: Accumulated impulse at the termination of compression.
+- $P_I^f$: The final accumulated value of impulse.
 
 
 #### Equation (17a): x-component velocity increment
@@ -109,9 +109,7 @@ $$
 $$
 
 #### Equation (16a): Work done by the normal force at contact point \( I \) along the \( Z' \)-axis
-$$
-(W_{Z'}^I)_{n+1} - (W_{Z'}^I)_n = \Delta P_I \cdot \frac{(ż'_I)_{n+1} + (ż'_I)_n}{2}
-$$
+$$(W_{Z'}^I)_{n+1} - (W_{Z'}^I)_n = \Delta P_I \cdot \frac{(ż'_I)_{n+1} + (ż'_I)_n}{2}$$
 
 
 ### Numerical Scheme for Ball-Cushion Impact Simulation Compression Phase
@@ -124,12 +122,8 @@ This section outlines the numerical scheme used to simulate the motion of a bill
 2. **Velocity Increments**:
    - The algorithm updates the centroidal velocities of the ball using Equation (17a) along with five additional simultaneous equations.
    - Equation (17a) for the x-component velocity increment:
-     $$
-        (ẋ_G)_{n+1} - (ẋ_G)_n = - \frac{1}{M} \left[\mu_w \cos(\phi) + \mu_s \cos(\phi') \cdot (\sin \theta + \mu_w \sin(\phi) \cos \theta)\right] \Delta P_I
-     $$
-     $$
-        (ẏ_G)_{n+1} - (ẏ_G)_n  = - \frac{1}{M} \left[ \cos \theta - \mu_w \sin \theta \sin \phi + \mu_s \sin \phi' \cdot \left( \sin \theta + \mu_w \sin \phi \cos \theta \right) \right] \Delta P_I
-     $$
+     $$(ẋ_G)_{n+1} - (ẋ_G)_n = - \frac{1}{M} \left[\mu_w \cos(\phi) + \mu_s \cos(\phi') \cdot (\sin \theta + \mu_w \sin(\phi) \cos \theta)\right] \Delta P_I$$
+     $$(ẏ_G)_{n+1} - (ẏ_G)_n  = - \frac{1}{M} \left[ \cos \theta - \mu_w \sin \theta \sin \phi + \mu_s \sin \phi' \cdot \left( \sin \theta + \mu_w \sin \phi \cos \theta \right) \right] \Delta P_I$$
 
    - Additional equations for z-components account for changes in these directions as the impulse accumulates. The z component is assumed zero.
 
@@ -141,18 +135,14 @@ This section outlines the numerical scheme used to simulate the motion of a bill
 
 5. **Work Done Calculation**:
    - Work done by the normal force at the contact point \( I \) along the \( Z' \)-axis is calculated using Equation (16a) and stored for analysis:
-     $$
-     (W_{Z'}^I)_{n+1} - (W_{Z'}^I)_n = \Delta P_I \cdot \frac{(ż_I')_{n+1} + (ż_I')_n}{2}
-     $$
+     $$(W_{Z'}^I)_{n+1} - (W_{Z'}^I)_n = \Delta P_I \cdot \frac{(ż_I')_{n+1} + (ż_I')_n}{2}$$
 
 This iterative algorithm captures the changes in the ball’s velocity and spin during impact, with stored values enabling further analysis of trajectory variations due to friction and cushion effects.
 
 The numerical scheme is initially stopped when $\dot{z}_I = 0$ (i.e., when the compression phase has ended), and the corresponding value of work done is obtained from the array containing $ W_{Z'}^I $, which will be $ W_{Z'}^I(P_I^c) $.
 
 Now, using Equation (16b), the value $ W_{Z'}^I(P_I^f) $ can be calculated, given that $ e_e $ is known:
-$$
-W_{Z'}^I(P_I^f) = (1 - e_e^2) W_{Z'}^I(P_I^c)
-$$
+$$W_{Z'}^I(P_I^f) = (1 - e_e^2) W_{Z'}^I(P_I^c)$$
 
 ### Restitution Phase
 
