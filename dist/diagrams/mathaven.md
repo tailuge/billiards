@@ -17,7 +17,7 @@ The common normal line Z at the contact point with the cushion makes an angle θ
 
 ## Given inputs to the numerical approximation
 
-```math
+```text
 V₀: Initial velocity magnitude
 α: Incident angle with 0 being perpendicular
 ω₀T: Initial topspin angular velocity along line of travel of ball
@@ -28,7 +28,7 @@ V₀: Initial velocity magnitude
 
 Centroid Velocities (Linear Velocities):
 
-```math
+```text
 (ẋG)₁ = V₀ cos(α)     // Initial x velocity perpendicular to cushion
 (ẏG)₁ = V₀ sin(α)  
 (żG)₁ = 0            
@@ -36,7 +36,7 @@ Centroid Velocities (Linear Velocities):
 
 Angular Velocities:
 
-```math
+```text
 (θ̇x)₁ = -ω₀T sin(α)   // Initial angular velocity around x-axis
 (θ̇y)₁ = ω₀T cos(α)    // Initial angular velocity around y-axis
 (θ̇z)₁ = ω₀S           // Initial angular velocity around z-axis (sidespin)
@@ -44,13 +44,13 @@ Angular Velocities:
 
 Slip Speed at Point I (cushion contact):
 
-```math
+```text
 s(0) = √[(V₀ cos(α) + R(ω₀T cos(α)sin(θ) - ω₀S cos(θ)))² + (-V₀ sin(α)sin(θ) - Rω₀T sin(α))²]
 ```
 
 Slip Speed at Point C (table contact):
 
-```math
+```text
 s'(0) = |V₀ - Rω₀T|
 ```
 
