@@ -1,23 +1,21 @@
 
+# Mathaven ball cushion summary
+
 ### Constants
 
-
-Coefficient of Restitution $e_e$: Value between the ball and cushion: 0.98
-
-Coefficient of Sliding Friction $μ_s$ : Between the ball and table surface: 0.212
-
-Coefficient of Sliding Friction $μ_w$ : Between the ball and cushion: 0.14
-
-Mass (M): 0.1406 kg
-
-Ball Radius (R): 26.25 mm
+  * Coefficient of Restitution $e_e$: Value between the ball and cushion: 0.98
+  * Coefficient of Sliding Friction $μ_s$ : Between the ball and table surface: 0.212
+  * Coefficient of Sliding Friction $μ_w$ : Between the ball and cushion: 0.14
+  * Mass (M): 0.1406 kg
+  * Ball Radius (R): 26.25 mm
 
 Cushion height in both snooker and pool, h = 7R/5, where R is the ball radius.
-The common normal line Z at the contact point with the cushion makes an angle θ with the Y-axis, such that sinθ = 2/5 constant. Thus cosθ = sqrt(21)/5 constant.
+The common normal line Z at the contact point with the cushion makes an angle θ with the Y-axis, such that 
+  * sinθ = 2/5 constant. 
+  * cosθ = sqrt(21)/5 constant.
 
+### Given inputs to the numerical approximation
 
-
-### Given inputs to the numerical approximation 
 ```
 V₀: Initial velocity magnitude
 α: Incident angle with 0 being perpendicular
@@ -25,7 +23,7 @@ V₀: Initial velocity magnitude
 ω₀S: Initial sidespin angular velocity
 ```
 
-### Initial Conditions Equations:
+### Initial Conditions Equations
 
 Centroid Velocities (Linear Velocities):
 
@@ -57,7 +55,6 @@ s'(0) = |V₀ - Rω₀T|
 
 Slip Angle at Point I:
 
-
 $\Phi$(0) = tan⁻¹((-V₀ sin(α)sin(θ) - Rω₀T sin(α)) / (V₀ cos(α) + R(ω₀T cos(α)sin(θ) - ω₀S cos(θ))))
 
 Slip Angle at Point C:
@@ -68,48 +65,52 @@ $\Phi^{\prime}$(0) = 180° + α     when V₀ - Rω₀T < 0
 
 undefined when V₀ = Rω₀T (rolling condition)
 
-- $P$: Accumulated impulse at any time during impact.
-- $P_I^c$: Accumulated impulse at the termination of compression.
-- $P_I^f$: The final accumulated value of impulse.
+### Key equations
 
 
 #### Equation (12a): Slip velocity at cushion along the x-axis
+
 $$
 ẋ_I = ẋ_G + θ̇_y R \sin \theta - θ̇_z R \cos \theta
 $$
 
 #### Equation (12b): Slip velocity at cushion along the y-axis (transformed to y')
+
 $$
 ẏ'_I = -ẏ_G \sin \theta + ż_G \cos \theta + θ̇_x R
 $$
 
 #### Equation (13a): Slip velocity at table along the x-axis
+
 $$
 ẋ_C = ẋ_G - θ̇_y R
 $$
 
 #### Equation (13b): Slip velocity at table along the y-axis
+
 $$
 ẏ_C = ẏ_G + θ̇_x R
 $$
 
 #### Equation (15a): Rolling condition for the ball at the cushion (when slip speed $s = 0$
+
 $$
 \Delta P_I^x = 0, \quad \Delta P_I^{y'} = 0
 $$
 
 #### Equation (15b): Rolling condition for the ball at the table when slip speed $s' = 0$
+
 $$
 \Delta P_C^x = 0, \quad \Delta P_C^y = 0
 $$
 
 #### Equation (16a): Work done by the normal force at contact point $I$ along the $Z'$-axis
+
 $$
 (W_{Z'}^I)_{n+1}-(W_Z'^I)_n = \Delta P_I \cdot \frac{(ż'_I)_n + (ż'_I)_m}{2}
 $$
 
 *where m=n+1*
-
 
 #### Equation (17a)
 
@@ -120,6 +121,10 @@ $$
 $$
 (ẏ_G)_{n+1} - (ẏ_G)_n  = - \frac{1}{M} \left[ \cos \theta - \mu_w \sin \theta \sin \phi + \mu_s \sin \phi' \cdot \left( \sin \theta + \mu_w \sin \phi \cos \theta \right) \right] \Delta P_I
 $$
+
+- $P$: Accumulated impulse at any time during impact.
+- $P_I^c$: Accumulated impulse at the termination of compression.
+- $P_I^f$: The final accumulated value of impulse.
 
 ### Numerical Scheme for Ball-Cushion Impact Simulation Compression Phase
 
@@ -141,7 +146,6 @@ This section outlines the numerical scheme used to simulate the motion of a bill
 
 5. **Work Done Calculation**:
    - Work done by the normal force at the contact point $I$ along the $Z'$-axis is calculated using Equation (16a) and stored for analysis
-   
 
 This iterative algorithm captures the changes in the ball’s velocity and spin during impact, with stored values enabling further analysis of trajectory variations due to friction and cushion effects.
 
@@ -151,7 +155,7 @@ $$
 ẏ_G < 0
 $$
 
-the corresponding value of work done is obtained from the array containing 
+the corresponding value of work done is obtained from the array containing
 
 $W_{Z'}^I$ which will be $W_{Z'}^I(P_I^c)$
 
@@ -188,14 +192,14 @@ The paper outlines an algorithm for compression phase while $ẏ_G > 0$
 - A theoretical analysis of billiard ball
 dynamics under cushion impacts [[Mathaven paper](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)].
 
-
 **Code generation**
 
-Assumptions for typescript code generation - use ThreeJS library, provide minimal readable code that breaks out functions where appropraite for a modular design. Comments should be minimal but reference equations from the paper.
+Assumptions for typescript code generation - use ThreeJS library, provide concise readable code with a modular design. Comments should be minimal but reference equations from the paper.
 The following imports can be assumed and should not be repeated in the solution.
 
 
-InitialConditions.ts
+state.ts
+
 ```typescript
 export interface InitialConditions {
   V0: number;          // Initial velocity magnitude
@@ -203,9 +207,7 @@ export interface InitialConditions {
   w0T: number;         // Initial topspin angular velocity
   w0S: number;         // Initial sidespin angular velocity
 }
-```
-State.ts
-```typescript
+
 export interface State {
   P: number;                    // Accumulated impulse 
   WzI: number;                  // Work done 
@@ -217,7 +219,9 @@ export interface State {
   θz_dot: number;
 }
 ```
+
 Constants.ts
+
 ```typescript
 
 export interface Constants {
@@ -244,9 +248,9 @@ export const constants: Constants = {
 ```
 
 CompressionPhase.ts
+
 ```typescript
-import { InitialConditions } from './InitialConditions';
-import { State } from './State';
+import { InitialConditions, State } from './State';
 
 export class CompressionPhase {
 
@@ -265,5 +269,3 @@ export class CompressionPhase {
   }
 }
 ```
-
-
