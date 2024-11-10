@@ -9,7 +9,7 @@
 
 [![Demo and Screenshot](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)](https://tailuge.github.io/billiards/dist)
 
-This is an open-source project bringing unsophisticated billiards physics written in typescript to a browser near you. Play pool, snooker, or 3-cushion online for free!
+This is an open-source project bringing unsophisticated billiards physics written in typescript to the browser. Play pool, snooker, or 3-cushion online right here.
 
 ## Features
 
@@ -84,6 +84,8 @@ where
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_y}&space;=&space;\frac{5}{2mR}\Big(\frac{-S_x_0}{A}&space;&plus;&space;sin\theta_a&space;\frac{C_0}{B}(1&plus;e)(cos\theta_a-sin\theta_a)\Big)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_y}&space;=&space;\frac{5}{2mR}\Big(\frac{-S_x_0}{A}&space;&plus;&space;sin\theta_a&space;\frac{C_0}{B}(1&plus;e)(cos\theta_a-sin\theta_a)\Big)" title="\dot{\omega_y} = \frac{5}{2mR}\Big(\frac{-S_x_0}{A} + sin\theta_a \frac{C_0}{B}(1+e)(cos\theta_a-sin\theta_a)\Big)" /></a>
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" title="\dot{\omega_z} = \frac{5S_y_0}{2mRA}cos\theta_a" /></a>
+
+Future work on [Mathaven](dist/diagrams/mathaven.md) cushion paper.
 
 ## Useful commands
 
