@@ -61,8 +61,6 @@ export class CompressionPhase {
     this.state.xG_dot += deltaXG
     this.state.yG_dot += deltaYG
 
-    // Update angular velocities based on torque equations (not shown in original equations)
-    // These would need to be derived from the complete set of equations
     this.updateAngularVelocities(slipParams)
   }
 
@@ -72,20 +70,15 @@ export class CompressionPhase {
     phi: number
     phiPrime: number
   }): void {
-    // Implementation of angular velocity updates based on torque equations
-    // This would include effects of both cushion and table contact
-    // Specific equations would need to be derived from the complete set
+    // implement using equations 14d,e,f
   }
 
   public completeCompressionPhase(): State {
-    let count =0 
+    let count = 0
+    console.log(count, this.state)
     while (this.state.yG_dot > 0) {
       count++
-      // Compression phase condition
-      const slipParams = MathavenEquations.calculateSlipParameters(
-        this.state,
-        constants
-      )
+      const slipParams = MathavenEquations.calculateSlipParameters(this.state)
 
       this.updateVelocities(slipParams)
 
@@ -98,7 +91,7 @@ export class CompressionPhase {
 
       this.state.P += this.deltaP
     }
-    console.log(count,this.state)
+    console.log(count, this.state)
 
     return this.state
   }

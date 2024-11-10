@@ -21,7 +21,7 @@ describe("Mathavan Cushion - Billiard Ball Dynamics", () => {
   it("directly into cushion", (done) => {
     const initial = {
       V0: 2.0, // 2 m/s initial velocity
-      alpha: Math.PI/2, // 0 degrees (perpendicular to cushion??)
+      alpha: Math.PI / 2, // 0 degrees (perpendicular to cushion??)
       w0T: 0, // no topspin
       w0S: 0, // no sidespin
     }
@@ -36,7 +36,7 @@ describe("Mathavan Cushion - Billiard Ball Dynamics", () => {
   it("claude", (done) => {
     const initial = {
       V0: 2.0, // 2 m/s initial velocity
-      alpha: Math.PI/4, // 45 degrees 
+      alpha: Math.PI / 4, // 45 degrees
       w0T: 0, // no topspin
       w0S: 0, // no sidespin
     }

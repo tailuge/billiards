@@ -92,6 +92,24 @@ $$
 ẏ_C = ẏ_G + θ̇_x R
 $$
 
+### equation (14d): update angular velocity
+
+$$
+(θ˙x)_{n+1}−(θ˙x)_n = -\frac{5}{2MR}[\mu_w \sin(\phi) + \mu_s \sin(\phi') \times (\sin(\theta) + \mu_w \sin(\phi)\cos(\theta))]\Delta P_I
+$$
+
+### equation (14e)
+
+$$
+(θ˙y)_{n+1}−(θ˙y)_n = -\frac{5}{2MR}[\mu_w \cos(\phi)\sin(\theta) - \mu_s \cos(\phi') \times (\sin(\theta) + \mu_w \sin(\phi)\cos(\theta))]\Delta P_I
+$$
+
+### equation (14f)
+
+$$
+(θ˙z)_{n+1}−(θ˙z)_n = \frac{5}{2MR}(\mu_w \cos(\phi)\cos(\theta))\Delta P_I
+$$
+
 ### Equation (15a): Rolling condition for the ball at the cushion (when slip speed $s = 0$
 
 $$
@@ -219,7 +237,7 @@ export interface State {
 }
 ```
 
-Constants.ts
+constants.ts
 
 ```typescript
 
@@ -246,10 +264,11 @@ export const constants: Constants = {
 };
 ```
 
-CompressionPhase.ts
+compressionphase.ts
 
 ```typescript
 import { InitialConditions, State } from './State';
+import { constants } from "./constants"
 
 export class CompressionPhase {
 
