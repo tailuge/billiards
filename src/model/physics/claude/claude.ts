@@ -70,7 +70,31 @@ export class CompressionPhase {
     phi: number
     phiPrime: number
   }): void {
-    // implement using equations 14d,e,f
+    const { phi, phiPrime } = slipParams
+    const { M, R, μw, μs, sinTheta, cosTheta } = constants
+
+    // Implementation of equation 14d numerical approximation
+    const deltaθx =
+      -(5 / (2 * M * R)) *
+      (μw * Math.sin(phi) +
+        μs * Math.sin(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta)) *
+      this.deltaP
+
+    // Implementation of equation 14e numerical approximation
+    const deltaθy =
+      -(5 / (2 * M * R)) *
+      (μw * Math.cos(phi) * sinTheta -
+        μs * Math.cos(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta)) *
+      this.deltaP
+
+    // Implementation of equation 14f numerical approximation
+    const deltaθz =
+      (5 / (2 * M * R)) * (μw * Math.cos(phi) * cosTheta) * this.deltaP
+
+    // Update angular velocities in state
+    this.state.θx_dot += deltaθx
+    this.state.θy_dot += deltaθy
+    this.state.θz_dot += deltaθz
   }
 
   public completeCompressionPhase(): State {
