@@ -12,7 +12,7 @@ Mass (M): 0.1406 kg
 
 Ball Radius (R): 26.25 mm
 
-In both snooker and pool, h = 7R/5, where R is the ball radius.
+Cushion height in both snooker and pool, h = 7R/5, where R is the ball radius.
 The common normal line Z at the contact point with the cushion makes an angle θ with the Y-axis, such that sinθ = 2/5 constant. Thus cosθ = sqrt(21)/5 constant.
 
 
@@ -109,7 +109,6 @@ $$
 $$
 
 #### Equation (16a): Work done by the normal force at contact point $I$ along the $Z'$-axis
-
 $$
 (W_{Z'}^I)_{n+1}-(W_Z'^I)_n = \Delta P_I \cdot \frac{(ż'_I)_n + (ż'_I)_m}{2}
 $$
@@ -173,7 +172,7 @@ In order to start the numerical scheme, a reasonable value for $\Delta P_I$ has 
 
 Hence, approximately for $N$ iterations, $\Delta P_I = \frac{(1 + e_e) M V_0 \sin \alpha}{N}$. Obviously, the values of $P_I^c$ and $P_I^f$ will determine the actual number of iterations that take place in the scheme. An initial $N$ of 5000 worked satisfactorily for the scheme.
 
-The paper outlines an algorithm for compression phase while $ẏ_G < 0$
+The paper outlines an algorithm for compression phase while $ẏ_G > 0$
 
 1. **CHECK FOR** $s, \Phi, s', \Phi'$
    **ESTIMATE** $\Delta \dot{x}_G, \ldots, \Delta \dot{\theta}_z$
@@ -199,29 +198,35 @@ dynamics under cushion impacts [[Mathaven paper](https://billiards.colostate.edu
 **Code generation**
 
 Assumptions for typescript code generation - use ThreeJS library, provide minimal readable code that breaks out functions where appropraite. Comments should be minimal but reference equations from the paper.
+The following imports can be assumed and should not be repeated in the solution.
 
+
+InitialConditions.ts
 ```typescript
-import { Vector3 } from 'vector3';
-
-interface InitialConditions {
+export interface InitialConditions {
   V0: number;          // Initial velocity magnitude
   alpha: number;       // Incident angle (radians)
   w0T: number;         // Initial topspin angular velocity
   w0S: number;         // Initial sidespin angular velocity
 }
-
-interface State {
-      P: number                    // Accumulated impulse 
-      WzI: number                  // Work done 
-      xG_dot: number
-      yG_dot: number
-      zG_dot: number
-      θx_dot: number
-      θy_dot: number
-      θz_dot: number
+```
+State.ts
+```typescript
+export interface State {
+  P: number;                    // Accumulated impulse 
+  WzI: number;                  // Work done 
+  xG_dot: number;
+  yG_dot: number;
+  zG_dot: number;
+  θx_dot: number;
+  θy_dot: number;
+  θz_dot: number;
 }
+```
+Constants.ts
+```typescript
 
-interface Constants {
+export interface Constants {
   M: number;           // Mass = 0.1406 kg
   R: number;           // Ball radius = 26.25 mm
   ee: number;          // Coefficient of restitution = 0.98
@@ -232,29 +237,39 @@ interface Constants {
   N: number;           // Number of iterations
 }
 
-const constants: Constants = {
+export const constants: Constants = {
   M: 0.1406,
   R: 0.02625,
   ee: 0.98,
   μs: 0.212,
   μw: 0.14,
-  sinTheta: 2/5,
-  cosTheta: Math.sqrt(21)/5,
+  sinTheta: 2 / 5,
+  cosTheta: Math.sqrt(21) / 5,
   N: 5000
 };
+```
 
-class CompressionPhase {
+CompressionPhase.ts
+```typescript
+import { InitialConditions } from './InitialConditions';
+import { State } from './State';
 
-  private state:State;
+export class CompressionPhase {
+
+  private state: State;
 
   constructor(initial: InitialConditions) {
     this.setInitialConditions(initial);
   }
 
-  public completeCompressionPhase() : State
-  ... complete this class for compression phase only ...
-}
+  public completeCompressionPhase() : State {
+    // ... complete this class for compression phase only ...
+  }
 
+  private setInitialConditions(initial: InitialConditions): void {
+    // Implementation of setting initial conditions
+  }
+}
 ```
 
 
