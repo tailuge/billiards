@@ -73,11 +73,6 @@ undefined when V₀ = Rω₀T (rolling condition)
 - $P_I^f$: The final accumulated value of impulse.
 
 
-#### Equation (17a): x-component velocity increment
-$$
-(ẋ_G)_{n+1} - (ẋ_G)_n = - \frac{1}{M} \left[\mu_w \cos(\phi) + \mu_s \cos(\phi') \cdot (\sin \theta + \mu_w \sin(\phi) \cos \theta)\right] \Delta P_I
-$$
-
 #### Equation (12a): Slip velocity at cushion along the x-axis
 $$
 ẋ_I = ẋ_G + θ̇_y R \sin \theta - θ̇_z R \cos \theta
@@ -174,20 +169,19 @@ Hence, approximately for $N$ iterations, $\Delta P_I = \frac{(1 + e_e) M V_0 \si
 
 The paper outlines an algorithm for compression phase while $ẏ_G > 0$
 
-1. **CHECK FOR** $s, \Phi, s', \Phi'$
-   **ESTIMATE** $\Delta \dot{x}_G, \ldots, \Delta \dot{\theta}_z$
+1. CHECK FOR $s, \Phi, s', \Phi'$
+   ESTIMATE $\Delta \dot{x}_G, \ldots, \Delta \dot{\theta}_z$
    *(Use Eqns. 15 and 17)*
 
 2. $\dot{x}_G = \dot{x}_G + \Delta \dot{x}_G$
    $\dot{\theta}_z = \dot{\theta}_z + \Delta \dot{\theta}_z$
 
-3. **UPDATE** $s, \Phi, s', \Phi'$
+3. UPDATE $s, \Phi, s', \Phi'$
    *(Use Eqns. 12 and 13)*
 
-4. **UPDATE**
-   $\dot{X}_G , \ldots, \dot{\theta}_z$
+4. UPDATE $\dot{X}_G , \ldots, \dot{\theta}_z$
 
-5. **ESTIMATE** $\Delta W^z$   *(Use Eqn. 16a)*   $W^z = W^z + \Delta W^z$
+5. ESTIMATE $\Delta W^z$   *(Use Eqn. 16a)*   $W^z = W^z + \Delta W^z$
 
 **References:**
 
@@ -197,7 +191,7 @@ dynamics under cushion impacts [[Mathaven paper](https://billiards.colostate.edu
 
 **Code generation**
 
-Assumptions for typescript code generation - use ThreeJS library, provide minimal readable code that breaks out functions where appropraite. Comments should be minimal but reference equations from the paper.
+Assumptions for typescript code generation - use ThreeJS library, provide minimal readable code that breaks out functions where appropraite for a modular design. Comments should be minimal but reference equations from the paper.
 The following imports can be assumed and should not be repeated in the solution.
 
 
@@ -227,11 +221,11 @@ Constants.ts
 ```typescript
 
 export interface Constants {
-  M: number;           // Mass = 0.1406 kg
-  R: number;           // Ball radius = 26.25 mm
-  ee: number;          // Coefficient of restitution = 0.98
-  μs: number;          // Coefficient of sliding friction (table) = 0.212
-  μw: number;          // Coefficient of sliding friction (cushion) = 0.14
+  M: number;           // Mass
+  R: number;           // Ball radius
+  ee: number;          // Coefficient of restitution
+  μs: number;          // Coefficient of sliding friction (table)
+  μw: number;          // Coefficient of sliding friction (cushion)
   sinTheta: number;    // Fixed angle of cushion contact point above ball center
   cosTheta: number;    // Fixed angle of cushion contact point above ball center 
   N: number;           // Number of iterations
