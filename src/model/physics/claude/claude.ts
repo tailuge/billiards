@@ -1,6 +1,6 @@
 import { MathavenEquations } from "./mathaven"
 import { InitialConditions, State } from "./state"
-import { constants } from "./constants"
+import { M, R, ee, μs, μw, sinTheta, cosTheta, N } from "./constants"
 
 export class CompressionPhase {
   private state: State
@@ -29,7 +29,7 @@ export class CompressionPhase {
 
   private calculateInitialDeltaP(initial: InitialConditions): number {
     const { V0, alpha } = initial
-    const { M, ee, N } = constants
+
     return ((1 + ee) * M * V0 * Math.sin(alpha)) / N
   }
 
@@ -40,7 +40,6 @@ export class CompressionPhase {
     phiPrime: number
   }): void {
     const { s, sPrime, phi, phiPrime } = slipParams
-    const { M, μw, μs, sinTheta, cosTheta } = constants
 
     // Implementation of Equation (17a) for velocity increments
     const deltaXG =
@@ -71,7 +70,6 @@ export class CompressionPhase {
     phiPrime: number
   }): void {
     const { phi, phiPrime } = slipParams
-    const { M, R, μw, μs, sinTheta, cosTheta } = constants
 
     // Implementation of equation 14d numerical approximation
     const deltaθx =

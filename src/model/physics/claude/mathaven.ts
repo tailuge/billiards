@@ -1,25 +1,25 @@
-import { constants } from "./constants"
 import { State } from "./state"
+import { R, sinTheta, cosTheta } from "./constants"
 
 export class MathavenEquations {
   // Equation (12a) - Slip velocity at cushion along x-axis at I
   static cushionSlipVelocityX(state: State): number {
     const { xG_dot, θy_dot, θz_dot } = state
-    const { R, sinTheta, cosTheta } = constants
+
     return xG_dot + θy_dot * R * sinTheta - θz_dot * R * cosTheta
   }
 
   // Equation (12b) - Slip velocity at cushion along y-axis at I
   static cushionSlipVelocityY(state: State): number {
     const { yG_dot, zG_dot, θx_dot } = state
-    const { R, sinTheta, cosTheta } = constants
+
     return -yG_dot * sinTheta + zG_dot * cosTheta + θx_dot * R
   }
 
   // Equation (13a,b) - Slip velocities at table C
   static tableSlipVelocities(state: State): { x: number; y: number } {
     const { xG_dot, yG_dot, θx_dot, θy_dot } = state
-    const { R } = constants
+
     return {
       x: xG_dot - θy_dot * R,
       y: yG_dot + θx_dot * R,
