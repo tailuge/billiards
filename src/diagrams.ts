@@ -90,11 +90,7 @@ function initialisePlots() {
     "Incident angle (degrees) of ball to cushion, 0=perpendicular, 90=parallel. Blue=Han2005 Red=Blend"
   )
 
-  linegraph5 = new Graph(
-    "plot5",
-    "phi",
-    "t"
-  )
+  linegraph5 = new Graph("plot5", "phi", "t")
 
   plotAll()
 }

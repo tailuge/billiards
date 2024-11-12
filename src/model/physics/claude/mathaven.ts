@@ -7,7 +7,7 @@ export class MathavenEquations {
     const { xG_dot, yG_dot, zG_dot, θx_dot, θy_dot, θz_dot } = state
     return {
       x: xG_dot + θy_dot * R * sinTheta - θz_dot * R * cosTheta,
-      y: -yG_dot * sinTheta + zG_dot * cosTheta + θx_dot * R
+      y: -yG_dot * sinTheta + zG_dot * cosTheta + θx_dot * R,
     }
   }
 
@@ -31,7 +31,9 @@ export class MathavenEquations {
     const cushionSlip = this.cushionSlipVelocities(state)
     const tableSlip = this.tableSlipVelocities(state)
 
-    const s = Math.sqrt(cushionSlip.x * cushionSlip.x + cushionSlip.y * cushionSlip.y)
+    const s = Math.sqrt(
+      cushionSlip.x * cushionSlip.x + cushionSlip.y * cushionSlip.y
+    )
     const sPrime = Math.sqrt(
       tableSlip.x * tableSlip.x + tableSlip.y * tableSlip.y
     )

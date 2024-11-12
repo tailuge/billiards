@@ -27,7 +27,7 @@ export class CompressionPhase {
       s: 0,
       sPrime: 0,
       phi: 0,
-      phiPrime: 0
+      phiPrime: 0,
     }
   }
 
@@ -57,8 +57,6 @@ export class CompressionPhase {
     this.prevState = { ...this.state }
     this.state.xG_dot += deltaXG
     this.state.yG_dot += deltaYG
-
-    this.updateAngularVelocities()
   }
 
   private updateAngularVelocities(): void {
@@ -100,6 +98,7 @@ export class CompressionPhase {
       this.state.phiPrime = slipParams.phiPrime
 
       this.updateVelocities()
+      this.updateAngularVelocities()
 
       // Update work done
       this.state.WzI += MathavenEquations.calculateWorkIncrement(
