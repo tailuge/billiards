@@ -7,6 +7,10 @@ export interface State {
   θx_dot: number
   θy_dot: number
   θz_dot: number
+  s: number // Slip speed at cushion
+  sPrime: number // Slip speed at table
+  phi: number // Slip angle at cushion
+  phiPrime: number // Slip angle at table
 }
 
 export interface InitialConditions {

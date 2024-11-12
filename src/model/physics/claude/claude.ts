@@ -24,22 +24,20 @@ export class CompressionPhase {
       θx_dot: -w0T * Math.sin(alpha),
       θy_dot: w0T * Math.cos(alpha),
       θz_dot: w0S,
+      s: 0,
+      sPrime: 0,
+      phi: 0,
+      phiPrime: 0
     }
   }
 
   private calculateInitialDeltaP(initial: InitialConditions): number {
     const { V0, alpha } = initial
-
     return ((1 + ee) * M * V0 * Math.sin(alpha)) / N
   }
 
-  private updateVelocities(slipParams: {
-    s: number
-    sPrime: number
-    phi: number
-    phiPrime: number
-  }): void {
-    const { s, sPrime, phi, phiPrime } = slipParams
+  private updateVelocities(): void {
+    const { phi, phiPrime } = this.state
 
     // Implementation of Equation (17a) for velocity increments
     const deltaXG =
@@ -60,16 +58,11 @@ export class CompressionPhase {
     this.state.xG_dot += deltaXG
     this.state.yG_dot += deltaYG
 
-    this.updateAngularVelocities(slipParams)
+    this.updateAngularVelocities()
   }
 
-  private updateAngularVelocities(slipParams: {
-    s: number
-    sPrime: number
-    phi: number
-    phiPrime: number
-  }): void {
-    const { phi, phiPrime } = slipParams
+  private updateAngularVelocities(): void {
+    const { phi, phiPrime } = this.state
 
     // Implementation of equation 14d numerical approximation
     const deltaθx =
@@ -101,8 +94,12 @@ export class CompressionPhase {
     while (this.state.yG_dot > 0) {
       count++
       const slipParams = MathavenEquations.calculateSlipParameters(this.state)
+      this.state.s = slipParams.s
+      this.state.sPrime = slipParams.sPrime
+      this.state.phi = slipParams.phi
+      this.state.phiPrime = slipParams.phiPrime
 
-      this.updateVelocities(slipParams)
+      this.updateVelocities()
 
       // Update work done
       this.state.WzI += MathavenEquations.calculateWorkIncrement(
