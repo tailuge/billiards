@@ -218,12 +218,6 @@ The following imports can be assumed and should not be repeated in the solution.
 state.ts
 
 ```typescript
-export interface InitialConditions {
-  V0: number;          // Initial velocity magnitude
-  alpha: number;       // Incident angle (radians)
-  w0T: number;         // Initial topspin angular velocity
-  w0S: number;         // Initial sidespin angular velocity
-}
 
 export interface State {
   P: number;                    // Accumulated impulse 
@@ -234,6 +228,10 @@ export interface State {
   θx_dot: number;
   θy_dot: number;
   θz_dot: number;
+  s: number // Slip speed at cushion
+  sPrime: number // Slip speed at table
+  phi: number // Slip angle at cushion
+  phiPrime: number // Slip angle at table
 }
 ```
 
@@ -241,49 +239,47 @@ constants.ts
 
 ```typescript
 
-export interface Constants {
-  M: number;           // Mass
-  R: number;           // Ball radius
-  ee: number;          // Coefficient of restitution
-  μs: number;          // Coefficient of sliding friction (table)
-  μw: number;          // Coefficient of sliding friction (cushion)
-  sinTheta: number;    // Fixed angle of cushion contact point above ball center
-  cosTheta: number;    // Fixed angle of cushion contact point above ball center 
-  N: number;           // Number of iterations
-}
+export const M = 0.1406
+export const R = 0.02625
+export const ee = 0.98
+export const μs = 0.212
+export const μw = 0.14
+export const sinTheta = 2 / 5
+export const cosTheta = Math.sqrt(21) / 5
+export const N = 5000
 
-export const constants: Constants = {
-  M: 0.1406,
-  R: 0.02625,
-  ee: 0.98,
-  μs: 0.212,
-  μw: 0.14,
-  sinTheta: 2 / 5,
-  cosTheta: Math.sqrt(21) / 5,
-  N: 5000
-};
 ```
 
-compressionphase.ts
+numericalsolution.ts
 
 ```typescript
 import { InitialConditions, State } from './State';
-import { constants } from "./constants"
+import { M, R, ee, μs, μw, sinTheta, cosTheta, N } from "./constants"
 
-export class CompressionPhase {
+export class NumericalSolution {
 
   private state: State;
 
-  constructor(initial: InitialConditions) {
-    this.setInitialConditions(initial);
+  constructor(V0, alpha, w0T, w0S) {
+    this.setInitialConditions(V0, alpha, w0T, w0S);
   }
 
-  public completeCompressionPhase() : State {
-    // ... complete this class for compression phase only ...
+  private setInitialConditions(V0, alpha, w0T, w0S): void {
+    // ...
   }
 
-  private setInitialConditions(initial: InitialConditions): void {
-    // Implementation of setting initial conditions
+  public compressionPhase() {
+    // ... 
   }
+
+  public restitutionPhase() {
+    // ... 
+  }
+
+  public updateSingleStep() {
+    this.updateVelocities()
+    this.updateAngularVelocities()
+  } 
+
 }
 ```
