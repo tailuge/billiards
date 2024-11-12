@@ -49,6 +49,8 @@ node_modules/
 
 # Yarn Integrity file
 .yarn-integrity
+.yarnrc
+.yarn/
 
 # dotenv environment variables file
 .env
