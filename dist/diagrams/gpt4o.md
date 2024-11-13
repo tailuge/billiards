@@ -50,16 +50,18 @@ export class NumericalSolution {
   }
 
   public compressionPhase(): void {
-    while (this.state.yG_dot > 0) {
-      this.updateVelocities();
-      this.updateAngularVelocities();
-      this.updateWorkDone();
-      this.state.P += (1 + ee) * M * this.state.yG_dot / N;
+    const tolerance = 1e-5;  // Small threshold for detecting end of compression
+    while (Math.abs(this.state.zG_dot) > tolerance) {
+        this.updateVelocities();
+        this.updateAngularVelocities();
+        this.updateWorkDone();
+        this.state.P += deltaP_I;  // Increment P by deltaP_I
     }
-  }
+    this.targetWorkRebound = (1 - ee ** 2) * this.state.WzI;  // Set target for restitution phase
+}
 
   public restitutionPhase(): void {
-    while (this.state.WzI < (1 - ee**2) * this.state.WzI) {
+    while (this.state.WzI < this.targetWorkRebound) {
       this.updateVelocities();
       this.updateAngularVelocities();
       this.updateWorkDone();
@@ -72,8 +74,9 @@ export class NumericalSolution {
     const deltaXG_dot = - (1 / M) * (μw * Math.cos(this.state.phi) + μs * Math.cos(this.state.phiPrime) * (sinTheta + μw * Math.sin(this.state.phi) * cosTheta));
     const deltaYG_dot = - (1 / M) * (cosTheta - μw * sinTheta * Math.sin(this.state.phi) + μs * Math.sin(this.state.phiPrime) * (sinTheta + μw * Math.sin(this.state.phi) * cosTheta));
 
-    this.state.xG_dot += deltaXG_dot * (this.state.P / N);
-    this.state.yG_dot += deltaYG_dot * (this.state.P / N);
+    const deltaP_I = this.state.P / N
+    this.state.xG_dot += deltaXG_dot * deltaP_I;
+    this.state.yG_dot += deltaYG_dot * deltaP_I;
   }
 
   private updateAngularVelocities(): void {
@@ -81,16 +84,15 @@ export class NumericalSolution {
     const deltaThetaY_dot = -(5 / (2 * M * R)) * (μw * Math.cos(this.state.phi) * sinTheta - μs * Math.cos(this.state.phiPrime) * (sinTheta + μw * Math.sin(this.state.phi) * cosTheta));
     const deltaThetaZ_dot = (5 / (2 * M * R)) * (μw * Math.cos(this.state.phi) * cosTheta);
 
-    this.state.θx_dot += deltaThetaX_dot * (this.state.P / N);
-    this.state.θy_dot += deltaThetaY_dot * (this.state.P / N);
-    this.state.θz_dot += deltaThetaZ_dot * (this.state.P / N);
+    const deltaP_I = this.state.P / N
+    this.state.θx_dot += deltaThetaX_dot * deltaP_I;
+    this.state.θy_dot += deltaThetaY_dot * deltaP_I;
+    this.state.θz_dot += deltaThetaZ_dot * deltaP_I;
   }
 
   private updateWorkDone(): void {
-    // Update equation (16a) or similar depending on the state updates
-    const deltaWzI =
-      this.state.P * ((this.state.zG_dot + this.state.zG_dot) / 2); // Placeholder, assuming similar to equation 16a
-
+    // Calculate incremental work based on zG_dot
+    const deltaWzI = this.state.zG_dot * (this.state.P / N);  // Approximate as z'_I * ΔP_I
     this.state.WzI += deltaWzI;
   }
 }

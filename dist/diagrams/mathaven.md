@@ -1,6 +1,13 @@
 
 # Mathaven ball cushion summary
 
+This outlines the ball’s impact with the cushion is analyzed with specific reference to the forces, velocities, and spins at play. Here's how the variables relate to the contact points I and C, as well as the velocities and spin components.
+
+Contact Points:
+
+* Point I: This is the primary contact point between the ball and the cushion.
+* Point C: This is where the ball contacts the table surface during the collision
+
 ## Constants
 
 * Coefficient of Restitution $e_e$: Value between the ball and cushion: 0.98
@@ -29,7 +36,7 @@ V₀: Initial velocity magnitude
 Centroid Velocities (Linear Velocities):
 
 ```text
-(ẋG)₁ = V₀ cos(α)     // Initial x velocity perpendicular to cushion
+(ẋG)₁ = V₀ cos(α)     // Initial x velocity parallel to cushion
 (ẏG)₁ = V₀ sin(α)  
 (żG)₁ = 0            
 ```
@@ -154,7 +161,7 @@ This section outlines the numerical scheme used to simulate the motion of a bill
 2. **Velocity Increments**:
    * The algorithm updates the centroidal velocities of the ball using Equation (17a) along with five additional simultaneous equations.
    * Equation (17a) for the x-component velocity increment
-   * Additional equations for z-components account for changes in these directions as the impulse accumulates. The z component is assumed zero.
+   * Additional equations for y-components account for changes in these directions as the impulse accumulates. The z component is assumed zero.
 
 3. **Slip Velocities Calculation**:
    * New slip velocities are computed using updated values from equations (12a), (12b), (13a), and (13b), which relate slip velocities at the cushion and table to the ball’s centroidal velocities.
@@ -185,20 +192,20 @@ $$W_{Z'}^I(P_I^f) = (1 - e_e^2) W_{Z'}^I(P_I^c)$$
 
 The numerical process of incrementing $P_I$ can resume again, and when $W_{Z'}^I = W_{Z'}^I(P_I^f)$, the process is terminated.
 
-In order to start the numerical scheme, a reasonable value for $\Delta P_I$ has to be assumed. An approximate value for $P_I^f$ can be assumed to be $(1 + e_e) M V_0 \sin \alpha$ , which is the value of the final accumulated normal impulse for a horizontally moving, non-spinning ball colliding into a solid vertical wall.
+In order to start the numerical scheme, a reasonable estimate for $\Delta P_I$ has to be assumed. An approximate value for $P_I^f$ can be assumed to be $(1 + e_e) M V_0 \sin \alpha$ , which is the value of the final accumulated normal impulse for a horizontally moving, non-spinning ball colliding into a solid vertical wall.
 
 Hence, approximately for $N$ iterations, $\Delta P_I = \frac{(1 + e_e) M V_0 \sin \alpha}{N}$. Obviously, the values of $P_I^c$ and $P_I^f$ will determine the actual number of iterations that take place in the scheme. An initial $N$ of 5000 worked satisfactorily for the scheme.
 
 The paper outlines an algorithm for compression phase while $ẏ_G > 0$
 
-1. CHECK FOR $s, \Phi, s', \Phi'$
+1. CALCULATE INITIAL $s, \Phi, s', \Phi'$
    ESTIMATE $\Delta \dot{x}_G, \ldots, \Delta \dot{\theta}_z$
    *(Use Eqns. 15 and 17)*
 
 2. $\dot{x}_G = \dot{x}_G + \Delta \dot{x}_G$
    $\dot{\theta}_z = \dot{\theta}_z + \Delta \dot{\theta}_z$
 
-3. UPDATE $s, \Phi, s', \Phi'$
+3. RECALCULATE $s, \Phi, s', \Phi'$
    *(Use Eqns. 12 and 13)*
 
 4. UPDATE $\dot{X}_G , \ldots, \dot{\theta}_z$
@@ -212,8 +219,14 @@ dynamics under cushion impacts [[Mathaven paper](https://billiards.colostate.edu
 
 ## Code generation prompt
 
-Assumptions for typescript code generation - use ThreeJS library, provide concise readable code with a modular design. Comments should be minimal but reference equations from the paper.
-The following imports can be assumed and should not be repeated in the solution.
+Generate TypeScript code for simulating billiard ball dynamics based on cushion impacts, referencing equations from the paper. The code should focus on modularity and readability, implementing a core algorithm to update `State` for both compression and restitution phases, and leveraging shared methods between phases.
+
+Assumptions:
+- Use concise, readable TypeScript with minimal inline comments.
+- Comments should reference specific equations from the paper, focusing on relevance rather than extensive explanation.
+- Implement state updates for both phases within a single `updateSingleStep` function, called by both `compressionPhase` and `restitutionPhase` methods.
+
+Imports are predefined and assumed as shown below and should not be repeated in the solution.
 
 state.ts
 
@@ -229,8 +242,8 @@ export interface State {
   θy_dot: number;
   θz_dot: number;
   s: number // Slip speed at cushion
-  sPrime: number // Slip speed at table
   phi: number // Slip angle at cushion
+  sPrime: number // Slip speed at table
   phiPrime: number // Slip angle at table
 }
 ```
@@ -253,33 +266,47 @@ export const N = 5000
 numericalsolution.ts
 
 ```typescript
-import { InitialConditions, State } from './State';
+import { State } from './State';
 import { M, R, ee, μs, μw, sinTheta, cosTheta, N } from "./constants"
 
 export class NumericalSolution {
-
+  
   private state: State;
 
-  constructor(V0, alpha, w0T, w0S) {
+  constructor(V0: number, alpha: number, w0T: number, w0S: number) {
     this.setInitialConditions(V0, alpha, w0T, w0S);
   }
 
-  private setInitialConditions(V0, alpha, w0T, w0S): void {
-    // ...
+  private setInitialConditions(V0: number, alpha: number, w0T: number, w0S: number): void {
+    // Initialize state based on initial values for V0, alpha, w0T, and w0S
   }
 
-  public compressionPhase() {
-    // ... 
+  public compressionPhase(): void {
+    // Call updateSingleStep repeatedly until compression end condition
   }
 
-  public restitutionPhase() {
-    // ... 
+  public restitutionPhase(targetWorkRebound): void {
+    // Call updateSingleStep repeatedly until restitution end condition
   }
 
-  public updateSingleStep() {
-    this.updateVelocities()
-    this.updateAngularVelocities()
-  } 
+  private updateSingleStep(deltaP: number): void {
+    // Common function to update velocities, angular velocities, and work done
+    this.updateVelocities(deltaP);
+    this.updateAngularVelocities(deltaP);
+    this.updateWorkDone(deltaP);
+  }
 
+  private updateVelocities(deltaP: number): void {
+    // Implement velocity updates based on equations 17a and 17b
+  }
+
+  private updateAngularVelocities(deltaP: number): void {
+    // Implement angular velocity updates based on equations 14d, 14e, and 14f
+  }
+
+  private updateWorkDone(deltaP: number): void {
+    // Compute work done based on equation 16a
+  }
 }
+
 ```
