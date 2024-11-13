@@ -1,26 +1,12 @@
 
 # Mathaven ball cushion summary
 
-This outlines the ball’s impact with the cushion is analyzed with specific reference to the forces, velocities, and spins at play. Here's how the variables relate to the contact points I and C, as well as the velocities and spin components.
+This outlines a ball’s impact with a cushion analyzed with specific reference to the forces, velocities, and spins at play. Here's how the variables relate to the contact points I and C, as well as the velocities and spin components.
 
 Contact Points:
 
 * Point I: This is the primary contact point between the ball and the cushion.
 * Point C: This is where the ball contacts the table surface during the collision
-
-## Constants
-
-* Coefficient of Restitution $e_e$: Value between the ball and cushion: 0.98
-* Coefficient of Sliding Friction $μ_s$ : Between the ball and table surface: 0.212
-* Coefficient of Sliding Friction $μ_w$ : Between the ball and cushion: 0.14
-* Mass (M): 0.1406 kg
-* Ball Radius (R): 26.25 mm
-
-Cushion height in both snooker and pool, h = 7R/5, where R is the ball radius.
-The common normal line Z at the contact point with the cushion makes an angle θ with the Y-axis, such that
-
-* sinθ = 2/5 constant.
-* cosθ = sqrt(21)/5 constant.
 
 ## Given inputs to the numerical approximation
 
@@ -48,6 +34,19 @@ Angular Velocities:
 (θ̇y)₁ = ω₀T cos(α)    // Initial angular velocity around y-axis
 (θ̇z)₁ = ω₀S           // Initial angular velocity around z-axis (sidespin)
 ```
+## Constants
+
+* Coefficient of Restitution $e_e$: Value between the ball and cushion: 0.98
+* Coefficient of Sliding Friction $μ_s$ : Between the ball and table surface: 0.212
+* Coefficient of Sliding Friction $μ_w$ : Between the ball and cushion: 0.14
+* Mass (M): 0.1406 kg
+* Ball Radius (R): 26.25 mm
+
+Cushion height in both snooker and pool, h = 7R/5, where R is the ball radius.
+The common normal line Z at the contact point with the cushion makes an angle θ with the Y-axis, such that
+
+* sinθ = 2/5 constant.
+* cosθ = sqrt(21)/5 constant.
 
 Slip Speed at Point I (cushion contact):
 

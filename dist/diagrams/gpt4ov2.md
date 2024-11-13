@@ -63,23 +63,22 @@ private updateSingleStep(deltaP: number): void {
 
 private updateVelocities(deltaP: number): void {
     const { phi, phiPrime } = this.state;
-
-    this.state.xG_dot -= (1 / M) * (μw * Math.cos(phi) + μs * Math.cos(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta)) * deltaP;
-    this.state.yG_dot -= (1 / M) * (cosTheta - μw * sinTheta * Math.sin(phi) + μs * Math.sin(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta)) * deltaP;
+    const coeff = (1 / M)
+    this.state.xG_dot -= coeff * (μw * Math.cos(phi) + μs * Math.cos(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta)) * deltaP;
+    this.state.yG_dot -= coeff * (cosTheta - μw * sinTheta * Math.sin(phi) + μs * Math.sin(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta)) * deltaP;
 }
 
 private updateAngularVelocities(deltaP: number): void {
     const { phi, phiPrime } = this.state;
-
-    this.state.θx_dot -= (5 / (2 * M * R)) * [μw * Math.sin(phi) + μs * Math.sin(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta)] * deltaP;
-    this.state.θy_dot -= (5 / (2 * M * R)) * [μw * Math.cos(phi) * sinTheta - μs * Math.cos(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta)] * deltaP;
-    this.state.θz_dot += (5 / (2 * M * R)) * (μw * Math.cos(phi) * cosTheta) * deltaP;
+    const coeff = (5 / (2 * M * R))
+    this.state.θx_dot -= coeff * [μw * Math.sin(phi) + μs * Math.sin(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta)] * deltaP;
+    this.state.θy_dot -= coeff * [μw * Math.cos(phi) * sinTheta - μs * Math.cos(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta)] * deltaP;
+    this.state.θz_dot += coeff * (μw * Math.cos(phi) * cosTheta) * deltaP;
 }
 
 private updateWorkDone(deltaP: number): void {
-    // Example calculation for work update - for demonstration purposes.
-    const zI_avg = 0;  // Placeholder for average Z velocity over step
-    this.state.WzI += deltaP * (zI_avg / 2);
+    const zI_dot_avg = (this.state.zG_dot + this.previousZ_dot) / 2; 
+    this.state.WzI += deltaP * zI_dot_avg;
 }
 ```
 
