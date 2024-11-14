@@ -141,3 +141,71 @@ export class NumericalSolution {
     }
   }
 }
+
+
+
+
+
+
+
+import { State } from './State';
+import { M, R, ee, μs, μw, sinTheta, cosTheta, N } from "./constants"
+
+export class NumericalSolution {
+    private state: State;
+
+    // ... (constructor and setInitialConditions remain the same)
+
+    public compressionPhase(): void {
+        // ... (No changes to compressionPhase logic)
+    }
+
+    public restitutionPhase(): void {
+        // ... (No changes to restitutionPhase logic)
+    }
+
+    private updateSingleStep(deltaP: number): void {
+        this.updateVelocities(deltaP);
+        this.updateAngularVelocities(deltaP);
+        this.updateSlipValues(); // Call updateSlipValues BEFORE updateWorkDone
+        this.updateWorkDone(deltaP); // updateWorkDone depends on updated slip values
+    }
+
+    // ... (updateVelocities and updateAngularVelocities remain the same)
+
+    private updateWorkDone(deltaP: number): void {
+        const { WzI, yG_dot, zG_dot, θx_dot, phi, phiPrime } = this.state;
+        const zI_prime_new = -yG_dot * sinTheta + zG_dot * cosTheta + R * θx_dot; // Equation for z'_I
+
+        // Corrected zI_prime_old using 17b to calculate previous yG_dot and 14d to calculate previous θx_dot
+        const prev_yG_dot = yG_dot - (- (1 / M) * (cosTheta - μw * Math.sin(phi) * sinTheta + μs * Math.sin(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta))) * deltaP;
+        const prev_θx_dot = θx_dot - (- (5 / (2 * M * R)) * (μw * Math.sin(phi) + μs * Math.sin(phiPrime) * (sinTheta + μw * Math.sin(phi) * cosTheta)) * deltaP);
+
+        const zI_prime_old = -prev_yG_dot * sinTheta + zG_dot * cosTheta + R * prev_θx_dot; // z'_I at previous step
+
+        this.state.WzI += (deltaP / 2) * (zI_prime_new + zI_prime_old);  // Equation 16a
+        this.state.P += deltaP;
+    }
+
+
+
+    private updateSlipValues(): void {
+        const { xG_dot, yG_dot, θx_dot, θy_dot, θz_dot } = this.state;
+
+        // Slip speed and angle at cushion (Equations 12a, 12b)
+        const xI_dot = xG_dot + R * (θy_dot * sinTheta - θz_dot * cosTheta); // 12a
+        const yI_prime_dot = -yG_dot * sinTheta + 0 * cosTheta + R * θx_dot;  // 12b (zG_dot is 0)
+
+        this.state.s = Math.sqrt(xI_dot * xI_dot + yI_prime_dot * yI_prime_dot);
+        this.state.phi = Math.atan2(yI_prime_dot, xI_dot);
+
+
+
+        // Slip speed and angle at table (Equations 13a, 13b)
+        const xC_dot = xG_dot - R * θy_dot; // 13a
+        const yC_dot = yG_dot + R * θx_dot; // 13b
+
+        this.state.sPrime = Math.sqrt(xC_dot * xC_dot + yC_dot * yC_dot);
+        this.state.phiPrime = Math.atan2(yC_dot, xC_dot);
+    }
+}
