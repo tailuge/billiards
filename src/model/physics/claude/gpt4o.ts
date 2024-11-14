@@ -1,4 +1,4 @@
-import { M, R, ee, μs, μw, sinTheta, cosTheta, N } from "./constants"
+import { M, R, ee, μs, μw, sinTheta, cosTheta, N, epsilon } from "./constants"
 
 export class NumericCalculation {
   private state
@@ -25,6 +25,7 @@ export class NumericCalculation {
       phi: 0,
       sPrime: 0,
       phiPrime: 0,
+      deltaP: 0,
     }
 
     this.state.s = this.calculateSlipSpeed()
@@ -92,18 +93,20 @@ export class NumericCalculation {
     this.previousZ_dot = this.state.zG_dot
   }
 
-  public solution() {
+  public solve() {
+    this.state.deltaP = this.calculateDeltaP()
     this.compressionPhase()
     this.restitutionPhase(this.targetWorkRebound)
     return this.state
   }
 
-  public compressionPhase(): void {
-    while (this.state.yG_dot > 0) {
+  public compressionPhase() {
+    while (this.state.yG_dot > epsilon) {
       this.logDataForPlotting()
       this.updateSingleStep()
     }
     this.targetWorkRebound = (1 - ee ** 2) * this.state.WzI
+    return this.state
   }
 
   public restitutionPhase(targetWorkRebound: number): void {
@@ -123,11 +126,15 @@ export class NumericCalculation {
     return ((1 + ee) * M * this.state.yG_dot) / N
   }
 
+  private iter = 0
   private updateSingleStep(): void {
-    const deltaP = this.calculateDeltaP()
-    this.updateVelocities(deltaP)
-    this.updateAngularVelocities(deltaP)
-    this.updateWorkDone(deltaP)
+    if (this.iter++ > 10000) {
+      console.log(this.state)
+      throw "Solution not found"
+    }
+    this.updateVelocities(this.state.deltaP)
+    this.updateAngularVelocities(this.state.deltaP)
+    this.updateWorkDone(this.state.deltaP)
 
     this.state.s = this.calculateSlipSpeed()
     this.state.phi = this.calculatePhi()

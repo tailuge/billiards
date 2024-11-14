@@ -20,4 +20,7 @@ export const sinTheta = 2 / 5
 export const cosTheta = Math.sqrt(21) / 5
 
 // Number of iterations
-export const N = 5000
+export const N = 1000
+
+// Number of iterations
+export const epsilon = 0.0001

@@ -15,6 +15,7 @@ import { Sliders } from "./view/sliders"
 import { DiagramContainer } from "./diagram/diagramcontainer"
 import { I, Mxy, Mz, R } from "./model/physics/constants"
 import { Cue } from "./view/cue"
+import { NumericCalculation } from "./model/physics/claude/gpt4o"
 
 let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4, linegraph5
@@ -181,15 +182,13 @@ function lineGraph4() {
 }
 
 function lineGraph5() {
-  const x: number[] = []
-  const y1: number[] = []
-  const y2: number[] = []
+  const numericCalculation = new NumericCalculation(2.0, Math.PI / 2, 0, 0)
+  const state = numericCalculation.solve()
 
-  for (let i = 0; i <= 1; i += 0.05) {
-    x.push(i)
-    y1.push(Math.sin(i))
-    y2.push(Math.cos(i))
-  }
+  const x: number[] = state.p
+  const y1: number[] = state.s
+  const y2: number[] = state.phi
+
   linegraph5.plot(x, y1, y2)
 }
 
