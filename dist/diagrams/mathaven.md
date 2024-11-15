@@ -98,6 +98,13 @@ $$
 ẏ_C = ẏ_G + θ̇_x R
 $$
 
+12/13 summarised as
+
+* **Equation (12a):** Slip velocity at cushion along the x-axis:  `ẋᵢ = ẋɢ + θ̇ᵧ R sin θ - θ̇𝘇 R cos θ`
+* **Equation (12b):** Slip velocity at cushion along the y'-axis (transformed to y'): `ẏ'ᵢ = -ẏɢ sin θ + żɢ cos θ + θ̇ₓ R`
+* **Equation (13a):** Slip velocity at table along the x-axis: `ẋc = ẋɢ - θ̇ᵧ R`
+* **Equation (13b):** Slip velocity at table along the y-axis:  `ẏc = ẏɢ + θ̇ₓ R`
+
 ### equation (14d): update angular velocity
 
 $$
@@ -115,6 +122,13 @@ $$
 $$
 (θ˙z)_{n+1}−(θ˙z)_n = \frac{5}{2MR}(\mu_w \cos(\phi)\cos(\theta))\Delta P_I
 $$
+
+equations 14abc summarised as
+
+Δθ̇ₓ = - (5/(2MR)) [μw sin(Φ) + μs sin(Φ') (sin θ + μw sin(Φ) cos θ)] ΔPᵢ
+Δθ̇ᵧ = - (5/(2MR)) [μw cos(Φ)sin(θ) - μs cos(Φ') (sin θ + μw sin(Φ) cos θ)] ΔPᵢ
+Δθ̇𝘇 = (5/(2MR)) (μw cos(Φ)cos(θ)) ΔPᵢ
+
 
 ### Equation (15a): Rolling condition for the ball at the cushion (when slip speed $s = 0$
 
@@ -144,6 +158,10 @@ $$
 (ẏ_G)_{n+1} - (ẏ_G)_n  = - \frac{1}{M} \left[ \cos \theta - \mu_w \sin \theta \sin \phi + \mu_s \sin \phi' \cdot \left( \sin \theta + \mu_w \sin \phi \cos \theta \right) \right] \Delta P_I
 $$
 
+Δẋɢ = - (1/M) [μw cos(Φ) + μs cos(Φ') (sin θ + μw sin(Φ) cos θ)] ΔPᵢ
+Δẏɢ = - (1/M) [cos θ - μw sin θ sin Φ + μs sin Φ' (sin θ + μw sin Φ cos θ)] ΔPᵢ
+
+
 * $P$: Accumulated impulse at any time during impact.
 * $P_I^c$: Accumulated impulse at the termination of compression.
 * $P_I^f$: The final accumulated value of impulse.
@@ -151,6 +169,15 @@ $$
 ## Numerical Scheme for Ball-Cushion Impact Simulation Compression Phase
 
 This section outlines the numerical scheme used to simulate the motion of a billiard ball during cushion impact, focusing on velocity changes and slip characteristics throughout the collision.
+
+The numerical solution involves iteratively updating the state of the ball using small impulse increments ($\Delta P_I$). It's divided into two phases: compression and restitution.
+
+**Compression Phase:** Continues as long as  `ẏɢ > 0` (ball is still moving towards the cushion).
+
+**Restitution Phase:** Starts when `ẏɢ < 0` and continues until the calculated work done matches the target work for rebound calculated using the coefficient of restitution ($W_{Z'}^I(P_I^f) = (1 - e_e^2) W_{Z'}^I(P_I^c)$).
+
+
+The core algorithm `updateSingleStep` is shared by both phases, handling the updates to velocities, angular velocities, and work done based on the equations above.
 
 1. **Initialization**:
    * The scheme begins by calculating the initial centroidal velocities (center-of-mass velocities) and slip speeds and angles based on initial conditions.
