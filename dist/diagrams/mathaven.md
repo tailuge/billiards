@@ -12,7 +12,7 @@ Contact Points:
 
 ```text
 V₀: Initial velocity magnitude
-α: Incident angle with 0 being perpendicular
+α: Angle relative to cushion with 0 being parallel and pi/2 perpendicular
 ω₀T: Initial topspin angular velocity along line of travel of ball
 ω₀S: Initial sidespin angular velocity
 ```
