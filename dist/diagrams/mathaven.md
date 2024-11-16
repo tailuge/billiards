@@ -252,25 +252,6 @@ Assumptions:
 
 Imports are predefined and assumed as shown below and should not be repeated in the solution.
 
-state.ts
-
-```typescript
-
-export interface State {
-  P: number;                    // Accumulated impulse 
-  WzI: number;                  // Work done 
-  xG_dot: number;
-  yG_dot: number;
-  zG_dot: number;
-  θx_dot: number;
-  θy_dot: number;
-  θz_dot: number;
-  s: number // Slip speed at cushion
-  phi: number // Slip angle at cushion
-  sPrime: number // Slip speed at table
-  phiPrime: number // Slip angle at table
-}
-```
 
 constants.ts
 
@@ -281,8 +262,8 @@ export const R = 0.02625
 export const ee = 0.98
 export const μs = 0.212
 export const μw = 0.14
-export const sinTheta = 2 / 5
-export const cosTheta = Math.sqrt(21) / 5
+export const sinθ = 2 / 5
+export const cosθ = Math.sqrt(21) / 5
 export const N = 5000
 
 ```
@@ -290,19 +271,29 @@ export const N = 5000
 numericalsolution.ts
 
 ```typescript
-import { State } from './State';
-import { M, R, ee, μs, μw, sinTheta, cosTheta, N } from "./constants"
+
+import { M, R, ee, μs, μw, sinθ, cosθ, N } from "./constants"
 
 export class NumericalSolution {
-  
-  private state: State;
 
-  constructor(V0: number, alpha: number, w0T: number, w0S: number) {
-    this.setInitialConditions(V0, alpha, w0T, w0S);
-  }
+  P: number = 0;
+  WzI: number = 0;
+  vx: number;
+  vy: number;
+  ωx: number;
+  ωy: number;
+  ωz: number;
+  s: number;
+  φ: number;
+  sʹ: number;
+  φʹ: number;
 
-  private setInitialConditions(V0: number, alpha: number, w0T: number, w0S: number): void {
-    // Initialize state based on initial values for V0, alpha, w0T, and w0S
+  constructor(v0: number, α: number, ω0S: number, ω0T: number) {
+    this.vx = v0 * Math.cos(α);
+    this.vy = v0 * Math.sin(α);
+    this.ωx = -ω0S * Math.sin(α);
+    this.ωy = ω0S * Math.cos(α);
+    this.ωz = ω0T;
   }
 
   public compressionPhase(): void {
@@ -313,22 +304,22 @@ export class NumericalSolution {
     // Call updateSingleStep repeatedly until restitution end condition
   }
 
-  private updateSingleStep(deltaP: number): void {
+  private updateSingleStep(ΔP: number): void {
     // Common function to update velocities, angular velocities, and work done
-    this.updateVelocities(deltaP);
-    this.updateAngularVelocities(deltaP);
-    this.updateWorkDone(deltaP);
+    this.updateVelocities(ΔP);
+    this.updateAngularVelocities(ΔP);
+    this.updateWorkDone(ΔP);
   }
 
-  private updateVelocities(deltaP: number): void {
+  private updateVelocities(ΔP: number): void {
     // Implement velocity updates based on equations 17a and 17b
   }
 
-  private updateAngularVelocities(deltaP: number): void {
+  private updateAngularVelocities(ΔP: number): void {
     // Implement angular velocity updates based on equations 14d, 14e, and 14f
   }
 
-  private updateWorkDone(deltaP: number): void {
+  private updateWorkDone(ΔP: number): void {
     // Compute work done based on equation 16a
   }
 }
