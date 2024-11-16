@@ -85,7 +85,7 @@ where
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" title="\dot{\omega_z} = \frac{5S_y_0}{2mRA}cos\theta_a" /></a>
 
-Future work on [Mathaven](dist/diagrams/mathaven.md) cushion paper.
+Future [work](https://tailuge.github.io/billiards/dist/diagrams/mathaven.html) on [Mathaven](dist/diagrams/mathaven.md) cushion paper.
 
 ## Useful commands
 
