@@ -51,7 +51,7 @@ The common normal line Z at the contact point with the cushion makes an angle θ
 Slip Speed at Point I (cushion contact):
 
 ```text
-s(0) = √[(V₀ cos(α) + R(ω₀T cos(α)sin(θ) - ω₀S cos(θ)))² + (-V₀ sin(α)sin(θ) - Rω₀T sin(α))²]
+s(0) = √[(V₀ cos(α) + R(ω₀T cos(α)sinθ - ω₀S cosθ))² + (-V₀ sin(α)sinθ - Rω₀T sin(α))²]
 ```
 
 Slip Speed at Point C (table contact):
@@ -62,7 +62,7 @@ s'(0) = |V₀ - Rω₀T|
 
 Slip Angle at Point I:
 
-$\Phi$(0) = tan⁻¹((-V₀ sin(α)sin(θ) - Rω₀T sin(α)) / (V₀ cos(α) + R(ω₀T cos(α)sin(θ) - ω₀S cos(θ))))
+$\Phi$(0) = tan⁻¹((-V₀ sin(α)sinθ - Rω₀T sin(α)) / (V₀ cos(α) + R(ω₀T cos(α)sinθ - ω₀S cosθ)))
 
 Slip Angle at Point C:
 
@@ -283,7 +283,7 @@ export class Mathaven {
   vx: number;
   vy: number;
 
-  //angualr velocity
+  //angular velocity
   ωx: number;
   ωy: number;
   ωz: number;
