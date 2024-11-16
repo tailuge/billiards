@@ -15,7 +15,7 @@ import { Sliders } from "./view/sliders"
 import { DiagramContainer } from "./diagram/diagramcontainer"
 import { I, Mxy, Mz, R } from "./model/physics/constants"
 import { Cue } from "./view/cue"
-import { NumericCalculation } from "./model/physics/claude/gpt4o"
+import { NumericCalculation } from "./model/physics/claude/geminipro"
 
 let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4, linegraph5
@@ -182,13 +182,16 @@ function lineGraph4() {
 }
 
 function lineGraph5() {
-  const numericCalculation = new NumericCalculation(2.0, Math.PI / 2, 0, 0)
-  const state = numericCalculation.solve()
-
-  const x: number[] = state.p
-  const y1: number[] = state.s
-  const y2: number[] = state.phi
-
+  const R = 0.02625
+  const numericCalculation = new NumericCalculation(2.0, Math.PI / 4, 1.5*2/R, 2*2/R)
+//  numericCalculation.solve()
+  try { numericCalculation.solve() } catch {}
+  let x: number[] = numericCalculation.plot.p
+  const y1: number[] = numericCalculation.plot.s
+  const y2: number[] = numericCalculation.plot.phi
+//  x=x.map((_,i)=>i)
+  console.log(numericCalculation.plot)
+  console.log(x)
   linegraph5.plot(x, y1, y2)
 }
 
