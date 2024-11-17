@@ -125,12 +125,12 @@ $$
 
 equations 14abc summarised as
 
-Δθ̇ₓ = - (5/(2MR)) [μw sin(Φ) + μs sin(Φ') (sin θ + μw sin(Φ) cos θ)] ΔPᵢ
-Δθ̇ᵧ = - (5/(2MR)) [μw cos(Φ)sin(θ) - μs cos(Φ') (sin θ + μw sin(Φ) cos θ)] ΔPᵢ
-Δθ̇𝘇 = (5/(2MR)) (μw cos(Φ)cos(θ)) ΔPᵢ
+* Δθ̇ₓ = - (5/(2MR)) [μw sin(Φ) + μs sin(Φ') (sinθ + μw sin(Φ) cosθ)] ΔPᵢ
+* Δθ̇ᵧ = - (5/(2MR)) [μw cos(Φ)sinθ - μs cos(Φ') (sinθ + μw sin(Φ) cosθ)] ΔPᵢ
+* Δθ̇𝘇 = (5/(2MR)) (μw cos(Φ)cosθ) ΔPᵢ
 
 
-### Equation (15a): Rolling condition for the ball at the cushion (when slip speed $s = 0$
+### Equation (15a): Rolling condition for the ball at the cushion when slip speed $s = 0$
 
 $$
 \Delta P_I^x = 0, \quad \Delta P_I^{y'} = 0
@@ -158,8 +158,8 @@ $$
 (ẏ_G)_{n+1} - (ẏ_G)_n  = - \frac{1}{M} \left[ \cos \theta - \mu_w \sin \theta \sin \phi + \mu_s \sin \phi' \cdot \left( \sin \theta + \mu_w \sin \phi \cos \theta \right) \right] \Delta P_I
 $$
 
-Δẋɢ = - (1/M) [μw cos(Φ) + μs cos(Φ') (sin θ + μw sin(Φ) cos θ)] ΔPᵢ
-Δẏɢ = - (1/M) [cos θ - μw sin θ sin Φ + μs sin Φ' (sin θ + μw sin Φ cos θ)] ΔPᵢ
+* Δẋɢ = - (1/M) [μw cos(Φ) + μs cos(Φ') (sin θ + μw sin(Φ) cos θ)] ΔPᵢ
+* Δẏɢ = - (1/M) [cos θ - μw sin θ sin Φ + μs sin Φ' (sin θ + μw sin Φ cos θ)] ΔPᵢ
 
 
 * $P$: Accumulated impulse at any time during impact.

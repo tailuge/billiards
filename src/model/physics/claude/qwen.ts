@@ -60,7 +60,7 @@ export class Mathaven {
         this.updateSlipSpeedsAndAngles()
         this.updateWorkDone(ΔP);
         this.history.push({ ...this });
-        if (this.i++ > 6000) {
+        if (this.i++ > 10*N) {
             throw "Solution not found"
         }
     }
