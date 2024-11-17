@@ -72,15 +72,23 @@ function createTrace(x: number[], y: number[], name: string, color: string) {
 
 const vals = (selector: (s: Mathaven) => number): number[] => extractValues(calc.history, selector)
 
-const impulse = vals(h => h.P).map((_,i)=>i)
-const data = [
-  createTrace(impulse, vals(h=>h.s), 's', color(0)), 
-  createTrace(impulse, vals(h=>h.φ), 'φ', color(1)), 
-  createTrace(impulse, vals(h=>h.sʹ), "s'", color(2)),
-  createTrace(impulse, vals(h=>h.φʹ), "φʹ", color(3)),
- ];
+const impulse = vals(h => h.P)
 
-window.Plotly.newPlot("mathaven-div", data, layout, config)
+window.Plotly.newPlot("mathaven-impulse", [
+    createTrace(impulse, vals(h => h.s), 's', color(0)),
+    createTrace(impulse, vals(h => h.φ), 'φ', color(1)),
+    createTrace(impulse, vals(h => h.sʹ), "s'", color(2)),
+    createTrace(impulse, vals(h => h.φʹ), "φʹ", color(3)),
+  ], layout, config)
+
+const index = vals(h => h.P).map((_,i)=>i)
+
+window.Plotly.newPlot("mathaven-vel", [
+  createTrace(index, vals(h => h.vx), 'vx', color(0)),
+  createTrace(index, vals(h => h.vy), 'vy', color(1)),
+  createTrace(index, vals(h => h.ωx), "ωx", color(2)),
+  createTrace(index, vals(h => h.ωy), "ωy", color(3)),
+], layout, config)
 
 
 
