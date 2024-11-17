@@ -33,13 +33,10 @@ export class Mathaven {
     }
 
     private updateSlipSpeedsAndAngles(): void {
-        this.s = Math.sqrt(
-            Math.pow(this.vx + R * (this.ωy * sinθ - this.ωz * cosθ), 2) +
-            Math.pow(-this.vy * sinθ - R * this.ωx, 2)
-        );
-        this.φ = Math.atan2(-this.vy * sinθ - R * this.ωx, this.vx + R * (this.ωy * sinθ - this.ωz * cosθ));
-        this.sʹ = Math.abs(this.vx - R * this.ωy);
-        this.φʹ = this.vx - R * this.ωy > 0 ? this.φ : Math.PI + this.φ;
+        this.s = Math.sqrt(Math.pow(this.vx + this.ωy * R * sinθ - this.ωz * R * cosθ, 2) + Math.pow(-this.vy * sinθ - this.ωx * R, 2));
+        this.φ = Math.atan2(-this.vy * sinθ - this.ωx * R, this.vx + this.ωy * R * sinθ - this.ωz * R * cosθ);
+        this.sʹ = Math.sqrt(Math.pow(this.vx - this.ωy * R, 2) + Math.pow(this.vy + this.ωx * R, 2));
+        this.φʹ = Math.atan2(this.vy + this.ωx * R, this.vx - this.ωy * R);
     }
 
     public compressionPhase(): void {
@@ -65,7 +62,7 @@ export class Mathaven {
         this.history.push({ ...this });
         if (this.i++ > 6000) {
             throw "Solution not found"
-          }
+        }
     }
 
     private updateVelocity(ΔP: number): void {
@@ -80,14 +77,14 @@ export class Mathaven {
     }
 
     private updateWorkDone(ΔP: number): void {
-        const ΔWzI = ΔP / 2 * (this.vy + this.vy);
+        const ΔWzI = ΔP * Math.abs(this.vy);
         this.WzI += ΔWzI;
         this.P += ΔP;
     }
 
     public solve(): void {
         this.compressionPhase();
-        const targetWorkRebound = (1 - ee * ee) * this.WzI;
+        const targetWorkRebound = this.WzI - (1 - ee * ee) * this.WzI;
         this.restitutionPhase(targetWorkRebound);
     }
 }
