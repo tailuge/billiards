@@ -42,7 +42,6 @@ export class Mathaven {
 
     public compressionPhase(): void {
         const ΔP = ((1 + ee) * M * this.vy) / N;
-        console.log(ΔP)
         while (this.vy > 0) {
             this.updateSingleStep(ΔP);
         }
@@ -59,10 +58,10 @@ export class Mathaven {
     private updateSingleStep(ΔP: number): void {
         this.updateVelocity(ΔP);
         this.updateAngularVelocity(ΔP);
+        this.updateSlipSpeedsAndAngles()
         this.updateWorkDone(ΔP);
         this.history.push({ ...this });
-        console.log(this.vy)
-        if (this.iter++ > 2000) {
+        if (this.iter++ > 10000) {
             throw "Solution not found"
           }
     }
