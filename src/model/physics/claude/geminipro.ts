@@ -5,7 +5,8 @@ import { M, R, ee, μs, μw, sinTheta, cosTheta, N } from "./constants"
 export class NumericCalculation {
 
     private state: State;
-    public readonly plot = { p: [] as number[], s: [] as number[], phi: [] as number[] }
+    public readonly history:State[] = [];
+
     constructor(V0: number, alpha: number, w0T: number, w0S: number) {
         console.log(V0 * Math.sin(alpha))
         this.setInitialConditions(V0, alpha, w0T, w0S);
@@ -81,15 +82,9 @@ private iter=0
         this.updateAngularVelocities(deltaP);
         this.updateSlipVelocities();
         this.updateWorkDone(deltaP);
-
+        this.history.push({...this.state});
         this.state.P += deltaP;
-        if (this.iter % 1000 === 0) {
-            this.plot.p.push( this.state.P)
-            this.plot.s.push( this.state.phiPrime)
-            this.plot.phi.push( this.state.phi)
-    
-        }
-        if (this.iter++ > 50000) {
+        if (this.iter++ > 2000) {
             console.log(this.state)
             throw "Solution not found"
           }
@@ -136,6 +131,9 @@ private iter=0
     public solve(): State {
         
         const compressionState = this.compressionPhase();
+        console.log("Compression state complete at ", this.iter);
+
+        // Calculate target work rebound using equation 16b
         const targetWorkRebound = (0.8) * compressionState.WzI;
         console.log("WzI", compressionState.WzI)
         console.log("Target work rebound: ", targetWorkRebound);
