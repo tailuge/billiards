@@ -11,45 +11,10 @@
 
 <body>
   <h1>mathaven diagrams</h1>
+
   <div id="plotly-div"></div>
-  <script>
-    config = {
-        responsive: true,
-        showLink: true,
-        plotlyServerURL: "https://chart-studio.plotly.com"
-      };
-    layout = {
-      legend: {
-        font: { color: '#4D5663' },
-        bgcolor: '#e5e6F9'
-      },
-      xaxis1: {
-        title: '',
-        tickfont: { color: '#4D5663' },
-        gridcolor: '#E1E5ED',
-        titlefont: { color: '#4D5663' },
-        zerolinecolor: '#E1E5ED'
-      },
-      yaxis1: {
-        title: 'Price',
-        tickfont: { color: '#4D5663' },
-        zeroline: false,
-        gridcolor: '#E1E5ED',
-        titlefont: { color: '#4D5663' },
-        tickprefix: '$',
-        zerolinecolor: '#E1E5ED'
-      },
-      plot_bgcolor: '#F5F6F9',
-      paper_bgcolor: '#F2F6F9'
-    };
+  <div id="mathaven-div"></div>
 
-    function plotlyDiv(div, data) {
-      Plotly.newPlot('plotly-div', data, layout, config);
-    }
-
-    window.plotlyDiv = plotlyDiv;
-
-  </script>
   <script src="https://cdn.plot.ly/plotly-cartesian-3.0.0-rc.0.min.js"></script>
   <script src="../vendor.js"></script>
   <script src="../mathaven.js"></script>
