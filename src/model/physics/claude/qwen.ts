@@ -33,7 +33,7 @@ export class Mathaven {
     }
 
     private updateSlipSpeedsAndAngles(): void {
-        this.s = Math.sqrt(Math.pow(this.vx + this.ωy * R * sinθ - this.ωz * R * cosθ, 2) + Math.pow(-this.vy * sinθ - this.ωx * R, 2));
+        this.s = Math.sqrt(Math.pow(this.vx + this.ωy * R * sinθ - this.ωz * R * cosθ, 2) + Math.pow(-this.vy * sinθ + this.ωx * R, 2));
         this.φ = Math.atan2(-this.vy * sinθ - this.ωx * R, this.vx + this.ωy * R * sinθ - this.ωz * R * cosθ);
         this.sʹ = Math.sqrt(Math.pow(this.vx - this.ωy * R, 2) + Math.pow(this.vy + this.ωx * R, 2));
         this.φʹ = Math.atan2(this.vy + this.ωx * R, this.vx - this.ωy * R);
