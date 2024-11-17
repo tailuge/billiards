@@ -27,14 +27,14 @@ const layout = {
     font: { color: '#4D5663' },
     bgcolor: '#e5e6F9'
   },
-  xaxis1: {
+  xaxis: {
     title: 'impulse',
     tickfont: { color: '#4D5663' },
     gridcolor: '#E1E5ED',
     titlefont: { color: '#4D5663' },
     zerolinecolor: '#E1E5ED'
   },
-  yaxis1: {
+  yaxis: {
     title: 'value',
     tickfont: { color: '#4D5663' },
     zeroline: false,
@@ -47,13 +47,13 @@ const layout = {
 };
 
 function color(index: number): string {
-  const hue = (index * 137.5) % 360; // Use the golden angle to distribute hues
-  const saturation = 70; // Ensure good contrast
-  const lightness = 50; // Keep colors vibrant
-  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  const hue = (index * 137.5) % 360
+  const saturation = 70
+  const lightness = 50
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`
 }
 function extractValues<T>(history, selector: (s: State) => T): T[] {
-  return history.map(selector);
+  return history.map(selector)
 }
 
 function createTrace(x: number[], y: number[], name: string, color: string) {
@@ -67,10 +67,10 @@ function createTrace(x: number[], y: number[], name: string, color: string) {
     },
     mode: 'lines',
     type: 'scatter'
-  };
+  }
 }
 
-const vals = (selector: (s: State) => number): number[] => extractValues(calc.history, selector);
+const vals = (selector: (s: State) => number): number[] => extractValues(calc.history, selector)
 
 const impulse = vals(h => h.P).map((_,i)=>i)
 const data = [
