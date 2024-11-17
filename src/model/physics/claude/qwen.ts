@@ -19,6 +19,8 @@ export class Mathaven {
     sʹ: number;
     φʹ: number;
 
+    i: number = 0
+
     readonly history: Array<Partial<Mathaven>> = [];
 
     constructor(v0: number, α: number, ω0S: number, ω0T: number) {
@@ -48,20 +50,20 @@ export class Mathaven {
     }
 
     public restitutionPhase(targetWorkRebound: number): void {
-        const ΔP = ((1 + ee) * M * this.vy) / N;
+        const ΔP = ((1 + ee) * M * this.WzI) / N;
+        this.WzI = 0
         while (this.WzI < targetWorkRebound) {
             this.updateSingleStep(ΔP);
         }
     }
 
-    private iter;
     private updateSingleStep(ΔP: number): void {
         this.updateVelocity(ΔP);
         this.updateAngularVelocity(ΔP);
         this.updateSlipSpeedsAndAngles()
         this.updateWorkDone(ΔP);
         this.history.push({ ...this });
-        if (this.iter++ > 10000) {
+        if (this.i++ > 6000) {
             throw "Solution not found"
           }
     }

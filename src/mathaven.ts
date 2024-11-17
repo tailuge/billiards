@@ -7,7 +7,6 @@ declare global {
   }
 }
 
-//const calc = new NumericCalculation(2.0, Math.PI / 4, 1.5 * 2 / R, 2 * 2 / R)
 const calc = new Mathaven(2.0, Math.PI / 4, 1.5 * 2 / R, 2 * 2 / R)
 
 try {
@@ -79,15 +78,17 @@ window.Plotly.newPlot("mathaven-impulse", [
     createTrace(impulse, vals(h => h.φ), 'φ', color(1)),
     createTrace(impulse, vals(h => h.sʹ), "s'", color(2)),
     createTrace(impulse, vals(h => h.φʹ), "φʹ", color(3)),
+    createTrace(impulse, vals(h => h.WzI), "WzI", color(4)),
+    createTrace(impulse, vals(h => h.P), "P", color(5)),
   ], layout, config)
 
-const index = vals(h => h.P).map((_,i)=>i)
+const index = vals(h => h.i)
 
 window.Plotly.newPlot("mathaven-vel", [
-  createTrace(index, vals(h => h.vx), 'vx', color(0)),
-  createTrace(index, vals(h => h.vy), 'vy', color(1)),
-  createTrace(index, vals(h => h.ωx), "ωx", color(2)),
-  createTrace(index, vals(h => h.ωy), "ωy", color(3)),
+  createTrace(index, vals(h => h.vx), 'vx', color(5)),
+  createTrace(index, vals(h => h.vy), 'vy', color(6)),
+//  createTrace(index, vals(h => h.ωx), "ωx", color(2)),
+//  createTrace(index, vals(h => h.ωy), "ωy", color(3)),
 ], layout, config)
 
 
