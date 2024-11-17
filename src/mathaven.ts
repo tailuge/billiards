@@ -1,5 +1,5 @@
 import { R } from "./model/physics/claude/constants";
-import { NumericCalculation } from "./model/physics/claude/geminipro"
+import { Mathaven } from "./model/physics/claude/qwen";
 import { State } from "./model/physics/claude/state";
 
 declare global {
@@ -8,7 +8,8 @@ declare global {
   }
 }
 
-const calc = new NumericCalculation(2.0, Math.PI / 4, 1.5 * 2 / R, 2 * 2 / R)
+//const calc = new NumericCalculation(2.0, Math.PI / 4, 1.5 * 2 / R, 2 * 2 / R)
+const calc = new Mathaven(2.0, Math.PI / 4, 1.5 * 2 / R, 2 * 2 / R)
 
 try {
   calc.solve()
@@ -52,7 +53,7 @@ function color(index: number): string {
   const lightness = 50
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`
 }
-function extractValues<T>(history, selector: (s: State) => T): T[] {
+function extractValues<T>(history, selector: (s: Mathaven) => T): T[] {
   return history.map(selector)
 }
 
@@ -70,14 +71,14 @@ function createTrace(x: number[], y: number[], name: string, color: string) {
   }
 }
 
-const vals = (selector: (s: State) => number): number[] => extractValues(calc.history, selector)
+const vals = (selector: (s: Mathaven) => number): number[] => extractValues(calc.history, selector)
 
 const impulse = vals(h => h.P).map((_,i)=>i)
 const data = [
   createTrace(impulse, vals(h=>h.s), 's', color(0)), 
-  createTrace(impulse, vals(h=>h.phi), 'phi', color(1)), 
-  createTrace(impulse, vals(h=>h.sPrime), 'sPrime', color(2)),
-  createTrace(impulse, vals(h=>h.phiPrime), 'phiPrime', color(3)),
+  createTrace(impulse, vals(h=>h.φ), 'φ', color(1)), 
+  createTrace(impulse, vals(h=>h.sʹ), "s'", color(2)),
+  createTrace(impulse, vals(h=>h.φʹ), "φʹ", color(3)),
  ];
 
 window.Plotly.newPlot("mathaven-div", data, layout, config)
