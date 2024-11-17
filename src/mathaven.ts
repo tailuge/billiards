@@ -1,6 +1,5 @@
 import { R } from "./model/physics/claude/constants";
 import { Mathaven } from "./model/physics/claude/qwen";
-import { State } from "./model/physics/claude/state";
 
 declare global {
   interface Window {
