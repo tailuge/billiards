@@ -33,10 +33,22 @@ export class Mathaven {
     }
 
     private updateSlipSpeedsAndAngles(): void {
-        this.s = Math.sqrt(Math.pow(this.vx + this.ωy * R * sinθ - this.ωz * R * cosθ, 2) + Math.pow(-this.vy * sinθ + this.ωx * R, 2));
-        this.φ = Math.atan2(-this.vy * sinθ - this.ωx * R, this.vx + this.ωy * R * sinθ - this.ωz * R * cosθ);
-        this.sʹ = Math.sqrt(Math.pow(this.vx - this.ωy * R, 2) + Math.pow(this.vy + this.ωx * R, 2));
-        this.φʹ = Math.atan2(this.vy + this.ωx * R, this.vx - this.ωy * R);
+        // Calculate velocities at the cushion (I)
+        const v_xI = this.vx + this.ωy * R * sinθ - this.ωz * R * cosθ;
+        const v_yI = -this.vy * sinθ + this.ωx * R;
+
+        // Calculate velocities at the table (C)
+        const v_xC = this.vx - this.ωy * R;
+        const v_yC = this.vy + this.ωx * R;
+
+        // Update slip speeds and angles at the cushion (I)
+        this.s = Math.sqrt(Math.pow(v_xI, 2) + Math.pow(v_yI, 2));
+        this.φ = Math.atan2(v_yI, v_xI);
+
+        // Update slip speeds and angles at the table (C)
+        this.sʹ = Math.sqrt(Math.pow(v_xC, 2) + Math.pow(v_yC, 2));
+        this.φʹ = Math.atan2(v_yC, v_xC);
+
     }
 
     public compressionPhase(): void {
@@ -60,7 +72,7 @@ export class Mathaven {
         this.updateSlipSpeedsAndAngles()
         this.updateWorkDone(ΔP);
         this.history.push({ ...this });
-        if (this.i++ > 10*N) {
+        if (this.i++ > 10 * N) {
             throw "Solution not found"
         }
     }
