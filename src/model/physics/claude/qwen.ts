@@ -56,14 +56,15 @@ export class Mathaven {
     }
 
     public compressionPhase(): void {
-        const ΔP = ((1 + ee) * M * this.vy) / N;
+        const ΔP = Math.max((M * this.vy) / N,0.001)
+        console.log(ΔP)
         while (this.vy > 0) {
             this.updateSingleStep(ΔP);
         }
     }
 
     public restitutionPhase(targetWorkRebound: number): void {
-        const ΔP = ((1 + ee) * M * this.WzI) / N;
+        const ΔP = Math.max((targetWorkRebound) / N,0.001)
         this.WzI = 0
         while (this.WzI < targetWorkRebound) {
             this.updateSingleStep(ΔP);

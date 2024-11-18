@@ -26,7 +26,7 @@ export class Figure9 {
       const trace: number[] = [];
       const topspin = (k * v0) / R;
       deg = []
-      for (let alpha = 1; alpha < 90; alpha += 20) {
+      for (let alpha = 1; alpha < 90; alpha += 9) {
         deg.push(alpha)
         const result = this.getFinalState(v0, alpha * (Math.PI / 180), sidespin, topspin );
         trace.push(result.speed)
@@ -36,6 +36,8 @@ export class Figure9 {
 
     const x = deg
 
+    layout.title.text = `<b>Figure.9</b> Rebound speed and rebound angle versus incident angle <br>
+    for different topspins of the ball, ωT0 = kV0/R and V0 = 1 m/s with no sidespin`
     window.Plotly.newPlot("mathaven-figure9-speed", [
       createTrace(x, traces[0], 'k=-1', color(0)),
       createTrace(x, traces[1], 'k=0', color(1)),

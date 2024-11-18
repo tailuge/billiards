@@ -1,4 +1,4 @@
-import { Figure12 } from "./diagram/figure12";
+import { ImpulsePlot } from "./diagram/impulseplot";
 import { Figure9 } from "./diagram/figure9";
 
 declare global {
@@ -7,5 +7,6 @@ declare global {
   }
 }
 
+new ImpulsePlot().plot()
 new Figure9().plot()
-new Figure12().plot()
+//new ImpulsePlot().plot(1,Math.PI/4,0,0)

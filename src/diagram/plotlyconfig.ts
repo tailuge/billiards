@@ -10,6 +10,12 @@ export const layout = {
     font: { color: '#4D5663' },
     bgcolor: '#e5e6F9'
   },
+  title: {
+    text: '',
+    font: {
+      size: 11
+    },
+  },
   xaxis: {
     title: 'impulse',
     tickfont: { color: '#4D5663' },

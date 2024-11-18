@@ -21,6 +21,18 @@ body {
   box-shadow: 2px 2px 2px lightgray;
 }
 
+.mathavendiagram
+{
+  width: 600px;
+  height: 400px;
+  border: 1px solid black;
+  border-radius: 4px;
+  padding: 4px;
+  margin: 4px;
+  background-color: white;
+  box-shadow: 2px 2px 2px lightgray;
+}
+
 .roll {
   width: 800px;
 }
