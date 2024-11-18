@@ -22,7 +22,7 @@ export const cosTheta = Math.sqrt(21) / 5
 export const cosθ = cosTheta
 
 // Number of iterations
-export const N = 1000
+export const N = 100
 
 // Number of iterations
 export const epsilon = 0.0001
