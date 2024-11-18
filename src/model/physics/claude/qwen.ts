@@ -44,11 +44,15 @@ export class Mathaven {
         // Update slip speeds and angles at the cushion (I)
         this.s = Math.sqrt(Math.pow(v_xI, 2) + Math.pow(v_yI, 2));
         this.φ = Math.atan2(v_yI, v_xI);
-
+        if (this.φ < 0) {
+            this.φ += 2 * Math.PI;
+        }
         // Update slip speeds and angles at the table (C)
         this.sʹ = Math.sqrt(Math.pow(v_xC, 2) + Math.pow(v_yC, 2));
         this.φʹ = Math.atan2(v_yC, v_xC);
-
+        if (this.φʹ < 0) {
+            this.φʹ += 2 * Math.PI;
+        }
     }
 
     public compressionPhase(): void {
