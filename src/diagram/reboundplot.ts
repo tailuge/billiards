@@ -2,11 +2,11 @@ import { R } from "../model/physics/claude/constants";
 import { Mathaven } from "../model/physics/claude/qwen";
 import { config, color, createTrace, layout } from "./plotlyconfig";
 
-export class Figure9 {
+export class ReboundPlot {
 
-  private getFinalState(v0, alpha, sidespin, topspin ) {
+  private getFinalState(v0, alpha, sidespin, topspin) {
     try {
-      const calc = new Mathaven(v0, alpha, sidespin, topspin )
+      const calc = new Mathaven(v0, alpha, sidespin, topspin)
       calc.solve()
       return { beta: 1, speed: Math.sqrt(calc.vx * calc.vx + calc.vy * calc.vy) }
     } catch (error) {
@@ -15,20 +15,18 @@ export class Figure9 {
     }
   }
 
-  public plot() {
+  public plot(div, title, sidespin = (_) => 0, topspin = (k) => k / R) {
     const traces: number[][] = []
     const v0 = 1;
-    const sidespin = 0;
 
     let deg: number[] = []
 
     for (let k = -1; k <= 2; k++) {
       const trace: number[] = [];
-      const topspin = (k * v0) / R;
       deg = []
       for (let alpha = 1; alpha < 90; alpha += 9) {
         deg.push(alpha)
-        const result = this.getFinalState(v0, alpha * (Math.PI / 180), sidespin, topspin );
+        const result = this.getFinalState(v0, alpha * (Math.PI / 180), sidespin(k), topspin(k));
         trace.push(result.speed)
       }
       traces.push(trace);
@@ -36,9 +34,8 @@ export class Figure9 {
 
     const x = deg
 
-    layout.title.text = `<b>Figure.9</b> Rebound speed and rebound angle versus incident angle <br>
-    for different topspins of the ball, ωT0 = kV0/R and V0 = 1 m/s with no sidespin`
-    window.Plotly.newPlot("mathaven-figure9-speed", [
+    layout.title.text = title
+    window.Plotly.newPlot(div, [
       createTrace(x, traces[0], 'k=-1', color(0)),
       createTrace(x, traces[1], 'k=0', color(1)),
       createTrace(x, traces[2], 'k=1', color(2)),
