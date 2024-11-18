@@ -6,8 +6,8 @@ declare global {
     Plotly: any;
   }
 }
-
-const calc = new Mathaven(2.0, Math.PI / 4, 1.5 * 2 / R, 2 * 2 / R)
+const v0 = 2
+const calc = new Mathaven(2.0, Math.PI / 4, 2 * v0 / R, 1.5 * v0 / R )
 
 try {
   calc.solve()
@@ -87,9 +87,15 @@ const index = vals(h => h.i)
 window.Plotly.newPlot("mathaven-vel", [
   createTrace(index, vals(h => h.vx), 'vx', color(5)),
   createTrace(index, vals(h => h.vy), 'vy', color(6)),
-//  createTrace(index, vals(h => h.ωx), "ωx", color(2)),
+  createTrace(index, vals(h => h.WzI), "WzI", color(4)),
+  //  createTrace(index, vals(h => h.ωx), "ωx", color(2)),
 //  createTrace(index, vals(h => h.ωy), "ωy", color(3)),
 ], layout, config)
 
+window.Plotly.newPlot("mathaven-spin", [
+  createTrace(index, vals(h => h.ωx), "ωx", color(2)),
+  createTrace(index, vals(h => h.ωy), "ωy", color(3)),
+  createTrace(impulse, vals(h => h.WzI), "WzI", color(4)),
+], layout, config)
 
 
