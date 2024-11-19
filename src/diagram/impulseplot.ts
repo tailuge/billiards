@@ -37,9 +37,13 @@ and sʹ and φʹ are for the slip at the table)`
         
     const index = vals(h => h.i)
         window.Plotly.newPlot("mathaven-vel", [
-          createTrace(index, vals(h => h.vy), 'vy', color(6)),
-          createTrace(index, vals(h => h.WzI), "WzI", color(4)),
-          createTrace(index, vals(h => h.P), "P", color(5)),
+          createTrace(index, vals(h => h.vy), 'vy', color(0)),
+          createTrace(index, vals(h => h.vx), 'vx', color(1)),
+          createTrace(index, vals(h => h.ωx*R), 'ωx', color(2)),
+          createTrace(index, vals(h => h.ωy*R), 'ωy', color(3)),
+          createTrace(index, vals(h => h.ωz*R), 'ωz', color(4)),
+          createTrace(index, vals(h => h.WzI), "WzI", color(5)),
+          createTrace(index, vals(h => h.P), "P", color(6)),
         ], layout, config)
   }
 }
