@@ -186,11 +186,11 @@ function cartesionToBallCentric(v, w) {
   const v0 = v.length()
   const alpha = (Math.atan2(v.y, v.x) + 2 * Math.PI) % (2 * Math.PI)
   const w0s = w.z
-  const w0t = 0
+  const w0t = Math.sqrt(w.x*w.x + w.y*w.y)
   const mathaven = new Mathaven(v0, alpha, w0s, w0t)
   mathaven.solve()
   const rv = new Vector3(mathaven.vx, mathaven.vy, 0)
-  const rw = new Vector3(0, 0, mathaven.ωz)
+  const rw = new Vector3(mathaven.ωx, mathaven.ωy, mathaven.ωz)
   const deltav = rv.sub(v)
   const deltaw = rw.sub(w)
   return { v: deltav, w: deltaw }
