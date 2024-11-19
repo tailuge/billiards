@@ -4,7 +4,7 @@ import { EventUtil } from "../events/eventutil"
 import { BreakEvent } from "../events/breakevent"
 import { SocketConnection } from "../network/client/socketconnection"
 import { GameEvent } from "../events/gameevent"
-import { bounceHan, bounceHanBlend } from "../model/physics/physics"
+import { bounceHan, bounceHanBlend, mathavenAdapter } from "../model/physics/physics"
 import JSONCrush from "jsoncrush"
 import { Assets } from "../view/assets"
 
@@ -39,8 +39,18 @@ export class BrowserContainer {
     this.ruletype = params.get("ruletype") ?? "nineball"
     this.wss = params.get("websocketserver")
     this.canvas3d = canvas3d
-    this.cushionModel =
-      params.get("cushionModel") === "bounceHan" ? bounceHan : bounceHanBlend
+    this.cushionModel = this.cushion(params.get("cushionModel"))
+  }
+
+  cushion(model) {
+    switch (model) {
+      case "bounceHan":
+        return bounceHan
+      case "mathavenAdapter":
+        return mathavenAdapter
+      default:
+        return bounceHanBlend
+    }
   }
 
   start() {
