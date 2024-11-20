@@ -57,7 +57,6 @@ export class Mathaven {
 
     public compressionPhase(): void {
         const ΔP = Math.max((M * this.vy) / N,0.001)
-        console.log(ΔP)
         while (this.vy > 0) {
             this.updateSingleStep(ΔP);
         }
