@@ -1,4 +1,4 @@
-import { R } from "../model/physics/claude/constants";
+import { ee, M, R, μs, μw } from "../model/physics/claude/constants";
 import { Mathaven } from "../model/physics/claude/qwen";
 import { config, color, createTrace, layout } from "./plotlyconfig";
 
@@ -6,7 +6,7 @@ export class ReboundPlot {
 
   private getFinalState(v0, alpha, sidespin, topspin) {
     try {
-      const calc = new Mathaven()
+      const calc = new Mathaven(M, R, ee, μs, μw)
       calc.solvePaper(v0, alpha, sidespin, topspin)
       const vy = calc.vy;
       const vx = calc.vx;

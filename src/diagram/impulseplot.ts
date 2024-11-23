@@ -1,11 +1,11 @@
-import { R } from "../model/physics/claude/constants";
+import { ee, M, R, μs, μw } from "../model/physics/claude/constants";
 import { HistoryMathaven } from "../model/physics/claude/historymathaven";
 import { config, color, createTrace, layout } from "./plotlyconfig";
 
 export class ImpulsePlot {
 
   public plot(v0 = 2, alpha = Math.PI / 4, wS = 2 * v0 / R, wT = 1.5 * v0 / R) {
-    const calculation = new HistoryMathaven()
+    const calculation = new HistoryMathaven(M, R, ee, μs, μw)
     try {
       calculation.solvePaper(v0, alpha, wS, wT)
     } catch (error) {

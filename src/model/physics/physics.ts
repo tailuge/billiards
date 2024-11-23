@@ -2,6 +2,7 @@ import { Vector3 } from "three"
 import { norm, upCross, up } from "../../utils/utils"
 import { muS, muC, g, m, Mz, Mxy, R, I, e } from "./constants"
 import { Mathaven } from "./claude/qwen"
+import { ee, μs, μw } from "./claude/constants"
 
 export function surfaceVelocity(v, w) {
   return surfaceVelocityFull(v, w).setZ(0)
@@ -184,7 +185,7 @@ export function restitutionCushion(v: Vector3) {
 
 function cartesionToBallCentric(v, w) {
 
-  const mathaven = new Mathaven()
+  const mathaven = new Mathaven(m, R, ee, μs, μw)
   mathaven.solve(v.x,v.y,w.x,w.y,w.z)
 
   const rv = new Vector3(mathaven.vx, mathaven.vy, 0)
