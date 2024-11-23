@@ -46,10 +46,10 @@ export class BrowserContainer {
     switch (model) {
       case "bounceHan":
         return bounceHan
-      case "mathavenAdapter":
-        return mathavenAdapter
-      default:
+      case "bounceHanBlend":
         return bounceHanBlend
+      default:
+        return mathavenAdapter
     }
   }
 
