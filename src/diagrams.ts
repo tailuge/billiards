@@ -15,10 +15,9 @@ import { Sliders } from "./view/sliders"
 import { DiagramContainer } from "./diagram/diagramcontainer"
 import { I, Mxy, Mz, R } from "./model/physics/constants"
 import { Cue } from "./view/cue"
-import { NumericCalculation } from "./model/physics/claude/geminipro"
 
 let p1, p2, p3, p4, p5
-let linegraph1, linegraph2, linegraph3, linegraph4, linegraph5
+let linegraph1, linegraph2, linegraph3, linegraph4
 let s = 3 * R
 
 const replaydiagrams = document.getElementsByClassName("replaydiagram")
@@ -91,8 +90,6 @@ function initialisePlots() {
     "Incident angle (degrees) of ball to cushion, 0=perpendicular, 90=parallel. Blue=Han2005 Red=Blend"
   )
 
-  linegraph5 = new Graph("plot5", "phi", "t")
-
   plotAll()
 }
 
@@ -108,7 +105,6 @@ function plotLineGraphs() {
   lineGraph2()
   lineGraph3()
   lineGraph4()
-  lineGraph5()
 }
 
 function lineGraph1() {
@@ -179,20 +175,6 @@ function lineGraph4() {
     y2.push(outAngleBlend)
   }
   linegraph4.plot(x, y1, y2)
-}
-
-function lineGraph5() {
-  const R = 0.02625
-  const numericCalculation = new NumericCalculation(2.0, Math.PI / 4, 1.5*2/R, 2*2/R)
-//  numericCalculation.solve()
-  try { numericCalculation.solve() } catch {}
-  let x: number[] = numericCalculation.plot.p
-  const y1: number[] = numericCalculation.plot.s
-  const y2: number[] = numericCalculation.plot.phi
-//  x=x.map((_,i)=>i)
-  console.log(numericCalculation.plot)
-  console.log(x)
-  linegraph5.plot(x, y1, y2)
 }
 
 function id(id: string): HTMLElement {

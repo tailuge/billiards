@@ -21,8 +21,6 @@ export class Mathaven {
 
     i: number = 0
 
-    readonly history: Array<Partial<Mathaven>> = [];
-
     constructor(v0: number, α: number, ω0S: number, ω0T: number) {
         this.vx = v0 * Math.cos(α);
         this.vy = v0 * Math.sin(α);
@@ -70,12 +68,11 @@ export class Mathaven {
         }
     }
 
-    private updateSingleStep(ΔP: number): void {
+    protected updateSingleStep(ΔP: number): void {
         this.updateVelocity(ΔP);
         this.updateAngularVelocity(ΔP);
         this.updateSlipSpeedsAndAngles()
         this.updateWorkDone(ΔP);
-        this.history.push({ ...this });
         if (this.i++ > 10 * N) {
             throw "Solution not found"
         }
