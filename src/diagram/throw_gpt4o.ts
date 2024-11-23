@@ -1,11 +1,19 @@
 export class CollisionThrow {
-    protected relativeVelocity(v: number, ωx: number, ωz: number, ϕ: number, R: number): number {
-      return v * Math.sin(ϕ) + R * ωz - (R * ωx) ** 2 * Math.cos(ϕ);
-    }
-  
-    public throwAngle(v: number, ωx: number, ωz: number, ϕ: number, R: number): number {
-      const v_rel = this.relativeVelocity(v, ωx, ωz, ϕ, R);
-      const throwAngle = v_rel === 0 ? 0 : Math.atan(v_rel / (v * Math.cos(ϕ)));
-      return Math.max(throwAngle, 0);
-    }
+
+  protected relativeVelocity(v: number, ωx: number, ωz: number, ϕ: number): number {
+    return Math.sqrt(
+      Math.pow(v * Math.sin(ϕ) - ωz * CollisionThrow.R, 2) +
+      Math.pow(v * Math.cos(ϕ) + ωx * CollisionThrow.R, 2)
+    );
   }
+
+  public throwAngle(v: number, ωx: number, ωz: number, ϕ: number): number {
+    const vRel = this.relativeVelocity(v, ωx, ωz, ϕ);
+    const μ = 0.06; // friction coefficient
+    const vT = Math.min(μ * vRel, v * Math.cos(ϕ));
+    const vN = v * Math.sin(ϕ);
+    return Math.atan2(vT, vN);
+  }
+
+  static R: number = 0.029; // ball radius in meters
+}

@@ -16,7 +16,7 @@ export class ThrowPlot {
       for (let alpha = 1; alpha < 90; alpha += 9) {
         deg.push(alpha)
         const model = new CollisionThrow() 
-        const result = model.throwAngle(k, k/R, 0, alpha,R)
+        const result = model.throwAngle(k, k/R, 0, alpha)
         angle.push(result)
       }
       angles.push(angle)
