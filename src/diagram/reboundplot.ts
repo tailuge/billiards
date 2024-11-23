@@ -6,8 +6,8 @@ export class ReboundPlot {
 
   private getFinalState(v0, alpha, sidespin, topspin) {
     try {
-      const calc = new Mathaven(v0, alpha, sidespin, topspin)
-      calc.solve()
+      const calc = new Mathaven()
+      calc.solvePaper(v0, alpha, sidespin, topspin)
       const vy = calc.vy;
       const vx = calc.vx;
       return { beta: Math.atan2(-vy, vx) * (180 / Math.PI), speed: Math.sqrt(vx * vx + vy * vy) }

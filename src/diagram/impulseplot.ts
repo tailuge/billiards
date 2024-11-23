@@ -5,9 +5,9 @@ import { config, color, createTrace, layout } from "./plotlyconfig";
 export class ImpulsePlot {
 
   public plot(v0 = 2, alpha = Math.PI / 4, wS = 2 * v0 / R, wT = 1.5 * v0 / R) {
-    const calculation = new HistoryMathaven(v0, alpha, wS, wT)
+    const calculation = new HistoryMathaven()
     try {
-      calculation.solve()
+      calculation.solvePaper(v0, alpha, wS, wT)
     } catch (error) {
       console.error(error)
     }
@@ -30,16 +30,16 @@ and sʹ and φʹ are for the slip at the table)`
     ], layout, config)
 
     layout.title.text = ""
-        
+
     const index = vals(h => h.i)
-        window.Plotly.newPlot("mathaven-vel", [
-          createTrace(index, vals(h => h.vy), 'vy', color(0)),
-          createTrace(index, vals(h => h.vx), 'vx', color(1)),
-          createTrace(index, vals(h => h.ωx!*R), 'ωx', color(2)),
-          createTrace(index, vals(h => h.ωy!*R), 'ωy', color(3)),
-          createTrace(index, vals(h => h.ωz!*R), 'ωz', color(4)),
-          createTrace(index, vals(h => h.WzI), "WzI", color(5)),
-          createTrace(index, vals(h => h.P), "P", color(6)),
-        ], layout, config)
+    window.Plotly.newPlot("mathaven-vel", [
+      createTrace(index, vals(h => h.vy), 'vy', color(0)),
+      createTrace(index, vals(h => h.vx), 'vx', color(1)),
+      createTrace(index, vals(h => h.ωx! * R), 'ωx', color(2)),
+      createTrace(index, vals(h => h.ωy! * R), 'ωy', color(3)),
+      createTrace(index, vals(h => h.ωz! * R), 'ωz', color(4)),
+      createTrace(index, vals(h => h.WzI), "WzI", color(5)),
+      createTrace(index, vals(h => h.P), "P", color(6)),
+    ], layout, config)
   }
 }

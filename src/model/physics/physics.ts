@@ -183,31 +183,14 @@ export function restitutionCushion(v: Vector3) {
 }
 
 function cartesionToBallCentric(v, w) {
-  const v0 = v.length()
-  const alpha = (Math.atan2(v.y, v.x) + 2 * Math.PI) % (2 * Math.PI)
-  const w0s = w.z
-  const w0t = Math.sqrt(w.x*w.x + w.y*w.y)
-  const mathaven = new Mathaven(v0, alpha, w0s, w0t)
 
-  const internalW = new Vector3(mathaven.ωx, mathaven.ωy, mathaven.ωz)
-  const distance = w.distanceTo(internalW)
-  console.log("w.distanceTo(interalW) = ", distance.toFixed())
-  if (distance > 0.2) {
-    console.log("v0",v0,"alpha",alpha,"w0s",w0s,"w0t",w0t)
-    console.log("w",w)
-    console.log(JSON.stringify(mathaven))
-    mathaven.ωx = w.x 
-    mathaven.ωy = w.y
-    mathaven.ωz = w.z 
-  }
+  const mathaven = new Mathaven()
+  mathaven.solve(v.x,v.y,w.x,w.y,w.z)
 
-  mathaven.solve()
   const rv = new Vector3(mathaven.vx, mathaven.vy, 0)
   const rw = new Vector3(mathaven.ωx, mathaven.ωy, mathaven.ωz)
-  const deltav = rv.sub(v)
-  const deltaw = rw.sub(w)
 
-  return { v: deltav, w: deltaw }
+  return { v: rv.sub(v), w: rw.sub(w) }
 }
 
 /**

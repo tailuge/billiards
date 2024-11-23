@@ -1,4 +1,5 @@
-import { M, R, ee, μs, μw, sinθ, cosθ, N } from "./constants"
+import { cosθ, sinθ } from "../constants";
+import { M, R, ee, μs, μw } from "./constants"
 
 export class Mathaven {
     P: number = 0;
@@ -20,15 +21,7 @@ export class Mathaven {
     φʹ: number;
 
     i: number = 0
-
-    constructor(v0: number, α: number, ω0S: number, ω0T: number) {
-        this.vx = v0 * Math.cos(α);
-        this.vy = v0 * Math.sin(α);
-        this.ωx = -ω0T * Math.sin(α);
-        this.ωy = ω0T * Math.cos(α);
-        this.ωz = ω0S;
-        this.updateSlipSpeedsAndAngles();
-    }
+    N = 100
 
     private updateSlipSpeedsAndAngles(): void {
         // Calculate velocities at the cushion (I)
@@ -54,14 +47,14 @@ export class Mathaven {
     }
 
     public compressionPhase(): void {
-        const ΔP = Math.max((M * this.vy) / N,0.001)
+        const ΔP = Math.max((M * this.vy) / this.N, 0.001)
         while (this.vy > 0) {
             this.updateSingleStep(ΔP);
         }
     }
 
     public restitutionPhase(targetWorkRebound: number): void {
-        const ΔP = Math.max((targetWorkRebound) / N,0.001)
+        const ΔP = Math.max((targetWorkRebound) / this.N, 0.001)
         this.WzI = 0
         while (this.WzI < targetWorkRebound) {
             this.updateSingleStep(ΔP);
@@ -69,11 +62,11 @@ export class Mathaven {
     }
 
     protected updateSingleStep(ΔP: number): void {
-        this.updateVelocity(ΔP);
-        this.updateAngularVelocity(ΔP);
         this.updateSlipSpeedsAndAngles()
-        this.updateWorkDone(ΔP);
-        if (this.i++ > 10 * N) {
+        this.updateVelocity(ΔP)
+        this.updateAngularVelocity(ΔP)
+        this.updateWorkDone(ΔP)
+        if (this.i++ > 10 * this.N) {
             throw "Solution not found"
         }
     }
@@ -95,7 +88,25 @@ export class Mathaven {
         this.P += ΔP;
     }
 
-    public solve(): void {
+    public solvePaper(v0: number, α: number, ω0S: number, ω0T: number) {
+        this.solve(
+            v0 * Math.cos(α),
+            v0 * Math.sin(α),
+            -ω0T * Math.sin(α),
+            ω0T * Math.cos(α),
+            ω0S)
+    }
+
+    public solve(vx, vy, ωx, ωy, ωz): void {
+        this.vx = vx;
+        this.vy = vy;
+        this.ωx = ωx;
+        this.ωy = ωy;
+        this.ωz = ωz;
+        this.WzI = 0
+        this.P = 0
+        this.i = 0
+        
         this.compressionPhase();
         const targetWorkRebound = this.WzI - (1 - ee * ee) * this.WzI;
         this.restitutionPhase(targetWorkRebound);

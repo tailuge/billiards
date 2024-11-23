@@ -10,6 +10,11 @@ export let Mz: number
 export let Mxy: number
 export let I: number
 
+// Fixed angle of cushion contact point above ball center
+export const sinθ = 2 / 5
+// Fixed angle of cushion contact point above ball center
+export const cosθ = Math.sqrt(21) / 5
+
 refresh()
 
 function refresh() {

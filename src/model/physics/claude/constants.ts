@@ -13,16 +13,3 @@ export const μs = 0.212
 // Coefficient of sliding friction (cushion)
 export const μw = 0.14
 
-// Fixed angle of cushion contact point above ball center
-export const sinTheta = 2 / 5
-export const sinθ = sinTheta
-
-// Fixed angle of cushion contact point above ball center
-export const cosTheta = Math.sqrt(21) / 5
-export const cosθ = cosTheta
-
-// Number of iterations
-export const N = 100
-
-// Number of iterations
-export const epsilon = 0.0001
