@@ -22,8 +22,9 @@ The throw angle is calculated using:
 ```
 
 Where:
-- $ v_t = \min(\mu \cdot v_{rel}, v \cos(\phi)) $  
-- $ v_n = v \sin(\phi) $  
+
+- $` v_t = \min(\mu \cdot v_{rel}, v \cos(\phi)) `$  
+- $` v_n = v \sin(\phi) `$  
 
 (Referenced from TP A.14, Equation 17 in the document)
 
