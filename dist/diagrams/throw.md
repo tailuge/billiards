@@ -36,18 +36,6 @@ Inputs
 *   `R` ball radius.
 *   `μ` coefficient of friction between balls
 
-More generally the relative velocity at the contact point of balls `a` and `b` is
-
-```math
-V_r = (v_a - v_b) + R(ω_b - ω_a) \times n
-```
-*   `n` is a 2D unit vector pointing from the center of ball `a` to the center of ball `b` at the point of contact.
-
-```math
-
-F_n =  m(1+e) * Δv_n
-```
-
 
 **Summary**
 
@@ -101,6 +89,43 @@ v_{rel} = \sqrt{(v\sin(\phi)-R\omega_z)^2+(R\omega_x\cos(\phi))^2}
 
 ```math
 \theta_{throw}(v,\omega_x,\omega_z,\phi,\mu_m)= \arctan \Big(  \frac{ \mu_m \sqrt{ (v \sin \phi - R\omega_z)^2+ (R \omega_x \cos \phi)^2 } (v \cos \phi)}{ v \cos \phi \sqrt{ (v \sin \phi - R\omega_z)^2+ (R \omega_x \cos \phi)^2 }} \Big)
+```
+
+Equation 8 describes the relative tangential speed (sliding velocity) between the cue ball (CB) and the object ball (OB) *after* impact. It is the difference between the tangential velocity of the CB and the tangential velocity of the OB. Each ball's tangential velocity is expressed as the sum of its linear velocity and its rotational velocity multiplied by the ball's radius.
+
+```math
+v_{rel} = (v_{CB_t} - \omega_{CB}  R) - (v_{OB_t} - \omega_{OB}  R)
+```
+
+where:
+
+* $`v_{rel}`$ is the relative tangential speed between the balls after impact.
+* $`v_{CB_t}`$ is the tangential component of the cue ball's post-impact linear velocity.
+* $`\omega_{CB}`$ is the cue ball's post-impact angular velocity (rotational speed).
+* $`v_{OB_t}`$ is the tangential component of the object ball's post-impact linear velocity.
+* $`\omega_{OB}`$ is the object ball's post-impact angular velocity.
+* `R` is the radius of the balls (assumed equal).
+
+
+The equation, `u(v) = a + b * exp(-c * v)`, represents a model for the coefficient of friction (µ) between the cue ball and object ball as a function of the relative tangential speed (`v`) between them. It's a decaying exponential plus a constant offset.
+
+* **Motivation:** The author is trying to create a more realistic model for friction than a simple constant value. Real-world friction often decreases slightly at higher speeds. The data presented by Marlow in "The Physics of Pocket Billiards" suggests this kind of relationship, although the author makes some assumptions about the data from Marlow, specifically the inclusion of a sin(45 degrees) factor.
+* **Equation Breakdown:**
+    * `u(v)`:  The coefficient of dynamic friction at a given relative tangential speed, `v`.
+    * `a`: Represents the asymptotic value of friction as the speed becomes very large. In other words, it's the minimum friction.
+    * `b`: Influences the initial value of friction at low speeds. A larger `b` leads to higher friction at slower speeds.
+    * `c`: Determines how quickly the friction decreases with increasing speed. Larger `c` means the decay happens faster.
+    * `v`: The relative tangential speed between the cue ball and the object ball at the point of contact.
+
+* **Best-Fit Constants:** Using the provided Marlow data and the given assumptions about that data, the author uses MathCAD's `Find` function to determine the best-fit parameters. The results are:
+    * `a ≈ 0.01`
+    * `b ≈ 0.108`
+    * `c ≈ 1.088`
+
+Therefore, the fitted equation for the coefficient of friction based on Marlow's data becomes:
+
+```
+u(v) = 0.01 + 0.108 * exp(-1.088 * v)
 ```
 
 **Code generation prompt**

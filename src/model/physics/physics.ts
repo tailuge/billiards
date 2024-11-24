@@ -185,7 +185,7 @@ export function restitutionCushion(v: Vector3) {
 
 function cartesionToBallCentric(v, w) {
 
-  const mathaven = new Mathaven(m, R, ee, μs, μw)
+  const mathaven = new Mathaven(m, R, ee, μs, μw + 0.1)
   mathaven.solve(v.x,v.y,w.x,w.y,w.z)
 
   const rv = new Vector3(mathaven.vx, mathaven.vy, 0)
