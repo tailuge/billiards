@@ -1,7 +1,7 @@
 import { ImpulsePlot } from "./diagram/impulseplot";
 import { ReboundPlot } from "./diagram/reboundplot";
 import { ThrowPlot } from "./diagram/throwplot";
-import { R } from "./model/physics/claude/constants";
+import { R } from "./diagram/constants";
 
 declare global {
   interface Window {

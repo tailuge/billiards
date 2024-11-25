@@ -75,17 +75,79 @@ where
 
 #### cushion bounce
 
-<a href="https://www.codecogs.com/eqnedit.php?latex=\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{v}_{x}&space;=&space;-v_{x0}(\frac{2}{7}sin^2\theta_{a}&space;&plus;&space;(1&plus;e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" title="\dot{v}_{x} = -v_{x0}(\frac{2}{7}sin^2\theta_{a} + (1+e)cos^2\theta_{a})-R\omega_{y0}sin\theta_{a}" /></a>
+This is based on a paper by [Mathaven](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf). Many of the [figures](https://tailuge.github.io/billiards/dist/diagrams/mathaven.html) from the paper are recreated to confirm correctness.
 
-<a href="https://www.codecogs.com/eqnedit.php?latex=\dot{v}_{y}&space;=&space;\frac{2}{7}v_{y0}&plus;\frac{2}{7}R(\omega_{x0}sin\theta_{a}&space;-&space;\omega_{z0}cos\theta_{a})&space;-&space;v_{y0}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{v}_{y}&space;=&space;\frac{2}{7}v_{y0}&plus;\frac{2}{7}R(\omega_{x0}sin\theta_{a}&space;-&space;\omega_{z0}cos\theta_{a})&space;-&space;v_{y0}" title="\dot{v}_{y} = \frac{2}{7}v_{y0}+\frac{2}{7}R(\omega_{x0}sin\theta_{a} - \omega_{z0}cos\theta_{a}) - v_{y0}" /></a>
+Slip velocity at cushion contact point I
 
-<a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_x}&space;=&space;\frac{5S_y_0}{2mRA}sin\theta_a" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_x}&space;=&space;\frac{5S_y_0}{2mRA}sin\theta_a" title="\dot{\omega_x} = \frac{5S_y_0}{2mRA}sin\theta_a" /></a>
+$$
+ẋ_I = \dot{v_x} + \dot{\omega_y} R \sin \theta - \dot{\omega_z} R \cos \theta,
+ẏ'_I = -\dot{v_y} \sin \theta + \dot{\omega_x} R
+$$
 
-<a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_y}&space;=&space;\frac{5}{2mR}\Big(\frac{-S_x_0}{A}&space;&plus;&space;sin\theta_a&space;\frac{C_0}{B}(1&plus;e)(cos\theta_a-sin\theta_a)\Big)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_y}&space;=&space;\frac{5}{2mR}\Big(\frac{-S_x_0}{A}&space;&plus;&space;sin\theta_a&space;\frac{C_0}{B}(1&plus;e)(cos\theta_a-sin\theta_a)\Big)" title="\dot{\omega_y} = \frac{5}{2mR}\Big(\frac{-S_x_0}{A} + sin\theta_a \frac{C_0}{B}(1+e)(cos\theta_a-sin\theta_a)\Big)" /></a>
+$$
+\phi = \arctan\left(\frac{ẏ'_I}{ẋ_I}\right), 
+s = \sqrt{(ẋ_I)^2 + (ẏ'_I)^2}
+$$
 
-<a href="https://www.codecogs.com/eqnedit.php?latex=\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\dot{\omega_z}&space;=&space;\frac{5S_y_0}{2mRA}cos\theta_a" title="\dot{\omega_z} = \frac{5S_y_0}{2mRA}cos\theta_a" /></a>
+Slip velocity at table contact point C
 
-Future [work](https://tailuge.github.io/billiards/dist/diagrams/mathaven.html) on [Mathaven](dist/diagrams/mathaven.md) cushion paper.
+$$
+ẋ_C = \dot{v_x} - \dot{\omega_y} R, 
+ẏ_C = \dot{v_y} + \dot{\omega_x} R
+$$
+
+$$
+\phi' = \arctan\left(\frac{ẏ'_I}{ẋ_I}\right),
+s' = \sqrt{(ẋ_C)^2 + (ẏ_C)^2}
+$$
+
+Numerical solutions for the centroid velocity of the ball during compression and resititution phases.
+
+$$
+(\dot{v_x})_{n+1} - (\dot{v_x})_n = - \frac{1}{M} \left[\mu_w \cos(\phi) + \mu_s \cos(\phi') \cdot (\sin \theta + \mu_w \sin(\phi) \cos \theta)\right] \Delta P_I
+$$
+
+$$
+(\dot{v_y})_{n+1} - (\dot{v_y})_n  = - \frac{1}{M} \left[ \cos \theta - \mu_w \sin \theta \sin \phi + \mu_s \sin \phi' \cdot \left( \sin \theta + \mu_w \sin \phi \cos \theta \right) \right] \Delta P_I
+$$
+
+Numerical solutions for angular velocity of ball
+
+$$
+(\dot{\omega_x})_{n+1}−(\dot{\omega_x})_n = -\frac{5}{2MR}[\mu_w \sin(\phi) + \mu_s \sin(\phi') \times (\sin(\theta) + \mu_w \sin(\phi)\cos(\theta))]\Delta P_I
+$$
+
+
+$$
+(\dot{\omega_y})_{n+1}−(\dot{\omega_y})_n = -\frac{5}{2MR}[\mu_w \cos(\phi)\sin(\theta) - \mu_s \cos(\phi') \times (\sin(\theta) + \mu_w \sin(\phi)\cos(\theta))]\Delta P_I
+$$
+
+
+$$
+(\dot{\omega_z})_{n+1}−(\dot{\omega_z})_n = \frac{5}{2MR}(\mu_w \cos(\phi)\cos(\theta))\Delta P_I
+$$
+
+$`\theta`$ is a constant of the angle of cushion contact above ball centre with $`\sin(\theta) = 2/5`$. $`μ_s`$ is the coefficient of sliding friction  between the ball and table surface. $`μ_w`$ is the coefficient of sliding friction  between the ball and the cushion. 
+
+Work done by the normal force at contact point $I$ along the $Z'$-axis which is aligned from the ball centre to I
+
+$$
+W_{Z'}^I(P_I^{(n+1)}) = W_{Z'}^I(P_I^{(n)}) + \frac{\Delta P_I}{2} \left( z'_I(P_I^{(n+1)}) + z'_I(P_I^{(n)}) \right)
+$$
+
+The ball is assumed to be bouncing in the +y cushion. Compression phase iterates until 
+
+$$
+\dot{v_y} <= 0
+$$
+
+For the restitution phase the iteration continues until the work done is
+
+$$
+W_{Z'}^I >= (1 - e_e^2) W_{compression}
+$$
+
+Some of the Mathaven equations not supplied by the paper were inferred by LLMs and the [code](./src/model/physics/mathaven.ts) for them was initially generated by a combination of [Claude, Qwen and GPT-4o](./dist/diagrams/mathaven.md).
 
 ## Useful commands
 

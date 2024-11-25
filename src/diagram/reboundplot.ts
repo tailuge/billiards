@@ -1,5 +1,5 @@
-import { ee, M, R, μs, μw } from "../model/physics/claude/constants";
-import { Mathaven } from "../model/physics/claude/qwen";
+import { ee, M, R, μs, μw } from "./constants";
+import { Mathaven } from "../model/physics/mathaven";
 import { config, color, createTrace, layout } from "./plotlyconfig";
 
 export class ReboundPlot {

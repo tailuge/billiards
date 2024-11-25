@@ -1,4 +1,4 @@
-import { cosθ, sinθ } from "../constants";
+import { cosθ, sinθ } from "./constants";
 
 export class Mathaven {
     // work done

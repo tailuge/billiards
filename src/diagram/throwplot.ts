@@ -24,7 +24,7 @@ export class ThrowPlot {
 
     const x = deg
 
-    layout.title.text = "Throw effect"
+    layout.title.text = "Throw effect (WIP) <br>from https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf "
 
     window.Plotly.newPlot("collision-throw", [
       createTrace(x, angles[0], 'k=-1', color(0)),

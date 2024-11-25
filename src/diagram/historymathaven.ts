@@ -1,4 +1,4 @@
-import { Mathaven } from "./qwen";
+import { Mathaven } from "../model/physics/mathaven";
 
 export class HistoryMathaven extends Mathaven {
     readonly h: Array<Partial<Mathaven>> = [];

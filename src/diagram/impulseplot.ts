@@ -1,5 +1,5 @@
-import { ee, M, R, μs, μw } from "../model/physics/claude/constants";
-import { HistoryMathaven } from "../model/physics/claude/historymathaven";
+import { ee, M, R, μs, μw } from "./constants";
+import { HistoryMathaven } from "./historymathaven";
 import { config, color, createTrace, layout } from "./plotlyconfig";
 
 export class ImpulsePlot {
