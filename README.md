@@ -80,24 +80,24 @@ This is based on a paper by [Mathaven](https://billiards.colostate.edu/physics_a
 Slip velocity at cushion contact point I
 
 $$
-ẋ_I = \dot{v_x} + \dot{\omega_y} R \sin \theta - \dot{\omega_z} R \cos \theta,
+ẋ_I = \dot{v_x} + \dot{\omega_y} R \sin \theta - \dot{\omega_z} R \cos \theta \qquad
 ẏ'_I = -\dot{v_y} \sin \theta + \dot{\omega_x} R
 $$
 
 $$
-\phi = \arctan\left(\frac{ẏ'_I}{ẋ_I}\right), 
+\phi = \arctan\left(\frac{ẏ'_I}{ẋ_I}\right) \qquad
 s = \sqrt{(ẋ_I)^2 + (ẏ'_I)^2}
 $$
 
 Slip velocity at table contact point C
 
 $$
-ẋ_C = \dot{v_x} - \dot{\omega_y} R, 
+ẋ_C = \dot{v_x} - \dot{\omega_y} R \qquad
 ẏ_C = \dot{v_y} + \dot{\omega_x} R
 $$
 
 $$
-\phi' = \arctan\left(\frac{ẏ'_I}{ẋ_I}\right),
+\phi' = \arctan\left(\frac{ẏ'_I}{ẋ_I}\right) \qquad
 s' = \sqrt{(ẋ_C)^2 + (ẏ_C)^2}
 $$
 
