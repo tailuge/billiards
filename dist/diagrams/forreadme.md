@@ -1,3 +1,38 @@
+Slip velocity at cushion contact point I
+
+$$
+ẋ_I = \dot{v_x} + \dot{\omega_y} R \sin \theta - \dot{\omega_z} R \cos \theta
+$$
+
+$$
+ẏ'_I = -\dot{v_y} \sin \theta + \dot{\omega_x} R
+$$
+
+$$
+\phi = \arctan\left(\frac{ẏ'_I}{ẋ_I}\right)
+$$
+
+$$
+s = \sqrt{(ẋ_I)^2 + (ẏ'_I)^2}
+$$
+
+Slip velocity at table contact point C
+
+$$
+ẋ_C = \dot{v_x} - \dot{\omega_y} R
+$$
+
+$$
+ẏ_C = \dot{v_y} + \dot{\omega_x} R
+$$
+
+$$
+\phi' = \arctan\left(\frac{ẏ'_I}{ẋ_I}\right)
+$$
+
+$$
+s' = \sqrt{(ẋ_C)^2 + (ẏ_C)^2}
+$$
 
 Numerical updates to the centroid velocity of the ball during compression and resititution phases.
 
@@ -25,24 +60,22 @@ $$
 (\dot{\omega_z})_{n+1}−(\dot{\omega_z})_n = \frac{5}{2MR}(\mu_w \cos(\phi)\cos(\theta))\Delta P_I
 $$
 
-At each step recalculate the slip angle and speed at the cushion contact point (I) and the ball and surface of the table contact point (C)
+$`\theta`$ is a constant of the angle of cushion contact above ball centre with $`\sin(\theta) = 2/5`$
 
-### Slip velocity at cushion 
-
-$$
-ẋ_I = \dot{v_x} + \dot{\omega_y} R \sin \theta - \dot{\omega_z} R \cos \theta
-$$
+Work done by the normal force at contact point $I$ along the $Z'$-axis
 
 $$
-ẏ'_I = -\dot{v_y} \sin \theta + \dot{\omega_x} R
+W_{Z'}^I(P_I^{(n+1)}) = W_{Z'}^I(P_I^{(n)}) + \frac{\Delta P_I}{2} \left( z'_I(P_I^{(n+1)}) + z'_I(P_I^{(n)}) \right)
 $$
 
-### Slip velocity at table 
+The ball is assumed to be bouncing in the +y cushion. Compression phase iterates until 
 
 $$
-ẋ_C = \dot{v_x} - \dot{\omega_y} R
+\dot{v_y} <= 0
 $$
 
+For the restitution phase the iteration continues until the work done is
+
 $$
-ẏ_C = \dot{v_y} + \dot{\omega_x} R
+W_{Z'}^I >= (1 - e_e^2) W_{compression}
 $$
