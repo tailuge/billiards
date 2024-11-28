@@ -127,10 +127,20 @@ Therefore, the fitted equation for the coefficient of friction based on Marlow's
 ```
 u(v) = 0.01 + 0.108 * exp(-1.088 * v)
 ```
+```typescript 
+function computeFrictionCoefficient(vRel: number): number {
+  const a = 0.01;
+  const b = 0.108;
+  const c = 1.088;
+  return a + b * Math.exp(-c * vRel);
+}
+```
 
 **Code generation prompt**
 
-Complete the following typescript method that updates ball velocity and angular velocity assuming that balls are in contact and both may be in motion. Use concise variable names where possible even unicode is acceptable to mirror closely the equations. Succinct clean solution is best.
+Complete the following typescript method that updates ball velocity and angular velocity assuming that balls are in contact and both may be in motion with equal radius and mass. Use concise variable names where possible even unicode is acceptable to mirror closely the equations. Succinct clean solution is best. Remember the balls are constrained in the
+2d plane z=0 and the spin axis of the balls is arbitrary 3d vector. The start of the method
+is given that already computes the relative velocity of the contact point.
 
 ```typescript
 class Ball {
@@ -139,11 +149,26 @@ class Ball {
   readonly rvel: Vector3  // angular velocity about any axis
 }
 
+import { Vector3 } from "three"
 import { I, m, R } from "./constants"
 
-class Collision
-    private static updateVelocities(a: Ball, b: Ball) {
-        const ab = b.pos.clone().sub(a.pos).normalize();
-        const abTangent = upCross(ab)
-        ... 
+class Collision {
+  private static updateVelocities(a: Ball, b: Ball) {
+    // Unit vector along the line of centers
+    const ab = b.pos.clone().sub(a.pos).normalize();
+    // Perpendicular tangent vector
+    const abTangent = new Vector3(-ab.y, ab.x, 0);
+
+    // Relative velocity at contact point
+    const vRel = a.vel.clone().sub(b.vel).add(
+      ab.clone().multiplyScalar(-R).cross(a.rvel).sub(
+        ab.clone().multiplyScalar(R).cross(b.rvel)
+      )
+    );
+
+    // Decompose relative velocity into normal and tangential components
+    const vRelNormal = ab.dot(vRel);
+    const vRelTangential = abTangent.dot(vRel);
+
+    ...  complete this method that updates the balls states and also computes the throw angle ...
 ```
