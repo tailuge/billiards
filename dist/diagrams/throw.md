@@ -135,6 +135,34 @@ function computeFrictionCoefficient(vRel: number): number {
   return a + b * Math.exp(-c * vRel);
 }
 ```
+**Relative Velocity Equation**
+
+The relative velocity  *v*<sub>rel</sub> between two colliding balls *a* and *b* is given by:
+
+  *v*<sub>rel</sub> = (*v*<sub>a</sub> - *v*<sub>b</sub>) + [*r*<sub>a</sub> × ω<sub>a</sub>] - [*r*<sub>b</sub> × ω<sub>b</sub>]
+
+Where:
+
+*   *v*<sub>a</sub>, *v*<sub>b</sub>: Linear velocities of balls *a* and *b*.
+*   ω<sub>a</sub>, ω<sub>b</sub>: Angular velocities of balls *a* and *b*.
+*   *r*<sub>a</sub> = -*R* **n**: Vector from the center of ball *a* to the contact point.
+*   *r*<sub>b</sub> = *R* **n**: Vector from the center of ball *b* to the contact point.
+*   *R*: Radius of the balls.
+*   **n**: Unit vector normal to the contact surface, pointing from ball *b* to ball *a*.
+
+**Expanding the Rotational Contributions**
+
+Expanding the cross product terms:
+
+*   *r*<sub>a</sub> × ω<sub>a</sub> = -*R* **n** × ω<sub>a</sub>
+*   *r*<sub>b</sub> × ω<sub>b</sub> =  *R* **n** × ω<sub>b</sub>
+
+**Final Relative Velocity Equation**
+
+Substituting these expansions into the relative velocity equation gives:
+
+*v*<sub>rel</sub> = (*v*<sub>a</sub> - *v*<sub>b</sub>) - [*R* (**n** × ω<sub>a</sub>)] + [*R* (**n** × ω<sub>b</sub>)]
+
 
 **Code generation prompt**
 
