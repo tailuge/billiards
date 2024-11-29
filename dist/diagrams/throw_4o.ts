@@ -24,7 +24,29 @@ class Collision {
     // Decompose relative velocity into normal and tangential components
     const vRelNormal = ab.dot(vRel);
     const vRelTangential = abTangent.dot(vRel);
+        // Compute the impulse along the line of centers
+        const Jn = (2 * m * vRelNormal) / (1 / m + 1 / m);
 
+        // Compute maximum static friction force
+        function computeFrictionCoefficient(v: number): number {
+          const a = 0.01;
+          const b = 0.108;
+          const c = 1.088;
+          return a + b * Math.exp(-c * v);
+        }
+        const μ = computeFrictionCoefficient(vRelTangential);
+    
+        const Ft_max = μ * Math.abs(Jn);
+    
+        // Compute impulse in the tangential direction considering the ft max
+        const Jt = Math.min(Ft_max, Math.abs(vRelTangential)) * Math.sign(vRelTangential);
+        
+
+    const mu = Collision.computeFrictionCoefficient(vRelNormal);
+    const j = (-(1 + 0.8) * vRelNormal) / (2 / m); 
+
+    const impTangent = Math.min(mu*j,m*vRelTangential/7)
+    
     // Impulse calculations
     const jNormal = -vRelNormal * (1 + 1) / (2 / m);
     const maxJTangent = μ * jNormal;
@@ -45,5 +67,13 @@ class Collision {
     const angularImpulse = jTangent * R / I;
     a.rvel.sub(new Vector3(0, 0, angularImpulse));
     b.rvel.add(new Vector3(0, 0, angularImpulse));
+  }
+
+
+  private static computeFrictionCoefficient(vRel: number): number {
+    const a = 0.01;
+    const b = 0.108;
+    const c = 1.088;
+    return a + b * Math.exp(-c * vRel);
   }
 }
