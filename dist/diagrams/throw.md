@@ -85,7 +85,7 @@ v_{OB_n} = \frac{F_n}{m} = v\cos(\phi)
 ### Throw Angle Formula
 
 ```math
-\theta_{\text{throw}} = \arctan\left(\left( \min\left( \frac{\mu(v_{\text{rel}}) \cdot v \cdot \cos(\phi)}{v_{\text{rel}}}, 1/7 \right) * (v \sin(\phi) - R \omega_z) \right) / v \cos(\phi) \right)
+\theta_{\text{throw}} = \arctan\left(\frac{\min\left( \frac{\mu(v_{\text{rel}}) \cdot v \cdot \cos(\phi)}{v_{\text{rel}}}, \frac{1}{7} \right) \cdot (v \sin(\phi) - R \omega_z)}{v \cos(\phi)} \right)
 ```
 #### Where:
 
