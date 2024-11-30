@@ -20,7 +20,7 @@ export class CollisionThrow {
   protected relativeVelocity(v: number, ωx: number, ωz: number, ϕ: number): number {
     return Math.sqrt(
       Math.pow(v * Math.sin(ϕ) - ωz * CollisionThrow.R, 2) +
-      Math.pow(v * Math.cos(ϕ) + ωx * CollisionThrow.R, 2)
+      Math.pow(Math.cos(ϕ) * ωx * CollisionThrow.R, 2)
     );
   }
 
