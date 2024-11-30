@@ -41,7 +41,7 @@
   "dependencies": {
     "interactjs": "1.10.27",
     "jsoncrush": "^1.1.8",
-    "three": "0.170.0"
+    "three": "0.171.0"
   },
   "devDependencies": {
     "@swc/core": "1.9.3",
