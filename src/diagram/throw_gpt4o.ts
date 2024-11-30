@@ -1,7 +1,10 @@
 import { Vector3 } from "three";
 import { Ball } from "../model/ball";
+import { up, zero } from "../utils/utils";
 
 export class CollisionThrow {
+
+  static R: number = 0.029; // ball radius in meters
 
   protected relativeVelocity(v: number, ωx: number, ωz: number, ϕ: number): number {
     return Math.sqrt(
@@ -18,6 +21,24 @@ export class CollisionThrow {
     return Math.atan2(vT, vN);
   }
 
+  public plot(v: number, ωx: number, ωz: number, ϕ: number) {
+    // assume balls in contact along y axis 
+    // cue ball a is travelling +y only
+    // object ball positioned so that collision angle is phi
+
+    const a = new Ball(zero)
+    a.vel.copy(new Vector3(0,v,0))
+    a.rvel.copy(new Vector3(ωx,0,ωz))
+  
+    const straight = new Vector3(0,2*CollisionThrow.R)
+    const bpos = straight.applyAxisAngle(up,ϕ)
+    const b = new Ball(bpos);
+
+
+//    console.log(a.pos,b.pos)
+
+    return CollisionThrow.updateVelocities(a,b)
+  }
   private static updateVelocities(a: Ball, b: Ball) {
     // Unit vector along the line of centers    
     const ab = b.pos.clone().sub(a.pos).normalize();
@@ -59,5 +80,4 @@ export class CollisionThrow {
     return Math.atan2(Math.abs(Jt), Math.abs(Jn));
   }
 
-  static R: number = 0.029; // ball radius in meters
 }
