@@ -1,4 +1,4 @@
-import { R } from "../model/physics/constants";
+
 import { config, color, createTrace, layout } from "./plotlyconfig";
 import { CollisionThrow } from "./throw_gpt4o";
 
@@ -8,46 +8,45 @@ export class ThrowPlot {
     return x * (Math.PI / 180);
   }
 
+  private radToDeg(x: number): number {
+    return x * (180 / Math.PI);
+  }
 
-  public plot() {
-    const velocities = [0.447, 1.341, 3.129];
+  public plotCutAngle() {
+    const R = CollisionThrow.R
+    this.plot("collision-throw-roll", k => (k / R))
+    this.plot("collision-throw-stun", _ => 0)
+  }
+  
+  public plot(div, omegax) {
 
-    const mo = new CollisionThrow()
-    console.log(mo.plot(1, 0.0, 0.0, 0.0))
     const angles: number[][] = []
-    const anglesFull: number[][] = []
 
     let deg: number[] = []
 
+    const velocities = [0.447, 1.341, 3.129];
     velocities.forEach(k => {
       const angle: number[] = []
-      const angleFull: number[] = []
       deg = []
       for (let alpha = 1; alpha < 90; alpha += 0.1) {
         deg.push(alpha)
         const model = new CollisionThrow()
-        angle.push(model.throwAngle(k, k / R, 0, this.degToRad(alpha)))
-        angleFull.push(model.plot(k, k / R, 0, this.degToRad(alpha)))
+        const throwAngle = model.plot(k, omegax(k), 0, this.degToRad(alpha))
+        angle.push(this.radToDeg(throwAngle))
       }
       angles.push(angle)
-      anglesFull.push(angleFull)
     })
 
-    const x = deg
+    const myLayout = { ...layout }
+    myLayout.title.text = `Throw effect (WIP)
+    <br>throw vs. cut angle for various-speed ${div} shots
+    <br>from https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf`
 
-    layout.title.text = "Throw effect (WIP) <br>from https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf "
-
-    window.Plotly.newPlot("collision-throw", [
-      createTrace(x, angles[0], 'k=1', color(0)),
-      createTrace(x, angles[1], 'k=2', color(1)),
-      createTrace(x, angles[2], 'k=3', color(2)),
-
-      createTrace(x, anglesFull[0], 'f k=1', color(4)),
-      createTrace(x, anglesFull[1], 'f k=2', color(5)),
-      createTrace(x, anglesFull[2], 'f k=3', color(6)),
-
-
-    ], layout, config)
+    window.Plotly.newPlot(div, [
+      createTrace(deg, angles[0], 'slow', color(4)),
+      createTrace(deg, angles[1], 'medium', color(5)),
+      createTrace(deg, angles[2], 'fast', color(6)),
+    ], myLayout, config)
 
   }
 }

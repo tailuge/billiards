@@ -4,7 +4,7 @@ import { up, zero } from "../utils/utils";
 
 export class CollisionThrow {
 
-  static R: number = 0.029; // ball radius in meters
+  public static R: number = 0.029; // ball radius in meters
 
    // Friction parameters
    private static a: number = 0.01; // Minimum friction coefficient
