@@ -6,21 +6,33 @@ export class CollisionThrow {
 
   static R: number = 0.029; // ball radius in meters
 
-  protected relativeVelocity(v: number, ωx: number, ωz: number, ϕ: number): number {
-    return Math.sqrt(
-      Math.pow(v * Math.sin(ϕ) - ωz * CollisionThrow.R, 2) +
-      Math.pow(v * Math.cos(ϕ) + ωx * CollisionThrow.R, 2)
-    );
-  }
-
-  public throwAngle(v: number, ωx: number, ωz: number, ϕ: number): number {
-    const vRel = this.relativeVelocity(v, ωx, ωz, ϕ);
-    const μ = 0.06; // friction coefficient
-    const vT = Math.min(μ * vRel, v * Math.cos(ϕ));
-    const vN = v * Math.sin(ϕ);
-    return Math.atan2(vT, vN);
-  }
-
+   // Friction parameters
+   private static a: number = 0.01; // Minimum friction coefficient
+   private static b: number = 0.1;  // Range of friction variation
+   private static c: number = 1.0;  // Decay rate
+ 
+   // Dynamic friction model
+   private dynamicFriction(vRel: number): number {
+     return CollisionThrow.a + CollisionThrow.b * Math.exp(-CollisionThrow.c * vRel);
+   }
+ 
+   // Relative velocity calculation
+   protected relativeVelocity(v: number, ωx: number, ωz: number, ϕ: number): number {
+     return Math.sqrt(
+       Math.pow(v * Math.sin(ϕ) - ωz * CollisionThrow.R, 2) +
+       Math.pow(v * Math.cos(ϕ) + ωx * CollisionThrow.R, 2)
+     );
+   }
+ 
+   // Throw angle calculation with dynamic friction
+   public throwAngle(v: number, ωx: number, ωz: number, ϕ: number): number {
+     const vRel = this.relativeVelocity(v, ωx, ωz, ϕ);
+     const μ = this.dynamicFriction(vRel); // Calculate dynamic friction
+     const vT = Math.min(μ * vRel, v * Math.cos(ϕ)); // Tangential velocity
+     const vN = v * Math.sin(ϕ); // Normal velocity
+     return Math.atan2(vT, vN); // Compute throw angle
+   }
+   
   public plot(v: number, ωx: number, ωz: number, ϕ: number) {
     // assume balls in contact along y axis 
     // cue ball a is travelling +y only
