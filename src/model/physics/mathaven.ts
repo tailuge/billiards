@@ -135,7 +135,7 @@ export class Mathaven {
         this.i = 0
 
         this.compressionPhase();
-        const targetWorkRebound = this.WzI - (1 - this.ee * this.ee) * this.WzI;
+        const targetWorkRebound = this.ee * this.ee * this.WzI;
         this.restitutionPhase(targetWorkRebound);
     }
 }

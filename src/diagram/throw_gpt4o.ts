@@ -8,11 +8,11 @@ export class CollisionThrow {
 
    // Friction parameters
    private static a: number = 0.01; // Minimum friction coefficient
-   private static b: number = 0.1;  // Range of friction variation
-   private static c: number = 1.0;  // Decay rate
+   private static b: number = 0.108;  // Range of friction variation
+   private static c: number = 1.088;  // Decay rate
  
    // Dynamic friction model
-   private dynamicFriction(vRel: number): number {
+   private static dynamicFriction(vRel: number): number {
      return CollisionThrow.a + CollisionThrow.b * Math.exp(-CollisionThrow.c * vRel);
    }
  
@@ -27,7 +27,7 @@ export class CollisionThrow {
    // Throw angle calculation with dynamic friction
    public throwAngle(v: number, ωx: number, ωz: number, ϕ: number): number {
      const vRel = this.relativeVelocity(v, ωx, ωz, ϕ);
-     const μ = this.dynamicFriction(vRel); // Calculate dynamic friction
+     const μ = CollisionThrow.dynamicFriction(vRel); // Calculate dynamic friction
      const vT = Math.min(μ * vRel, v * Math.cos(ϕ)); // Tangential velocity
      const vN = v * Math.sin(ϕ); // Normal velocity
      return Math.atan2(vT, vN); // Compute throw angle
@@ -75,14 +75,8 @@ export class CollisionThrow {
     // Compute the impulse along the line of centers
     const Jn = (2 * m * vRelNormal) / (1 / m + 1 / m);
 
-    // Compute maximum static friction force
-    function computeFrictionCoefficient(v: number): number {
-      const a = 0.01;
-      const b = 0.108;
-      const c = 1.088;
-      return a + b * Math.exp(-c * v);
-    }
-    const μ = computeFrictionCoefficient(vRelTangential);
+    
+    const μ = CollisionThrow.dynamicFriction(vRelTangential);
 
     const Ft_max = μ * Math.abs(Jn);
 
