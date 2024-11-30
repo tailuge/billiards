@@ -82,14 +82,20 @@ v_{OB_n} = \frac{F_n}{m} = v\cos(\phi)
 ```math
 \theta_{OB} = \arctan(\frac{v_{OB_t}}{v_{OB_n}})
 ```
+### Throw Angle Formula
 
 ```math
-v_{rel} = \sqrt{(v\sin(\phi)-R\omega_z)^2+(R\omega_x\cos(\phi))^2}
+\theta_{\text{throw}} = \arctan\left(\left( \min\left( \frac{\mu(v_{\text{rel}}) \cdot v \cdot \cos(\phi)}{v_{\text{rel}}}, 1/7 \right) * (v \sin(\phi) - R \omega_z) \right) / v \cos(\phi) \right)
 ```
+#### Where:
 
 ```math
-\theta_{throw}(v,\omega_x,\omega_z,\phi,\mu_m)= \arctan \Big(  \frac{ \mu_m \sqrt{ (v \sin \phi - R\omega_z)^2+ (R \omega_x \cos \phi)^2 } (v \cos \phi)}{ v \cos \phi \sqrt{ (v \sin \phi - R\omega_z)^2+ (R \omega_x \cos \phi)^2 }} \Big)
+v_{\text{rel}}(v, \omega_x, \omega_z, \phi) = \sqrt{(v \sin(\phi) - R \omega_z)^2 + (v \cos(\phi) + R \omega_x)^2} 
 ```
+```math
+ \mu(v) = a + b \cdot e^{-c \cdot v} 
+```
+
 
 Equation 8 describes the relative tangential speed (sliding velocity) between the cue ball (CB) and the object ball (OB) *at* impact. It is the difference between the tangential velocity of the CB and the tangential velocity of the OB. Each ball's tangential velocity is expressed as the sum of its linear velocity and its rotational velocity multiplied by the ball's radius.
 
