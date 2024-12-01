@@ -31,6 +31,13 @@ export class CollisionThrow {
     const μ = CollisionThrow.dynamicFriction(vRel);
     const numerator = Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7) * (v * Math.sin(ϕ) - CollisionThrow.R * ωz);
     const denominator = v * Math.cos(ϕ);
+/*
+    console.log("vRel = ", vRel)
+    console.log("μ = ", μ)
+    console.log("numerator = ", numerator)
+    console.log("denominator = ", denominator)
+    console.log("throw = ", Math.atan2(numerator, denominator))
+    */
     return Math.atan2(numerator, denominator);
   }
 
@@ -48,9 +55,11 @@ export class CollisionThrow {
     const b = new Ball(bpos);
 
 
-    //    console.log(a.pos,b.pos)
+    //        console.log(a.pos,b.pos)
 
-    //return CollisionThrow.updateVelocities(a, b)
+//    console.log("---new     ---")
+//    return CollisionThrow.updateVelocities(a, b)
+//    console.log("---original---")
     return this.throwAngle(v, ωx, ωz, ϕ)
   }
   private static updateVelocities(a: Ball, b: Ball) {
@@ -68,19 +77,31 @@ export class CollisionThrow {
         ab.clone().multiplyScalar(R).cross(b.rvel)
       )
     );
-
+    /*
+    console.log("a.vel = ", a.vel)
+    console.log("a.rvel = ", a.rvel)
+    console.log("b.vel = ", b.vel)
+    console.log("b.rvel = ", b.rvel)
+    console.log("ab = ", ab)
+    console.log("vRel = ", vRel)
+*/
     // Decompose relative velocity into normal and tangential components
     const vRelNormal = ab.dot(vRel);
     const vRelTangential = abTangent.dot(vRel);
 
-    const μ = this.dynamicFriction(vRel.length());
+    const μ = this.dynamicFriction(vRelNormal);
     // Compute impulses
-    const normalImpulse = -(1 + e) * vRelNormal / (2 / m);
-    const tangentialImpulse = Math.sign(vRelTangential) * Math.min(
-      Math.abs(vRelTangential) * m,
-      μ * Math.abs(normalImpulse)
-    );
+    const normalImpulse = vRelNormal;
+    const tangentialImpulse =
+      Math.min((μ * vRelNormal) / vRel.length(), 1 / 7) * -vRelTangential
 
+/*
+    console.log("vRelNormal =", vRelNormal);
+    console.log("vRelTangential =", vRelTangential);
+    console.log("μ =", μ);
+    console.log("tangentialImpulse (numerator)=", tangentialImpulse);
+    console.log("normalImpulse (denominator)=", normalImpulse);
+*/
     // Update linear velocities
     const normalImpulseVector = ab.clone().multiplyScalar(normalImpulse);
     a.vel.add(normalImpulseVector.clone().multiplyScalar(1 / m));
@@ -99,7 +120,9 @@ export class CollisionThrow {
     );
 
     // Return the throw angle
-    let throwAngle = Math.atan2(tangentialImpulse, normalImpulse)
+    let throwAngle = (Math.atan2(tangentialImpulse, normalImpulse) + 2 * Math.PI) % (2 * Math.PI);
+  //  console.log("throwAngle =", throwAngle);
+
     return throwAngle;
   }
 

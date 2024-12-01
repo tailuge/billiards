@@ -16,6 +16,9 @@ export class ThrowPlot {
     const R = CollisionThrow.R
     this.plot("collision-throw-roll", k => (k / R))
     this.plot("collision-throw-stun", _ => 0)
+
+    const model = new CollisionThrow()
+    console.log(model.plot(0.5, 0, 0, Math.PI/4))
   }
   
   public plot(div, omegax) {
