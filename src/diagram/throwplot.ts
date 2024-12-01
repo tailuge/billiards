@@ -17,8 +17,9 @@ export class ThrowPlot {
     this.plot("collision-throw-roll", k => (k / R))
     this.plot("collision-throw-stun", _ => 0)
 
+ // test:
     const model = new CollisionThrow()
-    console.log(model.plot(0.5, 0, 0, Math.PI/4))
+    model.plot(0.5, 0, 0, Math.PI/8)
   }
   
   public plot(div, omegax) {
@@ -31,7 +32,7 @@ export class ThrowPlot {
     velocities.forEach(k => {
       const angle: number[] = []
       deg = []
-      for (let alpha = 1; alpha < 90; alpha += 0.1) {
+      for (let alpha = 1; alpha < 90; alpha += 1) {
         deg.push(alpha)
         const model = new CollisionThrow()
         const throwAngle = model.plot(k, omegax(k), 0, this.degToRad(alpha))
