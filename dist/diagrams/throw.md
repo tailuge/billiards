@@ -3,30 +3,7 @@ Notes from https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf
 This models the throw of a ball ball collision caused by the cut angle and spin on the ball.
 
 
-#### 1. Relative Velocity 
 
-The relative sliding velocity vector between the cue ball (CB) and object ball (OB) is given as:
-
-```math
-v_{rel} = \sqrt{(v \sin(\phi) - \omega_z R)^2 + (v \cos(\phi) + \omega_x R)^2}
-```
-
-(Referenced from TP A.14, Equation 15 in the document)
-
-
-#### 2. Throw Angle 
-The throw angle is calculated using:
-
-```math
-\theta_{throw} = \arctan\left(\frac{v_t}{v_n}\right)
-```
-
-Where:
-
-- $` v_t = \min(\mu \cdot v_{rel}, v \cos(\phi)) `$  
-- $` v_n = v \sin(\phi) `$  
-
-(Referenced from TP A.14, Equation 17 in the document)
 
 Inputs
 
@@ -97,20 +74,6 @@ v_{\text{rel}}(v, \omega_x, \omega_z, \phi) = \sqrt{(v \sin(\phi) - R \omega_z)^
 ```
 
 
-Equation 8 describes the relative tangential speed (sliding velocity) between the cue ball (CB) and the object ball (OB) *at* impact. It is the difference between the tangential velocity of the CB and the tangential velocity of the OB. Each ball's tangential velocity is expressed as the sum of its linear velocity and its rotational velocity multiplied by the ball's radius.
-
-```math
-v_{rel} = (v_{CB_t} - \omega_{CB}  R) - (v_{OB_t} - \omega_{OB}  R)
-```
-
-where:
-
-* $`v_{rel}`$ is the relative tangential speed between the balls at impact.
-* $`v_{CB_t}`$ is the tangential component of the cue ball's impact linear velocity.
-* $`\omega_{CB}`$ is the cue ball's impact angular velocity.
-* $`v_{OB_t}`$ is the tangential component of the object ball's post-impact linear velocity.
-* $`\omega_{OB}`$ is the object ball's impact angular velocity.
-* `R` is the radius of the balls (assumed equal).
 
 
 The equation, `u(v) = a + b * exp(-c * v)`, represents a model for the coefficient of friction (µ) between the cue ball and object ball as a function of the relative tangential speed (`v`) between them. It's a decaying exponential plus a constant offset.
@@ -163,24 +126,59 @@ Expanding the cross product terms:
 *   *r*<sub>a</sub> × ω<sub>a</sub> = -*R* **n** × ω<sub>a</sub>
 *   *r*<sub>b</sub> × ω<sub>b</sub> =  *R* **n** × ω<sub>b</sub>
 
-**Final Relative Velocity Equation**
+**Relative Velocity Equation**
 
 Substituting these expansions into the relative velocity equation gives:
 
 *v*<sub>rel</sub> = (*v*<sub>a</sub> - *v*<sub>b</sub>) - [*R* (**n** × ω<sub>a</sub>)] + [*R* (**n** × ω<sub>b</sub>)]
 
+**Code Summary for throw angle**
+
+The following code accurately reflects the equations for throw angle.
+However it is not in the general form for two spinning balls.
+
+```typescript
+  public static R: number = 0.029; // ball radius in meters
+
+  // Friction parameters
+  private static a: number = 0.01; // Minimum friction coefficient
+  private static b: number = 0.108;  // Range of friction variation
+  private static c: number = 1.088;  // Decay rate
+
+
+  dynamicFriction(vRel: number): number {
+    return CollisionThrow.a + CollisionThrow.b * Math.exp(-CollisionThrow.c * vRel);
+  }
+
+
+  relativeVelocity(v: number, ωx: number, ωz: number, ϕ: number): number {
+    return Math.sqrt(
+      Math.pow(v * Math.sin(ϕ) - ωz * CollisionThrow.R, 2) +
+      Math.pow(Math.cos(ϕ) * ωx * CollisionThrow.R, 2)
+    );
+  }
+
+
+  throwAngle(v: number, ωx: number, ωz: number, ϕ: number): number {
+    const vRel = this.relativeVelocity(v, ωx, ωz, ϕ);
+    const μ = this.dynamicFriction(vRel);
+    const numerator = Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7) * (v * Math.sin(ϕ) - CollisionThrow.R * ωz);
+    const denominator = v * Math.cos(ϕ);
+    return Math.atan2(numerator, denominator);
+  }
+```
 
 **Code generation prompt**
 
-Complete the following typescript method that updates ball velocity and angular velocity assuming that balls are in contact and both may be in motion with equal radius and mass. Use concise variable names where possible even unicode is acceptable to mirror closely the equations. Succinct clean solution is best. Remember the balls are constrained in the
+Complete the following typescript method that updates ball velocity and angular velocity assuming that balls are in contact and both may be in motion with equal radius and mass. Use concise variable names where possible even unicode is acceptable to mirror closely the equations. Succinct clean modular solution is best. Remember the balls are constrained in the
 2d plane z=0 and the spin axis of the balls is arbitrary 3d vector. The start of the method
-is given that already computes the relative velocity of the contact point.
+is given that already computes the relative velocity of the contact point. Complete the following code with reference to the equations from this summary.
 
 ```typescript
 class Ball {
-  readonly pos: Vector3
-  readonly vel: Vector3  // motion always in z=0 plane
-  readonly rvel: Vector3  // angular velocity about any axis
+   pos: Vector3
+   vel: Vector3  // motion always in z=0 plane
+   rvel: Vector3  // angular velocity about any axis
 }
 
 import { Vector3 } from "three"
@@ -204,5 +202,5 @@ class Collision {
     const vRelNormal = ab.dot(vRel);
     const vRelTangential = abTangent.dot(vRel);
 
-    ...  complete this method that updates the balls states and also computes the throw angle ...
+    ...  complete this method that updates the balls states (vel and rvel) and also returns the throw angle ...
 ```
