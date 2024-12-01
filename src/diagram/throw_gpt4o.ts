@@ -1,6 +1,7 @@
 import { Vector3 } from "three";
 import { Ball } from "../model/ball";
 import { up, zero } from "../utils/utils";
+import { I } from "../model/physics/constants";
 
 export class CollisionThrow {
 
@@ -49,8 +50,8 @@ export class CollisionThrow {
 
     //    console.log(a.pos,b.pos)
 
-     CollisionThrow.updateVelocities(a, b)
-     return this.throwAngle(v, ωx, ωz, ϕ)
+    //return CollisionThrow.updateVelocities(a, b)
+    return this.throwAngle(v, ωx, ωz, ϕ)
   }
   private static updateVelocities(a: Ball, b: Ball) {
     // Unit vector along the line of centers    
@@ -60,7 +61,7 @@ export class CollisionThrow {
 
     const R: number = 0.029
     const m = 0.3
-
+    const e = 1
     // Relative velocity at contact point
     const vRel = a.vel.clone().sub(b.vel).add(
       ab.clone().multiplyScalar(-R).cross(a.rvel).sub(
@@ -72,19 +73,34 @@ export class CollisionThrow {
     const vRelNormal = ab.dot(vRel);
     const vRelTangential = abTangent.dot(vRel);
 
+    const μ = this.dynamicFriction(vRel.length());
+    // Compute impulses
+    const normalImpulse = -(1 + e) * vRelNormal / (2 / m);
+    const tangentialImpulse = Math.sign(vRelTangential) * Math.min(
+      Math.abs(vRelTangential) * m,
+      μ * Math.abs(normalImpulse)
+    );
 
-    // Compute the impulse along the line of centers
-    const Jn = (2 * m * vRelNormal) / (1 / m + 1 / m);
+    // Update linear velocities
+    const normalImpulseVector = ab.clone().multiplyScalar(normalImpulse);
+    a.vel.add(normalImpulseVector.clone().multiplyScalar(1 / m));
+    b.vel.sub(normalImpulseVector.clone().multiplyScalar(1 / m));
 
+    const tangentialImpulseVector = abTangent.clone().multiplyScalar(tangentialImpulse);
+    a.vel.add(tangentialImpulseVector.clone().multiplyScalar(1 / m));
+    b.vel.sub(tangentialImpulseVector.clone().multiplyScalar(1 / m));
 
-    const μ = CollisionThrow.dynamicFriction(vRelTangential);
+    // Update angular velocities
+    a.rvel.add(
+      ab.clone().cross(tangentialImpulseVector.clone().multiplyScalar(-R / I))
+    );
+    b.rvel.add(
+      ab.clone().cross(tangentialImpulseVector.clone().multiplyScalar(R / I))
+    );
 
-    const Ft_max = μ * Math.abs(Jn);
-
-    // Compute impulse in the tangential direction considering the ft max
-    const Jt = Math.min(Ft_max, Math.abs(vRelTangential)) * Math.sign(vRelTangential);
-
-    return Math.atan2(Math.abs(Jt), Math.abs(Jn));
+    // Return the throw angle
+    let throwAngle = Math.atan2(tangentialImpulse, normalImpulse)
+    return throwAngle;
   }
 
 }
