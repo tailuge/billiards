@@ -61,7 +61,7 @@ export class CollisionThrow {
     console.log("---original---")
     const result = this.throwAngle(v, ωx, ωz, ϕ)
     console.log("---new code")
-//    CollisionThrow.updateVelocities(a, b)
+    CollisionThrow.updateVelocities(a, b)
     return result
   }
   private static updateVelocities(a: Ball, b: Ball) {
@@ -79,13 +79,14 @@ export class CollisionThrow {
 
     const vRelNormal = ab.dot(vRel);
     const vRelTangential = abTangent.dot(vRel);
+    const vRelz = vRel.z
 
-    const vRelMag = Math.sqrt(Math.pow(vRel.z, 2) + Math.pow(vRelTangential, 2));
+    const vRelMag = Math.sqrt(Math.pow(vRelz, 2) + Math.pow(vRelTangential, 2));
     const μ = this.dynamicFriction(vRelMag);
 
     const normalImpulse = vRelNormal;
     const tangentialImpulse =
-      Math.min((μ * vRelNormal) / vRel.length(), 1 / 7) * -vRelTangential
+      Math.min((μ * vRelNormal) / vRelMag, 1 / 7) * -vRelTangential
 
     let throwAngle = (Math.atan2(tangentialImpulse, normalImpulse) + 2 * Math.PI) % (2 * Math.PI);
 
