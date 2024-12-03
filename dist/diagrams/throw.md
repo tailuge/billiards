@@ -199,15 +199,15 @@ class Collision {
     );
 
     const vRelNormal = ab.dot(vRel);
-    const vRelTangential = abTangent.dot(vRel);
-    const vRelz = vRel.z
+    const vRelTangential = abTangent.dot(vRel); // slip velocity tangential to impact
+    const vRelz = vRel.z  // slip velocity in z direction
 
     const vRelMag = Math.sqrt(Math.pow(vRelz, 2) + Math.pow(vRelTangential, 2));
     const μ = this.dynamicFriction(vRelMag);
 
     const normalImpulse = vRelNormal;
     const tangentialImpulse =
-      Math.min((μ * vRelNormal) / vRelMag, 1 / 7) * -vRelTangential
+      Math.min((μ * vRelNormal) / vRelMag, 1 / 7) * ((-vRelTangential) - R * (a.rvel.z - b.rvel.z))
 
     let throwAngle = (Math.atan2(tangentialImpulse, normalImpulse) + 2 * Math.PI) % (2 * Math.PI);
 
