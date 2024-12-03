@@ -67,7 +67,7 @@ v_{OB_n} = \frac{F_n}{m} = v\cos(\phi)
 #### Where:
 
 ```math
-v_{\text{rel}}(v, \omega_x, \omega_z, \phi) = \sqrt{(v \sin(\phi) - R \omega_z)^2 + (v \cos(\phi) + R \omega_x)^2} 
+v_{\text{rel}}(v, \omega_x, \omega_z, \phi) = \sqrt{(v \sin(\phi) - R \omega_z)^2 + ( \cos(\phi) R \omega_x)^2} 
 ```
 ```math
  \mu(v) = a + b \cdot e^{-c \cdot v} 
