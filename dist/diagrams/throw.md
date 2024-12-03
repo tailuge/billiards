@@ -198,9 +198,19 @@ class Collision {
       )
     );
 
-    // Decompose relative velocity into normal and tangential components
     const vRelNormal = ab.dot(vRel);
     const vRelTangential = abTangent.dot(vRel);
+    const vRelz = vRel.z
 
-    ...  complete this method that updates the balls states (vel and rvel) and also returns the throw angle ...
+    const vRelMag = Math.sqrt(Math.pow(vRelz, 2) + Math.pow(vRelTangential, 2));
+    const μ = this.dynamicFriction(vRelMag);
+
+    const normalImpulse = vRelNormal;
+    const tangentialImpulse =
+      Math.min((μ * vRelNormal) / vRelMag, 1 / 7) * -vRelTangential
+
+    let throwAngle = (Math.atan2(tangentialImpulse, normalImpulse) + 2 * Math.PI) % (2 * Math.PI);
+
+
+    ...  correct and complete this method which currently is not modelling the ωz side spin ...
 ```
