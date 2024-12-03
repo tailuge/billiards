@@ -49,7 +49,7 @@ F_{t_{max}} = \frac{m}{7}(v\sin(\phi) - R\omega_z)
 ```
 
 ```math
-v_{OB_t} = \frac{F_t}{m} = min(\frac{\mu v \cos(\phi)}{\sqrt{(v\sin(\phi)-R\omega_z)^2 + (R\omega_x\cos(\phi))^2}}, \frac{1}{7})(v\sin(\phi)-R\omega_z)
+v_{OB_t} = \frac{F_t}{m} = \min\left( \frac{\mu v \cos(\phi)}{\sqrt{(v\sin(\phi)-R\omega_z)^2 + (R\omega_x\cos(\phi))^2}}, \frac{1}{7} \right)(v\sin(\phi)-R\omega_z)
 ```
 
 ```math
