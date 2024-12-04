@@ -22,7 +22,7 @@ export class ThrowPlot {
 
  // test:
     const model = new CollisionThrow()
-    model.plot(0.5, 0, 0, Math.PI/8)
+    model.plot(0.5, 0, -10, Math.PI/8)
   }
   
   public plot(div, ks, omegax) {
