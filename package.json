@@ -44,7 +44,7 @@
     "three": "0.171.0"
   },
   "devDependencies": {
-    "@swc/core": "1.9.3",
+    "@swc/core": "1.10.0",
     "@swc/jest": "0.2.37",
     "@testing-library/dom": "10.4.0",
     "@types/chai": "4.3.18",
@@ -58,13 +58,13 @@
     "mocha": "10.8.2",
     "node-notifier": "^10.0.1",
     "nodemon": "3.1.7",
-    "prettier": "3.4.1",
+    "prettier": "3.4.2",
     "swc-loader": "^0.2.6",
     "ts-jest": "29.2.5",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "typescript": "5.7.2",
-    "webpack": "5.96.1",
+    "webpack": "5.97.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "5.1.0"
   }
