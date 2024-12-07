@@ -75,18 +75,16 @@ where
 
 #### collisions
 
-Based on [paper](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) by Alciatore and incorporates throw effect due to small amount of friction between the balls. Figures to prove consistency with paper [here](https://tailuge.github.io/billiards/dist/diagrams/mathaven.html). 
+Based on paper by [Alciatore](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) incorporating throw effect due to the small amount of friction between balls. Figures to prove consistency with paper [here](https://tailuge.github.io/billiards/dist/diagrams/mathaven.html). 
 
 
 For ball $a$:
 
-$$
-\vec{v}_a \leftarrow \vec{v}_a + \frac{J_{\text{normal}}}{m}\hat{n} + \frac{J_{\text{tangential}}}{m}\hat{t}
-$$
+![Equation 1](https://latex.codecogs.com/gif.latex?%5Cvec%7Bv%7D_a%20%5Cleftarrow%20%5Cvec%7Bv%7D_a%20%2B%20%5Cfrac%7BJ_%7B%5Ctext%7Bnormal%7D%7D%7D%7Bm%7D%5Chat%7Bn%7D%20%2B%20%5Cfrac%7BJ_%7B%5Ctext%7Btangential%7D%7D%7D%7Bm%7D%5Chat%7Bt%7D)
 
 For ball $b$:
 
-$\vec{v}_b \leftarrow \vec{v}_b - \frac{J_{\text{normal}}}{m}\hat{n} - \frac{J_{\text{tangential}}}{m}\hat{t}$
+![Equation 2](https://latex.codecogs.com/gif.latex?%5Cvec%7Bv%7D_b%20%5Cleftarrow%20%5Cvec%7Bv%7D_b%20-%20%5Cfrac%7BJ_%7B%5Ctext%7Bnormal%7D%7D%7D%7Bm%7D%5Chat%7Bn%7D%20-%20%5Cfrac%7BJ_%7B%5Ctext%7Btangential%7D%7D%7D%7Bm%7D%5Chat%7Bt%7D)
 
 Where:
 
