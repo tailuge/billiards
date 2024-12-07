@@ -80,7 +80,9 @@ Based on [paper](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pd
 
 For ball $a$:
 
-$\vec{v}_a \leftarrow \vec{v}_a + \frac{J_{\text{normal}}}{m}\hat{n} + \frac{J_{\text{tangential}}}{m}\hat{t}$
+$$
+\vec{v}_a \leftarrow \vec{v}_a + \frac{J_{\text{normal}}}{m}\hat{n} + \frac{J_{\text{tangential}}}{m}\hat{t}
+$$
 
 For ball $b$:
 
