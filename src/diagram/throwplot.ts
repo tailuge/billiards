@@ -14,17 +14,17 @@ export class ThrowPlot {
 
   public plotCutAngle() {
     const R = CollisionThrow.R
-    this.plot("collision-throw-roll",[0.447, 1.341, 3.129], k => (k / R))
-    this.plot("collision-throw-stun",[0.447, 1.341, 3.129], _ => 0)
+    this.plot("collision-throw-roll", [0.447, 1.341, 3.129], k => (k / R))
+    this.plot("collision-throw-stun", [0.447, 1.341, 3.129], _ => 0)
 
-    this.plotRolls("collision-throw-varying-roll",[0, 0.25, 0.5, 1], k => (k/R),_=>0,phi=>phi)
-    this.plotRolls("collision-throw-varying-side",[0, 0.25, 0.5, 1], k => (k/R),z=>(1/R)*(z-45)/45,_=>0)
+    this.plotRolls("collision-throw-varying-roll", [0, 0.25, 0.5, 1], k => (k / R), _ => 0, phi => phi)
+    this.plotRolls("collision-throw-varying-side", [0, 0.25, 0.5, 1], k => (k / R), z => (1 / R) * (z - 45) / 45, _ => 0)
 
- // test:
+    // test:
     const model = new CollisionThrow(console.log)
-    model.plot(0.5, 15, -10, Math.PI/8)
+    model.plot(0.5, -15, -10, Math.PI / 8)
   }
-  
+
   public plot(div, ks, omegax) {
 
     const angles: number[][] = []

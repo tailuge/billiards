@@ -191,26 +191,26 @@ class Collision {
     // Perpendicular tangent vector
     const abTangent = new Vector3(-ab.y, ab.x, 0);
 
-    // Relative velocity at contact point
-    const vRel = a.vel.clone().sub(b.vel).add(
+
+    const vPoint = a.vel.clone().sub(b.vel).add(
       ab.clone().multiplyScalar(-R).cross(a.rvel).sub(
         ab.clone().multiplyScalar(R).cross(b.rvel)
       )
     );
 
-    const vRelNormal = ab.dot(vRel);
-    const vRelTangential = abTangent.dot(vRel); // slip velocity tangential to impact
-    const vRelz = vRel.z  // slip velocity in z direction
+    const vRelNormalMag = ab.dot(vPoint);
+    //vRel matches the surface relative velocity outlined in the paper
+    const vRel = vPoint.addScaledVector(ab, -vRelNormalMag)
+    const vRelMag = vRel.length();
+    const vRelTangential = abTangent.dot(vRel); // slip velocity perpendicular to line of impact
 
-    const vRelMag = Math.sqrt(Math.pow(vRelz, 2) + Math.pow(vRelTangential, 2));
     const μ = this.dynamicFriction(vRelMag);
 
-    const normalImpulse = vRelNormal;
+    const normalImpulse = vRelNormalMag;
     const tangentialImpulse =
-      Math.min((μ * vRelNormal) / vRelMag, 1 / 7) * ((-vRelTangential) - R * (a.rvel.z - b.rvel.z))
+      Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7) * (-vRelTangential)
 
-    let throwAngle = (Math.atan2(tangentialImpulse, normalImpulse) + 2 * Math.PI) % (2 * Math.PI);
+    let throwAngle = Math.atan2(tangentialImpulse, normalImpulse)
 
-
-    ...  correct and complete this method which currently is not modelling the ωz side spin ...
+    ...  Complete the code to update a.vel b.vel a.rvel b.rvel incorporating inelastic coefficient of friction e=0.98 ...
 ```

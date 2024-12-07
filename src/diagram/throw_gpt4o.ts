@@ -34,8 +34,12 @@ export class CollisionThrow {
     const μ = this.dynamicFriction(vRel);
     const numerator = Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7) * (v * Math.sin(ϕ) - CollisionThrow.R * ωz);
     const denominator = v * Math.cos(ϕ);
-    this.log(`(v * Math.sin(ϕ) - CollisionThrow.R * ωz)=${(v * Math.sin(ϕ) - CollisionThrow.R * ωz)}`)
     this.log(`inputs:v=${v}, ωx=${ωx}, ωz=${ωz}, ϕ=${ϕ}`)
+    this.log(`   v * Math.sin(ϕ) =${(v * Math.sin(ϕ))}`)
+    this.log(`   CollisionThrow.R * ωz =${(CollisionThrow.R * ωz)}`)
+    this.log(`   Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7) =${Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7)}`)
+    this.log(`   (v * Math.sin(ϕ) - CollisionThrow.R * ωz) =${(v * Math.sin(ϕ) - CollisionThrow.R * ωz)}`)
+    this.log("")
     this.log("vRel = ", vRel)
     this.log("μ = ", μ)
     this.log("numerator = ", numerator)
@@ -60,8 +64,9 @@ export class CollisionThrow {
 
     this.log("---original---")
     let result = this.throwAngle(v, ωx, ωz, ϕ)
+    this.log("")
     this.log("---new code")
-    this.updateVelocities(a, b)
+    result = this.updateVelocities(a, b)
     return result
   }
 
@@ -72,35 +77,35 @@ export class CollisionThrow {
 
     const R: number = 0.029
 
-    const vRel = a.vel.clone().sub(b.vel).add(
+    const vPoint = a.vel.clone().sub(b.vel).add(
       ab.clone().multiplyScalar(-R).cross(a.rvel).sub(
         ab.clone().multiplyScalar(R).cross(b.rvel)
       )
     );
 
-    const vRelNormal = ab.dot(vRel);
-    const vRelTangential = abTangent.dot(vRel); // slip velocity tangential to impact
-    const vRelz = vRel.z  // slip velocity in z direction
+    const vRelNormalMag = ab.dot(vPoint);
+    const vRel = vPoint.addScaledVector(ab, -vRelNormalMag)
+    const vRelMag = vRel.length();
+    const vRelTangential = abTangent.dot(vRel); // slip velocity perpendicular to line of impact
 
-    const vRelMag = Math.sqrt(Math.pow(vRelz, 2) + Math.pow(vRelTangential, 2));
     const μ = this.dynamicFriction(vRelMag);
 
-    const normalImpulse = vRelNormal;
+    const normalImpulse = vRelNormalMag;
     const tangentialImpulse =
-      Math.min((μ * vRelNormal) / vRelMag, 1 / 7) * (-vRelMag * Math.sign(vRelTangential))
+      Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7) * (-vRelTangential)
 
-    let throwAngle = (Math.atan2(tangentialImpulse, normalImpulse) + 2 * Math.PI) % (2 * Math.PI);
+    let throwAngle = Math.atan2(tangentialImpulse, normalImpulse)
 
-    this.log(`a.vel = (${a.vel.x},${a.vel.y},0)`)
-    this.log(`ab = (${ab.x},${ab.y},0)`)
-    this.log("vRel.length() =", vRel.length());
     this.log("vRelMag =", vRelMag);
-    this.log("vRelNormal =", vRelNormal);
-    this.log("vRelTangential =", vRelTangential);
     this.log("μ =", μ);
     this.log("tangentialImpulse (numerator)=", tangentialImpulse);
     this.log("normalImpulse (denominator)=", normalImpulse);
     this.log("throwAngle =", throwAngle);
+    this.log("")
+    this.log(`Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7) = ${Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7)}`)
+    this.log(`(-vRelMag * Math.sign(vRelTangential)) = ${(-vRelMag * Math.sign(vRelTangential))}`)
+    this.log("vRelNormalMag =", vRelNormalMag);
+    this.log("vRelTangential =", vRelTangential);
 
     return throwAngle;
   }
