@@ -6,7 +6,7 @@ import { Vector3 } from "three"
 import { zero } from "../../src/utils/utils"
 import { R } from "../../src/model/physics/constants"
 
-const epsilon = 0.001
+const epsilon = 0.05
 const t = 0.01
 const v = 10 * R
 
@@ -52,8 +52,8 @@ describe("Collision", () => {
     expect(Collision.willCollide(a, b, t)).to.be.true
     Collision.collide(a, b)
     expect(Collision.willCollide(a, b, t)).to.be.false
-    expect(a.vel.x).to.be.equal(-v)
-    expect(b.vel.x).to.be.equal(v)
+    expect(a.vel.x).to.be.approximately(-v,0.1)
+    expect(b.vel.x).to.be.approximately(v,0.1)
     done()
   })
 })

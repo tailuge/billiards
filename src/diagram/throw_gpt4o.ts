@@ -1,6 +1,7 @@
 import { Vector3 } from "three";
 import { Ball } from "../model/ball";
 import { up, zero } from "../utils/utils";
+import { I, m } from "../model/physics/constants";
 
 export class CollisionThrow {
 
@@ -76,7 +77,7 @@ export class CollisionThrow {
     const abTangent = new Vector3(-ab.y, ab.x, 0);
 
     const R: number = 0.029
-
+    const e = 0.98
     const vPoint = a.vel.clone().sub(b.vel).add(
       ab.clone().multiplyScalar(-R).cross(a.rvel).sub(
         ab.clone().multiplyScalar(R).cross(b.rvel)
@@ -90,8 +91,8 @@ export class CollisionThrow {
 
     const μ = this.dynamicFriction(vRelMag);
 
-    const normalImpulse = vRelNormalMag;
-    const tangentialImpulse =
+    let normalImpulse = vRelNormalMag;
+    let tangentialImpulse =
       Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7) * (-vRelTangential)
 
     let throwAngle = Math.atan2(tangentialImpulse, normalImpulse)
@@ -106,6 +107,30 @@ export class CollisionThrow {
     this.log(`(-vRelMag * Math.sign(vRelTangential)) = ${(-vRelMag * Math.sign(vRelTangential))}`)
     this.log("vRelNormalMag =", vRelNormalMag);
     this.log("vRelTangential =", vRelTangential);
+
+       // Normal impulse (inelastic collision)
+        normalImpulse = -(1 + e) * vRelNormalMag / (2 / m);
+
+       // Tangential impulse (frictional constraint)
+        tangentialImpulse = Math.min(
+         (μ * Math.abs(normalImpulse)) / vRelMag,
+         1 / 7
+       ) * -vRelTangential;
+   
+       // Impulse vectors
+       const impulseNormal = ab.clone().multiplyScalar(normalImpulse);
+       const impulseTangential = abTangent.clone().multiplyScalar(tangentialImpulse);
+   
+       // Apply impulses to linear velocities
+       a.vel.addScaledVector(impulseNormal, 1 / m).addScaledVector(impulseTangential, 1 / m);
+       b.vel.addScaledVector(impulseNormal, -1 / m).addScaledVector(impulseTangential, -1 / m);
+   
+       // Angular velocity updates
+       const angularImpulseA = ab.clone().multiplyScalar(-R).cross(impulseTangential);
+       const angularImpulseB = ab.clone().multiplyScalar(R).cross(impulseTangential);
+   
+       a.rvel.addScaledVector(angularImpulseA, 1 / I);
+       b.rvel.addScaledVector(angularImpulseB, 1 / I);
 
     return throwAngle;
   }
