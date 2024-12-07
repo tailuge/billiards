@@ -75,7 +75,7 @@ where
 
 #### collisions
 
-Based on paper by [Alciatore](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) incorporating throw effect due to the small amount of friction between balls. Figures to prove consistency with paper [here](https://tailuge.github.io/billiards/dist/diagrams/mathaven.html). 
+Based on paper by [Alciatore](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) incorporating throw effect due to the small amount of friction between balls. Figures to prove consistency between the [code](./src/model/physics/collisionthrow.ts) and paper [here](https://tailuge.github.io/billiards/dist/diagrams/mathaven.html). 
 
 
 For ball $a$:
