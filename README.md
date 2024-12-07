@@ -73,6 +73,35 @@ where
 ![equation](https://latex.codecogs.com/svg.image?M_{xy}=\frac{7}{5\sqrt{2}}R\mu&space;m&space;g)
 ,![equation](https://latex.codecogs.com/svg.image?M_{z}=\frac{2}{3}\mu&space;m&space;g\rho)
 
+#### collisions
+
+Based on [paper](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) by Alciatore and incorporates throw effect due to small amount of friction between the balls. Figures to prove consistency with paper [here](https://tailuge.github.io/billiards/dist/diagrams/mathaven.html). 
+
+
+For ball $a$:
+
+$\vec{v}_a \leftarrow \vec{v}_a + \frac{J_{\text{normal}}}{m}\hat{n} + \frac{J_{\text{tangential}}}{m}\hat{t}$
+
+For ball $b$:
+
+$\vec{v}_b \leftarrow \vec{v}_b - \frac{J_{\text{normal}}}{m}\hat{n} - \frac{J_{\text{tangential}}}{m}\hat{t}$
+
+Where:
+
+The relative velocity at the point of contact is computed as:
+
+$\vec{v}_{\text{rel}} = (\vec{v}_a - \vec{v}_b) + \vec{r}_a \times \vec{\omega}_a - \vec{r}_b \times \vec{\omega}_b$
+
+$\vec{r}_a = -R \cdot \hat{n}$ and $\vec{r}_b = R \cdot \hat{n}$
+
+$J_{\text{normal}} = \frac{-(1 + e)v_{\text{rel,normal}}}{(2/m)}$
+
+$J_{\text{tangential}} = \min\left( \frac{\mu J_{\text{normal}}}{v_{\text{rel}}}, \frac{1}{7} \right)(-v_{\text{rel,tangential}})$
+
+$\hat{n}$: normal unit vector along the line of centers.
+
+$\hat{t}$: tangential unit vector perpendicular to $\hat{n}$.
+
 #### cushion bounce
 
 This is based on a paper by [Mathaven](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf). Many of the [figures](https://tailuge.github.io/billiards/dist/diagrams/mathaven.html) from the paper are recreated to confirm correctness.
