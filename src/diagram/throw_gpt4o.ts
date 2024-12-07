@@ -1,7 +1,6 @@
 import { Vector3 } from "three";
 import { Ball } from "../model/ball";
 import { up, zero } from "../utils/utils";
-import { I } from "../model/physics/constants";
 
 export class CollisionThrow {
 
@@ -12,8 +11,12 @@ export class CollisionThrow {
   private static b: number = 0.108;  // Range of friction variation
   private static c: number = 1.088;  // Decay rate
 
+  private log;
+  constructor(log: (...args: any[]) => void = () => { }) {
+    this.log = log
+  }
 
-  private static dynamicFriction(vRel: number): number {
+  private dynamicFriction(vRel: number): number {
     return CollisionThrow.a + CollisionThrow.b * Math.exp(-CollisionThrow.c * vRel);
   }
 
@@ -28,16 +31,16 @@ export class CollisionThrow {
 
   public throwAngle(v: number, ωx: number, ωz: number, ϕ: number): number {
     const vRel = this.relativeVelocity(v, ωx, ωz, ϕ);
-    const μ = CollisionThrow.dynamicFriction(vRel);
+    const μ = this.dynamicFriction(vRel);
     const numerator = Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7) * (v * Math.sin(ϕ) - CollisionThrow.R * ωz);
     const denominator = v * Math.cos(ϕ);
-    console.log(`(v * Math.sin(ϕ) - CollisionThrow.R * ωz)=${ (v * Math.sin(ϕ) - CollisionThrow.R * ωz) }`)
-    console.log(`inputs:v=${v}, ωx=${ωx}, ωz=${ωz}, ϕ=${ϕ}`)
-    console.log("vRel = ", vRel)
-    console.log("μ = ", μ)
-    console.log("numerator = ", numerator)
-    console.log("denominator = ", denominator)
-    console.log("throw = ", Math.atan2(numerator, denominator))
+    this.log(`(v * Math.sin(ϕ) - CollisionThrow.R * ωz)=${(v * Math.sin(ϕ) - CollisionThrow.R * ωz)}`)
+    this.log(`inputs:v=${v}, ωx=${ωx}, ωz=${ωz}, ϕ=${ϕ}`)
+    this.log("vRel = ", vRel)
+    this.log("μ = ", μ)
+    this.log("numerator = ", numerator)
+    this.log("denominator = ", denominator)
+    this.log("throw = ", Math.atan2(numerator, denominator))
 
     return Math.atan2(numerator, denominator);
   }
@@ -55,13 +58,14 @@ export class CollisionThrow {
     const bpos = straight.applyAxisAngle(up, ϕ)
     const b = new Ball(bpos);
 
-    console.log("---original---")
+    this.log("---original---")
     let result = this.throwAngle(v, ωx, ωz, ϕ)
-    console.log("---new code")
-     CollisionThrow.updateVelocities(a, b)
+    this.log("---new code")
+    this.updateVelocities(a, b)
     return result
   }
-  private static updateVelocities(a: Ball, b: Ball) {
+
+  private updateVelocities(a: Ball, b: Ball) {
 
     const ab = b.pos.clone().sub(a.pos).normalize();
     const abTangent = new Vector3(-ab.y, ab.x, 0);
@@ -83,20 +87,20 @@ export class CollisionThrow {
 
     const normalImpulse = vRelNormal;
     const tangentialImpulse =
-      Math.min((μ * vRelNormal) / vRelMag, 1 / 7) * (-vRelMag*Math.sign(vRelTangential))
+      Math.min((μ * vRelNormal) / vRelMag, 1 / 7) * (-vRelMag * Math.sign(vRelTangential))
 
     let throwAngle = (Math.atan2(tangentialImpulse, normalImpulse) + 2 * Math.PI) % (2 * Math.PI);
 
-    console.log(`a.vel = (${a.vel.x},${a.vel.y},0)`)
-    console.log(`ab = (${ab.x},${ab.y},0)`)
-    console.log("vRel.length() =", vRel.length());
-    console.log("vRelMag =", vRelMag);
-    console.log("vRelNormal =", vRelNormal);
-    console.log("vRelTangential =", vRelTangential);
-    console.log("μ =", μ);
-    console.log("tangentialImpulse (numerator)=", tangentialImpulse);
-    console.log("normalImpulse (denominator)=", normalImpulse);
-    console.log("throwAngle =", throwAngle);
+    this.log(`a.vel = (${a.vel.x},${a.vel.y},0)`)
+    this.log(`ab = (${ab.x},${ab.y},0)`)
+    this.log("vRel.length() =", vRel.length());
+    this.log("vRelMag =", vRelMag);
+    this.log("vRelNormal =", vRelNormal);
+    this.log("vRelTangential =", vRelTangential);
+    this.log("μ =", μ);
+    this.log("tangentialImpulse (numerator)=", tangentialImpulse);
+    this.log("normalImpulse (denominator)=", normalImpulse);
+    this.log("throwAngle =", throwAngle);
 
     return throwAngle;
   }

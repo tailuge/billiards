@@ -21,8 +21,8 @@ export class ThrowPlot {
     this.plotRolls("collision-throw-varying-side",[0, 0.25, 0.5, 1], k => (k/R),z=>(1/R)*(z-45)/45,_=>0)
 
  // test:
-    const model = new CollisionThrow()
-    model.plot(0.5, 0, -10, Math.PI/8)
+    const model = new CollisionThrow(console.log)
+    model.plot(0.5, 15, -10, Math.PI/8)
   }
   
   public plot(div, ks, omegax) {
