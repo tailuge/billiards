@@ -2,6 +2,7 @@ import {
   rotateApplyUnrotate,
   isGripCushion,
   bounceHan,
+  mathavenAdapter,
 } from "../model/physics/physics"
 import { Vector3 } from "three"
 
@@ -59,7 +60,7 @@ export class CushionPlot {
         this.endx,
         this.endy
       )
-      const delta = rotateApplyUnrotate(0, v, w, bounceHan)
+      const delta = rotateApplyUnrotate(0, v, w, mathavenAdapter)
       v.add(delta.v)
       this.drawArrow(
         this.endx,

@@ -82,9 +82,15 @@ For ball $a$:
 
 ![Equation 1](https://latex.codecogs.com/gif.latex?%5Cvec%7Bv%7D_a%20%5Cleftarrow%20%5Cvec%7Bv%7D_a%20%2B%20%5Cfrac%7BJ_%7B%5Ctext%7Bnormal%7D%7D%7D%7Bm%7D%5Chat%7Bn%7D%20%2B%20%5Cfrac%7BJ_%7B%5Ctext%7Btangential%7D%7D%7D%7Bm%7D%5Chat%7Bt%7D)
 
+![Equation for Angular Velocity of Ball a](https://latex.codecogs.com/gif.latex?%5Cvec%7B%5Comega%7D_a%20%5Cleftarrow%20%5Cvec%7B%5Comega%7D_a%20%2B%20%5Cfrac%7B1%7D%7BI%7D%20%28%5Cvec%7Br%7D_a%20%5Ctimes%20%5Cvec%7BJ%7D_%7B%5Ctext%7Btangential%7D%7D%29)
+
 For ball $b$:
 
 ![Equation 2](https://latex.codecogs.com/gif.latex?%5Cvec%7Bv%7D_b%20%5Cleftarrow%20%5Cvec%7Bv%7D_b%20-%20%5Cfrac%7BJ_%7B%5Ctext%7Bnormal%7D%7D%7D%7Bm%7D%5Chat%7Bn%7D%20-%20%5Cfrac%7BJ_%7B%5Ctext%7Btangential%7D%7D%7D%7Bm%7D%5Chat%7Bt%7D)
+
+
+![Equation for Angular Velocity of Ball b](https://latex.codecogs.com/gif.latex?%5Cvec%7B%5Comega%7D_b%20%5Cleftarrow%20%5Cvec%7B%5Comega%7D_b%20%2B%20%5Cfrac%7B1%7D%7BI%7D%20%28%5Cvec%7Br%7D_b%20%5Ctimes%20%5Cvec%7BJ%7D_%7B%5Ctext%7Btangential%7D%7D%29)
+
 
 Where:
 
