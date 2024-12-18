@@ -13,7 +13,7 @@ export class SocketServer {
     const gitpodCommand = spawnSync(`gp`, ["url", `${port}`], {
       shell: false,
     }).stdout
-    if (gitpodCommand !== null) {
+    if (gitpodCommand !== null && gitpodCommand !== undefined) {
       const gitpodUrl = gitpodCommand.toString()
       ServerLog.log(`WebSocketServer is exposed on gitpod at ${gitpodUrl}`)
     }
