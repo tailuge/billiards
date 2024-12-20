@@ -8,6 +8,17 @@ const port = Number(process.env.PORT || 8888)
 const socketserver = new SocketServer(port)
 const app = express()
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 app.use("/dist", express.static("dist"))
 app.get("/logs", (_, res) => {
   res.send(`<pre style="font-size: smaller;">${ServerLog.record}</pre>`)
