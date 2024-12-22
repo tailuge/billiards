@@ -18,13 +18,15 @@
   "scripts": {
     "test": "jest --verbose",
     "coverage": "jest --coverage",
-    "dev": "webpack ",
+    "dev": "webpack",
     "prettify": "prettier --cache true --write --trailing-comma es5 --no-semi {src,test}/**/*.[jt]s dist/**/*.{css,html} *.[jt]s *.json dist/lobby/*",
     "markdownlint": "npx markdownlint-cli2 README.md --fix",
     "serve": "webpack serve",
     "servegitpod": "webpack serve --client-web-socket-url $(gp url 8080 | sed 's/http/ws/' | sed 's#$#/ws#')",
     "deps": "npx yarn-check --skip-unused",
-    "websocket": "ts-node src/network/server/server.ts",
+    "websocket": "node dist/server.js",
+    "build:server": "webpack --config webpack.server.config.js",
+    "start:server": "node dist/server.js",
     "nop": "echo nop",
     "dockerify": "docker build -f dist/Dockerfile -t tailuge/billiards-nginx .",
     "gltfpack": "npx gltfpack -i dist/models/p8.gltf -o dist/models/p8.min.gltf && npx gltfpack -i dist/models/threecushion.gltf -o dist/models/threecushion.min.gltf && npx gltfpack -i dist/models/snooker.gltf -o dist/models/snooker.min.gltf && npx gltfpack -i dist/models/d-snooker.gltf -o dist/models/d-snooker.min.gltf"
@@ -67,6 +69,7 @@
     "typescript": "5.7.2",
     "webpack": "5.97.1",
     "webpack-cli": "6.0.1",
-    "webpack-dev-server": "5.2.0"
+    "webpack-dev-server": "5.2.0",
+    "webpack-node-externals": "^3.0.0"
   }
 }

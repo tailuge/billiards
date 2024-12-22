@@ -1,7 +1,6 @@
 import {
   rotateApplyUnrotate,
   isGripCushion,
-  bounceHan,
   mathavenAdapter,
 } from "../model/physics/physics"
 import { Vector3 } from "three"
