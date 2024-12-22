@@ -4,6 +4,8 @@ import { ServerLog } from "./serverlog"
 
 ServerLog.enable = true
 
+ServerLog.log(`Started execution`)
+
 const port = Number(process.env.PORT || 8888)
 const socketserver = new SocketServer(port)
 const app = express()
@@ -26,6 +28,8 @@ app.get("/logs", (_, res) => {
 app.get("/", (_, res) => {
   res.redirect("/dist/multi.html")
 })
+
+ServerLog.log(`Starting server`)
 
 const server = app.listen(port, () =>
   ServerLog.log(`Webserver running on http://localhost:${port}/dist/multi.html`)
