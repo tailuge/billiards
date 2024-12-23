@@ -1,4 +1,5 @@
 module.exports = {
+  rootDir: "../",
   preset: "ts-jest",
   transformIgnorePatterns: ["node_modules/(?!jsoncrush)"],
   transform: {

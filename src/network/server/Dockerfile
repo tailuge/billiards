@@ -2,9 +2,6 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-# Install nodemon globally
-RUN npm install -g nodemon
-
 # Create a non-root user
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
@@ -13,8 +10,8 @@ USER appuser
 COPY . .
 
 # Expose the application port
-EXPOSE 8888
+EXPOSE 10000
 
 # Command to run the application
-CMD ["nodemon", "src/network/server/server.ts"]
+CMD ["node", "dist/server.js"]
 
