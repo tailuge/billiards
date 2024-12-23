@@ -13,6 +13,7 @@ module.exports = {
     extensions: [".ts", ".js"],
     modules: [path.resolve(__dirname, "../../../node_modules"), "node_modules"],
   },
+  mode: "production",
   module: {
     rules: [
       {

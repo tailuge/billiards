@@ -1,5 +1,4 @@
 import { WebSocketServer, WebSocket } from "ws"
-import { spawnSync } from "child_process"
 import { Lobby } from "./lobby"
 import { ServerLog } from "./serverlog"
 
@@ -10,14 +9,6 @@ export class SocketServer {
   constructor(port) {
     this.port = port
     ServerLog.log(`WebSocketServer running on port ${port}`)
-    const gitpodCommand = spawnSync(`gp`, ["url", `${port}`], {
-      shell: false,
-    }).stdout
-    if (gitpodCommand !== null && gitpodCommand !== undefined) {
-      const gitpodUrl = gitpodCommand.toString()
-      ServerLog.log(`WebSocketServer is exposed on gitpod at ${gitpodUrl}`)
-    }
-
     this.wss.on("connection", (ws: WebSocket, req) => {
       this.connection(ws, req)
     })
