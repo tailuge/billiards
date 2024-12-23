@@ -5,12 +5,12 @@ import { I, m } from "../model/physics/constants";
 
 export class CollisionThrow {
 
-  public static R: number = 0.029; // ball radius in meters
+  public static readonly R: number = 0.029; // ball radius in meters
 
   // Friction parameters
-  private static a: number = 0.01; // Minimum friction coefficient
-  private static b: number = 0.108;  // Range of friction variation
-  private static c: number = 1.088;  // Decay rate
+  private static readonly a: number = 0.01; // Minimum friction coefficient
+  private static readonly b: number = 0.108;  // Range of friction variation
+  private static readonly c: number = 1.088;  // Decay rate
 
   private log;
   constructor(log: (...args: any[]) => void = () => { }) {

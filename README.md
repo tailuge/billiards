@@ -191,7 +191,7 @@ Some of the Mathaven equations not supplied by the paper were inferred by LLMs a
 ### Install
 
 ```shell
-nvm use v18.17.1
+nvm use v22.12.0
 yarn install
 yarn dev
 yarn gltfpack
@@ -225,7 +225,9 @@ yarn prettify
 ### Two player
 
 ```shell
-yarn websocket
+yarn websocket #(for local dev)
+yarn build:server
+yarn start:server
 ```
 
 the client uses query parameter ``?websocketserver=wss://some-host`` to locate

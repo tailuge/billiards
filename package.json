@@ -26,7 +26,7 @@
     "websocket": "nodemon ./src/network/server/server.ts",
     "build:server": "webpack --config ./src/network/server/webpack.server.config.js",
     "start:server": "node dist/server.js",
-    "dockerify": "docker build -f dist/Dockerfile -t tailuge/billiards-nginx .",
+    "dockerify": "docker buildx build --platform linux/amd64 -f ./src/network/server/Dockerfile -t tailuge/billiards-network .",
     "gltfpack": "npx gltfpack -i dist/models/p8.gltf -o dist/models/p8.min.gltf && npx gltfpack -i dist/models/threecushion.gltf -o dist/models/threecushion.min.gltf && npx gltfpack -i dist/models/snooker.gltf -o dist/models/snooker.min.gltf && npx gltfpack -i dist/models/d-snooker.gltf -o dist/models/d-snooker.min.gltf"
   },
   "nodemonConfig": {
