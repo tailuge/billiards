@@ -26,10 +26,20 @@ export class SocketServer {
     const sent = params.get("sent") ?? ""
     const recv = params.get("recv") ?? ""
     const name = params.get("name") ?? "anonymous"
+
     ServerLog.log(`${name}:${clientId} requesting to join ${tableId}`)
 
     const client = this.lobby.createClient(ws, tableId, clientId, name)
     if (!client) {
+      return
+    }
+
+    if (params.has("spectator")) {
+      this.lobby.spectateTable(client, tableId)
+
+      ws.on("close", (_) => {
+        this.lobby.handleUnspectateTable(client, tableId)
+      })
       return
     }
 
@@ -45,4 +55,5 @@ export class SocketServer {
       this.lobby.handleLeaveTable(client, tableId)
     })
   }
+    
 }

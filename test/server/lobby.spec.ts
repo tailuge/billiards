@@ -270,4 +270,11 @@ describe("Lobby", () => {
     expect(player1.ws.messages).to.be.length(1)
     done()
   })
+
+  it("spectate empty table and unspectate", (done) => {
+    expect(lobby.spectateTable(player1, tableId)).to.be.true
+    expect(lobby.handleUnspectateTable(player1, tableId)).to.be.true
+    done()
+  })
+
 })

@@ -8,6 +8,7 @@ import { ServerLog } from "./serverlog"
 import { Rejoin } from "./rejoin"
 
 export class Lobby {
+
   readonly tables = new Tables()
 
   createClient(ws, tableId, clientId, name): Client | undefined {
@@ -128,4 +129,14 @@ export class Lobby {
     client.ws?.send(EventUtil.serialise(event))
     ServerLog.logEvent(`sending to ${client.name}:${client.clientId}`, event)
   }
+
+  handleUnspectateTable(client: Client, tableId) {
+    ServerLog.log(`${client.name}:${client.clientId} unspectating ${tableId}`)
+    return true
+  }
+  spectateTable(client: Client, tableId) {
+    ServerLog.log(`${client.name}:${client.clientId} spectating ${tableId}`)
+    return true
+  }
+
 }
