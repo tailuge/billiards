@@ -1,9 +1,14 @@
 const path = require("path");
 const nodeExternals = require("webpack-node-externals");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
   target: "node",
-  externals: [nodeExternals()],
+  externals: [
+    nodeExternals({
+      allowlist: [], // Add any dependencies that should NOT be externalized
+    }),
+  ],
   entry: "./src/network/server/server.ts",
   output: {
     path: path.resolve(__dirname, "../../../dist"),
@@ -18,9 +23,22 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        use: "ts-loader",
+        use: {
+          loader: "ts-loader",
+          options: {
+            transpileOnly: true,
+          },
+        },
         exclude: /node_modules/,
       },
     ],
+  },
+  optimization: {
+    usedExports: true, // Tree shaking
+    minimize: true,
+    minimizer: [new TerserPlugin()],
+  },
+  cache: {
+    type: "filesystem", // Enable caching
   },
 };
