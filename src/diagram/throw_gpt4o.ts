@@ -64,55 +64,8 @@ export class CollisionThrowPlot {
     const bpos = straight.applyAxisAngle(up, ϕ)
     const b = new Ball(bpos);
 
-    //this.log("---original---")
-    //let result = this.throwAngle(v, ωx, ωz, ϕ)
-    //this.log("")
-    //this.log("---new code")
-    const target:string = "plot"
-    if (target == "actual") {
-      Collision.model.updateVelocities(a, b)
-      return Math.atan2(-Collision.model.tangentialImpulse, Collision.model.normalImpulse)
-    }
-    return this.updateVelocities(a, b)
-  }
-
-  private updateVelocities(a: Ball, b: Ball) {
-
-    const ab = b.pos.clone().sub(a.pos).normalize();
-    const abTangent = new Vector3(-ab.y, ab.x, 0);
-
-    const R: number = 0.029
-    const vPoint = a.vel.clone().sub(b.vel).add(
-      ab.clone().multiplyScalar(-R).cross(a.rvel).sub(
-        ab.clone().multiplyScalar(R).cross(b.rvel)
-      )
-    );
-
-    const vRelNormalMag = ab.dot(vPoint);
-    const vRel = vPoint.addScaledVector(ab, -vRelNormalMag)
-    const vRelMag = vRel.length();
-    const vRelTangential = abTangent.dot(vRel); // slip velocity perpendicular to line of impact
-
-    const μ = this.dynamicFriction(vRelMag);
-
-    let normalImpulse = vRelNormalMag;
-    let tangentialImpulse =
-      Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7) * (-vRelTangential)
-
-    let throwAngle = Math.atan2(tangentialImpulse, normalImpulse)
-
-    this.log("vRelMag =", vRelMag);
-    this.log("μ =", μ);
-    this.log("tangentialImpulse (numerator)=", tangentialImpulse);
-    this.log("normalImpulse (denominator)=", normalImpulse);
-    this.log("throwAngle =", throwAngle);
-    this.log("")
-    this.log(`Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7) = ${Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7)}`)
-    this.log(`(-vRelMag * Math.sign(vRelTangential)) = ${(-vRelMag * Math.sign(vRelTangential))}`)
-    this.log("vRelNormalMag =", vRelNormalMag);
-    this.log("vRelTangential =", vRelTangential);
-
-    return throwAngle;
+    Collision.model.updateVelocities(a, b)
+    return Math.atan2(Collision.model.tangentialImpulse, -Collision.model.normalImpulse)
   }
 
 }

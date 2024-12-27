@@ -39,10 +39,8 @@ export class CollisionThrow {
 
         const μ = this.dynamicFriction(vRelMag);
 
-        //let normalImpulse = vRelNormalMag;
-        //let tangentialImpulse =
-        //    Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7) * (-vRelTangential)
-
+        // let normalImpulse = vRelNormalMag;
+        // let tangentialImpulse = Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7) * (-vRelTangential)
         // matches paper when throwAngle = Math.atan2(tangentialImpulse, normalImpulse)
 
         // Normal impulse (inelastic collision)
