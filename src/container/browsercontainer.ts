@@ -28,6 +28,7 @@ export class BrowserContainer {
     score: 0,
   }
   cushionModel
+  spectator
   assets: Assets
   now
   constructor(canvas3d, params) {
@@ -40,6 +41,7 @@ export class BrowserContainer {
     this.wss = params.get("websocketserver")
     this.canvas3d = canvas3d
     this.cushionModel = this.cushion(params.get("cushionModel"))
+    this.spectator = params.has("spectator")
   }
 
   cushion(model) {
@@ -76,7 +78,7 @@ export class BrowserContainer {
     this.container.table.cushionModel = this.cushionModel
     this.setReplayLink()
     if (this.wss) {
-      const params = `name=${this.playername}&tableId=${this.tableId}&clientId=${this.clientId}`
+      const params = `name=${this.playername}&tableId=${this.tableId}&clientId=${this.clientId}${this.spectator ? "&spectator" : ""}`
       this.container.isSinglePlayer = false
       this.sc = new SocketConnection(`${this.wss}?${params}`, this.clientId)
       this.networkButton()

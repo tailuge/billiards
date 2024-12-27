@@ -99,6 +99,9 @@ export class Lobby {
     tableInfo.otherClients(client).forEach((c) => {
       this.send(c, tableId, event)
     })
+    tableInfo.spectators.forEach((c) => {
+      this.send(c, tableId, event)
+    })
   }
 
   handleLeaveTable(client, tableId) {
@@ -132,10 +135,15 @@ export class Lobby {
 
   handleUnspectateTable(client: Client, tableId) {
     ServerLog.log(`${client.name}:${client.clientId} unspectating ${tableId}`)
+    const tableInfo = this.tables.getTable(tableId)
+    tableInfo.spectatorLeave(client)
     return true
   }
+
   spectateTable(client: Client, tableId) {
     ServerLog.log(`${client.name}:${client.clientId} spectating ${tableId}`)
+    const tableInfo = this.tables.getTable(tableId)
+    tableInfo.spectatorJoin(client)
     return true
   }
 

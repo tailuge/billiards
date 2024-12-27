@@ -6,6 +6,7 @@ export class TableInfo {
   readonly tableId: string
   readonly owningClientIds: string[] = []
   clients: Client[] = []
+  spectators: Client[] = []
 
   eventHistory: Map<string, EventHistory> = new Map()
 
@@ -37,6 +38,14 @@ export class TableInfo {
   join(client: Client) {
     this.owningClientIds.push(client.clientId)
     this.clients.push(client)
+  }
+
+  spectatorJoin(client: Client) {
+    this.spectators.push(client)
+  }
+
+  spectatorLeave(client: Client) {
+    this.spectators = this.spectators.filter((c) => c.clientId !== client.clientId)
   }
 
   rejoin(client: Client) {

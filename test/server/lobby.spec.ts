@@ -38,6 +38,7 @@ beforeEach(function (done) {
   player1.ws.reset()
   player1r.ws.reset()
   player2.ws.reset()
+  player3.ws.reset()
 })
 
 const jestConsole = console
@@ -276,5 +277,25 @@ describe("Lobby", () => {
     expect(lobby.handleUnspectateTable(player1, tableId)).to.be.true
     done()
   })
+
+  it("spectate full table and unspectate", (done) => {
+    lobby.joinTable(player1, tableId)
+    lobby.joinTable(player2, tableId)
+    expect(lobby.spectateTable(player3, tableId)).to.be.true
+    expect(lobby.handleUnspectateTable(player3, tableId)).to.be.true
+    done()
+  })
+
+  it("spectator gets messages", (done) => {
+    lobby.joinTable(player1, tableId)
+    lobby.joinTable(player2, tableId)
+    expect(lobby.spectateTable(player3, tableId)).to.be.true
+    const message = EventUtil.serialise(new AimEvent())
+    lobby.handleTableMessage(player1, tableId, message)
+    const event = EventUtil.fromSerialised(player3.ws.messages[0])
+    expect(event).to.be.an.instanceof(AimEvent)
+    done()
+  })
+
 
 })
