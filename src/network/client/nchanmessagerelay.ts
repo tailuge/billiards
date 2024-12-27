@@ -2,7 +2,7 @@ import { MessageRelay } from "./messagerelay"
 
 export class NchanMessageRelay<T> implements MessageRelay<T> {
 
-  private websockets: Map<string, WebSocket> = new Map()
+  private readonly websockets: Map<string, WebSocket> = new Map()
 
   constructor(private readonly baseURL: string) { }
 
