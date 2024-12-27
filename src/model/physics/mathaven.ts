@@ -84,7 +84,7 @@ export class Mathaven {
         this.updateAngularVelocity(ΔP)
         this.updateWorkDone(ΔP)
         if (this.i++ > 10 * this.N) {
-            throw "Solution not found"
+            throw new Error("Solution not found")
         }
     }
 

@@ -9,7 +9,7 @@ import { Snooker } from "../controller/rules/snooker"
 
 export class View {
   readonly scene = new Scene()
-  private renderer: WebGLRenderer | undefined
+  private readonly renderer: WebGLRenderer | undefined
   camera: Camera
   windowWidth = 1
   windowHeight = 1

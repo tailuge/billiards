@@ -3,10 +3,10 @@ import { TableGeometry } from "./tablegeometry"
 import { R } from "../model/physics/constants"
 
 export class CameraTop {
-  static aspectLimit = 1.78
-  static portrait = 0.95
-  static fov = 20
-  static zoomFactor = 1
+  static readonly aspectLimit = 1.78
+  static readonly portrait = 0.95
+  static readonly fov = 20
+  static readonly zoomFactor = 1
   static viewPoint(aspectRatio, fov) {
     const dist = CameraTop.zoomFactor / (2 * Math.tan((fov * Math.PI) / 360))
 
