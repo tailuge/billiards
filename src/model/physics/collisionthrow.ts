@@ -10,6 +10,9 @@ import { I, m, R } from "./constants";
  */
 export class CollisionThrow {
 
+    normalImpulse: number;
+    tangentialImpulse: number;
+
     private dynamicFriction(vRel: number): number {
         return 0.01 + 0.108 * Math.exp(-1.088 * vRel);
     }
@@ -36,24 +39,24 @@ export class CollisionThrow {
 
         const μ = this.dynamicFriction(vRelMag);
 
-        let normalImpulse = vRelNormalMag;
-        let tangentialImpulse =
-            Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7) * (-vRelTangential)
+        //let normalImpulse = vRelNormalMag;
+        //let tangentialImpulse =
+        //    Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7) * (-vRelTangential)
 
         // matches paper when throwAngle = Math.atan2(tangentialImpulse, normalImpulse)
 
         // Normal impulse (inelastic collision)
-        normalImpulse = -(1 + e) * vRelNormalMag / (2 / m);
+        this.normalImpulse = -(1 + e) * vRelNormalMag / (2 / m);
 
         // Tangential impulse (frictional constraint)
-        tangentialImpulse = Math.min(
-            (μ * Math.abs(normalImpulse)) / vRelMag,
+        this.tangentialImpulse = Math.min(
+            (μ * Math.abs(this.normalImpulse)) / vRelMag,
             1 / 7
         ) * -vRelTangential;
 
         // Impulse vectors
-        const impulseNormal = ab.clone().multiplyScalar(normalImpulse);
-        const impulseTangential = abTangent.clone().multiplyScalar(tangentialImpulse);
+        const impulseNormal = ab.clone().multiplyScalar(this.normalImpulse);
+        const impulseTangential = abTangent.clone().multiplyScalar(this.tangentialImpulse);
 
         // Apply impulses to linear velocities
         a.vel.addScaledVector(impulseNormal, 1 / m).addScaledVector(impulseTangential, 1 / m);

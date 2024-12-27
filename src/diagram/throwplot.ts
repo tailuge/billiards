@@ -1,6 +1,6 @@
 
 import { config, color, createTrace, layout } from "./plotlyconfig";
-import { CollisionThrow } from "./throw_gpt4o";
+import { CollisionThrowPlot } from "./throw_gpt4o";
 
 export class ThrowPlot {
 
@@ -13,7 +13,7 @@ export class ThrowPlot {
   }
 
   public plotCutAngle() {
-    const R = CollisionThrow.R
+    const R = CollisionThrowPlot.R
     this.plot("collision-throw-roll", [0.447, 1.341, 3.129], k => (k / R))
     this.plot("collision-throw-stun", [0.447, 1.341, 3.129], _ => 0)
 
@@ -21,7 +21,7 @@ export class ThrowPlot {
     this.plotRolls("collision-throw-varying-side", [0, 0.25, 0.5, 1], k => (k / R), z => (1 / R) * (z - 45) / 45, _ => 0)
 
     // test:
-    const model = new CollisionThrow(console.log)
+    const model = new CollisionThrowPlot(console.log)
     model.plot(0.5, -15, -10, Math.PI / 8)
   }
 
@@ -35,7 +35,7 @@ export class ThrowPlot {
       deg = []
       for (let alpha = 1; alpha < 90; alpha += 1) {
         deg.push(alpha)
-        const model = new CollisionThrow()
+        const model = new CollisionThrowPlot()
         const throwAngle = model.plot(k, omegax(k), 0, this.degToRad(alpha))
         angle.push(this.radToDeg(throwAngle))
       }
@@ -64,7 +64,7 @@ export class ThrowPlot {
       x = []
       for (let alpha = 1; alpha < 90; alpha += 1) {
         x.push(alpha)
-        const model = new CollisionThrow()
+        const model = new CollisionThrowPlot()
         const throwAngle = model.plot(1, omegax(k), omegaz(alpha), this.degToRad(phi(alpha)))
         angle.push(this.radToDeg(throwAngle))
       }

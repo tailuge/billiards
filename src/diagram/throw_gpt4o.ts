@@ -1,9 +1,9 @@
 import { Vector3 } from "three";
 import { Ball } from "../model/ball";
 import { up, zero } from "../utils/utils";
-import { I, m } from "../model/physics/constants";
+import { Collision } from "../model/physics/collision";
 
-export class CollisionThrow {
+export class CollisionThrowPlot {
 
   public static readonly R: number = 0.029; // ball radius in meters
 
@@ -12,20 +12,20 @@ export class CollisionThrow {
   private static readonly b: number = 0.108;  // Range of friction variation
   private static readonly c: number = 1.088;  // Decay rate
 
-  private log;
+  private readonly log;
   constructor(log: (...args: any[]) => void = () => { }) {
     this.log = log
   }
 
   private dynamicFriction(vRel: number): number {
-    return CollisionThrow.a + CollisionThrow.b * Math.exp(-CollisionThrow.c * vRel);
+    return CollisionThrowPlot.a + CollisionThrowPlot.b * Math.exp(-CollisionThrowPlot.c * vRel);
   }
 
 
   protected relativeVelocity(v: number, ωx: number, ωz: number, ϕ: number): number {
     return Math.sqrt(
-      Math.pow(v * Math.sin(ϕ) - ωz * CollisionThrow.R, 2) +
-      Math.pow(Math.cos(ϕ) * ωx * CollisionThrow.R, 2)
+      Math.pow(v * Math.sin(ϕ) - ωz * CollisionThrowPlot.R, 2) +
+      Math.pow(Math.cos(ϕ) * ωx * CollisionThrowPlot.R, 2)
     );
   }
 
@@ -33,13 +33,13 @@ export class CollisionThrow {
   public throwAngle(v: number, ωx: number, ωz: number, ϕ: number): number {
     const vRel = this.relativeVelocity(v, ωx, ωz, ϕ);
     const μ = this.dynamicFriction(vRel);
-    const numerator = Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7) * (v * Math.sin(ϕ) - CollisionThrow.R * ωz);
+    const numerator = Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7) * (v * Math.sin(ϕ) - CollisionThrowPlot.R * ωz);
     const denominator = v * Math.cos(ϕ);
     this.log(`inputs:v=${v}, ωx=${ωx}, ωz=${ωz}, ϕ=${ϕ}`)
     this.log(`   v * Math.sin(ϕ) =${(v * Math.sin(ϕ))}`)
-    this.log(`   CollisionThrow.R * ωz =${(CollisionThrow.R * ωz)}`)
+    this.log(`   CollisionThrow.R * ωz =${(CollisionThrowPlot.R * ωz)}`)
     this.log(`   Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7) =${Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7)}`)
-    this.log(`   (v * Math.sin(ϕ) - CollisionThrow.R * ωz) =${(v * Math.sin(ϕ) - CollisionThrow.R * ωz)}`)
+    this.log(`   (v * Math.sin(ϕ) - CollisionThrow.R * ωz) =${(v * Math.sin(ϕ) - CollisionThrowPlot.R * ωz)}`)
     this.log("")
     this.log("vRel = ", vRel)
     this.log("μ = ", μ)
@@ -50,6 +50,7 @@ export class CollisionThrow {
     return Math.atan2(numerator, denominator);
   }
 
+
   public plot(v: number, ωx: number, ωz: number, ϕ: number) {
     // assume balls in contact along y axis 
     // cue ball a is travelling +y only
@@ -59,16 +60,20 @@ export class CollisionThrow {
     a.vel.copy(new Vector3(0, v, 0))
     a.rvel.copy(new Vector3(ωx, 0, ωz))
 
-    const straight = new Vector3(0, 2 * CollisionThrow.R)
+    const straight = new Vector3(0, 2 * CollisionThrowPlot.R)
     const bpos = straight.applyAxisAngle(up, ϕ)
     const b = new Ball(bpos);
 
-    this.log("---original---")
-    let result = this.throwAngle(v, ωx, ωz, ϕ)
-    this.log("")
-    this.log("---new code")
-    result = this.updateVelocities(a, b)
-    return result
+    //this.log("---original---")
+    //let result = this.throwAngle(v, ωx, ωz, ϕ)
+    //this.log("")
+    //this.log("---new code")
+    const target:string = "plot"
+    if (target == "actual") {
+      Collision.model.updateVelocities(a, b)
+      return Math.atan2(-Collision.model.tangentialImpulse, Collision.model.normalImpulse)
+    }
+    return this.updateVelocities(a, b)
   }
 
   private updateVelocities(a: Ball, b: Ball) {
@@ -77,7 +82,6 @@ export class CollisionThrow {
     const abTangent = new Vector3(-ab.y, ab.x, 0);
 
     const R: number = 0.029
-    const e = 0.98
     const vPoint = a.vel.clone().sub(b.vel).add(
       ab.clone().multiplyScalar(-R).cross(a.rvel).sub(
         ab.clone().multiplyScalar(R).cross(b.rvel)
@@ -107,30 +111,6 @@ export class CollisionThrow {
     this.log(`(-vRelMag * Math.sign(vRelTangential)) = ${(-vRelMag * Math.sign(vRelTangential))}`)
     this.log("vRelNormalMag =", vRelNormalMag);
     this.log("vRelTangential =", vRelTangential);
-
-       // Normal impulse (inelastic collision)
-        normalImpulse = -(1 + e) * vRelNormalMag / (2 / m);
-
-       // Tangential impulse (frictional constraint)
-        tangentialImpulse = Math.min(
-         (μ * Math.abs(normalImpulse)) / vRelMag,
-         1 / 7
-       ) * -vRelTangential;
-   
-       // Impulse vectors
-       const impulseNormal = ab.clone().multiplyScalar(normalImpulse);
-       const impulseTangential = abTangent.clone().multiplyScalar(tangentialImpulse);
-   
-       // Apply impulses to linear velocities
-       a.vel.addScaledVector(impulseNormal, 1 / m).addScaledVector(impulseTangential, 1 / m);
-       b.vel.addScaledVector(impulseNormal, -1 / m).addScaledVector(impulseTangential, -1 / m);
-   
-       // Angular velocity updates
-       const angularImpulseA = ab.clone().multiplyScalar(-R).cross(impulseTangential);
-       const angularImpulseB = ab.clone().multiplyScalar(R).cross(impulseTangential);
-   
-       a.rvel.addScaledVector(angularImpulseA, 1 / I);
-       b.rvel.addScaledVector(angularImpulseB, 1 / I);
 
     return throwAngle;
   }
