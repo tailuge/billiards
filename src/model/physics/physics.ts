@@ -184,9 +184,8 @@ export function restitutionCushion(v: Vector3) {
 }
 
 function cartesionToBallCentric(v, w) {
-
   const mathaven = new Mathaven(m, R, ee, μs, μw + 0.1)
-  mathaven.solve(v.x,v.y,w.x,w.y,w.z)
+  mathaven.solve(v.x, v.y, w.x, w.y, w.z)
 
   const rv = new Vector3(mathaven.vx, mathaven.vy, 0)
   const rw = new Vector3(mathaven.ωx, mathaven.ωy, mathaven.ωz)
@@ -196,7 +195,7 @@ function cartesionToBallCentric(v, w) {
 
 /**
  * Bounce is called with ball travelling in +x direction to cushion,
- * mathaven expects it in +y direction and also requires angle 
+ * mathaven expects it in +y direction and also requires angle
  * and spin to be relative to direction of ball travel.
  */
 export function mathavenAdapter(v: Vector3, w: Vector3) {

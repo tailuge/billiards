@@ -55,5 +55,4 @@ export class SocketServer {
       this.lobby.handleLeaveTable(client, tableId)
     })
   }
-    
 }

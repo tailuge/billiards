@@ -4,7 +4,11 @@ import { EventUtil } from "../events/eventutil"
 import { BreakEvent } from "../events/breakevent"
 import { SocketConnection } from "../network/client/socketconnection"
 import { GameEvent } from "../events/gameevent"
-import { bounceHan, bounceHanBlend, mathavenAdapter } from "../model/physics/physics"
+import {
+  bounceHan,
+  bounceHanBlend,
+  mathavenAdapter,
+} from "../model/physics/physics"
 import JSONCrush from "jsoncrush"
 import { Assets } from "../view/assets"
 

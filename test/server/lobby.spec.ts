@@ -296,6 +296,4 @@ describe("Lobby", () => {
     expect(event).to.be.an.instanceof(AimEvent)
     done()
   })
-
-
 })

@@ -8,7 +8,6 @@ import { ServerLog } from "./serverlog"
 import { Rejoin } from "./rejoin"
 
 export class Lobby {
-
   readonly tables = new Tables()
 
   createClient(ws, tableId, clientId, name): Client | undefined {
@@ -146,5 +145,4 @@ export class Lobby {
     tableInfo.spectatorJoin(client)
     return true
   }
-
 }

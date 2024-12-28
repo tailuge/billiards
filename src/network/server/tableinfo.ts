@@ -45,7 +45,9 @@ export class TableInfo {
   }
 
   spectatorLeave(client: Client) {
-    this.spectators = this.spectators.filter((c) => c.clientId !== client.clientId)
+    this.spectators = this.spectators.filter(
+      (c) => c.clientId !== client.clientId
+    )
   }
 
   rejoin(client: Client) {

@@ -12,4 +12,3 @@ export const μs = 0.212
 
 // Coefficient of sliding friction (cushion)
 export const μw = 0.14
-

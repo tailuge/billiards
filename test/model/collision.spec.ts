@@ -52,8 +52,8 @@ describe("Collision", () => {
     expect(Collision.willCollide(a, b, t)).to.be.true
     Collision.collide(a, b)
     expect(Collision.willCollide(a, b, t)).to.be.false
-    expect(a.vel.x).to.be.approximately(-v,0.1)
-    expect(b.vel.x).to.be.approximately(v,0.1)
+    expect(a.vel.x).to.be.approximately(-v, 0.1)
+    expect(b.vel.x).to.be.approximately(v, 0.1)
     done()
   })
 })
