@@ -52,6 +52,9 @@ export class EventUtil {
     if ("sequence" in parsed) {
       event.sequence = parsed.sequence
     }
+    if ("clientId" in parsed) {
+      event.clientId = parsed.clientId
+    }
     return event
   }
 }
