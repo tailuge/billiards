@@ -3,12 +3,14 @@ import { MessageRelay } from "./messagerelay"
 export class NchanMessageRelay<T> implements MessageRelay<T> {
   private readonly websockets: Map<string, WebSocket> = new Map()
 
-  constructor(private readonly baseURL: string) {}
+  constructor(
+    private readonly baseURL: string = "https://billiards-network.onrender.com"
+  ) {}
 
   subscribe(channel: string, callback: (message: T) => void): void {
     const url = `${this.baseURL}/subscribe/${channel}`
     const ws = new WebSocket(url)
-
+    console.log("Subscribed to ", url)
     ws.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data) as T
