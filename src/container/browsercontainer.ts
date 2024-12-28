@@ -42,6 +42,7 @@ export class BrowserContainer {
     this.canvas3d = canvas3d
     this.cushionModel = this.cushion(params.get("cushionModel"))
     this.spectator = params.has("spectator")
+    Session.init(this.clientId, this.playername, this.tableId)
   }
 
   cushion(model) {
