@@ -95,6 +95,7 @@ export class SocketConnection {
   send(event: GameEvent) {
     this.lastSentIdentifier = `${this.id}-${this.sequenceId++}`
     event.sequence = this.lastSentIdentifier
+    event.clientId = Session.getInstance().clientId
     this.ws.send(EventUtil.serialise(event))
     this.sent.push(event)
   }
