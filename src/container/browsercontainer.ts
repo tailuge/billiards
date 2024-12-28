@@ -105,7 +105,7 @@ export class BrowserContainer {
 
   netEvent(e: string) {
     const event = EventUtil.fromSerialised(e)
-    console.log(`${this.playername} received ${event.type}`)
+    console.log(`${this.playername} received ${event.type} ${event.clientId}`)
     this.container.eventQueue.push(event)
   }
 
