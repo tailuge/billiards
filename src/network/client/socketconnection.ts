@@ -3,6 +3,7 @@ import { EventHistory } from "../../events/eventhistory"
 import { EventUtil } from "../../events/eventutil"
 import { GameEvent } from "../../events/gameevent"
 import { RejoinEvent } from "../../events/rejoinevent"
+import { Session } from "./session"
 
 /**
  * Handle websocket connection to server

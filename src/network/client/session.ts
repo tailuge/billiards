@@ -1,4 +1,4 @@
-class Session {
+export class Session {
   constructor(
     readonly clientId: string,
     readonly username: string,

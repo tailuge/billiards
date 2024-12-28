@@ -11,6 +11,7 @@ import {
 } from "../model/physics/physics"
 import JSONCrush from "jsoncrush"
 import { Assets } from "../view/assets"
+import { Session } from "../network/client/session"
 
 /**
  * Integrate game container into HTML page

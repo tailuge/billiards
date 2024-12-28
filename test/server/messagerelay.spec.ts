@@ -13,7 +13,7 @@ afterEach(() => {
   global.console = jestConsole
 })
 
-describe("Lobby", () => {
+describe("MessageRelay", () => {
   const relay: MessageRelay<string> = new InMemoryMessageRelay<string>()
 
   it("validate subscriber receives published message", (done) => {
