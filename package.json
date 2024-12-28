@@ -53,7 +53,6 @@
     "@types/node": "22.10.2",
     "@types/three": "0.171.0",
     "chai": "5.1.2",
-    "ini": "5.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "node-notifier": "^10.0.1",
