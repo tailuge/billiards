@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { Session } from "../../src/network/client/session"
 

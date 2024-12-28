@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { Recorder } from "../../src/events/recorder"
 import { Container } from "../../src/container/container"

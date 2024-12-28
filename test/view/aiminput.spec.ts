@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { AimInputs } from "../../src/view/aiminputs"
 import { initDom, canvas3d } from "./dom"

@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { Controller, HitEvent, Input } from "../../src/controller/controller"
 import { Container } from "../../src/container/container"

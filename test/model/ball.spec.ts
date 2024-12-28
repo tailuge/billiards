@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { Ball, State } from "../../src/model/ball"
 import { Vector3 } from "three"

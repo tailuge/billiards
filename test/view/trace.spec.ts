@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { Trace } from "../../src/view/trace"
 import { Vector3 } from "three"

@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { Ball } from "../../src/model/ball"
 import { Pocket } from "../../src/model/physics/pocket"

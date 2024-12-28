@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { AimEvent } from "../../src/events/aimevent"
 import { AbortEvent } from "../../src/events/abortevent"

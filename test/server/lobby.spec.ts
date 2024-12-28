@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { Lobby } from "../../src/network/server/lobby"
 import { ChatEvent } from "../../src/events/chatevent"

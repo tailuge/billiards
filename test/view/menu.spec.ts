@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { initDom } from "./dom"
 import { fireEvent } from "@testing-library/dom"

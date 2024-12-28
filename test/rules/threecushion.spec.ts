@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { Container } from "../../src/container/container"
 import { Aim } from "../../src/controller/aim"

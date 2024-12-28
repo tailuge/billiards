@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { Vector3 } from "three"
 import {

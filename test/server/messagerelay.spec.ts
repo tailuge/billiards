@@ -1,4 +1,3 @@
-import "mocha"
 import { expect } from "chai"
 import { InMemoryMessageRelay } from "../mocks/inmemorymessagerelay"
 import { MessageRelay } from "../../src/network/client/messagerelay"
