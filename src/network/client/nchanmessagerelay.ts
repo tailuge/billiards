@@ -14,8 +14,6 @@ export class NchanMessageRelay implements MessageRelay {
     console.log("Subscribed to ", url)
     ws.onmessage = (event: MessageEvent) => {
       try {
-        console.log("Received message:", event)
-        console.log("data:", event.data)
         const message = event.data
         callback(message)
       } catch (e) {
