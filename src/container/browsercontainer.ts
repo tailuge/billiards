@@ -2,7 +2,6 @@ import { Container } from "./container"
 import { Keyboard } from "../events/keyboard"
 import { EventUtil } from "../events/eventutil"
 import { BreakEvent } from "../events/breakevent"
-import { SocketConnection } from "../network/client/socketconnection"
 import { GameEvent } from "../events/gameevent"
 import {
   bounceHan,
@@ -12,6 +11,9 @@ import {
 import JSONCrush from "jsoncrush"
 import { Assets } from "../view/assets"
 import { Session } from "../network/client/session"
+import { MessageRelay } from "../network/client/messagerelay"
+import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
+import { BeginEvent } from "../events/beginevent"
 
 /**
  * Integrate game container into HTML page
@@ -25,7 +27,7 @@ export class BrowserContainer {
   ruletype
   playername: string
   replay: string | null
-  sc: SocketConnection | null = null
+  messageRelay: MessageRelay | null = null
   breakState = {
     init: null,
     shots: Array<string>(),
@@ -34,6 +36,7 @@ export class BrowserContainer {
   }
   cushionModel
   spectator
+  first
   assets: Assets
   now
   constructor(canvas3d, params) {
@@ -47,6 +50,7 @@ export class BrowserContainer {
     this.canvas3d = canvas3d
     this.cushionModel = this.cushion(params.get("cushionModel"))
     this.spectator = params.has("spectator")
+    this.first = params.has("first")
     Session.init(this.clientId, this.playername, this.tableId)
   }
 
@@ -84,18 +88,19 @@ export class BrowserContainer {
     this.container.table.cushionModel = this.cushionModel
     this.setReplayLink()
     if (this.wss) {
-      const params = `name=${this.playername}&tableId=${this.tableId}&clientId=${this.clientId}${this.spectator ? "&spectator" : ""}`
       this.container.isSinglePlayer = false
-      this.sc = new SocketConnection(`${this.wss}?${params}`, this.clientId)
-      this.networkButton()
-      this.sc.eventHandler = (e) => {
+      this.messageRelay = new NchanMessageRelay()
+      this.messageRelay.subscribe(this.tableId, (e) => {
         this.netEvent(e)
+      })
+      if (!this.first && !this.spectator) {
+        this.broadcast(new BeginEvent())
       }
     }
 
     if (this.replay) {
       this.startReplay(this.replay)
-    } else if (!this.sc) {
+    } else if (!this.messageRelay) {
       this.container.eventQueue.push(new BreakEvent())
     }
 
@@ -106,17 +111,21 @@ export class BrowserContainer {
   netEvent(e: string) {
     const event = EventUtil.fromSerialised(e)
     console.log(`${this.playername} received ${event.type} : ${event.clientId}`)
-    this.container.eventQueue.push(event)
-  }
-
-  networkButton() {
-    document.getElementById("network")!.onclick = () => {
-      this.sc?.close()
+    if (event.clientId !== Session.getInstance().clientId) {
+      this.container.eventQueue.push(event)
+    } else {
+      console.log("Ignoring own event")
     }
   }
 
   broadcast(event: GameEvent) {
-    this.sc?.send(event)
+    if (this.messageRelay) {
+      event.clientId = Session.getInstance().clientId
+      console.log(
+        `${this.playername} broadcasting ${event.type} : ${event.clientId}`
+      )
+      this.messageRelay.publish(this.tableId, EventUtil.serialise(event))
+    }
   }
 
   setReplayLink() {

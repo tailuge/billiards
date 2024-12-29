@@ -40,7 +40,8 @@
     const ruletype = urlParams.get("ruletype")
     const unique = Math.floor(Math.random() * 0xffff).toString(16)
     const url = `index.html?ruletype=${ruletype}&websocketserver=${websocketserver}&tableId=${unique}`
-    document.getElementById("P1").src = `${url}&clientId=p1id&name=P1`
+    document.getElementById("P1").src =
+      `${url}&clientId=p1id&name=P1&first=true`
     document.getElementById("P2").src = `${url}&clientId=p2id&name=P2`
   </script>
 </html>

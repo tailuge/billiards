@@ -1,4 +1,4 @@
-export interface MessageRelay<T> {
-  subscribe(channel: string, callback: (message: T) => void): void
-  publish(channel: string, message: T): void
+export interface MessageRelay {
+  subscribe(channel: string, callback: (message: string) => void): void
+  publish(channel: string, message: string): void
 }
