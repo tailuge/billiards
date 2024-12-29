@@ -23,7 +23,7 @@ export class CollisionThrow {
     const ab = contact.b.sub(contact.a).normalize()
     const abTangent = new Vector3(-ab.y, ab.x, 0)
 
-    const e = 0.98
+    const e = 0.99
     const vPoint = a.vel
       .clone()
       .sub(b.vel)
@@ -49,8 +49,8 @@ export class CollisionThrow {
     // Normal impulse (inelastic collision)
     this.normalImpulse = (-(1 + e) * vRelNormalMag) / (2 / m)
 
-    // Tangential impulse (frictional constraint)
-    this.tangentialImpulse =
+    // Tangential impulse (frictional constraint) reduced by 1/3 until understood
+    this.tangentialImpulse = 0.3 *
       Math.min((μ * Math.abs(this.normalImpulse)) / vRelMag, 1 / 7) *
       -vRelTangential
 
