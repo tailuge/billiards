@@ -50,7 +50,8 @@ export class CollisionThrow {
     this.normalImpulse = (-(1 + e) * vRelNormalMag) / (2 / m)
 
     // Tangential impulse (frictional constraint) reduced by 1/3 until understood
-    this.tangentialImpulse = 0.3 *
+    this.tangentialImpulse =
+      0.3 *
       Math.min((μ * Math.abs(this.normalImpulse)) / vRelMag, 1 / 7) *
       -vRelTangential
 
