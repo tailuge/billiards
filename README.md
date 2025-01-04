@@ -13,11 +13,11 @@ This is an open-source project bringing unsophisticated billiards physics writte
 
 ## Features
 
-* Backspin and sidespin well modeled.
+* Backspin, sidespin an cushion bounces well modeled.
 * Presentation using WebGL in any modern browser on mobile, linux, mac or windows.
 * Record and playback breaks.
-* Two player online mode with node websocket server.
-* Nine ball, Snooker and three cushion billiards rules.
+* Two player online mode with nchan nginx server.
+* Nine ball, snooker and three cushion billiards rules.
 * Deploys to github pages, vercel.com and render.com with github actions.
 
 ## Online Demo
@@ -30,7 +30,7 @@ Demos run in all major desktop and mobile browsers and uses WebGL
 * 4-ball [Straight pool ⬀](https://tailuge.github.io/billiards/dist?ruletype=fourteenone). 
 * Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
 * Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard.html) hosted on vercel.com
-* Try [two player](https://scoreboard-tailuge.vercel.app/lobby) online hosted on render.com
+* Try [two player](https://scoreboard-tailuge.vercel.app/lobby) online lobby using nchan
 
 ## Reference material
 
@@ -224,14 +224,9 @@ yarn prettify
 
 ### Two player
 
-```shell
-yarn websocket #(for local dev)
-yarn build:server
-yarn start:server
-```
+tbd uses nchan
 
-the client uses query parameter ``?websocketserver=wss://some-host`` to locate
-a websocket server, open <http://localhost:8888/dist/multi.html> to see options
+open <http://localhost:8888/dist/multi.html> to see options
 
 ## Controls
 
