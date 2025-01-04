@@ -224,9 +224,11 @@ yarn prettify
 
 ### Two player
 
-tbd uses nchan
+```shell
+yarn serve
+```
 
-open <http://localhost:8888/dist/multi.html> to see options
+then open <http://localhost:8080/multi.html> to see options, message server is public nchan.
 
 ## Controls
 

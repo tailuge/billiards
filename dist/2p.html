@@ -36,8 +36,8 @@
 
   <script>
     const urlParams = new URLSearchParams(window.location.search)
-    const websocketserver = urlParams.get("websocketserver")
-    const ruletype = urlParams.get("ruletype")
+    const websocketserver = urlParams.get("websocketserver") ?? "ws://localhost:8080"
+    const ruletype = urlParams.get("ruletype") ?? "nineball"
     const unique = Math.floor(Math.random() * 0xffff).toString(16)
     const url = `index.html?ruletype=${ruletype}&websocketserver=${websocketserver}&tableId=${unique}`
     document.getElementById("P1").src =
