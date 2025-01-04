@@ -2,10 +2,11 @@ export class Session {
   constructor(
     readonly clientId: string,
     readonly username: string,
-    readonly tableId: string
+    readonly tableId: string,
+    readonly spectator: boolean
   ) {}
 
-  private static instance: Session
+  private static instance: Session | undefined
 
   static getInstance(): Session {
     if (!Session.instance) {
@@ -14,7 +15,20 @@ export class Session {
     return Session.instance
   }
 
-  static init(clientId: string, username: string, tableId: string) {
-    Session.instance = new Session(clientId, username, tableId)
+  static isSpectator(): boolean {
+    return Session.instance !== undefined && Session.getInstance().spectator
+  }
+
+  static reset() {
+    Session.instance = undefined
+  }
+
+  static init(
+    clientId: string,
+    username: string,
+    tableId: string,
+    spectator: boolean
+  ) {
+    Session.instance = new Session(clientId, username, tableId, spectator)
   }
 }

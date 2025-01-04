@@ -6,6 +6,8 @@ import { ControllerBase } from "./controllerbase"
 import { BreakEvent } from "../events/breakevent"
 import { PlaceBall } from "./placeball"
 import { Replay } from "./replay"
+import { Session } from "../network/client/session"
+import { Spectate } from "./spectate"
 
 /**
  * Initial state of controller.
@@ -14,6 +16,10 @@ import { Replay } from "./replay"
  */
 export class Init extends ControllerBase {
   override handleBegin(_: BeginEvent): Controller {
+    if (Session.isSpectator()) {
+      return new Spectate(this.container)
+    }
+
     this.container.chat.showMessage("Start")
     this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
     return new PlaceBall(this.container)

@@ -51,7 +51,7 @@ export class BrowserContainer {
     this.cushionModel = this.cushion(params.get("cushionModel"))
     this.spectator = params.has("spectator")
     this.first = params.has("first")
-    Session.init(this.clientId, this.playername, this.tableId)
+    Session.init(this.clientId, this.playername, this.tableId, this.spectator)
   }
 
   cushion(model) {
@@ -87,6 +87,13 @@ export class BrowserContainer {
     }
     this.container.table.cushionModel = this.cushionModel
     this.setReplayLink()
+
+    if (this.spectator) {
+      this.container.eventQueue.push(new BreakEvent())
+      this.container.animate(performance.now())
+      return
+    }
+
     if (this.wss) {
       this.container.isSinglePlayer = false
       this.messageRelay = new NchanMessageRelay()

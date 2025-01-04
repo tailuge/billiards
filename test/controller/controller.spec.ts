@@ -23,6 +23,8 @@ import { initDom } from "../view/dom"
 import { Ball, State } from "../../src/model/ball"
 import { Assets } from "../../src/view/assets"
 import { StartAimEvent } from "../../src/events/startaimevent"
+import { Session } from "../../src/network/client/session"
+import { Spectate } from "../../src/controller/spectate"
 
 initDom()
 
@@ -66,6 +68,15 @@ describe("Controller", () => {
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlaceBall)
     expect(broadcastEvents.pop()).to.be.an.instanceof(WatchEvent)
+    done()
+  })
+
+  it("Begin takes Init to Spectate when session set", (done) => {
+    Session.init("id", "player", "tableid", true)
+    container.eventQueue.push(new BeginEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Spectate)
+    Session.reset()
     done()
   })
 
