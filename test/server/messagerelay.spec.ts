@@ -1,9 +1,7 @@
 import { expect } from "chai"
 import { InMemoryMessageRelay } from "../mocks/inmemorymessagerelay"
 import { MessageRelay } from "../../src/network/client/messagerelay"
-import { NchanMessageRelay } from "../../src/network/client/nchanmessagerelay"
 import { BreakEvent } from "../../src/events/breakevent"
-import { GameEvent } from "../../src/events/gameevent"
 import { EventUtil } from "../../src/events/eventutil"
 
 const jestConsole = console

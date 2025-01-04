@@ -9,20 +9,16 @@ export function logusage() {
 
   const url = `https://scoreboard-tailuge.vercel.app/api/usage/game`
 
-  try {
-    fetch(url, {
-      method: "PUT",
-      mode: "cors",
+  fetch(url, {
+    method: "PUT",
+    mode: "cors",
+  })
+    .then((response) => {
+      if (!response.ok) {
+        console.error("HTTP error:", response.status, response.statusText)
+      }
     })
-      .then((response) => {
-        if (!response.ok) {
-          console.error("HTTP error:", response.status, response.statusText)
-        }
-      })
-      .catch((error) => {
-        console.error("Fetch error:", error)
-      })
-  } catch (error) {
-    console.error("Error in logusage:", error)
-  }
+    .catch((error) => {
+      console.error("Fetch error:", error)
+    })
 }

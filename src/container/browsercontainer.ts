@@ -89,7 +89,7 @@ export class BrowserContainer {
     this.setReplayLink()
 
     if (this.spectator) {
-      this.container.eventQueue.push(new BreakEvent())
+      this.container.eventQueue.push(new BeginEvent())
       this.container.animate(performance.now())
       return
     }
