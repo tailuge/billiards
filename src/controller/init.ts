@@ -18,7 +18,11 @@ import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
 export class Init extends ControllerBase {
   override handleBegin(_: BeginEvent): Controller {
     if (Session.isSpectator()) {
-      return new Spectate(this.container, new NchanMessageRelay(), Session.getInstance().tableId)
+      return new Spectate(
+        this.container,
+        new NchanMessageRelay(),
+        Session.getInstance().tableId
+      )
     }
 
     this.container.chat.showMessage("Start")

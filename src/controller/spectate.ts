@@ -1,30 +1,39 @@
 import { ControllerBase } from "./controllerbase"
-import { Controller, Input } from "./controller"
+import { AimEvent, Controller, HitEvent, Input } from "./controller"
 import { MessageRelay } from "../network/client/messagerelay"
-import { ChatEvent } from "../events/chatevent"
+import { EventUtil } from "../events/eventutil"
+import { GameEvent } from "../events/gameevent"
 
 export class Spectate extends ControllerBase {
-
   messageRelay: MessageRelay
   tableId: string
-  messages: string[] = []
+  messages: GameEvent[] = []
   constructor(container, messageRelay, tableId) {
     super(container)
     this.messageRelay = messageRelay
     this.tableId = tableId
     this.messageRelay.subscribe(this.tableId, (message) => {
       console.log(message)
-      this.messages.push(message)
-      this.container.eventQueue.push(new ChatEvent("nchan", "."))
+      const event = EventUtil.fromSerialised(message)
+      this.messages.push(event)
+      if (event instanceof HitEvent || event instanceof AimEvent) {
+        this.container.eventQueue.push(event)
+      }
     })
     console.log("Spectate")
   }
 
-  override handleChat(chatevent: ChatEvent): Controller {
-    console.log("Spectate chat",chatevent,this.messages.length)
+  override handleAim(event: AimEvent) {
+    this.container.table.cue.aim = event
+    this.container.table.cueball.pos.copy(event.pos)
     return this
   }
 
+  override handleHit(event: HitEvent) {
+    console.log("Spectate Hit")
+    this.container.table.updateFromSerialised(event.tablejson)
+    return this
+  }
 
   override handleInput(input: Input): Controller {
     this.commonKeyHandler(input)
