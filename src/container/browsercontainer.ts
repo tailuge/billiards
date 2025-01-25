@@ -145,10 +145,6 @@ export class BrowserContainer {
     console.log(replay)
     this.breakState = this.parse(replay)
     console.log(this.breakState)
-    if (Date.now() - this.breakState.now < 500000) {
-      console.log("upload")
-      this.offerUpload()
-    }
     const breakEvent = new BreakEvent(
       this.breakState.init,
       this.breakState.shots
