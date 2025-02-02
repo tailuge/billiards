@@ -145,7 +145,7 @@ export class Recorder {
     const serialisedShot = JSON.stringify(currentBreak)
     const compressed = JSONCrush.crush(serialisedShot)
     this.generateLink(text, compressed, "black")
-    if (breakScore >= 4) {
+    if (breakScore >= 2) {
       this.generateHiScoreLink(compressed)
     }
   }
