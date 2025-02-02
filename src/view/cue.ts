@@ -1,6 +1,6 @@
 import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
-import { upCross, unitAtAngle, norm } from "../utils/utils"
+import { upCross, unitAtAngle, norm, atan2, sin } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import { AimInputs } from "./aiminputs"
 import { Ball, State } from "../model/ball"
@@ -14,7 +14,7 @@ export class Cue {
   helperMesh: Mesh
   placerMesh: Mesh
   readonly offCenterLimit = 0.3
-  readonly maxPower = 150 * R
+  readonly maxPower = 160 * R
   t = 0
   aimInputs: AimInputs
   aim: AimEvent = new AimEvent()
@@ -61,7 +61,7 @@ export class Cue {
       return
     }
     const lineTo = norm(ball.pos.clone().sub(cueball.pos))
-    this.aim.angle = Math.atan2(lineTo.y, lineTo.x)
+    this.aim.angle = atan2(lineTo.y, lineTo.x)
   }
 
   adjustSpin(delta: Vector3, table: Table) {
@@ -105,10 +105,7 @@ export class Cue {
     this.helperMesh.rotation.z = this.aim.angle
     const offset = this.spinOffset()
     const swing =
-      (Math.sin(this.t + Math.PI / 2) - 1) *
-      2 *
-      R *
-      (this.aim.power / this.maxPower)
+      (sin(this.t + Math.PI / 2) - 1) * 2 * R * (this.aim.power / this.maxPower)
     const distanceToBall = unitAtAngle(this.aim.angle)
       .clone()
       .multiplyScalar(swing)

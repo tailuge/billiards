@@ -58,6 +58,7 @@ export class Table {
     }
     this.balls.forEach((a) => {
       a.update(t)
+      a.fround()
     })
   }
 

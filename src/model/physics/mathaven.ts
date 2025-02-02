@@ -1,3 +1,4 @@
+import { atan2, cos, pow, sin, sqrt } from "../../utils/utils"
 import { cosθ, sinθ } from "./constants"
 
 export class Mathaven {
@@ -50,14 +51,14 @@ export class Mathaven {
     const v_yC = this.vy + this.ωx * R
 
     // Update slip speeds and angles at the cushion (I)
-    this.s = Math.sqrt(Math.pow(v_xI, 2) + Math.pow(v_yI, 2))
-    this.φ = Math.atan2(v_yI, v_xI)
+    this.s = sqrt(pow(v_xI, 2) + pow(v_yI, 2))
+    this.φ = atan2(v_yI, v_xI)
     if (this.φ < 0) {
       this.φ += 2 * Math.PI
     }
     // Update slip speeds and angles at the table (C)
-    this.sʹ = Math.sqrt(Math.pow(v_xC, 2) + Math.pow(v_yC, 2))
-    this.φʹ = Math.atan2(v_yC, v_xC)
+    this.sʹ = sqrt(pow(v_xC, 2) + pow(v_yC, 2))
+    this.φʹ = atan2(v_yC, v_xC)
     if (this.φʹ < 0) {
       this.φʹ += 2 * Math.PI
     }
@@ -96,14 +97,14 @@ export class Mathaven {
     // Update centroid velocity components
     this.vx -=
       (1 / M) *
-      (μw * Math.cos(this.φ) +
-        μs * Math.cos(this.φʹ) * (sinθ + μw * Math.sin(this.φ) * cosθ)) *
+      (μw * cos(this.φ) +
+        μs * cos(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
       ΔP
     this.vy -=
       (1 / M) *
       (cosθ -
-        μw * sinθ * Math.sin(this.φ) +
-        μs * Math.sin(this.φʹ) * (sinθ + μw * Math.sin(this.φ) * cosθ)) *
+        μw * sinθ * sin(this.φ) +
+        μs * sin(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
       ΔP
   }
 
@@ -115,15 +116,15 @@ export class Mathaven {
 
     this.ωx +=
       -(5 / (2 * M * R)) *
-      (μw * Math.sin(this.φ) +
-        μs * Math.sin(this.φʹ) * (sinθ + μw * Math.sin(this.φ) * cosθ)) *
+      (μw * sin(this.φ) +
+        μs * sin(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
       ΔP
     this.ωy +=
       -(5 / (2 * M * R)) *
-      (μw * Math.cos(this.φ) * sinθ -
-        μs * Math.cos(this.φʹ) * (sinθ + μw * Math.sin(this.φ) * cosθ)) *
+      (μw * cos(this.φ) * sinθ -
+        μs * cos(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
       ΔP
-    this.ωz += (5 / (2 * M * R)) * (μw * Math.cos(this.φ) * cosθ) * ΔP
+    this.ωz += (5 / (2 * M * R)) * (μw * cos(this.φ) * cosθ) * ΔP
   }
 
   private updateWorkDone(ΔP: number): void {
@@ -133,13 +134,7 @@ export class Mathaven {
   }
 
   public solvePaper(v0: number, α: number, ω0S: number, ω0T: number) {
-    this.solve(
-      v0 * Math.cos(α),
-      v0 * Math.sin(α),
-      -ω0T * Math.sin(α),
-      ω0T * Math.cos(α),
-      ω0S
-    )
+    this.solve(v0 * cos(α), v0 * sin(α), -ω0T * sin(α), ω0T * cos(α), ω0S)
   }
 
   public solve(vx, vy, ωx, ωy, ωz): void {

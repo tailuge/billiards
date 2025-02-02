@@ -121,6 +121,16 @@ export class Ball {
     return this.futurePos
   }
 
+  fround() {
+    this.pos.x = Math.fround(this.pos.x)
+    this.pos.y = Math.fround(this.pos.y)
+    this.vel.x = Math.fround(this.vel.x)
+    this.vel.y = Math.fround(this.vel.y)
+    this.rvel.x = Math.fround(this.rvel.x)
+    this.rvel.y = Math.fround(this.rvel.y)
+    this.rvel.z = Math.fround(this.rvel.z)
+  }
+
   serialise() {
     return {
       pos: this.pos.clone(),

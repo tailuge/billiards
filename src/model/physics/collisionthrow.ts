@@ -2,6 +2,7 @@ import { Vector3 } from "three"
 import { Ball } from "../ball"
 import { Collision } from "./collision"
 import { I, m, R } from "./constants"
+import { exp } from "../../utils/utils"
 
 /**
  * Based on
@@ -13,7 +14,7 @@ export class CollisionThrow {
   tangentialImpulse: number
 
   private dynamicFriction(vRel: number): number {
-    return 0.01 + 0.108 * Math.exp(-1.088 * vRel)
+    return 0.01 + 0.108 * exp(-1.088 * vRel)
   }
 
   public updateVelocities(a: Ball, b: Ball) {
@@ -49,9 +50,9 @@ export class CollisionThrow {
     // Normal impulse (inelastic collision)
     this.normalImpulse = (-(1 + e) * vRelNormalMag) / (2 / m)
 
-    // Tangential impulse (frictional constraint) reduced by 1/3 until understood
+    // Tangential impulse (frictional constraint) reduced by 1/4 until understood
     this.tangentialImpulse =
-      0.3 *
+      0.25 *
       Math.min((μ * Math.abs(this.normalImpulse)) / vRelMag, 1 / 7) *
       -vRelTangential
 

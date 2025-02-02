@@ -47,3 +47,27 @@ export function roundVec2(v) {
   v.z = round2(v.z)
   return v
 }
+
+export function atan2(y, x) {
+  return Math.fround(Math.atan2(y, x))
+}
+
+export function pow(y, x) {
+  return Math.fround(Math.pow(y, x))
+}
+
+export function sin(theta) {
+  return Math.fround(Math.sin(theta))
+}
+
+export function cos(theta) {
+  return Math.fround(Math.cos(theta))
+}
+
+export function sqrt(theta) {
+  return Math.fround(Math.sqrt(theta))
+}
+
+export function exp(theta) {
+  return Math.fround(Math.exp(theta))
+}

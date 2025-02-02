@@ -1,5 +1,5 @@
 import { Vector3 } from "three"
-import { norm, upCross, up } from "../../utils/utils"
+import { norm, upCross, up, sin, cos } from "../../utils/utils"
 import { muS, muC, g, m, Mz, Mxy, R, I, e } from "./constants"
 import { Mathaven } from "./mathaven"
 import { ee, μs, μw } from "../../diagram/constants"
@@ -61,8 +61,8 @@ export function rotateApplyUnrotate(theta, v, w, model) {
 const epsilon = R * 0.1
 const theta_a = Math.asin(epsilon / R)
 
-const sin_a = Math.sin(theta_a)
-const cos_a = Math.cos(theta_a)
+const sin_a = sin(theta_a)
+const cos_a = cos(theta_a)
 
 export function s0(v, w) {
   return new Vector3(
