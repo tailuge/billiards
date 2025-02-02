@@ -23,7 +23,7 @@ export class ThreeCushion implements Rules {
   currentBreak = 0
   previousBreak = 0
   score = 0
-  rulename = "snooker"
+  rulename = "threecushion"
 
   constructor(container) {
     this.container = container
