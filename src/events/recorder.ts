@@ -78,6 +78,7 @@ export class Recorder {
       now: Date.now(),
       score: score,
       wholeGame: wholeGame,
+      v: 1,
     }
   }
 
