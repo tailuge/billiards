@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Billiard Shot Viewer</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: row; /* Arrange canvas and controls side by side */
+            align-items: flex-start; /* Align items to the top */
+            margin-top: 20px;
+
+        }
+
+        #canvas-container{
+          position: relative;  /*Needed for the pocket overlay to work.*/
+        }
+
+        #canvas {
+            border: 2px solid #333;
+            background-color: #228B22; /* Darker green for felt */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add a subtle shadow */
+
+        }
+
+        #controls {
+            display: flex;
+            flex-direction: column;
+            margin-left: 20px; /* Space between canvas and controls */
+            width: 200px;
+        }
+
+        #controls button, #controls select {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+        }
+        #controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #shotIndexDisplay {
+          margin-bottom: 5px;
+        }
+        #fileInput {
+          margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Billiard Shot Viewer</h1>
+
+    <input type="file" id="fileInput">
+
+    <div id="container">
+        <div id="canvas-container">
+            <canvas id="canvas" width="852" height="426"></canvas> <!-- 300 DPI, 72PPI = *4.1666-->
+        </div>
+
+
+        <div id="controls">
+            <button id="prevButton" disabled>Previous</button>
+            <span id="shotIndexDisplay">Shot: 1</span>
+            <button id="nextButton" disabled>Next</button>
+            <select id="shotSelector"></select>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const shotIndexDisplay = document.getElementById('shotIndexDisplay');
+        const shotSelector = document.getElementById('shotSelector');
+
+
+        const BALL_COLORS = {1: 'white', 2: 'yellow', 3: 'red'};
+        const BALL_DIAMETER = 0.0615; // in meters
+        const TABLE_WIDTH = 2.84; // in meters
+        const TABLE_HEIGHT = TABLE_WIDTH / 2;
+        const CUSHION_WIDTH = 0.01; // Example width, adjust as needed
+        const PIXELS_PER_METER = canvas.width / TABLE_WIDTH;  // Calculate scaling factor
+
+        let allShots = [];
+        let currentShotIndex = 0;
+
+        // Function to load and process the default JSON file
+        function loadDefaultData() {
+            fetch('simple_shots.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    allShots = data;
+                    if (allShots.length > 0) {
+                        currentShotIndex = 0;
+                        populateShotSelector();
+                        updateDisplay();
+                        drawShot(allShots[currentShotIndex]);
+                        updateButtons();
+                    } else {
+                        console.log("No shots found in the default JSON file.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading default JSON:", error);
+                    // Optional: Display a message to the user on the page.
+                });
+        }
+
+        // Load default data when the page loads
+        window.addEventListener('load', loadDefaultData);
+
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        allShots = JSON.parse(e.target.result);
+                        if (allShots.length > 0) {
+                            currentShotIndex = 0;
+                            populateShotSelector();
+                            updateDisplay();
+                            drawShot(allShots[currentShotIndex]);
+                            updateButtons();
+                        } else {
+                            alert("No shots found in the JSON file.");
+                        }
+                    } catch (error) {
+                        console.error("Error parsing JSON:", error);
+                        alert("Error parsing JSON file.");
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function populateShotSelector() {
+            shotSelector.innerHTML = ''; // Clear existing options
+            allShots.forEach((shot, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.text = `Shot ${index + 1} (ID: ${shot.shotID})`;
+                shotSelector.add(option);
+            });
+        }
+
+        function updateButtons() {
+            prevButton.disabled = currentShotIndex <= 0;
+            nextButton.disabled = currentShotIndex >= allShots.length - 1;
+        }
+
+        function updateDisplay() {
+            shotIndexDisplay.textContent = `Shot: ${currentShotIndex + 1}`;
+             if (allShots[currentShotIndex]) {
+                shotSelector.value = currentShotIndex; // Sync dropdown with current index
+            }
+        }
+
+        function drawShot(shotData) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous drawing
+
+            // Draw cushions
+            ctx.fillStyle = '#8B4513'; // Brown color for cushions
+            // Top cushion
+            ctx.fillRect(0, 0, canvas.width, CUSHION_WIDTH * PIXELS_PER_METER);
+            // Bottom cushion
+            ctx.fillRect(0, canvas.height - CUSHION_WIDTH * PIXELS_PER_METER, canvas.width, CUSHION_WIDTH * PIXELS_PER_METER);
+            // Left cushion
+            ctx.fillRect(0, 0, CUSHION_WIDTH * PIXELS_PER_METER, canvas.height);
+            // Right cushion
+            ctx.fillRect(canvas.width - CUSHION_WIDTH * PIXELS_PER_METER, 0, CUSHION_WIDTH * PIXELS_PER_METER, canvas.height);
+
+            //Draw grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'; // Semi-transparent white
+            ctx.lineWidth = 1;
+
+            // Vertical lines
+            for (let i = 0; i <= 8; i++) {
+              let x = CUSHION_WIDTH * PIXELS_PER_METER + (i * (canvas.width- 2*CUSHION_WIDTH * PIXELS_PER_METER) / 8);
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+
+            // Horizontal lines
+            for (let i = 0; i <= 4; i++) {
+              let y = CUSHION_WIDTH * PIXELS_PER_METER + (i * (canvas.height - 2*CUSHION_WIDTH * PIXELS_PER_METER) / 4);
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            for (const ballNum in shotData.balls) {
+                const ballData = shotData.balls[ballNum];
+                const color = BALL_COLORS[ballNum];
+
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let i = 0; i < ballData.x.length; i++) {
+                    const x = ballData.x[i] * PIXELS_PER_METER;
+                    const y = ballData.y[i] * PIXELS_PER_METER;
+
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+
+              // Draw initial position with a larger, bordered circle
+                if (ballData.x.length > 0) {
+                  const initialX = ballData.x[0] * PIXELS_PER_METER;
+                  const initialY = ballData.y[0] * PIXELS_PER_METER;
+                  const radius = BALL_DIAMETER/2 * PIXELS_PER_METER
+
+                  ctx.beginPath();
+                  ctx.arc(initialX, initialY, radius, 0, 2 * Math.PI);
+                  ctx.fillStyle = color;
+                  ctx.fill();
+                  ctx.strokeStyle = 'black'; // Black border
+                  ctx.lineWidth = 2;
+                  ctx.stroke();
+                }
+            }
+        }
+
+        prevButton.addEventListener('click', () => {
+            if (currentShotIndex > 0) {
+                currentShotIndex--;
+                updateDisplay();
+                drawShot(allShots[currentShotIndex]);
+                updateButtons();
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentShotIndex < allShots.length - 1) {
+                currentShotIndex++;
+                updateDisplay();
+                drawShot(allShots[currentShotIndex]);
+                updateButtons();
+            }
+        });
+
+        shotSelector.addEventListener('change', () => {
+            currentShotIndex = parseInt(shotSelector.value, 10);
+            updateDisplay();
+            drawShot(allShots[currentShotIndex]);
+            updateButtons();
+        });
+
+
+    </script>
+</body>
+</html>
