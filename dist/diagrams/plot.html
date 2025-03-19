@@ -101,6 +101,20 @@
         let allShots = [];
         let currentShotIndex = 0;
 
+        // Function to update URL with shot ID
+        function updateUrlWithShot(shotId) {
+            const url = new URL(window.location);
+            url.searchParams.set('shot', shotId);
+            console.log(shotId);
+            window.history.pushState({}, '', url);
+        }
+
+        // Function to get initial shot ID from URL
+        function getInitialShotFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('shot');
+        }
+
         // Function to load and process the default JSON file
         function loadDefaultData() {
             fetch('simple_shots.json')
@@ -113,11 +127,17 @@
                 .then(data => {
                     allShots = data;
                     if (allShots.length > 0) {
-                        currentShotIndex = 0;
+                        const urlShotId = getInitialShotFromUrl();
+                        if (urlShotId) {
+                            // Find the shot index with matching shotID
+                            const shotIndex = allShots.findIndex(shot => shot.shotID === urlShotId);
+                            currentShotIndex = shotIndex >= 0 ? shotIndex : 0;
+                        } else {
+                            currentShotIndex = 0;
+                        }
                         populateShotSelector();
                         updateDisplay();
                         drawShot(allShots[currentShotIndex]);
-                        updateButtons();
                     } else {
                         console.log("No shots found in the default JSON file.");
                     }
@@ -143,7 +163,6 @@
                             populateShotSelector();
                             updateDisplay();
                             drawShot(allShots[currentShotIndex]);
-                            updateButtons();
                         } else {
                             alert("No shots found in the JSON file.");
                         }
@@ -164,11 +183,6 @@
                 option.text = `Shot ${index + 1} (ID: ${shot.shotID})`;
                 shotSelector.add(option);
             });
-        }
-
-        function updateButtons() {
-            prevButton.disabled = currentShotIndex <= 0;
-            nextButton.disabled = currentShotIndex >= allShots.length - 1;
         }
 
         function updateDisplay() {
@@ -254,7 +268,7 @@
             currentShotIndex = parseInt(shotSelector.value, 10);
             updateDisplay();
             drawShot(allShots[currentShotIndex]);
-            updateButtons();
+            updateUrlWithShot(allShots[currentShotIndex].shotID);
         });
 
 
