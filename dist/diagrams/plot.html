@@ -25,7 +25,7 @@
 
         #canvas {
             border: 2px solid #333;
-            background-color: #228B22; /* Darker green for felt */
+            background-color: #636ac9;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add a subtle shadow */
 
         }
@@ -37,7 +37,7 @@
             width: 200px;
         }
 
-        #controls button, #controls select {
+        #controls button, #controls select, #controls input[type="file"] {
             margin-bottom: 10px;
             padding: 8px 12px;
             font-size: 16px;
@@ -45,7 +45,10 @@
             border-radius: 4px;
             background-color: white;
             cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
         }
+        
         #controls button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -53,9 +56,6 @@
 
         #shotIndexDisplay {
           margin-bottom: 5px;
-        }
-        #fileInput {
-          margin-bottom: 15px;
         }
 
         footer {
@@ -67,18 +67,14 @@
 </head>
 <body>
 
-    <input type="file" id="fileInput">
-
     <div id="container">
         <div id="canvas-container">
             <canvas id="canvas" width="852" height="426"></canvas> <!-- 300 DPI, 72PPI = *4.1666-->
         </div>
 
-
         <div id="controls">
-            <button id="prevButton" disabled>Previous</button>
+            <input type="file" id="fileInput">
             <span id="shotIndexDisplay">Shot: 1</span>
-            <button id="nextButton" disabled>Next</button>
             <select id="shotSelector"></select>
         </div>
     </div>
@@ -91,8 +87,6 @@
         const fileInput = document.getElementById('fileInput');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const prevButton = document.getElementById('prevButton');
-        const nextButton = document.getElementById('nextButton');
         const shotIndexDisplay = document.getElementById('shotIndexDisplay');
         const shotSelector = document.getElementById('shotSelector');
 
@@ -188,7 +182,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous drawing
 
             // Draw cushions
-            ctx.fillStyle = '#8B4513'; // Brown color for cushions
+            ctx.fillStyle = '#222255'; 
             // Top cushion
             ctx.fillRect(0, 0, canvas.width, CUSHION_WIDTH * PIXELS_PER_METER);
             // Bottom cushion
@@ -255,24 +249,6 @@
                 }
             }
         }
-
-        prevButton.addEventListener('click', () => {
-            if (currentShotIndex > 0) {
-                currentShotIndex--;
-                updateDisplay();
-                drawShot(allShots[currentShotIndex]);
-                updateButtons();
-            }
-        });
-
-        nextButton.addEventListener('click', () => {
-            if (currentShotIndex < allShots.length - 1) {
-                currentShotIndex++;
-                updateDisplay();
-                drawShot(allShots[currentShotIndex]);
-                updateButtons();
-            }
-        });
 
         shotSelector.addEventListener('change', () => {
             currentShotIndex = parseInt(shotSelector.value, 10);
