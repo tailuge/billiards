@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <title>Billiard Shot Viewer</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%23fff'/><circle cx='50' cy='50' r='30' fill='%23000'/></svg>">
     <style>
         body {
             font-family: sans-serif;
@@ -26,7 +27,7 @@
         #canvas {
             border: 2px solid #333;
             background-color: #636ac9;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add a subtle shadow */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5); /* Add a subtle shadow */
 
         }
 
@@ -128,9 +129,11 @@
                     allShots = data;
                     if (allShots.length > 0) {
                         const urlShotId = getInitialShotFromUrl();
+                        console.log("URL Shot ID:", urlShotId);
                         if (urlShotId) {
                             // Find the shot index with matching shotID
-                            const shotIndex = allShots.findIndex(shot => shot.shotID === urlShotId);
+                            const shotIndex = allShots.findIndex(shot => shot.shotID == urlShotId);
+                            console.log("Shot index:", shotIndex);
                             currentShotIndex = shotIndex >= 0 ? shotIndex : 0;
                         } else {
                             currentShotIndex = 0;
@@ -258,7 +261,7 @@
                   ctx.fillStyle = color;
                   ctx.fill();
                   ctx.strokeStyle = 'black'; // Black border
-                  ctx.lineWidth = 2;
+                  ctx.lineWidth = 1;
                   ctx.stroke();
                 }
             }
