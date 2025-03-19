@@ -18,10 +18,11 @@
         #container {
             display: flex;
             flex-direction: row;
-            align-items: flex-start;
+            align-items: center;
             margin-top: 20px;
             width: 852px;
             justify-content: center;
+            gap: 10px;
         }
 
         #canvas-container {
@@ -56,22 +57,26 @@
 
         #controls {
             display: flex;
-            flex-direction: column;
-            margin-left: 20px;
-            width: 200px;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            width: 100%;
+            justify-content: center;
         }
 
         #controls button,
         #controls select,
         #controls input[type="file"] {
-            margin-bottom: 10px;
+            margin-bottom: 0;
             padding: 8px 12px;
-            font-size: 16px;
+            font-size: 14px;
             border: 1px solid #ccc;
             border-radius: 4px;
             background-color: white;
             cursor: pointer;
-            width: 100%;
+            min-width: 120px;
+            flex-grow: 0;
             box-sizing: border-box;
         }
 
@@ -81,7 +86,8 @@
         }
 
         #shotIndexDisplay {
-            margin-bottom: 5px;
+            margin: 0 10px;
+            min-width: 80px;
         }
 
         footer {
