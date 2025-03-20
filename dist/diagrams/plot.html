@@ -37,12 +37,12 @@
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5);
             position: absolute;
             /* Use top, left, width, and height to control canvas position and size */
-            top: 40px;
-            left: 60px;
-            width: 736px;
+            top: 44px;
+            left: 28px;
+            width: 740px;
             height: 370px;
             display: block;
-            opacity: 0.15;
+            z-index: 1;
         }
 
         #myIframe {
@@ -52,7 +52,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
+            opacity: 0.9;
+            z-index: 2;
         }
 
         #controls {
@@ -97,6 +98,11 @@
             text-align: center;
             width: 100%;
         }
+
+        .topview {
+  width: 800px;
+  height: 460px;
+}
     </style>
 </head>
 
@@ -105,7 +111,13 @@
     <div id="canvas-container">
         <iframe id="myIframe"></iframe>
         <canvas id="canvas"></canvas>
+        <div id="myIframe" class="replaydiagram">
+            <div class="topview"
+                data-state='?ruletype=threecushion&state={"init":[-0.8179,-0.2044,-0.8183,0,0.819,0],"shots":[{"type":"AIM","offset":{"x":-0.2683281572999748,"y":0.1341640786499874,"z":0},"angle":0.1499,"power":4.192,"pos":{"x":-0.8179000020027161,"y":-0.20440000295639038,"z":0},"i":0}]}'>
+            </div>
+        </div>
     </div>
+
 
     <div id="container">
         <div id="controls">
@@ -115,11 +127,32 @@
         </div>
     </div>
 
+    <div class="diagram">
+        <p>
+            Physical Constants <button id="replay" type="button">replay</button>
+        </p>
+        <br />
+        <input id="R" type="range" />
+        <label for="R">R</label>
+        <input id="m" type="range" />
+        <label for="m">m</label>
+        <input id="e" type="range" />
+        <label for="e">e</label>
+        <input id="mu" type="range" />
+        <label for="mu">mu</label>
+        <input id="muS" type="range" />
+        <label for="muS">muS</label>
+        <input id="muC" type="range" />
+        <label for="muC">muC</label>
+        <input id="rho" type="range" />
+        <label for="rho">rho</label>
+    </div>
+
     <footer>
         Data source: <a href="https://www.youtube.com/c/NightCaféBilliard" style="color: #666;">Night Café Billiard</a>
         - Match between Cemal Cay and Ersin Dogan in December 2022
     </footer>
-
+    
     <script>
         const fileInput = document.getElementById('fileInput');
         const canvas = document.getElementById('canvas');
@@ -300,7 +333,7 @@
             updateUrlWithShot(allShots[currentShotIndex].shotID);
         });
 
-        loadIframe();
+//        loadIframe();
 
         function loadIframe() {
             const state = {
@@ -321,6 +354,10 @@
             myIframe.src = targetUrl;
         }
     </script>
+
+    <script src="../vendor.js"></script>
+    <script src="../diagram.js"></script>
+
 </body>
 
 </html>
