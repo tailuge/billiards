@@ -18,28 +18,23 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            margin-top: 20px;
-            width: 852px;
             justify-content: center;
             gap: 10px;
         }
 
         #canvas-container {
             position: relative;
-            width: 852px;
-            height: 536px;
+            width: 900px;
+            height: 500px;
         }
 
         #canvas {
-            border: 2px solid #333;
-            background-color: #636ac9;
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5);
+            background-color: #636ac9d2;
             position: absolute;
-            /* Use top, left, width, and height to control canvas position and size */
-            top: 44px;
-            left: 28px;
-            width: 740px;
-            height: 370px;
+            top: 42px;
+            left: 38px;
+            width: 826px;
+            height: 418px;
             display: block;
             z-index: 1;
         }
@@ -51,11 +46,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0.9;
+            opacity: 0.85;
             z-index: 2;
         }
 
         #controls {
+            padding: 8px;
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -98,12 +94,12 @@
         }
 
         .topview {
-  width: 800px;
-  height: 460px;
-}
+            width: 900px;
+            height: 500px;
+        }
 
         .diagram {
-            margin: 20px 0;
+            margin: 4x;
             padding: 15px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -161,7 +157,7 @@
         <canvas id="canvas"></canvas>
         <div id="myIframe" class="replaydiagram">
             <div class="topview"
-                data-state='?ruletype=threecushion&state={"init":[-0.8179,-0.2044,-0.8183,0,0.819,0],"shots":[{"type":"AIM","offset":{"x":-0.2683281572999748,"y":0.1341640786499874,"z":0},"angle":0.1499,"power":4.192,"pos":{"x":-0.8179000020027161,"y":-0.20440000295639038,"z":0},"i":0}]}'>
+                data-state='?ruletype=threecushion&state={"init":[-0.8179,-0.2044,-0.8183,0,0.819,0],"shots":[{"type":"AIM","offset":{"x":-0.2783281572999748,"y":0.1481640786499874,"z":0},"angle":0.1489,"power":4.292,"pos":{"x":-0.8179000020027161,"y":-0.20440000295639038,"z":0},"i":0}]}'>
             </div>
         </div>
     </div>
@@ -183,22 +179,22 @@
         <div class="controls-grid">
             <label for="R">R</label>
             <input id="R" type="range" />
-            
+
             <label for="m">m</label>
             <input id="m" type="range" />
-            
+
             <label for="e">e</label>
             <input id="e" type="range" />
-            
+
             <label for="mu">μ</label>
             <input id="mu" type="range" />
-            
+
             <label for="muS">μs</label>
             <input id="muS" type="range" />
-            
+
             <label for="muC">μc</label>
             <input id="muC" type="range" />
-            
+
             <label for="rho">ρ</label>
             <input id="rho" type="range" />
         </div>
@@ -208,7 +204,7 @@
         Data source: <a href="https://www.youtube.com/c/NightCaféBilliard" style="color: #666;">Night Café Billiard</a>
         - Match between Cemal Cay and Ersin Dogan in December 2022
     </footer>
-    
+
     <script>
         const fileInput = document.getElementById('fileInput');
         const canvas = document.getElementById('canvas');
@@ -389,7 +385,7 @@
             updateUrlWithShot(allShots[currentShotIndex].shotID);
         });
 
-//        loadIframe();
+        //        loadIframe();
 
         function loadIframe() {
             const state = {
