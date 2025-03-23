@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billiards Shot Visualizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #controls {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 10px;
+            align-items: center; /* Vertically align items */
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            background-color: #006400;  /* Green background for the table */
+            display: block; /* Prevent extra space below canvas */
+        }
+
+        #shotIndexDisplay {
+            font-size: 16px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        #shotSelector {
+            padding: 8px;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        #fileInput {
+            margin-top: 10px;
+        }
+
+        #replayButton {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        #replayButton:hover {
+            background-color: #367c39;
+        }
+
+        #myIframe {
+            width: 80%;
+            height: 400px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            display: none; /* Initially hide the iframe */
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <label for="fileInput">Load JSON Data:</label>
+        <input type="file" id="fileInput" accept=".json">
+        <span id="shotIndexDisplay">Shot: 1</span>
+        <select id="shotSelector"></select>
+        <button id="replayButton">Replay</button>
+    </div>
+    <canvas id="canvas" width="800" height="400"></canvas>
+    <iframe id="myIframe"></iframe>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const shotIndexDisplay = document.getElementById('shotIndexDisplay');
+        const shotSelector = document.getElementById('shotSelector');
+        const replayButton = document.getElementById('replayButton');
+        const myIframe = document.getElementById('myIframe');
+
+        console.log("Canvas width:", canvas.width);
+        const BALL_COLORS = { 1: 'white', 2: 'yellow', 3: 'red' };
+        const BALL_DIAMETER = 0.0615;
+        const TABLE_WIDTH = 2.84;
+        const TABLE_HEIGHT = TABLE_WIDTH / 2;
+        const CUSHION_WIDTH = 0.01;
+        const PIXELS_PER_METER = canvas.width / TABLE_WIDTH;
+
+        let allShots = [];
+        let currentShotIndex = 0;
+        let animationTimer = 0;
+        let animationInterval;
+        let isPlaying = false;
+        let tableDrawn = false; // Flag to track if the table has been drawn
+        let lastFrameTime = 0;
+        let animationStartTime = 0;
+
+
+        function updateUrlWithShot(shotId) {
+            const url = new URL(window.location);
+            url.searchParams.set('shot', shotId);
+            console.log(shotId);
+            window.history.pushState({}, '', url);
+        }
+
+        function getInitialShotFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('shot');
+        }
+
+        function loadDefaultData() {
+            fetch('simple_shots.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    allShots = data;
+                    if (allShots.length > 0) {
+                        const urlShotId = getInitialShotFromUrl();
+                        console.log("URL Shot ID:", urlShotId);
+                        if (urlShotId) {
+                            const shotIndex = allShots.findIndex(shot => shot.shotID == urlShotId);
+                            console.log("Shot index:", shotIndex);
+                            currentShotIndex = shotIndex >= 0 ? shotIndex : 0;
+                        } else {
+                            currentShotIndex = 0;
+                        }
+                        populateShotSelector();
+                        updateDisplay();
+                        drawTable(); // Draw the table once
+                        drawShot(allShots[currentShotIndex], 0); // Draw initial ball positions
+                    } else {
+                        console.log("No shots found in the default JSON file.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading default JSON:", error);
+                });
+        }
+
+        function start() {
+            loadDefaultData();
+        }
+
+        window.addEventListener('load', start);
+
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        allShots = JSON.parse(e.target.result);
+                        if (allShots.length > 0) {
+                            currentShotIndex = 0;
+                            populateShotSelector();
+                            updateDisplay();
+                            drawTable(); // Draw the table once
+                            drawShot(allShots[currentShotIndex], 0); // Draw initial ball positions
+                        } else {
+                            alert("No shots found in the JSON file.");
+                        }
+                    } catch (error) {
+                        console.error("Error parsing JSON:", error);
+                        alert("Error parsing JSON file.");
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function populateShotSelector() {
+            shotSelector.innerHTML = '';
+            allShots.forEach((shot, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.text = `Shot ${index + 1} (ID: ${shot.shotID})`;
+                shotSelector.add(option);
+            });
+            if (allShots.length > 0) {
+                shotSelector.value = currentShotIndex;
+            }
+        }
+
+        function updateDisplay() {
+            shotIndexDisplay.textContent = `Shot: ${currentShotIndex + 1}`;
+            if (allShots[currentShotIndex]) {
+                shotSelector.value = currentShotIndex;
+            }
+        }
+
+        function drawTable() {
+            // No scaling or translation here
+            ctx.fillStyle = '#222255';
+            ctx.fillRect(0, canvas.height - CUSHION_WIDTH * PIXELS_PER_METER, canvas.width, CUSHION_WIDTH * PIXELS_PER_METER);
+            ctx.fillRect(0,  0, canvas.width, CUSHION_WIDTH * PIXELS_PER_METER);
+            ctx.fillRect(0, canvas.height-CUSHION_WIDTH * PIXELS_PER_METER, CUSHION_WIDTH * PIXELS_PER_METER, -canvas.height);
+            ctx.fillRect(canvas.width - CUSHION_WIDTH * PIXELS_PER_METER, canvas.height, CUSHION_WIDTH * PIXELS_PER_METER, -canvas.height);
+
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 1;
+
+            for (let i = 0; i <= 8; i++) {
+                let x = CUSHION_WIDTH * PIXELS_PER_METER + (i * (canvas.width - 2 * CUSHION_WIDTH * PIXELS_PER_METER) / 8);
+                ctx.beginPath();
+                ctx.moveTo(x, canvas.height);
+                ctx.lineTo(x, 0);
+                ctx.stroke();
+            }
+
+            for (let i = 0; i <= 4; i++) {
+                let y = canvas.height - (CUSHION_WIDTH * PIXELS_PER_METER + (i * (canvas.height - 2 * CUSHION_WIDTH * PIXELS_PER_METER) / 4));
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            tableDrawn = true; // Set the flag to true after drawing
+        }
+
+        function drawBall(x, y, color) {
+            const radius = BALL_DIAMETER / 2 * PIXELS_PER_METER;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        function drawShot(shotData, currentTime = 0) {
+            if (!tableDrawn) {
+                drawTable();
+            }
+
+            const getInterpolatedPosition = (times, positions, targetTime) => {
+                if (!times || times.length === 0) return positions[0];
+
+                if (targetTime <= times[0]) return positions[0];
+                if (targetTime >= times[times.length - 1]) return positions[positions.length-1];
+
+                let lowIndex = 0;
+                let highIndex = times.length - 1;
+                while (lowIndex < highIndex - 1) {
+                    const midIndex = Math.floor((lowIndex + highIndex) / 2);
+                    if (times[midIndex] < targetTime) {
+                        lowIndex = midIndex;
+                    } else {
+                        highIndex = midIndex;
+                    }
+                }
+
+                const t1 = times[lowIndex];
+                const t2 = times[highIndex];
+                const p1 = positions[lowIndex];
+                const p2 = positions[highIndex];
+                const alpha = (targetTime - t1) / (t2 - t1);
+                return p1 + alpha * (p2 - p1);
+            };
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawTable();
+
+            for (const ballNum in shotData.balls) {
+                const ballData = shotData.balls[ballNum];
+                const color = BALL_COLORS[ballNum];
+                const xPositions = ballData.x;
+                const yPositions = ballData.y;
+                const times = ballData.t;
+
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+
+                let currentX, currentY;
+                if (times && times.length > 0) {
+                    currentX = getInterpolatedPosition(times, xPositions, currentTime) * PIXELS_PER_METER;
+                    currentY = canvas.height - (getInterpolatedPosition(times, yPositions, currentTime) * PIXELS_PER_METER);
+
+                    // Draw path
+                    let prevX = xPositions[0] * PIXELS_PER_METER;
+                    let prevY = canvas.height - (yPositions[0] * PIXELS_PER_METER);
+                    ctx.moveTo(prevX, prevY);
+
+                    for (let i = 1; i < times.length; i++)
+                    {
+                        if (times[i] <= currentTime){
+                            const x = xPositions[i] * PIXELS_PER_METER;
+                            const y = canvas.height - (yPositions[i] * PIXELS_PER_METER);
+                            ctx.lineTo(x,y);
+                            prevX = x;
+                            prevY = y;
+                        }
+                        else
+                        {
+                            const x = getInterpolatedPosition(times, xPositions, currentTime) * PIXELS_PER_METER;
+                            const y = canvas.height - (getInterpolatedPosition(times, yPositions, currentTime) * PIXELS_PER_METER);
+                            ctx.lineTo(x,y);
+                            break;
+                        }
+                    }
+                    ctx.stroke();
+                }
+                drawBall(currentX, currentY, color);
+            }
+        }
+
+        shotSelector.addEventListener('change', () => {
+            currentShotIndex = parseInt(shotSelector.value, 10);
+            updateDisplay();
+            resetAnimation();
+            startAnimation();
+        });
+
+        function animate(timestamp) {
+            if (!isPlaying) return;
+
+            if (!animationStartTime) {
+                animationStartTime = timestamp;
+                lastFrameTime = timestamp;
+            }
+
+            // Calculate elapsed time since last frame
+            const elapsedTime = (timestamp - lastFrameTime) / 1000; // Convert to seconds
+            lastFrameTime = timestamp;
+
+            animationTimer += elapsedTime; // Advance simulation time
+
+            const currentShot = allShots[currentShotIndex];
+            if (!currentShot || !currentShot.balls) {
+                resetAnimation();
+                return;
+            }
+
+            // Find the max time available for this shot
+            let maxTime = 0;
+            for (const ballNum in currentShot.balls) {
+                const ballData = currentShot.balls[ballNum];
+                if (ballData.t && ballData.t.length > 0) {
+                    maxTime = Math.max(maxTime, ballData.t[ballData.t.length - 1]);
+                }
+            }
+
+            if (animationTimer > maxTime) {
+                resetAnimation();
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawTable();
+            drawShot(currentShot, animationTimer);
+
+            requestAnimationFrame(animate);
+        }
+
+        function startAnimation() {
+            if (isPlaying) return;
+            isPlaying = true;
+            animationStartTime = 0;
+            animationTimer = 0;
+            lastFrameTime = performance.now();
+            requestAnimationFrame(animate);
+        }
+
+        function resetAnimation() {
+            isPlaying = false;
+            animationTimer = 0;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawTable();
+            drawShot(allShots[currentShotIndex], 0);
+        }
+
+        replayButton.addEventListener('click', () => {
+            resetAnimation();
+            startAnimation();
+        });
+
+        shotSelector.addEventListener('change', () => {
+            currentShotIndex = parseInt(shotSelector.value, 10);
+            updateDisplay();
+            resetAnimation(); // Reset and start when shot changes
+            startAnimation();
+        });
+
+        //Initial call.
+        drawTable();
+    </script>
+</body>
+</html>
