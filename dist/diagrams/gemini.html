@@ -63,29 +63,31 @@
             return urlParams.get('shot');
         }
 
-        function interpolateUntilMove(data , delta = 0.025, epsilon = 0.00001) {
-            const result = {
-                t: [data.t[0]],
-                x: [data.x[0]],
-                y: [data.y[0]],
-            };
-
-            for (let i = 1; i < data.t.length; i++) {
-                const gap = data.t[i] - result.t[result.t.length - 1];
-                if (gap > delta) {
-                    result.t.push(data.t[i] - epsilon);
-                    result.x.push(data.x[i]);
-                    result.y.push(data.y[i]);
-                }
-                result.t.push(data.t[i]);
-                result.x.push(data.x[i]);
-                result.y.push(data.y[i]);
+        function interpolateUntilMove(data, delta = 0.3, epsilon = 0.00001) {
+            if (data.t.length > 1 && data.t[1] - data.t[0] > delta) {
+                data.t.splice(1, 0, data.t[1] - epsilon);
+                data.x.splice(1, 0, data.x[0]);
+                data.y.splice(1, 0, data.y[0]);
             }
-            return result;
+            return data;
+        }
+
+        function interpolateAllBalls(shot) {
+            shot.balls = Object.fromEntries(
+                Object.entries(shot.balls)
+                    .filter(([num]) => num <= 3)
+                    .map(([num, data]) => [num, interpolateUntilMove(data)])
+            );
+            return shot;
         }
 
         function processShots(shotsData) {
             allShots = shotsData;
+            allShots = allShots.map(shot => {
+                const interpolatedShot = interpolateAllBalls(shot);
+                return interpolatedShot;
+            })
+
             if (allShots.length > 0) {
                 const urlShotId = getInitialShotFromUrl();
                 console.log("URL Shot ID:", urlShotId);
