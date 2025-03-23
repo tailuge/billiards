@@ -1,213 +1,215 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <title>Billiard Shot Viewer</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>🎱</svg>">
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>🎱</svg>"
+    />
     <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #f0f0f0;
-            margin: 0;
-        }
+      body {
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #f0f0f0;
+        margin: 0;
+      }
 
-        #container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+      #container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
 
-        #canvas-container {
-            position: relative;
-            width: 900px;
-            height: 500px;
-        }
+      #canvas-container {
+        position: relative;
+        width: 900px;
+        height: 500px;
+      }
 
-        #canvas {
-            background-color: #636ac9d2;
-            position: absolute;
-            top: 42px;
-            left: 38px;
-            width: 826px;
-            height: 418px;
-            display: block;
-            z-index: 1;
-        }
+      #canvas {
+        background-color: #636ac9d2;
+        position: absolute;
+        top: 42px;
+        left: 38px;
+        width: 826px;
+        height: 418px;
+        display: block;
+        z-index: 1;
+      }
 
-        #myIframe {
-            border: 1px solid #ccc;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.85;
-            z-index: 2;
-        }
+      #myIframe {
+        border: 1px solid #ccc;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.85;
+        z-index: 2;
+      }
 
-        #controls {
-            padding: 8px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            width: 100%;
-            justify-content: center;
-        }
+      #controls {
+        padding: 8px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
+      }
 
-        #controls button,
-        #controls select,
-        #controls input[type="file"] {
-            margin-bottom: 0;
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: white;
-            cursor: pointer;
-            min-width: 120px;
-            flex-grow: 0;
-            box-sizing: border-box;
-        }
+      #controls button,
+      #controls select,
+      #controls input[type="file"] {
+        margin-bottom: 0;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: white;
+        cursor: pointer;
+        min-width: 120px;
+        flex-grow: 0;
+        box-sizing: border-box;
+      }
 
-        #controls button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+      #controls button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
-        #shotIndexDisplay {
-            margin: 0 10px;
-            min-width: 80px;
-        }
+      #shotIndexDisplay {
+        margin: 0 10px;
+        min-width: 80px;
+      }
 
-        footer {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #666;
-            text-align: center;
-            width: 100%;
-        }
+      footer {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+        width: 100%;
+      }
 
-        .topview {
-            width: 900px;
-            height: 500px;
-        }
+      .topview {
+        width: 900px;
+        height: 500px;
+      }
 
-        .diagram {
-            margin: 4x;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background: #f8f8f8;
-            width: 800px;
-            font-family: 'Consolas', 'Monaco', monospace;
-        }
+      .diagram {
+        margin: 4x;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #f8f8f8;
+        width: 800px;
+        font-family: "Consolas", "Monaco", monospace;
+      }
 
-        .diagram-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            font-size: 0.9em;
-        }
+      .diagram-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 0.9em;
+      }
 
-        .controls-grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 8px;
-            align-items: center;
-        }
+      .controls-grid {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 8px;
+        align-items: center;
+      }
 
-        .diagram label {
-            font-size: 0.8em;
-            color: #444;
-            min-width: 30px;
-        }
+      .diagram label {
+        font-size: 0.8em;
+        color: #444;
+        min-width: 30px;
+      }
 
-        .diagram input[type="range"] {
-            width: 200px;
-            margin: 0;
-        }
+      .diagram input[type="range"] {
+        width: 200px;
+        margin: 0;
+      }
 
-        .diagram button {
-            padding: 4px 12px;
-            font-size: 0.8em;
-            font-family: inherit;
-            background: #fff;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            cursor: pointer;
-        }
+      .diagram button {
+        padding: 4px 12px;
+        font-size: 0.8em;
+        font-family: inherit;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+      }
 
-        .diagram button:hover {
-            background: #f0f0f0;
-        }
+      .diagram button:hover {
+        background: #f0f0f0;
+      }
     </style>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <div id="canvas-container">
-        <canvas id="canvas"></canvas>
-        <div id="myIframe" class="replaydiagram">
-            <div class="topview"
-                data-state='?ruletype=threecushion&state={"init":[-0.8179,-0.2044,-0.8183,0,0.819,0],"shots":[{"type":"AIM","offset":{"x":-0.2783281572999748,"y":0.1481640786499874,"z":0},"angle":0.1489,"power":4.292,"pos":{"x":-0.8179000020027161,"y":-0.20440000295639038,"z":0},"i":0}]}'>
-            </div>
-        </div>
+      <canvas id="canvas"></canvas>
+      <div id="myIframe" class="replaydiagram">
+        <div
+          class="topview"
+          data-state='?ruletype=threecushion&state={"init":[-0.8179,-0.2044,-0.8183,0,0.819,0],"shots":[{"type":"AIM","offset":{"x":-0.2783281572999748,"y":0.1481640786499874,"z":0},"angle":0.1489,"power":4.292,"pos":{"x":-0.8179000020027161,"y":-0.20440000295639038,"z":0},"i":0}]}'
+        ></div>
+      </div>
     </div>
 
-
     <div id="container">
-        <div id="controls">
-            <input type="file" id="fileInput">
-            <span id="shotIndexDisplay">Shot: 1</span>
-            <select id="shotSelector"></select>
-        </div>
+      <div id="controls">
+        <input type="file" id="fileInput" />
+        <span id="shotIndexDisplay">Shot: 1</span>
+        <select id="shotSelector"></select>
+      </div>
     </div>
 
     <div class="diagram">
-        <div class="diagram-header">
-            <span>Physical Constants</span>
-            <button id="replay" type="button">replay</button>
-        </div>
-        <div class="controls-grid">
-            <label for="R">R</label>
-            <input id="R" type="range" />
+      <div class="diagram-header">
+        <span>Physical Constants</span>
+        <button id="replay" type="button">replay</button>
+      </div>
+      <div class="controls-grid">
+        <label for="R">R</label>
+        <input id="R" type="range" />
 
-            <label for="m">m</label>
-            <input id="m" type="range" />
+        <label for="m">m</label>
+        <input id="m" type="range" />
 
-            <label for="e">e</label>
-            <input id="e" type="range" />
+        <label for="e">e</label>
+        <input id="e" type="range" />
 
-            <label for="mu">μ</label>
-            <input id="mu" type="range" />
+        <label for="mu">μ</label>
+        <input id="mu" type="range" />
 
-            <label for="muS">μs</label>
-            <input id="muS" type="range" />
+        <label for="muS">μs</label>
+        <input id="muS" type="range" />
 
-            <label for="muC">μc</label>
-            <input id="muC" type="range" />
+        <label for="muC">μc</label>
+        <input id="muC" type="range" />
 
-            <label for="rho">ρ</label>
-            <input id="rho" type="range" />
-        </div>
+        <label for="rho">ρ</label>
+        <input id="rho" type="range" />
+      </div>
     </div>
 
     <footer>
-        Data source: <a href="https://www.youtube.com/c/NightCaféBilliard" style="color: #666;">Night Café Billiard</a>
-        - Match between Cemal Cay and Ersin Dogan in December 2022
+      Data source:
+      <a href="https://www.youtube.com/c/NightCaféBilliard" style="color: #666"
+        >Night Café Billiard</a
+      >
+      - Match between Cemal Cay and Ersin Dogan in December 2022
     </footer>
 
     <script src="../vendor.js"></script>
     <script src="../diagram.js"></script>
     <script src="plot.js"></script>
-
-</body>
-
+  </body>
 </html>

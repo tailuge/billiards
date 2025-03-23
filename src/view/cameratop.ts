@@ -6,7 +6,7 @@ export class CameraTop {
   static readonly aspectLimit = 1.78
   static readonly portrait = 0.95
   static readonly fov = 20
-  static readonly zoomFactor = 1
+  static zoomFactor = 1
   static viewPoint(aspectRatio, fov) {
     const dist = CameraTop.zoomFactor / (2 * Math.tan((fov * Math.PI) / 360))
 

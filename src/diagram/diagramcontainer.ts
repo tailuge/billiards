@@ -4,6 +4,7 @@ import { BreakEvent } from "../events/breakevent"
 import { CameraTop } from "../view/cameratop"
 import { bounceHan } from "../model/physics/physics"
 import { Assets } from "../view/assets"
+import { RealOverlay } from "./realoverlay"
 
 /**
  * Integrate billiards container into diagram html page
@@ -18,6 +19,8 @@ export class DiagramContainer {
     init: null,
     shots: Array<string>(),
   }
+
+  realOverlay
 
   constructor(canvas3d, ruletype, replay) {
     this.replay = replay
@@ -44,6 +47,7 @@ export class DiagramContainer {
 
   onAssetsReady = () => {
     console.log(`diagram ready`)
+    this.realOverlay = new RealOverlay(document.getElementById("canvas"))
     this.breakState = JSON.parse(decodeURIComponent(this.replay))
     const replaybutton = document.getElementById("replay")! as HTMLButtonElement
     this.replayButton(replaybutton)
@@ -61,6 +65,7 @@ export class DiagramContainer {
           new BreakEvent(this.breakState.init, this.breakState.shots)
         )
       }
+      this.realOverlay.start()
     })
   }
 

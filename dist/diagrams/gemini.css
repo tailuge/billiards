@@ -1,66 +1,66 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f0f0f0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #controls {
-    background-color: #fff;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    gap: 10px;
-    align-items: center;
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 canvas {
-    border: 1px solid #ccc;
-    background-color: #006400;
-    display: block;
+  border: 1px solid #ccc;
+  background-color: #006400;
+  display: block;
 }
 
 #shotIndexDisplay {
-    font-size: 16px;
-    font-weight: bold;
-    color: #555;
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
 }
 
 #shotSelector {
-    padding: 8px;
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    font-size: 14px;
+  padding: 8px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
 #fileInput {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 #replayButton {
-    padding: 8px 16px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
 }
 
 #replayButton:hover {
-    background-color: #367c39;
+  background-color: #367c39;
 }
 
 #myIframe {
-    width: 80%;
-    height: 400px;
-    border: 1px solid #ccc;
-    margin-top: 20px;
-    display: none;
+  width: 80%;
+  height: 400px;
+  border: 1px solid #ccc;
+  margin-top: 20px;
+  display: none;
 }
