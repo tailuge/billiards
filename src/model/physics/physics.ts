@@ -1,8 +1,7 @@
 import { Vector3 } from "three"
 import { norm, upCross, up, sin, cos } from "../../utils/utils"
-import { muS, muC, g, m, Mz, Mxy, R, I, e } from "./constants"
+import { muS, muC, g, m, Mz, Mxy, R, I, e, ee, μs, μw } from "./constants"
 import { Mathaven } from "./mathaven"
-import { ee, μs, μw } from "../../diagram/constants"
 
 export function surfaceVelocity(v, w) {
   return surfaceVelocityFull(v, w).setZ(0)

@@ -6,6 +6,17 @@ export let rho = 0.034
 export let m = 0.23
 export let R = 0.03275
 export let e = 0.86
+
+// Mathaven specific
+// Coefficient of restitution
+export const ee = 0.98
+
+// Coefficient of sliding friction (table)
+export const μs = 0.212
+
+// Coefficient of sliding friction (cushion)
+export const μw = 0.14
+
 export let Mz: number
 export let Mxy: number
 export let I: number
