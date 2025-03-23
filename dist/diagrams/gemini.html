@@ -1,78 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Billiards Shot Visualizer</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #controls {
-            background-color: #fff;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            gap: 10px;
-            align-items: center; /* Vertically align items */
-        }
-
-        canvas {
-            border: 1px solid #ccc;
-            background-color: #006400;  /* Green background for the table */
-            display: block; /* Prevent extra space below canvas */
-        }
-
-        #shotIndexDisplay {
-            font-size: 16px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        #shotSelector {
-            padding: 8px;
-            border: 1px solid #aaa;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        #fileInput {
-            margin-top: 10px;
-        }
-
-        #replayButton {
-            padding: 8px 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s ease;
-        }
-
-        #replayButton:hover {
-            background-color: #367c39;
-        }
-
-        #myIframe {
-            width: 80%;
-            height: 400px;
-            border: 1px solid #ccc;
-            margin-top: 20px;
-            display: none; /* Initially hide the iframe */
-        }
-    </style>
+    <link rel="stylesheet" href="gemini.css">
 </head>
+
 <body>
     <div id="controls">
         <label for="fileInput">Load JSON Data:</label>
@@ -88,7 +23,7 @@
         Data source: <a href="https://www.youtube.com/c/NightCaféBilliard" style="color: #666;">Night Café Billiard</a>
         - Match between Cemal Cay and Ersin Dogan in December 2022
     </footer>
-    
+
     <script>
         const fileInput = document.getElementById('fileInput');
         const canvas = document.getElementById('canvas');
@@ -128,6 +63,48 @@
             return urlParams.get('shot');
         }
 
+        function interpolateUntilMove(data , delta = 0.025, epsilon = 0.00001) {
+            const result = {
+                t: [data.t[0]],
+                x: [data.x[0]],
+                y: [data.y[0]],
+            };
+
+            for (let i = 1; i < data.t.length; i++) {
+                const gap = data.t[i] - result.t[result.t.length - 1];
+                if (gap > delta) {
+                    result.t.push(data.t[i] - epsilon);
+                    result.x.push(data.x[i]);
+                    result.y.push(data.y[i]);
+                }
+                result.t.push(data.t[i]);
+                result.x.push(data.x[i]);
+                result.y.push(data.y[i]);
+            }
+            return result;
+        }
+
+        function processShots(shotsData) {
+            allShots = shotsData;
+            if (allShots.length > 0) {
+                const urlShotId = getInitialShotFromUrl();
+                console.log("URL Shot ID:", urlShotId);
+                if (urlShotId) {
+                    const shotIndex = allShots.findIndex(shot => shot.shotID == urlShotId);
+                    console.log("Shot index:", shotIndex);
+                    currentShotIndex = shotIndex >= 0 ? shotIndex : 0;
+                } else {
+                    currentShotIndex = 0;
+                }
+                populateShotSelector();
+                updateDisplay();
+                drawTable();
+                drawShot(allShots[currentShotIndex], 0);
+            } else {
+                console.log("No shots found in the data.");
+            }
+        }
+
         function loadDefaultData() {
             fetch('simple_shots.json')
                 .then(response => {
@@ -136,26 +113,7 @@
                     }
                     return response.json();
                 })
-                .then(data => {
-                    allShots = data;
-                    if (allShots.length > 0) {
-                        const urlShotId = getInitialShotFromUrl();
-                        console.log("URL Shot ID:", urlShotId);
-                        if (urlShotId) {
-                            const shotIndex = allShots.findIndex(shot => shot.shotID == urlShotId);
-                            console.log("Shot index:", shotIndex);
-                            currentShotIndex = shotIndex >= 0 ? shotIndex : 0;
-                        } else {
-                            currentShotIndex = 0;
-                        }
-                        populateShotSelector();
-                        updateDisplay();
-                        drawTable(); // Draw the table once
-                        drawShot(allShots[currentShotIndex], 0); // Draw initial ball positions
-                    } else {
-                        console.log("No shots found in the default JSON file.");
-                    }
-                })
+                .then(processShots)
                 .catch(error => {
                     console.error("Error loading default JSON:", error);
                 });
@@ -173,16 +131,8 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     try {
-                        allShots = JSON.parse(e.target.result);
-                        if (allShots.length > 0) {
-                            currentShotIndex = 0;
-                            populateShotSelector();
-                            updateDisplay();
-                            drawTable(); // Draw the table once
-                            drawShot(allShots[currentShotIndex], 0); // Draw initial ball positions
-                        } else {
-                            alert("No shots found in the JSON file.");
-                        }
+                        const shotsData = JSON.parse(e.target.result);
+                        processShots(shotsData);
                     } catch (error) {
                         console.error("Error parsing JSON:", error);
                         alert("Error parsing JSON file.");
@@ -216,8 +166,8 @@
             // No scaling or translation here
             ctx.fillStyle = '#222255';
             ctx.fillRect(0, canvas.height - CUSHION_WIDTH * PIXELS_PER_METER, canvas.width, CUSHION_WIDTH * PIXELS_PER_METER);
-            ctx.fillRect(0,  0, canvas.width, CUSHION_WIDTH * PIXELS_PER_METER);
-            ctx.fillRect(0, canvas.height-CUSHION_WIDTH * PIXELS_PER_METER, CUSHION_WIDTH * PIXELS_PER_METER, -canvas.height);
+            ctx.fillRect(0, 0, canvas.width, CUSHION_WIDTH * PIXELS_PER_METER);
+            ctx.fillRect(0, canvas.height - CUSHION_WIDTH * PIXELS_PER_METER, CUSHION_WIDTH * PIXELS_PER_METER, -canvas.height);
             ctx.fillRect(canvas.width - CUSHION_WIDTH * PIXELS_PER_METER, canvas.height, CUSHION_WIDTH * PIXELS_PER_METER, -canvas.height);
 
 
@@ -262,7 +212,7 @@
                 if (!times || times.length === 0) return positions[0];
 
                 if (targetTime <= times[0]) return positions[0];
-                if (targetTime >= times[times.length - 1]) return positions[positions.length-1];
+                if (targetTime >= times[times.length - 1]) return positions[positions.length - 1];
 
                 let lowIndex = 0;
                 let highIndex = times.length - 1;
@@ -307,20 +257,18 @@
                     let prevY = canvas.height - (yPositions[0] * PIXELS_PER_METER);
                     ctx.moveTo(prevX, prevY);
 
-                    for (let i = 1; i < times.length; i++)
-                    {
-                        if (times[i] <= currentTime){
+                    for (let i = 1; i < times.length; i++) {
+                        if (times[i] <= currentTime) {
                             const x = xPositions[i] * PIXELS_PER_METER;
                             const y = canvas.height - (yPositions[i] * PIXELS_PER_METER);
-                            ctx.lineTo(x,y);
+                            ctx.lineTo(x, y);
                             prevX = x;
                             prevY = y;
                         }
-                        else
-                        {
+                        else {
                             const x = getInterpolatedPosition(times, xPositions, currentTime) * PIXELS_PER_METER;
                             const y = canvas.height - (getInterpolatedPosition(times, yPositions, currentTime) * PIXELS_PER_METER);
-                            ctx.lineTo(x,y);
+                            ctx.lineTo(x, y);
                             break;
                         }
                     }
@@ -411,4 +359,5 @@
         drawTable();
     </script>
 </body>
+
 </html>
