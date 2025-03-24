@@ -4,7 +4,7 @@ import { BreakEvent } from "../events/breakevent"
 import { CameraTop } from "../view/cameratop"
 import { bounceHan } from "../model/physics/physics"
 import { Assets } from "../view/assets"
-import { RealOverlay } from "./realoverlay"
+import { RealOverlay } from "./real/realoverlay"
 
 /**
  * Integrate billiards container into diagram html page
