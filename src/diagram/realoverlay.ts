@@ -25,12 +25,19 @@ export class RealOverlay {
   lastFrameTime = 0
   animationStartTime = 0
 
+  elapsedTime = 0
+
   constructor(canvas, container) {
     this.canvas = canvas
     this.ctx = this.canvas.getContext("2d")
     this.PIXELS_PER_METER = this.canvas.width / this.TABLE_WIDTH
     container && (container.frame = this.advance)
     console.log("this.canvas.width ", this.canvas.width)
+  }
+
+  start() {
+    console.log("real overlay start")
+    this.loadDefaultData()
   }
 
   advance(elapsed) {
@@ -294,8 +301,4 @@ export class RealOverlay {
     this.drawShot(this.allShots[this.currentShotIndex], 0)
   }
 
-  start() {
-    console.log("real overlay start")
-    this.loadDefaultData()
-  }
 }
