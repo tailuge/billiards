@@ -1,8 +1,8 @@
 import { RealPosition } from "./realposition"
+import { RealDraw } from "./realdraw"
 
 export class RealOverlay {
-  canvas: HTMLCanvasElement
-  ctx: CanvasRenderingContext2D
+  private drawer: RealDraw
   fileInput: HTMLInputElement = document.getElementById(
     "fileInput"
   )! as HTMLInputElement
@@ -17,37 +17,25 @@ export class RealOverlay {
   )! as HTMLButtonElement
   myIframe = document.getElementById("myIframe")
 
-  BALL_COLORS = { 1: "white", 2: "yellow", 3: "red" }
-  BALL_DIAMETER = 0.0615
-  TABLE_WIDTH = 2.84
-  CUSHION_WIDTH = 0.01
-  TABLE_HEIGHT = this.TABLE_WIDTH / 2
-  PIXELS_PER_METER: number
-
   allShots: any[] = []
   currentShotIndex = 0
   animationTimer = -2.25
   isPlaying = false
-  tableDrawn = false
   lastFrameTime = 0
   animationStartTime = 0
   realPosition: RealPosition | null = null
-
   elapsedTime = 0
 
   constructor(canvas: HTMLCanvasElement, container: any) {
-    this.canvas = canvas
-    this.ctx = this.canvas.getContext("2d")!
-    this.PIXELS_PER_METER = this.canvas.width / this.TABLE_WIDTH
+    this.drawer = new RealDraw(canvas)
     container && (container.frame = this.advance.bind(this))
-    console.log("this.canvas.width ", this.canvas.width)
     this.start()
   }
 
-   start() {
+  start() {
     console.log("real overlay start")
-     this.loadDefaultData()
-    this.addEventListeners() //add event listeners
+    this.loadDefaultData()
+    this.addEventListeners()
   }
 
   addEventListeners() {
@@ -93,22 +81,16 @@ export class RealOverlay {
         return response.json()
       })
       .then((shotsData) => this.processShots(shotsData))
-      .catch((error) => {
-        console.error("Error loading default JSON:", error)
-      })
   }
 
   processShots(shotsData: any[]) {
     this.allShots = shotsData
-    this.realPosition = new RealPosition(this.allShots) // Initialize the simulator
+    this.realPosition = new RealPosition(this.allShots)
     if (this.allShots.length > 0) {
       this.currentShotIndex = 0
       this.populateShotSelector()
       this.updateDisplay()
-      this.drawTable()
       this.drawShot(this.allShots[this.currentShotIndex], 0)
-    } else {
-      console.log("No shots found in the data.")
     }
   }
 
@@ -132,119 +114,31 @@ export class RealOverlay {
     }
   }
 
-  drawTable() {
-    this.ctx.fillStyle = "#222255"
-    this.ctx.fillRect(
-      0,
-      this.canvas.height - this.CUSHION_WIDTH * this.PIXELS_PER_METER,
-      this.canvas.width,
-      this.CUSHION_WIDTH * this.PIXELS_PER_METER
-    )
-    this.ctx.fillRect(
-      0,
-      0,
-      this.canvas.width,
-      this.CUSHION_WIDTH * this.PIXELS_PER_METER
-    )
-    this.ctx.fillRect(
-      0,
-      this.canvas.height - this.CUSHION_WIDTH * this.PIXELS_PER_METER,
-      this.CUSHION_WIDTH * this.PIXELS_PER_METER,
-      -this.canvas.height
-    )
-    this.ctx.fillRect(
-      this.canvas.width - this.CUSHION_WIDTH * this.PIXELS_PER_METER,
-      this.canvas.height,
-      this.CUSHION_WIDTH * this.PIXELS_PER_METER,
-      -this.canvas.height
-    )
-
-    this.ctx.strokeStyle = "rgba(255, 255, 255, 0.3)"
-    this.ctx.lineWidth = 1
-
-    for (let i = 0; i <= 8; i++) {
-      let x =
-        this.CUSHION_WIDTH * this.PIXELS_PER_METER +
-        (i *
-          (this.canvas.width -
-            2 * this.CUSHION_WIDTH * this.PIXELS_PER_METER)) /
-          8
-      this.ctx.beginPath()
-      this.ctx.moveTo(x, this.canvas.height)
-      this.ctx.lineTo(x, 0)
-      this.ctx.stroke()
-    }
-
-    for (let i = 0; i <= 4; i++) {
-      let y =
-        this.canvas.height -
-        (this.CUSHION_WIDTH * this.PIXELS_PER_METER +
-          (i *
-            (this.canvas.height -
-              2 * this.CUSHION_WIDTH * this.PIXELS_PER_METER)) /
-            4)
-      this.ctx.beginPath()
-      this.ctx.moveTo(0, y)
-      this.ctx.lineTo(this.canvas.width, y)
-      this.ctx.stroke()
-    }
-    this.tableDrawn = true
-  }
-
-  drawBall(x: number, y: number, color: string) {
-    const radius = (this.BALL_DIAMETER / 2) * this.PIXELS_PER_METER
-    const flippedX = this.canvas.width - x
-    const flippedY =  y
-    this.ctx.beginPath()
-    this.ctx.arc(flippedX, flippedY, radius, 0, 2 * Math.PI)
-    this.ctx.fillStyle = color
-    this.ctx.fill()
-    this.ctx.strokeStyle = "black"
-    this.ctx.lineWidth = 1
-    this.ctx.stroke()
-  }
-
   drawShot(shotData: any, currentTime: number = 0) {
-    if (!this.tableDrawn) {
-      this.drawTable()
-    }
-console.log("drawShot", shotData.shotID, currentTime)
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    this.drawTable()
-
     if (!this.realPosition) return
+
     const ballPositions = this.realPosition.getPositionsAtTime(
       shotData.shotID,
       currentTime
     )
-
     if (!ballPositions) return
 
-    for (const ballNum in ballPositions) {
-      const ballPosition = ballPositions[ballNum]
-      const color = this.BALL_COLORS[ballNum]
-      const x = ballPosition.x * this.PIXELS_PER_METER
-      const y = this.canvas.height - ballPosition.y * this.PIXELS_PER_METER
-      this.drawBall(x, y, color)
-    }
+    this.drawer.clear()
+    this.drawer.drawShot(ballPositions)
   }
 
   resetAnimation() {
     this.isPlaying = false
     this.animationTimer = -3.7
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    this.drawTable()
+    this.drawer.resetCanvas()
     this.drawShot(this.allShots[this.currentShotIndex], 0)
   }
 
   advance(elapsed: number) {
     this.elapsedTime += elapsed
-//    console.log("elapsed time", this.elapsedTime)
     if (this.realPosition && this.allShots.length > 0) {
       this.animationTimer += elapsed
       const currentShot = this.allShots[this.currentShotIndex]
-
-
       this.drawShot(currentShot, this.animationTimer)
     }
   }
