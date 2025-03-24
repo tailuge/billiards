@@ -47,7 +47,7 @@ export class DiagramContainer {
 
   onAssetsReady = () => {
     console.log(`diagram ready`)
-    this.realOverlay = new RealOverlay(document.getElementById("canvas"))
+    this.realOverlay = new RealOverlay(document.getElementById("canvas"), this.container)
     this.breakState = JSON.parse(decodeURIComponent(this.replay))
     const replaybutton = document.getElementById("replay")! as HTMLButtonElement
     this.replayButton(replaybutton)

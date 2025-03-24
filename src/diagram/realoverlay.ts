@@ -25,11 +25,16 @@ export class RealOverlay {
   lastFrameTime = 0
   animationStartTime = 0
 
-  constructor(canvas) {
+  constructor(canvas, container) {
     this.canvas = canvas
     this.ctx = this.canvas.getContext("2d")
     this.PIXELS_PER_METER = this.canvas.width / this.TABLE_WIDTH
+    container && (container.frame = this.advance)
     console.log("this.canvas.width ", this.canvas.width)
+  }
+
+  advance(elapsed) {
+    console.log("advance", elapsed)
   }
 
   interpolateUntilMove(data, delta = 0.3, epsilon = 0.00001) {

@@ -38,6 +38,7 @@ export class Container {
   rules: Rules
   menu: Menu
   hud: Hud
+  frame: (timestamp: number) => void
 
   last = performance.now()
   readonly step = 0.001953125 * 1
@@ -76,6 +77,8 @@ export class Container {
   }
 
   advance(elapsed) {
+    this.frame?.(elapsed)
+
     const steps = Math.floor(elapsed / this.step)
     const computedElapsed = steps * this.step
     const stateBefore = this.table.allStationary()
