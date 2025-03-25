@@ -5,6 +5,7 @@ export class RealDraw {
   private BALL_DIAMETER = 0.0615
   private TABLE_WIDTH = 2.84
   private PIXELS_PER_METER: number
+  private ballPaths: Record<string, Array<{ x: number; y: number }>> = {}
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas
@@ -25,11 +26,34 @@ export class RealDraw {
     this.ctx.stroke()
   }
 
+  drawBallPath(ballNum: string, positions: Array<{ x: number; y: number }>) {
+    const color = this.BALL_COLORS[ballNum]
+    this.ctx.beginPath()
+    positions.forEach((pos, index) => {
+      const x = this.canvas.width - pos.x * this.PIXELS_PER_METER
+      const y = this.canvas.height - pos.y * this.PIXELS_PER_METER
+      if (index === 0) {
+        this.ctx.moveTo(x, y)
+      } else {
+        this.ctx.lineTo(x, y)
+      }
+    })
+    this.ctx.strokeStyle = color
+    this.ctx.lineWidth = 2
+    this.ctx.stroke()
+  }
+
   clear() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
   drawShot(ballPositions: Record<string, { x: number; y: number }>) {
+    // Draw paths first so balls appear on top
+    for (const ballNum in this.ballPaths) {
+      this.drawBallPath(ballNum, this.ballPaths[ballNum])
+    }
+
+    // Draw current ball positions
     for (const ballNum in ballPositions) {
       const ballPosition = ballPositions[ballNum]
       const color = this.BALL_COLORS[ballNum]
@@ -41,5 +65,13 @@ export class RealDraw {
 
   resetCanvas() {
     this.clear()
+    this.ballPaths = {}
+  }
+
+  updateBallPaths(ballNum: string, position: { x: number; y: number }) {
+    if (!this.ballPaths[ballNum]) {
+      this.ballPaths[ballNum] = []
+    }
+    this.ballPaths[ballNum].push(position)
   }
 }

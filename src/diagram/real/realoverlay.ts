@@ -123,6 +123,12 @@ export class RealOverlay {
     )
     if (!ballPositions) return
 
+    // Update ball paths with current positions
+    for (const ballNum in ballPositions) {
+      this.drawer.updateBallPaths(ballNum, ballPositions[ballNum])
+    }
+
+    // Clear and redraw everything
     this.drawer.clear()
     this.drawer.drawShot(ballPositions)
   }
@@ -130,7 +136,7 @@ export class RealOverlay {
   resetAnimation() {
     this.isPlaying = false
     this.animationTimer = -3.7
-    this.drawer.resetCanvas()
+    this.drawer.resetCanvas() // This will clear both the canvas and the stored paths
     this.drawShot(this.allShots[this.currentShotIndex], 0)
   }
 
