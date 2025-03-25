@@ -47,10 +47,8 @@ export class DiagramContainer {
 
   onAssetsReady = () => {
     console.log(`diagram ready`)
-    this.realOverlay = new RealOverlay(
-      document.getElementById("canvas"),
-      this.container
-    )
+    const canvas = document.getElementById("canvas") as HTMLCanvasElement
+    canvas && (this.realOverlay = new RealOverlay(canvas, this.container))
     this.breakState = JSON.parse(decodeURIComponent(this.replay))
     const replaybutton = document.getElementById("replay")! as HTMLButtonElement
     this.replayButton(replaybutton)
@@ -68,7 +66,7 @@ export class DiagramContainer {
           new BreakEvent(this.breakState.init, this.breakState.shots)
         )
       }
-      this.realOverlay.start()
+      this.realOverlay?.start()
     })
   }
 
