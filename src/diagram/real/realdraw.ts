@@ -28,6 +28,7 @@ export class RealDraw {
 
   drawBallPath(ballNum: string, positions: Array<{ x: number; y: number }>) {
     const color = this.BALL_COLORS[ballNum]
+    this.ctx.save()
     this.ctx.beginPath()
     positions.forEach((pos, index) => {
       const x = this.canvas.width - pos.x * this.PIXELS_PER_METER
@@ -38,9 +39,11 @@ export class RealDraw {
         this.ctx.lineTo(x, y)
       }
     })
+    this.ctx.setLineDash([4, 4]);
     this.ctx.strokeStyle = color
-    this.ctx.lineWidth = 2
+    this.ctx.lineWidth = 1
     this.ctx.stroke()
+    this.ctx.restore()
   }
 
   clear() {
