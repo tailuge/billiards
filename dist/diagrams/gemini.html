@@ -4,392 +4,895 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Billiards Shot Visualizer</title>
-    <link rel="stylesheet" href="gemini.css" />
+    <!-- <link rel="stylesheet" href="gemini.css" /> <-- Removed -->
+
+    <style>
+      /* --- Start Embedded CSS --- */
+
+      /* Basic Reset & Defaults */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        line-height: 1.6;
+        background-color: #f4f4f4;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      header {
+          background-color: #333;
+          color: #fff;
+          padding: 1rem 0;
+          text-align: center;
+          margin-bottom: 1rem;
+      }
+
+      h1 {
+          font-size: 1.5rem;
+          font-weight: 600;
+      }
+
+      /* Controls Styling */
+      #controls {
+        display: flex;
+        flex-wrap: wrap; /* Allow items to wrap onto the next line */
+        justify-content: center; /* Center items horizontally */
+        align-items: center; /* Align items vertically */
+        gap: 1rem; /* Space between control groups */
+        padding: 1rem;
+        background-color: #e9e9e9;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 1rem; /* Space below controls */
+      }
+
+      .control-group {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem; /* Space within a group */
+      }
+
+      #controls label {
+        font-weight: 500;
+        margin-right: 0.25rem;
+      }
+
+      #controls input[type="file"],
+      #controls select,
+      #controls button {
+        padding: 0.5rem 0.8rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        background-color: #fff;
+        cursor: pointer;
+      }
+
+      #controls input[type="file"] {
+        padding: 0.4rem; /* Slightly different padding for file input */
+        cursor: pointer;
+        /* Basic styling for file input - can be inconsistent across browsers */
+        max-width: 200px; /* Prevent it getting too wide */
+      }
+
+      #controls button:hover:not(:disabled) {
+        background-color: #f0f0f0;
+        border-color: #aaa;
+      }
+
+      #controls button:disabled {
+          cursor: not-allowed;
+          opacity: 0.6;
+      }
+
+      /* Icon Button Specific Styling */
+      .icon-button {
+        display: inline-flex; /* Align icon and potential text */
+        align-items: center;
+        justify-content: center;
+        padding: 0.4rem; /* Adjust padding for icons */
+        width: 36px; /* Fixed width */
+        height: 36px; /* Fixed height */
+        line-height: 1; /* Prevent extra space */
+      }
+
+      .icon-button svg {
+        width: 20px; /* Icon size */
+        height: 20px; /* Icon size */
+        fill: currentColor; /* Use button's text color */
+      }
+
+      #shotIndexDisplay {
+        font-weight: 500;
+        min-width: 80px; /* Prevent layout shifts, adjusted width */
+        text-align: center;
+        padding: 0 0.3rem;
+      }
+
+      /* Canvas Styling & Responsiveness */
+      .canvas-container {
+        width: 100%;
+        max-width: 900px; /* Max width of the canvas container */
+        margin: 1rem auto; /* Center the container */
+        padding: 0 1rem; /* Add padding on smaller screens */
+        aspect-ratio: 2 / 1; /* Maintain 2:1 aspect ratio */
+        position: relative; /* Needed for absolute positioning if used later */
+      }
+
+      #canvas {
+        display: block; /* Remove extra space below canvas */
+        width: 100%; /* Fill the container width */
+        height: 100%; /* Fill the container height */
+        background-color: #006400; /* Dark green table color */
+        border: 4px solid #654321; /* Wooden frame look */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Footer Styling */
+      footer {
+        margin-top: auto; /* Push footer to the bottom */
+        padding: 1rem;
+        text-align: center;
+        font-size: 0.85rem;
+        color: #666;
+        background-color: #e9e9e9;
+        border-top: 1px solid #ccc;
+      }
+
+      footer a {
+        color: #007bff;
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+
+      /* Media Query for very small screens (optional adjustments) */
+      @media (max-width: 520px) { /* Adjusted breakpoint */
+        #controls {
+          gap: 0.5rem 0.8rem; /* Reduce gap slightly */
+          padding: 0.8rem;
+          justify-content: space-around; /* Better distribution on small screens */
+        }
+
+        .control-group {
+            /* Allow wrapping within groups if needed, but main controls wrap first */
+             flex-basis: auto; /* Reset basis */
+             justify-content: center;
+        }
+
+        .file-input-group label {
+             /* Optionally hide label */
+             /* display: none; */
+        }
+         #controls input[type="file"] {
+            max-width: 150px;
+        }
+
+        h1 {
+          font-size: 1.3rem;
+        }
+        .canvas-container {
+            padding: 0 0.5rem; /* Reduce padding */
+        }
+      }
+
+      /* --- End Embedded CSS --- */
+    </style>
+
   </head>
 
   <body>
+
     <div id="controls">
-      <label for="fileInput">Load JSON Data:</label>
-      <input type="file" id="fileInput" accept=".json" />
-      <span id="shotIndexDisplay">Shot: 1</span>
-      <select id="shotSelector"></select>
-      <button id="replayButton">Replay</button>
+      <div class="control-group file-input-group">
+        <label for="fileInput">Load JSON:</label>
+        <input type="file" id="fileInput" accept=".json" />
+      </div>
+      <div class="control-group navigation-group">
+        <button id="prevShotButton" class="icon-button" aria-label="Previous Shot" disabled>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+          </svg>
+        </button>
+        <span id="shotIndexDisplay">Shot: -</span>
+         <button id="nextShotButton" class="icon-button" aria-label="Next Shot" disabled>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+          </svg>
+        </button>
+        <button id="replayButton" class="icon-button" aria-label="Replay Shot" disabled>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="control-group selector-group">
+         <label for="shotSelector">Select Shot:</label>
+         <select id="shotSelector" disabled></select>
+      </div>
     </div>
-    <canvas id="canvas" width="800" height="400"></canvas>
+
+    <div class="canvas-container">
+      <canvas id="canvas"></canvas>
+      <!-- Canvas width/height removed - will be set by CSS & JS -->
+    </div>
 
     <footer>
       Data source:
-      <a href="https://www.youtube.com/c/NightCaféBilliard" style="color: #666"
+      <a href="https://www.youtube.com/c/NightCaféBilliard" target="_blank" rel="noopener noreferrer"
         >Night Café Billiard</a
       >
       - Match between Cemal Cay and Ersin Dogan in December 2022
     </footer>
 
+    <!-- <script src="gemini.js"></script> <-- Removed -->
     <script>
-      const fileInput = document.getElementById("fileInput")
-      const canvas = document.getElementById("canvas")
-      const ctx = canvas.getContext("2d")
-      const shotIndexDisplay = document.getElementById("shotIndexDisplay")
-      const shotSelector = document.getElementById("shotSelector")
-      const replayButton = document.getElementById("replayButton")
-      const myIframe = document.getElementById("myIframe")
+      // --- Start Embedded JavaScript ---
 
-      console.log("Canvas width:", canvas.width)
-      const BALL_COLORS = { 1: "white", 2: "yellow", 3: "red" }
-      const BALL_DIAMETER = 0.0615
-      const TABLE_WIDTH = 2.84
-      const TABLE_HEIGHT = TABLE_WIDTH / 2
-      const CUSHION_WIDTH = 0.01
-      const PIXELS_PER_METER = canvas.width / TABLE_WIDTH
+      // DOM Elements
+      const fileInput = document.getElementById("fileInput");
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      const shotIndexDisplay = document.getElementById("shotIndexDisplay");
+      const shotSelector = document.getElementById("shotSelector");
+      const replayButton = document.getElementById("replayButton");
+      const prevShotButton = document.getElementById("prevShotButton");
+      const nextShotButton = document.getElementById("nextShotButton");
 
-      let allShots = []
-      let currentShotIndex = 0
-      let animationTimer = 0
-      let animationInterval
-      let isPlaying = false
-      let tableDrawn = false // Flag to track if the table has been drawn
-      let lastFrameTime = 0
-      let animationStartTime = 0
+      // Constants
+      const BALL_COLORS = { 1: "white", 2: "yellow", 3: "red" };
+      const BALL_DIAMETER = 0.0615; // meters
+      const TABLE_WIDTH = 2.84; // meters
+      const TABLE_HEIGHT = TABLE_WIDTH / 2; // meters (derived)
+      const CUSHION_WIDTH_M = 0.05; // Approximate cushion width in meters for visual representation
 
-      function updateUrlWithShot(shotId) {
-        const url = new URL(window.location)
-        url.searchParams.set("shot", shotId)
-        console.log(shotId)
-        window.history.pushState({}, "", url)
-      }
+      // State Variables
+      let allShots = [];
+      let currentShotIndex = -1; // Start at -1 to indicate no shot selected initially
+      let animationTimer = 0;
+      let animationFrameId = null;
+      let isPlaying = false;
+      let tableDrawn = false;
+      let lastFrameTime = 0;
+      let PIXELS_PER_METER = 100; // Initial placeholder, will be calculated dynamically
 
-      function getInitialShotFromUrl() {
-        const urlParams = new URLSearchParams(window.location.search)
-        return urlParams.get("shot")
-      }
-
-      function interpolateUntilMove(data, delta = 0.3, epsilon = 0.00001) {
-        if (data.t.length > 1 && data.t[1] - data.t[0] > delta) {
-          data.t.splice(1, 0, data.t[1] - epsilon)
-          data.x.splice(1, 0, data.x[0])
-          data.y.splice(1, 0, data.y[0])
-        }
-        return data
-      }
-
-      function interpolateAllBalls(shot) {
-        shot.balls = Object.fromEntries(
-          Object.entries(shot.balls)
-            .filter(([num]) => num <= 3)
-            .map(([num, data]) => [num, interpolateUntilMove(data)])
-        )
-        return shot
-      }
-
-      function processShots(shotsData) {
-        allShots = shotsData
-        allShots = allShots.map((shot) => {
-          const interpolatedShot = interpolateAllBalls(shot)
-          return interpolatedShot
-        })
-
-        if (allShots.length > 0) {
-          const urlShotId = getInitialShotFromUrl()
-          console.log("URL Shot ID:", urlShotId)
-          if (urlShotId) {
-            const shotIndex = allShots.findIndex(
-              (shot) => shot.shotID == urlShotId
-            )
-            console.log("Shot index:", shotIndex)
-            currentShotIndex = shotIndex >= 0 ? shotIndex : 0
-          } else {
-            currentShotIndex = 0
-          }
-          populateShotSelector()
-          updateDisplay()
-          drawTable()
-          drawShot(allShots[currentShotIndex], 0)
-        } else {
-          console.log("No shots found in the data.")
-        }
-      }
+      // --- Initialization ---
 
       function loadDefaultData() {
-        fetch("simple_shots.json")
+        fetch("simple_shots.json") // Make sure this file exists and is accessible
           .then((response) => {
             if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`)
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return response.json()
+            return response.json();
           })
           .then(processShots)
           .catch((error) => {
-            console.error("Error loading default JSON:", error)
-          })
+            console.error("Error loading default JSON:", error);
+            shotIndexDisplay.textContent = "Error loading data";
+            disableAllControls();
+          });
       }
 
       function start() {
-        loadDefaultData()
+        setupEventListeners();
+        loadDefaultData(); // Load default data on page load
       }
 
-      window.addEventListener("load", start)
+      window.addEventListener("load", start); // Use load to ensure everything including CSS potentially affecting layout is ready
 
-      fileInput.addEventListener("change", (event) => {
-        const file = event.target.files[0]
+      // --- Event Listeners ---
+
+      function setupEventListeners() {
+        fileInput.addEventListener("change", handleFileLoad);
+        shotSelector.addEventListener("change", handleShotSelectChange);
+        replayButton.addEventListener("click", handleReplay);
+        prevShotButton.addEventListener("click", handlePrevShot);
+        nextShotButton.addEventListener("click", handleNextShot);
+
+        // Use ResizeObserver for efficient canvas resize detection
+        const resizeObserver = new ResizeObserver(handleResize);
+        resizeObserver.observe(canvas);
+      }
+
+      function handleFileLoad(event) {
+        const file = event.target.files[0];
         if (file) {
-          const reader = new FileReader()
+          const reader = new FileReader();
           reader.onload = (e) => {
             try {
-              const shotsData = JSON.parse(e.target.result)
-              processShots(shotsData)
+              const shotsData = JSON.parse(e.target.result);
+              processShots(shotsData);
             } catch (error) {
-              console.error("Error parsing JSON:", error)
-              alert("Error parsing JSON file.")
+              console.error("Error parsing JSON:", error);
+              alert("Error parsing JSON file.");
+              disableAllControls();
+            }
+          };
+          reader.readAsText(file);
+        }
+      }
+
+      function handleShotSelectChange() {
+        if (isPlaying) {
+          resetAnimation(); // Stop current animation if playing
+        }
+        currentShotIndex = parseInt(shotSelector.value, 10);
+        updateDisplay();
+        if(allShots[currentShotIndex] && allShots[currentShotIndex].shotID){
+             updateUrlWithShot(allShots[currentShotIndex].shotID);
+        }
+        drawStaticShot(currentShotIndex); // Draw the initial state of the selected shot
+      }
+
+      function handleReplay() {
+        if (currentShotIndex >= 0 && allShots.length > 0) {
+          resetAnimation();
+          startAnimation();
+        }
+      }
+
+      function handlePrevShot() {
+        if (currentShotIndex > 0) {
+          if (isPlaying) resetAnimation();
+          currentShotIndex--;
+          updateDisplay();
+          if(allShots[currentShotIndex] && allShots[currentShotIndex].shotID){
+              updateUrlWithShot(allShots[currentShotIndex].shotID);
+          }
+          drawStaticShot(currentShotIndex); // Draw initial state
+          // Optional: Automatically start animation
+          // startAnimation();
+        }
+      }
+
+      function handleNextShot() {
+        if (currentShotIndex < allShots.length - 1) {
+          if (isPlaying) resetAnimation();
+          currentShotIndex++;
+          updateDisplay();
+          if(allShots[currentShotIndex] && allShots[currentShotIndex].shotID){
+              updateUrlWithShot(allShots[currentShotIndex].shotID);
+          }
+          drawStaticShot(currentShotIndex); // Draw initial state
+          // Optional: Automatically start animation
+          // startAnimation();
+        }
+      }
+
+      // --- Data Processing & State Updates ---
+
+      function processShots(shotsData) {
+        stopAnimation(); // Stop any previous animation
+        allShots = shotsData.map(interpolateAllBalls); // Apply interpolation
+
+        if (allShots.length > 0) {
+          const urlShotId = getInitialShotFromUrl();
+          let initialIndex = 0;
+          if (urlShotId) {
+            const foundIndex = allShots.findIndex((shot) => shot.shotID == urlShotId);
+            if (foundIndex >= 0) {
+              initialIndex = foundIndex;
+            } else {
+                console.warn(`Shot ID ${urlShotId} from URL not found, defaulting to first shot.`);
             }
           }
-          reader.readAsText(file)
+          currentShotIndex = initialIndex;
+          populateShotSelector();
+          enableAllControls();
+          updateDisplay();
+          handleResize(); // Initial resize call to set dimensions and draw
+        } else {
+          console.log("No shots found in the data.");
+          shotIndexDisplay.textContent = "No shots loaded";
+          disableAllControls();
+          // Clear canvas if needed
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+           drawTable(); // Draw empty table
         }
-      })
+      }
+
+      function interpolateUntilMove(data, delta = 0.3, epsilon = 0.00001) {
+        // Ensure data structure is valid
+        if (!data || !data.t || !data.x || !data.y || data.t.length === 0) {
+          // console.warn("Invalid data structure for interpolation:", data);
+          return data; // Return original data if invalid
+        }
+        // Check if interpolation is needed
+        if (data.t.length > 1 && data.t[1] - data.t[0] > delta) {
+          // Create copies to avoid modifying original arrays directly if they might be reused
+          const newT = [...data.t];
+          const newX = [...data.x];
+          const newY = [...data.y];
+
+          newT.splice(1, 0, data.t[1] - epsilon);
+          // Interpolate X and Y (often just duplicating the first point is intended here)
+          newX.splice(1, 0, data.x[0]);
+          newY.splice(1, 0, data.y[0]);
+
+          return { t: newT, x: newX, y: newY };
+        }
+        return data; // Return original if no interpolation needed
+      }
+
+
+      function interpolateAllBalls(shot) {
+        if (!shot || !shot.balls) return shot;
+        const interpolatedBalls = {};
+        for (const num in shot.balls) {
+          // Process only balls 1, 2, 3
+          if (parseInt(num) <= 3) {
+            interpolatedBalls[num] = interpolateUntilMove(shot.balls[num]);
+          }
+        }
+        // Return a new shot object with interpolated balls
+        return { ...shot, balls: interpolatedBalls };
+      }
+
 
       function populateShotSelector() {
-        shotSelector.innerHTML = ""
-        allShots.forEach((shot, index) => {
-          const option = document.createElement("option")
-          option.value = index
-          option.text = `Shot ${index + 1} (ID: ${shot.shotID})`
-          shotSelector.add(option)
-        })
-        if (allShots.length > 0) {
-          shotSelector.value = currentShotIndex
+        shotSelector.innerHTML = ""; // Clear existing options
+        if (allShots.length === 0) {
+          const option = document.createElement("option");
+          option.text = "No shots available";
+          option.disabled = true;
+          shotSelector.add(option);
+          return;
         }
+
+        allShots.forEach((shot, index) => {
+          const option = document.createElement("option");
+          option.value = index;
+          // Use shotID for more meaningful display if available
+          const shotLabel = shot.shotID ? `ID: ${shot.shotID}` : `Shot ${index + 1}`;
+          option.text = shotLabel;
+          shotSelector.add(option);
+        });
+
+         if (currentShotIndex >= 0 && currentShotIndex < allShots.length) {
+            shotSelector.value = currentShotIndex; // Set selector to current shot
+         } else if (allShots.length > 0) {
+             shotSelector.value = 0; // Default to first shot if current index is invalid
+             currentShotIndex = 0;
+         }
       }
 
       function updateDisplay() {
-        shotIndexDisplay.textContent = `Shot: ${currentShotIndex + 1}`
-        if (allShots[currentShotIndex]) {
-          shotSelector.value = currentShotIndex
+        if (currentShotIndex >= 0 && allShots.length > 0 && currentShotIndex < allShots.length) {
+          const currentShot = allShots[currentShotIndex];
+          const shotLabel = currentShot.shotID ? `ID: ${currentShot.shotID}` : `${currentShotIndex + 1}`;
+          shotIndexDisplay.textContent = `${shotLabel} (${currentShotIndex + 1}/${allShots.length})`;
+          if (shotSelector.options.length === allShots.length) { // Check if selector is populated
+              shotSelector.value = currentShotIndex;
+          }
+        } else {
+          shotIndexDisplay.textContent = "Shot: -";
+        }
+        updateButtonStates();
+      }
+
+      function updateButtonStates() {
+          const hasShots = allShots.length > 0;
+          const validIndex = currentShotIndex >= 0 && currentShotIndex < allShots.length;
+          const canGoPrev = hasShots && validIndex && currentShotIndex > 0;
+          const canGoNext = hasShots && validIndex && currentShotIndex < allShots.length - 1;
+
+          prevShotButton.disabled = !canGoPrev;
+          nextShotButton.disabled = !canGoNext;
+          replayButton.disabled = !hasShots || !validIndex;
+          shotSelector.disabled = !hasShots;
+      }
+
+      function enableAllControls() {
+          fileInput.disabled = false;
+          shotSelector.disabled = !(allShots.length === 0); // Disable if no shots
+          // Button states are handled by updateButtonStates
+          updateButtonStates();
+      }
+
+      function disableAllControls() {
+          fileInput.disabled = true; // Keep file input enabled maybe? Or disable.
+          shotSelector.disabled = true;
+          replayButton.disabled = true;
+          prevShotButton.disabled = true;
+          nextShotButton.disabled = true;
+      }
+
+      // --- URL Handling ---
+
+      function updateUrlWithShot(shotId) {
+        if (!shotId && shotId !== 0) return; // Allow 0 as a valid ID
+        try {
+            const url = new URL(window.location);
+            url.searchParams.set("shot", shotId);
+            // Use replaceState to avoid polluting history too much during navigation
+            window.history.replaceState({ shotId: shotId }, "", url);
+        } catch (e) {
+            console.error("Failed to update URL:", e);
         }
       }
+
+      function getInitialShotFromUrl() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get("shot");
+        } catch(e) {
+            console.error("Failed to read URL parameters:", e);
+            return null;
+        }
+      }
+
+      // --- Canvas Drawing ---
+
+      function handleResize() {
+        // Get the actual size the canvas is displayed at
+        const displayWidth = canvas.clientWidth;
+        const displayHeight = canvas.clientHeight;
+
+        // Check if the canvas size has actually changed to avoid unnecessary redraws
+        if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+          // Set the canvas drawing buffer size to match the display size
+          canvas.width = displayWidth;
+          canvas.height = displayHeight;
+
+          // Recalculate pixels per meter based on the new width
+          // Make sure TABLE_WIDTH is defined and non-zero
+          PIXELS_PER_METER = TABLE_WIDTH > 0 ? canvas.width / TABLE_WIDTH : 100; // Fallback PPM
+          console.log(`Resized: ${canvas.width}x${canvas.height}, PPM: ${PIXELS_PER_METER.toFixed(2)}`);
+
+          tableDrawn = false; // Force redraw of table elements
+        }
+
+        // Redraw the current state (static or frame of animation)
+        // Needs to happen even if size didn't change, e.g., on initial load or data load
+        if (currentShotIndex >= 0 && currentShotIndex < allShots.length) {
+            const currentShot = allShots[currentShotIndex];
+            if (!currentShot) return; // Exit if shot data is somehow invalid
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear before drawing
+            drawTable(); // Always redraw table after potential resize
+
+            if (isPlaying) {
+                // If animating, draw the current frame at the current animation time
+                drawShotFrame(currentShot, animationTimer);
+            } else {
+                // If static, draw the initial state (time 0)
+                drawShotFrame(currentShot, 0);
+            }
+        } else {
+            // If no shot selected or index is invalid, just draw the empty table
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawTable();
+        }
+      }
+
 
       function drawTable() {
-        // No scaling or translation here
-        ctx.fillStyle = "#222255"
-        ctx.fillRect(
-          0,
-          canvas.height - CUSHION_WIDTH * PIXELS_PER_METER,
-          canvas.width,
-          CUSHION_WIDTH * PIXELS_PER_METER
-        )
-        ctx.fillRect(0, 0, canvas.width, CUSHION_WIDTH * PIXELS_PER_METER)
-        ctx.fillRect(
-          0,
-          canvas.height - CUSHION_WIDTH * PIXELS_PER_METER,
-          CUSHION_WIDTH * PIXELS_PER_METER,
-          -canvas.height
-        )
-        ctx.fillRect(
-          canvas.width - CUSHION_WIDTH * PIXELS_PER_METER,
-          canvas.height,
-          CUSHION_WIDTH * PIXELS_PER_METER,
-          -canvas.height
-        )
+        // Calculate cushion width in pixels based on current scale
+        const cushionWidthPx = CUSHION_WIDTH_M * PIXELS_PER_METER;
 
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.3)"
-        ctx.lineWidth = 1
+        // Get background color from CSS for the main playing area
+        const canvasBgColor = window.getComputedStyle(canvas).backgroundColor || '#006400'; // Default green
+        ctx.fillStyle = canvasBgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+        // Draw cushions (using a visually distinct color)
+        ctx.fillStyle = "#654321"; // Wood color for cushions/border effect
+        // Top cushion
+        ctx.fillRect(0, 0, canvas.width, cushionWidthPx);
+        // Bottom cushion
+        ctx.fillRect(0, canvas.height - cushionWidthPx, canvas.width, cushionWidthPx);
+        // Left cushion
+        ctx.fillRect(0, 0, cushionWidthPx, canvas.height);
+        // Right cushion
+        ctx.fillRect(canvas.width - cushionWidthPx, 0, cushionWidthPx, canvas.height);
+
+        // Draw inner playing surface background (slightly different green maybe?)
+        // This covers the center area over the main background fill
+        ctx.fillStyle = canvasBgColor; // Or a slightly different green '#007300'
+        ctx.fillRect(cushionWidthPx, cushionWidthPx,
+                     canvas.width - 2 * cushionWidthPx,
+                     canvas.height - 2 * cushionWidthPx);
+
+
+        // Draw table lines (diamonds/spots simulation) - OPTIONAL enhancement
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+
+        const playableWidth = canvas.width - 2 * cushionWidthPx;
+        const playableHeight = canvas.height - 2 * cushionWidthPx;
+
+        // Vertical lines (along width)
         for (let i = 0; i <= 8; i++) {
-          let x =
-            CUSHION_WIDTH * PIXELS_PER_METER +
-            (i * (canvas.width - 2 * CUSHION_WIDTH * PIXELS_PER_METER)) / 8
-          ctx.beginPath()
-          ctx.moveTo(x, canvas.height)
-          ctx.lineTo(x, 0)
-          ctx.stroke()
+          let x = cushionWidthPx + (i * playableWidth) / 8;
+          ctx.moveTo(x, cushionWidthPx);
+          ctx.lineTo(x, canvas.height - cushionWidthPx);
         }
 
+        // Horizontal lines (along height)
         for (let i = 0; i <= 4; i++) {
-          let y =
-            canvas.height -
-            (CUSHION_WIDTH * PIXELS_PER_METER +
-              (i * (canvas.height - 2 * CUSHION_WIDTH * PIXELS_PER_METER)) / 4)
-          ctx.beginPath()
-          ctx.moveTo(0, y)
-          ctx.lineTo(canvas.width, y)
-          ctx.stroke()
+          let y = cushionWidthPx + (i * playableHeight) / 4;
+          ctx.moveTo(cushionWidthPx, y);
+          ctx.lineTo(canvas.width - cushionWidthPx, y);
         }
-        tableDrawn = true // Set the flag to true after drawing
+        ctx.stroke();
+
+        tableDrawn = true; // Set flag
       }
 
-      function drawBall(x, y, color) {
-        const radius = (BALL_DIAMETER / 2) * PIXELS_PER_METER
-        ctx.beginPath()
-        ctx.arc(x, y, radius, 0, 2 * Math.PI)
-        ctx.fillStyle = color
-        ctx.fill()
-        ctx.strokeStyle = "black"
-        ctx.lineWidth = 1
-        ctx.stroke()
-      }
+      function drawBall(xPx, yPx, color) {
+        const radiusPx = (BALL_DIAMETER / 2) * PIXELS_PER_METER;
 
-      function drawShot(shotData, currentTime = 0) {
-        if (!tableDrawn) {
-          drawTable()
+        // Prevent drawing unrealistically large or small balls
+        if (radiusPx < 1 || radiusPx > Math.min(canvas.width, canvas.height) / 4) {
+            // console.warn(`Skipping ball draw due to unrealistic radius: ${radiusPx.toFixed(1)}px`);
+            return;
         }
 
-        const getInterpolatedPosition = (times, positions, targetTime) => {
-          if (!times || times.length === 0) return positions[0]
 
-          if (targetTime <= times[0]) return positions[0]
-          if (targetTime >= times[times.length - 1])
-            return positions[positions.length - 1]
+        ctx.beginPath();
+        ctx.arc(xPx, yPx, radiusPx, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
 
-          let lowIndex = 0
-          let highIndex = times.length - 1
-          while (lowIndex < highIndex - 1) {
-            const midIndex = Math.floor((lowIndex + highIndex) / 2)
-            if (times[midIndex] < targetTime) {
-              lowIndex = midIndex
-            } else {
-              highIndex = midIndex
-            }
+        // Add a subtle border for definition
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.6)";
+        ctx.lineWidth = Math.max(1, radiusPx * 0.1); // Scale border width slightly
+        ctx.stroke();
+      }
+
+      // Helper to get position at a specific time
+      function getInterpolatedPosition(times, positions, targetTime) {
+        if (!times || times.length === 0) {
+          return positions && positions.length > 0 ? positions[0] : 0; // Default to first position or 0
+        }
+
+        // Clamp targetTime to the bounds of the available time data
+        const firstTime = times[0];
+        const lastTime = times[times.length - 1];
+        targetTime = Math.max(firstTime, Math.min(targetTime, lastTime));
+
+        // Optimization: Check endpoints first
+        if (targetTime === firstTime) return positions[0];
+        if (targetTime === lastTime) return positions[positions.length - 1];
+
+        // Binary search to find the interval [t1, t2] containing targetTime
+        let lowIndex = 0;
+        let highIndex = times.length - 1;
+        while (lowIndex < highIndex - 1) {
+          const midIndex = Math.floor((lowIndex + highIndex) / 2);
+          if (times[midIndex] <= targetTime) { // Use <= to handle exact matches correctly
+            lowIndex = midIndex;
+          } else {
+            highIndex = midIndex;
           }
-
-          const t1 = times[lowIndex]
-          const t2 = times[highIndex]
-          const p1 = positions[lowIndex]
-          const p2 = positions[highIndex]
-          const alpha = (targetTime - t1) / (t2 - t1)
-          return p1 + alpha * (p2 - p1)
         }
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        drawTable()
+        // Now, lowIndex and highIndex define the interval [t_low, t_high]
+        const t1 = times[lowIndex];
+        const t2 = times[highIndex];
+        const p1 = positions[lowIndex];
+        const p2 = positions[highIndex];
 
+        // Avoid division by zero if t1 and t2 are the same
+        if (t2 === t1) {
+          return p1; // Or p2, they correspond to the same time
+        }
+
+        // Linear interpolation: alpha = (targetTime - t1) / (t2 - t1)
+        const alpha = (targetTime - t1) / (t2 - t1);
+        return p1 + alpha * (p2 - p1);
+      }
+
+
+      // Draws a single frame of the shot at a given time
+      function drawShotFrame(shotData, currentTime) {
+        if (!shotData || !shotData.balls) {
+          // console.warn("drawShotFrame called with invalid shotData");
+          return;
+        }
+
+        // Ensure table is drawn (or redrawn if canvas resized)
+        // drawTable() is now called in handleResize or before starting animation loop
+
+        // Calculate coordinate transformation functions based on current canvas size and PPM
+        const cushionWidthPx = CUSHION_WIDTH_M * PIXELS_PER_METER;
+        // Adjust transformation to map meters (0,0) bottom-left to pixels including cushion offset
+        const toPxX = (meterX) => cushionWidthPx + meterX * (canvas.width - 2 * cushionWidthPx) / TABLE_WIDTH;
+        const toPxY = (meterY) => (canvas.height - cushionWidthPx) - meterY * (canvas.height - 2 * cushionWidthPx) / TABLE_HEIGHT;
+
+        // Draw paths and balls
         for (const ballNum in shotData.balls) {
-          const ballData = shotData.balls[ballNum]
-          const color = BALL_COLORS[ballNum]
-          const xPositions = ballData.x
-          const yPositions = ballData.y
-          const times = ballData.t
+          const ballData = shotData.balls[ballNum];
+          const color = BALL_COLORS[ballNum];
+          if (!color || !ballData.t || ballData.t.length === 0) continue; // Skip if no color or data
 
-          ctx.strokeStyle = color
-          ctx.lineWidth = 2
-          ctx.beginPath()
+          const times = ballData.t;
+          const xPositions = ballData.x;
+          const yPositions = ballData.y;
 
-          let currentX, currentY
-          if (times && times.length > 0) {
-            currentX =
-              getInterpolatedPosition(times, xPositions, currentTime) *
-              PIXELS_PER_METER
-            currentY =
-              canvas.height -
-              getInterpolatedPosition(times, yPositions, currentTime) *
-                PIXELS_PER_METER
+          // Calculate current position in meters and then pixels
+          const currentXMeters = getInterpolatedPosition(times, xPositions, currentTime);
+          const currentYMeters = getInterpolatedPosition(times, yPositions, currentTime);
+          const currentXPx = toPxX(currentXMeters);
+          const currentYPx = toPxY(currentYMeters);
 
-            // Draw path
-            let prevX = xPositions[0] * PIXELS_PER_METER
-            let prevY = canvas.height - yPositions[0] * PIXELS_PER_METER
-            ctx.moveTo(prevX, prevY)
 
-            for (let i = 1; i < times.length; i++) {
+           // --- Draw Path ---
+          ctx.strokeStyle = color; // Use ball color for path
+          ctx.lineWidth = 1.5; // Thinner line for path
+          ctx.setLineDash([4, 4]); // Dashed line for path
+          ctx.beginPath();
+
+          // Move to the starting position (at time t[0])
+          ctx.moveTo(toPxX(xPositions[0]), toPxY(yPositions[0]));
+
+          let lastDrawnIndex = 0;
+          // Draw segments up to the point where currentTime falls
+          for (let i = 1; i < times.length; i++) {
               if (times[i] <= currentTime) {
-                const x = xPositions[i] * PIXELS_PER_METER
-                const y = canvas.height - yPositions[i] * PIXELS_PER_METER
-                ctx.lineTo(x, y)
-                prevX = x
-                prevY = y
+                  ctx.lineTo(toPxX(xPositions[i]), toPxY(yPositions[i]));
+                  lastDrawnIndex = i;
               } else {
-                const x =
-                  getInterpolatedPosition(times, xPositions, currentTime) *
-                  PIXELS_PER_METER
-                const y =
-                  canvas.height -
-                  getInterpolatedPosition(times, yPositions, currentTime) *
-                    PIXELS_PER_METER
-                ctx.lineTo(x, y)
-                break
+                  // The target time is between times[i-1] and times[i]
+                  // Draw line segment up to the interpolated current position
+                   ctx.lineTo(currentXPx, currentYPx);
+                   lastDrawnIndex = -1; // Indicate we drew up to interpolated point
+                  break; // Stop drawing path segments for this ball
               }
-            }
-            ctx.stroke()
           }
-          drawBall(currentX, currentY, color)
+
+           // If loop finished without breaking (currentTime >= last time point)
+           // or if current time was exactly the last time point.
+           if (lastDrawnIndex === times.length - 1 && currentTime >= times[lastDrawnIndex]) {
+               // Ensure path goes exactly to the final point if time matches or exceeds
+               // (lineTo might already have done this, but explicit doesn't hurt)
+                // ctx.lineTo(toPxX(xPositions[lastDrawnIndex]), toPxY(yPositions[lastDrawnIndex]));
+                // No need to draw further lineTo, it should be at the last point already
+           } else if (lastDrawnIndex === 0 && times[0] > currentTime) {
+                // If current time is before the very first data point, path is just a point (handled by moveTo)
+                // Or draw line from start to current (interpolated) pos if needed
+                 ctx.lineTo(currentXPx, currentYPx);
+           } else if (lastDrawnIndex === 0 && times.length === 1) {
+                // If only one data point, draw line from it to itself (effectively a dot) or to current pos
+                 ctx.lineTo(currentXPx, currentYPx); // Draw to current pos, which should be the only point
+           }
+
+
+          ctx.stroke();
+          ctx.setLineDash([]); // Reset line dash
+          // --- End Path Draw ---
+
+
+          // Draw the ball at its current position
+          drawBall(currentXPx, currentYPx, color);
         }
       }
 
-      shotSelector.addEventListener("change", () => {
-        currentShotIndex = parseInt(shotSelector.value, 10)
-        updateDisplay()
-        resetAnimation()
-        startAnimation()
-      })
+
+      // Draws the static initial state (t=0) of a shot
+      function drawStaticShot(shotIndex) {
+        if (shotIndex < 0 || shotIndex >= allShots.length) {
+           // Draw just the empty table if index is invalid
+           ctx.clearRect(0, 0, canvas.width, canvas.height);
+           drawTable();
+           return;
+        };
+        const shotData = allShots[shotIndex];
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous frame
+        drawTable();
+        drawShotFrame(shotData, 0); // Draw frame at time 0
+      }
+
+      // --- Animation Control ---
 
       function animate(timestamp) {
-        if (!isPlaying) return
+        if (!isPlaying) return; // Stop if isPlaying is false
 
-        if (!animationStartTime) {
-          animationStartTime = timestamp
-          lastFrameTime = timestamp
+        if (!lastFrameTime) {
+          lastFrameTime = timestamp; // Initialize lastFrameTime on the first frame
         }
 
-        // Calculate elapsed time since last frame
-        const elapsedTime = (timestamp - lastFrameTime) / 1000 // Convert to seconds
-        lastFrameTime = timestamp
+        // Calculate delta time in seconds
+        const deltaTime = (timestamp - lastFrameTime) / 1000.0;
+        lastFrameTime = timestamp;
 
-        animationTimer += elapsedTime // Advance simulation time
+        // Increment animation timer - consider capping deltaTime to prevent large jumps
+        const maxDeltaTime = 0.1; // e.g., max 100ms jump
+        animationTimer += Math.min(deltaTime, maxDeltaTime);
 
-        const currentShot = allShots[currentShotIndex]
+        const currentShot = allShots[currentShotIndex];
         if (!currentShot || !currentShot.balls) {
-          resetAnimation()
-          return
+          console.error("Animation error: Invalid current shot data.");
+          resetAnimation();
+          return;
         }
 
-        // Find the max time available for this shot
-        let maxTime = 0
+        // Find the maximum time for the current shot
+        let maxTime = 0;
         for (const ballNum in currentShot.balls) {
-          const ballData = currentShot.balls[ballNum]
+          const ballData = currentShot.balls[ballNum];
           if (ballData.t && ballData.t.length > 0) {
-            maxTime = Math.max(maxTime, ballData.t[ballData.t.length - 1])
+            maxTime = Math.max(maxTime, ballData.t[ballData.t.length - 1]);
           }
         }
 
-        if (animationTimer > maxTime) {
-          resetAnimation()
-          return
+        // Stop animation smoothly if timer exceeds the shot duration
+        if (animationTimer >= maxTime) {
+          animationTimer = maxTime; // Clamp timer to the end
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          drawTable();
+          drawShotFrame(currentShot, animationTimer); // Draw the final frame
+          resetAnimation(); // Set isPlaying to false, clear frame ID
+          // console.log("Animation finished.");
+          return;
         }
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        drawTable()
-        drawShot(currentShot, animationTimer)
+        // Clear canvas and redraw table + current frame
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawTable(); // Redraw table every frame (necessary if clearing canvas)
+        drawShotFrame(currentShot, animationTimer);
 
-        requestAnimationFrame(animate)
+        // Request the next frame
+        animationFrameId = requestAnimationFrame(animate);
       }
 
       function startAnimation() {
-        if (isPlaying) return
-        isPlaying = true
-        animationStartTime = 0
-        animationTimer = 0
-        lastFrameTime = performance.now()
-        requestAnimationFrame(animate)
+        if (isPlaying || currentShotIndex < 0 || currentShotIndex >= allShots.length) return; // Don't start if already playing or no valid shot selected
+
+        isPlaying = true;
+        animationTimer = 0; // Reset timer for the current shot
+        lastFrameTime = 0; // Reset last frame time
+        replayButton.disabled = true; // Disable replay while playing
+        prevShotButton.disabled = true; // Disable navigation while playing
+        nextShotButton.disabled = true;
+        shotSelector.disabled = true;
+
+        console.log("Starting animation for shot:", currentShotIndex);
+        // Initial draw before starting loop might be good
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawTable();
+        drawShotFrame(allShots[currentShotIndex], 0);
+
+        animationFrameId = requestAnimationFrame(animate); // Start the loop
+      }
+
+      function stopAnimation() {
+          if (animationFrameId) {
+              cancelAnimationFrame(animationFrameId);
+              animationFrameId = null;
+          }
+          isPlaying = false;
+          lastFrameTime = 0; // Reset timing
+          // Re-enable controls based on current state
+           enableAllControls(); // This calls updateButtonStates
       }
 
       function resetAnimation() {
-        isPlaying = false
-        animationTimer = 0
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        drawTable()
-        drawShot(allShots[currentShotIndex], 0)
+          stopAnimation();
+          // Reset the timer visual or state if needed
+          animationTimer = 0;
+          // After stopping, ensure the static first frame is shown
+          if (currentShotIndex >= 0 && currentShotIndex < allShots.length) {
+               drawStaticShot(currentShotIndex); // Redraw frame 0 after stopping/resetting
+          }
       }
 
-      replayButton.addEventListener("click", () => {
-        resetAnimation()
-        startAnimation()
-      })
 
-      shotSelector.addEventListener("change", () => {
-        currentShotIndex = parseInt(shotSelector.value, 10)
-        updateDisplay()
-        resetAnimation() // Reset and start when shot changes
-        startAnimation()
-      })
-
-      //Initial call.
-      drawTable()
+      // --- End Embedded JavaScript ---
     </script>
+
   </body>
 </html>
