@@ -20,29 +20,31 @@ let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4
 let s = 3 * R
 
-const replaydiagrams = document.getElementsByClassName("replaydiagram")
-for (let i = 0; i < replaydiagrams.length; i++) {
-  const diagram = replaydiagrams.item(i)
-  const diagramcontainer = DiagramContainer.fromDiamgramElement(diagram)
-  diagramcontainer.start()
-}
-
-const rollcanvas = id("rollcanvas")
-if (rollcanvas) {
-  const rolldiagram = new RollDiagram(rollcanvas)
-  rolldiagram.draw(5)
-} else {
-  if (id("cushion1")) {
-    initialisePlots()
+document.addEventListener('DOMContentLoaded', () => {
+  const replaydiagrams = document.getElementsByClassName("replaydiagram")
+  for (let i = 0; i < replaydiagrams.length; i++) {
+    const diagram = replaydiagrams.item(i)
+    const diagramcontainer = DiagramContainer.fromDiamgramElement(diagram)
+    diagramcontainer.start()
   }
 
-  const sliders = new Sliders(plotAll)
-  sliders.initialiseSlider("s", s, sets, 4)
+  const rollcanvas = id("rollcanvas")
+  if (rollcanvas) {
+    const rolldiagram = new RollDiagram(rollcanvas)
+    rolldiagram.draw(5)
+  } else {
+    if (id("cushion1")) {
+      initialisePlots()
+    }
 
-  if (id("derived")) {
-    reportConstants()
+    const sliders = new Sliders(plotAll)
+    sliders.initialiseSlider("s", s, sets, 4)
+
+    if (id("derived")) {
+      reportConstants()
+    }
   }
-}
+})
 
 function reportConstants() {
   const elt = id("derived")
