@@ -1,5 +1,6 @@
 import { RealPosition } from "./realposition"
 import { RealDraw } from "./realdraw"
+import { Container } from "../../container/container"
 
 export class RealOverlay {
   private drawer: RealDraw
@@ -25,9 +26,11 @@ export class RealOverlay {
   animationStartTime = 0
   realPosition: RealPosition | null = null
   elapsedTime = 0
+  container: Container
 
   constructor(canvas: HTMLCanvasElement, container: any) {
     this.drawer = new RealDraw(canvas)
+    this.container = container
     container && (container.frame = this.advance.bind(this))
     this.start()
   }
@@ -36,6 +39,7 @@ export class RealOverlay {
     console.log("real overlay start")
     this.loadDefaultData()
     this.addEventListeners()
+    //    this.container.table.balls[0].
   }
 
   addEventListeners() {
@@ -138,14 +142,27 @@ export class RealOverlay {
     this.animationTimer = -3.7
     this.drawer.resetCanvas() // This will clear both the canvas and the stored paths
     this.drawShot(this.allShots[this.currentShotIndex], 0)
+    this.resetSimulation(this.allShots[this.currentShotIndex])
+  }
+
+  resetSimulation(shotData: any) {
+    // need to stop current sim, inject new start with zero delay.
+    const ballPositions = this.realPosition!.getPositionsAtTime(
+      shotData.shotID,
+      0
+    )
+    for (const ballNum in ballPositions) {
+      const ball = Number(ballNum) - 1
+      this.container.table.balls[ball].pos.setX(ballPositions[ballNum].x)
+      this.container.table.balls[ball].pos.setY(ballPositions[ballNum].x)
+    }
+    // inject hit event
   }
 
   advance(elapsed: number) {
     this.elapsedTime += elapsed
-    if (this.realPosition && this.allShots.length > 0) {
-      this.animationTimer += elapsed
-      const currentShot = this.allShots[this.currentShotIndex]
-      this.drawShot(currentShot, this.animationTimer)
-    }
+    this.animationTimer += elapsed
+    const currentShot = this.allShots[this.currentShotIndex]
+    this.drawShot(currentShot, this.animationTimer)
   }
 }

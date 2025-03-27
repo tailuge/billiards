@@ -20,7 +20,7 @@ let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4
 let s = 3 * R
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   const replaydiagrams = document.getElementsByClassName("replaydiagram")
   for (let i = 0; i < replaydiagrams.length; i++) {
     const diagram = replaydiagrams.item(i)

@@ -39,7 +39,7 @@ export class RealDraw {
         this.ctx.lineTo(x, y)
       }
     })
-    this.ctx.setLineDash([4, 4]);
+    this.ctx.setLineDash([4, 4])
     this.ctx.strokeStyle = color
     this.ctx.lineWidth = 1
     this.ctx.stroke()
