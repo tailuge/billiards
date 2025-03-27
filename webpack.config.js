@@ -7,6 +7,7 @@ module.exports = {
     index: { dependOn: "vendor", import: "./src/index.ts" },
     diagram: { dependOn: "vendor", import: "./src/diagrams.ts" },
     mathaven: { dependOn: "vendor", import: "./src/mathaven.ts" },
+    compare: { dependOn: "vendor", import: "./src/compare.ts" },
   },
   module: {
     rules: [

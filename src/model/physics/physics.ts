@@ -148,6 +148,7 @@ export function bounceHan(v: Vector3, w: Vector3) {
  * @returns delta to apply to velocity and spin
  */
 export function bounceHanBlend(v: Vector3, w: Vector3) {
+  console.log("blend")
   const deltaGrip = gripHan(v, w)
   const deltaSlip = slipHan(v, w)
 
@@ -183,6 +184,7 @@ export function restitutionCushion(v: Vector3) {
 }
 
 function cartesionToBallCentric(v, w) {
+  console.log(μs)
   const mathaven = new Mathaven(m, R, ee, μs, μw + 0.1)
   mathaven.solve(v.x, v.y, w.x, w.y, w.z)
 
