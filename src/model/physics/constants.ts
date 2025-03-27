@@ -9,13 +9,13 @@ export let e = 0.86
 
 // Mathaven specific
 // Coefficient of restitution
-export const ee = 0.98
+export let ee = 0.98
 
 // Coefficient of sliding friction (table)
-export const μs = 0.212
+export let μs = 0.212
 
 // Coefficient of sliding friction (cushion)
-export const μw = 0.14
+export let μw = 0.14
 
 export let Mz: number
 export let Mxy: number
@@ -58,4 +58,13 @@ export function sete(val: number) {
 }
 export function setmuC(val: number) {
   muC = val
+}
+export function setμs(val: number) {
+  μs = val
+}
+export function setμw(val: number) {
+  μw = val
+}
+export function setee(val: number) {
+  ee = val
 }

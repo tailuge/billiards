@@ -6,6 +6,9 @@ import {
   muC,
   muS,
   rho,
+  μs,
+  μw,
+  ee,
   setR,
   sete,
   setm,
@@ -13,6 +16,9 @@ import {
   setmuC,
   setmuS,
   setrho,
+  setμs,
+  setμw,
+  setee,
 } from "../model/physics/constants"
 
 export class Sliders {
@@ -31,6 +37,9 @@ export class Sliders {
     this.initialiseSlider("muS", muS, setmuS)
     this.initialiseSlider("muC", muC, setmuC)
     this.initialiseSlider("rho", rho, setrho)
+    this.initialiseSlider("μs", μs, setμs)
+    this.initialiseSlider("μw", μw, setμw)
+    this.initialiseSlider("ee", ee, setee)
   }
 
   toggleVisibility() {
@@ -44,6 +53,9 @@ export class Sliders {
 
   initialiseSlider(id, initialValue, setter, max = 1) {
     const slider = this.getInputElement(id)
+    if (!slider) {
+      return
+    }
     slider.step = "0.001"
     slider.min = "0.01"
     slider.max = `${max}`
