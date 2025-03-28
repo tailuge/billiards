@@ -39,7 +39,6 @@ export class RealOverlay {
     console.log("real overlay start")
     this.loadDefaultData()
     this.addEventListeners()
-    //    this.container.table.balls[0].
   }
 
   addEventListeners() {
@@ -72,10 +71,6 @@ export class RealOverlay {
     this.resetAnimation()
   }
 
-  handleReplay() {
-    this.resetAnimation()
-  }
-
   loadDefaultData() {
     fetch("simple_shots.json")
       .then((response) => {
@@ -94,7 +89,7 @@ export class RealOverlay {
       this.currentShotIndex = 0
       this.populateShotSelector()
       this.updateDisplay()
-      this.drawShot(this.allShots[this.currentShotIndex], 0)
+      this.resetAnimation()
     }
   }
 
@@ -135,6 +130,10 @@ export class RealOverlay {
     this.drawer.drawShot(ballPositions)
   }
 
+  handleReplay() {
+    this.resetAnimation()
+  }
+
   resetAnimation() {
     this.isPlaying = false
     this.animationTimer = -3.7
@@ -149,12 +148,15 @@ export class RealOverlay {
       shotData.shotID,
       0
     )
+    console.log(ballPositions)
     for (const ballNum in ballPositions) {
       const ball = Number(ballNum) - 1
-      this.container.table.balls[ball].pos.setX(ballPositions[ballNum].x)
-      this.container.table.balls[ball].pos.setY(ballPositions[ballNum].x)
+      const pos = ballPositions[ballNum]
+      this.container.table.balls[ball].pos.setX(pos.x/2)
+      this.container.table.balls[ball].pos.setY(pos.y/2)
     }
     // inject hit event
+    
   }
 
   advance(elapsed: number) {
