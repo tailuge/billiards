@@ -20,7 +20,7 @@ export class RealOverlay {
 
   allShots: any[] = []
   currentShotIndex = 0
-  animationTimer = -2.25
+  animationTimer = -2.35
   isPlaying = false
   lastFrameTime = 0
   animationStartTime = 0
