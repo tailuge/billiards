@@ -2,6 +2,7 @@ import { RealPosition } from "./realposition"
 import { RealDraw } from "./realdraw"
 import { Container } from "../../container/container"
 import { BreakEvent } from "../../events/breakevent"
+import { AbortEvent } from "../../events/abortevent"
 
 export class RealOverlay {
   private drawer: RealDraw
@@ -144,7 +145,7 @@ export class RealOverlay {
   }
 
   resetSimulation(shotData: any) {
-    // need to stop current sim, inject new start with zero delay.
+    this.container.eventQueue.push(new AbortEvent())
     const ballPositions = this.realPosition!.getPositionsAtTime(
       shotData.shotID,
       0
@@ -153,8 +154,8 @@ export class RealOverlay {
     for (const ballNum in ballPositions) {
       const ball = Number(ballNum) - 1
       const pos = ballPositions[ballNum]
-      this.container.table.balls[ball].pos.setX(pos.x / 2)
-      this.container.table.balls[ball].pos.setY(pos.y / 2)
+      this.container.table.balls[ball].pos.setX(2.3 * (0.71 - pos.x / 2))
+      this.container.table.balls[ball].pos.setY(2.3 * (-0.36 + pos.y / 2))
     }
     // inject hit event
     var state = {
@@ -172,6 +173,7 @@ export class RealOverlay {
     }
 
     this.container.eventQueue.push(new BreakEvent(state.init, state.shots))
+    console.log("eventQueue depth:", this.container.eventQueue)
   }
 
   advance(elapsed: number) {
