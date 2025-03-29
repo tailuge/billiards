@@ -1,6 +1,7 @@
 import { RealPosition } from "./realposition"
 import { RealDraw } from "./realdraw"
 import { Container } from "../../container/container"
+import { BreakEvent } from "../../events/breakevent"
 
 export class RealOverlay {
   private drawer: RealDraw
@@ -156,6 +157,21 @@ export class RealOverlay {
       this.container.table.balls[ball].pos.setY(pos.y / 2)
     }
     // inject hit event
+    var state = {
+      init: [-0.8179, -0.2044, -0.8183, 0, 0.819, 0],
+      shots: [
+        {
+          type: "AIM",
+          offset: { x: -0.2783281572999748, y: 0.1481640786499874, z: 0 },
+          angle: 0.149,
+          power: 4.592,
+          pos: { x: -0.8179000020027161, y: -0.20440000295639038, z: 0 },
+          i: 0,
+        },
+      ],
+    }
+
+    this.container.eventQueue.push(new BreakEvent(state.init, state.shots))
   }
 
   advance(elapsed: number) {

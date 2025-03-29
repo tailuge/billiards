@@ -1,5 +1,6 @@
 import { ChatEvent } from "../events/chatevent"
-import { Controller } from "./controller"
+import { BeginEvent, Controller } from "./controller"
+import { Init } from "./init"
 
 export class End extends Controller {
   override handleChat(chatevent: ChatEvent): Controller {
@@ -7,5 +8,9 @@ export class End extends Controller {
     const message = `${sender} ${chatevent.message}`
     this.container.chat.showMessage(message)
     return this
+  }
+
+  override handleBegin(_: BeginEvent): Controller {
+    return new Init(this.container)
   }
 }

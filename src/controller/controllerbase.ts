@@ -1,6 +1,4 @@
-import { AbortEvent } from "../events/abortevent"
 import { Controller } from "./controller"
-import { End } from "./end"
 import { exportGltf } from "../utils/gltf"
 import { ChatEvent } from "../events/chatevent"
 import { Outcome } from "../model/outcome"
@@ -8,10 +6,6 @@ import { Vector3 } from "three"
 
 export abstract class ControllerBase extends Controller {
   readonly scale = 0.001
-
-  override handleAbort(_: AbortEvent): Controller {
-    return new End(this.container)
-  }
 
   override handleChat(chatevent: ChatEvent): Controller {
     const sender = chatevent.sender ? `${chatevent.sender}:` : ""

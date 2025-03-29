@@ -25,6 +25,8 @@ import { Assets } from "../../src/view/assets"
 import { StartAimEvent } from "../../src/events/startaimevent"
 import { Session } from "../../src/network/client/session"
 import { Spectate } from "../../src/controller/spectate"
+import { Init } from "../../src/controller/init"
+import { Replay } from "../../src/controller/replay"
 
 initDom()
 
@@ -53,13 +55,6 @@ describe("Controller", () => {
   it("Container chat enques message", (done) => {
     container.chat.sendClicked({})
     expect(broadcastEvents).to.be.lengthOf(1)
-    done()
-  })
-
-  it("Abort takes Aim to End", (done) => {
-    const controller: Controller = new Aim(container)
-    const event: GameEvent = new AbortEvent()
-    expect(event.applyToController(controller)).to.be.an.instanceof(End)
     done()
   })
 
@@ -280,9 +275,6 @@ describe("Controller", () => {
     container.eventQueue.push(new AimEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
-    container.eventQueue.push(new BeginEvent())
-    container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new HitEvent(container.table.serialise()))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
@@ -304,6 +296,9 @@ describe("Controller", () => {
     container.inputQueue.push(new Input(0.1, "ArrowLeft"))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
+    container.eventQueue.push(new BeginEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Init)
     done()
   })
 

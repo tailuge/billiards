@@ -1,12 +1,13 @@
 import { HitEvent } from "../events/hitevent"
 import { ControllerBase } from "./controllerbase"
 import { AimEvent } from "../events/aimevent"
-import { Controller, Input } from "./controller"
+import { AbortEvent, Controller, Input } from "./controller"
 import { BreakEvent } from "../events/breakevent"
 import { Aim } from "./aim"
 import { GameEvent } from "../events/gameevent"
 import { EventType } from "../events/eventtype"
 import { RerackEvent } from "../events/rerackevent"
+import { End } from "./end"
 
 export class Replay extends ControllerBase {
   delay: number
@@ -83,6 +84,10 @@ export class Replay extends ControllerBase {
     }
     this.playNextShot(this.delay)
     return this
+  }
+
+  override handleAbort(_: AbortEvent): Controller {
+    return new End(this.container)
   }
 
   retry() {

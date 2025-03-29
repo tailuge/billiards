@@ -5,6 +5,7 @@ import { GameEvent } from "../../src/events/gameevent"
 import { Replay } from "../../src/controller/replay"
 import { PlaceBall } from "../../src/controller/placeball"
 import {
+  AbortEvent,
   Controller,
   HitEvent,
   Input,
@@ -15,6 +16,7 @@ import { controllerName } from "../../src/controller/util"
 import { End } from "../../src/controller/end"
 import { canvas3d, initDom } from "../view/dom"
 import { Assets } from "../../src/view/assets"
+import { Init } from "../../src/controller/init"
 
 initDom()
 
@@ -158,6 +160,14 @@ describe("Controller Replay", () => {
     container.inputQueue.push(new Input(0.1, "ShiftArrowLeft"))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlaceBall)
+    done()
+  })
+
+  it("Abort takes Replay to Init", (done) => {
+    container.controller = replayController
+    container.eventQueue.push(new AbortEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
     done()
   })
 })
