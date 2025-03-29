@@ -152,11 +152,10 @@ export class RealOverlay {
     for (const ballNum in ballPositions) {
       const ball = Number(ballNum) - 1
       const pos = ballPositions[ballNum]
-      this.container.table.balls[ball].pos.setX(pos.x/2)
-      this.container.table.balls[ball].pos.setY(pos.y/2)
+      this.container.table.balls[ball].pos.setX(pos.x / 2)
+      this.container.table.balls[ball].pos.setY(pos.y / 2)
     }
     // inject hit event
-    
   }
 
   advance(elapsed: number) {

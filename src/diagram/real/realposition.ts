@@ -1,8 +1,5 @@
 export class RealPosition {
   private shots: any[]
-  private BALL_DIAMETER: number = 0.0615
-  private TABLE_WIDTH: number = 2.84
-  private TABLE_HEIGHT: number = this.TABLE_WIDTH / 2
 
   constructor(shotsData: any[]) {
     this.shots = shotsData.map((shot) => this.interpolateAllBalls(shot))
@@ -14,7 +11,6 @@ export class RealPosition {
     epsilon: number = 0.00001
   ): any {
     if (data.t.length > 1 && data.t[1] - data.t[0] > delta) {
-      console.log("interpolating")
       data.t.splice(1, 0, data.t[1] - epsilon)
       data.x.splice(1, 0, data.x[0])
       data.y.splice(1, 0, data.y[0])
@@ -77,13 +73,5 @@ export class RealPosition {
       ballPositions[ballNum] = { x: x, y: y }
     }
     return ballPositions
-  }
-
-  public getTableDimensions(): { width: number; height: number } {
-    return { width: this.TABLE_WIDTH, height: this.TABLE_HEIGHT }
-  }
-
-  public getBallDiameter(): number {
-    return this.BALL_DIAMETER
   }
 }
