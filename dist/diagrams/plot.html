@@ -159,6 +159,107 @@
       .diagram button:hover {
         background: #f0f0f0;
       }
+
+      /* Aim Section Styles */
+      #aim-controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
+      }
+
+      #aim-ball-container {
+        position: relative;
+        width: 80px; /* Smaller container */
+        height: 80px;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        margin-bottom: 10px;
+        background-color: #ddd;
+      }
+
+      #aim-ball {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        width: 20px;
+        height: 20px;
+        background-color: brown;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      #aim-coordinates {
+        font-size: 0.7em;
+        color: #555;
+        margin-bottom: 5px;
+      }
+
+      #aim-power-direction {
+        display: flex;
+        flex-direction: column; /* Stack power and direction */
+        gap: 5px;
+        align-items: center;
+      }
+
+      #aim-power-direction label {
+        font-size: 0.7em;
+        color: #444;
+      }
+
+      #aim-power-direction input[type="range"] {
+        width: 150px; /* Shorter sliders */
+      }
+
+      .diagram-group {
+        margin: 4px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #f8f8f8;
+        width: 200px; /* Make the group narrower */
+        font-family: "Consolas", "Monaco", monospace;
+      }
+
+      .diagram-group-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 0.9em;
+      }
+
+      .diagram-group .controls-grid {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 5px;
+        align-items: center;
+      }
+
+      .diagram-group label {
+        font-size: 0.7em;
+        color: #444;
+        min-width: 30px;
+      }
+
+      .diagram-group input[type="range"] {
+        width: 150px; /* Shorter sliders */
+        margin: 0;
+      }
+
+      .diagram-group button {
+        padding: 4px 8px;
+        font-size: 0.7em;
+        font-family: inherit;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .diagram-group button:hover {
+        background: #f0f0f0;
+      }
     </style>
   </head>
 
@@ -179,8 +280,8 @@
     </div>
 
     <div class="diagram-container">
-      <div class="diagram diagram-section">
-        <div class="diagram-header">
+      <div class="diagram diagram-group">
+        <div class="diagram-group-header">
           <span>Han</span>
           <button id="replay" type="button">replay</button>
         </div>
@@ -208,8 +309,8 @@
         </div>
       </div>
 
-      <div class="diagram diagram-section">
-        <div class="diagram-header">
+      <div class="diagram diagram-group">
+        <div class="diagram-group-header">
           <span>Mathaven</span>
         </div>
         <div class="controls-grid">
@@ -221,6 +322,24 @@
 
           <label for="μw">μw</label>
           <input id="μw" type="range" />
+        </div>
+      </div>
+
+      <div class="diagram diagram-group" id="aim-controls">
+        <div class="diagram-group-header">
+          <span>Aim</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center">
+          <div id="aim-ball-container">
+            <div id="aim-ball"></div>
+          </div>
+          <div id="aim-coordinates">x: 0, y: 0</div>
+          <div id="aim-power-direction">
+            <label for="power">Power:</label>
+            <input type="range" id="power" min="0" max="100" value="50" />
+            <label for="direction">Direction:</label>
+            <input type="range" id="direction" min="0" max="360" value="0" />
+          </div>
         </div>
       </div>
     </div>
@@ -235,5 +354,47 @@
 
     <script src="../vendor.js"></script>
     <script src="../compare.js"></script>
+    <script>
+      const aimBall = document.getElementById("aim-ball")
+      const aimCoordinatesDisplay = document.getElementById("aim-coordinates")
+      const aimBallContainer = document.getElementById("aim-ball-container")
+      const BALL_CONTAINER_RADIUS = aimBallContainer.clientWidth / 2
+      const BALL_RADIUS = aimBall.offsetWidth / 2
+      const MAX_DISTANCE = 0.7
+
+      aimBallContainer.addEventListener("click", (event) => {
+        const rect = aimBallContainer.getBoundingClientRect()
+        let x = event.clientX - rect.left - rect.width / 2
+        let y = event.clientY - rect.top - rect.height / 2
+
+        // Calculate the distance from the center
+        const distance = Math.sqrt(x * x + y * y)
+
+        // Clamp the distance to MAX_DISTANCE * BALL_CONTAINER_RADIUS
+        if (distance > MAX_DISTANCE * BALL_CONTAINER_RADIUS) {
+          const angle = Math.atan2(y, x)
+          x = MAX_DISTANCE * BALL_CONTAINER_RADIUS * Math.cos(angle)
+          y = MAX_DISTANCE * BALL_CONTAINER_RADIUS * Math.sin(angle)
+        }
+
+        // Keep the ball within the container bounds.
+        const maxX = rect.width / 2 - aimBall.offsetWidth / 2
+        const minX = -maxX
+        const maxY = rect.height / 2 - aimBall.offsetHeight / 2
+        const minY = -maxY
+
+        const clampedX = Math.max(minX, Math.min(maxX, x))
+        const clampedY = Math.max(minY, Math.min(maxY, y))
+
+        aimBall.style.left = `${clampedX + rect.width / 2 - aimBall.offsetWidth / 2}px`
+        aimBall.style.top = `${clampedY + rect.height / 2 - aimBall.offsetHeight / 2}px`
+
+        // Output x and y in the range [-0.7, 0.7]
+        const normalizedX = clampedX / BALL_CONTAINER_RADIUS
+        const normalizedY = clampedY / BALL_CONTAINER_RADIUS
+
+        aimCoordinatesDisplay.textContent = `x: ${normalizedX.toFixed(2)}, y: ${normalizedY.toFixed(2)}`
+      })
+    </script>
   </body>
 </html>
