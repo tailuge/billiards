@@ -30,7 +30,7 @@
         height: 500px;
       }
 
-      #canvas {
+      #overlaycanvas {
         background-color: #636ac9d2;
         position: absolute;
         top: 42px;
@@ -164,12 +164,9 @@
 
   <body>
     <div id="canvas-container">
-      <canvas id="canvas" width="826" height="418"></canvas>
+      <canvas id="overlaycanvas" width="826" height="418"></canvas>
       <div id="myIframe" class="replaydiagram">
-        <div
-          class="topview"
-          data-state='?ruletype=threecushion&state={"init":[-0.8179,-0.2044,-0.8183,0,0.819,0],"shots":[{"type":"AIM","offset":{"x":-0.2783281572999748,"y":0.1481640786499874,"z":0},"angle":0.149,"power":4.592,"pos":{"x":-0.8179000020027161,"y":-0.20440000295639038,"z":0},"i":0}]}'
-        ></div>
+        <div class="topview" data-state="?ruletype=threecushion"></div>
       </div>
     </div>
 

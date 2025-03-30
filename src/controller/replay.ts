@@ -87,6 +87,7 @@ export class Replay extends ControllerBase {
   }
 
   override handleAbort(_: AbortEvent): Controller {
+    console.log("Replay aborted")
     return new End(this.container)
   }
 

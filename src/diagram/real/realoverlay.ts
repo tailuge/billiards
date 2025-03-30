@@ -3,6 +3,7 @@ import { RealDraw } from "./realdraw"
 import { Container } from "../../container/container"
 import { BreakEvent } from "../../events/breakevent"
 import { AbortEvent } from "../../events/abortevent"
+import { BeginEvent } from "../../events/beginevent"
 
 export class RealOverlay {
   private drawer: RealDraw
@@ -145,7 +146,6 @@ export class RealOverlay {
   }
 
   resetSimulation(shotData: any) {
-    this.container.eventQueue.push(new AbortEvent())
     const ballPositions = this.realPosition!.getPositionsAtTime(
       shotData.shotID,
       0
@@ -171,7 +171,9 @@ export class RealOverlay {
         },
       ],
     }
-
+    this.container.table.updateFromShortSerialised(state.init)
+    this.container.eventQueue.push(new AbortEvent())
+    this.container.eventQueue.push(new BeginEvent())
     this.container.eventQueue.push(new BreakEvent(state.init, state.shots))
     console.log("eventQueue depth:", this.container.eventQueue)
   }
