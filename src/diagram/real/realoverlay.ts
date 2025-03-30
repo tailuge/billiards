@@ -139,43 +139,18 @@ export class RealOverlay {
 
   resetAnimation() {
     this.isPlaying = false
-    this.animationTimer = -3.7
+    this.animationTimer = -2.3
     this.drawer.resetCanvas()
     this.drawShot(this.allShots[this.currentShotIndex], 0)
     this.resetSimulation(this.allShots[this.currentShotIndex])
   }
 
   resetSimulation(shotData: any) {
-    const ballPositions = this.realPosition!.getPositionsAtTime(
-      shotData.shotID,
-      0
-    )
-    console.log(ballPositions)
-    for (const ballNum in ballPositions) {
-      const ball = Number(ballNum) - 1
-      const pos = ballPositions[ballNum]
-      this.container.table.balls[ball].pos.setX(2.3 * (0.71 - pos.x / 2))
-      this.container.table.balls[ball].pos.setY(2.3 * (-0.36 + pos.y / 2))
-    }
-    // inject hit event
-    var state = {
-      init: [-0.8179, -0.2044, -0.8183, 0, 0.819, 0],
-      shots: [
-        {
-          type: "AIM",
-          offset: { x: -0.2783281572999748, y: 0.1481640786499874, z: 0 },
-          angle: 0.149,
-          power: 4.592,
-          pos: { x: -0.8179000020027161, y: -0.20440000295639038, z: 0 },
-          i: 0,
-        },
-      ],
-    }
+    var state = this.realPosition!.stateFrom(shotData)
     this.container.table.updateFromShortSerialised(state.init)
     this.container.eventQueue.push(new AbortEvent())
     this.container.eventQueue.push(new BeginEvent())
     this.container.eventQueue.push(new BreakEvent(state.init, state.shots))
-    console.log("eventQueue depth:", this.container.eventQueue)
   }
 
   advance(elapsed: number) {

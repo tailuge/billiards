@@ -74,4 +74,37 @@ export class RealPosition {
     }
     return ballPositions
   }
+
+  public realToSim(
+    key: string,
+    ballPositions: { [key: string]: { x: number; y: number } }
+  ) {
+    return {
+      x: 2.3 * (0.71 - ballPositions[key].x / 2),
+      y: 2.3 * (-0.36 + ballPositions[key].y / 2),
+    }
+  }
+
+  stateFrom(shotData: any) {
+    const ballPositions = this.getPositionsAtTime(shotData.shotID, 0)
+    var state: { init: number[]; shots: any[] } = {
+      init: [],
+      shots: [],
+    }
+    for (const ballNum in ballPositions) {
+      const pos = this.realToSim(ballNum, ballPositions)
+      state.init.push(pos.x)
+      state.init.push(pos.y)
+    }
+
+    state.shots.push({
+      type: "AIM",
+      offset: { x: -0.2, y: 0.1, z: 0 },
+      angle: 0.149,
+      power: 4.592,
+      pos: { x: state.init[0], y: state.init[1], z: 0 },
+      i: 0,
+    })
+    return state
+  }
 }
