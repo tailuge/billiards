@@ -1,3 +1,7 @@
+import { Vector3 } from "three"
+
+export type BallPositions = { [key: string]: { x: number; y: number } }
+
 export class RealPosition {
   private shots: any[]
 
@@ -28,10 +32,7 @@ export class RealPosition {
     return shot
   }
 
-  public getPositionsAtTime(
-    shotId: number,
-    time: number
-  ): { [key: string]: { x: number; y: number } } | null {
+  public getPositionsAtTime(shotId: number, time: number): BallPositions {
     const shot = this.shots.find((s) => s.shotID === shotId)
 
     const ballPositions: { [key: string]: { x: number; y: number } } = {}
@@ -75,13 +76,36 @@ export class RealPosition {
     return ballPositions
   }
 
-  public realToSim(
-    key: string,
-    ballPositions: { [key: string]: { x: number; y: number } }
-  ) {
+  public realToSim(key: string, ballPositions: BallPositions) {
     return {
       x: 2.3 * (0.71 - ballPositions[key].x / 2),
       y: 2.3 * (-0.36 + ballPositions[key].y / 2),
+    }
+  }
+
+  identifyFirstMover(shotData: any) {
+    console.log(shotData)
+    return shotData.balls["1"].t[1] < shotData.balls["2"].t[1] ? "1" : "2"
+  }
+
+  estimateDirection(shotData: any) {
+    const ballPositions1 = this.getPositionsAtTime(shotData.shotID, 0)
+    const ballPositions2 = this.getPositionsAtTime(shotData.shotID, 0.13)
+    const firstMover = this.identifyFirstMover(shotData)
+    const pos1 = new Vector3(
+      ballPositions1[firstMover].x,
+      ballPositions1[firstMover].y
+    )
+    const pos2 = new Vector3(
+      ballPositions2[firstMover].x,
+      ballPositions2[firstMover].y
+    )
+    return {
+      pos1: ballPositions1,
+      pos2: ballPositions2,
+      firstMover: firstMover,
+      angle: pos1.angleTo(pos2),
+      speed: pos1.distanceTo(pos2),
     }
   }
 
@@ -97,13 +121,16 @@ export class RealPosition {
       state.init.push(pos.y)
     }
 
+    const estimatedDirection = this.estimateDirection(shotData)
+    const ball = estimatedDirection.firstMover == "1" ? 0 : 1
+    console.log(estimatedDirection)
     state.shots.push({
       type: "AIM",
-      offset: { x: -0.2, y: 0.1, z: 0 },
-      angle: 0.149,
-      power: 4.592,
-      pos: { x: state.init[0], y: state.init[1], z: 0 },
-      i: 0,
+      offset: { x: -0, y: 0, z: 0 },
+      angle: estimatedDirection.angle,
+      power: estimatedDirection.speed,
+      pos: { x: state.init[ball * 2], y: state.init[ball * 2 + 1], z: 0 },
+      i: ball,
     })
     return state
   }

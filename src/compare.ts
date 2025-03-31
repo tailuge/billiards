@@ -2,6 +2,8 @@ import { Sliders } from "./view/sliders"
 import { DiagramContainer } from "./diagram/diagramcontainer"
 import { mathavenAdapter } from "./model/physics/physics"
 
+let sliders
+
 document.addEventListener("DOMContentLoaded", () => {
   const replaydiagrams = document.getElementsByClassName("replaydiagram")
   for (let i = 0; i < replaydiagrams.length; i++) {
@@ -11,5 +13,5 @@ document.addEventListener("DOMContentLoaded", () => {
     diagramcontainer.start()
   }
 
-  new Sliders()
+  sliders = new Sliders()
 })
