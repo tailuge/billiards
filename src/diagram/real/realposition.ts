@@ -90,7 +90,7 @@ export class RealPosition {
 
   estimateDirection(shotData: any) {
     const ballPositions1 = this.getPositionsAtTime(shotData.shotID, 0)
-    const ballPositions2 = this.getPositionsAtTime(shotData.shotID, 0.13)
+    const ballPositions2 = this.getPositionsAtTime(shotData.shotID, 0.2)
     const firstMover = this.identifyFirstMover(shotData)
     const pos1 = new Vector3(
       ballPositions1[firstMover].x,
@@ -104,8 +104,8 @@ export class RealPosition {
       pos1: ballPositions1,
       pos2: ballPositions2,
       firstMover: firstMover,
-      angle: pos1.angleTo(pos2),
-      speed: pos1.distanceTo(pos2),
+      angle: (new Vector3(-1,0)).angleTo(pos2.sub(pos1)),
+      speed: pos1.distanceTo(pos2)*2,
     }
   }
 
