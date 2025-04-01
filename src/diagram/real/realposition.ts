@@ -92,20 +92,16 @@ export class RealPosition {
     const ballPositions1 = this.getPositionsAtTime(shotData.shotID, 0)
     const ballPositions2 = this.getPositionsAtTime(shotData.shotID, 0.2)
     const firstMover = this.identifyFirstMover(shotData)
-    const pos1 = new Vector3(
-      ballPositions1[firstMover].x,
-      ballPositions1[firstMover].y
-    )
-    const pos2 = new Vector3(
-      ballPositions2[firstMover].x,
-      ballPositions2[firstMover].y
-    )
+    const ball1 = ballPositions1[firstMover]
+    const pos1 = new Vector3(ball1.x, ball1.y)
+    const ball2 = ballPositions1[firstMover]
+    const pos2 = new Vector3(ball2.x, ball2.y)
     return {
       pos1: ballPositions1,
       pos2: ballPositions2,
       firstMover: firstMover,
-      angle: (new Vector3(-1,0)).angleTo(pos2.sub(pos1)),
-      speed: pos1.distanceTo(pos2)*2,
+      speed: pos1.distanceTo(pos2) * 2,
+      angle: new Vector3(-1, 0).angleTo(pos2.sub(pos1)),
     }
   }
 
