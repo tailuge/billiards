@@ -4,10 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Billiards Shot Visualizer</title>
-    <!-- <link rel="stylesheet" href="gemini.css" /> <-- Removed -->
 
     <style>
-      /* --- Start Embedded CSS --- */
 
       /* Basic Reset & Defaults */
       *,
@@ -182,10 +180,6 @@
           justify-content: center;
         }
 
-        .file-input-group label {
-          /* Optionally hide label */
-          /* display: none; */
-        }
         #controls input[type="file"] {
           max-width: 150px;
         }
@@ -457,7 +451,6 @@
       function interpolateUntilMove(data, delta = 0.3, epsilon = 0.00001) {
         // Ensure data structure is valid
         if (!data || !data.t || !data.x || !data.y || data.t.length === 0) {
-          // console.warn("Invalid data structure for interpolation:", data);
           return data // Return original data if invalid
         }
         // Check if interpolation is needed
@@ -556,7 +549,7 @@
 
       function enableAllControls() {
         fileInput.disabled = false
-        shotSelector.disabled = !(allShots.length === 0) // Disable if no shots
+        shotSelector.disabled = (allShots.length !== 0) // Disable if no shots
         // Button states are handled by updateButtonStates
         updateButtonStates()
       }
@@ -627,10 +620,10 @@
 
           if (isPlaying) {
             // If animating, draw the current frame at the current animation time
-            drawShotFrame(currentShot, animationTimer)
+            drawShot(currentShot, animationTimer)
           } else {
             // If static, draw the initial state (time 0)
-            drawShotFrame(currentShot, 0)
+            drawShot(currentShot, 0)
           }
         } else {
           // If no shot selected or index is invalid, just draw the empty table
@@ -714,7 +707,6 @@
           radiusPx < 1 ||
           radiusPx > Math.min(canvas.width, canvas.height) / 4
         ) {
-          // console.warn(`Skipping ball draw due to unrealistic radius: ${radiusPx.toFixed(1)}px`);
           return
         }
 
@@ -774,9 +766,8 @@
       }
 
       // Draws a single frame of the shot at a given time
-      function drawShotFrame(shotData, currentTime) {
+      function drawShot(shotData, currentTime) {
         if (!shotData || !shotData.balls) {
-          // console.warn("drawShotFrame called with invalid shotData");
           return
         }
 
@@ -881,7 +872,7 @@
         const shotData = allShots[shotIndex]
         ctx.clearRect(0, 0, canvas.width, canvas.height) // Clear previous frame
         drawTable()
-        drawShotFrame(shotData, 0) // Draw frame at time 0
+        drawShot(shotData, 0) // Draw frame at time 0
       }
 
       // --- Animation Control ---
@@ -922,7 +913,7 @@
           animationTimer = maxTime // Clamp timer to the end
           ctx.clearRect(0, 0, canvas.width, canvas.height)
           drawTable()
-          drawShotFrame(currentShot, animationTimer) // Draw the final frame
+          drawShot(currentShot, animationTimer) // Draw the final frame
           resetAnimation() // Set isPlaying to false, clear frame ID
           // console.log("Animation finished.");
           return
@@ -931,7 +922,7 @@
         // Clear canvas and redraw table + current frame
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         drawTable() // Redraw table every frame (necessary if clearing canvas)
-        drawShotFrame(currentShot, animationTimer)
+        drawShot(currentShot, animationTimer)
 
         // Request the next frame
         animationFrameId = requestAnimationFrame(animate)
@@ -957,7 +948,7 @@
         // Initial draw before starting loop might be good
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         drawTable()
-        drawShotFrame(allShots[currentShotIndex], 0)
+        drawShot(allShots[currentShotIndex], 0)
 
         animationFrameId = requestAnimationFrame(animate) // Start the loop
       }

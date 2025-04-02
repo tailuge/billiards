@@ -3,7 +3,7 @@ import { Vector3 } from "three"
 export type BallPositions = { [key: string]: { x: number; y: number } }
 
 export class RealPosition {
-  private shots: any[]
+  private readonly shots: any[]
 
   constructor(shotsData: any[]) {
     this.shots = shotsData.map((shot) => this.interpolateAllBalls(shot))
@@ -107,7 +107,7 @@ export class RealPosition {
 
   stateFrom(shotData: any) {
     const ballPositions = this.getPositionsAtTime(shotData.shotID, 0)
-    var state: { init: number[]; shots: any[] } = {
+    const state: { init: number[]; shots: any[] } = {
       init: [],
       shots: [],
     }

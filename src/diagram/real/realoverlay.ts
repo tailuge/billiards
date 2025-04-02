@@ -4,9 +4,11 @@ import { Container } from "../../container/container"
 import { BreakEvent } from "../../events/breakevent"
 import { AbortEvent } from "../../events/abortevent"
 import { BeginEvent } from "../../events/beginevent"
+import { AimInputs } from "./aiminputs"
 
 export class RealOverlay {
-  private drawer: RealDraw
+  private readonly drawer: RealDraw
+  private aimInputs: AimInputs
   fileInput: HTMLInputElement = document.getElementById(
     "fileInput"
   )! as HTMLInputElement
@@ -34,6 +36,7 @@ export class RealOverlay {
   constructor(canvas: HTMLCanvasElement, container: any) {
     this.drawer = new RealDraw(canvas)
     this.container = container
+    this.aimInputs = new AimInputs()
     container && (container.frame = this.advance.bind(this))
     this.start()
   }
@@ -146,7 +149,7 @@ export class RealOverlay {
   }
 
   resetSimulation(shotData: any) {
-    var state = this.realPosition!.stateFrom(shotData)
+    const state = this.realPosition!.stateFrom(shotData)
     this.container.table.updateFromShortSerialised(state.init)
     this.container.eventQueue.push(new AbortEvent())
     this.container.eventQueue.push(new BeginEvent())

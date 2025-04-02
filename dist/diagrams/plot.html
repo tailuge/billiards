@@ -353,47 +353,5 @@
 
     <script src="../vendor.js"></script>
     <script src="../compare.js"></script>
-    <script>
-      const aimBall = document.getElementById("aim-ball")
-      const aimCoordinatesDisplay = document.getElementById("aim-coordinates")
-      const aimBallContainer = document.getElementById("aim-ball-container")
-      const BALL_CONTAINER_RADIUS = aimBallContainer.clientWidth / 2
-      const BALL_RADIUS = aimBall.offsetWidth / 2
-      const MAX_DISTANCE = 0.7
-
-      aimBallContainer.addEventListener("click", (event) => {
-        const rect = aimBallContainer.getBoundingClientRect()
-        let x = event.clientX - rect.left - rect.width / 2
-        let y = event.clientY - rect.top - rect.height / 2
-
-        // Calculate the distance from the center
-        const distance = Math.sqrt(x * x + y * y)
-
-        // Clamp the distance to MAX_DISTANCE * BALL_CONTAINER_RADIUS
-        if (distance > MAX_DISTANCE * BALL_CONTAINER_RADIUS) {
-          const angle = Math.atan2(y, x)
-          x = MAX_DISTANCE * BALL_CONTAINER_RADIUS * Math.cos(angle)
-          y = MAX_DISTANCE * BALL_CONTAINER_RADIUS * Math.sin(angle)
-        }
-
-        // Keep the ball within the container bounds.
-        const maxX = rect.width / 2 - aimBall.offsetWidth / 2
-        const minX = -maxX
-        const maxY = rect.height / 2 - aimBall.offsetHeight / 2
-        const minY = -maxY
-
-        const clampedX = Math.max(minX, Math.min(maxX, x))
-        const clampedY = Math.max(minY, Math.min(maxY, y))
-
-        aimBall.style.left = `${clampedX + rect.width / 2 - aimBall.offsetWidth / 2}px`
-        aimBall.style.top = `${clampedY + rect.height / 2 - aimBall.offsetHeight / 2}px`
-
-        // Output x and y in the range [-0.7, 0.7]
-        const normalizedX = clampedX / BALL_CONTAINER_RADIUS
-        const normalizedY = clampedY / BALL_CONTAINER_RADIUS
-
-        aimCoordinatesDisplay.textContent = `x: ${normalizedX.toFixed(2)}, y: ${normalizedY.toFixed(2)}`
-      })
-    </script>
   </body>
 </html>

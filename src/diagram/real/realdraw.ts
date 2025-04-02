@@ -1,10 +1,10 @@
 export class RealDraw {
-  private ctx: CanvasRenderingContext2D
-  private canvas: HTMLCanvasElement
-  private BALL_COLORS = { 1: "white", 2: "yellow", 3: "red" }
-  private BALL_DIAMETER = 0.0615
-  private TABLE_WIDTH = 2.84
-  private PIXELS_PER_METER: number
+  private readonly ctx: CanvasRenderingContext2D
+  private readonly canvas: HTMLCanvasElement
+  private readonly BALL_COLORS = { 1: "white", 2: "yellow", 3: "red" }
+  private readonly BALL_DIAMETER = 0.0615
+  private readonly TABLE_WIDTH = 2.84
+  private readonly PIXELS_PER_METER: number
   private ballPaths: Record<string, Array<{ x: number; y: number }>> = {}
 
   constructor(canvas: HTMLCanvasElement) {
