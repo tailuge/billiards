@@ -6,7 +6,6 @@
     <title>Billiards Shot Visualizer</title>
 
     <style>
-
       /* Basic Reset & Defaults */
       *,
       *::before,
@@ -549,7 +548,7 @@
 
       function enableAllControls() {
         fileInput.disabled = false
-        shotSelector.disabled = (allShots.length !== 0) // Disable if no shots
+        shotSelector.disabled = allShots.length !== 0 // Disable if no shots
         // Button states are handled by updateButtonStates
         updateButtonStates()
       }

@@ -2,14 +2,22 @@ export class AimInputs {
   private aimBall: HTMLElement | null
   private aimCoordinatesDisplay: HTMLElement | null
   private aimBallContainer: HTMLElement | null
+  private powerSlider: HTMLInputElement | null
+  private directionSlider: HTMLInputElement | null
   private readonly BALL_CONTAINER_RADIUS: number
   private readonly MAX_DISTANCE = 0.7
   private position = { x: 0, y: 0 }
+  private power = 5
+  private direction = 0
 
   constructor() {
     this.aimBall = document.getElementById("aim-ball")
     this.aimCoordinatesDisplay = document.getElementById("aim-coordinates")
     this.aimBallContainer = document.getElementById("aim-ball-container")
+    this.powerSlider = document.getElementById("power") as HTMLInputElement
+    this.directionSlider = document.getElementById(
+      "direction"
+    ) as HTMLInputElement
     this.BALL_CONTAINER_RADIUS = (this.aimBallContainer?.clientWidth || 0) / 2
     this.addEventListeners()
   }
@@ -18,6 +26,14 @@ export class AimInputs {
     this.aimBallContainer?.addEventListener("click", (event) =>
       this.handleClick(event)
     )
+
+    this.powerSlider?.addEventListener("input", (event) => {
+      this.power = parseInt((event.target as HTMLInputElement).value)
+    })
+
+    this.directionSlider?.addEventListener("input", (event) => {
+      this.direction = parseInt((event.target as HTMLInputElement).value)
+    })
   }
 
   private handleClick(event: MouseEvent) {
@@ -68,28 +84,34 @@ export class AimInputs {
     }
   }
 
-  getAim(state: { angle: number; speed: number }): {
-    offset: { x: number; y: number; z: number };
-    angle: number;
-    power: number;
+  getAim(): {
+    offset: { x: number; y: number; z: number }
+    angle: number
+    power: number
   } {
     return {
       offset: { x: this.position.x, y: this.position.y, z: 0 },
-      angle: state.angle,
-      power: state.speed,
+      angle: this.direction,
+      power: this.power,
     }
   }
 
-  setAim(state: { offset: { x: number; y: number; power: number } }) {
-    this.position.x = Math.max(
-      -this.MAX_DISTANCE,
-      Math.min(this.MAX_DISTANCE, state.offset.x)
-    )
-    this.position.y = Math.max(
-      -this.MAX_DISTANCE,
-      Math.min(this.MAX_DISTANCE, state.offset.y)
-    )
-    
+  setAim(state: {
+    offset: { x: number; y: number }
+    power: number
+    angle: number
+  }) {
+    this.position.x = state.offset.x
+
+    this.position.y = state.offset.y
+
+    this.power = state.power
+    this.powerSlider!.value = state.power.toString()
+
+    this.direction = state.angle
+    this.directionSlider!.value = state.angle.toString()
+
+    console.log("set aim", state)
     this.updateDom()
   }
 }

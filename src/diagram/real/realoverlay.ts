@@ -149,11 +149,16 @@ export class RealOverlay {
   }
 
   resetSimulation(shotData: any) {
+    console.log("reset simulation")
     const state = this.realPosition!.stateFrom(shotData)
     this.container.table.updateFromShortSerialised(state.init)
     this.container.eventQueue.push(new AbortEvent())
     this.container.eventQueue.push(new BeginEvent())
     this.container.eventQueue.push(new BreakEvent(state.init, state.shots))
+
+    // Update aim inputs with the shot state
+
+    this.aimInputs.setAim(state.shots[0])
   }
 
   advance(elapsed: number) {

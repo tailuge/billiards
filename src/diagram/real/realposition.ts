@@ -94,7 +94,7 @@ export class RealPosition {
     const firstMover = this.identifyFirstMover(shotData)
     const ball1 = ballPositions1[firstMover]
     const pos1 = new Vector3(ball1.x, ball1.y)
-    const ball2 = ballPositions1[firstMover]
+    const ball2 = ballPositions2[firstMover]
     const pos2 = new Vector3(ball2.x, ball2.y)
     return {
       pos1: ballPositions1,
@@ -118,6 +118,7 @@ export class RealPosition {
     }
 
     const estimatedDirection = this.estimateDirection(shotData)
+    console.log("estimated", estimatedDirection)
     const ball = estimatedDirection.firstMover == "1" ? 0 : 1
     console.log(estimatedDirection)
     state.shots.push({
