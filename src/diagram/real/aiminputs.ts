@@ -68,19 +68,28 @@ export class AimInputs {
     }
   }
 
-  getAimPosition(): { x: number; y: number } {
-    return { ...this.position }
+  getAim(state: { angle: number; speed: number }): {
+    offset: { x: number; y: number; z: number };
+    angle: number;
+    power: number;
+  } {
+    return {
+      offset: { x: this.position.x, y: this.position.y, z: 0 },
+      angle: state.angle,
+      power: state.speed,
+    }
   }
 
-  setAimPosition(x: number, y: number) {
+  setAim(state: { offset: { x: number; y: number; power: number } }) {
     this.position.x = Math.max(
       -this.MAX_DISTANCE,
-      Math.min(this.MAX_DISTANCE, x)
+      Math.min(this.MAX_DISTANCE, state.offset.x)
     )
     this.position.y = Math.max(
       -this.MAX_DISTANCE,
-      Math.min(this.MAX_DISTANCE, y)
+      Math.min(this.MAX_DISTANCE, state.offset.y)
     )
+    
     this.updateDom()
   }
 }
