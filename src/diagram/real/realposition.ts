@@ -32,45 +32,45 @@ export class RealPosition {
     return shot
   }
 
+  private getInterpolatedPosition(
+    times: number[],
+    positions: number[],
+    targetTime: number
+  ): number {
+    if (!times || times.length === 0) return positions[0]
+
+    if (targetTime <= times[0]) return positions[0]
+    if (targetTime >= times[times.length - 1])
+      return positions[positions.length - 1]
+
+    let lowIndex = 0
+    let highIndex = times.length - 1
+    while (lowIndex < highIndex - 1) {
+      const midIndex = Math.floor((lowIndex + highIndex) / 2)
+      if (times[midIndex] < targetTime) {
+        lowIndex = midIndex
+      } else {
+        highIndex = midIndex
+      }
+    }
+
+    const t1 = times[lowIndex]
+    const t2 = times[highIndex]
+    const p1 = positions[lowIndex]
+    const p2 = positions[highIndex]
+    const alpha = (targetTime - t1) / (t2 - t1)
+    return p1 + alpha * (p2 - p1)
+  }
+
   public getPositionsAtTime(shotId: number, time: number): BallPositions {
     const shot = this.shots.find((s) => s.shotID === shotId)
 
     const ballPositions: { [key: string]: { x: number; y: number } } = {}
 
-    const getInterpolatedPosition = (
-      times: number[],
-      positions: number[],
-      targetTime: number
-    ): number => {
-      if (!times || times.length === 0) return positions[0]
-
-      if (targetTime <= times[0]) return positions[0]
-      if (targetTime >= times[times.length - 1])
-        return positions[positions.length - 1]
-
-      let lowIndex = 0
-      let highIndex = times.length - 1
-      while (lowIndex < highIndex - 1) {
-        const midIndex = Math.floor((lowIndex + highIndex) / 2)
-        if (times[midIndex] < targetTime) {
-          lowIndex = midIndex
-        } else {
-          highIndex = midIndex
-        }
-      }
-
-      const t1 = times[lowIndex]
-      const t2 = times[highIndex]
-      const p1 = positions[lowIndex]
-      const p2 = positions[highIndex]
-      const alpha = (targetTime - t1) / (t2 - t1)
-      return p1 + alpha * (p2 - p1)
-    }
-
     for (const ballNum in shot.balls) {
       const ballData = shot.balls[ballNum]
-      const x = getInterpolatedPosition(ballData.t, ballData.x, time)
-      const y = getInterpolatedPosition(ballData.t, ballData.y, time)
+      const x = this.getInterpolatedPosition(ballData.t, ballData.x, time)
+      const y = this.getInterpolatedPosition(ballData.t, ballData.y, time)
       ballPositions[ballNum] = { x: x, y: y }
     }
     return ballPositions
