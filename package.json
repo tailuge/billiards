@@ -32,7 +32,7 @@
     "three": "0.175.0"
   },
   "devDependencies": {
-    "@swc/core": "1.11.16",
+    "@swc/core": "1.11.18",
     "@swc/jest": "0.2.37",
     "@testing-library/dom": "10.4.0",
     "@types/chai": "5.2.1",
@@ -48,7 +48,7 @@
     "ts-jest": "29.3.1",
     "ts-loader": "9.5.2",
     "ts-node": "^10.9.2",
-    "typescript": "5.8.2",
+    "typescript": "5.8.3",
     "webpack": "5.98.0",
     "webpack-cli": "6.0.1",
     "webpack-dev-server": "5.2.1",
