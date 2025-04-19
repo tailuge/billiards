@@ -19,7 +19,7 @@ export class RealOverlay {
     "shotSelector"
   )! as HTMLSelectElement
   replayButton: HTMLButtonElement = document.getElementById(
-    "replayButton"
+    "replay"
   )! as HTMLButtonElement
   myIframe = document.getElementById("myIframe")
 
@@ -52,6 +52,7 @@ export class RealOverlay {
       this.handleFileChange(event)
     )
     this.shotSelector.addEventListener("change", () => this.handleShotSelect())
+    this.replayButton.addEventListener("click", () => this.handleReplay())
   }
 
   handleFileChange(event: Event) {
@@ -137,7 +138,7 @@ export class RealOverlay {
   }
 
   handleReplay() {
-    this.resetAnimation()
+      this.resetAnimation()
   }
 
   resetAnimation() {
