@@ -138,7 +138,7 @@ export class RealOverlay {
   }
 
   handleReplay() {
-      this.resetAnimation()
+    this.resetAnimation()
   }
 
   resetAnimation() {
