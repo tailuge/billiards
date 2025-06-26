@@ -18,6 +18,7 @@ import { Rules } from "../controller/rules/rules"
 import { RuleFactory } from "../controller/rules/rulefactory"
 import { Menu } from "../view/menu"
 import { Hud } from "../view/hud"
+import { LobbyIndicator } from "../view/lobbyindicator"
 
 /**
  * Model, View, Controller container.
@@ -38,6 +39,7 @@ export class Container {
   rules: Rules
   menu: Menu
   hud: Hud
+  lobbyIndicator: LobbyIndicator
   frame: (timestamp: number) => void
 
   last = performance.now()
@@ -61,6 +63,7 @@ export class Container {
     this.menu = new Menu(this)
     this.table.addToScene(this.view.scene)
     this.hud = new Hud()
+    this.lobbyIndicator = new LobbyIndicator()
     this.updateController(new Init(this))
   }
 
