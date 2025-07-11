@@ -3757,9 +3757,20 @@ void main() {
 }`}(),r.useDepthPacking?"#define DEPTH_PACKING "+r.depthPacking:"",`
 `].filter(eQ).join(`
 `)),m=e0(m=e$(m=e2(m),r),r),g=e0(g=e$(g=e2(g),r),r),m=e6(m),g=e6(g),!0!==r.isRawShaderMaterial&&(T=`#version 300 es
-`,s=[b,"#define attribute in","#define varying out","#define texture2D texture"].join(`
+`,s=[b,`#define attribute in
+#define varying out
+#define texture2D texture`].join(`
 `)+`
-`+s,l=["#define varying in",r.glslVersion===n.Wdf?"":"layout(location = 0) out highp vec4 pc_fragColor;",r.glslVersion===n.Wdf?"":"#define gl_FragColor pc_fragColor","#define gl_FragDepthEXT gl_FragDepth","#define texture2D texture","#define textureCube texture","#define texture2DProj textureProj","#define texture2DLodEXT textureLod","#define texture2DProjLodEXT textureProjLod","#define textureCubeLodEXT textureLod","#define texture2DGradEXT textureGrad","#define texture2DProjGradEXT textureProjGrad","#define textureCubeGradEXT textureGrad"].join(`
+`+s,l=["#define varying in",r.glslVersion===n.Wdf?"":"layout(location = 0) out highp vec4 pc_fragColor;",r.glslVersion===n.Wdf?"":"#define gl_FragColor pc_fragColor",`#define gl_FragDepthEXT gl_FragDepth
+#define texture2D texture
+#define textureCube texture
+#define texture2DProj textureProj
+#define texture2DLodEXT textureLod
+#define texture2DProjLodEXT textureProjLod
+#define textureCubeLodEXT textureLod
+#define texture2DGradEXT textureGrad
+#define texture2DProjGradEXT textureProjGrad
+#define textureCubeGradEXT textureGrad`].join(`
 `)+`
 `+l);let w=T+s+m,A=T+l+g,R=eq(p,p.VERTEX_SHADER,w),C=eq(p,p.FRAGMENT_SHADER,A);function P(i){if(e.debug.checkShaderErrors){let r=p.getProgramInfoLog(E).trim(),n=p.getShaderInfoLog(R).trim(),a=p.getShaderInfoLog(C).trim(),o=!0,c=!0;if(!1===p.getProgramParameter(E,p.LINK_STATUS))if(o=!1,"function"==typeof e.debug.onShaderError)e.debug.onShaderError(p,E,R,C);else{let e=eJ(p,R,"vertex"),n=eJ(p,C,"fragment");console.error("THREE.WebGLProgram: Shader Error "+p.getError()+" - VALIDATE_STATUS "+p.getProgramParameter(E,p.VALIDATE_STATUS)+`
 

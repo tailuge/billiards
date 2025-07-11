@@ -32,14 +32,14 @@
     "three": "0.178.0"
   },
   "devDependencies": {
-    "@swc/core": "1.12.9",
-    "@swc/jest": "0.2.38",
+    "@swc/core": "1.12.11",
+    "@swc/jest": "0.2.39",
     "@testing-library/dom": "10.4.0",
     "@types/chai": "5.2.2",
     "@types/jest": "30.0.0",
-    "@types/node": "24.0.10",
-    "@types/three": "0.178.0",
-    "chai": "5.2.0",
+    "@types/node": "24.0.13",
+    "@types/three": "0.178.1",
+    "chai": "5.2.1",
     "jest": "30.0.4",
     "jest-environment-jsdom": "30.0.4",
     "node-notifier": "^10.0.1",
@@ -49,7 +49,7 @@
     "ts-loader": "9.5.2",
     "ts-node": "^10.9.2",
     "typescript": "5.8.3",
-    "webpack": "5.99.9",
+    "webpack": "5.100.0",
     "webpack-cli": "6.0.1",
     "webpack-dev-server": "5.2.2",
     "webpack-node-externals": "^3.0.0"
