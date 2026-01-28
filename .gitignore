@@ -56,4 +56,11 @@ node_modules/
 .env
 
 # next.js build output
+
 .next
+
+
+
+# Gemini context
+
+GEMINI.md
