@@ -34,6 +34,89 @@ export class Rack {
     return new Ball(Rack.jitter(pos), 0xfaebd7)
   }
 
+  static readonly ball8 = [
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#ededed",
+    "#ededed",
+    "#ededed",
+    "#000000",
+    "#ededed",
+    "#ededed",
+    "#ededed",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#ededed",
+    "#ededed",
+    "#ededed",
+    "#000000",
+    "#ededed",
+    "#ededed",
+    "#ededed",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#ededed",
+    "#000000",
+    "#ededed",
+    "#ededed",
+    "#ededed",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#ededed",
+    "#ededed",
+    "#000000",
+    "#ededed",
+    "#ededed",
+    "#ededed",
+    "#000000",
+    "#ededed",
+    "#000000",
+    "#000000",
+    "#000000",
+    "#000000",
+  ]
+
   static diamond() {
     const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
     const diamond: Ball[] = []
@@ -48,7 +131,13 @@ export class Rack {
     pos.sub(Rack.across)
     diamond.push(new Ball(Rack.jitter(pos), 0xff0000))
     pos.addScaledVector(Rack.across, 2)
-    diamond.push(new Ball(Rack.jitter(pos), 0x050505))
+    diamond.push(
+      new Ball(
+        Rack.jitter(pos),
+        0x050505,
+        Rack.ball8.map((color, index) => ({ index, color }))
+      )
+    )
     pos.add(Rack.diagonal).sub(Rack.across)
     diamond.push(new Ball(Rack.jitter(pos), 0x0a74c2))
     pos.sub(Rack.across)
