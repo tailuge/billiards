@@ -25,7 +25,7 @@ describe("LobbyIndicator", () => {
     // Wait for async init
     await new Promise((resolve) => setTimeout(resolve, 0))
 
-    expect(element?.textContent).to.equal("5👥")
+    expect(element?.textContent).to.equal(" 5 👥")
   })
 
   it("updates text content on message", async () => {
@@ -35,7 +35,7 @@ describe("LobbyIndicator", () => {
     const indicator = new LobbyIndicator(relay)
     await new Promise((resolve) => setTimeout(resolve, 0))
 
-    expect(element?.textContent).to.equal("5👥")
+    expect(element?.textContent).to.equal(" 5 👥")
 
     // Change count and publish message
     relay.getOnlineCount = async () => 6
@@ -44,6 +44,6 @@ describe("LobbyIndicator", () => {
     // Wait for async refresh
     await new Promise((resolve) => setTimeout(resolve, 10))
 
-    expect(element?.textContent).to.equal("6👥")
+    expect(element?.textContent).to.equal(" 6 👥")
   })
 })

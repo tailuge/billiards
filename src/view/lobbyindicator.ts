@@ -16,8 +16,7 @@ export class LobbyIndicator {
     const refresh = async () => {
       const count = await this.relay?.getOnlineCount()
       if (count !== null && this.element) {
-        // preserve the icon
-        this.element.textContent = `${count}👥`
+        this.element.textContent = ` ${count} 👥`
       }
     }
 
