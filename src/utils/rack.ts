@@ -4,6 +4,7 @@ import { Vector3 } from "three"
 import { roundVec, vec } from "./utils"
 import { R } from "../model/physics/constants"
 import { Table } from "../model/table"
+import { ball8 } from "./colours"
 
 export class Rack {
   static readonly noise = R * 0.0233
@@ -34,89 +35,6 @@ export class Rack {
     return new Ball(Rack.jitter(pos), 0xfaebd7)
   }
 
-  static readonly ball8 = [
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#ededed",
-    "#ededed",
-    "#ededed",
-    "#000000",
-    "#ededed",
-    "#ededed",
-    "#ededed",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#ededed",
-    "#ededed",
-    "#ededed",
-    "#000000",
-    "#ededed",
-    "#ededed",
-    "#ededed",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#ededed",
-    "#000000",
-    "#ededed",
-    "#ededed",
-    "#ededed",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#ededed",
-    "#ededed",
-    "#000000",
-    "#ededed",
-    "#ededed",
-    "#ededed",
-    "#000000",
-    "#ededed",
-    "#000000",
-    "#000000",
-    "#000000",
-    "#000000",
-  ]
-
   static diamond() {
     const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
     const diamond: Ball[] = []
@@ -135,7 +53,7 @@ export class Rack {
       new Ball(
         Rack.jitter(pos),
         0x050505,
-        Rack.ball8.map((color, index) => ({ index, color }))
+        ball8.map((color, index) => ({ index, color }))
       )
     )
     pos.add(Rack.diagonal).sub(Rack.across)
