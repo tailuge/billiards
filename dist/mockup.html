@@ -51,13 +51,16 @@
         canvas.height = 512
         const ctx = canvas.getContext("2d")
 
-        // 1. Black surround
-        ctx.fillStyle = "black"
-        ctx.fillRect(0, 0, 512, 512)
-
         const centerX = 256
         const centerY = 256
         const whiteCircleRadius = 160
+        const borderThickness = 15
+
+        // 1. Black circle (border)
+        ctx.beginPath()
+        ctx.arc(centerX, centerY, whiteCircleRadius + borderThickness, 0, Math.PI * 2)
+        ctx.fillStyle = "black"
+        ctx.fill()
 
         // 2. White circle
         ctx.beginPath()
@@ -144,7 +147,7 @@
              
              if (vLocalPosition.y > 0.0 && projUv.x >= 0.0 && projUv.x <= 1.0 && projUv.y >= 0.0 && projUv.y <= 1.0) {
                vec4 texColor = texture2D(numberTex, projUv);
-               diffuseColor.rgb = texColor.rgb;
+               diffuseColor.rgb = mix(diffuseColor.rgb, texColor.rgb, texColor.a);
              }
             `
           );
