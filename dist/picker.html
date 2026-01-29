@@ -339,9 +339,6 @@
         }
 
         function createAxisArrows() {
-            const arrowLength = 3;
-            const arrowColor = 0xffffff;
-            const arrowOpacity = 0.6;
 
             // X axis (Red) - Right
             const xArrow = createArrow(new THREE.Vector3(1, 0, 0), 0xff0000, 'X');
@@ -355,7 +352,7 @@
             scene.add(zArrow);
         }
 
-        function createArrow(direction, color, label) {
+        function createArrow(direction, color) {
             const group = new THREE.Group();
             const arrowLength = 2.5;
             const arrowHeadSize = 0.3;
@@ -363,7 +360,7 @@
             // Shaft
             const shaftGeometry = new THREE.CylinderGeometry(0.05, 0.05, arrowLength, 8);
             shaftGeometry.translate(0, arrowLength / 2, 0);
-            const shaftMaterial = new THREE.MeshBasicMaterial({ color: color });
+            const shaftMaterial = new THREE.MeshBasicMaterial({ color: color, opacity: 0.6 });
             const shaft = new THREE.Mesh(shaftGeometry, shaftMaterial);
 
             // Orient shaft along direction
