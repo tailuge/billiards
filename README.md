@@ -30,7 +30,7 @@ Demos run in all major desktop and mobile browsers and uses WebGL
 * 4-ball [Straight pool ⬀](https://tailuge.github.io/billiards/dist?ruletype=fourteenone). 
 * Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
 * Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard.html) hosted on vercel.com
-* Try [two player](https://scoreboard-tailuge.vercel.app/lobby) online lobby using nchan
+* Try [two player](https://scoreboard-tailuge.vercel.app/game) online lobby using nchan
 
 ## Reference material
 
