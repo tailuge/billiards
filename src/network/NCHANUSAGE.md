@@ -122,3 +122,37 @@ Ensure your element exists in the DOM:
 - **Quiet Failures:** The implementation handles connection errors silently and attempts to reconnect every 30 seconds.
 - **Latency:** The `basic_status` endpoint reflects real-time connections, but there might be a slight delay in the WebSocket broadcast.
 - **CORS:** The Nchan server is configured to allow CORS requests from all origins.
+
+# Proposed Refactoring Plan
+
+To integrate the live online user count while maintaining code quality and testability, the following changes are proposed:
+
+## 1. Generalize `MessageRelay` Interface
+Update `src/network/client/messagerelay.ts` to support different channel prefixes and the status check:
+- Add an optional `prefix` parameter to `subscribe` and `publish` (defaulting to `"table"`).
+- Add `getOnlineCount(): Promise<number | null>`.
+
+## 2. Enhance `NchanMessageRelay`
+Update `src/network/client/nchanmessagerelay.ts`:
+- Implement `getOnlineCount()` using the `basic_status` endpoint and `fetch`.
+- Refactor `subscribe` and `publish` to use the provided `prefix` in URL construction.
+
+## 3. Implement `LobbyIndicator`
+Update `src/view/lobbyindicator.ts`:
+- The constructor should accept a `MessageRelay`.
+- It will perform the initial `getOnlineCount()` call and subscribe to the `lobby` channel (using `prefix="lobby"`) to trigger refreshes when users connect.
+- It will safely update the DOM element with `id="lobby"`.
+
+## 4. Container Integration
+- Modify `Container` constructor in `src/container/container.ts` to accept an optional `MessageRelay`.
+- Pass this relay to the `LobbyIndicator`.
+- This ensures `LobbyIndicator` is always present but only active if a relay is provided.
+
+## 5. Browser Integration
+- Update `BrowserContainer` in `src/container/browsercontainer.ts` to always instantiate `NchanMessageRelay`.
+- Pass the relay to the `Container` regardless of whether it is in single-player or multi-player mode.
+- This allows the lobby count to function globally while game-specific logic remains conditional on the `wss` parameter.
+
+## 6. Test Compatibility
+- Update `InMemoryMessageRelay` in `test/mocks/inmemorymessagerelay.ts` to match the new interface.
+- Ensure that existing tests passing `null` or no relay to `Container` still function correctly (LobbyIndicator will simply remain idle).
