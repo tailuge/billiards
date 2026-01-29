@@ -1,3 +1,23 @@
+# Objectives
+
+I want to bind a live online user count to html component in index.html id=lobby
+
+  <a href="https://scoreboard-tailuge.vercel.app/game"
+            target="_blank"
+            class="pill"
+            title="Lobby"
+            id="lobby"
+            >(add live count here)👥</a
+          >
+
+Instructions on how to get the live count is outlined below. But first we must rationalise the suggestion with the existing class for in game messaging of shot in nchanmessagingrelay.ts
+
+Note that that component is only instantiated when it is in 2 player mode - so any changes must respoect that. It is important that when tests run that do not use this then it must not attempt connections. 
+
+Plan out how the suggested code below can be combined or abtracted from the existing class for in game messaging of shot in nchanmessagingrelay.ts. Obviously the onilne player count must be visible in 1-player mode so there will be some change to instantiation.
+
+The code that connects the network to the component should be in view/lobbyindicator.ts and that will be likely created from container.ts. It should be created in 1 player mode and probably all modes.
+
 # Nchan Usage: Live Online User Count
 
 This document describes how to integrate a real-time online user count into an external application using the Nchan server.
