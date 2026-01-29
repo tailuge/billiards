@@ -143,9 +143,11 @@
             '#include <color_fragment>',
             `#include <color_fragment>
              float r = ${radius.toFixed(1)};
-             vec2 projUv = vLocalPosition.xz / (r * projSize) + 0.5;
+             vec3 locPos = vLocalPosition;
+             if (locPos.y < 0.0) locPos.x = -locPos.x;
+             vec2 projUv = locPos.xz / (r * projSize) + 0.5;
              
-             if (vLocalPosition.y > 0.0 && projUv.x >= 0.0 && projUv.x <= 1.0 && projUv.y >= 0.0 && projUv.y <= 1.0) {
+             if (projUv.x >= 0.0 && projUv.x <= 1.0 && projUv.y >= 0.0 && projUv.y <= 1.0) {
                vec4 texColor = texture2D(numberTex, projUv);
                diffuseColor.rgb = mix(diffuseColor.rgb, texColor.rgb, texColor.a);
              }
