@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paintable Icosahedron Sphere</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #eee;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #canvas-container {
+            flex: 1;
+            position: relative;
+            min-height: 0;
+        }
+
+        #controls {
+            background: rgba(22, 33, 62, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid rgba(233, 69, 96, 0.3);
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.4);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: rgba(15, 52, 96, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        label {
+            font-size: 13px;
+            color: #a0a0a0;
+            white-space: nowrap;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button {
+            background: linear-gradient(145deg, #0f3460 0%, #1a4a7a 100%);
+            color: #eee;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            background: linear-gradient(145deg, #1a4a7a 0%, #256090 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        button.active {
+            background: linear-gradient(145deg, #e94560 0%, #ff6b6b 100%);
+            box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+        }
+
+        button.active:hover {
+            background: linear-gradient(145deg, #ff6b6b 0%, #ff8585 100%);
+            box-shadow: 0 6px 16px rgba(233, 69, 96, 0.5);
+        }
+
+        button#clear-fill-btn {
+            background: linear-gradient(145deg, #533483 0%, #6b4a9e 100%);
+        }
+
+        button#clear-fill-btn:hover {
+            background: linear-gradient(145deg, #6b4a9e 0%, #8561b8 100%);
+            box-shadow: 0 6px 12px rgba(107, 74, 158, 0.4);
+        }
+
+        input[type="color"] {
+            width: 45px;
+            height: 45px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            background: transparent;
+            padding: 2px;
+            transition: all 0.2s ease;
+        }
+
+        input[type="color"]:hover {
+            border-color: rgba(233, 69, 96, 0.5);
+            transform: scale(1.05);
+        }
+
+        input[type="range"] {
+            width: 140px;
+            cursor: pointer;
+            -webkit-appearance: none;
+            height: 8px;
+            background: rgba(15, 52, 96, 0.5);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(145deg, #e94560 0%, #ff6b6b 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(233, 69, 96, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 10px rgba(233, 69, 96, 0.6);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(145deg, #e94560 0%, #ff6b6b 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(233, 69, 96, 0.5);
+        }
+
+        .slider-value {
+            font-size: 15px;
+            color: #e94560;
+            min-width: 24px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        #dev-panel {
+            background: rgba(15, 15, 26, 0.98);
+            border-top: 1px solid rgba(233, 69, 96, 0.2);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        #dev-panel.open {
+            max-height: 300px;
+        }
+
+        #dev-panel-content {
+            padding: 20px 30px;
+            display: flex;
+            gap: 25px;
+        }
+
+        #dev-toggle {
+            background: rgba(51, 51, 51, 0.8);
+            color: #888;
+            padding: 8px 20px;
+            font-size: 12px;
+            border-radius: 0 0 10px 10px;
+            position: absolute;
+            top: 0;
+            right: 30px;
+            z-index: 10;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #dev-toggle:hover {
+            background: rgba(68, 68, 68, 0.9);
+            color: #aaa;
+        }
+
+        .dev-section {
+            flex: 1;
+        }
+
+        .dev-section h3 {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #triangle-list {
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 12px;
+            background: rgba(26, 26, 46, 0.8);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        #triangle-list .entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            border-bottom: 1px solid rgba(42, 42, 62, 0.5);
+            border-radius: 4px;
+            transition: background 0.15s ease;
+        }
+
+        #triangle-list .entry:hover {
+            background: rgba(42, 42, 62, 0.8);
+        }
+
+        #json-state {
+            height: 200px;
+            width: 100%;
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #4ade80;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 11px;
+            padding: 12px;
+            border-radius: 8px;
+            resize: none;
+        }
+
+        .mode-indicator {
+            font-size: 13px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: rgba(15, 52, 96, 0.5);
+            color: #a0a0a0;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .mode-indicator.paint {
+            background: linear-gradient(145deg, rgba(233, 69, 96, 0.3) 0%, rgba(255, 107, 107, 0.3) 100%);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.3);
+        }
+
+        /* Zoom hint overlay */
+        .zoom-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            color: #aaa;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .zoom-hint.visible {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            #controls {
+                padding: 15px 20px;
+                gap: 15px;
+            }
+
+            .control-group {
+                gap: 8px;
+                padding: 6px 12px;
+            }
+
+            button {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
+            input[type="range"] {
+                width: 100px;
+            }
+
+            label {
+                font-size: 11px;
+            }
+
+            #dev-panel-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #controls {
+                justify-content: flex-start;
+                padding: 12px 15px;
+            }
+
+            .control-group {
+                flex: 1 1 45%;
+                padding: 5px 10px;
+            }
+
+            .mode-indicator {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container">
+        <button id="dev-toggle">Dev Panel ▼</button>
+        <div class="zoom-hint" id="zoom-hint">Scroll to zoom • Drag to rotate</div>
+    </div>
+    
+    <div id="controls">
+        <div class="control-group">
+            <label>Mode:</label>
+            <button id="rotate-btn" class="active">Rotate</button>
+            <button id="paint-btn">Paint</button>
+        </div>
+        
+        <div class="control-group">
+            <label>Color:</label>
+            <input type="color" id="color-picker" value="#e94560">
+        </div>
+        
+        <div class="control-group">
+            <label>Detail:</label>
+            <input type="range" id="detail-slider" min="0" max="3" value="1" step="1">
+            <span class="slider-value" id="detail-value">1</span>
+        </div>
+        
+        <div class="control-group">
+            <button id="clear-fill-btn">Clear/Fill</button>
+        </div>
+        
+        <div class="control-group">
+            <span class="mode-indicator" id="mode-indicator">Rotate Mode</span>
+        </div>
+    </div>
+    
+    <div id="dev-panel">
+        <div id="dev-panel-content">
+            <div class="dev-section" style="flex: 0.4;">
+                <h3>Triangle Colors</h3>
+                <div id="triangle-list"></div>
+            </div>
+            <div class="dev-section" style="flex: 0.6;">
+                <h3>JSON State</h3>
+                <textarea id="json-state" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        const state = {
+            mode: 'rotate', // 'rotate' or 'paint'
+            selectedColor: '#e94560',
+            detailLevel: 1,
+            triangleColors: {}, // faceIndex -> color
+            hoveredFace: null,
+            originalColor: null
+        };
+
+        // Three.js globals
+        let scene, camera, renderer, mesh, geometry, material;
+        let raycaster, mouse;
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let cameraDistance = 5;
+        let cameraTheta = 0;
+        let cameraPhi = Math.PI / 2;
+
+        // DOM Elements
+        const container = document.getElementById('canvas-container');
+        const rotateBtn = document.getElementById('rotate-btn');
+        const paintBtn = document.getElementById('paint-btn');
+        const colorPicker = document.getElementById('color-picker');
+        const detailSlider = document.getElementById('detail-slider');
+        const detailValue = document.getElementById('detail-value');
+        const clearFillBtn = document.getElementById('clear-fill-btn');
+        const modeIndicator = document.getElementById('mode-indicator');
+        const devToggle = document.getElementById('dev-toggle');
+        const devPanel = document.getElementById('dev-panel');
+        const triangleList = document.getElementById('triangle-list');
+        const jsonState = document.getElementById('json-state');
+        const zoomHint = document.getElementById('zoom-hint');
+
+        // Initialize Three.js
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a1a2e);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            updateCameraPosition();
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // Raycaster
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            // Create initial mesh
+            createMesh();
+
+            // Add lights
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+            directionalLight2.position.set(-5, -5, -5);
+            scene.add(directionalLight2);
+
+            // Event listeners
+            setupEventListeners();
+
+            // Load from URL
+            loadFromURL();
+
+            // Start render loop
+            animate();
+
+            // Show zoom hint briefly on load
+            setTimeout(() => zoomHint.classList.add('visible'), 500);
+            setTimeout(() => zoomHint.classList.remove('visible'), 4000);
+        }
+
+        function updateCameraPosition() {
+            camera.position.x = cameraDistance * Math.sin(cameraPhi) * Math.cos(cameraTheta);
+            camera.position.y = cameraDistance * Math.cos(cameraPhi);
+            camera.position.z = cameraDistance * Math.sin(cameraPhi) * Math.sin(cameraTheta);
+            camera.lookAt(0, 0, 0);
+        }
+
+        function createMesh() {
+            if (mesh) {
+                scene.remove(mesh);
+                geometry.dispose();
+            }
+
+            // Create icosahedron geometry with detail level
+            geometry = new THREE.IcosahedronGeometry(2, state.detailLevel);
+
+            // Set up vertex colors
+            const count = geometry.attributes.position.count;
+            const colors = new Float32Array(count * 3);
+            
+            // Initialize with default color (gray)
+            const defaultColor = new THREE.Color(0x888888);
+            for (let i = 0; i < count; i++) {
+                colors[i * 3] = defaultColor.r;
+                colors[i * 3 + 1] = defaultColor.g;
+                colors[i * 3 + 2] = defaultColor.b;
+            }
+            
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            // Apply stored colors
+            applyStoredColors();
+
+            // Create material
+            material = new THREE.MeshPhongMaterial({
+                vertexColors: true,
+                flatShading: true,
+                emissive: 0,
+                shininess: 25,
+                specular: 0x555533,
+                side: THREE.DoubleSide
+            });
+
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            updateDevPanel();
+        }
+
+        function applyStoredColors() {
+            if (!geometry) return;
+            
+            const colors = geometry.attributes.color.array;
+            const position = geometry.attributes.position;
+            
+            // For each face (3 vertices per face in non-indexed geometry)
+            const faceCount = position.count / 3;
+            
+            for (let faceIndex = 0; faceIndex < faceCount; faceIndex++) {
+                const colorHex = state.triangleColors[faceIndex] || '#888888';
+                const color = new THREE.Color(colorHex);
+                
+                // Set color for all 3 vertices of this face
+                for (let v = 0; v < 3; v++) {
+                    const idx = (faceIndex * 3 + v) * 3;
+                    colors[idx] = color.r;
+                    colors[idx + 1] = color.g;
+                    colors[idx + 2] = color.b;
+                }
+            }
+            
+            geometry.attributes.color.needsUpdate = true;
+        }
+
+        function paintFace(faceIndex, colorHex) {
+            if (!geometry) return;
+            
+            const colors = geometry.attributes.color.array;
+            const color = new THREE.Color(colorHex);
+            
+            // Set color for all 3 vertices of this face
+            for (let v = 0; v < 3; v++) {
+                const idx = (faceIndex * 3 + v) * 3;
+                colors[idx] = color.r;
+                colors[idx + 1] = color.g;
+                colors[idx + 2] = color.b;
+            }
+            
+            geometry.attributes.color.needsUpdate = true;
+            
+            // Store in state
+            state.triangleColors[faceIndex] = colorHex;
+            
+            updateDevPanel();
+            updateURL();
+        }
+
+        function highlightFace(faceIndex) {
+            if (!geometry || state.hoveredFace === faceIndex) return;
+            
+            // Restore previous highlight
+            if (state.hoveredFace !== null) {
+                restoreFaceColor(state.hoveredFace);
+            }
+            
+            state.hoveredFace = faceIndex;
+            
+            if (faceIndex !== null) {
+                const colors = geometry.attributes.color.array;
+                
+                // Get current color and brighten it
+                const r = colors[faceIndex * 9];
+                const g = colors[faceIndex * 9 + 1];
+                const b = colors[faceIndex * 9 + 2];
+                
+                const highlightColor = new THREE.Color(r, g, b).offsetHSL(0, 0, 0.3);
+                
+                // Apply highlight to all 3 vertices
+                for (let v = 0; v < 3; v++) {
+                    const idx = (faceIndex * 3 + v) * 3;
+                    colors[idx] = highlightColor.r;
+                    colors[idx + 1] = highlightColor.g;
+                    colors[idx + 2] = highlightColor.b;
+                }
+                
+                geometry.attributes.color.needsUpdate = true;
+            }
+        }
+
+        function restoreFaceColor(faceIndex) {
+            if (!geometry || faceIndex === null) return;
+            
+            const colors = geometry.attributes.color.array;
+            const colorHex = state.triangleColors[faceIndex] || '#888888';
+            const color = new THREE.Color(colorHex);
+            
+            for (let v = 0; v < 3; v++) {
+                const idx = (faceIndex * 3 + v) * 3;
+                colors[idx] = color.r;
+                colors[idx + 1] = color.g;
+                colors[idx + 2] = color.b;
+            }
+            
+            geometry.attributes.color.needsUpdate = true;
+        }
+
+        function getFaceIndex(intersect) {
+            // In non-indexed geometry, each face has 3 vertices
+            // faceIndex from raycaster is the triangle index
+            return intersect.faceIndex;
+        }
+
+        function setupEventListeners() {
+            // Mode buttons
+            rotateBtn.addEventListener('click', () => setMode('rotate'));
+            paintBtn.addEventListener('click', () => setMode('paint'));
+            
+            // Color picker
+            colorPicker.addEventListener('input', (e) => {
+                state.selectedColor = e.target.value;
+            });
+            
+            // Detail slider
+            detailSlider.addEventListener('input', (e) => {
+                state.detailLevel = parseInt(e.target.value);
+                detailValue.textContent = state.detailLevel;
+            });
+            
+            detailSlider.addEventListener('change', () => {
+                // Clear colors when detail changes (face count changes)
+                state.triangleColors = {};
+                createMesh();
+                updateURL();
+            });
+            
+            // Clear/Fill button
+            clearFillBtn.addEventListener('click', () => {
+                const faceCount = geometry.attributes.position.count / 3;
+                for (let i = 0; i < faceCount; i++) {
+                    state.triangleColors[i] = state.selectedColor;
+                }
+                applyStoredColors();
+                updateDevPanel();
+                updateURL();
+            });
+            
+            // Dev panel toggle
+            devToggle.addEventListener('click', () => {
+                devPanel.classList.toggle('open');
+                devToggle.textContent = devPanel.classList.contains('open') ? 'Dev Panel ▲' : 'Dev Panel ▼';
+            });
+            
+            // Canvas interactions
+            renderer.domElement.addEventListener('mousedown', onMouseDown);
+            renderer.domElement.addEventListener('mousemove', onMouseMove);
+            renderer.domElement.addEventListener('mouseup', onMouseUp);
+            renderer.domElement.addEventListener('click', onClick);
+            renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: false });
+            renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false });
+            renderer.domElement.addEventListener('touchend', onTouchEnd);
+            renderer.domElement.addEventListener('wheel', onWheel, { passive: false });
+
+            // Window resize
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function setMode(mode) {
+            state.mode = mode;
+            
+            if (mode === 'rotate') {
+                rotateBtn.classList.add('active');
+                paintBtn.classList.remove('active');
+                modeIndicator.textContent = 'Rotate Mode';
+                modeIndicator.classList.remove('paint');
+                renderer.domElement.style.cursor = 'grab';
+            } else {
+                rotateBtn.classList.remove('active');
+                paintBtn.classList.add('active');
+                modeIndicator.textContent = 'Paint Mode';
+                modeIndicator.classList.add('paint');
+                renderer.domElement.style.cursor = 'crosshair';
+            }
+            
+            // Clear any highlight
+            if (state.hoveredFace !== null) {
+                restoreFaceColor(state.hoveredFace);
+                state.hoveredFace = null;
+            }
+        }
+
+        function updateMousePosition(clientX, clientY) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+        }
+
+        function onMouseDown(event) {
+            if (state.mode !== 'rotate') return;
+            
+            isDragging = true;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+            renderer.domElement.style.cursor = 'grabbing';
+        }
+
+        function onMouseMove(event) {
+            updateMousePosition(event.clientX, event.clientY);
+
+            if (state.mode === 'rotate' && isDragging) {
+                const deltaX = event.clientX - previousMousePosition.x;
+                const deltaY = event.clientY - previousMousePosition.y;
+
+                cameraTheta += deltaX * 0.01;
+                cameraPhi -= deltaY * 0.01;
+                cameraPhi = Math.max(0.1, Math.min(Math.PI - 0.1, cameraPhi));
+
+                updateCameraPosition();
+
+                previousMousePosition = { x: event.clientX, y: event.clientY };
+            } else if (state.mode === 'paint') {
+                // Hover highlight
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObject(mesh);
+                
+                if (intersects.length > 0) {
+                    const faceIndex = getFaceIndex(intersects[0]);
+                    highlightFace(faceIndex);
+                } else {
+                    if (state.hoveredFace !== null) {
+                        restoreFaceColor(state.hoveredFace);
+                        state.hoveredFace = null;
+                    }
+                }
+            }
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+            if (state.mode === 'rotate') {
+                renderer.domElement.style.cursor = 'grab';
+            }
+        }
+
+        function onClick(event) {
+            if (state.mode !== 'paint') return;
+            
+            updateMousePosition(event.clientX, event.clientY);
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObject(mesh);
+            
+            if (intersects.length > 0) {
+                const faceIndex = getFaceIndex(intersects[0]);
+                paintFace(faceIndex, state.selectedColor);
+            }
+        }
+
+        function onTouchStart(event) {
+            if (event.touches.length === 1) {
+                const touch = event.touches[0];
+                updateMousePosition(touch.clientX, touch.clientY);
+                
+                if (state.mode === 'rotate') {
+                    isDragging = true;
+                    previousMousePosition = { x: touch.clientX, y: touch.clientY };
+                }
+            }
+        }
+
+        function onTouchMove(event) {
+            if (event.touches.length === 1) {
+                event.preventDefault();
+                const touch = event.touches[0];
+                updateMousePosition(touch.clientX, touch.clientY);
+                
+                if (state.mode === 'rotate' && isDragging) {
+                    const deltaX = touch.clientX - previousMousePosition.x;
+                    const deltaY = touch.clientY - previousMousePosition.y;
+
+                    cameraTheta += deltaX * 0.01;
+                    cameraPhi -= deltaY * 0.01;
+                    cameraPhi = Math.max(0.1, Math.min(Math.PI - 0.1, cameraPhi));
+
+                    updateCameraPosition();
+
+                    previousMousePosition = { x: touch.clientX, y: touch.clientY };
+                }
+            }
+        }
+
+        function onTouchEnd(event) {
+            if (state.mode === 'paint' && event.changedTouches.length === 1) {
+                const touch = event.changedTouches[0];
+                updateMousePosition(touch.clientX, touch.clientY);
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObject(mesh);
+                
+                if (intersects.length > 0) {
+                    const faceIndex = getFaceIndex(intersects[0]);
+                    paintFace(faceIndex, state.selectedColor);
+                }
+            }
+            isDragging = false;
+        }
+
+        function onWindowResize() {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function onWheel(event) {
+            event.preventDefault();
+            const zoomSpeed = 0.001;
+            cameraDistance += event.deltaY * zoomSpeed;
+            cameraDistance = Math.max(3, Math.min(15, cameraDistance));
+            updateCameraPosition();
+        }
+
+        function updateDevPanel() {
+            // Update triangle list
+            let listHTML = '';
+            const sortedIndices = Object.keys(state.triangleColors).sort((a, b) => parseInt(a) - parseInt(b));
+            
+            for (const faceIndex of sortedIndices) {
+                const color = state.triangleColors[faceIndex];
+                listHTML += `
+                    <div class="entry">
+                        <span>Face ${faceIndex}</span>
+                        <span style="color: ${color}">${color}</span>
+                    </div>
+                `;
+            }
+            
+            if (sortedIndices.length === 0) {
+                listHTML = '<div class="entry"><span>No painted triangles</span></div>';
+            }
+            
+            triangleList.innerHTML = listHTML;
+            
+            // Update JSON state
+            const stateObj = {
+                detailLevel: state.detailLevel,
+                triangleColors: state.triangleColors
+            };
+            jsonState.value = JSON.stringify(stateObj, null, 2);
+        }
+
+        function updateURL() {
+            const stateObj = {
+                d: state.detailLevel,
+                c: state.triangleColors
+            };
+            
+            const jsonStr = JSON.stringify(stateObj);
+            const encoded = btoa(jsonStr);
+            
+            const newURL = new URL(window.location.href);
+            newURL.searchParams.set('s', encoded);
+            window.history.replaceState({}, '', newURL);
+        }
+
+        function loadFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const encoded = urlParams.get('s');
+            
+            if (encoded) {
+                try {
+                    const jsonStr = atob(encoded);
+                    const stateObj = JSON.parse(jsonStr);
+                    
+                    if (stateObj.d !== undefined) {
+                        state.detailLevel = stateObj.d;
+                        detailSlider.value = state.detailLevel;
+                        detailValue.textContent = state.detailLevel;
+                    }
+                    
+                    if (stateObj.c) {
+                        state.triangleColors = stateObj.c;
+                    }
+                    
+                    createMesh();
+                } catch (e) {
+                    console.error('Failed to load state from URL:', e);
+                }
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
