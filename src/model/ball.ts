@@ -31,9 +31,15 @@ export class Ball {
 
   static readonly transition = 0.05
 
-  constructor(pos, color?, pattern?: BallPattern) {
+  constructor(pos, color?, pattern?: BallPattern | string[]) {
     this.pos = pos.clone()
-    this.ballmesh = new BallMesh(color || 0xeeeeee * Math.random(), pattern)
+    if (Array.isArray(pattern) && typeof pattern[0] === "string") {
+      pattern = (pattern as string[]).map((color, index) => ({ index, color }))
+    }
+    this.ballmesh = new BallMesh(
+      color || 0xeeeeee * Math.random(),
+      pattern as BallPattern
+    )
   }
 
   update(t) {

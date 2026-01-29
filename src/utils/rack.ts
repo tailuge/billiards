@@ -4,7 +4,7 @@ import { Vector3 } from "three"
 import { roundVec, vec } from "./utils"
 import { R } from "../model/physics/constants"
 import { Table } from "../model/table"
-import { ball8 } from "./colours"
+import { ball1, ball2, ball8 } from "./colours"
 
 export class Rack {
   static readonly noise = R * 0.0233
@@ -39,7 +39,7 @@ export class Rack {
     const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
     const diamond: Ball[] = []
     diamond.push(Rack.cueBall(Rack.spot))
-    diamond.push(new Ball(Rack.jitter(pos), 0xe0de36))
+    diamond.push(new Ball(Rack.jitter(pos), 0xe0de36, ball1))
     pos.add(Rack.diagonal)
     diamond.push(new Ball(Rack.jitter(pos), 0xff9d00))
     pos.sub(Rack.across)
@@ -49,17 +49,11 @@ export class Rack {
     pos.sub(Rack.across)
     diamond.push(new Ball(Rack.jitter(pos), 0xff0000))
     pos.addScaledVector(Rack.across, 2)
-    diamond.push(
-      new Ball(
-        Rack.jitter(pos),
-        0x050505,
-        ball8.map((color, index) => ({ index, color }))
-      )
-    )
+    diamond.push(new Ball(Rack.jitter(pos), 0x050505, ball8))
     pos.add(Rack.diagonal).sub(Rack.across)
     diamond.push(new Ball(Rack.jitter(pos), 0x0a74c2))
     pos.sub(Rack.across)
-    diamond.push(new Ball(Rack.jitter(pos), 0x087300))
+    diamond.push(new Ball(Rack.jitter(pos), 0x087300, ball2))
     pos.add(Rack.diagonal)
     diamond.push(new Ball(Rack.jitter(pos), 0x3e009c))
     return diamond
