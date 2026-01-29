@@ -20,7 +20,7 @@ export class Init extends ControllerBase {
     if (Session.isSpectator()) {
       return new Spectate(
         this.container,
-        new NchanMessageRelay(),
+        this.container.relay ?? new NchanMessageRelay(),
         Session.getInstance().tableId
       )
     }

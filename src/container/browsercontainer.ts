@@ -74,13 +74,15 @@ export class BrowserContainer {
 
   onAssetsReady() {
     console.log(`${this.playername} assets ready`)
+    this.messageRelay = new NchanMessageRelay()
     this.container = new Container(
       this.canvas3d,
       console.log,
       this.assets,
       this.ruletype,
       new Keyboard(this.canvas3d),
-      this.playername
+      this.playername,
+      this.messageRelay
     )
     this.container.broadcast = (e) => {
       this.broadcast(e)
@@ -96,7 +98,6 @@ export class BrowserContainer {
 
     if (this.wss) {
       this.container.isSinglePlayer = false
-      this.messageRelay = new NchanMessageRelay()
       this.messageRelay.subscribe(this.tableId, (e) => {
         this.netEvent(e)
       })
@@ -107,7 +108,7 @@ export class BrowserContainer {
 
     if (this.replay) {
       this.startReplay(this.replay)
-    } else if (!this.messageRelay) {
+    } else if (this.container.isSinglePlayer) {
       this.container.eventQueue.push(new BreakEvent())
     }
 
@@ -126,7 +127,7 @@ export class BrowserContainer {
   }
 
   broadcast(event: GameEvent) {
-    if (this.messageRelay) {
+    if (this.wss && this.messageRelay) {
       event.clientId = Session.getInstance().clientId
       console.log(
         `${this.playername} broadcasting ${event.type} : ${event.clientId}`

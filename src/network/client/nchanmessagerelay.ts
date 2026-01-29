@@ -8,8 +8,12 @@ export class NchanMessageRelay implements MessageRelay {
     private readonly baseURL: string = "billiards-network.onrender.com"
   ) {}
 
-  subscribe(channel: string, callback: (message: string) => void): void {
-    const url = `wss://${this.baseURL}/subscribe/table/${channel}`
+  subscribe(
+    channel: string,
+    callback: (message: string) => void,
+    prefix = "table"
+  ): void {
+    const url = `wss://${this.baseURL}/subscribe/${prefix}/${channel}`
     const ws = new WebSocket(url)
     console.log("Subscribed to ", url)
     ws.onmessage = (event: MessageEvent) => {
@@ -31,13 +35,14 @@ export class NchanMessageRelay implements MessageRelay {
 
     ws.onclose = (event: CloseEvent) => {
       console.log(`Disconnected from ${url}:`, event.reason)
+      // Reconnect if needed could be added here
     }
 
-    this.websockets.set(channel, ws)
+    this.websockets.set(`${prefix}/${channel}`, ws)
   }
 
-  publish(channel: string, message: string): void {
-    const url = `https://${this.baseURL}/publish/table/${channel}`
+  publish(channel: string, message: string, prefix = "table"): void {
+    const url = `https://${this.baseURL}/publish/${prefix}/${channel}`
     fetch(url, {
       method: "POST",
       headers: {
@@ -47,5 +52,16 @@ export class NchanMessageRelay implements MessageRelay {
     }).catch((error) => {
       console.error("Publication error:", error)
     })
+  }
+
+  async getOnlineCount(): Promise<number | null> {
+    try {
+      const response = await fetch(`https://${this.baseURL}/basic_status`)
+      const text = await response.text()
+      const match = text.match(/Active connections:\s+(\d+)/)
+      return match ? parseInt(match[1], 10) - 1 : null
+    } catch (err) {
+      return null
+    }
   }
 }
