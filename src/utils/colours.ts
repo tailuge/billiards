@@ -78,7 +78,7 @@ export const ball1 = [
   "#CCCA31",
   "#E3E137",
   "#CDCB31",
-  "#E9E738"
+  "#E9E738",
 ]
 
 export const ball2 = [
@@ -161,7 +161,7 @@ export const ball2 = [
   "#ededed",
   "#ededed",
   "#000000",
-  "#ededed"
+  "#ededed",
 ]
 
 export const ball8 = [
