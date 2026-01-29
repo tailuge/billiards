@@ -21,7 +21,7 @@ describe("LobbyIndicator", () => {
     // Mock getOnlineCount to return 5
     relay.getOnlineCount = async () => 5
 
-    const indicator = new LobbyIndicator(relay)
+    new LobbyIndicator(relay)
     // Wait for async init
     await new Promise((resolve) => setTimeout(resolve, 0))
 
@@ -32,7 +32,7 @@ describe("LobbyIndicator", () => {
     const element = document.getElementById("lobby")
     relay.getOnlineCount = async () => 5
 
-    const indicator = new LobbyIndicator(relay)
+    new LobbyIndicator(relay)
     await new Promise((resolve) => setTimeout(resolve, 0))
 
     expect(element?.textContent).to.equal(" 5 👥")

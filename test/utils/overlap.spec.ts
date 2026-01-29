@@ -5,8 +5,6 @@ import { Vector3 } from "three"
 import { zero } from "../../src/utils/utils"
 import { Overlap } from "../../src/utils/overlap"
 
-const t = 0.01
-
 describe("Overlap", () => {
   it("finds first overlap", (done) => {
     const a = new Ball(zero)
