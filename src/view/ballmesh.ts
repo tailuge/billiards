@@ -15,15 +15,17 @@ import { norm, up, zero } from "./../utils/utils"
 import { R } from "../model/physics/constants"
 import { Trace } from "./trace"
 
+export type BallPattern = { index: number; color: string }[]
+
 export class BallMesh {
   mesh: Mesh
   shadow: Mesh
   spinAxisArrow: ArrowHelper
   trace: Trace
   color: Color
-  constructor(color) {
+  constructor(color, pattern?: BallPattern) {
     this.color = new Color(color)
-    this.initialiseMesh(color)
+    this.initialiseMesh(color, pattern)
   }
 
   updateAll(ball, t) {
@@ -58,7 +60,7 @@ export class BallMesh {
     }
   }
 
-  initialiseMesh(color) {
+  initialiseMesh(color, pattern?: BallPattern) {
     const geometry = new IcosahedronGeometry(R, 1)
     const material = new MeshPhongMaterial({
       emissive: 0,
@@ -68,7 +70,7 @@ export class BallMesh {
       shininess: 25,
       specular: 0x555533,
     })
-    this.addDots(geometry, color)
+    this.addDots(geometry, color, pattern)
     this.mesh = new Mesh(geometry, material)
     this.mesh.name = "ball"
     this.updateRotation(new Vector3().random(), 100)
@@ -84,10 +86,9 @@ export class BallMesh {
     this.trace = new Trace(500, color)
   }
 
-  addDots(geometry, baseColor) {
+  addDots(geometry, baseColor, pattern?: BallPattern) {
     const count = geometry.attributes.position.count
     const color = new Color(baseColor)
-    const red = new Color(0xaa2222)
 
     geometry.setAttribute(
       "color",
@@ -105,10 +106,18 @@ export class BallMesh {
       )
     }
 
-    const dots = [0, 96, 111, 156, 186, 195]
-    dots.forEach((i) => {
-      this.colorVerticesForFace(i / 3, verticies, red.r, red.g, red.b)
-    })
+    if (pattern) {
+      pattern.forEach((p) => {
+        const c = new Color(p.color)
+        this.colorVerticesForFace(p.index, verticies, c.r, c.g, c.b)
+      })
+    } else {
+      const red = new Color(0xaa2222)
+      const dots = [0, 96, 111, 156, 186, 195]
+      dots.forEach((i) => {
+        this.colorVerticesForFace(i / 3, verticies, red.r, red.g, red.b)
+      })
+    }
   }
 
   addToScene(scene) {
