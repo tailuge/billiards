@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>9 Ball Mockup - Basics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #1a1a2e;
+        font-family: Arial, sans-serif;
+      }
+      #canvas-container {
+        width: 100vw;
+        height: 100vh;
+      }
+      .controls {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 15px;
+        border-radius: 8px;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="canvas-container"></div>
+    <div class="controls">
+      <h1>Basic Yellow Ball</h1>
+      <p>Drag to rotate • Scroll to zoom</p>
+    </div>
+
+    <script>
+      let scene, camera, renderer, ball
+      let isDragging = false
+      let previousMousePosition = { x: 0, y: 0 }
+      let cameraDistance = 10
+      let cameraTheta = Math.PI / 4
+      let cameraPhi = Math.PI / 3
+
+      const container = document.getElementById("canvas-container")
+
+      function createNumberTexture() {
+        const canvas = document.createElement("canvas")
+        canvas.width = 512
+        canvas.height = 512
+        const ctx = canvas.getContext("2d")
+
+        // 1. Black surround
+        ctx.fillStyle = "black"
+        ctx.fillRect(0, 0, 512, 512)
+
+        const centerX = 256
+        const centerY = 256
+        const whiteCircleRadius = 160
+
+        // 2. White circle
+        ctx.beginPath()
+        ctx.arc(centerX, centerY, whiteCircleRadius, 0, Math.PI * 2)
+        ctx.fillStyle = "white"
+        ctx.fill()
+
+        // 3. Black number 9
+        ctx.fillStyle = "black"
+        ctx.font = "bold 220px Arial, sans-serif"
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
+        ctx.fillText("9", centerX, centerY + 15)
+
+        const texture = new THREE.CanvasTexture(canvas)
+        texture.flipY = false
+        return texture
+      }
+
+      function init() {
+        scene = new THREE.Scene()
+        scene.background = new THREE.Color(0x1a1a2e)
+
+        camera = new THREE.PerspectiveCamera(
+          45,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        )
+        updateCameraPosition()
+
+        renderer = new THREE.WebGLRenderer({ antialias: true })
+        renderer.setSize(window.innerWidth, window.innerHeight)
+        renderer.setPixelRatio(window.devicePixelRatio)
+        container.appendChild(renderer.domElement)
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+        scene.add(ambientLight)
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+        directionalLight.position.set(5, 10, 7.5)
+        scene.add(directionalLight)
+
+        // Icosahedron with Projected Texture
+        const radius = 2
+        const geometry = new THREE.IcosahedronGeometry(radius, 1)
+        const numberTexture = createNumberTexture()
+        const ballColor = new THREE.Color(0xffd700)
+
+        const material = new THREE.MeshStandardMaterial({ 
+          color: ballColor, 
+          flatShading: true 
+        })
+
+        material.onBeforeCompile = (shader) => {
+          shader.uniforms.numberTex = { value: numberTexture }
+          shader.uniforms.projSize = { value: 1.2 }
+          
+          shader.vertexShader = shader.vertexShader.replace(
+            '#include <common>',
+            `#include <common>
+             varying vec3 vLocalPosition;`
+          );
+          shader.vertexShader = shader.vertexShader.replace(
+            '#include <begin_vertex>',
+            `#include <begin_vertex>
+             vLocalPosition = position;`
+          );
+          
+          shader.fragmentShader = shader.fragmentShader.replace(
+            '#include <common>',
+            `#include <common>
+            uniform sampler2D numberTex;
+            uniform float projSize;
+            varying vec3 vLocalPosition;`
+          );
+          
+          shader.fragmentShader = shader.fragmentShader.replace(
+            '#include <color_fragment>',
+            `#include <color_fragment>
+             float r = ${radius.toFixed(1)};
+             vec2 projUv = vLocalPosition.xz / (r * projSize) + 0.5;
+             
+             if (vLocalPosition.y > 0.0 && projUv.x >= 0.0 && projUv.x <= 1.0 && projUv.y >= 0.0 && projUv.y <= 1.0) {
+               vec4 texColor = texture2D(numberTex, projUv);
+               diffuseColor.rgb = texColor.rgb;
+             }
+            `
+          );
+        }
+
+        ball = new THREE.Mesh(geometry, material)
+        scene.add(ball)
+
+        // Helper to see where the floor is
+        const gridHelper = new THREE.GridHelper(20, 20)
+        gridHelper.position.y = -2
+        scene.add(gridHelper)
+
+        setupEventListeners()
+        animate()
+      }
+
+      function updateCameraPosition() {
+        camera.position.x = cameraDistance * Math.sin(cameraPhi) * Math.cos(cameraTheta)
+        camera.position.y = cameraDistance * Math.cos(cameraPhi)
+        camera.position.z = cameraDistance * Math.sin(cameraPhi) * Math.sin(cameraTheta)
+        camera.lookAt(0, 0, 0)
+      }
+
+      function setupEventListeners() {
+        window.addEventListener("mousedown", (e) => { 
+          isDragging = true
+          previousMousePosition = { x: e.clientX, y: e.clientY } 
+        })
+        window.addEventListener("mousemove", (e) => {
+          if (isDragging) {
+            const deltaX = e.clientX - previousMousePosition.x
+            const deltaY = e.clientY - previousMousePosition.y
+            cameraTheta -= deltaX * 0.01
+            cameraPhi -= deltaY * 0.01
+            cameraPhi = Math.max(0.1, Math.min(Math.PI - 0.1, cameraPhi))
+            updateCameraPosition()
+            previousMousePosition = { x: e.clientX, y: e.clientY }
+          }
+        })
+        window.addEventListener("mouseup", () => { isDragging = false })
+        window.addEventListener("wheel", (e) => {
+          cameraDistance += e.deltaY * 0.01
+          cameraDistance = Math.max(2, Math.min(50, cameraDistance))
+          updateCameraPosition()
+        })
+        window.addEventListener("resize", () => {
+          camera.aspect = window.innerWidth / window.innerHeight
+          camera.updateProjectionMatrix()
+          renderer.setSize(window.innerWidth, window.innerHeight)
+        })
+      }
+
+      function animate() {
+        requestAnimationFrame(animate)
+        renderer.render(scene, camera)
+      }
+
+      init()
+    </script>
+  </body>
+</html>
