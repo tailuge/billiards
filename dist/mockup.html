@@ -109,15 +109,24 @@
     }
 
     function createNumberTexture(ballNumber) {
+      const size = 256
       const color = BALL_COLORS[ballNumber] || "#FFFFFF"
       const canvas = document.createElement("canvas")
-      canvas.width = 256
-      canvas.height = 256
+      canvas.width = size
+      canvas.height = size
       const ctx = canvas.getContext("2d")
 
       // 0. Background
       ctx.fillStyle = color
       ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      const rand = () => Math.random() * size
+      // 0.1 Noise
+      const noiseAlpha = 0.03
+      for (let i = 0; i < 100; i++) {
+        ctx.fillStyle = Math.random() > 0.5 ? `rgba(255,255,255,${noiseAlpha})` : `rgba(0,0,0,${noiseAlpha})`
+        ctx.fillRect(rand(), rand(), 10, 10)
+      }
 
       if (ballNumber >= 9) {
         addWhiteBars(ctx, canvas.width, canvas.height)
