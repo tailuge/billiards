@@ -17,6 +17,7 @@
     #canvas-container {
       width: 100vw;
       height: 100vh;
+      touch-action: none;
     }
 
     .controls {
@@ -50,14 +51,25 @@
 
     function createNumberTexture() {
       const canvas = document.createElement("canvas")
-      canvas.width = 512
-      canvas.height = 512
+      canvas.width = 256
+      canvas.height = 256
       const ctx = canvas.getContext("2d")
+
+      // 0. Red background
+      ctx.fillStyle = "red"
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      // White rectangle on top 1/4
+      ctx.fillStyle = "white"
+      ctx.fillRect(0, 0, canvas.width, canvas.height / 4)
+
+      // White rectangle on bottom 1/4
+      ctx.fillRect(0, (canvas.height * 3) / 4, canvas.width, canvas.height / 4)
 
       const centerX = canvas.width / 2
       const centerY = canvas.height / 2
-      const whiteCircleRadius = 160
-      const borderThickness = 16
+      const whiteCircleRadius = 53
+      const borderThickness = 5
 
       // 1. Black circle (border)
       ctx.beginPath()
@@ -73,10 +85,10 @@
 
       // 3. Black number 9
       ctx.fillStyle = "black"
-      ctx.font = "bold 300px Arial, sans-serif"
+      ctx.font = "bold 100px Arial, sans-serif"
       ctx.textAlign = "center"
       ctx.textBaseline = "middle"
-      ctx.fillText("9", centerX, centerY + 15)
+      ctx.fillText("9", centerX, centerY + 5)
 
       const texture = new THREE.CanvasTexture(canvas)
       texture.flipY = false
@@ -121,7 +133,7 @@
 
       material.onBeforeCompile = (shader) => {
         shader.uniforms.numberTex = { value: numberTexture }
-        shader.uniforms.projSize = { value: 1.2 }
+        shader.uniforms.projSize = { value: 2.0 }
 
         shader.vertexShader = shader.vertexShader.replace(
           '#include <common>',
@@ -178,11 +190,11 @@
     }
 
     function setupEventListeners() {
-      window.addEventListener("mousedown", (e) => {
+      window.addEventListener("pointerdown", (e) => {
         isDragging = true
         previousMousePosition = { x: e.clientX, y: e.clientY }
       })
-      window.addEventListener("mousemove", (e) => {
+      window.addEventListener("pointermove", (e) => {
         if (isDragging) {
           const deltaX = e.clientX - previousMousePosition.x
           const deltaY = e.clientY - previousMousePosition.y
@@ -193,7 +205,8 @@
           previousMousePosition = { x: e.clientX, y: e.clientY }
         }
       })
-      window.addEventListener("mouseup", () => { isDragging = false })
+      window.addEventListener("pointerup", () => { isDragging = false })
+      window.addEventListener("pointercancel", () => { isDragging = false })
       window.addEventListener("wheel", (e) => {
         cameraDistance += e.deltaY * 0.01
         cameraDistance = Math.max(2, Math.min(50, cameraDistance))
