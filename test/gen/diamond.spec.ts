@@ -21,7 +21,6 @@ describe("jsonCrush", () => {
 
   JSONCrush.uncrush(str)
 
-
   it("decodeURI", (done) => {
     expect(str).to.be.length(1973)
     done()

@@ -6,7 +6,7 @@ export class NchanMessageRelay implements MessageRelay {
 
   constructor(
     private readonly baseURL: string = "billiards-network.onrender.com"
-  ) { }
+  ) {}
 
   subscribe(
     channel: string,

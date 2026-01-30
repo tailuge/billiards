@@ -157,7 +157,7 @@ export class BrowserContainer {
   parse(s) {
     try {
       return JSON.parse(s)
-    } catch (_) {
+    } catch {
       return JSON.parse(JSONCrush.uncrush(s))
     }
   }

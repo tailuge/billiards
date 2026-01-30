@@ -11,7 +11,10 @@ export default tseslint.config(
       "!dist/picker.html",
       "node_modules/**",
       "webpack.config.js",
-      "jest.config.js"
+      "jest.config.js",
+      ".yarn/**",
+      ".aider.tags.cache.v3/**",
+      ".vscode/**"
     ],
   },
   {

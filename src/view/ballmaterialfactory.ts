@@ -1,16 +1,12 @@
-import {
-  CanvasTexture,
-  Color,
-  MeshPhongMaterial,
-  MeshStandardMaterial,
-  Shader,
-  Vector3,
-} from "three"
+import { Color, MeshPhongMaterial, MeshStandardMaterial, Shader } from "three"
 import { R } from "../model/physics/constants"
 import { BallTextureFactory } from "./balltexturefactory"
 
 export class BallMaterialFactory {
-  private static materialCache: Map<string, MeshStandardMaterial | MeshPhongMaterial> = new Map()
+  private static materialCache: Map<
+    string,
+    MeshStandardMaterial | MeshPhongMaterial
+  > = new Map()
 
   static createDottedMaterial(color: Color): MeshPhongMaterial {
     const key = `dotted_${color.getHex()}`
@@ -30,7 +26,10 @@ export class BallMaterialFactory {
     return material
   }
 
-  static createProjectedMaterial(label: number, color: Color): MeshStandardMaterial {
+  static createProjectedMaterial(
+    label: number,
+    color: Color
+  ): MeshStandardMaterial {
     const key = `projected_${label}_${color.getHex()}`
     if (this.materialCache.has(key)) {
       return this.materialCache.get(key) as MeshStandardMaterial
@@ -46,7 +45,7 @@ export class BallMaterialFactory {
 
     material.onBeforeCompile = (shader: Shader) => {
       shader.uniforms.numberTex = { value: numberTexture }
-      shader.uniforms.projSize = { value: 2.00 }
+      shader.uniforms.projSize = { value: 2.0 }
 
       shader.vertexShader = shader.vertexShader.replace(
         "#include <common>",

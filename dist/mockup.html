@@ -1,189 +1,224 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>9 Ball Mockup - Basics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #1a1a2e;
+        font-family: Arial, sans-serif;
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>9 Ball Mockup - Basics</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: #1a1a2e;
-      font-family: Arial, sans-serif;
-    }
+      #canvas-container {
+        width: 100vw;
+        height: 100vh;
+        touch-action: none;
+      }
 
-    #canvas-container {
-      width: 100vw;
-      height: 100vh;
-      touch-action: none;
-    }
+      .controls {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        padding: 15px;
+        border-radius: 8px;
+        color: white;
+      }
+    </style>
+  </head>
 
-    .controls {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 15px;
-      border-radius: 8px;
-      color: white;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="canvas-container"></div>
-  <div class="controls">
-    <h1 id="ball-name">9: Yellow (Striped)</h1>
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-      <button id="prev-ball" style="padding: 5px 15px; cursor: pointer;">-</button>
-      <span id="ball-number-ui"
-        style="font-size: 1.2em; font-weight: bold; min-width: 30px; text-align: center;">9</span>
-      <button id="next-ball" style="padding: 5px 15px; cursor: pointer;">+</button>
+  <body>
+    <div id="canvas-container"></div>
+    <div class="controls">
+      <h1 id="ball-name">9: Yellow (Striped)</h1>
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 10px;
+        "
+      >
+        <button id="prev-ball" style="padding: 5px 15px; cursor: pointer">
+          -
+        </button>
+        <span
+          id="ball-number-ui"
+          style="
+            font-size: 1.2em;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+          "
+          >9</span
+        >
+        <button id="next-ball" style="padding: 5px 15px; cursor: pointer">
+          +
+        </button>
+      </div>
+      <p>Drag to rotate • Scroll to zoom</p>
     </div>
-    <p>Drag to rotate • Scroll to zoom</p>
-  </div>
 
-  <script>
-    const BALL_COLORS = [
-      "#FFFFFF", // 0: Cue Ball
-      "#FFFF00", // 1: Yellow
-      "#0000FF", // 2: Blue
-      "#FF0000", // 3: Red
-      "#800080", // 4: Purple
-      "#FFA500", // 5: Orange
-      "#008000", // 6: Green
-      "#800000", // 7: Maroon
-      "#000000", // 8: Black
-      "#FFFF00", // 9: Yellow (Striped)
-      "#0000FF", // 10: Blue (Striped)
-      "#FF0000", // 11: Red (Striped)
-      "#800080", // 12: Purple (Striped)
-      "#FFA500", // 13: Orange (Striped)
-      "#008000", // 14: Green (Striped)
-      "#800000"  // 15: Maroon (Striped)
-    ]
+    <script>
+      const BALL_COLORS = [
+        "#FFFFFF", // 0: Cue Ball
+        "#FFFF00", // 1: Yellow
+        "#0000FF", // 2: Blue
+        "#FF0000", // 3: Red
+        "#800080", // 4: Purple
+        "#FFA500", // 5: Orange
+        "#008000", // 6: Green
+        "#800000", // 7: Maroon
+        "#000000", // 8: Black
+        "#FFFF00", // 9: Yellow (Striped)
+        "#0000FF", // 10: Blue (Striped)
+        "#FF0000", // 11: Red (Striped)
+        "#800080", // 12: Purple (Striped)
+        "#FFA500", // 13: Orange (Striped)
+        "#008000", // 14: Green (Striped)
+        "#800000", // 15: Maroon (Striped)
+      ]
 
-    const BALL_NAMES = [
-      "Cue Ball", "Yellow", "Blue", "Red", "Purple", "Orange", "Green", "Maroon", "Black",
-      "Yellow (Striped)", "Blue (Striped)", "Red (Striped)", "Purple (Striped)", "Orange (Striped)", "Green (Striped)", "Maroon (Striped)"
-    ]
+      const BALL_NAMES = [
+        "Cue Ball",
+        "Yellow",
+        "Blue",
+        "Red",
+        "Purple",
+        "Orange",
+        "Green",
+        "Maroon",
+        "Black",
+        "Yellow (Striped)",
+        "Blue (Striped)",
+        "Red (Striped)",
+        "Purple (Striped)",
+        "Orange (Striped)",
+        "Green (Striped)",
+        "Maroon (Striped)",
+      ]
 
-    let scene, camera, renderer, ball
-    let currentBallNumber = 9
-    let isDragging = false
-    let previousMousePosition = { x: 0, y: 0 }
-    let cameraDistance = 10
-    let cameraTheta = Math.PI / 4
-    let cameraPhi = Math.PI / 3
+      let scene, camera, renderer, ball
+      let currentBallNumber = 9
+      let isDragging = false
+      let previousMousePosition = { x: 0, y: 0 }
+      let cameraDistance = 10
+      let cameraTheta = Math.PI / 4
+      let cameraPhi = Math.PI / 3
 
-    const container = document.getElementById("canvas-container")
+      const container = document.getElementById("canvas-container")
 
-    function addWhiteBars(ctx, width, height) {
-      ctx.fillStyle = "white"
-      ctx.fillRect(0, 0, width, height / 4)
-      ctx.fillRect(0, (height * 3) / 4, width, height / 4)
-    }
-
-    function drawBaseCircle(ctx, x, y, radius, border) {
-      // 1. Black circle (border)
-      ctx.beginPath()
-      ctx.arc(x, y, radius + border, 0, Math.PI * 2)
-      ctx.fillStyle = "black"
-      ctx.fill()
-
-      // 2. White circle
-      ctx.beginPath()
-      ctx.arc(x, y, radius, 0, Math.PI * 2)
-      ctx.fillStyle = "white"
-      ctx.fill()
-    }
-
-    function drawNumber(ctx, number, x, y) {
-      ctx.fillStyle = "black"
-      ctx.font = "bold 80px Arial, sans-serif"
-      ctx.textAlign = "center"
-      ctx.textBaseline = "middle"
-      ctx.fillText(number.toString(), x, y + 5)
-    }
-
-    function createNumberTexture(ballNumber) {
-      const size = 256
-      const color = BALL_COLORS[ballNumber] || "#FFFFFF"
-      const canvas = document.createElement("canvas")
-      canvas.width = size
-      canvas.height = size
-      const ctx = canvas.getContext("2d")
-
-      // 0. Background
-      ctx.fillStyle = color
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-      const rand = () => Math.random() * size
-      // 0.1 Noise
-      const noiseAlpha = 0.03
-      for (let i = 0; i < 100; i++) {
-        ctx.fillStyle = Math.random() > 0.5 ? `rgba(255,255,255,${noiseAlpha})` : `rgba(0,0,0,${noiseAlpha})`
-        ctx.fillRect(rand(), rand(), 10, 10)
+      function addWhiteBars(ctx, width, height) {
+        ctx.fillStyle = "white"
+        ctx.fillRect(0, 0, width, height / 4)
+        ctx.fillRect(0, (height * 3) / 4, width, height / 4)
       }
 
-      if (ballNumber >= 9) {
-        addWhiteBars(ctx, canvas.width, canvas.height)
+      function drawBaseCircle(ctx, x, y, radius, border) {
+        // 1. Black circle (border)
+        ctx.beginPath()
+        ctx.arc(x, y, radius + border, 0, Math.PI * 2)
+        ctx.fillStyle = "black"
+        ctx.fill()
+
+        // 2. White circle
+        ctx.beginPath()
+        ctx.arc(x, y, radius, 0, Math.PI * 2)
+        ctx.fillStyle = "white"
+        ctx.fill()
       }
 
-      if (ballNumber > 0) {
-        const centerX = canvas.width / 2
-        const centerY = canvas.height / 2
-
-        drawBaseCircle(ctx, centerX, centerY, 53, 5)
-        drawNumber(ctx, ballNumber, centerX, centerY)
+      function drawNumber(ctx, number, x, y) {
+        ctx.fillStyle = "black"
+        ctx.font = "bold 80px Arial, sans-serif"
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
+        ctx.fillText(number.toString(), x, y + 5)
       }
 
-      const texture = new THREE.CanvasTexture(canvas)
-      texture.flipY = false
-      return texture
-    }
+      function createNumberTexture(ballNumber) {
+        const size = 256
+        const color = BALL_COLORS[ballNumber] || "#FFFFFF"
+        const canvas = document.createElement("canvas")
+        canvas.width = size
+        canvas.height = size
+        const ctx = canvas.getContext("2d")
 
-    function createBallMaterial(ballNumber) {
-      const ballColor = new THREE.Color(BALL_COLORS[ballNumber])
-      const numberTexture = createNumberTexture(ballNumber)
-      const radius = 2
+        // 0. Background
+        ctx.fillStyle = color
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-      const material = new THREE.MeshStandardMaterial({
-        color: ballColor,
-        flatShading: true
-      })
+        const rand = () => Math.random() * size
+        // 0.1 Noise
+        const noiseAlpha = 0.03
+        for (let i = 0; i < 100; i++) {
+          ctx.fillStyle =
+            Math.random() > 0.5
+              ? `rgba(255,255,255,${noiseAlpha})`
+              : `rgba(0,0,0,${noiseAlpha})`
+          ctx.fillRect(rand(), rand(), 10, 10)
+        }
 
-      material.onBeforeCompile = (shader) => {
-        shader.uniforms.numberTex = { value: numberTexture }
-        shader.uniforms.projSize = { value: 2.0 }
+        if (ballNumber >= 9) {
+          addWhiteBars(ctx, canvas.width, canvas.height)
+        }
 
-        shader.vertexShader = shader.vertexShader.replace(
-          '#include <common>',
-          `#include <common>
+        if (ballNumber > 0) {
+          const centerX = canvas.width / 2
+          const centerY = canvas.height / 2
+
+          drawBaseCircle(ctx, centerX, centerY, 53, 5)
+          drawNumber(ctx, ballNumber, centerX, centerY)
+        }
+
+        const texture = new THREE.CanvasTexture(canvas)
+        texture.flipY = false
+        return texture
+      }
+
+      function createBallMaterial(ballNumber) {
+        const ballColor = new THREE.Color(BALL_COLORS[ballNumber])
+        const numberTexture = createNumberTexture(ballNumber)
+        const radius = 2
+
+        const material = new THREE.MeshStandardMaterial({
+          color: ballColor,
+          flatShading: true,
+        })
+
+        material.onBeforeCompile = (shader) => {
+          shader.uniforms.numberTex = { value: numberTexture }
+          shader.uniforms.projSize = { value: 2.0 }
+
+          shader.vertexShader = shader.vertexShader.replace(
+            "#include <common>",
+            `#include <common>
              varying vec3 vLocalPosition;
              varying vec3 vNormalVar;`
-        );
-        shader.vertexShader = shader.vertexShader.replace(
-          '#include <begin_vertex>',
-          `#include <begin_vertex>
+          )
+          shader.vertexShader = shader.vertexShader.replace(
+            "#include <begin_vertex>",
+            `#include <begin_vertex>
              vLocalPosition = position;
              vNormalVar = normal;`
-        );
+          )
 
-        shader.fragmentShader = shader.fragmentShader.replace(
-          '#include <common>',
-          `#include <common>
+          shader.fragmentShader = shader.fragmentShader.replace(
+            "#include <common>",
+            `#include <common>
             uniform sampler2D numberTex;
             uniform float projSize;
             varying vec3 vLocalPosition;
             varying vec3 vNormalVar;`
-        );
+          )
 
-        shader.fragmentShader = shader.fragmentShader.replace(
-          '#include <color_fragment>',
-          `#include <color_fragment>
+          shader.fragmentShader = shader.fragmentShader.replace(
+            "#include <color_fragment>",
+            `#include <color_fragment>
              float r = 2.0;
              vec3 locPos = vLocalPosition;
 
@@ -195,108 +230,118 @@
              vec4 texColor = texture2D(numberTex, projUv);
              diffuseColor.rgb = texColor.rgb;
             `
-        );
-      }
-      return material
-    }
-
-    function updateBall(number) {
-      currentBallNumber = (number + 16) % 16
-      document.getElementById("ball-number-ui").innerText = currentBallNumber
-      document.getElementById("ball-name").innerText = `${currentBallNumber}: ${BALL_NAMES[currentBallNumber]}`
-
-      if (ball) {
-        ball.material = createBallMaterial(currentBallNumber)
-      }
-    }
-
-    function init() {
-      scene = new THREE.Scene()
-      scene.background = new THREE.Color(0x1a1a2e)
-
-      camera = new THREE.PerspectiveCamera(
-        45,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      )
-      updateCameraPosition()
-
-      renderer = new THREE.WebGLRenderer({ antialias: true })
-      renderer.setSize(window.innerWidth, window.innerHeight)
-      renderer.setPixelRatio(window.devicePixelRatio)
-      container.appendChild(renderer.domElement)
-
-      // Lights
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
-      scene.add(ambientLight)
-
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
-      directionalLight.position.set(5, 10, 7.5)
-      scene.add(directionalLight)
-
-      // Icosahedron with Projected Texture
-      const radius = 2
-      const geometry = new THREE.IcosahedronGeometry(radius, 1)
-      ball = new THREE.Mesh(geometry, createBallMaterial(currentBallNumber))
-      scene.add(ball)
-
-      // Helper to see where the floor is
-      const gridHelper = new THREE.GridHelper(20, 20)
-      gridHelper.position.y = -2
-      scene.add(gridHelper)
-
-      setupEventListeners()
-      animate()
-    }
-
-    function updateCameraPosition() {
-      camera.position.x = cameraDistance * Math.sin(cameraPhi) * Math.cos(cameraTheta)
-      camera.position.y = cameraDistance * Math.cos(cameraPhi)
-      camera.position.z = cameraDistance * Math.sin(cameraPhi) * Math.sin(cameraTheta)
-      camera.lookAt(0, 0, 0)
-    }
-
-    function setupEventListeners() {
-      document.getElementById("prev-ball").addEventListener("click", () => updateBall(currentBallNumber - 1))
-      document.getElementById("next-ball").addEventListener("click", () => updateBall(currentBallNumber + 1))
-
-      window.addEventListener("pointerdown", (e) => {
-        isDragging = true
-        previousMousePosition = { x: e.clientX, y: e.clientY }
-      })
-      window.addEventListener("pointermove", (e) => {
-        if (isDragging) {
-          const deltaX = e.clientX - previousMousePosition.x
-          const deltaY = e.clientY - previousMousePosition.y
-          cameraTheta -= deltaX * 0.01
-          cameraPhi -= deltaY * 0.01
-          cameraPhi = Math.max(0.1, Math.min(Math.PI - 0.1, cameraPhi))
-          updateCameraPosition()
-          previousMousePosition = { x: e.clientX, y: e.clientY }
+          )
         }
-      })
-      window.addEventListener("pointerup", () => { isDragging = false })
-      window.addEventListener("pointercancel", () => { isDragging = false })
-      window.addEventListener("wheel", (e) => {
-        cameraDistance += e.deltaY * 0.01
-        cameraDistance = Math.max(2, Math.min(50, cameraDistance))
+        return material
+      }
+
+      function updateBall(number) {
+        currentBallNumber = (number + 16) % 16
+        document.getElementById("ball-number-ui").innerText = currentBallNumber
+        document.getElementById("ball-name").innerText =
+          `${currentBallNumber}: ${BALL_NAMES[currentBallNumber]}`
+
+        if (ball) {
+          ball.material = createBallMaterial(currentBallNumber)
+        }
+      }
+
+      function init() {
+        scene = new THREE.Scene()
+        scene.background = new THREE.Color(0x1a1a2e)
+
+        camera = new THREE.PerspectiveCamera(
+          45,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        )
         updateCameraPosition()
-      })
-      window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight
-        camera.updateProjectionMatrix()
+
+        renderer = new THREE.WebGLRenderer({ antialias: true })
         renderer.setSize(window.innerWidth, window.innerHeight)
-      })
-    }
+        renderer.setPixelRatio(window.devicePixelRatio)
+        container.appendChild(renderer.domElement)
 
-    function animate() {
-      requestAnimationFrame(animate)
-      renderer.render(scene, camera)
-    }
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+        scene.add(ambientLight)
 
-    init()
-  </script>
-</body>
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+        directionalLight.position.set(5, 10, 7.5)
+        scene.add(directionalLight)
 
+        // Icosahedron with Projected Texture
+        const radius = 2
+        const geometry = new THREE.IcosahedronGeometry(radius, 1)
+        ball = new THREE.Mesh(geometry, createBallMaterial(currentBallNumber))
+        scene.add(ball)
+
+        // Helper to see where the floor is
+        const gridHelper = new THREE.GridHelper(20, 20)
+        gridHelper.position.y = -2
+        scene.add(gridHelper)
+
+        setupEventListeners()
+        animate()
+      }
+
+      function updateCameraPosition() {
+        camera.position.x =
+          cameraDistance * Math.sin(cameraPhi) * Math.cos(cameraTheta)
+        camera.position.y = cameraDistance * Math.cos(cameraPhi)
+        camera.position.z =
+          cameraDistance * Math.sin(cameraPhi) * Math.sin(cameraTheta)
+        camera.lookAt(0, 0, 0)
+      }
+
+      function setupEventListeners() {
+        document
+          .getElementById("prev-ball")
+          .addEventListener("click", () => updateBall(currentBallNumber - 1))
+        document
+          .getElementById("next-ball")
+          .addEventListener("click", () => updateBall(currentBallNumber + 1))
+
+        window.addEventListener("pointerdown", (e) => {
+          isDragging = true
+          previousMousePosition = { x: e.clientX, y: e.clientY }
+        })
+        window.addEventListener("pointermove", (e) => {
+          if (isDragging) {
+            const deltaX = e.clientX - previousMousePosition.x
+            const deltaY = e.clientY - previousMousePosition.y
+            cameraTheta -= deltaX * 0.01
+            cameraPhi -= deltaY * 0.01
+            cameraPhi = Math.max(0.1, Math.min(Math.PI - 0.1, cameraPhi))
+            updateCameraPosition()
+            previousMousePosition = { x: e.clientX, y: e.clientY }
+          }
+        })
+        window.addEventListener("pointerup", () => {
+          isDragging = false
+        })
+        window.addEventListener("pointercancel", () => {
+          isDragging = false
+        })
+        window.addEventListener("wheel", (e) => {
+          cameraDistance += e.deltaY * 0.01
+          cameraDistance = Math.max(2, Math.min(50, cameraDistance))
+          updateCameraPosition()
+        })
+        window.addEventListener("resize", () => {
+          camera.aspect = window.innerWidth / window.innerHeight
+          camera.updateProjectionMatrix()
+          renderer.setSize(window.innerWidth, window.innerHeight)
+        })
+      }
+
+      function animate() {
+        requestAnimationFrame(animate)
+        renderer.render(scene, camera)
+      }
+
+      init()
+    </script>
+  </body>
 </html>

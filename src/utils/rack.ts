@@ -32,7 +32,7 @@ export class Rack {
     "#800080", // 12: Purple (Striped)
     "#FFA500", // 13: Orange (Striped)
     "#008000", // 14: Green (Striped)
-    "#800000"  // 15: Maroon (Striped)
+    "#800000", // 15: Maroon (Striped)
   ]
   private static jitter(pos) {
     return roundVec(

@@ -14,7 +14,10 @@ export class BallTextureFactory {
     return texture
   }
 
-  private static createNumberTexture(label: number, color: Color): CanvasTexture {
+  private static createNumberTexture(
+    label: number,
+    color: Color
+  ): CanvasTexture {
     const size = 256
     const canvas = document.createElement("canvas")
     canvas.width = size
