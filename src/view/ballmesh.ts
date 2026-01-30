@@ -15,17 +15,15 @@ import { norm, up, zero } from "./../utils/utils"
 import { R } from "../model/physics/constants"
 import { Trace } from "./trace"
 
-export type BallPattern = { index: number; color: string }[]
-
 export class BallMesh {
   mesh: Mesh
   shadow: Mesh
   spinAxisArrow: ArrowHelper
   trace: Trace
   color: Color
-  constructor(color, pattern?: BallPattern) {
+  constructor(color) {
     this.color = new Color(color)
-    this.initialiseMesh(color, pattern)
+    this.initialiseMesh(color)
   }
 
   updateAll(ball, t) {
@@ -60,7 +58,7 @@ export class BallMesh {
     }
   }
 
-  initialiseMesh(color, pattern?: BallPattern) {
+  initialiseMesh(color) {
     const geometry = new IcosahedronGeometry(R, 1)
     const material = new MeshPhongMaterial({
       emissive: 0,
@@ -70,7 +68,7 @@ export class BallMesh {
       shininess: 25,
       specular: 0x555533,
     })
-    this.addDots(geometry, color, pattern)
+    this.addDots(geometry, color)
     this.mesh = new Mesh(geometry, material)
     this.mesh.name = "ball"
     this.updateRotation(new Vector3().random(), 100)
@@ -86,7 +84,7 @@ export class BallMesh {
     this.trace = new Trace(500, color)
   }
 
-  addDots(geometry, baseColor, pattern?: BallPattern) {
+  addDots(geometry, baseColor) {
     const count = geometry.attributes.position.count
     const color = new Color(baseColor)
 
@@ -106,18 +104,11 @@ export class BallMesh {
       )
     }
 
-    if (pattern) {
-      pattern.forEach((p) => {
-        const c = new Color(p.color)
-        this.colorVerticesForFace(p.index, verticies, c.r, c.g, c.b)
-      })
-    } else {
-      const red = new Color(0xaa2222)
-      const dots = [0, 96, 111, 156, 186, 195]
-      dots.forEach((i) => {
-        this.colorVerticesForFace(i / 3, verticies, red.r, red.g, red.b)
-      })
-    }
+    const red = new Color(0xaa2222)
+    const dots = [0, 96, 111, 156, 186, 195]
+    dots.forEach((i) => {
+      this.colorVerticesForFace(i / 3, verticies, red.r, red.g, red.b)
+    })
   }
 
   addToScene(scene) {

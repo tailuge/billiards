@@ -6,7 +6,7 @@ import {
   sliding,
   surfaceVelocityFull,
 } from "../model/physics/physics"
-import { BallMesh, BallPattern } from "../view/ballmesh"
+import { BallMesh } from "../view/ballmesh"
 import { Pocket } from "./physics/pocket"
 
 export enum State {
@@ -31,15 +31,9 @@ export class Ball {
 
   static readonly transition = 0.05
 
-  constructor(pos, color?, pattern?: BallPattern | string[]) {
+  constructor(pos, color?) {
     this.pos = pos.clone()
-    if (Array.isArray(pattern) && typeof pattern[0] === "string") {
-      pattern = (pattern as string[]).map((color, index) => ({ index, color }))
-    }
-    this.ballmesh = new BallMesh(
-      color || 0xeeeeee * Math.random(),
-      pattern as BallPattern
-    )
+    this.ballmesh = new BallMesh(color || 0xeeeeee * Math.random())
   }
 
   update(t) {
