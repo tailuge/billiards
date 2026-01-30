@@ -25,6 +25,7 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
       "@typescript-eslint/no-unused-expressions": "off",
       "@typescript-eslint/no-require-imports": "off",
+      "sonarjs/public-static-readonly": "off",
     },
   },
   {
