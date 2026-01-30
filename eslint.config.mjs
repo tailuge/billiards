@@ -1,10 +1,12 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import html from 'eslint-plugin-html';
+import sonarjs from 'eslint-plugin-sonarjs';
 
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
+  sonarjs.configs.recommended,
   {
     ignores: [
       "dist/*",
