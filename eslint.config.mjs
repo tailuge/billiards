@@ -26,6 +26,8 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-expressions": "off",
       "@typescript-eslint/no-require-imports": "off",
       "sonarjs/public-static-readonly": "off",
+      "sonarjs/pseudo-random": "off",
+      "sonarjs/constructor-for-side-effects": "off",
     },
   },
   {

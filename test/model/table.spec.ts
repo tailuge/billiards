@@ -51,7 +51,7 @@ describe("Table", () => {
     const table = new Table([a, b])
     expect(() => {
       table.advance(t)
-    }).to.throw(Error)
+    }).to.throw("Depth exceeded resolving collisions")
     done()
   })
 

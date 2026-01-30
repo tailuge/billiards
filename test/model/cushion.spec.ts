@@ -176,8 +176,10 @@ describe("Cushion", () => {
   })
 
   it("geometry present", (done) => {
-    new TableMesh().generateTable(true)
-    new TableMesh().generateTable(false)
+    const groupWithPockets = new TableMesh().generateTable(true)
+    expect(groupWithPockets.children.length).to.be.greaterThan(0)
+    const groupWithoutPockets = new TableMesh().generateTable(false)
+    expect(groupWithoutPockets.children.length).to.be.greaterThan(0)
     done()
   })
 
