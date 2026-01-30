@@ -35,12 +35,43 @@
 <body>
   <div id="canvas-container"></div>
   <div class="controls">
-    <h1>Basic Yellow Ball</h1>
+    <h1 id="ball-name">9: Yellow (Striped)</h1>
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+      <button id="prev-ball" style="padding: 5px 15px; cursor: pointer;">-</button>
+      <span id="ball-number-ui"
+        style="font-size: 1.2em; font-weight: bold; min-width: 30px; text-align: center;">9</span>
+      <button id="next-ball" style="padding: 5px 15px; cursor: pointer;">+</button>
+    </div>
     <p>Drag to rotate • Scroll to zoom</p>
   </div>
 
   <script>
+    const BALL_COLORS = [
+      "#FFFFFF", // 0: Cue Ball
+      "#FFFF00", // 1: Yellow
+      "#0000FF", // 2: Blue
+      "#FF0000", // 3: Red
+      "#800080", // 4: Purple
+      "#FFA500", // 5: Orange
+      "#008000", // 6: Green
+      "#800000", // 7: Maroon
+      "#000000", // 8: Black
+      "#FFFF00", // 9: Yellow (Striped)
+      "#0000FF", // 10: Blue (Striped)
+      "#FF0000", // 11: Red (Striped)
+      "#800080", // 12: Purple (Striped)
+      "#FFA500", // 13: Orange (Striped)
+      "#008000", // 14: Green (Striped)
+      "#800000"  // 15: Maroon (Striped)
+    ]
+
+    const BALL_NAMES = [
+      "Cue Ball", "Yellow", "Blue", "Red", "Purple", "Orange", "Green", "Maroon", "Black",
+      "Yellow (Striped)", "Blue (Striped)", "Red (Striped)", "Purple (Striped)", "Orange (Striped)", "Green (Striped)", "Maroon (Striped)"
+    ]
+
     let scene, camera, renderer, ball
+    let currentBallNumber = 9
     let isDragging = false
     let previousMousePosition = { x: 0, y: 0 }
     let cameraDistance = 10
@@ -49,82 +80,66 @@
 
     const container = document.getElementById("canvas-container")
 
-    function createNumberTexture() {
-      const canvas = document.createElement("canvas")
-      canvas.width = 256
-      canvas.height = 256
-      const ctx = canvas.getContext("2d")
-
-      // 0. Red background
-      ctx.fillStyle = "red"
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-      // White rectangle on top 1/4
+    function addWhiteBars(ctx, width, height) {
       ctx.fillStyle = "white"
-      ctx.fillRect(0, 0, canvas.width, canvas.height / 4)
+      ctx.fillRect(0, 0, width, height / 4)
+      ctx.fillRect(0, (height * 3) / 4, width, height / 4)
+    }
 
-      // White rectangle on bottom 1/4
-      ctx.fillRect(0, (canvas.height * 3) / 4, canvas.width, canvas.height / 4)
-
-      const centerX = canvas.width / 2
-      const centerY = canvas.height / 2
-      const whiteCircleRadius = 53
-      const borderThickness = 5
-
+    function drawBaseCircle(ctx, x, y, radius, border) {
       // 1. Black circle (border)
       ctx.beginPath()
-      ctx.arc(centerX, centerY, whiteCircleRadius + borderThickness, 0, Math.PI * 2)
+      ctx.arc(x, y, radius + border, 0, Math.PI * 2)
       ctx.fillStyle = "black"
       ctx.fill()
 
       // 2. White circle
       ctx.beginPath()
-      ctx.arc(centerX, centerY, whiteCircleRadius, 0, Math.PI * 2)
+      ctx.arc(x, y, radius, 0, Math.PI * 2)
       ctx.fillStyle = "white"
       ctx.fill()
+    }
 
-      // 3. Black number 9
+    function drawNumber(ctx, number, x, y) {
       ctx.fillStyle = "black"
-      ctx.font = "bold 100px Arial, sans-serif"
+      ctx.font = "bold 80px Arial, sans-serif"
       ctx.textAlign = "center"
       ctx.textBaseline = "middle"
-      ctx.fillText("9", centerX, centerY + 5)
+      ctx.fillText(number.toString(), x, y + 5)
+    }
+
+    function createNumberTexture(ballNumber) {
+      const color = BALL_COLORS[ballNumber] || "#FFFFFF"
+      const canvas = document.createElement("canvas")
+      canvas.width = 256
+      canvas.height = 256
+      const ctx = canvas.getContext("2d")
+
+      // 0. Background
+      ctx.fillStyle = color
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      if (ballNumber >= 9) {
+        addWhiteBars(ctx, canvas.width, canvas.height)
+      }
+
+      if (ballNumber > 0) {
+        const centerX = canvas.width / 2
+        const centerY = canvas.height / 2
+
+        drawBaseCircle(ctx, centerX, centerY, 53, 5)
+        drawNumber(ctx, ballNumber, centerX, centerY)
+      }
 
       const texture = new THREE.CanvasTexture(canvas)
       texture.flipY = false
       return texture
     }
 
-    function init() {
-      scene = new THREE.Scene()
-      scene.background = new THREE.Color(0x1a1a2e)
-
-      camera = new THREE.PerspectiveCamera(
-        45,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      )
-      updateCameraPosition()
-
-      renderer = new THREE.WebGLRenderer({ antialias: true })
-      renderer.setSize(window.innerWidth, window.innerHeight)
-      renderer.setPixelRatio(window.devicePixelRatio)
-      container.appendChild(renderer.domElement)
-
-      // Lights
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
-      scene.add(ambientLight)
-
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
-      directionalLight.position.set(5, 10, 7.5)
-      scene.add(directionalLight)
-
-      // Icosahedron with Projected Texture
+    function createBallMaterial(ballNumber) {
+      const ballColor = new THREE.Color(BALL_COLORS[ballNumber])
+      const numberTexture = createNumberTexture(ballNumber)
       const radius = 2
-      const geometry = new THREE.IcosahedronGeometry(radius, 1)
-      const numberTexture = createNumberTexture()
-      const ballColor = new THREE.Color(0xffd700)
 
       const material = new THREE.MeshStandardMaterial({
         color: ballColor,
@@ -133,7 +148,7 @@
 
       material.onBeforeCompile = (shader) => {
         shader.uniforms.numberTex = { value: numberTexture }
-        shader.uniforms.projSize = { value: 2.0 }
+        shader.uniforms.projSize = { value: 2.01 }
 
         shader.vertexShader = shader.vertexShader.replace(
           '#include <common>',
@@ -169,8 +184,48 @@
             `
         );
       }
+      return material
+    }
 
-      ball = new THREE.Mesh(geometry, material)
+    function updateBall(number) {
+      currentBallNumber = (number + 16) % 16
+      document.getElementById("ball-number-ui").innerText = currentBallNumber
+      document.getElementById("ball-name").innerText = `${currentBallNumber}: ${BALL_NAMES[currentBallNumber]}`
+
+      if (ball) {
+        ball.material = createBallMaterial(currentBallNumber)
+      }
+    }
+
+    function init() {
+      scene = new THREE.Scene()
+      scene.background = new THREE.Color(0x1a1a2e)
+
+      camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      )
+      updateCameraPosition()
+
+      renderer = new THREE.WebGLRenderer({ antialias: true })
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      renderer.setPixelRatio(window.devicePixelRatio)
+      container.appendChild(renderer.domElement)
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+      scene.add(ambientLight)
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+      directionalLight.position.set(5, 10, 7.5)
+      scene.add(directionalLight)
+
+      // Icosahedron with Projected Texture
+      const radius = 2
+      const geometry = new THREE.IcosahedronGeometry(radius, 1)
+      ball = new THREE.Mesh(geometry, createBallMaterial(currentBallNumber))
       scene.add(ball)
 
       // Helper to see where the floor is
@@ -190,6 +245,9 @@
     }
 
     function setupEventListeners() {
+      document.getElementById("prev-ball").addEventListener("click", () => updateBall(currentBallNumber - 1))
+      document.getElementById("next-ball").addEventListener("click", () => updateBall(currentBallNumber + 1))
+
       window.addEventListener("pointerdown", (e) => {
         isDragging = true
         previousMousePosition = { x: e.clientX, y: e.clientY }
