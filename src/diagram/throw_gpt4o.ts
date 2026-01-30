@@ -12,7 +12,7 @@ export class CollisionThrowPlot {
   private static readonly c: number = 1.088 // Decay rate
 
   private readonly log
-  constructor(log: (...args: any[]) => void = () => {}) {
+  constructor(log: (...args: unknown[]) => void = () => {}) {
     this.log = log
   }
 

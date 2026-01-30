@@ -6,7 +6,7 @@ export class NchanMessageRelay implements MessageRelay {
 
   constructor(
     private readonly baseURL: string = "billiards-network.onrender.com"
-  ) {}
+  ) { }
 
   subscribe(
     channel: string,
@@ -60,7 +60,7 @@ export class NchanMessageRelay implements MessageRelay {
       const text = await response.text()
       const match = text.match(/Active connections:\s+(\d+)/)
       return match ? parseInt(match[1], 10) - 1 : null
-    } catch (err) {
+    } catch {
       return null
     }
   }

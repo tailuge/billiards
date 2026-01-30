@@ -5,7 +5,7 @@ import { R } from "./diagram/constants"
 
 declare global {
   interface Window {
-    Plotly: any
+    Plotly: unknown
   }
 }
 
