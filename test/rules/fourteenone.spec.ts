@@ -39,7 +39,7 @@ describe("FourteenOne", () => {
   })
 
   it("Fourteenone has 16 balls", (done) => {
-    expect(container.table.balls).to.be.length(5)
+    expect(container.table.balls).to.be.length(16)
     done()
   })
 

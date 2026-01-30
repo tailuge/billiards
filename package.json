@@ -42,6 +42,7 @@
     "@types/three": "0.182.0",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
+    "canvas": "^3.2.1",
     "chai": "6.2.2",
     "eslint": "^9.39.2",
     "eslint-plugin-html": "^8.1.4",

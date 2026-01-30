@@ -16,6 +16,24 @@ export class Rack {
     .clone()
     .applyAxisAngle(Rack.up, (Math.PI * 1) / 3)
 
+  static readonly BALL_COLORS = [
+    "#FFFFFF", // 0: Cue Ball
+    "#FFFF00", // 1: Yellow
+    "#0000FF", // 2: Blue
+    "#FF0000", // 3: Red
+    "#800080", // 4: Purple
+    "#FFA500", // 5: Orange
+    "#008000", // 6: Green
+    "#800000", // 7: Maroon
+    "#000000", // 8: Black
+    "#FFFF00", // 9: Yellow (Striped)
+    "#0000FF", // 10: Blue (Striped)
+    "#FF0000", // 11: Red (Striped)
+    "#800080", // 12: Purple (Striped)
+    "#FFA500", // 13: Orange (Striped)
+    "#008000", // 14: Green (Striped)
+    "#800000"  // 15: Maroon (Striped)
+  ]
   private static jitter(pos) {
     return roundVec(
       pos
@@ -37,33 +55,40 @@ export class Rack {
   static diamond() {
     const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
     const diamond: Ball[] = []
+    const newball = (pos: Vector3, color: string, _: number) => {
+      return new Ball(Rack.jitter(pos), color)
+    }
     diamond.push(Rack.cueBall(Rack.spot))
-    diamond.push(new Ball(Rack.jitter(pos), 0xe0de36))
+    diamond.push(newball(pos, Rack.BALL_COLORS[1], 1)) // 1: Yellow
     pos.add(Rack.diagonal)
-    diamond.push(new Ball(Rack.jitter(pos), 0xff9d00))
+    diamond.push(newball(pos, Rack.BALL_COLORS[2], 2)) // 2: Blue
     pos.sub(Rack.across)
-    diamond.push(new Ball(Rack.jitter(pos), 0x521911))
+    diamond.push(newball(pos, Rack.BALL_COLORS[3], 3)) // 3: Red
     pos.add(Rack.diagonal)
-    diamond.push(new Ball(Rack.jitter(pos), 0x595200))
+    diamond.push(newball(pos, Rack.BALL_COLORS[4], 4)) // 4: Purple
     pos.sub(Rack.across)
-    diamond.push(new Ball(Rack.jitter(pos), 0xff0000))
+    diamond.push(newball(pos, Rack.BALL_COLORS[5], 5)) // 5: Orange
     pos.addScaledVector(Rack.across, 2)
-    diamond.push(new Ball(Rack.jitter(pos), 0x050505))
+    diamond.push(newball(pos, Rack.BALL_COLORS[6], 6)) // 6: Green
     pos.add(Rack.diagonal).sub(Rack.across)
-    diamond.push(new Ball(Rack.jitter(pos), 0x0a74c2))
+    diamond.push(newball(pos, Rack.BALL_COLORS[7], 7)) // 7: Maroon
     pos.sub(Rack.across)
-    diamond.push(new Ball(Rack.jitter(pos), 0x087300))
+    diamond.push(newball(pos, Rack.BALL_COLORS[8], 8)) // 8: Black
     pos.add(Rack.diagonal)
-    diamond.push(new Ball(Rack.jitter(pos), 0x3e009c))
+    diamond.push(newball(pos, Rack.BALL_COLORS[9], 9)) // 9: Yellow (Striped)
     return diamond
   }
 
   static triangle() {
     const tp = Rack.trianglePositions()
-    const cueball = Rack.cueBall(Rack.spot)
-    const triangle = tp.map((p) => new Ball(Rack.jitter(p)))
-    triangle.unshift(cueball)
-    return triangle.slice(0, 5)
+    const triangle: Ball[] = []
+    triangle.push(Rack.cueBall(Rack.spot))
+
+    tp.forEach((p, i) => {
+      const label = i + 1
+      triangle.push(new Ball(Rack.jitter(p), Rack.BALL_COLORS[label], label))
+    })
+    return triangle
   }
 
   static trianglePositions() {
@@ -128,9 +153,9 @@ export class Rack {
     const threeballs: Ball[] = []
     const dx = TableGeometry.X / 2
     const dy = TableGeometry.Y / 4
-    threeballs.push(Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0))))
-    threeballs.push(new Ball(Rack.jitter(new Vector3(-dx, 0, 0)), 0xe0de36))
-    threeballs.push(new Ball(Rack.jitter(new Vector3(dx, 0, 0)), 0xff0000))
+    threeballs.push(Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0)), 0)) // Ball 0: White
+    threeballs.push(new Ball(Rack.jitter(new Vector3(-dx, 0, 0)), 0xe0de36, 1)) // Ball 1: Yellow
+    threeballs.push(new Ball(Rack.jitter(new Vector3(dx, 0, 0)), 0xff0000, 2)) // Ball 2: Red
     return threeballs
   }
 

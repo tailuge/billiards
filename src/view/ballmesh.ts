@@ -9,11 +9,13 @@ import {
   Color,
   BufferAttribute,
   Vector3,
+  MeshStandardMaterial,
 } from "three"
 import { State } from "../model/ball"
 import { norm, up, zero } from "./../utils/utils"
 import { R } from "../model/physics/constants"
 import { Trace } from "./trace"
+import { BallMaterialFactory } from "./ballmaterialfactory"
 
 export class BallMesh {
   mesh: Mesh
@@ -21,9 +23,9 @@ export class BallMesh {
   spinAxisArrow: ArrowHelper
   trace: Trace
   color: Color
-  constructor(color) {
+  constructor(color, label?: number) {
     this.color = new Color(color)
-    this.initialiseMesh(color)
+    this.initialiseMesh(this.color, label)
   }
 
   updateAll(ball, t) {
@@ -58,17 +60,15 @@ export class BallMesh {
     }
   }
 
-  initialiseMesh(color) {
+  initialiseMesh(color: Color, label?: number) {
     const geometry = new IcosahedronGeometry(R, 1)
-    const material = new MeshPhongMaterial({
-      emissive: 0,
-      flatShading: true,
-      vertexColors: true,
-      forceSinglePass: true,
-      shininess: 25,
-      specular: 0x555533,
-    })
-    this.addDots(geometry, color)
+    let material: MeshPhongMaterial | MeshStandardMaterial
+    if (label !== undefined) {
+      material = BallMaterialFactory.createProjectedMaterial(label, color)
+    } else {
+      material = BallMaterialFactory.createDottedMaterial(color)
+      this.addDots(geometry, color)
+    }
     this.mesh = new Mesh(geometry, material)
     this.mesh.name = "ball"
     this.updateRotation(new Vector3().random(), 100)

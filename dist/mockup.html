@@ -162,12 +162,14 @@
         shader.vertexShader = shader.vertexShader.replace(
           '#include <common>',
           `#include <common>
-             varying vec3 vLocalPosition;`
+             varying vec3 vLocalPosition;
+             varying vec3 vNormalVar;`
         );
         shader.vertexShader = shader.vertexShader.replace(
           '#include <begin_vertex>',
           `#include <begin_vertex>
-             vLocalPosition = position;`
+             vLocalPosition = position;
+             vNormalVar = normal;`
         );
 
         shader.fragmentShader = shader.fragmentShader.replace(
@@ -175,7 +177,8 @@
           `#include <common>
             uniform sampler2D numberTex;
             uniform float projSize;
-            varying vec3 vLocalPosition;`
+            varying vec3 vLocalPosition;
+            varying vec3 vNormalVar;`
         );
 
         shader.fragmentShader = shader.fragmentShader.replace(
@@ -184,8 +187,12 @@
              float r = ${radius.toFixed(1)};
              vec3 locPos = vLocalPosition;
              if (locPos.y < 0.0) locPos.x = -locPos.x;
+
+             vec3 n = normalize(vNormalVar);
+             locPos.xz += n.xz * 0.001 * r;
+
              vec2 projUv = locPos.xz / (r * projSize) + 0.5;
-             
+
              if (projUv.x >= 0.0 && projUv.x <= 1.0 && projUv.y >= 0.0 && projUv.y <= 1.0) {
                vec4 texColor = texture2D(numberTex, projUv);
                diffuseColor.rgb = mix(diffuseColor.rgb, texColor.rgb, texColor.a);

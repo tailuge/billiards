@@ -28,12 +28,14 @@ export class Ball {
 
   public static id = 0
   readonly id = Ball.id++
+  readonly label?: number
 
   static readonly transition = 0.05
 
-  constructor(pos, color?) {
+  constructor(pos, color?, label?: number) {
     this.pos = pos.clone()
-    this.ballmesh = new BallMesh(color || 0xeeeeee * Math.random())
+    this.label = label
+    this.ballmesh = new BallMesh(color || 0xeeeeee * Math.random(), label)
   }
 
   update(t) {
