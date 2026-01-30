@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { Controller, HitEvent, Input } from "../../src/controller/controller"
+import { HitEvent, Input } from "../../src/controller/controller"
 import { Container } from "../../src/container/container"
 import { Aim } from "../../src/controller/aim"
 import { WatchAim } from "../../src/controller/watchaim"
@@ -26,7 +26,6 @@ import { StartAimEvent } from "../../src/events/startaimevent"
 import { Session } from "../../src/network/client/session"
 import { Spectate } from "../../src/controller/spectate"
 import { Init } from "../../src/controller/init"
-import { Replay } from "../../src/controller/replay"
 
 initDom()
 

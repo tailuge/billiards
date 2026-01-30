@@ -16,7 +16,6 @@ import { controllerName } from "../../src/controller/util"
 import { End } from "../../src/controller/end"
 import { canvas3d, initDom } from "../view/dom"
 import { Assets } from "../../src/view/assets"
-import { Init } from "../../src/controller/init"
 
 initDom()
 

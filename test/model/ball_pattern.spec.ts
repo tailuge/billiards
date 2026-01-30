@@ -1,6 +1,5 @@
 import { Vector3 } from "three"
 import { Ball } from "../../src/model/ball"
-import { BallPattern } from "../../src/view/ballmesh"
 
 describe("Ball Pattern", () => {
   it("should initialize a ball with a custom pattern", () => {
