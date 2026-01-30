@@ -157,7 +157,7 @@
 
       material.onBeforeCompile = (shader) => {
         shader.uniforms.numberTex = { value: numberTexture }
-        shader.uniforms.projSize = { value: 2.01 }
+        shader.uniforms.projSize = { value: 2.0 }
 
         shader.vertexShader = shader.vertexShader.replace(
           '#include <common>',
@@ -184,19 +184,16 @@
         shader.fragmentShader = shader.fragmentShader.replace(
           '#include <color_fragment>',
           `#include <color_fragment>
-             float r = ${radius.toFixed(1)};
+             float r = 2.0;
              vec3 locPos = vLocalPosition;
-             if (locPos.y < 0.0) locPos.x = -locPos.x;
 
-             vec3 n = normalize(vNormalVar);
-             locPos.xz += n.xz * 0.001 * r;
-
+             // planar projection
              vec2 projUv = locPos.xz / (r * projSize) + 0.5;
+             projUv = clamp(projUv, 0.0, 1.0);
 
-             if (projUv.x >= 0.0 && projUv.x <= 1.0 && projUv.y >= 0.0 && projUv.y <= 1.0) {
-               vec4 texColor = texture2D(numberTex, projUv);
-               diffuseColor.rgb = mix(diffuseColor.rgb, texColor.rgb, texColor.a);
-             }
+             // sample & blend
+             vec4 texColor = texture2D(numberTex, projUv);
+             diffuseColor.rgb = texColor.rgb;
             `
         );
       }

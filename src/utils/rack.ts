@@ -55,8 +55,8 @@ export class Rack {
   static diamond() {
     const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
     const diamond: Ball[] = []
-    const newball = (pos: Vector3, color: string, _: number) => {
-      return new Ball(Rack.jitter(pos), color)
+    const newball = (pos: Vector3, color: string, label: number) => {
+      return new Ball(Rack.jitter(pos), color, label)
     }
     diamond.push(Rack.cueBall(Rack.spot))
     diamond.push(newball(pos, Rack.BALL_COLORS[1], 1)) // 1: Yellow

@@ -39,26 +39,24 @@ export class BallMaterialFactory {
     const numberTexture = this.getOrCreateTexture(label, color)
     const material = new MeshStandardMaterial({
       color: color,
-      roughness: 0.1,
+      roughness: 0.5,
       metalness: 0,
       flatShading: true,
     })
 
     material.onBeforeCompile = (shader: Shader) => {
       shader.uniforms.numberTex = { value: numberTexture }
-      shader.uniforms.projSize = { value: 2.01 }
+      shader.uniforms.projSize = { value: 2.00 }
 
       shader.vertexShader = shader.vertexShader.replace(
         "#include <common>",
         `#include <common>
-         varying vec3 vLocalPosition;
-         varying vec3 vNormalVar;`
+         varying vec3 vLocalPosition;`
       )
       shader.vertexShader = shader.vertexShader.replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
-         vLocalPosition = position;
-         vNormalVar = normal;`
+         vLocalPosition = position;`
       )
 
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -66,8 +64,7 @@ export class BallMaterialFactory {
         `#include <common>
         uniform sampler2D numberTex;
         uniform float projSize;
-        varying vec3 vLocalPosition;
-        varying vec3 vNormalVar;`
+        varying vec3 vLocalPosition;`
       )
 
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -75,17 +72,14 @@ export class BallMaterialFactory {
         `#include <color_fragment>
          float r = ${R.toFixed(3)};
          vec3 locPos = vLocalPosition;
-         if (locPos.y < 0.0) locPos.x = -locPos.x;
-         
-         vec3 n = normalize(vNormalVar);
-         locPos.xz += n.xz * 0.001 * r;
 
+         // planar projection
          vec2 projUv = locPos.xz / (r * projSize) + 0.5;
-         
-         if (projUv.x >= 0.0 && projUv.x <= 1.0 && projUv.y >= 0.0 && projUv.y <= 1.0) {
-           vec4 texColor = texture2D(numberTex, projUv);
-           diffuseColor.rgb = mix(diffuseColor.rgb, texColor.rgb, texColor.a);
-         }
+         projUv = clamp(projUv, 0.0, 1.0);
+
+         // sample & blend
+         vec4 texColor = texture2D(numberTex, projUv);
+         diffuseColor.rgb = texColor.rgb;
         `
       )
     }
@@ -120,7 +114,7 @@ export class BallMaterialFactory {
 
     // Noise
     const rand = () => Math.random() * size
-    const noiseAlpha = 0.03
+    const noiseAlpha = 0.01
     for (let i = 0; i < 100; i++) {
       ctx.fillStyle = Math.random() > 0.5 ? `rgba(255,255,255,${noiseAlpha})` : `rgba(0,0,0,${noiseAlpha})`
       ctx.fillRect(rand(), rand(), 10, 10)
