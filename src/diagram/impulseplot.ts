@@ -24,7 +24,7 @@ for V0 = 2 m/s, α = 45◦,ωS0 = 2V0/R, and ωT0 = 1.5V0/R
 <br>(s and φ are for the slip at the cushion, 
 and sʹ and φʹ are for the slip at the table)`
 
-    window.Plotly.newPlot(
+    ;(window as any).Plotly.newPlot(
       "mathaven-impulse",
       [
         createTrace(

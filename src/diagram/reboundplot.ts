@@ -54,7 +54,7 @@ export class ReboundPlot {
     const x = deg
 
     layout.title.text = title
-    window.Plotly.newPlot(
+    ;(window as any).Plotly.newPlot(
       divSpeed,
       [
         createTrace(x, speeds[0], "k=-1", color(0)),
@@ -66,7 +66,7 @@ export class ReboundPlot {
       config
     )
 
-    window.Plotly.newPlot(
+    ;(window as any).Plotly.newPlot(
       divAngle,
       [
         createTrace(x, angles[0], "k=-1", color(0)),
