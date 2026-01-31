@@ -13,7 +13,7 @@ afterEach(() => {
 
 describe("Session", () => {
   it("instance created", (done) => {
-    Session.init("client1", "userId1", "tableId1")
+    Session.init("client1", "userId1", "tableId1", false)
     expect(Session.getInstance).to.be.not.null
     expect(Session.getInstance().clientId).to.be.equal("client1")
     done()

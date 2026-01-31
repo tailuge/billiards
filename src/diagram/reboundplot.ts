@@ -65,7 +65,6 @@ export class ReboundPlot {
       layout,
       config
     )
-
     ;(window as any).Plotly.newPlot(
       divAngle,
       [

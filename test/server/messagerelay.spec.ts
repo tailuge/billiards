@@ -26,16 +26,4 @@ describe("MessageRelay", () => {
     })
     relay.publish(channel, message)
   })
-  /*
-  it("test message replay", (done) => {
-    const realRelay = new NchanMessageRelay()
-    const channel = "101"
-    const message = EventUtil.serialise(new BreakEvent())
-    realRelay.subscribe(channel, (msg) => {
-      expect(msg).to.be.not.null
-      //      done()
-    })
-        realRelay.publish(channel, message)
-  })
-        */
 })

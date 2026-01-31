@@ -1,3 +1,6 @@
+new note, can End controller be updated with a constructor that would make it report the matchresult? is that worth it? e.g. a won state.
+new note, how would scoreboard project api change if we also report 1 player game completion? that is good for activity vibe.
+
 # Important information.
 
 This nineball game is hosted on a domain independant from the score tracking system. That system is hosted at https://scoreboard-tailuge.vercel.app/ .

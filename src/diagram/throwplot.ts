@@ -55,7 +55,6 @@ export class ThrowPlot {
     myLayout.title.text = `Throw effect (WIP)
     <br>throw vs. cut angle for various-speed ${div} shots
     <br>from https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf`
-
     ;(window as any).Plotly.newPlot(
       div,
       [
@@ -93,7 +92,6 @@ export class ThrowPlot {
     myLayout.title.text = `Throw effect (WIP)
     <br>throw vs. cut angle for various-speed ${div} shots
     <br>from https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf`
-
     ;(window as any).Plotly.newPlot(
       div,
       [
