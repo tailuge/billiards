@@ -1,4 +1,4 @@
-import { Color, MeshPhongMaterial, MeshStandardMaterial, Shader } from "three"
+import { Color, MeshPhongMaterial, MeshStandardMaterial } from "three"
 import { R } from "../model/physics/constants"
 import { BallTextureFactory } from "./balltexturefactory"
 
@@ -43,7 +43,7 @@ export class BallMaterialFactory {
       flatShading: true,
     })
 
-    material.onBeforeCompile = (shader: Shader) => {
+    material.onBeforeCompile = (shader: any) => {
       shader.uniforms.numberTex = { value: numberTexture }
       shader.uniforms.projSize = { value: 2.0 }
 

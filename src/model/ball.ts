@@ -28,7 +28,7 @@ export class Ball {
 
   public static id = 0
   readonly id = Ball.id++
-  readonly label?: number
+  readonly label: number | undefined
 
   static readonly transition = 0.05
 

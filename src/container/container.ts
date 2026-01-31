@@ -41,7 +41,7 @@ export class Container {
   menu: Menu
   hud: Hud
   lobbyIndicator: LobbyIndicator
-  relay?: MessageRelay
+  relay: MessageRelay | null = null
   frame: (timestamp: number) => void
 
   last = performance.now()
@@ -57,7 +57,7 @@ export class Container {
     ruletype?,
     keyboard?,
     id?,
-    relay?: MessageRelay
+    relay: MessageRelay | null = null
   ) {
     this.log = log
     this.rules = RuleFactory.create(ruletype, this)
@@ -74,7 +74,7 @@ export class Container {
     this.table.addToScene(this.view.scene)
     this.hud = new Hud()
     this.relay = relay
-    this.lobbyIndicator = new LobbyIndicator(relay)
+    this.lobbyIndicator = new LobbyIndicator(this.relay)
     this.updateController(new Init(this))
   }
 

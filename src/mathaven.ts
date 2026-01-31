@@ -3,12 +3,6 @@ import { ReboundPlot } from "./diagram/reboundplot"
 import { ThrowPlot } from "./diagram/throwplot"
 import { R } from "./diagram/constants"
 
-declare global {
-  interface Window {
-    Plotly: unknown
-  }
-}
-
 new ImpulsePlot().plot()
 const figure9 = `<b>Figure.9</b> Rebound speed and rebound angle versus incident angle <br>
     for different topspins of the ball, ωT0 = kV0/R and V0 = 1 m/s with no sidespin`

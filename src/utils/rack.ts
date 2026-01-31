@@ -48,8 +48,8 @@ export class Rack {
     )
   }
 
-  static cueBall(pos) {
-    return new Ball(Rack.jitter(pos), 0xfaebd7)
+  static cueBall(pos, label?: number) {
+    return new Ball(Rack.jitter(pos), 0xfaebd7, label)
   }
 
   static diamond() {
