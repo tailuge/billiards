@@ -18,6 +18,8 @@ import { R } from "../../model/physics/constants"
 import { Respot } from "../../utils/respot"
 import { TableGeometry } from "../../view/tablegeometry"
 import { StartAimEvent } from "../../events/startaimevent"
+import { MatchResult } from "../../model/matchresult"
+import { Session } from "../../network/client/session"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -90,7 +92,15 @@ export class NineBall implements Rules {
       if (this.isEndOfGame(outcome)) {
         this.container.eventQueue.push(new ChatEvent(null, `game over`))
         this.container.recorder.wholeGameLink()
-        return new End(this.container)
+        const session = Session.getInstance()
+        const result: MatchResult = {
+          winner: session.playername,
+          loser: session.opponentName || "Player 2",
+          winnerScore: 1,
+          loserScore: 0,
+          gameType: this.rulename,
+        }
+        return new End(this.container, result)
       }
       this.container.sendEvent(new WatchEvent(table.serialise()))
       return new Aim(this.container)

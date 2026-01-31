@@ -5,6 +5,6 @@ export interface MatchResult {
   loser: string
   winnerScore: number
   loserScore: number
-  gameType: "nineball" | "snooker" | "threecushion"
+  gameType: string
   timestamp?: number
 }

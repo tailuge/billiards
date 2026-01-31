@@ -13,6 +13,7 @@ import { Assets } from "../view/assets"
 import { Session } from "../network/client/session"
 import { MessageRelay } from "../network/client/messagerelay"
 import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
+import { ScoreReporter } from "../network/client/scorereporter"
 import { BeginEvent } from "../events/beginevent"
 
 /**
@@ -75,6 +76,7 @@ export class BrowserContainer {
   onAssetsReady() {
     console.log(`${this.playername} assets ready`)
     this.messageRelay = new NchanMessageRelay()
+    const scoreReporter = new ScoreReporter()
     this.container = new Container(
       this.canvas3d,
       console.log,
@@ -82,7 +84,8 @@ export class BrowserContainer {
       this.ruletype,
       new Keyboard(this.canvas3d),
       this.playername,
-      this.messageRelay
+      this.messageRelay,
+      scoreReporter
     )
     this.container.broadcast = (e) => {
       this.broadcast(e)

@@ -18,6 +18,8 @@ import { PlaceBallEvent } from "../../events/placeballevent"
 import { zero } from "../../utils/utils"
 import { SnookerUtils } from "./snookerutils"
 import { StartAimEvent } from "../../events/startaimevent"
+import { MatchResult } from "../../model/matchresult"
+import { Session } from "../../network/client/session"
 
 export class Snooker implements Rules {
   cueball: Ball
@@ -260,7 +262,15 @@ export class Snooker implements Rules {
     if (Outcome.isClearTable(table)) {
       this.container.eventQueue.push(new ChatEvent(null, `game over`))
       this.container.recorder.wholeGameLink()
-      return new End(this.container)
+      const session = Session.getInstance()
+      const result: MatchResult = {
+        winner: session.playername,
+        loser: session.opponentName || "Player 2",
+        winnerScore: this.score + this.currentBreak,
+        loserScore: 0, // We don't track opponent score easily here yet
+        gameType: this.rulename,
+      }
+      return new End(this.container, result)
     }
     this.container.sendEvent(new WatchEvent(table.serialise()))
     return new Aim(this.container)

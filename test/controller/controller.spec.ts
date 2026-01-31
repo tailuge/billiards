@@ -34,6 +34,7 @@ describe("Controller", () => {
   let broadcastEvents: GameEvent[]
 
   beforeEach(function (done) {
+    Session.init("testId", "testPlayer", "testTable", false)
     container = new Container(
       document.getElementById("viewP1"),
       (_) => {},

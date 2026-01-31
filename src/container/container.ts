@@ -20,6 +20,7 @@ import { Menu } from "../view/menu"
 import { Hud } from "../view/hud"
 import { LobbyIndicator } from "../view/lobbyindicator"
 import { MessageRelay } from "../network/client/messagerelay"
+import { ScoreReporter } from "../network/client/scorereporter"
 
 /**
  * Model, View, Controller container.
@@ -42,6 +43,7 @@ export class Container {
   hud: Hud
   lobbyIndicator: LobbyIndicator
   relay: MessageRelay | null = null
+  scoreReporter: ScoreReporter | null = null
   frame: (timestamp: number) => void
 
   last = performance.now()
@@ -57,7 +59,8 @@ export class Container {
     ruletype?,
     keyboard?,
     id?,
-    relay: MessageRelay | null = null
+    relay: MessageRelay | null = null,
+    scoreReporter: ScoreReporter | null = null
   ) {
     this.log = log
     this.rules = RuleFactory.create(ruletype, this)
@@ -74,6 +77,7 @@ export class Container {
     this.table.addToScene(this.view.scene)
     this.hud = new Hud()
     this.relay = relay
+    this.scoreReporter = scoreReporter
     this.lobbyIndicator = new LobbyIndicator(this.relay)
     this.updateController(new Init(this))
   }

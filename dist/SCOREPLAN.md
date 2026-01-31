@@ -75,7 +75,7 @@ The following files are relevant to implementing this functionality:
   ```
   The `Container` will be responsible for instantiating the `ScoreReporter`.
 
-- [ ] **Step 3: Trigger Score Reporting from the `End` Controller**
+- [x] **Step 3: Trigger Score Reporting from the `End` Controller**
   The `End` controller will be modified to trigger score reporting when a game ends. To ensure clean state transitions, the `End` controller should be instantiated with the final game outcome.
 
   **`src/controller/end.ts`**
