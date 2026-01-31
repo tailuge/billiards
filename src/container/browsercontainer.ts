@@ -120,6 +120,9 @@ export class BrowserContainer {
     const event = EventUtil.fromSerialised(e)
     console.log(`${this.playername} received ${event.type} : ${event.clientId}`)
     if (event.clientId !== Session.getInstance().clientId) {
+      if (event.playername) {
+        Session.getInstance().opponentName = event.playername
+      }
       this.container.eventQueue.push(event)
     } else {
       console.log("Ignoring own event")
@@ -129,6 +132,7 @@ export class BrowserContainer {
   broadcast(event: GameEvent) {
     if (this.wss && this.messageRelay) {
       event.clientId = Session.getInstance().clientId
+      event.playername = Session.getInstance().playername
       console.log(
         `${this.playername} broadcasting ${event.type} : ${event.clientId}`
       )

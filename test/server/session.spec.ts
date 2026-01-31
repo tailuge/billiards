@@ -12,10 +12,15 @@ afterEach(() => {
 })
 
 describe("Session", () => {
-  it("instance created", (done) => {
-    Session.init("client1", "userId1", "tableId1", false)
-    expect(Session.getInstance).to.be.not.null
-    expect(Session.getInstance().clientId).to.be.equal("client1")
-    done()
+  it("instance created", () => {
+    Session.init("c1", "u1", "t1", false)
+    expect(Session.getInstance().clientId).to.equal("c1")
+  })
+
+  it("can set opponentName", () => {
+    Session.init("c1", "u1", "t1", false)
+    const session = Session.getInstance()
+    session.opponentName = "Opponent"
+    expect(session.opponentName).to.equal("Opponent")
   })
 })

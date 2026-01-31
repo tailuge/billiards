@@ -55,6 +55,9 @@ export class EventUtil {
     if ("clientId" in parsed) {
       event.clientId = parsed.clientId
     }
+    if ("playername" in parsed) {
+      event.playername = parsed.playername
+    }
     return event
   }
 }

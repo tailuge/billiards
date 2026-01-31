@@ -1,10 +1,12 @@
 export class Session {
   constructor(
     readonly clientId: string,
-    readonly username: string,
+    readonly playername: string,
     readonly tableId: string,
     readonly spectator: boolean
   ) {}
+
+  opponentName?: string
 
   private static instance: Session | undefined
 
@@ -25,10 +27,10 @@ export class Session {
 
   static init(
     clientId: string,
-    username: string,
+    playername: string,
     tableId: string,
     spectator: boolean
   ) {
-    Session.instance = new Session(clientId, username, tableId, spectator)
+    Session.instance = new Session(clientId, playername, tableId, spectator)
   }
 }

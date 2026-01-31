@@ -28,4 +28,4 @@ The goal is to enable the transmission of an optional `playername` with each `Ga
   - That `GameEvent`s without a `playername` are also handled correctly (i.e., `playername` is `undefined` or `null` after deserialization).
 
 - [ ] **Step 6: Create Integration Tests (Optional but Recommended)**
-  If feasible, create or update integration tests to simulate a multiplayer scenario where `playername`s are transmitted and received correctly between two clients. This might involve mocking the `MessageRelay` or setting up a minimal test environment. This step aims to verify end-to-end functionality.
+  Just check that playername gets set and if a gameevent has a playername it is deserialized with the playername.

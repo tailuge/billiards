@@ -83,4 +83,21 @@ describe("EventUtil", () => {
     expect(deserialised.sequence).to.equal("seq-1000")
     done()
   })
+
+  it("Serialise and deserialise GameEvent with playername", (done) => {
+    const event: AimEvent = new AimEvent()
+    event.playername = "Player 1"
+    const serialised = EventUtil.serialise(event)
+    const deserialised = EventUtil.fromSerialised(serialised)
+    expect(deserialised.playername).to.equal("Player 1")
+    done()
+  })
+
+  it("Serialise and deserialise GameEvent without playername", (done) => {
+    const event: AimEvent = new AimEvent()
+    const serialised = EventUtil.serialise(event)
+    const deserialised = EventUtil.fromSerialised(serialised)
+    expect(deserialised.playername).to.be.undefined
+    done()
+  })
 })
