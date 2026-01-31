@@ -19,6 +19,7 @@ This is an open-source project bringing unsophisticated billiards physics writte
 * Two player online mode with nchan nginx server.
 * Nine ball, snooker and three cushion billiards rules.
 * Deploys to github pages, vercel.com and render.com with github actions.
+* Runs on and was developed mostly on a potato e.g. Raspberry pi 4.
 
 ## Online Demo
 
@@ -52,26 +53,25 @@ Based on [Han 2005](https://billiards.colostate.edu/physics_articles/Han_paper.p
 
 #### surface velocity
 
-![equation](http://latex.codecogs.com/png.latex?\vec{v{_{a}}}%20=%20\vec{v}+%20(\vec{up}%20\times%20R\vec{\omega}))
+$$\vec{v}_a = \vec{v} + (\vec{up} \times R\vec{\omega})$$
 
 #### sliding motion
 
-![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\mu%20g%20\frac{\vec{v_{a}}}{\left%20|%20\vec{v_{a}}%20\right%20|})
+$$\dot{v} = -\mu g \frac{\vec{v}_a}{|\vec{v}_a|}$$
 
-![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{2}\frac{\mu%20g}{R}%20\frac{\vec{v_{a}}}{\left%20|%20\vec{v_{a}}%20\right%20|})
+$$\dot{\omega} = -\frac{5}{2}\frac{\mu g}{R} \frac{\vec{v}_a}{|\vec{v}_a|}$$
 
-![equation](http://latex.codecogs.com/png.latex?\dot{\omega}_{z}%20=%20-\frac{5}{2}\frac{M_{z}}{mR^2}sgn(\omega_{z}))
+$$\dot{\omega}_z = -\frac{5}{2}\frac{M_z}{mR^2} \text{sgn}(\omega_z)$$
 
 #### rolling motion
 
-![equation](http://latex.codecogs.com/png.latex?\dot{v}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR}\frac{\vec{up}\times\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
+$$\dot{v} = -\frac{5}{7}\frac{M_{xy}}{mR} \frac{\vec{up} \times \vec{\omega}}{|\vec{\omega}|}$$
 
-![equation](http://latex.codecogs.com/png.latex?\dot{w}%20=%20-\frac{5}{7}\frac{M_{xy}}{mR^2}\frac{\vec{\omega}}{\left%20|%20\vec{w}%20\right%20|})
+$$\dot{\omega} = -\frac{5}{7}\frac{M_{xy}}{mR^2} \frac{\vec{\omega}}{|\vec{\omega}|}$$
 
 where
 
-![equation](https://latex.codecogs.com/svg.image?M_{xy}=\frac{7}{5\sqrt{2}}R\mu&space;m&space;g)
-,![equation](https://latex.codecogs.com/svg.image?M_{z}=\frac{2}{3}\mu&space;m&space;g\rho)
+$M_{xy} = \frac{7}{5\sqrt{2}} R \mu m g$ , $M_z = \frac{2}{3} \mu m g \rho$
 
 #### collisions
 
@@ -80,25 +80,25 @@ Based on paper by [Alciatore](https://billiards.colostate.edu/technical_proofs/n
 
 For ball $a$:
 
-![Equation 1](https://latex.codecogs.com/gif.latex?%5Cvec%7Bv%7D_a%20%5Cleftarrow%20%5Cvec%7Bv%7D_a%20%2B%20%5Cfrac%7BJ_%7B%5Ctext%7Bnormal%7D%7D%7D%7Bm%7D%5Chat%7Bn%7D%20%2B%20%5Cfrac%7BJ_%7B%5Ctext%7Btangential%7D%7D%7D%7Bm%7D%5Chat%7Bt%7D)
+$$\vec{v}_a \leftarrow \vec{v}_a + \frac{J_{\text{normal}}}{m}\hat{n} + \frac{J_{\text{tangential}}}{m}\hat{t}$$
 
-![Equation for Angular Velocity of Ball a](https://latex.codecogs.com/gif.latex?%5Cvec%7B%5Comega%7D_a%20%5Cleftarrow%20%5Cvec%7B%5Comega%7D_a%20%2B%20%5Cfrac%7B1%7D%7BI%7D%20%28%5Cvec%7Br%7D_a%20%5Ctimes%20%5Cvec%7BJ%7D_%7B%5Ctext%7Btangential%7D%7D%29)
+$$\vec{\omega}_a \leftarrow \vec{\omega}_a + \frac{1}{I} (\vec{r}_a \times \vec{J}_{\text{tangential}})$$
 
 For ball $b$:
 
-![Equation 2](https://latex.codecogs.com/gif.latex?%5Cvec%7Bv%7D_b%20%5Cleftarrow%20%5Cvec%7Bv%7D_b%20-%20%5Cfrac%7BJ_%7B%5Ctext%7Bnormal%7D%7D%7D%7Bm%7D%5Chat%7Bn%7D%20-%20%5Cfrac%7BJ_%7B%5Ctext%7Btangential%7D%7D%7D%7Bm%7D%5Chat%7Bt%7D)
+$$\vec{v}_b \leftarrow \vec{v}_b - \frac{J_{\text{normal}}}{m}\hat{n} - \frac{J_{\text{tangential}}}{m}\hat{t}$$
 
 
-![Equation for Angular Velocity of Ball b](https://latex.codecogs.com/gif.latex?%5Cvec%7B%5Comega%7D_b%20%5Cleftarrow%20%5Cvec%7B%5Comega%7D_b%20%2B%20%5Cfrac%7B1%7D%7BI%7D%20%28%5Cvec%7Br%7D_b%20%5Ctimes%20%5Cvec%7BJ%7D_%7B%5Ctext%7Btangential%7D%7D%29)
+$$\vec{\omega}_b \leftarrow \vec{\omega}_b + \frac{1}{I} (\vec{r}_b \times \vec{J}_{\text{tangential}})$$
 
 
 Where:
 
 The relative velocity at the point of contact is computed as:
 
-$\vec{v}_{\text{rel}} = (\vec{v}_a - \vec{v}_b) + \vec{r}_a \times \vec{\omega}_a - \vec{r}_b \times \vec{\omega}_b$
+$$\vec{v}_{\text{rel}} = (\vec{v}_a - \vec{v}_b) + \vec{r}_a \times \vec{\omega}_a - \vec{r}_b \times \vec{\omega}_b$$
 
-$`\vec{v}_{\text{slip}}`$ = $`\vec{v}_{\text{rel}}`$ - $`(\vec{v}_{\text{rel}} \cdot \hat{n}) \hat{n}`$
+$\vec{v}_{\text{slip}} = \vec{v}_{\text{rel}} - (\vec{v}_{\text{rel}} \cdot \hat{n}) \hat{n}$
 
 $\vec{r}_a = -R \cdot \hat{n}$ and $\vec{r}_b = R \cdot \hat{n}$
 
@@ -164,7 +164,7 @@ $$
 (\dot{\omega_z})_{n+1}−(\dot{\omega_z})_n = \frac{5}{2MR}(\mu_w \cos(\phi)\cos(\theta))\Delta P_I
 $$
 
-$`\theta`$ is a constant of the angle of cushion contact above ball centre with $`\sin(\theta) = 2/5`$. $`μ_s`$ is the coefficient of sliding friction  between the ball and table surface. $`μ_w`$ is the coefficient of sliding friction  between the ball and the cushion. 
+$\theta$ is a constant of the angle of cushion contact above ball centre with $\sin(\theta) = 2/5$. $\mu_s$ is the coefficient of sliding friction  between the ball and table surface. $\mu_w$ is the coefficient of sliding friction  between the ball and the cushion. 
 
 Work done by the normal force at contact point $I$ along the $Z'$-axis which is aligned from the ball centre to I
 
@@ -174,15 +174,11 @@ $$
 
 The ball is assumed to be bouncing in the +y cushion. Compression phase iterates until 
 
-$$
-\dot{v_y} <= 0
-$$
+$$\dot{v}_y \le 0$$
 
 For the restitution phase the iteration continues until the work done is
 
-$$
-W_{Z'}^I >= (1 - e_e^2) W_{compression}
-$$
+$$W_{Z'}^I \ge (1 - e_e^2) W_{\text{compression}}$$
 
 Some of the Mathaven equations not supplied by the paper were inferred by LLMs and the [code](./src/model/physics/mathaven.ts) for them was initially generated by a combination of [Claude, Qwen and GPT-4o](./dist/diagrams/mathaven.md).
 
