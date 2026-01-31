@@ -118,9 +118,29 @@ The following files are relevant to implementing this functionality:
   }
   ```
 
+- [ ] **Step 4: Enhance Game Event Protocol with Player Names**
+  Modify the `GameEvent` protocol to include the `playername` alongside `clientId`. This will allow for direct identification of players within game events, resolving the current "Player Identification" open question regarding opponent names. This would likely involve:
+    *   Adding an optional `playerName` property to the base `GameEvent` class.
+    *   Updating `EventUtil.serialise` and `EventUtil.fromSerialised` to handle the new property.
+    *   Ensuring `playername` is set correctly when events are broadcast.
+
 ## 4. Open Questions and Assumptions
 
-*   **Player Identification**: The plan assumes there is a way to identify both the winner and the loser in a two-player game. The `container.id` provides the current player's ID, but a mechanism to get the opponent's ID is needed.
+*   **Player Identification**: The plan assumes there is a way to identify both the winner and the loser in a two-player game. The `container.id` provides the current player's ID, but a mechanism to get the opponent's ID is needed. It has been observed that while `clientId` is transmitted with `GameEvent`s, the opponent's `playername` is not explicitly sent via WebSockets in the game event flow. This suggests that the mapping of `clientId` to `playername` might be handled externally (e.g., through a pre-game lobby or shared session state) or assumed to be known by both clients.
 *   **Score Tracking**: The `nineball.ts` rules file seems to track a single score. For a two-player game, the scoring logic needs to be clarified to provide `winnerScore` and `loserScore` as required by the `MatchResult` interface. The scores in `SCORES.md` (`9` and `7`) suggest a race-to-N format, which is not what is currently implemented in `nineball.ts`.
 
 This plan provides a more robust and extensible approach to integrate the score reporting functionality.
+
+## 5. Relevant URL Query Parameters
+
+The following URL query parameters are used to configure the game's behavior and features:
+
+*   **`name`**: Player's name. Defaults to an empty string if not provided.
+*   **`tableId`**: Identifier for the game table (multiplayer sessions). Defaults to "default".
+*   **`clientId`**: Identifier for the client. Defaults to "default".
+*   **`state`**: Used for replay functionality.
+*   **`ruletype`**: Determines the game rules (e.g., "nineball", "snooker", "threecushion"). Defaults to "nineball".
+*   **`websocketserver`**: Its presence triggers 2-player (multiplayer) mode and specifies the WebSocket server address.
+*   **`cushionModel`**: Determines the cushion physics model used.
+*   **`spectator`**: Its presence (e.g., `?spectator`) indicates the user is in spectator mode.
+*   **`first`**: Its presence (e.g., `?first`) is used in multiplayer initiation logic (e.g., `if (!this.first && !this.spectator)`).
