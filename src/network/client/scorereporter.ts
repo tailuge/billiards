@@ -20,7 +20,9 @@ export class ScoreReporter {
         },
         body: JSON.stringify(result),
       })
-      if (!response.ok) {
+      if (response.ok) {
+        console.log("Match result submitted successfully:", result)
+      } else {
         // Log the full response for better debugging
         const errorBody = await response.text()
         console.error(
