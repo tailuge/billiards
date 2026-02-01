@@ -56,9 +56,7 @@ The `update` method will process the `Outcome` array to determine if a foul occu
 
 ### 5. `respotNineBall()` (New Private Method)
 
-- If the 9-ball is pocketed during a foul, it must be returned to the table.
-- **Position**: Foot spot, which is `new Vector3(TableGeometry.tableX / 2, 0, 0)`.
-- **Blocked Path**: If the foot spot is occupied by any other ball, the 9-ball should be placed on the **long string** (the line from the foot spot to the center of the foot cushion) as close to the foot spot as possible. This means incrementing the X coordinate until an available spot is found.
+use existing in rack class
 
 ## Testing Approach
 
