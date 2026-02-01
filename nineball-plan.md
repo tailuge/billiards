@@ -50,3 +50,40 @@ The `update` method will be the central point for processing game events. It nee
 ## File to be Modified
 
 - `src/controller/rules/nineball.ts`
+
+## Testing Approach
+
+The implementation of the Nine-Ball rules will be thoroughly tested using Jest, following the existing project conventions.
+
+### 1. Test File Location
+
+- A new test file, `test/rules/nineball.spec.ts`, will be created to house all tests related to the `NineBall` class.
+
+### 2. Unit Testing `NineBall` Class Methods
+
+- **`update(outcome: Outcome[])`:**
+    - Test scenarios for legal shots, including potting non-9-ball, potting 9-ball (winning), and no pot (turn ends).
+    - Test all defined foul scenarios: cue ball potted, wrong ball hit first, no ball hit cushion/potted.
+    - Verify correct transition to `Aim` or `PlaceBall` controllers based on the outcome.
+    - Verify correct score updates and turn management.
+- **`nextCandidateBall()`:**
+    - Test that it correctly identifies and returns the lowest-numbered ball on the table.
+- **`isEndOfGame(outcome: Outcome[])`:**
+    - Test cases where the 9-ball is legally potted, leading to a win.
+    - Test cases where the 9-ball is not legally potted, and the game continues.
+- **`handleFoul(outcome: Outcome[])` (New Private Method):**
+    - Test that it correctly identifies if the 9-ball was potted on a foul and triggers `respotNineBall`.
+    - Verify that it sets up the next player with "ball-in-hand."
+- **`respotNineBall()` (New Private Method):**
+    - Test that the 9-ball is correctly respotted at its designated location.
+    - Handle scenarios where the spot is occupied.
+
+### 3. Mocking Dependencies
+
+- The `NineBall` class's dependencies, such as `this.container.table` and `Outcome` objects, will be mocked to isolate the logic of the rules engine during testing.
+- This will allow for precise control over the state of the game for each test case.
+
+### 4. Coverage
+
+- Aim for high test coverage to ensure all edge cases and rule variations are adequately handled.
+- Focus on comprehensive test cases for foul detection and game-winning conditions.
