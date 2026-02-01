@@ -123,7 +123,7 @@ export class NineBall implements Rules {
 
   isEndOfGame(_: Outcome[]) {
     const onTable = this.container.table.balls.filter((ball) => ball.onTable())
-    console.log("isEndOfGame onTable", onTable.length, onTable[0])
+    console.log("isEndOfGame onTable", onTable.length, onTable.map((b) => b.state))
     return onTable.length === 1 && onTable[0] === this.cueball
   }
 
