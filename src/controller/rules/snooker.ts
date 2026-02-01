@@ -264,11 +264,9 @@ export class Snooker implements Rules {
       this.container.recorder.wholeGameLink()
       const session = Session.getInstance()
       const result: MatchResult = {
-        id: "0",
         winner: session.playername || "Anon",
         winnerScore: this.score + this.currentBreak,
         gameType: this.rulename,
-        timestamp: Date.now(),
       }
       if (session.opponentName) {
         result.loser = session.opponentName

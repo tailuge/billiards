@@ -13,14 +13,6 @@ export class ScoreReporter {
   async submitMatchResult(result: MatchResult): Promise<void> {
     const url = `https://${this.baseURL}/api/match-results`
     
-    // Ensure mandatory fields are present
-    if (!result.id) {
-      result.id = "0"
-    }
-    if (!result.timestamp) {
-      result.timestamp = Date.now()
-    }
-
     console.log("Submitting match result payload:", JSON.stringify(result, null, 2))
 
     try {

@@ -17,13 +17,11 @@ describe("ScoreReporter", () => {
   })
 
   const sampleMatchResult: MatchResult = {
-    id: "0",
     winner: "player1",
     loser: "player2",
     winnerScore: 9,
     loserScore: 7,
     gameType: "nineball",
-    timestamp: 123456789,
   }
 
   it("should use the default base URL if none is provided", async () => {

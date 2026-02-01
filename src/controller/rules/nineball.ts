@@ -94,11 +94,9 @@ export class NineBall implements Rules {
         this.container.recorder.wholeGameLink()
         const session = Session.getInstance()
         const result: MatchResult = {
-          id: "0",
           winner: session.playername || "Anon",
           winnerScore: 1,
           gameType: this.rulename,
-          timestamp: Date.now(),
         }
         if (session.opponentName) {
           result.loser = session.opponentName
@@ -125,6 +123,7 @@ export class NineBall implements Rules {
 
   isEndOfGame(_: Outcome[]) {
     const onTable = this.container.table.balls.filter((ball) => ball.onTable())
+    console.log("isEndOfGame onTable", onTable.length, onTable[0])
     return onTable.length === 1 && onTable[0] === this.cueball
   }
 
