@@ -1,0 +1,89 @@
+import { expect } from "chai"
+import { Container } from "../../src/container/container"
+import { initDom } from "../view/dom"
+import { Assets } from "../../src/view/assets"
+import { NineBall } from "../../src/controller/rules/nineball"
+import { Snooker } from "../../src/controller/rules/snooker"
+import { Session } from "../../src/network/client/session"
+import { Outcome } from "../../src/model/outcome"
+import { End } from "../../src/controller/end"
+import { MatchResult } from "../../src/network/client/matchresult"
+import { State } from "../../src/model/ball"
+
+initDom()
+
+describe("MatchResult Construction", () => {
+  let container: Container
+
+  beforeEach(() => {
+    Session.init("test-client", "TestPlayer", "test-table", false)
+  })
+
+  afterEach(() => {
+    Session.reset()
+  })
+
+  it("NineBall should include Anon as winner if playername is empty", () => {
+    Session.init("test-client", "", "test-table", false)
+    container = new Container(undefined, (_) => {}, Assets.localAssets("nineball"), "nineball")
+    const nineball = container.rules as NineBall
+    container.table.balls.forEach(b => {
+      if (b !== container.table.cueball) {
+        b.state = State.InPocket
+      }
+    })
+
+    const outcome: Outcome[] = [Outcome.pot(container.table.balls[1], 1)]
+    // Simulate potting the last ball (which in NineBall logic leads to end of game if only cueball remains)
+    const endController = nineball.update(outcome) as End
+    const result = (endController as any).result as MatchResult
+
+    expect(result.winner).to.equal("Anon")
+    expect(result.loser).to.be.undefined
+    expect(result.loserScore).to.be.undefined
+  })
+
+  it("NineBall should include opponent if session.opponentName is present", () => {
+    container = new Container(undefined, (_) => {}, Assets.localAssets("nineball"), "nineball")
+    const session = Session.getInstance()
+    session.opponentName = "TestOpponent"
+    const nineball = container.rules as NineBall
+    container.table.balls.forEach(b => {
+      if (b !== container.table.cueball) {
+        b.state = State.InPocket
+      }
+    })
+
+    const outcome: Outcome[] = [Outcome.pot(container.table.balls[1], 1)]
+    const endController = nineball.update(outcome) as End
+    const result = (endController as any).result as MatchResult
+
+    expect(result.winner).to.equal("TestPlayer")
+    expect(result.loser).to.equal("TestOpponent")
+    expect(result.loserScore).to.equal(0)
+  })
+
+  it("Snooker should include Anon as winner if playername is empty", () => {
+    Session.init("test-client", "", "test-table", false)
+    container = new Container(undefined, (_) => {}, Assets.localAssets("snooker"), "snooker")
+    const snooker = container.rules as Snooker
+    // Mock score and break
+    snooker.score = 50
+    snooker.currentBreak = 10
+    
+    // Mock table is clear (only cueball remains)
+    container.table.balls.forEach(b => {
+       if (b !== container.table.cueball) {
+         b.state = State.InPocket
+       }
+    })
+
+    // Snooker's continueBreak is called when a ball is potted and table is clear
+    const endController = snooker.continueBreak() as End
+    const result = (endController as any).result as MatchResult
+
+    expect(result.winner).to.equal("Anon")
+    expect(result.winnerScore).to.equal(60)
+    expect(result.loser).to.be.undefined
+  })
+})

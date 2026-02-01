@@ -95,12 +95,14 @@ export class NineBall implements Rules {
         const session = Session.getInstance()
         const result: MatchResult = {
           id: "0",
-          winner: session.playername,
-          loser: session.opponentName || "Player 2",
+          winner: session.playername || "Anon",
           winnerScore: 1,
-          loserScore: 0,
           gameType: this.rulename,
           timestamp: Date.now(),
+        }
+        if (session.opponentName) {
+          result.loser = session.opponentName
+          result.loserScore = 0
         }
         return new End(this.container, result)
       }

@@ -265,12 +265,14 @@ export class Snooker implements Rules {
       const session = Session.getInstance()
       const result: MatchResult = {
         id: "0",
-        winner: session.playername,
-        loser: session.opponentName || "Player 2",
+        winner: session.playername || "Anon",
         winnerScore: this.score + this.currentBreak,
-        loserScore: 0, // We don't track opponent score easily here yet
         gameType: this.rulename,
         timestamp: Date.now(),
+      }
+      if (session.opponentName) {
+        result.loser = session.opponentName
+        result.loserScore = 0 // We don't track opponent score easily here yet
       }
       return new End(this.container, result)
     }
