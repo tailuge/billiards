@@ -54,6 +54,7 @@ describe("ScoreReporter", () => {
 
     expect(mockFetch).toHaveBeenCalledWith(expect.any(String), {
       method: "POST",
+      mode: "cors",
       headers: {
         "Content-Type": "application/json",
       },
