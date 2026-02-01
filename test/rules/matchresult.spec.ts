@@ -25,9 +25,14 @@ describe("MatchResult Construction", () => {
 
   it("NineBall should include Anon as winner if playername is empty", () => {
     Session.init("test-client", "", "test-table", false)
-    container = new Container(undefined, (_) => {}, Assets.localAssets("nineball"), "nineball")
+    container = new Container(
+      undefined,
+      (_) => {},
+      Assets.localAssets("nineball"),
+      "nineball"
+    )
     const nineball = container.rules as NineBall
-    container.table.balls.forEach(b => {
+    container.table.balls.forEach((b) => {
       if (b !== container.table.cueball) {
         b.state = State.InPocket
       }
@@ -44,11 +49,16 @@ describe("MatchResult Construction", () => {
   })
 
   it("NineBall should include opponent if session.opponentName is present", () => {
-    container = new Container(undefined, (_) => {}, Assets.localAssets("nineball"), "nineball")
+    container = new Container(
+      undefined,
+      (_) => {},
+      Assets.localAssets("nineball"),
+      "nineball"
+    )
     const session = Session.getInstance()
     session.opponentName = "TestOpponent"
     const nineball = container.rules as NineBall
-    container.table.balls.forEach(b => {
+    container.table.balls.forEach((b) => {
       if (b !== container.table.cueball) {
         b.state = State.InPocket
       }
@@ -65,17 +75,22 @@ describe("MatchResult Construction", () => {
 
   it("Snooker should include Anon as winner if playername is empty", () => {
     Session.init("test-client", "", "test-table", false)
-    container = new Container(undefined, (_) => {}, Assets.localAssets("snooker"), "snooker")
+    container = new Container(
+      undefined,
+      (_) => {},
+      Assets.localAssets("snooker"),
+      "snooker"
+    )
     const snooker = container.rules as Snooker
     // Mock score and break
     snooker.score = 50
     snooker.currentBreak = 10
-    
+
     // Mock table is clear (only cueball remains)
-    container.table.balls.forEach(b => {
-       if (b !== container.table.cueball) {
-         b.state = State.InPocket
-       }
+    container.table.balls.forEach((b) => {
+      if (b !== container.table.cueball) {
+        b.state = State.InPocket
+      }
     })
 
     // Snooker's continueBreak is called when a ball is potted and table is clear

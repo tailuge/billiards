@@ -3,8 +3,18 @@ import { TableGeometry } from "../view/tablegeometry"
 import { R } from "../model/physics/constants"
 import { Table } from "../model/table"
 import { Rack } from "./rack"
+import { Vector3 } from "three"
 
 export class Respot {
+  static nineBall(table: Table) {
+    const nineBall = table.balls.find((b) => b.id === 9)
+    if (!nineBall) return
+
+    const footSpot = new Vector3(TableGeometry.tableX / 2, 0, 0)
+
+    Respot.respotBehind(footSpot, nineBall, table)
+  }
+
   static respot(ball: Ball, table: Table) {
     const positions = Rack.snookerColourPositions()
     positions.push(positions[ball.id - 1])

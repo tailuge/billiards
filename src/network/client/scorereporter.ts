@@ -12,8 +12,11 @@ export class ScoreReporter {
 
   async submitMatchResult(result: MatchResult): Promise<void> {
     const url = `https://${this.baseURL}/api/match-results`
-    
-    console.log("Submitting match result payload:", JSON.stringify(result, null, 2))
+
+    console.log(
+      "Submitting match result payload:",
+      JSON.stringify(result, null, 2)
+    )
 
     try {
       const response = await fetch(url, {

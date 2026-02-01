@@ -1,4 +1,4 @@
-# Nine-Ball Rules Implementation Plan
+# Nine-Ball Rules Implementation Plan [COMPLETE]
 
 ## Overall Goal
 
@@ -88,3 +88,31 @@ The `update` method will process the `Outcome` array to determine if a foul occu
 - **Real Models**: Use real `Table` and `Ball` objects to simulate various table states (e.g., only 1, 5, 9 balls left). This ensures the tests are grounded in the actual physics engine's data structures.
 - **Outcome Construction**: Manually construct `Outcome` arrays with specific sequences of `Pot`, `Collision`, and `Cushion` events to test edge cases in foul detection (e.g., first contact with wrong ball, 9-ball potted on foul).
 - **Isolate Logic**: Only mock external dependencies like `this.container.sound` or `this.container.sendEvent` to verify that the correct side effects are triggered without needing a full UI or network stack.
+
+
+
+## notes
+
+before writing new tests check that current tests run and pass with changes to nineball.ts . State transition tests must still pass.
+possible function to determine if first ball hit was legal. Note that this is the state after the shot so we dont know the lowest ball before the shot directly but infer it. The following logic looks about right.
+
+   isLegalFirstContactBall(outcome: Outcome[]) {
+      const firstCollision = Outcome.firstCollision(outcome)
+      if (!firstCollision) {
+        return false
+      }
+      // lowest ball on table by id
+      
+      const lowestOnTable = this.container.table.balls.filter(
+        (ball) => ball.onTable() && ball !== this.cueball
+      )[0]
+
+      // if there is a ball still on the table, then first collision must have been lower or equal.
+      if (lowestOnTable) {
+        if (firstCollision?.ballB.id <= lowestOnTable.id) {
+          return false
+        }
+      }
+      return true
+    }
+ 
