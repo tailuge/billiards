@@ -148,7 +148,6 @@ export class Ball {
     b.pos.copy(data.pos)
     b.vel.copy(data?.vel ?? zero)
     b.rvel.copy(data?.rvel ?? zero)
-//    b.state = State.Stationary
     return b
   }
 }
