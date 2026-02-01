@@ -94,9 +94,12 @@ The `update` method will process the `Outcome` array to determine if a foul occu
 ## notes
 
 before writing new tests check that current tests run and pass with changes to nineball.ts . State transition tests must still pass.
+
+
 possible function to determine if first ball hit was legal. Note that this is the state after the shot so we dont know the lowest ball before the shot directly but infer it. The following logic looks about right.
 
-   isLegalFirstContactBall(outcome: Outcome[]) {
+```
+  isLegalFirstContactBall(outcome: Outcome[]) {
       const firstCollision = Outcome.firstCollision(outcome)
       if (!firstCollision) {
         return false
@@ -116,3 +119,4 @@ possible function to determine if first ball hit was legal. Note that this is th
       return true
     }
  
+```
