@@ -2,7 +2,7 @@ import { ChatEvent } from "../events/chatevent"
 import { BeginEvent, Controller } from "./controller"
 import { Init } from "./init"
 import { Container } from "../container/container"
-import { MatchResult } from "../model/matchresult"
+import { MatchResult } from "../network/client/matchresult"
 
 export class End extends Controller {
   private result?: MatchResult

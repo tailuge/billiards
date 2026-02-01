@@ -1,5 +1,5 @@
 // src/network/client/scorereporter.ts
-import { MatchResult } from "../../model/matchresult"
+import { MatchResult } from "./matchresult"
 
 export class ScoreReporter {
   private baseURL: string
@@ -12,6 +12,17 @@ export class ScoreReporter {
 
   async submitMatchResult(result: MatchResult): Promise<void> {
     const url = `https://${this.baseURL}/api/match-results`
+    
+    // Ensure mandatory fields are present
+    if (!result.id) {
+      result.id = "0"
+    }
+    if (!result.timestamp) {
+      result.timestamp = Date.now()
+    }
+
+    console.log("Submitting match result payload:", JSON.stringify(result, null, 2))
+
     try {
       const response = await fetch(url, {
         method: "POST",

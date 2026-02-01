@@ -18,7 +18,7 @@ import { PlaceBallEvent } from "../../events/placeballevent"
 import { zero } from "../../utils/utils"
 import { SnookerUtils } from "./snookerutils"
 import { StartAimEvent } from "../../events/startaimevent"
-import { MatchResult } from "../../model/matchresult"
+import { MatchResult } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
 
 export class Snooker implements Rules {
@@ -264,11 +264,13 @@ export class Snooker implements Rules {
       this.container.recorder.wholeGameLink()
       const session = Session.getInstance()
       const result: MatchResult = {
+        id: "0",
         winner: session.playername,
         loser: session.opponentName || "Player 2",
         winnerScore: this.score + this.currentBreak,
         loserScore: 0, // We don't track opponent score easily here yet
         gameType: this.rulename,
+        timestamp: Date.now(),
       }
       return new End(this.container, result)
     }

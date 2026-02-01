@@ -18,7 +18,7 @@ import { R } from "../../model/physics/constants"
 import { Respot } from "../../utils/respot"
 import { TableGeometry } from "../../view/tablegeometry"
 import { StartAimEvent } from "../../events/startaimevent"
-import { MatchResult } from "../../model/matchresult"
+import { MatchResult } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
 
 export class NineBall implements Rules {
@@ -94,11 +94,13 @@ export class NineBall implements Rules {
         this.container.recorder.wholeGameLink()
         const session = Session.getInstance()
         const result: MatchResult = {
+          id: "0",
           winner: session.playername,
           loser: session.opponentName || "Player 2",
           winnerScore: 1,
           loserScore: 0,
           gameType: this.rulename,
+          timestamp: Date.now(),
         }
         return new End(this.container, result)
       }

@@ -1,6 +1,6 @@
 // test/network/client/scorereporter.spec.ts
 import { ScoreReporter } from "../../../src/network/client/scorereporter"
-import { MatchResult } from "../../../src/model/matchresult"
+import { MatchResult } from "../../../src/network/client/matchresult"
 
 describe("ScoreReporter", () => {
   let mockFetch: jest.Mock
@@ -17,11 +17,13 @@ describe("ScoreReporter", () => {
   })
 
   const sampleMatchResult: MatchResult = {
+    id: "0",
     winner: "player1",
     loser: "player2",
     winnerScore: 9,
     loserScore: 7,
     gameType: "nineball",
+    timestamp: 123456789,
   }
 
   it("should use the default base URL if none is provided", async () => {
