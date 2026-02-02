@@ -150,7 +150,7 @@ describe("Controller", () => {
     const watchShot = new WatchShot(container)
     container.controller = watchShot
     container.table.cueball.setStationary()
-    container.eventQueue.push(new PlaceBallEvent(zero, true))
+    container.eventQueue.push(new PlaceBallEvent(zero))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlaceBall)
     done()
@@ -304,7 +304,7 @@ describe("Controller", () => {
     container.eventQueue.push(new BreakEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
-    container.eventQueue.push(new PlaceBallEvent(zero, true))
+    container.eventQueue.push(new PlaceBallEvent(zero))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
     container.inputQueue.push(new Input(0.1, "ArrowLeft"))

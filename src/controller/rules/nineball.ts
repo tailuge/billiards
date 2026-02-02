@@ -80,14 +80,19 @@ export class NineBall implements Rules {
       this.startTurn()
       const pots = Outcome.pots(outcome)
       const nineBallPotted = pots.some((b) => b.label === 9)
+      let respotData
       if (nineBallPotted) {
         this.respotNineBall()
+        const nineBall = this.container.table.balls.find((b) => b.label === 9)
+        if (nineBall) {
+          respotData = { id: 9, pos: nineBall.pos }
+        }
       }
 
       if (this.container.isSinglePlayer) {
         return new PlaceBall(this.container)
       }
-      this.container.sendEvent(new PlaceBallEvent(zero, true))
+      this.container.sendEvent(new PlaceBallEvent(zero, respotData))
       return new WatchAim(this.container)
     }
 

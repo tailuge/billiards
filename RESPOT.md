@@ -81,75 +81,19 @@ Since `table.serialise()` relies on `ball.serialise()`, it only includes positio
 - `Ball.updateFromSerialised` failing to update the state of an existing ball, leaving it in `InPocket` even after being moved back to the table.
 - Analysis of `FourteenOne.ts` confirms it uses the same flawed serialisation for reracking.
 
-## Recommended Fixes (Not Implemented)
-1. **Nine-ball:** Update `NineBall.ts` to send a synchronization event (like `WatchEvent`) with the respotted nine-ball's information.
-2. **Core:** Ensure that when a ball's position is updated from a network event after being in a pocket, its state is also updated to `Stationary`.
+## Resolution (2026-02-02)
 
-### 5. Using PlaceBallEvent for Synchronization
-An alternative "low impact" solution is to extend the `PlaceBallEvent`. Since a `PlaceBallEvent` is already sent after almost every foul (where respots typically occur), it could carry the necessary synchronization data.
+### Nineball Fix
+Implemented the `PlaceBallEvent` strategy:
+- Updated `PlaceBallEvent` to accept an optional `respot` object containing the ID and position of a respotted ball.
+- Updated `NineBall.ts` to include the 9-ball's new position in the `PlaceBallEvent` when it is respotted after a foul.
+- Updated `WatchShot.ts` to handle `PlaceBallEvent` by checking for `respot` data. If present, it updates the ball's position and explicitly sets its state to `Stationary`, fixing the "ghost ball" issue.
 
-#### The `allTable` parameter
-The `PlaceBallEvent` constructor currently takes two arguments: `pos` and `allTable`.
-```typescript
-constructor(pos, allTable)
-```
-- **`pos`**: The initial position for the cue ball placement.
-- **`allTable`**: A boolean flag. Analysis shows that this flag is **currently unused** in the codebase. It is assigned and serialized but never read by any controller or rule logic.
+### Snooker Fix
+Implemented a targeted fix in the `WatchShot` controller to handle existing `WatchEvent`s used by Snooker:
+- Updated `WatchShot.handleWatch` to detect "rerack" events (used by Snooker respot).
+- It now iterates over the balls in the event payload and explicitly sets their state to `Stationary` if they are part of the update. This fixes the "ghost ball" issue for Snooker without needing to change `PlaceBallEvent` usage for non-BIH fouls.
 
-It was likely intended to distinguish between "Ball in hand anywhere" vs "Ball in hand behind the baulk line", but this logic is currently handled by the `Rules` objects (`NineBall.allowsPlaceBall()` etc.).
-
-#### Proposed Extension
-We could repurpose `allTable` or add a new optional field (e.g., `respottedBalls`) to `PlaceBallEvent`. 
-- **Mechanism:** When a foul occurs and balls are respotted, the shooter's machine includes the IDs and new positions of these balls in the `PlaceBallEvent`.
-- **Receiver Logic:** When the opponent's machine handles `PlaceBallEvent`, it updates the positions and **crucially sets the state to `Stationary`** for all balls listed in the event.
-- **Benefit:** This avoids introducing a new event type (`RespotEvent`) and ensures synchronization happens automatically as part of the standard foul transition flow.
-
-## Implementation Plan: PlaceBallEvent Strategy
-
-### 1. Update `PlaceBallEvent` Class
-- **Change Constructor:** Modify the second argument to accept an optional object containing respot details.
-  ```typescript
-  // Old
-  constructor(pos, allTable: boolean)
-  
-  // New
-  constructor(pos, respot?: { id: number, pos: Vector3 })
-  ```
-- **Serialization:** Update `EventUtil` to handle this object structure.
-
-### 2. Update Rule Controllers
-- **NineBall:**
-  ```typescript
-  if (nineBallPotted) {
-    this.respotNineBall();
-    const nineBall = this.container.table.balls.find(b => b.label === 9);
-    // Send cue ball position (zero) AND the 9-ball's new valid position
-    this.container.sendEvent(new PlaceBallEvent(zero, { 
-      id: 9, 
-      pos: nineBall.pos 
-    }));
-  }
-  ```
-
-### 3. Update Receivers
-- **Logic:**
-  ```typescript
-  handlePlaceBall(event: PlaceBallEvent) {
-    if (event.respot) {
-      const ball = this.container.table.balls.find(b => b.id === event.respot.id);
-      if (ball) {
-        ball.pos.copy(event.respot.pos); // Deterministic placement
-        ball.state = State.Stationary;   // Fixes "ghost ball"
-        ball.vel.copy(zero);
-        ball.rvel.copy(zero);
-      }
-    }
-    // ...
-  }
-  ```
-- **Simplicity:** This removes the need for the receiver to know *why* or *how* the ball was respotted (e.g., foot spot logic); it just puts it where it's told.
-
-### 4. Verification
-- **Test:** Update `test/repro_respot_bug.spec.ts` to assert that:
-  1. `PlaceBallEvent` carries the correct ID and Position.
-  2. The receiver updates the ball's position AND state.
+### Verification
+- Added regression tests in `test/rules/nineball.spec.ts` to verify `PlaceBallEvent` payload.
+- Added new test suite `test/controller/watchshot.spec.ts` to verify that `WatchShot` correctly updates ball state for both `PlaceBallEvent` (Nineball) and `WatchEvent` (Snooker).

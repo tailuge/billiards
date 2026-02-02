@@ -46,7 +46,7 @@ describe("EventUtil", () => {
   })
 
   it("Serialise and deserialise PlaceBallEvent", (done) => {
-    const serialised = EventUtil.serialise(new PlaceBallEvent(zero, true))
+    const serialised = EventUtil.serialise(new PlaceBallEvent(zero))
     const deserialised = EventUtil.fromSerialised(serialised)
     expect(deserialised.type).to.equal(EventType.PLACEBALL)
     done()

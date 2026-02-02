@@ -286,7 +286,7 @@ export class Snooker implements Rules {
     if (this.container.isSinglePlayer) {
       return new PlaceBall(this.container)
     }
-    this.container.sendEvent(new PlaceBallEvent(zero, true))
+    this.container.sendEvent(new PlaceBallEvent(zero))
     return new WatchAim(this.container)
   }
 
