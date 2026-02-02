@@ -5,9 +5,9 @@ import { Container } from "../container/container"
 import { MatchResult } from "../network/client/matchresult"
 
 export class End extends Controller {
-  private result?: MatchResult
+  private result?: MatchResult | undefined
 
-  constructor(container: Container, result?: MatchResult) {
+  constructor(container: Container, result?: MatchResult | undefined) {
     super(container)
     this.result = result
   }

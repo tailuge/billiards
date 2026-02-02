@@ -20,7 +20,7 @@
     "coverage": "jest --config ./test/jest.config.js --coverage",
     "dev": "webpack",
     "build": "webpack",
-    "lint": "eslint .",
+    "lint": "tsc --noEmit && eslint .",
     "prettify": "prettier --cache true --write --trailing-comma es5 --no-semi {src,test}/**/*.[jt]s dist/**/*.{css,html} *.[jt]s *.json",
     "markdownlint": "npx markdownlint-cli2 README.md --fix",
     "serve": "webpack serve",
