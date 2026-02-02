@@ -33,12 +33,16 @@ describe("MatchResult Construction", () => {
     )
     const nineball = container.rules as NineBall
     container.table.balls.forEach((b) => {
-      if (b !== container.table.cueball) {
+      if (b !== container.table.cueball && b.label !== 9) {
         b.state = State.InPocket
       }
     })
 
-    const outcome: Outcome[] = [Outcome.pot(container.table.balls[1], 1)]
+    const nineBall = container.table.balls.find(b => b.label === 9)!
+    const outcome: Outcome[] = [
+        Outcome.collision(container.table.cueball, nineBall, 1),
+        Outcome.pot(nineBall, 1)
+    ]
     // Simulate potting the last ball (which in NineBall logic leads to end of game if only cueball remains)
     const endController = nineball.update(outcome) as End
     const result = (endController as any).result as MatchResult
@@ -59,12 +63,16 @@ describe("MatchResult Construction", () => {
     session.opponentName = "TestOpponent"
     const nineball = container.rules as NineBall
     container.table.balls.forEach((b) => {
-      if (b !== container.table.cueball) {
+      if (b !== container.table.cueball && b.label !== 9) {
         b.state = State.InPocket
       }
     })
 
-    const outcome: Outcome[] = [Outcome.pot(container.table.balls[1], 1)]
+    const nineBall = container.table.balls.find(b => b.label === 9)!
+    const outcome: Outcome[] = [
+        Outcome.collision(container.table.cueball, nineBall, 1),
+        Outcome.pot(nineBall, 1)
+    ]
     const endController = nineball.update(outcome) as End
     const result = (endController as any).result as MatchResult
 

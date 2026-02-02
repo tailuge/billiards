@@ -202,6 +202,9 @@ describe("Controller", () => {
     container.controller = new PlayShot(container)
     container.isSinglePlayer = true
     container.table.cueball.setStationary()
+    const ball1 = container.table.balls.find((b) => b.label === 1)!
+    container.table.outcome.push(Outcome.collision(container.table.cueball, ball1, 1))
+    container.table.outcome.push(Outcome.cushion(ball1, 1))
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
@@ -211,8 +214,10 @@ describe("Controller", () => {
   it("StationaryEvent takes active PlayShot to Aim if pot", (done) => {
     container.controller = new PlayShot(container)
     container.table.cueball.setStationary()
+    const ball1 = container.table.balls.find((b) => b.label === 1)!
+    container.table.outcome.push(Outcome.collision(container.table.cueball, ball1, 1))
+    container.table.outcome.push(Outcome.pot(ball1, 1))
     container.eventQueue.push(new StationaryEvent())
-    container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
     done()
@@ -222,8 +227,11 @@ describe("Controller", () => {
     container.controller = new PlayShot(container)
     container.table.balls.forEach((b) => (b.state = State.InPocket))
     container.table.cueball.setStationary()
+    const ball9 = container.table.balls.find((b) => b.label === 9)!
+    ball9.state = State.Stationary
+    container.table.outcome.push(Outcome.collision(container.table.cueball, ball9, 1))
+    container.table.outcome.push(Outcome.pot(ball9, 1))
     container.eventQueue.push(new StationaryEvent())
-    container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
     done()

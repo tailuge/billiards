@@ -10,6 +10,7 @@ import { Aim } from "../../src/controller/aim"
 import { WatchAim } from "../../src/controller/watchaim"
 import { End } from "../../src/controller/end"
 import { Session } from "../../src/network/client/session"
+import { zero } from "../../src/utils/utils"
 
 initDom()
 
@@ -40,11 +41,11 @@ describe("NineBall Rules", () => {
     }
   })
 
-  it("should continue turn if a ball is potted legally (current implementation)", () => {
-    // Current implementation doesn't care which ball is hit first yet
+  it("should continue turn if a ball is potted legally", () => {
+    const ball1 = container.table.balls.find(b => b.label === 1)!
     const outcome = [
-        Outcome.collision(container.table.cueball, container.table.balls[1], 1),
-        Outcome.pot(container.table.balls[1], 1)
+        Outcome.collision(container.table.cueball, ball1, 1),
+        Outcome.pot(ball1, 1)
     ]
     const nextController = nineball.update(outcome)
     expect(nextController).to.be.an.instanceof(Aim)
@@ -72,7 +73,6 @@ describe("NineBall Rules", () => {
   })
 
   it("should detect foul if wrong ball is hit first", () => {
-    const ball1 = container.table.balls.find(b => b.label === 1)!
     const ball2 = container.table.balls.find(b => b.label === 2)!
     const outcome = [
         Outcome.collision(container.table.cueball, ball2, 1)
