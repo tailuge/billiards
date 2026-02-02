@@ -92,6 +92,7 @@ export class NineBall implements Rules {
       if (this.container.isSinglePlayer) {
         return new PlaceBall(this.container)
       }
+      console.log("sending place ball event: ", respotData)
       this.container.sendEvent(new PlaceBallEvent(zero, respotData))
       return new WatchAim(this.container)
     }
