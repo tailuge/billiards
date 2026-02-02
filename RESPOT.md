@@ -85,13 +85,71 @@ Since `table.serialise()` relies on `ball.serialise()`, it only includes positio
 1. **Nine-ball:** Update `NineBall.ts` to send a synchronization event (like `WatchEvent`) with the respotted nine-ball's information.
 2. **Core:** Ensure that when a ball's position is updated from a network event after being in a pocket, its state is also updated to `Stationary`.
 
-## Alternative Solution: RespotEvent
-To minimize serialization data overhead (avoiding adding the `state` field to every ball in common `WatchEvent` payloads), a specialized `RespotEvent` could be introduced.
+### 5. Using PlaceBallEvent for Synchronization
+An alternative "low impact" solution is to extend the `PlaceBallEvent`. Since a `PlaceBallEvent` is already sent after almost every foul (where respots typically occur), it could carry the necessary synchronization data.
 
-### Advantages:
-- **Efficiency:** Only sends data for the specific balls being respotted rather than the entire table or adding fields to all balls.
-- **Explicit State Transition:** The `RespotEvent` handler can explicitly set the ball's state to `Stationary` and its velocity to zero, resolving the "ghost ball" issue without requiring `state` to be included in general serialisation payloads.
+#### The `allTable` parameter
+The `PlaceBallEvent` constructor currently takes two arguments: `pos` and `allTable`.
+```typescript
+constructor(pos, allTable)
+```
+- **`pos`**: The initial position for the cue ball placement.
+- **`allTable`**: A boolean flag. Analysis shows that this flag is **currently unused** in the codebase. It is assigned and serialized but never read by any controller or rule logic.
 
-### Considerations:
-- **Controller Handling:** Controllers (especially `WatchAim` and `WatchShot`) must be updated to handle this new event type and update the table model accordingly.
-- **Playback & Recording:** `src/events/recorder.ts` must be updated to record and playback `RespotEvent`. Since the recorder is used for shot replays and high scores, ensuring these events are captured is critical for visual accuracy during playback. If a ball is missing from the recorder's state because a respot wasn't captured, the replay will diverge from the original game.
+It was likely intended to distinguish between "Ball in hand anywhere" vs "Ball in hand behind the baulk line", but this logic is currently handled by the `Rules` objects (`NineBall.allowsPlaceBall()` etc.).
+
+#### Proposed Extension
+We could repurpose `allTable` or add a new optional field (e.g., `respottedBalls`) to `PlaceBallEvent`. 
+- **Mechanism:** When a foul occurs and balls are respotted, the shooter's machine includes the IDs and new positions of these balls in the `PlaceBallEvent`.
+- **Receiver Logic:** When the opponent's machine handles `PlaceBallEvent`, it updates the positions and **crucially sets the state to `Stationary`** for all balls listed in the event.
+- **Benefit:** This avoids introducing a new event type (`RespotEvent`) and ensures synchronization happens automatically as part of the standard foul transition flow.
+
+## Implementation Plan: PlaceBallEvent Strategy
+
+### 1. Update `PlaceBallEvent` Class
+- **Change Constructor:** Modify the second argument to accept an optional object containing respot details.
+  ```typescript
+  // Old
+  constructor(pos, allTable: boolean)
+  
+  // New
+  constructor(pos, respot?: { id: number, pos: Vector3 })
+  ```
+- **Serialization:** Update `EventUtil` to handle this object structure.
+
+### 2. Update Rule Controllers
+- **NineBall:**
+  ```typescript
+  if (nineBallPotted) {
+    this.respotNineBall();
+    const nineBall = this.container.table.balls.find(b => b.label === 9);
+    // Send cue ball position (zero) AND the 9-ball's new valid position
+    this.container.sendEvent(new PlaceBallEvent(zero, { 
+      id: 9, 
+      pos: nineBall.pos 
+    }));
+  }
+  ```
+
+### 3. Update Receivers
+- **Logic:**
+  ```typescript
+  handlePlaceBall(event: PlaceBallEvent) {
+    if (event.respot) {
+      const ball = this.container.table.balls.find(b => b.id === event.respot.id);
+      if (ball) {
+        ball.pos.copy(event.respot.pos); // Deterministic placement
+        ball.state = State.Stationary;   // Fixes "ghost ball"
+        ball.vel.copy(zero);
+        ball.rvel.copy(zero);
+      }
+    }
+    // ...
+  }
+  ```
+- **Simplicity:** This removes the need for the receiver to know *why* or *how* the ball was respotted (e.g., foot spot logic); it just puts it where it's told.
+
+### 4. Verification
+- **Test:** Update `test/repro_respot_bug.spec.ts` to assert that:
+  1. `PlaceBallEvent` carries the correct ID and Position.
+  2. The receiver updates the ball's position AND state.
