@@ -21,7 +21,9 @@ export class PlaceBallEvent extends GameEvent {
   }
 
   static fromJson(json) {
-    const respot = json.respot ? { id: json.respot.id, pos: vec(json.respot.pos) } : undefined
+    const respot = json.respot
+      ? { id: json.respot.id, pos: vec(json.respot.pos) }
+      : undefined
     return new PlaceBallEvent(vec(json.pos), respot)
   }
   applyToController(controller: Controller) {

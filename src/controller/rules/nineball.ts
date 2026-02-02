@@ -139,7 +139,9 @@ export class NineBall implements Rules {
   }
 
   isEndOfGame(outcome: Outcome[]) {
-    return !this.isFoul(outcome) && Outcome.pots(outcome).some((b) => b.label === 9)
+    return (
+      !this.isFoul(outcome) && Outcome.pots(outcome).some((b) => b.label === 9)
+    )
   }
 
   otherPlayersCueBall(): Ball {

@@ -19,7 +19,7 @@ describe("WatchShot Controller", () => {
     Session.init("test-client", "TestPlayer", "test-table", false)
     container = new Container(
       undefined,
-      (_) => { },
+      (_) => {},
       Assets.localAssets(),
       "nineball"
     )
@@ -34,7 +34,10 @@ describe("WatchShot Controller", () => {
     const watchShot = new WatchShot(container)
 
     const newPos = new Vector3(0, 0, 0)
-    const event = new PlaceBallEvent(new Vector3(10, 0, 0), { id: ball.id, pos: newPos })
+    const event = new PlaceBallEvent(new Vector3(10, 0, 0), {
+      id: ball.id,
+      pos: newPos,
+    })
 
     watchShot.handlePlaceBall(event)
 
@@ -53,7 +56,7 @@ describe("WatchShot Controller", () => {
     const newPos = new Vector3(0, 0, 0)
     const event = new WatchEvent({
       balls: [{ id: ball.id, pos: newPos }],
-      rerack: true
+      rerack: true,
     })
 
     watchShot.handleWatch(event)

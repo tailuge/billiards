@@ -133,7 +133,9 @@ describe("NineBall Rules", () => {
 
     nineball.update(outcome)
 
-    const placeBallEvents = sentEvents.filter((e) => e instanceof PlaceBallEvent)
+    const placeBallEvents = sentEvents.filter(
+      (e) => e instanceof PlaceBallEvent
+    )
     expect(placeBallEvents).to.have.length(1)
     const event = placeBallEvents[0] as PlaceBallEvent
     expect(event.respot).to.not.be.undefined
