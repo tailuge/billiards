@@ -57,13 +57,41 @@ static willCollide(a: Ball, b: Ball, t: number): boolean {
 
 This results in "ghost balls": the opponent might see the ball at the correct position on the table (because the `pos` was updated), but it will not collide with any other balls and will be ignored by game rules.
 
+### 4. FourteenOne: Rerack Inconsistency
+In `src/controller/rules/fourteenone.ts`, the `checkRerack` method sends a `WatchEvent` containing the full table state when a rerack occurs.
+
+```typescript
+// src/controller/rules/fourteenone.ts
+checkRerack(table: Table) {
+  // ...
+  if (onTable.length === 1) {
+    Rack.rerack(onTable[0], table);
+    const state = table.serialise();
+    const rerack = new WatchEvent({ ...state, rerack: true });
+    this.container.sendEvent(rerack);
+    // ...
+  }
+}
+```
+
+Since `table.serialise()` relies on `ball.serialise()`, it only includes positions. Any balls that were previously in a pocket on the opponent's machine will have their positions updated to the new rack, but will retain their `InPocket` state. This makes them "ghost balls" in FourteenOne as well, where they are visible in the new rack but cannot be hit.
+
 ## Evidence
-A reproduction test suite was created in `test/repro_respot_bug.spec.ts` which demonstrates:
-- `NineBall` failing to send a `WatchEvent` on respot.
-- `Ball.serialise` failing to include the `state`.
+...
 - `Ball.updateFromSerialised` failing to update the state of an existing ball, leaving it in `InPocket` even after being moved back to the table.
+- Analysis of `FourteenOne.ts` confirms it uses the same flawed serialisation for reracking.
 
 ## Recommended Fixes (Not Implemented)
-1. **Nine-ball:** Update `NineBall.ts` to send a `WatchEvent` with the respotted nine-ball's state, similar to how Snooker does it.
-2. **Core:** Update `Ball.serialise()` to include `this.state` and `Ball.updateFromSerialised()` to apply it.
-3. **Core:** Ensure `Table.updateFromSerialised()` correctly handles the updated ball states to bring them back "on table".
+1. **Nine-ball:** Update `NineBall.ts` to send a synchronization event (like `WatchEvent`) with the respotted nine-ball's information.
+2. **Core:** Ensure that when a ball's position is updated from a network event after being in a pocket, its state is also updated to `Stationary`.
+
+## Alternative Solution: RespotEvent
+To minimize serialization data overhead (avoiding adding the `state` field to every ball in common `WatchEvent` payloads), a specialized `RespotEvent` could be introduced.
+
+### Advantages:
+- **Efficiency:** Only sends data for the specific balls being respotted rather than the entire table or adding fields to all balls.
+- **Explicit State Transition:** The `RespotEvent` handler can explicitly set the ball's state to `Stationary` and its velocity to zero, resolving the "ghost ball" issue without requiring `state` to be included in general serialisation payloads.
+
+### Considerations:
+- **Controller Handling:** Controllers (especially `WatchAim` and `WatchShot`) must be updated to handle this new event type and update the table model accordingly.
+- **Playback & Recording:** `src/events/recorder.ts` must be updated to record and playback `RespotEvent`. Since the recorder is used for shot replays and high scores, ensuring these events are captured is critical for visual accuracy during playback. If a ball is missing from the recorder's state because a respot wasn't captured, the replay will diverge from the original game.
