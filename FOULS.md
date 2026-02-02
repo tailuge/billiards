@@ -23,19 +23,34 @@ if (this.foulPoints > 0) {
 ## Proposed Solution: Notification System
 
 ### 1. Extend Chat Protocol
-The existing `ChatEvent` and `Chat` view can be used to display foul notifications.
+The existing `ChatEvent` and `Chat` view can be used to display foul and status notifications.
 - **Pros:** Low effort, leverages existing synchronization and UI.
-- **Cons:** Foul messages might get lost in a busy chat; lacks "visual punch" of a dedicated foul indicator.
+- **Cons:** Messages might get lost in a busy chat; lacks "visual punch".
 
 ### 2. Dedicated "Toast" Notifications
 Introduce a new notification mechanism (e.g., `NotificationEvent` or extending `ChatEvent` with a `type` field).
-- **UI Implementation:** A "toaster" style overlay that appears briefly in the center or top of the screen.
-- **Integration:** The `Chat` view or a new `NotificationView` could handle these events.
+- **UI Implementation:** A "toaster" style overlay that appears briefly.
+- **Mobile Friendly:** Should be positioned where it doesn't interfere with touch controls (e.g., top-center) and be legible on small screens.
+- **Integration:** A dedicated `ToastView` or similar to handle these events.
 
-### 3. Implementation Plan
-- **Rule Updates:** Modify `NineBall.ts`, `Snooker.ts`, etc., to push a `ChatEvent` (or new event type) when a foul is detected.
-- **UI Update:** Enhance `src/view/chat.ts` or create a new component to render these as distinct notifications (e.g., using different colors or a temporary overlay).
-- **Network:** Ensure the event is broadcast to the opponent so they know why they are suddenly placing the ball or starting their turn.
+### 3. Game Over & Status Notifications
+The notification system should handle more than just fouls:
+- **Game End:** "You Win!", "Opponent Wins", "Match Over".
+- **Freeform Alerts:** General system messages or game status updates.
+- **In-Game Events:** "Ball Potted!", "Safety Shot", "Maximum Break!".
+
+## UI/UX Guidelines for Notifications
+To ensure the system is helpful without being intrusive:
+- **Location:** Top-center of the viewport is generally best for mobile, keeping the table area relatively clear for aiming and shot execution.
+- **Duration:** 2-3 seconds for minor fouls, slightly longer (5 seconds) for game-over results.
+- **Visuals:** Semitransparent backgrounds to maintain context of the game. Color-coding for different types (e.g., red for fouls, gold for wins, white for general info).
+- **Non-blocking:** Notifications should never block input; they are purely informational overlays.
+
+## Implementation Plan
+- **Rule Updates:** Modify `NineBall.ts`, `Snooker.ts`, etc., to push notifications when significant events occur (fouls, win conditions).
+- **View Update:** Create a `src/view/toast.ts` component to manage the lifecycle (show/fade-out) of these messages.
+- **Network:** Ensure events are broadcast to both players.
+- **Recorder:** Captured by `src/events/recorder.ts` for playback fidelity.
 
 ## Considerations for Recorder
 Like respots, foul notifications should be captured by `src/events/recorder.ts` to ensure that when a game is replayed, the "Foul!" messages appear at the correct moments, making the playback educational and accurate.
