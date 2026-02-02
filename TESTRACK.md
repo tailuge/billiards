@@ -30,8 +30,34 @@ The special test rack will be implemented by modifying the `rack()` method in `s
     - If the `playername` matches the test username, the method will call a new private helper method, e.g., `createTestRack()`, to generate the special ball layout.
     - Otherwise, it will proceed with the standard `Rack.diamond()` call to create the normal nine-ball rack.
 
+
+
 3.  **New `createTestRack()` Method:**
+
     - A new private method, `private createTestRack(): Ball[]`, will be added to `nineball.ts`.
+
     - This method will be responsible for creating and returning an array of `Ball` objects with custom positions for the minimal test setup (cue ball, 1-ball, and 9-ball near a pocket).
 
+
+
 This approach isolates the testing logic, making it available on-demand without affecting the standard gameplay experience for other users.
+
+
+
+## Decision Record: Trigger Mechanism
+
+
+
+**Decision:** Use `Session.playername` detection.
+
+
+
+**Alternatives Considered:**
+
+*   **URL Query Parameter (e.g., `?testrack=true`):** Rejected because it would require threading configuration through `index.ts` -> `Container` -> `Rules`, modifying multiple files.
+
+*   **Username Detection:** Selected because `Session` is already globally accessible in `NineBall.ts`, allowing for a single-file implementation.
+
+
+
+**Safety:** To prevent regular users from accidentally triggering this mode, we will use a distinct username pattern, such as `playtest_9ball`.
