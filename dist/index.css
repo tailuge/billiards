@@ -50,6 +50,30 @@ p {
   right: 3em;
 }
 
+#notificationOverlay {
+  position: absolute;
+  top: 15%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 100;
+}
+
+#notification {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: x-large;
+  color: white;
+  text-align: center;
+  filter: drop-shadow(0.08em 0.08em black);
+  /* background-color: rgba(0, 0, 0, 0.3); */ /* Optional: subtle background */
+  padding: 10px 20px;
+  border-radius: 10px;
+  pointer-events: auto; /* Enable for future interactive elements */
+  max-width: 80%;
+  user-select: none;
+}
+
 .view3d {
   width: 100%;
   height: 83%;
