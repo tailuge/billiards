@@ -38,10 +38,10 @@ describe("MatchResult Construction", () => {
       }
     })
 
-    const nineBall = container.table.balls.find(b => b.label === 9)!
+    const nineBall = container.table.balls.find((b) => b.label === 9)!
     const outcome: Outcome[] = [
-        Outcome.collision(container.table.cueball, nineBall, 1),
-        Outcome.pot(nineBall, 1)
+      Outcome.collision(container.table.cueball, nineBall, 1),
+      Outcome.pot(nineBall, 1),
     ]
     // Simulate potting the last ball (which in NineBall logic leads to end of game if only cueball remains)
     const endController = nineball.update(outcome) as End
@@ -68,10 +68,10 @@ describe("MatchResult Construction", () => {
       }
     })
 
-    const nineBall = container.table.balls.find(b => b.label === 9)!
+    const nineBall = container.table.balls.find((b) => b.label === 9)!
     const outcome: Outcome[] = [
-        Outcome.collision(container.table.cueball, nineBall, 1),
-        Outcome.pot(nineBall, 1)
+      Outcome.collision(container.table.cueball, nineBall, 1),
+      Outcome.pot(nineBall, 1),
     ]
     const endController = nineball.update(outcome) as End
     const result = (endController as any).result as MatchResult

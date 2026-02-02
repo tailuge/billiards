@@ -203,7 +203,9 @@ describe("Controller", () => {
     container.isSinglePlayer = true
     container.table.cueball.setStationary()
     const ball1 = container.table.balls.find((b) => b.label === 1)!
-    container.table.outcome.push(Outcome.collision(container.table.cueball, ball1, 1))
+    container.table.outcome.push(
+      Outcome.collision(container.table.cueball, ball1, 1)
+    )
     container.table.outcome.push(Outcome.cushion(ball1, 1))
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
@@ -215,7 +217,9 @@ describe("Controller", () => {
     container.controller = new PlayShot(container)
     container.table.cueball.setStationary()
     const ball1 = container.table.balls.find((b) => b.label === 1)!
-    container.table.outcome.push(Outcome.collision(container.table.cueball, ball1, 1))
+    container.table.outcome.push(
+      Outcome.collision(container.table.cueball, ball1, 1)
+    )
     container.table.outcome.push(Outcome.pot(ball1, 1))
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
@@ -229,7 +233,9 @@ describe("Controller", () => {
     container.table.cueball.setStationary()
     const ball9 = container.table.balls.find((b) => b.label === 9)!
     ball9.state = State.Stationary
-    container.table.outcome.push(Outcome.collision(container.table.cueball, ball9, 1))
+    container.table.outcome.push(
+      Outcome.collision(container.table.cueball, ball9, 1)
+    )
     container.table.outcome.push(Outcome.pot(ball9, 1))
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()

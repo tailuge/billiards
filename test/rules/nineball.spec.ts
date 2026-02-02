@@ -10,7 +10,6 @@ import { Aim } from "../../src/controller/aim"
 import { WatchAim } from "../../src/controller/watchaim"
 import { End } from "../../src/controller/end"
 import { Session } from "../../src/network/client/session"
-import { zero } from "../../src/utils/utils"
 
 initDom()
 
@@ -21,7 +20,12 @@ describe("NineBall Rules", () => {
   beforeEach(() => {
     Ball.id = 0
     Session.init("test-client", "TestPlayer", "test-table", false)
-    container = new Container(undefined, (_) => {}, Assets.localAssets(), "nineball")
+    container = new Container(
+      undefined,
+      (_) => {},
+      Assets.localAssets(),
+      "nineball"
+    )
     nineball = container.rules as NineBall
   })
 
@@ -33,7 +37,7 @@ describe("NineBall Rules", () => {
   it("should detect cue ball potted as foul", () => {
     const outcome = [Outcome.pot(container.table.cueball, 1)]
     const nextController = nineball.update(outcome)
-    
+
     if (container.isSinglePlayer) {
       expect(nextController).to.be.an.instanceof(PlaceBall)
     } else {
@@ -42,25 +46,25 @@ describe("NineBall Rules", () => {
   })
 
   it("should continue turn if a ball is potted legally", () => {
-    const ball1 = container.table.balls.find(b => b.label === 1)!
+    const ball1 = container.table.balls.find((b) => b.label === 1)!
     const outcome = [
-        Outcome.collision(container.table.cueball, ball1, 1),
-        Outcome.pot(ball1, 1)
+      Outcome.collision(container.table.cueball, ball1, 1),
+      Outcome.pot(ball1, 1),
     ]
     const nextController = nineball.update(outcome)
     expect(nextController).to.be.an.instanceof(Aim)
   })
 
   it("should end game if 9-ball is potted legally", () => {
-    container.table.balls.forEach(b => {
-        if (b !== container.table.cueball && b.label !== 9) {
-            b.state = State.InPocket
-        }
+    container.table.balls.forEach((b) => {
+      if (b !== container.table.cueball && b.label !== 9) {
+        b.state = State.InPocket
+      }
     })
-    const nineBall = container.table.balls.find(b => b.label === 9)!
+    const nineBall = container.table.balls.find((b) => b.label === 9)!
     const outcome = [
-        Outcome.collision(container.table.cueball, nineBall, 1),
-        Outcome.pot(nineBall, 1)
+      Outcome.collision(container.table.cueball, nineBall, 1),
+      Outcome.pot(nineBall, 1),
     ]
     const nextController = nineball.update(outcome)
     expect(nextController).to.be.an.instanceof(End)
@@ -73,45 +77,41 @@ describe("NineBall Rules", () => {
   })
 
   it("should detect foul if wrong ball is hit first", () => {
-    const ball2 = container.table.balls.find(b => b.label === 2)!
-    const outcome = [
-        Outcome.collision(container.table.cueball, ball2, 1)
-    ]
+    const ball2 = container.table.balls.find((b) => b.label === 2)!
+    const outcome = [Outcome.collision(container.table.cueball, ball2, 1)]
     const nextController = nineball.update(outcome)
     expect(nextController).to.be.an.instanceof(PlaceBall)
   })
 
   it("should detect foul if no cushion is hit after contact and no ball potted", () => {
-    const ball1 = container.table.balls.find(b => b.label === 1)!
-    const outcome = [
-        Outcome.collision(container.table.cueball, ball1, 1)
-    ]
+    const ball1 = container.table.balls.find((b) => b.label === 1)!
+    const outcome = [Outcome.collision(container.table.cueball, ball1, 1)]
     const nextController = nineball.update(outcome)
     expect(nextController).to.be.an.instanceof(PlaceBall)
   })
 
   it("should be legal if cushion is hit after contact", () => {
-    const ball1 = container.table.balls.find(b => b.label === 1)!
+    const ball1 = container.table.balls.find((b) => b.label === 1)!
     const outcome = [
-        Outcome.collision(container.table.cueball, ball1, 1),
-        Outcome.cushion(ball1, 1)
+      Outcome.collision(container.table.cueball, ball1, 1),
+      Outcome.cushion(ball1, 1),
     ]
     const nextController = nineball.update(outcome)
     expect(nextController).to.be.an.instanceof(Aim)
   })
 
   it("should respot 9-ball if potted on foul", () => {
-    const nineBall = container.table.balls.find(b => b.label === 9)!
+    const nineBall = container.table.balls.find((b) => b.label === 9)!
     const outcome = [
-        Outcome.pot(container.table.cueball, 1),
-        Outcome.pot(nineBall, 1)
+      Outcome.pot(container.table.cueball, 1),
+      Outcome.pot(nineBall, 1),
     ]
-    
+
     // Before: 9-ball is on table (in this test we just care it's not InPocket)
     nineBall.state = State.Stationary
-    
+
     nineball.update(outcome)
-    
+
     // After: 9-ball should be Stationary (respotted)
     expect(nineBall.state).to.equal(State.Stationary)
   })
