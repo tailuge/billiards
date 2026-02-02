@@ -77,11 +77,14 @@ export class NineBall implements Rules {
     const foul = this.isFoul(outcome)
 
     if (foul) {
+      console.log("nineball foul ")
       this.startTurn()
       const pots = Outcome.pots(outcome)
       const nineBallPotted = pots.some((b) => b.label === 9)
+      console.log("is nineball potted", nineBallPotted)
       let respotData
       if (nineBallPotted) {
+        console.log("respotting nineball")
         this.respotNineBall()
         const nineBall = this.container.table.balls.find((b) => b.label === 9)
         if (nineBall) {
@@ -96,7 +99,7 @@ export class NineBall implements Rules {
       this.container.sendEvent(new PlaceBallEvent(zero, respotData))
       return new WatchAim(this.container)
     }
-
+    console.log("not a foul")
     if (Outcome.potCount(outcome) > 0) {
       const pots = Outcome.potCount(outcome)
       this.currentBreak += pots
