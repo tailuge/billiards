@@ -26,6 +26,10 @@ export class FourteenOne extends NineBall implements Rules {
     return super.update(outcome)
   }
 
+  protected override isFoul(outcome: Outcome[]): boolean {
+    return Outcome.isCueBallPotted(this.container.table.cueball, outcome)
+  }
+
   checkRerack(table: Table) {
     const onTable = table.balls
       .filter((b) => b.onTable())

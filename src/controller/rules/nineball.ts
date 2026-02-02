@@ -8,7 +8,7 @@ import { ChatEvent } from "../../events/chatevent"
 import { PlaceBallEvent } from "../../events/placeballevent"
 import { WatchEvent } from "../../events/watchevent"
 import { Ball } from "../../model/ball"
-import { Outcome } from "../../model/outcome"
+import { Outcome, OutcomeType } from "../../model/outcome"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
 import { zero } from "../../utils/utils"
@@ -40,15 +40,14 @@ export class NineBall implements Rules {
   }
 
   nextCandidateBall() {
-    return Respot.closest(
-      this.container.table.cueball,
-      this.container.table.balls
-    )
+    return this.container.table.balls
+      .filter((b) => b !== this.cueball && b.onTable())
+      .sort((a, b) => (a.label || 0) - (b.label || 0))[0]
   }
 
   placeBall(target?): Vector3 {
     if (target) {
-      const max = new Vector3(-TableGeometry.X / 2, TableGeometry.tableY)
+      const max = new Vector3(TableGeometry.tableX, TableGeometry.tableY)
       const min = new Vector3(-TableGeometry.tableX, -TableGeometry.tableY)
       return target.clamp(min, max)
     }
@@ -75,16 +74,24 @@ export class NineBall implements Rules {
 
   update(outcome: Outcome[]): Controller {
     const table = this.container.table
-    // if white potted switch to other player
-    if (Outcome.isCueBallPotted(table.cueball, outcome)) {
+    const foul = this.isFoul(outcome)
+
+    if (foul) {
       this.startTurn()
+      const pots = Outcome.pots(outcome)
+      const nineBallPotted = pots.some((b) => b.label === 9)
+      if (nineBallPotted) {
+        this.respotNineBall()
+      }
+
       if (this.container.isSinglePlayer) {
         return new PlaceBall(this.container)
       }
       this.container.sendEvent(new PlaceBallEvent(zero, true))
       return new WatchAim(this.container)
     }
-    if (Outcome.isBallPottedNoFoul(table.cueball, outcome)) {
+
+    if (Outcome.potCount(outcome) > 0) {
       const pots = Outcome.potCount(outcome)
       this.currentBreak += pots
       this.score += pots
@@ -107,6 +114,7 @@ export class NineBall implements Rules {
       this.container.sendEvent(new WatchEvent(table.serialise()))
       return new Aim(this.container)
     }
+
     // if no pot and no foul switch to other player
     this.container.sendEvent(new StartAimEvent())
     if (this.container.isSinglePlayer) {
@@ -121,14 +129,8 @@ export class NineBall implements Rules {
     return Outcome.isBallPottedNoFoul(this.container.table.cueball, outcome)
   }
 
-  isEndOfGame(_: Outcome[]) {
-    const onTable = this.container.table.balls.filter((ball) => ball.onTable())
-    console.log(
-      "isEndOfGame onTable",
-      onTable.length,
-      onTable.map((b) => b.state)
-    )
-    return onTable.length === 1 && onTable[0] === this.cueball
+  isEndOfGame(outcome: Outcome[]) {
+    return Outcome.pots(outcome).some((b) => b.label === 9)
   }
 
   otherPlayersCueBall(): Ball {
@@ -142,5 +144,56 @@ export class NineBall implements Rules {
 
   allowsPlaceBall() {
     return true
+  }
+
+  protected isFoul(outcome: Outcome[]): boolean {
+    const table = this.container.table
+    const cueball = table.cueball
+
+    // 1. Cue ball potted
+    if (Outcome.isCueBallPotted(cueball, outcome)) {
+      return true
+    }
+
+    // 2. Wrong ball hit first
+    const lowestBall = this.getLowestBallAtStartOfShot(outcome)
+    const firstCollision = Outcome.firstCollision(
+      Outcome.cueBallFirst(cueball, outcome)
+    )
+
+    if (!firstCollision) {
+      return true // No ball hit
+    }
+
+    if (firstCollision.ballB !== lowestBall) {
+      return true // Wrong ball hit first
+    }
+
+    // 3. No cushion after contact
+    if (Outcome.potCount(outcome) === 0) {
+      // Find cushions after first collision
+      const firstCollisionIndex = outcome.indexOf(firstCollision)
+      const cushionsAfter = outcome
+        .slice(firstCollisionIndex + 1)
+        .some((o) => o.type === OutcomeType.Cushion)
+      if (!cushionsAfter) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  protected getLowestBallAtStartOfShot(outcome: Outcome[]): Ball | undefined {
+    const potted = Outcome.pots(outcome)
+    const onTable = this.container.table.balls.filter(
+      (b) => b !== this.cueball && b.onTable()
+    )
+    const all = [...potted, ...onTable]
+    return all.sort((a, b) => (a.label || 0) - (b.label || 0))[0]
+  }
+
+  private respotNineBall() {
+    Respot.nineBall(this.container.table)
   }
 }
