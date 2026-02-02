@@ -10,8 +10,8 @@ export class Respot {
     const nineBall = table.balls.find((b) => b.id === 9)
     if (!nineBall) return
 
+    nineBall.state = State.Stationary
     const footSpot = new Vector3(TableGeometry.tableX / 2, 0, 0)
-
     Respot.respotBehind(footSpot, nineBall, table)
   }
 
