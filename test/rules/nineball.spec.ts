@@ -146,4 +146,23 @@ describe("NineBall Rules", () => {
     const nextController = nineball.update(outcome)
     expect(nextController).to.be.an.instanceof(WatchAim)
   })
+
+  it("should not end game if 9-ball is potted on foul", () => {
+    const nineBall = container.table.balls.find((b) => b.label === 9)!
+    const outcome = [
+      Outcome.pot(container.table.cueball, 1),
+      Outcome.pot(nineBall, 1),
+    ]
+    expect(nineball.isEndOfGame(outcome)).to.be.false
+  })
+
+  it("should end game if 9-ball is potted legally (isEndOfGame check)", () => {
+    const ball1 = container.table.balls.find((b) => b.label === 1)!
+    const nineBall = container.table.balls.find((b) => b.label === 9)!
+    const outcome = [
+      Outcome.collision(container.table.cueball, ball1, 1),
+      Outcome.pot(nineBall, 1),
+    ]
+    expect(nineball.isEndOfGame(outcome)).to.be.true
+  })
 })
