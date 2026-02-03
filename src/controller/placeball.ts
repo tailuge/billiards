@@ -95,8 +95,6 @@ export class PlaceBall extends ControllerBase {
     this.container.sendEvent(
       new BreakEvent(this.container.table.shortSerialise())
     )
-    const table = this.container.table
-    table.cue.aimAtNext(table.cueball, this.container.rules.nextCandidateBall())
     return new Aim(this.container)
   }
 }
