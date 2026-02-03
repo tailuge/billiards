@@ -74,11 +74,11 @@ export class NineBall implements Rules {
 
   update(outcome: Outcome[]): Controller {
     const table = this.container.table
-    const foul = this.isFoul(outcome)
+    const reason = this.foulReason(outcome)
 
-    if (foul) {
-      console.log("nineball foul ")
-      this.container.notify("Foul!")
+    if (reason) {
+      console.log("nineball foul ", reason)
+      this.container.notify(`Foul! ${reason}. Ball in hand.`)
       this.startTurn()
       const pots = Outcome.pots(outcome)
       const nineBallPotted = pots.some((b) => b.label === 9)
@@ -107,6 +107,7 @@ export class NineBall implements Rules {
       this.score += pots
       this.container.sound.playSuccess(table.inPockets())
       if (this.isEndOfGame(outcome)) {
+        this.container.notify("Game Over!")
         this.container.eventQueue.push(new ChatEvent(null, `game over`))
         this.container.recorder.wholeGameLink()
         const session = Session.getInstance()
@@ -159,12 +160,16 @@ export class NineBall implements Rules {
   }
 
   protected isFoul(outcome: Outcome[]): boolean {
+    return this.foulReason(outcome) !== null
+  }
+
+  protected foulReason(outcome: Outcome[]): string | null {
     const table = this.container.table
     const cueball = table.cueball
 
     // 1. Cue ball potted
     if (Outcome.isCueBallPotted(cueball, outcome)) {
-      return true
+      return "Cue ball potted"
     }
 
     // 2. Wrong ball hit first
@@ -174,11 +179,11 @@ export class NineBall implements Rules {
     )
 
     if (!firstCollision) {
-      return true // No ball hit
+      return "No ball hit"
     }
 
     if (firstCollision.ballB !== lowestBall) {
-      return true // Wrong ball hit first
+      return "Wrong ball hit first"
     }
 
     // 3. No cushion after contact
@@ -189,11 +194,11 @@ export class NineBall implements Rules {
         .slice(firstCollisionIndex + 1)
         .some((o) => o.type === OutcomeType.Cushion)
       if (!cushionsAfter) {
-        return true
+        return "No cushion after contact"
       }
     }
 
-    return false
+    return null
   }
 
   protected getLowestBallAtStartOfShot(outcome: Outcome[]): Ball | undefined {

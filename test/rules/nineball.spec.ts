@@ -168,10 +168,55 @@ describe("NineBall Rules", () => {
     expect(nineball.isEndOfGame(outcome)).to.be.true
   })
 
-  it("should trigger Foul notification on foul", () => {
+  it("should trigger specific foul notification on cue ball potted", () => {
     const notifySpy = jest.spyOn(container, "notify")
     const outcome = [Outcome.pot(container.table.cueball, 1)]
     nineball.update(outcome)
-    expect(notifySpy.mock.calls[0]).to.deep.equal(["Foul!"])
+    expect(notifySpy.mock.calls[0][0]).to.equal(
+      "Foul! Cue ball potted. Ball in hand."
+    )
+  })
+
+  it("should trigger specific foul notification on no ball hit", () => {
+    const notifySpy = jest.spyOn(container, "notify")
+    const outcome: Outcome[] = []
+    nineball.update(outcome)
+    expect(notifySpy.mock.calls[0][0]).to.equal("Foul! No ball hit. Ball in hand.")
+  })
+
+  it("should trigger specific foul notification on wrong ball hit first", () => {
+    const notifySpy = jest.spyOn(container, "notify")
+    const ball2 = container.table.balls.find((b) => b.label === 2)!
+    const outcome = [Outcome.collision(container.table.cueball, ball2, 1)]
+    nineball.update(outcome)
+    expect(notifySpy.mock.calls[0][0]).to.equal(
+      "Foul! Wrong ball hit first. Ball in hand."
+    )
+  })
+
+  it("should trigger specific foul notification on no cushion after contact", () => {
+    const notifySpy = jest.spyOn(container, "notify")
+    const ball1 = container.table.balls.find((b) => b.label === 1)!
+    const outcome = [Outcome.collision(container.table.cueball, ball1, 1)]
+    nineball.update(outcome)
+    expect(notifySpy.mock.calls[0][0]).to.equal(
+      "Foul! No cushion after contact. Ball in hand."
+    )
+  })
+
+  it("should trigger game over notification", () => {
+    const notifySpy = jest.spyOn(container, "notify")
+    container.table.balls.forEach((b) => {
+      if (b !== container.table.cueball && b.label !== 9) {
+        b.state = State.InPocket
+      }
+    })
+    const nineBall = container.table.balls.find((b) => b.label === 9)!
+    const outcome = [
+      Outcome.collision(container.table.cueball, nineBall, 1),
+      Outcome.pot(nineBall, 1),
+    ]
+    nineball.update(outcome)
+    expect(notifySpy.mock.calls).to.deep.include(["Game Over!"])
   })
 })

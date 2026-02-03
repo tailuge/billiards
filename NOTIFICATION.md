@@ -60,20 +60,18 @@ The implementation is divided into three sequential phases.
    - Implement logic to broadcast `NotificationEvent` via the `MessageRelay` when a persistent notification is required for both players.
    - Update `Controller` handlers to process incoming `NotificationEvent`s and call the view layer.
 
-### Phase 3: Game Logic Integration (IN PROGRESS)
+### Phase 3: Game Logic Integration (COMPLETED)
 **Goal**: Connect the notification system to the rules engine and game flow.
 
-1. **Rules Engine Integration (`src/controller/rules/`)** (In Progress)
+1. **Rules Engine Integration (`src/controller/rules/`)** (Done)
    - [x] Implement "Foul!" notification in `NineBall` using `container.notify()`.
-   - Update the `Rules` interface to allow returning or triggering notification messages during `update()`.
-   - Implement specific foul messages in `NineBall`, `Snooker`, etc. (e.g., "Foul! Wrong ball hit").
-
-2. **Turn Transitions**
-   - Trigger "Your Turn" / "Opponent's Turn" notifications during transitions in `src/controller/init.ts` and `src/controller/playshot.ts`.
-
-3. **Validation & Testing**
+   - [x] Rework the foul method so that the reason for the foul can be notified.
+   - [x] Implement specific foul messages in `NineBall`,(e.g., "Foul! Wrong ball hit").
+   - [x] Notification will show FOUL, reason, and ball in hand status. 
+   - [x] Add a 'Game Over' notification with win/lose depending on potting the 9.
+2. **Validation & Testing** (Done)
    - [x] Unit tests for `NineBall` foul notification.
-   - Integration tests in `nineball.spec.ts` to verify fouls trigger the correct notification strings.
+   - [x] Integration tests in `nineball.spec.ts` to verify fouls trigger the correct notification strings.
 
 ---
 
