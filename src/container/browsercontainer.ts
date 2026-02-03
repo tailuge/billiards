@@ -146,7 +146,7 @@ export class BrowserContainer {
   setReplayLink() {
     const url = window.location.href.split("?")[0]
     const prefix = `${url}?ruletype=${this.ruletype}&state=`
-    this.container.recorder.replayUrl = prefix
+    this.container.linkFormatter.replayUrl = prefix
   }
 
   startReplay(replay) {

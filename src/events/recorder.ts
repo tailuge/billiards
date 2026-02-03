@@ -1,23 +1,23 @@
 import { Container } from "../container/container"
 import { Outcome } from "../model/outcome"
-import { ChatEvent } from "./chatevent"
 import { EventType } from "./eventtype"
 import { HitEvent } from "./hitevent"
-import JSONCrush from "jsoncrush"
 import { RerackEvent } from "./rerackevent"
 import { GameEvent } from "./gameevent"
+import { LinkFormatter } from "../view/link-formatter"
+import { ReplayEncoder } from "../utils/replay-encoder"
 
 export class Recorder {
   container: Container
+  linkFormatter: LinkFormatter
   shots: GameEvent[] = []
   states: number[][] = []
   start = Date.now()
   breakStart: number | undefined
   breakStartTime
-  replayUrl
-  hiScoreUrl = "https://scoreboard-tailuge.vercel.app/hiscore.html"
-  constructor(container: Container) {
+  constructor(container: Container, linkFormatter: LinkFormatter) {
     this.container = container
+    this.linkFormatter = linkFormatter
   }
 
   record(event) {
@@ -36,7 +36,7 @@ export class Recorder {
   }
 
   wholeGame() {
-    return this.state(
+    return ReplayEncoder.createState(
       this.states[0],
       this.shots,
       this.start,
@@ -55,12 +55,12 @@ export class Recorder {
 
   lastShot() {
     const last = this.last()
-    return this.state(this.states[last], [this.shots[last]])
+    return ReplayEncoder.createState(this.states[last], [this.shots[last]])
   }
 
   currentBreak() {
     if (this.breakStart !== undefined) {
-      return this.state(
+      return ReplayEncoder.createState(
         this.states[this.breakStart],
         this.shots.slice(this.breakStart),
         this.breakStartTime,
@@ -70,21 +70,11 @@ export class Recorder {
     return undefined
   }
 
-  private state(init, events, start = 0, score = 0, wholeGame = false) {
-    return {
-      init: init,
-      shots: events,
-      start: start,
-      now: Date.now(),
-      score: score,
-      wholeGame: wholeGame,
-      v: 1,
-    }
-  }
-
-  updateBreak(outcome: Outcome[]) {
-    const isPartOfBreak = this.container.rules.isPartOfBreak(outcome)
-    const isEndOfGame = this.container.rules.isEndOfGame(outcome)
+  updateBreak(
+    outcome: Outcome[],
+    isPartOfBreak: boolean,
+    isEndOfGame: boolean
+  ) {
     const potCount = Outcome.potCount(outcome)
     if (!isPartOfBreak) {
       this.breakLink(isEndOfGame)
@@ -112,18 +102,12 @@ export class Recorder {
   }
 
   lastShotLink(isPartOfBreak, potCount, balls) {
-    const pots = potCount > 1 ? potCount - 1 : 0
-
-    let colourString = "#000000"
-    if (balls.length > 0) {
-      balls.forEach((element) => {
-        colourString = "#" + element.ballmesh.color.getHexString()
-      })
-    }
-
-    const shotIcon = "⚈".repeat(pots) + (isPartOfBreak ? "⚈" : "⚆")
-    const serialisedShot = JSON.stringify(this.lastShot())
-    this.generateLink(shotIcon, serialisedShot, colourString)
+    this.linkFormatter.lastShotLink(
+      isPartOfBreak,
+      potCount,
+      balls,
+      this.lastShot()
+    )
   }
 
   breakLink(includeLastShot) {
@@ -131,58 +115,16 @@ export class Recorder {
     if (!currentBreak) {
       return
     }
-    if (!includeLastShot) {
-      currentBreak.shots.pop()
-    }
-    if (currentBreak.shots.length === 1) {
-      return
-    }
+
     const breakScore =
       this.container.rules.currentBreak === 0
         ? this.container.rules.previousBreak
         : this.container.rules.currentBreak
-    currentBreak.score = breakScore
-    const text = `break(${breakScore})`
-    const serialisedShot = JSON.stringify(currentBreak)
-    const compressed = JSONCrush.crush(serialisedShot)
-    this.generateLink(text, compressed, "black")
-    if (breakScore >= 2) {
-      this.generateHiScoreLink(compressed)
-    }
+
+    this.linkFormatter.breakLink(currentBreak, breakScore, includeLastShot)
   }
 
   wholeGameLink() {
-    const game = this.wholeGame()
-    const text = `frame(${this.shotCount(game.shots)} shots)`
-    const serialisedGame = JSON.stringify(game)
-    const compressed = JSONCrush.crush(serialisedGame)
-    this.generateLink(text, compressed, "black")
-  }
-
-  shotCount(shots) {
-    return shots.filter((shot) => shot.type !== "RERACK").length
-  }
-
-  private generateLink(text, state, colour) {
-    const shotUri = `${this.replayUrl}${this.fullyEncodeURI(state)}`
-    const shotLink = `<a class="pill" style="color: ${colour}" target="_blank" href="${shotUri}">${text}</a>`
-    this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
-  }
-
-  private generateHiScoreLink(state) {
-    const text = "hi score 🏆"
-    const shotUri = `${this.hiScoreUrl}?ruletype=${
-      this.container.rules.rulename
-    }&state=${this.fullyEncodeURI(state)}`
-    const shotLink = `<a class="pill" target="_blank" href="${shotUri}">${text}</a>`
-    this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
-  }
-
-  private fullyEncodeURI(uri) {
-    return encodeURIComponent(uri)
-      .replace(/\(/g, "%28")
-      .replace(/\)/g, "%29")
-      .replace(/!/g, "%21")
-      .replace(/\*/g, "%2A")
+    this.linkFormatter.wholeGameLink(this.wholeGame())
   }
 }

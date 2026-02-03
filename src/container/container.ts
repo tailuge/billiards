@@ -14,6 +14,7 @@ import { ChatEvent } from "../events/chatevent"
 import { Throttle } from "../events/throttle"
 import { Sliders } from "../view/sliders"
 import { Recorder } from "../events/recorder"
+import { LinkFormatter } from "../view/link-formatter"
 import { Rules } from "../controller/rules/rules"
 import { RuleFactory } from "../controller/rules/rulefactory"
 import { Menu } from "../view/menu"
@@ -39,6 +40,7 @@ export class Container {
   chat: Chat
   sliders: Sliders
   recorder: Recorder
+  linkFormatter: LinkFormatter
   id: string = ""
   isSinglePlayer: boolean = true
   rules: Rules
@@ -75,7 +77,8 @@ export class Container {
     this.sound = assets.sound
     this.chat = new Chat(this.sendChat)
     this.sliders = new Sliders()
-    this.recorder = new Recorder(this)
+    this.linkFormatter = new LinkFormatter(this)
+    this.recorder = new Recorder(this, this.linkFormatter)
     this.id = id
     this.menu = new Menu(this)
     this.table.addToScene(this.view.scene)

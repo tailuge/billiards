@@ -17,7 +17,7 @@ describe("Recorder", () => {
   })
 
   it("record events", (done) => {
-    const recorder = new Recorder(container)
+    const recorder = new Recorder(container, container.linkFormatter)
     const event: HitEvent = new HitEvent(container.table.serialise())
     recorder.record(event)
     expect(recorder.wholeGame()).to.be.not.null
@@ -25,19 +25,32 @@ describe("Recorder", () => {
   })
 
   it("show break messages", (done) => {
-    const recorder = new Recorder(container)
+    const recorder = new Recorder(container, container.linkFormatter)
     const event: HitEvent = new HitEvent(container.table.serialise())
     recorder.record(event)
-    container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
-    recorder.updateBreak(container.table.outcome)
+    const outcome = container.table.outcome
+    outcome.push(Outcome.pot(container.table.balls[1], 1))
+    recorder.updateBreak(
+      outcome,
+      container.rules.isPartOfBreak(outcome),
+      container.rules.isEndOfGame(outcome)
+    )
     expect(container.eventQueue).to.be.length(1)
     recorder.record(event)
-    container.table.outcome.push(Outcome.pot(container.table.balls[2], 1))
-    recorder.updateBreak(container.table.outcome)
+    outcome.push(Outcome.pot(container.table.balls[2], 1))
+    recorder.updateBreak(
+      outcome,
+      container.rules.isPartOfBreak(outcome),
+      container.rules.isEndOfGame(outcome)
+    )
     expect(container.eventQueue).to.be.length(2)
     recorder.record(event)
     container.table.outcome = []
-    recorder.updateBreak(container.table.outcome)
+    recorder.updateBreak(
+      container.table.outcome,
+      container.rules.isPartOfBreak(container.table.outcome),
+      container.rules.isEndOfGame(container.table.outcome)
+    )
     expect(container.eventQueue).to.be.length(4)
     done()
   })

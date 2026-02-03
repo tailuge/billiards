@@ -15,7 +15,9 @@ export class PlayShot extends ControllerBase {
     const table = this.container.table
     const outcome = table.outcome
     const nextController = this.container.rules.update(outcome)
-    this.container.recorder.updateBreak(outcome)
+    const isPartOfBreak = this.container.rules.isPartOfBreak(outcome)
+    const isEndOfGame = this.container.rules.isEndOfGame(outcome)
+    this.container.recorder.updateBreak(outcome, isPartOfBreak, isEndOfGame)
     table.cue.aimAtNext(table.cueball, this.container.rules.nextCandidateBall())
     return nextController
   }
