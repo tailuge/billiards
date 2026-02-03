@@ -31,13 +31,13 @@ describe("Auto Aim", () => {
     const watchShot = new WatchShot(container)
     container.controller = watchShot
     container.table.cueball.setStationary()
-    
+
     // Set cue angle to something else
-    container.table.cue.aim.angle = Math.PI / 2 
+    container.table.cue.aim.angle = Math.PI / 2
 
     container.eventQueue.push(new StartAimEvent())
     container.processEvents()
-    
+
     expect(container.controller).to.be.an.instanceof(Aim)
     // The 1-ball is at (tableX/2, 0) and cueball is at (-X/2, 0)
     // So nextCandidateBall (ball 1) should result in angle ~0
@@ -48,14 +48,14 @@ describe("Auto Aim", () => {
   it("PlaceBall.placed should auto-aim", (done) => {
     const placeBall = new PlaceBall(container)
     container.controller = placeBall
-    
+
     // Set cue angle to something else
-    container.table.cue.aim.angle = Math.PI / 2 
+    container.table.cue.aim.angle = Math.PI / 2
 
     // Simulate placing the ball (SpaceUp)
     container.inputQueue.push(new Input(0, "SpaceUp"))
     container.processEvents()
-    
+
     expect(container.controller).to.be.an.instanceof(Aim)
     expect(container.table.cue.aim.angle).to.be.closeTo(0, 0.1)
     done()
