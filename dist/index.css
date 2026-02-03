@@ -227,7 +227,8 @@ canvas {
 }
 
 input[type="range"].powerSlider {
-  appearance: slider-vertical;
+  writing-mode: vertical-lr;
+  direction: rtl;
 }
 
 .hitButton {
