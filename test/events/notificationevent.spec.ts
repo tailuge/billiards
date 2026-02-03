@@ -14,7 +14,9 @@ describe("NotificationEvent", () => {
   it("should serialise and deserialise", () => {
     const event = new NotificationEvent("test message", 1000)
     const serialised = EventUtil.serialise(event)
-    const deserialised = EventUtil.fromSerialised(serialised) as NotificationEvent
+    const deserialised = EventUtil.fromSerialised(
+      serialised
+    ) as NotificationEvent
 
     expect(deserialised.type).toBe(EventType.NOTIFICATION)
     expect(deserialised.data).toBe("test message")

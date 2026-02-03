@@ -73,78 +73,90 @@ export class NineBall implements Rules {
   }
 
   update(outcome: Outcome[]): Controller {
-    const table = this.container.table
     const reason = this.foulReason(outcome)
 
     if (reason) {
-      console.log("nineball foul ", reason)
-      this.container.notify({
-        type: "Foul",
-        title: "Foul!",
-        subtext: reason,
-        extra: "Ball in hand",
-      })
-      this.startTurn()
-      const pots = Outcome.pots(outcome)
-      const nineBallPotted = pots.some((b) => b.label === 9)
-      console.log("is nineball potted", nineBallPotted)
-      let respotData
-      if (nineBallPotted) {
-        console.log("respotting nineball")
-        this.respotNineBall()
-        const nineBall = this.container.table.balls.find((b) => b.label === 9)
-        if (nineBall) {
-          respotData = { id: 9, pos: nineBall.pos }
-        }
-      }
-
-      if (this.container.isSinglePlayer) {
-        return new PlaceBall(this.container)
-      }
-      console.log("sending place ball event: ", respotData)
-      this.container.sendEvent(new PlaceBallEvent(zero, respotData))
-      return new WatchAim(this.container)
+      return this.handleFoul(outcome, reason)
     }
-    console.log("not a foul")
+
     if (Outcome.potCount(outcome) > 0) {
-      const pots = Outcome.potCount(outcome)
-      this.currentBreak += pots
-      this.score += pots
-      this.container.sound.playSuccess(table.inPockets())
-      if (this.isEndOfGame(outcome)) {
-        const session = Session.getInstance()
-        let subtext = "You won!"
-        let extra = ""
-
-        if (session.opponentName) {
-          subtext = `Winner: ${session.playername || "You"}`
-          extra = `Loser: ${session.opponentName}`
-        }
-
-        this.container.notify({
-          type: "GameOver",
-          title: "Game Over!",
-          subtext: subtext,
-          extra: extra,
-          duration: 10000,
-        })
-        this.container.eventQueue.push(new ChatEvent(null, `game over`))
-        this.container.recorder.wholeGameLink()
-        const result: MatchResult = {
-          winner: session.playername || "Anon",
-          winnerScore: 1,
-          gameType: this.rulename,
-        }
-        if (session.opponentName) {
-          result.loser = session.opponentName
-          result.loserScore = 0
-        }
-        return new End(this.container, result)
-      }
-      this.container.sendEvent(new WatchEvent(table.serialise()))
-      return new Aim(this.container)
+      return this.handlePot(outcome)
     }
 
+    return this.handleMiss()
+  }
+
+  private handleFoul(outcome: Outcome[], reason: string): Controller {
+    this.container.notify({
+      type: "Foul",
+      title: "Foul!",
+      subtext: reason,
+      extra: "Ball in hand",
+    })
+    this.startTurn()
+    const pots = Outcome.pots(outcome)
+    const nineBallPotted = pots.some((b) => b.label === 9)
+    let respotData
+    if (nineBallPotted) {
+      this.respotNineBall()
+      const nineBall = this.container.table.balls.find((b) => b.label === 9)
+      if (nineBall) {
+        respotData = { id: 9, pos: nineBall.pos }
+      }
+    }
+
+    if (this.container.isSinglePlayer) {
+      return new PlaceBall(this.container)
+    }
+    this.container.sendEvent(new PlaceBallEvent(zero, respotData))
+    return new WatchAim(this.container)
+  }
+
+  private handlePot(outcome: Outcome[]): Controller {
+    const table = this.container.table
+    const pots = Outcome.potCount(outcome)
+    this.currentBreak += pots
+    this.score += pots
+    this.container.sound.playSuccess(table.inPockets())
+    if (this.isEndOfGame(outcome)) {
+      return this.handleGameEnd()
+    }
+    this.container.sendEvent(new WatchEvent(table.serialise()))
+    return new Aim(this.container)
+  }
+
+  private handleGameEnd(): Controller {
+    const session = Session.getInstance()
+    let subtext = "You won!"
+
+    if (session.opponentName) {
+      subtext = `Winner: ${session.playername || "You"}<br>Loser: ${session.opponentName}`
+    }
+
+    this.container.notify({
+      type: "GameOver",
+      title: "Game Over!",
+      subtext: subtext,
+      extra: `<button onclick="location.reload()">New Game</button>
+<a href="https://scoreboard-tailuge.vercel.app/" class="button">Lobby</a>`,
+      duration: 10000,
+    })
+    this.container.eventQueue.push(new ChatEvent(null, `game over`))
+    this.container.recorder.wholeGameLink()
+    const result: MatchResult = {
+      winner: session.playername || "Anon",
+      winnerScore: 1,
+      gameType: this.rulename,
+    }
+    if (session.opponentName) {
+      result.loser = session.opponentName
+      result.loserScore = 0
+    }
+    return new End(this.container, result)
+  }
+
+  private handleMiss(): Controller {
+    const table = this.container.table
     // if no pot and no foul switch to other player
     this.container.sendEvent(new StartAimEvent())
     if (this.container.isSinglePlayer) {

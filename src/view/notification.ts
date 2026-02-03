@@ -14,7 +14,7 @@ export class Notification {
     this.element = document.getElementById("notification") as HTMLDivElement
   }
 
-  show(data: NotificationData | string, defaultDuration: number = 2000) {
+  show(data: NotificationData | string, defaultDuration: number = 3000) {
     if (!this.element) return
 
     let content = ""

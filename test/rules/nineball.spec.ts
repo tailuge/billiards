@@ -24,7 +24,7 @@ describe("NineBall Rules", () => {
     Session.init("test-client", "TestPlayer", "test-table", false)
     container = new Container(
       undefined,
-      (_) => { },
+      (_) => {},
       Assets.localAssets(),
       "nineball"
     )
@@ -176,7 +176,7 @@ describe("NineBall Rules", () => {
       type: "Foul",
       title: "Foul!",
       subtext: "Cue ball potted",
-      extra: "Ball in hand"
+      extra: "Ball in hand",
     })
   })
 
@@ -188,7 +188,7 @@ describe("NineBall Rules", () => {
       type: "Foul",
       title: "Foul!",
       subtext: "No ball hit",
-      extra: "Ball in hand"
+      extra: "Ball in hand",
     })
   })
 
@@ -201,7 +201,7 @@ describe("NineBall Rules", () => {
       type: "Foul",
       title: "Foul!",
       subtext: "Wrong ball hit first",
-      extra: "Ball in hand"
+      extra: "Ball in hand",
     })
   })
 
@@ -214,7 +214,7 @@ describe("NineBall Rules", () => {
       type: "Foul",
       title: "Foul!",
       subtext: "No cushion after contact",
-      extra: "Ball in hand"
+      extra: "Ball in hand",
     })
   })
 
@@ -235,8 +235,9 @@ describe("NineBall Rules", () => {
       type: "GameOver",
       title: "Game Over!",
       subtext: "You won!",
-      extra: "",
-      duration: 10000
+      extra: `<button onclick="location.reload()">New Game</button>
+<a href="https://scoreboard-tailuge.vercel.app/" class="button">Lobby</a>`,
+      duration: 10000,
     })
   })
 })

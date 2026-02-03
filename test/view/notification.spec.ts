@@ -28,7 +28,7 @@ describe("Notification", () => {
       type: "Foul",
       title: "Foul!",
       subtext: "Wrong ball",
-      extra: "Ball in hand"
+      extra: "Ball in hand",
     })
     const element = document.getElementById("notification")
     expect(element?.style.display).toBe("block")
