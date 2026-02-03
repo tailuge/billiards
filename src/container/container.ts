@@ -19,6 +19,7 @@ import { RuleFactory } from "../controller/rules/rulefactory"
 import { Menu } from "../view/menu"
 import { Hud } from "../view/hud"
 import { Notification } from "../view/notification"
+import { NotificationEvent } from "../events/notificationevent"
 import { LobbyIndicator } from "../view/lobbyindicator"
 import { MessageRelay } from "../network/client/messagerelay"
 import { ScoreReporter } from "../network/client/scorereporter"
@@ -95,6 +96,11 @@ export class Container {
 
   sendEvent(event) {
     this.throttle.send(event)
+  }
+
+  notify(message: string, duration?: number) {
+    this.notification.show(message, duration)
+    this.sendEvent(new NotificationEvent(message, duration))
   }
 
   advance(elapsed) {

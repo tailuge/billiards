@@ -167,4 +167,11 @@ describe("NineBall Rules", () => {
     ]
     expect(nineball.isEndOfGame(outcome)).to.be.true
   })
+
+  it("should trigger Foul notification on foul", () => {
+    const notifySpy = jest.spyOn(container, "notify")
+    const outcome = [Outcome.pot(container.table.cueball, 1)]
+    nineball.update(outcome)
+    expect(notifySpy.mock.calls[0]).to.deep.equal(["Foul!"])
+  })
 })

@@ -78,6 +78,7 @@ export class NineBall implements Rules {
 
     if (foul) {
       console.log("nineball foul ")
+      this.container.notify("Foul!")
       this.startTurn()
       const pots = Outcome.pots(outcome)
       const nineBallPotted = pots.some((b) => b.label === 9)
