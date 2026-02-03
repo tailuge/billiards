@@ -1,120 +1,79 @@
 # Notification System
 
-This document outlines the design and implementation of the notification system in the Billiards project. Originally conceived as a foul reporting mechanism, it has been expanded into a general-purpose notification and dialogue system.
+This document outlines the design and implementation of the notification system for the Billiards project. The system provides real-time feedback to players regarding game state, rules, and events without obstructing core gameplay.
 
 ## Objective
 
-To provide clear, real-time feedback to the player regarding game state, rules, and events without obstructing the core gameplay (aiming and shooting).
+Deliver clear, non-intrusive visual feedback for events such as:
+- Rule violations (Fouls)
+- Game state changes (Turn transitions, Game Over)
+- Synchronization messages (Opponent actions)
 
-## UI Implementation
+## UI Design
 
-The system utilizes a dedicated overlay within the 3D view container.
+The system uses an overlay positioned in the upper-center of the 3D view.
 
-### HTML Structure (`dist/index.html`)
+### DOM Structure
+Already implemented in `dist/index.html`:
+- `#notificationOverlay`: A full-width container centered at the top.
+- `#notification`: The actual message box.
 
-```html
-<div id="viewP1" class="view3d">
-    <!-- Existing Score Overlay -->
-    <div id="snookerScoreOverlay">
-        <div id="snookerScore"></div>
-    </div>
-    <!-- New Notification Overlay -->
-    <div id="notificationOverlay">
-        <div id="notification"></div>
-    </div>
-</div>
-```
-
-### CSS Strategy (`dist/index.css`)
-
-- **`#notificationOverlay`**: Uses `pointer-events: none` to allow the user to click through the overlay and interact with the 3D table (aiming/dragging).
-- **`#notification`**: Uses `pointer-events: auto`. While currently used for text, this allows future interactive elements (buttons for rematches, etc.) to capture input.
-- **Visuals**: Centered at the top of the screen with a subtle drop shadow for readability against the green cloth.
-
-## Notification Types
-
-1.  **Game Rules (Fouls):**
-    - "Foul! In-off"
-    - "Foul! Wrong ball hit"
-    - "Foul! No cushion hit after contact"
-2.  **Game State:**
-    - "You Win!"
-    - "Nine-ball spotted"
-    - "Player 2's Turn"
-3.  **Interactive (Future):**
-    - "Rematch?"
-    - "Opponent wants to restart"
-
-## Implementation Plan
-
-### 1. TypeScript Manager
-Create a `Notification` view class in `src/view/notification.ts` (or extend `Hud`) to manage the `innerText` and visibility of the notification element.
-
-### 2. Event Integration
-The `Controller` and `Rules` sets should trigger notifications via `GameEvent` or a direct call to the notification manager.
-
-### 3. Recording & Replay
-Like respots and fouls, notification events must be captured by `src/events/recorder.ts`. This ensures that during playback, the same messages appear at the exact same timestamp as the original shot.
-
-## Implementation Plan
-
-The implementation is broken into two phases. Phase 1 focuses on building the core infrastructure for displaying, sending, and recording notifications. Phase 2 will integrate this system with the game rules engines.
-
-### Phase 1: Notification Infrastructure
-
-This phase covers the foundational work to get notifications appearing on-screen, synchronized in 2P games, and captured for replays.
-
-#### 1. View Layer (`src/view/notification.ts`)
-- **Objective:** Create a `Notification` class to manage the DOM element.
-- **Details:**
-    - Create a class similar to `Hud`.
-    - Implement methods: `show(message: string, duration?: number)`, `clear()`. The `duration` parameter will use `setTimeout` to automatically hide transient messages.
-    - Add a `showAction(message: string, actions: { [label: string]: Function })` method for future interactive dialogs (e.g., "Rematch?").
-
-#### 2. Controller Integration
-- **Objective:** Make the notification system accessible to the rest of the application.
-- **Details:**
-    - Instantiate the `Notification` view in `src/container/browsercontainer.ts`.
-    - Update `ControllerBase` to hold a reference to the notification instance, making it available to all controller states and rules engines.
-
-#### 3. Event Recording & Replay (`src/events/`)
-- **Objective:** Ensure notifications are saved and replayed correctly.
-- **Details:**
-    - Define a `NotificationEvent` in `src/events/` to encapsulate the message content and timing.
-    - Update `src/events/recorder.ts` to capture `NotificationEvent`s.
-    - Ensure the `Replay` controller can process these events to display messages during playback.
-
-#### 4. Testing Strategy (Phase 1)
-- **Unit Test (`test/view/notification.spec.ts`):** Verify that calling `show()` updates the DOM and that `setTimeout` is correctly used for clearing.
-- **Integration Test (`test/controller/replay.spec.ts`):** Record a sequence of events including a `NotificationEvent` and verify it appears during replay.
+### CSS Strategy
+Defined in `dist/index.css`:
+- **Transparency**: `pointer-events: none` on the overlay ensures clicks pass through to the 3D table for aiming.
+- **Interactivity**: `pointer-events: auto` on the message box allows for future interactive elements (e.g., "Rematch" buttons).
+- **Legibility**: High-contrast text with a drop shadow for visibility against varied table colors.
 
 ---
 
-### Phase 2: Rules and Game Logic Integration
+## Implementation Plan
 
-With the infrastructure in place, this phase focuses on generating meaningful notifications from the game's rules engines.
+The implementation is divided into three sequential phases.
 
-#### 1. Rules Engine Integration (`src/controller/rules/`)
-- **Objective:** Trigger notifications for fouls, game state changes, and other events.
-- **Details:**
-    - Modify the `Rules` interface (`src/controller/rules/rules.ts`) to provide a mechanism for the rules engine to emit notifications.
-    - Update specific rule implementations (`NineBall`, `Snooker`, `FourteenOne`) to generate notification strings for events like:
-        - Fouls ("Foul! Wrong ball first.")
-        - Game milestones ("Player 1 wins!")
-        - Ball-in-hand status.
+### Phase 1: Core Infrastructure
+**Goal**: Establish the TypeScript classes and integration needed to display notifications on a single client.
 
-#### 2. Multi-player Considerations (1P/2P)
-- **Objective:** Ensure notifications are relevant to the current player.
-- **Details:**
-    - The `Rules` engine is deterministic and runs on both clients, so foul notifications will be inherently synchronized.
-    - For player-specific messages (e.g., "Your Turn" vs. "Opponent's Turn"), the logic will reside in the `Controller` state transitions, which already manage turn-taking.
+1. **View Component (`src/view/notification.ts`)**
+   - Create a `Notification` class (optionally extending `Hud`).
+   - Implement `show(message: string, duration?: number)`: Updates the `#notification` element and handles automatic clearing via `setTimeout`.
+   - Implement `clear()`: Immediately hides the notification.
 
-#### 3. Testing Strategy (Phase 2)
-- **Rules Unit Tests:**
-    - Update `test/rules/nineball.spec.ts`, `snooker.spec.ts`, etc.
-    - In test scenarios that result in a foul or game end, assert that the `Rules` engine produces the expected notification message.
+2. **Container Integration (`src/container/container.ts`)**
+   - Add a `notification: Notification` property to the `Container` class.
+   - Instantiate it in the `Container` constructor alongside `Hud` and `Chat`.
+
+3. **Controller Access**
+   - Since `ControllerBase` has access to the `Container`, notifications can now be triggered from any state using `this.container.notification.show(...)`.
+
+### Phase 2: Network Synchronization
+**Goal**: Ensure notifications are synchronized across both clients in multi-player mode.
+
+1. **Event Definition (`src/events/notificationevent.ts`)**
+   - Create `NotificationEvent` extending `GameEvent`.
+   - Add `NOTIFICATION` to `EventType` in `src/events/eventtype.ts`.
+   - Update `EventUtil.fromSerialised` to handle the new event type.
+
+2. **Broadcasting**
+   - Implement logic to broadcast `NotificationEvent` via the `MessageRelay` when a persistent notification is required for both players.
+   - Update `Controller` handlers to process incoming `NotificationEvent`s and call the view layer.
+
+### Phase 3: Game Logic Integration
+**Goal**: Connect the notification system to the rules engine and game flow.
+
+1. **Rules Engine Integration (`src/controller/rules/`)**
+   - Update the `Rules` interface to allow returning or triggering notification messages during `update()`.
+   - Implement specific foul messages in `NineBall`, `Snooker`, etc. (e.g., "Foul! Wrong ball hit").
+
+2. **Turn Transitions**
+   - Trigger "Your Turn" / "Opponent's Turn" notifications during transitions in `src/controller/init.ts` and `src/controller/playshot.ts`.
+
+3. **Validation & Testing**
+   - Unit tests for `Notification` view logic.
+   - Integration tests in `nineball.spec.ts` to verify fouls trigger the correct notification strings.
+
+---
 
 ## UI/UX Guidelines
-- **Non-blocking:** Notifications must never interfere with the `mousedown`/`mousemove` logic used for aiming. This is achieved with `pointer-events: none` on the overlay container.
-- **Transience:** Simple status notifications should fade out after a few seconds.
-- **Clarity:** Use high-contrast colors (currently yellow/white with black shadow) to ensure visibility on all table colors.
+- **Transience**: Informational messages should disappear after 2-3 seconds.
+- **Persistence**: Critical messages (e.g., "Foul! Ball-in-hand") should remain until the next action.
+- **Minimalism**: Keep text concise to avoid cluttering the view.
