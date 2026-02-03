@@ -48,15 +48,11 @@ export class Snooker implements Rules {
     )
 
     if (info.pots === 0) {
-      if (!info.legalFirstCollision) {
-        const firstCollisionId = info.firstCollision?.ballB?.id ?? 0
-        this.foulPoints = Math.max(4, firstCollisionId + 1)
-      }
-      if (this.currentBreak > 0) {
-        // end of break, reset break score
-      }
       this.targetIsRed =
         SnookerUtils.redsOnTable(this.container.table).length > 0
+      if (!info.legalFirstCollision) {
+        return this.foul(outcome, info)
+      }
       return this.switchPlayer()
     }
 
@@ -84,7 +80,7 @@ export class Snooker implements Rules {
     this.respot(outcome)
 
     if (info.whitePotted) {
-      return this.whiteInHand()
+      return this.foul(outcome, info)
     }
 
     return this.switchPlayer()
@@ -94,19 +90,16 @@ export class Snooker implements Rules {
     console.log("applying target colour rule")
 
     if (info.whitePotted) {
-      this.respot(outcome)
-      return this.whiteInHand()
+      return this.foul(outcome, info)
     }
 
     if (info.pots > 1) {
-      this.foulPoints = this.foulCalculation(outcome, info)
       this.respot(outcome)
-      return this.switchPlayer()
+      return this.foul(outcome, info)
     }
 
     if (Outcome.pots(outcome)[0].id > 6) {
-      this.foulPoints = this.foulCalculation(outcome, info)
-      return this.switchPlayer()
+      return this.foul(outcome, info)
     }
 
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
@@ -140,7 +133,17 @@ export class Snooker implements Rules {
 
   foul(outcome, info) {
     this.foulPoints = this.foulCalculation(outcome, info)
+    const reason = this.foulReason(outcome, info)
+    this.container.notify({
+      type: "Foul",
+      title: "Foul!",
+      subtext: reason || `Foul (${this.foulPoints} points)`,
+      extra: "Ball in hand",
+    })
     this.respot(outcome)
+    if (info.whitePotted) {
+      return this.whiteInHand()
+    }
     return this.switchPlayer()
   }
 
@@ -153,6 +156,51 @@ export class Snooker implements Rules {
       firstCollisionId = 0
     }
     return Math.max(3, firstCollisionId, ...potted) + 1
+  }
+
+  foulReason(outcome, info): string | null {
+    if (info.whitePotted) {
+      return "White potted"
+    }
+
+    if (!info.firstCollision) {
+      return "No ball hit"
+    }
+
+    const firstBallId = info.firstCollision.ballB?.id ?? 0
+
+    if (this.targetIsRed) {
+      if (firstBallId < 7 || firstBallId === 0) {
+        const colourName = SnookerUtils.colourName(firstBallId)
+        return `Hit ${colourName} instead of red`
+      }
+    } else {
+      if (firstBallId >= 7) {
+        return "Hit red instead of colour"
+      }
+    }
+
+    const pottedColours = Outcome.pots(outcome).filter(
+      (b) => b.id > 0 && b.id < 7
+    )
+    if (pottedColours.length > 1) {
+      const colourNames = pottedColours
+        .map((b) => SnookerUtils.colourName(b.id))
+        .join(", ")
+      return `Potted ${colourNames}`
+    }
+
+    if (pottedColours.length === 1) {
+      const pottedId = pottedColours[0].id
+      const firstBallId2 = info.firstCollision?.ballB?.id ?? 0
+      if (pottedId !== firstBallId2) {
+        const pottedName = SnookerUtils.colourName(pottedId)
+        const hitName = SnookerUtils.colourName(firstBallId2)
+        return `Potted ${pottedName} instead of ${hitName}`
+      }
+    }
+
+    return null
   }
 
   tableGeometry() {
@@ -240,12 +288,7 @@ export class Snooker implements Rules {
   }
 
   switchPlayer() {
-    if (this.foulPoints > 0) {
-      console.log(`foul, ${this.foulPoints} to opponent`)
-    }
-    console.log("end of break, switch player")
     const table = this.container.table
-    console.log(table.cue.aim)
     this.container.sendEvent(new StartAimEvent(this.foulPoints))
     if (this.container.isSinglePlayer) {
       this.container.sendEvent(new WatchEvent(table.serialise()))
@@ -279,9 +322,6 @@ export class Snooker implements Rules {
   }
 
   whiteInHand(): Controller {
-    if (this.foulPoints > 0) {
-      console.log(`foul, ${this.foulPoints} to opponent`)
-    }
     this.startTurn()
     if (this.container.isSinglePlayer) {
       return new PlaceBall(this.container)

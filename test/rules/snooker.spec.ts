@@ -347,6 +347,67 @@ describe("Snooker", () => {
     done()
   })
 
+  it("should trigger foul notification when white potted", () => {
+    const notifySpy = jest.spyOn(container, "notify")
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.pot(table.cueball, 1))
+    table.cueball.state = State.InPocket
+    snooker.update(outcome)
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "Foul",
+      title: "Foul!",
+      subtext: "White potted",
+      extra: "Ball in hand",
+    })
+  })
+
+  it("should trigger foul notification on no ball hit", () => {
+    const notifySpy = jest.spyOn(container, "notify")
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    snooker.update(outcome)
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "Foul",
+      title: "Foul!",
+      subtext: "No ball hit",
+      extra: "Ball in hand",
+    })
+  })
+
+  it("should trigger foul notification on wrong ball hit", () => {
+    const notifySpy = jest.spyOn(container, "notify")
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
+    snooker.update(outcome)
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "Foul",
+      title: "Foul!",
+      subtext: "Hit Pink instead of red",
+      extra: "Ball in hand",
+    })
+  })
+
+  it("should trigger foul notification on potting multiple colours", () => {
+    const notifySpy = jest.spyOn(container, "notify")
+    snooker.targetIsRed = false
+    const outcome: Outcome[] = []
+    outcome.push(Outcome.hit(table.cueball, 1))
+    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
+    outcome.push(Outcome.pot(table.balls[5], 1))
+    outcome.push(Outcome.pot(table.balls[1], 1))
+    table.balls[5].state = State.InPocket
+    table.balls[1].state = State.InPocket
+    snooker.update(outcome)
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "Foul",
+      title: "Foul!",
+      subtext: "Potted Pink, Yellow",
+      extra: "Ball in hand",
+    })
+  })
+
   it("placeBall constrained to D", (done) => {
     expect(snooker.placeBall(zero).length()).to.be.greaterThan(0)
     done()

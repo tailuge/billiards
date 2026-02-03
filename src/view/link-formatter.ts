@@ -11,7 +11,12 @@ export class LinkFormatter {
     this.container = container
   }
 
-  lastShotLink(isPartOfBreak: boolean, potCount: number, balls: any[], lastShot: any) {
+  lastShotLink(
+    isPartOfBreak: boolean,
+    potCount: number,
+    balls: any[],
+    lastShot: any
+  ) {
     const pots = potCount > 1 ? potCount - 1 : 0
 
     let colourString = "#000000"

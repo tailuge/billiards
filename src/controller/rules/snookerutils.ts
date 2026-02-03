@@ -45,4 +45,16 @@ export class SnookerUtils {
   static coloursOnTable(table) {
     return table.balls.slice(1, 7).filter((ball) => ball.onTable())
   }
+
+  static colourName(id: number): string {
+    const names: { [key: number]: string } = {
+      1: "Yellow",
+      2: "Green",
+      3: "Brown",
+      4: "Blue",
+      5: "Pink",
+      6: "Black",
+    }
+    return names[id] || `Ball ${id}`
+  }
 }
