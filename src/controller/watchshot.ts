@@ -21,6 +21,8 @@ export class WatchShot extends ControllerBase {
   }
 
   override handleStartAim(_) {
+    const table = this.container.table
+    table.cue.aimAtNext(table.cueball, this.container.rules.nextCandidateBall())
     return new Aim(this.container)
   }
 
