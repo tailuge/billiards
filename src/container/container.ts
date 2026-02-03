@@ -18,6 +18,7 @@ import { Rules } from "../controller/rules/rules"
 import { RuleFactory } from "../controller/rules/rulefactory"
 import { Menu } from "../view/menu"
 import { Hud } from "../view/hud"
+import { Notification } from "../view/notification"
 import { LobbyIndicator } from "../view/lobbyindicator"
 import { MessageRelay } from "../network/client/messagerelay"
 import { ScoreReporter } from "../network/client/scorereporter"
@@ -41,6 +42,7 @@ export class Container {
   rules: Rules
   menu: Menu
   hud: Hud
+  notification: Notification
   lobbyIndicator: LobbyIndicator
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
@@ -76,6 +78,7 @@ export class Container {
     this.menu = new Menu(this)
     this.table.addToScene(this.view.scene)
     this.hud = new Hud()
+    this.notification = new Notification()
     this.relay = relay
     this.scoreReporter = scoreReporter
     this.lobbyIndicator = new LobbyIndicator(this.relay)

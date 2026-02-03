@@ -30,20 +30,23 @@ Defined in `dist/index.css`:
 
 The implementation is divided into three sequential phases.
 
-### Phase 1: Core Infrastructure
+### Phase 1: Core Infrastructure (COMPLETED)
 **Goal**: Establish the TypeScript classes and integration needed to display notifications on a single client.
 
-1. **View Component (`src/view/notification.ts`)**
+1. **View Component (`src/view/notification.ts`)** (Done)
    - Create a `Notification` class (optionally extending `Hud`).
    - Implement `show(message: string, duration?: number)`: Updates the `#notification` element and handles automatic clearing via `setTimeout`.
    - Implement `clear()`: Immediately hides the notification.
 
-2. **Container Integration (`src/container/container.ts`)**
+2. **Container Integration (`src/container/container.ts`)** (Done)
    - Add a `notification: Notification` property to the `Container` class.
    - Instantiate it in the `Container` constructor alongside `Hud` and `Chat`.
 
-3. **Controller Access**
+3. **Controller Access** (Done)
    - Since `ControllerBase` has access to the `Container`, notifications can now be triggered from any state using `this.container.notification.show(...)`.
+
+4. **Verification** (Done)
+   - Unit tests implemented in `test/view/notification.spec.ts`.
 
 ### Phase 2: Network Synchronization
 **Goal**: Ensure notifications are synchronized across both clients in multi-player mode.
