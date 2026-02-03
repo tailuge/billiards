@@ -48,15 +48,15 @@ The implementation is divided into three sequential phases.
 4. **Verification** (Done)
    - Unit tests implemented in `test/view/notification.spec.ts`.
 
-### Phase 2: Network Synchronization
+### Phase 2: Network Synchronization (COMPLETED)
 **Goal**: Ensure notifications are synchronized across both clients in multi-player mode.
 
-1. **Event Definition (`src/events/notificationevent.ts`)**
+1. **Event Definition (`src/events/notificationevent.ts`)** (Done)
    - Create `NotificationEvent` extending `GameEvent`.
    - Add `NOTIFICATION` to `EventType` in `src/events/eventtype.ts`.
    - Update `EventUtil.fromSerialised` to handle the new event type.
 
-2. **Broadcasting**
+2. **Broadcasting** (Done)
    - Implement logic to broadcast `NotificationEvent` via the `MessageRelay` when a persistent notification is required for both players.
    - Update `Controller` handlers to process incoming `NotificationEvent`s and call the view layer.
 

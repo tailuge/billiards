@@ -11,6 +11,7 @@ import { ChatEvent } from "../events/chatevent"
 import { PlaceBallEvent } from "../events/placeballevent"
 import { RejoinEvent } from "../events/rejoinevent"
 import { StartAimEvent } from "../events/startaimevent"
+import { NotificationEvent } from "../events/notificationevent"
 
 export { BeginEvent, AimEvent, HitEvent, Input, AbortEvent, StationaryEvent }
 
@@ -58,6 +59,9 @@ export abstract class Controller {
     return this
   }
   handleRejoin(_: RejoinEvent): Controller {
+    return this
+  }
+  handleNotification(_: NotificationEvent): Controller {
     return this
   }
   onFirst() {}

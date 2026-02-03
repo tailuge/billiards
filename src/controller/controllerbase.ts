@@ -1,6 +1,7 @@
 import { Controller } from "./controller"
 import { exportGltf } from "../utils/gltf"
 import { ChatEvent } from "../events/chatevent"
+import { NotificationEvent } from "../events/notificationevent"
 import { Outcome } from "../model/outcome"
 import { Vector3 } from "three"
 
@@ -11,6 +12,11 @@ export abstract class ControllerBase extends Controller {
     const sender = chatevent.sender ? `${chatevent.sender}:` : ""
     const message = `${sender} ${chatevent.message}`
     this.container.chat.showMessage(message)
+    return this
+  }
+
+  override handleNotification(event: NotificationEvent): Controller {
+    this.container.notification.show(event.message, event.duration)
     return this
   }
 

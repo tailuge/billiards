@@ -11,4 +11,5 @@ export enum EventType {
   REJOIN = "REJOIN",
   RERACK = "RERACK",
   STARTAIM = "STARTAIM",
+  NOTIFICATION = "NOTIFICATION",
 }
