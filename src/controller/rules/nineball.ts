@@ -78,7 +78,12 @@ export class NineBall implements Rules {
 
     if (reason) {
       console.log("nineball foul ", reason)
-      this.container.notify(`Foul! ${reason}. Ball in hand.`)
+      this.container.notify({
+        type: "Foul",
+        title: "Foul!",
+        subtext: reason,
+        extra: "Ball in hand",
+      })
       this.startTurn()
       const pots = Outcome.pots(outcome)
       const nineBallPotted = pots.some((b) => b.label === 9)
@@ -107,10 +112,24 @@ export class NineBall implements Rules {
       this.score += pots
       this.container.sound.playSuccess(table.inPockets())
       if (this.isEndOfGame(outcome)) {
-        this.container.notify("Game Over!")
+        const session = Session.getInstance()
+        let subtext = "You won!"
+        let extra = ""
+
+        if (session.opponentName) {
+          subtext = `Winner: ${session.playername || "You"}`
+          extra = `Loser: ${session.opponentName}`
+        }
+
+        this.container.notify({
+          type: "GameOver",
+          title: "Game Over!",
+          subtext: subtext,
+          extra: extra,
+          duration: 10000,
+        })
         this.container.eventQueue.push(new ChatEvent(null, `game over`))
         this.container.recorder.wholeGameLink()
-        const session = Session.getInstance()
         const result: MatchResult = {
           winner: session.playername || "Anon",
           winnerScore: 1,

@@ -29,7 +29,7 @@ p {
   background-color: #2e9097;
 }
 
-.flex-container > div {
+.flex-container>div {
   background-color: #1c802d;
   border: 1px;
   color: grey;
@@ -66,13 +66,54 @@ p {
   color: white;
   text-align: center;
   filter: drop-shadow(0.08em 0.08em black);
-  /* background-color: rgba(0, 0, 0, 0.3); */ /* Optional: subtle background */
+  /* background-color: rgba(0, 0, 0, 0.3); */
+  /* Optional: subtle background */
   padding: 10px 20px;
   border-radius: 10px;
-  pointer-events: auto; /* Enable for future interactive elements */
+  pointer-events: auto;
+  /* Enable for future interactive elements */
   max-width: 80%;
   user-select: none;
 }
+
+.notification-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.notification-title {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.notification-subtext {
+  font-size: large;
+  font-weight: normal;
+}
+
+.notification-extra {
+  font-size: medium;
+  font-style: italic;
+  margin-top: 5px;
+}
+
+#notification.type-Foul {
+  color: #ff4d4d;
+  /* Red for fouls */
+  background-color: rgba(50, 0, 0, 0.6);
+  border: 1px solid #ff4d4d;
+}
+
+#notification.type-GameOver {
+  color: #ffd700;
+  /* Gold for game over */
+  background-color: rgba(50, 40, 0, 0.7);
+  border: 1px solid #ffd700;
+  font-size: xx-large;
+}
+
+
 
 .view3d {
   width: 100%;
@@ -84,6 +125,7 @@ p {
   user-select: none;
   position: relative;
 }
+
 .view3d:focus {
   outline: none;
 }
@@ -121,13 +163,11 @@ canvas {
   height: 100%;
   margin: auto;
   aspect-ratio: 1;
-  background: radial-gradient(
-    circle at 65% 15%,
-    rgb(255, 255, 255) 2px,
-    rgb(255, 254, 254) 5%,
-    rgb(63, 63, 63) 60%,
-    rgb(24, 26, 26) 100%
-  );
+  background: radial-gradient(circle at 65% 15%,
+      rgb(255, 255, 255) 2px,
+      rgb(255, 254, 254) 5%,
+      rgb(63, 63, 63) 60%,
+      rgb(24, 26, 26) 100%);
   border-radius: 50%;
   position: absolute;
   top: 0;
@@ -256,6 +296,7 @@ a.pill {
 a {
   color: lightblue;
 }
+
 .constants {
   background: linear-gradient(#495155, #0b0b0e);
   border-radius: 5px;

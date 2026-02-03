@@ -79,3 +79,8 @@ The implementation is divided into three sequential phases.
 - **Transience**: Informational messages should disappear after 2-3 seconds.
 - **Persistence**: Critical messages (e.g., "Foul! Ball-in-hand") should remain until the next action.
 - **Minimalism**: Keep text concise to avoid cluttering the view.
+
+
+* Feedback For Nineball Notifications.
+
+The notification overlay UX needs improving. It should have distinct parts for Foul/GameOver with a subtext for the reason (and possibly a third part e.g. ball in hand) possibly no a subtle translucent card. On game over it should also persist longer maybe 10 seconds and indicate win  or loss in 2 player mode. The game over might also show playername defeated opponent name. 

@@ -23,6 +23,7 @@ import { NotificationEvent } from "../events/notificationevent"
 import { LobbyIndicator } from "../view/lobbyindicator"
 import { MessageRelay } from "../network/client/messagerelay"
 import { ScoreReporter } from "../network/client/scorereporter"
+import { NotificationData } from "../view/notification"
 
 /**
  * Model, View, Controller container.
@@ -52,7 +53,7 @@ export class Container {
   last = performance.now()
   readonly step = 0.001953125 * 1
 
-  broadcast: (event: GameEvent) => void = () => {}
+  broadcast: (event: GameEvent) => void = () => { }
   log: (text: string) => void
 
   constructor(
@@ -98,9 +99,9 @@ export class Container {
     this.throttle.send(event)
   }
 
-  notify(message: string, duration?: number) {
-    this.notification.show(message, duration)
-    this.sendEvent(new NotificationEvent(message, duration))
+  notify(data: NotificationData | string, duration?: number) {
+    this.notification.show(data, duration)
+    this.sendEvent(new NotificationEvent(data, duration))
   }
 
   advance(elapsed) {

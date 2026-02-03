@@ -1,14 +1,15 @@
 import { GameEvent } from "./gameevent"
 import { EventType } from "./eventtype"
 import { Controller } from "../controller/controller"
+import { NotificationData } from "../view/notification"
 
 export class NotificationEvent extends GameEvent {
-  message: string
+  data: NotificationData | string
   duration?: number | undefined
 
-  constructor(message: string, duration?: number | undefined) {
+  constructor(data: NotificationData | string, duration?: number | undefined) {
     super()
-    this.message = message
+    this.data = data
     this.duration = duration
     this.type = EventType.NOTIFICATION
   }
@@ -18,6 +19,6 @@ export class NotificationEvent extends GameEvent {
   }
 
   static fromJson(json: any) {
-    return new NotificationEvent(json.message, json.duration)
+    return new NotificationEvent(json.data, json.duration)
   }
 }

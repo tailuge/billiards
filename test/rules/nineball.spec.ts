@@ -24,7 +24,7 @@ describe("NineBall Rules", () => {
     Session.init("test-client", "TestPlayer", "test-table", false)
     container = new Container(
       undefined,
-      (_) => {},
+      (_) => { },
       Assets.localAssets(),
       "nineball"
     )
@@ -172,16 +172,24 @@ describe("NineBall Rules", () => {
     const notifySpy = jest.spyOn(container, "notify")
     const outcome = [Outcome.pot(container.table.cueball, 1)]
     nineball.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.equal(
-      "Foul! Cue ball potted. Ball in hand."
-    )
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "Foul",
+      title: "Foul!",
+      subtext: "Cue ball potted",
+      extra: "Ball in hand"
+    })
   })
 
   it("should trigger specific foul notification on no ball hit", () => {
     const notifySpy = jest.spyOn(container, "notify")
     const outcome: Outcome[] = []
     nineball.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.equal("Foul! No ball hit. Ball in hand.")
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "Foul",
+      title: "Foul!",
+      subtext: "No ball hit",
+      extra: "Ball in hand"
+    })
   })
 
   it("should trigger specific foul notification on wrong ball hit first", () => {
@@ -189,9 +197,12 @@ describe("NineBall Rules", () => {
     const ball2 = container.table.balls.find((b) => b.label === 2)!
     const outcome = [Outcome.collision(container.table.cueball, ball2, 1)]
     nineball.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.equal(
-      "Foul! Wrong ball hit first. Ball in hand."
-    )
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "Foul",
+      title: "Foul!",
+      subtext: "Wrong ball hit first",
+      extra: "Ball in hand"
+    })
   })
 
   it("should trigger specific foul notification on no cushion after contact", () => {
@@ -199,9 +210,12 @@ describe("NineBall Rules", () => {
     const ball1 = container.table.balls.find((b) => b.label === 1)!
     const outcome = [Outcome.collision(container.table.cueball, ball1, 1)]
     nineball.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.equal(
-      "Foul! No cushion after contact. Ball in hand."
-    )
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "Foul",
+      title: "Foul!",
+      subtext: "No cushion after contact",
+      extra: "Ball in hand"
+    })
   })
 
   it("should trigger game over notification", () => {
@@ -217,6 +231,12 @@ describe("NineBall Rules", () => {
       Outcome.pot(nineBall, 1),
     ]
     nineball.update(outcome)
-    expect(notifySpy.mock.calls).to.deep.include(["Game Over!"])
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "GameOver",
+      title: "Game Over!",
+      subtext: "You won!",
+      extra: "",
+      duration: 10000
+    })
   })
 })

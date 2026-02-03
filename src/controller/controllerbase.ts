@@ -16,7 +16,7 @@ export abstract class ControllerBase extends Controller {
   }
 
   override handleNotification(event: NotificationEvent): Controller {
-    this.container.notification.show(event.message, event.duration)
+    this.container.notification.show(event.data, event.duration)
     return this
   }
 

@@ -7,7 +7,7 @@ describe("NotificationEvent", () => {
   it("should create a NotificationEvent", () => {
     const event = new NotificationEvent("test message", 1000)
     expect(event.type).toBe(EventType.NOTIFICATION)
-    expect(event.message).toBe("test message")
+    expect(event.data).toBe("test message")
     expect(event.duration).toBe(1000)
   })
 
@@ -17,7 +17,7 @@ describe("NotificationEvent", () => {
     const deserialised = EventUtil.fromSerialised(serialised) as NotificationEvent
 
     expect(deserialised.type).toBe(EventType.NOTIFICATION)
-    expect(deserialised.message).toBe("test message")
+    expect(deserialised.data).toBe("test message")
     expect(deserialised.duration).toBe(1000)
   })
 
