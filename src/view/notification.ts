@@ -14,6 +14,12 @@ export class Notification {
     this.element = document.getElementById("notification") as HTMLDivElement
   }
 
+  private getIcon(type: NotificationData["type"]): string {
+    if (type === "Foul") return "🎱"
+    if (type === "GameOver") return "🏆"
+    return "🔵"
+  }
+
   show(data: NotificationData | string, defaultDuration: number = 3000) {
     if (!this.element) return
 
@@ -22,15 +28,34 @@ export class Notification {
     let duration = defaultDuration
 
     if (typeof data === "string") {
-      content = data
+      content = `
+        <div class="notification-banner">
+          <div class="notification-text-group">
+            <div class="notification-subtext">${data}</div>
+          </div>
+        </div>
+      `
       typeClass = "type-Info"
     } else {
+      const icon = this.getIcon(data.type)
+      let extraContentHtml = ""
+      if (data.extra) {
+        if (data.extra.includes("<")) {
+          extraContentHtml = `<div class="notification-extra">${data.extra}</div>`
+        } else {
+          extraContentHtml = `<div class="notification-badge">${data.extra}</div>`
+        }
+      }
+
       content = `
-        <div class="notification-content">
-          <div class="notification-title">${data.title}</div>
-          ${data.subtext ? `<div class="notification-subtext">${data.subtext}</div>` : ""}
-          ${data.extra ? `<div class="notification-extra">${data.extra}</div>` : ""}
+        <div class="notification-banner">
+          <div class="notification-icon">${icon}</div>
+          <div class="notification-text-group">
+            <div class="notification-title">${data.title}</div>
+            ${data.subtext ? `<div class="notification-subtext">${data.subtext}</div>` : ""}
+          </div>
         </div>
+        ${extraContentHtml}
       `
       typeClass = `type-${data.type}`
       if (data.duration !== undefined) {
@@ -41,7 +66,7 @@ export class Notification {
     this.element.innerHTML = content
     this.element.className = "" // Clear previous classes
     this.element.classList.add(typeClass)
-    this.element.style.display = "block"
+    this.element.style.display = "flex"
 
     if (this.timeoutId) {
       window.clearTimeout(this.timeoutId)

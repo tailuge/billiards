@@ -136,7 +136,7 @@ export class Snooker implements Rules {
     const reason = this.foulReason(outcome, info)
     this.container.notify({
       type: "Foul",
-      title: "Foul!",
+      title: "FOUL",
       subtext: reason || `Foul (${this.foulPoints} points)`,
       extra: "Ball in hand",
     })

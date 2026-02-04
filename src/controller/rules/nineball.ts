@@ -89,7 +89,7 @@ export class NineBall implements Rules {
   private handleFoul(outcome: Outcome[], reason: string): Controller {
     this.container.notify({
       type: "Foul",
-      title: "Foul!",
+      title: "FOUL",
       subtext: reason,
       extra: "Ball in hand",
     })
@@ -135,7 +135,7 @@ export class NineBall implements Rules {
 
     this.container.notify({
       type: "GameOver",
-      title: "Game Over!",
+      title: "GAME OVER",
       subtext: subtext,
       extra: `<button onclick="location.reload()">New Game</button>
 <a href="https://scoreboard-tailuge.vercel.app/" class="button">Lobby</a>`,

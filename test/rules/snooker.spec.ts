@@ -356,7 +356,7 @@ describe("Snooker", () => {
     snooker.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "Foul",
-      title: "Foul!",
+      title: "FOUL",
       subtext: "White potted",
       extra: "Ball in hand",
     })
@@ -369,7 +369,7 @@ describe("Snooker", () => {
     snooker.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "Foul",
-      title: "Foul!",
+      title: "FOUL",
       subtext: "No ball hit",
       extra: "Ball in hand",
     })
@@ -383,7 +383,7 @@ describe("Snooker", () => {
     snooker.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "Foul",
-      title: "Foul!",
+      title: "FOUL",
       subtext: "Hit Pink instead of red",
       extra: "Ball in hand",
     })
@@ -402,7 +402,7 @@ describe("Snooker", () => {
     snooker.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "Foul",
-      title: "Foul!",
+      title: "FOUL",
       subtext: "Potted Pink, Yellow",
       extra: "Ball in hand",
     })

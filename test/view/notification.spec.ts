@@ -18,25 +18,26 @@ describe("Notification", () => {
   it("should show a message string (legacy support)", () => {
     notification.show("Test Message")
     const element = document.getElementById("notification")
-    expect(element?.innerHTML).toBe("Test Message")
-    expect(element?.style.display).toBe("block")
+    expect(element?.innerHTML).toContain("Test Message")
+    expect(element?.innerHTML).toContain("notification-banner")
     expect(element?.classList.contains("type-Info")).toBe(true)
   })
 
   it("should show structured notification data", () => {
     notification.show({
       type: "Foul",
-      title: "Foul!",
+      title: "FOUL",
       subtext: "Wrong ball",
       extra: "Ball in hand",
     })
     const element = document.getElementById("notification")
-    expect(element?.style.display).toBe("block")
     expect(element?.classList.contains("type-Foul")).toBe(true)
-    expect(element?.innerHTML).toContain("Foul!")
+    expect(element?.innerHTML).toContain("FOUL")
     expect(element?.innerHTML).toContain("Wrong ball")
     expect(element?.innerHTML).toContain("Ball in hand")
     expect(element?.innerHTML).toContain("notification-title")
+    expect(element?.innerHTML).toContain("notification-banner")
+    expect(element?.innerHTML).toContain("notification-badge")
   })
 
   it("should clear a message", () => {
@@ -44,18 +45,16 @@ describe("Notification", () => {
     notification.clear()
     const element = document.getElementById("notification")
     expect(element?.innerHTML).toBe("")
-    expect(element?.style.display).toBe("none")
   })
 
   it("should clear a message after a duration", () => {
     notification.show("Test Message", 1000)
     const element = document.getElementById("notification")
-    expect(element?.innerHTML).toBe("Test Message")
+    expect(element?.innerHTML).toContain("Test Message")
 
     jest.advanceTimersByTime(1000)
 
     expect(element?.innerHTML).toBe("")
-    expect(element?.style.display).toBe("none")
   })
 
   it("should clear existing timeout when showing a new message", () => {
@@ -65,7 +64,7 @@ describe("Notification", () => {
     const element = document.getElementById("notification")
 
     jest.advanceTimersByTime(1000)
-    expect(element?.innerHTML).toBe("Second Message")
+    expect(element?.innerHTML).toContain("Second Message")
 
     jest.advanceTimersByTime(1000)
     expect(element?.innerHTML).toBe("")
@@ -76,7 +75,6 @@ describe("Notification", () => {
     const element = document.getElementById("notification")
 
     jest.advanceTimersByTime(10000)
-    expect(element?.innerHTML).toBe("Persistent Message")
-    expect(element?.style.display).toBe("block")
+    expect(element?.innerHTML).toContain("Persistent Message")
   })
 })

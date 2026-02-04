@@ -52,65 +52,121 @@ p {
 
 #notificationOverlay {
   position: absolute;
-  top: 15%;
+  top: 10%;
   width: 100%;
   display: flex;
   justify-content: center;
   pointer-events: none;
-  z-index: 100;
+  z-index: 1000;
 }
 
 #notification {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: x-large;
-  color: white;
-  text-align: center;
-  filter: drop-shadow(0.08em 0.08em black);
-  /* background-color: rgba(0, 0, 0, 0.3); */
-  /* Optional: subtle background */
-  padding: 10px 20px;
-  border-radius: 10px;
-  pointer-events: auto;
-  /* Enable for future interactive elements */
-  max-width: 80%;
-  user-select: none;
-}
-
-.notification-content {
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-}
-
-.notification-title {
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.notification-subtext {
-  font-size: large;
-  font-weight: normal;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  user-select: none;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+  pointer-events: auto;
 }
 
 .notification-extra {
-  font-size: medium;
-  font-style: italic;
-  margin-top: 5px;
+  margin-top: 32px;
 }
 
-#notification.type-Foul {
-  color: #ff4d4d;
-  /* Red for fouls */
-  background-color: rgba(50, 0, 0, 0.6);
-  border: 1px solid #ff4d4d;
+.notification-banner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 34px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(20, 100, 200, 0.75),
+    rgba(0, 180, 160, 0.75)
+  );
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition:
+    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    opacity 0.2s ease;
 }
 
-#notification.type-GameOver {
-  color: #ffd700;
-  /* Gold for game over */
-  background-color: rgba(50, 40, 0, 0.7);
-  border: 1px solid #ffd700;
-  font-size: xx-large;
+.notification-icon {
+  font-size: 1.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-text-group {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.notification-title {
+  color: white;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-size: 1.3em;
+  margin: 0;
+}
+
+.notification-subtext {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1em;
+  font-weight: 500;
+  margin: 0;
+}
+
+.notification-badge {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 10px;
+  font-size: 0.75em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: badgeIn 0.4s ease-out;
+}
+
+@keyframes badgeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#notification.type-Foul .notification-banner {
+  background: linear-gradient(
+    135deg,
+    rgba(40, 80, 150, 0.8),
+    rgba(20, 140, 140, 0.8)
+  );
+  border-color: rgba(100, 200, 255, 0.3);
+}
+
+#notification.type-GameOver .notification-banner {
+  background: linear-gradient(
+    135deg,
+    rgba(180, 140, 0, 0.8),
+    rgba(200, 100, 0, 0.8)
+  );
 }
 
 .notification-extra button,

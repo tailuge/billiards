@@ -174,7 +174,7 @@ describe("NineBall Rules", () => {
     nineball.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "Foul",
-      title: "Foul!",
+      title: "FOUL",
       subtext: "Cue ball potted",
       extra: "Ball in hand",
     })
@@ -186,7 +186,7 @@ describe("NineBall Rules", () => {
     nineball.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "Foul",
-      title: "Foul!",
+      title: "FOUL",
       subtext: "No ball hit",
       extra: "Ball in hand",
     })
@@ -199,7 +199,7 @@ describe("NineBall Rules", () => {
     nineball.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "Foul",
-      title: "Foul!",
+      title: "FOUL",
       subtext: "Wrong ball hit first",
       extra: "Ball in hand",
     })
@@ -212,7 +212,7 @@ describe("NineBall Rules", () => {
     nineball.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "Foul",
-      title: "Foul!",
+      title: "FOUL",
       subtext: "No cushion after contact",
       extra: "Ball in hand",
     })
@@ -233,7 +233,7 @@ describe("NineBall Rules", () => {
     nineball.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "GameOver",
-      title: "Game Over!",
+      title: "GAME OVER",
       subtext: "You won!",
       extra: `<button onclick="location.reload()">New Game</button>
 <a href="https://scoreboard-tailuge.vercel.app/" class="button">Lobby</a>`,
