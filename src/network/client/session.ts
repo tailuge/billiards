@@ -17,6 +17,10 @@ export class Session {
     return Session.instance
   }
 
+  static hasInstance(): boolean {
+    return Session.instance !== undefined
+  }
+
   static isSpectator(): boolean {
     return Session.instance !== undefined && Session.getInstance().spectator
   }
