@@ -1,4 +1,4 @@
-import { atan2, cos, pow, sin, sqrt } from "../../utils/utils"
+import { atan2, cos, sin, sqrt } from "../../utils/utils"
 import { cosθ, sinθ } from "./constants"
 
 export class Mathaven {
@@ -39,31 +39,6 @@ export class Mathaven {
     this.μw = μw
   }
 
-  private updateSlipSpeedsAndAngles(): void {
-    const R = this.R
-
-    // Calculate velocities at the cushion (I)
-    const v_xI = this.vx + this.ωy * R * sinθ - this.ωz * R * cosθ
-    const v_yI = -this.vy * sinθ + this.ωx * R
-
-    // Calculate velocities at the table (C)
-    const v_xC = this.vx - this.ωy * R
-    const v_yC = this.vy + this.ωx * R
-
-    // Update slip speeds and angles at the cushion (I)
-    this.s = sqrt(pow(v_xI, 2) + pow(v_yI, 2))
-    this.φ = atan2(v_yI, v_xI)
-    if (this.φ < 0) {
-      this.φ += 2 * Math.PI
-    }
-    // Update slip speeds and angles at the table (C)
-    this.sʹ = sqrt(pow(v_xC, 2) + pow(v_yC, 2))
-    this.φʹ = atan2(v_yC, v_xC)
-    if (this.φʹ < 0) {
-      this.φʹ += 2 * Math.PI
-    }
-  }
-
   public compressionPhase(): void {
     const ΔP = Math.max((this.M * this.vy) / this.N, 0.001)
     while (this.vy > 0) {
@@ -79,58 +54,66 @@ export class Mathaven {
     }
   }
 
-  protected updateSingleStep(ΔP: number): void {
-    this.updateSlipSpeedsAndAngles()
-    this.updateVelocity(ΔP)
-    this.updateAngularVelocity(ΔP)
-    this.updateWorkDone(ΔP)
-    if (this.i++ > 10 * this.N) {
-      throw new Error("Solution not found")
-    }
+  protected updateSlipAngles(
+    _v_yI: number,
+    _v_xI: number,
+    _v_yC: number,
+    _v_xC: number
+  ): void {
+    // No-op in base class for performance, overridden in HistoryMathaven for diagrams
   }
 
-  private updateVelocity(ΔP: number): void {
+  protected updateSingleStep(ΔP: number): void {
+    const R = this.R
     const μs = this.μs
     const μw = this.μw
     const M = this.M
+
+    // Calculate velocities at the cushion (I)
+    const v_xI = this.vx + this.ωy * R * sinθ - this.ωz * R * cosθ
+    const v_yI = -this.vy * sinθ + this.ωx * R
+
+    // Calculate velocities at the table (C)
+    const v_xC = this.vx - this.ωy * R
+    const v_yC = this.vy + this.ωx * R
+
+    // Update slip speeds and angles at the cushion (I)
+    const s = sqrt(v_xI * v_xI + v_yI * v_yI)
+    this.s = s
+    const cosPhi = s > 0 ? v_xI / s : 1
+    const sinPhi = s > 0 ? v_yI / s : 0
+
+    // Update slip speeds and angles at the table (C)
+    const sʹ = sqrt(v_xC * v_xC + v_yC * v_yC)
+    this.sʹ = sʹ
+    const cosPhiʹ = sʹ > 0 ? v_xC / sʹ : 1
+    const sinPhiʹ = sʹ > 0 ? v_yC / sʹ : 0
+
+    this.updateSlipAngles(v_yI, v_xI, v_yC, v_xC)
+
+    const termCommon = sinθ + μw * sinPhi * cosθ
+    const invM = 1 / M
+    const fiveOver2MR = 5 / (2 * M * R)
 
     // Update centroid velocity components
-    this.vx -=
-      (1 / M) *
-      (μw * cos(this.φ) +
-        μs * cos(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
-      ΔP
+    this.vx -= invM * (μw * cosPhi + μs * cosPhiʹ * termCommon) * ΔP
     this.vy -=
-      (1 / M) *
-      (cosθ -
-        μw * sinθ * sin(this.φ) +
-        μs * sin(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
-      ΔP
-  }
+      invM * (cosθ - μw * sinθ * sinPhi + μs * sinPhiʹ * termCommon) * ΔP
 
-  private updateAngularVelocity(ΔP: number): void {
-    const μs = this.μs
-    const μw = this.μw
-    const M = this.M
-    const R = this.R
-
-    this.ωx +=
-      -(5 / (2 * M * R)) *
-      (μw * sin(this.φ) +
-        μs * sin(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
-      ΔP
+    // Update angular velocity
+    this.ωx += -fiveOver2MR * (μw * sinPhi + μs * sinPhiʹ * termCommon) * ΔP
     this.ωy +=
-      -(5 / (2 * M * R)) *
-      (μw * cos(this.φ) * sinθ -
-        μs * cos(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
-      ΔP
-    this.ωz += (5 / (2 * M * R)) * (μw * cos(this.φ) * cosθ) * ΔP
-  }
+      -fiveOver2MR * (μw * cosPhi * sinθ - μs * cosPhiʹ * termCommon) * ΔP
+    this.ωz += fiveOver2MR * (μw * cosPhi * cosθ) * ΔP
 
-  private updateWorkDone(ΔP: number): void {
+    // Update work done
     const ΔWzI = ΔP * Math.abs(this.vy)
     this.WzI += ΔWzI
     this.P += ΔP
+
+    if (this.i++ > 10 * this.N) {
+      throw new Error("Solution not found")
+    }
   }
 
   public solvePaper(v0: number, α: number, ω0S: number, ω0T: number) {

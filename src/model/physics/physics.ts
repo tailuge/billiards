@@ -182,12 +182,26 @@ export function restitutionCushion(v: Vector3) {
   return e
 }
 
-function cartesionToBallCentric(v, w) {
-  const mathaven = new Mathaven(m, R, ee, μs, μw + 0.1)
-  mathaven.solve(v.x, v.y, w.x, w.y, w.z)
+let mathavenInstance: Mathaven | null = null
 
-  const rv = new Vector3(mathaven.vx, mathaven.vy, 0)
-  const rw = new Vector3(mathaven.ωx, mathaven.ωy, mathaven.ωz)
+function cartesionToBallCentric(v, w) {
+  if (!mathavenInstance) {
+    mathavenInstance = new Mathaven(m, R, ee, μs, μw + 0.1)
+  } else {
+    mathavenInstance.M = m
+    mathavenInstance.R = R
+    mathavenInstance.ee = ee
+    mathavenInstance.μs = μs
+    mathavenInstance.μw = μw + 0.1
+  }
+  mathavenInstance.solve(v.x, v.y, w.x, w.y, w.z)
+
+  const rv = new Vector3(mathavenInstance.vx, mathavenInstance.vy, 0)
+  const rw = new Vector3(
+    mathavenInstance.ωx,
+    mathavenInstance.ωy,
+    mathavenInstance.ωz
+  )
 
   return { v: rv.sub(v), w: rw.sub(w) }
 }
