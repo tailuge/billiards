@@ -237,7 +237,7 @@ describe("NineBall Rules", () => {
       subtext: "You won!",
       extra: `<button onclick="location.reload()">New Game</button>
 <a href="https://scoreboard-tailuge.vercel.app/" class="button">Lobby</a>`,
-      duration: 10000,
+      duration: 30000,
     })
   })
 })

@@ -139,7 +139,7 @@ export class NineBall implements Rules {
       subtext: subtext,
       extra: `<button onclick="location.reload()">New Game</button>
 <a href="https://scoreboard-tailuge.vercel.app/" class="button">Lobby</a>`,
-      duration: 10000,
+      duration: 30000,
     })
     this.container.eventQueue.push(new ChatEvent(null, `game over`))
     this.container.recorder.wholeGameLink()
