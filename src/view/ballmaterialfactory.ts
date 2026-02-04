@@ -28,14 +28,19 @@ export class BallMaterialFactory {
 
   static createProjectedMaterial(
     label: number,
-    color: Color
+    color: Color,
+    size = 256
   ): MeshStandardMaterial {
-    const key = `projected_${label}_${color.getHex()}`
+    const key = `projected_${label}_${color.getHex()}_${size}`
     if (this.materialCache.has(key)) {
       return this.materialCache.get(key) as MeshStandardMaterial
     }
 
-    const numberTexture = BallTextureFactory.getOrCreateTexture(label, color)
+    const numberTexture = BallTextureFactory.getOrCreateTexture(
+      label,
+      color,
+      size
+    )
     const material = new MeshStandardMaterial({
       color: color,
       roughness: 0.5,
@@ -50,12 +55,14 @@ export class BallMaterialFactory {
       shader.vertexShader = shader.vertexShader.replace(
         "#include <common>",
         `#include <common>
-         varying vec3 vLocalPosition;`
+         varying vec3 vLocalPosition;
+         varying vec3 vNormalVar;`
       )
       shader.vertexShader = shader.vertexShader.replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
-         vLocalPosition = position;`
+         vLocalPosition = position;
+         vNormalVar = normal;`
       )
 
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -63,7 +70,8 @@ export class BallMaterialFactory {
         `#include <common>
         uniform sampler2D numberTex;
         uniform float projSize;
-        varying vec3 vLocalPosition;`
+        varying vec3 vLocalPosition;
+        varying vec3 vNormalVar;`
       )
 
       shader.fragmentShader = shader.fragmentShader.replace(

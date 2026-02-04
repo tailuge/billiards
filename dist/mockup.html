@@ -70,17 +70,17 @@
         "#0000FF", // 2: Blue
         "#FF0000", // 3: Red
         "#800080", // 4: Purple
-        "#FFA500", // 5: Orange
+        "#FF8000", // 5: Orange
         "#008000", // 6: Green
-        "#800000", // 7: Maroon
+        "#600000", // 7: Maroon
         "#000000", // 8: Black
         "#FFFF00", // 9: Yellow (Striped)
         "#0000FF", // 10: Blue (Striped)
         "#FF0000", // 11: Red (Striped)
         "#800080", // 12: Purple (Striped)
-        "#FFA500", // 13: Orange (Striped)
+        "#FF8000", // 13: Orange (Striped)
         "#008000", // 14: Green (Striped)
-        "#800000", // 15: Maroon (Striped)
+        "#600000", // 15: Maroon (Striped)
       ]
 
       const BALL_NAMES = [
@@ -110,22 +110,23 @@
       let cameraTheta = Math.PI / 4
       let cameraPhi = Math.PI / 3
 
+      const TEXTURE_SIZE = 64
+      const SCALE = TEXTURE_SIZE / 256
+
       const container = document.getElementById("canvas-container")
 
       function addWhiteBars(ctx, width, height) {
         ctx.fillStyle = "white"
-        ctx.fillRect(0, 0, width, height / 4)
-        ctx.fillRect(0, (height * 3) / 4, width, height / 4)
+        ctx.fillRect(0, 0, width, height * 0.2)
+        ctx.fillRect(0, height * 0.8, width, height * 0.2)
       }
 
       function drawBaseCircle(ctx, x, y, radius, border) {
-        // 1. Black circle (border)
         ctx.beginPath()
         ctx.arc(x, y, radius + border, 0, Math.PI * 2)
         ctx.fillStyle = "black"
         ctx.fill()
 
-        // 2. White circle
         ctx.beginPath()
         ctx.arc(x, y, radius, 0, Math.PI * 2)
         ctx.fillStyle = "white"
@@ -134,33 +135,32 @@
 
       function drawNumber(ctx, number, x, y) {
         ctx.fillStyle = "black"
-        ctx.font = "bold 80px Arial, sans-serif"
+        ctx.font = "1000 " + Math.round(92 * SCALE) + "px Arial, sans-serif"
         ctx.textAlign = "center"
         ctx.textBaseline = "middle"
-        ctx.fillText(number.toString(), x, y + 5)
+        ctx.fillText(number.toString(), x, y + Math.round(5 * SCALE))
       }
 
       function createNumberTexture(ballNumber) {
-        const size = 256
+        const size = TEXTURE_SIZE
         const color = BALL_COLORS[ballNumber] || "#FFFFFF"
         const canvas = document.createElement("canvas")
         canvas.width = size
         canvas.height = size
         const ctx = canvas.getContext("2d")
 
-        // 0. Background
         ctx.fillStyle = color
         ctx.fillRect(0, 0, canvas.width, canvas.height)
 
         const rand = () => Math.random() * size
-        // 0.1 Noise
         const noiseAlpha = 0.03
+        const noiseSize = Math.round(10 * SCALE)
         for (let i = 0; i < 100; i++) {
           ctx.fillStyle =
             Math.random() > 0.5
               ? `rgba(255,255,255,${noiseAlpha})`
               : `rgba(0,0,0,${noiseAlpha})`
-          ctx.fillRect(rand(), rand(), 10, 10)
+          ctx.fillRect(rand(), rand(), noiseSize, noiseSize)
         }
 
         if (ballNumber >= 9) {
@@ -171,7 +171,13 @@
           const centerX = canvas.width / 2
           const centerY = canvas.height / 2
 
-          drawBaseCircle(ctx, centerX, centerY, 53, 5)
+          drawBaseCircle(
+            ctx,
+            centerX,
+            centerY,
+            Math.round(53 * SCALE),
+            Math.round(10 * SCALE)
+          )
           drawNumber(ctx, ballNumber, centerX, centerY)
         }
 
