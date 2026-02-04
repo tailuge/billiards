@@ -52,6 +52,12 @@ export class Rack {
     return new Ball(Rack.jitter(pos), 0xfaebd7, label)
   }
 
+  static swapBallPositions(b1: Ball, b2: Ball) {
+    const temp = b1.pos.clone()
+    b1.pos.copy(b2.pos)
+    b2.pos.copy(temp)
+  }
+
   static diamond() {
     const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
     const diamond: Ball[] = []
@@ -78,9 +84,7 @@ export class Rack {
     diamond.push(newball(pos, Rack.BALL_COLORS[9], 9)) // 9: Yellow (Striped)
 
     // swap 9 ball to center
-    const other = diamond[4].pos.clone()
-    diamond[4].pos.copy(diamond[9].pos)
-    diamond[9].pos.copy(other)
+    Rack.swapBallPositions(diamond[4], diamond[9])
     return diamond
   }
 
@@ -93,6 +97,7 @@ export class Rack {
       const label = i + 1
       triangle.push(new Ball(Rack.jitter(p), Rack.BALL_COLORS[label], label))
     })
+    Rack.swapBallPositions(triangle[4], triangle[9])
     return triangle
   }
 
