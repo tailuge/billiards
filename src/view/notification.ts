@@ -1,12 +1,11 @@
-import { Session } from "../network/client/session"
-
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info"
   title: string
   subtext?: string
   extra?: string
   duration?: number
-  winnerClientId?: string
+  icon?: string
+  extraClass?: string
 }
 
 export class Notification {
@@ -18,17 +17,9 @@ export class Notification {
   }
 
   private getIcon(data: NotificationData): string {
+    if (data.icon) return data.icon
     if (data.type === "Foul") return "🎱"
-    if (data.type === "GameOver") {
-      if (data.winnerClientId && Session.hasInstance()) {
-        const session = Session.getInstance()
-        if (session.clientId === data.winnerClientId) {
-          return "🏆"
-        }
-        return "🥈"
-      }
-      return "🏆"
-    }
+    if (data.type === "GameOver") return "🏆"
     return "🔵"
   }
 
@@ -66,17 +57,10 @@ export class Notification {
 
   private processData(data: NotificationData) {
     let typeClass = `type-${data.type}`
-    const icon = this.getIcon(data)
-
-    if (data.type === "GameOver" && data.winnerClientId && Session.hasInstance()) {
-      const session = Session.getInstance()
-      if (session.clientId === data.winnerClientId) {
-        typeClass += " is-winner"
-      } else {
-        typeClass += " is-loser"
-      }
+    if (data.extraClass) {
+      typeClass += ` ${data.extraClass}`
     }
-
+    const icon = this.getIcon(data)
     const extraContentHtml = this.renderExtra(data.extra)
 
     const content = `

@@ -107,6 +107,10 @@ export class Container {
     this.sendEvent(new NotificationEvent(data, duration))
   }
 
+  notifyLocal(data: NotificationData | string, duration?: number) {
+    this.notification.show(data, duration)
+  }
+
   advance(elapsed) {
     this.frame?.(elapsed)
 

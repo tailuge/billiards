@@ -119,18 +119,35 @@ export class NineBall implements Rules {
     this.score += pots
     this.container.sound.playSuccess(table.inPockets())
     if (this.isEndOfGame(outcome)) {
-      return this.handleGameEnd()
+      return this.handleGameEnd(true)
     }
     this.container.sendEvent(new WatchEvent(table.serialise()))
     return new Aim(this.container)
   }
 
-  private handleGameEnd(): Controller {
-    const session = Session.getInstance()
-    let subtext = "You won!"
+  handleGameEnd(isWinner: boolean): Controller {
+    const session = Session.hasInstance() ? Session.getInstance() : null
+    let title: string
+    let subtext: string
+    let icon: string
+    let extraClass = ""
 
-    if (session.opponentName) {
-      subtext = `Winner: ${session.playername || "You"}<br>Loser: ${session.opponentName}`
+    if (isWinner) {
+      title = "YOU WON"
+      subtext = "Congratulations!"
+      icon = "🏆"
+      extraClass = "is-winner"
+    } else if (!Session.isSpectator()) {
+      title = "YOU LOST"
+      subtext = "Better luck next time"
+      icon = "🥈"
+      extraClass = "is-loser"
+    } else {
+      title = "GAME OVER"
+      subtext = session?.opponentName
+        ? `Winner: ${session.opponentName}`
+        : "Game Over"
+      icon = "🏆"
     }
 
     const lobbyButton = `<button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`
@@ -139,26 +156,33 @@ export class NineBall implements Rules {
       ? `${newGameButton}${lobbyButton}`
       : lobbyButton
 
-    this.container.notify({
+    this.container.notifyLocal({
       type: "GameOver",
-      title: "GAME OVER",
+      title: title,
       subtext: subtext,
       extra: extra,
+      icon: icon,
+      extraClass: extraClass,
       duration: 30000,
-      winnerClientId: session.clientId,
     })
-    this.container.eventQueue.push(new ChatEvent(null, `game over`))
-    this.container.recorder.wholeGameLink()
+
+    if (isWinner) {
+      this.container.eventQueue.push(new ChatEvent(null, `game over`))
+      this.container.recorder.wholeGameLink()
+    }
+
     const result: MatchResult = {
-      winner: session.playername || "Anon",
+      winner: isWinner
+        ? session?.playername || "Anon"
+        : session?.opponentName || "Opponent",
       winnerScore: 1,
       gameType: this.rulename,
     }
-    if (session.opponentName) {
-      result.loser = session.opponentName
+    if (session?.opponentName) {
+      result.loser = isWinner ? session.opponentName : session.playername || "Anon"
       result.loserScore = 0
     }
-    return new End(this.container, result)
+    return new End(this.container, isWinner ? result : undefined)
   }
 
   private handleMiss(): Controller {

@@ -309,22 +309,63 @@ export class Snooker implements Rules {
     const table = this.container.table
     this.container.sound.playSuccess(table.inPockets())
     if (Outcome.isClearTable(table)) {
-      this.container.eventQueue.push(new ChatEvent(null, `game over`))
-      this.container.recorder.wholeGameLink()
-      const session = Session.getInstance()
-      const result: MatchResult = {
-        winner: session.playername || "Anon",
-        winnerScore: this.score + this.currentBreak,
-        gameType: this.rulename,
-      }
-      if (session.opponentName) {
-        result.loser = session.opponentName
-        result.loserScore = 0 // We don't track opponent score easily here yet
-      }
-      return new End(this.container, result)
+      return this.handleGameEnd(true)
     }
     this.container.sendEvent(new WatchEvent(table.serialise()))
     return new Aim(this.container)
+  }
+
+  handleGameEnd(isWinner: boolean): Controller {
+    if (isWinner) {
+      this.container.eventQueue.push(new ChatEvent(null, `game over`))
+      this.container.recorder.wholeGameLink()
+    }
+
+    const session = Session.hasInstance() ? Session.getInstance() : null
+    let title: string
+    let subtext: string
+    let icon: string
+    let extraClass = ""
+
+    if (isWinner) {
+      title = "YOU WON"
+      subtext = "Congratulations!"
+      icon = "🏆"
+      extraClass = "is-winner"
+    } else if (!Session.isSpectator()) {
+      title = "YOU LOST"
+      subtext = "Better luck next time"
+      icon = "🥈"
+      extraClass = "is-loser"
+    } else {
+      title = "GAME OVER"
+      subtext = session?.opponentName
+        ? `Winner: ${session.opponentName}`
+        : "Game Over"
+      icon = "🏆"
+    }
+
+    this.container.notifyLocal({
+      type: "GameOver",
+      title: title,
+      subtext: subtext,
+      icon: icon,
+      extraClass: extraClass,
+      duration: 30000,
+    })
+
+    const result: MatchResult = {
+      winner: isWinner
+        ? session?.playername || "Anon"
+        : session?.opponentName || "Opponent",
+      winnerScore: this.score + this.currentBreak,
+      gameType: this.rulename,
+    }
+    if (session?.opponentName) {
+      result.loser = isWinner ? session.opponentName : session.playername || "Anon"
+      result.loserScore = 0 // We don't track opponent score easily here yet
+    }
+    return new End(this.container, isWinner ? result : undefined)
   }
 
   whiteInHand(): Controller {

@@ -15,6 +15,9 @@ import { Rules } from "./rules"
 import { zero } from "../../utils/utils"
 import { Respot } from "../../utils/respot"
 import { StartAimEvent } from "../../events/startaimevent"
+import { End } from "../end"
+import { Session } from "../../network/client/session"
+import { MatchResult } from "../../network/client/matchresult"
 
 export class ThreeCushion implements Rules {
   readonly container: Container
@@ -107,6 +110,26 @@ export class ThreeCushion implements Rules {
 
   isEndOfGame(_: Outcome[]) {
     return false
+  }
+
+  handleGameEnd(isWinner: boolean): Controller {
+    const session = Session.hasInstance() ? Session.getInstance() : null
+    this.container.notifyLocal({
+      type: "GameOver",
+      title: isWinner ? "YOU WON" : "YOU LOST",
+      icon: isWinner ? "🏆" : "🥈",
+      extraClass: isWinner ? "is-winner" : "is-loser",
+      duration: 30000,
+    })
+
+    const result: MatchResult = {
+      winner: isWinner
+        ? session?.playername || "Anon"
+        : session?.opponentName || "Opponent",
+      winnerScore: this.score,
+      gameType: this.rulename,
+    }
+    return new End(this.container, isWinner ? result : undefined)
   }
 
   allowsPlaceBall() {

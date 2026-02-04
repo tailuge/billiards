@@ -23,4 +23,5 @@ export interface Rules {
   asset(): string
   nextCandidateBall()
   startTurn()
+  handleGameEnd(isWinner: boolean): Controller
 }
