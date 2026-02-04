@@ -1,9 +1,12 @@
+import { Session } from "../network/client/session"
+
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info"
   title: string
   subtext?: string
   extra?: string
   duration?: number
+  winnerClientId?: string
 }
 
 export class Notification {
@@ -14,9 +17,18 @@ export class Notification {
     this.element = document.getElementById("notification") as HTMLDivElement
   }
 
-  private getIcon(type: NotificationData["type"]): string {
-    if (type === "Foul") return "🎱"
-    if (type === "GameOver") return "🏆"
+  private getIcon(data: NotificationData): string {
+    if (data.type === "Foul") return "🎱"
+    if (data.type === "GameOver") {
+      if (data.winnerClientId && Session.hasInstance()) {
+        const session = Session.getInstance()
+        if (session.clientId === data.winnerClientId) {
+          return "🏆"
+        }
+        return "🥈"
+      }
+      return "🏆"
+    }
     return "🔵"
   }
 
@@ -28,44 +40,72 @@ export class Notification {
     let duration = defaultDuration
 
     if (typeof data === "string") {
-      content = `
-        <div class="notification-banner">
-          <div class="notification-text-group">
-            <div class="notification-subtext">${data}</div>
-          </div>
-        </div>
-      `
+      content = this.renderStringContent(data)
       typeClass = "type-Info"
     } else {
-      const icon = this.getIcon(data.type)
-      let extraContentHtml = ""
-      if (data.extra) {
-        if (data.extra.includes("<")) {
-          extraContentHtml = `<div class="notification-extra">${data.extra}</div>`
-        } else {
-          extraContentHtml = `<div class="notification-badge">${data.extra}</div>`
-        }
-      }
-
-      content = `
-        <div class="notification-banner">
-          <div class="notification-icon">${icon}</div>
-          <div class="notification-text-group">
-            <div class="notification-title">${data.title}</div>
-            ${data.subtext ? `<div class="notification-subtext">${data.subtext}</div>` : ""}
-          </div>
-        </div>
-        ${extraContentHtml}
-      `
-      typeClass = `type-${data.type}`
+      const result = this.processData(data)
+      content = result.content
+      typeClass = result.typeClass
       if (data.duration !== undefined) {
         duration = data.duration
       }
     }
 
+    this.display(content, typeClass, duration)
+  }
+
+  private renderStringContent(message: string): string {
+    return `
+      <div class="notification-banner">
+        <div class="notification-text-group">
+          <div class="notification-subtext">${message}</div>
+        </div>
+      </div>
+    `
+  }
+
+  private processData(data: NotificationData) {
+    let typeClass = `type-${data.type}`
+    const icon = this.getIcon(data)
+
+    if (data.type === "GameOver" && data.winnerClientId && Session.hasInstance()) {
+      const session = Session.getInstance()
+      if (session.clientId === data.winnerClientId) {
+        typeClass += " is-winner"
+      } else {
+        typeClass += " is-loser"
+      }
+    }
+
+    const extraContentHtml = this.renderExtra(data.extra)
+
+    const content = `
+      <div class="notification-banner">
+        <div class="notification-icon">${icon}</div>
+        <div class="notification-text-group">
+          <div class="notification-title">${data.title}</div>
+          ${data.subtext ? `<div class="notification-subtext">${data.subtext}</div>` : ""}
+        </div>
+      </div>
+      ${extraContentHtml}
+    `
+
+    return { content, typeClass }
+  }
+
+  private renderExtra(extra?: string): string {
+    if (!extra) return ""
+    if (extra.includes("<")) {
+      return `<div class="notification-extra">${extra}</div>`
+    }
+    return `<div class="notification-badge">${extra}</div>`
+  }
+
+  private display(content: string, typeClass: string, duration: number) {
+    if (!this.element) return
     this.element.innerHTML = content
     this.element.className = "" // Clear previous classes
-    this.element.classList.add(typeClass)
+    this.element.classList.add(...typeClass.split(" "))
     this.element.style.display = "flex"
 
     if (this.timeoutId) {

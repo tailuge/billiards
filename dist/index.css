@@ -81,17 +81,13 @@ p {
   align-items: center;
   gap: 18px;
   padding: 14px 34px;
-  border-radius: 16px;
-  background: linear-gradient(
-    135deg,
-    rgba(20, 100, 200, 0.75),
-    rgba(0, 180, 160, 0.75)
-  );
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  background: #1464c8;
+  background: linear-gradient(135deg, #1464c8 0%, #00b4a0 100%);
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   transition:
-    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    transform 0.2s ease,
     opacity 0.2s ease;
 }
 
@@ -126,9 +122,8 @@ p {
 }
 
 .notification-badge {
+  background: #555;
   background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   color: white;
   padding: 6px 16px;
   border-radius: 10px;
@@ -153,20 +148,38 @@ p {
 }
 
 #notification.type-Foul .notification-banner {
-  background: linear-gradient(
-    135deg,
-    rgba(40, 80, 150, 0.8),
-    rgba(20, 140, 140, 0.8)
-  );
-  border-color: rgba(100, 200, 255, 0.3);
+  background: #285096;
+  background: linear-gradient(135deg, #285096 0%, #148c8c 100%);
+  border-color: #64c8ff;
 }
 
 #notification.type-GameOver .notification-banner {
-  background: linear-gradient(
-    135deg,
-    rgba(180, 140, 0, 0.8),
-    rgba(200, 100, 0, 0.8)
-  );
+  background: #b48c00;
+  background: linear-gradient(135deg, #b48c00 0%, #c86400 100%);
+}
+
+#notification.is-winner .notification-banner {
+  background: #ffd700;
+  background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
+  color: #000;
+  border-color: #ffffff;
+}
+
+#notification.is-winner .notification-title,
+#notification.is-winner .notification-subtext {
+  color: #000;
+}
+
+#notification.is-loser .notification-banner {
+  background: #c0c0c0;
+  background: linear-gradient(135deg, #c0c0c0 0%, #808080 100%);
+  color: #000;
+  border-color: #ffffff;
+}
+
+#notification.is-loser .notification-title,
+#notification.is-loser .notification-subtext {
+  color: #000;
 }
 
 .notification-extra button,

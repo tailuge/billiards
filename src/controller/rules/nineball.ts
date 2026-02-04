@@ -145,6 +145,7 @@ export class NineBall implements Rules {
       subtext: subtext,
       extra: extra,
       duration: 30000,
+      winnerClientId: session.clientId,
     })
     this.container.eventQueue.push(new ChatEvent(null, `game over`))
     this.container.recorder.wholeGameLink()

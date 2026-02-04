@@ -237,6 +237,7 @@ describe("NineBall Rules", () => {
       subtext: "You won!",
       extra: `<button onclick="location.reload()">New Game</button><button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
       duration: 30000,
+      winnerClientId: "test-client",
     })
   })
 
@@ -260,6 +261,7 @@ describe("NineBall Rules", () => {
       subtext: "You won!",
       extra: `<button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
       duration: 30000,
+      winnerClientId: "test-client",
     })
   })
 })
