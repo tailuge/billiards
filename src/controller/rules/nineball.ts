@@ -133,12 +133,17 @@ export class NineBall implements Rules {
       subtext = `Winner: ${session.playername || "You"}<br>Loser: ${session.opponentName}`
     }
 
+    const lobbyButton = `<button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`
+    const newGameButton = `<button onclick="location.reload()">New Game</button>`
+    const extra = this.container.isSinglePlayer
+      ? `${newGameButton}${lobbyButton}`
+      : lobbyButton
+
     this.container.notify({
       type: "GameOver",
       title: "GAME OVER",
       subtext: subtext,
-      extra: `<button onclick="location.reload()">New Game</button>
-<a href="https://scoreboard-tailuge.vercel.app/" class="button">Lobby</a>`,
+      extra: extra,
       duration: 30000,
     })
     this.container.eventQueue.push(new ChatEvent(null, `game over`))

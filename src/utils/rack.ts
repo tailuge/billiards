@@ -76,6 +76,11 @@ export class Rack {
     diamond.push(newball(pos, Rack.BALL_COLORS[8], 8)) // 8: Black
     pos.add(Rack.diagonal)
     diamond.push(newball(pos, Rack.BALL_COLORS[9], 9)) // 9: Yellow (Striped)
+
+    // swap 9 ball to center
+    const other = diamond[4].pos.clone()
+    diamond[4].pos.copy(diamond[9].pos)
+    diamond[9].pos.copy(other)
     return diamond
   }
 

@@ -24,7 +24,7 @@ describe("NineBall Rules", () => {
     Session.init("test-client", "TestPlayer", "test-table", false)
     container = new Container(
       undefined,
-      (_) => {},
+      (_: any) => {},
       Assets.localAssets(),
       "nineball"
     )
@@ -235,8 +235,30 @@ describe("NineBall Rules", () => {
       type: "GameOver",
       title: "GAME OVER",
       subtext: "You won!",
-      extra: `<button onclick="location.reload()">New Game</button>
-<a href="https://scoreboard-tailuge.vercel.app/" class="button">Lobby</a>`,
+      extra: `<button onclick="location.reload()">New Game</button><button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
+      duration: 30000,
+    })
+  })
+
+  it("should trigger game over notification with only lobby button in 2-player mode", () => {
+    container.isSinglePlayer = false
+    const notifySpy = jest.spyOn(container, "notify")
+    container.table.balls.forEach((b) => {
+      if (b !== container.table.cueball && b.label !== 9) {
+        b.state = State.InPocket
+      }
+    })
+    const nineBall = container.table.balls.find((b) => b.label === 9)!
+    const outcome = [
+      Outcome.collision(container.table.cueball, nineBall, 1),
+      Outcome.pot(nineBall, 1),
+    ]
+    nineball.update(outcome)
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "GameOver",
+      title: "GAME OVER",
+      subtext: "You won!",
+      extra: `<button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
       duration: 30000,
     })
   })

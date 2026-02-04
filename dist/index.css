@@ -172,22 +172,26 @@ p {
 .notification-extra button,
 .notification-extra .button {
   display: inline-block;
-  padding: 8px 16px;
-  margin: 5px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 4px;
+  padding: 10px 20px;
+  margin: 8px;
+  background: rgba(100, 100, 100, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
   color: white;
   text-decoration: none;
-  font-family: "Roboto", sans-serif;
+  font-family: inherit;
   font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .notification-extra button:hover,
 .notification-extra .button:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(150, 150, 150, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .view3d {
