@@ -2,7 +2,6 @@ import { Aim } from "./aim"
 import { WatchAim } from "./watchaim"
 import { ControllerBase } from "./controllerbase"
 import { PlaceBall } from "./placeball"
-import { End } from "./end"
 import { PlaceBallEvent } from "../events/placeballevent"
 
 export class WatchShot extends ControllerBase {
@@ -15,7 +14,7 @@ export class WatchShot extends ControllerBase {
   override handleStationary(_) {
     const outcome = this.container.table.outcome
     if (this.container.rules.isEndOfGame(outcome)) {
-      return new End(this.container)
+      return this.container.rules.handleGameEnd(false)
     }
     return this
   }
