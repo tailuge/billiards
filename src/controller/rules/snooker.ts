@@ -44,7 +44,8 @@ export class Snooker implements Rules {
     const info = SnookerUtils.shotInfo(
       this.container.table,
       outcome,
-      this.targetIsRed
+      this.targetIsRed,
+      this.previousPotRed
     )
 
     if (info.pots === 0) {
@@ -66,7 +67,6 @@ export class Snooker implements Rules {
   }
 
   targetRedRule(outcome: Outcome[], info): Controller {
-    console.log("applying target red rule")
     if (info.legalFirstCollision && Outcome.onlyRedsPotted(outcome)) {
       // legal pot of one or more reds
       this.currentBreak += info.pots
@@ -87,8 +87,6 @@ export class Snooker implements Rules {
   }
 
   targetColourRule(outcome: Outcome[], info): Controller {
-    console.log("applying target colour rule")
-
     if (info.whitePotted) {
       return this.foul(outcome, info)
     }
@@ -98,15 +96,16 @@ export class Snooker implements Rules {
       return this.foul(outcome, info)
     }
 
+    // This checks if the potted ball is a colour (ID 1-6)
     if (Outcome.pots(outcome)[0].id > 6) {
+      // If it's a red, it's a foul
       return this.foul(outcome, info)
     }
-
-    this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
 
     // exactly one non red potted
 
     const id = Outcome.pots(outcome)[0].id
+    // This checks if the potted ball is the same as the first ball hit
     if (id !== info.firstCollision.ballB.id) {
       return this.foul(outcome, info)
     }
@@ -115,9 +114,14 @@ export class Snooker implements Rules {
       this.respot(outcome)
       this.currentBreak += id + 1
       this.previousPotRed = false
+      this.targetIsRed =
+        SnookerUtils.redsOnTable(this.container.table).length > 0
       return this.continueBreak()
     }
 
+    // This block is only reached if previousPotRed is false,
+    // meaning all reds are off the table and colours are being cleared in order.
+    // In this case, we need to check if a lesser ball is on the table.
     const lesserBallOnTable =
       SnookerUtils.coloursOnTable(this.container.table).filter((b) => b.id < id)
         .length > 0
@@ -128,6 +132,7 @@ export class Snooker implements Rules {
 
     this.currentBreak += id + 1
     this.previousPotRed = false
+    this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     return this.continueBreak()
   }
 
@@ -169,7 +174,8 @@ export class Snooker implements Rules {
 
     const firstBallId = info.firstCollision.ballB?.id ?? 0
 
-    if (this.targetIsRed) {
+    // Use info.targetIsRed for the foul message, as it reflects the state *before* the shot.
+    if (info.targetIsRed) {
       if (firstBallId < 7 || firstBallId === 0) {
         const colourName = SnookerUtils.colourName(firstBallId)
         return `Hit ${colourName} instead of red`

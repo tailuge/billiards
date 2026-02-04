@@ -3,7 +3,12 @@ import { Respot } from "../../utils/respot"
 import { Table } from "../../model/table"
 
 export class SnookerUtils {
-  static shotInfo(table: Table, outcome: Outcome[], targetIsRed) {
+  static shotInfo(
+    table: Table,
+    outcome: Outcome[],
+    targetIsRed: boolean,
+    previousPotRed: boolean
+  ) {
     const firstCollision = Outcome.firstCollision(outcome)
     return {
       pots: Outcome.potCount(outcome),
@@ -11,24 +16,44 @@ export class SnookerUtils {
       legalFirstCollision: SnookerUtils.isLegalFirstCollision(
         table,
         targetIsRed,
+        previousPotRed,
         firstCollision
       ),
       whitePotted: Outcome.isCueBallPotted(table.cueball, outcome),
+      targetIsRed: targetIsRed,
     }
   }
 
-  static isLegalFirstCollision(table: Table, targetIsRed, firstCollision) {
+  static isLegalFirstCollision(
+    table: Table,
+    targetIsRed: boolean,
+    previousPotRed: boolean,
+    firstCollision
+  ) {
     if (!firstCollision) {
       return false
     }
     const id = firstCollision.ballB!.id
     if (targetIsRed) {
-      const isRed = id >= 7
-      return isRed
+      // Player is targeting red
+      return id >= 7 // First hit ball must be a red
+    } else {
+      // Player is targeting colour
+      if (previousPotRed) {
+        // Just potted a red, now hitting *any* colour
+        return id >= 1 && id <= 6 // First hit ball must be a colour (1-6)
+      } else {
+        // All reds off the table, clearing colours in order
+        const colours = SnookerUtils.coloursOnTable(table).sort(
+          (a, b) => a.id - b.id
+        )
+        if (colours.length === 0) {
+          // No colours left
+          return false
+        }
+        return id === colours[0].id // First hit ball must be the lowest ID colour
+      }
     }
-    const lesserBallOnTable =
-      SnookerUtils.coloursOnTable(table).filter((b) => b.id < id).length > 0
-    return !lesserBallOnTable
   }
 
   static respotAllPottedColours(table, outcome: Outcome[]) {
@@ -39,7 +64,8 @@ export class SnookerUtils {
   }
 
   static redsOnTable(table) {
-    return table.balls.slice(7).filter((ball) => ball.onTable())
+    const reds = table.balls.slice(7).filter((ball) => ball.onTable())
+    return reds
   }
 
   static coloursOnTable(table) {
