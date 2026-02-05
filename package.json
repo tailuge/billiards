@@ -16,8 +16,8 @@
     "yarn": "1.x"
   },
   "scripts": {
-    "test": "jest --config ./test/jest.config.js --verbose",
-    "coverage": "jest --config ./test/jest.config.js --coverage",
+    "test": "jest --config ./test/jest.config.js --verbose --silent",
+    "coverage": "jest --config ./test/jest.config.js --coverage --silent",
     "dev": "webpack",
     "build": "webpack",
     "lint": "tsc --noEmit && eslint .",
