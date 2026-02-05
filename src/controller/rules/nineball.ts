@@ -95,12 +95,12 @@ export class NineBall implements Rules {
     })
     this.startTurn()
     const pots = Outcome.pots(outcome)
-    const nineBallPotted = pots.some((b) => b.label === 9)
+    const nineBallPotted = pots.includes(this.container.table.balls[9])
     const cueball = this.container.table.cueball
 
     if (nineBallPotted) {
       this.respotNineBall()
-      const nineBall = this.container.table.balls.find((b) => b.label === 9)
+      const nineBall = this.container.table.balls[9]
       if (nineBall) {
         const respot = RerackEvent.fromJson({
           balls: [nineBall.serialise()],
@@ -212,7 +212,8 @@ export class NineBall implements Rules {
 
   isEndOfGame(outcome: Outcome[]) {
     return (
-      !this.isFoul(outcome) && Outcome.pots(outcome).some((b) => b.label === 9)
+      !this.isFoul(outcome) &&
+      Outcome.pots(outcome).includes(this.container.table.balls[9])
     )
   }
 
