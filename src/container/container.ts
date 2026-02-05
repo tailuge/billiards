@@ -55,7 +55,7 @@ export class Container {
   last = performance.now()
   readonly step = 0.001953125 * 1
 
-  broadcast: (event: GameEvent) => void = () => {}
+  broadcast: (event: GameEvent) => void = () => { }
   log: (text: string) => void
 
   constructor(
@@ -99,6 +99,7 @@ export class Container {
   })
 
   sendEvent(event) {
+    this.recorder.record(event)
     this.throttle.send(event)
   }
 
@@ -146,6 +147,7 @@ export class Container {
       const event = this.eventQueue.shift()
       if (event) {
         this.lastEventTime = performance.now()
+        this.recorder.record(event)
         this.updateController(event.applyToController(this.controller))
       }
     }

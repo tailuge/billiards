@@ -3,6 +3,7 @@ import { Container } from "../../src/container/container"
 import { Ball, State } from "../../src/model/ball"
 import { Outcome } from "../../src/model/outcome"
 import { NineBall } from "../../src/controller/rules/nineball"
+import { PlaceBallEvent } from "../../src/events/placeballevent"
 import { Assets } from "../../src/view/assets"
 import { initDom } from "../view/dom"
 import { PlaceBall } from "../../src/controller/placeball"
@@ -10,8 +11,7 @@ import { Aim } from "../../src/controller/aim"
 import { WatchAim } from "../../src/controller/watchaim"
 import { End } from "../../src/controller/end"
 import { Session } from "../../src/network/client/session"
-
-import { PlaceBallEvent } from "../../src/events/placeballevent"
+import { RerackEvent } from "../../src/events/rerackevent"
 
 initDom()
 
@@ -24,7 +24,7 @@ describe("NineBall Rules", () => {
     Session.init("test-client", "TestPlayer", "test-table", false)
     container = new Container(
       undefined,
-      (_: any) => {},
+      (_: any) => { },
       Assets.localAssets(),
       "nineball"
     )
@@ -118,7 +118,7 @@ describe("NineBall Rules", () => {
     expect(nineBall.state).to.equal(State.Stationary)
   })
 
-  it("should send PlaceBallEvent with respot data when 9-ball is respotted in multiplayer", () => {
+  it("should send RerackEvent and PlaceBallEvent when 9-ball is respotted in multiplayer", () => {
     container.isSinglePlayer = false
     const sentEvents: any[] = []
     container.broadcast = (event) => {
@@ -133,13 +133,14 @@ describe("NineBall Rules", () => {
 
     nineball.update(outcome)
 
-    const placeBallEvents = sentEvents.filter(
-      (e) => e instanceof PlaceBallEvent
-    )
+    const rerackEvents = sentEvents.filter((e) => e instanceof RerackEvent)
+    expect(rerackEvents).to.have.length(1)
+    const rerack = rerackEvents[0] as RerackEvent
+    expect(rerack.ballinfo.balls).to.have.length(1)
+    expect(rerack.ballinfo.balls[0].id).to.equal(nineBall.id)
+
+    const placeBallEvents = sentEvents.filter((e) => e instanceof PlaceBallEvent)
     expect(placeBallEvents).to.have.length(1)
-    const event = placeBallEvents[0] as PlaceBallEvent
-    expect(event.respot).to.not.be.undefined
-    expect(event.respot!.id).to.equal(nineBall.id)
   })
 
   it("should return WatchAim on foul in multi-player", () => {
@@ -265,5 +266,29 @@ describe("NineBall Rules", () => {
       extraClass: "is-winner",
       duration: 30000,
     })
+  })
+
+  it("NineBall.handleFoul should record respot in single-player", () => {
+    const nineBall = container.table.balls.find((b) => b.label === 9)!
+    const outcome = [
+      Outcome.pot(container.table.cueball, 1),
+      Outcome.pot(nineBall, 1),
+    ]
+
+    nineball.update(outcome)
+
+    const shots = container.recorder.shots
+    // Shot (N-2): HIT (not in this direct update test, but usually there)
+    // Shot (N-1): RERACK
+    // Shot (N): PLACEBALL
+
+    const lastShot = shots[shots.length - 1]
+    expect(lastShot).to.be.an.instanceof(PlaceBallEvent)
+
+    const rerackShot = shots[shots.length - 2]
+    expect(rerackShot).to.be.an.instanceof(RerackEvent)
+    const rerack = rerackShot as RerackEvent
+    expect(rerack.ballinfo.balls).to.have.length(1)
+    expect(rerack.ballinfo.balls[0].id).to.equal(nineBall.id)
   })
 })

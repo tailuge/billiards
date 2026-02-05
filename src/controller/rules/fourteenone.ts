@@ -1,4 +1,4 @@
-import { WatchEvent } from "../../events/watchevent"
+import { RerackEvent } from "../../events/rerackevent"
 import { Outcome } from "../../model/outcome"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
@@ -38,9 +38,8 @@ export class FourteenOne extends NineBall implements Rules {
       Rack.rerack(onTable[0], table)
       this.container.sound.playSuccess(table.inPockets())
       const state = table.serialise()
-      const rerack = new WatchEvent({ ...state, rerack: true })
+      const rerack = RerackEvent.fromJson(state)
       this.container.sendEvent(rerack)
-      this.container.recorder.record(rerack)
       this.container.recorder.wholeGameLink()
     }
   }

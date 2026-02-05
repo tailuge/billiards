@@ -82,3 +82,40 @@ The JSON structure (with keys `init`, `shots`, `start`, `now`, `score`, `wholeGa
 ### 3. Regression & Compatibility Tests
 - Load a legacy serialised JSON replay into the new system and ensure it plays back correctly.
 - Verify `fullyEncodeURI` produces the same output for a set of complex strings (including parentheses and special characters).
+
+# Addendum: Event Bus Migration Plan
+
+The transition to an Event Bus approach will allow the `Recorder` to be a passive observer of the game loop, making it easier to capture both local and remote events consistently.
+
+### Step-by-Step Implementation Plan
+
+1.  **Decouple `record()` from Controllers**:
+    Currently, `Aim.playShot` explicitly calls `recorder.record(hitEvent)`. This should be removed in favor of a central hook.
+
+2.  **Enhance `Container.processEvents()`**:
+    Modify the event processing loop in `src/container/container.ts` to notify the recorder before an event is applied to the active controller. This ensures the recorder captures the table state *before* it is modified by the event.
+    ```typescript
+    // In Container.processEvents()
+    if (event) {
+        this.recorder.record(event);
+        this.updateController(event.applyToController(this.controller));
+    }
+    ```
+
+3.  **Extend `Recorder.record(event)`**:
+    Update the `record` method in `src/events/recorder.ts` to handle the following event types:
+    -   **`EventType.HIT`**: Push `table.shortSerialise()` to `states` and `event.tablejson.aim` to `shots`.
+    -   **`EventType.RERACK`**: Push `table.shortSerialise()` to `states` and the new ball configuration to `shots`.
+    -   **`EventType.PLACEBALL`**: (New) Push `table.shortSerialise()` and the placement coordinates. This ensures ball positioning (e.g., in "Ball-in-hand" scenarios) is recorded.
+
+4.  **Preserve Current Protocol**:
+    -   The `states` array must continue to store `number[][]` from `table.shortSerialise()`.
+    -   The `shots` array must continue to store `GameEvent` objects that the `ReplayEncoder` and `ReplayController` recognize.
+    -   Any changes to the internal representation of `RERACK` or `PLACEBALL` in the `shots` array must be reflected in the replay playback logic to avoid breaking legacy replays.
+
+5.  **Enable Remote Recording**:
+    Since `BrowserContainer.netEvent` already pushes remote events into the `container.eventQueue`, the passive listener in `Container.processEvents` will automatically record them as they are "played back" locally.
+
+### Verification Steps
+-   **Parity Test**: Perform a sequence of shots locally and via a mock network relay; verify that both result in an identical `wholeGame()` JSON output.
+-   **Replay Validation**: Ensure that a game recorded via the event bus can be fully replayed using the existing `Replay` controller.

@@ -9,7 +9,6 @@ import { Ball, State } from "../../src/model/ball"
 import { Aim } from "../../src/controller/aim"
 import { BeginEvent } from "../../src/events/beginevent"
 import { Input } from "../../src/events/input"
-import { WatchEvent } from "../../src/events/watchevent"
 import { RerackEvent } from "../../src/events/rerackevent"
 import { Assets } from "../../src/view/assets"
 
@@ -31,7 +30,7 @@ describe("FourteenOne", () => {
   const rule = "fourteenone"
 
   beforeEach(function (done) {
-    container = new Container(undefined, (_) => {}, Assets.localAssets(), rule)
+    container = new Container(undefined, () => { }, Assets.localAssets(), rule)
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
     Ball.id = 0
@@ -88,8 +87,8 @@ describe("FourteenOne", () => {
     playShotWaitForOutcome()
     expect(container.controller).to.be.an.instanceof(Aim)
 
-    const watchEvent = broadcastEvents[3] as WatchEvent
-    expect(watchEvent.json.rerack).to.be.true
+    const rerackEvent = broadcastEvents[3] as RerackEvent
+    expect(rerackEvent.type).to.be.equal("RERACK")
     expect(container.recorder.shots[1].type).to.be.equal("RERACK")
   }
 

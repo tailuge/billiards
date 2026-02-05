@@ -55,7 +55,6 @@ export class Aim extends ControllerBase {
   playShot() {
     const hitEvent = new HitEvent(this.container.table.serialise())
     this.container.sendEvent(hitEvent)
-    this.container.recorder.record(hitEvent)
     return new PlayShot(this.container)
   }
 }

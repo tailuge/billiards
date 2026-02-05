@@ -7,6 +7,7 @@ import { Aim } from "./aim"
 import { GameEvent } from "../events/gameevent"
 import { EventType } from "../events/eventtype"
 import { RerackEvent } from "../events/rerackevent"
+import { PlaceBallEvent } from "../events/placeballevent"
 import { End } from "./end"
 
 export class Replay extends ControllerBase {
@@ -38,7 +39,32 @@ export class Replay extends ControllerBase {
 
     if (shot?.type === EventType.RERACK) {
       const rerack = RerackEvent.fromJson((shot as RerackEvent).ballinfo)
-      rerack.applyToController(this)
+      if (rerack.ballinfo.balls) {
+        rerack.ballinfo.balls.forEach((bData) => {
+          const ball = this.container.table.balls[bData.id]
+          if (ball) {
+            ball.pos.copy(bData.pos)
+            ball.setStationary()
+          }
+        })
+      }
+      if (this.shots.length > 0) {
+        this.playNextShot(delay)
+      }
+      return
+    }
+
+    if (shot?.type === EventType.PLACEBALL) {
+      const place = PlaceBallEvent.fromJson(shot)
+      this.container.table.cueball.pos.copy(place.pos)
+      this.container.table.cueball.setStationary()
+      if (place.respot) {
+        const ball = this.container.table.balls[place.respot.id]
+        if (ball) {
+          ball.pos.copy(place.respot.pos)
+          ball.setStationary()
+        }
+      }
       if (this.shots.length > 0) {
         this.playNextShot(delay)
       }

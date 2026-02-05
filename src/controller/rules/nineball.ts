@@ -6,6 +6,7 @@ import { PlaceBall } from "../../controller/placeball"
 import { WatchAim } from "../../controller/watchaim"
 import { ChatEvent } from "../../events/chatevent"
 import { PlaceBallEvent } from "../../events/placeballevent"
+import { RerackEvent } from "../../events/rerackevent"
 import { WatchEvent } from "../../events/watchevent"
 import { Ball } from "../../model/ball"
 import { Outcome, OutcomeType } from "../../model/outcome"
@@ -96,19 +97,24 @@ export class NineBall implements Rules {
     this.startTurn()
     const pots = Outcome.pots(outcome)
     const nineBallPotted = pots.some((b) => b.label === 9)
-    let respotData
+
     if (nineBallPotted) {
       this.respotNineBall()
       const nineBall = this.container.table.balls.find((b) => b.label === 9)
       if (nineBall) {
-        respotData = { id: 9, pos: nineBall.pos }
+        const respot = RerackEvent.fromJson({
+          balls: [nineBall.serialise()],
+        })
+        this.container.sendEvent(respot)
       }
     }
+
+    const placeBallEvent = new PlaceBallEvent(zero)
+    this.container.sendEvent(placeBallEvent)
 
     if (this.container.isSinglePlayer) {
       return new PlaceBall(this.container)
     }
-    this.container.sendEvent(new PlaceBallEvent(zero, respotData))
     return new WatchAim(this.container)
   }
 

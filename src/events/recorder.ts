@@ -7,6 +7,8 @@ import { GameEvent } from "./gameevent"
 import { LinkFormatter } from "../view/link-formatter"
 import { ReplayEncoder } from "../utils/replay-encoder"
 
+import { PlaceBallEvent } from "./placeballevent"
+
 export class Recorder {
   container: Container
   linkFormatter: LinkFormatter
@@ -20,18 +22,18 @@ export class Recorder {
     this.linkFormatter = linkFormatter
   }
 
-  record(event) {
-    if (event.type === EventType.WATCHAIM && "rerack" in event.json) {
-      this.states.push(this.container.table.shortSerialise())
-      this.shots.push(
-        RerackEvent.fromJson({
-          balls: event.json.balls,
-        })
-      )
-    }
+  record(event: GameEvent) {
     if (event.type === EventType.HIT) {
       this.states.push(this.container.table.shortSerialise())
       this.shots.push((<HitEvent>event).tablejson.aim)
+    }
+    if (event.type === EventType.RERACK) {
+      this.states.push(this.container.table.shortSerialise())
+      this.shots.push(event as RerackEvent)
+    }
+    if (event.type === EventType.PLACEBALL) {
+      this.states.push(this.container.table.shortSerialise())
+      this.shots.push(event as PlaceBallEvent)
     }
   }
 

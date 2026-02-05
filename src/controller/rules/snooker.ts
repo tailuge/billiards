@@ -20,6 +20,7 @@ import { SnookerUtils } from "./snookerutils"
 import { StartAimEvent } from "../../events/startaimevent"
 import { MatchResult } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
+import { RerackEvent } from "../../events/rerackevent"
 
 export class Snooker implements Rules {
   cueball: Ball
@@ -387,13 +388,10 @@ export class Snooker implements Rules {
       outcome
     )
     if (respotted.length > 0) {
-      const changes = {
+      const respot = RerackEvent.fromJson({
         balls: respotted.map((b) => b.serialise()),
-        rerack: true,
-      }
-      const respot = new WatchEvent(changes)
+      })
       this.container.sendEvent(respot)
-      this.container.recorder.record(respot)
     }
   }
 }
