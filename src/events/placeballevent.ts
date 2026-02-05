@@ -12,11 +12,13 @@ export interface RespotBody {
 export class PlaceBallEvent extends GameEvent {
   pos
   respot?: RespotBody | undefined
+  useStartPos?: boolean | undefined
 
-  constructor(pos, respot?: RespotBody | undefined) {
+  constructor(pos, respot?: RespotBody | undefined, useStartPos?: boolean) {
     super()
     this.pos = pos
     this.respot = respot
+    this.useStartPos = useStartPos
     this.type = EventType.PLACEBALL
   }
 
@@ -24,7 +26,7 @@ export class PlaceBallEvent extends GameEvent {
     const respot = json.respot
       ? { id: json.respot.id, pos: vec(json.respot.pos) }
       : undefined
-    return new PlaceBallEvent(vec(json.pos), respot)
+    return new PlaceBallEvent(vec(json.pos), respot, json.useStartPos ?? false)
   }
   applyToController(controller: Controller) {
     return controller.handlePlaceBall(this)

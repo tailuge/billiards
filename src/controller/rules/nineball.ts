@@ -12,7 +12,6 @@ import { Ball } from "../../model/ball"
 import { Outcome, OutcomeType } from "../../model/outcome"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
-import { zero } from "../../utils/utils"
 import { End } from "../end"
 import { Rules } from "./rules"
 import { R } from "../../model/physics/constants"
@@ -97,6 +96,7 @@ export class NineBall implements Rules {
     this.startTurn()
     const pots = Outcome.pots(outcome)
     const nineBallPotted = pots.some((b) => b.label === 9)
+    const cueball = this.container.table.cueball
 
     if (nineBallPotted) {
       this.respotNineBall()
@@ -109,11 +109,14 @@ export class NineBall implements Rules {
       }
     }
 
-    const placeBallEvent = new PlaceBallEvent(zero)
+    const startPos = cueball.onTable()
+      ? cueball.pos.clone()
+      : this.placeBall()
+    const placeBallEvent = new PlaceBallEvent(startPos, undefined, true)
     this.container.sendEvent(placeBallEvent)
 
     if (this.container.isSinglePlayer) {
-      return new PlaceBall(this.container)
+      return new PlaceBall(this.container, startPos)
     }
     return new WatchAim(this.container)
   }

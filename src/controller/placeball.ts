@@ -13,9 +13,11 @@ import { CueMesh } from "../view/cuemesh"
  */
 export class PlaceBall extends ControllerBase {
   readonly placescale = 0.02 * R
+  private readonly startPos: Vector3 | undefined
 
-  constructor(container) {
+  constructor(container, startPos?: Vector3) {
     super(container)
+    this.startPos = startPos
     this.container.table.cue.moveTo(this.container.table.cueball.pos)
     this.container.table.cue.aim.power = 0
     this.container.view.camera.forceMode(this.container.view.camera.aimView)
@@ -24,7 +26,11 @@ export class PlaceBall extends ControllerBase {
   override onFirst() {
     const cueball = this.container.table.cueball
     if (this.container.rules.allowsPlaceBall()) {
-      cueball.pos.copy(this.container.rules.placeBall())
+      if (this.startPos) {
+        cueball.pos.copy(this.container.rules.placeBall(this.startPos.clone()))
+      } else {
+        cueball.pos.copy(this.container.rules.placeBall())
+      }
     }
     cueball.setStationary()
     cueball.updateMesh(0)

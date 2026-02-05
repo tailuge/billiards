@@ -33,6 +33,9 @@ export class WatchShot extends ControllerBase {
         ball.setStationary()
       }
     }
+    if (event.useStartPos) {
+      return new PlaceBall(this.container, event.pos.clone())
+    }
     return new PlaceBall(this.container)
   }
 
