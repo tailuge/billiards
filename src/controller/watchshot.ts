@@ -3,6 +3,7 @@ import { WatchAim } from "./watchaim"
 import { ControllerBase } from "./controllerbase"
 import { PlaceBall } from "./placeball"
 import { PlaceBallEvent } from "../events/placeballevent"
+import { RerackEvent } from "../events/rerackevent"
 
 export class WatchShot extends ControllerBase {
   constructor(container) {
@@ -42,15 +43,7 @@ export class WatchShot extends ControllerBase {
   override handleWatch(event) {
     if ("rerack" in event.json) {
       console.log("Respot")
-      this.container.table.updateFromSerialised(event.json)
-      if (event.json.balls) {
-        event.json.balls.forEach((bData) => {
-          const ball = this.container.table.balls.find((b) => b.id === bData.id)
-          if (ball) {
-            ball.setStationary()
-          }
-        })
-      }
+      RerackEvent.applyBallinfoToTable(this.container.table, event.json)
       return this
     }
     return new WatchAim(this.container)

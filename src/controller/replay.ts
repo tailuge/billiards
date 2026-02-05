@@ -39,15 +39,7 @@ export class Replay extends ControllerBase {
 
     if (shot?.type === EventType.RERACK) {
       const rerack = RerackEvent.fromJson((shot as RerackEvent).ballinfo)
-      if (rerack.ballinfo.balls) {
-        rerack.ballinfo.balls.forEach((bData) => {
-          const ball = this.container.table.balls[bData.id]
-          if (ball) {
-            ball.pos.copy(bData.pos)
-            ball.setStationary()
-          }
-        })
-      }
+      RerackEvent.applyBallinfoToTable(this.container.table, rerack.ballinfo)
       if (this.shots.length > 0) {
         this.playNextShot(delay)
       }

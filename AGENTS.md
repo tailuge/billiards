@@ -17,6 +17,7 @@
 - TypeScript is the primary language; keep types explicit at public boundaries.
 - Indentation follows the existing codebase (2 spaces in TS/JS files).
 - Filenames are lower-case and descriptive. Tests use `*.spec.ts` (e.g., `test/model/cushion.spec.ts`).
+- Keep ball serialisation compact; do not include `state` in serialized ball data.
 - Use ESLint and Prettier before opening a PR: `yarn lint` and `yarn prettify`.
 
 ## Testing Guidelines
