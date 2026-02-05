@@ -162,11 +162,40 @@ describe("Controller Replay", () => {
     done()
   })
 
-  it("Abort takes Replay to Init", (done) => {
+  it("Abort takes Replay to End", (done) => {
     container.controller = replayController
     container.eventQueue.push(new AbortEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
+    done()
+  })
+
+  it("Abort clears scheduled shot timer", (done) => {
+    jest.clearAllTimers()
+    // We use a longer delay to ensure the timer is still pending when we abort
+    const longDelayReplay = new Replay(
+      container,
+      state.init,
+      state.shots,
+      false,
+      1000
+    )
+    container.controller = longDelayReplay
+
+    container.eventQueue.push(new AbortEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+
+    const queueLengthBefore = container.eventQueue.length
+
+    // Advance timers past the scheduled HitEvent (1000 * 1.5 = 1500ms)
+    jest.advanceTimersByTime(2000)
+
+    // If timer was not cleared, a HitEvent should have been pushed
+    expect(container.eventQueue.length).to.be.equal(
+      queueLengthBefore,
+      "A HitEvent was pushed after abort!"
+    )
     done()
   })
 })
