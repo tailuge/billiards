@@ -77,14 +77,7 @@ export class Snooker implements Rules {
       return this.continueBreak()
     }
 
-    this.foulPoints = this.foulCalculation(outcome, info)
-    this.respot(outcome)
-
-    if (info.whitePotted) {
-      return this.foul(outcome, info)
-    }
-
-    return this.switchPlayer()
+    return this.foul(outcome, info)
   }
 
   targetColourRule(outcome: Outcome[], info): Controller {
@@ -142,16 +135,16 @@ export class Snooker implements Rules {
     const reason = this.foulReason(outcome, info)
     const notification = info.whitePotted
       ? ({
-          type: "Foul",
-          title: "FOUL",
-          subtext: reason || `Foul (${this.foulPoints} points)`,
-          extra: "Ball in hand",
-        } as const)
+        type: "Foul",
+        title: "FOUL",
+        subtext: reason || `Foul (${this.foulPoints} points)`,
+        extra: "Ball in hand",
+      } as const)
       : ({
-          type: "Foul",
-          title: "FOUL",
-          subtext: reason || `Foul (${this.foulPoints} points)`,
-        } as const)
+        type: "Foul",
+        title: "FOUL",
+        subtext: reason || `Foul (${this.foulPoints} points)`,
+      } as const)
     this.container.notify(notification)
     this.respot(outcome)
     if (info.whitePotted) {

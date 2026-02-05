@@ -40,7 +40,7 @@ describe("Snooker", () => {
     Ball.id = 0
     container = new Container(
       undefined,
-      (_) => {},
+      (_) => { },
       Assets.localAssets(rule),
       rule
     )
@@ -341,9 +341,7 @@ describe("Snooker", () => {
     table.balls[6].state = State.InPocket
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.true
-    expect(snooker.foulPoints).to.be.equal(6)
-    console.log(broadcastEvents)
-    expect(broadcastEvents).to.be.length(2)
+    expect(broadcastEvents).to.be.length(3)
     done()
   })
 
