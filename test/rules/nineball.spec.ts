@@ -24,7 +24,7 @@ describe("NineBall Rules", () => {
     Session.init("test-client", "TestPlayer", "test-table", false)
     container = new Container(
       undefined,
-      (_: any) => { },
+      (_: any) => {},
       Assets.localAssets(),
       "nineball"
     )
@@ -139,7 +139,9 @@ describe("NineBall Rules", () => {
     expect(rerack.ballinfo.balls).to.have.length(1)
     expect(rerack.ballinfo.balls[0].id).to.equal(nineBall.id)
 
-    const placeBallEvents = sentEvents.filter((e) => e instanceof PlaceBallEvent)
+    const placeBallEvents = sentEvents.filter(
+      (e) => e instanceof PlaceBallEvent
+    )
     expect(placeBallEvents).to.have.length(1)
   })
 

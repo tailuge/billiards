@@ -370,7 +370,9 @@ export class Snooker implements Rules {
       gameType: this.rulename,
     }
     if (session?.opponentName) {
-      result.loser = isWinner ? session.opponentName : session.playername || "Anon"
+      result.loser = isWinner
+        ? session.opponentName
+        : session.playername || "Anon"
       result.loserScore = 0 // We don't track opponent score easily here yet
     }
     return new End(this.container, isWinner ? result : undefined)

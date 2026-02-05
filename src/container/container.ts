@@ -55,7 +55,7 @@ export class Container {
   last = performance.now()
   readonly step = 0.001953125 * 1
 
-  broadcast: (event: GameEvent) => void = () => { }
+  broadcast: (event: GameEvent) => void = () => {}
   log: (text: string) => void
 
   constructor(

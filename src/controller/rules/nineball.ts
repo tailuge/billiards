@@ -105,13 +105,12 @@ export class NineBall implements Rules {
         const respot = RerackEvent.fromJson({
           balls: [nineBall.serialise()],
         })
+        console.log("Respot nine ball sending rerack event", respot)
         this.container.sendEvent(respot)
       }
     }
 
-    const startPos = cueball.onTable()
-      ? cueball.pos.clone()
-      : this.placeBall()
+    const startPos = cueball.onTable() ? cueball.pos.clone() : this.placeBall()
     const placeBallEvent = new PlaceBallEvent(startPos, undefined, true)
     this.container.sendEvent(placeBallEvent)
 
@@ -188,7 +187,9 @@ export class NineBall implements Rules {
       gameType: this.rulename,
     }
     if (session?.opponentName) {
-      result.loser = isWinner ? session.opponentName : session.playername || "Anon"
+      result.loser = isWinner
+        ? session.opponentName
+        : session.playername || "Anon"
       result.loserScore = 0
     }
     return new End(this.container, isWinner ? result : undefined)

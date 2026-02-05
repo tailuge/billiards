@@ -136,9 +136,9 @@ export class BrowserContainer {
     if (this.wss && this.messageRelay) {
       event.clientId = Session.getInstance().clientId
       event.playername = Session.getInstance().playername
-      //      console.log(
-      //        `${this.playername} broadcasting ${event.type} : ${event.clientId}`
-      //      )
+      console.log(
+        `${this.playername} broadcasting ${event.type} : ${event.clientId}`
+      )
       this.messageRelay.publish(this.tableId, EventUtil.serialise(event))
     }
   }

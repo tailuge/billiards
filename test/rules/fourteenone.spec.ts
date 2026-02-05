@@ -30,7 +30,7 @@ describe("FourteenOne", () => {
   const rule = "fourteenone"
 
   beforeEach(function (done) {
-    container = new Container(undefined, () => { }, Assets.localAssets(), rule)
+    container = new Container(undefined, () => {}, Assets.localAssets(), rule)
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
     Ball.id = 0
