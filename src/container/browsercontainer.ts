@@ -121,7 +121,7 @@ export class BrowserContainer {
 
   netEvent(e: string) {
     const event = EventUtil.fromSerialised(e)
-    //    console.log(`${this.playername} received ${event.type} : ${event.clientId}`)
+    console.log(`${this.playername} received ${event.type} : ${event.clientId}`)
     if (event.clientId !== Session.getInstance().clientId) {
       if (event.playername) {
         Session.getInstance().opponentName = event.playername
