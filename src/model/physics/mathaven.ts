@@ -1,4 +1,4 @@
-import { atan2, cos, sin, sqrt } from "../../utils/utils"
+import { atan2, cos, pow, sin, sqrt } from "../../utils/utils"
 import { cosθ, sinθ } from "./constants"
 
 export class Mathaven {
@@ -54,15 +54,6 @@ export class Mathaven {
     }
   }
 
-  protected updateSlipAngles(
-    _v_yI: number,
-    _v_xI: number,
-    _v_yC: number,
-    _v_xC: number
-  ): void {
-    // No-op in base class for performance, overridden in HistoryMathaven for diagrams
-  }
-
   protected updateSingleStep(ΔP: number): void {
     const R = this.R
     const μs = this.μs
@@ -78,18 +69,23 @@ export class Mathaven {
     const v_yC = this.vy + this.ωx * R
 
     // Update slip speeds and angles at the cushion (I)
-    const s = sqrt(v_xI * v_xI + v_yI * v_yI)
-    this.s = s
-    const cosPhi = s > 0 ? v_xI / s : 1
-    const sinPhi = s > 0 ? v_yI / s : 0
+    this.s = sqrt(pow(v_xI, 2) + pow(v_yI, 2))
+    this.φ = atan2(v_yI, v_xI)
+    if (this.φ < 0) {
+      this.φ += 2 * Math.PI
+    }
 
     // Update slip speeds and angles at the table (C)
-    const sʹ = sqrt(v_xC * v_xC + v_yC * v_yC)
-    this.sʹ = sʹ
-    const cosPhiʹ = sʹ > 0 ? v_xC / sʹ : 1
-    const sinPhiʹ = sʹ > 0 ? v_yC / sʹ : 0
+    this.sʹ = sqrt(pow(v_xC, 2) + pow(v_yC, 2))
+    this.φʹ = atan2(v_yC, v_xC)
+    if (this.φʹ < 0) {
+      this.φʹ += 2 * Math.PI
+    }
 
-    this.updateSlipAngles(v_yI, v_xI, v_yC, v_xC)
+    const sinPhi = sin(this.φ)
+    const cosPhi = cos(this.φ)
+    const sinPhiʹ = sin(this.φʹ)
+    const cosPhiʹ = cos(this.φʹ)
 
     const termCommon = sinθ + μw * sinPhi * cosθ
     const invM = 1 / M
