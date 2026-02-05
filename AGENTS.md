@@ -24,6 +24,7 @@
 - Add tests alongside the affected domain (e.g., physics changes in `test/model`).
 - Prefer deterministic tests; use `jest.useFakeTimers()` when timing is involved.
 - Run `yarn test` locally before submitting; `yarn coverage` for deeper validation.
+- After making changes, run `yarn lint` and `yarn test`.
 
 ## Commit & Pull Request Guidelines
 - There is no enforced commit message standard in this repo. Use concise, imperative summaries (e.g., “Fix cushion bounce edge case”).

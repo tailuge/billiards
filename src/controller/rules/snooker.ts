@@ -140,12 +140,19 @@ export class Snooker implements Rules {
   foul(outcome, info) {
     this.foulPoints = this.foulCalculation(outcome, info)
     const reason = this.foulReason(outcome, info)
-    this.container.notify({
-      type: "Foul",
-      title: "FOUL",
-      subtext: reason || `Foul (${this.foulPoints} points)`,
-      extra: "Ball in hand",
-    })
+    const notification = info.whitePotted
+      ? ({
+          type: "Foul",
+          title: "FOUL",
+          subtext: reason || `Foul (${this.foulPoints} points)`,
+          extra: "Ball in hand",
+        } as const)
+      : ({
+          type: "Foul",
+          title: "FOUL",
+          subtext: reason || `Foul (${this.foulPoints} points)`,
+        } as const)
+    this.container.notify(notification)
     this.respot(outcome)
     if (info.whitePotted) {
       return this.whiteInHand()

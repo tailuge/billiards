@@ -367,12 +367,12 @@ describe("Snooker", () => {
     const outcome: Outcome[] = []
     outcome.push(Outcome.hit(table.cueball, 1))
     snooker.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+    expect(notifySpy.mock.calls[0][0]).to.deep.include({
       type: "Foul",
       title: "FOUL",
       subtext: "No ball hit",
-      extra: "Ball in hand",
     })
+    expect("extra" in notifySpy.mock.calls[0][0]).to.be.false
   })
 
   it("should trigger foul notification on wrong ball hit", () => {
@@ -381,12 +381,12 @@ describe("Snooker", () => {
     outcome.push(Outcome.hit(table.cueball, 1))
     outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
     snooker.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+    expect(notifySpy.mock.calls[0][0]).to.deep.include({
       type: "Foul",
       title: "FOUL",
       subtext: "Hit Pink instead of red",
-      extra: "Ball in hand",
     })
+    expect("extra" in notifySpy.mock.calls[0][0]).to.be.false
   })
 
   it("should trigger foul notification on potting multiple colours", () => {
@@ -400,12 +400,12 @@ describe("Snooker", () => {
     table.balls[5].state = State.InPocket
     table.balls[1].state = State.InPocket
     snooker.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+    expect(notifySpy.mock.calls[0][0]).to.deep.include({
       type: "Foul",
       title: "FOUL",
       subtext: "Potted Pink, Yellow",
-      extra: "Ball in hand",
     })
+    expect("extra" in notifySpy.mock.calls[0][0]).to.be.false
   })
 
   it("placeBall constrained to D", (done) => {
