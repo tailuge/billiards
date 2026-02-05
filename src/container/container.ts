@@ -1,5 +1,7 @@
 import { Input } from "../events/input"
 import { GameEvent } from "../events/gameevent"
+import { Session } from "../network/client/session"
+
 import { StationaryEvent } from "../events/stationaryevent"
 import { Controller } from "../controller/controller"
 import { Table } from "../model/table"
@@ -55,7 +57,7 @@ export class Container {
   last = performance.now()
   readonly step = 0.001953125 * 1
 
-  broadcast: (event: GameEvent) => void = () => {}
+  broadcast: (event: GameEvent) => void = () => { }
   log: (text: string) => void
 
   constructor(
@@ -173,7 +175,10 @@ export class Container {
 
   updateController(controller) {
     if (controller !== this.controller) {
-      this.log("Transition to " + controllerName(controller))
+      const playerName = Session.hasInstance()
+        ? Session.getInstance().playername
+        : "_"
+      this.log(`${playerName}: Transition to ${controllerName(controller)}`)
       this.controller = controller
       this.controller.onFirst()
     }

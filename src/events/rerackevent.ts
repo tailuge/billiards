@@ -18,7 +18,7 @@ export class RerackEvent extends GameEvent {
 
   static fromJson(json) {
     const event = new RerackEvent()
-    event.ballinfo = json
+    event.ballinfo = json.ballinfo ?? json
     return event
   }
 
