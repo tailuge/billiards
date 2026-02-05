@@ -15,25 +15,25 @@ describe("Notification", () => {
     jest.useRealTimers()
   })
 
-  it("should show a message string (legacy support)", () => {
-    notification.show("Test Message")
+  it("should show a message string (legacy support and escaped)", () => {
+    notification.show("Test <b>Message</b>")
     const element = document.getElementById("notification")
-    expect(element?.innerHTML).toContain("Test Message")
+    expect(element?.innerHTML).toContain("Test &lt;b&gt;Message&lt;/b&gt;")
     expect(element?.innerHTML).toContain("notification-banner")
     expect(element?.classList.contains("type-Info")).toBe(true)
   })
 
-  it("should show structured notification data", () => {
+  it("should show structured notification data and escape title/subtext", () => {
     notification.show({
       type: "Foul",
-      title: "FOUL",
-      subtext: "Wrong ball",
+      title: "<b>FOUL</b>",
+      subtext: "<i>Wrong ball</i>",
       extra: "Ball in hand",
     })
     const element = document.getElementById("notification")
     expect(element?.classList.contains("type-Foul")).toBe(true)
-    expect(element?.innerHTML).toContain("FOUL")
-    expect(element?.innerHTML).toContain("Wrong ball")
+    expect(element?.innerHTML).toContain("&lt;b&gt;FOUL&lt;/b&gt;")
+    expect(element?.innerHTML).toContain("&lt;i&gt;Wrong ball&lt;/i&gt;")
     expect(element?.innerHTML).toContain("Ball in hand")
     expect(element?.innerHTML).toContain("notification-title")
     expect(element?.innerHTML).toContain("notification-banner")

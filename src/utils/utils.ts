@@ -71,3 +71,23 @@ export function sqrt(theta) {
 export function exp(theta) {
   return Math.fround(Math.exp(theta))
 }
+
+export function escapeHTML(str: string): string {
+  if (!str) return ""
+  return str.replace(/[&<>"']/g, (m) => {
+    switch (m) {
+      case "&":
+        return "&amp;"
+      case "<":
+        return "&lt;"
+      case ">":
+        return "&gt;"
+      case '"':
+        return "&quot;"
+      case "'":
+        return "&#39;"
+      default:
+        return m
+    }
+  })
+}

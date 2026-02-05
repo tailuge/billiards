@@ -170,8 +170,9 @@ export class BrowserContainer {
   }
 
   offerUpload() {
-    this.container.chat.showMessage(
-      `<a class="pill" target="_blank" href="https://scoreboard-tailuge.vercel.app/hiscore.html${location.search}"> upload high score 🏆</a`
+    const search = new URLSearchParams(location.search).toString()
+    this.container.chat.showHTML(
+      `<a class="pill" target="_blank" href="https://scoreboard-tailuge.vercel.app/hiscore.html?${search}"> upload high score 🏆</a>`
     )
   }
 }

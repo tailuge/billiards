@@ -1,3 +1,5 @@
+import { escapeHTML } from "../utils/utils"
+
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info"
   title: string
@@ -49,7 +51,7 @@ export class Notification {
     return `
       <div class="notification-banner">
         <div class="notification-text-group">
-          <div class="notification-subtext">${message}</div>
+          <div class="notification-subtext">${escapeHTML(message)}</div>
         </div>
       </div>
     `
@@ -67,8 +69,8 @@ export class Notification {
       <div class="notification-banner">
         <div class="notification-icon">${icon}</div>
         <div class="notification-text-group">
-          <div class="notification-title">${data.title}</div>
-          ${data.subtext ? `<div class="notification-subtext">${data.subtext}</div>` : ""}
+          <div class="notification-title">${escapeHTML(data.title)}</div>
+          ${data.subtext ? `<div class="notification-subtext">${escapeHTML(data.subtext)}</div>` : ""}
         </div>
       </div>
       ${extraContentHtml}
