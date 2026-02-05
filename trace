@@ -1,0 +1,2011 @@
+826b4d3e5607a822.js:1 Connected to wss://billiards-network.onrender.com/subscribe/lobby/lobby
+826b4d3e5607a822.js:1 Connected to wss://billiards-network.onrender.com/subscribe/lobby/lobby
+826b4d3e5607a822.js:1 Connected to wss://billiards-network.onrender.com/subscribe/lobby/lobby
+826b4d3e5607a822.js:1 Received message: {"action":"create"}
+826b4d3e5607a822.js:1 Received message: {"action":"create"}
+826b4d3e5607a822.js:1 Received message: {"action":"create"}
+826b4d3e5607a822.js:1 Received message: {"action":"join"}
+826b4d3e5607a822.js:1 Received message: {"action":"join"}
+826b4d3e5607a822.js:1 Received message: {"action":"join"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2581 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2582 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2584 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2585 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2586 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2588 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2589 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2590 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2591 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2592 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2593 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Active connections: 5 
+server accepts handled requests
+ 468 468 2594 
+Reading: 0 Writing: 5 Waiting: 0 
+
+826b4d3e5607a822.js:1 Active Connections: 4
+826b4d3e5607a822.js:1 active users: 4
+826b4d3e5607a822.js:1 Received message: {"action":"complete"}
+826b4d3e5607a822.js:1 Received message: {"action":"complete"}
+826b4d3e5607a822.js:1 Received message: {"action":"complete"}
+ models/cue.gltf 2513 bytes loaded
+ models/background.gltf 2431 bytes loaded
+ models/p8.min.gltf 4986 bytes loaded
+ Rozella assets ready
+ Transition to Init
+ Subscribed to  wss://billiards-network.onrender.com/subscribe/table/ywg0ey6m
+ Subscribed to  wss://billiards-network.onrender.com/subscribe/lobby/lobby
+ Connected to wss://billiards-network.onrender.com/subscribe/table/ywg0ey6m
+ Connected to wss://billiards-network.onrender.com/subscribe/lobby/lobby
+826b4d3e5607a822.js:1 Received message: {"action":"complete"}
+826b4d3e5607a822.js:1 Received message: {"action":"complete"}
+826b4d3e5607a822.js:1 Received message: {"action":"complete"}
+ models/background.gltf 2431 bytes loaded
+ models/p8.min.gltf 4986 bytes loaded
+ models/cue.gltf 2513 bytes loaded
+ Bruce assets ready
+ Transition to Init
+ Subscribed to  wss://billiards-network.onrender.com/subscribe/table/ywg0ey6m
+ Bruce broadcasting BEGIN : o72tfvnv
+ Subscribed to  wss://billiards-network.onrender.com/subscribe/lobby/lobby
+ Rozella received BEGIN : o72tfvnv
+ Rozella broadcasting WATCHAIM : suk7j6fq
+ Transition to PlaceBall
+ Connected to wss://billiards-network.onrender.com/subscribe/table/ywg0ey6m
+ Bruce received BEGIN : o72tfvnv
+ Ignoring own event
+ Bruce received WATCHAIM : suk7j6fq
+ Rozella received WATCHAIM : suk7j6fq
+ Ignoring own event
+ Transition to WatchAim
+ Connected to wss://billiards-network.onrender.com/subscribe/lobby/lobby
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Bruce received AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting BREAK : suk7j6fq
+ Transition to Aim
+index.js:17 Bruce received BREAK : suk7j6fq
+ Rozella received BREAK : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting HIT : suk7j6fq
+ Transition to PlayShot
+index.js:17 Bruce received HIT : suk7j6fq
+ Rozella received HIT : suk7j6fq
+ Ignoring own event
+index.js:16 Transition to WatchShot
+ Rozella broadcasting STARTAIM : suk7j6fq
+ Transition to WatchAim
+index.js:17 Bruce received STARTAIM : suk7j6fq
+ Rozella received STARTAIM : suk7j6fq
+ Ignoring own event
+index.js:16 Transition to Aim
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce broadcasting AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce received AIM : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received AIM : o72tfvnv
+index.js:17 Bruce broadcasting HIT : o72tfvnv
+index.js:16 Transition to PlayShot
+index.js:17 Bruce received HIT : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received HIT : o72tfvnv
+ Transition to WatchShot
+index.js:17 Bruce broadcasting NOTIFICATION : o72tfvnv
+index.js:17 Bruce broadcasting PLACEBALL : o72tfvnv
+index.js:16 Transition to WatchAim
+index.js:17 Bruce received PLACEBALL : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received PLACEBALL : o72tfvnv
+index.js:17 Bruce received NOTIFICATION : o72tfvnv
+index.js:17 Ignoring own event
+ Rozella received NOTIFICATION : o72tfvnv
+ Transition to PlaceBall
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting BREAK : suk7j6fq
+ Transition to Aim
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received BREAK : suk7j6fq
+ Rozella received BREAK : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella broadcasting AIM : suk7j6fq
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+ Rozella received AIM : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+index.js:17 Bruce received AIM : suk7j6fq
+ Rozella broadcasting HIT : suk7j6fq
+ Transition to PlayShot
+index.js:17 Bruce received HIT : suk7j6fq
+ Rozella received HIT : suk7j6fq
+ Ignoring own event
+index.js:16 Transition to WatchShot
+ Rozella broadcasting NOTIFICATION : suk7j6fq
+ Respot nine ball sending rerack event r {type: 'RERACK', sequence: undefined, clientId: undefined, playername: undefined, ballinfo: {…}}ballinfo: balls: Array(1)0: {pos: ia, id: 9}length: 1[[Prototype]]: Array(0)[[Prototype]]: ObjectclientId: "suk7j6fq"playername: "Rozella"sequence: undefinedtype: "RERACK"[[Prototype]]: e
+ Rozella broadcasting RERACK : suk7j6fq
+ Rozella broadcasting PLACEBALL : suk7j6fq
+ Transition to WatchAim
+index.js:17 Bruce received NOTIFICATION : suk7j6fq
+ Rozella received NOTIFICATION : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received RERACK : suk7j6fq
+ Rozella received RERACK : suk7j6fq
+ Ignoring own event
+ Rozella received PLACEBALL : suk7j6fq
+ Ignoring own event
+index.js:17 Bruce received PLACEBALL : suk7j6fq
+index.js:16 Transition to PlaceBall
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Received message: {"action":"connected"}
+826b4d3e5607a822.js:1 Active connections: 9 
+server accepts handled requests
+ 539 539 3151 
+Reading: 0 Writing: 8 Waiting: 1 
+
+826b4d3e5607a822.js:1 Active Connections: 8
+826b4d3e5607a822.js:1 active users: 8
+826b4d3e5607a822.js:1 Active connections: 9 
+server accepts handled requests
+ 539 539 3153 
+Reading: 0 Writing: 8 Waiting: 1 
+
+826b4d3e5607a822.js:1 Active Connections: 8
+826b4d3e5607a822.js:1 active users: 8
+826b4d3e5607a822.js:1 Active connections: 9 
+server accepts handled requests
+ 539 539 3155 
+Reading: 0 Writing: 8 Waiting: 1 
+
+826b4d3e5607a822.js:1 Active Connections: 8
+826b4d3e5607a822.js:1 active users: 8
+826b4d3e5607a822.js:1 Active connections: 9 
+server accepts handled requests
+ 539 539 3157 
+Reading: 0 Writing: 8 Waiting: 1 
+
+826b4d3e5607a822.js:1 Active Connections: 8
+826b4d3e5607a822.js:1 active users: 8
+826b4d3e5607a822.js:1 Active connections: 9 
+server accepts handled requests
+ 539 539 3159 
+Reading: 0 Writing: 8 Waiting: 1 
+
+826b4d3e5607a822.js:1 Active Connections: 8
+826b4d3e5607a822.js:1 active users: 8
+826b4d3e5607a822.js:1 Active connections: 9 
+server accepts handled requests
+ 539 539 3160 
+Reading: 0 Writing: 8 Waiting: 1 
+
+826b4d3e5607a822.js:1 Active Connections: 8
+826b4d3e5607a822.js:1 active users: 8
