@@ -1,7 +1,53 @@
 import { Notification } from "../../src/view/notification"
+import { Chat } from "../../src/view/chat"
 import { initDom } from "./dom"
 
 initDom()
+
+describe("XSS Prevention", () => {
+  beforeEach(() => {
+    initDom()
+  })
+
+  it("Chat.showMessage should escape HTML by using textContent", () => {
+    const chat = new Chat(() => {})
+    const maliciousMsg = "<b id='xss'>XSS</b>"
+    chat.showMessage(maliciousMsg)
+
+    const chatOutput = document.getElementById("chatoutput")!
+    expect(chatOutput.innerHTML).not.toContain("<b id=\"xss\">")
+    expect(chatOutput.textContent).toContain(maliciousMsg)
+    expect(document.getElementById("xss")).toBeNull()
+  })
+
+  it("Chat.appendElement should allow adding elements (trusted)", () => {
+    const chat = new Chat(() => {})
+    const trustedEl = document.createElement("b")
+    trustedEl.id = "trusted"
+    trustedEl.textContent = "Trusted"
+    chat.appendElement(trustedEl)
+
+    const chatOutput = document.getElementById("chatoutput")!
+    expect(chatOutput.innerHTML).toContain("<b id=\"trusted\">Trusted</b>")
+    expect(document.getElementById("trusted")).not.toBeNull()
+  })
+
+  it("Notification should escape title and subtext", () => {
+    const notification = new Notification()
+    notification.show({
+      type: "Info",
+      title: "<b id='title-xss'>Title</b>",
+      subtext: "<b id='subtext-xss'>Subtext</b>",
+    })
+
+    expect(document.getElementById("title-xss")).toBeNull()
+    expect(document.getElementById("subtext-xss")).toBeNull()
+
+    const element = document.getElementById("notification")!
+    expect(element.innerHTML).toContain("&lt;b id='title-xss'&gt;Title&lt;/b&gt;")
+    expect(element.innerHTML).toContain("&lt;b id='subtext-xss'&gt;Subtext&lt;/b&gt;")
+  })
+})
 
 describe("Notification", () => {
   let notification: Notification

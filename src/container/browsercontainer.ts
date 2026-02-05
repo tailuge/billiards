@@ -171,8 +171,11 @@ export class BrowserContainer {
 
   offerUpload() {
     const search = new URLSearchParams(location.search).toString()
-    this.container.chat.showHTML(
-      `<a class="pill" target="_blank" href="https://scoreboard-tailuge.vercel.app/hiscore.html?${search}"> upload high score 🏆</a>`
-    )
+    const a = document.createElement("a")
+    a.className = "pill"
+    a.target = "_blank"
+    a.href = `https://scoreboard-tailuge.vercel.app/hiscore.html?${search}`
+    a.textContent = " upload high score 🏆"
+    this.container.chat.appendElement(a)
   }
 }
