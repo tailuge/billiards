@@ -27,15 +27,6 @@ export class NineBall implements Rules {
   cueball: Ball
   currentBreak = 0
   previousBreak = 0
-  scores: [number, number] = [0, 0]
-  get score() {
-    const index = Session.playerIndex()
-    return this.scores[index]
-  }
-  set score(v: number) {
-    const index = Session.playerIndex()
-    this.scores[index] = v
-  }
   rulename = "nineball"
 
   constructor(container) {
@@ -43,7 +34,7 @@ export class NineBall implements Rules {
   }
 
   getScores(): [number, number] {
-    return this.scores
+    return this.container.scores
   }
 
   startTurn() {
@@ -136,7 +127,7 @@ export class NineBall implements Rules {
     const table = this.container.table
     const pots = Outcome.potCount(outcome)
     this.currentBreak += pots
-    this.score += pots
+    this.container.scores[Session.playerIndex()] += pots
     this.container.sound.playSuccess(table.inPockets())
     if (this.isEndOfGame(outcome)) {
       return this.handleGameEnd(true)

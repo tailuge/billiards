@@ -29,15 +29,6 @@ export class Snooker implements Rules {
   currentBreak = 0
   previousBreak = 0
   foulPoints = 0
-  scores: [number, number] = [0, 0]
-  get score() {
-    const index = Session.playerIndex()
-    return this.scores[index]
-  }
-  set score(v: number) {
-    const index = Session.playerIndex()
-    this.scores[index] = v
-  }
   rulename = "snooker"
 
   static readonly tablemodel = "models/d-snooker.min.gltf"
@@ -79,7 +70,7 @@ export class Snooker implements Rules {
     if (info.legalFirstCollision && Outcome.onlyRedsPotted(outcome)) {
       // legal pot of one or more reds
       this.currentBreak += info.pots
-      this.scores[Session.playerIndex()] += info.pots
+      this.container.scores[Session.playerIndex()] += info.pots
       this.targetIsRed = false
       this.previousPotRed = true
       return this.continueBreak()
@@ -115,7 +106,7 @@ export class Snooker implements Rules {
     if (this.previousPotRed) {
       this.respot(outcome)
       this.currentBreak += id + 1
-      this.scores[Session.playerIndex()] += id + 1
+      this.container.scores[Session.playerIndex()] += id + 1
       this.previousPotRed = false
       this.targetIsRed =
         SnookerUtils.redsOnTable(this.container.table).length > 0
@@ -134,7 +125,7 @@ export class Snooker implements Rules {
     }
 
     this.currentBreak += id + 1
-    this.scores[Session.playerIndex()] += id + 1
+    this.container.scores[Session.playerIndex()] += id + 1
     this.previousPotRed = false
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     return this.continueBreak()
@@ -143,20 +134,20 @@ export class Snooker implements Rules {
   foul(outcome, info) {
     this.foulPoints = this.foulCalculation(outcome, info)
     const index = Session.playerIndex()
-    this.scores[1 - index] += this.foulPoints
+    this.container.scores[1 - index] += this.foulPoints
     const reason = this.foulReason(outcome, info)
     const notification = info.whitePotted
       ? ({
-        type: "Foul",
-        title: "FOUL",
-        subtext: reason || `Foul (${this.foulPoints} points)`,
-        extra: "Ball in hand",
-      } as const)
+          type: "Foul",
+          title: "FOUL",
+          subtext: reason || `Foul (${this.foulPoints} points)`,
+          extra: "Ball in hand",
+        } as const)
       : ({
-        type: "Foul",
-        title: "FOUL",
-        subtext: reason || `Foul (${this.foulPoints} points)`,
-      } as const)
+          type: "Foul",
+          title: "FOUL",
+          subtext: reason || `Foul (${this.foulPoints} points)`,
+        } as const)
     this.container.notify(notification)
     this.respot(outcome)
     if (info.whitePotted) {
@@ -265,7 +256,7 @@ export class Snooker implements Rules {
   }
 
   getScores(): [number, number] {
-    return this.scores
+    return this.container.scores
   }
 
   rack() {
@@ -374,8 +365,8 @@ export class Snooker implements Rules {
         ? session?.playername || "Anon"
         : session?.opponentName || "Opponent",
       winnerScore: isWinner
-        ? this.score
-        : this.scores[1 - Session.playerIndex()],
+        ? this.container.scores[Session.playerIndex()]
+        : this.container.scores[1 - Session.playerIndex()],
       gameType: this.rulename,
     }
     if (session?.opponentName) {
@@ -383,8 +374,8 @@ export class Snooker implements Rules {
         ? session.opponentName
         : session.playername || "Anon"
       result.loserScore = isWinner
-        ? this.scores[1 - Session.playerIndex()]
-        : this.score
+        ? this.container.scores[1 - Session.playerIndex()]
+        : this.container.scores[Session.playerIndex()]
     }
     return new End(this.container, isWinner ? result : undefined)
   }

@@ -25,15 +25,6 @@ export class ThreeCushion implements Rules {
   cueball: Ball
   currentBreak = 0
   previousBreak = 0
-  scores: [number, number] = [0, 0]
-  get score() {
-    const index = Session.playerIndex()
-    return this.scores[index]
-  }
-  set score(v: number) {
-    const index = Session.playerIndex()
-    this.scores[index] = v
-  }
   rulename = "threecushion"
 
   constructor(container) {
@@ -41,7 +32,7 @@ export class ThreeCushion implements Rules {
   }
 
   getScores(): [number, number] {
-    return this.scores
+    return this.container.scores
   }
 
   startTurn() {
@@ -92,7 +83,7 @@ export class ThreeCushion implements Rules {
       this.container.sound.playSuccess(outcomes.length / 3)
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
       this.currentBreak++
-      this.score++
+      this.container.scores[Session.playerIndex()]++
       return new Aim(this.container)
     }
 
@@ -138,7 +129,7 @@ export class ThreeCushion implements Rules {
       winner: isWinner
         ? session?.playername || "Anon"
         : session?.opponentName || "Opponent",
-      winnerScore: this.score,
+      winnerScore: this.container.scores[Session.playerIndex()],
       gameType: this.rulename,
     }
     return new End(this.container, isWinner ? result : undefined)

@@ -6,9 +6,9 @@ import { RerackEvent } from "./rerackevent"
 import { GameEvent } from "./gameevent"
 import { LinkFormatter } from "../view/link-formatter"
 import { ReplayEncoder } from "../utils/replay-encoder"
-
 import { PlaceBallEvent } from "./placeballevent"
 import { ScoreEvent } from "./scoreevent"
+import { Session } from "../network/client/session"
 
 export class Recorder {
   container: Container
@@ -46,7 +46,7 @@ export class Recorder {
       this.states[0],
       this.shots,
       this.start,
-      this.container.rules.score,
+      this.container.rules.getScores()[Session.playerIndex()],
       true
     )
   }
