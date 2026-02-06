@@ -21,6 +21,7 @@ export class WatchShot extends ControllerBase {
   }
 
   override handleStartAim(_) {
+    this.container.rules.startTurn()
     return new Aim(this.container)
   }
 
@@ -35,8 +36,10 @@ export class WatchShot extends ControllerBase {
       }
     }
     if (event.useStartPos) {
+      this.container.rules.startTurn()
       return new PlaceBall(this.container, event.pos.clone())
     }
+    this.container.rules.startTurn()
     return new PlaceBall(this.container)
   }
 
