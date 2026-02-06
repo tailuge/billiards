@@ -15,6 +15,7 @@ import { MessageRelay } from "../network/client/messagerelay"
 import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
 import { ScoreReporter } from "../network/client/scorereporter"
 import { BeginEvent } from "../events/beginevent"
+import { logNetEvent } from "../utils/event-log"
 
 /**
  * Integrate game container into HTML page
@@ -121,7 +122,7 @@ export class BrowserContainer {
 
   netEvent(e: string) {
     const event = EventUtil.fromSerialised(e)
-    console.log(`${this.playername} received ${event.type} : ${event.clientId}`)
+    logNetEvent(this.playername, event, "receive")
     if (event.clientId !== Session.getInstance().clientId) {
       if (event.playername) {
         Session.getInstance().opponentName = event.playername
@@ -136,9 +137,7 @@ export class BrowserContainer {
     if (this.wss && this.messageRelay) {
       event.clientId = Session.getInstance().clientId
       event.playername = Session.getInstance().playername
-      console.log(
-        `${this.playername} broadcasting ${event.type} : ${event.clientId}`
-      )
+      logNetEvent(this.playername, event, "broadcast")
       this.messageRelay.publish(this.tableId, EventUtil.serialise(event))
     }
   }

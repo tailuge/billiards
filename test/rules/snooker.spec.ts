@@ -107,6 +107,18 @@ describe("Snooker", () => {
     done()
   })
 
+  it("Pot red increments score immediately", (done) => {
+    bringToAimMode()
+
+    setupTableWithPot(table.balls[7])
+    playShotWaitForOutcome()
+
+    const [p1, p2] = snooker.getScores()
+    expect(p1).to.be.equal(1)
+    expect(p2).to.be.equal(0)
+    done()
+  })
+
   it("Pot colour is respotted after red", (done) => {
     bringToAimMode()
     // pot red

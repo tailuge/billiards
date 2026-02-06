@@ -90,8 +90,8 @@ describe("MatchResult Construction", () => {
       "snooker"
     )
     const snooker = container.rules as Snooker
-    // Mock score and break
-    snooker.score = 50
+    // Mock score and break (score is live total)
+    snooker.score = 60
     snooker.currentBreak = 10
 
     // Mock table is clear (only cueball remains)

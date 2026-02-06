@@ -79,6 +79,7 @@ export class Snooker implements Rules {
     if (info.legalFirstCollision && Outcome.onlyRedsPotted(outcome)) {
       // legal pot of one or more reds
       this.currentBreak += info.pots
+      this.scores[Session.playerIndex()] += info.pots
       this.targetIsRed = false
       this.previousPotRed = true
       this.container.hud.updateBreak(this.currentBreak)
@@ -115,6 +116,7 @@ export class Snooker implements Rules {
     if (this.previousPotRed) {
       this.respot(outcome)
       this.currentBreak += id + 1
+      this.scores[Session.playerIndex()] += id + 1
       this.previousPotRed = false
       this.targetIsRed =
         SnookerUtils.redsOnTable(this.container.table).length > 0
@@ -133,6 +135,7 @@ export class Snooker implements Rules {
     }
 
     this.currentBreak += id + 1
+    this.scores[Session.playerIndex()] += id + 1
     this.previousPotRed = false
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     return this.continueBreak()
@@ -259,8 +262,6 @@ export class Snooker implements Rules {
     this.previousPotRed = false
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     this.previousBreak = this.currentBreak
-    const index = Session.playerIndex()
-    this.scores[index] += this.currentBreak
     this.currentBreak = 0
     this.container.hud.updateBreak(this.currentBreak)
   }
@@ -317,6 +318,7 @@ export class Snooker implements Rules {
       this.startTurn()
       return new Aim(this.container)
     }
+    this.startTurn()
     return new WatchAim(this.container)
   }
 
@@ -375,7 +377,7 @@ export class Snooker implements Rules {
         ? session?.playername || "Anon"
         : session?.opponentName || "Opponent",
       winnerScore: isWinner
-        ? this.score + this.currentBreak
+        ? this.score
         : this.scores[1 - Session.playerIndex()],
       gameType: this.rulename,
     }
@@ -385,7 +387,7 @@ export class Snooker implements Rules {
         : session.playername || "Anon"
       result.loserScore = isWinner
         ? this.scores[1 - Session.playerIndex()]
-        : this.score + this.currentBreak
+        : this.score
     }
     return new End(this.container, isWinner ? result : undefined)
   }
