@@ -6,6 +6,7 @@ import { RerackEvent } from "./rerackevent"
 import { GameEvent } from "./gameevent"
 import { LinkFormatter } from "../view/link-formatter"
 import { ReplayEncoder } from "../utils/replay-encoder"
+
 import { PlaceBallEvent } from "./placeballevent"
 import { Session } from "../network/client/session"
 
@@ -35,9 +36,6 @@ export class Recorder {
       this.states.push(this.container.table.shortSerialise())
       this.shots.push(event as PlaceBallEvent)
     }
-    if (event.type === EventType.SCORE) {
-     // this.shots.push(event as ScoreEvent)
-    }
   }
 
   wholeGame() {
@@ -45,7 +43,7 @@ export class Recorder {
       this.states[0],
       this.shots,
       this.start,
-      this.container.rules.getScores()[Session.playerIndex()],
+      this.container.scores[Session.playerIndex()],
       true
     )
   }
