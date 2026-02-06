@@ -7,7 +7,6 @@ import { GameEvent } from "./gameevent"
 import { LinkFormatter } from "../view/link-formatter"
 import { ReplayEncoder } from "../utils/replay-encoder"
 import { PlaceBallEvent } from "./placeballevent"
-import { ScoreEvent } from "./scoreevent"
 import { Session } from "../network/client/session"
 
 export class Recorder {
@@ -37,7 +36,7 @@ export class Recorder {
       this.shots.push(event as PlaceBallEvent)
     }
     if (event.type === EventType.SCORE) {
-      this.shots.push(event as ScoreEvent)
+     // this.shots.push(event as ScoreEvent)
     }
   }
 
