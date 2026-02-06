@@ -22,6 +22,10 @@ export class Session {
     return Session.instance !== undefined
   }
 
+  static playerIndex(): number {
+    return Session.instance ? Session.instance.playerIndex : 0
+  }
+
   static isSpectator(): boolean {
     return Session.instance !== undefined && Session.getInstance().spectator
   }

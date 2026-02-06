@@ -25,11 +25,23 @@ export class ThreeCushion implements Rules {
   cueball: Ball
   currentBreak = 0
   previousBreak = 0
-  score = 0
+  scores: [number, number] = [0, 0]
+  get score() {
+    const index = Session.playerIndex()
+    return this.scores[index]
+  }
+  set score(v: number) {
+    const index = Session.playerIndex()
+    this.scores[index] = v
+  }
   rulename = "threecushion"
 
   constructor(container) {
     this.container = container
+  }
+
+  getScores(): [number, number] {
+    return this.scores
   }
 
   startTurn() {

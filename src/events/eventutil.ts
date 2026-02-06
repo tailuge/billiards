@@ -12,6 +12,7 @@ import { PlaceBallEvent } from "./placeballevent"
 import { RerackEvent } from "./rerackevent"
 import { StartAimEvent } from "./startaimevent"
 import { NotificationEvent } from "./notificationevent"
+import { ScoreEvent } from "./scoreevent"
 
 export class EventUtil {
   static serialise(event: GameEvent) {
@@ -44,6 +45,8 @@ export class EventUtil {
         return StartAimEvent.fromJson(parsed)
       case EventType.NOTIFICATION:
         return NotificationEvent.fromJson(parsed)
+      case EventType.SCORE:
+        return ScoreEvent.fromJson(parsed)
       default:
         throw Error("Unknown GameEvent :" + parsed)
     }

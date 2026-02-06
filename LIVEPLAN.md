@@ -1,69 +1,59 @@
-# Live Score Plan (Option 2)
+# Live Score Plan (Minimal & Clean)
 
 ## Summary
-Introduce a dedicated `ScoreEvent` that carries a minimal payload for totals and current break, plus session-side P1/P2 mapping based on the `BeginEvent` sender. Phase 1 lays the infrastructure; Phase 2 uses it in snooker; replay score support is deferred.
+Implement a dedicated `ScoreEvent` to synchronize scores in multiplayer games. This approach ensures consistency, supports recording/replay automatically, and provides a clean UI for both 1-player and 2-player modes.
 
-## Important API / Interface Changes
-- Add `EventType.SCORE`.
-- Add `ScoreEvent` with compact payload:
-  - `[number, number, number]` total scores (P1, P2) and current break
-- Add `handleScore(event: ScoreEvent)` to `Controller` and a default implementation in `ControllerBase`.
-- Use Session.playerIndex to determine P1/P2 mapping.
+## Phase 1: Event & HUD Infrastructure
 
-## Phase 1 — Infrastructure Only
-1. **Event plumbing**
-   - Create `src/events/scoreevent.ts` with `s` and `b` only.
-   - Add `SCORE` to `src/events/eventtype.ts`.
-   - Update `src/events/eventutil.ts` to parse and instantiate `ScoreEvent`.
-   - Extend `src/controller/controller.ts` with `handleScore`.
-   - Implement `handleScore` in `src/controller/controllerbase.ts` to update container score state and HUD.
+### 1. New Event: `ScoreEvent`
+- **File**: `src/events/scoreevent.ts`
+- **Type**: `EventType.SCORE`
+- **Payload**: `[number, number, number]` // [p1Score, p2Score, breakScore]
+- **Behavior**:
+  - `applyToController` calls `controller.handleScore(this)`.
 
-2. **Container score state**
-   - Add `scoreTuple: [number, number]` and `currentBreak: number` to `Container`.
-   - Add `updateScores(s, b)` to set state and update HUD.
+### 2. View: `Hud` Updates
+- **File**: `src/view/hud.ts`
+- **Method**: `updateScores(p1: number, p2: number, breakScore: number, p1Name: string, p2Name?: string)`
+- **Logic**:
+  - **1-Player Mode** (no `p2Name`): Keep existing behavior (Show "Break: X" or single score).
+  - **2-Player Mode**: Display standard scoreboard: `Name1: X | Name2: Y`.
+  - **Break**: Display current break prominently if > 0.
 
-3. **HUD display**
-   - Extend `src/view/hud.ts` with `updateScores(p1Name, p2Name, score data)`.
-   - Keep `updateBreak` for existing uses.
-   - Display `P1Name: score | P2Name: score` with break as is now in one player mode break should stay as now
+### 3. Container & Controller
+- **Container**: Add state `scores: [number, number]` to track latest known scores.
+- **Controller**: Add `handleScore(event)` to `ControllerBase`.
+  - Updates `Container.scores`.
+  - Calls `container.hud.updateScores(...)`.
 
-## Phase 2 — Snooker Integration (Use Infrastructure)
-1. **Add frame score tracking**
-   - the score might be stored in the hud? have helper addToMyScore that uses playerIndex to update the data?
+## Phase 2: Game Logic Integration
 
-2. **Emit ScoreEvent on score changes**
-   - Add `emitScoreEvent()` helper that:
-     - Computes totals (`frameScores`, plus current break for the active player)
-     - Sends `ScoreEvent([p1Total, p2Total, currentBreak])` only when values change - think about this in 1 player mode. If in future we record this
+### 1. Rules Interface
+- **File**: `src/controller/rules/rules.ts`
+- **Change**: Add `getScores(): [number, number]` to the interface.
+- **Default**: Return `[this.score, 0]` for single-player rules.
 
-3. **Hook emission into scoring paths**
-   - On pots: update `currentBreak`, update `frameScores`, emit
-   - On foul: add points to opponent, reset `currentBreak`, emit
-   - On switch player / miss: reset `currentBreak`, emit to clear break
+### 2. Rule Implementations (Snooker, etc.)
+- **Logic**:
+  - Track scores for both players: `scores: [number, number] = [0, 0]`.
+  - Use `Session.playerIndex` (default 0 if no session) to determine which index in `scores` to update during the active player's turn.
+  - When a pot occurs, update `scores[index] += value`.
+  - When a foul occurs, update `scores[1 - index] += foulPoints`.
+  - On `startTurn()`, the *active* player resets their `currentBreak` and adds it to their total score in `scores[index]`.
 
-4. **Receiver handling**
-   - `handleScore` updates `Container` score state and HUD using Session names
+### 3. Emission (The "Glue")
+- **Location**: `PlayShot.handleStationary` (or where `rules.update` is called).
+- **Logic**:
+  - The active player computes the latest `scores` and `currentBreak`.
+  - Emits `ScoreEvent(scores[0], scores[1], currentBreak)`.
+  - Receiver (watcher) updates their local `scores` and `currentBreak` state via `handleScore`.
 
-## Phase 3 — Replay Score (Deferred)
-- Decide later whether to:
-  - Record `ScoreEvent` in the `Recorder` and apply during `Replay`, or
-  - Attach final scores only in replay state
-- Ensure replay doesn’t break if `ScoreEvent` appears in shot lists
+## Phase 3: Replay & Recording (Automatic)
+- By using `ScoreEvent` (a `GameEvent`), the `Recorder` automatically serializes it.
+- During `Replay`, `ScoreEvent` will be processed by the `Controller`, updating the HUD in sync with the playback.
+- **Requirement**: Ensure `Replay` controller delegates `handleScore` to `ControllerBase` (or implements it).
 
-## Tests / Scenarios
-- Multiplayer snooker with two tabs
-  - BeginEvent sender is P1; receiver is P2
-- Potting sequence
-  - P1 score increases; Break increases
-- Foul
-  - Opponent score increases; Break resets to 0
-- Turn switch
-  - Break resets; no score delta
-- Spectator
-  - ScoreEvent does not crash spectate
-
-## Assumptions / Defaults
-- P1/P2 mapping by BeginEvent sender (per your preference)
-- ScoreEvent payload uses compact keys: `s`, `b`
-- Break display is global; no per-player break tagging
-- Replay score updates deferred until Phase 3
+## Verification
+- **1-Player**: HUD looks normal. Events emitted but P2 score is 0.
+- **2-Player**: HUD shows split scores. Both clients stay in sync via events.
+- **Spectator**: Receives `ScoreEvent` and updates HUD passively.

@@ -8,6 +8,7 @@ import { LinkFormatter } from "../view/link-formatter"
 import { ReplayEncoder } from "../utils/replay-encoder"
 
 import { PlaceBallEvent } from "./placeballevent"
+import { ScoreEvent } from "./scoreevent"
 
 export class Recorder {
   container: Container
@@ -34,6 +35,9 @@ export class Recorder {
     if (event.type === EventType.PLACEBALL) {
       this.states.push(this.container.table.shortSerialise())
       this.shots.push(event as PlaceBallEvent)
+    }
+    if (event.type === EventType.SCORE) {
+      this.shots.push(event as ScoreEvent)
     }
   }
 

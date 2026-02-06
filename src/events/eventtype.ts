@@ -12,4 +12,5 @@ export enum EventType {
   RERACK = "RERACK",
   STARTAIM = "STARTAIM",
   NOTIFICATION = "NOTIFICATION",
+  SCORE = "SCORE",
 }

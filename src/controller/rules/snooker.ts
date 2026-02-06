@@ -29,7 +29,15 @@ export class Snooker implements Rules {
   currentBreak = 0
   previousBreak = 0
   foulPoints = 0
-  score = 0
+  scores: [number, number] = [0, 0]
+  get score() {
+    const index = Session.playerIndex()
+    return this.scores[index]
+  }
+  set score(v: number) {
+    const index = Session.playerIndex()
+    this.scores[index] = v
+  }
   rulename = "snooker"
 
   static readonly tablemodel = "models/d-snooker.min.gltf"
@@ -132,6 +140,8 @@ export class Snooker implements Rules {
 
   foul(outcome, info) {
     this.foulPoints = this.foulCalculation(outcome, info)
+    const index = Session.playerIndex()
+    this.scores[1 - index] += this.foulPoints
     const reason = this.foulReason(outcome, info)
     const notification = info.whitePotted
       ? ({
@@ -249,9 +259,14 @@ export class Snooker implements Rules {
     this.previousPotRed = false
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     this.previousBreak = this.currentBreak
-    this.score += this.currentBreak
+    const index = Session.playerIndex()
+    this.scores[index] += this.currentBreak
     this.currentBreak = 0
     this.container.hud.updateBreak(this.currentBreak)
+  }
+
+  getScores(): [number, number] {
+    return this.scores
   }
 
   rack() {
@@ -359,14 +374,18 @@ export class Snooker implements Rules {
       winner: isWinner
         ? session?.playername || "Anon"
         : session?.opponentName || "Opponent",
-      winnerScore: this.score + this.currentBreak,
+      winnerScore: isWinner
+        ? this.score + this.currentBreak
+        : this.scores[1 - Session.playerIndex()],
       gameType: this.rulename,
     }
     if (session?.opponentName) {
       result.loser = isWinner
         ? session.opponentName
         : session.playername || "Anon"
-      result.loserScore = 0 // We don't track opponent score easily here yet
+      result.loserScore = isWinner
+        ? this.scores[1 - Session.playerIndex()]
+        : this.score + this.currentBreak
     }
     return new End(this.container, isWinner ? result : undefined)
   }

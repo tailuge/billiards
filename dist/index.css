@@ -50,6 +50,16 @@ p {
   right: 3em;
 }
 
+.p1Score, .p2Score {
+  font-size: 0.8em;
+}
+
+.breakScore {
+  font-size: 1em;
+  color: white;
+  margin-top: 0.2em;
+}
+
 #notificationOverlay {
   position: absolute;
   top: 10%;

@@ -54,6 +54,9 @@ export class Container {
   scoreReporter: ScoreReporter | null = null
   frame: (timestamp: number) => void
 
+  scores: [number, number] = [0, 0]
+  currentBreak = 0
+
   last = performance.now()
   readonly step = 0.001953125 * 1
 

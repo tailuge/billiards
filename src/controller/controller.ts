@@ -12,6 +12,7 @@ import { PlaceBallEvent } from "../events/placeballevent"
 import { RejoinEvent } from "../events/rejoinevent"
 import { StartAimEvent } from "../events/startaimevent"
 import { NotificationEvent } from "../events/notificationevent"
+import { ScoreEvent } from "../events/scoreevent"
 
 export { BeginEvent, AimEvent, HitEvent, Input, AbortEvent, StationaryEvent }
 
@@ -62,6 +63,9 @@ export abstract class Controller {
     return this
   }
   handleNotification(_: NotificationEvent): Controller {
+    return this
+  }
+  handleScore(_: ScoreEvent): Controller {
     return this
   }
   onFirst() {}

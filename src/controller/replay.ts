@@ -9,6 +9,7 @@ import { EventType } from "../events/eventtype"
 import { RerackEvent } from "../events/rerackevent"
 import { PlaceBallEvent } from "../events/placeballevent"
 import { End } from "./end"
+import { ScoreEvent } from "../events/scoreevent"
 
 export class Replay extends ControllerBase {
   delay: number
@@ -62,6 +63,15 @@ export class Replay extends ControllerBase {
       }
       return
     }
+    if (shot?.type === EventType.SCORE) {
+      const score = ScoreEvent.fromJson(shot)
+      score.applyToController(this)
+      if (this.shots.length > 0) {
+        this.playNextShot(delay)
+      }
+      return
+    }
+
     const aim = AimEvent.fromJson(shot)
     this.container.table.cueball = this.container.table.balls[aim.i]
     console.log(this.container.table.cueball.pos.distanceTo(aim.pos))
