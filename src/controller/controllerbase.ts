@@ -3,7 +3,6 @@ import { exportGltf } from "../utils/gltf"
 import { ChatEvent } from "../events/chatevent"
 import { NotificationEvent } from "../events/notificationevent"
 import { ScoreEvent } from "../events/scoreevent"
-import { Session } from "../network/client/session"
 import { Outcome } from "../model/outcome"
 import { Vector3 } from "three"
 
@@ -23,26 +22,7 @@ export abstract class ControllerBase extends Controller {
   }
 
   override handleScore(event: ScoreEvent): Controller {
-    this.container.scores = [event.p1, event.p2]
-    this.container.currentBreak = event.b
-
-    let p1Name: string | undefined = undefined
-    let p2Name: string | undefined = undefined
-
-    if (Session.hasInstance()) {
-      const session = Session.getInstance()
-      const isP1 = Session.playerIndex() === 0
-      p1Name = (isP1 ? session.playername : session.opponentName) || undefined
-      p2Name = (isP1 ? session.opponentName : session.playername) || undefined
-    }
-
-    this.container.hud.updateScores(
-      event.p1,
-      event.p2,
-      p1Name,
-      p2Name,
-      event.b
-    )
+    this.container.updateScoreHud(event.p1, event.p2, event.b)
     return this
   }
 

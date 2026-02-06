@@ -27,6 +27,7 @@ import { LobbyIndicator } from "../view/lobbyindicator"
 import { MessageRelay } from "../network/client/messagerelay"
 import { ScoreReporter } from "../network/client/scorereporter"
 import { NotificationData } from "../view/notification"
+import { ScoreEvent } from "../events/scoreevent"
 
 /**
  * Model, View, Controller container.
@@ -106,6 +107,28 @@ export class Container {
   sendEvent(event) {
     this.recorder.record(event)
     this.throttle.send(event)
+  }
+
+  updateScoreHud(p1: number, p2: number, b: number) {
+    this.scores = [p1, p2]
+    this.currentBreak = b
+
+    let p1Name: string | undefined = undefined
+    let p2Name: string | undefined = undefined
+
+    if (Session.hasInstance()) {
+      const session = Session.getInstance()
+      const isP1 = Session.playerIndex() === 0
+      p1Name = (isP1 ? session.playername : session.opponentName) || undefined
+      p2Name = (isP1 ? session.opponentName : session.playername) || undefined
+    }
+
+    this.hud.updateScores(p1, p2, p1Name, p2Name, b)
+  }
+
+  sendScoreUpdate(p1: number, p2: number, b: number) {
+    this.updateScoreHud(p1, p2, b)
+    this.sendEvent(new ScoreEvent(p1, p2, b))
   }
 
   notify(data: NotificationData | string, duration?: number) {

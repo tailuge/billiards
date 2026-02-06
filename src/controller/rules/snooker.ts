@@ -82,7 +82,6 @@ export class Snooker implements Rules {
       this.scores[Session.playerIndex()] += info.pots
       this.targetIsRed = false
       this.previousPotRed = true
-      this.container.hud.updateBreak(this.currentBreak)
       return this.continueBreak()
     }
 
@@ -263,7 +262,6 @@ export class Snooker implements Rules {
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     this.previousBreak = this.currentBreak
     this.currentBreak = 0
-    this.container.hud.updateBreak(this.currentBreak)
   }
 
   getScores(): [number, number] {
@@ -323,7 +321,6 @@ export class Snooker implements Rules {
   }
 
   continueBreak() {
-    this.container.hud.updateBreak(this.currentBreak)
     const table = this.container.table
     this.container.sound.playSuccess(table.inPockets())
     if (Outcome.isClearTable(table)) {

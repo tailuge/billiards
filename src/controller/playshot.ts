@@ -1,6 +1,5 @@
 import { Controller, Input } from "./controller"
 import { ControllerBase } from "./controllerbase"
-import { ScoreEvent } from "../events/scoreevent"
 
 /**
  * PlayShot starts balls rolling using cue state, applies rules to outcome
@@ -18,7 +17,7 @@ export class PlayShot extends ControllerBase {
     const nextController = this.container.rules.update(outcome)
     const [s1, s2] = this.container.rules.getScores()
     const b = this.container.rules.currentBreak
-    this.container.sendEvent(new ScoreEvent(s1, s2, b))
+    this.container.sendScoreUpdate(s1, s2, b)
 
     const isPartOfBreak = this.container.rules.isPartOfBreak(outcome)
     const isEndOfGame = this.container.rules.isEndOfGame(outcome)
