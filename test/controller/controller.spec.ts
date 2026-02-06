@@ -64,6 +64,7 @@ describe("Controller", () => {
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlaceBall)
     expect(broadcastEvents.pop()).to.be.an.instanceof(WatchEvent)
+    expect(Session.getInstance().breakingPlayerIndex).to.equal(0)
     done()
   })
 
@@ -80,6 +81,7 @@ describe("Controller", () => {
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
+    expect(Session.getInstance().breakingPlayerIndex).to.equal(1)
     done()
   })
 

@@ -25,12 +25,18 @@ export class Init extends ControllerBase {
       )
     }
 
+    if (Session.hasInstance()) {
+      Session.getInstance().breakingPlayerIndex = 0
+    }
     this.container.chat.showMessage("Start")
     this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
     return new PlaceBall(this.container)
   }
 
   override handleWatch(event: WatchEvent): Controller {
+    if (Session.hasInstance()) {
+      Session.getInstance().breakingPlayerIndex = 1
+    }
     this.container.chat.showMessage("Opponent to break")
     this.container.rules.secondToPlay()
     this.container.table.updateFromSerialised(event.json)

@@ -7,6 +7,7 @@ export class Session {
   ) {}
 
   opponentName?: string
+  breakingPlayerIndex = 0
 
   private static instance: Session | undefined
 
