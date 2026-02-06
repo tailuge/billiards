@@ -39,9 +39,9 @@ export abstract class ControllerBase extends Controller {
     this.container.hud.updateScores(
       event.p1,
       event.p2,
-      event.b,
       p1Name,
-      p2Name
+      p2Name,
+      event.b
     )
     return this
   }
