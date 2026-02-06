@@ -56,8 +56,10 @@ p {
 }
 
 .breakScore {
-  font-size: 1em;
-  color: white;
+  font-size: xx-large;
+  font-style: italic;
+  color: yellow;
+  text-align: center;
   margin-top: 0.2em;
 }
 
