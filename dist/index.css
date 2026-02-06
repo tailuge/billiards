@@ -50,8 +50,9 @@ p {
   right: 3em;
 }
 
-.p1Score, .p2Score {
-  font-size: 0.8em;
+.p1Score,
+.p2Score {
+  font-size: 0.6em;
 }
 
 .breakScore {

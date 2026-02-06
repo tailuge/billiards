@@ -1,43 +1,54 @@
 export class Hud {
-  element: HTMLDivElement
+  p1Element: HTMLElement | null
+  p2Element: HTMLElement | null
+  breakElement: HTMLElement | null
 
   constructor() {
-    this.element = this.getElement("snookerScore")
+    this.p1Element = document.getElementById("p1Score")
+    this.p2Element = document.getElementById("p2Score")
+    this.breakElement = document.getElementById("breakScore")
   }
 
-  updateBreak(score) {
-    if (this.element) {
-      if (score > 0) {
-        this.element.innerHTML = "Break</br>" + score
-      } else {
-        this.element.innerHTML = ""
-      }
+  private setText(element: HTMLElement | null, text: string) {
+    if (element) {
+      element.textContent = text
     }
   }
 
-  updateScores(p1: number, p2: number, b: number, p1Name?: string, p2Name?: string) {
-    if (!this.element) return
+  updateBreak(score: number) {
+    this.setText(this.p1Element, "")
+    this.setText(this.p2Element, "")
+    if (score > 0 && this.breakElement) {
+      this.breakElement.innerHTML = "Break</br>" + score
+    } else {
+      this.setText(this.breakElement, "")
+    }
+  }
 
-    let html = ""
+  updateScores(
+    p1: number,
+    p2: number,
+    p1Name?: string,
+    p2Name?: string,
+    b: number = 0
+  ) {
+    this.setText(this.p1Element, "")
+    this.setText(this.p2Element, "")
+    this.setText(this.breakElement, "")
+
     if (p1Name && p2Name) {
-      html = `<div class="p1Score">${p1Name}: ${p1}</div>`
-      html += `<div class="p2Score">${p2Name}: ${p2}</div>`
+      this.setText(this.p1Element, `${p1Name}: ${p1}`)
+      this.setText(this.p2Element, `${p2Name}: ${p2}`)
     } else if (p1Name) {
-      html = `<div class="p1Score">${p1Name}: ${p1}</div>`
+      this.setText(this.p1Element, `${p1Name}: ${p1}`)
     } else if (p2Name) {
-      html = `<div class="p2Score">${p2Name}: ${p2}</div>`
-    } else if (b === 0) {
-      html = `<div class="p1Score">Score: ${p1}</div>`
+      this.setText(this.p2Element, `${p2Name}: ${p2}`)
+    } else {
+      this.setText(this.p1Element, `Score: ${p1}`)
     }
 
     if (b > 0) {
-      html += `<div class="breakScore">Break: ${b}</div>`
+      this.setText(this.breakElement, `Break: ${b}`)
     }
-
-    this.element.innerHTML = html
-  }
-
-  getElement(id): HTMLDivElement {
-    return document.getElementById(id)! as HTMLDivElement
   }
 }
