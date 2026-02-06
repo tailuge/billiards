@@ -6,11 +6,9 @@ Introduce a dedicated `ScoreEvent` that carries a minimal payload for totals and
 ## Important API / Interface Changes
 - Add `EventType.SCORE`.
 - Add `ScoreEvent` with compact payload:
-  - `s: [number, number]` total scores (P1, P2)
-  - `b: number` current break for the active player
+  - `[number, number, number]` total scores (P1, P2) and current break
 - Add `handleScore(event: ScoreEvent)` to `Controller` and a default implementation in `ControllerBase`.
-- Extend `Session` with P1/P2 mapping fields and player index:
-  - `p1Name?: string`, `p2Name?: string`, `playerIndex?: 0 | 1`
+- Use Session.playerIndex to determine P1/P2 mapping.
 
 ## Phase 1 — Infrastructure Only
 1. **Event plumbing**
@@ -25,30 +23,18 @@ Introduce a dedicated `ScoreEvent` that carries a minimal payload for totals and
    - Add `updateScores(s, b)` to set state and update HUD.
 
 3. **HUD display**
-   - Extend `src/view/hud.ts` with `updateScores(p1Name, p2Name, s, b)`.
+   - Extend `src/view/hud.ts` with `updateScores(p1Name, p2Name, score data)`.
    - Keep `updateBreak` for existing uses.
-   - Display `P1Name: X | P2Name: Y` and `Break: b` when `b > 0`.
-
-4. **P1/P2 mapping (BeginEvent sender = P1)**
-   - In `BrowserContainer`, before sending `BeginEvent` (when `!first`), set:
-     - `Session.p1Name = Session.playername`
-     - `Session.playerIndex = 0`
-   - In `netEvent`, on receiving `BEGIN`:
-     - `Session.p1Name = event.playername`
-     - `Session.p2Name = Session.playername`
-     - `Session.playerIndex = 1`
-   - When any event arrives with `playername`, fill missing `p1Name` or `p2Name` based on `playerIndex`.
+   - Display `P1Name: score | P2Name: score` with break as is now in one player mode break should stay as now
 
 ## Phase 2 — Snooker Integration (Use Infrastructure)
 1. **Add frame score tracking**
-   - In `src/controller/rules/snooker.ts`, add:
-     - `frameScores: [number, number] = [0, 0]`
-     - `activeIndex: 0 | 1` derived from `Session.playerIndex` when local is active
+   - the score might be stored in the hud? have helper addToMyScore that uses playerIndex to update the data?
 
 2. **Emit ScoreEvent on score changes**
    - Add `emitScoreEvent()` helper that:
      - Computes totals (`frameScores`, plus current break for the active player)
-     - Sends `ScoreEvent([p1Total, p2Total], currentBreak)` only when values change
+     - Sends `ScoreEvent([p1Total, p2Total, currentBreak])` only when values change - think about this in 1 player mode. If in future we record this
 
 3. **Hook emission into scoring paths**
    - On pots: update `currentBreak`, update `frameScores`, emit

@@ -23,22 +23,15 @@ export class RerackEvent extends GameEvent {
   }
 
   static applyBallinfoToTable(table: Table, ballinfo) {
-    console.log("RERACK applyBallinfoToTable ballinfo:", ballinfo)
     table.updateFromSerialised(ballinfo)
     if (ballinfo?.balls) {
       ballinfo.balls.forEach((bData) => {
         const ball = table.balls[bData.id]
         if (ball) {
-          console.log("RERACK apply ball", {
-            id: bData.id,
-            pos: bData.pos,
-          })
           ball.pos.copy(bData.pos)
           ball.setStationary()
         }
       })
-    } else {
-      console.log("RERACK applyBallinfoToTable: no ballinfo.balls")
     }
   }
 }

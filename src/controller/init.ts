@@ -34,6 +34,9 @@ export class Init extends ControllerBase {
     this.container.chat.showMessage("Opponent to break")
     this.container.rules.secondToPlay()
     this.container.table.updateFromSerialised(event.json)
+    if (Session.hasInstance()) {
+      Session.getInstance().playerIndex = 1
+    }
     return new WatchAim(this.container)
   }
 

@@ -7,7 +7,8 @@ export class Session {
   ) {}
 
   opponentName?: string
-
+  playerIndex: number = 0
+  
   private static instance: Session | undefined
 
   static getInstance(): Session {
