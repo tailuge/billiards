@@ -64,18 +64,25 @@
   <body>
     <div id="viewP1" class="view3d">
       <div id="snookerScoreOverlay">
-        <div id="snookerScore">
+        <div id="snookerScore" aria-live="polite">
           <div id="p1Score" class="p1Score"></div>
           <div id="p2Score" class="p2Score"></div>
           <div id="breakScore" class="breakScore"></div>
         </div>
       </div>
       <div id="notificationOverlay">
-        <div id="notification"></div>
+        <div id="notification" aria-live="assertive" role="alert"></div>
       </div>
     </div>
     <div class="panel">
-      <button class="hitButton" id="cueHit" type="button">hit</button>
+      <button
+        class="hitButton"
+        id="cueHit"
+        type="button"
+        aria-label="Hit cue ball"
+      >
+        hit
+      </button>
       <div class="ballContainer">
         <div id="objectBall" class="objectBall"></div>
         <div id="cueBall" class="cueBall">
@@ -94,11 +101,17 @@
       />
       <div class="chatarea">
         <div id="chatoutput" class="chatoutput">
-          <a href="https://github.com/tailuge/billiards" title="Github">★</a>
+          <a
+            href="https://github.com/tailuge/billiards"
+            title="Github"
+            aria-label="GitHub Repository"
+            >★</a
+          >
           <a
             href="https://scoreboard-tailuge.vercel.app/leaderboard.html"
             target="_blank"
             title="High Break Table"
+            aria-label="High Break Table"
             >🏆</a
           >
           <a
@@ -107,20 +120,45 @@
             class="pill"
             title="Lobby"
             id="lobby"
+            aria-label="Multiplayer Lobby"
             >👥</a
           >
         </div>
         <div class="outerMenu">
-          <button class="menuButton" title="share" id="share" type="submit">
+          <button
+            class="menuButton"
+            title="share"
+            id="share"
+            type="submit"
+            aria-label="Share replay link"
+          >
             ⬀
           </button>
-          <button class="menuButton" title="replay" id="replay" type="submit">
+          <button
+            class="menuButton"
+            title="replay"
+            id="replay"
+            type="submit"
+            aria-label="Replay last break"
+          >
             ↻
           </button>
-          <button class="menuButton" title="retry" id="redo" type="submit">
+          <button
+            class="menuButton"
+            title="retry"
+            id="redo"
+            type="submit"
+            aria-label="Retry last break"
+          >
             ⎌
           </button>
-          <button class="menuButton" title="view" id="camera" type="submit">
+          <button
+            class="menuButton"
+            title="view"
+            id="camera"
+            type="submit"
+            aria-label="Toggle camera view"
+          >
             🎥
           </button>
         </div>
@@ -150,7 +188,9 @@
         <input id="rho" type="range" /><label for="rho">rho</label>
       </div>
       <div class="nw">
-        <button id="network">network🗲</button>
+        <button id="network" aria-label="Toggle network settings">
+          network🗲
+        </button>
       </div>
     </div>
     <script async src="vendor.js"></script>

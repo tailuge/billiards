@@ -1,0 +1,3 @@
+## 2025-05-22 - [ARIA Labels and Live Regions]
+**Learning:** In projects where HTML files are served directly from the `dist/` directory and not managed by a build plugin like `HtmlWebpackPlugin`, these files should be treated as source assets. Adding `aria-live` to dynamic score and notification areas significantly improves the experience for screen reader users by announcing updates without requiring manual focus shifts.
+**Action:** When improving accessibility in a new repo, check `webpack.config.js` to confirm if HTML files are source assets or build artifacts. Always prioritize `aria-live` for dynamic game state updates like scores.
