@@ -31,3 +31,33 @@ This document outlines the findings from a review of the Three.js implementation
 - [x] **Conditional Updates:** Optimized `View.renderCamera` to only update the projection matrix when size or FOV changes.
 - [x] **Shared Assets:** Refactored `BallMesh` to use shared static geometry for the ball and shared geometry/material for shadows.
 - [x] **Code Cleanup:** Fixed the `viewFrustrum` typo.
+
+## Further Optimizations (Batch 2)
+
+### 5. Persistent Vectors in High-Frequency Updates
+**Issue:** `Cue.ts` was creating multiple `Vector3` objects every frame in its `moveTo` method via `.clone()` and `unitAtAngle()` calls without a target.
+**Solution:** Introduced persistent private `Vector3` members to `Cue` and updated mathematical operations to use these vectors.
+
+### 6. Raycaster and Array Allocation
+**Issue:** `Cue.intersectsAnything` created a new `Raycaster` and a new array of meshes (via `map`) every time it was called (e.g., during aim rotation).
+**Solution:** Cached the `Raycaster` and the list of ball meshes to avoid redundant object creation.
+
+### 7. Dotted Geometry Sharing
+**Issue:** Every ball without a label (like the 15 red balls in Snooker) created its own `IcosahedronGeometry`.
+**Solution:** Implemented a static cache for dotted geometries in `BallMesh`, allowing balls with the same base color to share the same geometry and vertex-colored dots.
+
+### 8. Conditional Ball Mesh Updates
+**Issue:** `BallMesh.updateAll` was updating Three.js properties (position, rotation, arrows) every frame even when balls were stationary.
+**Solution:** Refactored the update loop to skip redundant updates if the ball is stationary, its state hasn't changed, and its position is constant.
+
+### 9. Normalized Vector Reuse
+**Issue:** `BallMesh.updateAll` called `norm(ball.rvel)` multiple times per frame.
+**Solution:** Pre-calculated the normalized rotational velocity once per update and passed it to dependent methods.
+
+### 10. Robust Vector Normalization
+**Issue:** Normalizing zero-length vectors (e.g., when a ball stops) could lead to `NaN` values, causing rendering artifacts or console warnings.
+**Solution:** Added guards in `BallMesh` and `Cue` to ensure `norm()` is only called on non-zero vectors, and updated `utils.ts` to support explicit target vectors for all vector math utilities.
+
+- [x] **Vector Reuse in Cue:** Optimized `Cue` class for zero-allocation movement.
+- [x] **Static Asset Caching:** Added geometry sharing for dotted balls in `BallMesh`.
+- [x] **Smart Rendering:** Implemented state-based update skipping in `BallMesh`.

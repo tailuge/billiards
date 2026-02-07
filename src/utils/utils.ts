@@ -8,12 +8,12 @@ export function vec(v) {
 }
 
 const upCrossVec = new Vector3()
-export function upCross(v) {
-  return upCrossVec.copy(up).cross(v)
+export function upCross(v, target = upCrossVec) {
+  return target.copy(up).cross(v)
 }
 const normVec = new Vector3()
-export function norm(v) {
-  return normVec.copy(v).normalize()
+export function norm(v, target = normVec) {
+  return target.copy(v).normalize()
 }
 
 const vc = new Vector3()
