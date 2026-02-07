@@ -4,4 +4,5 @@ export interface MatchResult {
   winnerScore: number
   loserScore?: number
   gameType: string
+  replayData?: string
 }
