@@ -26,8 +26,8 @@ export class Notification {
   show(data: NotificationData | string, defaultDuration: number = 3000) {
     if (!this.element) return
 
-    let content = ""
-    let typeClass = ""
+    let content: string
+    let typeClass: string
     let duration = defaultDuration
 
     if (typeof data === "string") {
