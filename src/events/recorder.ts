@@ -2,46 +2,58 @@ import { Container } from "../container/container"
 import { Outcome } from "../model/outcome"
 import { EventType } from "./eventtype"
 import { HitEvent } from "./hitevent"
-import { RerackEvent } from "./rerackevent"
 import { GameEvent } from "./gameevent"
 import { LinkFormatter } from "../view/link-formatter"
 import { ReplayEncoder } from "../utils/replay-encoder"
-
-import { PlaceBallEvent } from "./placeballevent"
 import { Session } from "../network/client/session"
+import { RecordEntry } from "./recordentry"
 
 export class Recorder {
   container: Container
   linkFormatter: LinkFormatter
-  shots: GameEvent[] = []
-  states: number[][] = []
+  entries: RecordEntry[] = []
   start = Date.now()
   breakStart: number | undefined
-  breakStartTime
+  breakStartTime: number | undefined
+
   constructor(container: Container, linkFormatter: LinkFormatter) {
     this.container = container
     this.linkFormatter = linkFormatter
   }
 
+  get shots(): GameEvent[] {
+    return this.entries.map((e) => e.event)
+  }
+
+  get states(): number[][] {
+    return this.entries.map((e) => e.state)
+  }
+
   record(event: GameEvent) {
+    let recordedEvent = event
     if (event.type === EventType.HIT) {
-      this.states.push(this.container.table.shortSerialise())
-      this.shots.push((<HitEvent>event).tablejson.aim)
+      recordedEvent = (event as HitEvent).tablejson.aim
     }
-    if (event.type === EventType.RERACK) {
-      this.states.push(this.container.table.shortSerialise())
-      this.shots.push(event as RerackEvent)
-    }
-    if (event.type === EventType.PLACEBALL) {
-      this.states.push(this.container.table.shortSerialise())
-      this.shots.push(event as PlaceBallEvent)
+
+    if (
+      event.type === EventType.HIT ||
+      event.type === EventType.RERACK ||
+      event.type === EventType.PLACEBALL
+    ) {
+      this.entries.push({
+        state: this.container.table.shortSerialise(),
+        event: recordedEvent,
+        pots: 0,
+        isPartOfBreak: false,
+        time: Date.now(),
+      })
     }
   }
 
   wholeGame() {
     return ReplayEncoder.createState(
-      this.states[0],
-      this.shots,
+      this.entries[0]?.state,
+      this.entries.map((e) => e.event),
       this.start,
       this.container.scores[Session.playerIndex()],
       true
@@ -49,8 +61,8 @@ export class Recorder {
   }
 
   last() {
-    let last = this.states.length - 1
-    if (last > 0 && this.shots[last].type === "RERACK") {
+    let last = this.entries.length - 1
+    while (last > 0 && this.entries[last].event.type === EventType.RERACK) {
       last--
     }
     return last
@@ -58,14 +70,18 @@ export class Recorder {
 
   lastShot() {
     const last = this.last()
-    return ReplayEncoder.createState(this.states[last], [this.shots[last]])
+    const entry = this.entries[last]
+    return entry
+      ? ReplayEncoder.createState(entry.state, [entry.event])
+      : undefined
   }
 
   currentBreak() {
     if (this.breakStart !== undefined) {
+      const breakEntries = this.entries.slice(this.breakStart)
       return ReplayEncoder.createState(
-        this.states[this.breakStart],
-        this.shots.slice(this.breakStart),
+        this.entries[this.breakStart].state,
+        breakEntries.map((e) => e.event),
         this.breakStartTime,
         this.container.rules.previousBreak
       )
@@ -79,6 +95,12 @@ export class Recorder {
     isEndOfGame: boolean
   ) {
     const potCount = Outcome.potCount(outcome)
+    const lastIndex = this.last()
+    if (lastIndex >= 0) {
+      this.entries[lastIndex].pots = potCount
+      this.entries[lastIndex].isPartOfBreak = isPartOfBreak
+    }
+
     if (!isPartOfBreak) {
       this.breakLink(isEndOfGame)
     }
@@ -99,18 +121,16 @@ export class Recorder {
     }
 
     if (this.breakStart === undefined) {
-      this.breakStart = this.last()
+      this.breakStart = lastIndex
       this.breakStartTime = Date.now()
     }
   }
 
   lastShotLink(isPartOfBreak, potCount, balls) {
-    this.linkFormatter.lastShotLink(
-      isPartOfBreak,
-      potCount,
-      balls,
-      this.lastShot()
-    )
+    const lastShot = this.lastShot()
+    if (lastShot) {
+      this.linkFormatter.lastShotLink(isPartOfBreak, potCount, balls, lastShot)
+    }
   }
 
   breakLink(includeLastShot) {
@@ -129,5 +149,20 @@ export class Recorder {
 
   wholeGameLink() {
     this.linkFormatter.wholeGameLink(this.wholeGame())
+  }
+
+  getPastShots(
+    n: number,
+    skipTypes: EventType[] = [EventType.RERACK, EventType.SCORE]
+  ) {
+    const shots: RecordEntry[] = []
+
+    for (let i = this.entries.length - 1; i >= 0 && shots.length < n; i--) {
+      if (!skipTypes.includes(this.entries[i].event.type)) {
+        shots.unshift(this.entries[i])
+      }
+    }
+
+    return shots
   }
 }
