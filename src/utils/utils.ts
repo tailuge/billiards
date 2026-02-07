@@ -21,8 +21,8 @@ export function passesThroughZero(v, dv) {
   return vc.copy(v).add(dv).dot(v) <= 0
 }
 
-export function unitAtAngle(theta) {
-  return new Vector3(1, 0, 0).applyAxisAngle(up, theta)
+export function unitAtAngle(theta, target = new Vector3()) {
+  return target.set(1, 0, 0).applyAxisAngle(up, theta)
 }
 
 export function round(num) {
