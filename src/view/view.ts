@@ -17,6 +17,11 @@ export class View {
   table: Table
   loadAssets = true
   assets: Assets
+
+  // Reuse objects to reduce garbage collection pressure in high-frequency rendering
+  private readonly frustum = new Frustum()
+  private readonly projScreenMatrix = new Matrix4()
+
   constructor(element, table, assets) {
     this.element = element
     this.table = table
@@ -93,10 +98,12 @@ export class View {
 
   viewFrustrum() {
     const c = this.camera.camera
-    const frustrum = new Frustum()
-    frustrum.setFromProjectionMatrix(
-      new Matrix4().multiplyMatrices(c.projectionMatrix, c.matrixWorldInverse)
+    this.frustum.setFromProjectionMatrix(
+      this.projScreenMatrix.multiplyMatrices(
+        c.projectionMatrix,
+        c.matrixWorldInverse
+      )
     )
-    return frustrum
+    return this.frustum
   }
 }

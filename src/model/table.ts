@@ -93,7 +93,8 @@ export class Table {
    *
    */
   private prepareAdvanceToCushions(a: Ball, t: number): boolean {
-    if (!a.onTable()) {
+    // Skip boundary and pocket checks for stationary balls
+    if (!a.onTable() || !a.inMotion()) {
       return true
     }
     const futurePosition = a.futurePosition(t)

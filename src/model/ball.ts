@@ -57,7 +57,8 @@ export class Ball {
 
   private updateVelocity(t: number) {
     if (this.inMotion()) {
-      if (this.isRolling()) {
+      // Avoid expensive vector math if already in the Rolling state
+      if (this.state === State.Rolling || this.isRolling()) {
         this.state = State.Rolling
         forceRoll(this.vel, this.rvel)
         this.addDelta(t, rollingFull(this.rvel))
@@ -124,6 +125,10 @@ export class Ball {
   }
 
   fround() {
+    // Avoid redundant rounding operations for stationary balls
+    if (!this.inMotion()) {
+      return
+    }
     this.pos.x = Math.fround(this.pos.x)
     this.pos.y = Math.fround(this.pos.y)
     this.vel.x = Math.fround(this.vel.x)
