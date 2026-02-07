@@ -1,6 +1,5 @@
 import {
   Vector3,
-  Matrix4,
   Mesh,
   CylinderGeometry,
   BoxGeometry,
@@ -16,6 +15,9 @@ export class TableMesh {
   logger = (_) => {}
 
   static mesh
+
+  private static readonly cylinderCache = new Map<string, CylinderGeometry>()
+  private static readonly boxCache = new Map<string, BoxGeometry>()
 
   generateTable(hasPockets: boolean) {
     const group = new Group()
@@ -74,14 +76,15 @@ export class TableMesh {
   }
 
   private cylinder(pos, radius, depth, scene, material) {
-    const geometry = new CylinderGeometry(radius, radius, depth, 16)
+    const key = `${radius}_${depth}`
+    let geometry = TableMesh.cylinderCache.get(key)
+    if (!geometry) {
+      geometry = new CylinderGeometry(radius, radius, depth, 16)
+      TableMesh.cylinderCache.set(key, geometry)
+    }
     const mesh = new Mesh(geometry, material)
     mesh.position.copy(pos)
-    mesh.geometry.applyMatrix4(
-      new Matrix4()
-        .identity()
-        .makeRotationAxis(new Vector3(1, 0, 0), Math.PI / 2)
-    )
+    mesh.rotation.x = Math.PI / 2
     scene.add(mesh)
     return mesh
   }
@@ -128,7 +131,12 @@ export class TableMesh {
   }
 
   private plane(pos, x, y, z, scene, material = this.cushion) {
-    const geometry = new BoxGeometry(x, y, z)
+    const key = `${x}_${y}_${z}`
+    let geometry = TableMesh.boxCache.get(key)
+    if (!geometry) {
+      geometry = new BoxGeometry(x, y, z)
+      TableMesh.boxCache.set(key, geometry)
+    }
     const mesh = new Mesh(geometry, material)
     mesh.receiveShadow = true
     mesh.position.copy(pos)

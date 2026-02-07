@@ -4,3 +4,7 @@
 ## 2026-02-07 - [Three.js Resource Sharing and Vector Reuse]
 **Learning:** Each ball mesh previously created its own geometry and shadow assets. Sharing static geometries and materials significantly reduces memory footprint and GPU upload overhead. Additionally, projection matrix updates must account for both aspect ratio AND FOV changes.
 **Action:** Refactored BallMesh to use static shared assets. Updated View.ts to conditionally call updateProjectionMatrix on size OR FOV change. Refactored math utilities to support optional target vectors for zero-allocation reuse.
+
+## 2026-02-07 - [Advanced Three.js Geometry Caching and Cue Optimization]
+**Learning:** Redundant geometry creation for table components (knuckles, pockets, cushions) and unlabeled balls (snooker reds) adds unnecessary memory overhead. Object churn in cue movement and raycasting also contributes to GC pressure.
+**Action:** Implemented static geometry caching in TableMesh and BallMesh. Added persistent scratch vectors and Raycaster to the Cue class. Optimized camera calculations by caching trigonometric results.

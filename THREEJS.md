@@ -31,3 +31,18 @@ This document outlines the findings from a review of the Three.js implementation
 - [x] **Conditional Updates:** Optimized `View.renderCamera` to only update the projection matrix when size or FOV changes.
 - [x] **Shared Assets:** Refactored `BallMesh` to use shared static geometry for the ball and shared geometry/material for shadows.
 - [x] **Code Cleanup:** Fixed the `viewFrustrum` typo.
+
+### 5. Object Churn in `Cue.ts`
+**Issue:** `Vector3` and `Raycaster` objects were being instantiated or cloned every frame (or on every input event) in `Cue.ts`.
+**Impact:** Unnecessary garbage collection pressure.
+**Recommendation:** Use persistent, reusable objects for mathematical operations and raycasting.
+
+### 6. Redundant Geometry Creation in `TableMesh` and `BallMesh`
+**Issue:** Similar geometries (cylinders for pockets/knuckles, and noisy icosahedrons for snooker balls) were being recreated instead of being cached or shared.
+**Impact:** Increased memory footprint and slower initialization.
+**Recommendation:** Implement geometry caching for common shapes and colors.
+
+### 7. Repetitive Trigonometric Calculations
+**Issue:** `Math.tan` was being calculated every frame in `CameraTop.viewPoint` despite the FOV rarely changing.
+**Impact:** Minor CPU overhead.
+**Recommendation:** Cache the results of these calculations.
