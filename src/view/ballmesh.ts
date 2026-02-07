@@ -21,6 +21,8 @@ export class BallMesh {
   private static _ballGeometry: IcosahedronGeometry
   private static _shadowGeometry: CircleGeometry
   private static _shadowMaterial: MeshBasicMaterial
+  private static readonly _dottedGeometries: Map<number, IcosahedronGeometry> =
+    new Map()
 
   private static getBallGeometry() {
     if (!this._ballGeometry) {
@@ -51,16 +53,35 @@ export class BallMesh {
   spinAxisArrow: ArrowHelper
   trace: Trace
   color: Color
+
+  private readonly _lastPos = new Vector3()
+  private readonly _tempVec1 = new Vector3()
+  private _lastState: State | undefined
+
   constructor(color, label?: number) {
     this.color = new Color(color)
     this.initialiseMesh(this.color, label)
   }
 
   updateAll(ball, t) {
+    const inMotion = ball.inMotion()
+    const posChanged = !this._lastPos.equals(ball.pos)
+
+    if (!inMotion && !posChanged && this._lastState === ball.state) {
+      return
+    }
+
     this.updatePosition(ball.pos)
-    this.updateArrows(ball.pos, ball.rvel, ball.state)
-    if (ball.rvel.lengthSq() !== 0) {
-      this.updateRotation(ball.rvel, t)
+    this._lastPos.copy(ball.pos)
+    this._lastState = ball.state
+
+    const rvelLen = ball.rvel.length()
+    const rvelNorm = rvelLen > 0 ? norm(ball.rvel, this._tempVec1) : null
+
+    this.updateArrows(ball.pos, ball.state, rvelLen, rvelNorm)
+
+    if (rvelLen > 0 && rvelNorm) {
+      this.updateRotation(rvelLen, rvelNorm, t)
       this.trace.addTrace(ball.pos, ball.vel)
     }
   }
@@ -70,17 +91,17 @@ export class BallMesh {
     this.shadow.position.copy(pos)
   }
 
-  readonly m = new Matrix4()
-
-  updateRotation(rvel, t) {
-    const angle = rvel.length() * t
-    this.mesh.rotateOnWorldAxis(norm(rvel), angle)
+  updateRotation(rvelLen, rvelNorm, t) {
+    const angle = rvelLen * t
+    this.mesh.rotateOnWorldAxis(rvelNorm, angle)
   }
 
-  updateArrows(pos, rvel, state) {
-    this.spinAxisArrow.setLength(R + (R * rvel.length()) / 2, R, R)
+  updateArrows(pos, state, rvelLen, rvelNorm) {
+    this.spinAxisArrow.setLength(R + (R * rvelLen) / 2, R, R)
     this.spinAxisArrow.position.copy(pos)
-    this.spinAxisArrow.setDirection(norm(rvel))
+    if (rvelNorm) {
+      this.spinAxisArrow.setDirection(rvelNorm)
+    }
     if (state == State.Rolling) {
       this.spinAxisArrow.setColor(0xcc0000)
     } else {
@@ -95,13 +116,20 @@ export class BallMesh {
       geometry = BallMesh.getBallGeometry()
       material = BallMaterialFactory.createProjectedMaterial(label, color)
     } else {
-      geometry = new IcosahedronGeometry(R, 1)
+      const hex = color.getHex()
+      if (BallMesh._dottedGeometries.has(hex)) {
+        geometry = BallMesh._dottedGeometries.get(hex)!
+      } else {
+        geometry = new IcosahedronGeometry(R, 1)
+        BallMesh.addDots(geometry, color)
+        BallMesh._dottedGeometries.set(hex, geometry)
+      }
       material = BallMaterialFactory.createDottedMaterial(color)
-      this.addDots(geometry, color)
     }
     this.mesh = new Mesh(geometry, material)
     this.mesh.name = "ball"
-    this.updateRotation(new Vector3().random(), 100)
+    const randomRvel = new Vector3().random()
+    this.updateRotation(randomRvel.length(), norm(randomRvel, new Vector3()), 100)
 
     this.shadow = new Mesh(
       BallMesh.getShadowGeometry(),
@@ -112,7 +140,7 @@ export class BallMesh {
     this.trace = new Trace(500, color)
   }
 
-  addDots(geometry, baseColor) {
+  private static addDots(geometry, baseColor) {
     const count = geometry.attributes.position.count
     const color = new Color(baseColor)
 
@@ -146,13 +174,13 @@ export class BallMesh {
     scene.add(this.trace.line)
   }
 
-  private colorVerticesForFace(face, verticies, r, g, b) {
+  private static colorVerticesForFace(face, verticies, r, g, b) {
     verticies.setXYZ(face * 3 + 0, r, g, b)
     verticies.setXYZ(face * 3 + 1, r, g, b)
     verticies.setXYZ(face * 3 + 2, r, g, b)
   }
 
-  private scaleNoise(v) {
+  private static scaleNoise(v) {
     return (1.0 - Math.random() * 0.25) * v
   }
 }

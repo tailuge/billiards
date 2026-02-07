@@ -21,6 +21,12 @@ export class Cue {
 
   length = TableGeometry.tableX * 1
 
+  private readonly _tempVec1 = new Vector3()
+  private readonly _tempVec2 = new Vector3()
+  private readonly _tempVec3 = new Vector3()
+  private readonly _raycaster = new Raycaster()
+  private readonly _rayItems: Mesh[] = []
+
   constructor() {
     this.mesh = CueMesh.createCue(
       (R * 0.05) / 0.5,
@@ -52,7 +58,7 @@ export class Cue {
     const aim = this.aim
     this.t = 0
     ball.state = State.Sliding
-    ball.vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
+    ball.vel.copy(unitAtAngle(aim.angle, this._tempVec1).multiplyScalar(aim.power))
     ball.rvel.copy(cueToSpin(aim.offset, ball.vel))
   }
 
@@ -60,14 +66,16 @@ export class Cue {
     if (!ball) {
       return
     }
-    const lineTo = norm(ball.pos.clone().sub(cueball.pos))
+    const lineTo = norm(
+      this._tempVec1.copy(ball.pos).sub(cueball.pos),
+      this._tempVec1
+    )
     this.aim.angle = atan2(lineTo.y, lineTo.x)
   }
 
   adjustSpin(delta: Vector3, table: Table) {
-    const originalOffset = this.aim.offset.clone()
-    const newOffset = originalOffset.clone().add(delta)
-    this.setSpin(newOffset, table)
+    this._tempVec1.copy(this.aim.offset).add(delta)
+    this.setSpin(this._tempVec1, table)
   }
 
   setSpin(offset: Vector3, table: Table) {
@@ -103,13 +111,11 @@ export class Cue {
     this.aim.pos.copy(pos)
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle
-    const offset = this.spinOffset()
+    const offset = this.spinOffset(this._tempVec1)
     const swing =
       (sin(this.t + Math.PI / 2) - 1) * 2 * R * (this.aim.power / this.maxPower)
-    const distanceToBall = unitAtAngle(this.aim.angle)
-      .clone()
-      .multiplyScalar(swing)
-    this.mesh.position.copy(pos.clone().add(offset).add(distanceToBall))
+    const distanceToBall = unitAtAngle(this.aim.angle, this._tempVec2).multiplyScalar(swing)
+    this.mesh.position.copy(pos).add(offset).add(distanceToBall)
     this.helperMesh.position.copy(pos)
     this.placerMesh.position.copy(pos)
     this.placerMesh.rotation.z = this.t
@@ -131,22 +137,33 @@ export class Cue {
     this.placerMesh.visible = false
   }
 
-  spinOffset() {
-    return upCross(unitAtAngle(this.aim.angle))
+  spinOffset(target = new Vector3()) {
+    return target
+      .copy(upCross(unitAtAngle(this.aim.angle, target)))
       .multiplyScalar(this.aim.offset.x * 2 * R)
       .setZ(this.aim.offset.y * 2 * R)
   }
 
   intersectsAnything(table: Table) {
-    const offset = this.spinOffset()
-    const origin = table.cueball.pos.clone().add(offset)
-    const direction = norm(unitAtAngle(this.aim.angle + Math.PI).setZ(0.1))
-    const raycaster = new Raycaster(origin, direction)
-    const items = table.balls.map((b) => b.ballmesh.mesh)
-    if (table.mesh) {
-      items.push(table.mesh)
+    const offset = this.spinOffset(this._tempVec1)
+    const origin = this._tempVec2.copy(table.cueball.pos).add(offset)
+    const direction = norm(
+      unitAtAngle(this.aim.angle + Math.PI, this._tempVec3).setZ(0.1),
+      this._tempVec3
+    )
+
+    this._raycaster.set(origin, direction)
+
+    // Reuse items array to avoid allocations
+    this._rayItems.length = 0
+    for (let i = 0; i < table.balls.length; i++) {
+      this._rayItems.push(table.balls[i].ballmesh.mesh)
     }
-    const intersections = raycaster.intersectObjects(items, true)
+
+    if (table.mesh) {
+      this._rayItems.push(table.mesh)
+    }
+    const intersections = this._raycaster.intersectObjects(this._rayItems, true)
     return intersections.length > 0
   }
 
