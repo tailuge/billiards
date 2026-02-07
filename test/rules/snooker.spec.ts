@@ -40,7 +40,7 @@ describe("Snooker", () => {
     Ball.id = 0
     container = new Container(
       undefined,
-      (_) => { },
+      (_) => {},
       Assets.localAssets(rule),
       rule
     )
