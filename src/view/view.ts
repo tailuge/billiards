@@ -13,6 +13,7 @@ export class View {
   camera: Camera
   windowWidth = 1
   windowHeight = 1
+  private lastFov = 0
   readonly element
   table: Table
   loadAssets = true
@@ -61,7 +62,8 @@ export class View {
   }
 
   renderCamera(cam) {
-    if (this.updateSize()) {
+    const sizeChanged = this.updateSize()
+    if (sizeChanged) {
       const width = this.windowWidth
       const height = this.windowHeight
 
@@ -72,7 +74,12 @@ export class View {
 
       cam.camera.aspect = width / height
     }
-    cam.camera.updateProjectionMatrix()
+
+    if (sizeChanged || cam.camera.fov !== this.lastFov) {
+      cam.camera.updateProjectionMatrix()
+      this.lastFov = cam.camera.fov
+    }
+
     this.renderer?.render(this.scene, cam.camera)
   }
 
@@ -91,12 +98,12 @@ export class View {
   ballToCheck = 0
 
   isInMotionNotVisible() {
-    const frustrum = this.viewFrustrum()
+    const frustum = this.viewFrustum()
     const b = this.table.balls[this.ballToCheck++ % this.table.balls.length]
-    return b.inMotion() && !frustrum.intersectsObject(b.ballmesh.mesh)
+    return b.inMotion() && !frustum.intersectsObject(b.ballmesh.mesh)
   }
 
-  viewFrustrum() {
+  viewFrustum() {
     const c = this.camera.camera
     this.frustum.setFromProjectionMatrix(
       this.projScreenMatrix.multiplyMatrices(

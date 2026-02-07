@@ -1,4 +1,4 @@
-import { PerspectiveCamera, MathUtils } from "three"
+import { PerspectiveCamera, MathUtils, Vector3 } from "three"
 import { up, zero, unitAtAngle } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import { CameraTop } from "./cameratop"
@@ -14,6 +14,10 @@ export class Camera {
   private mainMode = this.aimView
   private height = R * 8
 
+  private readonly target = new Vector3()
+  private readonly lookTarget = new Vector3()
+  private readonly tempVec = new Vector3()
+
   elapsed: number
 
   update(elapsed, aim: AimEvent) {
@@ -24,7 +28,7 @@ export class Camera {
   topView(_: AimEvent) {
     this.camera.fov = CameraTop.fov
     this.camera.position.lerp(
-      CameraTop.viewPoint(this.camera.aspect, this.camera.fov),
+      CameraTop.viewPoint(this.camera.aspect, this.camera.fov, this.tempVec),
       0.9
     )
     this.camera.up = up
@@ -39,13 +43,14 @@ export class Camera {
       const factor = 100 * (10 * R - h)
       this.camera.fov -= factor * (portrait ? 3 : 1)
     }
-    this.camera.position.lerp(
-      aim.pos.clone().addScaledVector(unitAtAngle(aim.angle), -R * 18),
-      fraction
-    )
+    this.target
+      .copy(aim.pos)
+      .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -R * 18)
+    this.camera.position.lerp(this.target, fraction)
     this.camera.position.z = h
     this.camera.up = up
-    this.camera.lookAt(aim.pos.clone().addScaledVector(up, h / 2))
+    this.lookTarget.copy(aim.pos).addScaledVector(up, h / 2)
+    this.camera.lookAt(this.lookTarget)
   }
 
   adjustHeight(delta) {

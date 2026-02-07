@@ -18,6 +18,34 @@ import { Trace } from "./trace"
 import { BallMaterialFactory } from "./ballmaterialfactory"
 
 export class BallMesh {
+  private static _ballGeometry: IcosahedronGeometry
+  private static _shadowGeometry: CircleGeometry
+  private static _shadowMaterial: MeshBasicMaterial
+
+  private static getBallGeometry() {
+    if (!this._ballGeometry) {
+      this._ballGeometry = new IcosahedronGeometry(R, 1)
+    }
+    return this._ballGeometry
+  }
+
+  private static getShadowGeometry() {
+    if (!this._shadowGeometry) {
+      this._shadowGeometry = new CircleGeometry(R * 0.9, 9)
+      this._shadowGeometry.applyMatrix4(
+        new Matrix4().makeTranslation(0, 0, -R * 0.99)
+      )
+    }
+    return this._shadowGeometry
+  }
+
+  private static getShadowMaterial() {
+    if (!this._shadowMaterial) {
+      this._shadowMaterial = new MeshBasicMaterial({ color: 0x111122 })
+    }
+    return this._shadowMaterial
+  }
+
   mesh: Mesh
   shadow: Mesh
   spinAxisArrow: ArrowHelper
@@ -61,11 +89,13 @@ export class BallMesh {
   }
 
   initialiseMesh(color: Color, label?: number) {
-    const geometry = new IcosahedronGeometry(R, 1)
+    let geometry: IcosahedronGeometry
     let material: MeshPhongMaterial | MeshStandardMaterial
     if (label !== undefined) {
+      geometry = BallMesh.getBallGeometry()
       material = BallMaterialFactory.createProjectedMaterial(label, color)
     } else {
+      geometry = new IcosahedronGeometry(R, 1)
       material = BallMaterialFactory.createDottedMaterial(color)
       this.addDots(geometry, color)
     }
@@ -73,12 +103,10 @@ export class BallMesh {
     this.mesh.name = "ball"
     this.updateRotation(new Vector3().random(), 100)
 
-    const shadowGeometry = new CircleGeometry(R * 0.9, 9)
-    shadowGeometry.applyMatrix4(
-      new Matrix4().identity().makeTranslation(0, 0, -R * 0.99)
+    this.shadow = new Mesh(
+      BallMesh.getShadowGeometry(),
+      BallMesh.getShadowMaterial()
     )
-    const shadowMaterial = new MeshBasicMaterial({ color: 0x111122 })
-    this.shadow = new Mesh(shadowGeometry, shadowMaterial)
     this.spinAxisArrow = new ArrowHelper(up, zero, 2, 0x000000, 0.01, 0.01)
     this.spinAxisArrow.visible = false
     this.trace = new Trace(500, color)
