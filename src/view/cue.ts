@@ -57,7 +57,9 @@ export class Cue {
     const aim = this.aim
     this.t = 0
     ball.state = State.Sliding
-    ball.vel.copy(unitAtAngle(aim.angle, this.tempVec).multiplyScalar(aim.power))
+    ball.vel.copy(
+      unitAtAngle(aim.angle, this.tempVec).multiplyScalar(aim.power)
+    )
     ball.rvel.copy(cueToSpin(aim.offset, ball.vel))
   }
 
@@ -110,13 +112,11 @@ export class Cue {
     const offset = this.spinOffset()
     const swing =
       (sin(this.t + Math.PI / 2) - 1) * 2 * R * (this.aim.power / this.maxPower)
-    const distanceToBall = unitAtAngle(this.aim.angle, this.tempVec).multiplyScalar(
-      swing
-    )
-    this.mesh.position
-      .copy(pos)
-      .add(offset)
-      .add(distanceToBall)
+    const distanceToBall = unitAtAngle(
+      this.aim.angle,
+      this.tempVec
+    ).multiplyScalar(swing)
+    this.mesh.position.copy(pos).add(offset).add(distanceToBall)
     this.helperMesh.position.copy(pos)
     this.placerMesh.position.copy(pos)
     this.placerMesh.rotation.z = this.t
