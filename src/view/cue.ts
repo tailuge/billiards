@@ -21,6 +21,11 @@ export class Cue {
 
   length = TableGeometry.tableX * 1
 
+  private readonly tempVec = new Vector3()
+  private readonly tempVec2 = new Vector3()
+  private readonly tempVec3 = new Vector3()
+  private readonly raycaster = new Raycaster()
+
   constructor() {
     this.mesh = CueMesh.createCue(
       (R * 0.05) / 0.5,
@@ -52,7 +57,7 @@ export class Cue {
     const aim = this.aim
     this.t = 0
     ball.state = State.Sliding
-    ball.vel.copy(unitAtAngle(aim.angle).multiplyScalar(aim.power))
+    ball.vel.copy(unitAtAngle(aim.angle, this.tempVec).multiplyScalar(aim.power))
     ball.rvel.copy(cueToSpin(aim.offset, ball.vel))
   }
 
@@ -60,13 +65,12 @@ export class Cue {
     if (!ball) {
       return
     }
-    const lineTo = norm(ball.pos.clone().sub(cueball.pos))
+    const lineTo = norm(this.tempVec.copy(ball.pos).sub(cueball.pos))
     this.aim.angle = atan2(lineTo.y, lineTo.x)
   }
 
   adjustSpin(delta: Vector3, table: Table) {
-    const originalOffset = this.aim.offset.clone()
-    const newOffset = originalOffset.clone().add(delta)
+    const newOffset = this.tempVec3.copy(this.aim.offset).add(delta)
     this.setSpin(newOffset, table)
   }
 
@@ -106,10 +110,13 @@ export class Cue {
     const offset = this.spinOffset()
     const swing =
       (sin(this.t + Math.PI / 2) - 1) * 2 * R * (this.aim.power / this.maxPower)
-    const distanceToBall = unitAtAngle(this.aim.angle)
-      .clone()
-      .multiplyScalar(swing)
-    this.mesh.position.copy(pos.clone().add(offset).add(distanceToBall))
+    const distanceToBall = unitAtAngle(this.aim.angle, this.tempVec).multiplyScalar(
+      swing
+    )
+    this.mesh.position
+      .copy(pos)
+      .add(offset)
+      .add(distanceToBall)
     this.helperMesh.position.copy(pos)
     this.placerMesh.position.copy(pos)
     this.placerMesh.rotation.z = this.t
@@ -132,21 +139,23 @@ export class Cue {
   }
 
   spinOffset() {
-    return upCross(unitAtAngle(this.aim.angle))
+    return upCross(unitAtAngle(this.aim.angle, this.tempVec2))
       .multiplyScalar(this.aim.offset.x * 2 * R)
       .setZ(this.aim.offset.y * 2 * R)
   }
 
   intersectsAnything(table: Table) {
     const offset = this.spinOffset()
-    const origin = table.cueball.pos.clone().add(offset)
-    const direction = norm(unitAtAngle(this.aim.angle + Math.PI).setZ(0.1))
-    const raycaster = new Raycaster(origin, direction)
+    const origin = this.tempVec.copy(table.cueball.pos).add(offset)
+    const direction = norm(
+      unitAtAngle(this.aim.angle + Math.PI, this.tempVec2).setZ(0.1)
+    )
+    this.raycaster.set(origin, direction)
     const items = table.balls.map((b) => b.ballmesh.mesh)
     if (table.mesh) {
       items.push(table.mesh)
     }
-    const intersections = raycaster.intersectObjects(items, true)
+    const intersections = this.raycaster.intersectObjects(items, true)
     return intersections.length > 0
   }
 

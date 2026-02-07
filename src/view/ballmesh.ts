@@ -21,6 +21,10 @@ export class BallMesh {
   private static _ballGeometry: IcosahedronGeometry
   private static _shadowGeometry: CircleGeometry
   private static _shadowMaterial: MeshBasicMaterial
+  private static readonly _dottedGeometryCache = new Map<
+    number,
+    IcosahedronGeometry
+  >()
 
   private static getBallGeometry() {
     if (!this._ballGeometry) {
@@ -95,9 +99,15 @@ export class BallMesh {
       geometry = BallMesh.getBallGeometry()
       material = BallMaterialFactory.createProjectedMaterial(label, color)
     } else {
-      geometry = new IcosahedronGeometry(R, 1)
+      const key = color.getHex()
+      let cached = BallMesh._dottedGeometryCache.get(key)
+      if (!cached) {
+        cached = new IcosahedronGeometry(R, 1)
+        BallMesh.addDots(cached, color)
+        BallMesh._dottedGeometryCache.set(key, cached)
+      }
+      geometry = cached
       material = BallMaterialFactory.createDottedMaterial(color)
-      this.addDots(geometry, color)
     }
     this.mesh = new Mesh(geometry, material)
     this.mesh.name = "ball"
@@ -112,7 +122,7 @@ export class BallMesh {
     this.trace = new Trace(500, color)
   }
 
-  addDots(geometry, baseColor) {
+  private static addDots(geometry, baseColor) {
     const count = geometry.attributes.position.count
     const color = new Color(baseColor)
 
@@ -123,19 +133,19 @@ export class BallMesh {
 
     const verticies = geometry.attributes.color
     for (let i = 0; i < count / 3; i++) {
-      this.colorVerticesForFace(
+      BallMesh.colorVerticesForFace(
         i,
         verticies,
-        this.scaleNoise(color.r),
-        this.scaleNoise(color.g),
-        this.scaleNoise(color.b)
+        BallMesh.scaleNoise(color.r),
+        BallMesh.scaleNoise(color.g),
+        BallMesh.scaleNoise(color.b)
       )
     }
 
     const red = new Color(0xaa2222)
     const dots = [0, 96, 111, 156, 186, 195]
     dots.forEach((i) => {
-      this.colorVerticesForFace(i / 3, verticies, red.r, red.g, red.b)
+      BallMesh.colorVerticesForFace(i / 3, verticies, red.r, red.g, red.b)
     })
   }
 
@@ -146,13 +156,13 @@ export class BallMesh {
     scene.add(this.trace.line)
   }
 
-  private colorVerticesForFace(face, verticies, r, g, b) {
+  private static colorVerticesForFace(face, verticies, r, g, b) {
     verticies.setXYZ(face * 3 + 0, r, g, b)
     verticies.setXYZ(face * 3 + 1, r, g, b)
     verticies.setXYZ(face * 3 + 2, r, g, b)
   }
 
-  private scaleNoise(v) {
+  private static scaleNoise(v) {
     return (1.0 - Math.random() * 0.25) * v
   }
 }

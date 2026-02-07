@@ -7,8 +7,22 @@ export class CameraTop {
   static readonly portrait = 0.95
   static readonly fov = 20
   static zoomFactor = 1
+
+  private static lastFov: number
+  private static lastZoom: number
+  private static cachedDist: number
+
   static viewPoint(aspectRatio, fov, target = new Vector3()) {
-    const dist = CameraTop.zoomFactor / (2 * Math.tan((fov * Math.PI) / 360))
+    if (
+      fov !== CameraTop.lastFov ||
+      CameraTop.zoomFactor !== CameraTop.lastZoom
+    ) {
+      CameraTop.cachedDist =
+        CameraTop.zoomFactor / (2 * Math.tan((fov * Math.PI) / 360))
+      CameraTop.lastFov = fov
+      CameraTop.lastZoom = CameraTop.zoomFactor
+    }
+    const dist = CameraTop.cachedDist
 
     if (aspectRatio > this.portrait) {
       const factor =
