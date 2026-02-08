@@ -333,8 +333,7 @@ export class Snooker implements Rules {
     const myScore = this.container.scores[playerIndex]
     const opponentScore = this.container.scores[opponentIndex]
 
-    const actuallyWon = myScore > opponentScore
-    const isDraw = myScore === opponentScore
+    const actuallyWon = myScore >= opponentScore
 
     let title: string
     let subtext: string
@@ -345,9 +344,6 @@ export class Snooker implements Rules {
       title = "YOU WON"
       icon = "🏆"
       extraClass = "is-winner"
-    } else if (isDraw) {
-      title = "DRAW"
-      icon = "🤝"
     } else if (!Session.isSpectator()) {
       title = "YOU LOST"
       icon = "🥈"

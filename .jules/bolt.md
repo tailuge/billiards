@@ -11,4 +11,4 @@
 
 ## 2026-02-08 - [Snooker Score-Based Winner Determination]
 **Learning:** In Snooker, the person who pots the last ball isn't necessarily the winner; the player with the highest score wins the frame. Relying on an `isWinner` boolean passed from the game flow controller can lead to incorrect UI states and match reporting in multiplayer.
-**Action:** Refactored `Snooker.handleGameEnd` to ignore the `isWinner` parameter for UI/Winner logic. It now explicitly compares `this.container.scores` to determine the actual winner, updates the notification subtext with names and scores, and ensures only the correct winner submits the match result.
+**Action:** Refactored `Snooker.handleGameEnd` to ignore the `isWinner` parameter for UI/Winner logic. It now explicitly compares `this.container.scores` to determine the actual winner (where a tie is treated as a win), updates the notification subtext with names and scores, and ensures only the correct winner submits the match result.

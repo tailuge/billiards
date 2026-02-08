@@ -471,4 +471,27 @@ describe("Snooker", () => {
 
     Session.reset()
   })
+
+  it("handleGameEnd treats a draw as a win", () => {
+    container.isSinglePlayer = false
+    Session.init("1", "Player A", "table", false)
+    const session = Session.getInstance()
+    session.playerIndex = 0
+    session.opponentName = "Player B"
+
+    container.scores = [20, 20] // Draw
+
+    const notifySpy = jest.spyOn(container, "notifyLocal")
+
+    const nextController = snooker.handleGameEnd(false)
+
+    expect(nextController).to.be.instanceOf(End)
+    // Player A wins on a draw per user request
+    expect(notifySpy.mock.calls[0][0]).to.deep.include({
+      title: "YOU WON",
+      subtext: "Player A 20 - 20 Player B",
+    })
+
+    Session.reset()
+  })
 })
