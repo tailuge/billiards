@@ -120,9 +120,9 @@ export class ThreeCushion implements Rules {
     this.container.notifyLocal({
       type: "GameOver",
       title: isWinner ? "YOU WON" : "YOU LOST",
-      icon: isWinner ? "🏆" : "🥈",
+      icon: isWinner ? "🏆" : "🥪",
       extraClass: isWinner ? "is-winner" : "is-loser",
-      duration: 30000,
+      duration: 0,
     })
 
     const result: MatchResult = {

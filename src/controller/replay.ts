@@ -99,6 +99,14 @@ export class Replay extends ControllerBase {
     if (this.shots.length > 0 && this.timer === undefined) {
       this.playNextShot(this.delay)
     }
+    if (this.shots.length === 0 && this.timer === undefined) {
+      this.container.notifyLocal({
+        type: "GameOver",
+        title: "Replay Complete",
+        extra: `<button onclick="location.reload()">Replay</button> <button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
+      })
+      return new End(this.container)
+    }
     return this
   }
 

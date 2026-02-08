@@ -222,6 +222,7 @@ describe("NineBall Rules", () => {
   })
 
   it("should trigger game over notification", () => {
+    container.isSinglePlayer = true
     const notifySpy = jest.spyOn(container, "notifyLocal")
     container.table.balls.forEach((b) => {
       if (b !== container.table.cueball && b.label !== 9) {
@@ -241,7 +242,7 @@ describe("NineBall Rules", () => {
       extra: `<button onclick="location.reload()">New Game</button><button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
       icon: "🏆",
       extraClass: "is-winner",
-      duration: 30000,
+      duration: 0,
     })
   })
 
@@ -266,7 +267,32 @@ describe("NineBall Rules", () => {
       extra: `<button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
       icon: "🏆",
       extraClass: "is-winner",
-      duration: 30000,
+      duration: 0,
+    })
+  })
+
+  it("should trigger game over notification", () => {
+    container.isSinglePlayer = true
+    const notifySpy = jest.spyOn(container, "notifyLocal")
+    container.table.balls.forEach((b) => {
+      if (b !== container.table.cueball && b.label !== 9) {
+        b.state = State.InPocket
+      }
+    })
+    const nineBall = container.table.balls.find((b) => b.label === 9)!
+    const outcome = [
+      Outcome.collision(container.table.cueball, nineBall, 1),
+      Outcome.pot(nineBall, 1),
+    ]
+    nineball.update(outcome)
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "GameOver",
+      title: "YOU WON",
+      subtext: "Congratulations!",
+      extra: `<button onclick="location.reload()">New Game</button><button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
+      icon: "🏆",
+      extraClass: "is-winner",
+      duration: 0,
     })
   })
 

@@ -174,7 +174,7 @@ export class NineBall implements Rules {
       extra: extra,
       icon: icon,
       extraClass: extraClass,
-      duration: 30000,
+      duration: 0,
     })
 
     if (isWinner) {

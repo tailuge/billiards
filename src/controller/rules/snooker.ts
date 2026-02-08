@@ -357,9 +357,8 @@ export class Snooker implements Rules {
       subtext: subtext,
       icon: icon,
       extraClass: extraClass,
-      duration: 30000,
+      duration: 0,
     })
-
     const result: MatchResult = {
       winner: isWinner
         ? session?.playername || "Anon"
