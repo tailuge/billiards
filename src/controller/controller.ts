@@ -26,6 +26,10 @@ export abstract class Controller {
     this.container = container
   }
 
+  get name(): string {
+    return this.constructor.name
+  }
+
   handleInput(_: Input): Controller {
     return this
   }

@@ -5,6 +5,7 @@ import { CameraTop } from "../view/cameratop"
 import { bounceHan } from "../model/physics/physics"
 import { Assets } from "../view/assets"
 import { RealOverlay } from "./real/realoverlay"
+import { id, getButton, getCanvas } from "../utils/dom"
 
 /**
  * Integrate billiards container into diagram html page
@@ -47,11 +48,9 @@ export class DiagramContainer {
 
   onAssetsReady = () => {
     console.log(`diagram ready`)
-    const replaybutton = document.getElementById("replay")! as HTMLButtonElement
+    const replaybutton = getButton("replay")!
     this.replayButton(replaybutton)
-    const overlayCanvas = document.getElementById(
-      "overlaycanvas"
-    ) as HTMLCanvasElement
+    const overlayCanvas = getCanvas("overlaycanvas")
     if (overlayCanvas) {
       this.realOverlay = new RealOverlay(overlayCanvas, this.container)
     } else {
@@ -80,7 +79,7 @@ export class DiagramContainer {
     const stateUrl = containerDiv?.getAttribute("data-state")
     const params = new URLSearchParams(stateUrl)
     const p = diagram?.getElementsByClassName("description")[0]
-    const common = document.getElementById("common")
+    const common = id("common")
     const editlink = document.createElement("a")
     editlink.href = `../${stateUrl}`
     editlink.innerHTML = "⬀"

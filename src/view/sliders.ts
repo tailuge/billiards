@@ -1,3 +1,4 @@
+import { id, getInput } from "../utils/dom"
 import {
   R,
   e,
@@ -27,8 +28,7 @@ export class Sliders {
 
   constructor(notify?) {
     this.notify = notify ?? (() => {})
-    this.style =
-      (document.getElementById("constants") as HTMLElement)?.style ?? {}
+    this.style = id("constants")?.style ?? {}
 
     this.initialiseSlider("R", R, setR)
     this.initialiseSlider("m", m, setm)
@@ -48,7 +48,7 @@ export class Sliders {
   }
 
   getInputElement(id) {
-    return (document.getElementById(id) as HTMLInputElement) ?? {}
+    return getInput(id)
   }
 
   initialiseSlider(id, initialValue, setter, max = 1) {

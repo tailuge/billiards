@@ -9,6 +9,10 @@
 **Learning:** Redundant geometry creation for table components (knuckles, pockets, cushions) and unlabeled balls (snooker reds) adds unnecessary memory overhead. Object churn in cue movement and raycasting also contributes to GC pressure.
 **Action:** Implemented static geometry caching in TableMesh and BallMesh. Added persistent scratch vectors and Raycaster to the Cue class. Optimized camera calculations by caching trigonometric results.
 
+## 2026-02-07 - [DOM and Controller Organization]
+**Learning:** Scattered `document.getElementById` calls with manual type casting and duplicate controller name mapping logic lead to code maintenance challenges and potential runtime errors.
+**Action:** Centralized DOM access in `src/utils/dom.ts` with typed helpers. Refactored the `Controller` base class to include a `name` getter using `this.constructor.name`, eliminating the need for a manual name-mapping utility and reducing duplication.
+
 ## 2026-02-08 - [Snooker Score-Based Winner Determination]
 **Learning:** In Snooker, the person who pots the last ball isn't necessarily the winner; the player with the highest score wins the frame. Relying on an `isWinner` boolean passed from the game flow controller can lead to incorrect UI states and match reporting in multiplayer.
 **Action:** Refactored `Snooker.handleGameEnd` to ignore the `isWinner` parameter for UI/Winner logic. It now explicitly compares `this.container.scores` to determine the actual winner (where a tie is treated as a win), updates the notification subtext with names and scores, and ensures only the correct winner submits the match result.

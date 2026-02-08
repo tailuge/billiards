@@ -1,10 +1,11 @@
 import { MessageRelay } from "../network/client/messagerelay"
+import { id } from "../utils/dom"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
 
   constructor(private readonly relay: MessageRelay | null) {
-    this.element = document.getElementById("lobby")
+    this.element = id("lobby")
     if (this.relay && this.element) {
       this.init()
     }
