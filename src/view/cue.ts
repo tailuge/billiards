@@ -151,7 +151,10 @@ export class Cue {
       unitAtAngle(this.aim.angle + Math.PI, this.tempVec2).setZ(0.1)
     )
     this.raycaster.set(origin, direction)
-    const items = table.balls.map((b) => b.ballmesh.mesh)
+    const items: Mesh[] = []
+    for (const b of table.balls) {
+      items.push(b.ballmesh.mesh)
+    }
     if (table.mesh) {
       items.push(table.mesh)
     }
