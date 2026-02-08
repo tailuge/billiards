@@ -1,3 +1,5 @@
+import { id, getInput } from "../utils/dom"
+
 export class Chat {
   chatoutput: HTMLElement | null
   chatInput: HTMLElement | null
@@ -5,11 +7,9 @@ export class Chat {
   chatInputText: HTMLInputElement | null
   send
   constructor(send) {
-    this.chatoutput = document.getElementById("chatoutput")
-    this.chatInputText = document.getElementById(
-      "chatinputtext"
-    ) as HTMLInputElement
-    this.chatSend = document.getElementById("chatsend")
+    this.chatoutput = id("chatoutput")
+    this.chatInputText = getInput("chatinputtext")
+    this.chatSend = id("chatsend")
     this.chatSend?.addEventListener("click", this.sendClicked)
     this.send = send
   }

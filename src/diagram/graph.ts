@@ -1,3 +1,5 @@
+import { getCanvas } from "../utils/dom"
+
 export class Graph {
   canvas: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
@@ -6,7 +8,7 @@ export class Graph {
   readonly gutter = 20
 
   constructor(canvasId: string, title: string, label: string) {
-    this.canvas = document.getElementById(canvasId) as HTMLCanvasElement
+    this.canvas = getCanvas(canvasId)!
     this.ctx = this.canvas.getContext("2d")!
     ;(this.canvas.previousElementSibling as HTMLParagraphElement).innerHTML =
       title

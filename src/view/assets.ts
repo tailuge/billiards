@@ -40,7 +40,7 @@ export class Assets {
     })
   }
 
-  creatLocal() {
+  createLocal() {
     this.sound = new Sound(false)
     TableMesh.mesh = new TableMesh().generateTable(TableGeometry.hasPockets)
     this.table = TableMesh.mesh
@@ -48,7 +48,7 @@ export class Assets {
 
   static localAssets(ruletype = "") {
     const assets = new Assets(ruletype)
-    assets.creatLocal()
+    assets.createLocal()
     return assets
   }
 

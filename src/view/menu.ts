@@ -1,4 +1,5 @@
 import { Container } from "../container/container"
+import { getButton } from "../utils/dom"
 
 export class Menu {
   container: Container
@@ -25,6 +26,6 @@ export class Menu {
   }
 
   getElement(id): HTMLButtonElement {
-    return document.getElementById(id)! as HTMLButtonElement
+    return getButton(id)!
   }
 }
