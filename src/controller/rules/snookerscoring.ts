@@ -17,18 +17,15 @@ export class SnookerScoring {
     const myScore = container.scores[playerIndex]
     const opponentScore = container.scores[1 - playerIndex]
 
-    const actuallyWon = myScore >= opponentScore
-    const ui = this.getGameOverUI(actuallyWon, Session.isSpectator())
     const subtext = this.getScoreSubtext(container, session, playerIndex)
 
-    container.notifyLocal({
-      type: "GameOver",
-      title: ui.title,
-      subtext: subtext,
-      icon: ui.icon,
-      extraClass: ui.extraClass,
-      duration: 0,
-    })
+    if (myScore >= opponentScore) {
+      this.notifyWin(container, subtext)
+    } else if (Session.isSpectator()) {
+      this.notifySpectator(container, subtext)
+    } else {
+      this.notifyLoss(container, subtext)
+    }
 
     const result = this.createMatchResult(container, rulename, session, playerIndex)
     const winnerIndex = container.scores[0] >= container.scores[1] ? 0 : 1
@@ -37,14 +34,37 @@ export class SnookerScoring {
     return new End(container, amIWinner ? result : undefined)
   }
 
-  private static getGameOverUI(actuallyWon: boolean, isSpectator: boolean) {
-    if (actuallyWon) {
-      return { title: "YOU WON", icon: "🏆", extraClass: "is-winner" }
-    } else if (!isSpectator) {
-      return { title: "YOU LOST", icon: "🥈", extraClass: "is-loser" }
-    } else {
-      return { title: "GAME OVER", icon: "🏆", extraClass: "" }
-    }
+  private static notifyWin(container: Container, subtext: string) {
+    container.notifyLocal({
+      type: "GameOver",
+      title: "YOU WON",
+      subtext: subtext,
+      icon: "🏆",
+      extraClass: "is-winner",
+      duration: 0,
+    })
+  }
+
+  private static notifyLoss(container: Container, subtext: string) {
+    container.notifyLocal({
+      type: "GameOver",
+      title: "YOU LOST",
+      subtext: subtext,
+      icon: "🥈",
+      extraClass: "is-loser",
+      duration: 0,
+    })
+  }
+
+  private static notifySpectator(container: Container, subtext: string) {
+    container.notifyLocal({
+      type: "GameOver",
+      title: "GAME OVER",
+      subtext: subtext,
+      icon: "🏆",
+      extraClass: "",
+      duration: 0,
+    })
   }
 
   private static getScoreSubtext(
