@@ -26,6 +26,10 @@ export class Aim extends ControllerBase {
     table.cue.aimInputs.showOverlap()
   }
 
+  override onFirst() {
+    this.container.table.cue.aimInputs.setDisabled(false)
+  }
+
   override handleInput(input: Input): Controller {
     switch (input.key) {
       case "Space":

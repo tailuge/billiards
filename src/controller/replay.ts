@@ -35,6 +35,10 @@ export class Replay extends ControllerBase {
     }
   }
 
+  override onFirst() {
+    this.container.table.cue.aimInputs.setDisabled(true)
+  }
+
   playNextShot(delay) {
     const shot = this.shots.shift()
 

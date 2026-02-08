@@ -45,6 +45,12 @@ export class AimInputs {
     this.cueHitElement && (this.cueHitElement.innerText = text)
   }
 
+  setDisabled(disabled: boolean) {
+    if (this.cueHitElement) {
+      this.cueHitElement.disabled = disabled
+    }
+  }
+
   mousemove = (e) => {
     e.buttons === 1 && this.adjustSpin(e)
   }

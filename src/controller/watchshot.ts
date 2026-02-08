@@ -12,6 +12,10 @@ export class WatchShot extends ControllerBase {
     this.container.table.hit()
   }
 
+  override onFirst() {
+    this.container.table.cue.aimInputs.setDisabled(true)
+  }
+
   override handleStationary(_) {
     const outcome = this.container.table.outcome
     if (this.container.rules.isEndOfGame(outcome)) {

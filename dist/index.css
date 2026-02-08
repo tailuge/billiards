@@ -364,6 +364,11 @@ input[type="range"].powerSlider {
   transform: scale(0.97);
 }
 
+.hitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .chatarea {
   height: 70%;
   display: flex;

@@ -157,7 +157,6 @@ export class BrowserContainer {
       this.breakState.shots
     )
     this.container.eventQueue.push(breakEvent)
-    this.container.menu.replayMode(window.location.href, breakEvent)
   }
 
   parse(s) {

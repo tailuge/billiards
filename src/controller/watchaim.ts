@@ -11,6 +11,10 @@ export class WatchAim extends ControllerBase {
     this.container.view.camera.suggestMode(this.container.view.camera.topView)
   }
 
+  override onFirst() {
+    this.container.table.cue.aimInputs.setDisabled(true)
+  }
+
   override handleAim(event: AimEvent) {
     this.container.table.cue.aim = event
     this.container.table.cueball.pos.copy(event.pos)
