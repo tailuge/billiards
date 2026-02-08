@@ -3,6 +3,7 @@ import { Container } from "../container/container"
 import { Input } from "../events/input"
 import { Overlap } from "../utils/overlap"
 import { unitAtAngle } from "../utils/utils"
+import { id } from "../utils/dom"
 
 export class AimInputs {
   readonly cueBallElement
@@ -19,11 +20,11 @@ export class AimInputs {
 
   constructor(container) {
     this.container = container
-    this.cueBallElement = document.getElementById("cueBall")
-    this.cueTipElement = document.getElementById("cueTip")
-    this.cuePowerElement = document.getElementById("cuePower")
-    this.cueHitElement = document.getElementById("cueHit")
-    this.objectBallStyle = document.getElementById("objectBall")?.style
+    this.cueBallElement = id("cueBall")
+    this.cueTipElement = id("cueTip")
+    this.cuePowerElement = id("cuePower")
+    this.cueHitElement = id("cueHit")
+    this.objectBallStyle = id("objectBall")?.style
     this.overlap = new Overlap(this.container.table.balls)
     this.addListeners()
   }
@@ -36,7 +37,7 @@ export class AimInputs {
     this.cueHitElement?.addEventListener("click", this.hit)
     this.cuePowerElement?.addEventListener("change", this.powerChanged)
     if (!("ontouchstart" in window)) {
-      document.getElementById("viewP1")?.addEventListener("dblclick", this.hit)
+      id("viewP1")?.addEventListener("dblclick", this.hit)
     }
     document.addEventListener("wheel", this.mousewheel)
   }

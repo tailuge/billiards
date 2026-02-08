@@ -15,6 +15,7 @@ import { Sliders } from "./view/sliders"
 import { DiagramContainer } from "./diagram/diagramcontainer"
 import { I, Mxy, Mz, R } from "./model/physics/constants"
 import { Cue } from "./view/cue"
+import { id } from "./utils/dom"
 
 let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4
@@ -48,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function reportConstants() {
   const elt = id("derived")
+  if (!elt) return
   const v = new Vector3(new Cue().maxPower, 0, 0)
   const w = cueToSpin(new Vector3(0.5), v)
   elt.innerHTML += `Mx,My    = ${Mxy.toFixed(6)}\n`
@@ -62,11 +64,11 @@ function sets(v) {
 }
 
 function initialisePlots() {
-  p1 = new CushionPlot(id("cushion1"), "stun shot")
-  p2 = new CushionPlot(id("cushion2"), "running side")
-  p3 = new CushionPlot(id("cushion3"), "check side")
-  p4 = new CushionPlot(id("cushion4"), "varying side")
-  p5 = new CushionPlot(id("cushion5"), "varying side high vel")
+  p1 = new CushionPlot(id("cushion1")!, "stun shot")
+  p2 = new CushionPlot(id("cushion2")!, "running side")
+  p3 = new CushionPlot(id("cushion3")!, "check side")
+  p4 = new CushionPlot(id("cushion4")!, "varying side")
+  p5 = new CushionPlot(id("cushion5")!, "varying side high vel")
 
   linegraph1 = new Graph(
     "plot1",
@@ -179,9 +181,6 @@ function lineGraph4() {
   linegraph4.plot(x, y1, y2)
 }
 
-function id(id: string): HTMLElement {
-  return document.getElementById(id)!
-}
 
 function plotCushionDiagrams() {
   function spin(w) {

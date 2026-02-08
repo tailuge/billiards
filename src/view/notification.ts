@@ -1,3 +1,5 @@
+import { id } from "../utils/dom"
+
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info"
   title: string
@@ -13,7 +15,7 @@ export class Notification {
   timeoutId: number | null = null
 
   constructor() {
-    this.element = document.getElementById("notification") as HTMLDivElement
+    this.element = id("notification") as HTMLDivElement
   }
 
   private getIcon(data: NotificationData): string {

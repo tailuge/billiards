@@ -1,12 +1,14 @@
+import { id } from "../utils/dom"
+
 export class Hud {
   p1Element: HTMLElement | null
   p2Element: HTMLElement | null
   breakElement: HTMLElement | null
 
   constructor() {
-    this.p1Element = document.getElementById("p1Score")
-    this.p2Element = document.getElementById("p2Score")
-    this.breakElement = document.getElementById("breakScore")
+    this.p1Element = id("p1Score")
+    this.p2Element = id("p2Score")
+    this.breakElement = id("breakScore")
   }
 
   private setText(element: HTMLElement | null, text: string) {

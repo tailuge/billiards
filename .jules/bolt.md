@@ -8,3 +8,7 @@
 ## 2026-02-07 - [Advanced Three.js Geometry Caching and Cue Optimization]
 **Learning:** Redundant geometry creation for table components (knuckles, pockets, cushions) and unlabeled balls (snooker reds) adds unnecessary memory overhead. Object churn in cue movement and raycasting also contributes to GC pressure.
 **Action:** Implemented static geometry caching in TableMesh and BallMesh. Added persistent scratch vectors and Raycaster to the Cue class. Optimized camera calculations by caching trigonometric results.
+
+## 2026-02-07 - [DOM and Controller Organization]
+**Learning:** Scattered `document.getElementById` calls with manual type casting and duplicate controller name mapping logic lead to code maintenance challenges and potential runtime errors.
+**Action:** Centralized DOM access in `src/utils/dom.ts` with typed helpers. Refactored the `Controller` base class to include a `name` getter using `this.constructor.name`, eliminating the need for a manual name-mapping utility and reducing duplication.

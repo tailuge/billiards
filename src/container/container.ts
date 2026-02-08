@@ -10,7 +10,6 @@ import { Init } from "../controller/init"
 import { AimInputs } from "../view/aiminputs"
 import { Keyboard } from "../events/keyboard"
 import { Sound } from "../view/sound"
-import { controllerName } from "../controller/util"
 import { Chat } from "../view/chat"
 import { ChatEvent } from "../events/chatevent"
 import { Throttle } from "../events/throttle"
@@ -204,7 +203,7 @@ export class Container {
       const playerName = Session.hasInstance()
         ? Session.getInstance().playername
         : "_"
-      this.log(`${playerName}: Transition to ${controllerName(controller)}`)
+      this.log(`${playerName}: Transition to ${controller.name}`)
       this.controller = controller
       this.controller.onFirst()
     }
