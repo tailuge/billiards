@@ -14,53 +14,86 @@ export class SnookerScoring {
 
     const session = Session.hasInstance() ? Session.getInstance() : null
     const playerIndex = Session.playerIndex()
-    const opponentIndex = 1 - playerIndex
     const myScore = container.scores[playerIndex]
-    const opponentScore = container.scores[opponentIndex]
+    const opponentScore = container.scores[1 - playerIndex]
 
-    const actuallyWon = myScore >= opponentScore
+    const subtext = this.getScoreSubtext(container, session, playerIndex)
 
-    let title: string
-    let subtext: string
-    let icon: string
-    let extraClass = ""
-
-    if (actuallyWon) {
-      title = "YOU WON"
-      icon = "🏆"
-      extraClass = "is-winner"
-    } else if (!Session.isSpectator()) {
-      title = "YOU LOST"
-      icon = "🥈"
-      extraClass = "is-loser"
+    if (myScore >= opponentScore) {
+      this.notifyWin(container, subtext)
+    } else if (Session.isSpectator()) {
+      this.notifySpectator(container, subtext)
     } else {
-      title = "GAME OVER"
-      icon = "🏆"
+      this.notifyLoss(container, subtext)
     }
 
-    if (container.isSinglePlayer) {
-      subtext = `Score: ${myScore}`
-    } else {
-      const p0Name =
-        playerIndex === 0
-          ? session?.playername || "You"
-          : session?.opponentName || "Opponent"
-      const p1Name =
-        playerIndex === 1
-          ? session?.playername || "You"
-          : session?.opponentName || "Opponent"
-      subtext = `${p0Name} ${container.scores[0]} - ${container.scores[1]} ${p1Name}`
-    }
+    const result = this.createMatchResult(container, rulename, session, playerIndex)
+    const winnerIndex = container.scores[0] >= container.scores[1] ? 0 : 1
+    const amIWinner = winnerIndex === playerIndex
 
+    return new End(container, amIWinner ? result : undefined)
+  }
+
+  private static notifyWin(container: Container, subtext: string) {
     container.notifyLocal({
       type: "GameOver",
-      title: title,
+      title: "YOU WON",
       subtext: subtext,
-      icon: icon,
-      extraClass: extraClass,
+      icon: "🏆",
+      extraClass: "is-winner",
       duration: 0,
     })
+  }
 
+  private static notifyLoss(container: Container, subtext: string) {
+    container.notifyLocal({
+      type: "GameOver",
+      title: "YOU LOST",
+      subtext: subtext,
+      icon: "🥈",
+      extraClass: "is-loser",
+      duration: 0,
+    })
+  }
+
+  private static notifySpectator(container: Container, subtext: string) {
+    container.notifyLocal({
+      type: "GameOver",
+      title: "GAME OVER",
+      subtext: subtext,
+      icon: "🏆",
+      extraClass: "",
+      duration: 0,
+    })
+  }
+
+  private static getScoreSubtext(
+    container: Container,
+    session: Session | null,
+    playerIndex: number
+  ): string {
+    if (container.isSinglePlayer) {
+      return `Score: ${container.scores[playerIndex]}`
+    }
+
+    const p0Name =
+      playerIndex === 0
+        ? session?.playername || "You"
+        : session?.opponentName || "Opponent"
+    const p1Name =
+      playerIndex === 1
+        ? session?.playername || "You"
+        : session?.opponentName || "Opponent"
+
+    return `${p0Name} ${container.scores[0]} - ${container.scores[1]} ${p1Name}`
+  }
+
+  private static createMatchResult(
+    container: Container,
+    rulename: string,
+    session: Session | null,
+    playerIndex: number
+  ): MatchResult {
     const winnerIndex = container.scores[0] >= container.scores[1] ? 0 : 1
     const loserIndex = 1 - winnerIndex
 
@@ -84,7 +117,6 @@ export class SnookerScoring {
       result.loserScore = container.scores[loserIndex]
     }
 
-    const amIWinner = winnerIndex === playerIndex
-    return new End(container, amIWinner ? result : undefined)
+    return result
   }
 }
