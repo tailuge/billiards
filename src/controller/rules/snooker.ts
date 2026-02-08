@@ -7,8 +7,6 @@ import { Rules } from "./rules"
 import { Respot } from "../../utils/respot"
 import { Aim } from "../aim"
 import { WatchAim } from "../watchaim"
-import { ChatEvent } from "../../events/chatevent"
-import { End } from "../end"
 import { Container } from "../../container/container"
 import { Ball } from "../../model/ball"
 import { Table } from "../../model/table"
@@ -16,9 +14,9 @@ import { TableGeometry } from "../../view/tablegeometry"
 import { PlaceBall } from "../placeball"
 import { PlaceBallEvent } from "../../events/placeballevent"
 import { zero } from "../../utils/utils"
-import { SnookerUtils } from "./snookerutils"
+import { SnookerUtils, ShotInfo } from "./snookerutils"
+import { SnookerScoring } from "./snookerscoring"
 import { StartAimEvent } from "../../events/startaimevent"
-import { MatchResult } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
 import { RerackEvent } from "../../events/rerackevent"
 
@@ -35,7 +33,7 @@ export class Snooker implements Rules {
 
   readonly container: Container
 
-  constructor(container) {
+  constructor(container: Container) {
     this.container = container
   }
 
@@ -57,18 +55,15 @@ export class Snooker implements Rules {
       return this.switchPlayer()
     }
 
-    // ball has been potted
     if (this.targetIsRed) {
       return this.targetRedRule(outcome, info)
     }
 
-    // non red potted
     return this.targetColourRule(outcome, info)
   }
 
-  targetRedRule(outcome: Outcome[], info): Controller {
+  targetRedRule(outcome: Outcome[], info: ShotInfo): Controller {
     if (info.legalFirstCollision && Outcome.onlyRedsPotted(outcome)) {
-      // legal pot of one or more reds
       this.currentBreak += info.pots
       this.container.scores[Session.playerIndex()] += info.pots
       this.targetIsRed = false
@@ -79,7 +74,7 @@ export class Snooker implements Rules {
     return this.foul(outcome, info)
   }
 
-  targetColourRule(outcome: Outcome[], info): Controller {
+  targetColourRule(outcome: Outcome[], info: ShotInfo): Controller {
     if (info.whitePotted) {
       return this.foul(outcome, info)
     }
@@ -89,16 +84,11 @@ export class Snooker implements Rules {
       return this.foul(outcome, info)
     }
 
-    // This checks if the potted ball is a colour (ID 1-6)
     if (Outcome.pots(outcome)[0].id > 6) {
-      // If it's a red, it's a foul
       return this.foul(outcome, info)
     }
 
-    // exactly one non red potted
-
     const id = Outcome.pots(outcome)[0].id
-    // This checks if the potted ball is the same as the first ball hit
     if (id !== info.firstCollision.ballB.id) {
       return this.foul(outcome, info)
     }
@@ -113,12 +103,10 @@ export class Snooker implements Rules {
       return this.continueBreak()
     }
 
-    // This block is only reached if previousPotRed is false,
-    // meaning all reds are off the table and colours are being cleared in order.
-    // In this case, we need to check if a lesser ball is on the table.
     const lesserBallOnTable =
-      SnookerUtils.coloursOnTable(this.container.table).filter((b) => b.id < id)
-        .length > 0
+      SnookerUtils.coloursOnTable(this.container.table).filter(
+        (b: Ball) => b.id < id
+      ).length > 0
 
     if (lesserBallOnTable) {
       return this.foul(outcome, info)
@@ -131,22 +119,22 @@ export class Snooker implements Rules {
     return this.continueBreak()
   }
 
-  foul(outcome, info) {
-    this.foulPoints = this.foulCalculation(outcome, info)
+  foul(outcome: Outcome[], info: ShotInfo): Controller {
+    const foulResult = SnookerUtils.calculateFoul(outcome, info)
+    this.foulPoints = foulResult.points
     const index = Session.playerIndex()
     this.container.scores[1 - index] += this.foulPoints
-    const reason = this.foulReason(outcome, info)
     const notification = info.whitePotted
       ? ({
           type: "Foul",
           title: "FOUL",
-          subtext: reason || `Foul (${this.foulPoints} points)`,
+          subtext: foulResult.reason || `Foul (${this.foulPoints} points)`,
           extra: "Ball in hand",
         } as const)
       : ({
           type: "Foul",
           title: "FOUL",
-          subtext: reason || `Foul (${this.foulPoints} points)`,
+          subtext: foulResult.reason || `Foul (${this.foulPoints} points)`,
         } as const)
     this.container.notify(notification)
     this.respot(outcome)
@@ -154,63 +142,6 @@ export class Snooker implements Rules {
       return this.whiteInHand()
     }
     return this.switchPlayer()
-  }
-
-  foulCalculation(outcome, info) {
-    const potted = Outcome.pots(outcome)
-      .map((b) => b.id)
-      .filter((id) => id < 7)
-    let firstCollisionId = info.firstCollision?.ballB?.id ?? 0
-    if (firstCollisionId > 6) {
-      firstCollisionId = 0
-    }
-    return Math.max(3, firstCollisionId, ...potted) + 1
-  }
-
-  foulReason(outcome, info): string | null {
-    if (info.whitePotted) {
-      return "White potted"
-    }
-
-    if (!info.firstCollision) {
-      return "No ball hit"
-    }
-
-    const firstBallId = info.firstCollision.ballB?.id ?? 0
-
-    // Use info.targetIsRed for the foul message, as it reflects the state *before* the shot.
-    if (info.targetIsRed) {
-      if (firstBallId < 7 || firstBallId === 0) {
-        const colourName = SnookerUtils.colourName(firstBallId)
-        return `Hit ${colourName} instead of red`
-      }
-    } else {
-      if (firstBallId >= 7) {
-        return "Hit red instead of colour"
-      }
-    }
-
-    const pottedColours = Outcome.pots(outcome).filter(
-      (b) => b.id > 0 && b.id < 7
-    )
-    if (pottedColours.length > 1) {
-      const colourNames = pottedColours
-        .map((b) => SnookerUtils.colourName(b.id))
-        .join(", ")
-      return `Potted ${colourNames}`
-    }
-
-    if (pottedColours.length === 1) {
-      const pottedId = pottedColours[0].id
-      const firstBallId2 = info.firstCollision?.ballB?.id ?? 0
-      if (pottedId !== firstBallId2) {
-        const pottedName = SnookerUtils.colourName(pottedId)
-        const hitName = SnookerUtils.colourName(firstBallId2)
-        return `Potted ${pottedName} instead of ${hitName}`
-      }
-    }
-
-    return null
   }
 
   tableGeometry() {
@@ -224,13 +155,10 @@ export class Snooker implements Rules {
   }
 
   otherPlayersCueBall(): Ball {
-    // only for three cushion
     return this.cueball
   }
 
-  secondToPlay() {
-    // only for three cushion
-  }
+  secondToPlay() {}
 
   isPartOfBreak(_: Outcome[]): boolean {
     return this.currentBreak > 0
@@ -282,7 +210,6 @@ export class Snooker implements Rules {
 
   placeBall(target?: Vector3): Vector3 {
     if (target) {
-      // constrain to "D"
       const centre = new Vector3(Rack.baulk, 0, 0)
       const radius = Rack.sixth
       const distance = target.distanceTo(centre)
@@ -299,7 +226,7 @@ export class Snooker implements Rules {
     return new Vector3(Rack.baulk, -Rack.sixth / 2.6, 0)
   }
 
-  switchPlayer() {
+  switchPlayer(): Controller {
     const table = this.container.table
     this.container.sendEvent(new StartAimEvent(this.foulPoints))
     if (this.container.isSinglePlayer) {
@@ -311,7 +238,7 @@ export class Snooker implements Rules {
     return new WatchAim(this.container)
   }
 
-  continueBreak() {
+  continueBreak(): Controller {
     const table = this.container.table
     this.container.sound.playSuccess(table.inPockets())
     if (Outcome.isClearTable(table)) {
@@ -321,62 +248,8 @@ export class Snooker implements Rules {
     return new Aim(this.container)
   }
 
-  handleGameEnd(isWinner: boolean): Controller {
-    if (isWinner) {
-      this.container.eventQueue.push(new ChatEvent(null, `game over`))
-      this.container.recorder.wholeGameLink()
-    }
-
-    const session = Session.hasInstance() ? Session.getInstance() : null
-    let title: string
-    let subtext: string
-    let icon: string
-    let extraClass = ""
-
-    if (isWinner) {
-      title = "YOU WON"
-      subtext = "Congratulations!"
-      icon = "🏆"
-      extraClass = "is-winner"
-    } else if (!Session.isSpectator()) {
-      title = "YOU LOST"
-      subtext = "Better luck next time"
-      icon = "🥈"
-      extraClass = "is-loser"
-    } else {
-      title = "GAME OVER"
-      subtext = session?.opponentName
-        ? `Winner: ${session.opponentName}`
-        : "Game Over"
-      icon = "🏆"
-    }
-
-    this.container.notifyLocal({
-      type: "GameOver",
-      title: title,
-      subtext: subtext,
-      icon: icon,
-      extraClass: extraClass,
-      duration: 0,
-    })
-    const result: MatchResult = {
-      winner: isWinner
-        ? session?.playername || "Anon"
-        : session?.opponentName || "Opponent",
-      winnerScore: isWinner
-        ? this.container.scores[Session.playerIndex()]
-        : this.container.scores[1 - Session.playerIndex()],
-      gameType: this.rulename,
-    }
-    if (session?.opponentName) {
-      result.loser = isWinner
-        ? session.opponentName
-        : session.playername || "Anon"
-      result.loserScore = isWinner
-        ? this.container.scores[1 - Session.playerIndex()]
-        : this.container.scores[Session.playerIndex()]
-    }
-    return new End(this.container, isWinner ? result : undefined)
+  handleGameEnd(_: boolean): Controller {
+    return SnookerScoring.presentGameEnd(this.container, this.rulename)
   }
 
   whiteInHand(): Controller {

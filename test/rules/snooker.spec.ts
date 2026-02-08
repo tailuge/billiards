@@ -16,6 +16,8 @@ import { Assets } from "../../src/view/assets"
 import { Outcome } from "../../src/model/outcome"
 import { Table } from "../../src/model/table"
 import { zero } from "../../src/utils/utils"
+import { Session } from "../../src/network/client/session"
+import { End } from "../../src/controller/end"
 
 initDom()
 
@@ -420,5 +422,76 @@ describe("Snooker", () => {
   it("placeBall constrained to D", (done) => {
     expect(snooker.placeBall(zero).length()).to.be.greaterThan(0)
     done()
+  })
+
+  it("handleGameEnd determines winner by score in 2 player mode", () => {
+    container.isSinglePlayer = false
+    Session.init("1", "Player A", "table", false)
+    const session = Session.getInstance()
+    session.playerIndex = 0
+    session.opponentName = "Player B"
+
+    container.scores = [10, 20] // Player A has 10, Player B has 20
+
+    const notifySpy = jest.spyOn(container, "notifyLocal")
+
+    // Player A clears the table (isWinner=true in the parameter sense)
+    const nextController = snooker.handleGameEnd(true)
+
+    expect(nextController).to.be.instanceOf(End)
+    // Even though Player A cleared the table, they lost by score
+    expect(notifySpy.mock.calls[0][0]).to.deep.include({
+      title: "YOU LOST",
+      subtext: "Player A 10 - 20 Player B",
+    })
+
+    Session.reset()
+  })
+
+  it("handleGameEnd determines winner by score in 2 player mode (as winner)", () => {
+    container.isSinglePlayer = false
+    Session.init("1", "Player A", "table", false)
+    const session = Session.getInstance()
+    session.playerIndex = 0
+    session.opponentName = "Player B"
+
+    container.scores = [30, 20] // Player A has 30, Player B has 20
+
+    const notifySpy = jest.spyOn(container, "notifyLocal")
+
+    // Player B cleared the table (so Player A receives isWinner=false)
+    const nextController = snooker.handleGameEnd(false)
+
+    expect(nextController).to.be.instanceOf(End)
+    // Player A won by score
+    expect(notifySpy.mock.calls[0][0]).to.deep.include({
+      title: "YOU WON",
+      subtext: "Player A 30 - 20 Player B",
+    })
+
+    Session.reset()
+  })
+
+  it("handleGameEnd treats a draw as a win", () => {
+    container.isSinglePlayer = false
+    Session.init("1", "Player A", "table", false)
+    const session = Session.getInstance()
+    session.playerIndex = 0
+    session.opponentName = "Player B"
+
+    container.scores = [20, 20] // Draw
+
+    const notifySpy = jest.spyOn(container, "notifyLocal")
+
+    const nextController = snooker.handleGameEnd(false)
+
+    expect(nextController).to.be.instanceOf(End)
+    // Player A wins on a draw per user request
+    expect(notifySpy.mock.calls[0][0]).to.deep.include({
+      title: "YOU WON",
+      subtext: "Player A 20 - 20 Player B",
+    })
+
+    Session.reset()
   })
 })
