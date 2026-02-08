@@ -328,27 +328,47 @@ export class Snooker implements Rules {
     }
 
     const session = Session.hasInstance() ? Session.getInstance() : null
+    const playerIndex = Session.playerIndex()
+    const opponentIndex = 1 - playerIndex
+    const myScore = this.container.scores[playerIndex]
+    const opponentScore = this.container.scores[opponentIndex]
+
+    const actuallyWon = myScore > opponentScore
+    const isDraw = myScore === opponentScore
+
     let title: string
     let subtext: string
     let icon: string
     let extraClass = ""
 
-    if (isWinner) {
+    if (actuallyWon) {
       title = "YOU WON"
-      subtext = "Congratulations!"
       icon = "🏆"
       extraClass = "is-winner"
+    } else if (isDraw) {
+      title = "DRAW"
+      icon = "🤝"
     } else if (!Session.isSpectator()) {
       title = "YOU LOST"
-      subtext = "Better luck next time"
       icon = "🥈"
       extraClass = "is-loser"
     } else {
       title = "GAME OVER"
-      subtext = session?.opponentName
-        ? `Winner: ${session.opponentName}`
-        : "Game Over"
       icon = "🏆"
+    }
+
+    if (this.container.isSinglePlayer) {
+      subtext = `Score: ${myScore}`
+    } else {
+      const p0Name =
+        playerIndex === 0
+          ? session?.playername || "You"
+          : session?.opponentName || "Opponent"
+      const p1Name =
+        playerIndex === 1
+          ? session?.playername || "You"
+          : session?.opponentName || "Opponent"
+      subtext = `${p0Name} ${this.container.scores[0]} - ${this.container.scores[1]} ${p1Name}`
     }
 
     this.container.notifyLocal({
@@ -359,24 +379,33 @@ export class Snooker implements Rules {
       extraClass: extraClass,
       duration: 0,
     })
-    const result: MatchResult = {
-      winner: isWinner
+
+    const winnerIndex =
+      this.container.scores[0] >= this.container.scores[1] ? 0 : 1
+    const loserIndex = 1 - winnerIndex
+
+    const winnerName =
+      winnerIndex === playerIndex
         ? session?.playername || "Anon"
-        : session?.opponentName || "Opponent",
-      winnerScore: isWinner
-        ? this.container.scores[Session.playerIndex()]
-        : this.container.scores[1 - Session.playerIndex()],
+        : session?.opponentName || "Opponent"
+    const loserName =
+      loserIndex === playerIndex
+        ? session?.playername || "Anon"
+        : session?.opponentName || "Opponent"
+
+    const result: MatchResult = {
+      winner: winnerName,
+      winnerScore: this.container.scores[winnerIndex],
       gameType: this.rulename,
     }
+
     if (session?.opponentName) {
-      result.loser = isWinner
-        ? session.opponentName
-        : session.playername || "Anon"
-      result.loserScore = isWinner
-        ? this.container.scores[1 - Session.playerIndex()]
-        : this.container.scores[Session.playerIndex()]
+      result.loser = loserName
+      result.loserScore = this.container.scores[loserIndex]
     }
-    return new End(this.container, isWinner ? result : undefined)
+
+    const amIWinner = winnerIndex === playerIndex
+    return new End(this.container, amIWinner ? result : undefined)
   }
 
   whiteInHand(): Controller {

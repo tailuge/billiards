@@ -8,3 +8,7 @@
 ## 2026-02-07 - [Advanced Three.js Geometry Caching and Cue Optimization]
 **Learning:** Redundant geometry creation for table components (knuckles, pockets, cushions) and unlabeled balls (snooker reds) adds unnecessary memory overhead. Object churn in cue movement and raycasting also contributes to GC pressure.
 **Action:** Implemented static geometry caching in TableMesh and BallMesh. Added persistent scratch vectors and Raycaster to the Cue class. Optimized camera calculations by caching trigonometric results.
+
+## 2026-02-08 - [Snooker Score-Based Winner Determination]
+**Learning:** In Snooker, the person who pots the last ball isn't necessarily the winner; the player with the highest score wins the frame. Relying on an `isWinner` boolean passed from the game flow controller can lead to incorrect UI states and match reporting in multiplayer.
+**Action:** Refactored `Snooker.handleGameEnd` to ignore the `isWinner` parameter for UI/Winner logic. It now explicitly compares `this.container.scores` to determine the actual winner, updates the notification subtext with names and scores, and ensures only the correct winner submits the match result.
