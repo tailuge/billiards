@@ -1,6 +1,7 @@
 import { Color, Vector3 } from "three"
 import { Container } from "../container/container"
 import { Input } from "../events/input"
+import { Session } from "../network/client/session"
 import { Overlap } from "../utils/overlap"
 import { unitAtAngle } from "../utils/utils"
 
@@ -26,6 +27,9 @@ export class AimInputs {
     this.objectBallStyle = document.getElementById("objectBall")?.style
     this.overlap = new Overlap(this.container.table.balls)
     this.addListeners()
+    if (Session.isSpectator()) {
+      this.setDisabled(true)
+    }
   }
 
   addListeners() {
@@ -47,7 +51,7 @@ export class AimInputs {
 
   setDisabled(disabled: boolean) {
     if (this.cueHitElement) {
-      this.cueHitElement.disabled = disabled
+      this.cueHitElement.disabled = disabled || Session.isSpectator()
     }
   }
 

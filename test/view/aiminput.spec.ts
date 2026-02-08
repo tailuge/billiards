@@ -4,6 +4,7 @@ import { initDom, canvas3d } from "./dom"
 import { Container } from "../../src/container/container"
 import { fireEvent } from "@testing-library/dom"
 import { Assets } from "../../src/view/assets"
+import { Session } from "../../src/network/client/session"
 
 initDom()
 
@@ -41,6 +42,16 @@ describe("AimInput", () => {
   it("mouse wheel updates power", (done) => {
     aiminputs.mousewheel({ deltaY: 10 })
     expect(aiminputs.container.table.cue.aim.power).to.greaterThan(0)
+    done()
+  })
+
+  it("spectator mode disables hit button", (done) => {
+    Session.init("id", "name", "table", true)
+    const spectatorAimInputs = new AimInputs(container)
+    expect(spectatorAimInputs.cueHitElement.disabled).to.be.true
+    spectatorAimInputs.setDisabled(false)
+    expect(spectatorAimInputs.cueHitElement.disabled).to.be.true
+    Session.reset()
     done()
   })
 })
