@@ -4,10 +4,6 @@
 
 In 2p mode the on screen ball spin and cue power show the opponents choice when they hitBall however when it becomes that players turn the values have not been updated (in the local aim object) and when they hit the ball you get a surprise.
 
-## Snooker Determine Win by Score
-
-Update the logic to use scores at end of game point.
-
 ## Snooker Concede Button
 
 Discuss, maybe all games need a concede button.
