@@ -1,12 +1,12 @@
 export class AimInputs {
-  private aimBall: HTMLElement | null
-  private aimCoordinatesDisplay: HTMLElement | null
-  private aimBallContainer: HTMLElement | null
-  private powerSlider: HTMLInputElement | null
-  private directionSlider: HTMLInputElement | null
+  private readonly aimBall: HTMLElement | null
+  private readonly aimCoordinatesDisplay: HTMLElement | null
+  private readonly aimBallContainer: HTMLElement | null
+  private readonly powerSlider: HTMLInputElement | null
+  private readonly directionSlider: HTMLInputElement | null
   private readonly BALL_CONTAINER_RADIUS: number
   private readonly MAX_DISTANCE = 0.7
-  private position = { x: 0, y: 0 }
+  private readonly position = { x: 0, y: 0 }
   private power = 5
   private direction = 0
 
