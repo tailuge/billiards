@@ -10,6 +10,8 @@ import { RerackEvent } from "../events/rerackevent"
 import { PlaceBallEvent } from "../events/placeballevent"
 import { End } from "./end"
 import { ScoreEvent } from "../events/scoreevent"
+import { ChatEvent } from "../events/chatevent"
+import { share, shorten } from "../utils/shorten"
 
 export class Replay extends ControllerBase {
   delay: number
@@ -37,6 +39,16 @@ export class Replay extends ControllerBase {
 
   override onFirst() {
     this.container.table.cue.aimInputs.setDisabled(true)
+    const shareButton = this.container.menu.share
+    if (shareButton) {
+      shareButton.disabled = false
+      shareButton.onclick = () => {
+        shorten(window.location.href, (url) => {
+          const response = share(url)
+          this.container.eventQueue.push(new ChatEvent(null, response))
+        })
+      }
+    }
   }
 
   playNextShot(delay) {
