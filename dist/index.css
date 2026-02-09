@@ -29,7 +29,7 @@ p {
   background-color: #2e9097;
 }
 
-.flex-container > div {
+.flex-container>div {
   background-color: #1c802d;
   border: 1px;
   color: grey;
@@ -154,6 +154,7 @@ p {
     opacity: 0;
     transform: translateY(-5px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -268,13 +269,11 @@ canvas {
   height: 100%;
   margin: auto;
   aspect-ratio: 1;
-  background: radial-gradient(
-    circle at 65% 15%,
-    rgb(255, 255, 255) 2px,
-    rgb(255, 254, 254) 5%,
-    rgb(63, 63, 63) 60%,
-    rgb(24, 26, 26) 100%
-  );
+  background: radial-gradient(circle at 65% 15%,
+      rgb(255, 255, 255) 2px,
+      rgb(255, 254, 254) 5%,
+      rgb(63, 63, 63) 60%,
+      rgb(24, 26, 26) 100%);
   border-radius: 50%;
   position: absolute;
   top: 0;
@@ -331,7 +330,7 @@ input[type="range"].powerSlider {
 
 .outerMenu {
   display: flex;
-  height: 50%;
+  height: 46%;
   justify-content: flex-end;
 }
 
@@ -370,7 +369,7 @@ input[type="range"].powerSlider {
 }
 
 .chatarea {
-  height: 70%;
+  height: 96%;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -378,13 +377,12 @@ input[type="range"].powerSlider {
 }
 
 .chatoutput {
-  height: 30%;
-  width: 0px;
-  min-width: 100%;
+  height: 46%;
+  box-sizing: border-box;
   overflow-y: scroll;
   background-color: rgba(47, 79, 79, 0.486);
   padding: 5px;
-  margin: 2px;
+  margin: 2px 4px 2px 2px;
   border-radius: 5px;
   font-size: smaller;
 }
