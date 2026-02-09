@@ -132,11 +132,15 @@ export class ThreeCushion implements Rules {
       duration: 0,
     })
 
+    const myIndex = Session.playerIndex()
+    const winnerScore = isWinner
+      ? this.container.scores[myIndex]
+      : this.container.scores[1 - myIndex]
     const result: MatchResult = {
       winner: isWinner
         ? session?.playername || "Anon"
         : session?.opponentName || "Opponent",
-      winnerScore: this.container.scores[Session.playerIndex()],
+      winnerScore,
       gameType: this.rulename,
     }
     return new End(this.container, isWinner ? result : undefined)

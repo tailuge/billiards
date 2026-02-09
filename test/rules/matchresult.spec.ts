@@ -162,4 +162,26 @@ describe("MatchResult Construction", () => {
     expect(result.replayData).to.be.a("string")
     expect(result.replayData!.length).to.be.greaterThan(0)
   })
+
+  it("ThreeCushion should report correct winnerScore when player at index 1 wins", () => {
+    const session = Session.getInstance()
+    session.playerIndex = 1
+    session.opponentName = "OpponentPlayer"
+    container = new Container(
+      undefined,
+      (_) => {},
+      Assets.localAssets("threecushion"),
+      "threecushion"
+    )
+    container.scoreReporter = new ScoreReporter()
+    const threecushion = container.rules as any
+    container.scores = [3, 7]
+
+    const endController = threecushion.handleGameEnd(true) as End
+    endController.onFirst()
+    const result = (endController as any).result as MatchResult
+
+    expect(result.winner).to.equal("TestPlayer")
+    expect(result.winnerScore).to.equal(7)
+  })
 })
