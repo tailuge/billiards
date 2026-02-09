@@ -1,3 +1,4 @@
+import nodeConsole from "node:console"
 import { expect } from "chai"
 import { Container } from "../../src/container/container"
 import { GameEvent } from "../../src/events/gameevent"
@@ -24,7 +25,7 @@ initDom()
 const jestConsole = console
 
 beforeEach(() => {
-  globalThis.console = require("console")
+  globalThis.console = nodeConsole
 })
 
 afterEach(() => {
@@ -198,10 +199,11 @@ describe("Snooker", () => {
 
   it("target red after potting colour, when reds remain", (done) => {
     snooker.targetIsRed = false
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[1], 1))
-    outcome.push(Outcome.pot(table.balls[1], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[1], 1),
+      Outcome.pot(table.balls[1], 1),
+    ]
     table.balls[1].state = State.InPocket
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.true
@@ -211,10 +213,11 @@ describe("Snooker", () => {
   it("target colour after potting colour, when no reds remain", (done) => {
     snooker.targetIsRed = false
     markAllRedsPotted()
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[1], 1))
-    outcome.push(Outcome.pot(table.balls[1], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[1], 1),
+      Outcome.pot(table.balls[1], 1),
+    ]
     table.balls[1].state = State.InPocket
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.false
@@ -222,9 +225,10 @@ describe("Snooker", () => {
   })
 
   it("potted white goes to placeball", (done) => {
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.pot(table.cueball, 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.pot(table.cueball, 1),
+    ]
     table.cueball.state = State.InPocket
     expect(snooker.update(outcome)).to.be.instanceOf(PlaceBall)
     snooker.targetIsRed = false
@@ -234,9 +238,10 @@ describe("Snooker", () => {
   })
 
   it("missed pot of colour results in targetRed when reds on table", (done) => {
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[1], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[1], 1),
+    ]
     snooker.targetIsRed = false
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.true
@@ -244,9 +249,10 @@ describe("Snooker", () => {
   })
 
   it("missed pot of colour results in not targetRed when no reds on table", (done) => {
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[1], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[1], 1),
+    ]
     markAllRedsPotted()
     snooker.targetIsRed = false
     snooker.update(outcome)
@@ -256,11 +262,12 @@ describe("Snooker", () => {
 
   it("pot yellow and pink is foul", (done) => {
     snooker.targetIsRed = false
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[1], 1))
-    outcome.push(Outcome.pot(table.balls[1], 1))
-    outcome.push(Outcome.pot(table.balls[5], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[1], 1),
+      Outcome.pot(table.balls[1], 1),
+      Outcome.pot(table.balls[5], 1),
+    ]
     table.balls[1].state = State.InPocket
     table.balls[5].state = State.InPocket
     snooker.update(outcome)
@@ -271,10 +278,11 @@ describe("Snooker", () => {
 
   it("hit pink but pot yellow is foul", (done) => {
     snooker.targetIsRed = false
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
-    outcome.push(Outcome.pot(table.balls[1], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[5], 1),
+      Outcome.pot(table.balls[1], 1),
+    ]
     table.balls[1].state = State.InPocket
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.true
@@ -285,11 +293,12 @@ describe("Snooker", () => {
   it("hit black but pot pink is foul", (done) => {
     snooker.targetIsRed = false
     snooker.previousPotRed = true
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[6], 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
-    outcome.push(Outcome.pot(table.balls[5], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[6], 1),
+      Outcome.collision(table.cueball, table.balls[5], 1),
+      Outcome.pot(table.balls[5], 1),
+    ]
     table.balls[5].state = State.InPocket
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.true
@@ -298,9 +307,10 @@ describe("Snooker", () => {
   })
 
   it("target is red but hit pink is foul", (done) => {
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[5], 1),
+    ]
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.true
     expect(snooker.foulPoints).to.be.equal(6)
@@ -308,10 +318,11 @@ describe("Snooker", () => {
   })
 
   it("pot red but hit pink first is foul", (done) => {
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
-    outcome.push(Outcome.pot(table.balls[8], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[5], 1),
+      Outcome.pot(table.balls[8], 1),
+    ]
     table.balls[8].state = State.InPocket
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.true
@@ -334,10 +345,11 @@ describe("Snooker", () => {
 
   it("target colour but pot red", (done) => {
     snooker.targetIsRed = false
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[8], 1))
-    outcome.push(Outcome.pot(table.balls[8], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[8], 1),
+      Outcome.pot(table.balls[8], 1),
+    ]
     table.balls[8].state = State.InPocket
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.true
@@ -347,10 +359,11 @@ describe("Snooker", () => {
 
   it("target red but pot colour", (done) => {
     container.isSinglePlayer = false
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
-    outcome.push(Outcome.pot(table.balls[5], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[5], 1),
+      Outcome.pot(table.balls[5], 1),
+    ]
     table.balls[6].state = State.InPocket
     snooker.update(outcome)
     expect(snooker.targetIsRed).to.be.true
@@ -360,9 +373,10 @@ describe("Snooker", () => {
 
   it("should trigger foul notification when white potted", () => {
     const notifySpy = jest.spyOn(container, "notify")
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.pot(table.cueball, 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.pot(table.cueball, 1),
+    ]
     table.cueball.state = State.InPocket
     snooker.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
@@ -375,8 +389,7 @@ describe("Snooker", () => {
 
   it("should trigger foul notification on no ball hit", () => {
     const notifySpy = jest.spyOn(container, "notify")
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
+    const outcome: Outcome[] = [Outcome.hit(table.cueball, 1)]
     snooker.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.include({
       type: "Foul",
@@ -388,9 +401,10 @@ describe("Snooker", () => {
 
   it("should trigger foul notification on wrong ball hit", () => {
     const notifySpy = jest.spyOn(container, "notify")
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[5], 1),
+    ]
     snooker.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.include({
       type: "Foul",
@@ -403,11 +417,12 @@ describe("Snooker", () => {
   it("should trigger foul notification on potting multiple colours", () => {
     const notifySpy = jest.spyOn(container, "notify")
     snooker.targetIsRed = false
-    const outcome: Outcome[] = []
-    outcome.push(Outcome.hit(table.cueball, 1))
-    outcome.push(Outcome.collision(table.cueball, table.balls[5], 1))
-    outcome.push(Outcome.pot(table.balls[5], 1))
-    outcome.push(Outcome.pot(table.balls[1], 1))
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[5], 1),
+      Outcome.pot(table.balls[5], 1),
+      Outcome.pot(table.balls[1], 1),
+    ]
     table.balls[5].state = State.InPocket
     table.balls[1].state = State.InPocket
     snooker.update(outcome)
