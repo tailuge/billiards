@@ -1,5 +1,4 @@
 import { MessageRelay } from "./messagerelay"
-import fetch from "cross-fetch"
 
 export class NchanMessageRelay implements MessageRelay {
   private readonly websockets: Map<string, WebSocket> = new Map()
