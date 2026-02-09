@@ -95,13 +95,13 @@ export class Notification {
     this.element.style.display = "flex"
 
     if (this.timeoutId) {
-      window.clearTimeout(this.timeoutId)
+      globalThis.clearTimeout(this.timeoutId)
     }
 
     if (duration > 0) {
-      this.timeoutId = window.setTimeout(() => {
+      this.timeoutId = globalThis.setTimeout(() => {
         this.clear()
-      }, duration)
+      }, duration) as unknown as number
     }
   }
 
@@ -112,7 +112,7 @@ export class Notification {
       this.element.className = ""
     }
     if (this.timeoutId) {
-      window.clearTimeout(this.timeoutId)
+      globalThis.clearTimeout(this.timeoutId)
       this.timeoutId = null
     }
   }

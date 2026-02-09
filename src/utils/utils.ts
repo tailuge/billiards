@@ -52,8 +52,8 @@ export function atan2(y, x) {
   return Math.fround(Math.atan2(y, x))
 }
 
-export function pow(y, x) {
-  return Math.fround(Math.pow(y, x))
+export function pow(x, y) {
+  return Math.fround(Math.pow(x, y))
 }
 
 export function sin(theta) {

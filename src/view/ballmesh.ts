@@ -95,10 +95,7 @@ export class BallMesh {
   initialiseMesh(color: Color, label?: number) {
     let geometry: IcosahedronGeometry
     let material: MeshPhongMaterial | MeshStandardMaterial
-    if (label !== undefined) {
-      geometry = BallMesh.getBallGeometry()
-      material = BallMaterialFactory.createProjectedMaterial(label, color)
-    } else {
+    if (label === undefined) {
       const key = color.getHex()
       let cached = BallMesh._dottedGeometryCache.get(key)
       if (!cached) {
@@ -108,6 +105,9 @@ export class BallMesh {
       }
       geometry = cached
       material = BallMaterialFactory.createDottedMaterial(color)
+    } else {
+      geometry = BallMesh.getBallGeometry()
+      material = BallMaterialFactory.createProjectedMaterial(label, color)
     }
     this.mesh = new Mesh(geometry, material)
     this.mesh.name = "ball"
@@ -163,6 +163,6 @@ export class BallMesh {
   }
 
   private static scaleNoise(v) {
-    return (1.0 - Math.random() * 0.25) * v
+    return (1 - Math.random() * 0.25) * v
   }
 }
