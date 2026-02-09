@@ -27,7 +27,12 @@ export class SnookerScoring {
       this.notifyLoss(container, subtext)
     }
 
-    const result = this.createMatchResult(container, rulename, session, playerIndex)
+    const result = this.createMatchResult(
+      container,
+      rulename,
+      session,
+      playerIndex
+    )
     const winnerIndex = container.scores[0] >= container.scores[1] ? 0 : 1
     const amIWinner = winnerIndex === playerIndex
 

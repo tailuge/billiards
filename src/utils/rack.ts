@@ -163,9 +163,9 @@ export class Rack {
     const threeballs: Ball[] = []
     const dx = TableGeometry.X / 2
     const dy = TableGeometry.Y / 4
-    threeballs.push(Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0)), 0)) // Ball 0: White
-    threeballs.push(new Ball(Rack.jitter(new Vector3(-dx, 0, 0)), 0xe0de36, 1)) // Ball 1: Yellow
-    threeballs.push(new Ball(Rack.jitter(new Vector3(dx, 0, 0)), 0xff0000, 2)) // Ball 2: Red
+    threeballs.push(Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0)))) // Ball 0: White
+    threeballs.push(new Ball(Rack.jitter(new Vector3(-dx, 0, 0)), 0xe0de36)) // Ball 1: Yellow
+    threeballs.push(new Ball(Rack.jitter(new Vector3(dx, 0, 0)), 0xff0000)) // Ball 2: Red
     return threeballs
   }
 

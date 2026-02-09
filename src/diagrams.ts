@@ -181,7 +181,6 @@ function lineGraph4() {
   linegraph4.plot(x, y1, y2)
 }
 
-
 function plotCushionDiagrams() {
   function spin(w) {
     return (_) => svec(0, 0, w)
