@@ -59,7 +59,7 @@ export class NchanMessageRelay implements MessageRelay {
       const response = await fetch(`https://${this.baseURL}/basic_status`)
       const text = await response.text()
       const match = text.match(/Active connections:\s+(\d+)/)
-      return match ? parseInt(match[1], 10) - 1 : null
+      return match ? Number.parseInt(match[1], 10) - 1 : null
     } catch {
       return null
     }

@@ -92,6 +92,7 @@ export class Container {
     this.relay = relay
     this.scoreReporter = scoreReporter
     this.lobbyIndicator = new LobbyIndicator(this.relay)
+    this.lobbyIndicator.init()
     this.updateController(new Init(this))
   }
 

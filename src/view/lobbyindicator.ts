@@ -6,12 +6,9 @@ export class LobbyIndicator {
 
   constructor(private readonly relay: MessageRelay | null) {
     this.element = id("lobby")
-    if (this.relay && this.element) {
-      this.init()
-    }
   }
 
-  private async init(): Promise<void> {
+  async init(): Promise<void> {
     if (!this.relay || !this.element) return
 
     const refresh = async () => {

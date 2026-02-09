@@ -3,10 +3,10 @@ import JSONCrush from "jsoncrush"
 export class ReplayEncoder {
   static fullyEncodeURI(uri: string): string {
     return encodeURIComponent(uri)
-      .replace(/\(/g, "%28")
-      .replace(/\)/g, "%29")
-      .replace(/!/g, "%21")
-      .replace(/\*/g, "%2A")
+      .replaceAll("(", "%28")
+      .replaceAll(")", "%29")
+      .replaceAll("!", "%21")
+      .replaceAll("*", "%2A")
   }
 
   static crush(data: string): string {

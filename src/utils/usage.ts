@@ -1,7 +1,7 @@
 export function logusage() {
   if (
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1"
+    globalThis.location.hostname === "localhost" ||
+    globalThis.location.hostname === "127.0.0.1"
   ) {
     console.log("Skipping usage fetch for localhost.")
     return

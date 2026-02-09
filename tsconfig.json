@@ -19,6 +19,7 @@
     "exactOptionalPropertyTypes": true,
     "moduleResolution": "Node",
     "target": "ES5",
+    "lib": ["ESNext", "DOM"],
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
