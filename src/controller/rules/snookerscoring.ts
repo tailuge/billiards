@@ -3,6 +3,7 @@ import { MatchResult } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
 import { ChatEvent } from "../../events/chatevent"
 import { End } from "../end"
+import { gameOverButtons } from "../../utils/gameover"
 
 export class SnookerScoring {
   static presentGameEnd(container: Container, rulename: string): End {
@@ -43,6 +44,7 @@ export class SnookerScoring {
       subtext: subtext,
       icon: "🏆",
       extraClass: "is-winner",
+      extra: gameOverButtons.forMode(container.isSinglePlayer),
       duration: 0,
     })
   }
@@ -54,6 +56,7 @@ export class SnookerScoring {
       subtext: subtext,
       icon: "🥈",
       extraClass: "is-loser",
+      extra: gameOverButtons.forMode(container.isSinglePlayer),
       duration: 0,
     })
   }
@@ -65,6 +68,7 @@ export class SnookerScoring {
       subtext: subtext,
       icon: "🏆",
       extraClass: "",
+      extra: gameOverButtons.lobby,
       duration: 0,
     })
   }

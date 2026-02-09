@@ -20,6 +20,7 @@ import { TableGeometry } from "../../view/tablegeometry"
 import { StartAimEvent } from "../../events/startaimevent"
 import { MatchResult } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
+import { gameOverButtons } from "../../utils/gameover"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -161,11 +162,7 @@ export class NineBall implements Rules {
       icon = "🏆"
     }
 
-    const lobbyButton = `<button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`
-    const newGameButton = `<button onclick="location.reload()">New Game</button>`
-    const extra = this.container.isSinglePlayer
-      ? `${newGameButton}${lobbyButton}`
-      : lobbyButton
+    const extra = gameOverButtons.forMode(this.container.isSinglePlayer)
 
     this.container.notifyLocal({
       type: "GameOver",

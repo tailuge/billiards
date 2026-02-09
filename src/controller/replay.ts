@@ -12,6 +12,7 @@ import { End } from "./end"
 import { ScoreEvent } from "../events/scoreevent"
 import { ChatEvent } from "../events/chatevent"
 import { share, shorten } from "../utils/shorten"
+import { gameOverButtons } from "../utils/gameover"
 
 export class Replay extends ControllerBase {
   delay: number
@@ -116,7 +117,7 @@ export class Replay extends ControllerBase {
         {
           type: "GameOver",
           title: "Replay Complete",
-          extra: `<button onclick="location.reload()">Replay</button> <button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
+          extra: gameOverButtons.replay + gameOverButtons.lobby,
         },
         0
       )

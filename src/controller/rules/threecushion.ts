@@ -18,6 +18,7 @@ import { StartAimEvent } from "../../events/startaimevent"
 import { End } from "../end"
 import { Session } from "../../network/client/session"
 import { MatchResult } from "../../network/client/matchresult"
+import { gameOverButtons } from "../../utils/gameover"
 
 export class ThreeCushion implements Rules {
   readonly container: Container
@@ -122,6 +123,7 @@ export class ThreeCushion implements Rules {
       title: isWinner ? "YOU WON" : "YOU LOST",
       icon: isWinner ? "🏆" : "🥪",
       extraClass: isWinner ? "is-winner" : "is-loser",
+      extra: gameOverButtons.forMode(this.container.isSinglePlayer),
       duration: 0,
     })
 
