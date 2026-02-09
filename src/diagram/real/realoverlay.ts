@@ -8,20 +8,20 @@ import { AimInputs } from "./aiminputs"
 
 export class RealOverlay {
   private readonly drawer: RealDraw
-  private aimInputs: AimInputs
-  fileInput: HTMLInputElement = document.getElementById(
+  private readonly aimInputs: AimInputs
+  readonly fileInput: HTMLInputElement = document.getElementById(
     "fileInput"
   )! as HTMLInputElement
-  shotIndexDisplay: HTMLSpanElement = document.getElementById(
+  readonly shotIndexDisplay: HTMLSpanElement = document.getElementById(
     "shotIndexDisplay"
   )! as HTMLSpanElement
-  shotSelector: HTMLSelectElement = document.getElementById(
+  readonly shotSelector: HTMLSelectElement = document.getElementById(
     "shotSelector"
   )! as HTMLSelectElement
-  replayButton: HTMLButtonElement = document.getElementById(
+  readonly replayButton: HTMLButtonElement = document.getElementById(
     "replay"
   )! as HTMLButtonElement
-  myIframe = document.getElementById("myIframe")
+  readonly myIframe = document.getElementById("myIframe")
 
   allShots: any[] = []
   currentShotIndex = 0
@@ -31,7 +31,7 @@ export class RealOverlay {
   animationStartTime = 0
   realPosition: RealPosition | null = null
   elapsedTime = 0
-  container: Container
+  readonly container: Container
 
   constructor(canvas: HTMLCanvasElement, container: any) {
     this.drawer = new RealDraw(canvas)

@@ -6,7 +6,7 @@ import { MatchResult } from "../network/client/matchresult"
 import { ReplayEncoder } from "../utils/replay-encoder"
 
 export class End extends Controller {
-  private result?: MatchResult | undefined
+  private readonly result?: MatchResult | undefined
 
   constructor(container: Container, result?: MatchResult | undefined) {
     super(container)

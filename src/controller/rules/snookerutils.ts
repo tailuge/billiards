@@ -49,18 +49,16 @@ export class SnookerUtils {
     const id = firstCollision.ballB!.id
     if (targetIsRed) {
       return id >= 7
+    } else if (previousPotRed) {
+      return id >= 1 && id <= 6
     } else {
-      if (previousPotRed) {
-        return id >= 1 && id <= 6
-      } else {
-        const colours = SnookerUtils.coloursOnTable(table).sort(
-          (a, b) => a.id - b.id
-        )
-        if (colours.length === 0) {
-          return false
-        }
-        return id === colours[0].id
+      const colours = SnookerUtils.coloursOnTable(table).sort(
+        (a, b) => a.id - b.id
+      )
+      if (colours.length === 0) {
+        return false
       }
+      return id === colours[0].id
     }
   }
 
@@ -100,10 +98,8 @@ export class SnookerUtils {
         const colourName = SnookerUtils.colourName(firstBallId)
         return `Hit ${colourName} instead of red`
       }
-    } else {
-      if (firstBallId >= 7) {
-        return "Hit red instead of colour"
-      }
+    } else if (firstBallId >= 7) {
+      return "Hit red instead of colour"
     }
 
     const pottedColours = Outcome.pots(outcome).filter(
