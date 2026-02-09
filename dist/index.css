@@ -253,7 +253,7 @@ canvas {
 }
 
 .ballContainer {
-  height: 70%;
+  height: 96%;
   margin: auto;
   margin-left: 10px;
   margin-right: 10px;
@@ -307,7 +307,7 @@ canvas {
 
 .powerSlider {
   width: 20px;
-  height: 70%;
+  height: 96%;
   margin: auto;
   margin-right: 10px;
 }
@@ -318,7 +318,7 @@ input[type="range"].powerSlider {
 }
 
 .hitButton {
-  height: 70%;
+  height: 96%;
   margin: auto;
   margin-left: 5px;
   aspect-ratio: 0.4;
