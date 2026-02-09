@@ -20,7 +20,7 @@ describe("View", () => {
   })
   it("mobile device scale to width", (done) => {
     const distance = CameraTop.viewPoint(0.4, fov)
-    expect(distance.z).to.be.approximately(7.0, 1)
+    expect(distance.z).to.be.approximately(7, 1)
     done()
   })
 })

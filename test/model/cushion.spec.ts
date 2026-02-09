@@ -14,11 +14,11 @@ const t = 0.1
 const jestConsole = console
 
 beforeEach(() => {
-  global.console = require("console")
+  globalThis.console = require("console")
 })
 
 afterEach(() => {
-  global.console = jestConsole
+  globalThis.console = jestConsole
 })
 
 describe("Cushion", () => {
