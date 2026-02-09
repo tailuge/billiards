@@ -1,5 +1,7 @@
 import { Ball, State } from "../model/ball"
+import { SnookerConfig } from "./snookerconfig"
 import { TableGeometry } from "../view/tablegeometry"
+import { PocketGeometry } from "../view/pocketgeometry"
 import { Vector3 } from "three"
 import { roundVec, vec } from "./utils"
 import { R } from "../model/physics/constants"
@@ -185,10 +187,17 @@ export class Rack {
     balls.push(new Ball(Rack.jitter(colours[4]), 0xffaacc))
     balls.push(new Ball(Rack.jitter(colours[5]), 0x010101))
 
-    // change to 15 red balls
+    const redsToPlay = Math.min(SnookerConfig.reds, 15)
     const triangle = Rack.trianglePositions().slice(0, 15)
-    triangle.forEach((p) => {
-      balls.push(new Ball(Rack.jitter(p.add(Rack.down)), 0xee0000))
+    const pocketPos = PocketGeometry.pockets.pocketS.pocket.pos
+    triangle.forEach((p, i) => {
+      const ball = new Ball(Rack.jitter(p.add(Rack.down)), 0xee0000)
+      if (i >= redsToPlay) {
+        ball.pos.copy(pocketPos)
+        ball.pos.setZ(-8.5 * R)
+        ball.state = State.InPocket
+      }
+      balls.push(ball)
     })
     return balls
   }

@@ -10,6 +10,7 @@ import {
 } from "../model/physics/physics"
 import JSONCrush from "jsoncrush"
 import { Assets } from "../view/assets"
+import { SnookerConfig } from "../utils/snookerconfig"
 import { Session } from "../network/client/session"
 import { MessageRelay } from "../network/client/messagerelay"
 import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
@@ -53,6 +54,7 @@ export class BrowserContainer {
     this.cushionModel = this.cushion(params.get("cushionModel"))
     this.spectator = params.has("spectator")
     this.first = params.has("first")
+    SnookerConfig.reds = parseInt(params.get("reds") ?? "15") || 15
     Session.init(this.clientId, this.playername, this.tableId, this.spectator)
   }
 

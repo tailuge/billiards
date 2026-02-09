@@ -46,13 +46,16 @@ describe("NchanMessageRelay", () => {
 
       relay.publish("chan1", "hello")
 
-      expect(mockFetch).toHaveBeenCalledWith("https://test.com/publish/table/chan1", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: "hello",
-      })
+      expect(mockFetch).toHaveBeenCalledWith(
+        "https://test.com/publish/table/chan1",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: "hello",
+        }
+      )
     })
 
     it("should log an error on publication failure", async () => {
@@ -84,7 +87,9 @@ describe("NchanMessageRelay", () => {
       const callback = jest.fn()
       relay.subscribe("chan1", callback)
 
-      expect(mockWS).toHaveBeenCalledWith("wss://test.com/subscribe/table/chan1")
+      expect(mockWS).toHaveBeenCalledWith(
+        "wss://test.com/subscribe/table/chan1"
+      )
     })
   })
 })
