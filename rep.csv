@@ -1,0 +1,215 @@
+filename,line_number,problem_description
+dist/diagrams/gemini.html,L279,Remove this commented out code.
+dist/embed.html,L15,Meta viewport disables zoom via user-scalable=no.
+dist/index.html,L15,Meta viewport disables zoom via user-scalable=no.
+dist/multi.html,L16,Meta viewport disables zoom via user-scalable=no.
+src/container/browsercontainer.ts,L35,Use `new Array()` instead of `Array()`.
+src/container/browsercontainer.ts,L126,Use `new Array()` instead of `Array()`.
+src/container/browsercontainer.ts,L146,Use `new Array()` instead of `Array()`.
+src/container/container.ts,L23,'../view/notification' imported multiple times.
+src/container/container.ts,L28,'../view/notification' imported multiple times.
+src/container/container.ts,L66,'../view/notification' imported multiple times.
+src/controller/controller.ts,L17,Use `export…from` to re-export `BeginEvent`.
+src/controller/controller.ts,L17,Use `export…from` to re-export `BeginEvent`.
+src/controller/controller.ts,L17,Use `export…from` to re-export `BeginEvent`.
+src/controller/controller.ts,L17,Use `export…from` to re-export `BeginEvent`.
+src/controller/controller.ts,L17,Use `export…from` to re-export `BeginEvent`.
+src/controller/controller.ts,L17,Use `export…from` to re-export `BeginEvent`.
+src/controller/controller.ts,L69,Use `export…from` to re-export `BeginEvent`.
+src/controller/controller.ts,L72,Use `export…from` to re-export `BeginEvent`.
+src/controller/end.ts,L9,Member 'result' is never reassigned; mark it as `readonly`.
+src/controller/rules/nineball.ts,L151,Unexpected negated condition.
+src/controller/rules/nineball.ts,L285,Unexpected negated condition.
+src/controller/rules/snooker.ts,L107,Prefer `.some(…)` over non-zero length check from `.filter(…)`.
+src/controller/rules/snooker.ts,L161,Prefer `.some(…)` over non-zero length check from `.filter(…)`.
+src/controller/rules/snookerutils.ts,L53,'If' statement should not be the only statement in 'else' block
+src/controller/rules/snookerutils.ts,L104,'If' statement should not be the only statement in 'else' block
+src/controller/watchshot.ts,L38,This assertion is unnecessary since it does not change the type of the expression.
+src/diagram/diagramcontainer.ts,L21,Use `new Array()` instead of `Array()`.
+src/diagram/diagramcontainer.ts,L79,Use `new Array()` instead of `Array()`.
+src/diagram/impulseplot.ts,L26,Prefer `globalThis` over `window`.
+src/diagram/real/aiminputs.ts,L2,Member 'aimBall' is never reassigned; mark it as `readonly`.
+src/diagram/real/aiminputs.ts,L3,Member 'aimBall' is never reassigned; mark it as `readonly`.
+src/diagram/real/aiminputs.ts,L4,Member 'aimBall' is never reassigned; mark it as `readonly`.
+src/diagram/real/aiminputs.ts,L5,Member 'aimBall' is never reassigned; mark it as `readonly`.
+src/diagram/real/aiminputs.ts,L6,Member 'aimBall' is never reassigned; mark it as `readonly`.
+src/diagram/real/aiminputs.ts,L9,Member 'aimBall' is never reassigned; mark it as `readonly`.
+src/diagram/real/aiminputs.ts,L31,Member 'aimBall' is never reassigned; mark it as `readonly`.
+src/diagram/real/aiminputs.ts,L35,Member 'aimBall' is never reassigned; mark it as `readonly`.
+src/diagram/real/aiminputs.ts,L47,Member 'aimBall' is never reassigned; mark it as `readonly`.
+src/diagram/real/realoverlay.ts,L11,Member 'aimInputs' is never reassigned; mark it as `readonly`.
+src/diagram/real/realoverlay.ts,L71,Member 'aimInputs' is never reassigned; mark it as `readonly`.
+src/diagram/real/realoverlay.ts,L76,Member 'aimInputs' is never reassigned; mark it as `readonly`.
+src/diagram/real/realoverlay.ts,L157,Member 'aimInputs' is never reassigned; mark it as `readonly`.
+src/diagram/real/realoverlay.ts,L158,Member 'aimInputs' is never reassigned; mark it as `readonly`.
+src/diagram/real/realposition.ts,L117,Do not call `Array#push()` multiple times.
+src/diagram/reboundplot.ts,L14,Prefer `Math.hypot(…)` over `Math.sqrt(…)`.
+src/diagram/reboundplot.ts,L18,Prefer `Math.hypot(…)` over `Math.sqrt(…)`.
+src/diagram/reboundplot.ts,L18,Prefer `Math.hypot(…)` over `Math.sqrt(…)`.
+src/diagram/reboundplot.ts,L57,Prefer `Math.hypot(…)` over `Math.sqrt(…)`.
+src/diagram/reboundplot.ts,L68,Prefer `Math.hypot(…)` over `Math.sqrt(…)`.
+src/diagram/rolldiagram.ts,L8,Don't use a zero fraction in the number.
+src/diagram/rolldiagram.ts,L19,Don't use a zero fraction in the number.
+src/diagram/throwplot.ts,L58,Prefer `globalThis` over `window`.
+src/diagram/throwplot.ts,L95,Prefer `globalThis` over `window`.
+src/diagrams.ts,L121,Don't use a zero fraction in the number.
+src/diagrams.ts,L122,Don't use a zero fraction in the number.
+src/diagrams.ts,L122,Don't use a zero fraction in the number.
+src/diagrams.ts,L137,Don't use a zero fraction in the number.
+src/diagrams.ts,L154,Don't use a zero fraction in the number.
+src/diagrams.ts,L186,Don't use a zero fraction in the number.
+src/events/eventutil.ts,L51,Use `new Error()` instead of `Error()`.
+src/events/keyboard.ts,L45,"Prefer using nullish coalescing operator (`??=`) instead of an assignment expression, as it is simpler to read."
+src/events/keyboard.ts,L69,"Prefer using nullish coalescing operator (`??=`) instead of an assignment expression, as it is simpler to read."
+src/events/keyboard.ts,L70,"Prefer using nullish coalescing operator (`??=`) instead of an assignment expression, as it is simpler to read."
+src/model/ball.ts,L29,Make this public static property readonly.
+src/model/physics/constants.ts,L12,"Exporting mutable 'let' binding, use 'const' instead."
+src/model/physics/constants.ts,L15,"Exporting mutable 'let' binding, use 'const' instead."
+src/model/physics/constants.ts,L18,"Exporting mutable 'let' binding, use 'const' instead."
+src/model/table.ts,L172,Prefer `Array#flat()` over `Array#reduce()` to flatten an array.
+src/network/client/nchanmessagerelay.ts,L62,Prefer `Number.parseInt` over `parseInt`.
+src/network/client/scorereporter.ts,L5,Member 'baseURL' is never reassigned; mark it as `readonly`.
+src/utils/rack.ts,L12,Don't use a zero fraction in the number.
+src/utils/rack.ts,L68,Don't use a zero fraction in the number.
+src/utils/rack.ts,L167,Don't use a zero fraction in the number.
+src/utils/rack.ts,L168,Don't use a zero fraction in the number.
+src/utils/rack.ts,L182,Don't use a zero fraction in the number.
+src/utils/rack.ts,L183,Don't use a zero fraction in the number.
+src/utils/rack.ts,L184,Don't use a zero fraction in the number.
+src/utils/rack.ts,L185,Don't use a zero fraction in the number.
+src/utils/rack.ts,L186,Don't use a zero fraction in the number.
+src/utils/rack.ts,L201,Don't use a zero fraction in the number.
+src/utils/rack.ts,L202,Don't use a zero fraction in the number.
+src/utils/rack.ts,L203,Don't use a zero fraction in the number.
+src/utils/rack.ts,L204,Don't use a zero fraction in the number.
+src/utils/rack.ts,L205,Don't use a zero fraction in the number.
+src/utils/replay-encoder.ts,L6,Prefer `String#replaceAll()` over `String#replace()`.
+src/utils/replay-encoder.ts,L7,Prefer `String#replaceAll()` over `String#replace()`.
+src/utils/replay-encoder.ts,L8,Prefer `String#replaceAll()` over `String#replace()`.
+src/utils/replay-encoder.ts,L9,Prefer `String#replaceAll()` over `String#replace()`.
+src/utils/usage.ts,L3,Prefer `globalThis` over `window`.
+src/utils/usage.ts,L4,Prefer `globalThis` over `window`.
+src/utils/utils.ts,L56,Arguments 'y' and 'x' have the same names but not the same order as the function parameters.
+src/view/aiminputs.ts,L43,Prefer `globalThis` over `window`.
+src/view/ballmaterialfactory.ts,L6,Member 'materialCache' is never reassigned; mark it as `readonly`.
+src/view/ballmaterialfactory.ts,L53,Member 'materialCache' is never reassigned; mark it as `readonly`.
+src/view/ballmesh.ts,L98,Unexpected negated condition.
+src/view/ballmesh.ts,L166,Unexpected negated condition.
+src/view/balltexturefactory.ts,L4,Member 'textureCache' is never reassigned; mark it as `readonly`.
+src/view/cameratop.ts,L9,Make this public static property readonly.
+src/view/cuemesh.ts,L13,Make this public static property readonly.
+src/view/cuemesh.ts,L102,Make this public static property readonly.
+src/view/cuemesh.ts,L102,Make this public static property readonly.
+src/view/cuemesh.ts,L102,Make this public static property readonly.
+src/view/grid.ts,L23,Do not call `Array#push()` multiple times.
+src/view/grid.ts,L31,Do not call `Array#push()` multiple times.
+src/view/lobbyindicator.ts,L10,Refactor this asynchronous operation outside of the constructor.
+src/view/notification.ts,L98,Prefer `globalThis` over `window`.
+src/view/notification.ts,L102,Prefer `globalThis` over `window`.
+src/view/notification.ts,L115,Prefer `globalThis` over `window`.
+src/view/pocketgeometry.ts,L11,Make this public static property readonly.
+src/view/pocketgeometry.ts,L12,Make this public static property readonly.
+src/view/pocketgeometry.ts,L13,Make this public static property readonly.
+src/view/pocketgeometry.ts,L14,Make this public static property readonly.
+src/view/pocketgeometry.ts,L15,Make this public static property readonly.
+src/view/pocketgeometry.ts,L16,Make this public static property readonly.
+src/view/pocketgeometry.ts,L17,Make this public static property readonly.
+src/view/pocketgeometry.ts,L18,Make this public static property readonly.
+src/view/pocketgeometry.ts,L20,Make this public static property readonly.
+src/view/pocketgeometry.ts,L21,Make this public static property readonly.
+src/view/pocketgeometry.ts,L22,Make this public static property readonly.
+src/view/sliders.ts,L65,Prefer `Number.parseFloat` over `parseFloat`.
+src/view/tablegeometry.ts,L4,Make this public static property readonly.
+src/view/tablegeometry.ts,L5,Make this public static property readonly.
+src/view/tablegeometry.ts,L6,Make this public static property readonly.
+src/view/tablegeometry.ts,L7,Make this public static property readonly.
+src/view/tablegeometry.ts,L8,Make this public static property readonly.
+src/view/tablemesh.ts,L17,Make this public static property readonly.
+src/view/tablemesh.ts,L24,Make this public static property readonly.
+test/controller/controller.spec.ts,L210,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L224,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L240,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L323,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L324,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L325,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L326,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L327,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L328,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L329,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L330,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L331,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L332,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L333,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L334,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L335,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L336,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L337,Do not call `Array#push()` multiple times.
+test/controller/controller.spec.ts,L338,Do not call `Array#push()` multiple times.
+test/controller/replay.spec.ts,L22,Prefer `globalThis` over `global`.
+test/controller/replay.spec.ts,L108,Prefer `globalThis` over `global`.
+test/diagram/realposition.spec.ts,L21,Don't use a zero fraction in the number.
+test/gen/diamond.spec.ts,L7,Prefer `globalThis` over `global`.
+test/gen/diamond.spec.ts,L7,Prefer `globalThis` over `global`.
+test/gen/diamond.spec.ts,L11,Prefer `globalThis` over `global`.
+test/model/cushion.spec.ts,L17,Prefer `globalThis` over `global`.
+test/model/cushion.spec.ts,L17,Prefer `globalThis` over `global`.
+test/model/cushion.spec.ts,L21,Prefer `globalThis` over `global`.
+test/model/cushion.spec.ts,L75,Prefer `globalThis` over `global`.
+test/model/cushion.spec.ts,L186,Prefer `globalThis` over `global`.
+test/model/physics.spec.ts,L43,Don't use a zero fraction in the number.
+test/model/table.spec.ts,L62,Don't use a zero fraction in the number.
+test/model/table.spec.ts,L63,Don't use a zero fraction in the number.
+test/network/client/scorereporter.spec.ts,L11,Prefer `globalThis` over `global`.
+test/rules/fourteenone.spec.ts,L20,Prefer `globalThis` over `global`.
+test/rules/fourteenone.spec.ts,L20,Prefer `globalThis` over `global`.
+test/rules/fourteenone.spec.ts,L24,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L27,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L27,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L31,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L203,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L204,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L216,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L217,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L227,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L239,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L249,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L261,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L262,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L263,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L276,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L277,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L290,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L291,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L292,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L303,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L313,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L314,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L339,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L340,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L352,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L353,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L365,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L393,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L408,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L409,Prefer `globalThis` over `global`.
+test/rules/snooker.spec.ts,L410,Prefer `globalThis` over `global`.
+test/rules/threecushion.spec.ts,L46,Do not call `Array#push()` multiple times.
+test/rules/threecushion.spec.ts,L47,Do not call `Array#push()` multiple times.
+test/rules/threecushion.spec.ts,L48,Do not call `Array#push()` multiple times.
+test/rules/threecushion.spec.ts,L49,Do not call `Array#push()` multiple times.
+test/rules/threecushion.spec.ts,L93,Do not call `Array#push()` multiple times.
+test/rules/threecushion.spec.ts,L94,Do not call `Array#push()` multiple times.
+test/rules/threecushion.spec.ts,L95,Do not call `Array#push()` multiple times.
+test/rules/threecushion.spec.ts,L96,Do not call `Array#push()` multiple times.
+test/rules/threecushion.spec.ts,L104,Do not call `Array#push()` multiple times.
+test/rules/threecushion.spec.ts,L105,Do not call `Array#push()` multiple times.
+test/server/messagerelay.spec.ts,L10,Prefer `globalThis` over `global`.
+test/server/messagerelay.spec.ts,L10,Prefer `globalThis` over `global`.
+test/server/messagerelay.spec.ts,L14,Prefer `globalThis` over `global`.
+test/server/session.spec.ts,L7,Prefer `globalThis` over `global`.
+test/server/session.spec.ts,L7,Prefer `globalThis` over `global`.
+test/server/session.spec.ts,L11,Prefer `globalThis` over `global`.
+test/view/cameratop.spec.ts,L23,Don't use a zero fraction in the number.
+test/view/dom.ts,L1,Prefer `node:fs` over `fs`.
+test/view/dom.ts,L2,Prefer `node:fs` over `fs`.
+test/view/dom.ts,L1,Prefer `node:fs` over `fs`.
