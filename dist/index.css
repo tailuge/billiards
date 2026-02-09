@@ -29,7 +29,7 @@ p {
   background-color: #2e9097;
 }
 
-.flex-container>div {
+.flex-container > div {
   background-color: #1c802d;
   border: 1px;
   color: grey;
@@ -269,11 +269,13 @@ canvas {
   height: 100%;
   margin: auto;
   aspect-ratio: 1;
-  background: radial-gradient(circle at 65% 15%,
-      rgb(255, 255, 255) 2px,
-      rgb(255, 254, 254) 5%,
-      rgb(63, 63, 63) 60%,
-      rgb(24, 26, 26) 100%);
+  background: radial-gradient(
+    circle at 65% 15%,
+    rgb(255, 255, 255) 2px,
+    rgb(255, 254, 254) 5%,
+    rgb(63, 63, 63) 60%,
+    rgb(24, 26, 26) 100%
+  );
   border-radius: 50%;
   position: absolute;
   top: 0;

@@ -7,6 +7,8 @@ import { GameEvent } from "../../src/events/gameevent"
 import { Outcome } from "../../src/model/outcome"
 import { RuleFactory } from "../../src/controller/rules/rulefactory"
 import { WatchAim } from "../../src/controller/watchaim"
+import { ThreeCushionConfig } from "../../src/utils/threecushionconfig"
+import { End } from "../../src/controller/end"
 import { initDom } from "../view/dom"
 import { Assets } from "../../src/view/assets"
 import { TableGeometry } from "../../src/view/tablegeometry"
@@ -100,12 +102,42 @@ describe("ThreeCushion", () => {
 
   it("Invalid threecushion outcome", (done) => {
     const outcomes: Outcome[] = []
-    outcomes.push(Outcome.collision(cueBall, oppononetBall, 1))
+    outcomes.push(Outcome.collision(oppononetBall, cueBall, 1))
     outcomes.push(Outcome.cushion(cueBall, 1))
     outcomes.push(Outcome.cushion(cueBall, 1))
     expect(Outcome.isThreeCushionPoint(cueBall, outcomes)).to.be.false
     outcomes.push(Outcome.collision(cueBall, redBall, 1))
     expect(Outcome.isThreeCushionPoint(cueBall, outcomes)).to.be.false
+    done()
+  })
+
+  it("isEndOfGame returns false before raceTo reached", (done) => {
+    const rules = RuleFactory.create(rule, container) as any
+    container.scores = [3, 2]
+    expect(rules.isEndOfGame([])).to.be.false
+    done()
+  })
+
+  it("isEndOfGame returns true when raceTo reached", (done) => {
+    const rules = RuleFactory.create(rule, container) as any
+    container.scores = [ThreeCushionConfig.raceTo, 2]
+    expect(rules.isEndOfGame([])).to.be.true
+    done()
+  })
+
+  it("update returns End when raceTo reached", (done) => {
+    container.controller = new PlayShot(container)
+    container.scores = [ThreeCushionConfig.raceTo - 1, 0]
+    container.table.cueball.setStationary()
+    container.eventQueue.push(new StationaryEvent())
+    const balls = container.table.balls
+    container.table.outcome.push(Outcome.collision(balls[0], balls[1], 1))
+    container.table.outcome.push(Outcome.cushion(balls[0], 1))
+    container.table.outcome.push(Outcome.cushion(balls[0], 1))
+    container.table.outcome.push(Outcome.cushion(balls[0], 1))
+    container.table.outcome.push(Outcome.collision(balls[0], balls[2], 1))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
     done()
   })
 })

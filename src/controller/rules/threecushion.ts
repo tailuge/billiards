@@ -14,6 +14,7 @@ import { TableGeometry } from "../../view/tablegeometry"
 import { Rules } from "./rules"
 import { zero } from "../../utils/utils"
 import { Respot } from "../../utils/respot"
+import { ThreeCushionConfig } from "../../utils/threecushionconfig"
 import { StartAimEvent } from "../../events/startaimevent"
 import { End } from "../end"
 import { Session } from "../../network/client/session"
@@ -85,6 +86,9 @@ export class ThreeCushion implements Rules {
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
       this.currentBreak++
       this.container.scores[Session.playerIndex()]++
+      if (this.isEndOfGame(outcomes)) {
+        return this.handleGameEnd(true)
+      }
       return new Aim(this.container)
     }
 
@@ -113,7 +117,8 @@ export class ThreeCushion implements Rules {
   }
 
   isEndOfGame(_: Outcome[]) {
-    return false
+    const [s1, s2] = this.container.scores
+    return s1 >= ThreeCushionConfig.raceTo || s2 >= ThreeCushionConfig.raceTo
   }
 
   handleGameEnd(isWinner: boolean): Controller {
