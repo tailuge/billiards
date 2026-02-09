@@ -40,7 +40,7 @@ describe("Physics", () => {
   })
 
   it("bounceHan with right side makes ball move right on bounce and reduces spin", (done) => {
-    const v = new Vector3(1.0, 0, 0)
+    const v = new Vector3(1, 0, 0)
     const w = new Vector3(0, 0, -5)
     const delta = bounceHan(v, w)
     expect(delta.v.y).to.be.greaterThan(0)

@@ -4,11 +4,11 @@ import JSONCrush from "jsoncrush"
 const jestConsole = console
 
 beforeEach(() => {
-  global.console = require("console")
+  globalThis.console = require("console")
 })
 
 afterEach(() => {
-  global.console = jestConsole
+  globalThis.console = jestConsole
 })
 
 describe("jsonCrush", () => {

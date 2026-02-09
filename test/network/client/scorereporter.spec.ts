@@ -8,7 +8,7 @@ describe("ScoreReporter", () => {
   beforeEach(() => {
     mockFetch = jest.fn()
     // Mock the global fetch function
-    global.fetch = mockFetch
+    globalThis.fetch = mockFetch
     jest.spyOn(console, "error").mockImplementation(() => {}) // Suppress console.error during tests
   })
 

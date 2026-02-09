@@ -59,8 +59,8 @@ describe("Table", () => {
     const a = new Ball(zero)
     a.vel.x = 100 * R
     a.state = State.Sliding
-    const b = new Ball(new Vector3(2.0 * R, 0, 0))
-    const c = new Ball(new Vector3(4.0 * R, 0, 0))
+    const b = new Ball(new Vector3(2 * R, 0, 0))
+    const c = new Ball(new Vector3(4 * R, 0, 0))
     const table = new Table([a, b, c])
     expect(table.allStationary()).to.be.false
     expect(table.prepareAdvanceAll(t)).to.be.false

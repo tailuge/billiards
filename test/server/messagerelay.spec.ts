@@ -7,11 +7,11 @@ import { EventUtil } from "../../src/events/eventutil"
 const jestConsole = console
 
 beforeEach(() => {
-  global.console = require("console")
+  globalThis.console = require("console")
 })
 
 afterEach(() => {
-  global.console = jestConsole
+  globalThis.console = jestConsole
 })
 
 describe("MessageRelay", () => {

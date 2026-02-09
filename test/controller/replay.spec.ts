@@ -19,7 +19,7 @@ import { Assets } from "../../src/view/assets"
 initDom()
 
 jest.useFakeTimers()
-jest.spyOn(global, "setTimeout")
+jest.spyOn(globalThis, "setTimeout")
 
 describe("Controller Replay", () => {
   let container: Container

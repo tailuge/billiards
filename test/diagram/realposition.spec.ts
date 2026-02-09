@@ -18,7 +18,7 @@ const real = new RealPosition(example)
 
 describe("RealPosition", () => {
   it("Use initial position up to move", (done) => {
-    const result0 = real.getPositionsAtTime(545599, 0.0)
+    const result0 = real.getPositionsAtTime(545599, 0)
     const result1 = real.getPositionsAtTime(545599, 0.039)
     expect(result1).to.deep.equal(result0)
     done()
