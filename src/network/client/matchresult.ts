@@ -3,6 +3,6 @@ export interface MatchResult {
   loser?: string
   winnerScore: number
   loserScore?: number
-  gameType: string
+  ruleType: string
   replayData?: string
 }

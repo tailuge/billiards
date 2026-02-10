@@ -184,7 +184,7 @@ export class NineBall implements Rules {
         ? session?.playername || "Anon"
         : session?.opponentName || "Opponent",
       winnerScore: 1,
-      gameType: this.rulename,
+      ruleType: this.rulename,
     }
     if (session?.opponentName) {
       result.loser = isWinner

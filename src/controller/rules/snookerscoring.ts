@@ -115,7 +115,7 @@ export class SnookerScoring {
     const result: MatchResult = {
       winner: winnerName,
       winnerScore: container.scores[winnerIndex],
-      gameType: rulename,
+      ruleType: rulename,
     }
 
     if (session?.opponentName) {

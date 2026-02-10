@@ -155,7 +155,7 @@ export class ThreeCushion implements Rules {
         ? session?.playername || "Anon"
         : session?.opponentName || "Opponent",
       winnerScore,
-      gameType: this.rulename,
+      ruleType: this.rulename,
     }
     return new End(this.container, isWinner ? result : undefined)
   }

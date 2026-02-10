@@ -21,7 +21,7 @@ describe("ScoreReporter", () => {
     loser: "player2",
     winnerScore: 9,
     loserScore: 7,
-    gameType: "nineball",
+    ruleType: "nineball",
   }
 
   it("should use the default base URL if none is provided", async () => {
