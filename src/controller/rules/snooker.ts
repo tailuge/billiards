@@ -1,130 +1,129 @@
-import { Vector3 } from "three";
-import { WatchEvent } from "../../events/watchevent";
-import { Outcome } from "../../model/outcome";
-import { Rack } from "../../utils/rack";
-import { Controller } from "../controller";
-import { Rules } from "./rules";
-import { Respot } from "../../utils/respot";
-import { Aim } from "../aim";
-import { WatchAim } from "../watchaim";
-import { Container } from "../../container/container";
-import { Ball } from "../../model/ball";
-import { Table } from "../../model/table";
-import { TableGeometry } from "../../view/tablegeometry";
-import { PlaceBall } from "../placeball";
-import { PlaceBallEvent } from "../../events/placeballevent";
-import { zero, isFirstShot } from "../../utils/utils";
-import { SnookerUtils, ShotInfo } from "./snookerutils";
-import { SnookerScoring } from "./snookerscoring";
-import { StartAimEvent } from "../../events/startaimevent";
-import { Session } from "../../network/client/session";
-import { RerackEvent } from "../../events/rerackevent";
+import { Vector3 } from "three"
+import { WatchEvent } from "../../events/watchevent"
+import { Outcome } from "../../model/outcome"
+import { Rack } from "../../utils/rack"
+import { Controller } from "../controller"
+import { Rules } from "./rules"
+import { Respot } from "../../utils/respot"
+import { Aim } from "../aim"
+import { WatchAim } from "../watchaim"
+import { Container } from "../../container/container"
+import { Ball } from "../../model/ball"
+import { Table } from "../../model/table"
+import { TableGeometry } from "../../view/tablegeometry"
+import { PlaceBall } from "../placeball"
+import { PlaceBallEvent } from "../../events/placeballevent"
+import { zero, isFirstShot } from "../../utils/utils"
+import { SnookerUtils, ShotInfo } from "./snookerutils"
+import { SnookerScoring } from "./snookerscoring"
+import { StartAimEvent } from "../../events/startaimevent"
+import { Session } from "../../network/client/session"
+import { RerackEvent } from "../../events/rerackevent"
 
 export class Snooker implements Rules {
-  cueball: Ball;
-  previousPotRed = false;
-  targetIsRed = true;
-  currentBreak = 0;
-  previousBreak = 0;
-  foulPoints = 0;
-  rulename = "snooker";
+  cueball: Ball
+  previousPotRed = false
+  targetIsRed = true
+  currentBreak = 0
+  previousBreak = 0
+  foulPoints = 0
+  rulename = "snooker"
 
-  static readonly tablemodel = "models/d-snooker.min.gltf";
+  static readonly tablemodel = "models/d-snooker.min.gltf"
 
-  readonly container: Container;
+  readonly container: Container
 
   constructor(container: Container) {
-    this.container = container;
+    this.container = container
   }
 
   snookerrule(outcome: Outcome[]): Controller {
-    this.foulPoints = 0;
+    this.foulPoints = 0
     const info = SnookerUtils.shotInfo(
       this.container.table,
       outcome,
       this.targetIsRed,
-      this.previousPotRed,
-    );
+      this.previousPotRed
+    )
 
     if (info.pots === 0) {
       this.targetIsRed =
-        SnookerUtils.redsOnTable(this.container.table).length > 0;
+        SnookerUtils.redsOnTable(this.container.table).length > 0
       if (!info.legalFirstCollision) {
-        return this.foul(outcome, info);
+        return this.foul(outcome, info)
       }
-      return this.switchPlayer();
+      return this.switchPlayer()
     }
 
     if (this.targetIsRed) {
-      return this.targetRedRule(outcome, info);
+      return this.targetRedRule(outcome, info)
     }
 
-    return this.targetColourRule(outcome, info);
+    return this.targetColourRule(outcome, info)
   }
 
   targetRedRule(outcome: Outcome[], info: ShotInfo): Controller {
     if (info.legalFirstCollision && Outcome.onlyRedsPotted(outcome)) {
-      this.currentBreak += info.pots;
-      this.container.scores[Session.playerIndex()] += info.pots;
-      this.targetIsRed = false;
-      this.previousPotRed = true;
-      return this.continueBreak();
+      this.currentBreak += info.pots
+      this.container.scores[Session.playerIndex()] += info.pots
+      this.targetIsRed = false
+      this.previousPotRed = true
+      return this.continueBreak()
     }
 
-    return this.foul(outcome, info);
+    return this.foul(outcome, info)
   }
 
   targetColourRule(outcome: Outcome[], info: ShotInfo): Controller {
     if (info.whitePotted) {
-      return this.foul(outcome, info);
+      return this.foul(outcome, info)
     }
 
     if (info.pots > 1) {
-      this.respot(outcome);
-      return this.foul(outcome, info);
+      this.respot(outcome)
+      return this.foul(outcome, info)
     }
 
     if (Outcome.pots(outcome)[0].id > 6) {
-      return this.foul(outcome, info);
+      return this.foul(outcome, info)
     }
 
-    const id = Outcome.pots(outcome)[0].id;
+    const id = Outcome.pots(outcome)[0].id
     if (id !== info.firstCollision.ballB.id) {
-      return this.foul(outcome, info);
+      return this.foul(outcome, info)
     }
 
     if (this.previousPotRed) {
-      this.respot(outcome);
-      this.currentBreak += id + 1;
-      this.container.scores[Session.playerIndex()] += id + 1;
-      this.previousPotRed = false;
+      this.respot(outcome)
+      this.currentBreak += id + 1
+      this.container.scores[Session.playerIndex()] += id + 1
+      this.previousPotRed = false
       this.targetIsRed =
-        SnookerUtils.redsOnTable(this.container.table).length > 0;
-      return this.continueBreak();
+        SnookerUtils.redsOnTable(this.container.table).length > 0
+      return this.continueBreak()
     }
 
     const lesserBallOnTable =
       SnookerUtils.coloursOnTable(this.container.table).filter(
-        (b: Ball) => b.id < id,
-      ).length > 0;
+        (b: Ball) => b.id < id
+      ).length > 0
 
     if (lesserBallOnTable) {
-      return this.foul(outcome, info);
+      return this.foul(outcome, info)
     }
 
-    this.currentBreak += id + 1;
-    this.container.scores[Session.playerIndex()] += id + 1;
-    this.previousPotRed = false;
-    this.targetIsRed =
-      SnookerUtils.redsOnTable(this.container.table).length > 0;
-    return this.continueBreak();
+    this.currentBreak += id + 1
+    this.container.scores[Session.playerIndex()] += id + 1
+    this.previousPotRed = false
+    this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
+    return this.continueBreak()
   }
 
   foul(outcome: Outcome[], info: ShotInfo): Controller {
-    const foulResult = SnookerUtils.calculateFoul(outcome, info);
-    this.foulPoints = foulResult.points;
-    const index = Session.playerIndex();
-    this.container.scores[1 - index] += this.foulPoints;
+    const foulResult = SnookerUtils.calculateFoul(outcome, info)
+    this.foulPoints = foulResult.points
+    const index = Session.playerIndex()
+    this.container.scores[1 - index] += this.foulPoints
     const notification = info.whitePotted
       ? ({
           type: "Foul",
@@ -136,150 +135,149 @@ export class Snooker implements Rules {
           type: "Foul",
           title: "FOUL",
           subtext: foulResult.reason || `Foul (${this.foulPoints} points)`,
-        } as const);
-    this.container.notify(notification);
-    this.respot(outcome);
+        } as const)
+    this.container.notify(notification)
+    this.respot(outcome)
     if (info.whitePotted) {
-      return this.whiteInHand();
+      return this.whiteInHand()
     }
-    return this.switchPlayer();
+    return this.switchPlayer()
   }
 
   tableGeometry() {
-    TableGeometry.hasPockets = true;
+    TableGeometry.hasPockets = true
   }
 
   table(): Table {
-    const table = new Table(this.rack());
-    this.cueball = table.cueball;
-    return table;
+    const table = new Table(this.rack())
+    this.cueball = table.cueball
+    return table
   }
 
   otherPlayersCueBall(): Ball {
-    return this.cueball;
+    return this.cueball
   }
 
   secondToPlay() {}
 
   isPartOfBreak(_: Outcome[]): boolean {
-    return this.currentBreak > 0;
+    return this.currentBreak > 0
   }
 
   isEndOfGame(_: Outcome[]): boolean {
-    return Outcome.isClearTable(this.container.table) && this.currentBreak > 0;
+    return Outcome.isClearTable(this.container.table) && this.currentBreak > 0
   }
 
   allowsPlaceBall(): boolean {
-    return true;
+    return true
   }
 
   asset(): string {
-    return Snooker.tablemodel;
+    return Snooker.tablemodel
   }
 
   startTurn() {
-    this.previousPotRed = false;
-    this.targetIsRed =
-      SnookerUtils.redsOnTable(this.container.table).length > 0;
-    this.previousBreak = this.currentBreak;
-    this.currentBreak = 0;
+    this.previousPotRed = false
+    this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
+    this.previousBreak = this.currentBreak
+    this.currentBreak = 0
   }
 
   getScores(): [number, number] {
-    return this.container.scores;
+    return this.container.scores
   }
 
   rack() {
-    return Rack.snooker();
+    return Rack.snooker()
   }
 
   nextCandidateBall() {
     if (isFirstShot(this.container.recorder)) {
-      return undefined;
+      return undefined
     }
-    const table = this.container.table;
-    const redsOnTable = SnookerUtils.redsOnTable(table);
-    const coloursOnTable = SnookerUtils.coloursOnTable(table);
+    const table = this.container.table
+    const redsOnTable = SnookerUtils.redsOnTable(table)
+    const coloursOnTable = SnookerUtils.coloursOnTable(table)
     if (this.previousPotRed) {
-      return Respot.closest(table.cueball, coloursOnTable);
+      return Respot.closest(table.cueball, coloursOnTable)
     }
     if (redsOnTable.length > 0) {
-      return Respot.closest(table.cueball, redsOnTable);
+      return Respot.closest(table.cueball, redsOnTable)
     }
 
     if (coloursOnTable.length > 0) {
-      return coloursOnTable[0];
+      return coloursOnTable[0]
     }
-    return undefined;
+    return undefined
   }
 
   placeBall(target?: Vector3): Vector3 {
     if (target) {
-      const centre = new Vector3(Rack.baulk, 0, 0);
-      const radius = Rack.sixth;
-      const distance = target.distanceTo(centre);
+      const centre = new Vector3(Rack.baulk, 0, 0)
+      const radius = Rack.sixth
+      const distance = target.distanceTo(centre)
       if (target.x >= Rack.baulk) {
-        target.x = Rack.baulk;
+        target.x = Rack.baulk
       }
       if (distance > radius) {
-        const direction = target.clone().sub(centre).normalize();
-        return centre.add(direction.multiplyScalar(radius));
+        const direction = target.clone().sub(centre).normalize()
+        return centre.add(direction.multiplyScalar(radius))
       } else {
-        return target;
+        return target
       }
     }
-    return new Vector3(Rack.baulk, -Rack.sixth / 2.6, 0);
+    return new Vector3(Rack.baulk, -Rack.sixth / 2.6, 0)
   }
 
   switchPlayer(): Controller {
-    const table = this.container.table;
-    this.container.sendEvent(new StartAimEvent(this.foulPoints));
+    const table = this.container.table
+    this.container.sendEvent(new StartAimEvent(this.foulPoints))
     if (this.container.isSinglePlayer) {
-      this.container.sendEvent(new WatchEvent(table.serialise()));
-      this.startTurn();
-      return new Aim(this.container);
+      this.container.sendEvent(new WatchEvent(table.serialise()))
+      this.startTurn()
+      return new Aim(this.container)
     }
-    this.startTurn();
-    return new WatchAim(this.container);
+    this.startTurn()
+    return new WatchAim(this.container)
   }
 
   continueBreak(): Controller {
-    const table = this.container.table;
-    this.container.sound.playSuccess(table.inPockets());
+    const table = this.container.table
+    this.container.sound.playSuccess(table.inPockets())
     if (Outcome.isClearTable(table)) {
-      return this.handleGameEnd(true);
+      return this.handleGameEnd(true)
     }
-    this.container.sendEvent(new WatchEvent(table.serialise()));
-    return new Aim(this.container);
+    this.container.sendEvent(new WatchEvent(table.serialise()))
+    return new Aim(this.container)
   }
 
   handleGameEnd(_: boolean): Controller {
-    return SnookerScoring.presentGameEnd(this.container, this.rulename);
+    return SnookerScoring.presentGameEnd(this.container, this.rulename)
   }
 
   whiteInHand(): Controller {
-    this.startTurn();
+    this.startTurn()
     if (this.container.isSinglePlayer) {
-      return new PlaceBall(this.container);
+      return new PlaceBall(this.container)
     }
-    this.container.sendEvent(new PlaceBallEvent(zero));
-    return new WatchAim(this.container);
+    this.container.sendEvent(new PlaceBallEvent(zero))
+    return new WatchAim(this.container)
   }
 
   update(outcome: Outcome[]): Controller {
-    return this.snookerrule(outcome);
+    return this.snookerrule(outcome)
   }
 
   respot(outcome: Outcome[]) {
     const respotted = SnookerUtils.respotAllPottedColours(
       this.container.table,
-      outcome,
-    );
+      outcome
+    )
     if (respotted.length > 0) {
       const respot = RerackEvent.fromJson({
         balls: respotted.map((b) => b.serialise()),
-      });
-      this.container.sendEvent(respot);
+      })
+      this.container.sendEvent(respot)
     }
   }
 }
