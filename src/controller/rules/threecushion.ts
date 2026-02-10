@@ -16,6 +16,7 @@ import { zero } from "../../utils/utils"
 import { Respot } from "../../utils/respot"
 import { ThreeCushionConfig } from "../../utils/threecushionconfig"
 import { StartAimEvent } from "../../events/startaimevent"
+import { NotificationEvent } from "../../events/notificationevent"
 import { End } from "../end"
 import { Session } from "../../network/client/session"
 import { MatchResult } from "../../network/client/matchresult"
@@ -131,6 +132,19 @@ export class ThreeCushion implements Rules {
       extra: gameOverButtons.forMode(this.container.isSinglePlayer),
       duration: 0,
     })
+
+    if (isWinner && !this.container.isSinglePlayer) {
+      this.container.sendEvent(
+        new NotificationEvent({
+          type: "GameOver",
+          title: "YOU LOST",
+          icon: "🥪",
+          extraClass: "is-loser",
+          extra: gameOverButtons.forMode(false),
+          duration: 0,
+        })
+      )
+    }
 
     const myIndex = Session.playerIndex()
     const winnerScore = isWinner
