@@ -28,6 +28,7 @@ export class Replay extends ControllerBase {
     this.delay = delay
     this.container.table.showTraces(true)
     this.container.table.updateFromShortSerialised(this.init)
+    console.log(this.shots)
     if (retry) {
       const retryEvent = new BreakEvent(init, shots)
       retryEvent.retry = true
