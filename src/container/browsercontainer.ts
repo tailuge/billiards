@@ -51,7 +51,7 @@ export class BrowserContainer {
   now
   constructor(canvas3d, params) {
     this.now = Date.now()
-    this.playername = params.get("name") ?? ""
+    this.playername = params.get("name") ?? params.get("playername") ?? ""
     this.tableId = params.get("tableId") ?? "default"
     this.clientId = params.get("clientId") ?? "default"
     this.replay = params.get("state")
