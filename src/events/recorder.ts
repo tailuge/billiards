@@ -50,13 +50,26 @@ export class Recorder {
     }
   }
 
+  getPlayerNames(): { player1: string; player2: string } | undefined {
+    if (!Session.hasInstance()) {
+      return undefined
+    }
+    const session = Session.getInstance()
+    const isP1 = session.playerIndex === 0
+    return {
+      player1: (isP1 ? session.playername : session.opponentName) || "Player 1",
+      player2: (isP1 ? session.opponentName : session.playername) || "Player 2",
+    }
+  }
+
   wholeGame() {
     return ReplayEncoder.createState(
       this.entries[0]?.state,
       this.entries.map((e) => e.event),
       this.start,
       this.container.scores[Session.playerIndex()],
-      true
+      true,
+      this.getPlayerNames()
     )
   }
 
@@ -72,7 +85,14 @@ export class Recorder {
     const last = this.last()
     const entry = this.entries[last]
     return entry
-      ? ReplayEncoder.createState(entry.state, [entry.event])
+      ? ReplayEncoder.createState(
+          entry.state,
+          [entry.event],
+          0,
+          0,
+          false,
+          this.getPlayerNames()
+        )
       : undefined
   }
 
@@ -83,7 +103,9 @@ export class Recorder {
         this.entries[this.breakStart].state,
         breakEntries.map((e) => e.event),
         this.breakStartTime,
-        this.container.rules.previousBreak
+        this.container.rules.previousBreak,
+        false,
+        this.getPlayerNames()
       )
     }
     return undefined

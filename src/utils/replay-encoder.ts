@@ -18,9 +18,10 @@ export class ReplayEncoder {
     events: any[],
     start: number = 0,
     score: number = 0,
-    wholeGame: boolean = false
+    wholeGame: boolean = false,
+    players?: { player1: string; player2: string }
   ) {
-    return {
+    const state: any = {
       init: init,
       shots: events,
       start: start,
@@ -29,5 +30,9 @@ export class ReplayEncoder {
       wholeGame: wholeGame,
       v: 1,
     }
+    if (players) {
+      state.players = players
+    }
+    return state
   }
 }
