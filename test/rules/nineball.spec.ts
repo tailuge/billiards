@@ -238,7 +238,7 @@ describe("NineBall Rules", () => {
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "GameOver",
       title: "YOU WON",
-      subtext: "Congratulations!",
+      subtext: "Score: 1",
       extra: `<button onclick="location.reload()">New Game</button><button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
       icon: "🏆",
       extraClass: "is-winner",
@@ -263,7 +263,7 @@ describe("NineBall Rules", () => {
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "GameOver",
       title: "YOU WON",
-      subtext: "Congratulations!",
+      subtext: "TestPlayer 1 - 0 Opponent",
       extra: `<button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
       icon: "🏆",
       extraClass: "is-winner",
@@ -271,7 +271,7 @@ describe("NineBall Rules", () => {
     })
   })
 
-  it("should trigger game over notification", () => {
+  it("should trigger game over notification (duplicate check)", () => {
     container.isSinglePlayer = true
     const notifySpy = jest.spyOn(container, "notifyLocal")
     container.table.balls.forEach((b) => {
@@ -288,7 +288,7 @@ describe("NineBall Rules", () => {
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "GameOver",
       title: "YOU WON",
-      subtext: "Congratulations!",
+      subtext: "Score: 1",
       extra: `<button onclick="location.reload()">New Game</button><button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
       icon: "🏆",
       extraClass: "is-winner",

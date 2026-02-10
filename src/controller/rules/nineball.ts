@@ -4,7 +4,6 @@ import { Aim } from "../../controller/aim"
 import { Controller } from "../../controller/controller"
 import { PlaceBall } from "../../controller/placeball"
 import { WatchAim } from "../../controller/watchaim"
-import { ChatEvent } from "../../events/chatevent"
 import { PlaceBallEvent } from "../../events/placeballevent"
 import { RerackEvent } from "../../events/rerackevent"
 import { WatchEvent } from "../../events/watchevent"
@@ -12,15 +11,13 @@ import { Ball } from "../../model/ball"
 import { Outcome, OutcomeType } from "../../model/outcome"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
-import { End } from "../end"
 import { Rules } from "./rules"
 import { R } from "../../model/physics/constants"
 import { Respot } from "../../utils/respot"
 import { TableGeometry } from "../../view/tablegeometry"
 import { StartAimEvent } from "../../events/startaimevent"
-import { MatchResult } from "../../network/client/matchresult"
+import { MatchResultHelper } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
-import { gameOverButtons } from "../../utils/gameover"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -137,62 +134,8 @@ export class NineBall implements Rules {
     return new Aim(this.container)
   }
 
-  handleGameEnd(isWinner: boolean): Controller {
-    const session = Session.hasInstance() ? Session.getInstance() : null
-    let title: string
-    let subtext: string
-    let icon: string
-    let extraClass = ""
-
-    if (isWinner) {
-      title = "YOU WON"
-      subtext = "Congratulations!"
-      icon = "🏆"
-      extraClass = "is-winner"
-    } else if (!Session.isSpectator()) {
-      title = "YOU LOST"
-      subtext = "Better luck next time"
-      icon = "🥈"
-      extraClass = "is-loser"
-    } else {
-      title = "GAME OVER"
-      subtext = session?.opponentName
-        ? `Winner: ${session.opponentName}`
-        : "Game Over"
-      icon = "🏆"
-    }
-
-    const extra = gameOverButtons.forMode(this.container.isSinglePlayer)
-
-    this.container.notifyLocal({
-      type: "GameOver",
-      title: title,
-      subtext: subtext,
-      extra: extra,
-      icon: icon,
-      extraClass: extraClass,
-      duration: 0,
-    })
-
-    if (isWinner) {
-      this.container.eventQueue.push(new ChatEvent(null, `game over`))
-      this.container.recorder.wholeGameLink()
-    }
-
-    const result: MatchResult = {
-      winner: isWinner
-        ? session?.playername || "Anon"
-        : session?.opponentName || "Opponent",
-      winnerScore: 1,
-      ruleType: this.rulename,
-    }
-    if (session?.opponentName) {
-      result.loser = isWinner
-        ? session.opponentName
-        : session.playername || "Anon"
-      result.loserScore = 0
-    }
-    return new End(this.container, isWinner ? result : undefined)
+  handleGameEnd(_: boolean): Controller {
+    return MatchResultHelper.presentGameEnd(this.container, this.rulename)
   }
 
   private handleMiss(): Controller {

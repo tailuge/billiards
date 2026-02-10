@@ -16,11 +16,8 @@ import { zero } from "../../utils/utils"
 import { Respot } from "../../utils/respot"
 import { ThreeCushionConfig } from "../../utils/threecushionconfig"
 import { StartAimEvent } from "../../events/startaimevent"
-import { NotificationEvent } from "../../events/notificationevent"
-import { End } from "../end"
+import { MatchResultHelper } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
-import { MatchResult } from "../../network/client/matchresult"
-import { gameOverButtons } from "../../utils/gameover"
 
 export class ThreeCushion implements Rules {
   readonly container: Container
@@ -122,42 +119,8 @@ export class ThreeCushion implements Rules {
     return s1 >= ThreeCushionConfig.raceTo || s2 >= ThreeCushionConfig.raceTo
   }
 
-  handleGameEnd(isWinner: boolean): Controller {
-    const session = Session.hasInstance() ? Session.getInstance() : null
-    this.container.notifyLocal({
-      type: "GameOver",
-      title: isWinner ? "YOU WON" : "YOU LOST",
-      icon: isWinner ? "🏆" : "🥪",
-      extraClass: isWinner ? "is-winner" : "is-loser",
-      extra: gameOverButtons.forMode(this.container.isSinglePlayer),
-      duration: 0,
-    })
-
-    if (isWinner && !this.container.isSinglePlayer) {
-      this.container.sendEvent(
-        new NotificationEvent({
-          type: "GameOver",
-          title: "YOU LOST",
-          icon: "🥪",
-          extraClass: "is-loser",
-          extra: gameOverButtons.forMode(false),
-          duration: 0,
-        })
-      )
-    }
-
-    const myIndex = Session.playerIndex()
-    const winnerScore = isWinner
-      ? this.container.scores[myIndex]
-      : this.container.scores[1 - myIndex]
-    const result: MatchResult = {
-      winner: isWinner
-        ? session?.playername || "Anon"
-        : session?.opponentName || "Opponent",
-      winnerScore,
-      ruleType: this.rulename,
-    }
-    return new End(this.container, isWinner ? result : undefined)
+  handleGameEnd(_: boolean): Controller {
+    return MatchResultHelper.presentGameEnd(this.container, this.rulename)
   }
 
   allowsPlaceBall() {
