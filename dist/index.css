@@ -97,7 +97,7 @@ p {
   border-radius: 12px;
   background: #1464c8;
   background: linear-gradient(135deg, #1464c8 0%, #00b4a0 100%);
-  border: 2px solid #ffffff;
+  border: 1px solid #ffffff;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   transition:
     transform 0.2s ease,
@@ -366,7 +366,7 @@ input[type="range"].powerSlider {
 }
 
 .hitButton:disabled {
-  opacity: 0.25;
+  opacity: 0.75;
   cursor: not-allowed;
 }
 
