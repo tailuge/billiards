@@ -1,7 +1,7 @@
 export class Session {
   constructor(
+    public playername: string,
     readonly clientId: string,
-    readonly playername: string,
     readonly tableId: string,
     readonly spectator: boolean
   ) {}
@@ -40,6 +40,6 @@ export class Session {
     tableId: string,
     spectator: boolean
   ) {
-    Session.instance = new Session(clientId, playername, tableId, spectator)
+    Session.instance = new Session(playername, clientId, tableId, spectator)
   }
 }

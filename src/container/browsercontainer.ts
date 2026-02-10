@@ -32,9 +32,15 @@ export class BrowserContainer {
   playername: string
   replay: string | null
   messageRelay: MessageRelay | null = null
-  breakState = {
+  breakState: {
+    init: any
+    shots: any[]
+    now: number
+    score: number
+    players?: { player1: string; player2: string }
+  } = {
     init: null,
-    shots: Array<string>(),
+    shots: [],
     now: 0,
     score: 0,
   }
@@ -153,9 +159,12 @@ export class BrowserContainer {
   }
 
   startReplay(replay) {
-    console.log(replay)
     this.breakState = this.parse(replay)
-    console.log(this.breakState)
+    if (this.breakState.players) {
+      const session = Session.getInstance()
+      session.playername = this.breakState.players.player1
+      session.opponentName = this.breakState.players.player2
+    }
     const breakEvent = new BreakEvent(
       this.breakState.init,
       this.breakState.shots
