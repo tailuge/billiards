@@ -15,6 +15,7 @@ export class Aim extends ControllerBase {
     table.cue.aimMode()
     table.cue.showHelper(true)
     table.cueball = this.container.rules.cueball
+    table.cue.aim.i = table.balls.indexOf(table.cueball)
     table.cue.moveTo(table.cueball.pos)
     if (this.container.rules.rulename != "snooker") {
       table.cue.aimAtNext(
