@@ -38,7 +38,8 @@ export class Recorder {
     if (
       event.type === EventType.HIT ||
       event.type === EventType.RERACK ||
-      event.type === EventType.PLACEBALL
+      event.type === EventType.PLACEBALL ||
+      event.type === EventType.SCORE
     ) {
       this.entries.push({
         state: this.container.table.shortSerialise(),
@@ -48,6 +49,16 @@ export class Recorder {
         time: Date.now(),
       })
     }
+  }
+
+  private findLastIndex(
+    skipTypes: EventType[] = [EventType.RERACK, EventType.SCORE]
+  ): number {
+    let last = this.entries.length - 1
+    while (last >= 0 && skipTypes.includes(this.entries[last].event.type)) {
+      last--
+    }
+    return last
   }
 
   getPlayerNames(): { player1: string; player2: string } | undefined {
@@ -74,26 +85,29 @@ export class Recorder {
   }
 
   last() {
-    let last = this.entries.length - 1
-    while (last > 0 && this.entries[last].event.type === EventType.RERACK) {
-      last--
-    }
-    return last
+    return this.findLastIndex()
   }
 
   lastShot() {
     const last = this.last()
+    if (last < 0) {
+      return undefined
+    }
     const entry = this.entries[last]
-    return entry
-      ? ReplayEncoder.createState(
-          entry.state,
-          [entry.event],
-          0,
-          0,
-          false,
-          this.getPlayerNames()
-        )
-      : undefined
+    const events: GameEvent[] = [entry.event]
+    for (let i = last + 1; i < this.entries.length; i++) {
+      if (this.entries[i].event.type === EventType.SCORE) {
+        events.push(this.entries[i].event)
+      }
+    }
+    return ReplayEncoder.createState(
+      entry.state,
+      events,
+      0,
+      0,
+      false,
+      this.getPlayerNames()
+    )
   }
 
   currentBreak() {
@@ -155,7 +169,7 @@ export class Recorder {
     }
   }
 
-  breakLink(includeLastShot) {
+  breakLink(includeLastShot: boolean) {
     const currentBreak = this.currentBreak()
     if (!currentBreak) {
       return
@@ -166,7 +180,29 @@ export class Recorder {
         ? this.container.rules.previousBreak
         : this.container.rules.currentBreak
 
-    this.linkFormatter.breakLink(currentBreak, breakScore, includeLastShot)
+    if (includeLastShot) {
+      this.linkFormatter.breakLink(currentBreak, breakScore, true)
+      return
+    }
+
+    const trimmedShots = (currentBreak.shots as GameEvent[]).slice()
+    while (
+      trimmedShots.length > 0 &&
+      (trimmedShots[trimmedShots.length - 1].type === EventType.SCORE ||
+        trimmedShots[trimmedShots.length - 1].type === EventType.RERACK)
+    ) {
+      trimmedShots.pop()
+    }
+
+    if (trimmedShots.length === 0) {
+      return
+    }
+
+    const trimmedBreak = {
+      ...currentBreak,
+      shots: trimmedShots,
+    }
+    this.linkFormatter.breakLink(trimmedBreak, breakScore, false)
   }
 
   wholeGameLink() {
