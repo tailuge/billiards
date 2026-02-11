@@ -1,4 +1,5 @@
 import { id, getInput } from "../utils/dom"
+import { isSafeUrl } from "../utils/security"
 
 export class Chat {
   chatoutput: HTMLElement | null
@@ -27,50 +28,49 @@ export class Chat {
       return
     }
     const div = document.createElement("div")
+
     // Match the specific pattern used by LinkFormatter for system links
     // Format: <a class="pill" style="color: ..." target="_blank" href="...">...</a>
     // Or without style: <a class="pill" target="_blank" href="...">...</a>
     // It might be preceded by a space if sender is null in ControllerBase
     const linkMatch = msg.match(
-      /^( ?)<a class="pill"(?: style="color: (.*?)")? target="_blank" href="(.*?)">(.*?)<\/a>$/
+      /^( ?)<a class="pill"(?: style="color: ([^"]*?)")? target="_blank" href="([^"]*?)">([^<]*?)<\/a>$/
     )
 
     if (linkMatch) {
-      const [, prefix, color, href, text] = linkMatch
-      if (prefix) {
-        div.appendChild(document.createTextNode(prefix))
-      }
-      const a = document.createElement("a")
-      a.className = "pill"
-      if (
-        color &&
-        (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(color) ||
-          /^[a-z]+$/.test(color))
-      ) {
-        a.style.color = color
-      }
-      a.target = "_blank"
-      const normalizedHref = href.trim().toLowerCase()
-      const blocked = ["java" + "script:", "data:", "vb" + "script:"]
-      const isBlocked = blocked.some((proto) =>
-        normalizedHref.startsWith(proto)
-      )
-      // Only allow relative URLs or https://scoreboard-tailuge.vercel.app/
-      const isSafeDomain =
-        href.startsWith("?") ||
-        href.startsWith("#") ||
-        href.startsWith("/") ||
-        href.startsWith("https://scoreboard-tailuge.vercel.app/")
-      if (!isBlocked && isSafeDomain) {
-        a.href = href
-      }
-      a.textContent = text
-      div.appendChild(a)
+      this.renderSystemLink(div, linkMatch)
     } else {
       div.textContent = msg
     }
     this.chatoutput.appendChild(div)
     this.updateScroll()
+  }
+
+  private renderSystemLink(div: HTMLElement, match: RegExpMatchArray) {
+    const [, prefix, color, href, text] = match
+    if (prefix) {
+      div.appendChild(document.createTextNode(prefix))
+    }
+    const a = document.createElement("a")
+    a.className = "pill"
+
+    if (color) {
+      // Validate color to prevent CSS injection
+      if (
+        /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(color) ||
+        /^[a-z]+$/.test(color)
+      ) {
+        a.style.color = color
+      }
+    }
+
+    a.target = "_blank"
+    if (isSafeUrl(href)) {
+      a.href = href
+    }
+
+    a.textContent = text
+    div.appendChild(a)
   }
 
   updateScroll() {

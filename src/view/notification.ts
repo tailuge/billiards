@@ -1,5 +1,6 @@
 import { id } from "../utils/dom"
 import { ButtonConfig } from "../utils/gameover"
+import { isSafeUrl } from "../utils/security"
 
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info"
@@ -50,30 +51,31 @@ export class Notification {
     this.display(typeClass, duration)
   }
 
-  private renderStringContent(message: string): void {
+  private createBanner() {
     const banner = document.createElement("div")
     banner.className = "notification-banner"
     const textGroup = document.createElement("div")
     textGroup.className = "notification-text-group"
+    banner.appendChild(textGroup)
+    return { banner, textGroup }
+  }
+
+  private renderStringContent(message: string): void {
+    const { banner, textGroup } = this.createBanner()
     const subtext = document.createElement("div")
     subtext.className = "notification-subtext"
     subtext.textContent = message
     textGroup.appendChild(subtext)
-    banner.appendChild(textGroup)
     this.element.appendChild(banner)
   }
 
   private renderDataContent(data: NotificationData) {
-    const banner = document.createElement("div")
-    banner.className = "notification-banner"
+    const { banner, textGroup } = this.createBanner()
 
     const iconDiv = document.createElement("div")
     iconDiv.className = "notification-icon"
     iconDiv.textContent = this.getIcon(data)
-    banner.appendChild(iconDiv)
-
-    const textGroup = document.createElement("div")
-    textGroup.className = "notification-text-group"
+    banner.insertBefore(iconDiv, textGroup)
 
     const title = document.createElement("div")
     title.className = "notification-title"
@@ -86,7 +88,6 @@ export class Notification {
       subtext.textContent = data.subtext
       textGroup.appendChild(subtext)
     }
-    banner.appendChild(textGroup)
     this.element.appendChild(banner)
 
     if (data.extra) {
@@ -115,16 +116,9 @@ export class Notification {
   }
 
   private handleHref(url: string) {
-    const trimmed = url.trim()
-    const lower = trimmed.toLowerCase()
-    if (
-      lower.startsWith("javascript:") ||
-      lower.startsWith("data:") ||
-      lower.startsWith("vbscript:")
-    ) {
-      return
+    if (isSafeUrl(url)) {
+      location.href = url.trim()
     }
-    location.href = trimmed
   }
 
   private display(typeClass: string, duration: number) {
