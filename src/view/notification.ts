@@ -61,46 +61,23 @@ export class Notification {
   }
 
   private renderStringContent(message: string): void {
-    const { banner, textGroup } = this.createBanner()
-    const subtext = document.createElement("div")
-    subtext.className = "notification-subtext"
-    subtext.textContent = message
-    textGroup.appendChild(subtext)
-    this.element.appendChild(banner)
+    this.renderContent(undefined, message)
   }
 
   private renderDataContent(data: NotificationData) {
-    const { banner, textGroup } = this.createBanner()
-
-    const iconDiv = document.createElement("div")
-    iconDiv.className = "notification-icon"
-    iconDiv.textContent = this.getIcon(data)
-    banner.insertBefore(iconDiv, textGroup)
-
-    const title = document.createElement("div")
-    title.className = "notification-title"
-    title.textContent = data.title
-    textGroup.appendChild(title)
-
-    if (data.subtext) {
-      const subtext = document.createElement("div")
-      subtext.className = "notification-subtext"
-      subtext.textContent = data.subtext
-      textGroup.appendChild(subtext)
-    }
-    this.element.appendChild(banner)
+    this.renderContent(data.title, data.subtext, this.getIcon(data))
 
     if (data.extra) {
       const extraDiv = document.createElement("div")
       if (typeof data.extra === "string") {
         extraDiv.className = "notification-badge"
-        extraDiv.textContent = data.extra
+        extraDiv.appendChild(document.createTextNode(data.extra))
       } else {
         extraDiv.className = "notification-extra"
         const buttons = Array.isArray(data.extra) ? data.extra : [data.extra]
         buttons.forEach((btnConfig) => {
           const btn = document.createElement("button")
-          btn.textContent = btnConfig.text
+          btn.appendChild(document.createTextNode(btnConfig.text))
           btn.onclick = () => {
             if (btnConfig.action === "reload") {
               location.reload()
@@ -113,6 +90,32 @@ export class Notification {
       }
       this.element.appendChild(extraDiv)
     }
+  }
+
+  private renderContent(titleText?: string, subtextText?: string, icon?: string) {
+    const { banner, textGroup } = this.createBanner()
+
+    if (icon) {
+      const iconDiv = document.createElement("div")
+      iconDiv.className = "notification-icon"
+      iconDiv.appendChild(document.createTextNode(icon))
+      banner.insertBefore(iconDiv, textGroup)
+    }
+
+    if (titleText) {
+      const title = document.createElement("div")
+      title.className = "notification-title"
+      title.appendChild(document.createTextNode(titleText))
+      textGroup.appendChild(title)
+    }
+
+    if (subtextText) {
+      const subtext = document.createElement("div")
+      subtext.className = "notification-subtext"
+      subtext.appendChild(document.createTextNode(subtextText))
+      textGroup.appendChild(subtext)
+    }
+    this.element.appendChild(banner)
   }
 
   private handleHref(url: string) {

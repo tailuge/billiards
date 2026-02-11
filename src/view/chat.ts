@@ -40,7 +40,7 @@ export class Chat {
     if (linkMatch) {
       this.renderSystemLink(div, linkMatch)
     } else {
-      div.textContent = msg
+      div.appendChild(document.createTextNode(msg))
     }
     this.chatoutput.appendChild(div)
     this.updateScroll()
@@ -69,7 +69,7 @@ export class Chat {
       a.href = href
     }
 
-    a.textContent = text
+    a.appendChild(document.createTextNode(text))
     div.appendChild(a)
   }
 

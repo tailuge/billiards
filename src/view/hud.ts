@@ -13,7 +13,10 @@ export class Hud {
 
   private setText(element: HTMLElement | null, text: string) {
     if (element) {
-      element.textContent = text
+      element.innerHTML = ""
+      if (text) {
+        element.appendChild(document.createTextNode(text))
+      }
     }
   }
 
