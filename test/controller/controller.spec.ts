@@ -54,7 +54,13 @@ describe("Controller", () => {
   })
 
   it("Container chat enques message", (done) => {
-    container.chat.sendClicked({})
+    const input = document.createElement("input")
+    input.id = "chatinputtext"
+    input.value = "test message"
+    document.body.appendChild(input)
+    container.chat.chatInputText = input
+
+    container.chat.sendClicked({} as Event)
     expect(broadcastEvents).to.be.lengthOf(1)
     done()
   })

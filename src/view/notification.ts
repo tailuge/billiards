@@ -27,69 +27,82 @@ export class Notification {
 
   show(data: NotificationData | string, defaultDuration: number = 3000) {
     if (!this.element) return
+    this.element.innerHTML = ""
 
-    let content: string
     let typeClass: string
     let duration = defaultDuration
 
     if (typeof data === "string") {
-      content = this.renderStringContent(data)
+      this.renderStringContent(data)
       typeClass = "type-Info"
     } else {
-      const result = this.processData(data)
-      content = result.content
-      typeClass = result.typeClass
+      this.renderDataContent(data)
+      typeClass = `type-${data.type}`
+      if (data.extraClass) {
+        typeClass += ` ${data.extraClass}`
+      }
       if (data.duration !== undefined) {
         duration = data.duration
       }
     }
 
-    this.display(content, typeClass, duration)
+    this.display(typeClass, duration)
   }
 
-  private renderStringContent(message: string): string {
-    return `
-      <div class="notification-banner">
-        <div class="notification-text-group">
-          <div class="notification-subtext">${message}</div>
-        </div>
-      </div>
-    `
+  private renderStringContent(message: string): void {
+    const banner = document.createElement("div")
+    banner.className = "notification-banner"
+    const textGroup = document.createElement("div")
+    textGroup.className = "notification-text-group"
+    const subtext = document.createElement("div")
+    subtext.className = "notification-subtext"
+    subtext.textContent = message
+    textGroup.appendChild(subtext)
+    banner.appendChild(textGroup)
+    this.element.appendChild(banner)
   }
 
-  private processData(data: NotificationData) {
-    let typeClass = `type-${data.type}`
-    if (data.extraClass) {
-      typeClass += ` ${data.extraClass}`
+  private renderDataContent(data: NotificationData) {
+    const banner = document.createElement("div")
+    banner.className = "notification-banner"
+
+    const iconDiv = document.createElement("div")
+    iconDiv.className = "notification-icon"
+    iconDiv.textContent = this.getIcon(data)
+    banner.appendChild(iconDiv)
+
+    const textGroup = document.createElement("div")
+    textGroup.className = "notification-text-group"
+
+    const title = document.createElement("div")
+    title.className = "notification-title"
+    title.textContent = data.title
+    textGroup.appendChild(title)
+
+    if (data.subtext) {
+      const subtext = document.createElement("div")
+      subtext.className = "notification-subtext"
+      subtext.textContent = data.subtext
+      textGroup.appendChild(subtext)
     }
-    const icon = this.getIcon(data)
-    const extraContentHtml = this.renderExtra(data.extra)
+    banner.appendChild(textGroup)
+    this.element.appendChild(banner)
 
-    const content = `
-      <div class="notification-banner">
-        <div class="notification-icon">${icon}</div>
-        <div class="notification-text-group">
-          <div class="notification-title">${data.title}</div>
-          ${data.subtext ? `<div class="notification-subtext">${data.subtext}</div>` : ""}
-        </div>
-      </div>
-      ${extraContentHtml}
-    `
-
-    return { content, typeClass }
-  }
-
-  private renderExtra(extra?: string): string {
-    if (!extra) return ""
-    if (extra.includes("<")) {
-      return `<div class="notification-extra">${extra}</div>`
+    if (data.extra) {
+      const extraDiv = document.createElement("div")
+      if (data.extra.includes("<")) {
+        extraDiv.className = "notification-extra"
+        extraDiv.innerHTML = data.extra
+      } else {
+        extraDiv.className = "notification-badge"
+        extraDiv.textContent = data.extra
+      }
+      this.element.appendChild(extraDiv)
     }
-    return `<div class="notification-badge">${extra}</div>`
   }
 
-  private display(content: string, typeClass: string, duration: number) {
+  private display(typeClass: string, duration: number) {
     if (!this.element) return
-    this.element.innerHTML = content
     this.element.className = "" // Clear previous classes
     this.element.classList.add(...typeClass.split(" "))
     this.element.style.display = "flex"

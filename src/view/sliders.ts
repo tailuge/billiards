@@ -71,6 +71,8 @@ export class Sliders {
 
   showValue(element, value) {
     const label = document.querySelector(`label[for=${element}]`)
-    label && (label.innerHTML = `${element}=${value}`)
+    if (label) {
+      label.textContent = `${element}=${value}`
+    }
   }
 }

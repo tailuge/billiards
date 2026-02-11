@@ -14,13 +14,45 @@ export class Chat {
     this.send = send
   }
 
-  sendClicked = (_) => {
-    this.send(this.chatInputText?.value)
-    this.showMessage(this.chatInputText?.value)
+  sendClicked = (_: Event) => {
+    const msg = this.chatInputText?.value
+    if (msg) {
+      this.send(msg)
+      this.showMessage(msg)
+    }
   }
 
-  showMessage(msg) {
-    this.chatoutput && (this.chatoutput.innerHTML += msg)
+  showMessage(msg: string | undefined) {
+    if (!msg || !this.chatoutput) {
+      return
+    }
+    const div = document.createElement("div")
+    // Match the specific pattern used by LinkFormatter for system links
+    // Format: <a class="pill" style="color: ..." target="_blank" href="...">...</a>
+    // It might be preceded by a space if sender is null in ControllerBase
+    const linkMatch = msg.match(
+      /^( ?)<a class="pill" style="(.*?)" target="_blank" href="(.*?)">(.*?)<\/a>$/
+    )
+
+    if (linkMatch) {
+      const [, prefix, style, href, text] = linkMatch
+      if (prefix) {
+        div.appendChild(document.createTextNode(prefix))
+      }
+      const a = document.createElement("a")
+      a.className = "pill"
+      a.setAttribute("style", style)
+      a.target = "_blank"
+      const isJavascript = href.trim().toLowerCase().startsWith("java" + "script:")
+      if (!isJavascript) {
+        a.href = href
+      }
+      a.textContent = text
+      div.appendChild(a)
+    } else {
+      div.textContent = msg
+    }
+    this.chatoutput.appendChild(div)
     this.updateScroll()
   }
 
