@@ -52,4 +52,25 @@ describe("Chat", () => {
     // The link should be rendered but WITHOUT the href attribute (or with empty/null href)
     expect(link?.hasAttribute("href")).toBe(false)
   })
+
+  it("should block data: and vbscript: URIs", () => {
+    const dataLink = '<a class="pill" style="color: black" target="_blank" href="data:text/html,<script>alert(1)</script>">test</a>'
+    chat.showMessage(dataLink)
+    let link = document.getElementById("chatoutput")?.querySelector("a.pill")
+    expect(link?.hasAttribute("href")).toBe(false)
+
+    const vbLink = '<a class="pill" style="color: black" target="_blank" href="vbscript:msgbox(1)">test</a>'
+    chat.showMessage(vbLink)
+    link = document.getElementById("chatoutput")?.querySelectorAll("a.pill")[1]
+    expect(link?.hasAttribute("href")).toBe(false)
+  })
+
+  it("should support links without style", () => {
+    const noStyleLink = '<a class="pill" target="_blank" href="https://example.com">no style</a>'
+    chat.showMessage(noStyleLink)
+    const link = document.getElementById("chatoutput")?.querySelector("a.pill")
+    expect(link).not.toBeNull()
+    expect(link?.getAttribute("href")).toBe("https://example.com")
+    expect(link?.textContent).toBe("no style")
+  })
 })

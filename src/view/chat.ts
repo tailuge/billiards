@@ -29,22 +29,33 @@ export class Chat {
     const div = document.createElement("div")
     // Match the specific pattern used by LinkFormatter for system links
     // Format: <a class="pill" style="color: ..." target="_blank" href="...">...</a>
+    // Or without style: <a class="pill" target="_blank" href="...">...</a>
     // It might be preceded by a space if sender is null in ControllerBase
     const linkMatch = msg.match(
-      /^( ?)<a class="pill" style="(.*?)" target="_blank" href="(.*?)">(.*?)<\/a>$/
+      /^( ?)<a class="pill"(?: style="color: (.*?)")? target="_blank" href="(.*?)">(.*?)<\/a>$/
     )
 
     if (linkMatch) {
-      const [, prefix, style, href, text] = linkMatch
+      const [, prefix, color, href, text] = linkMatch
       if (prefix) {
         div.appendChild(document.createTextNode(prefix))
       }
       const a = document.createElement("a")
       a.className = "pill"
-      a.setAttribute("style", style)
+      if (
+        color &&
+        (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(color) ||
+          /^[a-z]+$/.test(color))
+      ) {
+        a.style.color = color
+      }
       a.target = "_blank"
-      const isJavascript = href.trim().toLowerCase().startsWith("java" + "script:")
-      if (!isJavascript) {
+      const normalizedHref = href.trim().toLowerCase()
+      const blocked = ["java" + "script:", "data:", "vb" + "script:"]
+      const isBlocked = blocked.some((proto) =>
+        normalizedHref.startsWith(proto)
+      )
+      if (!isBlocked) {
         a.href = href
       }
       a.textContent = text
