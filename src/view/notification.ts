@@ -1,10 +1,11 @@
 import { id } from "../utils/dom"
+import { ButtonConfig } from "../utils/gameover"
 
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info"
   title: string
   subtext?: string
-  extra?: string
+  extra?: string | ButtonConfig | ButtonConfig[]
   duration?: number
   icon?: string
   extraClass?: string
@@ -90,15 +91,40 @@ export class Notification {
 
     if (data.extra) {
       const extraDiv = document.createElement("div")
-      if (data.extra.includes("<")) {
-        extraDiv.className = "notification-extra"
-        extraDiv.innerHTML = data.extra
-      } else {
+      if (typeof data.extra === "string") {
         extraDiv.className = "notification-badge"
         extraDiv.textContent = data.extra
+      } else {
+        extraDiv.className = "notification-extra"
+        const buttons = Array.isArray(data.extra) ? data.extra : [data.extra]
+        buttons.forEach((btnConfig) => {
+          const btn = document.createElement("button")
+          btn.textContent = btnConfig.text
+          btn.onclick = () => {
+            if (btnConfig.action === "reload") {
+              location.reload()
+            } else if (btnConfig.action === "href" && btnConfig.url) {
+              this.handleHref(btnConfig.url)
+            }
+          }
+          extraDiv.appendChild(btn)
+        })
       }
       this.element.appendChild(extraDiv)
     }
+  }
+
+  private handleHref(url: string) {
+    const trimmed = url.trim()
+    const lower = trimmed.toLowerCase()
+    if (
+      lower.startsWith("javascript:") ||
+      lower.startsWith("data:") ||
+      lower.startsWith("vbscript:")
+    ) {
+      return
+    }
+    location.href = trimmed
   }
 
   private display(typeClass: string, duration: number) {

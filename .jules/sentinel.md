@@ -1,4 +1,11 @@
-## 2025-05-14 - XSS in Chat and Notifications
-**Vulnerability:** The application was vulnerable to Cross-Site Scripting (XSS) because it used `innerHTML` to render chat messages and game notifications that included user-controlled data (like player names from the session).
-**Learning:** Legacy code often uses `innerHTML` for convenience when building complex UI components, but this creates a massive security risk if any part of the message is untrusted. Even system-generated links were being passed as HTML strings through the chat system.
-**Prevention:** Always prefer `textContent` for user-controllable text. For cases where HTML is absolutely required (like system links), use a strict parser/regex to extract safe parts and rebuild the elements manually using `createElement`. Ensure `javascript:`, `data:`, and `vbscript:` URIs are blocked by checking for the prefix on trimmed, lowercase strings. Avoid `setAttribute("style")` with dynamic content; instead, parse and set individual style properties (e.g., `a.style.color`).
+# Sentinel Journal - Billiards Security
+
+## 2025-02-11 - Preventing XSS via innerHTML and Insecure Redirects
+**Vulnerability:** XSS via `innerHTML` and `location.href` injection.
+**Learning:** Using `textContent` and `createElement` effectively neutralizes HTML injection. However, even when using safe DOM APIs, assigning unsanitized user-provided strings to `location.href` or `setAttribute('href', ...)` can still lead to XSS via `javascript:`, `data:`, or `vbscript:` protocols.
+**Prevention:**
+1. Replace all `innerHTML` sinks with `textContent` or structured DOM construction.
+2. Implement a strict protocol check (whitelist or blocklist) for any URL before assignment to `href`. Normalize URLs by trimming and converting to lowercase before checking prefixes.
+3. Move interaction logic (like redirects) into dedicated methods (e.g., `handleHref`) to facilitate easier unit testing and spying in JSDOM environments where `globalThis.location` is protected.
+4. Avoid committing build artifacts (`dist/`) that might be regenerated during the fix process.
+5. Use structured data (e.g., `ButtonConfig` objects) instead of HTML strings for passing dynamic UI actions between modules.

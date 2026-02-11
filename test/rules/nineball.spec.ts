@@ -239,7 +239,14 @@ describe("NineBall Rules", () => {
       type: "GameOver",
       title: "YOU WON",
       subtext: "Score: 1",
-      extra: `<button onclick="location.reload()">New Game</button><button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
+      extra: [
+        { text: "New Game", action: "reload" },
+        {
+          text: "Lobby",
+          action: "href",
+          url: "https://scoreboard-tailuge.vercel.app/",
+        },
+      ],
       icon: "🏆",
       extraClass: "is-winner",
       duration: 0,
@@ -264,7 +271,13 @@ describe("NineBall Rules", () => {
       type: "GameOver",
       title: "YOU WON",
       subtext: "TestPlayer 1 - 0 Opponent",
-      extra: `<button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
+      extra: [
+        {
+          text: "Lobby",
+          action: "href",
+          url: "https://scoreboard-tailuge.vercel.app/",
+        },
+      ],
       icon: "🏆",
       extraClass: "is-winner",
       duration: 0,
@@ -289,7 +302,14 @@ describe("NineBall Rules", () => {
       type: "GameOver",
       title: "YOU WON",
       subtext: "Score: 1",
-      extra: `<button onclick="location.reload()">New Game</button><button onclick="location.href='https://scoreboard-tailuge.vercel.app/'">Lobby</button>`,
+      extra: [
+        { text: "New Game", action: "reload" },
+        {
+          text: "Lobby",
+          action: "href",
+          url: "https://scoreboard-tailuge.vercel.app/",
+        },
+      ],
       icon: "🏆",
       extraClass: "is-winner",
       duration: 0,

@@ -31,13 +31,13 @@ describe("Chat", () => {
 
   it("should still support system-generated links (pills)", () => {
     // This is the format used by LinkFormatter
-    const linkHtml = '<a class="pill" style="color: black" target="_blank" href="https://example.com">test link</a>'
+    const linkHtml = '<a class="pill" style="color: black" target="_blank" href="?ruletype=nineball">test link</a>'
     chat.showMessage(linkHtml)
 
     const chatoutput = document.getElementById("chatoutput")
     const link = chatoutput?.querySelector("a.pill")
     expect(link).not.toBeNull()
-    expect(link?.getAttribute("href")).toBe("https://example.com")
+    expect(link?.getAttribute("href")).toBe("?ruletype=nineball")
     expect(link?.textContent).toBe("test link")
   })
 
@@ -66,11 +66,11 @@ describe("Chat", () => {
   })
 
   it("should support links without style", () => {
-    const noStyleLink = '<a class="pill" target="_blank" href="https://example.com">no style</a>'
+    const noStyleLink = '<a class="pill" target="_blank" href="https://scoreboard-tailuge.vercel.app/hiscore.html">no style</a>'
     chat.showMessage(noStyleLink)
     const link = document.getElementById("chatoutput")?.querySelector("a.pill")
     expect(link).not.toBeNull()
-    expect(link?.getAttribute("href")).toBe("https://example.com")
+    expect(link?.getAttribute("href")).toBe("https://scoreboard-tailuge.vercel.app/hiscore.html")
     expect(link?.textContent).toBe("no style")
   })
 })

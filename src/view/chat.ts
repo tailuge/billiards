@@ -55,7 +55,13 @@ export class Chat {
       const isBlocked = blocked.some((proto) =>
         normalizedHref.startsWith(proto)
       )
-      if (!isBlocked) {
+      // Only allow relative URLs or https://scoreboard-tailuge.vercel.app/
+      const isSafeDomain =
+        href.startsWith("?") ||
+        href.startsWith("#") ||
+        href.startsWith("/") ||
+        href.startsWith("https://scoreboard-tailuge.vercel.app/")
+      if (!isBlocked && isSafeDomain) {
         a.href = href
       }
       a.textContent = text
