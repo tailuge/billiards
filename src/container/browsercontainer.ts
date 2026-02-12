@@ -51,7 +51,7 @@ export class BrowserContainer {
   now
   constructor(canvas3d, params) {
     this.now = Date.now()
-    this.playername = params.get("name") ?? params.get("playername") ?? ""
+    this.playername = params.get("name") ?? params.get("playername") ?? "Anon"
     this.tableId = params.get("tableId") ?? "default"
     this.clientId = params.get("clientId") ?? "default"
     this.replay = params.get("state")
@@ -63,6 +63,9 @@ export class BrowserContainer {
     this.first = params.has("first")
     SnookerConfig.reds = parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo = parseInt(params.get("raceTo") ?? "2") || 2
+    console.log(
+      `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator}`
+    )
     Session.init(this.clientId, this.playername, this.tableId, this.spectator)
   }
 

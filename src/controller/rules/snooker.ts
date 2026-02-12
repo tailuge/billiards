@@ -193,6 +193,7 @@ export class Snooker implements Rules {
 
   nextCandidateBall() {
     if (isFirstShot(this.container.recorder)) {
+      console.log("first shot")
       return undefined
     }
     const table = this.container.table
