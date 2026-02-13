@@ -68,8 +68,8 @@ export class Recorder {
     const session = Session.getInstance()
     const isP1 = session.playerIndex === 0
     return {
-      player1: (isP1 ? session.playername : session.opponentName) || "Player 1",
-      player2: (isP1 ? session.opponentName : session.playername) || "Player 2",
+      player1: (isP1 ? session.playername : session.opponentName) || "Player",
+      player2: (isP1 ? session.opponentName : session.playername) || "Opponent",
     }
   }
 
