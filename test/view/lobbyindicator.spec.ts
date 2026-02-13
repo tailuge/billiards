@@ -18,31 +18,11 @@ describe("LobbyIndicator", () => {
       element.textContent = "👥"
     }
 
-    // Mock getOnlineCount to return 5
     relay.getOnlineCount = async () => 5
 
     const indicator = new LobbyIndicator(relay)
     await indicator.init()
 
     expect(element?.textContent).to.equal(" 5 👥")
-  })
-
-  it("updates text content on message", async () => {
-    const element = document.getElementById("lobby")
-    relay.getOnlineCount = async () => 5
-
-    const indicator = new LobbyIndicator(relay)
-    await indicator.init()
-
-    expect(element?.textContent).to.equal(" 5 👥")
-
-    // Change count and publish message
-    relay.getOnlineCount = async () => 6
-    relay.publish("lobby", JSON.stringify({ action: "connected" }), "lobby")
-
-    // Wait for async refresh
-    await new Promise((resolve) => setTimeout(resolve, 10))
-
-    expect(element?.textContent).to.equal(" 6 👥")
   })
 })

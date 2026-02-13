@@ -18,23 +18,7 @@ export class LobbyIndicator {
       }
     }
 
-    // Initial update
     await refresh()
-
-    // Subscribe to lobby for updates
-    this.relay.subscribe(
-      "lobby",
-      (message) => {
-        try {
-          const data = JSON.parse(message)
-          if (data.action === "connected") {
-            refresh()
-          }
-        } catch {
-          // Ignore non-JSON messages
-        }
-      },
-      "lobby"
-    )
+    setInterval(refresh, 5 * 60 * 1000)
   }
 }

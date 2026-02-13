@@ -9,21 +9,24 @@ describe("NchanMessageRelay", () => {
   })
 
   describe("getOnlineCount", () => {
-    it("should return the number of active connections minus one", async () => {
+    it("should return the subscribers count from JSON response", async () => {
       const relay = new NchanMessageRelay("test.com")
       mockFetch.mockResolvedValueOnce({
-        text: () => Promise.resolve("Active connections: 10"),
+        json: () => Promise.resolve({ subscribers: 6 }),
       })
 
       const count = await relay.getOnlineCount()
-      expect(count).toBe(9)
-      expect(mockFetch).toHaveBeenCalledWith("https://test.com/basic_status")
+      expect(count).toBe(6)
+      expect(mockFetch).toHaveBeenCalledWith(
+        "https://test.com/publish/presence/lobby",
+        { method: "POST", headers: { Accept: "application/json" } }
+      )
     })
 
-    it("should return null if no match is found", async () => {
+    it("should return null if subscribers field is missing", async () => {
       const relay = new NchanMessageRelay()
       mockFetch.mockResolvedValueOnce({
-        text: () => Promise.resolve("Some other text"),
+        json: () => Promise.resolve({ messages: 0 }),
       })
 
       const count = await relay.getOnlineCount()

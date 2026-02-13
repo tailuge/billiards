@@ -55,10 +55,15 @@ export class NchanMessageRelay implements MessageRelay {
 
   async getOnlineCount(): Promise<number | null> {
     try {
-      const response = await fetch(`https://${this.baseURL}/basic_status`)
-      const text = await response.text()
-      const match = text.match(/Active connections:\s+(\d+)/)
-      return match ? Number.parseInt(match[1], 10) - 1 : null
+      const response = await fetch(
+        `https://${this.baseURL}/publish/presence/lobby`,
+        {
+          method: "POST",
+          headers: { Accept: "application/json" },
+        }
+      )
+      const data = await response.json()
+      return typeof data.subscribers === "number" ? data.subscribers : null
     } catch {
       return null
     }
