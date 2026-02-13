@@ -3,11 +3,10 @@ const TerserPlugin = require("terser-webpack-plugin")
 let packagedeps = require("./package.json")
 module.exports = {
   entry: {
-    vendor: Object.keys(packagedeps.dependencies),
-    index: { dependOn: "vendor", import: "./src/index.ts" },
-    diagram: { dependOn: "vendor", import: "./src/diagrams.ts" },
-    mathaven: { dependOn: "vendor", import: "./src/mathaven.ts" },
-    compare: { dependOn: "vendor", import: "./src/compare.ts" },
+    index: "./src/index.ts",
+    diagram: "./src/diagrams.ts",
+    mathaven: "./src/mathaven.ts",
+    compare: "./src/compare.ts",
   },
   module: {
     rules: [
@@ -34,7 +33,17 @@ module.exports = {
   },
   performance: { hints: false },
   mode: "production",
+  devtool: "source-map",
   optimization: {
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendor",
+          chunks: "all",
+        },
+      },
+    },
     minimize: true,
     minimizer: [
       new TerserPlugin({
@@ -46,7 +55,7 @@ module.exports = {
       }),
     ],
     usedExports: true,
-    moduleIds: "named",
+    moduleIds: "deterministic",
   },
   stats: {
     errorDetails: true,

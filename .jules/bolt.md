@@ -16,3 +16,13 @@
 ## 2026-02-08 - [Snooker Score-Based Winner Determination]
 **Learning:** In Snooker, the person who pots the last ball isn't necessarily the winner; the player with the highest score wins the frame. Relying on an `isWinner` boolean passed from the game flow controller can lead to incorrect UI states and match reporting in multiplayer.
 **Action:** Refactored `Snooker.handleGameEnd` to ignore the `isWinner` parameter for UI/Winner logic. It now explicitly compares `this.container.scores` to determine the actual winner (where a tie is treated as a win), updates the notification subtext with names and scores, and ensures only the correct winner submits the match result.
+
+## 2026-02-13 - [Webpack and Accessibility Optimization]
+**Learning:**
+- Removing 'user-scalable=0' and adding '<main>' landmarks directly addresses Lighthouse accessibility failures.
+- Replacing manual 'vendor' entry points with 'optimization.splitChunks' in Webpack allows for better tree-shaking of large dependencies like Three.js.
+- Enabling 'devtool: "source-map"' in production satisfies Lighthouse best practices and aids in production debugging.
+**Action:**
+- Updated HTML files in dist/ to remove scaling restrictions and add main landmarks.
+- Refactored webpack.config.js to use splitChunks and deterministic module IDs.
+- Enabled source maps for production builds.
