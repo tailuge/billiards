@@ -431,3 +431,78 @@ label {
   display: inline-block;
   width: 9ch;
 }
+
+/* Bot Debug Overlay */
+#botDebugOverlay {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 350px;
+  max-height: 400px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 10px;
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 11px;
+  color: #ccc;
+  z-index: 2000;
+  overflow: hidden;
+  display: none;
+}
+
+#botDebugOverlay header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #444;
+}
+
+#botDebugOverlay header h3 {
+  margin: 0;
+  font-size: 12px;
+  color: #fbbf24;
+}
+
+#botDebugOverlay header button {
+  background: transparent;
+  border: 1px solid #666;
+  color: #aaa;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 10px;
+  border-radius: 4px;
+}
+
+#botDebugOverlay header button:hover {
+  background: #333;
+  color: #fff;
+}
+
+#botDebugLog {
+  margin: 0;
+  padding: 0;
+  max-height: 340px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+#botDebugLog::-webkit-scrollbar {
+  width: 8px;
+}
+
+#botDebugLog::-webkit-scrollbar-track {
+  background: #222;
+}
+
+#botDebugLog::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+#botDebugLog::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}

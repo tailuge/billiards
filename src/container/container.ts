@@ -28,6 +28,7 @@ import { ScoreReporter } from "../network/client/scorereporter"
 import { NotificationData } from "../view/notification"
 import { ScoreEvent } from "../events/scoreevent"
 import { ContainerConfig } from "./containerconfig"
+import { BotDebugOverlay } from "../network/bot/overlay"
 
 /**
  * Model, View, Controller container.
@@ -53,6 +54,7 @@ export class Container {
   lobbyIndicator: LobbyIndicator
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
+  botDebugOverlay: BotDebugOverlay
   frame: (timestamp: number) => void
 
   scores: [number, number] = [0, 0]
@@ -93,6 +95,7 @@ export class Container {
     this.table.addToScene(this.view.scene)
     this.hud = new Hud()
     this.notification = new Notification()
+    this.botDebugOverlay = new BotDebugOverlay()
     this.relay = relay
     this.scoreReporter = scoreReporter
     this.lobbyIndicator = new LobbyIndicator(this.relay)
