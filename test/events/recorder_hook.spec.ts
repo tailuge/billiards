@@ -13,7 +13,11 @@ describe("Recorder Hook in Container", () => {
   let container: Container
 
   beforeEach(function (done) {
-    container = new Container(canvas3d, () => {}, Assets.localAssets())
+    container = new Container({
+      element: canvas3d,
+      log: () => {},
+      assets: Assets.localAssets(),
+    })
     done()
   })
 

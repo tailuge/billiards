@@ -45,14 +45,14 @@ describe("Controller Replay", () => {
 
   beforeEach(function (done) {
     const mockKeyboard = { getEvents: () => [] }
-    container = new Container(
-      canvas3d,
-      (_) => {},
-      Assets.localAssets(),
-      "nineball",
-      mockKeyboard,
-      () => {}
-    )
+    container = new Container({
+      element: canvas3d,
+      log: (_) => {},
+      assets: Assets.localAssets(),
+      ruletype: "nineball",
+      keyboard: mockKeyboard as any,
+      id: () => {},
+    })
     container.isSinglePlayer = true
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)

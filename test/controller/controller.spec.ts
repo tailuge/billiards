@@ -36,11 +36,11 @@ describe("Controller", () => {
 
   beforeEach(function (done) {
     Session.init("testId", "testPlayer", "testTable", false)
-    container = new Container(
-      document.getElementById("viewP1"),
-      (_) => {},
-      Assets.localAssets()
-    )
+    container = new Container({
+      element: document.getElementById("viewP1"),
+      log: (_) => {},
+      assets: Assets.localAssets(),
+    })
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
     Ball.id = 0
@@ -256,12 +256,12 @@ describe("Controller", () => {
   })
 
   it("PlaceBall moves to Aim if threecushion", (done) => {
-    container = new Container(
-      document.getElementById("viewP1"),
-      (_) => {},
-      Assets.localAssets(),
-      "threecushion"
-    )
+    container = new Container({
+      element: document.getElementById("viewP1"),
+      log: (_) => {},
+      assets: Assets.localAssets(),
+      ruletype: "threecushion",
+    })
     container.broadcast = (x) => broadcastEvents.push(x)
     container.eventQueue.push(new BeginEvent())
     container.processEvents()

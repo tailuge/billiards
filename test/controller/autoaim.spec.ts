@@ -17,12 +17,12 @@ describe("Auto Aim", () => {
 
   beforeEach(function (done) {
     Session.init("testId", "testPlayer", "testTable", false)
-    container = new Container(
-      document.getElementById("viewP1"),
-      (_) => {},
-      Assets.localAssets(),
-      "nineball"
-    )
+    container = new Container({
+      element: document.getElementById("viewP1"),
+      log: (_) => {},
+      assets: Assets.localAssets(),
+      ruletype: "nineball",
+    })
     Ball.id = 0
     done()
   })

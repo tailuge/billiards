@@ -41,12 +41,12 @@ describe("Snooker", () => {
 
   beforeEach(function (done) {
     Ball.id = 0
-    container = new Container(
-      undefined,
-      (_) => {},
-      Assets.localAssets(rule),
-      rule
-    )
+    container = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets(rule),
+      ruletype: rule,
+    })
     snooker = container.rules as Snooker
     table = container.table
     broadcastEvents = []

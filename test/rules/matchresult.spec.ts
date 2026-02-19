@@ -26,12 +26,12 @@ describe("MatchResult Construction", () => {
 
   it("NineBall should include Anon as winner if playername is empty", () => {
     Session.init("test-client", "", "test-table", false)
-    container = new Container(
-      undefined,
-      (_) => {},
-      Assets.localAssets("nineball"),
-      "nineball"
-    )
+    container = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets("nineball"),
+      ruletype: "nineball",
+    })
     const nineball = container.rules as NineBall
     container.table.balls.forEach((b) => {
       if (b !== container.table.cueball && b.label !== 9) {
@@ -54,12 +54,12 @@ describe("MatchResult Construction", () => {
   })
 
   it("NineBall should include opponent if session.opponentName is present", () => {
-    container = new Container(
-      undefined,
-      (_) => {},
-      Assets.localAssets("nineball"),
-      "nineball"
-    )
+    container = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets("nineball"),
+      ruletype: "nineball",
+    })
     const session = Session.getInstance()
     session.opponentName = "TestOpponent"
     const nineball = container.rules as NineBall
@@ -83,12 +83,12 @@ describe("MatchResult Construction", () => {
   })
 
   it("NineBall should include replayData in MatchResult", () => {
-    container = new Container(
-      undefined,
-      (_) => {},
-      Assets.localAssets("nineball"),
-      "nineball"
-    )
+    container = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets("nineball"),
+      ruletype: "nineball",
+    })
     container.scoreReporter = new ScoreReporter()
     const nineball = container.rules as NineBall
     container.table.balls.forEach((b) => {
@@ -112,12 +112,12 @@ describe("MatchResult Construction", () => {
 
   it("Snooker should include Anon as winner if playername is empty", () => {
     Session.init("test-client", "", "test-table", false)
-    container = new Container(
-      undefined,
-      (_) => {},
-      Assets.localAssets("snooker"),
-      "snooker"
-    )
+    container = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets("snooker"),
+      ruletype: "snooker",
+    })
     container.scoreReporter = new ScoreReporter()
     const snooker = container.rules as Snooker
     container.scores = [60, 0]
@@ -143,12 +143,12 @@ describe("MatchResult Construction", () => {
   })
 
   it("ThreeCushion should include replayData in MatchResult", () => {
-    container = new Container(
-      undefined,
-      (_) => {},
-      Assets.localAssets("threecushion"),
-      "threecushion"
-    )
+    container = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets("threecushion"),
+      ruletype: "threecushion",
+    })
     container.scoreReporter = new ScoreReporter()
     const threecushion = container.rules as any
     container.scores = [10, 5]
@@ -167,12 +167,12 @@ describe("MatchResult Construction", () => {
     const session = Session.getInstance()
     session.playerIndex = 1
     session.opponentName = "OpponentPlayer"
-    container = new Container(
-      undefined,
-      (_) => {},
-      Assets.localAssets("threecushion"),
-      "threecushion"
-    )
+    container = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets("threecushion"),
+      ruletype: "threecushion",
+    })
     container.scoreReporter = new ScoreReporter()
     const threecushion = container.rules as any
     container.scores = [3, 7]

@@ -22,12 +22,12 @@ describe("NineBall Rules", () => {
   beforeEach(() => {
     Ball.id = 0
     Session.init("test-client", "TestPlayer", "test-table", false)
-    container = new Container(
-      undefined,
-      (_: any) => {},
-      Assets.localAssets(),
-      "nineball"
-    )
+    container = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "nineball",
+    })
     nineball = container.rules as NineBall
   })
 

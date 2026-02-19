@@ -17,12 +17,12 @@ describe("WatchShot Controller", () => {
   beforeEach(() => {
     Ball.id = 0
     Session.init("test-client", "TestPlayer", "test-table", false)
-    container = new Container(
-      undefined,
-      (_) => {},
-      Assets.localAssets(),
-      "nineball"
-    )
+    container = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets(),
+      ruletype: "nineball",
+    })
     container.isSinglePlayer = false
   })
 

@@ -1,4 +1,5 @@
 import { Container } from "./container"
+import { ContainerConfig } from "./containerconfig"
 import { Keyboard } from "../events/keyboard"
 import { EventUtil } from "../events/eventutil"
 import { BreakEvent } from "../events/breakevent"
@@ -91,16 +92,17 @@ export class BrowserContainer {
     console.log(`${this.playername} assets ready`)
     this.messageRelay = new NchanMessageRelay()
     const scoreReporter = new ScoreReporter()
-    this.container = new Container(
-      this.canvas3d,
-      console.log,
-      this.assets,
-      this.ruletype,
-      new Keyboard(this.canvas3d),
-      this.playername,
-      this.messageRelay,
-      scoreReporter
-    )
+    const config: ContainerConfig = {
+      element: this.canvas3d,
+      log: console.log,
+      assets: this.assets,
+      ruletype: this.ruletype,
+      keyboard: new Keyboard(this.canvas3d),
+      id: this.playername,
+      relay: this.messageRelay,
+      scoreReporter: scoreReporter,
+    }
+    this.container = new Container(config)
     this.container.broadcast = (e) => {
       this.broadcast(e)
     }

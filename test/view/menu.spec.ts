@@ -10,11 +10,11 @@ initDom()
 let container: Container
 
 beforeEach(function (done) {
-  container = new Container(
-    document.getElementById("viewP1"),
-    (_) => {},
-    Assets.localAssets()
-  )
+  container = new Container({
+    element: document.getElementById("viewP1"),
+    log: (_) => {},
+    assets: Assets.localAssets(),
+  })
   new Menu(container)
   done()
 })

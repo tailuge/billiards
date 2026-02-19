@@ -1,4 +1,5 @@
 import { Container } from "../container/container"
+import { ContainerConfig } from "../container/containerconfig"
 import { Keyboard } from "../events/keyboard"
 import { BreakEvent } from "../events/breakevent"
 import { CameraTop } from "../view/cameratop"
@@ -32,14 +33,15 @@ export class DiagramContainer {
 
   start() {
     const keyboard = new Keyboard(this.canvas3d)
-    this.container = new Container(
-      this.canvas3d,
-      console.log,
-      Assets.localAssets(this.ruletype),
-      this.ruletype,
-      keyboard,
-      "diagram"
-    )
+    const config: ContainerConfig = {
+      element: this.canvas3d,
+      log: console.log,
+      assets: Assets.localAssets(this.ruletype),
+      ruletype: this.ruletype,
+      keyboard: keyboard,
+      id: "diagram",
+    }
+    this.container = new Container(config)
     if (this.cushionModel) {
       this.container.table.cushionModel = this.cushionModel
     }

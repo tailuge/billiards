@@ -27,6 +27,7 @@ import { MessageRelay } from "../network/client/messagerelay"
 import { ScoreReporter } from "../network/client/scorereporter"
 import { NotificationData } from "../view/notification"
 import { ScoreEvent } from "../events/scoreevent"
+import { ContainerConfig } from "./containerconfig"
 
 /**
  * Model, View, Controller container.
@@ -37,13 +38,13 @@ export class Container {
   controller: Controller
   inputQueue: Input[] = []
   eventQueue: GameEvent[] = []
-  keyboard: Keyboard
+  keyboard?: Keyboard
   sound: Sound
   chat: Chat
   sliders: Sliders
   recorder: Recorder
   linkFormatter: LinkFormatter
-  id: string = ""
+  id: string
   isSinglePlayer: boolean = true
   rules: Rules
   menu: Menu
@@ -63,28 +64,31 @@ export class Container {
   broadcast: (event: GameEvent) => void = () => {}
   log: (text: string) => void
 
-  constructor(
-    element,
-    log,
-    assets,
-    ruletype?,
-    keyboard?,
-    id?,
-    relay: MessageRelay | null = null,
-    scoreReporter: ScoreReporter | null = null
-  ) {
+  constructor(config: ContainerConfig) {
+    const {
+      element,
+      log,
+      assets,
+      ruletype,
+      keyboard,
+      id,
+      relay = null,
+      scoreReporter = null,
+    } = config
     this.log = log
     this.rules = RuleFactory.create(ruletype, this)
     this.table = this.rules.table()
     this.view = new View(element, this.table, assets)
     this.table.cue.aimInputs = new AimInputs(this)
-    this.keyboard = keyboard
+    if (keyboard) {
+      this.keyboard = keyboard
+    }
     this.sound = assets.sound
     this.chat = new Chat(this.sendChat)
     this.sliders = new Sliders()
     this.linkFormatter = new LinkFormatter(this)
     this.recorder = new Recorder(this, this.linkFormatter)
-    this.id = id
+    this.id = id ?? ""
     this.menu = new Menu(this)
     this.table.addToScene(this.view.scene)
     this.hud = new Hud()

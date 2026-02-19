@@ -12,7 +12,11 @@ describe("Recorder", () => {
   let container: Container
 
   beforeEach(function (done) {
-    container = new Container(canvas3d, (_) => {}, Assets.localAssets())
+    container = new Container({
+      element: canvas3d,
+      log: (_) => {},
+      assets: Assets.localAssets(),
+    })
     done()
   })
 
