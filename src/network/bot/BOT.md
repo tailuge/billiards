@@ -92,7 +92,7 @@ A debug console (similar to notification overlay) for:
 - Wire to hotkey
 - Show/hide functionality
 
-#### Phase 3: Bot Mode Activation
+#### Phase 3: Bot Mode Activation [DONE]
 - Add `botMode` to `Session`
 - Parse `bot=true` URL param
 - Display indicator when bot mode active
@@ -102,7 +102,8 @@ A debug console (similar to notification overlay) for:
 - Create `BotMessageRelay` implementing `MessageRelay`
 - Wire into Container when bot mode enabled
 - Log events to debug overlay
-- Still no bot decision logic
+- No bot decision logic
+- I want to ensure that in bot mode the init state transitions to placeball for the player and it broadcasts a WatchEvent to the bot
 
 #### Phase 5: Bot Core (Future)
 - Bot decision engine
