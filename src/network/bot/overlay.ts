@@ -1,54 +1,69 @@
-import { id } from "../../utils/dom"
+import { id } from "../../utils/dom";
+import { Session } from "../client/session";
 
 export interface LogEntry {
-  timestamp: number
-  direction: "in" | "out" | "info"
-  message: string
+  timestamp: number;
+  direction: "in" | "out" | "info";
+  message: string;
 }
 
 export class BotDebugOverlay {
-  element: HTMLDivElement
-  logElement: HTMLPreElement
-  statusElement: HTMLSpanElement
-  entries: LogEntry[] = []
-  visible: boolean = false
-  maxEntries: number = 50
+  element: HTMLDivElement;
+  logElement: HTMLPreElement;
+  statusElement: HTMLSpanElement;
+  entries: LogEntry[] = [];
+  visible: boolean = false;
+  maxEntries: number = 50;
 
   constructor() {
-    this.element = id("botDebugOverlay") as HTMLDivElement
-    this.logElement = id("botDebugLog") as HTMLPreElement
-    this.statusElement = id("botDebugStatus") as HTMLSpanElement
-    this.hide()
-    this.updateStatus(false)
+    this.element = id("botDebugOverlay") as HTMLDivElement;
+    this.logElement = id("botDebugLog") as HTMLPreElement;
+    this.statusElement = id("botDebugStatus") as HTMLSpanElement;
+    this.hide();
+    this.updateStatus(false);
+
+    const botMode = Session.hasInstance() && Session.isBotMode();
+    this.updateStatus(botMode);
+    if (botMode) {
+      this.info("Bot mode activated");
+      this.show();
+    }
+
+    const clearButton = document.getElementById("botDebugClear");
+    if (clearButton) {
+      clearButton.addEventListener("click", () => {
+        this.clear();
+      });
+    }
   }
 
   toggle() {
-    this.visible = !this.visible
+    this.visible = !this.visible;
     if (this.visible) {
-      this.show()
+      this.show();
     } else {
-      this.hide()
+      this.hide();
     }
   }
 
   show() {
-    this.visible = true
+    this.visible = true;
     if (this.element) {
-      this.element.style.display = "block"
+      this.element.style.display = "block";
     }
   }
 
   hide() {
-    this.visible = false
+    this.visible = false;
     if (this.element) {
-      this.element.style.display = "none"
+      this.element.style.display = "none";
     }
   }
 
   updateStatus(active: boolean) {
     if (this.statusElement) {
-      this.statusElement.textContent = active ? "BOT MODE" : ""
-      this.statusElement.style.color = active ? "#4ade80" : "#666"
+      this.statusElement.textContent = active ? "BOT MODE" : "";
+      this.statusElement.style.color = active ? "#4ade80" : "#666";
     }
   }
 
@@ -57,60 +72,60 @@ export class BotDebugOverlay {
       timestamp: Date.now(),
       direction,
       message,
-    }
-    this.entries.push(entry)
+    };
+    this.entries.push(entry);
     if (this.entries.length > this.maxEntries) {
-      this.entries.shift()
+      this.entries.shift();
     }
-    this.render()
+    this.render();
   }
 
   info(message: string) {
-    this.log("info", message)
+    this.log("info", message);
   }
 
   incoming(message: string) {
-    this.log("in", message)
+    this.log("in", message);
   }
 
   outgoing(message: string) {
-    this.log("out", message)
+    this.log("out", message);
   }
 
   clear() {
-    this.entries = []
-    this.render()
+    this.entries = [];
+    this.render();
   }
 
   private render() {
-    if (!this.logElement) return
+    if (!this.logElement) return;
 
     const lines = this.entries.map((entry) => {
-      const time = new Date(entry.timestamp).toLocaleTimeString()
-      let prefix: string
-      let color: string
+      const time = new Date(entry.timestamp).toLocaleTimeString();
+      let prefix: string;
+      let color: string;
 
       if (entry.direction === "in") {
-        prefix = "←"
-        color = "#4ade80"
+        prefix = "←";
+        color = "#4ade80";
       } else if (entry.direction === "out") {
-        prefix = "→"
-        color = "#60a5fa"
+        prefix = "→";
+        color = "#60a5fa";
       } else {
-        prefix = "•"
-        color = "#fbbf24"
+        prefix = "•";
+        color = "#fbbf24";
       }
 
-      return `<span style="color: ${color}">[${time}] ${prefix}</span> ${this.escapeHtml(entry.message)}`
-    })
+      return `<span style="color: ${color}">[${time}] ${prefix}</span> ${this.escapeHtml(entry.message)}`;
+    });
 
-    this.logElement.innerHTML = lines.join("\n")
-    this.logElement.scrollTop = this.logElement.scrollHeight
+    this.logElement.innerHTML = lines.join("\n");
+    this.logElement.scrollTop = this.logElement.scrollHeight;
   }
 
   private escapeHtml(text: string): string {
-    const div = document.createElement("div")
-    div.textContent = text
-    return div.innerHTML
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
   }
 }
