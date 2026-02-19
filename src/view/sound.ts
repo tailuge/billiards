@@ -1,10 +1,4 @@
-import {
-  AudioListener,
-  Audio,
-  AudioLoader,
-  MathUtils,
-  AudioContext,
-} from "three"
+import { AudioListener, Audio, AudioLoader, MathUtils } from "three"
 
 export class Sound {
   listener: AudioListener
@@ -61,7 +55,7 @@ export class Sound {
 
   play(audio: Audio, volume, detune = 0) {
     if (this.loadAssets) {
-      const context = AudioContext.getContext()
+      const context = this.listener.context
       if (context?.state === "suspended") {
         if (navigator?.userActivation?.hasBeenActive) {
           context.resume()
