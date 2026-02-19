@@ -16,6 +16,7 @@ import { ThreeCushionConfig } from "../utils/threecushionconfig"
 import { Session } from "../network/client/session"
 import { MessageRelay } from "../network/client/messagerelay"
 import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
+import { BotMessageRelay } from "../network/client/botmessagerelay"
 import { ScoreReporter } from "../network/client/scorereporter"
 import { BeginEvent } from "../events/beginevent"
 import { logNetEvent } from "../utils/event-log"
@@ -50,6 +51,8 @@ export class BrowserContainer {
   first
   assets: Assets
   now
+  botMode: boolean = false
+  readonly botDelay: number = 500
   constructor(canvas3d, params) {
     this.now = Date.now()
     this.playername = params.get("name") ?? params.get("playername") ?? "Anon"
@@ -62,12 +65,13 @@ export class BrowserContainer {
     this.cushionModel = this.cushion(params.get("cushionModel"))
     this.spectator = params.has("spectator")
     this.first = params.has("first")
+    this.botMode = params.has("bot")
     SnookerConfig.reds = parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo = parseInt(params.get("raceTo") ?? "2") || 2
     console.log(
-      `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator}`
+      `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode}`
     )
-    Session.init(this.clientId, this.playername, this.tableId, this.spectator)
+    Session.init(this.clientId, this.playername, this.tableId, this.spectator, this.botMode)
   }
 
   cushion(model) {
@@ -81,17 +85,7 @@ export class BrowserContainer {
     }
   }
 
-  start() {
-    this.assets = new Assets(this.ruletype)
-    this.assets.loadFromWeb(() => {
-      this.onAssetsReady()
-    })
-  }
-
-  onAssetsReady() {
-    console.log(`${this.playername} assets ready`)
-    this.messageRelay = new NchanMessageRelay()
-    const scoreReporter = new ScoreReporter()
+  private createContainer(scoreReporter: ScoreReporter) {
     const config: ContainerConfig = {
       element: this.canvas3d,
       log: console.log,
@@ -102,7 +96,29 @@ export class BrowserContainer {
       relay: this.messageRelay,
       scoreReporter: scoreReporter,
     }
-    this.container = new Container(config)
+    return new Container(config)
+  }
+
+  start() {
+    this.assets = new Assets(this.ruletype)
+    this.assets.loadFromWeb(() => {
+      this.onAssetsReady()
+    })
+  }
+
+  onAssetsReady() {
+    console.log(`${this.playername} assets ready`)
+    const scoreReporter = new ScoreReporter()
+
+    if (this.botMode) {
+      this.messageRelay = new BotMessageRelay()
+      this.container = this.createContainer(scoreReporter)
+      this.container.isSinglePlayer = false
+    } else {
+      this.messageRelay = new NchanMessageRelay()
+      this.container = this.createContainer(scoreReporter)
+    }
+
     this.container.broadcast = (e) => {
       this.broadcast(e)
     }

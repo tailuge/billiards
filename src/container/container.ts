@@ -100,7 +100,24 @@ export class Container {
     this.scoreReporter = scoreReporter
     this.lobbyIndicator = new LobbyIndicator(this.relay)
     this.lobbyIndicator.init()
+    this.updateBotDebugStatus()
     this.updateController(new Init(this))
+  }
+
+  updateBotDebugStatus() {
+    const botMode = Session.hasInstance() && Session.isBotMode()
+    this.botDebugOverlay.updateStatus(botMode)
+    if (botMode) {
+      this.botDebugOverlay.info("Bot mode activated")
+      this.botDebugOverlay.show()
+    }
+
+    const clearButton = document.getElementById("botDebugClear")
+    if (clearButton) {
+      clearButton.addEventListener("click", () => {
+        this.botDebugOverlay.clear()
+      })
+    }
   }
 
   sendChat = (msg) => {

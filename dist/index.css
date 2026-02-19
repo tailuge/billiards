@@ -481,6 +481,18 @@ label {
   color: #fff;
 }
 
+#botDebugOverlay header div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#botDebugStatus {
+  font-size: 10px;
+  font-weight: bold;
+  color: #666;
+}
+
 #botDebugLog {
   margin: 0;
   padding: 0;

@@ -87,7 +87,7 @@ A debug console (similar to notification overlay) for:
 - Refactor `Container` to use config object
 - Verify all tests pass, no regression
 
-#### Phase 2: Debug Overlay
+#### Phase 2: Debug Overlay [DONE]
 - Create `BotDebugOverlay` component
 - Wire to hotkey
 - Show/hide functionality

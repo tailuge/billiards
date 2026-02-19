@@ -3,7 +3,8 @@ export class Session {
     public playername: string,
     readonly clientId: string,
     readonly tableId: string,
-    readonly spectator: boolean
+    readonly spectator: boolean,
+    readonly botMode: boolean = false
   ) {}
 
   opponentName?: string
@@ -30,6 +31,10 @@ export class Session {
     return Session.instance !== undefined && Session.getInstance().spectator
   }
 
+  static isBotMode(): boolean {
+    return Session.instance !== undefined && Session.getInstance().botMode
+  }
+
   static reset() {
     Session.instance = undefined
   }
@@ -38,8 +43,9 @@ export class Session {
     clientId: string,
     playername: string,
     tableId: string,
-    spectator: boolean
+    spectator: boolean,
+    botMode: boolean = false
   ) {
-    Session.instance = new Session(playername, clientId, tableId, spectator)
+    Session.instance = new Session(playername, clientId, tableId, spectator, botMode)
   }
 }

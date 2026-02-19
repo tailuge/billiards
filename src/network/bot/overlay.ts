@@ -9,6 +9,7 @@ export interface LogEntry {
 export class BotDebugOverlay {
   element: HTMLDivElement
   logElement: HTMLPreElement
+  statusElement: HTMLSpanElement
   entries: LogEntry[] = []
   visible: boolean = false
   maxEntries: number = 50
@@ -16,7 +17,9 @@ export class BotDebugOverlay {
   constructor() {
     this.element = id("botDebugOverlay") as HTMLDivElement
     this.logElement = id("botDebugLog") as HTMLPreElement
+    this.statusElement = id("botDebugStatus") as HTMLSpanElement
     this.hide()
+    this.updateStatus(false)
   }
 
   toggle() {
@@ -39,6 +42,13 @@ export class BotDebugOverlay {
     this.visible = false
     if (this.element) {
       this.element.style.display = "none"
+    }
+  }
+
+  updateStatus(active: boolean) {
+    if (this.statusElement) {
+      this.statusElement.textContent = active ? "BOT MODE" : ""
+      this.statusElement.style.color = active ? "#4ade80" : "#666"
     }
   }
 
