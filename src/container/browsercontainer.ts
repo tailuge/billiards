@@ -16,7 +16,7 @@ import { ThreeCushionConfig } from "../utils/threecushionconfig"
 import { Session } from "../network/client/session"
 import { MessageRelay } from "../network/client/messagerelay"
 import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
-import { BotMessageRelay } from "../network/client/botmessagerelay"
+import { BotMessageRelay } from "../network/bot/botmessagerelay"
 import { ScoreReporter } from "../network/client/scorereporter"
 import { BeginEvent } from "../events/beginevent"
 import { logNetEvent } from "../utils/event-log"
@@ -71,7 +71,13 @@ export class BrowserContainer {
     console.log(
       `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode}`
     )
-    Session.init(this.clientId, this.playername, this.tableId, this.spectator, this.botMode)
+    Session.init(
+      this.clientId,
+      this.playername,
+      this.tableId,
+      this.spectator,
+      this.botMode
+    )
   }
 
   cushion(model) {
@@ -114,6 +120,12 @@ export class BrowserContainer {
       this.messageRelay = new BotMessageRelay()
       this.container = this.createContainer(scoreReporter)
       this.container.isSinglePlayer = false
+      ;(this.messageRelay as BotMessageRelay).setDebugOverlay(
+        this.container.botDebugOverlay
+      )
+      this.messageRelay.subscribe(this.tableId, (e) => {
+        this.netEvent(e)
+      })
     } else {
       this.messageRelay = new NchanMessageRelay()
       this.container = this.createContainer(scoreReporter)
@@ -165,7 +177,7 @@ export class BrowserContainer {
   }
 
   broadcast(event: GameEvent) {
-    if (this.wss && this.messageRelay) {
+    if (this.messageRelay) {
       event.clientId = Session.getInstance().clientId
       event.playername = Session.getInstance().playername
       logNetEvent(this.playername, event, "broadcast")

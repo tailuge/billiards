@@ -103,7 +103,7 @@ A debug console (similar to notification overlay) for:
 - Wire into Container when bot mode enabled
 - Log events to debug overlay
 - No bot decision logic
-- I want to ensure that in bot mode the init state transitions to placeball for the player and it broadcasts a WatchEvent to the bot
+- I want to ensure that in bot mode the init state transitions to placeball for the player and it broadcasts a WatchEvent to the bot. It must recieve a BeginEvent
 
 #### Phase 5: Bot Core (Future)
 - Bot decision engine

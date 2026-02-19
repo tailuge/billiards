@@ -46,6 +46,12 @@ export class Session {
     spectator: boolean,
     botMode: boolean = false
   ) {
-    Session.instance = new Session(playername, clientId, tableId, spectator, botMode)
+    Session.instance = new Session(
+      playername,
+      clientId,
+      tableId,
+      spectator,
+      botMode
+    )
   }
 }
