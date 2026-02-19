@@ -3,14 +3,17 @@ import { BotDebugOverlay } from "./overlay"
 import { BeginEvent } from "../../events/beginevent"
 import { EventUtil } from "../../events/eventutil"
 import { EventType } from "../../events/eventtype"
+import { BotEventHandler } from "./eventhandler"
 
 export class BotMessageRelay implements MessageRelay {
   private messageQueue: string[] = []
   private callback: ((message: string) => void) | null = null
   private logs: BotDebugOverlay
+  private eventHandler: BotEventHandler
 
   constructor() {
     this.logs = new BotDebugOverlay()
+    this.eventHandler = new BotEventHandler()
   }
 
   private isAimEvent(message: string): boolean {
@@ -39,23 +42,24 @@ export class BotMessageRelay implements MessageRelay {
 
     setTimeout(() => {
       const beginEvent = EventUtil.serialise(new BeginEvent())
-      this.logs.incoming(`Bot joining: BeginEvent`)
+      this.logs.outgoing(`Bot joining: BeginEvent`)
       callback(beginEvent)
     }, 0)
   }
 
-  publish(channel: string, message: string, prefix?: string): void {
+  publish(_channel: string, message: string, _prefix?: string): void {
     if (!this.isAimEvent(message)) {
-      this.logs.outgoing(`Publish to ${prefix || ""}${channel}: ${message}`)
+      this.logs.incoming(`Incoming: ${message}`)
+    }
+
+    try {
+      const event = EventUtil.fromSerialised(message)
+      this.eventHandler.handle(event)
+    } catch {
+      // not a valid event
     }
 
     this.messageQueue.push(message)
-
-    if (this.callback) {
-      setTimeout(() => {
-        this.callback?.(message)
-      }, 0)
-    }
   }
 
   async getOnlineCount(): Promise<number | null> {
