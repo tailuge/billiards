@@ -376,6 +376,7 @@ input[type="range"].powerSlider {
   flex-direction: column;
   flex-grow: 1;
   margin-right: 5px;
+  min-width: 0;
 }
 
 .chatoutput {
@@ -387,6 +388,7 @@ input[type="range"].powerSlider {
   margin: 2px 4px 2px 2px;
   border-radius: 5px;
   font-size: smaller;
+  overflow-wrap: anywhere;
 }
 
 .chatoutput::-webkit-scrollbar {
