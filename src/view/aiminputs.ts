@@ -111,10 +111,10 @@ export class AimInputs {
     this.container.table.cue.setPower(this.cuePowerElement.value)
   }
 
-  updatePowerSlider(power) {
-    power > 0 &&
-      this.cuePowerElement?.value &&
-      (this.cuePowerElement.value = power)
+  updatePowerSlider(power: number) {
+    if (this.cuePowerElement) {
+      this.cuePowerElement.value = power.toString()
+    }
   }
 
   hit = (_) => {
@@ -128,5 +128,13 @@ export class AimInputs {
       this.container.table.cue.setPower(this.cuePowerElement.value)
       this.container.lastEventTime = performance.now()
     }
+  }
+
+  syncFromModel() {
+    const cue = this.container.table.cue
+    const aim = cue.aim
+    this.updateVisualState(aim.offset.x, aim.offset.y)
+    this.updatePowerSlider(aim.power / cue.maxPower)
+    this.showOverlap()
   }
 }

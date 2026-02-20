@@ -27,12 +27,17 @@ export class Ball {
   pocket: Pocket
 
   public static id = 0
-  readonly id = Ball.id++
+  readonly id: number
+
+  static resetId() {
+    Ball.id = 0
+  }
   readonly label: number | undefined
 
   static readonly transition = 0.05
 
-  constructor(pos, color?, label?: number) {
+  constructor(pos, color?, label?: number, id?: number) {
+    this.id = id ?? Ball.id++
     this.pos = pos.clone()
     this.label = label
     this.ballmesh = new BallMesh(color || 0xeeeeee * Math.random(), label)
@@ -141,7 +146,7 @@ export class Ball {
   }
 
   static fromSerialised(data) {
-    return Ball.updateFromSerialised(new Ball(vec(data.pos)), data)
+    return Ball.updateFromSerialised(new Ball(vec(data.pos), undefined, undefined, data.id), data)
   }
 
   static updateFromSerialised(b, data) {

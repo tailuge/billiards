@@ -13,13 +13,12 @@ export function vec(v) {
   return new Vector3(v.x, v.y, v.z)
 }
 
-const upCrossVec = new Vector3()
-export function upCross(v) {
-  return upCrossVec.copy(up).cross(v)
+export function upCross(v, target = new Vector3()) {
+  return target.copy(up).cross(v)
 }
-const normVec = new Vector3()
-export function norm(v) {
-  return normVec.copy(v).normalize()
+export function norm(v, target = new Vector3()) {
+  if (v.lengthSq() === 0) return target.copy(zero)
+  return target.copy(v).normalize()
 }
 
 const vc = new Vector3()

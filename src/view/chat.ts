@@ -20,7 +20,11 @@ export class Chat {
   }
 
   showMessage(msg) {
-    this.chatoutput && (this.chatoutput.innerHTML += msg)
+    if (this.chatoutput) {
+      const div = document.createElement("div")
+      div.textContent = msg
+      this.chatoutput.appendChild(div)
+    }
     this.updateScroll()
   }
 
