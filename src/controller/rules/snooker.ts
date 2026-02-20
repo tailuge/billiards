@@ -65,7 +65,7 @@ export class Snooker implements Rules {
   targetRedRule(outcome: Outcome[], info: ShotInfo): Controller {
     if (info.legalFirstCollision && Outcome.onlyRedsPotted(outcome)) {
       this.currentBreak += info.pots
-      this.container.scores[Session.playerIndex()] += info.pots
+      this.container.scores[this.container.getActivePlayerIndex()] += info.pots
       this.targetIsRed = false
       this.previousPotRed = true
       return this.continueBreak()
@@ -96,7 +96,7 @@ export class Snooker implements Rules {
     if (this.previousPotRed) {
       this.respot(outcome)
       this.currentBreak += id + 1
-      this.container.scores[Session.playerIndex()] += id + 1
+      this.container.scores[this.container.getActivePlayerIndex()] += id + 1
       this.previousPotRed = false
       this.targetIsRed =
         SnookerUtils.redsOnTable(this.container.table).length > 0
@@ -113,7 +113,7 @@ export class Snooker implements Rules {
     }
 
     this.currentBreak += id + 1
-    this.container.scores[Session.playerIndex()] += id + 1
+    this.container.scores[this.container.getActivePlayerIndex()] += id + 1
     this.previousPotRed = false
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     return this.continueBreak()
@@ -122,7 +122,7 @@ export class Snooker implements Rules {
   foul(outcome: Outcome[], info: ShotInfo): Controller {
     const foulResult = SnookerUtils.calculateFoul(outcome, info)
     this.foulPoints = foulResult.points
-    const index = Session.playerIndex()
+    const index = this.container.getActivePlayerIndex()
     this.container.scores[1 - index] += this.foulPoints
     const notification = info.whitePotted
       ? ({

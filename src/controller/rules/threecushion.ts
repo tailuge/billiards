@@ -86,7 +86,7 @@ export class ThreeCushion implements Rules {
       this.container.sound.playSuccess(outcomes.length / 3)
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
       this.currentBreak++
-      this.container.scores[Session.playerIndex()]++
+      this.container.scores[this.container.getActivePlayerIndex()]++
       if (this.isEndOfGame(outcomes)) {
         return this.handleGameEnd(true)
       }

@@ -160,9 +160,10 @@ export class Container {
     this.view.update(computedElapsed, this.table.cue.aim)
     this.table.cue.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
-      this.eventQueue.push(new StationaryEvent())
+      const stationary = new StationaryEvent()
+      this.eventQueue.push(stationary)
       if (Session.isBotMode()) {
-        this.sendEvent(new BeginEvent())
+        this.sendEvent(stationary)
       }
     }
     this.sound.processOutcomes(this.table.outcome)
@@ -218,5 +219,16 @@ export class Container {
       this.controller = controller
       this.controller.onFirst()
     }
+  }
+
+  getActivePlayerIndex(): number {
+    const name = this.controller ? this.controller.name : ""
+    const isWatching =
+      name.startsWith("Watch") ||
+      name === "Spectate" ||
+      name === "Replay"
+
+    const localIndex = Session.playerIndex()
+    return isWatching ? 1 - localIndex : localIndex
   }
 }

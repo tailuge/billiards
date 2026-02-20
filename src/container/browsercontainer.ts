@@ -67,8 +67,9 @@ export class BrowserContainer {
     this.spectator = params.has("spectator")
     this.first = params.has("first")
     this.botMode = params.has("bot")
-    SnookerConfig.reds = parseInt(params.get("reds") ?? "15") || 15
-    ThreeCushionConfig.raceTo = parseInt(params.get("raceTo") ?? "2") || 2
+    this.botDelay = Number.parseInt(params.get("botDelay") ?? "2000", 10) || 2000
+    SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15", 10) || 15
+    ThreeCushionConfig.raceTo = Number.parseInt(params.get("raceTo") ?? "2", 10) || 2
     console.log(
       `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode}`
     )
@@ -121,7 +122,7 @@ export class BrowserContainer {
       this.container = this.createContainer(scoreReporter)
       this.container.isSinglePlayer = false
       const logs = new Logger()
-      this.messageRelay = new BotRelay(logs, this.container)
+      this.messageRelay = new BotRelay(logs, this.container, this.botDelay)
       this.messageRelay.subscribe(this.tableId, (e) => {
         this.netEvent(e)
       })

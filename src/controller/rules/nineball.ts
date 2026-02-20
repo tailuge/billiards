@@ -125,7 +125,7 @@ export class NineBall implements Rules {
     const table = this.container.table
     const pots = Outcome.potCount(outcome)
     this.currentBreak += pots
-    this.container.scores[Session.playerIndex()] += pots
+    this.container.scores[this.container.getActivePlayerIndex()] += pots
     this.container.sound.playSuccess(table.inPockets())
     if (this.isEndOfGame(outcome)) {
       return this.handleGameEnd(true)

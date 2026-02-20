@@ -13,61 +13,103 @@ export class BotEventHandler {
   private logs: Logger
   private container: Container
   private publishToPlayer: (event: GameEvent) => void
+  private delay: number
 
   constructor(
     logs: Logger,
     container: Container,
-    publishToPlayer: (event: GameEvent) => void
+    publishToPlayer: (event: GameEvent) => void,
+    delay: number = 2000
   ) {
     this.logs = logs
     this.container = container
     this.publishToPlayer = publishToPlayer
+    this.delay = delay
   }
+
+  private isBotTurn: boolean = false
+  private isThinking: boolean = false
+  private timeoutId: number | null = null
 
   handle(event: GameEvent): void {
     this.logs.info(`Bot handling event: ${event.type}`)
+
     if (event.type === EventType.STARTAIM) {
-      this.handleStartAim()
-    }
-    if (event.type === EventType.PLACEBALL) {
-      this.handlePlaceBall()
-    }
-    if (event.type === EventType.BEGIN) {
-      this.handleStationary()
+      if (this.isBotTurn) {
+        // If we thought it was our turn but we get a STARTAIM, it means the turn switched back to the human
+        this.isBotTurn = false
+        this.cancelAction()
+      } else {
+        this.isBotTurn = true
+        this.startThinking()
+      }
+    } else if (event.type === EventType.WATCHAIM) {
+      if (this.isBotTurn && !this.isThinking) {
+        this.startThinking()
+      }
+    } else if (event.type === EventType.PLACEBALL) {
+      this.isBotTurn = true
+      this.scheduleAction(() => this.handlePlaceBall())
+    } else if (event.type === EventType.HIT || event.type === EventType.ABORT) {
+      this.cancelAction()
+      if (event.type === EventType.HIT) {
+        this.isThinking = false
+      } else {
+        this.isBotTurn = false
+        this.isThinking = false
+      }
     }
   }
 
-  private handleStationary(): void {
-    // The balls have finished rolling after a shot, now apply rules to find out
-    // if turn continues or switches maybe with a foul and a placeball
-    // gameover is also an option
-    const outcome = this.container.table.outcome
-    if (this.container.rules.isEndOfGame(outcome)) {
-      // bot has won, notify player
-    }
-    const controller = this.container.rules.update(outcome)
-    if (controller instanceof Aim) {
-      // valid shot continue
-      this.handleStartAim()
-    } else {
-      // switch to players turn
-      this.publishToPlayer(new StartAimEvent())
+  private startThinking() {
+    this.isThinking = true
+    this.scheduleAction(() => this.handleStartAim())
+  }
+
+  private scheduleAction(action: () => void) {
+    this.cancelAction()
+    this.timeoutId = globalThis.setTimeout(
+      action,
+      this.delay
+    ) as unknown as number
+  }
+
+  private cancelAction() {
+    if (this.timeoutId !== null) {
+      globalThis.clearTimeout(this.timeoutId)
+      this.timeoutId = null
     }
   }
 
   private handleStartAim(): void {
+    if (!this.isBotTurn) return
+
+    // First, generate the shot and show the player where the bot is aiming
     const hitEvent = this.generateRandomShot()
-    this.publishToPlayer(hitEvent)
+    this.publishToPlayer(new WatchEvent(this.container.table.serialise()))
+
+    // Then wait a bit more (simulating "thinking/finalizing") before taking the shot
+    this.scheduleAction(() => {
+      if (this.isBotTurn) {
+        this.publishToPlayer(hitEvent)
+      }
+    })
   }
 
   private handlePlaceBall(): void {
-    const table = this.container.table
+    if (!this.isBotTurn) return
     const pos = this.container.rules.placeBall()
-    const cueball = table.cueball
-    cueball.pos.copy(pos)
-    cueball.setStationary()
-    const hitEvent = this.generateRandomShot()
-    this.publishToPlayer(hitEvent)
+
+    // Send the place ball event first
+    const placeBallEvent = new PlaceBallEvent(pos)
+    this.publishToPlayer(placeBallEvent)
+
+    // Then wait a bit more before showing the aim
+    this.scheduleAction(() => {
+      if (this.isBotTurn) {
+        this.handleStartAim()
+      }
+    })
   }
 
   private generateRandomShot(): HitEvent {
