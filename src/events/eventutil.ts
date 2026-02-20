@@ -13,6 +13,7 @@ import { RerackEvent } from "./rerackevent"
 import { StartAimEvent } from "./startaimevent"
 import { NotificationEvent } from "./notificationevent"
 import { ScoreEvent } from "./scoreevent"
+import { StationaryEvent } from "./stationaryevent"
 
 export class EventUtil {
   static serialise(event: GameEvent) {
@@ -23,6 +24,8 @@ export class EventUtil {
     switch (parsed.type) {
       case EventType.BEGIN:
         return new BeginEvent()
+      case EventType.STATIONARY:
+        return new StationaryEvent()
       case EventType.AIM:
         return AimEvent.fromJson(parsed)
       case EventType.BREAK:

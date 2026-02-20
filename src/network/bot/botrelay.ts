@@ -5,6 +5,7 @@ import { EventUtil } from "../../events/eventutil"
 import { EventType } from "../../events/eventtype"
 import { BotEventHandler } from "./eventhandler"
 import { Container } from "../../container/container"
+import { GameEvent } from "../../events/gameevent"
 
 export class BotRelay implements MessageRelay {
   private messageQueue: string[] = []
@@ -14,7 +15,11 @@ export class BotRelay implements MessageRelay {
 
   constructor(logs: Logger, container: Container) {
     this.logs = logs
-    this.eventHandler = new BotEventHandler(logs, container)
+    this.eventHandler = new BotEventHandler(
+      logs,
+      container,
+      this.publishToPlayer.bind(this)
+    )
   }
 
   subscribe(
@@ -23,13 +28,19 @@ export class BotRelay implements MessageRelay {
     prefix?: string
   ): void {
     this.callback = callback
-    this.logs.info(`BotRelay subscribed to ${prefix || ""}${channel}`)
-
+    console.log(`BotRelay subscribed to ${prefix || ""}${channel}`)
     const beginEvent = EventUtil.serialise(new BeginEvent())
-    this.logs.outgoing(`Bot joining: BeginEvent`)
+    this.logs.outgoing(beginEvent)
     this.callback(beginEvent)
   }
 
+  /**
+   * This gets invoked when player sends an event.
+   * In essence it is receiving an event from the player to the bot.
+   * @param _channel
+   * @param message
+   * @param _prefix
+   */
   publish(_channel: string, message: string, _prefix?: string): void {
     try {
       const event = EventUtil.fromSerialised(message)
@@ -38,9 +49,16 @@ export class BotRelay implements MessageRelay {
         this.messageQueue.push(message)
         this.eventHandler.handle(event)
       }
-    } catch {
-      this.logs.incoming(`unknown: ${message}`)
+    } catch (e) {
+      this.logs.incoming(`unknown: ${message} ${e}`)
+      this.logs.incoming(`${e}`)
     }
+  }
+
+  publishToPlayer(event: GameEvent) {
+    const message = EventUtil.serialise(event)
+    this.logs.outgoing(`${message}`)
+    this.callback?.(message)
   }
 
   async getOnlineCount(): Promise<number | null> {

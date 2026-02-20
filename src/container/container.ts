@@ -162,6 +162,10 @@ export class Container {
     this.table.cue.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())
+      // if in botmode, send event to bot
+      if (Session.isBotMode()) {
+        this.sendEvent(new StationaryEvent())
+      }
     }
     this.sound.processOutcomes(this.table.outcome)
   }
