@@ -1,9 +1,8 @@
 import { Input } from "../events/input"
 import { GameEvent } from "../events/gameevent"
 import { Session } from "../network/client/session"
-
 import { StationaryEvent } from "../events/stationaryevent"
-import { Controller } from "../controller/controller"
+import { BeginEvent, Controller } from "../controller/controller"
 import { Table } from "../model/table"
 import { View } from "../view/view"
 import { Init } from "../controller/init"
@@ -162,9 +161,8 @@ export class Container {
     this.table.cue.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())
-      // if in botmode, send event to bot
       if (Session.isBotMode()) {
-        this.sendEvent(new StationaryEvent())
+        this.sendEvent(new BeginEvent())
       }
     }
     this.sound.processOutcomes(this.table.outcome)

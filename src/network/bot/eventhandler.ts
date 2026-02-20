@@ -6,6 +6,8 @@ import { HitEvent } from "../../events/hitevent"
 import { AimEvent } from "../../events/aimevent"
 import { Vector3 } from "three"
 import { R } from "../../model/physics/constants"
+import { Aim } from "../../controller/aim"
+import { StartAimEvent } from "../../events/startaimevent"
 
 export class BotEventHandler {
   private logs: Logger
@@ -29,6 +31,27 @@ export class BotEventHandler {
     }
     if (event.type === EventType.PLACEBALL) {
       this.handlePlaceBall()
+    }
+    if (event.type === EventType.BEGIN) {
+      this.handleStationary()
+    }
+  }
+
+  private handleStationary(): void {
+    // The balls have finished rolling after a shot, now apply rules to find out
+    // if turn continues or switches maybe with a foul and a placeball
+    // gameover is also an option
+    const outcome = this.container.table.outcome
+    if (this.container.rules.isEndOfGame(outcome)) {
+      // bot has won, notify player
+    }
+    const controller = this.container.rules.update(outcome)
+    if (controller instanceof Aim) {
+      // valid shot continue
+      this.handleStartAim()
+    } else {
+      // switch to players turn
+      this.publishToPlayer(new StartAimEvent())
     }
   }
 
