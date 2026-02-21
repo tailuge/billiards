@@ -9,6 +9,7 @@ import { GameEvent } from "../../events/gameevent"
 
 export class BotRelay implements MessageRelay {
   private messageQueue: string[] = []
+  private timeoutId: ReturnType<typeof setTimeout> | null = null
   private callback: ((message: string) => void) | null = null
   private logs: Logger
   private eventHandler: BotEventHandler
@@ -18,7 +19,8 @@ export class BotRelay implements MessageRelay {
     this.eventHandler = new BotEventHandler(
       logs,
       container,
-      this.publishToPlayer.bind(this)
+      this.publishToPlayer.bind(this),
+      this.enqueueMessage.bind(this)
     )
   }
 
@@ -35,23 +37,46 @@ export class BotRelay implements MessageRelay {
   }
 
   /**
-   * This gets invoked when player sends an event.
+   * This gets invoked when player sends an event (to the bot).
    * In essence it is receiving an event from the player to the bot.
    * @param _channel
    * @param message
    * @param _prefix
    */
+  enqueueMessage(message: string): void {
+    this.messageQueue.push(message)
+    if (this.timeoutId === null) {
+      this.timeoutId = setTimeout(() => this.processQueue(), 500)
+    }
+  }
+
   publish(_channel: string, message: string, _prefix?: string): void {
     try {
       const event = EventUtil.fromSerialised(message)
       if (event.type !== EventType.AIM) {
         this.logs.incoming(`${message}`)
-        this.messageQueue.push(message)
-        this.eventHandler.handle(event)
+        this.enqueueMessage(message)
       }
     } catch (e) {
       this.logs.incoming(`unknown: ${message} ${e}`)
       this.logs.incoming(`${e}`)
+    }
+  }
+
+  private processQueue(): void {
+    this.timeoutId = null
+    const message = this.messageQueue.shift()
+    if (message) {
+      try {
+        const event = EventUtil.fromSerialised(message)
+        this.eventHandler.handle(event)
+      } catch (e) {
+        this.logs.incoming(`unknown: ${message} ${e}`)
+        this.logs.incoming(`${e}`)
+      }
+    }
+    if (this.messageQueue.length > 0) {
+      this.timeoutId = setTimeout(() => this.processQueue(), 500)
     }
   }
 
@@ -63,10 +88,5 @@ export class BotRelay implements MessageRelay {
 
   async getOnlineCount(): Promise<number | null> {
     return 2
-  }
-
-  queueMessage(message: string): void {
-    this.messageQueue.push(message)
-    this.logs.incoming(`Queued: ${message}`)
   }
 }

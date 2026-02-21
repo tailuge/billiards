@@ -3,7 +3,6 @@ import { Logger } from "./logger"
 import { Container } from "../../container/container"
 import { EventType } from "../../events/eventtype"
 import { HitEvent } from "../../events/hitevent"
-import { AimEvent } from "../../events/aimevent"
 import { Vector3 } from "three"
 import { R } from "../../model/physics/constants"
 import { StartAimEvent } from "../../events/startaimevent"
@@ -11,29 +10,33 @@ import { Outcome } from "../../model/outcome"
 import { NineBall } from "../../controller/rules/nineball"
 import { PlaceBallEvent } from "../../events/placeballevent"
 import { WatchEvent } from "../../events/watchevent"
+import { EventUtil } from "../../events/eventutil"
 
 export class BotEventHandler {
   private logs: Logger
   private container: Container
   private publishToPlayer: (event: GameEvent) => void
+  protected enqueueMessage: (message: string) => void
 
   constructor(
     logs: Logger,
     container: Container,
-    publishToPlayer: (event: GameEvent) => void
+    publishToPlayer: (event: GameEvent) => void,
+    enqueueMessage: (message: string) => void
   ) {
     this.logs = logs
     this.container = container
     this.publishToPlayer = publishToPlayer
+    this.enqueueMessage = enqueueMessage
   }
 
-  handle(event: GameEvent): void {
+  handle(event): void {
     this.logs.info(`Bot handling event: ${event.type}`)
     if (event.type === EventType.STARTAIM) {
       this.handleStartAim()
     }
     if (event.type === EventType.PLACEBALL) {
-      this.handlePlaceBall()
+      this.handlePlaceBall(event)
     }
     if (event.type === EventType.BEGIN) {
       this.handleStationary()
@@ -72,6 +75,8 @@ export class BotEventHandler {
       // pot success, send watch event to other player
       this.publishToPlayer(new WatchEvent(this.container.table.serialise()))
       // this player has to take another shot.
+      this.enqueueMessage(EventUtil.serialise(new StartAimEvent()))
+      return
     }
 
     // switch to players turn
@@ -83,11 +88,21 @@ export class BotEventHandler {
     this.publishToPlayer(hitEvent)
   }
 
-  private handlePlaceBall(): void {
+  private handlePlaceBall(event: PlaceBallEvent): void {
     const table = this.container.table
-    const pos = this.container.rules.placeBall()
+
+    if (event.respot) {
+      const ball = table.balls.find((b) => b.id === event.respot!.id)
+      if (ball) {
+        ball.pos.copy(event.respot!.pos)
+        ball.setStationary()
+      }
+    }
+
     const cueball = table.cueball
-    cueball.pos.copy(pos)
+    cueball.pos.copy(
+      event.useStartPos ? event.pos : this.container.rules.placeBall()
+    )
     cueball.setStationary()
     const hitEvent = this.generateRandomShot()
     this.publishToPlayer(hitEvent)

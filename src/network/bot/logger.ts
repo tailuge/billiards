@@ -60,7 +60,7 @@ export class Logger {
     const entry: LogEntry = {
       timestamp: Date.now(),
       direction,
-      message: `${message.substring(0, 50)}...`,
+      message: `${message.substring(0, 250)}...`,
     }
     this.entries.push(entry)
     if (this.entries.length > this.maxEntries) {
