@@ -20,7 +20,7 @@ export class BotEventHandler {
   private container: Container
   private publishToPlayer: (event: GameEvent) => void
   protected enqueueMessage: (message: string) => void
-  private calculator: AimCalculator
+  private readonly calculator: AimCalculator
 
   constructor(
     logs: Logger,
