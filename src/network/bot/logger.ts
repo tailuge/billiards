@@ -22,7 +22,7 @@ export class Logger {
     const botMode = Session.hasInstance() && Session.isBotMode()
     if (botMode) {
       this.info("Bot mode activated")
-      this.show()
+      //      this.show()
     }
 
     const clearButton = document.getElementById("botDebugClear")
