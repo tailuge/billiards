@@ -74,7 +74,7 @@ export class NineBall implements Rules {
   }
 
   update(outcome: Outcome[]): Controller {
-    const reason = this.foulReason(outcome)
+    const reason = NineBall.foulReason(this.container.table, outcome)
 
     if (reason) {
       return this.handleFoul(outcome, reason)
@@ -175,11 +175,10 @@ export class NineBall implements Rules {
   }
 
   protected isFoul(outcome: Outcome[]): boolean {
-    return this.foulReason(outcome) !== null
+    return NineBall.foulReason(this.container.table, outcome) !== null
   }
 
-  protected foulReason(outcome: Outcome[]): string | null {
-    const table = this.container.table
+  public static foulReason(table: Table, outcome: Outcome[]): string | null {
     const cueball = table.cueball
 
     // 1. Cue ball potted
@@ -188,7 +187,7 @@ export class NineBall implements Rules {
     }
 
     // 2. Wrong ball hit first
-    const lowestBall = this.getLowestBallAtStartOfShot(outcome)
+    const lowestBall = NineBall.getLowestBallAtStartOfShot(table, outcome)
     const firstCollision = Outcome.firstCollision(
       Outcome.cueBallFirst(cueball, outcome)
     )
@@ -216,10 +215,13 @@ export class NineBall implements Rules {
     return null
   }
 
-  protected getLowestBallAtStartOfShot(outcome: Outcome[]): Ball | undefined {
+  public static getLowestBallAtStartOfShot(
+    table: Table,
+    outcome: Outcome[]
+  ): Ball | undefined {
     const potted = Outcome.pots(outcome)
-    const onTable = this.container.table.balls.filter(
-      (b) => b !== this.cueball && b.onTable()
+    const onTable = table.balls.filter(
+      (b) => b !== table.cueball && b.onTable()
     )
     const all = [...potted, ...onTable]
     return all.sort((a, b) => (a.label || 0) - (b.label || 0))[0]

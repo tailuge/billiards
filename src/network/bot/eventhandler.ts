@@ -6,8 +6,11 @@ import { HitEvent } from "../../events/hitevent"
 import { AimEvent } from "../../events/aimevent"
 import { Vector3 } from "three"
 import { R } from "../../model/physics/constants"
-import { Aim } from "../../controller/aim"
 import { StartAimEvent } from "../../events/startaimevent"
+import { Outcome } from "../../model/outcome"
+import { NineBall } from "../../controller/rules/nineball"
+import { PlaceBallEvent } from "../../events/placeballevent"
+import { WatchEvent } from "../../events/watchevent"
 
 export class BotEventHandler {
   private logs: Logger
@@ -45,14 +48,34 @@ export class BotEventHandler {
     if (this.container.rules.isEndOfGame(outcome)) {
       // bot has won, notify player
     }
-    const controller = this.container.rules.update(outcome)
-    if (controller instanceof Aim) {
-      // valid shot continue
-      this.handleStartAim()
-    } else {
-      // switch to players turn
-      this.publishToPlayer(new StartAimEvent())
+
+    const foulReason = NineBall.foulReason(this.container.table, outcome)
+    if (foulReason) {
+      // bot has fouled, notify player
+      this.container.notify({
+        type: "Foul",
+        title: "FOUL",
+        subtext: foulReason,
+        extra: "Ball in hand",
+      })
+
+      // in nineball it is ball in hand
+      const cueball = this.container.table.cueball
+      const startPos = cueball.onTable()
+        ? cueball.pos.clone()
+        : this.container.rules.placeBall()
+      const placeBallEvent = new PlaceBallEvent(startPos, undefined, true)
+      this.publishToPlayer(placeBallEvent)
     }
+
+    if (Outcome.potCount(outcome) > 0) {
+      // pot success, send watch event to other player
+      this.publishToPlayer(new WatchEvent(this.container.table.serialise()))
+      // this player has to take another shot.
+    }
+
+    // switch to players turn
+    this.publishToPlayer(new StartAimEvent())
   }
 
   private handleStartAim(): void {
@@ -74,21 +97,18 @@ export class BotEventHandler {
     const table = this.container.table
     const cueball = table.cueball
 
-    const aim = new AimEvent()
-    aim.pos = cueball.pos.clone()
+    const targetBall = this.container.rules.nextCandidateBall()
+    table.cue.aimAtNext(cueball, targetBall)
+    const aim = table.cue.aim
     aim.i = table.balls.indexOf(cueball)
-    aim.angle = Math.random() * 2 * Math.PI
-    aim.power = 0.5 * 160 * R // 50% of max power
-    aim.offset = new Vector3(
-      (Math.random() - 0.5) * 0.6, // random side spin
-      (Math.random() - 0.5) * 0.6 // random top/bottom spin
-    )
+    aim.angle = aim.angle + (Math.random() - 0.5) * 0.1
+    aim.power = 80 * R
+    aim.offset = new Vector3(0, (Math.random() - 0.5) * 0.6)
+
     // Clamp offset to valid range
     if (aim.offset.length() > 0.3) {
       aim.offset.normalize().multiplyScalar(0.3)
     }
-
-    table.cue.aim = aim
 
     const hitEvent = new HitEvent(table.serialise())
     return hitEvent
