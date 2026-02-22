@@ -8,11 +8,11 @@ import { Container } from "../../container/container"
 import { GameEvent } from "../../events/gameevent"
 
 export class BotRelay implements MessageRelay {
-  private messageQueue: string[] = []
+  private readonly messageQueue: string[] = []
   private timeoutId: ReturnType<typeof setTimeout> | null = null
   private callback: ((message: string) => void) | null = null
-  private logs: Logger
-  private eventHandler: BotEventHandler
+  private readonly logs: Logger
+  private readonly eventHandler: BotEventHandler
 
   constructor(logs: Logger, container: Container) {
     this.logs = logs
@@ -45,9 +45,7 @@ export class BotRelay implements MessageRelay {
    */
   enqueueMessage(message: string): void {
     this.messageQueue.push(message)
-    if (this.timeoutId === null) {
-      this.timeoutId = setTimeout(() => this.processQueue(), 500)
-    }
+    this.timeoutId ??= setTimeout(() => this.processQueue(), 500)
   }
 
   publish(_channel: string, message: string, _prefix?: string): void {

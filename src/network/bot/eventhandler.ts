@@ -16,9 +16,9 @@ import { Respot } from "../../utils/respot"
 import { gameOverButtons } from "../../utils/gameover"
 
 export class BotEventHandler {
-  private logs: Logger
-  private container: Container
-  private publishToPlayer: (event: GameEvent) => void
+  private readonly logs: Logger
+  private readonly container: Container
+  private readonly publishToPlayer: (event: GameEvent) => void
   protected enqueueMessage: (message: string) => void
   private readonly calculator: AimCalculator
 
@@ -116,9 +116,9 @@ export class BotEventHandler {
     const table = this.container.table
 
     if (event.respot) {
-      const ball = table.balls.find((b) => b.id === event.respot!.id)
+      const ball = table.balls.find((b) => b.id === event.respot.id)
       if (ball) {
-        ball.pos.copy(event.respot!.pos)
+        ball.pos.copy(event.respot.pos)
         ball.setStationary()
       }
     }
