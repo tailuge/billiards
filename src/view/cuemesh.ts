@@ -97,9 +97,7 @@ export class CueMesh {
     const tilt = 0.17
     mesh.geometry
       .applyMatrix4(
-        new Matrix4()
-          .identity()
-          .makeRotationAxis(new Vector3(1, 0, 0), -tilt)
+        new Matrix4().identity().makeRotationAxis(new Vector3(1, 0, 0), -tilt)
       )
       .applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
       .applyMatrix4(
