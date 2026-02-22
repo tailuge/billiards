@@ -21,7 +21,10 @@ export class Hud {
     this.setText(this.p1Element, "")
     this.setText(this.p2Element, "")
     if (score > 0 && this.breakElement) {
-      this.breakElement.innerHTML = "Break</br>" + score
+      this.breakElement.textContent = ""
+      this.breakElement.appendChild(document.createTextNode("Break"))
+      this.breakElement.appendChild(document.createElement("br"))
+      this.breakElement.appendChild(document.createTextNode(score.toString()))
     } else {
       this.setText(this.breakElement, "")
     }

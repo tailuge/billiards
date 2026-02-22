@@ -39,12 +39,11 @@ export class WatchShot extends ControllerBase {
   }
 
   override handlePlaceBall(event: PlaceBallEvent) {
-    if (event.respot) {
-      const ball = this.container.table.balls.find(
-        (b) => b.id === event.respot!.id
-      )
+    const respot = event.respot
+    if (respot) {
+      const ball = this.container.table.balls.find((b) => b.id === respot.id)
       if (ball) {
-        ball.pos.copy(event.respot!.pos)
+        ball.pos.copy(respot.pos)
         ball.setStationary()
       }
     }

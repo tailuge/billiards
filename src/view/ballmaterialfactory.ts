@@ -3,7 +3,7 @@ import { R } from "../model/physics/constants"
 import { BallTextureFactory } from "./balltexturefactory"
 
 export class BallMaterialFactory {
-  private static materialCache: Map<
+  private static readonly materialCache: Map<
     string,
     MeshStandardMaterial | MeshPhongMaterial
   > = new Map()
@@ -50,7 +50,7 @@ export class BallMaterialFactory {
 
     material.onBeforeCompile = (shader: any) => {
       shader.uniforms.numberTex = { value: numberTexture }
-      shader.uniforms.projSize = { value: 2.0 }
+      shader.uniforms.projSize = { value: 2 }
 
       shader.vertexShader = shader.vertexShader.replace(
         "#include <common>",

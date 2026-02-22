@@ -58,22 +58,21 @@ export class RealOverlay {
   handleFileChange(event: Event) {
     const file = (event.target as HTMLInputElement).files![0]
     if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        try {
-          const shotsData = JSON.parse(e.target!.result as string)
+      file
+        .text()
+        .then((text) => {
+          const shotsData = JSON.parse(text)
           this.processShots(shotsData)
-        } catch (error) {
+        })
+        .catch((error) => {
           console.error("Error parsing JSON:", error)
           alert("Error parsing JSON file.")
-        }
-      }
-      reader.readAsText(file)
+        })
     }
   }
 
   handleShotSelect() {
-    this.currentShotIndex = parseInt(this.shotSelector.value, 10)
+    this.currentShotIndex = Number.parseInt(this.shotSelector.value, 10)
     this.updateDisplay()
     this.resetAnimation()
   }
@@ -153,9 +152,11 @@ export class RealOverlay {
     console.log("reset simulation")
     const state = this.realPosition!.stateFrom(shotData)
     this.container.table.updateFromShortSerialised(state.init)
-    this.container.eventQueue.push(new AbortEvent())
-    this.container.eventQueue.push(new BeginEvent())
-    this.container.eventQueue.push(new BreakEvent(state.init, state.shots))
+    this.container.eventQueue.push(
+      new AbortEvent(),
+      new BeginEvent(),
+      new BreakEvent(state.init, state.shots)
+    )
 
     // Update aim inputs with the shot state
 

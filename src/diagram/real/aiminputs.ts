@@ -28,11 +28,11 @@ export class AimInputs {
     )
 
     this.powerSlider?.addEventListener("input", (event) => {
-      this.power = parseInt((event.target as HTMLInputElement).value)
+      this.power = Number.parseInt((event.target as HTMLInputElement).value)
     })
 
     this.directionSlider?.addEventListener("input", (event) => {
-      this.direction = parseInt((event.target as HTMLInputElement).value)
+      this.direction = Number.parseInt((event.target as HTMLInputElement).value)
     })
   }
 
@@ -44,7 +44,7 @@ export class AimInputs {
     let y = event.clientY - rect.top - rect.height / 2
 
     // Calculate the distance from the center
-    const distance = Math.sqrt(x * x + y * y)
+    const distance = Math.hypot(x, y)
 
     // Clamp the distance to MAX_DISTANCE * BALL_CONTAINER_RADIUS
     if (distance > this.MAX_DISTANCE * this.BALL_CONTAINER_RADIUS) {
