@@ -104,7 +104,10 @@ describe("Controller Replay", () => {
 
   it("Replay handles inputs", (done) => {
     container.controller = replayController
-    container.inputQueue.push(new Input(0.1, "KeyOUp"), new Input(0.1, "KeyDUp"))
+    container.inputQueue.push(
+      new Input(0.1, "KeyOUp"),
+      new Input(0.1, "KeyDUp")
+    )
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Replay)
     done()

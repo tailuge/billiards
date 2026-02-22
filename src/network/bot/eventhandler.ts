@@ -116,7 +116,7 @@ export class BotEventHandler {
     const table = this.container.table
 
     if (event.respot) {
-      const ball = table.balls.find((b) => b.id === event.respot.id)
+      const ball = table.balls.find((b) => b.id === event.respot?.id)
       if (ball) {
         ball.pos.copy(event.respot.pos)
         ball.setStationary()
