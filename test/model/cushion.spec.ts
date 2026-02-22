@@ -8,18 +8,34 @@ import { Vector3 } from "three"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
 import { R } from "../../src/model/physics/constants"
 import { bounceHan, bounceHanBlend } from "../../src/model/physics/physics"
+import { console as nodeConsole } from "node:console"
 
 const t = 0.1
 
-const jestConsole = console
+const jestConsole = globalThis.console
 
 beforeEach(() => {
-  globalThis.console = require("console")
+  globalThis.console = nodeConsole
 })
 
 afterEach(() => {
   globalThis.console = jestConsole
 })
+
+function bounceInXWithSpin(rvel) {
+  const pos = new Vector3(TableGeometry.tableX, 0, 0)
+  const ball = new Ball(pos)
+  ball.vel.x = 1
+  ball.rvel.copy(rvel)
+  Cushion.bounceAny(ball, t)
+  return ball
+}
+
+function ballAtXCushion() {
+  const pos = new Vector3(TableGeometry.tableX, 0, 0)
+  const ball = new Ball(pos)
+  return ball
+}
 
 describe("Cushion", () => {
   it("bounces off X cushion", (done) => {
@@ -71,15 +87,6 @@ describe("Cushion", () => {
     expect(ball.vel.x).to.be.below(0)
     done()
   })
-
-  function bounceInXWithSpin(rvel) {
-    const pos = new Vector3(TableGeometry.tableX, 0, 0)
-    const ball = new Ball(pos)
-    ball.vel.x = 1
-    ball.rvel.copy(rvel)
-    Cushion.bounceAny(ball, t)
-    return ball
-  }
 
   it("bounces off X cushion with rhs spins", (done) => {
     const ball = bounceInXWithSpin(new Vector3(0, 0, 1))
@@ -182,12 +189,6 @@ describe("Cushion", () => {
     expect(groupWithoutPockets.children.length).to.be.greaterThan(0)
     done()
   })
-
-  function ballAtXCushion() {
-    const pos = new Vector3(TableGeometry.tableX, 0, 0)
-    const ball = new Ball(pos)
-    return ball
-  }
 
   it.each([
     ["bounceHan", bounceHan],

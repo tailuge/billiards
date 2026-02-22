@@ -49,11 +49,13 @@ describe("ThreeCushion", () => {
     container.table.balls[0].setStationary()
     container.eventQueue.push(new StationaryEvent())
     const balls = container.table.balls
-    container.table.outcome.push(Outcome.cushion(balls[0], 1))
-    container.table.outcome.push(Outcome.cushion(balls[0], 1))
-    container.table.outcome.push(Outcome.cushion(balls[0], 1))
-    container.table.outcome.push(Outcome.collision(balls[0], balls[1], 1))
-    container.table.outcome.push(Outcome.collision(balls[0], balls[2], 1))
+    container.table.outcome.push(
+      Outcome.cushion(balls[0], 1),
+      Outcome.cushion(balls[0], 1),
+      Outcome.cushion(balls[0], 1),
+      Outcome.collision(balls[0], balls[1], 1),
+      Outcome.collision(balls[0], balls[2], 1)
+    )
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
     done()
@@ -95,21 +97,23 @@ describe("ThreeCushion", () => {
   const redBall = {}
 
   it("Valid threecushion outcome", (done) => {
-    const outcomes: Outcome[] = []
-    outcomes.push(Outcome.collision(oppononetBall, cueBall, 1))
-    outcomes.push(Outcome.cushion(cueBall, 1))
-    outcomes.push(Outcome.cushion(cueBall, 1))
-    outcomes.push(Outcome.cushion(cueBall, 1))
-    outcomes.push(Outcome.collision(cueBall, redBall, 1))
+    const outcomes: Outcome[] = [
+      Outcome.collision(oppononetBall, cueBall, 1),
+      Outcome.cushion(cueBall, 1),
+      Outcome.cushion(cueBall, 1),
+      Outcome.cushion(cueBall, 1),
+      Outcome.collision(cueBall, redBall, 1),
+    ]
     expect(Outcome.isThreeCushionPoint(cueBall, outcomes)).to.be.true
     done()
   })
 
   it("Invalid threecushion outcome", (done) => {
-    const outcomes: Outcome[] = []
-    outcomes.push(Outcome.collision(oppononetBall, cueBall, 1))
-    outcomes.push(Outcome.cushion(cueBall, 1))
-    outcomes.push(Outcome.cushion(cueBall, 1))
+    const outcomes: Outcome[] = [
+      Outcome.collision(oppononetBall, cueBall, 1),
+      Outcome.cushion(cueBall, 1),
+      Outcome.cushion(cueBall, 1),
+    ]
     expect(Outcome.isThreeCushionPoint(cueBall, outcomes)).to.be.false
     outcomes.push(Outcome.collision(cueBall, redBall, 1))
     expect(Outcome.isThreeCushionPoint(cueBall, outcomes)).to.be.false
@@ -136,11 +140,13 @@ describe("ThreeCushion", () => {
     container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
     const balls = container.table.balls
-    container.table.outcome.push(Outcome.collision(balls[0], balls[1], 1))
-    container.table.outcome.push(Outcome.cushion(balls[0], 1))
-    container.table.outcome.push(Outcome.cushion(balls[0], 1))
-    container.table.outcome.push(Outcome.cushion(balls[0], 1))
-    container.table.outcome.push(Outcome.collision(balls[0], balls[2], 1))
+    container.table.outcome.push(
+      Outcome.collision(balls[0], balls[1], 1),
+      Outcome.cushion(balls[0], 1),
+      Outcome.cushion(balls[0], 1),
+      Outcome.cushion(balls[0], 1),
+      Outcome.collision(balls[0], balls[2], 1)
+    )
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
     done()

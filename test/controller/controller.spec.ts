@@ -205,9 +205,9 @@ describe("Controller", () => {
     container.table.cueball.setStationary()
     const ball1 = container.table.balls.find((b) => b.label === 1)!
     container.table.outcome.push(
-      Outcome.collision(container.table.cueball, ball1, 1)
+      Outcome.collision(container.table.cueball, ball1, 1),
+      Outcome.cushion(ball1, 1)
     )
-    container.table.outcome.push(Outcome.cushion(ball1, 1))
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
@@ -219,9 +219,9 @@ describe("Controller", () => {
     container.table.cueball.setStationary()
     const ball1 = container.table.balls.find((b) => b.label === 1)!
     container.table.outcome.push(
-      Outcome.collision(container.table.cueball, ball1, 1)
+      Outcome.collision(container.table.cueball, ball1, 1),
+      Outcome.pot(ball1, 1)
     )
-    container.table.outcome.push(Outcome.pot(ball1, 1))
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(Aim)
@@ -235,9 +235,9 @@ describe("Controller", () => {
     const ball9 = container.table.balls.find((b) => b.label === 9)!
     ball9.state = State.Stationary
     container.table.outcome.push(
-      Outcome.collision(container.table.cueball, ball9, 1)
+      Outcome.collision(container.table.cueball, ball9, 1),
+      Outcome.pot(ball9, 1)
     )
-    container.table.outcome.push(Outcome.pot(ball9, 1))
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
@@ -319,23 +319,25 @@ describe("Controller", () => {
 
   it("Aim handles all inputs", (done) => {
     container.controller = new Aim(container)
-    container.inputQueue.push(new Input(0.1, "A"))
-    container.inputQueue.push(new Input(0.1, "ArrowLeft"))
-    container.inputQueue.push(new Input(0.1, "ArrowRight"))
-    container.inputQueue.push(new Input(0.1, "ShiftArrowLeft"))
-    container.inputQueue.push(new Input(0.1, "ShiftArrowRight"))
-    container.inputQueue.push(new Input(0.1, "ArrowUp"))
-    container.inputQueue.push(new Input(0.1, "ArrowDown"))
-    container.inputQueue.push(new Input(0.1, "Space"))
-    container.inputQueue.push(new Input(0.1, "SpaceUp"))
-    container.inputQueue.push(new Input(0.1, "KeyPUp"))
-    container.inputQueue.push(new Input(0.1, "KeyHUp"))
-    container.inputQueue.push(new Input(0.1, "KeyOUp"))
-    container.inputQueue.push(new Input(0.1, "KeyDUp"))
-    container.inputQueue.push(new Input(0.1, "NumpadAdd"))
-    container.inputQueue.push(new Input(0.1, "NumpadSubtract"))
-    container.inputQueue.push(new Input(0.1, "movementXUp"))
-    container.inputQueue.push(new Input(0.1, "movementYUp"))
+    container.inputQueue.push(
+      new Input(0.1, "A"),
+      new Input(0.1, "ArrowLeft"),
+      new Input(0.1, "ArrowRight"),
+      new Input(0.1, "ShiftArrowLeft"),
+      new Input(0.1, "ShiftArrowRight"),
+      new Input(0.1, "ArrowUp"),
+      new Input(0.1, "ArrowDown"),
+      new Input(0.1, "Space"),
+      new Input(0.1, "SpaceUp"),
+      new Input(0.1, "KeyPUp"),
+      new Input(0.1, "KeyHUp"),
+      new Input(0.1, "KeyOUp"),
+      new Input(0.1, "KeyDUp"),
+      new Input(0.1, "NumpadAdd"),
+      new Input(0.1, "NumpadSubtract"),
+      new Input(0.1, "movementXUp"),
+      new Input(0.1, "movementYUp")
+    )
 
     let count = container.inputQueue.length
     while (count-- > 0) {
