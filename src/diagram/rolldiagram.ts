@@ -5,7 +5,7 @@ import { zero } from "../utils/utils"
 
 export class RollDiagram {
   ball: Ball
-  theta = 0.0
+  theta = 0
   canvas: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
 
@@ -16,7 +16,7 @@ export class RollDiagram {
     this.ctx = this.canvas.getContext("2d")!
     this.ball = new Ball(zero)
     this.ball.vel.copy(new Vector3(32 * R, 0, 0))
-    this.ball.rvel.copy(new Vector3(0, -(2.0 * this.ball.vel.x) / R, 0))
+    this.ball.rvel.copy(new Vector3(0, -(2 * this.ball.vel.x) / R, 0))
     this.ball.state = State.Sliding
   }
 

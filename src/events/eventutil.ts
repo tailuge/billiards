@@ -51,7 +51,7 @@ export class EventUtil {
       case EventType.SCORE:
         return ScoreEvent.fromJson(parsed)
       default:
-        throw Error("Unknown GameEvent :" + parsed)
+        throw new Error("Unknown GameEvent :" + parsed)
     }
   }
 
