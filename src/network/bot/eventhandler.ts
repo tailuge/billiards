@@ -13,6 +13,7 @@ import { WatchEvent } from "../../events/watchevent"
 import { EventUtil } from "../../events/eventutil"
 import { RerackEvent } from "../../events/rerackevent"
 import { Respot } from "../../utils/respot"
+import { gameOverButtons } from "../../utils/gameover"
 
 export class BotEventHandler {
   private logs: Logger
@@ -54,6 +55,16 @@ export class BotEventHandler {
     const outcome = this.container.table.outcome
     if (this.container.rules.isEndOfGame(outcome)) {
       // bot has won, notify player
+      this.container.notifyLocal({
+        type: "GameOver",
+        title: "YOU LOST",
+        subtext: "The machines win",
+        icon: "🥈",
+        extraClass: "is-loser",
+        extra: gameOverButtons.forMode(true),
+        duration: 0,
+      })
+      return
     }
 
     const foulReason = NineBall.foulReason(this.container.table, outcome)

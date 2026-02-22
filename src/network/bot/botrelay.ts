@@ -59,7 +59,6 @@ export class BotRelay implements MessageRelay {
       }
     } catch (e) {
       this.logs.incoming(`unknown: ${message} ${e}`)
-      this.logs.incoming(`${e}`)
     }
   }
 
