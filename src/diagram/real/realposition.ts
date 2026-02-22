@@ -113,8 +113,7 @@ export class RealPosition {
     }
     for (const ballNum in ballPositions) {
       const pos = this.realToSim(ballNum, ballPositions)
-      state.init.push(pos.x)
-      state.init.push(pos.y)
+      state.init.push(pos.x, pos.y)
     }
 
     const estimatedDirection = this.estimateDirection(shotData)

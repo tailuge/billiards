@@ -118,8 +118,8 @@ function lineGraph1() {
 
   for (let i = -180; i <= 180; i += 30) {
     x.push(i)
-    const v = new Vector3(0.2 * R, 0.0, 0)
-    const w = new Vector3(0.0, 0.0, i * R)
+    const v = new Vector3(0.2 * R, 0, 0)
+    const w = new Vector3(0, 0, i * R)
     y1.push(Pze(c0(v)))
     y2.push(Pzs(s0(v, w)))
   }
@@ -134,7 +134,7 @@ function lineGraph2() {
   for (let i = -180; i <= 180; i += 30) {
     x.push(i)
     const v = new Vector3(150 * R, 0, 0)
-    const w = new Vector3(0.0, i * R, 0)
+    const w = new Vector3(0, i * R, 0)
     y1.push(Pze(c0(v)))
     y2.push(Pzs(s0(v, w)))
   }
@@ -151,7 +151,7 @@ function lineGraph3() {
     const rad = (i * Math.PI) / 180
     const v = new Vector3(Math.cos(rad) * R, Math.sin(rad) * R, 0)
     v.multiplyScalar(s)
-    const w = new Vector3(0.0, 0, -10 * R)
+    const w = new Vector3(0, 0, -10 * R)
     y1.push(Pze(c0(v)))
     y2.push(Pzs(s0(v, w)))
   }
@@ -181,10 +181,11 @@ function lineGraph4() {
   linegraph4.plot(x, y1, y2)
 }
 
+function spin(w) {
+  return (_) => svec(0, 0, w)
+}
+
 function plotCushionDiagrams() {
-  function spin(w) {
-    return (_) => svec(0, 0, w)
-  }
   const sin = (a) => Math.sin((a * Math.PI) / 180)
   const cos = (a) => Math.cos((a * Math.PI) / 180)
   const aimAtAngle = (a) => svec(cos(a), sin(a), 0)

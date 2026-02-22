@@ -11,11 +11,11 @@ export class ReboundPlot {
       const vx = calc.vx
       return {
         beta: Math.atan2(-vy, vx) * (180 / Math.PI),
-        speed: Math.sqrt(vx * vx + vy * vy),
+        speed: Math.hypot(vx, vy),
       }
     } catch (error) {
       console.error(error)
-      return { beta: NaN, speed: NaN }
+      return { beta: Number.NaN, speed: Number.NaN }
     }
   }
 
@@ -54,7 +54,7 @@ export class ReboundPlot {
     const x = deg
 
     layout.title.text = title
-    ;(window as any).Plotly.newPlot(
+    ;(globalThis as any).Plotly.newPlot(
       divSpeed,
       [
         createTrace(x, speeds[0], "k=-1", color(0)),
@@ -65,7 +65,7 @@ export class ReboundPlot {
       layout,
       config
     )
-    ;(window as any).Plotly.newPlot(
+    ;(globalThis as any).Plotly.newPlot(
       divAngle,
       [
         createTrace(x, angles[0], "k=-1", color(0)),

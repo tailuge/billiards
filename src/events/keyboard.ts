@@ -42,9 +42,7 @@ export class Keyboard {
   }
 
   keydown = (e) => {
-    if (this.pressed[e.code] == null) {
-      this.pressed[e.code] = performance.now()
-    }
+    this.pressed[e.code] ??= performance.now()
     e.stopImmediatePropagation()
     if (e.key !== "F12") {
       e.preventDefault()
@@ -66,8 +64,8 @@ export class Keyboard {
     const factor = topHalf || e.ctrlKey ? 0.5 : 1
     const dx = e.dx * factor
     const dy = e.dy * 0.8
-    k["movementY"] = (k["movementY"] ?? 0.0) + dy
-    k["movementX"] = (k["movementX"] ?? 0.0) + dx
+    k["movementY"] = (k["movementY"] ?? 0) + dy
+    k["movementX"] = (k["movementX"] ?? 0) + dx
     if (Math.abs(k["movementX"]) > Math.abs(k["movementY"])) {
       k["movementY"] = 0
     }
