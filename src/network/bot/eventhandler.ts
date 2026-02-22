@@ -5,18 +5,22 @@ import { EventType } from "../../events/eventtype"
 import { HitEvent } from "../../events/hitevent"
 import { Vector3 } from "three"
 import { R } from "../../model/physics/constants"
+import { AimCalculator } from "./aimcalculator"
+import { PocketGeometry } from "../../view/pocketgeometry"
 import { StartAimEvent } from "../../events/startaimevent"
 import { Outcome } from "../../model/outcome"
 import { NineBall } from "../../controller/rules/nineball"
 import { PlaceBallEvent } from "../../events/placeballevent"
 import { WatchEvent } from "../../events/watchevent"
 import { EventUtil } from "../../events/eventutil"
+import { atan2 } from "../../utils/utils"
 
 export class BotEventHandler {
   private logs: Logger
   private container: Container
   private publishToPlayer: (event: GameEvent) => void
   protected enqueueMessage: (message: string) => void
+  private readonly calculator: AimCalculator
 
   constructor(
     logs: Logger,
@@ -28,6 +32,7 @@ export class BotEventHandler {
     this.container = container
     this.publishToPlayer = publishToPlayer
     this.enqueueMessage = enqueueMessage
+    this.calculator = new AimCalculator(R)
   }
 
   handle(event): void {
@@ -84,7 +89,7 @@ export class BotEventHandler {
   }
 
   private handleStartAim(): void {
-    const hitEvent = this.generateRandomShot()
+    const hitEvent = this.generateCalculatedShot()
     this.publishToPlayer(hitEvent)
   }
 
@@ -104,8 +109,41 @@ export class BotEventHandler {
       event.useStartPos ? event.pos : this.container.rules.placeBall()
     )
     cueball.setStationary()
-    const hitEvent = this.generateRandomShot()
+    const hitEvent = this.generateCalculatedShot()
     this.publishToPlayer(hitEvent)
+  }
+
+  private generateCalculatedShot(): HitEvent {
+    const table = this.container.table
+    const cueball = table.cueball
+    const targetBall = this.container.rules.nextCandidateBall()
+
+    if (!targetBall) {
+      return this.generateRandomShot()
+    }
+
+    const pockets = this.calculator.extractPocketPositions(
+      PocketGeometry.pocketCenters
+    )
+    const aimPoint = this.calculator.getAimPoint(
+      cueball.pos,
+      targetBall.pos,
+      pockets
+    )
+
+    if (!aimPoint) {
+      return this.generateRandomShot()
+    }
+
+    const lineTo = aimPoint.clone().sub(cueball.pos)
+    const aim = table.cue.aim
+    aim.angle = atan2(lineTo.y, lineTo.x)
+    aim.i = table.balls.indexOf(cueball)
+    aim.power = 80 * R
+    aim.offset = new Vector3(0, 0)
+
+    const hitEvent = new HitEvent(table.serialise())
+    return hitEvent
   }
 
   private generateRandomShot(): HitEvent {
