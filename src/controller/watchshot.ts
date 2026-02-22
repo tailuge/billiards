@@ -4,6 +4,8 @@ import { ControllerBase } from "./controllerbase"
 import { PlaceBall } from "./placeball"
 import { PlaceBallEvent } from "../events/placeballevent"
 import { RerackEvent } from "../events/rerackevent"
+import { Session } from "../network/client/session"
+import { BeginEvent } from "../events/beginevent"
 
 export class WatchShot extends ControllerBase {
   override get name(): string {
@@ -20,6 +22,10 @@ export class WatchShot extends ControllerBase {
   }
 
   override handleStationary(_) {
+    if (Session.isBotMode()) {
+      this.container.sendEvent(new BeginEvent())
+    }
+
     const outcome = this.container.table.outcome
     if (this.container.rules.isEndOfGame(outcome)) {
       return this.container.rules.handleGameEnd(false)

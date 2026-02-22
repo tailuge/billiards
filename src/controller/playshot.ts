@@ -1,6 +1,4 @@
-import { Session } from "../network/client/session"
-import { Aim } from "./aim"
-import { BeginEvent, Controller, Input } from "./controller"
+import { Controller, Input } from "./controller"
 import { ControllerBase } from "./controllerbase"
 
 /**
@@ -29,9 +27,6 @@ export class PlayShot extends ControllerBase {
     this.container.recorder.updateBreak(outcome, isPartOfBreak, isEndOfGame)
     table.cue.aimAtNext(table.cueball, this.container.rules.nextCandidateBall())
 
-    if (Session.isBotMode() && !(nextController instanceof Aim)) {
-      this.container.sendEvent(new BeginEvent())
-    }
     return nextController
   }
 
