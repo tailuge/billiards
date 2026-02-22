@@ -1,7 +1,7 @@
 import { CanvasTexture, Color } from "three"
 
 export class BallTextureFactory {
-  private static textureCache: Map<string, CanvasTexture> = new Map()
+  private static readonly textureCache: Map<string, CanvasTexture> = new Map()
 
   static getOrCreateTexture(
     label: number,

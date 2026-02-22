@@ -19,7 +19,7 @@ export class DiagramContainer {
   cushionModel
   breakState = {
     init: null,
-    shots: Array<string>(),
+    shots: [] as string[],
   }
 
   realOverlay
@@ -78,7 +78,7 @@ export class DiagramContainer {
 
   static fromDiamgramElement(diagram): DiagramContainer {
     const containerDiv = diagram?.getElementsByClassName("topview")[0]
-    const stateUrl = containerDiv?.getAttribute("data-state")
+    const stateUrl = containerDiv?.dataset.state
     const params = new URLSearchParams(stateUrl)
     const p = diagram?.getElementsByClassName("description")[0]
     const common = id("common")
