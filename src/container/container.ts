@@ -2,7 +2,6 @@ import { Input } from "../events/input"
 import { GameEvent } from "../events/gameevent"
 import { Session } from "../network/client/session"
 import { StationaryEvent } from "../events/stationaryevent"
-import { BeginEvent, Controller } from "../controller/controller"
 import { Table } from "../model/table"
 import { View } from "../view/view"
 import { Init } from "../controller/init"
@@ -27,6 +26,7 @@ import { ScoreReporter } from "../network/client/scorereporter"
 import { NotificationData } from "../view/notification"
 import { ScoreEvent } from "../events/scoreevent"
 import { ContainerConfig } from "./containerconfig"
+import { Controller } from "../controller/controller"
 
 /**
  * Model, View, Controller container.
@@ -161,9 +161,6 @@ export class Container {
     this.table.cue.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())
-      if (Session.isBotMode()) {
-        this.sendEvent(new BeginEvent())
-      }
     }
     this.sound.processOutcomes(this.table.outcome)
   }
