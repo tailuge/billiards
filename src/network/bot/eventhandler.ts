@@ -18,19 +18,22 @@ import { gameOverButtons } from "../../utils/gameover"
 export class BotEventHandler {
   private readonly logs: Logger
   private readonly container: Container
-  private readonly publishToPlayer: (event: GameEvent) => void
+  private readonly publishSequenceToPlayer: (
+    events: GameEvent[],
+    delay?: number
+  ) => void
   protected enqueueMessage: (message: string) => void
   private readonly calculator: AimCalculator
 
   constructor(
     logs: Logger,
     container: Container,
-    publishToPlayer: (event: GameEvent) => void,
+    publishSequenceToPlayer: (events: GameEvent[], delay?: number) => void,
     enqueueMessage: (message: string) => void
   ) {
     this.logs = logs
     this.container = container
-    this.publishToPlayer = publishToPlayer
+    this.publishSequenceToPlayer = publishSequenceToPlayer
     this.enqueueMessage = enqueueMessage
     this.calculator = new AimCalculator()
   }
@@ -91,25 +94,27 @@ export class BotEventHandler {
         })
       }
       const placeBallEvent = new PlaceBallEvent(startPos, respot, true)
-      this.publishToPlayer(placeBallEvent)
+      this.publishSequenceToPlayer([placeBallEvent])
       return
     }
 
     if (Outcome.potCount(outcome) > 0) {
       // pot success, send watch event to other player
-      this.publishToPlayer(new WatchEvent(this.container.table.serialise()))
+      this.publishSequenceToPlayer([
+        new WatchEvent(this.container.table.serialise()),
+      ])
       // this player has to take another shot.
       this.enqueueMessage(EventUtil.serialise(new StartAimEvent()))
       return
     }
 
     // switch to players turn
-    this.publishToPlayer(new StartAimEvent())
+    this.publishSequenceToPlayer([new StartAimEvent()])
   }
 
   private handleStartAim(): void {
     const hitEvent = this.aimAndHit()
-    this.publishToPlayer(hitEvent)
+    this.publishSequenceToPlayer([hitEvent])
   }
 
   private handlePlaceBall(event: PlaceBallEvent): void {
@@ -129,7 +134,7 @@ export class BotEventHandler {
     )
     cueball.setStationary()
     const hitEvent = this.aimAndHit()
-    this.publishToPlayer(hitEvent)
+    this.publishSequenceToPlayer([hitEvent])
   }
 
   private aimAndHit(): HitEvent {
@@ -138,7 +143,7 @@ export class BotEventHandler {
     const targetBall = this.container.rules.nextCandidateBall()
 
     if (!targetBall) {
-      return this.calculator.generateRandomShot(table, 0.1, targetBall?.pos)
+      return this.calculator.generateRandomShot(table, 0.01, targetBall?.pos)
     }
 
     const pockets = this.calculator.extractPocketPositions(

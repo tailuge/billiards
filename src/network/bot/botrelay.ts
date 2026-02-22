@@ -10,6 +10,7 @@ import { GameEvent } from "../../events/gameevent"
 export class BotRelay implements MessageRelay {
   private readonly messageQueue: string[] = []
   private timeoutId: ReturnType<typeof setTimeout> | null = null
+  private sequenceTimeoutId: ReturnType<typeof setTimeout> | null = null
   private callback: ((message: string) => void) | null = null
   private readonly logs: Logger
   private readonly eventHandler: BotEventHandler
@@ -19,7 +20,7 @@ export class BotRelay implements MessageRelay {
     this.eventHandler = new BotEventHandler(
       logs,
       container,
-      this.publishToPlayer.bind(this),
+      this.publishSequenceToPlayer.bind(this),
       this.enqueueMessage.bind(this)
     )
   }
@@ -77,10 +78,21 @@ export class BotRelay implements MessageRelay {
     }
   }
 
-  publishToPlayer(event: GameEvent) {
-    const message = EventUtil.serialise(event)
-    this.logs.outgoing(`${message}`)
-    this.callback?.(message)
+  publishSequenceToPlayer(events: GameEvent[], delay = 300) {
+    if (events.length === 0) return
+    if (this.sequenceTimeoutId) {
+      clearTimeout(this.sequenceTimeoutId)
+    }
+    this.sequenceTimeoutId = setTimeout(() => {
+      this.sequenceTimeoutId = null
+      const event = events[0]
+      const message = EventUtil.serialise(event)
+      this.logs.outgoing(`${message}`)
+      this.callback?.(message)
+      if (events.length > 1) {
+        this.publishSequenceToPlayer(events.slice(1), delay)
+      }
+    }, delay)
   }
 
   async getOnlineCount(): Promise<number | null> {
