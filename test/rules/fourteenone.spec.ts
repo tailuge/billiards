@@ -11,13 +11,14 @@ import { BeginEvent } from "../../src/events/beginevent"
 import { Input } from "../../src/events/input"
 import { RerackEvent } from "../../src/events/rerackevent"
 import { Assets } from "../../src/view/assets"
+import { console as nodeConsole } from "node:console"
 
 initDom()
 
-const jestConsole = console
+const jestConsole = globalThis.console
 
 beforeEach(() => {
-  globalThis.console = require("console")
+  globalThis.console = nodeConsole
 })
 
 afterEach(() => {

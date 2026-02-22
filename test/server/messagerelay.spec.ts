@@ -3,11 +3,12 @@ import { InMemoryMessageRelay } from "../mocks/inmemorymessagerelay"
 import { MessageRelay } from "../../src/network/client/messagerelay"
 import { BreakEvent } from "../../src/events/breakevent"
 import { EventUtil } from "../../src/events/eventutil"
+import { console as nodeConsole } from "node:console"
 
-const jestConsole = console
+const jestConsole = globalThis.console
 
 beforeEach(() => {
-  globalThis.console = require("console")
+  globalThis.console = nodeConsole
 })
 
 afterEach(() => {

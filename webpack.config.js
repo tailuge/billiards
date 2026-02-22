@@ -1,4 +1,4 @@
-const path = require("path")
+const path = require("node:path")
 const TerserPlugin = require("terser-webpack-plugin")
 let packagedeps = require("./package.json")
 module.exports = {

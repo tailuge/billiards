@@ -1,10 +1,11 @@
 import { expect } from "chai"
 import { Session } from "../../src/network/client/session"
+import { console as nodeConsole } from "node:console"
 
-const jestConsole = console
+const jestConsole = globalThis.console
 
 beforeEach(() => {
-  globalThis.console = require("console")
+  globalThis.console = nodeConsole
 })
 
 afterEach(() => {
