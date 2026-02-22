@@ -1,87 +1,81 @@
-import { Vector3 } from "three"
-import { Pocket } from "../../model/physics/pocket"
+import { Vector3 } from "three";
+import { HitEvent } from "../../events/hitevent";
+import { Table } from "../../model/table";
+import { R } from "../../model/physics/constants";
+import { atan2 } from "../../utils/utils";
+import { Pocket } from "../../model/physics/pocket";
 
 export class AimCalculator {
-  private readonly ballRadius: number
+  private readonly ballRadius: number;
 
-  constructor(ballRadius: number) {
-    this.ballRadius = ballRadius
+  constructor() {
+    this.ballRadius = R;
   }
 
-  /**
-   * Main entry point: Determines the optimal aim point (Ghost Ball position).
-   * Note: The source of the pocket list is typically PocketGeometry.pocketCenters.
-   */
   public getAimPoint(
     cuePos: Vector3,
     targetPos: Vector3,
-    pockets: Vector3[]
+    pockets: Vector3[],
   ): Vector3 | null {
-    const bestPocket = this.findBestPocket(cuePos, targetPos, pockets)
+    const bestPocket = this.findBestPocket(cuePos, targetPos, pockets);
 
-    if (!bestPocket) return null
-    return this.calculateGhostBallPos(targetPos, bestPocket)
+    if (!bestPocket) return null;
+    return this.calculateGhostBallPos(targetPos, bestPocket);
   }
 
-  /**
-   * Extracts positions from a list of Pocket objects.
-   * Note: The source of the pocket list is typically PocketGeometry.pocketCenters.
-   */
   public extractPocketPositions(pockets: Pocket[]): Vector3[] {
-    return pockets.map((pocket) => pocket.pos)
+    return pockets.map((pocket) => pocket.pos.clone().multiplyScalar(0.95));
   }
 
-  /**
-   * Filters pockets that are 'forward' relative to the shot line,
-   * then selects the closest one to the target ball.
-   */
+  generateRandomShot(table: Table, noise: number, targetPos?: Vector3): HitEvent {
+    const cueball = table.cueball;
+    const aim = table.cue.aim;
+
+    if (!targetPos) {
+      targetPos = new Vector3().random()
+    }
+
+    const lineTo = targetPos.clone().sub(cueball.pos);
+    aim.angle = atan2(lineTo.y, lineTo.x) + (Math.random() - 0.5) * noise;
+    aim.power = 80 * R;
+    aim.offset = new Vector3(0, (Math.random() - 0.5) * 0.6);
+    return new HitEvent(table.serialise());
+  }
+
   private findBestPocket(
     cuePos: Vector3,
     targetPos: Vector3,
-    pockets: Vector3[]
+    pockets: Vector3[],
   ): Vector3 | undefined {
     return pockets
       .filter((pocket) => this.isPocketAhead(cuePos, targetPos, pocket))
       .sort(
-        (a, b) => this.distanceSq(targetPos, a) - this.distanceSq(targetPos, b)
-      )[0]
+        (a, b) => this.distanceSq(targetPos, a) - this.distanceSq(targetPos, b),
+      )[0];
   }
 
-  /**
-   * Checks if a pocket is reachable (ahead of the cue-to-target line).
-   * Uses dot product: (Cue->Target) . (Target->Pocket) > 0
-   */
   private isPocketAhead(
     cuePos: Vector3,
     targetPos: Vector3,
-    pocket: Vector3
+    pocket: Vector3,
   ): boolean {
-    const shotLine = this.getDirectionVector(cuePos, targetPos)
-    const pocketLine = this.getDirectionVector(targetPos, pocket)
-    return shotLine.dot(pocketLine) > 0
+    const shotLine = this.getDirectionVector(cuePos, targetPos);
+    const pocketLine = this.getDirectionVector(targetPos, pocket);
+    return shotLine.dot(pocketLine) > 0;
   }
 
-  /**
-   * Calculates the Ghost Ball position (Aim Point).
-   * Logic: TargetPos + (Normalized(Pocket->Target) * 2 * Radius)
-   */
   private calculateGhostBallPos(targetPos: Vector3, pocket: Vector3): Vector3 {
-    // Vector pointing FROM pocket TO target ball
-    const incidentVector = this.getDirectionVector(pocket, targetPos)
-
-    // Offset target position by 2 radii along that vector
+    const incidentVector = this.getDirectionVector(pocket, targetPos);
     return targetPos
       .clone()
-      .add(incidentVector.multiplyScalar(this.ballRadius * 2))
+      .add(incidentVector.multiplyScalar(this.ballRadius * 2.01));
   }
 
-  // --- Low-level Helpers ---
-
   private getDirectionVector(from: Vector3, to: Vector3): Vector3 {
-    return new Vector3().subVectors(to, from).normalize() // subVectors is immutable to inputs
+    return new Vector3().subVectors(to, from).normalize();
   }
 
   private distanceSq(v1: Vector3, v2: Vector3): number {
-    return v1.distanceToSquared(v2) // Squared is faster than sqrt for sorting
+    return v1.distanceToSquared(v2);
   }
 }
