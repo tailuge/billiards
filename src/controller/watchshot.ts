@@ -27,7 +27,7 @@ export class WatchShot extends ControllerBase {
     }
 
     const outcome = this.container.table.outcome
-    if (this.container.rules.isEndOfGame(outcome)) {
+    if (this.container.rules.isEndOfGame(outcome) && !Session.isBotMode()) {
       return this.container.rules.handleGameEnd(false)
     }
     return this

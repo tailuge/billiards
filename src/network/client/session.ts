@@ -53,5 +53,8 @@ export class Session {
       spectator,
       botMode
     )
+    if (botMode) {
+      Session.instance.opponentName = "ClawBot"
+    }
   }
 }
