@@ -4,7 +4,6 @@ import { Container } from "../../container/container"
 import { EventType } from "../../events/eventtype"
 import { HitEvent } from "../../events/hitevent"
 import { AimCalculator } from "./aimcalculator"
-import { PocketGeometry } from "../../view/pocketgeometry"
 import { StartAimEvent } from "../../events/startaimevent"
 import { Outcome } from "../../model/outcome"
 import { NineBall } from "../../controller/rules/nineball"
@@ -14,6 +13,7 @@ import { EventUtil } from "../../events/eventutil"
 import { RerackEvent } from "../../events/rerackevent"
 import { Respot } from "../../utils/respot"
 import { gameOverButtons } from "../../utils/gameover"
+import { zero } from "../../utils/utils"
 
 export class BotEventHandler {
   private readonly logs: Logger
@@ -83,6 +83,7 @@ export class BotEventHandler {
       const startPos = cueball.onTable()
         ? cueball.pos.clone()
         : this.container.rules.placeBall()
+      cueball.setStationary()
 
       const nineBall = this.container.table.balls[9]
       const nineBallPotted = Outcome.pots(outcome).includes(nineBall)
@@ -113,7 +114,7 @@ export class BotEventHandler {
   }
 
   private handleStartAim(): void {
-    const hitEvent = this.aimAndHit()
+    const hitEvent = this.aim()
     this.publishSequenceToPlayer([hitEvent])
   }
 
@@ -133,30 +134,20 @@ export class BotEventHandler {
       event.useStartPos ? event.pos : this.container.rules.placeBall()
     )
     cueball.setStationary()
-    const hitEvent = this.aimAndHit()
+    const hitEvent = this.aim()
     this.publishSequenceToPlayer([hitEvent])
   }
 
-  private aimAndHit(): HitEvent {
+  private aim(): HitEvent {
     const table = this.container.table
     const cueball = table.cueball
     const targetBall = this.container.rules.nextCandidateBall()
+    let targetPoint = targetBall?.pos ?? zero
 
-    if (!targetBall) {
-      return this.calculator.generateRandomShot(table, 0.01, targetBall?.pos)
-    }
-
-    const pockets = this.calculator.extractPocketPositions(
-      PocketGeometry.pocketCenters
-    )
-    const aimPoint = this.calculator.getAimPoint(
-      cueball.pos,
-      targetBall.pos,
-      pockets
-    )
+    const aimPoint = this.calculator.getAimPoint(cueball.pos, targetPoint)
     return this.calculator.generateRandomShot(
       table,
-      0.01,
+      0.005,
       aimPoint ?? undefined
     )
   }

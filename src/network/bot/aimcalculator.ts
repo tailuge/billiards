@@ -4,18 +4,21 @@ import { Table } from "../../model/table"
 import { R } from "../../model/physics/constants"
 import { atan2 } from "../../utils/utils"
 import { Pocket } from "../../model/physics/pocket"
+import { PocketGeometry } from "../../view/pocketgeometry"
 
 export class AimCalculator {
   private readonly ballRadius: number
+  public readonly pockets: Vector3[]
 
   constructor() {
     this.ballRadius = R
+    this.pockets = this.extractPocketPositions(PocketGeometry.pocketCenters)
   }
 
   public getAimPoint(
     cuePos: Vector3,
     targetPos: Vector3,
-    pockets: Vector3[]
+    pockets: Vector3[] = this.pockets
   ): Vector3 | null {
     const bestPocket = this.findBestPocket(cuePos, targetPos, pockets)
 
@@ -23,7 +26,7 @@ export class AimCalculator {
     return this.calculateGhostBallPos(targetPos, bestPocket)
   }
 
-  public extractPocketPositions(pockets: Pocket[]): Vector3[] {
+  private extractPocketPositions(pockets: Pocket[]): Vector3[] {
     return pockets.map((pocket) => pocket.pos.clone().multiplyScalar(0.95))
   }
 
@@ -65,14 +68,14 @@ export class AimCalculator {
   ): boolean {
     const shotLine = this.getDirectionVector(cuePos, targetPos)
     const pocketLine = this.getDirectionVector(targetPos, pocket)
-    return shotLine.dot(pocketLine) > 0
+    return shotLine.dot(pocketLine) > 0.01
   }
 
   private calculateGhostBallPos(targetPos: Vector3, pocket: Vector3): Vector3 {
     const incidentVector = this.getDirectionVector(pocket, targetPos)
     return targetPos
       .clone()
-      .add(incidentVector.multiplyScalar(this.ballRadius * 2.01))
+      .add(incidentVector.multiplyScalar(this.ballRadius * 2.005))
   }
 
   private getDirectionVector(from: Vector3, to: Vector3): Vector3 {
