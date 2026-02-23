@@ -99,11 +99,70 @@ describe("Controller", () => {
     done()
   })
 
+  it("AimEvent updates aim input UI in WatchAim", (done) => {
+    container.controller = new WatchAim(container)
+    const powerSpy = jest.spyOn(
+      container.table.cue.aimInputs,
+      "updatePowerSlider"
+    )
+    const visualSpy = jest.spyOn(
+      container.table.cue.aimInputs,
+      "updateVisualState"
+    )
+    const aimEvent = new AimEvent()
+    aimEvent.offset.x = 0.1
+    aimEvent.offset.y = -0.15
+    aimEvent.power = container.table.cue.maxPower * 0.4
+    aimEvent.pos.copy(container.table.cueball.pos)
+
+    container.eventQueue.push(aimEvent)
+    container.processEvents()
+
+    expect(container.controller).to.be.an.instanceof(WatchAim)
+    expect(powerSpy.mock.calls).to.not.be.empty
+    expect(visualSpy.mock.calls).to.not.be.empty
+    const powerArgs = powerSpy.mock.calls[powerSpy.mock.calls.length - 1]
+    const visualArgs = visualSpy.mock.calls[visualSpy.mock.calls.length - 1]
+    expect(powerArgs[0]).to.be.approximately(0.4, 0.0001)
+    expect(visualArgs[0]).to.be.approximately(0.1, 0.0001)
+    expect(visualArgs[1]).to.be.approximately(-0.15, 0.0001)
+    done()
+  })
+
   it("RejoinEvent takes WatchAim to WatchAim", (done) => {
     container.controller = new WatchAim(container)
     container.eventQueue.push(new RejoinEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
+    done()
+  })
+
+  it("HitEvent updates aim input UI before WatchShot transition", (done) => {
+    container.controller = new WatchAim(container)
+    const powerSpy = jest.spyOn(
+      container.table.cue.aimInputs,
+      "updatePowerSlider"
+    )
+    const visualSpy = jest.spyOn(
+      container.table.cue.aimInputs,
+      "updateVisualState"
+    )
+
+    const tablejson = container.table.serialise()
+    tablejson.aim.offset.x = 0.05
+    tablejson.aim.offset.y = -0.2
+    tablejson.aim.power = container.table.cue.maxPower * 0.25
+    container.eventQueue.push(new HitEvent(tablejson))
+    container.processEvents()
+
+    expect(container.controller).to.be.an.instanceof(WatchShot)
+    expect(powerSpy.mock.calls).to.not.be.empty
+    expect(visualSpy.mock.calls).to.not.be.empty
+    const powerArgs = powerSpy.mock.calls[powerSpy.mock.calls.length - 1]
+    const visualArgs = visualSpy.mock.calls[visualSpy.mock.calls.length - 1]
+    expect(powerArgs[0]).to.be.approximately(0.25, 0.0001)
+    expect(visualArgs[0]).to.be.approximately(0.05, 0.0001)
+    expect(visualArgs[1]).to.be.approximately(-0.2, 0.0001)
     done()
   })
 

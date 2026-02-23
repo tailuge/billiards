@@ -53,9 +53,45 @@ describe("AimInput", () => {
     Session.init("id", "name", "table", true)
     const spectatorAimInputs = new AimInputs(container)
     expect(spectatorAimInputs.cueHitElement.disabled).to.be.true
+    expect(spectatorAimInputs.cuePowerElement.disabled).to.be.true
+    expect(spectatorAimInputs.cueBallElement.style.pointerEvents).to.equal(
+      "none"
+    )
     spectatorAimInputs.setDisabled(false)
     expect(spectatorAimInputs.cueHitElement.disabled).to.be.true
+    expect(spectatorAimInputs.cuePowerElement.disabled).to.be.true
+    expect(spectatorAimInputs.cueBallElement.style.pointerEvents).to.equal(
+      "none"
+    )
     Session.reset()
+    done()
+  })
+
+  it("setDisabled toggles spin and power controls", (done) => {
+    aiminputs.setDisabled(true)
+    expect(aiminputs.cueHitElement.disabled).to.be.true
+    expect(aiminputs.cuePowerElement.disabled).to.be.true
+    expect(aiminputs.cueBallElement.style.pointerEvents).to.equal("none")
+
+    aiminputs.setDisabled(false)
+    expect(aiminputs.cueHitElement.disabled).to.be.false
+    expect(aiminputs.cuePowerElement.disabled).to.be.false
+    expect(aiminputs.cueBallElement.style.pointerEvents).to.equal("auto")
+    done()
+  })
+
+  it("disabled controls ignore spin and power input events", (done) => {
+    aiminputs.setDisabled(true)
+    const initialPower = container.table.cue.aim.power
+    const initialOffset = container.table.cue.aim.offset.clone()
+
+    aiminputs.cuePowerElement.value = 1
+    aiminputs.powerChanged({})
+    aiminputs.mousewheel({ deltaY: 10 })
+    aiminputs.adjustSpin({ offsetX: 1, offsetY: 1 })
+
+    expect(container.table.cue.aim.power).to.equal(initialPower)
+    expect(container.table.cue.aim.offset.equals(initialOffset)).to.be.true
     done()
   })
 })

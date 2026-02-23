@@ -22,11 +22,13 @@ export class WatchAim extends ControllerBase {
   override handleAim(event: AimEvent) {
     this.container.table.cue.aim = event
     this.container.table.cueball.pos.copy(event.pos)
+    this.container.table.cue.updateAimInput()
     return this
   }
 
   override handleHit(event: HitEvent) {
     this.container.table.updateFromSerialised(event.tablejson)
+    this.container.table.cue.updateAimInput()
     return new WatchShot(this.container)
   }
 }

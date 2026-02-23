@@ -18,6 +18,7 @@ export class AimInputs {
   ballWidth
   ballHeight
   tipRadius
+  private controlsDisabled = false
 
   constructor(container) {
     this.container = container
@@ -51,8 +52,22 @@ export class AimInputs {
   }
 
   setDisabled(disabled: boolean) {
+    this.controlsDisabled = disabled || Session.isSpectator()
     if (this.cueHitElement) {
-      this.cueHitElement.disabled = disabled || Session.isSpectator()
+      this.cueHitElement.disabled = this.controlsDisabled
+    }
+    if (this.cuePowerElement) {
+      this.cuePowerElement.disabled = this.controlsDisabled
+      this.cuePowerElement.classList.toggle(
+        "is-disabled",
+        this.controlsDisabled
+      )
+    }
+    if (this.cueBallElement) {
+      this.cueBallElement.style.pointerEvents = this.controlsDisabled
+        ? "none"
+        : "auto"
+      this.cueBallElement.classList.toggle("is-disabled", this.controlsDisabled)
     }
   }
 
@@ -67,6 +82,9 @@ export class AimInputs {
   }
 
   adjustSpin(e) {
+    if (this.controlsDisabled) {
+      return
+    }
     this.readDimensions()
     this.container.table.cue.setSpin(
       new Vector3(
@@ -108,6 +126,9 @@ export class AimInputs {
   }
 
   powerChanged = (_) => {
+    if (this.controlsDisabled) {
+      return
+    }
     this.container.table.cue.setPower(this.cuePowerElement.value)
   }
 
@@ -118,11 +139,17 @@ export class AimInputs {
   }
 
   hit = (_) => {
+    if (this.controlsDisabled) {
+      return
+    }
     this.container.table.cue.setPower(this.cuePowerElement?.value)
     this.container.inputQueue.push(new Input(0, "SpaceUp"))
   }
 
   mousewheel = (e) => {
+    if (this.controlsDisabled) {
+      return
+    }
     if (this.cuePowerElement) {
       this.cuePowerElement.value -= Math.sign(e.deltaY) / 10
       this.container.table.cue.setPower(this.cuePowerElement.value)
