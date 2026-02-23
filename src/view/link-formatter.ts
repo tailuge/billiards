@@ -1,5 +1,6 @@
 import { Container } from "../container/container"
 import { ChatEvent } from "../events/chatevent"
+import { EventType } from "../events/eventtype"
 import { ReplayEncoder } from "../utils/replay-encoder"
 
 export class LinkFormatter {
@@ -62,7 +63,7 @@ export class LinkFormatter {
   }
 
   private shotCount(shots: any[]) {
-    return shots.filter((shot) => shot.type !== "RERACK").length
+    return shots.filter((shot) => shot.type === EventType.AIM).length
   }
 
   private generateLink(text: string, state: string, colour: string) {

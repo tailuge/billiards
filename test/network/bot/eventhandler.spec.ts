@@ -13,8 +13,10 @@ import { PlaceBallEvent } from "../../../src/events/placeballevent"
 import { GameEvent } from "../../../src/events/gameevent"
 import { EventType } from "../../../src/events/eventtype"
 import { EventUtil } from "../../../src/events/eventutil"
+import { HitEvent } from "../../../src/events/hitevent"
 import { WatchShot } from "../../../src/controller/watchshot"
 import { PlaceBall } from "../../../src/controller/placeball"
+import { Vector3 } from "three"
 
 initDom()
 
@@ -233,5 +235,33 @@ describe("BotEventHandler Respot Logic", () => {
       expectedCueBallPos.x,
       0.001
     )
+  })
+
+  it("should set bot aim.pos from placed cue ball after PLACEBALL", () => {
+    const logs = new Logger()
+    const publishFn = (events: GameEvent[], _delay?: number) => {
+      publishedEvents.push(...events)
+    }
+    const enqueueFn = (_message: string) => {}
+
+    const eventHandler = new BotEventHandler(
+      logs,
+      container,
+      publishFn,
+      enqueueFn
+    )
+
+    container.table.cueball.state = State.InPocket
+    const placedPos = new Vector3(-0.7205, 0, 0)
+
+    eventHandler.handle(new PlaceBallEvent(placedPos, undefined, true))
+
+    const hit = publishedEvents.find((e) => e instanceof HitEvent) as HitEvent
+    expect(hit).to.not.be.undefined
+
+    expect(hit.tablejson.aim.pos.x).to.be.closeTo(placedPos.x, 1e-9)
+    expect(hit.tablejson.aim.pos.y).to.be.closeTo(placedPos.y, 1e-9)
+    expect(hit.tablejson.aim.pos.z).to.be.closeTo(placedPos.z, 1e-9)
+    expect(hit.tablejson.aim.i).to.equal(0)
   })
 })

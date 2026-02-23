@@ -38,6 +38,9 @@ export class AimCalculator {
     const cueball = table.cueball
     const aim = table.cue.aim
 
+    aim.pos.copy(cueball.pos)
+    aim.i = table.balls.indexOf(cueball)
+
     if (!targetPos) {
       targetPos = new Vector3().random()
     }
@@ -68,7 +71,7 @@ export class AimCalculator {
   ): boolean {
     const shotLine = this.getDirectionVector(cuePos, targetPos)
     const pocketLine = this.getDirectionVector(targetPos, pocket)
-    return shotLine.dot(pocketLine) > 0.01
+    return shotLine.dot(pocketLine) > 0.05
   }
 
   private calculateGhostBallPos(targetPos: Vector3, pocket: Vector3): Vector3 {
