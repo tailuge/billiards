@@ -135,7 +135,7 @@ describe("NineBall Rules", () => {
 
     const rerackEvents = sentEvents.filter((e) => e instanceof RerackEvent)
     expect(rerackEvents).to.have.length(1)
-    const rerack = rerackEvents[0] as RerackEvent
+    const rerack = rerackEvents[0]
     expect(rerack.ballinfo.balls).to.have.length(1)
     expect(rerack.ballinfo.balls[0].id).to.equal(nineBall.id)
 

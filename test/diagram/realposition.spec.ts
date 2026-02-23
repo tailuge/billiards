@@ -28,7 +28,7 @@ describe("RealPosition", () => {
     const result = real.getPositionsAtTime(545599, 0.4)
     console.log(result)
     expect(result).to.not.be.null
-    expect(result!["1"].x).to.be.closeTo(1.5, 0.01)
+    expect(result["1"].x).to.be.closeTo(1.5, 0.01)
     done()
   })
 })
