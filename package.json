@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@swc/core": "1.15.11",
+    "@swc/core": "1.15.13",
     "@swc/jest": "0.2.39",
     "@testing-library/dom": "10.4.1",
     "@types/chai": "5.2.3",

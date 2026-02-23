@@ -51,7 +51,7 @@ describe("Session", () => {
   it("uses a bot opponent in bot mode", () => {
     Session.init("c1", "u1", "t1", false, true)
     const session = Session.getInstance()
-    expect(session.opponentName).to.equal("ClawBot")
+    expect(session.opponentName).to.equal("ClawBreak")
     expect(session.opponentScore()).to.equal(0)
   })
 })

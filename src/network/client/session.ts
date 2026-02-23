@@ -58,7 +58,7 @@ export class Session {
     )
     Session.instance.initializeScores()
     if (botMode) {
-      Session.instance.opponentName = "ClawBot"
+      Session.instance.opponentName = "ClawBreak"
       Session.instance.setOpponentClientId("bot")
     }
   }
