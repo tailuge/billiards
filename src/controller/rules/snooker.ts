@@ -27,6 +27,7 @@ export class Snooker implements Rules {
   previousBreak = 0
   foulPoints = 0
   rulename = "snooker"
+  readonly zoomFactor = 1
 
   static readonly tablemodel = "models/d-snooker.min.gltf"
 

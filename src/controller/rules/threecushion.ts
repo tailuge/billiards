@@ -9,7 +9,6 @@ import { Outcome } from "../../model/outcome"
 import { R } from "../../model/physics/constants"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
-import { CameraTop } from "../../view/cameratop"
 import { TableGeometry } from "../../view/tablegeometry"
 import { Rules } from "./rules"
 import { zero, isFirstShot } from "../../utils/utils"
@@ -25,6 +24,7 @@ export class ThreeCushion implements Rules {
   currentBreak = 0
   previousBreak = 0
   rulename = "threecushion"
+  readonly zoomFactor = 0.92
 
   constructor(container) {
     this.container = container
@@ -66,7 +66,6 @@ export class ThreeCushion implements Rules {
 
   table(): Table {
     this.tableGeometry()
-    CameraTop.zoomFactor = 0.92
     const table = new Table(this.rack())
     this.cueball = table.cueball
     return table

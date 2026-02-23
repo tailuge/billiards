@@ -25,6 +25,7 @@ export class NineBall implements Rules {
   currentBreak = 0
   previousBreak = 0
   rulename = "nineball"
+  readonly zoomFactor = 1
 
   constructor(container) {
     this.container = container

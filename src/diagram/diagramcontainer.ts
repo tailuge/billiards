@@ -2,7 +2,6 @@ import { Container } from "../container/container"
 import { ContainerConfig } from "../container/containerconfig"
 import { Keyboard } from "../events/keyboard"
 import { BreakEvent } from "../events/breakevent"
-import { CameraTop } from "../view/cameratop"
 import { bounceHan } from "../model/physics/physics"
 import { Assets } from "../view/assets"
 import { RealOverlay } from "./real/realoverlay"
@@ -28,7 +27,6 @@ export class DiagramContainer {
     this.replay = replay
     this.ruletype = ruletype
     this.canvas3d = canvas3d
-    CameraTop.zoomFactor = 0.88
   }
 
   start() {
@@ -39,6 +37,7 @@ export class DiagramContainer {
       assets: Assets.localAssets(this.ruletype),
       ruletype: this.ruletype,
       keyboard: keyboard,
+      zoomFactor: 0.88,
       id: "diagram",
     }
     this.container = new Container(config)

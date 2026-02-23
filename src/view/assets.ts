@@ -4,7 +4,6 @@ import { importGltf } from "../utils/gltf"
 import { Rules } from "../controller/rules/rules"
 import { Sound } from "./sound"
 import { TableMesh } from "./tablemesh"
-import { CueMesh } from "./cuemesh"
 import { TableGeometry } from "./tablegeometry"
 
 export class Assets {
@@ -35,7 +34,6 @@ export class Assets {
     })
     importGltf("models/cue.gltf", (m) => {
       this.cue = m
-      CueMesh.mesh = m.scene.children[0]
       this.done()
     })
   }

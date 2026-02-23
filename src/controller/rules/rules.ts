@@ -23,4 +23,5 @@ export interface Rules {
   nextCandidateBall()
   startTurn()
   handleGameEnd(isWinner: boolean): Controller
+  readonly zoomFactor?: number
 }

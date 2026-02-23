@@ -53,6 +53,7 @@ export class Container {
   lobbyIndicator: LobbyIndicator
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
+  zoomFactor: number = 1
   frame: (timestamp: number) => void
 
   private localScores = {
@@ -82,9 +83,11 @@ export class Container {
       id,
       relay = null,
       scoreReporter = null,
+      zoomFactor,
     } = config
     this.log = log
     this.rules = RuleFactory.create(ruletype, this)
+    this.zoomFactor = zoomFactor ?? this.rules.zoomFactor ?? 1
     this.table = this.rules.table()
     this.view = new View(element, this.table, assets)
     this.table.cue.aimInputs = new AimInputs(this)
@@ -260,7 +263,7 @@ export class Container {
       this.table.advance(this.step)
     }
     this.table.updateBallMesh(computedElapsed)
-    this.view.update(computedElapsed, this.table.cue.aim)
+    this.view.update(computedElapsed, this.table.cue.aim, this.zoomFactor)
     this.table.cue.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())

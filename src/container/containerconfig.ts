@@ -11,4 +11,5 @@ export interface ContainerConfig {
   id?: string
   relay?: MessageRelay | null
   scoreReporter?: ScoreReporter | null
+  zoomFactor?: number
 }

@@ -20,22 +20,27 @@ export class Camera {
 
   elapsed: number
 
-  update(elapsed, aim: AimEvent) {
+  update(elapsed, aim: AimEvent, zoomFactor: number = 1) {
     this.elapsed = elapsed
-    this.mode(aim)
+    this.mode(aim, zoomFactor)
   }
 
-  topView(_: AimEvent) {
+  topView(_: AimEvent, zoomFactor: number = 1) {
     this.camera.fov = CameraTop.fov
     this.camera.position.lerp(
-      CameraTop.viewPoint(this.camera.aspect, this.camera.fov, this.tempVec),
+      CameraTop.viewPoint(
+        this.camera.aspect,
+        this.camera.fov,
+        zoomFactor,
+        this.tempVec
+      ),
       0.9
     )
     this.camera.up = up
     this.camera.lookAt(zero)
   }
 
-  aimView(aim: AimEvent, fraction = 0.08) {
+  aimView(aim: AimEvent, _zoomFactor: number = 1, fraction = 0.08) {
     const h = this.height
     const portrait = this.camera.aspect < 0.8
     this.camera.fov = portrait ? 60 : 40

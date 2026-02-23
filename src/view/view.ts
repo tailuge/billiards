@@ -34,8 +34,8 @@ export class View {
     this.initialiseScene()
   }
 
-  update(elapsed, aim: AimEvent) {
-    this.camera.update(elapsed, aim)
+  update(elapsed, aim: AimEvent, zoomFactor: number = 1) {
+    this.camera.update(elapsed, aim, zoomFactor)
   }
 
   sizeChanged() {

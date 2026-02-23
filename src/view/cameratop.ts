@@ -6,21 +6,18 @@ export class CameraTop {
   static readonly aspectLimit = 1.78
   static readonly portrait = 0.95
   static readonly fov = 20
-  static zoomFactor = 1
+  static readonly zoomFactor = 1
 
   private static lastFov: number
   private static lastZoom: number
   private static cachedDist: number
 
-  static viewPoint(aspectRatio, fov, target = new Vector3()) {
-    if (
-      fov !== CameraTop.lastFov ||
-      CameraTop.zoomFactor !== CameraTop.lastZoom
-    ) {
+  static viewPoint(aspectRatio, fov, zoomFactor = 1, target = new Vector3()) {
+    if (fov !== CameraTop.lastFov || zoomFactor !== CameraTop.lastZoom) {
       CameraTop.cachedDist =
-        CameraTop.zoomFactor / (2 * Math.tan((fov * Math.PI) / 360))
+        zoomFactor / (2 * Math.tan((fov * Math.PI) / 360))
       CameraTop.lastFov = fov
-      CameraTop.lastZoom = CameraTop.zoomFactor
+      CameraTop.lastZoom = zoomFactor
     }
     const dist = CameraTop.cachedDist
 
