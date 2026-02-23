@@ -53,7 +53,14 @@ export class Container {
   scoreReporter: ScoreReporter | null = null
   frame: (timestamp: number) => void
 
-  scores: [number, number] = [0, 0]
+  private localScores = {
+    my: 0,
+    opponent: 0,
+  }
+  private hudScores = {
+    p1: 0,
+    p2: 0,
+  }
   currentBreak = 0
 
   last = performance.now()
@@ -111,26 +118,88 @@ export class Container {
     this.throttle.send(event)
   }
 
-  updateScoreHud(p1: number, p2: number, b: number) {
-    this.scores = [p1, p2]
-    this.currentBreak = b
-
-    let p1Name: string | undefined = undefined
-    let p2Name: string | undefined = undefined
-
+  getMyScore(): number {
     if (Session.hasInstance()) {
-      const session = Session.getInstance()
-      const isP1 = Session.playerIndex() === 0
-      p1Name = (isP1 ? session.playername : session.opponentName) || undefined
-      p2Name = (isP1 ? session.opponentName : session.playername) || undefined
+      return Session.getInstance().myScore()
     }
+    return this.localScores.my
+  }
 
-    this.hud.updateScores(p1, p2, p1Name, p2Name, b)
+  getOpponentScore(): number {
+    if (Session.hasInstance()) {
+      return Session.getInstance().opponentScore()
+    }
+    return this.localScores.opponent
+  }
+
+  setMyScore(score: number): void {
+    if (Session.hasInstance()) {
+      Session.getInstance().setMyScore(score)
+      return
+    }
+    this.localScores.my = score
+  }
+
+  setOpponentScore(score: number): void {
+    if (Session.hasInstance()) {
+      Session.getInstance().setOpponentScore(score)
+      return
+    }
+    this.localScores.opponent = score
+  }
+
+  addMyScore(delta: number): void {
+    this.setMyScore(this.getMyScore() + delta)
+  }
+
+  addOpponentScore(delta: number): void {
+    this.setOpponentScore(this.getOpponentScore() + delta)
+  }
+
+  getOrderedScores(): { p1: number; p2: number } {
+    if (Session.hasInstance()) {
+      return Session.getInstance().orderedScoresForHud()
+    }
+    return { p1: this.localScores.my, p2: this.localScores.opponent }
+  }
+
+  getOrderedNames(): { p1Name?: string; p2Name?: string } {
+    if (Session.hasInstance()) {
+      return Session.getInstance().orderedNamesForHud()
+    }
+    return {}
+  }
+
+  setScoresFromNetwork(p1: number, p2: number, breakScore: number): void {
+    if (Session.hasInstance() && Session.getInstance().playerIndex === 1) {
+      this.setMyScore(p2)
+      this.setOpponentScore(p1)
+    } else {
+      this.setMyScore(p1)
+      this.setOpponentScore(p2)
+    }
+    this.currentBreak = breakScore
+  }
+
+  updateScoreHud(p1: number, p2: number, b: number) {
+    this.setScoresFromNetwork(p1, p2, b)
+    const orderedScores = this.getOrderedScores()
+    this.hudScores = orderedScores
+    const orderedNames = this.getOrderedNames()
+    this.hud.updateScores(
+      orderedScores.p1,
+      orderedScores.p2,
+      orderedNames.p1Name,
+      orderedNames.p2Name,
+      b
+    )
   }
 
   sendScoreUpdate(p1: number, p2: number, b: number) {
     const changed =
-      this.scores[0] !== p1 || this.scores[1] !== p2 || this.currentBreak !== b
+      this.hudScores.p1 !== p1 ||
+      this.hudScores.p2 !== p2 ||
+      this.currentBreak !== b
     this.updateScoreHud(p1, p2, b)
     if (changed) {
       this.sendEvent(new ScoreEvent(p1, p2, b))

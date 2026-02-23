@@ -98,8 +98,12 @@ export class BotEventHandler {
       this.publishSequenceToPlayer([placeBallEvent])
       return
     }
+    const pots = Outcome.potCount(outcome)
+    if (pots > 0) {
+      this.container.addOpponentScore(pots)
+      const { p1: s1, p2: s2 } = this.container.getOrderedScores()
+      this.container.sendScoreUpdate(s1, s2, 0)
 
-    if (Outcome.potCount(outcome) > 0) {
       // pot success, send watch event to other player
       this.publishSequenceToPlayer([
         new WatchEvent(this.container.table.serialise()),

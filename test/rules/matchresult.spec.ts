@@ -120,7 +120,7 @@ describe("MatchResult Construction", () => {
     })
     container.scoreReporter = new ScoreReporter()
     const snooker = container.rules as Snooker
-    container.scores = [60, 0]
+    container.setScoresFromNetwork(60, 0, 0)
     snooker.currentBreak = 10
 
     // Mock table is clear (only cueball remains)
@@ -151,7 +151,7 @@ describe("MatchResult Construction", () => {
     })
     container.scoreReporter = new ScoreReporter()
     const threecushion = container.rules as any
-    container.scores = [10, 5]
+    container.setScoresFromNetwork(10, 5, 0)
 
     const endController = threecushion.handleGameEnd(true) as End
     endController.onFirst()
@@ -175,7 +175,7 @@ describe("MatchResult Construction", () => {
     })
     container.scoreReporter = new ScoreReporter()
     const threecushion = container.rules as any
-    container.scores = [3, 7]
+    container.setScoresFromNetwork(3, 7, 0)
 
     const endController = threecushion.handleGameEnd(true) as End
     endController.onFirst()

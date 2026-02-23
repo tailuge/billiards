@@ -8,9 +8,12 @@ export class Session {
   ) {}
 
   opponentName?: string
+  opponentClientId?: string
   playerIndex: number = 0
+  private scoreByClientId: Record<string, number> = {}
 
   private static instance: Session | undefined
+  private static readonly fallbackOpponentClientId = "opponent"
 
   static getInstance(): Session {
     if (!Session.instance) {
@@ -53,8 +56,100 @@ export class Session {
       spectator,
       botMode
     )
+    Session.instance.initializeScores()
     if (botMode) {
       Session.instance.opponentName = "ClawBot"
+      Session.instance.setOpponentClientId("bot")
     }
+  }
+
+  initializeScores(): void {
+    this.scoreByClientId = {
+      [this.clientId]: 0,
+    }
+    if (this.opponentClientId) {
+      this.scoreByClientId[this.opponentClientId] = 0
+    }
+  }
+
+  private opponentKey(): string {
+    return this.opponentClientId ?? Session.fallbackOpponentClientId
+  }
+
+  setOpponentClientId(clientId: string): void {
+    const previousOpponentKey = this.opponentKey()
+    const previousScore = this.getScoreByClientId(previousOpponentKey)
+    this.opponentClientId = clientId
+    if (!(clientId in this.scoreByClientId)) {
+      this.scoreByClientId[clientId] = previousScore
+    }
+    if (
+      previousOpponentKey !== clientId &&
+      previousOpponentKey in this.scoreByClientId
+    ) {
+      delete this.scoreByClientId[previousOpponentKey]
+    }
+  }
+
+  myScore(): number {
+    return this.getScoreByClientId(this.clientId)
+  }
+
+  opponentScore(): number {
+    return this.getScoreByClientId(this.opponentKey())
+  }
+
+  setMyScore(score: number): void {
+    this.setScoreByClientId(this.clientId, score)
+  }
+
+  setOpponentScore(score: number): void {
+    this.setScoreByClientId(this.opponentKey(), score)
+  }
+
+  addMyScore(delta: number): void {
+    this.setMyScore(this.myScore() + delta)
+  }
+
+  addOpponentScore(delta: number): void {
+    this.setOpponentScore(this.opponentScore() + delta)
+  }
+
+  getScoreByClientId(clientId: string): number {
+    return this.scoreByClientId[clientId] ?? 0
+  }
+
+  setScoreByClientId(clientId: string, score: number): void {
+    this.scoreByClientId[clientId] = score
+  }
+
+  orderedScoresForHud(): { p1: number; p2: number } {
+    if (this.playerIndex === 0) {
+      return { p1: this.myScore(), p2: this.opponentScore() }
+    }
+    return { p1: this.opponentScore(), p2: this.myScore() }
+  }
+
+  orderedNamesForHud(): { p1Name?: string; p2Name?: string } {
+    const myName = this.playername || undefined
+    const theirName = this.opponentName || undefined
+    if (this.playerIndex === 0) {
+      const names: { p1Name?: string; p2Name?: string } = {}
+      if (myName) {
+        names.p1Name = myName
+      }
+      if (theirName) {
+        names.p2Name = theirName
+      }
+      return names
+    }
+    const names: { p1Name?: string; p2Name?: string } = {}
+    if (theirName) {
+      names.p1Name = theirName
+    }
+    if (myName) {
+      names.p2Name = myName
+    }
+    return names
   }
 }

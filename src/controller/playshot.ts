@@ -18,7 +18,7 @@ export class PlayShot extends ControllerBase {
     const table = this.container.table
     const outcome = table.outcome
     const nextController = this.container.rules.update(outcome)
-    const [s1, s2] = this.container.rules.getScores()
+    const { p1: s1, p2: s2 } = this.container.getOrderedScores()
     const b = this.container.rules.currentBreak
     this.container.sendScoreUpdate(s1, s2, b)
 

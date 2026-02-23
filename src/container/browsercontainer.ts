@@ -79,6 +79,7 @@ export class BrowserContainer {
       this.spectator,
       this.botMode
     )
+    console.log(Session.getInstance())
   }
 
   cushion(model) {
@@ -166,6 +167,9 @@ export class BrowserContainer {
     const event = EventUtil.fromSerialised(e)
     logNetEvent(this.playername, event, "receive")
     if (event.clientId !== Session.getInstance().clientId) {
+      if (event.clientId) {
+        Session.getInstance().setOpponentClientId(event.clientId)
+      }
       if (event.playername) {
         Session.getInstance().opponentName = event.playername
       }

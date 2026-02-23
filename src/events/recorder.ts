@@ -65,11 +65,10 @@ export class Recorder {
     if (!Session.hasInstance()) {
       return undefined
     }
-    const session = Session.getInstance()
-    const isP1 = session.playerIndex === 0
+    const orderedNames = Session.getInstance().orderedNamesForHud()
     return {
-      player1: (isP1 ? session.playername : session.opponentName) || "Player",
-      player2: (isP1 ? session.opponentName : session.playername) || "Opponent",
+      player1: orderedNames.p1Name || "Player",
+      player2: orderedNames.p2Name || "Opponent",
     }
   }
 
@@ -78,7 +77,7 @@ export class Recorder {
       this.entries[0]?.state,
       this.entries.map((e) => e.event),
       this.start,
-      this.container.scores[Session.playerIndex()],
+      this.container.getMyScore(),
       true,
       this.getPlayerNames()
     )

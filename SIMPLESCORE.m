@@ -1,5 +1,26 @@
 # Simplify Score Tracking via Session-Owned Scores (clientId-keyed)
 
+## Progress (2026-02-23)
+
+### Completed
+- Session now owns score state via `clientId` keys.
+- Added explicit score APIs on `Session` and container-forwarding helpers on `Container`.
+- Removed `Container.scores` tuple and all score mutations via array indexing.
+- Removed `Rules.getScores()` API and updated `PlayShot` to use ordered session/container helpers.
+- Refactored score consumers:
+  - rules (`snooker`, `nineball`, `threecushion`)
+  - recorder whole-game score
+  - match-result winner/loser + subtext generation
+- Wired opponent identity update to set opponent `clientId` during network receive flow.
+- Updated tests for new score APIs and added new `Session` score-model coverage.
+
+### Validation
+- `yarn lint` passed.
+- `yarn test` passed (40 suites, 268 tests).
+
+### Notes
+- The plan document in-repo is currently named `SIMPLESCORE.m`; progress is recorded here.
+
 ## Summary
 Replace `Container`’s tuple-based score state (`scores: [number, number]`) with a `Session`-owned score model keyed by player identity (`clientId`).
 Use explicit APIs like “add to my score” and “add to opponent score” so rules stop doing index math (`Session.playerIndex()` and `1 - index`).

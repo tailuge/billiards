@@ -115,7 +115,7 @@ describe("Snooker", () => {
     setupTableWithPot(table.balls[7])
     playShotWaitForOutcome()
 
-    const [p1, p2] = snooker.getScores()
+    const { p1, p2 } = container.getOrderedScores()
     expect(p1).to.be.equal(1)
     expect(p2).to.be.equal(0)
     done()
@@ -446,7 +446,7 @@ describe("Snooker", () => {
     session.playerIndex = 0
     session.opponentName = "Player B"
 
-    container.scores = [10, 20] // Player A has 10, Player B has 20
+    container.setScoresFromNetwork(10, 20, 0)
 
     const notifySpy = jest.spyOn(container, "notifyLocal")
 
@@ -470,7 +470,7 @@ describe("Snooker", () => {
     session.playerIndex = 0
     session.opponentName = "Player B"
 
-    container.scores = [30, 20] // Player A has 30, Player B has 20
+    container.setScoresFromNetwork(30, 20, 0)
 
     const notifySpy = jest.spyOn(container, "notifyLocal")
 
@@ -494,7 +494,7 @@ describe("Snooker", () => {
     session.playerIndex = 0
     session.opponentName = "Player B"
 
-    container.scores = [20, 20] // Draw
+    container.setScoresFromNetwork(20, 20, 0)
 
     const notifySpy = jest.spyOn(container, "notifyLocal")
 

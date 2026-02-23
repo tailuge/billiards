@@ -22,6 +22,5 @@ export interface Rules {
   asset(): string
   nextCandidateBall()
   startTurn()
-  getScores(): [number, number]
   handleGameEnd(isWinner: boolean): Controller
 }

@@ -20,11 +20,12 @@ export class MatchResultHelper {
     container.recorder.wholeGameLink()
 
     const session = Session.hasInstance() ? Session.getInstance() : null
-    const playerIndex = Session.playerIndex()
-    const winnerIndex = container.scores[0] >= container.scores[1] ? 0 : 1
+    const { p1, p2 } = container.getOrderedScores()
+    const winnerIndex = p1 >= p2 ? 0 : 1
+    const playerIndex = session?.playerIndex ?? 0
     const amIWinner = winnerIndex === playerIndex
 
-    const subtext = this.getScoreSubtext(container, session, playerIndex)
+    const subtext = this.getScoreSubtext(container)
 
     if (amIWinner) {
       this.notifyWin(container, subtext)
@@ -35,12 +36,7 @@ export class MatchResultHelper {
       this.notifyLoss(container, subtext)
     }
 
-    const result = this.createMatchResult(
-      container,
-      rulename,
-      session,
-      playerIndex
-    )
+    const result = this.createMatchResult(container, rulename, session)
 
     return new End(container, amIWinner ? result : undefined)
   }
@@ -95,54 +91,42 @@ export class MatchResultHelper {
     )
   }
 
-  private static getScoreSubtext(
-    container: Container,
-    session: Session | null,
-    playerIndex: number
-  ): string {
+  private static getScoreSubtext(container: Container): string {
     if (container.isSinglePlayer) {
-      return `Score: ${container.scores[playerIndex]}`
+      return `Score: ${container.getMyScore()}`
     }
 
-    const p0Name =
-      playerIndex === 0
-        ? session?.playername || "You"
-        : session?.opponentName || "Opponent"
-    const p1Name =
-      playerIndex === 1
-        ? session?.playername || "You"
-        : session?.opponentName || "Opponent"
-
-    return `${p0Name} ${container.scores[0]} - ${container.scores[1]} ${p1Name}`
+    const { p1Name, p2Name } = container.getOrderedNames()
+    const { p1, p2 } = container.getOrderedScores()
+    return `${p1Name || "You"} ${p1} - ${p2} ${p2Name || "Opponent"}`
   }
 
   private static createMatchResult(
     container: Container,
     rulename: string,
-    session: Session | null,
-    playerIndex: number
+    session: Session | null
   ): MatchResult {
-    const winnerIndex = container.scores[0] >= container.scores[1] ? 0 : 1
-    const loserIndex = 1 - winnerIndex
-
-    const winnerName =
-      winnerIndex === playerIndex
-        ? session?.playername || "Anon"
-        : session?.opponentName || "Opponent"
-    const loserName =
-      loserIndex === playerIndex
-        ? session?.playername || "Anon"
-        : session?.opponentName || "Opponent"
+    const myScore = container.getMyScore()
+    const opponentScore = container.getOpponentScore()
+    const iWon = myScore >= opponentScore
+    const winnerName = iWon
+      ? session?.playername || "Anon"
+      : session?.opponentName || "Opponent"
+    const loserName = iWon
+      ? session?.opponentName || "Opponent"
+      : session?.playername || "Anon"
+    const winnerScore = iWon ? myScore : opponentScore
+    const loserScore = iWon ? opponentScore : myScore
 
     const result: MatchResult = {
       winner: winnerName,
-      winnerScore: container.scores[winnerIndex],
+      winnerScore: winnerScore,
       ruleType: rulename,
     }
 
     if (session?.opponentName) {
       result.loser = loserName
-      result.loserScore = container.scores[loserIndex]
+      result.loserScore = loserScore
     }
 
     return result
