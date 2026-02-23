@@ -75,7 +75,7 @@ describe("BotEventHandler Respot Logic", () => {
     )
     expect(placeBallEvents).to.have.length(1)
 
-    const placeBallEvent = placeBallEvents[0] as PlaceBallEvent
+    const placeBallEvent = placeBallEvents[0]
 
     const cueBallPos = placeBallEvent.pos
     expect(cueBallPos.x).to.be.lessThan(0)
@@ -215,7 +215,7 @@ describe("BotEventHandler Respot Logic", () => {
 
     // Verify result is PlaceBall controller with correct position
     expect(resultController).to.be.instanceof(PlaceBall)
-    const placeBallController = resultController as PlaceBall
+    const placeBallController = resultController
 
     // Cue ball position should be in kitchen (negative x)
     expect(placeBallController.startPos.x).to.be.lessThan(0)

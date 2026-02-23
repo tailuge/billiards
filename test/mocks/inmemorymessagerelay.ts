@@ -1,7 +1,10 @@
 import { MessageRelay } from "../../src/network/client/messagerelay"
 
 export class InMemoryMessageRelay implements MessageRelay {
-  private subscriptions: Map<string, Set<(message: string) => void>> = new Map()
+  private readonly subscriptions: Map<
+    string,
+    Set<(message: string) => void>
+  > = new Map()
 
   subscribe(
     channel: string,
