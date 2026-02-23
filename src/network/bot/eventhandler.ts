@@ -7,10 +7,9 @@ import { AimCalculator } from "./aimcalculator"
 import { StartAimEvent } from "../../events/startaimevent"
 import { Outcome } from "../../model/outcome"
 import { NineBall } from "../../controller/rules/nineball"
-import { PlaceBallEvent } from "../../events/placeballevent"
+import { PlaceBallEvent, RespotBody } from "../../events/placeballevent"
 import { WatchEvent } from "../../events/watchevent"
 import { EventUtil } from "../../events/eventutil"
-import { RerackEvent } from "../../events/rerackevent"
 import { Respot } from "../../utils/respot"
 import { gameOverButtons } from "../../utils/gameover"
 import { zero } from "../../utils/utils"
@@ -87,12 +86,13 @@ export class BotEventHandler {
 
       const nineBall = this.container.table.balls[9]
       const nineBallPotted = Outcome.pots(outcome).includes(nineBall)
-      let respot
+      let respot: RespotBody | undefined
       if (nineBallPotted) {
         Respot.nineBall(this.container.table)
-        respot = RerackEvent.fromJson({
-          balls: [nineBall.serialise()],
-        })
+        respot = {
+          id: nineBall.id,
+          pos: nineBall.pos.clone(),
+        }
       }
       const placeBallEvent = new PlaceBallEvent(startPos, respot, true)
       this.publishSequenceToPlayer([placeBallEvent])
@@ -142,7 +142,7 @@ export class BotEventHandler {
     const table = this.container.table
     const cueball = table.cueball
     const targetBall = this.container.rules.nextCandidateBall()
-    let targetPoint = targetBall?.pos ?? zero
+    const targetPoint = targetBall?.pos ?? zero
 
     const aimPoint = this.calculator.getAimPoint(cueball.pos, targetPoint)
     return this.calculator.generateRandomShot(
