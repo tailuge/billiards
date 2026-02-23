@@ -20,7 +20,10 @@ export class PlayShot extends ControllerBase {
     const nextController = this.container.rules.update(outcome)
     const { p1: s1, p2: s2 } = this.container.getOrderedScores()
     const b = this.container.rules.currentBreak
-    this.container.sendScoreUpdate(s1, s2, b)
+    const active = this.container.inferActivePlayerFromControllerName(
+      nextController.name
+    )
+    this.container.sendScoreUpdate(s1, s2, b, active)
 
     const isPartOfBreak = this.container.rules.isPartOfBreak(outcome)
     const isEndOfGame = this.container.rules.isEndOfGame(outcome)

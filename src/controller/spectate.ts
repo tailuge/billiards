@@ -3,6 +3,7 @@ import { AimEvent, Controller, HitEvent, Input } from "./controller"
 import { MessageRelay } from "../network/client/messagerelay"
 import { EventUtil } from "../events/eventutil"
 import { GameEvent } from "../events/gameevent"
+import { ScoreEvent } from "../events/scoreevent"
 
 export class Spectate extends ControllerBase {
   override get name() {
@@ -19,7 +20,11 @@ export class Spectate extends ControllerBase {
       console.log(message)
       const event = EventUtil.fromSerialised(message)
       this.messages.push(event)
-      if (event instanceof HitEvent || event instanceof AimEvent) {
+      if (
+        event instanceof HitEvent ||
+        event instanceof AimEvent ||
+        event instanceof ScoreEvent
+      ) {
         this.container.eventQueue.push(event)
       }
     })

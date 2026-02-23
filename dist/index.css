@@ -55,6 +55,12 @@ p {
   font-size: 0.6em;
 }
 
+.p1Score.is-active,
+.p2Score.is-active {
+  font-weight: 800;
+  filter: brightness(1.2);
+}
+
 .breakScore {
   font-size: xx-large;
   font-style: italic;

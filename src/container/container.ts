@@ -27,6 +27,8 @@ import { ScoreEvent } from "../events/scoreevent"
 import { ContainerConfig } from "./containerconfig"
 import { Controller } from "../controller/controller"
 
+type ActivePlayer = 0 | 1 | 2
+
 /**
  * Model, View, Controller container.
  */
@@ -61,6 +63,7 @@ export class Container {
     p1: 0,
     p2: 0,
   }
+  private hudActivePlayer: ActivePlayer = 0
   currentBreak = 0
 
   last = performance.now()
@@ -181,7 +184,36 @@ export class Container {
     this.currentBreak = breakScore
   }
 
-  updateScoreHud(p1: number, p2: number, b: number) {
+  private myHudSlot(): 1 | 2 {
+    return Session.hasInstance() && Session.getInstance().playerIndex === 1
+      ? 2
+      : 1
+  }
+
+  private opponentHudSlot(): 1 | 2 {
+    return this.myHudSlot() === 1 ? 2 : 1
+  }
+
+  inferActivePlayerFromControllerName(name: string): ActivePlayer {
+    if (name === "Aim" || name === "PlaceBall" || name === "PlayShot") {
+      return this.myHudSlot()
+    }
+    if (name === "WatchAim" || name === "WatchShot") {
+      return this.opponentHudSlot()
+    }
+    return 0
+  }
+
+  inferActivePlayerFromController(controller = this.controller): ActivePlayer {
+    return this.inferActivePlayerFromControllerName(controller?.name ?? "")
+  }
+
+  setHudActivePlayer(active: ActivePlayer) {
+    this.hudActivePlayer = active
+    this.hud.setActivePlayer(active)
+  }
+
+  updateScoreHud(p1: number, p2: number, b: number, active?: ActivePlayer) {
     this.setScoresFromNetwork(p1, p2, b)
     const orderedScores = this.getOrderedScores()
     this.hudScores = orderedScores
@@ -193,16 +225,19 @@ export class Container {
       orderedNames.p2Name,
       b
     )
+    this.setHudActivePlayer(active ?? this.inferActivePlayerFromController())
   }
 
-  sendScoreUpdate(p1: number, p2: number, b: number) {
+  sendScoreUpdate(p1: number, p2: number, b: number, active?: ActivePlayer) {
+    const activePlayer = active ?? this.inferActivePlayerFromController()
     const changed =
       this.hudScores.p1 !== p1 ||
       this.hudScores.p2 !== p2 ||
-      this.currentBreak !== b
-    this.updateScoreHud(p1, p2, b)
+      this.currentBreak !== b ||
+      this.hudActivePlayer !== activePlayer
+    this.updateScoreHud(p1, p2, b, activePlayer)
     if (changed) {
-      this.sendEvent(new ScoreEvent(p1, p2, b))
+      this.sendEvent(new ScoreEvent(p1, p2, b, activePlayer))
     }
   }
 
@@ -281,6 +316,14 @@ export class Container {
         : "_"
       this.log(`${playerName}: Transition to ${controller.name}`)
       this.controller = controller
+      const active = this.inferActivePlayerFromController(controller)
+      if (
+        active !== 0 ||
+        controller.name === "Init" ||
+        controller.name === "End"
+      ) {
+        this.setHudActivePlayer(active)
+      }
       this.controller.onFirst()
     }
   }

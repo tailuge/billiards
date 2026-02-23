@@ -12,6 +12,7 @@ import { zero } from "../../src/utils/utils"
 import { ChatEvent } from "../../src/events/chatevent"
 import { BeginEvent } from "../../src/events/beginevent"
 import { HitEvent } from "../../src/events/hitevent"
+import { ScoreEvent } from "../../src/events/scoreevent"
 
 describe("EventUtil", () => {
   it("Serialise and deserialise AimEvent", (done) => {
@@ -81,6 +82,25 @@ describe("EventUtil", () => {
     const deserialised = EventUtil.fromSerialised(serialised)
     expect(deserialised.type).to.equal(EventType.HIT)
     expect(deserialised.sequence).to.equal("seq-1000")
+    done()
+  })
+
+  it("Serialise and deserialise ScoreEvent with active player", (done) => {
+    const serialised = EventUtil.serialise(new ScoreEvent(7, 3, 2, 2))
+    const deserialised = EventUtil.fromSerialised(serialised) as ScoreEvent
+    expect(deserialised.type).to.equal(EventType.SCORE)
+    expect(deserialised.p1).to.equal(7)
+    expect(deserialised.p2).to.equal(3)
+    expect(deserialised.b).to.equal(2)
+    expect(deserialised.active).to.equal(2)
+    done()
+  })
+
+  it("Deserialise ScoreEvent without active player defaults to none", (done) => {
+    const deserialised = EventUtil.fromSerialised(
+      JSON.stringify({ type: EventType.SCORE, p1: 1, p2: 0, b: 0 })
+    ) as ScoreEvent
+    expect(deserialised.active).to.equal(0)
     done()
   })
 

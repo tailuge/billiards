@@ -27,6 +27,7 @@ import { StartAimEvent } from "../../src/events/startaimevent"
 import { Session } from "../../src/network/client/session"
 import { Spectate } from "../../src/controller/spectate"
 import { Init } from "../../src/controller/init"
+import { ScoreEvent } from "../../src/events/scoreevent"
 
 initDom()
 
@@ -64,6 +65,10 @@ describe("Controller", () => {
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlaceBall)
     expect(broadcastEvents.pop()).to.be.an.instanceof(WatchEvent)
+    expect(document.getElementById("p1Score")?.classList.contains("is-active"))
+      .to.be.true
+    expect(document.getElementById("p2Score")?.classList.contains("is-active"))
+      .to.be.false
     done()
   })
 
@@ -80,6 +85,21 @@ describe("Controller", () => {
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
+    expect(document.getElementById("p1Score")?.classList.contains("is-active"))
+      .to.be.true
+    expect(document.getElementById("p2Score")?.classList.contains("is-active"))
+      .to.be.false
+    done()
+  })
+
+  it("ScoreEvent active slot highlights corresponding HUD player", (done) => {
+    container.controller = new WatchAim(container)
+    container.eventQueue.push(new ScoreEvent(4, 2, 0, 1))
+    container.processEvents()
+    expect(document.getElementById("p1Score")?.classList.contains("is-active"))
+      .to.be.true
+    expect(document.getElementById("p2Score")?.classList.contains("is-active"))
+      .to.be.false
     done()
   })
 

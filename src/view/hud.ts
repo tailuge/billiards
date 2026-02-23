@@ -11,6 +11,11 @@ export class Hud {
     this.breakElement = id("breakScore")
   }
 
+  setActivePlayer(active: 0 | 1 | 2) {
+    this.p1Element?.classList.toggle("is-active", active === 1)
+    this.p2Element?.classList.toggle("is-active", active === 2)
+  }
+
   private setText(element: HTMLElement | null, text: string) {
     if (element) {
       element.textContent = text

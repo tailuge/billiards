@@ -102,7 +102,8 @@ export class BotEventHandler {
     if (pots > 0) {
       this.container.addOpponentScore(pots)
       const { p1: s1, p2: s2 } = this.container.getOrderedScores()
-      this.container.sendScoreUpdate(s1, s2, 0)
+      const active = this.container.inferActivePlayerFromController()
+      this.container.sendScoreUpdate(s1, s2, 0, active)
 
       // pot success, send watch event to other player
       this.publishSequenceToPlayer([
