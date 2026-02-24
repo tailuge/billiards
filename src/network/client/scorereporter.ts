@@ -2,7 +2,7 @@
 import { MatchResult } from "./matchresult"
 
 export class ScoreReporter {
-  private baseURL: string
+  private readonly baseURL: string
   private readonly defaultBaseURL = "scoreboard-tailuge.vercel.app" // Default URL as per SCOREPLAN.md
 
   constructor(baseURL?: string) {
