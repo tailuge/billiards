@@ -1,24 +1,56 @@
 import { MessageRelay } from "../network/client/messagerelay"
+import { PresenceClient } from "../network/client/presenceclient"
+import { Session } from "../network/client/session"
 import { id } from "../utils/dom"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
+  private readonly presenceClient: PresenceClient
+  private hasLiveCount = false
 
   constructor(private readonly relay: MessageRelay | null) {
     this.element = id("lobby")
+    const session = Session.hasInstance() ? Session.getInstance() : undefined
+    const locale =
+      typeof navigator !== "undefined" ? navigator.language : undefined
+    const originUrl =
+      typeof location !== "undefined" ? `origin:${location.host}` : undefined
+    this.presenceClient = new PresenceClient(
+      session?.clientId ?? "default",
+      session?.playername ?? "Anon",
+      locale,
+      originUrl
+    )
   }
 
   async init(): Promise<void> {
-    if (!this.relay || !this.element) return
+    this.presenceClient.onCountChange((count) => {
+      this.hasLiveCount = true
+      this.setCount(count)
+    })
+    this.presenceClient.start()
+    if (!this.element) return
 
-    const refresh = async () => {
+    try {
       const count = await this.relay?.getOnlineCount()
-      if (count !== null && this.element) {
-        this.element.textContent = ` ${count} 👥`
+      if (!this.hasLiveCount && count !== null && count !== undefined) {
+        this.setCount(count)
       }
+    } catch {
+      // Ignore fallback fetch failures.
     }
+  }
 
-    await refresh()
-    setInterval(refresh, 5 * 60 * 1000)
+  private setCount(count: number): void {
+    if (!this.element) return
+    this.element.textContent = ` ${count} 👥`
+  }
+
+  stop(): void {
+    try {
+      this.presenceClient.stop()
+    } catch {
+      // Ignore presence shutdown failures.
+    }
   }
 }
