@@ -55,7 +55,7 @@ export class Container {
   scoreReporter: ScoreReporter | null = null
   frame: (timestamp: number) => void
 
-  private localScores = {
+  private readonly localScores = {
     my: 0,
     opponent: 0,
   }
@@ -104,8 +104,11 @@ export class Container {
     this.relay = relay
     this.scoreReporter = scoreReporter
     this.lobbyIndicator = new LobbyIndicator(this.relay, this.rules)
-    this.lobbyIndicator.init()
     this.updateController(new Init(this))
+  }
+
+  init() {
+    this.lobbyIndicator.init()
   }
 
   sendChat = (msg) => {

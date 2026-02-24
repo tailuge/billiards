@@ -42,6 +42,7 @@ export class DiagramContainer {
       id: "diagram",
     }
     this.container = new Container(config)
+    this.container.init()
     if (this.cushionModel) {
       this.container.table.cushionModel = this.cushionModel
     }
