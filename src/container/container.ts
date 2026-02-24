@@ -324,6 +324,7 @@ export class Container {
       ) {
         this.setHudActivePlayer(active)
       }
+      this.menu?.setShareVisible(controller.name === "Replay")
       this.controller.onFirst()
     }
   }

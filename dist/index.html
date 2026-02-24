@@ -90,30 +90,32 @@
       </div>
     </div>
     <div class="panel">
-      <button
-        class="hitButton"
-        id="cueHit"
-        type="button"
-        aria-label="Hit cue ball"
-      >
-        hit
-      </button>
-      <div class="ballContainer">
-        <div id="objectBall" class="objectBall"></div>
-        <div id="cueBall" class="cueBall">
-          <div id="cueTip" class="cueTip"></div>
+      <div class="aimingArea">
+        <button
+          class="hitButton"
+          id="cueHit"
+          type="button"
+          aria-label="Hit cue ball"
+        >
+          hit
+        </button>
+        <div class="ballContainer">
+          <div id="objectBall" class="objectBall"></div>
+          <div id="cueBall" class="cueBall">
+            <div id="cueTip" class="cueTip"></div>
+          </div>
         </div>
+        <input
+          class="powerSlider"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.7"
+          id="cuePower"
+          aria-label="power slider"
+        />
       </div>
-      <input
-        class="powerSlider"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0.7"
-        id="cuePower"
-        aria-label="power slider"
-      />
       <div class="chatarea">
         <div id="chatoutput" class="chatoutput">
           <a
@@ -139,26 +141,27 @@
             >👥</a
           >
         </div>
-        <div class="outerMenu">
-          <button
-            class="menuButton"
-            title="share"
-            id="share"
-            type="submit"
-            aria-label="Share replay link"
-          >
-            ⬀
-          </button>
-          <button
-            class="menuButton"
-            title="view"
-            id="camera"
-            type="submit"
-            aria-label="Toggle camera view"
-          >
-            🎥
-          </button>
-        </div>
+      </div>
+      <div class="outerMenu">
+        <button
+          class="menuButton"
+          title="share"
+          id="share"
+          type="submit"
+          aria-label="Share replay link"
+          hidden
+        >
+          ⬀
+        </button>
+        <button
+          class="menuButton"
+          title="view"
+          id="camera"
+          type="submit"
+          aria-label="Toggle camera view"
+        >
+          🎥
+        </button>
       </div>
     </div>
     <div class="constants" id="constants">

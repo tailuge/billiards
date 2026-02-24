@@ -79,6 +79,20 @@ describe("Controller Replay", () => {
     done()
   })
 
+  it("share button is only visible in Replay", (done) => {
+    const share = document.getElementById("share") as HTMLButtonElement
+    expect(share.hidden).to.be.true
+    container.eventQueue.push(new BreakEvent(state.init, state.shots))
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(Replay)
+    expect(share.hidden).to.be.false
+    container.eventQueue.push(new AbortEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    expect(share.hidden).to.be.true
+    done()
+  })
+
   it("Replay and retry moves to Aim", (done) => {
     container.controller = new Replay(container, state.init, state.shots, true)
     expect(container.eventQueue.length).to.be.equal(1)

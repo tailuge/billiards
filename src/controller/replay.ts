@@ -46,7 +46,6 @@ export class Replay extends ControllerBase {
     this.container.table.cue.aimInputs.setDisabled(true)
     const shareButton = this.container.menu.share
     if (shareButton) {
-      shareButton.disabled = false
       shareButton.onclick = () => {
         shorten(window.location.href, (url) => {
           const response = share(url)

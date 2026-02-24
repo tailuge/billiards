@@ -253,22 +253,33 @@ canvas {
   width: 100%;
   height: 17%;
   display: flex;
-  padding: 0px;
+  gap: 6px;
+  padding: 0 4px;
   background: linear-gradient(rgb(0, 64, 94), #000214);
   border-radius: 5px;
+  align-items: stretch;
+}
+
+.aimingArea {
+  height: 100%;
+  min-width: 0;
+  flex: 0 1 auto;
+  display: flex;
   align-items: center;
+  gap: 4px;
 }
 
 .ballContainer {
   height: 96%;
-  margin: auto;
-  margin-left: 10px;
-  margin-right: 10px;
+  width: auto;
+  flex: 0 0 auto;
+  margin: 0;
   position: relative;
   overflow: hidden;
   border-radius: 5px;
   aspect-ratio: 1;
-  padding: 0 5px;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .cueBall {
@@ -320,8 +331,8 @@ canvas {
 .powerSlider {
   width: 20px;
   height: 96%;
-  margin: auto;
-  margin-right: 10px;
+  margin: 0;
+  flex: 0 0 20px;
 }
 
 input[type="range"].powerSlider.is-disabled,
@@ -337,8 +348,7 @@ input[type="range"].powerSlider {
 
 .hitButton {
   height: 96%;
-  margin: auto;
-  margin-left: 5px;
+  margin: 0;
   aspect-ratio: 0.4;
   border-radius: 10px;
   border-width: 4px;
@@ -349,19 +359,21 @@ input[type="range"].powerSlider {
 
 .outerMenu {
   display: flex;
-  height: 46%;
-  justify-content: flex-end;
+  flex-direction: column;
+  height: 100%;
+  flex: 0 0 52px;
+  gap: 4px;
+  padding: 2px;
+  box-sizing: border-box;
 }
 
 .menuButton {
-  height: 100%;
-  width: 25%;
-  margin-right: 4px;
-  aspect-ratio: 0.4;
-  border-radius: 4px;
-  border-width: 2px;
+  flex: 1 1 0;
+  width: 100%;
+  border-radius: 10px;
+  border-width: 4px;
   padding: 0;
-  max-width: 80px;
+  font-size: large;
   user-select: none;
 }
 
@@ -388,23 +400,26 @@ input[type="range"].powerSlider {
 }
 
 .chatarea {
-  height: 96%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  margin-right: 5px;
-  min-width: 0;
+  flex: 1 1 auto;
+  min-width: 120px;
+  width: auto;
+  max-width: none;
 }
 
 .chatoutput {
-  height: 46%;
+  width: 100%;
+  height: 100%;
   box-sizing: border-box;
-  overflow-y: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
   background-color: rgba(47, 79, 79, 0.486);
   padding: 5px;
-  margin: 2px 4px 2px 2px;
+  margin: 2px 0;
   border-radius: 5px;
   font-size: smaller;
+  word-break: break-word;
   overflow-wrap: anywhere;
 }
 

@@ -13,9 +13,7 @@ export class Menu {
 
     this.share = this.getElement("share")
     this.camera = this.getElement("camera")
-    if (this.share) {
-      this.share.disabled = true
-    }
+    this.setShareVisible(false)
     if (this.camera) {
       this.camera.onclick = (_) => {
         this.adjustCamera()
@@ -30,5 +28,13 @@ export class Menu {
 
   getElement(id): HTMLButtonElement {
     return getButton(id)!
+  }
+
+  setShareVisible(visible: boolean) {
+    if (!this.share) {
+      return
+    }
+    this.share.hidden = !visible
+    this.share.disabled = !visible
   }
 }
