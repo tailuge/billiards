@@ -102,10 +102,9 @@ export class Snooker implements Rules {
       return this.continueBreak()
     }
 
-    const lesserBallOnTable =
-      SnookerUtils.coloursOnTable(this.container.table).filter(
-        (b: Ball) => b.id < id
-      ).length > 0
+    const lesserBallOnTable = SnookerUtils.coloursOnTable(
+      this.container.table
+    ).some((b: Ball) => b.id < id)
 
     if (lesserBallOnTable) {
       return this.foul(outcome, info)
@@ -156,7 +155,9 @@ export class Snooker implements Rules {
     return this.cueball
   }
 
-  secondToPlay() {}
+  secondToPlay() {
+    // only for three cushion
+  }
 
   isPartOfBreak(_: Outcome[]): boolean {
     return this.currentBreak > 0

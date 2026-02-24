@@ -223,7 +223,8 @@ export class NineBall implements Rules {
       (b) => b !== table.cueball && b.onTable()
     )
     const all = [...potted, ...onTable]
-    return all.sort((a, b) => (a.label || 0) - (b.label || 0))[0]
+    all.sort((a, b) => (a.label || 0) - (b.label || 0))
+    return all[0]
   }
 
   private respotNineBall() {

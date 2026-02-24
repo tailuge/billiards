@@ -67,8 +67,8 @@ export class BrowserContainer {
     this.spectator = params.has("spectator")
     this.first = params.has("first")
     this.botMode = params.has("bot")
-    SnookerConfig.reds = parseInt(params.get("reds") ?? "15") || 15
-    ThreeCushionConfig.raceTo = parseInt(params.get("raceTo") ?? "2") || 2
+    SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
+    ThreeCushionConfig.raceTo = Number.parseInt(params.get("raceTo") ?? "2") || 2
     console.log(
       `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode}`
     )
@@ -120,6 +120,7 @@ export class BrowserContainer {
 
     if (this.botMode) {
       this.container = this.createContainer(scoreReporter)
+      this.container.init()
       this.container.isSinglePlayer = false
       const logs = new Logger()
       this.messageRelay = new BotRelay(logs, this.container)
@@ -129,6 +130,7 @@ export class BrowserContainer {
     } else {
       this.messageRelay = new NchanMessageRelay()
       this.container = this.createContainer(scoreReporter)
+      this.container.init()
     }
 
     this.container.broadcast = (e) => {
@@ -166,7 +168,9 @@ export class BrowserContainer {
   netEvent(e: string) {
     const event = EventUtil.fromSerialised(e)
     logNetEvent(this.playername, event, "receive")
-    if (event.clientId !== Session.getInstance().clientId) {
+    if (event.clientId === Session.getInstance().clientId) {
+      console.log("Ignoring own event")
+    } else {
       if (event.clientId) {
         Session.getInstance().setOpponentClientId(event.clientId)
       }
@@ -174,8 +178,6 @@ export class BrowserContainer {
         Session.getInstance().opponentName = event.playername
       }
       this.container.eventQueue.push(event)
-    } else {
-      console.log("Ignoring own event")
     }
   }
 
@@ -189,7 +191,7 @@ export class BrowserContainer {
   }
 
   setReplayLink() {
-    const url = window.location.href.split("?")[0]
+    const url = globalThis.location.href.split("?")[0]
     const prefix = `${url}?ruletype=${this.ruletype}&state=`
     this.container.linkFormatter.replayUrl = prefix
   }
