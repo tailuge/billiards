@@ -15,10 +15,8 @@ export class LobbyIndicator {
   ) {
     this.element = id("lobby")
     const session = Session.hasInstance() ? Session.getInstance() : undefined
-    const locale =
-      typeof navigator !== "undefined" ? navigator.language : undefined
-    const originUrl =
-      typeof location !== "undefined" ? location.host : undefined
+    const locale = globalThis.navigator?.language
+    const originUrl = globalThis.location?.host
     this.presenceClient = new PresenceClient(
       session?.clientId ?? "default",
       session?.playername ?? "Anon",

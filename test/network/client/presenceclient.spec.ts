@@ -7,13 +7,15 @@ class MockWebSocket {
   onerror: (() => void) | null = null
   onclose: (() => void) | null = null
 
-  static instances: MockWebSocket[] = []
+  static readonly instances: MockWebSocket[] = []
 
   constructor(public readonly url: string) {
     MockWebSocket.instances.push(this)
   }
 
-  close(): void {}
+  close(): void {
+    // Intentionally empty for mock
+  }
 }
 
 describe("PresenceClient", () => {
