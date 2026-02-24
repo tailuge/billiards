@@ -169,7 +169,9 @@ export class Table {
   }
 
   shortSerialise() {
-    return this.balls.map((b) => [b.pos.x, b.pos.y]).flat()
+    return this.balls
+      .map((b) => [b.pos.x, b.pos.y])
+      .reduce((acc, val) => acc.concat(val), [])
   }
 
   updateFromShortSerialised(data) {
