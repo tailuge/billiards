@@ -110,6 +110,37 @@ describe("MatchResult Construction", () => {
     expect(result.replayData!.length).to.be.greaterThan(0)
   })
 
+  it("NineBall should declare potter winner even if behind on points", () => {
+    container = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets("nineball"),
+      ruletype: "nineball",
+    })
+    const session = Session.getInstance()
+    session.opponentName = "TestOpponent"
+    container.setMyScore(2)
+    container.setOpponentScore(8)
+
+    const nineball = container.rules as NineBall
+    container.table.balls.forEach((b) => {
+      if (b !== container.table.cueball && b.label !== 9) {
+        b.state = State.InPocket
+      }
+    })
+
+    const nineBall = container.table.balls.find((b) => b.label === 9)!
+    const outcome: Outcome[] = [
+      Outcome.collision(container.table.cueball, nineBall, 1),
+      Outcome.pot(nineBall, 1),
+    ]
+    const endController = nineball.update(outcome) as End
+    const result = (endController as any).result as MatchResult
+
+    expect(result.winner).to.equal("TestPlayer")
+    expect(result.loser).to.equal("TestOpponent")
+  })
+
   it("Snooker should include Anon as winner if playername is empty", () => {
     Session.init("test-client", "", "test-table", false)
     container = new Container({

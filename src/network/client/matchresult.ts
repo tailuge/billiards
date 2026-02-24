@@ -15,7 +15,11 @@ export interface MatchResult {
 }
 
 export class MatchResultHelper {
-  static presentGameEnd(container: Container, rulename: string): End {
+  static presentGameEnd(
+    container: Container,
+    rulename: string,
+    forcedAmIWinner?: boolean
+  ): End {
     container.eventQueue.push(new ChatEvent(null, "game over"))
     container.recorder.wholeGameLink()
 
@@ -23,7 +27,7 @@ export class MatchResultHelper {
     const { p1, p2 } = container.getOrderedScores()
     const winnerIndex = p1 >= p2 ? 0 : 1
     const playerIndex = session?.playerIndex ?? 0
-    const amIWinner = winnerIndex === playerIndex
+    const amIWinner = forcedAmIWinner ?? winnerIndex === playerIndex
 
     const subtext = this.getScoreSubtext(container)
 
@@ -36,7 +40,12 @@ export class MatchResultHelper {
       this.notifyLoss(container, subtext)
     }
 
-    const result = this.createMatchResult(container, rulename, session)
+    const result = this.createMatchResult(
+      container,
+      rulename,
+      session,
+      amIWinner
+    )
 
     return new End(container, amIWinner ? result : undefined)
   }
@@ -104,11 +113,11 @@ export class MatchResultHelper {
   private static createMatchResult(
     container: Container,
     rulename: string,
-    session: Session | null
+    session: Session | null,
+    iWon: boolean
   ): MatchResult {
     const myScore = container.getMyScore()
     const opponentScore = container.getOpponentScore()
-    const iWon = myScore >= opponentScore
     const winnerName = iWon
       ? session?.playername || "Anon"
       : session?.opponentName || "Opponent"
