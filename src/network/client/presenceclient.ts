@@ -59,9 +59,12 @@ export class PresenceClient {
       this.pruneAndNotify(Date.now())
     }, 1000)
 
-    if (typeof window !== "undefined" && window.addEventListener) {
-      window.addEventListener("beforeunload", this.handleUnload)
-      window.addEventListener("pagehide", this.handleUnload)
+    if (
+      typeof globalThis.window !== "undefined" &&
+      globalThis.window.addEventListener
+    ) {
+      globalThis.window.addEventListener("beforeunload", this.handleUnload)
+      globalThis.window.addEventListener("pagehide", this.handleUnload)
     }
   }
 
@@ -77,9 +80,12 @@ export class PresenceClient {
       clearInterval(this.pruneTimer)
       this.pruneTimer = null
     }
-    if (typeof window !== "undefined" && window.removeEventListener) {
-      window.removeEventListener("beforeunload", this.handleUnload)
-      window.removeEventListener("pagehide", this.handleUnload)
+    if (
+      typeof globalThis.window !== "undefined" &&
+      globalThis.window.removeEventListener
+    ) {
+      globalThis.window.removeEventListener("beforeunload", this.handleUnload)
+      globalThis.window.removeEventListener("pagehide", this.handleUnload)
     }
     if (this.websocket) {
       try {
@@ -92,7 +98,7 @@ export class PresenceClient {
     this.publish("leave", true)
   }
 
-  private handleUnload = (): void => {
+  private readonly handleUnload = (): void => {
     this.publish("leave", true)
   }
 

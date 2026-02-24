@@ -60,9 +60,10 @@ export class AimCalculator {
     // Use filtered list if available, otherwise fallback to the full list
     const candidates = ahead.length > 0 ? ahead : pockets
 
-    return candidates.sort(
+    const sorted = [...candidates].sort(
       (a, b) => a.distanceToSquared(targetPos) - b.distanceToSquared(targetPos)
-    )[0]
+    )
+    return sorted[0]
   }
 
   private isPocketAhead(
