@@ -212,4 +212,47 @@ describe("Controller Replay", () => {
     )
     done()
   })
+
+  it("pre-highlights active player before aim using SCORE.active", (done) => {
+    const replayState = {
+      init: state.init,
+      shots: [
+        { type: "SCORE", p1: 1, p2: 0, b: 0, active: 2 },
+        state.shots[0],
+      ],
+    }
+    container.controller = new Replay(
+      container,
+      replayState.init,
+      replayState.shots as any,
+      false,
+      1000
+    )
+    const p1 = document.getElementById("p1Score") as HTMLElement
+    const p2 = document.getElementById("p2Score") as HTMLElement
+    expect(p1.classList.contains("is-active")).to.be.false
+    expect(p2.classList.contains("is-active")).to.be.true
+    done()
+  })
+
+  it("keeps previous active player when SCORE.active is 0", (done) => {
+    const replayState = {
+      init: state.init,
+      shots: [
+        { type: "SCORE", p1: 1, p2: 0, b: 0, active: 2 },
+        { type: "SCORE", p1: 1, p2: 0, b: 0, active: 0 },
+        state.shots[0],
+      ],
+    }
+    container.controller = new Replay(
+      container,
+      replayState.init,
+      replayState.shots as any,
+      false,
+      1000
+    )
+    const p2 = document.getElementById("p2Score") as HTMLElement
+    expect(p2.classList.contains("is-active")).to.be.true
+    done()
+  })
 })

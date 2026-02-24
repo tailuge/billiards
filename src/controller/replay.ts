@@ -21,6 +21,7 @@ export class Replay extends ControllerBase {
   delay: number
   shots: GameEvent[]
   firstShot: GameEvent
+  currentActive: 0 | 1 | 2 = 1
   timer
   init
   constructor(container, init, shots, retry = false, delay = 1500) {
@@ -55,44 +56,68 @@ export class Replay extends ControllerBase {
     }
   }
 
+  private handleRerackShot(shot: GameEvent, delay: number): boolean {
+    if (shot?.type !== EventType.RERACK) {
+      return false
+    }
+    const rerack = RerackEvent.fromJson((shot as RerackEvent).ballinfo)
+    RerackEvent.applyBallinfoToTable(this.container.table, rerack.ballinfo)
+    if (this.shots.length > 0) {
+      this.playNextShot(delay)
+    }
+    return true
+  }
+
+  private handlePlaceBallShot(shot: GameEvent, delay: number): boolean {
+    if (shot?.type !== EventType.PLACEBALL) {
+      return false
+    }
+    const place = PlaceBallEvent.fromJson(shot)
+    this.container.table.cueball.pos.copy(place.pos)
+    this.container.table.cueball.setStationary()
+    if (place.respot) {
+      const ball = this.container.table.balls[place.respot.id]
+      if (ball) {
+        ball.pos.copy(place.respot.pos)
+        ball.setStationary()
+      }
+    }
+    if (this.shots.length > 0) {
+      this.playNextShot(delay)
+    }
+    return true
+  }
+
+  private handleScoreShot(shot: GameEvent, delay: number): boolean {
+    if (shot?.type !== EventType.SCORE) {
+      return false
+    }
+    const score = ScoreEvent.fromJson(shot)
+    score.applyToController(this)
+    if (score.active !== 0) {
+      this.currentActive = score.active
+    }
+    if (this.shots.length > 0) {
+      this.playNextShot(delay)
+    }
+    return true
+  }
+
   playNextShot(delay) {
     const shot = this.shots.shift()
-
-    if (shot?.type === EventType.RERACK) {
-      const rerack = RerackEvent.fromJson((shot as RerackEvent).ballinfo)
-      RerackEvent.applyBallinfoToTable(this.container.table, rerack.ballinfo)
-      if (this.shots.length > 0) {
-        this.playNextShot(delay)
-      }
+    if (!shot) {
       return
     }
-
-    if (shot?.type === EventType.PLACEBALL) {
-      const place = PlaceBallEvent.fromJson(shot)
-      this.container.table.cueball.pos.copy(place.pos)
-      this.container.table.cueball.setStationary()
-      if (place.respot) {
-        const ball = this.container.table.balls[place.respot.id]
-        if (ball) {
-          ball.pos.copy(place.respot.pos)
-          ball.setStationary()
-        }
-      }
-      if (this.shots.length > 0) {
-        this.playNextShot(delay)
-      }
-      return
-    }
-    if (shot?.type === EventType.SCORE) {
-      const score = ScoreEvent.fromJson(shot)
-      score.applyToController(this)
-      if (this.shots.length > 0) {
-        this.playNextShot(delay)
-      }
+    if (
+      this.handleRerackShot(shot, delay) ||
+      this.handlePlaceBallShot(shot, delay) ||
+      this.handleScoreShot(shot, delay)
+    ) {
       return
     }
 
     const aim = AimEvent.fromJson(shot)
+    this.container.setHudActivePlayer(this.currentActive)
     this.container.table.cueball = this.container.table.balls[aim.i]
     console.log(this.container.table.cueball.pos.distanceTo(aim.pos))
     this.container.table.cueball.pos.copy(aim.pos)
