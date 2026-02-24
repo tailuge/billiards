@@ -66,8 +66,7 @@ export class Rack {
     const newball = (pos: Vector3, color: string, label: number) => {
       return new Ball(Rack.jitter(pos), color, label)
     }
-    diamond.push(Rack.cueBall(Rack.spot))
-    diamond.push(newball(pos, Rack.BALL_COLORS[1], 1)) // 1: Yellow
+    diamond.push(Rack.cueBall(Rack.spot), newball(pos, Rack.BALL_COLORS[1], 1)) // 1: Yellow
     pos.add(Rack.diagonal)
     diamond.push(newball(pos, Rack.BALL_COLORS[2], 2)) // 2: Blue
     pos.sub(Rack.across)
@@ -162,12 +161,13 @@ export class Rack {
   }
 
   static three() {
-    const threeballs: Ball[] = []
     const dx = TableGeometry.X / 2
     const dy = TableGeometry.Y / 4
-    threeballs.push(Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0)))) // Ball 0: White
-    threeballs.push(new Ball(Rack.jitter(new Vector3(-dx, 0, 0)), 0xe0de36)) // Ball 1: Yellow
-    threeballs.push(new Ball(Rack.jitter(new Vector3(dx, 0, 0)), 0xff0000)) // Ball 2: Red
+    const threeballs: Ball[] = [
+      Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0))), // Ball 0: White
+      new Ball(Rack.jitter(new Vector3(-dx, 0, 0)), 0xe0de36), // Ball 1: Yellow
+      new Ball(Rack.jitter(new Vector3(dx, 0, 0)), 0xff0000), // Ball 2: Red
+    ]
     return threeballs
   }
 
@@ -180,12 +180,14 @@ export class Rack {
     balls.push(Rack.cueBall(Rack.jitter(new Vector3(Rack.baulk, -dy * 0.5, 0))))
 
     const colours = Rack.snookerColourPositions()
-    balls.push(new Ball(Rack.jitter(colours[0]), 0xeede36))
-    balls.push(new Ball(Rack.jitter(colours[1]), 0x0c9664))
-    balls.push(new Ball(Rack.jitter(colours[2]), 0xbd723a))
-    balls.push(new Ball(Rack.jitter(colours[3]), 0x0883ee))
-    balls.push(new Ball(Rack.jitter(colours[4]), 0xffaacc))
-    balls.push(new Ball(Rack.jitter(colours[5]), 0x010101))
+    balls.push(
+      new Ball(Rack.jitter(colours[0]), 0xeede36),
+      new Ball(Rack.jitter(colours[1]), 0x0c9664),
+      new Ball(Rack.jitter(colours[2]), 0xbd723a),
+      new Ball(Rack.jitter(colours[3]), 0x0883ee),
+      new Ball(Rack.jitter(colours[4]), 0xffaacc),
+      new Ball(Rack.jitter(colours[5]), 0x010101)
+    )
 
     const redsToPlay = Math.min(SnookerConfig.reds, 15)
     const triangle = Rack.trianglePositions().slice(0, 15)
@@ -205,13 +207,14 @@ export class Rack {
   static snookerColourPositions() {
     const dx = TableGeometry.X / 2
     const black = TableGeometry.X - (TableGeometry.X * 2) / 11
-    const positions: Vector3[] = []
-    positions.push(new Vector3(Rack.baulk, -Rack.sixth, 0))
-    positions.push(new Vector3(Rack.baulk, Rack.sixth, 0))
-    positions.push(new Vector3(Rack.baulk, 0, 0))
-    positions.push(new Vector3(0, 0, 0))
-    positions.push(new Vector3(dx, 0, 0))
-    positions.push(new Vector3(black, 0, 0))
+    const positions: Vector3[] = [
+      new Vector3(Rack.baulk, -Rack.sixth, 0),
+      new Vector3(Rack.baulk, Rack.sixth, 0),
+      new Vector3(Rack.baulk, 0, 0),
+      new Vector3(0, 0, 0),
+      new Vector3(dx, 0, 0),
+      new Vector3(black, 0, 0),
+    ]
     return positions
   }
 }
