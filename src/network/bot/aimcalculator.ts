@@ -7,11 +7,9 @@ import { Pocket } from "../../model/physics/pocket"
 import { PocketGeometry } from "../../view/pocketgeometry"
 
 export class AimCalculator {
-  private readonly ballRadius: number
   public readonly pockets: Vector3[]
 
   constructor() {
-    this.ballRadius = R
     this.pockets = this.extractPocketPositions(PocketGeometry.pocketCenters)
   }
 
@@ -19,15 +17,13 @@ export class AimCalculator {
     cuePos: Vector3,
     targetPos: Vector3,
     pockets: Vector3[] = this.pockets
-  ): Vector3 | null {
+  ): Vector3 {
     const bestPocket = this.findBestPocket(cuePos, targetPos, pockets)
-
-    if (!bestPocket) return null
     return this.calculateGhostBallPos(targetPos, bestPocket)
   }
 
   private extractPocketPositions(pockets: Pocket[]): Vector3[] {
-    return pockets.map((pocket) => pocket.pos.clone().multiplyScalar(0.95))
+    return pockets.map((pocket) => pocket.pos.clone().multiplyScalar(0.94))
   }
 
   generateRandomShot(
@@ -56,12 +52,17 @@ export class AimCalculator {
     cuePos: Vector3,
     targetPos: Vector3,
     pockets: Vector3[]
-  ): Vector3 | undefined {
-    return pockets
-      .filter((pocket) => this.isPocketAhead(cuePos, targetPos, pocket))
-      .sort(
-        (a, b) => this.distanceSq(targetPos, a) - this.distanceSq(targetPos, b)
-      )[0]
+  ): Vector3 {
+    const ahead = pockets.filter((p) =>
+      this.isPocketAhead(cuePos, targetPos, p)
+    )
+
+    // Use filtered list if available, otherwise fallback to the full list
+    const candidates = ahead.length > 0 ? ahead : pockets
+
+    return candidates.sort(
+      (a, b) => a.distanceToSquared(targetPos) - b.distanceToSquared(targetPos)
+    )[0]
   }
 
   private isPocketAhead(
@@ -71,21 +72,15 @@ export class AimCalculator {
   ): boolean {
     const shotLine = this.getDirectionVector(cuePos, targetPos)
     const pocketLine = this.getDirectionVector(targetPos, pocket)
-    return shotLine.dot(pocketLine) > 0.05
+    return shotLine.dot(pocketLine) > 0.1
   }
 
   private calculateGhostBallPos(targetPos: Vector3, pocket: Vector3): Vector3 {
     const incidentVector = this.getDirectionVector(pocket, targetPos)
-    return targetPos
-      .clone()
-      .add(incidentVector.multiplyScalar(this.ballRadius * 2.005))
+    return targetPos.clone().add(incidentVector.multiplyScalar(R * 2.001))
   }
 
   private getDirectionVector(from: Vector3, to: Vector3): Vector3 {
     return new Vector3().subVectors(to, from).normalize()
-  }
-
-  private distanceSq(v1: Vector3, v2: Vector3): number {
-    return v1.distanceToSquared(v2)
   }
 }
