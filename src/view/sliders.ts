@@ -62,7 +62,7 @@ export class Sliders {
     slider.value = initialValue
     this.showValue(id, initialValue)
     slider.oninput = (e) => {
-      const val = parseFloat((e.target as HTMLInputElement).value)
+      const val = Number.parseFloat((e.target as HTMLInputElement).value)
       setter(val)
       this.showValue(id, val)
       this.notify()

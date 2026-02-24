@@ -59,10 +59,7 @@ export class PresenceClient {
       this.pruneAndNotify(Date.now())
     }, 1000)
 
-    if (
-      typeof globalThis.window !== "undefined" &&
-      globalThis.window.addEventListener
-    ) {
+    if (globalThis.window?.addEventListener !== undefined) {
       globalThis.window.addEventListener("beforeunload", this.handleUnload)
       globalThis.window.addEventListener("pagehide", this.handleUnload)
     }
@@ -80,10 +77,7 @@ export class PresenceClient {
       clearInterval(this.pruneTimer)
       this.pruneTimer = null
     }
-    if (
-      typeof globalThis.window !== "undefined" &&
-      globalThis.window.removeEventListener
-    ) {
+    if (globalThis.window?.removeEventListener !== undefined) {
       globalThis.window.removeEventListener("beforeunload", this.handleUnload)
       globalThis.window.removeEventListener("pagehide", this.handleUnload)
     }

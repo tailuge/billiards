@@ -21,7 +21,7 @@ export class TableMesh {
 
   generateTable(hasPockets: boolean) {
     const group = new Group()
-    const light = new PointLight(0xf0f0e8, 22.0)
+    const light = new PointLight(0xf0f0e8, 22)
     light.position.set(0, 0, R * 50)
     group.add(light)
     this.addCushions(group, hasPockets)
