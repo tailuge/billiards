@@ -1,6 +1,7 @@
 import { MessageRelay } from "../network/client/messagerelay"
 import { PresenceClient } from "../network/client/presenceclient"
 import { Session } from "../network/client/session"
+import { Rules } from "../controller/rules/rules"
 import { id } from "../utils/dom"
 
 export class LobbyIndicator {
@@ -8,18 +9,23 @@ export class LobbyIndicator {
   private readonly presenceClient: PresenceClient
   private hasLiveCount = false
 
-  constructor(private readonly relay: MessageRelay | null) {
+  constructor(
+    private readonly relay: MessageRelay | null,
+    rules: Rules
+  ) {
     this.element = id("lobby")
     const session = Session.hasInstance() ? Session.getInstance() : undefined
     const locale =
       typeof navigator !== "undefined" ? navigator.language : undefined
     const originUrl =
-      typeof location !== "undefined" ? `origin:${location.host}` : undefined
+      typeof location !== "undefined" ? location.host : undefined
     this.presenceClient = new PresenceClient(
       session?.clientId ?? "default",
       session?.playername ?? "Anon",
       locale,
-      originUrl
+      originUrl,
+      rules.rulename,
+      session?.botMode
     )
   }
 

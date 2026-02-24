@@ -20,7 +20,8 @@ describe("LobbyIndicator", () => {
 
     relay.getOnlineCount = async () => 5
 
-    const indicator = new LobbyIndicator(relay)
+    const mockRules = { rulename: "nineball" } as any
+    const indicator = new LobbyIndicator(relay, mockRules)
     await indicator.init()
 
     expect(element?.textContent).to.equal(" 5 👥")

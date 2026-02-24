@@ -103,7 +103,7 @@ export class Container {
     this.notification = new Notification()
     this.relay = relay
     this.scoreReporter = scoreReporter
-    this.lobbyIndicator = new LobbyIndicator(this.relay)
+    this.lobbyIndicator = new LobbyIndicator(this.relay, this.rules)
     this.lobbyIndicator.init()
     this.updateController(new Init(this))
   }

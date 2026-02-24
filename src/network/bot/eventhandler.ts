@@ -66,6 +66,7 @@ export class BotEventHandler {
         extra: gameOverButtons.forMode(true),
         duration: 0,
       })
+      this.container.recorder.wholeGameLink()
       return
     }
 
