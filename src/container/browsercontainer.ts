@@ -196,11 +196,13 @@ export class BrowserContainer {
 
   startReplay(replay) {
     this.breakState = this.parse(replay)
+    const session = Session.getInstance()
     if (this.breakState.players) {
-      const session = Session.getInstance()
       session.playername = this.breakState.players.player1
       session.opponentName = this.breakState.players.player2
     }
+    const orderedScores = session.orderedScoresForHud()
+    this.container.updateScoreHud(orderedScores.p1, orderedScores.p2, 0, 0)
     const breakEvent = new BreakEvent(
       this.breakState.init,
       this.breakState.shots
