@@ -53,6 +53,7 @@ export class Container {
   lobbyIndicator: LobbyIndicator
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
+  replayMode: boolean = false
   frame: (timestamp: number) => void
 
   private readonly localScores = {
@@ -64,6 +65,7 @@ export class Container {
     p2: 0,
   }
   private hudActivePlayer: ActivePlayer = 0
+  private wasReplay: boolean = false
   currentBreak = 0
 
   last = performance.now()
@@ -82,8 +84,10 @@ export class Container {
       id,
       relay = null,
       scoreReporter = null,
+      replayMode = false,
     } = config
     this.log = log
+    this.replayMode = replayMode
     this.rules = RuleFactory.create(ruletype, this)
     this.table = this.rules.table()
     this.view = new View(element, this.table, assets)
@@ -108,7 +112,9 @@ export class Container {
   }
 
   init() {
-    this.lobbyIndicator.init()
+    if (!this.replayMode) {
+      this.lobbyIndicator.init()
+    }
   }
 
   sendChat = (msg) => {
@@ -313,6 +319,7 @@ export class Container {
   }
 
   updateController(controller) {
+    this.wasReplay = this.wasReplay || controller.name === "Replay"
     if (controller !== this.controller) {
       const playerName = Session.hasInstance()
         ? Session.getInstance().playername
@@ -327,7 +334,10 @@ export class Container {
       ) {
         this.setHudActivePlayer(active)
       }
-      this.menu?.setShareVisible(controller.name === "Replay")
+      this.menu?.setShareVisible(
+        controller.name === "Replay" ||
+          (this.wasReplay && controller.name === "End")
+      )
       this.controller.onFirst()
     }
   }

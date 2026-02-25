@@ -79,7 +79,7 @@ describe("Controller Replay", () => {
     done()
   })
 
-  it("share button is only visible in Replay", (done) => {
+  it("share button remains visible when transitioning from Replay to End", (done) => {
     const share = document.getElementById("share") as HTMLButtonElement
     expect(share.hidden).to.be.true
     container.eventQueue.push(new BreakEvent(state.init, state.shots))
@@ -89,7 +89,7 @@ describe("Controller Replay", () => {
     container.eventQueue.push(new AbortEvent())
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
-    expect(share.hidden).to.be.true
+    expect(share.hidden).to.be.false
     done()
   })
 
@@ -216,10 +216,7 @@ describe("Controller Replay", () => {
   it("pre-highlights active player before aim using SCORE.active", (done) => {
     const replayState = {
       init: state.init,
-      shots: [
-        { type: "SCORE", p1: 1, p2: 0, b: 0, active: 2 },
-        state.shots[0],
-      ],
+      shots: [{ type: "SCORE", p1: 1, p2: 0, b: 0, active: 2 }, state.shots[0]],
     }
     container.controller = new Replay(
       container,

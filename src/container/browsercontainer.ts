@@ -68,7 +68,8 @@ export class BrowserContainer {
     this.first = params.has("first")
     this.botMode = params.has("bot")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
-    ThreeCushionConfig.raceTo = Number.parseInt(params.get("raceTo") ?? "2") || 2
+    ThreeCushionConfig.raceTo =
+      Number.parseInt(params.get("raceTo") ?? "2") || 2
     console.log(
       `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode}`
     )
@@ -103,6 +104,7 @@ export class BrowserContainer {
       id: this.playername,
       relay: this.messageRelay,
       scoreReporter: scoreReporter,
+      replayMode: !!this.replay,
     }
     return new Container(config)
   }
