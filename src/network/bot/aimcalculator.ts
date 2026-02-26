@@ -45,6 +45,11 @@ export class AimCalculator {
     aim.angle = atan2(lineTo.y, lineTo.x) + (Math.random() - 0.5) * noise
     aim.power = 80 * R
     aim.offset = new Vector3(0, (Math.random() - 0.5) * 0.6)
+
+    if (table.cue.intersectsAnything(table, aim)) {
+      aim.offset.set(0, table.cue.offCenterLimit, 0)
+    }
+
     return new HitEvent(table.serialise())
   }
 
@@ -55,7 +60,6 @@ export class AimCalculator {
   ): Vector3 {
     return pockets
       .map((p) => ({ pocket: p, score: this.cutScore(cuePos, targetPos, p) }))
-      .filter((x) => x.score < 0.8)
       .sort((a, b) => a.score - b.score)[0].pocket
   }
 

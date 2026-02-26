@@ -138,17 +138,17 @@ export class Cue {
     this.placerMesh.visible = false
   }
 
-  spinOffset() {
-    return upCross(unitAtAngle(this.aim.angle, this.tempVec2))
-      .multiplyScalar(this.aim.offset.x * 2 * R)
-      .setZ(this.aim.offset.y * 2 * R)
+  spinOffset(aim: AimEvent = this.aim) {
+    return upCross(unitAtAngle(aim.angle, this.tempVec2))
+      .multiplyScalar(aim.offset.x * 2 * R)
+      .setZ(aim.offset.y * 2 * R)
   }
 
-  intersectsAnything(table: Table) {
-    const offset = this.spinOffset()
+  intersectsAnything(table: Table, aim: AimEvent = this.aim) {
+    const offset = this.spinOffset(aim)
     const origin = this.tempVec.copy(table.cueball.pos).add(offset)
     const direction = norm(
-      unitAtAngle(this.aim.angle + Math.PI, this.tempVec2).setZ(0.1)
+      unitAtAngle(aim.angle + Math.PI, this.tempVec2).setZ(0.1)
     )
     this.raycaster.set(origin, direction)
     const items: Mesh[] = []
