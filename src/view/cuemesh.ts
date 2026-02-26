@@ -8,7 +8,6 @@ import {
   Vector3,
   ShaderMaterial,
   Group,
-  SphereGeometry,
 } from "three"
 
 export class CueMesh {
@@ -161,17 +160,17 @@ export class CueMesh {
     group.add(ferrule)
 
     // 4. Tip
-    const tipGeom = new SphereGeometry(
+    const tipHeight = 0.005
+    const tipTopRadius = tipRadius * 0.9
+    const tipGeom = new CylinderGeometry(
+      tipTopRadius,
       tipRadius,
-      segments,
-      8,
-      0,
-      Math.PI * 2,
-      0,
-      Math.PI / 2
+      tipHeight,
+      segments
     )
     const tip = new Mesh(tipGeom, tipMat)
-    tip.position.y = ferrule.position.y + ferruleLength / 2
+    tip.position.y = ferrule.position.y + ferruleLength / 2 + tipHeight / 2
+    tip.name = "cueTip"
     group.add(tip)
 
     return group
