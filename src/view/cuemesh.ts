@@ -7,16 +7,12 @@ import {
   MeshPhongMaterial,
   Vector3,
   ShaderMaterial,
+  Group,
+  SphereGeometry,
 } from "three"
 
 export class CueMesh {
   static mesh: Mesh
-
-  private static readonly material = new MeshPhongMaterial({
-    color: 0x885577,
-    wireframe: false,
-    flatShading: false,
-  })
 
   static readonly placermaterial = new MeshPhongMaterial({
     color: 0xccffcc,
@@ -91,24 +87,89 @@ export class CueMesh {
   }
 
   static createCue(tip, but, length) {
-    const geometry = new CylinderGeometry(tip, but, length, 11)
-    const mesh = new Mesh(geometry, CueMesh.material)
+    const group = this.cueGeometry(tip, but, length)
+    const mesh = new Group()
+    mesh.add(group)
     mesh.castShadow = false
     const tilt = 0.17
-    mesh.geometry
-      .applyMatrix4(
-        new Matrix4().identity().makeRotationAxis(new Vector3(1, 0, 0), -tilt)
-      )
-      .applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
-      .applyMatrix4(
-        new Matrix4()
-          .identity()
-          .makeTranslation(
-            -length / 2 - R,
-            0,
-            (length / 2) * Math.sin(tilt) + R * 0.25
-          )
-      )
+    group.applyMatrix4(
+      new Matrix4().identity().makeRotationAxis(new Vector3(1, 0, 0), -tilt)
+    )
+    group.applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
+    group.applyMatrix4(
+      new Matrix4()
+        .identity()
+        .makeTranslation(
+          -length / 2 - R,
+          0,
+          (length / 2) * Math.sin(tilt) + R * 0.25
+        )
+    )
     return mesh
   }
+
+  static cueGeometry(tipRadius, buttRadius, length, segments = 8) {
+    const group = new Group()
+
+    // Material Definitions
+    const ashWoodMat = new MeshPhongMaterial({ color: 0xd2b48c, shininess: 50 })
+    const ebonyMat = new MeshPhongMaterial({ color: 0x1a1a1a, shininess: 80 })
+    const ferruleMat = new MeshPhongMaterial({ color: 0xe5e5e5, shininess: 100 })
+    const tipMat = new MeshPhongMaterial({ color: 0x4a7c9a, shininess: 5 })
+
+    // Ratios for a standard snooker cue
+    const buttLength = length * 0.28
+    const shaftLength = length * 0.71
+    const ferruleLength = length * 0.007
+
+    // 1. Butt
+    const buttGeom = new CylinderGeometry(
+      buttRadius * 0.9,
+      buttRadius,
+      buttLength,
+      segments
+    )
+    const butt = new Mesh(buttGeom, ebonyMat)
+    butt.position.y = -length / 2 + buttLength / 2
+    group.add(butt)
+
+    // 2. Shaft
+    const shaftGeom = new CylinderGeometry(
+      tipRadius,
+      buttRadius * 0.9,
+      shaftLength,
+      segments
+    )
+    const shaft = new Mesh(shaftGeom, ashWoodMat)
+    shaft.position.y = butt.position.y + buttLength / 2 + shaftLength / 2
+    group.add(shaft)
+
+    // 3. Ferrule
+    const ferruleGeom = new CylinderGeometry(
+      tipRadius,
+      tipRadius,
+      ferruleLength,
+      segments
+    )
+    const ferrule = new Mesh(ferruleGeom, ferruleMat)
+    ferrule.position.y = shaft.position.y + shaftLength / 2 + ferruleLength / 2
+    group.add(ferrule)
+
+    // 4. Tip
+    const tipGeom = new SphereGeometry(
+      tipRadius,
+      segments,
+      8,
+      0,
+      Math.PI * 2,
+      0,
+      Math.PI / 2
+    )
+    const tip = new Mesh(tipGeom, tipMat)
+    tip.position.y = ferrule.position.y + ferruleLength / 2
+    group.add(tip)
+
+    return group
+  }
+
 }

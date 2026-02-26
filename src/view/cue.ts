@@ -6,11 +6,11 @@ import { AimInputs } from "./aiminputs"
 import { Ball, State } from "../model/ball"
 import { cueToSpin } from "../model/physics/physics"
 import { CueMesh } from "./cuemesh"
-import { Mesh, Raycaster, Vector3 } from "three"
+import { Mesh, Raycaster, Vector3, Object3D } from "three"
 import { R } from "../model/physics/constants"
 
 export class Cue {
-  mesh: Mesh
+  mesh: Object3D
   helperMesh: Mesh
   placerMesh: Mesh
   readonly offCenterLimit = 0.3
