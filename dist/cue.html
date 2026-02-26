@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Low Poly Snooker Cue</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #1a1a1a; font-family: sans-serif; }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            pointer-events: auto;
+            backdrop-filter: blur(4px);
+        }
+        .control-group { margin-top: 10px; }
+        input[type=range] { width: 100%; cursor: pointer; }
+        #poly-count { font-weight: bold; color: #4ade80; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h1 style="margin:0 0 10px 0; font-size: 1.2rem;">Snooker Cue Visualizer</h1>
+        <div class="control-group">
+            <label>Radial Segments: <span id="segment-val">12</span></label>
+            <input type="range" id="segment-slider" min="3" max="64" value="12">
+        </div>
+        <div class="control-group">
+            Poly Count (Triangles): <span id="poly-count">0</span>
+        </div>
+        <p style="font-size: 0.8rem; margin-top: 10px; opacity: 0.7;">Rotate with Mouse • Zoom with Scroll</p>
+    </div>
+
+    <!-- Load Three.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        let scene, camera, renderer, cueGroup;
+        let currentSegments = 12;
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x121212);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 20, 100);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 7.5);
+            scene.add(directionalLight);
+
+            cueGroup = new THREE.Group();
+            scene.add(cueGroup);
+
+            buildCue(currentSegments);
+
+            cueGroup.rotation.z = Math.PI / 4;
+
+            setupInteractions();
+            setupControls();
+
+            window.addEventListener('resize', onWindowResize, false);
+            animate();
+        }
+
+        function buildCue(segments) {
+            // Clear existing geometry
+            while(cueGroup.children.length > 0){ 
+                cueGroup.remove(cueGroup.children[0]); 
+            }
+
+            const ashWoodMat = new THREE.MeshPhongMaterial({ color: 0xd2b48c, shininess: 50 });
+            const ebonyMat = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 80 });
+            const ferruleMat = new THREE.MeshPhongMaterial({ color: 0xe5e5e5, shininess: 100 });
+            const tipMat = new THREE.MeshPhongMaterial({ color: 0x4a7c9a, shininess: 5 });
+
+            // Butt
+            const buttGeom = new THREE.CylinderGeometry(1.3, 1.5, 40, segments);
+            const butt = new THREE.Mesh(buttGeom, ebonyMat);
+            butt.position.y = -52.5; 
+            cueGroup.add(butt);
+
+            // Shaft
+            const shaftGeom = new THREE.CylinderGeometry(0.5, 1.3, 104, segments);
+            const shaft = new THREE.Mesh(shaftGeom, ashWoodMat);
+            shaft.position.y = 19.5; 
+            cueGroup.add(shaft);
+
+            // Ferrule
+            const ferruleGeom = new THREE.CylinderGeometry(0.5, 0.5, 1, segments);
+            const ferrule = new THREE.Mesh(ferruleGeom, ferruleMat);
+            ferrule.position.y = 72; 
+            cueGroup.add(ferrule);
+
+            // Tip
+            const tipGeom = new THREE.SphereGeometry(0.5, segments, Math.max(3, Math.floor(segments/2)), 0, Math.PI * 2, 0, Math.PI / 2);
+            const tip = new THREE.Mesh(tipGeom, tipMat);
+            tip.position.y = 72.5;
+            cueGroup.add(tip);
+
+            updatePolyCount();
+        }
+
+        function updatePolyCount() {
+            let totalPolys = 0;
+            cueGroup.traverse((object) => {
+                if (object.isMesh && object.geometry) {
+                    // Triangle count is typically index/3 or attributes.position.count/3
+                    if (object.geometry.index) {
+                        totalPolys += object.geometry.index.count / 3;
+                    } else {
+                        totalPolys += object.geometry.attributes.position.count / 3;
+                    }
+                }
+            });
+            document.getElementById('poly-count').innerText = totalPolys;
+        }
+
+        function setupControls() {
+            const slider = document.getElementById('segment-slider');
+            const valLabel = document.getElementById('segment-val');
+
+            slider.addEventListener('input', (e) => {
+                currentSegments = parseInt(e.target.value);
+                valLabel.innerText = currentSegments;
+                buildCue(currentSegments);
+            });
+        }
+
+        let isDragging = false;
+        let previousMouseX = 0;
+        let previousMouseY = 0;
+
+        function setupInteractions() {
+            document.addEventListener('mousedown', () => isDragging = true);
+            document.addEventListener('mouseup', () => isDragging = false);
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const deltaX = e.clientX - previousMouseX;
+                    const deltaY = e.clientY - previousMouseY;
+                    cueGroup.rotation.y += deltaX * 0.01;
+                    cueGroup.rotation.x += deltaY * 0.01;
+                }
+                previousMouseX = e.clientX;
+                previousMouseY = e.clientY;
+            });
+
+            document.addEventListener('wheel', (e) => {
+                camera.position.z += e.deltaY * 0.1;
+                camera.position.z = Math.max(20, Math.min(camera.position.z, 300));
+            });
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (!isDragging) {
+                cueGroup.rotation.y += 0.005;
+            }
+            renderer.render(scene, camera);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

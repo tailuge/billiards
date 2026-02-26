@@ -60,7 +60,7 @@ export class BotEventHandler {
       this.container.notifyLocal({
         type: "GameOver",
         title: "YOU LOST",
-        subtext: "The machines always win",
+        subtext: "Lostber 🦞",
         icon: "🥈",
         extraClass: "is-loser",
         extra: gameOverButtons.forMode(true),
