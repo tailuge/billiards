@@ -56,7 +56,7 @@ export class Replay extends ControllerBase {
     }
   }
 
-  private handleRerackShot(shot: GameEvent, delay: number): boolean {
+  private rerackShot(shot: GameEvent, delay: number): boolean {
     if (shot?.type !== EventType.RERACK) {
       return false
     }
@@ -68,7 +68,7 @@ export class Replay extends ControllerBase {
     return true
   }
 
-  private handlePlaceBallShot(shot: GameEvent, delay: number): boolean {
+  private placeBallShot(shot: GameEvent, delay: number): boolean {
     if (shot?.type !== EventType.PLACEBALL) {
       return false
     }
@@ -88,7 +88,7 @@ export class Replay extends ControllerBase {
     return true
   }
 
-  private handleScoreShot(shot: GameEvent, delay: number): boolean {
+  private scoreShot(shot: GameEvent, delay: number): boolean {
     if (shot?.type !== EventType.SCORE) {
       return false
     }
@@ -109,9 +109,9 @@ export class Replay extends ControllerBase {
       return
     }
     if (
-      this.handleRerackShot(shot, delay) ||
-      this.handlePlaceBallShot(shot, delay) ||
-      this.handleScoreShot(shot, delay)
+      this.rerackShot(shot, delay) ||
+      this.placeBallShot(shot, delay) ||
+      this.scoreShot(shot, delay)
     ) {
       return
     }
@@ -143,7 +143,7 @@ export class Replay extends ControllerBase {
     if (this.shots.length === 0 && this.timer === undefined) {
       this.container.notifyLocal(
         {
-          type: "GameOver",
+          type: "Info",
           title: "Replay Complete",
           extra: gameOverButtons.replay + gameOverButtons.lobby,
         },
@@ -171,7 +171,6 @@ export class Replay extends ControllerBase {
   }
 
   override handleAbort(_: AbortEvent): Controller {
-    console.log("Replay aborted")
     clearTimeout(this.timer)
     this.timer = undefined
     return new End(this.container)
