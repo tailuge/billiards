@@ -12,6 +12,7 @@ export class Logger {
   logElement: HTMLPreElement
   entries: LogEntry[] = []
   visible: boolean = false
+  expanded: boolean = false
   maxEntries: number = 50
 
   constructor() {
@@ -22,7 +23,6 @@ export class Logger {
     const botMode = Session.hasInstance() && Session.isBotMode()
     if (botMode) {
       this.info("Bot mode activated")
-      //this.show()
     }
 
     const clearButton = document.getElementById("botDebugClear")
@@ -31,6 +31,15 @@ export class Logger {
         this.clear()
       })
     }
+
+    const toggleButton = document.getElementById("botDebugToggle")
+    if (toggleButton) {
+      toggleButton.addEventListener("click", () => {
+        this.toggleExpanded()
+      })
+    }
+
+    this.updateExpandedState()
   }
 
   toggle() {
@@ -39,6 +48,27 @@ export class Logger {
       this.show()
     } else {
       this.hide()
+    }
+  }
+
+  toggleExpanded() {
+    this.expanded = !this.expanded
+    this.updateExpandedState()
+  }
+
+  private updateExpandedState() {
+    if (this.element) {
+      if (this.expanded) {
+        this.element.classList.remove("compact")
+      } else {
+        this.element.classList.add("compact")
+      }
+    }
+    const toggleButton = document.getElementById(
+      "botDebugToggle"
+    ) as HTMLButtonElement
+    if (toggleButton) {
+      toggleButton.textContent = this.expanded ? "<" : ">"
     }
   }
 
