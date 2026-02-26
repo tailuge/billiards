@@ -46,7 +46,7 @@ export class AimCalculator {
     aim.power = 80 * R
     aim.offset = new Vector3(0, (Math.random() - 0.5) * 0.6)
 
-    if (table.cue.intersectsAnything(table)) {
+    if (table.cue.intersectsAnything(table, aim)) {
       aim.offset.set(0, table.cue.offCenterLimit, 0)
     }
 
