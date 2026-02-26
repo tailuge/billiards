@@ -129,13 +129,12 @@ export class BrowserContainer {
       this.messageRelay.subscribe(this.tableId, (e) => {
         this.netEvent(e)
       })
-            this.container.notify({
+      this.container.notify({
         type: "Info",
         title: "Playing vs 🦞",
         subtext: "",
         extra: "You first",
       } as const)
-
     } else {
       this.messageRelay = new NchanMessageRelay()
       this.container = this.createContainer(scoreReporter)

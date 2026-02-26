@@ -95,7 +95,9 @@ export class CueMesh {
     group.applyMatrix4(
       new Matrix4().identity().makeRotationAxis(new Vector3(1, 0, 0), -tilt)
     )
-    group.applyMatrix4(new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2))
+    group.applyMatrix4(
+      new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2)
+    )
     group.applyMatrix4(
       new Matrix4()
         .identity()
@@ -114,7 +116,10 @@ export class CueMesh {
     // Material Definitions
     const ashWoodMat = new MeshPhongMaterial({ color: 0xd2b48c, shininess: 50 })
     const ebonyMat = new MeshPhongMaterial({ color: 0x1a1a1a, shininess: 80 })
-    const ferruleMat = new MeshPhongMaterial({ color: 0xe5e5e5, shininess: 100 })
+    const ferruleMat = new MeshPhongMaterial({
+      color: 0xe5e5e5,
+      shininess: 100,
+    })
     const tipMat = new MeshPhongMaterial({ color: 0x4a7c9a, shininess: 5 })
 
     // Ratios for a standard snooker cue
@@ -171,5 +176,4 @@ export class CueMesh {
 
     return group
   }
-
 }

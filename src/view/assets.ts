@@ -4,7 +4,6 @@ import { importGltf } from "../utils/gltf"
 import { Rules } from "../controller/rules/rules"
 import { Sound } from "./sound"
 import { TableMesh } from "./tablemesh"
-import { CueMesh } from "./cuemesh"
 import { TableGeometry } from "./tablegeometry"
 
 export class Assets {
@@ -12,7 +11,6 @@ export class Assets {
   rules: Rules
   background: Mesh
   table: Mesh
-  cue: Mesh
 
   sound: Sound
 
@@ -33,11 +31,6 @@ export class Assets {
       TableMesh.mesh = m.scene.children[0]
       this.done()
     })
-    importGltf("models/cue.gltf", (m) => {
-      this.cue = m
-      CueMesh.mesh = m.scene.children[0]
-      this.done()
-    })
   }
 
   createLocal() {
@@ -53,7 +46,7 @@ export class Assets {
   }
 
   private done() {
-    if (this.background && this.table && this.cue) {
+    if (this.background && this.table) {
       this.ready()
     }
   }
