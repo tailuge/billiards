@@ -53,27 +53,20 @@ export class AimCalculator {
     targetPos: Vector3,
     pockets: Vector3[]
   ): Vector3 {
-    const ahead = pockets.filter((p) =>
-      this.isPocketAhead(cuePos, targetPos, p)
-    )
-
-    // Use filtered list if available, otherwise fallback to the full list
-    const candidates = ahead.length > 0 ? ahead : pockets
-
-    const sorted = [...candidates].sort(
-      (a, b) => a.distanceToSquared(targetPos) - b.distanceToSquared(targetPos)
-    )
-    return sorted[0]
+    return pockets
+      .map((p) => ({ pocket: p, score: this.cutScore(cuePos, targetPos, p) }))
+      .filter((x) => x.score < 0.8)
+      .sort((a, b) => a.score - b.score)[0].pocket
   }
 
-  private isPocketAhead(
+  private cutScore(
     cuePos: Vector3,
     targetPos: Vector3,
     pocket: Vector3
-  ): boolean {
+  ): number {
     const shotLine = this.getDirectionVector(cuePos, targetPos)
     const pocketLine = this.getDirectionVector(targetPos, pocket)
-    return shotLine.dot(pocketLine) > 0.1
+    return 1 - shotLine.dot(pocketLine)
   }
 
   private calculateGhostBallPos(targetPos: Vector3, pocket: Vector3): Vector3 {

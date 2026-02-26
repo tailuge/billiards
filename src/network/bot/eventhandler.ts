@@ -115,11 +115,13 @@ export class BotEventHandler {
       return
     }
 
+    this.logs.hide()
     // switch to players turn
     this.publishSequenceToPlayer([new StartAimEvent()])
   }
 
   private handleStartAim(): void {
+    this.logs.show()
     const hitEvent = this.aim()
     this.publishSequenceToPlayer([hitEvent])
   }
