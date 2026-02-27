@@ -160,8 +160,8 @@ export class CueMesh {
     group.add(ferrule)
 
     // 4. Tip
-    const tipHeight = 0.005
-    const tipTopRadius = tipRadius * 0.9
+    const tipHeight = 0.0055
+    const tipTopRadius = tipRadius * 0.93
     const tipGeom = new CylinderGeometry(
       tipTopRadius,
       tipRadius,
