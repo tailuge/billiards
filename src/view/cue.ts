@@ -37,6 +37,9 @@ export class Cue {
   }
 
   rotateAim(angle, table: Table) {
+    if (this.aimInputs.isDisabled()) {
+      return
+    }
     this.aim.angle = this.aim.angle + angle
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle

@@ -46,43 +46,9 @@ Uses frustum culling - if ball in motion not visible, auto-switches to topView.
 
 ## Refactoring Plan
 
-### Phase 1: Decouple Camera from Aim (Non-Breaking)
-
-1. Create CameraMode interface with update(camera, elapsed, context) method
-2. Create CameraContext containing aim, balls[], table, isAiming
-3. Migrate topView/aimView to mode objects
-4. Add mode registry to Camera class
-
-### Phase 2: Input Context System (Non-Breaking)
-
-1. Create InputContext enum: Aiming | Spectating | Replaying
-2. Modify commonKeyHandler to accept context parameter
-3. Route input differently:
-   - Aiming: movementX → cue.rotateAim, movementY → camera.adjustHeight
-   - Spectating/Replaying: movementX/Y → camera orbit rotation
-
-### Phase 3: New ReplayCamera Mode (New Feature)
-
-1. Create ReplayCameraMode that tracks all balls in motion
-2. Calculate centroid of moving balls, smoothly lerp camera target
-3. Add orbit controls - drag rotates around scene
-4. Auto-return to tracking after inactivity
-5. Integrate with WatchAim/WatchShot controllers
-
----
-
-## Key Files to Modify
-
-| Phase | Files |
-|-------|-------|
-| 1 | camera.ts (refactor), new camera/mode.ts, camera/context.ts |
-| 2 | controllerbase.ts, new inputcontext.ts |
-| 3 | camera/replay.ts, spectate.ts, watchaim.ts |
-
----
-
-## Backward Compatibility
-
-- Phase 1: internal refactoring only
-- Phase 2: defaults to current behavior
-- Phase 3: additive - existing players unaffected
+I want to have a new camera mode for spectators (e.g. replay) that allows camera to pan but not updating aim.
+To do this I'd like to route the dragX calls depending on the controller state.
+Identify a surgical place to add this new idea.
+Add stub methods on the camera that accepts this pan info in X and Y.
+Check that everything still works. i.e. in replay modes (watch aim watch shot) that pan commans do not change aim.
+ 

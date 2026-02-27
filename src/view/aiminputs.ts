@@ -71,6 +71,10 @@ export class AimInputs {
     }
   }
 
+  isDisabled(): boolean {
+    return this.controlsDisabled
+  }
+
   mousemove = (e) => {
     e.buttons === 1 && this.adjustSpin(e)
   }
