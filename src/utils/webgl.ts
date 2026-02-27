@@ -8,7 +8,7 @@ export function renderer(element: HTMLElement) {
   const renderer = new WebGLRenderer({ antialias: false })
   renderer.shadowMap.enabled = false
   renderer.autoClear = false
-  renderer.setSize(element.clientWidth || 1, element.clientHeight || 1)
+  renderer.setSize(element.offsetWidth, element.offsetHeight)
   renderer.setPixelRatio(window.devicePixelRatio * 0.75)
   element.appendChild(renderer.domElement)
   return renderer

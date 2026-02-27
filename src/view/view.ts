@@ -14,7 +14,7 @@ export class View {
   windowWidth = 1
   windowHeight = 1
   private lastFov = 0
-  readonly element: HTMLElement
+  readonly element
   table: Table
   loadAssets = true
   assets: Assets
@@ -23,48 +23,33 @@ export class View {
   private readonly frustum = new Frustum()
   private readonly projScreenMatrix = new Matrix4()
 
-  private resizeObserver: ResizeObserver | undefined
-
-  constructor(element: HTMLElement, table: Table, assets: Assets) {
+  constructor(element, table, assets) {
     this.element = element
     this.table = table
     this.assets = assets
     this.renderer = renderer(element)
-    this.windowWidth = element ? element.offsetWidth : 1
-    this.windowHeight = element ? element.offsetHeight : 1
-    this.camera = new Camera(this.windowWidth / this.windowHeight)
+    this.camera = new Camera(
+      element ? element.offsetWidth / element.offsetHeight : 1
+    )
     this.initialiseScene()
-    this.setupResizeObserver()
-  }
-
-  private setupResizeObserver() {
-    if (globalThis.ResizeObserver && this.element) {
-      this.resizeObserver = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          if (entry.contentRect) {
-            this.windowWidth = entry.contentRect.width
-            this.windowHeight = entry.contentRect.height
-          }
-        }
-      })
-      this.resizeObserver.observe(this.element)
-    }
   }
 
   update(elapsed, aim: AimEvent) {
     this.camera.update(elapsed, aim)
   }
 
-  private lastRenderWidth = 0
-  private lastRenderHeight = 0
+  sizeChanged() {
+    return (
+      this.windowWidth != this.element?.offsetWidth ||
+      this.windowHeight != this.element?.offsetHeight
+    )
+  }
 
   updateSize() {
-    const hasChanged =
-      this.windowWidth !== this.lastRenderWidth ||
-      this.windowHeight !== this.lastRenderHeight
+    const hasChanged = this.sizeChanged()
     if (hasChanged) {
-      this.lastRenderWidth = this.windowWidth
-      this.lastRenderHeight = this.windowHeight
+      this.windowWidth = this.element?.offsetWidth
+      this.windowHeight = this.element?.offsetHeight
     }
     return hasChanged
   }
