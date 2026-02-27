@@ -355,7 +355,7 @@ input[type="range"].powerSlider {
   border-radius: 10px;
   border-width: 4px;
   font-size: large;
-  min-width: 80px;
+  min-width: 70px;
   user-select: none;
 }
 
@@ -372,6 +372,7 @@ input[type="range"].powerSlider {
 .menuButton {
   flex: 1 1 0;
   width: 100%;
+  min-width: 70px;
   border-radius: 10px;
   border-width: 4px;
   padding: 0;
