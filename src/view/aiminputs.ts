@@ -15,12 +15,13 @@ export class AimInputs {
   readonly container: Container
   readonly overlap: Overlap
 
-  ballWidth
-  ballHeight
-  tipRadius
+  ballWidth = 1
+  ballHeight = 1
+  tipRadius = 1
   private controlsDisabled = false
+  private resizeObserver: ResizeObserver | undefined
 
-  constructor(container) {
+  constructor(container: Container) {
     this.container = container
     this.cueBallElement = id("cueBall")
     this.cueTipElement = id("cueTip")
@@ -31,6 +32,28 @@ export class AimInputs {
     this.addListeners()
     if (Session.isSpectator()) {
       this.setDisabled(true)
+    }
+    this.setupResizeObserver()
+  }
+
+  private setupResizeObserver() {
+    if (globalThis.ResizeObserver && this.cueBallElement) {
+      this.resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.target === this.cueBallElement) {
+            this.ballWidth = entry.contentRect.width
+            this.ballHeight = entry.contentRect.height
+          } else if (entry.target === this.cueTipElement) {
+            this.tipRadius = entry.contentRect.width / 2
+          }
+        }
+      })
+      this.resizeObserver.observe(this.cueBallElement)
+      if (this.cueTipElement) {
+        this.resizeObserver.observe(this.cueTipElement)
+      }
+    } else {
+      this.readDimensions()
     }
   }
 
@@ -80,16 +103,15 @@ export class AimInputs {
   }
 
   readDimensions() {
-    this.ballWidth = this.cueBallElement?.offsetWidth
-    this.ballHeight = this.cueBallElement?.offsetHeight
-    this.tipRadius = this.cueTipElement?.offsetWidth / 2
+    this.ballWidth = this.cueBallElement?.offsetWidth || 1
+    this.ballHeight = this.cueBallElement?.offsetHeight || 1
+    this.tipRadius = (this.cueTipElement?.offsetWidth || 2) / 2
   }
 
   adjustSpin(e) {
     if (this.controlsDisabled) {
       return
     }
-    this.readDimensions()
     this.container.table.cue.setSpin(
       new Vector3(
         -(e.offsetX - this.ballWidth / 2) / this.ballWidth,
@@ -101,7 +123,6 @@ export class AimInputs {
   }
 
   updateVisualState(x: number, y: number) {
-    this.readDimensions()
     const elt = this.cueTipElement?.style
     if (elt) {
       elt.left = (-x + 0.5) * this.ballWidth - this.tipRadius + "px"
@@ -116,7 +137,6 @@ export class AimInputs {
       const dir = unitAtAngle(table.cue.aim.angle)
       const closest = this.overlap.getOverlapOffset(table.cueball, dir)
       if (closest) {
-        this.readDimensions()
         this.objectBallStyle.visibility = "visible"
         this.objectBallStyle.left =
           (closest.overlap * this.ballWidth) / 2 + "px"
