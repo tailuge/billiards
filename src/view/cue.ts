@@ -6,8 +6,9 @@ import { AimInputs } from "./aiminputs"
 import { Ball, State } from "../model/ball"
 import { cueToSpin } from "../model/physics/physics"
 import { CueMesh } from "./cuemesh"
-import { Mesh, Raycaster, Vector3, Object3D } from "three"
+import { Mesh, Vector3, Object3D } from "three"
 import { R } from "../model/physics/constants"
+import { cueIntersectsAnything } from "../utils/cueintersect"
 
 export class Cue {
   mesh: Object3D
@@ -24,7 +25,6 @@ export class Cue {
   private readonly tempVec = new Vector3()
   private readonly tempVec2 = new Vector3()
   private readonly tempVec3 = new Vector3()
-  private readonly raycaster = new Raycaster()
 
   constructor() {
     this.mesh = CueMesh.createCue(
@@ -148,21 +148,7 @@ export class Cue {
   }
 
   intersectsAnything(table: Table, aim: AimEvent = this.aim) {
-    const offset = this.spinOffset(aim)
-    const origin = this.tempVec.copy(table.cueball.pos).add(offset)
-    const direction = norm(
-      unitAtAngle(aim.angle + Math.PI, this.tempVec2).setZ(0.1)
-    )
-    this.raycaster.set(origin, direction)
-    const items: Mesh[] = []
-    for (const b of table.balls) {
-      items.push(b.ballmesh.mesh)
-    }
-    if (table.mesh) {
-      items.push(table.mesh)
-    }
-    const intersections = this.raycaster.intersectObjects(items, true)
-    return intersections.length > 0
+    return cueIntersectsAnything(table, aim, this.spinOffset(aim))
   }
 
   showHelper(b) {
