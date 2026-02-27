@@ -3,11 +3,10 @@ const TerserPlugin = require("terser-webpack-plugin")
 let packagedeps = require("./package.json")
 module.exports = {
   entry: {
-    vendor: Object.keys(packagedeps.dependencies),
-    index: { dependOn: "vendor", import: "./src/index.ts" },
-    diagram: { dependOn: "vendor", import: "./src/diagrams.ts" },
-    mathaven: { dependOn: "vendor", import: "./src/mathaven.ts" },
-    compare: { dependOn: "vendor", import: "./src/compare.ts" },
+    index: "./src/index.ts",
+    diagram: "./src/diagrams.ts",
+    mathaven: "./src/mathaven.ts",
+    compare: "./src/compare.ts",
   },
   module: {
     rules: [
@@ -41,12 +40,33 @@ module.exports = {
         minify: TerserPlugin.swcMinify,
         extractComments: false,
         terserOptions: {
+          compress: {
+            unused: true,
+            dead_code: true,
+          },
+          mangle: true,
           safari10: true,
         },
       }),
     ],
     usedExports: true,
-    moduleIds: "named",
+    moduleIds: "deterministic",
+    splitChunks: {
+      chunks: "all",
+      minSize: 20000,
+      maxSize: 250000,
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name(module) {
+            const packageName = module.context.match(
+              /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+            )[1]
+            return `npm.${packageName.replace("@", "")}`
+          },
+        },
+      },
+    },
   },
   stats: {
     errorDetails: true,

@@ -14,7 +14,7 @@ export class View {
   windowWidth = 1
   windowHeight = 1
   private lastFov = 0
-  readonly element
+  readonly element: HTMLElement
   table: Table
   loadAssets = true
   assets: Assets
@@ -23,33 +23,48 @@ export class View {
   private readonly frustum = new Frustum()
   private readonly projScreenMatrix = new Matrix4()
 
-  constructor(element, table, assets) {
+  private resizeObserver: ResizeObserver | undefined
+
+  constructor(element: HTMLElement, table: Table, assets: Assets) {
     this.element = element
     this.table = table
     this.assets = assets
     this.renderer = renderer(element)
-    this.camera = new Camera(
-      element ? element.offsetWidth / element.offsetHeight : 1
-    )
+    this.windowWidth = element ? element.offsetWidth : 1
+    this.windowHeight = element ? element.offsetHeight : 1
+    this.camera = new Camera(this.windowWidth / this.windowHeight)
     this.initialiseScene()
+    this.setupResizeObserver()
+  }
+
+  private setupResizeObserver() {
+    if (globalThis.ResizeObserver && this.element) {
+      this.resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.contentRect) {
+            this.windowWidth = entry.contentRect.width
+            this.windowHeight = entry.contentRect.height
+          }
+        }
+      })
+      this.resizeObserver.observe(this.element)
+    }
   }
 
   update(elapsed, aim: AimEvent) {
     this.camera.update(elapsed, aim)
   }
 
-  sizeChanged() {
-    return (
-      this.windowWidth != this.element?.offsetWidth ||
-      this.windowHeight != this.element?.offsetHeight
-    )
-  }
+  private lastRenderWidth = 0
+  private lastRenderHeight = 0
 
   updateSize() {
-    const hasChanged = this.sizeChanged()
+    const hasChanged =
+      this.windowWidth !== this.lastRenderWidth ||
+      this.windowHeight !== this.lastRenderHeight
     if (hasChanged) {
-      this.windowWidth = this.element?.offsetWidth
-      this.windowHeight = this.element?.offsetHeight
+      this.lastRenderWidth = this.windowWidth
+      this.lastRenderHeight = this.windowHeight
     }
     return hasChanged
   }
