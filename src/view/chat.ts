@@ -19,16 +19,17 @@ export class Chat {
     this.showMessage(this.chatInputText?.value)
   }
 
-  showMessage(msg: string) {
+  showMessage(msg: string, isTrustedHtml: boolean = false) {
     if (!this.chatoutput || !msg) return
 
-    if (msg.includes("<a ") || msg.includes("<span ")) {
+    if (isTrustedHtml) {
       // System links from link-formatter.ts or browsercontainer.ts
-      // We parse these safely to avoid innerHTML
+      // Trusted HTML strings are parsed into a template to avoid direct innerHTML assignment to the live DOM
       const template = document.createElement("template")
+      // Explicitly using a template to parse trusted system HTML
+      // This is safer than direct innerHTML assignment on the live output element
       template.innerHTML = msg.trim()
-      const content = template.content
-      this.chatoutput.appendChild(content)
+      this.chatoutput.appendChild(document.importNode(template.content, true))
     } else {
       // Pure text (user or system info)
       const div = document.createElement("div")

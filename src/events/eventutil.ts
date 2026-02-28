@@ -34,8 +34,13 @@ export class EventUtil {
         return WatchEvent.fromJson(parsed.json)
       case EventType.HIT:
         return HitEvent.fromJson(parsed)
-      case EventType.CHAT:
-        return ChatEvent.fromJson(parsed)
+      case EventType.CHAT: {
+        const event = ChatEvent.fromJson(parsed)
+        if ("isTrusted" in parsed) {
+          event.isTrusted = parsed.isTrusted
+        }
+        return event
+      }
       case EventType.REJOIN:
         return RejoinEvent.fromJson(parsed)
       case EventType.ABORT:

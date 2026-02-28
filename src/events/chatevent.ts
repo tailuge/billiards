@@ -5,6 +5,7 @@ import { Controller } from "../controller/controller"
 export class ChatEvent extends GameEvent {
   sender
   message
+  isTrusted: boolean = false
   constructor(sender, message) {
     super()
     this.sender = sender
