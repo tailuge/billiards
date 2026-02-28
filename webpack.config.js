@@ -20,7 +20,6 @@ module.exports = {
     extensions: [".ts", ".js"],
   },
   output: {
-    clean: true,
     path: path.resolve(__dirname, "dist"),
   },
   devServer: {
