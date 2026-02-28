@@ -19,8 +19,22 @@ export class Chat {
     this.showMessage(this.chatInputText?.value)
   }
 
-  showMessage(msg) {
-    this.chatoutput && (this.chatoutput.innerHTML += msg)
+  showMessage(msg: string) {
+    if (!this.chatoutput || !msg) return
+
+    if (msg.includes("<a ") || msg.includes("<span ")) {
+      // System links from link-formatter.ts or browsercontainer.ts
+      // We parse these safely to avoid innerHTML
+      const template = document.createElement("template")
+      template.innerHTML = msg.trim()
+      const content = template.content
+      this.chatoutput.appendChild(content)
+    } else {
+      // Pure text (user or system info)
+      const div = document.createElement("div")
+      div.textContent = msg
+      this.chatoutput.appendChild(div)
+    }
     this.updateScroll()
   }
 
