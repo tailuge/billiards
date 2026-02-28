@@ -66,8 +66,10 @@ node_modules/
 
 # Gemini context
 
-
-
+.opencode/
+conductor/
+.jules/
+.Jules/
 GEMINI.md
 
 
