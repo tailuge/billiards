@@ -1,73 +1,4 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <title>
-      2 Player Billiards - Local Multiplayer Pool Game | Break Builder
-    </title>
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta
-      name="description"
-      content="Play local 2 player billiards on one screen. Side-by-side pool game with realistic physics simulation. Free and open source."
-    />
-    <meta name="robots" content="index,follow" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="canonical"
-      href="https://tailuge.github.io/billiards/dist/2p.html"
-    />
-    <meta
-      property="og:title"
-      content="2 Player Billiards - Local Multiplayer Pool Game"
-    />
-    <meta
-      property="og:description"
-      content="Play local 2 player billiards on one screen. Side-by-side pool game with realistic physics."
-    />
-    <meta property="og:type" content="website" />
-    <meta
-      property="og:url"
-      content="https://tailuge.github.io/billiards/dist/2p.html"
-    />
-    <meta name="twitter:card" content="summary" />
-    <meta
-      name="twitter:title"
-      content="2 Player Billiards - Local Multiplayer Pool Game"
-    />
-    <meta
-      name="twitter:description"
-      content="Play local 2 player billiards on one screen. Free and open source."
-    />
-    <link rel="stylesheet" type="text/css" href="index.css" />
-  </head>
-
-  <body>
-    <div class="box">
-      <iframe
-        src="index.html"
-        title="P1"
-        id="P1"
-        width="620"
-        height="450"
-        style="float: left"
-      ></iframe>
-    </div>
-    <div class="box">
-      <iframe
-        src="index.html"
-        title="P2"
-        id="P2"
-        width="620"
-        height="450"
-        style="float: right"
-      ></iframe>
-    </div>
-  </body>
-
-  <script>
-    const urlParams = new URLSearchParams(window.location.search)
+<!doctype html><html lang="en"><head><title>2 Player Billiards - Local Multiplayer Pool Game | Break Builder</title><link rel="icon" type="image/png" href="favicon.png"/><meta charset="utf-8"/><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/><meta name="description" content="Play local 2 player billiards on one screen. Side-by-side pool game with realistic physics simulation. Free and open source."/><meta name="robots" content="index,follow"/><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/><meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="canonical" href="https://tailuge.github.io/billiards/dist/2p.html"/><meta property="og:title" content="2 Player Billiards - Local Multiplayer Pool Game"/><meta property="og:description" content="Play local 2 player billiards on one screen. Side-by-side pool game with realistic physics."/><meta property="og:type" content="website"/><meta property="og:url" content="https://tailuge.github.io/billiards/dist/2p.html"/><meta name="twitter:card" content="summary"/><meta name="twitter:title" content="2 Player Billiards - Local Multiplayer Pool Game"/><meta name="twitter:description" content="Play local 2 player billiards on one screen. Free and open source."/><link rel="stylesheet" href="index.css"/></head><body><div class="box"><iframe src="index.html" title="P1" id="P1" width="620" height="450" style="float: left"></iframe></div><div class="box"><iframe src="index.html" title="P2" id="P2" width="620" height="450" style="float: right"></iframe></div></body><script>const urlParams = new URLSearchParams(window.location.search)
     const websocketserver =
       urlParams.get("websocketserver") ?? "ws://localhost:8080"
     const ruletype = urlParams.get("ruletype") ?? "nineball"
@@ -75,6 +6,4 @@
     const url = `index.html?ruletype=${ruletype}&websocketserver=${websocketserver}&tableId=${unique}`
     document.getElementById("P1").src =
       `${url}&clientId=p1id&name=P1&first=true`
-    document.getElementById("P2").src = `${url}&clientId=p2id&name=P2`
-  </script>
-</html>
+    document.getElementById("P2").src = `${url}&clientId=p2id&name=P2`</script></html>

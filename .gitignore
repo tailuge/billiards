@@ -59,6 +59,8 @@ node_modules/
 
 .next
 
+dist/*.js
+
 
 
 # Gemini context
