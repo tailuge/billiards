@@ -19,6 +19,10 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".js"],
   },
+  output: {
+    clean: true,
+    path: path.resolve(__dirname, "dist"),
+  },
   devServer: {
     static: {
       directory: path.join(__dirname, "dist"),
