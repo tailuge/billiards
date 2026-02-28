@@ -1,3 +1,6 @@
+# generated js files
+dist/*.js
+
 # Logs
 logs
 *.log
