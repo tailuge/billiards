@@ -68,7 +68,7 @@ export class LinkFormatter {
 
   private generateLink(text: string, state: string, colour: string) {
     const shotUri = `${this.replayUrl}${ReplayEncoder.fullyEncodeURI(state)}`
-    const shotLink = `<a class="pill" style="color: ${colour}" target="_blank" href="${shotUri}">${text}</a>`
+    const shotLink = `<a class="pill" style="color: ${colour}" target="_blank" rel="noopener noreferrer" href="${shotUri}">${text}</a>`
     this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
   }
 
@@ -77,7 +77,7 @@ export class LinkFormatter {
     const shotUri = `${this.hiScoreUrl}?ruletype=${
       this.container.rules.rulename
     }&state=${ReplayEncoder.fullyEncodeURI(state)}`
-    const shotLink = `<a class="pill" target="_blank" href="${shotUri}">${text}</a>`
+    const shotLink = `<a class="pill" target="_blank" rel="noopener noreferrer" href="${shotUri}">${text}</a>`
     this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
   }
 }
