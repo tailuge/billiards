@@ -2,6 +2,24 @@ const path = require("node:path")
 const TerserPlugin = require("terser-webpack-plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 
+const pages = [
+  { template: "src/templates/index.html", chunks: ["index"] },
+  { template: "src/templates/embed.html", chunks: ["index"] },
+  { template: "src/templates/2p.html", chunks: [], inject: false },
+  { template: "src/templates/multi.html", chunks: [], inject: false },
+  { template: "src/templates/mockup.html", chunks: [], inject: false },
+  // Diagrams
+  { template: "src/templates/diagrams/diagrams.html", chunks: ["diagram"] },
+  { template: "src/templates/diagrams/mathaven.html", chunks: ["mathaven"] },
+  { template: "src/templates/diagrams/nineball.html", chunks: ["diagram"] },
+  { template: "src/templates/diagrams/symmetry.html", chunks: ["diagram"] },
+  { template: "src/templates/diagrams/roll.html", chunks: ["diagram"] },
+  { template: "src/templates/diagrams/diamond.html", chunks: ["diagram"] },
+  { template: "src/templates/diagrams/odd.html", chunks: ["diagram"] },
+  { template: "src/templates/diagrams/plot.html", chunks: ["compare"] },
+  { template: "src/templates/diagrams/gemini.html", chunks: [], inject: false },
+]
+
 module.exports = {
   entry: {
     index: "./src/index.ts",
@@ -26,7 +44,7 @@ module.exports = {
     filename: "[name].js",
     chunkFilename: "chunk-[name]-[contenthash:8].js",
     clean: {
-      keep: (asset) => !asset.endsWith(".js"),
+      keep: (asset) => !asset.endsWith(".js") && !asset.endsWith(".html"),
     },
   },
   devServer: {
@@ -87,91 +105,16 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: "dist/index.html",
-      filename: "index.html",
-      chunks: ["index"],
-      inject: "body",
+  plugins: pages.map((page) => {
+    return new HtmlWebpackPlugin({
+      template: page.template,
+      filename: page.template.replace("src/templates/", ""),
+      chunks: page.chunks,
+      inject: page.inject ?? "body",
       scriptLoading: "defer",
-    }),
-    new HtmlWebpackPlugin({
-      template: "dist/2p.html",
-      filename: "2p.html",
-      chunks: [], // 2p.html is a wrapper with iframes, doesn't need its own entry's JS
-      inject: false,
-    }),
-    new HtmlWebpackPlugin({
-      template: "dist/embed.html",
-      filename: "embed.html",
-      chunks: ["index"],
-      inject: "body",
-      scriptLoading: "defer",
-    }),
-    new HtmlWebpackPlugin({
-      template: "dist/multi.html",
-      filename: "multi.html",
-      chunks: [],
-      inject: false,
-    }),
-    // Diagrams
-    new HtmlWebpackPlugin({
-      template: "dist/diagrams/diagrams.html",
-      filename: "diagrams/diagrams.html",
-      chunks: ["diagram"],
-      inject: "body",
-      scriptLoading: "defer",
-    }),
-    new HtmlWebpackPlugin({
-      template: "dist/diagrams/mathaven.html",
-      filename: "diagrams/mathaven.html",
-      chunks: ["mathaven"],
-      inject: "body",
-      scriptLoading: "defer",
-    }),
-    new HtmlWebpackPlugin({
-      template: "dist/diagrams/nineball.html",
-      filename: "diagrams/nineball.html",
-      chunks: ["diagram"],
-      inject: "body",
-      scriptLoading: "defer",
-    }),
-    new HtmlWebpackPlugin({
-      template: "dist/diagrams/symmetry.html",
-      filename: "diagrams/symmetry.html",
-      chunks: ["diagram"],
-      inject: "body",
-      scriptLoading: "defer",
-    }),
-    new HtmlWebpackPlugin({
-      template: "dist/diagrams/roll.html",
-      filename: "diagrams/roll.html",
-      chunks: ["diagram"],
-      inject: "body",
-      scriptLoading: "defer",
-    }),
-    new HtmlWebpackPlugin({
-      template: "dist/diagrams/diamond.html",
-      filename: "diagrams/diamond.html",
-      chunks: ["diagram"],
-      inject: "body",
-      scriptLoading: "defer",
-    }),
-    new HtmlWebpackPlugin({
-      template: "dist/diagrams/odd.html",
-      filename: "diagrams/odd.html",
-      chunks: ["diagram"],
-      inject: "body",
-      scriptLoading: "defer",
-    }),
-    new HtmlWebpackPlugin({
-      template: "dist/diagrams/plot.html",
-      filename: "diagrams/plot.html",
-      chunks: ["compare"],
-      inject: "body",
-      scriptLoading: "defer",
-    }),
-  ],
+      minify: false,
+    })
+  }),
   stats: {
     errorDetails: true,
   },
