@@ -25,7 +25,7 @@ module.exports = {
       directory: path.join(__dirname, "dist"),
     },
     allowedHosts: [".gitpod.io"],
-    host: "0.0.0.0",
+    host: "localhost",
     compress: true,
     port: 8080,
     client: {
@@ -41,6 +41,11 @@ module.exports = {
         minify: TerserPlugin.swcMinify,
         extractComments: false,
         terserOptions: {
+          compress: {
+            unused: true,
+            dead_code: true,
+          },
+          mangle: true,
           safari10: true,
         },
       }),
