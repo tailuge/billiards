@@ -1,0 +1,32 @@
+yarn run v1.22.22
+$ webpack serve
+<i> [webpack-dev-server] Project is running at:
+<i> [webpack-dev-server] Loopback: http://localhost:8080/, http://[::1]:8080/
+<i> [webpack-dev-server] On Your Network (IPv4): http://192.168.0.2:8080/
+<i> [webpack-dev-server] Content not from webpack is served from '/app/dist' directory
+asset vendor.js 773 KiB [emitted] [minimized] [big] (name: vendor) (id hint: vendor)
+asset diagram.js 209 KiB [emitted] [minimized] (name: diagram)
+asset index.js 204 KiB [emitted] [minimized] (name: index)
+asset compare.js 200 KiB [emitted] [minimized] (name: compare)
+asset mathaven.js 38.9 KiB [emitted] [minimized] (name: mathaven)
+Entrypoint index [big] 977 KiB = vendor.js 773 KiB index.js 204 KiB
+Entrypoint diagram [big] 982 KiB = vendor.js 773 KiB diagram.js 209 KiB
+Entrypoint mathaven [big] 812 KiB = vendor.js 773 KiB mathaven.js 38.9 KiB
+Entrypoint compare [big] 973 KiB = vendor.js 773 KiB compare.js 200 KiB
+cached modules 776 KiB [cached] 131 modules
+runtime modules 120 KiB 60 modules
+javascript modules 3.82 MiB
+  modules by path ./node_modules/ 2.3 MiB
+    modules by path ./node_modules/three/build/*.js 1.97 MiB 2 modules
+    modules by path ./node_modules/three/examples/jsm/ 245 KiB
+      ./node_modules/three/examples/jsm/exporters/GLTFExporter.js 87.2 KiB [code generated]
+      ./node_modules/three/examples/jsm/loaders/GLTFLoader.js + 2 modules 157 KiB [code generated]
+    ./node_modules/interactjs/dist/interact.min.js 95.9 KiB [code generated]
+  modules by path ./src/*.ts 1.52 MiB
+    ./src/index.ts + 99 modules 497 KiB [code generated]
+    ./src/diagrams.ts + 99 modules 503 KiB [code generated]
+    ./src/mathaven.ts + 18 modules 75 KiB [code generated]
+    ./src/compare.ts + 96 modules 483 KiB [code generated]
+webpack 5.105.3 compiled successfully in 2600 ms
+tting down. To force exit, press ^C again. Please wait...
+Done in 105.79s.
