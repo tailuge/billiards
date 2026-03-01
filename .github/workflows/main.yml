@@ -40,8 +40,8 @@ jobs:
           ./codecov
           echo done
 
-      - name: delete coverage
-        run: rm -rf coverage
+      - name: delete coverage and blend files
+        run: rm -rf coverage dist/models/*.blend
 
       - name: upload build artifact
         uses: actions/upload-artifact@v4
@@ -74,9 +74,10 @@ jobs:
 
       - name: cleanup for deployment
         run: |
-          echo "Removing unnecessary files for deployment"
           cp dist/redirect.html index.html
+          echo "Removing unnecessary files for deployment"
           rm -rf node_modules src test .github
+          du -hs * 
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
