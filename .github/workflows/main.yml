@@ -39,3 +39,23 @@ jobs:
           chmod +x codecov
           ./codecov
           echo done
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: install dependencies
+        run: yarn install
+
+      - name: build
+        run: yarn build
+
+      - name: deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
