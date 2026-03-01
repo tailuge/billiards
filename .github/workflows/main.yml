@@ -1,6 +1,6 @@
 # Basic workflow
 
-name: Tests
+name: Build
 
 on:
   # Triggers the workflow on push or pull request events but only for the "master" branch
@@ -11,6 +11,10 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 
 jobs:
@@ -33,12 +37,9 @@ jobs:
           echo done
 
       - name: upload to codecov.io
-        run: |
-          ls -lart coverage
-          curl -Os https://uploader.codecov.io/latest/linux/codecov
-          chmod +x codecov
-          ./codecov
-          echo done
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info
 
       - name: delete coverage and blend files
         run: rm -rf coverage dist/models/*.blend
@@ -76,8 +77,8 @@ jobs:
         run: |
           cp dist/redirect.html index.html
           echo "Removing unnecessary files for deployment"
-          rm -rf node_modules src test .github
-          du -hs * 
+          rm -rf node_modules src test .github LICENSE yarn.lock
+          du -h * 
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
