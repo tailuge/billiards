@@ -1,3 +1,4 @@
+import { Vector3 } from "three"
 import { Ball, State } from "../ball"
 import { CollisionThrow } from "./collisionthrow"
 import { R } from "./constants"
@@ -16,29 +17,34 @@ export class Collision {
     return Collision.updateVelocities(a, b)
   }
 
+  static readonly p = new Vector3()
+  static readonly v = new Vector3()
+
   static positionsAtContact(a: Ball, b: Ball) {
-    const p = a.pos.clone().sub(b.pos) // Relative position
-    const v = a.vel.clone().sub(b.vel) // Relative velocity
+    this.p.subVectors(a.pos, b.pos)
+    this.v.subVectors(a.vel, b.vel)
+
     const rSum = 2 * R
+    const aCoeff = this.v.lengthSq()
 
-    const a_coeff = v.lengthSq()
-    if (a_coeff === 0) return { a: a.pos.clone(), b: b.pos.clone() }
+    if (aCoeff === 0) {
+      return {
+        a: a.pos.clone(),
+        b: b.pos.clone(),
+      }
+    }
 
-    const b_coeff = 2 * p.dot(v)
-    const c_coeff = p.lengthSq() - rSum * rSum
+    const bCoeff = 2 * this.p.dot(this.v)
+    const cCoeff = this.p.lengthSq() - rSum * rSum
 
-    const discriminant = b_coeff * b_coeff - 4 * a_coeff * c_coeff
+    const discriminant = bCoeff * bCoeff - 4 * aCoeff * cCoeff
 
-    // If discriminant < 0, they never actually touch on these vectors.
-    // Use the negative root to find the *first* point of contact.
     const t =
-      discriminant < 0
-        ? 0
-        : Math.fround((-b_coeff - Math.sqrt(discriminant)) / (2 * a_coeff))
+      discriminant < 0 ? 0 : (-bCoeff - Math.sqrt(discriminant)) / (2 * aCoeff)
 
     return {
-      a: a.pos.clone().addScaledVector(a.vel, t),
-      b: b.pos.clone().addScaledVector(b.vel, t),
+      a: new Vector3().copy(a.pos).addScaledVector(a.vel, t),
+      b: new Vector3().copy(b.pos).addScaledVector(b.vel, t),
     }
   }
 
