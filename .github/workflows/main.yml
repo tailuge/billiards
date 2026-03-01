@@ -75,6 +75,7 @@ jobs:
       - name: cleanup for deployment
         run: |
           echo "Removing unnecessary files for deployment"
+          cp dist/redirect.html index.html
           rm -rf node_modules src test .github
 
       - name: Upload artifact
