@@ -12,7 +12,7 @@ import { WatchEvent } from "../../events/watchevent"
 import { EventUtil } from "../../events/eventutil"
 import { Respot } from "../../utils/respot"
 import { gameOverButtons } from "../../utils/gameover"
-import { zero } from "../../utils/utils"
+import { zero } from "../../utils/three-utils"
 
 export class BotEventHandler {
   private readonly logs: Logger

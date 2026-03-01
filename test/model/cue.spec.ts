@@ -3,7 +3,7 @@ import { Ball } from "../../src/model/ball"
 import { Table } from "../../src/model/table"
 import { Cue } from "../../src/view/cue"
 import { Vector3 } from "three"
-import { zero } from "../../src/utils/utils"
+import { zero } from "../../src/utils/three-utils"
 import { R } from "../../src/model/physics/constants"
 
 const t = 0.1

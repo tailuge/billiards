@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { Ball } from "../model/ball"
-import { up, zero } from "../utils/utils"
+import { up, zero } from "../utils/three-utils"
 import { Collision } from "../model/physics/collision"
 
 export class CollisionThrowPlot {

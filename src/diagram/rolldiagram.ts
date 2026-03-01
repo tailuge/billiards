@@ -1,7 +1,7 @@
 import { Vector3 } from "three"
 import { Ball, State } from "../model/ball"
 import { R } from "../model/physics/constants"
-import { zero } from "../utils/utils"
+import { zero } from "../utils/three-utils"
 
 export class RollDiagram {
   ball: Ball

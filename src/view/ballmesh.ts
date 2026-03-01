@@ -12,7 +12,7 @@ import {
   MeshStandardMaterial,
 } from "three"
 import { State } from "../model/ball"
-import { norm, up, zero } from "./../utils/utils"
+import { norm, up, zero } from "./../utils/three-utils"
 import { R } from "../model/physics/constants"
 import { Trace } from "./trace"
 import { BallMaterialFactory } from "./ballmaterialfactory"

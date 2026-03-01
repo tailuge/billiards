@@ -3,7 +3,7 @@ import { SnookerConfig } from "./snookerconfig"
 import { TableGeometry } from "../view/tablegeometry"
 import { PocketGeometry } from "../view/pocketgeometry"
 import { Vector3 } from "three"
-import { roundVec, vec } from "./utils"
+import { roundVec, vec } from "./three-utils"
 import { R } from "../model/physics/constants"
 import { Table } from "../model/table"
 

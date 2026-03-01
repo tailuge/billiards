@@ -2,7 +2,7 @@ import { expect } from "chai"
 import { Ball, State } from "../../src/model/ball"
 import { Collision } from "../../src/model/physics/collision"
 import { Vector3 } from "three"
-import { zero } from "../../src/utils/utils"
+import { zero } from "../../src/utils/three-utils"
 import { R } from "../../src/model/physics/constants"
 
 const epsilon = 0.05

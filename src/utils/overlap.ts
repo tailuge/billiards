@@ -1,5 +1,5 @@
 import { Line3, Vector3 } from "three"
-import { norm } from "./utils"
+import { norm } from "./three-utils"
 import { Ball } from "../model/ball"
 import { R } from "../model/physics/constants"
 import { TableGeometry } from "../view/tablegeometry"

@@ -1,5 +1,6 @@
 import { Vector3 } from "three"
-import { unitAtAngle, round2, roundVec2, pow, exp } from "../../src/utils/utils"
+import { unitAtAngle, round2, roundVec2, pow, exp } from "../../src/utils/three-utils"
+import { round2, pow, exp } from "../../src/utils/utils"
 
 describe("utils", () => {
   describe("unitAtAngle", () => {

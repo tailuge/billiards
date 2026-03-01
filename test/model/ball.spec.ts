@@ -1,7 +1,7 @@
 import { expect } from "chai"
 import { Ball, State } from "../../src/model/ball"
 import { Vector3 } from "three"
-import { zero, passesThroughZero } from "../../src/utils/utils"
+import { zero, passesThroughZero } from "../../src/utils/three-utils"
 import { forceRoll, surfaceVelocity } from "../../src/model/physics/physics"
 import { R } from "../../src/model/physics/constants"
 

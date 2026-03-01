@@ -1,7 +1,7 @@
 import { Ball, State } from "../ball"
 import { Vector3 } from "three"
 import { R, g } from "./constants"
-import { up, upCross, zero } from "../../utils/utils"
+import { up, upCross, zero } from "../../utils/three-utils"
 
 export class Pocket {
   pos: Vector3

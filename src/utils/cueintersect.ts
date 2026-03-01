@@ -1,7 +1,7 @@
 import { Table } from "../model/table"
 import { AimEvent } from "../events/aimevent"
 import { Mesh, Raycaster, Vector3 } from "three"
-import { unitAtAngle, norm } from "./utils"
+import { unitAtAngle, norm } from "./three-utils"
 
 const tempVec = new Vector3()
 const tempVec2 = new Vector3()

@@ -1,5 +1,5 @@
 import { PerspectiveCamera, MathUtils, Vector3 } from "three"
-import { up, zero, unitAtAngle } from "../utils/utils"
+import { up, zero, unitAtAngle } from "../utils/three-utils"
 import { AimEvent } from "../events/aimevent"
 import { CameraTop } from "./cameratop"
 import { R } from "../model/physics/constants"

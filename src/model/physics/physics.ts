@@ -1,5 +1,6 @@
 import { Vector3 } from "three"
-import { norm, upCross, up, sin, cos } from "../../utils/utils"
+import { sin, cos } from "../../utils/utils"
+import { norm, upCross, up } from "../../utils/three-utils"
 import { muS, muC, g, m, Mz, Mxy, R, I, e, ee, μs, μw } from "./constants"
 import { Mathaven } from "./mathaven"
 
