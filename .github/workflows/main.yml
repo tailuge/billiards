@@ -67,7 +67,7 @@ jobs:
         run: |
           echo "Removing node_modules to avoid uploading dependencies"
           du -hs *
-          rm -rf node_modules
+          rm -rf node_modules src test
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
