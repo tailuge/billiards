@@ -8,9 +8,8 @@ import { Session } from "../../src/network/client/session"
 import { Outcome } from "../../src/model/outcome"
 import { End } from "../../src/controller/end"
 import { MatchResult } from "../../src/network/client/matchresult"
-import { State } from "../../src/model/ball"
+import { Ball, State } from "../../src/model/ball"
 import { ScoreReporter } from "../../src/network/client/scorereporter"
-import { Ball } from "../../src/model/ball"
 
 initDom()
 
