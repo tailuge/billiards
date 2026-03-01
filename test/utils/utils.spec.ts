@@ -25,8 +25,9 @@ describe("utils", () => {
   })
 
   describe("round", () => {
-    it("should round a number using Math.fround", () => {
-      expect(round(1.2345678)).toBe(Math.fround(1.2345678))
+    it("should round a number to 4 decimal places", () => {
+      expect(round(1.2345678)).toBe(1.2345)
+      expect(round(-1.2345678)).toBe(-1.2345)
     })
   })
 
