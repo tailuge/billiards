@@ -63,11 +63,11 @@ jobs:
       - name: build
         run: yarn build
 
-       - name: remove node_modules
-         run: |
-           echo "Removing node_modules to avoid uploading dependencies"
-           ls -la
-           rm -rf node_modules
+      - name: remove node_modules
+        run: |
+          echo "Removing node_modules to avoid uploading dependencies"
+          ls -la
+          rm -rf node_modules
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
