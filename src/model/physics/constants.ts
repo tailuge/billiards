@@ -15,7 +15,7 @@ export let ee = 0.98
 export let μs = 0.212
 
 // Coefficient of sliding friction (cushion)
-export let μw = 0.14
+export let μw = 0.165
 
 export let Mz: number
 export let Mxy: number

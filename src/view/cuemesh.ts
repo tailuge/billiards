@@ -109,7 +109,7 @@ export class CueMesh {
     return mesh
   }
 
-  static cueGeometry(tipRadius, buttRadius, length, segments = 8) {
+  static cueGeometry(tipRadius, buttRadius, length, segments = 9) {
     const group = new Group()
 
     // Material Definitions

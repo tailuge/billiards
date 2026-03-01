@@ -17,9 +17,25 @@ export class Collision {
   }
 
   static positionsAtContact(a: Ball, b: Ball) {
-    const sep = a.pos.distanceTo(b.pos)
-    const rv = a.vel.clone().sub(b.vel)
-    const t = (sep - 2 * R) / rv.length() || 0
+    const p = a.pos.clone().sub(b.pos) // Relative position
+    const v = a.vel.clone().sub(b.vel) // Relative velocity
+    const rSum = 2 * R
+
+    const a_coeff = v.lengthSq()
+    if (a_coeff === 0) return { a: a.pos.clone(), b: b.pos.clone() }
+
+    const b_coeff = 2 * p.dot(v)
+    const c_coeff = p.lengthSq() - rSum * rSum
+
+    const discriminant = b_coeff * b_coeff - 4 * a_coeff * c_coeff
+
+    // If discriminant < 0, they never actually touch on these vectors.
+    // Use the negative root to find the *first* point of contact.
+    const t =
+      discriminant < 0
+        ? 0
+        : Math.fround((-b_coeff - Math.sqrt(discriminant)) / (2 * a_coeff))
+
     return {
       a: a.pos.clone().addScaledVector(a.vel, t),
       b: b.pos.clone().addScaledVector(b.vel, t),

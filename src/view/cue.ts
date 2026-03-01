@@ -28,8 +28,8 @@ export class Cue {
 
   constructor() {
     this.mesh = CueMesh.createCue(
-      (R * 0.05) / 0.5,
-      (R * 0.15) / 0.5,
+      (R * 0.07) / 0.5,
+      (R * 0.23) / 0.5,
       this.length
     )
     this.helperMesh = CueMesh.createHelper()
