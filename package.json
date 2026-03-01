@@ -12,9 +12,7 @@
     "physics"
   ],
   "license": "GPL-3.0",
-  "sideEffects": [
-    "**/*.css"
-  ],
+  "sideEffects": false,
   "engines": {
     "yarn": "1.x"
   },
