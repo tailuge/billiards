@@ -49,7 +49,7 @@ jobs:
           files: ./coverage/lcov.info
 
       - name: delete coverage and blend files
-        run: rm -rf coverage dist/models/*.blend
+        run: rm -rf coverage dist/models/*.blend dist/models/d-snooker.gltf  dist/models/p8.gltf  dist/models/snooker.gltf dist/models/d-snooker.bin  dist/models/p8.bin  dist/models/snooker.bin
 
       - name: upload build artifact
         uses: actions/upload-artifact@v4
