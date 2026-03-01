@@ -41,7 +41,10 @@ export class LinkFormatter {
     if (!includeLastShot) {
       currentBreak.shots.pop()
     }
-    if (currentBreak.shots.length === 1) {
+    if (
+      currentBreak.shots.filter((shot) => shot.type === EventType.AIM)
+        .length === 1
+    ) {
       return
     }
 
