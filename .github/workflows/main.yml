@@ -5,9 +5,9 @@ name: Build
 on:
   # Triggers the workflow on push or pull request events but only for the "master" branch
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -15,7 +15,6 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 
 jobs:
   build:
@@ -46,7 +45,9 @@ jobs:
       - name: upload to codecov.io
         uses: codecov/codecov-action@v5
         with:
-          files: ./coverage/lcov.info
+          directory: ./coverage/
+          plugins: noop
+          files: ./coverage/coverage-final.json
 
       - name: delete coverage and blend files
         run: rm -rf coverage dist/models/*.blend dist/models/d-snooker.gltf dist/models/p8.gltf dist/models/snooker.gltf dist/models/d-snooker.bin dist/models/p8.bin dist/models/snooker.bin
@@ -61,16 +62,16 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    
+
     permissions:
       contents: read
       pages: write
       id-token: write
-    
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    
+
     steps:
       - uses: actions/checkout@v4
 
@@ -92,7 +93,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: './'
+          path: "./"
 
       - name: Deploy to GitHub Pages
         id: deployment
