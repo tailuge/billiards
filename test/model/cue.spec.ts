@@ -3,7 +3,7 @@ import { Ball } from "../../src/model/ball"
 import { Table } from "../../src/model/table"
 import { Cue } from "../../src/view/cue"
 import { Vector3 } from "three"
-import { zero } from "../../src/utils/utils"
+import { zero } from "../../src/utils/three-utils"
 import { R } from "../../src/model/physics/constants"
 
 const t = 0.1
@@ -41,5 +41,39 @@ describe("Cue", () => {
     cue.setSpin(new Vector3(0, 0.4), table)
     cue.hit(table.balls[0])
     expect(table.balls[0].rvel.y).to.be.greaterThan(0)
+  })
+
+  test("rotateAim calls showOverlap if aimInputs present", () => {
+    const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
+    let called = false
+    cue.aimInputs = {
+      isDisabled: () => false,
+      showOverlap: () => {
+        called = true
+      },
+      updateVisualState: () => {},
+      updatePowerSlider: () => {},
+    } as any
+    cue.rotateAim(0.1, table)
+    expect(called).to.be.true
+  })
+
+  test("rotateAim returns early if aimInputs isDisabled", () => {
+    const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.aimInputs = {
+      isDisabled: () => true,
+    } as any
+    const angleBefore = cue.aim.angle
+    cue.rotateAim(0.1, table)
+    expect(cue.aim.angle).to.equal(angleBefore)
+  })
+
+  test("avoidCueTouchingOtherBall normalizes offset if too large", () => {
+    const { cue, table } = createCueAndTable(new Vector3(-3 * R, 0, 0))
+    // Trigger the while loop in avoidCueTouchingOtherBall
+    // By setting offset such that it intersects and then grows
+    cue.aim.offset.set(0, cue.offCenterLimit)
+    cue.avoidCueTouchingOtherBall(table)
+    expect(cue.aim.offset.length()).to.be.closeTo(cue.offCenterLimit, 0.001)
   })
 })

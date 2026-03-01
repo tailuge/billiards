@@ -1,5 +1,5 @@
 import { Vector3 } from "three"
-import { zero, vec, passesThroughZero } from "../utils/utils"
+import { zero, vec, passesThroughZero } from "../utils/three-utils"
 import {
   forceRoll,
   rollingFull,

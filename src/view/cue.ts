@@ -1,6 +1,7 @@
 import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
-import { upCross, unitAtAngle, norm, atan2, sin } from "../utils/utils"
+import { upCross, unitAtAngle, norm } from "../utils/three-utils"
+import { atan2, sin } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import { AimInputs } from "./aiminputs"
 import { Ball, State } from "../model/ball"

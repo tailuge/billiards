@@ -2,7 +2,7 @@ import { expect } from "chai"
 import { Ball } from "../../src/model/ball"
 import { Table } from "../../src/model/table"
 import { Vector3 } from "three"
-import { zero } from "../../src/utils/utils"
+import { zero } from "../../src/utils/three-utils"
 import { Overlap } from "../../src/utils/overlap"
 
 describe("Overlap", () => {

@@ -4,6 +4,14 @@ import {
   isGripCushion,
   bounceHan,
   cueToSpin,
+  bounceHanBlend,
+  mathavenAdapter,
+  s0,
+  c0,
+  Pzs,
+  Pze,
+  muCushion,
+  restitutionCushion,
 } from "../../src/model/physics/physics"
 import {
   I,
@@ -100,6 +108,34 @@ describe("Physics", () => {
     expect(e).to.be.equal(k)
     expect(muC).to.be.equal(k)
     expect(muS).to.be.equal(k)
+    done()
+  })
+
+  it("bounceHanBlend covers check side blending logic", (done) => {
+    const v = new Vector3(1, 1, 0)
+    const w = new Vector3(0, 0, 5)
+    const delta = bounceHanBlend(v, w)
+    expect(delta.v.length()).to.be.greaterThan(0)
+    done()
+  })
+
+  it("mathavenAdapter provides delta using mathaven model", (done) => {
+    const v = new Vector3(1, 0, 0)
+    const w = new Vector3(0, 0, 0)
+    const delta = mathavenAdapter(v, w)
+    expect(delta.v.length()).to.be.greaterThan(0)
+    done()
+  })
+
+  it("covers helper functions for cushion physics", (done) => {
+    const v = new Vector3(1, 0, 0)
+    const w = new Vector3(0, 0, 0)
+    expect(s0(v, w)).to.be.instanceOf(Vector3)
+    expect(c0(v)).to.be.a("number")
+    expect(Pzs(new Vector3(1, 0, 0))).to.be.a("number")
+    expect(Pze(1)).to.be.a("number")
+    expect(muCushion(v)).to.be.a("number")
+    expect(restitutionCushion(v)).to.be.a("number")
     done()
   })
 })

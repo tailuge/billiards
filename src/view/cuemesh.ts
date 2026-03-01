@@ -1,5 +1,5 @@
 import { R } from "../model/physics/constants"
-import { up } from "../utils/utils"
+import { up } from "../utils/three-utils"
 import {
   Matrix4,
   Mesh,
