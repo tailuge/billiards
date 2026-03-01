@@ -10,8 +10,35 @@ import { End } from "../../src/controller/end"
 import { MatchResult } from "../../src/network/client/matchresult"
 import { State } from "../../src/model/ball"
 import { ScoreReporter } from "../../src/network/client/scorereporter"
+import { Ball } from "../../src/model/ball"
 
 initDom()
+
+function createNineBallContainer(ruletype: string = "nineball"): Container {
+  return new Container({
+    element: undefined,
+    log: (_) => {},
+    assets: Assets.localAssets(ruletype),
+    ruletype,
+  })
+}
+
+function setupNineBallTable(container: Container): void {
+  Ball.id = 0
+  container.table.balls.forEach((b) => {
+    if (b !== container.table.cueball && b.label !== 9) {
+      b.state = State.InPocket
+    }
+  })
+}
+
+function getNineBallOutcome(container: Container): Outcome[] {
+  const nineBall = container.table.balls.find((b) => b.label === 9)!
+  return [
+    Outcome.collision(container.table.cueball, nineBall, 1),
+    Outcome.pot(nineBall, 1),
+  ]
+}
 
 describe("MatchResult Construction", () => {
   let container: Container
@@ -26,25 +53,11 @@ describe("MatchResult Construction", () => {
 
   it("NineBall should include Anon as winner if playername is empty", () => {
     Session.init("test-client", "", "test-table", false)
-    container = new Container({
-      element: undefined,
-      log: (_) => {},
-      assets: Assets.localAssets("nineball"),
-      ruletype: "nineball",
-    })
-    const nineball = container.rules as NineBall
-    container.table.balls.forEach((b) => {
-      if (b !== container.table.cueball && b.label !== 9) {
-        b.state = State.InPocket
-      }
-    })
+    container = createNineBallContainer()
+    setupNineBallTable(container)
 
-    const nineBall = container.table.balls.find((b) => b.label === 9)!
-    const outcome: Outcome[] = [
-      Outcome.collision(container.table.cueball, nineBall, 1),
-      Outcome.pot(nineBall, 1),
-    ]
-    // Simulate potting the last ball (which in NineBall logic leads to end of game if only cueball remains)
+    const nineball = container.rules as NineBall
+    const outcome = getNineBallOutcome(container)
     const endController = nineball.update(outcome) as End
     const result = (endController as any).result as MatchResult
 
@@ -54,26 +67,13 @@ describe("MatchResult Construction", () => {
   })
 
   it("NineBall should include opponent if session.opponentName is present", () => {
-    container = new Container({
-      element: undefined,
-      log: (_) => {},
-      assets: Assets.localAssets("nineball"),
-      ruletype: "nineball",
-    })
+    container = createNineBallContainer()
     const session = Session.getInstance()
     session.opponentName = "TestOpponent"
-    const nineball = container.rules as NineBall
-    container.table.balls.forEach((b) => {
-      if (b !== container.table.cueball && b.label !== 9) {
-        b.state = State.InPocket
-      }
-    })
+    setupNineBallTable(container)
 
-    const nineBall = container.table.balls.find((b) => b.label === 9)!
-    const outcome: Outcome[] = [
-      Outcome.collision(container.table.cueball, nineBall, 1),
-      Outcome.pot(nineBall, 1),
-    ]
+    const nineball = container.rules as NineBall
+    const outcome = getNineBallOutcome(container)
     const endController = nineball.update(outcome) as End
     const result = (endController as any).result as MatchResult
 
@@ -83,25 +83,12 @@ describe("MatchResult Construction", () => {
   })
 
   it("NineBall should include replayData in MatchResult", () => {
-    container = new Container({
-      element: undefined,
-      log: (_) => {},
-      assets: Assets.localAssets("nineball"),
-      ruletype: "nineball",
-    })
+    container = createNineBallContainer()
     container.scoreReporter = new ScoreReporter()
-    const nineball = container.rules as NineBall
-    container.table.balls.forEach((b) => {
-      if (b !== container.table.cueball && b.label !== 9) {
-        b.state = State.InPocket
-      }
-    })
+    setupNineBallTable(container)
 
-    const nineBall = container.table.balls.find((b) => b.label === 9)!
-    const outcome: Outcome[] = [
-      Outcome.collision(container.table.cueball, nineBall, 1),
-      Outcome.pot(nineBall, 1),
-    ]
+    const nineball = container.rules as NineBall
+    const outcome = getNineBallOutcome(container)
     const endController = nineball.update(outcome) as End
     endController.onFirst()
     const result = (endController as any).result as MatchResult
@@ -111,29 +98,15 @@ describe("MatchResult Construction", () => {
   })
 
   it("NineBall should declare potter winner even if behind on points", () => {
-    container = new Container({
-      element: undefined,
-      log: (_) => {},
-      assets: Assets.localAssets("nineball"),
-      ruletype: "nineball",
-    })
+    container = createNineBallContainer()
     const session = Session.getInstance()
     session.opponentName = "TestOpponent"
     container.setMyScore(2)
     container.setOpponentScore(8)
+    setupNineBallTable(container)
 
     const nineball = container.rules as NineBall
-    container.table.balls.forEach((b) => {
-      if (b !== container.table.cueball && b.label !== 9) {
-        b.state = State.InPocket
-      }
-    })
-
-    const nineBall = container.table.balls.find((b) => b.label === 9)!
-    const outcome: Outcome[] = [
-      Outcome.collision(container.table.cueball, nineBall, 1),
-      Outcome.pot(nineBall, 1),
-    ]
+    const outcome = getNineBallOutcome(container)
     const endController = nineball.update(outcome) as End
     const result = (endController as any).result as MatchResult
 

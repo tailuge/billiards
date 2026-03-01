@@ -20,6 +20,37 @@ import { Vector3 } from "three"
 
 initDom()
 
+function setupCueballAndNineball(container: Container): {
+  cueball: Ball
+  nineBall: Ball
+} {
+  container.table.balls.forEach((ball) => {
+    if (ball.id !== 0 && ball.id !== 9) {
+      ball.state = State.InPocket
+    }
+  })
+
+  const cueball = container.table.cueball
+  const nineBall = container.table.balls[9]
+  return { cueball, nineBall }
+}
+
+function createOutcomeWithPots(cueball: Ball, nineBall: Ball): Outcome[] {
+  return [Outcome.pot(cueball, 1), Outcome.pot(nineBall, 1)]
+}
+
+function createBotEventHandler(
+  container: Container,
+  publishedEvents: GameEvent[]
+): BotEventHandler {
+  const logs = new Logger()
+  const publishFn = (events: GameEvent[], _delay?: number) => {
+    publishedEvents.push(...events)
+  }
+  const enqueueFn = (_message: string) => {}
+  return new BotEventHandler(logs, container, publishFn, enqueueFn)
+}
+
 describe("BotEventHandler Respot Logic", () => {
   let container: Container
   let publishedEvents: GameEvent[]
@@ -39,35 +70,15 @@ describe("BotEventHandler Respot Logic", () => {
   })
 
   it("should respot nine ball and cue ball to different positions when both are potted", () => {
-    container.table.balls.forEach((ball) => {
-      if (ball.id !== 0 && ball.id !== 9) {
-        ball.state = State.InPocket
-      }
-    })
-
-    const cueball = container.table.cueball
-    const nineBall = container.table.balls[9]
+    const { cueball, nineBall } = setupCueballAndNineball(container)
 
     expect(cueball.onTable()).to.be.true
     expect(nineBall.onTable()).to.be.true
 
-    const outcome = [Outcome.pot(cueball, 1), Outcome.pot(nineBall, 1)]
-
+    const outcome = createOutcomeWithPots(cueball, nineBall)
     container.table.outcome = outcome
 
-    const logs = new Logger()
-    const publishFn = (events: GameEvent[], _delay?: number) => {
-      publishedEvents.push(...events)
-    }
-    const enqueueFn = (_message: string) => {}
-
-    const eventHandler = new BotEventHandler(
-      logs,
-      container,
-      publishFn,
-      enqueueFn
-    )
-
+    const eventHandler = createBotEventHandler(container, publishedEvents)
     eventHandler.handle({ type: EventType.BEGIN })
 
     const placeBallEvents = publishedEvents.filter(
@@ -83,10 +94,7 @@ describe("BotEventHandler Respot Logic", () => {
     expect(placeBallEvent.respot).to.not.be.undefined
     const nineBallPos = placeBallEvent.respot!.pos
 
-    // Nine ball should be respotted behind the foot spot
-    // The foot spot is at tableX / 2
     const footSpotX = TableGeometry.tableX / 2
-    // Allow a wider range since the ball may be moved back if there's overlap
     expect(nineBallPos.x).to.be.greaterThan(footSpotX - R * 10)
 
     const distance = cueBallPos.distanceTo(nineBallPos)
@@ -94,32 +102,12 @@ describe("BotEventHandler Respot Logic", () => {
   })
 
   it("should correctly serialize and deserialize respot data", () => {
-    // Set up table with only cue ball and nine ball
-    container.table.balls.forEach((ball) => {
-      if (ball.id !== 0 && ball.id !== 9) {
-        ball.state = State.InPocket
-      }
-    })
+    const { cueball, nineBall } = setupCueballAndNineball(container)
 
-    const cueball = container.table.cueball
-    const nineBall = container.table.balls[9]
-
-    const outcome = [Outcome.pot(cueball, 1), Outcome.pot(nineBall, 1)]
+    const outcome = createOutcomeWithPots(cueball, nineBall)
     container.table.outcome = outcome
 
-    const logs = new Logger()
-    const publishFn = (events: GameEvent[], _delay?: number) => {
-      publishedEvents.push(...events)
-    }
-    const enqueueFn = (_message: string) => {}
-
-    const eventHandler = new BotEventHandler(
-      logs,
-      container,
-      publishFn,
-      enqueueFn
-    )
-
+    const eventHandler = createBotEventHandler(container, publishedEvents)
     eventHandler.handle({ type: EventType.BEGIN })
 
     const placeBallEvent = publishedEvents.find(
@@ -141,32 +129,12 @@ describe("BotEventHandler Respot Logic", () => {
   })
 
   it("should correctly respot nine ball when WatchShot processes PlaceBallEvent", () => {
-    // Set up sender (bot) container
-    container.table.balls.forEach((ball) => {
-      if (ball.id !== 0 && ball.id !== 9) {
-        ball.state = State.InPocket
-      }
-    })
+    const { cueball, nineBall } = setupCueballAndNineball(container)
 
-    const cueball = container.table.cueball
-    const nineBall = container.table.balls[9]
-
-    const outcome = [Outcome.pot(cueball, 1), Outcome.pot(nineBall, 1)]
+    const outcome = createOutcomeWithPots(cueball, nineBall)
     container.table.outcome = outcome
 
-    const logs = new Logger()
-    const publishFn = (events: GameEvent[], _delay?: number) => {
-      publishedEvents.push(...events)
-    }
-    const enqueueFn = (_message: string) => {}
-
-    const eventHandler = new BotEventHandler(
-      logs,
-      container,
-      publishFn,
-      enqueueFn
-    )
-
+    const eventHandler = createBotEventHandler(container, publishedEvents)
     eventHandler.handle({ type: EventType.BEGIN })
 
     const placeBallEvent = publishedEvents.find(
@@ -238,18 +206,7 @@ describe("BotEventHandler Respot Logic", () => {
   })
 
   it("should set bot aim.pos from placed cue ball after PLACEBALL", () => {
-    const logs = new Logger()
-    const publishFn = (events: GameEvent[], _delay?: number) => {
-      publishedEvents.push(...events)
-    }
-    const enqueueFn = (_message: string) => {}
-
-    const eventHandler = new BotEventHandler(
-      logs,
-      container,
-      publishFn,
-      enqueueFn
-    )
+    const eventHandler = createBotEventHandler(container, publishedEvents)
 
     container.table.cueball.state = State.InPocket
     const placedPos = new Vector3(-0.7205, 0, 0)

@@ -15,6 +15,22 @@ import { RerackEvent } from "../../src/events/rerackevent"
 
 initDom()
 
+function setupEndGameTable(container: Container): void {
+  container.table.balls.forEach((b) => {
+    if (b !== container.table.cueball && b.label !== 9) {
+      b.state = State.InPocket
+    }
+  })
+}
+
+function getEndGameOutcome(container: Container): Outcome[] {
+  const nineBall = container.table.balls.find((b) => b.label === 9)!
+  return [
+    Outcome.collision(container.table.cueball, nineBall, 1),
+    Outcome.pot(nineBall, 1),
+  ]
+}
+
 describe("NineBall Rules", () => {
   let container: Container
   let nineball: NineBall
@@ -58,16 +74,8 @@ describe("NineBall Rules", () => {
   })
 
   it("should end game if 9-ball is potted legally", () => {
-    container.table.balls.forEach((b) => {
-      if (b !== container.table.cueball && b.label !== 9) {
-        b.state = State.InPocket
-      }
-    })
-    const nineBall = container.table.balls.find((b) => b.label === 9)!
-    const outcome = [
-      Outcome.collision(container.table.cueball, nineBall, 1),
-      Outcome.pot(nineBall, 1),
-    ]
+    setupEndGameTable(container)
+    const outcome = getEndGameOutcome(container)
     const nextController = nineball.update(outcome)
     expect(nextController).to.be.an.instanceof(End)
   })
@@ -224,16 +232,8 @@ describe("NineBall Rules", () => {
   it("should trigger game over notification", () => {
     container.isSinglePlayer = true
     const notifySpy = jest.spyOn(container, "notifyLocal")
-    container.table.balls.forEach((b) => {
-      if (b !== container.table.cueball && b.label !== 9) {
-        b.state = State.InPocket
-      }
-    })
-    const nineBall = container.table.balls.find((b) => b.label === 9)!
-    const outcome = [
-      Outcome.collision(container.table.cueball, nineBall, 1),
-      Outcome.pot(nineBall, 1),
-    ]
+    setupEndGameTable(container)
+    const outcome = getEndGameOutcome(container)
     nineball.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "GameOver",
@@ -249,16 +249,8 @@ describe("NineBall Rules", () => {
   it("should trigger game over notification with only lobby button in 2-player mode", () => {
     container.isSinglePlayer = false
     const notifySpy = jest.spyOn(container, "notifyLocal")
-    container.table.balls.forEach((b) => {
-      if (b !== container.table.cueball && b.label !== 9) {
-        b.state = State.InPocket
-      }
-    })
-    const nineBall = container.table.balls.find((b) => b.label === 9)!
-    const outcome = [
-      Outcome.collision(container.table.cueball, nineBall, 1),
-      Outcome.pot(nineBall, 1),
-    ]
+    setupEndGameTable(container)
+    const outcome = getEndGameOutcome(container)
     nineball.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "GameOver",
@@ -274,16 +266,8 @@ describe("NineBall Rules", () => {
   it("should trigger game over notification (duplicate check)", () => {
     container.isSinglePlayer = true
     const notifySpy = jest.spyOn(container, "notifyLocal")
-    container.table.balls.forEach((b) => {
-      if (b !== container.table.cueball && b.label !== 9) {
-        b.state = State.InPocket
-      }
-    })
-    const nineBall = container.table.balls.find((b) => b.label === 9)!
-    const outcome = [
-      Outcome.collision(container.table.cueball, nineBall, 1),
-      Outcome.pot(nineBall, 1),
-    ]
+    setupEndGameTable(container)
+    const outcome = getEndGameOutcome(container)
     nineball.update(outcome)
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "GameOver",
