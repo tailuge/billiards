@@ -19,7 +19,7 @@ jobs:
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: install dependencies
         run: yarn install
@@ -40,6 +40,15 @@ jobs:
           ./codecov
           echo done
 
+      - name: delete coverage
+        run: rm -rf coverage
+
+      - name: upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-artifact
+          path: dist/
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -55,19 +64,18 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: install dependencies
-        run: yarn install
+      - name: download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-artifact
+          path: dist/
 
-      - name: build
-        run: yarn build
-
-      - name: remove node_modules
+      - name: cleanup for deployment
         run: |
-          echo "Removing node_modules to avoid uploading dependencies"
-          du -hs *
-          rm -rf node_modules src test
+          echo "Removing unnecessary files for deployment"
+          rm -rf node_modules src test .github
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
