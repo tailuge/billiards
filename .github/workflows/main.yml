@@ -83,9 +83,10 @@ jobs:
       - name: cleanup for deployment
         run: |
           cp dist/redirect.html index.html
+          cp dist/robots.txt robots.txt
           echo "Removing unnecessary files for deployment"
           rm -rf node_modules src test .github LICENSE yarn.lock
-          du -h * 
+          du -a * | sort -n
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
