@@ -1,4 +1,5 @@
 import { Vector3 } from "three"
+import { round, round2 } from "./utils"
 
 export const zero = new Vector3(0, 0, 0)
 export const up = new Vector3(0, 0, 1)
@@ -26,15 +27,15 @@ export function unitAtAngle(theta, target = new Vector3()) {
 }
 
 export function roundVec(v) {
-  v.x = Math.fround(v.x)
-  v.y = Math.fround(v.y)
-  v.z = Math.fround(v.z)
+  v.x = round(v.x)
+  v.y = round(v.y)
+  v.z = round(v.z)
   return v
 }
 
 export function roundVec2(v) {
-  v.x = Math.round((v.x + Number.EPSILON) * 100) / 100
-  v.y = Math.round((v.y + Number.EPSILON) * 100) / 100
-  v.z = Math.round((v.z + Number.EPSILON) * 100) / 100
+  v.x = round2(v.x)
+  v.y = round2(v.y)
+  v.z = round2(v.z)
   return v
 }

@@ -1,6 +1,9 @@
 import { Vector3 } from "three"
-import { unitAtAngle, round2, roundVec2, pow, exp } from "../../src/utils/three-utils"
-import { round2, pow, exp } from "../../src/utils/utils"
+import { unitAtAngle, roundVec2 } from "../../src/utils/three-utils"
+import { round, round2, pow, exp, isFirstShot } from "../../src/utils/utils"
+import { Recorder } from "../../src/events/recorder"
+import { EventType } from "../../src/events/eventtype"
+import { AimEvent } from "../../src/events/aimevent"
 
 describe("utils", () => {
   describe("unitAtAngle", () => {
@@ -18,6 +21,12 @@ describe("utils", () => {
       expect(v.x).toBeCloseTo(0)
       expect(v.y).toBeCloseTo(1)
       expect(v.z).toBeCloseTo(0)
+    })
+  })
+
+  describe("round", () => {
+    it("should round a number using Math.fround", () => {
+      expect(round(1.2345678)).toBe(Math.fround(1.2345678))
     })
   })
 
@@ -49,6 +58,20 @@ describe("utils", () => {
     it("should return e raised to the power of x", () => {
       expect(exp(0)).toBe(1)
       expect(exp(1)).toBeCloseTo(Math.E)
+    })
+  })
+
+  describe("isFirstShot", () => {
+    it("should return true if no AIM event is in recorder", () => {
+      const recorder = { entries: [] } as any
+      expect(isFirstShot(recorder)).toBe(true)
+    })
+
+    it("should return false if an AIM event is in recorder", () => {
+      const recorder = {
+        entries: [{ event: { type: EventType.AIM } }],
+      } as any
+      expect(isFirstShot(recorder)).toBe(false)
     })
   })
 })
