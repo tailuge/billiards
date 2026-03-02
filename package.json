@@ -19,13 +19,13 @@
   "scripts": {
     "test": "jest --config ./test/jest.config.js --verbose --silent",
     "coverage": "jest --config ./test/jest.config.js --coverage --silent",
-    "dev": "webpack",
-    "build": "webpack",
+    "dev": "vite",
+    "build": "vite build",
     "lint": "tsc --noEmit && eslint .",
     "prettify": "prettier --cache true --write --trailing-comma es5 --no-semi {src,test}/**/*.[jt]s dist/**/*.{css,html} *.[jt]s *.json",
     "markdownlint": "npx markdownlint-cli2 README.md --fix",
-    "serve": "python3 -m http.server 8080 --directory dist/",
-    "livereload": "webpack serve",
+    "serve": "vite preview",
+    "livereload": "vite",
     "deps": "npx yarn-check --skip-unused",
     "gltfpack": "npx gltfpack -i dist/models/p8.gltf -o dist/models/p8.min.gltf && npx gltfpack -i dist/models/threecushion.gltf -o dist/models/threecushion.min.gltf && npx gltfpack -i dist/models/snooker.gltf -o dist/models/snooker.min.gltf && npx gltfpack -i dist/models/d-snooker.gltf -o dist/models/d-snooker.min.gltf"
   },
@@ -55,15 +55,10 @@
     "jest-environment-jsdom": "30.2.0",
     "node-notifier": "^10.0.1",
     "prettier": "3.8.1",
-    "swc-loader": "0.2.7",
     "ts-jest": "29.4.6",
-    "ts-loader": "9.5.4",
     "ts-node": "^10.9.2",
     "typescript": "5.9.3",
     "typescript-eslint": "8.56.1",
-    "webpack": "5.105.3",
-    "webpack-cli": "6.0.1",
-    "webpack-dev-server": "5.2.3",
-    "webpack-node-externals": "^3.0.0"
+    "vite": "^7.3.1"
   }
 }
