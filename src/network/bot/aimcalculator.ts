@@ -43,7 +43,7 @@ export class AimCalculator {
 
     const lineTo = targetPos.clone().sub(cueball.pos)
     aim.angle = atan2(lineTo.y, lineTo.x) + (Math.random() - 0.5) * noise
-    aim.power = 80 * R
+    aim.power = 90 * R
     aim.offset = new Vector3(0, (Math.random() - 0.5) * 0.6)
 
     if (table.cue.intersectsAnything(table, aim)) {

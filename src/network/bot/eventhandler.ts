@@ -155,7 +155,7 @@ export class BotEventHandler {
     const aimPoint = this.calculator.getAimPoint(cueball.pos, targetPoint)
     return this.calculator.generateRandomShot(
       table,
-      0.005,
+      0,
       aimPoint ?? undefined
     )
   }
