@@ -7,6 +7,7 @@ export interface PresenceMessage {
   userName: string
   locale?: string
   originUrl?: string
+  ua?: string
   timestamp?: number
   ruletype?: string
   isBot?: boolean
@@ -39,7 +40,8 @@ export class PresenceClient {
     private readonly locale?: string,
     private readonly originUrl?: string,
     private readonly ruletype?: string,
-    private readonly isBot?: boolean
+    private readonly isBot?: boolean,
+    private readonly ua?: string
   ) {}
 
   onCountChange(callback: (count: number) => void): void {
@@ -199,6 +201,9 @@ export class PresenceClient {
     }
     if (this.isBot !== undefined) {
       payload.isBot = this.isBot
+    }
+    if (this.ua !== undefined) {
+      payload.ua = this.ua
     }
 
     fetch(PresenceClient.publishURL, {

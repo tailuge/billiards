@@ -17,13 +17,15 @@ export class LobbyIndicator {
     const session = Session.hasInstance() ? Session.getInstance() : undefined
     const locale = globalThis.navigator?.language
     const originUrl = globalThis.location?.host
+    const ua = globalThis.navigator?.userAgent
     this.presenceClient = new PresenceClient(
       session?.clientId ?? "default",
       session?.playername ?? "Anon",
       locale,
       originUrl,
       rules.rulename,
-      session?.botMode
+      session?.botMode,
+      ua
     )
   }
 
