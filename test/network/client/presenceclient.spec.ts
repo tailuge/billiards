@@ -98,4 +98,21 @@ describe("PresenceClient", () => {
     expect(leaveCall).toBeDefined()
     expect(leaveCall[1].keepalive).toBe(true)
   })
+
+  it("includes ua field in payload if provided", () => {
+    const client = new PresenceClient(
+      "u1",
+      "Alice",
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      "Mozilla/5.0"
+    )
+    client.start()
+    jest.advanceTimersByTime(100)
+
+    const joinBody = JSON.parse(mockFetch.mock.calls[0][1].body)
+    expect(joinBody.ua).toBe("Mozilla/5.0")
+  })
 })
