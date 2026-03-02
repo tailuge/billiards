@@ -53,12 +53,23 @@ module.exports = {
     innerGraph: true,
     splitChunks: {
       cacheGroups: {
-        three: {
-          test: /[\\/]node_modules[\\/]three[\\/]/,
-          name: "three",
+        three_core: {
+          test: /[\\/]node_modules[\\/]three[\\/]build[\\/]three\.core\.js/,
+          name: "three_core",
           chunks: "all",
-          priority: 20,
-          maxSize: 350000,
+          priority: 30,
+        },
+        three_module: {
+          test: /[\\/]node_modules[\\/]three[\\/]build[\\/]three\.module\.js/,
+          name: "three_module",
+          chunks: "all",
+          priority: 30,
+        },
+        three_examples: {
+          test: /[\\/]node_modules[\\/]three[\\/]examples[\\/]jsm[\\/]/,
+          name: "three_examples",
+          chunks: "all",
+          priority: 30,
         },
         interact: {
           test: /[\\/]node_modules[\\/]interactjs[\\/]/,
