@@ -1,5 +1,5 @@
 # generated js files
-dist/*.js
+dist/**/*.js
 dist/assets
 dist/chunks
 
