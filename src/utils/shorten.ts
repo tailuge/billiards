@@ -9,7 +9,7 @@ export function shorten(url, action) {
       .replaceAll("!", "%21")
       .replaceAll("*", "%2A")
   ).search
-
+  console.log("Shortening url")
   fetch("https://scoreboard-tailuge.vercel.app/api/shorten", {
     method: "POST",
     mode: "cors",
@@ -25,6 +25,11 @@ export function shorten(url, action) {
         console.log(data)
         action(url)
       }
+    })
+    .catch((e) => {
+      console.log("Error shortening url:")
+      console.log(e)
+      action(url)
     })
 }
 
