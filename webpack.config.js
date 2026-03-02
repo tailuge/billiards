@@ -58,6 +58,7 @@ module.exports = {
           name: "three",
           chunks: "all",
           priority: 20,
+          maxSize: 350000,
         },
         interact: {
           test: /[\\/]node_modules[\\/]interactjs[\\/]/,
