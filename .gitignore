@@ -1,5 +1,7 @@
 # generated js files
 dist/*.js
+dist/assets
+dist/chunks
 
 # Logs
 logs
