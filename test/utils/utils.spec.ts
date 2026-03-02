@@ -1,9 +1,7 @@
 import { Vector3 } from "three"
 import { unitAtAngle, roundVec2 } from "../../src/utils/three-utils"
 import { round, round2, pow, exp, isFirstShot } from "../../src/utils/utils"
-import { Recorder } from "../../src/events/recorder"
 import { EventType } from "../../src/events/eventtype"
-import { AimEvent } from "../../src/events/aimevent"
 
 describe("utils", () => {
   describe("unitAtAngle", () => {
