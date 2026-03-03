@@ -4,6 +4,7 @@ import { MessageRelay } from "../network/client/messagerelay"
 import { EventUtil } from "../events/eventutil"
 import { GameEvent } from "../events/gameevent"
 import { ScoreEvent } from "../events/scoreevent"
+import { PlaceBallEvent } from "../events/placeballevent"
 
 export class Spectate extends ControllerBase {
   override get name() {
@@ -23,7 +24,8 @@ export class Spectate extends ControllerBase {
       if (
         event instanceof HitEvent ||
         event instanceof AimEvent ||
-        event instanceof ScoreEvent
+        event instanceof ScoreEvent ||
+        event instanceof PlaceBallEvent
       ) {
         this.container.eventQueue.push(event)
       }
@@ -42,6 +44,18 @@ export class Spectate extends ControllerBase {
     this.container.table.updateFromSerialised(event.tablejson)
     this.container.table.outcome = []
     this.container.table.hit()
+    return this
+  }
+
+  override handlePlaceBall(event: PlaceBallEvent) {
+    const respot = event.respot
+    if (respot) {
+      const ball = this.container.table.balls.find((b) => b.id === respot.id)
+      if (ball) {
+        ball.pos.copy(respot.pos)
+        ball.setStationary()
+      }
+    }
     return this
   }
 
