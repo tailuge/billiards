@@ -50,7 +50,7 @@ export class AimCalculator {
       aim.offset.set(0, table.cue.offCenterLimit, 0)
     }
 
-    return new HitEvent(table.serialise())
+    return new HitEvent(table.serialiseHit())
   }
 
   private findBestPocket(

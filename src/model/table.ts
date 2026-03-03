@@ -153,6 +153,13 @@ export class Table {
     }
   }
 
+  serialiseHit() {
+    return {
+      balls: [this.balls[0].serialise()],
+      aim: this.cue.aim.copy(),
+    }
+  }
+
   static fromSerialised(data) {
     const table = new Table(data.balls.map((b) => Ball.fromSerialised(b)))
     table.updateFromSerialised(data)
