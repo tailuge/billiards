@@ -5,6 +5,7 @@ import { EventUtil } from "../events/eventutil"
 import { GameEvent } from "../events/gameevent"
 import { ScoreEvent } from "../events/scoreevent"
 import { PlaceBallEvent } from "../events/placeballevent"
+import { RerackEvent } from "../events/rerackevent"
 
 export class Spectate extends ControllerBase {
   override get name() {
@@ -25,7 +26,8 @@ export class Spectate extends ControllerBase {
         event instanceof HitEvent ||
         event instanceof AimEvent ||
         event instanceof ScoreEvent ||
-        event instanceof PlaceBallEvent
+        event instanceof PlaceBallEvent ||
+        event instanceof RerackEvent
       ) {
         this.container.eventQueue.push(event)
       }
@@ -57,6 +59,11 @@ export class Spectate extends ControllerBase {
         ball.setStationary()
       }
     }
+    return this
+  }
+
+  override handleRerack(event: RerackEvent) {
+    RerackEvent.applyBallinfoToTable(this.container.table, event.ballinfo)
     return this
   }
 
