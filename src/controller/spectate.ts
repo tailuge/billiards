@@ -52,6 +52,7 @@ export class Spectate extends ControllerBase {
     if (respot) {
       const ball = this.container.table.balls.find((b) => b.id === respot.id)
       if (ball) {
+        console.log("Respotting ball", ball.id, "to", respot.pos)
         ball.pos.copy(respot.pos)
         ball.setStationary()
       }
