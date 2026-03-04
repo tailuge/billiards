@@ -60,6 +60,7 @@ describe("LobbyIndicator", () => {
     new LobbyIndicator(relay, mockRules)
 
     let openedUrl = ""
+    const originalOpen = globalThis.open
     globalThis.open = ((url: string) => {
       openedUrl = url
       return null
@@ -70,5 +71,6 @@ describe("LobbyIndicator", () => {
 
     document.body.removeChild(div)
     document.getElementById = originalGetElementById
+    globalThis.open = originalOpen
   })
 })

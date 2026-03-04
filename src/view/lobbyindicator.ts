@@ -19,12 +19,17 @@ export class LobbyIndicator {
   ) {
     this.element = id("lobby")
     if (this.element) {
-      if (this.element.tagName === "A") {
+      if (this.element.tagName.toUpperCase() === "A") {
         this.element.setAttribute("href", LobbyIndicator.GAME_URL)
         this.element.setAttribute("target", "_blank")
+        this.element.setAttribute("rel", "noopener noreferrer")
       } else {
         this.element.addEventListener("click", () => {
-          globalThis.open(LobbyIndicator.GAME_URL, "_blank")
+          globalThis.open(
+            LobbyIndicator.GAME_URL,
+            "_blank",
+            "noopener,noreferrer"
+          )
         })
         this.element.style.cursor = "pointer"
       }

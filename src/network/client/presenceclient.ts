@@ -172,13 +172,15 @@ export class PresenceClient {
 
   private pruneAndNotify(now: number): void {
     let challenged = false
+    const staleIds: string[] = []
     this.users.forEach((entry, id) => {
       if (now - entry.lastSeen > PresenceClient.ttlMs) {
-        this.users.delete(id)
+        staleIds.push(id)
       } else if (entry.opponentId === this.userId) {
         challenged = true
       }
     })
+    staleIds.forEach((id) => this.users.delete(id))
     this.notify(this.users.size, challenged)
   }
 
