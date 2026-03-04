@@ -14,6 +14,11 @@ export interface PresenceMessage {
   opponentId?: string
 }
 
+export interface ChallengerInfo {
+  userId: string
+  userName: string
+}
+
 type PresenceEntry = {
   userName: string
   locale?: string
@@ -28,9 +33,11 @@ export class PresenceClient {
   private pruneTimer: ReturnType<typeof setInterval> | null = null
   private joinTimer: ReturnType<typeof setTimeout> | null = null
   private started = false
-  private isChallenged = false
+  private challenger: ChallengerInfo | null = null
   private readonly callbacks: Array<(count: number) => void> = []
-  private readonly challengeCallbacks: Array<(challenged: boolean) => void> = []
+  private readonly challengeCallbacks: Array<
+    (challenger: ChallengerInfo | null) => void
+  > = []
 
   static readonly subscribeURL =
     "wss://billiards-network.onrender.com/subscribe/presence/lobby"
@@ -53,7 +60,9 @@ export class PresenceClient {
     this.callbacks.push(callback)
   }
 
-  onChallengeChange(callback: (challenged: boolean) => void): void {
+  onChallengeChange(
+    callback: (challenger: ChallengerInfo | null) => void
+  ): void {
     this.challengeCallbacks.push(callback)
   }
 
@@ -204,20 +213,20 @@ export class PresenceClient {
   }
 
   private pruneAndNotify(now: number): void {
-    let challenged = false
+    let challenger: ChallengerInfo | null = null
     const staleIds: string[] = []
     this.users.forEach((entry, id) => {
       if (now - entry.lastSeen > PresenceClient.ttlMs) {
         staleIds.push(id)
       } else if (entry.opponentId === this.userId) {
-        challenged = true
+        challenger = { userId: id, userName: entry.userName }
       }
     })
     staleIds.forEach((id) => this.users.delete(id))
-    this.notify(this.users.size, challenged)
+    this.notify(this.users.size, challenger)
   }
 
-  private notify(count: number, challenged: boolean): void {
+  private notify(count: number, challenger: ChallengerInfo | null): void {
     // Create copies of the callback arrays to prevent modification during iteration.
     const currentCallbacks = [...this.callbacks]
     const currentChallengeCallbacks = [...this.challengeCallbacks]
@@ -230,11 +239,18 @@ export class PresenceClient {
       }
     })
 
-    if (challenged !== this.isChallenged) {
-      this.isChallenged = challenged
+    const challengerChanged =
+      (challenger === null) !== (this.challenger === null) ||
+      (challenger !== null &&
+        this.challenger !== null &&
+        (challenger.userId !== this.challenger.userId ||
+          challenger.userName !== this.challenger.userName))
+
+    if (challengerChanged) {
+      this.challenger = challenger
       currentChallengeCallbacks.forEach((callback) => {
         try {
-          callback(challenged)
+          callback(challenger)
         } catch {
           // Ignore UI callback failures.
         }

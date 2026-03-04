@@ -36,13 +36,24 @@ describe("LobbyIndicator", () => {
     // Trigger challenge (this is a bit tricky as presenceClient is private)
     // We can reach it via (indicator as any).presenceClient
     const presenceClient = (indicator as any).presenceClient
-    presenceClient.challengeCallbacks.forEach((cb: any) => cb(true))
+    presenceClient.challengeCallbacks.forEach((cb: any) =>
+      cb({ userId: "u2", userName: "Bob" })
+    )
 
     expect(element?.textContent).to.contain("⚔️")
     expect(element?.getAttribute("aria-label")).to.contain("YOU ARE CHALLENGED")
 
-    presenceClient.challengeCallbacks.forEach((cb: any) => cb(false))
+    const href = element?.getAttribute("href") ?? ""
+    expect(href).to.contain("action=join")
+    expect(href).to.contain("ruletype=nineball")
+    expect(href).to.contain("opponentId=u2")
+    expect(href).to.contain("opponentName=Bob")
+
+    presenceClient.challengeCallbacks.forEach((cb: any) => cb(null))
     expect(element?.textContent).to.not.contain("⚔️")
+    expect(element?.getAttribute("href")).to.equal(
+      "https://scoreboard-tailuge.vercel.app/lobby"
+    )
   })
 
   it("handles non-anchor elements and click events", async () => {
@@ -67,7 +78,7 @@ describe("LobbyIndicator", () => {
     }) as any
 
     div.click()
-    expect(openedUrl).to.equal("https://scoreboard-tailuge.vercel.app/game")
+    expect(openedUrl).to.equal("https://scoreboard-tailuge.vercel.app/lobby")
 
     document.body.removeChild(div)
     document.getElementById = originalGetElementById
