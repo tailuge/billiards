@@ -118,23 +118,28 @@ describe("PresenceClient", () => {
 
   describe("Challenge detection", () => {
     let client: PresenceClient
-    let challenges: boolean[]
+    let challenges: Array<any>
 
     beforeEach(() => {
       client = new PresenceClient("u1", "Alice")
       challenges = []
-      client.onChallengeChange((challenged) => challenges.push(challenged))
+      client.onChallengeChange((challenger) => challenges.push(challenger))
       client.start()
     })
 
-    const sendPresence = (type: string, userId: string, opponentId?: string) => {
+    const sendPresence = (
+      type: string,
+      userId: string,
+      opponentId?: string,
+      userName = "Bob"
+    ) => {
       const ws = MockWebSocket.instances[0]
       ws.onmessage?.({
         data: JSON.stringify({
           messageType: "presence",
           type,
           userId,
-          userName: "Bob",
+          userName,
           opponentId,
           timestamp: Date.now(),
         }),
@@ -143,18 +148,18 @@ describe("PresenceClient", () => {
 
     it("triggers challenge callback when opponentId matches current user", () => {
       sendPresence("heartbeat", "u2", "u1")
-      expect(challenges).toEqual([true])
+      expect(challenges).toEqual([{ userId: "u2", userName: "Bob" }])
 
       sendPresence("heartbeat", "u2")
-      expect(challenges).toEqual([true, false])
+      expect(challenges).toEqual([{ userId: "u2", userName: "Bob" }, null])
     })
 
     it("removes challenge when challenger leaves", () => {
       sendPresence("heartbeat", "u2", "u1")
-      expect(challenges).toEqual([true])
+      expect(challenges).toEqual([{ userId: "u2", userName: "Bob" }])
 
       sendPresence("leave", "u2")
-      expect(challenges).toEqual([true, false])
+      expect(challenges).toEqual([{ userId: "u2", userName: "Bob" }, null])
     })
 
     it("handles messages with locale and preserves it", () => {
