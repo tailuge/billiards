@@ -18,7 +18,7 @@ type PresenceEntry = {
   userName: string
   locale?: string
   lastSeen: number
-  opponentId?: string
+  opponentId?: string | undefined
 }
 
 export class PresenceClient {

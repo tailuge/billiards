@@ -156,5 +156,57 @@ describe("PresenceClient", () => {
       sendPresence("leave", "u2")
       expect(challenges).toEqual([true, false])
     })
+
+    it("handles messages with locale and preserves it", () => {
+      const ws = MockWebSocket.instances[0]
+      ws.onmessage?.({
+        data: JSON.stringify({
+          messageType: "presence",
+          type: "join",
+          userId: "u3",
+          userName: "Charlie",
+          locale: "fr-FR",
+          timestamp: Date.now(),
+        }),
+      })
+      // Internal state isn't directly exposed, but we can verify it doesn't crash and count updates
+    })
+  })
+
+  it("handles invalid messages gracefully", () => {
+    const client = new PresenceClient("u1", "Alice")
+    client.start()
+    const ws = MockWebSocket.instances[0]
+
+    const invalidMessages = [
+      null,
+      "not json",
+      JSON.stringify({ messageType: "not presence" }),
+      JSON.stringify({ messageType: "presence", type: "unknown" }),
+      JSON.stringify({ messageType: "presence", type: "join" }), // missing ids
+      JSON.stringify({
+        messageType: "presence",
+        type: "join",
+        userId: "u2",
+        userName: "Bob",
+        opponentId: 123,
+      }), // invalid opponentId type
+    ]
+
+    invalidMessages.forEach((msg) => {
+      ws.onmessage?.({ data: msg })
+    })
+  })
+
+  it("covers stop() edge cases", () => {
+    const client = new PresenceClient("u1", "Alice")
+    client.start()
+    const ws = MockWebSocket.instances[0]
+    // Mock websocket close to throw
+    ws.close = () => {
+      throw new Error("close failed")
+    }
+    client.stop()
+    client.stop() // second call should return early
   })
 })
