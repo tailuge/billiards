@@ -10,6 +10,8 @@ export class LobbyIndicator {
   private hasLiveCount = false
   private count = 0
   private challenged = false
+  private static readonly GAME_URL =
+    "https://scoreboard-tailuge.vercel.app/game"
 
   constructor(
     private readonly relay: MessageRelay | null,
@@ -18,14 +20,11 @@ export class LobbyIndicator {
     this.element = id("lobby")
     if (this.element) {
       if (this.element.tagName === "A") {
-        this.element.setAttribute(
-          "href",
-          "https://scoreboard-tailuge.vercel.app/game"
-        )
+        this.element.setAttribute("href", LobbyIndicator.GAME_URL)
         this.element.setAttribute("target", "_blank")
       } else {
         this.element.addEventListener("click", () => {
-          globalThis.open("https://scoreboard-tailuge.vercel.app/game", "_blank")
+          globalThis.open(LobbyIndicator.GAME_URL, "_blank")
         })
         this.element.style.cursor = "pointer"
       }

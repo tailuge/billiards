@@ -116,67 +116,45 @@ describe("PresenceClient", () => {
     expect(joinBody.ua).toBe("Mozilla/5.0")
   })
 
-  it("triggers challenge callback when opponentId matches current user", () => {
-    const client = new PresenceClient("u1", "Alice")
-    const challenges: boolean[] = []
-    client.onChallengeChange((challenged) => challenges.push(challenged))
-    client.start()
+  describe("Challenge detection", () => {
+    let client: PresenceClient
+    let challenges: boolean[]
 
-    const ws = MockWebSocket.instances[0]
-    // User u2 challenges u1
-    ws.onmessage?.({
-      data: JSON.stringify({
-        messageType: "presence",
-        type: "heartbeat",
-        userId: "u2",
-        userName: "Bob",
-        opponentId: "u1",
-        timestamp: Date.now(),
-      }),
+    beforeEach(() => {
+      client = new PresenceClient("u1", "Alice")
+      challenges = []
+      client.onChallengeChange((challenged) => challenges.push(challenged))
+      client.start()
     })
-    expect(challenges).toEqual([true])
 
-    // User u2 stops challenging
-    ws.onmessage?.({
-      data: JSON.stringify({
-        messageType: "presence",
-        type: "heartbeat",
-        userId: "u2",
-        userName: "Bob",
-        timestamp: Date.now(),
-      }),
+    const sendPresence = (type: string, userId: string, opponentId?: string) => {
+      const ws = MockWebSocket.instances[0]
+      ws.onmessage?.({
+        data: JSON.stringify({
+          messageType: "presence",
+          type,
+          userId,
+          userName: "Bob",
+          opponentId,
+          timestamp: Date.now(),
+        }),
+      })
+    }
+
+    it("triggers challenge callback when opponentId matches current user", () => {
+      sendPresence("heartbeat", "u2", "u1")
+      expect(challenges).toEqual([true])
+
+      sendPresence("heartbeat", "u2")
+      expect(challenges).toEqual([true, false])
     })
-    expect(challenges).toEqual([true, false])
-  })
 
-  it("removes challenge when challenger leaves", () => {
-    const client = new PresenceClient("u1", "Alice")
-    const challenges: boolean[] = []
-    client.onChallengeChange((challenged) => challenges.push(challenged))
-    client.start()
+    it("removes challenge when challenger leaves", () => {
+      sendPresence("heartbeat", "u2", "u1")
+      expect(challenges).toEqual([true])
 
-    const ws = MockWebSocket.instances[0]
-    ws.onmessage?.({
-      data: JSON.stringify({
-        messageType: "presence",
-        type: "heartbeat",
-        userId: "u2",
-        userName: "Bob",
-        opponentId: "u1",
-        timestamp: Date.now(),
-      }),
+      sendPresence("leave", "u2")
+      expect(challenges).toEqual([true, false])
     })
-    expect(challenges).toEqual([true])
-
-    ws.onmessage?.({
-      data: JSON.stringify({
-        messageType: "presence",
-        type: "leave",
-        userId: "u2",
-        userName: "Bob",
-        timestamp: Date.now(),
-      }),
-    })
-    expect(challenges).toEqual([true, false])
   })
 })
