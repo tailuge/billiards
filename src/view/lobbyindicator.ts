@@ -8,23 +8,45 @@ export class LobbyIndicator {
   private readonly element: HTMLElement | null
   private readonly presenceClient: PresenceClient
   private hasLiveCount = false
+  private count = 0
+  private challenged = false
+  private static readonly GAME_URL =
+    "https://scoreboard-tailuge.vercel.app/game"
 
   constructor(
     private readonly relay: MessageRelay | null,
     rules: Rules
   ) {
     this.element = id("lobby")
+    if (this.element) {
+      if (this.element instanceof HTMLAnchorElement) {
+        this.element.setAttribute("href", LobbyIndicator.GAME_URL)
+        this.element.setAttribute("target", "_blank")
+        this.element.setAttribute("rel", "noopener noreferrer")
+      } else {
+        this.element.addEventListener("click", () => {
+          if (typeof globalThis.open === "function") {
+            globalThis.open(
+              LobbyIndicator.GAME_URL,
+              "_blank",
+              "noopener,noreferrer"
+            )
+          }
+        })
+        this.element.style.cursor = "pointer"
+      }
+    }
     const session = Session.hasInstance() ? Session.getInstance() : undefined
-    const locale = globalThis.navigator?.language
-    const originUrl = globalThis.location?.host
-    const ua = globalThis.navigator?.userAgent
+    const locale = globalThis.navigator?.language ?? undefined
+    const originUrl = globalThis.location?.host ?? undefined
+    const ua = globalThis.navigator?.userAgent ?? undefined
     this.presenceClient = new PresenceClient(
       session?.clientId ?? "default",
       session?.playername ?? "Anon",
       locale,
       originUrl,
       rules.rulename,
-      session?.botMode,
+      session?.botMode ?? undefined,
       ua
     )
   }
@@ -32,7 +54,12 @@ export class LobbyIndicator {
   async init(): Promise<void> {
     this.presenceClient.onCountChange((count) => {
       this.hasLiveCount = true
-      this.setCount(count)
+      this.count = count
+      this.updateDisplay()
+    })
+    this.presenceClient.onChallengeChange((challenged) => {
+      this.challenged = challenged
+      this.updateDisplay()
     })
     this.presenceClient.start()
     if (!this.element) return
@@ -40,16 +67,29 @@ export class LobbyIndicator {
     try {
       const count = await this.relay?.getOnlineCount()
       if (!this.hasLiveCount && count !== null && count !== undefined) {
-        this.setCount(count)
+        this.count = count
+        this.updateDisplay()
       }
     } catch {
       // Ignore fallback fetch failures.
     }
   }
 
-  private setCount(count: number): void {
+  private updateDisplay(): void {
     if (!this.element) return
-    this.element.textContent = ` ${count} 👥`
+    const challengeIcon = this.challenged ? " ⚔️" : ""
+    this.element.textContent = ` ${this.count} 👥${challengeIcon}`
+    if (this.challenged) {
+      this.element.setAttribute(
+        "aria-label",
+        `Multiplayer Lobby - ${this.count} online - YOU ARE CHALLENGED!`
+      )
+    } else {
+      this.element.setAttribute(
+        "aria-label",
+        `Multiplayer Lobby - ${this.count} online`
+      )
+    }
   }
 
   stop(): void {
