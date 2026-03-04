@@ -8,12 +8,28 @@ export class LobbyIndicator {
   private readonly element: HTMLElement | null
   private readonly presenceClient: PresenceClient
   private hasLiveCount = false
+  private count = 0
+  private challenged = false
 
   constructor(
     private readonly relay: MessageRelay | null,
     rules: Rules
   ) {
     this.element = id("lobby")
+    if (this.element) {
+      if (this.element.tagName === "A") {
+        this.element.setAttribute(
+          "href",
+          "https://scoreboard-tailuge.vercel.app/game"
+        )
+        this.element.setAttribute("target", "_blank")
+      } else {
+        this.element.addEventListener("click", () => {
+          globalThis.open("https://scoreboard-tailuge.vercel.app/game", "_blank")
+        })
+        this.element.style.cursor = "pointer"
+      }
+    }
     const session = Session.hasInstance() ? Session.getInstance() : undefined
     const locale = globalThis.navigator?.language
     const originUrl = globalThis.location?.host
@@ -32,7 +48,12 @@ export class LobbyIndicator {
   async init(): Promise<void> {
     this.presenceClient.onCountChange((count) => {
       this.hasLiveCount = true
-      this.setCount(count)
+      this.count = count
+      this.updateDisplay()
+    })
+    this.presenceClient.onChallengeChange((challenged) => {
+      this.challenged = challenged
+      this.updateDisplay()
     })
     this.presenceClient.start()
     if (!this.element) return
@@ -40,16 +61,29 @@ export class LobbyIndicator {
     try {
       const count = await this.relay?.getOnlineCount()
       if (!this.hasLiveCount && count !== null && count !== undefined) {
-        this.setCount(count)
+        this.count = count
+        this.updateDisplay()
       }
     } catch {
       // Ignore fallback fetch failures.
     }
   }
 
-  private setCount(count: number): void {
+  private updateDisplay(): void {
     if (!this.element) return
-    this.element.textContent = ` ${count} 👥`
+    const challengeIcon = this.challenged ? " ⚔️" : ""
+    this.element.textContent = ` ${this.count} 👥${challengeIcon}`
+    if (this.challenged) {
+      this.element.setAttribute(
+        "aria-label",
+        `Multiplayer Lobby - ${this.count} online - YOU ARE CHALLENGED!`
+      )
+    } else {
+      this.element.setAttribute(
+        "aria-label",
+        `Multiplayer Lobby - ${this.count} online`
+      )
+    }
   }
 
   stop(): void {

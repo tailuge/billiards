@@ -11,12 +11,14 @@ export interface PresenceMessage {
   timestamp?: number
   ruletype?: string
   isBot?: boolean
+  opponentId?: string
 }
 
 type PresenceEntry = {
   userName: string
   locale?: string
   lastSeen: number
+  opponentId?: string
 }
 
 export class PresenceClient {
@@ -25,7 +27,9 @@ export class PresenceClient {
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null
   private pruneTimer: ReturnType<typeof setInterval> | null = null
   private started = false
+  private isChallenged = false
   private readonly callbacks: Array<(count: number) => void> = []
+  private readonly challengeCallbacks: Array<(challenged: boolean) => void> = []
 
   static readonly subscribeURL =
     "wss://billiards-network.onrender.com/subscribe/presence/lobby"
@@ -46,6 +50,10 @@ export class PresenceClient {
 
   onCountChange(callback: (count: number) => void): void {
     this.callbacks.push(callback)
+  }
+
+  onChallengeChange(callback: (challenged: boolean) => void): void {
+    this.challengeCallbacks.push(callback)
   }
 
   start(): void {
@@ -127,6 +135,7 @@ export class PresenceClient {
       if (message.locale !== undefined) {
         entry.locale = message.locale
       }
+      entry.opponentId = message.opponentId
       this.users.set(message.userId, entry)
     }
 
@@ -151,6 +160,10 @@ export class PresenceClient {
       }
       if (!msg.userId || !msg.userName) return null
 
+      if (msg.opponentId !== undefined && typeof msg.opponentId !== "string") {
+        return null
+      }
+
       return msg as PresenceMessage
     } catch {
       return null
@@ -158,15 +171,18 @@ export class PresenceClient {
   }
 
   private pruneAndNotify(now: number): void {
+    let challenged = false
     this.users.forEach((entry, id) => {
       if (now - entry.lastSeen > PresenceClient.ttlMs) {
         this.users.delete(id)
+      } else if (entry.opponentId === this.userId) {
+        challenged = true
       }
     })
-    this.notify(this.users.size)
+    this.notify(this.users.size, challenged)
   }
 
-  private notify(count: number): void {
+  private notify(count: number, challenged: boolean): void {
     this.callbacks.forEach((callback) => {
       try {
         callback(count)
@@ -174,6 +190,17 @@ export class PresenceClient {
         // Ignore UI callback failures.
       }
     })
+
+    if (challenged !== this.isChallenged) {
+      this.isChallenged = challenged
+      this.challengeCallbacks.forEach((callback) => {
+        try {
+          callback(challenged)
+        } catch {
+          // Ignore UI callback failures.
+        }
+      })
+    }
   }
 
   private publishLater(type: PresenceEventType, delayMs: number): void {
