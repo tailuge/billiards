@@ -145,6 +145,10 @@ export class Ball {
   }
 
   static updateFromSerialised(b, data) {
+    const distance = b.pos.distanceTo(data.pos)
+    if (distance > 0.00001) {
+      console.log(`Ball ${b.id} moved ${distance}`)
+    }
     b.pos.copy(data.pos)
     b.vel.copy(data?.vel ?? zero)
     b.rvel.copy(data?.rvel ?? zero)
