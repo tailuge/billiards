@@ -124,7 +124,7 @@ export class PresenceClient {
   }
 
   private subscribe(): void {
-    if (typeof globalThis.WebSocket === "undefined") return
+    if (globalThis.WebSocket === undefined) return
     try {
       const socket = new globalThis.WebSocket(PresenceClient.subscribeURL)
       socket.onmessage = (event: MessageEvent) => {

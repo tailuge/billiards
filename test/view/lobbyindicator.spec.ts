@@ -68,7 +68,8 @@ describe("LobbyIndicator", () => {
       id === "lobby" ? div : originalGetElementById.call(document, id)
 
     const mockRules = { rulename: "nineball" } as any
-    new LobbyIndicator(relay, mockRules)
+    const indicator = new LobbyIndicator(relay, mockRules)
+    await indicator.init()
 
     let openedUrl = ""
     const originalOpen = globalThis.open
@@ -80,7 +81,8 @@ describe("LobbyIndicator", () => {
     div.click()
     expect(openedUrl).to.equal("https://scoreboard-tailuge.vercel.app/lobby")
 
-    document.body.removeChild(div)
+    indicator.stop()
+    div.remove()
     document.getElementById = originalGetElementById
     globalThis.open = originalOpen
   })
