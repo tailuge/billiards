@@ -6,6 +6,7 @@ import { GameEvent } from "../events/gameevent"
 import { ScoreEvent } from "../events/scoreevent"
 import { PlaceBallEvent } from "../events/placeballevent"
 import { RerackEvent } from "../events/rerackevent"
+import { BreakEvent } from "../events/breakevent"
 
 export class Spectate extends ControllerBase {
   override get name() {
@@ -27,6 +28,7 @@ export class Spectate extends ControllerBase {
         event instanceof AimEvent ||
         event instanceof ScoreEvent ||
         event instanceof PlaceBallEvent ||
+        event instanceof BreakEvent ||
         event instanceof RerackEvent
       ) {
         this.container.eventQueue.push(event)
@@ -46,6 +48,11 @@ export class Spectate extends ControllerBase {
     this.container.table.updateFromSerialised(event.tablejson)
     this.container.table.outcome = []
     this.container.table.hit()
+    return this
+  }
+
+  override handleBreak(event: BreakEvent) {
+    this.container.table.updateFromShortSerialised(event.init)
     return this
   }
 
