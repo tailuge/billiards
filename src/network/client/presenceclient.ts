@@ -115,9 +115,9 @@ export class PresenceClient {
   }
 
   private subscribe(): void {
-    if (typeof WebSocket === "undefined") return
+    if (typeof globalThis.WebSocket === "undefined") return
     try {
-      const socket = new WebSocket(PresenceClient.subscribeURL)
+      const socket = new globalThis.WebSocket(PresenceClient.subscribeURL)
       socket.onmessage = (event: MessageEvent) => {
         this.handleIncoming(event.data)
       }
@@ -157,33 +157,50 @@ export class PresenceClient {
 
     try {
       const parsed: unknown = JSON.parse(data)
-      if (!parsed || typeof parsed !== "object") return null
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+        return null
+      }
 
       const msg = parsed as Partial<PresenceMessage>
-      if (msg.messageType !== "presence") return null
-      if (
-        msg.type !== "join" &&
-        msg.type !== "heartbeat" &&
-        msg.type !== "leave"
-      ) {
-        return null
+      if (this.isValidPresenceMessage(msg)) {
+        return msg as PresenceMessage
       }
-      if (typeof msg.userId !== "string" || typeof msg.userName !== "string") {
-        return null
-      }
-
-      if (msg.opponentId !== undefined && typeof msg.opponentId !== "string") {
-        return null
-      }
-
-      if (msg.timestamp !== undefined && !Number.isFinite(msg.timestamp)) {
-        return null
-      }
-
-      return msg as PresenceMessage
     } catch {
-      return null
+      // Ignore parse failures
     }
+    return null
+  }
+
+  private isValidPresenceMessage(msg: Partial<PresenceMessage>): boolean {
+    if (msg.messageType !== "presence") return false
+    if (msg.type !== "join" && msg.type !== "heartbeat" && msg.type !== "leave") {
+      return false
+    }
+    if (typeof msg.userId !== "string" || typeof msg.userName !== "string") {
+      return false
+    }
+
+    return (
+      this.validateOptionalFields(msg) &&
+      (msg.timestamp === undefined || Number.isFinite(msg.timestamp))
+    )
+  }
+
+  private validateOptionalFields(msg: Partial<PresenceMessage>): boolean {
+    if (msg.opponentId !== undefined && typeof msg.opponentId !== "string") {
+      return false
+    }
+    if (msg.locale !== undefined && typeof msg.locale !== "string") return false
+    if (msg.originUrl !== undefined && typeof msg.originUrl !== "string") {
+      return false
+    }
+    if (msg.ruletype !== undefined && typeof msg.ruletype !== "string") {
+      return false
+    }
+    if (msg.isBot !== undefined && typeof msg.isBot !== "boolean") return false
+    if (msg.ua !== undefined && typeof msg.ua !== "string") return false
+
+    return true
   }
 
   private pruneAndNotify(now: number): void {
@@ -201,7 +218,11 @@ export class PresenceClient {
   }
 
   private notify(count: number, challenged: boolean): void {
-    this.callbacks.forEach((callback) => {
+    // Create copies of the callback arrays to prevent modification during iteration.
+    const currentCallbacks = [...this.callbacks]
+    const currentChallengeCallbacks = [...this.challengeCallbacks]
+
+    currentCallbacks.forEach((callback) => {
       try {
         callback(count)
       } catch {
@@ -211,7 +232,7 @@ export class PresenceClient {
 
     if (challenged !== this.isChallenged) {
       this.isChallenged = challenged
-      this.challengeCallbacks.forEach((callback) => {
+      currentChallengeCallbacks.forEach((callback) => {
         try {
           callback(challenged)
         } catch {
@@ -222,7 +243,7 @@ export class PresenceClient {
   }
 
   private publish(type: PresenceEventType, keepalive = false): void {
-    if (typeof fetch !== "function") return
+    if (typeof globalThis.fetch !== "function") return
 
     const payload: PresenceMessage = {
       messageType: "presence",
@@ -247,7 +268,7 @@ export class PresenceClient {
       payload.ua = this.ua
     }
 
-    fetch(PresenceClient.publishURL, {
+    globalThis.fetch(PresenceClient.publishURL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

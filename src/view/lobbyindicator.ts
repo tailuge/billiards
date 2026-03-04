@@ -25,11 +25,13 @@ export class LobbyIndicator {
         this.element.setAttribute("rel", "noopener noreferrer")
       } else {
         this.element.addEventListener("click", () => {
-          globalThis.open(
-            LobbyIndicator.GAME_URL,
-            "_blank",
-            "noopener,noreferrer"
-          )
+          if (typeof globalThis.open === "function") {
+            globalThis.open(
+              LobbyIndicator.GAME_URL,
+              "_blank",
+              "noopener,noreferrer"
+            )
+          }
         })
         this.element.style.cursor = "pointer"
       }
