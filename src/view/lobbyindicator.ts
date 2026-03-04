@@ -19,7 +19,7 @@ export class LobbyIndicator {
   ) {
     this.element = id("lobby")
     if (this.element) {
-      if (this.element.tagName.toUpperCase() === "A") {
+      if (this.element instanceof HTMLAnchorElement) {
         this.element.setAttribute("href", LobbyIndicator.GAME_URL)
         this.element.setAttribute("target", "_blank")
         this.element.setAttribute("rel", "noopener noreferrer")
@@ -35,16 +35,16 @@ export class LobbyIndicator {
       }
     }
     const session = Session.hasInstance() ? Session.getInstance() : undefined
-    const locale = globalThis.navigator?.language
-    const originUrl = globalThis.location?.host
-    const ua = globalThis.navigator?.userAgent
+    const locale = globalThis.navigator?.language ?? undefined
+    const originUrl = globalThis.location?.host ?? undefined
+    const ua = globalThis.navigator?.userAgent ?? undefined
     this.presenceClient = new PresenceClient(
       session?.clientId ?? "default",
       session?.playername ?? "Anon",
       locale,
       originUrl,
       rules.rulename,
-      session?.botMode,
+      session?.botMode ?? undefined,
       ua
     )
   }

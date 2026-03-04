@@ -26,6 +26,7 @@ export class PresenceClient {
   private websocket: WebSocket | null = null
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null
   private pruneTimer: ReturnType<typeof setInterval> | null = null
+  private joinTimer: ReturnType<typeof setTimeout> | null = null
   private started = false
   private isChallenged = false
   private readonly callbacks: Array<(count: number) => void> = []
@@ -61,7 +62,10 @@ export class PresenceClient {
     this.started = true
 
     this.subscribe()
-    this.publishLater("join", 100)
+    this.joinTimer = setTimeout(() => {
+      this.publish("join")
+      this.joinTimer = null
+    }, 100)
     this.heartbeatTimer = setInterval(() => {
       this.publish("heartbeat")
     }, PresenceClient.heartbeatMs)
@@ -82,6 +86,10 @@ export class PresenceClient {
     if (this.heartbeatTimer) {
       clearInterval(this.heartbeatTimer)
       this.heartbeatTimer = null
+    }
+    if (this.joinTimer) {
+      clearTimeout(this.joinTimer)
+      this.joinTimer = null
     }
     if (this.pruneTimer) {
       clearInterval(this.pruneTimer)
@@ -107,6 +115,7 @@ export class PresenceClient {
   }
 
   private subscribe(): void {
+    if (typeof WebSocket === "undefined") return
     try {
       const socket = new WebSocket(PresenceClient.subscribeURL)
       socket.onmessage = (event: MessageEvent) => {
@@ -121,6 +130,7 @@ export class PresenceClient {
   }
 
   private handleIncoming(data: unknown): void {
+    if (!this.started) return
     const message = this.tryParseMessage(data)
     if (!message) return
 
@@ -158,9 +168,15 @@ export class PresenceClient {
       ) {
         return null
       }
-      if (!msg.userId || !msg.userName) return null
+      if (typeof msg.userId !== "string" || typeof msg.userName !== "string") {
+        return null
+      }
 
       if (msg.opponentId !== undefined && typeof msg.opponentId !== "string") {
+        return null
+      }
+
+      if (msg.timestamp !== undefined && !Number.isFinite(msg.timestamp)) {
         return null
       }
 
@@ -203,10 +219,6 @@ export class PresenceClient {
         }
       })
     }
-  }
-
-  private publishLater(type: PresenceEventType, delayMs: number): void {
-    setTimeout(() => this.publish(type), delayMs)
   }
 
   private publish(type: PresenceEventType, keepalive = false): void {
