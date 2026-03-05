@@ -23,16 +23,23 @@ jobs:
       contents: read
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: install dependencies
         uses: nick-fields/retry@v3
         with:
           timeout_minutes: 5
-          max_attempts: 3
+          max_attempts: 2
           retry_wait_seconds: 10
-          command: yarn install
+          command: yarn install --immutable
 
       - name: build
         run: yarn build
