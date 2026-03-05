@@ -570,3 +570,7 @@ label {
 #botDebugLog::-webkit-scrollbar-thumb:hover {
   background: #777;
 }
+
+.challenge-icon {
+  text-shadow: 0 0 8px #ff0000, 0 0 12px #ff0000;
+}
