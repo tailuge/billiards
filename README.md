@@ -187,7 +187,9 @@ Some of the Mathaven equations not supplied by the paper were inferred by LLMs a
 ### Install
 
 ```shell
-nvm use v22.12.0
+nvm use v24.11.0
+corepack enable
+yarn set version 4.9.1
 yarn install
 yarn dev
 yarn gltfpack
