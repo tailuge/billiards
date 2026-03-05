@@ -85,9 +85,15 @@ export class LobbyIndicator {
       challengeSpan.className = "challenge-icon"
       challengeSpan.textContent = " ⚔️"
       this.element.appendChild(challengeSpan)
+
+      const challengePill = document.createElement("span")
+      challengePill.className = "challenge-pill"
+      challengePill.textContent = `Challenge from ${this.challenger!.userName}`
+      this.element.appendChild(challengePill)
+
       this.element.setAttribute(
         "aria-label",
-        `Multiplayer Lobby - ${this.count} online - YOU ARE CHALLENGED!`
+        `Multiplayer Lobby - ${this.count} online - CHALLENGE FROM ${this.challenger!.userName}!`
       )
     } else {
       this.element.setAttribute(

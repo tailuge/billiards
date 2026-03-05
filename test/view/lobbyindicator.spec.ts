@@ -41,7 +41,8 @@ describe("LobbyIndicator", () => {
     )
 
     expect(element?.textContent).to.contain("⚔️")
-    expect(element?.getAttribute("aria-label")).to.contain("YOU ARE CHALLENGED")
+    expect(element?.textContent).to.contain("Challenge from Bob")
+    expect(element?.getAttribute("aria-label")).to.contain("CHALLENGE FROM Bob")
 
     const href = element?.getAttribute("href") ?? ""
     expect(href).to.contain("action=join")
