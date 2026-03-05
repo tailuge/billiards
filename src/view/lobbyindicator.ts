@@ -31,11 +31,7 @@ export class LobbyIndicator {
       } else {
         this.element.addEventListener("click", () => {
           if (typeof globalThis.open === "function") {
-            globalThis.open(
-              this.getLobbyUrl(),
-              "_blank",
-              "noopener,noreferrer"
-            )
+            globalThis.open(this.getLobbyUrl(), "_blank", "noopener,noreferrer")
           }
         })
         this.element.style.cursor = "pointer"

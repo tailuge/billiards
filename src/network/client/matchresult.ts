@@ -4,6 +4,7 @@ import { NotificationEvent } from "../../events/notificationevent"
 import { End } from "../../controller/end"
 import { Session } from "./session"
 import { gameOverButtons } from "../../utils/gameover"
+import { VERSION } from "../../utils/version"
 
 export interface MatchResult {
   winner: string
@@ -12,6 +13,8 @@ export interface MatchResult {
   loserScore?: number
   ruleType: string
   replayData?: string
+  version?: string
+  userAgent?: string
 }
 
 export class MatchResultHelper {
@@ -138,6 +141,8 @@ export class MatchResultHelper {
       result.loserScore = loserScore
     }
 
+    result.version = VERSION
+    result.userAgent = navigator?.userAgent
     return result
   }
 }

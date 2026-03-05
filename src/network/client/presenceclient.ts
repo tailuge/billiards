@@ -182,7 +182,11 @@ export class PresenceClient {
 
   private isValidPresenceMessage(msg: Partial<PresenceMessage>): boolean {
     if (msg.messageType !== "presence") return false
-    if (msg.type !== "join" && msg.type !== "heartbeat" && msg.type !== "leave") {
+    if (
+      msg.type !== "join" &&
+      msg.type !== "heartbeat" &&
+      msg.type !== "leave"
+    ) {
       return false
     }
     if (typeof msg.userId !== "string" || typeof msg.userName !== "string") {
@@ -284,14 +288,16 @@ export class PresenceClient {
       payload.ua = this.ua
     }
 
-    globalThis.fetch(PresenceClient.publishURL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      keepalive,
-      body: JSON.stringify(payload),
-    }).catch(() => {})
+    globalThis
+      .fetch(PresenceClient.publishURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        keepalive,
+        body: JSON.stringify(payload),
+      })
+      .catch(() => {})
   }
 }

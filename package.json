@@ -24,7 +24,6 @@
     "dev": "webpack",
     "prebuild": "npm run version-gen",
     "build": "webpack",
-    "prelint": "npm run version-gen",
     "lint": "tsc --noEmit && eslint .",
     "prettify": "prettier --cache true --write --trailing-comma es5 --no-semi {src,test}/**/*.[jt]s dist/**/*.{css,html} *.[jt]s *.json",
     "markdownlint": "npx markdownlint-cli2 README.md --fix",
