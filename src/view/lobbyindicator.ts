@@ -79,9 +79,12 @@ export class LobbyIndicator {
   private updateDisplay(): void {
     if (!this.element) return
     const challenged = this.challenger !== null
-    const challengeIcon = challenged ? " ⚔️" : ""
-    this.element.textContent = ` ${this.count} 👥${challengeIcon}`
+    this.element.textContent = ` ${this.count} 👥`
     if (challenged) {
+      const challengeSpan = document.createElement("span")
+      challengeSpan.className = "challenge-icon"
+      challengeSpan.textContent = " ⚔️"
+      this.element.appendChild(challengeSpan)
       this.element.setAttribute(
         "aria-label",
         `Multiplayer Lobby - ${this.count} online - YOU ARE CHALLENGED!`
