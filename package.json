@@ -19,8 +19,12 @@
   "scripts": {
     "test": "jest --config ./test/jest.config.js --verbose --silent",
     "coverage": "jest --config ./test/jest.config.js --coverage --silent",
+    "version-gen": "node -e \"const d=new Date();const v=d.getFullYear().toString().slice(-2)+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'.'+('0'+d.getHours()).slice(-2);require('fs').writeFileSync('src/utils/version.ts', 'export const VERSION = \\'' + v + '\\';\\n')\"",
+    "predev": "npm run version-gen",
     "dev": "webpack",
+    "prebuild": "npm run version-gen",
     "build": "webpack",
+    "prelint": "npm run version-gen",
     "lint": "tsc --noEmit && eslint .",
     "prettify": "prettier --cache true --write --trailing-comma es5 --no-semi {src,test}/**/*.[jt]s dist/**/*.{css,html} *.[jt]s *.json",
     "markdownlint": "npx markdownlint-cli2 README.md --fix",
