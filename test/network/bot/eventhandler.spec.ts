@@ -92,7 +92,8 @@ describe("BotEventHandler Respot Logic", () => {
     chaiExpect(cueBallPos.x).to.be.lessThan(0)
 
     chaiExpect(placeBallEvent.respot).to.not.be.undefined
-    const nineBallPos = placeBallEvent.respot!.pos
+    const nineBallPos = placeBallEvent.respot?.pos
+    if (!nineBallPos) throw new Error("Respot position missing")
 
     const footSpotX = TableGeometry.tableX / 2
     chaiExpect(nineBallPos.x).to.be.greaterThan(footSpotX - R * 10)
@@ -120,12 +121,14 @@ describe("BotEventHandler Respot Logic", () => {
 
     // Verify respot data is correctly preserved after deserialization
     chaiExpect(deserialized.respot).to.not.be.undefined
-    chaiExpect(deserialized.respot!.id).to.equal(9)
-    chaiExpect(deserialized.respot!.pos).to.not.be.undefined
+    const respot = deserialized.respot
+    if (!respot) throw new Error("Respot missing")
+    chaiExpect(respot.id).to.equal(9)
+    chaiExpect(respot.pos).to.not.be.undefined
 
     // Verify the nine ball position is valid (behind foot spot)
     const footSpotX = TableGeometry.tableX / 2
-    chaiExpect(deserialized.respot!.pos.x).to.be.greaterThan(footSpotX - R * 10)
+    chaiExpect(respot.pos.x).to.be.greaterThan(footSpotX - R * 10)
   })
 
   it("should correctly respot nine ball when WatchShot processes PlaceBallEvent", () => {
@@ -142,7 +145,8 @@ describe("BotEventHandler Respot Logic", () => {
     ) as PlaceBallEvent
 
     // Capture the correct positions before serialization
-    const expectedNineBallPos = placeBallEvent.respot!.pos.clone()
+    const expectedNineBallPos = placeBallEvent.respot?.pos.clone()
+    if (!expectedNineBallPos) throw new Error("Expected respot pos missing")
     const expectedCueBallPos = placeBallEvent.pos.clone()
 
     // Set up recipient container

@@ -119,8 +119,11 @@ export class Logger {
   private render() {
     if (!this.logElement) return
 
-    const lines = this.entries.map((entry) => {
+    this.logElement.textContent = ""
+    this.entries.forEach((entry) => {
+      const line = document.createElement("div")
       const time = new Date(entry.timestamp).toLocaleTimeString()
+
       let prefix: string
       let color: string
 
@@ -135,16 +138,16 @@ export class Logger {
         color = "#fbbf24"
       }
 
-      return `<span style="color: ${color}">[${time}] ${prefix}</span> ${this.escapeHtml(entry.message)}`
+      const meta = document.createElement("span")
+      meta.style.color = color
+      meta.textContent = `[${time}] ${prefix} `
+      line.appendChild(meta)
+      line.appendChild(document.createTextNode(entry.message))
+
+      this.logElement.appendChild(line)
     })
 
-    this.logElement.innerHTML = lines.join("\n")
     this.logElement.scrollTop = this.logElement.scrollHeight
   }
 
-  private escapeHtml(text: string): string {
-    const div = document.createElement("div")
-    div.textContent = text
-    return div.innerHTML
-  }
 }
