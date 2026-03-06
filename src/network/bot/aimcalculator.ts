@@ -82,18 +82,12 @@ export class AimCalculator {
     targetPos: Vector3,
     pockets: Vector3[]
   ): Vector3 {
-    let bestPocket = pockets[0]
-    let lowestScore = Infinity
-
-    for (const pocket of pockets) {
-      const score = this.calculateCutScore(cuePos, targetPos, pocket)
-      if (score < lowestScore) {
-        lowestScore = score
-        bestPocket = pocket
-      }
-    }
-
-    return bestPocket
+    return pockets
+      .map((p) => ({
+        pocket: p,
+        score: this.calculateCutScore(cuePos, targetPos, p),
+      }))
+      .sort((a, b) => a.score - b.score)[0].pocket
   }
 
   /**
