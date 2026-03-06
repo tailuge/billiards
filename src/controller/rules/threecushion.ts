@@ -58,8 +58,12 @@ export class ThreeCushion implements Rules {
   }
 
   tableGeometry() {
-    TableGeometry.tableX = R * 49
-    TableGeometry.tableY = R * 24
+    const UMB_TABLE_X = 92.36
+    const UMB_TABLE_Y = 46.18
+
+    TableGeometry.tableX = R * (UMB_TABLE_X / 2 - 1)
+    TableGeometry.tableY = R * (UMB_TABLE_Y / 2 - 1)
+
     TableGeometry.X = TableGeometry.tableX + R
     TableGeometry.Y = TableGeometry.tableY + R
     TableGeometry.hasPockets = false

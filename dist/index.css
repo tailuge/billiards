@@ -572,7 +572,9 @@ label {
 }
 
 .challenge-icon {
-  text-shadow: 0 0 8px #ff0000, 0 0 12px #ff0000;
+  text-shadow:
+    0 0 8px #ff0000,
+    0 0 12px #ff0000;
 }
 
 .challenge-pill {
