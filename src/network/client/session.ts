@@ -9,6 +9,8 @@ export class Session {
 
   opponentName?: string
   opponentClientId?: string
+  spectatedP1Name?: string
+  spectatedP2Name?: string
   playerIndex: number = 0
   private scoreByClientId: Record<string, number> = {}
 
@@ -131,6 +133,17 @@ export class Session {
   }
 
   orderedNamesForHud(): { p1Name?: string; p2Name?: string } {
+    if (this.spectator) {
+      const names: { p1Name?: string; p2Name?: string } = {}
+      if (this.spectatedP1Name) {
+        names.p1Name = this.spectatedP1Name
+      }
+      if (this.spectatedP2Name) {
+        names.p2Name = this.spectatedP2Name
+      }
+      return names
+    }
+
     const myName = this.playername || undefined
     const theirName = this.opponentName || undefined
     if (this.playerIndex === 0) {
