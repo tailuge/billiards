@@ -37,23 +37,28 @@ export class BotEventHandler {
     this.calculator = new AimCalculator()
   }
 
-  handle(event): void {
+  /**
+   * Main entry point for the bot to handle game events.
+   */
+  public handle(event: GameEvent): void {
     this.logs.info(`Bot handling event: ${event.type}`)
-    if (event.type === EventType.STARTAIM) {
-      this.handleStartAim()
-    }
-    if (event.type === EventType.PLACEBALL) {
-      this.handlePlaceBall(event)
-    }
-    if (event.type === EventType.BEGIN) {
-      this.handleStationary()
+    switch (event.type) {
+      case EventType.STARTAIM:
+        this.handleStartAim()
+        break
+      case EventType.PLACEBALL:
+        this.handlePlaceBall(event as PlaceBallEvent)
+        break
+      case EventType.BEGIN:
+        this.handleStationary()
+        break
     }
   }
 
+  /**
+   * The balls have finished rolling after a shot. Bot applies rules to decide the next action.
+   */
   private handleStationary(): void {
-    // The balls have finished rolling after a shot, now apply rules to find out
-    // if turn continues or switches maybe with a foul and a placeball
-    // gameover is also an option
     const outcome = this.container.table.outcome
     if (this.container.rules.isEndOfGame(outcome)) {
       // bot has won, notify player
@@ -99,6 +104,7 @@ export class BotEventHandler {
       this.publishSequenceToPlayer([placeBallEvent])
       return
     }
+
     const pots = Outcome.potCount(outcome)
     if (pots > 0) {
       this.container.addOpponentScore(pots)
@@ -119,6 +125,7 @@ export class BotEventHandler {
     // switch to players turn
     this.publishSequenceToPlayer([new StartAimEvent()])
   }
+
 
   private handleStartAim(): void {
     this.logs.show()

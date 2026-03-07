@@ -1,4 +1,4 @@
-import { expect } from "chai"
+import { expect as chaiExpect } from "chai"
 import { Container } from "../../../src/container/container"
 import { Ball, State } from "../../../src/model/ball"
 import { Outcome } from "../../../src/model/outcome"
@@ -17,6 +17,9 @@ import { HitEvent } from "../../../src/events/hitevent"
 import { WatchShot } from "../../../src/controller/watchshot"
 import { PlaceBall } from "../../../src/controller/placeball"
 import { Vector3 } from "three"
+import { NineBall } from "../../../src/controller/rules/nineball"
+import { StartAimEvent } from "../../../src/events/startaimevent"
+import { WatchEvent } from "../../../src/events/watchevent"
 
 initDom()
 
@@ -72,8 +75,8 @@ describe("BotEventHandler Respot Logic", () => {
   it("should respot nine ball and cue ball to different positions when both are potted", () => {
     const { cueball, nineBall } = setupCueballAndNineball(container)
 
-    expect(cueball.onTable()).to.be.true
-    expect(nineBall.onTable()).to.be.true
+    chaiExpect(cueball.onTable()).to.equal(true)
+    chaiExpect(nineBall.onTable()).to.equal(true)
 
     const outcome = createOutcomeWithPots(cueball, nineBall)
     container.table.outcome = outcome
@@ -84,21 +87,23 @@ describe("BotEventHandler Respot Logic", () => {
     const placeBallEvents = publishedEvents.filter(
       (e) => e instanceof PlaceBallEvent
     )
-    expect(placeBallEvents).to.have.length(1)
+    chaiExpect(placeBallEvents).to.have.length(1)
 
     const placeBallEvent = placeBallEvents[0]
+    if (!(placeBallEvent instanceof PlaceBallEvent)) throw new Error("Expected PlaceBallEvent")
 
     const cueBallPos = placeBallEvent.pos
-    expect(cueBallPos.x).to.be.lessThan(0)
+    chaiExpect(cueBallPos.x).to.be.lessThan(0)
 
-    expect(placeBallEvent.respot).to.not.be.undefined
-    const nineBallPos = placeBallEvent.respot!.pos
+    chaiExpect(placeBallEvent.respot).to.not.be.undefined
+    const nineBallPos = placeBallEvent.respot?.pos
+    if (!nineBallPos) throw new Error("Respot position missing")
 
     const footSpotX = TableGeometry.tableX / 2
-    expect(nineBallPos.x).to.be.greaterThan(footSpotX - R * 10)
+    chaiExpect(nineBallPos.x).to.be.greaterThan(footSpotX - R * 10)
 
     const distance = cueBallPos.distanceTo(nineBallPos)
-    expect(distance).to.be.greaterThan(R * 2)
+    chaiExpect(distance).to.be.greaterThan(R * 2)
   })
 
   it("should correctly serialize and deserialize respot data", () => {
@@ -112,20 +117,24 @@ describe("BotEventHandler Respot Logic", () => {
 
     const placeBallEvent = publishedEvents.find(
       (e) => e instanceof PlaceBallEvent
-    ) as PlaceBallEvent
+    )
+    if (!(placeBallEvent instanceof PlaceBallEvent)) throw new Error("Expected PlaceBallEvent")
 
     // Serialize and deserialize
     const serialized = EventUtil.serialise(placeBallEvent)
-    const deserialized = EventUtil.fromSerialised(serialized) as PlaceBallEvent
+    const deserialized = EventUtil.fromSerialised(serialized)
+    if (!(deserialized instanceof PlaceBallEvent)) throw new Error("Expected PlaceBallEvent after deserialization")
 
     // Verify respot data is correctly preserved after deserialization
-    expect(deserialized.respot).to.not.be.undefined
-    expect(deserialized.respot!.id).to.equal(9)
-    expect(deserialized.respot!.pos).to.not.be.undefined
+    chaiExpect(deserialized.respot).to.not.be.undefined
+    const respot = deserialized.respot
+    if (!respot) throw new Error("Respot missing")
+    chaiExpect(respot.id).to.equal(9)
+    chaiExpect(respot.pos).to.not.be.undefined
 
     // Verify the nine ball position is valid (behind foot spot)
     const footSpotX = TableGeometry.tableX / 2
-    expect(deserialized.respot!.pos.x).to.be.greaterThan(footSpotX - R * 10)
+    chaiExpect(respot.pos.x).to.be.greaterThan(footSpotX - R * 10)
   })
 
   it("should correctly respot nine ball when WatchShot processes PlaceBallEvent", () => {
@@ -139,10 +148,13 @@ describe("BotEventHandler Respot Logic", () => {
 
     const placeBallEvent = publishedEvents.find(
       (e) => e instanceof PlaceBallEvent
-    ) as PlaceBallEvent
+    )
+    if (!(placeBallEvent instanceof PlaceBallEvent)) throw new Error("Expected PlaceBallEvent")
 
     // Capture the correct positions before serialization
-    const expectedNineBallPos = placeBallEvent.respot!.pos.clone()
+    const respotData = placeBallEvent.respot
+    if (!respotData) throw new Error("Expected respot data")
+    const expectedNineBallPos = respotData.pos.clone()
     const expectedCueBallPos = placeBallEvent.pos.clone()
 
     // Set up recipient container
@@ -167,39 +179,40 @@ describe("BotEventHandler Respot Logic", () => {
 
     // Serialize and deserialize as would happen over network
     const serialized = EventUtil.serialise(placeBallEvent)
-    const deserialized = EventUtil.fromSerialised(serialized) as PlaceBallEvent
+    const deserialized = EventUtil.fromSerialised(serialized)
+    if (!(deserialized instanceof PlaceBallEvent)) throw new Error("Expected PlaceBallEvent")
 
     // Process on recipient side using WatchShot.handlePlaceBall
     const watchShot = new WatchShot(recipientContainer)
     const resultController = watchShot.handlePlaceBall(deserialized)
 
     // Verify nine ball was respotted correctly
-    expect(recipientNineBall.state).to.equal(State.Stationary)
-    expect(recipientNineBall.onTable()).to.be.true
+    chaiExpect(recipientNineBall.state).to.equal(State.Stationary)
+    chaiExpect(recipientNineBall.onTable()).to.equal(true)
 
     // Nine ball should be respotted behind the foot spot
     const footSpotX = TableGeometry.tableX / 2
-    expect(recipientNineBall.pos.x).to.be.greaterThan(footSpotX - R * 10)
+    chaiExpect(recipientNineBall.pos.x).to.be.greaterThan(footSpotX - R * 10)
 
     // Verify result is PlaceBall controller with correct position
-    expect(resultController).to.be.instanceof(PlaceBall)
-    const placeBallController = resultController
+    chaiExpect(resultController).to.be.instanceof(PlaceBall)
+    const placeBallController = resultController as PlaceBall
 
     // Cue ball position should be in kitchen (negative x)
-    expect(placeBallController.startPos.x).to.be.lessThan(0)
+    chaiExpect(placeBallController.startPos.x).to.be.lessThan(0)
 
     // Nine ball and cue ball should be at different positions
     const distance = recipientNineBall.pos.distanceTo(
       placeBallController.startPos
     )
-    expect(distance).to.be.greaterThan(R * 2)
+    chaiExpect(distance).to.be.greaterThan(R * 2)
 
     // Verify positions match what was intended
-    expect(recipientNineBall.pos.x).to.be.approximately(
+    chaiExpect(recipientNineBall.pos.x).to.be.approximately(
       expectedNineBallPos.x,
       0.001
     )
-    expect(placeBallController.startPos.x).to.be.approximately(
+    chaiExpect(placeBallController.startPos.x).to.be.approximately(
       expectedCueBallPos.x,
       0.001
     )
@@ -213,12 +226,110 @@ describe("BotEventHandler Respot Logic", () => {
 
     eventHandler.handle(new PlaceBallEvent(placedPos, undefined, true))
 
-    const hit = publishedEvents.find((e) => e instanceof HitEvent) as HitEvent
-    expect(hit).to.not.be.undefined
+    const hit = publishedEvents.find((e) => e instanceof HitEvent)
+    if (!(hit instanceof HitEvent)) throw new Error("Expected HitEvent")
 
-    expect(hit.tablejson.aim.pos.x).to.be.closeTo(placedPos.x, 1e-9)
-    expect(hit.tablejson.aim.pos.y).to.be.closeTo(placedPos.y, 1e-9)
-    expect(hit.tablejson.aim.pos.z).to.be.closeTo(placedPos.z, 1e-9)
-    expect(hit.tablejson.aim.i).to.equal(0)
+    chaiExpect(hit.tablejson.aim.pos.x).to.be.closeTo(placedPos.x, 1e-9)
+    chaiExpect(hit.tablejson.aim.pos.y).to.be.closeTo(placedPos.y, 1e-9)
+    chaiExpect(hit.tablejson.aim.pos.z).to.be.closeTo(placedPos.z, 1e-9)
+    chaiExpect(hit.tablejson.aim.i).to.equal(0)
+  })
+
+  it("should notify player and stop when game is over", () => {
+    const eventHandler = createBotEventHandler(container, publishedEvents)
+    const notifySpy = jest.spyOn(container, "notifyLocal")
+
+    // Mock isEndOfGame to return true
+    jest.spyOn(container.rules, "isEndOfGame").mockReturnValue(true)
+
+    eventHandler.handle({ type: EventType.BEGIN })
+
+    expect(notifySpy).toHaveBeenCalledWith(expect.objectContaining({
+      type: "GameOver",
+      title: "YOU LOST"
+    }))
+  })
+
+  it("should handle foul with cue ball already on table", () => {
+    const cueball = container.table.cueball
+    cueball.state = State.Stationary
+    cueball.pos.set(0, 0, 0)
+
+    // Mock foulReason to return a reason
+    jest.spyOn(NineBall, "foulReason").mockReturnValue("Some foul")
+
+    const eventHandler = createBotEventHandler(container, publishedEvents)
+    eventHandler.handle({ type: EventType.BEGIN })
+
+    const placeBallEvent = publishedEvents.find(e => e instanceof PlaceBallEvent)
+    if (!(placeBallEvent instanceof PlaceBallEvent)) throw new Error("Expected PlaceBallEvent")
+    chaiExpect(placeBallEvent.pos.x).to.equal(0)
+    chaiExpect(placeBallEvent.pos.y).to.equal(0)
+  })
+
+  it("should handle miss and switch turn", () => {
+    // Mock foulReason to return null
+    jest.spyOn(NineBall, "foulReason").mockReturnValue(null)
+    // Mock potCount to return 0
+    jest.spyOn(Outcome, "potCount").mockReturnValue(0)
+
+    const eventHandler = createBotEventHandler(container, publishedEvents)
+    eventHandler.handle({ type: EventType.BEGIN })
+
+    const startAimEvent = publishedEvents.find(e => e instanceof StartAimEvent)
+    chaiExpect(startAimEvent).to.not.be.undefined
+  })
+
+  it("should use fallback target point if no next candidate ball", () => {
+    jest.spyOn(container.rules, "nextCandidateBall").mockReturnValue(undefined)
+
+    const eventHandler = createBotEventHandler(container, publishedEvents)
+    eventHandler.handle({ type: EventType.STARTAIM })
+
+    const hitEvent = publishedEvents.find(e => e instanceof HitEvent)
+    if (!(hitEvent instanceof HitEvent)) throw new Error("Expected HitEvent")
+  })
+
+  it("should respot ball during handlePlaceBall if respot data is present", () => {
+    const ball = container.table.balls[1]
+    ball.state = State.InPocket
+    const respotPos = new Vector3(1, 1, 0)
+
+    const eventHandler = createBotEventHandler(container, publishedEvents)
+    const placeBallEvent = new PlaceBallEvent(new Vector3(), { id: ball.id, pos: respotPos }, true)
+
+    eventHandler.handle(placeBallEvent)
+
+    chaiExpect(ball.state).to.equal(State.Stationary)
+    chaiExpect(ball.pos.x).to.equal(1)
+  })
+
+  it("should handle pot success and continue turn", () => {
+    // Mock foulReason to return null
+    jest.spyOn(NineBall, "foulReason").mockReturnValue(null)
+    // Mock potCount to return 1
+    jest.spyOn(Outcome, "potCount").mockReturnValue(1)
+
+    const eventHandler = createBotEventHandler(container, publishedEvents)
+    eventHandler.handle({ type: EventType.BEGIN })
+
+    const watchEvent = publishedEvents.find(e => e instanceof WatchEvent)
+    chaiExpect(watchEvent).to.not.be.undefined
+  })
+
+  it("should handle foul with 9-ball potted and respot it", () => {
+    const { cueball, nineBall } = setupCueballAndNineball(container)
+    const outcome = [Outcome.pot(cueball, 1), Outcome.pot(nineBall, 1)]
+    container.table.outcome = outcome
+
+    // Mock foulReason to return a reason
+    jest.spyOn(NineBall, "foulReason").mockReturnValue("Foul")
+
+    const eventHandler = createBotEventHandler(container, publishedEvents)
+    eventHandler.handle({ type: EventType.BEGIN })
+
+    const placeBallEvent = publishedEvents.find(e => e instanceof PlaceBallEvent) as PlaceBallEvent
+    chaiExpect(placeBallEvent.respot).to.not.be.undefined
+    chaiExpect(placeBallEvent.respot?.id).to.equal(9)
   })
 })
