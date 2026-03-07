@@ -7,6 +7,8 @@ import { ScoreEvent } from "../events/scoreevent"
 import { PlaceBallEvent } from "../events/placeballevent"
 import { RerackEvent } from "../events/rerackevent"
 import { BreakEvent } from "../events/breakevent"
+import { Session } from "../network/client/session"
+import { EventType } from "../events/eventtype"
 
 export class Spectate extends ControllerBase {
   override get name() {
@@ -23,6 +25,9 @@ export class Spectate extends ControllerBase {
       console.log(message)
       const event = EventUtil.fromSerialised(message)
       this.messages.push(event)
+
+      this.sniffNames(event)
+
       if (
         event instanceof HitEvent ||
         event instanceof AimEvent ||
@@ -35,6 +40,42 @@ export class Spectate extends ControllerBase {
       }
     })
     console.log("Spectate")
+  }
+
+  private sniffNames(event: GameEvent) {
+    if (!Session.hasInstance()) {
+      return
+    }
+    const session = Session.getInstance()
+    if (event.clientId === session.clientId) {
+      return
+    }
+
+    let changed = false
+    if (
+      event.type === EventType.BEGIN &&
+      !session.spectatedP1Name &&
+      event.playername
+    ) {
+      session.spectatedP1Name = event.playername
+      changed = true
+    } else if (
+      event.type === EventType.WATCHAIM &&
+      !session.spectatedP2Name &&
+      event.playername
+    ) {
+      session.spectatedP2Name = event.playername
+      changed = true
+    }
+
+    if (changed) {
+      const scores = this.container.getOrderedScores()
+      this.container.updateScoreHud(
+        scores.p1,
+        scores.p2,
+        this.container.currentBreak
+      )
+    }
   }
 
   override handleAim(event: AimEvent) {
