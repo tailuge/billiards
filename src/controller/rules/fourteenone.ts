@@ -6,17 +6,20 @@ import { Controller } from "../controller"
 import { NineBall } from "./nineball"
 import { Rules } from "./rules"
 
+import { Ball } from "../../model/ball"
+import { Container } from "../../container/container"
+
 export class FourteenOne extends NineBall implements Rules {
   override asset(): string {
     return "models/p8.min.gltf"
   }
 
-  constructor(container) {
+  constructor(container: Container) {
     super(container)
     this.rulename = "fourteenone"
   }
 
-  override rack() {
+  override rack(): Ball[] {
     return Rack.triangle()
   }
 
@@ -30,7 +33,7 @@ export class FourteenOne extends NineBall implements Rules {
     return Outcome.isCueBallPotted(this.container.table.cueball, outcome)
   }
 
-  checkRerack(table: Table) {
+  private checkRerack(table: Table): void {
     const onTable = table.balls
       .filter((b) => b.onTable())
       .filter((b) => b !== table.cueball)

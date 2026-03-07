@@ -7,6 +7,8 @@ export interface FoulResult {
   reason: string | null
 }
 
+import { Ball } from "../../model/ball"
+
 export interface ShotInfo {
   pots: number
   firstCollision: any
@@ -41,7 +43,7 @@ export class SnookerUtils {
     table: Table,
     targetIsRed: boolean,
     previousPotRed: boolean,
-    firstCollision
+    firstCollision: any
   ): boolean {
     if (!firstCollision) {
       return false
@@ -125,20 +127,20 @@ export class SnookerUtils {
     return null
   }
 
-  static respotAllPottedColours(table: Table, outcome: Outcome[]) {
+  static respotAllPottedColours(table: Table, outcome: Outcome[]): Ball[] {
     return Outcome.pots(outcome)
       .filter((ball) => ball.id < 7)
       .filter((ball) => ball.id !== 0)
       .map((ball) => Respot.respot(ball, table))
   }
 
-  static redsOnTable(table: Table) {
-    const reds = table.balls.slice(7).filter((ball: any) => ball.onTable())
+  static redsOnTable(table: Table): Ball[] {
+    const reds = table.balls.slice(7).filter((ball: Ball) => ball.onTable())
     return reds
   }
 
-  static coloursOnTable(table: Table) {
-    return table.balls.slice(1, 7).filter((ball: any) => ball.onTable())
+  static coloursOnTable(table: Table): Ball[] {
+    return table.balls.slice(1, 7).filter((ball: Ball) => ball.onTable())
   }
 
   static colourName(id: number): string {

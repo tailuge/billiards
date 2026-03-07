@@ -27,15 +27,15 @@ export class ThreeCushion implements Rules {
   previousBreak = 0
   rulename = "threecushion"
 
-  constructor(container) {
+  constructor(container: Container) {
     this.container = container
   }
 
-  startTurn() {
+  startTurn(): void {
     // not used
   }
 
-  nextCandidateBall() {
+  nextCandidateBall(): Ball | undefined {
     if (isFirstShot(this.container.recorder)) {
       return undefined
     }
@@ -45,7 +45,7 @@ export class ThreeCushion implements Rules {
     )
   }
 
-  placeBall(_?): Vector3 {
+  placeBall(_?: Vector3): Vector3 {
     return zero
   }
 
@@ -53,11 +53,11 @@ export class ThreeCushion implements Rules {
     return "models/threecushion.min.gltf"
   }
 
-  secondToPlay() {
+  secondToPlay(): void {
     this.cueball = this.container.table.balls[1]
   }
 
-  tableGeometry() {
+  tableGeometry(): void {
     const UMB_TABLE_X = 92.36
     const UMB_TABLE_Y = 46.18
 
@@ -77,7 +77,7 @@ export class ThreeCushion implements Rules {
     return table
   }
 
-  rack() {
+  rack(): Ball[] {
     return Rack.three()
   }
 
@@ -113,11 +113,11 @@ export class ThreeCushion implements Rules {
     return this.cueball === balls[0] ? balls[1] : balls[0]
   }
 
-  isPartOfBreak(outcome: Outcome[]) {
+  isPartOfBreak(outcome: Outcome[]): boolean {
     return Outcome.isThreeCushionPoint(this.cueball, outcome)
   }
 
-  isEndOfGame(_: Outcome[]) {
+  isEndOfGame(_: Outcome[]): boolean {
     const { p1: s1, p2: s2 } = this.container.getOrderedScores()
     return s1 >= ThreeCushionConfig.raceTo || s2 >= ThreeCushionConfig.raceTo
   }
@@ -126,7 +126,7 @@ export class ThreeCushion implements Rules {
     return MatchResultHelper.presentGameEnd(this.container, this.rulename)
   }
 
-  allowsPlaceBall() {
+  allowsPlaceBall(): boolean {
     return false
   }
 }

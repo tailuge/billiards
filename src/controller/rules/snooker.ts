@@ -62,7 +62,7 @@ export class Snooker implements Rules {
     return this.targetColourRule(outcome, info)
   }
 
-  targetRedRule(outcome: Outcome[], info: ShotInfo): Controller {
+  private targetRedRule(outcome: Outcome[], info: ShotInfo): Controller {
     if (info.legalFirstCollision && Outcome.onlyRedsPotted(outcome)) {
       this.currentBreak += info.pots
       this.container.addMyScore(info.pots)
@@ -74,7 +74,7 @@ export class Snooker implements Rules {
     return this.foul(outcome, info)
   }
 
-  targetColourRule(outcome: Outcome[], info: ShotInfo): Controller {
+  private targetColourRule(outcome: Outcome[], info: ShotInfo): Controller {
     if (info.whitePotted) {
       return this.foul(outcome, info)
     }
@@ -118,7 +118,7 @@ export class Snooker implements Rules {
     return this.continueBreak()
   }
 
-  foul(outcome: Outcome[], info: ShotInfo): Controller {
+  private foul(outcome: Outcome[], info: ShotInfo): Controller {
     const foulResult = SnookerUtils.calculateFoul(outcome, info)
     this.foulPoints = foulResult.points
     this.container.addOpponentScore(this.foulPoints)
@@ -142,7 +142,7 @@ export class Snooker implements Rules {
     return this.switchPlayer()
   }
 
-  tableGeometry() {
+  tableGeometry(): void {
     TableGeometry.hasPockets = true
   }
 
@@ -156,7 +156,7 @@ export class Snooker implements Rules {
     return this.cueball
   }
 
-  secondToPlay() {
+  secondToPlay(): void {
     // only for three cushion
   }
 
@@ -176,18 +176,18 @@ export class Snooker implements Rules {
     return Snooker.tablemodel
   }
 
-  startTurn() {
+  startTurn(): void {
     this.previousPotRed = false
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     this.previousBreak = this.currentBreak
     this.currentBreak = 0
   }
 
-  rack() {
+  rack(): Ball[] {
     return Rack.snooker()
   }
 
-  nextCandidateBall() {
+  nextCandidateBall(): Ball | undefined {
     if (isFirstShot(this.container.recorder)) {
       return undefined
     }
@@ -225,7 +225,7 @@ export class Snooker implements Rules {
     return new Vector3(Rack.baulk, -Rack.sixth / 2.6, 0)
   }
 
-  switchPlayer(): Controller {
+  private switchPlayer(): Controller {
     const table = this.container.table
     this.container.sendEvent(new StartAimEvent(this.foulPoints))
     if (this.container.isSinglePlayer) {
@@ -237,7 +237,7 @@ export class Snooker implements Rules {
     return new WatchAim(this.container)
   }
 
-  continueBreak(): Controller {
+  private continueBreak(): Controller {
     const table = this.container.table
     this.container.sound.playSuccess(table.inPockets())
     if (Outcome.isClearTable(table)) {
@@ -251,7 +251,7 @@ export class Snooker implements Rules {
     return SnookerScoring.presentGameEnd(this.container, this.rulename)
   }
 
-  whiteInHand(): Controller {
+  private whiteInHand(): Controller {
     this.startTurn()
     if (this.container.isSinglePlayer) {
       return new PlaceBall(this.container)
@@ -264,7 +264,7 @@ export class Snooker implements Rules {
     return this.snookerrule(outcome)
   }
 
-  respot(outcome: Outcome[]) {
+  private respot(outcome: Outcome[]): void {
     const respotted = SnookerUtils.respotAllPottedColours(
       this.container.table,
       outcome
