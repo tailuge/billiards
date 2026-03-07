@@ -75,7 +75,9 @@ describe("BotRelay", () => {
     it("should log error if message parsing fails", () => {
       const logSpy = jest.spyOn(logger, "incoming")
       botRelay.publish("channel", "invalid json")
-      expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("Error parsing message"))
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Error parsing message")
+      )
     })
   })
 
@@ -99,14 +101,18 @@ describe("BotRelay", () => {
     it("should log error if event handling fails", () => {
       const logSpy = jest.spyOn(logger, "incoming")
       // Mock handle to throw
-      jest.spyOn((botRelay as any).eventHandler, "handle").mockImplementation(() => {
-        throw new Error("fail")
-      })
+      jest
+        .spyOn((botRelay as any).eventHandler, "handle")
+        .mockImplementation(() => {
+          throw new Error("fail")
+        })
 
       botRelay.enqueueMessage(EventUtil.serialise(new ChatEvent("me", "msg")))
       jest.advanceTimersByTime(500)
 
-      expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("Error handling message"))
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Error handling message")
+      )
     })
 
     it("should process multiple messages sequentially", () => {
@@ -162,7 +168,9 @@ describe("BotRelay", () => {
 
       jest.advanceTimersByTime(100)
       expect(callback).toHaveBeenCalledTimes(1)
-      expect(EventUtil.fromSerialised(callback.mock.calls[0][0]).type).toBe(EventType.CHAT)
+      expect(EventUtil.fromSerialised(callback.mock.calls[0][0]).type).toBe(
+        EventType.CHAT
+      )
 
       jest.advanceTimersByTime(100)
       expect(callback).toHaveBeenCalledTimes(2)
@@ -178,7 +186,9 @@ describe("BotRelay", () => {
 
       jest.advanceTimersByTime(100)
       expect(callback).toHaveBeenCalledTimes(1)
-      const event = EventUtil.fromSerialised(callback.mock.calls[0][0]) as ChatEvent
+      const event = EventUtil.fromSerialised(
+        callback.mock.calls[0][0]
+      ) as ChatEvent
       expect(event.message).toBe("second")
     })
 

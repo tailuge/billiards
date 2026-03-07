@@ -149,5 +149,4 @@ export class Logger {
 
     this.logElement.scrollTop = this.logElement.scrollHeight
   }
-
 }

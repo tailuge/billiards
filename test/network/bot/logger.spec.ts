@@ -112,7 +112,7 @@ describe("Logger", () => {
       return originalGetElementById(id)
     })
 
-    new Logger()
+    expect(() => new Logger()).not.toThrow()
 
     document.getElementById = originalGetElementById
     expect(true).toBe(true)
@@ -121,8 +121,8 @@ describe("Logger", () => {
   it("should handle missing elements during expanded state update", () => {
     const originalGetElementById = document.getElementById.bind(document)
     document.getElementById = jest.fn().mockImplementation((id) => {
-        if (id === "botDebugToggle") return null
-        return originalGetElementById(id)
+      if (id === "botDebugToggle") return null
+      return originalGetElementById(id)
     })
 
     const l = logger as any

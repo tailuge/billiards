@@ -126,7 +126,6 @@ export class BotEventHandler {
     this.publishSequenceToPlayer([new StartAimEvent()])
   }
 
-
   private handleStartAim(): void {
     this.logs.show()
     const hitEvent = this.aim()

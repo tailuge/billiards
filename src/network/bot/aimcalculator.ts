@@ -111,7 +111,9 @@ export class AimCalculator {
     return targetPos
       .clone()
       .add(
-        incidentVector.multiplyScalar(R * AimCalculator.GHOST_BALL_DISTANCE_FACTOR)
+        incidentVector.multiplyScalar(
+          R * AimCalculator.GHOST_BALL_DISTANCE_FACTOR
+        )
       )
   }
 
