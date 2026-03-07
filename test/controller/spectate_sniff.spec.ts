@@ -40,7 +40,8 @@ describe("Spectate Name Sniffing", () => {
   })
 
   it("should sniff names from BEGIN and WATCHAIM events", () => {
-    new Spectate(container, messageRelay, "test-table")
+    const spectate = new Spectate(container, messageRelay, "test-table")
+    expect(spectate).to.not.be.null
     const session = Session.getInstance()
 
     // Simulate BEGIN event from P1 (Peter)
@@ -66,7 +67,8 @@ describe("Spectate Name Sniffing", () => {
   })
 
   it("should not override names once set", () => {
-    new Spectate(container, messageRelay, "test-table")
+    const spectate = new Spectate(container, messageRelay, "test-table")
+    expect(spectate).to.not.be.null
     const session = Session.getInstance()
 
     const begin1 = new BeginEvent()
@@ -83,7 +85,8 @@ describe("Spectate Name Sniffing", () => {
   })
 
   it("should ignore events from the spectator itself", () => {
-    new Spectate(container, messageRelay, "test-table")
+    const spectate = new Spectate(container, messageRelay, "test-table")
+    expect(spectate).to.not.be.null
     const session = Session.getInstance()
 
     const begin = new BeginEvent()

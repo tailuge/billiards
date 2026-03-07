@@ -52,17 +52,29 @@ export class Spectate extends ControllerBase {
     }
 
     let changed = false
-    if (event.type === EventType.BEGIN && !session.spectatedP1Name) {
+    if (
+      event.type === EventType.BEGIN &&
+      !session.spectatedP1Name &&
+      event.playername
+    ) {
       session.spectatedP1Name = event.playername
       changed = true
-    } else if (event.type === EventType.WATCHAIM && !session.spectatedP2Name) {
+    } else if (
+      event.type === EventType.WATCHAIM &&
+      !session.spectatedP2Name &&
+      event.playername
+    ) {
       session.spectatedP2Name = event.playername
       changed = true
     }
 
     if (changed) {
       const scores = this.container.getOrderedScores()
-      this.container.updateScoreHud(scores.p1, scores.p2, 0)
+      this.container.updateScoreHud(
+        scores.p1,
+        scores.p2,
+        this.container.currentBreak
+      )
     }
   }
 
