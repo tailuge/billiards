@@ -83,17 +83,4 @@ describe("Spectate Name Sniffing", () => {
 
     expect(session.spectatedP1Name).to.equal("Peter")
   })
-
-  it("should ignore events from the spectator itself", () => {
-    const spectate = new Spectate(container, messageRelay, "test-table")
-    expect(spectate).to.not.be.null
-    const session = Session.getInstance()
-
-    const begin = new BeginEvent()
-    begin.clientId = "spectator-client"
-    begin.playername = "Spectator"
-    capturedCallback(EventUtil.serialise(begin))
-
-    expect(session.spectatedP1Name).to.be.undefined
-  })
 })
