@@ -1,10 +1,12 @@
+import { Container } from "../../container/container"
 import { FourteenOne } from "./fourteenone"
 import { NineBall } from "./nineball"
+import { Rules } from "./rules"
 import { Snooker } from "./snooker"
 import { ThreeCushion } from "./threecushion"
 
 export class RuleFactory {
-  static create(ruletype, container) {
+  static create(ruletype: string, container: Container): Rules {
     switch (ruletype) {
       case "threecushion":
         return new ThreeCushion(container)

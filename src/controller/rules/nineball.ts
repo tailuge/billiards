@@ -26,26 +26,26 @@ export class NineBall implements Rules {
   previousBreak = 0
   rulename = "nineball"
 
-  constructor(container) {
+  constructor(container: Container) {
     this.container = container
   }
 
-  startTurn() {
+  startTurn(): void {
     this.previousBreak = this.currentBreak
     this.currentBreak = 0
   }
 
-  nextCandidateBall() {
+  nextCandidateBall(): Ball | undefined {
     return this.container.table.balls
       .filter((b) => b !== this.cueball && b.onTable())
       .sort((a, b) => (a.label || 0) - (b.label || 0))[0]
   }
 
-  placeBall(target?): Vector3 {
+  placeBall(target?: Vector3): Vector3 {
     if (target) {
       const max = new Vector3(TableGeometry.tableX, TableGeometry.tableY)
       const min = new Vector3(-TableGeometry.tableX, -TableGeometry.tableY)
-      return target.clamp(min, max)
+      return target.clone().clamp(min, max)
     }
     return new Vector3((-R * 11) / 0.5, 0, 0)
   }
@@ -54,7 +54,7 @@ export class NineBall implements Rules {
     return "models/p8.min.gltf"
   }
 
-  tableGeometry() {
+  tableGeometry(): void {
     TableGeometry.hasPockets = true
   }
 
@@ -64,7 +64,7 @@ export class NineBall implements Rules {
     return table
   }
 
-  rack() {
+  rack(): Ball[] {
     return Rack.diamond()
   }
 
@@ -149,11 +149,11 @@ export class NineBall implements Rules {
     return new WatchAim(this.container)
   }
 
-  isPartOfBreak(outcome: Outcome[]) {
+  isPartOfBreak(outcome: Outcome[]): boolean {
     return Outcome.isBallPottedNoFoul(this.container.table.cueball, outcome)
   }
 
-  isEndOfGame(outcome: Outcome[]) {
+  isEndOfGame(outcome: Outcome[]): boolean {
     return (
       !this.isFoul(outcome) &&
       Outcome.pots(outcome).includes(this.container.table.balls[9])
@@ -165,11 +165,11 @@ export class NineBall implements Rules {
     return this.cueball
   }
 
-  secondToPlay() {
+  secondToPlay(): void {
     // only for three cushion
   }
 
-  allowsPlaceBall() {
+  allowsPlaceBall(): boolean {
     return true
   }
 

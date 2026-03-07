@@ -11,16 +11,16 @@ export interface Rules {
   rulename: string
   update(outcome: Outcome[]): Controller
   rack(): Ball[]
-  tableGeometry()
+  tableGeometry(): void
   table(): Table
-  secondToPlay()
+  secondToPlay(): void
   otherPlayersCueBall(): Ball
   isPartOfBreak(outcome: Outcome[]): boolean
   isEndOfGame(outcome: Outcome[]): boolean
   allowsPlaceBall(): boolean
-  placeBall(target?): Vector3
+  placeBall(target?: Vector3): Vector3
   asset(): string
-  nextCandidateBall()
-  startTurn()
+  nextCandidateBall(): Ball | undefined
+  startTurn(): void
   handleGameEnd(isWinner: boolean): Controller
 }

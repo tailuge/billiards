@@ -126,4 +126,11 @@ describe("FourteenOne", () => {
     expect(before).to.be.equal(after)
     done()
   })
+
+  it("FourteenOne asset and foul", (done) => {
+    const rules = container.rules as any
+    expect(rules.asset()).to.equal("models/p8.min.gltf")
+    expect(rules.isFoul([])).to.be.false
+    done()
+  })
 })
