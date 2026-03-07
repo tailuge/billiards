@@ -1,4 +1,5 @@
 import { expect } from "chai"
+import { Vector3 } from "three"
 import { Container } from "../../src/container/container"
 import { Ball, State } from "../../src/model/ball"
 import { Outcome } from "../../src/model/outcome"
@@ -302,5 +303,21 @@ describe("NineBall Rules", () => {
     const rerack = rerackShot as RerackEvent
     expect(rerack.ballinfo.balls).to.have.length(1)
     expect(rerack.ballinfo.balls[0].id).to.equal(nineBall.id)
+  })
+
+  it("should cover placeBall and other methods", () => {
+    const pos = nineball.placeBall()
+    expect(pos.x).to.be.below(0)
+
+    const target = new Vector3(1000, 1000, 0)
+    const clamped = nineball.placeBall(target)
+    expect(clamped.x).to.be.lessThan(1000)
+    expect(clamped.y).to.be.lessThan(1000)
+
+    expect(nineball.asset()).to.equal("models/p8.min.gltf")
+    expect(nineball.otherPlayersCueBall()).to.equal(container.table.cueball)
+    nineball.secondToPlay() // Should not throw
+    expect(nineball.allowsPlaceBall()).to.be.true
+    expect(nineball.isPartOfBreak([])).to.be.false
   })
 })

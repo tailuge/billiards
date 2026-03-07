@@ -11,6 +11,9 @@ import { Ball, State } from "../../src/model/ball"
 import { Vector3 } from "three"
 import { PlayShot } from "../../src/controller/playshot"
 import { Aim } from "../../src/controller/aim"
+import { StationaryEvent } from "../../src/events/stationaryevent"
+import { AimEvent } from "../../src/events/aimevent"
+import { HitEvent } from "../../src/events/hitevent"
 import { PlaceBall } from "../../src/controller/placeball"
 import { Snooker } from "../../src/controller/rules/snooker"
 import { Assets } from "../../src/view/assets"
@@ -508,5 +511,37 @@ describe("Snooker", () => {
     })
 
     Session.reset()
+  })
+
+  it("nextCandidateBall logic", () => {
+    // First shot should return undefined
+    expect(snooker.nextCandidateBall()).to.be.undefined
+
+    const hit = new HitEvent()
+    hit.tablejson = { aim: new AimEvent() } as any
+    container.recorder.record(hit)
+
+    // Mock not first shot
+    const recorder = container.recorder
+
+    // reds on table
+    expect(snooker.nextCandidateBall()).to.not.be.undefined
+    expect(snooker.nextCandidateBall()!.id).to.be.greaterThan(6)
+
+    // previous pot red, target colour
+    snooker.previousPotRed = true
+    const ball = snooker.nextCandidateBall()
+    expect(ball!.id).to.be.within(1, 6)
+
+    // no reds on table
+    markAllRedsPotted()
+    snooker.previousPotRed = false
+    expect(snooker.nextCandidateBall()!.id).to.be.within(1, 6)
+  })
+
+  it("tableGeometry and secondToPlay", () => {
+    snooker.tableGeometry()
+    snooker.secondToPlay()
+    // Should not throw
   })
 })

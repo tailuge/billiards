@@ -3,6 +3,8 @@ import { Container } from "../../src/container/container"
 import { Aim } from "../../src/controller/aim"
 import { PlayShot } from "../../src/controller/playshot"
 import { StationaryEvent } from "../../src/events/stationaryevent"
+import { AimEvent } from "../../src/events/aimevent"
+import { HitEvent } from "../../src/events/hitevent"
 import { GameEvent } from "../../src/events/gameevent"
 import { Outcome } from "../../src/model/outcome"
 import { RuleFactory } from "../../src/controller/rules/rulefactory"
@@ -149,6 +151,32 @@ describe("ThreeCushion", () => {
     )
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(End)
+    done()
+  })
+
+  it("ThreeCushion properties and simple methods", (done) => {
+    const rules = RuleFactory.create(rule, container)
+    expect(rules.asset()).to.equal("models/threecushion.min.gltf")
+    const pb = rules.placeBall()
+    expect(pb.x).to.equal(0)
+    expect(pb.y).to.equal(0)
+    expect(pb.z).to.equal(0)
+    rules.startTurn() // Should not throw
+    done()
+  })
+
+  it("ThreeCushion otherPlayersCueBall and nextCandidateBall", (done) => {
+    const rules = RuleFactory.create(rule, container)
+    rules.cueball = container.table.balls[0]
+    expect(rules.otherPlayersCueBall()).to.equal(container.table.balls[1])
+    rules.cueball = container.table.balls[1]
+    expect(rules.otherPlayersCueBall()).to.equal(container.table.balls[0])
+
+    const hit = new HitEvent()
+    hit.tablejson = { aim: new AimEvent() } as any
+    container.recorder.record(hit)
+
+    expect(rules.nextCandidateBall()).to.not.be.undefined
     done()
   })
 })

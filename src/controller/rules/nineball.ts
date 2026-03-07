@@ -149,11 +149,11 @@ export class NineBall implements Rules {
     return new WatchAim(this.container)
   }
 
-  isPartOfBreak(outcome: Outcome[]) {
+  isPartOfBreak(outcome: Outcome[]): boolean {
     return Outcome.isBallPottedNoFoul(this.container.table.cueball, outcome)
   }
 
-  isEndOfGame(outcome: Outcome[]) {
+  isEndOfGame(outcome: Outcome[]): boolean {
     return (
       !this.isFoul(outcome) &&
       Outcome.pots(outcome).includes(this.container.table.balls[9])
