@@ -91,7 +91,7 @@ export class AimCalculator {
   }
 
   /**
-   * Calculates a score based on the cut angle. 0 is straight, 2 is a complete back-cut.
+   * Calculates a score based on the cut angle.
    */
   private calculateCutScore(
     cuePos: Vector3,
