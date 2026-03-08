@@ -187,4 +187,14 @@ describe("MatchResult Construction", () => {
     expect(result.winner).to.equal("TestPlayer")
     expect(result.winnerScore).to.equal(7)
   })
+
+  it("MatchResultHelper should show Lostber subtext in bot mode loss", () => {
+    Session.init("test-client", "TestPlayer", "test-table", false, true)
+    container = createNineBallContainer()
+    const result = (container.rules as any).handleGameEnd(false)
+    expect(result.name).to.equal("End")
+    const notification = document.getElementById("notification")
+    expect(notification?.innerHTML).to.contain("Lostber 🦞")
+    expect(notification?.innerHTML).to.contain("New Game")
+  })
 })
