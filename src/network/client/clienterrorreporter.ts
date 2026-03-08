@@ -81,6 +81,9 @@ export class ClientErrorReporter {
   }
 
   start() {
+    if (!(typeof window !== "undefined" && process.env.NODE_ENV !== "test"))
+      return
+
     this.patchConsole()
     this.patchGlobalErrors()
 
