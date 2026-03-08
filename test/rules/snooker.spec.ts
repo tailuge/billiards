@@ -11,7 +11,6 @@ import { Ball, State } from "../../src/model/ball"
 import { Vector3 } from "three"
 import { PlayShot } from "../../src/controller/playshot"
 import { Aim } from "../../src/controller/aim"
-import { StationaryEvent } from "../../src/events/stationaryevent"
 import { AimEvent } from "../../src/events/aimevent"
 import { HitEvent } from "../../src/events/hitevent"
 import { PlaceBall } from "../../src/controller/placeball"
@@ -522,7 +521,6 @@ describe("Snooker", () => {
     container.recorder.record(hit)
 
     // Mock not first shot
-    const recorder = container.recorder
 
     // reds on table
     expect(snooker.nextCandidateBall()).to.not.be.undefined

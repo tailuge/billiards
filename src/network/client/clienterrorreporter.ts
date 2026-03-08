@@ -37,17 +37,17 @@ export interface ErrorReport {
 }
 
 export class ClientErrorReporter {
-  private endpoint: string
-  private sid: string
+  private readonly endpoint: string
+  private readonly sid: string
   private queue: ErrorReport[] = []
-  private seen = new Map<string, number>()
+  private readonly seen = new Map<string, number>()
 
   private readonly maxPerKey: number
   private readonly flushIntervalMs: number
   private readonly maxQueueSize: number
 
   private intervalId: ReturnType<typeof setInterval> | undefined
-  private boundFlush: () => void
+  private readonly boundFlush: () => void
   private originalConsoleError?: typeof console.error
   private originalConsoleWarn?: typeof console.warn
 
@@ -73,7 +73,7 @@ export class ClientErrorReporter {
       return crypto.randomUUID()
     } catch {
       return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-        const r = (Math.random() * 16) | 0
+        const r = Math.trunc(Math.random() * 16)
         const v = c === "x" ? r : (r & 0x3) | 0x8
         return v.toString(16)
       })
@@ -89,7 +89,7 @@ export class ClientErrorReporter {
 
     this.intervalId = setInterval(this.boundFlush, this.flushIntervalMs)
 
-    window.addEventListener("pagehide", this.boundFlush)
+    globalThis.addEventListener("pagehide", this.boundFlush)
   }
 
   stop() {
@@ -100,7 +100,7 @@ export class ClientErrorReporter {
       this.intervalId = undefined
     }
 
-    window.removeEventListener("pagehide", this.boundFlush)
+    globalThis.removeEventListener("pagehide", this.boundFlush)
 
     if (this.originalConsoleError) {
       console.error = this.originalConsoleError
@@ -126,18 +126,18 @@ export class ClientErrorReporter {
   }
 
   private patchGlobalErrors() {
-    window.addEventListener("error", (e) => {
+    globalThis.addEventListener("error", (e) => {
       this.capture("uncaught", [e.error || e.message])
     })
 
-    window.addEventListener("unhandledrejection", (e) => {
+    globalThis.addEventListener("unhandledrejection", (e) => {
       this.capture("promise", [e.reason])
     })
   }
 
   private capture(type: string, args: unknown[]) {
     try {
-      let message = args.map((a) => String(a)).join(" ")
+      let message = args.map(String).join(" ")
       let stack: string | undefined
 
       if (args[0] instanceof Error) {
