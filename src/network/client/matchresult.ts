@@ -32,7 +32,7 @@ export class MatchResultHelper {
     const playerIndex = session?.playerIndex ?? 0
     const amIWinner = forcedAmIWinner ?? winnerIndex === playerIndex
 
-    const subtext = this.getScoreSubtext(container, amIWinner)
+    const subtext = this.getScoreSubtext(container)
 
     if (amIWinner) {
       this.notifyWin(container, subtext)
@@ -71,7 +71,7 @@ export class MatchResultHelper {
     container.notifyLocal({
       type: "GameOver",
       title: "YOU LOST",
-      subtext: subtext,
+      subtext: Session.isBotMode() ? "Lostber 🦞" : subtext,
       icon: "🥈",
       extraClass: "is-loser",
       extra: gameOverButtons.forMode(
@@ -107,14 +107,7 @@ export class MatchResultHelper {
     )
   }
 
-  private static getScoreSubtext(
-    container: Container,
-    amIWinner?: boolean
-  ): string {
-    if (Session.isBotMode() && amIWinner === false) {
-      return "Lostber 🦞"
-    }
-
+  private static getScoreSubtext(container: Container): string {
     if (container.isSinglePlayer) {
       return `Score: ${container.getMyScore()}`
     }
