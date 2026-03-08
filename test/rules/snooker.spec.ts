@@ -536,5 +536,4 @@ describe("Snooker", () => {
     snooker.previousPotRed = false
     expect(snooker.nextCandidateBall()!.id).to.be.within(1, 6)
   })
-
 })

@@ -18,6 +18,7 @@
  *
  * CAPTURED SOURCES:
  * - console.error and console.warn calls
+ * - console.log calls (only when captureAll is true, or on Apple devices)
  * - window.onerror (uncaught JavaScript errors)
  * - window.onunhandledrejection (unhandled Promise rejections)
  * @example
@@ -45,11 +46,13 @@ export class ClientErrorReporter {
   private readonly maxPerKey: number
   private readonly flushIntervalMs: number
   private readonly maxQueueSize: number
+  public readonly captureAll: boolean
 
   private intervalId: ReturnType<typeof setInterval> | undefined
   private readonly boundFlush: () => void
   private originalConsoleError?: typeof console.error
   private originalConsoleWarn?: typeof console.warn
+  private originalConsoleLog?: typeof console.log
 
   constructor(
     endpoint: string,
@@ -57,6 +60,7 @@ export class ClientErrorReporter {
       maxPerKey?: number
       flushIntervalMs?: number
       maxQueueSize?: number
+      captureAll?: boolean
     }
   ) {
     this.endpoint = endpoint
@@ -64,6 +68,10 @@ export class ClientErrorReporter {
     this.maxPerKey = options?.maxPerKey ?? 3
     this.flushIntervalMs = options?.flushIntervalMs ?? 5000
     this.maxQueueSize = options?.maxQueueSize ?? 20
+    const isSafari: boolean = /^((?!chrome|android).)*safari/i.test(
+      navigator.userAgent
+    )
+    this.captureAll = isSafari
 
     this.boundFlush = this.flush.bind(this)
   }
@@ -108,6 +116,9 @@ export class ClientErrorReporter {
     if (this.originalConsoleWarn) {
       console.warn = this.originalConsoleWarn
     }
+    if (this.originalConsoleLog) {
+      console.log = this.originalConsoleLog
+    }
   }
 
   private patchConsole() {
@@ -122,6 +133,14 @@ export class ClientErrorReporter {
     console.warn = (...args: unknown[]) => {
       this.capture("warn", args)
       this.originalConsoleWarn!.apply(console, args)
+    }
+
+    if (this.captureAll) {
+      this.originalConsoleLog = console.log
+      console.log = (...args: unknown[]) => {
+        this.capture("log", args)
+        this.originalConsoleLog!.apply(console, args)
+      }
     }
   }
 

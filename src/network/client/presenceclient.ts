@@ -111,7 +111,8 @@ export class PresenceClient {
     if (this.websocket) {
       try {
         this.websocket.close()
-      } catch {
+      } catch (err) {
+        console.error("Failed to close WebSocket:", err)
         // Ignore close failures to avoid affecting gameplay.
       }
       this.websocket = null
