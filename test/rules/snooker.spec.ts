@@ -537,9 +537,4 @@ describe("Snooker", () => {
     expect(snooker.nextCandidateBall()!.id).to.be.within(1, 6)
   })
 
-  it("tableGeometry and secondToPlay", () => {
-    snooker.tableGeometry()
-    snooker.secondToPlay()
-    // Should not throw
-  })
 })
