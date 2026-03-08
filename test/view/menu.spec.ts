@@ -31,4 +31,20 @@ describe("Menu", () => {
     )
     done()
   })
+
+  it("concede notification buttons clear the notification", (done) => {
+    const concede = document.getElementById("concede") as HTMLButtonElement
+    fireEvent.click(concede)
+
+    const notification = document.getElementById("notification")
+    expect(notification?.innerHTML).to.contain("Concede Game")
+
+    const playOn = document.querySelector(
+      "[data-notification-action='concede-cancel']"
+    ) as HTMLButtonElement
+    fireEvent.click(playOn)
+
+    expect(notification?.innerHTML).to.equal("")
+    done()
+  })
 })

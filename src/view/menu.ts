@@ -5,6 +5,7 @@ export class Menu {
   container: Container
   share: HTMLButtonElement
   camera: HTMLButtonElement
+  concede: HTMLButtonElement
 
   disabled = true
 
@@ -13,10 +14,31 @@ export class Menu {
 
     this.share = this.getElement("share")
     this.camera = this.getElement("camera")
+    this.concede = this.getElement("concede")
     this.setShareVisible(false)
     if (this.camera) {
       this.camera.onclick = (_) => {
         this.adjustCamera()
+      }
+    }
+    if (this.concede) {
+      this.concede.onclick = (_) => {
+        this.container.notification.show(
+          {
+            type: "Info",
+            title: "Concede Game",
+            subtext: "opponent will win",
+            extra:
+              '<button class="notification-btn" data-notification-action="concede-confirm">Concede</button>' +
+              '<button class="notification-btn" data-notification-action="concede-cancel">Play on</button>',
+            duration: 0,
+          },
+          0,
+          {
+            "concede-confirm": () => this.container.notification.clear(),
+            "concede-cancel": () => this.container.notification.clear(),
+          }
+        )
       }
     }
   }
@@ -36,5 +58,12 @@ export class Menu {
     }
     this.share.hidden = !visible
     this.share.disabled = !visible
+  }
+
+  setConcedeVisible(visible: boolean) {
+    if (!this.concede) {
+      return
+    }
+    this.concede.hidden = !visible
   }
 }

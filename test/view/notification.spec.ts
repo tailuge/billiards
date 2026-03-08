@@ -77,4 +77,42 @@ describe("Notification", () => {
     jest.advanceTimersByTime(10000)
     expect(element?.innerHTML).toContain("Persistent Message")
   })
+
+  it("should trigger custom action handlers", () => {
+    const onConfirm = jest.fn()
+    notification.show(
+      {
+        type: "Info",
+        title: "Confirm",
+        extra: `<button data-notification-action="confirm">Confirm</button>`,
+        duration: 0,
+      },
+      0,
+      { confirm: onConfirm }
+    )
+
+    const button = document.querySelector(
+      "[data-notification-action='confirm']"
+    ) as HTMLButtonElement
+    button.click()
+
+    expect(onConfirm).toHaveBeenCalledTimes(1)
+  })
+
+  it("should clear on built-in clear action", () => {
+    notification.show({
+      type: "Info",
+      title: "Dismiss me",
+      extra: `<button data-notification-action="clear">Dismiss</button>`,
+      duration: 0,
+    })
+
+    const button = document.querySelector(
+      "[data-notification-action='clear']"
+    ) as HTMLButtonElement
+    button.click()
+
+    const element = document.getElementById("notification")
+    expect(element?.innerHTML).toBe("")
+  })
 })

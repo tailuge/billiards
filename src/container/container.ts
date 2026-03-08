@@ -338,6 +338,7 @@ export class Container {
         controller.name === "Replay" ||
           (this.wasReplay && controller.name === "End")
       )
+      this.menu?.setConcedeVisible(!this.isSinglePlayer && !this.replayMode)
       this.controller.onFirst()
     }
   }

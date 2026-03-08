@@ -1,4 +1,5 @@
 import { id } from "../utils/dom"
+import { LOBBY_URL } from "../utils/gameover"
 
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info"
@@ -10,12 +11,16 @@ export interface NotificationData {
   extraClass?: string
 }
 
+export type NotificationActionHandlers = Record<string, () => void>
+
 export class Notification {
   element: HTMLDivElement
   timeoutId: number | null = null
+  actionHandlers: NotificationActionHandlers = {}
 
   constructor() {
     this.element = id("notification") as HTMLDivElement
+    this.bindActions()
   }
 
   private getIcon(data: NotificationData): string {
@@ -25,8 +30,13 @@ export class Notification {
     return "🔵"
   }
 
-  show(data: NotificationData | string, defaultDuration: number = 3000) {
+  show(
+    data: NotificationData | string,
+    defaultDuration: number = 3000,
+    actionHandlers?: NotificationActionHandlers
+  ) {
     if (!this.element) return
+    this.actionHandlers = actionHandlers ?? {}
 
     let content: string
     let typeClass: string
@@ -105,12 +115,46 @@ export class Notification {
     }
   }
 
+  private bindActions() {
+    if (!this.element) return
+    this.element.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement | null
+      const button = target?.closest(
+        "[data-notification-action]"
+      ) as HTMLElement | null
+      const action = button?.dataset.notificationAction
+      if (!action) return
+      this.handleAction(action)
+    })
+  }
+
+  private handleAction(action: string) {
+    const handler = this.actionHandlers[action]
+    if (handler) {
+      handler()
+      return
+    }
+
+    if (action === "clear") {
+      this.clear()
+      return
+    }
+    if (action === "reload" || action === "replay") {
+      globalThis.location.reload()
+      return
+    }
+    if (action === "lobby") {
+      globalThis.location.href = LOBBY_URL
+    }
+  }
+
   clear() {
     if (this.element) {
       this.element.innerHTML = ""
       this.element.style.display = "none"
       this.element.className = ""
     }
+    this.actionHandlers = {}
     if (this.timeoutId) {
       globalThis.clearTimeout(this.timeoutId)
       this.timeoutId = null
