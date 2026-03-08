@@ -28,6 +28,8 @@
  *
  */
 
+import { getUID } from "../../utils/uid"
+
 export interface ErrorReport {
   type: string
   message: string
@@ -77,15 +79,7 @@ export class ClientErrorReporter {
   }
 
   private generateSid(): string {
-    try {
-      return crypto.randomUUID()
-    } catch {
-      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-        const r = Math.trunc(Math.random() * 16)
-        const v = c === "x" ? r : (r & 0x3) | 0x8
-        return v.toString(16)
-      })
-    }
+    return "B_" + getUID()
   }
 
   start() {
