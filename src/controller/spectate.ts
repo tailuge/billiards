@@ -82,6 +82,7 @@ export class Spectate extends ControllerBase {
 
   override handleAim(event: AimEvent) {
     this.container.table.cue.aim = event
+    this.container.table.cueball = this.container.table.balls[event.i]
     this.container.table.cueball.pos.copy(event.pos)
     this.container.table.cue.updateAimInput()
     return this
