@@ -11,7 +11,6 @@ import { PlaceBallEvent, RespotBody } from "../../events/placeballevent"
 import { WatchEvent } from "../../events/watchevent"
 import { EventUtil } from "../../events/eventutil"
 import { Respot } from "../../utils/respot"
-import { gameOverButtons } from "../../utils/gameover"
 import { zero } from "../../utils/three-utils"
 
 export class BotEventHandler {
@@ -61,17 +60,7 @@ export class BotEventHandler {
   private handleStationary(): void {
     const outcome = this.container.table.outcome
     if (this.container.rules.isEndOfGame(outcome)) {
-      // bot has won, notify player
-      this.container.notifyLocal({
-        type: "GameOver",
-        title: "YOU LOST",
-        subtext: "Lostber 🦞",
-        icon: "🥈",
-        extraClass: "is-loser",
-        extra: gameOverButtons.forMode(true),
-        duration: 0,
-      })
-      this.container.recorder.wholeGameLink()
+      this.container.updateController(this.container.rules.handleGameEnd(false))
       return
     }
 
