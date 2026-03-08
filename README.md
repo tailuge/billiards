@@ -7,19 +7,9 @@
 [![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards)
 ![GitHub](https://img.shields.io/github/license/tailuge/billiards.svg)
 
-[![Demo and Screenshot](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)](https://tailuge.github.io/billiards/dist)
+[![Demo and Screenshot](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)](https://billiards.tailuge.workers.dev/?bot=true)
 
-This is an open-source project bringing unsophisticated billiards physics written in typescript to the browser. Play pool, snooker, or 3-cushion online right here.
-
-## Features
-
-* Backspin, sidespin an cushion bounces well modeled.
-* Presentation using WebGL in any modern browser on mobile, linux, mac or windows.
-* Record and playback breaks.
-* Two player online mode with nchan nginx server.
-* Nine ball, snooker and three cushion billiards rules.
-* Deploys to github pages, vercel.com and render.com with github actions.
-* Runs on and was developed mostly on a potato e.g. Raspberry pi 4.
+This is an open-source project bringing unsophisticated billiards physics written in typescript to the browser.
 
 ## Online Demo
 
@@ -32,6 +22,16 @@ Demos run in all major desktop and mobile browsers and uses WebGL
 * Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
 * Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard.html) hosted on vercel.com
 * Try [two player](https://scoreboard-tailuge.vercel.app/game) online lobby using nchan
+
+## Features
+
+* Backspin, sidespin an cushion bounces well modeled.
+* Presentation using WebGL in any modern browser on mobile, linux, mac or windows.
+* Record and playback breaks.
+* Two player online mode with nchan nginx server.
+* Nine ball, snooker and three cushion billiards rules.
+* Deploys to github pages, vercel.com and render.com with github actions.
+* Runs on and was developed mostly on a potato e.g. Raspberry pi 4.
 
 ## Reference material
 
