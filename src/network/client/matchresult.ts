@@ -60,7 +60,9 @@ export class MatchResultHelper {
       subtext: subtext,
       icon: "🏆",
       extraClass: "is-winner",
-      extra: gameOverButtons.forMode(container.isSinglePlayer),
+      extra: gameOverButtons.forMode(
+        container.isSinglePlayer || Session.isBotMode()
+      ),
       duration: 0,
     })
   }
@@ -69,10 +71,12 @@ export class MatchResultHelper {
     container.notifyLocal({
       type: "GameOver",
       title: "YOU LOST",
-      subtext: subtext,
+      subtext: Session.isBotMode() ? "Lostber 🦞" : subtext,
       icon: "🥈",
       extraClass: "is-loser",
-      extra: gameOverButtons.forMode(container.isSinglePlayer),
+      extra: gameOverButtons.forMode(
+        container.isSinglePlayer || Session.isBotMode()
+      ),
       duration: 0,
     })
   }

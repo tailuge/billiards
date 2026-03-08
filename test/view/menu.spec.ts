@@ -4,6 +4,7 @@ import { fireEvent } from "@testing-library/dom"
 import { Container } from "../../src/container/container"
 import { Menu } from "../../src/view/menu"
 import { Assets } from "../../src/view/assets"
+import { Session } from "../../src/network/client/session"
 
 initDom()
 
@@ -45,6 +46,25 @@ describe("Menu", () => {
     fireEvent.click(playOn)
 
     expect(notification?.innerHTML).to.equal("")
+    done()
+  })
+
+  it("concede confirm in bot mode triggers game over", (done) => {
+    Session.init("test-client", "TestPlayer", "test-table", false, true)
+    const concede = document.getElementById("concede") as HTMLButtonElement
+    fireEvent.click(concede)
+
+    const confirm = document.querySelector(
+      "[data-notification-action='concede-confirm']"
+    ) as HTMLButtonElement
+    fireEvent.click(confirm)
+
+    expect(container.controller.name).to.equal("End")
+    const notification = document.getElementById("notification")
+    expect(notification?.innerHTML).to.contain("YOU LOST")
+    expect(notification?.innerHTML).to.contain("Lostber 🦞")
+
+    Session.reset()
     done()
   })
 })

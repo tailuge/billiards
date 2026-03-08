@@ -1,5 +1,6 @@
 import { Container } from "../container/container"
 import { getButton } from "../utils/dom"
+import { Session } from "../network/client/session"
 
 export class Menu {
   container: Container
@@ -35,7 +36,14 @@ export class Menu {
           },
           0,
           {
-            "concede-confirm": () => this.container.notification.clear(),
+            "concede-confirm": () => {
+              this.container.notification.clear()
+              if (Session.isBotMode()) {
+                this.container.updateController(
+                  this.container.rules.handleGameEnd(false)
+                )
+              }
+            },
             "concede-cancel": () => this.container.notification.clear(),
           }
         )
