@@ -12,6 +12,8 @@ import { WatchEvent } from "../../events/watchevent"
 import { EventUtil } from "../../events/eventutil"
 import { Respot } from "../../utils/respot"
 import { zero } from "../../utils/three-utils"
+import { MatchResult } from "../client/matchresult"
+import { ReplayEncoder } from "../../utils/replay-encoder"
 
 export class BotEventHandler {
   private readonly logs: Logger
@@ -60,6 +62,27 @@ export class BotEventHandler {
   private handleStationary(): void {
     const outcome = this.container.table.outcome
     if (this.container.rules.isEndOfGame(outcome)) {
+      // Upload match result when bot wins
+      if (this.container.scoreReporter) {
+        let replayData: string | undefined
+        try {
+          const gameState = this.container.recorder.wholeGame()
+          replayData = ReplayEncoder.crush(JSON.stringify(gameState))
+        } catch (e) {
+          console.error("Failed to encode replay data", e)
+        }
+        const result: MatchResult = {
+          winner: "Bot",
+          loser: "Player",
+          winnerScore: this.container.getOpponentScore(),
+          loserScore: this.container.getMyScore(),
+          ruleType: this.container.rules.rulename,
+        }
+        if (replayData) {
+          result.replayData = replayData
+        }
+        this.container.scoreReporter.submitMatchResult(result)
+      }
       this.container.updateController(this.container.rules.handleGameEnd(false))
       return
     }
