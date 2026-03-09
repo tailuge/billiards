@@ -72,7 +72,7 @@ export class BotEventHandler {
           console.error("Failed to encode replay data", e)
         }
         const result: MatchResult = {
-          winner: "Bot",
+          winner: "ClawBreak",
           loser: "Player",
           winnerScore: this.container.getOpponentScore(),
           loserScore: this.container.getMyScore(),
