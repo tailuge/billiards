@@ -94,5 +94,32 @@ describe("NchanMessageRelay", () => {
         "wss://test.com/subscribe/table/chan1"
       )
     })
+
+    it("should log WebSocket errors with details", () => {
+      let errorHandler: ((e: any) => void) | undefined
+      const mockWS = jest.fn().mockImplementation(() => ({
+        set onerror(handler: any) {
+          errorHandler = handler
+        },
+      }))
+      globalThis.WebSocket = mockWS as any
+
+      const relay = new NchanMessageRelay("test.com")
+      relay.subscribe("chan1", jest.fn())
+
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation()
+      if (errorHandler) {
+        errorHandler({ type: "error" })
+      }
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "WebSocket error on",
+        expect.any(String),
+        ":",
+        "error",
+        expect.anything()
+      )
+      consoleSpy.mockRestore()
+    })
   })
 })

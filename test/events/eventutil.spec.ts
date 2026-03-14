@@ -60,6 +60,11 @@ describe("EventUtil", () => {
     done()
   })
 
+  it("Log and throw on invalid JSON", (done) => {
+    expect(() => EventUtil.fromSerialised("invalid json")).to.throw()
+    done()
+  })
+
   it("Serialise and deserialise ChatEvent", (done) => {
     const serialised = EventUtil.serialise(new ChatEvent("a", "m"))
     const deserialised = EventUtil.fromSerialised(serialised)

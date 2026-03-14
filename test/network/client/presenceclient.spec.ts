@@ -214,4 +214,22 @@ describe("PresenceClient", () => {
     client.stop()
     client.stop() // second call should return early
   })
+
+  it("handles WebSocket error gracefully", () => {
+    const client = new PresenceClient("u1", "Alice")
+    client.start()
+    const ws = MockWebSocket.instances[0]
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation()
+
+    ws.onerror?.({ type: "error" } as Event)
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "Presence WebSocket error on",
+      expect.any(String),
+      ":",
+      "error",
+      expect.anything()
+    )
+    consoleSpy.mockRestore()
+  })
 })
