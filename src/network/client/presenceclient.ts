@@ -131,7 +131,15 @@ export class PresenceClient {
       socket.onmessage = (event: MessageEvent) => {
         this.handleIncoming(event.data)
       }
-      socket.onerror = () => {}
+      socket.onerror = (error: Event) => {
+        console.error(
+          "Presence WebSocket error on",
+          PresenceClient.subscribeURL,
+          ":",
+          error.type,
+          error
+        )
+      }
       socket.onclose = () => {}
       this.websocket = socket
     } catch {

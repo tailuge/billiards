@@ -25,7 +25,7 @@ export class NchanMessageRelay implements MessageRelay {
     }
 
     ws.onerror = (error: Event) => {
-      console.error("WebSocket error:", error)
+      console.error("WebSocket error on", url, ":", error.type, error)
     }
 
     ws.onopen = () => {

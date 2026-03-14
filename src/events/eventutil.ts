@@ -51,22 +51,27 @@ export class EventUtil {
       case EventType.SCORE:
         return ScoreEvent.fromJson(parsed)
       default:
-        throw new Error("Unknown GameEvent :" + parsed)
+        throw new Error("Unknown GameEvent :" + JSON.stringify(parsed))
     }
   }
 
   static fromSerialised(data: string) {
-    const parsed = JSON.parse(data)
-    const event = EventUtil.fromJson(parsed)
-    if ("sequence" in parsed) {
-      event.sequence = parsed.sequence
+    try {
+      const parsed = JSON.parse(data)
+      const event = EventUtil.fromJson(parsed)
+      if ("sequence" in parsed) {
+        event.sequence = parsed.sequence
+      }
+      if ("clientId" in parsed) {
+        event.clientId = parsed.clientId
+      }
+      if ("playername" in parsed) {
+        event.playername = parsed.playername
+      }
+      return event
+    } catch (e) {
+      console.error("Error parsing message string:", data)
+      throw e
     }
-    if ("clientId" in parsed) {
-      event.clientId = parsed.clientId
-    }
-    if ("playername" in parsed) {
-      event.playername = parsed.playername
-    }
-    return event
   }
 }

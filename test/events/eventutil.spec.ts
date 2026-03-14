@@ -53,9 +53,9 @@ describe("EventUtil", () => {
     done()
   })
 
-  it("Throw on unknown event", (done) => {
+  it("Throw on unknown event with detailed message", (done) => {
     expect(() => EventUtil.fromSerialised("{}")).to.throw(
-      "Unknown GameEvent :[object Object]"
+      "Unknown GameEvent :{}"
     )
     done()
   })
