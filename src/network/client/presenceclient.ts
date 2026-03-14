@@ -132,18 +132,27 @@ export class PresenceClient {
         this.handleIncoming(event.data)
       }
       socket.onerror = (event: Event) => {
-        console.warn("Presence WebSocket error:", event)
+        console.warn(
+          "Presence WebSocket error:",
+          this.stringifyLog(this.normalizeEvent(event))
+        )
       }
       socket.onclose = (event: CloseEvent) => {
-        console.warn("Presence WebSocket closed:", {
-          code: event.code,
-          reason: event.reason,
-          wasClean: event.wasClean,
-        })
+        console.warn(
+          "Presence WebSocket closed:",
+          this.stringifyLog({
+            code: event.code,
+            reason: event.reason,
+            wasClean: event.wasClean,
+          })
+        )
       }
       this.websocket = socket
     } catch (err) {
-      console.warn("Presence WebSocket subscribe failed:", err)
+      console.warn(
+        "Presence WebSocket subscribe failed:",
+        this.stringifyLog(this.normalizeError(err))
+      )
       // Ignore subscription failures; indicator falls back silently.
     }
   }
@@ -309,7 +318,47 @@ export class PresenceClient {
         body: JSON.stringify(payload),
       })
       .catch((err) => {
-        console.warn("Presence publish failed:", err)
+        console.warn(
+          "Presence publish failed:",
+          this.stringifyLog(this.normalizeError(err))
+        )
       })
+  }
+
+  private normalizeEvent(event: Event): Record<string, unknown> {
+    return {
+      type: event.type,
+      timeStamp: event.timeStamp,
+      target: this.describeTarget(event.target),
+    }
+  }
+
+  private describeTarget(target: EventTarget | null): string | null {
+    const constructorName = (target as { constructor?: { name?: string } })
+      ?.constructor?.name
+    if (!target || typeof constructorName !== "string") {
+      return null
+    }
+    return constructorName ?? null
+  }
+
+  private normalizeError(error: unknown): Record<string, unknown> {
+    if (error instanceof Error) {
+      return {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      }
+    }
+    return { message: String(error) }
+  }
+
+  private stringifyLog(value: unknown): string {
+    try {
+      if (typeof value === "string") return value
+      return JSON.stringify(value)
+    } catch {
+      return String(value)
+    }
   }
 }

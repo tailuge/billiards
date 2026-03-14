@@ -20,24 +20,33 @@ export class NchanMessageRelay implements MessageRelay {
       try {
         decoded = await this.decodeMessage(event.data)
         if (decoded === null) {
-          console.warn("WebSocket message ignored (unsupported type):", {
-            type: typeof event.data,
-            constructor: (event.data as { constructor?: { name?: string } })
-              ?.constructor?.name,
-          })
+          console.warn(
+            "WebSocket message ignored (unsupported type):",
+            this.stringifyLog({
+              type: typeof event.data,
+              constructor: (event.data as { constructor?: { name?: string } })
+                ?.constructor?.name,
+            })
+          )
           return
         }
         callback(decoded)
       } catch (error) {
-        console.warn("WebSocket message handling failed:", {
-          error,
-          message: decoded ?? event.data,
-        })
+        console.warn(
+          "WebSocket message handling failed:",
+          this.stringifyLog({
+            error: this.normalizeError(error),
+            message: decoded ?? event.data,
+          })
+        )
       }
     }
 
     ws.onerror = (error: Event) => {
-      console.warn("WebSocket error:", error)
+      console.warn(
+        "WebSocket error:",
+        this.stringifyLog(this.normalizeEvent(error))
+      )
     }
 
     ws.onopen = () => {
@@ -45,11 +54,14 @@ export class NchanMessageRelay implements MessageRelay {
     }
 
     ws.onclose = (event: CloseEvent) => {
-      console.warn(`Disconnected from ${url}:`, {
-        code: event.code,
-        reason: event.reason,
-        wasClean: event.wasClean,
-      })
+      console.warn(
+        `Disconnected from ${url}:`,
+        this.stringifyLog({
+          code: event.code,
+          reason: event.reason,
+          wasClean: event.wasClean,
+        })
+      )
       // Reconnect if needed could be added here
     }
 
@@ -97,5 +109,42 @@ export class NchanMessageRelay implements MessageRelay {
       return new TextDecoder().decode(data.buffer)
     }
     return null
+  }
+
+  private normalizeEvent(event: Event): Record<string, unknown> {
+    return {
+      type: event.type,
+      timeStamp: event.timeStamp,
+      target: this.describeTarget(event.target),
+    }
+  }
+
+  private describeTarget(target: EventTarget | null): string | null {
+    const constructorName = (target as { constructor?: { name?: string } })
+      ?.constructor?.name
+    if (!target || typeof constructorName !== "string") {
+      return null
+    }
+    return constructorName ?? null
+  }
+
+  private normalizeError(error: unknown): Record<string, unknown> {
+    if (error instanceof Error) {
+      return {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      }
+    }
+    return { message: String(error) }
+  }
+
+  private stringifyLog(value: unknown): string {
+    try {
+      if (typeof value === "string") return value
+      return JSON.stringify(value)
+    } catch {
+      return String(value)
+    }
   }
 }
