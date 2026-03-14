@@ -10,7 +10,22 @@ module.exports = {
   module: {
     rules: [
       {
-        use: "swc-loader",
+        use: {
+          loader: "swc-loader",
+          options: {
+            jsc: {
+              parser: {
+                syntax: "typescript",
+                tsx: false,
+              },
+            },
+            env: {
+              targets: {
+                ios: "12",
+              },
+            },
+          },
+        },
         exclude: /node_modules/,
       },
     ],

@@ -15,17 +15,29 @@ export class NchanMessageRelay implements MessageRelay {
     const url = `wss://${this.baseURL}/subscribe/${prefix}/${channel}`
     const ws = new WebSocket(url)
     console.log("Subscribed to ", url)
-    ws.onmessage = (event: MessageEvent) => {
+    ws.onmessage = async (event: MessageEvent) => {
+      let decoded: string | null = null
       try {
-        const message = event.data
-        callback(message)
-      } catch (e) {
-        console.error("Error parsing message:", e)
+        decoded = await this.decodeMessage(event.data)
+        if (decoded === null) {
+          console.warn("WebSocket message ignored (unsupported type):", {
+            type: typeof event.data,
+            constructor: (event.data as { constructor?: { name?: string } })
+              ?.constructor?.name,
+          })
+          return
+        }
+        callback(decoded)
+      } catch (error) {
+        console.warn("WebSocket message handling failed:", {
+          error,
+          message: decoded ?? event.data,
+        })
       }
     }
 
     ws.onerror = (error: Event) => {
-      console.error("WebSocket error:", error)
+      console.warn("WebSocket error:", error)
     }
 
     ws.onopen = () => {
@@ -33,7 +45,11 @@ export class NchanMessageRelay implements MessageRelay {
     }
 
     ws.onclose = (event: CloseEvent) => {
-      console.log(`Disconnected from ${url}:`, event.reason)
+      console.warn(`Disconnected from ${url}:`, {
+        code: event.code,
+        reason: event.reason,
+        wasClean: event.wasClean,
+      })
       // Reconnect if needed could be added here
     }
 
@@ -67,5 +83,19 @@ export class NchanMessageRelay implements MessageRelay {
     } catch {
       return null
     }
+  }
+
+  private async decodeMessage(data: unknown): Promise<string | null> {
+    if (typeof data === "string") return data
+    if (data instanceof Blob) {
+      return data.text()
+    }
+    if (data instanceof ArrayBuffer) {
+      return new TextDecoder().decode(data)
+    }
+    if (ArrayBuffer.isView(data)) {
+      return new TextDecoder().decode(data.buffer)
+    }
+    return null
   }
 }

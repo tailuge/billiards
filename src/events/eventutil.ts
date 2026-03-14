@@ -51,7 +51,7 @@ export class EventUtil {
       case EventType.SCORE:
         return ScoreEvent.fromJson(parsed)
       default:
-        throw new Error("Unknown GameEvent :" + parsed)
+        throw new Error(`Unknown GameEvent: ${EventUtil.safeStringify(parsed)}`)
     }
   }
 
@@ -68,5 +68,14 @@ export class EventUtil {
       event.playername = parsed.playername
     }
     return event
+  }
+
+  private static safeStringify(value: unknown): string {
+    try {
+      if (typeof value === "string") return value
+      return JSON.stringify(value)
+    } catch {
+      return String(value)
+    }
   }
 }

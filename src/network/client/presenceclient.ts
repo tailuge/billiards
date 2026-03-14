@@ -131,10 +131,19 @@ export class PresenceClient {
       socket.onmessage = (event: MessageEvent) => {
         this.handleIncoming(event.data)
       }
-      socket.onerror = () => {}
-      socket.onclose = () => {}
+      socket.onerror = (event: Event) => {
+        console.warn("Presence WebSocket error:", event)
+      }
+      socket.onclose = (event: CloseEvent) => {
+        console.warn("Presence WebSocket closed:", {
+          code: event.code,
+          reason: event.reason,
+          wasClean: event.wasClean,
+        })
+      }
       this.websocket = socket
-    } catch {
+    } catch (err) {
+      console.warn("Presence WebSocket subscribe failed:", err)
       // Ignore subscription failures; indicator falls back silently.
     }
   }
@@ -299,6 +308,8 @@ export class PresenceClient {
         keepalive,
         body: JSON.stringify(payload),
       })
-      .catch(() => {})
+      .catch((err) => {
+        console.warn("Presence publish failed:", err)
+      })
   }
 }
