@@ -1,21 +1,21 @@
 import { MessageRelay } from "../network/client/messagerelay"
-import {
-  ChallengerInfo,
-  PresenceClient,
-} from "../network/client/presenceclient"
+import { MessagingClient, Lobby } from "@tailuge/messaging"
 import { Session } from "../network/client/session"
 import { Rules } from "../controller/rules/rules"
 import { id } from "../utils/dom"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
-  private readonly presenceClient: PresenceClient
+  private messagingClient: MessagingClient | null = null
+  private lobby: Lobby | null = null
   private hasLiveCount = false
   private count = 0
-  private challenger: ChallengerInfo | null = null
+  private challenger: { userId: string; userName: string } | null = null
   private readonly rules: Rules
   private static readonly LOBBY_URL =
-    "https://scoreboard-tailuge.vercel.app/lobby"
+    "https://scoreboard-tailuge.vercel.app/game"
+  private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
+  private currentTableId: string | null = null
 
   constructor(
     private readonly relay: MessageRelay | null,
@@ -23,47 +23,79 @@ export class LobbyIndicator {
   ) {
     this.rules = rules
     this.element = id("lobby")
-    if (this.element) {
-      if (this.element instanceof HTMLAnchorElement) {
-        this.element.setAttribute("href", this.getLobbyUrl())
-        this.element.setAttribute("target", "_blank")
-        this.element.setAttribute("rel", "noopener noreferrer")
-      } else {
-        this.element.addEventListener("click", () => {
-          if (typeof globalThis.open === "function") {
-            globalThis.open(this.getLobbyUrl(), "_blank", "noopener,noreferrer")
-          }
-        })
-        this.element.style.cursor = "pointer"
-      }
+    this.setupElement()
+  }
+
+  private setupElement(): void {
+    if (!this.element) return
+
+    if (this.element instanceof HTMLAnchorElement) {
+      this.element.setAttribute("target", "_blank")
+      this.element.setAttribute("rel", "noopener noreferrer")
+    } else {
+      this.element.addEventListener("click", () => {
+        if (typeof globalThis.open === "function") {
+          globalThis.open(this.getLobbyUrl(), "_blank", "noopener,noreferrer")
+        }
+      })
+      this.element.style.cursor = "pointer"
     }
-    const session = Session.hasInstance() ? Session.getInstance() : undefined
-    const locale = globalThis.navigator?.language ?? undefined
-    const originUrl = globalThis.location?.host ?? undefined
-    const ua = globalThis.navigator?.userAgent ?? undefined
-    this.presenceClient = new PresenceClient(
-      session?.clientId ?? "default",
-      session?.playername ?? "Anon",
-      locale,
-      originUrl,
-      rules.rulename,
-      session?.botMode ?? undefined,
-      ua
-    )
   }
 
   async init(): Promise<void> {
-    this.presenceClient.onCountChange((count) => {
-      this.hasLiveCount = true
-      this.count = count
-      this.updateDisplay()
-    })
-    this.presenceClient.onChallengeChange((challenger) => {
-      this.challenger = challenger
-      this.updateDisplay()
-    })
-    this.presenceClient.start()
     if (!this.element) return
+
+    const session = Session.hasInstance() ? Session.getInstance() : undefined
+    const userId = session?.clientId ?? "default"
+    const userName = session?.playername ?? "Anon"
+
+    this.messagingClient = new MessagingClient({
+      baseUrl: LobbyIndicator.NCHAN_URL,
+    })
+    this.messagingClient.start()
+
+    const params = new URLSearchParams(globalThis.location?.search ?? "")
+    this.currentTableId = params.get("tableId")
+
+    const presence: {
+      messageType: "presence"
+      type: "join"
+      userId: string
+      userName: string
+      ruleType: string
+      tableId?: string
+    } = {
+      messageType: "presence",
+      type: "join",
+      userId,
+      userName,
+      ruleType: this.rules.rulename,
+    }
+    if (this.currentTableId) {
+      presence.tableId = this.currentTableId
+    }
+
+    this.lobby = await this.messagingClient.joinLobby(presence)
+
+    this.lobby.onUsersChange((users) => {
+      this.hasLiveCount = true
+      this.count = users.length
+      this.updateDisplay()
+    })
+
+    this.lobby.onChallenge((challenge) => {
+      if (challenge.type === "offer") {
+        this.challenger = {
+          userId: challenge.challengerId,
+          userName: challenge.challengerName,
+        }
+      } else if (challenge.type === "decline" || challenge.type === "cancel") {
+        this.challenger = null
+      }
+      this.updateDisplay()
+    })
+
+    this.updateDisplay()
 
     try {
       const count = await this.relay?.getOnlineCount()
@@ -73,6 +105,17 @@ export class LobbyIndicator {
       }
     } catch {
       // Ignore fallback fetch failures.
+    }
+  }
+
+  setTableId(tableId: string | null): void {
+    this.currentTableId = tableId
+    if (this.lobby) {
+      if (tableId) {
+        this.lobby.updatePresence({ tableId })
+      } else {
+        this.lobby.updatePresence({})
+      }
     }
   }
 
@@ -119,18 +162,23 @@ export class LobbyIndicator {
 
     const session = Session.hasInstance() ? Session.getInstance() : undefined
     if (session) {
-      url.searchParams.set("username", session.playername)
+      url.searchParams.set("userName", session.playername)
       url.searchParams.set("userId", session.clientId)
     }
 
     return url.toString()
   }
 
-  stop(): void {
+  async stop(): Promise<void> {
     try {
-      this.presenceClient.stop()
+      if (this.lobby) {
+        await this.lobby.leave()
+      }
+      if (this.messagingClient) {
+        await this.messagingClient.stop()
+      }
     } catch {
-      // Ignore presence shutdown failures.
+      // Ignore shutdown failures.
     }
   }
 }

@@ -2,8 +2,8 @@ module.exports = {
   rootDir: "../",
   preset: "ts-jest",
   transformIgnorePatterns: [
-    // Exclude all node_modules except for chai and jsoncrush
-    "node_modules/(?!(chai|jsoncrush))",
+    // Exclude all node_modules except for chai, jsoncrush, and @tailuge/messaging
+    "node_modules/(?!(chai|jsoncrush|@tailuge/messaging))",
   ],
   transform: {
     // Use SWC for transforming both JavaScript and TypeScript files
@@ -40,6 +40,8 @@ module.exports = {
     ".*GLTFExporter": "<rootDir>/test/mocks/gltfexporter.ts",
     ".*GLTFLoader": "<rootDir>/test/mocks/gltfloader.ts",
     ".*/sound": "<rootDir>/test/mocks/mocksound.ts",
+    "^@tailuge/messaging$":
+      "<rootDir>/node_modules/@tailuge/messaging/dist/index.js",
   },
   // Enable ESM support in Jest
   extensionsToTreatAsEsm: [".ts"],

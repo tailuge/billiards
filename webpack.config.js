@@ -26,7 +26,7 @@ module.exports = {
             },
           },
         },
-        exclude: /node_modules/,
+        exclude: /node_modules\/(?!(@tailuge\/messaging))/,
       },
     ],
   },
@@ -85,6 +85,12 @@ module.exports = {
           name: "three_examples",
           chunks: "all",
           priority: 30,
+        },
+        messaging: {
+          test: /[\\/]node_modules[\\/]@tailuge[\\/]messaging[\\/]/,
+          name: "messaging",
+          chunks: "all",
+          priority: 20,
         },
         interact: {
           test: /[\\/]node_modules[\\/]interactjs[\\/]/,

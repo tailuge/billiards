@@ -3,6 +3,21 @@ import { LobbyIndicator } from "../../src/view/lobbyindicator"
 import { InMemoryMessageRelay } from "../mocks/inmemorymessagerelay"
 import { initDom } from "./dom"
 
+// Mock the @tailuge/messaging module
+jest.mock("@tailuge/messaging", () => ({
+  MessagingClient: jest.fn().mockImplementation(() => ({
+    start: jest.fn(),
+    joinLobby: jest.fn().mockResolvedValue({
+      onUsersChange: jest.fn(),
+      onChallenge: jest.fn(),
+      updatePresence: jest.fn(),
+      leave: jest.fn(),
+    }),
+    stop: jest.fn(),
+  })),
+  Lobby: jest.fn(),
+}))
+
 initDom()
 
 describe("LobbyIndicator", () => {
@@ -33,12 +48,18 @@ describe("LobbyIndicator", () => {
     const indicator = new LobbyIndicator(relay, mockRules)
     await indicator.init()
 
-    // Trigger challenge (this is a bit tricky as presenceClient is private)
-    // We can reach it via (indicator as any).presenceClient
-    const presenceClient = (indicator as any).presenceClient
-    presenceClient.challengeCallbacks.forEach((cb: any) =>
-      cb({ userId: "u2", userName: "Bob" })
-    )
+    // Access the mock lobby to trigger challenge callback
+    const mockLobby = (indicator as any).lobby
+    const onChallengeCallback = mockLobby.onChallenge.mock.calls[0][0]
+
+    // Simulate receiving a challenge offer
+    onChallengeCallback({
+      type: "offer",
+      challengerId: "u2",
+      challengerName: "Bob",
+      recipientId: "default",
+      ruleType: "nineball",
+    })
 
     expect(element?.textContent).to.contain("⚔️")
     expect(element?.textContent).to.contain("Challenge from Bob")
@@ -50,10 +71,17 @@ describe("LobbyIndicator", () => {
     expect(href).to.contain("opponentId=u2")
     expect(href).to.contain("opponentName=Bob")
 
-    presenceClient.challengeCallbacks.forEach((cb: any) => cb(null))
+    // Simulate challenge decline/cancel
+    onChallengeCallback({
+      type: "decline",
+      challengerId: "u2",
+      challengerName: "Bob",
+      recipientId: "default",
+      ruleType: "nineball",
+    })
     expect(element?.textContent).to.not.contain("⚔️")
     expect(element?.getAttribute("href")).to.equal(
-      "https://scoreboard-tailuge.vercel.app/lobby"
+      "https://scoreboard-tailuge.vercel.app/game"
     )
   })
 
@@ -80,11 +108,32 @@ describe("LobbyIndicator", () => {
     }) as any
 
     div.click()
-    expect(openedUrl).to.equal("https://scoreboard-tailuge.vercel.app/lobby")
+    expect(openedUrl).to.equal("https://scoreboard-tailuge.vercel.app/game")
 
-    indicator.stop()
+    await indicator.stop()
     div.remove()
     document.getElementById = originalGetElementById
     globalThis.open = originalOpen
+  })
+
+  it("setTableId updates presence", async () => {
+    const mockRules = { rulename: "nineball" } as any
+    const indicator = new LobbyIndicator(relay, mockRules)
+    await indicator.init()
+
+    const mockLobby = (indicator as any).lobby
+    const updatePresenceFn = mockLobby.updatePresence
+
+    indicator.setTableId("table-123")
+    expect(updatePresenceFn.mock.calls.length).to.be.greaterThan(0)
+
+    const firstCall = updatePresenceFn.mock.calls[0]
+    expect(firstCall[0]).to.deep.equal({ tableId: "table-123" })
+
+    indicator.setTableId(null)
+    const secondCall = updatePresenceFn.mock.calls[1]
+    expect(secondCall[0]).to.deep.equal({})
+
+    await indicator.stop()
   })
 })
