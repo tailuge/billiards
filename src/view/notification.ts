@@ -144,7 +144,18 @@ export class Notification {
       return
     }
     if (action === "lobby") {
-      globalThis.location.href = LOBBY_URL
+      const params = new globalThis.URLSearchParams(globalThis.location.search)
+      const queryParams = new globalThis.URLSearchParams()
+      if (params.has("userId")) {
+        queryParams.set("userId", params.get("userId")!)
+      }
+      if (params.has("userName")) {
+        queryParams.set("userName", params.get("userName")!)
+      }
+      const queryString = queryParams.toString()
+      globalThis.location.href = queryString
+        ? `${LOBBY_URL}?${queryString}`
+        : LOBBY_URL
     }
   }
 

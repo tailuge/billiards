@@ -56,9 +56,16 @@ export class BrowserContainer {
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
     this.now = Date.now()
-    this.playername = params.get("name") ?? params.get("playername") ?? "Anon"
+    this.playername =
+      params.get("userName") ??
+      params.get("name") ??
+      params.get("playername") ??
+      "Anon"
     this.tableId = params.get("tableId") ?? "default"
-    this.clientId = params.get("clientId") ?? `G_${Date.now() % 100000}`
+    this.clientId =
+      params.get("userId") ??
+      params.get("clientId") ??
+      `G_${Date.now() % 100000}`
     this.replay = params.get("state")
     this.ruletype = params.get("ruletype") ?? "nineball"
     this.wss = params.get("websocketserver")
