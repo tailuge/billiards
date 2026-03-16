@@ -182,18 +182,17 @@ export class BrowserContainer {
 
   netEvent(e: string) {
     const event = EventUtil.fromSerialised(e)
-    logNetEvent(this.playername, event, "receive")
     if (event.clientId === Session.getInstance().clientId) {
-      console.log("Ignoring own event")
-    } else {
-      if (event.clientId) {
-        Session.getInstance().setOpponentClientId(event.clientId)
-      }
-      if (event.playername) {
-        Session.getInstance().opponentName = event.playername
-      }
-      this.container.eventQueue.push(event)
+      return
     }
+    logNetEvent(this.playername, event, "receive")
+    if (event.clientId) {
+      Session.getInstance().setOpponentClientId(event.clientId)
+    }
+    if (event.playername) {
+      Session.getInstance().opponentName = event.playername
+    }
+    this.container.eventQueue.push(event)
   }
 
   broadcast(event: GameEvent) {
