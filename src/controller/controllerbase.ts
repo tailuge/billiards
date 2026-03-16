@@ -3,6 +3,7 @@ import { exportGltf } from "../utils/gltf"
 import { ChatEvent } from "../events/chatevent"
 import { NotificationEvent } from "../events/notificationevent"
 import { ScoreEvent } from "../events/scoreevent"
+import { ConcedeEvent } from "../events/concedeevent"
 import { Outcome } from "../model/outcome"
 import { Vector3 } from "three"
 
@@ -23,6 +24,10 @@ export abstract class ControllerBase extends Controller {
 
   override handleScore(event: ScoreEvent): Controller {
     this.container.updateScoreHud(event.p1, event.p2, event.b, event.active)
+    return this
+  }
+
+  override handleConcede(_: ConcedeEvent): Controller {
     return this
   }
 
