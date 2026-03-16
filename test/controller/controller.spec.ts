@@ -476,6 +476,16 @@ describe("Controller", () => {
     done()
   })
 
+  it("ConcedeEvent transitions to End as winner", (done) => {
+    const watchShot = new WatchShot(container)
+    container.controller = watchShot
+    container.table.halt()
+    container.eventQueue.push(new ConcedeEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
+    done()
+  })
+
   it("End handles ConcedeEvent", (done) => {
     container.controller = new End(container)
     container.eventQueue.push(new ConcedeEvent())

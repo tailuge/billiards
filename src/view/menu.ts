@@ -1,6 +1,7 @@
 import { Container } from "../container/container"
 import { getButton } from "../utils/dom"
 import { Session } from "../network/client/session"
+import { ConcedeEvent } from "../events/concedeevent"
 
 export class Menu {
   container: Container
@@ -42,6 +43,11 @@ export class Menu {
                 this.container.updateController(
                   this.container.rules.handleGameEnd(false)
                 )
+              } else {
+                this.container.updateController(
+                  this.container.rules.handleGameEnd(false)
+                )
+                this.container.sendEvent(new ConcedeEvent())
               }
             },
             "concede-cancel": () => this.container.notification.clear(),

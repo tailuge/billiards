@@ -83,7 +83,12 @@ export class ClientErrorReporter {
   }
 
   start() {
-    if (!(typeof globalThis.window !== "undefined" && process.env.NODE_ENV !== "test"))
+    if (
+      !(
+        typeof globalThis.window !== "undefined" &&
+        process.env.NODE_ENV !== "test"
+      )
+    )
       return
 
     this.patchConsole()

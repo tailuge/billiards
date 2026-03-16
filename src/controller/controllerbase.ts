@@ -28,7 +28,7 @@ export abstract class ControllerBase extends Controller {
   }
 
   override handleConcede(_: ConcedeEvent): Controller {
-    return this
+    return this.container.rules.handleGameEnd(true)
   }
 
   hit() {
