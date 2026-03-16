@@ -129,11 +129,12 @@ export class NineBall implements Rules {
     return new Aim(this.container)
   }
 
-  handleGameEnd(isWinner: boolean): Controller {
+  handleGameEnd(isWinner: boolean, endSubtext?: string): Controller {
     return MatchResultHelper.presentGameEnd(
       this.container,
       this.rulename,
-      isWinner
+      isWinner,
+      endSubtext
     )
   }
 

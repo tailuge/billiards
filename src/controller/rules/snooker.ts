@@ -247,8 +247,12 @@ export class Snooker implements Rules {
     return new Aim(this.container)
   }
 
-  handleGameEnd(_: boolean): Controller {
-    return SnookerScoring.presentGameEnd(this.container, this.rulename)
+  handleGameEnd(_: boolean, endSubtext?: string): Controller {
+    return SnookerScoring.presentGameEnd(
+      this.container,
+      this.rulename,
+      endSubtext
+    )
   }
 
   private whiteInHand(): Controller {

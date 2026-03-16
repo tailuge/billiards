@@ -122,8 +122,13 @@ export class ThreeCushion implements Rules {
     return s1 >= ThreeCushionConfig.raceTo || s2 >= ThreeCushionConfig.raceTo
   }
 
-  handleGameEnd(_: boolean): Controller {
-    return MatchResultHelper.presentGameEnd(this.container, this.rulename)
+  handleGameEnd(_: boolean, endSubtext?: string): Controller {
+    return MatchResultHelper.presentGameEnd(
+      this.container,
+      this.rulename,
+      undefined,
+      endSubtext
+    )
   }
 
   allowsPlaceBall(): boolean {

@@ -22,5 +22,5 @@ export interface Rules {
   asset(): string
   nextCandidateBall(): Ball | undefined
   startTurn(): void
-  handleGameEnd(isWinner: boolean): Controller
+  handleGameEnd(isWinner: boolean, endSubtext?: string): Controller
 }

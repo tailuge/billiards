@@ -21,7 +21,8 @@ export class MatchResultHelper {
   static presentGameEnd(
     container: Container,
     rulename: string,
-    forcedAmIWinner?: boolean
+    forcedAmIWinner?: boolean,
+    endSubtext?: string
   ): End {
     container.eventQueue.push(new ChatEvent(null, "game over"))
     container.recorder.wholeGameLink()
@@ -32,7 +33,7 @@ export class MatchResultHelper {
     const playerIndex = session?.playerIndex ?? 0
     const amIWinner = forcedAmIWinner ?? winnerIndex === playerIndex
 
-    const subtext = this.getScoreSubtext(container)
+    const subtext = endSubtext ?? this.getScoreSubtext(container)
 
     if (amIWinner) {
       this.notifyWin(container, subtext)
