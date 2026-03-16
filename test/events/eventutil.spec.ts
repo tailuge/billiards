@@ -13,6 +13,7 @@ import { ChatEvent } from "../../src/events/chatevent"
 import { BeginEvent } from "../../src/events/beginevent"
 import { HitEvent } from "../../src/events/hitevent"
 import { ScoreEvent } from "../../src/events/scoreevent"
+import { ConcedeEvent } from "../../src/events/concedeevent"
 
 describe("EventUtil", () => {
   it("Serialise and deserialise AimEvent", (done) => {
@@ -71,6 +72,13 @@ describe("EventUtil", () => {
     const serialised = EventUtil.serialise(new BeginEvent())
     const deserialised = EventUtil.fromSerialised(serialised)
     expect(deserialised.type).to.equal(EventType.BEGIN)
+    done()
+  })
+
+  it("Serialise and deserialise ConcedeEvent", (done) => {
+    const serialised = EventUtil.serialise(new ConcedeEvent())
+    const deserialised = EventUtil.fromSerialised(serialised)
+    expect(deserialised.type).to.equal(EventType.CONCEDE)
     done()
   })
 

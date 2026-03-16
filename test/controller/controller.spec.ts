@@ -16,6 +16,7 @@ import { Outcome } from "../../src/model/outcome"
 import { PlaceBall } from "../../src/controller/placeball"
 import { ChatEvent } from "../../src/events/chatevent"
 import { NotificationEvent } from "../../src/events/notificationevent"
+import { ConcedeEvent } from "../../src/events/concedeevent"
 import { PlaceBallEvent } from "../../src/events/placeballevent"
 import { zero } from "../../src/utils/utils"
 import { BreakEvent } from "../../src/events/breakevent"
@@ -463,6 +464,23 @@ describe("Controller", () => {
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchShot)
     expect(showSpy.mock.calls[0]).to.deep.equal(["test", 100])
+    done()
+  })
+
+  it("ConcedeEvent handled with no change of state", (done) => {
+    const watchShot = new WatchShot(container)
+    container.controller = watchShot
+    container.eventQueue.push(new ConcedeEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(WatchShot)
+    done()
+  })
+
+  it("End handles ConcedeEvent", (done) => {
+    container.controller = new End(container)
+    container.eventQueue.push(new ConcedeEvent())
+    container.processEvents()
+    expect(container.controller).to.be.an.instanceof(End)
     done()
   })
 })

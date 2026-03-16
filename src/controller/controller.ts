@@ -14,8 +14,17 @@ import { StartAimEvent } from "../events/startaimevent"
 import { NotificationEvent } from "../events/notificationevent"
 import { ScoreEvent } from "../events/scoreevent"
 import { RerackEvent } from "../events/rerackevent"
+import { ConcedeEvent } from "../events/concedeevent"
 
-export { BeginEvent, AimEvent, HitEvent, Input, AbortEvent, StationaryEvent }
+export {
+  BeginEvent,
+  AimEvent,
+  HitEvent,
+  Input,
+  AbortEvent,
+  StationaryEvent,
+  ConcedeEvent,
+}
 
 /**
  * Controller manages the state of the system reacting to input and network events in the animation loop.
@@ -74,6 +83,9 @@ export abstract class Controller {
     return this
   }
   handleRerack(_: RerackEvent): Controller {
+    return this
+  }
+  handleConcede(_: ConcedeEvent): Controller {
     return this
   }
   onFirst() {}
