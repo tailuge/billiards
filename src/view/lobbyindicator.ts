@@ -25,8 +25,8 @@ export class LobbyIndicator {
     if (!this.element) return;
 
     if (this.element instanceof HTMLAnchorElement) {
-      this.element.setAttribute("target", "_blank");
-      this.element.setAttribute("rel", "noopener noreferrer");
+      this.element.setAttribute("target", "_self");
+      this.element.setAttribute("rel", "noopener");
     } else {
       this.element.addEventListener("click", () => {
         if (typeof globalThis.open === "function") {
