@@ -27,8 +27,8 @@ export class Chat {
     this.updateScroll()
   }
 
-  showHTML(html: string) {
-    this.chatoutput?.insertAdjacentHTML("beforeend", html)
+  showElement(el: HTMLElement) {
+    this.chatoutput?.appendChild(el)
     this.updateScroll()
   }
 

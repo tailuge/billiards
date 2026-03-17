@@ -234,8 +234,11 @@ export class BrowserContainer {
   }
 
   offerUpload() {
-    this.container.chat.showHTML(
-      `<a class="pill" target="_blank" href="https://scoreboard-tailuge.vercel.app/hiscore.html${location.search}"> upload high score 🏆</a>`
-    )
+    const link = document.createElement("a")
+    link.className = "pill"
+    link.target = "_blank"
+    link.href = `https://scoreboard-tailuge.vercel.app/hiscore.html${location.search}`
+    link.textContent = " upload high score 🏆"
+    this.container.chat.showElement(link)
   }
 }
