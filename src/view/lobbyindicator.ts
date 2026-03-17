@@ -40,9 +40,8 @@ export class LobbyIndicator {
   async init(): Promise<void> {
     if (!this.element) return
 
-    const session = Session.hasInstance() ? Session.getInstance() : undefined
-    const userId = session?.clientId ?? "default"
-    const userName = session?.playername ?? "Anon"
+    const userId = Session.getInstance().clientId
+    const userName = Session.getInstance().playername
 
     this.messagingClient = new MessagingClient({
       baseUrl: LobbyIndicator.NCHAN_URL,

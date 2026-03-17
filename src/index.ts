@@ -16,6 +16,7 @@ function initialise() {
   const canvas3d = getCanvas("viewP1")!
   const params = new URLSearchParams(location.search)
   const browserContainer = new BrowserContainer(canvas3d, params)
+  ;(globalThis as any).browserContainer = browserContainer
   browserContainer.start()
   logusage()
 }

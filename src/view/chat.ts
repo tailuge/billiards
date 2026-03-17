@@ -19,8 +19,8 @@ export class Chat {
     this.showMessage(this.chatInputText?.value)
   }
 
-  showMessage(msg) {
-    this.chatoutput && (this.chatoutput.innerHTML += msg)
+  showMessage(msg: string) {
+    this.chatoutput?.insertAdjacentHTML("beforeend", msg)
     this.updateScroll()
   }
 
