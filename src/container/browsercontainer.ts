@@ -21,6 +21,7 @@ import { ScoreReporter } from "../network/client/scorereporter"
 import { BeginEvent } from "../events/beginevent"
 import { logNetEvent } from "../utils/event-log"
 import { Logger } from "../network/bot/logger"
+import { getUID } from "../utils/uid"
 
 /**
  * Integrate game container into HTML page
@@ -63,9 +64,7 @@ export class BrowserContainer {
       "Anon"
     this.tableId = params.get("tableId") ?? "default"
     this.clientId =
-      params.get("userId") ??
-      params.get("clientId") ??
-      `G_${Date.now() % 100000}`
+      params.get("userId") ?? params.get("clientId") ?? `G_${getUID()}`
     this.replay = params.get("state")
     this.ruletype = params.get("ruletype") ?? "nineball"
     this.wss = params.get("websocketserver")
