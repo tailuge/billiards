@@ -20,7 +20,15 @@ export class Chat {
   }
 
   showMessage(msg: string) {
-    this.chatoutput?.insertAdjacentHTML("beforeend", msg)
+    if (this.chatoutput) {
+      const textNode = document.createTextNode(msg)
+      this.chatoutput.appendChild(textNode)
+    }
+    this.updateScroll()
+  }
+
+  showHTML(html: string) {
+    this.chatoutput?.insertAdjacentHTML("beforeend", html)
     this.updateScroll()
   }
 
