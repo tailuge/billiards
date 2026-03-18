@@ -1,8 +1,6 @@
 import { expect } from "chai"
 import { Camera } from "../../src/view/camera"
 import { AimEvent } from "../../src/events/aimevent"
-import { R } from "../../src/model/physics/constants"
-import { Vector3 } from "three"
 
 describe("Camera", () => {
   it("increments t in update", () => {
