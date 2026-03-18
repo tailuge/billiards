@@ -1,6 +1,7 @@
 import { expect } from "chai"
 import { LobbyIndicator } from "../../src/view/lobbyindicator"
 import { initDom } from "./dom"
+import { Session } from "../../src/network/client/session"
 
 // Mock the @tailuge/messaging module
 jest.mock("@tailuge/messaging", () => ({
@@ -20,7 +21,13 @@ jest.mock("@tailuge/messaging", () => ({
 initDom()
 
 describe("LobbyIndicator", () => {
-  beforeEach(() => {})
+  beforeEach(() => {
+    Session.init("test-client", "TestPlayer", "test-table", false)
+  })
+
+  afterEach(() => {
+    Session.reset()
+  })
 
   it("updates text content on init", async () => {
     const element = document.getElementById("lobby")
