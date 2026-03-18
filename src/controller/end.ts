@@ -35,6 +35,12 @@ export class End extends Controller {
       }
       this.container.scoreReporter.submitMatchResult(this.result)
     }
+
+    const wasBotWin = !this.result && Session.isBotMode()
+    if (wasBotWin) {
+      return
+    }
+
     if (
       !this.result ||
       !Session.hasInstance() ||
