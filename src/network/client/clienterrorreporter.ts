@@ -85,7 +85,7 @@ export class ClientErrorReporter {
   start() {
     if (
       !(
-        typeof globalThis.window !== "undefined" &&
+        globalThis.window !== undefined &&
         process.env.NODE_ENV !== "test"
       )
     )

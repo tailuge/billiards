@@ -20,8 +20,8 @@ import {
 export class Trophy {
   group = new Group()
   private seed: number
-  private geometries: BufferGeometry[] = []
-  private materials: Material[] = []
+  private readonly geometries: BufferGeometry[] = []
+  private readonly materials: Material[] = []
   private texture?: Texture
 
   constructor(seed: number, flags: string[]) {
@@ -79,7 +79,7 @@ export class Trophy {
   private createTrophy(flags: string[]) {
     const segments = Math.floor(this.random(10, 13))
     const layers = 50
-    const maxHeight = this.random(3.5, 5.0)
+    const maxHeight = this.random(3.5, 5)
     const baseRadius = this.random(0.6, 0.9)
     const freq = this.random(1.5, 3.5)
     const amp = this.random(0.1, 0.3)
@@ -87,7 +87,7 @@ export class Trophy {
     const points: Vector2[] = []
     for (let i = 0; i <= layers; i++) {
       const t = i / layers
-      let r = baseRadius * (1.0 + Math.sin(t * Math.PI * freq) * amp)
+      let r = baseRadius * (1 + Math.sin(t * Math.PI * freq) * amp)
       if (t > 0.1 && t < 0.7)
         r *= 0.5 + Math.pow(Math.sin(t * Math.PI), 1.5) * 0.5
       if (t > 0.92) r += ((t - 0.92) / 0.08) * 0.6
