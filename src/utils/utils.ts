@@ -39,18 +39,42 @@ export function exp(theta) {
 }
 
 export function getRandomSeed() {
+  const crypto = globalThis.crypto || (globalThis as any).msCrypto
+  if (crypto?.getRandomValues !== undefined) {
+    const array = new Uint32Array(1)
+    crypto.getRandomValues(array)
+    return array[0] % 999999
+  }
   return Math.floor(Math.random() * 999999)
 }
 
 export function getFlagForLocale(): string {
   const locale = globalThis.navigator?.language ?? "en-GB"
-  const countryCode = locale.split("-")[1] ?? locale.split("-")[0].toUpperCase()
-  if (countryCode.length !== 2) {
-    return "🌐"
+  const parts = locale.split("-")
+  let countryCode = "🌐"
+
+  if (parts.length > 1) {
+    // Standard locales: en-GB, zh-Hans-CN, etc.
+    // Try to find a 2-letter country code (usually the last part)
+    const lastPart = parts[parts.length - 1].toUpperCase()
+    if (lastPart.length === 2) {
+      countryCode = lastPart
+    } else {
+      // Fallback for cases like zh-Hant
+      const secondPart = parts[1].toUpperCase()
+      if (secondPart.length === 2) {
+        countryCode = secondPart
+      }
+    }
   }
+
+  if (countryCode === "🌐") {
+    return countryCode
+  }
+
   return countryCode
     .toUpperCase()
-    .replace(/./g, (char) =>
-      String.fromCodePoint(char.charCodeAt(0) + 127397)
-    )
+    .split("")
+    .map((char) => String.fromCodePoint(char.charCodeAt(0) + 127397))
+    .join("")
 }

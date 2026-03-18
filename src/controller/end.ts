@@ -23,7 +23,7 @@ export class End extends Controller {
 
   override onFirst(): void {
     this.trophy = new Trophy(getRandomSeed(), [getFlagForLocale()])
-    this.trophy.group.position.set(0, 0, -R)
+    this.trophy.group.position.set(0, 0, 0)
     this.container.view.scene.add(this.trophy.group)
 
     if (this.result && this.container.scoreReporter) {

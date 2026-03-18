@@ -24,9 +24,8 @@ export class Trophy {
   }
 
   private random(min: number, max: number): number {
-    const x = Math.sin(this.seed++) * 10000
-    const r = x - Math.floor(x)
-    return min + r * (max - min)
+    this.seed = (this.seed * 16807) % 2147483647
+    return min + (this.seed / 2147483647) * (max - min)
   }
 
   private createFlagTexture(flags: string[]): CanvasTexture {
@@ -80,9 +79,13 @@ export class Trophy {
     const points: Vector2[] = []
     for (let i = 0; i <= layers; i++) {
       const t = i / layers
-      let r = baseRadius * (1.0 + Math.sin(t * Math.PI * freq) * amp)
-      if (t > 0.1 && t < 0.7) r *= 0.5 + Math.pow(Math.sin(t * Math.PI), 1.5) * 0.5
-      if (t > 0.92) r += ((t - 0.92) / 0.08) * 0.06
+      let r = baseRadius * (1 + Math.sin(t * Math.PI * freq) * amp)
+      if (t > 0.1 && t < 0.7) {
+        r *= 0.5 + Math.pow(Math.sin(t * Math.PI), 1.5) * 0.5
+      }
+      if (t > 0.92) {
+        r += ((t - 0.92) / 0.08) * 0.06
+      }
       points.push(new Vector2(Math.max(0.01, r), t * maxHeight))
     }
 
@@ -99,7 +102,7 @@ export class Trophy {
     mesh.material = material
     // mesh.castShadow = true; // Shadows not enabled in main renderer
     // In our system Z is up, so we rotate it to stand on the table
-    mesh.rotation.x = -Math.PI / 2
+    mesh.rotation.x = Math.PI / 2
     mesh.position.z = 0.09 // Offset from plinth
     this.group.add(mesh)
 
