@@ -54,6 +54,7 @@ export class Container {
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
   replayMode: boolean = false
+  stayActive: boolean = false
   frame: (timestamp: number) => void
 
   private readonly localScores = {
@@ -309,7 +310,8 @@ export class Container {
     const needsRender =
       timestamp < this.lastEventTime + 12000 ||
       !this.table.allStationary() ||
-      this.view.sizeChanged()
+      this.view.sizeChanged() ||
+      this.stayActive
     if (needsRender) {
       this.view.render()
     }

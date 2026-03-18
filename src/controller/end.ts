@@ -5,6 +5,7 @@ import { Container } from "../container/container"
 import { MatchResult, MatchResultHelper } from "../network/client/matchresult"
 import { ReplayEncoder } from "../utils/replay-encoder"
 import { Trophy } from "../view/trophy"
+import { Session } from "../network/client/session"
 
 export class End extends Controller {
   override get name(): string {
@@ -21,6 +22,7 @@ export class End extends Controller {
 
   override onFirst(): void {
     this.container.view.camera.forceMode(this.container.view.camera.orbitView)
+    this.container.stayActive = true
     this.container.menu?.setConcedeVisible(false)
     console.log("result:", this.result)
     if (this.result && this.container.scoreReporter) {
@@ -32,9 +34,13 @@ export class End extends Controller {
         console.error("Failed to encode replay data", e)
       }
       this.container.scoreReporter.submitMatchResult(this.result)
-      if (MatchResultHelper.isWinner(this.result)) {
-        this.showTrophy()
-      }
+    }
+    if (
+      !this.result ||
+      !Session.hasInstance() ||
+      MatchResultHelper.isWinner(this.result)
+    ) {
+      this.showTrophy()
     }
   }
 
