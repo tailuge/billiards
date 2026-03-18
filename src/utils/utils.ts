@@ -37,3 +37,20 @@ export function sqrt(theta) {
 export function exp(theta) {
   return Math.fround(Math.exp(theta))
 }
+
+export function getRandomSeed() {
+  return Math.floor(Math.random() * 999999)
+}
+
+export function getFlagForLocale(): string {
+  const locale = globalThis.navigator?.language ?? "en-GB"
+  const countryCode = locale.split("-")[1] ?? locale.split("-")[0].toUpperCase()
+  if (countryCode.length !== 2) {
+    return "🌐"
+  }
+  return countryCode
+    .toUpperCase()
+    .replace(/./g, (char) =>
+      String.fromCodePoint(char.charCodeAt(0) + 127397)
+    )
+}

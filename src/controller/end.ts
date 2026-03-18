@@ -4,6 +4,9 @@ import { Init } from "./init"
 import { Container } from "../container/container"
 import { MatchResult } from "../network/client/matchresult"
 import { ReplayEncoder } from "../utils/replay-encoder"
+import { Trophy } from "../view/trophy"
+import { getFlagForLocale, getRandomSeed } from "../utils/utils"
+import { R } from "../model/physics/constants"
 
 export class End extends Controller {
   override get name(): string {
@@ -11,6 +14,7 @@ export class End extends Controller {
   }
 
   private readonly result?: MatchResult | undefined
+  private trophy?: Trophy
 
   constructor(container: Container, result?: MatchResult | undefined) {
     super(container)
@@ -18,6 +22,10 @@ export class End extends Controller {
   }
 
   override onFirst(): void {
+    this.trophy = new Trophy(getRandomSeed(), [getFlagForLocale()])
+    this.trophy.group.position.set(0, 0, -R)
+    this.container.view.scene.add(this.trophy.group)
+
     if (this.result && this.container.scoreReporter) {
       try {
         const gameState = this.container.recorder.wholeGame()
@@ -38,6 +46,9 @@ export class End extends Controller {
   }
 
   override handleBegin(_: BeginEvent): Controller {
+    if (this.trophy) {
+      this.container.view.scene.remove(this.trophy.group)
+    }
     return new Init(this.container)
   }
 }
