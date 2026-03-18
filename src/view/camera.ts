@@ -19,10 +19,24 @@ export class Camera {
   private readonly tempVec = new Vector3()
 
   elapsed: number
+  private t = 0
 
   update(elapsed, aim: AimEvent) {
     this.elapsed = elapsed
+    this.t += elapsed
     this.mode(aim)
+  }
+
+  orbitView(_: AimEvent) {
+    this.camera.fov = 45
+    this.target.set(
+      Math.sin(this.t / 20) * R * 22,
+      Math.cos(this.t / 20) * R * 22,
+      R * 2
+    )
+    this.camera.position.lerp(this.target, 0.02)
+    this.camera.up = up
+    this.camera.lookAt(zero)
   }
 
   topView(_: AimEvent) {
