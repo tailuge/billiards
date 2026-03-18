@@ -6,7 +6,6 @@ import { MatchResult } from "../network/client/matchresult"
 import { ReplayEncoder } from "../utils/replay-encoder"
 import { Trophy } from "../view/trophy"
 import { getFlagForLocale, getRandomSeed } from "../utils/utils"
-import { R } from "../model/physics/constants"
 
 export class End extends Controller {
   override get name(): string {
@@ -48,6 +47,7 @@ export class End extends Controller {
   override handleBegin(_: BeginEvent): Controller {
     if (this.trophy) {
       this.container.view.scene.remove(this.trophy.group)
+      this.trophy.dispose()
     }
     return new Init(this.container)
   }

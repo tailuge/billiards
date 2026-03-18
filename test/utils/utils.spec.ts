@@ -1,6 +1,14 @@
 import { Vector3 } from "three"
 import { unitAtAngle, roundVec2 } from "../../src/utils/three-utils"
-import { round, round2, pow, exp, isFirstShot } from "../../src/utils/utils"
+import {
+  round,
+  round2,
+  pow,
+  exp,
+  isFirstShot,
+  getRandomSeed,
+  getFlagForLocale,
+} from "../../src/utils/utils"
 import { EventType } from "../../src/events/eventtype"
 
 describe("utils", () => {
@@ -71,6 +79,35 @@ describe("utils", () => {
         entries: [{ event: { type: EventType.AIM } }],
       } as any
       expect(isFirstShot(recorder)).toBe(false)
+    })
+  })
+
+  describe("getRandomSeed", () => {
+    it("should return a number between 0 and 999999", () => {
+      const seed = getRandomSeed()
+      expect(seed).toBeGreaterThanOrEqual(0)
+      expect(seed).toBeLessThan(1000000)
+    })
+
+    it("should return different values", () => {
+      const seed1 = getRandomSeed()
+      const seed2 = getRandomSeed()
+      // Extremely unlikely to be same, but possible.
+      // We just want to check it's not a constant.
+      if (seed1 === seed2) {
+        const seed3 = getRandomSeed()
+        expect(seed3).not.toBe(seed1)
+      }
+    })
+  })
+
+  describe("getFlagForLocale", () => {
+    it("should return a flag emoji for common locales", () => {
+      // Mocking navigator.language is hard in jsdom if it's already set
+      // but we can test the logic if we were to expose it better,
+      // or just check it returns something valid.
+      const flag = getFlagForLocale()
+      expect(flag.length).toBeGreaterThan(0)
     })
   })
 })

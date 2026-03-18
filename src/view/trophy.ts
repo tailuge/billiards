@@ -1,4 +1,5 @@
 import {
+  BufferGeometry,
   CanvasTexture,
   Color,
   ConeGeometry,
@@ -7,9 +8,11 @@ import {
   Group,
   LatheGeometry,
   LinearFilter,
+  Material,
   Mesh,
   MeshStandardMaterial,
   RepeatWrapping,
+  Texture,
   TorusGeometry,
   Vector2,
 } from "three"
@@ -17,10 +20,19 @@ import {
 export class Trophy {
   group = new Group()
   private seed: number
+  private geometries: BufferGeometry[] = []
+  private materials: Material[] = []
+  private texture?: Texture
 
   constructor(seed: number, flags: string[]) {
     this.seed = seed
     this.createTrophy(flags)
+  }
+
+  public dispose(): void {
+    this.geometries.forEach((g) => g.dispose())
+    this.materials.forEach((m) => m.dispose())
+    this.texture?.dispose()
   }
 
   private random(min: number, max: number): number {
@@ -90,6 +102,7 @@ export class Trophy {
     }
 
     const geometry = new LatheGeometry(points, segments)
+    this.geometries.push(geometry)
     const material = new MeshStandardMaterial({
       color: this.getMetallicColor(),
       flatShading: true,
@@ -97,13 +110,16 @@ export class Trophy {
       roughness: 0.15,
       side: DoubleSide,
     })
+    this.materials.push(material)
 
-    const mesh = new Mesh(geometry)
-    mesh.material = material
+    const mesh = new Mesh(geometry, material)
     // mesh.castShadow = true; // Shadows not enabled in main renderer
     // In our system Z is up, so we rotate it to stand on the table
-    mesh.rotation.x = Math.PI / 2
-    mesh.position.z = 0.09 // Offset from plinth
+    // The cup is created along Y axis in LatheGeometry, so we rotate it to stand on Z axis
+    mesh.rotation.x = -Math.PI / 2
+    // Standing on the table, not on the plinth offset.
+    // The plinth is at Z=0 to 0.09, so the cup should start at 0.09
+    mesh.position.z = 0.09
     this.group.add(mesh)
 
     // Side Item
@@ -112,17 +128,15 @@ export class Trophy {
       const offset = baseRadius * this.random(0.8, 1.2)
       let sideMesh: Mesh
       if (this.random(0, 1) > 0.5) {
-        sideMesh = new Mesh(
-          new ConeGeometry(baseRadius * 0.4, maxHeight * 0.4, 3),
-          material
-        )
-        sideMesh.rotation.x = Math.PI / 2
+        const sideGeo = new ConeGeometry(baseRadius * 0.4, maxHeight * 0.4, 3)
+        this.geometries.push(sideGeo)
+        sideMesh = new Mesh(sideGeo, material)
+        sideMesh.rotation.x = -Math.PI / 2
         sideMesh.rotation.z = -Math.PI / 4
       } else {
-        sideMesh = new Mesh(
-          new TorusGeometry(baseRadius * 0.6, 0.01, 4, 8),
-          material
-        )
+        const sideGeo = new TorusGeometry(baseRadius * 0.6, 0.01, 4, 8)
+        this.geometries.push(sideGeo)
+        sideMesh = new Mesh(sideGeo, material)
       }
       sideMesh.position.set(offset, 0, hPos)
       this.group.add(sideMesh)
@@ -133,28 +147,39 @@ export class Trophy {
       roughness: 0.9,
       flatShading: true,
     })
+    this.materials.push(woodMat)
 
     const flagTex = this.createFlagTexture(flags)
+    this.texture = flagTex
     const flagMat = new MeshStandardMaterial({
       map: flagTex,
       roughness: 0.8,
       transparent: false,
     })
+    this.materials.push(flagMat)
 
-    const plinthBase = new Mesh(
-      new CylinderGeometry(baseRadius * 1.5, baseRadius * 1.6, 0.03, segments),
-      woodMat
+    const plinthBaseGeo = new CylinderGeometry(
+      baseRadius * 1.5,
+      baseRadius * 1.6,
+      0.03,
+      segments
     )
-    plinthBase.rotation.x = Math.PI / 2
+    this.geometries.push(plinthBaseGeo)
+    const plinthBase = new Mesh(plinthBaseGeo, woodMat)
+    plinthBase.rotation.x = -Math.PI / 2
     plinthBase.position.z = 0.015
     this.group.add(plinthBase)
 
     const plinthTopHeight = 0.06
-    const plinthTop = new Mesh(
-      new CylinderGeometry(baseRadius * 1.2, baseRadius * 1.3, plinthTopHeight, segments),
-      flagMat
+    const plinthTopGeo = new CylinderGeometry(
+      baseRadius * 1.2,
+      baseRadius * 1.3,
+      plinthTopHeight,
+      segments
     )
-    plinthTop.rotation.x = Math.PI / 2
+    this.geometries.push(plinthTopGeo)
+    const plinthTop = new Mesh(plinthTopGeo, flagMat)
+    plinthTop.rotation.x = -Math.PI / 2
     plinthTop.position.z = 0.03 + plinthTopHeight / 2
     this.group.add(plinthTop)
   }

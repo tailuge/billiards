@@ -38,43 +38,43 @@ export function exp(theta) {
   return Math.fround(Math.exp(theta))
 }
 
-export function getRandomSeed() {
-  const crypto = globalThis.crypto || (globalThis as any).msCrypto
-  if (crypto?.getRandomValues !== undefined) {
+export function getRandomSeed(): number {
+  const crypto =
+    globalThis.crypto || (globalThis as Record<string, unknown>).msCrypto
+  if (
+    crypto !== undefined &&
+    typeof (crypto as Crypto).getRandomValues === "function"
+  ) {
     const array = new Uint32Array(1)
-    crypto.getRandomValues(array)
+    ;(crypto as Crypto).getRandomValues(array)
     return array[0] % 999999
   }
-  return Math.floor(Math.random() * 999999)
+  // Fallback to time-based seed if crypto is unavailable (not for security sensitive tasks)
+  return Date.now() % 999999
 }
 
 export function getFlagForLocale(): string {
   const locale = globalThis.navigator?.language ?? "en-GB"
   const parts = locale.split("-")
-  let countryCode = "🌐"
+  let countryCode = ""
 
-  if (parts.length > 1) {
-    // Standard locales: en-GB, zh-Hans-CN, etc.
-    // Try to find a 2-letter country code (usually the last part)
-    const lastPart = parts[parts.length - 1].toUpperCase()
-    if (lastPart.length === 2) {
-      countryCode = lastPart
-    } else {
-      // Fallback for cases like zh-Hant
-      const secondPart = parts[1].toUpperCase()
-      if (secondPart.length === 2) {
-        countryCode = secondPart
-      }
+  // Standard locales: en-GB, zh-Hans-CN, etc.
+  // Search for a 2-letter country code in the locale string
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const part = parts[i].toUpperCase()
+    if (part.length === 2 && /^[A-Z]{2}$/.test(part)) {
+      countryCode = part
+      break
     }
   }
 
-  if (countryCode === "🌐") {
-    return countryCode
+  if (countryCode === "") {
+    return "🌐"
   }
 
+  const OFFSET = 127397
   return countryCode
-    .toUpperCase()
     .split("")
-    .map((char) => String.fromCodePoint(char.charCodeAt(0) + 127397))
+    .map((char) => String.fromCodePoint(char.charCodeAt(0) + OFFSET))
     .join("")
 }

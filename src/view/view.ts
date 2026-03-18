@@ -1,4 +1,12 @@
-import { Scene, WebGLRenderer, Frustum, Matrix4, AmbientLight } from "three"
+import {
+  Scene,
+  WebGLRenderer,
+  Frustum,
+  Matrix4,
+  AmbientLight,
+  HemisphereLight,
+  DirectionalLight,
+} from "three"
 import { Camera } from "./camera"
 import { AimEvent } from "../events/aimevent"
 import { Table } from "../model/table"
@@ -84,7 +92,14 @@ export class View {
   }
 
   private initialiseScene() {
-    this.scene.add(new AmbientLight(0x009922, 0.3))
+    this.scene.add(new AmbientLight(0xffffff, 0.4))
+    const hemiLight = new HemisphereLight(0xffffff, 0x888888, 0.6)
+    this.scene.add(hemiLight)
+
+    const keyLight = new DirectionalLight(0xffffff, 0.8)
+    keyLight.position.set(2, 5, 2)
+    this.scene.add(keyLight)
+
     if (this.assets.background) {
       this.scene.add(this.assets.background)
     }
