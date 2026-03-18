@@ -38,6 +38,7 @@ export class Menu {
           0,
           {
             "concede-confirm": () => {
+              this.setConcedeVisible(false)
               this.container.notification.clear()
               if (Session.isBotMode()) {
                 this.container.updateController(

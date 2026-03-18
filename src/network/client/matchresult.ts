@@ -54,6 +54,10 @@ export class MatchResultHelper {
     return new End(container, amIWinner ? result : undefined)
   }
 
+  static isWinner(result: MatchResult): boolean {
+    return result.winner === Session.getInstance()?.playername
+  }
+
   private static notifyWin(container: Container, subtext: string) {
     container.notifyLocal({
       type: "GameOver",

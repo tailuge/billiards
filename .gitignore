@@ -1,5 +1,6 @@
 # generated js files
 dist/*.js
+dist.tsconfig.tsbuildinfo
 
 # Logs
 logs
