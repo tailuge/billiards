@@ -20,6 +20,7 @@ export class End extends Controller {
   }
 
   override onFirst(): void {
+    this.container.menu?.setConcedeVisible(false)
     console.log("result:", this.result)
     if (this.result && this.container.scoreReporter) {
       try {
