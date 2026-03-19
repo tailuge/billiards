@@ -114,7 +114,7 @@ export class Container {
     this.scoreReporter = scoreReporter
     this.lobbyIndicator = new LobbyIndicator(this.rules)
     this.updateController(new Init(this))
-//    this.updateController(new End(this))
+    //    this.updateController(new End(this))
   }
 
   init() {
