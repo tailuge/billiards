@@ -27,6 +27,7 @@ import { ScoreEvent } from "../events/scoreevent"
 import { ContainerConfig } from "./containerconfig"
 import { Controller } from "../controller/controller"
 import { ParticleSystem } from "../view/particle-system"
+// import { End } from "../controller/end"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -115,7 +116,6 @@ export class Container {
     this.updateController(new Init(this))
 //    this.updateController(new End(this))
   }
-
 
   init() {
     if (!this.replayMode) {

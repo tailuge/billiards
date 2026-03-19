@@ -26,13 +26,13 @@ export interface ParticleSystemConfig {
 const DEFAULT_CONFIG: Required<ParticleSystemConfig> = {
   tableWidth: 88,
   tableLength: 44,
-  tableZ: -R * 3,
+  tableZ: -R * 3.5,
   scaleX: 0.99 * R,
   scaleY: 0.98 * R,
   stopThreshold: 0.25,
-  gravity: -1.375,
-  baseRestitution: 0.75,
-  restitutionVariance: 0.35,
+  gravity: -1.1,
+  baseRestitution: 0.55,
+  restitutionVariance: 0.25,
 }
 
 export class ParticleSystem {
@@ -58,8 +58,14 @@ export class ParticleSystem {
   }
 
   initParticles(scene: Scene) {
+    const winningPool = "🎱🏆🥇🔥💯💎🥇勝"
+    const getWin = (p: string) =>
+      Array.from(p)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 2)
+        .join("")
     const sourceCanvas = ParticleUtils.generateTextCanvas(
-      "🇬🇧-龍",
+      getWin(winningPool),
       88,
       44,
       "bold sans-serif"
@@ -124,7 +130,7 @@ export class ParticleSystem {
         offset + (x - this.config.tableWidth / 2) * this.config.scaleX
       this.pPosY[i] =
         -offset + (this.config.tableLength / 2 - y) * this.config.scaleY
-      this.pPosZ[i] = 25 * R + Math.random() * 5 * R
+      this.pPosZ[i] = 45 * R + Math.random() * 15 * R
 
       this.pRot[i * 3] = Math.random() * Math.PI
       this.pRot[i * 3 + 1] = Math.random() * Math.PI
@@ -169,6 +175,10 @@ export class ParticleSystem {
     this.scene = null
   }
 
+  TWO_PI = Math.PI * 2
+  damp = (theta) =>
+    ((((theta % Math.PI) * 2 + 3 * Math.PI * 2) % Math.PI) * 2 - Math.PI) * 0.1
+
   private updateParticle(i: number, dt: number): boolean {
     if (this.pState[i] === 2) return false
 
@@ -193,6 +203,8 @@ export class ParticleSystem {
       if (Math.abs(this.pVelZ[i]) < this.config.stopThreshold) {
         this.pVelZ[i] = 0
         this.pState[i] = 2
+        this.pRot[i * 3] = this.damp(this.pRot[i * 3])
+        this.pRot[i * 3 + 1] = this.damp(this.pRot[i * 3 + 1])
       } else {
         const varFactor =
           Math.random() * (this.config.restitutionVariance * 2) -
