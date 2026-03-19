@@ -26,6 +26,8 @@ import { Notification, NotificationData } from "../view/notification"
 import { ScoreEvent } from "../events/scoreevent"
 import { ContainerConfig } from "./containerconfig"
 import { Controller } from "../controller/controller"
+import { ParticleSystem } from "../view/particle-system"
+import { ParticleUtils } from "../view/particle-utils"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -34,6 +36,7 @@ type ActivePlayer = 0 | 1 | 2
  */
 export class Container {
   table: Table
+  particles: ParticleSystem
   view: View
   controller: Controller
   inputQueue: Input[] = []
@@ -104,6 +107,14 @@ export class Container {
     this.id = id ?? ""
     this.menu = new Menu(this)
     this.table.addToScene(this.view.scene)
+    this.particles = new ParticleSystem()
+    const sourceCanvas = ParticleUtils.generateTextCanvas(
+      "🇬🇧-龍",
+      88,
+      44,
+      "bold sans-serif"
+    )
+    this.particles.initialise(this.view.scene, sourceCanvas)
     this.hud = new Hud()
     this.notification = new Notification()
     this.relay = relay
@@ -272,6 +283,7 @@ export class Container {
     this.table.updateBallMesh(computedElapsed)
     this.view.update(computedElapsed, this.table.cue.aim)
     this.table.cue.update(computedElapsed)
+    this.particles.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())
     }
