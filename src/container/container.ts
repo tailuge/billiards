@@ -28,6 +28,7 @@ import { ContainerConfig } from "./containerconfig"
 import { Controller } from "../controller/controller"
 import { ParticleSystem } from "../view/particle-system"
 import { ParticleUtils } from "../view/particle-utils"
+import { End } from "../controller/end"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -114,6 +115,7 @@ export class Container {
     this.scoreReporter = scoreReporter
     this.lobbyIndicator = new LobbyIndicator(this.rules)
     this.updateController(new Init(this))
+//    this.initParicles()
   }
 
   initParicles() {
@@ -124,6 +126,7 @@ export class Container {
       "bold sans-serif"
     )
     this.particles.initialise(this.view.scene, sourceCanvas)
+    this.updateController(new End(this))
   }
 
   init() {

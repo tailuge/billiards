@@ -28,9 +28,9 @@ const DEFAULT_CONFIG: Required<ParticleSystemConfig> = {
   tableZ: -R * 3,
   scaleX: 0.99 * R,
   scaleY: 0.98 * R,
-  stopThreshold: 0.5,
-  gravity: -8.375,
-  baseRestitution: 0.55,
+  stopThreshold: 0.25,
+  gravity: -1.375,
+  baseRestitution: 0.75,
   restitutionVariance: 0.35,
 }
 
@@ -113,7 +113,7 @@ export class ParticleSystem {
         offset + (x - this.config.tableWidth / 2) * this.config.scaleX
       this.pPosY[i] =
         -offset + (this.config.tableLength / 2 - y) * this.config.scaleY
-      this.pPosZ[i] = 10 * R + Math.random() * 2 * R
+      this.pPosZ[i] = 25 * R + Math.random() * 5 * R
 
       this.pRot[i * 3] = Math.random() * Math.PI
       this.pRot[i * 3 + 1] = Math.random() * Math.PI
