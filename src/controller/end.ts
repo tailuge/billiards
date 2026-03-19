@@ -4,7 +4,6 @@ import { Init } from "./init"
 import { Container } from "../container/container"
 import { MatchResult, MatchResultHelper } from "../network/client/matchresult"
 import { ReplayEncoder } from "../utils/replay-encoder"
-import { Trophy } from "../view/trophy"
 import { Session } from "../network/client/session"
 
 export class End extends Controller {
@@ -13,7 +12,6 @@ export class End extends Controller {
   }
 
   private readonly result?: MatchResult | undefined
-  private trophy?: Trophy
 
   constructor(container: Container, result?: MatchResult | undefined) {
     super(container)
@@ -46,14 +44,8 @@ export class End extends Controller {
       !Session.hasInstance() ||
       MatchResultHelper.isWinner(this.result)
     ) {
-      this.showTrophy()
+      this.container.particles.initParticles(this.container.view.scene)
     }
-  }
-
-  private showTrophy() {
-    this.trophy = new Trophy(Date.now() % 999999, ["🇬🇧"])
-    this.trophy.group.position.set(0, 0, -0.03)
-    this.container.view.scene.add(this.trophy.group)
   }
 
   override handleChat(chatevent: ChatEvent): Controller {
@@ -64,10 +56,6 @@ export class End extends Controller {
   }
 
   override handleBegin(_: BeginEvent): Controller {
-    if (this.trophy) {
-      this.container.view.scene.remove(this.trophy.group)
-      this.trophy.dispose()
-    }
     return new Init(this.container)
   }
 }

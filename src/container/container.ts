@@ -27,8 +27,6 @@ import { ScoreEvent } from "../events/scoreevent"
 import { ContainerConfig } from "./containerconfig"
 import { Controller } from "../controller/controller"
 import { ParticleSystem } from "../view/particle-system"
-import { ParticleUtils } from "../view/particle-utils"
-import { End } from "../controller/end"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -115,19 +113,9 @@ export class Container {
     this.scoreReporter = scoreReporter
     this.lobbyIndicator = new LobbyIndicator(this.rules)
     this.updateController(new Init(this))
-//    this.initParicles()
+//    this.updateController(new End(this))
   }
 
-  initParicles() {
-    const sourceCanvas = ParticleUtils.generateTextCanvas(
-      "🇬🇧-龍",
-      88,
-      44,
-      "bold sans-serif"
-    )
-    this.particles.initialise(this.view.scene, sourceCanvas)
-    this.updateController(new End(this))
-  }
 
   init() {
     if (!this.replayMode) {

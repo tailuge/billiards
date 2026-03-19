@@ -9,6 +9,7 @@ import {
   DoubleSide,
 } from "three"
 import { R } from "../model/physics/constants"
+import { ParticleUtils } from "./particle-utils"
 
 export interface ParticleSystemConfig {
   tableWidth?: number
@@ -54,6 +55,16 @@ export class ParticleSystem {
   constructor(config: ParticleSystemConfig = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config }
     this.count = this.config.tableWidth * this.config.tableLength
+  }
+
+  initParticles(scene: Scene) {
+    const sourceCanvas = ParticleUtils.generateTextCanvas(
+      "🇬🇧-龍",
+      88,
+      44,
+      "bold sans-serif"
+    )
+    this.initialise(scene, sourceCanvas)
   }
 
   initialise(scene: Scene, sourceCanvas: HTMLCanvasElement): void {

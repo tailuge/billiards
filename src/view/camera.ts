@@ -30,10 +30,10 @@ export class Camera {
   orbitView(_: AimEvent) {
     this.camera.fov = 45
     const orbitR = R * 60
-    const orbitH = R * 20
+    const orbitH = R * 30
     this.target.set(
-      Math.sin(this.t / 20) * orbitR,
-      Math.cos(this.t / 20) * orbitR,
+      Math.sin(this.t / 5) * orbitR,
+      Math.cos(this.t / 5) * orbitR,
       orbitH + Math.sin(this.t / 31) * orbitH * 0.2
     )
     this.camera.position.lerp(this.target, 0.01)
