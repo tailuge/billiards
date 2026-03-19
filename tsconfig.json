@@ -2,6 +2,7 @@
   "include": ["src/**/*"],
   "exclude": ["**/*.spec.ts"],
   "compilerOptions": {
+    "incremental": false,
     "outDir": "./dist",
     "module": "commonjs",
     "noImplicitAny": false,
