@@ -58,9 +58,33 @@ export class ParticleSystem {
   }
 
   initParticles(scene: Scene) {
-    const winningPool = "🎱🏆🥇🔥💯💎🥇勝"
-    const getWin = (p: string) =>
-      Array.from(p)
+    const winningPool = [
+      "🎱",
+      "🏆",
+      "🔥",
+      "💯",
+      "💎",
+      "👑",
+      "🦁",
+      "✨",
+      "勝",
+      "神",
+      "福",
+      "佳",
+      "🎲",
+      "🍀",
+      "👾",
+      "🕹️",
+      "🎮",
+      "🇯🇵",
+      "🇬🇧",
+      "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
+      "🇹🇼",
+      "🌍",
+    ]
+
+    const getWin = (p: string[]) =>
+      p
         .sort(() => 0.5 - Math.random())
         .slice(0, 2)
         .join("")
