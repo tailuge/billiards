@@ -108,6 +108,15 @@ export class Container {
     this.menu = new Menu(this)
     this.table.addToScene(this.view.scene)
     this.particles = new ParticleSystem()
+    this.hud = new Hud()
+    this.notification = new Notification()
+    this.relay = relay
+    this.scoreReporter = scoreReporter
+    this.lobbyIndicator = new LobbyIndicator(this.rules)
+    this.updateController(new Init(this))
+  }
+
+  initParicles() {
     const sourceCanvas = ParticleUtils.generateTextCanvas(
       "🇬🇧-龍",
       88,
@@ -115,12 +124,6 @@ export class Container {
       "bold sans-serif"
     )
     this.particles.initialise(this.view.scene, sourceCanvas)
-    this.hud = new Hud()
-    this.notification = new Notification()
-    this.relay = relay
-    this.scoreReporter = scoreReporter
-    this.lobbyIndicator = new LobbyIndicator(this.rules)
-    this.updateController(new Init(this))
   }
 
   init() {
