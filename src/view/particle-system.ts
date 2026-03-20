@@ -37,7 +37,7 @@ const DEFAULT_CONFIG: Required<ParticleSystemConfig> = {
   backgroundColor: "#040b9f",
 };
 
-const COLOR_TOLERANCE = 8;
+const COLOR_TOLERANCE = 4;
 
 export class ParticleSystem {
   private scene: Scene | null = null;
@@ -129,6 +129,7 @@ export class ParticleSystem {
     this.instancedMesh = new InstancedMesh(geo, mat, this.count);
     this.instancedMesh.castShadow = true;
     this.instancedMesh.receiveShadow = true;
+    this.instancedMesh.frustumCulled = false; // Instance positions aren't considered in culling
     this.scene.add(this.instancedMesh);
 
     const offset = R / 2;
