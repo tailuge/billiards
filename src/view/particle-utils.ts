@@ -3,7 +3,8 @@ export class ParticleUtils {
     text: string,
     width: number,
     height: number,
-    fontStack: string
+    fontStack: string,
+    backgroundColor: string = "#040b9f"
   ): HTMLCanvasElement {
     const canvas = document.createElement("canvas")
     canvas.width = width
@@ -13,7 +14,7 @@ export class ParticleUtils {
     if (!ctx) return canvas
 
     // Background
-    ctx.fillStyle = "#040b9f"
+    ctx.fillStyle = backgroundColor
     ctx.fillRect(0, 0, width, height)
 
     // Improve rendering quality

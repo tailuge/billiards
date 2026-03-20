@@ -56,6 +56,7 @@ export class End extends Controller {
   }
 
   override handleBegin(_: BeginEvent): Controller {
+    this.container.particles.dispose()
     return new Init(this.container)
   }
 }
