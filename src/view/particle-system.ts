@@ -37,8 +37,6 @@ const DEFAULT_CONFIG: Required<ParticleSystemConfig> = {
   backgroundColor: "#040b9f",
 };
 
-const COLOR_TOLERANCE = 4;
-
 export class ParticleSystem {
   private scene: Scene | null = null;
   private config: Required<ParticleSystemConfig>;
@@ -87,22 +85,20 @@ export class ParticleSystem {
       this.config.tableLength,
     ).data;
 
-    const bg = new Color(this.config.backgroundColor);
-    const bgR = Math.round(bg.r * 255);
-    const bgG = Math.round(bg.g * 255);
-    const bgB = Math.round(bg.b * 255);
+    const { r: bgR, g: bgG, b: bgB } = ParticleUtils.colorToRgb(
+      this.config.backgroundColor,
+    );
 
     const activeIndices: number[] = [];
     const totalPixels = this.config.tableWidth * this.config.tableLength;
     for (let i = 0; i < totalPixels; i++) {
       const idx = i * 4;
       if (
-        Math.abs(imgData[idx] - bgR) > COLOR_TOLERANCE &&
-        Math.abs(imgData[idx + 1] - bgG) > COLOR_TOLERANCE &&
-        Math.abs(imgData[idx + 2] - bgB) > COLOR_TOLERANCE
-      ) {
-        activeIndices.push(i);
-      }
+        imgData[idx] === bgR &&
+        imgData[idx + 1] === bgG &&
+        imgData[idx + 2] === bgB
+      ) continue;
+      activeIndices.push(i);
     }
 
     this.count = activeIndices.length;
