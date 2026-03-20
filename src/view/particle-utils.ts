@@ -65,6 +65,7 @@ export class ParticleUtils {
     "太魯閣",
     "🐧🧡",
     "(ツ)",
+    "水啦",
   ]
 
   static randomText() {

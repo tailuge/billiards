@@ -124,7 +124,7 @@ export class ParticleSystem {
         offset + (x - this.config.tableWidth / 2) * this.config.scaleX
       this.pPosY[i] =
         -offset + (this.config.tableLength / 2 - y) * this.config.scaleY
-      this.pPosZ[i] = 45 * R + Math.random() * 15 * R
+      this.pPosZ[i] = 55 * R + Math.random() * 35 * R
 
       this.pRot[i * 3] = Math.random() * Math.PI
       this.pRot[i * 3 + 1] = Math.random() * Math.PI
