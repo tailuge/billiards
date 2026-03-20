@@ -11,6 +11,7 @@ export class AimInputs {
   readonly cueBallElement
   readonly cueTipElement
   readonly cuePowerElement
+  /** Shared button for both "Hit" and "Place Ball" actions. */
   readonly cueHitElement
   readonly objectBallStyle: CSSStyleDeclaration | undefined
   readonly container: Container

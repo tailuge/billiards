@@ -27,7 +27,7 @@ export class TimeoutButton {
     this.start = null
     this.el.classList.remove("timeout-finished")
     this.el.style.setProperty("--timer-color", "#10b981")
-    this.animationId = requestAnimationFrame(this.tick.bind(this))
+    this.animationId = requestAnimationFrame(this.tick)
   }
 
   cancel() {
@@ -40,7 +40,7 @@ export class TimeoutButton {
     this.el.classList.remove("timeout-finished")
   }
 
-  private tick(now: number) {
+  private tick = (now: number) => {
     if (!this.isRunning) return
     if (!this.start) this.start = now
     const elapsed = now - this.start
@@ -54,7 +54,7 @@ export class TimeoutButton {
     }
 
     if (elapsed < this.duration) {
-      this.animationId = requestAnimationFrame(this.tick.bind(this))
+      this.animationId = requestAnimationFrame(this.tick)
     } else {
       this.finalize()
     }
