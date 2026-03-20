@@ -58,38 +58,8 @@ export class ParticleSystem {
   }
 
   initParticles(scene: Scene) {
-    const winningPool = [
-      "🎱",
-      "🏆",
-      "🔥",
-      "💯",
-      "💎",
-      "👑",
-      "🦁",
-      "✨",
-      "勝",
-      "神",
-      "福",
-      "佳",
-      "🎲",
-      "🍀",
-      "👾",
-      "🕹️",
-      "🎮",
-      "🇯🇵",
-      "🇬🇧",
-      "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
-      "🇹🇼",
-      "🌍",
-    ]
-
-    const getWin = (p: string[]) =>
-      p
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 2)
-        .join("")
     const sourceCanvas = ParticleUtils.generateTextCanvas(
-      getWin(winningPool),
+      ParticleUtils.randomText(),
       88,
       44,
       "bold sans-serif"
