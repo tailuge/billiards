@@ -1,4 +1,21 @@
 export class ParticleUtils {
+  static colorToRgb(
+    color: string,
+  ): { r: number; g: number; b: number } {
+    const canvas = document.createElement("canvas")
+    canvas.width = 1
+    canvas.height = 1
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return { r: 0, g: 0, b: 0 }
+
+    ctx.fillStyle = color
+    ctx.fillRect(0, 0, 1, 1)
+    const data = ctx.getImageData(0, 0, 1, 1).data
+
+    return { r: data[0], g: data[1], b: data[2] }
+  }
+
   static generateTextCanvas(
     text: string,
     width: number,
