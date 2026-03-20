@@ -21,6 +21,7 @@ export interface ParticleSystemConfig {
   gravity?: number
   baseRestitution?: number
   restitutionVariance?: number
+  backgroundColor?: string
 }
 
 const DEFAULT_CONFIG: Required<ParticleSystemConfig> = {
@@ -33,6 +34,7 @@ const DEFAULT_CONFIG: Required<ParticleSystemConfig> = {
   gravity: -1.0,
   baseRestitution: 0.45,
   restitutionVariance: 0.25,
+  backgroundColor: "#040b9f",
 }
 
 export class ParticleSystem {
@@ -60,17 +62,48 @@ export class ParticleSystem {
   initParticles(scene: Scene) {
     const sourceCanvas = ParticleUtils.generateTextCanvas(
       ParticleUtils.randomText(),
-      88,
-      44,
-      "bold sans-serif"
+      this.config.tableWidth,
+      this.config.tableLength,
+      "bold sans-serif",
+      this.config.backgroundColor
     )
     this.initialise(scene, sourceCanvas)
   }
 
   initialise(scene: Scene, sourceCanvas: HTMLCanvasElement): void {
+    this.dispose()
     this.scene = scene
     this.stopZ = this.config.tableZ + 0.1
 
+    const ctx = sourceCanvas.getContext("2d", { willReadFrequently: true })
+    if (!ctx) return
+
+    const imgData = ctx.getImageData(
+      0,
+      0,
+      this.config.tableWidth,
+      this.config.tableLength
+    ).data
+
+    const bg = new Color(this.config.backgroundColor)
+    const bgR = Math.round(bg.r * 255)
+    const bgG = Math.round(bg.g * 255)
+    const bgB = Math.round(bg.b * 255)
+
+    const activeIndices: number[] = []
+    const totalPixels = this.config.tableWidth * this.config.tableLength
+    for (let i = 0; i < totalPixels; i++) {
+      const idx = i * 4
+      if (
+        imgData[idx] !== bgR ||
+        imgData[idx + 1] !== bgG ||
+        imgData[idx + 2] !== bgB
+      ) {
+        activeIndices.push(i)
+      }
+    }
+
+    this.count = activeIndices.length
     this.pPosX = new Float32Array(this.count)
     this.pPosY = new Float32Array(this.count)
     this.pPosZ = new Float32Array(this.count)
@@ -81,16 +114,6 @@ export class ParticleSystem {
     this.pAge = new Float32Array(this.count)
     this.pState = new Uint8Array(this.count)
     this.dummy = new Object3D()
-
-    const ctx = sourceCanvas.getContext("2d")
-    if (!ctx) return
-
-    const imgData = ctx.getImageData(
-      0,
-      0,
-      this.config.tableWidth,
-      this.config.tableLength
-    ).data
 
     const geo = new BufferGeometry()
     const v = R * 0.8
@@ -109,14 +132,15 @@ export class ParticleSystem {
     const offset = R / 2
     const color = new Color()
     for (let i = 0; i < this.count; i++) {
-      const x = i % this.config.tableWidth
-      const y = Math.floor(i / this.config.tableWidth)
-      const idx = i * 4
+      const pixelIdx = activeIndices[i]
+      const x = pixelIdx % this.config.tableWidth
+      const y = Math.floor(pixelIdx / this.config.tableWidth)
+      const rgbaIdx = pixelIdx * 4
 
       color.setRGB(
-        imgData[idx] / 255,
-        imgData[idx + 1] / 255,
-        imgData[idx + 2] / 255
+        imgData[rgbaIdx] / 255,
+        imgData[rgbaIdx + 1] / 255,
+        imgData[rgbaIdx + 2] / 255
       )
       this.instancedMesh.setColorAt(i, color)
 
