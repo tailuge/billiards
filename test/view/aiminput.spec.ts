@@ -31,6 +31,7 @@ describe("AimInput", () => {
   })
 
   it("adjust power", (done) => {
+    aiminputs.setDisabled(false)
     aiminputs.cuePowerElement.value = 1
     fireEvent.change(aiminputs.cuePowerElement, { target: { value: 1 } })
     expect(container.table.cue.aim.power).to.be.greaterThan(0)
@@ -38,18 +39,20 @@ describe("AimInput", () => {
   })
 
   it("click hit button", (done) => {
+    aiminputs.setDisabled(false)
     document.getElementById("cueHit")?.click()
     expect(aiminputs.container.inputQueue).to.be.not.empty
     done()
   })
 
   it("mouse wheel updates power", (done) => {
+    aiminputs.setDisabled(false)
     aiminputs.mousewheel({ deltaY: 10 })
     expect(aiminputs.container.table.cue.aim.power).to.greaterThan(0)
     done()
   })
 
-  it("spectator mode disables hit button", (done) => {
+  it("spectator mode disables hit button, power and spin controls", (done) => {
     Session.init("id", "name", "table", true)
     const spectatorAimInputs = new AimInputs(container)
     expect(spectatorAimInputs.cueHitElement.disabled).to.be.true
@@ -67,7 +70,7 @@ describe("AimInput", () => {
     done()
   })
 
-  it("setDisabled toggles spin and power controls", (done) => {
+  it("setDisabled toggles hit, spin and power controls", (done) => {
     aiminputs.setDisabled(true)
     expect(aiminputs.cueHitElement.disabled).to.be.true
     expect(aiminputs.cuePowerElement.disabled).to.be.true

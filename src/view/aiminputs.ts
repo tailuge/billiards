@@ -5,11 +5,13 @@ import { Session } from "../network/client/session"
 import { Overlap } from "../utils/overlap"
 import { unitAtAngle } from "../utils/three-utils"
 import { id } from "../utils/dom"
+import { TimeoutButton } from "./timeoutbutton"
 
 export class AimInputs {
   readonly cueBallElement
   readonly cueTipElement
   readonly cuePowerElement
+  /** Shared button for both "Hit" and "Place Ball" actions. */
   readonly cueHitElement
   readonly objectBallStyle: CSSStyleDeclaration | undefined
   readonly container: Container
@@ -18,14 +20,23 @@ export class AimInputs {
   ballWidth
   ballHeight
   tipRadius
-  private controlsDisabled = false
+  private controlsDisabled = true
+  private readonly timeoutButton: TimeoutButton | undefined
 
   constructor(container) {
     this.container = container
     this.cueBallElement = id("cueBall")
     this.cueTipElement = id("cueTip")
     this.cuePowerElement = id("cuePower")
-    this.cueHitElement = id("cueHit")
+    this.cueHitElement = id("cueHit") as HTMLButtonElement
+    if (this.cueHitElement) {
+      this.timeoutButton = new TimeoutButton(this.cueHitElement, {
+        duration: 20000,
+        onComplete: () => {
+          this.cueHitElement?.click()
+        },
+      })
+    }
     this.objectBallStyle = id("objectBall")?.style
     this.overlap = new Overlap(this.container.table.balls)
     this.addListeners()
@@ -52,9 +63,15 @@ export class AimInputs {
   }
 
   setDisabled(disabled: boolean) {
+    const wasDisabled = this.controlsDisabled
     this.controlsDisabled = disabled || Session.isSpectator()
     if (this.cueHitElement) {
       this.cueHitElement.disabled = this.controlsDisabled
+      if (wasDisabled && !this.controlsDisabled) {
+        this.timeoutButton?.startTimer()
+      } else if (this.controlsDisabled) {
+        this.timeoutButton?.cancel()
+      }
     }
     if (this.cuePowerElement) {
       this.cuePowerElement.disabled = this.controlsDisabled

@@ -357,6 +357,7 @@ input[type="range"].powerSlider {
   font-size: large;
   min-width: 70px;
   user-select: none;
+  box-sizing: border-box;
 }
 
 .outerMenu {
@@ -401,6 +402,23 @@ input[type="range"].powerSlider {
   opacity: 0.75;
   cursor: not-allowed;
 }
+
+.timeout-btn {
+  --sweep: 360deg;
+  --timer-color: #10b981;
+  background:
+    linear-gradient(#18181b, #18181b) padding-box,
+    conic-gradient(var(--timer-color) var(--sweep), #3f3f46 0deg) border-box;
+  border: 4px solid transparent;
+  border-radius: 14px;
+}
+
+.timeout-btn:not(:disabled):hover {
+  background:
+    linear-gradient(#27272a, #27272a) padding-box,
+    conic-gradient(var(--timer-color) var(--sweep), #3f3f46 0deg) border-box;
+}
+
 
 .chatarea {
   height: 100%;
