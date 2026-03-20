@@ -419,12 +419,6 @@ input[type="range"].powerSlider {
     conic-gradient(var(--timer-color) var(--sweep), #3f3f46 0deg) border-box;
 }
 
-.timeout-btn.timeout-finished {
-  box-shadow:
-    0 0 0 2px #065f4666,
-    0 0 0 4px #09090b;
-  border-color: #10b981;
-}
 
 .chatarea {
   height: 100%;

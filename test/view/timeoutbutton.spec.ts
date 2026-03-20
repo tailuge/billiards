@@ -24,16 +24,29 @@ describe("TimeoutButton", () => {
     }
   })
 
-  it("should disable the button and start the timer", (done) => {
+  it("should start the timer and keep the button enabled", (done) => {
     timeoutButton.startTimer()
-    expect(button.disabled).to.be.true
+    expect(button.disabled).to.be.false
     expect(button.style.getPropertyValue("--timer-color")).to.equal("#10b981")
 
     setTimeout(() => {
       try {
         expect(completed).to.be.true
-        expect(button.disabled).to.be.false
-        expect(button.classList.contains("timeout-finished")).to.be.true
+        done()
+      } catch (e) {
+        done(e)
+      }
+    }, 150)
+  })
+
+  it("should cancel the timer when the button is clicked", (done) => {
+    timeoutButton.startTimer()
+    button.click()
+
+    setTimeout(() => {
+      try {
+        expect(completed).to.be.false
+        expect(button.style.getPropertyValue("--sweep")).to.equal("0deg")
         done()
       } catch (e) {
         done(e)
@@ -58,18 +71,4 @@ describe("TimeoutButton", () => {
     }, 90)
   })
 
-  it("should cancel the timer", (done) => {
-    timeoutButton.startTimer()
-    timeoutButton.cancel()
-
-    setTimeout(() => {
-      try {
-        expect(completed).to.be.false
-        expect(button.style.getPropertyValue("--sweep")).to.equal("0deg")
-        done()
-      } catch (e) {
-        done(e)
-      }
-    }, 150)
-  })
 })

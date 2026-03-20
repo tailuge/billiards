@@ -18,14 +18,16 @@ export class TimeoutButton {
     this.duration = options.duration || 10000
     this.criticalMs = options.criticalMs || 2000
     this.onComplete = options.onComplete || (() => {})
+
+    this.el.addEventListener("click", () => {
+      this.cancel()
+    })
   }
 
   startTimer() {
     this.cancel()
     this.isRunning = true
-    this.el.disabled = true
     this.start = null
-    this.el.classList.remove("timeout-finished")
     this.el.style.setProperty("--timer-color", "#10b981")
     this.animationId = requestAnimationFrame(this.tick)
   }
@@ -37,7 +39,6 @@ export class TimeoutButton {
       this.animationId = null
     }
     this.el.style.setProperty("--sweep", "0deg")
-    this.el.classList.remove("timeout-finished")
   }
 
   private tick = (now: number) => {
@@ -62,9 +63,7 @@ export class TimeoutButton {
 
   private finalize() {
     this.isRunning = false
-    this.el.disabled = false
     this.el.style.setProperty("--sweep", "0deg")
-    this.el.classList.add("timeout-finished")
     this.onComplete()
   }
 }

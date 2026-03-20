@@ -40,11 +40,6 @@ describe("AimInput", () => {
 
   it("click hit button", (done) => {
     aiminputs.setDisabled(false)
-    // Wait for timer to finish or bypass it for test
-    // For test, we just want to see if the hit logic works when NOT disabled
-    // But TimeoutButton makes it disabled.
-    // Let's manually enable it for the test after setDisabled(false)
-    aiminputs.cueHitElement.disabled = false
     document.getElementById("cueHit")?.click()
     expect(aiminputs.container.inputQueue).to.be.not.empty
     done()
@@ -57,7 +52,7 @@ describe("AimInput", () => {
     done()
   })
 
-  it("spectator mode disables hit button", (done) => {
+  it("spectator mode disables hit button, power and spin controls", (done) => {
     Session.init("id", "name", "table", true)
     const spectatorAimInputs = new AimInputs(container)
     expect(spectatorAimInputs.cueHitElement.disabled).to.be.true
@@ -75,15 +70,14 @@ describe("AimInput", () => {
     done()
   })
 
-  it("setDisabled toggles spin and power controls", (done) => {
+  it("setDisabled toggles hit, spin and power controls", (done) => {
     aiminputs.setDisabled(true)
     expect(aiminputs.cueHitElement.disabled).to.be.true
     expect(aiminputs.cuePowerElement.disabled).to.be.true
     expect(aiminputs.cueBallElement.style.pointerEvents).to.equal("none")
 
     aiminputs.setDisabled(false)
-    // with timeout, it stays disabled until duration
-    expect(aiminputs.cueHitElement.disabled).to.be.true
+    expect(aiminputs.cueHitElement.disabled).to.be.false
     expect(aiminputs.cuePowerElement.disabled).to.be.false
     expect(aiminputs.cueBallElement.style.pointerEvents).to.equal("auto")
     done()

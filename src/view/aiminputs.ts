@@ -32,6 +32,9 @@ export class AimInputs {
     if (this.cueHitElement) {
       this.timeoutButton = new TimeoutButton(this.cueHitElement, {
         duration: 10000,
+        onComplete: () => {
+          this.cueHitElement?.click()
+        },
       })
     }
     this.objectBallStyle = id("objectBall")?.style
