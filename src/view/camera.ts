@@ -36,7 +36,7 @@ export class Camera {
       Math.cos(this.t / 5) * orbitR,
       orbitH + Math.sin(this.t / 31) * orbitH * 0.2
     )
-    this.camera.position.lerp(this.target, 0.01)
+    this.camera.position.lerp(this.target, 0.003)
     this.camera.up = up
     this.camera.lookAt(zero)
   }
