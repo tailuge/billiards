@@ -31,6 +31,7 @@ describe("AimInput", () => {
   })
 
   it("adjust power", (done) => {
+    aiminputs.setDisabled(false)
     aiminputs.cuePowerElement.value = 1
     fireEvent.change(aiminputs.cuePowerElement, { target: { value: 1 } })
     expect(container.table.cue.aim.power).to.be.greaterThan(0)
@@ -38,12 +39,19 @@ describe("AimInput", () => {
   })
 
   it("click hit button", (done) => {
+    aiminputs.setDisabled(false)
+    // Wait for timer to finish or bypass it for test
+    // For test, we just want to see if the hit logic works when NOT disabled
+    // But TimeoutButton makes it disabled.
+    // Let's manually enable it for the test after setDisabled(false)
+    aiminputs.cueHitElement.disabled = false
     document.getElementById("cueHit")?.click()
     expect(aiminputs.container.inputQueue).to.be.not.empty
     done()
   })
 
   it("mouse wheel updates power", (done) => {
+    aiminputs.setDisabled(false)
     aiminputs.mousewheel({ deltaY: 10 })
     expect(aiminputs.container.table.cue.aim.power).to.greaterThan(0)
     done()
@@ -74,7 +82,8 @@ describe("AimInput", () => {
     expect(aiminputs.cueBallElement.style.pointerEvents).to.equal("none")
 
     aiminputs.setDisabled(false)
-    expect(aiminputs.cueHitElement.disabled).to.be.false
+    // with timeout, it stays disabled until duration
+    expect(aiminputs.cueHitElement.disabled).to.be.true
     expect(aiminputs.cuePowerElement.disabled).to.be.false
     expect(aiminputs.cueBallElement.style.pointerEvents).to.equal("auto")
     done()
