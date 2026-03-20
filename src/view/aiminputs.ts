@@ -21,7 +21,7 @@ export class AimInputs {
   ballHeight
   tipRadius
   private controlsDisabled = true
-  private timeoutButton: TimeoutButton | undefined
+  private readonly timeoutButton: TimeoutButton | undefined
 
   constructor(container) {
     this.container = container
@@ -31,7 +31,7 @@ export class AimInputs {
     this.cueHitElement = id("cueHit") as HTMLButtonElement
     if (this.cueHitElement) {
       this.timeoutButton = new TimeoutButton(this.cueHitElement, {
-        duration: 10000,
+        duration: 20000,
         onComplete: () => {
           this.cueHitElement?.click()
         },

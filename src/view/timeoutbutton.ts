@@ -5,10 +5,10 @@ export interface TimeoutOptions {
 }
 
 export class TimeoutButton {
-  private el: HTMLButtonElement
-  private duration: number
-  private criticalMs: number
-  private onComplete: () => void
+  private readonly el: HTMLButtonElement
+  private readonly duration: number
+  private readonly criticalMs: number
+  private readonly onComplete: () => void
   private start: number | null = null
   private animationId: number | null = null
   private isRunning = false
