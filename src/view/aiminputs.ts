@@ -63,13 +63,12 @@ export class AimInputs {
   }
 
   setDisabled(disabled: boolean) {
-    const wasDisabled = this.controlsDisabled
     this.controlsDisabled = disabled || Session.isSpectator()
     if (this.cueHitElement) {
       this.cueHitElement.disabled = this.controlsDisabled
-      if (wasDisabled && !this.controlsDisabled) {
+      if (!this.controlsDisabled) {
         this.timeoutButton?.startTimer()
-      } else if (this.controlsDisabled) {
+      } else {
         this.timeoutButton?.cancel()
       }
     }
