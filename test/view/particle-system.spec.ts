@@ -1,5 +1,5 @@
 import { ParticleSystem } from "../../src/view/particle-system"
-import { Scene, InstancedMesh, Color } from "three"
+import { Scene, InstancedMesh } from "three"
 
 describe("ParticleSystem", () => {
   let scene: Scene

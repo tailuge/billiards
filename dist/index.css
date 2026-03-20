@@ -407,16 +407,17 @@ input[type="range"].powerSlider {
   --sweep: 360deg;
   --timer-color: #10b981;
   background:
-    linear-gradient(#18181b, #18181b) padding-box,
-    conic-gradient(var(--timer-color) var(--sweep), #3f3f46 0deg) border-box;
+    linear-gradient(#f4f4f5, #f4f4f5) padding-box,
+    conic-gradient(var(--timer-color) var(--sweep), #e4e4e7 0deg) border-box;
   border: 4px solid transparent;
   border-radius: 14px;
+  color: #18181b;
 }
 
 .timeout-btn:not(:disabled):hover {
   background:
-    linear-gradient(#27272a, #27272a) padding-box,
-    conic-gradient(var(--timer-color) var(--sweep), #3f3f46 0deg) border-box;
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    conic-gradient(var(--timer-color) var(--sweep), #e4e4e7 0deg) border-box;
 }
 
 
