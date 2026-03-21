@@ -47,7 +47,7 @@ export class ParticleUtils {
 
       const textHeight = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent
 
-      if (m.width < width * 0.9 && textHeight < height * 0.8) break
+      if (m.width < width && textHeight < height) break
 
       fontSize--
     }
