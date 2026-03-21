@@ -30,7 +30,7 @@
     "gltfpack": "npx gltfpack -i dist/models/p8.gltf -o dist/models/p8.min.gltf && npx gltfpack -i dist/models/threecushion.gltf -o dist/models/threecushion.min.gltf && npx gltfpack -i dist/models/snooker.gltf -o dist/models/snooker.min.gltf && npx gltfpack -i dist/models/d-snooker.gltf -o dist/models/d-snooker.min.gltf"
   },
   "dependencies": {
-    "@tailuge/messaging": "1.10.0",
+    "@tailuge/messaging": "1.11.0",
     "interactjs": "1.10.27",
     "jsoncrush": "^1.1.8",
     "three": "0.183.2"
@@ -49,7 +49,7 @@
     "canvas": "^3.2.1",
     "chai": "6.2.2",
     "concurrently": "^9.2.1",
-    "eslint": "10.0.3",
+    "eslint": "10.1.0",
     "eslint-plugin-html": "^8.1.4",
     "eslint-plugin-sonarjs": "4.0.2",
     "globals": "17.4.0",

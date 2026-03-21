@@ -70,10 +70,7 @@ export class ClientErrorReporter {
     this.maxPerKey = options?.maxPerKey ?? 3
     this.flushIntervalMs = options?.flushIntervalMs ?? 5000
     this.maxQueueSize = options?.maxQueueSize ?? 20
-    const isSafari: boolean = /^((?!chrome|android).)*safari/i.test(
-      navigator.userAgent
-    )
-    this.captureAll = isSafari
+    this.captureAll = false
 
     this.boundFlush = this.flush.bind(this)
   }
