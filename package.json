@@ -44,15 +44,12 @@
     "@types/jest": "30.0.0",
     "@types/node": "25.5.0",
     "@types/three": "0.183.1",
-    "@typescript-eslint/eslint-plugin": "8.57.1",
-    "@typescript-eslint/parser": "8.57.1",
     "canvas": "3.2.2",
     "chai": "6.2.2",
     "concurrently": "^9.2.1",
     "eslint": "10.1.0",
     "eslint-plugin-html": "^8.1.4",
     "eslint-plugin-sonarjs": "4.0.2",
-    "globals": "17.4.0",
     "http-server": "^14.1.1",
     "jest": "30.3.0",
     "jest-environment-jsdom": "30.3.0",
@@ -60,13 +57,10 @@
     "prettier": "3.8.1",
     "swc-loader": "0.2.7",
     "ts-jest": "29.4.6",
-    "ts-loader": "9.5.4",
-    "ts-node": "^10.9.2",
     "typescript": "5.9.3",
     "typescript-eslint": "8.57.1",
     "webpack": "5.105.4",
     "webpack-cli": "7.0.2",
-    "webpack-dev-server": "5.2.3",
-    "webpack-node-externals": "^3.0.0"
+    "webpack-dev-server": "5.2.3"
   }
 }
