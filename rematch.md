@@ -24,7 +24,6 @@ In `src/container/browsercontainer.ts`:
 - In the `constructor`, extract the `rematch` query parameter from the URL.
 - Parse the parameter using `JSON.parse(decodeURIComponent(rematchParam))`.
 - Store the parsed object in `Session.getInstance().rematchInfo`.
-- Automatically set `opponentName` and `opponentClientId` in the session based on the `rematchInfo` if they are not already set.
 
 ## 4. Notifications
 In `src/container/browsercontainer.ts`'s `onAssetsReady` method:
@@ -32,8 +31,8 @@ In `src/container/browsercontainer.ts`'s `onAssetsReady` method:
 - **Notification Details**:
   - **Type**: `Info`
   - **Title**: `Match Score`
-  - **Subtext**: Display the current series score (e.g., "You 2 - 1 Alex") by comparing `lastScores` against the local `clientId`.
-  - **Icon**: `🎱`
+  - **Subtext**: Display the current series score (e.g., "Bob 2 - 1 Alex") by comparing `lastScores` against the local `clientId`.
+  - **Icon**: crossed sword unicode
 
 ## 5. UI: Game Over Screen
 In `src/utils/gameover.ts`:
@@ -51,7 +50,7 @@ In `src/view/notification.ts`, update `handleAction(action: string)`:
 - Add a handler for the `"rematch"` action.
 - **Logic**:
   1. Retrieve the current `rematchInfo` from the session.
-  2. Determine the game winner by comparing scores (e.g., `session.myScore()` vs `session.opponentScore()`).
+  2. Determine the game winner using existing logic.
   3. Create an updated `rematchInfo` object:
      - Increment the `score` for the winner's `userId` in the `lastScores` array.
      - Set `nextTurnId` to the `userId` of the player who lost (to ensure they start the next game).
