@@ -1,5 +1,6 @@
 import { id } from "../utils/dom"
 import { LOBBY_URL } from "../utils/gameover"
+import { Session } from "../network/client/session"
 
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info"
@@ -135,28 +136,52 @@ export class Notification {
       return
     }
 
-    if (action === "clear") {
-      this.clear()
-      return
+    switch (action) {
+      case "clear":
+        this.clear()
+        break
+      case "reload":
+      case "replay":
+        globalThis.location.reload()
+        break
+      case "rematch":
+        this.redirectToLobbyWithRematch()
+        break
+      case "lobby":
+        this.redirectToLobby()
+        break
     }
-    if (action === "reload" || action === "replay") {
-      globalThis.location.reload()
-      return
+  }
+
+  private redirectToLobbyWithRematch() {
+    const rematchInfo = Session.getInstance().rematchInfo
+    if (rematchInfo) {
+      const encodedRematch = encodeURIComponent(JSON.stringify(rematchInfo))
+      const queryParams = this.getPreservedParams()
+      queryParams.set("rematch", encodedRematch)
+      globalThis.location.href = `${LOBBY_URL}?${queryParams.toString()}`
     }
-    if (action === "lobby") {
-      const params = new globalThis.URLSearchParams(globalThis.location.search)
-      const queryParams = new globalThis.URLSearchParams()
-      if (params.has("userId")) {
-        queryParams.set("userId", params.get("userId")!)
+  }
+
+  private redirectToLobby() {
+    const queryParams = this.getPreservedParams()
+    const queryString = queryParams.toString()
+    globalThis.location.href = queryString
+      ? `${LOBBY_URL}?${queryString}`
+      : LOBBY_URL
+  }
+
+  private getPreservedParams(): URLSearchParams {
+    const params = new globalThis.URLSearchParams(globalThis.location.search)
+    const queryParams = new globalThis.URLSearchParams()
+    const preserved = ["userId", "userName"]
+    for (const key of preserved) {
+      const val = params.get(key)
+      if (val) {
+        queryParams.set(key, val)
       }
-      if (params.has("userName")) {
-        queryParams.set("userName", params.get("userName")!)
-      }
-      const queryString = queryParams.toString()
-      globalThis.location.href = queryString
-        ? `${LOBBY_URL}?${queryString}`
-        : LOBBY_URL
     }
+    return queryParams
   }
 
   clear() {

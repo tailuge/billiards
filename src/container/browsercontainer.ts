@@ -86,6 +86,16 @@ export class BrowserContainer {
       this.spectator,
       this.botMode
     )
+    const rematchParam = params.get("rematch")
+    if (rematchParam) {
+      try {
+        Session.getInstance().rematchInfo = JSON.parse(
+          decodeURIComponent(rematchParam)
+        )
+      } catch (e) {
+        console.error("Failed to parse rematch info", e)
+      }
+    }
     console.log(Session.getInstance())
   }
 
@@ -122,29 +132,54 @@ export class BrowserContainer {
     })
   }
 
+  private initBotMode(scoreReporter: ScoreReporter) {
+    this.container = this.createContainer(scoreReporter)
+    this.container.init()
+    this.container.isSinglePlayer = false
+    const logs = new Logger()
+    this.messageRelay = new BotRelay(logs, this.container)
+    this.messageRelay.subscribe(this.tableId, (e) => {
+      this.netEvent(e)
+    })
+    this.container.notify({
+      type: "Info",
+      title: "Playing vs 🦞",
+      subtext: "",
+      extra: "You first",
+    } as const)
+  }
+
+  private initMultiplayer(scoreReporter: ScoreReporter) {
+    this.messageRelay = new NchanMessageRelay()
+    this.container = this.createContainer(scoreReporter)
+    this.container.init()
+
+    const rematchInfo = Session.getInstance().rematchInfo
+    if (rematchInfo) {
+      const p1 = rematchInfo.lastScores[0]
+      const p2 = rematchInfo.lastScores[1]
+      const session = Session.getInstance()
+      const getName = (uid: string) =>
+        uid === session.clientId
+          ? session.playername
+          : session.opponentName || rematchInfo.opponentName
+
+      this.container.notify({
+        type: "Info",
+        title: "Match Score",
+        subtext: `${getName(p1.userId)} ${p1.score} - ${p2.score} ${getName(p2.userId)}`,
+      } as const)
+    }
+  }
+
   onAssetsReady() {
     console.log(`${this.playername} assets ready`)
     const scoreReporter = new ScoreReporter()
 
     if (this.botMode) {
-      this.container = this.createContainer(scoreReporter)
-      this.container.init()
-      this.container.isSinglePlayer = false
-      const logs = new Logger()
-      this.messageRelay = new BotRelay(logs, this.container)
-      this.messageRelay.subscribe(this.tableId, (e) => {
-        this.netEvent(e)
-      })
-      this.container.notify({
-        type: "Info",
-        title: "Playing vs 🦞",
-        subtext: "",
-        extra: "You first",
-      } as const)
+      this.initBotMode(scoreReporter)
     } else {
-      this.messageRelay = new NchanMessageRelay()
-      this.container = this.createContainer(scoreReporter)
-      this.container.init()
+      this.initMultiplayer(scoreReporter)
     }
 
     this.container.broadcast = (e) => {
@@ -155,16 +190,21 @@ export class BrowserContainer {
 
     if (this.spectator) {
       this.container.eventQueue.push(new BeginEvent())
-      this.container.animate(performance.now())
-      return
+    } else {
+      this.initGameLoop()
     }
 
+    // trigger animation loops
+    this.container.animate(performance.now())
+  }
+
+  private initGameLoop() {
     if (this.wss) {
       this.container.isSinglePlayer = false
-      this.messageRelay.subscribe(this.tableId, (e) => {
+      this.messageRelay?.subscribe(this.tableId, (e) => {
         this.netEvent(e)
       })
-      if (!this.first && !this.spectator) {
+      if (!this.first) {
         this.broadcast(new BeginEvent())
       }
     }
@@ -174,9 +214,6 @@ export class BrowserContainer {
     } else if (this.container.isSinglePlayer) {
       this.container.eventQueue.push(new BreakEvent())
     }
-
-    // trigger animation loops
-    this.container.animate(performance.now())
   }
 
   netEvent(e: string) {
