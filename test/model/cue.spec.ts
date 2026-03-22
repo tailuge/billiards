@@ -49,6 +49,78 @@ describe("Cue", () => {
     expect(table.balls[0].rvel.y).to.be.greaterThan(0)
   })
 
+  test("adjustPower increases power when enabled", () => {
+    const { cue } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.aimInputs = {
+      isDisabled: () => false,
+      updateVisualState: () => {},
+      updatePowerSlider: () => {},
+      showOverlap: () => {},
+    } as any
+    const powerBefore = cue.aim.power
+    cue.adjustPower(10 * R)
+    expect(cue.aim.power).to.equal(powerBefore + 10 * R)
+  })
+
+  test("adjustPower returns early when disabled", () => {
+    const { cue } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.aimInputs = { isDisabled: () => true } as any
+    const powerBefore = cue.aim.power
+    cue.adjustPower(10 * R)
+    expect(cue.aim.power).to.equal(powerBefore)
+  })
+
+  test("setPower updates power when enabled", () => {
+    const { cue } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.aimInputs = { isDisabled: () => false } as any
+    cue.setPower(0.5)
+    expect(cue.aim.power).to.equal(0.5 * cue.maxPower)
+  })
+
+  test("setPower returns early when disabled", () => {
+    const { cue } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.aimInputs = { isDisabled: () => true } as any
+    const powerBefore = cue.aim.power
+    cue.setPower(0.5)
+    expect(cue.aim.power).to.equal(powerBefore)
+  })
+
+  test("adjustSpin updates offset when enabled", () => {
+    const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.aimInputs = {
+      isDisabled: () => false,
+      updateVisualState: () => {},
+      updatePowerSlider: () => {},
+      showOverlap: () => {},
+    } as any
+    const offsetBefore = cue.aim.offset.clone()
+    cue.adjustSpin(new Vector3(0.1, 0.1), table)
+    expect(cue.aim.offset.x).to.equal(offsetBefore.x + 0.1)
+  })
+
+  test("adjustSpin returns early when disabled", () => {
+    const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.aimInputs = { isDisabled: () => true } as any
+    const offsetBefore = cue.aim.offset.clone()
+    cue.adjustSpin(new Vector3(0.1, 0.1), table)
+    expect(cue.aim.offset.equals(offsetBefore)).to.be.true
+  })
+
+  test("setSpin returns early when disabled", () => {
+    const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.aimInputs = { isDisabled: () => true } as any
+    const offsetBefore = cue.aim.offset.clone()
+    cue.setSpin(new Vector3(0.1, 0.1), table)
+    expect(cue.aim.offset.equals(offsetBefore)).to.be.true
+  })
+
+  test("toggleHelper toggles helper visibility", () => {
+    const cue = new Cue()
+    const visibleBefore = cue.helperMesh.visible
+    cue.toggleHelper()
+    expect(cue.helperMesh.visible).to.equal(!visibleBefore)
+  })
+
   test("rotateAim calls showOverlap if aimInputs present", () => {
     const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
     let called = false
