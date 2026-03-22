@@ -459,7 +459,8 @@ describe("Snooker", () => {
     // Even though Player A cleared the table, they lost by score
     expect(notifySpy.mock.calls[0][0]).to.deep.include({
       title: "YOU LOST",
-      subtext: "Player A 10 - 20 Player B",
+      subtext:
+        "Player A 10 - 20 Player B | Match Score: Player A 0 - 1 Player B",
     })
 
     Session.reset()
@@ -483,7 +484,8 @@ describe("Snooker", () => {
     // Player A won by score
     expect(notifySpy.mock.calls[0][0]).to.deep.include({
       title: "YOU WON",
-      subtext: "Player A 30 - 20 Player B",
+      subtext:
+        "Player A 30 - 20 Player B | Match Score: Player A 1 - 0 Player B",
     })
 
     Session.reset()
@@ -506,7 +508,8 @@ describe("Snooker", () => {
     // Player A wins on a draw per user request
     expect(notifySpy.mock.calls[0][0]).to.deep.include({
       title: "YOU WON",
-      subtext: "Player A 20 - 20 Player B",
+      subtext:
+        "Player A 20 - 20 Player B | Match Score: Player A 1 - 0 Player B",
     })
 
     Session.reset()

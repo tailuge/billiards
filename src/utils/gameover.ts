@@ -6,10 +6,10 @@ export const gameOverButtons = {
   replay: `<button data-notification-action="replay">Replay</button>`,
   rematch: `<button data-notification-action="rematch">Rematch</button>`,
 
-  forMode(isSinglePlayer: boolean, hasRematch: boolean = false): string {
+  forMode(isSinglePlayer: boolean, _hasRematch: boolean = false): string {
     if (isSinglePlayer) {
       return this.newGame + this.lobby
     }
-    return hasRematch ? this.rematch + this.lobby : this.lobby
+    return this.rematch + this.lobby
   },
 }

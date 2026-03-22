@@ -28,35 +28,15 @@ export class MatchResultHelper {
     container.recorder.wholeGameLink()
 
     const session = Session.hasInstance() ? Session.getInstance() : null
-    const { p1, p2 } = container.getOrderedScores()
-    const winnerIndex = p1 >= p2 ? 0 : 1
-    const playerIndex = session?.playerIndex ?? 0
-    const amIWinner = forcedAmIWinner ?? winnerIndex === playerIndex
-
+    const amIWinner = this.determineWinner(container, session, forcedAmIWinner)
     const subtext = endSubtext ?? this.getScoreSubtext(container)
 
-    if (session?.rematchInfo) {
-      const winnerId = amIWinner ? session.clientId : session.rematchInfo.opponentId
-      const loserId = amIWinner ? session.rematchInfo.opponentId : session.clientId
-
-      session.rematchInfo.lastScores.forEach((s) => {
-        if (s.userId === winnerId) {
-          s.score++
-        }
-      })
-      session.rematchInfo.nextTurnId = loserId
-    }
+    this.updateRematchInfo(container, session, rulename, amIWinner)
 
     const fullSubtext = this.getFullSubtext(container, subtext, session)
+    const hasRematch = !!session?.rematchInfo
 
-    if (amIWinner) {
-      this.notifyWin(container, fullSubtext, !!session?.rematchInfo)
-      this.sendLossNotification(container, !!session?.rematchInfo)
-    } else if (Session.isSpectator()) {
-      this.notifySpectator(container, fullSubtext)
-    } else {
-      this.notifyLoss(container, fullSubtext, !!session?.rematchInfo)
-    }
+    this.notifyEndState(container, amIWinner, fullSubtext, hasRematch)
 
     const result = this.createMatchResult(
       container,
@@ -66,6 +46,72 @@ export class MatchResultHelper {
     )
 
     return new End(container, amIWinner ? result : undefined)
+  }
+
+  private static determineWinner(
+    container: Container,
+    session: Session | null,
+    forcedAmIWinner?: boolean
+  ): boolean {
+    if (forcedAmIWinner !== undefined) {
+      return forcedAmIWinner
+    }
+
+    const { p1, p2 } = container.getOrderedScores()
+    const winnerIndex = p1 >= p2 ? 0 : 1
+    const playerIndex = session?.playerIndex ?? 0
+    return winnerIndex === playerIndex
+  }
+
+  private static updateRematchInfo(
+    container: Container,
+    session: Session | null,
+    rulename: string,
+    amIWinner: boolean
+  ): void {
+    if (!session || !session.clientId) return
+    if (container.isSinglePlayer || Session.isBotMode()) return
+
+    const opponentId = session.opponentClientId || "opponent"
+    const winnerId = amIWinner ? session.clientId : opponentId
+    const loserId = amIWinner ? opponentId : session.clientId
+
+    if (!session.rematchInfo) {
+      const opponentName = session.opponentName || "Opponent"
+      session.rematchInfo = {
+        opponentId,
+        opponentName,
+        ruleType: rulename,
+        lastScores: [
+          { userId: session.clientId, score: amIWinner ? 1 : 0 },
+          { userId: opponentId, score: amIWinner ? 0 : 1 },
+        ],
+        nextTurnId: loserId,
+      }
+    } else {
+      session.rematchInfo.lastScores.forEach((s) => {
+        if (s.userId === winnerId) {
+          s.score++
+        }
+      })
+      session.rematchInfo.nextTurnId = loserId
+    }
+  }
+
+  private static notifyEndState(
+    container: Container,
+    amIWinner: boolean,
+    fullSubtext: string,
+    hasRematch: boolean
+  ): void {
+    if (amIWinner) {
+      this.notifyWin(container, fullSubtext, hasRematch)
+      this.sendLossNotification(container, hasRematch)
+    } else if (Session.isSpectator()) {
+      this.notifySpectator(container, fullSubtext)
+    } else {
+      this.notifyLoss(container, fullSubtext, hasRematch)
+    }
   }
 
   static isWinner(result: MatchResult): boolean {

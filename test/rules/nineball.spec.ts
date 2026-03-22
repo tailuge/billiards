@@ -256,8 +256,9 @@ describe("NineBall Rules", () => {
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "GameOver",
       title: "YOU WON",
-      subtext: "TestPlayer 1 - 0 Opponent",
-      extra: `<button data-notification-action="lobby">Lobby</button>`,
+      subtext:
+        "TestPlayer 1 - 0 Opponent | Match Score: TestPlayer 1 - 0 Player 2",
+      extra: `<button data-notification-action="rematch">Rematch</button><button data-notification-action="lobby">Lobby</button>`,
       icon: "🏆",
       extraClass: "is-winner",
       duration: 0,
