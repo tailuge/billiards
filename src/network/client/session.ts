@@ -1,3 +1,11 @@
+export interface RematchInfo {
+  opponentId: string
+  opponentName: string
+  ruleType: string
+  lastScores: { userId: string; score: number }[]
+  nextTurnId: string
+}
+
 export class Session {
   constructor(
     public playername: string,
@@ -7,6 +15,7 @@ export class Session {
     readonly botMode: boolean = false
   ) {}
 
+  rematchInfo?: RematchInfo
   opponentName?: string
   opponentClientId?: string
   spectatedP1Name?: string
@@ -130,6 +139,19 @@ export class Session {
       return { p1: this.myScore(), p2: this.opponentScore() }
     }
     return { p1: this.opponentScore(), p2: this.myScore() }
+  }
+
+  orderedRematchScores(): { p1: number; p2: number } {
+    if (!this.rematchInfo) return { p1: 0, p2: 0 }
+    const sMe =
+      this.rematchInfo.lastScores.find((s) => s.userId === this.clientId)
+        ?.score ?? 0
+    const sThem =
+      this.rematchInfo.lastScores.find((s) => s.userId !== this.clientId)
+        ?.score ?? 0
+    return this.playerIndex === 0
+      ? { p1: sMe, p2: sThem }
+      : { p1: sThem, p2: sMe }
   }
 
   orderedNamesForHud(): { p1Name?: string; p2Name?: string } {
