@@ -13,7 +13,7 @@ import JSONCrush from "jsoncrush"
 import { Assets } from "../view/assets"
 import { SnookerConfig } from "../utils/snookerconfig"
 import { ThreeCushionConfig } from "../utils/threecushionconfig"
-import { Session } from "../network/client/session"
+import { Session, RematchInfo } from "../network/client/session"
 import { MessageRelay } from "../network/client/messagerelay"
 import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
 import { BotRelay } from "../network/bot/botrelay"
@@ -86,6 +86,18 @@ export class BrowserContainer {
       this.spectator,
       this.botMode
     )
+    const rematch = params.get("rematch")
+    if (rematch) {
+      try {
+        const decoded = JSON.parse(JSONCrush.uncrush(rematch)) as RematchInfo
+        const session = Session.getInstance()
+        session.rematchInfo = decoded
+        session.opponentName = decoded.opponentName
+        session.setOpponentClientId(decoded.opponentId)
+      } catch (e) {
+        console.error("Failed to parse rematch param", e)
+      }
+    }
     console.log(Session.getInstance())
   }
 
@@ -145,6 +157,25 @@ export class BrowserContainer {
       this.messageRelay = new NchanMessageRelay()
       this.container = this.createContainer(scoreReporter)
       this.container.init()
+
+      const session = Session.getInstance()
+      if (session.rematchInfo) {
+        const myScore =
+          session.rematchInfo.lastScores.find(
+            (s) => s.userId === session.clientId
+          )?.score ?? 0
+        const opponentScore =
+          session.rematchInfo.lastScores.find(
+            (s) => s.userId !== session.clientId
+          )?.score ?? 0
+        const opponentName = session.rematchInfo.opponentName
+        this.container.notifyLocal({
+          type: "Info",
+          title: "Match Score",
+          subtext: `You ${myScore} - ${opponentScore} ${opponentName}`,
+          icon: "🎱",
+        })
+      }
     }
 
     this.container.broadcast = (e) => {

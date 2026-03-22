@@ -1,5 +1,7 @@
 import { id } from "../utils/dom"
 import { LOBBY_URL } from "../utils/gameover"
+import { Session } from "../network/client/session"
+import JSONCrush from "jsoncrush"
 
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info"
@@ -143,7 +145,8 @@ export class Notification {
       globalThis.location.reload()
       return
     }
-    if (action === "lobby") {
+    if (action === "lobby" || action === "rematch") {
+      const session = Session.hasInstance() ? Session.getInstance() : null
       const params = new globalThis.URLSearchParams(globalThis.location.search)
       const queryParams = new globalThis.URLSearchParams()
       if (params.has("userId")) {
@@ -152,6 +155,40 @@ export class Notification {
       if (params.has("userName")) {
         queryParams.set("userName", params.get("userName")!)
       }
+
+      if (action === "rematch" && session?.rematchInfo) {
+        const myScore = session.myScore()
+        const opponentScore = session.opponentScore()
+        let winnerId: string | null = null
+        if (myScore > opponentScore) {
+          winnerId = session.clientId
+        } else if (opponentScore > myScore) {
+          winnerId = session.rematchInfo.opponentId
+        }
+
+        const loserId =
+          winnerId === session.clientId
+            ? session.rematchInfo.opponentId
+            : session.clientId
+
+        const updatedRematch = {
+          ...session.rematchInfo,
+          lastScores: session.rematchInfo.lastScores.map((s) => ({
+            userId: s.userId,
+            score: s.score + (s.userId === winnerId ? 1 : 0),
+          })),
+          nextTurnId: winnerId
+            ? loserId
+            : session.rematchInfo.nextTurnId === session.clientId
+              ? session.rematchInfo.opponentId
+              : session.clientId,
+        }
+        queryParams.set(
+          "rematch",
+          JSONCrush.crush(JSON.stringify(updatedRematch))
+        )
+      }
+
       const queryString = queryParams.toString()
       globalThis.location.href = queryString
         ? `${LOBBY_URL}?${queryString}`
