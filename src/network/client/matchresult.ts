@@ -59,7 +59,6 @@ export class MatchResultHelper {
   }
 
   private static notifyWin(container: Container, subtext: string) {
-    const session = Session.hasInstance() ? Session.getInstance() : null
     container.notifyLocal({
       type: "GameOver",
       title: "YOU WON",
@@ -67,15 +66,13 @@ export class MatchResultHelper {
       icon: "🏆",
       extraClass: "is-winner",
       extra: gameOverButtons.forMode(
-        container.isSinglePlayer || Session.isBotMode(),
-        !!session?.rematchInfo
+        container.isSinglePlayer || Session.isBotMode()
       ),
       duration: 0,
     })
   }
 
   private static notifyLoss(container: Container, subtext: string) {
-    const session = Session.hasInstance() ? Session.getInstance() : null
     container.notifyLocal({
       type: "GameOver",
       title: "YOU LOST",
@@ -83,8 +80,7 @@ export class MatchResultHelper {
       icon: "🥈",
       extraClass: "is-loser",
       extra: gameOverButtons.forMode(
-        container.isSinglePlayer || Session.isBotMode(),
-        !!session?.rematchInfo
+        container.isSinglePlayer || Session.isBotMode()
       ),
       duration: 0,
     })
@@ -104,14 +100,13 @@ export class MatchResultHelper {
 
   private static sendLossNotification(container: Container) {
     if (container.isSinglePlayer) return
-    const session = Session.hasInstance() ? Session.getInstance() : null
     container.sendEvent(
       new NotificationEvent({
         type: "GameOver",
         title: "YOU LOST",
         icon: "🥈",
         extraClass: "is-loser",
-        extra: gameOverButtons.forMode(false, !!session?.rematchInfo),
+        extra: gameOverButtons.forMode(false),
         duration: 0,
       })
     )

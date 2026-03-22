@@ -1,11 +1,3 @@
-export interface RematchInfo {
-  opponentId: string
-  opponentName: string
-  ruleType: string
-  lastScores: { userId: string; score: number }[]
-  nextTurnId: string
-}
-
 export class Session {
   constructor(
     public playername: string,
@@ -15,7 +7,6 @@ export class Session {
     readonly botMode: boolean = false
   ) {}
 
-  rematchInfo?: RematchInfo
   opponentName?: string
   opponentClientId?: string
   spectatedP1Name?: string
