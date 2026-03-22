@@ -31,8 +31,7 @@ In `src/container/browsercontainer.ts`'s `onAssetsReady` method:
 - **Notification Details**:
   - **Type**: `Info`
   - **Title**: `Match Score`
-  - **Subtext**: Display the current series score (e.g., "Bob 2 - 1 Alex") by comparing `lastScores` against the local `clientId`.
-  - **Icon**: crossed sword unicode
+  - **Subtext**: Display the current series score (e.g., "Bob 2 - 1 Alex") simply display it no logic
 
 ## 5. UI: Game Over Screen
 In `src/utils/gameover.ts`:
@@ -40,8 +39,14 @@ In `src/utils/gameover.ts`:
   ```javascript
   rematch: '<button data-notification-action="rematch">Rematch</button>'
   ```
+-  Determine the game winner using existing logic.
+   Create an updated `rematchInfo` object:
+     - Increment the `score` for the winner's `userId` in the `lastScores` array.
+     - Set `nextTurnId` to the `userId` of the player who lost (to ensure they start the next game).
+- Show the updated match score possiblyl using subtext of the notification
 - Update `gameOverButtons.forMode(isSinglePlayer, hasRematch)` to include the `rematch` button if `hasRematch` is true and it's not a single-player/bot game.
-
+- logic will work from winnner and losers perspective
+  
 In `src/network/client/matchresult.ts`:
 - Update `notifyWin`, `notifyLoss`, and `sendLossNotification` to pass `!!session?.rematchInfo` to `gameOverButtons.forMode`.
 
@@ -50,10 +55,6 @@ In `src/view/notification.ts`, update `handleAction(action: string)`:
 - Add a handler for the `"rematch"` action.
 - **Logic**:
   1. Retrieve the current `rematchInfo` from the session.
-  2. Determine the game winner using existing logic.
-  3. Create an updated `rematchInfo` object:
-     - Increment the `score` for the winner's `userId` in the `lastScores` array.
-     - Set `nextTurnId` to the `userId` of the player who lost (to ensure they start the next game).
   4. Encode the updated object: `encodeURIComponent(JSON.stringify(updatedRematch))`.
   5. Redirect the user to the lobby URL with the updated `rematch` parameter:
      - `globalThis.location.href = LOBBY_URL + "?rematch=" + encodedRematch;` (while also preserving `userId` and `userName` if present).
