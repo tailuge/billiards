@@ -18,7 +18,7 @@ describe("AimInput", () => {
       log: (_) => {},
       assets: Assets.localAssets(),
     })
-    aiminputs = new AimInputs(container)
+    aiminputs = container.table.cue.aimInputs
     done()
   })
 

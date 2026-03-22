@@ -149,7 +149,7 @@ export class AimInputs {
     if (this.controlsDisabled) {
       return
     }
-    this.container.table.cue.setPower(this.cuePowerElement.value)
+    this.container.table.cue.setPower(Number(this.cuePowerElement.value))
   }
 
   updatePowerSlider(power) {
@@ -162,7 +162,7 @@ export class AimInputs {
     if (this.controlsDisabled) {
       return
     }
-    this.container.table.cue.setPower(this.cuePowerElement?.value)
+    this.container.table.cue.setPower(Number(this.cuePowerElement?.value))
     this.container.inputQueue.push(new Input(0, "SpaceUp"))
   }
 
@@ -171,8 +171,9 @@ export class AimInputs {
       return
     }
     if (this.cuePowerElement) {
-      this.cuePowerElement.value -= Math.sign(e.deltaY) / 10
-      this.container.table.cue.setPower(this.cuePowerElement.value)
+      this.cuePowerElement.value =
+        Number(this.cuePowerElement.value) - Math.sign(e.deltaY) / 10
+      this.container.table.cue.setPower(Number(this.cuePowerElement.value))
       this.container.lastEventTime = performance.now()
     }
   }

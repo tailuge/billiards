@@ -37,6 +37,12 @@ describe("Cue", () => {
 
   test("topspin applied", () => {
     const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.aimInputs = {
+      isDisabled: () => false,
+      updateVisualState: () => {},
+      updatePowerSlider: () => {},
+      showOverlap: () => {},
+    } as any
     cue.setPower(1)
     cue.setSpin(new Vector3(0, 0.4), table)
     cue.hit(table.balls[0])
