@@ -38,7 +38,7 @@ export class Cue {
   }
 
   rotateAim(angle, table: Table) {
-    if (this.aimInputs.isDisabled()) {
+    if (!this.aimInputs || this.aimInputs.isDisabled()) {
       return
     }
     this.aim.angle = this.aim.angle + angle
@@ -49,11 +49,17 @@ export class Cue {
   }
 
   adjustPower(delta) {
+    if (!this.aimInputs || this.aimInputs.isDisabled()) {
+      return
+    }
     this.aim.power = Math.min(this.maxPower, this.aim.power + delta)
     this.updateAimInput()
   }
 
   setPower(value: number) {
+    if (!this.aimInputs || this.aimInputs.isDisabled()) {
+      return
+    }
     this.aim.power = value * this.maxPower
   }
 
@@ -76,11 +82,17 @@ export class Cue {
   }
 
   adjustSpin(delta: Vector3, table: Table) {
+    if (!this.aimInputs || this.aimInputs.isDisabled()) {
+      return
+    }
     const newOffset = this.tempVec3.copy(this.aim.offset).add(delta)
     this.setSpin(newOffset, table)
   }
 
   setSpin(offset: Vector3, table: Table) {
+    if (!this.aimInputs || this.aimInputs.isDisabled()) {
+      return
+    }
     if (offset.length() > this.offCenterLimit) {
       offset.normalize().multiplyScalar(this.offCenterLimit)
     }

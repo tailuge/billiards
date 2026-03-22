@@ -56,6 +56,8 @@ export class Aim extends ControllerBase {
   }
 
   playShot() {
+    this.container.inputQueue.length = 0
+    this.container.table.cue.aimInputs.setDisabled(true)
     const hitEvent = new HitEvent(this.container.table.serialiseHit())
     this.container.sendEvent(hitEvent)
     return new PlayShot(this.container)
