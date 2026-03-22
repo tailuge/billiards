@@ -41,7 +41,7 @@ export class TimeoutButton {
     this.el.style.setProperty("--sweep", "0deg")
   }
 
-  private tick = (now: number) => {
+  private readonly tick = (now: number) => {
     if (!this.isRunning) return
     if (!this.start) this.start = now
     const elapsed = now - this.start

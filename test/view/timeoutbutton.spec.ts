@@ -17,7 +17,10 @@ describe("TimeoutButton", () => {
     })
     // Mock requestAnimationFrame
     globalThis.requestAnimationFrame = (callback: FrameRequestCallback) => {
-      return setTimeout(() => callback(performance.now()), 16) as unknown as number
+      return setTimeout(
+        () => callback(performance.now()),
+        16
+      ) as unknown as number
     }
     globalThis.cancelAnimationFrame = (id: number) => {
       clearTimeout(id as unknown as ReturnType<typeof setTimeout>)
@@ -63,12 +66,13 @@ describe("TimeoutButton", () => {
 
     setTimeout(() => {
       try {
-        expect(button.style.getPropertyValue("--timer-color")).to.equal("#ef4444")
+        expect(button.style.getPropertyValue("--timer-color")).to.equal(
+          "#ef4444"
+        )
         done()
       } catch (e) {
         done(e)
       }
     }, 90)
   })
-
 })

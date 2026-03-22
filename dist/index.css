@@ -420,7 +420,6 @@ input[type="range"].powerSlider {
     conic-gradient(var(--timer-color) var(--sweep), #e4e4e7 0deg) border-box;
 }
 
-
 .chatarea {
   height: 100%;
   display: flex;

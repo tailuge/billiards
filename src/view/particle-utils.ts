@@ -1,7 +1,5 @@
 export class ParticleUtils {
-  static colorToRgb(
-    color: string,
-  ): { r: number; g: number; b: number } {
+  static colorToRgb(color: string): { r: number; g: number; b: number } {
     const canvas = document.createElement("canvas")
     canvas.width = 1
     canvas.height = 1
