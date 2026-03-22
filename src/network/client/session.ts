@@ -141,6 +141,19 @@ export class Session {
     return { p1: this.opponentScore(), p2: this.myScore() }
   }
 
+  orderedRematchScores(): { p1: number; p2: number } {
+    if (!this.rematchInfo) return { p1: 0, p2: 0 }
+    const sMe =
+      this.rematchInfo.lastScores.find((s) => s.userId === this.clientId)
+        ?.score ?? 0
+    const sThem =
+      this.rematchInfo.lastScores.find((s) => s.userId !== this.clientId)
+        ?.score ?? 0
+    return this.playerIndex === 0
+      ? { p1: sMe, p2: sThem }
+      : { p1: sThem, p2: sMe }
+  }
+
   orderedNamesForHud(): { p1Name?: string; p2Name?: string } {
     if (this.spectator) {
       console.log(

@@ -33,43 +33,29 @@ export class MatchResultHelper {
     const playerIndex = session?.playerIndex ?? 0
     const amIWinner = forcedAmIWinner ?? winnerIndex === playerIndex
 
-    let subtext = endSubtext ?? this.getScoreSubtext(container)
+    const subtext = endSubtext ?? this.getScoreSubtext(container)
 
     if (session?.rematchInfo) {
-      const isDraw = p1 === p2
-      const opponentId =
-        session.opponentClientId ?? session.rematchInfo.opponentId
+      const winnerId = amIWinner ? session.clientId : session.rematchInfo.opponentId
+      const loserId = amIWinner ? session.rematchInfo.opponentId : session.clientId
 
-      if (!isDraw) {
-        const winnerId = amIWinner ? session.clientId : opponentId
-        const loserId = amIWinner ? opponentId : session.clientId
-
-        session.rematchInfo.lastScores.forEach((s) => {
-          if (s.userId === winnerId) {
-            s.score++
-          }
-        })
-        session.rematchInfo.nextTurnId = loserId
-      }
-
-      const s1 = session.rematchInfo.lastScores[0]
-      const s2 = session.rematchInfo.lastScores[1]
-      const getPlayerName = (uid: string) => {
-        if (uid === session.clientId) return session.playername || "You"
-        if (uid === opponentId)
-          return session.opponentName || session.rematchInfo!.opponentName
-        return "Opponent"
-      }
-      subtext += ` | Match Score: ${getPlayerName(s1.userId)} ${s1.score} - ${s2.score} ${getPlayerName(s2.userId)}`
+      session.rematchInfo.lastScores.forEach((s) => {
+        if (s.userId === winnerId) {
+          s.score++
+        }
+      })
+      session.rematchInfo.nextTurnId = loserId
     }
 
+    const fullSubtext = this.getFullSubtext(container, subtext, session)
+
     if (amIWinner) {
-      this.notifyWin(container, subtext, !!session?.rematchInfo)
+      this.notifyWin(container, fullSubtext, !!session?.rematchInfo)
       this.sendLossNotification(container, !!session?.rematchInfo)
     } else if (Session.isSpectator()) {
-      this.notifySpectator(container, subtext)
+      this.notifySpectator(container, fullSubtext)
     } else {
-      this.notifyLoss(container, subtext, !!session?.rematchInfo)
+      this.notifyLoss(container, fullSubtext, !!session?.rematchInfo)
     }
 
     const result = this.createMatchResult(
@@ -161,6 +147,17 @@ export class MatchResultHelper {
     const { p1Name, p2Name } = container.getOrderedNames()
     const { p1, p2 } = container.getOrderedScores()
     return `${p1Name || "You"} ${p1} - ${p2} ${p2Name || "Opponent"}`
+  }
+
+  private static getFullSubtext(
+    container: Container,
+    subtext: string,
+    session: Session | null
+  ): string {
+    if (!session?.rematchInfo) return subtext
+    const names = container.getOrderedNames()
+    const scores = session.orderedRematchScores()
+    return `${subtext} | Match Score: ${names.p1Name || "Player 1"} ${scores.p1} - ${scores.p2} ${names.p2Name || "Player 2"}`
   }
 
   private static createMatchResult(
