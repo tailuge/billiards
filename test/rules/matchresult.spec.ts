@@ -198,7 +198,7 @@ describe("MatchResult Construction", () => {
     expect(notification?.innerHTML).to.contain("New Game")
   })
 
-  it("MatchResultHelper should use newline separator for Match Score in subtext", () => {
+  it("MatchResultHelper should use structured match score in notification", () => {
     container = createNineBallContainer()
     const session = Session.getInstance()
     session.opponentName = "TestOpponent"
@@ -221,8 +221,8 @@ describe("MatchResult Construction", () => {
     endController.onFirst()
 
     const notification = document.getElementById("notification")
-    const subtextElement = notification?.querySelector(".notification-subtext")
-    expect(subtextElement?.textContent).to.contain("\nMatch Score:")
-    expect(subtextElement?.textContent).to.not.contain(" | Match Score:")
+    const matchScoreElement = notification?.querySelector(".notification-match-score")
+    expect(matchScoreElement?.textContent).to.contain("MATCH SCORE")
+    expect(matchScoreElement?.textContent).to.contain("TestPlayer 1 — 0 TestOpponent")
   })
 })

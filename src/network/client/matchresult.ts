@@ -34,10 +34,9 @@ export class MatchResultHelper {
 
     this.updateRematchInfo(container, session, rulename, amIWinner)
 
-    const fullSubtext = this.getFullSubtext(container, subtext, session)
     const hasRematch = !!session?.rematchInfo
 
-    this.notifyEndState(container, amIWinner, fullSubtext, hasRematch)
+    this.notifyEndState(container, amIWinner, subtext, hasRematch)
 
     const result = this.createMatchResult(
       container,
@@ -77,16 +76,21 @@ export class MatchResultHelper {
   private static notifyEndState(
     container: Container,
     amIWinner: boolean,
-    fullSubtext: string,
+    subtext: string,
     hasRematch: boolean
   ): void {
+    const session = Session.getInstance();
+    const matchScore = hasRematch && session.rematchInfo
+      ? Rematch.getMatchScoreText(session, container.getOrderedNames())
+      : undefined;
+
     if (amIWinner) {
-      this.notifyWin(container, fullSubtext, hasRematch)
-      this.sendLossNotification(container, hasRematch)
+      this.notifyWin(container, subtext, matchScore, hasRematch);
+      this.sendLossNotification(container, matchScore, hasRematch);
     } else if (Session.isSpectator()) {
-      this.notifySpectator(container, fullSubtext)
+      this.notifySpectator(container, subtext, matchScore);
     } else {
-      this.notifyLoss(container, fullSubtext, hasRematch)
+      this.notifyLoss(container, subtext, matchScore, hasRematch);
     }
   }
 
@@ -97,12 +101,14 @@ export class MatchResultHelper {
   private static notifyWin(
     container: Container,
     subtext: string,
+    matchScore: string | undefined,
     hasRematch: boolean = false
   ) {
     container.notifyLocal({
       type: "GameOver",
       title: "YOU WON",
       subtext: subtext,
+      matchScore: matchScore,
       icon: "🏆",
       extraClass: "is-winner",
       extra: gameOverButtons.forMode(
@@ -116,12 +122,14 @@ export class MatchResultHelper {
   private static notifyLoss(
     container: Container,
     subtext: string,
+    matchScore: string | undefined,
     hasRematch: boolean = false
   ) {
     container.notifyLocal({
       type: "GameOver",
       title: "YOU LOST",
       subtext: Session.isBotMode() ? "Lostber 🦞" : subtext,
+      matchScore: matchScore,
       icon: "🥈",
       extraClass: "is-loser",
       extra: gameOverButtons.forMode(
@@ -132,11 +140,16 @@ export class MatchResultHelper {
     })
   }
 
-  private static notifySpectator(container: Container, subtext: string) {
+  private static notifySpectator(
+    container: Container,
+    subtext: string,
+    matchScore: string | undefined
+  ) {
     container.notifyLocal({
       type: "GameOver",
       title: "GAME OVER",
       subtext: subtext,
+      matchScore: matchScore,
       icon: "🏆",
       extraClass: "",
       extra: gameOverButtons.lobby,
@@ -146,6 +159,7 @@ export class MatchResultHelper {
 
   private static sendLossNotification(
     container: Container,
+    matchScore: string | undefined,
     hasRematch: boolean = false
   ) {
     if (container.isSinglePlayer) return
@@ -153,6 +167,7 @@ export class MatchResultHelper {
       new NotificationEvent({
         type: "GameOver",
         title: "YOU LOST",
+        matchScore: matchScore,
         icon: "🥈",
         extraClass: "is-loser",
         extra: gameOverButtons.forMode(false, hasRematch),
@@ -169,19 +184,6 @@ export class MatchResultHelper {
     const { p1Name, p2Name } = container.getOrderedNames()
     const { p1, p2 } = container.getOrderedScores()
     return `${p1Name || "You"} ${p1} - ${p2} ${p2Name || "Opponent"}`
-  }
-
-  private static getFullSubtext(
-    container: Container,
-    subtext: string,
-    session: Session | null
-  ): string {
-    if (!session?.rematchInfo) return subtext
-    const matchScoreText = Rematch.getMatchScoreText(
-      session,
-      container.getOrderedNames()
-    )
-    return `${subtext}\n${matchScoreText}`
   }
 
   private static createMatchResult(

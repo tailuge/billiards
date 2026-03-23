@@ -240,6 +240,7 @@ describe("NineBall Rules", () => {
       type: "GameOver",
       title: "YOU WON",
       subtext: "Score: 1",
+      matchScore: undefined,
       extra: `<button data-notification-action="reload">New Game</button><button data-notification-action="lobby">Lobby</button>`,
       icon: "🏆",
       extraClass: "is-winner",
@@ -256,8 +257,11 @@ describe("NineBall Rules", () => {
     expect(notifySpy.mock.calls[0][0]).to.deep.equal({
       type: "GameOver",
       title: "YOU WON",
-      subtext:
-        "TestPlayer 1 - 0 Opponent\nMatch Score: TestPlayer 1 - 0 Player 2",
+      subtext: "TestPlayer 1 - 0 Opponent",
+      matchScore: `<div class="match-score-container">
+        <div class="match-score-label">MATCH SCORE</div>
+        <div class="match-score-value">TestPlayer 1 — 0 Player 2</div>
+      </div>`,
       extra: `<button data-notification-action="rematch">Rematch</button><button data-notification-action="lobby">Lobby</button>`,
       icon: "🏆",
       extraClass: "is-winner",
@@ -275,6 +279,7 @@ describe("NineBall Rules", () => {
       type: "GameOver",
       title: "YOU WON",
       subtext: "Score: 1",
+      matchScore: undefined,
       extra: `<button data-notification-action="reload">New Game</button><button data-notification-action="lobby">Lobby</button>`,
       icon: "🏆",
       extraClass: "is-winner",

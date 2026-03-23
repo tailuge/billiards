@@ -71,7 +71,7 @@ p {
 
 #notificationOverlay {
   position: absolute;
-  top: 10%;
+  top: 5%;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -85,33 +85,49 @@ p {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 32px;
+  gap: 24px;
   user-select: none;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.3));
   pointer-events: auto;
 }
 
 .notification-extra {
-  margin-top: 32px;
+  margin-top: 16px;
 }
 
 .notification-banner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 18px;
-  padding: 14px 34px;
-  border-radius: 12px;
+  justify-content: center;
+  padding: 0;
+  border-radius: 8px;
   background: #1464c8;
   background: linear-gradient(135deg, #1464c8 0%, #00b4a0 100%);
-  border: 1px solid #ffffff;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  transition:
-    transform 0.2s ease,
-    opacity 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  min-width: 320px;
+}
+
+.notification-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.notification-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 18px 32px;
+  width: 100%;
 }
 
 .notification-icon {
-  font-size: 1.6em;
+  font-size: 2em;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,113 +135,138 @@ p {
 
 .notification-text-group {
   display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  gap: 12px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .notification-title {
   color: white;
   font-weight: 800;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  font-size: 1.3em;
+  font-size: 1.4em;
   margin: 0;
 }
 
 .notification-subtext {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1em;
-  font-weight: 500;
-  margin: 0;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1em;
+  font-weight: 600;
+  margin: 4px 0 0 0;
   white-space: pre-wrap;
 }
 
-.notification-badge {
-  background: #555;
-  background: rgba(255, 255, 255, 0.3);
-  color: white;
-  padding: 6px 16px;
-  border-radius: 10px;
-  font-size: 0.75em;
-  font-weight: 700;
+.notification-match-score {
+  background: rgba(0, 0, 0, 0.15);
+  padding: 12px 24px;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.match-score-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.match-score-label {
+  font-size: 0.7em;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
+}
+
+.match-score-value {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: white;
   letter-spacing: 0.5px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  animation: badgeIn 0.4s ease-out;
 }
 
-@keyframes badgeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-#notification.type-Foul .notification-banner {
-  background: #285096;
-  background: linear-gradient(135deg, #285096 0%, #148c8c 100%);
-  border-color: #64c8ff;
-}
-
-#notification.type-GameOver .notification-banner {
-  background: #b48c00;
-  background: linear-gradient(135deg, #b48c00 0%, #c86400 100%);
+.notification-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
 }
 
 #notification.is-winner .notification-banner {
   background: #ffd700;
   background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
-  color: #000;
-  border-color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 #notification.is-winner .notification-title,
-#notification.is-winner .notification-subtext {
+#notification.is-winner .notification-subtext,
+#notification.is-winner .match-score-value {
   color: #000;
+}
+
+#notification.is-winner .match-score-label {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+#notification.is-winner .notification-match-score {
+  background: rgba(0, 0, 0, 0.05);
+  border-top-color: rgba(0, 0, 0, 0.1);
 }
 
 #notification.is-loser .notification-banner {
-  background: #c0c0c0;
-  background: linear-gradient(135deg, #c0c0c0 0%, #808080 100%);
-  color: #000;
-  border-color: #ffffff;
+  background: #e0e0e0;
+  background: linear-gradient(135deg, #e0e0e0 0%, #a0a0a0 100%);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 #notification.is-loser .notification-title,
-#notification.is-loser .notification-subtext {
+#notification.is-loser .notification-subtext,
+#notification.is-loser .match-score-value {
   color: #000;
+}
+
+#notification.is-loser .match-score-label {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+#notification.is-loser .notification-match-score {
+  background: rgba(0, 0, 0, 0.05);
+  border-top-color: rgba(0, 0, 0, 0.1);
 }
 
 .notification-extra button,
 .notification-extra .button {
   display: inline-block;
-  padding: 10px 20px;
-  margin: 8px;
-  background: rgba(100, 100, 100, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+  padding: 14px 28px;
+  margin: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
   color: white;
   text-decoration: none;
   font-family: inherit;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .notification-extra button:hover,
 .notification-extra .button:hover {
-  background: rgba(150, 150, 150, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .view3d {

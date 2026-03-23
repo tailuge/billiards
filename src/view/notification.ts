@@ -5,11 +5,12 @@ import { Session } from "../network/client/session";
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info";
   title: string;
-  subtext?: string;
-  extra?: string;
-  duration?: number;
-  icon?: string;
-  extraClass?: string;
+  subtext?: string | undefined;
+  matchScore?: string | undefined;
+  extra?: string | undefined;
+  duration?: number | undefined;
+  icon?: string | undefined;
+  extraClass?: string | undefined;
 }
 
 export type NotificationActionHandlers = Record<string, () => void>;
@@ -78,10 +79,15 @@ export class Notification {
 
     const content = `
       <div class="notification-banner">
-        <div class="notification-icon">${icon}</div>
-        <div class="notification-text-group">
-          <div class="notification-title">${data.title}</div>
-          ${data.subtext ? `<div class="notification-subtext">${data.subtext}</div>` : ""}
+        <div class="notification-content-wrapper">
+          <div class="notification-main">
+            <div class="notification-icon">${icon}</div>
+            <div class="notification-text-group">
+              <div class="notification-title">${data.title}</div>
+              ${data.subtext ? `<div class="notification-subtext">${data.subtext}</div>` : ""}
+            </div>
+          </div>
+          ${data.matchScore ? `<div class="notification-match-score">${data.matchScore}</div>` : ""}
         </div>
       </div>
       ${extraContentHtml}

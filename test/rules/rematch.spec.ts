@@ -47,9 +47,8 @@ describe("Rematch Logic", () => {
 
     const notification = document.getElementById("notification")
     expect(notification?.innerHTML).to.contain("Rematch")
-    expect(notification?.innerHTML).to.contain(
-      "Match Score: TestPlayer 1 - 0 TestOpponent"
-    )
+    expect(notification?.innerHTML).to.contain("MATCH SCORE")
+    expect(notification?.innerHTML).to.contain("TestPlayer 1 — 0 TestOpponent")
   })
 
   it("should update rematchInfo if it already exists", () => {
@@ -78,9 +77,8 @@ describe("Rematch Logic", () => {
     expect(scores.p2).to.equal(2) // Them (was 1, now +1)
 
     const notification = document.getElementById("notification")
-    expect(notification?.innerHTML).to.contain(
-      "Match Score: TestPlayer 1 - 2 TestOpponent"
-    )
+    expect(notification?.innerHTML).to.contain("MATCH SCORE")
+    expect(notification?.innerHTML).to.contain("TestPlayer 1 — 2 TestOpponent")
   })
 
   it("should NOT show rematch button in bot mode", () => {

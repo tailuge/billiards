@@ -75,7 +75,12 @@ export class Rematch {
   ): string {
     if (!session.rematchInfo) return "";
     const scores = this.getOrderedScores(session);
-    return `Match Score: ${names.p1Name || "Player 1"} ${scores.p1} - ${scores.p2} ${names.p2Name || "Player 2"}`;
+    return `
+      <div class="match-score-container">
+        <div class="match-score-label">MATCH SCORE</div>
+        <div class="match-score-value">${names.p1Name || "Player 1"} ${scores.p1} — ${scores.p2} ${names.p2Name || "Player 2"}</div>
+      </div>
+    `.trim();
   }
 
   static navigate(session: Session) {

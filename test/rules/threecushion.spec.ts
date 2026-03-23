@@ -14,6 +14,7 @@ import { End } from "../../src/controller/end"
 import { initDom } from "../view/dom"
 import { Assets } from "../../src/view/assets"
 import { TableGeometry } from "../../src/view/tablegeometry"
+import { Session } from "../../src/network/client/session"
 
 initDom()
 
@@ -23,6 +24,7 @@ describe("ThreeCushion", () => {
   const rule = "threecushion"
 
   beforeEach(function (done) {
+    Session.init("test-client", "TestPlayer", "test-table", false)
     container = new Container({
       element: undefined,
       log: (_) => {},
@@ -32,6 +34,10 @@ describe("ThreeCushion", () => {
     broadcastEvents = []
     container.broadcast = (x) => broadcastEvents.push(x)
     done()
+  })
+
+  afterEach(() => {
+    Session.reset()
   })
 
   it("ThreeCushion no point switch player", (done) => {

@@ -161,7 +161,7 @@ export class BrowserContainer {
       this.container.notify({
         type: "Info",
         title: "Match Score",
-        subtext: matchScoreText,
+        matchScore: matchScoreText,
       } as const)
     }
   }

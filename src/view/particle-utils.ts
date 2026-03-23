@@ -92,6 +92,7 @@ export class ParticleUtils {
     "1UP✨",
     "🍒🍒🍒",
     "☀️ 🌤️ ⛅ 🌥️",
+    "E = m💫²",
   ]
 
   static randomText() {
