@@ -174,14 +174,11 @@ export class Notification {
   }
 
   private getPreservedParams(): URLSearchParams {
-    const params = new globalThis.URLSearchParams(globalThis.location.search);
     const queryParams = new globalThis.URLSearchParams();
-    const preserved = ["userId", "userName"];
-    for (const key of preserved) {
-      const val = params.get(key);
-      if (val) {
-        queryParams.set(key, val);
-      }
+    if (Session.hasInstance()) {
+      const session = Session.getInstance();
+      queryParams.set("userId", session.clientId);
+      queryParams.set("userName", session.playername);
     }
     return queryParams;
   }
