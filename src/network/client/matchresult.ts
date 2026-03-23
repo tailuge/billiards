@@ -203,7 +203,7 @@ export class MatchResultHelper {
     if (!session?.rematchInfo) return subtext
     const names = container.getOrderedNames()
     const scores = session.orderedRematchScores()
-    return `${subtext} | Match Score: ${names.p1Name || "Player 1"} ${scores.p1} - ${scores.p2} ${names.p2Name || "Player 2"}`
+    return `${subtext}\nMatch Score: ${names.p1Name || "Player 1"} ${scores.p1} - ${scores.p2} ${names.p2Name || "Player 2"}`
   }
 
   private static createMatchResult(

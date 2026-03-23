@@ -197,4 +197,32 @@ describe("MatchResult Construction", () => {
     expect(notification?.innerHTML).to.contain("Lostber 🦞")
     expect(notification?.innerHTML).to.contain("New Game")
   })
+
+  it("MatchResultHelper should use newline separator for Match Score in subtext", () => {
+    container = createNineBallContainer()
+    const session = Session.getInstance()
+    session.opponentName = "TestOpponent"
+    session.opponentClientId = "test-opponent"
+    session.rematchInfo = {
+      opponentId: "test-opponent",
+      opponentName: "TestOpponent",
+      ruleType: "nineball",
+      lastScores: [
+        { userId: "test-client", score: 1 },
+        { userId: "test-opponent", score: 0 },
+      ],
+      nextTurnId: "test-opponent",
+    }
+    setupNineBallTable(container)
+
+    const nineball = container.rules as NineBall
+    const outcome = getNineBallOutcome(container)
+    const endController = nineball.update(outcome) as End
+    endController.onFirst()
+
+    const notification = document.getElementById("notification")
+    const subtextElement = notification?.querySelector(".notification-subtext")
+    expect(subtextElement?.textContent).to.contain("\nMatch Score:")
+    expect(subtextElement?.textContent).to.not.contain(" | Match Score:")
+  })
 })
