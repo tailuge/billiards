@@ -14,6 +14,7 @@ import { Assets } from "../view/assets"
 import { SnookerConfig } from "../utils/snookerconfig"
 import { ThreeCushionConfig } from "../utils/threecushionconfig"
 import { Session } from "../network/client/session"
+import { Rematch } from "../network/client/rematch"
 import { MessageRelay } from "../network/client/messagerelay"
 import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
 import { BotRelay } from "../network/bot/botrelay"
@@ -86,16 +87,7 @@ export class BrowserContainer {
       this.spectator,
       this.botMode
     )
-    const rematchParam = params.get("rematch")
-    if (rematchParam) {
-      try {
-        Session.getInstance().rematchInfo = JSON.parse(
-          decodeURIComponent(rematchParam)
-        )
-      } catch (e) {
-        console.error("Failed to parse rematch info", e)
-      }
-    }
+    Session.getInstance().rematchInfo = Rematch.fromURL(params)
     console.log(Session.getInstance())
   }
 
@@ -154,20 +146,22 @@ export class BrowserContainer {
     this.container = this.createContainer(scoreReporter)
     this.container.init()
 
-    const rematchInfo = Session.getInstance().rematchInfo
-    if (rematchInfo) {
-      const p1 = rematchInfo.lastScores[0]
-      const p2 = rematchInfo.lastScores[1]
-      const session = Session.getInstance()
+    const session = Session.getInstance()
+    if (session.rematchInfo) {
       const getName = (uid: string) =>
         uid === session.clientId
           ? session.playername
-          : session.opponentName || rematchInfo.opponentName
+          : session.opponentName || session.rematchInfo?.opponentName
+
+      const matchScoreText = Rematch.getMatchScoreText(session, {
+        p1Name: getName(session.rematchInfo.lastScores[0].userId),
+        p2Name: getName(session.rematchInfo.lastScores[1].userId),
+      })
 
       this.container.notify({
         type: "Info",
         title: "Match Score",
-        subtext: `${getName(p1.userId)} ${p1.score} - ${p2.score} ${getName(p2.userId)}`,
+        subtext: matchScoreText,
       } as const)
     }
   }

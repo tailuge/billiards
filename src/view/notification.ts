@@ -1,5 +1,5 @@
 import { id } from "../utils/dom";
-import { LOBBY_URL } from "../utils/gameover";
+import { Rematch } from "../network/client/rematch";
 import { Session } from "../network/client/session";
 
 export interface NotificationData {
@@ -145,42 +145,18 @@ export class Notification {
         globalThis.location.reload();
         break;
       case "rematch":
-        this.redirectToLobbyWithRematch();
+        if (Session.hasInstance()) {
+          Rematch.navigate(Session.getInstance());
+        }
         break;
       case "lobby":
-        this.redirectToLobby();
+        if (Session.hasInstance()) {
+          Rematch.redirectToLobby(undefined, Session.getInstance());
+        } else {
+          Rematch.redirectToLobby();
+        }
         break;
     }
-  }
-
-  private redirectToLobbyWithRematch() {
-    const rematchInfo = Session.getInstance().rematchInfo;
-    if (rematchInfo) {
-      const encodedRematch = JSON.stringify(rematchInfo);
-      const queryParams = this.getPreservedParams();
-      queryParams.set("rematch", encodedRematch);
-      const redirectUrl = `${LOBBY_URL}?${queryParams.toString()}`;
-      console.log("Redirect URL:", redirectUrl);
-      globalThis.location.href = redirectUrl;
-    }
-  }
-
-  private redirectToLobby() {
-    const queryParams = this.getPreservedParams();
-    const queryString = queryParams.toString();
-    globalThis.location.href = queryString
-      ? `${LOBBY_URL}?${queryString}`
-      : LOBBY_URL;
-  }
-
-  private getPreservedParams(): URLSearchParams {
-    const queryParams = new globalThis.URLSearchParams();
-    if (Session.hasInstance()) {
-      const session = Session.getInstance();
-      queryParams.set("userId", session.clientId);
-      queryParams.set("userName", session.playername);
-    }
-    return queryParams;
   }
 
   clear() {

@@ -4,6 +4,7 @@ import { initDom } from "../view/dom"
 import { Assets } from "../../src/view/assets"
 import { Session } from "../../src/network/client/session"
 import { MatchResultHelper } from "../../src/network/client/matchresult"
+import { Rematch } from "../../src/network/client/rematch"
 
 initDom()
 
@@ -40,7 +41,7 @@ describe("Rematch Logic", () => {
     expect(session.rematchInfo?.opponentId).to.equal("opponent-client")
     expect(session.rematchInfo?.opponentName).to.equal("TestOpponent")
 
-    const scores = session.orderedRematchScores()
+    const scores = Rematch.getOrderedScores(session)
     expect(scores.p1).to.equal(1) // Me (p1 because playerIndex is 0)
     expect(scores.p2).to.equal(0) // Them
 
@@ -72,7 +73,7 @@ describe("Rematch Logic", () => {
 
     MatchResultHelper.presentGameEnd(container, "nineball", false)
 
-    const scores = session.orderedRematchScores()
+    const scores = Rematch.getOrderedScores(session)
     expect(scores.p1).to.equal(1) // Me
     expect(scores.p2).to.equal(2) // Them (was 1, now +1)
 

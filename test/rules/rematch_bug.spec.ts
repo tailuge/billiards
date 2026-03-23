@@ -4,6 +4,7 @@ import { BrowserContainer } from "../../src/container/browsercontainer"
 import { initDom } from "../view/dom"
 import { Assets } from "../../src/view/assets"
 import { Session } from "../../src/network/client/session"
+import { Rematch } from "../../src/network/client/rematch"
 
 initDom()
 
@@ -29,8 +30,7 @@ describe("Rematch Bug Reproduction", () => {
     // Note: NO "userId" set here!
 
     // Initialize BrowserContainer with mocked canvas
-    let bc1: any
-    bc1 = new BrowserContainer(
+    const bc1: any = new BrowserContainer(
       document.getElementById("canvas3d"),
       initialParams
     )
@@ -68,7 +68,7 @@ describe("Rematch Bug Reproduction", () => {
     }
 
     // Verify local score tracking works
-    expect(session1.orderedRematchScores().p1).to.equal(1)
+    expect(Rematch.getOrderedScores(session1).p1).to.equal(1)
 
     // 3. Simulate "Rematch" Click & Redirect Logic (The FIX)
     const encodedRematch = encodeURIComponent(JSON.stringify(session1.rematchInfo))
@@ -83,8 +83,7 @@ describe("Rematch Bug Reproduction", () => {
     Session.reset()
 
     // 4. New Session (Rematch)
-    let bc2: any
-    bc2 = new BrowserContainer(
+    const bc2: any = new BrowserContainer(
         document.getElementById("canvas3d"),
         newParams
     );
@@ -105,7 +104,7 @@ describe("Rematch Bug Reproduction", () => {
     expect(session2.rematchInfo).to.not.be.undefined
     
     // ...and it matches the score to the preserved ID!
-    const scores = session2.orderedRematchScores()
+    const scores = Rematch.getOrderedScores(session2)
     
     expect(scores.p1).to.equal(1, "Score should be 1 because identity was preserved")
   })

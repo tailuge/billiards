@@ -3,6 +3,7 @@ import { ChatEvent } from "../../events/chatevent"
 import { NotificationEvent } from "../../events/notificationevent"
 import { End } from "../../controller/end"
 import { Session } from "./session"
+import { Rematch } from "./rematch"
 import { gameOverButtons } from "../../utils/gameover"
 import { VERSION } from "../../utils/version"
 
@@ -69,33 +70,8 @@ export class MatchResultHelper {
     rulename: string,
     amIWinner: boolean
   ): void {
-    if (!session || !session.clientId) return
-    if (container.isSinglePlayer || Session.isBotMode()) return
-
-    const opponentId = session.opponentClientId || "opponent"
-    const winnerId = amIWinner ? session.clientId : opponentId
-    const loserId = amIWinner ? opponentId : session.clientId
-
-    if (!session.rematchInfo) {
-      const opponentName = session.opponentName || "Opponent"
-      session.rematchInfo = {
-        opponentId,
-        opponentName,
-        ruleType: rulename,
-        lastScores: [
-          { userId: session.clientId, score: amIWinner ? 1 : 0 },
-          { userId: opponentId, score: amIWinner ? 0 : 1 },
-        ],
-        nextTurnId: loserId,
-      }
-    } else {
-      session.rematchInfo.lastScores.forEach((s) => {
-        if (s.userId === winnerId) {
-          s.score++
-        }
-      })
-      session.rematchInfo.nextTurnId = loserId
-    }
+    if (!session) return
+    Rematch.update(session, rulename, amIWinner, container.isSinglePlayer)
   }
 
   private static notifyEndState(
@@ -201,9 +177,11 @@ export class MatchResultHelper {
     session: Session | null
   ): string {
     if (!session?.rematchInfo) return subtext
-    const names = container.getOrderedNames()
-    const scores = session.orderedRematchScores()
-    return `${subtext}\nMatch Score: ${names.p1Name || "Player 1"} ${scores.p1} - ${scores.p2} ${names.p2Name || "Player 2"}`
+    const matchScoreText = Rematch.getMatchScoreText(
+      session,
+      container.getOrderedNames()
+    )
+    return `${subtext}\n${matchScoreText}`
   }
 
   private static createMatchResult(
