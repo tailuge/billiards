@@ -77,22 +77,21 @@ export class NchanMessageRelay implements MessageRelay {
       },
       body: message,
     }).catch((error) => {
-      console.error("Publication error:", error)
+      console.error(`Publication error for ${url}:`, error)
     })
   }
 
   async getOnlineCount(): Promise<number | null> {
+    const url = `https://${this.baseURL}/publish/presence/lobby`
     try {
-      const response = await fetch(
-        `https://${this.baseURL}/publish/presence/lobby`,
-        {
-          method: "POST",
-          headers: { Accept: "application/json" },
-        }
-      )
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+      })
       const data = await response.json()
       return typeof data.subscribers === "number" ? data.subscribers : null
-    } catch {
+    } catch (error) {
+      console.warn(`Failed to fetch online count from ${url}:`, error)
       return null
     }
   }

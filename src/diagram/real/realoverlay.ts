@@ -78,7 +78,8 @@ export class RealOverlay {
   }
 
   loadDefaultData() {
-    fetch("simple_shots.json")
+    const filename = "simple_shots.json"
+    fetch(filename)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -86,6 +87,9 @@ export class RealOverlay {
         return response.json()
       })
       .then((shotsData) => this.processShots(shotsData))
+      .catch((error) => {
+        console.error(`Error loading default data from ${filename}:`, error)
+      })
   }
 
   processShots(shotsData: any[]) {
