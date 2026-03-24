@@ -88,7 +88,7 @@ export class RealOverlay {
       })
       .then((shotsData) => this.processShots(shotsData))
       .catch((error) => {
-        console.error(`Error loading default data from ${filename}:`, error)
+        console.error("Error loading default data from", filename, error)
       })
   }
 

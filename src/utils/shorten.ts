@@ -22,12 +22,12 @@ export function shorten(url, action) {
       if ("shortUrl" in data) {
         action(data.shortUrl)
       } else {
-        console.error(`Could not shorten url ${url} via ${endpoint}:`, data)
+        console.error("Could not shorten url", url, "via", endpoint, data)
         action(url)
       }
     })
     .catch((e) => {
-      console.error(`Error shortening url ${url} via ${endpoint}:`, e)
+      console.error("Error shortening url", url, "via", endpoint, e)
       action(url)
     })
 }

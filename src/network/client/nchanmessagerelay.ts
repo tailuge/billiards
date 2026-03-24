@@ -77,7 +77,7 @@ export class NchanMessageRelay implements MessageRelay {
       },
       body: message,
     }).catch((error) => {
-      console.error(`Publication error for ${url}:`, error)
+      console.error("Publication error for", url, error)
     })
   }
 
@@ -91,7 +91,7 @@ export class NchanMessageRelay implements MessageRelay {
       const data = await response.json()
       return typeof data.subscribers === "number" ? data.subscribers : null
     } catch (error) {
-      console.warn(`Failed to fetch online count from ${url}:`, error)
+      console.warn("Failed to fetch online count from", url, error)
       return null
     }
   }

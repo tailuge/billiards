@@ -95,7 +95,8 @@ describe("ScoreReporter", () => {
     await reporter.submitMatchResult(sampleMatchResult)
 
     expect(console.error).toHaveBeenCalledWith(
-      "Error submitting match result to https://scoreboard-tailuge.vercel.app/api/match-results:",
+      "Error submitting match result to",
+      "https://scoreboard-tailuge.vercel.app/api/match-results",
       networkError
     )
   })

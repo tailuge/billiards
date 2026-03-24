@@ -19,6 +19,6 @@ export function logusage() {
       }
     })
     .catch((error) => {
-      console.error(`Fetch error for ${url}:`, error)
+      console.error("Fetch error for", url, error)
     })
 }
