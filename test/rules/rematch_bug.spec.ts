@@ -38,7 +38,7 @@ describe("Rematch Bug Reproduction", () => {
     // Stub onAssetsReady/createContainer to avoid full game loop
     bc1["createContainer"] = function(scoreReporter: any) {
         return new Container({
-            element: bc1.canvas3d as any,
+            element: bc1.canvas3d,
             log: () => {},
             assets: Assets.localAssets("nineball"),
             ruletype: "nineball",
