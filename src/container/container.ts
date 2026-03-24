@@ -314,7 +314,7 @@ export class Container {
     this.last = timestamp
     this.processEvents()
     const needsRender =
-      timestamp < this.lastEventTime + 12000 ||
+      timestamp < this.lastEventTime + 30000 ||
       !this.table.allStationary() ||
       this.view.sizeChanged() ||
       this.stayActive

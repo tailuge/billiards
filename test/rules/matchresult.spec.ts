@@ -221,8 +221,12 @@ describe("MatchResult Construction", () => {
     endController.onFirst()
 
     const notification = document.getElementById("notification")
-    const matchScoreElement = notification?.querySelector(".notification-match-score")
+    const matchScoreElement = notification?.querySelector(
+      ".notification-match-score"
+    )
     expect(matchScoreElement?.textContent).to.contain("MATCH SCORE")
-    expect(matchScoreElement?.textContent).to.contain("TestPlayer 1 — 0 TestOpponent")
+    expect(matchScoreElement?.textContent).to.contain(
+      "TestPlayer 1 — 0 TestOpponent"
+    )
   })
 })

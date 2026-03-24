@@ -38,7 +38,9 @@ export class Replay extends ControllerBase {
       retryEvent.retry = true
       this.container.eventQueue.push(retryEvent)
     } else {
-      this.container.view.camera.forceMode(this.container.view.camera.topView)
+      this.container.view.camera.forceMode(
+        this.container.view.camera.spectatorView
+      )
       this.playNextShot(this.delay * 1.5)
     }
   }
@@ -124,6 +126,9 @@ export class Replay extends ControllerBase {
     this.container.table.cue.aim = aim
     this.container.table.cue.updateAimInput()
     this.container.table.cue.t = 1
+    this.container.view.camera.suggestMode(
+      this.container.view.camera.spectatorView
+    )
     clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       this.container.eventQueue.push(new HitEvent(this.container.table.cue.aim))

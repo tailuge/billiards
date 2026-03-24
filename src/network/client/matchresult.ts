@@ -79,18 +79,19 @@ export class MatchResultHelper {
     subtext: string,
     hasRematch: boolean
   ): void {
-    const session = Session.getInstance();
-    const matchScore = hasRematch && session.rematchInfo
-      ? Rematch.getMatchScoreText(session, container.getOrderedNames())
-      : undefined;
+    const session = Session.getInstance()
+    const matchScore =
+      hasRematch && session.rematchInfo
+        ? Rematch.getMatchScoreText(session, container.getOrderedNames())
+        : undefined
 
     if (amIWinner) {
-      this.notifyWin(container, subtext, matchScore, hasRematch);
-      this.sendLossNotification(container, matchScore, hasRematch);
+      this.notifyWin(container, subtext, matchScore, hasRematch)
+      this.sendLossNotification(container, matchScore, hasRematch)
     } else if (Session.isSpectator()) {
-      this.notifySpectator(container, subtext, matchScore);
+      this.notifySpectator(container, subtext, matchScore)
     } else {
-      this.notifyLoss(container, subtext, matchScore, hasRematch);
+      this.notifyLoss(container, subtext, matchScore, hasRematch)
     }
   }
 

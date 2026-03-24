@@ -41,6 +41,29 @@ export class Camera {
     this.camera.lookAt(zero)
   }
 
+  spectatorView(aim: AimEvent) {
+    const h = 25 * R
+    const portrait = this.camera.aspect < 0.8
+    this.camera.fov = portrait ? 60 : 40
+    if (h < 10 * R) {
+      const factor = 100 * (10 * R - h)
+      this.camera.fov -= factor * (portrait ? 3 : 1)
+    }
+    this.target
+      .copy(aim.pos)
+      .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -R * 28)
+    this.camera.position.lerp(this.target, 0.05)
+    this.camera.position.z = h
+    this.camera.up = up
+    this.lookTarget.lerp(
+      aim.pos
+        .clone()
+        .addScaledVector(unitAtAngle(aim.angle, this.tempVec), R * 20),
+      0.02
+    )
+    this.camera.lookAt(this.lookTarget)
+  }
+
   topView(_: AimEvent) {
     this.camera.fov = CameraTop.fov
     this.camera.position.lerp(
@@ -82,6 +105,12 @@ export class Camera {
 
   suggestMode(mode) {
     if (this.mainMode === this.aimView) {
+      this.mode = mode
+    }
+    if (
+      this.mainMode === this.spectatorView &&
+      (mode === this.topView || mode === this.spectatorView)
+    ) {
       this.mode = mode
     }
   }
