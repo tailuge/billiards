@@ -40,7 +40,7 @@ export class ScoreReporter {
         )
       }
     } catch (error) {
-      console.error("Error submitting match result:", error)
+      console.error("Error submitting match result to", url, error)
     }
   }
 }

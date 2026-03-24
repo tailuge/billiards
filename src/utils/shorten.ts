@@ -10,7 +10,8 @@ export function shorten(url, action) {
       .replaceAll("*", "%2A")
   ).search
   console.log("Shortening url")
-  fetch("https://scoreboard-tailuge.vercel.app/api/shorten", {
+  const endpoint = "https://scoreboard-tailuge.vercel.app/api/shorten"
+  fetch(endpoint, {
     method: "POST",
     mode: "cors",
     headers: { "Content-Type": "application/json" },
@@ -21,14 +22,12 @@ export function shorten(url, action) {
       if ("shortUrl" in data) {
         action(data.shortUrl)
       } else {
-        console.log("Could not shorten url:")
-        console.log(data)
+        console.error("Could not shorten url", url, "via", endpoint, data)
         action(url)
       }
     })
     .catch((e) => {
-      console.log("Error shortening url:")
-      console.log(e)
+      console.error("Error shortening url", url, "via", endpoint, e)
       action(url)
     })
 }

@@ -71,7 +71,11 @@ describe("NchanMessageRelay", () => {
 
       // wait for the promise in publish to settle
       await new Promise((resolve) => setTimeout(resolve, 0))
-      expect(spy).toHaveBeenCalledWith("Publication error:", error)
+      expect(spy).toHaveBeenCalledWith(
+        "Publication error for",
+        "https://billiards-network.onrender.com/publish/table/chan1",
+        error
+      )
       spy.mockRestore()
     })
   })
