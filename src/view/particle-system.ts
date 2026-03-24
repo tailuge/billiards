@@ -31,7 +31,7 @@ const DEFAULT_CONFIG: Required<ParticleSystemConfig> = {
   scaleX: 0.99 * R,
   scaleY: 0.98 * R,
   stopThreshold: 0.25,
-  gravity: -1.0,
+  gravity: -1,
   baseRestitution: 0.45,
   restitutionVariance: 0.25,
   backgroundColor: "#040b9f",

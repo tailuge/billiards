@@ -27,14 +27,21 @@ export class Rematch {
     amIWinner: boolean,
     isSinglePlayer: boolean,
   ) {
-    if (!session || !session.clientId) return;
+    if (!session?.clientId) return;
     if (isSinglePlayer || session.botMode) return;
 
     const opponentId = session.opponentClientId || "opponent";
     const winnerId = amIWinner ? session.clientId : opponentId;
     const loserId = amIWinner ? opponentId : session.clientId;
 
-    if (!session.rematchInfo) {
+    if (session.rematchInfo) {
+      session.rematchInfo.lastScores.forEach((s) => {
+        if (s.userId === winnerId) {
+          s.score++;
+        }
+      });
+      session.rematchInfo.nextTurnId = loserId;
+    } else {
       const opponentName = session.opponentName || "Opponent";
       session.rematchInfo = {
         opponentId,
@@ -46,13 +53,6 @@ export class Rematch {
         ],
         nextTurnId: loserId,
       };
-    } else {
-      session.rematchInfo.lastScores.forEach((s) => {
-        if (s.userId === winnerId) {
-          s.score++;
-        }
-      });
-      session.rematchInfo.nextTurnId = loserId;
     }
   }
 
