@@ -39,3 +39,9 @@ export function roundVec2(v) {
   v.z = round2(v.z)
   return v
 }
+
+export function anglesAlign(a, b, toleranceRad) {
+  const dot = Math.cos(a - b)
+  const diff = Math.acos(Math.max(-1, Math.min(1, dot)))
+  return diff <= toleranceRad
+}

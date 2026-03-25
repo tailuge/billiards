@@ -13,6 +13,7 @@ import { ScoreEvent } from "../events/scoreevent"
 import { ChatEvent } from "../events/chatevent"
 import { share, shorten } from "../utils/shorten"
 import { gameOverButtons } from "../utils/gameover"
+import { anglesAlign } from "../utils/three-utils"
 
 export class Replay extends ControllerBase {
   override get name() {
@@ -122,12 +123,20 @@ export class Replay extends ControllerBase {
     this.container.setHudActivePlayer(this.currentActive)
     this.container.table.cueball = this.container.table.balls[aim.i]
     console.log(this.container.table.cueball.pos.distanceTo(aim.pos))
+
+    const canPan = anglesAlign(
+      this.container.table.cue.aim.angle,
+      aim.angle,
+      0.8
+    )
     this.container.table.cueball.pos.copy(aim.pos)
     this.container.table.cue.aim = aim
     this.container.table.cue.updateAimInput()
     this.container.table.cue.t = 1
     this.container.view.camera.suggestMode(
-      this.container.view.camera.spectatorView
+      canPan
+        ? this.container.view.camera.spectatorView
+        : this.container.view.camera.topView
     )
     clearTimeout(this.timer)
     this.timer = setTimeout(() => {
