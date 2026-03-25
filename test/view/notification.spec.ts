@@ -115,4 +115,19 @@ describe("Notification", () => {
     const element = document.getElementById("notification")
     expect(element?.innerHTML).toBe("")
   })
+
+  it("should have a dismiss button", () => {
+    notification.show("Test message")
+    const closeButton = document.querySelector(
+      ".notification-close"
+    ) as HTMLButtonElement
+    expect(closeButton).not.toBeNull()
+    expect(closeButton.getAttribute("aria-label")).toBe("Dismiss notification")
+    expect(closeButton.dataset.notificationAction).toBe("clear")
+
+    // Click it
+    closeButton.click()
+    const element = document.getElementById("notification")
+    expect(element?.style.display).toBe("none")
+  })
 })
