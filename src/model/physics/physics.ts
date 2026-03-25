@@ -43,15 +43,18 @@ export function forceRoll(v, w) {
   w.setZ(wz)
 }
 
+const vr = new Vector3()
+const wr = new Vector3()
+const rotateDeltaResult = { v: new Vector3(), w: new Vector3() }
 export function rotateApplyUnrotate(theta, v, w, model) {
-  const vr = v.clone().applyAxisAngle(up, theta)
-  const wr = w.clone().applyAxisAngle(up, theta)
+  vr.copy(v).applyAxisAngle(up, theta)
+  wr.copy(w).applyAxisAngle(up, theta)
 
   const delta = model(vr, wr)
 
-  delta.v.applyAxisAngle(up, -theta)
-  delta.w.applyAxisAngle(up, -theta)
-  return delta
+  rotateDeltaResult.v.copy(delta.v).applyAxisAngle(up, -theta)
+  rotateDeltaResult.w.copy(delta.w).applyAxisAngle(up, -theta)
+  return { v: rotateDeltaResult.v.clone(), w: rotateDeltaResult.w.clone() }
 }
 
 // Han paper cushion physics
@@ -64,10 +67,12 @@ const theta_a = Math.asin(epsilon / R)
 const sin_a = sin(theta_a)
 const cos_a = cos(theta_a)
 
+const s0Vec = new Vector3()
 export function s0(v, w) {
-  return new Vector3(
+  return s0Vec.set(
     v.x * sin_a - v.z * cos_a + R * w.y,
-    -v.y - R * w.z * cos_a + R * w.x * sin_a
+    -v.y - R * w.z * cos_a + R * w.x * sin_a,
+    0
   )
 }
 
@@ -107,7 +112,7 @@ function gripHan(v, w) {
   const PX = (-s.x / A) * sin_a - ecB * cos_a
   const PY = s.y / A
   const PZ = (s.x / A) * cos_a - ecB * sin_a
-  return impulseToDelta(PX, PY, PZ)
+  return impulseToDelta(PX, PY, PZ, deltaGrip)
 }
 
 function slipHan(v, w) {
@@ -120,7 +125,7 @@ function slipHan(v, w) {
   const PX = -mu * ecB * cos_phi * cos_a - ecB * cos_a
   const PY = mu * ecB * sin_phi
   const PZ = mu * ecB * cos_phi * cos_a - ecB * sin_a
-  return impulseToDelta(PX, PY, PZ)
+  return impulseToDelta(PX, PY, PZ, deltaSlip)
 }
 
 /**
@@ -133,11 +138,17 @@ function slipHan(v, w) {
  */
 export function bounceHan(v: Vector3, w: Vector3) {
   if (isGripCushion(v, w)) {
-    return gripHan(v, w)
+    const delta = gripHan(v, w)
+    return { v: delta.v.clone(), w: delta.w.clone() }
   } else {
-    return slipHan(v, w)
+    const delta = slipHan(v, w)
+    return { v: delta.v.clone(), w: delta.w.clone() }
   }
 }
+
+const deltaGrip = { v: new Vector3(), w: new Vector3() }
+const deltaSlip = { v: new Vector3(), w: new Vector3() }
+const deltaBlend = { v: new Vector3(), w: new Vector3() }
 
 /**
  * Modification Han 2005 paper by Taylor to blend two bounce regimes.
@@ -149,28 +160,26 @@ export function bounceHan(v: Vector3, w: Vector3) {
  * @returns delta to apply to velocity and spin
  */
 export function bounceHanBlend(v: Vector3, w: Vector3) {
-  const deltaGrip = gripHan(v, w)
-  const deltaSlip = slipHan(v, w)
+  const g = gripHan(v, w)
+  const s = slipHan(v, w)
 
   const isCheckSide = Math.sign(v.y) === Math.sign(w.z)
   const factor = isCheckSide ? Math.cos(Math.atan2(v.y, v.x)) : 1
 
-  const delta = {
-    v: deltaSlip.v.lerp(deltaGrip.v, factor),
-    w: deltaSlip.w.lerp(deltaGrip.w, factor),
-  }
-  return delta
+  deltaBlend.v.copy(s.v).lerp(g.v, factor)
+  deltaBlend.w.copy(s.w).lerp(g.w, factor)
+
+  return { v: deltaBlend.v.clone(), w: deltaBlend.w.clone() }
 }
 
-function impulseToDelta(PX, PY, PZ) {
-  return {
-    v: new Vector3(PX / m, PY / m),
-    w: new Vector3(
-      (-R / I) * PY * sin_a,
-      (R / I) * (PX * sin_a - PZ * cos_a),
-      (R / I) * PY * cos_a
-    ),
-  }
+function impulseToDelta(PX, PY, PZ, target = { v: new Vector3(), w: new Vector3() }) {
+  target.v.set(PX / m, PY / m, 0)
+  target.w.set(
+    (-R / I) * PY * sin_a,
+    (R / I) * (PX * sin_a - PZ * cos_a),
+    (R / I) * PY * cos_a
+  )
+  return target
 }
 
 export function muCushion(v: Vector3) {
@@ -183,14 +192,18 @@ export function restitutionCushion(v: Vector3) {
   return e
 }
 
+const mathavenSolver = new Mathaven(m, R, ee, μs, μw)
+const mathavenDelta = { v: new Vector3(), w: new Vector3() }
+
 function cartesionToBallCentric(v, w) {
-  const mathaven = new Mathaven(m, R, ee, μs, μw)
-  mathaven.solve(v.x, v.y, w.x, w.y, w.z)
+  mathavenSolver.solve(v.x, v.y, w.x, w.y, w.z)
 
-  const rv = new Vector3(mathaven.vx, mathaven.vy, 0)
-  const rw = new Vector3(mathaven.ωx, mathaven.ωy, mathaven.ωz)
+  mathavenDelta.v.set(mathavenSolver.vx, mathavenSolver.vy, 0).sub(v)
+  mathavenDelta.w
+    .set(mathavenSolver.ωx, mathavenSolver.ωy, mathavenSolver.ωz)
+    .sub(w)
 
-  return { v: rv.sub(v), w: rw.sub(w) }
+  return mathavenDelta
 }
 
 /**
@@ -202,6 +215,7 @@ export function mathavenAdapter(v: Vector3, w: Vector3) {
   return rotateApplyUnrotate(Math.PI / 2, v, w, cartesionToBallCentric)
 }
 
+const cueToSpinDir = new Vector3()
 /**
  * Spin on ball after strike with cue
  * https://billiards.colostate.edu/technical_proofs/new/TP_A-12.pdf
@@ -213,7 +227,7 @@ export function mathavenAdapter(v: Vector3, w: Vector3) {
 export function cueToSpin(offset: Vector3, v: Vector3) {
   const spinAxis = Math.atan2(-offset.x, offset.y)
   const spinRate = ((5 / 2) * v.length() * (offset.length() * R)) / (R * R)
-  const dir = v.clone().normalize()
+  const dir = cueToSpinDir.copy(v).normalize()
   const rvel = upCross(dir)
     .applyAxisAngle(dir, spinAxis)
     .multiplyScalar(spinRate)

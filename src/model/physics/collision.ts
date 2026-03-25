@@ -19,6 +19,7 @@ export class Collision {
 
   static readonly p = new Vector3()
   static readonly v = new Vector3()
+  private static readonly contactResult = { a: new Vector3(), b: new Vector3() }
 
   static positionsAtContact(a: Ball, b: Ball) {
     this.p.subVectors(a.pos, b.pos)
@@ -28,10 +29,9 @@ export class Collision {
     const aCoeff = this.v.lengthSq()
 
     if (aCoeff === 0) {
-      return {
-        a: a.pos.clone(),
-        b: b.pos.clone(),
-      }
+      this.contactResult.a.copy(a.pos)
+      this.contactResult.b.copy(b.pos)
+      return this.contactResult
     }
 
     const bCoeff = 2 * this.p.dot(this.v)
@@ -42,10 +42,9 @@ export class Collision {
     const t =
       discriminant < 0 ? 0 : (-bCoeff - Math.sqrt(discriminant)) / (2 * aCoeff)
 
-    return {
-      a: new Vector3().copy(a.pos).addScaledVector(a.vel, t),
-      b: new Vector3().copy(b.pos).addScaledVector(b.vel, t),
-    }
+    this.contactResult.a.copy(a.pos).addScaledVector(a.vel, t)
+    this.contactResult.b.copy(b.pos).addScaledVector(b.vel, t)
+    return this.contactResult
   }
 
   static readonly model = new CollisionThrow()

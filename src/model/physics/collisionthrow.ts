@@ -13,6 +13,16 @@ export class CollisionThrow {
   normalImpulse: number
   tangentialImpulse: number
 
+  private static readonly ab = new Vector3()
+  private static readonly abTangent = new Vector3()
+  private static readonly vPoint = new Vector3()
+  private static readonly vRel = new Vector3()
+  private static readonly impulseNormal = new Vector3()
+  private static readonly impulseTangential = new Vector3()
+  private static readonly angularImpulseA = new Vector3()
+  private static readonly angularImpulseB = new Vector3()
+  private static readonly temp = new Vector3()
+
   private dynamicFriction(vRel: number): number {
     return 0.01 + 0.108 * exp(-1.088 * vRel)
   }
@@ -21,23 +31,25 @@ export class CollisionThrow {
     const contact = Collision.positionsAtContact(a, b)
     a.ballmesh.trace.forceTrace(contact.a)
     b.ballmesh.trace.forceTrace(contact.b)
-    const ab = contact.b.sub(contact.a).normalize()
-    const abTangent = new Vector3(-ab.y, ab.x, 0)
+    const ab = CollisionThrow.ab.subVectors(contact.b, contact.a).normalize()
+    const abTangent = CollisionThrow.abTangent.set(-ab.y, ab.x, 0)
 
     const e = 0.99
-    const vPoint = a.vel
-      .clone()
+    const vPoint = CollisionThrow.vPoint
+      .copy(a.vel)
       .sub(b.vel)
       .add(
-        ab
-          .clone()
+        CollisionThrow.temp
+          .copy(ab)
           .multiplyScalar(-R)
           .cross(a.rvel)
-          .sub(ab.clone().multiplyScalar(R).cross(b.rvel))
+          .sub(CollisionThrow.angularImpulseB.copy(ab).multiplyScalar(R).cross(b.rvel))
       )
 
     const vRelNormalMag = ab.dot(vPoint)
-    const vRel = vPoint.addScaledVector(ab, -vRelNormalMag)
+    const vRel = CollisionThrow.vRel
+      .copy(vPoint)
+      .addScaledVector(ab, -vRelNormalMag)
     const vRelMag = vRel.length()
     const vRelTangential = abTangent.dot(vRel) // slip velocity perpendicular to line of impact
 
@@ -57,9 +69,11 @@ export class CollisionThrow {
       -vRelTangential
 
     // Impulse vectors
-    const impulseNormal = ab.clone().multiplyScalar(this.normalImpulse)
-    const impulseTangential = abTangent
-      .clone()
+    const impulseNormal = CollisionThrow.impulseNormal
+      .copy(ab)
+      .multiplyScalar(this.normalImpulse)
+    const impulseTangential = CollisionThrow.impulseTangential
+      .copy(abTangent)
       .multiplyScalar(this.tangentialImpulse)
 
     // Apply impulses to linear velocities
@@ -71,12 +85,12 @@ export class CollisionThrow {
       .addScaledVector(impulseTangential, -1 / m)
 
     // Angular velocity updates
-    const angularImpulseA = ab
-      .clone()
+    const angularImpulseA = CollisionThrow.angularImpulseA
+      .copy(ab)
       .multiplyScalar(-R)
       .cross(impulseTangential)
-    const angularImpulseB = ab
-      .clone()
+    const angularImpulseB = CollisionThrow.angularImpulseB
+      .copy(ab)
       .multiplyScalar(R)
       .cross(impulseTangential)
 
