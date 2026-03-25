@@ -95,6 +95,17 @@ p {
   margin-top: 16px;
 }
 
+@keyframes notificationSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .notification-banner {
   display: flex;
   flex-direction: column;
@@ -108,6 +119,40 @@ p {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   min-width: 320px;
+  animation: notificationSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+    forwards;
+  position: relative;
+}
+
+.notification-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+  padding-bottom: 2px;
+}
+
+.notification-close:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.notification-close:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .notification-content-wrapper {
@@ -267,6 +312,13 @@ p {
   transform: translateY(-4px) scale(1.05);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   border-color: rgba(255, 255, 255, 0.5);
+}
+
+.notification-extra button:focus-visible,
+.notification-extra .button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 4px;
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .view3d {

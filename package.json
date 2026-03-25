@@ -13,7 +13,6 @@
   ],
   "license": "GPL-3.0",
   "sideEffects": false,
-  "packageManager": "yarn@4.9.1",
   "scripts": {
     "test": "jest --config ./test/jest.config.js --verbose --silent",
     "coverage": "jest --config ./test/jest.config.js --coverage --silent",
