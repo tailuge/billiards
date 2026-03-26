@@ -13,6 +13,7 @@ describe("AimInput", () => {
   let aiminputs: AimInputs
 
   beforeEach(function (done) {
+    initDom()
     container = new Container({
       element: canvas3d,
       log: (_) => {},

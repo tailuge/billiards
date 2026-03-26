@@ -47,9 +47,6 @@ export class Spectate extends ControllerBase {
   }
 
   private sniffNames(event: GameEvent) {
-    if (!Session.hasInstance()) {
-      return
-    }
     const session = Session.getInstance()
 
     let changed = false

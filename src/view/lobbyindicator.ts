@@ -144,10 +144,8 @@ export class LobbyIndicator {
     url.searchParams.set("opponentName", this.challenger.userName)
 
     const session = Session.getInstance()
-    if (session) {
-      url.searchParams.set("userName", session.playername)
-      url.searchParams.set("userId", session.clientId)
-    }
+    url.searchParams.set("userName", session.playername)
+    url.searchParams.set("userId", session.clientId)
 
     return url.toString()
   }

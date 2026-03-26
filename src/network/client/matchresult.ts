@@ -28,13 +28,13 @@ export class MatchResultHelper {
     container.eventQueue.push(new ChatEvent(null, "game over"))
     container.recorder.wholeGameLink()
 
-    const session = Session.hasInstance() ? Session.getInstance() : null
+    const session = Session.getInstance()
     const amIWinner = this.determineWinner(container, session, forcedAmIWinner)
     const subtext = endSubtext ?? this.getScoreSubtext(container)
 
     this.updateRematchInfo(container, session, rulename, amIWinner)
 
-    const hasRematch = !!session?.rematchInfo
+    const hasRematch = !!session.rematchInfo
 
     this.notifyEndState(container, amIWinner, subtext, hasRematch)
 
@@ -50,7 +50,7 @@ export class MatchResultHelper {
 
   private static determineWinner(
     container: Container,
-    session: Session | null,
+    session: Session,
     forcedAmIWinner?: boolean
   ): boolean {
     if (forcedAmIWinner !== undefined) {
@@ -59,17 +59,16 @@ export class MatchResultHelper {
 
     const { p1, p2 } = container.getOrderedScores()
     const winnerIndex = p1 >= p2 ? 0 : 1
-    const playerIndex = session?.playerIndex ?? 0
+    const playerIndex = session.playerIndex
     return winnerIndex === playerIndex
   }
 
   private static updateRematchInfo(
     container: Container,
-    session: Session | null,
+    session: Session,
     rulename: string,
     amIWinner: boolean
   ): void {
-    if (!session) return
     Rematch.update(session, rulename, amIWinner, container.isSinglePlayer)
   }
 
@@ -96,7 +95,7 @@ export class MatchResultHelper {
   }
 
   static isWinner(result: MatchResult): boolean {
-    return result.winner === Session.getInstance()?.playername
+    return result.winner === Session.getInstance().playername
   }
 
   private static notifyWin(
@@ -190,17 +189,17 @@ export class MatchResultHelper {
   private static createMatchResult(
     container: Container,
     rulename: string,
-    session: Session | null,
+    session: Session,
     iWon: boolean
   ): MatchResult {
     const myScore = container.getMyScore()
     const opponentScore = container.getOpponentScore()
     const winnerName = iWon
-      ? session?.playername || "Anon"
-      : session?.opponentName || "Opponent"
+      ? session.playername || "Anon"
+      : session.opponentName || "Opponent"
     const loserName = iWon
-      ? session?.opponentName || "Opponent"
-      : session?.playername || "Anon"
+      ? session.opponentName || "Opponent"
+      : session.playername || "Anon"
     const winnerScore = iWon ? myScore : opponentScore
     const loserScore = iWon ? opponentScore : myScore
 
@@ -210,7 +209,7 @@ export class MatchResultHelper {
       ruleType: rulename,
     }
 
-    if (session?.opponentName) {
+    if (session.opponentName) {
       result.loser = loserName
       result.loserScore = loserScore
     }

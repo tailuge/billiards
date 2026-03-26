@@ -43,6 +43,7 @@ describe("Snooker", () => {
 
   beforeEach(function (done) {
     Ball.id = 0
+    Session.init("1", "Player A", "table", false)
     container = new Container({
       element: undefined,
       log: (_) => {},
@@ -117,9 +118,9 @@ describe("Snooker", () => {
     setupTableWithPot(table.balls[7])
     playShotWaitForOutcome()
 
-    const { p1, p2 } = container.getOrderedScores()
-    expect(p1).to.be.equal(1)
-    expect(p2).to.be.equal(0)
+    const orderedScores = container.getOrderedScores()
+    expect(orderedScores.p1).to.be.equal(1)
+    expect(orderedScores.p2).to.be.equal(0)
     done()
   })
 
@@ -371,6 +372,10 @@ describe("Snooker", () => {
     expect(snooker.targetIsRed).to.be.true
     expect(broadcastEvents).to.be.length(3)
     done()
+  })
+
+  afterEach(() => {
+    Session.reset()
   })
 
   it("should trigger foul notification when white potted", () => {

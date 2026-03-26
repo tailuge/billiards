@@ -39,11 +39,7 @@ export class End extends Controller {
       return
     }
 
-    if (
-      !this.result ||
-      !Session.hasInstance() ||
-      MatchResultHelper.isWinner(this.result)
-    ) {
+    if (!this.result || MatchResultHelper.isWinner(this.result)) {
       this.container.particles.initParticles(this.container.view.scene)
     }
   }

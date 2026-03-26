@@ -27,7 +27,7 @@ export class Rematch {
     amIWinner: boolean,
     isSinglePlayer: boolean
   ) {
-    if (!session?.clientId) return
+    if (!session.clientId) return
     if (isSinglePlayer || session.botMode) return
 
     const opponentId = session.opponentClientId || "opponent"

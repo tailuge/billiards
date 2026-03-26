@@ -147,15 +147,16 @@ export class BrowserContainer {
     this.container.init()
 
     const session = Session.getInstance()
-    if (session.rematchInfo) {
+    const rematchInfo = session.rematchInfo
+    if (rematchInfo) {
       const getName = (uid: string) =>
         uid === session.clientId
           ? session.playername
-          : session.opponentName || session.rematchInfo?.opponentName
+          : session.opponentName || rematchInfo.opponentName
 
       const matchScoreText = Rematch.getMatchScoreText(session, {
-        p1Name: getName(session.rematchInfo.lastScores[0].userId),
-        p2Name: getName(session.rematchInfo.lastScores[1].userId),
+        p1Name: getName(rematchInfo.lastScores[0].userId),
+        p2Name: getName(rematchInfo.lastScores[1].userId),
       })
 
       this.container.notify({

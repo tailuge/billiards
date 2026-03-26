@@ -153,16 +153,10 @@ export class Notification {
         globalThis.location.reload()
         break
       case "rematch":
-        if (Session.hasInstance()) {
-          Rematch.navigate(Session.getInstance())
-        }
+        Rematch.navigate(Session.getInstance())
         break
       case "lobby":
-        if (Session.hasInstance()) {
-          Rematch.redirectToLobby(undefined, Session.getInstance())
-        } else {
-          Rematch.redirectToLobby()
-        }
+        Rematch.redirectToLobby(undefined, Session.getInstance())
         break
     }
   }
