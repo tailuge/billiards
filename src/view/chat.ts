@@ -20,7 +20,18 @@ export class Chat {
   }
 
   showMessage(msg) {
-    this.chatoutput && (this.chatoutput.innerHTML += msg)
+    if (!this.chatoutput || msg === undefined || msg === null) {
+      this.updateScroll()
+      return
+    }
+
+    if (msg.includes("<")) {
+      const template = document.createElement("template")
+      template.innerHTML = msg
+      this.chatoutput.appendChild(template.content)
+    } else {
+      this.chatoutput.appendChild(document.createTextNode(msg))
+    }
     this.updateScroll()
   }
 

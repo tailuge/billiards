@@ -27,7 +27,6 @@ export class Session {
     return Session.instance
   }
 
-
   static playerIndex(): number {
     return Session.getInstance().playerIndex
   }
