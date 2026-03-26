@@ -61,10 +61,7 @@ export class Recorder {
     return last
   }
 
-  getPlayerNames(): { player1: string; player2: string } | undefined {
-    if (!Session.hasInstance()) {
-      return undefined
-    }
+  getPlayerNames(): { player1: string; player2: string } {
     const orderedNames = Session.getInstance().orderedNamesForHud()
     return {
       player1: orderedNames.p1Name || "Player",

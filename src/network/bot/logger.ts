@@ -20,8 +20,7 @@ export class Logger {
     this.logElement = id("botDebugLog") as HTMLPreElement
     this.hide()
 
-    const botMode = Session.hasInstance() && Session.isBotMode()
-    if (botMode) {
+    if (Session.isBotMode()) {
       this.info("Bot mode activated")
     }
 

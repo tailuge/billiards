@@ -27,20 +27,17 @@ export class Session {
     return Session.instance
   }
 
-  static hasInstance(): boolean {
-    return Session.instance !== undefined
-  }
 
   static playerIndex(): number {
-    return Session.instance ? Session.instance.playerIndex : 0
+    return Session.getInstance().playerIndex
   }
 
   static isSpectator(): boolean {
-    return Session.instance !== undefined && Session.getInstance().spectator
+    return Session.getInstance().spectator
   }
 
   static isBotMode(): boolean {
-    return Session.instance !== undefined && Session.getInstance().botMode
+    return Session.getInstance().botMode
   }
 
   static reset() {

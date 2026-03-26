@@ -60,10 +60,6 @@ export class Container {
   stayActive: boolean = false
   frame: (timestamp: number) => void
 
-  private readonly localScores = {
-    my: 0,
-    opponent: 0,
-  }
   private hudScores = {
     p1: 0,
     p2: 0,
@@ -118,9 +114,7 @@ export class Container {
   }
 
   init() {
-    if (!this.replayMode) {
-      this.lobbyIndicator.init()
-    }
+    this.lobbyIndicator.init()
   }
 
   sendChat = (msg) => {
@@ -137,33 +131,19 @@ export class Container {
   }
 
   getMyScore(): number {
-    if (Session.hasInstance()) {
-      return Session.getInstance().myScore()
-    }
-    return this.localScores.my
+    return Session.getInstance().myScore()
   }
 
   getOpponentScore(): number {
-    if (Session.hasInstance()) {
-      return Session.getInstance().opponentScore()
-    }
-    return this.localScores.opponent
+    return Session.getInstance().opponentScore()
   }
 
   setMyScore(score: number): void {
-    if (Session.hasInstance()) {
-      Session.getInstance().setMyScore(score)
-      return
-    }
-    this.localScores.my = score
+    Session.getInstance().setMyScore(score)
   }
 
   setOpponentScore(score: number): void {
-    if (Session.hasInstance()) {
-      Session.getInstance().setOpponentScore(score)
-      return
-    }
-    this.localScores.opponent = score
+    Session.getInstance().setOpponentScore(score)
   }
 
   addMyScore(delta: number): void {
@@ -175,21 +155,15 @@ export class Container {
   }
 
   getOrderedScores(): { p1: number; p2: number } {
-    if (Session.hasInstance()) {
-      return Session.getInstance().orderedScoresForHud()
-    }
-    return { p1: this.localScores.my, p2: this.localScores.opponent }
+    return Session.getInstance().orderedScoresForHud()
   }
 
   getOrderedNames(): { p1Name?: string; p2Name?: string } {
-    if (Session.hasInstance()) {
-      return Session.getInstance().orderedNamesForHud()
-    }
-    return {}
+    return Session.getInstance().orderedNamesForHud()
   }
 
   setScoresFromNetwork(p1: number, p2: number, breakScore: number): void {
-    if (Session.hasInstance() && Session.getInstance().playerIndex === 1) {
+    if (Session.getInstance().playerIndex === 1) {
       this.setMyScore(p2)
       this.setOpponentScore(p1)
     } else {
@@ -200,9 +174,7 @@ export class Container {
   }
 
   private myHudSlot(): 1 | 2 {
-    return Session.hasInstance() && Session.getInstance().playerIndex === 1
-      ? 2
-      : 1
+    return Session.getInstance().playerIndex === 1 ? 2 : 1
   }
 
   private opponentHudSlot(): 1 | 2 {
@@ -329,9 +301,7 @@ export class Container {
   updateController(controller) {
     this.wasReplay = this.wasReplay || controller.name === "Replay"
     if (controller !== this.controller) {
-      const playerName = Session.hasInstance()
-        ? Session.getInstance().playername
-        : "_"
+      const playerName = Session.getInstance().playername
       this.log(`${playerName}: Transition to ${controller.name}`)
       this.controller = controller
       const active = this.inferActivePlayerFromController(controller)
