@@ -124,11 +124,9 @@ export class Replay extends ControllerBase {
     this.container.table.cueball = this.container.table.balls[aim.i]
     console.log(this.container.table.cueball.pos.distanceTo(aim.pos))
 
-    const canPan = anglesAlign(
-      this.container.table.cue.aim.angle,
-      aim.angle,
-      0.8
-    )
+    const canPan =
+      anglesAlign(this.container.table.cue.aim.angle, aim.angle, 0.8) ||
+      this.container.view.camera.mode === this.container.view.camera.topView
     this.container.table.cueball.pos.copy(aim.pos)
     this.container.table.cue.aim = aim
     this.container.table.cue.updateAimInput()
