@@ -29,7 +29,7 @@ export class Camera {
 
   orbitView(_: AimEvent) {
     this.camera.fov = 46
-    const orbitR = R * 64
+    const orbitR = R * 68
     const orbitH = R * 32
     this.target.set(
       Math.sin(this.t / 5) * orbitR,
@@ -42,7 +42,7 @@ export class Camera {
   }
 
   spectatorView(aim: AimEvent) {
-    const h = 25 * R
+    const h = 26 * R
     const portrait = this.camera.aspect < 0.8
     this.camera.fov = portrait ? 60 : 40
     if (h < 10 * R) {
@@ -51,14 +51,14 @@ export class Camera {
     }
     this.target
       .copy(aim.pos)
-      .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -R * 28)
+      .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -R * 30)
     this.camera.position.lerp(this.target, 0.05)
     this.camera.position.z = h
     this.camera.up = up
     this.lookTarget.lerp(
       aim.pos
         .clone()
-        .addScaledVector(unitAtAngle(aim.angle, this.tempVec), R * 20),
+        .addScaledVector(unitAtAngle(aim.angle, this.tempVec), R * 10),
       0.02
     )
     this.camera.lookAt(this.lookTarget)
