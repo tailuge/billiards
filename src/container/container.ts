@@ -22,7 +22,11 @@ import { NotificationEvent } from "../events/notificationevent"
 import { LobbyIndicator } from "../view/lobbyindicator"
 import { MessageRelay } from "../network/client/messagerelay"
 import { ScoreReporter } from "../network/client/scorereporter"
-import { Notification, NotificationData } from "../view/notification"
+import {
+  Notification,
+  NotificationData,
+  NotificationActionHandlers,
+} from "../view/notification"
 import { ScoreEvent } from "../events/scoreevent"
 import { ContainerConfig } from "./containerconfig"
 import { Controller } from "../controller/controller"
@@ -237,8 +241,12 @@ export class Container {
     this.sendEvent(new NotificationEvent(data, duration))
   }
 
-  notifyLocal(data: NotificationData | string, duration?: number) {
-    this.notification.show(data, duration)
+  notifyLocal(
+    data: NotificationData | string,
+    duration?: number,
+    actionHandlers?: NotificationActionHandlers
+  ) {
+    this.notification.show(data, duration, actionHandlers)
   }
 
   advance(elapsed) {

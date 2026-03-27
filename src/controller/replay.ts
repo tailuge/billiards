@@ -14,6 +14,7 @@ import { ChatEvent } from "../events/chatevent"
 import { share, shorten } from "../utils/shorten"
 import { gameOverButtons } from "../utils/gameover"
 import { anglesAlign } from "../utils/three-utils"
+import { Rematch } from "../network/client/rematch"
 
 export class Replay extends ControllerBase {
   override get name() {
@@ -159,7 +160,8 @@ export class Replay extends ControllerBase {
           title: "Replay Complete",
           extra: gameOverButtons.replay + gameOverButtons.lobby,
         },
-        0
+        0,
+        { lobby: () => Rematch.redirectToLobby(undefined, undefined) }
       )
       return new End(this.container)
     }
