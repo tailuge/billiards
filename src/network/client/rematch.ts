@@ -1,5 +1,6 @@
 import { Session } from "./session"
 import { LOBBY_URL } from "../../utils/gameover"
+import { getOriginalIdentity } from "../../utils/utils"
 
 export interface RematchInfo {
   opponentId: string
@@ -89,10 +90,18 @@ export class Rematch {
 
   static redirectToLobby(rematchInfo?: RematchInfo, session?: Session) {
     const queryParams = new globalThis.URLSearchParams()
-    if (session) {
-      queryParams.set("userId", session.clientId)
-      queryParams.set("userName", session.playername)
+    const identity = getOriginalIdentity()
+
+    const userId = identity.userId || session?.clientId
+    const userName = identity.userName || session?.playername
+
+    if (userId) {
+      queryParams.set("userId", userId)
     }
+    if (userName) {
+      queryParams.set("userName", userName)
+    }
+
     if (rematchInfo) {
       queryParams.set("rematch", JSON.stringify(rematchInfo))
     }

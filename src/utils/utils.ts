@@ -37,3 +37,11 @@ export function sqrt(theta) {
 export function exp(theta) {
   return Math.fround(Math.exp(theta))
 }
+
+export function getOriginalIdentity() {
+  const params = new URLSearchParams(globalThis.location?.search ?? "")
+  return {
+    userId: params.get("userId") ?? params.get("clientId"),
+    userName: params.get("userName") ?? params.get("name") ?? params.get("playername")
+  }
+}

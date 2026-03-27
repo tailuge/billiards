@@ -2,6 +2,7 @@ import { MessagingClient, Lobby } from "@tailuge/messaging"
 import { Session } from "../network/client/session"
 import { Rules } from "../controller/rules/rules"
 import { id } from "../utils/dom"
+import { getOriginalIdentity } from "../utils/utils"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
@@ -143,19 +144,24 @@ export class LobbyIndicator {
   }
 
   private getLobbyUrl(): string {
+    const url = new URL(LobbyIndicator.LOBBY_URL)
+    const session = Session.getInstance()
+    const identity = getOriginalIdentity()
+
+    const userId = identity.userId || session.clientId
+    const userName = identity.userName || session.playername
+
+    url.searchParams.set("userName", userName)
+    url.searchParams.set("userId", userId)
+
     if (!this.challenger) {
-      return LobbyIndicator.LOBBY_URL
+      return url.toString()
     }
 
-    const url = new URL(LobbyIndicator.LOBBY_URL)
     url.searchParams.set("action", "join")
     url.searchParams.set("ruletype", this.ruleType)
     url.searchParams.set("opponentId", this.challenger.userId)
     url.searchParams.set("opponentName", this.challenger.userName)
-
-    const session = Session.getInstance()
-    url.searchParams.set("userName", session.playername)
-    url.searchParams.set("userId", session.clientId)
 
     return url.toString()
   }
