@@ -113,6 +113,7 @@ export class BrowserContainer {
       relay: this.messageRelay,
       scoreReporter: scoreReporter,
       replayMode: !!this.replay,
+      botMode: this.botMode,
     }
     return new Container(config)
   }

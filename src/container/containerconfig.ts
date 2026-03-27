@@ -12,4 +12,5 @@ export interface ContainerConfig {
   relay?: MessageRelay | null
   scoreReporter?: ScoreReporter | null
   replayMode?: boolean
+  botMode?: boolean
 }

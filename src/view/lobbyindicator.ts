@@ -10,13 +10,23 @@ export class LobbyIndicator {
   private count = 0
   private challenger: { userId: string; userName: string } | null = null
   private readonly rules: Rules
+  private readonly ruleType: string
   private static readonly LOBBY_URL =
     "https://scoreboard-tailuge.vercel.app/game"
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
   private currentTableId: string | null = null
 
-  constructor(rules: Rules) {
+  constructor(botMode: boolean, replayMode: boolean, rules: Rules) {
     this.rules = rules
+    if (botMode) {
+      this.ruleType = "bot"
+    } else if (replayMode) {
+      this.ruleType = "replay"
+    } else if (Session.getInstance().spectator) {
+      this.ruleType = "spectator"
+    } else {
+      this.ruleType = this.rules.rulename
+    }
     this.element = id("lobby")
     this.setupElement()
   }
@@ -63,7 +73,7 @@ export class LobbyIndicator {
       type: "join",
       userId,
       userName,
-      ruleType: this.rules.rulename,
+      ruleType: this.ruleType,
     }
     if (this.currentTableId) {
       presence.tableId = this.currentTableId
@@ -139,7 +149,7 @@ export class LobbyIndicator {
 
     const url = new URL(LobbyIndicator.LOBBY_URL)
     url.searchParams.set("action", "join")
-    url.searchParams.set("ruletype", this.rules.rulename)
+    url.searchParams.set("ruletype", this.ruleType)
     url.searchParams.set("opponentId", this.challenger.userId)
     url.searchParams.set("opponentName", this.challenger.userName)
 

@@ -1,7 +1,7 @@
-import { expect } from "chai"
-import { LobbyIndicator } from "../../src/view/lobbyindicator"
-import { initDom } from "./dom"
-import { Session } from "../../src/network/client/session"
+import { expect } from "chai";
+import { LobbyIndicator } from "../../src/view/lobbyindicator";
+import { initDom } from "./dom";
+import { Session } from "../../src/network/client/session";
 
 // Mock the @tailuge/messaging module
 jest.mock("@tailuge/messaging", () => ({
@@ -16,41 +16,41 @@ jest.mock("@tailuge/messaging", () => ({
     stop: jest.fn(),
   })),
   Lobby: jest.fn(),
-}))
+}));
 
-initDom()
+initDom();
 
 describe("LobbyIndicator", () => {
   beforeEach(() => {
-    Session.init("test-client", "TestPlayer", "test-table", false)
-  })
+    Session.init("test-client", "TestPlayer", "test-table", false);
+  });
 
   afterEach(() => {
-    Session.reset()
-  })
+    Session.reset();
+  });
 
   it("updates text content on init", async () => {
-    const element = document.getElementById("lobby")
+    const element = document.getElementById("lobby");
     if (element) {
-      element.textContent = "👥"
+      element.textContent = "👥";
     }
 
-    const mockRules = { rulename: "nineball" } as any
-    const indicator = new LobbyIndicator(mockRules)
-    await indicator.init()
+    const mockRules = { rulename: "nineball" } as any;
+    const indicator = new LobbyIndicator(false, false, mockRules);
+    await indicator.init();
 
-    expect(element?.textContent).to.equal(" 0 👥")
-  })
+    expect(element?.textContent).to.equal(" 0 👥");
+  });
 
   it("updates display when challenged", async () => {
-    const element = document.getElementById("lobby")
-    const mockRules = { rulename: "nineball" } as any
-    const indicator = new LobbyIndicator(mockRules)
-    await indicator.init()
+    const element = document.getElementById("lobby");
+    const mockRules = { rulename: "nineball" } as any;
+    const indicator = new LobbyIndicator(false, false, mockRules);
+    await indicator.init();
 
     // Access the mock lobby to trigger challenge callback
-    const mockLobby = (indicator as any).lobby
-    const onChallengeCallback = mockLobby.onChallenge.mock.calls[0][0]
+    const mockLobby = (indicator as any).lobby;
+    const onChallengeCallback = mockLobby.onChallenge.mock.calls[0][0];
 
     // Simulate receiving a challenge offer
     onChallengeCallback({
@@ -59,17 +59,19 @@ describe("LobbyIndicator", () => {
       challengerName: "Bob",
       recipientId: "default",
       ruleType: "nineball",
-    })
+    });
 
-    expect(element?.textContent).to.contain("⚔️")
-    expect(element?.textContent).to.contain("Challenge from Bob")
-    expect(element?.getAttribute("aria-label")).to.contain("CHALLENGE FROM Bob")
+    expect(element?.textContent).to.contain("⚔️");
+    expect(element?.textContent).to.contain("Challenge from Bob");
+    expect(element?.getAttribute("aria-label")).to.contain(
+      "CHALLENGE FROM Bob",
+    );
 
-    const href = element?.getAttribute("href") ?? ""
-    expect(href).to.contain("action=join")
-    expect(href).to.contain("ruletype=nineball")
-    expect(href).to.contain("opponentId=u2")
-    expect(href).to.contain("opponentName=Bob")
+    const href = element?.getAttribute("href") ?? "";
+    expect(href).to.contain("action=join");
+    expect(href).to.contain("ruletype=nineball");
+    expect(href).to.contain("opponentId=u2");
+    expect(href).to.contain("opponentName=Bob");
 
     // Simulate challenge decline/cancel
     onChallengeCallback({
@@ -78,62 +80,62 @@ describe("LobbyIndicator", () => {
       challengerName: "Bob",
       recipientId: "default",
       ruleType: "nineball",
-    })
-    expect(element?.textContent).to.not.contain("⚔️")
+    });
+    expect(element?.textContent).to.not.contain("⚔️");
     expect(element?.getAttribute("href")).to.equal(
-      "https://scoreboard-tailuge.vercel.app/game"
-    )
-  })
+      "https://scoreboard-tailuge.vercel.app/game",
+    );
+  });
 
   it("handles non-anchor elements and click events", async () => {
     // Create a div instead of a link
-    const div = document.createElement("div")
-    div.id = "lobby-div"
-    document.body.appendChild(div)
+    const div = document.createElement("div");
+    div.id = "lobby-div";
+    document.body.appendChild(div);
 
     // Mock id() to return our div
-    const originalGetElementById = document.getElementById
+    const originalGetElementById = document.getElementById;
     document.getElementById = (id: string) =>
-      id === "lobby" ? div : originalGetElementById.call(document, id)
+      id === "lobby" ? div : originalGetElementById.call(document, id);
 
-    const mockRules = { rulename: "nineball" } as any
-    const indicator = new LobbyIndicator(mockRules)
-    await indicator.init()
+    const mockRules = { rulename: "nineball" } as any;
+    const indicator = new LobbyIndicator(false, false, mockRules);
+    await indicator.init();
 
-    let openedUrl = ""
-    const originalOpen = globalThis.open
+    let openedUrl = "";
+    const originalOpen = globalThis.open;
     globalThis.open = ((url: string) => {
-      openedUrl = url
-      return null
-    }) as any
+      openedUrl = url;
+      return null;
+    }) as any;
 
-    div.click()
-    expect(openedUrl).to.equal("https://scoreboard-tailuge.vercel.app/game")
+    div.click();
+    expect(openedUrl).to.equal("https://scoreboard-tailuge.vercel.app/game");
 
-    await indicator.stop()
-    div.remove()
-    document.getElementById = originalGetElementById
-    globalThis.open = originalOpen
-  })
+    await indicator.stop();
+    div.remove();
+    document.getElementById = originalGetElementById;
+    globalThis.open = originalOpen;
+  });
 
   it("setTableId updates presence", async () => {
-    const mockRules = { rulename: "nineball" } as any
-    const indicator = new LobbyIndicator(mockRules)
-    await indicator.init()
+    const mockRules = { rulename: "nineball" } as any;
+    const indicator = new LobbyIndicator(false, false, mockRules);
+    await indicator.init();
 
-    const mockLobby = (indicator as any).lobby
-    const updatePresenceFn = mockLobby.updatePresence
+    const mockLobby = (indicator as any).lobby;
+    const updatePresenceFn = mockLobby.updatePresence;
 
-    indicator.setTableId("table-123")
-    expect(updatePresenceFn.mock.calls.length).to.be.greaterThan(0)
+    indicator.setTableId("table-123");
+    expect(updatePresenceFn.mock.calls.length).to.be.greaterThan(0);
 
-    const firstCall = updatePresenceFn.mock.calls[0]
-    expect(firstCall[0]).to.deep.equal({ tableId: "table-123" })
+    const firstCall = updatePresenceFn.mock.calls[0];
+    expect(firstCall[0]).to.deep.equal({ tableId: "table-123" });
 
-    indicator.setTableId(null)
-    const secondCall = updatePresenceFn.mock.calls[1]
-    expect(secondCall[0]).to.deep.equal({})
+    indicator.setTableId(null);
+    const secondCall = updatePresenceFn.mock.calls[1];
+    expect(secondCall[0]).to.deep.equal({});
 
-    await indicator.stop()
-  })
-})
+    await indicator.stop();
+  });
+});

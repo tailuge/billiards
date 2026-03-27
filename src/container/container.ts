@@ -108,7 +108,11 @@ export class Container {
     this.notification = new Notification()
     this.relay = relay
     this.scoreReporter = scoreReporter
-    this.lobbyIndicator = new LobbyIndicator(this.rules)
+    this.lobbyIndicator = new LobbyIndicator(
+      Session.getInstance().botMode,
+      this.replayMode,
+      this.rules
+    )
     this.updateController(new Init(this))
     //  this.updateController(new End(this))
   }
