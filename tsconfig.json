@@ -4,7 +4,7 @@
   "compilerOptions": {
     "incremental": false,
     "outDir": "./dist",
-    "module": "commonjs",
+    "module": "preserve",
     "noImplicitAny": false,
     "strictNullChecks": true,
     "noUnusedLocals": true,
