@@ -40,6 +40,10 @@ export class Session {
     return Session.getInstance().botMode
   }
 
+  static isReplayMode(): boolean {
+    return Session.getInstance().replayMode
+  }
+
   static reset() {
     Session.instance = undefined
   }
