@@ -45,10 +45,9 @@ export class Init extends ControllerBase {
   override handleBreak(event: BreakEvent): Controller {
     if (event.init) {
       this.container.table.updateFromShortSerialised(event.init)
-      const player = Session.getInstance().playername || "Player"
-      const opponent = Session.getInstance().opponentClientId
-        ? ` vs ${Session.getInstance().opponentName}`
-        : ""
+      const orderedNames = Session.getInstance().orderedNamesForHud()
+      const player = orderedNames.p1Name || "Player"
+      const opponent = orderedNames.p2Name ? ` vs ${orderedNames.p2Name}` : ""
       this.container.chat.showMessage(`Replay of ${player}${opponent}`)
       return new Replay(this.container, event.init, event.shots)
     }

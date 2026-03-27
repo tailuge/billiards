@@ -6,7 +6,8 @@ export class Session {
     readonly clientId: string,
     readonly tableId: string,
     readonly spectator: boolean,
-    readonly botMode: boolean = false
+    readonly botMode: boolean = false,
+    readonly replayMode: boolean = false
   ) {}
 
   rematchInfo?: RematchInfo | undefined
@@ -48,14 +49,16 @@ export class Session {
     playername: string,
     tableId: string,
     spectator: boolean,
-    botMode: boolean = false
+    botMode: boolean = false,
+    replayMode: boolean = false
   ) {
     Session.instance = new Session(
       playername,
       clientId,
       tableId,
       spectator,
-      botMode
+      botMode,
+      replayMode
     )
     Session.instance.initializeScores()
     if (botMode) {
@@ -132,9 +135,9 @@ export class Session {
   }
 
   orderedNamesForHud(): { p1Name?: string; p2Name?: string } {
-    if (this.spectator) {
+    if (this.spectator || this.replayMode) {
       console.log(
-        `[Session] orderedNamesForHud spectator mode: spectatedP1Name=${this.spectatedP1Name}, spectatedP2Name=${this.spectatedP2Name}`
+        `[Session] orderedNamesForHud ${this.spectator ? "spectator" : "replay"} mode: spectatedP1Name=${this.spectatedP1Name}, spectatedP2Name=${this.spectatedP2Name}`
       )
       const names: { p1Name?: string; p2Name?: string } = {}
       if (this.spectatedP1Name) {

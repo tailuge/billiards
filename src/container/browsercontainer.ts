@@ -85,7 +85,8 @@ export class BrowserContainer {
       this.playername,
       this.tableId,
       this.spectator,
-      this.botMode
+      this.botMode,
+      !!this.replay
     )
     Session.getInstance().rematchInfo = Rematch.fromURL(params)
     console.log(Session.getInstance())
@@ -246,8 +247,8 @@ export class BrowserContainer {
     this.breakState = this.parse(replay)
     const session = Session.getInstance()
     if (this.breakState.players) {
-      session.playername = this.breakState.players.player1
-      session.opponentName = this.breakState.players.player2
+      session.spectatedP1Name = this.breakState.players.player1
+      session.spectatedP2Name = this.breakState.players.player2
     }
     const orderedScores = session.orderedScoresForHud()
     this.container.updateScoreHud(orderedScores.p1, orderedScores.p2, 0, 0)
