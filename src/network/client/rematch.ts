@@ -89,25 +89,22 @@ export class Rematch {
   }
 
   static redirectToLobby(rematchInfo?: RematchInfo, session?: Session) {
-    const queryParams = new globalThis.URLSearchParams()
     const identity = getOriginalIdentity()
 
     const userId = identity.userId || session?.clientId
     const userName = identity.userName || session?.playername
 
+    const url = new URL(LOBBY_URL)
     if (userId) {
-      queryParams.set("userId", userId)
+      url.searchParams.set("userId", userId)
     }
     if (userName) {
-      queryParams.set("userName", userName)
+      url.searchParams.set("userName", userName)
     }
 
     if (rematchInfo) {
-      queryParams.set("rematch", JSON.stringify(rematchInfo))
+      url.searchParams.set("rematch", JSON.stringify(rematchInfo))
     }
-    const queryString = queryParams.toString()
-    globalThis.location.href = queryString
-      ? `${LOBBY_URL}?${queryString}`
-      : LOBBY_URL
+    globalThis.location.href = url.toString()
   }
 }
