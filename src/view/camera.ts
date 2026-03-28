@@ -42,7 +42,7 @@ export class Camera {
   }
 
   spectatorView(aim: AimEvent) {
-    const h = 26 * R
+    const h = 25 * R
     const portrait = this.camera.aspect < 0.8
     this.camera.fov = portrait ? 60 : 40
     if (h < 10 * R) {
@@ -58,8 +58,8 @@ export class Camera {
     this.lookTarget.lerp(
       aim.pos
         .clone()
-        .addScaledVector(unitAtAngle(aim.angle, this.tempVec), R * 5),
-      0.01
+        .addScaledVector(unitAtAngle(aim.angle, this.tempVec), R * 10),
+      0.03
     )
     this.camera.lookAt(this.lookTarget)
   }
