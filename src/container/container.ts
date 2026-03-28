@@ -61,7 +61,6 @@ export class Container {
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
   replayMode: boolean = false
-  stayActive: boolean = false
   frame: (timestamp: number) => void
 
   private hudScores = {
@@ -255,10 +254,9 @@ export class Container {
     this.last = timestamp
     this.processEvents()
     const needsRender =
-      timestamp < this.lastEventTime + 30000 ||
+      timestamp < this.lastEventTime + 32000 ||
       !this.table.allStationary() ||
-      this.view.sizeChanged() ||
-      this.stayActive
+      this.view.sizeChanged()
     if (needsRender) {
       this.view.render()
     }

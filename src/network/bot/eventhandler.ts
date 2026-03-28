@@ -98,9 +98,14 @@ export class BotEventHandler {
       })
 
       const cueball = this.container.table.cueball
-      const startPos = cueball.onTable()
-        ? cueball.pos.clone()
-        : this.container.rules.placeBall()
+      if (!cueball.onTable()) {
+        Respot.respotBehind(
+          this.container.rules.placeBall(),
+          cueball,
+          this.container.table
+        )
+      }
+      const startPos = cueball.pos.clone()
       cueball.setStationary()
 
       const nineBall = this.container.table.balls[9]

@@ -8,7 +8,7 @@ import { R } from "../model/physics/constants"
 import { Table } from "../model/table"
 
 export class Rack {
-  static readonly noise = R * 0.0235
+  static readonly noise = Math.fround(R * 0.023 + 0.0015 * Math.random())
   static readonly gap = 2 * R + 2 * Rack.noise
   static readonly up = new Vector3(0, 0, -1)
   static readonly spot = new Vector3(-TableGeometry.X / 2, 0, 0)
