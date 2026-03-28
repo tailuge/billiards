@@ -1,4 +1,6 @@
 import { Vector3 } from "three"
+import { Session } from "../../network/client/session"
+
 import { WatchEvent } from "../../events/watchevent"
 import { Outcome } from "../../model/outcome"
 import { Rack } from "../../utils/rack"
@@ -65,7 +67,8 @@ export class Snooker implements Rules {
   private targetRedRule(outcome: Outcome[], info: ShotInfo): Controller {
     if (info.legalFirstCollision && Outcome.onlyRedsPotted(outcome)) {
       this.currentBreak += info.pots
-      this.container.addMyScore(info.pots)
+      Session.getInstance().addMyScore(info.pots)
+
       this.targetIsRed = false
       this.previousPotRed = true
       return this.continueBreak()
@@ -96,7 +99,8 @@ export class Snooker implements Rules {
     if (this.previousPotRed) {
       this.respot(outcome)
       this.currentBreak += id + 1
-      this.container.addMyScore(id + 1)
+      Session.getInstance().addMyScore(id + 1)
+
       this.previousPotRed = false
       this.targetIsRed =
         SnookerUtils.redsOnTable(this.container.table).length > 0
@@ -112,7 +116,8 @@ export class Snooker implements Rules {
     }
 
     this.currentBreak += id + 1
-    this.container.addMyScore(id + 1)
+    Session.getInstance().addMyScore(id + 1)
+
     this.previousPotRed = false
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     return this.continueBreak()
@@ -121,7 +126,8 @@ export class Snooker implements Rules {
   private foul(outcome: Outcome[], info: ShotInfo): Controller {
     const foulResult = SnookerUtils.calculateFoul(outcome, info)
     this.foulPoints = foulResult.points
-    this.container.addOpponentScore(this.foulPoints)
+    Session.getInstance().addOpponentScore(this.foulPoints)
+
     const notification = info.whitePotted
       ? ({
           type: "Foul",

@@ -18,7 +18,7 @@ import { Snooker } from "../../src/controller/rules/snooker"
 import { Assets } from "../../src/view/assets"
 import { Outcome } from "../../src/model/outcome"
 import { Table } from "../../src/model/table"
-import { zero } from "../../src/utils/utils"
+import { zero } from "../../src/utils/three-utils"
 import { Session } from "../../src/network/client/session"
 import { End } from "../../src/controller/end"
 
@@ -79,7 +79,7 @@ describe("Snooker", () => {
     PocketGeometry.middleRadius +
     0.01 * R
 
-  function setupTableWithPot(ball) {
+  function setupTableWithPot(ball: Ball) {
     table.cueball.pos.copy(new Vector3(0, edge + R * 2.1, 0))
     ball.pos.copy(new Vector3(0, edge, 0))
   }
@@ -118,7 +118,8 @@ describe("Snooker", () => {
     setupTableWithPot(table.balls[7])
     playShotWaitForOutcome()
 
-    const orderedScores = container.getOrderedScores()
+    const orderedScores = Session.getInstance().orderedScoresForHud()
+
     expect(orderedScores.p1).to.be.equal(1)
     expect(orderedScores.p2).to.be.equal(0)
     done()
@@ -379,14 +380,16 @@ describe("Snooker", () => {
   })
 
   it("should trigger foul notification when white potted", () => {
-    const notifySpy = jest.spyOn(container, "notify")
+    const notifySpy = jest.spyOn(container as any, "notify")
+
     const outcome: Outcome[] = [
       Outcome.hit(table.cueball, 1),
       Outcome.pot(table.cueball, 1),
     ]
     table.cueball.state = State.InPocket
     snooker.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+    const call = notifySpy.mock.calls[0][0] as any
+    expect(call).to.deep.equal({
       type: "Foul",
       title: "FOUL",
       subtext: "White potted",
@@ -395,34 +398,39 @@ describe("Snooker", () => {
   })
 
   it("should trigger foul notification on no ball hit", () => {
-    const notifySpy = jest.spyOn(container, "notify")
+    const notifySpy = jest.spyOn(container as any, "notify")
+
     const outcome: Outcome[] = [Outcome.hit(table.cueball, 1)]
     snooker.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.include({
+    const call = notifySpy.mock.calls[0][0] as any
+    expect(call).to.deep.include({
       type: "Foul",
       title: "FOUL",
       subtext: "No ball hit",
     })
-    expect("extra" in notifySpy.mock.calls[0][0]).to.be.false
+    expect("extra" in call).to.be.false
   })
 
   it("should trigger foul notification on wrong ball hit", () => {
-    const notifySpy = jest.spyOn(container, "notify")
+    const notifySpy = jest.spyOn(container as any, "notify")
+
     const outcome: Outcome[] = [
       Outcome.hit(table.cueball, 1),
       Outcome.collision(table.cueball, table.balls[5], 1),
     ]
     snooker.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.include({
+    const call = notifySpy.mock.calls[0][0] as any
+    expect(call).to.deep.include({
       type: "Foul",
       title: "FOUL",
       subtext: "Hit Pink instead of red",
     })
-    expect("extra" in notifySpy.mock.calls[0][0]).to.be.false
+    expect("extra" in call).to.be.false
   })
 
   it("should trigger foul notification on potting multiple colours", () => {
-    const notifySpy = jest.spyOn(container, "notify")
+    const notifySpy = jest.spyOn(container as any, "notify")
+
     snooker.targetIsRed = false
     const outcome: Outcome[] = [
       Outcome.hit(table.cueball, 1),
@@ -433,12 +441,13 @@ describe("Snooker", () => {
     table.balls[5].state = State.InPocket
     table.balls[1].state = State.InPocket
     snooker.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.include({
+    const call = notifySpy.mock.calls[0][0] as any
+    expect(call).to.deep.include({
       type: "Foul",
       title: "FOUL",
       subtext: "Potted Pink, Yellow",
     })
-    expect("extra" in notifySpy.mock.calls[0][0]).to.be.false
+    expect("extra" in call).to.be.false
   })
 
   it("placeBall constrained to D", (done) => {
@@ -453,16 +462,17 @@ describe("Snooker", () => {
     session.playerIndex = 0
     session.opponentName = "Player B"
 
-    container.setScoresFromNetwork(10, 20, 0)
+    Session.getInstance().updateScoresFromNetwork(10, 20, 0)
 
-    const notifySpy = jest.spyOn(container, "notifyLocal")
+    const notifySpy = jest.spyOn(container as any, "notifyLocal")
 
     // Player A clears the table (isWinner=true in the parameter sense)
     const nextController = snooker.handleGameEnd(true)
 
     expect(nextController).to.be.instanceOf(End)
     // Even though Player A cleared the table, they lost by score
-    expect(notifySpy.mock.calls[0][0]).to.deep.include({
+    const call = notifySpy.mock.calls[0][0] as any
+    expect(call).to.deep.include({
       title: "YOU LOST",
       subtext: "Player A 10 - 20 Player B",
       matchScore: `<div class="match-score-container">
@@ -481,16 +491,17 @@ describe("Snooker", () => {
     session.playerIndex = 0
     session.opponentName = "Player B"
 
-    container.setScoresFromNetwork(30, 20, 0)
+    Session.getInstance().updateScoresFromNetwork(30, 20, 0)
 
-    const notifySpy = jest.spyOn(container, "notifyLocal")
+    const notifySpy = jest.spyOn(container as any, "notifyLocal")
 
     // Player B cleared the table (so Player A receives isWinner=false)
     const nextController = snooker.handleGameEnd(false)
 
     expect(nextController).to.be.instanceOf(End)
     // Player A won by score
-    expect(notifySpy.mock.calls[0][0]).to.deep.include({
+    const call = notifySpy.mock.calls[0][0] as any
+    expect(call).to.deep.include({
       title: "YOU WON",
       subtext: "Player A 30 - 20 Player B",
       matchScore: `<div class="match-score-container">
@@ -509,15 +520,16 @@ describe("Snooker", () => {
     session.playerIndex = 0
     session.opponentName = "Player B"
 
-    container.setScoresFromNetwork(20, 20, 0)
+    Session.getInstance().updateScoresFromNetwork(20, 20, 0)
 
-    const notifySpy = jest.spyOn(container, "notifyLocal")
+    const notifySpy = jest.spyOn(container as any, "notifyLocal")
 
     const nextController = snooker.handleGameEnd(false)
 
     expect(nextController).to.be.instanceOf(End)
     // Player A wins on a draw per user request
-    expect(notifySpy.mock.calls[0][0]).to.deep.include({
+    const call = notifySpy.mock.calls[0][0] as any
+    expect(call).to.deep.include({
       title: "YOU WON",
       subtext: "Player A 20 - 20 Player B",
       matchScore: `<div class="match-score-container">
@@ -533,7 +545,8 @@ describe("Snooker", () => {
     // First shot should return undefined
     expect(snooker.nextCandidateBall()).to.be.undefined
 
-    const hit = new HitEvent()
+    const hit = new HitEvent({} as any)
+
     hit.tablejson = { aim: new AimEvent() } as any
     container.recorder.record(hit)
 

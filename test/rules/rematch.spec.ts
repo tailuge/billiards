@@ -32,8 +32,8 @@ describe("Rematch Logic", () => {
     session.setOpponentClientId("opponent-client")
 
     // Simulate winning a multiplayer game
-    container.setMyScore(1)
-    container.setOpponentScore(0)
+    session.setMyScore(1)
+    session.setOpponentScore(0)
 
     MatchResultHelper.presentGameEnd(container, "nineball", true)
 
@@ -67,8 +67,8 @@ describe("Rematch Logic", () => {
     }
 
     // Simulate losing a multiplayer game
-    container.setMyScore(0)
-    container.setOpponentScore(1)
+    session.setMyScore(0)
+    session.setOpponentScore(1)
 
     MatchResultHelper.presentGameEnd(container, "nineball", false)
 

@@ -130,21 +130,29 @@ describe("ThreeCushion", () => {
 
   it("isEndOfGame returns false before raceTo reached", (done) => {
     const rules = RuleFactory.create(rule, container) as any
-    container.setScoresFromNetwork(3, 2, 0)
+    Session.getInstance().updateScoresFromNetwork(3, 2, 0)
     expect(rules.isEndOfGame([])).to.be.false
     done()
   })
 
   it("isEndOfGame returns true when raceTo reached", (done) => {
     const rules = RuleFactory.create(rule, container) as any
-    container.setScoresFromNetwork(ThreeCushionConfig.raceTo, 2, 0)
+    Session.getInstance().updateScoresFromNetwork(
+      ThreeCushionConfig.raceTo,
+      2,
+      0
+    )
     expect(rules.isEndOfGame([])).to.be.true
     done()
   })
 
   it("update returns End when raceTo reached", (done) => {
     container.controller = new PlayShot(container)
-    container.setScoresFromNetwork(ThreeCushionConfig.raceTo - 1, 0, 0)
+    Session.getInstance().updateScoresFromNetwork(
+      ThreeCushionConfig.raceTo - 1,
+      0,
+      0
+    )
     container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
     const balls = container.table.balls
@@ -178,7 +186,7 @@ describe("ThreeCushion", () => {
     rules.cueball = container.table.balls[1]
     expect(rules.otherPlayersCueBall()).to.equal(container.table.balls[0])
 
-    const hit = new HitEvent()
+    const hit = new HitEvent({} as any)
     hit.tablejson = { aim: new AimEvent() } as any
     container.recorder.record(hit)
 

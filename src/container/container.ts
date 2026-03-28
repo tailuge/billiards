@@ -70,7 +70,6 @@ export class Container {
   }
   private hudActivePlayer: ActivePlayer = 0
   private wasReplay: boolean = false
-  currentBreak = 0
 
   last = performance.now()
   readonly step = 0.001953125 * 1
@@ -138,49 +137,6 @@ export class Container {
     this.throttle.send(event)
   }
 
-  getMyScore(): number {
-    return Session.getInstance().myScore()
-  }
-
-  getOpponentScore(): number {
-    return Session.getInstance().opponentScore()
-  }
-
-  setMyScore(score: number): void {
-    Session.getInstance().setMyScore(score)
-  }
-
-  setOpponentScore(score: number): void {
-    Session.getInstance().setOpponentScore(score)
-  }
-
-  addMyScore(delta: number): void {
-    this.setMyScore(this.getMyScore() + delta)
-  }
-
-  addOpponentScore(delta: number): void {
-    this.setOpponentScore(this.getOpponentScore() + delta)
-  }
-
-  getOrderedScores(): { p1: number; p2: number } {
-    return Session.getInstance().orderedScoresForHud()
-  }
-
-  getOrderedNames(): { p1Name?: string; p2Name?: string } {
-    return Session.getInstance().orderedNamesForHud()
-  }
-
-  setScoresFromNetwork(p1: number, p2: number, breakScore: number): void {
-    if (Session.getInstance().playerIndex === 1) {
-      this.setMyScore(p2)
-      this.setOpponentScore(p1)
-    } else {
-      this.setMyScore(p1)
-      this.setOpponentScore(p2)
-    }
-    this.currentBreak = breakScore
-  }
-
   private myHudSlot(): 1 | 2 {
     return Session.getInstance().playerIndex === 1 ? 2 : 1
   }
@@ -209,10 +165,11 @@ export class Container {
   }
 
   updateScoreHud(p1: number, p2: number, b: number, active?: ActivePlayer) {
-    this.setScoresFromNetwork(p1, p2, b)
-    const orderedScores = this.getOrderedScores()
+    const session = Session.getInstance()
+    session.updateScoresFromNetwork(p1, p2, b)
+    const orderedScores = session.orderedScoresForHud()
     this.hudScores = orderedScores
-    const orderedNames = this.getOrderedNames()
+    const orderedNames = session.orderedNamesForHud()
     this.hud.updateScores(
       orderedScores.p1,
       orderedScores.p2,
@@ -228,7 +185,7 @@ export class Container {
     const changed =
       this.hudScores.p1 !== p1 ||
       this.hudScores.p2 !== p2 ||
-      this.currentBreak !== b ||
+      Session.getInstance().currentBreak !== b ||
       this.hudActivePlayer !== activePlayer
     this.updateScoreHud(p1, p2, b, activePlayer)
     if (changed) {

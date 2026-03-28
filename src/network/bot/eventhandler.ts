@@ -14,6 +14,7 @@ import { Respot } from "../../utils/respot"
 import { zero } from "../../utils/three-utils"
 import { MatchResult } from "../client/matchresult"
 import { ReplayEncoder } from "../../utils/replay-encoder"
+import { Session } from "../client/session"
 
 export class BotEventHandler {
   private readonly logs: Logger
@@ -74,8 +75,8 @@ export class BotEventHandler {
         const result: MatchResult = {
           winner: "ClawBreak",
           loser: "Player",
-          winnerScore: this.container.getOpponentScore(),
-          loserScore: this.container.getMyScore(),
+          winnerScore: Session.getInstance().opponentScore(),
+          loserScore: Session.getInstance().myScore(),
           ruleType: this.container.rules.rulename,
         }
         if (replayData) {
@@ -119,8 +120,9 @@ export class BotEventHandler {
 
     const pots = Outcome.potCount(outcome)
     if (pots > 0) {
-      this.container.addOpponentScore(pots)
-      const { p1: s1, p2: s2 } = this.container.getOrderedScores()
+      Session.getInstance().addOpponentScore(pots)
+      const { p1: s1, p2: s2 } = Session.getInstance().orderedScoresForHud()
+
       const active = this.container.inferActivePlayerFromController()
       this.container.sendScoreUpdate(s1, s2, 0, active)
 

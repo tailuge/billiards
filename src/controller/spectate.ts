@@ -68,12 +68,8 @@ export class Spectate extends ControllerBase {
     }
 
     if (changed) {
-      const scores = this.container.getOrderedScores()
-      this.container.updateScoreHud(
-        scores.p1,
-        scores.p2,
-        this.container.currentBreak
-      )
+      const scores = session.orderedScoresForHud()
+      this.container.updateScoreHud(scores.p1, scores.p2, session.currentBreak)
     }
   }
 

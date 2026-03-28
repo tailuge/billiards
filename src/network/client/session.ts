@@ -16,6 +16,7 @@ export class Session {
   spectatedP2Name?: string
   playerIndex: number = 0
   private scoreByClientId: Record<string, number> = {}
+  currentBreak: number = 0
 
   private static instance: Session | undefined
   private static readonly fallbackOpponentClientId = "opponent"
@@ -166,5 +167,16 @@ export class Session {
       names.p2Name = myName
     }
     return names
+  }
+
+  updateScoresFromNetwork(p1: number, p2: number, breakScore: number): void {
+    if (this.playerIndex === 1) {
+      this.setMyScore(p2)
+      this.setOpponentScore(p1)
+    } else {
+      this.setMyScore(p1)
+      this.setOpponentScore(p2)
+    }
+    this.currentBreak = breakScore
   }
 }

@@ -29,7 +29,7 @@ export class MatchResultHelper {
     container.recorder.wholeGameLink()
 
     const session = Session.getInstance()
-    const amIWinner = this.determineWinner(container, session, forcedAmIWinner)
+    const amIWinner = this.determineWinner(session, forcedAmIWinner)
     const subtext = endSubtext ?? this.getScoreSubtext(container)
 
     this.updateRematchInfo(container, session, rulename, amIWinner)
@@ -38,18 +38,12 @@ export class MatchResultHelper {
 
     this.notifyEndState(container, amIWinner, subtext, hasRematch)
 
-    const result = this.createMatchResult(
-      container,
-      rulename,
-      session,
-      amIWinner
-    )
+    const result = this.createMatchResult(rulename, session, amIWinner)
 
     return new End(container, amIWinner ? result : undefined)
   }
 
   private static determineWinner(
-    container: Container,
     session: Session,
     forcedAmIWinner?: boolean
   ): boolean {
@@ -57,7 +51,8 @@ export class MatchResultHelper {
       return forcedAmIWinner
     }
 
-    const { p1, p2 } = container.getOrderedScores()
+    const { p1, p2 } = session.orderedScoresForHud()
+
     const winnerIndex = p1 >= p2 ? 0 : 1
     const playerIndex = session.playerIndex
     return winnerIndex === playerIndex
@@ -81,7 +76,7 @@ export class MatchResultHelper {
     const session = Session.getInstance()
     const matchScore =
       hasRematch && session.rematchInfo
-        ? Rematch.getMatchScoreText(session, container.getOrderedNames())
+        ? Rematch.getMatchScoreText(session, session.orderedNamesForHud())
         : undefined
 
     if (amIWinner) {
@@ -178,22 +173,22 @@ export class MatchResultHelper {
 
   private static getScoreSubtext(container: Container): string {
     if (container.isSinglePlayer) {
-      return `Score: ${container.getMyScore()}`
+      return `Score: ${Session.getInstance().myScore()}`
     }
 
-    const { p1Name, p2Name } = container.getOrderedNames()
-    const { p1, p2 } = container.getOrderedScores()
+    const { p1Name, p2Name } = Session.getInstance().orderedNamesForHud()
+    const { p1, p2 } = Session.getInstance().orderedScoresForHud()
     return `${p1Name || "You"} ${p1} - ${p2} ${p2Name || "Opponent"}`
   }
 
   private static createMatchResult(
-    container: Container,
     rulename: string,
     session: Session,
     iWon: boolean
   ): MatchResult {
-    const myScore = container.getMyScore()
-    const opponentScore = container.getOpponentScore()
+    const myScore = session.myScore()
+    const opponentScore = session.opponentScore()
+
     const winnerName = iWon
       ? session.playername || "Anon"
       : session.opponentName || "Opponent"

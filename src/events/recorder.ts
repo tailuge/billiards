@@ -74,7 +74,7 @@ export class Recorder {
       this.entries[0]?.state,
       this.entries.map((e) => e.event),
       this.start,
-      this.container.getMyScore(),
+      Session.getInstance().myScore(),
       true,
       this.getPlayerNames()
     )

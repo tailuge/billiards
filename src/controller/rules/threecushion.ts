@@ -18,6 +18,7 @@ import { Respot } from "../../utils/respot"
 import { ThreeCushionConfig } from "../../utils/threecushionconfig"
 import { StartAimEvent } from "../../events/startaimevent"
 import { MatchResultHelper } from "../../network/client/matchresult"
+import { Session } from "../../network/client/session"
 
 export class ThreeCushion implements Rules {
   readonly container: Container
@@ -86,7 +87,8 @@ export class ThreeCushion implements Rules {
       this.container.sound.playSuccess(outcomes.length / 3)
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
       this.currentBreak++
-      this.container.addMyScore(1)
+      Session.getInstance().addMyScore(1)
+
       if (this.isEndOfGame(outcomes)) {
         return this.handleGameEnd(true)
       }
@@ -118,7 +120,8 @@ export class ThreeCushion implements Rules {
   }
 
   isEndOfGame(_: Outcome[]): boolean {
-    const { p1: s1, p2: s2 } = this.container.getOrderedScores()
+    const { p1: s1, p2: s2 } = Session.getInstance().orderedScoresForHud()
+
     return s1 >= ThreeCushionConfig.raceTo || s2 >= ThreeCushionConfig.raceTo
   }
 

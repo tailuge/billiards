@@ -100,8 +100,8 @@ describe("MatchResult Construction", () => {
     container = createNineBallContainer()
     const session = Session.getInstance()
     session.opponentName = "TestOpponent"
-    container.setMyScore(2)
-    container.setOpponentScore(8)
+    session.setMyScore(2)
+    session.setOpponentScore(8)
     setupNineBallTable(container)
 
     const nineball = container.rules as NineBall
@@ -123,7 +123,7 @@ describe("MatchResult Construction", () => {
     })
     container.scoreReporter = new ScoreReporter()
     const snooker = container.rules as Snooker
-    container.setScoresFromNetwork(60, 0, 0)
+    Session.getInstance().updateScoresFromNetwork(60, 0, 0)
     snooker.currentBreak = 10
 
     // Mock table is clear (only cueball remains)
@@ -134,7 +134,7 @@ describe("MatchResult Construction", () => {
     })
 
     // Snooker's continueBreak is called when a ball is potted and table is clear
-    const endController = snooker.continueBreak() as End
+    const endController = (snooker as any).continueBreak() as End
     endController.onFirst()
     const result = (endController as any).result as MatchResult
 
@@ -154,7 +154,7 @@ describe("MatchResult Construction", () => {
     })
     container.scoreReporter = new ScoreReporter()
     const threecushion = container.rules as any
-    container.setScoresFromNetwork(10, 5, 0)
+    Session.getInstance().updateScoresFromNetwork(10, 5, 0)
 
     const endController = threecushion.handleGameEnd(true) as End
     endController.onFirst()
@@ -178,7 +178,7 @@ describe("MatchResult Construction", () => {
     })
     container.scoreReporter = new ScoreReporter()
     const threecushion = container.rules as any
-    container.setScoresFromNetwork(3, 7, 0)
+    Session.getInstance().updateScoresFromNetwork(3, 7, 0)
 
     const endController = threecushion.handleGameEnd(true) as End
     endController.onFirst()
