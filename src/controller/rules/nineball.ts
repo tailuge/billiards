@@ -18,6 +18,7 @@ import { TableGeometry } from "../../view/tablegeometry"
 import { StartAimEvent } from "../../events/startaimevent"
 import { MatchResultHelper } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
+import { isFirstShot } from "../../utils/utils"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -43,12 +44,17 @@ export class NineBall implements Rules {
   }
 
   placeBall(target?: Vector3): Vector3 {
+    const baulkline = (-R * 11) / 0.5
     if (target) {
       const max = new Vector3(TableGeometry.tableX, TableGeometry.tableY)
       const min = new Vector3(-TableGeometry.tableX, -TableGeometry.tableY)
+      if (isFirstShot(this.container.recorder)) {
+        max.setX(baulkline)
+        min.setX(baulkline)
+      }
       return target.clone().clamp(min, max)
     }
-    return new Vector3((-R * 11) / 0.5, 0, 0)
+    return new Vector3(baulkline, 0, 0)
   }
 
   asset(): string {
