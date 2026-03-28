@@ -1670,10 +1670,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailuge/messaging@npm:1.13.0":
-  version: 1.13.0
-  resolution: "@tailuge/messaging@npm:1.13.0"
-  checksum: 10c0/617a16f36bd4e1e3211e528aa94a7e5db1308c8334fdfcaa88c72a49739057eea7740cb8101d121eab3f0e34240b6d6ed7e9d8c073dba42cd1a282c1765ed4f4
+"@tailuge/messaging@npm:1.14.0":
+  version: 1.14.0
+  resolution: "@tailuge/messaging@npm:1.14.0"
+  checksum: 10c0/3f49409385d8516ce32a703613811784841148e5ad4e637494c9070b033e86b5ea0cd2e627f9dee8553a03aab6f37953269c386cf7657c599fdc1d74d84ba676
   languageName: node
   linkType: hard
 
@@ -2927,7 +2927,7 @@ __metadata:
     "@eslint/js": "npm:10.0.1"
     "@swc/core": "npm:1.15.21"
     "@swc/jest": "npm:0.2.39"
-    "@tailuge/messaging": "npm:1.13.0"
+    "@tailuge/messaging": "npm:1.14.0"
     "@testing-library/dom": "npm:10.4.1"
     "@types/chai": "npm:5.2.3"
     "@types/jest": "npm:30.0.0"
