@@ -14,6 +14,14 @@ export default tseslint.config(
     ...sonarjs.configs.recommended,
   },
   {
+    name: 'billiards/parser-options',
+    languageOptions: {
+      parserOptions: {
+        warnOnUnsupportedTypeScriptVersion: false,
+      },
+    },
+  },
+  {
     name: 'billiards/ignores',
     ignores: [
       "dist/*",
