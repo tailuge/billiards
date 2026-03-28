@@ -456,7 +456,7 @@ input[type="range"].powerSlider {
 
 .outerMenu {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 100%;
   flex: 0 0 52px;
   gap: 4px;
