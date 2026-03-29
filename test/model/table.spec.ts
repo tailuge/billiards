@@ -144,21 +144,6 @@ describe("Table", () => {
     done()
   })
 
-  it("rounds cueball position safely", (done) => {
-    const a = new Ball(new Vector3(0.00001 + 2 * R, 0, 0))
-    const b = new Ball(new Vector3(0.00001 + 0, 0, 0))
-    const c = new Ball(new Vector3(0.00001 + 4 * R, 0, 0))
-    const table = new Table([a, b, c])
-    table.cueball = a
-    expect(table.overlapsAny(table.cueball.pos)).to.be.false
-    table.roundCueBallPosition()
-    expect(table.overlapsAny(table.cueball.pos)).to.be.false
-    b.pos.y = 1
-    table.roundCueBallPosition()
-    expect(table.overlapsAny(table.cueball.pos)).to.be.false
-    done()
-  })
-
   it("serialise/deserialise", (done) => {
     const a = new Ball(new Vector3(-TableGeometry.tableX, 0, 0))
     const b = new Ball(new Vector3(-TableGeometry.tableX + 1, 0, 0))

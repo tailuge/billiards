@@ -6,8 +6,7 @@ export function isFirstShot(recorder: Recorder): boolean {
 }
 
 export function round(num) {
-  const sign = Math.sign(num)
-  return (sign * Math.floor((Math.abs(num) + Number.EPSILON) * 10000)) / 10000
+  return Math.fround(num)
 }
 
 export function round2(num) {

@@ -93,6 +93,7 @@ export class PlaceBall extends ControllerBase {
     const delta = new Vector3(dx, dy)
     const ballPos = this.container.table.cueball.pos.add(delta)
     ballPos.copy(this.container.rules.placeBall(ballPos))
+    this.container.table.cueball.fround()
     CueMesh.indicateValid(!this.container.table.overlapsAny(ballPos))
   }
 
@@ -100,6 +101,7 @@ export class PlaceBall extends ControllerBase {
     if (this.container.table.overlapsAny(this.container.table.cueball.pos)) {
       return this
     }
+    this.container.table.cueball.fround()
     this.container.table.cue.aimInputs.setButtonText("Hit")
     this.container.sound.playNotify()
     this.container.sendEvent(
