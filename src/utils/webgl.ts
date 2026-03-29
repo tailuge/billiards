@@ -6,7 +6,7 @@ export function renderer(element: HTMLElement) {
   }
 
   const renderer = new WebGLRenderer({
-    antialias: false
+    antialias: false,
   })
   renderer.shadowMap.enabled = false
   renderer.autoClear = false
