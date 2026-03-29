@@ -21,9 +21,6 @@ export class BallMaterialFactory {
       forceSinglePass: true,
       shininess: 25,
       specular: 0x555533,
-      transparent: false,
-      depthWrite: true,
-      precision: "lowp",
     })
     this.materialCache.set(key, material)
     return material
@@ -51,9 +48,6 @@ export class BallMaterialFactory {
       roughness: 0.5,
       metalness: 0,
       flatShading: true,
-      transparent: false,
-      depthWrite: true,
-      precision: "lowp",
     })
 
     material.onBeforeCompile = (shader: any) => {
