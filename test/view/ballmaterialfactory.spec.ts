@@ -7,7 +7,10 @@ describe("BallMaterialFactory", () => {
   it("creates a projected material with correct uniforms", () => {
     const color = new Color(0xff0000)
     const label = 8
-    const material = BallMaterialFactory.createProjectedMaterial(label, color) as MeshStandardMaterial
+    const material = BallMaterialFactory.createProjectedMaterial(
+      label,
+      color
+    ) as MeshStandardMaterial
 
     expect(material).to.be.an.instanceOf(MeshStandardMaterial)
     expect(material.color.getHex()).to.equal(color.getHex())
@@ -16,7 +19,7 @@ describe("BallMaterialFactory", () => {
     const shader = {
       uniforms: {} as any,
       vertexShader: "#include <common>\n#include <begin_vertex>",
-      fragmentShader: "#include <common>\n#include <color_fragment>"
+      fragmentShader: "#include <common>\n#include <color_fragment>",
     }
 
     if (material.onBeforeCompile) {
@@ -30,7 +33,9 @@ describe("BallMaterialFactory", () => {
     expect(shader.vertexShader).to.not.contain("varying vec3 vNormalVar;")
 
     expect(shader.fragmentShader).to.contain("uniform float invScale;")
-    expect(shader.fragmentShader).to.contain("vLocalPosition.xz * invScale + 0.5")
+    expect(shader.fragmentShader).to.contain(
+      "vLocalPosition.xz * invScale + 0.5"
+    )
     expect(shader.fragmentShader).to.not.contain("float r =")
   })
 

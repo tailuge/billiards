@@ -70,18 +70,32 @@ export class BallMaterialFactory {
         uniform float invScale;
         varying vec3 vLocalPosition;`
       )
-
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-         // planar projection
-         vec2 projUv = vLocalPosition.xz * invScale + 0.5;
-         projUv = clamp(projUv, 0.0, 1.0);
+        // Calculate the base UV mapping
+        vec2 projUv = vLocalPosition.xz * invScale + 0.5;
 
-         // sample & blend
-         vec4 texColor = texture2D(numberTex, projUv);
-         diffuseColor.rgb = texColor.rgb;
-        `
+        // Capture derivatives BEFORE the flip. 
+        // This prevents the GPU from seeing the 'teleport' at the equator.
+        vec2 dx = dFdx(projUv);
+        vec2 dy = dFdy(projUv);
+
+        // Flip logic for the bottom hemisphere
+        if (vLocalPosition.y < 0.0) {
+          projUv.x = 1.0 - projUv.x;
+          // Mirror the derivatives so mipmapping stays consistent
+          dx.x = -dx.x;
+          dy.x = -dy.x;
+        }
+
+        projUv = clamp(projUv, 0.0, 1.0);
+
+        // Add a negative bias to force a higher-resolution mipmap level
+        // -0.5 to -1.0 usually restores the "crisp" look.
+        vec4 texColor = textureGrad(numberTex, projUv, dx * 0.5, dy * 0.5);
+     
+        diffuseColor.rgb = texColor.rgb;`
       )
     }
     this.materialCache.set(key, material)
