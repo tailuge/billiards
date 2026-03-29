@@ -41,6 +41,8 @@ export class BallMaterialFactory {
       color,
       size
     )
+    numberTexture.magFilter = 1003 // THREE.NearestFilter
+    numberTexture.minFilter = 1003 // THREE.NearestFilter
     const material = new MeshStandardMaterial({
       color: color,
       roughness: 0.5,
