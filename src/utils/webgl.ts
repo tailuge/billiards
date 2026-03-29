@@ -9,6 +9,8 @@ export function renderer(element: HTMLElement) {
     antialias: false,
     depth: true,
     precision: "lowp",
+    powerPreference: "high-performance",
+    stencil: false
   })
   renderer.shadowMap.enabled = false
   renderer.autoClear = false
