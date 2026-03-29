@@ -222,14 +222,6 @@ export class Table {
     })
   }
 
-  roundCueBallPosition() {
-    const pos = this.cueball.pos.clone()
-    if (this.overlapsAny(pos)) {
-      return
-    }
-    this.cueball.pos.copy(pos)
-  }
-
   overlapsAny(pos, excluding = this.cueball) {
     return this.balls
       .filter((b) => b !== excluding)

@@ -1,6 +1,6 @@
 import { TableGeometry } from "../view/tablegeometry"
 import { Table } from "../model/table"
-import { upCross, unitAtAngle, norm } from "../utils/three-utils"
+import { upCross, unitAtAngle, norm, roundVec } from "../utils/three-utils"
 import { atan2, sin } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import { AimInputs } from "./aiminputs"
@@ -41,7 +41,7 @@ export class Cue {
     if (!this.aimInputs || this.aimInputs.isDisabled()) {
       return
     }
-    this.aim.angle = this.aim.angle + angle
+    this.aim.angle = Math.fround(this.aim.angle + angle)
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle
     this.aimInputs.showOverlap()
@@ -52,7 +52,7 @@ export class Cue {
     if (!this.aimInputs || this.aimInputs.isDisabled()) {
       return
     }
-    this.aim.power = Math.min(this.maxPower, this.aim.power + delta)
+    this.aim.power = Math.fround(Math.min(this.maxPower, this.aim.power + delta))
     this.updateAimInput()
   }
 
@@ -60,7 +60,7 @@ export class Cue {
     if (!this.aimInputs || this.aimInputs.isDisabled()) {
       return
     }
-    this.aim.power = value * this.maxPower
+    this.aim.power = Math.fround(value * this.maxPower)
   }
 
   hit(ball: Ball) {
@@ -96,7 +96,7 @@ export class Cue {
     if (offset.length() > this.offCenterLimit) {
       offset.normalize().multiplyScalar(this.offCenterLimit)
     }
-    this.aim.offset.copy(offset)
+    this.aim.offset.copy(roundVec(offset))
     this.avoidCueTouchingOtherBall(table)
     this.updateAimInput()
   }

@@ -59,7 +59,7 @@ describe("Cue", () => {
     } as any
     const powerBefore = cue.aim.power
     cue.adjustPower(10 * R)
-    expect(cue.aim.power).to.equal(powerBefore + 10 * R)
+    expect(cue.aim.power).to.equal(Math.fround(powerBefore + 10 * R))
   })
 
   test("adjustPower returns early when disabled", () => {
@@ -74,7 +74,7 @@ describe("Cue", () => {
     const { cue } = createCueAndTable(new Vector3(0, 1, 0))
     cue.aimInputs = { isDisabled: () => false } as any
     cue.setPower(0.5)
-    expect(cue.aim.power).to.equal(0.5 * cue.maxPower)
+    expect(cue.aim.power).to.equal(Math.fround(0.5 * cue.maxPower))
   })
 
   test("setPower returns early when disabled", () => {
@@ -95,7 +95,7 @@ describe("Cue", () => {
     } as any
     const offsetBefore = cue.aim.offset.clone()
     cue.adjustSpin(new Vector3(0.1, 0.1), table)
-    expect(cue.aim.offset.x).to.equal(offsetBefore.x + 0.1)
+    expect(cue.aim.offset.x).to.equal(Math.fround(offsetBefore.x + 0.1))
   })
 
   test("adjustSpin returns early when disabled", () => {
