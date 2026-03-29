@@ -10,6 +10,7 @@ import {
   BufferAttribute,
   Vector3,
   MeshStandardMaterial,
+  InstancedMesh,
 } from "three"
 import { State } from "../model/ball"
 import { norm, up, zero } from "./../utils/three-utils"
@@ -50,8 +51,17 @@ export class BallMesh {
     return this._shadowMaterial
   }
 
+  static createShadowMesh(count: number): InstancedMesh {
+    return new InstancedMesh(
+      this.getShadowGeometry(),
+      this.getShadowMaterial(),
+      count
+    )
+  }
+
   mesh: Mesh
-  shadow: Mesh
+  instanceId: number = -1
+  shadowMesh: InstancedMesh | undefined
   spinAxisArrow: ArrowHelper
   trace: Trace
   color: Color
@@ -62,29 +72,47 @@ export class BallMesh {
 
   updateAll(ball, t) {
     this.updatePosition(ball.pos)
-    this.updateArrows(ball.pos, ball.rvel, ball.state)
-    if (ball.rvel.lengthSq() !== 0) {
-      this.updateRotation(ball.rvel, t)
+    const rvelLenSq = ball.rvel.lengthSq()
+
+    if (this.spinAxisArrow.visible) {
+      this.updateArrows(ball.pos, ball.rvel, rvelLenSq, ball.state)
+    }
+
+    if (rvelLenSq > 1e-8) {
+      const rvelLen = Math.sqrt(rvelLenSq)
+      this.updateRotation(ball.rvel, rvelLen, t)
       this.trace.addTrace(ball.pos, ball.vel)
     }
   }
 
+  private static readonly _tempMatrix = new Matrix4()
+  private static readonly _tempAxis = new Vector3()
+
   updatePosition(pos) {
+    if (this.mesh.position.equals(pos)) return
+
     this.mesh.position.copy(pos)
-    this.shadow.position.copy(pos)
+    if (this.shadowMesh && this.instanceId !== -1) {
+      BallMesh._tempMatrix.makeTranslation(pos.x, pos.y, pos.z)
+      this.shadowMesh.setMatrixAt(this.instanceId, BallMesh._tempMatrix)
+      this.shadowMesh.instanceMatrix.needsUpdate = true
+    }
   }
 
-  readonly m = new Matrix4()
-
-  updateRotation(rvel, t) {
-    const angle = rvel.length() * t
-    this.mesh.rotateOnWorldAxis(norm(rvel), angle)
+  updateRotation(rvel, rvelLen, t) {
+    const angle = rvelLen * t
+    BallMesh._tempAxis.copy(rvel).divideScalar(rvelLen)
+    this.mesh.rotateOnWorldAxis(BallMesh._tempAxis, angle)
   }
 
-  updateArrows(pos, rvel, state) {
-    this.spinAxisArrow.setLength(R + (R * rvel.length()) / 2, R, R)
+  updateArrows(pos, rvel, rvelLenSq, state) {
+    const rvelLen = rvelLenSq > 1e-8 ? Math.sqrt(rvelLenSq) : 0
+    this.spinAxisArrow.setLength(R + (R * rvelLen) / 2, R, R)
     this.spinAxisArrow.position.copy(pos)
-    this.spinAxisArrow.setDirection(norm(rvel))
+    if (rvelLen > 0) {
+      BallMesh._tempAxis.copy(rvel).divideScalar(rvelLen)
+      this.spinAxisArrow.setDirection(BallMesh._tempAxis)
+    }
     if (state == State.Rolling) {
       this.spinAxisArrow.setColor(0xcc0000)
     } else {
@@ -111,12 +139,9 @@ export class BallMesh {
     }
     this.mesh = new Mesh(geometry, material)
     this.mesh.name = "ball"
-    this.updateRotation(new Vector3().random(), 100)
+    const randomRvel = new Vector3().random()
+    this.updateRotation(randomRvel, randomRvel.length(), 100)
 
-    this.shadow = new Mesh(
-      BallMesh.getShadowGeometry(),
-      BallMesh.getShadowMaterial()
-    )
     this.spinAxisArrow = new ArrowHelper(up, zero, 2, 0x000000, 0.01, 0.01)
     this.spinAxisArrow.visible = false
     this.trace = new Trace(500, color)
@@ -151,7 +176,6 @@ export class BallMesh {
 
   addToScene(scene) {
     scene.add(this.mesh)
-    scene.add(this.shadow)
     scene.add(this.spinAxisArrow)
     scene.add(this.trace.line)
   }

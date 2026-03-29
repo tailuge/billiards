@@ -50,38 +50,32 @@ export class BallMaterialFactory {
 
     material.onBeforeCompile = (shader: any) => {
       shader.uniforms.numberTex = { value: numberTexture }
-      shader.uniforms.projSize = { value: 2 }
+      shader.uniforms.invScale = { value: 1 / (R * 2) }
 
       shader.vertexShader = shader.vertexShader.replace(
         "#include <common>",
         `#include <common>
-         varying vec3 vLocalPosition;
-         varying vec3 vNormalVar;`
+         varying vec3 vLocalPosition;`
       )
       shader.vertexShader = shader.vertexShader.replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
-         vLocalPosition = position;
-         vNormalVar = normal;`
+         vLocalPosition = position;`
       )
 
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <common>",
         `#include <common>
         uniform sampler2D numberTex;
-        uniform float projSize;
-        varying vec3 vLocalPosition;
-        varying vec3 vNormalVar;`
+        uniform float invScale;
+        varying vec3 vLocalPosition;`
       )
 
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-         float r = ${R.toFixed(3)};
-         vec3 locPos = vLocalPosition;
-
          // planar projection
-         vec2 projUv = locPos.xz / (r * projSize) + 0.5;
+         vec2 projUv = vLocalPosition.xz * invScale + 0.5;
          projUv = clamp(projUv, 0.0, 1.0);
 
          // sample & blend

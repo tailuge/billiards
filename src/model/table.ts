@@ -3,6 +3,7 @@ import { Collision } from "./physics/collision"
 import { Knuckle } from "./physics/knuckle"
 import { Pocket } from "./physics/pocket"
 import { Cue } from "../view/cue"
+import { BallMesh } from "../view/ballmesh"
 import { Ball, State } from "./ball"
 import { AimEvent } from "../events/aimevent"
 import { TableGeometry } from "../view/tablegeometry"
@@ -193,8 +194,13 @@ export class Table {
   }
 
   addToScene(scene) {
-    this.balls.forEach((b) => {
+    const shadowMesh = BallMesh.createShadowMesh(this.balls.length)
+    scene.add(shadowMesh)
+    this.balls.forEach((b, i) => {
+      b.ballmesh.instanceId = i
+      b.ballmesh.shadowMesh = shadowMesh
       b.ballmesh.addToScene(scene)
+      b.ballmesh.updatePosition(b.pos)
     })
     scene.add(this.cue.mesh)
     scene.add(this.cue.helperMesh)

@@ -2,8 +2,8 @@ module.exports = {
   rootDir: "../",
   preset: "ts-jest",
   transformIgnorePatterns: [
-    // Exclude all node_modules except for chai, jsoncrush, and @tailuge/messaging
-    "node_modules/(?!(chai|jsoncrush|@tailuge/messaging))",
+    // Exclude all node_modules except for chai, jsoncrush, @tailuge/messaging, and three
+    "node_modules/(?!(chai|jsoncrush|@tailuge/messaging|three))",
   ],
   transform: {
     // Use SWC for transforming both JavaScript and TypeScript files
