@@ -41,65 +41,53 @@ export class BallMaterialFactory {
       color,
       size
     )
-    numberTexture.magFilter = 1003 // THREE.NearestFilter
-    numberTexture.minFilter = 1003 // THREE.NearestFilter
     const material = new MeshStandardMaterial({
       color: color,
       roughness: 0.5,
       metalness: 0,
       flatShading: true,
-      transparent: false,
-      depthWrite: true,
     })
 
     material.onBeforeCompile = (shader: any) => {
       shader.uniforms.numberTex = { value: numberTexture }
-      shader.uniforms.invScale = { value: 1 / (R * 2) }
+      shader.uniforms.projSize = { value: 2 }
 
       shader.vertexShader = shader.vertexShader.replace(
         "#include <common>",
         `#include <common>
-         varying vec3 vLocalPosition;`
+         varying vec3 vLocalPosition;
+         varying vec3 vNormalVar;`
       )
       shader.vertexShader = shader.vertexShader.replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
-         vLocalPosition = position;`
+         vLocalPosition = position;
+         vNormalVar = normal;`
       )
 
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <common>",
         `#include <common>
         uniform sampler2D numberTex;
-        uniform float invScale;
-        varying vec3 vLocalPosition;`
+        uniform float projSize;
+        varying vec3 vLocalPosition;
+        varying vec3 vNormalVar;`
       )
+
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-        // Calculate the base UV mapping
-        vec2 projUv = vLocalPosition.xz * invScale + 0.5;
+         float r = ${R.toFixed(3)};
+         vec3 locPos = vLocalPosition;
 
-        // Capture derivatives BEFORE the flip. 
-        // This prevents the GPU from seeing the 'teleport' at the equator.
-        vec2 dx = dFdx(projUv);
-        vec2 dy = dFdy(projUv);
+         // planar projection
+         vec2 projUv = locPos.xz / (r * projSize) + 0.5;
+         projUv = clamp(projUv, 0.0, 1.0);
 
-        // Flip logic for the bottom hemisphere
-        if (vLocalPosition.y < 0.0) {
-          projUv.x = 1.0 - projUv.x;
-          // Mirror the derivatives so mipmapping stays consistent
-          dx.x = -dx.x;
-          dy.x = -dy.x;
-        }
-
-        projUv = clamp(projUv, 0.0, 1.0);
-
-        // Add a negative bias to force a higher-resolution mipmap level
-        // -0.5 to -1.0 usually restores the "crisp" look.
-        vec4 texColor = textureGrad(numberTex, projUv, dx * 0.5, dy * 0.5);
-     
-        diffuseColor.rgb = texColor.rgb;`
+         // sample & blend
+         vec4 texColor = texture2D(numberTex, projUv);
+         diffuseColor.rgb = texColor.rgb;
+        `
       )
     }
     this.materialCache.set(key, material)
