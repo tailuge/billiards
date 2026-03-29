@@ -337,6 +337,8 @@ p {
 }
 
 canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
   border-radius: 5px;
   -webkit-user-select: none;
   -ms-user-select: none;
