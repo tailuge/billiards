@@ -21,8 +21,6 @@ export class BallMaterialFactory {
       forceSinglePass: true,
       shininess: 25,
       specular: 0x555533,
-      transparent: false,
-      depthWrite: true,
     })
     this.materialCache.set(key, material)
     return material
