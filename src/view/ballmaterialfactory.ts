@@ -23,7 +23,6 @@ export class BallMaterialFactory {
       specular: 0x555533,
       transparent: false,
       depthWrite: true,
-      precision: "lowp",
     })
     this.materialCache.set(key, material)
     return material
@@ -53,7 +52,6 @@ export class BallMaterialFactory {
       flatShading: true,
       transparent: false,
       depthWrite: true,
-      precision: "lowp",
     })
 
     material.onBeforeCompile = (shader: any) => {
