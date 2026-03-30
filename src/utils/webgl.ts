@@ -1,4 +1,4 @@
-import { WebGLRenderer } from "three"
+import { WebGLRenderer, SRGBColorSpace,NoToneMapping } from "three"
 
 export function renderer(element: HTMLElement) {
   if (typeof process !== "undefined") {
@@ -14,6 +14,8 @@ export function renderer(element: HTMLElement) {
 
   renderer.shadowMap.enabled = false
   renderer.autoClear = false
+  renderer.outputColorSpace = SRGBColorSpace
+  renderer.toneMapping = NoToneMapping
   renderer.setSize(element.offsetWidth, element.offsetHeight)
   renderer.setPixelRatio(window.devicePixelRatio * 0.5)
   element.appendChild(renderer.domElement)
