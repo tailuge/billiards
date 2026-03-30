@@ -11,8 +11,6 @@ import { Session } from "../../src/network/client/session"
 import { canvas3d, initDom } from "../view/dom"
 import { Table } from "../../src/model/table"
 import { Rack } from "../../src/utils/rack"
-import { TableGeometry } from "../../src/view/tablegeometry"
-import { Collision } from "../../src/model/physics/collision"
 import { mathavenAdapter } from "../../src/model/physics/physics"
 
 interface BugFixture {
@@ -81,7 +79,7 @@ function distanceBeforeSecondShot(fixture: BugFixture) {
   const maxIterations = 200000
   let iterations = 0
   const cueballHistory = [container.table.cueball.pos.clone()]
-  let previousCueball = container.table.cueball.pos.clone()
+  const previousCueball = container.table.cueball.pos.clone()
   let previousState = container.table.shortSerialise()
   while (!container.table.allStationary() && iterations < maxIterations) {
     previousCueball.copy(container.table.cueball.pos)
@@ -147,7 +145,9 @@ function directPhysicsDistanceBeforeSecondShot(fixture: BugFixture) {
   }
 
   if (!table.allStationary()) {
-    throw new Error(`Direct physics break did not settle after ${maxIterations} steps`)
+    throw new Error(
+      `Direct physics break did not settle after ${maxIterations} steps`
+    )
   }
 
   return {
@@ -175,11 +175,13 @@ describe("Break Replay Regression", () => {
     expect(firstRun.state).to.deep.equal(secondRun.state)
     expect(firstRun.previousState).to.deep.equal(secondRun.previousState)
     expect(firstRun.cueball.distanceTo(secondRun.cueball)).to.equal(0)
-    expect(firstRun.previousCueball.distanceTo(secondRun.previousCueball)).to.equal(
-      0
-    )
     expect(
-      firstRun.previousDistinctCueball.distanceTo(secondRun.previousDistinctCueball)
+      firstRun.previousCueball.distanceTo(secondRun.previousCueball)
+    ).to.equal(0)
+    expect(
+      firstRun.previousDistinctCueball.distanceTo(
+        secondRun.previousDistinctCueball
+      )
     ).to.equal(0)
     expect(firstRun.deltaToRecorded).to.equal(secondRun.deltaToRecorded)
     expect(firstRun.deltaToRecordedPrevStep).to.equal(

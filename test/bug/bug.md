@@ -129,3 +129,79 @@ If returning to this later, the best focused question is:
 If temporary debug data is added again, the most useful low-cost thing to record per shot is **explicit cueball x/y at shot start** alongside the `AimEvent`, rather than serialising all moved balls.
 
 That would directly test whether `aim.pos` is the wrong source of truth for replay shot starts.
+
+
+## New Confirmed Findings
+
+### The earlier large Jest discrepancy was a test harness artifact
+
+An important hidden difference between browser replay and the local bug test was the **cushion model**.
+
+Facts:
+
+- `Table` defaults to `bounceHanBlend`
+- `BrowserContainer` defaults to `mathavenAdapter` unless a `cushionModel` URL param is supplied
+- the real browser replay for this bug was therefore using `mathavenAdapter`
+
+The original local regression tests were unintentionally using `bounceHanBlend`, which produced a much larger deterministic mismatch (`~0.03903`).
+
+After explicitly setting:
+
+```ts
+table.cushionModel = mathavenAdapter
+```
+
+in both the replay/container test path and the direct inner-loop test path, both local tests matched the browser-sized discrepancy:
+
+- `d = 0.00003583328374224414`
+
+This is a major cleanup of the investigation because it means the local regression now agrees with the browser on the magnitude of the mismatch.
+
+### The local regression is now trustworthy for this bug
+
+There are now two useful tests in `test/bug/break_replay_regression.spec.ts`:
+
+1. replay/container path
+2. direct inner-loop path
+
+Both now reproduce the same tiny deterministic mismatch as the browser, using:
+
+- identical init state
+- identical first-shot aim
+- `CollisionThrow`
+- `mathavenAdapter`
+- nine-ball table geometry with pockets
+
+This means:
+
+- the bug is reproducible locally without a browser
+- it is not caused by wrong test geometry/constants/model selection anymore
+
+### One-step-earlier cueball experiment
+
+In the direct-inner-loop regression, looking one iteration earlier did **not** explain the mismatch in any strong way.
+
+The last distinct cueball position before the final one was only microscopically closer than the final cueball position.
+
+Interpretation:
+
+- the mismatch is **not** simply “the cueball should have been sampled one final step earlier”
+- the cueball is already essentially at the mismatched location when it stops moving
+
+That weakens the idea that the bug is just an off-by-one stationary-step boundary issue.
+
+### Current strongest state of the problem
+
+What is now known:
+
+1. the break replay discrepancy is deterministic
+2. the local regression reproduces the same tiny discrepancy as the browser
+3. the mismatch exists at the boundary between settled shot 1 and recorded shot 2
+4. the cueball is already at the mismatched location when it stops, rather than becoming wrong only because other balls continue to roll
+
+So the best remaining hypothesis is still:
+
+- replayed shot 1 settles to a slightly different state than the original live shot 1
+- shot 2 is then started from that tiny mismatch
+
+This still points more to **missing or slightly wrong shot-boundary state** than to random physics instability.
