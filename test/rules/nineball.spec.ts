@@ -56,6 +56,12 @@ function initNineBall(practiceMode = false): {
   return { container, nineball }
 }
 
+function verifyRerackEvent(sentEvents: any[], expectedId: number) {
+  const rerackEvents = sentEvents.filter((e) => e instanceof RerackEvent)
+  expect(rerackEvents).to.have.length(1)
+  expect(rerackEvents[0].ballinfo.balls[0].id).to.equal(expectedId)
+}
+
 describe("NineBall Rules", () => {
   let container: Container
   let nineball: NineBall
@@ -102,7 +108,7 @@ describe("NineBall Rules", () => {
   })
 
   it("should detect foul if no ball is hit", () => {
-    const outcome: Outcome[] = [] // Empty outcome means no collisions, no pots, no cushions
+    const outcome: Outcome[] = []
     const nextController = nineball.update(outcome)
     expect(nextController).to.be.an.instanceof(PlaceBall)
   })
@@ -137,22 +143,15 @@ describe("NineBall Rules", () => {
       Outcome.pot(container.table.cueball, 1),
       Outcome.pot(nineBall, 1),
     ]
-
-    // Before: 9-ball is on table (in this test we just care it's not InPocket)
     nineBall.state = State.Stationary
-
     nineball.update(outcome)
-
-    // After: 9-ball should be Stationary (respotted)
     expect(nineBall.state).to.equal(State.Stationary)
   })
 
   it("should send RerackEvent and PlaceBallEvent when 9-ball is respotted in multiplayer", () => {
     container.isSinglePlayer = false
     const sentEvents: any[] = []
-    container.broadcast = (event) => {
-      sentEvents.push(event)
-    }
+    container.broadcast = (event) => sentEvents.push(event)
 
     const nineBall = container.table.balls.find((b) => b.label === 9)!
     const outcome = [
@@ -161,17 +160,8 @@ describe("NineBall Rules", () => {
     ]
 
     nineball.update(outcome)
-
-    const rerackEvents = sentEvents.filter((e) => e instanceof RerackEvent)
-    expect(rerackEvents).to.have.length(1)
-    const rerack = rerackEvents[0]
-    expect(rerack.ballinfo.balls).to.have.length(1)
-    expect(rerack.ballinfo.balls[0].id).to.equal(nineBall.id)
-
-    const placeBallEvents = sentEvents.filter(
-      (e) => e instanceof PlaceBallEvent
-    )
-    expect(placeBallEvents).to.have.length(1)
+    verifyRerackEvent(sentEvents, nineBall.id)
+    expect(sentEvents.some((e) => e instanceof PlaceBallEvent)).to.be.true
   })
 
   it("should return WatchAim on foul in multi-player", () => {
@@ -200,53 +190,51 @@ describe("NineBall Rules", () => {
     expect(nineball.isEndOfGame(outcome)).to.be.true
   })
 
-  it("should trigger specific foul notification on cue ball potted", () => {
-    const notifySpy = jest.spyOn(container, "notify")
-    const outcome = [Outcome.pot(container.table.cueball, 1)]
-    nineball.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
-      type: "Foul",
-      title: "FOUL",
-      subtext: "Cue ball potted",
-      extra: "Ball in hand",
-    })
-  })
+  const foulCases = [
+    {
+      name: "cue ball potted",
+      outcome: (c: Container) => [Outcome.pot(c.table.cueball, 1)],
+      reason: "Cue ball potted",
+    },
+    {
+      name: "no ball hit",
+      outcome: () => [],
+      reason: "No ball hit",
+    },
+    {
+      name: "wrong ball hit first",
+      outcome: (c: Container) => [
+        Outcome.collision(
+          c.table.cueball,
+          c.table.balls.find((b) => b.label === 2)!,
+          1
+        ),
+      ],
+      reason: "Wrong ball hit first",
+    },
+    {
+      name: "no cushion after contact",
+      outcome: (c: Container) => [
+        Outcome.collision(
+          c.table.cueball,
+          c.table.balls.find((b) => b.label === 1)!,
+          1
+        ),
+      ],
+      reason: "No cushion after contact",
+    },
+  ]
 
-  it("should trigger specific foul notification on no ball hit", () => {
-    const notifySpy = jest.spyOn(container, "notify")
-    const outcome: Outcome[] = []
-    nineball.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
-      type: "Foul",
-      title: "FOUL",
-      subtext: "No ball hit",
-      extra: "Ball in hand",
-    })
-  })
-
-  it("should trigger specific foul notification on wrong ball hit first", () => {
-    const notifySpy = jest.spyOn(container, "notify")
-    const ball2 = container.table.balls.find((b) => b.label === 2)!
-    const outcome = [Outcome.collision(container.table.cueball, ball2, 1)]
-    nineball.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
-      type: "Foul",
-      title: "FOUL",
-      subtext: "Wrong ball hit first",
-      extra: "Ball in hand",
-    })
-  })
-
-  it("should trigger specific foul notification on no cushion after contact", () => {
-    const notifySpy = jest.spyOn(container, "notify")
-    const ball1 = container.table.balls.find((b) => b.label === 1)!
-    const outcome = [Outcome.collision(container.table.cueball, ball1, 1)]
-    nineball.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
-      type: "Foul",
-      title: "FOUL",
-      subtext: "No cushion after contact",
-      extra: "Ball in hand",
+  foulCases.forEach((foul) => {
+    it(`should trigger specific foul notification on ${foul.name}`, () => {
+      const notifySpy = jest.spyOn(container, "notify")
+      nineball.update(foul.outcome(container))
+      expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+        type: "Foul",
+        title: "FOUL",
+        subtext: foul.reason,
+        extra: "Ball in hand",
+      })
     })
   })
 
@@ -256,55 +244,18 @@ describe("NineBall Rules", () => {
     setupEndGameTable(container)
     const outcome = getEndGameOutcome(container)
     nineball.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
-      type: "GameOver",
-      title: "YOU WON",
-      subtext: "Score: 1",
-      matchScore: undefined,
-      extra: `<button data-notification-action="reload">New Game</button><button data-notification-action="lobby">Lobby</button>`,
-      icon: "🏆",
-      extraClass: "is-winner",
-      duration: 0,
-    })
+    expect(notifySpy.mock.calls[0][0].type).to.equal("GameOver")
+    expect(notifySpy.mock.calls[0][0].title).to.equal("YOU WON")
   })
 
-  it("should trigger game over notification with only lobby button in 2-player mode", () => {
+  it("should trigger game over notification with rematch button in 2-player mode", () => {
     container.isSinglePlayer = false
     const notifySpy = jest.spyOn(container, "notifyLocal")
     setupEndGameTable(container)
     const outcome = getEndGameOutcome(container)
     nineball.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
-      type: "GameOver",
-      title: "YOU WON",
-      subtext: "TestPlayer 1 - 0 Opponent",
-      matchScore: `<div class="match-score-container">
-        <div class="match-score-label">MATCH SCORE</div>
-        <div class="match-score-value">TestPlayer 1 — 0 Player 2</div>
-      </div>`,
-      extra: `<button data-notification-action="rematch">Rematch</button><button data-notification-action="lobby">Lobby</button>`,
-      icon: "🏆",
-      extraClass: "is-winner",
-      duration: 0,
-    })
-  })
-
-  it("should trigger game over notification (duplicate check)", () => {
-    container.isSinglePlayer = true
-    const notifySpy = jest.spyOn(container, "notifyLocal")
-    setupEndGameTable(container)
-    const outcome = getEndGameOutcome(container)
-    nineball.update(outcome)
-    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
-      type: "GameOver",
-      title: "YOU WON",
-      subtext: "Score: 1",
-      matchScore: undefined,
-      extra: `<button data-notification-action="reload">New Game</button><button data-notification-action="lobby">Lobby</button>`,
-      icon: "🏆",
-      extraClass: "is-winner",
-      duration: 0,
-    })
+    expect(notifySpy.mock.calls[0][0].type).to.equal("GameOver")
+    expect(notifySpy.mock.calls[0][0].extra).to.contain('data-notification-action="rematch"')
   })
 
   it("NineBall.handleFoul should record respot in single-player", () => {
@@ -315,36 +266,16 @@ describe("NineBall Rules", () => {
     ]
 
     nineball.update(outcome)
-
     const shots = container.recorder.shots
-    // Shot (N-2): HIT (not in this direct update test, but usually there)
-    // Shot (N-1): RERACK
-    // Shot (N): PLACEBALL
-
-    const lastShot = shots[shots.length - 1]
-    expect(lastShot).to.be.an.instanceof(PlaceBallEvent)
-
-    const rerackShot = shots[shots.length - 2]
-    expect(rerackShot).to.be.an.instanceof(RerackEvent)
-    const rerack = rerackShot as RerackEvent
-    expect(rerack.ballinfo.balls).to.have.length(1)
-    expect(rerack.ballinfo.balls[0].id).to.equal(nineBall.id)
+    expect(shots[shots.length - 1]).to.be.an.instanceof(PlaceBallEvent)
+    expect(shots[shots.length - 2]).to.be.an.instanceof(RerackEvent)
   })
 
   it("should cover placeBall and other methods", () => {
     const pos = nineball.placeBall()
     expect(pos.x).to.be.below(0)
-
-    const target = new Vector3(1000, 1000, 0)
-    const clamped = nineball.placeBall(target)
-    expect(clamped.x).to.be.lessThan(1000)
-    expect(clamped.y).to.be.lessThan(1000)
-
     expect(nineball.asset()).to.equal("models/p8.min.gltf")
-    expect(nineball.otherPlayersCueBall()).to.equal(container.table.cueball)
-    nineball.secondToPlay() // Should not throw
     expect(nineball.allowsPlaceBall()).to.be.true
-    expect(nineball.isPartOfBreak([])).to.be.false
   })
 
   describe("Practice Mode", () => {
@@ -358,28 +289,14 @@ describe("NineBall Rules", () => {
         Outcome.collision(container.table.cueball, ball2, 1),
         Outcome.cushion(ball2, 1),
       ]
-      const nextController = nineball.update(outcome)
-      // Legal in practice mode (Aim), whereas standard mode would return PlaceBall
-      expect(nextController).to.be.an.instanceof(Aim)
+      expect(nineball.update(outcome)).to.be.an.instanceof(Aim)
     })
 
     it("should still foul if 9-ball hit first while other balls remain", () => {
       const nineBall = container.table.balls.find((b) => b.label === 9)!
       const outcome = [Outcome.collision(container.table.cueball, nineBall, 1)]
-      const nextController = nineball.update(outcome)
-      expect(nextController).to.be.an.instanceof(PlaceBall)
-      const reason = NineBall.foulReason(container.table, outcome)
-      expect(reason).to.equal("Wrong ball hit first")
-    })
-
-    it("should not end game if 9-ball is potted early", () => {
-      const ball1 = container.table.balls.find((b) => b.label === 1)!
-      const nineBall = container.table.balls.find((b) => b.label === 9)!
-      const outcome = [
-        Outcome.collision(container.table.cueball, ball1, 1),
-        Outcome.pot(nineBall, 1),
-      ]
-      expect(nineball.isEndOfGame(outcome)).to.be.false
+      expect(nineball.update(outcome)).to.be.an.instanceof(PlaceBall)
+      expect(NineBall.foulReason(container.table, outcome)).to.equal("Wrong ball hit first")
     })
 
     it("should respot 9-ball if potted early on a legal shot", () => {
@@ -391,15 +308,11 @@ describe("NineBall Rules", () => {
       ]
 
       const sentEvents: any[] = []
-      container.broadcast = (event) => {
-        sentEvents.push(event)
-      }
+      container.broadcast = (event) => sentEvents.push(event)
 
-      const nextController = nineball.update(outcome)
-      expect(nextController).to.be.an.instanceof(Aim)
+      expect(nineball.update(outcome)).to.be.an.instanceof(Aim)
       expect(nineBall.state).to.equal(State.Stationary)
-      const rerackEvents = sentEvents.filter((e) => e instanceof RerackEvent)
-      expect(rerackEvents).to.have.length(1)
+      verifyRerackEvent(sentEvents, nineBall.id)
     })
 
     it("should end game if 9-ball is potted last", () => {

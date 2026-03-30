@@ -268,8 +268,4 @@ export class NineBall implements Rules {
       this.container.sendEvent(respotEvent)
     }
   }
-
-  private respotNineBall() {
-    Respot.nineBall(this.container.table)
-  }
 }
