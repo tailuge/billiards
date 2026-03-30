@@ -8,6 +8,8 @@ import {
   Vector3,
   ShaderMaterial,
   Group,
+  PlaneGeometry,
+  MeshBasicMaterial,
 } from "three"
 
 export class CueMesh {
@@ -82,6 +84,22 @@ export class CueMesh {
         new Matrix4().identity().makeTranslation(0, 0, (R * 0.7) / 0.5)
       )
     mesh.visible = false
+    return mesh
+  }
+
+  static createShadow(length: number) {
+    const geometry = new PlaneGeometry(length, R * 0.4)
+    geometry.applyMatrix4(
+      new Matrix4().identity().makeTranslation(-length / 2 - R, 0, 0)
+    )
+    const material = new MeshBasicMaterial({
+      color: 0x000000,
+      opacity: 0.25,
+      transparent: true,
+      depthWrite: false,
+    })
+    const mesh = new Mesh(geometry, material)
+    mesh.visible = true
     return mesh
   }
 

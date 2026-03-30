@@ -15,6 +15,7 @@ export class Cue {
   mesh: Object3D
   helperMesh: Mesh
   placerMesh: Mesh
+  shadowMesh: Mesh
   readonly offCenterLimit = 0.3
   readonly maxPower = 160 * R
   t = 0
@@ -35,6 +36,7 @@ export class Cue {
     )
     this.helperMesh = CueMesh.createHelper()
     this.placerMesh = CueMesh.createPlacer()
+    this.shadowMesh = CueMesh.createShadow(this.length)
   }
 
   rotateAim(angle, table: Table) {
@@ -44,6 +46,7 @@ export class Cue {
     this.aim.angle = Math.fround(this.aim.angle + angle)
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle
+    this.shadowMesh.rotation.z = this.aim.angle
     this.aimInputs.showOverlap()
     this.avoidCueTouchingOtherBall(table)
   }
@@ -127,6 +130,7 @@ export class Cue {
     this.aim.pos.copy(pos)
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle
+    this.shadowMesh.rotation.z = this.aim.angle
     const offset = this.spinOffset()
     const swing =
       (sin(this.t + Math.PI / 2) - 1) * 2 * R * (this.aim.power / this.maxPower)
@@ -135,6 +139,14 @@ export class Cue {
       this.tempVec
     ).multiplyScalar(swing)
     this.mesh.position.copy(pos).add(offset).add(distanceToBall)
+
+    const horizontalOffset = this.tempVec2.set(offset.x, offset.y, 0)
+    this.shadowMesh.position
+      .copy(pos)
+      .add(horizontalOffset)
+      .add(distanceToBall)
+    this.shadowMesh.position.z = -R * 0.99
+
     this.helperMesh.position.copy(pos)
     this.placerMesh.position.copy(pos)
     this.placerMesh.rotation.z = this.t
@@ -147,12 +159,14 @@ export class Cue {
 
   placeBallMode() {
     this.mesh.visible = false
+    this.shadowMesh.visible = false
     this.placerMesh.visible = true
     this.aim.angle = 0
   }
 
   aimMode() {
     this.mesh.visible = true
+    this.shadowMesh.visible = true
     this.placerMesh.visible = false
   }
 
