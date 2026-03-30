@@ -205,3 +205,7 @@ So the best remaining hypothesis is still:
 - shot 2 is then started from that tiny mismatch
 
 This still points more to **missing or slightly wrong shot-boundary state** than to random physics instability.
+
+Result is stable and reproducable in firefox, chrom, mobile and desktop.
+
+Could collision ordering differ during live vs replay?
