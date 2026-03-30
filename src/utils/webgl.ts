@@ -18,6 +18,9 @@ export function renderer(element: HTMLElement) {
   renderer.toneMapping = NoToneMapping
   renderer.setSize(element.offsetWidth, element.offsetHeight)
   renderer.setPixelRatio(window.devicePixelRatio * 0.5)
+  renderer.domElement.draggable = false
+  renderer.domElement.style.userSelect = "none"
+  renderer.domElement.addEventListener("dragstart", (e) => e.preventDefault())
   element.appendChild(renderer.domElement)
   return renderer
 }

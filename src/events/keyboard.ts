@@ -74,6 +74,7 @@ export class Keyboard {
   private addHandlers(element: HTMLCanvasElement) {
     element.addEventListener("keydown", this.keydown)
     element.addEventListener("keyup", this.keyup)
+    element.addEventListener("dragstart", (e) => e.preventDefault())
     element.focus()
 
     interact(element).draggable({

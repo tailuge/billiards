@@ -326,6 +326,7 @@ p {
   height: 83%;
   cursor: none;
   caret-color: transparent;
+  -webkit-user-drag: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
@@ -340,6 +341,7 @@ canvas {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   border-radius: 5px;
+  -webkit-user-drag: none;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
