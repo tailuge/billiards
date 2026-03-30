@@ -6,7 +6,8 @@ export class Session {
     readonly clientId: string,
     readonly tableId: string,
     readonly spectator: boolean,
-    readonly botMode: boolean = false
+    readonly botMode: boolean = false,
+    readonly practiceMode: boolean = false
   ) {}
 
   rematchInfo?: RematchInfo | undefined
@@ -40,6 +41,10 @@ export class Session {
     return Session.getInstance().botMode
   }
 
+  static isPracticeMode(): boolean {
+    return Session.instance?.practiceMode ?? false
+  }
+
   static reset() {
     Session.instance = undefined
   }
@@ -49,14 +54,16 @@ export class Session {
     playername: string,
     tableId: string,
     spectator: boolean,
-    botMode: boolean = false
+    botMode: boolean = false,
+    practiceMode: boolean = false
   ) {
     Session.instance = new Session(
       playername,
       clientId,
       tableId,
       spectator,
-      botMode
+      botMode,
+      practiceMode
     )
     Session.instance.initializeScores()
     if (botMode) {

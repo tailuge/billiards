@@ -102,15 +102,7 @@ export class NineBall implements Rules {
     const cueball = this.container.table.cueball
 
     if (nineBallPotted) {
-      this.respotNineBall()
-      const nineBall = this.container.table.balls[9]
-      if (nineBall) {
-        const respot = RerackEvent.fromJson({
-          balls: [nineBall.serialise()],
-        })
-        console.log("Respot nine ball sending rerack event", respot)
-        this.container.sendEvent(respot)
-      }
+      this.respotAndBroadcastNineBall()
     }
 
     const startPos = cueball.onTable() ? cueball.pos.clone() : this.placeBall()
@@ -133,6 +125,13 @@ export class NineBall implements Rules {
     if (this.isEndOfGame(outcome)) {
       return this.handleGameEnd(true)
     }
+
+    if (Session.isPracticeMode()) {
+      if (Outcome.pots(outcome).includes(table.balls[9])) {
+        this.respotAndBroadcastNineBall()
+      }
+    }
+
     this.container.sendEvent(new WatchEvent(table.serialise()))
     return new Aim(this.container)
   }
@@ -163,10 +162,17 @@ export class NineBall implements Rules {
   }
 
   isEndOfGame(outcome: Outcome[]): boolean {
-    return (
-      !this.isFoul(outcome) &&
-      Outcome.pots(outcome).includes(this.container.table.balls[9])
-    )
+    const nineBall = this.container.table.balls[9]
+    const nineBallPotted = Outcome.pots(outcome).includes(nineBall)
+    if (!nineBallPotted || this.isFoul(outcome)) {
+      return false
+    }
+
+    if (Session.isPracticeMode()) {
+      return !NineBall.hasOtherObjectBalls(this.container.table)
+    }
+
+    return true
   }
 
   otherPlayersCueBall(): Ball {
@@ -205,7 +211,16 @@ export class NineBall implements Rules {
     }
 
     if (firstCollision.ballB !== lowestBall) {
-      return "Wrong ball hit first"
+      if (Session.isPracticeMode()) {
+        if (
+          firstCollision.ballB === table.balls[9] &&
+          NineBall.hasOtherObjectBalls(table)
+        ) {
+          return "Wrong ball hit first"
+        }
+      } else {
+        return "Wrong ball hit first"
+      }
     }
 
     // 3. No cushion after contact
@@ -236,7 +251,21 @@ export class NineBall implements Rules {
     return all[0]
   }
 
-  private respotNineBall() {
+  private static hasOtherObjectBalls(table: Table): boolean {
+    return table.balls.some(
+      (b) => b !== table.cueball && b !== table.balls[9] && b.onTable()
+    )
+  }
+
+  private respotAndBroadcastNineBall() {
     Respot.nineBall(this.container.table)
+    const nineBall = this.container.table.balls[9]
+    if (nineBall) {
+      const respotEvent = RerackEvent.fromJson({
+        balls: [nineBall.serialise()],
+      })
+      console.log("Respot nine ball sending rerack event", respotEvent)
+      this.container.sendEvent(respotEvent)
+    }
   }
 }
