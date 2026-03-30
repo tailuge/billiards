@@ -11,6 +11,9 @@ import { Session } from "../../src/network/client/session"
 import { canvas3d, initDom } from "../view/dom"
 import { Table } from "../../src/model/table"
 import { Rack } from "../../src/utils/rack"
+import { TableGeometry } from "../../src/view/tablegeometry"
+import { Collision } from "../../src/model/physics/collision"
+import { mathavenAdapter } from "../../src/model/physics/physics"
 
 interface BugFixture {
   ruletype: string
@@ -51,13 +54,15 @@ function createContainer(ruletype: string) {
   Session.init("test-client", "TestPlayer", "test-table", false)
 
   const keyboard = { getEvents: () => [] }
-  return new Container({
+  const container = new Container({
     element: canvas3d,
     log: (_) => {},
     assets: Assets.localAssets(ruletype),
     ruletype,
     keyboard: keyboard as any,
   })
+  container.table.cushionModel = mathavenAdapter
+  return container
 }
 
 function distanceBeforeSecondShot(fixture: BugFixture) {
@@ -123,6 +128,7 @@ function distanceBeforeSecondShot(fixture: BugFixture) {
 function directPhysicsDistanceBeforeSecondShot(fixture: BugFixture) {
   Ball.id = 0
   const table = new Table(Rack.diamond())
+  table.cushionModel = mathavenAdapter
   table.updateFromShortSerialised(fixture.init)
 
   const aimShots = fixture.shots.filter((shot) => shot.type === "AIM")
@@ -183,7 +189,10 @@ describe("Break Replay Regression", () => {
       secondRun.deltaToRecordedPrevDistinct
     )
     expect(firstRun.deltaToRecorded).to.be.greaterThan(0)
-    expect(firstRun.deltaToRecorded).to.be.closeTo(0.03903063840011522, 1e-12)
+    expect(firstRun.deltaToRecorded).to.be.closeTo(
+      0.00003583328374224414,
+      1e-12
+    )
     expect(firstRun.deltaToRecordedPrevStep).to.be.greaterThan(0)
     expect(firstRun.deltaToRecordedPrevDistinct).to.be.greaterThan(0)
     expect(firstRun.deltaToRecordedPrevDistinct).to.be.lessThan(
@@ -200,7 +209,10 @@ describe("Break Replay Regression", () => {
     expect(firstRun.state).to.deep.equal(secondRun.state)
     expect(firstRun.cueball.distanceTo(secondRun.cueball)).to.equal(0)
     expect(firstRun.deltaToRecorded).to.equal(secondRun.deltaToRecorded)
-    expect(firstRun.deltaToRecorded).to.be.closeTo(0.03903063840011522, 1e-12)
+    expect(firstRun.deltaToRecorded).to.be.closeTo(
+      0.00003583328374224414,
+      1e-12
+    )
     done()
   })
 })
