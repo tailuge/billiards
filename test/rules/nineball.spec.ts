@@ -32,20 +32,36 @@ function getEndGameOutcome(container: Container): Outcome[] {
   ]
 }
 
+function initNineBall(practiceMode = false): {
+  container: Container
+  nineball: NineBall
+} {
+  Ball.id = 0
+  Session.reset()
+  Session.init(
+    "test-client",
+    "TestPlayer",
+    "test-table",
+    false,
+    false,
+    practiceMode
+  )
+  const container = new Container({
+    element: undefined,
+    log: (_: any) => {},
+    assets: Assets.localAssets(),
+    ruletype: "nineball",
+  })
+  const nineball = container.rules as NineBall
+  return { container, nineball }
+}
+
 describe("NineBall Rules", () => {
   let container: Container
   let nineball: NineBall
 
   beforeEach(() => {
-    Ball.id = 0
-    Session.init("test-client", "TestPlayer", "test-table", false)
-    container = new Container({
-      element: undefined,
-      log: (_: any) => {},
-      assets: Assets.localAssets(),
-      ruletype: "nineball",
-    })
-    nineball = container.rules as NineBall
+    ;({ container, nineball } = initNineBall())
   })
 
   afterEach(() => {
@@ -333,17 +349,7 @@ describe("NineBall Rules", () => {
 
   describe("Practice Mode", () => {
     beforeEach(() => {
-      Ball.id = 0
-      // Re-initialize session with practiceMode = true
-      Session.reset()
-      Session.init("test-client", "TestPlayer", "test-table", false, false, true)
-      container = new Container({
-        element: undefined,
-        log: (_: any) => {},
-        assets: Assets.localAssets(),
-        ruletype: "nineball",
-      })
-      nineball = container.rules as NineBall
+      ;({ container, nineball } = initNineBall(true))
     })
 
     it("should allow hitting any ball 1-8 first", () => {

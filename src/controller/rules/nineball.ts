@@ -102,15 +102,7 @@ export class NineBall implements Rules {
     const cueball = this.container.table.cueball
 
     if (nineBallPotted) {
-      this.respotNineBall()
-      const nineBall = this.container.table.balls[9]
-      if (nineBall) {
-        const respot = RerackEvent.fromJson({
-          balls: [nineBall.serialise()],
-        })
-        console.log("Respot nine ball sending rerack event", respot)
-        this.container.sendEvent(respot)
-      }
+      this.respotAndBroadcastNineBall()
     }
 
     const startPos = cueball.onTable() ? cueball.pos.clone() : this.placeBall()
@@ -135,14 +127,8 @@ export class NineBall implements Rules {
     }
 
     if (Session.isPracticeMode()) {
-      const nineBall = table.balls[9]
-      if (Outcome.pots(outcome).includes(nineBall)) {
-        this.respotNineBall()
-        this.container.sendEvent(
-          RerackEvent.fromJson({
-            balls: [nineBall.serialise()],
-          })
-        )
+      if (Outcome.pots(outcome).includes(table.balls[9])) {
+        this.respotAndBroadcastNineBall()
       }
     }
 
@@ -176,19 +162,14 @@ export class NineBall implements Rules {
   }
 
   isEndOfGame(outcome: Outcome[]): boolean {
-    const nineBallPotted = Outcome.pots(outcome).includes(
-      this.container.table.balls[9]
-    )
+    const nineBall = this.container.table.balls[9]
+    const nineBallPotted = Outcome.pots(outcome).includes(nineBall)
     if (!nineBallPotted || this.isFoul(outcome)) {
       return false
     }
 
     if (Session.isPracticeMode()) {
-      const otherObjectBallsOnTable = this.container.table.balls.some(
-        (b) =>
-          b !== this.cueball && b !== this.container.table.balls[9] && b.onTable()
-      )
-      return !otherObjectBallsOnTable
+      return !NineBall.hasOtherObjectBalls(this.container.table)
     }
 
     return true
@@ -231,10 +212,10 @@ export class NineBall implements Rules {
 
     if (firstCollision.ballB !== lowestBall) {
       if (Session.isPracticeMode()) {
-        const otherObjectBallsOnTable = table.balls.some(
-          (b) => b !== cueball && b !== table.balls[9] && b.onTable()
-        )
-        if (firstCollision.ballB === table.balls[9] && otherObjectBallsOnTable) {
+        if (
+          firstCollision.ballB === table.balls[9] &&
+          NineBall.hasOtherObjectBalls(table)
+        ) {
           return "Wrong ball hit first"
         }
       } else {
@@ -268,6 +249,24 @@ export class NineBall implements Rules {
     const all = [...potted, ...onTable]
     all.sort((a, b) => (a.label || 0) - (b.label || 0))
     return all[0]
+  }
+
+  private static hasOtherObjectBalls(table: Table): boolean {
+    return table.balls.some(
+      (b) => b !== table.cueball && b !== table.balls[9] && b.onTable()
+    )
+  }
+
+  private respotAndBroadcastNineBall() {
+    Respot.nineBall(this.container.table)
+    const nineBall = this.container.table.balls[9]
+    if (nineBall) {
+      const respotEvent = RerackEvent.fromJson({
+        balls: [nineBall.serialise()],
+      })
+      console.log("Respot nine ball sending rerack event", respotEvent)
+      this.container.sendEvent(respotEvent)
+    }
   }
 
   private respotNineBall() {
