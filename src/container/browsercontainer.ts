@@ -55,6 +55,7 @@ export class BrowserContainer {
   assets: Assets
   now
   botMode: boolean = false
+  practiceMode: boolean = false
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
     this.now = Date.now()
@@ -74,6 +75,7 @@ export class BrowserContainer {
     this.spectator = params.has("spectator")
     this.first = params.has("first")
     this.botMode = params.has("bot")
+    this.practiceMode = params.has("practice")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
       Number.parseInt(params.get("raceTo") ?? "2") || 2
@@ -85,7 +87,8 @@ export class BrowserContainer {
       this.playername,
       this.tableId,
       this.spectator,
-      this.botMode
+      this.botMode,
+      this.practiceMode
     )
     Session.getInstance().rematchInfo = Rematch.fromURL(params)
     console.log(Session.getInstance())

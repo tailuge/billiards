@@ -133,6 +133,19 @@ export class NineBall implements Rules {
     if (this.isEndOfGame(outcome)) {
       return this.handleGameEnd(true)
     }
+
+    if (Session.isPracticeMode()) {
+      const nineBall = table.balls[9]
+      if (Outcome.pots(outcome).includes(nineBall)) {
+        this.respotNineBall()
+        this.container.sendEvent(
+          RerackEvent.fromJson({
+            balls: [nineBall.serialise()],
+          })
+        )
+      }
+    }
+
     this.container.sendEvent(new WatchEvent(table.serialise()))
     return new Aim(this.container)
   }
@@ -163,10 +176,22 @@ export class NineBall implements Rules {
   }
 
   isEndOfGame(outcome: Outcome[]): boolean {
-    return (
-      !this.isFoul(outcome) &&
-      Outcome.pots(outcome).includes(this.container.table.balls[9])
+    const nineBallPotted = Outcome.pots(outcome).includes(
+      this.container.table.balls[9]
     )
+    if (!nineBallPotted || this.isFoul(outcome)) {
+      return false
+    }
+
+    if (Session.isPracticeMode()) {
+      const otherObjectBallsOnTable = this.container.table.balls.some(
+        (b) =>
+          b !== this.cueball && b !== this.container.table.balls[9] && b.onTable()
+      )
+      return !otherObjectBallsOnTable
+    }
+
+    return true
   }
 
   otherPlayersCueBall(): Ball {
@@ -205,7 +230,16 @@ export class NineBall implements Rules {
     }
 
     if (firstCollision.ballB !== lowestBall) {
-      return "Wrong ball hit first"
+      if (Session.isPracticeMode()) {
+        const otherObjectBallsOnTable = table.balls.some(
+          (b) => b !== cueball && b !== table.balls[9] && b.onTable()
+        )
+        if (firstCollision.ballB === table.balls[9] && otherObjectBallsOnTable) {
+          return "Wrong ball hit first"
+        }
+      } else {
+        return "Wrong ball hit first"
+      }
     }
 
     // 3. No cushion after contact
