@@ -9,6 +9,8 @@ import { Assets } from "../../src/view/assets"
 import { Ball } from "../../src/model/ball"
 import { Session } from "../../src/network/client/session"
 import { canvas3d, initDom } from "../view/dom"
+import { Table } from "../../src/model/table"
+import { Rack } from "../../src/utils/rack"
 
 interface BugFixture {
   ruletype: string
@@ -73,8 +75,14 @@ function distanceBeforeSecondShot(fixture: BugFixture) {
 
   const maxIterations = 200000
   let iterations = 0
+  const cueballHistory = [container.table.cueball.pos.clone()]
+  let previousCueball = container.table.cueball.pos.clone()
+  let previousState = container.table.shortSerialise()
   while (!container.table.allStationary() && iterations < maxIterations) {
+    previousCueball.copy(container.table.cueball.pos)
+    previousState = container.table.shortSerialise()
     container.advance(container.step)
+    cueballHistory.push(container.table.cueball.pos.clone())
     iterations++
   }
 
@@ -83,16 +91,64 @@ function distanceBeforeSecondShot(fixture: BugFixture) {
   }
 
   const deltaToRecorded = container.table.cueball.pos.distanceTo(secondAim.pos)
+  const deltaToRecordedPrevStep = previousCueball.distanceTo(secondAim.pos)
   const cueball = container.table.cueball.pos.clone()
+  let previousDistinctCueball = cueballHistory[0]
+  for (let i = cueballHistory.length - 2; i >= 0; i--) {
+    if (cueballHistory[i].distanceTo(cueball) > 0) {
+      previousDistinctCueball = cueballHistory[i]
+      break
+    }
+  }
+  const deltaToRecordedPrevDistinct = previousDistinctCueball.distanceTo(
+    secondAim.pos
+  )
   const onTable = container.table.balls.filter((ball) => ball.onTable()).length
   const state = container.table.shortSerialise()
 
   return {
     deltaToRecorded,
+    deltaToRecordedPrevStep,
+    deltaToRecordedPrevDistinct,
     cueball,
+    previousCueball,
+    previousDistinctCueball,
     onTable,
     iterations,
     state,
+    previousState,
+  }
+}
+
+function directPhysicsDistanceBeforeSecondShot(fixture: BugFixture) {
+  Ball.id = 0
+  const table = new Table(Rack.diamond())
+  table.updateFromShortSerialised(fixture.init)
+
+  const aimShots = fixture.shots.filter((shot) => shot.type === "AIM")
+  const firstAim = AimEvent.fromJson(aimShots[0])
+  const secondAim = AimEvent.fromJson(aimShots[1])
+
+  table.cue.aim = firstAim
+  table.cueball = table.balls[firstAim.i]
+  table.hit()
+
+  const maxIterations = 200000
+  let iterations = 0
+  while (!table.allStationary() && iterations < maxIterations) {
+    table.advance(0.001953125)
+    iterations++
+  }
+
+  if (!table.allStationary()) {
+    throw new Error(`Direct physics break did not settle after ${maxIterations} steps`)
+  }
+
+  return {
+    deltaToRecorded: table.cueball.pos.distanceTo(secondAim.pos),
+    cueball: table.cueball.pos.clone(),
+    iterations,
+    state: table.shortSerialise(),
   }
 }
 
@@ -111,9 +167,39 @@ describe("Break Replay Regression", () => {
     expect(firstRun.onTable).to.equal(9)
     expect(firstRun.iterations).to.be.greaterThan(0)
     expect(firstRun.state).to.deep.equal(secondRun.state)
+    expect(firstRun.previousState).to.deep.equal(secondRun.previousState)
+    expect(firstRun.cueball.distanceTo(secondRun.cueball)).to.equal(0)
+    expect(firstRun.previousCueball.distanceTo(secondRun.previousCueball)).to.equal(
+      0
+    )
+    expect(
+      firstRun.previousDistinctCueball.distanceTo(secondRun.previousDistinctCueball)
+    ).to.equal(0)
+    expect(firstRun.deltaToRecorded).to.equal(secondRun.deltaToRecorded)
+    expect(firstRun.deltaToRecordedPrevStep).to.equal(
+      secondRun.deltaToRecordedPrevStep
+    )
+    expect(firstRun.deltaToRecordedPrevDistinct).to.equal(
+      secondRun.deltaToRecordedPrevDistinct
+    )
+    expect(firstRun.deltaToRecorded).to.be.greaterThan(0)
+    expect(firstRun.deltaToRecorded).to.be.closeTo(0.03903063840011522, 1e-12)
+    expect(firstRun.deltaToRecordedPrevStep).to.be.greaterThan(0)
+    expect(firstRun.deltaToRecordedPrevDistinct).to.be.greaterThan(0)
+    expect(firstRun.deltaToRecordedPrevDistinct).to.be.lessThan(
+      firstRun.deltaToRecorded
+    )
+    done()
+  })
+
+  it("reproduces the direct inner-loop mismatch without replay/controller flow", (done) => {
+    const firstRun = directPhysicsDistanceBeforeSecondShot(fixture)
+    const secondRun = directPhysicsDistanceBeforeSecondShot(fixture)
+
+    expect(firstRun.iterations).to.be.greaterThan(0)
+    expect(firstRun.state).to.deep.equal(secondRun.state)
     expect(firstRun.cueball.distanceTo(secondRun.cueball)).to.equal(0)
     expect(firstRun.deltaToRecorded).to.equal(secondRun.deltaToRecorded)
-    expect(firstRun.deltaToRecorded).to.be.greaterThan(0)
     expect(firstRun.deltaToRecorded).to.be.closeTo(0.03903063840011522, 1e-12)
     done()
   })
