@@ -141,10 +141,7 @@ export class Cue {
     this.mesh.position.copy(pos).add(offset).add(distanceToBall)
 
     const horizontalOffset = this.tempVec2.set(offset.x, offset.y, 0)
-    this.shadowMesh.position
-      .copy(pos)
-      .add(horizontalOffset)
-      .add(distanceToBall)
+    this.shadowMesh.position.copy(pos).add(horizontalOffset).add(distanceToBall)
     this.shadowMesh.position.z = -R * 0.99
 
     this.helperMesh.position.copy(pos)

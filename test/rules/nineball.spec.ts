@@ -1,5 +1,4 @@
 import { expect } from "chai"
-import { Vector3 } from "three"
 import { Container } from "../../src/container/container"
 import { Ball, State } from "../../src/model/ball"
 import { Outcome } from "../../src/model/outcome"
@@ -255,7 +254,9 @@ describe("NineBall Rules", () => {
     const outcome = getEndGameOutcome(container)
     nineball.update(outcome)
     expect(notifySpy.mock.calls[0][0].type).to.equal("GameOver")
-    expect(notifySpy.mock.calls[0][0].extra).to.contain('data-notification-action="rematch"')
+    expect(notifySpy.mock.calls[0][0].extra).to.contain(
+      'data-notification-action="rematch"'
+    )
   })
 
   it("NineBall.handleFoul should record respot in single-player", () => {
@@ -296,7 +297,9 @@ describe("NineBall Rules", () => {
       const nineBall = container.table.balls.find((b) => b.label === 9)!
       const outcome = [Outcome.collision(container.table.cueball, nineBall, 1)]
       expect(nineball.update(outcome)).to.be.an.instanceof(PlaceBall)
-      expect(NineBall.foulReason(container.table, outcome)).to.equal("Wrong ball hit first")
+      expect(NineBall.foulReason(container.table, outcome)).to.equal(
+        "Wrong ball hit first"
+      )
     })
 
     it("should respot 9-ball if potted early on a legal shot", () => {

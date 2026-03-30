@@ -1,187 +1,184 @@
-import { Color, Vector3 } from "three";
-import { Container } from "../container/container";
-import { Input } from "../events/input";
-import { Session } from "../network/client/session";
-import { Overlap } from "../utils/overlap";
-import { unitAtAngle } from "../utils/three-utils";
-import { id } from "../utils/dom";
-import { TimeoutButton } from "./timeoutbutton";
+import { Color, Vector3 } from "three"
+import { Container } from "../container/container"
+import { Input } from "../events/input"
+import { Session } from "../network/client/session"
+import { Overlap } from "../utils/overlap"
+import { unitAtAngle } from "../utils/three-utils"
+import { id } from "../utils/dom"
+import { TimeoutButton } from "./timeoutbutton"
 
 export class AimInputs {
-  readonly cueBallElement;
-  readonly cueTipElement;
-  readonly cuePowerElement;
+  readonly cueBallElement
+  readonly cueTipElement
+  readonly cuePowerElement
   /** Shared button for both "Hit" and "Place Ball" actions. */
-  readonly cueHitElement;
-  readonly objectBallStyle: CSSStyleDeclaration | undefined;
-  readonly container: Container;
-  readonly overlap: Overlap;
+  readonly cueHitElement
+  readonly objectBallStyle: CSSStyleDeclaration | undefined
+  readonly container: Container
+  readonly overlap: Overlap
 
-  ballWidth;
-  ballHeight;
-  tipRadius;
-  private controlsDisabled = true;
-  private readonly timeoutButton: TimeoutButton | undefined;
+  ballWidth
+  ballHeight
+  tipRadius
+  private controlsDisabled = true
+  private readonly timeoutButton: TimeoutButton | undefined
 
   constructor(container) {
-    this.container = container;
-    this.cueBallElement = id("cueBall");
-    this.cueTipElement = id("cueTip");
-    this.cuePowerElement = id("cuePower");
-    this.cueHitElement = id("cueHit") as HTMLButtonElement;
+    this.container = container
+    this.cueBallElement = id("cueBall")
+    this.cueTipElement = id("cueTip")
+    this.cuePowerElement = id("cuePower")
+    this.cueHitElement = id("cueHit") as HTMLButtonElement
     if (this.cueHitElement) {
       this.timeoutButton = new TimeoutButton(this.cueHitElement, {
         duration: 20000,
         onComplete: () => {
-          this.cueHitElement?.click();
+          this.cueHitElement?.click()
         },
-      });
+      })
     }
-    this.objectBallStyle = id("objectBall")?.style;
-    this.overlap = new Overlap(this.container.table.balls);
-    this.addListeners();
+    this.objectBallStyle = id("objectBall")?.style
+    this.overlap = new Overlap(this.container.table.balls)
+    this.addListeners()
     if (Session.isSpectator()) {
-      this.setDisabled(true);
+      this.setDisabled(true)
     }
   }
 
   addListeners() {
-    this.cueBallElement?.addEventListener("pointermove", this.mousemove);
+    this.cueBallElement?.addEventListener("pointermove", this.mousemove)
     this.cueBallElement?.addEventListener("click", (e) => {
-      this.adjustSpin(e);
-    });
-    this.cueHitElement?.addEventListener("click", this.hit);
-    this.cuePowerElement?.addEventListener("change", this.powerChanged);
+      this.adjustSpin(e)
+    })
+    this.cueHitElement?.addEventListener("click", this.hit)
+    this.cuePowerElement?.addEventListener("change", this.powerChanged)
     if (!("ontouchstart" in globalThis)) {
-      id("viewP1")?.addEventListener("dblclick", this.hit);
+      id("viewP1")?.addEventListener("dblclick", this.hit)
     }
-    document.addEventListener("wheel", this.mousewheel);
+    document.addEventListener("wheel", this.mousewheel)
   }
 
   setButtonText(text) {
-    this.cueHitElement && (this.cueHitElement.innerText = text);
+    this.cueHitElement && (this.cueHitElement.innerText = text)
   }
 
   setDisabled(disabled: boolean) {
-    this.controlsDisabled = disabled || Session.isSpectator();
+    this.controlsDisabled = disabled || Session.isSpectator()
     if (this.cueHitElement) {
-      this.cueHitElement.disabled = this.controlsDisabled;
+      this.cueHitElement.disabled = this.controlsDisabled
       if (this.controlsDisabled) {
-        this.timeoutButton?.cancel();
+        this.timeoutButton?.cancel()
       } else {
         const useShotClock =
-          !this.container.isSinglePlayer || Session.isBotMode();
+          !this.container.isSinglePlayer || Session.isBotMode()
         if (useShotClock) {
-          this.timeoutButton?.startTimer();
+          this.timeoutButton?.startTimer()
         }
       }
     }
     if (this.cuePowerElement) {
-      this.cuePowerElement.disabled = this.controlsDisabled;
+      this.cuePowerElement.disabled = this.controlsDisabled
       this.cuePowerElement.classList.toggle(
         "is-disabled",
-        this.controlsDisabled,
-      );
+        this.controlsDisabled
+      )
     }
     if (this.cueBallElement) {
       this.cueBallElement.style.pointerEvents = this.controlsDisabled
         ? "none"
-        : "auto";
-      this.cueBallElement.classList.toggle(
-        "is-disabled",
-        this.controlsDisabled,
-      );
+        : "auto"
+      this.cueBallElement.classList.toggle("is-disabled", this.controlsDisabled)
     }
   }
 
   isDisabled(): boolean {
-    return this.controlsDisabled;
+    return this.controlsDisabled
   }
 
   mousemove = (e) => {
-    e.buttons === 1 && this.adjustSpin(e);
-  };
+    e.buttons === 1 && this.adjustSpin(e)
+  }
 
   readDimensions() {
-    this.ballWidth = this.cueBallElement?.offsetWidth;
-    this.ballHeight = this.cueBallElement?.offsetHeight;
-    this.tipRadius = this.cueTipElement?.offsetWidth / 2;
+    this.ballWidth = this.cueBallElement?.offsetWidth
+    this.ballHeight = this.cueBallElement?.offsetHeight
+    this.tipRadius = this.cueTipElement?.offsetWidth / 2
   }
 
   adjustSpin(e) {
     if (this.controlsDisabled) {
-      return;
+      return
     }
-    this.readDimensions();
+    this.readDimensions()
     this.container.table.cue.setSpin(
       new Vector3(
         -(e.offsetX - this.ballWidth / 2) / this.ballWidth,
-        -(e.offsetY - this.ballHeight / 2) / this.ballHeight,
+        -(e.offsetY - this.ballHeight / 2) / this.ballHeight
       ),
-      this.container.table,
-    );
-    this.container.lastEventTime = performance.now();
+      this.container.table
+    )
+    this.container.lastEventTime = performance.now()
   }
 
   updateVisualState(x: number, y: number) {
-    this.readDimensions();
-    const elt = this.cueTipElement?.style;
+    this.readDimensions()
+    const elt = this.cueTipElement?.style
     if (elt) {
-      elt.left = (-x + 0.5) * this.ballWidth - this.tipRadius + "px";
-      elt.top = (-y + 0.5) * this.ballHeight - this.tipRadius + "px";
+      elt.left = (-x + 0.5) * this.ballWidth - this.tipRadius + "px"
+      elt.top = (-y + 0.5) * this.ballHeight - this.tipRadius + "px"
     }
-    this.showOverlap();
+    this.showOverlap()
   }
 
   showOverlap() {
     if (this.objectBallStyle) {
-      const table = this.container.table;
-      const dir = unitAtAngle(table.cue.aim.angle);
-      const closest = this.overlap.getOverlapOffset(table.cueball, dir);
+      const table = this.container.table
+      const dir = unitAtAngle(table.cue.aim.angle)
+      const closest = this.overlap.getOverlapOffset(table.cueball, dir)
       if (closest) {
-        this.readDimensions();
-        this.objectBallStyle.visibility = "visible";
+        this.readDimensions()
+        this.objectBallStyle.visibility = "visible"
         this.objectBallStyle.left =
-          (closest.overlap * this.ballWidth) / 2 + "px";
+          (closest.overlap * this.ballWidth) / 2 + "px"
         this.objectBallStyle.backgroundColor = new Color(0, 0, 0)
           .lerp(closest.ball.ballmesh.color, 0.5)
-          .getStyle();
+          .getStyle()
       } else {
-        this.objectBallStyle.visibility = "hidden";
+        this.objectBallStyle.visibility = "hidden"
       }
     }
   }
 
   powerChanged = (_) => {
     if (this.controlsDisabled) {
-      return;
+      return
     }
-    this.container.table.cue.setPower(Number(this.cuePowerElement.value));
-  };
+    this.container.table.cue.setPower(Number(this.cuePowerElement.value))
+  }
 
   updatePowerSlider(power) {
     power > 0 &&
       this.cuePowerElement?.value &&
-      (this.cuePowerElement.value = power);
+      (this.cuePowerElement.value = power)
   }
 
   hit = (_) => {
     if (this.controlsDisabled) {
-      return;
+      return
     }
-    this.container.table.cue.setPower(Number(this.cuePowerElement?.value));
-    this.container.inputQueue.push(new Input(0, "SpaceUp"));
-  };
+    this.container.table.cue.setPower(Number(this.cuePowerElement?.value))
+    this.container.inputQueue.push(new Input(0, "SpaceUp"))
+  }
 
   mousewheel = (e) => {
     if (this.controlsDisabled) {
-      return;
+      return
     }
     if (this.cuePowerElement) {
       this.cuePowerElement.value =
-        Number(this.cuePowerElement.value) - Math.sign(e.deltaY) / 10;
-      this.container.table.cue.setPower(Number(this.cuePowerElement.value));
-      this.container.lastEventTime = performance.now();
+        Number(this.cuePowerElement.value) - Math.sign(e.deltaY) / 10
+      this.container.table.cue.setPower(Number(this.cuePowerElement.value))
+      this.container.lastEventTime = performance.now()
     }
-  };
+  }
 }

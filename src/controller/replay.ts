@@ -29,6 +29,7 @@ export class Replay extends ControllerBase {
   constructor(container, init, shots, retry = false, delay = 1500) {
     super(container)
     this.init = init
+    console.log(`init: ${JSON.stringify(init)}`)
     this.shots = [...shots]
     this.firstShot = this.shots[0]
     this.delay = delay

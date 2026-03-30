@@ -1,4 +1,4 @@
-import { WebGLRenderer, SRGBColorSpace,NoToneMapping } from "three"
+import { WebGLRenderer, SRGBColorSpace, NoToneMapping } from "three"
 
 export function renderer(element: HTMLElement) {
   if (typeof process !== "undefined") {
@@ -9,7 +9,7 @@ export function renderer(element: HTMLElement) {
     antialias: false,
     depth: true,
     powerPreference: "high-performance",
-    stencil: false
+    stencil: false,
   })
 
   renderer.shadowMap.enabled = false
