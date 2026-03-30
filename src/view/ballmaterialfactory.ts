@@ -21,6 +21,8 @@ export class BallMaterialFactory {
       forceSinglePass: true,
       shininess: 25,
       specular: 0x555533,
+      transparent: false,
+      depthWrite: true,
     })
     this.materialCache.set(key, material)
     return material
@@ -41,13 +43,18 @@ export class BallMaterialFactory {
       color,
       size
     )
-    numberTexture.magFilter = 1003 // THREE.NearestFilter
-    numberTexture.minFilter = 1003 // THREE.NearestFilter
+    /*
+     * for hard textures
+     *    numberTexture.magFilter = THREE.NearestFilter
+     *    numberTexture.minFilter = THREE.NearestFilter
+     */
     const material = new MeshStandardMaterial({
       color: color,
       roughness: 0.5,
       metalness: 0,
       flatShading: true,
+      transparent: false,
+      depthWrite: true,
     })
 
     material.onBeforeCompile = (shader: any) => {
