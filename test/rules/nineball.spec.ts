@@ -48,6 +48,10 @@ describe("NineBall Rules", () => {
     nineball = container.rules as NineBall
   })
 
+  afterEach(() => {
+    Session.reset()
+  })
+
   it("should be nineball", () => {
     expect(nineball.rulename).to.equal("nineball")
     expect(container.table.balls).to.have.length(10) // Cue ball + 9 balls
@@ -325,5 +329,77 @@ describe("NineBall Rules", () => {
     nineball.secondToPlay() // Should not throw
     expect(nineball.allowsPlaceBall()).to.be.true
     expect(nineball.isPartOfBreak([])).to.be.false
+  })
+
+  describe("Practice Mode", () => {
+    beforeEach(() => {
+      Ball.id = 0
+      // Re-initialize session with practiceMode = true
+      Session.reset()
+      Session.init("test-client", "TestPlayer", "test-table", false, false, true)
+      container = new Container({
+        element: undefined,
+        log: (_: any) => {},
+        assets: Assets.localAssets(),
+        ruletype: "nineball",
+      })
+      nineball = container.rules as NineBall
+    })
+
+    it("should allow hitting any ball 1-8 first", () => {
+      const ball2 = container.table.balls.find((b) => b.label === 2)!
+      const outcome = [
+        Outcome.collision(container.table.cueball, ball2, 1),
+        Outcome.cushion(ball2, 1),
+      ]
+      const nextController = nineball.update(outcome)
+      // Legal in practice mode (Aim), whereas standard mode would return PlaceBall
+      expect(nextController).to.be.an.instanceof(Aim)
+    })
+
+    it("should still foul if 9-ball hit first while other balls remain", () => {
+      const nineBall = container.table.balls.find((b) => b.label === 9)!
+      const outcome = [Outcome.collision(container.table.cueball, nineBall, 1)]
+      const nextController = nineball.update(outcome)
+      expect(nextController).to.be.an.instanceof(PlaceBall)
+      const reason = NineBall.foulReason(container.table, outcome)
+      expect(reason).to.equal("Wrong ball hit first")
+    })
+
+    it("should not end game if 9-ball is potted early", () => {
+      const ball1 = container.table.balls.find((b) => b.label === 1)!
+      const nineBall = container.table.balls.find((b) => b.label === 9)!
+      const outcome = [
+        Outcome.collision(container.table.cueball, ball1, 1),
+        Outcome.pot(nineBall, 1),
+      ]
+      expect(nineball.isEndOfGame(outcome)).to.be.false
+    })
+
+    it("should respot 9-ball if potted early on a legal shot", () => {
+      const ball1 = container.table.balls.find((b) => b.label === 1)!
+      const nineBall = container.table.balls.find((b) => b.label === 9)!
+      const outcome = [
+        Outcome.collision(container.table.cueball, ball1, 1),
+        Outcome.pot(nineBall, 1),
+      ]
+
+      const sentEvents: any[] = []
+      container.broadcast = (event) => {
+        sentEvents.push(event)
+      }
+
+      const nextController = nineball.update(outcome)
+      expect(nextController).to.be.an.instanceof(Aim)
+      expect(nineBall.state).to.equal(State.Stationary)
+      const rerackEvents = sentEvents.filter((e) => e instanceof RerackEvent)
+      expect(rerackEvents).to.have.length(1)
+    })
+
+    it("should end game if 9-ball is potted last", () => {
+      setupEndGameTable(container)
+      const outcome = getEndGameOutcome(container)
+      expect(nineball.isEndOfGame(outcome)).to.be.true
+    })
   })
 })
