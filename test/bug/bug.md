@@ -100,3 +100,9 @@ The key question is now:
 > At the moment a shot is actually hit in live play, does the live cueball position exactly match the recorded `tablejson.aim.pos`?
 
 If the new tripwire fires on real traffic, that will be the strongest evidence yet that replay is recording a slightly stale shot-start position.
+
+
+## Next steps
+
+Does live logging show up?Fix recorder to use correct object to record.
+Could we fuzz placeball,aim and hit inputs to get a tripwire to happen.
