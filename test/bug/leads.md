@@ -1,4 +1,4 @@
-# Investigation Leads for Nineball Break Replay Discrepancy
+# Investigation Leads for Nineball Break Replay Discrepancy [outdated]
 
 ## Summary
 A discrepancy was observed where a recorded nineball game replay diverged from the live game starting from the break-off shot. Specifically, the cueball position at the start of the second shot in the replay differs from its recorded position.
