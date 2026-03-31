@@ -30,7 +30,7 @@ describe("LobbyIndicator", () => {
   })
 
   it("updates text content on init", async () => {
-    const element = document.getElementById("lobby")
+    const element = document.getElementById("lobbyOverlay")
     if (element) {
       element.textContent = "👥"
     }
@@ -43,7 +43,7 @@ describe("LobbyIndicator", () => {
   })
 
   it("updates display when challenged", async () => {
-    const element = document.getElementById("lobby")
+    const element = document.getElementById("lobbyOverlay")
     const mockRules = { rulename: "nineball" } as any
     const indicator = new LobbyIndicator(false, false, mockRules)
     await indicator.init()
@@ -88,13 +88,13 @@ describe("LobbyIndicator", () => {
   it("handles non-anchor elements and click events", async () => {
     // Create a div instead of a link
     const div = document.createElement("div")
-    div.id = "lobby-div"
+    div.id = "lobbyOverlay-div"
     document.body.appendChild(div)
 
     // Mock id() to return our div
     const originalGetElementById = document.getElementById
     document.getElementById = (id: string) =>
-      id === "lobby" ? div : originalGetElementById.call(document, id)
+      id === "lobbyOverlay" ? div : originalGetElementById.call(document, id)
 
     const mockRules = { rulename: "nineball" } as any
     const indicator = new LobbyIndicator(false, false, mockRules)

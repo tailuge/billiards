@@ -687,6 +687,21 @@ label {
   background: #777;
 }
 
+/* Lobby Overlay */
+#lobbyOverlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+}
+
+#lobbyOverlay .challenge-pill {
+  margin-left: 6px;
+}
+
 .challenge-icon {
   text-shadow:
     0 0 8px #ff0000,

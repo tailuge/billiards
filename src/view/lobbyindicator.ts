@@ -26,7 +26,7 @@ export class LobbyIndicator {
     } else {
       this.ruleType = this.rules.rulename
     }
-    this.element = id("lobby")
+    this.element = id("lobbyOverlay")
     this.setupElement()
   }
 
