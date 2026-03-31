@@ -81,7 +81,7 @@ describe("LobbyIndicator", () => {
     })
     expect(element?.textContent).to.not.contain("⚔️")
     expect(element?.getAttribute("href")).to.equal(
-      "https://scoreboard-tailuge.vercel.app/game"
+      "https://scoreboard-tailuge.vercel.app/game?userName=TestPlayer&userId=test-client"
     )
   })
 
@@ -108,7 +108,9 @@ describe("LobbyIndicator", () => {
     }) as any
 
     div.click()
-    expect(openedUrl).to.equal("https://scoreboard-tailuge.vercel.app/game")
+    expect(openedUrl).to.equal(
+      "https://scoreboard-tailuge.vercel.app/game?userName=TestPlayer&userId=test-client"
+    )
 
     await indicator.stop()
     div.remove()

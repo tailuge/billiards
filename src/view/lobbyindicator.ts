@@ -2,6 +2,7 @@ import { MessagingClient, Lobby } from "@tailuge/messaging"
 import { Session } from "../network/client/session"
 import { Rules } from "../controller/rules/rules"
 import { id } from "../utils/dom"
+import { LOBBY_URL } from "../utils/gameover"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
@@ -11,8 +12,6 @@ export class LobbyIndicator {
   private challenger: { userId: string; userName: string } | null = null
   private readonly rules: Rules
   private readonly ruleType: string
-  private static readonly LOBBY_URL =
-    "https://scoreboard-tailuge.vercel.app/game"
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
   private currentTableId: string | null = null
 
@@ -143,19 +142,19 @@ export class LobbyIndicator {
   }
 
   private getLobbyUrl(): string {
+    const url = new URL(LOBBY_URL)
+    const session = Session.getInstance()
+    url.searchParams.set("userName", session.playername)
+    url.searchParams.set("userId", session.clientId)
+
     if (!this.challenger) {
-      return LobbyIndicator.LOBBY_URL
+      return url.toString()
     }
 
-    const url = new URL(LobbyIndicator.LOBBY_URL)
     url.searchParams.set("action", "join")
     url.searchParams.set("ruletype", this.ruleType)
     url.searchParams.set("opponentId", this.challenger.userId)
     url.searchParams.set("opponentName", this.challenger.userName)
-
-    const session = Session.getInstance()
-    url.searchParams.set("userName", session.playername)
-    url.searchParams.set("userId", session.clientId)
 
     return url.toString()
   }

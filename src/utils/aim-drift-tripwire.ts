@@ -13,8 +13,7 @@ type AimLike = {
 
 type ExtraFields = Record<string, unknown>
 
-const TRIPWIRE_THRESHOLD = 1e-6
-const BREAK_POWER_THRESHOLD = 4.5
+const TRIPWIRE_THRESHOLD = 1e-9
 
 export function warnAimDriftTripwire(
   label: string,
@@ -30,7 +29,7 @@ export function warnAimDriftTripwire(
   const dy = cueballPos.y - aim.pos.y
   const d = Math.hypot(dx, dy)
 
-  if (d <= TRIPWIRE_THRESHOLD || aim.power <= BREAK_POWER_THRESHOLD) {
+  if (d <= TRIPWIRE_THRESHOLD) {
     return
   }
 
