@@ -7,6 +7,7 @@ import { LinkFormatter } from "../view/link-formatter"
 import { ReplayEncoder } from "../utils/replay-encoder"
 import { Session } from "../network/client/session"
 import { RecordEntry } from "./recordentry"
+import { warnAimDriftTripwire } from "../utils/aim-drift-tripwire"
 
 export class Recorder {
   container: Container
@@ -32,7 +33,19 @@ export class Recorder {
   record(event: GameEvent) {
     let recordedEvent = event
     if (event.type === EventType.HIT) {
-      recordedEvent = (event as HitEvent).tablejson.aim
+      const recordedAim = (event as HitEvent).tablejson.aim
+      recordedEvent = recordedAim
+      warnAimDriftTripwire(
+        "tripwire: recorder_hit_aim_mismatch",
+        recordedAim,
+        {
+          x: this.container.table.cueball.pos.x,
+          y: this.container.table.cueball.pos.y,
+        },
+        {
+          recordedAt: "Recorder.record",
+        }
+      )
     }
 
     if (

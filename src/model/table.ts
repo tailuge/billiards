@@ -9,6 +9,7 @@ import { TableGeometry } from "../view/tablegeometry"
 import { Outcome } from "./outcome"
 import { PocketGeometry } from "../view/pocketgeometry"
 import { bounceHanBlend } from "./physics/physics"
+import { warnAimDriftTripwire } from "../utils/aim-drift-tripwire"
 import { zero } from "../utils/three-utils"
 import { R } from "./physics/constants"
 
@@ -154,6 +155,11 @@ export class Table {
   }
 
   serialiseHit() {
+    warnAimDriftTripwire("tripwire: serialise_hit_aim_mismatch", this.cue.aim, {
+      x: this.cueball.pos.x,
+      y: this.cueball.pos.y,
+    })
+
     return {
       balls: [this.balls[0].serialise()],
       aim: this.cue.aim.copy(),

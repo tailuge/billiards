@@ -44,7 +44,7 @@
     "@types/jest": "30.0.0",
     "@types/node": "25.5.0",
     "@types/three": "0.183.1",
-    "canvas": "3.2.2",
+    "canvas": "3.2.3",
     "chai": "6.2.2",
     "concurrently": "^9.2.1",
     "eslint": "10.1.0",
