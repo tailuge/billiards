@@ -33,7 +33,7 @@ export function warnAimDriftTripwire(
     return
   }
 
-  console.warn(label, {
+  console.warn(label, JSON.stringify({
     dx,
     dy,
     d,
@@ -48,5 +48,5 @@ export function warnAimDriftTripwire(
       y: cueballPos.y,
     },
     ...extra,
-  })
+  }, null, 2))
 }
