@@ -142,6 +142,7 @@ p {
   z-index: 10;
   transition: all 0.2s ease;
   padding-bottom: 2px;
+  visibility: hidden;
 }
 
 .notification-close:hover {
