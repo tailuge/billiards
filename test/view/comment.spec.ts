@@ -8,6 +8,7 @@ import { Assets } from "../../src/view/assets"
 initDom()
 
 let container: Container
+let comment: Comment
 
 function addMenu() {
   const menu = document.createElement("div")
@@ -36,31 +37,28 @@ beforeEach(function (done) {
     log: (_) => {},
     assets: Assets.localAssets(),
   })
-  new Comment(container)
+  comment = new Comment(container)
   done()
 })
 
 describe("Comment", () => {
   it("clicking comment button shows menu", (done) => {
     const commentBtn = document.getElementById("comment") as HTMLButtonElement
-    const menu = document.getElementById("commentMenu") as HTMLDivElement
 
-    expect(menu.style.display).to.equal("none")
+    expect(comment.menu.style.display).to.equal("none")
     fireEvent.click(commentBtn)
-    expect(menu.style.display).to.equal("grid")
+    expect(comment.menu.style.display).to.equal("grid")
     done()
   })
 
   it("clicking an emoji sends a chat event with that emoji", (done) => {
-    const menu = document.getElementById("commentMenu") as HTMLDivElement
-
-    const emojiBtns = menu.querySelectorAll(".comment-emoji")
+    const emojiBtns = comment.menu.querySelectorAll(".comment-emoji")
     expect(emojiBtns.length).to.equal(9)
 
     const firstEmoji = emojiBtns[0] as HTMLButtonElement
     fireEvent.click(firstEmoji)
 
-    expect(menu.style.display).to.equal("none")
+    expect(comment.menu.style.display).to.equal("none")
     done()
   })
 })

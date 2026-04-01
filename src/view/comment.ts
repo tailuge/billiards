@@ -21,7 +21,7 @@ export class Comment {
       const emojiButtons = this.menu.querySelectorAll(".comment-emoji")
       emojiButtons.forEach((btn) => {
         btn.addEventListener("click", (_) => {
-          this.container.sendChat(btn.textContent!)
+          this.container.sendChat(btn.textContent)
           this.hideMenu()
         })
       })
@@ -40,7 +40,7 @@ export class Comment {
           const emojiButtons = this.menu.querySelectorAll(".comment-emoji")
           emojiButtons.forEach((btn) => {
             btn.addEventListener("click", (_) => {
-              this.container.sendChat(btn.textContent!)
+              this.container.sendChat(btn.textContent)
               this.hideMenu()
             })
           })

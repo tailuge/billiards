@@ -104,9 +104,9 @@ export class Recorder {
             lastAimEventSequence: this.container.lastAimEventSequence,
             lastAimEventOrigin: this.container.lastAimEventOrigin,
             timeSinceLastAimMs:
-              this.container.lastAimEventTime !== undefined
-                ? performance.now() - this.container.lastAimEventTime
-                : undefined,
+              this.container.lastAimEventTime === undefined
+                ? undefined
+                : performance.now() - this.container.lastAimEventTime,
             serialisedCueball: serialisedCueball
               ? {
                   x: serialisedCueball.x,
