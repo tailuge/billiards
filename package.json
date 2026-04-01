@@ -56,7 +56,7 @@
     "node-notifier": "^10.0.1",
     "prettier": "3.8.1",
     "swc-loader": "0.2.7",
-    "ts-jest": "29.4.6",
+    "ts-jest": "29.4.9",
     "typescript": "6.0.2",
     "typescript-eslint": "8.58.0",
     "webpack": "5.105.4",

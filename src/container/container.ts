@@ -287,7 +287,8 @@ export class Container {
         this.setHudActivePlayer(active)
       }
       this.menu?.setShareVisible(
-        controller instanceof Replay || (this.wasReplay && controller instanceof End)
+        controller instanceof Replay ||
+          (this.wasReplay && controller instanceof End)
       )
       this.menu?.setConcedeVisible(!this.isSinglePlayer && !this.replayMode)
       this.controller.onFirst()

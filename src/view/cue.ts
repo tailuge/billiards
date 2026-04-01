@@ -139,10 +139,10 @@ export class Cue {
       (sin(this.t + Math.PI / 2) - 1) * 2 * R * (this.aim.power / this.maxPower)
     const unitToBall = unitAtAngle(this.aim.angle, this.tempVec)
 
-    this.postHitOffset.copy(unitToBall).multiplyScalar(-1).setZ(0.25)
+    this.postHitOffset.copy(unitToBall).multiplyScalar(-1).setZ(0.35)
 
     this.postHitOffset.multiplyScalar(
-      this.hittingAnimation ? Math.min(this.t * 4 * R, 0.04 * R) : 0
+      this.hittingAnimation ? this.hitAnimationCurve(this.t) * 2 * R : 0
     )
 
     unitToBall.multiplyScalar(swing)
@@ -160,6 +160,31 @@ export class Cue {
     this.helperMesh.position.copy(pos)
     this.placerMesh.position.copy(pos)
     this.placerMesh.rotation.z = this.t
+  }
+
+  hitAnimationCurve(t: number) {
+    const pts = [
+      { t: 0, v: -0.3 },
+      { t: 0.25, v: -1 },
+      { t: 1, v: 1 },
+      { t: 2, v: 2 },
+    ]
+    if (t <= pts[0].t) return pts[0].v
+    if (t >= pts[pts.length - 1].t) return pts[pts.length - 1].v
+    const i = pts.findIndex((p, idx) => t >= p.t && t <= pts[idx + 1]?.t)
+    const p1 = pts[i],
+      p2 = pts[i + 1]
+    const p0 = pts[Math.max(0, i - 1)],
+      p3 = pts[Math.min(pts.length - 1, i + 2)]
+    const lt = (t - p1.t) / (p2.t - p1.t),
+      lt2 = lt * lt,
+      lt3 = lt2 * lt
+    return (
+      p0.v * (-0.5 * lt3 + lt2 - 0.5 * lt) +
+      p1.v * (1.5 * lt3 - 2.5 * lt2 + 1) +
+      p2.v * (-1.5 * lt3 + 2 * lt2 + 0.5 * lt) +
+      p3.v * (0.5 * lt3 - 0.5 * lt2)
+    )
   }
 
   update(t) {
