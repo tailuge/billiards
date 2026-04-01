@@ -21,6 +21,7 @@ import { NineBall } from "../../../src/controller/rules/nineball"
 import { StartAimEvent } from "../../../src/events/startaimevent"
 import { WatchEvent } from "../../../src/events/watchevent"
 import { Controller } from "../../../src/controller/controller"
+import { AimEvent } from "../../../src/events/aimevent"
 
 initDom()
 
@@ -245,6 +246,25 @@ describe("BotEventHandler Respot Logic", () => {
     expect(hit.tablejson.aim.pos.y).toBeCloseTo(placedPos.y, 9)
     expect(hit.tablejson.aim.pos.z).toBeCloseTo(placedPos.z, 9)
     expect(hit.tablejson.aim.i).toBe(0)
+  })
+
+  it("should publish a matching AimEvent before bot HitEvent", () => {
+    const eventHandler = createBotEventHandler(container, publishedEvents)
+
+    eventHandler.handle(mockEvent(EventType.STARTAIM))
+
+    expect(publishedEvents[0]).toBeInstanceOf(AimEvent)
+    expect(publishedEvents[1]).toBeInstanceOf(HitEvent)
+
+    const aimEvent = publishedEvents[0] as AimEvent
+    const hitEvent = publishedEvents[1] as HitEvent
+
+    expect(aimEvent.pos.x).toBeCloseTo(hitEvent.tablejson.aim.pos.x, 9)
+    expect(aimEvent.pos.y).toBeCloseTo(hitEvent.tablejson.aim.pos.y, 9)
+    expect(aimEvent.pos.z).toBeCloseTo(hitEvent.tablejson.aim.pos.z, 9)
+    expect(aimEvent.angle).toBe(hitEvent.tablejson.aim.angle)
+    expect(aimEvent.power).toBe(hitEvent.tablejson.aim.power)
+    expect(aimEvent.i).toBe(hitEvent.tablejson.aim.i)
   })
 
   it("should notify player and stop when game is over", () => {

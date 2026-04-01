@@ -15,6 +15,7 @@ import { zero } from "../../utils/three-utils"
 import { MatchResult } from "../client/matchresult"
 import { ReplayEncoder } from "../../utils/replay-encoder"
 import { Session } from "../client/session"
+import { AimEvent } from "../../events/aimevent"
 
 export class BotEventHandler {
   private readonly logs: Logger
@@ -147,8 +148,7 @@ export class BotEventHandler {
 
   private handleStartAim(): void {
     this.logs.show()
-    const hitEvent = this.aim()
-    this.publishSequenceToPlayer([hitEvent])
+    this.publishSequenceToPlayer(this.aim())
   }
 
   private handlePlaceBall(event: PlaceBallEvent): void {
@@ -167,17 +167,22 @@ export class BotEventHandler {
       event.useStartPos ? event.pos : this.container.rules.placeBall()
     )
     cueball.setStationary()
-    const hitEvent = this.aim()
-    this.publishSequenceToPlayer([hitEvent])
+    this.publishSequenceToPlayer(this.aim())
   }
 
-  private aim(): HitEvent {
+  private aim(): [AimEvent, HitEvent] {
     const table = this.container.table
     const cueball = table.cueball
     const targetBall = this.container.rules.nextCandidateBall()
     const targetPoint = targetBall?.pos ?? zero
 
     const aimPoint = this.calculator.getAimPoint(cueball.pos, targetPoint)
-    return this.calculator.generateRandomShot(table, 0, aimPoint ?? undefined)
+    const hitEvent = this.calculator.generateRandomShot(
+      table,
+      0,
+      aimPoint ?? undefined
+    )
+    const aimEvent = AimEvent.fromJson(hitEvent.tablejson.aim)
+    return [aimEvent, hitEvent]
   }
 }
