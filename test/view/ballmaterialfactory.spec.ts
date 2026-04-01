@@ -7,10 +7,7 @@ describe("BallMaterialFactory", () => {
   it("creates a projected material with correct uniforms", () => {
     const color = new Color(0xff0000)
     const label = 8
-    const material = BallMaterialFactory.createProjectedMaterial(
-      label,
-      color
-    ) as MeshStandardMaterial
+    const material = BallMaterialFactory.createProjectedMaterial(label, color)
 
     expect(material).to.be.an.instanceOf(MeshStandardMaterial)
     expect(material.color.getHex()).to.equal(color.getHex())
