@@ -132,7 +132,7 @@ export class Container {
   })
 
   sendEvent(event) {
-    this.recorder.record(event)
+    this.recorder.record(event, "sendEvent")
     this.throttle.send(event)
   }
 
@@ -242,7 +242,7 @@ export class Container {
       const event = this.eventQueue.shift()
       if (event) {
         this.lastEventTime = performance.now()
-        this.recorder.record(event)
+        this.recorder.record(event, "processEvents")
         this.updateController(event.applyToController(this.controller))
       }
     }

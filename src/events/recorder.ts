@@ -30,10 +30,13 @@ export class Recorder {
     return this.entries.map((e) => e.state)
   }
 
-  record(event: GameEvent) {
+  record(event: GameEvent, recordOrigin = "unknown") {
     let recordedEvent = event
     if (event.type === EventType.HIT) {
-      const recordedAim = (event as HitEvent).tablejson.aim
+      const hitEvent = event as HitEvent
+      const recordedAim = hitEvent.tablejson.aim
+      const serialisedCueball = hitEvent.tablejson.balls?.[0]?.pos
+      const session = this.safeSession()
       recordedEvent = recordedAim
       warnAimDriftTripwire(
         "tripwire: recorder_hit_aim_mismatch",
@@ -44,6 +47,33 @@ export class Recorder {
         },
         {
           recordedAt: "Recorder.record",
+          recordOrigin,
+          controller: this.container.controller?.name,
+          replayMode: this.container.replayMode,
+          isSinglePlayer: this.container.isSinglePlayer,
+          sessionClientId: session?.clientId,
+          eventClientId: event.clientId,
+          sessionPlayername: session?.playername,
+          eventPlayername: event.playername,
+          spectator: session?.spectator,
+          botMode: session?.botMode,
+          practiceMode: session?.practiceMode,
+          serialisedCueball: serialisedCueball
+            ? {
+                x: serialisedCueball.x,
+                y: serialisedCueball.y,
+              }
+            : undefined,
+          serialisedCueballDelta: serialisedCueball
+            ? {
+                dx: serialisedCueball.x - recordedAim.pos.x,
+                dy: serialisedCueball.y - recordedAim.pos.y,
+                d: Math.hypot(
+                  serialisedCueball.x - recordedAim.pos.x,
+                  serialisedCueball.y - recordedAim.pos.y
+                ),
+              }
+            : undefined,
         }
       )
     }
@@ -61,6 +91,14 @@ export class Recorder {
         isPartOfBreak: false,
         time: Date.now(),
       })
+    }
+  }
+
+  private safeSession() {
+    try {
+      return Session.getInstance()
+    } catch {
+      return undefined
     }
   }
 

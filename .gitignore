@@ -68,6 +68,7 @@ node_modules/
 # Gemini context
 
 .opencode/
+.codex
 conductor/
 .jules/
 .Jules/

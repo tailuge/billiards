@@ -171,3 +171,25 @@ This does not change the existing bug regression test. That test still documents
 the old deterministic mismatch in the direct physics path from the recorded
 fixture. The fix prevents that stale start position from being produced in live
 play again.
+
+## Still occuring
+
+[11:16:03 AM] warn tripwire: recorder_hit_aim_mismatch {
+  "version": "260401.07",
+  "dx": 7.629394560559888e-9,
+  "dy": 0,
+  "d": 7.629394560559888e-9,
+  "power": 2.9475000000000002,
+  "i": 0,
+  "aim": {
+    "x": -0.7205,
+    "y": 0
+  },
+  "cueball": {
+    "x": -0.7204999923706055,
+    "y": 0
+  },
+  "recordedAt": "Recorder.record"
+}
+
+Now adding extra debug info for next occurence.
