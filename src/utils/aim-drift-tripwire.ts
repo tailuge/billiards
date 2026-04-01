@@ -1,4 +1,5 @@
 import { Vector3 } from "three"
+import { VERSION } from "./version"
 
 type PositionLike = {
   x: number
@@ -37,6 +38,7 @@ export function warnAimDriftTripwire(
     label,
     JSON.stringify(
       {
+        version: VERSION,
         dx,
         dy,
         d,
