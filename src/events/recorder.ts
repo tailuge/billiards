@@ -9,6 +9,8 @@ import { Session } from "../network/client/session"
 import { RecordEntry } from "./recordentry"
 import { warnAimDriftTripwire } from "../utils/aim-drift-tripwire"
 
+const REMOTE_HIT_LOCAL_STATE_MISMATCH_THRESHOLD = 0.1
+
 export class Recorder {
   container: Container
   linkFormatter: LinkFormatter
@@ -37,45 +39,73 @@ export class Recorder {
       const recordedAim = hitEvent.tablejson.aim
       const serialisedCueball = hitEvent.tablejson.balls?.[0]?.pos
       const session = this.safeSession()
+      const serialisedCueballDelta = serialisedCueball
+        ? {
+            dx: serialisedCueball.x - recordedAim.pos.x,
+            dy: serialisedCueball.y - recordedAim.pos.y,
+            d: Math.hypot(
+              serialisedCueball.x - recordedAim.pos.x,
+              serialisedCueball.y - recordedAim.pos.y
+            ),
+          }
+        : undefined
+      const localCueballDelta = {
+        dx: this.container.table.cueball.pos.x - recordedAim.pos.x,
+        dy: this.container.table.cueball.pos.y - recordedAim.pos.y,
+        d: Math.hypot(
+          this.container.table.cueball.pos.x - recordedAim.pos.x,
+          this.container.table.cueball.pos.y - recordedAim.pos.y
+        ),
+      }
       recordedEvent = recordedAim
-      warnAimDriftTripwire(
-        "tripwire: recorder_hit_aim_mismatch",
-        recordedAim,
-        {
-          x: this.container.table.cueball.pos.x,
-          y: this.container.table.cueball.pos.y,
-        },
-        {
-          recordedAt: "Recorder.record",
-          recordOrigin,
-          controller: this.container.controller?.name,
-          replayMode: this.container.replayMode,
-          isSinglePlayer: this.container.isSinglePlayer,
-          sessionClientId: session?.clientId,
-          eventClientId: event.clientId,
-          sessionPlayername: session?.playername,
-          eventPlayername: event.playername,
-          spectator: session?.spectator,
-          botMode: session?.botMode,
-          practiceMode: session?.practiceMode,
-          serialisedCueball: serialisedCueball
-            ? {
-                x: serialisedCueball.x,
-                y: serialisedCueball.y,
-              }
-            : undefined,
-          serialisedCueballDelta: serialisedCueball
-            ? {
-                dx: serialisedCueball.x - recordedAim.pos.x,
-                dy: serialisedCueball.y - recordedAim.pos.y,
-                d: Math.hypot(
-                  serialisedCueball.x - recordedAim.pos.x,
-                  serialisedCueball.y - recordedAim.pos.y
-                ),
-              }
-            : undefined,
-        }
-      )
+      const isRemoteQueuedHit =
+        recordOrigin === "processEvents" &&
+        !!event.clientId &&
+        event.clientId !== session?.clientId
+      const payloadIsInternallyConsistent =
+        !!serialisedCueball &&
+        !!serialisedCueballDelta &&
+        serialisedCueballDelta.d <= 1e-9
+      const isLargeLocalStateGap =
+        localCueballDelta.d > REMOTE_HIT_LOCAL_STATE_MISMATCH_THRESHOLD
+
+      if (
+        !(
+          isRemoteQueuedHit &&
+          payloadIsInternallyConsistent &&
+          isLargeLocalStateGap
+        )
+      ) {
+        warnAimDriftTripwire(
+          "tripwire: recorder_hit_aim_mismatch",
+          recordedAim,
+          {
+            x: this.container.table.cueball.pos.x,
+            y: this.container.table.cueball.pos.y,
+          },
+          {
+            recordedAt: "Recorder.record",
+            recordOrigin,
+            controller: this.container.controller?.name,
+            replayMode: this.container.replayMode,
+            isSinglePlayer: this.container.isSinglePlayer,
+            sessionClientId: session?.clientId,
+            eventClientId: event.clientId,
+            sessionPlayername: session?.playername,
+            eventPlayername: event.playername,
+            spectator: session?.spectator,
+            botMode: session?.botMode,
+            practiceMode: session?.practiceMode,
+            serialisedCueball: serialisedCueball
+              ? {
+                  x: serialisedCueball.x,
+                  y: serialisedCueball.y,
+                }
+              : undefined,
+            serialisedCueballDelta,
+          }
+        )
+      }
     }
 
     if (

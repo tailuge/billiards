@@ -172,6 +172,28 @@ the old deterministic mismatch in the direct physics path from the recorded
 fixture. The fix prevents that stale start position from being produced in live
 play again.
 
+## Current Status
+
+The local source-side fix is live and genuine small `recorder_hit_aim_mismatch`
+reports still remain useful.
+
+Additional logging showed that a large mismatch seen in two-player mode after a
+foul respot was a false alarm:
+
+- the warning was raised during `processEvents`
+- the controller was `WatchAim`
+- the event came from the remote player
+- `serialisedCueball` exactly matched `aim`
+- the large delta was only between the incoming hit payload and the local table
+  state before that remote hit was applied
+
+That means the payload itself was internally consistent, and the warning was
+caused by comparing a valid remote hit against stale local pre-apply state.
+
+To avoid that noise, the recorder tripwire now suppresses this specific case:
+remote queued hit, internally consistent payload, and a large local-state gap
+greater than `0.1`.
+
 ## Still occuring
 
 [11:16:03 AM] warn tripwire: recorder_hit_aim_mismatch {
