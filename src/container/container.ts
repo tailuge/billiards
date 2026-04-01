@@ -126,7 +126,7 @@ export class Container {
     this.relay = relay
     this.scoreReporter = scoreReporter
     this.lobbyIndicator = new LobbyIndicator(
-      Session.getInstance().botMode,
+      Session.isBotMode(),
       this.replayMode,
       this.rules
     )

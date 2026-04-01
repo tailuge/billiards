@@ -21,7 +21,7 @@ export class LobbyIndicator {
       this.ruleType = "bot"
     } else if (replayMode) {
       this.ruleType = "replay"
-    } else if (Session.getInstance().spectator) {
+    } else if (Session.isSpectator()) {
       this.ruleType = "spectator"
     } else {
       this.ruleType = this.rules.rulename

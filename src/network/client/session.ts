@@ -30,15 +30,15 @@ export class Session {
   }
 
   static playerIndex(): number {
-    return Session.getInstance().playerIndex
+    return Session.instance?.playerIndex ?? 0
   }
 
   static isSpectator(): boolean {
-    return Session.getInstance().spectator
+    return Session.instance?.spectator ?? false
   }
 
   static isBotMode(): boolean {
-    return Session.getInstance().botMode
+    return Session.instance?.botMode ?? false
   }
 
   static isPracticeMode(): boolean {

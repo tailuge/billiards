@@ -7,6 +7,8 @@ import { bounceHan } from "../model/physics/physics"
 import { Assets } from "../view/assets"
 import { RealOverlay } from "./real/realoverlay"
 import { id, getButton, getCanvas } from "../utils/dom"
+import { Session } from "../network/client/session"
+import { getUID } from "../utils/uid"
 
 /**
  * Integrate billiards container into diagram html page
@@ -32,6 +34,7 @@ export class DiagramContainer {
   }
 
   start() {
+    Session.init("G_" + getUID(), "Diagram", "diagram", false, false, false)
     const keyboard = new Keyboard(this.canvas3d)
     const config: ContainerConfig = {
       element: this.canvas3d,
