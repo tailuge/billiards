@@ -54,4 +54,12 @@ describe("Session", () => {
     expect(session.opponentName).to.equal("ClawBreak")
     expect(session.opponentScore()).to.equal(0)
   })
+
+  it("returns safe defaults when session not initialized", () => {
+    Session.reset()
+    expect(Session.playerIndex()).to.equal(0)
+    expect(Session.isSpectator()).to.be.false
+    expect(Session.isBotMode()).to.be.false
+    expect(Session.isPracticeMode()).to.be.false
+  })
 })

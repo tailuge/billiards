@@ -29,6 +29,13 @@ describe("LobbyIndicator", () => {
     Session.reset()
   })
 
+  it("handles uninitialized session in constructor", () => {
+    Session.reset()
+    const mockRules = { rulename: "nineball" } as any
+    const indicator = new LobbyIndicator(false, false, mockRules)
+    expect((indicator as any).ruleType).to.equal("nineball")
+  })
+
   it("updates text content on init", async () => {
     const element = document.getElementById("lobbyOverlay")
     if (element) {
