@@ -17,6 +17,7 @@ import { LinkFormatter } from "../view/link-formatter"
 import { Rules } from "../controller/rules/rules"
 import { RuleFactory } from "../controller/rules/rulefactory"
 import { Menu } from "../view/menu"
+import { Comment } from "../view/comment"
 import { Hud } from "../view/hud"
 import { NotificationEvent } from "../events/notificationevent"
 import { LobbyIndicator } from "../view/lobbyindicator"
@@ -61,6 +62,7 @@ export class Container {
   isSinglePlayer: boolean = true
   rules: Rules
   menu: Menu
+  comment: Comment
   hud: Hud
   notification: Notification
   lobbyIndicator: LobbyIndicator
@@ -110,6 +112,7 @@ export class Container {
     this.recorder = new Recorder(this, this.linkFormatter)
     this.id = id ?? ""
     this.menu = new Menu(this)
+    this.comment = new Comment(this)
     this.table.addToScene(this.view.scene)
     this.particles = new ParticleSystem()
     this.hud = new Hud()

@@ -59,7 +59,8 @@ node_modules/
 # dotenv environment variables file
 .env
 
-# next.js build output
+# Kilo
+.kilo/
 
 .next
 
