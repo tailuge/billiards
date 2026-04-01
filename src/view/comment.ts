@@ -3,13 +3,13 @@ import { getButton } from "../utils/dom"
 
 export class Comment {
   container: Container
-  button: HTMLButtonElement
-  menu: HTMLDivElement
+  button: HTMLButtonElement | null
+  menu: HTMLDivElement | null
 
   constructor(container: Container) {
     this.container = container
 
-    this.button = getButton("comment")!
+    this.button = getButton("comment")
     this.menu = document.getElementById("commentMenu") as HTMLDivElement
 
     if (this.button && this.menu) {
@@ -50,6 +50,9 @@ export class Comment {
   }
 
   toggleMenu() {
+    if (!this.menu) {
+      return
+    }
     if (this.menu.style.display === "none") {
       this.showMenu()
     } else {
@@ -58,10 +61,14 @@ export class Comment {
   }
 
   showMenu() {
-    this.menu.style.display = "grid"
+    if (this.menu) {
+      this.menu.style.display = "grid"
+    }
   }
 
   hideMenu() {
-    this.menu.style.display = "none"
+    if (this.menu) {
+      this.menu.style.display = "none"
+    }
   }
 }

@@ -28,6 +28,16 @@ describe("Recorder", () => {
     done()
   })
 
+  it("record hit with aim metadata", (done) => {
+    const recorder = new Recorder(container, container.linkFormatter)
+    const event: HitEvent = new HitEvent(container.table.serialise())
+    // @ts-ignore
+    container.trackAimEvent({ type: "AIM", pos: { x: 0, y: 0 } }, "test")
+    recorder.record(event)
+    expect(recorder.wholeGame()).to.be.not.null
+    done()
+  })
+
   it("show break messages", (done) => {
     const recorder = new Recorder(container, container.linkFormatter)
     const event: HitEvent = new HitEvent(container.table.serialise())

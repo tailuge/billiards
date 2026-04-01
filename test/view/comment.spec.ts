@@ -10,28 +10,8 @@ initDom()
 let container: Container
 let comment: Comment
 
-function addMenu() {
-  const menu = document.createElement("div")
-  menu.id = "commentMenu"
-  menu.className = "comment-menu"
-  menu.style.display = "none"
-  menu.innerHTML = `
-    <button class="comment-emoji">🍀</button>
-    <button class="comment-emoji">🐢</button>
-    <button class="comment-emoji">🐑</button>
-    <button class="comment-emoji">👏</button>
-    <button class="comment-emoji">🧸</button>
-    <button class="comment-emoji">🧙‍♂️</button>
-    <button class="comment-emoji">🎖️</button>
-    <button class="comment-emoji">🦈</button>
-    <button class="comment-emoji">👀</button>
-  `
-  document.body.appendChild(menu)
-}
-
 beforeEach(function (done) {
-  document.querySelectorAll(".comment-menu").forEach((el) => el.remove())
-  addMenu()
+  initDom()
   container = new Container({
     element: document.getElementById("viewP1"),
     log: (_) => {},
@@ -60,5 +40,40 @@ describe("Comment", () => {
 
     expect(comment.menu.style.display).to.equal("none")
     done()
+  })
+
+  it("toggleMenu shows/hides the menu", (done) => {
+    expect(comment.menu.style.display).to.equal("none")
+    comment.toggleMenu()
+    expect(comment.menu.style.display).to.equal("grid")
+    comment.toggleMenu()
+    expect(comment.menu.style.display).to.equal("none")
+    done()
+  })
+
+  it("handles missing elements gracefully", (done) => {
+    // @ts-ignore
+    comment.menu = null
+    comment.toggleMenu()
+    comment.showMenu()
+    comment.hideMenu()
+    done()
+  })
+
+  it("initializes via setTimeout if elements are not immediately present", (done) => {
+    document.body.innerHTML = ""
+    const commentLater = new Comment(container)
+
+    initDom()
+
+    setTimeout(() => {
+      expect(commentLater.button).to.not.be.null
+      expect(commentLater.menu).to.not.be.null
+      const emojiBtn = commentLater.menu!.querySelector(
+        ".comment-emoji"
+      ) as HTMLButtonElement
+      fireEvent.click(emojiBtn)
+      done()
+    }, 200)
   })
 })
