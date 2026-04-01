@@ -129,7 +129,7 @@ export class BotEventHandler {
       Session.getInstance().addOpponentScore(pots)
       const { p1: s1, p2: s2 } = Session.getInstance().orderedScoresForHud()
 
-      const active = this.container.inferActivePlayerFromController()
+      const active = this.container.inferActivePlayer()
       this.container.sendScoreUpdate(s1, s2, 0, active)
 
       // pot success, send watch event to other player
