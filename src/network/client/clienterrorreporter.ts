@@ -29,6 +29,7 @@
  */
 
 import { getUID } from "../../utils/uid"
+import { VERSION } from "../../utils/version"
 
 export interface ErrorReport {
   type: string
@@ -37,6 +38,8 @@ export interface ErrorReport {
   url: string
   ts: number
   sid: string
+  version: string
+  origin: string
 }
 
 export class ClientErrorReporter {
@@ -168,6 +171,8 @@ export class ClientErrorReporter {
         url: globalThis.location?.href ?? "",
         ts: Date.now(),
         sid: this.sid,
+        version: VERSION,
+        origin: globalThis.location?.origin ?? "",
       })
 
       if (this.queue.length > this.maxQueueSize) this.flush()
