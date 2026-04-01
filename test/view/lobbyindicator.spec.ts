@@ -36,6 +36,12 @@ describe("LobbyIndicator", () => {
     expect((indicator as any).ruleType).to.equal("nineball")
   })
 
+  it("identifies replay mode", () => {
+    const mockRules = { rulename: "nineball" } as any
+    const indicator = new LobbyIndicator(false, true, mockRules)
+    expect((indicator as any).ruleType).to.equal("replay")
+  })
+
   it("updates text content on init", async () => {
     const element = document.getElementById("lobbyOverlay")
     if (element) {

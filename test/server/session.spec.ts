@@ -55,6 +55,29 @@ describe("Session", () => {
     expect(session.opponentScore()).to.equal(0)
   })
 
+  it("throws when getInstance called before init", () => {
+    Session.reset()
+    expect(() => Session.getInstance()).to.throw("Session not initialized")
+  })
+
+  it("initializes scores with opponent", () => {
+    Session.init("c1", "u1", "t1", false)
+    const session = Session.getInstance()
+    session.setOpponentClientId("c2")
+    session.initializeScores()
+    expect(session.getScoreByClientId("c2")).to.equal(0)
+  })
+
+  it("deletes previous opponent score when changing opponent", () => {
+    Session.init("c1", "u1", "t1", false)
+    const session = Session.getInstance()
+    session.setOpponentClientId("c2")
+    session.setScoreByClientId("c2", 10)
+    session.setOpponentClientId("c3")
+    expect(session.getScoreByClientId("c2")).to.equal(0)
+    expect(session.opponentScore()).to.equal(10)
+  })
+
   it("returns safe defaults when session not initialized", () => {
     Session.reset()
     expect(Session.playerIndex()).to.equal(0)
