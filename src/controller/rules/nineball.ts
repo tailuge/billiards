@@ -19,6 +19,7 @@ import { StartAimEvent } from "../../events/startaimevent"
 import { MatchResultHelper } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
 import { isFirstShot } from "../../utils/utils"
+import { roundVec } from "../../utils/three-utils"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -44,7 +45,7 @@ export class NineBall implements Rules {
   }
 
   placeBall(target?: Vector3): Vector3 {
-    const baulkline = (-R * 11) / 0.5
+    const baulkline = Math.fround((-R * 11) / 0.5)
     if (target) {
       const max = new Vector3(TableGeometry.tableX, TableGeometry.tableY)
       const min = new Vector3(-TableGeometry.tableX, -TableGeometry.tableY)
@@ -52,9 +53,9 @@ export class NineBall implements Rules {
         max.setX(baulkline)
         min.setX(baulkline)
       }
-      return target.clone().clamp(min, max)
+      return roundVec(target.clone().clamp(min, max))
     }
-    return new Vector3(baulkline, 0, 0)
+    return roundVec(new Vector3(baulkline, 0, 0))
   }
 
   asset(): string {

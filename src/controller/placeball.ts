@@ -34,6 +34,7 @@ export class PlaceBall extends ControllerBase {
       } else {
         cueball.pos.copy(this.container.rules.placeBall())
       }
+      cueball.fround()
     }
     cueball.setStationary()
     cueball.updateMesh(0)

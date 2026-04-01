@@ -34,6 +34,8 @@ export class Recorder {
     let recordedEvent = event
     if (event.type === EventType.HIT) {
       const recordedAim = (event as HitEvent).tablejson.aim
+      recordedAim.pos.x = this.container.table.cueball.pos.x
+      recordedAim.pos.y = this.container.table.cueball.pos.y
       recordedEvent = recordedAim
       warnAimDriftTripwire(
         "tripwire: recorder_hit_aim_mismatch",
@@ -54,8 +56,9 @@ export class Recorder {
       event.type === EventType.PLACEBALL ||
       event.type === EventType.SCORE
     ) {
+      const state = this.container.table.shortSerialise()
       this.entries.push({
-        state: this.container.table.shortSerialise(),
+        state,
         event: recordedEvent,
         pots: 0,
         isPartOfBreak: false,

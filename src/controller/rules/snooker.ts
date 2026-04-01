@@ -16,7 +16,7 @@ import { TableGeometry } from "../../view/tablegeometry"
 import { PlaceBall } from "../placeball"
 import { PlaceBallEvent } from "../../events/placeballevent"
 import { isFirstShot } from "../../utils/utils"
-import { zero } from "../../utils/three-utils"
+import { zero, roundVec } from "../../utils/three-utils"
 import { SnookerUtils, ShotInfo } from "./snookerutils"
 import { SnookerScoring } from "./snookerscoring"
 import { StartAimEvent } from "../../events/startaimevent"
@@ -223,12 +223,12 @@ export class Snooker implements Rules {
       }
       if (distance > radius) {
         const direction = target.clone().sub(centre).normalize()
-        return centre.add(direction.multiplyScalar(radius))
+        return roundVec(centre.add(direction.multiplyScalar(radius)))
       } else {
-        return target
+        return roundVec(target)
       }
     }
-    return new Vector3(Rack.baulk, -Rack.sixth / 2.6, 0)
+    return roundVec(new Vector3(Rack.baulk, -Rack.sixth / 2.6, 0))
   }
 
   private switchPlayer(): Controller {

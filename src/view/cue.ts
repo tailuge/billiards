@@ -128,6 +128,7 @@ export class Cue {
 
   moveTo(pos) {
     this.aim.pos.copy(pos)
+    roundVec(this.aim.pos)
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle
     this.shadowMesh.rotation.z = this.aim.angle

@@ -195,6 +195,7 @@ export class Table {
       b.vel.copy(zero)
       b.rvel.copy(zero)
       b.state = State.Stationary
+      b.fround()
     })
   }
 

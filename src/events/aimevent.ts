@@ -1,7 +1,7 @@
 import { GameEvent } from "./gameevent"
 import { EventType } from "./eventtype"
 import { Controller } from "../controller/controller"
-import { vec } from "../utils/three-utils"
+import { vec, roundVec } from "../utils/three-utils"
 import { Vector3 } from "three"
 
 export class AimEvent extends GameEvent {
@@ -22,10 +22,10 @@ export class AimEvent extends GameEvent {
 
   static fromJson(json) {
     const event = new AimEvent()
-    event.pos = vec(json.pos)
-    event.angle = json.angle
-    event.offset = vec(json.offset)
-    event.power = json.power
+    event.pos = roundVec(vec(json.pos))
+    event.angle = Math.fround(json.angle)
+    event.offset = roundVec(vec(json.offset))
+    event.power = Math.fround(json.power)
     if (json.i) {
       event.i = json.i
     }
