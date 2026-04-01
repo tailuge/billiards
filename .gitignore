@@ -88,3 +88,9 @@ rg.sh
 dist/SCOREPLANREMOTE.md
 telemetry-id
 src/utils/version.ts
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example

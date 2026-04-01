@@ -27,7 +27,9 @@
     "start-server": "http-server dist -p 8080 -c-1",
     "watch": "webpack --watch",
     "deps": "npx yarn-check --skip-unused",
-    "gltfpack": "npx gltfpack -i dist/models/p8.gltf -o dist/models/p8.min.gltf && npx gltfpack -i dist/models/threecushion.gltf -o dist/models/threecushion.min.gltf && npx gltfpack -i dist/models/snooker.gltf -o dist/models/snooker.min.gltf && npx gltfpack -i dist/models/d-snooker.gltf -o dist/models/d-snooker.min.gltf"
+    "gltfpack": "npx gltfpack -i dist/models/p8.gltf -o dist/models/p8.min.gltf && npx gltfpack -i dist/models/threecushion.gltf -o dist/models/threecushion.min.gltf && npx gltfpack -i dist/models/snooker.gltf -o dist/models/snooker.min.gltf && npx gltfpack -i dist/models/d-snooker.gltf -o dist/models/d-snooker.min.gltf",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
   },
   "dependencies": {
     "@tailuge/messaging": "1.14.0",
@@ -61,6 +63,7 @@
     "typescript-eslint": "8.58.0",
     "webpack": "5.105.4",
     "webpack-cli": "7.0.2",
-    "webpack-dev-server": "5.2.3"
+    "webpack-dev-server": "5.2.3",
+    "wrangler": "^4.79.0"
   }
 }
