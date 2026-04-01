@@ -9,8 +9,28 @@ initDom()
 
 let container: Container
 
+function addMenu() {
+  const menu = document.createElement("div")
+  menu.id = "commentMenu"
+  menu.className = "comment-menu"
+  menu.style.display = "none"
+  menu.innerHTML = `
+    <button class="comment-emoji">🍀</button>
+    <button class="comment-emoji">🐢</button>
+    <button class="comment-emoji">🐑</button>
+    <button class="comment-emoji">👏</button>
+    <button class="comment-emoji">🧸</button>
+    <button class="comment-emoji">🧙‍♂️</button>
+    <button class="comment-emoji">🎖️</button>
+    <button class="comment-emoji">🦈</button>
+    <button class="comment-emoji">👀</button>
+  `
+  document.body.appendChild(menu)
+}
+
 beforeEach(function (done) {
   document.querySelectorAll(".comment-menu").forEach((el) => el.remove())
+  addMenu()
   container = new Container({
     element: document.getElementById("viewP1"),
     log: (_) => {},
@@ -23,26 +43,24 @@ beforeEach(function (done) {
 describe("Comment", () => {
   it("clicking comment button shows menu", (done) => {
     const commentBtn = document.getElementById("comment") as HTMLButtonElement
+    const menu = document.getElementById("commentMenu") as HTMLDivElement
 
+    expect(menu.style.display).to.equal("none")
     fireEvent.click(commentBtn)
-
-    const menu = document.querySelector(".comment-menu")
-    expect(menu).to.not.be.null
+    expect(menu.style.display).to.equal("grid")
     done()
   })
 
   it("clicking an emoji sends a chat event with that emoji", (done) => {
-    const commentBtn = document.getElementById("comment") as HTMLButtonElement
-    fireEvent.click(commentBtn)
+    const menu = document.getElementById("commentMenu") as HTMLDivElement
 
-    const emojiBtns = document.querySelectorAll(".comment-emoji")
+    const emojiBtns = menu.querySelectorAll(".comment-emoji")
     expect(emojiBtns.length).to.equal(9)
 
     const firstEmoji = emojiBtns[0] as HTMLButtonElement
     fireEvent.click(firstEmoji)
 
-    const menu = document.querySelector(".comment-menu")
-    expect(menu).to.be.null
+    expect(menu.style.display).to.equal("none")
     done()
   })
 })
