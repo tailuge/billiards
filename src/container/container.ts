@@ -70,6 +70,12 @@ export class Container {
   scoreReporter: ScoreReporter | null = null
   replayMode: boolean = false
   frame: (timestamp: number) => void
+  lastAimEventPos: { x: number; y: number } | undefined
+  lastAimEventTime: number | undefined
+  lastAimEventClientId: string | undefined
+  lastAimEventPlayername: string | undefined
+  lastAimEventSequence: string | undefined
+  lastAimEventOrigin: string | undefined
 
   private hudScores = {
     p1: 0,
@@ -141,6 +147,7 @@ export class Container {
   })
 
   sendEvent(event) {
+    this.trackAimEvent(event, "sendEvent")
     this.recorder.record(event, "sendEvent")
     this.throttle.send(event)
   }
@@ -251,10 +258,30 @@ export class Container {
       const event = this.eventQueue.shift()
       if (event) {
         this.lastEventTime = performance.now()
+        this.trackAimEvent(event, "processEvents")
         this.recorder.record(event, "processEvents")
         this.updateController(event.applyToController(this.controller))
       }
     }
+  }
+
+  private trackAimEvent(event: GameEvent, origin: string) {
+    if (event.type !== "AIM") {
+      return
+    }
+    const aimEvent = event as any
+    if (!aimEvent.pos) {
+      return
+    }
+    this.lastAimEventPos = {
+      x: aimEvent.pos.x,
+      y: aimEvent.pos.y,
+    }
+    this.lastAimEventTime = performance.now()
+    this.lastAimEventClientId = event.clientId
+    this.lastAimEventPlayername = event.playername
+    this.lastAimEventSequence = event.sequence
+    this.lastAimEventOrigin = origin
   }
 
   lastEventTime = performance.now()

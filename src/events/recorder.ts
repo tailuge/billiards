@@ -89,13 +89,24 @@ export class Recorder {
             controller: this.container.controller?.name,
             replayMode: this.container.replayMode,
             isSinglePlayer: this.container.isSinglePlayer,
+            cueballState: this.container.table.cueball.state,
             sessionClientId: session?.clientId,
             eventClientId: event.clientId,
+            eventSequence: event.sequence,
             sessionPlayername: session?.playername,
             eventPlayername: event.playername,
             spectator: session?.spectator,
             botMode: session?.botMode,
             practiceMode: session?.practiceMode,
+            lastAimEvent: this.container.lastAimEventPos,
+            lastAimEventClientId: this.container.lastAimEventClientId,
+            lastAimEventPlayername: this.container.lastAimEventPlayername,
+            lastAimEventSequence: this.container.lastAimEventSequence,
+            lastAimEventOrigin: this.container.lastAimEventOrigin,
+            timeSinceLastAimMs:
+              this.container.lastAimEventTime !== undefined
+                ? performance.now() - this.container.lastAimEventTime
+                : undefined,
             serialisedCueball: serialisedCueball
               ? {
                   x: serialisedCueball.x,
