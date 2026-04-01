@@ -155,3 +155,19 @@ I observed the following trip wire errors:
   },
   "recordedAt": "Recorder.record"
 }
+
+## Fix Summary
+
+The fix is minimal and applied at source in `Table.serialiseHit()`.
+
+At hit time, the code now copies the current aim data and then overwrites
+`aim.pos` with the live `cueball.pos` before creating the serialized hit payload.
+
+That means the recorded and over-the-wire shot start position now always comes
+from the authoritative live cue ball, not from a slightly stale or rounded
+`cue.aim.pos` value.
+
+This does not change the existing bug regression test. That test still documents
+the old deterministic mismatch in the direct physics path from the recorded
+fixture. The fix prevents that stale start position from being produced in live
+play again.

@@ -182,4 +182,18 @@ describe("Table", () => {
     expect(table.shortSerialise()).to.be.length((9 + 1) * 2)
     done()
   })
+
+  it("serialiseHit uses live cueball position for aim", (done) => {
+    const table = new Table(Rack.diamond())
+    table.cue.aim.pos.set(-0.7205, 0, 0)
+    table.cueball.pos.set(-0.7204999923706055, 0.123456789, 0)
+
+    const hit = table.serialiseHit()
+
+    expect(hit.aim.pos.x).to.equal(table.cueball.pos.x)
+    expect(hit.aim.pos.y).to.equal(table.cueball.pos.y)
+    expect(hit.aim.pos.z).to.equal(table.cueball.pos.z)
+    expect(hit.aim.pos.x).to.not.equal(-0.7205)
+    done()
+  })
 })

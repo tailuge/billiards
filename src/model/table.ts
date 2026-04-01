@@ -160,9 +160,12 @@ export class Table {
       y: this.cueball.pos.y,
     })
 
+    const aim = this.cue.aim.copy()
+    aim.pos.copy(this.cueball.pos)
+
     return {
       balls: [this.balls[0].serialise()],
-      aim: this.cue.aim.copy(),
+      aim,
     }
   }
 
