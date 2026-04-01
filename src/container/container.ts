@@ -220,6 +220,7 @@ export class Container {
     this.particles.update(computedElapsed)
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())
+      this.table.cue.hittingAnimation = false
     }
     this.sound.processOutcomes(this.table.outcome)
   }

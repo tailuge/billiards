@@ -19,6 +19,7 @@ export class Cue {
   readonly offCenterLimit = 0.3
   readonly maxPower = 160 * R
   t = 0
+  hittingAnimation = false
   aimInputs: AimInputs
   aim: AimEvent = new AimEvent()
 
@@ -27,6 +28,7 @@ export class Cue {
   private readonly tempVec = new Vector3()
   private readonly tempVec2 = new Vector3()
   private readonly tempVec3 = new Vector3()
+  private readonly postHitOffset = new Vector3()
 
   constructor() {
     this.mesh = CueMesh.createCue(
@@ -71,6 +73,7 @@ export class Cue {
   hit(ball: Ball) {
     const aim = this.aim
     this.t = 0
+    this.hittingAnimation = true
     ball.state = State.Sliding
     ball.vel.copy(
       unitAtAngle(aim.angle, this.tempVec).multiplyScalar(aim.power)
@@ -134,14 +137,24 @@ export class Cue {
     const offset = this.spinOffset()
     const swing =
       (sin(this.t + Math.PI / 2) - 1) * 2 * R * (this.aim.power / this.maxPower)
-    const distanceToBall = unitAtAngle(
-      this.aim.angle,
-      this.tempVec
-    ).multiplyScalar(swing)
-    this.mesh.position.copy(pos).add(offset).add(distanceToBall)
+    const unitToBall = unitAtAngle(this.aim.angle, this.tempVec)
+
+    this.postHitOffset.copy(unitToBall).multiplyScalar(-1).setZ(0.25)
+
+    this.postHitOffset.multiplyScalar(
+      this.hittingAnimation ? Math.min(this.t * 4 * R, 0.04 * R) : 0
+    )
+
+    unitToBall.multiplyScalar(swing)
+
+    this.mesh.position
+      .copy(pos)
+      .add(offset)
+      .add(unitToBall)
+      .add(this.postHitOffset)
 
     const horizontalOffset = this.tempVec2.set(offset.x, offset.y, 0)
-    this.shadowMesh.position.copy(pos).add(horizontalOffset).add(distanceToBall)
+    this.shadowMesh.position.copy(pos).add(horizontalOffset).add(unitToBall)
     this.shadowMesh.position.z = -R * 0.99
 
     this.helperMesh.position.copy(pos)

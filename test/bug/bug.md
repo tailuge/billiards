@@ -102,7 +102,56 @@ The key question is now:
 If the new tripwire fires on real traffic, that will be the strongest evidence yet that replay is recording a slightly stale shot-start position.
 
 
-## Next steps
+## Tripwire reports
 
-Does live logging show up?Fix recorder to use correct object to record.
-Could we fuzz placeball,aim and hit inputs to get a tripwire to happen.
+I observed the following trip wire errors:
+
+[5:29:24 AM] warn tripwire: recorder_hit_aim_mismatch {
+  "dx": 7.629394560559888e-9,
+  "dy": 0,
+  "d": 7.629394560559888e-9,
+  "power": 2.9475000000000002,
+  "i": 0,
+  "aim": {
+    "x": -0.7205,
+    "y": 0
+  },
+  "cueball": {
+    "x": -0.7204999923706055,
+    "y": 0
+  },
+  "recordedAt": "Recorder.record"
+}
+
+[5:36:21 AM] warn tripwire: recorder_hit_aim_mismatch {
+  "dx": 7.629394560559888e-9,
+  "dy": 0,
+  "d": 7.629394560559888e-9,
+  "power": 2.9475000000000002,
+  "i": 0,
+  "aim": {
+    "x": -0.7205,
+    "y": 0
+  },
+  "cueball": {
+    "x": -0.7204999923706055,
+    "y": 0
+  },
+  "recordedAt": "Recorder.record"
+}
+[5:36:55 AM] warn tripwire: recorder_hit_aim_mismatch {
+  "dx": 7.629394560559888e-9,
+  "dy": 0,
+  "d": 7.629394560559888e-9,
+  "power": 2.9475000000000002,
+  "i": 0,
+  "aim": {
+    "x": -0.7205,
+    "y": 0
+  },
+  "cueball": {
+    "x": -0.7204999923706055,
+    "y": 0
+  },
+  "recordedAt": "Recorder.record"
+}

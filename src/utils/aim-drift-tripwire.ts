@@ -33,20 +33,27 @@ export function warnAimDriftTripwire(
     return
   }
 
-  console.warn(label, JSON.stringify({
-    dx,
-    dy,
-    d,
-    power: aim.power,
-    i: aim.i,
-    aim: {
-      x: aim.pos.x,
-      y: aim.pos.y,
-    },
-    cueball: {
-      x: cueballPos.x,
-      y: cueballPos.y,
-    },
-    ...extra,
-  }, null, 2))
+  console.warn(
+    label,
+    JSON.stringify(
+      {
+        dx,
+        dy,
+        d,
+        power: aim.power,
+        i: aim.i,
+        aim: {
+          x: aim.pos.x,
+          y: aim.pos.y,
+        },
+        cueball: {
+          x: cueballPos.x,
+          y: cueballPos.y,
+        },
+        ...extra,
+      },
+      null,
+      2
+    )
+  )
 }
