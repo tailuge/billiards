@@ -22,9 +22,7 @@ export class PlayShot extends ControllerBase {
     const { p1: s1, p2: s2 } = Session.getInstance().orderedScoresForHud()
 
     const b = this.container.rules.currentBreak
-    const active = this.container.inferActivePlayerFromControllerName(
-      nextController.name
-    )
+    const active = this.container.inferActivePlayer(nextController)
     this.container.sendScoreUpdate(s1, s2, b, active)
 
     const isPartOfBreak = this.container.rules.isPartOfBreak(outcome)

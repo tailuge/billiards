@@ -31,7 +31,13 @@ import { ScoreEvent } from "../events/scoreevent"
 import { ContainerConfig } from "./containerconfig"
 import { Controller } from "../controller/controller"
 import { ParticleSystem } from "../view/particle-system"
-//import { End } from "../controller/end"
+import { End } from "../controller/end"
+import { Replay } from "../controller/replay"
+import { Aim } from "../controller/aim"
+import { PlaceBall } from "../controller/placeball"
+import { PlayShot } from "../controller/playshot"
+import { WatchAim } from "../controller/watchaim"
+import { WatchShot } from "../controller/watchshot"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -144,18 +150,18 @@ export class Container {
     return this.myHudSlot() === 1 ? 2 : 1
   }
 
-  inferActivePlayerFromControllerName(name: string): ActivePlayer {
-    if (name === "Aim" || name === "PlaceBall" || name === "PlayShot") {
+  inferActivePlayer(controller: Controller = this.controller): ActivePlayer {
+    if (
+      controller instanceof Aim ||
+      controller instanceof PlaceBall ||
+      controller instanceof PlayShot
+    ) {
       return this.myHudSlot()
     }
-    if (name === "WatchAim" || name === "WatchShot") {
+    if (controller instanceof WatchAim || controller instanceof WatchShot) {
       return this.opponentHudSlot()
     }
     return 0
-  }
-
-  inferActivePlayerFromController(controller = this.controller): ActivePlayer {
-    return this.inferActivePlayerFromControllerName(controller?.name ?? "")
   }
 
   setHudActivePlayer(active: ActivePlayer) {
@@ -176,11 +182,11 @@ export class Container {
       orderedNames.p2Name,
       b
     )
-    this.setHudActivePlayer(active ?? this.inferActivePlayerFromController())
+    this.setHudActivePlayer(active ?? this.inferActivePlayer())
   }
 
   sendScoreUpdate(p1: number, p2: number, b: number, active?: ActivePlayer) {
-    const activePlayer = active ?? this.inferActivePlayerFromController()
+    const activePlayer = active ?? this.inferActivePlayer()
     const changed =
       this.hudScores.p1 !== p1 ||
       this.hudScores.p2 !== p2 ||
@@ -266,23 +272,22 @@ export class Container {
     })
   }
 
-  updateController(controller) {
-    this.wasReplay = this.wasReplay || controller.name === "Replay"
+  updateController(controller: Controller) {
+    this.wasReplay = this.wasReplay || controller instanceof Replay
     if (controller !== this.controller) {
       const playerName = Session.getInstance().playername
       this.log(`${playerName}: Transition to ${controller.name}`)
       this.controller = controller
-      const active = this.inferActivePlayerFromController(controller)
+      const active = this.inferActivePlayer(controller)
       if (
         active !== 0 ||
-        controller.name === "Init" ||
-        controller.name === "End"
+        controller instanceof Init ||
+        controller instanceof End
       ) {
         this.setHudActivePlayer(active)
       }
       this.menu?.setShareVisible(
-        controller.name === "Replay" ||
-          (this.wasReplay && controller.name === "End")
+        controller instanceof Replay || (this.wasReplay && controller instanceof End)
       )
       this.menu?.setConcedeVisible(!this.isSinglePlayer && !this.replayMode)
       this.controller.onFirst()
