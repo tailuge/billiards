@@ -159,6 +159,7 @@ export class BotEventHandler {
       if (ball) {
         ball.pos.copy(event.respot.pos)
         ball.setStationary()
+        ball.fround()
       }
     }
 
@@ -167,6 +168,7 @@ export class BotEventHandler {
       event.useStartPos ? event.pos : this.container.rules.placeBall()
     )
     cueball.setStationary()
+    cueball.fround()
     this.publishSequenceToPlayer(this.aim())
   }
 
