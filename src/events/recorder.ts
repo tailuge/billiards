@@ -123,12 +123,10 @@ export class Recorder {
             this.container.lastAimEventTime != null
               ? performance.now() - this.container.lastAimEventTime
               : undefined,
-          serialisedCueball: serialisedCueball
-            ? {
-                x: serialisedCueball.x,
-                y: serialisedCueball.y,
-              }
-            : undefined,
+          serialisedCueball: serialisedCueball && {
+            x: serialisedCueball.x,
+            y: serialisedCueball.y,
+          },
           serialisedCueballDelta,
         }
       )

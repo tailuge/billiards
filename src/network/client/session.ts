@@ -23,9 +23,7 @@ export class Session {
   private static readonly fallbackOpponentClientId = "opponent"
 
   static getInstance(): Session {
-    if (!Session.instance) {
-      Session.instance = new Session("", "", "", false, false, false)
-    }
+    Session.instance ??= new Session("", "", "", false, false, false)
     return Session.instance
   }
 
