@@ -2,6 +2,7 @@ import { AimEvent } from "../events/aimevent"
 import { HitEvent } from "../events/hitevent"
 import { WatchShot } from "./watchshot"
 import { ControllerBase } from "./controllerbase"
+import { warnAimDriftTripwire } from "../utils/aim-drift-tripwire"
 
 export class WatchAim extends ControllerBase {
   override get name() {
@@ -27,8 +28,51 @@ export class WatchAim extends ControllerBase {
   }
 
   override handleHit(event: HitEvent) {
+    const tablejson = event.tablejson
+    const aim = tablejson.aim ?? tablejson
+    const serialisedCueball = tablejson.balls?.[0]?.pos
+
+    warnAimDriftTripwire(
+      "tripwire: remote_hit_pre_apply_state_gap",
+      aim,
+      this.container.table.cueball.pos,
+      {
+        phase: "pre_apply",
+        controller: this.name,
+        eventClientId: event.clientId,
+        eventPlayername: event.playername,
+        eventSequence: event.sequence,
+        serialisedCueball: serialisedCueball
+          ? {
+              x: serialisedCueball.x,
+              y: serialisedCueball.y,
+            }
+          : undefined,
+      }
+    )
+
     this.container.table.updateFromSerialised(event.tablejson)
     this.container.table.cue.updateAimInput()
-    return new WatchShot(this.container)
+
+    warnAimDriftTripwire(
+      "tripwire: remote_hit_post_apply_state_gap",
+      aim,
+      this.container.table.cueball.pos,
+      {
+        phase: "post_apply",
+        controller: this.name,
+        eventClientId: event.clientId,
+        eventPlayername: event.playername,
+        eventSequence: event.sequence,
+        serialisedCueball: serialisedCueball
+          ? {
+              x: serialisedCueball.x,
+              y: serialisedCueball.y,
+            }
+          : undefined,
+      }
+    )
+
+    return new WatchShot(this.container, event)
   }
 }

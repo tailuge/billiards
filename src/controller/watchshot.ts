@@ -6,14 +6,40 @@ import { PlaceBallEvent } from "../events/placeballevent"
 import { RerackEvent } from "../events/rerackevent"
 import { Session } from "../network/client/session"
 import { BeginEvent } from "../events/beginevent"
+import { HitEvent } from "../events/hitevent"
+import { warnAimDriftTripwire } from "../utils/aim-drift-tripwire"
 
 export class WatchShot extends ControllerBase {
   override get name(): string {
     return "WatchShot"
   }
-  constructor(container) {
+  constructor(container, hitEvent?: HitEvent) {
     super(container)
     this.container.table.outcome = []
+
+    const tablejson = hitEvent?.tablejson
+    const aim = tablejson ? (tablejson.aim ?? tablejson) : undefined
+    const serialisedCueball = tablejson?.balls?.[0]?.pos
+
+    warnAimDriftTripwire(
+      "tripwire: remote_hit_sim_start_gap",
+      aim,
+      this.container.table.cueball.pos,
+      {
+        phase: "sim_start",
+        controller: this.name,
+        eventClientId: hitEvent?.clientId,
+        eventPlayername: hitEvent?.playername,
+        eventSequence: hitEvent?.sequence,
+        serialisedCueball: serialisedCueball
+          ? {
+              x: serialisedCueball.x,
+              y: serialisedCueball.y,
+            }
+          : undefined,
+      }
+    )
+
     this.container.table.hit()
   }
 

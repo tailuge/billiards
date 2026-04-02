@@ -194,6 +194,94 @@ To avoid that noise, the recorder tripwire now suppresses this specific case:
 remote queued hit, internally consistent payload, and a large local-state gap
 greater than `0.1`.
 
+## Current Understanding
+
+The original investigation used recordings and replay because they made the
+ divergence easy to capture and reproduce.
+
+However, the root issue is not replay-specific.
+
+The same class of mismatch is also showing up in live two-player games where
+state is sent over the wire. That makes this more serious than a replay-only
+recording defect: two machines can disagree about the exact shot-start state at
+the hit boundary.
+
+For a deterministic simulation, no amount of position difference is acceptable
+at that boundary. Even very small differences can fan out into different
+outcomes after collisions, cushions, or pots.
+
+The key point now is:
+
+- if one client is about to simulate a shot from a different cue-ball position
+  than the other client, the game state is already divergent before the shot
+  begins
+
+This means the bug should now be treated as a live two-player state alignment
+problem, not only as a replay/recording bug.
+
+## Next Steps
+
+1. Separate the two classes of tripwire clearly in code and logs:
+   payload inconsistency vs remote pre-apply state gap.
+
+2. Treat any remote hit where the incoming payload is internally consistent but
+   the local receiver cue ball differs as evidence that the two clients had
+   different initial shot state at the hit boundary.
+
+3. Instrument the last observed remote `AimEvent` on the receiving side and
+   compare it directly with the incoming `HitEvent` payload to determine whether
+   the receiver missed the final aim state or whether local table state drifted
+   by some other path.
+
+4. Audit the exact two-player shot boundary sequence:
+   final aim update, hit publish, receive ordering, and local application order
+   on both sender and receiver.
+
+5. Decide what the authoritative multiplayer contract should be at hit time.
+   The likely requirement is that the `HitEvent` must carry the full exact shot
+   start state needed for both clients to begin simulation from the same state,
+   and the receiver must apply that authoritative state before simulation.
+
+6. Once the transport/apply contract is clear, add a targeted two-player
+   regression that proves both sides start the shot from identical state.
+
+## Test Plan
+
+Add a targeted two-player regression for the initial synchronization path.
+
+The goal of the test should be:
+
+- simulate the first-player startup path that publishes the initial full-table
+  `WatchEvent`
+- apply that event on a second container using the normal receiver path
+- assert that the receiving container ends with exactly the same full ball state
+  as the sending container before the first shot begins
+
+More specifically, the test should:
+
+1. Create two containers representing player 1 and player 2.
+
+2. Put player 1 through the normal opening transition that produces the initial
+   `WatchEvent` / full-state sync payload.
+
+3. Deliver that serialized event to player 2 through the same
+   `EventUtil.fromSerialised(...)` and `eventQueue` path used in multiplayer.
+
+4. After player 2 processes the event and reaches `WatchAim`, compare all ball
+   positions between the two containers.
+
+5. Require exact equality, not approximate equality, because any difference at
+   the initial deterministic state boundary is already a bug.
+
+6. Extend the test, if needed, to cover the immediate next remote `HitEvent`
+   boundary:
+   player 1 creates the first hit, player 2 receives it, and the test asserts
+   that player 2 starts simulation from the exact state carried by the hit
+   payload.
+
+This test should become the main regression for the live two-player form of the
+bug, complementing the existing replay regression in this file.
+
 ## Still occuring
 
 [11:16:03 AM] warn tripwire: recorder_hit_aim_mismatch {
@@ -215,3 +303,88 @@ greater than `0.1`.
 }
 
 Now adding extra debug info for next occurence.
+
+---
+
+index.js:75 Version: 260402.06
+index.js:75 http://localhost:8080/index.html?ruletype=nineball&websocketserver=ws://localhost:8080&tableId=1a09&userId=p2id&userName=P2
+index.js:75 clientId: p2id playername: P2 tableId: 1a09 spectator: false botMode: false
+index.js:75 r {playername: 'P2', clientId: 'p2id', tableId: '1a09', spectator: false, botMode: false, …}
+index.js:75 Skipping usage fetch for localhost.
+index.js:29 models/background.gltf 2431 bytes loaded
+index.js:29 models/p8.min.gltf 4985 bytes loaded
+index.js:75 P2 assets ready
+index.js:75 P2: Transition to Init
+index.js:48 Subscribed to  wss://billiards-network.onrender.com/subscribe/table/1a09
+index.js:75 P2 broadcast BEGIN : p2id
+index.js:75 Version: 260402.06
+index.js:75 http://localhost:8080/index.html?ruletype=nineball&websocketserver=ws://localhost:8080&tableId=1a09&userId=p1id&userName=P1&first=true
+index.js:75 clientId: p1id playername: P1 tableId: 1a09 spectator: false botMode: false
+index.js:75 r {playername: 'P1', clientId: 'p1id', tableId: '1a09', spectator: false, botMode: false, …}
+index.js:75 Skipping usage fetch for localhost.
+index.js:29 models/background.gltf 2431 bytes loaded
+index.js:29 models/p8.min.gltf 4985 bytes loaded
+index.js:75 P1 assets ready
+index.js:75 P1: Transition to Init
+index.js:48 Subscribed to  wss://billiards-network.onrender.com/subscribe/table/1a09
+index.js:48 Connected to wss://billiards-network.onrender.com/subscribe/table/1a09
+index.js:48 Connected to wss://billiards-network.onrender.com/subscribe/table/1a09
+index.js:75 P1 receive BEGIN : p2id
+index.js:75 P1 broadcast WATCHAIM : p1id
+index.js:75 P1: Transition to PlaceBall
+index.js:75 P2 receive WATCHAIM : p1id
+index.js:29 Ball 0 moved 0.00011792840069938527
+index.js:29 Ball 1 moved 0.0008486351039853972
+index.js:29 Ball 2 moved 0.0007509339689204836
+index.js:29 Ball 3 moved 0.002077893825944207
+index.js:29 Ball 4 moved 0.0016488790562344936
+index.js:29 Ball 5 moved 0.0011722404102128842
+index.js:29 Ball 6 moved 0.0015987353096292617
+index.js:29 Ball 7 moved 0.0012535684770100253
+index.js:29 Ball 8 moved 0.0020564792344264626
+index.js:29 Ball 9 moved 0.0006810634067032396
+index.js:75 P2: Transition to WatchAim
+index.js:75 P1 broadcast BREAK : p1id
+index.js:75 P1: Transition to Aim
+index.js:75 P2 receive BREAK : p1id
+index.js:75 P1 broadcast HIT : p1id
+index.js:75 P1: Transition to PlayShot
+index.js:75 P2 receive HIT : p1id
+index.js:75 tripwire: recorder_hit_aim_mismatch {
+  "version": "260402.06",
+  "dx": -0.00018608570098876953,
+  "dy": -0.0003791984054259956,
+  "d": 0.00042239711030036593,
+  "power": 3.930000066757202,
+  "i": 0,
+  "aim": {
+    "x": -0.7204999923706055,
+    "y": 0
+  },
+  "cueball": {
+    "x": -0.7206860780715942,
+    "y": -0.0003791984054259956
+  },
+  "recordedAt": "Recorder.record",
+  "recordOrigin": "processEvents",
+  "controller": "WatchAim",
+  "replayMode": false,
+  "isSinglePlayer": false,
+  "cueballState": "Stationary",
+  "sessionClientId": "p2id",
+  "eventClientId": "p1id",
+  "sessionPlayername": "P2",
+  "eventPlayername": "P1",
+  "spectator": false,
+  "botMode": false,
+  "practiceMode": false,
+  "serialisedCueball": {
+    "x": -0.7204999923706055,
+    "y": 0
+  },
+  "serialisedCueballDelta": {
+    "dx": 0,
+    "dy": 0,
+    "d": 0
+  }
+}
