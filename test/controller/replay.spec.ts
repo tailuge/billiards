@@ -213,6 +213,24 @@ describe("Controller Replay", () => {
     done()
   })
 
+  it("replay can process its scheduled HitEvent without crashing recorder", (done) => {
+    jest.clearAllTimers()
+    container.controller = new Replay(
+      container,
+      state.init,
+      state.shots,
+      false,
+      0
+    )
+
+    jest.runOnlyPendingTimers()
+    expect(container.eventQueue.length).to.be.greaterThan(0)
+
+    expect(() => container.processEvents()).to.not.throw()
+    expect(container.controller).to.be.an.instanceof(Replay)
+    done()
+  })
+
   it("pre-highlights active player before aim using SCORE.active", (done) => {
     const replayState = {
       init: state.init,

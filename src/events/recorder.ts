@@ -35,88 +35,7 @@ export class Recorder {
   record(event: GameEvent, recordOrigin = "unknown") {
     let recordedEvent = event
     if (event.type === EventType.HIT) {
-      const hitEvent = event as HitEvent
-      const recordedAim = hitEvent.tablejson.aim
-      const serialisedCueball = hitEvent.tablejson.balls?.[0]?.pos
-      const session = this.safeSession()
-      const serialisedCueballDelta = serialisedCueball
-        ? {
-            dx: serialisedCueball.x - recordedAim.pos.x,
-            dy: serialisedCueball.y - recordedAim.pos.y,
-            d: Math.hypot(
-              serialisedCueball.x - recordedAim.pos.x,
-              serialisedCueball.y - recordedAim.pos.y
-            ),
-          }
-        : undefined
-      const localCueballDelta = {
-        dx: this.container.table.cueball.pos.x - recordedAim.pos.x,
-        dy: this.container.table.cueball.pos.y - recordedAim.pos.y,
-        d: Math.hypot(
-          this.container.table.cueball.pos.x - recordedAim.pos.x,
-          this.container.table.cueball.pos.y - recordedAim.pos.y
-        ),
-      }
-      recordedEvent = recordedAim
-      const isRemoteQueuedHit =
-        recordOrigin === "processEvents" &&
-        !!event.clientId &&
-        event.clientId !== session?.clientId
-      const payloadIsInternallyConsistent =
-        !!serialisedCueball &&
-        !!serialisedCueballDelta &&
-        serialisedCueballDelta.d <= 1e-9
-      const isLargeLocalStateGap =
-        localCueballDelta.d > REMOTE_HIT_LOCAL_STATE_MISMATCH_THRESHOLD
-
-      if (
-        !(
-          isRemoteQueuedHit &&
-          payloadIsInternallyConsistent &&
-          isLargeLocalStateGap
-        )
-      ) {
-        warnAimDriftTripwire(
-          "tripwire: recorder_hit_aim_mismatch",
-          recordedAim,
-          {
-            x: this.container.table.cueball.pos.x,
-            y: this.container.table.cueball.pos.y,
-          },
-          {
-            recordedAt: "Recorder.record",
-            recordOrigin,
-            controller: this.container.controller?.name,
-            replayMode: this.container.replayMode,
-            isSinglePlayer: this.container.isSinglePlayer,
-            cueballState: this.container.table.cueball.state,
-            sessionClientId: session?.clientId,
-            eventClientId: event.clientId,
-            eventSequence: event.sequence,
-            sessionPlayername: session?.playername,
-            eventPlayername: event.playername,
-            spectator: session?.spectator,
-            botMode: session?.botMode,
-            practiceMode: session?.practiceMode,
-            lastAimEvent: this.container.lastAimEventPos,
-            lastAimEventClientId: this.container.lastAimEventClientId,
-            lastAimEventPlayername: this.container.lastAimEventPlayername,
-            lastAimEventSequence: this.container.lastAimEventSequence,
-            lastAimEventOrigin: this.container.lastAimEventOrigin,
-            timeSinceLastAimMs:
-              this.container.lastAimEventTime !== undefined
-                ? performance.now() - this.container.lastAimEventTime
-                : undefined,
-            serialisedCueball: serialisedCueball
-              ? {
-                  x: serialisedCueball.x,
-                  y: serialisedCueball.y,
-                }
-              : undefined,
-            serialisedCueballDelta,
-          }
-        )
-      }
+      recordedEvent = this.recordHitEvent(event as HitEvent, recordOrigin)
     }
 
     if (
@@ -141,6 +60,115 @@ export class Recorder {
     } catch {
       return undefined
     }
+  }
+
+  private recordHitEvent(hitEvent: HitEvent, recordOrigin: string) {
+    const tablejson = hitEvent.tablejson
+    const recordedAim = tablejson.aim ?? tablejson
+    const serialisedCueball = tablejson.balls?.[0]?.pos
+    const session = this.safeSession()
+    if (!recordedAim?.pos) {
+      throw new Error("HitEvent missing aim position")
+    }
+
+    const serialisedCueballDelta = serialisedCueball
+      ? {
+          dx: serialisedCueball.x - recordedAim.pos.x,
+          dy: serialisedCueball.y - recordedAim.pos.y,
+          d: Math.hypot(
+            serialisedCueball.x - recordedAim.pos.x,
+            serialisedCueball.y - recordedAim.pos.y
+          ),
+        }
+      : undefined
+
+    if (
+      !this.shouldSuppressRemotePreApplyMismatch(
+        hitEvent,
+        recordOrigin,
+        session,
+        recordedAim,
+        serialisedCueball,
+        serialisedCueballDelta
+      )
+    ) {
+      warnAimDriftTripwire(
+        "tripwire: recorder_hit_aim_mismatch",
+        recordedAim,
+        {
+          x: this.container.table.cueball.pos.x,
+          y: this.container.table.cueball.pos.y,
+        },
+        {
+          recordedAt: "Recorder.record",
+          recordOrigin,
+          controller: this.container.controller?.name,
+          replayMode: this.container.replayMode,
+          isSinglePlayer: this.container.isSinglePlayer,
+          cueballState: this.container.table.cueball.state,
+          sessionClientId: session?.clientId,
+          eventClientId: hitEvent.clientId,
+          eventSequence: hitEvent.sequence,
+          sessionPlayername: session?.playername,
+          eventPlayername: hitEvent.playername,
+          spectator: session?.spectator,
+          botMode: session?.botMode,
+          practiceMode: session?.practiceMode,
+          lastAimEvent: this.container.lastAimEventPos,
+          lastAimEventClientId: this.container.lastAimEventClientId,
+          lastAimEventPlayername: this.container.lastAimEventPlayername,
+          lastAimEventSequence: this.container.lastAimEventSequence,
+          lastAimEventOrigin: this.container.lastAimEventOrigin,
+          timeSinceLastAimMs:
+            this.container.lastAimEventTime !== undefined
+              ? performance.now() - this.container.lastAimEventTime
+              : undefined,
+          serialisedCueball: serialisedCueball
+            ? {
+                x: serialisedCueball.x,
+                y: serialisedCueball.y,
+              }
+            : undefined,
+          serialisedCueballDelta,
+        }
+      )
+    }
+
+    return recordedAim
+  }
+
+  private shouldSuppressRemotePreApplyMismatch(
+    hitEvent: HitEvent,
+    recordOrigin: string,
+    session: Session | undefined,
+    recordedAim,
+    serialisedCueball,
+    serialisedCueballDelta
+  ) {
+    const localCueballDelta = {
+      dx: this.container.table.cueball.pos.x - recordedAim.pos.x,
+      dy: this.container.table.cueball.pos.y - recordedAim.pos.y,
+      d: Math.hypot(
+        this.container.table.cueball.pos.x - recordedAim.pos.x,
+        this.container.table.cueball.pos.y - recordedAim.pos.y
+      ),
+    }
+    const isRemoteQueuedHit =
+      recordOrigin === "processEvents" &&
+      !!hitEvent.clientId &&
+      hitEvent.clientId !== session?.clientId
+    const payloadIsInternallyConsistent =
+      !!serialisedCueball &&
+      !!serialisedCueballDelta &&
+      serialisedCueballDelta.d <= 1e-9
+    const isLargeLocalStateGap =
+      localCueballDelta.d > REMOTE_HIT_LOCAL_STATE_MISMATCH_THRESHOLD
+
+    return (
+      isRemoteQueuedHit &&
+      payloadIsInternallyConsistent &&
+      isLargeLocalStateGap
+    )
   }
 
   private findLastIndex(
