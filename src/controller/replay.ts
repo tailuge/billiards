@@ -164,7 +164,7 @@ export class Replay extends ControllerBase {
         {
           type: "Info",
           title: "Replay Complete",
-          extra: gameOverButtons.replay + gameOverButtons.lobby,
+          extra: gameOverButtons.replay + " " + gameOverButtons.lobby,
         },
         0,
         { lobby: () => Rematch.redirectToLobby() }
