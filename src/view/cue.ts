@@ -29,6 +29,7 @@ export class Cue {
   private readonly tempVec2 = new Vector3()
   private readonly tempVec3 = new Vector3()
   private readonly postHitOffset = new Vector3()
+  hitAnimationWeight: number = 0
 
   constructor() {
     this.mesh = CueMesh.createCue(
@@ -136,16 +137,28 @@ export class Cue {
     this.shadowMesh.rotation.z = this.aim.angle
     const offset = this.spinOffset()
     const swing =
-      (sin(this.t + Math.PI / 2) - 1) * 2 * R * (this.aim.power / this.maxPower)
+      (sin(this.t * 1.5 + Math.PI / 2) - 1) *
+      2 *
+      R *
+      (this.aim.power / this.maxPower)
     const unitToBall = unitAtAngle(this.aim.angle, this.tempVec)
 
-    this.postHitOffset.copy(unitToBall).multiplyScalar(-1).setZ(0.35)
+    this.postHitOffset
+      .copy(unitToBall)
+      .multiplyScalar(-1)
+      .setZ(0.15 + Math.min(this.t / 5, 0.25))
+
+    if (this.hittingAnimation) {
+      this.hitAnimationWeight = 1
+    } else {
+      this.hitAnimationWeight *= 0.97
+    }
 
     this.postHitOffset.multiplyScalar(
-      this.hittingAnimation ? this.hitAnimationCurve(this.t) * 2 * R : 0
+      this.hitAnimationWeight * this.hitAnimationCurve(this.t) * 2 * R
     )
 
-    unitToBall.multiplyScalar(swing)
+    unitToBall.multiplyScalar((1 - this.hitAnimationWeight) * swing)
 
     this.mesh.position
       .copy(pos)
@@ -164,10 +177,10 @@ export class Cue {
 
   hitAnimationCurve(t: number) {
     const pts = [
-      { t: 0, v: -0.3 },
-      { t: 0.25, v: -1 },
-      { t: 1, v: 1 },
-      { t: 2, v: 2 },
+      { t: 0, v: -2 },
+      { t: 1, v: -1 },
+      { t: 2, v: 1 },
+      { t: 3, v: 2 },
     ]
     if (t <= pts[0].t) return pts[0].v
     if (t >= pts[pts.length - 1].t) return pts[pts.length - 1].v
