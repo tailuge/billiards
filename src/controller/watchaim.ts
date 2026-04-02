@@ -1,5 +1,6 @@
 import { AimEvent } from "../events/aimevent"
 import { HitEvent } from "../events/hitevent"
+import { BreakEvent } from "../events/breakevent"
 import { WatchShot } from "./watchshot"
 import { ControllerBase } from "./controllerbase"
 import { warnAimDriftTripwire } from "../utils/aim-drift-tripwire"
@@ -24,6 +25,13 @@ export class WatchAim extends ControllerBase {
     this.container.table.cue.aim = event
     this.container.table.cueball.pos.copy(event.pos)
     this.container.table.cue.updateAimInput()
+    return this
+  }
+
+  override handleBreak(event: BreakEvent) {
+    if (event.init) {
+      this.container.table.updateFromShortSerialised(event.init)
+    }
     return this
   }
 

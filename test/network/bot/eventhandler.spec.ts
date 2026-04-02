@@ -242,9 +242,9 @@ describe("BotEventHandler Respot Logic", () => {
     const hit = publishedEvents.find((e) => e instanceof HitEvent)
     if (!(hit instanceof HitEvent)) throw new Error("Expected HitEvent")
 
-    expect(hit.tablejson.aim.pos.x).toBeCloseTo(placedPos.x, 9)
-    expect(hit.tablejson.aim.pos.y).toBeCloseTo(placedPos.y, 9)
-    expect(hit.tablejson.aim.pos.z).toBeCloseTo(placedPos.z, 9)
+    expect(hit.tablejson.aim.pos.x).toBeCloseTo(Math.fround(placedPos.x), 9)
+    expect(hit.tablejson.aim.pos.y).toBeCloseTo(Math.fround(placedPos.y), 9)
+    expect(hit.tablejson.aim.pos.z).toBeCloseTo(Math.fround(placedPos.z), 9)
     expect(hit.tablejson.aim.i).toBe(0)
   })
 
