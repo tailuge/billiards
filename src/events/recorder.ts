@@ -120,7 +120,7 @@ export class Recorder {
           lastAimEventSequence: this.container.lastAimEventSequence,
           lastAimEventOrigin: this.container.lastAimEventOrigin,
           timeSinceLastAimMs:
-            this.container.lastAimEventTime !== undefined
+            this.container.lastAimEventTime != null
               ? performance.now() - this.container.lastAimEventTime
               : undefined,
           serialisedCueball: serialisedCueball
@@ -165,9 +165,7 @@ export class Recorder {
       localCueballDelta.d > REMOTE_HIT_LOCAL_STATE_MISMATCH_THRESHOLD
 
     return (
-      isRemoteQueuedHit &&
-      payloadIsInternallyConsistent &&
-      isLargeLocalStateGap
+      isRemoteQueuedHit && payloadIsInternallyConsistent && isLargeLocalStateGap
     )
   }
 

@@ -36,7 +36,8 @@ beforeEach(function (done) {
     log: (_) => {},
     assets: Assets.localAssets(),
   })
-  new Comment(container)
+  const comment = new Comment(container)
+  expect(comment).to.not.be.undefined
   done()
 })
 
