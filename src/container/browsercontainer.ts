@@ -220,7 +220,7 @@ export class BrowserContainer {
     if (event.clientId === Session.getInstance().clientId) {
       return
     }
-//    logNetEvent(this.playername, event, "receive")
+    //    logNetEvent(this.playername, event, "receive")
     if (event.clientId) {
       Session.getInstance().setOpponentClientId(event.clientId)
     }
@@ -234,7 +234,7 @@ export class BrowserContainer {
     if (this.messageRelay) {
       event.clientId = Session.getInstance().clientId
       event.playername = Session.getInstance().playername
-//      logNetEvent(this.playername, event, "broadcast")
+      //      logNetEvent(this.playername, event, "broadcast")
       this.messageRelay.publish(this.tableId, EventUtil.serialise(event))
     }
   }

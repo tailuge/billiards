@@ -65,35 +65,28 @@ export class ParticleUtils {
     return canvas
   }
 
+  static readonly win =
+    "🍕🍔🍟🌮🍣🍜🍝🍛🍗🍖🍰🎂🍩🍪🍦🍧🍨🍫🍬🍿🥑🍜🍲🍱🍚🍡🍢🍘🍙🍥🥟🥠🥢🥖🧀🍷🥘🥨🥪🥓🧂🍲🥗🥙🌯🌶️🍍🥥🍹🍉🍇🍈🍊🍋🍠🍌🥜🍯🍵🍛🍭🍬🍫🍿🍮🍧🍨🍦🥧🧁🍩☕🍵🍶🍺🍷🥛🍹🧃🧉🥤🍾🥂🍸🍻🥓🧂🌭🥪🥨🧀🥚🍳🥘🍲"
   static readonly messages = [
     "🍀WIN",
     "🎲神",
-    "(ಠ_ಠ)",
     "👾🕹️",
     "🏆🌍",
     "Void*",
-    "🥑💥🥑",
     "🍣",
-    "🍡🍘",
-    "🥟🍜",
     "🇹🇼🍚🥢",
-    "🥬🥤🍛",
     "太魯閣",
     "🐧🧡",
     "(ツ)",
     "🀄",
-    "🂡🂡",
+    "🂡",
     "水啦",
-    "🍤✨",
     "🍱💯",
-    "🥢⚡",
-    "🍙🍤",
     "🍵🍶",
     "1UP✨",
     "🍒🍒🍒",
-    "☀️ 🌤️ ⛅ 🌥️",
     "E = m💫²",
-  ]
+  ].concat([...this.win])
 
   static randomText() {
     return this.messages[Math.floor(Math.random() * this.messages.length)]
