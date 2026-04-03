@@ -388,3 +388,46 @@ index.js:75 tripwire: recorder_hit_aim_mismatch {
     "d": 0
   }
 }
+
+
+
+
+////
+
+Goal Description
+The current aim drift tripwire is inefficient at detecting full state desyncs in 2-player games because it only compares the cueball position with its aim position. This plan removes the old tripwire and implements a robust state-comparison tripwire that checks for 2-player desync by comparing the position of all balls across clients just prior to executing a shot.
+
+Proposed Changes
+Tripwire Utilities
+[DELETE] src/utils/aim-drift-tripwire.ts
+[NEW] src/utils/desync-tripwire.ts
+Create a new utility function checkDesyncTripwire that takes two sets of shortSerialise state arrays (representing the full table ball positions). It will compare differences and trigger console.warn specifying which balls drifted past a defined threshold (e.g., 1e-9).
+
+Model
+[MODIFY] src/model/table.ts
+Remove imports and calls to warnAimDriftTripwire.
+Modify serialiseHit() to include the entire table state footprint for tripwire purposes right before the hit. This footprint will be added to the returned payload as stateCheck: this.shortSerialise().
+Controllers
+[MODIFY] src/controller/watchaim.ts
+Remove warnAimDriftTripwire.
+When receiving a HitEvent, verify the event payload's stateCheck property against this.container.table.shortSerialise().
+Call checkDesyncTripwire("tripwire: remote_hit_pre_apply_desync", remoteStateCheck, localStateCheck, ...) to catch any diverging simulations from the previous turn.
+[MODIFY] src/controller/watchshot.ts
+Remove warnAimDriftTripwire.
+Events
+[MODIFY] src/events/recorder.ts
+Remove warnAimDriftTripwire.
+
+IMPORTANT
+
+The new desync tripwire will rely on adding stateCheck: this.shortSerialise() to the HitEvent payload. Because HitEvent is already transmitted locally and remotely, catching desyncs pre-shot (validating that the active player's state matches the remote player's state before hitting) will efficiently indicate if the previous shot's physics yielded a divergence.
+
+Ensure that the recorder.ts does not store this extra field so that recordings are not bloated.
+
+Verification Plan
+Automated Tests
+Build using yarn build.
+Run tests via yarn test to ensure HitEvent adjustments do not break existing serialization logic.
+Manual Verification
+A manual local simulation sending synthetic hit events can trigger the tripwire mismatch explicitly (by injecting a tiny offset).
+Testing via browser console to confirm tripwire: remote_hit_pre_apply_desync fires appropriately and cleanly logs drifting state details.
