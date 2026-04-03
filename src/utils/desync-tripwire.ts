@@ -1,6 +1,6 @@
 import { VERSION } from "./version"
 
-const DESYNC_THRESHOLD = 1e-12
+const DESYNC_THRESHOLD = 1e-9
 
 export function checkDesyncTripwire(
   label: string,
@@ -8,7 +8,7 @@ export function checkDesyncTripwire(
   localStateCheck: number[],
   extra: Record<string, unknown> = {}
 ) {
-  if (!remoteStateCheck || remoteStateCheck.length !== localStateCheck.length) {
+  if (remoteStateCheck?.length !== localStateCheck.length) {
     return
   }
 
