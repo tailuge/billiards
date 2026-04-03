@@ -687,3 +687,20 @@ index.js:75 Bob: Transition to WatchAim
 index.js:75 Bob: Transition to WatchShot
  Alice: Transition to WatchAim
 index.js:75 Bob: Transition to Aim
+## Tripwire Review Findings
+
+The current `remote_hit_pre_apply_desync` tripwire (implemented in `src/utils/desync-tripwire.ts`) effectively monitors state alignment in 2-player mode by comparing the local table state with the authoritative `HitEvent` payload just before the shot is applied.
+
+### Strengths:
+- **Authoritative Sync Point:** It validates the exact moment where both clients must have identical state to ensure a deterministic simulation of the upcoming shot.
+- **Precision:** The `1e-9` threshold is sensitive enough to catch any 32-bit float drift (`Math.fround`).
+- **Lean Implementation:** It performs checks only at the start of a shot, avoiding per-frame physics overhead.
+
+### Limitations & Blind Spots:
+1. **End-of-Game Silence:** Desyncs occurring during the final shot of a game (e.g., potting the game-winning ball) are never caught because no subsequent `HitEvent` is generated to trigger the check.
+2. **Intermediate Transition Gaps:** Transitions like `WatchEvent` (during a break) or `StartAimEvent` (turn change after a miss) do not perform desync checks. A desync could persist through multiple such transitions without being logged until the next `HitEvent`.
+3. **Catastrophic Failure Silence:** If the number of balls on the table differs between clients (`remoteStateCheck.length !== localStateCheck.length`), the tripwire currently returns early without logging. This is a severe desync that should be explicitly caught.
+4. **Active Player Blind Spot:** The check is only performed by the receiver of a `HitEvent`. The active player never validates their outgoing state against what the receiver actually sees, meaning logs only appear on one side of a desynced pair.
+
+### Conclusion on 2-Player Effectiveness:
+While the tripwire provides a strong "heartbeat" for simulation health, its reliance on `HitEvent` means it only reports desyncs with a "one shot delay" and remains blind to desyncs that conclude a game or occur during non-scoring transitions. Expanding desync checks to `WatchEvent` and end-game states would improve coverage.
