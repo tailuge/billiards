@@ -1,6 +1,6 @@
 import { VERSION } from "./version"
 
-const DESYNC_THRESHOLD = 1e-6
+const DESYNC_THRESHOLD = 1e-12
 
 export function checkDesyncTripwire(
   label: string,

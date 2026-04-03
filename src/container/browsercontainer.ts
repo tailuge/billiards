@@ -20,7 +20,7 @@ import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
 import { BotRelay } from "../network/bot/botrelay"
 import { ScoreReporter } from "../network/client/scorereporter"
 import { BeginEvent } from "../events/beginevent"
-import { logNetEvent } from "../utils/event-log"
+//import { logNetEvent } from "../utils/event-log"
 import { Logger } from "../network/bot/logger"
 import { getUID } from "../utils/uid"
 

@@ -431,3 +431,259 @@ Run tests via yarn test to ensure HitEvent adjustments do not break existing ser
 Manual Verification
 A manual local simulation sending synthetic hit events can trigger the tripwire mismatch explicitly (by injecting a tiny offset).
 Testing via browser console to confirm tripwire: remote_hit_pre_apply_desync fires appropriately and cleanly logs drifting state details.
+
+
+-----
+
+
+Version: 260403.06
+ https://billiards.tailuge.workers.dev/?websocketserver=wss%3A%2F%2Fbilliards.onrender.com%2Fws&tableId=c9c5b215&userName=Alice&userId=player-1-v7rf&ruletype=snooker&first=true
+ clientId: player-1-v7rf playername: Alice tableId: c9c5b215 spectator: false botMode: false
+ r
+ models/d-snooker.min.gltf 5223 bytes loaded
+ models/background.gltf 2431 bytes loaded
+index.js:75 Version: 260403.06
+index.js:75 https://billiards.tailuge.workers.dev/?websocketserver=wss%3A%2F%2Fbilliards.onrender.com%2Fws&tableId=c9c5b215&userName=Bob&userId=player-2-3ogy&ruletype=snooker
+index.js:75 clientId: player-2-3ogy playername: Bob tableId: c9c5b215 spectator: false botMode: false
+index.js:75 r
+index.js:29 models/d-snooker.min.gltf 5223 bytes loaded
+index.js:29 models/background.gltf 2431 bytes loaded
+ Alice assets ready
+ Alice: Transition to Init
+ Subscribed to  wss://billiards-network.onrender.com/subscribe/table/c9c5b215
+index.js:75 Bob assets ready
+index.js:75 Bob: Transition to Init
+index.js:48 Subscribed to  wss://billiards-network.onrender.com/subscribe/table/c9c5b215
+ Connected to wss://billiards-network.onrender.com/subscribe/table/c9c5b215
+ Alice: Transition to PlaceBall
+index.js:48 Connected to wss://billiards-network.onrender.com/subscribe/table/c9c5b215
+index.js:29 Ball 0 moved 0.0012299807047141656
+index.js:29 Ball 1 moved 0.0011732496913854302
+index.js:29 Ball 2 moved 0.0005104742935492094
+index.js:29 Ball 3 moved 0.0015966839820420933
+index.js:29 Ball 4 moved 0.0005879871071834419
+index.js:29 Ball 5 moved 0.0004153259278593661
+index.js:29 Ball 6 moved 0.00013613259151787048
+index.js:29 Ball 7 moved 0.0010138928425168312
+index.js:29 Ball 8 moved 0.00034213242922105414
+index.js:29 Ball 9 moved 0.0005837208926340643
+index.js:29 Ball 10 moved 0.0009668446252462988
+index.js:29 Ball 11 moved 0.0002036235014764528
+index.js:29 Ball 12 moved 0.001775207978186345
+index.js:29 Ball 13 moved 0.0013665555880749479
+index.js:29 Ball 14 moved 0.0002667402341464135
+index.js:29 Ball 15 moved 0.0012198432211739743
+index.js:29 Ball 16 moved 0.0009100374003971753
+index.js:29 Ball 17 moved 0.0008697341575770852
+index.js:29 Ball 18 moved 0.0016827654520484372
+index.js:29 Ball 19 moved 0.0008449112699859618
+index.js:29 Ball 20 moved 0.0005329874144860879
+index.js:29 Ball 21 moved 0.0008288630667850123
+index.js:75 Bob: Transition to WatchAim
+ Alice: Transition to Aim
+ Alice: Transition to PlayShot
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to Aim
+index.js:75 Bob: Transition to PlayShot
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to WatchAim
+ Alice: Transition to Aim
+ Alice: Transition to PlayShot
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to Aim
+index.js:75 Bob: Transition to PlayShot
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to Aim
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to PlayShot
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to WatchAim
+ Alice: Transition to Aim
+ Alice: Transition to PlayShot
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to Aim
+index.js:75 Bob: Transition to PlayShot
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to WatchAim
+ Alice: Transition to PlaceBall
+ Alice: Transition to Aim
+ Alice: Transition to PlayShot
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to Aim
+index.js:75 Bob: Transition to PlayShot
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to WatchAim
+ Alice: Transition to Aim
+ Alice: Transition to PlayShot
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to Aim
+index.js:75 Bob: Transition to PlayShot
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to WatchAim
+ Alice: Transition to Aim
+ Alice: Transition to PlayShot
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to Aim
+index.js:29 Ball 6 moved 2.7170401242641335
+index.js:75 Bob: Transition to PlayShot
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to WatchAim
+ Alice: Transition to Aim
+ Alice: Transition to PlayShot
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to Aim
+index.js:75 Bob: Transition to PlayShot
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to WatchAim
+ Alice: Transition to Aim
+ Alice: Transition to PlayShot
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to PlaceBall
+index.js:75 Bob: Transition to Aim
+index.js:75 Bob: Transition to PlayShot
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to Aim
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to PlayShot
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to WatchAim
+ Ball 3 moved 2.4477233799897715
+ Alice: Transition to PlaceBall
+ Alice: Transition to Aim
+ Alice: Transition to PlayShot
+index.js:75 tripwire: remote_hit_pre_apply_desync {
+  "version": "260403.06",
+  "maxDrift": 0.01779758930206299,
+  "driftedBallIndices": [
+    21
+  ],
+  "phase": "pre_apply",
+  "controller": "WatchAim",
+  "eventClientId": "player-1-v7rf",
+  "eventPlayername": "Alice"
+}
+console.warn @ index.js:75
+(anonymous) @ index.js:48
+handleHit @ index.js:48
+applyToController @ index.js:29
+processEvents @ index.js:75
+animate @ index.js:75
+ 
+ 
+ 
+ 
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to Aim
+index.js:75 Bob: Transition to PlayShot
+ tripwire: remote_hit_pre_apply_desync {
+  "version": "260403.06",
+  "maxDrift": 0.01779758930206299,
+  "driftedBallIndices": [
+    21
+  ],
+  "phase": "pre_apply",
+  "controller": "WatchAim",
+  "eventClientId": "player-2-3ogy",
+  "eventPlayername": "Bob"
+}
+console.warn @ index.js:75
+(anonymous) @ index.js:48
+handleHit @ index.js:48
+applyToController @ index.js:29
+processEvents @ index.js:75
+animate @ index.js:75
+ 
+ 
+ 
+ 
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to WatchAim
+ Alice: Transition to Aim
+ Ball 1 moved 2.554988131302193
+ Alice: Transition to PlayShot
+index.js:75 tripwire: remote_hit_pre_apply_desync {
+  "version": "260403.06",
+  "maxDrift": 0.01779758930206299,
+  "driftedBallIndices": [
+    21
+  ],
+  "phase": "pre_apply",
+  "controller": "WatchAim",
+  "eventClientId": "player-1-v7rf",
+  "eventPlayername": "Alice"
+}
+console.warn @ index.js:75
+(anonymous) @ index.js:48
+handleHit @ index.js:48
+applyToController @ index.js:29
+processEvents @ index.js:75
+animate @ index.js:75
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to PlaceBall
+index.js:75 Bob: Transition to Aim
+index.js:75 Bob: Transition to PlayShot
+ Alice: Transition to WatchShot
+index.js:75 Bob: Transition to WatchAim
+ Alice: Transition to Aim
+ Alice: Transition to PlayShot
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to Aim
+index.js:75 Bob: Transition to WatchAim
+ Alice: Transition to PlayShot
+index.js:75 Bob: Transition to WatchShot
+ Alice: Transition to WatchAim
+index.js:75 Bob: Transition to Aim
