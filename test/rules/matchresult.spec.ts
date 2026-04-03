@@ -229,4 +229,19 @@ describe("MatchResult Construction", () => {
       "TestPlayer 1 — 0 TestOpponent"
     )
   })
+
+  it("MatchResult should include bot flag when playing against bot", () => {
+    Session.init("test-client", "TestPlayer", "test-table", false, true) // botMode: true
+    container = createNineBallContainer()
+    const session = Session.getInstance()
+    session.opponentName = "ClawBreak" // Bot sets this
+    setupNineBallTable(container)
+
+    const nineball = container.rules as NineBall
+    const outcome = getNineBallOutcome(container)
+    const endController = nineball.update(outcome) as End
+    const result = (endController as any).result as MatchResult
+
+    expect(result.bot).to.be.true
+  })
 })

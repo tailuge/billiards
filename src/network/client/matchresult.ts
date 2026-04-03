@@ -16,6 +16,7 @@ export interface MatchResult {
   replayData?: string
   version?: string
   userAgent?: string
+  bot?: boolean
 }
 
 export class MatchResultHelper {
@@ -202,6 +203,7 @@ export class MatchResultHelper {
       winner: winnerName,
       winnerScore: winnerScore,
       ruleType: rulename,
+      bot: session.botMode,
     }
 
     if (session.opponentName) {
