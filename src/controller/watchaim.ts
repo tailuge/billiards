@@ -45,7 +45,7 @@ export class WatchAim extends ControllerBase {
       "tripwire: remote_hit_pre_apply_desync",
       tablejson.stateCheck,
       this.container.table.shortSerialise(),
-      {
+      () => ({
         phase: "pre_apply",
         controller: this.name,
         eventClientId: event.clientId,
@@ -56,7 +56,7 @@ export class WatchAim extends ControllerBase {
         recordingUrl: buildRecordingUrl(
           this.container.recorder.getWholeGameCompressed()
         ),
-      }
+      })
     )
 
     this.container.table.updateFromSerialised(event.tablejson)

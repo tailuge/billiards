@@ -6,7 +6,7 @@ export function checkDesyncTripwire(
   label: string,
   remoteStateCheck: number[] | undefined,
   localStateCheck: number[],
-  extra: Record<string, unknown> = {}
+  extra: Record<string, unknown> | (() => Record<string, unknown>) = {}
 ) {
   if (remoteStateCheck?.length !== localStateCheck.length) {
     return
@@ -34,6 +34,7 @@ export function checkDesyncTripwire(
     }
   }
 
+  const extraObj = typeof extra === "function" ? extra() : extra
   console.warn(
     label,
     JSON.stringify(
@@ -41,7 +42,7 @@ export function checkDesyncTripwire(
         version: VERSION,
         maxDrift: drift,
         driftedBallIndices: driftedIndices,
-        ...extra,
+        ...extraObj,
       },
       null,
       2
