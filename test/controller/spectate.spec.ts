@@ -1,4 +1,5 @@
 import { expect } from "chai"
+import { HitEvent } from "../../src/controller/controller"
 import { Container } from "../../src/container/container"
 import { Ball, State } from "../../src/model/ball"
 import { Spectate } from "../../src/controller/spectate"
@@ -64,5 +65,37 @@ describe("Spectate Controller", () => {
     const result = spectate.handlePlaceBall(event)
 
     expect(result).to.equal(spectate)
+  })
+
+  it("handleHit should update aim input UI", () => {
+    const messageRelay: MessageRelay = {
+      subscribe: () => {},
+      publish: () => {},
+      getOnlineCount: () => Promise.resolve(null),
+    }
+    const spectate = new Spectate(container, messageRelay, "test-table")
+    const powerSpy = jest.spyOn(
+      container.table.cue.aimInputs,
+      "updatePowerSlider"
+    )
+    const visualSpy = jest.spyOn(
+      container.table.cue.aimInputs,
+      "updateVisualState"
+    )
+
+    const tablejson = container.table.serialise()
+    tablejson.aim.offset.x = 0.05
+    tablejson.aim.offset.y = -0.2
+    tablejson.aim.power = container.table.cue.maxPower * 0.25
+
+    spectate.handleHit(new HitEvent(tablejson))
+
+    expect(powerSpy.mock.calls).to.not.be.empty
+    expect(visualSpy.mock.calls).to.not.be.empty
+    const powerArgs = powerSpy.mock.calls[powerSpy.mock.calls.length - 1]
+    const visualArgs = visualSpy.mock.calls[visualSpy.mock.calls.length - 1]
+    expect(powerArgs[0]).to.be.approximately(0.25, 0.0001)
+    expect(visualArgs[0]).to.be.approximately(0.05, 0.0001)
+    expect(visualArgs[1]).to.be.approximately(-0.2, 0.0001)
   })
 })
