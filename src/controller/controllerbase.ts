@@ -11,9 +11,7 @@ export abstract class ControllerBase extends Controller {
   readonly scale = 0.001
 
   override handleChat(chatevent: ChatEvent): Controller {
-    const sender = chatevent.sender ? `${chatevent.sender}:` : ""
-    const message = `${sender} ${chatevent.message}`
-    this.container.chat.showMessage(message)
+    this.container.chat.showMessage(chatevent.message)
     return this
   }
 
