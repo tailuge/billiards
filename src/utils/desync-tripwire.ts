@@ -48,3 +48,8 @@ export function checkDesyncTripwire(
     )
   )
 }
+
+export function buildRecordingUrl(compressedState: string): string {
+  const origin = globalThis.location.origin
+  return `${origin}/?state=${encodeURIComponent(compressedState)}`
+}

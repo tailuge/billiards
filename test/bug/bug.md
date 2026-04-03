@@ -704,3 +704,18 @@ The current `remote_hit_pre_apply_desync` tripwire (implemented in `src/utils/de
 
 ### Conclusion on 2-Player Effectiveness:
 While the tripwire provides a strong "heartbeat" for simulation health, its reliance on `HitEvent` means it only reports desyncs with a "one shot delay" and remains blind to desyncs that conclude a game or occur during non-scoring transitions. Expanding desync checks to `WatchEvent` and end-game states would improve coverage.
+
+## Conclusion on 0.01 Drift Report
+
+The recent tripwire report showing a **maxDrift of 0.010125** for ball 3 is a breakthrough finding.
+
+### Significance:
+- **Physics Divergence:** A drift of 0.01 is massive (half the ball radius). This confirms the clients aren't just slightly off due to rounding; they are following fundamentally different physical paths.
+- **Timing:** Since this was caught in `WatchAim`, it means the divergence occurred during the simulation of the *previous* shot.
+- **Focus:** The investigation must shift to non-deterministic branches in the physics engine (`Table.advance`), specifically collision resolution or cushion bounces that might react differently to 32-bit vs 64-bit precision, even with `Math.fround` in place.
+
+### Diagnostic Improvements:
+To catch the next one with more precision, the tripwire now includes:
+- **Shot Count:** To identify exactly which shot in the game sequence leads to divergence.
+- **Recent History:** To see if unusual events (like `PLACEBALL` or multiple `SCORE` events) preceded the drift.
+- **Recording URL:** To allow for instant, local reproduction of the exact desynced state.

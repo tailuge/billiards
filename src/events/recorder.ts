@@ -81,6 +81,14 @@ export class Recorder {
     }
   }
 
+  getShotCount(): number {
+    return this.entries.filter((e) => e.event.type === EventType.HIT).length
+  }
+
+  getRecentHistory(n: number = 5): string[] {
+    return this.entries.slice(-n).map((e) => e.event.type)
+  }
+
   wholeGame() {
     return ReplayEncoder.createState(
       this.entries[0]?.state,
@@ -90,6 +98,11 @@ export class Recorder {
       true,
       this.getPlayerNames()
     )
+  }
+
+  getWholeGameCompressed(): string {
+    const game = this.wholeGame()
+    return ReplayEncoder.crush(JSON.stringify(game))
   }
 
   last() {
