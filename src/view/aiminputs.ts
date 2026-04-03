@@ -157,9 +157,9 @@ export class AimInputs {
   }
 
   updatePowerSlider(power) {
-    power > 0 &&
-      this.cuePowerElement?.value &&
-      (this.cuePowerElement.value = power)
+    if (this.cuePowerElement) {
+      this.cuePowerElement.value = power
+    }
   }
 
   hit = (_) => {

@@ -84,6 +84,7 @@ export class Spectate extends ControllerBase {
   override handleHit(event: HitEvent) {
     console.log("Spectate Hit")
     this.container.table.updateFromSerialised(event.tablejson)
+    this.container.table.cue.updateAimInput()
     this.container.table.outcome = []
     this.container.table.hit()
     return this
