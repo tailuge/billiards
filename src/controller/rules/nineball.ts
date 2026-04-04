@@ -19,6 +19,7 @@ import { StartAimEvent } from "../../events/startaimevent"
 import { MatchResultHelper } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
 import { isFirstShot } from "../../utils/utils"
+import { roundVec } from "../../utils/three-utils"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -106,6 +107,7 @@ export class NineBall implements Rules {
     }
 
     const startPos = cueball.onTable() ? cueball.pos.clone() : this.placeBall()
+    roundVec(startPos)
     const placeBallEvent = new PlaceBallEvent(startPos, undefined, true)
     this.container.sendEvent(placeBallEvent)
 
@@ -261,6 +263,7 @@ export class NineBall implements Rules {
     Respot.nineBall(this.container.table)
     const nineBall = this.container.table.balls[9]
     if (nineBall) {
+      nineBall.fround()
       const respotEvent = RerackEvent.fromJson({
         balls: [nineBall.serialise()],
       })

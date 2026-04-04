@@ -719,3 +719,90 @@ To catch the next one with more precision, the tripwire now includes:
 - **Shot Count:** To identify exactly which shot in the game sequence leads to divergence.
 - **Recent History:** To see if unusual events (like `PLACEBALL` or multiple `SCORE` events) preceded the drift.
 - **Recording URL:** To allow for instant, local reproduction of the exact desynced state.
+
+
+
+--------
+
+LATEST:
+
+The most recent tripwire report, is here. the constructed recording url is invalid. I would like to reduce tripwire
+  logging to not include any compressed json.  Based on recentHistory can you double check that the local rerack and
+  local placeball code is rounding beofre sending and so in sync. Always focus on sender side as recipient is always
+  a slave in this scenario. Possibly logging out full diff of incomming ball positions vs current balls positions
+  would help? Dont suggest frounding of received x,y as this defeats the purpose. I'm interested to eliminate sender
+  sending one version and then adjusting before beginnng simulation.
+
+Logs for B_8ee1_2
+Copy
+[4:18:13 AM] warn tripwire: remote_hit_pre_apply_desync {
+  "version": "260403.18",
+  "maxDrift": 0.009459972381591797,
+  "driftedBallIndices": [
+    20
+  ],
+  "phase": "pre_apply",
+  "controller": "WatchAim",
+  "eventClientId": "player-2-m0yr",
+  "eventPlayername": "Bob",
+  "shotCount": 0,
+  "recentHistory": [
+    "RERACK",
+    "PLACEBALL",
+    "AIM",
+    "SCORE",
+    "AIM"
+  ],
+  "recordingUrl": "https://billiards.tailuge.workers.dev/?state=('init!%5B-j8646000027656555%4009%26%408644058704376221%4024058684706687927%408645500540733337%7B24060094356536865%408644657135009766%7B0007452358840964735%400008318664040416479%4000009407022298546508%7B7205265760421753%400005649647209793329%2C1.1794259548187256%7B0005911940825171769%7B7889904379844666%400004140675300732255%7B8495449423789978%7B03517656773328781%7B8498477339744568%4003408590331673622%7B9107925891876221%7B00024603973724879324%7B9105904698371887%4006904766708612442%7B9095827341079712%7B06868382543325424%7B9704158902168274%7B1039169579744339%7B9694374799728394%7B03373772278428078%7B9698718786239624%4003389698639512062%7B9704713225364685%4010490535944700241%2C1.030048131942749%4013811567425727844%2C1.029479742050171%400698469951748848%2C1.0300157070159912%7B00010129966540262103%2C1.0308101177215576%7B06996925175189972%2C1.0294643640518188%7B13903334736824036%5D~shots!%5B('type!'%2B%3Be!0Xk%26DJq2Z0~b!2%231U%2B%3Be!-2.4551279544830322Xj9567775130271912%3F2516842186450958%22JWj7205%3E5%24Jq8Z0~b!8%231UV%20-1.121055006980896Xj8430655002593994%3F20990529656410217DJq8Z0Q2UV%20-j06909673660993576Xj6161592602729797%3F6009692549705505DNq8Z0Q1UV%20-j9753311276435852X-j7901121377944946Y03544687107205391%22JW1.179%3E2)%5D)%5EJ%7FTJq8Z4Q2UV%20-j6383387446403503Xk%26DNq8Z5%3C2UV%20j7196006178855896X-1.0606659650802612%3F008789298124611378DNq12Z5Q1UV%205.854385852813721X-1.17779541015625Y1415882408618927_i!0%5EJ%7FTJq12Z9Q2UV%202.052177667617798Xk%26DNq12Z10%3C2UV%20-5.221729278564453X-1.1145689487457275%3F4648122489452362_i!0%5EN%60USCORETNq16Z1
+
+Notes from code check:
+
+- The current tripwire `recordingUrl` is expected to be invalid for replay because `buildRecordingUrl()` only emits `/?state=...` and does not include `ruletype=...`. It also rebuilds from `location.origin` instead of using the replay prefix already built by `BrowserContainer.setReplayLink()`.
+- Local place-ball confirmation is already rounded before the sender snapshots the break state. `PlaceBall.placed()` calls `cueball.fround()` and then sends `new BreakEvent(this.container.table.shortSerialise())`.
+- The actual shot packet is also sender-side snapshotted from current local state at send time. `Aim.playShot()` sends `new HitEvent(this.container.table.serialiseHit())`, and `Table.serialiseHit()` copies `cueball.pos` into `aim.pos` immediately before the event is created.
+- The outbound network path is not holding a live mutable object. `BrowserContainer.broadcast()` serialises immediately with `EventUtil.serialise(event)`, which is just `JSON.stringify(event)`, before publish.
+- For the foul `PLACEBALL` path in nine-ball, the sender uses `cueball.pos.clone()` or `this.placeBall()` before constructing `new PlaceBallEvent(startPos, undefined, true)`. That means the sent `pos` is detached from the live cueball vector. There is no explicit `fround()` here, but this does not look like a post-send mutation bug.
+- For local rerack in fourteen-one, `Rack.rerack()` mutates the table first, then `table.serialise()` clones the positions, then `RerackEvent.fromJson(state)` is sent. Again, this is a snapshot, not a live reference. The moved balls are already rounded by `Rack.jitter()`. The only remaining subtlety is that rerack does not explicitly `fround()` every ball immediately before `table.serialise()`.
+
+Interpretation of this report:
+
+- Based on the current sender code, I do not see evidence that the sender transmits one version of `PLACEBALL`, `RERACK`, or `HIT` and then later mutates that same outbound payload object before it reaches the recipient.
+- The more plausible sender-side failure mode is earlier than network serialisation: the sender may be entering the next turn with a table state that has already drifted slightly before `serialiseHit().stateCheck` is captured.
+- The `recentHistory` sequence `RERACK -> PLACEBALL -> AIM -> SCORE -> AIM` is consistent with that theory. In recorder history, `AIM` here is actually the recorded form of a sent `HIT`, not a free aim-move packet.
+
+Suggested next steps:
+
+1. Remove compressed replay JSON from the tripwire log. Keep only concise structured fields plus a deterministic fingerprint such as `stateCheckHash`, `recentHistory`, `eventSequence`, and `driftedBallIndices`.
+2. Replace `recordingUrl` in the tripwire with either:
+   - a proper replay URL built from the same prefix as `linkFormatter.replayUrl`, including `ruletype`, or
+   - no URL at all in live tripwire logs.
+3. Add a sender-side breadcrumb for every outbound `RERACK`, `PLACEBALL`, and `HIT` containing:
+   - event type
+   - event sequence/client
+   - a short hash of the outbound payload
+   - a short hash of `table.shortSerialise()` at the exact same moment
+   - for `HIT`, the hash of `stateCheck`
+   This will prove whether the sender's event payload and sender's local table matched at emission time.
+4. On the sender only, add an invariant check immediately after sending `PLACEBALL` and immediately before the next `HIT`:
+   - compare the previously emitted authoritative start position/state with the current local table state
+   - log only when they differ
+   This is the best way to catch "sent X, then locally adjusted to Y before simulation".
+5. For desync reports, log a compact per-ball diff only for mismatched balls instead of compressed replay data. Suggested shape:
+   - `ballId`
+   - `remoteX`, `remoteY`
+   - `localX`, `localY`
+   - `dx`, `dy`
+   - `dist`
+   This should make the report actionable without bloating logs.
+6. Add a targeted sender-side tripwire around fourteen-one rerack:
+   - capture `preRerackStateCheck`
+   - capture `postRerackStateCheck`
+   - capture the exact `RerackEvent.ballinfo`
+   - compare `postRerackStateCheck` with the flattened positions from the outgoing rerack payload
+   If they differ, the rerack path is the bug.
+7. Add a targeted sender-side tripwire around nine-ball foul place-ball:
+   - log the emitted `PlaceBallEvent.pos`
+   - log the sender cueball position at foul resolution
+   - log the sender cueball position again immediately before `serialiseHit()`
+   If the first and last differ before any physics runs, that is the mutation we are looking for.
+8. If we want to eliminate the last remaining doubt in rerack/placeball setup, add explicit sender-side `fround()`/rounding assertions before serialising those authoritative events, but only on the sender and only as a verified invariant, not by rounding received coordinates.

@@ -29,6 +29,7 @@ import { Session } from "../../src/network/client/session"
 import { Spectate } from "../../src/controller/spectate"
 import { Init } from "../../src/controller/init"
 import { ScoreEvent } from "../../src/events/scoreevent"
+import { Vector3 } from "three"
 
 initDom()
 
@@ -59,6 +60,81 @@ describe("Controller", () => {
     container.chat.sendClicked({})
     expect(broadcastEvents).to.be.lengthOf(1)
     done()
+  })
+
+  it("warns if sender state drifts after authoritative placeball and before hit", () => {
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {})
+    const debugSpy = jest.spyOn(console, "debug").mockImplementation(() => {})
+    const startPos = container.table.cueball.pos.clone()
+
+    container.sendEvent(new PlaceBallEvent(startPos, undefined, true))
+    container.table.cueball.pos.x += 0.01
+    container.sendEvent(new HitEvent(container.table.serialiseHit()))
+
+    expect(
+      warnSpy.mock.calls.some(
+        ([label]) => label === "tripwire: sender_pre_hit_authoritative_drift"
+      )
+    ).to.be.true
+
+    warnSpy.mockRestore()
+    debugSpy.mockRestore()
+  })
+
+  it("does not warn for non-authoritative placeball mode-switch events", () => {
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {})
+    const debugSpy = jest.spyOn(console, "debug").mockImplementation(() => {})
+
+    container.sendEvent(new PlaceBallEvent(new Vector3(0, 0, 0)))
+
+    expect(
+      warnSpy.mock.calls.some(
+        ([label]) => label === "tripwire: sender_placeball_emit_mismatch"
+      )
+    ).to.be.false
+
+    warnSpy.mockRestore()
+    debugSpy.mockRestore()
+  })
+
+  it("does not warn for scratch placeball start positions", () => {
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {})
+    const debugSpy = jest.spyOn(console, "debug").mockImplementation(() => {})
+    const cueball = container.table.cueball
+    cueball.state = State.InPocket
+
+    container.sendEvent(
+      new PlaceBallEvent(cueball.pos.clone(), undefined, true)
+    )
+
+    expect(
+      warnSpy.mock.calls.some(
+        ([label]) => label === "tripwire: sender_placeball_emit_mismatch"
+      )
+    ).to.be.false
+
+    warnSpy.mockRestore()
+    debugSpy.mockRestore()
+  })
+
+  it("clears authoritative placeball tracking on score before later hit", () => {
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {})
+    const debugSpy = jest.spyOn(console, "debug").mockImplementation(() => {})
+    const startPos = container.table.cueball.pos.clone()
+
+    container.sendEvent(new PlaceBallEvent(startPos, undefined, true))
+    container.sendEvent(new ScoreEvent(1, 0, 0, 1))
+    container.table.cueball.pos.x += 0.01
+    container.sendEvent(new HitEvent(container.table.serialiseHit()))
+
+    expect(
+      warnSpy.mock.calls.some(
+        ([label]) => label === "tripwire: sender_pre_hit_authoritative_drift"
+      )
+    ).to.be.false
+
+    warnSpy.mockRestore()
+    debugSpy.mockRestore()
   })
 
   it("Begin takes Init to PlaceBall", (done) => {

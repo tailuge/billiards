@@ -3,10 +3,7 @@ import { HitEvent } from "../events/hitevent"
 import { BreakEvent } from "../events/breakevent"
 import { WatchShot } from "./watchshot"
 import { ControllerBase } from "./controllerbase"
-import {
-  checkDesyncTripwire,
-  buildRecordingUrl,
-} from "../utils/desync-tripwire"
+import { checkDesyncTripwire } from "../utils/desync-tripwire"
 
 export class WatchAim extends ControllerBase {
   override get name() {
@@ -53,9 +50,6 @@ export class WatchAim extends ControllerBase {
         eventSequence: event.sequence,
         shotCount: this.container.recorder.getShotCount(),
         recentHistory: this.container.recorder.getRecentHistory(),
-        recordingUrl: buildRecordingUrl(
-          this.container.recorder.getWholeGameCompressed()
-        ),
       })
     )
 

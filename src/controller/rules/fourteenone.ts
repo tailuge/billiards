@@ -39,6 +39,7 @@ export class FourteenOne extends NineBall implements Rules {
       .filter((b) => b !== table.cueball)
     if (onTable.length === 1) {
       Rack.rerack(onTable[0], table)
+      table.balls.forEach((ball) => ball.fround())
       this.container.sound.playSuccess(table.inPockets())
       const state = table.serialise()
       const rerack = RerackEvent.fromJson(state)

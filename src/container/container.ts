@@ -39,6 +39,15 @@ import { PlaceBall } from "../controller/placeball"
 import { PlayShot } from "../controller/playshot"
 import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
+import { EventType } from "../events/eventtype"
+import { HitEvent } from "../events/hitevent"
+import { PlaceBallEvent } from "../events/placeballevent"
+import { RerackEvent } from "../events/rerackevent"
+import {
+  hashJson,
+  hashStateCheck,
+  summariseStateDiff,
+} from "../utils/desync-tripwire"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -80,6 +89,20 @@ export class Container {
 
   last = performance.now()
   readonly step = 0.001953125 * 1
+  private lastAuthoritativeState:
+    | {
+        eventType: EventType
+        tableState: number[]
+        tableStateHash: string
+        payloadHash: string
+        cueballPos?:
+          | {
+              x: number
+              y: number
+            }
+          | undefined
+      }
+    | undefined
 
   broadcast: (event: GameEvent) => void = () => {}
   log: (text: string) => void
@@ -143,8 +166,284 @@ export class Container {
   })
 
   sendEvent(event) {
+    this.clearExpiredAuthoritativeState(event)
+    this.checkSenderPreHitDrift(event)
     this.recorder.record(event)
+    this.trackSenderAuthoritativeEvent(event)
     this.throttle.send(event)
+  }
+
+  private trackSenderAuthoritativeEvent(event: GameEvent) {
+    if (
+      event.type !== EventType.PLACEBALL &&
+      event.type !== EventType.RERACK &&
+      event.type !== EventType.HIT
+    ) {
+      return
+    }
+
+    const tableState = this.table.shortSerialise()
+    const tableStateHash = hashStateCheck(tableState)
+    const payloadHash = hashJson(event)
+    const clientId = Session.getInstance().clientId
+    const placeBallIsAuthoritative = this.isAuthoritativePlaceBallEvent(event)
+
+    globalThis.console?.debug?.(
+      "tripwire: sender_authoritative_event",
+      JSON.stringify(
+        {
+          eventType: event.type,
+          clientId,
+          payloadHash,
+          tableStateHash,
+          recentHistory: this.recorder.getRecentHistory(),
+          ...this.getEventSpecificBreadcrumb(event, tableState),
+        },
+        null,
+        2
+      )
+    )
+
+    if (
+      event.type === EventType.RERACK ||
+      (event.type === EventType.PLACEBALL && placeBallIsAuthoritative)
+    ) {
+      const cueballPos =
+        event.type === EventType.PLACEBALL
+          ? {
+              x: this.table.cueball.pos.x,
+              y: this.table.cueball.pos.y,
+            }
+          : undefined
+      this.lastAuthoritativeState = {
+        eventType: event.type,
+        tableState,
+        tableStateHash,
+        payloadHash,
+        cueballPos,
+      }
+      return
+    }
+
+    this.lastAuthoritativeState = undefined
+  }
+
+  private checkSenderPreHitDrift(event: GameEvent) {
+    if (event.type !== EventType.HIT || !this.lastAuthoritativeState) {
+      return
+    }
+
+    if (this.lastAuthoritativeState.eventType === EventType.PLACEBALL) {
+      this.checkSenderPreHitPlaceBallDrift(event as HitEvent)
+      return
+    }
+
+    const currentTableState = this.table.shortSerialise()
+    const diffSummary = summariseStateDiff(
+      this.lastAuthoritativeState.tableState,
+      currentTableState
+    )
+    if (!diffSummary || diffSummary.maxDrift <= 1e-9) {
+      return
+    }
+
+    globalThis.console?.warn?.(
+      "tripwire: sender_pre_hit_authoritative_drift",
+      JSON.stringify(
+        {
+          clientId: Session.getInstance().clientId,
+          authoritativeEventType: this.lastAuthoritativeState.eventType,
+          previousTableStateHash: this.lastAuthoritativeState.tableStateHash,
+          currentTableStateHash: hashStateCheck(currentTableState),
+          previousPayloadHash: this.lastAuthoritativeState.payloadHash,
+          nextPayloadHash: hashJson(event),
+          recentHistory: this.recorder.getRecentHistory(),
+          maxDrift: diffSummary.maxDrift,
+          driftedBallIndices: diffSummary.driftedBallIndices,
+          ballDiffs: diffSummary.ballDiffs,
+        },
+        null,
+        2
+      )
+    )
+  }
+
+  private checkSenderPreHitPlaceBallDrift(event: HitEvent) {
+    const authoritativeState = this.lastAuthoritativeState
+    if (
+      !authoritativeState ||
+      authoritativeState.eventType !== EventType.PLACEBALL ||
+      !authoritativeState.cueballPos
+    ) {
+      return
+    }
+
+    const currentCueballPos = this.table.cueball.pos
+    const dx = authoritativeState.cueballPos.x - currentCueballPos.x
+    const dy = authoritativeState.cueballPos.y - currentCueballPos.y
+    const dist = Math.hypot(dx, dy)
+    if (dist <= 1e-9) {
+      return
+    }
+
+    globalThis.console?.warn?.(
+      "tripwire: sender_pre_hit_authoritative_drift",
+      JSON.stringify(
+        {
+          clientId: Session.getInstance().clientId,
+          authoritativeEventType: authoritativeState.eventType,
+          previousTableStateHash: authoritativeState.tableStateHash,
+          currentTableStateHash: hashStateCheck(this.table.shortSerialise()),
+          previousPayloadHash: authoritativeState.payloadHash,
+          nextPayloadHash: hashJson(event),
+          recentHistory: this.recorder.getRecentHistory(),
+          cueballDiff: {
+            remoteX: authoritativeState.cueballPos.x,
+            remoteY: authoritativeState.cueballPos.y,
+            localX: currentCueballPos.x,
+            localY: currentCueballPos.y,
+            dx,
+            dy,
+            dist,
+          },
+        },
+        null,
+        2
+      )
+    )
+  }
+
+  private getEventSpecificBreadcrumb(event: GameEvent, tableState: number[]) {
+    if (event.type === EventType.HIT) {
+      const hitEvent = event as HitEvent
+      return {
+        stateCheckHash: hashStateCheck(hitEvent.tablejson?.stateCheck),
+        cueballX: tableState[0],
+        cueballY: tableState[1],
+      }
+    }
+
+    if (event.type === EventType.PLACEBALL) {
+      const placeBallEvent = event as PlaceBallEvent
+      const authoritative = this.isAuthoritativePlaceBallEvent(event)
+      const cueballPos = this.table.cueball.pos
+      const dx = placeBallEvent.pos.x - cueballPos.x
+      const dy = placeBallEvent.pos.y - cueballPos.y
+      const dist = Math.hypot(dx, dy)
+      if (authoritative && dist > 1e-9) {
+        globalThis.console?.warn?.(
+          "tripwire: sender_placeball_emit_mismatch",
+          JSON.stringify(
+            {
+              clientId: Session.getInstance().clientId,
+              eventType: event.type,
+              payloadHash: hashJson(event),
+              eventPos: {
+                x: placeBallEvent.pos.x,
+                y: placeBallEvent.pos.y,
+              },
+              cueballPos: {
+                x: cueballPos.x,
+                y: cueballPos.y,
+              },
+              dx,
+              dy,
+              dist,
+            },
+            null,
+            2
+          )
+        )
+      }
+
+      return {
+        authoritative,
+        useStartPos: placeBallEvent.useStartPos ?? false,
+        emittedCueballPos: {
+          x: placeBallEvent.pos.x,
+          y: placeBallEvent.pos.y,
+        },
+      }
+    }
+
+    const rerackEvent = event as RerackEvent
+    const ballDiffs =
+      rerackEvent.ballinfo?.balls
+        ?.map((ballInfo) => {
+          const currentBall = this.table.balls[ballInfo.id]
+          if (!currentBall) {
+            return undefined
+          }
+
+          const dx = ballInfo.pos.x - currentBall.pos.x
+          const dy = ballInfo.pos.y - currentBall.pos.y
+          const dist = Math.hypot(dx, dy)
+          if (dist <= 1e-9) {
+            return undefined
+          }
+
+          return {
+            ballId: ballInfo.id,
+            eventX: ballInfo.pos.x,
+            eventY: ballInfo.pos.y,
+            tableX: currentBall.pos.x,
+            tableY: currentBall.pos.y,
+            dx,
+            dy,
+            dist,
+          }
+        })
+        .filter(
+          (diff): diff is NonNullable<typeof diff> => diff !== undefined
+        ) ?? []
+
+    if (ballDiffs.length > 0) {
+      globalThis.console?.warn?.(
+        "tripwire: sender_rerack_emit_mismatch",
+        JSON.stringify(
+          {
+            clientId: Session.getInstance().clientId,
+            eventType: event.type,
+            payloadHash: hashJson(event),
+            ballDiffs,
+          },
+          null,
+          2
+        )
+      )
+    }
+
+    return {
+      rerackBallIds:
+        rerackEvent.ballinfo?.balls?.map((ballInfo) => ballInfo.id) ?? [],
+    }
+  }
+
+  private isAuthoritativePlaceBallEvent(event: GameEvent): boolean {
+    if (event.type !== EventType.PLACEBALL) {
+      return false
+    }
+
+    const placeBallEvent = event as PlaceBallEvent
+    return Boolean(placeBallEvent.useStartPos && this.table.cueball.onTable())
+  }
+
+  private clearExpiredAuthoritativeState(event: GameEvent) {
+    if (!this.lastAuthoritativeState) {
+      return
+    }
+
+    if (this.lastAuthoritativeState.eventType !== EventType.PLACEBALL) {
+      return
+    }
+
+    if (
+      event.type === EventType.SCORE ||
+      event.type === EventType.STARTAIM ||
+      event.type === EventType.WATCHAIM
+    ) {
+      this.lastAuthoritativeState = undefined
+    }
   }
 
   private myHudSlot(): 1 | 2 {
