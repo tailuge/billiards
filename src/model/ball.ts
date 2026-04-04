@@ -1,4 +1,5 @@
 import { Vector3 } from "three"
+import { random } from "../utils/utils"
 import { zero, vec, passesThroughZero } from "../utils/three-utils"
 import {
   forceRoll,
@@ -35,7 +36,7 @@ export class Ball {
   constructor(pos, color?, label?: number) {
     this.pos = pos.clone()
     this.label = label
-    this.ballmesh = new BallMesh(color || 0xeeeeee * Math.random(), label)
+    this.ballmesh = new BallMesh(color || 0xeeeeee * random(), label)
   }
 
   update(t) {

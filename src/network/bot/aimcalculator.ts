@@ -3,7 +3,7 @@ import { roundVec } from "../../utils/three-utils"
 import { HitEvent } from "../../events/hitevent"
 import { Table } from "../../model/table"
 import { R } from "../../model/physics/constants"
-import { atan2 } from "../../utils/utils"
+import { atan2, random } from "../../utils/utils"
 import { Pocket } from "../../model/physics/pocket"
 import { PocketGeometry } from "../../view/pocketgeometry"
 
@@ -62,11 +62,11 @@ export class AimCalculator {
 
     const lineTo = targetPos.clone().sub(cueball.pos)
     aim.angle = Math.fround(
-      atan2(lineTo.y, lineTo.x) + (Math.random() - 0.5) * noise
+      atan2(lineTo.y, lineTo.x) + (random() - 0.5) * noise
     )
     aim.power = Math.fround(AimCalculator.DEFAULT_SHOT_POWER)
     aim.offset = roundVec(
-      new Vector3(0, (Math.random() - 0.5) * AimCalculator.RANDOM_OFFSET_RANGE)
+      new Vector3(0, (random() - 0.5) * AimCalculator.RANDOM_OFFSET_RANGE)
     )
 
     if (cue.intersectsAnything(table, aim)) {

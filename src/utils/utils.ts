@@ -37,6 +37,12 @@ export function exp(theta) {
   return Math.fround(Math.exp(theta))
 }
 
+export function random() {
+  const array = new Uint32Array(1)
+  globalThis.crypto.getRandomValues(array)
+  return array[0] / (0xffffffff + 1)
+}
+
 export function asin(num) {
   return Math.fround(Math.asin(num))
 }

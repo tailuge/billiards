@@ -3,12 +3,13 @@ import { SnookerConfig } from "./snookerconfig"
 import { TableGeometry } from "../view/tablegeometry"
 import { PocketGeometry } from "../view/pocketgeometry"
 import { Vector3 } from "three"
+import { random } from "./utils"
 import { roundVec, vec } from "./three-utils"
 import { R } from "../model/physics/constants"
 import { Table } from "../model/table"
 
 export class Rack {
-  static readonly noise = Math.fround(R * 0.023 + 0.0015 * Math.random())
+  static readonly noise = Math.fround(R * 0.023 + 0.0015 * random())
   static readonly gap = 2 * R + 2 * Rack.noise
   static readonly up = new Vector3(0, 0, -1)
   static readonly spot = roundVec(new Vector3(-TableGeometry.X / 2, 0, 0))
@@ -42,8 +43,8 @@ export class Rack {
         .clone()
         .add(
           new Vector3(
-            Rack.noise * (Math.random() - 0.5),
-            Rack.noise * (Math.random() - 0.5),
+            Rack.noise * (random() - 0.5),
+            Rack.noise * (random() - 0.5),
             0
           )
         )
