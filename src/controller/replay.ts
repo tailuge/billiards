@@ -125,11 +125,6 @@ export class Replay extends ControllerBase {
     const aim = AimEvent.fromJson(shot)
     this.container.setHudActivePlayer(this.currentActive)
     this.container.table.cueball = this.container.table.balls[aim.i]
-    console.log("replay-shot-delta", {
-      dx: aim.pos.x - this.container.table.cueball.pos.x,
-      dy: aim.pos.y - this.container.table.cueball.pos.y,
-      d: this.container.table.cueball.pos.distanceTo(aim.pos),
-    })
 
     const canPan =
       anglesAlign(this.container.table.cue.aim.angle, aim.angle, 0.8) ||

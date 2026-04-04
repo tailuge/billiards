@@ -29,7 +29,6 @@ import { Session } from "../../src/network/client/session"
 import { Spectate } from "../../src/controller/spectate"
 import { Init } from "../../src/controller/init"
 import { ScoreEvent } from "../../src/events/scoreevent"
-import { Vector3 } from "three"
 
 initDom()
 
@@ -62,79 +61,53 @@ describe("Controller", () => {
     done()
   })
 
-  it("warns if sender state drifts after authoritative placeball and before hit", () => {
-    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {})
-    const debugSpy = jest.spyOn(console, "debug").mockImplementation(() => {})
-    const startPos = container.table.cueball.pos.clone()
+  it("attaches a cloned hit history window to outgoing hits", () => {
+    const hit = new HitEvent(container.table.serialiseHit())
 
-    container.sendEvent(new PlaceBallEvent(startPos, undefined, true))
-    container.table.cueball.pos.x += 0.01
-    container.sendEvent(new HitEvent(container.table.serialiseHit()))
+    container.sendEvent(hit)
+    const historyWindow = hit.tablejson.historyWindow
 
-    expect(
-      warnSpy.mock.calls.some(
-        ([label]) => label === "tripwire: sender_pre_hit_authoritative_drift"
-      )
-    ).to.be.true
+    expect(historyWindow).to.have.length(1)
+    expect(historyWindow[0].shotIndex).to.equal(0)
+    expect(historyWindow[0].state).to.deep.equal(hit.tablejson.stateCheck)
 
-    warnSpy.mockRestore()
-    debugSpy.mockRestore()
-  })
-
-  it("does not warn for non-authoritative placeball mode-switch events", () => {
-    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {})
-    const debugSpy = jest.spyOn(console, "debug").mockImplementation(() => {})
-
-    container.sendEvent(new PlaceBallEvent(new Vector3(0, 0, 0)))
-
-    expect(
-      warnSpy.mock.calls.some(
-        ([label]) => label === "tripwire: sender_placeball_emit_mismatch"
-      )
-    ).to.be.false
-
-    warnSpy.mockRestore()
-    debugSpy.mockRestore()
-  })
-
-  it("does not warn for scratch placeball start positions", () => {
-    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {})
-    const debugSpy = jest.spyOn(console, "debug").mockImplementation(() => {})
-    const cueball = container.table.cueball
-    cueball.state = State.InPocket
-
-    container.sendEvent(
-      new PlaceBallEvent(cueball.pos.clone(), undefined, true)
+    container.table.cueball.pos.x += 0.5
+    expect(historyWindow[0].state[0]).to.not.equal(
+      container.table.cueball.pos.x
     )
-
-    expect(
-      warnSpy.mock.calls.some(
-        ([label]) => label === "tripwire: sender_placeball_emit_mismatch"
-      )
-    ).to.be.false
-
-    warnSpy.mockRestore()
-    debugSpy.mockRestore()
   })
 
-  it("clears authoritative placeball tracking on score before later hit", () => {
+  it("includes aligned local and remote hit history in desync tripwire logs", () => {
     const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {})
-    const debugSpy = jest.spyOn(console, "debug").mockImplementation(() => {})
-    const startPos = container.table.cueball.pos.clone()
 
-    container.sendEvent(new PlaceBallEvent(startPos, undefined, true))
-    container.sendEvent(new ScoreEvent(1, 0, 0, 1))
-    container.table.cueball.pos.x += 0.01
     container.sendEvent(new HitEvent(container.table.serialiseHit()))
+    container.controller = new WatchAim(container)
 
-    expect(
-      warnSpy.mock.calls.some(
-        ([label]) => label === "tripwire: sender_pre_hit_authoritative_drift"
-      )
-    ).to.be.false
+    const remoteHit = new HitEvent(container.table.serialiseHit())
+    remoteHit.tablejson.stateCheck = remoteHit.tablejson.stateCheck.slice()
+    remoteHit.tablejson.stateCheck[0] += 0.01
+    remoteHit.tablejson.historyWindow = [
+      {
+        shotIndex: 0,
+        event: { aim: { pos: { x: 0, y: 0, z: 0 } } },
+        state: remoteHit.tablejson.stateCheck.slice(),
+      },
+    ]
+
+    container.eventQueue.push(remoteHit)
+    container.processEvents()
+
+    const tripwireCall = warnSpy.mock.calls.find(
+      ([label]) => label === "tripwire: remote_hit_pre_apply_desync"
+    )
+    expect(tripwireCall).to.not.be.undefined
+
+    const payload = JSON.parse(String(tripwireCall?.[1]))
+    expect(payload.remoteHistoryWindow).to.have.length(1)
+    expect(payload.localHistoryWindow).to.have.length(1)
+    expect(payload.historyMismatches).to.not.be.empty
 
     warnSpy.mockRestore()
-    debugSpy.mockRestore()
   })
 
   it("Begin takes Init to PlaceBall", (done) => {

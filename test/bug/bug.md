@@ -806,3 +806,87 @@ Suggested next steps:
    - log the sender cueball position again immediately before `serialiseHit()`
    If the first and last differ before any physics runs, that is the mutation we are looking for.
 8. If we want to eliminate the last remaining doubt in rerack/placeball setup, add explicit sender-side `fround()`/rounding assertions before serialising those authoritative events, but only on the sender and only as a verified invariant, not by rounding received coordinates.
+
+
+
+---------------
+
+Bug reports from this:
+
+replay-shot-delta {i: 0, dx: -0.8646000027656555, dy: -0.24016666412353516, d: 0.8973367212694455}
+
+This is a false alarm, a replay of white ball being placed in replay mode.
+
+
+Bug:
+
+Logs for B_f10e_2
+Copy
+[2:01:59 PM] warn tripwire: sender_pre_hit_authoritative_drift {
+  "clientId": "4c09cfb2",
+  "authoritativeEventType": "RERACK",
+  "previousTableStateHash": "3cb69088",
+  "currentTableStateHash": "d82445ea",
+  "previousPayloadHash": "6d6308d0",
+  "nextPayloadHash": "c32e066b",
+  "recentHistory": [
+    "SCORE",
+    "AIM",
+    "SCORE",
+    "AIM",
+    "SCORE"
+  ],
+  "maxDrift": 1.0390990376472473,
+  "driftedBallIndices": [
+    0,
+    6,
+    7,
+    21
+  ],
+  "ballDiffs": [
+    {
+      "ballIndex": 0,
+      "remoteX": -0.47822076082229614,
+      "remoteY": 0.5004900693893433,
+      "localX": -0.18771690130233765,
+      "localY": -0.538608968257904,
+      "dx": -0.2905038595199585,
+      "dy": 1.0390990376472473,
+      "dist": 1.0789436048447698
+    },
+    {
+      "ballIndex": 6,
+      "remoteX": -0.1252971738576889,
+      "remoteY": -0.6681820750236511,
+      "localX": -0.25700876116752625,
+      "localY": -0.5448518395423889,
+      "dx": 0.13171158730983734,
+      "dy": -0.12333023548126221,
+      "dist": 0.18043915654740933
+    },
+    {
+      "ballIndex": 7,
+      "remoteX": 1.4058263301849365,
+      "remoteY": -0.3922945261001587,
+      "localX": 1.3612912893295288,
+      "localY": -0.35949304699897766,
+      "dx": 0.044535040855407715,
+      "dy": -0.03280147910118103,
+      "dist": 0.05531100157489512
+    },
+    {
+      "ballIndex": 21,
+      "remoteX": 1.2023451328277588,
+      "remoteY": -0.46506768465042114,
+      "localX": 1.4319672584533691,
+      "localY": -0.7147244811058044,
+      "dx": -0.22962212562561035,
+      "dy": 0.2496567964553833,
+      "dist": 0.3391973416658631
+    }
+  ]
+}
+
+
+This was reported on live 2 player game, I had no visibility of opponents table, but the game proceeded as though there was no desync, do you think its valid and do you think we need even more info?
+

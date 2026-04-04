@@ -39,17 +39,16 @@ import { PlaceBall } from "../controller/placeball"
 import { PlayShot } from "../controller/playshot"
 import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
-import { EventType } from "../events/eventtype"
 import { HitEvent } from "../events/hitevent"
-import { PlaceBallEvent } from "../events/placeballevent"
-import { RerackEvent } from "../events/rerackevent"
-import {
-  hashJson,
-  hashStateCheck,
-  summariseStateDiff,
-} from "../utils/desync-tripwire"
+import { hashStateCheck } from "../utils/desync-tripwire"
 
 type ActivePlayer = 0 | 1 | 2
+
+interface HitHistoryEntry {
+  shotIndex: number
+  event: Record<string, unknown>
+  state: number[]
+}
 
 /**
  * Model, View, Controller container.
@@ -89,20 +88,8 @@ export class Container {
 
   last = performance.now()
   readonly step = 0.001953125 * 1
-  private lastAuthoritativeState:
-    | {
-        eventType: EventType
-        tableState: number[]
-        tableStateHash: string
-        payloadHash: string
-        cueballPos?:
-          | {
-              x: number
-              y: number
-            }
-          | undefined
-      }
-    | undefined
+  private readonly hitHistoryLimit = 8
+  private hitHistory: HitHistoryEntry[] = []
 
   broadcast: (event: GameEvent) => void = () => {}
   log: (text: string) => void
@@ -166,284 +153,188 @@ export class Container {
   })
 
   sendEvent(event) {
-    this.clearExpiredAuthoritativeState(event)
-    this.checkSenderPreHitDrift(event)
+    if (event.type === "HIT") {
+      this.attachOutgoingHitHistory(event as HitEvent)
+    }
     this.recorder.record(event)
-    this.trackSenderAuthoritativeEvent(event)
     this.throttle.send(event)
   }
 
-  private trackSenderAuthoritativeEvent(event: GameEvent) {
-    if (
-      event.type !== EventType.PLACEBALL &&
-      event.type !== EventType.RERACK &&
-      event.type !== EventType.HIT
-    ) {
-      return
-    }
-
-    const tableState = this.table.shortSerialise()
-    const tableStateHash = hashStateCheck(tableState)
-    const payloadHash = hashJson(event)
-    const clientId = Session.getInstance().clientId
-    const placeBallIsAuthoritative = this.isAuthoritativePlaceBallEvent(event)
-
-    globalThis.console?.debug?.(
-      "tripwire: sender_authoritative_event",
-      JSON.stringify(
-        {
-          eventType: event.type,
-          clientId,
-          payloadHash,
-          tableStateHash,
-          recentHistory: this.recorder.getRecentHistory(),
-          ...this.getEventSpecificBreadcrumb(event, tableState),
-        },
-        null,
-        2
-      )
+  private attachOutgoingHitHistory(hitEvent: HitEvent) {
+    const currentEntry = this.createHitHistoryEntry(
+      hitEvent.tablejson,
+      this.hitHistory.length
     )
-
-    if (
-      event.type === EventType.RERACK ||
-      (event.type === EventType.PLACEBALL && placeBallIsAuthoritative)
-    ) {
-      const cueballPos =
-        event.type === EventType.PLACEBALL
-          ? {
-              x: this.table.cueball.pos.x,
-              y: this.table.cueball.pos.y,
-            }
-          : undefined
-      this.lastAuthoritativeState = {
-        eventType: event.type,
-        tableState,
-        tableStateHash,
-        payloadHash,
-        cueballPos,
-      }
-      return
-    }
-
-    this.lastAuthoritativeState = undefined
+    hitEvent.tablejson.historyWindow = [
+      ...this.cloneHitHistoryWindow(
+        this.hitHistory.slice(-(this.hitHistoryLimit - 1))
+      ),
+      this.cloneHitHistoryEntry(currentEntry),
+    ]
+    this.hitHistory = [
+      ...this.hitHistory.slice(-(this.hitHistoryLimit - 1)),
+      currentEntry,
+    ]
   }
 
-  private checkSenderPreHitDrift(event: GameEvent) {
-    if (event.type !== EventType.HIT || !this.lastAuthoritativeState) {
-      return
-    }
-
-    if (this.lastAuthoritativeState.eventType === EventType.PLACEBALL) {
-      this.checkSenderPreHitPlaceBallDrift(event as HitEvent)
-      return
-    }
-
-    const currentTableState = this.table.shortSerialise()
-    const diffSummary = summariseStateDiff(
-      this.lastAuthoritativeState.tableState,
-      currentTableState
+  getRemoteHitHistoryDiagnostics(hitEvent: HitEvent) {
+    const remoteHistoryWindow = this.normaliseHitHistoryWindow(
+      hitEvent.tablejson?.historyWindow
     )
-    if (!diffSummary || diffSummary.maxDrift <= 1e-9) {
-      return
+    if (!remoteHistoryWindow) {
+      return {}
     }
 
-    globalThis.console?.warn?.(
-      "tripwire: sender_pre_hit_authoritative_drift",
-      JSON.stringify(
-        {
-          clientId: Session.getInstance().clientId,
-          authoritativeEventType: this.lastAuthoritativeState.eventType,
-          previousTableStateHash: this.lastAuthoritativeState.tableStateHash,
-          currentTableStateHash: hashStateCheck(currentTableState),
-          previousPayloadHash: this.lastAuthoritativeState.payloadHash,
-          nextPayloadHash: hashJson(event),
-          recentHistory: this.recorder.getRecentHistory(),
-          maxDrift: diffSummary.maxDrift,
-          driftedBallIndices: diffSummary.driftedBallIndices,
-          ballDiffs: diffSummary.ballDiffs,
-        },
-        null,
-        2
-      )
-    )
-  }
+    const localHistoryWindow = remoteHistoryWindow
+      .map((entry) => this.getComparableHitHistoryEntry(entry.shotIndex))
+      .filter((entry): entry is HitHistoryEntry => entry !== undefined)
 
-  private checkSenderPreHitPlaceBallDrift(event: HitEvent) {
-    const authoritativeState = this.lastAuthoritativeState
-    if (
-      !authoritativeState ||
-      authoritativeState.eventType !== EventType.PLACEBALL ||
-      !authoritativeState.cueballPos
-    ) {
-      return
-    }
-
-    const currentCueballPos = this.table.cueball.pos
-    const dx = authoritativeState.cueballPos.x - currentCueballPos.x
-    const dy = authoritativeState.cueballPos.y - currentCueballPos.y
-    const dist = Math.hypot(dx, dy)
-    if (dist <= 1e-9) {
-      return
-    }
-
-    globalThis.console?.warn?.(
-      "tripwire: sender_pre_hit_authoritative_drift",
-      JSON.stringify(
-        {
-          clientId: Session.getInstance().clientId,
-          authoritativeEventType: authoritativeState.eventType,
-          previousTableStateHash: authoritativeState.tableStateHash,
-          currentTableStateHash: hashStateCheck(this.table.shortSerialise()),
-          previousPayloadHash: authoritativeState.payloadHash,
-          nextPayloadHash: hashJson(event),
-          recentHistory: this.recorder.getRecentHistory(),
-          cueballDiff: {
-            remoteX: authoritativeState.cueballPos.x,
-            remoteY: authoritativeState.cueballPos.y,
-            localX: currentCueballPos.x,
-            localY: currentCueballPos.y,
-            dx,
-            dy,
-            dist,
-          },
-        },
-        null,
-        2
-      )
-    )
-  }
-
-  private getEventSpecificBreadcrumb(event: GameEvent, tableState: number[]) {
-    if (event.type === EventType.HIT) {
-      const hitEvent = event as HitEvent
-      return {
-        stateCheckHash: hashStateCheck(hitEvent.tablejson?.stateCheck),
-        cueballX: tableState[0],
-        cueballY: tableState[1],
-      }
-    }
-
-    if (event.type === EventType.PLACEBALL) {
-      const placeBallEvent = event as PlaceBallEvent
-      const authoritative = this.isAuthoritativePlaceBallEvent(event)
-      const cueballPos = this.table.cueball.pos
-      const dx = placeBallEvent.pos.x - cueballPos.x
-      const dy = placeBallEvent.pos.y - cueballPos.y
-      const dist = Math.hypot(dx, dy)
-      if (authoritative && dist > 1e-9) {
-        globalThis.console?.warn?.(
-          "tripwire: sender_placeball_emit_mismatch",
-          JSON.stringify(
-            {
-              clientId: Session.getInstance().clientId,
-              eventType: event.type,
-              payloadHash: hashJson(event),
-              eventPos: {
-                x: placeBallEvent.pos.x,
-                y: placeBallEvent.pos.y,
-              },
-              cueballPos: {
-                x: cueballPos.x,
-                y: cueballPos.y,
-              },
-              dx,
-              dy,
-              dist,
-            },
-            null,
-            2
-          )
+    const historyMismatches = remoteHistoryWindow
+      .map((remoteEntry) => {
+        const localEntry = this.getComparableHitHistoryEntry(
+          remoteEntry.shotIndex
         )
-      }
-
-      return {
-        authoritative,
-        useStartPos: placeBallEvent.useStartPos ?? false,
-        emittedCueballPos: {
-          x: placeBallEvent.pos.x,
-          y: placeBallEvent.pos.y,
-        },
-      }
-    }
-
-    const rerackEvent = event as RerackEvent
-    const ballDiffs =
-      rerackEvent.ballinfo?.balls
-        ?.map((ballInfo) => {
-          const currentBall = this.table.balls[ballInfo.id]
-          if (!currentBall) {
-            return undefined
-          }
-
-          const dx = ballInfo.pos.x - currentBall.pos.x
-          const dy = ballInfo.pos.y - currentBall.pos.y
-          const dist = Math.hypot(dx, dy)
-          if (dist <= 1e-9) {
-            return undefined
-          }
-
+        if (!localEntry) {
           return {
-            ballId: ballInfo.id,
-            eventX: ballInfo.pos.x,
-            eventY: ballInfo.pos.y,
-            tableX: currentBall.pos.x,
-            tableY: currentBall.pos.y,
-            dx,
-            dy,
-            dist,
+            shotIndex: remoteEntry.shotIndex,
+            reason: "missing_local_history",
           }
-        })
-        .filter(
-          (diff): diff is NonNullable<typeof diff> => diff !== undefined
-        ) ?? []
+        }
 
-    if (ballDiffs.length > 0) {
-      globalThis.console?.warn?.(
-        "tripwire: sender_rerack_emit_mismatch",
-        JSON.stringify(
-          {
-            clientId: Session.getInstance().clientId,
-            eventType: event.type,
-            payloadHash: hashJson(event),
-            ballDiffs,
-          },
-          null,
-          2
-        )
+        const remoteHash = hashStateCheck(remoteEntry.state)
+        const localHash = hashStateCheck(localEntry.state)
+        if (remoteHash === localHash) {
+          return undefined
+        }
+
+        return {
+          shotIndex: remoteEntry.shotIndex,
+          remoteStateHash: remoteHash,
+          localStateHash: localHash,
+        }
+      })
+      .filter(
+        (entry): entry is NonNullable<typeof entry> => entry !== undefined
       )
+
+    return {
+      remoteHistoryWindow: this.cloneHitHistoryWindow(remoteHistoryWindow),
+      localHistoryWindow: this.cloneHitHistoryWindow(localHistoryWindow),
+      historyMismatches,
+    }
+  }
+
+  recordReceivedHitHistory(hitEvent: HitEvent) {
+    const remoteHistoryWindow = this.normaliseHitHistoryWindow(
+      hitEvent.tablejson?.historyWindow
+    )
+    const latestEntry =
+      remoteHistoryWindow?.[remoteHistoryWindow.length - 1] ??
+      this.createHitHistoryEntry(hitEvent.tablejson, this.hitHistory.length)
+
+    if (
+      this.hitHistory.some((entry) => entry.shotIndex === latestEntry.shotIndex)
+    ) {
+      return
+    }
+
+    this.hitHistory = [
+      ...this.hitHistory.slice(-(this.hitHistoryLimit - 1)),
+      this.cloneHitHistoryEntry(latestEntry),
+    ]
+  }
+
+  private getComparableHitHistoryEntry(shotIndex: number) {
+    const existingEntry = this.hitHistory.find(
+      (entry) => entry.shotIndex === shotIndex
+    )
+    if (existingEntry) {
+      return this.cloneHitHistoryEntry(existingEntry)
+    }
+
+    if (shotIndex !== this.hitHistory.length) {
+      return undefined
     }
 
     return {
-      rerackBallIds:
-        rerackEvent.ballinfo?.balls?.map((ballInfo) => ballInfo.id) ?? [],
+      shotIndex,
+      event: {},
+      state: this.table.shortSerialise().slice(),
     }
   }
 
-  private isAuthoritativePlaceBallEvent(event: GameEvent): boolean {
-    if (event.type !== EventType.PLACEBALL) {
-      return false
+  private normaliseHitHistoryWindow(
+    historyWindow: unknown
+  ): HitHistoryEntry[] | undefined {
+    if (!Array.isArray(historyWindow)) {
+      return undefined
     }
 
-    const placeBallEvent = event as PlaceBallEvent
-    return Boolean(placeBallEvent.useStartPos && this.table.cueball.onTable())
+    return historyWindow
+      .map((entry) => this.normaliseHitHistoryEntry(entry))
+      .filter((entry): entry is HitHistoryEntry => entry !== undefined)
   }
 
-  private clearExpiredAuthoritativeState(event: GameEvent) {
-    if (!this.lastAuthoritativeState) {
-      return
+  private normaliseHitHistoryEntry(
+    entry: unknown
+  ): HitHistoryEntry | undefined {
+    const candidate = entry as {
+      shotIndex?: unknown
+      event?: unknown
+      state?: unknown
     }
-
-    if (this.lastAuthoritativeState.eventType !== EventType.PLACEBALL) {
-      return
-    }
-
     if (
-      event.type === EventType.SCORE ||
-      event.type === EventType.STARTAIM ||
-      event.type === EventType.WATCHAIM
+      typeof candidate?.shotIndex !== "number" ||
+      !Array.isArray(candidate.state) ||
+      typeof candidate.event !== "object" ||
+      candidate.event === null
     ) {
-      this.lastAuthoritativeState = undefined
+      return undefined
     }
+
+    return {
+      shotIndex: candidate.shotIndex,
+      event: JSON.parse(JSON.stringify(candidate.event)) as Record<
+        string,
+        unknown
+      >,
+      state: candidate.state.slice(),
+    }
+  }
+
+  private createHitHistoryEntry(tablejson, shotIndex: number): HitHistoryEntry {
+    return {
+      shotIndex,
+      event: this.cloneHitPayloadForHistory(tablejson),
+      state: this.cloneStateCheck(tablejson?.stateCheck),
+    }
+  }
+
+  private cloneHitPayloadForHistory(tablejson): Record<string, unknown> {
+    const cloned = JSON.parse(JSON.stringify(tablejson)) as Record<
+      string,
+      unknown
+    >
+    delete cloned.historyWindow
+    return cloned
+  }
+
+  private cloneStateCheck(stateCheck: number[] | undefined): number[] {
+    return (stateCheck ?? this.table.shortSerialise()).slice()
+  }
+
+  private cloneHitHistoryEntry(entry: HitHistoryEntry): HitHistoryEntry {
+    return {
+      shotIndex: entry.shotIndex,
+      event: JSON.parse(JSON.stringify(entry.event)) as Record<string, unknown>,
+      state: entry.state.slice(),
+    }
+  }
+
+  private cloneHitHistoryWindow(
+    historyWindow: HitHistoryEntry[]
+  ): HitHistoryEntry[] {
+    return historyWindow.map((entry) => this.cloneHitHistoryEntry(entry))
   }
 
   private myHudSlot(): 1 | 2 {

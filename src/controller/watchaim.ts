@@ -37,6 +37,8 @@ export class WatchAim extends ControllerBase {
 
   override handleHit(event: HitEvent) {
     const tablejson = event.tablejson
+    const historyDiagnostics =
+      this.container.getRemoteHitHistoryDiagnostics(event)
 
     checkDesyncTripwire(
       "tripwire: remote_hit_pre_apply_desync",
@@ -50,8 +52,10 @@ export class WatchAim extends ControllerBase {
         eventSequence: event.sequence,
         shotCount: this.container.recorder.getShotCount(),
         recentHistory: this.container.recorder.getRecentHistory(),
+        ...historyDiagnostics,
       })
     )
+    this.container.recordReceivedHitHistory(event)
 
     this.container.table.updateFromSerialised(event.tablejson)
     this.container.table.cue.updateAimInput()
