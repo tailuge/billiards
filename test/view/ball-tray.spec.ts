@@ -33,6 +33,7 @@ describe("BallTray", () => {
     ballTray.addBreak({}, 2)
     expect(ballTray.entries.length).toBe(1)
     expect(ballTray.entries[0].label).toBe("break(2)")
+    expect(ballTray.entries[0].icon).toBe("⬤x2")
     expect(ballTray.entries[0].hiScoreUri).toBe("hiscore-url")
   })
 

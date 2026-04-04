@@ -68,7 +68,7 @@ export class BallTray {
   addBreak(breakData: any, score: number) {
     const replayUri = this.container.linkFormatter.getReplayUri(breakData)
     const entry: ShotEntry = {
-      icon: "🏆",
+      icon: `⬤x${score}`,
       label: `break(${score})`,
       color: "#ffd700",
       replayUri,
@@ -108,7 +108,7 @@ export class BallTray {
       return
     }
 
-    const lastEntries = this.entries.slice(-3)
+    const lastEntries = this.entries.slice(-9)
     this.collapsedElement.innerHTML = lastEntries
       .map(
         (entry) => `
