@@ -54,9 +54,14 @@ export class BallTray {
     const icon = "⚈".repeat(pots) + (isPartOfBreak ? "⚈" : "⚆")
     const replayUri = this.container.linkFormatter.getReplayUri(state)
 
+    let label = "Shot"
+    if (potCount > 0) {
+      label = `${potCount} pot${potCount > 1 ? "s" : ""}`
+    }
+
     const entry: ShotEntry = {
       icon,
-      label: potCount > 0 ? `${potCount} pot${potCount > 1 ? "s" : ""}` : "Shot",
+      label,
       color,
       replayUri,
       isPot: potCount > 0,

@@ -21,7 +21,7 @@ describe("BallTray", () => {
         getHiScoreUri: jest.fn().mockReturnValue("hiscore-url"),
       },
     }
-    tray = new BallTray(container as any as Container)
+    tray = new BallTray(container)
   })
 
   test("addShot groups consecutive pots", () => {
