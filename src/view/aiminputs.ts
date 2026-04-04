@@ -30,8 +30,13 @@ export class AimInputs {
     this.cuePowerElement = id("cuePower")
     this.cueHitElement = id("cueHit") as HTMLButtonElement
     if (this.cueHitElement) {
+      const params = new URLSearchParams(location.search)
+      const shotClockSeconds = params.get("shotClock")
+      const duration = shotClockSeconds
+        ? Number(shotClockSeconds) * 1000
+        : 20000
       this.timeoutButton = new TimeoutButton(this.cueHitElement, {
-        duration: 20000,
+        duration,
         onComplete: () => {
           this.cueHitElement?.click()
         },
