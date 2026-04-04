@@ -40,8 +40,16 @@ import { PlayShot } from "../controller/playshot"
 import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
 import { BallTray } from "../view/ball-tray"
+import { HitEvent } from "../events/hitevent"
+import { hashStateCheck } from "../utils/desync-tripwire"
 
 type ActivePlayer = 0 | 1 | 2
+
+interface HitHistoryEntry {
+  shotIndex: number
+  event: Record<string, unknown>
+  state: number[]
+}
 
 /**
  * Model, View, Controller container.
@@ -82,6 +90,8 @@ export class Container {
 
   last = performance.now()
   readonly step = 0.001953125 * 1
+  private readonly hitHistoryLimit = 8
+  private hitHistory: HitHistoryEntry[] = []
 
   broadcast: (event: GameEvent) => void = () => {}
   log: (text: string) => void
@@ -146,8 +156,188 @@ export class Container {
   })
 
   sendEvent(event) {
+    if (event.type === "HIT") {
+      this.attachOutgoingHitHistory(event as HitEvent)
+    }
     this.recorder.record(event)
     this.throttle.send(event)
+  }
+
+  private attachOutgoingHitHistory(hitEvent: HitEvent) {
+    const currentEntry = this.createHitHistoryEntry(
+      hitEvent.tablejson,
+      this.hitHistory.length
+    )
+    hitEvent.tablejson.historyWindow = [
+      ...this.cloneHitHistoryWindow(
+        this.hitHistory.slice(-(this.hitHistoryLimit - 1))
+      ),
+      this.cloneHitHistoryEntry(currentEntry),
+    ]
+    this.hitHistory = [
+      ...this.hitHistory.slice(-(this.hitHistoryLimit - 1)),
+      currentEntry,
+    ]
+  }
+
+  getRemoteHitHistoryDiagnostics(hitEvent: HitEvent) {
+    const remoteHistoryWindow = this.normaliseHitHistoryWindow(
+      hitEvent.tablejson?.historyWindow
+    )
+    if (!remoteHistoryWindow) {
+      return {}
+    }
+
+    const localHistoryWindow = remoteHistoryWindow
+      .map((entry) => this.getComparableHitHistoryEntry(entry.shotIndex))
+      .filter((entry): entry is HitHistoryEntry => entry !== undefined)
+
+    const historyMismatches = remoteHistoryWindow
+      .map((remoteEntry) => {
+        const localEntry = this.getComparableHitHistoryEntry(
+          remoteEntry.shotIndex
+        )
+        if (!localEntry) {
+          return {
+            shotIndex: remoteEntry.shotIndex,
+            reason: "missing_local_history",
+          }
+        }
+
+        const remoteHash = hashStateCheck(remoteEntry.state)
+        const localHash = hashStateCheck(localEntry.state)
+        if (remoteHash === localHash) {
+          return undefined
+        }
+
+        return {
+          shotIndex: remoteEntry.shotIndex,
+          remoteStateHash: remoteHash,
+          localStateHash: localHash,
+        }
+      })
+      .filter(
+        (entry): entry is NonNullable<typeof entry> => entry !== undefined
+      )
+
+    return {
+      remoteHistoryWindow: this.cloneHitHistoryWindow(remoteHistoryWindow),
+      localHistoryWindow: this.cloneHitHistoryWindow(localHistoryWindow),
+      historyMismatches,
+    }
+  }
+
+  recordReceivedHitHistory(hitEvent: HitEvent) {
+    const remoteHistoryWindow = this.normaliseHitHistoryWindow(
+      hitEvent.tablejson?.historyWindow
+    )
+    const latestEntry =
+      remoteHistoryWindow?.[remoteHistoryWindow.length - 1] ??
+      this.createHitHistoryEntry(hitEvent.tablejson, this.hitHistory.length)
+
+    if (
+      this.hitHistory.some((entry) => entry.shotIndex === latestEntry.shotIndex)
+    ) {
+      return
+    }
+
+    this.hitHistory = [
+      ...this.hitHistory.slice(-(this.hitHistoryLimit - 1)),
+      this.cloneHitHistoryEntry(latestEntry),
+    ]
+  }
+
+  private getComparableHitHistoryEntry(shotIndex: number) {
+    const existingEntry = this.hitHistory.find(
+      (entry) => entry.shotIndex === shotIndex
+    )
+    if (existingEntry) {
+      return this.cloneHitHistoryEntry(existingEntry)
+    }
+
+    if (shotIndex !== this.hitHistory.length) {
+      return undefined
+    }
+
+    return {
+      shotIndex,
+      event: {},
+      state: this.table.shortSerialise().slice(),
+    }
+  }
+
+  private normaliseHitHistoryWindow(
+    historyWindow: unknown
+  ): HitHistoryEntry[] | undefined {
+    if (!Array.isArray(historyWindow)) {
+      return undefined
+    }
+
+    return historyWindow
+      .map((entry) => this.normaliseHitHistoryEntry(entry))
+      .filter((entry): entry is HitHistoryEntry => entry !== undefined)
+  }
+
+  private normaliseHitHistoryEntry(
+    entry: unknown
+  ): HitHistoryEntry | undefined {
+    const candidate = entry as {
+      shotIndex?: unknown
+      event?: unknown
+      state?: unknown
+    }
+    if (
+      typeof candidate?.shotIndex !== "number" ||
+      !Array.isArray(candidate.state) ||
+      typeof candidate.event !== "object" ||
+      candidate.event === null
+    ) {
+      return undefined
+    }
+
+    return {
+      shotIndex: candidate.shotIndex,
+      event: JSON.parse(JSON.stringify(candidate.event)) as Record<
+        string,
+        unknown
+      >,
+      state: candidate.state.slice(),
+    }
+  }
+
+  private createHitHistoryEntry(tablejson, shotIndex: number): HitHistoryEntry {
+    return {
+      shotIndex,
+      event: this.cloneHitPayloadForHistory(tablejson),
+      state: this.cloneStateCheck(tablejson?.stateCheck),
+    }
+  }
+
+  private cloneHitPayloadForHistory(tablejson): Record<string, unknown> {
+    const cloned = JSON.parse(JSON.stringify(tablejson)) as Record<
+      string,
+      unknown
+    >
+    delete cloned.historyWindow
+    return cloned
+  }
+
+  private cloneStateCheck(stateCheck: number[] | undefined): number[] {
+    return (stateCheck ?? this.table.shortSerialise()).slice()
+  }
+
+  private cloneHitHistoryEntry(entry: HitHistoryEntry): HitHistoryEntry {
+    return {
+      shotIndex: entry.shotIndex,
+      event: JSON.parse(JSON.stringify(entry.event)) as Record<string, unknown>,
+      state: entry.state.slice(),
+    }
+  }
+
+  private cloneHitHistoryWindow(
+    historyWindow: HitHistoryEntry[]
+  ): HitHistoryEntry[] {
+    return historyWindow.map((entry) => this.cloneHitHistoryEntry(entry))
   }
 
   private myHudSlot(): 1 | 2 {

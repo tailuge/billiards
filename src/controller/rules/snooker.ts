@@ -280,6 +280,7 @@ export class Snooker implements Rules {
       outcome
     )
     if (respotted.length > 0) {
+      respotted.forEach((ball) => ball.fround())
       const respot = RerackEvent.fromJson({
         balls: respotted.map((b) => b.serialise()),
       })

@@ -61,6 +61,55 @@ describe("Controller", () => {
     done()
   })
 
+  it("attaches a cloned hit history window to outgoing hits", () => {
+    const hit = new HitEvent(container.table.serialiseHit())
+
+    container.sendEvent(hit)
+    const historyWindow = hit.tablejson.historyWindow
+
+    expect(historyWindow).to.have.length(1)
+    expect(historyWindow[0].shotIndex).to.equal(0)
+    expect(historyWindow[0].state).to.deep.equal(hit.tablejson.stateCheck)
+
+    container.table.cueball.pos.x += 0.5
+    expect(historyWindow[0].state[0]).to.not.equal(
+      container.table.cueball.pos.x
+    )
+  })
+
+  it("includes aligned local and remote hit history in desync tripwire logs", () => {
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {})
+
+    container.sendEvent(new HitEvent(container.table.serialiseHit()))
+    container.controller = new WatchAim(container)
+
+    const remoteHit = new HitEvent(container.table.serialiseHit())
+    remoteHit.tablejson.stateCheck = remoteHit.tablejson.stateCheck.slice()
+    remoteHit.tablejson.stateCheck[0] += 0.01
+    remoteHit.tablejson.historyWindow = [
+      {
+        shotIndex: 0,
+        event: { aim: { pos: { x: 0, y: 0, z: 0 } } },
+        state: remoteHit.tablejson.stateCheck.slice(),
+      },
+    ]
+
+    container.eventQueue.push(remoteHit)
+    container.processEvents()
+
+    const tripwireCall = warnSpy.mock.calls.find(
+      ([label]) => label === "tripwire: remote_hit_pre_apply_desync"
+    )
+    expect(tripwireCall).to.not.be.undefined
+
+    const payload = JSON.parse(String(tripwireCall?.[1]))
+    expect(payload.remoteHistoryWindow).to.have.length(1)
+    expect(payload.localHistoryWindow).to.have.length(1)
+    expect(payload.historyMismatches).to.not.be.empty
+
+    warnSpy.mockRestore()
+  })
+
   it("Begin takes Init to PlaceBall", (done) => {
     container.eventQueue.push(new BeginEvent())
     container.processEvents()

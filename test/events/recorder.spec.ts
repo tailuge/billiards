@@ -28,6 +28,23 @@ describe("Recorder", () => {
     done()
   })
 
+  it("does not record hit history windows", () => {
+    const recorder = new Recorder(container, container.linkFormatter)
+    const event: HitEvent = new HitEvent(container.table.serialiseHit())
+    event.tablejson.historyWindow = [
+      {
+        shotIndex: 0,
+        event: { aim: { pos: { x: 1, y: 2, z: 0 } } },
+        state: [1, 2, 3, 4],
+      },
+    ]
+
+    recorder.record(event)
+
+    expect(recorder.shots[0]).to.deep.equal(event.tablejson.aim)
+    expect((recorder.shots[0] as any).historyWindow).to.be.undefined
+  })
+
   it("show break messages via ball tray", (done) => {
     const recorder = new Recorder(container, container.linkFormatter)
     const event: HitEvent = new HitEvent(container.table.serialise())
