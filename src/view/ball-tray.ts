@@ -16,9 +16,9 @@ export class BallTray {
   expanded: boolean = false
   entries: ShotEntry[] = []
 
-  private trayElement: HTMLElement | null
-  private collapsedElement: HTMLElement | null
-  private expandedElement: HTMLElement | null
+  private readonly trayElement: HTMLElement | null
+  private readonly collapsedElement: HTMLElement | null
+  private readonly expandedElement: HTMLElement | null
 
   constructor(container: Container) {
     this.container = container

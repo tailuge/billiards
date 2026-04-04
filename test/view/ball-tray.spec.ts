@@ -1,4 +1,3 @@
-import { Container } from "../../src/container/container"
 import { BallTray } from "../../src/view/ball-tray"
 
 describe("BallTray", () => {
