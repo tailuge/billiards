@@ -56,4 +56,38 @@ describe("BallTray", () => {
     expect(ballTray.entries.length).toBe(0)
     expect(ballTray.expanded).toBe(false)
   })
+
+  test("should handle click events and stop propagation", () => {
+    const collapsed = document.querySelector(".ball-tray-collapsed") as HTMLElement
+    const expanded = document.querySelector(".ball-tray-expanded") as HTMLElement
+
+    const event = new MouseEvent("click", { bubbles: true, cancelable: true })
+    const spy = jest.spyOn(event, "stopPropagation")
+
+    collapsed.dispatchEvent(event)
+    expect(spy).toHaveBeenCalled()
+    expect(ballTray.expanded).toBe(true)
+
+    expanded.dispatchEvent(event)
+    expect(spy).toHaveBeenCalledTimes(2)
+  })
+
+  test("should handle close button click", () => {
+    ballTray.toggle() // expand first
+    const closeBtn = document.querySelector(".ball-tray-close") as HTMLElement
+    const event = new MouseEvent("click", { bubbles: true, cancelable: true })
+    closeBtn.dispatchEvent(event)
+    expect(ballTray.expanded).toBe(false)
+  })
+
+  test("should update history container if header already exists", () => {
+    ballTray.toggle() // first render creates header
+    ballTray.addShot(false, 1, [], {}) // add another shot
+    // toggle again to re-render (it's already expanded, so just calling render via addShot was enough)
+    const history = document.querySelector(".ball-tray-history") as HTMLElement
+    expect(history.querySelectorAll(".shot-row").length).toBe(1)
+
+    ballTray.addShot(false, 2, [], {})
+    expect(history.querySelectorAll(".shot-row").length).toBe(2)
+  })
 })
