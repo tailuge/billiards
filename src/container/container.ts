@@ -39,6 +39,7 @@ import { PlaceBall } from "../controller/placeball"
 import { PlayShot } from "../controller/playshot"
 import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
+import { BallTray } from "../view/ball-tray"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -58,6 +59,7 @@ export class Container {
   sliders: Sliders
   recorder: Recorder
   linkFormatter: LinkFormatter
+  ballTray: BallTray
   id: string
   isSinglePlayer: boolean = true
   rules: Rules
@@ -109,6 +111,7 @@ export class Container {
     this.chat = new Chat(this.sendChat)
     this.sliders = new Sliders()
     this.linkFormatter = new LinkFormatter(this)
+    this.ballTray = new BallTray(this)
     this.recorder = new Recorder(this, this.linkFormatter)
     this.id = id ?? ""
     this.menu = new Menu(this)

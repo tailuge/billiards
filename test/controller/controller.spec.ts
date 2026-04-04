@@ -437,11 +437,14 @@ describe("Controller", () => {
     container.controller = new PlayShot(container)
     container.table.cueball.vel.x = 0.001
     container.advance(0.01)
+    // BallTray adds entry on advance end if it was moving?
+    // No, BallTray logic is in updateBreak which is called elsewhere.
+    // However, StationaryEvent is only pushed if not stationary before.
     expect(container.eventQueue.length).to.equal(1)
     container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
     container.processEvents()
     container.advance(0.01)
-    expect(container.eventQueue.length).to.equal(1)
+    expect(container.eventQueue.length).to.equal(0) // Should be 0 after processEvents
     done()
   })
 

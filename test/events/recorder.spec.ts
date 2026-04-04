@@ -28,7 +28,7 @@ describe("Recorder", () => {
     done()
   })
 
-  it("show break messages", (done) => {
+  it("show break messages via ball tray", (done) => {
     const recorder = new Recorder(container, container.linkFormatter)
     const event: HitEvent = new HitEvent(container.table.serialise())
     recorder.record(event)
@@ -39,7 +39,9 @@ describe("Recorder", () => {
       container.rules.isPartOfBreak(outcome),
       container.rules.isEndOfGame(outcome)
     )
-    expect(container.eventQueue).to.be.length(1)
+    // One entry in tray, none in eventQueue for lastShotLink/breakLink
+    expect(container.ballTray.entries).to.have.length(1)
+
     recorder.record(event)
     outcome.push(Outcome.pot(container.table.balls[2], 1))
     recorder.updateBreak(
@@ -47,7 +49,8 @@ describe("Recorder", () => {
       container.rules.isPartOfBreak(outcome),
       container.rules.isEndOfGame(outcome)
     )
-    expect(container.eventQueue).to.be.length(2)
+    expect(container.ballTray.entries).to.have.length(2)
+
     recorder.record(event)
     container.table.outcome = []
     recorder.updateBreak(
@@ -55,7 +58,8 @@ describe("Recorder", () => {
       container.rules.isPartOfBreak(container.table.outcome),
       container.rules.isEndOfGame(container.table.outcome)
     )
-    expect(container.eventQueue).to.be.length(4)
+    // End of break should add another entry to tray
+    expect(container.ballTray.entries).to.have.length(4)
     done()
   })
 })
