@@ -59,7 +59,7 @@ describe("AimCalculator", () => {
       const hitEvent = calculator.generateRandomShot(table, 0, targetPos) as any
 
       const aimData = hitEvent.tablejson.aim
-      expect(aimData.offset.y).toBe(table.cue.offCenterLimit)
+      expect(aimData.offset.y).toBeCloseTo(table.cue.offCenterLimit, 7)
       expect(aimData.offset.x).toBe(0)
     })
 

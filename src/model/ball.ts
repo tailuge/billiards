@@ -126,8 +126,10 @@ export class Ball {
   fround() {
     this.pos.x = Math.fround(this.pos.x)
     this.pos.y = Math.fround(this.pos.y)
+    this.pos.z = Math.fround(this.pos.z)
     this.vel.x = Math.fround(this.vel.x)
     this.vel.y = Math.fround(this.vel.y)
+    this.vel.z = Math.fround(this.vel.z)
     this.rvel.x = Math.fround(this.rvel.x)
     this.rvel.y = Math.fround(this.rvel.y)
     this.rvel.z = Math.fround(this.rvel.z)

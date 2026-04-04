@@ -13,6 +13,7 @@ import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
 import { Rules } from "./rules"
 import { R } from "../../model/physics/constants"
+import { roundVec } from "../../utils/three-utils"
 import { Respot } from "../../utils/respot"
 import { TableGeometry } from "../../view/tablegeometry"
 import { StartAimEvent } from "../../events/startaimevent"
@@ -105,7 +106,9 @@ export class NineBall implements Rules {
       this.respotAndBroadcastNineBall()
     }
 
-    const startPos = cueball.onTable() ? cueball.pos.clone() : this.placeBall()
+    const startPos = cueball.onTable()
+      ? cueball.pos.clone()
+      : roundVec(this.placeBall())
     const placeBallEvent = new PlaceBallEvent(startPos, undefined, true)
     this.container.sendEvent(placeBallEvent)
 

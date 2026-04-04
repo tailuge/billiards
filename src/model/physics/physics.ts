@@ -1,5 +1,5 @@
 import { Vector3 } from "three"
-import { sin, cos } from "../../utils/utils"
+import { sin, cos, asin, atan2 } from "../../utils/utils"
 import { norm, upCross, up } from "../../utils/three-utils"
 import { muS, muC, g, m, Mz, Mxy, R, I, e, ee, μs, μw } from "./constants"
 import { Mathaven } from "./mathaven"
@@ -59,7 +59,7 @@ export function rotateApplyUnrotate(theta, v, w, model) {
 // cushion contact point epsilon above ball centre
 
 const epsilon = R * 0.1
-const theta_a = Math.asin(epsilon / R)
+const theta_a = asin(epsilon / R)
 
 const sin_a = sin(theta_a)
 const cos_a = cos(theta_a)
@@ -114,9 +114,9 @@ function slipHan(v, w) {
   const { c, B } = basisHan(v, w)
   const ecB = (1 + e) * (c / B)
   const mu = muCushion(v)
-  const phi = Math.atan2(v.y, v.x)
-  const cos_phi = Math.cos(phi)
-  const sin_phi = Math.sin(phi)
+  const phi = atan2(v.y, v.x)
+  const cos_phi = cos(phi)
+  const sin_phi = sin(phi)
   const PX = -mu * ecB * cos_phi * cos_a - ecB * cos_a
   const PY = mu * ecB * sin_phi
   const PZ = mu * ecB * cos_phi * cos_a - ecB * sin_a
@@ -153,7 +153,7 @@ export function bounceHanBlend(v: Vector3, w: Vector3) {
   const deltaSlip = slipHan(v, w)
 
   const isCheckSide = Math.sign(v.y) === Math.sign(w.z)
-  const factor = isCheckSide ? Math.cos(Math.atan2(v.y, v.x)) : 1
+  const factor = isCheckSide ? cos(atan2(v.y, v.x)) : 1
 
   const delta = {
     v: deltaSlip.v.lerp(deltaGrip.v, factor),
@@ -174,7 +174,7 @@ function impulseToDelta(PX, PY, PZ) {
 }
 
 export function muCushion(v: Vector3) {
-  const theta = Math.atan2(Math.abs(v.y), v.x)
+  const theta = atan2(Math.abs(v.y), v.x)
   return 0.471 - theta * 0.241
 }
 
@@ -211,7 +211,7 @@ export function mathavenAdapter(v: Vector3, w: Vector3) {
  * @returns angular velocity
  */
 export function cueToSpin(offset: Vector3, v: Vector3) {
-  const spinAxis = Math.atan2(-offset.x, offset.y)
+  const spinAxis = atan2(-offset.x, offset.y)
   const spinRate = ((5 / 2) * v.length() * (offset.length() * R)) / (R * R)
   const dir = v.clone().normalize()
   const rvel = upCross(dir)

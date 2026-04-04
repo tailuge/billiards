@@ -36,3 +36,15 @@ export function sqrt(theta) {
 export function exp(theta) {
   return Math.fround(Math.exp(theta))
 }
+
+export function asin(num) {
+  return Math.fround(Math.asin(num))
+}
+
+export function acos(num) {
+  return Math.fround(Math.acos(num))
+}
+
+export function atan(num) {
+  return Math.fround(Math.atan(num))
+}

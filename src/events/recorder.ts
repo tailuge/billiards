@@ -7,6 +7,7 @@ import { LinkFormatter } from "../view/link-formatter"
 import { ReplayEncoder } from "../utils/replay-encoder"
 import { Session } from "../network/client/session"
 import { RecordEntry } from "./recordentry"
+import { roundVec } from "../utils/three-utils"
 
 export class Recorder {
   container: Container
@@ -59,6 +60,10 @@ export class Recorder {
     if (!recordedAim?.pos) {
       throw new Error("HitEvent missing aim position")
     }
+
+    // Align recorded aim with live cueball state
+    recordedAim.pos.copy(this.container.table.cueball.pos)
+    roundVec(recordedAim.pos)
 
     return recordedAim
   }

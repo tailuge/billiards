@@ -11,12 +11,12 @@ export class Rack {
   static readonly noise = Math.fround(R * 0.023 + 0.0015 * Math.random())
   static readonly gap = 2 * R + 2 * Rack.noise
   static readonly up = new Vector3(0, 0, -1)
-  static readonly spot = new Vector3(-TableGeometry.X / 2, 0, 0)
-  static readonly across = new Vector3(0, Rack.gap, 0)
-  static readonly down = new Vector3(Rack.gap, 0, 0)
-  static readonly diagonal = Rack.across
-    .clone()
-    .applyAxisAngle(Rack.up, (Math.PI * 1) / 3)
+  static readonly spot = roundVec(new Vector3(-TableGeometry.X / 2, 0, 0))
+  static readonly across = roundVec(new Vector3(0, Rack.gap, 0))
+  static readonly down = roundVec(new Vector3(Rack.gap, 0, 0))
+  static readonly diagonal = roundVec(
+    Rack.across.clone().applyAxisAngle(Rack.up, (Math.PI * 1) / 3)
+  )
 
   static readonly BALL_COLORS = [
     "#FFFFFF", // 0: Cue Ball
@@ -61,6 +61,7 @@ export class Rack {
   }
 
   static diamond() {
+    Ball.id = 0
     const pos = new Vector3(TableGeometry.tableX / 2, 0, 0)
     const diamond: Ball[] = []
     const newball = (pos: Vector3, color: string, label: number) => {
@@ -90,6 +91,7 @@ export class Rack {
   }
 
   static triangle() {
+    Ball.id = 0
     const tp = Rack.trianglePositions()
     const triangle: Ball[] = []
     triangle.push(Rack.cueBall(Rack.spot))
@@ -104,40 +106,40 @@ export class Rack {
 
   static trianglePositions() {
     const triangle: Vector3[] = []
-    const pos = new Vector3(TableGeometry.X / 2, 0, 0)
-    triangle.push(vec(pos))
+    const pos = roundVec(new Vector3(TableGeometry.X / 2, 0, 0))
+    triangle.push(roundVec(vec(pos)))
     // row 2
     pos.add(this.diagonal)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     pos.sub(this.across)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     // row 3
     pos.add(this.diagonal)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     pos.sub(this.across)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     pos.addScaledVector(this.across, 2)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     // row 4
     pos.add(this.diagonal)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     pos.sub(this.across)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     pos.sub(this.across)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     pos.sub(this.across)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     // row 5
     pos.add(this.diagonal).sub(this.across)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     pos.add(this.across)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     pos.add(this.across)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     pos.add(this.across)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
     pos.add(this.across)
-    triangle.push(vec(pos))
+    triangle.push(roundVec(vec(pos)))
 
     return triangle
   }
@@ -175,6 +177,7 @@ export class Rack {
   static readonly baulk = (-1.5 * TableGeometry.X * 2) / 5
 
   static snooker() {
+    Ball.id = 0
     const balls: Ball[] = []
     const dy = TableGeometry.Y / 4
     balls.push(Rack.cueBall(Rack.jitter(new Vector3(Rack.baulk, -dy * 0.5, 0))))
@@ -208,12 +211,12 @@ export class Rack {
     const dx = TableGeometry.X / 2
     const black = TableGeometry.X - (TableGeometry.X * 2) / 11
     const positions: Vector3[] = [
-      new Vector3(Rack.baulk, -Rack.sixth, 0),
-      new Vector3(Rack.baulk, Rack.sixth, 0),
-      new Vector3(Rack.baulk, 0, 0),
-      new Vector3(0, 0, 0),
-      new Vector3(dx, 0, 0),
-      new Vector3(black, 0, 0),
+      roundVec(new Vector3(Rack.baulk, -Rack.sixth, 0)),
+      roundVec(new Vector3(Rack.baulk, Rack.sixth, 0)),
+      roundVec(new Vector3(Rack.baulk, 0, 0)),
+      roundVec(new Vector3(0, 0, 0)),
+      roundVec(new Vector3(dx, 0, 0)),
+      roundVec(new Vector3(black, 0, 0)),
     ]
     return positions
   }

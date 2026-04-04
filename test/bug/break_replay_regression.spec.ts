@@ -83,10 +83,8 @@ describe("Break Replay Regression", () => {
     expect(firstRun.state).to.deep.equal(secondRun.state)
     expect(firstRun.cueball.distanceTo(secondRun.cueball)).to.equal(0)
     expect(firstRun.deltaToRecorded).to.equal(secondRun.deltaToRecorded)
-    expect(firstRun.deltaToRecorded).to.be.closeTo(
-      0.00003583328374224414,
-      1e-12
-    )
+    // The mismatch is now significantly reduced due to precision fixes
+    expect(firstRun.deltaToRecorded).to.be.closeTo(9.313225746154785e-9, 1e-12)
     done()
   })
 })

@@ -1,4 +1,5 @@
 import { Vector3 } from "three"
+import { roundVec } from "../../utils/three-utils"
 import { HitEvent } from "../../events/hitevent"
 import { Table } from "../../model/table"
 import { R } from "../../model/physics/constants"
@@ -60,15 +61,17 @@ export class AimCalculator {
     aim.i = balls.indexOf(cueball)
 
     const lineTo = targetPos.clone().sub(cueball.pos)
-    aim.angle = atan2(lineTo.y, lineTo.x) + (Math.random() - 0.5) * noise
-    aim.power = AimCalculator.DEFAULT_SHOT_POWER
-    aim.offset = new Vector3(
-      0,
-      (Math.random() - 0.5) * AimCalculator.RANDOM_OFFSET_RANGE
+    aim.angle = Math.fround(
+      atan2(lineTo.y, lineTo.x) + (Math.random() - 0.5) * noise
+    )
+    aim.power = Math.fround(AimCalculator.DEFAULT_SHOT_POWER)
+    aim.offset = roundVec(
+      new Vector3(0, (Math.random() - 0.5) * AimCalculator.RANDOM_OFFSET_RANGE)
     )
 
     if (cue.intersectsAnything(table, aim)) {
       aim.offset.set(0, cue.offCenterLimit, 0)
+      roundVec(aim.offset)
     }
 
     return new HitEvent(table.serialiseHit())
