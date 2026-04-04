@@ -32,7 +32,7 @@ describe("BallTray", () => {
     ballTray.addBreak({}, 2)
     expect(ballTray.entries.length).toBe(1)
     expect(ballTray.entries[0].label).toBe("break(2)")
-    expect(ballTray.entries[0].icon).toBe("⬤x2")
+    expect(ballTray.entries[0].icon).toBe("⚈⚈")
     expect(ballTray.entries[0].hiScoreUri).toBe("hiscore-url")
   })
 
@@ -82,12 +82,18 @@ describe("BallTray", () => {
 
   test("should update history container if header already exists", () => {
     ballTray.toggle() // first render creates header
-    ballTray.addShot(false, 1, [], {}) // add another shot
-    // toggle again to re-render (it's already expanded, so just calling render via addShot was enough)
-    const history = document.querySelector(".ball-tray-history") as HTMLElement
-    expect(history.querySelectorAll(".shot-row").length).toBe(1)
+    ballTray.addShot(false, 0, [], {}) // MISSED shot -> 1 line
 
-    ballTray.addShot(false, 2, [], {})
-    expect(history.querySelectorAll(".shot-row").length).toBe(2)
+    const history = document.querySelector(".ball-tray-history") as HTMLElement
+    expect(history.querySelectorAll(".shot-line").length).toBe(1)
+    expect(history.querySelectorAll(".shot-inline").length).toBe(1)
+
+    ballTray.addShot(false, 0, [], {}) // Another MISSED shot -> 2 lines
+    expect(history.querySelectorAll(".shot-line").length).toBe(2)
+
+    ballTray.addShot(true, 1, [], {}) // A pot -> still 2 lines (pot doesn't end the line until a miss or end)
+    // Wait, the final push adds it as a line. So it should be 3 lines total now.
+    expect(history.querySelectorAll(".shot-line").length).toBe(3)
+    expect(history.querySelectorAll(".shot-inline").length).toBe(3)
   })
 })

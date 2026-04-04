@@ -9,6 +9,7 @@ interface ShotEntry {
   hiScoreUri?: string
   timestamp: number
   isBreak: boolean
+  isPot: boolean
 }
 
 export class BallTray {
@@ -61,6 +62,7 @@ export class BallTray {
       replayUri,
       timestamp: Date.now(),
       isBreak: false,
+      isPot: potCount > 0,
     })
     this.render()
   }
@@ -68,12 +70,13 @@ export class BallTray {
   addBreak(breakData: any, score: number) {
     const replayUri = this.container.linkFormatter.getReplayUri(breakData)
     const entry: ShotEntry = {
-      icon: `⬤x${score}`,
+      icon: "⚈".repeat(score),
       label: `break(${score})`,
       color: "#ffd700",
       replayUri,
       timestamp: Date.now(),
       isBreak: true,
+      isPot: true,
     }
 
     if (score >= 2) {
@@ -130,34 +133,48 @@ export class BallTray {
       return
     }
 
-    const historyHtml =
-      this.entries.length === 0
-        ? `<div class="ball-tray-empty">No shot history yet</div>`
-        : this.entries
-            .map((entry) => {
-              const date = new Date(entry.timestamp)
-              const timeStr = `${date.getHours().toString().padStart(2, "0")}:${date
-                .getMinutes()
-                .toString()
-                .padStart(2, "0")}:${date
-                .getSeconds()
-                .toString()
-                .padStart(2, "0")}`
-              const hiScoreHtml = entry.hiScoreUri
-                ? `<a href="${entry.hiScoreUri}" target="_blank" class="hi-score-pill" onclick="event.stopPropagation()">🏆 hi score</a>`
-                : ""
-              return `
-            <a href="${entry.replayUri}" target="_blank" class="shot-row" onclick="event.stopPropagation()">
-              <span class="shot-time">${timeStr}</span>
-              <span class="shot-icon" style="color: ${entry.color}">${entry.icon}</span>
-              <span class="shot-label">${entry.label} ${hiScoreHtml}</span>
-              <span class="shot-link-icon">↗</span>
-            </a>
-          `
-            })
-            .reverse()
-            .join("")
+    if (this.entries.length === 0) {
+      this.renderHistoryContent(
+        `<div class="ball-tray-empty">No shot history yet</div>`
+      )
+      return
+    }
 
+    const lines: string[] = []
+    let currentLine: string[] = []
+
+    this.entries.forEach((entry) => {
+      const hiScoreHtml = entry.hiScoreUri
+        ? `<a href="${entry.hiScoreUri}" target="_blank" class="hi-score-pill" onclick="event.stopPropagation()">🏆 hi score</a>`
+        : ""
+
+      const linkHtml = `
+        <span class="shot-inline-container">
+          <a href="${entry.replayUri}" target="_blank" class="shot-inline" title="${entry.label}" style="color: ${entry.color}" onclick="event.stopPropagation()">
+            ${entry.icon}
+          </a>
+          ${hiScoreHtml}
+        </span>
+      `
+
+      currentLine.push(linkHtml)
+
+      if (!entry.isPot) {
+        lines.push(`<div class="shot-line">${currentLine.join("")}</div>`)
+        currentLine = []
+      }
+    })
+
+    if (currentLine.length > 0) {
+      lines.push(`<div class="shot-line">${currentLine.join("")}</div>`)
+    }
+
+    const historyHtml = lines.reverse().join("")
+    this.renderHistoryContent(historyHtml)
+  }
+
+  private renderHistoryContent(html: string) {
+    if (!this.expandedElement) return
     const header = this.expandedElement.querySelector("header")
     if (!header) {
       this.expandedElement.innerHTML = `
@@ -166,7 +183,7 @@ export class BallTray {
           <button class="ball-tray-close">Close</button>
         </header>
         <div class="ball-tray-history">
-          ${historyHtml}
+          ${html}
         </div>
       `
       this.expandedElement
@@ -180,7 +197,7 @@ export class BallTray {
         ".ball-tray-history"
       )
       if (historyContainer) {
-        historyContainer.innerHTML = historyHtml
+        historyContainer.innerHTML = html
       }
     }
   }
