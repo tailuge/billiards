@@ -7,44 +7,43 @@ interface ShotEntry {
   color: string
   replayUri: string
   hiScoreUri?: string
-  timestamp: number
-  isBreak: boolean
   isPot: boolean
+  isBreak: boolean
 }
 
 export class BallTray {
   container: Container
-  expanded: boolean = false
   entries: ShotEntry[] = []
 
   private readonly trayElement: HTMLElement | null
-  private readonly collapsedElement: HTMLElement | null
-  private readonly expandedElement: HTMLElement | null
+  private readonly listElement: HTMLElement | null
+  private readonly leftBtn: HTMLElement | null
+  private readonly rightBtn: HTMLElement | null
 
   constructor(container: Container) {
     this.container = container
     this.trayElement = id("ballTray")
-    this.collapsedElement = this.trayElement?.querySelector(
-      ".ball-tray-collapsed"
-    ) as HTMLElement
-    this.expandedElement = this.trayElement?.querySelector(
-      ".ball-tray-expanded"
-    ) as HTMLElement
+    this.listElement = id("ballTrayList")
+    this.leftBtn = id("trayLeft")
+    this.rightBtn = id("trayRight")
 
-    this.collapsedElement?.addEventListener("click", (e) => {
+    this.leftBtn?.addEventListener("click", (e) => {
       e.stopPropagation()
-      this.toggle()
+      this.scroll(-80)
     })
-    this.expandedElement?.addEventListener("click", (e) => {
+    this.rightBtn?.addEventListener("click", (e) => {
       e.stopPropagation()
+      this.scroll(80)
     })
 
-    this.render()
+    this.trayElement?.addEventListener("click", (e) => {
+      e.stopPropagation()
+    })
   }
 
   addShot(isPartOfBreak: boolean, potCount: number, balls: any[], state: any) {
     const pots = potCount > 1 ? potCount - 1 : 0
-    let color = "#000000"
+    let color = "#ffffff"
     if (balls.length > 0) {
       const lastBall = balls[balls.length - 1]
       if (lastBall.ballmesh) {
@@ -55,16 +54,17 @@ export class BallTray {
     const icon = "⚈".repeat(pots) + (isPartOfBreak ? "⚈" : "⚆")
     const replayUri = this.container.linkFormatter.getReplayUri(state)
 
-    this.entries.push({
+    const entry: ShotEntry = {
       icon,
       label: potCount > 0 ? `${potCount} pot${potCount > 1 ? "s" : ""}` : "Shot",
       color,
       replayUri,
-      timestamp: Date.now(),
-      isBreak: false,
       isPot: potCount > 0,
-    })
-    this.render()
+      isBreak: false,
+    }
+
+    this.entries.push(entry)
+    this.renderEntry(entry)
   }
 
   addBreak(breakData: any, score: number) {
@@ -74,9 +74,8 @@ export class BallTray {
       label: `break(${score})`,
       color: "#ffd700",
       replayUri,
-      timestamp: Date.now(),
-      isBreak: true,
       isPot: true,
+      isBreak: true,
     }
 
     if (score >= 2) {
@@ -84,121 +83,68 @@ export class BallTray {
     }
 
     this.entries.push(entry)
-    this.render()
-  }
-
-  toggle() {
-    this.expanded = !this.expanded
-    this.render()
+    this.renderEntry(entry)
   }
 
   reset() {
     this.entries = []
-    this.expanded = false
-    this.render()
-  }
-
-  private render() {
-    this.renderCollapsed()
-    this.renderExpanded()
-  }
-
-  private renderCollapsed() {
-    if (!this.collapsedElement) return
-
-    if (this.entries.length === 0) {
-      this.collapsedElement.innerHTML = `<span class="ball-tray-empty">No shots yet</span>`
-      return
+    if (this.listElement) {
+      this.listElement.innerHTML = ""
     }
+  }
 
-    const lastEntries = this.entries.slice(-9)
-    this.collapsedElement.innerHTML = lastEntries
-      .map(
-        (entry) => `
-      <span class="ball-tray-shot-pill" style="color: ${entry.color}">${entry.icon}</span>
+  private scroll(distance: number) {
+    if (this.listElement) {
+      this.listElement.scrollBy({ left: distance, behavior: "smooth" })
+    }
+  }
+
+  private renderEntry(entry: ShotEntry) {
+    if (!this.listElement) return
+
+    const lastGroup = this.listElement.lastElementChild as HTMLElement
+    const canAppendToGroup =
+      lastGroup?.classList.contains("break-group") &&
+      !lastGroup.querySelector(".miss")
+
+    const hiScoreHtml = entry.hiScoreUri
+      ? `<a href="${entry.hiScoreUri}" target="_blank" class="hi-score-pill" title="hi score" onclick="event.stopPropagation()">🏆</a>`
+      : ""
+
+    const ballHtml = `
+      <a href="${entry.replayUri}" target="_blank" class="ball-item ${entry.isPot ? "pot" : "miss"}"
+         title="${entry.label}" style="color: ${entry.color}" onclick="event.stopPropagation()">
+        ${entry.icon}
+      </a>
+      ${hiScoreHtml}
     `
-      )
-      .join("")
-  }
 
-  private renderExpanded() {
-    if (!this.expandedElement) return
-
-    if (this.expanded) {
-      this.expandedElement.removeAttribute("hidden")
-      this.expandedElement.style.display = "flex"
+    if (entry.isPot) {
+      if (canAppendToGroup) {
+        const div = document.createElement("div")
+        div.innerHTML = ballHtml
+        while (div.firstChild) {
+          lastGroup.appendChild(div.firstChild)
+        }
+      } else {
+        const newGroup = document.createElement("div")
+        newGroup.className = "break-group"
+        newGroup.innerHTML = ballHtml
+        this.listElement.appendChild(newGroup)
+      }
     } else {
-      this.expandedElement.setAttribute("hidden", "")
-      this.expandedElement.style.display = "none"
-      return
+      const div = document.createElement("div")
+      div.innerHTML = ballHtml
+      while (div.firstChild) {
+        this.listElement.appendChild(div.firstChild)
+      }
     }
 
-    if (this.entries.length === 0) {
-      this.renderHistoryContent(
-        `<div class="ball-tray-empty">No shot history yet</div>`
-      )
-      return
-    }
-
-    const lines: string[] = []
-    let currentLine: string[] = []
-
-    this.entries.forEach((entry) => {
-      const hiScoreHtml = entry.hiScoreUri
-        ? `<a href="${entry.hiScoreUri}" target="_blank" class="hi-score-pill" onclick="event.stopPropagation()">🏆 hi score</a>`
-        : ""
-
-      const linkHtml = `
-        <span class="shot-inline-container">
-          <a href="${entry.replayUri}" target="_blank" class="shot-inline" title="${entry.label}" style="color: ${entry.color}" onclick="event.stopPropagation()">
-            ${entry.icon}
-          </a>
-          ${hiScoreHtml}
-        </span>
-      `
-
-      currentLine.push(linkHtml)
-
-      if (!entry.isPot) {
-        lines.push(`<div class="shot-line">${currentLine.join("")}</div>`)
-        currentLine = []
+    // Auto-scroll to end
+    requestAnimationFrame(() => {
+      if (this.listElement) {
+        this.listElement.scrollLeft = this.listElement.scrollWidth
       }
     })
-
-    if (currentLine.length > 0) {
-      lines.push(`<div class="shot-line">${currentLine.join("")}</div>`)
-    }
-
-    const historyHtml = lines.reverse().join("")
-    this.renderHistoryContent(historyHtml)
-  }
-
-  private renderHistoryContent(html: string) {
-    if (!this.expandedElement) return
-    const header = this.expandedElement.querySelector("header")
-    if (!header) {
-      this.expandedElement.innerHTML = `
-        <header>
-          <h2>Shot History</h2>
-          <button class="ball-tray-close">Close</button>
-        </header>
-        <div class="ball-tray-history">
-          ${html}
-        </div>
-      `
-      this.expandedElement
-        .querySelector(".ball-tray-close")
-        ?.addEventListener("click", (e) => {
-          e.stopPropagation()
-          this.toggle()
-        })
-    } else {
-      const historyContainer = this.expandedElement.querySelector(
-        ".ball-tray-history"
-      )
-      if (historyContainer) {
-        historyContainer.innerHTML = html
-      }
-    }
   }
 }

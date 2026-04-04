@@ -1,99 +1,62 @@
 import { BallTray } from "../../src/view/ball-tray"
+import { Container } from "../../src/container/container"
 
 describe("BallTray", () => {
+  let tray: BallTray
   let container: any
-  let ballTray: BallTray
+  let trayList: HTMLElement
 
   beforeEach(() => {
     document.body.innerHTML = `
-      <div id="ballTray">
-        <div class="ball-tray-collapsed"></div>
-        <div class="ball-tray-expanded" hidden></div>
+      <div id="ballTray" class="tray-container">
+        <div id="trayLeft"></div>
+        <div id="ballTrayList"></div>
+        <div id="trayRight"></div>
       </div>
     `
+    trayList = document.getElementById("ballTrayList")!
     container = {
       linkFormatter: {
         getReplayUri: jest.fn().mockReturnValue("replay-url"),
         getHiScoreUri: jest.fn().mockReturnValue("hiscore-url"),
       },
     }
-    ballTray = new BallTray(container)
+    tray = new BallTray(container as any as Container)
   })
 
-  test("should add a shot to the tray", () => {
-    const state = { shots: [] }
-    ballTray.addShot(false, 1, [{ ballmesh: { color: { getHexString: () => "ffffff" } } }], state)
-    expect(ballTray.entries.length).toBe(1)
-    expect(ballTray.entries[0].label).toBe("1 pot")
-    expect(ballTray.entries[0].replayUri).toBe("replay-url")
+  test("addShot groups consecutive pots", () => {
+    // First pot
+    tray.addShot(true, 1, [], {})
+    expect(trayList.querySelectorAll(".break-group").length).toBe(1)
+    expect(trayList.querySelectorAll(".ball-item").length).toBe(1)
+
+    // Second pot
+    tray.addShot(true, 1, [], {})
+    expect(trayList.querySelectorAll(".break-group").length).toBe(1)
+    expect(trayList.querySelectorAll(".ball-item").length).toBe(2)
   })
 
-  test("should add a break to the tray with high score link if score >= 2", () => {
-    ballTray.addBreak({}, 2)
-    expect(ballTray.entries.length).toBe(1)
-    expect(ballTray.entries[0].label).toBe("break(2)")
-    expect(ballTray.entries[0].icon).toBe("⚈⚈")
-    expect(ballTray.entries[0].hiScoreUri).toBe("hiscore-url")
+  test("addShot breaks group on miss", () => {
+    // Pot
+    tray.addShot(true, 1, [], {})
+    // Miss
+    tray.addShot(false, 0, [], {})
+    expect(trayList.querySelectorAll(".break-group").length).toBe(1)
+    expect(trayList.querySelectorAll(".ball-item").length).toBe(2)
+    // Next pot should be in new group
+    tray.addShot(true, 1, [], {})
+    expect(trayList.querySelectorAll(".break-group").length).toBe(2)
   })
 
-  test("should not add high score link if score < 2", () => {
-    ballTray.addBreak({}, 1)
-    expect(ballTray.entries[0].hiScoreUri).toBeUndefined()
+  test("addBreak creates new group", () => {
+    tray.addBreak({}, 3)
+    expect(trayList.querySelectorAll(".break-group").length).toBe(1)
+    expect(trayList.querySelector(".break-group")?.innerHTML).toContain("hiscore-url")
   })
 
-  test("should toggle expanded state", () => {
-    expect(ballTray.expanded).toBe(false)
-    ballTray.toggle()
-    expect(ballTray.expanded).toBe(true)
-    const expandedEl = document.querySelector(".ball-tray-expanded") as HTMLElement
-    expect(expandedEl.hidden).toBe(false)
-    expect(expandedEl.style.display).toBe("flex")
-  })
-
-  test("should reset entries", () => {
-    ballTray.addShot(false, 1, [], {})
-    ballTray.reset()
-    expect(ballTray.entries.length).toBe(0)
-    expect(ballTray.expanded).toBe(false)
-  })
-
-  test("should handle click events and stop propagation", () => {
-    const collapsed = document.querySelector(".ball-tray-collapsed") as HTMLElement
-    const expanded = document.querySelector(".ball-tray-expanded") as HTMLElement
-
-    const event = new MouseEvent("click", { bubbles: true, cancelable: true })
-    const spy = jest.spyOn(event, "stopPropagation")
-
-    collapsed.dispatchEvent(event)
-    expect(spy).toHaveBeenCalled()
-    expect(ballTray.expanded).toBe(true)
-
-    expanded.dispatchEvent(event)
-    expect(spy).toHaveBeenCalledTimes(2)
-  })
-
-  test("should handle close button click", () => {
-    ballTray.toggle() // expand first
-    const closeBtn = document.querySelector(".ball-tray-close") as HTMLElement
-    const event = new MouseEvent("click", { bubbles: true, cancelable: true })
-    closeBtn.dispatchEvent(event)
-    expect(ballTray.expanded).toBe(false)
-  })
-
-  test("should update history container if header already exists", () => {
-    ballTray.toggle() // first render creates header
-    ballTray.addShot(false, 0, [], {}) // MISSED shot -> 1 line
-
-    const history = document.querySelector(".ball-tray-history") as HTMLElement
-    expect(history.querySelectorAll(".shot-line").length).toBe(1)
-    expect(history.querySelectorAll(".shot-inline").length).toBe(1)
-
-    ballTray.addShot(false, 0, [], {}) // Another MISSED shot -> 2 lines
-    expect(history.querySelectorAll(".shot-line").length).toBe(2)
-
-    ballTray.addShot(true, 1, [], {}) // A pot -> still 2 lines (pot doesn't end the line until a miss or end)
-    // Wait, the final push adds it as a line. So it should be 3 lines total now.
-    expect(history.querySelectorAll(".shot-line").length).toBe(3)
-    expect(history.querySelectorAll(".shot-inline").length).toBe(3)
+  test("reset clears all items", () => {
+    tray.addShot(true, 1, [], {})
+    tray.reset()
+    expect(trayList.innerHTML).toBe("")
   })
 })
