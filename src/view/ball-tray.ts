@@ -27,18 +27,27 @@ export class BallTray {
     this.leftBtn = id("trayLeft")
     this.rightBtn = id("trayRight")
 
+    const stop = (e: Event) => {
+      if ((e.target as HTMLElement).closest("a")) {
+        return
+      }
+      e.stopPropagation()
+    }
+
     this.leftBtn?.addEventListener("click", (e) => {
+      e.preventDefault()
       e.stopPropagation()
       this.scroll(-80)
     })
     this.rightBtn?.addEventListener("click", (e) => {
+      e.preventDefault()
       e.stopPropagation()
       this.scroll(80)
     })
 
-    this.trayElement?.addEventListener("click", (e) => {
-      e.stopPropagation()
-    })
+    this.trayElement?.addEventListener("click", stop)
+    this.trayElement?.addEventListener("mousedown", stop)
+    this.trayElement?.addEventListener("touchstart", stop)
   }
 
   addShot(isPartOfBreak: boolean, potCount: number, balls: any[], state: any) {
@@ -75,7 +84,7 @@ export class BallTray {
   addBreak(breakData: any, score: number) {
     const replayUri = this.container.linkFormatter.getReplayUri(breakData)
     const entry: ShotEntry = {
-      icon: "⚈".repeat(score),
+      icon: `(${score})`,
       label: `break(${score})`,
       color: "#ffd700",
       replayUri,
@@ -113,12 +122,12 @@ export class BallTray {
       !lastGroup.querySelector(".miss")
 
     const hiScoreHtml = entry.hiScoreUri
-      ? `<a href="${entry.hiScoreUri}" target="_blank" class="hi-score-pill" title="hi score" onclick="event.stopPropagation()">🏆</a>`
+      ? `<a href="${entry.hiScoreUri}" target="_blank" class="hi-score-pill" title="hi score">🏆</a>`
       : ""
 
     const ballHtml = `
       <a href="${entry.replayUri}" target="_blank" class="ball-item ${entry.isPot ? "pot" : "miss"}"
-         title="${entry.label}" style="color: ${entry.color}" onclick="event.stopPropagation()">
+         title="${entry.label}" style="color: ${entry.color}">
         ${entry.icon}
       </a>
       ${hiScoreHtml}

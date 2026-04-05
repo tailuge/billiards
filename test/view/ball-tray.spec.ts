@@ -58,4 +58,32 @@ describe("BallTray", () => {
     tray.reset()
     expect(trayList.innerHTML).toBe("")
   })
+
+  test("replay link events bubble, but other tray clicks stop", () => {
+    tray.addShot(true, 1, [], {})
+    const link = trayList.querySelector(".ball-item") as HTMLElement
+    const nonLink = trayList.querySelector(".break-group") as HTMLElement
+    const spy = jest.fn()
+    document.body.addEventListener("click", spy)
+    document.body.addEventListener("mousedown", spy)
+
+    try {
+      // Click on link should bubble
+      link.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }))
+      expect(spy).toHaveBeenCalledTimes(1)
+
+      // Mousedown on link should bubble
+      spy.mockClear()
+      link.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true }))
+      expect(spy).toHaveBeenCalledTimes(1)
+
+      // Mousedown on non-link tray element should NOT bubble
+      spy.mockClear()
+      nonLink.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true }))
+      expect(spy).not.toHaveBeenCalled()
+    } finally {
+      document.body.removeEventListener("click", spy)
+      document.body.removeEventListener("mousedown", spy)
+    }
+  })
 })
