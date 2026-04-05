@@ -43,3 +43,10 @@ The following changes should be localized within the `network` directory:
 ## 4. Integration with Game State
 
 The `Container`'s deterministic physics and sequential `eventQueue` naturally handle the "burst" of messages that occur during a catch-up phase. So long as the `NchanMessageRelay` provides a clean, ordered stream of events (by filtering old ones via `meta.ts`), the game will accurately "fast-forward" to the current state upon reconnection.
+
+
+-----
+
+example of meta enriched message (enrichment guaranteed by nchan):
+
+{"type":"SCORE","clientId":"p1id","playername":"P1","p1":0,"p2":0,"b":0,"active":2,"meta":{"ts":1775410078786,"ua":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36","origin":"http://localhost:8080","country":"GB","city":"City of London"}}
