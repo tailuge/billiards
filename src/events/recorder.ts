@@ -159,17 +159,17 @@ export class Recorder {
     }
 
     if (!isPartOfBreak) {
-      this.breakLink(isEndOfGame)
+      this.addBreakToTray(isEndOfGame)
     }
 
-    this.lastShotLink(
+    this.addShotToTray(
       isPartOfBreak || isEndOfGame,
       potCount,
       Outcome.pots(outcome)
     )
 
     if (isEndOfGame) {
-      this.breakLink(isEndOfGame)
+      this.addBreakToTray(isEndOfGame)
     }
 
     if (!isPartOfBreak) {
@@ -183,14 +183,14 @@ export class Recorder {
     }
   }
 
-  lastShotLink(isPartOfBreak, potCount, balls) {
+  addShotToTray(isPartOfBreak, potCount, balls) {
     const lastShot = this.lastShot()
     if (lastShot) {
-      this.linkFormatter.lastShotLink(isPartOfBreak, potCount, balls, lastShot)
+      this.container.ballTray.addShot(isPartOfBreak, potCount, balls, lastShot)
     }
   }
 
-  breakLink(includeLastShot: boolean) {
+  addBreakToTray(includeLastShot: boolean) {
     const currentBreak = this.currentBreak()
     if (!currentBreak) {
       return
@@ -202,7 +202,7 @@ export class Recorder {
         : this.container.rules.currentBreak
 
     if (includeLastShot) {
-      this.linkFormatter.breakLink(currentBreak, breakScore, true)
+      this.container.ballTray.addBreak(currentBreak, breakScore)
       return
     }
 
@@ -223,7 +223,7 @@ export class Recorder {
       ...currentBreak,
       shots: trimmedShots,
     }
-    this.linkFormatter.breakLink(trimmedBreak, breakScore, false)
+    this.container.ballTray.addBreak(trimmedBreak, breakScore)
   }
 
   wholeGameLink() {

@@ -195,6 +195,9 @@ export class BrowserContainer {
 
     // trigger animation loops
     this.container.animate(performance.now())
+
+    // Expose container for debugging/playwright verification
+    globalThis.container = this.container
   }
 
   private initGameLoop() {

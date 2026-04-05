@@ -65,6 +65,7 @@
       }
     </script>
     <link rel="stylesheet" type="text/css" href="index.css" />
+    <link rel="stylesheet" type="text/css" href="tray.css" />
   </head>
 
   <body>
@@ -100,6 +101,11 @@
           </div>
         </header>
         <pre id="botDebugLog" aria-live="polite"></pre>
+      </div>
+      <div id="ballTray" class="tray-container" aria-live="polite" role="log">
+        <div class="nav-btn btn-left" id="trayLeft">❮</div>
+        <div class="ball-tray-list" id="ballTrayList"></div>
+        <div class="nav-btn btn-right" id="trayRight">❯</div>
       </div>
     </div>
     <a

@@ -890,3 +890,4 @@ Copy
 
 This was reported on live 2 player game, I had no visibility of opponents table, but the game proceeded as though there was no desync, do you think its valid and do you think we need even more info?
 
+

@@ -1,0 +1,100 @@
+/* Minimalist Ball Tray Style */
+.tray-container {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 35%;
+  min-width: 220px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1500;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.ball-tray-list {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  gap: 3px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+.ball-tray-list::-webkit-scrollbar {
+  display: none;
+}
+
+.break-group {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0 3px;
+  border-radius: 12px;
+  height: 22px;
+  gap: 1px;
+}
+
+.nav-btn {
+  width: 20px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+  transition: opacity 0.3s ease, background 0.2s;
+  user-select: none;
+  z-index: 10;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tray-container:hover .nav-btn {
+  opacity: 1;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.ball-item {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 1;
+  margin: 0;
+  text-decoration: none;
+  transition: transform 0.1s ease;
+  cursor: pointer;
+}
+
+.ball-item:hover {
+  transform: scale(1.25);
+}
+
+.hi-score-pill {
+  color: #ffd700;
+  font-size: 10px;
+  text-decoration: none;
+  margin-left: 2px;
+}
+
+.hi-score-pill:hover {
+  transform: scale(1.1);
+}

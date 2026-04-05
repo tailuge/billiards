@@ -12,75 +12,30 @@ export class LinkFormatter {
     this.container = container
   }
 
-  lastShotLink(
-    isPartOfBreak: boolean,
-    potCount: number,
-    balls: any[],
-    lastShot: any
-  ) {
-    const pots = potCount > 1 ? potCount - 1 : 0
-
-    let colourString = "#000000"
-    if (balls.length > 0) {
-      balls.forEach((element) => {
-        if (element.ballmesh) {
-          colourString = "#" + element.ballmesh.color.getHexString()
-        }
-      })
-    }
-
-    const shotIcon = "⚈".repeat(pots) + (isPartOfBreak ? "⚈" : "⚆")
-    const serialisedShot = JSON.stringify(lastShot)
-    this.generateLink(shotIcon, serialisedShot, colourString)
+  getReplayUri(state: any): string {
+    const serialised =
+      typeof state === "string" ? state : JSON.stringify(state)
+    const compressed = ReplayEncoder.crush(serialised)
+    return `${this.replayUrl}${ReplayEncoder.fullyEncodeURI(compressed)}`
   }
 
-  breakLink(currentBreak: any, breakScore: number, includeLastShot: boolean) {
-    if (!currentBreak) {
-      return
-    }
-    if (!includeLastShot) {
-      currentBreak.shots.pop()
-    }
-    if (
-      currentBreak.shots.filter((shot) => shot.type === EventType.AIM)
-        .length === 1
-    ) {
-      return
-    }
-
-    currentBreak.score = breakScore
-    const text = `break(${breakScore})`
-    const serialisedShot = JSON.stringify(currentBreak)
-    const compressed = ReplayEncoder.crush(serialisedShot)
-    this.generateLink(text, compressed, "black")
-    if (breakScore >= 2) {
-      this.generateHiScoreLink(compressed)
-    }
+  getHiScoreUri(state: any): string {
+    const serialised =
+      typeof state === "string" ? state : JSON.stringify(state)
+    const compressed = ReplayEncoder.crush(serialised)
+    return `${this.hiScoreUrl}?ruletype=${
+      this.container.rules.rulename
+    }&state=${ReplayEncoder.fullyEncodeURI(compressed)}`
   }
 
   wholeGameLink(game: any) {
     const text = `frame(${this.shotCount(game.shots)} shots)`
-    const serialisedGame = JSON.stringify(game)
-    const compressed = ReplayEncoder.crush(serialisedGame)
-    this.generateLink(text, compressed, "black")
+    const shotUri = this.getReplayUri(game)
+    const shotLink = `<a class="pill" style="color: black" target="_blank" href="${shotUri}">${text}</a>`
+    this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
   }
 
   private shotCount(shots: any[]) {
     return shots.filter((shot) => shot.type === EventType.AIM).length
-  }
-
-  private generateLink(text: string, state: string, colour: string) {
-    const shotUri = `${this.replayUrl}${ReplayEncoder.fullyEncodeURI(state)}`
-    const shotLink = `<a class="pill" style="color: ${colour}" target="_blank" href="${shotUri}">${text}</a>`
-    this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
-  }
-
-  private generateHiScoreLink(state: string) {
-    const text = "hi score 🏆"
-    const shotUri = `${this.hiScoreUrl}?ruletype=${
-      this.container.rules.rulename
-    }&state=${ReplayEncoder.fullyEncodeURI(state)}`
-    const shotLink = `<a class="pill" target="_blank" href="${shotUri}">${text}</a>`
-    this.container.eventQueue.push(new ChatEvent(null, `${shotLink}`))
   }
 }
