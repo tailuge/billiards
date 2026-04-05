@@ -43,7 +43,7 @@ export class NchanMessageRelay implements MessageRelay {
         if (typeof timestamp === "number") {
           const lastTs = this.lastProcessedTimestamps.get(key) ?? 0
           if (timestamp <= lastTs) {
-            // console.log("Discarding duplicate message with timestamp", timestamp)
+            console.log("Discarding duplicate message with timestamp", timestamp)
             return
           }
           this.lastProcessedTimestamps.set(key, timestamp)
@@ -86,6 +86,7 @@ export class NchanMessageRelay implements MessageRelay {
       if (this.websockets.get(key) === ws) {
         const nextDelay = Math.min(backoffDelay * 2, 30000)
         const timer = setTimeout(() => {
+          console.log("Reconnecting with backoff", nextDelay, "ms")
           this.connect(channel, callback, prefix, nextDelay)
         }, backoffDelay)
         this.reconnectionTimers.set(key, timer)
