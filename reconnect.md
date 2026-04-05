@@ -6,55 +6,40 @@ Currently, two-player games using the `NchanMessageRelay` are vulnerable to netw
 
 The `NchanMessageRelay` (in `src/network/client/nchanmessagerelay.ts`) initializes a `WebSocket` connection to the Nchan server.
 - The `onclose` handler currently logs a warning but does not attempt to reconnect.
-- Messages are processed as raw strings or blobs, with no metadata (like sequence IDs) extracted from the transport layer.
+- Messages are processed as raw strings or blobs. While Nchan enriches these messages with metadata, it is not currently utilized for resumption.
 
-## 2. Proposed Reconnection Strategy
+## 2. Refined Reconnection Strategy
 
 ### Automatic Reconnection with Exponential Backoff
 The `NchanMessageRelay` should be updated to maintain a "desired" subscription state.
-- When a `WebSocket` closes unexpectedly, a reconnection attempt should be scheduled.
-- Use exponential backoff (e.g., 1s, 2s, 4s, 8s, up to a maximum of 30s) to avoid overwhelming the server during outages.
-- Clear the backoff timer upon a successful `onopen`.
+- Upon an unexpected `onclose`, a reconnection attempt should be scheduled.
+- Use exponential backoff (e.g., 1s, 2s, 4s, 8s, up to 30s) to re-establish the WebSocket connection.
+- Reset the backoff logic once the connection is successfully re-opened.
 
-### Resumable Subscriptions using Nchan Metadata
-Nchan supports a `ws+meta.nchan` subprotocol that bundles messages with metadata, including unique message IDs and timestamps.
+### Message Deduplication using `meta.ts`
+The Nchan server enriches all event JSON with a `meta.ts` field, representing a server-side timestamp for the message.
 
-#### Metadata Extraction
-To enable resumption, we must:
-1. Initialize the WebSocket with the `ws+meta.nchan` subprotocol:
-   ```typescript
-   const ws = new WebSocket(url, 'ws+meta.nchan');
-   ```
-2. Parse the Nchan message format. Messages arrive with a header:
-   ```
-   id: <message_id>
-   content-type: <type>
-   <empty line>
-   <payload>
-   ```
-3. Store the `id` of the last successfully processed message in the `NchanMessageRelay`.
+#### Last-Seen Tracking
+The `NchanMessageRelay` should track the `meta.ts` of the last successfully processed message:
+1. Parse the incoming event JSON to extract the `meta.ts` field.
+2. Store this value in a class-level variable (e.g., `this.lastProcessedTimestamp`).
 
-#### Requesting Missed Messages
-Upon reconnection, the client can request messages starting from the last known ID using Nchan's resumption mechanisms (e.g., appending the ID to the WebSocket URL or using the `Last-Event-ID` header if supported by the client/server configuration). This ensures that any events published during the downtime are replayed to the reconnecting client.
+#### Filtering Replayed Messages
+When reconnecting, Nchan may replay messages that the client has already seen (especially when using resumption protocols like `ws+meta.nchan`).
+- **Deduplication Logic**: Before pushing any message to the `callback` (and subsequently the `Container`'s `eventQueue`), the relay must check if its `meta.ts` is greater than `this.lastProcessedTimestamp`.
+- **Discarding**: Messages with a `meta.ts` less than or equal to the last processed timestamp should be discarded. This ensures that the game state is only updated with "new" information.
 
-## 3. Handling Replayed Events in the Container
+## 3. Implementation Plan for `NchanMessageRelay`
 
-The `Container` is well-suited for state recovery due to its deterministic design:
-- **Deterministic Physics**: The `Table.advance` method uses a fixed time step and 32-bit float precision, ensuring that the same sequence of events produces the same physical state on all clients.
-- **Event Queue**: Replayed events from Nchan should be pushed to the `eventQueue`.
-- **Sequential Processing**: The `processEvents` loop only processes one event at a time when the table is stationary. This ensures that a burst of missed events (e.g., several `HitEvent` and `StationaryEvent` pairs) will be played back in the correct order, effectively "fast-forwarding" the game to the current state.
+The following changes should be localized within the `network` directory:
 
-## 4. Peer Synchronization with RejoinEvent
-
-The `RejoinEvent` should be used to ensure both clients are in sync after a reconnection:
-- **Sequence Verification**: The `GameEvent` class already has a `sequence` property. Clients can use the `RejoinEvent` to compare their last processed sequence number with their opponent.
-- **State Check**: If a significant divergence is detected (e.g., sequence numbers match but `stateCheck` hashes differ), the `RejoinEvent` could trigger a full table state synchronization (similar to a `WatchEvent`).
-
-## 5. Summary of Changes
-
-| Component | Responsibility |
+| Task | Detail |
 | :--- | :--- |
-| `NchanMessageRelay` | Implement exponential backoff, switch to `ws+meta.nchan`, and track/request message IDs. |
-| `EventUtil` | Update to parse the Nchan metadata header before JSON-deserializing the `GameEvent`. |
-| `Container` | Ensure the `eventQueue` correctly handles a burst of replayed events. |
-| `RejoinEvent` | Implement the logic in `Controller` subclasses to handle and respond to rejoin requests. |
+| **Track State** | Add `lastProcessedTimestamp: number` to `NchanMessageRelay`. |
+| **Handle Reconnect** | Implement a `reconnect()` method in `NchanMessageRelay` that handles WebSocket re-initialization with exponential backoff. |
+| **Filter Messages** | Update the `onmessage` handler to parse `meta.ts` and only execute the callback if the message is new. |
+| **Resumption Protocol** | Switch to the `ws+meta.nchan` subprotocol to allow Nchan to provide message IDs for more efficient resumption. |
+
+## 4. Integration with Game State
+
+The `Container`'s deterministic physics and sequential `eventQueue` naturally handle the "burst" of messages that occur during a catch-up phase. So long as the `NchanMessageRelay` provides a clean, ordered stream of events (by filtering old ones via `meta.ts`), the game will accurately "fast-forward" to the current state upon reconnection.
