@@ -44,6 +44,10 @@ export class AimInputs {
     }
     this.objectBallStyle = id("objectBall")?.style
     this.overlap = new Overlap(this.container.table.balls)
+    if (this.cuePowerElement) {
+      this.container.table.cue.aim.power =
+        Number(this.cuePowerElement.value) * this.container.table.cue.maxPower
+    }
     this.addListeners()
     if (Session.isSpectator()) {
       this.setDisabled(true)

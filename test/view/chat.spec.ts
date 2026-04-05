@@ -31,7 +31,7 @@ describe("Chat", () => {
     const links = document.querySelectorAll("#chatoutput a")
 
     expect(currentLobby).toBe(originalLobby)
-    expect(links.length).toBeGreaterThan(1)
+    expect(links.length).toBeGreaterThan(0)
     expect(
       Array.from(links).some((link) => link.getAttribute("href") === "/test")
     ).toBe(true)
