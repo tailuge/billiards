@@ -50,12 +50,14 @@ describe("BallTray", () => {
   test("addBreak creates new group", () => {
     tray.addBreak({}, 3)
     expect(trayList.querySelectorAll(".break-group").length).toBe(1)
-    expect(trayList.querySelector(".break-group")?.innerHTML).toContain("hiscore-url")
+    expect(trayList.querySelector(".break-group")?.innerHTML).toContain(
+      "hiscore-url"
+    )
   })
 
   test("tray is hidden when empty and shown when items exist", () => {
     const trayElement = document.getElementById("ballTray")!
-    
+
     // Initially empty, should be hidden
     expect(trayElement.style.display).toBe("none")
 
@@ -95,17 +97,23 @@ describe("BallTray", () => {
 
     try {
       // Click on link should bubble
-      link.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }))
+      link.dispatchEvent(
+        new MouseEvent("click", { bubbles: true, cancelable: true })
+      )
       expect(spy).toHaveBeenCalledTimes(1)
 
       // Mousedown on link should bubble
       spy.mockClear()
-      link.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true }))
+      link.dispatchEvent(
+        new MouseEvent("mousedown", { bubbles: true, cancelable: true })
+      )
       expect(spy).toHaveBeenCalledTimes(1)
 
       // Mousedown on non-link tray element should NOT bubble
       spy.mockClear()
-      nonLink.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true }))
+      nonLink.dispatchEvent(
+        new MouseEvent("mousedown", { bubbles: true, cancelable: true })
+      )
       expect(spy).not.toHaveBeenCalled()
     } finally {
       document.body.removeEventListener("click", spy)

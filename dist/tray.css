@@ -31,8 +31,20 @@
   -ms-overflow-style: none;
   scroll-behavior: smooth;
   gap: 3px;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 15%,
+    black 85%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 15%,
+    black 85%,
+    transparent 100%
+  );
 }
 
 .ball-tray-list::-webkit-scrollbar {
@@ -58,7 +70,9 @@
   cursor: pointer;
   color: rgba(255, 255, 255, 0.5);
   font-size: 10px;
-  transition: opacity 0.3s ease, background 0.2s;
+  transition:
+    opacity 0.3s ease,
+    background 0.2s;
   user-select: none;
   z-index: 10;
   opacity: 0;

@@ -42,7 +42,7 @@ export function summariseStateDiff(
     return undefined
   }
 
-  const remoteState = remoteStateCheck!
+  const remoteState = remoteStateCheck
 
   let maxDrift = 0
   const driftedBallIndices: number[] = []

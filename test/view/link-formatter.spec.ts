@@ -1,5 +1,4 @@
 import { Container } from "../../src/container/container"
-import { ChatEvent } from "../../src/events/chatevent"
 import { EventType } from "../../src/events/eventtype"
 import { Assets } from "../../src/view/assets"
 import { canvas3d, initDom } from "./dom"
