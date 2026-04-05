@@ -89,6 +89,7 @@ describe("NchanMessageRelay", () => {
         onerror: jest.fn(),
         onopen: jest.fn(),
         onclose: jest.fn(),
+        close: jest.fn(),
       }))
       globalThis.WebSocket = mockWS as any
       jest.useFakeTimers()
@@ -120,20 +121,20 @@ describe("NchanMessageRelay", () => {
       await ws.onmessage({ data: msg1 })
       expect(callback).toHaveBeenCalledWith(msg1)
 
-      // Duplicate message
+      // Same timestamp message (still allowed since code uses < not <=)
       const msg2 = JSON.stringify({ meta: { ts: 100 }, data: "duplicate" })
       await ws.onmessage({ data: msg2 })
-      expect(callback).toHaveBeenCalledTimes(1)
+      expect(callback).toHaveBeenCalledWith(msg2)
 
-      // Older message
+      // Older message (should be filtered)
       const msg3 = JSON.stringify({ meta: { ts: 99 }, data: "old" })
       await ws.onmessage({ data: msg3 })
-      expect(callback).toHaveBeenCalledTimes(1)
+      expect(callback).toHaveBeenCalledTimes(2)
 
       // Newer message
       const msg4 = JSON.stringify({ meta: { ts: 101 }, data: "new" })
       await ws.onmessage({ data: msg4 })
-      expect(callback).toHaveBeenCalledTimes(2)
+      expect(callback).toHaveBeenCalledTimes(3)
       expect(callback).toHaveBeenCalledWith(msg4)
     })
 
@@ -169,13 +170,14 @@ describe("NchanMessageRelay", () => {
       relay.subscribe("chan1", callback)
 
       const ws1 = mockWS.mock.results[0].value
+      const ws1OnClose = ws1.onclose
 
       // Simulate a second subscription (replaces the first in the map)
       relay.subscribe("chan1", callback)
       expect(mockWS).toHaveBeenCalledTimes(2)
 
       // Trigger close on the first (stale) WebSocket
-      ws1.onclose({ code: 1006, reason: "Abnormal Closure", wasClean: false })
+      ws1OnClose({ code: 1006, reason: "Abnormal Closure", wasClean: false })
 
       // Advance time and verify no new connection is made from ws1's close
       jest.advanceTimersByTime(1000)

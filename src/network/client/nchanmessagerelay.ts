@@ -1,12 +1,9 @@
 import { MessageRelay } from "./messagerelay"
 
 export class NchanMessageRelay implements MessageRelay {
-  private readonly websockets: Map<string, WebSocket> = new Map()
-  private readonly lastProcessedTimestamps: Map<string, number> = new Map()
-  private readonly reconnectionTimers: Map<
-    string,
-    ReturnType<typeof setTimeout>
-  > = new Map()
+  private readonly websockets = new Map<string, WebSocket>()
+  private readonly lastProcessedTimestamps = new Map<string, number>()
+  private readonly reconnectionTimers = new Map<string, ReturnType<typeof setTimeout>>()
 
   constructor(
     private readonly baseURL: string = "billiards-network.onrender.com"
@@ -17,6 +14,8 @@ export class NchanMessageRelay implements MessageRelay {
     callback: (message: string) => void,
     prefix = "table"
   ): void {
+    const key = `${prefix}/${channel}`
+    this.cleanup(key) // Ensure no duplicate sockets or timers exist for this key
     this.connect(channel, callback, prefix, 1000)
   }
 
@@ -30,23 +29,25 @@ export class NchanMessageRelay implements MessageRelay {
     const url = `wss://${this.baseURL}/subscribe/${key}`
     const ws = new WebSocket(url)
 
-    console.log(`Subscribed to ${url} (backoff: ${backoffDelay}ms)`)
+    this.websockets.set(key, ws)
 
     ws.onmessage = async (event: MessageEvent) => {
       try {
         const decoded = await this.decodeMessage(event.data)
         if (decoded === null) return
 
-        const parsed = JSON.parse(decoded)
-        const timestamp = parsed.meta?.ts
+        try {
+          const parsed = JSON.parse(decoded)
+          const timestamp = parsed.meta?.ts
 
-        if (typeof timestamp === "number") {
-          const lastTs = this.lastProcessedTimestamps.get(key) ?? 0
-          if (timestamp <= lastTs) {
-            console.log("Discarding duplicate message with timestamp", timestamp)
-            return
+          if (typeof timestamp === "number") {
+            const lastTs = this.lastProcessedTimestamps.get(key) ?? -1
+            // Use < instead of <= to prevent stalling on multi-message ticks
+            if (timestamp < lastTs) return
+            this.lastProcessedTimestamps.set(key, timestamp)
           }
-          this.lastProcessedTimestamps.set(key, timestamp)
+        } catch {
+          // Not JSON; treat as raw message
         }
 
         callback(decoded)
@@ -62,47 +63,35 @@ export class NchanMessageRelay implements MessageRelay {
     }
 
     ws.onerror = (error: Event) => {
-      console.warn(
-        "WebSocket error:",
-        this.stringifyLog(this.normalizeEvent(error))
-      )
+      console.warn("WebSocket error:", this.stringifyLog(this.normalizeEvent(error)))
     }
 
     ws.onopen = () => {
+      this.clearTimer(key)
       console.log(`Connected to ${url}`)
-      this.reconnectionTimers.delete(key)
     }
 
     ws.onclose = (event: CloseEvent) => {
-      console.warn(
-        `Disconnected from ${url}:`,
-        this.stringifyLog({
-          code: event.code,
-          reason: event.reason,
-          wasClean: event.wasClean,
-        })
-      )
-
+      console.log("Disconnected event", event)
+      // Only trigger reconnect if this specific instance is still the active one
       if (this.websockets.get(key) === ws) {
+        this.websockets.delete(key)
+        console.warn(`Disconnected from ${url}. Reconnecting...`)
+
         const nextDelay = Math.min(backoffDelay * 2, 30000)
         const timer = setTimeout(() => {
-          console.log("Reconnecting with backoff", nextDelay, "ms")
           this.connect(channel, callback, prefix, nextDelay)
         }, backoffDelay)
         this.reconnectionTimers.set(key, timer)
       }
     }
-
-    this.websockets.set(key, ws)
   }
 
   publish(channel: string, message: string, prefix = "table"): void {
     const url = `https://${this.baseURL}/publish/${prefix}/${channel}`
     fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: message,
     }).catch((error) => {
       console.error("Publication error for", url, error)
@@ -119,22 +108,35 @@ export class NchanMessageRelay implements MessageRelay {
       const data = await response.json()
       return typeof data.subscribers === "number" ? data.subscribers : null
     } catch (error) {
-      console.warn("Failed to fetch online count from", url, error)
+      console.warn("Failed to fetch online count", error)
       return null
+    }
+  }
+
+  private cleanup(key: string): void {
+    this.clearTimer(key)
+    const existingWs = this.websockets.get(key)
+    if (existingWs) {
+      // Remove listener to prevent it from triggering a reconnect loop on close()
+      existingWs.onclose = null
+      existingWs.close()
+      this.websockets.delete(key)
+    }
+  }
+
+  private clearTimer(key: string): void {
+    const timer = this.reconnectionTimers.get(key)
+    if (timer) {
+      clearTimeout(timer)
+      this.reconnectionTimers.delete(key)
     }
   }
 
   private async decodeMessage(data: unknown): Promise<string | null> {
     if (typeof data === "string") return data
-    if (data instanceof Blob) {
-      return data.text()
-    }
-    if (data instanceof ArrayBuffer) {
-      return new TextDecoder().decode(data)
-    }
-    if (ArrayBuffer.isView(data)) {
-      return new TextDecoder().decode(data.buffer)
-    }
+    if (data instanceof Blob) return data.text()
+    if (data instanceof ArrayBuffer) return new TextDecoder().decode(data)
+    if (ArrayBuffer.isView(data)) return new TextDecoder().decode(data.buffer)
     return null
   }
 
@@ -147,29 +149,19 @@ export class NchanMessageRelay implements MessageRelay {
   }
 
   private describeTarget(target: EventTarget | null): string | null {
-    const constructorName = (target as { constructor?: { name?: string } })
-      ?.constructor?.name
-    if (!target || typeof constructorName !== "string") {
-      return null
-    }
-    return constructorName ?? null
+    return (target as { constructor?: { name?: string } })?.constructor?.name ?? null
   }
 
   private normalizeError(error: unknown): Record<string, unknown> {
     if (error instanceof Error) {
-      return {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-      }
+      return { name: error.name, message: error.message, stack: error.stack }
     }
     return { message: String(error) }
   }
 
   private stringifyLog(value: unknown): string {
     try {
-      if (typeof value === "string") return value
-      return JSON.stringify(value)
+      return typeof value === "string" ? value : JSON.stringify(value)
     } catch {
       return String(value)
     }
