@@ -48,6 +48,8 @@ export class BallTray {
     this.trayElement?.addEventListener("click", stop)
     this.trayElement?.addEventListener("mousedown", stop)
     this.trayElement?.addEventListener("touchstart", stop)
+
+    this.updateVisibility()
   }
 
   addShot(isPartOfBreak: boolean, potCount: number, balls: any[], state: any) {
@@ -79,6 +81,7 @@ export class BallTray {
 
     this.entries.push(entry)
     this.renderEntry(entry)
+    this.updateVisibility()
   }
 
   addBreak(breakData: any, score: number) {
@@ -98,12 +101,20 @@ export class BallTray {
 
     this.entries.push(entry)
     this.renderEntry(entry)
+    this.updateVisibility()
   }
 
   reset() {
     this.entries = []
     if (this.listElement) {
       this.listElement.innerHTML = ""
+    }
+    this.updateVisibility()
+  }
+
+  private updateVisibility() {
+    if (this.trayElement) {
+      this.trayElement.style.display = this.entries.length > 0 ? "flex" : "none"
     }
   }
 

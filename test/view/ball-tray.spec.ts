@@ -53,6 +53,25 @@ describe("BallTray", () => {
     expect(trayList.querySelector(".break-group")?.innerHTML).toContain("hiscore-url")
   })
 
+  test("tray is hidden when empty and shown when items exist", () => {
+    const trayElement = document.getElementById("ballTray")!
+    
+    // Initially empty, should be hidden
+    expect(trayElement.style.display).toBe("none")
+
+    // Add a shot, should be shown
+    tray.addShot(true, 1, [], {})
+    expect(trayElement.style.display).toBe("flex")
+
+    // Reset, should be hidden again
+    tray.reset()
+    expect(trayElement.style.display).toBe("none")
+
+    // Add a break, should be shown
+    tray.addBreak({}, 10)
+    expect(trayElement.style.display).toBe("flex")
+  })
+
   test("reset clears all items", () => {
     tray.addShot(true, 1, [], {})
     tray.reset()
