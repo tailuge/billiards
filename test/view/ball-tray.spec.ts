@@ -72,6 +72,13 @@ describe("BallTray", () => {
     expect(trayElement.style.display).toBe("flex")
   })
 
+  test("addGame adds a game link with Ⓡ symbol", () => {
+    tray.addGame({})
+    expect(trayList.querySelectorAll(".ball-item").length).toBe(1)
+    const link = trayList.querySelector(".ball-item") as HTMLElement
+    expect(link.innerHTML).toContain("Ⓡ")
+  })
+
   test("reset clears all items", () => {
     tray.addShot(true, 1, [], {})
     tray.reset()

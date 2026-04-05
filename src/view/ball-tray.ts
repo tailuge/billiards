@@ -104,6 +104,22 @@ export class BallTray {
     this.updateVisibility()
   }
 
+  addGame(gameData: any) {
+    const replayUri = this.container.linkFormatter.getReplayUri(gameData)
+    const entry: ShotEntry = {
+      icon: "Ⓡ",
+      label: "Whole Game",
+      color: "#ffffff",
+      replayUri,
+      isPot: true,
+      isBreak: false,
+    }
+
+    this.entries.push(entry)
+    this.renderEntry(entry)
+    this.updateVisibility()
+  }
+
   reset() {
     this.entries = []
     if (this.listElement) {

@@ -17,7 +17,7 @@ describe("LinkFormatter", () => {
     })
   })
 
-  it("wholeGameLink should count only AIM events as shots", () => {
+  it("wholeGameLink should add a link to the ball tray", () => {
     const game = {
       shots: [
         { type: EventType.AIM },
@@ -28,13 +28,12 @@ describe("LinkFormatter", () => {
       ],
     }
 
-    container.eventQueue = []
     container.linkFormatter.wholeGameLink(game)
 
-    expect(container.eventQueue).toHaveLength(1)
-    const chatEvent = container.eventQueue[0] as ChatEvent
-    expect(chatEvent.type).toBe(EventType.CHAT)
-    expect(chatEvent.message).toContain("frame(2 shots)")
+    expect(container.ballTray.entries).toHaveLength(1)
+    const entry = container.ballTray.entries[0]
+    expect(entry.icon).toBe("Ⓡ")
+    expect(entry.label).toBe("Whole Game")
   })
 
   it("getReplayUri should return a valid URI", () => {
