@@ -1,25 +1,8 @@
 import { VERSION } from "./version"
 
-const DESYNC_THRESHOLD = 1e-9
 const HASH_SEED = 2166136261
 const HASH_MULTIPLIER = 16777619
-
-export interface BallPositionDiff {
-  ballIndex: number
-  remoteX: number
-  remoteY: number
-  localX: number
-  localY: number
-  dx: number
-  dy: number
-  dist: number
-}
-
-export interface StateDiffSummary {
-  maxDrift: number
-  driftedBallIndices: number[]
-  ballDiffs: BallPositionDiff[]
-}
+const reportedTripwires = new Set<string>()
 
 export function hashStateCheck(stateCheck: number[] | undefined): string {
   if (!stateCheck) {
@@ -33,58 +16,21 @@ export function hashJson(value: unknown): string {
   return hashString(JSON.stringify(value))
 }
 
-export function summariseStateDiff(
+export function statesDiffer(
   remoteStateCheck: number[] | undefined,
-  localStateCheck: number[],
-  threshold: number = DESYNC_THRESHOLD
-): StateDiffSummary | undefined {
-  if (remoteStateCheck?.length !== localStateCheck.length) {
-    return undefined
+  localStateCheck: number[]
+): boolean {
+  if (!remoteStateCheck || remoteStateCheck.length !== localStateCheck.length) {
+    return true
   }
 
-  const remoteState = remoteStateCheck
-
-  let maxDrift = 0
-  const driftedBallIndices: number[] = []
-  const ballDiffs: BallPositionDiff[] = []
-
-  for (let i = 0; i < remoteState.length; i += 2) {
-    const remoteX = remoteState[i]
-    const remoteY = remoteState[i + 1]
-    const localX = localStateCheck[i]
-    const localY = localStateCheck[i + 1]
-    const dx = remoteX - localX
-    const dy = remoteY - localY
-    const absDx = Math.abs(dx)
-    const absDy = Math.abs(dy)
-    const dist = Math.hypot(dx, dy)
-    const localMaxDrift = Math.max(absDx, absDy)
-
-    if (localMaxDrift > maxDrift) {
-      maxDrift = localMaxDrift
-    }
-
-    if (absDx > threshold || absDy > threshold) {
-      const ballIndex = i / 2
-      driftedBallIndices.push(ballIndex)
-      ballDiffs.push({
-        ballIndex,
-        remoteX,
-        remoteY,
-        localX,
-        localY,
-        dx,
-        dy,
-        dist,
-      })
+  for (let i = 0; i < remoteStateCheck.length; i++) {
+    if (remoteStateCheck[i] !== localStateCheck[i]) {
+      return true
     }
   }
 
-  return {
-    maxDrift,
-    driftedBallIndices,
-    ballDiffs,
-  }
+  return false
 }
 
 export function checkDesyncTripwire(
@@ -93,14 +39,14 @@ export function checkDesyncTripwire(
   localStateCheck: number[],
   extra: Record<string, unknown> | (() => Record<string, unknown>) = {}
 ) {
-  const diffSummary = summariseStateDiff(remoteStateCheck, localStateCheck)
-  if (!diffSummary) {
+  if (!statesDiffer(remoteStateCheck, localStateCheck)) {
     return
   }
 
-  if (diffSummary.maxDrift <= DESYNC_THRESHOLD) {
+  if (reportedTripwires.has(label)) {
     return
   }
+  reportedTripwires.add(label)
 
   const extraObj = typeof extra === "function" ? extra() : extra
   globalThis.console?.warn?.(
@@ -108,11 +54,6 @@ export function checkDesyncTripwire(
     JSON.stringify(
       {
         version: VERSION,
-        maxDrift: diffSummary.maxDrift,
-        driftedBallIndices: diffSummary.driftedBallIndices,
-        remoteStateHash: hashStateCheck(remoteStateCheck),
-        localStateHash: hashStateCheck(localStateCheck),
-        ballDiffs: diffSummary.ballDiffs,
         ...extraObj,
       },
       null,

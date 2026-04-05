@@ -40,7 +40,6 @@ import { PlayShot } from "../controller/playshot"
 import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
 import { HitEvent } from "../events/hitevent"
-import { hashStateCheck } from "../utils/desync-tripwire"
 import { BallTray } from "../view/ball-tray"
 
 type ActivePlayer = 0 | 1 | 2
@@ -50,6 +49,8 @@ interface HitHistoryEntry {
   event: Record<string, unknown>
   state: number[]
 }
+
+const DESYNC_HISTORY_SLICE = 3
 
 /**
  * Model, View, Controller container.
@@ -192,38 +193,13 @@ export class Container {
       .map((entry) => this.getComparableHitHistoryEntry(entry.shotIndex))
       .filter((entry): entry is HitHistoryEntry => entry !== undefined)
 
-    const historyMismatches = remoteHistoryWindow
-      .map((remoteEntry) => {
-        const localEntry = this.getComparableHitHistoryEntry(
-          remoteEntry.shotIndex
-        )
-        if (!localEntry) {
-          return {
-            shotIndex: remoteEntry.shotIndex,
-            reason: "missing_local_history",
-          }
-        }
-
-        const remoteHash = hashStateCheck(remoteEntry.state)
-        const localHash = hashStateCheck(localEntry.state)
-        if (remoteHash === localHash) {
-          return undefined
-        }
-
-        return {
-          shotIndex: remoteEntry.shotIndex,
-          remoteStateHash: remoteHash,
-          localStateHash: localHash,
-        }
-      })
-      .filter(
-        (entry): entry is NonNullable<typeof entry> => entry !== undefined
-      )
-
     return {
-      remoteHistoryWindow: this.cloneHitHistoryWindow(remoteHistoryWindow),
-      localHistoryWindow: this.cloneHitHistoryWindow(localHistoryWindow),
-      historyMismatches,
+      remoteHistoryWindow: this.cloneHitHistoryWindow(
+        remoteHistoryWindow.slice(-DESYNC_HISTORY_SLICE)
+      ),
+      localHistoryWindow: this.cloneHitHistoryWindow(
+        localHistoryWindow.slice(-DESYNC_HISTORY_SLICE)
+      ),
     }
   }
 
@@ -314,12 +290,13 @@ export class Container {
   }
 
   private cloneHitPayloadForHistory(tablejson): Record<string, unknown> {
-    const cloned = JSON.parse(JSON.stringify(tablejson)) as Record<
-      string,
-      unknown
-    >
-    delete cloned.historyWindow
-    return cloned
+    return {
+      type: "HIT",
+      tablejson: {
+        aim: JSON.parse(JSON.stringify(tablejson?.aim ?? null)),
+        balls: JSON.parse(JSON.stringify(tablejson?.balls ?? [])),
+      },
+    }
   }
 
   private cloneStateCheck(stateCheck: number[] | undefined): number[] {

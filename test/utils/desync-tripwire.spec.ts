@@ -1,7 +1,4 @@
-import {
-  hashStateCheck,
-  summariseStateDiff,
-} from "../../src/utils/desync-tripwire"
+import { hashStateCheck, statesDiffer } from "../../src/utils/desync-tripwire"
 
 describe("desync-tripwire", () => {
   describe("hashStateCheck", () => {
@@ -16,23 +13,17 @@ describe("desync-tripwire", () => {
     })
   })
 
-  describe("summariseStateDiff", () => {
-    it("summarises only mismatched balls", () => {
-      const summary = summariseStateDiff(
-        [0, 0, 1, 1, 2, 2],
-        [0, 0, 1.25, 1, 2, 1.5]
-      )
-
-      expect(summary).toBeDefined()
-      expect(summary?.driftedBallIndices).toEqual([1, 2])
-      expect(summary?.ballDiffs).toHaveLength(2)
-      expect(summary?.ballDiffs[0].ballIndex).toBe(1)
-      expect(summary?.ballDiffs[1].ballIndex).toBe(2)
-      expect(summary?.maxDrift).toBeCloseTo(0.5)
+  describe("statesDiffer", () => {
+    it("returns false for identical state", () => {
+      expect(statesDiffer([0, 0, 1, 1], [0, 0, 1, 1])).toBe(false)
     })
 
-    it("returns undefined when state lengths differ", () => {
-      expect(summariseStateDiff([0, 1], [0, 1, 2, 3])).toBeUndefined()
+    it("returns true for mismatched state", () => {
+      expect(statesDiffer([0, 0, 1, 1], [0, 0, 1.25, 1])).toBe(true)
+    })
+
+    it("returns true when state lengths differ", () => {
+      expect(statesDiffer([0, 1], [0, 1, 2, 3])).toBe(true)
     })
   })
 })

@@ -77,7 +77,7 @@ describe("Controller", () => {
     )
   })
 
-  it("includes aligned local and remote hit history in desync tripwire logs", () => {
+  it("logs compact hit history once when desync is detected", () => {
     const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {})
 
     container.sendEvent(new HitEvent(container.table.serialiseHit()))
@@ -96,16 +96,24 @@ describe("Controller", () => {
 
     container.eventQueue.push(remoteHit)
     container.processEvents()
+    container.eventQueue.push(remoteHit)
+    container.processEvents()
 
-    const tripwireCall = warnSpy.mock.calls.find(
+    const tripwireCalls = warnSpy.mock.calls.filter(
       ([label]) => label === "tripwire: remote_hit_pre_apply_desync"
     )
-    expect(tripwireCall).to.not.be.undefined
+    expect(tripwireCalls).to.have.length(1)
 
-    const payload = JSON.parse(String(tripwireCall?.[1]))
+    const payload = JSON.parse(String(tripwireCalls[0][1]))
     expect(payload.remoteHistoryWindow).to.have.length(1)
     expect(payload.localHistoryWindow).to.have.length(1)
-    expect(payload.historyMismatches).to.not.be.empty
+    expect(payload.localHistoryWindow[0].event.type).to.equal("HIT")
+    expect(payload.remoteHistoryWindow[0].state).to.deep.equal(
+      remoteHit.tablejson.stateCheck
+    )
+    expect(payload.localHistoryWindow[0].event.tablejson).to.not.have.property(
+      "historyWindow"
+    )
 
     warnSpy.mockRestore()
   })
