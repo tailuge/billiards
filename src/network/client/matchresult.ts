@@ -1,5 +1,4 @@
 import { Container } from "../../container/container"
-import { ChatEvent } from "../../events/chatevent"
 import { NotificationEvent } from "../../events/notificationevent"
 import { End } from "../../controller/end"
 import { Session } from "./session"
@@ -26,7 +25,6 @@ export class MatchResultHelper {
     forcedAmIWinner?: boolean,
     endSubtext?: string
   ): End {
-    container.eventQueue.push(new ChatEvent(null, "game over"))
     container.recorder.wholeGameLink()
 
     const session = Session.getInstance()
