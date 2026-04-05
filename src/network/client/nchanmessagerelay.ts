@@ -2,6 +2,11 @@ import { MessageRelay } from "./messagerelay"
 
 export class NchanMessageRelay implements MessageRelay {
   private readonly websockets: Map<string, WebSocket> = new Map()
+  private readonly lastProcessedTimestamps: Map<string, number> = new Map()
+  private readonly reconnectionTimers: Map<
+    string,
+    ReturnType<typeof setTimeout>
+  > = new Map()
 
   constructor(
     private readonly baseURL: string = "billiards-network.onrender.com"
@@ -12,31 +17,45 @@ export class NchanMessageRelay implements MessageRelay {
     callback: (message: string) => void,
     prefix = "table"
   ): void {
-    const url = `wss://${this.baseURL}/subscribe/${prefix}/${channel}`
+    this.connect(channel, callback, prefix, 1000)
+  }
+
+  private connect(
+    channel: string,
+    callback: (message: string) => void,
+    prefix: string,
+    backoffDelay: number
+  ): void {
+    const key = `${prefix}/${channel}`
+    const url = `wss://${this.baseURL}/subscribe/${key}`
     const ws = new WebSocket(url)
-    console.log("Subscribed to ", url)
+
+    console.log(`Subscribed to ${url} (backoff: ${backoffDelay}ms)`)
+
     ws.onmessage = async (event: MessageEvent) => {
-      let decoded: string | null = null
       try {
-        decoded = await this.decodeMessage(event.data)
-        if (decoded === null) {
-          console.warn(
-            "WebSocket message ignored (unsupported type):",
-            this.stringifyLog({
-              type: typeof event.data,
-              constructor: (event.data as { constructor?: { name?: string } })
-                ?.constructor?.name,
-            })
-          )
-          return
+        const decoded = await this.decodeMessage(event.data)
+        if (decoded === null) return
+
+        const parsed = JSON.parse(decoded)
+        const timestamp = parsed.meta?.ts
+
+        if (typeof timestamp === "number") {
+          const lastTs = this.lastProcessedTimestamps.get(key) ?? 0
+          if (timestamp <= lastTs) {
+            // console.log("Discarding duplicate message with timestamp", timestamp)
+            return
+          }
+          this.lastProcessedTimestamps.set(key, timestamp)
         }
+
         callback(decoded)
       } catch (error) {
         console.warn(
           "WebSocket message handling failed:",
           this.stringifyLog({
             error: this.normalizeError(error),
-            message: decoded ?? event.data,
+            message: event.data,
           })
         )
       }
@@ -51,6 +70,7 @@ export class NchanMessageRelay implements MessageRelay {
 
     ws.onopen = () => {
       console.log(`Connected to ${url}`)
+      this.reconnectionTimers.delete(key)
     }
 
     ws.onclose = (event: CloseEvent) => {
@@ -62,10 +82,17 @@ export class NchanMessageRelay implements MessageRelay {
           wasClean: event.wasClean,
         })
       )
-      // Reconnect if needed could be added here
+
+      if (this.websockets.get(key) === ws) {
+        const nextDelay = Math.min(backoffDelay * 2, 30000)
+        const timer = setTimeout(() => {
+          this.connect(channel, callback, prefix, nextDelay)
+        }, backoffDelay)
+        this.reconnectionTimers.set(key, timer)
+      }
     }
 
-    this.websockets.set(`${prefix}/${channel}`, ws)
+    this.websockets.set(key, ws)
   }
 
   publish(channel: string, message: string, prefix = "table"): void {

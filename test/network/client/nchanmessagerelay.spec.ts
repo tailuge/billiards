@@ -81,15 +81,24 @@ describe("NchanMessageRelay", () => {
   })
 
   describe("subscribe", () => {
-    it("should create a WebSocket connection", () => {
-      const mockWS = jest.fn().mockImplementation(() => ({
+    let mockWS: any
+
+    beforeEach(() => {
+      mockWS = jest.fn().mockImplementation(() => ({
         onmessage: jest.fn(),
         onerror: jest.fn(),
         onopen: jest.fn(),
         onclose: jest.fn(),
       }))
       globalThis.WebSocket = mockWS as any
+      jest.useFakeTimers()
+    })
 
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    it("should create a WebSocket connection", () => {
       const relay = new NchanMessageRelay("test.com")
       const callback = jest.fn()
       relay.subscribe("chan1", callback)
@@ -97,6 +106,80 @@ describe("NchanMessageRelay", () => {
       expect(mockWS).toHaveBeenCalledWith(
         "wss://test.com/subscribe/table/chan1"
       )
+    })
+
+    it("should deduplicate messages based on meta.ts", async () => {
+      const relay = new NchanMessageRelay("test.com")
+      const callback = jest.fn()
+      relay.subscribe("chan1", callback)
+
+      const ws = mockWS.mock.results[0].value
+
+      // First message
+      const msg1 = JSON.stringify({ meta: { ts: 100 }, data: "one" })
+      await ws.onmessage({ data: msg1 })
+      expect(callback).toHaveBeenCalledWith(msg1)
+
+      // Duplicate message
+      const msg2 = JSON.stringify({ meta: { ts: 100 }, data: "duplicate" })
+      await ws.onmessage({ data: msg2 })
+      expect(callback).toHaveBeenCalledTimes(1)
+
+      // Older message
+      const msg3 = JSON.stringify({ meta: { ts: 99 }, data: "old" })
+      await ws.onmessage({ data: msg3 })
+      expect(callback).toHaveBeenCalledTimes(1)
+
+      // Newer message
+      const msg4 = JSON.stringify({ meta: { ts: 101 }, data: "new" })
+      await ws.onmessage({ data: msg4 })
+      expect(callback).toHaveBeenCalledTimes(2)
+      expect(callback).toHaveBeenCalledWith(msg4)
+    })
+
+    it("should reconnect on close with exponential backoff", () => {
+      const relay = new NchanMessageRelay("test.com")
+      const callback = jest.fn()
+      relay.subscribe("chan1", callback)
+
+      expect(mockWS).toHaveBeenCalledTimes(1)
+      const ws1 = mockWS.mock.results[0].value
+
+      // Trigger close
+      ws1.onclose({ code: 1006, reason: "Abnormal Closure", wasClean: false })
+
+      // Should not have reconnected immediately
+      expect(mockWS).toHaveBeenCalledTimes(1)
+
+      // Advance time by 1s (initial backoff)
+      jest.advanceTimersByTime(1000)
+      expect(mockWS).toHaveBeenCalledTimes(2)
+
+      const ws2 = mockWS.mock.results[1].value
+      ws2.onclose({ code: 1006, reason: "Abnormal Closure", wasClean: false })
+
+      // Advance time by 2s (exponential backoff)
+      jest.advanceTimersByTime(2000)
+      expect(mockWS).toHaveBeenCalledTimes(3)
+    })
+
+    it("should stop reconnecting if a newer WebSocket exists for the same key", () => {
+      const relay = new NchanMessageRelay("test.com")
+      const callback = jest.fn()
+      relay.subscribe("chan1", callback)
+
+      const ws1 = mockWS.mock.results[0].value
+
+      // Simulate a second subscription (replaces the first in the map)
+      relay.subscribe("chan1", callback)
+      expect(mockWS).toHaveBeenCalledTimes(2)
+
+      // Trigger close on the first (stale) WebSocket
+      ws1.onclose({ code: 1006, reason: "Abnormal Closure", wasClean: false })
+
+      // Advance time and verify no new connection is made from ws1's close
+      jest.advanceTimersByTime(1000)
+      expect(mockWS).toHaveBeenCalledTimes(2)
     })
   })
 })
