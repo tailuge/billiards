@@ -1,0 +1,252 @@
+#notificationOverlay {
+  position: absolute;
+  top: 7%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+#notification {
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  user-select: none;
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.3));
+  pointer-events: auto;
+}
+
+.notification-extra {
+  margin-top: 16px;
+}
+
+@keyframes notificationSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.notification-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 8px;
+  background: #1464c8;
+  background: linear-gradient(135deg, #1464c8 0%, #00b4a0 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  min-width: 320px;
+  animation: notificationSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+    forwards;
+  position: relative;
+}
+
+.notification-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 25%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+  padding-bottom: 2px;
+  visibility: hidden;
+}
+
+.notification-close:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.notification-close:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.notification-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.notification-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 16px;
+  width: 100%;
+}
+
+.notification-icon {
+  font-size: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-text-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.notification-title {
+  color: white;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 1.4em;
+  margin: 0;
+}
+
+.notification-subtext {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1em;
+  font-weight: 600;
+  margin: 4px 0 0 0;
+  white-space: pre-wrap;
+}
+
+.notification-match-score {
+  background: rgba(0, 0, 0, 0.15);
+  padding: 12px 24px;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.match-score-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.match-score-label {
+  font-size: 0.7em;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+}
+
+.match-score-value {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.5px;
+}
+
+.notification-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+}
+
+#notification.is-winner .notification-banner {
+  background: #ffd700;
+  background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+#notification.is-winner .notification-title,
+#notification.is-winner .notification-subtext,
+#notification.is-winner .match-score-value {
+  color: #000;
+}
+
+#notification.is-winner .match-score-label {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+#notification.is-winner .notification-match-score {
+  background: rgba(0, 0, 0, 0.05);
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+#notification.is-loser .notification-banner {
+  background: #e0e0e0;
+  background: linear-gradient(135deg, #e0e0e0 0%, #a0a0a0 100%);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+#notification.is-loser .notification-title,
+#notification.is-loser .notification-subtext,
+#notification.is-loser .match-score-value {
+  color: #000;
+}
+
+#notification.is-loser .match-score-label {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+#notification.is-loser .notification-match-score {
+  background: rgba(0, 0, 0, 0.05);
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+.notification-extra button,
+.notification-extra .button {
+  display: inline-block;
+  padding: 14px 28px;
+  margin: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  color: white;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.notification-extra button:hover,
+.notification-extra .button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.notification-extra button:focus-visible,
+.notification-extra .button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 4px;
+  background: rgba(255, 255, 255, 0.25);
+}
