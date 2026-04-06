@@ -118,7 +118,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--notification-space-6);
+  gap: var(--notification-space-3); /* Exactly half of previous 24px */
   user-select: none;
   filter: drop-shadow(var(--notification-shadow-lg));
   pointer-events: auto;
@@ -167,12 +167,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--notification-space-6);
-  height: var(--notification-space-6);
+  width: var(--notification-space-5);
+  height: var(--notification-space-5);
   cursor: pointer;
   opacity: 0.5;
   color: var(--notification-text-clr-main);
-  font-size: var(--notification-size-m);
+  font-size: var(--notification-size-s);
   background: var(--notification-white-20);
   border: none;
   border-radius: var(--notification-radius-full);
@@ -210,16 +210,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--notification-space-3);
+  gap: var(--notification-space-2); /* Reduced gap */
   width: 100%;
-  padding: var(--notification-space-2) var(--notification-space-4);
+  padding: var(--notification-space-1) var(--notification-space-4); /* Tight padding */
 }
 
 .notification-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.6rem; /* Slightly smaller icon */
 }
 
 .notification-text-group {
@@ -232,16 +232,16 @@
 .notification-title {
   margin: 0;
   color: var(--notification-text-clr-main);
-  font-size: var(--notification-size-xl);
+  font-size: var(--notification-size-l);
   font-weight: var(--notification-weight-heavy);
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
 .notification-subtext {
-  margin: var(--notification-space-1) 0 0 0;
+  margin: 0;
   color: var(--notification-text-clr-sub);
-  font-size: var(--notification-size-l);
+  font-size: var(--notification-size-m);
   font-weight: var(--notification-weight-semi);
   white-space: pre-wrap;
 }
@@ -249,7 +249,7 @@
 /* 3.4 Match Score */
 .notification-match-score {
   width: 100%;
-  padding: var(--notification-space-3) var(--notification-space-6);
+  padding: var(--notification-space-1) var(--notification-space-6); /* Extremely tight vertical padding */
   background: var(--notification-score-bg);
   border-top: 1px solid var(--notification-score-border);
 }
@@ -258,7 +258,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--notification-space-1);
+  gap: 0;
 }
 
 .match-score-label {
@@ -271,7 +271,7 @@
 
 .match-score-value {
   color: var(--notification-score-value-clr);
-  font-size: var(--notification-size-l);
+  font-size: var(--notification-size-m);
   font-weight: var(--notification-weight-bold);
   letter-spacing: 0.5px;
 }
@@ -319,16 +319,16 @@
    ========================================================================== */
 
 .notification-extra {
-  margin-top: var(--notification-space-4);
+  margin-top: 0; /* No margin between banner and extras */
 }
 
 /* 5.1 Badge Style (Simple extra info) */
 .notification-badge {
   display: inline-block;
-  margin-top: var(--notification-space-2);
-  padding: var(--notification-space-2) var(--notification-space-5);
+  margin-top: 0;
+  padding: var(--notification-space-1) var(--notification-space-4);
   color: var(--notification-white);
-  font-size: var(--notification-size-s);
+  font-size: var(--notification-size-xs);
   font-weight: var(--notification-weight-heavy);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -344,13 +344,13 @@
 .notification-extra button,
 .notification-extra .button {
   display: inline-block;
-  margin: var(--notification-space-2);
-  padding: var(--notification-space-3) var(--notification-space-6);
+  margin: var(--notification-space-1);
+  padding: var(--notification-space-1) var(--notification-space-4); /* Tightest button padding */
   cursor: pointer;
   color: var(--notification-white);
   text-decoration: none;
   font-family: inherit;
-  font-size: var(--notification-size-l);
+  font-size: var(--notification-size-m);
   font-weight: var(--notification-weight-bold);
   background: var(--notification-white-15);
   backdrop-filter: blur(5px);
