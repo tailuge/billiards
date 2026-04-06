@@ -17,6 +17,8 @@
 }
 
 .ball-tray-list {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 15%, black 90%, transparent);
   flex: 1;
   display: flex;
   align-items: center;
