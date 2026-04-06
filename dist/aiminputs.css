@@ -1,8 +1,12 @@
 .aimingArea {
-  height: 100%;
-  min-width: 0;
-  flex: 0 0 auto;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 2000;
   display: flex;
   align-items: center;
   gap: 4px;
+  pointer-events: auto;
+  min-width: 240px;
+  height: 140px;
 }
