@@ -523,15 +523,17 @@ input[type="range"].powerSlider {
 
 a.pill {
   outline: none;
-  background: linear-gradient(#888686, #b0b0b3);
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
   text-decoration: none;
-  border-color: white;
-  border-width: 1px;
-  margin: 1px;
-  padding: 1px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin: 0;
+  padding: 0 8px;
   font-size: smaller;
-  border-top-style: groove;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 a {
@@ -567,8 +569,8 @@ label {
   left: 10px;
   width: 320px;
   max-height: 400px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid #444;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   padding: 10px;
   font-family: "Consolas", "Monaco", monospace;
@@ -583,9 +585,9 @@ label {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid #444;
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 #botDebugOverlay header button {
@@ -634,6 +636,11 @@ label {
 /* Compact mode */
 #botDebugOverlay.compact {
   width: 50px;
+  height: 30px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 #botDebugOverlay.compact #botDebugLog {
