@@ -62,7 +62,6 @@ export class Notification {
   private renderStringContent(message: string): string {
     return `
       <div class="notification-banner">
-        <button class="notification-close" aria-label="Dismiss notification" data-notification-action="clear">×</button>
         <div class="notification-text-group">
           <div class="notification-subtext">${message}</div>
         </div>
@@ -80,7 +79,6 @@ export class Notification {
 
     const content = `
       <div class="notification-banner">
-        <button class="notification-close" aria-label="Dismiss notification" data-notification-action="clear">×</button>
         <div class="notification-content-wrapper">
           <div class="notification-main">
             <div class="notification-icon">${icon}</div>
