@@ -73,6 +73,27 @@ export class AimInputs {
 
   setDisabled(disabled: boolean) {
     this.controlsDisabled = disabled || Session.isSpectator()
+    this.updateAimingAreaVisibility()
+    this.updateHitButton()
+    this.updatePowerElement()
+    this.updateCueBall()
+    if (this.objectBallStyle) {
+      if (this.controlsDisabled) {
+        this.objectBallStyle.visibility = "hidden"
+      } else {
+        this.showOverlap()
+      }
+    }
+  }
+
+  private updateAimingAreaVisibility() {
+    const aimingArea = this.cueBallElement?.closest(".aimingArea")
+    if (aimingArea) {
+      aimingArea.style.visibility = this.controlsDisabled ? "hidden" : ""
+    }
+  }
+
+  private updateHitButton() {
     if (this.cueHitElement) {
       this.cueHitElement.disabled = this.controlsDisabled
       if (this.controlsDisabled) {
@@ -85,6 +106,9 @@ export class AimInputs {
         }
       }
     }
+  }
+
+  private updatePowerElement() {
     if (this.cuePowerElement) {
       this.cuePowerElement.disabled = this.controlsDisabled
       this.cuePowerElement.classList.toggle(
@@ -92,6 +116,9 @@ export class AimInputs {
         this.controlsDisabled
       )
     }
+  }
+
+  private updateCueBall() {
     if (this.cueBallElement) {
       this.cueBallElement.style.pointerEvents = this.controlsDisabled
         ? "none"
