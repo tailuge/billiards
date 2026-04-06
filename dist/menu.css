@@ -8,7 +8,7 @@
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  height: 140px;
+  height: 120px;
   width: max-content;
   gap: 4px;
   padding: 2px;
@@ -21,7 +21,7 @@
   width: 100%;
   max-width: 100px;
   min-width: 50px;
-  height: 140px;
+  height: 120px;
   border-radius: 10px;
   border-width: 4px;
   padding: 0;
@@ -65,5 +65,5 @@
 }
 
 #camera {
-  min-width: 80px;
+  min-width: 70px;
 }
