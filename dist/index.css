@@ -462,8 +462,9 @@ input[type="range"].powerSlider {
 .outerMenu {
   display: flex;
   flex-direction: row;
+  justify-content: flex-end;
   height: 100%;
-  flex: 0 0 52px;
+  flex: 1 1 auto;
   gap: 4px;
   padding: 2px;
   box-sizing: border-box;
@@ -472,7 +473,8 @@ input[type="range"].powerSlider {
 .menuButton {
   flex: 1 1 0;
   width: 100%;
-  min-width: 70px;
+  max-width: 100px;
+  min-width: 50px;
   border-radius: 10px;
   border-width: 4px;
   padding: 0;
