@@ -1,3 +1,85 @@
+/* ==========================================================================
+   NOTIFICATION SYSTEM
+   Refactored CSS for better maintainability and coherence.
+   Sections:
+   1. Variables
+   2. Layout & Animations
+   3. Components
+   4. States
+   5. Extras & Utilities
+   ========================================================================== */
+
+:root {
+  /* Brand Colors */
+  --notification-primary: #1464c8;
+  --notification-secondary: #00b4a0;
+  --notification-winner-start: #ffd700;
+  --notification-winner-end: #daa520;
+  --notification-loser-start: #e0e0e0;
+  --notification-loser-end: #a0a0a0;
+
+  /* Translucent Colors */
+  --notification-white-10: rgba(255, 255, 255, 0.1);
+  --notification-white-15: rgba(255, 255, 255, 0.15);
+  --notification-white-25: rgba(255, 255, 255, 0.25);
+  --notification-white-30: rgba(255, 255, 255, 0.3);
+  --notification-white-40: rgba(255, 255, 255, 0.4);
+  --notification-white-50: rgba(255, 255, 255, 0.5);
+  --notification-white-60: rgba(255, 255, 255, 0.6);
+  --notification-white-95: rgba(255, 255, 255, 0.95);
+
+  --notification-black-05: rgba(0, 0, 0, 0.05);
+  --notification-black-10: rgba(0, 0, 0, 0.1);
+  --notification-black-15: rgba(0, 0, 0, 0.15);
+  --notification-black-20: rgba(0, 0, 0, 0.2);
+  --notification-black-30: rgba(0, 0, 0, 0.3);
+  --notification-black-40: rgba(0, 0, 0, 0.4);
+
+  /* Spacing */
+  --notification-spacing-xs: 4px;
+  --notification-spacing-s: 8px;
+  --notification-spacing-m: 10px;
+  --notification-spacing-l: 12px;
+  --notification-spacing-xl: 16px;
+  --notification-spacing-xxl: 24px;
+
+  /* Radii */
+  --notification-radius-s: 6px;
+  --notification-radius-m: 8px;
+  --notification-radius-circle: 25%;
+
+  /* Shadows */
+  --notification-shadow-banner: 0 15px 30px var(--notification-black-30);
+  --notification-shadow-glow: 0 8px 32px var(--notification-black-40);
+  --notification-shadow-badge: 0 4px 12px var(--notification-black-15);
+  --notification-shadow-btn: 0 6px 12px var(--notification-black-20);
+  --notification-shadow-btn-hover: 0 10px 20px var(--notification-black-30);
+
+  /* Transitions */
+  --notification-transition-fast: all 0.2s ease;
+  --notification-transition-elastic: all 0.25s
+    cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* Semantic Theme Variables (Default) */
+  --notification-banner-bg: var(--notification-primary);
+  --notification-banner-gradient: linear-gradient(
+    135deg,
+    var(--notification-primary) 0%,
+    var(--notification-secondary) 100%
+  );
+  --notification-banner-border: var(--notification-white-40);
+  --notification-text-main: white;
+  --notification-text-sub: var(--notification-white-95);
+  --notification-score-bg: var(--notification-black-15);
+  --notification-score-border: var(--notification-white-10);
+  --notification-score-label: var(--notification-white-60);
+  --notification-score-value: white;
+}
+
+/* ==========================================================================
+   2. Layout & Animations
+   ========================================================================== */
+
 #notificationOverlay {
   position: absolute;
   top: 7%;
@@ -14,14 +96,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
+  gap: var(--notification-spacing-xxl);
   user-select: none;
-  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(var(--notification-shadow-banner));
   pointer-events: auto;
-}
-
-.notification-extra {
-  margin-top: 16px;
 }
 
 @keyframes notificationSlideIn {
@@ -35,56 +113,63 @@
   }
 }
 
+/* ==========================================================================
+   3. Components
+   ========================================================================== */
+
+/* 3.1 Banner */
 .notification-banner {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  border-radius: 8px;
-  background: #1464c8;
-  background: linear-gradient(135deg, #1464c8 0%, #00b4a0 100%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  overflow: hidden;
   min-width: 320px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--notification-radius-m);
+  background: var(--notification-banner-bg);
+  background: var(--notification-banner-gradient);
+  border: 1px solid var(--notification-banner-border);
+  box-shadow: var(--notification-shadow-glow);
   animation: notificationSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
     forwards;
-  position: relative;
 }
 
+/* 3.2 Close Button */
 .notification-close {
   position: absolute;
   top: 6px;
   right: 6px;
-  background: rgba(255, 255, 255, 0.3);
-  border: none;
-  border-radius: 25%;
-  width: 16px;
-  height: 16px;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 16px;
-  cursor: pointer;
-  z-index: 10;
-  transition: all 0.2s ease;
+  width: 16px;
+  height: 16px;
   padding-bottom: 2px;
+  cursor: pointer;
   visibility: hidden;
+  color: var(--notification-white-50);
+  font-size: 16px;
+  background: var(--notification-white-30);
+  border: none;
+  border-radius: var(--notification-radius-circle);
+  transition: var(--notification-transition-fast);
 }
 
 .notification-close:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--notification-white-40);
   transform: scale(1.1);
 }
 
 .notification-close:focus-visible {
   outline: 2px solid white;
   outline-offset: 2px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--notification-white-40);
 }
 
+/* 3.3 Content Structure */
 .notification-content-wrapper {
   display: flex;
   flex-direction: column;
@@ -96,16 +181,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 8px 16px;
+  gap: var(--notification-spacing-m);
   width: 100%;
+  padding: var(--notification-spacing-s) var(--notification-spacing-xl);
 }
 
 .notification-icon {
-  font-size: 2em;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 2em;
 }
 
 .notification-text-group {
@@ -116,137 +201,145 @@
 }
 
 .notification-title {
-  color: white;
+  margin: 0;
+  color: var(--notification-text-main);
+  font-size: 1.4em;
   font-weight: 800;
   letter-spacing: 2px;
   text-transform: uppercase;
-  font-size: 1.4em;
-  margin: 0;
 }
 
 .notification-subtext {
-  color: rgba(255, 255, 255, 0.95);
+  margin: var(--notification-spacing-xs) 0 0 0;
+  color: var(--notification-text-sub);
   font-size: 1.1em;
   font-weight: 600;
-  margin: 4px 0 0 0;
   white-space: pre-wrap;
 }
 
+/* 3.4 Match Score */
 .notification-match-score {
-  background: rgba(0, 0, 0, 0.15);
-  padding: 12px 24px;
   width: 100%;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--notification-spacing-l) var(--notification-spacing-xxl);
+  background: var(--notification-score-bg);
+  border-top: 1px solid var(--notification-score-border);
 }
 
 .match-score-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: var(--notification-spacing-xs);
 }
 
 .match-score-label {
+  color: var(--notification-score-label);
   font-size: 0.7em;
   font-weight: 800;
   letter-spacing: 3px;
-  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
 }
 
 .match-score-value {
+  color: var(--notification-score-value);
   font-size: 1.1em;
   font-weight: 700;
-  color: white;
   letter-spacing: 0.5px;
 }
 
+/* ==========================================================================
+   4. States
+   ========================================================================== */
+
+/* 4.1 Winner State */
+#notification.is-winner {
+  --notification-banner-bg: var(--notification-winner-start);
+  --notification-banner-gradient: linear-gradient(
+    135deg,
+    var(--notification-winner-start) 0%,
+    var(--notification-winner-end) 100%
+  );
+  --notification-banner-border: var(--notification-white-60);
+  --notification-text-main: #000;
+  --notification-text-sub: #000;
+  --notification-score-bg: var(--notification-black-05);
+  --notification-score-border: var(--notification-black-10);
+  --notification-score-label: rgba(0, 0, 0, 0.5);
+  --notification-score-value: #000;
+}
+
+/* 4.2 Loser State */
+#notification.is-loser {
+  --notification-banner-bg: var(--notification-loser-start);
+  --notification-banner-gradient: linear-gradient(
+    135deg,
+    var(--notification-loser-start) 0%,
+    var(--notification-loser-end) 100%
+  );
+  --notification-banner-border: var(--notification-white-60);
+  --notification-text-main: #000;
+  --notification-text-sub: #000;
+  --notification-score-bg: var(--notification-black-05);
+  --notification-score-border: var(--notification-black-10);
+  --notification-score-label: rgba(0, 0, 0, 0.5);
+  --notification-score-value: #000;
+}
+
+/* ==========================================================================
+   5. Extras & Utilities
+   ========================================================================== */
+
+.notification-extra {
+  margin-top: var(--notification-spacing-xl);
+}
+
+/* 5.1 Badge Style (Simple extra info) */
 .notification-badge {
-  background: rgba(255, 255, 255, 0.25);
+  display: inline-block;
+  margin-top: var(--notification-spacing-s);
+  padding: var(--notification-spacing-s) 20px;
   color: white;
-  padding: 8px 20px;
-  border-radius: 6px;
   font-size: 0.85em;
   font-weight: 800;
-  text-transform: uppercase;
   letter-spacing: 1px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin-top: 8px;
+  text-transform: uppercase;
+  background: var(--notification-white-25);
+  border: 1px solid var(--notification-white-30);
+  border-radius: var(--notification-radius-s);
+  box-shadow: var(--notification-shadow-badge);
 }
 
-#notification.is-winner .notification-banner {
-  background: #ffd700;
-  background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
-  border-color: rgba(255, 255, 255, 0.6);
-}
-
-#notification.is-winner .notification-title,
-#notification.is-winner .notification-subtext,
-#notification.is-winner .match-score-value {
-  color: #000;
-}
-
-#notification.is-winner .match-score-label {
-  color: rgba(0, 0, 0, 0.5);
-}
-
-#notification.is-winner .notification-match-score {
-  background: rgba(0, 0, 0, 0.05);
-  border-top-color: rgba(0, 0, 0, 0.1);
-}
-
-#notification.is-loser .notification-banner {
-  background: #e0e0e0;
-  background: linear-gradient(135deg, #e0e0e0 0%, #a0a0a0 100%);
-  border-color: rgba(255, 255, 255, 0.6);
-}
-
-#notification.is-loser .notification-title,
-#notification.is-loser .notification-subtext,
-#notification.is-loser .match-score-value {
-  color: #000;
-}
-
-#notification.is-loser .match-score-label {
-  color: rgba(0, 0, 0, 0.5);
-}
-
-#notification.is-loser .notification-match-score {
-  background: rgba(0, 0, 0, 0.05);
-  border-top-color: rgba(0, 0, 0, 0.1);
-}
-
+/* 5.2 Action Buttons (Links/Buttons in extra area) */
 .notification-extra button,
 .notification-extra .button {
   display: inline-block;
+  margin: var(--notification-spacing-m);
   padding: 14px 28px;
-  margin: 10px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
+  cursor: pointer;
   color: white;
   text-decoration: none;
   font-family: inherit;
   font-size: 1.1rem;
   font-weight: 700;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  background: var(--notification-white-15);
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--notification-white-30);
+  border-radius: var(--notification-radius-s);
+  box-shadow: var(--notification-shadow-btn);
+  transition: var(--notification-transition-elastic);
 }
 
 .notification-extra button:hover,
 .notification-extra .button:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--notification-white-25);
+  border-color: var(--notification-white-50);
+  box-shadow: var(--notification-shadow-btn-hover);
   transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .notification-extra button:focus-visible,
 .notification-extra .button:focus-visible {
   outline: 2px solid white;
   outline-offset: 4px;
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--notification-white-25);
 }
