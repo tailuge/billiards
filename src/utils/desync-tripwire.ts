@@ -20,7 +20,7 @@ export function statesDiffer(
   remoteStateCheck: number[] | undefined,
   localStateCheck: number[]
 ): boolean {
-  if (!remoteStateCheck || remoteStateCheck.length !== localStateCheck.length) {
+  if (remoteStateCheck?.length !== localStateCheck.length) {
     return true
   }
 

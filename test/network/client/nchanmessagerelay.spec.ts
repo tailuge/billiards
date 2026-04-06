@@ -91,7 +91,7 @@ describe("NchanMessageRelay", () => {
         onclose: jest.fn(),
         close: jest.fn(),
       }))
-      globalThis.WebSocket = mockWS as any
+      globalThis.WebSocket = mockWS
       jest.useFakeTimers()
     })
 
