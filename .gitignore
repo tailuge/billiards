@@ -61,7 +61,7 @@ node_modules/
 
 # Kilo
 .kilo/
-
+.kilocode/
 .next
 
 

@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@swc/core": "1.15.21",
+    "@swc/core": "1.15.24",
     "@swc/jest": "0.2.39",
     "@testing-library/dom": "10.4.1",
     "@types/chai": "5.2.3",
@@ -47,7 +47,7 @@
     "canvas": "3.2.3",
     "chai": "6.2.2",
     "concurrently": "^9.2.1",
-    "eslint": "10.1.0",
+    "eslint": "10.2.0",
     "eslint-plugin-html": "^8.1.4",
     "eslint-plugin-sonarjs": "4.0.2",
     "http-server": "^14.1.1",
