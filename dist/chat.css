@@ -1,0 +1,47 @@
+/* Chat Overlay */
+.chatarea {
+  position: absolute;
+  top: 44px;
+  right: 10px;
+  max-width: 280px;
+  max-height: 400px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 0;
+  z-index: 2000;
+  overflow: hidden;
+}
+
+.chatoutput {
+  max-height: 360px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2px;
+  font-size: smaller;
+  color: #ccc;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.chatoutput a {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.chatoutput::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chatoutput::-webkit-scrollbar-track {
+  background: #222;
+}
+
+.chatoutput::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.chatoutput::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}

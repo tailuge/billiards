@@ -3,7 +3,10 @@ import { MessageRelay } from "./messagerelay"
 export class NchanMessageRelay implements MessageRelay {
   private readonly websockets = new Map<string, WebSocket>()
   private readonly lastProcessedTimestamps = new Map<string, number>()
-  private readonly reconnectionTimers = new Map<string, ReturnType<typeof setTimeout>>()
+  private readonly reconnectionTimers = new Map<
+    string,
+    ReturnType<typeof setTimeout>
+  >()
 
   constructor(
     private readonly baseURL: string = "billiards-network.onrender.com"
@@ -63,7 +66,10 @@ export class NchanMessageRelay implements MessageRelay {
     }
 
     ws.onerror = (error: Event) => {
-      console.warn("WebSocket error:", this.stringifyLog(this.normalizeEvent(error)))
+      console.warn(
+        "WebSocket error:",
+        this.stringifyLog(this.normalizeEvent(error))
+      )
     }
 
     ws.onopen = () => {
@@ -149,7 +155,9 @@ export class NchanMessageRelay implements MessageRelay {
   }
 
   private describeTarget(target: EventTarget | null): string | null {
-    return (target as { constructor?: { name?: string } })?.constructor?.name ?? null
+    return (
+      (target as { constructor?: { name?: string } })?.constructor?.name ?? null
+    )
   }
 
   private normalizeError(error: unknown): Record<string, unknown> {

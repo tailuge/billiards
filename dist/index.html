@@ -66,6 +66,7 @@
     </script>
     <link rel="stylesheet" type="text/css" href="index.css" />
     <link rel="stylesheet" type="text/css" href="tray.css" />
+    <link rel="stylesheet" type="text/css" href="chat.css" />
   </head>
 
   <body>
@@ -101,6 +102,9 @@
           </div>
         </header>
         <pre id="botDebugLog" aria-live="polite"></pre>
+      </div>
+      <div class="chatarea">
+        <div id="chatoutput" class="chatoutput"></div>
       </div>
     </div>
     <div id="ballTray" class="tray-container" aria-live="polite" role="log">
@@ -142,10 +146,6 @@
           id="cuePower"
           aria-label="power slider"
         />
-      </div>
-      <div class="chatarea">
-        <div id="chatoutput" class="chatoutput">
-        </div>
       </div>
       <div class="outerMenu">
         <button
