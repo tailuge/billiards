@@ -63,12 +63,6 @@ export class Logger {
         this.element.classList.add("compact")
       }
     }
-    const toggleButton = document.getElementById(
-      "botDebugToggle"
-    ) as HTMLButtonElement
-    if (toggleButton) {
-      toggleButton.textContent = this.expanded ? "<" : ">"
-    }
   }
 
   show() {

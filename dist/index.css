@@ -568,17 +568,21 @@ label {
   top: 10px;
   left: 10px;
   width: 320px;
+  min-height: 30px;
   max-height: 400px;
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  padding: 10px;
+  padding: 0 8px;
   font-family: "Consolas", "Monaco", monospace;
   font-size: 11px;
   color: #ccc;
   z-index: 2000;
   overflow: hidden;
   display: none;
+  box-sizing: border-box;
+  align-items: center;
+  flex-direction: column;
 }
 
 #botDebugOverlay header {
@@ -588,6 +592,11 @@ label {
   margin-bottom: 0;
   padding-bottom: 0;
   border-bottom: none;
+  min-height: 30px;
+}
+
+#botDebugOverlay header span#botDebugToggle {
+  cursor: pointer;
 }
 
 #botDebugOverlay header button {
@@ -598,6 +607,7 @@ label {
   padding: 2px 6px;
   font-size: 10px;
   border-radius: 4px;
+  height: 22px;
 }
 
 #botDebugOverlay header button:hover {
@@ -612,7 +622,7 @@ label {
 }
 
 #botDebugLog {
-  margin: 0;
+  margin: 4px 0 0 0;
   padding: 0;
   max-height: 340px;
   overflow-y: auto;
@@ -654,7 +664,12 @@ label {
 
 /* Lobster emoji in header */
 #botDebugOverlay header > span {
-  font-size: 16px;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+  top: -2px;
 }
 
 #botDebugLog::-webkit-scrollbar-thumb:hover {
