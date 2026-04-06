@@ -51,6 +51,7 @@ describe("Recorder", () => {
     recorder.record(event)
     const outcome = container.table.outcome
     outcome.push(Outcome.pot(container.table.balls[1], 1))
+    outcome.push(Outcome.pot(container.table.balls[2], 1))
     recorder.updateBreak(
       outcome,
       container.rules.isPartOfBreak(outcome),
@@ -60,7 +61,7 @@ describe("Recorder", () => {
     expect(container.ballTray.entries).to.have.length(1)
 
     recorder.record(event)
-    outcome.push(Outcome.pot(container.table.balls[2], 1))
+    outcome.push(Outcome.pot(container.table.balls[3], 1))
     recorder.updateBreak(
       outcome,
       container.rules.isPartOfBreak(outcome),
@@ -75,8 +76,8 @@ describe("Recorder", () => {
       container.rules.isPartOfBreak(container.table.outcome),
       container.rules.isEndOfGame(container.table.outcome)
     )
-    // End of break should add another entry to tray
-    expect(container.ballTray.entries).to.have.length(4)
+    // End of break should add another entry to tray (break score entry skipped since score=1)
+    expect(container.ballTray.entries).to.have.length(3)
     done()
   })
 })

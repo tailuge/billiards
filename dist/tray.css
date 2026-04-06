@@ -4,8 +4,7 @@
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  width: 35%;
-  min-width: 220px;
+  width: 160px;
   height: 30px;
   display: flex;
   align-items: center;
@@ -72,13 +71,16 @@
 }
 
 .ball-item {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 16px;
   line-height: 1;
   margin: 0;
   text-decoration: none;
   transition: transform 0.1s ease;
   cursor: pointer;
+  vertical-align: middle;
 }
 
 .ball-item:hover {
@@ -90,8 +92,20 @@
   font-size: 10px;
   text-decoration: none;
   margin-left: 2px;
+  position: relative;
+  top: -2px;
 }
 
 .hi-score-pill:hover {
   transform: scale(1.1);
+}
+
+.ball-item.break-score {
+  font-size: 13px;
+  font-weight: 100;
+  font-family: Verdana, sans-serif;
+  vertical-align: middle;
+  line-height: normal;
+  position: relative;
+  top: -2px;
 }

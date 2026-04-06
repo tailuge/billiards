@@ -85,6 +85,10 @@ export class BallTray {
   }
 
   addBreak(breakData: any, score: number) {
+    if (score <= 1) {
+      return
+    }
+
     const replayUri = this.container.linkFormatter.getReplayUri(breakData)
     const entry: ShotEntry = {
       icon: `(${score})`,
@@ -153,7 +157,7 @@ export class BallTray {
       : ""
 
     const ballHtml = `
-      <a href="${entry.replayUri}" target="_blank" class="ball-item ${entry.isPot ? "pot" : "miss"}"
+      <a href="${entry.replayUri}" target="_blank" class="ball-item ${entry.isPot ? "pot" : "miss"}${entry.isBreak ? " break-score" : ""}"
          title="${entry.label}" style="color: ${entry.color}">
         ${entry.icon}
       </a>
