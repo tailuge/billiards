@@ -39,7 +39,9 @@ describe("LobbyIndicator", () => {
     const indicator = new LobbyIndicator(false, false, mockRules)
     await indicator.init()
 
-    expect(element?.textContent).to.equal(" 0 👥")
+    const countElement = element?.querySelector(".lobby-count")
+    expect(countElement?.textContent).to.equal("0 👥")
+    expect(countElement?.classList.contains("is-hidden")).to.be.false
   })
 
   it("updates display when challenged", async () => {
@@ -61,7 +63,8 @@ describe("LobbyIndicator", () => {
       ruleType: "nineball",
     })
 
-    expect(element?.textContent).to.contain("⚔️")
+    const countElement = element?.querySelector(".lobby-count")
+    expect(countElement?.classList.contains("is-hidden")).to.be.true
     expect(element?.textContent).to.contain("Challenge from Bob")
     expect(element?.getAttribute("aria-label")).to.contain("CHALLENGE FROM Bob")
 
@@ -79,7 +82,8 @@ describe("LobbyIndicator", () => {
       recipientId: "default",
       ruleType: "nineball",
     })
-    expect(element?.textContent).to.not.contain("⚔️")
+    expect(element?.querySelector(".challenge-pill")).to.be.null
+    expect(countElement?.classList.contains("is-hidden")).to.be.false
     expect(element?.getAttribute("href")).to.equal(
       "https://scoreboard-tailuge.vercel.app/game?userName=TestPlayer&userId=test-client"
     )

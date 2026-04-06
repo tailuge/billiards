@@ -6,6 +6,7 @@ import { LOBBY_URL } from "../utils/gameover"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
+  private readonly countElement: HTMLSpanElement
   private messagingClient: MessagingClient | null = null
   private lobby: Lobby | null = null
   private count = 0
@@ -27,11 +28,16 @@ export class LobbyIndicator {
       this.ruleType = this.rules.rulename
     }
     this.element = id("lobbyOverlay")
+    this.countElement = document.createElement("span")
+    this.countElement.className = "lobby-count"
     this.setupElement()
   }
 
   private setupElement(): void {
     if (!this.element) return
+
+    this.element.textContent = ""
+    this.element.appendChild(this.countElement)
 
     if (this.element instanceof HTMLAnchorElement) {
       this.element.setAttribute("target", "_self")
@@ -114,23 +120,29 @@ export class LobbyIndicator {
   private updateDisplay(): void {
     if (!this.element) return
     const challenged = this.challenger !== null
-    this.element.textContent = ` ${this.count} 👥`
-    if (challenged) {
-      const challengeSpan = document.createElement("span")
-      challengeSpan.className = "challenge-icon"
-      challengeSpan.textContent = " ⚔️"
-      this.element.appendChild(challengeSpan)
 
-      const challengePill = document.createElement("span")
-      challengePill.className = "challenge-pill"
-      challengePill.textContent = `Challenge from ${this.challenger!.userName}`
-      this.element.appendChild(challengePill)
+    this.countElement.textContent = `${this.count} 👥`
+    this.countElement.classList.toggle("is-hidden", challenged)
+
+    if (challenged) {
+      const existingPill = this.element.querySelector(".challenge-pill")
+      if (!existingPill) {
+        const challengePill = document.createElement("span")
+        challengePill.className = "challenge-pill"
+        challengePill.textContent = `Challenge from ${this.challenger!.userName}`
+        this.element.appendChild(challengePill)
+      }
 
       this.element.setAttribute(
         "aria-label",
-        `Multiplayer Lobby - ${this.count} online - CHALLENGE FROM ${this.challenger!.userName}!`
+        `Multiplayer Lobby - CHALLENGE FROM ${this.challenger!.userName}!`
       )
     } else {
+      const existingPill = this.element.querySelector(".challenge-pill")
+      if (existingPill) {
+        existingPill.remove()
+      }
+
       this.element.setAttribute(
         "aria-label",
         `Multiplayer Lobby - ${this.count} online`

@@ -423,40 +423,6 @@ label {
   background: #777;
 }
 
-/* Lobby Overlay */
-#lobbyOverlay {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  pointer-events: auto;
-}
-
-#lobbyOverlay .challenge-pill {
-  margin-left: 6px;
-}
-
-.challenge-icon {
-  text-shadow:
-    0 0 8px #ff0000,
-    0 0 12px #ff0000;
-}
-
-.challenge-pill {
-  display: inline-block;
-  background-color: #ff0000;
-  color: #ffffff;
-  padding: 0px 2px;
-  border-radius: 3px;
-  font-size: 11px;
-  margin-left: 6px;
-  vertical-align: 1px;
-  white-space: nowrap;
-  box-shadow: 0 0 10px rgba(137, 33, 33, 0.5);
-}
-
 .comment-menu {
   position: fixed;
   display: grid;
