@@ -74,7 +74,6 @@ export class AimInputs {
 
   setDisabled(disabled: boolean) {
     this.controlsDisabled = disabled || Session.isSpectator()
-    this.updateAimingAreaVisibility()
     this.updateHitButton()
     this.updatePowerElement()
     this.updateCueBall()
@@ -84,13 +83,6 @@ export class AimInputs {
       } else {
         this.showOverlap()
       }
-    }
-  }
-
-  private updateAimingAreaVisibility() {
-    const aimingArea = this.cueBallElement?.closest(".aimingArea")
-    if (aimingArea) {
-      aimingArea.style.visibility = this.controlsDisabled ? "hidden" : ""
     }
   }
 

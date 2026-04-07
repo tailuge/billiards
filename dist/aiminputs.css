@@ -7,11 +7,13 @@
   grid-template-areas:
     "ball power"
     "hit power";
-  grid-template-columns: 96px 60px;
+  grid-template-columns: 100px 38px;
   gap: 8px;
+  align-items: center; /* Centers vertically */
+  justify-items: center; /* Centers horizontally */
   pointer-events: auto;
   width: auto;
-  border-radius: 10px;
+  border-radius: 4px;
 }
 
 .ballContainer {
@@ -40,7 +42,7 @@
   );
   border-radius: 50%;
   position: absolute;
-  top: 0;
+  top: 0px;
   z-index: 5;
 }
 

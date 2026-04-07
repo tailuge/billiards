@@ -1,5 +1,5 @@
 .powerSliderContainer {
-  height: 210px;
+  height: 214px;
   width: 40px;
   display: flex;
   justify-content: center;
@@ -11,7 +11,7 @@
 input[type="range"].powerSlider {
   -webkit-appearance: none;
   appearance: none;
-  width: 210px;
+  width: 214px;
   height: 48px;
   background: transparent;
   cursor: pointer;
@@ -28,34 +28,39 @@ input[type="range"].powerSlider:disabled {
   filter: saturate(0.2) brightness(0.85);
 }
 
-       /* Track - Webkit (Chrome/Safari) */
-        input[type="range"].powerSlider::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 27px; 
-            cursor: pointer;
-            border-radius: 4px;
-            border: 1px solid #111;
-            box-sizing: border-box;
-            /* Flipped: Now Red (high power) at bottom, Yellow at top */
-            background: linear-gradient(to right, 
-                #e3c9a6 0%,              
-                #d2b48c var(--progress), 
-                rgba(255, 0, 0, 0.2) var(--progress), 
-                rgba(255, 255, 0, 0.2) 100%             
-            );
-        }
+/* Track - Webkit (Chrome/Safari) */
+input[type="range"].powerSlider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 27px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #111;
+  box-sizing: border-box;
+  /* Flipped: Now Red (high power) at bottom, Yellow at top */
+  background: linear-gradient(
+    to right,
+    #e3c9a6 0%,
+    #d2b48c var(--progress),
+    rgba(255, 0, 0, 0.2) var(--progress),
+    rgba(255, 255, 0, 0.2) 100%
+  );
+}
 
-        /* Track - Firefox */
-        input[type="range"].powerSlider::-moz-range-track {
-            width: 100%;
-            height: 27px; 
-            cursor: pointer;
-            border-radius: 4px;
-            border: 1px solid #111;
-            /* Flipped background for Firefox */
-            background: linear-gradient(to right, rgba(255, 0, 0, 0.2), rgba(255, 255, 0, 0.2));
-            box-sizing: border-box;
-        }
+/* Track - Firefox */
+input[type="range"].powerSlider::-moz-range-track {
+  width: 100%;
+  height: 27px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #111;
+  /* Flipped background for Firefox */
+  background: linear-gradient(
+    to right,
+    rgba(255, 0, 0, 0.2),
+    rgba(255, 255, 0, 0.2)
+  );
+  box-sizing: border-box;
+}
 
 input[type="range"].powerSlider::-moz-range-progress {
   background: linear-gradient(to right, #e3c9a6, #d2b48c);
