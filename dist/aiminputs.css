@@ -1,13 +1,13 @@
 .aimingArea {
   position: absolute;
-  bottom: 0px;
-  left: 0px;
+  bottom: -2px;
+  left: 2px;
   z-index: 2000;
   display: grid;
   grid-template-areas:
     "ball power"
     "hit power";
-  grid-template-columns: 100px 60px;
+  grid-template-columns: 96px 60px;
   gap: 8px;
   pointer-events: auto;
   width: auto;
@@ -75,8 +75,8 @@
 
 .hitButton {
   grid-area: hit;
-  width: 100px;
-  height: 80px;
+  width: 106px;
+  height: 106px;
   margin: 0;
   aspect-ratio: auto;
   border-radius: 10px;

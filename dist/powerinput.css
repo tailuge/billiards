@@ -1,6 +1,6 @@
 .powerSliderContainer {
-  height: 400px;
-  width: 60px;
+  height: 210px;
+  width: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,7 +11,7 @@
 input[type="range"].powerSlider {
   -webkit-appearance: none;
   appearance: none;
-  width: 400px;
+  width: 210px;
   height: 48px;
   background: transparent;
   cursor: pointer;
