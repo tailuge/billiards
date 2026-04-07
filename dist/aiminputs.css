@@ -1,7 +1,7 @@
 .aimingArea {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
+  bottom: 0px;
+  left: 0px;
   z-index: 2000;
   display: grid;
   grid-template-areas:
@@ -125,8 +125,8 @@ input[type="range"].powerSlider::-moz-range-track {
 
 input[type="range"].powerSlider::-moz-range-progress {
   width: 24px;
-  background: linear-gradient(180deg, #8a8a8a, #5a5a5a);
-  border: 1px solid #1e1e1e;
+  background: linear-gradient(180deg, #007bff, #0056b3);
+  border: 1px solid #004a99;
   border-radius: 999px;
   height: 100%;
 }
@@ -143,7 +143,7 @@ input[type="range"].powerSlider::-moz-range-thumb {
 .hitButton {
   grid-area: hit;
   width: 100px;
-  height: 60px;
+  height: 80px;
   margin: 0;
   aspect-ratio: auto;
   border-radius: 10px;
