@@ -117,6 +117,7 @@ export class BrowserContainer {
       scoreReporter: scoreReporter,
       replayMode: !!this.replay,
       botMode: this.botMode,
+      isSinglePlayer: !this.wss && !this.botMode && !this.replay,
     }
     return new Container(config)
   }
@@ -131,7 +132,6 @@ export class BrowserContainer {
   private initBotMode(scoreReporter: ScoreReporter) {
     this.container = this.createContainer(scoreReporter)
     this.container.init()
-    this.container.isSinglePlayer = false
     const logs = new Logger()
     this.messageRelay = new BotRelay(logs, this.container)
     this.messageRelay.subscribe(this.tableId, (e) => {
@@ -202,7 +202,6 @@ export class BrowserContainer {
 
   private initGameLoop() {
     if (this.wss) {
-      this.container.isSinglePlayer = false
       this.messageRelay?.subscribe(this.tableId, (e) => {
         this.netEvent(e)
       })

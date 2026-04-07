@@ -16,9 +16,6 @@ export class Comment {
       return
     }
 
-    // Initially hide the button, we'll show it only in multiplayer mode
-    this.updateButtonVisibility()
-
     this.button.onclick = (_) => {
       this.toggleMenu()
     }
@@ -34,11 +31,10 @@ export class Comment {
     })
   }
 
-  updateButtonVisibility() {
-    // Show button only in 2-player or bot mode (not single-player/replay)
+  setVisible(visible: boolean) {
     if (this.button) {
-      this.button.hidden =
-        this.container.isSinglePlayer || this.container.replayMode
+      this.button.hidden = !visible
+      this.button.disabled = !visible
     }
   }
 

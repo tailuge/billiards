@@ -108,9 +108,11 @@ export class Container {
       relay = null,
       scoreReporter = null,
       replayMode = false,
+      isSinglePlayer = true,
     } = config
     this.log = log
     this.replayMode = replayMode
+    this.isSinglePlayer = isSinglePlayer
     this.rules = RuleFactory.create(ruletype, this)
     this.table = this.rules.table()
     this.view = new View(element, this.table, assets)
@@ -465,10 +467,13 @@ export class Container {
         controller instanceof Replay ||
           (this.wasReplay && controller instanceof End)
       )
-      this.menu?.setConcedeVisible(!this.isSinglePlayer && !this.replayMode)
-
-      // Update comment button visibility based on player mode
-      this.comment?.updateButtonVisibility()
+      const isTwoPlayer =
+        !this.isSinglePlayer &&
+        !this.replayMode &&
+        !Session.isBotMode() &&
+        !Session.isSpectator()
+      this.menu?.setConcedeVisible(isTwoPlayer)
+      this.comment?.setVisible(isTwoPlayer)
 
       this.controller.onFirst()
     }
