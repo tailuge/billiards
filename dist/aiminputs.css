@@ -1,14 +1,16 @@
 .aimingArea {
   position: absolute;
-  bottom: 10px;
-  left: 10px;
+  bottom: -2px;
+  left: 0px;
   z-index: 2000;
   display: flex;
   align-items: center;
   gap: 4px;
   pointer-events: auto;
-  min-width: 240px;
+  min-width: 220px;
   height: 120px;
+  background: #292929;
+  border-radius: 10px;
 }
 
 .ballContainer {

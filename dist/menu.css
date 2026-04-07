@@ -1,8 +1,8 @@
 /* Outer Menu */
 .outerMenu {
   position: absolute;
-  bottom: 0px;
-  right: 0px;
+  bottom: -2px;
+  right: -2px;
   z-index: 2000;
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
   height: auto;
   width: 70px;
   gap: 2px;
-  padding: 2px;
+  padding: 1px;
   box-sizing: border-box;
   pointer-events: auto;
   background: rgb(50, 50, 50);
