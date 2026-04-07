@@ -32,27 +32,31 @@
 }
 
 .comment-menu {
-  position: fixed;
+  position: absolute;
+  bottom: 80px;
+  right: 100%;
+  margin-right: 8px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
+  gap: 2px;
   background: rgba(34, 34, 34, 0.7);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px;
-  border-radius: 8px;
+  padding: 2px;
+  border-radius: 6px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   z-index: 10000;
+  align-self: flex-end;
 }
 
 .comment-emoji {
-  width: 32px;
-  height: 32px;
-  font-size: 18px;
-  background: #2a327c;
+  width: 42px;
+  height: 42px;
+  font-size: 20px;
+  background: #454a77;
   border: 0.5px solid #444;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   padding: 0;
 }

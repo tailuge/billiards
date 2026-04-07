@@ -53,15 +53,6 @@ export class Comment {
   showMenu() {
     if (!this.menu) return
     this.menu.style.display = "grid"
-    // Position the menu to the left of the button
-    if (this.button) {
-      const buttonRect = this.button.getBoundingClientRect()
-      const menuHeight = this.menu.offsetHeight
-      const menuWidth = this.menu.offsetWidth
-      this.menu.style.top = `${buttonRect.top + (buttonRect.height - menuHeight) / 2}px`
-      this.menu.style.left = `${buttonRect.left - menuWidth - 8}px`
-      this.menu.style.position = "fixed"
-    }
   }
 
   hideMenu() {
