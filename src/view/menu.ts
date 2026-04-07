@@ -75,9 +75,9 @@ export class Menu {
   }
 
   setConcedeVisible(visible: boolean) {
-    if (!this.concede) {
-      return
+    if (this.concede) {
+      this.concede.hidden = !visible
+      this.concede.disabled = !visible
     }
-    this.concede.hidden = !visible
   }
 }

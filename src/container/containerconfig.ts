@@ -13,4 +13,5 @@ export interface ContainerConfig {
   scoreReporter?: ScoreReporter | null
   replayMode?: boolean
   botMode?: boolean
+  isSinglePlayer?: boolean
 }
