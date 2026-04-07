@@ -1,24 +1,23 @@
 .aimingArea {
   position: absolute;
-  bottom: -2px;
-  left: 0px;
+  bottom: 10px;
+  left: 10px;
   z-index: 2000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  display: grid;
+  grid-template-areas:
+    "ball power"
+    "hit power";
+  grid-template-columns: 100px 32px;
+  gap: 8px;
   pointer-events: auto;
-  width: 100px;
-  min-width: 100px;
-  height: auto;
+  width: auto;
   border-radius: 10px;
 }
 
 .ballContainer {
-  width: 96%;
+  grid-area: ball;
+  width: 100px;
   height: auto;
-  flex: 0 0 auto;
-  order: 2;
   margin: 0;
   position: relative;
   overflow: hidden;
@@ -75,11 +74,10 @@
 }
 
 .powerSlider {
-  width: 96%;
-  height: 80px;
-  order: 1;
+  grid-area: power;
+  width: 32px;
+  height: 100%;
   margin: 0;
-  flex: 0 0 80px;
 }
 
 input[type="range"].powerSlider.is-disabled,
@@ -102,6 +100,7 @@ input[type="range"].powerSlider::-webkit-slider-runnable-track {
   background: linear-gradient(180deg, #6d6d6d, #4b4b4b);
   border: 1px solid #1e1e1e;
   border-radius: 999px;
+  height: 100%;
 }
 
 input[type="range"].powerSlider::-webkit-slider-thumb {
@@ -121,6 +120,7 @@ input[type="range"].powerSlider::-moz-range-track {
   background: linear-gradient(180deg, #6d6d6d, #4b4b4b);
   border: 1px solid #1e1e1e;
   border-radius: 999px;
+  height: 100%;
 }
 
 input[type="range"].powerSlider::-moz-range-progress {
@@ -128,6 +128,7 @@ input[type="range"].powerSlider::-moz-range-progress {
   background: linear-gradient(180deg, #8a8a8a, #5a5a5a);
   border: 1px solid #1e1e1e;
   border-radius: 999px;
+  height: 100%;
 }
 
 input[type="range"].powerSlider::-moz-range-thumb {
@@ -140,9 +141,9 @@ input[type="range"].powerSlider::-moz-range-thumb {
 }
 
 .hitButton {
-  width: 96%;
-  height: 80px;
-  order: 3;
+  grid-area: hit;
+  width: 100px;
+  height: 60px;
   margin: 0;
   aspect-ratio: auto;
   border-radius: 10px;

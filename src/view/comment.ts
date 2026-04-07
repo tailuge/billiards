@@ -35,9 +35,10 @@ export class Comment {
   }
 
   updateButtonVisibility() {
-    // Show button only in multiplayer mode (when isSinglePlayer is false)
+    // Show button only in 2-player or bot mode (not single-player/replay)
     if (this.button) {
-      this.button.hidden = this.container.isSinglePlayer
+      this.button.hidden =
+        this.container.isSinglePlayer || this.container.replayMode
     }
   }
 
