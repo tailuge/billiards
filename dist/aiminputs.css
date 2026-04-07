@@ -8,7 +8,7 @@
     "ball power"
     "hit power";
   grid-template-columns: 100px 38px;
-  gap: 8px;
+  gap: 4px;
   align-items: center; /* Centers vertically */
   justify-items: center; /* Centers horizontally */
   pointer-events: auto;
@@ -30,7 +30,7 @@
 }
 
 .cueBall {
-  height: 100%;
+  height: 95%;
   margin: auto;
   aspect-ratio: 1;
   background: radial-gradient(
@@ -43,6 +43,7 @@
   border-radius: 50%;
   position: absolute;
   top: 0px;
+  left: 2px;
   z-index: 5;
 }
 
@@ -52,7 +53,7 @@
 }
 
 .objectBall {
-  height: 99%;
+  height: 93%;
   margin: auto;
   aspect-ratio: 1;
   border: 0.5px solid rgb(0, 44, 64);
