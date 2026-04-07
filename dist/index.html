@@ -66,6 +66,7 @@
     </script>
     <link rel="stylesheet" type="text/css" href="index.css" />
     <link rel="stylesheet" type="text/css" href="aiminputs.css" />
+    <link rel="stylesheet" type="text/css" href="powerinput.css" />
     <link rel="stylesheet" type="text/css" href="notification.css" />
     <link rel="stylesheet" type="text/css" href="tray.css" />
     <link rel="stylesheet" type="text/css" href="chat.css" />
@@ -132,16 +133,18 @@
           <div id="cueTip" class="cueTip"></div>
         </div>
       </div>
-      <input
-        class="powerSlider"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0.75"
-        id="cuePower"
-        aria-label="power slider"
-      />
+      <div class="powerSliderContainer">
+        <input
+          class="powerSlider"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.75"
+          id="cuePower"
+          aria-label="power slider"
+        />
+      </div>
     </div>
     <div class="outerMenu">
       <button
