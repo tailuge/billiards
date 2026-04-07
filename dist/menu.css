@@ -66,6 +66,10 @@
   border-color: #666;
 }
 
+.menuButton:disabled {
+  display: none;
+}
+
 .menuButton:active {
   transform: scale(0.97);
 }
