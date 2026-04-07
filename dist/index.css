@@ -108,100 +108,6 @@ canvas {
   box-sizing: border-box;
 }
 
-.ballContainer {
-  height: 96%;
-  width: auto;
-  flex: 0 0 auto;
-  margin: 0;
-  position: relative;
-  overflow: hidden;
-  border-radius: 5px;
-  aspect-ratio: 1;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.cueBall {
-  height: 100%;
-  margin: auto;
-  aspect-ratio: 1;
-  background: radial-gradient(
-    circle at 65% 15%,
-    rgb(255, 255, 255) 2px,
-    rgb(255, 254, 254) 5%,
-    rgb(63, 63, 63) 60%,
-    rgb(24, 26, 26) 100%
-  );
-  border-radius: 50%;
-  position: absolute;
-  top: 0;
-  z-index: 5;
-}
-
-.cueBall.is-disabled {
-  filter: grayscale(0.65) brightness(0.55);
-  box-shadow: inset 0 0 0 2px rgba(220, 220, 220, 0.25);
-}
-
-.objectBall {
-  height: 99%;
-  margin: auto;
-  aspect-ratio: 1;
-  border: 0.5px solid rgb(0, 44, 64);
-  border-radius: 50%;
-  z-index: 3;
-  position: absolute;
-  top: 0;
-  pointer-events: none;
-}
-
-.cueTip {
-  height: 20%;
-  width: 20%;
-  background-color: rgb(72, 72, 158);
-  border-radius: 50%;
-  top: 40%;
-  left: 40%;
-  z-index: 10;
-  position: relative;
-  pointer-events: none;
-}
-
-.powerSlider {
-  width: 20px;
-  height: 96%;
-  margin: 0;
-  flex: 0 0 20px;
-}
-
-input[type="range"].powerSlider.is-disabled,
-input[type="range"].powerSlider:disabled {
-  opacity: 0.5;
-  filter: saturate(0.2) brightness(0.85);
-}
-
-input[type="range"].powerSlider {
-  writing-mode: vertical-lr;
-  direction: rtl;
-}
-
-.hitButton {
-  height: 96%;
-  margin: 0;
-  aspect-ratio: 0.4;
-  border-radius: 10px;
-  border-width: 4px;
-  font-size: large;
-  min-width: 70px;
-  user-select: none;
-  box-sizing: border-box;
-}
-
-.hitButton:disabled {
-  opacity: 0.75;
-  cursor: not-allowed;
-}
-
 .toggleButton {
   height: 100%;
   width: 20%;
@@ -214,26 +120,8 @@ input[type="range"].powerSlider {
 }
 
 .toggleButton:active,
-.menuButton:active,
-.hitButton:active {
+.menuButton:active {
   transform: scale(0.97);
-}
-
-.timeout-btn {
-  --sweep: 360deg;
-  --timer-color: #10b981;
-  background:
-    linear-gradient(#f4f4f5, #f4f4f5) padding-box,
-    conic-gradient(var(--timer-color) var(--sweep), #e4e4e7 0deg) border-box;
-  border: 4px solid transparent;
-  border-radius: 14px;
-  color: #18181b;
-}
-
-.timeout-btn:not(:disabled):hover {
-  background:
-    linear-gradient(#ffffff, #ffffff) padding-box,
-    conic-gradient(var(--timer-color) var(--sweep), #e4e4e7 0deg) border-box;
 }
 
 a.pill {
