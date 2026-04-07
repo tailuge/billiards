@@ -47,6 +47,7 @@ export class AimInputs {
     if (this.cuePowerElement) {
       this.container.table.cue.aim.power =
         Number(this.cuePowerElement.value) * this.container.table.cue.maxPower
+      this.updatePowerProgress()
     }
     this.addListeners()
     if (Session.isSpectator()) {
@@ -60,7 +61,7 @@ export class AimInputs {
       this.adjustSpin(e)
     })
     this.cueHitElement?.addEventListener("click", this.hit)
-    this.cuePowerElement?.addEventListener("change", this.powerChanged)
+    this.cuePowerElement?.addEventListener("input", this.powerChanged)
     if (!("ontouchstart" in globalThis)) {
       id("viewP1")?.addEventListener("dblclick", this.hit)
     }
@@ -185,16 +186,25 @@ export class AimInputs {
     }
   }
 
+  private updatePowerProgress() {
+    if (this.cuePowerElement) {
+      const percent = Number(this.cuePowerElement.value) * 100
+      this.cuePowerElement.style.setProperty("--progress", percent + "%")
+    }
+  }
+
   powerChanged = (_) => {
     if (this.controlsDisabled) {
       return
     }
     this.container.table.cue.setPower(Number(this.cuePowerElement.value))
+    this.updatePowerProgress()
   }
 
   updatePowerSlider(power) {
     if (this.cuePowerElement) {
       this.cuePowerElement.value = power
+      this.updatePowerProgress()
     }
   }
 
@@ -211,9 +221,12 @@ export class AimInputs {
       return
     }
     if (this.cuePowerElement) {
-      this.cuePowerElement.value =
-        Number(this.cuePowerElement.value) - Math.sign(e.deltaY) / 10
+      this.cuePowerElement.value = (
+        Number(this.cuePowerElement.value) -
+        Math.sign(e.deltaY) / 10
+      ).toString()
       this.container.table.cue.setPower(Number(this.cuePowerElement.value))
+      this.updatePowerProgress()
       this.container.lastEventTime = performance.now()
     }
   }

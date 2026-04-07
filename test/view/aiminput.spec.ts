@@ -33,9 +33,11 @@ describe("AimInput", () => {
 
   it("adjust power", (done) => {
     aiminputs.setDisabled(false)
-    aiminputs.cuePowerElement.value = 1
-    fireEvent.change(aiminputs.cuePowerElement, { target: { value: 1 } })
+    aiminputs.cuePowerElement.value = "1"
+    fireEvent.input(aiminputs.cuePowerElement, { target: { value: "1" } })
     expect(container.table.cue.aim.power).to.be.greaterThan(0)
+    expect(aiminputs.cuePowerElement.style.getPropertyValue("--progress")).to
+      .equal("100%")
     done()
   })
 
@@ -48,8 +50,11 @@ describe("AimInput", () => {
 
   it("mouse wheel updates power", (done) => {
     aiminputs.setDisabled(false)
+    const initialPower = Number(aiminputs.cuePowerElement.value)
     aiminputs.mousewheel({ deltaY: 10 })
-    expect(aiminputs.container.table.cue.aim.power).to.greaterThan(0)
+    expect(Number(aiminputs.cuePowerElement.value)).to.not.equal(initialPower)
+    expect(aiminputs.cuePowerElement.style.getPropertyValue("--progress")).to
+      .not.be.empty
     done()
   })
 
