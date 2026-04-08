@@ -4,12 +4,10 @@
   left: 2px;
   z-index: 2000;
   display: grid;
-  grid-template-areas:
-    "ball power"
-    "hit power";
-  grid-template-columns: 100px 38px;
-  gap: 4px;
-  align-items: center; /* Centers vertically */
+  grid-template-areas: "power ball hit";
+  grid-template-columns: 38px 100px 76px;
+  gap: 0px;
+  align-items: end; /* Centers vertically */
   justify-items: center; /* Centers horizontally */
   pointer-events: auto;
   width: auto;
@@ -78,8 +76,8 @@
 
 .hitButton {
   grid-area: hit;
-  width: 106px;
-  height: 106px;
+  width: 70px;
+  height: 70px;
   margin: 0;
   aspect-ratio: auto;
   border-radius: 10px;
@@ -87,6 +85,7 @@
   font-size: large;
   user-select: none;
   box-sizing: border-box;
+  padding: 0;
 }
 
 .hitButton:disabled {
