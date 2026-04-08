@@ -207,16 +207,14 @@ export class AimInputs {
     }
     this.container.table.cue.setPower(Number(this.cuePowerElement?.value))
     this.container.inputQueue.push(new Input(0, "SpaceUp"))
-    // Trigger slider animation after hit logic is complete
-    requestAnimationFrame(() => this.animateSliderHit())
   }
 
   /**
    * The "Hit" animation logic for the slider.
    * Resets the cue visually to 0 and eases it back to the target position.
-   * Does NOT change the actual input value - visual only.
+   * Does NOT change the actual game power - visual only.
    */
-  private animateSliderHit() {
+  animateSliderHit() {
     if (this.sliderAnimId !== null) return // Prevent multiple concurrent animations
 
     const target = parseFloat(this.cuePowerElement.value)

@@ -45,8 +45,7 @@ input[type="range"].powerSlider {
 
 input[type="range"].powerSlider.is-disabled,
 input[type="range"].powerSlider:disabled {
-  opacity: 0.5;
-  filter: saturate(0.2) brightness(0.85);
+  filter: brightness(0.5);
   cursor: not-allowed;
 }
 

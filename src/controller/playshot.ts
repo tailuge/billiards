@@ -15,6 +15,10 @@ export class PlayShot extends ControllerBase {
     this.hit()
   }
 
+  override onFirst() {
+    this.container.table.cue.aimInputs?.animateSliderHit()
+  }
+
   override handleStationary(_) {
     const table = this.container.table
     const outcome = table.outcome
