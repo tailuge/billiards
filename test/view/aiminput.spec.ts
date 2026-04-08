@@ -36,9 +36,9 @@ describe("AimInput", () => {
     aiminputs.cuePowerElement.value = "1"
     fireEvent.input(aiminputs.cuePowerElement, { target: { value: "1" } })
     expect(container.table.cue.aim.power).to.be.greaterThan(0)
-    expect(
-      aiminputs.cuePowerElement.style.getPropertyValue("--progress")
-    ).to.equal("100%")
+    expect(aiminputs.cuePowerElement.style.getPropertyValue("--p")).to.equal(
+      "100%"
+    )
     done()
   })
 
@@ -54,8 +54,8 @@ describe("AimInput", () => {
     const initialPower = Number(aiminputs.cuePowerElement.value)
     aiminputs.mousewheel({ deltaY: 10 })
     expect(Number(aiminputs.cuePowerElement.value)).to.not.equal(initialPower)
-    expect(aiminputs.cuePowerElement.style.getPropertyValue("--progress")).to
-      .not.be.empty
+    expect(aiminputs.cuePowerElement.style.getPropertyValue("--p")).to.not.be
+      .empty
     done()
   })
 

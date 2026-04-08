@@ -181,7 +181,7 @@ export class AimInputs {
   private updatePowerProgress() {
     if (this.cuePowerElement) {
       const percent = Number(this.cuePowerElement.value) * 100
-      this.cuePowerElement.style.setProperty("--progress", percent + "%")
+      this.cuePowerElement.style.setProperty("--p", percent + "%")
     }
   }
 

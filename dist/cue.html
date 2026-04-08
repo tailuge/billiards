@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snooker Cue Slider</title>
+    <style>
+      :root {
+        /* State: Power percentage (0-100) */
+        --p: 35%;
+
+        /* Theme Colors */
+        --wood-dark: #3e2711;
+        --wood-light: #5d3a1a;
+        --cue-tan: #d2b48c;
+        --tip-blue: #357abd;
+
+        /* 3D cylindrical effect shared by cue shaft and tip */
+        --cue-cylindrical: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.2) 0%,
+          rgba(255, 255, 255, 0.1) 20%,
+          rgba(255, 255, 255, 0.3) 40%,
+          rgba(255, 255, 255, 0.1) 60%,
+          rgba(0, 0, 0, 0.3) 100%
+        );
+      }
+
+      body {
+        background: #1a1a1a;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        gap: 24px;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        touch-action: manipulation;
+      }
+
+      /* 1. Main Slider Container */
+      .cue-container {
+        position: relative;
+        width: 90vw;
+        max-width: 450px;
+        height: 28px;
+        padding: 4px;
+        background: var(--wood-dark);
+        border: 4px solid var(--wood-light);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+        overflow: hidden; /* Clips the inner triangle */
+      }
+
+      /* 2. Flat Power Triangle (Sits behind the cue) */
+      .power-track {
+        position: absolute;
+        inset: 4px;
+        pointer-events: none;
+        z-index: 1;
+        clip-path: polygon(0 100%, 100% 100%, 100% 0);
+        background: linear-gradient(
+          to right,
+          rgba(255, 255, 0, 0.5),
+          rgba(255, 0, 0, 0.8)
+        );
+      }
+
+      /* 3. The Functional Range Input */
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        background: transparent;
+        cursor: pointer;
+        position: relative;
+        z-index: 2;
+        margin: 0;
+        outline: none;
+        height: 100%;
+        /* Shaft rendering: Sheen overlay + Tan wood color that reveals the triangle */
+        background:
+          var(--cue-cylindrical),
+          linear-gradient(
+            to right,
+            transparent var(--p),
+            var(--cue-tan) var(--p)
+          );
+      }
+
+      /* Thumb Styling (The Tip) */
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 28px;
+        width: 36px;
+        background:
+          var(--cue-cylindrical),
+          linear-gradient(to right, var(--tip-blue) 25%, #fff 0);
+        border-left: 2px solid #000;
+        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.6);
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        height: 28px;
+        width: 36px;
+        background:
+          var(--cue-cylindrical),
+          linear-gradient(to right, var(--tip-blue) 25%, #fff 0);
+        border: none;
+        border-left: 2px solid #000;
+        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.6);
+      }
+
+      button {
+        padding: 12px 40px;
+        background: var(--wood-light);
+        color: var(--cue-tan);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 900;
+        text-transform: uppercase;
+        box-shadow: 0 4px 0 var(--wood-dark);
+        transition: transform 0.05s;
+      }
+
+      button:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 var(--wood-dark);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cue-container">
+      <div class="power-track"></div>
+      <input type="range" id="s" value="35" min="0" max="100" step="0.1" />
+    </div>
+
+    <button id="hitBtn">Hit</button>
+
+    <script>
+      /**
+       * SNOOKER CUE SLIDER LOGIC
+       * - Modularized for easy reuse.
+       * - Optimized for cross-browser performance using CSS Variables.
+       */
+      const slider = document.getElementById("s")
+      const btn = document.getElementById("hitBtn")
+      let animId = null
+
+      /**
+       * Synchronizes the UI state with the value.
+       * Updates the CSS variable --p which controls the shaft "reveal".
+       */
+      const updateValue = (val) => {
+        slider.value = val
+        document.documentElement.style.setProperty("--p", val + "%")
+      }
+
+      // Listen for manual user input
+      slider.addEventListener("input", (e) => updateValue(e.target.value))
+
+      /**
+       * The "Hit" animation logic.
+       * Resets the cue and eases it back to the target position.
+       */
+      function handleHit() {
+        if (animId) return // Prevent multiple concurrent animations
+
+        btn.disabled = true
+        const target = parseFloat(slider.value)
+        const duration = 1200 // ms
+        let start = null
+
+        updateValue(0) // Start the visual stroke from 0
+
+        function animate(now) {
+          if (!start) start = now
+          const progress = Math.min((now - start) / duration, 1)
+
+          // OutQuart Easing: fast start, slow finish
+          const ease = 1 - Math.pow(1 - progress, 4)
+          updateValue(ease * target)
+
+          if (progress < 1) {
+            animId = requestAnimationFrame(animate)
+          } else {
+            animId = null
+            btn.disabled = false
+          }
+        }
+
+        // Short delay ensures the initial '0' value renders before animation starts
+        setTimeout(() => {
+          animId = requestAnimationFrame(animate)
+        }, 50)
+      }
+
+      btn.addEventListener("click", handleHit)
+
+      // Run initial sync on load
+      updateValue(slider.value)
+    </script>
+  </body>
+</html>

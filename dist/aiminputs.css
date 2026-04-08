@@ -4,9 +4,10 @@
   left: 2px;
   z-index: 2000;
   display: grid;
-  grid-template-areas: "power ball hit";
-  grid-template-columns: 38px 100px 76px;
-  gap: 0px;
+  grid-template-areas: "hit power" "ball power";
+  grid-template-columns: 100px minmax(200px, 1240px) 76px;
+  grid-template-rows: 36px;
+  gap: 8px;
   align-items: end; /* Centers vertically */
   justify-items: center; /* Centers horizontally */
   pointer-events: auto;
@@ -76,8 +77,8 @@
 
 .hitButton {
   grid-area: hit;
-  width: 70px;
-  height: 70px;
+  width: 90px;
+  height: 90px;
   margin: 0;
   aspect-ratio: auto;
   border-radius: 10px;
