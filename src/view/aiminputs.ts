@@ -249,8 +249,9 @@ export class AimInputs {
    * Updates both the CSS variable and the input value for visual consistency.
    */
   private setSliderVisual(val: number) {
+    const percent = val * 100
     this.cuePowerElement.value = val.toString()
-    this.cuePowerElement.style.setProperty("--p", val + "%")
+    this.cuePowerElement.style.setProperty("--p", percent + "%")
   }
 
   mousewheel = (e) => {
