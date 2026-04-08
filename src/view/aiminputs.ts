@@ -22,6 +22,7 @@ export class AimInputs {
   tipRadius
   private controlsDisabled = true
   private readonly timeoutButton: TimeoutButton | undefined
+  private sliderAnimId: number | null = null
 
   constructor(container) {
     this.container = container
@@ -206,6 +207,52 @@ export class AimInputs {
     }
     this.container.table.cue.setPower(Number(this.cuePowerElement?.value))
     this.container.inputQueue.push(new Input(0, "SpaceUp"))
+    // Trigger slider animation after hit logic is complete
+    requestAnimationFrame(() => this.animateSliderHit())
+  }
+
+  /**
+   * The "Hit" animation logic for the slider.
+   * Resets the cue visually to 0 and eases it back to the target position.
+   * Does NOT change the actual input value - visual only.
+   */
+  private animateSliderHit() {
+    if (this.sliderAnimId !== null) return // Prevent multiple concurrent animations
+
+    const target = parseFloat(this.cuePowerElement.value)
+    const duration = 1200 // ms
+    let start: number | null = null
+
+    this.setSliderVisual(0) // Start the visual stroke from 0
+
+    const animate = (now: number) => {
+      if (!start) start = now
+      const progress = Math.min((now - start) / duration, 1)
+
+      // OutQuart Easing: fast start, slow finish
+      const ease = 1 - Math.pow(1 - progress, 4)
+      this.setSliderVisual(ease * target)
+
+      if (progress < 1) {
+        this.sliderAnimId = requestAnimationFrame(animate)
+      } else {
+        this.sliderAnimId = null
+      }
+    }
+
+    // Short delay ensures the initial '0' value renders before animation starts
+    setTimeout(() => {
+      this.sliderAnimId = requestAnimationFrame(animate)
+    }, 50)
+  }
+
+  /**
+   * Sets the slider visual without changing the actual game power.
+   * Updates both the CSS variable and the input value for visual consistency.
+   */
+  private setSliderVisual(val: number) {
+    this.cuePowerElement.value = val.toString()
+    this.cuePowerElement.style.setProperty("--p", val + "%")
   }
 
   mousewheel = (e) => {

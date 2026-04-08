@@ -15,6 +15,20 @@
   overflow: hidden;
 }
 
+/* Flat Power Triangle (Sits behind the cue) */
+.power-track {
+  position: absolute;
+  inset: 4px;
+  pointer-events: none;
+  z-index: 1;
+  clip-path: polygon(0 100%, 100% 100%, 100% 0);
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 0, 0.5),
+    rgba(255, 0, 0, 0.8)
+  );
+}
+
 input[type="range"].powerSlider {
   -webkit-appearance: none;
   appearance: none;
