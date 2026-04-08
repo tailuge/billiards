@@ -6,69 +6,64 @@
     <title>Snooker Cue Slider</title>
     <style>
       :root {
+        --bg-color: #1a1a1a;
+        --accent-tan: #c19a6b;
+
         /* State: Power percentage (0-100) */
         --p: 35%;
+        --p-inv: 65%;
 
         /* Theme Colors */
         --wood-dark: #3e2711;
         --wood-light: #5d3a1a;
-        --cue-tan: #d2b48c;
         --tip-blue: #357abd;
-
-        /* 3D cylindrical effect shared by cue shaft and tip */
-        --cue-cylindrical: linear-gradient(
-          to bottom,
-          rgba(0, 0, 0, 0.2) 0%,
-          rgba(255, 255, 255, 0.1) 20%,
-          rgba(255, 255, 255, 0.3) 40%,
-          rgba(255, 255, 255, 0.1) 60%,
-          rgba(0, 0, 0, 0.3) 100%
-        );
       }
 
       body {
-        background: #1a1a1a;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-        gap: 24px;
         font-family:
           system-ui,
           -apple-system,
           sans-serif;
+        background-color: var(--bg-color);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        gap: 24px;
+        /* Prevent accidental pull-to-refresh on some mobile browsers during sliding */
+        overscroll-behavior: none;
         touch-action: manipulation;
       }
 
       /* 1. Main Slider Container */
       .cue-container {
-        position: relative;
-        width: 90vw;
+        height: 44px; /* Slightly taller for better touch target (min 44px recommended) */
+        width: 90%;
         max-width: 450px;
-        height: 28px;
-        padding: 4px;
-        background: var(--wood-dark);
-        border: 4px solid var(--wood-light);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         display: flex;
-        align-items: center;
+        position: relative;
+        padding: 0;
+        background: #25180a;
+        border: 4px solid #5d3a1a;
         border-radius: 4px;
-        overflow: hidden; /* Clips the inner triangle */
+        overflow: hidden;
+        box-sizing: border-box;
       }
 
       /* 2. Flat Power Triangle (Sits behind the cue) */
       .power-track {
         position: absolute;
-        inset: 4px;
+        inset: 0;
         pointer-events: none;
         z-index: 1;
         clip-path: polygon(0 100%, 100% 100%, 100% 0);
         background: linear-gradient(
           to right,
-          rgba(255, 255, 0, 0.5),
-          rgba(255, 0, 0, 0.8)
+          rgba(255, 0, 0, 0.9) 0%,
+          #ffff00 100%
         );
       }
 
@@ -77,44 +72,104 @@
         -webkit-appearance: none;
         appearance: none;
         width: 100%;
+        height: 100%;
         background: transparent;
         cursor: pointer;
-        position: relative;
-        z-index: 2;
         margin: 0;
         outline: none;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Webkit Track (Chrome, Safari, Edge, Opera) */
+      input[type="range"]::-webkit-slider-runnable-track {
+        width: 100%;
         height: 100%;
-        /* Shaft rendering: Sheen overlay + Tan wood color that reveals the triangle */
         background:
-          var(--cue-cylindrical),
+          linear-gradient(
+              to bottom,
+              rgba(0, 0, 0, 0.8) 0%,
+              rgba(0, 0, 0, 0.2) 15%,
+              rgba(255, 230, 200, 0.3) 40%,
+              rgba(255, 230, 200, 0.3) 60%,
+              rgba(0, 0, 0, 0.2) 85%,
+              rgba(0, 0, 0, 0.8) 100%
+            )
+            no-repeat 100% 0 / var(--p-inv) 100%,
           linear-gradient(
             to right,
             transparent var(--p),
-            var(--cue-tan) var(--p)
+            var(--accent-tan) var(--p)
+          );
+      }
+
+      /* Firefox Track */
+      input[type="range"]::-moz-range-track {
+        width: 100%;
+        height: 100%;
+        background:
+          linear-gradient(
+              to bottom,
+              rgba(0, 0, 0, 0.8) 0%,
+              rgba(0, 0, 0, 0.2) 15%,
+              rgba(255, 230, 200, 0.3) 40%,
+              rgba(255, 230, 200, 0.3) 60%,
+              rgba(0, 0, 0, 0.2) 85%,
+              rgba(0, 0, 0, 0.8) 100%
+            )
+            no-repeat 100% 0 / var(--p-inv) 100%,
+          linear-gradient(
+            to right,
+            transparent var(--p),
+            var(--accent-tan) var(--p)
           );
       }
 
       /* Thumb Styling (The Tip) */
       input[type="range"]::-webkit-slider-thumb {
         -webkit-appearance: none;
-        height: 28px;
+        appearance: none;
+        height: 100%;
         width: 36px;
         background:
-          var(--cue-cylindrical),
-          linear-gradient(to right, var(--tip-blue) 25%, #fff 0);
-        border-left: 2px solid #000;
-        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.6);
-      }
-
-      input[type="range"]::-moz-range-thumb {
-        height: 28px;
-        width: 36px;
-        background:
-          var(--cue-cylindrical),
+          linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.8) 0%,
+            rgba(0, 0, 0, 0.2) 15%,
+            rgba(255, 230, 200, 0.3) 40%,
+            rgba(255, 230, 200, 0.3) 60%,
+            rgba(0, 0, 0, 0.2) 85%,
+            rgba(0, 0, 0, 0.8) 100%
+          ),
           linear-gradient(to right, var(--tip-blue) 25%, #fff 0);
         border: none;
         border-left: 2px solid #000;
-        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.6);
+        cursor: grab;
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        height: 100%;
+        width: 36px;
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.8) 0%,
+            rgba(0, 0, 0, 0.2) 15%,
+            rgba(255, 230, 200, 0.3) 40%,
+            rgba(255, 230, 200, 0.3) 60%,
+            rgba(0, 0, 0, 0.2) 85%,
+            rgba(0, 0, 0, 0.8) 100%
+          ),
+          linear-gradient(to right, var(--tip-blue) 25%, #fff 0);
+        border: none;
+        border-left: 2px solid #000;
+        border-radius: 0;
+        cursor: grab;
+      }
+
+      input[type="range"]:active::-webkit-slider-thumb,
+      input[type="range"]:active::-moz-range-thumb {
+        cursor: grabbing;
       }
 
       button {
@@ -165,6 +220,7 @@
       const updateValue = (val) => {
         slider.value = val
         document.documentElement.style.setProperty("--p", val + "%")
+        document.documentElement.style.setProperty("--p-inv", 100 - val + "%")
       }
 
       // Listen for manual user input
