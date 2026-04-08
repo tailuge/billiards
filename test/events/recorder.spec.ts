@@ -50,8 +50,10 @@ describe("Recorder", () => {
     const event: HitEvent = new HitEvent(container.table.serialise())
     recorder.record(event)
     const outcome = container.table.outcome
-    outcome.push(Outcome.pot(container.table.balls[1], 1))
-    outcome.push(Outcome.pot(container.table.balls[2], 1))
+    outcome.push(
+      Outcome.pot(container.table.balls[1], 1),
+      Outcome.pot(container.table.balls[2], 1)
+    )
     recorder.updateBreak(
       outcome,
       container.rules.isPartOfBreak(outcome),
