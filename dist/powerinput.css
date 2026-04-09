@@ -1,13 +1,10 @@
 .powerSliderContainer {
-  height: 44px;
+  height: 80%;
   width: 100%;
-  max-width: 450px;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  grid-area: power;
-  margin-bottom: 15px;
   padding: 0;
   background: #25180a;
   border: 2px solid #4c2f15;

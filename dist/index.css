@@ -48,7 +48,7 @@ p {
 
 #snookerScoreOverlay {
   position: absolute;
-  bottom: 160px;
+  bottom: 16px;
   right: 3em;
 }
 
@@ -101,13 +101,27 @@ canvas {
   width: 100%;
   height: 70px;
   display: flex;
-  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: flex-end;
   gap: 6px;
-  padding: 0 4px;
+  padding: 4px;
   background: linear-gradient(rgb(0, 64, 94), #000214);
   border-radius: 5px;
-  align-items: stretch;
   box-sizing: border-box;
+}
+
+.panel .ballContainer {
+  flex: 0 0 100px;
+}
+
+.panel .powerSliderContainer {
+  flex: 1 1 auto;
+  margin: 0;
+  align-self: center;
+}
+
+.panel .outerMenu {
+  flex: 0 0 auto;
 }
 
 .toggleButton {

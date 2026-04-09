@@ -106,7 +106,79 @@
         <div id="chatoutput" class="chatoutput"></div>
       </div>
     </div>
-    <div id="panel" class="panel wood-texture"></div>
+    <div id="panel" class="panel wood-texture">
+      <div class="ballContainer">
+        <div id="objectBall" class="objectBall"></div>
+        <div id="cueBall" class="cueBall">
+          <div id="cueTip" class="cueTip"></div>
+        </div>
+      </div>
+      <div class="powerSliderContainer">
+        <div class="power-track"></div>
+        <input
+          class="powerSlider"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.75"
+          id="cuePower"
+          aria-label="power slider"
+        />
+      </div>
+      <div class="outerMenu">
+        <button
+          class="menuButton"
+          title="comment"
+          id="comment"
+          type="submit"
+          aria-label="Comment"
+          hidden
+        >
+          🗨
+        </button>
+        <div id="commentMenu" class="comment-menu" style="display: none">
+          <button class="comment-emoji">🍀</button>
+          <button class="comment-emoji">🍷</button>
+          <button class="comment-emoji">🐑</button>
+          <button class="comment-emoji">👏</button>
+          <button class="comment-emoji">🍟</button>
+          <button class="comment-emoji">🍍</button>
+          <button class="comment-emoji">🎖️</button>
+          <button class="comment-emoji">🦈</button>
+          <button class="comment-emoji">👀</button>
+        </div>
+        <button
+          class="menuButton"
+          title="share"
+          id="share"
+          type="submit"
+          aria-label="Share replay link"
+          hidden
+        >
+          ⬀
+        </button>
+        <button
+          class="menuButton"
+          title="concede"
+          id="concede"
+          type="submit"
+          aria-label="Concede"
+          hidden
+        >
+          🏳️
+        </button>
+        <button
+          class="menuButton"
+          title="view"
+          id="camera"
+          type="submit"
+          aria-label="Toggle camera view"
+        >
+          🎥
+        </button>
+      </div>
+    </div>
 
     <div id="ballTray" class="tray-container" aria-live="polite" role="log">
       <div class="nav-btn btn-left" id="trayLeft">❮</div>
@@ -129,77 +201,6 @@
         aria-label="Hit cue ball"
       >
         hit
-      </button>
-      <div class="ballContainer">
-        <div id="objectBall" class="objectBall"></div>
-        <div id="cueBall" class="cueBall">
-          <div id="cueTip" class="cueTip"></div>
-        </div>
-      </div>
-      <div class="powerSliderContainer">
-        <div class="power-track"></div>
-        <input
-          class="powerSlider"
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value="0.75"
-          id="cuePower"
-          aria-label="power slider"
-        />
-      </div>
-    </div>
-    <div class="outerMenu">
-      <button
-        class="menuButton"
-        title="comment"
-        id="comment"
-        type="submit"
-        aria-label="Comment"
-        hidden
-      >
-        🗨
-      </button>
-      <div id="commentMenu" class="comment-menu" style="display: none">
-        <button class="comment-emoji">🍀</button>
-        <button class="comment-emoji">🍷</button>
-        <button class="comment-emoji">🐑</button>
-        <button class="comment-emoji">👏</button>
-        <button class="comment-emoji">🍟</button>
-        <button class="comment-emoji">🍍</button>
-        <button class="comment-emoji">🎖️</button>
-        <button class="comment-emoji">🦈</button>
-        <button class="comment-emoji">👀</button>
-      </div>
-      <button
-        class="menuButton"
-        title="share"
-        id="share"
-        type="submit"
-        aria-label="Share replay link"
-        hidden
-      >
-        ⬀
-      </button>
-      <button
-        class="menuButton"
-        title="concede"
-        id="concede"
-        type="submit"
-        aria-label="Concede"
-        hidden
-      >
-        🏳️
-      </button>
-      <button
-        class="menuButton"
-        title="view"
-        id="camera"
-        type="submit"
-        aria-label="Toggle camera view"
-      >
-        🎥
       </button>
     </div>
     <section class="constants" id="constants" aria-label="Physical Constants">
