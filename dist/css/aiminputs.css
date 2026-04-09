@@ -14,6 +14,7 @@
   border-radius: 5px;
   padding: 0;
   box-sizing: border-box;
+  flex: 0 0 100px;
 }
 
 .cueBall {

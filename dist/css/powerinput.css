@@ -12,6 +12,9 @@
   border-radius: 2px;
   overflow: hidden;
   box-sizing: border-box;
+  flex: 1 1 auto;
+  margin: 0 auto;
+  align-self: center;
 }
 
 /* Flat Power Triangle (Sits behind the cue) */

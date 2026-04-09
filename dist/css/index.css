@@ -110,21 +110,6 @@ canvas {
   box-sizing: border-box;
 }
 
-.panel .ballContainer {
-  flex: 0 0 100px;
-}
-
-.panel .powerSliderContainer {
-  flex: 1 1 auto;
-  max-width: 512px;
-  margin: 0 auto;
-  align-self: center;
-}
-
-.panel .outerMenu {
-  flex: 0 0 auto;
-}
-
 .toggleButton {
   height: 100%;
   width: 20%;
