@@ -8,8 +8,8 @@
   grid-template-columns: 100px minmax(200px, 1240px) 76px;
   grid-template-rows: 36px;
   gap: 8px;
-  align-items: end; /* Centers vertically */
-  justify-items: center; /* Centers horizontally */
+  align-items: end;
+  justify-items: center;
   pointer-events: auto;
   width: auto;
   border-radius: 4px;
