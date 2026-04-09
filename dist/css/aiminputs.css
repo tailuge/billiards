@@ -23,10 +23,10 @@
   margin: auto;
   background: radial-gradient(
     circle at 65% 15%,
-    rgb(255, 255, 255) 2px,
-    rgb(255, 254, 254) 5%,
-    rgb(63, 63, 63) 60%,
-    rgb(24, 26, 26) 100%
+    rgb(255 255 255) 2px,
+    rgb(255 254 254) 5%,
+    rgb(63 63 63) 60%,
+    rgb(24 26 26) 100%
   );
   border-radius: 50%;
   position: absolute;
@@ -37,13 +37,13 @@
 
 .cueBall.is-disabled {
   filter: grayscale(0.65) brightness(0.55);
-  box-shadow: inset 0 0 0 2px rgba(220, 220, 220, 0.25);
+  box-shadow: inset 0 0 0 2px rgb(220 220 220 / 25%);
 }
 
 .objectBall {
   height: 93px;
   width: 93px;
-  border: 0.5px solid rgb(0, 44, 64);
+  border: 0.5px solid rgb(0 44 64);
   border-radius: 50%;
   z-index: 3;
   position: absolute;
@@ -55,7 +55,7 @@
 .cueTip {
   height: 20%;
   width: 20%;
-  background-color: rgb(72, 72, 158);
+  background-color: rgb(72 72 158);
   border-radius: 50%;
   top: 40%;
   left: 40%;
@@ -90,6 +90,7 @@
 .timeout-btn {
   --sweep: 360deg;
   --timer-color: #10b981;
+
   background:
     linear-gradient(#f4f4f5, #f4f4f5) padding-box,
     conic-gradient(var(--timer-color) var(--sweep), #e4e4e7 0deg) border-box;
@@ -100,6 +101,6 @@
 
 .timeout-btn:not(:disabled):hover {
   background:
-    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(#fff, #fff) padding-box,
     conic-gradient(var(--timer-color) var(--sweep), #e4e4e7 0deg) border-box;
 }

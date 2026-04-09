@@ -15,8 +15,7 @@
 
 .chatoutput {
   max-height: 360px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   padding: 2px;
   font-size: smaller;
   color: #ccc;

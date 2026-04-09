@@ -1,7 +1,7 @@
 body {
   display: flex;
   flex-wrap: wrap;
-  background-color: rgb(245, 245, 245);
+  background-color: rgb(245 245 245);
 }
 
 .topview {

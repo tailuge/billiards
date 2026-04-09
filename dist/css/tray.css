@@ -8,16 +8,16 @@
   height: 30px;
   display: flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgb(0 0 0 / 40%);
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgb(255 255 255 / 15%);
   z-index: 1500;
   overflow: hidden;
   pointer-events: auto;
 }
 
 .ball-tray-list {
-  -webkit-mask-image: linear-gradient(
+  mask-image: linear-gradient(
     to right,
     transparent,
     black 15%,
@@ -50,7 +50,7 @@
 .break-group {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgb(255 255 255 / 10%);
   padding: 0 3px;
   border-radius: 12px;
   height: 22px;
@@ -64,7 +64,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgb(255 255 255 / 50%);
   font-size: 10px;
   transition:
     opacity 0.3s ease,
@@ -72,7 +72,7 @@
   user-select: none;
   z-index: 10;
   opacity: 0;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgb(255 255 255 / 5%);
 }
 
 .tray-container:hover .nav-btn {
@@ -80,7 +80,7 @@
 }
 
 .nav-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(255 255 255 / 20%);
   color: white;
 }
 

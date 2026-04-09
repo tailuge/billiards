@@ -19,24 +19,23 @@
   --notification-clr-loser-end: #a0a0a0;
 
   /* Neutrals & Opacity Layers */
-  --notification-white: #ffffff;
-  --notification-black: #000000;
-  --notification-white-10: rgba(255, 255, 255, 0.1);
-  --notification-white-15: rgba(255, 255, 255, 0.15);
-  --notification-white-20: rgba(255, 255, 255, 0.2);
-  --notification-white-25: rgba(255, 255, 255, 0.25);
-  --notification-white-30: rgba(255, 255, 255, 0.3);
-  --notification-white-40: rgba(255, 255, 255, 0.4);
-  --notification-white-50: rgba(255, 255, 255, 0.5);
-  --notification-white-60: rgba(255, 255, 255, 0.6);
-  --notification-white-90: rgba(255, 255, 255, 0.9);
-
-  --notification-black-05: rgba(0, 0, 0, 0.05);
-  --notification-black-10: rgba(0, 0, 0, 0.1);
-  --notification-black-15: rgba(0, 0, 0, 0.15);
-  --notification-black-20: rgba(0, 0, 0, 0.2);
-  --notification-black-30: rgba(0, 0, 0, 0.3);
-  --notification-black-40: rgba(0, 0, 0, 0.4);
+  --notification-white: #fff;
+  --notification-black: #000;
+  --notification-white-10: rgb(255 255 255 / 10%);
+  --notification-white-15: rgb(255 255 255 / 15%);
+  --notification-white-20: rgb(255 255 255 / 20%);
+  --notification-white-25: rgb(255 255 255 / 25%);
+  --notification-white-30: rgb(255 255 255 / 30%);
+  --notification-white-40: rgb(255 255 255 / 40%);
+  --notification-white-50: rgb(255 255 255 / 50%);
+  --notification-white-60: rgb(255 255 255 / 60%);
+  --notification-white-90: rgb(255 255 255 / 90%);
+  --notification-black-05: rgb(0 0 0 / 5%);
+  --notification-black-10: rgb(0 0 0 / 10%);
+  --notification-black-15: rgb(0 0 0 / 15%);
+  --notification-black-20: rgb(0 0 0 / 20%);
+  --notification-black-30: rgb(0 0 0 / 30%);
+  --notification-black-40: rgb(0 0 0 / 40%);
 
   /* --- Spacing (4px based) --- */
   --notification-space-1: 4px;
@@ -50,13 +49,12 @@
   --notification-space-12: 48px;
 
   /* --- Typography --- */
-  --notification-font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --notification-font-family: "Segoe UI", roboto, helvetica, arial, sans-serif;
   --notification-size-xs: 0.7rem;
   --notification-size-s: 0.85rem;
   --notification-size-m: 1rem;
   --notification-size-l: 1.1rem;
   --notification-size-xl: 1.4rem;
-
   --notification-weight-normal: 400;
   --notification-weight-semi: 600;
   --notification-weight-bold: 700;
@@ -91,7 +89,6 @@
   --notification-text-clr-main: var(--notification-white);
   --notification-text-clr-sub: var(--notification-white-90);
   --notification-text-clr-inv: var(--notification-black);
-
   --notification-score-bg: var(--notification-black-15);
   --notification-score-border: var(--notification-white-10);
   --notification-score-label-clr: var(--notification-white-60);
@@ -129,6 +126,7 @@
     opacity: 0;
     transform: translateY(-20px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -150,7 +148,6 @@
   padding: 0;
   overflow: hidden;
   border-radius: var(--notification-radius-m);
-  background: var(--notification-bg);
   background: var(--notification-bg-gradient);
   border: 1px solid var(--notification-border-clr);
   box-shadow: var(--notification-shadow-md);
@@ -253,7 +250,7 @@
   --notification-text-clr-sub: var(--notification-text-clr-inv);
   --notification-score-bg: var(--notification-black-05);
   --notification-score-border: var(--notification-black-10);
-  --notification-score-label-clr: rgba(0, 0, 0, 0.5);
+  --notification-score-label-clr: rgb(0 0 0 / 50%);
   --notification-score-value-clr: var(--notification-text-clr-inv);
 }
 
@@ -270,7 +267,7 @@
   --notification-text-clr-sub: var(--notification-text-clr-inv);
   --notification-score-bg: var(--notification-black-05);
   --notification-score-border: var(--notification-black-10);
-  --notification-score-label-clr: rgba(0, 0, 0, 0.5);
+  --notification-score-label-clr: rgb(0 0 0 / 50%);
   --notification-score-value-clr: var(--notification-text-clr-inv);
 }
 
@@ -294,7 +291,7 @@
   text-transform: uppercase;
   background: var(--notification-white-25);
   backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
   border: 1px solid var(--notification-white-30);
   border-radius: var(--notification-radius-s);
   box-shadow: var(--notification-shadow-sm);
@@ -314,7 +311,7 @@
   font-weight: var(--notification-weight-bold);
   background: var(--notification-white-15);
   backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
   border: 1px solid var(--notification-white-30);
   border-radius: var(--notification-radius-s);
   box-shadow: var(--notification-shadow-sm);

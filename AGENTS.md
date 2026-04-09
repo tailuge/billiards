@@ -12,6 +12,7 @@
 - `yarn test` runs Jest with the repo’s config.
 - `yarn coverage` runs Jest with coverage reporting.
 - `yarn lint` runs `tsc --noEmit` and ESLint.
+- `yarn lint:css` runs stylelint on CSS files in `dist/css/`.
 - `yarn prettify` formats JS/TS/JSON/CSS/HTML and caches results.
 
 ## Coding Style & Naming Conventions
