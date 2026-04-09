@@ -3,57 +3,213 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Snooker Cue Slider</title>
+    <title>Billiards UI Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
       :root {
-        --bg-color: #1a1a1a;
-        --accent-tan: #c19a6b;
+        /* Table Colors */
+        --wood-dark: #3d2b1f;
+        --wood-light: #5d4037;
 
-        /* State: Power percentage (0-100) */
+        /* Cue Slider State */
         --p: 35%;
         --p-inv: 65%;
-
-        /* Theme Colors */
-        --wood-dark: #3e2711;
-        --wood-light: #5d3a1a;
+        --accent-tan: #c19a6b;
         --tip-blue: #357abd;
+
+        /* Fixed Dimensions */
+        --footer-height: 70px;
       }
 
       body {
-        font-family:
-          system-ui,
-          -apple-system,
-          sans-serif;
-        background-color: var(--bg-color);
-        color: white;
+        background-color: #064e3b; /* Billiard table green */
+        margin: 0;
+        height: 100vh;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        margin: 0;
-        gap: 24px;
-        /* Prevent accidental pull-to-refresh on some mobile browsers during sliding */
         overscroll-behavior: none;
         touch-action: manipulation;
       }
 
-      /* 1. Main Slider Container */
+      /* Generated Woodgrain Texture */
+      .wood-texture {
+        background-color: var(--wood-dark);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.005 0.05' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.25 0 0 0 0 0.15 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+      }
+
+      /* Top Bar UI */
+      .top-ui {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 12px;
+        z-index: 50;
+      }
+
+      .wood-frame {
+        padding: 8px;
+        border-radius: 0 0 8px 0;
+        box-shadow:
+          2px 2px 10px rgba(0, 0, 0, 0.4),
+          inset -1px -1px 4px rgba(0, 0, 0, 0.3);
+        border-right: 2px solid #2d1e16;
+        border-bottom: 2px solid #2d1e16;
+      }
+
+      .mode-btn {
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        backdrop-filter: blur(2px);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+      }
+
+      .mode-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ef4444;
+        box-shadow: 0 0 8px #ef4444;
+      }
+
+      .mode-watch .mode-indicator {
+        background: #22c55e;
+        box-shadow: 0 0 8px #22c55e;
+      }
+
+      /* Spin Control Styling */
+      .spin-control-container {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 140px;
+        height: 140px;
+        border-radius: 0 12px 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 4px solid #2d1e16;
+        border-bottom: none;
+        border-left: none;
+        box-shadow:
+          2px -4px 15px rgba(0, 0, 0, 0.5),
+          inset 0 15px 30px rgba(0, 0, 0, 0.4);
+        z-index: 20;
+      }
+
+      .watch-mode .spin-control-container {
+        width: 70px;
+        height: 70px;
+        border-radius: 0;
+        border-width: 2px;
+        box-shadow: none;
+      }
+
+      .spin-ball {
+        width: 128px;
+        height: 128px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 35% 35%,
+          #ffffff 0%,
+          rgba(255, 255, 255, 0.8) 10%,
+          rgba(220, 220, 220, 0.9) 30%,
+          #a0a0a0 65%,
+          #606060 90%,
+          #404040 100%
+        );
+        box-shadow:
+          6px 12px 24px rgba(0, 0, 0, 0.7),
+          inset -4px -6px 12px rgba(0, 0, 0, 0.4),
+          inset 8px 10px 15px rgba(255, 255, 255, 0.2);
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .spin-ball::before {
+        content: "";
+        position: absolute;
+        top: 18%;
+        left: 18%;
+        width: 25%;
+        height: 25%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.9) 0%,
+          transparent 80%
+        );
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      .watch-mode .spin-ball {
+        width: 62px;
+        height: 62px;
+      }
+
+      /* Hit Tip Indicator: Blue, scaled, doubled in size for aim mode */
+      .spin-ball::after {
+        content: "";
+        position: absolute;
+        width: 24px; /* Doubled from previous 12px */
+        height: 24px;
+        background: var(--tip-blue);
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow:
+          0 0 6px rgba(0, 0, 0, 0.8),
+          inset 0 2px 2px rgba(255, 255, 255, 0.4);
+        transition: all 0.3s ease;
+      }
+
+      /* Scales down with the ball in watch mode */
+      .watch-mode .spin-ball::after {
+        width: 12px;
+        height: 12px;
+      }
+
+      /* Layout Fix: Power slider centered absolutely to avoid shifts */
+      .slider-wrapper {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        justify-content: center;
+        z-index: 10;
+      }
+
+      /* Snooker Cue Slider Container */
       .cue-container {
-        height: 44px; /* Slightly taller for better touch target (min 44px recommended) */
-        width: 90%;
-        max-width: 450px;
+        height: 38px;
+        width: 100%;
         display: flex;
         position: relative;
-        padding: 0;
         background: #25180a;
-        border: 4px solid #5d3a1a;
+        border: 3px solid #1a1108;
         border-radius: 4px;
         overflow: hidden;
         box-sizing: border-box;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
       }
 
-      /* 2. Flat Power Triangle (Sits behind the cue) */
       .power-track {
         position: absolute;
         inset: 0;
@@ -67,7 +223,6 @@
         );
       }
 
-      /* 3. The Functional Range Input */
       input[type="range"] {
         -webkit-appearance: none;
         appearance: none;
@@ -81,7 +236,6 @@
         z-index: 2;
       }
 
-      /* Webkit Track (Chrome, Safari, Edge, Opera) */
       input[type="range"]::-webkit-slider-runnable-track {
         width: 100%;
         height: 100%;
@@ -103,29 +257,6 @@
           );
       }
 
-      /* Firefox Track */
-      input[type="range"]::-moz-range-track {
-        width: 100%;
-        height: 100%;
-        background:
-          linear-gradient(
-              to bottom,
-              rgba(0, 0, 0, 0.8) 0%,
-              rgba(0, 0, 0, 0.2) 15%,
-              rgba(255, 230, 200, 0.3) 40%,
-              rgba(255, 230, 200, 0.3) 60%,
-              rgba(0, 0, 0, 0.2) 85%,
-              rgba(0, 0, 0, 0.8) 100%
-            )
-            no-repeat 100% 0 / var(--p-inv) 100%,
-          linear-gradient(
-            to right,
-            transparent var(--p),
-            var(--accent-tan) var(--p)
-          );
-      }
-
-      /* Thumb Styling (The Tip) */
       input[type="range"]::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
@@ -147,107 +278,133 @@
         cursor: grab;
       }
 
-      input[type="range"]::-moz-range-thumb {
-        height: 100%;
-        width: 36px;
-        background:
-          linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0.8) 0%,
-            rgba(0, 0, 0, 0.2) 15%,
-            rgba(255, 230, 200, 0.3) 40%,
-            rgba(255, 230, 200, 0.3) 60%,
-            rgba(0, 0, 0, 0.2) 85%,
-            rgba(0, 0, 0, 0.8) 100%
-          ),
-          linear-gradient(to right, var(--tip-blue) 25%, #fff 0);
-        border: none;
-        border-left: 2px solid #000;
-        border-radius: 0;
-        cursor: grab;
-      }
-
-      input[type="range"]:active::-webkit-slider-thumb,
-      input[type="range"]:active::-moz-range-thumb {
-        cursor: grabbing;
-      }
-
-      button {
-        padding: 12px 40px;
-        background: var(--wood-light);
-        color: var(--cue-tan);
+      .strike-btn {
+        position: absolute;
+        right: 1rem;
+        padding: 10px 32px;
+        background: #5d3a1a;
+        color: #fef3c7;
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 4px;
         cursor: pointer;
         font-weight: 900;
         text-transform: uppercase;
-        box-shadow: 0 4px 0 var(--wood-dark);
+        letter-spacing: 0.05em;
+        font-size: 14px;
+        box-shadow: 0 3px 0 #3e2711;
         transition: transform 0.05s;
+        z-index: 20;
       }
 
-      button:active {
-        transform: translateY(2px);
-        box-shadow: 0 2px 0 var(--wood-dark);
-      }
-      button:disabled {
+      .strike-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+        filter: grayscale(1);
       }
     </style>
   </head>
-  <body>
-    <div class="cue-container">
-      <div class="power-track"></div>
-      <input type="range" id="s" value="35" min="0" max="100" step="0.1" />
+  <body class="overflow-hidden">
+    <!-- Top Left UI -->
+    <div class="top-ui">
+      <div class="wood-frame wood-texture">
+        <button id="modeToggle" class="mode-btn">
+          <span class="mode-indicator"></span>
+          <span id="modeText">Aim Mode</span>
+        </button>
+      </div>
     </div>
 
-    <button id="hitBtn">Hit</button>
+    <!-- Main Game Area -->
+    <div class="flex-grow flex items-center justify-center relative">
+      <div
+        class="text-white/10 text-6xl font-black uppercase tracking-widest pointer-events-none select-none"
+      >
+        Billiards
+      </div>
+      <div
+        class="absolute w-12 h-12 bg-white rounded-full shadow-2xl"
+        style="
+          top: 50%;
+          left: 30%;
+          background: radial-gradient(
+            circle at 30% 30%,
+            #fff 0%,
+            #eee 60%,
+            #ccc 100%
+          );
+        "
+      ></div>
+    </div>
+
+    <!-- UI Footer Area -->
+    <footer
+      id="mainFooter"
+      class="wood-texture h-[70px] w-full relative flex items-center shadow-[inset_0_4px_10px_rgba(0,0,0,0.5),0_-2px_10px_rgba(0,0,0,0.3)] border-t-4 border-[#2d1e16]"
+    >
+      <!-- Spin Control: Absolutely positioned to avoid horizontal layout shift -->
+      <div id="spinControl" class="spin-control-container wood-texture">
+        <div class="spin-ball"></div>
+      </div>
+
+      <!-- Snooker Cue Slider: Centered via absolute wrapper -->
+      <div class="slider-wrapper">
+        <div class="cue-container">
+          <div class="power-track"></div>
+          <input
+            type="range"
+            id="power-slider"
+            value="35"
+            min="0"
+            max="100"
+            step="0.1"
+          />
+        </div>
+      </div>
+
+      <!-- Action Button: Absolutely positioned right -->
+      <button id="hitBtn" class="strike-btn">Strike</button>
+    </footer>
 
     <script>
-      /**
-       * SNOOKER CUE SLIDER LOGIC
-       * - Modularized for easy reuse.
-       * - Optimized for cross-browser performance using CSS Variables.
-       */
-      const slider = document.getElementById("s")
+      const slider = document.getElementById("power-slider")
       const btn = document.getElementById("hitBtn")
-      let animId = null
+      const modeToggle = document.getElementById("modeToggle")
+      const modeText = document.getElementById("modeText")
+      const footer = document.getElementById("mainFooter")
 
-      /**
-       * Synchronizes the UI state with the value.
-       * Updates the CSS variable --p which controls the shaft "reveal".
-       */
+      let animId = null
+      let isWatchMode = false
+
+      modeToggle.addEventListener("click", () => {
+        isWatchMode = !isWatchMode
+        modeToggle.classList.toggle("mode-watch", isWatchMode)
+        footer.classList.toggle("watch-mode", isWatchMode)
+        modeText.textContent = isWatchMode ? "Watch Mode" : "Aim Mode"
+
+        slider.disabled = isWatchMode
+        btn.disabled = isWatchMode
+      })
+
       const updateValue = (val) => {
         slider.value = val
         document.documentElement.style.setProperty("--p", val + "%")
         document.documentElement.style.setProperty("--p-inv", 100 - val + "%")
       }
 
-      // Listen for manual user input
       slider.addEventListener("input", (e) => updateValue(e.target.value))
 
-      /**
-       * The "Hit" animation logic.
-       * Resets the cue and eases it back to the target position.
-       */
       function handleHit() {
-        if (animId) return // Prevent multiple concurrent animations
-
+        if (animId || isWatchMode) return
         btn.disabled = true
         const target = parseFloat(slider.value)
-        const duration = 1200 // ms
+        const duration = 1000
         let start = null
-
-        updateValue(0) // Start the visual stroke from 0
-
+        updateValue(0)
         function animate(now) {
           if (!start) start = now
           const progress = Math.min((now - start) / duration, 1)
-
-          // OutQuart Easing: fast start, slow finish
           const ease = 1 - Math.pow(1 - progress, 4)
           updateValue(ease * target)
-
           if (progress < 1) {
             animId = requestAnimationFrame(animate)
           } else {
@@ -255,16 +412,12 @@
             btn.disabled = false
           }
         }
-
-        // Short delay ensures the initial '0' value renders before animation starts
         setTimeout(() => {
           animId = requestAnimationFrame(animate)
         }, 50)
       }
 
       btn.addEventListener("click", handleHit)
-
-      // Run initial sync on load
       updateValue(slider.value)
     </script>
   </body>
