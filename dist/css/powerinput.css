@@ -1,5 +1,5 @@
 .powerSliderContainer {
-  height: 80%;
+  height: 75%;
   width: 100%;
   max-width: 812px;
   display: flex;
@@ -7,13 +7,13 @@
   align-items: center;
   position: relative;
   padding: 0;
+  margin: 6px;
   background: #25180a;
   border: 2px solid #4c2f15;
   border-radius: 2px;
   overflow: hidden;
   box-sizing: border-box;
   flex: 1 1 auto;
-  margin: 0 auto;
   align-self: center;
 }
 
@@ -43,6 +43,7 @@ input[type="range"].powerSlider {
   --p-inv: calc(100% - var(--p));
 }
 
+.powerSliderContainer.is-disabled .power-track,
 input[type="range"].powerSlider.is-disabled,
 input[type="range"].powerSlider:disabled {
   filter: brightness(0.5);

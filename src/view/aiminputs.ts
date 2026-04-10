@@ -8,8 +8,11 @@ import { id } from "../utils/dom"
 import { TimeoutButton } from "./timeoutbutton"
 
 export class AimInputs {
+  readonly ballContainerWrapperElement
+  readonly ballContainerElement
   readonly cueBallElement
   readonly cueTipElement
+  readonly powerSliderContainerElement
   readonly cuePowerElement
   /** Shared button for both "Hit" and "Place Ball" actions. */
   readonly cueHitElement
@@ -26,8 +29,11 @@ export class AimInputs {
 
   constructor(container) {
     this.container = container
+    this.ballContainerWrapperElement = id("ballContainerWrapper")
+    this.ballContainerElement = id("ballContainer")
     this.cueBallElement = id("cueBall")
     this.cueTipElement = id("cueTip")
+    this.powerSliderContainerElement = id("powerSliderContainer")
     this.cuePowerElement = id("cuePower")
     this.cueHitElement = id("cueHit") as HTMLButtonElement
     if (this.cueHitElement) {
@@ -78,12 +84,28 @@ export class AimInputs {
     this.updateHitButton()
     this.updatePowerElement()
     this.updateCueBall()
+    this.updateBallContainer()
     if (this.objectBallStyle) {
       if (this.controlsDisabled) {
         this.objectBallStyle.visibility = "hidden"
       } else {
         this.showOverlap()
       }
+    }
+  }
+
+  private updateBallContainer() {
+    if (this.ballContainerWrapperElement) {
+      this.ballContainerWrapperElement.classList.toggle(
+        "is-disabled",
+        this.controlsDisabled
+      )
+    }
+    if (this.ballContainerElement) {
+      this.ballContainerElement.classList.toggle(
+        "is-disabled",
+        this.controlsDisabled
+      )
     }
   }
 
@@ -103,6 +125,12 @@ export class AimInputs {
   }
 
   private updatePowerElement() {
+    if (this.powerSliderContainerElement) {
+      this.powerSliderContainerElement.classList.toggle(
+        "is-disabled",
+        this.controlsDisabled
+      )
+    }
     if (this.cuePowerElement) {
       this.cuePowerElement.disabled = this.controlsDisabled
       this.cuePowerElement.classList.toggle(
@@ -169,7 +197,9 @@ export class AimInputs {
         this.readDimensions()
         this.objectBallStyle.visibility = "visible"
         this.objectBallStyle.left =
-          (closest.overlap * this.ballWidth) / 2 + 2 + "px"
+          (closest.overlap * this.ballWidth) / 2 +
+          this.cueBallElement.offsetLeft +
+          "px"
         this.objectBallStyle.backgroundColor = new Color(0, 0, 0)
           .lerp(closest.ball.ballmesh.color, 0.5)
           .getStyle()
@@ -218,17 +248,27 @@ export class AimInputs {
     if (this.sliderAnimId !== null) return // Prevent multiple concurrent animations
 
     const target = parseFloat(this.cuePowerElement.value)
-    const duration = 1200 // ms
+    const duration = 2000 // Increased to 2s to allow for the 1s delay
     let start: number | null = null
 
     this.setSliderVisual(0) // Start the visual stroke from 0
 
     const animate = (now: number) => {
       if (!start) start = now
-      const progress = Math.min((now - start) / duration, 1)
+      const elapsed = now - start
+      const progress = Math.min(elapsed / duration, 1)
 
-      // OutQuart Easing: fast start, slow finish
-      const ease = 1 - Math.pow(1 - progress, 4)
+      let ease = 0
+      if (progress < 0.5) {
+        // First 50% (1 second): Stay very close to 0
+        ease = Math.pow(progress * 2, 8) * 0.05
+      } else {
+        // Second 50% (1 second): Rapidly stroke to target
+        const p2 = (progress - 0.5) * 2
+        // OutQuart-like finish: starts fast from the 1s mark
+        ease = 0.05 + 0.95 * (1 - Math.pow(1 - p2, 4))
+      }
+
       this.setSliderVisual(ease * target)
 
       if (progress < 1) {
