@@ -1811,10 +1811,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailuge/messaging@npm:1.14.0":
-  version: 1.14.0
-  resolution: "@tailuge/messaging@npm:1.14.0"
-  checksum: 10c0/3f49409385d8516ce32a703613811784841148e5ad4e637494c9070b033e86b5ea0cd2e627f9dee8553a03aab6f37953269c386cf7657c599fdc1d74d84ba676
+"@tailuge/messaging@npm:1.15.0":
+  version: 1.15.0
+  resolution: "@tailuge/messaging@npm:1.15.0"
+  checksum: 10c0/6774a5f8b874f4192fc2d4d7140d8983b386f432ba556978933fa3451687dee813928157a6838edeebc99f4bb7a0d6c2a67f937f00f6db6e235ef6fe3824c673
   languageName: node
   linkType: hard
 
@@ -2119,12 +2119,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:25.5.2":
-  version: 25.5.2
-  resolution: "@types/node@npm:25.5.2"
+"@types/node@npm:25.6.0":
+  version: 25.6.0
+  resolution: "@types/node@npm:25.6.0"
   dependencies:
-    undici-types: "npm:~7.18.0"
-  checksum: 10c0/11e41a85401724cd1a4de6fb7bd4264ec46db10c09fc8cf8d41de4ede0a7063db458348f859ead4ec0929906aa26aaf45a5fef3aa59742ca0521cda9cee52377
+    undici-types: "npm:~7.19.0"
+  checksum: 10c0/d2d2015630ff098a201407f55f5077a20270ae4f465c739b40865cd9933b91b9c5d2b85568eadaf3db0801b91e267333ca7eb39f007428b173d1cdab4b339ac5
   languageName: node
   linkType: hard
 
@@ -3082,11 +3082,11 @@ __metadata:
     "@eslint/js": "npm:10.0.1"
     "@swc/core": "npm:1.15.24"
     "@swc/jest": "npm:0.2.39"
-    "@tailuge/messaging": "npm:1.14.0"
+    "@tailuge/messaging": "npm:1.15.0"
     "@testing-library/dom": "npm:10.4.1"
     "@types/chai": "npm:5.2.3"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:25.5.2"
+    "@types/node": "npm:25.6.0"
     "@types/three": "npm:0.183.1"
     canvas: "npm:3.2.3"
     chai: "npm:6.2.2"
@@ -3100,7 +3100,7 @@ __metadata:
     jest-environment-jsdom: "npm:30.3.0"
     jsoncrush: "npm:^1.1.8"
     node-notifier: "npm:^10.0.1"
-    prettier: "npm:3.8.1"
+    prettier: "npm:3.8.2"
     stylelint: "npm:^17.6.0"
     stylelint-config-standard: "npm:^40.0.0"
     swc-loader: "npm:0.2.7"
@@ -7251,12 +7251,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.8.1":
-  version: 3.8.1
-  resolution: "prettier@npm:3.8.1"
+"prettier@npm:3.8.2":
+  version: 3.8.2
+  resolution: "prettier@npm:3.8.2"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/33169b594009e48f570471271be7eac7cdcf88a209eed39ac3b8d6d78984039bfa9132f82b7e6ba3b06711f3bfe0222a62a1bfb87c43f50c25a83df1b78a2c42
+  checksum: 10c0/2d64bd01d269c8dd6d8c423a2a2e1fb88230a53aac523204b327de40059ccf8bd8e6fe70b8ce6154b97ed4442e9fd878504ff8a5330f3a4f64bd13d1576f7652
   languageName: node
   linkType: hard
 
@@ -8718,6 +8718,13 @@ __metadata:
   version: 7.18.2
   resolution: "undici-types@npm:7.18.2"
   checksum: 10c0/85a79189113a238959d7a647368e4f7c5559c3a404ebdb8fc4488145ce9426fcd82252a844a302798dfc0e37e6fb178ff481ed03bc4caf634c5757d9ef43521d
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~7.19.0":
+  version: 7.19.2
+  resolution: "undici-types@npm:7.19.2"
+  checksum: 10c0/7159f10546f9f6c47d36776bb1bbf8671e87c1e587a6fee84ae1f111ae8de4f914efa8ca0dfcd224f4f4a9dfc3f6028f627ccb5ddaccf82d7fd54671b89fac3e
   languageName: node
   linkType: hard
 

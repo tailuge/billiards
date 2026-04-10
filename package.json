@@ -31,7 +31,7 @@
     "gltfpack": "npx gltfpack -i dist/models/p8.gltf -o dist/models/p8.min.gltf && npx gltfpack -i dist/models/threecushion.gltf -o dist/models/threecushion.min.gltf && npx gltfpack -i dist/models/snooker.gltf -o dist/models/snooker.min.gltf && npx gltfpack -i dist/models/d-snooker.gltf -o dist/models/d-snooker.min.gltf"
   },
   "dependencies": {
-    "@tailuge/messaging": "1.14.0",
+    "@tailuge/messaging": "1.15.0",
     "interactjs": "1.10.27",
     "jsoncrush": "^1.1.8",
     "three": "0.183.2"
@@ -43,7 +43,7 @@
     "@testing-library/dom": "10.4.1",
     "@types/chai": "5.2.3",
     "@types/jest": "30.0.0",
-    "@types/node": "25.5.2",
+    "@types/node": "25.6.0",
     "@types/three": "0.183.1",
     "canvas": "3.2.3",
     "chai": "6.2.2",
@@ -55,7 +55,7 @@
     "jest": "30.3.0",
     "jest-environment-jsdom": "30.3.0",
     "node-notifier": "^10.0.1",
-    "prettier": "3.8.1",
+    "prettier": "3.8.2",
     "stylelint": "^17.6.0",
     "stylelint-config-standard": "^40.0.0",
     "swc-loader": "0.2.7",
