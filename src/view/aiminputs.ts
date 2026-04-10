@@ -57,6 +57,7 @@ export class AimInputs {
       this.updatePowerProgress()
     }
     this.addListeners()
+    this.updateVisualState(0, 0)
     if (Session.isSpectator()) {
       this.setDisabled(true)
     }
@@ -179,11 +180,12 @@ export class AimInputs {
   }
 
   updateVisualState(x: number, y: number) {
-    this.readDimensions()
     const elt = this.cueTipElement?.style
     if (elt) {
-      elt.left = (-x + 0.5) * this.ballWidth - this.tipRadius + "px"
-      elt.top = (-y + 0.5) * this.ballHeight - this.tipRadius + "px"
+      // Use percentages so the tip scales automatically with the ball
+      elt.left = ((-x + 0.5) * 100).toString() + "%"
+      elt.top = ((-y + 0.5) * 100).toString() + "%"
+      elt.transform = "translate(-50%, -50%)"
     }
     this.showOverlap()
   }
