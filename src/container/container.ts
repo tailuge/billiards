@@ -41,6 +41,7 @@ import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
 import { HitEvent } from "../events/hitevent"
 import { BallTray } from "../view/ball-tray"
+import { checkDesyncTripwire } from "../utils/desync-tripwire"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -394,8 +395,31 @@ export class Container {
     const steps = Math.floor(elapsed / this.step)
     const computedElapsed = steps * this.step
     const stateBefore = this.table.allStationary()
-    for (let i = 0; i < steps; i++) {
-      this.table.advance(this.step)
+    const stateAtStart = this.table.shortSerialise()
+    try {
+      for (let i = 0; i < steps; i++) {
+        this.table.advance(this.step)
+      }
+    } catch (e) {
+      const payload = checkDesyncTripwire(
+        "tripwire: advance_exception",
+        undefined,
+        stateAtStart,
+        () => ({
+          phase: "advance",
+          controller: this.controller.name,
+          shotCount: this.recorder.getShotCount(),
+          recentHistory: this.recorder.getRecentHistory(),
+          localHistoryWindow: this.cloneHitHistoryWindow(
+            this.hitHistory.slice(-DESYNC_HISTORY_SLICE)
+          ),
+          stateAtStart,
+        })
+      )
+      if (e instanceof Error) {
+        e.message = `${e.message} ${payload}`
+      }
+      throw e
     }
     this.table.updateBallMesh(computedElapsed)
     this.view.update(computedElapsed, this.table.cue.aim)

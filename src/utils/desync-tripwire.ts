@@ -38,28 +38,27 @@ export function checkDesyncTripwire(
   remoteStateCheck: number[] | undefined,
   localStateCheck: number[],
   extra: Record<string, unknown> | (() => Record<string, unknown>) = {}
-) {
-  if (!statesDiffer(remoteStateCheck, localStateCheck)) {
-    return
+): string | undefined {
+  if (remoteStateCheck && !statesDiffer(remoteStateCheck, localStateCheck)) {
+    return undefined
   }
-
-  if (reportedTripwires.has(label)) {
-    return
-  }
-  reportedTripwires.add(label)
 
   const extraObj = typeof extra === "function" ? extra() : extra
-  globalThis.console?.warn?.(
-    label,
-    JSON.stringify(
-      {
-        version: VERSION,
-        ...extraObj,
-      },
-      null,
-      2
-    )
+  const payload = JSON.stringify(
+    {
+      version: VERSION,
+      ...extraObj,
+    },
+    null,
+    2
   )
+
+  if (!reportedTripwires.has(label)) {
+    reportedTripwires.add(label)
+    globalThis.console?.warn?.(label, payload)
+  }
+
+  return payload
 }
 
 function hashString(input: string): string {
