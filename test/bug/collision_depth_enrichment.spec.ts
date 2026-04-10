@@ -50,7 +50,7 @@ describe("Collision Depth Enrichment", () => {
     }
   })
 
-  it("should rethrow other errors without enrichment", () => {
+  it("should enrich any error thrown during advance", () => {
     const originalAdvance = mockTable.advance
     mockTable.advance = () => {
       throw new Error("Some other error")
@@ -60,7 +60,9 @@ describe("Collision Depth Enrichment", () => {
       container.advance(0.1)
       expect.fail("Should have thrown")
     } catch (e: any) {
-      expect(e.message).to.equal("Some other error")
+      expect(e.message).to.contain("Some other error")
+      expect(e.message).to.contain('"phase": "advance"')
+      expect(e.message).to.contain('"stateAtStart":')
     } finally {
       mockTable.advance = originalAdvance
     }

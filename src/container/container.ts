@@ -401,22 +401,22 @@ export class Container {
         this.table.advance(this.step)
       }
     } catch (e) {
-      if (e instanceof Error && e.message.includes("Depth exceeded")) {
-        const payload = checkDesyncTripwire(
-          "tripwire: collision_depth_exceeded",
-          undefined,
+      const payload = checkDesyncTripwire(
+        "tripwire: advance_exception",
+        undefined,
+        stateAtStart,
+        () => ({
+          phase: "advance",
+          controller: this.controller.name,
+          shotCount: this.recorder.getShotCount(),
+          recentHistory: this.recorder.getRecentHistory(),
+          localHistoryWindow: this.cloneHitHistoryWindow(
+            this.hitHistory.slice(-DESYNC_HISTORY_SLICE)
+          ),
           stateAtStart,
-          () => ({
-            phase: "advance",
-            controller: this.controller.name,
-            shotCount: this.recorder.getShotCount(),
-            recentHistory: this.recorder.getRecentHistory(),
-            localHistoryWindow: this.cloneHitHistoryWindow(
-              this.hitHistory.slice(-DESYNC_HISTORY_SLICE)
-            ),
-            stateAtStart,
-          })
-        )
+        })
+      )
+      if (e instanceof Error) {
         e.message = `${e.message} ${payload}`
       }
       throw e
