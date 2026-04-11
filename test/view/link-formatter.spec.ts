@@ -56,11 +56,6 @@ describe("LinkFormatter", () => {
     const uncrushed = require("jsoncrush").default.uncrush(compressed)
     const payload = JSON.parse(uncrushed)
 
-    // Current behavior (broken according to issue)
-    // payload = { v: 1, state: { test: 1 }, score: 10 }
-    // Expected behavior (fixed)
-    // payload = { test: 1, score: 10, v: 1 }
-
     expect(payload.score).toBe(10)
     expect(payload.v).toBe(1)
     expect(payload.test).toBe(1)
