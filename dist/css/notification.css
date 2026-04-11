@@ -144,7 +144,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 320px;
+  min-width: 300px;
   padding: 0;
   overflow: hidden;
   border-radius: var(--notification-radius-m);

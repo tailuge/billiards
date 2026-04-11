@@ -260,7 +260,7 @@ export class AimInputs {
       const elapsed = now - start
       const progress = Math.min(elapsed / duration, 1)
 
-      let ease = 0
+      let ease: number
       if (progress < 0.5) {
         // First 50% (1 second): Stay very close to 0
         ease = Math.pow(progress * 2, 8) * 0.05

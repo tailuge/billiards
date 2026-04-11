@@ -92,11 +92,11 @@ export class Notification {
             <div class="notification-icon">${icon}</div>
             <div class="notification-text-group">
               <div class="notification-title">${data.title}</div>
-              ${
-                data.subtext
-                  ? `<div class="notification-subtext${data.type === "GameOver" ? " notification-subtext-light" : ""}">${data.subtext}</div>`
-                  : ""
-              }
+              ${(() => {
+                if (!data.subtext) return ""
+                const subtextClass = data.type === "GameOver" ? " notification-subtext-light" : ""
+                return `<div class="notification-subtext${subtextClass}">${data.subtext}</div>`
+              })()}
             </div>
           </div>
           ${data.matchScore ? `<div class="notification-match-score">${data.matchScore}</div>` : ""}
@@ -179,7 +179,9 @@ export class Notification {
   }
 
   private bindActions() {
-    if (!this.element) return
+    if (!this.element) {
+      return
+    }
     ;["pointerdown", "mousedown", "touchstart", "click"].forEach(
       (eventName) => {
         this.element.addEventListener(eventName, (event) => {
