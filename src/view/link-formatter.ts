@@ -18,8 +18,8 @@ export class LinkFormatter {
 
   getHiScoreUri(state: any, score: number): string {
     const payload = {
+      ...state,
       v: 1,
-      state,
       score,
     }
     const compressed = ReplayEncoder.crush(JSON.stringify(payload))
