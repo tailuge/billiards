@@ -203,12 +203,29 @@
   white-space: pre-wrap;
 }
 
+.notification-subtext-light {
+  font-weight: var(--notification-weight-normal);
+  opacity: 0.85;
+}
+
 /* 3.4 Match Score */
 .notification-match-score {
   width: 100%;
   padding: var(--notification-space-1) var(--notification-space-6); /* Extremely tight vertical padding */
   background: var(--notification-score-bg);
   border-top: 1px solid var(--notification-score-border);
+}
+
+.notification-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--notification-space-1);
+  width: 100%;
+  padding: var(--notification-space-2) var(--notification-space-4)
+    var(--notification-space-3);
+  border-top: 1px solid var(--notification-score-border);
+  background: rgb(0 0 0 / 9%);
 }
 
 .match-score-container {
@@ -222,7 +239,6 @@
   color: var(--notification-score-label-clr);
   font-size: var(--notification-size-xs);
   font-weight: var(--notification-weight-heavy);
-  letter-spacing: 3px;
   text-transform: uppercase;
 }
 
@@ -275,14 +291,9 @@
    5. Interaction & Extras
    ========================================================================== */
 
-.notification-extra {
-  margin-top: 0; /* No margin between banner and extras */
-}
-
 /* 5.1 Badge Style (Simple extra info) */
 .notification-badge {
   display: inline-block;
-  margin-top: 0;
   padding: var(--notification-space-1) var(--notification-space-4);
   color: var(--notification-white);
   font-size: var(--notification-size-xs);
@@ -297,12 +308,60 @@
   box-shadow: var(--notification-shadow-sm);
 }
 
-/* 5.2 Action Buttons (Links/Buttons in extra area) */
-.notification-extra button,
-.notification-extra .button {
+/* 5.2 High Breaks */
+.notification-high-breaks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 220px;
+}
+
+.notification-high-break {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 2px 0;
+  color: var(--notification-white);
+  font-size: var(--notification-size-m);
+  font-weight: var(--notification-weight-normal);
+  font-family: inherit;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.notification-high-break:hover,
+.notification-high-break:focus-visible {
+  text-decoration: underline;
+}
+
+.notification-high-break-label {
+  letter-spacing: 0.5px;
+}
+
+.notification-high-break-icon,
+.notification-high-break-upload {
+  color: var(--notification-white);
+}
+
+/* 5.3 Action Buttons */
+.notification-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--notification-space-2);
+  width: 100%;
+}
+
+.notification-actions button,
+.notification-actions .button {
   display: inline-block;
-  margin: var(--notification-space-1);
-  padding: var(--notification-space-1) var(--notification-space-4); /* Tightest button padding */
+  padding: var(--notification-space-1) var(--notification-space-2); /* 4px 8px */
   cursor: pointer;
   color: var(--notification-white);
   text-decoration: none;
@@ -321,16 +380,16 @@
     background var(--notification-dur-fast) var(--notification-ease-out);
 }
 
-.notification-extra button:hover,
-.notification-extra .button:hover {
+.notification-actions button:hover,
+.notification-actions .button:hover {
   background: var(--notification-white-25);
   border-color: var(--notification-white-50);
   box-shadow: var(--notification-shadow-md);
   transform: translateY(-4px) scale(1.05);
 }
 
-.notification-extra button:focus-visible,
-.notification-extra .button:focus-visible {
+.notification-actions button:focus-visible,
+.notification-actions .button:focus-visible {
   outline: 2px solid var(--notification-white);
   outline-offset: 4px;
   background: var(--notification-white-25);

@@ -474,7 +474,7 @@ describe("Snooker", () => {
     const call = notifySpy.mock.calls[0][0] as any
     expect(call).to.deep.include({
       title: "YOU LOST",
-      subtext: "Player A 10 - 20 Player B",
+      subtext: "10 - 20",
       matchScore: `<div class="match-score-container">
         <div class="match-score-label">MATCH SCORE</div>
         <div class="match-score-value">Player A 0 — 1 Player B</div>
@@ -503,7 +503,7 @@ describe("Snooker", () => {
     const call = notifySpy.mock.calls[0][0] as any
     expect(call).to.deep.include({
       title: "YOU WON",
-      subtext: "Player A 30 - 20 Player B",
+      subtext: "30 - 20",
       matchScore: `<div class="match-score-container">
         <div class="match-score-label">MATCH SCORE</div>
         <div class="match-score-value">Player A 1 — 0 Player B</div>
@@ -531,7 +531,7 @@ describe("Snooker", () => {
     const call = notifySpy.mock.calls[0][0] as any
     expect(call).to.deep.include({
       title: "YOU WON",
-      subtext: "Player A 20 - 20 Player B",
+      subtext: "20 - 20",
       matchScore: `<div class="match-score-container">
         <div class="match-score-label">MATCH SCORE</div>
         <div class="match-score-value">Player A 1 — 0 Player B</div>

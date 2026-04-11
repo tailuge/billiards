@@ -5,6 +5,7 @@ import { Session } from "./session"
 import { Rematch } from "./rematch"
 import { gameOverButtons } from "../../utils/gameover"
 import { VERSION } from "../../utils/version"
+import { NotificationHighBreak } from "../../view/notification"
 
 export interface MatchResult {
   winner: string
@@ -103,6 +104,7 @@ export class MatchResultHelper {
       title: "YOU WON",
       subtext: subtext,
       matchScore: matchScore,
+      highBreaks: this.getHighBreaks(container),
       icon: "🏆",
       extraClass: "is-winner",
       extra: gameOverButtons.forMode(
@@ -124,6 +126,7 @@ export class MatchResultHelper {
       title: "YOU LOST",
       subtext: Session.isBotMode() ? "Lostber 🦞" : subtext,
       matchScore: matchScore,
+      highBreaks: this.getHighBreaks(container),
       icon: "🥈",
       extraClass: "is-loser",
       extra: gameOverButtons.forMode(
@@ -144,6 +147,7 @@ export class MatchResultHelper {
       title: "GAME OVER",
       subtext: subtext,
       matchScore: matchScore,
+      highBreaks: this.getHighBreaks(container),
       icon: "🏆",
       extraClass: "",
       extra: gameOverButtons.lobby,
@@ -162,6 +166,7 @@ export class MatchResultHelper {
         type: "GameOver",
         title: "YOU LOST",
         matchScore: matchScore,
+        highBreaks: this.getHighBreaks(container),
         icon: "🥈",
         extraClass: "is-loser",
         extra: gameOverButtons.forMode(false, hasRematch),
@@ -175,9 +180,14 @@ export class MatchResultHelper {
       return `Score: ${Session.getInstance().myScore()}`
     }
 
-    const { p1Name, p2Name } = Session.getInstance().orderedNamesForHud()
     const { p1, p2 } = Session.getInstance().orderedScoresForHud()
-    return `${p1Name || "You"} ${p1} - ${p2} ${p2Name || "Opponent"}`
+    return `${p1} - ${p2}`
+  }
+
+  private static getHighBreaks(container: Container): NotificationHighBreak[] {
+    return container.ballTray
+      .getTopBreaks(3)
+      .map(({ score, hiScoreUri }) => ({ score, url: hiScoreUri }))
   }
 
   private static createMatchResult(

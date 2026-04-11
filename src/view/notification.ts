@@ -2,11 +2,17 @@ import { id } from "../utils/dom"
 import { Rematch } from "../network/client/rematch"
 import { Session } from "../network/client/session"
 
+export interface NotificationHighBreak {
+  score: number
+  url: string
+}
+
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info"
   title: string
   subtext?: string | undefined
   matchScore?: string | undefined
+  highBreaks?: NotificationHighBreak[] | undefined
   extra?: string | undefined
   duration?: number | undefined
   icon?: string | undefined
@@ -17,10 +23,12 @@ export type NotificationActionHandlers = Record<string, () => void>
 
 export class Notification {
   element: HTMLDivElement
+  overlay: HTMLDivElement | null
   timeoutId: number | null = null
   actionHandlers: NotificationActionHandlers = {}
 
   constructor() {
+    this.overlay = id("notificationOverlay") as HTMLDivElement | null
     this.element = id("notification") as HTMLDivElement
     this.bindActions()
   }
@@ -75,7 +83,7 @@ export class Notification {
       typeClass += ` ${data.extraClass}`
     }
     const icon = this.getIcon(data)
-    const extraContentHtml = this.renderExtra(data.extra)
+    const footerContentHtml = this.renderFooter(data)
 
     const content = `
       <div class="notification-banner">
@@ -84,24 +92,69 @@ export class Notification {
             <div class="notification-icon">${icon}</div>
             <div class="notification-text-group">
               <div class="notification-title">${data.title}</div>
-              ${data.subtext ? `<div class="notification-subtext">${data.subtext}</div>` : ""}
+              ${
+                data.subtext
+                  ? `<div class="notification-subtext${data.type === "GameOver" ? " notification-subtext-light" : ""}">${data.subtext}</div>`
+                  : ""
+              }
             </div>
           </div>
           ${data.matchScore ? `<div class="notification-match-score">${data.matchScore}</div>` : ""}
         </div>
+        ${footerContentHtml}
       </div>
-      ${extraContentHtml}
     `
 
     return { content, typeClass }
   }
 
+  private renderFooter(data: NotificationData): string {
+    const highBreaksHtml = this.renderHighBreaks(data.highBreaks)
+    const extraHtml = this.renderExtra(data.extra)
+    if (!highBreaksHtml && !extraHtml) {
+      return ""
+    }
+
+    return `
+      <div class="notification-footer">
+        ${highBreaksHtml}
+        ${extraHtml}
+      </div>
+    `
+  }
+
   private renderExtra(extra?: string): string {
     if (!extra) return ""
     if (extra.includes("<")) {
-      return `<div class="notification-extra">${extra}</div>`
+      return `<div class="notification-actions">${extra}</div>`
     }
     return `<div class="notification-badge">${extra}</div>`
+  }
+
+  private renderHighBreaks(highBreaks?: NotificationHighBreak[]): string {
+    if (!highBreaks || highBreaks.length === 0) {
+      return ""
+    }
+
+    const items = highBreaks
+      .slice(0, 3)
+      .map(
+        (highBreak) => `
+          <button
+            type="button"
+            class="notification-high-break"
+            data-notification-upload-url="${highBreak.url}"
+            title="Open high break ${highBreak.score}"
+          >
+            <span class="notification-high-break-label">break:${highBreak.score}</span>
+            <span class="notification-high-break-icon">🏆</span>
+            <span class="notification-high-break-upload">upload</span>
+          </button>
+        `
+      )
+      .join("")
+
+    return `<div class="notification-high-breaks">${items}</div>`
   }
 
   private display(content: string, typeClass: string, duration: number) {
@@ -110,6 +163,9 @@ export class Notification {
     this.element.className = "" // Clear previous classes
     this.element.classList.add(...typeClass.split(" "))
     this.element.style.display = "flex"
+    if (this.overlay) {
+      this.overlay.style.pointerEvents = "auto"
+    }
 
     if (this.timeoutId) {
       globalThis.clearTimeout(this.timeoutId)
@@ -124,8 +180,23 @@ export class Notification {
 
   private bindActions() {
     if (!this.element) return
+    ;["pointerdown", "mousedown", "touchstart", "click"].forEach(
+      (eventName) => {
+        this.element.addEventListener(eventName, (event) => {
+          event.stopPropagation()
+        })
+      }
+    )
     this.element.addEventListener("click", (event) => {
       const target = event.target as HTMLElement | null
+      const uploadButton = target?.closest(
+        "[data-notification-upload-url]"
+      ) as HTMLElement | null
+      const uploadUrl = uploadButton?.dataset.notificationUploadUrl
+      if (uploadUrl) {
+        globalThis.open(uploadUrl, "_blank", "noopener,noreferrer")
+        return
+      }
       const button = target?.closest(
         "[data-notification-action]"
       ) as HTMLElement | null
@@ -164,6 +235,9 @@ export class Notification {
       this.element.innerHTML = ""
       this.element.style.display = "none"
       this.element.className = ""
+    }
+    if (this.overlay) {
+      this.overlay.style.pointerEvents = "none"
     }
     this.actionHandlers = {}
     if (this.timeoutId) {

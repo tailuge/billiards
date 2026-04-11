@@ -7,8 +7,14 @@ interface ShotEntry {
   color: string
   replayUri: string
   hiScoreUri?: string
+  score?: number
   isPot: boolean
   isBreak: boolean
+}
+
+export interface HighBreakEntry {
+  score: number
+  hiScoreUri: string
 }
 
 export class BallTray {
@@ -95,6 +101,7 @@ export class BallTray {
       label: `break(${score})`,
       color: "#ffd700",
       replayUri,
+      score,
       isPot: true,
       isBreak: true,
     }
@@ -122,6 +129,20 @@ export class BallTray {
     this.entries.push(entry)
     this.renderEntry(entry)
     this.updateVisibility()
+  }
+
+  getTopBreaks(limit: number = 3): HighBreakEntry[] {
+    return this.entries
+      .filter(
+        (entry): entry is ShotEntry & { score: number; hiScoreUri: string } =>
+          entry.isBreak &&
+          entry.score !== undefined &&
+          entry.score > 1 &&
+          typeof entry.hiScoreUri === "string"
+      )
+      .sort((left, right) => right.score - left.score)
+      .slice(0, limit)
+      .map(({ score, hiScoreUri }) => ({ score, hiScoreUri }))
   }
 
   reset() {

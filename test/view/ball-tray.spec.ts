@@ -55,6 +55,19 @@ describe("BallTray", () => {
     )
   })
 
+  test("getTopBreaks returns the top 3 break links by score", () => {
+    tray.addBreak({}, 4)
+    tray.addBreak({}, 9)
+    tray.addBreak({}, 2)
+    tray.addBreak({}, 7)
+
+    expect(tray.getTopBreaks()).toEqual([
+      { score: 9, hiScoreUri: "hiscore-url" },
+      { score: 7, hiScoreUri: "hiscore-url" },
+      { score: 4, hiScoreUri: "hiscore-url" },
+    ])
+  })
+
   test("tray is hidden when empty and shown when items exist", () => {
     const trayElement = document.getElementById("ballTray")!
 

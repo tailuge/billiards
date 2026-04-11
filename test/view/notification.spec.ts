@@ -40,6 +40,57 @@ describe("Notification", () => {
     expect(element?.innerHTML).toContain("notification-badge")
   })
 
+  it("should render high breaks and actions inside the notification footer", () => {
+    notification.show({
+      type: "GameOver",
+      title: "YOU WON",
+      highBreaks: [
+        { score: 9, url: "https://example.com/9" },
+        { score: 7, url: "https://example.com/7" },
+        { score: 4, url: "https://example.com/4" },
+      ],
+      extra: `<button data-notification-action="clear">Dismiss</button>`,
+      duration: 0,
+    })
+
+    const element = document.getElementById("notification")
+    expect(element?.querySelectorAll(".notification-high-break")).toHaveLength(
+      3
+    )
+    expect(element?.querySelector(".notification-actions")).not.toBeNull()
+    expect(element?.querySelector(".notification-footer")).not.toBeNull()
+    expect(element?.innerHTML).toContain("break:9")
+    expect(element?.innerHTML).toContain("upload")
+    expect(
+      (element?.querySelector(".notification-high-break") as HTMLButtonElement)
+        ?.dataset.notificationUploadUrl
+    ).toContain("https://example.com/9")
+  })
+
+  it("should open a high break upload in a new window", () => {
+    const openSpy = jest
+      .spyOn(globalThis, "open")
+      .mockImplementation(() => null)
+
+    notification.show({
+      type: "GameOver",
+      title: "YOU WON",
+      highBreaks: [{ score: 9, url: "https://example.com/9" }],
+      duration: 0,
+    })
+    ;(
+      document.querySelector(".notification-high-break") as HTMLButtonElement
+    ).click()
+
+    expect(openSpy).toHaveBeenCalledWith(
+      "https://example.com/9",
+      "_blank",
+      "noopener,noreferrer"
+    )
+
+    openSpy.mockRestore()
+  })
+
   it("should clear a message", () => {
     notification.show("Test Message")
     notification.clear()

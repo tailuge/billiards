@@ -244,4 +244,26 @@ describe("MatchResult Construction", () => {
 
     expect(result.bot).to.be.true
   })
+
+  it("MatchResultHelper should show the top 3 high breaks in game over notification", () => {
+    container = createNineBallContainer()
+    container.ballTray.addBreak({ shots: [] }, 4)
+    container.ballTray.addBreak({ shots: [] }, 11)
+    container.ballTray.addBreak({ shots: [] }, 2)
+    container.ballTray.addBreak({ shots: [] }, 7)
+
+    const result = (container.rules as any).handleGameEnd(true)
+    expect(result.name).to.equal("End")
+
+    const notification = document.getElementById("notification")
+    const scores = Array.from(
+      notification?.querySelectorAll(".notification-high-break-label") ?? []
+    ).map((element) => element.textContent?.trim())
+
+    expect(scores).to.deep.equal(["break:11", "break:7", "break:4"])
+    expect(
+      notification?.querySelectorAll(".notification-high-break").length
+    ).to.equal(3)
+    expect(notification?.querySelector(".notification-actions")).to.exist
+  })
 })
