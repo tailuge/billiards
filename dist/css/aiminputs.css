@@ -16,7 +16,7 @@
   height: 70px;
   position: relative;
   z-index: 20;
-  transition: flex 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: flex 0.1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ballContainerWrapper.is-disabled {
@@ -33,7 +33,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid #2d1e16;
   border-bottom: none;
   border-left: none;
@@ -77,7 +77,7 @@
     6px 12px 24px rgb(0 0 0 / 70%),
     inset -4px -6px 12px rgb(0 0 0 / 40%),
     inset 8px 10px 15px rgb(255 255 255 / 20%);
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
 }
 
 .cueBall::before {
@@ -111,7 +111,7 @@
   top: 6%;
   left: 6%;
   pointer-events: none;
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
 }
 
 .cueTip {
@@ -126,7 +126,7 @@
   box-shadow:
     0 0 2px rgb(0 0 0 / 60%),
     inset 0 1px 1px rgb(255 255 255 / 30%);
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
 }
 
 .ballContainer.is-disabled .cueTip {
