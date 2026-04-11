@@ -45,4 +45,21 @@ describe("LinkFormatter", () => {
     expect(uri).toContain("hiscore.html")
     expect(uri).toContain("ruletype=")
   })
+
+  it("getHiScoreUri should include score and v at top level and inside state object", () => {
+    const state = { test: 1 }
+    const score = 10
+    const uri = container.linkFormatter.getHiScoreUri(state, score)
+
+    const url = new URL(uri)
+    const compressed = url.searchParams.get("state")!
+    const uncrushed = require("jsoncrush").default.uncrush(compressed)
+    const payload = JSON.parse(uncrushed)
+
+    expect(payload.score).toBe(10)
+    expect(payload.v).toBe(1)
+    expect(payload.state.test).toBe(1)
+    expect(payload.state.score).toBe(10)
+    expect(payload.state.v).toBe(1)
+  })
 })
