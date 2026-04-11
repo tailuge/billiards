@@ -53,6 +53,7 @@ describe("BallTray", () => {
     expect(trayList.querySelector(".break-group")?.innerHTML).toContain(
       "hiscore-url"
     )
+    expect(container.linkFormatter.getHiScoreUri).toHaveBeenCalledWith({}, 3)
   })
 
   test("getTopBreaks returns the top 3 break links by score", () => {

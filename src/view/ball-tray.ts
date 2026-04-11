@@ -107,7 +107,7 @@ export class BallTray {
     }
 
     if (score >= 2) {
-      entry.hiScoreUri = this.container.linkFormatter.getHiScoreUri(breakData)
+      entry.hiScoreUri = this.container.linkFormatter.getHiScoreUri(breakData, score)
     }
 
     this.entries.push(entry)

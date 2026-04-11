@@ -324,7 +324,7 @@
   gap: 6px;
   padding: 2px 0;
   color: var(--notification-white);
-  font-size: var(--notification-size-m);
+  font-size: var(--notification-size-s);
   font-weight: var(--notification-weight-normal);
   font-family: inherit;
   background: transparent;

@@ -41,7 +41,7 @@ describe("LinkFormatter", () => {
   })
 
   it("getHiScoreUri should return a valid URI with ruletype", () => {
-    const uri = container.linkFormatter.getHiScoreUri({ test: 1 })
+    const uri = container.linkFormatter.getHiScoreUri({ test: 1 }, 10)
     expect(uri).toContain("hiscore.html")
     expect(uri).toContain("ruletype=")
   })
