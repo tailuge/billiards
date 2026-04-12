@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Billiards Shot Visualizer</title>
+    <link rel="stylesheet" type="text/css" href="../css/fonts.css" />
 
     <style>
       /* Basic Reset & Defaults */
@@ -16,18 +17,7 @@
       }
 
       body {
-        font-family:
-          system-ui,
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          Roboto,
-          Oxygen,
-          Ubuntu,
-          Cantarell,
-          "Open Sans",
-          "Helvetica Neue",
-          sans-serif;
+        font-family: var(--font-family-primary);
         line-height: 1.6;
         background-color: #f4f4f4;
         color: #333;
@@ -45,7 +35,7 @@
       }
 
       h1 {
-        font-size: 1.5rem;
+        font-size: 16px;
         font-weight: 600;
       }
 
@@ -79,7 +69,7 @@
         padding: 0.5rem 0.8rem;
         border: 1px solid #ccc;
         border-radius: 4px;
-        font-size: 0.9rem;
+        font-size: 16px;
         background-color: #fff;
         cursor: pointer;
       }
@@ -149,7 +139,7 @@
         margin-top: auto; /* Push footer to the bottom */
         padding: 1rem;
         text-align: center;
-        font-size: 0.85rem;
+        font-size: 8px;
         color: #666;
         background-color: #e9e9e9;
         border-top: 1px solid #ccc;
@@ -184,7 +174,7 @@
         }
 
         h1 {
-          font-size: 1.3rem;
+          font-size: 16px;
         }
         .canvas-container {
           padding: 0 0.5rem; /* Reduce padding */

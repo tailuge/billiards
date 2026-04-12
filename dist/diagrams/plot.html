@@ -2,13 +2,14 @@
 <html lang="en">
   <head>
     <title>Billiard Shot Viewer</title>
+    <link rel="stylesheet" type="text/css" href="../css/fonts.css" />
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>🎱</svg>"
     />
     <style>
       body {
-        font-family: sans-serif;
+        font-family: var(--font-family-primary);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -89,7 +90,7 @@
 
       footer {
         margin-top: 20px;
-        font-size: 12px;
+        font-size: 16px;
         color: #666;
         text-align: center;
         width: 100%;
@@ -107,7 +108,7 @@
         border-radius: 4px;
         background: #f8f8f8;
         width: 400px;
-        font-family: "Consolas", "Monaco", monospace;
+        font-family: var(--font-family-mono);
       }
 
       .diagram-container {
@@ -125,7 +126,7 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 15px;
-        font-size: 0.9em;
+        font-size: 16px;
       }
 
       .controls-grid {
@@ -136,7 +137,7 @@
       }
 
       .diagram label {
-        font-size: 0.8em;
+        font-size: 8px;
         color: #444;
         min-width: 50px;
       }
@@ -148,7 +149,7 @@
 
       .diagram button {
         padding: 4px 12px;
-        font-size: 0.8em;
+        font-size: 8px;
         font-family: inherit;
         background: #fff;
         border: 1px solid #ccc;
@@ -190,7 +191,7 @@
       }
 
       #aim-coordinates {
-        font-size: 0.7em;
+        font-size: 8px;
         color: #555;
         margin-bottom: 5px;
       }
@@ -203,7 +204,7 @@
       }
 
       #aim-power-direction label {
-        font-size: 0.7em;
+        font-size: 8px;
         color: #444;
       }
 
@@ -218,14 +219,14 @@
         border-radius: 4px;
         background: #f8f8f8;
         width: 220px; /* Make the group narrower */
-        font-family: "Consolas", "Monaco", monospace;
+        font-family: var(--font-family-mono);
       }
 
       .diagram-group-header {
         display: flex;
         justify-content: space-between;
         margin-bottom: 10px;
-        font-size: 0.9em;
+        font-size: 16px;
       }
 
       .diagram-group .controls-grid {
@@ -236,7 +237,7 @@
       }
 
       .diagram-group label {
-        font-size: 0.7em;
+        font-size: 8px;
         color: #444;
         min-width: 30px;
       }
@@ -248,7 +249,7 @@
 
       .diagram-group button {
         padding: 4px 8px;
-        font-size: 0.7em;
+        font-size: 8px;
         font-family: inherit;
         background: #fff;
         border: 1px solid #ccc;

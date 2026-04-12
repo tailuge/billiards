@@ -25,10 +25,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: "ui-monospace", monospace;
-  font-size: 12px;
-  -webkit-font-smoothing: none;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-family-mono);
+  font-size: 16px;
   letter-spacing: 0.5px;
   line-height: 1.2;
   color: white;
@@ -99,7 +97,7 @@
   justify-content: center;
   cursor: pointer;
   color: rgb(255 255 255 / 50%);
-  font-size: 10px;
+  font-size: 12px;
   transition:
     opacity 0.3s ease,
     background 0.2s;
@@ -137,7 +135,7 @@
 
 .hi-score-pill {
   color: #ffd700;
-  font-size: 10px;
+  font-size: 12px;
   text-decoration: none;
   margin-left: 2px;
   position: relative;
@@ -149,9 +147,9 @@
 }
 
 .ball-item.break-score {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 100;
-  font-family: Verdana, sans-serif;
+  font-family: var(--font-family-primary);
   vertical-align: middle;
   line-height: normal;
   position: relative;

@@ -11,6 +11,7 @@
 
 .lobby-count {
   display: inline-block;
+  font-size: 16px;
 }
 
 .lobby-count.is-hidden {
@@ -23,7 +24,7 @@
   color: #fff;
   padding: 0 2px;
   border-radius: 3px;
-  font-size: 11px;
+  font-size: 16px;
   white-space: nowrap;
   box-shadow: 0 0 10px rgb(137 33 33 / 50%);
 }

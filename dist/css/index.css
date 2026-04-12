@@ -38,9 +38,8 @@ p {
 }
 
 #snookerScore {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 16px;
-  font-style: italic;
+  font-family: var(--font-family-primary);
+  font-size: 32px;
   color: yellow;
   text-align: center;
   filter: drop-shadow(0.08em 0.08em black);
@@ -49,12 +48,12 @@ p {
 #snookerScoreOverlay {
   position: absolute;
   bottom: 10px;
-  right: 4em;
+  right: 80px;
 }
 
 .p1Score,
 .p2Score {
-  font-size: 0.6em;
+  font-size: 12px;
 }
 
 .p1Score.is-active,
@@ -64,7 +63,7 @@ p {
 }
 
 .breakScore {
-  font-size: xx-large;
+  font-size: 32px;
   font-style: italic;
   color: yellow;
   text-align: center;
@@ -134,7 +133,7 @@ a.pill {
   border: 1px solid rgb(255 255 255 / 15%);
   margin: 0;
   padding: 0 8px;
-  font-size: smaller;
+  font-size: 12px;
   height: 30px;
   display: flex;
   align-items: center;
@@ -155,7 +154,7 @@ a {
   padding: 5px;
   border: double;
   max-width: 50%;
-  font-size: small;
+  font-size: 12px;
 }
 
 .nw {
@@ -179,8 +178,8 @@ label {
   border: 1px solid rgb(255 255 255 / 15%);
   border-radius: 8px;
   padding: 0 8px;
-  font-family: Consolas, Monaco, monospace;
-  font-size: 11px;
+  font-family: var(--font-family-mono);
+  font-size: 16px;
   color: #ccc;
   z-index: 2000;
   overflow: hidden;
@@ -210,7 +209,7 @@ label {
   color: #aaa;
   cursor: pointer;
   padding: 2px 6px;
-  font-size: 10px;
+  font-size: 12px;
   border-radius: 4px;
   height: 22px;
 }
@@ -269,7 +268,7 @@ label {
 
 /* Lobster emoji in header */
 #botDebugOverlay header > span {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1;
   display: flex;
   align-items: center;

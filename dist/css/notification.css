@@ -49,12 +49,12 @@
   --notification-space-12: 48px;
 
   /* --- Typography --- */
-  --notification-font-family: "Segoe UI", roboto, helvetica, arial, sans-serif;
-  --notification-size-xs: 0.7rem;
-  --notification-size-s: 0.85rem;
-  --notification-size-m: 1rem;
-  --notification-size-l: 1.1rem;
-  --notification-size-xl: 1.4rem;
+  --notification-font-family: var(--font-family-primary);
+  --notification-size-xs: 12px;
+  --notification-size-s: 16px;
+  --notification-size-m: 16px;
+  --notification-size-l: 16px;
+  --notification-size-xl: 16px;
   --notification-weight-normal: 400;
   --notification-weight-semi: 600;
   --notification-weight-bold: 700;
@@ -101,7 +101,7 @@
 
 #notificationOverlay {
   position: absolute;
-  top: 50px;
+  top: 60px;
   width: 100%;
   display: flex;
   justify-content: center;
