@@ -94,7 +94,8 @@ export class Notification {
               <div class="notification-title">${data.title}</div>
               ${(() => {
                 if (!data.subtext) return ""
-                const subtextClass = data.type === "GameOver" ? " notification-subtext-light" : ""
+                const subtextClass =
+                  data.type === "GameOver" ? " notification-subtext-light" : ""
                 return `<div class="notification-subtext${subtextClass}">${data.subtext}</div>`
               })()}
             </div>

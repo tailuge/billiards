@@ -17,16 +17,9 @@ export class LinkFormatter {
   }
 
   getHiScoreUri(state: any, score: number): string {
-    const payload = {
-      v: 1,
-      state: {
-        ...state,
-        v: 1,
-        score,
-      },
-      score,
-    }
-    const compressed = ReplayEncoder.crush(JSON.stringify(payload))
+    state.score = score
+    const serialised = JSON.stringify(state)
+    const compressed = ReplayEncoder.crush(serialised)
     return `${this.hiScoreUrl}?ruletype=${
       this.container.rules.rulename
     }&state=${ReplayEncoder.fullyEncodeURI(compressed)}`
