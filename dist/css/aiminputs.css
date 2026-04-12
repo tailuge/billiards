@@ -1,12 +1,12 @@
 :root {
-  --ball-size-base: 160px;
+  --ball-size-base: 152px;
   --ball-size-small: 70px;
 }
 
 .aimingArea {
   position: absolute;
-  bottom: 180px;
-  left: 28px;
+  bottom: 160px;
+  left: 24px;
   z-index: 2000;
   pointer-events: auto;
 }
@@ -52,6 +52,8 @@
   border-radius: 0;
   border-width: 0px;
   box-shadow: none;
+  background-color: transparent !important;
+  background-image: none !important;
 }
 
 .cueBall {
