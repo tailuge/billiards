@@ -39,7 +39,7 @@ p {
 
 #snookerScore {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: xx-large;
+  font-size: 16px;
   font-style: italic;
   color: yellow;
   text-align: center;
@@ -48,8 +48,8 @@ p {
 
 #snookerScoreOverlay {
   position: absolute;
-  bottom: 16px;
-  right: 3em;
+  bottom: 10px;
+  right: 4em;
 }
 
 .p1Score,

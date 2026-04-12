@@ -1,7 +1,7 @@
 /* Minimalist Ball Tray Style */
 .tray-container {
   position: absolute;
-  top: 10px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 160px;
@@ -9,11 +9,45 @@
   display: flex;
   align-items: center;
   background: rgb(0 0 0 / 40%);
-  border-radius: 8px;
+  border-radius: 0 0 8px 8px;
   border: 1px solid rgb(255 255 255 / 15%);
+  border-top: none;
   z-index: 1500;
   overflow: hidden;
   pointer-events: auto;
+}
+
+.tray-score-container {
+  position: absolute;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "ui-monospace", monospace;
+  font-size: 12px;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  color: white;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 1);
+  padding-top: 2px;
+  pointer-events: none;
+  gap: 2px;
+  z-index: 1501;
+}
+
+.p1Score,
+.p2Score {
+  font-size: inherit;
+}
+
+.p2Score:not(:empty)::before {
+  content: ":";
+  margin: 0 4px;
+  opacity: 0.7;
 }
 
 .ball-tray-list {

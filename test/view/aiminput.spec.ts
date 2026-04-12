@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { AimInputs } from "../../src/view/aiminputs"
+import { AimInputs } from "../../src/view/dom/aiminputs"
 import { initDom, canvas3d } from "./dom"
 import { Container } from "../../src/container/container"
 import { fireEvent } from "@testing-library/dom"

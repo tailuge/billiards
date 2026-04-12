@@ -1,11 +1,11 @@
 import { Color, Vector3 } from "three"
-import { Container } from "../container/container"
-import { Input } from "../events/input"
-import { Session } from "../network/client/session"
-import { Overlap } from "../utils/overlap"
-import { unitAtAngle } from "../utils/three-utils"
-import { id } from "../utils/dom"
-import { TimeoutButton } from "./timeoutbutton"
+import { Container } from "../../container/container"
+import { Input } from "../../events/input"
+import { Session } from "../../network/client/session"
+import { Overlap } from "../../utils/overlap"
+import { unitAtAngle } from "../../utils/three-utils"
+import { id } from "../../utils/dom"
+import { TimeoutButton } from "../timeoutbutton"
 
 export class AimInputs {
   readonly ballContainerWrapperElement

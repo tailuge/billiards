@@ -4,7 +4,7 @@ import { Container } from "../../container/container"
 import { BreakEvent } from "../../events/breakevent"
 import { AbortEvent } from "../../events/abortevent"
 import { BeginEvent } from "../../events/beginevent"
-import { AimInputs } from "./aiminputs"
+import { AimInputs } from "../../view/dom/aiminputs"
 
 export class RealOverlay {
   private readonly drawer: RealDraw

@@ -47,14 +47,14 @@ export class Hud {
     this.setText(this.breakElement, "")
 
     if (p1Name && p2Name) {
-      this.setText(this.p1Element, `${p1Name}: ${p1}`)
-      this.setText(this.p2Element, `${p2Name}: ${p2}`)
+      this.setText(this.p1Element, `${p1Name} ${p1}`)
+      this.setText(this.p2Element, `${p2} ${p2Name}`)
     } else if (p1Name) {
-      this.setText(this.p1Element, `${p1Name}: ${p1}`)
+      this.setText(this.p1Element, `${p1Name} ${p1}`)
     } else if (p2Name) {
-      this.setText(this.p2Element, `${p2Name}: ${p2}`)
+      this.setText(this.p2Element, `${p2} ${p2Name}`)
     } else {
-      this.setText(this.p1Element, `Score: ${p1}`)
+      this.setText(this.p1Element, `${p1}`)
     }
 
     if (b > 0) {
