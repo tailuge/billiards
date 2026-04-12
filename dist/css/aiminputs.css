@@ -34,7 +34,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid #2d1e16;
+  border: 1px solid #2d1e16;
   border-bottom: none;
   border-left: none;
   z-index: 20;

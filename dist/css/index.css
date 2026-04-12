@@ -106,6 +106,7 @@ canvas {
   padding: 0;
   background: linear-gradient(rgb(0 64 94), #000214);
   border-radius: 0;
+  border-top: 1px solid #2d1e16;
   box-sizing: border-box;
 }
 
