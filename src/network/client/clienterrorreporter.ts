@@ -158,6 +158,10 @@ export class ClientErrorReporter {
         stack = args[0].stack
       }
 
+      if (message.includes("Backpack couldn't override `window.ethereum`.")) {
+        return
+      }
+
       const key = type + ":" + message
       const count = (this.seen.get(key) ?? 0) + 1
       this.seen.set(key, count)

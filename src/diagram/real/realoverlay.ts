@@ -158,7 +158,6 @@ export class RealOverlay {
       new BeginEvent(),
       new BreakEvent(state.init, state.shots)
     )
-
   }
 
   advance(elapsed: number) {
