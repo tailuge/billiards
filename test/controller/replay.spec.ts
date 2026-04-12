@@ -270,4 +270,33 @@ describe("Controller Replay", () => {
     expect(p2.classList.contains("is-active")).to.be.true
     done()
   })
+
+  it("onclick share button pushes ChatEvent", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      json: () => Promise.resolve({ shortUrl: "http://short.url" }),
+    })
+    Object.defineProperty(global.window, "navigator", {
+      value: {
+        canShare: () => false,
+        clipboard: {
+          writeText: jest.fn().mockResolvedValue(undefined),
+        },
+      },
+      configurable: true,
+    })
+
+    const shareButton = document.getElementById("share") as HTMLButtonElement
+    // Replay controller is already created in beforeEach, and onFirst is called during transition
+    // But we can call it again to be sure the mock is wired up
+    replayController.onFirst()
+
+    expect(shareButton.onclick).to.exist
+    shareButton.onclick!(new MouseEvent("click") as any)
+
+    // shorten -> fetch -> promise -> callback -> share -> promise -> push
+    for (let i = 0; i < 10; i++) await Promise.resolve()
+
+    const chatEvent = container.eventQueue.find((e) => e.type === "CHAT")
+    expect(chatEvent).to.exist
+  })
 })
