@@ -273,7 +273,7 @@ describe("Controller Replay", () => {
 
   it("onclick share button pushes ChatEvent", async () => {
     global.fetch = jest.fn().mockResolvedValue({
-      json: () => Promise.resolve({ shortUrl: "http://short.url" }),
+      json: () => Promise.resolve({ shortUrl: "https://short.url" }),
     })
     Object.defineProperty(global.window, "navigator", {
       value: {

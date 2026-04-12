@@ -39,7 +39,7 @@ describe("shorten utils", () => {
 
     it("should log error if navigator.share fails", async () => {
       const url = "https://example.com"
-      const consoleSpy = jest.spyOn(console, "log").mockImplementation()
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation()
       const shareMock = jest.fn().mockRejectedValue(new Error("Share failed"))
       Object.defineProperty(global.window, "navigator", {
         value: {
@@ -53,9 +53,7 @@ describe("shorten utils", () => {
       expect(result).toBe("link shared")
       // wait for the catch block to be executed
       for (let i = 0; i < 5; i++) await Promise.resolve()
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining("Error: Error: Share failed")
-      )
+      expect(consoleSpy).toHaveBeenCalledWith("Share failed", expect.any(Error))
       consoleSpy.mockRestore()
     })
 
@@ -127,7 +125,7 @@ describe("shorten utils", () => {
     it("should return immediate action if process is object", () => {
       const url = "https://example.com"
       const action = jest.fn()
-      // @ts-ignore
+      // @ts-expect-error mocking process
       global.process = { type: "object" }
 
       shorten(url, action)
@@ -139,7 +137,7 @@ describe("shorten utils", () => {
       const shortUrl = "https://bit.ly/short"
       const action = jest.fn()
 
-      // @ts-ignore
+      // @ts-expect-error mocking process
       delete global.process
 
       global.fetch = jest.fn().mockResolvedValue({
@@ -159,7 +157,7 @@ describe("shorten utils", () => {
       const url = "https://example.com"
       const action = jest.fn()
 
-      // @ts-ignore
+      // @ts-expect-error mocking process
       delete global.process
 
       global.fetch = jest.fn().mockRejectedValue(new Error("Network error"))
@@ -178,7 +176,7 @@ describe("shorten utils", () => {
       const url = "https://example.com"
       const action = jest.fn()
 
-      // @ts-ignore
+      // @ts-expect-error mocking process
       delete global.process
 
       global.fetch = jest.fn().mockResolvedValue({
@@ -202,7 +200,7 @@ describe("shorten utils", () => {
     it("should escape special characters in URL", async () => {
       const url = "https://example.com/search?q=()!*"
       const action = jest.fn()
-      // @ts-ignore
+      // @ts-expect-error mocking process
       delete global.process
       global.fetch = jest.fn().mockResolvedValue({
         json: () => Promise.resolve({ shortUrl: "short" })

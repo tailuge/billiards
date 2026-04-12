@@ -39,23 +39,24 @@ export async function share(url) {
     url: url,
   }
   if (navigator.canShare?.(shareData)) {
-    navigator
-      .share(shareData)
-      .then(() => console.log("shared successfully"))
-      .catch((e) => {
-        console.log("Error: " + e)
-      })
+    try {
+      await navigator.share(shareData)
+      console.log("shared successfully")
+    } catch (e) {
+      console.error("Share failed", e)
+    }
     return `link shared`
   }
 
+  const escapedUrl = url.replaceAll('"', "&quot;").replaceAll("'", "&apos;")
   if (navigator.clipboard) {
     try {
       await navigator.clipboard.writeText(url)
-      return `link copied to clipboard <a href="${url}">${url}</a>`
+      return `link copied to clipboard <a href="${escapedUrl}">${escapedUrl}</a>`
     } catch (e) {
       console.warn("Clipboard write failed", e)
     }
   }
 
-  return `link for sharing <a href="${url}">${url}</a>`
+  return `link for sharing <a href="${escapedUrl}">${escapedUrl}</a>`
 }
