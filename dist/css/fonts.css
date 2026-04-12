@@ -1,11 +1,11 @@
 /* Global Font Configuration */
 /* Import Exo from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap");
 
 /* Central font custom property - change --font-family-primary to update fonts globally */
 :root {
-  --font-family-primary: 'Exo', sans-serif;
-  --font-family-mono: 'Exo', monospace;
+  --font-family-primary: "Exo", sans-serif;
+  --font-family-mono: "Exo", monospace;
 }
 
 /* Apply primary font to body and common elements */
