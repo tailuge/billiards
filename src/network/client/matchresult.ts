@@ -184,7 +184,7 @@ export class MatchResultHelper {
     return `${p1} - ${p2}`
   }
 
-  private static getHighBreaks(container: Container): NotificationHighBreak[] {
+  public static getHighBreaks(container: Container): NotificationHighBreak[] {
     return container.ballTray
       .getTopBreaks(3)
       .map(({ score, hiScoreUri }) => ({ score, url: hiScoreUri }))

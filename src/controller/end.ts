@@ -41,6 +41,9 @@ export class End extends Controller {
     if (!this.result || MatchResultHelper.isWinner(this.result)) {
       this.container.particles.initParticles(this.container.view.scene)
     }
+
+    const highBreaks = MatchResultHelper.getHighBreaks(this.container)
+    this.container.notification?.updateHighBreaks(highBreaks)
   }
 
   override handleChat(chatevent: ChatEvent): Controller {

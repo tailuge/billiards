@@ -133,6 +133,20 @@
   }
 }
 
+@keyframes notificationFoldDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    max-height: 40px;
+    transform: translateY(0);
+  }
+}
+
 /* ==========================================================================
    3. Base Components
    ========================================================================== */
@@ -332,6 +346,8 @@
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
+  overflow: hidden;
+  animation: notificationFoldDown 1s ease-out forwards;
 }
 
 .notification-high-break:hover,

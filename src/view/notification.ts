@@ -139,23 +139,45 @@ export class Notification {
 
     const items = highBreaks
       .slice(0, 3)
-      .map(
-        (highBreak) => `
-          <button
-            type="button"
-            class="notification-high-break"
-            data-notification-upload-url="${highBreak.url}"
-            title="Open high break ${highBreak.score}"
-          >
-            <span class="notification-high-break-label">break:${highBreak.score}</span>
-            <span class="notification-high-break-icon">🏆</span>
-            <span class="notification-high-break-upload">upload</span>
-          </button>
-        `
-      )
+      .map((highBreak) => this.renderHighBreakButton(highBreak))
       .join("")
 
     return `<div class="notification-high-breaks">${items}</div>`
+  }
+
+  private renderHighBreakButton(highBreak: NotificationHighBreak): string {
+    return `
+      <button
+        type="button"
+        class="notification-high-break"
+        data-notification-upload-url="${highBreak.url}"
+        title="Open high break ${highBreak.score}"
+      >
+        <span class="notification-high-break-label">break:${highBreak.score}</span>
+        <span class="notification-high-break-icon">🏆</span>
+        <span class="notification-high-break-upload">upload</span>
+      </button>
+    `
+  }
+
+  updateHighBreaks(highBreaks?: NotificationHighBreak[]) {
+    const footer = this.element.querySelector(".notification-footer")
+    if (footer) {
+      let container = footer.querySelector(
+        ".notification-high-breaks"
+      ) as HTMLElement | null
+      if (!container) {
+        container = document.createElement("div")
+        container.className = "notification-high-breaks"
+        footer.prepend(container)
+      }
+      container.innerHTML = highBreaks
+        ? highBreaks
+            .slice(0, 3)
+            .map((hb) => this.renderHighBreakButton(hb))
+            .join("")
+        : ""
+    }
   }
 
   private display(content: string, typeClass: string, duration: number) {
