@@ -32,7 +32,7 @@ export function shorten(url, action) {
     })
 }
 
-export function share(url) {
+export async function share(url) {
   const shareData = {
     title: "Billiards",
     text: `Replay break`,
@@ -47,6 +47,15 @@ export function share(url) {
       })
     return `link shared`
   }
-  navigator.clipboard?.writeText(url)
-  return `link copied to clipboard <a href="${url}">${url}</a>`
+
+  if (navigator.clipboard) {
+    try {
+      await navigator.clipboard.writeText(url)
+      return `link copied to clipboard <a href="${url}">${url}</a>`
+    } catch (e) {
+      console.warn("Clipboard write failed", e)
+    }
+  }
+
+  return `link for sharing <a href="${url}">${url}</a>`
 }

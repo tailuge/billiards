@@ -54,8 +54,8 @@ export class Replay extends ControllerBase {
     const shareButton = this.container.menu.share
     if (shareButton) {
       shareButton.onclick = () => {
-        shorten(globalThis.location.href, (url) => {
-          const response = share(url)
+        shorten(globalThis.location.href, async (url) => {
+          const response = await share(url)
           this.container.eventQueue.push(new ChatEvent(null, response))
         })
       }
