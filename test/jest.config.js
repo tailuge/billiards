@@ -31,7 +31,6 @@ module.exports = {
     "gltf.ts",
     "webgl.ts",
     "dom.ts",
-    "shorten.ts",
     "assets.ts",
   ],
   coverageReporters: ["text", "json"],
