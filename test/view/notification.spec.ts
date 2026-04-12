@@ -59,8 +59,8 @@ describe("Notification", () => {
     )
     expect(element?.querySelector(".notification-actions")).not.toBeNull()
     expect(element?.querySelector(".notification-footer")).not.toBeNull()
-    expect(element?.innerHTML).toContain("break:9")
-    expect(element?.innerHTML).toContain("upload")
+    expect(element?.innerHTML).toContain("Break : 9")
+    expect(element?.innerHTML).toContain("upload⇗")
     expect(
       (element?.querySelector(".notification-high-break") as HTMLButtonElement)
         ?.dataset.notificationUploadUrl

@@ -139,13 +139,17 @@ export class Notification {
 
     const items = highBreaks
       .slice(0, 3)
-      .map((highBreak) => this.renderHighBreakButton(highBreak))
+      .map((highBreak, index) => this.renderHighBreakButton(highBreak, index))
       .join("")
 
     return `<div class="notification-high-breaks">${items}</div>`
   }
 
-  private renderHighBreakButton(highBreak: NotificationHighBreak): string {
+  private renderHighBreakButton(
+    highBreak: NotificationHighBreak,
+    index: number
+  ): string {
+    const medals = "🎖️".repeat(Math.max(0, 3 - index))
     return `
       <button
         type="button"
@@ -153,9 +157,9 @@ export class Notification {
         data-notification-upload-url="${highBreak.url}"
         title="Open high break ${highBreak.score}"
       >
-        <span class="notification-high-break-label">break:${highBreak.score}</span>
-        <span class="notification-high-break-icon">🏆</span>
-        <span class="notification-high-break-upload">upload</span>
+        <span class="notification-high-break-label">Break : ${highBreak.score}</span>
+        <span class="notification-high-break-icon">${medals}</span>
+        <span class="notification-high-break-upload">upload⇗</span>
       </button>
     `
   }
@@ -174,7 +178,7 @@ export class Notification {
       container.innerHTML = highBreaks
         ? highBreaks
             .slice(0, 3)
-            .map((hb) => this.renderHighBreakButton(hb))
+            .map((hb, index) => this.renderHighBreakButton(hb, index))
             .join("")
         : ""
     }

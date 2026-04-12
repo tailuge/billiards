@@ -326,7 +326,7 @@
 .notification-high-breaks {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0;
   width: 100%;
   max-width: 220px;
 }
@@ -335,10 +335,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 2px;
   padding: 2px 0;
   color: var(--notification-white);
-  font-size: var(--notification-size-s);
+  font-size: 12px;
   font-weight: var(--notification-weight-normal);
   font-family: inherit;
   background: transparent;

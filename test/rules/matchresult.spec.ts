@@ -260,7 +260,7 @@ describe("MatchResult Construction", () => {
       notification?.querySelectorAll(".notification-high-break-label") ?? []
     ).map((element) => element.textContent?.trim())
 
-    expect(scores).to.deep.equal(["break:11", "break:7", "break:4"])
+    expect(scores).to.deep.equal(["Break : 11", "Break : 7", "Break : 4"])
     expect(
       notification?.querySelectorAll(".notification-high-break").length
     ).to.equal(3)
