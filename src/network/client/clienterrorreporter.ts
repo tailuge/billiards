@@ -158,7 +158,7 @@ export class ClientErrorReporter {
         stack = args[0].stack
       }
 
-      if (message.includes("Backpack couldn't override `window.ethereum`.")) {
+      if (message.includes("Backpack couldn't override `window.et")) {
         return
       }
 

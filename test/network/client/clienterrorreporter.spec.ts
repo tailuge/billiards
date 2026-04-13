@@ -38,7 +38,7 @@ describe("ClientErrorReporter", () => {
 
   it("should skip 'Backpack' warning if configured or hardcoded", () => {
     reporter.start()
-    const backpackMsg = "Backpack couldn't override `window.ethereum`."
+    const backpackMsg = "Backpack couldn't override `window.ether"
     console.warn(backpackMsg)
     ;(reporter as any).flush()
 
