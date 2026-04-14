@@ -125,6 +125,7 @@ export class Notification {
   }
 
   private renderExtra(extra?: string): string {
+    console.log("extra", extra)
     if (!extra) return ""
     if (extra.includes("<")) {
       return `<div class="notification-actions">${extra}</div>`
