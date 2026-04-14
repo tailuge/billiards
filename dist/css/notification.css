@@ -165,8 +165,6 @@
   background: var(--notification-bg-gradient);
   border: 1px solid var(--notification-border-clr);
   box-shadow: var(--notification-shadow-md);
-  animation: notificationSlideIn var(--notification-dur-main)
-    var(--notification-ease-elastic) forwards;
 }
 
 /* 3.3 Content Structure */
