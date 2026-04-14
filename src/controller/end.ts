@@ -1,4 +1,3 @@
-import { ChatEvent } from "../events/chatevent"
 import { BeginEvent, Controller } from "./controller"
 import { Init } from "./init"
 import { Container } from "../container/container"
@@ -44,13 +43,6 @@ export class End extends Controller {
 
     const highBreaks = MatchResultHelper.getHighBreaks(this.container)
     this.container.notification?.updateHighBreaks(highBreaks)
-  }
-
-  override handleChat(chatevent: ChatEvent): Controller {
-    const sender = chatevent.sender ? `${chatevent.sender}:` : ""
-    const message = `${sender} ${chatevent.message}`
-    this.container.chat.showMessage(message)
-    return this
   }
 
   override handleBegin(_: BeginEvent): Controller {
