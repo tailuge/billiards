@@ -15,920 +15,38 @@ localUrl: http://localhost:8080/?ruletype=nineball&state=%28%27init%21%5B%22U%23
 
 This bug is a deterministic replay mismatch in nine-ball.
 
-The visible divergence starts at the boundary between shot 1 and shot 2. After replaying the break, the settled cueball position is extremely close to, but not identical to, the recorded `aim.pos` for shot 2.
-
-Observed replay-side delta:
-
-- `dx ~= 0.0000112056732178`
-- `dy ~= 0.0000340361148119`
-- `d ~= 0.00003583328374224414`
-
-That tiny mismatch is enough for the break to fan out into a visibly different table state.
-
-## What Is Established
-
-1. The mismatch is deterministic.
-   It reproduces consistently across Firefox, Chrome, desktop, and mobile.
-
-2. The mismatch is at a shot boundary.
-   The replayed break settles at a cueball position that does not exactly equal the recorded start position of shot 2.
-
-3. The local regression matches browser magnitude.
-   After using `mathavenAdapter` in the regression, the local repro lands at the same `0.00003583328374224414` delta seen in the browser.
-
-5. This is unlikely to be random nondeterminism or collision ordering instability.
-   If that were the problem, the result would not be this stable across runs and devices.
-
-## Important Implementation Detail
-
-The recorder does not store the live `HitEvent` as replay input.
-
-For `EventType.HIT`, `Recorder.record()` stores `HitEvent.tablejson.aim`.
-
-That means whole-game replay is driven by:
-
-- the recorded starting state in `entries[0].state`
-- recorded `AimEvent`-shaped shot data
-
-It is not driven by the live `HitEvent` object itself.
-
-This matters because if `tablejson.aim.pos` is already slightly stale at hit time, replay is guaranteed to start that shot from the wrong position.
-
-## Current Leading Hypothesis
-
-The strongest current hypothesis is:
-
-- live shot 1 is executed from a slightly different cueball position than the recorded `aim.pos`
-- replay uses the recorded `aim.pos`
-- replayed shot 1 therefore settles to a slightly different state
-- shot 2 then starts from that slightly wrong state and the break divergence becomes visible
-
-In short: this looks more like missing or slightly wrong shot-start state than like unstable physics.
-
-## Live Logging Status
-
-Low-volume tripwires have been added to catch this in live play:
-
-- `Table.serialiseHit()`
-- `Recorder.record()` for `EventType.HIT`
-
-These warn only when live cueball position differs from recorded `aim.pos` by more than a tiny threshold, and only for stronger shots to keep log volume down.
-
-## Regression Test
-
-There is one regression test for this issue:
-
-- `test/bug/break_replay_regression.spec.ts`
-
-It uses the direct inner-loop path only, with:
-
-- fixture state from this file
-- first recorded break aim
-- `mathavenAdapter`
-- fixed physics stepping until settle
-
-The test asserts that the direct physics path deterministically lands at:
-
-- `d = 0.00003583328374224414`
-
-The higher-level replay/container test was removed because it added moving parts without improving coverage for this specific issue.
-
-## Next Useful Question
-
-The key question is now:
-
-> At the moment a shot is actually hit in live play, does the live cueball position exactly match the recorded `tablejson.aim.pos`?
-
-If the new tripwire fires on real traffic, that will be the strongest evidence yet that replay is recording a slightly stale shot-start position.
-
-
-## Tripwire reports
-
-I observed the following trip wire errors:
-
-[5:29:24 AM] warn tripwire: recorder_hit_aim_mismatch {
-  "dx": 7.629394560559888e-9,
-  "dy": 0,
-  "d": 7.629394560559888e-9,
-  "power": 2.9475000000000002,
-  "i": 0,
-  "aim": {
-    "x": -0.7205,
-    "y": 0
-  },
-  "cueball": {
-    "x": -0.7204999923706055,
-    "y": 0
-  },
-  "recordedAt": "Recorder.record"
-}
-
-[5:36:21 AM] warn tripwire: recorder_hit_aim_mismatch {
-  "dx": 7.629394560559888e-9,
-  "dy": 0,
-  "d": 7.629394560559888e-9,
-  "power": 2.9475000000000002,
-  "i": 0,
-  "aim": {
-    "x": -0.7205,
-    "y": 0
-  },
-  "cueball": {
-    "x": -0.7204999923706055,
-    "y": 0
-  },
-  "recordedAt": "Recorder.record"
-}
-[5:36:55 AM] warn tripwire: recorder_hit_aim_mismatch {
-  "dx": 7.629394560559888e-9,
-  "dy": 0,
-  "d": 7.629394560559888e-9,
-  "power": 2.9475000000000002,
-  "i": 0,
-  "aim": {
-    "x": -0.7205,
-    "y": 0
-  },
-  "cueball": {
-    "x": -0.7204999923706055,
-    "y": 0
-  },
-  "recordedAt": "Recorder.record"
-}
-
-## Fix Summary
-
-The fix is minimal and applied at source in `Table.serialiseHit()`.
-
-At hit time, the code now copies the current aim data and then overwrites
-`aim.pos` with the live `cueball.pos` before creating the serialized hit payload.
-
-That means the recorded and over-the-wire shot start position now always comes
-from the authoritative live cue ball, not from a slightly stale or rounded
-`cue.aim.pos` value.
-
-This does not change the existing bug regression test. That test still documents
-the old deterministic mismatch in the direct physics path from the recorded
-fixture. The fix prevents that stale start position from being produced in live
-play again.
-
-## Current Status
-
-The local source-side fix is live and genuine small `recorder_hit_aim_mismatch`
-reports still remain useful.
-
-Additional logging showed that a large mismatch seen in two-player mode after a
-foul respot was a false alarm:
-
-- the warning was raised during `processEvents`
-- the controller was `WatchAim`
-- the event came from the remote player
-- `serialisedCueball` exactly matched `aim`
-- the large delta was only between the incoming hit payload and the local table
-  state before that remote hit was applied
-
-That means the payload itself was internally consistent, and the warning was
-caused by comparing a valid remote hit against stale local pre-apply state.
-
-To avoid that noise, the recorder tripwire now suppresses this specific case:
-remote queued hit, internally consistent payload, and a large local-state gap
-greater than `0.1`.
-
-## Current Understanding
-
-The original investigation used recordings and replay because they made the
- divergence easy to capture and reproduce.
-
-However, the root issue is not replay-specific.
-
-The same class of mismatch is also showing up in live two-player games where
-state is sent over the wire. That makes this more serious than a replay-only
-recording defect: two machines can disagree about the exact shot-start state at
-the hit boundary.
-
-For a deterministic simulation, no amount of position difference is acceptable
-at that boundary. Even very small differences can fan out into different
-outcomes after collisions, cushions, or pots.
-
-The key point now is:
-
-- if one client is about to simulate a shot from a different cue-ball position
-  than the other client, the game state is already divergent before the shot
-  begins
-
-This means the bug should now be treated as a live two-player state alignment
-problem, not only as a replay/recording bug.
-
-## Next Steps
-
-1. Separate the two classes of tripwire clearly in code and logs:
-   payload inconsistency vs remote pre-apply state gap.
-
-2. Treat any remote hit where the incoming payload is internally consistent but
-   the local receiver cue ball differs as evidence that the two clients had
-   different initial shot state at the hit boundary.
-
-3. Instrument the last observed remote `AimEvent` on the receiving side and
-   compare it directly with the incoming `HitEvent` payload to determine whether
-   the receiver missed the final aim state or whether local table state drifted
-   by some other path.
-
-4. Audit the exact two-player shot boundary sequence:
-   final aim update, hit publish, receive ordering, and local application order
-   on both sender and receiver.
-
-5. Decide what the authoritative multiplayer contract should be at hit time.
-   The likely requirement is that the `HitEvent` must carry the full exact shot
-   start state needed for both clients to begin simulation from the same state,
-   and the receiver must apply that authoritative state before simulation.
-
-6. Once the transport/apply contract is clear, add a targeted two-player
-   regression that proves both sides start the shot from identical state.
-
-## Test Plan
-
-Add a targeted two-player regression for the initial synchronization path.
-
-The goal of the test should be:
-
-- simulate the first-player startup path that publishes the initial full-table
-  `WatchEvent`
-- apply that event on a second container using the normal receiver path
-- assert that the receiving container ends with exactly the same full ball state
-  as the sending container before the first shot begins
-
-More specifically, the test should:
-
-1. Create two containers representing player 1 and player 2.
-
-2. Put player 1 through the normal opening transition that produces the initial
-   `WatchEvent` / full-state sync payload.
-
-3. Deliver that serialized event to player 2 through the same
-   `EventUtil.fromSerialised(...)` and `eventQueue` path used in multiplayer.
-
-4. After player 2 processes the event and reaches `WatchAim`, compare all ball
-   positions between the two containers.
-
-5. Require exact equality, not approximate equality, because any difference at
-   the initial deterministic state boundary is already a bug.
-
-6. Extend the test, if needed, to cover the immediate next remote `HitEvent`
-   boundary:
-   player 1 creates the first hit, player 2 receives it, and the test asserts
-   that player 2 starts simulation from the exact state carried by the hit
-   payload.
-
-This test should become the main regression for the live two-player form of the
-bug, complementing the existing replay regression in this file.
-
-## Still occuring
-
-[11:16:03 AM] warn tripwire: recorder_hit_aim_mismatch {
-  "version": "260401.07",
-  "dx": 7.629394560559888e-9,
-  "dy": 0,
-  "d": 7.629394560559888e-9,
-  "power": 2.9475000000000002,
-  "i": 0,
-  "aim": {
-    "x": -0.7205,
-    "y": 0
-  },
-  "cueball": {
-    "x": -0.7204999923706055,
-    "y": 0
-  },
-  "recordedAt": "Recorder.record"
-}
-
-Now adding extra debug info for next occurence.
-
----
-
-index.js:75 Version: 260402.06
-index.js:75 http://localhost:8080/index.html?ruletype=nineball&websocketserver=ws://localhost:8080&tableId=1a09&userId=p2id&userName=P2
-index.js:75 clientId: p2id playername: P2 tableId: 1a09 spectator: false botMode: false
-index.js:75 r {playername: 'P2', clientId: 'p2id', tableId: '1a09', spectator: false, botMode: false, …}
-index.js:75 Skipping usage fetch for localhost.
-index.js:29 models/background.gltf 2431 bytes loaded
-index.js:29 models/p8.min.gltf 4985 bytes loaded
-index.js:75 P2 assets ready
-index.js:75 P2: Transition to Init
-index.js:48 Subscribed to  wss://billiards-network.onrender.com/subscribe/table/1a09
-index.js:75 P2 broadcast BEGIN : p2id
-index.js:75 Version: 260402.06
-index.js:75 http://localhost:8080/index.html?ruletype=nineball&websocketserver=ws://localhost:8080&tableId=1a09&userId=p1id&userName=P1&first=true
-index.js:75 clientId: p1id playername: P1 tableId: 1a09 spectator: false botMode: false
-index.js:75 r {playername: 'P1', clientId: 'p1id', tableId: '1a09', spectator: false, botMode: false, …}
-index.js:75 Skipping usage fetch for localhost.
-index.js:29 models/background.gltf 2431 bytes loaded
-index.js:29 models/p8.min.gltf 4985 bytes loaded
-index.js:75 P1 assets ready
-index.js:75 P1: Transition to Init
-index.js:48 Subscribed to  wss://billiards-network.onrender.com/subscribe/table/1a09
-index.js:48 Connected to wss://billiards-network.onrender.com/subscribe/table/1a09
-index.js:48 Connected to wss://billiards-network.onrender.com/subscribe/table/1a09
-index.js:75 P1 receive BEGIN : p2id
-index.js:75 P1 broadcast WATCHAIM : p1id
-index.js:75 P1: Transition to PlaceBall
-index.js:75 P2 receive WATCHAIM : p1id
-index.js:29 Ball 0 moved 0.00011792840069938527
-index.js:29 Ball 1 moved 0.0008486351039853972
-index.js:29 Ball 2 moved 0.0007509339689204836
-index.js:29 Ball 3 moved 0.002077893825944207
-index.js:29 Ball 4 moved 0.0016488790562344936
-index.js:29 Ball 5 moved 0.0011722404102128842
-index.js:29 Ball 6 moved 0.0015987353096292617
-index.js:29 Ball 7 moved 0.0012535684770100253
-index.js:29 Ball 8 moved 0.0020564792344264626
-index.js:29 Ball 9 moved 0.0006810634067032396
-index.js:75 P2: Transition to WatchAim
-index.js:75 P1 broadcast BREAK : p1id
-index.js:75 P1: Transition to Aim
-index.js:75 P2 receive BREAK : p1id
-index.js:75 P1 broadcast HIT : p1id
-index.js:75 P1: Transition to PlayShot
-index.js:75 P2 receive HIT : p1id
-index.js:75 tripwire: recorder_hit_aim_mismatch {
-  "version": "260402.06",
-  "dx": -0.00018608570098876953,
-  "dy": -0.0003791984054259956,
-  "d": 0.00042239711030036593,
-  "power": 3.930000066757202,
-  "i": 0,
-  "aim": {
-    "x": -0.7204999923706055,
-    "y": 0
-  },
-  "cueball": {
-    "x": -0.7206860780715942,
-    "y": -0.0003791984054259956
-  },
-  "recordedAt": "Recorder.record",
-  "recordOrigin": "processEvents",
-  "controller": "WatchAim",
-  "replayMode": false,
-  "isSinglePlayer": false,
-  "cueballState": "Stationary",
-  "sessionClientId": "p2id",
-  "eventClientId": "p1id",
-  "sessionPlayername": "P2",
-  "eventPlayername": "P1",
-  "spectator": false,
-  "botMode": false,
-  "practiceMode": false,
-  "serialisedCueball": {
-    "x": -0.7204999923706055,
-    "y": 0
-  },
-  "serialisedCueballDelta": {
-    "dx": 0,
-    "dy": 0,
-    "d": 0
-  }
-}
-
-
-
-
-////
-
-Goal Description
-The current aim drift tripwire is inefficient at detecting full state desyncs in 2-player games because it only compares the cueball position with its aim position. This plan removes the old tripwire and implements a robust state-comparison tripwire that checks for 2-player desync by comparing the position of all balls across clients just prior to executing a shot.
-
-Proposed Changes
-Tripwire Utilities
-[DELETE] src/utils/aim-drift-tripwire.ts
-[NEW] src/utils/desync-tripwire.ts
-Create a new utility function checkDesyncTripwire that takes two sets of shortSerialise state arrays (representing the full table ball positions). It will compare differences and trigger console.warn specifying which balls drifted past a defined threshold (e.g., 1e-9).
-
-Model
-[MODIFY] src/model/table.ts
-Remove imports and calls to warnAimDriftTripwire.
-Modify serialiseHit() to include the entire table state footprint for tripwire purposes right before the hit. This footprint will be added to the returned payload as stateCheck: this.shortSerialise().
-Controllers
-[MODIFY] src/controller/watchaim.ts
-Remove warnAimDriftTripwire.
-When receiving a HitEvent, verify the event payload's stateCheck property against this.container.table.shortSerialise().
-Call checkDesyncTripwire("tripwire: remote_hit_pre_apply_desync", remoteStateCheck, localStateCheck, ...) to catch any diverging simulations from the previous turn.
-[MODIFY] src/controller/watchshot.ts
-Remove warnAimDriftTripwire.
-Events
-[MODIFY] src/events/recorder.ts
-Remove warnAimDriftTripwire.
-
-IMPORTANT
-
-The new desync tripwire will rely on adding stateCheck: this.shortSerialise() to the HitEvent payload. Because HitEvent is already transmitted locally and remotely, catching desyncs pre-shot (validating that the active player's state matches the remote player's state before hitting) will efficiently indicate if the previous shot's physics yielded a divergence.
-
-Ensure that the recorder.ts does not store this extra field so that recordings are not bloated.
-
-Verification Plan
-Automated Tests
-Build using yarn build.
-Run tests via yarn test to ensure HitEvent adjustments do not break existing serialization logic.
-Manual Verification
-A manual local simulation sending synthetic hit events can trigger the tripwire mismatch explicitly (by injecting a tiny offset).
-Testing via browser console to confirm tripwire: remote_hit_pre_apply_desync fires appropriately and cleanly logs drifting state details.
-
-
------
-
-
-Version: 260403.06
- https://billiards.tailuge.workers.dev/?websocketserver=wss%3A%2F%2Fbilliards.onrender.com%2Fws&tableId=c9c5b215&userName=Alice&userId=player-1-v7rf&ruletype=snooker&first=true
- clientId: player-1-v7rf playername: Alice tableId: c9c5b215 spectator: false botMode: false
- r
- models/d-snooker.min.gltf 5223 bytes loaded
- models/background.gltf 2431 bytes loaded
-index.js:75 Version: 260403.06
-index.js:75 https://billiards.tailuge.workers.dev/?websocketserver=wss%3A%2F%2Fbilliards.onrender.com%2Fws&tableId=c9c5b215&userName=Bob&userId=player-2-3ogy&ruletype=snooker
-index.js:75 clientId: player-2-3ogy playername: Bob tableId: c9c5b215 spectator: false botMode: false
-index.js:75 r
-index.js:29 models/d-snooker.min.gltf 5223 bytes loaded
-index.js:29 models/background.gltf 2431 bytes loaded
- Alice assets ready
- Alice: Transition to Init
- Subscribed to  wss://billiards-network.onrender.com/subscribe/table/c9c5b215
-index.js:75 Bob assets ready
-index.js:75 Bob: Transition to Init
-index.js:48 Subscribed to  wss://billiards-network.onrender.com/subscribe/table/c9c5b215
- Connected to wss://billiards-network.onrender.com/subscribe/table/c9c5b215
- Alice: Transition to PlaceBall
-index.js:48 Connected to wss://billiards-network.onrender.com/subscribe/table/c9c5b215
-index.js:29 Ball 0 moved 0.0012299807047141656
-index.js:29 Ball 1 moved 0.0011732496913854302
-index.js:29 Ball 2 moved 0.0005104742935492094
-index.js:29 Ball 3 moved 0.0015966839820420933
-index.js:29 Ball 4 moved 0.0005879871071834419
-index.js:29 Ball 5 moved 0.0004153259278593661
-index.js:29 Ball 6 moved 0.00013613259151787048
-index.js:29 Ball 7 moved 0.0010138928425168312
-index.js:29 Ball 8 moved 0.00034213242922105414
-index.js:29 Ball 9 moved 0.0005837208926340643
-index.js:29 Ball 10 moved 0.0009668446252462988
-index.js:29 Ball 11 moved 0.0002036235014764528
-index.js:29 Ball 12 moved 0.001775207978186345
-index.js:29 Ball 13 moved 0.0013665555880749479
-index.js:29 Ball 14 moved 0.0002667402341464135
-index.js:29 Ball 15 moved 0.0012198432211739743
-index.js:29 Ball 16 moved 0.0009100374003971753
-index.js:29 Ball 17 moved 0.0008697341575770852
-index.js:29 Ball 18 moved 0.0016827654520484372
-index.js:29 Ball 19 moved 0.0008449112699859618
-index.js:29 Ball 20 moved 0.0005329874144860879
-index.js:29 Ball 21 moved 0.0008288630667850123
-index.js:75 Bob: Transition to WatchAim
- Alice: Transition to Aim
- Alice: Transition to PlayShot
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to Aim
-index.js:75 Bob: Transition to PlayShot
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to WatchAim
- Alice: Transition to Aim
- Alice: Transition to PlayShot
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to Aim
-index.js:75 Bob: Transition to PlayShot
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to Aim
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to PlayShot
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to WatchAim
- Alice: Transition to Aim
- Alice: Transition to PlayShot
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to Aim
-index.js:75 Bob: Transition to PlayShot
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to WatchAim
- Alice: Transition to PlaceBall
- Alice: Transition to Aim
- Alice: Transition to PlayShot
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to Aim
-index.js:75 Bob: Transition to PlayShot
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to WatchAim
- Alice: Transition to Aim
- Alice: Transition to PlayShot
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to Aim
-index.js:75 Bob: Transition to PlayShot
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to WatchAim
- Alice: Transition to Aim
- Alice: Transition to PlayShot
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to Aim
-index.js:29 Ball 6 moved 2.7170401242641335
-index.js:75 Bob: Transition to PlayShot
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to WatchAim
- Alice: Transition to Aim
- Alice: Transition to PlayShot
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to Aim
-index.js:75 Bob: Transition to PlayShot
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to WatchAim
- Alice: Transition to Aim
- Alice: Transition to PlayShot
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to PlaceBall
-index.js:75 Bob: Transition to Aim
-index.js:75 Bob: Transition to PlayShot
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to Aim
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to PlayShot
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to WatchAim
- Ball 3 moved 2.4477233799897715
- Alice: Transition to PlaceBall
- Alice: Transition to Aim
- Alice: Transition to PlayShot
-index.js:75 tripwire: remote_hit_pre_apply_desync {
-  "version": "260403.06",
-  "maxDrift": 0.01779758930206299,
-  "driftedBallIndices": [
-    21
-  ],
+[6:28:27 PM] warn tripwire: remote_hit_pre_apply_desync {
+  "version": "260413.15",
   "phase": "pre_apply",
   "controller": "WatchAim",
-  "eventClientId": "player-1-v7rf",
-  "eventPlayername": "Alice"
-}
-console.warn @ index.js:75
-(anonymous) @ index.js:48
-handleHit @ index.js:48
-applyToController @ index.js:29
-processEvents @ index.js:75
-animate @ index.js:75
- 
- 
- 
- 
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to Aim
-index.js:75 Bob: Transition to PlayShot
- tripwire: remote_hit_pre_apply_desync {
-  "version": "260403.06",
-  "maxDrift": 0.01779758930206299,
-  "driftedBallIndices": [
-    21
-  ],
-  "phase": "pre_apply",
-  "controller": "WatchAim",
-  "eventClientId": "player-2-3ogy",
-  "eventPlayername": "Bob"
-}
-console.warn @ index.js:75
-(anonymous) @ index.js:48
-handleHit @ index.js:48
-applyToController @ index.js:29
-processEvents @ index.js:75
-animate @ index.js:75
- 
- 
- 
- 
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to WatchAim
- Alice: Transition to Aim
- Ball 1 moved 2.554988131302193
- Alice: Transition to PlayShot
-index.js:75 tripwire: remote_hit_pre_apply_desync {
-  "version": "260403.06",
-  "maxDrift": 0.01779758930206299,
-  "driftedBallIndices": [
-    21
-  ],
-  "phase": "pre_apply",
-  "controller": "WatchAim",
-  "eventClientId": "player-1-v7rf",
-  "eventPlayername": "Alice"
-}
-console.warn @ index.js:75
-(anonymous) @ index.js:48
-handleHit @ index.js:48
-applyToController @ index.js:29
-processEvents @ index.js:75
-animate @ index.js:75
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to PlaceBall
-index.js:75 Bob: Transition to Aim
-index.js:75 Bob: Transition to PlayShot
- Alice: Transition to WatchShot
-index.js:75 Bob: Transition to WatchAim
- Alice: Transition to Aim
- Alice: Transition to PlayShot
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to Aim
-index.js:75 Bob: Transition to WatchAim
- Alice: Transition to PlayShot
-index.js:75 Bob: Transition to WatchShot
- Alice: Transition to WatchAim
-index.js:75 Bob: Transition to Aim
-## Tripwire Review Findings
-
-The current `remote_hit_pre_apply_desync` tripwire (implemented in `src/utils/desync-tripwire.ts`) effectively monitors state alignment in 2-player mode by comparing the local table state with the authoritative `HitEvent` payload just before the shot is applied.
-
-### Strengths:
-- **Authoritative Sync Point:** It validates the exact moment where both clients must have identical state to ensure a deterministic simulation of the upcoming shot.
-- **Precision:** The `1e-9` threshold is sensitive enough to catch any 32-bit float drift (`Math.fround`).
-- **Lean Implementation:** It performs checks only at the start of a shot, avoiding per-frame physics overhead.
-
-### Limitations & Blind Spots:
-1. **End-of-Game Silence:** Desyncs occurring during the final shot of a game (e.g., potting the game-winning ball) are never caught because no subsequent `HitEvent` is generated to trigger the check.
-2. **Intermediate Transition Gaps:** Transitions like `WatchEvent` (during a break) or `StartAimEvent` (turn change after a miss) do not perform desync checks. A desync could persist through multiple such transitions without being logged until the next `HitEvent`.
-3. **Catastrophic Failure Silence:** If the number of balls on the table differs between clients (`remoteStateCheck.length !== localStateCheck.length`), the tripwire currently returns early without logging. This is a severe desync that should be explicitly caught.
-4. **Active Player Blind Spot:** The check is only performed by the receiver of a `HitEvent`. The active player never validates their outgoing state against what the receiver actually sees, meaning logs only appear on one side of a desynced pair.
-
-### Conclusion on 2-Player Effectiveness:
-While the tripwire provides a strong "heartbeat" for simulation health, its reliance on `HitEvent` means it only reports desyncs with a "one shot delay" and remains blind to desyncs that conclude a game or occur during non-scoring transitions. Expanding desync checks to `WatchEvent` and end-game states would improve coverage.
-
-## Conclusion on 0.01 Drift Report
-
-The recent tripwire report showing a **maxDrift of 0.010125** for ball 3 is a breakthrough finding.
-
-### Significance:
-- **Physics Divergence:** A drift of 0.01 is massive (half the ball radius). This confirms the clients aren't just slightly off due to rounding; they are following fundamentally different physical paths.
-- **Timing:** Since this was caught in `WatchAim`, it means the divergence occurred during the simulation of the *previous* shot.
-- **Focus:** The investigation must shift to non-deterministic branches in the physics engine (`Table.advance`), specifically collision resolution or cushion bounces that might react differently to 32-bit vs 64-bit precision, even with `Math.fround` in place.
-
-### Diagnostic Improvements:
-To catch the next one with more precision, the tripwire now includes:
-- **Shot Count:** To identify exactly which shot in the game sequence leads to divergence.
-- **Recent History:** To see if unusual events (like `PLACEBALL` or multiple `SCORE` events) preceded the drift.
-- **Recording URL:** To allow for instant, local reproduction of the exact desynced state.
-
-
-
---------
-
-LATEST:
-
-The most recent tripwire report, is here. the constructed recording url is invalid. I would like to reduce tripwire
-  logging to not include any compressed json.  Based on recentHistory can you double check that the local rerack and
-  local placeball code is rounding beofre sending and so in sync. Always focus on sender side as recipient is always
-  a slave in this scenario. Possibly logging out full diff of incomming ball positions vs current balls positions
-  would help? Dont suggest frounding of received x,y as this defeats the purpose. I'm interested to eliminate sender
-  sending one version and then adjusting before beginnng simulation.
-
-Logs for B_8ee1_2
-Copy
-[4:18:13 AM] warn tripwire: remote_hit_pre_apply_desync {
-  "version": "260403.18",
-  "maxDrift": 0.009459972381591797,
-  "driftedBallIndices": [
-    20
-  ],
-  "phase": "pre_apply",
-  "controller": "WatchAim",
-  "eventClientId": "player-2-m0yr",
+  "eventClientId": "player-2-x7gd",
   "eventPlayername": "Bob",
   "shotCount": 0,
   "recentHistory": [
-    "RERACK",
-    "PLACEBALL",
-    "AIM",
     "SCORE",
-    "AIM"
-  ],
-  "recordingUrl": "https://billiards.tailuge.workers.dev/?state=('init!%5B-j8646000027656555%4009%26%408644058704376221%4024058684706687927%408645500540733337%7B24060094356536865%408644657135009766%7B0007452358840964735%400008318664040416479%4000009407022298546508%7B7205265760421753%400005649647209793329%2C1.1794259548187256%7B0005911940825171769%7B7889904379844666%400004140675300732255%7B8495449423789978%7B03517656773328781%7B8498477339744568%4003408590331673622%7B9107925891876221%7B00024603973724879324%7B9105904698371887%4006904766708612442%7B9095827341079712%7B06868382543325424%7B9704158902168274%7B1039169579744339%7B9694374799728394%7B03373772278428078%7B9698718786239624%4003389698639512062%7B9704713225364685%4010490535944700241%2C1.030048131942749%4013811567425727844%2C1.029479742050171%400698469951748848%2C1.0300157070159912%7B00010129966540262103%2C1.0308101177215576%7B06996925175189972%2C1.0294643640518188%7B13903334736824036%5D~shots!%5B('type!'%2B%3Be!0Xk%26DJq2Z0~b!2%231U%2B%3Be!-2.4551279544830322Xj9567775130271912%3F2516842186450958%22JWj7205%3E5%24Jq8Z0~b!8%231UV%20-1.121055006980896Xj8430655002593994%3F20990529656410217DJq8Z0Q2UV%20-j06909673660993576Xj6161592602729797%3F6009692549705505DNq8Z0Q1UV%20-j9753311276435852X-j7901121377944946Y03544687107205391%22JW1.179%3E2)%5D)%5EJ%7FTJq8Z4Q2UV%20-j6383387446403503Xk%26DNq8Z5%3C2UV%20j7196006178855896X-1.0606659650802612%3F008789298124611378DNq12Z5Q1UV%205.854385852813721X-1.17779541015625Y1415882408618927_i!0%5EJ%7FTJq12Z9Q2UV%202.052177667617798Xk%26DNq12Z10%3C2UV%20-5.221729278564453X-1.1145689487457275%3F4648122489452362_i!0%5EN%60USCORETNq16Z1
-
-Notes from code check:
-
-- The current tripwire `recordingUrl` is expected to be invalid for replay because `buildRecordingUrl()` only emits `/?state=...` and does not include `ruletype=...`. It also rebuilds from `location.origin` instead of using the replay prefix already built by `BrowserContainer.setReplayLink()`.
-- Local place-ball confirmation is already rounded before the sender snapshots the break state. `PlaceBall.placed()` calls `cueball.fround()` and then sends `new BreakEvent(this.container.table.shortSerialise())`.
-- The actual shot packet is also sender-side snapshotted from current local state at send time. `Aim.playShot()` sends `new HitEvent(this.container.table.serialiseHit())`, and `Table.serialiseHit()` copies `cueball.pos` into `aim.pos` immediately before the event is created.
-- The outbound network path is not holding a live mutable object. `BrowserContainer.broadcast()` serialises immediately with `EventUtil.serialise(event)`, which is just `JSON.stringify(event)`, before publish.
-- For the foul `PLACEBALL` path in nine-ball, the sender uses `cueball.pos.clone()` or `this.placeBall()` before constructing `new PlaceBallEvent(startPos, undefined, true)`. That means the sent `pos` is detached from the live cueball vector. There is no explicit `fround()` here, but this does not look like a post-send mutation bug.
-- For local rerack in fourteen-one, `Rack.rerack()` mutates the table first, then `table.serialise()` clones the positions, then `RerackEvent.fromJson(state)` is sent. Again, this is a snapshot, not a live reference. The moved balls are already rounded by `Rack.jitter()`. The only remaining subtlety is that rerack does not explicitly `fround()` every ball immediately before `table.serialise()`.
-
-Interpretation of this report:
-
-- Based on the current sender code, I do not see evidence that the sender transmits one version of `PLACEBALL`, `RERACK`, or `HIT` and then later mutates that same outbound payload object before it reaches the recipient.
-- The more plausible sender-side failure mode is earlier than network serialisation: the sender may be entering the next turn with a table state that has already drifted slightly before `serialiseHit().stateCheck` is captured.
-- The `recentHistory` sequence `RERACK -> PLACEBALL -> AIM -> SCORE -> AIM` is consistent with that theory. In recorder history, `AIM` here is actually the recorded form of a sent `HIT`, not a free aim-move packet.
-
-Suggested next steps:
-
-1. Remove compressed replay JSON from the tripwire log. Keep only concise structured fields plus a deterministic fingerprint such as `stateCheckHash`, `recentHistory`, `eventSequence`, and `driftedBallIndices`.
-2. Replace `recordingUrl` in the tripwire with either:
-   - a proper replay URL built from the same prefix as `linkFormatter.replayUrl`, including `ruletype`, or
-   - no URL at all in live tripwire logs.
-3. Add a sender-side breadcrumb for every outbound `RERACK`, `PLACEBALL`, and `HIT` containing:
-   - event type
-   - event sequence/client
-   - a short hash of the outbound payload
-   - a short hash of `table.shortSerialise()` at the exact same moment
-   - for `HIT`, the hash of `stateCheck`
-   This will prove whether the sender's event payload and sender's local table matched at emission time.
-4. On the sender only, add an invariant check immediately after sending `PLACEBALL` and immediately before the next `HIT`:
-   - compare the previously emitted authoritative start position/state with the current local table state
-   - log only when they differ
-   This is the best way to catch "sent X, then locally adjusted to Y before simulation".
-5. For desync reports, log a compact per-ball diff only for mismatched balls instead of compressed replay data. Suggested shape:
-   - `ballId`
-   - `remoteX`, `remoteY`
-   - `localX`, `localY`
-   - `dx`, `dy`
-   - `dist`
-   This should make the report actionable without bloating logs.
-6. Add a targeted sender-side tripwire around fourteen-one rerack:
-   - capture `preRerackStateCheck`
-   - capture `postRerackStateCheck`
-   - capture the exact `RerackEvent.ballinfo`
-   - compare `postRerackStateCheck` with the flattened positions from the outgoing rerack payload
-   If they differ, the rerack path is the bug.
-7. Add a targeted sender-side tripwire around nine-ball foul place-ball:
-   - log the emitted `PlaceBallEvent.pos`
-   - log the sender cueball position at foul resolution
-   - log the sender cueball position again immediately before `serialiseHit()`
-   If the first and last differ before any physics runs, that is the mutation we are looking for.
-8. If we want to eliminate the last remaining doubt in rerack/placeball setup, add explicit sender-side `fround()`/rounding assertions before serialising those authoritative events, but only on the sender and only as a verified invariant, not by rounding received coordinates.
-
-
-
----------------
-
-Bug reports from this:
-
-replay-shot-delta {i: 0, dx: -0.8646000027656555, dy: -0.24016666412353516, d: 0.8973367212694455}
-
-This is a false alarm, a replay of white ball being placed in replay mode.
-
-
-Bug:
-
-Logs for B_f10e_2
-Copy
-[2:01:59 PM] warn tripwire: sender_pre_hit_authoritative_drift {
-  "clientId": "4c09cfb2",
-  "authoritativeEventType": "RERACK",
-  "previousTableStateHash": "3cb69088",
-  "currentTableStateHash": "d82445ea",
-  "previousPayloadHash": "6d6308d0",
-  "nextPayloadHash": "c32e066b",
-  "recentHistory": [
-    "SCORE",
-    "AIM",
-    "SCORE",
-    "AIM",
-    "SCORE"
-  ],
-  "maxDrift": 1.0390990376472473,
-  "driftedBallIndices": [
-    0,
-    6,
-    7,
-    21
-  ],
-  "ballDiffs": [
-    {
-      "ballIndex": 0,
-      "remoteX": -0.47822076082229614,
-      "remoteY": 0.5004900693893433,
-      "localX": -0.18771690130233765,
-      "localY": -0.538608968257904,
-      "dx": -0.2905038595199585,
-      "dy": 1.0390990376472473,
-      "dist": 1.0789436048447698
-    },
-    {
-      "ballIndex": 6,
-      "remoteX": -0.1252971738576889,
-      "remoteY": -0.6681820750236511,
-      "localX": -0.25700876116752625,
-      "localY": -0.5448518395423889,
-      "dx": 0.13171158730983734,
-      "dy": -0.12333023548126221,
-      "dist": 0.18043915654740933
-    },
-    {
-      "ballIndex": 7,
-      "remoteX": 1.4058263301849365,
-      "remoteY": -0.3922945261001587,
-      "localX": 1.3612912893295288,
-      "localY": -0.35949304699897766,
-      "dx": 0.044535040855407715,
-      "dy": -0.03280147910118103,
-      "dist": 0.05531100157489512
-    },
-    {
-      "ballIndex": 21,
-      "remoteX": 1.2023451328277588,
-      "remoteY": -0.46506768465042114,
-      "localX": 1.4319672584533691,
-      "localY": -0.7147244811058044,
-      "dx": -0.22962212562561035,
-      "dy": 0.2496567964553833,
-      "dist": 0.3391973416658631
-    }
-  ]
-}
-
-
-This was reported on live 2 player game, I had no visibility of opponents table, but the game proceeded as though there was no desync, do you think its valid and do you think we need even more info?
-
-
----------------
-
-
-
-Latest tripwire DIFFERENT origin, this happens usually if  aball is overlapping or out of bounds:
-
-Logs for B_702f_2
-Copy
-[10:41:34 AM] warn tripwire: advance_exception {
-  "version": "260412.22",
-  "phase": "advance",
-  "controller": "WatchShot",
-  "shotCount": 0,
-  "recentHistory": [
-    "AIM",
     "AIM",
     "PLACEBALL",
     "SCORE",
     "AIM"
   ],
-  "localHistoryWindow": [
+  "remoteHistoryWindow": [
     {
-      "shotIndex": 5,
+      "shotIndex": 4,
       "event": {
         "type": "HIT",
         "tablejson": {
           "aim": {
             "type": "AIM",
             "offset": {
-              "x": 0,
-              "y": 0.3,
+              "x": 0.16869300603866577,
+              "y": 0.24807794392108917,
               "z": 0
             },
-            "angle": 0.060908686369657516,
-            "power": 2.9475000000000002,
+            "angle": -0.42850640416145325,
+            "power": 1.9387999773025513,
             "pos": {
-              "x": -1.3137716054916382,
-              "y": -0.374784380197525,
+              "x": 0.763754665851593,
+              "y": 0.04025835171341896,
               "z": 0
             },
             "i": 0
@@ -936,8 +54,8 @@ Copy
           "balls": [
             {
               "pos": {
-                "x": -1.3137716054916382,
-                "y": -0.374784380197525,
+                "x": 0.763754665851593,
+                "y": 0.04025835171341896,
                 "z": 0
               },
               "id": 0
@@ -946,26 +64,82 @@ Copy
         }
       },
       "state": [
-        -1.3137716054916382,
-        -0.374784380197525,
-        1.455881953239441,
-        -0.7532521486282349,
-        -1.4507464170455933,
-        0.7379950881004333,
-        1.3828588724136353,
-        -0.14475767314434052,
-        -1.2839877605438232,
-        -0.007493197917938232,
-        0.48716890811920166,
-        -0.511671245098114,
-        -0.7628549337387085,
-        -0.018809136003255844,
-        -0.4528382420539856,
-        0.29027026891708374,
-        1.3893194198608398,
-        0.1954631805419922,
-        1.0833051204681396,
-        0.24460379779338837
+        0.763754665851593,
+        0.04025835171341896,
+        -1.4470384120941162,
+        -0.7509639859199524,
+        0.24560047686100006,
+        -0.05871790274977684,
+        -0.9272850751876831,
+        -0.1096646636724472,
+        0.011717895977199078,
+        -0.7846896648406982,
+        0.8180956840515137,
+        -0.6266915202140808,
+        -1.4338274002075195,
+        0.7689780592918396,
+        1.4586023092269897,
+        -0.7253769636154175,
+        1.0360466241836548,
+        -0.12868140637874603,
+        0.7774505019187927,
+        -0.09820795804262161
+      ]
+    },
+    {
+      "shotIndex": 5,
+      "event": {
+        "type": "HIT",
+        "tablejson": {
+          "aim": {
+            "type": "AIM",
+            "offset": {
+              "x": 0.16869300603866577,
+              "y": 0.24807794392108917,
+              "z": 0
+            },
+            "angle": 0.15639346837997437,
+            "power": 1.309999942779541,
+            "pos": {
+              "x": -1.346205711364746,
+              "y": 0.2614285349845886,
+              "z": 0
+            },
+            "i": 0
+          },
+          "balls": [
+            {
+              "pos": {
+                "x": -1.346205711364746,
+                "y": 0.2614285349845886,
+                "z": 0
+              },
+              "id": 0
+            }
+          ]
+        }
+      },
+      "state": [
+        -1.346205711364746,
+        0.2614285349845886,
+        -1.4470384120941162,
+        -0.7509639859199524,
+        0.24560047686100006,
+        -0.05871790274977684,
+        -0.9272850751876831,
+        -0.1096646636724472,
+        0.011717895977199078,
+        -0.7846896648406982,
+        0.8180956840515137,
+        -0.6266915202140808,
+        -1.4338274002075195,
+        0.7689780592918396,
+        1.4586023092269897,
+        -0.7253769636154175,
+        0.8834645748138428,
+        0.6145361661911011,
+        0.7774505019187927,
+        -0.09820795804262161
       ]
     },
     {
@@ -976,12 +150,193 @@ Copy
           "aim": {
             "type": "AIM",
             "offset": {
-              "x": 0,
-              "y": 0.3,
+              "x": -0.007352941203862429,
+              "y": -0.029411764815449715,
               "z": 0
             },
-            "angle": -0.12663958966732025,
-            "power": 2.9344000816345215,
+            "angle": -0.7389466762542725,
+            "power": 1.309999942779541,
             "pos": {
-              "x": 0.47176605463027954,
-              "y": 0.02
+              "x": -0.0652952715754509,
+              "y": 0.20230291783809662,
+              "z": 0
+            },
+            "i": 0
+          },
+          "balls": [
+            {
+              "pos": {
+                "x": -0.0652952715754509,
+                "y": 0.20230291783809662,
+                "z": 0
+              },
+              "id": 0
+            }
+          ]
+        }
+      },
+      "state": [
+        -0.0652952715754509,
+        0.20230291783809662,
+        -1.4470384120941162,
+        -0.7509639859199524,
+        0.24560047686100006,
+        -0.05871790274977684,
+        -0.9272850751876831,
+        -0.1096646636724472,
+        0.011717895977199078,
+        -0.7846896648406982,
+        0.8180956840515137,
+        -0.6266915202140808,
+        -1.4338274002075195,
+        0.7689780592918396,
+        1.4586023092269897,
+        -0.7253769636154175,
+        1.4317225217819214,
+        0.7596760988235474,
+        0.7774505019187927,
+        -0.09820795804262161
+      ]
+    }
+  ],
+  "localHistoryWindow": [
+    {
+      "shotIndex": 4,
+      "event": {
+        "type": "HIT",
+        "tablejson": {
+          "aim": {
+            "type": "AIM",
+            "offset": {
+              "x": 0.16869300603866577,
+              "y": 0.24807794392108917,
+              "z": 0
+            },
+            "angle": -0.42850640416145325,
+            "power": 1.9387999773025513,
+            "pos": {
+              "x": 0.763754665851593,
+              "y": 0.04025835171341896,
+              "z": 0
+            },
+            "i": 0
+          },
+          "balls": [
+            {
+              "pos": {
+                "x": 0.763754665851593,
+                "y": 0.04025835171341896,
+                "z": 0
+              },
+              "id": 0
+            }
+          ]
+        }
+      },
+      "state": [
+        0.763754665851593,
+        0.04025835171341896,
+        -1.4470384120941162,
+        -0.7509639859199524,
+        0.24560047686100006,
+        -0.05871790274977684,
+        -0.9272850751876831,
+        -0.1096646636724472,
+        0.011717895977199078,
+        -0.7846896648406982,
+        0.8180956840515137,
+        -0.6266915202140808,
+        -1.4338274002075195,
+        0.7689780592918396,
+        1.4586023092269897,
+        -0.7253769636154175,
+        1.0360466241836548,
+        -0.12868140637874603,
+        0.7774505019187927,
+        -0.09820795804262161
+      ]
+    },
+    {
+      "shotIndex": 5,
+      "event": {
+        "type": "HIT",
+        "tablejson": {
+          "aim": {
+            "type": "AIM",
+            "offset": {
+              "x": 0.16869300603866577,
+              "y": 0.24807794392108917,
+              "z": 0
+            },
+            "angle": 0.15639346837997437,
+            "power": 1.309999942779541,
+            "pos": {
+              "x": -1.346205711364746,
+              "y": 0.2614285349845886,
+              "z": 0
+            },
+            "i": 0
+          },
+          "balls": [
+            {
+              "pos": {
+                "x": -1.346205711364746,
+                "y": 0.2614285349845886,
+                "z": 0
+              },
+              "id": 0
+            }
+          ]
+        }
+      },
+      "state": [
+        -1.346205711364746,
+        0.2614285349845886,
+        -1.4470384120941162,
+        -0.7509639859199524,
+        0.24560047686100006,
+        -0.05871790274977684,
+        -0.9272850751876831,
+        -0.1096646636724472,
+        0.011717895977199078,
+        -0.7846896648406982,
+        0.8180956840515137,
+        -0.6266915202140808,
+        -1.4338274002075195,
+        0.7689780592918396,
+        1.4586023092269897,
+        -0.7253769636154175,
+        0.8834645748138428,
+        0.6145361661911011,
+        0.7774505019187927,
+        -0.09820795804262161
+      ]
+    },
+    {
+      "shotIndex": 6,
+      "event": {},
+      "state": [
+        -0.0652952715754509,
+        0.20230291783809662,
+        -1.4470384120941162,
+        -0.7509639859199524,
+        0.24560047686100006,
+        -0.05871790274977684,
+        -0.9272850751876831,
+        -0.1096646636724472,
+        0.011717895977199078,
+        -0.7846896648406982,
+        0.8180956840515137,
+        -0.6266915202140808,
+        -1.439072847366333,
+        0.7633445262908936,
+        1.4586023092269897,
+        -0.7253769636154175,
+        1.4317225217819214,
+        0.7596760988235474,
+        0.7774505019187927,
+        -0.09820795804262161
+      ]
+    }
+  ]
+}
