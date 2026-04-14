@@ -7,6 +7,7 @@ export interface RematchInfo {
   ruleType: string
   lastScores: { userId: string; score: number }[]
   nextTurnId: string
+  options?: Record<string, string>
 }
 
 export class Rematch {
@@ -21,6 +22,23 @@ export class Rematch {
     }
   }
 
+  static optionsFromURL() : Record<string, string> | undefined {
+    const params = new URLSearchParams(globalThis.location.search)
+    const raceTo = params.get("raceTo")
+    if (raceTo) {
+      const options: Record<string, string> = {}
+      options["raceTo"] = raceTo
+      return options
+    }
+    const reds = params.get("reds")
+    if (reds) {
+      const options: Record<string, string> = {}
+      options["reds"] = reds
+      return options
+    }
+
+    return undefined
+  }
   static update(
     session: Session,
     rulename: string,
@@ -52,6 +70,7 @@ export class Rematch {
           { userId: opponentId, score: amIWinner ? 0 : 1 },
         ],
         nextTurnId: loserId,
+        options: Rematch.optionsFromURL() ?? {}
       }
     }
   }
