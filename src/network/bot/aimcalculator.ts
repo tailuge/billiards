@@ -52,7 +52,8 @@ export class AimCalculator {
     table: Table,
     noise: number,
     targetPos: Vector3 = new Vector3().random(),
-    power: number
+    power: number,
+    spinOffset: Vector3 = AimCalculator.randomSpin()
   ): HitEvent {
     const { cueball, cue, balls } = table
     const { aim } = cue
@@ -63,10 +64,7 @@ export class AimCalculator {
     const lineTo = targetPos.clone().sub(cueball.pos)
     aim.angle = atan2(lineTo.y, lineTo.x) + (Math.random() - 0.5) * noise
     aim.power = power
-    aim.offset = new Vector3(
-      0,
-      (Math.random() - 0.5) * AimCalculator.RANDOM_OFFSET_RANGE
-    )
+    aim.offset = spinOffset
 
     if (cue.intersectsAnything(table, aim)) {
       aim.offset.set(0, cue.offCenterLimit, 0)
@@ -120,5 +118,12 @@ export class AimCalculator {
 
   private getDirectionVector(from: Vector3, to: Vector3): Vector3 {
     return new Vector3().subVectors(to, from).normalize()
+  }
+
+  static randomSpin() {
+    return new Vector3(
+      0,
+      (Math.random() - 0.5) * AimCalculator.RANDOM_OFFSET_RANGE
+    )
   }
 }
