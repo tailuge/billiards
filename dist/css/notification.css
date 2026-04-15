@@ -299,6 +299,14 @@
   --notification-score-value-clr: var(--notification-text-clr-inv);
 }
 
+#notification.is-winner .notification-actions button,
+#notification.is-winner .notification-actions .button,
+#notification.is-loser .notification-actions button,
+#notification.is-loser .notification-actions .button {
+  background: var(--notification-black-15);
+  border-color: var(--notification-black-30);
+}
+
 /* ==========================================================================
    5. Interaction & Extras
    ========================================================================== */

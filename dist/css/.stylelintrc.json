@@ -1,3 +1,8 @@
 {
-  "extends": "stylelint-config-standard"
+  "extends": "stylelint-config-standard",
+  "rules": {
+    "selector-id-pattern": null,
+    "selector-class-pattern": null,
+    "keyframes-name-pattern": null
+  }
 }

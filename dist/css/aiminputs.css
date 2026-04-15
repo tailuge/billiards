@@ -50,7 +50,7 @@
   width: var(--ball-size-small);
   height: var(--ball-size-small);
   border-radius: 0;
-  border-width: 0px;
+  border-width: 0;
   box-shadow: none;
   background-color: transparent !important;
   background-image: none !important;

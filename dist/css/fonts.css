@@ -1,4 +1,5 @@
 /* Global Font Configuration */
+
 /* Import Exo from Google Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap");
 
@@ -18,6 +19,6 @@ textarea {
   font-family: var(--font-family-primary);
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: auto;
-  text-rendering: optimizeSpeed;
+  text-rendering: optimizespeed;
   font-smooth: never;
 }

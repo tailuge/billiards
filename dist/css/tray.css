@@ -30,7 +30,7 @@
   letter-spacing: 0.5px;
   line-height: 1.2;
   color: white;
-  text-shadow: 1px 1px 0px rgba(0, 0, 0, 1);
+  text-shadow: 1px 1px 0 rgb(0 0 0 / 100%);
   padding-top: 2px;
   pointer-events: none;
   gap: 2px;
@@ -49,13 +49,6 @@
 }
 
 .ball-tray-list {
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 15%,
-    black 90%,
-    transparent
-  );
   mask-image: linear-gradient(
     to right,
     transparent,
