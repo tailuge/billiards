@@ -22,7 +22,7 @@ export class Rematch {
     }
   }
 
-  static optionsFromURL() : Record<string, string> | undefined {
+  static optionsFromURL(): Record<string, string> | undefined {
     const params = new URLSearchParams(globalThis.location.search)
     const raceTo = params.get("raceTo")
     if (raceTo) {
@@ -70,7 +70,7 @@ export class Rematch {
           { userId: opponentId, score: amIWinner ? 0 : 1 },
         ],
         nextTurnId: loserId,
-        options: Rematch.optionsFromURL() ?? {}
+        options: Rematch.optionsFromURL() ?? {},
       }
     }
   }

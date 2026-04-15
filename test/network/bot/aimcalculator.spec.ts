@@ -56,7 +56,12 @@ describe("AimCalculator", () => {
       jest.spyOn(table.cue, "intersectsAnything").mockReturnValue(true)
 
       const targetPos = new Vector3(10, 0, 0)
-      const hitEvent = calculator.generateRandomShot(table, 0, targetPos) as any
+      const hitEvent = calculator.generateShot(
+        table,
+        0,
+        targetPos,
+        AimCalculator.DEFAULT_SHOT_POWER
+      ) as any
 
       const aimData = hitEvent.tablejson.aim
       expect(aimData.offset.y).toBe(table.cue.offCenterLimit)
@@ -71,7 +76,12 @@ describe("AimCalculator", () => {
       jest.spyOn(table.cue, "intersectsAnything").mockReturnValue(false)
 
       const targetPos = new Vector3(10, 0, 0)
-      const hitEvent = calculator.generateRandomShot(table, 0, targetPos) as any
+      const hitEvent = calculator.generateShot(
+        table,
+        0,
+        targetPos,
+        AimCalculator.DEFAULT_SHOT_POWER
+      ) as any
 
       const aimData = hitEvent.tablejson.aim
       // By default generateRandomShot sets a random offset.y between -0.3 and 0.3

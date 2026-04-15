@@ -179,10 +179,11 @@ export class BotEventHandler {
     const targetPoint = targetBall?.pos ?? zero
 
     const aimPoint = this.calculator.getAimPoint(cueball.pos, targetPoint)
-    const hitEvent = this.calculator.generateRandomShot(
+    const hitEvent = this.calculator.generateShot(
       table,
       0,
-      aimPoint ?? undefined
+      aimPoint ?? undefined,
+      AimCalculator.DEFAULT_SHOT_POWER
     )
     const aimEvent = AimEvent.fromJson(hitEvent.tablejson.aim)
     return [aimEvent, hitEvent]

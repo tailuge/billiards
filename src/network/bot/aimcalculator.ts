@@ -14,9 +14,9 @@ import { PocketGeometry } from "../../view/pocketgeometry"
 export class AimCalculator {
   private static readonly POCKET_INSET_FACTOR = 0.94
   private static readonly GHOST_BALL_DISTANCE_FACTOR = 2.001
-  private static readonly DEFAULT_SHOT_POWER = 90 * R
   private static readonly RANDOM_OFFSET_RANGE = 0.6
 
+  static readonly DEFAULT_SHOT_POWER = 90 * R
   public readonly pockets: Vector3[]
 
   constructor() {
@@ -48,10 +48,11 @@ export class AimCalculator {
   /**
    * Generates a HitEvent for a shot towards a target position, optionally adding noise.
    */
-  public generateRandomShot(
+  public generateShot(
     table: Table,
     noise: number,
-    targetPos: Vector3 = new Vector3().random()
+    targetPos: Vector3 = new Vector3().random(),
+    power: number
   ): HitEvent {
     const { cueball, cue, balls } = table
     const { aim } = cue
@@ -61,7 +62,7 @@ export class AimCalculator {
 
     const lineTo = targetPos.clone().sub(cueball.pos)
     aim.angle = atan2(lineTo.y, lineTo.x) + (Math.random() - 0.5) * noise
-    aim.power = AimCalculator.DEFAULT_SHOT_POWER
+    aim.power = power
     aim.offset = new Vector3(
       0,
       (Math.random() - 0.5) * AimCalculator.RANDOM_OFFSET_RANGE
