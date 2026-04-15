@@ -182,8 +182,8 @@ export class BotEventHandler {
     const hitEvent = this.calculator.generateShot(
       table,
       0,
-      aimPoint ?? undefined,
-      AimCalculator.DEFAULT_SHOT_POWER
+      AimCalculator.DEFAULT_SHOT_POWER,
+      aimPoint ?? undefined
     )
     const aimEvent = AimEvent.fromJson(hitEvent.tablejson.aim)
     return [aimEvent, hitEvent]

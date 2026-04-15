@@ -51,8 +51,8 @@ export class AimCalculator {
   public generateShot(
     table: Table,
     noise: number,
-    targetPos: Vector3 = new Vector3().random(),
     power: number,
+    targetPos: Vector3 = new Vector3().random(),
     spinOffset: Vector3 = AimCalculator.randomSpin()
   ): HitEvent {
     const { cueball, cue, balls } = table
