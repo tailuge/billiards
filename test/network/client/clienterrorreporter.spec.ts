@@ -11,8 +11,8 @@ describe("ClientErrorReporter", () => {
 
     reporter = new ClientErrorReporter(endpoint)
     // Mock fetch and sendBeacon
-    global.fetch = jest.fn(() => Promise.resolve({ ok: true })) as jest.Mock
-    global.navigator.sendBeacon = jest.fn(() => true)
+    globalThis.fetch = jest.fn(() => Promise.resolve({ ok: true })) as jest.Mock
+    globalThis.navigator.sendBeacon = jest.fn(() => true)
   })
 
   afterEach(() => {
@@ -28,9 +28,9 @@ describe("ClientErrorReporter", () => {
     // Force flush
     ;(reporter as any).flush()
 
-    expect(global.navigator.sendBeacon).toHaveBeenCalled()
+    expect(globalThis.navigator.sendBeacon).toHaveBeenCalled()
     const payload = JSON.parse(
-      (global.navigator.sendBeacon as jest.Mock).mock.calls[0][1]
+      (globalThis.navigator.sendBeacon as jest.Mock).mock.calls[0][1]
     )
     expect(payload[0].message).toBe("Test error")
     expect(payload[0].type).toBe("error")
@@ -42,6 +42,6 @@ describe("ClientErrorReporter", () => {
     console.warn(backpackMsg)
     ;(reporter as any).flush()
 
-    expect(global.navigator.sendBeacon).not.toHaveBeenCalled()
+    expect(globalThis.navigator.sendBeacon).not.toHaveBeenCalled()
   })
 })

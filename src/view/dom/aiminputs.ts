@@ -249,7 +249,7 @@ export class AimInputs {
   animateSliderHit() {
     if (this.sliderAnimId !== null) return // Prevent multiple concurrent animations
 
-    const target = parseFloat(this.cuePowerElement.value)
+    const target = Number.parseFloat(this.cuePowerElement.value)
     const duration = 2000 // Increased to 2s to allow for the 1s delay
     let start: number | null = null
 
