@@ -43,7 +43,6 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   background: rgb(34 34 34 / 70%);
-  backdrop-filter: blur(10px);
   border: 1px solid rgb(255 255 255 / 10%);
   padding: 1px;
   border-radius: 6px;
