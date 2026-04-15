@@ -314,7 +314,6 @@
   text-transform: uppercase;
   background: var(--notification-white-25);
   backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
   border: 1px solid var(--notification-white-30);
   border-radius: var(--notification-radius-s);
   box-shadow: var(--notification-shadow-sm);
@@ -383,7 +382,6 @@
   font-size: var(--notification-size-m);
   font-weight: var(--notification-weight-bold);
   background: var(--notification-white-15);
-  backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   border: 1px solid var(--notification-white-30);
   border-radius: var(--notification-radius-s);
