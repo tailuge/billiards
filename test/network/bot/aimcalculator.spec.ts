@@ -59,8 +59,8 @@ describe("AimCalculator", () => {
       const hitEvent = calculator.generateShot(
         table,
         0,
-        targetPos,
-        AimCalculator.DEFAULT_SHOT_POWER
+        AimCalculator.DEFAULT_SHOT_POWER,
+        targetPos
       ) as any
 
       const aimData = hitEvent.tablejson.aim
@@ -79,8 +79,8 @@ describe("AimCalculator", () => {
       const hitEvent = calculator.generateShot(
         table,
         0,
-        targetPos,
-        AimCalculator.DEFAULT_SHOT_POWER
+        AimCalculator.DEFAULT_SHOT_POWER,
+        targetPos
       ) as any
 
       const aimData = hitEvent.tablejson.aim
