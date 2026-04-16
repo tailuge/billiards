@@ -1,71 +1,110 @@
-# Voice Chat Integration Plan
+# Voice Chat Integration Plan (Revised)
 
-This document outlines the plan for adding a simple-peer voice chat feature to the Billiards game.
+This document outlines the simplified and robust plan for adding a simple-peer voice chat feature to the Billiards game.
 
-## Overview
+## 1. Architectural Simplification
 
-The voice chat will be initiated by a new button in the chat emoji grid. Clicking this button will send a special chat message that triggers both the sender and the receiver to establish a peer-to-peer audio connection using `simple-peer`.
+*   **Implicit Peer Identity:** In a 1v1 game, peer identity is implicit. Any signaling message received via the game session is from the opponent. No `clientId` exchange is required.
+*   **Structured Events:** Use structured events with a `type` field rather than parsing strings.
+*   **Signaling Isolation:** Ensure signaling messages are handled by the `VoiceManager` and do not appear in the chat history UI.
 
-## UI Changes
+## 2. Updated Signaling Flow
 
-### `dist/index.html`
-- Add a new emoji button to the `#commentMenu` div:
-  ```html
-  <button class="comment-emoji">☎️</button>
-  ```
+| Step | Action | Event Payload |
+| :--- | :--- | :--- |
+| **1. Request** | User A clicks ☎️ | `{ type: 'VOICE_REQUEST' }` |
+| **2. Signaling** | User A/B emit `signal` | `{ type: 'VOICE_SIGNAL', data: [SDP/ICE Object] }` |
+| **3. Stream** | Peer emits `stream` | (Internal to `simple-peer`) |
 
-## Identity and Peer Identification
+## 3. Implementation Outline
 
-- **Identity:** Use the `clientId` from the `Session` singleton (`Session.getInstance().clientId`). This ID is unique for each participant in a game session.
-- **Passing Identity:** When the ☎️ emoji is clicked, the chat message should include the sender's `clientId`. For example: `☎️:{clientId}`.
+### UI Change (`dist/index.html`)
+Add a simple toggle button in the `#commentMenu`:
+```html
+<button id="voiceToggle" class="comment-emoji">☎️</button>
+```
 
-## Signaling Flow
+### The `VoiceManager` (`src/network/voice/voicemanager.ts`)
+Encapsulate all WebRTC logic here to keep `container.ts` clean.
 
-WebRTC requires an exchange of signaling data (SDP and ICE candidates) to establish a connection. We will use the existing `ChatEvent` mechanism as the signaling channel.
+```typescript
+// Note: simple-peer might require polyfills for 'process' or 'Buffer' in some environments.
+import SimplePeer from 'simple-peer';
 
-1.  **Initiation:**
-    - User A (Initiator) clicks the ☎️ button.
-    - User A's client sends a `ChatEvent` with message `☎️:INIT:{clientId}`.
-    - User A's client initializes `SimplePeer` with `{ initiator: true }`.
-2.  **Reception:**
-    - User B (Receiver) receives the `ChatEvent`.
-    - User B's client recognizes the ☎️ icon and the `clientId`.
-    - User B's client initializes `SimplePeer` with `{ initiator: false }`.
-3.  **Signal Exchange:**
-    - When User A's peer object emits a `signal` event, User A sends a `ChatEvent` with `☎️:SIGNAL:{clientId}:{data}`.
-    - User B receives the signal message and calls `peer.signal(data)`.
-    - User B's peer object will also emit `signal` events, which are sent back to User A in the same manner.
-4.  **Connection:**
-    - Once the peers are connected, the audio stream will be exchanged.
+export class VoiceManager {
+  private peer: any = null;
 
-## `simple-peer` Interface for Voice
+  async start(isInitiator: boolean, onSignal: (data: any) => void) {
+    // Ensure we don't start multiple sessions
+    if (this.peer) this.peer.destroy();
 
-- **Installation:** Add `simple-peer` to `package.json` or include it via a CDN in `index.html`.
-- **Media Access:**
-  ```javascript
-  navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(stream => {
-      const peer = new SimplePeer({
-        initiator: isInitiator,
-        stream: stream,
-        trickle: true
-      });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      peer.on('signal', data => {
-        // Send signal data via ChatEvent
-      });
-
-      peer.on('stream', remoteStream => {
-        // Play remote audio stream
-        const audio = new Audio();
-        audio.srcObject = remoteStream;
-        audio.play();
-      });
+    this.peer = new SimplePeer({
+      initiator: isInitiator,
+      stream: stream,
+      trickle: true
     });
-  ```
 
-## Required Code Changes (Outline)
+    this.peer.on('signal', (data: any) => onSignal(data));
 
-- **`src/view/comment.ts`**: Update to ensure the ☎️ button triggers the initiation logic.
-- **`src/container/container.ts`**: Handle incoming `ChatEvent`s to filter for voice signaling messages and route them to a `VoiceManager`.
-- **`src/network/voice/voicemanager.ts` (New)**: Create a class to manage the `SimplePeer` instance, media streams, and signaling state.
+    this.peer.on('stream', (remoteStream: MediaStream) => {
+      const audio = new Audio();
+      audio.srcObject = remoteStream;
+      audio.play();
+    });
+  }
+
+  signal(data: any) {
+    if (this.peer) this.peer.signal(data);
+  }
+
+  destroy() {
+    if (this.peer) {
+        this.peer.destroy();
+        this.peer = null;
+    }
+  }
+}
+```
+
+### Network Integration (`src/container/container.ts`)
+Handle the events without bloating the chat UI. The `VoiceManager` should be a persistent member of the `Container`.
+
+```typescript
+// Inside Container class initialization
+this.voiceManager = new VoiceManager();
+
+// Inside message handling logic (e.g., handleChat)
+function handleChat(event: ChatEvent) {
+  if (event.type === 'VOICE_REQUEST') {
+      // Opponent wants to chat; start as receiver
+      this.voiceManager.start(false, (data) => this.sendChatEvent('VOICE_SIGNAL', data));
+      return;
+  }
+
+  if (event.type === 'VOICE_SIGNAL') {
+      this.voiceManager.signal(event.data);
+      return;
+  }
+
+  // Standard chat message (no type specified)
+  if (!event.type) {
+      this.chat.showMessage(event.message);
+  }
+}
+
+// Button Click Handler (in Comment or Container)
+document.getElementById('voiceToggle').onclick = () => {
+  this.voiceManager.start(true, (data) => this.sendChatEvent('VOICE_SIGNAL', data));
+  this.sendChatEvent('VOICE_REQUEST', {});
+};
+```
+
+## 4. Required Code Changes
+
+- **`src/events/chatevent.ts`**: Add optional `voiceType` and `data` fields to the `ChatEvent` class to carry signaling information.
+- **`src/view/comment.ts`**: Update to handle the `#voiceToggle` button click separately from standard emoji clicks.
+- **`src/container/container.ts`**: Instantiate `VoiceManager` as a member and update `handleChat` to route signaling messages correctly, bypassing the `Chat` view.
+- **`src/network/voice/voicemanager.ts`**: Create this new class as outlined above.
+- **`package.json`**: Add `simple-peer` dependency.
