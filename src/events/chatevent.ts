@@ -5,7 +5,7 @@ import { Controller } from "../controller/controller"
 export class ChatEvent extends GameEvent {
   sender
   message
-  voiceType?: "VOICE_REQUEST" | "VOICE_SIGNAL"
+  voiceType?: "VOICE_REQUEST" | "VOICE_SIGNAL" | undefined
   voiceData?: any
 
   constructor(

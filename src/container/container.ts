@@ -71,6 +71,8 @@ export class Container {
   notification: Notification
   lobbyIndicator: LobbyIndicator
   replayMode: boolean = false
+  relay: MessageRelay | null = null
+  scoreReporter: ScoreReporter | null = null
   voiceManager: VoiceManager
   voiceController: VoiceController
   frame: (timestamp: number) => void
