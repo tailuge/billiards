@@ -106,6 +106,5 @@ export class VoiceManager {
       this.localStream = null
     }
 
-    this.pendingSignals = []
   }
 }
