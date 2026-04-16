@@ -85,7 +85,7 @@ export class VoiceController {
       // Caller initiates the WebRTC offer
       this.voice.start(true, stream)
       this.container.sendEvent(
-        new ChatEvent(this.container.id, "", "VOICE_REQUEST")
+        new ChatEvent(this.container.id, "☎️", "VOICE_REQUEST")
       )
     } catch (err) {
       console.warn("Mic error:", err)
