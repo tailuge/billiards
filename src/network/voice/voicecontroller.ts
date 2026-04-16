@@ -122,10 +122,6 @@ export class VoiceController {
   }
 
   onSignal(data: any) {
-    // Only auto-accept if we haven't started the process yet
-    if (this.state === "ringing") {
-      this.acceptCall()
-    }
     this.voice.signal(data)
   }
 
