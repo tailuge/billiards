@@ -15,9 +15,10 @@ export class LobbyIndicator {
   private readonly ruleType: string
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
   private currentTableId: string | null = null
-
+  private replayMode: boolean
   constructor(botMode: boolean, replayMode: boolean, rules: Rules) {
     this.rules = rules
+    this.replayMode = replayMode
     if (botMode) {
       this.ruleType = "bot"
     } else if (replayMode) {
@@ -156,6 +157,11 @@ export class LobbyIndicator {
   private getLobbyUrl(): string {
     const url = new URL(LOBBY_URL)
     const session = Session.getInstance()
+
+    if (this.replayMode) {
+      return url.toString()
+    }
+
     url.searchParams.set("userName", session.playername)
     url.searchParams.set("userId", session.clientId)
 
