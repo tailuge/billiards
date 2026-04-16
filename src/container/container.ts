@@ -39,19 +39,9 @@ import { PlaceBall } from "../controller/placeball"
 import { PlayShot } from "../controller/playshot"
 import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
-import { HitEvent } from "../events/hitevent"
 import { BallTray } from "../view/ball-tray"
-import { checkDesyncTripwire } from "../utils/desync-tripwire"
 
 type ActivePlayer = 0 | 1 | 2
-
-interface HitHistoryEntry {
-  shotIndex: number
-  event: Record<string, unknown>
-  state: number[]
-}
-
-const DESYNC_HISTORY_SLICE = 3
 
 /**
  * Model, View, Controller container.
@@ -92,8 +82,6 @@ export class Container {
 
   last = performance.now()
   readonly step = 0.001953125 * 1
-  private readonly hitHistoryLimit = 8
-  private hitHistory: HitHistoryEntry[] = []
 
   broadcast: (event: GameEvent) => void = () => {}
   log: (text: string) => void
@@ -160,164 +148,8 @@ export class Container {
   })
 
   sendEvent(event) {
-    if (event.type === "HIT") {
-      this.attachOutgoingHitHistory(event as HitEvent)
-    }
     this.recorder.record(event)
     this.throttle.send(event)
-  }
-
-  private attachOutgoingHitHistory(hitEvent: HitEvent) {
-    const currentEntry = this.createHitHistoryEntry(
-      hitEvent.tablejson,
-      this.hitHistory.length
-    )
-    hitEvent.tablejson.historyWindow = [
-      ...this.cloneHitHistoryWindow(
-        this.hitHistory.slice(-(this.hitHistoryLimit - 1))
-      ),
-      this.cloneHitHistoryEntry(currentEntry),
-    ]
-    this.hitHistory = [
-      ...this.hitHistory.slice(-(this.hitHistoryLimit - 1)),
-      currentEntry,
-    ]
-  }
-
-  getRemoteHitHistoryDiagnostics(hitEvent: HitEvent) {
-    const remoteHistoryWindow = this.normaliseHitHistoryWindow(
-      hitEvent.tablejson?.historyWindow
-    )
-    if (!remoteHistoryWindow) {
-      return {}
-    }
-
-    const localHistoryWindow = remoteHistoryWindow
-      .map((entry) => this.getComparableHitHistoryEntry(entry.shotIndex))
-      .filter((entry): entry is HitHistoryEntry => entry !== undefined)
-
-    return {
-      remoteHistoryWindow: this.cloneHitHistoryWindow(
-        remoteHistoryWindow.slice(-DESYNC_HISTORY_SLICE)
-      ),
-      localHistoryWindow: this.cloneHitHistoryWindow(
-        localHistoryWindow.slice(-DESYNC_HISTORY_SLICE)
-      ),
-    }
-  }
-
-  recordReceivedHitHistory(hitEvent: HitEvent) {
-    const remoteHistoryWindow = this.normaliseHitHistoryWindow(
-      hitEvent.tablejson?.historyWindow
-    )
-    const latestEntry =
-      remoteHistoryWindow?.[remoteHistoryWindow.length - 1] ??
-      this.createHitHistoryEntry(hitEvent.tablejson, this.hitHistory.length)
-
-    if (
-      this.hitHistory.some((entry) => entry.shotIndex === latestEntry.shotIndex)
-    ) {
-      return
-    }
-
-    this.hitHistory = [
-      ...this.hitHistory.slice(-(this.hitHistoryLimit - 1)),
-      this.cloneHitHistoryEntry(latestEntry),
-    ]
-  }
-
-  private getComparableHitHistoryEntry(shotIndex: number) {
-    const existingEntry = this.hitHistory.find(
-      (entry) => entry.shotIndex === shotIndex
-    )
-    if (existingEntry) {
-      return this.cloneHitHistoryEntry(existingEntry)
-    }
-
-    if (shotIndex !== this.hitHistory.length) {
-      return undefined
-    }
-
-    return {
-      shotIndex,
-      event: {},
-      state: this.table.shortSerialise().slice(),
-    }
-  }
-
-  private normaliseHitHistoryWindow(
-    historyWindow: unknown
-  ): HitHistoryEntry[] | undefined {
-    if (!Array.isArray(historyWindow)) {
-      return undefined
-    }
-
-    return historyWindow
-      .map((entry) => this.normaliseHitHistoryEntry(entry))
-      .filter((entry): entry is HitHistoryEntry => entry !== undefined)
-  }
-
-  private normaliseHitHistoryEntry(
-    entry: unknown
-  ): HitHistoryEntry | undefined {
-    const candidate = entry as {
-      shotIndex?: unknown
-      event?: unknown
-      state?: unknown
-    }
-    if (
-      typeof candidate?.shotIndex !== "number" ||
-      !Array.isArray(candidate.state) ||
-      typeof candidate.event !== "object" ||
-      candidate.event === null
-    ) {
-      return undefined
-    }
-
-    return {
-      shotIndex: candidate.shotIndex,
-      event: JSON.parse(JSON.stringify(candidate.event)) as Record<
-        string,
-        unknown
-      >,
-      state: candidate.state.slice(),
-    }
-  }
-
-  private createHitHistoryEntry(tablejson, shotIndex: number): HitHistoryEntry {
-    return {
-      shotIndex,
-      event: this.cloneHitPayloadForHistory(tablejson),
-      state: this.cloneStateCheck(tablejson?.stateCheck),
-    }
-  }
-
-  private cloneHitPayloadForHistory(tablejson): Record<string, unknown> {
-    return {
-      type: "HIT",
-      tablejson: {
-        aim: JSON.parse(JSON.stringify(tablejson?.aim ?? null)),
-        balls: JSON.parse(JSON.stringify(tablejson?.balls ?? [])),
-      },
-    }
-  }
-
-  private cloneStateCheck(stateCheck: number[] | undefined): number[] {
-    return (stateCheck ?? this.table.shortSerialise()).slice()
-  }
-
-  private cloneHitHistoryEntry(entry: HitHistoryEntry): HitHistoryEntry {
-    return {
-      shotIndex: entry.shotIndex,
-      event: JSON.parse(JSON.stringify(entry.event)) as Record<string, unknown>,
-      state: entry.state.slice(),
-    }
-  }
-
-  private cloneHitHistoryWindow(
-    historyWindow: HitHistoryEntry[]
-  ): HitHistoryEntry[] {
-    return historyWindow.map((entry) => this.cloneHitHistoryEntry(entry))
   }
 
   private myHudSlot(): 1 | 2 {
@@ -395,31 +227,8 @@ export class Container {
     const steps = Math.floor(elapsed / this.step)
     const computedElapsed = steps * this.step
     const stateBefore = this.table.allStationary()
-    const stateAtStart = this.table.shortSerialise()
-    try {
-      for (let i = 0; i < steps; i++) {
-        this.table.advance(this.step)
-      }
-    } catch (e) {
-      const payload = checkDesyncTripwire(
-        "tripwire: advance_exception",
-        undefined,
-        stateAtStart,
-        () => ({
-          phase: "advance",
-          controller: this.controller.name,
-          shotCount: this.recorder.getShotCount(),
-          recentHistory: this.recorder.getRecentHistory(),
-          localHistoryWindow: this.cloneHitHistoryWindow(
-            this.hitHistory.slice(-DESYNC_HISTORY_SLICE)
-          ),
-          stateAtStart,
-        })
-      )
-      if (e instanceof Error) {
-        e.message = `${e.message} ${payload}`
-      }
-      throw e
+    for (let i = 0; i < steps; i++) {
+      this.table.advance(this.step)
     }
     this.table.updateBallMesh(computedElapsed)
     this.view.update(computedElapsed, this.table.cue.aim)

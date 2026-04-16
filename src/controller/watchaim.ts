@@ -3,7 +3,6 @@ import { HitEvent } from "../events/hitevent"
 import { BreakEvent } from "../events/breakevent"
 import { WatchShot } from "./watchshot"
 import { ControllerBase } from "./controllerbase"
-import { checkDesyncTripwire } from "../utils/desync-tripwire"
 
 export class WatchAim extends ControllerBase {
   override get name() {
@@ -36,27 +35,6 @@ export class WatchAim extends ControllerBase {
   }
 
   override handleHit(event: HitEvent) {
-    const tablejson = event.tablejson
-    const historyDiagnostics =
-      this.container.getRemoteHitHistoryDiagnostics(event)
-
-    checkDesyncTripwire(
-      "tripwire: remote_hit_pre_apply_desync",
-      tablejson.stateCheck,
-      this.container.table.shortSerialise(),
-      () => ({
-        phase: "pre_apply",
-        controller: this.name,
-        eventClientId: event.clientId,
-        eventPlayername: event.playername,
-        eventSequence: event.sequence,
-        shotCount: this.container.recorder.getShotCount(),
-        recentHistory: this.container.recorder.getRecentHistory(),
-        ...historyDiagnostics,
-      })
-    )
-    this.container.recordReceivedHitHistory(event)
-
     this.container.table.updateFromSerialised(event.tablejson)
     this.container.table.cue.updateAimInput()
 

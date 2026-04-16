@@ -160,7 +160,6 @@ export class Table {
     return {
       balls: [this.balls[0].serialise()],
       aim,
-      stateCheck: this.shortSerialise(),
     }
   }
 
