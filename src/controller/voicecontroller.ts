@@ -24,6 +24,7 @@ export class VoiceController {
   private state: VoiceState = "idle"
   private voice: VoiceManager
   private container: Container
+  private ringingTimeout: any
 
   onStateChange: (symbol: string) => void = () => {}
 
@@ -31,7 +32,7 @@ export class VoiceController {
     this.container = container
     this.voice = voice
     if (!this.voice) return
-    
+
     this.voice.onSignal = (data) => {
       this.container.sendEvent(
         new ChatEvent(this.container.id, "", "VOICE_SIGNAL", data)
@@ -51,12 +52,20 @@ export class VoiceController {
 
   setState(next: VoiceState) {
     if (this.state === next) return
+    if (this.state === "ringing") {
+      clearTimeout(this.ringingTimeout)
+    }
     console.log(`Voice state: ${this.state} → ${next}`)
     this.state = next
     this.onStateChange(SYMBOLS[next])
   }
 
   requestCall() {
+    if (this.state === "ringing") {
+      this.acceptCall()
+      return
+    }
+
     if (this.state !== "idle" && this.state !== "failed") {
       if (this.state === "connected" || this.state === "connecting") {
         this.endCall()
@@ -75,18 +84,11 @@ export class VoiceController {
 
     this.setState("ringing")
 
-    this.container.notifyLocal(
-      {
-        type: "Info",
-        title: "Voice Chat Request",
-        subtext: "Your opponent wants to start a voice chat.",
-        extra: `<button class="notification-action" data-notification-action="join">Join</button>`,
-      },
-      15000,
-      {
-        join: () => this.acceptCall(),
+    this.ringingTimeout = setTimeout(() => {
+      if (this.state === "ringing") {
+        this.setState("idle")
       }
-    )
+    }, 15000)
   }
 
   async acceptCall() {

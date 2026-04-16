@@ -29,6 +29,7 @@ export class Comment {
       }
       if (this.container.voiceController) {
         this.container.voiceController.onStateChange = (symbol) => {
+          console.log("Voice state changed:", symbol)
           voiceBtn.textContent = symbol
         }
       }

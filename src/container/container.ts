@@ -120,6 +120,8 @@ export class Container {
     this.ballTray = new BallTray(this)
     this.recorder = new Recorder(this, this.linkFormatter)
     this.id = id ?? ""
+    this.voiceManager = new VoiceManager()
+    this.voiceController = new VoiceController(this, this.voiceManager)
     this.menu = new Menu(this)
     this.comment = new Comment(this)
     this.table.addToScene(this.view.scene)
@@ -133,8 +135,6 @@ export class Container {
       this.replayMode,
       this.rules
     )
-    this.voiceManager = new VoiceManager()
-    this.voiceController = new VoiceController(this, this.voiceManager)
     this.updateController(new Init(this))
     //  this.updateController(new End(this))
   }
