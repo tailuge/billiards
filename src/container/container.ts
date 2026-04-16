@@ -291,8 +291,8 @@ export class Container {
   updateController(controller: Controller) {
     this.wasReplay = this.wasReplay || controller instanceof Replay
     if (controller !== this.controller) {
-      const playerName = Session.getInstance().playername
-      this.log(`${playerName}: Transition to ${controller.name}`)
+      // a     const playerName = Session.getInstance().playername
+      // b     this.log(`${playerName}: Transition to ${controller.name}`)
       this.controller = controller
       const active = this.inferActivePlayer(controller)
       if (

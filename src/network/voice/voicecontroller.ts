@@ -42,6 +42,11 @@ export class VoiceController {
       this.setState("connected")
     }
 
+    // Handle remote hangup/disconnect
+    this.voice.onClose = () => {
+      this.setState("idle")
+    }
+
     this.voice.onError = (err) => {
       console.warn("VoiceController: VoiceManager error", err)
       this.setState("failed")
@@ -60,33 +65,32 @@ export class VoiceController {
   }
 
   async requestCall() {
+    // Single-button toggle logic
     if (this.state === "ringing") {
-      this.acceptCall()
-      return
+      return this.acceptCall()
     }
 
-    if (this.state !== "idle" && this.state !== "failed") {
-      if (this.state === "connected" || this.state === "connecting") {
-        this.endCall()
-      }
-      return
+    if (
+      this.state === "connected" ||
+      this.state === "connecting" ||
+      this.state === "requesting"
+    ) {
+      return this.endCall()
     }
 
     this.setState("requesting")
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const isInitiator = true // caller is always initiator
-      this.voice.start(isInitiator, stream)
+      // Caller initiates the WebRTC offer
+      this.voice.start(true, stream)
+      this.container.sendEvent(
+        new ChatEvent(this.container.id, "", "VOICE_REQUEST")
+      )
     } catch (err) {
       console.warn("Mic error:", err)
       this.setState("failed")
-      return
     }
-
-    this.container.sendEvent(
-      new ChatEvent(this.container.id, "", "VOICE_REQUEST")
-    )
   }
 
   onIncomingRequest() {
@@ -102,27 +106,38 @@ export class VoiceController {
   }
 
   async acceptCall() {
+    // Prevent redundant calls to getUserMedia during signaling
     if (this.state !== "ringing" && this.state !== "requesting") return
 
+    const prevState = this.state
+    this.setState("connecting")
+
     try {
-      this.setState("connecting")
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const isInitiator = false
-      this.voice.start(isInitiator, stream)
+      // Receiver waits for the offer/signals
+      this.voice.start(false, stream)
     } catch (err) {
-      console.warn("VoiceController: Could not get microphone access:", err)
+      console.warn("VoiceController: Mic access failed:", err)
       this.setState("failed")
     }
   }
 
   onSignal(data: any) {
-    if (this.state === "requesting") {
+    // Only auto-accept if we haven't started the process yet
+    if (this.state === "ringing") {
       this.acceptCall()
     }
     this.voice.signal(data)
   }
 
   endCall() {
+    this.container.sendEvent(new ChatEvent(this.container.id, "", "VOICE_END"))
+    this.voice.destroy()
+    this.setState("idle")
+  }
+
+  // Call this when receiving a VOICE_END event from the remote peer
+  onRemoteEnd() {
     this.voice.destroy()
     this.setState("idle")
   }
