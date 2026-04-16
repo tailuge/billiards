@@ -3,7 +3,7 @@ module.exports = {
   preset: "ts-jest",
   transformIgnorePatterns: [
     // Exclude all node_modules except for chai, jsoncrush, and @tailuge/messaging
-    "node_modules/(?!(chai|jsoncrush|@tailuge/messaging))",
+    "node_modules/(?!(chai|jsoncrush|@tailuge/messaging|simple-peer-light))",
   ],
   transform: {
     // Use SWC for transforming both JavaScript and TypeScript files

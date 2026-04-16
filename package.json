@@ -34,7 +34,7 @@
     "@tailuge/messaging": "1.16.0",
     "interactjs": "1.10.27",
     "jsoncrush": "^1.1.8",
-    "simple-peer": "^9.11.1",
+    "simple-peer-light": "^9.10.0",
     "three": "0.183.2"
   },
   "devDependencies": {
@@ -45,7 +45,6 @@
     "@types/chai": "5.2.3",
     "@types/jest": "30.0.0",
     "@types/node": "25.6.0",
-    "@types/simple-peer": "^9",
     "@types/three": "0.183.1",
     "canvas": "3.2.3",
     "chai": "6.2.2",

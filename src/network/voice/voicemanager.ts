@@ -1,4 +1,4 @@
-import SimplePeer from "simple-peer"
+import SimplePeer from "simple-peer-light"
 
 export class VoiceManager {
   private peer: SimplePeer.Instance | null = null
