@@ -13,8 +13,9 @@ This document outlines the simplified and robust plan for adding a simple-peer v
 | Step | Action | Event Payload |
 | :--- | :--- | :--- |
 | **1. Request** | User A clicks ☎️ | `{ type: 'VOICE_REQUEST' }` |
-| **2. Signaling** | User A/B emit `signal` | `{ type: 'VOICE_SIGNAL', data: [SDP/ICE Object] }` |
-| **3. Stream** | Peer emits `stream` | (Internal to `simple-peer`) |
+| **2. Acceptance**| User B clicks "Join" Notification | (Local Action) |
+| **3. Signaling** | User A/B emit `signal` | `{ type: 'VOICE_SIGNAL', data: [SDP/ICE Object] }` |
+| **4. Stream** | Peer emits `stream` | (Internal to `simple-peer`) |
 
 ## 3. Implementation Outline
 
@@ -25,7 +26,7 @@ Add a simple toggle button in the `#commentMenu`:
 ```
 
 ### The `VoiceManager` (`src/network/voice/voicemanager.ts`)
-Encapsulate all WebRTC logic here to keep `container.ts` clean.
+Encapsulate all WebRTC logic here. Includes robust error handling for user permissions.
 
 ```typescript
 // Note: simple-peer might require polyfills for 'process' or 'Buffer' in some environments.
@@ -35,24 +36,28 @@ export class VoiceManager {
   private peer: any = null;
 
   async start(isInitiator: boolean, onSignal: (data: any) => void) {
-    // Ensure we don't start multiple sessions
     if (this.peer) this.peer.destroy();
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-    this.peer = new SimplePeer({
-      initiator: isInitiator,
-      stream: stream,
-      trickle: true
-    });
+      this.peer = new SimplePeer({
+        initiator: isInitiator,
+        stream: stream,
+        trickle: true
+      });
 
-    this.peer.on('signal', (data: any) => onSignal(data));
+      this.peer.on('signal', (data: any) => onSignal(data));
 
-    this.peer.on('stream', (remoteStream: MediaStream) => {
-      const audio = new Audio();
-      audio.srcObject = remoteStream;
-      audio.play();
-    });
+      this.peer.on('stream', (remoteStream: MediaStream) => {
+        const audio = new Audio();
+        audio.srcObject = remoteStream;
+        audio.play().catch(e => console.error("Audio play blocked", e));
+      });
+    } catch (err) {
+      console.error("Failed to get local stream", err);
+      // Notify the user via the UI that voice initialization failed
+    }
   }
 
   signal(data: any) {
@@ -69,7 +74,7 @@ export class VoiceManager {
 ```
 
 ### Network Integration (`src/container/container.ts`)
-Handle the events without bloating the chat UI. The `VoiceManager` should be a persistent member of the `Container`.
+Handle events with mandatory user activation for the receiver to satisfy browser security policies.
 
 ```typescript
 // Inside Container class initialization
@@ -78,8 +83,17 @@ this.voiceManager = new VoiceManager();
 // Inside message handling logic (e.g., handleChat)
 function handleChat(event: ChatEvent) {
   if (event.type === 'VOICE_REQUEST') {
-      // Opponent wants to chat; start as receiver
-      this.voiceManager.start(false, (data) => this.sendChatEvent('VOICE_SIGNAL', data));
+      // User Activation Requirement: Show a notification instead of starting automatically
+      this.notifyLocal({
+          title: "Voice Chat Request",
+          message: `${event.sender} wants to start a voice chat.`,
+          actions: [{
+              label: "Join",
+              callback: () => {
+                  this.voiceManager.start(false, (data) => this.sendChatEvent('VOICE_SIGNAL', data));
+              }
+          }]
+      });
       return;
   }
 
@@ -88,23 +102,28 @@ function handleChat(event: ChatEvent) {
       return;
   }
 
-  // Standard chat message (no type specified)
+  // Standard chat message
   if (!event.type) {
       this.chat.showMessage(event.message);
   }
 }
 
-// Button Click Handler (in Comment or Container)
+// Button Click Handler (Initiator)
 document.getElementById('voiceToggle').onclick = () => {
   this.voiceManager.start(true, (data) => this.sendChatEvent('VOICE_SIGNAL', data));
   this.sendChatEvent('VOICE_REQUEST', {});
 };
 ```
 
-## 4. Required Code Changes
+## 4. Key Improvements & Browser Compatibility
+1.  **User Activation:** By using `this.notifyLocal` and requiring a button click to "Join", we ensure `getUserMedia` and `audio.play()` are called within a user-initiated event stack, preventing browser blocks.
+2.  **Error Handling:** `VoiceManager.start` uses `try-catch` to handle cases where the user denies microphone access or no device is available.
+3.  **Signaling Isolation:** Signaling events are processed silently by the `Container` and do not clutter the chat output.
 
-- **`src/events/chatevent.ts`**: Add optional `voiceType` and `data` fields to the `ChatEvent` class to carry signaling information.
-- **`src/view/comment.ts`**: Update to handle the `#voiceToggle` button click separately from standard emoji clicks.
-- **`src/container/container.ts`**: Instantiate `VoiceManager` as a member and update `handleChat` to route signaling messages correctly, bypassing the `Chat` view.
-- **`src/network/voice/voicemanager.ts`**: Create this new class as outlined above.
-- **`package.json`**: Add `simple-peer` dependency.
+## 5. Required Code Changes
+
+- **`src/events/chatevent.ts`**: Add optional `voiceType` and `data` fields.
+- **`src/view/comment.ts`**: Add `#voiceToggle` handler.
+- **`src/container/container.ts`**: Integrate `VoiceManager`, handle `VOICE_REQUEST` with local notifications, and route signaling data.
+- **`src/network/voice/voicemanager.ts`**: New class implementation.
+- **`package.json`**: Add `simple-peer`.
