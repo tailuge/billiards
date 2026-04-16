@@ -40,6 +40,8 @@ import { PlayShot } from "../controller/playshot"
 import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
 import { BallTray } from "../view/ball-tray"
+import { VoiceManager } from "../network/voice/voicemanager"
+import { VoiceController } from "../controller/voicecontroller"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -68,9 +70,9 @@ export class Container {
   hud: Hud
   notification: Notification
   lobbyIndicator: LobbyIndicator
-  relay: MessageRelay | null = null
-  scoreReporter: ScoreReporter | null = null
   replayMode: boolean = false
+  voiceManager: VoiceManager
+  voiceController: VoiceController
   frame: (timestamp: number) => void
 
   private hudScores = {
@@ -129,6 +131,8 @@ export class Container {
       this.replayMode,
       this.rules
     )
+//    this.voiceManager = new VoiceManager()
+//    this.voiceController = new VoiceController(this, this.voiceManager)
     this.updateController(new Init(this))
     //  this.updateController(new End(this))
   }

@@ -11,7 +11,17 @@ export abstract class ControllerBase extends Controller {
   readonly scale = 0.001
 
   override handleChat(chatevent: ChatEvent): Controller {
-    this.container.chat.showMessage(chatevent.message)
+    if (chatevent.voiceType === "VOICE_REQUEST") {
+      this.container.voiceController.onIncomingRequest()
+      return this
+    }
+    if (chatevent.voiceType === "VOICE_SIGNAL") {
+      this.container.voiceController.onSignal(chatevent.voiceData)
+      return this
+    }
+    if (chatevent.message) {
+      this.container.chat.showMessage(chatevent.message)
+    }
     return this
   }
 

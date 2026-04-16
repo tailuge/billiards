@@ -5,10 +5,20 @@ import { Controller } from "../controller/controller"
 export class ChatEvent extends GameEvent {
   sender
   message
-  constructor(sender, message) {
+  voiceType?: "VOICE_REQUEST" | "VOICE_SIGNAL"
+  voiceData?: any
+
+  constructor(
+    sender,
+    message,
+    voiceType?: "VOICE_REQUEST" | "VOICE_SIGNAL",
+    voiceData?: any
+  ) {
     super()
     this.sender = sender
     this.message = message
+    this.voiceType = voiceType
+    this.voiceData = voiceData
     this.type = EventType.CHAT
   }
 
@@ -17,6 +27,11 @@ export class ChatEvent extends GameEvent {
   }
 
   static fromJson(json) {
-    return new ChatEvent(json.sender, json.message)
+    return new ChatEvent(
+      json.sender,
+      json.message,
+      json.voiceType,
+      json.voiceData
+    )
   }
 }

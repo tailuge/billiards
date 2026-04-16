@@ -20,8 +20,23 @@ export class Comment {
       this.toggleMenu()
     }
 
+    const voiceBtn = this.menu.querySelector("#voice") as HTMLButtonElement
+    if (voiceBtn) {
+      voiceBtn.onclick = (e) => {
+        e.stopPropagation()
+        this.container.voiceController.requestCall()
+        this.hideMenu()
+      }
+      if (this.container.voiceController) {
+        this.container.voiceController.onStateChange = (symbol) => {
+          voiceBtn.textContent = symbol
+        }
+      }
+    }
+
     const emojiButtons = this.menu.querySelectorAll(".comment-emoji")
     emojiButtons.forEach((btn) => {
+      if (btn.id === "voice") return
       btn.addEventListener("click", (_) => {
         const text = btn.textContent ?? ""
         this.container.chat.showMessage(text)
