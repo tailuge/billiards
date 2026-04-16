@@ -30,8 +30,17 @@ export class VoiceManager {
           ],
         },
       })
+      this.peer.on("iceStateChange", (state: any) => {
+        console.log("ICE state:", state)
+      })
 
-      this.peer.on("signal", (data: any) => this.onSignal(data))
+      this.peer.on("connect", () => {
+        console.log("PEER CONNECTED")
+      })
+      this.peer.on("signal", (data: any) => {
+        console.log("SIGNAL OUT:", data.type || "candidate")
+        this.onSignal(data)
+      })
       this.peer.on("connect", () => this.onConnect())
       this.peer.on("stream", (remoteStream: MediaStream) => {
         this.playStream(remoteStream)
@@ -53,6 +62,7 @@ export class VoiceManager {
   }
 
   signal(data: any) {
+    console.log("SIGNAL IN:", data.type || "candidate")
     if (this.peer) {
       try {
         this.peer.signal(data)

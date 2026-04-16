@@ -41,7 +41,7 @@ import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
 import { BallTray } from "../view/ball-tray"
 import { VoiceManager } from "../network/voice/voicemanager"
-import { VoiceController } from "../controller/voicecontroller"
+import { VoiceController } from "../network/voice/voicecontroller"
 
 type ActivePlayer = 0 | 1 | 2
 

@@ -1,7 +1,7 @@
-import { Container } from "../container/container"
-import { VoiceManager } from "../network/voice/voicemanager"
-import { ChatEvent } from "../events/chatevent"
-import { Session } from "../network/client/session"
+import { Container } from "../../container/container"
+import { VoiceManager } from "./voicemanager"
+import { ChatEvent } from "../../events/chatevent"
+import { Session } from "../client/session"
 
 export type VoiceState =
   | "idle"
