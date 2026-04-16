@@ -1,129 +1,81 @@
-# Voice Chat Integration Plan (Revised)
+# Voice Chat Integration Plan (Robust Edition)
 
-This document outlines the simplified and robust plan for adding a simple-peer voice chat feature to the Billiards game.
+This document outlines the focused, state-driven plan for adding 1v1 voice chat using `simple-peer`.
 
-## 1. Architectural Simplification
+## 1. Principles
+*   **One Class, One Job:** 
+    *   `VoiceManager`: Low-level WebRTC (SimplePeer) wrapper.
+    *   `VoiceController`: High-level state machine, UI coordination, and network policy.
+*   **State-Driven:** All logic flows through a minimal state machine to handle race conditions (e.g., signaling arriving before the user clicks "Join").
+*   **Implicit Signaling:** No need for extra handshakes; in a 1v1 game, the opponent is always the target.
 
-*   **Implicit Peer Identity:** In a 1v1 game, peer identity is implicit. Any signaling message received via the game session is from the opponent. No `clientId` exchange is required.
-*   **Structured Events:** Use structured events with a `type` field rather than parsing strings.
-*   **Signaling Isolation:** Ensure signaling messages are handled by the `VoiceManager` and do not appear in the chat history UI.
-
-## 2. Updated Signaling Flow
-
-| Step | Action | Event Payload |
-| :--- | :--- | :--- |
-| **1. Request** | User A clicks ☎️ | `{ type: 'VOICE_REQUEST' }` |
-| **2. Acceptance**| User B clicks "Join" Notification | (Local Action) |
-| **3. Signaling** | User A/B emit `signal` | `{ type: 'VOICE_SIGNAL', data: [SDP/ICE Object] }` |
-| **4. Stream** | Peer emits `stream` | (Internal to `simple-peer`) |
-
-## 3. Implementation Outline
-
-### UI Change (`dist/index.html`)
-Add a simple toggle button in the `#commentMenu`:
-```html
-<button id="voiceToggle" class="comment-emoji">☎️</button>
-```
-
-### The `VoiceManager` (`src/network/voice/voicemanager.ts`)
-Encapsulate all WebRTC logic here. Includes robust error handling for user permissions.
+## 2. The State Machine
 
 ```typescript
-// Note: simple-peer might require polyfills for 'process' or 'Buffer' in some environments.
-import SimplePeer from 'simple-peer';
-
-export class VoiceManager {
-  private peer: any = null;
-
-  async start(isInitiator: boolean, onSignal: (data: any) => void) {
-    if (this.peer) this.peer.destroy();
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-      this.peer = new SimplePeer({
-        initiator: isInitiator,
-        stream: stream,
-        trickle: true
-      });
-
-      this.peer.on('signal', (data: any) => onSignal(data));
-
-      this.peer.on('stream', (remoteStream: MediaStream) => {
-        const audio = new Audio();
-        audio.srcObject = remoteStream;
-        audio.play().catch(e => console.error("Audio play blocked", e));
-      });
-    } catch (err) {
-      console.error("Failed to get local stream", err);
-      // Notify the user via the UI that voice initialization failed
-    }
-  }
-
-  signal(data: any) {
-    if (this.peer) this.peer.signal(data);
-  }
-
-  destroy() {
-    if (this.peer) {
-        this.peer.destroy();
-        this.peer = null;
-    }
-  }
-}
+type VoiceState =
+  | 'idle'
+  | 'requesting'   // I clicked ☎️
+  | 'ringing'      // Opponent clicked ☎️
+  | 'connecting'   // Both accepted, signaling happening
+  | 'connected'    // Audio streaming
+  | 'failed';      // Error or permission denied
 ```
 
-### Network Integration (`src/container/container.ts`)
-Handle events with mandatory user activation for the receiver to satisfy browser security policies.
+## 3. Component Architecture
 
-```typescript
-// Inside Container class initialization
-this.voiceManager = new VoiceManager();
+### A. `VoiceManager` (`src/network/voice/voicemanager.ts`)
+Handles the browser-level WebRTC logic and media streams.
 
-// Inside message handling logic (e.g., handleChat)
-function handleChat(event: ChatEvent) {
-  if (event.type === 'VOICE_REQUEST') {
-      // User Activation Requirement: Show a notification instead of starting automatically
-      this.notifyLocal({
-          title: "Voice Chat Request",
-          message: `${event.sender} wants to start a voice chat.`,
-          actions: [{
-              label: "Join",
-              callback: () => {
-                  this.voiceManager.start(false, (data) => this.sendChatEvent('VOICE_SIGNAL', data));
-              }
-          }]
-      });
-      return;
-  }
+*   `start(isInitiator: boolean, stream: MediaStream)`: Initializes `SimplePeer`.
+*   `signal(data: any)`: Passes incoming signaling data to the peer.
+*   `destroy()`: Cleanup streams and peer connection.
+*   **Events:** `onSignal`, `onConnect`, `onStream`, `onError`.
 
-  if (event.type === 'VOICE_SIGNAL') {
-      this.voiceManager.signal(event.data);
-      return;
-  }
+### B. `VoiceController` (`src/controller/voicecontroller.ts`)
+The brains of the operation. Coordinates between the `VoiceManager`, `Container` (Network), and UI.
 
-  // Standard chat message
-  if (!event.type) {
-      this.chat.showMessage(event.message);
-  }
-}
+*   `requestCall()`: Sends `VOICE_REQUEST` and moves to `requesting`.
+*   `onIncomingRequest()`: Shows "Join" notification via `container.notifyLocal`.
+*   `acceptCall()`: Acquires microphone, starts `VoiceManager`, and moves to `connecting`.
+*   `onSignal(data)`: Handles incoming signaling; can "lazy-start" if we are in `requesting` state.
+*   **Helper:** `isInitiator()` derived from `Session.playerIndex === 0`.
 
-// Button Click Handler (Initiator)
-document.getElementById('voiceToggle').onclick = () => {
-  this.voiceManager.start(true, (data) => this.sendChatEvent('VOICE_SIGNAL', data));
-  this.sendChatEvent('VOICE_REQUEST', {});
-};
+### C. `ChatEvent` Extension (`src/events/chatevent.ts`)
+Reuse existing chat infrastructure for signaling to avoid new message types.
+
+*   Add `voiceType?: 'VOICE_REQUEST' | 'VOICE_SIGNAL'`
+*   Add `voiceData?: any`
+
+## 4. Implementation Steps
+
+### 1. Dependencies
+Add `simple-peer` and its types.
+```bash
+yarn add simple-peer
+yarn add -D @types/simple-peer
 ```
 
-## 4. Key Improvements & Browser Compatibility
-1.  **User Activation:** By using `this.notifyLocal` and requiring a button click to "Join", we ensure `getUserMedia` and `audio.play()` are called within a user-initiated event stack, preventing browser blocks.
-2.  **Error Handling:** `VoiceManager.start` uses `try-catch` to handle cases where the user denies microphone access or no device is available.
-3.  **Signaling Isolation:** Signaling events are processed silently by the `Container` and do not clutter the chat output.
+### 2. `VoiceManager` Implementation
+Robustly wrap `simple-peer`, ensuring `MediaStream` is handled correctly and `destroy()` is thorough.
 
-## 5. Required Code Changes
+### 3. `VoiceController` Implementation
+Implement the state machine logic.
+*   **Permissions:** Wrap `getUserMedia` in a try/catch to transition to `failed` gracefully.
+*   **UI:** Use `container.notifyLocal` with an action button for "Join".
 
-- **`src/events/chatevent.ts`**: Add optional `voiceType` and `data` fields.
-- **`src/view/comment.ts`**: Add `#voiceToggle` handler.
-- **`src/container/container.ts`**: Integrate `VoiceManager`, handle `VOICE_REQUEST` with local notifications, and route signaling data.
-- **`src/network/voice/voicemanager.ts`**: New class implementation.
-- **`package.json`**: Add `simple-peer`.
+### 4. `Container` Wiring
+*   Instantiate `VoiceController` and `VoiceManager`.
+*   In `handleChat`: Route events with `voiceType` to `VoiceController.onSignal` or `onIncomingRequest`.
+
+### 5. `Comment` View Wiring
+*   Identify the `☎️` button click in `src/view/comment.ts`.
+*   Call `voiceController.requestCall()`.
+
+## 5. Sequence Diagram
+
+1.  **User A** clicks ☎️ -> `VC.requestCall()` -> Send `VOICE_REQUEST`.
+2.  **User B** receives `VOICE_REQUEST` -> `VC.onIncomingRequest()` -> `container.notifyLocal("Join")`.
+3.  **User B** clicks "Join" -> `VC.acceptCall()` -> `VM.start(false)` -> `VM` emits `signal`.
+4.  **User A** receives `signal` -> `VC.onSignal(data)` -> `VC` sees state is `requesting` -> `VC.acceptCall()` -> `VM.start(true)` -> `VM.signal(data)`.
+5.  **Peers** exchange signals until `connected`.
+6.  **Audio** streams automatically via `VM.onStream`.
