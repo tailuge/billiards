@@ -20,6 +20,10 @@ export abstract class ControllerBase extends Controller {
       this.container.voiceController.onSignal(chatevent.voiceData)
       return this
     }
+    if (chatevent.voiceType === "VOICE_END") {
+      this.container.voiceController.onRemoteEnd()
+      return this
+    }
     if (chatevent.message) {
       this.container.chat.showMessage(chatevent.message)
     }
