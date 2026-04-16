@@ -109,7 +109,6 @@ export class VoiceController {
     // Prevent redundant calls to getUserMedia during signaling
     if (this.state !== "ringing" && this.state !== "requesting") return
 
-    const prevState = this.state
     this.setState("connecting")
 
     try {

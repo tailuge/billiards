@@ -5,13 +5,13 @@ import { Controller } from "../controller/controller"
 export class ChatEvent extends GameEvent {
   sender
   message
-  voiceType?: "VOICE_REQUEST" | "VOICE_SIGNAL" | undefined
+  voiceType?: "VOICE_REQUEST" | "VOICE_SIGNAL" | "VOICE_END" | undefined
   voiceData?: any
 
   constructor(
     sender,
     message,
-    voiceType?: "VOICE_REQUEST" | "VOICE_SIGNAL",
+    voiceType?: "VOICE_REQUEST" | "VOICE_SIGNAL" | "VOICE_END",
     voiceData?: any
   ) {
     super()

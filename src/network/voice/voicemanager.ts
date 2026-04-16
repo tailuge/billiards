@@ -104,6 +104,5 @@ export class VoiceManager {
       this.localStream.getTracks().forEach((track) => track.stop())
       this.localStream = null
     }
-
   }
 }
