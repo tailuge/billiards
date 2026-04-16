@@ -30,7 +30,8 @@ export class VoiceController {
   constructor(container: Container, voice: VoiceManager) {
     this.container = container
     this.voice = voice
-
+    if (!this.voice) return
+    
     this.voice.onSignal = (data) => {
       this.container.sendEvent(
         new ChatEvent(this.container.id, "", "VOICE_SIGNAL", data)

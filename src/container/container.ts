@@ -131,8 +131,8 @@ export class Container {
       this.replayMode,
       this.rules
     )
-//    this.voiceManager = new VoiceManager()
-//    this.voiceController = new VoiceController(this, this.voiceManager)
+    //this.voiceManager = new VoiceManager()
+    this.voiceController = new VoiceController(this, this.voiceManager)
     this.updateController(new Init(this))
     //  this.updateController(new End(this))
   }
