@@ -92,18 +92,6 @@ module.exports = {
           chunks: "all",
           priority: 20,
         },
-        interact: {
-          test: /[\\/]node_modules[\\/]interactjs[\\/]/,
-          name: "interact",
-          chunks: "all",
-          priority: 10,
-        },
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendor",
-          chunks: "all",
-          priority: 0,
-        },
       },
     },
     moduleIds: "named",
