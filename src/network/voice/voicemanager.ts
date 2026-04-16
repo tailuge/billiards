@@ -4,6 +4,7 @@ export class VoiceManager {
   private peer: any = null
   private localStream: MediaStream | null = null
   private audio: HTMLAudioElement | null = null
+  private pendingSignals: any[] = []
 
   onSignal: (data: any) => void = () => {}
   onConnect: () => void = () => {}
@@ -30,6 +31,12 @@ export class VoiceManager {
           ],
         },
       })
+      // flush
+      for (const s of this.pendingSignals) {
+        this.peer.signal(s)
+      }
+      this.pendingSignals = []
+      
       this.peer.on("iceStateChange", (state: any) => {
         console.log("ICE state:", state)
       })
@@ -63,12 +70,15 @@ export class VoiceManager {
 
   signal(data: any) {
     console.log("SIGNAL IN:", data.type || "candidate")
-    if (this.peer) {
-      try {
-        this.peer.signal(data)
-      } catch (err) {
-        console.warn("Error signaling Peer:", err)
-      }
+    if (!this.peer) {
+      this.pendingSignals.push(data)
+      return
+    }
+
+    try {
+      this.peer.signal(data)
+    } catch (err) {
+      console.warn("Error signaling Peer:", err)
     }
   }
 

@@ -1,7 +1,6 @@
 import { Container } from "../../container/container"
 import { VoiceManager } from "./voicemanager"
 import { ChatEvent } from "../../events/chatevent"
-import { Session } from "../client/session"
 
 export type VoiceState =
   | "idle"
@@ -60,7 +59,7 @@ export class VoiceController {
     this.onStateChange(SYMBOLS[next])
   }
 
-  requestCall() {
+  async requestCall() {
     if (this.state === "ringing") {
       this.acceptCall()
       return
@@ -74,6 +73,17 @@ export class VoiceController {
     }
 
     this.setState("requesting")
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const isInitiator = true // caller is always initiator
+      this.voice.start(isInitiator, stream)
+    } catch (err) {
+      console.warn("Mic error:", err)
+      this.setState("failed")
+      return
+    }
+
     this.container.sendEvent(
       new ChatEvent(this.container.id, "", "VOICE_REQUEST")
     )
@@ -97,7 +107,7 @@ export class VoiceController {
     try {
       this.setState("connecting")
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const isInitiator = Session.getInstance().playerIndex === 0
+      const isInitiator = false
       this.voice.start(isInitiator, stream)
     } catch (err) {
       console.warn("VoiceController: Could not get microphone access:", err)
