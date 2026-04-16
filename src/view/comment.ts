@@ -31,6 +31,7 @@ export class Comment {
         this.container.voiceController.onStateChange = (symbol) => {
           console.log("Voice state changed:", symbol)
           voiceBtn.textContent = symbol
+          voiceBtn.classList.toggle("voice-ringing", symbol === "☏")
         }
       }
     }

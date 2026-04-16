@@ -13,7 +13,7 @@ export type VoiceState =
 const SYMBOLS: Record<VoiceState, string> = {
   idle: "☎️",
   requesting: "📡",
-  ringing: "🔔",
+  ringing: "☏",
   connecting: "📡",
   connected: "🎙️",
   failed: "⚠️",

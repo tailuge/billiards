@@ -66,6 +66,19 @@
   border-color: #666;
 }
 
+@keyframes voice-throb {
+  0%, 100% {
+    background-color: rgba(220, 0, 0, 0.3);
+  }
+  50% {
+    background-color: rgba(220, 0, 0, 0.9);
+  }
+}
+
+.voice-ringing {
+  animation: voice-throb 1.4s ease-in-out infinite;
+}
+
 .menuButton:disabled {
   display: none;
 }
