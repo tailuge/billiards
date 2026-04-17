@@ -21,8 +21,8 @@ const SYMBOLS: Record<VoiceState, string> = {
 
 export class VoiceController {
   private state: VoiceState = "idle"
-  private voice: VoiceManager
-  private container: Container
+  private readonly voice: VoiceManager
+  private readonly container: Container
   private ringingTimeout: any
 
   onStateChange: (symbol: string) => void = () => {}
