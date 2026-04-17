@@ -65,7 +65,9 @@ export class Session {
     )
     Session.instance.initializeScores()
     if (botMode) {
-      Session.instance.opponentName = "ClawBreak"
+      const urlParams = new URLSearchParams(window.location.search)
+      const bot = urlParams.get("bot")
+      Session.instance.opponentName = bot ?? "ClawBreak"
       Session.instance.setOpponentClientId("bot")
     }
   }

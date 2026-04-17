@@ -16,7 +16,7 @@ import { ReplayEncoder } from "../../utils/replay-encoder"
 import { Session } from "../client/session"
 import { AimEvent } from "../../events/aimevent"
 import { Ball } from "../../model/ball"
-import { Vector3 } from "three/src/math/Vector3.js"
+import { Vector3 } from "three"
 
 export class BotEventHandler {
   private readonly logs: Logger
@@ -27,6 +27,7 @@ export class BotEventHandler {
   ) => void
   protected enqueueMessage: (message: string) => void
   private readonly calculator: AimCalculator
+  private botName: string
 
   constructor(
     logs: Logger,
@@ -39,6 +40,7 @@ export class BotEventHandler {
     this.publishSequenceToPlayer = publishSequenceToPlayer
     this.enqueueMessage = enqueueMessage
     this.calculator = new AimCalculator()
+    this.botName = new URLSearchParams(window.location.search).get("bot") ?? "ClawBreak"
   }
 
   /**
@@ -75,8 +77,8 @@ export class BotEventHandler {
           console.error("Failed to encode replay data", e)
         }
         const result: MatchResult = {
-          winner: "ClawBreak",
-          loser: "Player",
+          winner: this.botName,
+          loser: Session.getInstance().playername,
           winnerScore: Session.getInstance().opponentScore(),
           loserScore: Session.getInstance().myScore(),
           ruleType: this.container.rules.rulename,
@@ -179,9 +181,7 @@ export class BotEventHandler {
   }
 
   private botSelector(targetBall) {
-    const urlParams = new URLSearchParams(window.location.search)
-    const bot = urlParams.get("bot")
-    if (bot === "TheFarJaw") {
+    if (this.botName === "TheFarJaw") {
       return this.theFarJaw(targetBall)
     }
     return this.clawBreak(targetBall)
