@@ -63,7 +63,7 @@ describe("BotRelay", () => {
     })
 
     it("should not enqueue AIM messages", () => {
-      const aimEvent = new AimEvent(new Vector3(), 0, 0, new Vector3())
+      const aimEvent = new AimEvent()
       const message = EventUtil.serialise(aimEvent)
 
       const enqueueSpy = jest.spyOn(botRelay, "enqueueMessage")
