@@ -35,7 +35,7 @@
     "interactjs": "1.10.27",
     "jsoncrush": "^1.1.8",
     "simple-peer-light": "^9.10.0",
-    "three": "0.183.2"
+    "three": "0.184.0"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
@@ -45,7 +45,7 @@
     "@types/chai": "5.2.3",
     "@types/jest": "30.0.0",
     "@types/node": "25.6.0",
-    "@types/three": "0.183.1",
+    "@types/three": "0.184.0",
     "canvas": "3.2.3",
     "chai": "6.2.2",
     "concurrently": "^9.2.1",
@@ -61,7 +61,7 @@
     "stylelint-config-standard": "^40.0.0",
     "swc-loader": "0.2.7",
     "ts-jest": "29.4.9",
-    "typescript": "6.0.2",
+    "typescript": "6.0.3",
     "typescript-eslint": "8.58.2",
     "webpack": "5.106.2",
     "webpack-cli": "7.0.2",
