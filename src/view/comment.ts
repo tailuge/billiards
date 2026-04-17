@@ -16,11 +16,12 @@ export class Comment {
       return
     }
 
+    const voiceBtn = document.getElementById("voice") as HTMLButtonElement
+
     this.button.onclick = (_) => {
       this.toggleMenu()
     }
 
-    const voiceBtn = document.getElementById("voice") as HTMLButtonElement
     if (voiceBtn) {
       voiceBtn.onclick = (e) => {
         e.stopPropagation()
@@ -31,7 +32,11 @@ export class Comment {
         this.container.voiceController.onStateChange = (symbol) => {
           console.log("Voice state changed:", symbol)
           voiceBtn.textContent = symbol
-          voiceBtn.classList.toggle("voice-ringing", symbol === "☏")
+          const ringing = symbol === "☏"
+          voiceBtn.classList.toggle("voice-ringing", ringing)
+          if (ringing) {
+            voiceBtn.hidden = false
+          }
         }
       }
     }
@@ -67,6 +72,8 @@ export class Comment {
   showMenu() {
     if (!this.menu) return
     this.menu.style.display = "grid"
+    const voiceBtn = document.getElementById("voice") as HTMLButtonElement
+    if (voiceBtn) voiceBtn.hidden = false
   }
 
   hideMenu() {

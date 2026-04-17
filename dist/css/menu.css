@@ -85,7 +85,7 @@
   animation: voice-throb 1.4s ease-in-out infinite;
 }
 
-.menuButton:disabled {
+.menuButton[hidden] {
   display: none;
 }
 
