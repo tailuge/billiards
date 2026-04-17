@@ -4,7 +4,7 @@ export class VoiceManager {
   private peer: SimplePeer.Instance | null = null
   private localStream: MediaStream | null = null
   private audio: HTMLAudioElement | null = null
-  private pendingSignals: any[] = []
+  private readonly pendingSignals: any[] = []
 
   onSignal: (data: any) => void = () => {}
   onConnect: () => void = () => {}

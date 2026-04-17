@@ -15,7 +15,7 @@ export class LobbyIndicator {
   private readonly ruleType: string
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
   private currentTableId: string | null = null
-  private replayMode: boolean
+  private readonly replayMode: boolean
   constructor(botMode: boolean, replayMode: boolean, rules: Rules) {
     this.rules = rules
     this.replayMode = replayMode
