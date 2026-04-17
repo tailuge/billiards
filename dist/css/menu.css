@@ -34,6 +34,10 @@
   justify-content: center;
 }
 
+.menuButton.half-height {
+  height: 35px;
+}
+
 .comment-menu {
   position: absolute;
   bottom: 100%;
@@ -67,7 +71,8 @@
 }
 
 @keyframes voice-throb {
-  0%, 100% {
+  0%,
+  100% {
     background-color: rgb(220 0 0 / 30%);
   }
 

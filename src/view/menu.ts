@@ -8,6 +8,7 @@ export class Menu {
   share: HTMLButtonElement
   camera: HTMLButtonElement
   concede: HTMLButtonElement
+  voice: HTMLButtonElement
 
   disabled = true
 
@@ -17,6 +18,7 @@ export class Menu {
     this.share = this.getElement("share")
     this.camera = this.getElement("camera")
     this.concede = this.getElement("concede")
+    this.voice = this.getElement("voice")
     this.setShareVisible(false)
     if (this.camera) {
       this.camera.onclick = (_) => {
@@ -78,6 +80,10 @@ export class Menu {
     if (this.concede) {
       this.concede.hidden = !visible
       this.concede.disabled = !visible
+    }
+    if (this.voice) {
+      this.voice.hidden = !visible
+      this.voice.disabled = !visible
     }
   }
 }

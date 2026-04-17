@@ -20,7 +20,7 @@ export class Comment {
       this.toggleMenu()
     }
 
-    const voiceBtn = this.menu.querySelector("#voice") as HTMLButtonElement
+    const voiceBtn = document.getElementById("voice") as HTMLButtonElement
     if (voiceBtn) {
       voiceBtn.onclick = (e) => {
         e.stopPropagation()
