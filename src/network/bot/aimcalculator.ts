@@ -5,6 +5,7 @@ import { R } from "../../model/physics/constants"
 import { atan2 } from "../../utils/utils"
 import { Pocket } from "../../model/physics/pocket"
 import { PocketGeometry } from "../../view/pocketgeometry"
+import { Knuckle } from "../../model/physics/knuckle"
 
 /**
  * AimCalculator provides logic for the bot to calculate shot angles and power.
@@ -18,9 +19,11 @@ export class AimCalculator {
 
   static readonly DEFAULT_SHOT_POWER = 90 * R
   public readonly pockets: Vector3[]
+  public readonly knuckles: Vector3[]
 
   constructor() {
     this.pockets = this.extractPocketPositions(PocketGeometry.pocketCenters)
+    this.knuckles = this.extractPocketKnucklePositions(PocketGeometry.knuckles)
   }
 
   /**
@@ -43,6 +46,24 @@ export class AimCalculator {
     return pockets.map((pocket) =>
       pocket.pos.clone().multiplyScalar(AimCalculator.POCKET_INSET_FACTOR)
     )
+  }
+
+  private extractPocketKnucklePositions(knuckles: []): Vector3[] {
+    return knuckles
+      .map((knuckle) => (knuckle as Knuckle).pos.clone())
+      .map((pos) => {
+        return pos.lerp(this.closestPocket(pos), 0.5)
+      })
+  }
+
+  private closestPocket(pos) {
+    return this.pockets.sort((a, b) => pos.distanceTo(a) - pos.distanceTo(b))[0]
+  }
+
+  public closestKnuckles(pos) {
+    return this.knuckles
+      .sort((a, b) => pos.distanceTo(a) - pos.distanceTo(b))
+      .slice(0, 2)
   }
 
   /**
@@ -76,7 +97,7 @@ export class AimCalculator {
   /**
    * Finds the pocket that requires the smallest cut angle for the given shot.
    */
-  private findBestPocket(
+  public findBestPocket(
     cuePos: Vector3,
     targetPos: Vector3,
     pockets: Vector3[]

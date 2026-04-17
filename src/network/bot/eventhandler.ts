@@ -2,7 +2,6 @@ import { GameEvent } from "../../events/gameevent"
 import { Logger } from "./logger"
 import { Container } from "../../container/container"
 import { EventType } from "../../events/eventtype"
-import { HitEvent } from "../../events/hitevent"
 import { AimCalculator } from "./aimcalculator"
 import { StartAimEvent } from "../../events/startaimevent"
 import { Outcome } from "../../model/outcome"
@@ -16,6 +15,8 @@ import { MatchResult } from "../client/matchresult"
 import { ReplayEncoder } from "../../utils/replay-encoder"
 import { Session } from "../client/session"
 import { AimEvent } from "../../events/aimevent"
+import { Ball } from "../../model/ball"
+import { Vector3 } from "three/src/math/Vector3.js"
 
 export class BotEventHandler {
   private readonly logs: Logger
@@ -172,12 +173,24 @@ export class BotEventHandler {
     this.publishSequenceToPlayer(this.aim())
   }
 
-  private aim(): [AimEvent, HitEvent] {
+  private aim() {
+    const targetBall = this.container.rules.nextCandidateBall()
+    return this.botSelector(targetBall)
+  }
+
+  private botSelector(targetBall) {
+    const urlParams = new URLSearchParams(window.location.search)
+    const bot = urlParams.get("bot")
+    if (bot === "TheFarJaw") {
+      return this.theFarJaw(targetBall)
+    }
+    return this.clawBreak(targetBall)
+  }
+
+  private clawBreak(targetBall: Ball) {
     const table = this.container.table
     const cueball = table.cueball
-    const targetBall = this.container.rules.nextCandidateBall()
     const targetPoint = targetBall?.pos ?? zero
-
     const aimPoint = this.calculator.getAimPoint(cueball.pos, targetPoint)
     const hitEvent = this.calculator.generateShot(
       table,
@@ -187,5 +200,51 @@ export class BotEventHandler {
     )
     const aimEvent = AimEvent.fromJson(hitEvent.tablejson.aim)
     return [aimEvent, hitEvent]
+  }
+
+  private theFarJaw(targetBall: Ball) {
+    const table = this.container.table
+    const cueball = table.cueball
+    const targetPoint = targetBall.pos
+    const aimPoint = this.calculator.getAimPoint(
+      cueball.pos,
+      targetPoint,
+      this.calculator.pockets
+    )
+    // now get knuckes for pocket
+    const knuckles = this.calculator.closestKnuckles(
+      this.calculator.findBestPocket(cueball.pos,targetPoint,this.calculator.pockets))
+
+    // pick more distant knuckle
+    const farKnuckle =
+      targetPoint.distanceTo(knuckles[0]) > targetPoint.distanceTo(knuckles[1])
+        ? knuckles[0]
+        : knuckles[1]
+
+    const farKnuckleAimPoint = this.calculator.getAimPoint(
+      cueball.pos,
+      targetPoint,
+      [farKnuckle]
+    )
+
+    const pocketHitEvent = this.calculator.generateShot(
+      table,
+      0,
+      AimCalculator.DEFAULT_SHOT_POWER * 0.8,
+      aimPoint,
+      new Vector3(0, 0, 0)
+    )
+    const farKnuckleHitEvent = this.calculator.generateShot(
+      table,
+      0,
+      AimCalculator.DEFAULT_SHOT_POWER * 0.8,
+      farKnuckleAimPoint,
+      new Vector3(0, -0.3, 0)
+    )
+    const aimEvent = AimEvent.fromJson(pocketHitEvent.tablejson.aim)
+    const farKnuckleAimEvent = AimEvent.fromJson(
+      farKnuckleHitEvent.tablejson.aim
+    )
+    return [aimEvent, farKnuckleAimEvent, farKnuckleHitEvent]
   }
 }
