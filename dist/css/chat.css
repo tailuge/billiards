@@ -19,12 +19,12 @@
   padding: 2px;
   font-size: 16px;
   color: #ccc;
-  word-break: break-word;
+  overflow-wrap: break-word;
   overflow-wrap: anywhere;
 }
 
 .chatoutput a {
-  word-break: break-word;
+  overflow-wrap: break-word;
   overflow-wrap: anywhere;
 }
 

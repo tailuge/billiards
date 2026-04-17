@@ -261,6 +261,51 @@
   letter-spacing: 0.5px;
 }
 
+/* 5.3 Action Buttons */
+.notification-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--notification-space-2);
+  width: 100%;
+}
+
+.notification-actions button,
+.notification-actions .button {
+  display: inline-block;
+  padding: var(--notification-space-1) var(--notification-space-2); /* 4px 8px */
+  cursor: pointer;
+  color: var(--notification-white);
+  text-decoration: none;
+  font-family: inherit;
+  font-size: var(--notification-size-m);
+  font-weight: var(--notification-weight-bold);
+  background: var(--notification-white-15);
+  border: 1px solid var(--notification-white-30);
+  border-radius: var(--notification-radius-s);
+  box-shadow: var(--notification-shadow-sm);
+  transition:
+    transform var(--notification-dur-fast) var(--notification-ease-elastic),
+    box-shadow var(--notification-dur-fast) var(--notification-ease-out),
+    background var(--notification-dur-fast) var(--notification-ease-out);
+}
+
+.notification-actions button:hover,
+.notification-actions .button:hover {
+  background: var(--notification-white-25);
+  border-color: var(--notification-white-50);
+  box-shadow: var(--notification-shadow-md);
+  transform: translateY(-4px) scale(1.05);
+}
+
+.notification-actions button:focus-visible,
+.notification-actions .button:focus-visible {
+  outline: 2px solid var(--notification-white);
+  outline-offset: 4px;
+  background: var(--notification-white-25);
+}
+
 /* ==========================================================================
    4. Theme Variants (States)
    ========================================================================== */
@@ -366,49 +411,4 @@
 .notification-high-break-icon,
 .notification-high-break-upload {
   color: var(--notification-white);
-}
-
-/* 5.3 Action Buttons */
-.notification-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--notification-space-2);
-  width: 100%;
-}
-
-.notification-actions button,
-.notification-actions .button {
-  display: inline-block;
-  padding: var(--notification-space-1) var(--notification-space-2); /* 4px 8px */
-  cursor: pointer;
-  color: var(--notification-white);
-  text-decoration: none;
-  font-family: inherit;
-  font-size: var(--notification-size-m);
-  font-weight: var(--notification-weight-bold);
-  background: var(--notification-white-15);
-  border: 1px solid var(--notification-white-30);
-  border-radius: var(--notification-radius-s);
-  box-shadow: var(--notification-shadow-sm);
-  transition:
-    transform var(--notification-dur-fast) var(--notification-ease-elastic),
-    box-shadow var(--notification-dur-fast) var(--notification-ease-out),
-    background var(--notification-dur-fast) var(--notification-ease-out);
-}
-
-.notification-actions button:hover,
-.notification-actions .button:hover {
-  background: var(--notification-white-25);
-  border-color: var(--notification-white-50);
-  box-shadow: var(--notification-shadow-md);
-  transform: translateY(-4px) scale(1.05);
-}
-
-.notification-actions button:focus-visible,
-.notification-actions .button:focus-visible {
-  outline: 2px solid var(--notification-white);
-  outline-offset: 4px;
-  background: var(--notification-white-25);
 }

@@ -100,13 +100,13 @@
   background: rgb(255 255 255 / 5%);
 }
 
-.tray-container:hover .nav-btn {
-  opacity: 1;
-}
-
 .nav-btn:hover {
   background: rgb(255 255 255 / 20%);
   color: white;
+}
+
+.tray-container:hover .nav-btn {
+  opacity: 1;
 }
 
 .ball-item {
