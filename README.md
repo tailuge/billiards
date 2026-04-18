@@ -7,7 +7,7 @@
 [![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards)
 ![GitHub](https://img.shields.io/github/license/tailuge/billiards.svg)
 
-[![Demo and Screenshot](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)](https://billiards.tailuge.workers.dev/?bot=true)
+[![Demo and Screenshot](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)](https://billiards.tailuge.workers.dev/?bot=TheFarJaw)
 
 This is an open-source project bringing unsophisticated billiards physics written in typescript to the browser.
 
@@ -18,7 +18,7 @@ Demos run in all major desktop and mobile browsers and uses WebGL
 * [Nine ball ⬀](https://billiards.tailuge.workers.dev/?practice=true) make a break and share replay link with friends
 * [Three cushion billiards ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion) the ultimate test of physics and player (average on both counts)
 * [Snooker ⬀](https://billiards.tailuge.workers.dev/?ruletype=snooker) we await the first 147 submission to the leaderboard.
-* Play vs the [Claw ⬀](https://billiards.tailuge.workers.dev/?bot=true). 
+* Play vs the [Claw ⬀](https://billiards.tailuge.workers.dev/?bot=ClawBreak). 
 * Try [two player](https://scoreboard-tailuge.vercel.app/game) online lobby using nchan
 * Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard) hosted on vercel.com
 * Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).

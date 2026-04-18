@@ -18,6 +18,7 @@ export class AimCalculator {
   private static readonly RANDOM_OFFSET_RANGE = 0.6
 
   static readonly DEFAULT_SHOT_POWER = 90 * R
+  static readonly MAX_SHOT_POWER = 120 * R
   public readonly pockets: Vector3[]
   public readonly knuckles: Vector3[]
 
@@ -52,7 +53,7 @@ export class AimCalculator {
     return knuckles
       .map((knuckle) => (knuckle as Knuckle).pos.clone())
       .map((pos) => {
-        return pos.lerp(this.closestPocket(pos), 0.5)
+        return pos.lerp(this.closestPocket(pos), 0.6)
       })
   }
 
