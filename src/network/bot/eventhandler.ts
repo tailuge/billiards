@@ -231,14 +231,14 @@ export class BotEventHandler {
     const pocketHitEvent = this.calculator.generateShot(
       table,
       0,
-      AimCalculator.DEFAULT_SHOT_POWER * 0.8,
+      AimCalculator.DEFAULT_SHOT_POWER,
       aimPoint,
       new Vector3(0, 0, 0)
     )
     const farKnuckleHitEvent = this.calculator.generateShot(
       table,
       0,
-      AimCalculator.DEFAULT_SHOT_POWER * 0.8,
+      AimCalculator.MAX_SHOT_POWER,
       farKnuckleAimPoint,
       new Vector3(0, -0.3, 0)
     )
