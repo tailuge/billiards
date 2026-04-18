@@ -11,7 +11,6 @@ import { BeginEvent } from "../../../src/events/beginevent"
 import { Outcome } from "../../../src/model/outcome"
 import { NineBall } from "../../../src/controller/rules/nineball"
 import { initDom } from "../../view/dom"
-import { Vector3 } from "three"
 import { Session } from "../../../src/network/client/session"
 
 initDom()

@@ -27,7 +27,7 @@ export class BotEventHandler {
   ) => void
   protected enqueueMessage: (message: string) => void
   private readonly calculator: AimCalculator
-  private botName: string
+  private readonly botName: string
 
   constructor(
     logs: Logger,
@@ -40,7 +40,8 @@ export class BotEventHandler {
     this.publishSequenceToPlayer = publishSequenceToPlayer
     this.enqueueMessage = enqueueMessage
     this.calculator = new AimCalculator()
-    this.botName = new URLSearchParams(window.location.search).get("bot") ?? "ClawBreak"
+    this.botName =
+      new URLSearchParams(globalThis.location.search).get("bot") ?? "ClawBreak"
   }
 
   /**

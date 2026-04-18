@@ -57,11 +57,13 @@ export class AimCalculator {
   }
 
   private closestPocket(pos) {
-    return this.pockets.sort((a, b) => pos.distanceTo(a) - pos.distanceTo(b))[0]
+    return [...this.pockets].sort(
+      (a, b) => pos.distanceTo(a) - pos.distanceTo(b)
+    )[0]
   }
 
   public closestKnuckles(pos) {
-    return this.knuckles
+    return [...this.knuckles]
       .sort((a, b) => pos.distanceTo(a) - pos.distanceTo(b))
       .slice(0, 2)
   }
