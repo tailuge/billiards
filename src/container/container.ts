@@ -185,9 +185,16 @@ export class Container {
     this.hud.setActivePlayer(active)
   }
 
-  updateScoreHud(p1: number, p2: number, b: number, active?: ActivePlayer) {
+  updateScoreHud(
+    p1: number,
+    p2: number,
+    b: number,
+    active?: ActivePlayer,
+    p1a?: number,
+    p2a?: number
+  ) {
     const session = Session.getInstance()
-    session.updateScoresFromNetwork(p1, p2, b)
+    session.updateScoresFromNetwork(p1, p2, b, p1a, p2a)
     const orderedScores = session.orderedScoresForHud()
     this.hudScores = orderedScores
     const orderedNames = session.orderedNamesForHud()
@@ -196,21 +203,32 @@ export class Container {
       orderedScores.p2,
       orderedNames.p1Name,
       orderedNames.p2Name,
-      b
+      b,
+      orderedScores.p1a,
+      orderedScores.p2a
     )
     this.setHudActivePlayer(active ?? this.inferActivePlayer())
   }
 
-  sendScoreUpdate(p1: number, p2: number, b: number, active?: ActivePlayer) {
+  sendScoreUpdate(
+    p1: number,
+    p2: number,
+    b: number,
+    active?: ActivePlayer,
+    p1a?: number,
+    p2a?: number
+  ) {
     const activePlayer = active ?? this.inferActivePlayer()
     const changed =
       this.hudScores.p1 !== p1 ||
       this.hudScores.p2 !== p2 ||
       Session.getInstance().currentBreak !== b ||
-      this.hudActivePlayer !== activePlayer
-    this.updateScoreHud(p1, p2, b, activePlayer)
+      this.hudActivePlayer !== activePlayer ||
+      p1a !== undefined ||
+      p2a !== undefined
+    this.updateScoreHud(p1, p2, b, activePlayer, p1a, p2a)
     if (changed) {
-      this.sendEvent(new ScoreEvent(p1, p2, b, activePlayer))
+      this.sendEvent(new ScoreEvent(p1, p2, b, activePlayer, p1a, p2a))
     }
   }
 

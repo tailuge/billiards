@@ -18,6 +18,8 @@ export class Session {
   playerIndex: number = 0
   private scoreByClientId: Record<string, number> = {}
   currentBreak: number = 0
+  p1a: number = 0
+  p2a: number = 0
 
   private static instance: Session | undefined
   private static readonly fallbackOpponentClientId = "opponent"
@@ -132,11 +134,26 @@ export class Session {
     this.scoreByClientId[clientId] = score
   }
 
-  orderedScoresForHud(): { p1: number; p2: number } {
+  orderedScoresForHud(): {
+    p1: number
+    p2: number
+    p1a: number
+    p2a: number
+  } {
     if (this.playerIndex === 0) {
-      return { p1: this.myScore(), p2: this.opponentScore() }
+      return {
+        p1: this.myScore(),
+        p2: this.opponentScore(),
+        p1a: this.p1a,
+        p2a: this.p2a,
+      }
     }
-    return { p1: this.opponentScore(), p2: this.myScore() }
+    return {
+      p1: this.opponentScore(),
+      p2: this.myScore(),
+      p1a: this.p1a,
+      p2a: this.p2a,
+    }
   }
 
   orderedNamesForHud(): { p1Name?: string; p2Name?: string } {
@@ -176,7 +193,13 @@ export class Session {
     return names
   }
 
-  updateScoresFromNetwork(p1: number, p2: number, breakScore: number): void {
+  updateScoresFromNetwork(
+    p1: number,
+    p2: number,
+    breakScore: number,
+    p1a?: number,
+    p2a?: number
+  ): void {
     if (this.playerIndex === 1) {
       this.setMyScore(p2)
       this.setOpponentScore(p1)
@@ -185,5 +208,7 @@ export class Session {
       this.setOpponentScore(p2)
     }
     this.currentBreak = breakScore
+    if (p1a !== undefined) this.p1a = p1a
+    if (p2a !== undefined) this.p2a = p2a
   }
 }

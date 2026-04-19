@@ -40,19 +40,30 @@ export class Hud {
     p2: number,
     p1Name?: string,
     p2Name?: string,
-    b: number = 0
+    b: number = 0,
+    p1a: number = 0,
+    p2a: number = 0
   ) {
     this.setText(this.p1Element, "")
     this.setText(this.p2Element, "")
     this.setText(this.breakElement, "")
 
-    if (p1Name && p2Name) {
-      this.setText(this.p1Element, `${p1Name} ${p1}`)
-      this.setText(this.p2Element, `${p2} ${p2Name}`)
-    } else if (p1Name) {
-      this.setText(this.p1Element, `${p1Name} ${p1}`)
-    } else if (p2Name) {
-      this.setText(this.p2Element, `${p2} ${p2Name}`)
+    const group = (a: number) => {
+      if (a === 1) return " (Solids)"
+      if (a === 2) return " (Stripes)"
+      return ""
+    }
+
+    const n1 = p1Name ? `${p1Name}${group(p1a)}` : ""
+    const n2 = p2Name ? `${group(p2a)}${p2Name}` : ""
+
+    if (n1 && n2) {
+      this.setText(this.p1Element, `${n1} ${p1}`)
+      this.setText(this.p2Element, `${p2} ${n2}`)
+    } else if (n1) {
+      this.setText(this.p1Element, `${n1} ${p1}`)
+    } else if (n2) {
+      this.setText(this.p2Element, `${p2} ${n2}`)
     } else {
       this.setText(this.p1Element, `${p1}`)
     }

@@ -90,7 +90,7 @@ export class NineBall implements Rules {
     return this.handleMiss()
   }
 
-  private handleFoul(outcome: Outcome[], reason: string): Controller {
+  protected handleFoul(outcome: Outcome[], reason: string): Controller {
     this.container.notify({
       type: "Foul",
       title: "FOUL",
@@ -117,7 +117,7 @@ export class NineBall implements Rules {
     return new WatchAim(this.container)
   }
 
-  private handlePot(outcome: Outcome[]): Controller {
+  protected handlePot(outcome: Outcome[]): Controller {
     const table = this.container.table
     const pots = Outcome.potCount(outcome)
     this.currentBreak += pots
@@ -147,7 +147,7 @@ export class NineBall implements Rules {
     )
   }
 
-  private handleMiss(): Controller {
+  protected handleMiss(): Controller {
     const table = this.container.table
     // if no pot and no foul switch to other player
     this.container.sendEvent(new StartAimEvent())
