@@ -145,10 +145,10 @@ export class EightBall implements Rules {
       }
     } else {
       const pottedThisShot = new Set(Outcome.pots(outcome))
-      const myGroup = table.balls.filter(
-        (b) => b !== cueball && b.onTable() && this.isMyType(b) && !pottedThisShot.has(b)
+      const myGroupBefore = table.balls.filter(
+        (b) => b !== cueball && (b.onTable() || pottedThisShot.has(b)) && this.isMyType(b)
       )
-      if (myGroup.length > 0) {
+      if (myGroupBefore.length > 0) {
         if (!this.isMyType(hitBall!)) {
           return "Wrong group hit first"
         }

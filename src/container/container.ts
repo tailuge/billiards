@@ -191,6 +191,13 @@ export class Container {
     const orderedScores = session.orderedScoresForHud()
     this.hudScores = orderedScores
     const orderedNames = session.orderedNamesForHud()
+    if (this.rules.rulename === "eightball" && session.p1type !== 0) {
+      const typeLabel = session.p1type === 1 ? "solids" : "stripes"
+      const mySlot = session.playerIndex === 0 ? "p1Name" : "p2Name"
+      if (orderedNames[mySlot]) {
+        orderedNames[mySlot] = `${orderedNames[mySlot]}(${typeLabel})`
+      }
+    }
     this.hud.updateScores(
       orderedScores.p1,
       orderedScores.p2,
