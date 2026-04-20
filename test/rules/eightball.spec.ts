@@ -63,30 +63,30 @@ describe("EightBall Rules", () => {
     )
   })
 
-  const testAssignment = (
+  const testShot = (
     ballLabel: number,
     activePlayer: number,
-    expectedP1Type: number
+    pot: boolean = true
   ) => {
     if (activePlayer === 2) {
       container.updateController(new WatchAim(container))
     }
     const ball = container.table.balls.find((b) => b.label === ballLabel)!
-    const outcome = [
-      Outcome.collision(container.table.cueball, ball, 1),
-      Outcome.pot(ball, 1),
-    ]
-    eightball.update(outcome)
-    expect(Session.getInstance().p1type).to.equal(expectedP1Type)
+    const outcome = [Outcome.collision(container.table.cueball, ball, 1)]
+    if (pot) {
+      outcome.push(Outcome.pot(ball, 1))
+    }
+    const nextController = eightball.update(outcome)
+    return { nextController, outcome }
   }
 
   it("should assign solids if only solids are potted", () => {
-    testAssignment(1, 1, 1) // P1 pots solid -> P1 type 1
+    testShot(1, 1) // P1 pots solid -> P1 type 1
     expect(Session.getInstance().p1type).to.equal(1)
   })
 
   it("should assign stripes if only stripes are potted", () => {
-    testAssignment(9, 1, 2) // P1 pots stripe -> P1 type 2
+    testShot(9, 1) // P1 pots stripe -> P1 type 2
     expect(Session.getInstance().p1type).to.equal(2)
   })
 
@@ -102,13 +102,20 @@ describe("EightBall Rules", () => {
     expect(Session.getInstance().p1type).to.equal(0)
   })
 
-  it("should foul if wrong group hit first after assignment", () => {
-    Session.getInstance().p1type = 1 // Solids
-    const ball9 = container.table.balls.find((b) => b.label === 9)!
-    const outcome = [Outcome.collision(container.table.cueball, ball9, 1)]
-    const nextController = eightball.update(outcome)
+  const testWrongGroupFoul = (activePlayer: number, wrongBallLabel: number) => {
+    Session.getInstance().p1type = 1 // P1: Solids, P2: Stripes
+    const { nextController, outcome } = testShot(
+      wrongBallLabel,
+      activePlayer,
+      false
+    )
     expect(nextController).to.be.an.instanceof(PlaceBall)
     expect(eightball.foulReason(outcome)).to.equal("Wrong group hit first")
+  }
+
+  it("should foul if wrong group hit first after assignment", () => {
+    testWrongGroupFoul(1, 9)
+    expect(Session.getInstance().p1type).to.equal(1)
   })
 
   it("should foul if no cushion hit and no pot", () => {
@@ -130,22 +137,21 @@ describe("EightBall Rules", () => {
     expect(eightBall.onTable()).to.be.true
   })
 
-  it("should win if 8-ball potted after clearing group", () => {
-    Session.getInstance().p1type = 1 // Solids
-    // Clear solids
+  const testWin = (activePlayer: number, groupRange: [number, number]) => {
+    Session.getInstance().p1type = 1 // P1: Solids, P2: Stripes
     container.table.balls.forEach((b) => {
-      if ((b.label || 0) >= 1 && (b.label || 0) <= 7) {
+      if ((b.label || 0) >= groupRange[0] && (b.label || 0) <= groupRange[1]) {
         b.state = State.InPocket
       }
     })
-    const eightBall = container.table.balls.find((b) => b.label === 8)!
-    const outcome = [
-      Outcome.collision(container.table.cueball, eightBall, 1),
-      Outcome.pot(eightBall, 1),
-    ]
+    const { nextController, outcome } = testShot(8, activePlayer)
     expect(eightball.isEndOfGame(outcome)).to.be.true
-    const nextController = eightball.update(outcome)
     expect(nextController).to.be.an.instanceof(End)
+  }
+
+  it("should win if 8-ball potted after clearing group", () => {
+    testWin(1, [1, 7])
+    expect(Session.getInstance().p1type).to.equal(1)
   })
 
   it("should lose if 8-ball potted on open table", () => {
@@ -222,57 +228,29 @@ describe("EightBall Rules", () => {
 
   describe("2-Player Rules", () => {
     it("should assign p1type=2 if Player 2 pots solids on open table", () => {
-      testAssignment(1, 2, 2) // P2 pots solid -> P1 type 2
+      testShot(1, 2) // P2 pots solid -> P1 type 2
       expect(Session.getInstance().p1type).to.equal(2)
     })
 
     it("should assign p1type=1 if Player 2 pots stripes on open table", () => {
-      testAssignment(9, 2, 1) // P2 pots stripe -> P1 type 1
+      testShot(9, 2) // P2 pots stripe -> P1 type 1
       expect(Session.getInstance().p1type).to.equal(1)
     })
 
     it("should foul if Player 2 hits wrong group", () => {
-      Session.getInstance().p1type = 1 // P1: Solids, P2: Stripes
-      container.updateController(new WatchAim(container))
-
-      const ball1 = container.table.balls.find((b) => b.label === 1)! // Solid
-      const outcome = [Outcome.collision(container.table.cueball, ball1, 1)]
-      const nextController = eightball.update(outcome)
-      expect(nextController).to.be.an.instanceof(PlaceBall)
-      expect(eightball.foulReason(outcome)).to.equal("Wrong group hit first")
+      testWrongGroupFoul(2, 1)
+      expect(Session.getInstance().p1type).to.equal(1)
     })
 
     it("should win if Player 2 pots 8-ball after clearing group", () => {
-      Session.getInstance().p1type = 1 // P1: Solids, P2: Stripes
-      // Clear Player 2's group (Stripes 9-15)
-      container.table.balls.forEach((b) => {
-        if ((b.label || 0) >= 9 && (b.label || 0) <= 15) {
-          b.state = State.InPocket
-        }
-      })
-      container.updateController(new WatchAim(container))
-
-      const eightBall = container.table.balls.find((b) => b.label === 8)!
-      const outcome = [
-        Outcome.collision(container.table.cueball, eightBall, 1),
-        Outcome.pot(eightBall, 1),
-      ]
-      expect(eightball.isEndOfGame(outcome)).to.be.true
-      const nextController = eightball.update(outcome)
-      expect(nextController).to.be.an.instanceof(End)
+      testWin(2, [9, 15])
+      expect(Session.getInstance().p1type).to.equal(1)
     })
 
     it("should lose if Player 2 pots 8-ball early", () => {
       Session.getInstance().p1type = 1 // P1: Solids, P2: Stripes
-      container.updateController(new WatchAim(container))
-
-      const eightBall = container.table.balls.find((b) => b.label === 8)!
-      const outcome = [
-        Outcome.collision(container.table.cueball, eightBall, 1),
-        Outcome.pot(eightBall, 1),
-      ]
+      const { nextController, outcome } = testShot(8, 2)
       expect(eightball.isEndOfGame(outcome)).to.be.false
-      const nextController = eightball.update(outcome)
       expect(nextController).to.be.an.instanceof(End)
     })
   })
