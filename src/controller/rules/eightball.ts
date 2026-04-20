@@ -118,16 +118,33 @@ export class EightBall implements Rules {
     return this.foulReason(outcome) !== null
   }
 
+  private wrongBallHitReason(hitBall: Ball, outcome: Outcome[]): string | null {
+    const session = Session.getInstance()
+    if (session.p1type === 0) {
+      return hitBall.label === 8 ? "Hitting the 8-ball first is a foul" : null
+    }
+    const cueball = this.container.table.cueball
+    const pottedThisShot = new Set(Outcome.pots(outcome))
+    const myGroupBefore = this.container.table.balls.filter(
+      (b) =>
+        b !== cueball &&
+        (b.onTable() || pottedThisShot.has(b)) &&
+        this.isMyType(b)
+    )
+    if (myGroupBefore.length > 0) {
+      return this.isMyType(hitBall) ? null : "Wrong group hit first"
+    }
+    return hitBall.label !== 8 ? "Must hit 8-ball first" : null
+  }
+
   foulReason(outcome: Outcome[]): string | null {
     const table = this.container.table
     const cueball = table.cueball
 
-    // 1. Cue ball potted
     if (Outcome.isCueBallPotted(cueball, outcome)) {
       return "Cue ball potted"
     }
 
-    // 2. Wrong ball hit first
     const firstCollision = Outcome.firstCollision(
       Outcome.cueBallFirst(cueball, outcome)
     )
@@ -136,27 +153,9 @@ export class EightBall implements Rules {
       return "No ball hit"
     }
 
-    const hitBall = firstCollision.ballB
-    const session = Session.getInstance()
-
-    if (session.p1type === 0) {
-      if (hitBall!.label === 8) {
-        return "Hitting the 8-ball first is a foul"
-      }
-    } else {
-      const pottedThisShot = new Set(Outcome.pots(outcome))
-      const myGroupBefore = table.balls.filter(
-        (b) => b !== cueball && (b.onTable() || pottedThisShot.has(b)) && this.isMyType(b)
-      )
-      if (myGroupBefore.length > 0) {
-        if (!this.isMyType(hitBall!)) {
-          return "Wrong group hit first"
-        }
-      } else {
-        if (hitBall!.label !== 8) {
-          return "Must hit 8-ball first"
-        }
-      }
+    const wrongBall = this.wrongBallHitReason(firstCollision.ballB!, outcome)
+    if (wrongBall) {
+      return wrongBall
     }
 
     // 3. No cushion after contact
@@ -263,7 +262,9 @@ export class EightBall implements Rules {
     const footSpot = new Vector3(TableGeometry.tableX / 2, 0, 0)
     Respot.respotBehind(footSpot, eightBall, table)
     eightBall.fround()
-    this.container.sendEvent(RerackEvent.fromJson({ balls: [eightBall.serialise()] }))
+    this.container.sendEvent(
+      RerackEvent.fromJson({ balls: [eightBall.serialise()] })
+    )
     return this.handleFoul([], "8-ball pocketed early")
   }
 
@@ -294,7 +295,12 @@ export class EightBall implements Rules {
     const cueball = table.cueball
     const pottedThisShot = new Set(Outcome.pots(outcome))
     const myGroup = table.balls.filter(
-      (b) => b !== cueball && b !== eightBall && b.onTable() && this.isMyType(b) && !pottedThisShot.has(b)
+      (b) =>
+        b !== cueball &&
+        b !== eightBall &&
+        b.onTable() &&
+        this.isMyType(b) &&
+        !pottedThisShot.has(b)
     )
 
     return myGroup.length === 0
