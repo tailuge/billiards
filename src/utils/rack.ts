@@ -89,6 +89,17 @@ export class Rack {
     return diamond
   }
 
+  static eightBall() {
+    const tp = Rack.trianglePositions()
+    const balls: Ball[] = []
+    balls.push(Rack.cueBall(Rack.spot))
+    const labels = [9, 1, 10, 11, 8, 2, 3, 12, 4, 13, 14, 5, 6, 15, 7]
+    labels.forEach((label, i) => {
+      balls.push(new Ball(Rack.jitter(tp[i]), Rack.BALL_COLORS[label], label))
+    })
+    return balls
+  }
+
   static triangle() {
     const tp = Rack.trianglePositions()
     const triangle: Ball[] = []

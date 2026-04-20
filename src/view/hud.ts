@@ -41,8 +41,7 @@ export class Hud {
     p1Name?: string,
     p2Name?: string,
     b: number = 0,
-    p1a: number = 0,
-    p2a: number = 0
+    p1type: number = 0
   ) {
     this.setText(this.p1Element, "")
     this.setText(this.p2Element, "")
@@ -54,8 +53,9 @@ export class Hud {
       return ""
     }
 
-    const n1 = p1Name ? `${p1Name}${group(p1a)}` : ""
-    const n2 = p2Name ? `${group(p2a)}${p2Name}` : ""
+    const p2type = p1type === 0 ? 0 : p1type === 1 ? 2 : 1
+    const n1 = p1Name ? `${p1Name}${group(p1type)}` : ""
+    const n2 = p2Name ? `${group(p2type)}${p2Name}` : ""
 
     if (n1 && n2) {
       this.setText(this.p1Element, `${n1} ${p1}`)

@@ -18,8 +18,7 @@ export class Session {
   playerIndex: number = 0
   private scoreByClientId: Record<string, number> = {}
   currentBreak: number = 0
-  p1a: number = 0
-  p2a: number = 0
+  p1type: number = 0
 
   private static instance: Session | undefined
   private static readonly fallbackOpponentClientId = "opponent"
@@ -137,22 +136,19 @@ export class Session {
   orderedScoresForHud(): {
     p1: number
     p2: number
-    p1a: number
-    p2a: number
+    p1type: number
   } {
     if (this.playerIndex === 0) {
       return {
         p1: this.myScore(),
         p2: this.opponentScore(),
-        p1a: this.p1a,
-        p2a: this.p2a,
+        p1type: this.p1type,
       }
     }
     return {
       p1: this.opponentScore(),
       p2: this.myScore(),
-      p1a: this.p1a,
-      p2a: this.p2a,
+      p1type: this.p1type,
     }
   }
 
@@ -197,8 +193,7 @@ export class Session {
     p1: number,
     p2: number,
     breakScore: number,
-    p1a?: number,
-    p2a?: number
+    p1type?: number
   ): void {
     if (this.playerIndex === 1) {
       this.setMyScore(p2)
@@ -208,7 +203,6 @@ export class Session {
       this.setOpponentScore(p2)
     }
     this.currentBreak = breakScore
-    if (p1a !== undefined) this.p1a = p1a
-    if (p2a !== undefined) this.p2a = p2a
+    if (p1type !== undefined) this.p1type = p1type
   }
 }

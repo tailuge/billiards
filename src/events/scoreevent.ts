@@ -8,8 +8,7 @@ export class ScoreEvent extends GameEvent {
     readonly p2: number,
     readonly b: number,
     readonly active: 0 | 1 | 2 = 0,
-    readonly p1a?: number,
-    readonly p2a?: number
+    readonly p1type?: number
   ) {
     super()
     this.type = EventType.SCORE
@@ -25,8 +24,7 @@ export class ScoreEvent extends GameEvent {
       json.p2,
       json.b,
       json.active ?? 0,
-      json.p1a,
-      json.p2a
+      json.p1type
     )
   }
 }
