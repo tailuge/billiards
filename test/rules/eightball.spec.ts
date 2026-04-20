@@ -111,7 +111,7 @@ describe("EightBall Rules", () => {
     expect(nextController).to.be.an.instanceof(PlaceBall)
   })
 
-  it("should lose if 8-ball potted early", () => {
+  it("should respot 8-ball and give ball in hand if 8-ball potted early", () => {
     const eightBall = container.table.balls.find((b) => b.label === 8)!
     const ball1 = container.table.balls.find((b) => b.label === 1)!
     const outcome = [
@@ -119,9 +119,8 @@ describe("EightBall Rules", () => {
       Outcome.pot(eightBall, 1),
     ]
     const nextController = eightball.update(outcome)
-    expect(nextController).to.be.an.instanceof(End)
-    // Check if it's a loss (isWinner should be false, but handleGameEnd is called with false)
-    // In our implementation, handlePot returns handleGameEnd(false, "8-ball pocketed early")
+    expect(nextController).to.be.an.instanceof(PlaceBall)
+    expect(eightBall.onTable()).to.be.true
   })
 
   it("should win if 8-ball potted after clearing group", () => {

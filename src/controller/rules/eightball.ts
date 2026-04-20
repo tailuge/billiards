@@ -20,6 +20,7 @@ import { StartAimEvent } from "../../events/startaimevent"
 import { ScoreEvent } from "../../events/scoreevent"
 import { roundVec } from "../../utils/three-utils"
 import { Respot } from "../../utils/respot"
+import { RerackEvent } from "../../events/rerackevent"
 
 export class EightBall implements Rules {
   readonly container: Container
@@ -143,8 +144,9 @@ export class EightBall implements Rules {
         return "Hitting the 8-ball first is a foul"
       }
     } else {
+      const pottedThisShot = new Set(Outcome.pots(outcome))
       const myGroup = table.balls.filter(
-        (b) => b !== cueball && b.onTable() && this.isMyType(b)
+        (b) => b !== cueball && b.onTable() && this.isMyType(b) && !pottedThisShot.has(b)
       )
       if (myGroup.length > 0) {
         if (!this.isMyType(hitBall!)) {
@@ -223,7 +225,7 @@ export class EightBall implements Rules {
     }
 
     if (pots.some((b) => b.label === 8)) {
-      return this.handleGameEnd(false, "8-ball pocketed early")
+      return this.respotEightBallFoul()
     }
 
     if (session.p1type === 0) {
@@ -255,6 +257,16 @@ export class EightBall implements Rules {
     return new Aim(this.container)
   }
 
+  private respotEightBallFoul(): Controller {
+    const table = this.container.table
+    const eightBall = table.balls.find((b) => b.label === 8)!
+    const footSpot = new Vector3(TableGeometry.tableX / 2, 0, 0)
+    Respot.respotBehind(footSpot, eightBall, table)
+    eightBall.fround()
+    this.container.sendEvent(RerackEvent.fromJson({ balls: [eightBall.serialise()] }))
+    return this.handleFoul([], "8-ball pocketed early")
+  }
+
   private handleMiss(): Controller {
     const table = this.container.table
     this.container.sendEvent(new StartAimEvent())
@@ -280,8 +292,9 @@ export class EightBall implements Rules {
 
     const table = this.container.table
     const cueball = table.cueball
+    const pottedThisShot = new Set(Outcome.pots(outcome))
     const myGroup = table.balls.filter(
-      (b) => b !== cueball && b !== eightBall && b.onTable() && this.isMyType(b)
+      (b) => b !== cueball && b !== eightBall && b.onTable() && this.isMyType(b) && !pottedThisShot.has(b)
     )
 
     return myGroup.length === 0
