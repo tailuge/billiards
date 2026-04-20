@@ -214,7 +214,12 @@ export class BotEventHandler {
     )
     // now get knuckes for pocket
     const knuckles = this.calculator.closestKnuckles(
-      this.calculator.findBestPocket(cueball.pos,targetPoint,this.calculator.pockets))
+      this.calculator.findBestPocket(
+        cueball.pos,
+        targetPoint,
+        this.calculator.pockets
+      )
+    )
 
     // pick more distant knuckle
     const farKnuckle =

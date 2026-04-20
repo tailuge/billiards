@@ -150,4 +150,28 @@ export class AimCalculator {
       (Math.random() - 0.5) * AimCalculator.RANDOM_OFFSET_RANGE
     )
   }
+
+  /**
+   * @param pos Current position of the moving ball
+   * @param vel Velocity vector of the moving ball
+   * @param target Center position of the stationary ball
+   */
+  static checkCollision(pos: Vector3, vel: Vector3, target: Vector3): boolean {
+    // 1. Vector from moving ball to target
+    const toTarget = new Vector3().subVectors(target, pos)
+
+    // 2. Project toTarget onto the velocity vector to find the closest point's distance along the path
+    const velNormalized = vel.clone().normalize()
+    const dParallel = toTarget.dot(velNormalized)
+
+    // 3. If dParallel is negative, the target is "behind" the moving ball
+    if (dParallel < 0) return false
+
+    // 4. Calculate the perpendicular distance squared using the Pythagorean theorem:
+    // distSq = |toTarget|^2 - dParallel^2
+    const distSq = toTarget.lengthSq() - dParallel * dParallel
+
+    // 5. Collision occurs if the closest distance is within the combined radii
+    return distSq <= 2 * R * 2 * R
+  }
 }

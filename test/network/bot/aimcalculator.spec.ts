@@ -91,6 +91,33 @@ describe("AimCalculator", () => {
     })
   })
 
+  describe("checkCollision", () => {
+    // Ball moving in +x direction from origin
+    const pos = new Vector3(0, 0, 0)
+    const vel = new Vector3(1, 0, 0)
+
+    it("returns true when target is directly in path", () => {
+      const target = new Vector3(5, 0, 0)
+      expect(AimCalculator.checkCollision(pos, vel, target)).toBe(true)
+    })
+
+    it("returns true when target is within combined radii laterally", () => {
+      // Perpendicular offset just inside 2R
+      const target = new Vector3(5, 2 * R * 0.99, 0)
+      expect(AimCalculator.checkCollision(pos, vel, target)).toBe(true)
+    })
+
+    it("returns false when target is outside combined radii laterally", () => {
+      const target = new Vector3(5, 2 * R * 1.01, 0)
+      expect(AimCalculator.checkCollision(pos, vel, target)).toBe(false)
+    })
+
+    it("returns false when target is behind the moving ball", () => {
+      const target = new Vector3(-5, 0, 0)
+      expect(AimCalculator.checkCollision(pos, vel, target)).toBe(false)
+    })
+  })
+
   describe("extractPocketPositions", () => {
     it("should extract positions from a list of Pocket objects", () => {
       const p1 = new Pocket(new Vector3(1, 2, 3), 1)
