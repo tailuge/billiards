@@ -63,24 +63,31 @@ describe("EightBall Rules", () => {
     )
   })
 
-  it("should assign solids if only solids are potted", () => {
-    const ball1 = container.table.balls.find((b) => b.label === 1)!
+  const testAssignment = (
+    ballLabel: number,
+    activePlayer: number,
+    expectedP1Type: number
+  ) => {
+    if (activePlayer === 2) {
+      container.updateController(new WatchAim(container))
+    }
+    const ball = container.table.balls.find((b) => b.label === ballLabel)!
     const outcome = [
-      Outcome.collision(container.table.cueball, ball1, 1),
-      Outcome.pot(ball1, 1),
+      Outcome.collision(container.table.cueball, ball, 1),
+      Outcome.pot(ball, 1),
     ]
     eightball.update(outcome)
-    expect(Session.getInstance().p1type).to.equal(1) // Solids
+    expect(Session.getInstance().p1type).to.equal(expectedP1Type)
+  }
+
+  it("should assign solids if only solids are potted", () => {
+    testAssignment(1, 1, 1) // P1 pots solid -> P1 type 1
+    expect(Session.getInstance().p1type).to.equal(1)
   })
 
   it("should assign stripes if only stripes are potted", () => {
-    const ball9 = container.table.balls.find((b) => b.label === 9)!
-    const outcome = [
-      Outcome.collision(container.table.cueball, ball9, 1),
-      Outcome.pot(ball9, 1),
-    ]
-    eightball.update(outcome)
-    expect(Session.getInstance().p1type).to.equal(2) // Stripes
+    testAssignment(9, 1, 2) // P1 pots stripe -> P1 type 2
+    expect(Session.getInstance().p1type).to.equal(2)
   })
 
   it("should remain open if both solid and stripe are potted", () => {
@@ -215,38 +222,17 @@ describe("EightBall Rules", () => {
 
   describe("2-Player Rules", () => {
     it("should assign p1type=2 if Player 2 pots solids on open table", () => {
-      // Set Player 2 as active
-      container.updateController(new WatchAim(container))
-      expect(container.inferActivePlayer()).to.equal(2)
-
-      const ball1 = container.table.balls.find((b) => b.label === 1)!
-      const outcome = [
-        Outcome.collision(container.table.cueball, ball1, 1),
-        Outcome.pot(ball1, 1),
-      ]
-      eightball.update(outcome)
-      // If P2 pots solids, P1 is assigned stripes
+      testAssignment(1, 2, 2) // P2 pots solid -> P1 type 2
       expect(Session.getInstance().p1type).to.equal(2)
     })
 
     it("should assign p1type=1 if Player 2 pots stripes on open table", () => {
-      // Set Player 2 as active
-      container.updateController(new WatchAim(container))
-      expect(container.inferActivePlayer()).to.equal(2)
-
-      const ball9 = container.table.balls.find((b) => b.label === 9)!
-      const outcome = [
-        Outcome.collision(container.table.cueball, ball9, 1),
-        Outcome.pot(ball9, 1),
-      ]
-      eightball.update(outcome)
-      // If P2 pots stripes, P1 is assigned solids
+      testAssignment(9, 2, 1) // P2 pots stripe -> P1 type 1
       expect(Session.getInstance().p1type).to.equal(1)
     })
 
     it("should foul if Player 2 hits wrong group", () => {
       Session.getInstance().p1type = 1 // P1: Solids, P2: Stripes
-      // Set Player 2 as active
       container.updateController(new WatchAim(container))
 
       const ball1 = container.table.balls.find((b) => b.label === 1)! // Solid
@@ -264,7 +250,6 @@ describe("EightBall Rules", () => {
           b.state = State.InPocket
         }
       })
-      // Set Player 2 as active
       container.updateController(new WatchAim(container))
 
       const eightBall = container.table.balls.find((b) => b.label === 8)!
@@ -279,7 +264,6 @@ describe("EightBall Rules", () => {
 
     it("should lose if Player 2 pots 8-ball early", () => {
       Session.getInstance().p1type = 1 // P1: Solids, P2: Stripes
-      // Set Player 2 as active
       container.updateController(new WatchAim(container))
 
       const eightBall = container.table.balls.find((b) => b.label === 8)!
