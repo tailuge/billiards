@@ -168,7 +168,10 @@ describe("EightBall Rules", () => {
   it("should allow placeBall anywhere on the table after a foul", () => {
     // Simulate it's NOT the first shot
     container.recorder.record({ type: "PLACEBALL" } as any)
-    container.recorder.record({ type: "HIT", tablejson: { aim: { pos: { x: 0, y: 0 } } } } as any)
+    container.recorder.record({
+      type: "HIT",
+      tablejson: { aim: { pos: { x: 0, y: 0 } } },
+    } as any)
     // Manually force an AIM type entry if recorder doesn't do it automatically from HIT
     container.recorder.entries.push({ event: { type: "AIM" } } as any)
     expect(isFirstShot(container.recorder)).to.be.false

@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { Container } from "../../container/container"
-import { Ball, State } from "../../model/ball"
+import { Ball } from "../../model/ball"
 import { Outcome, OutcomeType } from "../../model/outcome"
 import { Table } from "../../model/table"
 import { Controller } from "../controller"
@@ -19,6 +19,7 @@ import { WatchEvent } from "../../events/watchevent"
 import { StartAimEvent } from "../../events/startaimevent"
 import { ScoreEvent } from "../../events/scoreevent"
 import { roundVec } from "../../utils/three-utils"
+import { Respot } from "../../utils/respot"
 
 export class EightBall implements Rules {
   readonly container: Container
@@ -62,7 +63,7 @@ export class EightBall implements Rules {
   }
 
   isPartOfBreak(outcome: Outcome[]): boolean {
-    return isFirstShot(this.container.recorder)
+    return Outcome.isBallPottedNoFoul(this.container.table.cueball, outcome)
   }
 
   allowsPlaceBall(): boolean {
@@ -95,7 +96,7 @@ export class EightBall implements Rules {
 
     const myGroup = balls.filter((b) => this.isMyType(b))
     if (myGroup.length > 0) {
-      return myGroup[0]
+      return Respot.closest(table.cueball, myGroup)
     }
 
     return table.balls.find((b) => b.label === 8 && b.onTable())
@@ -138,7 +139,7 @@ export class EightBall implements Rules {
     const session = Session.getInstance()
 
     if (session.p1type === 0) {
-      if (hitBall.label === 8) {
+      if (hitBall!.label === 8) {
         return "Hitting the 8-ball first is a foul"
       }
     } else {
@@ -146,11 +147,11 @@ export class EightBall implements Rules {
         (b) => b !== cueball && b.onTable() && this.isMyType(b)
       )
       if (myGroup.length > 0) {
-        if (!this.isMyType(hitBall)) {
+        if (!this.isMyType(hitBall!)) {
           return "Wrong group hit first"
         }
       } else {
-        if (hitBall.label !== 8) {
+        if (hitBall!.label !== 8) {
           return "Must hit 8-ball first"
         }
       }
