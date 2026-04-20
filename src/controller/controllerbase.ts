@@ -36,7 +36,13 @@ export abstract class ControllerBase extends Controller {
   }
 
   override handleScore(event: ScoreEvent): Controller {
-    this.container.updateScoreHud(event.p1, event.p2, event.b, event.active)
+    this.container.updateScoreHud(
+      event.p1,
+      event.p2,
+      event.b,
+      event.active,
+      event.p1type
+    )
     return this
   }
 

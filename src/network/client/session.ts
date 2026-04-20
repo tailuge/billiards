@@ -177,7 +177,12 @@ export class Session {
     return names
   }
 
-  updateScoresFromNetwork(p1: number, p2: number, breakScore: number): void {
+  updateScoresFromNetwork(
+    p1: number,
+    p2: number,
+    breakScore: number,
+    p1type?: number
+  ): void {
     if (this.playerIndex === 1) {
       this.setMyScore(p2)
       this.setOpponentScore(p1)
@@ -186,5 +191,8 @@ export class Session {
       this.setOpponentScore(p2)
     }
     this.currentBreak = breakScore
+    if (p1type !== undefined) {
+      this.p1type = p1type
+    }
   }
 }

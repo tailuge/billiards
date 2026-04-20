@@ -185,17 +185,26 @@ export class Container {
     this.hud.setActivePlayer(active)
   }
 
-  updateScoreHud(p1: number, p2: number, b: number, active?: ActivePlayer) {
+  updateScoreHud(
+    p1: number,
+    p2: number,
+    b: number,
+    active?: ActivePlayer,
+    p1type?: number
+  ) {
     const session = Session.getInstance()
-    session.updateScoresFromNetwork(p1, p2, b)
+    session.updateScoresFromNetwork(p1, p2, b, p1type)
     const orderedScores = session.orderedScoresForHud()
     this.hudScores = orderedScores
     const orderedNames = session.orderedNamesForHud()
     if (this.rules.rulename === "eightball" && session.p1type !== 0) {
-      const typeLabel = session.p1type === 1 ? "solids" : "stripes"
-      const mySlot = session.playerIndex === 0 ? "p1Name" : "p2Name"
-      if (orderedNames[mySlot]) {
-        orderedNames[mySlot] = `${orderedNames[mySlot]}(${typeLabel})`
+      const p1Label = session.p1type === 1 ? "solids" : "stripes"
+      const p2Label = session.p1type === 1 ? "stripes" : "solids"
+      if (orderedNames.p1Name) {
+        orderedNames.p1Name = `${orderedNames.p1Name}(${p1Label})`
+      }
+      if (orderedNames.p2Name) {
+        orderedNames.p2Name = `${orderedNames.p2Name}(${p2Label})`
       }
     }
     this.hud.updateScores(

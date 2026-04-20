@@ -105,10 +105,16 @@ export class EightBall implements Rules {
 
   private isMyType(ball: Ball): boolean {
     const session = Session.getInstance()
-    if (session.p1type === 1) {
+    if (session.p1type === 0) {
+      return false
+    }
+    const activePlayer = this.container.inferActivePlayer()
+    const myType = activePlayer === 2 ? 3 - session.p1type : session.p1type
+
+    if (myType === 1) {
       return (ball.label || 0) >= 1 && (ball.label || 0) <= 7
     }
-    if (session.p1type === 2) {
+    if (myType === 2) {
       return (ball.label || 0) >= 9 && (ball.label || 0) <= 15
     }
     return false
@@ -215,7 +221,6 @@ export class EightBall implements Rules {
   }
 
   private handlePot(outcome: Outcome[]): Controller {
-    const session = Session.getInstance()
     const table = this.container.table
     const pots = Outcome.pots(outcome)
 
@@ -227,17 +232,9 @@ export class EightBall implements Rules {
       return this.respotEightBallFoul()
     }
 
-    if (session.p1type === 0) {
-      const solids = pots.filter((b) => b.label! >= 1 && b.label! <= 7)
-      const stripes = pots.filter((b) => b.label! >= 9 && b.label! <= 15)
+    this.assignGroupOnPot(pots)
 
-      if (solids.length > 0 && stripes.length === 0) {
-        session.p1type = 1
-      } else if (stripes.length > 0 && solids.length === 0) {
-        session.p1type = 2
-      }
-    }
-
+    const session = Session.getInstance()
     this.currentBreak += pots.length
     session.addMyScore(pots.length)
 
@@ -254,6 +251,21 @@ export class EightBall implements Rules {
 
     this.container.sendEvent(new WatchEvent(table.serialise()))
     return new Aim(this.container)
+  }
+
+  private assignGroupOnPot(pots: Ball[]): void {
+    const session = Session.getInstance()
+    if (session.p1type === 0) {
+      const solids = pots.filter((b) => b.label! >= 1 && b.label! <= 7)
+      const stripes = pots.filter((b) => b.label! >= 9 && b.label! <= 15)
+      const activePlayer = this.container.inferActivePlayer()
+
+      if (solids.length > 0 && stripes.length === 0) {
+        session.p1type = activePlayer === 2 ? 2 : 1
+      } else if (stripes.length > 0 && solids.length === 0) {
+        session.p1type = activePlayer === 2 ? 1 : 2
+      }
+    }
   }
 
   private respotEightBallFoul(): Controller {

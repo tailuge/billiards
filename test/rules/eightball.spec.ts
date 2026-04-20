@@ -11,6 +11,7 @@ import { PlaceBall } from "../../src/controller/placeball"
 import { End } from "../../src/controller/end"
 import { Session } from "../../src/network/client/session"
 import { ScoreEvent } from "../../src/events/scoreevent"
+import { WatchAim } from "../../src/controller/watchaim"
 
 initDom()
 
@@ -210,5 +211,85 @@ describe("EightBall Rules", () => {
     })
     const candidate = eightball.nextCandidateBall()
     expect(candidate?.label).to.equal(8)
+  })
+
+  describe("2-Player Rules", () => {
+    it("should assign p1type=2 if Player 2 pots solids on open table", () => {
+      // Set Player 2 as active
+      container.updateController(new WatchAim(container))
+      expect(container.inferActivePlayer()).to.equal(2)
+
+      const ball1 = container.table.balls.find((b) => b.label === 1)!
+      const outcome = [
+        Outcome.collision(container.table.cueball, ball1, 1),
+        Outcome.pot(ball1, 1),
+      ]
+      eightball.update(outcome)
+      // If P2 pots solids, P1 is assigned stripes
+      expect(Session.getInstance().p1type).to.equal(2)
+    })
+
+    it("should assign p1type=1 if Player 2 pots stripes on open table", () => {
+      // Set Player 2 as active
+      container.updateController(new WatchAim(container))
+      expect(container.inferActivePlayer()).to.equal(2)
+
+      const ball9 = container.table.balls.find((b) => b.label === 9)!
+      const outcome = [
+        Outcome.collision(container.table.cueball, ball9, 1),
+        Outcome.pot(ball9, 1),
+      ]
+      eightball.update(outcome)
+      // If P2 pots stripes, P1 is assigned solids
+      expect(Session.getInstance().p1type).to.equal(1)
+    })
+
+    it("should foul if Player 2 hits wrong group", () => {
+      Session.getInstance().p1type = 1 // P1: Solids, P2: Stripes
+      // Set Player 2 as active
+      container.updateController(new WatchAim(container))
+
+      const ball1 = container.table.balls.find((b) => b.label === 1)! // Solid
+      const outcome = [Outcome.collision(container.table.cueball, ball1, 1)]
+      const nextController = eightball.update(outcome)
+      expect(nextController).to.be.an.instanceof(PlaceBall)
+      expect(eightball.foulReason(outcome)).to.equal("Wrong group hit first")
+    })
+
+    it("should win if Player 2 pots 8-ball after clearing group", () => {
+      Session.getInstance().p1type = 1 // P1: Solids, P2: Stripes
+      // Clear Player 2's group (Stripes 9-15)
+      container.table.balls.forEach((b) => {
+        if ((b.label || 0) >= 9 && (b.label || 0) <= 15) {
+          b.state = State.InPocket
+        }
+      })
+      // Set Player 2 as active
+      container.updateController(new WatchAim(container))
+
+      const eightBall = container.table.balls.find((b) => b.label === 8)!
+      const outcome = [
+        Outcome.collision(container.table.cueball, eightBall, 1),
+        Outcome.pot(eightBall, 1),
+      ]
+      expect(eightball.isEndOfGame(outcome)).to.be.true
+      const nextController = eightball.update(outcome)
+      expect(nextController).to.be.an.instanceof(End)
+    })
+
+    it("should lose if Player 2 pots 8-ball early", () => {
+      Session.getInstance().p1type = 1 // P1: Solids, P2: Stripes
+      // Set Player 2 as active
+      container.updateController(new WatchAim(container))
+
+      const eightBall = container.table.balls.find((b) => b.label === 8)!
+      const outcome = [
+        Outcome.collision(container.table.cueball, eightBall, 1),
+        Outcome.pot(eightBall, 1),
+      ]
+      expect(eightball.isEndOfGame(outcome)).to.be.false
+      const nextController = eightball.update(outcome)
+      expect(nextController).to.be.an.instanceof(End)
+    })
   })
 })
