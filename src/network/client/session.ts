@@ -18,6 +18,7 @@ export class Session {
   playerIndex: number = 0
   private scoreByClientId: Record<string, number> = {}
   currentBreak: number = 0
+  p1type: number = 0
 
   private static instance: Session | undefined
   private static readonly fallbackOpponentClientId = "opponent"
