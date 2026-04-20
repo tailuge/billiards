@@ -1,5 +1,6 @@
 import { FourteenOne } from "./fourteenone"
 import { NineBall } from "./nineball"
+import { EightBall } from "./eightball"
 import { Rules } from "./rules"
 import { Snooker } from "./snooker"
 import { ThreeCushion } from "./threecushion"
@@ -11,6 +12,8 @@ export class RuleFactory {
         return new ThreeCushion(container)
       case "fourteenone":
         return new FourteenOne(container)
+      case "eightball":
+        return new EightBall(container)
       case "snooker":
         return new Snooker(container)
       default:

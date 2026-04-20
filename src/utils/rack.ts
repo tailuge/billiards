@@ -217,4 +217,13 @@ export class Rack {
     ]
     return positions
   }
+
+  static eightBall() {
+    const triangle = this.triangle()
+    Rack.swapBallPositions(triangle[4], triangle[9])
+    Rack.swapBallPositions(triangle[4], triangle[8])
+    Rack.swapBallPositions(triangle[3], triangle[11])
+    Rack.swapBallPositions(triangle[6], triangle[14])
+    return triangle
+  }
 }
