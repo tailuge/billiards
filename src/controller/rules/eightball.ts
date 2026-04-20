@@ -1,7 +1,7 @@
 import { Vector3 } from "three"
 import { Container } from "../../container/container"
-import { Ball } from "../../model/ball"
-import { Outcome } from "../../model/outcome"
+import { Ball, State } from "../../model/ball"
+import { Outcome, OutcomeType } from "../../model/outcome"
 import { Table } from "../../model/table"
 import { Controller } from "../controller"
 import { Rules } from "./rules"
@@ -9,6 +9,16 @@ import { TableGeometry } from "../../view/tablegeometry"
 import { Rack } from "../../utils/rack"
 import { isFirstShot } from "../../utils/utils"
 import { R } from "../../model/physics/constants"
+import { Session } from "../../network/client/session"
+import { MatchResultHelper } from "../../network/client/matchresult"
+import { Aim } from "../aim"
+import { WatchAim } from "../watchaim"
+import { PlaceBall } from "../placeball"
+import { PlaceBallEvent } from "../../events/placeballevent"
+import { WatchEvent } from "../../events/watchevent"
+import { StartAimEvent } from "../../events/startaimevent"
+import { ScoreEvent } from "../../events/scoreevent"
+import { roundVec } from "../../utils/three-utils"
 
 export class EightBall implements Rules {
   readonly container: Container
@@ -16,14 +26,17 @@ export class EightBall implements Rules {
   cueball: Ball
   currentBreak = 0
   previousBreak = 0
-  rulename = "nineball"
+  rulename = "eightball"
 
   constructor(container: Container) {
     this.container = container
   }
-  update(outcome: Outcome[]): Controller {
-    throw new Error("Method not implemented.")
+
+  startTurn(): void {
+    this.previousBreak = this.currentBreak
+    this.currentBreak = 0
   }
+
   asset(): string {
     return "models/p8.min.gltf"
   }
@@ -31,6 +44,7 @@ export class EightBall implements Rules {
   tableGeometry(): void {
     TableGeometry.hasPockets = true
   }
+
   table(): Table {
     const table = new Table(this.rack())
     this.cueball = table.cueball
@@ -40,44 +54,244 @@ export class EightBall implements Rules {
   rack(): Ball[] {
     return Rack.eightBall()
   }
-  secondToPlay(): void {
-    throw new Error("Method not implemented.")
-  }
+
+  secondToPlay(): void {}
+
   otherPlayersCueBall(): Ball {
-    throw new Error("Method not implemented.")
+    return this.cueball
   }
+
   isPartOfBreak(outcome: Outcome[]): boolean {
-    throw new Error("Method not implemented.")
+    return isFirstShot(this.container.recorder)
   }
-  isEndOfGame(outcome: Outcome[]): boolean {
-    throw new Error("Method not implemented.")
-  }
+
   allowsPlaceBall(): boolean {
     return true
   }
+
   placeBall(target?: Vector3): Vector3 {
-    const baulkline = (-R * 11) / 0.5
     if (target) {
       const max = new Vector3(TableGeometry.tableX, TableGeometry.tableY)
       const min = new Vector3(-TableGeometry.tableX, -TableGeometry.tableY)
       if (isFirstShot(this.container.recorder)) {
+        const baulkline = (-R * 11) / 0.5
         max.setX(baulkline)
         min.setX(baulkline)
       }
       return target.clone().clamp(min, max)
     }
+    const baulkline = (-R * 11) / 0.5
     return new Vector3(baulkline, 0, 0)
   }
+
   nextCandidateBall(): Ball | undefined {
-    // need to respect solids/ stripes choice when made
-    return this.container.table.balls
-      .filter((b) => b !== this.cueball && b.onTable())
-      .sort((a, b) => (a.label || 0) - (b.label || 0))[0]
+    const session = Session.getInstance()
+    const table = this.container.table
+    const balls = table.balls.filter((b) => b !== this.cueball && b.onTable())
+
+    if (session.p1type === 0) {
+      return balls.find((b) => b.label !== 8)
+    }
+
+    const myGroup = balls.filter((b) => this.isMyType(b))
+    if (myGroup.length > 0) {
+      return myGroup[0]
+    }
+
+    return table.balls.find((b) => b.label === 8 && b.onTable())
   }
-  startTurn(): void {
-    throw new Error("Method not implemented.")
+
+  private isMyType(ball: Ball): boolean {
+    const session = Session.getInstance()
+    if (session.p1type === 1) {
+      return (ball.label || 0) >= 1 && (ball.label || 0) <= 7
+    }
+    if (session.p1type === 2) {
+      return (ball.label || 0) >= 9 && (ball.label || 0) <= 15
+    }
+    return false
   }
+
+  isFoul(outcome: Outcome[]): boolean {
+    return this.foulReason(outcome) !== null
+  }
+
+  foulReason(outcome: Outcome[]): string | null {
+    const table = this.container.table
+    const cueball = table.cueball
+
+    // 1. Cue ball potted
+    if (Outcome.isCueBallPotted(cueball, outcome)) {
+      return "Cue ball potted"
+    }
+
+    // 2. Wrong ball hit first
+    const firstCollision = Outcome.firstCollision(
+      Outcome.cueBallFirst(cueball, outcome)
+    )
+
+    if (!firstCollision) {
+      return "No ball hit"
+    }
+
+    const hitBall = firstCollision.ballB
+    const session = Session.getInstance()
+
+    if (session.p1type === 0) {
+      if (hitBall.label === 8) {
+        return "Hitting the 8-ball first is a foul"
+      }
+    } else {
+      const myGroup = table.balls.filter(
+        (b) => b !== cueball && b.onTable() && this.isMyType(b)
+      )
+      if (myGroup.length > 0) {
+        if (!this.isMyType(hitBall)) {
+          return "Wrong group hit first"
+        }
+      } else {
+        if (hitBall.label !== 8) {
+          return "Must hit 8-ball first"
+        }
+      }
+    }
+
+    // 3. No cushion after contact
+    if (Outcome.potCount(outcome) === 0) {
+      const firstCollisionIndex = outcome.indexOf(firstCollision)
+      const cushionsAfter = outcome
+        .slice(firstCollisionIndex + 1)
+        .some((o) => o.type === OutcomeType.Cushion)
+      if (!cushionsAfter) {
+        return "No cushion after contact"
+      }
+    }
+
+    return null
+  }
+
+  update(outcome: Outcome[]): Controller {
+    const reason = this.foulReason(outcome)
+
+    if (reason) {
+      return this.handleFoul(outcome, reason)
+    }
+
+    const pots = Outcome.pots(outcome)
+    if (pots.length > 0) {
+      return this.handlePot(outcome)
+    }
+
+    return this.handleMiss()
+  }
+
+  private handleFoul(outcome: Outcome[], reason: string): Controller {
+    this.container.notify({
+      type: "Foul",
+      title: "FOUL",
+      subtext: reason,
+      extra: "Ball in hand",
+    })
+    this.startTurn()
+    const pots = Outcome.pots(outcome)
+    const eightBallPotted = pots.some((b) => b.label === 8)
+    const cueball = this.container.table.cueball
+
+    if (eightBallPotted) {
+      return this.handleGameEnd(false, "8-ball pocketed on foul")
+    }
+
+    const startPos = cueball.onTable() ? cueball.pos.clone() : this.placeBall()
+    roundVec(startPos)
+    const placeBallEvent = new PlaceBallEvent(startPos, undefined, true)
+    this.container.sendEvent(placeBallEvent)
+
+    if (this.container.isSinglePlayer) {
+      return new PlaceBall(this.container, startPos)
+    }
+    return new WatchAim(this.container)
+  }
+
+  private handlePot(outcome: Outcome[]): Controller {
+    const session = Session.getInstance()
+    const table = this.container.table
+    const pots = Outcome.pots(outcome)
+
+    if (this.isEndOfGame(outcome)) {
+      return this.handleGameEnd(true)
+    }
+
+    if (pots.some((b) => b.label === 8)) {
+      return this.handleGameEnd(false, "8-ball pocketed early")
+    }
+
+    if (session.p1type === 0) {
+      const solids = pots.filter((b) => b.label! >= 1 && b.label! <= 7)
+      const stripes = pots.filter((b) => b.label! >= 9 && b.label! <= 15)
+
+      if (solids.length > 0 && stripes.length === 0) {
+        session.p1type = 1
+      } else if (stripes.length > 0 && solids.length === 0) {
+        session.p1type = 2
+      }
+    }
+
+    this.currentBreak += pots.length
+    session.addMyScore(pots.length)
+
+    this.container.sound.playSuccess(table.inPockets())
+
+    const scoreEvent = new ScoreEvent(
+      session.playerIndex === 0 ? session.myScore() : session.opponentScore(),
+      session.playerIndex === 1 ? session.myScore() : session.opponentScore(),
+      this.currentBreak,
+      (session.playerIndex + 1) as any,
+      session.p1type
+    )
+    this.container.sendEvent(scoreEvent)
+
+    this.container.sendEvent(new WatchEvent(table.serialise()))
+    return new Aim(this.container)
+  }
+
+  private handleMiss(): Controller {
+    const table = this.container.table
+    this.container.sendEvent(new StartAimEvent())
+    if (this.container.isSinglePlayer) {
+      this.container.sendEvent(new WatchEvent(table.serialise()))
+      this.startTurn()
+      return new Aim(this.container)
+    }
+    return new WatchAim(this.container)
+  }
+
+  isEndOfGame(outcome: Outcome[]): boolean {
+    const eightBall = this.container.table.balls.find((b) => b.label === 8)!
+    const eightBallPotted = Outcome.pots(outcome).includes(eightBall)
+    if (!eightBallPotted || this.isFoul(outcome)) {
+      return false
+    }
+
+    const session = Session.getInstance()
+    if (session.p1type === 0) {
+      return false
+    }
+
+    const table = this.container.table
+    const cueball = table.cueball
+    const myGroup = table.balls.filter(
+      (b) => b !== cueball && b !== eightBall && b.onTable() && this.isMyType(b)
+    )
+
+    return myGroup.length === 0
+  }
+
   handleGameEnd(isWinner: boolean, endSubtext?: string): Controller {
-    throw new Error("Method not implemented.")
+    return MatchResultHelper.presentGameEnd(
+      this.container,
+      this.rulename,
+      isWinner,
+      endSubtext
+    )
   }
 }
