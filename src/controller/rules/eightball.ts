@@ -1,43 +1,20 @@
-import { Vector3 } from "three"
-import { Container } from "../../container/container"
-import { Aim } from "../../controller/aim"
-import { Controller } from "../../controller/controller"
-import { PlaceBall } from "../../controller/placeball"
-import { WatchAim } from "../../controller/watchaim"
-import { PlaceBallEvent } from "../../events/placeballevent"
-import { WatchEvent } from "../../events/watchevent"
 import { Ball } from "../../model/ball"
 import { Outcome, OutcomeType } from "../../model/outcome"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
-import { Rules } from "./rules"
-import { TableGeometry } from "../../view/tablegeometry"
-import { StartAimEvent } from "../../events/startaimevent"
-import { MatchResultHelper } from "../../network/client/matchresult"
+import { PoolRules } from "./poolrules"
 import { Session } from "../../network/client/session"
 import { ScoreEvent } from "../../events/scoreevent"
-import { roundVec } from "../../utils/three-utils"
-import { R } from "../../model/physics/constants"
-import { isFirstShot } from "../../utils/utils"
+import { Controller } from "../controller"
 
-export class EightBall implements Rules {
-  readonly container: Container
-
-  cueball: Ball
-  currentBreak = 0
-  previousBreak = 0
+export class EightBall extends PoolRules {
   rulename = "eightball"
   openTable = true
   p1Assignment = 0 // 0: None, 1: Solids, 2: Stripes
   p2Assignment = 0
 
-  constructor(container: Container) {
-    this.container = container
-  }
-
-  startTurn(): void {
-    this.previousBreak = this.currentBreak
-    this.currentBreak = 0
+  override startTurn(): void {
+    super.startTurn()
     // Sync local state from Session on turn start
     const session = Session.getInstance()
     this.p1Assignment = session.p1type
@@ -47,7 +24,7 @@ export class EightBall implements Rules {
     }
   }
 
-  nextCandidateBall(): Ball | undefined {
+  override nextCandidateBall(): Ball | undefined {
     const table = this.container.table
     const active = this.container.inferActivePlayer()
     const assignment = active === 1 ? this.p1Assignment : this.p2Assignment
@@ -69,39 +46,11 @@ export class EightBall implements Rules {
     return table.balls.find(b => (b.label || 0) === 8)
   }
 
-  placeBall(target?: Vector3): Vector3 {
-    const baulkline = (-R * 11) / 0.5
-    if (target) {
-      const max = new Vector3(TableGeometry.tableX, TableGeometry.tableY)
-      const min = new Vector3(-TableGeometry.tableX, -TableGeometry.tableY)
-      if (isFirstShot(this.container.recorder)) {
-        max.setX(baulkline)
-        min.setX(baulkline)
-      }
-      return target.clone().clamp(min, max)
-    }
-    return new Vector3(baulkline, 0, 0)
-  }
-
-  asset(): string {
-    return "models/p8.min.gltf"
-  }
-
-  tableGeometry(): void {
-    TableGeometry.hasPockets = true
-  }
-
-  table(): Table {
-    const table = new Table(this.rack())
-    this.cueball = table.cueball
-    return table
-  }
-
-  rack(): Ball[] {
+  override rack(): Ball[] {
     return Rack.eightBall()
   }
 
-  update(outcome: Outcome[]): Controller {
+  override update(outcome: Outcome[]): Controller {
     const reason = this.eightBallFoulReason(this.container.table, outcome)
 
     if (reason) {
@@ -109,6 +58,7 @@ export class EightBall implements Rules {
       if (ballsPotted.some((b) => (b.label || 0) === 8)) {
         return this.handleGameEnd(false, "8-ball pocketed on foul")
       }
+      this.startTurn()
       return this.handleFoul(outcome, reason)
     }
 
@@ -140,80 +90,6 @@ export class EightBall implements Rules {
     }
 
     return this.handleMiss()
-  }
-
-  private handleFoul(outcome: Outcome[], reason: string): Controller {
-    this.container.notify({
-      type: "Foul",
-      title: "FOUL",
-      subtext: reason,
-      extra: "Ball in hand",
-    })
-    this.startTurn()
-    const cueball = this.container.table.cueball
-    const startPos = cueball.onTable() ? cueball.pos.clone() : this.placeBall()
-    roundVec(startPos)
-    this.container.sendEvent(new PlaceBallEvent(startPos, undefined, true))
-
-    if (this.container.isSinglePlayer) {
-      return new PlaceBall(this.container, startPos)
-    }
-    return new WatchAim(this.container)
-  }
-
-  private handlePot(outcome: Outcome[]): Controller {
-    const table = this.container.table
-    const pots = Outcome.potCount(outcome)
-    this.currentBreak += pots
-    Session.getInstance().addMyScore(pots)
-
-    this.container.sound.playSuccess(table.inPockets())
-    if (this.isEndOfGame(outcome)) {
-      return this.handleGameEnd(true)
-    }
-
-    this.container.sendEvent(new WatchEvent(table.serialise()))
-    return new Aim(this.container)
-  }
-
-  handleGameEnd(isWinner: boolean, endSubtext?: string): Controller {
-    return MatchResultHelper.presentGameEnd(
-      this.container,
-      this.rulename,
-      isWinner,
-      endSubtext
-    )
-  }
-
-  private handleMiss(): Controller {
-    const table = this.container.table
-    this.container.sendEvent(new StartAimEvent())
-    if (this.container.isSinglePlayer) {
-      this.container.sendEvent(new WatchEvent(table.serialise()))
-      this.startTurn()
-      return new Aim(this.container)
-    }
-    return new WatchAim(this.container)
-  }
-
-  isPartOfBreak(outcome: Outcome[]): boolean {
-    return Outcome.isBallPottedNoFoul(this.container.table.cueball, outcome)
-  }
-
-  isEndOfGame(outcome: Outcome[]): boolean {
-    const eightBall = this.container.table.balls.find(b => (b.label || 0) === 8)
-    return !eightBall || !eightBall.onTable()
-  }
-
-  otherPlayersCueBall(): Ball {
-    return this.cueball
-  }
-
-  secondToPlay(): void {
-  }
-
-  allowsPlaceBall(): boolean {
-    return true
   }
 
   private eightBallFoulReason(table: Table, outcome: Outcome[]): string | null {
@@ -293,7 +169,12 @@ export class EightBall implements Rules {
     })
   }
 
-  handleScore(event: ScoreEvent): Controller {
+  override isEndOfGame(outcome: Outcome[]): boolean {
+    const eightBall = this.container.table.balls.find(b => (b.label || 0) === 8)
+    return !eightBall || !eightBall.onTable()
+  }
+
+  override handleScore(event: ScoreEvent): void {
     if (event.p1type !== undefined) {
       this.p1Assignment = event.p1type
       this.p2Assignment = event.p1type === 0 ? 0 : (event.p1type === 1 ? 2 : 1)
@@ -301,7 +182,6 @@ export class EightBall implements Rules {
         this.openTable = false
       }
     }
-    this.container.updateScoreHud(event.p1, event.p2, event.b, event.active, event.p1type)
-    return this.container.controller
+    super.handleScore(event)
   }
 }

@@ -3,6 +3,7 @@ import { Controller } from "../../controller/controller"
 import { Ball } from "../../model/ball"
 import { Outcome } from "../../model/outcome"
 import { Table } from "../../model/table"
+import { ScoreEvent } from "../../events/scoreevent"
 
 export interface Rules {
   cueball: Ball
@@ -23,4 +24,5 @@ export interface Rules {
   nextCandidateBall(): Ball | undefined
   startTurn(): void
   handleGameEnd(isWinner: boolean, endSubtext?: string): Controller
+  handleScore(event: ScoreEvent): void
 }

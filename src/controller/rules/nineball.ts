@@ -1,169 +1,53 @@
-import { Vector3 } from "three"
-import { Container } from "../../container/container"
-import { Aim } from "../../controller/aim"
-import { Controller } from "../../controller/controller"
-import { PlaceBall } from "../../controller/placeball"
-import { WatchAim } from "../../controller/watchaim"
-import { PlaceBallEvent } from "../../events/placeballevent"
-import { RerackEvent } from "../../events/rerackevent"
-import { WatchEvent } from "../../events/watchevent"
-import { Ball } from "../../model/ball"
 import { Outcome, OutcomeType } from "../../model/outcome"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
-import { Rules } from "./rules"
-import { R } from "../../model/physics/constants"
+import { PoolRules } from "./poolrules"
+import { RerackEvent } from "../../events/rerackevent"
 import { Respot } from "../../utils/respot"
-import { TableGeometry } from "../../view/tablegeometry"
-import { StartAimEvent } from "../../events/startaimevent"
-import { MatchResultHelper } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
-import { isFirstShot } from "../../utils/utils"
-import { roundVec } from "../../utils/three-utils"
+import { Ball } from "../../model/ball"
+import { Controller } from "../controller"
 
-export class NineBall implements Rules {
-  readonly container: Container
-
-  cueball: Ball
-  currentBreak = 0
-  previousBreak = 0
+export class NineBall extends PoolRules {
   rulename = "nineball"
 
-  constructor(container: Container) {
-    this.container = container
-  }
-
-  startTurn(): void {
-    this.previousBreak = this.currentBreak
-    this.currentBreak = 0
-  }
-
-  nextCandidateBall(): Ball | undefined {
+  override nextCandidateBall(): Ball | undefined {
     return this.container.table.balls
       .filter((b) => b !== this.cueball && b.onTable())
       .sort((a, b) => (a.label || 0) - (b.label || 0))[0]
   }
 
-  placeBall(target?: Vector3): Vector3 {
-    const baulkline = (-R * 11) / 0.5
-    if (target) {
-      const max = new Vector3(TableGeometry.tableX, TableGeometry.tableY)
-      const min = new Vector3(-TableGeometry.tableX, -TableGeometry.tableY)
-      if (isFirstShot(this.container.recorder)) {
-        max.setX(baulkline)
-        min.setX(baulkline)
-      }
-      return target.clone().clamp(min, max)
-    }
-    return new Vector3(baulkline, 0, 0)
-  }
-
-  asset(): string {
-    return "models/p8.min.gltf"
-  }
-
-  tableGeometry(): void {
-    TableGeometry.hasPockets = true
-  }
-
-  table(): Table {
-    const table = new Table(this.rack())
-    this.cueball = table.cueball
-    return table
-  }
-
-  rack(): Ball[] {
+  override rack(): Ball[] {
     return Rack.diamond()
   }
 
-  update(outcome: Outcome[]): Controller {
+  override update(outcome: Outcome[]): Controller {
     const reason = NineBall.foulReason(this.container.table, outcome)
 
     if (reason) {
+      this.startTurn()
+      const pots = Outcome.pots(outcome)
+      const nineBallPotted = pots.includes(this.container.table.balls[9])
+
+      if (nineBallPotted) {
+        this.respotAndBroadcastNineBall()
+      }
       return this.handleFoul(outcome, reason)
     }
 
     if (Outcome.potCount(outcome) > 0) {
+      if (Session.isPracticeMode()) {
+        if (Outcome.pots(outcome).includes(this.container.table.balls[9])) {
+          this.respotAndBroadcastNineBall()
+        }
+      }
       return this.handlePot(outcome)
     }
 
     return this.handleMiss()
   }
 
-  protected handleFoul(outcome: Outcome[], reason: string): Controller {
-    this.container.notify({
-      type: "Foul",
-      title: "FOUL",
-      subtext: reason,
-      extra: "Ball in hand",
-    })
-    this.startTurn()
-    const pots = Outcome.pots(outcome)
-    const nineBallPotted = pots.includes(this.container.table.balls[9])
-    const cueball = this.container.table.cueball
-
-    if (nineBallPotted) {
-      this.respotAndBroadcastNineBall()
-    }
-
-    const startPos = cueball.onTable() ? cueball.pos.clone() : this.placeBall()
-    roundVec(startPos)
-    const placeBallEvent = new PlaceBallEvent(startPos, undefined, true)
-    this.container.sendEvent(placeBallEvent)
-
-    if (this.container.isSinglePlayer) {
-      return new PlaceBall(this.container, startPos)
-    }
-    return new WatchAim(this.container)
-  }
-
-  protected handlePot(outcome: Outcome[]): Controller {
-    const table = this.container.table
-    const pots = Outcome.potCount(outcome)
-    this.currentBreak += pots
-    Session.getInstance().addMyScore(pots)
-
-    this.container.sound.playSuccess(table.inPockets())
-    if (this.isEndOfGame(outcome)) {
-      return this.handleGameEnd(true)
-    }
-
-    if (Session.isPracticeMode()) {
-      if (Outcome.pots(outcome).includes(table.balls[9])) {
-        this.respotAndBroadcastNineBall()
-      }
-    }
-
-    this.container.sendEvent(new WatchEvent(table.serialise()))
-    return new Aim(this.container)
-  }
-
-  handleGameEnd(isWinner: boolean, endSubtext?: string): Controller {
-    return MatchResultHelper.presentGameEnd(
-      this.container,
-      this.rulename,
-      isWinner,
-      endSubtext
-    )
-  }
-
-  protected handleMiss(): Controller {
-    const table = this.container.table
-    // if no pot and no foul switch to other player
-    this.container.sendEvent(new StartAimEvent())
-    if (this.container.isSinglePlayer) {
-      this.container.sendEvent(new WatchEvent(table.serialise()))
-      this.startTurn()
-      return new Aim(this.container)
-    }
-    return new WatchAim(this.container)
-  }
-
-  isPartOfBreak(outcome: Outcome[]): boolean {
-    return Outcome.isBallPottedNoFoul(this.container.table.cueball, outcome)
-  }
-
-  isEndOfGame(outcome: Outcome[]): boolean {
+  override isEndOfGame(outcome: Outcome[]): boolean {
     const nineBall = this.container.table.balls[9]
     const nineBallPotted = Outcome.pots(outcome).includes(nineBall)
     if (!nineBallPotted || this.isFoul(outcome)) {
@@ -174,19 +58,6 @@ export class NineBall implements Rules {
       return !NineBall.hasOtherObjectBalls(this.container.table)
     }
 
-    return true
-  }
-
-  otherPlayersCueBall(): Ball {
-    // only for three cushion
-    return this.cueball
-  }
-
-  secondToPlay(): void {
-    // only for three cushion
-  }
-
-  allowsPlaceBall(): boolean {
     return true
   }
 
