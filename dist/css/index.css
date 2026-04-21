@@ -15,6 +15,11 @@ html {
   color: white;
 }
 
+*:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
 div {
   color: antiquewhite;
   touch-action: none;
@@ -23,18 +28,6 @@ div {
 h1,
 p {
   margin: 0 0 1em;
-}
-
-.flex-container {
-  display: flex;
-  align-items: stretch;
-  background-color: #2e9097;
-}
-
-.flex-container > div {
-  background-color: #1c802d;
-  border: 1px;
-  color: grey;
 }
 
 #snookerScore {
@@ -80,10 +73,6 @@ p {
   position: relative;
 }
 
-.view3d:focus {
-  outline: none;
-}
-
 canvas {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
@@ -106,24 +95,11 @@ canvas {
   box-sizing: border-box;
 }
 
-.toggleButton {
-  height: 100%;
-  width: 20%;
-  margin-right: 4px;
-  aspect-ratio: 0.4;
-  border-radius: 10px;
-  border-width: 4px;
-  padding: 0;
-  max-width: 80px;
-}
-
-.toggleButton:active,
 .menuButton:active {
   transform: scale(0.97);
 }
 
 a.pill {
-  outline: none;
   background: rgb(0 0 0 / 40%);
   border-radius: 8px;
   text-decoration: none;

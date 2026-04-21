@@ -32,6 +32,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
 }
 
 .menuButton.half-height {
@@ -91,4 +95,8 @@
 
 .menuButton:active {
   transform: scale(0.97);
+}
+
+.menuButton:hover:not(:disabled) {
+  filter: brightness(1.1);
 }
