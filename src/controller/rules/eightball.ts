@@ -22,6 +22,12 @@ import { roundVec } from "../../utils/three-utils"
 import { Respot } from "../../utils/respot"
 import { RerackEvent } from "../../events/rerackevent"
 
+const flipType = (t: number) => {
+  if (t === 1) return 2
+  if (t === 2) return 1
+  return 0
+}
+
 export class EightBall implements Rules {
   readonly container: Container
 
@@ -243,12 +249,14 @@ export class EightBall implements Rules {
 
     this.container.sound.playSuccess(table.inPockets())
 
+    const p1typeForEvent =
+      session.playerIndex === 0 ? session.p1type : flipType(session.p1type)
     const scoreEvent = new ScoreEvent(
       session.playerIndex === 0 ? session.myScore() : session.opponentScore(),
       session.playerIndex === 1 ? session.myScore() : session.opponentScore(),
       this.currentBreak,
       (session.playerIndex + 1) as any,
-      session.p1type
+      p1typeForEvent
     )
     this.container.sendEvent(scoreEvent)
 

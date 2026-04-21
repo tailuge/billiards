@@ -6,6 +6,9 @@ import { ScoreEvent } from "../events/scoreevent"
 import { ConcedeEvent } from "../events/concedeevent"
 import { Outcome } from "../model/outcome"
 import { Vector3 } from "three"
+import { Session } from "../network/client/session"
+
+const flipP1type = (t: number) => (t === 1 ? 2 : 1)
 
 export abstract class ControllerBase extends Controller {
   readonly scale = 0.001
@@ -36,6 +39,11 @@ export abstract class ControllerBase extends Controller {
   }
 
   override handleScore(event: ScoreEvent): Controller {
+    const session = Session.getInstance()
+    if (event.p1type !== undefined && event.p1type !== 0 && session.p1type === 0) {
+      session.p1type =
+        session.playerIndex === 0 ? event.p1type : flipP1type(event.p1type)
+    }
     this.container.updateScoreHud(event.p1, event.p2, event.b, event.active)
     return this
   }
