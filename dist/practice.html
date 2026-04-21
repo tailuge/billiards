@@ -5,380 +5,385 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>9-Ball Layout Visualizer</title>
     <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
       body {
-        background-color: #0a0a0a;
+        min-height: 100dvh;
+        background: #0d0d0d;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 100vh;
-        margin: 0;
-        touch-action: none;
-        overflow-x: hidden;
-        overflow-y: auto;
+        gap: 20px;
+        padding: 16px;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         color: #eee;
+        touch-action: none;
+        overflow: hidden;
       }
-      .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
+
+      #table-wrap {
+        position: relative;
         width: 100%;
+        max-width: 820px;
+        border-radius: 10px;
+        box-shadow:
+          0 0 0 14px #5c3a1e,
+          0 0 0 18px #3b2210,
+          0 0 60px 10px rgba(0,0,0,0.9);
       }
-      canvas {
-        background-color: #065f46; /* Slightly more vibrant green */
+
+      /* portrait: constrain height so it fits viewport minus controls */
+      @media (orientation: portrait) {
+        #table-wrap {
+          max-width: 100%;
+          max-height: calc(100dvh - 100px);
+          width: auto;
+          /* height drives layout; width is derived from aspect-ratio */
+          height: calc(100dvh - 100px);
+        }
+      }
+
+      #table-surface {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 6px;
+        background: radial-gradient(ellipse at 30% 30%, #2d8a55 0%, #1a6b3c 55%, #0f4a28 100%);
+        /* overflow visible so balls at edges aren't clipped */
+        overflow: visible;
+      }
+
+      #table-surface::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background-image:
+          repeating-linear-gradient(0deg,   transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px),
+          repeating-linear-gradient(90deg,  transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+        pointer-events: none;
+      }
+
+      .ball {
+        position: absolute;
+        border-radius: 50%;
         cursor: grab;
-        border: 2px solid #043a2c;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-        width: 100%;
-        height: auto;
-        display: block;
-        box-sizing: border-box;
+        transform: translate(-50%, -50%);
+        filter: drop-shadow(2px 3px 5px rgba(0,0,0,0.75));
+        user-select: none;
+        touch-action: none;
+        z-index: 10;
       }
-      canvas:active {
+      .ball.dragging {
         cursor: grabbing;
+        filter: drop-shadow(4px 6px 12px rgba(0,0,0,0.95));
+        z-index: 100;
       }
+
+      .ball-label {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 100;
+        pointer-events: none;
+        border-radius: 50%;
+      }
+
       .controls {
         display: flex;
-        gap: 10px;
+        flex-wrap: wrap;
+        gap: 8px;
         width: 100%;
-        max-width: 800px;
-        padding: 0 10px;
+        max-width: 820px;
+        flex-shrink: 0;
+        justify-content: center;
       }
-      input {
-        flex-grow: 1;
-        background: #1a1a1a;
-        border: 1px solid #333;
-        color: #00ff66;
-        padding: 10px;
-        font-family: "Cascadia Code", "Fira Code", monospace;
-        border-radius: 4px;
-        font-size: 14px;
-      }
+
       button {
-        background: #10b981;
-        color: white;
         border: none;
-        padding: 10px 24px;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
         font-weight: 600;
-        transition: all 0.2s;
+        transition: transform 0.15s, box-shadow 0.15s;
+        flex-shrink: 0;
       }
-      button:hover {
-        background: #34d399;
-        transform: translateY(-1px);
+      button:hover  { transform: translateY(-2px); }
+      button:active { transform: translateY(0); }
+
+      .btn-preset {
+        background: #1e1e1e;
+        color: #aaa;
+        border: 1px solid #333;
+        padding: 7px 13px;
+        font-size: 11px;
+        letter-spacing: 0.03em;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
       }
-      button:active {
-        transform: translateY(0);
+      .btn-preset:hover { background: #2a2a2a; color: #eee; border-color: #555; }
+
+      .btn-play {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #fff;
+        padding: 8px 22px;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(16,185,129,0.35);
+        margin-left: auto;
       }
+      .btn-play:hover { box-shadow: 0 6px 18px rgba(16,185,129,0.5); }
     </style>
   </head>
   <body>
-    <div class="container">
-      <canvas id="tableCanvas"></canvas>
-      <div class="controls">
-        <input
-          type="text"
-          id="posInput"
-          placeholder="[0.x, 0.y, 1.x, 1.y, ...]"
-          spellcheck="false"
-        />
-        <button id="playBtn">Play</button>
-      </div>
+    <div id="table-wrap">
+      <div id="table-surface"></div>
+    </div>
+    <div class="controls">
+      <button class="btn-preset" data-preset="scattered">scattered</button>
+      <button class="btn-preset" data-preset="rack">rack up</button>
+      <button class="btn-preset" data-preset="line">line up</button>
+      <button class="btn-preset" data-preset="corners">corners</button>
+      <button class="btn-preset" data-preset="cluster">cluster</button>
+      <button class="btn-play" id="playBtn">Play</button>
     </div>
 
     <script>
-      const canvas = document.getElementById("tableCanvas")
-      const ctx = canvas.getContext("2d")
-      const posInput = document.getElementById("posInput")
-      const playBtn = document.getElementById("playBtn")
+      // ── Physics constants ──────────────────────────────────────
+      const R  = 0.03275
+      const HW = R * 43 + R   // half-width  (X)
+      const HH = R * 21 + R   // half-height (Y)
 
-      const R = 0.03275
-      const tableX = R * 43
-      const tableY = R * 21
-      const X = tableX + R
-      const Y = tableY + R
-      const baseScale = 450 / (X * 2)
+      const BALL_COLORS = [
+        "#ffffff","#ffd700","#2563eb","#ef4444",
+        "#9333ea","#f97316","#16a34a","#991b1b","#111111","#fbbf24",
+      ]
 
+      // ── State ──────────────────────────────────────────────────
       let balls = []
-      let selectedBall = null
-      let scale = baseScale
+      let dragging = null   // { ball, startTableX, startTableY }
 
-      function resizeCanvas() {
-        const container = canvas.parentElement
-        const availableWidth = container.clientWidth
-        const aspectRatio = (Y * 2) / (X * 2)
-        const borderTotal = 4 // 2px border on each side (left/right, top/bottom)
-        const totalWidth = availableWidth
-        const totalHeight = availableWidth * aspectRatio
-        const contentWidth = totalWidth - borderTotal
-        const contentHeight = totalHeight - borderTotal
+      const wrap    = document.getElementById("table-wrap")
+      const surface = document.getElementById("table-surface")
 
-        const dpr = window.devicePixelRatio || 1
-        canvas.width = contentWidth * dpr
-        canvas.height = contentHeight * dpr
-        canvas.style.width = totalWidth + "px"
-        canvas.style.height = totalHeight + "px"
+      // ── Orientation ────────────────────────────────────────────
+      function portrait() { return window.innerHeight > window.innerWidth }
 
-        scale = contentWidth / (X * 2)
-        ctx.setTransform(1, 0, 0, 1, 0, 0)
-        ctx.scale(dpr, dpr)
-
-        draw()
-      }
-
-      function init() {
-        resizeCanvas()
-
-        // More vibrant color palette
-        const ballColors = [
-          "#ffffff", // 0: Cue
-          "#ffd700", // 1: Gold/Yellow
-          "#2563eb", // 2: Royal Blue
-          "#ef4444", // 3: Bright Red
-          "#9333ea", // 4: Purple
-          "#f97316", // 5: Orange
-          "#16a34a", // 6: Green
-          "#991b1b", // 7: Maroon
-          "#0a0a0a", // 8: Black
-          "#fbbf24", // 9: Vibrant Yellow (Stripe removed per request)
-        ]
-
-        for (let i = 0; i <= 9; i++) {
-          balls.push({
-            id: i,
-            x: -0.8 + i * (R * 2.25),
-            y: i % 2 === 0 ? 0.1 : -0.1,
-            color: ballColors[i],
-          })
+      function setAspectRatio() {
+        if (portrait()) {
+          // height is constrained by CSS; width derives from aspect-ratio
+          wrap.style.aspectRatio = `${HH * 2} / ${HW * 2}`
+        } else {
+          wrap.style.aspectRatio = `${HW * 2} / ${HH * 2}`
         }
-        updateInputString()
-        draw()
       }
 
-      function toCanvas(val, axis) {
-        const offset =
-          axis === "x" ? canvas.clientWidth / 2 : canvas.clientHeight / 2
-        return val * scale + offset
-      }
-
-      function fromCanvas(val, axis) {
-        const offset =
-          axis === "x" ? canvas.clientWidth / 2 : canvas.clientHeight / 2
-        return (val - offset) / scale
-      }
-
-      function drawBall(ball) {
-        const bx = toCanvas(ball.x, "x")
-        const by = toCanvas(ball.y, "y")
-        const br = R * scale
-
-        // 1. CLOTH SHADOW
-        ctx.save()
-        ctx.beginPath()
-        const shadowOffset = br * 0.04
-        ctx.filter = "blur(3px)"
-        ctx.fillStyle = "rgba(0, 0, 0, 0.7)"
-        ctx.arc(bx + shadowOffset, by + shadowOffset, br * 1.02, 0, Math.PI * 2)
-        ctx.fill()
-        ctx.restore()
-
-        // 2. BALL BASE & VIBRANT LIGHTING
-        const surfaceGrad = ctx.createRadialGradient(
-          bx - br * 0.2,
-          by - br * 0.2,
-          0,
-          bx - br * 0.2,
-          by - br * 0.2,
-          br * 1.5
-        )
-        surfaceGrad.addColorStop(0, ball.color)
-        surfaceGrad.addColorStop(0.9, "#000000")
-
-        ctx.beginPath()
-        ctx.arc(bx, by, br, 0, Math.PI * 2)
-        ctx.fillStyle = surfaceGrad
-        ctx.fill()
-
-        // 3. SECONDARY REFLECTION
-        const clothReflect = ctx.createRadialGradient(
-          bx + br * 0.4,
-          by + br * 0.4,
-          0,
-          bx + br * 0.4,
-          by + br * 0.4,
-          br * 0.8
-        )
-        clothReflect.addColorStop(0, "rgba(52, 211, 153, 0.3)")
-        clothReflect.addColorStop(1, "rgba(0,0,0,0)")
-        ctx.fillStyle = clothReflect
-        ctx.fill()
-
-        // 4. NUMBER (THIN FONT)
-        if (ball.id !== 0) {
-          ctx.fillStyle = ball.id === 8 ? "#fff" : "#000"
-          ctx.font = `100 ${br * 1.6}px "Segoe UI", Arial`
-          ctx.textAlign = "center"
-          ctx.textBaseline = "middle"
-          ctx.fillText(ball.id, bx, by)
-        }
-
-        // 5. SPECULAR HIGHLIGHT
-        const specularGrad = ctx.createRadialGradient(
-          bx - br * 0.35,
-          by - br * 0.35,
-          0,
-          bx - br * 0.35,
-          by - br * 0.35,
-          br * 0.4
-        )
-        specularGrad.addColorStop(0, "rgba(255,255,255,0.9)")
-        specularGrad.addColorStop(1, "rgba(255,255,255,0)")
-        ctx.fillStyle = specularGrad
-        ctx.fill()
-
-        // 6. RIM LIGHTING
-        ctx.beginPath()
-        ctx.arc(bx, by, br, 0, Math.PI * 2)
-        const rimGrad = ctx.createRadialGradient(bx, by, br * 0.82, bx, by, br)
-        rimGrad.addColorStop(0, "rgba(0,0,0,0)")
-        rimGrad.addColorStop(1, "rgba(255,255,255,0.2)")
-        ctx.fillStyle = rimGrad
-        ctx.fill()
-      }
-
-      function draw() {
-        const w = canvas.clientWidth
-        const h = canvas.clientHeight
-        ctx.clearRect(0, 0, w, h)
-        ctx.strokeStyle = "rgba(255,255,255,0.1)"
-        ctx.lineWidth = 1
-        ctx.strokeRect(0, 0, w, h)
-        balls.forEach(drawBall)
-      }
-
-      function updateInputString() {
-        const coords = balls.flatMap((b) => [
-          parseFloat(b.x.toFixed(4)),
-          parseFloat(b.y.toFixed(4)),
-        ])
-        posInput.value = `[${coords.join(", ")}]`
-      }
-
-      function loadFromInput() {
-        try {
-          const cleanInput = posInput.value.replace(/[\[\]\s]/g, "")
-          const data = cleanInput.split(",").map(Number)
-          if (data.length >= 20) {
-            for (let i = 0; i <= 9; i++) {
-              balls[i].x = data[i * 2]
-              balls[i].y = data[i * 2 + 1]
-            }
-            draw()
+      // ── Coordinate mapping ─────────────────────────────────────
+      // table (tx,ty) → CSS % on surface element
+      function tableToCSS(tx, ty) {
+        if (portrait()) {
+          // rotate 90°: table-x → screen-down, table-y → screen-left
+          return {
+            left: ((HH - ty) / (HH * 2)) * 100,
+            top:  ((tx + HW) / (HW * 2)) * 100,
           }
-        } catch (e) {
-          console.error("Invalid position data")
+        }
+        return {
+          left: ((tx + HW) / (HW * 2)) * 100,
+          top:  ((ty + HH) / (HH * 2)) * 100,
         }
       }
 
-      function isColliding(ball, newX, newY) {
-        for (let other of balls) {
-          if (other === ball) continue
-          const dx = newX - other.x
-          const dy = newY - other.y
-          if (dx * dx + dy * dy < (2 * R) ** 2) return true
+      // client pixel → table units
+      function clientToTable(clientX, clientY) {
+        const r = surface.getBoundingClientRect()
+        const px = clientX - r.left
+        const py = clientY - r.top
+        if (portrait()) {
+          const tx =  (py / r.height) * (HW * 2) - HW
+          const ty = -(px / r.width)  * (HH * 2) + HH
+          return { x: tx, y: ty }
+        }
+        return {
+          x: (px / r.width)  * (HW * 2) - HW,
+          y: (py / r.height) * (HH * 2) - HH,
+        }
+      }
+
+      // ── Ball size ──────────────────────────────────────────────
+      function ballPx() {
+        const r = surface.getBoundingClientRect()
+        const dim = portrait() ? r.height : r.width
+        return (R / (HW * 2)) * dim * 2
+      }
+
+      // ── Collision ──────────────────────────────────────────────
+      function collides(ball, nx, ny) {
+        for (const o of balls) {
+          if (o === ball) continue
+          const dx = nx - o.x, dy = ny - o.y
+          if (dx*dx + dy*dy < (2*R)**2) return true
         }
         return false
       }
 
-      function getMousePos(e) {
-        const rect = canvas.getBoundingClientRect()
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY
-        const borderOffset = 2 // Must match CSS border width
-        const contentX = clientX - rect.left - borderOffset
-        const contentY = clientY - rect.top - borderOffset
-        return {
-          x: fromCanvas(contentX, "x"),
-          y: fromCanvas(contentY, "y"),
-        }
+      // ── DOM ────────────────────────────────────────────────────
+      function positionBall(ball) {
+        const sz = ballPx()
+        const { left, top } = tableToCSS(ball.x, ball.y)
+        ball.el.style.width    = sz + "px"
+        ball.el.style.height   = sz + "px"
+        ball.el.style.fontSize = (sz * 0.78) + "px"
+        ball.el.style.left     = left + "%"
+        ball.el.style.top      = top  + "%"
       }
 
-      function onDown(e) {
-        const pos = getMousePos(e)
+      function buildBall(ball) {
+        const el = document.createElement("div")
+        el.className = "ball"
+        const c = ball.color
+        el.style.background = [
+          `radial-gradient(circle at 62% 65%, rgba(52,211,153,0.22) 0%, transparent 55%)`,
+          `radial-gradient(circle at 35% 30%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 38%)`,
+          `radial-gradient(circle at 38% 35%, ${c} 0%, #000 100%)`,
+        ].join(", ")
+
+        if (ball.id !== 0) {
+          const lbl = document.createElement("span")
+          lbl.className = "ball-label"
+          lbl.textContent = ball.id
+          lbl.style.color = ball.id === 8 ? "#fff" : "#000"
+          el.appendChild(lbl)
+        }
+
+        surface.appendChild(el)
+        ball.el = el
+        positionBall(ball)
+      }
+
+      // ── Drag (single global handler) ───────────────────────────
+      function pointerDown(e) {
+        const touch = e.touches ? e.touches[0] : e
+        const pos = clientToTable(touch.clientX, touch.clientY)
+        // find closest ball within 2R
         for (let i = balls.length - 1; i >= 0; i--) {
-          const dx = pos.x - balls[i].x
-          const dy = pos.y - balls[i].y
-          if (Math.sqrt(dx * dx + dy * dy) < R * 2) {
-            selectedBall = balls[i]
+          const b = balls[i]
+          const dx = pos.x - b.x, dy = pos.y - b.y
+          if (dx*dx + dy*dy < (2*R)**2) {
+            dragging = b
+            b.el.classList.add("dragging")
+            e.preventDefault()
             break
           }
         }
       }
 
-      function onMove(e) {
-        if (!selectedBall) return
-        const pos = getMousePos(e)
-        const limitX = X - R
-        const limitY = Y - R
-        const nextX = Math.max(-limitX, Math.min(limitX, pos.x))
-        const nextY = Math.max(-limitY, Math.min(limitY, pos.y))
+      function pointerMove(e) {
+        if (!dragging) return
+        e.preventDefault()
+        const touch = e.touches ? e.touches[0] : e
+        const pos = clientToTable(touch.clientX, touch.clientY)
+        const nx = Math.max(-(HW-R), Math.min(HW-R, pos.x))
+        const ny = Math.max(-(HH-R), Math.min(HH-R, pos.y))
 
-        if (!isColliding(selectedBall, nextX, nextY)) {
-          selectedBall.x = nextX
-          selectedBall.y = nextY
+        if (!collides(dragging, nx, ny)) {
+          dragging.x = nx; dragging.y = ny
         } else {
-          // Try to slide as close as possible along each axis
-          if (!isColliding(selectedBall, nextX, selectedBall.y))
-            selectedBall.x = nextX
-          if (!isColliding(selectedBall, selectedBall.x, nextY))
-            selectedBall.y = nextY
+          if (!collides(dragging, nx, dragging.y)) dragging.x = nx
+          if (!collides(dragging, dragging.x, ny)) dragging.y = ny
         }
-        updateInputString()
-        draw()
+        positionBall(dragging)
+        logCoords()
       }
 
-      function onUp() {
-        selectedBall = null
+      function pointerUp() {
+        if (dragging) { dragging.el.classList.remove("dragging"); dragging = null }
       }
 
-      canvas.addEventListener("mousedown", onDown)
-      window.addEventListener("mousemove", onMove)
-      window.addEventListener("mouseup", onUp)
-      canvas.addEventListener(
-        "touchstart",
-        (e) => {
-          onDown(e)
-          e.preventDefault()
+      // ── Presets ────────────────────────────────────────────────
+      const PRESETS = {
+        scattered: () => [
+          [ 0,     0   ], // cue
+          [-1.0,  -0.3 ], [-0.5,   0.4 ], [ 0.2,  -0.5 ], [ 0.7,   0.2 ],
+          [-0.8,   0.5 ], [ 0.4,  -0.2 ], [-0.3,   0.0 ], [ 1.0,   0.4 ],
+          [-0.6,  -0.5 ],
+        ],
+        rack: () => {
+          // standard 9-ball diamond rack centred at (0.3, 0)
+          const cx = 0.3, d = R * 2.05
+          return [
+            [-1.0,  0   ],                          // cue
+            [ cx,   0   ],                          // 1 (apex)
+            [ cx+d,-d/2 ], [ cx+d, d/2 ],          // 2nd row
+            [ cx+2*d,-d ], [ cx+2*d, 0 ], [ cx+2*d, d ], // 3rd row
+            [ cx+3*d,-d/2 ], [ cx+3*d, d/2 ],      // 4th row
+            [ cx+4*d, 0 ],                          // 9 (back)
+          ]
         },
-        { passive: false }
-      )
-      window.addEventListener(
-        "touchmove",
-        (e) => {
-          onMove(e)
-          e.preventDefault()
+        line: () => Array.from({length: 10}, (_, i) => [-0.9 + i * (R*2.2), 0]),
+        corners: () => [
+          [ 0,    0   ],
+          [-1.0, -0.5 ], [ 1.0, -0.5 ], [-1.0,  0.5 ], [ 1.0,  0.5 ],
+          [-0.5, -0.5 ], [ 0.5, -0.5 ], [-0.5,  0.5 ], [ 0.5,  0.5 ],
+          [ 0,   0.3  ],
+        ],
+        cluster: () => {
+          const pts = [[ 0, 0 ]]
+          const angles = Array.from({length: 9}, (_, i) => (i / 9) * Math.PI * 2)
+          angles.forEach((a, i) => pts.push([ Math.cos(a)*R*2.2, Math.sin(a)*R*2.2 ]))
+          return pts
         },
-        { passive: false }
-      )
-      window.addEventListener("touchend", onUp)
-      window.addEventListener("resize", resizeCanvas)
+      }
 
-      playBtn.addEventListener("click", () => {
-        const coords = balls.flatMap((b) => [
-          parseFloat(b.x.toFixed(4)),
-          parseFloat(b.y.toFixed(4)),
-        ])
-        const init = encodeURIComponent(JSON.stringify(coords))
-        window.location.href = `./index.html?practice=true&init=${init}`
-      })
-      posInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") loadFromInput()
+      function applyPreset(name) {
+        const positions = PRESETS[name]()
+        balls.forEach((b, i) => {
+          const [x, y] = positions[i] ?? [0, 0]
+          b.x = Math.max(-(HW-R), Math.min(HW-R, x))
+          b.y = Math.max(-(HH-R), Math.min(HH-R, y))
+        })
+        balls.forEach(positionBall)
+        logCoords()
+      }
+
+      // ── Coords ─────────────────────────────────────────────────
+      function logCoords() {
+        console.log(`[${balls.flatMap(b => [+b.x.toFixed(4), +b.y.toFixed(4)]).join(", ")}]`)
+      }
+
+      // ── Init ───────────────────────────────────────────────────
+      function init() {
+        setAspectRatio()
+        for (let i = 0; i <= 9; i++) {
+          balls.push({ id: i, x: -0.8 + i*(R*2.25), y: i%2===0 ? 0.1 : -0.1, color: BALL_COLORS[i], el: null })
+        }
+        balls.forEach(buildBall)
+        logCoords()
+      }
+
+      // ── Events ─────────────────────────────────────────────────
+      surface.addEventListener("mousedown",  pointerDown)
+      surface.addEventListener("touchstart", pointerDown, { passive: false })
+      window.addEventListener("mousemove",   pointerMove)
+      window.addEventListener("touchmove",   pointerMove, { passive: false })
+      window.addEventListener("mouseup",     pointerUp)
+      window.addEventListener("touchend",    pointerUp)
+
+      window.addEventListener("resize", () => {
+        setAspectRatio()
+        balls.forEach(positionBall)
       })
 
-      window.onload = init
+      document.getElementById("playBtn").addEventListener("click", () => {
+        const coords = balls.flatMap(b => [+b.x.toFixed(4), +b.y.toFixed(4)])
+        window.location.href = `./index.html?practice=true&init=${encodeURIComponent(JSON.stringify(coords))}`
+      })
+
+      document.querySelectorAll(".btn-preset").forEach(btn => {
+        btn.addEventListener("click", () => applyPreset(btn.dataset.preset))
+      })
+
+      window.addEventListener("load", init)
     </script>
   </body>
 </html>
