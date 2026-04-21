@@ -319,34 +319,34 @@
       // ── Presets ────────────────────────────────────────────────
       const PRESETS = {
         scattered: () => [
-          [ 0,     0   ], // cue
-          [-1.0,  -0.3 ], [-0.5,   0.4 ], [ 0.2,  -0.5 ], [ 0.7,   0.2 ],
-          [-0.8,   0.5 ], [ 0.4,  -0.2 ], [-0.3,   0.0 ], [ 1.0,   0.4 ],
-          [-0.6,  -0.5 ],
+          0, 0,
+          -1.0, -0.3, -0.5, 0.4, 0.2, -0.5, 0.7, 0.2,
+          -0.8, 0.5, 0.4, -0.2, -0.3, 0.0, 1.0, 0.4,
+          -0.6, -0.5,
         ],
         rack: () => {
-          // standard 9-ball diamond rack centred at (0.3, 0)
           const cx = 0.3, d = R * 2.05
           return [
-            [-1.0,  0   ],                          // cue
-            [ cx,   0   ],                          // 1 (apex)
-            [ cx+d,-d/2 ], [ cx+d, d/2 ],          // 2nd row
-            [ cx+2*d,-d ], [ cx+2*d, 0 ], [ cx+2*d, d ], // 3rd row
-            [ cx+3*d,-d/2 ], [ cx+3*d, d/2 ],      // 4th row
-            [ cx+4*d, 0 ],                          // 9 (back)
+            -1.0, 0,
+            cx, 0,
+            cx + d, -d / 2, cx + d, d / 2,
+            cx + 2 * d, -d, cx + 2 * d, 0, cx + 2 * d, d,
+            cx + 3 * d, -d / 2, cx + 3 * d, d / 2,
+            cx + 4 * d, 0,
           ]
         },
-        line: () => Array.from({length: 10}, (_, i) => [-0.9 + i * (R*2.2), 0]),
+        line: () => Array.from({ length: 10 }, (_, i) => [-0.9 + i * (R * 2.2), 0]).flat(),
         corners: () => [
-          [ 0,    0   ],
-          [-1.0, -0.5 ], [ 1.0, -0.5 ], [-1.0,  0.5 ], [ 1.0,  0.5 ],
-          [-0.5, -0.5 ], [ 0.5, -0.5 ], [-0.5,  0.5 ], [ 0.5,  0.5 ],
-          [ 0,   0.3  ],
+          -0.8, 0.1, -0.0056, -0.6764, 1.3661, -0.6615, 1.3549, 0.639, -0.013, 0.6615,
+          -1.3549, 0.6503, -1.3512, -0.6241, -0.356, 0, 0.3634, -0.0037, 0.0019, 0
         ],
         cluster: () => {
-          const pts = [[ 0, 0 ]]
-          const angles = Array.from({length: 9}, (_, i) => (i / 9) * Math.PI * 2)
-          angles.forEach((a, i) => pts.push([ Math.cos(a)*R*2.2, Math.sin(a)*R*2.2 ]))
+          const pts = [0, 0]
+          const angles = Array.from({ length: 9 }, (_, i) => (i / 9) * Math.PI * 2)
+          angles.forEach((a) => {
+            pts.push(Math.cos(a) * R * 2.2)
+            pts.push(Math.sin(a) * R * 2.2)
+          })
           return pts
         },
       }
@@ -354,9 +354,10 @@
       function applyPreset(name) {
         const positions = PRESETS[name]()
         balls.forEach((b, i) => {
-          const [x, y] = positions[i] ?? [0, 0]
-          b.x = Math.max(-(HW-R), Math.min(HW-R, x))
-          b.y = Math.max(-(HH-R), Math.min(HH-R, y))
+          const x = positions[i * 2] ?? 0
+          const y = positions[i * 2 + 1] ?? 0
+          b.x = Math.max(-(HW - R), Math.min(HW - R, x))
+          b.y = Math.max(-(HH - R), Math.min(HH - R, y))
         })
         balls.forEach(positionBall)
         logCoords()
