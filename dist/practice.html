@@ -33,6 +33,22 @@
           0 0 60px 10px rgba(0,0,0,0.9);
       }
 
+      #table-wrap::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url("images/practiceback.png") center / contain no-repeat;
+        border-radius: inherit;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      @media (orientation: portrait) {
+        #table-wrap::before {
+          transform: rotate(90deg);
+        }
+      }
+
       /* portrait: constrain height so it fits viewport minus controls */
       @media (orientation: portrait) {
         #table-wrap {
@@ -49,9 +65,10 @@
         width: 100%;
         height: 100%;
         border-radius: 6px;
-        background: radial-gradient(ellipse at 30% 30%, #2d8a55 0%, #1a6b3c 55%, #0f4a28 100%);
+        background: radial-gradient(ellipse at 30% 30%, rgba(45,138,85,0.75) 0%, rgba(26,107,60,0.75) 55%, rgba(15,74,40,0.75) 100%);
         /* overflow visible so balls at edges aren't clipped */
         overflow: visible;
+        z-index: 1;
       }
 
       #table-surface::before {
