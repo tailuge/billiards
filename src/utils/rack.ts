@@ -226,4 +226,18 @@ export class Rack {
     Rack.swapBallPositions(triangle[6], triangle[14])
     return triangle
   }
+
+  static fromInitParam(balls: Ball[]): Ball[] {
+    const params = new URLSearchParams(globalThis.location?.search)
+    if (!params.has("practice") || !params.has("init")) {
+      return balls
+    }
+    const data: number[] = JSON.parse(params.get("init")!)
+    balls.forEach((b, i) => {
+      b.pos.x = data[i * 2]
+      b.pos.y = data[i * 2 + 1]
+      b.pos.z = 0
+    })
+    return balls
+  }
 }

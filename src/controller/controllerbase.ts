@@ -40,7 +40,11 @@ export abstract class ControllerBase extends Controller {
 
   override handleScore(event: ScoreEvent): Controller {
     const session = Session.getInstance()
-    if (event.p1type !== undefined && event.p1type !== 0 && session.p1type === 0) {
+    if (
+      event.p1type !== undefined &&
+      event.p1type !== 0 &&
+      session.p1type === 0
+    ) {
       session.p1type =
         session.playerIndex === 0 ? event.p1type : flipP1type(event.p1type)
     }

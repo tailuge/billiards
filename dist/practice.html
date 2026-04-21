@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>9-Ball Layout Visualizer</title>
+    <style>
+      body {
+        background-color: #0a0a0a;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        touch-action: none;
+        overflow-x: hidden;
+        overflow-y: auto;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: #eee;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+      }
+      canvas {
+        background-color: #065f46; /* Slightly more vibrant green */
+        cursor: grab;
+        border: 2px solid #043a2c;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        width: 100%;
+        height: auto;
+        display: block;
+        box-sizing: border-box;
+      }
+      canvas:active {
+        cursor: grabbing;
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+        max-width: 800px;
+        padding: 0 10px;
+      }
+      input {
+        flex-grow: 1;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        color: #00ff66;
+        padding: 10px;
+        font-family: "Cascadia Code", "Fira Code", monospace;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      button {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      button:hover {
+        background: #34d399;
+        transform: translateY(-1px);
+      }
+      button:active {
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <canvas id="tableCanvas"></canvas>
+      <div class="controls">
+        <input
+          type="text"
+          id="posInput"
+          placeholder="[0.x, 0.y, 1.x, 1.y, ...]"
+          spellcheck="false"
+        />
+        <button id="playBtn">Play</button>
+      </div>
+    </div>
+
+    <script>
+      const canvas = document.getElementById("tableCanvas")
+      const ctx = canvas.getContext("2d")
+      const posInput = document.getElementById("posInput")
+      const playBtn = document.getElementById("playBtn")
+
+      const R = 0.03275
+      const tableX = R * 43
+      const tableY = R * 21
+      const X = tableX + R
+      const Y = tableY + R
+      const baseScale = 450 / (X * 2)
+
+      let balls = []
+      let selectedBall = null
+      let scale = baseScale
+
+      function resizeCanvas() {
+        const container = canvas.parentElement
+        const availableWidth = container.clientWidth
+        const aspectRatio = (Y * 2) / (X * 2)
+        const borderTotal = 4 // 2px border on each side (left/right, top/bottom)
+        const totalWidth = availableWidth
+        const totalHeight = availableWidth * aspectRatio
+        const contentWidth = totalWidth - borderTotal
+        const contentHeight = totalHeight - borderTotal
+
+        const dpr = window.devicePixelRatio || 1
+        canvas.width = contentWidth * dpr
+        canvas.height = contentHeight * dpr
+        canvas.style.width = totalWidth + "px"
+        canvas.style.height = totalHeight + "px"
+
+        scale = contentWidth / (X * 2)
+        ctx.setTransform(1, 0, 0, 1, 0, 0)
+        ctx.scale(dpr, dpr)
+
+        draw()
+      }
+
+      function init() {
+        resizeCanvas()
+
+        // More vibrant color palette
+        const ballColors = [
+          "#ffffff", // 0: Cue
+          "#ffd700", // 1: Gold/Yellow
+          "#2563eb", // 2: Royal Blue
+          "#ef4444", // 3: Bright Red
+          "#9333ea", // 4: Purple
+          "#f97316", // 5: Orange
+          "#16a34a", // 6: Green
+          "#991b1b", // 7: Maroon
+          "#0a0a0a", // 8: Black
+          "#fbbf24", // 9: Vibrant Yellow (Stripe removed per request)
+        ]
+
+        for (let i = 0; i <= 9; i++) {
+          balls.push({
+            id: i,
+            x: -0.8 + i * (R * 2.25),
+            y: i % 2 === 0 ? 0.1 : -0.1,
+            color: ballColors[i],
+          })
+        }
+        updateInputString()
+        draw()
+      }
+
+      function toCanvas(val, axis) {
+        const offset =
+          axis === "x" ? canvas.clientWidth / 2 : canvas.clientHeight / 2
+        return val * scale + offset
+      }
+
+      function fromCanvas(val, axis) {
+        const offset =
+          axis === "x" ? canvas.clientWidth / 2 : canvas.clientHeight / 2
+        return (val - offset) / scale
+      }
+
+      function drawBall(ball) {
+        const bx = toCanvas(ball.x, "x")
+        const by = toCanvas(ball.y, "y")
+        const br = R * scale
+
+        // 1. CLOTH SHADOW
+        ctx.save()
+        ctx.beginPath()
+        const shadowOffset = br * 0.04
+        ctx.filter = "blur(3px)"
+        ctx.fillStyle = "rgba(0, 0, 0, 0.7)"
+        ctx.arc(bx + shadowOffset, by + shadowOffset, br * 1.02, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+
+        // 2. BALL BASE & VIBRANT LIGHTING
+        const surfaceGrad = ctx.createRadialGradient(
+          bx - br * 0.2,
+          by - br * 0.2,
+          0,
+          bx - br * 0.2,
+          by - br * 0.2,
+          br * 1.5
+        )
+        surfaceGrad.addColorStop(0, ball.color)
+        surfaceGrad.addColorStop(0.9, "#000000")
+
+        ctx.beginPath()
+        ctx.arc(bx, by, br, 0, Math.PI * 2)
+        ctx.fillStyle = surfaceGrad
+        ctx.fill()
+
+        // 3. SECONDARY REFLECTION
+        const clothReflect = ctx.createRadialGradient(
+          bx + br * 0.4,
+          by + br * 0.4,
+          0,
+          bx + br * 0.4,
+          by + br * 0.4,
+          br * 0.8
+        )
+        clothReflect.addColorStop(0, "rgba(52, 211, 153, 0.3)")
+        clothReflect.addColorStop(1, "rgba(0,0,0,0)")
+        ctx.fillStyle = clothReflect
+        ctx.fill()
+
+        // 4. NUMBER (THIN FONT)
+        if (ball.id !== 0) {
+          ctx.fillStyle = ball.id === 8 ? "#fff" : "#000"
+          ctx.font = `100 ${br * 1.6}px "Segoe UI", Arial`
+          ctx.textAlign = "center"
+          ctx.textBaseline = "middle"
+          ctx.fillText(ball.id, bx, by)
+        }
+
+        // 5. SPECULAR HIGHLIGHT
+        const specularGrad = ctx.createRadialGradient(
+          bx - br * 0.35,
+          by - br * 0.35,
+          0,
+          bx - br * 0.35,
+          by - br * 0.35,
+          br * 0.4
+        )
+        specularGrad.addColorStop(0, "rgba(255,255,255,0.9)")
+        specularGrad.addColorStop(1, "rgba(255,255,255,0)")
+        ctx.fillStyle = specularGrad
+        ctx.fill()
+
+        // 6. RIM LIGHTING
+        ctx.beginPath()
+        ctx.arc(bx, by, br, 0, Math.PI * 2)
+        const rimGrad = ctx.createRadialGradient(bx, by, br * 0.82, bx, by, br)
+        rimGrad.addColorStop(0, "rgba(0,0,0,0)")
+        rimGrad.addColorStop(1, "rgba(255,255,255,0.2)")
+        ctx.fillStyle = rimGrad
+        ctx.fill()
+      }
+
+      function draw() {
+        const w = canvas.clientWidth
+        const h = canvas.clientHeight
+        ctx.clearRect(0, 0, w, h)
+        ctx.strokeStyle = "rgba(255,255,255,0.1)"
+        ctx.lineWidth = 1
+        ctx.strokeRect(0, 0, w, h)
+        balls.forEach(drawBall)
+      }
+
+      function updateInputString() {
+        const coords = balls.flatMap((b) => [
+          parseFloat(b.x.toFixed(4)),
+          parseFloat(b.y.toFixed(4)),
+        ])
+        posInput.value = `[${coords.join(", ")}]`
+      }
+
+      function loadFromInput() {
+        try {
+          const cleanInput = posInput.value.replace(/[\[\]\s]/g, "")
+          const data = cleanInput.split(",").map(Number)
+          if (data.length >= 20) {
+            for (let i = 0; i <= 9; i++) {
+              balls[i].x = data[i * 2]
+              balls[i].y = data[i * 2 + 1]
+            }
+            draw()
+          }
+        } catch (e) {
+          console.error("Invalid position data")
+        }
+      }
+
+      function isColliding(ball, newX, newY) {
+        for (let other of balls) {
+          if (other === ball) continue
+          const dx = newX - other.x
+          const dy = newY - other.y
+          if (dx * dx + dy * dy < (2 * R) ** 2) return true
+        }
+        return false
+      }
+
+      function getMousePos(e) {
+        const rect = canvas.getBoundingClientRect()
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY
+        const borderOffset = 2 // Must match CSS border width
+        const contentX = clientX - rect.left - borderOffset
+        const contentY = clientY - rect.top - borderOffset
+        return {
+          x: fromCanvas(contentX, "x"),
+          y: fromCanvas(contentY, "y"),
+        }
+      }
+
+      function onDown(e) {
+        const pos = getMousePos(e)
+        for (let i = balls.length - 1; i >= 0; i--) {
+          const dx = pos.x - balls[i].x
+          const dy = pos.y - balls[i].y
+          if (Math.sqrt(dx * dx + dy * dy) < R * 2) {
+            selectedBall = balls[i]
+            break
+          }
+        }
+      }
+
+      function onMove(e) {
+        if (!selectedBall) return
+        const pos = getMousePos(e)
+        const limitX = X - R
+        const limitY = Y - R
+        const nextX = Math.max(-limitX, Math.min(limitX, pos.x))
+        const nextY = Math.max(-limitY, Math.min(limitY, pos.y))
+
+        if (!isColliding(selectedBall, nextX, nextY)) {
+          selectedBall.x = nextX
+          selectedBall.y = nextY
+        } else {
+          // Try to slide as close as possible along each axis
+          if (!isColliding(selectedBall, nextX, selectedBall.y))
+            selectedBall.x = nextX
+          if (!isColliding(selectedBall, selectedBall.x, nextY))
+            selectedBall.y = nextY
+        }
+        updateInputString()
+        draw()
+      }
+
+      function onUp() {
+        selectedBall = null
+      }
+
+      canvas.addEventListener("mousedown", onDown)
+      window.addEventListener("mousemove", onMove)
+      window.addEventListener("mouseup", onUp)
+      canvas.addEventListener(
+        "touchstart",
+        (e) => {
+          onDown(e)
+          e.preventDefault()
+        },
+        { passive: false }
+      )
+      window.addEventListener(
+        "touchmove",
+        (e) => {
+          onMove(e)
+          e.preventDefault()
+        },
+        { passive: false }
+      )
+      window.addEventListener("touchend", onUp)
+      window.addEventListener("resize", resizeCanvas)
+
+      playBtn.addEventListener("click", () => {
+        const coords = balls.flatMap((b) => [
+          parseFloat(b.x.toFixed(4)),
+          parseFloat(b.y.toFixed(4)),
+        ])
+        const init = encodeURIComponent(JSON.stringify(coords))
+        window.location.href = `./index.html?practice=true&init=${init}`
+      })
+      posInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") loadFromInput()
+      })
+
+      window.onload = init
+    </script>
+  </body>
+</html>

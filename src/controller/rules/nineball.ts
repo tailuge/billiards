@@ -73,7 +73,7 @@ export class NineBall implements Rules {
   }
 
   rack(): Ball[] {
-    return Rack.diamond()
+    return Rack.fromInitParam(Rack.diamond())
   }
 
   update(outcome: Outcome[]): Controller {
