@@ -33,22 +33,6 @@
           0 0 60px 10px rgba(0,0,0,0.9);
       }
 
-      #table-wrap::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: url("images/practiceback.png") center / contain no-repeat;
-        border-radius: inherit;
-        z-index: 0;
-        pointer-events: none;
-      }
-
-      @media (orientation: portrait) {
-        #table-wrap::before {
-          transform: rotate(90deg);
-        }
-      }
-
       /* portrait: constrain height so it fits viewport minus controls */
       @media (orientation: portrait) {
         #table-wrap {
@@ -65,21 +49,29 @@
         width: 100%;
         height: 100%;
         border-radius: 6px;
-        background: radial-gradient(ellipse at 30% 30%, rgba(45,138,85,0.75) 0%, rgba(26,107,60,0.75) 55%, rgba(15,74,40,0.75) 100%);
-        /* overflow visible so balls at edges aren't clipped */
+        background: url("images/practiceback.png") center / 100% 100% no-repeat;
+        opacity: 0.75;
         overflow: visible;
         z-index: 1;
       }
 
-      #table-surface::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background-image:
-          repeating-linear-gradient(0deg,   transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px),
-          repeating-linear-gradient(90deg,  transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
-        pointer-events: none;
+      @media (orientation: portrait) {
+        #table-surface {
+          background: none;
+          container-type: size;
+        }
+        #table-surface::before {
+          content: "";
+          position: absolute;
+          width: 100cqh;
+          height: 100cqw;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) rotate(-90deg);
+          background: url("images/practiceback.png") center / 100% 100% no-repeat;
+          pointer-events: none;
+          z-index: -1;
+        }
       }
 
       .ball {
