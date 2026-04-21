@@ -358,10 +358,10 @@
       function init() {
         setAspectRatio()
         for (let i = 0; i <= 9; i++) {
-          balls.push({ id: i, x: -0.8 + i*(R*2.25), y: i%2===0 ? 0.1 : -0.1, color: BALL_COLORS[i], el: null })
+          balls.push({ id: i, x: 0, y: 0, color: BALL_COLORS[i], el: null })
         }
         balls.forEach(buildBall)
-        logCoords()
+        applyPreset("corners")
       }
 
       // ── Events ─────────────────────────────────────────────────

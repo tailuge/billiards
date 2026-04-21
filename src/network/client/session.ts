@@ -44,6 +44,11 @@ export class Session {
     return Session.instance?.practiceMode ?? false
   }
 
+  static hasInitParam(): boolean {
+    const params = new URLSearchParams(globalThis.location?.search)
+    return params.has("init")
+  }
+
   static reset() {
     Session.instance = undefined
   }

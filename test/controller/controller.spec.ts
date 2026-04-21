@@ -82,6 +82,21 @@ describe("Controller", () => {
     done()
   })
 
+  it("BreakEvent takes Init to Aim in practice mode with init param", (done) => {
+    jest.spyOn(Session, "hasInitParam").mockReturnValue(true)
+    Session.init("testId", "testPlayer", "testTable", false, false, true)
+
+    container.eventQueue.push(new BreakEvent())
+    container.processEvents()
+
+    expect(container.controller).to.be.an.instanceof(Aim)
+
+    // Cleanup
+    jest.restoreAllMocks()
+    Session.reset()
+    done()
+  })
+
   it("WatchEvent takes Init to WatchAim", (done) => {
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()

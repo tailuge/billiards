@@ -9,6 +9,7 @@ import { Replay } from "./replay"
 import { Session } from "../network/client/session"
 import { Spectate } from "./spectate"
 import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
+import { Aim } from "./aim"
 
 /**
  * Initial state of controller.
@@ -29,6 +30,14 @@ export class Init extends ControllerBase {
       )
     }
     this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
+    if (Session.isPracticeMode() && Session.hasInitParam()) {
+      this.container.table.cueball.fround()
+      this.container.sound.playNotify()
+      this.container.sendEvent(
+        new BreakEvent(this.container.table.shortSerialise())
+      )
+      return new Aim(this.container)
+    }
     return new PlaceBall(this.container)
   }
 
@@ -43,6 +52,14 @@ export class Init extends ControllerBase {
     if (event.init) {
       this.container.table.updateFromShortSerialised(event.init)
       return new Replay(this.container, event.init, event.shots)
+    }
+    if (Session.isPracticeMode() && Session.hasInitParam()) {
+      this.container.table.cueball.fround()
+      this.container.sound.playNotify()
+      this.container.sendEvent(
+        new BreakEvent(this.container.table.shortSerialise())
+      )
+      return new Aim(this.container)
     }
     return new PlaceBall(this.container)
   }
