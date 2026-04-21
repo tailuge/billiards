@@ -378,7 +378,7 @@
       })
 
       document.getElementById("playBtn").addEventListener("click", () => {
-        const coords = balls.flatMap(b => [+b.x.toFixed(4), +b.y.toFixed(4)])
+        const coords = balls.flatMap(b => [+b.x.toFixed(4), +(-b.y).toFixed(4)])
         window.location.href = `./index.html?practice=true&init=${encodeURIComponent(JSON.stringify(coords))}`
       })
 
