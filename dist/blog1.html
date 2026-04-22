@@ -183,6 +183,41 @@
 
       nav.back a { color: #555; text-decoration: none; }
       nav.back a:hover { color: #aaa; }
+
+      .side-by-side {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        margin: 48px 0;
+      }
+
+      .side-by-side .media {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .side-by-side .content {
+        flex: 1;
+      }
+
+      @media (min-width: 768px) {
+        .side-by-side {
+          flex-direction: row;
+          align-items: flex-start;
+        }
+      }
+
+      figure a {
+        display: block;
+        transition: transform 0.2s, filter 0.2s;
+      }
+
+      figure a:hover {
+        transform: scale(1.01);
+        filter: brightness(1.1);
+      }
     </style>
   </head>
   <body>
@@ -302,7 +337,9 @@
       </p>
 
       <figure>
-        <img src="./images/practiceback.png" alt="9-ball practice layout with balls positioned on the table" loading="lazy" />
+        <a href="./practice.html">
+          <img src="./images/practiceback.png" alt="9-ball practice layout with balls positioned on the table" loading="lazy" />
+        </a>
         <figcaption>Practice mode — drag balls into position, then play</figcaption>
       </figure>
 
@@ -311,12 +348,16 @@
       </p>
 
       <figure>
-        <img src="./images/lobby.jpg" alt="Multiplayer lobby showing available games" loading="lazy" />
+        <a href="https://scoreboard-tailuge.vercel.app/game">
+          <img src="./images/lobby.jpg" alt="Multiplayer lobby showing available games" loading="lazy" />
+        </a>
         <figcaption>Online lobby — find a game or start one</figcaption>
       </figure>
 
       <figure>
-        <img src="./images/threecushion1.jpg" alt="Spectating a game in progress" loading="lazy" />
+        <a href="https://scoreboard-tailuge.vercel.app/game">
+          <img src="./images/threecushion1.jpg" alt="Spectating a game in progress" loading="lazy" />
+        </a>
         <figcaption>You can watch games in progress too</figcaption>
       </figure>
 
@@ -353,17 +394,6 @@
       <div class="cta">
         <p>Playable in the browser, no download, no account. Nine-ball, snooker, three-cushion, or practice mode.</p>
         <a href="./index.html">Play now</a>
-        <a href="./practice.html">Practice</a>
-        <a href="https://scoreboard-tailuge.vercel.app/game">Join lobby</a>
-        <a href="https://scoreboard-tailuge.vercel.app/leaderboard">Leaderboard</a>
-        <a href="https://github.com/tailuge/billiards">Source on GitHub</a>
-      </div>
-
-    </article>
-
-  </body>
-</html>
-w</a>
         <a href="./practice.html">Practice</a>
         <a href="https://scoreboard-tailuge.vercel.app/game">Join lobby</a>
         <a href="https://scoreboard-tailuge.vercel.app/leaderboard">Leaderboard</a>
