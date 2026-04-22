@@ -18,10 +18,11 @@ Demos run in all major desktop and mobile browsers and uses WebGL
 * [Nine ball ⬀](https://billiards.tailuge.workers.dev/?practice=true) make a break and share replay link with friends
 * [Three cushion billiards ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion) the ultimate test of physics and player (average on both counts)
 * [Snooker ⬀](https://billiards.tailuge.workers.dev/?ruletype=snooker) we await the first 147 submission to the leaderboard.
-* Play vs the [Claw ⬀](https://billiards.tailuge.workers.dev/?bot=ClawBreak). 
+* Play vs the [Claw ⬀](https://billiards.tailuge.workers.dev/?bot=ClawBreak) and [TheFarJaw ⬀](https://billiards.tailuge.workers.dev/?bot=TheFarJaw).
 * Try [two player](https://scoreboard-tailuge.vercel.app/game) online lobby using nchan
 * Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard) hosted on vercel.com
 * Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
+* Set up the table for trick shots and [practice ⬀](https://billiards.tailuge.workers.dev/practice.html).
 
 ## Features
 

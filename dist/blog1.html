@@ -3,6 +3,9 @@
   <head>
     <title>Why Most Pool Games Feel Wrong — And What Realistic Cushion Physics Actually Looks Like</title>
     <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap" rel="stylesheet" />
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta
@@ -52,7 +55,8 @@
       body {
         background: #0f0f0f;
         color: #ddd;
-        font-family: Georgia, "Times New Roman", serif;
+        font-family: 'Exo', sans-serif;
+        font-weight: 200;
         font-size: 18px;
         line-height: 1.75;
         padding: 0 16px 64px;
@@ -149,13 +153,12 @@
         background: #1e1e1e;
         color: #ccc;
         text-decoration: none;
-        padding: 8px 18px;
+        padding: 5px 12px;
         border-radius: 5px;
-        font-family: sans-serif;
         font-size: 0.9rem;
-        font-weight: 600;
+        font-weight: 200;
         border: 1px solid #333;
-        margin: 4px 4px 4px 0;
+        margin: 3px 3px 3px 0;
       }
 
       .cta a:first-of-type {
@@ -198,7 +201,15 @@
     </header>
 
     <div class="hero-img">
-      <img src="./images/banner.jpg" alt="Browser-based billiards with realistic physics" />
+      <img src="./images/banner.jpg" alt="Browser-based billiards with realistic physics" loading="lazy" />
+    </div>
+
+    <div class="cta" style="max-width:720px;margin:16px auto 0;padding:12px;">
+      <a href="./index.html">Play now</a>
+      <a href="./practice.html">Practice</a>
+      <a href="https://scoreboard-tailuge.vercel.app/game">Join lobby</a>
+      <a href="https://scoreboard-tailuge.vercel.app/leaderboard">Leaderboard</a>
+      <a href="https://github.com/tailuge/billiards">Source on GitHub</a>
     </div>
 
     <article>
@@ -226,7 +237,7 @@
       </p>
 
       <figure>
-        <img src="./images/t1.png" alt="Early physics simulation showing ball trajectories" />
+        <img src="./images/t1.png" alt="Early physics simulation showing ball trajectories" loading="lazy" />
         <figcaption>Early build — getting the trajectories right before worrying about anything else</figcaption>
       </figure>
 
@@ -241,8 +252,13 @@
       </p>
 
       <figure>
-        <img src="./images/t3.png" alt="Realistic cushion bounce with spin interaction" />
+        <img src="./images/t3.png" alt="Realistic cushion bounce with spin interaction" loading="lazy" />
         <figcaption>Cushion interaction with side spin — the angle changes depending on what the ball is doing</figcaption>
+      </figure>
+
+      <figure>
+        <img src="./images/mathavengraphs.jpg" alt="Mathavan cushion model validation graphs" loading="lazy" />
+        <figcaption>Validation graphs from the Mathavan model — simulated results match published figures</figcaption>
       </figure>
 
       <p>
@@ -250,7 +266,7 @@
       </p>
 
       <figure>
-        <img src="./images/topview.png" alt="Overhead view of the table showing ball positions and trajectories" />
+        <img src="./images/topview.png" alt="Overhead view of the table showing ball positions and trajectories" loading="lazy" />
         <figcaption>Top-down view — useful for seeing how the cue ball actually travels after contact</figcaption>
       </figure>
 
@@ -261,12 +277,12 @@
       </p>
 
       <figure>
-        <img src="./images/aim.png" alt="Aiming interface showing shot line and spin selection" />
+        <img src="./images/nineball1.jpg" alt="Aiming interface showing shot line and spin selection" loading="lazy" />
         <figcaption>Shot setup — spin offset moves the contact point on the cue ball</figcaption>
       </figure>
 
       <figure>
-        <img src="./images/distant.png" alt="Long table perspective showing full table layout" />
+        <img src="./images/distant.png" alt="Long table perspective showing full table layout" loading="lazy" />
         <figcaption>Long shots look and behave differently — the cue ball path matters</figcaption>
       </figure>
 
@@ -275,7 +291,7 @@
       </p>
 
       <figure>
-        <img src="./images/aimmobile.png" alt="Mobile aiming interface" />
+        <img src="./images/snooker1.jpg" alt="Mobile aiming interface" loading="lazy" />
         <figcaption>Mobile aiming — same physics, different input</figcaption>
       </figure>
 
@@ -286,7 +302,7 @@
       </p>
 
       <figure>
-        <img src="./images/practiceback.png" alt="9-ball practice layout with balls positioned on the table" />
+        <img src="./images/practiceback.png" alt="9-ball practice layout with balls positioned on the table" loading="lazy" />
         <figcaption>Practice mode — drag balls into position, then play</figcaption>
       </figure>
 
@@ -295,12 +311,12 @@
       </p>
 
       <figure>
-        <img src="./images/lobby.jpg" alt="Multiplayer lobby showing available games" />
+        <img src="./images/lobby.jpg" alt="Multiplayer lobby showing available games" loading="lazy" />
         <figcaption>Online lobby — find a game or start one</figcaption>
       </figure>
 
       <figure>
-        <img src="./images/watch.png" alt="Spectating a game in progress" />
+        <img src="./images/threecushion1.jpg" alt="Spectating a game in progress" loading="lazy" />
         <figcaption>You can watch games in progress too</figcaption>
       </figure>
 
