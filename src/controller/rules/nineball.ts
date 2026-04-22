@@ -161,11 +161,7 @@ export class NineBall implements Rules {
   isEndOfGame(outcome: Outcome[]): boolean {
     const nineBall = this.container.table.balls[9]
     const nineBallPotted = Outcome.pots(outcome).includes(nineBall)
-    if (!nineBallPotted || this.isFoul(outcome)) {
-      return false
-    }
-
-    return true
+    return nineBallPotted && !this.isFoul(outcome)
   }
 
   otherPlayersCueBall(): Ball {

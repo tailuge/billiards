@@ -34,8 +34,8 @@ export class ScoreReporter {
         let errorBody = "Could not read response body"
         try {
           errorBody = await response.text()
-        } catch (e) {
-          // ignore
+        } catch {
+          errorBody = `Could not read response body (status: ${status})`
         }
         console.error(
           "Failed to submit match result:",

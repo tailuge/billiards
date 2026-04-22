@@ -102,7 +102,7 @@ describe("ScoreReporter", () => {
       "Failed to submit match result:",
       500,
       "Internal Server Error",
-      "Could not read response body"
+      "Could not read response body (status: 500)"
     )
   })
 
