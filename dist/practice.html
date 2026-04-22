@@ -47,6 +47,7 @@
         --table-height-portrait: 80vh;
         --table-width-landscape: 85%;
         --controls-gap: 30px;
+        --p: 2px;
       }
 
       #table-bg {
@@ -80,31 +81,53 @@
 
       .ball {
         position: absolute;
-        border-radius: 50%;
-        cursor: grab;
         transform: translate(-50%, -50%);
-        filter: drop-shadow(2px 3px 1.5px rgba(0,0,0,1));
+        cursor: grab;
         user-select: none;
         touch-action: none;
         z-index: 10;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        filter: drop-shadow(calc(var(--p) * 1) calc(var(--p) * 1) 0 rgba(0,0,0,0.5));
+        will-change: left, top;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: inset calc(var(--p) * -1) calc(var(--p) * -1) 0 rgba(0,0,0,0.3);
+        border: var(--p) solid #000;
+        box-sizing: content-box; /* accurate to radius content */
         image-rendering: pixelated;
         image-rendering: crisp-edges;
+        -webkit-font-smoothing: none;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeSpeed;
       }
-      .ball.dragging {
+      .ball.dragging, .ball:active {
         cursor: grabbing;
-        filter: drop-shadow(4px 6px 12px rgba(0,0,0,0.95));
         z-index: 100;
+        filter: drop-shadow(calc(var(--p) * 3) calc(var(--p) * 3) 0 rgba(0,0,0,0.6));
+      }
+
+      /* Shine effect */
+      .ball::after {
+        content: '';
+        position: absolute;
+        top: 15%;
+        left: 15%;
+        width: 25%;
+        height: 25%;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        pointer-events: none;
       }
 
       .ball-label {
-        position: absolute;
-        inset: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 100;
+        font-weight: 200;
         pointer-events: none;
-        border-radius: 50%;
+        z-index: 1;
       }
 
       .controls {
@@ -258,12 +281,7 @@
       function buildBall(ball) {
         const el = document.createElement("div")
         el.className = "ball"
-        const c = ball.color
-        el.style.background = [
-          `radial-gradient(circle at 62% 65%, rgba(52,211,153,0.22) 0%, transparent 55%)`,
-          `radial-gradient(circle at 35% 30%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 38%)`,
-          `radial-gradient(circle at 38% 35%, ${c} 0%, #000 100%)`,
-        ].join(", ")
+        el.style.backgroundColor = ball.color
 
         if (ball.id !== 0) {
           const lbl = document.createElement("span")
