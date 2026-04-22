@@ -34,6 +34,11 @@
   justify-content: center;
 }
 
+.menuButton svg {
+  width: 45%;
+  height: auto;
+}
+
 .menuButton.half-height {
   height: 35px;
 }
