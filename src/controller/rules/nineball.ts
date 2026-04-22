@@ -128,11 +128,6 @@ export class NineBall implements Rules {
       return this.handleGameEnd(true)
     }
 
-    if (Session.isPracticeMode()) {
-      if (Outcome.pots(outcome).includes(table.balls[9])) {
-        this.respotAndBroadcastNineBall()
-      }
-    }
 
     this.container.sendEvent(new WatchEvent(table.serialise()))
     return new Aim(this.container)
@@ -168,10 +163,6 @@ export class NineBall implements Rules {
     const nineBallPotted = Outcome.pots(outcome).includes(nineBall)
     if (!nineBallPotted || this.isFoul(outcome)) {
       return false
-    }
-
-    if (Session.isPracticeMode()) {
-      return !NineBall.hasOtherObjectBalls(this.container.table)
     }
 
     return true

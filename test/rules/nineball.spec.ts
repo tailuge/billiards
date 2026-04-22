@@ -302,7 +302,7 @@ describe("NineBall Rules", () => {
       )
     })
 
-    it("should respot 9-ball if potted early on a legal shot", () => {
+    it("should end game if 9-ball is potted early on a legal shot", () => {
       const ball1 = container.table.balls.find((b) => b.label === 1)!
       const nineBall = container.table.balls.find((b) => b.label === 9)!
       const outcome = [
@@ -310,12 +310,8 @@ describe("NineBall Rules", () => {
         Outcome.pot(nineBall, 1),
       ]
 
-      const sentEvents: any[] = []
-      container.broadcast = (event) => sentEvents.push(event)
-
-      expect(nineball.update(outcome)).to.be.an.instanceof(Aim)
-      expect(nineBall.state).to.equal(State.Stationary)
-      verifyRerackEvent(sentEvents, nineBall.id)
+      const nextController = nineball.update(outcome)
+      expect(nextController).to.be.an.instanceof(End)
     })
 
     it("should end game if 9-ball is potted last", () => {
