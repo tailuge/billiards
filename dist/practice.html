@@ -580,7 +580,10 @@
           +(-b.x).toFixed(4),
           +b.y.toFixed(4),
         ])
-        window.location.href = `./index.html?practice=true&init=${encodeURIComponent(JSON.stringify(coords))}`
+        const params = new URLSearchParams(window.location.search)
+        params.set("practice", "true")
+        params.set("init", JSON.stringify(coords))
+        window.location.href = `./index.html?${params.toString()}`
       })
 
       document.querySelectorAll(".btn-preset").forEach((btn) => {
@@ -592,7 +595,7 @@
           +(-b.x).toFixed(4),
           +b.y.toFixed(4),
         ])
-        const url = new URL(window.location.href)
+        const url = new URL(window.location.origin + window.location.pathname)
         url.searchParams.set("init", JSON.stringify(coords))
 
         const shareData = {
