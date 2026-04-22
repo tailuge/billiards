@@ -16,17 +16,44 @@
     <meta name="robots" content="index,follow" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <link rel="canonical" href="https://tailuge.github.io/billiards/dist/practice.html" />
-    <meta property="og:title" content="9-Ball Practice - Free Online Pool Game" />
-    <meta property="og:description" content="Set up 9-ball practice layouts and play in your browser. Drag balls, choose a preset, hit play." />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <link
+      rel="canonical"
+      href="https://tailuge.github.io/billiards/dist/practice.html"
+    />
+    <meta
+      property="og:title"
+      content="9-Ball Practice - Free Online Pool Game"
+    />
+    <meta
+      property="og:description"
+      content="Set up 9-ball practice layouts and play in your browser. Drag balls, choose a preset, hit play."
+    />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://tailuge.github.io/billiards/dist/practice.html" />
-    <meta property="og:image" content="https://tailuge.github.io/billiards/dist/images/practiceback.png" />
+    <meta
+      property="og:url"
+      content="https://tailuge.github.io/billiards/dist/practice.html"
+    />
+    <meta
+      property="og:image"
+      content="https://tailuge.github.io/billiards/dist/images/practiceback.png"
+    />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="9-Ball Practice - Free Online Pool Game" />
-    <meta name="twitter:description" content="Set up 9-ball practice layouts and play in your browser. No download required." />
-    <meta name="twitter:image" content="https://tailuge.github.io/billiards/dist/images/practiceback.png" />
+    <meta
+      name="twitter:title"
+      content="9-Ball Practice - Free Online Pool Game"
+    />
+    <meta
+      name="twitter:description"
+      content="Set up 9-ball practice layouts and play in your browser. No download required."
+    />
+    <meta
+      name="twitter:image"
+      content="https://tailuge.github.io/billiards/dist/images/practiceback.png"
+    />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -242,6 +269,29 @@
       .btn-play:hover {
         box-shadow: 0 6px 18px rgba(16, 185, 129, 0.5);
       }
+
+      .btn-share {
+        background: #1e1e1e;
+        color: #aaa;
+        border: 1px solid #333;
+        padding: 7px 13px;
+        font-size: 11px;
+        letter-spacing: 0.03em;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn-share:hover {
+        background: #2a2a2a;
+        color: #eee;
+        border-color: #555;
+      }
+      .btn-share svg {
+        width: 14px;
+        height: 14px;
+        stroke-width: 2.5;
+      }
     </style>
   </head>
   <body>
@@ -255,6 +305,26 @@
       <button class="btn-preset" data-preset="line">line up</button>
       <button class="btn-preset" data-preset="corners">corners</button>
       <button class="btn-preset" data-preset="cluster">cluster</button>
+      <button class="btn-share" id="shareBtn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+        Share
+      </button>
       <button class="btn-play" id="playBtn">Play</button>
     </div>
 
@@ -474,7 +544,22 @@
           balls.push({ id: i, x: 0, y: 0, color: BALL_COLORS[i], el: null })
         }
         balls.forEach(buildBall)
-        applyPreset("corners")
+
+        const params = new URLSearchParams(window.location.search)
+        if (params.has("init")) {
+          try {
+            const data = JSON.parse(params.get("init"))
+            balls.forEach((b, i) => {
+              b.x = -data[i * 2]
+              b.y = data[i * 2 + 1]
+            })
+            balls.forEach(positionBall)
+          } catch (e) {
+            applyPreset("corners")
+          }
+        } else {
+          applyPreset("corners")
+        }
       }
 
       // ── Events ─────────────────────────────────────────────────
@@ -500,6 +585,36 @@
 
       document.querySelectorAll(".btn-preset").forEach((btn) => {
         btn.addEventListener("click", () => applyPreset(btn.dataset.preset))
+      })
+
+      document.getElementById("shareBtn").addEventListener("click", () => {
+        const coords = balls.flatMap((b) => [
+          +(-b.x).toFixed(4),
+          +b.y.toFixed(4),
+        ])
+        const url = new URL(window.location.href)
+        url.searchParams.set("init", JSON.stringify(coords))
+
+        const shareData = {
+          title: "9-Ball Practice Layout",
+          text: "Check out this 9-ball layout!",
+          url: url.toString(),
+        }
+
+        if (navigator.share && navigator.canShare(shareData)) {
+          navigator
+            .share(shareData)
+            .catch((err) => console.log("Share failed", err))
+        } else {
+          navigator.clipboard.writeText(url.toString()).then(() => {
+            const btn = document.getElementById("shareBtn")
+            const originalContent = btn.innerHTML
+            btn.innerHTML = "Copied!"
+            setTimeout(() => {
+              btn.innerHTML = originalContent
+            }, 2000)
+          })
+        }
       })
 
       window.addEventListener("load", init)

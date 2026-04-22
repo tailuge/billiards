@@ -128,7 +128,6 @@ export class NineBall implements Rules {
       return this.handleGameEnd(true)
     }
 
-
     this.container.sendEvent(new WatchEvent(table.serialise()))
     return new Aim(this.container)
   }
