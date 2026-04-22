@@ -88,6 +88,24 @@ describe("ScoreReporter", () => {
     )
   })
 
+  it("should log status code even if text() fails", async () => {
+    const reporter = new ScoreReporter()
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+      text: () => Promise.reject(new Error("Body read error")),
+    })
+    await reporter.submitMatchResult(sampleMatchResult)
+
+    expect(console.error).toHaveBeenCalledWith(
+      "Failed to submit match result:",
+      500,
+      "Internal Server Error",
+      "Could not read response body (status: 500)"
+    )
+  })
+
   it("should log an error for a fetch network error", async () => {
     const reporter = new ScoreReporter()
     const networkError = new Error("Network is down")

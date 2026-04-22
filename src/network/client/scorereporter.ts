@@ -30,12 +30,17 @@ export class ScoreReporter {
       if (response.ok) {
         console.log("Match result submitted successfully:", result)
       } else {
-        // Log the full response for better debugging
-        const errorBody = await response.text()
+        const { status, statusText } = response
+        let errorBody = "Could not read response body"
+        try {
+          errorBody = await response.text()
+        } catch {
+          errorBody = `Could not read response body (status: ${status})`
+        }
         console.error(
           "Failed to submit match result:",
-          response.status,
-          response.statusText,
+          status,
+          statusText,
           errorBody
         )
       }
