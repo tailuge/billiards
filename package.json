@@ -31,7 +31,7 @@
     "gltfpack": "npx gltfpack -i dist/models/p8.gltf -o dist/models/p8.min.gltf && npx gltfpack -i dist/models/threecushion.gltf -o dist/models/threecushion.min.gltf && npx gltfpack -i dist/models/snooker.gltf -o dist/models/snooker.min.gltf && npx gltfpack -i dist/models/d-snooker.gltf -o dist/models/d-snooker.min.gltf"
   },
   "dependencies": {
-    "@tailuge/messaging": "1.16.0",
+    "@tailuge/messaging": "1.17.0",
     "interactjs": "1.10.27",
     "jsoncrush": "^1.1.8",
     "simple-peer-light": "^9.10.0",
