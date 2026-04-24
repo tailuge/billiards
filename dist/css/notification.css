@@ -21,20 +21,35 @@
   /* Neutrals & Opacity Layers */
   --notification-white: #fff;
   --notification-black: #000;
+  --notification-white-10: rgba(255, 255, 255, 0.1);
   --notification-white-10: rgb(255 255 255 / 10%);
+  --notification-white-15: rgba(255, 255, 255, 0.15);
   --notification-white-15: rgb(255 255 255 / 15%);
+  --notification-white-20: rgba(255, 255, 255, 0.2);
   --notification-white-20: rgb(255 255 255 / 20%);
+  --notification-white-25: rgba(255, 255, 255, 0.25);
   --notification-white-25: rgb(255 255 255 / 25%);
+  --notification-white-30: rgba(255, 255, 255, 0.3);
   --notification-white-30: rgb(255 255 255 / 30%);
+  --notification-white-40: rgba(255, 255, 255, 0.4);
   --notification-white-40: rgb(255 255 255 / 40%);
+  --notification-white-50: rgba(255, 255, 255, 0.5);
   --notification-white-50: rgb(255 255 255 / 50%);
+  --notification-white-60: rgba(255, 255, 255, 0.6);
   --notification-white-60: rgb(255 255 255 / 60%);
+  --notification-white-90: rgba(255, 255, 255, 0.9);
   --notification-white-90: rgb(255 255 255 / 90%);
+  --notification-black-05: rgba(0, 0, 0, 0.05);
   --notification-black-05: rgb(0 0 0 / 5%);
+  --notification-black-10: rgba(0, 0, 0, 0.1);
   --notification-black-10: rgb(0 0 0 / 10%);
+  --notification-black-15: rgba(0, 0, 0, 0.15);
   --notification-black-15: rgb(0 0 0 / 15%);
+  --notification-black-20: rgba(0, 0, 0, 0.2);
   --notification-black-20: rgb(0 0 0 / 20%);
+  --notification-black-30: rgba(0, 0, 0, 0.3);
   --notification-black-30: rgb(0 0 0 / 30%);
+  --notification-black-40: rgba(0, 0, 0, 0.4);
   --notification-black-40: rgb(0 0 0 / 40%);
 
   /* --- Spacing (4px based) --- */
@@ -237,6 +252,7 @@
   padding: var(--notification-space-2) var(--notification-space-4)
     var(--notification-space-3);
   border-top: 1px solid var(--notification-score-border);
+  background: rgba(0, 0, 0, 0.09);
   background: rgb(0 0 0 / 9%);
 }
 
@@ -278,6 +294,7 @@
   --notification-text-clr-sub: var(--notification-text-clr-inv);
   --notification-score-bg: var(--notification-black-05);
   --notification-score-border: var(--notification-black-10);
+  --notification-score-label-clr: rgba(0, 0, 0, 0.5);
   --notification-score-label-clr: rgb(0 0 0 / 50%);
   --notification-score-value-clr: var(--notification-text-clr-inv);
 }
@@ -295,6 +312,7 @@
   --notification-text-clr-sub: var(--notification-text-clr-inv);
   --notification-score-bg: var(--notification-black-05);
   --notification-score-border: var(--notification-black-10);
+  --notification-score-label-clr: rgba(0, 0, 0, 0.5);
   --notification-score-label-clr: rgb(0 0 0 / 50%);
   --notification-score-value-clr: var(--notification-text-clr-inv);
 }

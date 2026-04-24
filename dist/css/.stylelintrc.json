@@ -3,6 +3,11 @@
   "rules": {
     "selector-id-pattern": null,
     "selector-class-pattern": null,
-    "keyframes-name-pattern": null
+    "keyframes-name-pattern": null,
+    "color-function-notation": null,
+    "alpha-value-notation": null,
+    "color-function-alias-notation": null,
+    "declaration-block-no-duplicate-custom-properties": null,
+    "declaration-block-no-duplicate-properties": null
   }
 }
