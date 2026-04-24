@@ -16,7 +16,10 @@
     <meta name="robots" content="index,follow" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
     <link
       rel="canonical"
       href="https://tailuge.github.io/billiards/dist/practice.html"
@@ -99,20 +102,17 @@
         max-width: 920px;
         container-type: size;
         margin: auto;
-        flex: 1;
-        min-height: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
 
       /* portrait: constrain height so it fits viewport minus controls */
       @media (orientation: portrait) {
         #table-wrap {
           max-width: 90%;
-          height: 100%;
+          height: var(--table-height-portrait);
           width: auto;
           /* height drives layout; width is derived from aspect-ratio */
+          flex-shrink: 1;
+          min-height: 0;
         }
       }
 
@@ -121,7 +121,7 @@
         --bg-scale-y-landscape: 1.3;
         --bg-scale-x-portrait: 1.16;
         --bg-scale-y-portrait: 1.3;
-        --table-height-portrait: 70dvh;
+        --table-height-portrait: 80vh;
         --table-width-landscape: 85%;
         --controls-gap: 30px;
         --p: 2px;
@@ -144,8 +144,6 @@
         #table-bg {
           width: 100cqh;
           height: 100cqw;
-          max-width: 100cqh;
-          max-height: 100cqw;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%) rotate(-90deg)
@@ -299,7 +297,7 @@
     </style>
   </head>
   <body>
-    <h1 hidden>Free Pool, Billiards and Snooker</h1>
+  <h1 hidden>Free Pool, Billiards and Snooker</h1>
     <div id="table-wrap">
       <div id="table-bg"></div>
       <div id="table-surface"></div>
