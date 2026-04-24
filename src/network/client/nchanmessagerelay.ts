@@ -140,7 +140,14 @@ export class NchanMessageRelay implements MessageRelay {
 
   private async decodeMessage(data: unknown): Promise<string | null> {
     if (typeof data === "string") return data
-    if (data instanceof Blob) return data.text()
+    if (data instanceof Blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result as string)
+        reader.onerror = () => reject(reader.error)
+        reader.readAsText(data)
+      })
+    }
     if (data instanceof ArrayBuffer) return new TextDecoder().decode(data)
     if (ArrayBuffer.isView(data)) return new TextDecoder().decode(data.buffer)
     return null
