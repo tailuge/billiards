@@ -170,33 +170,47 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        filter: drop-shadow(
-          calc(var(--p) * 1) calc(var(--p) * 1) 0 rgba(0, 0, 0, 0.5)
-        );
         will-change: left, top;
+      }
+      .ball.dragging,
+      .ball:active {
+        cursor: grabbing;
+        z-index: 100;
+      }
+
+      .ball-body {
+        position: absolute;
+        inset: 0;
         border-radius: 50%;
-        overflow: hidden;
         box-shadow: inset calc(var(--p) * -1) calc(var(--p) * -1) 0
           rgba(0, 0, 0, 0.3);
         border: var(--p) solid #000;
-        box-sizing: content-box; /* accurate to radius content */
+        box-sizing: content-box;
+        filter: drop-shadow(
+          calc(var(--p) * 1) calc(var(--p) * 1) 0 rgba(0, 0, 0, 0.5)
+        );
         image-rendering: pixelated;
         image-rendering: crisp-edges;
         -webkit-font-smoothing: none;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeSpeed;
       }
-      .ball.dragging,
-      .ball:active {
-        cursor: grabbing;
-        z-index: 100;
+
+      .ball.dragging .ball-body,
+      .ball:active .ball-body {
         filter: drop-shadow(
           calc(var(--p) * 3) calc(var(--p) * 3) 0 rgba(0, 0, 0, 0.6)
         );
       }
 
+      .move-indicators {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
       /* Shine effect */
-      .ball::after {
+      .ball-body::after {
         content: "";
         position: absolute;
         top: 15%;
@@ -293,6 +307,120 @@
         width: 14px;
         height: 14px;
         stroke-width: 2.5;
+      }
+
+      /* 1. Base styles for the 4 pseudo-elements */
+      .ball::before,
+      .ball::after,
+      .move-indicators::before,
+      .move-indicators::after {
+        position: absolute;
+        color: white;
+        font-size: 2.2em;
+        font-weight: bold;
+        line-height: 1;
+        text-shadow: 0 0 4px black;
+        opacity: 0;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      /* 2. Map directions to specific pseudos */
+      .ball::before {
+        content: "⇧";
+        top: -0.75em;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .ball::after {
+        content: "⇩";
+        bottom: -0.75em;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .move-indicators::before {
+        content: "⇦";
+        left: -0.75em;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .move-indicators::after {
+        content: "⇨";
+        right: -0.75em;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      /* 3. Drift animations starting from behind the ball */
+      @keyframes driftUp {
+        0% {
+          transform: translate(-50%, 0.3em);
+          opacity: 0;
+        }
+        20% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -0.4em);
+          opacity: 0;
+        }
+      }
+      @keyframes driftDown {
+        0% {
+          transform: translate(-50%, -0.3em);
+          opacity: 0;
+        }
+        20% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, 0.4em);
+          opacity: 0;
+        }
+      }
+      @keyframes driftLeft {
+        0% {
+          transform: translate(0.3em, -50%);
+          opacity: 0;
+        }
+        20% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-0.4em, -50%);
+          opacity: 0;
+        }
+      }
+      @keyframes driftRight {
+        0% {
+          transform: translate(-0.3em, -50%);
+          opacity: 0;
+        }
+        20% {
+          opacity: 1;
+        }
+        100% {
+          transform: translate(0.4em, -50%);
+          opacity: 0;
+        }
+      }
+
+      /* 4. Trigger animations on hover or drag */
+      .ball:hover::before,
+      .ball.dragging::before {
+        animation: driftUp 3s infinite ease-out;
+      }
+      .ball:hover::after,
+      .ball.dragging::after {
+        animation: driftDown 3s infinite ease-out;
+      }
+      .ball:hover .move-indicators::before,
+      .ball.dragging .move-indicators::before {
+        animation: driftLeft 3s infinite ease-out;
+      }
+      .ball:hover .move-indicators::after,
+      .ball.dragging .move-indicators::after {
+        animation: driftRight 3s infinite ease-out;
       }
     </style>
   </head>
@@ -435,7 +563,15 @@
       function buildBall(ball) {
         const el = document.createElement("div")
         el.className = "ball"
-        el.style.backgroundColor = ball.color
+
+        const ballBody = document.createElement("div")
+        ballBody.className = "ball-body"
+        ballBody.style.backgroundColor = ball.color
+        el.appendChild(ballBody)
+
+        const indicators = document.createElement("div")
+        indicators.className = "move-indicators"
+        el.appendChild(indicators)
 
         if (ball.id !== 0) {
           const lbl = document.createElement("span")
