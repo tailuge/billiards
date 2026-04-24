@@ -93,6 +93,7 @@ jobs:
         run: |
           cp dist/redirect.html index.html
           cp dist/robots.txt robots.txt
+          cp dist/sitemap.xml sitemap.xml
           echo "Removing unnecessary files for deployment"
           rm -rf node_modules src test .github LICENSE yarn.lock
           rm -rf dist/models/*.blend dist/models/d-snooker.gltf dist/models/p8.gltf dist/models/snooker.gltf dist/models/d-snooker.bin dist/models/p8.bin dist/models/snooker.bin
