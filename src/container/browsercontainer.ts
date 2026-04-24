@@ -7,7 +7,7 @@ import { GameEvent } from "../events/gameevent"
 import {
   bounceHan,
   bounceHanBlend,
-  mathavenAdapter,
+  mathavanAdapter,
 } from "../model/physics/physics"
 import JSONCrush from "jsoncrush"
 import { Assets } from "../view/assets"
@@ -101,7 +101,7 @@ export class BrowserContainer {
       case "bounceHanBlend":
         return bounceHanBlend
       default:
-        return mathavenAdapter
+        return mathavanAdapter
     }
   }
 

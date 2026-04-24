@@ -2,7 +2,7 @@ import { Vector3 } from "three"
 import { sin, cos } from "../../utils/utils"
 import { norm, upCross, up } from "../../utils/three-utils"
 import { muS, muC, g, m, Mz, Mxy, R, I, e, ee, μs, μw } from "./constants"
-import { Mathaven } from "./mathaven"
+import { Mathavan } from "./mathavan"
 
 export function surfaceVelocity(v, w) {
   return surfaceVelocityFull(v, w).setZ(0)
@@ -184,21 +184,21 @@ export function restitutionCushion(v: Vector3) {
 }
 
 function cartesionToBallCentric(v, w) {
-  const mathaven = new Mathaven(m, R, ee, μs, μw)
-  mathaven.solve(v.x, v.y, w.x, w.y, w.z)
+  const mathavan = new Mathavan(m, R, ee, μs, μw)
+  mathavan.solve(v.x, v.y, w.x, w.y, w.z)
 
-  const rv = new Vector3(mathaven.vx, mathaven.vy, 0)
-  const rw = new Vector3(mathaven.ωx, mathaven.ωy, mathaven.ωz)
+  const rv = new Vector3(mathavan.vx, mathavan.vy, 0)
+  const rw = new Vector3(mathavan.ωx, mathavan.ωy, mathavan.ωz)
 
   return { v: rv.sub(v), w: rw.sub(w) }
 }
 
 /**
  * Bounce is called with ball travelling in +x direction to cushion,
- * mathaven expects it in +y direction and also requires angle
+ * mathavan expects it in +y direction and also requires angle
  * and spin to be relative to direction of ball travel.
  */
-export function mathavenAdapter(v: Vector3, w: Vector3) {
+export function mathavanAdapter(v: Vector3, w: Vector3) {
   return rotateApplyUnrotate(Math.PI / 2, v, w, cartesionToBallCentric)
 }
 

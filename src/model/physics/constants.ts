@@ -7,7 +7,7 @@ export let m = 0.23
 export let R = 0.03275
 export let e = 0.86
 
-// Mathaven specific
+// Mathavan specific
 // Coefficient of restitution
 export let ee = 0.98
 

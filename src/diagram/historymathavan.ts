@@ -1,7 +1,7 @@
-import { Mathaven } from "../model/physics/mathaven"
+import { Mathavan } from "../model/physics/mathavan"
 
-export class HistoryMathaven extends Mathaven {
-  readonly h: Array<Partial<Mathaven>> = []
+export class HistoryMathavan extends Mathavan {
+  readonly h: Array<Partial<Mathavan>> = []
 
   override updateSingleStep(ΔP: number): void {
     super.updateSingleStep(ΔP)
@@ -9,7 +9,7 @@ export class HistoryMathaven extends Mathaven {
   }
 
   public extractValues = (
-    selector: (s: Partial<Mathaven>) => number | undefined
+    selector: (s: Partial<Mathavan>) => number | undefined
   ): number[] => {
     return this.h.map(selector).map((value) => value ?? 0)
   }
