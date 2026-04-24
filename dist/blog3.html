@@ -167,6 +167,12 @@
       .equation-block {
         margin: 24px 0;
         overflow-x: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .equation-block::-webkit-scrollbar {
+        display: none;
       }
 
       .cta {
@@ -280,6 +286,22 @@
         the collision into compression and restitution phases, accounting for
         slip velocities at both the cushion and table contact points.
       </p>
+
+      <figure>
+        <img
+          src="./images/mh.jpg"
+          alt="Forces on ball at cushion"
+          loading="lazy"
+        />
+        <figcaption>
+          Forces on ball at cushion. (Source:
+          <a
+            href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
+            rel="noopener noreferrer"
+            >Mathavan et al. (2010)</a
+          >)
+        </figcaption>
+      </figure>
 
       <h2>The Mathavan Model</h2>
 
