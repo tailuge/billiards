@@ -73,11 +73,11 @@
         "url": "https://tailuge.github.io/billiards/dist/blog3.html"
       }
     </script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script
       id="MathJax-script"
       async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+      src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
+      crossorigin="anonymous"
     ></script>
     <style>
       *,
@@ -228,10 +228,16 @@
       nav.back a:hover {
         color: #aaa;
       }
+
+      nav.back-bottom {
+        margin-top: 64px;
+        border-top: 1px solid #222;
+        padding-top: 32px;
+      }
     </style>
   </head>
   <body>
-    <nav class="back">
+    <nav class="back" aria-label="Top navigation">
       <a href="./index.html">Play</a>
       <a href="./practice.html">Practice</a>
       <a href="https://scoreboard-tailuge.vercel.app/game">Lobby</a>
@@ -260,7 +266,6 @@
         the work of
         <a
           href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
-          rel="noopener"
           >Mathavan et al. (2010)</a
         >, "A theoretical analysis of the dynamics of a billiards ball colliding
         with a cushion". This approach models the interaction by breaking down
@@ -313,12 +318,11 @@
       <div class="equation-block">
         \[ (\dot{\omega}_x)_{n+1} - (\dot{\omega}_x)_n = -\frac{5}{2MR}[\mu_w
         \sin(\phi) + \mu_s \sin(\phi') \times (\sin(\theta) + \mu_w
-        \sin(\phi)\cos(\theta))]\Delta P_I \] \[
-        (\dot{\omega}_y)_{n+1} - (\dot{\omega}_y)_n = -\frac{5}{2MR}[\mu_w
-        \cos(\phi)\sin(\theta) - \mu_s \cos(\phi') \times (\sin(\theta) + \mu_w
-        \sin(\phi)\cos(\theta))]\Delta P_I \] \[
-        (\dot{\omega}_z)_{n+1} - (\dot{\omega}_z)_n = \frac{5}{2MR}(\mu_w
-        \cos(\phi)\cos(\theta))\Delta P_I \]
+        \sin(\phi)\cos(\theta))]\Delta P_I \] \[ (\dot{\omega}_y)_{n+1} -
+        (\dot{\omega}_y)_n = -\frac{5}{2MR}[\mu_w \cos(\phi)\sin(\theta) - \mu_s
+        \cos(\phi') \times (\sin(\theta) + \mu_w \sin(\phi)\cos(\theta))]\Delta
+        P_I \] \[ (\dot{\omega}_z)_{n+1} - (\dot{\omega}_z)_n =
+        \frac{5}{2MR}(\mu_w \cos(\phi)\cos(\theta))\Delta P_I \]
       </div>
 
       <p>
@@ -337,7 +341,7 @@
 
       <div class="equation-block">
         \[ W_{Z'}^I(P_I^{(n+1)}) = W_{Z'}^I(P_I^{(n)}) + \frac{\Delta P_I}{2}
-        \left( z'_I(P_I^{(n+1)}) + z'_I(P_I^{(n)}) \right) \]
+        \left( \dot{z}'_I(P_I^{(n+1)}) + \dot{z}'_I(P_I^{(n)}) \right) \]
       </div>
 
       <p>
@@ -385,10 +389,7 @@
         <a href="https://github.com/tailuge/billiards">Source on GitHub</a>
       </div>
 
-      <nav
-        class="back"
-        style="margin-top: 64px; border-top: 1px solid #222; padding-top: 32px"
-      >
+      <nav class="back back-bottom" aria-label="Bottom navigation">
         <a href="./index.html">Play</a>
         <a href="./practice.html">Practice</a>
         <a href="https://scoreboard-tailuge.vercel.app/game">Lobby</a>
