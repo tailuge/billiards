@@ -57,7 +57,7 @@
     "jest-environment-jsdom": "30.3.0",
     "node-notifier": "^10.0.1",
     "prettier": "3.8.3",
-    "stylelint": "17.8.0",
+    "stylelint": "17.9.0",
     "stylelint-config-standard": "^40.0.0",
     "swc-loader": "0.2.7",
     "ts-jest": "29.4.9",

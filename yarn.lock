@@ -440,13 +440,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@csstools/css-calc@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "@csstools/css-calc@npm:3.1.1"
+"@csstools/css-calc@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "@csstools/css-calc@npm:3.2.0"
   peerDependencies:
     "@csstools/css-parser-algorithms": ^4.0.0
     "@csstools/css-tokenizer": ^4.0.0
-  checksum: 10c0/6efcc016d988edf66e54c7bad03e352d61752cbd1b56c7557fd013868aab23505052ded8f912cd4034e216943ea1e04c957d81012489e3eddc14a57b386510ef
+  checksum: 10c0/a4dffeef3cb8ec9e8c1e44fa68c7634033050be52ea0b56ba6ac3815b635b587c6f3a8f8cd7b8f53881c2dd0ab9ec0af77227c532ed81b8e24a05aa997d22337
   languageName: node
   linkType: hard
 
@@ -481,7 +481,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@csstools/css-syntax-patches-for-csstree@npm:^1.1.2":
+"@csstools/css-syntax-patches-for-csstree@npm:^1.1.3":
   version: 1.1.3
   resolution: "@csstools/css-syntax-patches-for-csstree@npm:1.1.3"
   peerDependencies:
@@ -3094,7 +3094,7 @@ __metadata:
     node-notifier: "npm:^10.0.1"
     prettier: "npm:3.8.3"
     simple-peer-light: "npm:^9.10.0"
-    stylelint: "npm:17.8.0"
+    stylelint: "npm:17.9.0"
     stylelint-config-standard: "npm:^40.0.0"
     swc-loader: "npm:0.2.7"
     three: "npm:0.184.0"
@@ -8201,13 +8201,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylelint@npm:17.8.0":
-  version: 17.8.0
-  resolution: "stylelint@npm:17.8.0"
+"stylelint@npm:17.9.0":
+  version: 17.9.0
+  resolution: "stylelint@npm:17.9.0"
   dependencies:
-    "@csstools/css-calc": "npm:^3.1.1"
+    "@csstools/css-calc": "npm:^3.2.0"
     "@csstools/css-parser-algorithms": "npm:^4.0.0"
-    "@csstools/css-syntax-patches-for-csstree": "npm:^1.1.2"
+    "@csstools/css-syntax-patches-for-csstree": "npm:^1.1.3"
     "@csstools/css-tokenizer": "npm:^4.0.0"
     "@csstools/media-query-list-parser": "npm:^5.0.0"
     "@csstools/selector-resolve-nested": "npm:^4.0.0"
@@ -8243,7 +8243,7 @@ __metadata:
     write-file-atomic: "npm:^7.0.1"
   bin:
     stylelint: bin/stylelint.mjs
-  checksum: 10c0/de822c902944ed094afabb48802e5659ef479e7707cc0a789e11e833fff5d54fb7a82b83052df83882f77de00190c109dbacd0b2d87157857c3ed626eb0fb4d5
+  checksum: 10c0/e4d0867778f31e08a2458d871f70dbb701a5d844a2a775c13aff86b8a681e435da5dc6dc738eedc3d1744a2065fdef1a6bfd51b29a685b8087622d6ea88538c1
   languageName: node
   linkType: hard
 
