@@ -128,7 +128,7 @@ export class Mathavan {
   }
 
   private updateWorkDone(ΔP: number): void {
-    const ΔWzI = ΔP * Math.abs(this.vy * cosθ)
+    const ΔWzI = ΔP * Math.abs(this.vy)
     this.WzI += ΔWzI
     this.P += ΔP
   }
