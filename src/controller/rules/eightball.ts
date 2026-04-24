@@ -63,7 +63,9 @@ export class EightBall implements Rules {
     return Rack.eightBall()
   }
 
-  secondToPlay(): void {}
+  secondToPlay(): void {
+    // Intentionally empty
+  }
 
   otherPlayersCueBall(): Ball {
     return this.cueball
@@ -140,7 +142,7 @@ export class EightBall implements Rules {
     if (myGroupBefore.length > 0) {
       return this.isMyType(hitBall) ? null : "Wrong group hit first"
     }
-    return hitBall.label !== 8 ? "Must hit 8-ball first" : null
+    return hitBall.label === 8 ? null : "Must hit 8-ball first"
   }
 
   foulReason(outcome: Outcome[]): string | null {
