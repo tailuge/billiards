@@ -5,7 +5,7 @@ import { AimEvent } from "../../src/events/aimevent"
 import { Ball } from "../../src/model/ball"
 import { Table } from "../../src/model/table"
 import { Rack } from "../../src/utils/rack"
-import { mathavenAdapter } from "../../src/model/physics/physics"
+import { mathavanAdapter } from "../../src/model/physics/physics"
 
 interface BugFixture {
   ruletype: string
@@ -39,7 +39,7 @@ function loadFixture(): BugFixture {
 function directPhysicsDistanceBeforeSecondShot(fixture: BugFixture) {
   Ball.id = 0
   const table = new Table(Rack.diamond())
-  table.cushionModel = mathavenAdapter
+  table.cushionModel = mathavanAdapter
   table.updateFromShortSerialised(fixture.init)
 
   const aimShots = fixture.shots.filter((shot) => shot.type === "AIM")

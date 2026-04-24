@@ -1,5 +1,5 @@
 
-# Mathaven ball cushion summary
+# Mathavan ball cushion summary
 
 This outlines a ball’s impact with a cushion analyzed with specific reference to the forces, velocities, and spins at play. Here's how the variables relate to the contact points I and C, as well as the velocities and spin components.
 
@@ -174,7 +174,7 @@ The numerical solution involves iteratively updating the state of the ball using
 
 **Compression Phase:** Continues as long as  `ẏɢ > 0` (ball is still moving towards the cushion).
 
-**Restitution Phase:** Starts when `ẏɢ < 0` and continues until the calculated work done matches the target work for rebound calculated using the coefficient of restitution ($W_{Z'}^I(P_I^f) = (1 - e_e^2) W_{Z'}^I(P_I^c)$).
+**Restitution Phase:** Starts when `ẏɢ < 0` and continues until the calculated work done matches the target work for rebound calculated using the coefficient of restitution ($W_{Z'}^I(P_I^f) = e_e^2 W_{Z'}^I(P_I^c)$).
 
 
 The core algorithm `updateSingleStep` is shared by both phases, handling the updates to velocities, angular velocities, and work done based on the equations above.
@@ -210,7 +210,7 @@ $W_{Z'}^I$ which will be $W_{Z'}^I(P_I^c)$
 
 Now, using Equation (16b), the value $W_{Z'}^I(P_I^f)$ can be calculated, given that $e_e$ is known:
 
-$$W_{Z'}^I(P_I^f) = (1 - e_e^2) W_{Z'}^I(P_I^c)$$
+$$W_{Z'}^I(P_I^f) = e_e^2 W_{Z'}^I(P_I^c)$$
 
 ## Restitution Phase
 
@@ -239,7 +239,7 @@ The paper outlines an algorithm for compression phase while $ẏ_G > 0$
 ## References
 
 * A theoretical analysis of billiard ball
-dynamics under cushion impacts [[Mathaven paper](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)].
+dynamics under cushion impacts [[Mathavan paper](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf)].
 
 ## Code generation prompt
 
@@ -274,7 +274,7 @@ numericalsolution.ts
 
 import { M, R, ee, μs, μw, sinθ, cosθ, N } from "./constants"
 
-export class Mathaven {
+export class Mathavan {
 
   P: number = 0;
   WzI: number = 0;

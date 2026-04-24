@@ -1,5 +1,5 @@
 import { ee, M, R, μs, μw } from "./constants"
-import { HistoryMathaven } from "./historymathaven"
+import { HistoryMathavan } from "./historymathavan"
 import { config, color, createTrace, layout } from "./plotlyconfig"
 
 export class ImpulsePlot {
@@ -9,7 +9,7 @@ export class ImpulsePlot {
     wS = (2 * v0) / R,
     wT = (1.5 * v0) / R
   ) {
-    const calculation = new HistoryMathaven(M, R, ee, μs, μw)
+    const calculation = new HistoryMathavan(M, R, ee, μs, μw)
     try {
       calculation.solvePaper(v0, alpha, wS, wT)
     } catch (error) {
@@ -24,7 +24,7 @@ for V0 = 2 m/s, α = 45◦,ωS0 = 2V0/R, and ωT0 = 1.5V0/R
 <br>(s and φ are for the slip at the cushion, 
 and sʹ and φʹ are for the slip at the table)`
     ;(globalThis as any).Plotly.newPlot(
-      "mathaven-impulse",
+      "mathavan-impulse",
       [
         createTrace(
           impulse,

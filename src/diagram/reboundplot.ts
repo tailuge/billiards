@@ -1,11 +1,11 @@
 import { ee, M, R, μs, μw } from "./constants"
-import { Mathaven } from "../model/physics/mathaven"
+import { Mathavan } from "../model/physics/mathavan"
 import { config, color, createTrace, layout } from "./plotlyconfig"
 
 export class ReboundPlot {
   private getFinalState(v0, alpha, sidespin, topspin) {
     try {
-      const calc = new Mathaven(M, R, ee, μs, μw)
+      const calc = new Mathavan(M, R, ee, μs, μw)
       calc.solvePaper(v0, alpha, sidespin, topspin)
       const vy = calc.vy
       const vx = calc.vx

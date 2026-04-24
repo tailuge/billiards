@@ -4,7 +4,7 @@ module.exports = {
   entry: {
     index: "./src/index.ts",
     diagram: "./src/diagrams.ts",
-    mathaven: "./src/mathaven.ts",
+    mathavan: "./src/mathavan.ts",
     compare: "./src/compare.ts",
   },
   module: {

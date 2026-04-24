@@ -1,7 +1,7 @@
 import { atan2, cos, pow, sin, sqrt } from "../../utils/utils"
 import { cosθ, sinθ } from "./constants"
 
-export class Mathaven {
+export class Mathavan {
   // work done
   P: number = 0
   WzI: number = 0
@@ -128,7 +128,7 @@ export class Mathaven {
   }
 
   private updateWorkDone(ΔP: number): void {
-    const ΔWzI = ΔP * Math.abs(this.vy)
+    const ΔWzI = ΔP * Math.abs(this.vy * cosθ)
     this.WzI += ΔWzI
     this.P += ΔP
   }

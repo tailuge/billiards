@@ -5,7 +5,7 @@ import {
   bounceHan,
   cueToSpin,
   bounceHanBlend,
-  mathavenAdapter,
+  mathavanAdapter,
   s0,
   c0,
   Pzs,
@@ -119,10 +119,10 @@ describe("Physics", () => {
     done()
   })
 
-  it("mathavenAdapter provides delta using mathaven model", (done) => {
+  it("mathavanAdapter provides delta using mathavan model", (done) => {
     const v = new Vector3(1, 0, 0)
     const w = new Vector3(0, 0, 0)
-    const delta = mathavenAdapter(v, w)
+    const delta = mathavanAdapter(v, w)
     expect(delta.v.length()).to.be.greaterThan(0)
     done()
   })

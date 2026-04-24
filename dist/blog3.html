@@ -37,7 +37,7 @@
     />
     <meta
       property="og:image"
-      content="https://tailuge.github.io/billiards/dist/images/mathavengraphs.jpg"
+      content="https://tailuge.github.io/billiards/dist/images/mathavangraphs.jpg"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
@@ -50,7 +50,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://tailuge.github.io/billiards/dist/images/mathavengraphs.jpg"
+      content="https://tailuge.github.io/billiards/dist/images/mathavangraphs.jpg"
     />
     <script type="application/ld+json">
       {
@@ -58,7 +58,7 @@
         "@type": "BlogPosting",
         "headline": "Implementing Mathavan Cushion Physics",
         "description": "A deep dive into the numerical modeling of ball-cushion interactions in billiards based on the Mathavan (2010) paper.",
-        "image": "https://tailuge.github.io/billiards/dist/images/mathavengraphs.jpg",
+        "image": "https://tailuge.github.io/billiards/dist/images/mathavangraphs.jpg",
         "author": {
           "@type": "Person",
           "name": "tailuge"
@@ -355,15 +355,15 @@
       <p>
         The compression phase iterates until \(\dot{v}_y \le 0\), and the
         restitution phase continues until the work done satisfies \(W_{Z'}^I \ge
-        (1 - e_e^2) W_{\text{compression}}\). Some of the Mathaven equations not
+        e_e^2 W_{\text{compression}}\). Some of the Mathavan equations not
         supplied by the paper were inferred to bridge gaps for a complete
         numerical solution.
       </p>
 
       <figure>
-        <a href="./diagrams/mathaven.html">
+        <a href="./diagrams/mathavan.html">
           <img
-            src="./images/mathavengraphs.jpg"
+            src="./images/mathavangraphs.jpg"
             alt="Mathavan cushion model validation graphs"
             loading="lazy"
           />
@@ -377,7 +377,7 @@
       <p>
         To confirm the correctness of this implementation, we've recreated many
         of the figures from the paper in our
-        <a href="./diagrams/mathaven.html">interactive physics diagrams</a>.
+        <a href="./diagrams/mathavan.html">interactive physics diagrams</a>.
         These diagrams allow you to see the impulse and velocity changes across
         different incident angles and spins, proving consistency between the
         code and the theoretical model.

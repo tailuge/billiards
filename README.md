@@ -76,7 +76,7 @@ $M_{xy} = \frac{7}{5\sqrt{2}} R \mu m g$ , $M_z = \frac{2}{3} \mu m g \rho$
 
 #### collisions
 
-Based on paper by [Alciatore](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) incorporating throw effect due to the small amount of friction between balls. Figures to prove consistency between the [code](./src/model/physics/collisionthrow.ts) and paper [here](https://tailuge.github.io/billiards/dist/diagrams/mathaven.html). 
+Based on paper by [Alciatore](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) incorporating throw effect due to the small amount of friction between balls. Figures to prove consistency between the [code](./src/model/physics/collisionthrow.ts) and paper [here](https://tailuge.github.io/billiards/dist/diagrams/mathavan.html).
 
 
 For ball $a$:
@@ -113,7 +113,7 @@ $\hat{t}$: tangential unit vector perpendicular to $\hat{n}$.
 
 #### cushion bounce
 
-This is based on a paper by [Mathaven](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf). Many of the [figures](https://tailuge.github.io/billiards/dist/diagrams/mathaven.html) from the paper are recreated to confirm correctness.
+This is based on a paper by [Mathavan](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf). Many of the [figures](https://tailuge.github.io/billiards/dist/diagrams/mathavan.html) from the paper are recreated to confirm correctness.
 
 Slip velocity at cushion contact point I
 
@@ -135,7 +135,7 @@ ẏ_C = \dot{v_y} + \dot{\omega_x} R
 $$
 
 $$
-\phi' = \arctan\left(\frac{ẏ'_I}{ẋ_I}\right) \qquad
+\phi' = \arctan\left(\frac{ẏ_C}{ẋ_C}\right) \qquad
 s' = \sqrt{(ẋ_C)^2 + (ẏ_C)^2}
 $$
 
@@ -179,9 +179,9 @@ $$\dot{v}_y \le 0$$
 
 For the restitution phase the iteration continues until the work done is
 
-$$W_{Z'}^I \ge (1 - e_e^2) W_{\text{compression}}$$
+$$W_{Z'}^I \ge e_e^2 W_{\text{compression}}$$
 
-Some of the Mathaven equations not supplied by the paper were inferred to bridge gaps for a complete numerical solution.
+Some of the Mathavan equations not supplied by the paper were inferred to bridge gaps for a complete numerical solution.
 
 ## Useful commands
 
