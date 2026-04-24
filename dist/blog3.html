@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Implementing Mathavan Cushion Physics</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="description"
+      content="A deep dive into the numerical modeling of ball-cushion interactions in billiards based on the Mathavan (2010) paper."
+    />
+    <meta
+      name="keywords"
+      content="billiards physics, Mathavan paper, cushion bounce, numerical model, ball mechanics, browser billiards"
+    />
+    <meta name="robots" content="index,follow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="canonical"
+      href="https://tailuge.github.io/billiards/dist/blog3.html"
+    />
+    <meta property="og:title" content="Implementing Mathavan Cushion Physics" />
+    <meta
+      property="og:description"
+      content="A deep dive into the numerical modeling of ball-cushion interactions in billiards based on the Mathavan (2010) paper."
+    />
+    <meta property="og:type" content="article" />
+    <meta
+      property="og:url"
+      content="https://tailuge.github.io/billiards/dist/blog3.html"
+    />
+    <meta
+      property="og:image"
+      content="https://tailuge.github.io/billiards/dist/images/mathavengraphs.jpg"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Implementing Mathavan Cushion Physics"
+    />
+    <meta
+      name="twitter:description"
+      content="A deep dive into the numerical modeling of ball-cushion interactions in billiards based on the Mathavan (2010) paper."
+    />
+    <meta
+      name="twitter:image"
+      content="https://tailuge.github.io/billiards/dist/images/mathavengraphs.jpg"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Implementing Mathavan Cushion Physics",
+        "description": "A deep dive into the numerical modeling of ball-cushion interactions in billiards based on the Mathavan (2010) paper.",
+        "image": "https://tailuge.github.io/billiards/dist/images/mathavengraphs.jpg",
+        "author": {
+          "@type": "Person",
+          "name": "tailuge"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Break Builder"
+        },
+        "datePublished": "2026-04-25",
+        "url": "https://tailuge.github.io/billiards/dist/blog3.html"
+      }
+    </script>
+    <script
+      id="MathJax-script"
+      async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
+      integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: #0f0f0f;
+        color: #ddd;
+        font-family: "Exo", sans-serif;
+        font-weight: 200;
+        font-size: 18px;
+        line-height: 1.75;
+        padding: 0 16px 64px;
+      }
+
+      header {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 48px 0 32px;
+        border-bottom: 1px solid #222;
+      }
+
+      header h1 {
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+        line-height: 1.25;
+        color: #f0f0f0;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+
+      header .meta {
+        font-size: 0.85rem;
+        color: #666;
+        font-family: sans-serif;
+      }
+
+      article {
+        max-width: 720px;
+        margin: 0 auto;
+        padding-top: 40px;
+      }
+
+      p {
+        margin-bottom: 20px;
+        color: #ccc;
+      }
+
+      h2 {
+        font-size: 1.25rem;
+        color: #c8c8c8;
+        margin: 48px 0 16px;
+        font-weight: 600;
+      }
+
+      a {
+        color: #10b981;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      figure {
+        margin: 36px 0;
+      }
+
+      figure img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 4px;
+        border: 1px solid #222;
+      }
+
+      figcaption {
+        font-size: 0.8rem;
+        color: #555;
+        font-family: sans-serif;
+        margin-top: 8px;
+        text-align: center;
+      }
+
+      .equation-block {
+        margin: 24px 0;
+        overflow-x: auto;
+      }
+
+      .cta {
+        margin-top: 48px;
+        padding: 24px;
+        border: 1px solid #2a2a2a;
+        border-radius: 6px;
+        background: #141414;
+      }
+
+      .cta p {
+        margin-bottom: 16px;
+        color: #bbb;
+      }
+
+      .cta a {
+        display: inline-block;
+        background: #1e1e1e;
+        color: #ccc;
+        text-decoration: none;
+        padding: 5px 12px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        font-weight: 200;
+        border: 1px solid #333;
+        margin: 3px 3px 3px 0;
+      }
+
+      .cta a:first-of-type {
+        background: #10b981;
+        color: #fff;
+        border-color: transparent;
+      }
+
+      .cta a:hover {
+        border-color: #555;
+        color: #fff;
+      }
+      .cta a:first-of-type:hover {
+        background: #059669;
+      }
+
+      nav.back {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 24px 0 0;
+        font-family: sans-serif;
+        font-size: 0.85rem;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      nav.back a {
+        color: #555;
+        text-decoration: none;
+      }
+      nav.back a:hover {
+        color: #aaa;
+      }
+
+      nav.back-bottom {
+        margin-top: 64px;
+        border-top: 1px solid #222;
+        padding-top: 32px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="back" aria-label="Top navigation">
+      <a href="./index.html">Play</a>
+      <a href="./practice.html">Practice</a>
+      <a
+        href="https://scoreboard-tailuge.vercel.app/game"
+        rel="noopener noreferrer"
+        >Lobby</a
+      >
+      <a
+        href="https://scoreboard-tailuge.vercel.app/leaderboard"
+        rel="noopener noreferrer"
+        >Leaderboard</a
+      >
+      <a href="https://github.com/tailuge/billiards" rel="noopener noreferrer"
+        >GitHub</a
+      >
+    </nav>
+
+    <header>
+      <h1>Implementing Mathavan Cushion Physics</h1>
+      <p class="meta">April 2026 · 5 min read</p>
+    </header>
+
+    <article>
+      <p>
+        Billiards is often simplified in games as a series of linear
+        reflections, but the reality of ball-cushion interaction is far more
+        complex. The rebound angle and velocity of a ball hitting a cushion are
+        influenced by its incoming spin, velocity, and the physical properties
+        of the cushion itself.
+      </p>
+
+      <p>
+        To capture this accurately, we've implemented a numerical model based on
+        the work of
+        <a
+          href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
+          rel="noopener noreferrer"
+          >Mathavan et al. (2010)</a
+        >, "A theoretical analysis of the dynamics of a billiards ball colliding
+        with a cushion". This approach models the interaction by breaking down
+        the collision into compression and restitution phases, accounting for
+        slip velocities at both the cushion and table contact points.
+      </p>
+
+      <h2>The Mathavan Model</h2>
+
+      <p>
+        The core of the implementation involves calculating the slip velocity at
+        the cushion contact point (I) and the table contact point (C).
+      </p>
+
+      <div class="equation-block">
+        <p>Slip velocity at cushion contact point I:</p>
+        \[ \dot{x}_I = \dot{v}_x + \dot{\omega}_y R \sin \theta - \dot{\omega}_z
+        R \cos \theta \qquad \dot{y}'_I = -\dot{v}_y \sin \theta +
+        \dot{\omega}_x R \] \[ \phi =
+        \arctan\left(\frac{\dot{y}'_I}{\dot{x}_I}\right) \qquad s =
+        \sqrt{(\dot{x}_I)^2 + (\dot{y}'_I)^2} \]
+      </div>
+
+      <div class="equation-block">
+        <p>Slip velocity at table contact point C:</p>
+        \[ \dot{x}_C = \dot{v}_x - \dot{\omega}_y R \qquad \dot{y}_C = \dot{v}_y
+        + \dot{\omega}_x R \] \[ \phi' =
+        \arctan\left(\frac{\dot{y}_C}{\dot{x}_C}\right) \qquad s' =
+        \sqrt{(\dot{x}_C)^2 + (\dot{y}_C)^2} \]
+      </div>
+
+      <h2>Numerical Solutions</h2>
+
+      <p>
+        The simulation uses numerical solutions for the centroid velocity of the
+        ball during the interaction.
+      </p>
+
+      <div class="equation-block">
+        \[ (\dot{v}_x)_{n+1} - (\dot{v}_x)_n = - \frac{1}{M} \left[\mu_w
+        \cos(\phi) + \mu_s \cos(\phi') \cdot (\sin \theta + \mu_w \sin(\phi)
+        \cos \theta)\right] \Delta P_I \] \[ (\dot{v}_y)_{n+1} - (\dot{v}_y)_n =
+        - \frac{1}{M} \left[ \cos \theta - \mu_w \sin \theta \sin \phi + \mu_s
+        \sin \phi' \cdot \left( \sin \theta + \mu_w \sin \phi \cos \theta
+        \right) \right] \Delta P_I \]
+      </div>
+
+      <p>And for the angular velocity:</p>
+
+      <div class="equation-block">
+        \[ (\dot{\omega}_x)_{n+1} - (\dot{\omega}_x)_n = -\frac{5}{2MR}[\mu_w
+        \sin(\phi) + \mu_s \sin(\phi') \times (\sin(\theta) + \mu_w
+        \sin(\phi)\cos(\theta))]\Delta P_I \] \[ (\dot{\omega}_y)_{n+1} -
+        (\dot{\omega}_y)_n = -\frac{5}{2MR}[\mu_w \cos(\phi)\sin(\theta) - \mu_s
+        \cos(\phi') \times (\sin(\theta) + \mu_w \sin(\phi)\cos(\theta))]\Delta
+        P_I \] \[ (\dot{\omega}_z)_{n+1} - (\dot{\omega}_z)_n =
+        \frac{5}{2MR}(\mu_w \cos(\phi)\cos(\theta))\Delta P_I \]
+      </div>
+
+      <p>
+        Where \(\theta\) is a constant of the angle of cushion contact above
+        ball centre with \(\sin(\theta) = 2/5\). \(\mu_s\) is the coefficient of
+        sliding friction between the ball and table surface, and \(\mu_w\) is
+        the coefficient of sliding friction between the ball and the cushion.
+      </p>
+
+      <h2>Energy and Restitution</h2>
+
+      <p>
+        The interaction is governed by the work done by the normal force at
+        contact point I along the \(Z'\)-axis:
+      </p>
+
+      <div class="equation-block">
+        \[ W_{Z'}^I(P_I^{(n+1)}) = W_{Z'}^I(P_I^{(n)}) + \frac{\Delta P_I}{2}
+        \left( \dot{z}'_I(P_I^{(n+1)}) + \dot{z}'_I(P_I^{(n)}) \right) \]
+      </div>
+
+      <p>
+        The compression phase iterates until \(\dot{v}_y \le 0\), and the
+        restitution phase continues until the work done satisfies \(W_{Z'}^I \ge
+        (1 - e_e^2) W_{\text{compression}}\). Some of the Mathaven equations not
+        supplied by the paper were inferred to bridge gaps for a complete
+        numerical solution.
+      </p>
+
+      <figure>
+        <a href="./diagrams/mathaven.html">
+          <img
+            src="./images/mathavengraphs.jpg"
+            alt="Mathavan cushion model validation graphs"
+            loading="lazy"
+          />
+        </a>
+        <figcaption>
+          Validation graphs showing how simulated results match the published
+          figures from the Mathavan paper. Click to see interactive diagrams.
+        </figcaption>
+      </figure>
+
+      <p>
+        To confirm the correctness of this implementation, we've recreated many
+        of the figures from the paper in our
+        <a href="./diagrams/mathaven.html">interactive physics diagrams</a>.
+        These diagrams allow you to see the impulse and velocity changes across
+        different incident angles and spins, proving consistency between the
+        code and the theoretical model.
+      </p>
+
+      <div class="cta">
+        <p>
+          Experience the physics for yourself in the browser. Nine-ball,
+          snooker, three-cushion, or practice mode.
+        </p>
+        <a href="./index.html">Play now</a>
+        <a href="./practice.html">Practice</a>
+        <a
+          href="https://scoreboard-tailuge.vercel.app/game"
+          rel="noopener noreferrer"
+          >Join lobby</a
+        >
+        <a
+          href="https://scoreboard-tailuge.vercel.app/leaderboard"
+          rel="noopener noreferrer"
+          >Leaderboard</a
+        >
+        <a href="https://github.com/tailuge/billiards" rel="noopener noreferrer"
+          >Source on GitHub</a
+        >
+      </div>
+
+      <nav class="back back-bottom" aria-label="Bottom navigation">
+        <a href="./index.html">Play</a>
+        <a href="./practice.html">Practice</a>
+        <a
+          href="https://scoreboard-tailuge.vercel.app/game"
+          rel="noopener noreferrer"
+          >Lobby</a
+        >
+        <a
+          href="https://scoreboard-tailuge.vercel.app/leaderboard"
+          rel="noopener noreferrer"
+          >Leaderboard</a
+        >
+        <a href="https://github.com/tailuge/billiards" rel="noopener noreferrer"
+          >GitHub</a
+        >
+      </nav>
+    </article>
+  </body>
+</html>
