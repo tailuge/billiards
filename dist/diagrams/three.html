@@ -541,8 +541,8 @@
         })
       }
 
-      function round3(value) {
-        return +value.toFixed(3)
+      function round6(value) {
+        return +value.toFixed(6)
       }
 
       function setPowerSliderValue() {
@@ -647,19 +647,19 @@
         const params = new URLSearchParams(topview.dataset.state)
         const state = JSON.parse(params.get("state"))
         state.init = tableBalls.flatMap((ball) => [
-          round3(ball.x),
-          round3(ball.y),
+          round6(ball.x),
+          round6(ball.y),
         ])
         if (state.shots?.[0]?.pos) {
           state.shots[0].pos.x = state.init[0]
           state.shots[0].pos.y = state.init[1]
         }
         if (state.shots?.[0]) {
-          state.shots[0].angle = round3(aimAngle)
-          state.shots[0].power = round3(aimPower)
+          state.shots[0].angle = round6(aimAngle)
+          state.shots[0].power = round6(aimPower)
           state.shots[0].offset = {
-            x: round3(aimOffset.x),
-            y: round3(aimOffset.y),
+            x: round6(aimOffset.x),
+            y: round6(aimOffset.y),
             z: 0,
           }
         }
