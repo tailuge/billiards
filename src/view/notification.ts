@@ -166,7 +166,7 @@ export class Notification {
   }
 
   updateHighBreaks(highBreaks?: NotificationHighBreak[]) {
-    const footer = this.element.querySelector(".notification-footer")
+    const footer = this.element?.querySelector(".notification-footer")
     if (footer) {
       let container = footer.querySelector(
         ".notification-high-breaks"

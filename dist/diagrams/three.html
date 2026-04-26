@@ -22,11 +22,20 @@
       }
 
       body {
-        display: flex;
-        flex-wrap: wrap;
         background-color: rgb(245 245 245);
         font-family: sans-serif;
         font-size: x-small;
+        margin: 0;
+        padding: 1px;
+      }
+
+      #page {
+        width: 100%;
+        max-width: 720px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
       }
 
       .replaydiagram {
@@ -35,13 +44,12 @@
         border-radius: 4px;
         padding: 0px;
         margin: 0px;
-        background-color: white;
-        box-shadow: 2px 2px 2px lightgray;
+        background-color: rgb(81, 81, 81);
         aspect-ratio: 2 / 1;
       }
 
       .diagram {
-        width: 400px;
+        width: 360px;
         max-width: 100%;
         padding: 0px;
         margin: 0px;
@@ -192,6 +200,7 @@
         display: flex;
         flex-wrap: wrap;
         align-items: stretch;
+        gap: 10px;
       }
 
       #spin-power-wrap {
@@ -309,69 +318,100 @@
       #aim-params {
         font-size: 11px;
         color: rgb(40 40 40);
-        margin: 6px 4px 0;
+        margin: 0 4px;
         font-family: monospace;
         white-space: pre-wrap;
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 8px;
+        }
+
+        #page {
+          gap: 8px;
+        }
+
+        #table-wrap {
+          width: 100%;
+        }
+
+        .controls-row {
+          flex-direction: column;
+        }
+
+        .diagram,
+        #spin-power-wrap {
+          width: 100%;
+          max-width: 100%;
+        }
+
+        #spin-power-wrap {
+          justify-content: center;
+        }
       }
     </style>
   </head>
 
   <body>
-    <div class="replaydiagram">
-      <div
-        class="topview"
-        data-state="?ruletype=threecushion&state=%7B%22init%22:%5B-0.769,-0.192,0.769,0,1.07,0%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.202,%22y%22:0.222,%22z%22:0%7D,%22angle%22:-0.77,%22power%22:3.0,%22pos%22:%7B%22x%22:-0.769,%22y%22:-0.192,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
-      ></div>
-    </div>
-
-    <div id="table-wrap">
-      <div id="table-bg">
-        <img src="../images/3ctop.jpg" />
-      </div>
-      <div id="table-surface">
-        <svg id="aim-layer" aria-hidden="true">
-          <line id="aim-arrow-line" x1="0" y1="0" x2="0" y2="0"></line>
-          <circle id="aim-arrow-head" cx="0" cy="0" r="8"></circle>
-          <circle id="aim-arrow-hit" cx="0" cy="0" r="18"></circle>
-        </svg>
-      </div>
-    </div>
-
-    <div class="controls-row">
-      <div id="constants" class="diagram">
-        <p>
-          Physical Constants <button id="replay" type="button">replay</button>
-        </p>
-        <br />
-        <input id="R" type="range" />
-        <label for="R">R</label>
-        <input id="m" type="range" />
-        <label for="m">m</label>
-        <input id="e" type="range" />
-        <label for="e">e</label>
-        <input id="mu" type="range" />
-        <label for="mu">mu</label>
-        <input id="muS" type="range" />
-        <label for="muS">muS</label>
-        <input id="muC" type="range" />
-        <label for="muC">muC</label>
-        <input id="rho" type="range" />
-        <label for="rho">rho</label>
+    <div id="page">
+      <div class="replaydiagram">
+        <div
+          class="topview"
+          data-state="?ruletype=threecushion&state=%7B%22init%22:%5B-0.769,-0.192,0.769,0,1.07,0%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.202,%22y%22:0.222,%22z%22:0%7D,%22angle%22:-0.77,%22power%22:3.0,%22pos%22:%7B%22x%22:-0.769,%22y%22:-0.192,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
+        ></div>
       </div>
 
-      <div id="spin-power-wrap">
-        <div id="ballContainerWrapper" class="ballContainerWrapper">
-          <div id="ballContainer" class="ballContainer">
-            <div id="objectBall" class="objectBall"></div>
-            <div id="cueBall" class="cueBall">
-              <div id="cueTip" class="cueTip"></div>
+      <div id="table-wrap">
+        <div id="table-bg">
+          <img src="../images/3ctop.jpg" />
+        </div>
+        <div id="table-surface">
+          <svg id="aim-layer" aria-hidden="true">
+            <line id="aim-arrow-line" x1="0" y1="0" x2="0" y2="0"></line>
+            <circle id="aim-arrow-head" cx="0" cy="0" r="8"></circle>
+            <circle id="aim-arrow-hit" cx="0" cy="0" r="18"></circle>
+          </svg>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <div id="constants" class="diagram">
+          <p>
+            Physical Constants <button id="replay" type="button">replay</button>
+          </p>
+          <br />
+          <input id="R" type="range" hidden/>
+          <label for="R" hidden>R</label>
+          <input id="m" type="range" />
+          <label for="m">m</label>
+          <input id="e" type="range" />
+          <label for="e">e</label>
+          <input id="mu" type="range" />
+          <label for="mu">mu</label>
+          <input id="muS" type="range" hidden/>
+          <label for="muS" hidden>muS</label>
+          <input id="muC" type="range" hidden/>
+          <label for="muC" hidden>muC</label>
+          <input id="rho" type="range" />
+          <label for="rho">rho</label>
+        </div>
+
+        <div id="spin-power-wrap">
+          <div id="ballContainerWrapper" class="ballContainerWrapper">
+            <div id="ballContainer" class="ballContainer">
+              <div id="objectBall" class="objectBall"></div>
+              <div id="cueBall" class="cueBall">
+                <div id="cueTip" class="cueTip"></div>
+              </div>
             </div>
           </div>
+          <input id="power" type="range" />
         </div>
-        <input id="power" type="range" />
       </div>
+
+      
     </div>
-    <div id="aim-params"></div>
 
     <script defer src="../three_core.js"></script>
     <script defer src="../three_module.js"></script>
@@ -486,11 +526,10 @@
       }
 
       function updateAimParamsText() {
-        const elt = document.getElementById("aim-params");
-        if (!elt) return;
-        elt.textContent =
+        console.log(
           `spin x=${aimOffset.x.toFixed(3)} y=${aimOffset.y.toFixed(3)}  ` +
-          `power=${aimPower.toFixed(3)}  angle=${aimAngle.toFixed(3)}`;
+            `power=${aimPower.toFixed(3)}  angle=${aimAngle.toFixed(3)}`
+        );
       }
 
       function normalizeSpinOffset(offsetX, offsetY) {
