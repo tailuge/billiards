@@ -379,11 +379,9 @@
 
       <div class="controls-row">
         <div id="constants" class="diagram">
-          <p>
-            Physical Constants 
-          </p>
+          <p>Physical Constants</p>
           <br />
-          <input id="R" type="range" hidden/>
+          <input id="R" type="range" hidden />
           <label for="R" hidden>R</label>
           <input id="m" type="range" />
           <label for="m">m</label>
@@ -393,14 +391,14 @@
           <label for="mu">mu</label>
           <input id="rho" type="range" />
           <label for="rho">rho</label>
-          <input id="muS" type="range" hidden/>
+          <input id="muS" type="range" hidden />
           <label for="muS" hidden>muS</label>
-          <input id="muC" type="range" hidden/>
+          <input id="muC" type="range" hidden />
           <label for="muC" hidden>muC</label>
           <input id="μs" type="range" />
-          <label for="μs" >μs</label>
+          <label for="μs">μs</label>
           <input id="μw" type="range" />
-          <label for="μw" >μw</label>
+          <label for="μw">μw</label>
         </div>
 
         <div id="spin-power-wrap">
@@ -416,8 +414,6 @@
           <button id="replay" type="button">replay</button>
         </div>
       </div>
-
-      
     </div>
 
     <script defer src="../three_core.js"></script>
@@ -452,7 +448,7 @@
       function tableToCSS(x, y) {
         return {
           left: ((x + TABLE_HALF_WIDTH) / (TABLE_HALF_WIDTH * 2)) * 100,
-          top: ((y + TABLE_HALF_HEIGHT) / (TABLE_HALF_HEIGHT * 2)) * 100,
+          top: ((TABLE_HALF_HEIGHT - y) / (TABLE_HALF_HEIGHT * 2)) * 100,
         };
       }
 
@@ -460,7 +456,7 @@
         const rect = surface.getBoundingClientRect();
         return {
           x: ((x + TABLE_HALF_WIDTH) / (TABLE_HALF_WIDTH * 2)) * rect.width,
-          y: ((y + TABLE_HALF_HEIGHT) / (TABLE_HALF_HEIGHT * 2)) * rect.height,
+          y: ((TABLE_HALF_HEIGHT - y) / (TABLE_HALF_HEIGHT * 2)) * rect.height,
         };
       }
 
@@ -471,8 +467,8 @@
             ((clientX - rect.left) / rect.width) * (TABLE_HALF_WIDTH * 2) -
             TABLE_HALF_WIDTH,
           y:
-            ((clientY - rect.top) / rect.height) * (TABLE_HALF_HEIGHT * 2) -
-            TABLE_HALF_HEIGHT,
+            TABLE_HALF_HEIGHT -
+            ((clientY - rect.top) / rect.height) * (TABLE_HALF_HEIGHT * 2),
         };
       }
 
@@ -535,7 +531,7 @@
       function updateAimParamsText() {
         console.log(
           `spin x=${aimOffset.x.toFixed(3)} y=${aimOffset.y.toFixed(3)}  ` +
-            `power=${aimPower.toFixed(3)}  angle=${aimAngle.toFixed(3)}`
+            `power=${aimPower.toFixed(3)}  angle=${aimAngle.toFixed(3)}`,
         );
       }
 
@@ -642,7 +638,9 @@
           };
         }
         params.set("state", JSON.stringify(state));
-        topview.dataset.state = `?${params.toString()}`;
+        const nextStateUrl = `?${params.toString()}`;
+        topview.dataset.state = nextStateUrl;
+        topview.setAttribute("data-state", nextStateUrl);
         updateAimParamsText();
       }
 
