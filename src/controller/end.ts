@@ -4,6 +4,8 @@ import { Container } from "../container/container"
 import { MatchResult, MatchResultHelper } from "../network/client/matchresult"
 import { ReplayEncoder } from "../utils/replay-encoder"
 import { Session } from "../network/client/session"
+import { BreakEvent } from "../events/breakevent"
+import { Replay } from "./replay"
 
 export class End extends Controller {
   override get name(): string {
@@ -56,5 +58,20 @@ export class End extends Controller {
   override handleBegin(_: BeginEvent): Controller {
     this.container.particles.dispose()
     return new Init(this.container)
+  }
+
+  override handleBreak(event: BreakEvent): Controller {
+    if (event.init) {
+      this.container.table.updateFromShortSerialised(event.init)
+      return new Replay(
+        this.container,
+        event.init,
+        event.shots,
+        false,
+        1000,
+        event.diagram
+      )
+    }
+    return this
   }
 }
