@@ -1,23 +1,25 @@
-import { GameEvent } from "./gameevent"
-import { EventType } from "./eventtype"
-import { Controller } from "../controller/controller"
+import { GameEvent } from "./gameevent";
+import { EventType } from "./eventtype";
+import { Controller } from "../controller/controller";
 
 export class BreakEvent extends GameEvent {
-  init
-  shots
-  retry
-  constructor(init?, shots?) {
-    super()
-    this.init = init
-    this.shots = shots
-    this.type = EventType.BREAK
+  init;
+  shots;
+  diagram;
+  retry;
+  constructor(init?, shots?, diagram?) {
+    super();
+    this.init = init;
+    this.shots = shots;
+    this.diagram = diagram;
+    this.type = EventType.BREAK;
   }
 
   applyToController(controller: Controller) {
-    return controller.handleBreak(this)
+    return controller.handleBreak(this);
   }
 
   static fromJson(json) {
-    return new BreakEvent(json.init, json.shots)
+    return new BreakEvent(json.init, json.shots, json.diagram);
   }
 }

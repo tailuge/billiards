@@ -18,6 +18,7 @@ export class DiagramContainer {
   replay: string;
   cushionModel;
   breakState = {
+    diagram: undefined as boolean | undefined,
     init: null,
     shots: [] as string[],
   };
@@ -59,7 +60,11 @@ export class DiagramContainer {
     } else {
       this.breakState = JSON.parse(decodeURIComponent(this.replay));
       this.container.eventQueue.push(
-        new BreakEvent(this.breakState.init, this.breakState.shots),
+        new BreakEvent(
+          this.breakState.init,
+          this.breakState.shots,
+          this.breakState.diagram,
+        ),
       );
     }
     this.container.animate(performance.now());
@@ -84,7 +89,11 @@ export class DiagramContainer {
           this.container.view.camera.topView,
         );
         this.container.eventQueue.push(
-          new BreakEvent(this.breakState.init, this.breakState.shots),
+          new BreakEvent(
+            this.breakState.init,
+            this.breakState.shots,
+            this.breakState.diagram,
+          ),
         );
       }
       this.realOverlay?.start();
