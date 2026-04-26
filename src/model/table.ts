@@ -53,7 +53,10 @@ export class Table {
     let depth = 0
     while (!this.prepareAdvanceAll(t)) {
       if (depth++ > 100) {
-        console.log("Depth exceeded resolving collisions", JSON.stringify(this.shortSerialise()))
+        console.log(
+          "Depth exceeded resolving collisions",
+          JSON.stringify(this.shortSerialise())
+        )
         throw new Error("Depth exceeded resolving collisions")
       }
     }
