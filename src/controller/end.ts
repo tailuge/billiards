@@ -18,9 +18,17 @@ export class End extends Controller {
   }
 
   override onFirst(): void {
-    this.container.view.camera.forceMode(this.container.view.camera.orbitView)
+    const isDiagram = this.container.id === "diagram"
+    this.container.view.camera.forceMode(
+      isDiagram
+        ? this.container.view.camera.topView
+        : this.container.view.camera.orbitView
+    )
     this.container.menu?.setConcedeVisible(false)
     console.log("result:", this.result)
+    if (isDiagram) {
+      return
+    }
     if (this.result && this.container.scoreReporter) {
       try {
         const gameState = this.container.recorder.wholeGame()

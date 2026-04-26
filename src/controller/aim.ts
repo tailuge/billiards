@@ -1,8 +1,8 @@
-import { BreakEvent } from "../events/breakevent";
-import { Controller, HitEvent, Input } from "./controller";
-import { ControllerBase } from "./controllerbase";
-import { PlayShot } from "./playshot";
-import { Replay } from "./replay";
+import { BreakEvent } from "../events/breakevent"
+import { Controller, HitEvent, Input } from "./controller"
+import { ControllerBase } from "./controllerbase"
+import { PlayShot } from "./playshot"
+import { Replay } from "./replay"
 
 /**
  * Aim using input events.
@@ -10,43 +10,40 @@ import { Replay } from "./replay";
  */
 export class Aim extends ControllerBase {
   override get name(): string {
-    return "Aim";
+    return "Aim"
   }
   constructor(container) {
-    super(container);
-    const table = this.container.table;
-    table.cue.aimMode();
-    table.cue.showHelper(true);
-    table.cueball = this.container.rules.cueball;
-    table.cue.aim.i = table.balls.indexOf(table.cueball);
-    table.cue.moveTo(table.cueball.pos);
-    table.cue.aimAtNext(
-      table.cueball,
-      this.container.rules.nextCandidateBall(),
-    );
-    this.container.view.camera.suggestMode(this.container.view.camera.aimView);
-    table.cue.aimInputs.showOverlap();
+    super(container)
+    const table = this.container.table
+    table.cue.aimMode()
+    table.cue.showHelper(true)
+    table.cueball = this.container.rules.cueball
+    table.cue.aim.i = table.balls.indexOf(table.cueball)
+    table.cue.moveTo(table.cueball.pos)
+    table.cue.aimAtNext(table.cueball, this.container.rules.nextCandidateBall())
+    this.container.view.camera.suggestMode(this.container.view.camera.aimView)
+    table.cue.aimInputs.showOverlap()
   }
 
   override onFirst() {
-    this.container.table.cue.aimInputs.setDisabled(false);
+    this.container.table.cue.aimInputs.setDisabled(false)
   }
 
   override handleInput(input: Input): Controller {
     switch (input.key) {
       case "Space":
-        this.container.table.cue.adjustPower(input.t * this.scale * 0.7);
-        break;
+        this.container.table.cue.adjustPower(input.t * this.scale * 0.7)
+        break
       case "SpaceUp":
-        return this.playShot();
+        return this.playShot()
       default:
         if (!this.commonKeyHandler(input)) {
-          return this;
+          return this
         }
     }
 
-    this.container.sendEvent(this.container.table.cue.aim);
-    return this;
+    this.container.sendEvent(this.container.table.cue.aim)
+    return this
   }
 
   override handleBreak(breakEvent: BreakEvent): Controller {
@@ -56,15 +53,15 @@ export class Aim extends ControllerBase {
       breakEvent.shots,
       breakEvent.retry,
       1500,
-      breakEvent.diagram,
-    );
+      breakEvent.diagram
+    )
   }
 
   playShot() {
-    this.container.inputQueue.length = 0;
-    this.container.table.cue.aimInputs.setDisabled(true);
-    const hitEvent = new HitEvent(this.container.table.serialiseHit());
-    this.container.sendEvent(hitEvent);
-    return new PlayShot(this.container);
+    this.container.inputQueue.length = 0
+    this.container.table.cue.aimInputs.setDisabled(true)
+    const hitEvent = new HitEvent(this.container.table.serialiseHit())
+    this.container.sendEvent(hitEvent)
+    return new PlayShot(this.container)
   }
 }
