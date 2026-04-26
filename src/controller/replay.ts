@@ -45,7 +45,9 @@ export class Replay extends ControllerBase {
       this.container.eventQueue.push(retryEvent);
     } else {
       this.container.view.camera.forceMode(
-        this.container.view.camera.spectatorView,
+        this.diagram
+          ? this.container.view.camera.topView
+          : this.container.view.camera.spectatorView,
       );
       this.playNextShot(this.delay * 1.5);
     }
