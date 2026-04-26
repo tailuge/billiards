@@ -7,6 +7,7 @@ import { bounceHan } from "../model/physics/physics"
 import { Assets } from "../view/assets"
 import { RealOverlay } from "./real/realoverlay"
 import { id, getButton, getCanvas } from "../utils/dom"
+import { AbortEvent } from "../events/abortevent"
 
 /**
  * Integrate billiards container into diagram html page
@@ -68,7 +69,10 @@ export class DiagramContainer {
   replayButton(replaybutton) {
     replaybutton.innerHTML = "↻"
     replaybutton.addEventListener("click", () => {
+      console.log("clicked with length=", this.container.eventQueue.length)
       if (this.container.eventQueue.length == 0) {
+        this.container.table.updateFromShortSerialised(this.breakState.init)
+        this.container.view.camera.forceMode(this.container.view.camera.topView)
         this.container.eventQueue.push(
           new BreakEvent(this.breakState.init, this.breakState.shots)
         )

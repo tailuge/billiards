@@ -61,6 +61,8 @@
       #mu,
       #muS,
       #muC,
+      #μs,
+      #μw,
       #rho {
         width: 75%;
       }
@@ -378,7 +380,7 @@
       <div class="controls-row">
         <div id="constants" class="diagram">
           <p>
-            Physical Constants <button id="replay" type="button">replay</button>
+            Physical Constants 
           </p>
           <br />
           <input id="R" type="range" hidden/>
@@ -389,12 +391,16 @@
           <label for="e">e</label>
           <input id="mu" type="range" />
           <label for="mu">mu</label>
+          <input id="rho" type="range" />
+          <label for="rho">rho</label>
           <input id="muS" type="range" hidden/>
           <label for="muS" hidden>muS</label>
           <input id="muC" type="range" hidden/>
           <label for="muC" hidden>muC</label>
-          <input id="rho" type="range" />
-          <label for="rho">rho</label>
+          <input id="μs" type="range" />
+          <label for="μs" >μs</label>
+          <input id="μw" type="range" />
+          <label for="μw" >μw</label>
         </div>
 
         <div id="spin-power-wrap">
@@ -407,6 +413,7 @@
             </div>
           </div>
           <input id="power" type="range" />
+          <button id="replay" type="button">replay</button>
         </div>
       </div>
 
