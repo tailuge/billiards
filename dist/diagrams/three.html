@@ -1,585 +1,704 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <title>
+      Billiards Physics Edge Cases - Free & Open Source | Break Builder
+    </title>
+    <link rel="icon" type="image/png" href="../favicon.png" />
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="description"
+      content="Exploring edge cases in billiards physics. Free and open source interactive diagrams of complex ball behaviors."
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link rel="stylesheet" type="text/css" href="../css/diagrams.css" />
+    <style>
+      :root {
+        --table-ball-border: 2px;
+        --table-surface-width: 87%;
+        --table-surface-height: 75%;
+        --ball-size-base: 170px;
+        --ball-size-small: 70px;
+      }
 
-<head>
-  <title>
-    Billiards Physics Edge Cases - Free & Open Source | Break Builder
-  </title>
-  <link rel="icon" type="image/png" href="../favicon.png" />
-  <meta charset="utf-8" />
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="description"
-    content="Exploring edge cases in billiards physics. Free and open source interactive diagrams of complex ball behaviors." />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <link rel="stylesheet" type="text/css" href="../css/diagrams.css" />
-  <style>
-    :root {
-      --table-ball-border: 2px;
-      --table-surface-width: 87%;
-      --table-surface-height: 75%;
-      --ball-size-base: 170px;
-      --ball-size-small: 70px;
-    }
+      #table-wrap {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 2 / 1;
+        border: 1px solid black;
+        border-radius: 4px;
+        padding: 4px;
+        margin: 4px;
+        background-color: white;
+        box-shadow: 2px 2px 2px lightgray;
+      }
 
-    #table-wrap {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 2 / 1;
-      border: 1px solid black;
-      border-radius: 4px;
-      padding: 4px;
-      margin: 4px;
-      background-color: white;
-      box-shadow: 2px 2px 2px lightgray;
-    }
+      #table-bg,
+      #table-surface {
+        position: absolute;
+        inset: 4px;
+      }
 
-    #table-bg,
-    #table-surface {
-      position: absolute;
-      inset: 4px;
-    }
+      #table-bg {
+        overflow: hidden;
+        border-radius: 2px;
+      }
 
-    #table-bg {
-      overflow: hidden;
-      border-radius: 2px;
-    }
+      #table-bg img {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
 
-    #table-bg img {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
+      #table-surface {
+        inset: auto;
+        width: var(--table-surface-width);
+        height: var(--table-surface-height);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+      }
 
-    #table-surface {
-      inset: auto;
-      width: var(--table-surface-width);
-      height: var(--table-surface-height);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1;
-    }
+      .ball {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        cursor: grab;
+        user-select: none;
+        touch-action: none;
+        z-index: 10;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.5));
+        will-change: left, top;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3);
+        border: var(--table-ball-border) solid #000;
+        box-sizing: content-box;
+      }
 
-    .ball {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      cursor: grab;
-      user-select: none;
-      touch-action: none;
-      z-index: 10;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.5));
-      will-change: left, top;
-      border-radius: 50%;
-      overflow: hidden;
-      box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3);
-      border: var(--table-ball-border) solid #000;
-      box-sizing: content-box;
-    }
+      .ball.dragging,
+      .ball:active {
+        cursor: grabbing;
+        z-index: 100;
+        filter: drop-shadow(6px 6px 0 rgba(0, 0, 0, 0.6));
+      }
 
-    .ball.dragging,
-    .ball:active {
-      cursor: grabbing;
-      z-index: 100;
-      filter: drop-shadow(6px 6px 0 rgba(0, 0, 0, 0.6));
-    }
+      .ball::after {
+        content: "";
+        position: absolute;
+        top: 15%;
+        left: 15%;
+        width: 25%;
+        height: 25%;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        pointer-events: none;
+      }
 
-    .ball::after {
-      content: "";
-      position: absolute;
-      top: 15%;
-      left: 15%;
-      width: 25%;
-      height: 25%;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 50%;
-      pointer-events: none;
-    }
+      #aim-layer {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        pointer-events: none;
+        overflow: visible;
+      }
 
-    #aim-layer {
-      position: absolute;
-      inset: 0;
-      z-index: 5;
-      pointer-events: none;
-      overflow: visible;
-    }
+      #aim-arrow-line {
+        stroke: rgba(255, 255, 255, 0.5);
+        stroke-linecap: round;
+        filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.45));
+      }
 
-    #aim-arrow-line {
-      stroke: rgba(255, 255, 255, 0.5);
-      stroke-linecap: round;
-      filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.45));
-    }
+      #aim-arrow-head {
+        fill: none;
+        stroke: rgba(0, 0, 0, 0.65);
+        stroke-width: 1.25;
+        pointer-events: none;
+      }
 
-    #aim-arrow-head {
-      fill: none;
-      stroke: rgba(0, 0, 0, 0.65);
-      stroke-width: 1.25;
-      pointer-events: none;
-    }
+      #aim-arrow-hit {
+        fill: transparent;
+        stroke: transparent;
+        cursor: grab;
+        pointer-events: auto;
+      }
 
-    #aim-arrow-hit {
-      fill: transparent;
-      stroke: transparent;
-      cursor: grab;
-      pointer-events: auto;
-    }
+      #aim-arrow-hit.dragging {
+        cursor: grabbing;
+      }
 
-    #aim-arrow-hit.dragging {
-      cursor: grabbing;
-    }
+      /* --- spin input styles --- */
 
-    /* --- spin input styles --- */
+      .ballContainerWrapper {
+        flex: 0 0 var(--ball-size-base);
+        height: 70px;
+        position: relative;
+        z-index: 20;
+      }
 
-    .ballContainerWrapper {
-      flex: 0 0 var(--ball-size-base);
-      height: 70px;
-      position: relative;
-      z-index: 20;
-    }
+      .ballContainer {
+        position: relative;
+        width: var(--ball-size-base);
+        height: var(--ball-size-base);
+        border-radius: 0 12px 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 20;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
 
-    .ballContainer {
-      position: relative;
-      width: var(--ball-size-base);
-      height: var(--ball-size-base);
-      border-radius: 0 12px 0 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 20;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-
-    .cueBall {
-      height: 90%;
-      width: 90%;
-      margin: auto;
-      opacity: 1;
-      background: radial-gradient(circle at 35% 35%,
+      .cueBall {
+        height: 90%;
+        width: 90%;
+        margin: auto;
+        opacity: 1;
+        background: radial-gradient(
+          circle at 35% 35%,
           #fff 0%,
           rgb(255 255 255) 10%,
           rgb(220 220 220) 30%,
           #a0a0a0 65%,
           #606060 90%,
-          #404040 100%);
-      border-radius: 50%;
-      position: absolute;
-      top: 5%;
-      left: 5%;
-      z-index: 5;
-      box-shadow:
-        6px 12px 24px rgb(0 0 0 / 70%),
-        inset -4px -6px 12px rgb(0 0 0 / 40%),
-        inset 8px 10px 15px rgb(255 255 255 / 20%);
-      transition: all 0.1s ease;
-    }
+          #404040 100%
+        );
+        border-radius: 50%;
+        position: absolute;
+        top: 5%;
+        left: 5%;
+        z-index: 5;
+        box-shadow:
+          6px 12px 24px rgb(0 0 0 / 70%),
+          inset -4px -6px 12px rgb(0 0 0 / 40%),
+          inset 8px 10px 15px rgb(255 255 255 / 20%);
+        transition: all 0.1s ease;
+      }
 
-    .cueBall::before {
-      content: "";
-      position: absolute;
-      top: 18%;
-      left: 18%;
-      width: 25%;
-      height: 25%;
-      background: radial-gradient(circle,
+      .cueBall::before {
+        content: "";
+        position: absolute;
+        top: 18%;
+        left: 18%;
+        width: 25%;
+        height: 25%;
+        background: radial-gradient(
+          circle,
           rgb(255 255 255 / 90%) 0%,
-          transparent 80%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
+          transparent 80%
+        );
+        border-radius: 50%;
+        pointer-events: none;
+      }
 
+      .objectBall {
+        height: 88%;
+        width: 88%;
+        border: 0.5px solid rgb(0 44 64);
+        border-radius: 50%;
+        z-index: 3;
+        position: absolute;
+        top: 6%;
+        left: 6%;
+        pointer-events: none;
+        transition: all 0.1s ease;
+      }
 
-    .objectBall {
-      height: 88%;
-      width: 88%;
-      border: 0.5px solid rgb(0 44 64);
-      border-radius: 50%;
-      z-index: 3;
-      position: absolute;
-      top: 6%;
-      left: 6%;
-      pointer-events: none;
-      transition: all 0.1s ease;
-    }
+      .cueTip {
+        height: 24px;
+        width: 24px;
+        background-color: #357abd;
+        border-radius: 50%;
+        z-index: 10;
+        position: absolute;
+        pointer-events: auto;
+        cursor: grab;
+        transform: translate(-50%, -50%);
+        box-shadow:
+          0 0 2px rgb(0 0 0 / 60%),
+          inset 0 1px 1px rgb(255 255 255 / 30%);
+        transition: all 0.1s ease;
+      }
 
-    .cueTip {
-      height: 24px;
-      width: 24px;
-      background-color: #357abd;
-      border-radius: 50%;
-      z-index: 10;
-      position: absolute;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      box-shadow:
-        0 0 2px rgb(0 0 0 / 60%),
-        inset 0 1px 1px rgb(255 255 255 / 30%);
-      transition: all 0.1s ease;
-    }
-  </style>
-</head>
+      #aim-params {
+        font-size: 11px;
+        color: rgb(40 40 40);
+        margin: 6px 4px 0;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
 
-<body>
-  <div class="diagram">
-    <p>
-      Physical Constants <button id="replay" type="button">replay</button>
-    </p>
-    <br />
-    <input id="R" type="range" />
-    <label for="R">R</label>
-    <input id="m" type="range" />
-    <label for="m">m</label>
-    <input id="e" type="range" />
-    <label for="e">e</label>
-    <input id="mu" type="range" />
-    <label for="mu">mu</label>
-    <input id="muS" type="range" />
-    <label for="muS">muS</label>
-    <input id="muC" type="range" />
-    <label for="muC">muC</label>
-    <input id="rho" type="range" />
-    <label for="rho">rho</label>
-  </div>
-
-  <div class="replaydiagram">
-    <div class="topview"
-      data-state="?ruletype=threecushion&state=%7B%22init%22:%5B-0.769,-0.192,0.769,0,1.07,0%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.202,%22y%22:0.222,%22z%22:0%7D,%22angle%22:-0.77,%22power%22:3.0,%22pos%22:%7B%22x%22:-0.769,%22y%22:-0.192,%22z%22:0%7D,%22i%22:0%7D%5D%7D">
+  <body>
+    <div class="diagram">
+      <p>
+        Physical Constants <button id="replay" type="button">replay</button>
+      </p>
+      <br />
+      <input id="R" type="range" />
+      <label for="R">R</label>
+      <input id="m" type="range" />
+      <label for="m">m</label>
+      <input id="e" type="range" />
+      <label for="e">e</label>
+      <input id="mu" type="range" />
+      <label for="mu">mu</label>
+      <input id="muS" type="range" />
+      <label for="muS">muS</label>
+      <input id="muC" type="range" />
+      <label for="muC">muC</label>
+      <input id="rho" type="range" />
+      <label for="rho">rho</label>
     </div>
-    <p class="description">Shot simulation</p>
-  </div>
 
-  <div id="table-wrap">
-    <div id="table-bg">
-      <img src="../images/3ctop.jpg" />
+    <div class="replaydiagram">
+      <div
+        class="topview"
+        data-state="?ruletype=threecushion&state=%7B%22init%22:%5B-0.769,-0.192,0.769,0,1.07,0%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.202,%22y%22:0.222,%22z%22:0%7D,%22angle%22:-0.77,%22power%22:3.0,%22pos%22:%7B%22x%22:-0.769,%22y%22:-0.192,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
+      ></div>
+      <p class="description">Shot simulation</p>
     </div>
-    <div id="table-surface">
-      <svg id="aim-layer" aria-hidden="true">
-        <line id="aim-arrow-line" x1="0" y1="0" x2="0" y2="0"></line>
-        <circle id="aim-arrow-head" cx="0" cy="0" r="8"></circle>
-        <circle id="aim-arrow-hit" cx="0" cy="0" r="18"></circle>
-      </svg>
-    </div>
-  </div>
 
-  <div id="ballContainerWrapper" class="ballContainerWrapper">
-    <div id="ballContainer" class="ballContainer">
-      <div id="objectBall" class="objectBall"></div>
-      <div id="cueBall" class="cueBall">
-        <div id="cueTip" class="cueTip"></div>
+    <div id="table-wrap">
+      <div id="table-bg">
+        <img src="../images/3ctop.jpg" />
+      </div>
+      <div id="table-surface">
+        <svg id="aim-layer" aria-hidden="true">
+          <line id="aim-arrow-line" x1="0" y1="0" x2="0" y2="0"></line>
+          <circle id="aim-arrow-head" cx="0" cy="0" r="8"></circle>
+          <circle id="aim-arrow-hit" cx="0" cy="0" r="18"></circle>
+        </svg>
       </div>
     </div>
-  </div>
-  <input id="power" type="range" />
 
-  <script defer src="../three_core.js"></script>
-  <script defer src="../three_module.js"></script>
-  <script defer src="../three_examples.js"></script>
-  <script defer src="../messaging.js"></script>
-  <script defer src="../interact.js"></script>
-  <script>
-    const TABLE_HALF_WIDTH = 1.42
-    const TABLE_HALF_HEIGHT = 0.71
-    const BALL_RADIUS = 0.0615 / 2
-    const DEFAULT_AIM_LENGTH = 16 * BALL_RADIUS
-    const BALL_COLORS = ["#ffffff", "#ffd700", "#ef4444"]
+    <div id="ballContainerWrapper" class="ballContainerWrapper">
+      <div id="ballContainer" class="ballContainer">
+        <div id="objectBall" class="objectBall"></div>
+        <div id="cueBall" class="cueBall">
+          <div id="cueTip" class="cueTip"></div>
+        </div>
+      </div>
+    </div>
+    <input id="power" type="range" />
+    <div id="aim-params"></div>
 
-    let tableBalls = []
-    let draggingBall = null
-    let draggingAim = false
-    let aimAngle = 0
-    let aimLength = DEFAULT_AIM_LENGTH
+    <script defer src="../three_core.js"></script>
+    <script defer src="../three_module.js"></script>
+    <script defer src="../three_examples.js"></script>
+    <script defer src="../messaging.js"></script>
+    <script defer src="../interact.js"></script>
+    <script>
+      const TABLE_HALF_WIDTH = 1.42;
+      const TABLE_HALF_HEIGHT = 0.71;
+      const BALL_RADIUS = 0.0615 / 2;
+      const DEFAULT_AIM_LENGTH = 16 * BALL_RADIUS;
+      const OFF_CENTER_LIMIT = 0.3;
+      const MAX_POWER = 160 * BALL_RADIUS;
+      const BALL_COLORS = ["#ffffff", "#ffd700", "#ef4444"];
 
-    function clamp(value, min, max) {
-      return Math.max(min, Math.min(max, value))
-    }
+      let tableBalls = [];
+      let draggingBall = null;
+      let draggingAim = false;
+      let draggingSpin = false;
+      let aimAngle = 0;
+      let aimLength = DEFAULT_AIM_LENGTH;
+      let aimOffset = { x: 0, y: 0, z: 0 };
+      let aimPower = 0.75 * MAX_POWER;
 
-    function tableToCSS(x, y) {
-      return {
-        left: ((x + TABLE_HALF_WIDTH) / (TABLE_HALF_WIDTH * 2)) * 100,
-        top: ((y + TABLE_HALF_HEIGHT) / (TABLE_HALF_HEIGHT * 2)) * 100,
-      }
-    }
-
-    function tableToSurfacePx(surface, x, y) {
-      const rect = surface.getBoundingClientRect()
-      return {
-        x: ((x + TABLE_HALF_WIDTH) / (TABLE_HALF_WIDTH * 2)) * rect.width,
-        y: ((y + TABLE_HALF_HEIGHT) / (TABLE_HALF_HEIGHT * 2)) * rect.height,
-      }
-    }
-
-    function clientToTable(surface, clientX, clientY) {
-      const rect = surface.getBoundingClientRect()
-      return {
-        x:
-          ((clientX - rect.left) / rect.width) * (TABLE_HALF_WIDTH * 2) -
-          TABLE_HALF_WIDTH,
-        y:
-          ((clientY - rect.top) / rect.height) * (TABLE_HALF_HEIGHT * 2) -
-          TABLE_HALF_HEIGHT,
-      }
-    }
-
-    function ballPx(surface) {
-      return (
-        (surface.getBoundingClientRect().width * (BALL_RADIUS * 2)) /
-        (TABLE_HALF_WIDTH * 2)
-      )
-    }
-
-    function normalizeAngle(angle) {
-      const tau = Math.PI * 2
-      return ((angle % tau) + tau) % tau
-    }
-
-    function distanceToEdge(x, y, angle) {
-      const dx = Math.cos(angle)
-      const dy = Math.sin(angle)
-      const distances = []
-
-      if (dx > 0) {
-        distances.push((TABLE_HALF_WIDTH - x) / dx)
-      } else if (dx < 0) {
-        distances.push((-TABLE_HALF_WIDTH - x) / dx)
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
       }
 
-      if (dy > 0) {
-        distances.push((TABLE_HALF_HEIGHT - y) / dy)
-      } else if (dy < 0) {
-        distances.push((-TABLE_HALF_HEIGHT - y) / dy)
+      function tableToCSS(x, y) {
+        return {
+          left: ((x + TABLE_HALF_WIDTH) / (TABLE_HALF_WIDTH * 2)) * 100,
+          top: ((y + TABLE_HALF_HEIGHT) / (TABLE_HALF_HEIGHT * 2)) * 100,
+        };
       }
 
-      const positiveDistances = distances.filter((distance) => distance >= 0)
-      if (!positiveDistances.length) return 0
-      return Math.min(...positiveDistances)
-    }
-
-    function collides(ball, x, y) {
-      return tableBalls.some((other) => {
-        if (other === ball) return false
-        const dx = x - other.x
-        const dy = y - other.y
-        return dx * dx + dy * dy < (BALL_RADIUS * 2) ** 2
-      })
-    }
-
-    function positionBall(surface, ball) {
-      const size = ballPx(surface)
-      const { left, top } = tableToCSS(ball.x, ball.y)
-      ball.el.style.width = `${size}px`
-      ball.el.style.height = `${size}px`
-      ball.el.style.aspectRatio = "1 / 1"
-      ball.el.style.left = `${left}%`
-      ball.el.style.top = `${top}%`
-    }
-
-    function positionAimArrow(surface) {
-      const cueBall = tableBalls[0]
-      const aimLayer = document.getElementById("aim-layer")
-      const aimLine = document.getElementById("aim-arrow-line")
-      const aimHead = document.getElementById("aim-arrow-head")
-      const aimHit = document.getElementById("aim-arrow-hit")
-
-      if (!cueBall || !aimLayer || !aimLine || !aimHead || !aimHit) return
-
-      const rect = surface.getBoundingClientRect()
-      aimLayer.setAttribute("viewBox", `0 0 ${rect.width} ${rect.height}`)
-      aimLayer.setAttribute("width", rect.width)
-      aimLayer.setAttribute("height", rect.height)
-
-      const maxArrowLength = Math.max(
-        0,
-        distanceToEdge(cueBall.x, cueBall.y, aimAngle) - BALL_RADIUS
-      )
-      const arrowLength = Math.min(aimLength, maxArrowLength)
-      const headRadius = ballPx(surface) / 2
-      const lineWidth = ballPx(surface)
-      const start = tableToSurfacePx(surface, cueBall.x, cueBall.y)
-      const end = tableToSurfacePx(
-        surface,
-        cueBall.x + Math.cos(aimAngle) * arrowLength,
-        cueBall.y + Math.sin(aimAngle) * arrowLength
-      )
-
-      aimLine.setAttribute("stroke-width", lineWidth)
-      aimLine.setAttribute("x1", start.x)
-      aimLine.setAttribute("y1", start.y)
-      aimLine.setAttribute("x2", end.x)
-      aimLine.setAttribute("y2", end.y)
-      aimHead.setAttribute("cx", end.x)
-      aimHead.setAttribute("cy", end.y)
-      aimHead.setAttribute("r", headRadius)
-      aimHit.setAttribute("cx", end.x)
-      aimHit.setAttribute("cy", end.y)
-      aimHit.setAttribute("r", Math.max(headRadius * 2.25, 18))
-    }
-
-    function syncDiagramState(topview) {
-      if (!topview || !topview.dataset.state) return
-      const params = new URLSearchParams(topview.dataset.state)
-      const state = JSON.parse(params.get("state"))
-      state.init = tableBalls.flatMap((ball) => [
-        +ball.x.toFixed(3),
-        +ball.y.toFixed(3),
-      ])
-      if (state.shots?.[0]?.pos) {
-        state.shots[0].pos.x = state.init[0]
-        state.shots[0].pos.y = state.init[1]
+      function tableToSurfacePx(surface, x, y) {
+        const rect = surface.getBoundingClientRect();
+        return {
+          x: ((x + TABLE_HALF_WIDTH) / (TABLE_HALF_WIDTH * 2)) * rect.width,
+          y: ((y + TABLE_HALF_HEIGHT) / (TABLE_HALF_HEIGHT * 2)) * rect.height,
+        };
       }
-      if (state.shots?.[0]) {
-        state.shots[0].angle = +aimAngle.toFixed(4)
+
+      function clientToTable(surface, clientX, clientY) {
+        const rect = surface.getBoundingClientRect();
+        return {
+          x:
+            ((clientX - rect.left) / rect.width) * (TABLE_HALF_WIDTH * 2) -
+            TABLE_HALF_WIDTH,
+          y:
+            ((clientY - rect.top) / rect.height) * (TABLE_HALF_HEIGHT * 2) -
+            TABLE_HALF_HEIGHT,
+        };
       }
-      params.set("state", JSON.stringify(state))
-      topview.dataset.state = `?${params.toString()}`
-    }
 
-    function buildBall(surface, ball) {
-      const el = document.createElement("div")
-      el.className = "ball"
-      el.style.backgroundColor = ball.color
-      surface.appendChild(el)
-      ball.el = el
-      positionBall(surface, ball)
-    }
+      function ballPx(surface) {
+        return (
+          (surface.getBoundingClientRect().width * (BALL_RADIUS * 2)) /
+          (TABLE_HALF_WIDTH * 2)
+        );
+      }
 
-    function initDraggableTable() {
-      const surface = document.getElementById("table-surface")
-      const topview = document.querySelector(".topview")
-      if (!surface || !topview?.dataset.state) return
+      function normalizeAngle(angle) {
+        const tau = Math.PI * 2;
+        return ((angle % tau) + tau) % tau;
+      }
 
-      const params = new URLSearchParams(topview.dataset.state)
-      const state = JSON.parse(params.get("state"))
-      const init = state.init ?? []
-      aimAngle = normalizeAngle(state.shots?.[0]?.angle ?? 0)
-      aimLength = DEFAULT_AIM_LENGTH
+      function distanceToEdge(x, y, angle) {
+        const dx = Math.cos(angle);
+        const dy = Math.sin(angle);
+        const distances = [];
 
-      tableBalls = BALL_COLORS.map((color, index) => ({
-        color,
-        x: init[index * 2] ?? 0,
-        y: init[index * 2 + 1] ?? 0,
-        el: null,
-      }))
+        if (dx > 0) {
+          distances.push((TABLE_HALF_WIDTH - x) / dx);
+        } else if (dx < 0) {
+          distances.push((-TABLE_HALF_WIDTH - x) / dx);
+        }
 
-      tableBalls.forEach((ball) => buildBall(surface, ball))
-      positionAimArrow(surface)
-      syncDiagramState(topview)
+        if (dy > 0) {
+          distances.push((TABLE_HALF_HEIGHT - y) / dy);
+        } else if (dy < 0) {
+          distances.push((-TABLE_HALF_HEIGHT - y) / dy);
+        }
 
-      function pointerDown(event) {
-        if (draggingAim) return
-        const pointer = event.touches ? event.touches[0] : event
-        const pos = clientToTable(surface, pointer.clientX, pointer.clientY)
+        const positiveDistances = distances.filter((distance) => distance >= 0);
+        if (!positiveDistances.length) return 0;
+        return Math.min(...positiveDistances);
+      }
 
-        for (let index = tableBalls.length - 1; index >= 0; index -= 1) {
-          const ball = tableBalls[index]
-          const dx = pos.x - ball.x
-          const dy = pos.y - ball.y
-          if (dx * dx + dy * dy < (BALL_RADIUS * 2) ** 2) {
-            draggingBall = ball
-            ball.el.classList.add("dragging")
-            event.preventDefault()
-            break
+      function collides(ball, x, y) {
+        return tableBalls.some((other) => {
+          if (other === ball) return false;
+          const dx = x - other.x;
+          const dy = y - other.y;
+          return dx * dx + dy * dy < (BALL_RADIUS * 2) ** 2;
+        });
+      }
+
+      function round3(value) {
+        return +value.toFixed(3);
+      }
+
+      function setPowerSliderValue() {
+        const power = document.getElementById("power");
+        if (!power) return;
+        power.min = "0";
+        power.max = "1";
+        power.step = "0.01";
+        power.value = clamp(aimPower / MAX_POWER, 0, 1).toFixed(2);
+      }
+
+      function updateAimParamsText() {
+        const elt = document.getElementById("aim-params");
+        if (!elt) return;
+        elt.textContent =
+          `spin x=${aimOffset.x.toFixed(3)} y=${aimOffset.y.toFixed(3)}  ` +
+          `power=${aimPower.toFixed(3)}  angle=${aimAngle.toFixed(3)}`;
+      }
+
+      function normalizeSpinOffset(offsetX, offsetY) {
+        const length = Math.hypot(offsetX, offsetY);
+        if (length > OFF_CENTER_LIMIT) {
+          const scale = OFF_CENTER_LIMIT / length;
+          return { x: offsetX * scale, y: offsetY * scale, z: 0 };
+        }
+        return { x: offsetX, y: offsetY, z: 0 };
+      }
+
+      function updateSpinVisualState() {
+        const cueTip = document.getElementById("cueTip");
+        if (!cueTip) return;
+        cueTip.style.left = `${(-aimOffset.x + 0.5) * 100}%`;
+        cueTip.style.top = `${(-aimOffset.y + 0.5) * 100}%`;
+        cueTip.style.transform = "translate(-50%, -50%)";
+      }
+
+      function setSpinFromPointer(pointerEvent) {
+        const cueBall = document.getElementById("cueBall");
+        if (!cueBall) return;
+        const rect = cueBall.getBoundingClientRect();
+        const spinX =
+          -(pointerEvent.clientX - rect.left - rect.width / 2) / rect.width;
+        const spinY =
+          -(pointerEvent.clientY - rect.top - rect.height / 2) / rect.height;
+        aimOffset = normalizeSpinOffset(spinX, spinY);
+        updateSpinVisualState();
+        updateAimParamsText();
+      }
+
+      function positionBall(surface, ball) {
+        const size = ballPx(surface);
+        const { left, top } = tableToCSS(ball.x, ball.y);
+        ball.el.style.width = `${size}px`;
+        ball.el.style.height = `${size}px`;
+        ball.el.style.aspectRatio = "1 / 1";
+        ball.el.style.left = `${left}%`;
+        ball.el.style.top = `${top}%`;
+      }
+
+      function positionAimArrow(surface) {
+        const cueBall = tableBalls[0];
+        const aimLayer = document.getElementById("aim-layer");
+        const aimLine = document.getElementById("aim-arrow-line");
+        const aimHead = document.getElementById("aim-arrow-head");
+        const aimHit = document.getElementById("aim-arrow-hit");
+
+        if (!cueBall || !aimLayer || !aimLine || !aimHead || !aimHit) return;
+
+        const rect = surface.getBoundingClientRect();
+        aimLayer.setAttribute("viewBox", `0 0 ${rect.width} ${rect.height}`);
+        aimLayer.setAttribute("width", rect.width);
+        aimLayer.setAttribute("height", rect.height);
+
+        const maxArrowLength = Math.max(
+          0,
+          distanceToEdge(cueBall.x, cueBall.y, aimAngle) - BALL_RADIUS,
+        );
+        const arrowLength = Math.min(aimLength, maxArrowLength);
+        const headRadius = ballPx(surface) / 2;
+        const lineWidth = ballPx(surface);
+        const start = tableToSurfacePx(surface, cueBall.x, cueBall.y);
+        const end = tableToSurfacePx(
+          surface,
+          cueBall.x + Math.cos(aimAngle) * arrowLength,
+          cueBall.y + Math.sin(aimAngle) * arrowLength,
+        );
+
+        aimLine.setAttribute("stroke-width", lineWidth);
+        aimLine.setAttribute("x1", start.x);
+        aimLine.setAttribute("y1", start.y);
+        aimLine.setAttribute("x2", end.x);
+        aimLine.setAttribute("y2", end.y);
+        aimHead.setAttribute("cx", end.x);
+        aimHead.setAttribute("cy", end.y);
+        aimHead.setAttribute("r", headRadius);
+        aimHit.setAttribute("cx", end.x);
+        aimHit.setAttribute("cy", end.y);
+        aimHit.setAttribute("r", Math.max(headRadius * 2.25, 18));
+      }
+
+      function syncDiagramState(topview) {
+        if (!topview || !topview.dataset.state) return;
+        const params = new URLSearchParams(topview.dataset.state);
+        const state = JSON.parse(params.get("state"));
+        state.init = tableBalls.flatMap((ball) => [
+          round3(ball.x),
+          round3(ball.y),
+        ]);
+        if (state.shots?.[0]?.pos) {
+          state.shots[0].pos.x = state.init[0];
+          state.shots[0].pos.y = state.init[1];
+        }
+        if (state.shots?.[0]) {
+          state.shots[0].angle = round3(aimAngle);
+          state.shots[0].power = round3(aimPower);
+          state.shots[0].offset = {
+            x: round3(aimOffset.x),
+            y: round3(aimOffset.y),
+            z: 0,
+          };
+        }
+        params.set("state", JSON.stringify(state));
+        topview.dataset.state = `?${params.toString()}`;
+        updateAimParamsText();
+      }
+
+      function buildBall(surface, ball) {
+        const el = document.createElement("div");
+        el.className = "ball";
+        el.style.backgroundColor = ball.color;
+        surface.appendChild(el);
+        ball.el = el;
+        positionBall(surface, ball);
+      }
+
+      function initDraggableTable() {
+        const surface = document.getElementById("table-surface");
+        const topview = document.querySelector(".topview");
+        if (!surface || !topview?.dataset.state) return;
+
+        const params = new URLSearchParams(topview.dataset.state);
+        const state = JSON.parse(params.get("state"));
+        const init = state.init ?? [];
+        const shot = state.shots?.[0] ?? {};
+        aimAngle = normalizeAngle(shot.angle ?? 0);
+        aimLength = DEFAULT_AIM_LENGTH;
+        aimOffset = normalizeSpinOffset(
+          shot.offset?.x ?? 0,
+          shot.offset?.y ?? 0,
+        );
+        aimPower = clamp(shot.power ?? 0.75 * MAX_POWER, 0, MAX_POWER);
+
+        tableBalls = BALL_COLORS.map((color, index) => ({
+          color,
+          x: init[index * 2] ?? 0,
+          y: init[index * 2 + 1] ?? 0,
+          el: null,
+        }));
+
+        tableBalls.forEach((ball) => buildBall(surface, ball));
+        positionAimArrow(surface);
+        updateSpinVisualState();
+        setPowerSliderValue();
+        syncDiagramState(topview);
+
+        function pointerDown(event) {
+          if (draggingAim || draggingSpin) return;
+          const pointer = event.touches ? event.touches[0] : event;
+          const pos = clientToTable(surface, pointer.clientX, pointer.clientY);
+
+          for (let index = tableBalls.length - 1; index >= 0; index -= 1) {
+            const ball = tableBalls[index];
+            const dx = pos.x - ball.x;
+            const dy = pos.y - ball.y;
+            if (dx * dx + dy * dy < (BALL_RADIUS * 2) ** 2) {
+              draggingBall = ball;
+              ball.el.classList.add("dragging");
+              event.preventDefault();
+              break;
+            }
           }
         }
-      }
 
-      function pointerMove(event) {
-        if (!draggingBall) return
-        event.preventDefault()
+        function pointerMove(event) {
+          if (!draggingBall) return;
+          event.preventDefault();
 
-        const pointer = event.touches ? event.touches[0] : event
-        const pos = clientToTable(surface, pointer.clientX, pointer.clientY)
-        const nextX = clamp(
-          pos.x,
-          -(TABLE_HALF_WIDTH - BALL_RADIUS),
-          TABLE_HALF_WIDTH - BALL_RADIUS
-        )
-        const nextY = clamp(
-          pos.y,
-          -(TABLE_HALF_HEIGHT - BALL_RADIUS),
-          TABLE_HALF_HEIGHT - BALL_RADIUS
-        )
+          const pointer = event.touches ? event.touches[0] : event;
+          const pos = clientToTable(surface, pointer.clientX, pointer.clientY);
+          const nextX = clamp(
+            pos.x,
+            -(TABLE_HALF_WIDTH - BALL_RADIUS),
+            TABLE_HALF_WIDTH - BALL_RADIUS,
+          );
+          const nextY = clamp(
+            pos.y,
+            -(TABLE_HALF_HEIGHT - BALL_RADIUS),
+            TABLE_HALF_HEIGHT - BALL_RADIUS,
+          );
 
-        if (!collides(draggingBall, nextX, nextY)) {
-          draggingBall.x = nextX
-          draggingBall.y = nextY
-        } else {
-          if (!collides(draggingBall, nextX, draggingBall.y))
-            draggingBall.x = nextX
-          if (!collides(draggingBall, draggingBall.x, nextY))
-            draggingBall.y = nextY
+          if (!collides(draggingBall, nextX, nextY)) {
+            draggingBall.x = nextX;
+            draggingBall.y = nextY;
+          } else {
+            if (!collides(draggingBall, nextX, draggingBall.y))
+              draggingBall.x = nextX;
+            if (!collides(draggingBall, draggingBall.x, nextY))
+              draggingBall.y = nextY;
+          }
+
+          positionBall(surface, draggingBall);
+          positionAimArrow(surface);
+          syncDiagramState(topview);
         }
 
-        positionBall(surface, draggingBall)
-        positionAimArrow(surface)
-        syncDiagramState(topview)
+        function pointerUp() {
+          if (!draggingBall) return;
+          draggingBall.el.classList.remove("dragging");
+          draggingBall = null;
+        }
+
+        function aimPointerDown(event) {
+          draggingAim = true;
+          event.currentTarget.classList.add("dragging");
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        function aimPointerMove(event) {
+          if (!draggingAim) return;
+          event.preventDefault();
+
+          const cueBall = tableBalls[0];
+          if (!cueBall) return;
+
+          const pointer = event.touches ? event.touches[0] : event;
+          const pos = clientToTable(surface, pointer.clientX, pointer.clientY);
+          const dx = pos.x - cueBall.x;
+          const dy = pos.y - cueBall.y;
+          aimAngle = normalizeAngle(Math.atan2(dy, dx));
+          aimLength = Math.sqrt(dx * dx + dy * dy);
+          positionAimArrow(surface);
+          syncDiagramState(topview);
+        }
+
+        function aimPointerUp() {
+          if (!draggingAim) return;
+          draggingAim = false;
+          document
+            .getElementById("aim-arrow-hit")
+            ?.classList.remove("dragging");
+        }
+
+        function spinPointerDown(event) {
+          draggingSpin = true;
+          event.currentTarget?.setPointerCapture?.(event.pointerId);
+          setSpinFromPointer(event);
+          syncDiagramState(topview);
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        function spinPointerMove(event) {
+          if (!draggingSpin) return;
+          setSpinFromPointer(event);
+          syncDiagramState(topview);
+          event.preventDefault();
+        }
+
+        function spinPointerUp() {
+          draggingSpin = false;
+        }
+
+        surface.addEventListener("mousedown", pointerDown);
+        surface.addEventListener("touchstart", pointerDown, { passive: false });
+        document
+          .getElementById("cueBall")
+          ?.addEventListener("pointerdown", spinPointerDown);
+        document
+          .getElementById("cueTip")
+          ?.addEventListener("pointerdown", spinPointerDown);
+        document
+          .getElementById("aim-arrow-hit")
+          ?.addEventListener("mousedown", aimPointerDown);
+        document
+          .getElementById("aim-arrow-hit")
+          ?.addEventListener("touchstart", aimPointerDown, { passive: false });
+        window.addEventListener("mousemove", pointerMove);
+        window.addEventListener("mousemove", aimPointerMove);
+        window.addEventListener("touchmove", pointerMove, { passive: false });
+        window.addEventListener("touchmove", aimPointerMove, {
+          passive: false,
+        });
+        window.addEventListener("pointermove", spinPointerMove);
+        window.addEventListener("mouseup", pointerUp);
+        window.addEventListener("mouseup", aimPointerUp);
+        window.addEventListener("pointerup", spinPointerUp);
+        window.addEventListener("touchend", pointerUp);
+        window.addEventListener("touchend", aimPointerUp);
+        window.addEventListener("resize", () => {
+          tableBalls.forEach((ball) => positionBall(surface, ball));
+          positionAimArrow(surface);
+          updateSpinVisualState();
+        });
+        document.getElementById("power")?.addEventListener("input", (event) => {
+          aimPower = Number(event.target.value) * MAX_POWER;
+          syncDiagramState(topview);
+        });
       }
 
-      function pointerUp() {
-        if (!draggingBall) return
-        draggingBall.el.classList.remove("dragging")
-        draggingBall = null
-      }
-
-      function aimPointerDown(event) {
-        draggingAim = true
-        event.currentTarget.classList.add("dragging")
-        event.preventDefault()
-        event.stopPropagation()
-      }
-
-      function aimPointerMove(event) {
-        if (!draggingAim) return
-        event.preventDefault()
-
-        const cueBall = tableBalls[0]
-        if (!cueBall) return
-
-        const pointer = event.touches ? event.touches[0] : event
-        const pos = clientToTable(surface, pointer.clientX, pointer.clientY)
-        const dx = pos.x - cueBall.x
-        const dy = pos.y - cueBall.y
-        aimAngle = normalizeAngle(Math.atan2(dy, dx))
-        aimLength = Math.sqrt(dx * dx + dy * dy)
-        positionAimArrow(surface)
-        syncDiagramState(topview)
-      }
-
-      function aimPointerUp() {
-        if (!draggingAim) return
-        draggingAim = false
-        document.getElementById("aim-arrow-hit")?.classList.remove("dragging")
-      }
-
-      surface.addEventListener("mousedown", pointerDown)
-      surface.addEventListener("touchstart", pointerDown, { passive: false })
-      document
-        .getElementById("aim-arrow-hit")
-        ?.addEventListener("mousedown", aimPointerDown)
-      document
-        .getElementById("aim-arrow-hit")
-        ?.addEventListener("touchstart", aimPointerDown, { passive: false })
-      window.addEventListener("mousemove", pointerMove)
-      window.addEventListener("mousemove", aimPointerMove)
-      window.addEventListener("touchmove", pointerMove, { passive: false })
-      window.addEventListener("touchmove", aimPointerMove, {
-        passive: false,
-      })
-      window.addEventListener("mouseup", pointerUp)
-      window.addEventListener("mouseup", aimPointerUp)
-      window.addEventListener("touchend", pointerUp)
-      window.addEventListener("touchend", aimPointerUp)
-      window.addEventListener("resize", () => {
-        tableBalls.forEach((ball) => positionBall(surface, ball))
-        positionAimArrow(surface)
-      })
-    }
-
-    document.addEventListener("DOMContentLoaded", initDraggableTable)
-  </script>
-  <script src="../diagram.js"></script>
-</body>
-
+      document.addEventListener("DOMContentLoaded", initDraggableTable);
+    </script>
+    <script src="../diagram.js"></script>
+  </body>
 </html>
