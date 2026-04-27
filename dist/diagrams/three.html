@@ -661,6 +661,9 @@
         const nextStateUrl = `?${params.toString()}`
         topview.dataset.state = nextStateUrl
         topview.setAttribute("data-state", nextStateUrl)
+        const pageParams = new URLSearchParams(window.location.search)
+        pageParams.set("s", JSON.stringify(state))
+        window.history.replaceState(null, "", `?${pageParams.toString()}`)
         updateAimParamsText()
       }
 
@@ -677,6 +680,15 @@
         const surface = document.getElementById("table-surface")
         const topview = document.querySelector(".topview")
         if (!surface || !topview?.dataset.state) return
+
+        const savedState = new URLSearchParams(window.location.search).get("s")
+        if (savedState) {
+          const params = new URLSearchParams(topview.dataset.state)
+          params.set("state", savedState)
+          const overrideUrl = `?${params.toString()}`
+          topview.dataset.state = overrideUrl
+          topview.setAttribute("data-state", overrideUrl)
+        }
 
         const params = new URLSearchParams(topview.dataset.state)
         const state = JSON.parse(params.get("state"))
