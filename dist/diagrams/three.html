@@ -186,9 +186,8 @@
       }
 
       #aim-arrow-line {
-        stroke: rgba(255, 255, 255, 0.5);
+        stroke: rgba(255, 255, 255, 0.1);
         stroke-linecap: round;
-        filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.45));
       }
 
       #aim-arrow-head {
@@ -357,6 +356,7 @@
 
   <body>
     <div id="page">
+      <h1>Three cushion shot experiments</h1>
       <div class="replaydiagram">
         <div
           class="topview"
@@ -447,7 +447,7 @@
       const UMB_TABLE_Y = 46.18
       const TABLE_HALF_WIDTH = (BALL_RADIUS * UMB_TABLE_X) / 2
       const TABLE_HALF_HEIGHT = (BALL_RADIUS * UMB_TABLE_Y) / 2
-      const DEFAULT_AIM_LENGTH = 16 * BALL_RADIUS
+      const DEFAULT_AIM_LENGTH = 86 * BALL_RADIUS
       const OFF_CENTER_LIMIT = 0.3
       const MAX_POWER = 160 * BALL_RADIUS
       const BALL_COLORS = ["#ffffff", "#ffd700", "#ef4444"]
