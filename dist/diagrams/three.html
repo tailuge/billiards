@@ -667,9 +667,6 @@
         const nextStateUrl = `?${params.toString()}`
         topview.dataset.state = nextStateUrl
         topview.setAttribute("data-state", nextStateUrl)
-        const pageParams = new URLSearchParams(window.location.search)
-        pageParams.set("s", JSON.stringify(state))
-        window.history.replaceState(null, "", `?${pageParams.toString()}`)
         updateAimParamsText()
       }
 
@@ -863,16 +860,32 @@
           syncDiagramState(topview)
         })
         document.getElementById("share")?.addEventListener("click", () => {
-          const url = window.location.href
+          const topview = document.querySelector(".topview")
+          const stateParams = new URLSearchParams(topview.dataset.state)
+          const state = stateParams.get("state")
+          
+          const url = new URL(window.location.href)
+          url.search = ""
+          if (state) url.searchParams.set("s", state)
+          
+          const CONSTANTS = ["m", "e", "mu", "rho", "μs", "μw", "ee"]
+          CONSTANTS.forEach((key) => {
+            const input = document.getElementById(key)
+            if (input) {
+              url.searchParams.set(key, input.value)
+            }
+          })
+
+          const shareUrl = url.toString()
           if (navigator.share) {
             navigator
               .share({
                 title: document.title,
-                url: url,
+                url: shareUrl,
               })
               .catch(console.error)
           } else {
-            navigator.clipboard.writeText(url).then(() => {
+            navigator.clipboard.writeText(shareUrl).then(() => {
               const btn = document.getElementById("share")
               const originalText = btn.innerHTML
               btn.innerText = "copied!"
@@ -882,6 +895,12 @@
             })
           }
         })
+
+        setTimeout(() => {
+          if (window.location.search) {
+            window.history.replaceState(null, "", window.location.pathname)
+          }
+        }, 1)
       }
 
       function applyPreset(positions, angle, power, offset) {

@@ -30,16 +30,23 @@ export class Sliders {
     this.notify = notify ?? (() => {})
     this.style = id("constants")?.style ?? {}
 
-    this.initialiseSlider("R", R, setR)
-    this.initialiseSlider("m", m, setm)
-    this.initialiseSlider("e", e, sete)
-    this.initialiseSlider("mu", mu, setmu)
-    this.initialiseSlider("muS", muS, setmuS)
-    this.initialiseSlider("muC", muC, setmuC)
-    this.initialiseSlider("rho", rho, setrho)
-    this.initialiseSlider("μs", μs, setμs)
-    this.initialiseSlider("μw", μw, setμw)
-    this.initialiseSlider("ee", ee, setee)
+    const urlParams = new URLSearchParams(window.location.search)
+
+    const get = (key, fallback) => {
+      const val = Number.parseFloat(urlParams.get(key)!)
+      return Number.isNaN(val) ? fallback : val
+    }
+
+    this.initialiseSlider("R", get("R", R), setR)
+    this.initialiseSlider("m", get("m", m), setm)
+    this.initialiseSlider("e", get("e", e), sete)
+    this.initialiseSlider("mu", get("mu", mu), setmu)
+    this.initialiseSlider("muS", get("muS", muS), setmuS)
+    this.initialiseSlider("muC", get("muC", muC), setmuC)
+    this.initialiseSlider("rho", get("rho", rho), setrho)
+    this.initialiseSlider("μs", get("μs", μs), setμs)
+    this.initialiseSlider("μw", get("μw", μw), setμw)
+    this.initialiseSlider("ee", get("ee", ee), setee)
   }
 
   toggleVisibility() {
