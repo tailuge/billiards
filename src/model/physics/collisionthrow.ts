@@ -24,7 +24,7 @@ export class CollisionThrow {
     const ab = contact.b.sub(contact.a).normalize()
     const abTangent = new Vector3(-ab.y, ab.x, 0)
 
-    const e = 0.99
+    const e = 0.96
     const vPoint = a.vel
       .clone()
       .sub(b.vel)
