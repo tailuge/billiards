@@ -1,16 +1,11 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>
-      Three cushion physics
-    </title>
+    <title>Three cushion physics</title>
     <link rel="icon" type="image/png" href="../favicon.png" />
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta
-      name="description"
-      content="billiards physics."
-    />
+    <meta name="description" content="billiards physics." />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
@@ -48,11 +43,9 @@
 
       .replaydiagram {
         width: 100%;
-        border: 1px solid #333;
-        border-radius: 4px;
         padding: 0px;
         margin: 0px;
-        background-color: #111;
+        background-color: #000;
         aspect-ratio: 2 / 1;
       }
 
@@ -111,8 +104,6 @@
         position: relative;
         width: 92%;
         aspect-ratio: 616 / 343;
-        border: 1px solid #333;
-        border-radius: 4px;
         padding: 0px;
         margin: 0px auto;
         background-color: black;
@@ -356,7 +347,6 @@
         font-family: monospace;
         white-space: pre-wrap;
       }
-
     </style>
   </head>
 
@@ -368,19 +358,6 @@
           class="topview"
           data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-1.305026,-0.634005,-1.434758,0.601475,-1.310215,0.685593%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.201901,%22y%22:0.221892,%22z%22:0%7D,%22angle%22:0.63687,%22power%22:2.62,%22pos%22:%7B%22x%22:-1.305026,%22y%22:-0.634005,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
         ></div>
-      </div>
-
-      <div id="table-wrap">
-        <div id="table-bg">
-          <img src="../images/3ctop.jpg" />
-        </div>
-        <div id="table-surface">
-          <svg id="aim-layer" aria-hidden="true">
-            <line id="aim-arrow-line" x1="0" y1="0" x2="0" y2="0"></line>
-            <circle id="aim-arrow-head" cx="0" cy="0" r="8"></circle>
-            <circle id="aim-arrow-hit" cx="0" cy="0" r="18"></circle>
-          </svg>
-        </div>
       </div>
 
       <div class="controls-row">
@@ -433,11 +410,78 @@
               </svg>
               share
             </button>
-            <button type="button" onclick="location.href='https://scoreboard-tailuge.vercel.app/game'">lobby</button>
-            <button type="button" onclick="applyPreset([[-1.305026, -0.634005], [-1.434758, 0.601475], [-1.310215, 0.685593]], 0.63687, 2.62, {x:-0.201901,y:0.221892,z:0})">preset 1</button>
-            <button type="button" onclick="applyPreset([[-0.756, -0.189], [-0.756, 0], [0.756, 0]], 0.147099, 3.7204, {x:-0.252932,y:0.161324,z:0})">preset 2</button>
-            <button type="button" onclick="applyPreset([[-0.769, -0.192], [0.769, 0], [1.07, 0]], 5.513185, 3, {x:-0.201901,y:0.221892,z:0})">preset 3</button>
+            <button
+              type="button"
+              onclick="
+                location.href = 'https://scoreboard-tailuge.vercel.app/game'
+              "
+            >
+              lobby
+            </button>
+            <button
+              type="button"
+              onclick="
+                applyPreset(
+                  [
+                    [-1.305026, -0.634005],
+                    [-1.434758, 0.601475],
+                    [-1.310215, 0.685593],
+                  ],
+                  0.63687,
+                  2.62,
+                  { x: -0.201901, y: 0.221892, z: 0 }
+                )
+              "
+            >
+              preset 1
+            </button>
+            <button
+              type="button"
+              onclick="
+                applyPreset(
+                  [
+                    [-0.756, -0.189],
+                    [-0.756, 0],
+                    [0.756, 0],
+                  ],
+                  0.147099,
+                  3.7204,
+                  { x: -0.252932, y: 0.161324, z: 0 }
+                )
+              "
+            >
+              preset 2
+            </button>
+            <button
+              type="button"
+              onclick="
+                applyPreset(
+                  [
+                    [-0.769, -0.192],
+                    [0.769, 0],
+                    [1.07, 0],
+                  ],
+                  5.513185,
+                  3,
+                  { x: -0.201901, y: 0.221892, z: 0 }
+                )
+              "
+            >
+              preset 3
+            </button>
           </div>
+        </div>
+      </div>
+      <div id="table-wrap">
+        <div id="table-bg">
+          <img src="../images/3ctop.jpg" />
+        </div>
+        <div id="table-surface">
+          <svg id="aim-layer" aria-hidden="true">
+            <line id="aim-arrow-line" x1="0" y1="0" x2="0" y2="0"></line>
+            <circle id="aim-arrow-head" cx="0" cy="0" r="8"></circle>
+            <circle id="aim-arrow-hit" cx="0" cy="0" r="18"></circle>
+          </svg>
         </div>
       </div>
     </div>
@@ -863,11 +907,11 @@
           const topview = document.querySelector(".topview")
           const stateParams = new URLSearchParams(topview.dataset.state)
           const state = stateParams.get("state")
-          
+
           const url = new URL(window.location.href)
           url.search = ""
           if (state) url.searchParams.set("s", state)
-          
+
           const CONSTANTS = ["m", "e", "mu", "rho", "μs", "μw", "ee"]
           CONSTANTS.forEach((key) => {
             const input = document.getElementById(key)
