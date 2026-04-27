@@ -43,14 +43,14 @@ export class TableMesh {
   }
 
   private readonly cloth = new MeshPhongMaterial({
-    color: 0x4455b9,
+    color: 0x243599,
     wireframe: false,
     flatShading: true,
     transparent: false,
   })
 
   private readonly cushion = new MeshPhongMaterial({
-    color: 0x5465b9,
+    color: 0x4455a9,
     wireframe: false,
     flatShading: true,
     transparent: false,

@@ -34,7 +34,7 @@
 
       #page {
         width: 100%;
-        max-width: 800px;
+        max-width: 760px;
         margin: 0 auto;
         display: flex;
         flex-direction: column;
@@ -410,10 +410,19 @@
             <button
               type="button"
               onclick="
-                location.href = 'https://scoreboard-tailuge.vercel.app/game'
+                applyPreset(
+                  [
+                    [-1.127866, 0.347029],
+                    [-1.347367, 0.611996],
+                    [-1.412751, 0.687701],
+                  ],
+                  0.212025,
+                  2.096,
+                  { x: 0.246853, y: 0.170481, z: 0 }
+                )
               "
             >
-              lobby
+              preset 0
             </button>
             <button
               type="button"
@@ -947,7 +956,7 @@
         }, 1)
       }
 
-      function applyPreset(positions, angle, power, offset) {
+      function applyPreset(positions, angle, power, offset, constants) {
         const surface = document.getElementById("table-surface")
         const topview = document.querySelector(".topview")
         if (!surface || !topview) return
@@ -958,6 +967,18 @@
         aimAngle = normalizeAngle(angle)
         aimPower = clamp(power, 0, MAX_POWER)
         aimOffset = offset ?? { x: 0, y: 0, z: 0 }
+
+        if (constants) {
+          Object.entries(constants).forEach(([id, value]) => {
+            const input = document.getElementById(id)
+            if (input) {
+              input.value = value
+              input.dispatchEvent(new Event("input", { bubbles: true }))
+              input.dispatchEvent(new Event("change", { bubbles: true }))
+            }
+          })
+        }
+
         tableBalls.forEach((ball) => positionBall(surface, ball))
         positionAimArrow(surface)
         updateSpinVisualState()
@@ -968,5 +989,15 @@
       document.addEventListener("DOMContentLoaded", initDraggableTable)
     </script>
     <script src="../diagram.js"></script>
+    <nav style="max-width:720px;margin:32px auto 0;padding:24px 0;border-top:1px solid #222;font-family:sans-serif;font-size:0.7rem;display:flex;gap:20px;flex-wrap:wrap;justify-content:center;">
+      <a href="../index.html" style="color:#555;text-decoration:none;">Play</a>
+      <a href="../practice.html" style="color:#555;text-decoration:none;">Practice</a>
+      <a href="https://scoreboard-tailuge.vercel.app/game" rel="noopener noreferrer" style="color:#555;text-decoration:none;">Lobby</a>
+      <a href="https://scoreboard-tailuge.vercel.app/leaderboard" rel="noopener noreferrer" style="color:#555;text-decoration:none;">Leaderboard</a>
+      <a href="https://github.com/tailuge/billiards" rel="noopener noreferrer" style="color:#555;text-decoration:none;">GitHub</a>
+      <a href="../blog1.html" style="color:#555;text-decoration:none;">Blog: Cushion Physics</a>
+      <a href="../blog2.html" style="color:#555;text-decoration:none;">Blog: Line Up</a>
+      <a href="../blog3.html" style="color:#555;text-decoration:none;">Blog: Mathavan</a>
+    </nav>
   </body>
 </html>
