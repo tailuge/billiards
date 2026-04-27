@@ -292,7 +292,6 @@
           3px 4px 8px rgba(82, 82, 82, 0.7),
           inset -4px -6px 12px rgb(0 0 0 / 40%),
           inset 8px 10px 15px rgb(255 255 255 / 20%);
-        transition: all 0.1s ease;
       }
 
       .cueBall::before {
@@ -321,7 +320,6 @@
         top: 6%;
         left: 6%;
         pointer-events: none;
-        transition: all 0.1s ease;
       }
 
       .cueTip {
@@ -337,7 +335,6 @@
         box-shadow:
           0 0 2px rgb(0 0 0 / 60%),
           inset 0 1px 1px rgb(255 255 255 / 30%);
-        transition: all 0.1s ease;
       }
 
       #aim-params {
@@ -870,6 +867,9 @@
 
         surface.addEventListener("mousedown", pointerDown)
         surface.addEventListener("touchstart", pointerDown, { passive: false })
+        document
+          .getElementById("ballContainer")
+          ?.addEventListener("pointerdown", spinPointerDown)
         document
           .getElementById("cueBall")
           ?.addEventListener("pointerdown", spinPointerDown)
