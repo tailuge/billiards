@@ -3,7 +3,7 @@ import { ContainerConfig } from "../container/containerconfig"
 import { Keyboard } from "../events/keyboard"
 import { BreakEvent } from "../events/breakevent"
 import { CameraTop } from "../view/cameratop"
-import { bounceHan } from "../model/physics/physics"
+import { bounceHan, mathavanAdapter } from "../model/physics/physics"
 import { Assets } from "../view/assets"
 import { RealOverlay } from "./real/realoverlay"
 import { id, getButton, getCanvas } from "../utils/dom"
@@ -120,6 +120,8 @@ export class DiagramContainer {
     diagramcontainer.replayButton(replaybutton)
     if (params.get("cushionModel") == "bounceHan") {
       diagramcontainer.cushionModel = bounceHan
+    } else {
+      diagramcontainer.cushionModel = mathavanAdapter
     }
     return diagramcontainer
   }

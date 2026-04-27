@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
       :root {
-        --table-ball-border: 2px;
+        --table-ball-border: 1px;
         --table-surface-width: 88%;
         --table-surface-height: 78%;
         --ball-size-base: 160px;
@@ -51,8 +51,7 @@
       }
 
       .diagram {
-        width: 360px;
-        max-width: 100%;
+        width: 50%;
         padding: 0px;
         margin: 0px;
       }
@@ -67,7 +66,7 @@
       #μw,
       #ee,
       #rho {
-        width: 75%;
+        width: 65%;
       }
 
       p {
@@ -392,10 +391,6 @@
 
       <div class="controls-row">
         <div id="constants" class="diagram">
-          <p>Physical Constants</p>
-          <br />
-          <input id="R" type="range" hidden />
-          <label for="R" hidden>R</label>
           <input id="m" type="range" />
           <label for="m">m</label>
           <input id="e" type="range" />
@@ -404,10 +399,6 @@
           <label for="mu">mu</label>
           <input id="rho" type="range" />
           <label for="rho">rho</label>
-          <input id="muS" type="range" hidden />
-          <label for="muS" hidden>muS</label>
-          <input id="muC" type="range" hidden />
-          <label for="muC" hidden>muC</label>
           <input id="μs" type="range" />
           <label for="μs">μs</label>
           <input id="μw" type="range" />
