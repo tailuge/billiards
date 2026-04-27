@@ -18,7 +18,7 @@
         --table-ball-border: 1px;
         --table-surface-width: 88%;
         --table-surface-height: 78%;
-        --ball-size-base: 90px;
+        --ball-size-base: 140px;
         --ball-size-small: 70px;
       }
 
@@ -224,18 +224,18 @@
 
       #spin-power-wrap {
         display: flex;
-        align-items: stretch;
+        align-items: center;
         padding: 4px;
         margin: 4px;
-        min-height: var(--ball-size-base);
         width: min-content;
         gap: 4px;
         flex-shrink: 0;
       }
 
       .ballContainerWrapper {
-        aspect-ratio: 1 / 1;
-        height: 100%;
+        width: var(--ball-size-base);
+        height: var(--ball-size-base);
+        flex-shrink: 0;
         position: relative;
         z-index: 20;
       }
@@ -261,11 +261,16 @@
         margin: 0;
       }
 
+      #replay {
+        flex: 2;
+      }
+
       #button-stack {
         display: flex;
         flex-direction: column;
         gap: 4px;
         justify-content: center;
+        align-self: stretch;
       }
 
       .cueBall {
@@ -422,6 +427,10 @@
               </svg>
               share
             </button>
+            <button type="button" onclick="location.href='https://scoreboard-tailuge.vercel.app/game'">lobby</button>
+            <button type="button">preset 1</button>
+            <button type="button">preset 2</button>
+            <button type="button">preset 3</button>
           </div>
         </div>
       </div>
