@@ -1,4 +1,21 @@
-import { ee, M, R, μs, μw } from "./constants"
+import {
+  ee,
+  m as M,
+  R,
+  μs,
+  μw,
+  setm,
+  setR,
+  setee,
+  setμs,
+  setμw,
+} from "../model/physics/constants"
+
+setm(0.1406)
+setR(0.02625)
+setee(0.98)
+setμs(0.212)
+setμw(0.14)
 import { Mathavan } from "../model/physics/mathavan"
 import { config, color, createTrace, layout } from "./plotlyconfig"
 

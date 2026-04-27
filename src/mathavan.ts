@@ -1,7 +1,7 @@
 import { ImpulsePlot } from "./diagram/impulseplot"
 import { ReboundPlot } from "./diagram/reboundplot"
 import { ThrowPlot } from "./diagram/throwplot"
-import { R } from "./diagram/constants"
+import { R } from "./model/physics/constants"
 
 new ImpulsePlot().plot()
 const figure9 = `<b>Figure.9</b> Rebound speed and rebound angle versus incident angle <br>
