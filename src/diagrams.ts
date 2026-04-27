@@ -16,9 +16,15 @@ import { DiagramContainer } from "./diagram/diagramcontainer"
 import { I, Mxy, Mz, R } from "./model/physics/constants"
 import { Cue } from "./view/cue"
 import { id } from "./utils/dom"
+import { ImpulsePlot } from "./diagram/impulseplot"
+import { ReboundPlot } from "./diagram/reboundplot"
+import { ThrowPlot } from "./diagram/throwplot"
 
 let p1, p2, p3, p4, p5
 let linegraph1, linegraph2, linegraph3, linegraph4
+let impulsePlot: ImpulsePlot | undefined
+let reboundPlot: ReboundPlot | undefined
+let throwPlot: ThrowPlot | undefined
 let s = 3 * R
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -36,6 +42,10 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     if (id("cushion1")) {
       initialisePlots()
+    }
+
+    if (id("mathavan-impulse")) {
+      initialiseMathavanPlots()
     }
 
     const sliders = new Sliders(plotAll)
@@ -101,6 +111,9 @@ function plotAll() {
   if (p1) {
     plotCushionDiagrams()
     plotLineGraphs()
+  }
+  if (impulsePlot) {
+    plotMathavanDiagrams()
   }
 }
 
@@ -211,4 +224,32 @@ function plotCushionDiagrams() {
 
 function svec(x, y, z) {
   return new Vector3(x * R, y * R, z * R)
+}
+
+function initialiseMathavanPlots() {
+  impulsePlot = new ImpulsePlot()
+  reboundPlot = new ReboundPlot()
+  throwPlot = new ThrowPlot()
+  plotMathavanDiagrams()
+}
+
+function plotMathavanDiagrams() {
+  impulsePlot?.plot()
+  const figure9 = `<b>Figure.9</b> Rebound speed and rebound angle versus incident angle <br>
+    for different topspins of the ball, ωT0 = kV0/R and V0 = 1 m/s with no sidespin`
+  reboundPlot?.plot(
+    "mathavan-figure9-speed",
+    "mathavan-figure9-angle",
+    figure9
+  )
+  const figure10 = `<b>Figure.10</b> Rebound speed and rebound angle versus incident angle <br>
+for different sidespins of the ball,ωS0 = kV0/R and V0 = 1 m/s with the ball rolling (ωT0 = V0/R)`
+  reboundPlot?.plot(
+    "mathavan-figure10-speed",
+    "mathavan-figure10-angle",
+    figure10,
+    (k) => k / R,
+    (_) => 1 / R
+  )
+  throwPlot?.plotCutAngle()
 }

@@ -1,4 +1,4 @@
-import { ee, M, R, μs, μw } from "./constants"
+import { ee, m, R, μs, μw } from "../model/physics/constants"
 import { HistoryMathavan } from "./historymathavan"
 import { config, color, createTrace, layout } from "./plotlyconfig"
 
@@ -9,7 +9,7 @@ export class ImpulsePlot {
     wS = (2 * v0) / R,
     wT = (1.5 * v0) / R
   ) {
-    const calculation = new HistoryMathavan(M, R, ee, μs, μw)
+    const calculation = new HistoryMathavan(m, R, ee, μs, μw)
     try {
       calculation.solvePaper(v0, alpha, wS, wT)
     } catch (error) {

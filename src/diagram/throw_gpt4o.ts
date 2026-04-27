@@ -2,9 +2,12 @@ import { Vector3 } from "three"
 import { Ball } from "../model/ball"
 import { up, zero } from "../utils/three-utils"
 import { Collision } from "../model/physics/collision"
+import { R } from "../model/physics/constants"
 
 export class CollisionThrowPlot {
-  public static readonly R: number = 0.029 // ball radius in meters
+  public static get R(): number {
+    return R
+  }
 
   // Friction parameters
   private static readonly a: number = 0.01 // Minimum friction coefficient

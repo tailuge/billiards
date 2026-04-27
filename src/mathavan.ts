@@ -1,7 +1,11 @@
 import { ImpulsePlot } from "./diagram/impulseplot"
 import { ReboundPlot } from "./diagram/reboundplot"
 import { ThrowPlot } from "./diagram/throwplot"
-import { R } from "./diagram/constants"
+import { R, setR, setm } from "./model/physics/constants"
+
+// Paper values for Mathavan diagrams
+setm(0.1406)
+setR(0.02625)
 
 new ImpulsePlot().plot()
 const figure9 = `<b>Figure.9</b> Rebound speed and rebound angle versus incident angle <br>
