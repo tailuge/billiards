@@ -68,7 +68,7 @@
       #μw,
       #ee,
       #rho {
-        width: 75%;
+        width: 70%;
       }
 
       p {
@@ -360,7 +360,7 @@
       <div class="replaydiagram">
         <div
           class="topview"
-          data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-0.769,-0.192,0.769,0,1.07,0%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.202,%22y%22:0.222,%22z%22:0%7D,%22angle%22:-0.77,%22power%22:3.0,%22pos%22:%7B%22x%22:-0.769,%22y%22:-0.192,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
+          data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-1.305026,-0.634005,-1.434758,0.601475,-1.310215,0.685593%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.201901,%22y%22:0.221892,%22z%22:0%7D,%22angle%22:0.63687,%22power%22:2.62,%22pos%22:%7B%22x%22:-1.305026,%22y%22:-0.634005,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
         ></div>
       </div>
 
@@ -428,9 +428,9 @@
               share
             </button>
             <button type="button" onclick="location.href='https://scoreboard-tailuge.vercel.app/game'">lobby</button>
-            <button type="button">preset 1</button>
-            <button type="button">preset 2</button>
-            <button type="button">preset 3</button>
+            <button type="button" onclick="applyPreset([[-1.305026, -0.634005], [-1.434758, 0.601475], [-1.310215, 0.685593]], 0.63687, 2.62, {x:-0.201901,y:0.221892,z:0})">preset 1</button>
+            <button type="button" onclick="applyPreset([[-0.756, -0.189], [-0.756, 0], [0.756, 0]], 0.147099, 3.7204, {x:-0.252932,y:0.161324,z:0})">preset 2</button>
+            <button type="button" onclick="applyPreset([[-0.769, -0.192], [0.769, 0], [1.07, 0]], 5.513185, 3, {x:-0.201901,y:0.221892,z:0})">preset 3</button>
           </div>
         </div>
       </div>
@@ -876,6 +876,24 @@
             })
           }
         })
+      }
+
+      function applyPreset(positions, angle, power, offset) {
+        const surface = document.getElementById("table-surface")
+        const topview = document.querySelector(".topview")
+        if (!surface || !topview) return
+        positions.forEach(([x, y], i) => {
+          tableBalls[i].x = x
+          tableBalls[i].y = y
+        })
+        aimAngle = normalizeAngle(angle)
+        aimPower = clamp(power, 0, MAX_POWER)
+        aimOffset = offset ?? { x: 0, y: 0, z: 0 }
+        tableBalls.forEach((ball) => positionBall(surface, ball))
+        positionAimArrow(surface)
+        updateSpinVisualState()
+        setPowerSliderValue()
+        syncDiagramState(topview)
       }
 
       document.addEventListener("DOMContentLoaded", initDraggableTable)
