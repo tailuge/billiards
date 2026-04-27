@@ -18,7 +18,7 @@
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+      content="width=device-width, initial-scale=1.0"
     />
     <link
       rel="canonical"
@@ -321,6 +321,8 @@
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
         >
           <path
             d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
@@ -343,6 +345,8 @@
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
         >
           <circle cx="18" cy="5" r="3"></circle>
           <circle cx="6" cy="12" r="3"></circle>
@@ -460,6 +464,8 @@
         const el = document.createElement("div")
         el.className = "ball"
         el.style.backgroundColor = ball.color
+        el.setAttribute("role", "img")
+        el.setAttribute("aria-label", ball.id === 0 ? "Cue ball" : `${ball.id}-ball`)
 
         if (ball.id !== 0) {
           const lbl = document.createElement("span")
