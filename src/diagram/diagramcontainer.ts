@@ -71,7 +71,7 @@ export class DiagramContainer {
   }
 
   replayButton(replaybutton) {
-    replaybutton.innerHTML = "↻"
+    replaybutton.innerHTML = "▷"
     replaybutton.addEventListener("click", () => {
       console.log("clicked with length=", this.container.eventQueue.length)
       if (this.container.eventQueue.length == 0) {
