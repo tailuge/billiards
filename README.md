@@ -22,7 +22,7 @@ Demos run in all major desktop and mobile browsers and uses WebGL
 * Try [two player](https://scoreboard-tailuge.vercel.app/game) online lobby using nchan
 * Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard) hosted on vercel.com
 * Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
-* Set up the table for trick shots and [practice ⬀](https://billiards.tailuge.workers.dev/practice.html).
+* Set up trick shots and [practice ⬀](https://billiards.tailuge.workers.dev/practice.html). Tune three cushion [physics ⬀](https://tailuge.github.io/billiards/dist/diagrams/three.html). 
 
 ## Features
 
