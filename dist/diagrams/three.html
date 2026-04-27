@@ -18,7 +18,7 @@
         --table-ball-border: 1px;
         --table-surface-width: 88%;
         --table-surface-height: 78%;
-        --ball-size-base: 150px;
+        --ball-size-base: 90px;
         --ball-size-small: 70px;
       }
 
@@ -51,7 +51,9 @@
       }
 
       .diagram {
-        width: 40%;
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: 60%;
         padding: 0px;
         margin: 0px;
       }
@@ -66,7 +68,7 @@
       #μw,
       #ee,
       #rho {
-        width: 65%;
+        width: 75%;
       }
 
       p {
@@ -81,17 +83,17 @@
       }
 
       button {
-        margin-left: 6px;
         font-size: 12px;
       }
 
       #replay,
       #share {
-        min-width: 70px;
+        min-width: 60px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 4px;
+        margin: 0;
       }
 
       .topview {
@@ -211,9 +213,13 @@
 
       .controls-row {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         align-items: stretch;
         gap: 10px;
+        width: 92%;
+        margin: 0 auto;
+        box-sizing: border-box;
+        overflow-x: auto;
       }
 
       #spin-power-wrap {
@@ -223,6 +229,8 @@
         margin: 4px;
         min-height: var(--ball-size-base);
         width: min-content;
+        gap: 4px;
+        flex-shrink: 0;
       }
 
       .ballContainerWrapper {
@@ -250,7 +258,14 @@
         direction: rtl;
         height: var(--ball-size-base);
         width: 32px;
-        margin: 0 8px;
+        margin: 0;
+      }
+
+      #button-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        justify-content: center;
       }
 
       .cueBall {
@@ -332,38 +347,6 @@
         white-space: pre-wrap;
       }
 
-      @media (max-width: 640px) {
-        body {
-          padding: 0px;
-        }
-
-        #page {
-          gap: 4px;
-        }
-
-        .replaydiagram,
-        #table-wrap {
-          width: 100%;
-          border-left: none;
-          border-right: none;
-          border-radius: 0;
-        }
-
-        .controls-row {
-          flex-direction: column;
-          padding: 8px;
-        }
-
-        .diagram,
-        #spin-power-wrap {
-          width: 100%;
-          max-width: 100%;
-        }
-
-        #spin-power-wrap {
-          justify-content: center;
-        }
-      }
     </style>
   </head>
 
@@ -417,27 +400,29 @@
             </div>
           </div>
           <input id="power" type="range" />
-          <button id="replay" type="button">replay</button>
-          <button id="share" type="button">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="18" cy="5" r="3"></circle>
-              <circle cx="6" cy="12" r="3"></circle>
-              <circle cx="18" cy="19" r="3"></circle>
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-            </svg>
-            share
-          </button>
+          <div id="button-stack">
+            <button id="replay" type="button">replay</button>
+            <button id="share" type="button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+              share
+            </button>
+          </div>
         </div>
       </div>
     </div>
