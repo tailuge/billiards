@@ -3,17 +3,16 @@
   <head>
     <title>Three cushion physics</title>
     <link rel="icon" type="image/png" href="../favicon.png" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo:wght@300&display=swap" />
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="description" content="Interactive three-cushion billiards shot editor. Adjust physics constants, drag balls, set spin and power, then replay or share the shot." />
+    <meta
+      name="description"
+      content="Interactive three-cushion billiards shot editor. Adjust physics constants, drag balls, set spin and power, then replay or share the shot."
+    />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      
-div:nth-child(1) { border-color: #ff9999; }
-div:nth-child(2) { border-color: #99ff99; }
-div:nth-child(3) { border-color: #9999ff; }
-div:nth-child(4) { border-color: #ffff99; }
       :root {
         --table-ball-border: 1px;
         --table-surface-width: 88%;
@@ -25,11 +24,14 @@ div:nth-child(4) { border-color: #ffff99; }
       h1 {
         text-align: center;
         font-size: 1rem;
+        font-family: "Exo", sans-serif;
         font-weight: 300;
         margin-top: 0;
-        margin-bottom: 0;
+        margin-bottom: -20px;
         padding-top: 4px;
         padding-bottom: 0;
+        position: relative;
+        z-index: 10;
       }
 
       body {
@@ -431,7 +433,7 @@ div:nth-child(4) { border-color: #ffff99; }
 
   <body>
     <div id="page">
-      <h1>Three cushion shot experiments</h1>
+      <h1>Three cushion research</h1>
       <div class="replaydiagram">
         <div
           class="topview"
@@ -1068,27 +1070,104 @@ div:nth-child(4) { border-color: #ffff99; }
       document.addEventListener("DOMContentLoaded", initDraggableTable)
     </script>
     <script src="../diagram.js"></script>
-    <section style="max-width:720px;margin:32px auto 0;padding:0 0 24px;font-family:sans-serif;font-size:0.7rem;color:#888;display:flex;gap:16px;align-items:flex-start;">
-      <img src="../images/mh.jpg" alt="Forces on ball at cushion" width="192" height="192" style="flex-shrink:0;opacity:0.8;" />
-      <div style="margin:0;line-height:1.6;">
-        <p style="margin:0 0 6px;">These three constants govern how the ball behaves at the cushion:</p>
-        <ul style="margin:0;padding-left:16px;">
-          <li><strong style="color:#aaa;">μs = 0.212</strong> table friction (point C in diagram); controls how much the table surface grips the ball during the bounce higher values slow the ball's slide across the cloth and transfer more energy into spin.</li>
-          <li><strong style="color:#aaa;">μw = 0.165</strong> cushion friction (point I in diagram); determines how strongly the cushion face grips the ball on contact increase it and the ball bites into the cushion, altering the rebound angle and adding side-spin; reduce it and the ball skids off more cleanly.</li>
-          <li><strong style="color:#aaa;">ee = 0.98</strong> cushion restitution; sets how elastic the cushion bounce is values close to 1 return nearly all the normal velocity, while lower values produce a softer, more deadened rebound.</li>
+    <section
+      style="
+        max-width: 720px;
+        margin: 32px auto 0;
+        padding: 0 0 24px;
+        font-family: sans-serif;
+        font-size: 0.7rem;
+        color: #888;
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+      "
+    >
+      <img
+        src="../images/mh.jpg"
+        alt="Forces on ball at cushion"
+        width="192"
+        height="192"
+        style="flex-shrink: 0; opacity: 0.8"
+      />
+      <div style="margin: 0; line-height: 1.6">
+        <p style="margin: 0 0 6px">
+          These three constants govern how the ball behaves at the cushion:
+        </p>
+        <ul style="margin: 0; padding-left: 16px">
+          <li>
+            <strong style="color: #aaa">μs = 0.212</strong> table friction
+            (point C in diagram); controls how much the table surface grips the
+            ball during the bounce higher values slow the ball's slide across
+            the cloth and transfer more energy into spin.
+          </li>
+          <li>
+            <strong style="color: #aaa">μw = 0.165</strong> cushion friction
+            (point I in diagram); determines how strongly the cushion face grips
+            the ball on contact increase it and the ball bites into the cushion,
+            altering the rebound angle and adding side-spin; reduce it and the
+            ball skids off more cleanly.
+          </li>
+          <li>
+            <strong style="color: #aaa">ee = 0.98</strong> cushion restitution;
+            sets how elastic the cushion bounce is values close to 1 return
+            nearly all the normal velocity, while lower values produce a softer,
+            more deadened rebound.
+          </li>
         </ul>
-        <p style="margin:6px 0 0;">Adjust the parameters and share results to discuss.</p>
+        <p style="margin: 6px 0 0">
+          Adjust the parameters and share results to discuss. If you have suggestions for improvement please open an issue on my <a href="https://github.com/tailuge/billiards">GitHub repo</a>.
+        </p>
       </div>
     </section>
-    <nav style="max-width:720px;margin:32px auto 0;padding:24px 0;border-top:1px solid #222;font-family:sans-serif;font-size:0.7rem;display:flex;gap:20px;flex-wrap:wrap;justify-content:center;" aria-label="Site navigation">
-      <a href="../index.html" style="color:#888;text-decoration:none;">Play</a>
-      <a href="../practice.html" style="color:#888;text-decoration:none;">Practice</a>
-      <a href="https://scoreboard-tailuge.vercel.app/game" rel="noopener noreferrer" style="color:#888;text-decoration:none;">Lobby</a>
-      <a href="https://scoreboard-tailuge.vercel.app/leaderboard" rel="noopener noreferrer" style="color:#888;text-decoration:none;">Leaderboard</a>
-      <a href="https://github.com/tailuge/billiards" rel="noopener noreferrer" style="color:#888;text-decoration:none;">GitHub</a>
-      <a href="../blog1.html" style="color:#888;text-decoration:none;">Blog: Cushion Physics</a>
-      <a href="../blog2.html" style="color:#888;text-decoration:none;">Blog: Line Up</a>
-      <a href="../blog3.html" style="color:#888;text-decoration:none;">Blog: Mathavan</a>
+    <nav
+      style="
+        max-width: 720px;
+        margin: 32px auto 0;
+        padding: 24px 0;
+        border-top: 1px solid #222;
+        font-family: sans-serif;
+        font-size: 0.7rem;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+      "
+      aria-label="Site navigation"
+    >
+      <a href="../index.html" style="color: #888; text-decoration: none"
+        >Play</a
+      >
+      <a href="../practice.html" style="color: #888; text-decoration: none"
+        >Practice</a
+      >
+      <a
+        href="https://scoreboard-tailuge.vercel.app/game"
+        rel="noopener noreferrer"
+        style="color: #888; text-decoration: none"
+        >Lobby</a
+      >
+      <a
+        href="https://scoreboard-tailuge.vercel.app/leaderboard"
+        rel="noopener noreferrer"
+        style="color: #888; text-decoration: none"
+        >Leaderboard</a
+      >
+      <a
+        href="https://github.com/tailuge/billiards"
+        rel="noopener noreferrer"
+        style="color: #888; text-decoration: none"
+        >GitHub</a
+      >
+      <a href="../blog1.html" style="color: #888; text-decoration: none"
+        >Blog: Cushion Physics</a
+      >
+      <a href="../blog2.html" style="color: #888; text-decoration: none"
+        >Blog: Line Up</a
+      >
+      <a href="../blog3.html" style="color: #888; text-decoration: none"
+        >Blog: Mathavan</a
+      >
     </nav>
   </body>
 </html>

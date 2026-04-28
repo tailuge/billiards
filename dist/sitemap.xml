@@ -49,6 +49,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/three.html</loc>
+    <lastmod>2026-04-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://tailuge.github.io/billiards/index.html</loc>
     <lastmod>2026-04-24</lastmod>
     <changefreq>monthly</changefreq>
