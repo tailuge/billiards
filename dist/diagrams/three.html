@@ -18,7 +18,7 @@ div:nth-child(4) { border-color: #ffff99; }
         --table-ball-border: 1px;
         --table-surface-width: 88%;
         --table-surface-height: 78%;
-        --ball-size-base: 130px;
+        --ball-size-base: 120px;
         --ball-size-small: 70px;
       }
 
@@ -55,7 +55,7 @@ div:nth-child(4) { border-color: #ffff99; }
         padding: 0px;
         margin: 0px;
         background-color: #000;
-        aspect-ratio: 2 / 1;
+        aspect-ratio: 2 / 1.1;
         position: relative;
       }
 
@@ -176,7 +176,7 @@ div:nth-child(4) { border-color: #ffff99; }
 
       #table-wrap {
         position: relative;
-        width: 92%;
+        width: 80%;
         aspect-ratio: 616 / 343;
         padding: 0px;
         margin: 0px auto;
@@ -323,7 +323,7 @@ div:nth-child(4) { border-color: #ffff99; }
       #power {
         writing-mode: vertical-lr;
         direction: rtl;
-        height: 120px;
+        height: 110px;
         width: 24px;
         margin: 0;
       }
@@ -793,6 +793,7 @@ div:nth-child(4) { border-color: #ffff99; }
         topview.dataset.state = nextStateUrl
         topview.setAttribute("data-state", nextStateUrl)
         updateAimParamsText()
+        document.getElementById("replay").click()
       }
 
       function buildBall(surface, ball) {
