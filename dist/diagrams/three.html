@@ -18,7 +18,7 @@ div:nth-child(4) { border-color: #ffff99; }
         --table-ball-border: 1px;
         --table-surface-width: 88%;
         --table-surface-height: 78%;
-        --ball-size-base: 140px;
+        --ball-size-base: 130px;
         --ball-size-small: 70px;
       }
 
@@ -330,10 +330,10 @@ div:nth-child(4) { border-color: #ffff99; }
 
       #button-stack {
         display: flex;
-        flex-direction: column;
-        gap: 0px;
+        flex-direction: row;
+        gap: 4px;
         justify-content: center;
-        align-self: stretch;
+        align-items: center;
       }
 
       .cueBall {
@@ -436,6 +436,76 @@ div:nth-child(4) { border-color: #ffff99; }
         ></div>
         <div id="overlay-buttons">
           <button id="replay" type="button">replay</button>
+          <div id="button-stack">
+            <button
+              type="button"
+              onclick="
+                applyPreset(
+                  [
+                    [-1.127866, 0.347029],
+                    [-1.347367, 0.611996],
+                    [-1.412751, 0.687701],
+                  ],
+                  0.212025,
+                  2.096,
+                  { x: 0.246853, y: 0.170481, z: 0 }
+                )
+              "
+            >
+              #1
+            </button>
+            <button
+              type="button"
+              onclick="
+                applyPreset(
+                  [
+                    [-1.305026, -0.634005],
+                    [-1.434758, 0.601475],
+                    [-1.310215, 0.685593],
+                  ],
+                  0.63687,
+                  2.62,
+                  { x: -0.201901, y: 0.221892, z: 0 }
+                )
+              "
+            >
+              #2
+            </button>
+            <button
+              type="button"
+              onclick="
+                applyPreset(
+                  [
+                    [-0.756, -0.189],
+                    [-0.756, 0],
+                    [0.756, 0],
+                  ],
+                  0.147099,
+                  3.7204,
+                  { x: -0.252932, y: 0.161324, z: 0 }
+                )
+              "
+            >
+              #3
+            </button>
+            <button
+              type="button"
+              onclick="
+                applyPreset(
+                  [
+                    [-0.769, -0.192],
+                    [0.769, 0],
+                    [1.07, 0],
+                  ],
+                  5.513185,
+                  3,
+                  { x: -0.201901, y: 0.221892, z: 0 }
+                )
+              "
+            >
+              #4
+            </button>
+          </div>
           <button id="share" type="button">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -473,76 +543,6 @@ div:nth-child(4) { border-color: #ffff99; }
           </div>
           <label for="power" class="sr-only">Power</label>
           <input id="power" type="range" />
-          <div id="button-stack">
-            <button
-              type="button"
-              onclick="
-                applyPreset(
-                  [
-                    [-1.127866, 0.347029],
-                    [-1.347367, 0.611996],
-                    [-1.412751, 0.687701],
-                  ],
-                  0.212025,
-                  2.096,
-                  { x: 0.246853, y: 0.170481, z: 0 }
-                )
-              "
-            >
-              preset 0
-            </button>
-            <button
-              type="button"
-              onclick="
-                applyPreset(
-                  [
-                    [-1.305026, -0.634005],
-                    [-1.434758, 0.601475],
-                    [-1.310215, 0.685593],
-                  ],
-                  0.63687,
-                  2.62,
-                  { x: -0.201901, y: 0.221892, z: 0 }
-                )
-              "
-            >
-              preset 1
-            </button>
-            <button
-              type="button"
-              onclick="
-                applyPreset(
-                  [
-                    [-0.756, -0.189],
-                    [-0.756, 0],
-                    [0.756, 0],
-                  ],
-                  0.147099,
-                  3.7204,
-                  { x: -0.252932, y: 0.161324, z: 0 }
-                )
-              "
-            >
-              preset 2
-            </button>
-            <button
-              type="button"
-              onclick="
-                applyPreset(
-                  [
-                    [-0.769, -0.192],
-                    [0.769, 0],
-                    [1.07, 0],
-                  ],
-                  5.513185,
-                  3,
-                  { x: -0.201901, y: 0.221892, z: 0 }
-                )
-              "
-            >
-              preset 3
-            </button>
-          </div>
         </div>
         <div id="constants">
           <input id="μs" type="range" />
