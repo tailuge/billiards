@@ -47,6 +47,7 @@
         margin: 0px;
         background-color: #000;
         aspect-ratio: 2 / 1;
+        position: relative;
       }
 
       .diagram {
@@ -67,7 +68,7 @@
       #μw,
       #ee,
       #rho {
-        width: 70%;
+        width: 65%;
       }
 
       p {
@@ -93,6 +94,16 @@
         justify-content: center;
         gap: 4px;
         margin: 0;
+      }
+
+      #overlay-buttons {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 8px;
+        z-index: 10;
       }
 
       .topview {
@@ -257,10 +268,6 @@
         margin: 0;
       }
 
-      #replay {
-        flex: 2;
-      }
-
       #button-stack {
         display: flex;
         flex-direction: column;
@@ -367,6 +374,31 @@
           class="topview"
           data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-1.305026,-0.634005,-1.434758,0.601475,-1.310215,0.685593%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.201901,%22y%22:0.221892,%22z%22:0%7D,%22angle%22:0.63687,%22power%22:2.62,%22pos%22:%7B%22x%22:-1.305026,%22y%22:-0.634005,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
         ></div>
+        <div id="overlay-buttons">
+          <button id="replay" type="button">replay</button>
+          <button id="share" type="button">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+            share
+          </button>
+        </div>
       </div>
 
       <div class="controls-row">
@@ -399,29 +431,6 @@
           <label for="power" class="sr-only">Power</label>
           <input id="power" type="range" />
           <div id="button-stack">
-            <button id="replay" type="button">replay</button>
-            <button id="share" type="button">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <circle cx="18" cy="5" r="3"></circle>
-                <circle cx="6" cy="12" r="3"></circle>
-                <circle cx="18" cy="19" r="3"></circle>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-              </svg>
-              share
-            </button>
             <button
               type="button"
               onclick="
@@ -1004,6 +1013,18 @@
       document.addEventListener("DOMContentLoaded", initDraggableTable)
     </script>
     <script src="../diagram.js"></script>
+    <section style="max-width:720px;margin:32px auto 0;padding:0 0 24px;font-family:sans-serif;font-size:0.7rem;color:#888;display:flex;gap:16px;align-items:flex-start;">
+      <img src="../images/mh.jpg" alt="Forces on ball at cushion" width="192" height="192" style="flex-shrink:0;opacity:0.8;" />
+      <div style="margin:0;line-height:1.6;">
+        <p style="margin:0 0 6px;">These three constants govern how the ball behaves at the cushion:</p>
+        <ul style="margin:0;padding-left:16px;">
+          <li><strong style="color:#aaa;">μs = 0.212</strong> table friction (point C in diagram); controls how much the table surface grips the ball during the bounce higher values slow the ball's slide across the cloth and transfer more energy into spin.</li>
+          <li><strong style="color:#aaa;">μw = 0.165</strong> cushion friction (point I in diagram); determines how strongly the cushion face grips the ball on contact increase it and the ball bites into the cushion, altering the rebound angle and adding side-spin; reduce it and the ball skids off more cleanly.</li>
+          <li><strong style="color:#aaa;">ee = 0.98</strong> cushion restitution; sets how elastic the cushion bounce is values close to 1 return nearly all the normal velocity, while lower values produce a softer, more deadened rebound.</li>
+        </ul>
+        <p style="margin:6px 0 0;">Adjust the parameters and share results to discuss.</p>
+      </div>
+    </section>
     <nav style="max-width:720px;margin:32px auto 0;padding:24px 0;border-top:1px solid #222;font-family:sans-serif;font-size:0.7rem;display:flex;gap:20px;flex-wrap:wrap;justify-content:center;" aria-label="Site navigation">
       <a href="../index.html" style="color:#888;text-decoration:none;">Play</a>
       <a href="../practice.html" style="color:#888;text-decoration:none;">Practice</a>
