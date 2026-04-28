@@ -9,6 +9,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
+      
+div:nth-child(1) { border-color: #ff9999; }
+div:nth-child(2) { border-color: #99ff99; }
+div:nth-child(3) { border-color: #9999ff; }
+div:nth-child(4) { border-color: #ffff99; }
       :root {
         --table-ball-border: 1px;
         --table-surface-width: 88%;
@@ -21,6 +26,10 @@
         text-align: center;
         font-size: 1rem;
         font-weight: 300;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 4px;
+        padding-bottom: 0;
       }
 
       body {
@@ -68,11 +77,11 @@
       #μw,
       #ee,
       #rho {
-        width: 65%;
+        width: 90%;
         height: 2px;
         accent-color: #888;
-        vertical-align: middle;
-        margin: 2px 4px 2px 0;
+        display: block;
+        margin: 2px auto;
         appearance: none;
         background: #555;
         outline: none;
@@ -91,7 +100,7 @@
       #rho::-webkit-slider-thumb {
         appearance: none;
         width: 8px;
-        height: 14px;
+        height: 8px;
         background: #aaa;
         border-radius: 0;
         cursor: pointer;
@@ -108,7 +117,7 @@
       #ee::-moz-range-thumb,
       #rho::-moz-range-thumb {
         width: 8px;
-        height: 14px;
+        height: 8px;
         background: #aaa;
         border-radius: 0;
         border: none;
@@ -117,6 +126,12 @@
 
       #constants {
         line-height: 1.4;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        box-sizing: border-box;
+        flex: 1;
       }
 
       p {
@@ -270,7 +285,7 @@
         display: flex;
         flex-wrap: nowrap;
         align-items: stretch;
-        gap: 10px;
+        gap: 0px;
         width: 92%;
         margin: 0 auto;
         box-sizing: border-box;
@@ -280,10 +295,7 @@
       #spin-power-wrap {
         display: flex;
         align-items: center;
-        padding: 4px;
-        margin: 4px;
         width: min-content;
-        gap: 4px;
         flex-shrink: 0;
       }
 
@@ -311,15 +323,15 @@
       #power {
         writing-mode: vertical-lr;
         direction: rtl;
-        height: var(--ball-size-base);
-        width: 32px;
+        height: 120px;
+        width: 24px;
         margin: 0;
       }
 
       #button-stack {
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 0px;
         justify-content: center;
         align-self: stretch;
       }
@@ -450,23 +462,6 @@
       </div>
 
       <div class="controls-row">
-        <div id="constants" class="diagram">
-          <input id="m" type="range" />
-          <label for="m">m</label>
-          <input id="e" type="range" />
-          <label for="e">e</label>
-          <input id="mu" type="range" />
-          <label for="mu">mu</label>
-          <input id="rho" type="range" />
-          <label for="rho">rho</label>
-          <input id="μs" type="range" />
-          <label for="μs">μs</label>
-          <input id="μw" type="range" />
-          <label for="μw">μw</label>
-          <input id="ee" type="range" />
-          <label for="ee">ee</label>
-        </div>
-
         <div id="spin-power-wrap">
           <div id="ballContainerWrapper" class="ballContainerWrapper">
             <div id="ballContainer" class="ballContainer">
@@ -548,6 +543,14 @@
               preset 3
             </button>
           </div>
+        </div>
+        <div id="constants">
+          <input id="μs" type="range" />
+          <label for="μs">μs</label>
+          <input id="μw" type="range" />
+          <label for="μw">μw</label>
+          <input id="ee" type="range" />
+          <label for="ee">ee</label>
         </div>
       </div>
       <div id="table-wrap">
