@@ -123,9 +123,24 @@ The proximity indicator (already coded) shows when the cue ball is within 4R of 
 - Subsequent checks: outcome replaced only if getting closer
 - Outcomes array contains single proximity outcome with minimum distance
 
-### Phase 5: Dynamic Ring Updates
+### Phase 5: Dynamic Ring Updates ✓ COMPLETE
 
-Call `setProximity(distance)` to show/hide filled rings based on current distance.
+**Goal**: Update filled rings based on proximity distance when outcomes are generated
+
+**Implementation details:**
+
+1. **In `Table.checkProximity()`** [DONE]:
+   - Call `setProximity(distance)` when new proximity outcome is added
+   - Call `setProximity(distance)` when proximity outcome is replaced (closer)
+   - No updates when distance increases or no outcome generated
+
+**Files modified:**
+- `src/model/table.ts` - Added `setProximity()` calls in both outcome branches [DONE]
+
+**Behavior:**
+- Rings update only when proximity outcome is generated or replaced
+- Visual reflects the distance of the actual outcome emitted
+- Rings at 4R, 3R, 2R show/hide based on current distance
 
 ### Phase 6: Sound Integration
 

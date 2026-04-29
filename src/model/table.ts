@@ -277,12 +277,14 @@ export class Table {
             this.outcome.push(
               Outcome.proximity(this.cueball, this.proximityTarget, distance)
             )
+            this.proximityIndicator.setProximity(distance)
           } else if (distance < lastOutcome.incidentSpeed) {
             this.outcome[this.outcome.length - 1] = Outcome.proximity(
               this.cueball,
               this.proximityTarget,
               distance
             )
+            this.proximityIndicator.setProximity(distance)
           }
         }
       }
