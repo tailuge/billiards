@@ -72,10 +72,14 @@
       urlParams.get("websocketserver") ?? "ws://localhost:8080"
     const ruletype = urlParams.get("ruletype") ?? "nineball"
     const shotClock = urlParams.get("shotClock")
+    const practice = urlParams.get("practice")
     const unique = Math.floor(Math.random() * 0xffff).toString(16)
     let url = `index.html?ruletype=${ruletype}&websocketserver=${websocketserver}&tableId=${unique}`
     if (shotClock) {
       url += `&shotClock=${shotClock}`
+    }
+    if (practice) {
+      url += `&practice=${practice}`
     }
     document.getElementById("P1").src =
       `${url}&userId=p1id&userName=P1&first=true`
