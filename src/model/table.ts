@@ -249,6 +249,11 @@ export class Table {
 
     // If indicator already shown, check proximity to tracked target
     if (this.proximityIndicator.group.visible && this.proximityTarget) {
+      // Update indicator position if target is moving
+      if (this.proximityTarget.inMotion()) {
+        this.proximityIndicator.showAt(this.proximityTarget.pos)
+      }
+
       const distance = this.cueball.pos.distanceTo(this.proximityTarget.pos)
       if (distance < 4 * R) {
         this.outcome.push(
