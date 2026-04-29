@@ -7,6 +7,7 @@ import { bounceHan, mathavanAdapter } from "../model/physics/physics"
 import { Assets } from "../view/assets"
 import { RealOverlay } from "./real/realoverlay"
 import { id, getButton, getCanvas } from "../utils/dom"
+import { Session } from "../network/client/session"
 
 /**
  * Integrate billiards container into diagram html page
@@ -17,6 +18,7 @@ export class DiagramContainer {
   ruletype
   replay: string
   cushionModel
+  practiceMode = false
   breakState = {
     diagram: undefined as boolean | undefined,
     init: null,
@@ -33,6 +35,7 @@ export class DiagramContainer {
   }
 
   start() {
+    Session.init("diagram", "diagram", "diagram", false, false, this.practiceMode)
     const keyboard = new Keyboard(this.canvas3d)
     const config: ContainerConfig = {
       element: this.canvas3d,
@@ -85,6 +88,7 @@ export class DiagramContainer {
           }
         }
         this.container.table.updateFromShortSerialised(this.breakState.init)
+        this.container.table.proximityIndicator.hide()
         this.container.view.camera.forceMode(this.container.view.camera.topView)
         this.container.eventQueue.push(
           new BreakEvent(
@@ -117,6 +121,7 @@ export class DiagramContainer {
       params.get("ruletype"),
       params.get("state")
     )
+    diagramcontainer.practiceMode = params.has("practice")
     diagramcontainer.replayButton(replaybutton)
     if (params.get("cushionModel") == "bounceHan") {
       diagramcontainer.cushionModel = bounceHan
