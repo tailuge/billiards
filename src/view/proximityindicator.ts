@@ -16,7 +16,6 @@ export class ProximityIndicator {
   readonly group = new Group()
   private readonly borders: LineLoop[] = []
   private readonly fills: Mesh[] = []
-  private isTriggered = false
 
   constructor() {
     this.group.position.z = -0.97 * R // Near table bed

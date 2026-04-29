@@ -39,8 +39,8 @@ export class Outcome {
     return new Outcome(OutcomeType.Hit, ballA, ballA, incidentSpeed)
   }
 
-  static proximity(ballA, ballB) {
-    return new Outcome(OutcomeType.Proximity, ballA, ballB, 0)
+  static proximity(ballA, ballB, distance = 0) {
+    return new Outcome(OutcomeType.Proximity, ballA, ballB, distance)
   }
 
   static isCueBallPotted(cueBall, outcomes: Outcome[]) {
