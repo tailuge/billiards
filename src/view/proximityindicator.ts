@@ -66,6 +66,7 @@ export class ProximityIndicator {
 
   hide() {
     this.group.visible = false
+    this.fills.forEach((fill) => (fill.visible = false))
   }
 
   setProximity(distance: number) {
