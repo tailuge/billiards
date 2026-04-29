@@ -259,6 +259,11 @@ export class Table {
           (o) => o.type === OutcomeType.Cushion && o.ballA === this.cueball
         ).length
 
+        if (cushionCount !== this.proximityIndicator.cushionCount) {
+          this.proximityIndicator.cushionCount = cushionCount
+          this.proximityIndicator.setCushionCount(cushionCount)
+        }
+
         if (cushionCount >= 3) {
           this.proximityIndicator.threeCushionsMet = true
         }

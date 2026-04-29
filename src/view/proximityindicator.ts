@@ -19,6 +19,7 @@ export class ProximityIndicator {
   private readonly fills: Mesh[] = []
   target: Ball | null = null
   threeCushionsMet: boolean = false
+  cushionCount: number = 0
 
   constructor() {
     this.group.position.z = -0.97 * R // Near table bed
@@ -45,6 +46,7 @@ export class ProximityIndicator {
       )
       this.borders.push(border)
       this.group.add(border)
+      border.visible = false
 
       // 2. Dynamic Filled Centers
       const fillGeo = new CircleGeometry(radius, 24)
@@ -70,8 +72,17 @@ export class ProximityIndicator {
   hide() {
     this.group.visible = false
     this.fills.forEach((fill) => (fill.visible = false))
+    this.borders.forEach((border) => (border.visible = false))
     this.target = null
     this.threeCushionsMet = false
+    this.cushionCount = 0
+  }
+
+  setCushionCount(count: number) {
+    // Reveal ring borders inside-out: count=1 shows 2R ring, count=2 adds 3R, count=3 adds 4R
+    this.borders.forEach((border, i) => {
+      border.visible = count >= 3 - i
+    })
   }
 
   setProximity(distance: number) {
