@@ -247,7 +247,10 @@ export class Table {
     }
 
     // If indicator already shown, check proximity to tracked target
-    if (this.proximityIndicator.group.visible && this.proximityIndicator.target) {
+    if (
+      this.proximityIndicator.group.visible &&
+      this.proximityIndicator.target
+    ) {
       // Update indicator position if target is moving
       if (this.proximityIndicator.target.inMotion()) {
         this.proximityIndicator.showAt(this.proximityIndicator.target.pos)
@@ -271,7 +274,7 @@ export class Table {
 
       // Only emit outcomes if 3 cushions requirement met
       if (this.proximityIndicator.threeCushionsMet) {
-        const lastOutcome = this.outcome.at(-1)
+        const lastOutcome = this.outcome[this.outcome.length - 1]
         if (
           lastOutcome?.type === OutcomeType.Collision &&
           lastOutcome.ballA === this.cueball &&
@@ -279,16 +282,26 @@ export class Table {
         ) {
           const distance = 1.99 * R
           this.outcome.push(
-            Outcome.proximity(this.cueball, this.proximityIndicator.target, distance)
+            Outcome.proximity(
+              this.cueball,
+              this.proximityIndicator.target,
+              distance
+            )
           )
           this.proximityIndicator.setProximity(distance)
         } else {
-          const distance = this.cueball.pos.distanceTo(this.proximityIndicator.target.pos)
+          const distance = this.cueball.pos.distanceTo(
+            this.proximityIndicator.target.pos
+          )
           if (distance < 4 * R) {
             // Add if no previous proximity, or replace if closer
             if (lastOutcome?.type !== OutcomeType.Proximity) {
               this.outcome.push(
-                Outcome.proximity(this.cueball, this.proximityIndicator.target, distance)
+                Outcome.proximity(
+                  this.cueball,
+                  this.proximityIndicator.target,
+                  distance
+                )
               )
               this.proximityIndicator.setProximity(distance)
             } else if (distance < lastOutcome.incidentSpeed) {

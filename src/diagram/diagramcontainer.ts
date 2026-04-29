@@ -35,7 +35,14 @@ export class DiagramContainer {
   }
 
   start() {
-    Session.init("diagram", "diagram", "diagram", false, false, this.practiceMode)
+    Session.init(
+      "diagram",
+      "diagram",
+      "diagram",
+      false,
+      false,
+      this.practiceMode
+    )
     const keyboard = new Keyboard(this.canvas3d)
     const config: ContainerConfig = {
       element: this.canvas3d,
