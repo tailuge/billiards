@@ -266,23 +266,34 @@ export class Table {
 
       // Only emit outcomes if 3 cushions requirement met
       if (this.proximityIndicator.threeCushionsMet) {
-        const distance = this.cueball.pos.distanceTo(this.proximityIndicator.target.pos)
-        if (distance < 4 * R) {
-          const lastOutcome = this.outcome.at(-1)
-
-          // Add if no previous proximity, or replace if closer
-          if (lastOutcome?.type !== OutcomeType.Proximity) {
-            this.outcome.push(
-              Outcome.proximity(this.cueball, this.proximityIndicator.target, distance)
-            )
-            this.proximityIndicator.setProximity(distance)
-          } else if (distance < lastOutcome.incidentSpeed) {
-            this.outcome[this.outcome.length - 1] = Outcome.proximity(
-              this.cueball,
-              this.proximityIndicator.target,
-              distance
-            )
-            this.proximityIndicator.setProximity(distance)
+        const lastOutcome = this.outcome.at(-1)
+        if (
+          lastOutcome?.type === OutcomeType.Collision &&
+          lastOutcome.ballA === this.cueball &&
+          lastOutcome.ballB === this.proximityIndicator.target
+        ) {
+          const distance = 1.99 * R
+          this.outcome.push(
+            Outcome.proximity(this.cueball, this.proximityIndicator.target, distance)
+          )
+          this.proximityIndicator.setProximity(distance)
+        } else {
+          const distance = this.cueball.pos.distanceTo(this.proximityIndicator.target.pos)
+          if (distance < 4 * R) {
+            // Add if no previous proximity, or replace if closer
+            if (lastOutcome?.type !== OutcomeType.Proximity) {
+              this.outcome.push(
+                Outcome.proximity(this.cueball, this.proximityIndicator.target, distance)
+              )
+              this.proximityIndicator.setProximity(distance)
+            } else if (distance < lastOutcome.incidentSpeed) {
+              this.outcome[this.outcome.length - 1] = Outcome.proximity(
+                this.cueball,
+                this.proximityIndicator.target,
+                distance
+              )
+              this.proximityIndicator.setProximity(distance)
+            }
           }
         }
       }
