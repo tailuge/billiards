@@ -66,6 +66,7 @@ export class Table {
       a.update(t)
       a.fround()
     })
+    this.checkProximity()
   }
 
   /**
@@ -237,5 +238,22 @@ export class Table {
     return this.balls
       .filter((b) => b !== excluding)
       .some((b) => b.pos.distanceTo(pos) < 2 * R)
+  }
+
+  private checkProximity() {
+    const Session = require("../network/client/session").Session
+    if (!Session.isPracticeMode()) {
+      return
+    }
+
+    const moving = this.balls.filter((b) => b.inMotion())
+    if (moving.length !== 2 || !moving.includes(this.cueball)) {
+      return
+    }
+
+    const target = this.balls.find((b) => !b.inMotion() && b !== this.cueball)
+    if (target) {
+      this.proximityIndicator.showAt(target.pos)
+    }
   }
 }

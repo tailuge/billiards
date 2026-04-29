@@ -74,9 +74,6 @@ export class ThreeCushion implements Rules {
     this.tableGeometry()
     CameraTop.zoomFactor = 0.92
     const table = new Table(this.rack())
-    if (Session.isPracticeMode()) {
-      table.proximityIndicator.showAt(zero)
-    }
     this.cueball = table.cueball
     return table
   }

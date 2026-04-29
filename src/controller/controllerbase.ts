@@ -57,6 +57,7 @@ export abstract class ControllerBase extends Controller {
   }
 
   hit() {
+    this.container.table.proximityIndicator.hide()
     this.container.table.outcome = [
       Outcome.hit(
         this.container.table.cueball,
