@@ -83,10 +83,6 @@ export class ThreeCushion implements Rules {
   }
 
   update(outcomes: Outcome[]): Controller {
-    this.container.table.proximityIndicator.hide()
-    this.container.table.proximityTarget = null
-    this.container.table.proximityThreeCushionsMet = false
-
     if (Outcome.isThreeCushionPoint(this.cueball, outcomes)) {
       this.container.sound.playSuccess(outcomes.length / 3)
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))

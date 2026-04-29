@@ -230,7 +230,7 @@ describe("ThreeCushion", () => {
 
     // Verify indicator is shown
     expect(practiceContainer.table.proximityIndicator.group.visible).to.be.true
-    expect(practiceContainer.table.proximityTarget).to.equal(balls[2])
+    expect(practiceContainer.table.proximityIndicator.target).to.equal(balls[2])
 
     // Add 3 cushion outcomes to meet requirement
     const Outcome = require("../../src/model/outcome").Outcome

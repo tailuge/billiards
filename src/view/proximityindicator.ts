@@ -11,11 +11,14 @@ import {
   DoubleSide,
 } from "three"
 import { R } from "../model/physics/constants"
+import { Ball } from "../model/ball"
 
 export class ProximityIndicator {
   readonly group = new Group()
   private readonly borders: LineLoop[] = []
   private readonly fills: Mesh[] = []
+  target: Ball | null = null
+  threeCushionsMet: boolean = false
 
   constructor() {
     this.group.position.z = -0.97 * R // Near table bed
@@ -67,6 +70,8 @@ export class ProximityIndicator {
   hide() {
     this.group.visible = false
     this.fills.forEach((fill) => (fill.visible = false))
+    this.target = null
+    this.threeCushionsMet = false
   }
 
   setProximity(distance: number) {

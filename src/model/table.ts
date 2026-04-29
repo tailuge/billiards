@@ -22,8 +22,6 @@ export class Table {
   balls: Ball[]
   cue = new Cue()
   proximityIndicator = new ProximityIndicator()
-  proximityTarget: Ball | null = null
-  proximityThreeCushionsMet: boolean = false
   pairs: Pair[]
   outcome: Outcome[] = []
   cueball: Ball
@@ -249,39 +247,39 @@ export class Table {
     }
 
     // If indicator already shown, check proximity to tracked target
-    if (this.proximityIndicator.group.visible && this.proximityTarget) {
+    if (this.proximityIndicator.group.visible && this.proximityIndicator.target) {
       // Update indicator position if target is moving
-      if (this.proximityTarget.inMotion()) {
-        this.proximityIndicator.showAt(this.proximityTarget.pos)
+      if (this.proximityIndicator.target.inMotion()) {
+        this.proximityIndicator.showAt(this.proximityIndicator.target.pos)
       }
 
       // Check if 3 cushions met (only once)
-      if (!this.proximityThreeCushionsMet) {
+      if (!this.proximityIndicator.threeCushionsMet) {
         const cushionCount = this.outcome.filter(
           (o) => o.type === OutcomeType.Cushion && o.ballA === this.cueball
         ).length
 
         if (cushionCount >= 3) {
-          this.proximityThreeCushionsMet = true
+          this.proximityIndicator.threeCushionsMet = true
         }
       }
 
       // Only emit outcomes if 3 cushions requirement met
-      if (this.proximityThreeCushionsMet) {
-        const distance = this.cueball.pos.distanceTo(this.proximityTarget.pos)
+      if (this.proximityIndicator.threeCushionsMet) {
+        const distance = this.cueball.pos.distanceTo(this.proximityIndicator.target.pos)
         if (distance < 4 * R) {
           const lastOutcome = this.outcome.at(-1)
 
           // Add if no previous proximity, or replace if closer
           if (lastOutcome?.type !== OutcomeType.Proximity) {
             this.outcome.push(
-              Outcome.proximity(this.cueball, this.proximityTarget, distance)
+              Outcome.proximity(this.cueball, this.proximityIndicator.target, distance)
             )
             this.proximityIndicator.setProximity(distance)
           } else if (distance < lastOutcome.incidentSpeed) {
             this.outcome[this.outcome.length - 1] = Outcome.proximity(
               this.cueball,
-              this.proximityTarget,
+              this.proximityIndicator.target,
               distance
             )
             this.proximityIndicator.setProximity(distance)
@@ -299,7 +297,7 @@ export class Table {
 
     const target = this.balls.find((b) => !b.inMotion() && b !== this.cueball)
     if (target) {
-      this.proximityTarget = target
+      this.proximityIndicator.target = target
       this.proximityIndicator.showAt(target.pos)
     }
   }

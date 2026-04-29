@@ -13,6 +13,11 @@ const flipP1type = (t: number) => (t === 1 ? 2 : 1)
 export abstract class ControllerBase extends Controller {
   readonly scale = 0.001
 
+  constructor(container) {
+    super(container)
+    container.table.proximityIndicator.hide()
+  }
+
   override handleChat(chatevent: ChatEvent): Controller {
     if (chatevent.voiceType === "VOICE_REQUEST") {
       this.container.chat.showMessage(chatevent.message)
