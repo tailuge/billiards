@@ -104,7 +104,9 @@ export class Outcome {
     if (proximity) {
       const collisionCount = new Set(
         outcomes
-          .filter((o) => o.type === OutcomeType.Collision && o.ballA === cueBall)
+          .filter(
+            (o) => o.type === OutcomeType.Collision && o.ballA === cueBall
+          )
           .map((o) => o.ballB)
       ).size
       if (collisionCount === 1 && cushions >= 3) {

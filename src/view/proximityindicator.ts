@@ -41,7 +41,6 @@ export class ProximityIndicator {
           opacity: borderOpacities[i],
         })
       )
-      border.position.z = 0.001
       this.borders.push(border)
       this.group.add(border)
 
@@ -55,8 +54,6 @@ export class ProximityIndicator {
         depthWrite: false,
       })
       const fillMesh = new Mesh(fillGeo, fillMat)
-      // Offset slightly to prevent z-fighting within stacks
-      fillMesh.position.z = (radii.length - i) * 0.002
       fillMesh.visible = false
       this.fills.push(fillMesh)
       this.group.add(fillMesh)
@@ -76,17 +73,6 @@ export class ProximityIndicator {
     const radii = [4, 3, 2]
     this.fills.forEach((fill, i) => {
       fill.visible = distance < radii[i] * R
-    })
-  }
-
-  setTriggered(triggered: boolean) {
-    this.isTriggered = triggered
-    const color = triggered ? 0xffff00 : 0xffffff
-    this.borders.forEach((border) => {
-      ;(border.material as LineBasicMaterial).color.set(color)
-    })
-    this.fills.forEach((fill) => {
-      ;(fill.material as MeshBasicMaterial).color.set(color)
     })
   }
 }
