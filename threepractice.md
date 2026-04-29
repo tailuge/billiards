@@ -79,9 +79,25 @@ The proximity indicator (already coded) shows when the cue ball is within 4R of 
 
 Add cushion counting logic to only show indicator after cue ball hits ≥3 cushions.
 
-### Phase 4: Add Deduplication
+### Phase 4: Add Deduplication ✓ COMPLETE
 
-Implement "closer by R" deduplication logic for proximity outcomes.
+**Goal**: Prevent duplicate proximity outcomes, only keep the closest approach
+
+**Implementation details:**
+
+1. **In `Table.checkProximity()`** [DONE]:
+   - Check if last outcome is Proximity type
+   - If not Proximity: add new proximity outcome
+   - If is Proximity: only replace if current distance is closer
+   - Result: outcomes array has at most one proximity outcome per shot
+
+**Files modified:**
+- `src/model/table.ts` - Added OutcomeType import, implemented de-dupe logic [DONE]
+
+**Behavior:**
+- First proximity within 4R: outcome added
+- Subsequent checks: outcome replaced only if getting closer
+- Outcomes array contains single proximity outcome with minimum distance
 
 ### Phase 5: Dynamic Ring Updates
 

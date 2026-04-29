@@ -6,7 +6,7 @@ import { Cue } from "../view/cue"
 import { Ball, State } from "./ball"
 import { AimEvent } from "../events/aimevent"
 import { TableGeometry } from "../view/tablegeometry"
-import { Outcome } from "./outcome"
+import { Outcome, OutcomeType } from "./outcome"
 import { PocketGeometry } from "../view/pocketgeometry"
 import { bounceHanBlend } from "./physics/physics"
 import { zero } from "../utils/three-utils"
@@ -256,9 +256,20 @@ export class Table {
 
       const distance = this.cueball.pos.distanceTo(this.proximityTarget.pos)
       if (distance < 4 * R) {
-        this.outcome.push(
-          Outcome.proximity(this.cueball, this.proximityTarget, distance)
-        )
+        const lastOutcome = this.outcome.at(-1)
+
+        // Add if no previous proximity, or replace if closer
+        if (lastOutcome?.type !== OutcomeType.Proximity) {
+          this.outcome.push(
+            Outcome.proximity(this.cueball, this.proximityTarget, distance)
+          )
+        } else if (distance < lastOutcome.incidentSpeed) {
+          this.outcome[this.outcome.length - 1] = Outcome.proximity(
+            this.cueball,
+            this.proximityTarget,
+            distance
+          )
+        }
       }
       return
     }
