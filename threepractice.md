@@ -12,30 +12,35 @@ The proximity indicator (already coded) shows when the cue ball is within 4R of 
 
 ## Implementation Phases
 
-### Phase 1: Show Indicator on 2 Balls in Motion
+### Phase 1: Show Indicator on 2 Balls in Motion ✓ COMPLETE
 
 **Goal**: Show indicator at stationary target ball when 2 balls are in motion (practice mode only)
 
-**What to implement:**
+**Implementation details:**
 
-1. **In `Table.checkProximity()`** (called from `Table.advance()`):
+1. **`Table.checkProximity()`** [DONE]:
+   - Early out if indicator already visible (`this.proximityIndicator.group.visible`)
    - Guard: Skip if not practice mode (`Session.isPracticeMode()`)
    - Find balls in motion: `const moving = this.balls.filter(b => b.inMotion())`
    - Check if exactly 2 balls moving and one is cue ball
    - Find stationary target: `this.balls.find(b => !b.inMotion() && b !== this.cueball)`
    - If target exists: `this.proximityIndicator.showAt(target.pos)`
+   - Called from `Table.advance()` every physics step
 
-2. **In `ControllerBase.hit()`** (or similar shot start):
-   - Call `table.proximityIndicator.hide()` at start of each shot
+2. **Hide indicator after rules decided** [DONE]:
+   - `ThreeCushion.update()` calls `this.container.table.proximityIndicator.hide()` at start
+   - This happens when all balls are stationary and outcome is evaluated
 
-**Files to modify:**
-- `src/model/table.ts` - Add `checkProximity()` method, call from `advance()`
-- `src/controller/controllerbase.ts` - Add `hide()` call in `hit()`
+**Files modified:**
+- `src/model/table.ts` - Added `checkProximity()` method with early out, called from `advance()` [DONE]
+- `src/controller/rules/threecushion.ts` - Added `hide()` call at start of `update()` [DONE]
 
-**Success criteria:**
+**Behavior:**
 - Indicator appears at stationary ball position when 2 balls are moving
-- Indicator hidden at start of each new shot
+- Indicator stays visible while balls are moving
+- Indicator hidden when rules are decided (in `update()`)
 - Only works in practice mode
+- Assumes cue ball is always one of the moving balls
 
 ### Phase 2: Add 3-Cushion Requirement
 
