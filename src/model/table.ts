@@ -6,12 +6,14 @@ import { Cue } from "../view/cue"
 import { Ball, State } from "./ball"
 import { AimEvent } from "../events/aimevent"
 import { TableGeometry } from "../view/tablegeometry"
-import { Outcome, OutcomeType } from "./outcome"
+import { Outcome } from "./outcome"
 import { PocketGeometry } from "../view/pocketgeometry"
 import { bounceHanBlend } from "./physics/physics"
 import { zero } from "../utils/three-utils"
 import { R } from "./physics/constants"
 import { ProximityIndicator } from "../view/proximityindicator"
+import { checkProximity } from "../utils/proximity"
+import { Session } from "../network/client/session"
 
 interface Pair {
   a: Ball
@@ -66,7 +68,7 @@ export class Table {
       a.update(t)
       a.fround()
     })
-    this.checkProximity()
+    checkProximity(this.outcome, this.cueball, this.balls, this.proximityIndicator, Session.isPracticeMode())
   }
 
   /**
@@ -240,94 +242,4 @@ export class Table {
       .some((b) => b.pos.distanceTo(pos) < 2 * R)
   }
 
-  private checkProximity() {
-    const Session = require("../network/client/session").Session
-    if (!Session.isPracticeMode()) {
-      return
-    }
-
-    // If indicator already shown, check proximity to tracked target
-    if (
-      this.proximityIndicator.group.visible &&
-      this.proximityIndicator.target
-    ) {
-      // Update indicator position if target is moving
-      if (this.proximityIndicator.target.inMotion()) {
-        this.proximityIndicator.showAt(this.proximityIndicator.target.pos)
-      }
-
-      // Check if 3 cushions met (only once)
-      if (!this.proximityIndicator.threeCushionsMet) {
-        const cushionCount = this.outcome.filter(
-          (o) => o.type === OutcomeType.Cushion && o.ballA === this.cueball
-        ).length
-
-        if (cushionCount !== this.proximityIndicator.cushionCount) {
-          this.proximityIndicator.cushionCount = cushionCount
-          this.proximityIndicator.setCushionCount(cushionCount)
-        }
-
-        if (cushionCount >= 3) {
-          this.proximityIndicator.threeCushionsMet = true
-        }
-      }
-
-      // Only emit outcomes if 3 cushions requirement met
-      if (this.proximityIndicator.threeCushionsMet) {
-        const lastOutcome = this.outcome[this.outcome.length - 1]
-        if (
-          lastOutcome?.type === OutcomeType.Collision &&
-          lastOutcome.ballA === this.cueball &&
-          lastOutcome.ballB === this.proximityIndicator.target
-        ) {
-          const distance = 1.99 * R
-          this.outcome.push(
-            Outcome.proximity(
-              this.cueball,
-              this.proximityIndicator.target,
-              distance
-            )
-          )
-          this.proximityIndicator.setProximity(distance)
-        } else {
-          const distance = this.cueball.pos.distanceTo(
-            this.proximityIndicator.target.pos
-          )
-          if (distance < 4 * R) {
-            // Add if no previous proximity, or replace if closer
-            if (lastOutcome?.type !== OutcomeType.Proximity) {
-              this.outcome.push(
-                Outcome.proximity(
-                  this.cueball,
-                  this.proximityIndicator.target,
-                  distance
-                )
-              )
-              this.proximityIndicator.setProximity(distance)
-            } else if (distance < lastOutcome.incidentSpeed) {
-              this.outcome[this.outcome.length - 1] = Outcome.proximity(
-                this.cueball,
-                this.proximityIndicator.target,
-                distance
-              )
-              this.proximityIndicator.setProximity(distance)
-            }
-          }
-        }
-      }
-      return
-    }
-
-    // Show indicator when 2 balls in motion
-    const moving = this.balls.filter((b) => b.inMotion())
-    if (moving.length !== 2 || !moving.includes(this.cueball)) {
-      return
-    }
-
-    const target = this.balls.find((b) => !b.inMotion() && b !== this.cueball)
-    if (target) {
-      this.proximityIndicator.target = target
-      this.proximityIndicator.showAt(target.pos)
-    }
-  }
 }
