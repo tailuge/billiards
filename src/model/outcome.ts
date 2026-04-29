@@ -5,6 +5,7 @@ export enum OutcomeType {
   Cushion = "Cushion",
   Collision = "Collision",
   Hit = "Hit",
+  Proximity = "Proximity",
 }
 
 export class Outcome {
@@ -36,6 +37,10 @@ export class Outcome {
 
   static hit(ballA, incidentSpeed) {
     return new Outcome(OutcomeType.Hit, ballA, ballA, incidentSpeed)
+  }
+
+  static proximity(ballA, ballB) {
+    return new Outcome(OutcomeType.Proximity, ballA, ballB, 0)
   }
 
   static isCueBallPotted(cueBall, outcomes: Outcome[]) {
@@ -91,6 +96,22 @@ export class Outcome {
         }
       }
     }
+
+    // Pass 2: Proximity point
+    const proximity = outcomes.find(
+      (o) => o.type === OutcomeType.Proximity && o.ballA === cueBall
+    )
+    if (proximity) {
+      const collisionCount = new Set(
+        outcomes
+          .filter((o) => o.type === OutcomeType.Collision && o.ballA === cueBall)
+          .map((o) => o.ballB)
+      ).size
+      if (collisionCount === 1 && cushions >= 3) {
+        return true
+      }
+    }
+
     return false
   }
 

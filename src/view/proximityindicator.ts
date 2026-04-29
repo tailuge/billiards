@@ -5,31 +5,61 @@ import {
   LineLoop,
   LineBasicMaterial,
   Vector3,
+  CircleGeometry,
+  MeshBasicMaterial,
+  Mesh,
+  DoubleSide,
 } from "three"
 import { R } from "../model/physics/constants"
 
 export class ProximityIndicator {
   readonly group = new Group()
-  private readonly rings: LineLoop[] = []
+  private readonly borders: LineLoop[] = []
+  private readonly fills: Mesh[] = []
   private isTriggered = false
 
-  constructor(count = 3) {
+  constructor() {
     this.group.position.z = -0.97 * R // Near table bed
     this.group.visible = false
 
-    for (let i = 0; i < count; i++) {
-      const multiplier = i + 2
-      const radius = R * multiplier
+    const radii = [4, 3, 2]
+    const borderOpacities = [0.15, 0.3, 0.5]
+    const fillOpacities = [0.15, 0.35, 0.6] // Cumulative effect will make inner rings stronger
+    const color = 0xffffff
+
+    for (let i = 0; i < 3; i++) {
+      const radius = R * radii[i]
+
+      // 1. Static Unfilled Borders
       const curve = new EllipseCurve(0, 0, radius, radius)
-      const geometry = new BufferGeometry().setFromPoints(curve.getPoints(32))
-      const material = new LineBasicMaterial({
-        color: 0xffffff,
+      const geometry = new BufferGeometry().setFromPoints(curve.getPoints(64))
+      const border = new LineLoop(
+        geometry,
+        new LineBasicMaterial({
+          color: color,
+          transparent: true,
+          opacity: borderOpacities[i],
+        })
+      )
+      border.position.z = 0.001
+      this.borders.push(border)
+      this.group.add(border)
+
+      // 2. Dynamic Filled Centers
+      const fillGeo = new CircleGeometry(radius, 24)
+      const fillMat = new MeshBasicMaterial({
+        color: color,
         transparent: true,
-        opacity: 0.6 / (i + 1),
+        opacity: fillOpacities[i],
+        side: DoubleSide,
+        depthWrite: false,
       })
-      const ring = new LineLoop(geometry, material)
-      this.rings.push(ring)
-      this.group.add(ring)
+      const fillMesh = new Mesh(fillGeo, fillMat)
+      // Offset slightly to prevent z-fighting within stacks
+      fillMesh.position.z = (radii.length - i) * 0.002
+      fillMesh.visible = false
+      this.fills.push(fillMesh)
+      this.group.add(fillMesh)
     }
   }
 
@@ -42,15 +72,21 @@ export class ProximityIndicator {
     this.group.visible = false
   }
 
-  setTriggered(triggered: boolean) {
-    if (this.isTriggered === triggered) return
-    this.isTriggered = triggered
+  setProximity(distance: number) {
+    const radii = [4, 3, 2]
+    this.fills.forEach((fill, i) => {
+      fill.visible = distance < radii[i] * R
+    })
+  }
 
+  setTriggered(triggered: boolean) {
+    this.isTriggered = triggered
     const color = triggered ? 0xffff00 : 0xffffff
-    this.rings.forEach((ring, i) => {
-      const material = ring.material as LineBasicMaterial
-      material.color.set(color)
-      material.opacity = triggered ? 0.8 / (i + 1) : 0.6 / (i + 1)
+    this.borders.forEach((border) => {
+      ;(border.material as LineBasicMaterial).color.set(color)
+    })
+    this.fills.forEach((fill) => {
+      ;(fill.material as MeshBasicMaterial).color.set(color)
     })
   }
 }
