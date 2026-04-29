@@ -75,9 +75,33 @@ The proximity indicator (already coded) shows when the cue ball is within 4R of 
 - Target cleared when rules decided
 - Test passes (438 total tests passing)
 
-### Phase 3: Add 3-Cushion Requirement
+### Phase 3: Add 3-Cushion Requirement ✓ COMPLETE
 
-Add cushion counting logic to only show indicator after cue ball hits ≥3 cushions.
+**Goal**: Only emit proximity outcomes after cue ball hits ≥3 cushions (indicator still shows earlier)
+
+**Implementation details:**
+
+1. **In `Table`** [DONE]:
+   - Added `proximityThreeCushionsMet: boolean` flag
+   - Check cushion count once when indicator is visible
+   - Set flag to true when ≥3 cushions detected
+   - Only emit proximity outcomes if flag is true
+   - Clear flag in `ThreeCushion.update()`
+
+2. **Behavior** [DONE]:
+   - Indicator shows when 2 balls in motion (no cushion requirement)
+   - Cushion count checked on each advance() until threshold met
+   - Proximity outcomes only emitted after 3 cushions hit
+   - Flag prevents repeated cushion counting after threshold met
+
+**Files modified:**
+- `src/model/table.ts` - Added flag, cushion check logic before outcome emission [DONE]
+- `src/controller/rules/threecushion.ts` - Clear flag in `update()` [DONE]
+
+**Behavior:**
+- Indicator visible early (2 balls in motion)
+- Outcomes only emitted after 3 cushions
+- Efficient: cushion counting stops once threshold met
 
 ### Phase 4: Add Deduplication ✓ COMPLETE
 

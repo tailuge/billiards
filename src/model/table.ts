@@ -23,6 +23,7 @@ export class Table {
   cue = new Cue()
   proximityIndicator = new ProximityIndicator()
   proximityTarget: Ball | null = null
+  proximityThreeCushionsMet: boolean = false
   pairs: Pair[]
   outcome: Outcome[] = []
   cueball: Ball
@@ -254,21 +255,35 @@ export class Table {
         this.proximityIndicator.showAt(this.proximityTarget.pos)
       }
 
-      const distance = this.cueball.pos.distanceTo(this.proximityTarget.pos)
-      if (distance < 4 * R) {
-        const lastOutcome = this.outcome.at(-1)
+      // Check if 3 cushions met (only once)
+      if (!this.proximityThreeCushionsMet) {
+        const cushionCount = this.outcome.filter(
+          (o) => o.type === OutcomeType.Cushion && o.ballA === this.cueball
+        ).length
 
-        // Add if no previous proximity, or replace if closer
-        if (lastOutcome?.type !== OutcomeType.Proximity) {
-          this.outcome.push(
-            Outcome.proximity(this.cueball, this.proximityTarget, distance)
-          )
-        } else if (distance < lastOutcome.incidentSpeed) {
-          this.outcome[this.outcome.length - 1] = Outcome.proximity(
-            this.cueball,
-            this.proximityTarget,
-            distance
-          )
+        if (cushionCount >= 3) {
+          this.proximityThreeCushionsMet = true
+        }
+      }
+
+      // Only emit outcomes if 3 cushions requirement met
+      if (this.proximityThreeCushionsMet) {
+        const distance = this.cueball.pos.distanceTo(this.proximityTarget.pos)
+        if (distance < 4 * R) {
+          const lastOutcome = this.outcome.at(-1)
+
+          // Add if no previous proximity, or replace if closer
+          if (lastOutcome?.type !== OutcomeType.Proximity) {
+            this.outcome.push(
+              Outcome.proximity(this.cueball, this.proximityTarget, distance)
+            )
+          } else if (distance < lastOutcome.incidentSpeed) {
+            this.outcome[this.outcome.length - 1] = Outcome.proximity(
+              this.cueball,
+              this.proximityTarget,
+              distance
+            )
+          }
         }
       }
       return
