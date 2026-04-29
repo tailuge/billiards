@@ -11,6 +11,7 @@ import { PocketGeometry } from "../view/pocketgeometry"
 import { bounceHanBlend } from "./physics/physics"
 import { zero } from "../utils/three-utils"
 import { R } from "./physics/constants"
+import { ProximityIndicator } from "../view/proximityindicator"
 
 interface Pair {
   a: Ball
@@ -20,6 +21,7 @@ interface Pair {
 export class Table {
   balls: Ball[]
   cue = new Cue()
+  proximityIndicator = new ProximityIndicator()
   pairs: Pair[]
   outcome: Outcome[] = []
   cueball: Ball
@@ -207,6 +209,7 @@ export class Table {
     scene.add(this.cue.helperMesh)
     scene.add(this.cue.placerMesh)
     scene.add(this.cue.shadowMesh)
+    scene.add(this.proximityIndicator.group)
   }
 
   showTraces(bool) {

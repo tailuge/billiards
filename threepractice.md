@@ -58,7 +58,7 @@ After the existing loop returns `false`, add pass 2:
 New file `src/view/proximityindicator.ts`. Creates a `THREE.Group` containing:
 - A single ring at radius `4R` (the proximity threshold) using `EllipseCurve` + `LineLoop`
 - A `Sprite` text label `"4r"` using a `CanvasTexture`
-- Both start `visible = false`
+- Both start `visible = false` [DONE]
 
 The group is positioned at `z = 0.01` (above table bed), same as other overlays.
 
@@ -66,8 +66,8 @@ The group is positioned at `z = 0.01` (above table bed), same as other overlays.
 
 | File | Change |
 |---|---|
-| `src/view/proximityindicator.ts` | New — ring + label sprite, `showAt(pos)` / `hide()` |
-| `src/model/table.ts` | Add `proximityIndicator` field, add to scene, call `showAt` from `checkProximity()` |
+| `src/view/proximityindicator.ts` | New — ring visual, `showAt(pos)` / `hide()` [DONE] |
+| `src/model/table.ts` | Add `proximityIndicator` field, add to scene, call `showAt` from `checkProximity()` [DONE] |
 | `src/controller/controllerbase.ts` | Call `table.proximityIndicator.hide()` in `hit()` |
 
 ## Files Changed
@@ -77,6 +77,6 @@ The group is positioned at `z = 0.01` (above table bed), same as other overlays.
 | `src/model/outcome.ts` | Add `Proximity` type, factory method, pass 2 in `isThreeCushionPoint` |
 | `src/model/table.ts` | Add `static proximityEnabled`, `proximityIndicator`, `checkProximity()` in `advance()`, add indicator to scene |
 | `src/controller/rules/threecushion.ts` | Set `Table.proximityEnabled = true` in `tableGeometry()` |
-| `src/view/proximityindicator.ts` | New — ring + label sprite, `showAt(pos)` / `hide()` |
+| `src/view/proximityindicator.ts` | New — ring visual, `showAt(pos)` / `hide()` [DONE] |
 | `src/controller/controllerbase.ts` | Call `table.proximityIndicator.hide()` in `hit()` |
 | `test/rules/threecushion.spec.ts` | New proximity scoring tests |
