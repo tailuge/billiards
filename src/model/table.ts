@@ -241,6 +241,10 @@ export class Table {
   }
 
   private checkProximity() {
+    if (this.proximityIndicator.group.visible) {
+      return
+    }
+
     const Session = require("../network/client/session").Session
     if (!Session.isPracticeMode()) {
       return
