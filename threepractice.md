@@ -42,19 +42,52 @@ The proximity indicator (already coded) shows when the cue ball is within 4R of 
 - Only works in practice mode
 - Assumes cue ball is always one of the moving balls
 
-### Phase 2: Add 3-Cushion Requirement
+### Phase 2: Emit Proximity Outcomes (No Cushion Requirement Yet) ✓ COMPLETE
+
+**Goal**: Generate `Outcome.proximity()` events when indicator is shown and cue ball is within 4R of target
+
+**Implementation details:**
+
+1. **In `Table`** [DONE]:
+   - Added `proximityTarget: Ball | null` field to track the stationary target ball
+   - When indicator first shown (2 balls in motion), store reference to stationary ball in `proximityTarget`
+   - On subsequent `advance()` calls, check distance to `proximityTarget` and emit outcome if < 4R
+   - Clear `proximityTarget` when indicator is hidden in `ThreeCushion.update()`
+
+2. **In `Table.checkProximity()`** [DONE]:
+   - If indicator already visible: check distance to `proximityTarget`, emit outcome if < 4R, then return
+   - Otherwise: check for 2 balls in motion, show indicator and set `proximityTarget`
+
+3. **Unit test** in `test/rules/threecushion.spec.ts` [DONE]:
+   - Set up practice mode with Session.init
+   - Create shot with 2 balls in motion (Rolling state), cue ball within 4R of stationary ball
+   - Call `advance()` twice: first to show indicator and set target, second to emit outcome
+   - Verify `Outcome.proximity()` is in outcomes array with correct balls and distance < 4R
+
+**Files modified:**
+- `src/model/table.ts` - Added `proximityTarget` field, updated `checkProximity()` logic [DONE]
+- `src/controller/rules/threecushion.ts` - Clear `proximityTarget` in `update()` [DONE]
+- `test/rules/threecushion.spec.ts` - Added unit test [DONE]
+
+**Behavior:**
+- Indicator shown when 2 balls in motion, target ball reference stored
+- Proximity outcomes emitted continuously on each advance() while indicator visible and distance < 4R
+- Target cleared when rules decided
+- Test passes (438 total tests passing)
+
+### Phase 3: Add 3-Cushion Requirement
 
 Add cushion counting logic to only show indicator after cue ball hits ≥3 cushions.
 
-### Phase 3: Emit Proximity Outcomes
+### Phase 4: Add Deduplication
 
-Emit `Outcome.proximity()` with distance when ball enters 4R threshold, implement "closer by R" deduplication.
+Implement "closer by R" deduplication logic for proximity outcomes.
 
-### Phase 4: Dynamic Ring Updates
+### Phase 5: Dynamic Ring Updates
 
 Call `setProximity(distance)` to show/hide filled rings based on current distance.
 
-### Phase 5: Sound Integration
+### Phase 6: Sound Integration
 
 Add sound triggers for "first shown" and "ball in proximity" transitions.
 

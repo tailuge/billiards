@@ -22,6 +22,7 @@ export class Table {
   balls: Ball[]
   cue = new Cue()
   proximityIndicator = new ProximityIndicator()
+  proximityTarget: Ball | null = null
   pairs: Pair[]
   outcome: Outcome[] = []
   cueball: Ball
@@ -241,15 +242,23 @@ export class Table {
   }
 
   private checkProximity() {
-    if (this.proximityIndicator.group.visible) {
-      return
-    }
-
     const Session = require("../network/client/session").Session
     if (!Session.isPracticeMode()) {
       return
     }
 
+    // If indicator already shown, check proximity to tracked target
+    if (this.proximityIndicator.group.visible && this.proximityTarget) {
+      const distance = this.cueball.pos.distanceTo(this.proximityTarget.pos)
+      if (distance < 4 * R) {
+        this.outcome.push(
+          Outcome.proximity(this.cueball, this.proximityTarget, distance)
+        )
+      }
+      return
+    }
+
+    // Show indicator when 2 balls in motion
     const moving = this.balls.filter((b) => b.inMotion())
     if (moving.length !== 2 || !moving.includes(this.cueball)) {
       return
@@ -257,6 +266,7 @@ export class Table {
 
     const target = this.balls.find((b) => !b.inMotion() && b !== this.cueball)
     if (target) {
+      this.proximityTarget = target
       this.proximityIndicator.showAt(target.pos)
     }
   }

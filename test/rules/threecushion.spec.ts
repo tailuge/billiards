@@ -193,4 +193,61 @@ describe("ThreeCushion", () => {
     expect(rules.nextCandidateBall()).to.not.be.undefined
     done()
   })
+
+  it("Proximity outcome emitted when cue ball within 4R in practice mode", (done) => {
+    // Initialize session with practice mode
+    Session.reset()
+    Session.init("test-client", "TestPlayer", "test-table", false, false, true)
+
+    const practiceContainer = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets(),
+      ruletype: rule,
+      practiceMode: true,
+    })
+
+    const balls = practiceContainer.table.balls
+    const cueball = balls[0]
+    const target = balls[1]
+
+    // Set up: cue ball and one other ball in motion, third ball stationary
+    const State = require("../../src/model/ball").State
+    cueball.vel.set(1, 0, 0)
+    cueball.state = State.Rolling
+    target.vel.set(-1, 0, 0)
+    target.state = State.Rolling
+    balls[2].vel.set(0, 0, 0)
+    balls[2].state = State.Stationary
+
+    // Position cue ball within 4R of stationary ball
+    const R = require("../../src/model/physics/constants").R
+    cueball.pos.set(0, 0, 0)
+    balls[2].pos.set(3 * R, 0, 0) // Within 4R
+
+    // First advance: show indicator and set target
+    practiceContainer.table.advance(0.01)
+
+    // Verify indicator is shown
+    expect(practiceContainer.table.proximityIndicator.group.visible).to.be.true
+    expect(practiceContainer.table.proximityTarget).to.equal(balls[2])
+
+    // Second advance: check proximity and emit outcome
+    practiceContainer.table.advance(0.01)
+
+    // Verify proximity outcome was emitted
+    const proximityOutcomes = practiceContainer.table.outcome.filter(
+      (o) => o.type === "Proximity"
+    )
+    expect(proximityOutcomes).to.have.lengthOf(1)
+
+    const proximityOutcome = proximityOutcomes[0]
+    expect(proximityOutcome.ballA).to.equal(cueball)
+    expect(proximityOutcome.ballB).to.equal(balls[2])
+    // Distance should be less than 4R and positive
+    expect(proximityOutcome.incidentSpeed).to.be.lessThan(4 * R)
+    expect(proximityOutcome.incidentSpeed).to.be.greaterThan(0)
+
+    done()
+  })
 })
