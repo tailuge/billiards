@@ -10,7 +10,50 @@ The proximity indicator (already coded) shows when the cue ball is within 4R of 
 - `hide()` - Hide indicator
 - `setProximity(distance)` - Update filled rings based on distance to ball
 
-## Proximity Outcome Rules
+## Implementation Phases
+
+### Phase 1: Show Indicator on 2 Balls in Motion
+
+**Goal**: Show indicator at stationary target ball when 2 balls are in motion (practice mode only)
+
+**What to implement:**
+
+1. **In `Table.checkProximity()`** (called from `Table.advance()`):
+   - Guard: Skip if not practice mode (`Session.isPracticeMode()`)
+   - Find balls in motion: `const moving = this.balls.filter(b => b.inMotion())`
+   - Check if exactly 2 balls moving and one is cue ball
+   - Find stationary target: `this.balls.find(b => !b.inMotion() && b !== this.cueball)`
+   - If target exists: `this.proximityIndicator.showAt(target.pos)`
+
+2. **In `ControllerBase.hit()`** (or similar shot start):
+   - Call `table.proximityIndicator.hide()` at start of each shot
+
+**Files to modify:**
+- `src/model/table.ts` - Add `checkProximity()` method, call from `advance()`
+- `src/controller/controllerbase.ts` - Add `hide()` call in `hit()`
+
+**Success criteria:**
+- Indicator appears at stationary ball position when 2 balls are moving
+- Indicator hidden at start of each new shot
+- Only works in practice mode
+
+### Phase 2: Add 3-Cushion Requirement
+
+Add cushion counting logic to only show indicator after cue ball hits ≥3 cushions.
+
+### Phase 3: Emit Proximity Outcomes
+
+Emit `Outcome.proximity()` with distance when ball enters 4R threshold, implement "closer by R" deduplication.
+
+### Phase 4: Dynamic Ring Updates
+
+Call `setProximity(distance)` to show/hide filled rings based on current distance.
+
+### Phase 5: Sound Integration
+
+Add sound triggers for "first shown" and "ball in proximity" transitions.
+
+## Proximity Outcome Rules (Full Implementation)
 
 Emit `OutcomeType.Proximity` in `Table.advance()` when:
 
