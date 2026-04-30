@@ -66,7 +66,7 @@ export class ParticleUtils {
   }
 
   static readonly win =
-    "🍕🍔🍟🌮🍣🍜🍝🍛🍗🍖🍰🎂🍩🍦🍧🍨🍫🍬🍿🥑🍜🍲🍱🍚🍡🍢🍘🍙🥟🧀🍷🥪🍲🥗🍍🥥🍹🍉🍇🍈🍊🍋🍠🍌🥜🍯🍵🍛🍭🍬🍫🍿🍮🍧🍨🍦🥧🧁🍩☕🍵🍶🍺🍷🥛🍹🧃🧉🥤🍾🥂🍸🍻🥓🌭🥪🥨🧀🥚🍳🥘🍲"
+    "🍕🍔🍟🌮🍣🍜🍝🍛🍗🍖🍰🎂🍩🍦🍧🍨🍿🥑🍜🍲🍚🍡🍢🧀🍷🥪🍲🥗🍍🥥🍹🍉🍇🍈🍊🍋🍠🍌🥜🍵🍛🍮🍧🍨🍦🥧🧁🍩☕🍵🍺🍷🥛🍹🧃🧉🥤🍾🥂🍸🍻🥓🌭🥪🥨🧀🥚🍳"
   static readonly messages = [
     "🍀WIN",
     "🎲神",
@@ -81,11 +81,11 @@ export class ParticleUtils {
     "🀄",
     "🂡",
     "水啦",
-    "🍱💯",
     "🏃🏃‍♂️🏃‍♀️",
     "1UP✨",
     "🍒🍒🍒",
     "E = m💫²",
+    "🔴⚪🟡❤️",
   ].concat([...this.win])
 
   static randomText() {

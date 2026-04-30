@@ -20,6 +20,7 @@ export class ProximityIndicator {
   target: Ball | null = null
   threeCushionsMet: boolean = false
   cushionCount: number = 0
+  hitTarget: boolean = false
 
   constructor() {
     this.group.position.z = -0.97 * R // Near table bed
@@ -76,6 +77,7 @@ export class ProximityIndicator {
     this.target = null
     this.threeCushionsMet = false
     this.cushionCount = 0
+    this.hitTarget = false
   }
 
   setCushionCount(count: number) {

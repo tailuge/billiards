@@ -25,12 +25,14 @@ function updateProximityOutcome(
   cueball: Ball,
   indicator: ProximityIndicator
 ) {
+  if (indicator.hitTarget) return
   const lastOutcome = outcome[outcome.length - 1]
   if (
     lastOutcome?.type === OutcomeType.Collision &&
     lastOutcome.ballA === cueball &&
     lastOutcome.ballB === indicator.target
   ) {
+    indicator.hitTarget = true
     const distance = 1.99 * R
     outcome.push(Outcome.proximity(cueball, indicator.target!, distance))
     indicator.setProximity(distance)
