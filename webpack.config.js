@@ -26,8 +26,7 @@ module.exports = {
             },
           },
         },
-        exclude:
-          /node_modules\/(?!(three|@tailuge\/messaging|simple-peer-light|jsoncrush))/,
+        exclude: /node_modules\/(?!(three|@tailuge\/messaging|jsoncrush))/,
       },
     ],
   },

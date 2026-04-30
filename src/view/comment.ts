@@ -16,29 +16,8 @@ export class Comment {
       return
     }
 
-    const voiceBtn = document.getElementById("voice") as HTMLButtonElement
-
     this.button.onclick = (_) => {
       this.toggleMenu()
-    }
-
-    if (voiceBtn) {
-      voiceBtn.onclick = (e) => {
-        e.stopPropagation()
-        this.container.voiceController.requestCall()
-        this.hideMenu()
-      }
-      if (this.container.voiceController) {
-        this.container.voiceController.onStateChange = (symbol) => {
-          console.log("Voice state changed:", symbol)
-          voiceBtn.textContent = symbol
-          const ringing = symbol === "☏"
-          voiceBtn.classList.toggle("voice-ringing", ringing)
-          if (ringing) {
-            voiceBtn.hidden = false
-          }
-        }
-      }
     }
 
     const emojiButtons = this.menu.querySelectorAll(".comment-emoji")
@@ -72,8 +51,6 @@ export class Comment {
   showMenu() {
     if (!this.menu) return
     this.menu.style.display = "grid"
-    const voiceBtn = document.getElementById("voice") as HTMLButtonElement
-    if (voiceBtn) voiceBtn.hidden = false
   }
 
   hideMenu() {

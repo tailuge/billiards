@@ -34,7 +34,6 @@
     "@tailuge/messaging": "1.18.0",
     "interactjs": "1.10.27",
     "jsoncrush": "^1.1.8",
-    "simple-peer-light": "^9.10.0",
     "three": "0.184.0"
   },
   "devDependencies": {

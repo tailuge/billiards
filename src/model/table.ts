@@ -69,7 +69,12 @@ export class Table {
       a.fround()
     })
     if (this.proximityEnabled) {
-      checkProximity(this.outcome, this.cueball, this.balls, this.proximityIndicator)
+      checkProximity(
+        this.outcome,
+        this.cueball,
+        this.balls,
+        this.proximityIndicator
+      )
     }
   }
 
@@ -243,5 +248,4 @@ export class Table {
       .filter((b) => b !== excluding)
       .some((b) => b.pos.distanceTo(pos) < 2 * R)
   }
-
 }

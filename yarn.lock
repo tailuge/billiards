@@ -3093,7 +3093,6 @@ __metadata:
     jsoncrush: "npm:^1.1.8"
     node-notifier: "npm:^10.0.1"
     prettier: "npm:3.8.3"
-    simple-peer-light: "npm:^9.10.0"
     stylelint: "npm:17.9.1"
     stylelint-config-standard: "npm:^40.0.0"
     swc-loader: "npm:0.2.7"
@@ -7901,13 +7900,6 @@ __metadata:
     once: "npm:^1.3.1"
     simple-concat: "npm:^1.0.0"
   checksum: 10c0/b0649a581dbca741babb960423248899203165769747142033479a7dc5e77d7b0fced0253c731cd57cf21e31e4d77c9157c3069f4448d558ebc96cf9e1eebcf0
-  languageName: node
-  linkType: hard
-
-"simple-peer-light@npm:^9.10.0":
-  version: 9.10.0
-  resolution: "simple-peer-light@npm:9.10.0"
-  checksum: 10c0/cfc029bcc46fa780188f470827dd7cabf23580663312b665c1e1238a500749f3f3e1437feb15a8439f6231ae682d04438550c7207d64e1bd4fe37980161b239c
   languageName: node
   linkType: hard
 

@@ -19,19 +19,6 @@ export abstract class ControllerBase extends Controller {
   }
 
   override handleChat(chatevent: ChatEvent): Controller {
-    if (chatevent.voiceType === "VOICE_REQUEST") {
-      this.container.chat.showMessage(chatevent.message)
-      this.container.voiceController.onIncomingRequest()
-      return this
-    }
-    if (chatevent.voiceType === "VOICE_SIGNAL") {
-      this.container.voiceController.onSignal(chatevent.voiceData)
-      return this
-    }
-    if (chatevent.voiceType === "VOICE_END") {
-      this.container.voiceController.onRemoteEnd()
-      return this
-    }
     if (chatevent.message) {
       this.container.chat.showMessage(chatevent.message)
     }
