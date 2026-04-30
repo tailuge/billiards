@@ -19,10 +19,26 @@ export function renderer(element: HTMLElement) {
   renderer.toneMapping = NoToneMapping
   renderer.sortObjects = false
   renderer.setSize(element.offsetWidth, element.offsetHeight)
-  renderer.setPixelRatio(window.devicePixelRatio * 1)
+  renderer.setPixelRatio(computeCappedDPR(element.offsetWidth, element.offsetHeight))
   renderer.domElement.draggable = false
   renderer.domElement.style.userSelect = "none"
   renderer.domElement.addEventListener("dragstart", (e) => e.preventDefault())
   element.appendChild(renderer.domElement)
   return renderer
+}
+
+function computeCappedDPR(width: number, height: number) {
+  const maxPixels = 1_500_000;
+
+  const deviceDPR = window.devicePixelRatio || 1;
+
+  let dpr = deviceDPR;
+
+  const pixels = width * height * dpr * dpr;
+
+  if (pixels > maxPixels) {
+    dpr = Math.sqrt(maxPixels / (width * height));
+  }
+
+  return Math.min(dpr, 1);
 }
