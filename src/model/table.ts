@@ -23,6 +23,7 @@ export class Table {
   balls: Ball[]
   cue = new Cue()
   proximityIndicator = new ProximityIndicator()
+  proximityEnabled = false
   pairs: Pair[]
   outcome: Outcome[] = []
   cueball: Ball
@@ -67,7 +68,9 @@ export class Table {
       a.update(t)
       a.fround()
     })
-    checkProximity(this.outcome, this.cueball, this.balls, this.proximityIndicator)
+    if (this.proximityEnabled) {
+      checkProximity(this.outcome, this.cueball, this.balls, this.proximityIndicator)
+    }
   }
 
   /**
