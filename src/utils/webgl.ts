@@ -10,12 +10,14 @@ export function renderer(element: HTMLElement) {
     depth: true,
     powerPreference: "high-performance",
     stencil: false,
+    alpha: false,
   })
 
   renderer.shadowMap.enabled = false
   renderer.autoClear = false
   renderer.outputColorSpace = SRGBColorSpace
   renderer.toneMapping = NoToneMapping
+  renderer.sortObjects = false
   renderer.setSize(element.offsetWidth, element.offsetHeight)
   renderer.setPixelRatio(window.devicePixelRatio * 1)
   renderer.domElement.draggable = false
