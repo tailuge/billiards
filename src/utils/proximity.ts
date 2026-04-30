@@ -73,10 +73,8 @@ export function checkProximity(
   outcome: Outcome[],
   cueball: Ball,
   balls: Ball[],
-  indicator: ProximityIndicator,
-  practiceMode: boolean
+  indicator: ProximityIndicator
 ): void {
-  if (!practiceMode) return
 
   if (indicator.group.visible && indicator.target) {
     trackActiveIndicator(outcome, cueball, indicator)

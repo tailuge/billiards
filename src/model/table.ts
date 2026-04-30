@@ -13,7 +13,6 @@ import { zero } from "../utils/three-utils"
 import { R } from "./physics/constants"
 import { ProximityIndicator } from "../view/proximityindicator"
 import { checkProximity } from "../utils/proximity"
-import { Session } from "../network/client/session"
 
 interface Pair {
   a: Ball
@@ -68,7 +67,7 @@ export class Table {
       a.update(t)
       a.fround()
     })
-    checkProximity(this.outcome, this.cueball, this.balls, this.proximityIndicator, Session.isPracticeMode())
+    checkProximity(this.outcome, this.cueball, this.balls, this.proximityIndicator)
   }
 
   /**
