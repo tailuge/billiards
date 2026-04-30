@@ -17,7 +17,7 @@ export function renderer(element: HTMLElement) {
   renderer.outputColorSpace = SRGBColorSpace
   renderer.toneMapping = NoToneMapping
   renderer.setSize(element.offsetWidth, element.offsetHeight)
-  renderer.setPixelRatio(window.devicePixelRatio * 0.75)
+  renderer.setPixelRatio(window.devicePixelRatio * 1)
   renderer.domElement.draggable = false
   renderer.domElement.style.userSelect = "none"
   renderer.domElement.addEventListener("dragstart", (e) => e.preventDefault())
