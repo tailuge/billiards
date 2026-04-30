@@ -28,7 +28,7 @@ export function renderer(element: HTMLElement) {
 }
 
 function computeCappedDPR(width: number, height: number) {
-  const maxPixels = 1_500_000;
+  const maxPixels = 2_000_000;
 
   const deviceDPR = window.devicePixelRatio || 1;
 
