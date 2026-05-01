@@ -156,22 +156,9 @@
 
       #replay,
       #share {
-        min-width: 60px;
         display: inline-flex;
         align-items: center;
-        justify-content: center;
         gap: 4px;
-        margin: 0;
-      }
-
-      #overlay-buttons {
-        position: absolute;
-        bottom: 8px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 8px;
-        z-index: 200;
       }
 
       .topview {
@@ -339,21 +326,12 @@
       #presets-row {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         gap: 8px;
         align-items: center;
         width: 92%;
         margin: 0 auto;
         padding: 4px 0;
-        overflow-x: auto;
-        white-space: nowrap;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        position: relative;
-        top: -12px;
-      }
-
-      #presets-row::-webkit-scrollbar {
-        display: none;
       }
 
       #presets-list {
@@ -364,29 +342,16 @@
       .preset-btn-container {
         display: inline-flex;
         align-items: center;
-        background: #333;
-        border: 1px solid #444;
-        border-radius: 4px;
         padding: 0 4px;
       }
 
       .preset-btn {
-        background: none;
-        border: none;
-        color: white;
         padding: 4px 8px;
         cursor: pointer;
         font-size: 11px;
       }
 
-      .preset-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-
       .preset-action {
-        background: none;
-        border: none;
-        color: #888;
         cursor: pointer;
         padding: 4px;
         font-size: 10px;
@@ -395,24 +360,11 @@
         justify-content: center;
       }
 
-      .preset-action:hover {
-        color: white;
-      }
-
       #add-preset,
       #share-all {
-        background: #444;
-        border: 1px solid #555;
-        color: white;
-        border-radius: 4px;
         padding: 4px 8px;
         cursor: pointer;
         font-size: 11px;
-      }
-
-      #add-preset:hover,
-      #share-all:hover {
-        background: #555;
       }
 
       .cueBall {
@@ -513,31 +465,6 @@
           class="topview"
           data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-1.305026,-0.634005,-1.434758,0.601475,-1.310215,0.685593%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.201901,%22y%22:0.221892,%22z%22:0%7D,%22angle%22:0.63687,%22power%22:2.62,%22pos%22:%7B%22x%22:-1.305026,%22y%22:-0.634005,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
         ></div>
-        <div id="overlay-buttons">
-          <button id="replay" type="button">replay</button>
-          <button id="share" type="button">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <circle cx="18" cy="5" r="3"></circle>
-              <circle cx="6" cy="12" r="3"></circle>
-              <circle cx="18" cy="19" r="3"></circle>
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-            </svg>
-            share
-          </button>
-        </div>
       </div>
 
       <div id="presets-row">
@@ -545,7 +472,30 @@
         <button id="add-preset" type="button" title="Add current as preset">
           +
         </button>
-        <button id="share-all" type="button">share all</button>
+        <button id="share-all" type="button">share all presets</button>
+        <button id="replay" type="button">replay</button>
+        <button id="share" type="button">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <circle cx="18" cy="5" r="3"></circle>
+            <circle cx="6" cy="12" r="3"></circle>
+            <circle cx="18" cy="19" r="3"></circle>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+          </svg>
+          share
+        </button>
       </div>
 
       <div class="controls-row">
