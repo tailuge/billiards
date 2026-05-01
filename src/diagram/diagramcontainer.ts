@@ -64,6 +64,10 @@ export class DiagramContainer {
     console.log(`diagram ready`)
     const replaybutton = getButton("replay")!
     this.replayButton(replaybutton)
+    const clearbutton = getButton("cleartraces")
+    if (clearbutton) {
+      this.clearTracesButton(clearbutton)
+    }
     const overlayCanvas = getCanvas("overlaycanvas")
     if (overlayCanvas) {
       this.realOverlay = new RealOverlay(overlayCanvas, this.container)
@@ -78,6 +82,14 @@ export class DiagramContainer {
       )
     }
     this.container.animate(performance.now())
+  }
+
+  clearTracesButton(button) {
+    button.addEventListener("click", () => {
+      this.container.table.balls.forEach((b) =>
+        b.ballmesh.clearGhosts(this.container.view.scene)
+      )
+    })
   }
 
   replayButton(replaybutton) {
