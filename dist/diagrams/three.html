@@ -136,7 +136,7 @@
         justify-content: center;
         text-align: center;
         box-sizing: border-box;
-        flex: 1;
+        flex: 1 1 auto;
       }
 
       p {
@@ -274,13 +274,12 @@
 
       .controls-row {
         display: flex;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         align-items: stretch;
         gap: 0px;
         width: 92%;
         margin: 0 auto;
         box-sizing: border-box;
-        overflow-x: auto;
         position: relative;
         top: 0;
         z-index: 10;
@@ -290,7 +289,9 @@
         display: flex;
         align-items: center;
         width: min-content;
-        flex-shrink: 0;
+        flex: 1 1 auto;
+        justify-content: center;
+        box-sizing: border-box;
       }
 
       .ballContainerWrapper {
@@ -331,10 +332,12 @@
         width: 92%;
         margin: 0 auto;
         padding: 4px 0;
+        box-sizing: border-box;
       }
 
       #presets-list {
         display: flex;
+        flex-wrap: wrap;
         gap: 4px;
       }
 
