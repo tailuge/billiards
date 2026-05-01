@@ -156,22 +156,8 @@
 
       #replay,
       #share {
-        min-width: 60px;
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        gap: 4px;
-        margin: 0;
-      }
-
-      #overlay-buttons {
-        position: absolute;
-        bottom: 8px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 8px;
-        z-index: 200;
       }
 
       .topview {
@@ -296,7 +282,7 @@
         box-sizing: border-box;
         overflow-x: auto;
         position: relative;
-        top: -14px;
+        top: 0;
         z-index: 10;
       }
 
@@ -336,12 +322,57 @@
         margin: 0;
       }
 
-      #button-stack {
+      #presets-row {
         display: flex;
         flex-direction: row;
-        gap: 4px;
-        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
         align-items: center;
+        width: 92%;
+        margin: 0 auto;
+        padding: 4px 0;
+      }
+
+      #presets-list {
+        display: flex;
+        gap: 4px;
+      }
+
+      .preset-btn-container {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 4px;
+      }
+
+      .preset-btn,
+      .preset-action,
+      #add-preset,
+      #share-all,
+      #share,
+      #replay {
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 11px;
+        border: 2px outset #ddd;
+        border-radius: 2px;
+        transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+      }
+
+      .preset-action { background-color: #f0c8c8; }
+      #replay { background-color: #c8f0c8; }
+
+      .preset-btn:hover, .preset-action:hover,
+      #add-preset:hover, #share-all:hover, #share:hover, #replay:hover {
+        filter: brightness(0.88);
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      }
+      .preset-btn:active, .preset-action:active,
+      #add-preset:active, #share-all:active, #share:active, #replay:active {
+        border-style: inset;
+        filter: brightness(0.75);
+        transform: translateY(2px) scale(0.97);
+        box-shadow: none;
       }
 
       .cueBall {
@@ -442,101 +473,16 @@
           class="topview"
           data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-1.305026,-0.634005,-1.434758,0.601475,-1.310215,0.685593%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.201901,%22y%22:0.221892,%22z%22:0%7D,%22angle%22:0.63687,%22power%22:2.62,%22pos%22:%7B%22x%22:-1.305026,%22y%22:-0.634005,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
         ></div>
-        <div id="overlay-buttons">
-          <button id="replay" type="button">replay</button>
-          <div id="button-stack">
-            <button
-              type="button"
-              onclick="
-                applyPreset(
-                  [
-                    [-1.127866, 0.347029],
-                    [-1.347367, 0.611996],
-                    [-1.412751, 0.687701],
-                  ],
-                  0.212025,
-                  2.096,
-                  { x: 0.246853, y: 0.170481, z: 0 }
-                )
-              "
-            >
-              #1
-            </button>
-            <button
-              type="button"
-              onclick="
-                applyPreset(
-                  [
-                    [-1.305026, -0.634005],
-                    [-1.434758, 0.601475],
-                    [-1.310215, 0.685593],
-                  ],
-                  0.63687,
-                  2.62,
-                  { x: -0.201901, y: 0.221892, z: 0 }
-                )
-              "
-            >
-              #2
-            </button>
-            <button
-              type="button"
-              onclick="
-                applyPreset(
-                  [
-                    [-0.756, -0.189],
-                    [-0.756, 0],
-                    [0.756, 0],
-                  ],
-                  0.147099,
-                  3.7204,
-                  { x: -0.252932, y: 0.161324, z: 0 }
-                )
-              "
-            >
-              #3
-            </button>
-            <button
-              type="button"
-              onclick="
-                applyPreset(
-                  [
-                    [-0.769, -0.192],
-                    [0.769, 0],
-                    [1.07, 0],
-                  ],
-                  5.513185,
-                  3,
-                  { x: -0.201901, y: 0.221892, z: 0 }
-                )
-              "
-            >
-              #4
-            </button>
-          </div>
-          <button id="share" type="button">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <circle cx="18" cy="5" r="3"></circle>
-              <circle cx="6" cy="12" r="3"></circle>
-              <circle cx="18" cy="19" r="3"></circle>
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-            </svg>
-            share
-          </button>
-        </div>
+      </div>
+
+      <div id="presets-row">
+        <div id="presets-list"></div>
+        <button id="add-preset" type="button" title="Add current as preset">
+          +
+        </button>
+        <button id="share-all" type="button">share all presets</button>
+        <button id="share" type="button">share this shot</button>
+        <button id="replay" type="button">replay</button>
       </div>
 
       <div class="controls-row">
@@ -590,8 +536,55 @@
       const OFF_CENTER_LIMIT = 0.3
       const MAX_POWER = 160 * BALL_RADIUS
       const BALL_COLORS = ["#ffffff", "#ffd700", "#ef4444"]
+      const DEFAULT_PRESETS = [
+        {
+          name: "#1",
+          positions: [
+            [-1.127866, 0.347029],
+            [-1.347367, 0.611996],
+            [-1.412751, 0.687701],
+          ],
+          angle: 0.212025,
+          power: 2.096,
+          offset: { x: 0.246853, y: 0.170481, z: 0 },
+        },
+        {
+          name: "#2",
+          positions: [
+            [-1.305026, -0.634005],
+            [-1.434758, 0.601475],
+            [-1.310215, 0.685593],
+          ],
+          angle: 0.63687,
+          power: 2.62,
+          offset: { x: -0.201901, y: 0.221892, z: 0 },
+        },
+        {
+          name: "#3",
+          positions: [
+            [-0.756, -0.189],
+            [-0.756, 0],
+            [0.756, 0],
+          ],
+          angle: 0.147099,
+          power: 3.7204,
+          offset: { x: -0.252932, y: 0.161324, z: 0 },
+        },
+        {
+          name: "#4",
+          positions: [
+            [-0.769, -0.192],
+            [0.769, 0],
+            [1.07, 0],
+          ],
+          angle: 5.513185,
+          power: 3,
+          offset: { x: -0.201901, y: 0.221892, z: 0 },
+        },
+      ]
 
       let tableBalls = []
+      let presets = []
       let draggingBall = null
       let draggingAim = false
       let draggingSpin = false
@@ -688,10 +681,10 @@
       }
 
       function updateAimParamsText() {
-        console.log(
-          `spin x=${aimOffset.x.toFixed(3)} y=${aimOffset.y.toFixed(3)}  ` +
-            `power=${aimPower.toFixed(3)}  angle=${aimAngle.toFixed(3)}`
-        )
+        //        console.log(
+        //          `spin x=${aimOffset.x.toFixed(3)} y=${aimOffset.y.toFixed(3)}  ` +
+        //            `power=${aimPower.toFixed(3)}  angle=${aimAngle.toFixed(3)}`
+        //        )
       }
 
       function normalizeSpinOffset(offsetX, offsetY) {
@@ -818,7 +811,21 @@
         const topview = document.querySelector(".topview")
         if (!surface || !topview?.dataset.state) return
 
-        const savedState = new URLSearchParams(window.location.search).get("s")
+        const urlParams = new URLSearchParams(window.location.search)
+        const sharedPresets = urlParams.get("ps")
+        if (sharedPresets) {
+          try {
+            const newPresets = JSON.parse(sharedPresets)
+            if (confirm(`Import ${newPresets.length} shared presets?`)) {
+              presets = newPresets
+              savePresets(presets)
+            }
+          } catch (e) {
+            console.error("Failed to import presets", e)
+          }
+        }
+
+        const savedState = urlParams.get("s")
         if (savedState) {
           const params = new URLSearchParams(topview.dataset.state)
           params.set("state", savedState)
@@ -850,6 +857,13 @@
         positionAimArrow(surface)
         updateSpinVisualState()
         setPowerSliderValue()
+
+        presets = loadPresets()
+        renderPresets()
+        document
+          .getElementById("add-preset")
+          ?.addEventListener("click", addNewPreset)
+
         syncDiagramState(topview)
 
         function pointerDown(event) {
@@ -878,13 +892,13 @@
           const pos = clientToTable(surface, pointer.clientX, pointer.clientY)
           const nextX = clamp(
             pos.x,
-            -(TABLE_HALF_WIDTH - BALL_RADIUS),
-            TABLE_HALF_WIDTH - BALL_RADIUS
+            -(TABLE_HALF_WIDTH - BALL_RADIUS - 1e-4),
+            TABLE_HALF_WIDTH - BALL_RADIUS - 1e-4
           )
           const nextY = clamp(
             pos.y,
-            -(TABLE_HALF_HEIGHT - BALL_RADIUS),
-            TABLE_HALF_HEIGHT - BALL_RADIUS
+            -(TABLE_HALF_HEIGHT - BALL_RADIUS - 1e-4),
+            TABLE_HALF_HEIGHT - BALL_RADIUS - 1e-4
           )
 
           if (!collides(draggingBall, nextX, nextY)) {
@@ -996,6 +1010,27 @@
           aimPower = Number(event.target.value) * MAX_POWER
           syncDiagramState(topview)
         })
+        function shareUrl(url) {
+          const shareUrl = url.toString()
+          if (navigator.share) {
+            navigator
+              .share({
+                title: document.title,
+                url: shareUrl,
+              })
+              .catch(console.error)
+          } else {
+            navigator.clipboard.writeText(shareUrl).then(() => {
+              const btn = document.activeElement
+              const originalText = btn.innerHTML
+              btn.innerText = "copied!"
+              setTimeout(() => {
+                btn.innerHTML = originalText
+              }, 2000)
+            })
+          }
+        }
+
         document.getElementById("share")?.addEventListener("click", () => {
           const topview = document.querySelector(".topview")
           const stateParams = new URLSearchParams(topview.dataset.state)
@@ -1012,25 +1047,14 @@
               url.searchParams.set(key, input.value)
             }
           })
+          shareUrl(url)
+        })
 
-          const shareUrl = url.toString()
-          if (navigator.share) {
-            navigator
-              .share({
-                title: document.title,
-                url: shareUrl,
-              })
-              .catch(console.error)
-          } else {
-            navigator.clipboard.writeText(shareUrl).then(() => {
-              const btn = document.getElementById("share")
-              const originalText = btn.innerHTML
-              btn.innerText = "copied!"
-              setTimeout(() => {
-                btn.innerHTML = originalText
-              }, 2000)
-            })
-          }
+        document.getElementById("share-all")?.addEventListener("click", () => {
+          const url = new URL(window.location.href)
+          url.search = ""
+          url.searchParams.set("ps", JSON.stringify(presets))
+          shareUrl(url)
         })
 
         setTimeout(() => {
@@ -1040,7 +1064,103 @@
         }, 1)
       }
 
-      function applyPreset(positions, angle, power, offset, constants) {
+      function loadPresets() {
+        const saved = localStorage.getItem("three_cushion_presets")
+        if (saved) {
+          try {
+            return JSON.parse(saved)
+          } catch (e) {
+            console.error("Failed to load presets", e)
+          }
+        }
+        return JSON.parse(JSON.stringify(DEFAULT_PRESETS))
+      }
+
+      function savePresets(presets) {
+        localStorage.setItem("three_cushion_presets", JSON.stringify(presets))
+      }
+
+      function renderPresets() {
+        const list = document.getElementById("presets-list")
+        if (!list) return
+        list.innerHTML = ""
+        presets.forEach((preset, index) => {
+          const container = document.createElement("div")
+          container.className = "preset-btn-container"
+
+          const btn = document.createElement("button")
+          btn.className = "preset-btn"
+          btn.textContent = preset.name
+          btn.onclick = () => applyPreset(preset)
+          container.appendChild(btn)
+
+          const deleteBtn = document.createElement("button")
+          deleteBtn.className = "preset-action"
+          deleteBtn.innerHTML = "×"
+          deleteBtn.title = "Delete"
+          deleteBtn.onclick = () => deletePreset(index)
+          container.appendChild(deleteBtn)
+
+          list.appendChild(container)
+        })
+      }
+
+      function addNewPreset() {
+        const name = window.prompt("Preset name (max 16 chars):")
+        if (!name) return
+        const newPreset = {
+          name: name.slice(0, 16),
+          positions: tableBalls.map((b) => [round6(b.x), round6(b.y)]),
+          angle: round6(aimAngle),
+          power: round6(aimPower),
+          offset: {
+            x: round6(aimOffset.x),
+            y: round6(aimOffset.y),
+            z: 0,
+          },
+        }
+        presets.push(newPreset)
+        savePresets(presets)
+        renderPresets()
+      }
+
+      function deletePreset(index) {
+        if (confirm(`Delete preset "${presets[index].name}"?`)) {
+          presets.splice(index, 1)
+          savePresets(presets)
+          renderPresets()
+        }
+      }
+
+      function updatePreset(index) {
+        if (confirm(`Update preset "${presets[index].name}" with current state?`)) {
+          presets[index] = {
+            ...presets[index],
+            positions: tableBalls.map((b) => [round6(b.x), round6(b.y)]),
+            angle: round6(aimAngle),
+            power: round6(aimPower),
+            offset: {
+              x: round6(aimOffset.x),
+              y: round6(aimOffset.y),
+              z: 0,
+            },
+          }
+          savePresets(presets)
+          renderPresets()
+        }
+      }
+
+      function renamePreset(index) {
+        const newName = window.prompt("New name:", presets[index].name)
+        if (newName) {
+          presets[index].name = newName.slice(0, 16)
+          savePresets(presets)
+          renderPresets()
+        }
+      }
+
+      function applyPreset(preset) {
+        const { positions, angle, power, offset, constants } = preset
         const surface = document.getElementById("table-surface")
         const topview = document.querySelector(".topview")
         if (!surface || !topview) return
@@ -1119,7 +1239,7 @@
           </li>
         </ul>
         <p style="margin: 6px 0 0">
-          Adjust the parameters and share results to discuss. If you have
+          Adjust the parameters and share results to discuss. Presets are saved to your browser's local storage (constants are not saved). Use "share all presets" to send your full preset collection to a friend for collaborative research. If you have
           suggestions for improvement please open an issue on my
           <a href="https://github.com/tailuge/billiards">GitHub repo</a>.
         </p>
