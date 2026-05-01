@@ -95,6 +95,7 @@ export class DiagramContainer {
           }
         }
         this.container.table.updateFromShortSerialised(this.breakState.init)
+        this.container.table.freezeTraces(this.container.view.scene)
         this.container.table.proximityIndicator.hide()
         this.container.view.camera.forceMode(this.container.view.camera.topView)
         this.container.eventQueue.push(

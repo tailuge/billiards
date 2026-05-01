@@ -10,6 +10,8 @@ import {
   BufferAttribute,
   Vector3,
   MeshStandardMaterial,
+  Scene,
+  Line,
 } from "three"
 import { State } from "../model/ball"
 import { norm, up, zero } from "./../utils/three-utils"
@@ -55,6 +57,21 @@ export class BallMesh {
   spinAxisArrow: ArrowHelper
   trace: Trace
   color: Color
+  private ghosts: Line[] = []
+
+  freezeTrace(scene: Scene) {
+    const count = this.trace.geometry.drawRange.count
+    if (count > 1) {
+      const ghost = this.trace.freeze()
+      this.ghosts.push(ghost)
+      scene.add(ghost)
+    }
+  }
+
+  clearGhosts(scene: Scene) {
+    this.ghosts.forEach((g) => scene.remove(g))
+    this.ghosts = []
+  }
   constructor(color, label?: number) {
     this.color = new Color(color)
     this.initialiseMesh(this.color, label)

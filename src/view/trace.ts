@@ -68,6 +68,17 @@ export class Trace {
     this.addPoint(pos, index)
   }
 
+  freeze(): Line {
+    const count = this.geometry.drawRange.count
+    const snapshot = new Float32Array(this.positions.subarray(0, count * 3))
+    const geo = new BufferGeometry()
+    geo.setAttribute("position", new BufferAttribute(snapshot, 3))
+    geo.setDrawRange(0, count)
+    const mat = (this.line.material as LineBasicMaterial).clone()
+    mat.opacity = 0.12
+    return new Line(geo, mat)
+  }
+
   addPoint(pos, i) {
     let index = i * 3
     if (index > this.positions.length) {

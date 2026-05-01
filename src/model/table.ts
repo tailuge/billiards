@@ -229,6 +229,10 @@ export class Table {
     })
   }
 
+  freezeTraces(scene) {
+    this.balls.forEach((b) => b.ballmesh.freezeTrace(scene))
+  }
+
   showSpin(bool) {
     this.balls.forEach((b) => {
       b.ballmesh.spinAxisArrow.visible = bool
