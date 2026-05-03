@@ -9,7 +9,7 @@ export let e = 0.86
 
 // Mathavan specific
 // Coefficient of restitution
-export let ee = 0.98
+export let ee = 0.9
 
 // Coefficient of sliding friction (table)
 export let μs = 0.212

@@ -81,9 +81,10 @@ export class Mathavan {
 
   protected updateSingleStep(ΔP: number): void {
     this.updateSlipSpeedsAndAngles()
+    const vyPrev = this.vy
     this.updateVelocity(ΔP)
     this.updateAngularVelocity(ΔP)
-    this.updateWorkDone(ΔP)
+    this.updateWorkDone(ΔP, vyPrev)
     if (this.i++ > 10 * this.N) {
       throw new Error("Solution not found")
     }
@@ -127,8 +128,8 @@ export class Mathavan {
     this.ωz += (5 / (2 * M * R)) * (μw * cos(this.φ) * cosθ) * ΔP
   }
 
-  private updateWorkDone(ΔP: number): void {
-    const ΔWzI = ΔP * Math.abs(this.vy)
+  private updateWorkDone(ΔP: number, vyPrev: number): void {
+    const ΔWzI = (ΔP / 2) * (Math.abs(vyPrev) + Math.abs(this.vy)) * cosθ
     this.WzI += ΔWzI
     this.P += ΔP
   }
