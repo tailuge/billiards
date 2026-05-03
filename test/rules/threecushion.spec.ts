@@ -258,4 +258,59 @@ describe("ThreeCushion", () => {
 
     done()
   })
+
+  it("Proximity indicator does not update after cue ball hits target before 3 cushions", (done) => {
+    Session.reset()
+    Session.init("test-client", "TestPlayer", "test-table", false, false, true)
+
+    const practiceContainer = new Container({
+      element: undefined,
+      log: (_) => {},
+      assets: Assets.localAssets(),
+      ruletype: rule,
+      practiceMode: true,
+    })
+
+    const balls = practiceContainer.table.balls
+    const cueball = balls[0]
+    const State = require("../../src/model/ball").State
+    const Outcome = require("../../src/model/outcome").Outcome
+    const R = require("../../src/model/physics/constants").R
+
+    cueball.vel.set(1, 0, 0)
+    cueball.state = State.Rolling
+    balls[1].vel.set(-1, 0, 0)
+    balls[1].state = State.Rolling
+    balls[2].vel.set(0, 0, 0)
+    balls[2].state = State.Stationary
+    cueball.pos.set(0, 0, 0)
+    balls[2].pos.set(3 * R, 0, 0)
+
+    practiceContainer.table.advance(0.01)
+    const indicator = practiceContainer.table.proximityIndicator
+
+    // Only 2 cushions then collision with target (invalid shot)
+    practiceContainer.table.outcome.push(
+      Outcome.cushion(cueball, 1),
+      Outcome.cushion(cueball, 1),
+      Outcome.collision(cueball, balls[2], 1)
+    )
+    practiceContainer.table.advance(0.01)
+
+    expect(indicator.hitTarget).to.be.true
+    expect(indicator.threeCushionsMet).to.be.false
+
+    // Now 3rd cushion arrives - indicator should not update visually
+    practiceContainer.table.outcome.push(Outcome.cushion(cueball, 1))
+    practiceContainer.table.advance(0.01)
+
+    expect(indicator.threeCushionsMet).to.be.true
+    // No proximity outcome should have been emitted (invalid shot)
+    const proximityOutcomes = practiceContainer.table.outcome.filter(
+      (o) => o.type === "Proximity"
+    )
+    expect(proximityOutcomes).to.have.lengthOf(0)
+
+    done()
+  })
 })
