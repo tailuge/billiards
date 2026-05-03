@@ -61,10 +61,26 @@ function trackActiveIndicator(
   if (indicator.target!.inMotion()) {
     indicator.showAt(indicator.target!.pos)
   }
+  if (!indicator.hitTarget) {
+    const hitNow = outcome.some(
+      (o) =>
+        o.type === OutcomeType.Collision &&
+        ((o.ballA === cueball && o.ballB === indicator.target) ||
+          (o.ballB === cueball && o.ballA === indicator.target))
+    )
+    if (hitNow) {
+      indicator.hitTarget = true
+      if (indicator.threeCushionsMet) {
+        const distance = 1.99 * R
+        outcome.push(Outcome.proximity(cueball, indicator.target!, distance))
+        indicator.setProximity(distance)
+      }
+    }
+  }
   if (!indicator.threeCushionsMet) {
     updateCushionCount(outcome, cueball, indicator)
   }
-  if (indicator.threeCushionsMet) {
+  if (indicator.threeCushionsMet && !indicator.hitTarget) {
     updateProximityOutcome(outcome, cueball, indicator)
   }
 }
