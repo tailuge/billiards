@@ -227,7 +227,25 @@ export class BrowserContainer {
       Session.getInstance().setOpponentClientId(event.clientId)
     }
     if (event.playername) {
-      Session.getInstance().opponentName = event.playername
+      const session = Session.getInstance()
+      session.opponentName = event.playername
+      if (
+        !session.vsNotificationShown &&
+        !this.botMode &&
+        !session.rematchInfo &&
+        !this.spectator &&
+        session.playername &&
+        session.opponentName
+      ) {
+        const names = session.orderedNamesForHud()
+        if (names.p1Name && names.p2Name) {
+          this.container.notifyLocal({
+            type: "Info",
+            title: `${names.p1Name} vs ${names.p2Name}`,
+          })
+          session.vsNotificationShown = true
+        }
+      }
     }
     this.container.eventQueue.push(event)
   }
