@@ -1,20 +1,19 @@
 export const g = 9.8
-export let mu = 0.00985
-export let muS = 0.16
+export let mu = 0.00985 // Han rolling friction
+export let muS = 0.14 // Han sliding friction
 export let muC = 0.85
-export let rho = 0.034
+export let rho = 0.034 // Han spindown rate
 export let m = 0.23
 export let R = 0.03275
 export let e = 0.86
 
-// Mathavan specific
-// Coefficient of restitution
-export let ee = 0.9
+// Mathavan coefficient of restitution
+export let ee = 0.85
 
-// Coefficient of sliding friction (table)
+// Mathavan coefficient (table)
 export let μs = 0.212
 
-// Coefficient of sliding friction (cushion)
+// Mathavan coefficient (cushion)
 export let μw = 0.165
 
 export let Mz: number
