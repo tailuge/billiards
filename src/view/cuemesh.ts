@@ -10,6 +10,7 @@ import {
   Group,
   PlaneGeometry,
   MeshBasicMaterial,
+  ConeGeometry,
 } from "three"
 
 export class CueMesh {
@@ -72,19 +73,26 @@ export class CueMesh {
   }
 
   static createPlacer() {
-    const geometry = new CylinderGeometry((R * 0.01) / 0.5, R, R, 4)
-    const mesh = new Mesh(geometry, CueMesh.placermaterial)
-    mesh.geometry
-      .applyMatrix4(
-        new Matrix4()
-          .identity()
-          .makeRotationAxis(new Vector3(1, 0, 0), -Math.PI / 2)
-      )
-      .applyMatrix4(
-        new Matrix4().identity().makeTranslation(0, 0, (R * 0.7) / 0.5)
-      )
-    mesh.visible = false
-    return mesh
+    const group = new Group()
+    const pyramidGeo = new ConeGeometry(0.96 * R, 1.6 * R, 3)
+    for (let i = 0; i < 4; i++) {
+      const pyramid = new Mesh(pyramidGeo, CueMesh.placermaterial)
+      const angle = (i * Math.PI) / 2
+
+      // Distribute around the ball
+      pyramid.position.x = Math.cos(angle) * 4 * R
+      pyramid.position.y = Math.sin(angle) * 4 * R
+      pyramid.position.z = 3.2 * R // Hover height
+
+      // Point toward the center
+      pyramid.lookAt(0, 0, R)
+      // Adjust rotation because ConeGeometry points up its Y axis
+      pyramid.rotateX(Math.PI / 2)
+
+      group.add(pyramid)
+    }
+    group.visible = false
+    return group
   }
 
   static createShadow(length: number) {
