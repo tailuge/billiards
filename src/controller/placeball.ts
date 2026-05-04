@@ -5,6 +5,7 @@ import { BreakEvent } from "../events/breakevent"
 import { R } from "../model/physics/constants"
 import { Vector3 } from "three"
 import { CueMesh } from "../view/cuemesh"
+import { CameraTop } from "../view/cameratop"
 
 /**
  * Place cue ball using input events.
@@ -22,7 +23,7 @@ export class PlaceBall extends ControllerBase {
     super(container)
     this.startPos = startPos
     this.container.table.cue.moveTo(this.container.table.cueball.pos)
-    this.container.view.camera.forceMode(this.container.view.camera.aimView)
+    this.container.view.camera.forceMode(this.container.view.camera.topView)
   }
 
   override onFirst() {
@@ -57,10 +58,10 @@ export class PlaceBall extends ControllerBase {
         break
       // use cursor movement for placing cueball
       case "movementXUp":
-        this.moveTo(0, -input.t * this.placescale * 2)
+        this.handleMovement(input.t * 2, 0)
         break
       case "movementYUp":
-        this.moveTo(-input.t * this.placescale * 2, 0)
+        this.handleMovement(0, input.t * 2)
         break
       // use IJKL for placing cueball
       case "KeyI":
@@ -86,6 +87,15 @@ export class PlaceBall extends ControllerBase {
     this.container.sendEvent(this.container.table.cue.aim)
 
     return this
+  }
+
+  handleMovement(dx: number, dy: number) {
+    const aspect = this.container.view.camera.camera.aspect
+    if (aspect > CameraTop.portrait) {
+      this.moveTo(dx * this.placescale, -dy * this.placescale)
+    } else {
+      this.moveTo(-dy * this.placescale, -dx * this.placescale)
+    }
   }
 
   moveTo(dx, dy) {
