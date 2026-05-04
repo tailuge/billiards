@@ -21,6 +21,7 @@ export class ProximityIndicator {
   threeCushionsMet: boolean = false
   cushionCount: number = 0
   hitTarget: boolean = false
+  private minDistance: number = Infinity
 
   constructor() {
     this.group.position.z = -0.97 * R // Near table bed
@@ -78,6 +79,7 @@ export class ProximityIndicator {
     this.threeCushionsMet = false
     this.cushionCount = 0
     this.hitTarget = false
+    this.minDistance = Infinity
   }
 
   setCushionCount(count: number) {
@@ -88,9 +90,10 @@ export class ProximityIndicator {
   }
 
   setProximity(distance: number) {
+    this.minDistance = Math.min(this.minDistance, distance)
     const radii = [4, 3, 2]
     this.fills.forEach((fill, i) => {
-      fill.visible = distance < radii[i] * R
+      fill.visible = this.minDistance < radii[i] * R
     })
   }
 }
