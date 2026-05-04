@@ -4,5 +4,11 @@
     "selector-id-pattern": null,
     "selector-class-pattern": null,
     "keyframes-name-pattern": null
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/*.html"],
+      "customSyntax": "postcss-html"
+    }
+  ]
 }

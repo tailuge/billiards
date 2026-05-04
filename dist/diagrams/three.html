@@ -27,7 +27,7 @@
       h1 {
         text-align: center;
         font-size: 1rem;
-        font-family: "Exo", sans-serif;
+        font-family: Exo, sans-serif;
         font-weight: 300;
         margin-top: 0;
         margin-bottom: -20px;
@@ -57,8 +57,8 @@
 
       .replaydiagram {
         width: 100%;
-        padding: 0px;
-        margin: 0px;
+        padding: 0;
+        margin: 0;
         background-color: #000;
         aspect-ratio: 2 / 1.1;
         position: relative;
@@ -68,8 +68,8 @@
         flex: 1 1 auto;
         min-width: 0;
         max-width: 60%;
-        padding: 0px;
-        margin: 0px;
+        padding: 0;
+        margin: 0;
       }
 
       #R,
@@ -141,7 +141,7 @@
 
       p {
         text-align: center;
-        margin: 0px auto;
+        margin: 0 auto;
       }
 
       input {
@@ -163,15 +163,15 @@
         position: relative;
         width: 80%;
         aspect-ratio: 616 / 343;
-        padding: 0px;
-        margin: 0px auto;
+        padding: 0;
+        margin: 0 auto;
         background-color: black;
       }
 
       #table-bg,
       #table-surface {
         position: absolute;
-        inset: 0px;
+        inset: 0;
       }
 
       #table-bg {
@@ -205,11 +205,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.3));
+        filter: drop-shadow(2px 2px 0 rgb(0 0 0 / 30%));
         will-change: left, top;
         border-radius: 50%;
         overflow: hidden;
-        box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.3);
+        box-shadow: inset -2px -2px 0 rgb(0 0 0 / 30%);
         border: var(--table-ball-border) solid #000;
         box-sizing: content-box;
       }
@@ -218,7 +218,7 @@
       .ball:active {
         cursor: grabbing;
         z-index: 100;
-        filter: drop-shadow(6px 6px 0 rgba(0, 0, 0, 0.6));
+        filter: drop-shadow(6px 6px 0 rgb(0 0 0 / 60%));
       }
 
       .ball::after {
@@ -228,7 +228,7 @@
         left: 15%;
         width: 25%;
         height: 25%;
-        background: rgba(255, 255, 255, 0.8);
+        background: rgb(255 255 255 / 80%);
         border-radius: 50%;
         pointer-events: none;
       }
@@ -242,13 +242,13 @@
       }
 
       #aim-arrow-line {
-        stroke: rgba(255, 255, 255, 0.1);
+        stroke: rgb(255 255 255 / 10%);
         stroke-linecap: round;
       }
 
       #aim-arrow-head {
         fill: none;
-        stroke: rgba(255, 255, 255, 0.65);
+        stroke: rgb(255 255 255 / 65%);
         stroke-width: 1.25;
         pointer-events: none;
       }
@@ -270,7 +270,7 @@
         display: flex;
         flex-wrap: nowrap;
         align-items: stretch;
-        gap: 0px;
+        gap: 0;
         width: 92%;
         margin: 0 auto;
         box-sizing: border-box;
@@ -318,8 +318,7 @@
 
       #presets-row {
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
+        flex-flow: row wrap;
         gap: 8px;
         align-items: center;
         width: 92%;
@@ -389,8 +388,9 @@
       #add-preset:hover, #share-all:hover, #share:hover, #replay:hover, #cleartraces:hover {
         filter: brightness(0.88);
         transform: translateY(-2px) scale(1.05);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        box-shadow: 0 4px 10px rgb(0 0 0 / 40%);
       }
+
       .preset-btn:active, .preset-action:active,
       #add-preset:active, #share-all:active, #share:active, #replay:active, #cleartraces:active {
         border-style: inset;
@@ -419,7 +419,7 @@
         left: 5%;
         z-index: 5;
         box-shadow:
-          3px 4px 8px rgba(82, 82, 82, 0.7),
+          3px 4px 8px rgb(82 82 82 / 70%),
           inset -4px -6px 12px rgb(0 0 0 / 40%),
           inset 8px 10px 15px rgb(255 255 255 / 20%);
       }
@@ -570,13 +570,6 @@
       const DEFAULT_PRESETS = JSON.parse(decodeURIComponent(DEFAULT_PRESETS_PARAM.replaceAll("+", "%20")))
       console.log(DEFAULT_PRESETS)
       // To update defaults: copy the `ps=` query param value from the share-all URL and paste it above
-
-//      init: [-0.7735584378242493,0.5551462173461914,
-//             -1.3135993480682373,-0.10137517005205154,
-//              1.364066243171692,0.4813707768917084]
-//[{"type":"AIM","offset":{"x":0.2576840817928314,"y":0.15361936390399933,"z":0},
-// "angle":-2.3127007484436035,
-// "power":2.253200054168701,"pos":{"x":-0.7735584378242493,"y":0.5551462173461914,"z":0},"i":0}]
 
       let tableBalls = []
       let presets = []
