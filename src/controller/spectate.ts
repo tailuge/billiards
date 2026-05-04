@@ -68,8 +68,22 @@ export class Spectate extends ControllerBase {
     }
 
     if (changed) {
+      const names = session.orderedNamesForHud()
       const scores = session.orderedScoresForHud()
       this.container.updateScoreHud(scores.p1, scores.p2, session.currentBreak)
+
+      if (
+        !session.vsNotificationShown &&
+        !session.rematchInfo &&
+        names.p1Name &&
+        names.p2Name
+      ) {
+        this.container.notifyLocal({
+          type: "Info",
+          title: `${names.p1Name} vs ${names.p2Name}`,
+        })
+        session.vsNotificationShown = true
+      }
     }
   }
 

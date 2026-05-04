@@ -15,6 +15,7 @@ export class Session {
   opponentClientId?: string
   spectatedP1Name?: string
   spectatedP2Name?: string
+  vsNotificationShown: boolean = false
   playerIndex: number = 0
   private scoreByClientId: Record<string, number> = {}
   currentBreak: number = 0
