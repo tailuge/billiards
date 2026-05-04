@@ -1,6 +1,6 @@
 export const g = 9.8
 export let mu = 0.00985 // Han rolling friction
-export let muS = 0.14 // Han sliding friction
+export let muS = 0.13 // Han sliding friction
 export let muC = 0.85
 export let rho = 0.034 // Han spindown rate
 export let m = 0.23
