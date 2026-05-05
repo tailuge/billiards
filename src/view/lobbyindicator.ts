@@ -8,7 +8,6 @@ export class LobbyIndicator {
   private readonly element: HTMLElement | null
   private readonly countElement: HTMLSpanElement | null
   private readonly challengePill: HTMLElement | null
-  private readonly challengeDecline: HTMLElement | null
   private messagingClient: MessagingClient | null = null
   private lobby: Lobby | null = null
   private count = 0
@@ -33,7 +32,6 @@ export class LobbyIndicator {
     this.element = id("lobbyOverlay")
     this.countElement = this.element?.querySelector(".lobby-count") as HTMLSpanElement
     this.challengePill = id("challengePill")
-    this.challengeDecline = id("challengeDecline")
     this.setupElement()
   }
 
@@ -52,14 +50,19 @@ export class LobbyIndicator {
       this.element.style.cursor = "pointer"
     }
 
-    this.challengeDecline?.addEventListener("click", (e) => {
-      e.preventDefault()
+    id("challengeDecline")?.addEventListener("click", (e) => {
       e.stopPropagation()
       if (this.lobby && this.challenger) {
         this.lobby.declineChallenge(this.challenger.userId, this.ruleType)
       }
       this.challenger = null
       this.updateDisplay()
+    })
+
+    id("challengeAccept")?.addEventListener("click", () => {
+      if (typeof globalThis.open === "function") {
+        globalThis.open(this.getLobbyUrl(), "_self")
+      }
     })
   }
 
@@ -139,11 +142,13 @@ export class LobbyIndicator {
     if (this.challengePill) {
       this.challengePill.hidden = !challenged
       if (challenged) {
-        this.challengePill.textContent = `Challenge from ${this.challenger!.userName}`
+        const textNode = this.challengePill.childNodes[0]
+        if (textNode?.nodeType === Node.TEXT_NODE) {
+          textNode.textContent = `Challenge from ${this.challenger!.userName} `
+        } else {
+          this.challengePill.prepend(`Challenge from ${this.challenger!.userName} `)
+        }
       }
-    }
-    if (this.challengeDecline) {
-      this.challengeDecline.hidden = !challenged
     }
 
     this.element.setAttribute(

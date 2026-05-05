@@ -79,7 +79,7 @@ describe("LobbyIndicator", () => {
       ruleType: "nineball",
     })
     expect(document.getElementById("challengePill")?.hidden).to.be.true
-    expect(document.getElementById("challengeDecline")?.hidden).to.be.true
+    expect(document.getElementById("challengeDecline") ).to.not.be.null
     expect(countElement?.classList.contains("is-hidden")).to.be.false
     expect(element?.getAttribute("href")).to.equal(
       "https://scoreboard-tailuge.vercel.app/game?userName=TestPlayer&userId=test-client"

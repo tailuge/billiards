@@ -30,28 +30,37 @@
 }
 
 .challenge-pill {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   background-color: rgb(145, 12, 12);
   color: #fff;
-  padding: 0 2px;
-  border-radius: 3px;
+  padding: 0 4px;
+  border-radius: 8px;
   font-size: 16px;
+  height: 30px;
+  box-sizing: border-box;
   white-space: nowrap;
   box-shadow: 0 0 10px rgb(137 33 33 / 50%);
 }
 
-.challenge-pill[hidden],
-#challengeDecline[hidden] {
+.challenge-pill[hidden] {
   display: none;
+}
+
+.challenge-pill button {
+  font-size: 0.65rem;
+  padding: 1px 3px;
+  margin-left: 4px;
+  cursor: pointer;
+  height: 80%;
+  color: #fff;
+  border-radius: 4px;
+}
+
+#challengeAccept {
+  background: rgba(129, 235, 129, 0.828);
 }
 
 #challengeDecline {
-  font-size: 12px;
-  padding: 1px 4px;
-  margin-left: 4px;
-  cursor: pointer;
-}
-
-#challengeDecline[hidden] {
-  display: none;
+  background: rgba(182, 71, 71, 0.492);
 }
