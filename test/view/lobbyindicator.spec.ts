@@ -30,15 +30,11 @@ describe("LobbyIndicator", () => {
   })
 
   it("updates text content on init", async () => {
-    const element = document.getElementById("lobbyOverlay")
-    if (element) {
-      element.textContent = "👥"
-    }
-
     const mockRules = { rulename: "nineball" } as any
     const indicator = new LobbyIndicator(false, false, mockRules)
     await indicator.init()
 
+    const element = document.getElementById("lobbyOverlay")
     const countElement = element?.querySelector(".lobby-count")
     expect(countElement?.textContent).to.equal("0 👥")
     expect(countElement?.classList.contains("is-hidden")).to.be.false
@@ -64,8 +60,8 @@ describe("LobbyIndicator", () => {
     })
 
     const countElement = element?.querySelector(".lobby-count")
-    expect(countElement?.classList.contains("is-hidden")).to.be.true
-    expect(element?.textContent).to.contain("Challenge from Bob")
+    expect(countElement?.classList.contains("is-hidden")).to.be.false
+    expect(document.getElementById("challengePill")?.textContent).to.contain("Challenge from Bob")
     expect(element?.getAttribute("aria-label")).to.contain("CHALLENGE FROM Bob")
 
     const href = element?.getAttribute("href") ?? ""
@@ -82,7 +78,8 @@ describe("LobbyIndicator", () => {
       recipientId: "default",
       ruleType: "nineball",
     })
-    expect(element?.querySelector(".challenge-pill")).to.be.null
+    expect(document.getElementById("challengePill")?.hidden).to.be.true
+    expect(document.getElementById("challengeDecline")?.hidden).to.be.true
     expect(countElement?.classList.contains("is-hidden")).to.be.false
     expect(element?.getAttribute("href")).to.equal(
       "https://scoreboard-tailuge.vercel.app/game?userName=TestPlayer&userId=test-client"

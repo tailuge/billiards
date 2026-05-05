@@ -234,14 +234,20 @@
       <div id="p1Score" class="p1Score"></div>
       <div id="p2Score" class="p2Score"></div>
     </div>
-    <a
-      href="https://scoreboard-tailuge.vercel.app/game"
-      class="pill"
-      title="Lobby"
-      id="lobbyOverlay"
-      aria-label="Multiplayer Lobby"
-      >👥</a
-    >
+    <div id="lobbyContainer">
+      <div class="challenge-row">
+        <span id="challengePill" class="challenge-pill" hidden></span>
+        <button id="challengeDecline" hidden>✕</button>
+      </div>
+      <a
+        href="https://scoreboard-tailuge.vercel.app/game"
+        class="pill"
+        title="Lobby"
+        id="lobbyOverlay"
+        aria-label="Multiplayer Lobby"
+        ><span class="lobby-count"></span></a
+      >
+    </div>
     <div class="aimingArea">
       <button
         class="hitButton timeout-btn"

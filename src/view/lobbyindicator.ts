@@ -6,7 +6,9 @@ import { LOBBY_URL } from "../utils/gameover"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
-  private readonly countElement: HTMLSpanElement
+  private readonly countElement: HTMLSpanElement | null
+  private readonly challengePill: HTMLElement | null
+  private readonly challengeDecline: HTMLElement | null
   private messagingClient: MessagingClient | null = null
   private lobby: Lobby | null = null
   private count = 0
@@ -29,16 +31,14 @@ export class LobbyIndicator {
       this.ruleType = this.rules.rulename
     }
     this.element = id("lobbyOverlay")
-    this.countElement = document.createElement("span")
-    this.countElement.className = "lobby-count"
+    this.countElement = this.element?.querySelector(".lobby-count") as HTMLSpanElement
+    this.challengePill = id("challengePill")
+    this.challengeDecline = id("challengeDecline")
     this.setupElement()
   }
 
   private setupElement(): void {
     if (!this.element) return
-
-    this.element.textContent = ""
-    this.element.appendChild(this.countElement)
 
     if (this.element instanceof HTMLAnchorElement) {
       this.element.setAttribute("target", "_self")
@@ -51,6 +51,16 @@ export class LobbyIndicator {
       })
       this.element.style.cursor = "pointer"
     }
+
+    this.challengeDecline?.addEventListener("click", (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      if (this.lobby && this.challenger) {
+        this.lobby.declineChallenge(this.challenger.userId, this.ruleType)
+      }
+      this.challenger = null
+      this.updateDisplay()
+    })
   }
 
   async init(): Promise<void> {
@@ -122,33 +132,27 @@ export class LobbyIndicator {
     if (!this.element) return
     const challenged = this.challenger !== null
 
-    this.countElement.textContent = `${this.count} 👥`
-    this.countElement.classList.toggle("is-hidden", challenged)
-
-    if (challenged) {
-      const existingPill = this.element.querySelector(".challenge-pill")
-      if (!existingPill) {
-        const challengePill = document.createElement("span")
-        challengePill.className = "challenge-pill"
-        challengePill.textContent = `Challenge from ${this.challenger!.userName}`
-        this.element.appendChild(challengePill)
-      }
-
-      this.element.setAttribute(
-        "aria-label",
-        `Multiplayer Lobby - CHALLENGE FROM ${this.challenger!.userName}!`
-      )
-    } else {
-      const existingPill = this.element.querySelector(".challenge-pill")
-      if (existingPill) {
-        existingPill.remove()
-      }
-
-      this.element.setAttribute(
-        "aria-label",
-        `Multiplayer Lobby - ${this.count} online`
-      )
+    if (this.countElement) {
+      this.countElement.textContent = `${this.count} 👥`
     }
+
+    if (this.challengePill) {
+      this.challengePill.hidden = !challenged
+      if (challenged) {
+        this.challengePill.textContent = `Challenge from ${this.challenger!.userName}`
+      }
+    }
+    if (this.challengeDecline) {
+      this.challengeDecline.hidden = !challenged
+    }
+
+    this.element.setAttribute(
+      "aria-label",
+      challenged
+        ? `Multiplayer Lobby - CHALLENGE FROM ${this.challenger!.userName}!`
+        : `Multiplayer Lobby - ${this.count} online`
+    )
+
     if (this.element instanceof HTMLAnchorElement) {
       this.element.setAttribute("href", this.getLobbyUrl())
     }
