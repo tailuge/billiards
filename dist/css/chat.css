@@ -20,6 +20,7 @@
   font-size: 16px;
   color: #ccc;
   overflow-wrap: anywhere;
+  text-align: right;
 }
 
 .chatoutput a {
@@ -41,4 +42,31 @@
 
 .chatoutput::-webkit-scrollbar-thumb:hover {
   background: #777;
+}
+
+#inputTextDiv {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+}
+
+#inputTextDiv[hidden] {
+  display: none;
+}
+
+#inputText {
+  width: 20ch;
+  font-size: 0.7rem;
+  padding: 1px;
+}
+
+#inputTextDiv button {
+  font-size: 0.7rem;
+  padding: 1px;
+  margin-left: 2px;
 }

@@ -20,15 +20,44 @@ export class Comment {
       this.toggleMenu()
     }
 
+    const inputTextDiv = document.getElementById("inputTextDiv") as HTMLElement
+    const inputText = document.getElementById("inputText") as HTMLInputElement
+
+    const sendText = () => {
+      const text = inputText.value.trim()
+      inputTextDiv.hidden = true
+      if (text) {
+        this.container.chat.showMessage("<br>" + text)
+        this.container.sendChat(text)
+      }
+    }
+
     const emojiButtons = this.menu.querySelectorAll(".comment-emoji")
     emojiButtons.forEach((btn) => {
       if (btn.id === "voice") return
       btn.addEventListener("click", (_) => {
+        if (btn.id === "openTextInput") {
+          this.hideMenu()
+          inputTextDiv.hidden = false
+          inputText.value = ""
+          inputText.focus()
+          return
+        }
         const text = btn.textContent ?? ""
         this.container.chat.showMessage(text)
         this.container.sendChat(text)
         this.hideMenu()
       })
+    })
+
+    inputText.addEventListener("keydown", (e) => {
+      e.stopImmediatePropagation()
+      if (e.key === "Enter") sendText()
+    })
+
+    document.getElementById("inputSend")?.addEventListener("click", sendText)
+    document.getElementById("inputClose")?.addEventListener("click", () => {
+      inputTextDiv.hidden = true
     })
   }
 

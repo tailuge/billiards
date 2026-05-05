@@ -74,7 +74,7 @@ export class CueMesh {
   static createPlacer() {
     const group = new Group()
     const pyramidGeo = new ConeGeometry(0.75 * R, 1.6 * R, 4)
-    let n = 4
+    const n = 4
     for (let i = 0; i < n; i++) {
       const pyramid = new Mesh(pyramidGeo, CueMesh.placermaterial)
       const angle = (i * 2*Math.PI) / n
