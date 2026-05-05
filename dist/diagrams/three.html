@@ -370,7 +370,7 @@
       .preset-action,
       #add-preset,
       #share-all,
-      #share,
+      #share-shot,
       #replay,
       #cleartraces {
         padding: 2px 8px;
@@ -385,14 +385,14 @@
       #replay { background-color: #c8f0c8; }
 
       .preset-btn:hover, .preset-action:hover,
-      #add-preset:hover, #share-all:hover, #share:hover, #replay:hover, #cleartraces:hover {
+      #add-preset:hover, #share-all:hover, #share-shot:hover, #replay:hover, #cleartraces:hover {
         filter: brightness(0.88);
         transform: translateY(-2px) scale(1.05);
         box-shadow: 0 4px 10px rgb(0 0 0 / 40%);
       }
 
       .preset-btn:active, .preset-action:active,
-      #add-preset:active, #share-all:active, #share:active, #replay:active, #cleartraces:active {
+      #add-preset:active, #share-all:active, #share-shot:active, #replay:active, #cleartraces:active {
         border-style: inset;
         filter: brightness(0.75);
         transform: translateY(2px) scale(0.97);
@@ -508,7 +508,7 @@
           +
         </button>
         <button id="share-all" type="button">share all presets</button>
-        <button id="share" type="button">share this shot</button>
+        <button id="share-shot" type="button">share this shot</button>
         <button id="replay" type="button">replay</button>
         <button id="cleartraces" type="button">clear traces</button>
         <button id="reset-presets" type="button" class="preset-action">reset</button>
@@ -1023,7 +1023,7 @@
           }
         }
 
-        document.getElementById("share")?.addEventListener("click", () => {
+        document.getElementById("share-shot")?.addEventListener("click", () => {
           const topview = document.querySelector(".topview")
           const stateParams = new URLSearchParams(topview.dataset.state)
           const state = stateParams.get("state")
