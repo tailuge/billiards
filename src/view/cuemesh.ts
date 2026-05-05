@@ -17,11 +17,10 @@ export class CueMesh {
   static mesh: Mesh
 
   static readonly placermaterial = new MeshPhongMaterial({
-    color: 0xccffcc,
+    color: 0xffffff,
     wireframe: false,
     flatShading: false,
-    transparent: true,
-    opacity: 0.5,
+    transparent: false,
   })
 
   static indicateValid(valid) {
@@ -74,15 +73,16 @@ export class CueMesh {
 
   static createPlacer() {
     const group = new Group()
-    const pyramidGeo = new ConeGeometry(0.96 * R, 1.6 * R, 3)
-    for (let i = 0; i < 4; i++) {
+    const pyramidGeo = new ConeGeometry(0.75 * R, 1.6 * R, 4)
+    let n = 4
+    for (let i = 0; i < n; i++) {
       const pyramid = new Mesh(pyramidGeo, CueMesh.placermaterial)
-      const angle = (i * Math.PI) / 2
+      const angle = (i * 2*Math.PI) / n
 
       // Distribute around the ball
-      pyramid.position.x = Math.cos(angle) * 4 * R
-      pyramid.position.y = Math.sin(angle) * 4 * R
-      pyramid.position.z = 3.2 * R // Hover height
+      pyramid.position.x = Math.cos(angle) * 2 * R
+      pyramid.position.y = Math.sin(angle) * 2 * R
+      pyramid.position.z = 1 * R // Hover height
 
       // Point toward the center
       pyramid.lookAt(0, 0, R)

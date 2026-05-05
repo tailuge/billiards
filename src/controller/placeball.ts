@@ -58,10 +58,10 @@ export class PlaceBall extends ControllerBase {
         break
       // use cursor movement for placing cueball
       case "movementXUp":
-        this.handleMovement(input.t * 2, 0)
+        this.handleMovement(input.t * 4, 0)
         break
       case "movementYUp":
-        this.handleMovement(0, input.t * 2)
+        this.handleMovement(0, input.t * 4)
         break
       // use IJKL for placing cueball
       case "KeyI":
