@@ -14,7 +14,7 @@ import { cueIntersectsAnything } from "../utils/cueintersect"
 export class Cue {
   mesh: Object3D
   helperMesh: Mesh
-  placerMesh: Mesh
+  placerMesh: Object3D
   shadowMesh: Mesh
   readonly offCenterLimit = 0.3
   readonly maxPower = 160 * R

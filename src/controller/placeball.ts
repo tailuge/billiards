@@ -116,6 +116,7 @@ export class PlaceBall extends ControllerBase {
     this.container.sendEvent(
       new BreakEvent(this.container.table.shortSerialise())
     )
+    this.container.view.camera.forceMode(this.container.view.camera.aimView)
     return new Aim(this.container)
   }
 }
