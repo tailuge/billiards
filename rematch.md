@@ -81,3 +81,39 @@ Full URL example:
 ```
 https://tailuge.github.io/billiards/dist/index.html?userId=G_67890&userName=Bob&rematch=%7B%22opponentId%22%3A%22G_12345%22%2C...%7D
 ```
+
+
+----
+
+Here's what actually happens in the code:                                                                           
+                                                                                                                      
+  ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                                      
+  Clicking "Rematch" after a game                                                                                     
+                                                                                                                      
+  1. notification.ts handles the button click and calls Rematch.navigate(Session.getInstance())                       
+  2. Rematch.navigate calls Rematch.redirectToLobby(session.rematchInfo, session)                                     
+  3. That builds a URL with three query params: userId, userName, and rematch (the full JSON-encoded RematchInfo)     
+  4. It does globalThis.location.href = ${LOBBY_URL}?... — a full browser redirect to the lobby                       
+                                                                                                                      
+  Yes, the rematch payload is sent to the lobby — the full RematchInfo (opponent ID/name, rule type, running scores,  
+  who breaks next, options) is JSON-encoded and passed as the rematch query param.                                    
+                                                                                                                      
+  ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                                      
+  Clicking the lobby indicator when there's an incoming challenge                                                     
+                                                                                                                      
+  LobbyIndicator.getLobbyUrl() builds the URL when a challenger is present:                                           
+                                                                                                                      
+  https://scoreboard-tailuge.vercel.app/game                                                                          
+    ?userName=<myName>                                                                                                
+    &userId=<myId>                                                                                                    
+    &action=join                                                                                                      
+    &ruletype=<ruleType>                                                                                              
+    &opponentId=<challenger.userId>                                                                                   
+    &opponentName=<challenger.userName>                                                                               
+                                                                                                                      
+  No `rematch` param is included here. The lobby indicator only sends identity info (userId, userName) and            
+  challenge-acceptance info (action=join, opponentId, opponentName, ruletype). Any existing rematchInfo in the session
+  is ignored — this is a fresh challenge, not a rematch continuation.                                                 
+                                                                                          
