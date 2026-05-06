@@ -16,7 +16,6 @@ Instance method on the interface. Each rule class implements its own foul logic.
 - `EightBall`: already has an instance `foulReason(outcome)` — no change needed
 - `Snooker`: derive from `SnookerUtils.calculateFoul`
 - `ThreeCushion`: always returns `null` (no fouls)
-- `FourteenOne`: inherits from `NineBall` but only fouls on cue ball potted — override accordingly
 
 The static `NineBall.foulReason(table, outcome)` is kept as an internal implementation detail; the new instance method delegates to it.
 
@@ -24,7 +23,7 @@ The static `NineBall.foulReason(table, outcome)` is kept as an internal implemen
 
 New method with no conflicts. Returns the score value for a shot outcome:
 
-- `NineBall` / `EightBall` / `FourteenOne`: `Outcome.potCount(outcome)`
+- `NineBall` / `EightBall`: `Outcome.potCount(outcome)`
 - `Snooker`: sum of ball values for legally potted balls
 - `ThreeCushion`: `Outcome.isThreeCushionPoint(this.cueball, outcome) ? 1 : 0`
 
@@ -38,7 +37,6 @@ Returns the balls that were moved so callers can broadcast a `RerackEvent`.
 - `Snooker`: delegates to `SnookerUtils.respotAllPottedColours`, returns moved balls
 - `EightBall`: returns empty array (no automatic respot)
 - `ThreeCushion`: returns empty array
-- `FourteenOne`: inherits from `NineBall`
 
 #### 1d. Make `asset` a readonly property
 

@@ -1,4 +1,3 @@
-import { FourteenOne } from "./fourteenone"
 import { NineBall } from "./nineball"
 import { EightBall } from "./eightball"
 import { Rules } from "./rules"
@@ -10,8 +9,6 @@ export class RuleFactory {
     switch (ruletype) {
       case "threecushion":
         return new ThreeCushion(container)
-      case "fourteenone":
-        return new FourteenOne(container)
       case "eightball":
         return new EightBall(container)
       case "snooker":

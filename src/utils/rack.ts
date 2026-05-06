@@ -5,7 +5,6 @@ import { PocketGeometry } from "../view/pocketgeometry"
 import { Vector3 } from "three"
 import { roundVec, vec } from "./three-utils"
 import { R } from "../model/physics/constants"
-import { Table } from "../model/table"
 
 export class Rack {
   static readonly noise = Math.fround(R * 0.023 + 0.0015 * Math.random())
@@ -140,24 +139,6 @@ export class Rack {
     triangle.push(vec(pos))
 
     return triangle
-  }
-
-  static rerack(key: Ball, table: Table) {
-    const tp = Rack.trianglePositions()
-    const first = tp.shift()!
-    table.balls
-      .filter((b) => b !== table.cueball)
-      .filter((b) => b !== key)
-      .forEach((b) => {
-        b.pos.copy(Rack.jitter(tp.shift()))
-        b.state = State.Stationary
-      })
-    if (table.overlapsAny(key.pos, key)) {
-      key.pos.copy(first)
-    }
-    if (table.overlapsAny(table.cueball.pos)) {
-      table.cueball.pos.copy(Rack.spot)
-    }
   }
 
   static three() {
