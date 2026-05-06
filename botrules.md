@@ -74,16 +74,16 @@ These are two distinct concerns. Renaming them to a single `getStartingCueBall(p
 
 ---
 
-### Phase 2 — Bot Refactoring
+### Phase 2 — Bot Refactoring ✅ COMPLETE
 
 Once the interface is stable, simplify `BotEventHandler` to use only interface methods:
 
-- Replace `NineBall.foulReason(table, outcome)` → `rules.foulReason(outcome)`
-- Replace inline nine-ball respot logic → `rules.respot(outcome)`
-- Replace `Outcome.potCount(outcome)` score update → `rules.getAmountScored(outcome)`
-- `rules.isPartOfBreak(outcome)` already on interface — no change needed
+- ✅ Replace `NineBall.foulReason(table, outcome)` → `rules.foulReason(outcome)`
+- ✅ Replace inline nine-ball respot logic → `rules.respot(outcome)`
+- ✅ Replace `Outcome.potCount(outcome)` score update → `rules.getAmountScored(outcome)`
+- ✅ `rules.isPartOfBreak(outcome)` already on interface — no change needed
 
-This removes the `NineBall` import and all `if (nineBallPotted)` checks from the bot.
+`NineBall` import and all nine-ball-specific logic removed from the bot. Bot now works correctly for **nine-ball and eight-ball**.
 
 ---
 

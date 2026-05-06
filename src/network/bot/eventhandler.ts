@@ -4,8 +4,6 @@ import { Container } from "../../container/container"
 import { EventType } from "../../events/eventtype"
 import { AimCalculator } from "./aimcalculator"
 import { StartAimEvent } from "../../events/startaimevent"
-import { Outcome } from "../../model/outcome"
-import { NineBall } from "../../controller/rules/nineball"
 import { PlaceBallEvent, RespotBody } from "../../events/placeballevent"
 import { WatchEvent } from "../../events/watchevent"
 import { EventUtil } from "../../events/eventutil"
@@ -93,7 +91,7 @@ export class BotEventHandler {
       return
     }
 
-    const foulReason = NineBall.foulReason(this.container.table, outcome)
+    const foulReason = this.container.rules.foulReason(outcome)
     if (foulReason) {
       this.container.notify({
         type: "Foul",
@@ -113,22 +111,18 @@ export class BotEventHandler {
       const startPos = cueball.pos.clone()
       cueball.setStationary()
 
-      const nineBall = this.container.table.balls[9]
-      const nineBallPotted = Outcome.pots(outcome).includes(nineBall)
+      const respotted = this.container.rules.respot(outcome)
       let respot: RespotBody | undefined
-      if (nineBallPotted) {
-        Respot.nineBall(this.container.table)
-        respot = {
-          id: nineBall.id,
-          pos: nineBall.pos.clone(),
-        }
+      if (respotted.length > 0) {
+        const ball = respotted[0]
+        respot = { id: ball.id, pos: ball.pos.clone() }
       }
       const placeBallEvent = new PlaceBallEvent(startPos, respot, true)
       this.publishSequenceToPlayer([placeBallEvent])
       return
     }
 
-    const pots = Outcome.potCount(outcome)
+    const pots = this.container.rules.getAmountScored(outcome)
     if (pots > 0) {
       Session.getInstance().addOpponentScore(pots)
       const { p1: s1, p2: s2 } = Session.getInstance().orderedScoresForHud()

@@ -17,7 +17,6 @@ import { HitEvent } from "../../../src/events/hitevent"
 import { WatchShot } from "../../../src/controller/watchshot"
 import { PlaceBall } from "../../../src/controller/placeball"
 import { Vector3 } from "three"
-import { NineBall } from "../../../src/controller/rules/nineball"
 import { StartAimEvent } from "../../../src/events/startaimevent"
 import { WatchEvent } from "../../../src/events/watchevent"
 import { Controller } from "../../../src/controller/controller"
@@ -289,8 +288,7 @@ describe("BotEventHandler Respot Logic", () => {
     cueball.state = State.Stationary
     cueball.pos.set(0, 0, 0)
 
-    // Mock foulReason to return a reason
-    jest.spyOn(NineBall, "foulReason").mockReturnValue("Some foul")
+    jest.spyOn(container.rules, "foulReason").mockReturnValue("Some foul")
 
     const eventHandler = createBotEventHandler(container, publishedEvents)
     eventHandler.handle(mockEvent(EventType.BEGIN))
@@ -305,10 +303,8 @@ describe("BotEventHandler Respot Logic", () => {
   })
 
   it("should handle miss and switch turn", () => {
-    // Mock foulReason to return null
-    jest.spyOn(NineBall, "foulReason").mockReturnValue(null)
-    // Mock potCount to return 0
-    jest.spyOn(Outcome, "potCount").mockReturnValue(0)
+    jest.spyOn(container.rules, "foulReason").mockReturnValue(null)
+    jest.spyOn(container.rules, "getAmountScored").mockReturnValue(0)
 
     const eventHandler = createBotEventHandler(container, publishedEvents)
     eventHandler.handle(mockEvent(EventType.BEGIN))
@@ -348,10 +344,8 @@ describe("BotEventHandler Respot Logic", () => {
   })
 
   it("should handle pot success and continue turn", () => {
-    // Mock foulReason to return null
-    jest.spyOn(NineBall, "foulReason").mockReturnValue(null)
-    // Mock potCount to return 1
-    jest.spyOn(Outcome, "potCount").mockReturnValue(1)
+    jest.spyOn(container.rules, "foulReason").mockReturnValue(null)
+    jest.spyOn(container.rules, "getAmountScored").mockReturnValue(1)
 
     const eventHandler = createBotEventHandler(container, publishedEvents)
     eventHandler.handle(mockEvent(EventType.BEGIN))
@@ -365,8 +359,7 @@ describe("BotEventHandler Respot Logic", () => {
     const outcome = [Outcome.pot(cueball, 1), Outcome.pot(nineBall, 1)]
     container.table.outcome = outcome
 
-    // Mock foulReason to return a reason
-    jest.spyOn(NineBall, "foulReason").mockReturnValue("Foul")
+    jest.spyOn(container.rules, "foulReason").mockReturnValue("Foul")
 
     const eventHandler = createBotEventHandler(container, publishedEvents)
     eventHandler.handle(mockEvent(EventType.BEGIN))
