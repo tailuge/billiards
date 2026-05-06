@@ -179,12 +179,12 @@ export class LobbyIndicator {
     let statusEmoji = ""
     if (isTwoPlayer) {
       if (this.opponentOnline === true) {
-        statusEmoji = " 🟢"
+        statusEmoji = " <span class='status-emoji'>🟢</span>"
       } else if (this.opponentOnline === false) {
-        statusEmoji = " 🔴"
+        statusEmoji = " <span class='status-emoji'>🔴</span>"
       }
     }
-    this.countElement.textContent = `${this.count} 👥${statusEmoji}`
+    this.countElement.innerHTML = `${this.count} 👥${statusEmoji}`
   }
 
   private updateChallengePill(challenged: boolean): void {

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>2 Player Billiards - Open in Two Tabs</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+  </head>
+  <body>
+    <p>Opening two player tabs...</p>
+  </body>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search)
+    const websocketserver =
+      urlParams.get("websocketserver") ?? "ws://localhost:8080"
+    const ruletype = urlParams.get("ruletype") ?? "nineball"
+    const shotClock = urlParams.get("shotClock")
+    const practice = urlParams.get("practice")
+    const unique = Math.floor(Math.random() * 0xffff).toString(16)
+    let url = `index.html?ruletype=${ruletype}&websocketserver=${websocketserver}&tableId=${unique}`
+    if (shotClock) {
+      url += `&shotClock=${shotClock}`
+    }
+    if (practice) {
+      url += `&practice=${practice}`
+    }
+    window.open(`${url}&userId=p1id&userName=P1&first=true`, "_blank")
+    window.open(`${url}&userId=p2id&userName=P2`, "_blank")
+  </script>
+</html>
