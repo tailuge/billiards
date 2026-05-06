@@ -275,8 +275,46 @@ describe("NineBall Rules", () => {
   it("should cover placeBall and other methods", () => {
     const pos = nineball.placeBall()
     expect(pos.x).to.be.below(0)
-    expect(nineball.asset()).to.equal("models/p8.min.gltf")
+    expect(nineball.asset).to.equal("models/p8.min.gltf")
     expect(nineball.allowsPlaceBall()).to.be.true
+  })
+
+  describe("getAmountScored", () => {
+    it("returns 0 when no balls potted", () => {
+      const ball1 = container.table.balls.find((b) => b.label === 1)!
+      const outcome = [Outcome.collision(container.table.cueball, ball1, 1)]
+      expect(nineball.getAmountScored(outcome)).to.equal(0)
+    })
+
+    it("returns pot count when balls are potted", () => {
+      const ball1 = container.table.balls.find((b) => b.label === 1)!
+      const ball2 = container.table.balls.find((b) => b.label === 2)!
+      const outcome = [
+        Outcome.collision(container.table.cueball, ball1, 1),
+        Outcome.pot(ball1, 1),
+        Outcome.pot(ball2, 1),
+      ]
+      expect(nineball.getAmountScored(outcome)).to.equal(2)
+    })
+  })
+
+  describe("respot", () => {
+    it("returns empty array when nine-ball not potted", () => {
+      const ball1 = container.table.balls.find((b) => b.label === 1)!
+      const outcome = [Outcome.pot(ball1, 1)]
+      expect(nineball.respot(outcome)).to.deep.equal([])
+    })
+
+    it("returns nine-ball when nine-ball is potted", () => {
+      const nineBall = container.table.balls.find((b) => b.label === 9)!
+      const outcome = [
+        Outcome.pot(container.table.cueball, 1),
+        Outcome.pot(nineBall, 1),
+      ]
+      const respotted = nineball.respot(outcome)
+      expect(respotted).to.have.length(1)
+      expect(respotted[0]).to.equal(nineBall)
+    })
   })
 
   describe("Practice Mode", () => {

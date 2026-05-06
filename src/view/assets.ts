@@ -26,7 +26,7 @@ export class Assets {
       this.background = m.scene
       this.done()
     })
-    importGltf(this.rules.asset(), (m) => {
+    importGltf(this.rules.asset, (m) => {
       this.table = m.scene
       TableMesh.mesh = m.scene.children[0]
       this.done()

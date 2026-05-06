@@ -107,6 +107,12 @@ export class SnookerUtils {
     const pottedColours = Outcome.pots(outcome).filter(
       (b) => b.id > 0 && b.id < 7
     )
+    if (!shotInfo.targetIsRed) {
+      const pottedReds = Outcome.pots(outcome).filter((b) => b.id >= 7)
+      if (pottedReds.length > 0) {
+        return "Red potted instead of colour"
+      }
+    }
     if (pottedColours.length > 1) {
       const colourNames = pottedColours
         .map((b) => SnookerUtils.colourName(b.id))
@@ -119,7 +125,7 @@ export class SnookerUtils {
       const firstBallId2 = shotInfo.firstCollision?.ballB?.id ?? 0
       if (pottedId !== firstBallId2) {
         const pottedName = SnookerUtils.colourName(pottedId)
-        const hitName = SnookerUtils.colourName(firstBallId2)
+        const hitName = firstBallId2 >= 7 ? "red" : SnookerUtils.colourName(firstBallId2)
         return `Potted ${pottedName} instead of ${hitName}`
       }
     }

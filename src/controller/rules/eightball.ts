@@ -45,9 +45,7 @@ export class EightBall implements Rules {
     this.currentBreak = 0
   }
 
-  asset(): string {
-    return "models/p8.min.gltf"
-  }
+  readonly asset = "models/p8.min.gltf"
 
   tableGeometry(): void {
     TableGeometry.hasPockets = true
@@ -124,6 +122,14 @@ export class EightBall implements Rules {
 
   isFoul(outcome: Outcome[]): boolean {
     return this.foulReason(outcome) !== null
+  }
+
+  getAmountScored(outcome: Outcome[]): number {
+    return Outcome.potCount(outcome)
+  }
+
+  respot(_outcome: Outcome[]): Ball[] {
+    return []
   }
 
   private wrongBallHitReason(hitBall: Ball, outcome: Outcome[]): string | null {

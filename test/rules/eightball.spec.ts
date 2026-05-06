@@ -201,6 +201,25 @@ describe("EightBall Rules", () => {
     expect(candidate?.label).to.be.at.least(1).and.at.most(7)
   })
 
+  describe("getAmountScored", () => {
+    it("returns 0 when no balls potted", () => {
+      const ball1 = container.table.balls.find((b) => b.label === 1)!
+      const outcome = [Outcome.collision(container.table.cueball, ball1, 1)]
+      expect(eightball.getAmountScored(outcome)).to.equal(0)
+    })
+
+    it("returns pot count when balls are potted", () => {
+      const ball1 = container.table.balls.find((b) => b.label === 1)!
+      const ball9 = container.table.balls.find((b) => b.label === 9)!
+      const outcome = [
+        Outcome.collision(container.table.cueball, ball1, 1),
+        Outcome.pot(ball1, 1),
+        Outcome.pot(ball9, 1),
+      ]
+      expect(eightball.getAmountScored(outcome)).to.equal(2)
+    })
+  })
+
   it("nextCandidateBall should return 8-ball if group cleared", () => {
     Session.getInstance().p1type = 1 // Solids
     container.table.balls.forEach((b) => {

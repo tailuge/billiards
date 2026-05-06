@@ -90,7 +90,7 @@ export class View {
     }
     this.scene.add(this.assets.table)
     this.table.mesh = this.assets.table
-    if (this.assets.rules.asset() !== Snooker.tablemodel) {
+    if (this.assets.rules.asset !== Snooker.tablemodel) {
       this.scene.add(new Grid().generateLineSegments())
     }
   }

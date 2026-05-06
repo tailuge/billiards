@@ -4,7 +4,7 @@ To enable the bot to play any game variant without rule-specific logic, the `Rul
 
 ## Phased Approach
 
-### Phase 1 — Interface Refactoring (no bot changes)
+### Phase 1 — Interface Refactoring (no bot changes) ✅ COMPLETE
 
 Refactor the `Rules` interface and all implementing classes so the interface is clean and consistent. The bot (`BotEventHandler`) is **not touched** in this phase. The goal is a stable, well-defined interface that Phase 2 can build on.
 
@@ -63,12 +63,14 @@ These are two distinct concerns. Renaming them to a single `getStartingCueBall(p
 
 #### Phase 1 success criteria
 
-- `Rules` interface has three new methods: `foulReason`, `getAmountScored`, `respot`
-- `asset()` method replaced by `readonly asset` property across interface and all implementations
-- All rule classes implement the updated interface
-- `Snooker`'s private `respot()` renamed to avoid collision
-- `yarn lint` and `yarn test` pass with no regressions
-- `BotEventHandler` is unchanged
+- ✅ `Rules` interface has three new methods: `foulReason`, `getAmountScored`, `respot`
+- ✅ `asset()` method replaced by `readonly asset` property across interface and all implementations
+- ✅ All rule classes implement the updated interface
+- ✅ `Snooker`'s private `respot()` renamed to `respotColours()` to avoid collision
+- ✅ `yarn lint` and `yarn test` pass with no regressions
+- ✅ `BotEventHandler` is unchanged
+
+**Bonus fix:** `SnookerUtils.foulReason` now correctly reports "Red potted instead of colour" when a red is accidentally potted while targeting a colour (previously returned `null` reason).
 
 ---
 

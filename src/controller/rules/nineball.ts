@@ -58,9 +58,7 @@ export class NineBall implements Rules {
     return new Vector3(baulkline, 0, 0)
   }
 
-  asset(): string {
-    return "models/p8.min.gltf"
-  }
+  readonly asset = "models/p8.min.gltf"
 
   tableGeometry(): void {
     TableGeometry.hasPockets = true
@@ -103,7 +101,7 @@ export class NineBall implements Rules {
     const cueball = this.container.table.cueball
 
     if (nineBallPotted) {
-      this.respotAndBroadcastNineBall()
+      this.respotAndBroadcastNineBall(outcome)
     }
 
     const startPos = cueball.onTable() ? cueball.pos.clone() : this.placeBall()
@@ -180,6 +178,23 @@ export class NineBall implements Rules {
     return NineBall.foulReason(this.container.table, outcome) !== null
   }
 
+  foulReason(outcome: Outcome[]): string | null {
+    return NineBall.foulReason(this.container.table, outcome)
+  }
+
+  getAmountScored(outcome: Outcome[]): number {
+    return Outcome.potCount(outcome)
+  }
+
+  respot(outcome: Outcome[]): Ball[] {
+    const nineBall = this.container.table.balls[9]
+    if (nineBall && Outcome.pots(outcome).includes(nineBall)) {
+      Respot.nineBall(this.container.table)
+      return [nineBall]
+    }
+    return []
+  }
+
   public static foulReason(table: Table, outcome: Outcome[]): string | null {
     const cueball = table.cueball
 
@@ -245,9 +260,9 @@ export class NineBall implements Rules {
     )
   }
 
-  private respotAndBroadcastNineBall() {
-    Respot.nineBall(this.container.table)
-    const nineBall = this.container.table.balls[9]
+  private respotAndBroadcastNineBall(outcome: Outcome[]) {
+    const respotted = this.respot(outcome)
+    const nineBall = respotted[0]
     if (nineBall) {
       nineBall.fround()
       const respotEvent = RerackEvent.fromJson({

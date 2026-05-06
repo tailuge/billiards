@@ -9,6 +9,7 @@ export interface Rules {
   currentBreak: number
   previousBreak: number
   rulename: string
+  readonly asset: string
   update(outcome: Outcome[]): Controller
   rack(): Ball[]
   tableGeometry(): void
@@ -19,8 +20,10 @@ export interface Rules {
   isEndOfGame(outcome: Outcome[]): boolean
   allowsPlaceBall(): boolean
   placeBall(target?: Vector3): Vector3
-  asset(): string
   nextCandidateBall(): Ball | undefined
   startTurn(): void
   handleGameEnd(isWinner: boolean, endSubtext?: string): Controller
+  foulReason(outcome: Outcome[]): string | null
+  getAmountScored(outcome: Outcome[]): number
+  respot(outcome: Outcome[]): Ball[]
 }

@@ -310,6 +310,45 @@ describe("Snooker", () => {
     done()
   })
 
+  it("potted colour when red was hit first says 'instead of red'", (done) => {
+    // target colour, hit lowest colour (yellow, id=1) but pot pink (id=5)
+    // yellow is lowest colour on table so legalFirstCollision passes
+    snooker.targetIsRed = false
+    snooker.previousPotRed = false
+    // remove all colours except yellow and pink from table so yellow is lowest
+    table.balls[2].state = State.InPocket // green
+    table.balls[3].state = State.InPocket // brown
+    table.balls[4].state = State.InPocket // blue
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[1], 1), // hit yellow (id=1)
+      Outcome.pot(table.balls[5], 1),                      // pot pink (id=5)
+    ]
+    table.balls[5].state = State.InPocket
+    const notifySpy = jest.spyOn(container as any, "notify")
+    snooker.update(outcome)
+    const call = notifySpy.mock.calls[0][0] as any
+    expect(call.subtext).to.equal("Potted Pink instead of Yellow")
+    done()
+  })
+
+  it("red potted when targeting colour says 'Red potted instead of colour'", (done) => {
+    snooker.targetIsRed = false
+    snooker.previousPotRed = true
+    // hit black (id=6), accidentally pot a red (id=7)
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[6], 1), // hit black
+      Outcome.pot(table.balls[7], 1),                      // pot a red
+    ]
+    table.balls[7].state = State.InPocket
+    const notifySpy = jest.spyOn(container as any, "notify")
+    snooker.update(outcome)
+    const call = notifySpy.mock.calls[0][0] as any
+    expect(call.subtext).to.equal("Red potted instead of colour")
+    done()
+  })
+
   it("target is red but hit pink is foul", (done) => {
     const outcome: Outcome[] = [
       Outcome.hit(table.cueball, 1),
@@ -453,6 +492,72 @@ describe("Snooker", () => {
   it("placeBall constrained to D", (done) => {
     expect(snooker.placeBall(zero).length()).to.be.greaterThan(0)
     done()
+  })
+
+  describe("getAmountScored", () => {
+    it("returns 0 when no balls potted", () => {
+      const outcome: Outcome[] = [
+        Outcome.hit(table.cueball, 1),
+        Outcome.collision(table.cueball, table.balls[7], 1),
+      ]
+      expect(snooker.getAmountScored(outcome)).to.equal(0)
+    })
+
+    it("returns 1 per red potted", () => {
+      const outcome: Outcome[] = [
+        Outcome.hit(table.cueball, 1),
+        Outcome.collision(table.cueball, table.balls[7], 1),
+        Outcome.pot(table.balls[7], 1),
+        Outcome.pot(table.balls[8], 1),
+      ]
+      expect(snooker.getAmountScored(outcome)).to.equal(2)
+    })
+
+    it("returns colour value (id+1) for a potted colour", () => {
+      // black is id=6, value=7
+      const outcome: Outcome[] = [
+        Outcome.hit(table.cueball, 1),
+        Outcome.collision(table.cueball, table.balls[6], 1),
+        Outcome.pot(table.balls[6], 1),
+      ]
+      expect(snooker.getAmountScored(outcome)).to.equal(7)
+    })
+  })
+
+  describe("respot", () => {
+    it("returns empty array when no colours potted", () => {
+      const outcome: Outcome[] = [Outcome.pot(table.balls[7], 1)]
+      expect(snooker.respot(outcome)).to.deep.equal([])
+    })
+
+    it("returns respotted colour balls", () => {
+      // pot pink (id=5) — should be respotted
+      table.balls[5].state = require("../../src/model/ball").State.InPocket
+      const outcome: Outcome[] = [
+        Outcome.hit(table.cueball, 1),
+        Outcome.collision(table.cueball, table.balls[5], 1),
+        Outcome.pot(table.balls[5], 1),
+      ]
+      const respotted = snooker.respot(outcome)
+      expect(respotted).to.have.length(1)
+      expect(respotted[0]).to.equal(table.balls[5])
+    })
+
+    it("returns both balls when blue and pink are potted", () => {
+      // blue is id=4, pink is id=5
+      table.balls[4].state = require("../../src/model/ball").State.InPocket
+      table.balls[5].state = require("../../src/model/ball").State.InPocket
+      const outcome: Outcome[] = [
+        Outcome.hit(table.cueball, 1),
+        Outcome.collision(table.cueball, table.balls[4], 1),
+        Outcome.pot(table.balls[4], 1),
+        Outcome.pot(table.balls[5], 1),
+      ]
+      const respotted = snooker.respot(outcome)
+      expect(respotted).to.have.length(2)
+      expect(respotted).to.include(table.balls[4])
+      expect(respotted).to.include(table.balls[5])
+    })
   })
 
   it("handleGameEnd determines winner by score in 2 player mode", () => {

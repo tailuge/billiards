@@ -83,7 +83,7 @@ export class Snooker implements Rules {
     }
 
     if (info.pots > 1) {
-      this.respot(outcome)
+      this.respotColours(outcome)
       return this.foul(outcome, info)
     }
 
@@ -97,7 +97,7 @@ export class Snooker implements Rules {
     }
 
     if (this.previousPotRed) {
-      this.respot(outcome)
+      this.respotColours(outcome)
       this.currentBreak += id + 1
       Session.getInstance().addMyScore(id + 1)
 
@@ -141,7 +141,7 @@ export class Snooker implements Rules {
           subtext: foulResult.reason || `Foul (${this.foulPoints} points)`,
         } as const)
     this.container.notify(notification)
-    this.respot(outcome)
+    this.respotColours(outcome)
     if (info.whitePotted) {
       return this.whiteInHand()
     }
@@ -178,9 +178,7 @@ export class Snooker implements Rules {
     return true
   }
 
-  asset(): string {
-    return Snooker.tablemodel
-  }
+  readonly asset = Snooker.tablemodel
 
   startTurn(): void {
     this.previousPotRed = false
@@ -274,17 +272,36 @@ export class Snooker implements Rules {
     return this.snookerrule(outcome)
   }
 
-  private respot(outcome: Outcome[]): void {
-    const respotted = SnookerUtils.respotAllPottedColours(
+  foulReason(outcome: Outcome[]): string | null {
+    const info = SnookerUtils.shotInfo(
       this.container.table,
-      outcome
+      outcome,
+      this.targetIsRed,
+      this.previousPotRed
     )
+    return SnookerUtils.calculateFoul(outcome, info).reason
+  }
+
+  getAmountScored(outcome: Outcome[]): number {
+    return Outcome.pots(outcome).reduce((sum, ball) => {
+      if (ball.id >= 7) return sum + 1        // red: 1 point
+      if (ball.id >= 1) return sum + ball.id + 1  // colour: id+1 points
+      return sum
+    }, 0)
+  }
+
+  respot(outcome: Outcome[]): Ball[] {
+    return SnookerUtils.respotAllPottedColours(this.container.table, outcome)
+  }
+
+  private respotColours(outcome: Outcome[]): void {
+    const respotted = this.respot(outcome)
     if (respotted.length > 0) {
       respotted.forEach((ball) => ball.fround())
-      const respot = RerackEvent.fromJson({
+      const respotEvent = RerackEvent.fromJson({
         balls: respotted.map((b) => b.serialise()),
       })
-      this.container.sendEvent(respot)
+      this.container.sendEvent(respotEvent)
     }
   }
 }

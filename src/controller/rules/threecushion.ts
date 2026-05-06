@@ -50,9 +50,7 @@ export class ThreeCushion implements Rules {
     return zero
   }
 
-  asset(): string {
-    return "models/threecushion.min.gltf"
-  }
+  readonly asset = "models/threecushion.min.gltf"
 
   secondToPlay(): void {
     this.cueball = this.container.table.balls[1]
@@ -137,5 +135,17 @@ export class ThreeCushion implements Rules {
 
   allowsPlaceBall(): boolean {
     return false
+  }
+
+  foulReason(_outcome: Outcome[]): string | null {
+    return null
+  }
+
+  getAmountScored(outcome: Outcome[]): number {
+    return Outcome.isThreeCushionPoint(this.cueball, outcome) ? 1 : 0
+  }
+
+  respot(_outcome: Outcome[]): Ball[] {
+    return []
   }
 }

@@ -170,13 +170,36 @@ describe("ThreeCushion", () => {
 
   it("ThreeCushion properties and simple methods", (done) => {
     const rules = RuleFactory.create(rule, container)
-    expect(rules.asset()).to.equal("models/threecushion.min.gltf")
+    expect(rules.asset).to.equal("models/threecushion.min.gltf")
     const pb = rules.placeBall()
     expect(pb.x).to.equal(0)
     expect(pb.y).to.equal(0)
     expect(pb.z).to.equal(0)
     rules.startTurn() // Should not throw
     done()
+  })
+
+  describe("getAmountScored", () => {
+    it("returns 0 when no three-cushion point", () => {
+      const balls = container.table.balls
+      const outcome: Outcome[] = [
+        Outcome.cushion(balls[0], 1),
+        Outcome.cushion(balls[0], 1),
+      ]
+      expect(container.rules.getAmountScored(outcome)).to.equal(0)
+    })
+
+    it("returns 1 when three-cushion point scored", () => {
+      const balls = container.table.balls
+      const outcome: Outcome[] = [
+        Outcome.cushion(balls[0], 1),
+        Outcome.cushion(balls[0], 1),
+        Outcome.cushion(balls[0], 1),
+        Outcome.collision(balls[0], balls[1], 1),
+        Outcome.collision(balls[0], balls[2], 1),
+      ]
+      expect(container.rules.getAmountScored(outcome)).to.equal(1)
+    })
   })
 
   it("ThreeCushion otherPlayersCueBall and nextCandidateBall", (done) => {
