@@ -171,7 +171,11 @@ export class BotEventHandler {
   }
 
   private aim() {
-    const targetBall = this.container.rules.nextCandidateBall()
+    const p1type = Session.getInstance().p1type
+    let botType = 0
+    if (p1type === 1) botType = 2
+    else if (p1type === 2) botType = 1
+    const targetBall = this.container.rules.nextCandidateBall(botType)
     return this.botSelector(targetBall)
   }
 

@@ -20,7 +20,7 @@ export interface Rules {
   isEndOfGame(outcome: Outcome[]): boolean
   allowsPlaceBall(): boolean
   placeBall(target?: Vector3): Vector3
-  nextCandidateBall(): Ball | undefined
+  nextCandidateBall(p1type?: number): Ball | undefined
   startTurn(): void
   handleGameEnd(isWinner: boolean, endSubtext?: string): Controller
   foulReason(outcome: Outcome[]): string | null

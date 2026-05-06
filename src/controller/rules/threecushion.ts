@@ -36,7 +36,7 @@ export class ThreeCushion implements Rules {
     // not used
   }
 
-  nextCandidateBall(): Ball | undefined {
+  nextCandidateBall(_p1type?: number): Ball | undefined {
     if (isFirstShot(this.container.recorder)) {
       return undefined
     }

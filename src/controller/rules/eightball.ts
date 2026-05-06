@@ -92,16 +92,16 @@ export class EightBall implements Rules {
     return new Vector3(baulkline, 0, 0)
   }
 
-  nextCandidateBall(): Ball | undefined {
-    const session = Session.getInstance()
+  nextCandidateBall(p1type?: number): Ball | undefined {
+    const type = p1type ?? Session.getInstance().p1type
     const table = this.container.table
     const balls = table.balls.filter((b) => b !== this.cueball && b.onTable())
 
-    if (session.p1type === 0) {
+    if (type === 0) {
       return balls.find((b) => b.label !== 8)
     }
 
-    const myGroup = balls.filter((b) => this.isMyType(b))
+    const myGroup = balls.filter((b) => this.isMyType(b, type))
     if (myGroup.length > 0) {
       return Respot.closest(table.cueball, myGroup)
     }
@@ -109,12 +109,11 @@ export class EightBall implements Rules {
     return table.balls.find((b) => b.label === 8 && b.onTable())
   }
 
-  private isMyType(ball: Ball): boolean {
-    const session = Session.getInstance()
-    if (session.p1type === 1) {
+  private isMyType(ball: Ball, type = Session.getInstance().p1type): boolean {
+    if (type === 1) {
       return (ball.label || 0) >= 1 && (ball.label || 0) <= 7
     }
-    if (session.p1type === 2) {
+    if (type === 2) {
       return (ball.label || 0) >= 9 && (ball.label || 0) <= 15
     }
     return false

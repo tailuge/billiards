@@ -191,7 +191,7 @@ export class Snooker implements Rules {
     return Rack.snooker()
   }
 
-  nextCandidateBall(): Ball | undefined {
+  nextCandidateBall(_p1type?: number): Ball | undefined {
     if (isFirstShot(this.container.recorder)) {
       return undefined
     }

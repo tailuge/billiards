@@ -38,7 +38,7 @@ export class NineBall implements Rules {
     this.currentBreak = 0
   }
 
-  nextCandidateBall(): Ball | undefined {
+  nextCandidateBall(_p1type?: number): Ball | undefined {
     return this.container.table.balls
       .filter((b) => b !== this.cueball && b.onTable())
       .sort((a, b) => (a.label || 0) - (b.label || 0))[0]
