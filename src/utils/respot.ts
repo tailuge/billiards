@@ -6,6 +6,22 @@ import { Rack } from "./rack"
 import { Vector3 } from "three"
 
 export class Respot {
+  static snookerD(table: Table): Vector3 {
+    const preferred = new Vector3(Rack.baulk, -Rack.sixth / 2.6, 0)
+    if (!table.overlapsAny(preferred, table.cueball)) {
+      return preferred
+    }
+    const step = R / 4
+    const pos = new Vector3(Rack.baulk, -Rack.sixth, 0)
+    while (pos.y <= Rack.sixth) {
+      if (!table.overlapsAny(pos, table.cueball)) {
+        return pos
+      }
+      pos.y += step
+    }
+    return pos
+  }
+
   static nineBall(table: Table) {
     const nineBall = table.balls.find((b) => b.id === 9)
     if (!nineBall) return

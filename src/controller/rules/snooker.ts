@@ -226,7 +226,7 @@ export class Snooker implements Rules {
         return target
       }
     }
-    return new Vector3(Rack.baulk, -Rack.sixth / 2.6, 0)
+    return Respot.snookerD(this.container.table)
   }
 
   private switchPlayer(): Controller {

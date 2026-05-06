@@ -88,7 +88,6 @@ export class BotEventHandler {
    */
   private handleStationary(): void {
     const outcome = this.container.table.outcome
-    this.botRules.advanceState?.(outcome)
     const botType = this.botType()
     if (this.container.rules.isEndOfGame(outcome, botType)) {
       this.handleGameEnd()
@@ -97,9 +96,11 @@ export class BotEventHandler {
     const foulReason = this.botRules.foulReason(outcome, botType)
     if (foulReason) {
       this.handleFoul(foulReason, outcome)
+      this.botRules.advanceState?.(outcome)
       return
     }
     const pots = this.container.rules.getAmountScored(outcome)
+    this.botRules.advanceState?.(outcome)
     if (pots > 0) {
       this.handlePot(pots, outcome)
       return
@@ -140,13 +141,20 @@ export class BotEventHandler {
   }
 
   private handleFoul(foulReason: string, outcome: Outcome[]): void {
+    const cueball = this.container.table.cueball
+    const isSnooker = this.container.rules.rulename === "snooker"
+    const whitePotted = Outcome.isCueBallPotted(cueball, outcome)
+    const ballInHand = !isSnooker || whitePotted
     this.container.notify({
       type: "Foul",
       title: "FOUL",
       subtext: foulReason,
-      extra: "Ball in hand",
+      ...(ballInHand ? { extra: "Ball in hand" } : {}),
     })
-    const cueball = this.container.table.cueball
+    if (!ballInHand) {
+      this.publishSequenceToPlayer([new StartAimEvent()])
+      return
+    }
     if (!cueball.onTable()) {
       Respot.respotBehind(
         this.container.rules.placeBall(),

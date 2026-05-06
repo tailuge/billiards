@@ -370,4 +370,47 @@ describe("BotEventHandler Respot Logic", () => {
     expect(placeBallEvent.respot).toBeDefined()
     expect(placeBallEvent.respot?.id).toBe(9)
   })
+
+  it("snooker foul: white potted sends PlaceBallEvent with Ball in hand", () => {
+    Ball.id = 0
+    const snookerContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "snooker",
+    })
+    const cueball = snookerContainer.table.cueball
+    cueball.state = State.InPocket
+    const outcome = [Outcome.pot(cueball, 1)]
+    snookerContainer.table.outcome = outcome
+
+    const events: GameEvent[] = []
+    const handler = createBotEventHandler(snookerContainer, events)
+    jest.spyOn(handler.botRules, "foulReason").mockReturnValue("White potted")
+    handler.handle(mockEvent(EventType.BEGIN))
+
+    expect(events.find((e) => e instanceof PlaceBallEvent)).toBeDefined()
+    expect(events.find((e) => e instanceof StartAimEvent)).toBeUndefined()
+  })
+
+  it("snooker foul: white on table sends StartAimEvent not PlaceBallEvent", () => {
+    Ball.id = 0
+    const snookerContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "snooker",
+    })
+    const cueball = snookerContainer.table.cueball
+    cueball.state = State.Stationary
+    snookerContainer.table.outcome = []
+
+    const events: GameEvent[] = []
+    const handler = createBotEventHandler(snookerContainer, events)
+    jest.spyOn(handler.botRules, "foulReason").mockReturnValue("Hit colour instead of red")
+    handler.handle(mockEvent(EventType.BEGIN))
+
+    expect(events.find((e) => e instanceof StartAimEvent)).toBeDefined()
+    expect(events.find((e) => e instanceof PlaceBallEvent)).toBeUndefined()
+  })
 })
