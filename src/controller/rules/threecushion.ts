@@ -40,8 +40,8 @@ export class ThreeCushion implements Rules {
     if (isFirstShot(this.container.recorder)) {
       return undefined
     }
-    return Respot.closest(
-      this.container.table.cueball,
+    return Respot.furthest(
+      this.cueball,
       this.container.table.balls
     )
   }

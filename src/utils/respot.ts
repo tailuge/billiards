@@ -62,6 +62,14 @@ export class Respot {
   }
 
   static closest(cueball: Ball, balls: Ball[]) {
+    return Respot.byDistance(cueball, balls, (a, b) => a < b)
+  }
+
+  static furthest(cueball: Ball, balls: Ball[]) {
+    return Respot.byDistance(cueball, balls, (a, b) => a > b)
+  }
+
+  private static byDistance(cueball: Ball, balls: Ball[], prefer: (a: number, b: number) => boolean) {
     const onTable = balls
       .filter((ball) => ball.onTable())
       .filter((ball) => ball !== cueball)
@@ -72,7 +80,7 @@ export class Respot {
       return cueball.pos.distanceTo(b.pos)
     }
     return onTable.reduce(
-      (a, b) => (distanceToCueBall(a) < distanceToCueBall(b) ? a : b),
+      (a, b) => (prefer(distanceToCueBall(a), distanceToCueBall(b)) ? a : b),
       onTable[0]
     )
   }
