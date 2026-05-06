@@ -29,14 +29,6 @@ Modify `LobbyIndicator` to:
 - In its `onUsersChange` handler, compare the current set of users at the table against the `opponentClientId` from `Session`.
 - Invoke the registered callback whenever the opponent's online status changes.
 
-### Container Integration
-The `Container` (or `BrowserContainer`) should:
-- Register a listener with `LobbyIndicator` during initialization.
-- When notified that the opponent is offline:
-    - Use `this.notifyLocal` to show an "Opponent disconnected" message (e.g., as an `Info` or `Warning` notification).
-- When notified that the opponent is back online:
-    - Use `this.notifyLocal` to show an "Opponent reconnected" message.
-
 ## Edge Cases and Considerations
 - **Network Flakiness**: Nchan heartbeats and pruning intervals (typically 60-90s) mean there might be a delay in detecting a disconnect.
 - **Spectators**: Presence data currently does not distinguish between players and spectators at a table. However, since we track the specific `opponentClientId`, we can accurately monitor the opponent player specifically.
