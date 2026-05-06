@@ -61,7 +61,9 @@ describe("LobbyIndicator", () => {
 
     const countElement = element?.querySelector(".lobby-count")
     expect(countElement?.classList.contains("is-hidden")).to.be.false
-    expect(document.getElementById("challengePill")?.textContent).to.contain("Challenge from Bob")
+    expect(document.getElementById("challengePill")?.textContent).to.contain(
+      "Challenge from Bob"
+    )
     expect(element?.getAttribute("aria-label")).to.contain("CHALLENGE FROM Bob")
 
     const href = element?.getAttribute("href") ?? ""
@@ -79,7 +81,7 @@ describe("LobbyIndicator", () => {
       ruleType: "nineball",
     })
     expect(document.getElementById("challengePill")?.hidden).to.be.true
-    expect(document.getElementById("challengeDecline") ).to.not.be.null
+    expect(document.getElementById("challengeDecline")).to.not.be.null
     expect(countElement?.classList.contains("is-hidden")).to.be.false
     expect(element?.getAttribute("href")).to.equal(
       "https://scoreboard-tailuge.vercel.app/game?userName=TestPlayer&userId=test-client"
@@ -138,5 +140,66 @@ describe("LobbyIndicator", () => {
     expect(secondCall[0]).to.deep.equal({})
 
     await indicator.stop()
+  })
+
+  it("updates opponent status emoji correctly", async () => {
+    Session.init("p1", "Player 1", "table-1", false)
+    Session.getInstance().setOpponentClientId("p2")
+
+    const mockRules = { rulename: "nineball" } as any
+    const indicator = new LobbyIndicator(false, false, mockRules)
+
+    const element = document.getElementById("lobbyOverlay")
+    const countElement = element?.querySelector(".lobby-count") as HTMLElement
+
+    await indicator.init()
+    expect(countElement.textContent).to.equal("0 👥")
+
+    // Access the mock lobby to trigger onUsersChange callback
+    const mockLobby = (indicator as any).lobby
+    const onUsersChangeCallback = mockLobby.onUsersChange.mock.calls[0][0]
+
+    // Simulate opponent connected at the same table
+    onUsersChangeCallback([
+      { userId: "p1", tableId: "table-1" },
+      { userId: "p2", tableId: "table-1" },
+    ])
+    expect(countElement.textContent).to.equal("2 👥 🟢")
+
+    // Simulate opponent disconnected (not in list)
+    onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
+    expect(countElement.textContent).to.equal("1 👥 🔴")
+
+    // Simulate opponent at a different table
+    onUsersChangeCallback([
+      { userId: "p1", tableId: "table-1" },
+      { userId: "p2", tableId: "other-table" },
+    ])
+    expect(countElement.textContent).to.equal("2 👥 🔴")
+
+    await indicator.stop()
+  })
+
+  it("hides opponent status emoji in non-multiplayer modes", async () => {
+    const mockRules = { rulename: "nineball" } as any
+
+    // Bot mode
+    Session.init("p1", "Player 1", "table-1", false, true)
+    const indicator = new LobbyIndicator(true, false, mockRules)
+    await indicator.init()
+
+    const element = document.getElementById("lobbyOverlay")
+    const countElement = element?.querySelector(".lobby-count") as HTMLElement
+    expect(countElement.textContent).to.equal("0 👥")
+    await indicator.stop()
+
+    // Replay mode
+    Session.reset()
+    Session.init("p1", "Player 1", "table-1", false)
+    const indicator2 = new LobbyIndicator(false, true, mockRules)
+    await indicator2.init()
+    const countElement2 = element?.querySelector(".lobby-count") as HTMLElement
+    expect(countElement2.textContent).to.equal("0 👥")
+    await indicator2.stop()
   })
 })
