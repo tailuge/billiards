@@ -131,9 +131,10 @@ export class EightBall implements Rules {
     return []
   }
 
-  private wrongBallHitReason(hitBall: Ball, outcome: Outcome[]): string | null {
+  private wrongBallHitReason(hitBall: Ball, outcome: Outcome[], type?: number): string | null {
     const session = Session.getInstance()
-    if (session.p1type === 0) {
+    const effectiveType = type ?? session.p1type
+    if (effectiveType === 0) {
       return hitBall.label === 8 ? "Hitting the 8-ball first is a foul" : null
     }
     const cueball = this.container.table.cueball
@@ -142,15 +143,15 @@ export class EightBall implements Rules {
       (b) =>
         b !== cueball &&
         (b.onTable() || pottedThisShot.has(b)) &&
-        this.isMyType(b)
+        this.isMyType(b, effectiveType)
     )
     if (myGroupBefore.length > 0) {
-      return this.isMyType(hitBall) ? null : "Wrong group hit first"
+      return this.isMyType(hitBall, effectiveType) ? null : "Wrong group hit first"
     }
     return hitBall.label === 8 ? null : "Must hit 8-ball first"
   }
 
-  foulReason(outcome: Outcome[]): string | null {
+  foulReason(outcome: Outcome[], type?: number): string | null {
     const table = this.container.table
     const cueball = table.cueball
 
@@ -166,7 +167,7 @@ export class EightBall implements Rules {
       return "No ball hit"
     }
 
-    const wrongBall = this.wrongBallHitReason(firstCollision.ballB!, outcome)
+    const wrongBall = this.wrongBallHitReason(firstCollision.ballB!, outcome, type)
     if (wrongBall) {
       return wrongBall
     }
@@ -294,10 +295,10 @@ export class EightBall implements Rules {
     return new WatchAim(this.container)
   }
 
-  isEndOfGame(outcome: Outcome[]): boolean {
+  isEndOfGame(outcome: Outcome[], type?: number): boolean {
     const eightBall = this.container.table.balls.find((b) => b.label === 8)!
     const eightBallPotted = Outcome.pots(outcome).includes(eightBall)
-    if (!eightBallPotted || this.isFoul(outcome)) {
+    if (!eightBallPotted || this.foulReason(outcome, type)) {
       return false
     }
 
@@ -314,7 +315,7 @@ export class EightBall implements Rules {
         b !== cueball &&
         b !== eightBall &&
         b.onTable() &&
-        this.isMyType(b) &&
+        this.isMyType(b, type) &&
         !pottedThisShot.has(b)
     )
 

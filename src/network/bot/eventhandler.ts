@@ -1,4 +1,5 @@
 import { GameEvent } from "../../events/gameevent"
+import { Outcome } from "../../model/outcome"
 import { Logger } from "./logger"
 import { Container } from "../../container/container"
 import { EventType } from "../../events/eventtype"
@@ -65,7 +66,11 @@ export class BotEventHandler {
    */
   private handleStationary(): void {
     const outcome = this.container.table.outcome
-    if (this.container.rules.isEndOfGame(outcome)) {
+    const p1type = Session.getInstance().p1type
+    let botType = 0
+    if (p1type === 1) botType = 2
+    else if (p1type === 2) botType = 1
+    if (this.container.rules.isEndOfGame(outcome, botType)) {
       // Upload match result when bot wins
       if (this.container.scoreReporter) {
         let replayData: string | undefined
@@ -91,7 +96,7 @@ export class BotEventHandler {
       return
     }
 
-    const foulReason = this.container.rules.foulReason(outcome)
+    const foulReason = this.container.rules.foulReason(outcome, botType)
     if (foulReason) {
       this.container.notify({
         type: "Foul",
@@ -124,9 +129,23 @@ export class BotEventHandler {
 
     const pots = this.container.rules.getAmountScored(outcome)
     if (pots > 0) {
-      Session.getInstance().addOpponentScore(pots)
-      const { p1: s1, p2: s2 } = Session.getInstance().orderedScoresForHud()
+      const session = Session.getInstance()
+      session.addOpponentScore(pots)
 
+      if (session.p1type === 0 && this.container.rules.rulename === "eightball") {
+        const pottedBalls = Outcome.pots(outcome)
+        const hasSolid = pottedBalls.some((b) => (b.label ?? 0) >= 1 && (b.label ?? 0) <= 7)
+        const hasStripe = pottedBalls.some((b) => (b.label ?? 0) >= 9 && (b.label ?? 0) <= 15)
+        if (hasSolid && !hasStripe) {
+          // bot potted solids → bot is type 1, so human (p1) is type 2
+          session.p1type = 2
+        } else if (hasStripe && !hasSolid) {
+          // bot potted stripes → bot is type 2, so human (p1) is type 1
+          session.p1type = 1
+        }
+      }
+
+      const { p1: s1, p2: s2 } = session.orderedScoresForHud()
       const active = this.container.inferActivePlayer()
       this.container.sendScoreUpdate(s1, s2, 0, active)
 

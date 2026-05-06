@@ -17,13 +17,13 @@ export interface Rules {
   secondToPlay(): void
   otherPlayersCueBall(): Ball
   isPartOfBreak(outcome: Outcome[]): boolean
-  isEndOfGame(outcome: Outcome[]): boolean
+  isEndOfGame(outcome: Outcome[], type?: number): boolean
   allowsPlaceBall(): boolean
   placeBall(target?: Vector3): Vector3
   nextCandidateBall(p1type?: number): Ball | undefined
   startTurn(): void
   handleGameEnd(isWinner: boolean, endSubtext?: string): Controller
-  foulReason(outcome: Outcome[]): string | null
+  foulReason(outcome: Outcome[], type?: number): string | null
   getAmountScored(outcome: Outcome[]): number
   respot(outcome: Outcome[]): Ball[]
 }
