@@ -268,6 +268,35 @@ export class Snooker implements Rules {
     return new WatchAim(this.container)
   }
 
+  advanceState(outcome: Outcome[]): void {
+    const info = SnookerUtils.shotInfo(
+      this.container.table,
+      outcome,
+      this.targetIsRed,
+      this.previousPotRed
+    )
+    if (info.pots === 0) {
+      this.targetIsRed =
+        SnookerUtils.redsOnTable(this.container.table).length > 0
+      this.previousPotRed = false
+      return
+    }
+    if (this.targetIsRed) {
+      if (info.legalFirstCollision && Outcome.onlyRedsPotted(outcome)) {
+        this.targetIsRed = false
+        this.previousPotRed = true
+      } else {
+        this.previousPotRed = false
+        this.targetIsRed =
+          SnookerUtils.redsOnTable(this.container.table).length > 0
+      }
+    } else {
+      this.previousPotRed = false
+      this.targetIsRed =
+        SnookerUtils.redsOnTable(this.container.table).length > 0
+    }
+  }
+
   update(outcome: Outcome[]): Controller {
     return this.snookerrule(outcome)
   }
@@ -284,8 +313,8 @@ export class Snooker implements Rules {
 
   getAmountScored(outcome: Outcome[]): number {
     return Outcome.pots(outcome).reduce((sum, ball) => {
-      if (ball.id >= 7) return sum + 1        // red: 1 point
-      if (ball.id >= 1) return sum + ball.id + 1  // colour: id+1 points
+      if (ball.id >= 7) return sum + 1 // red: 1 point
+      if (ball.id >= 1) return sum + ball.id + 1 // colour: id+1 points
       return sum
     }, 0)
   }

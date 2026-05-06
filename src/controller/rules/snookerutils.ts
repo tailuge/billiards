@@ -131,7 +131,8 @@ export class SnookerUtils {
       const firstBallId2 = shotInfo.firstCollision?.ballB?.id ?? 0
       if (pottedId !== firstBallId2) {
         const pottedName = SnookerUtils.colourName(pottedId)
-        const hitName = firstBallId2 >= 7 ? "red" : SnookerUtils.colourName(firstBallId2)
+        const hitName =
+          firstBallId2 >= 7 ? "red" : SnookerUtils.colourName(firstBallId2)
         return `Potted ${pottedName} instead of ${hitName}`
       }
     }

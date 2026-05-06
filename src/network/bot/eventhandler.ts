@@ -16,6 +16,22 @@ import { Session } from "../client/session"
 import { AimEvent } from "../../events/aimevent"
 import { Ball } from "../../model/ball"
 import { Vector3 } from "three"
+import { Rules } from "../../controller/rules/rules"
+import { RuleFactory } from "../../controller/rules/rulefactory"
+
+class BotContainer {
+  table
+  recorder
+  notify() {}
+  sendEvent() {}
+  sound = { playSuccess() {} }
+  isSinglePlayer = false
+
+  constructor(container: Container) {
+    this.table = container.table
+    this.recorder = container.recorder
+  }
+}
 
 export class BotEventHandler {
   private readonly logs: Logger
@@ -27,6 +43,7 @@ export class BotEventHandler {
   protected enqueueMessage: (message: string) => void
   private readonly calculator: AimCalculator
   private readonly botName: string
+  protected readonly botRules: Rules
 
   constructor(
     logs: Logger,
@@ -41,6 +58,11 @@ export class BotEventHandler {
     this.calculator = new AimCalculator()
     this.botName =
       new URLSearchParams(globalThis.location.search).get("bot") ?? "ClawBreak"
+    this.botRules = RuleFactory.create(
+      container.rules.rulename,
+      new BotContainer(container)
+    )
+    this.botRules.cueball = container.table.cueball
   }
 
   /**
@@ -66,101 +88,104 @@ export class BotEventHandler {
    */
   private handleStationary(): void {
     const outcome = this.container.table.outcome
-    const p1type = Session.getInstance().p1type
-    let botType = 0
-    if (p1type === 1) botType = 2
-    else if (p1type === 2) botType = 1
+    this.botRules.advanceState?.(outcome)
+    const botType = this.botType()
     if (this.container.rules.isEndOfGame(outcome, botType)) {
-      // Upload match result when bot wins
-      if (this.container.scoreReporter) {
-        let replayData: string | undefined
-        try {
-          const gameState = this.container.recorder.wholeGame()
-          replayData = ReplayEncoder.crush(JSON.stringify(gameState))
-        } catch (e) {
-          console.error("Failed to encode replay data", e)
-        }
-        const result: MatchResult = {
-          winner: this.botName,
-          loser: Session.getInstance().playername,
-          winnerScore: Session.getInstance().opponentScore(),
-          loserScore: Session.getInstance().myScore(),
-          ruleType: this.container.rules.rulename,
-        }
-        if (replayData) {
-          result.replayData = replayData
-        }
-        this.container.scoreReporter.submitMatchResult(result)
-      }
-      this.container.updateController(this.container.rules.handleGameEnd(false))
+      this.handleGameEnd()
       return
     }
-
-    const foulReason = this.container.rules.foulReason(outcome, botType)
+    const foulReason = this.botRules.foulReason(outcome, botType)
     if (foulReason) {
-      this.container.notify({
-        type: "Foul",
-        title: "FOUL",
-        subtext: foulReason,
-        extra: "Ball in hand",
-      })
-
-      const cueball = this.container.table.cueball
-      if (!cueball.onTable()) {
-        Respot.respotBehind(
-          this.container.rules.placeBall(),
-          cueball,
-          this.container.table
-        )
-      }
-      const startPos = cueball.pos.clone()
-      cueball.setStationary()
-
-      const respotted = this.container.rules.respot(outcome)
-      let respot: RespotBody | undefined
-      if (respotted.length > 0) {
-        const ball = respotted[0]
-        respot = { id: ball.id, pos: ball.pos.clone() }
-      }
-      const placeBallEvent = new PlaceBallEvent(startPos, respot, true)
-      this.publishSequenceToPlayer([placeBallEvent])
+      this.handleFoul(foulReason, outcome)
       return
     }
-
     const pots = this.container.rules.getAmountScored(outcome)
     if (pots > 0) {
-      const session = Session.getInstance()
-      session.addOpponentScore(pots)
-
-      if (session.p1type === 0 && this.container.rules.rulename === "eightball") {
-        const pottedBalls = Outcome.pots(outcome)
-        const hasSolid = pottedBalls.some((b) => (b.label ?? 0) >= 1 && (b.label ?? 0) <= 7)
-        const hasStripe = pottedBalls.some((b) => (b.label ?? 0) >= 9 && (b.label ?? 0) <= 15)
-        if (hasSolid && !hasStripe) {
-          // bot potted solids → bot is type 1, so human (p1) is type 2
-          session.p1type = 2
-        } else if (hasStripe && !hasSolid) {
-          // bot potted stripes → bot is type 2, so human (p1) is type 1
-          session.p1type = 1
-        }
-      }
-
-      const { p1: s1, p2: s2 } = session.orderedScoresForHud()
-      const active = this.container.inferActivePlayer()
-      this.container.sendScoreUpdate(s1, s2, 0, active)
-
-      // pot success, send watch event to other player
-      this.publishSequenceToPlayer([
-        new WatchEvent(this.container.table.serialise()),
-      ])
-      // this player has to take another shot.
-      this.enqueueMessage(EventUtil.serialise(new StartAimEvent()))
+      this.handlePot(pots, outcome)
       return
     }
-
     this.logs.hide()
-    // switch to players turn
     this.publishSequenceToPlayer([new StartAimEvent()])
+  }
+
+  private botType(): number {
+    const p1type = Session.getInstance().p1type
+    if (p1type === 1) return 2
+    if (p1type === 2) return 1
+    return 0
+  }
+
+  private handleGameEnd(): void {
+    if (this.container.scoreReporter) {
+      let replayData: string | undefined
+      try {
+        const gameState = this.container.recorder.wholeGame()
+        replayData = ReplayEncoder.crush(JSON.stringify(gameState))
+      } catch (e) {
+        console.error("Failed to encode replay data", e)
+      }
+      const result: MatchResult = {
+        winner: this.botName,
+        loser: Session.getInstance().playername,
+        winnerScore: Session.getInstance().opponentScore(),
+        loserScore: Session.getInstance().myScore(),
+        ruleType: this.container.rules.rulename,
+      }
+      if (replayData) {
+        result.replayData = replayData
+      }
+      this.container.scoreReporter.submitMatchResult(result)
+    }
+    this.container.updateController(this.container.rules.handleGameEnd(false))
+  }
+
+  private handleFoul(foulReason: string, outcome: Outcome[]): void {
+    this.container.notify({
+      type: "Foul",
+      title: "FOUL",
+      subtext: foulReason,
+      extra: "Ball in hand",
+    })
+    const cueball = this.container.table.cueball
+    if (!cueball.onTable()) {
+      Respot.respotBehind(
+        this.container.rules.placeBall(),
+        cueball,
+        this.container.table
+      )
+    }
+    const startPos = cueball.pos.clone()
+    cueball.setStationary()
+    const respotted = this.container.rules.respot(outcome)
+    let respot: RespotBody | undefined
+    if (respotted.length > 0) {
+      respot = { id: respotted[0].id, pos: respotted[0].pos.clone() }
+    }
+    this.publishSequenceToPlayer([new PlaceBallEvent(startPos, respot, true)])
+  }
+
+  private handlePot(pots: number, outcome: Outcome[]): void {
+    const session = Session.getInstance()
+    session.addOpponentScore(pots)
+    this.assignEightBallType(session, outcome)
+    const { p1: s1, p2: s2 } = session.orderedScoresForHud()
+    this.container.sendScoreUpdate(s1, s2, 0, this.container.inferActivePlayer())
+    this.publishSequenceToPlayer([new WatchEvent(this.container.table.serialise())])
+    this.enqueueMessage(EventUtil.serialise(new StartAimEvent()))
+  }
+
+  private assignEightBallType(session: Session, outcome: Outcome[]): void {
+    if (session.p1type !== 0 || this.container.rules.rulename !== "eightball") {
+      return
+    }
+    const pottedBalls = Outcome.pots(outcome)
+    const hasSolid = pottedBalls.some((b) => (b.label ?? 0) >= 1 && (b.label ?? 0) <= 7)
+    const hasStripe = pottedBalls.some((b) => (b.label ?? 0) >= 9 && (b.label ?? 0) <= 15)
+    if (hasSolid && !hasStripe) {
+      session.p1type = 2
+    } else if (hasStripe && !hasSolid) {
+      session.p1type = 1
+    }
   }
 
   private handleStartAim(): void {
@@ -194,7 +219,7 @@ export class BotEventHandler {
     let botType = 0
     if (p1type === 1) botType = 2
     else if (p1type === 2) botType = 1
-    const targetBall = this.container.rules.nextCandidateBall(botType)
+    const targetBall = this.botRules.nextCandidateBall(botType)
     return this.botSelector(targetBall)
   }
 

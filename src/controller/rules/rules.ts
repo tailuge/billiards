@@ -26,4 +26,5 @@ export interface Rules {
   foulReason(outcome: Outcome[], type?: number): string | null
   getAmountScored(outcome: Outcome[]): number
   respot(outcome: Outcome[]): Ball[]
+  advanceState?(outcome: Outcome[]): void
 }

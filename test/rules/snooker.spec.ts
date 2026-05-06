@@ -322,7 +322,7 @@ describe("Snooker", () => {
     const outcome: Outcome[] = [
       Outcome.hit(table.cueball, 1),
       Outcome.collision(table.cueball, table.balls[1], 1), // hit yellow (id=1)
-      Outcome.pot(table.balls[5], 1),                      // pot pink (id=5)
+      Outcome.pot(table.balls[5], 1), // pot pink (id=5)
     ]
     table.balls[5].state = State.InPocket
     const notifySpy = jest.spyOn(container as any, "notify")
@@ -339,7 +339,7 @@ describe("Snooker", () => {
     const outcome: Outcome[] = [
       Outcome.hit(table.cueball, 1),
       Outcome.collision(table.cueball, table.balls[6], 1), // hit black
-      Outcome.pot(table.balls[7], 1),                      // pot a red
+      Outcome.pot(table.balls[7], 1), // pot a red
     ]
     table.balls[7].state = State.InPocket
     const notifySpy = jest.spyOn(container as any, "notify")

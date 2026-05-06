@@ -131,7 +131,11 @@ export class EightBall implements Rules {
     return []
   }
 
-  private wrongBallHitReason(hitBall: Ball, outcome: Outcome[], type?: number): string | null {
+  private wrongBallHitReason(
+    hitBall: Ball,
+    outcome: Outcome[],
+    type?: number
+  ): string | null {
     const session = Session.getInstance()
     const effectiveType = type ?? session.p1type
     if (effectiveType === 0) {
@@ -146,7 +150,9 @@ export class EightBall implements Rules {
         this.isMyType(b, effectiveType)
     )
     if (myGroupBefore.length > 0) {
-      return this.isMyType(hitBall, effectiveType) ? null : "Wrong group hit first"
+      return this.isMyType(hitBall, effectiveType)
+        ? null
+        : "Wrong group hit first"
     }
     return hitBall.label === 8 ? null : "Must hit 8-ball first"
   }
@@ -167,7 +173,11 @@ export class EightBall implements Rules {
       return "No ball hit"
     }
 
-    const wrongBall = this.wrongBallHitReason(firstCollision.ballB!, outcome, type)
+    const wrongBall = this.wrongBallHitReason(
+      firstCollision.ballB!,
+      outcome,
+      type
+    )
     if (wrongBall) {
       return wrongBall
     }

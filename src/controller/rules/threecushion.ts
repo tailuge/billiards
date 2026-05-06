@@ -137,6 +137,12 @@ export class ThreeCushion implements Rules {
     return false
   }
 
+  advanceState(outcomes: Outcome[]): void {
+    if (!Outcome.isThreeCushionPoint(this.cueball, outcomes)) {
+      this.cueball = this.otherPlayersCueBall()
+    }
+  }
+
   foulReason(_outcome: Outcome[]): string | null {
     return null
   }
