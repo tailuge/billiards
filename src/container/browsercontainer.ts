@@ -55,6 +55,7 @@ export class BrowserContainer {
   assets: Assets
   now
   botMode: boolean = false
+  botName: string = ""
   practiceMode: boolean = false
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
@@ -75,6 +76,7 @@ export class BrowserContainer {
     this.spectator = params.has("spectator")
     this.first = params.has("first")
     this.botMode = params.has("bot")
+    this.botName = params.get("bot") ?? ""
     this.practiceMode = params.has("practice")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
@@ -139,7 +141,7 @@ export class BrowserContainer {
     })
     this.container.notify({
       type: "Info",
-      title: "Playing vs 🦞",
+      title: `Playing vs 🦞 ${this.botName}`,
       subtext: "",
       extra: "You first",
     } as const)
