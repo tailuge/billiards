@@ -338,7 +338,9 @@
         display: inline-block;
       }
 
-      #presets-details summary::-webkit-details-marker { display: none; }
+      #presets-details summary::-webkit-details-marker {
+        display: none;
+      }
 
       #presets-details summary::before {
         content: "▶ ";
@@ -378,21 +380,39 @@
         font-size: 11px;
         border: 2px outset #ddd;
         border-radius: 2px;
-        transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+        transition:
+          transform 0.15s ease,
+          filter 0.15s ease,
+          box-shadow 0.15s ease,
+          background-color 0.15s ease;
       }
 
-      .preset-action { background-color: #f0c8c8; }
-      #replay { background-color: #c8f0c8; }
+      .preset-action {
+        background-color: #f0c8c8;
+      }
+      #replay {
+        background-color: #c8f0c8;
+      }
 
-      .preset-btn:hover, .preset-action:hover,
-      #add-preset:hover, #share-all:hover, #share-shot:hover, #replay:hover, #cleartraces:hover {
+      .preset-btn:hover,
+      .preset-action:hover,
+      #add-preset:hover,
+      #share-all:hover,
+      #share-shot:hover,
+      #replay:hover,
+      #cleartraces:hover {
         filter: brightness(0.88);
         transform: translateY(-2px) scale(1.05);
         box-shadow: 0 4px 10px rgb(0 0 0 / 40%);
       }
 
-      .preset-btn:active, .preset-action:active,
-      #add-preset:active, #share-all:active, #share-shot:active, #replay:active, #cleartraces:active {
+      .preset-btn:active,
+      .preset-action:active,
+      #add-preset:active,
+      #share-all:active,
+      #share-shot:active,
+      #replay:active,
+      #cleartraces:active {
         border-style: inset;
         filter: brightness(0.75);
         transform: translateY(2px) scale(0.97);
@@ -511,7 +531,9 @@
         <button id="share-shot" type="button">share this shot</button>
         <button id="replay" type="button">replay</button>
         <button id="cleartraces" type="button">clear traces</button>
-        <button id="reset-presets" type="button" class="preset-action">reset</button>
+        <button id="reset-presets" type="button" class="preset-action">
+          reset
+        </button>
       </div>
 
       <div class="controls-row">
@@ -533,8 +555,8 @@
           <input id="μw" type="range" />
           <div>Mathavan <label for="μw"></label></div>
           <input id="ee" type="range" />
-         <div>Cushion restitution <label for="ee"></label></div>
-           <input id="mu" type="range" />
+          <div>Cushion restitution <label for="ee"></label></div>
+          <input id="mu" type="range" />
           <div>Han rolling friction <label for="mu"></label></div>
           <input id="muS" type="range" />
           <div>Han sliding friction <label for="muS"></label></div>
@@ -542,7 +564,10 @@
       </div>
       <div id="table-wrap">
         <div id="table-bg">
-          <img src="../images/3ctopnew.jpg" alt="Three-cushion billiards table" />
+          <img
+            src="../images/3ctopnew.jpg"
+            alt="Three-cushion billiards table"
+          />
         </div>
         <div id="table-surface">
           <svg id="aim-layer" aria-hidden="true">
@@ -571,7 +596,9 @@
       const BALL_COLORS = ["#ffffff", "#ffd700", "#ef4444"]
       const DEFAULT_PRESETS_PARAM =
         "%5B%7B%22name%22%3A%220-%3E3+plain%22%2C%22positions%22%3A%5B%5B-1.43725%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.97278%2C%22power%22%3A2.1484%2C%22offset%22%3A%7B%22x%22%3A-0.016348%2C%22y%22%3A0.026548%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E3+max%22%2C%22positions%22%3A%5B%5B-1.43725%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.97278%2C%22power%22%3A2.1484%2C%22offset%22%3A%7B%22x%22%3A-0.298654%2C%22y%22%3A0.028383%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E4+plain%22%2C%22positions%22%3A%5B%5B-1.398795%2C-0.711841%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.834095%2C%22power%22%3A2.1484%2C%22offset%22%3A%7B%22x%22%3A-0.032914%2C%22y%22%3A0.068287%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E4+max%22%2C%22positions%22%3A%5B%5B-1.398795%2C-0.711841%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.834095%2C%22power%22%3A2.1484%2C%22offset%22%3A%7B%22x%22%3A-0.299159%2C%22y%22%3A0.022451%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E5+plain%22%2C%22positions%22%3A%5B%5B-1.379568%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.727616%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.032914%2C%22y%22%3A0.068287%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E5+max%22%2C%22positions%22%3A%5B%5B-1.379568%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.727616%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.297669%2C%22y%22%3A0.037322%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E6+plain%22%2C%22positions%22%3A%5B%5B-1.360341%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.640387%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.032914%2C%22y%22%3A0.068287%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E6+max%22%2C%22positions%22%3A%5B%5B-1.360341%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.640387%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.299432%2C%22y%22%3A0.018458%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E7+plain%22%2C%22positions%22%3A%5B%5B-1.350727%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.558663%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.032914%2C%22y%22%3A0.068287%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E7+max%22%2C%22positions%22%3A%5B%5B-1.350727%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.558663%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.298575%2C%22y%22%3A0.029203%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E8+plain%22%2C%22positions%22%3A%5B%5B-1.326693%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.501812%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.010489%2C%22y%22%3A0.080802%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E8+max%22%2C%22positions%22%3A%5B%5B-1.326693%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.501812%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.298776%2C%22y%22%3A0.027072%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22holdup%22%2C%22positions%22%3A%5B%5B-0.372531%2C-0.371469%5D%2C%5B0.747466%2C-0.395106%5D%2C%5B0.704205%2C-0.574747%5D%5D%2C%22angle%22%3A0.004992%2C%22power%22%3A3.93%2C%22offset%22%3A%7B%22x%22%3A-0.240914%2C%22y%22%3A-0.178774%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22screw%22%2C%22positions%22%3A%5B%5B-0.771501%2C-0.376197%5D%2C%5B0.742659%2C0.49837%5D%2C%5B0.704205%2C-0.574747%5D%5D%2C%22angle%22%3A0.524251%2C%22power%22%3A5.24%2C%22offset%22%3A%7B%22x%22%3A-0.031442%2C%22y%22%3A-0.298348%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22doubleRail%22%2C%22positions%22%3A%5B%5B0.603261%2C0.053996%5D%2C%5B1.415619%2C0.110724%5D%2C%5B1.127208%2C-0.139827%5D%5D%2C%22angle%22%3A0.093624%2C%22power%22%3A3.8776%2C%22offset%22%3A%7B%22x%22%3A-0.121388%2C%22y%22%3A0.274344%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22break%22%2C%22positions%22%3A%5B%5B-0.756%2C-0.189%5D%2C%5B-0.756%2C0%5D%2C%5B0.756%2C0%5D%5D%2C%22angle%22%3A0.147099%2C%22power%22%3A3.7204%2C%22offset%22%3A%7B%22x%22%3A-0.252932%2C%22y%22%3A0.161324%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22reverse%22%2C%22positions%22%3A%5B%5B-0.769%2C-0.192%5D%2C%5B0.769%2C0%5D%2C%5B1.07%2C0%5D%5D%2C%22angle%22%3A5.451724%2C%22power%22%3A3%2C%22offset%22%3A%7B%22x%22%3A-0.201901%2C%22y%22%3A0.221892%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22doubleRail2%22%2C%22positions%22%3A%5B%5B-1.160856%2C0.181635%5D%2C%5B-1.347367%2C0.611996%5D%2C%5B-1.412751%2C0.687701%5D%5D%2C%22angle%22%3A0.250141%2C%22power%22%3A2.096%2C%22offset%22%3A%7B%22x%22%3A0.246853%2C%22y%22%3A0.170481%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22outside%22%2C%22positions%22%3A%5B%5B-0.773558%2C0.555247%5D%2C%5B-1.313599%2C-0.101375%5D%2C%5B1.364066%2C0.481371%5D%5D%2C%22angle%22%3A3.970485%2C%22power%22%3A2.2532%2C%22offset%22%3A%7B%22x%22%3A0.257684%2C%22y%22%3A0.153619%2C%22z%22%3A0%7D%7D%5D"
-      const DEFAULT_PRESETS = JSON.parse(decodeURIComponent(DEFAULT_PRESETS_PARAM.replaceAll("+", "%20")))
+      const DEFAULT_PRESETS = JSON.parse(
+        decodeURIComponent(DEFAULT_PRESETS_PARAM.replaceAll("+", "%20"))
+      )
       console.log(DEFAULT_PRESETS)
       // To update defaults: copy the `ps=` query param value from the share-all URL and paste it above
 
@@ -1125,7 +1152,9 @@
       }
 
       function updatePreset(index) {
-        if (confirm(`Update preset "${presets[index].name}" with current state?`)) {
+        if (
+          confirm(`Update preset "${presets[index].name}" with current state?`)
+        ) {
           presets[index] = {
             ...presets[index],
             positions: tableBalls.map((b) => [round6(b.x), round6(b.y)]),
@@ -1182,12 +1211,18 @@
         syncDiagramState(topview)
       }
 
-      document.getElementById("reset-presets")?.addEventListener("click", () => {
-        if (confirm("Reset all presets? This will clear your saved presets and reload the page.")) {
-          localStorage.removeItem("three_cushion_presets")
-          location.reload()
-        }
-      })
+      document
+        .getElementById("reset-presets")
+        ?.addEventListener("click", () => {
+          if (
+            confirm(
+              "Reset all presets? This will clear your saved presets and reload the page."
+            )
+          ) {
+            localStorage.removeItem("three_cushion_presets")
+            location.reload()
+          }
+        })
 
       document.addEventListener("DOMContentLoaded", initDraggableTable)
     </script>
@@ -1238,8 +1273,11 @@
           </li>
         </ul>
         <p style="margin: 6px 0 0">
-          Adjust the parameters and share results to discuss. Presets are saved to your browser's local storage (constants are not saved). Use "share all presets" to send your full preset collection to a friend for collaborative research. If you have
-          suggestions for improvement please open an issue on my
+          Adjust the parameters and share results to discuss. Presets are saved
+          to your browser's local storage (constants are not saved). Use "share
+          all presets" to send your full preset collection to a friend for
+          collaborative research. If you have suggestions for improvement please
+          open an issue on my
           <a href="https://github.com/tailuge/billiards">GitHub repo</a>.
         </p>
       </div>

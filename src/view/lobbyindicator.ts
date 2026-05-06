@@ -17,6 +17,7 @@ export class LobbyIndicator {
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
   private currentTableId: string | null = null
   private readonly replayMode: boolean
+  private opponentOnline: boolean | null = null
   constructor(botMode: boolean, replayMode: boolean, rules: Rules) {
     this.rules = rules
     this.replayMode = replayMode
@@ -30,7 +31,9 @@ export class LobbyIndicator {
       this.ruleType = this.rules.rulename
     }
     this.element = id("lobbyOverlay")
-    this.countElement = this.element?.querySelector(".lobby-count") as HTMLSpanElement
+    this.countElement = this.element?.querySelector(
+      ".lobby-count"
+    ) as HTMLSpanElement
     this.challengePill = id("challengePill")
     this.setupElement()
   }
@@ -102,6 +105,17 @@ export class LobbyIndicator {
 
     this.lobby.onUsersChange((users) => {
       this.count = users.length
+      const session = Session.getInstance()
+      const opponentId = session.opponentClientId
+      if (opponentId) {
+        this.opponentOnline = users.some(
+          (u) =>
+            u.userId === opponentId &&
+            u.tableId === (this.currentTableId || session.tableId)
+        )
+      } else {
+        this.opponentOnline = null
+      }
       this.updateDisplay()
     })
 
@@ -135,21 +149,8 @@ export class LobbyIndicator {
     if (!this.element) return
     const challenged = this.challenger !== null
 
-    if (this.countElement) {
-      this.countElement.textContent = `${this.count} 👥`
-    }
-
-    if (this.challengePill) {
-      this.challengePill.hidden = !challenged
-      if (challenged) {
-        const textNode = this.challengePill.childNodes[0]
-        if (textNode?.nodeType === Node.TEXT_NODE) {
-          textNode.textContent = `Challenge from ${this.challenger!.userName} `
-        } else {
-          this.challengePill.prepend(`Challenge from ${this.challenger!.userName} `)
-        }
-      }
-    }
+    this.updateCountDisplay()
+    this.updateChallengePill(challenged)
 
     this.element.setAttribute(
       "aria-label",
@@ -160,6 +161,44 @@ export class LobbyIndicator {
 
     if (this.element instanceof HTMLAnchorElement) {
       this.element.setAttribute("href", this.getLobbyUrl())
+    }
+  }
+
+  private updateCountDisplay(): void {
+    if (!this.countElement) return
+
+    const session = Session.getInstance()
+    const opponentId = session.opponentClientId
+    const isTwoPlayer =
+      !!opponentId &&
+      opponentId !== "bot" &&
+      !session.botMode &&
+      !session.practiceMode &&
+      !this.replayMode
+
+    let statusEmoji = ""
+    if (isTwoPlayer) {
+      if (this.opponentOnline === true) {
+        statusEmoji = " 🟢"
+      } else if (this.opponentOnline === false) {
+        statusEmoji = " 🔴"
+      }
+    }
+    this.countElement.textContent = `${this.count} 👥${statusEmoji}`
+  }
+
+  private updateChallengePill(challenged: boolean): void {
+    if (!this.challengePill) return
+
+    this.challengePill.hidden = !challenged
+    if (challenged) {
+      const textNode = this.challengePill.childNodes[0]
+      const msg = `Challenge from ${this.challenger!.userName} `
+      if (textNode?.nodeType === Node.TEXT_NODE) {
+        textNode.textContent = msg
+      } else {
+        this.challengePill.prepend(msg)
+      }
     }
   }
 

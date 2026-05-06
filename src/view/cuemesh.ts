@@ -77,7 +77,7 @@ export class CueMesh {
     const n = 4
     for (let i = 0; i < n; i++) {
       const pyramid = new Mesh(pyramidGeo, CueMesh.placermaterial)
-      const angle = (i * 2*Math.PI) / n
+      const angle = (i * 2 * Math.PI) / n
 
       // Distribute around the ball
       pyramid.position.x = Math.cos(angle) * 2 * R
