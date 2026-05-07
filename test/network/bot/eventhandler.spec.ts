@@ -413,4 +413,37 @@ describe("BotEventHandler Respot Logic", () => {
     expect(events.find((e) => e instanceof StartAimEvent)).toBeDefined()
     expect(events.find((e) => e instanceof PlaceBallEvent)).toBeUndefined()
   })
+
+  it("snooker foul: bot pots red and black - black is respotted, StartAimEvent sent", () => {
+    Ball.id = 0
+    const snookerContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "snooker",
+    })
+    const table = snookerContainer.table
+    const cueball = table.cueball
+    const black = table.balls[6] // black is id=6
+    const red = table.balls[7]   // first red is id=7
+
+    red.state = State.InPocket
+    black.state = State.InPocket
+
+    const outcome: Outcome[] = [
+      Outcome.hit(cueball, 1),
+      Outcome.collision(cueball, red, 1),
+      Outcome.pot(red, 1),
+      Outcome.pot(black, 1),
+    ]
+    table.outcome = outcome
+
+    const events: GameEvent[] = []
+    const handler = createBotEventHandler(snookerContainer, events)
+    handler.handle(mockEvent(EventType.BEGIN))
+
+    expect(events.find((e) => e instanceof StartAimEvent)).toBeDefined()
+    expect(events.find((e) => e instanceof PlaceBallEvent)).toBeUndefined()
+    expect(black.onTable()).toBe(true)
+  })
 })

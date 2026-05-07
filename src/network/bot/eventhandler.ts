@@ -152,6 +152,7 @@ export class BotEventHandler {
       ...(ballInHand ? { extra: "Ball in hand" } : {}),
     })
     if (!ballInHand) {
+      this.container.rules.respot(outcome).forEach((ball) => ball.fround())
       this.publishSequenceToPlayer([new StartAimEvent()])
       return
     }

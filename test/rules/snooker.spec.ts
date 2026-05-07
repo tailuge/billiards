@@ -414,6 +414,23 @@ describe("Snooker", () => {
     done()
   })
 
+  it("pot red and accidentally pot black - black is respotted", (done) => {
+    // targeting red, pots a red (id=7) and black (id=6) in same shot
+    // this is a foul; black should be respotted
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[7], 1),
+      Outcome.pot(table.balls[7], 1),
+      Outcome.pot(table.balls[6], 1),
+    ]
+    table.balls[7].state = State.InPocket
+    table.balls[6].state = State.InPocket
+    snooker.update(outcome)
+    expect(snooker.foulPoints).to.be.greaterThan(0)
+    expect(table.balls[6].onTable()).to.be.true
+    done()
+  })
+
   afterEach(() => {
     Session.reset()
   })
