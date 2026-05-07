@@ -62,7 +62,7 @@ describe("LobbyIndicator", () => {
     const countElement = element?.querySelector(".lobby-count")
     expect(countElement?.classList.contains("is-hidden")).to.be.false
     expect(document.getElementById("challengePill")?.textContent).to.contain(
-      "Challenge from Bob"
+      "Challenge of nineball from Bob"
     )
     expect(element?.getAttribute("aria-label")).to.contain("CHALLENGE FROM Bob")
 

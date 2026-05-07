@@ -61,12 +61,12 @@
 
 #inputText {
   width: 20ch;
-  font-size: 0.7rem;
+  font-size: 16px;
   padding: 1px;
 }
 
 #inputTextDiv button {
-  font-size: 0.7rem;
+  font-size: 16px;
   padding: 1px;
   margin-left: 2px;
 }

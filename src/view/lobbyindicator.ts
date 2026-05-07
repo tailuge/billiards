@@ -11,7 +11,7 @@ export class LobbyIndicator {
   private messagingClient: MessagingClient | null = null
   private lobby: Lobby | null = null
   private count = 0
-  private challenger: { userId: string; userName: string } | null = null
+  private challenger: { userId: string; userName: string; ruleType: string } | null = null
   private readonly rules: Rules
   private readonly ruleType: string
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
@@ -124,6 +124,7 @@ export class LobbyIndicator {
         this.challenger = {
           userId: challenge.challengerId,
           userName: challenge.challengerName,
+          ruleType: challenge.ruleType,
         }
       } else if (challenge.type === "decline" || challenge.type === "cancel") {
         this.challenger = null
@@ -193,7 +194,7 @@ export class LobbyIndicator {
     this.challengePill.hidden = !challenged
     if (challenged) {
       const textNode = this.challengePill.childNodes[0]
-      const msg = `Challenge from ${this.challenger!.userName} `
+      const msg = `Challenge of ${this.challenger!.ruleType} from ${this.challenger!.userName} `
       if (textNode?.nodeType === Node.TEXT_NODE) {
         textNode.textContent = msg
       } else {
