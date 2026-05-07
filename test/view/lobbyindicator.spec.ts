@@ -55,7 +55,7 @@ describe("LobbyIndicator", () => {
       type: "offer",
       challengerId: "u2",
       challengerName: "Bob",
-      recipientId: "default",
+      challengeeId: "default",
       ruleType: "nineball",
     })
 
@@ -77,7 +77,7 @@ describe("LobbyIndicator", () => {
       type: "decline",
       challengerId: "u2",
       challengerName: "Bob",
-      recipientId: "default",
+      challengeeId: "default",
       ruleType: "nineball",
     })
     expect(document.getElementById("challengePill")?.hidden).to.be.true
