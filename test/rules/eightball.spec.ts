@@ -140,7 +140,13 @@ describe("EightBall Rules", () => {
     expect(nextController).to.be.an.instanceof(End)
   })
 
-  it("should lose if 8-ball potted on open table", () => {
+  it("should lose if 8-ball potted on open table with no other balls remaining", () => {
+    // Clear all non-8-ball, non-cue balls so it's a valid end-game foul
+    container.table.balls.forEach((b) => {
+      if (b !== container.table.cueball && b.label !== 8) {
+        b.state = State.InPocket
+      }
+    })
     const eightBall = container.table.balls.find((b) => b.label === 8)!
     const outcome = [
       Outcome.collision(container.table.cueball, eightBall, 1),
@@ -149,11 +155,15 @@ describe("EightBall Rules", () => {
     expect(eightball.isEndOfGame(outcome)).to.be.false
     const nextController = eightball.update(outcome)
     expect(nextController).to.be.an.instanceof(End)
-    // Here we should ideally verify that it was a loss, e.g. by checking notification title
-    // but the test as-is confirms it's not a win according to isEndOfGame.
   })
 
-  it("should lose if 8-ball potted on foul", () => {
+  it("should lose if 8-ball potted on foul with no other balls remaining", () => {
+    Session.getInstance().p1type = 1
+    container.table.balls.forEach((b) => {
+      if (b !== container.table.cueball && b.label !== 8) {
+        b.state = State.InPocket
+      }
+    })
     const eightBall = container.table.balls.find((b) => b.label === 8)!
     const outcome = [
       Outcome.pot(container.table.cueball, 1),
@@ -161,6 +171,39 @@ describe("EightBall Rules", () => {
     ]
     const nextController = eightball.update(outcome)
     expect(nextController).to.be.an.instanceof(End)
+  })
+
+  it("should respot 8-ball and give ball in hand if cue ball and 8-ball both potted with other balls remaining", () => {
+    Session.getInstance().p1type = 1 // Solids assigned
+    const eightBall = container.table.balls.find((b) => b.label === 8)!
+    // Leave some solids and stripes on the table
+    const outcome = [
+      Outcome.collision(container.table.cueball, eightBall, 1),
+      Outcome.pot(eightBall, 1),
+      Outcome.pot(container.table.cueball, 1),
+    ]
+    const nextController = eightball.update(outcome)
+    expect(nextController).to.be.an.instanceof(PlaceBall)
+    expect(eightBall.onTable()).to.be.true
+  })
+
+  it("should lose if cue ball and 8-ball both potted with only those two on table", () => {
+    Session.getInstance().p1type = 1 // Solids assigned
+    // Remove all balls except cue ball and 8-ball
+    container.table.balls.forEach((b) => {
+      if (b !== container.table.cueball && b.label !== 8) {
+        b.state = State.InPocket
+      }
+    })
+    const eightBall = container.table.balls.find((b) => b.label === 8)!
+    const outcome = [
+      Outcome.collision(container.table.cueball, eightBall, 1),
+      Outcome.pot(eightBall, 1),
+      Outcome.pot(container.table.cueball, 1),
+    ]
+    const nextController = eightball.update(outcome)
+    expect(nextController).to.be.an.instanceof(End)
+    expect(eightball.isEndOfGame(outcome)).to.be.false // foul means no win
   })
 
   it("should allow placeBall anywhere on the table after a foul", () => {

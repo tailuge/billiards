@@ -224,6 +224,13 @@ export class EightBall implements Rules {
     const cueball = this.container.table.cueball
 
     if (eightBallPotted) {
+      const session = Session.getInstance()
+      const hasGroupBalls = this.container.table.balls.some(
+        (b) => b !== cueball && b.label !== 8 && b.onTable()
+      )
+      if (session.p1type !== 0 && hasGroupBalls) {
+        return this.respotEightBallFoul()
+      }
       return this.handleGameEnd(false, "8-ball pocketed on foul")
     }
 
