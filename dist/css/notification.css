@@ -204,7 +204,7 @@
   font-size: var(--notification-size-l);
   font-weight: var(--notification-weight-heavy);
   letter-spacing: 2px;
-  text-transform: uppercase;
+  text-transform: capitalize;
 }
 
 .notification-subtext {

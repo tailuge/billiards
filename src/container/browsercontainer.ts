@@ -141,8 +141,8 @@ export class BrowserContainer {
     })
     this.container.notify({
       type: "Info",
-      title: `Playing vs 🦞 ${this.botName}`,
-      subtext: "",
+      title: this.ruletype,
+      subtext: `Playing vs 🦞 ${this.botName}`,
       extra: "You first",
     } as const)
   }
@@ -243,7 +243,8 @@ export class BrowserContainer {
         if (names.p1Name && names.p2Name) {
           this.container.notifyLocal({
             type: "Info",
-            title: `${names.p1Name} vs ${names.p2Name}`,
+            title: this.ruletype,
+            subtext: `${names.p1Name} vs ${names.p2Name}`,
           })
           session.vsNotificationShown = true
         }
