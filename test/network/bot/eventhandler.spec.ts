@@ -371,6 +371,76 @@ describe("BotEventHandler Respot Logic", () => {
     expect(placeBallEvent.respot?.id).toBe(9)
   })
 
+  it("eightball foul: bot pots black and cue ball with balls remaining - black is respotted", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+    Session.getInstance().p1type = 1
+
+    const eightBallContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "eightball",
+    })
+    const cueball = eightBallContainer.table.cueball
+    const eightBall = eightBallContainer.table.balls.find((b) => b.label === 8)!
+    cueball.state = State.InPocket
+    eightBall.state = State.InPocket
+    eightBallContainer.table.outcome = [
+      Outcome.collision(cueball, eightBall, 1),
+      Outcome.pot(eightBall, 1),
+      Outcome.pot(cueball, 1),
+    ]
+
+    const events: GameEvent[] = []
+    const handler = createBotEventHandler(eightBallContainer, events)
+    handler.handle(mockEvent(EventType.BEGIN))
+
+    const placeBallEvent = events.find((e) => e instanceof PlaceBallEvent)
+    expect(placeBallEvent).toBeInstanceOf(PlaceBallEvent)
+    expect(eightBall.onTable()).toBe(true)
+    expect((placeBallEvent as PlaceBallEvent).respot?.id).toBe(eightBall.id)
+  })
+
+  it("eightball foul: bot pots black and cue ball with no balls remaining - bot wins", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+    Session.getInstance().p1type = 1
+
+    const eightBallContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "eightball",
+    })
+    eightBallContainer.table.balls.forEach((ball) => {
+      if (ball !== eightBallContainer.table.cueball && ball.label !== 8) {
+        ball.state = State.InPocket
+      }
+    })
+
+    const cueball = eightBallContainer.table.cueball
+    const eightBall = eightBallContainer.table.balls.find((b) => b.label === 8)!
+    cueball.state = State.InPocket
+    eightBall.state = State.InPocket
+    eightBallContainer.table.outcome = [
+      Outcome.collision(cueball, eightBall, 1),
+      Outcome.pot(eightBall, 1),
+      Outcome.pot(cueball, 1),
+    ]
+
+    const events: GameEvent[] = []
+    const handler = createBotEventHandler(eightBallContainer, events)
+    const updateControllerSpy = jest.spyOn(
+      eightBallContainer,
+      "updateController"
+    )
+    handler.handle(mockEvent(EventType.BEGIN))
+
+    expect(events.find((e) => e instanceof PlaceBallEvent)).toBeUndefined()
+    expect(updateControllerSpy).toHaveBeenCalled()
+  })
+
   it("snooker foul: white potted sends PlaceBallEvent with Ball in hand", () => {
     Ball.id = 0
     const snookerContainer = new Container({
@@ -407,7 +477,9 @@ describe("BotEventHandler Respot Logic", () => {
 
     const events: GameEvent[] = []
     const handler = createBotEventHandler(snookerContainer, events)
-    jest.spyOn(handler.botRules, "foulReason").mockReturnValue("Hit colour instead of red")
+    jest
+      .spyOn(handler.botRules, "foulReason")
+      .mockReturnValue("Hit colour instead of red")
     handler.handle(mockEvent(EventType.BEGIN))
 
     expect(events.find((e) => e instanceof StartAimEvent)).toBeDefined()
@@ -425,7 +497,7 @@ describe("BotEventHandler Respot Logic", () => {
     const table = snookerContainer.table
     const cueball = table.cueball
     const black = table.balls[6] // black is id=6
-    const red = table.balls[7]   // first red is id=7
+    const red = table.balls[7] // first red is id=7
 
     red.state = State.InPocket
     black.state = State.InPocket

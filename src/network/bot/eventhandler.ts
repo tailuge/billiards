@@ -18,6 +18,7 @@ import { Ball } from "../../model/ball"
 import { Vector3 } from "three"
 import { Rules } from "../../controller/rules/rules"
 import { RuleFactory } from "../../controller/rules/rulefactory"
+import { TableGeometry } from "../../view/tablegeometry"
 
 class BotContainer {
   table
@@ -95,6 +96,10 @@ export class BotEventHandler {
     }
     const foulReason = this.botRules.foulReason(outcome, botType)
     if (foulReason) {
+      if (this.handleEightBallFoul(outcome)) {
+        this.botRules.advanceState?.(outcome)
+        return
+      }
       this.handleFoul(foulReason, outcome)
       this.botRules.advanceState?.(outcome)
       return
@@ -140,7 +145,40 @@ export class BotEventHandler {
     this.container.updateController(this.container.rules.handleGameEnd(false))
   }
 
-  private handleFoul(foulReason: string, outcome: Outcome[]): void {
+  private handleEightBallFoul(outcome: Outcome[]): boolean {
+    if (this.container.rules.rulename !== "eightball") {
+      return false
+    }
+
+    const table = this.container.table
+    const cueball = table.cueball
+    const eightBall = table.balls.find((b) => b.label === 8)
+    if (!eightBall || !Outcome.pots(outcome).includes(eightBall)) {
+      return false
+    }
+
+    const session = Session.getInstance()
+    const hasObjectBallsRemaining = table.balls.some(
+      (b) => b !== cueball && b.label !== 8 && b.onTable()
+    )
+
+    if (session.p1type !== 0 && hasObjectBallsRemaining) {
+      const footSpot = new Vector3(TableGeometry.tableX / 2, 0, 0)
+      Respot.respotBehind(footSpot, eightBall, table)
+      eightBall.fround()
+      this.handleFoul("8-ball pocketed early", [], [eightBall])
+      return true
+    }
+
+    this.handleGameEnd()
+    return true
+  }
+
+  private handleFoul(
+    foulReason: string,
+    outcome: Outcome[],
+    respottedOverride?: Ball[]
+  ): void {
     const cueball = this.container.table.cueball
     const isSnooker = this.container.rules.rulename === "snooker"
     const whitePotted = Outcome.isCueBallPotted(cueball, outcome)
@@ -152,7 +190,9 @@ export class BotEventHandler {
       ...(ballInHand ? { extra: "Ball in hand" } : {}),
     })
     if (!ballInHand) {
-      this.container.rules.respot(outcome).forEach((ball) => ball.fround())
+      ;(respottedOverride ?? this.container.rules.respot(outcome)).forEach(
+        (ball) => ball.fround()
+      )
       this.publishSequenceToPlayer([new StartAimEvent()])
       return
     }
@@ -165,7 +205,7 @@ export class BotEventHandler {
     }
     const startPos = cueball.pos.clone()
     cueball.setStationary()
-    const respotted = this.container.rules.respot(outcome)
+    const respotted = respottedOverride ?? this.container.rules.respot(outcome)
     let respot: RespotBody | undefined
     if (respotted.length > 0) {
       respot = { id: respotted[0].id, pos: respotted[0].pos.clone() }
@@ -178,8 +218,15 @@ export class BotEventHandler {
     session.addOpponentScore(pots)
     this.assignEightBallType(session, outcome)
     const { p1: s1, p2: s2 } = session.orderedScoresForHud()
-    this.container.sendScoreUpdate(s1, s2, 0, this.container.inferActivePlayer())
-    this.publishSequenceToPlayer([new WatchEvent(this.container.table.serialise())])
+    this.container.sendScoreUpdate(
+      s1,
+      s2,
+      0,
+      this.container.inferActivePlayer()
+    )
+    this.publishSequenceToPlayer([
+      new WatchEvent(this.container.table.serialise()),
+    ])
     this.enqueueMessage(EventUtil.serialise(new StartAimEvent()))
   }
 
@@ -188,8 +235,12 @@ export class BotEventHandler {
       return
     }
     const pottedBalls = Outcome.pots(outcome)
-    const hasSolid = pottedBalls.some((b) => (b.label ?? 0) >= 1 && (b.label ?? 0) <= 7)
-    const hasStripe = pottedBalls.some((b) => (b.label ?? 0) >= 9 && (b.label ?? 0) <= 15)
+    const hasSolid = pottedBalls.some(
+      (b) => (b.label ?? 0) >= 1 && (b.label ?? 0) <= 7
+    )
+    const hasStripe = pottedBalls.some(
+      (b) => (b.label ?? 0) >= 9 && (b.label ?? 0) <= 15
+    )
     if (hasSolid && !hasStripe) {
       session.p1type = 2
     } else if (hasStripe && !hasSolid) {

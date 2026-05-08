@@ -40,10 +40,7 @@ export class ThreeCushion implements Rules {
     if (isFirstShot(this.container.recorder)) {
       return undefined
     }
-    return Respot.furthest(
-      this.cueball,
-      this.container.table.balls
-    )
+    return Respot.furthest(this.cueball, this.container.table.balls)
   }
 
   placeBall(_?: Vector3): Vector3 {

@@ -69,7 +69,11 @@ export class Respot {
     return Respot.byDistance(cueball, balls, (a, b) => a > b)
   }
 
-  private static byDistance(cueball: Ball, balls: Ball[], prefer: (a: number, b: number) => boolean) {
+  private static byDistance(
+    cueball: Ball,
+    balls: Ball[],
+    prefer: (a: number, b: number) => boolean
+  ) {
     const onTable = balls
       .filter((ball) => ball.onTable())
       .filter((ball) => ball !== cueball)

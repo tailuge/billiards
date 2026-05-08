@@ -11,7 +11,11 @@ export class LobbyIndicator {
   private messagingClient: MessagingClient | null = null
   private lobby: Lobby | null = null
   private count = 0
-  private challenger: { userId: string; userName: string; ruleType: string } | null = null
+  private challenger: {
+    userId: string
+    userName: string
+    ruleType: string
+  } | null = null
   private readonly rules: Rules
   private readonly ruleType: string
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
