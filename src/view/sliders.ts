@@ -1,4 +1,5 @@
 import { id, getInput } from "../utils/dom"
+import { BallMesh } from "./ballmesh"
 import {
   R,
   e,
@@ -10,6 +11,7 @@ import {
   μs,
   μw,
   ee,
+  res,
   setR,
   sete,
   setm,
@@ -20,6 +22,7 @@ import {
   setμs,
   setμw,
   setee,
+  setRes,
 } from "../model/physics/constants"
 
 export class Sliders {
@@ -47,6 +50,7 @@ export class Sliders {
     this.initialiseSlider("μs", get("μs", μs), setμs)
     this.initialiseSlider("μw", get("μw", μw), setμw)
     this.initialiseSlider("ee", get("ee", ee), setee)
+    this.initialiseSlider("res", get("res", res), setRes, 5)
   }
 
   toggleVisibility() {
@@ -70,6 +74,9 @@ export class Sliders {
     this.showValue(id, initialValue)
     slider.oninput = (e) => {
       const val = Number.parseFloat((e.target as HTMLInputElement).value)
+      if (id === "res") {
+        BallMesh.clearCache()
+      }
       setter(val)
       this.showValue(id, val)
       this.notify()

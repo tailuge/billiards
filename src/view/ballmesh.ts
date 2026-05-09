@@ -15,7 +15,7 @@ import {
 } from "three"
 import { State } from "../model/ball"
 import { norm, up, zero } from "./../utils/three-utils"
-import { R } from "../model/physics/constants"
+import { R, res } from "../model/physics/constants"
 import { Trace } from "./trace"
 import { BallMaterialFactory } from "./ballmaterialfactory"
 
@@ -28,9 +28,16 @@ export class BallMesh {
     IcosahedronGeometry
   >()
 
+  static clearCache() {
+    this._ballGeometry?.dispose()
+    this._ballGeometry = undefined as any
+    this._dottedGeometryCache.forEach((g) => g.dispose())
+    this._dottedGeometryCache.clear()
+  }
+
   private static getBallGeometry() {
     if (!this._ballGeometry) {
-      this._ballGeometry = new IcosahedronGeometry(R, 1)
+      this._ballGeometry = new IcosahedronGeometry(R, res)
     }
     return this._ballGeometry
   }
@@ -116,7 +123,7 @@ export class BallMesh {
       const key = color.getHex()
       let cached = BallMesh._dottedGeometryCache.get(key)
       if (!cached) {
-        cached = new IcosahedronGeometry(R, 1)
+        cached = new IcosahedronGeometry(R, res)
         BallMesh.addDots(cached, color)
         BallMesh._dottedGeometryCache.set(key, cached)
       }
@@ -181,5 +188,20 @@ export class BallMesh {
 
   private static scaleNoise(v) {
     return (1 - Math.random() * 0.25) * v
+  }
+
+  updateResolution(label?: number) {
+    if (label === undefined) {
+      const key = this.color.getHex()
+      let cached = BallMesh._dottedGeometryCache.get(key)
+      if (!cached) {
+        cached = new IcosahedronGeometry(R, res)
+        BallMesh.addDots(cached, this.color)
+        BallMesh._dottedGeometryCache.set(key, cached)
+      }
+      this.mesh.geometry = cached
+    } else {
+      this.mesh.geometry = BallMesh.getBallGeometry()
+    }
   }
 }

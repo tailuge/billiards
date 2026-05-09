@@ -16,6 +16,8 @@ export let μs = 0.212
 // Mathavan coefficient (cushion)
 export let μw = 0.165
 
+export let res = 1
+
 export let Mz: number
 export let Mxy: number
 export let I: number
@@ -24,6 +26,15 @@ export let I: number
 export const sinθ = 2 / 5
 // Fixed angle of cushion contact point above ball center
 export const cosθ = Math.sqrt(21) / 5
+
+const urlParams = new globalThis.URLSearchParams(globalThis.location?.search)
+const resParam = urlParams.get("res")
+if (resParam) {
+  const parsedRes = Math.round(Number.parseFloat(resParam))
+  if (!Number.isNaN(parsedRes) && parsedRes >= 0) {
+    res = parsedRes
+  }
+}
 
 refresh()
 
@@ -66,4 +77,7 @@ export function setμw(val: number) {
 }
 export function setee(val: number) {
   ee = val
+}
+export function setRes(val: number) {
+  res = Math.round(val)
 }
