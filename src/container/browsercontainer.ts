@@ -90,7 +90,8 @@ export class BrowserContainer {
       this.tableId,
       this.spectator,
       this.botMode,
-      this.practiceMode
+      this.practiceMode,
+      Number.parseInt(params.get("lod") ?? "1")
     )
     Session.getInstance().rematchInfo = Rematch.fromURL(params)
     console.log(Session.getInstance())

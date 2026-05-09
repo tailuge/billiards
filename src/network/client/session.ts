@@ -7,7 +7,8 @@ export class Session {
     readonly tableId: string,
     readonly spectator: boolean,
     readonly botMode: boolean = false,
-    readonly practiceMode: boolean = false
+    readonly practiceMode: boolean = false,
+    public readonly lod: number = 1
   ) {}
 
   rematchInfo?: RematchInfo | undefined
@@ -45,6 +46,10 @@ export class Session {
     return Session.instance?.practiceMode ?? false
   }
 
+  static getLod(): number {
+    return Session.getInstance().lod
+  }
+
   static hasInitParam(): boolean {
     const params = new URLSearchParams(globalThis.location?.search)
     return params.has("init")
@@ -60,7 +65,8 @@ export class Session {
     tableId: string,
     spectator: boolean,
     botMode: boolean = false,
-    practiceMode: boolean = false
+    practiceMode: boolean = false,
+    lod: number = 1
   ) {
     Session.instance = new Session(
       playername,
@@ -68,7 +74,8 @@ export class Session {
       tableId,
       spectator,
       botMode,
-      practiceMode
+      practiceMode,
+      lod
     )
     Session.instance.initializeScores()
     if (botMode) {
