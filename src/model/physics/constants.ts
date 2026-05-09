@@ -78,6 +78,3 @@ export function setμw(val: number) {
 export function setee(val: number) {
   ee = val
 }
-export function setRes(val: number) {
-  res = Math.round(val)
-}

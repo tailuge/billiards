@@ -53,12 +53,6 @@ export class Table {
     })
   }
 
-  updateResolution() {
-    this.balls.forEach((b) => {
-      b.ballmesh.updateResolution(b.label)
-    })
-  }
-
   advance(t: number) {
     let depth = 0
     while (!this.prepareAdvanceAll(t)) {

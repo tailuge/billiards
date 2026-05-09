@@ -28,13 +28,6 @@ export class BallMesh {
     IcosahedronGeometry
   >()
 
-  static clearCache() {
-    this._ballGeometry?.dispose()
-    this._ballGeometry = undefined as any
-    this._dottedGeometryCache.forEach((g) => g.dispose())
-    this._dottedGeometryCache.clear()
-  }
-
   private static getBallGeometry() {
     if (!this._ballGeometry) {
       this._ballGeometry = new IcosahedronGeometry(R, res)
@@ -188,20 +181,5 @@ export class BallMesh {
 
   private static scaleNoise(v) {
     return (1 - Math.random() * 0.25) * v
-  }
-
-  updateResolution(label?: number) {
-    if (label === undefined) {
-      const key = this.color.getHex()
-      let cached = BallMesh._dottedGeometryCache.get(key)
-      if (!cached) {
-        cached = new IcosahedronGeometry(R, res)
-        BallMesh.addDots(cached, this.color)
-        BallMesh._dottedGeometryCache.set(key, cached)
-      }
-      this.mesh.geometry = cached
-    } else {
-      this.mesh.geometry = BallMesh.getBallGeometry()
-    }
   }
 }

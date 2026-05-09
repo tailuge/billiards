@@ -111,7 +111,7 @@ export class Container {
     }
     this.sound = assets.sound
     this.chat = new Chat(this.sendChat)
-    this.sliders = new Sliders(() => this.table.updateResolution())
+    this.sliders = new Sliders()
     this.linkFormatter = new LinkFormatter(this)
     this.ballTray = new BallTray(this)
     this.recorder = new Recorder(this, this.linkFormatter)

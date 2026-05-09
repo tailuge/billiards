@@ -23,12 +23,10 @@ let s = 3 * R
 
 document.addEventListener("DOMContentLoaded", () => {
   const replaydiagrams = document.getElementsByClassName("replaydiagram")
-  const containers: DiagramContainer[] = []
   for (let i = 0; i < replaydiagrams.length; i++) {
     const diagram = replaydiagrams.item(i)
     const diagramcontainer = DiagramContainer.fromDiamgramElement(diagram)
     diagramcontainer.start()
-    containers.push(diagramcontainer)
   }
 
   const rollcanvas = id("rollcanvas")
@@ -40,10 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
       initialisePlots()
     }
 
-    const sliders = new Sliders(() => {
-      plotAll()
-      containers.forEach((c) => c.container.table.updateResolution())
-    })
+    const sliders = new Sliders(plotAll)
     sliders.initialiseSlider("s", s, sets, 4)
 
     if (id("derived")) {
