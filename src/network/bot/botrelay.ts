@@ -3,7 +3,7 @@ import { Logger } from "./logger"
 import { BeginEvent } from "../../events/beginevent"
 import { EventUtil } from "../../events/eventutil"
 import { EventType } from "../../events/eventtype"
-import { BotEventHandler } from "./eventhandler"
+import { BotEventHandler } from "./boteventhandler"
 import { Container } from "../../container/container"
 import { GameEvent } from "../../events/gameevent"
 

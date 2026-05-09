@@ -5,7 +5,7 @@ import { Outcome } from "../../../src/model/outcome"
 import { Session } from "../../../src/network/client/session"
 import { Assets } from "../../../src/view/assets"
 import { initDom } from "../../view/dom"
-import { BotEventHandler } from "../../../src/network/bot/eventhandler"
+import { BotEventHandler } from "../../../src/network/bot/boteventhandler"
 import { Logger } from "../../../src/network/bot/logger"
 import { R } from "../../../src/model/physics/constants"
 import { TableGeometry } from "../../../src/view/tablegeometry"
@@ -645,5 +645,127 @@ describe("BotEventHandler Respot Logic", () => {
 
     expect(events.find((e) => e instanceof WatchEvent)).toBeUndefined()
     expect(events.find((e) => e instanceof StartAimEvent)).toBeDefined()
+  })
+
+  it("validTargetBalls returns non-8 balls on open eightball table", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+
+    const eightBallContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "eightball",
+    })
+
+    const handler = createBotEventHandler(eightBallContainer, [])
+    const validTargetBalls = handler.validTargetBalls()
+
+    expect(validTargetBalls).toHaveLength(14)
+    expect(validTargetBalls.some((ball) => ball.label === 8)).toBe(false)
+  })
+
+  it("validTargetBalls returns eight ball once bot group is cleared", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+    Session.getInstance().p1type = 1
+
+    const eightBallContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "eightball",
+    })
+
+    eightBallContainer.table.balls.forEach((ball) => {
+      if ((ball.label ?? 0) >= 9 && (ball.label ?? 0) <= 15) {
+        ball.state = State.InPocket
+      }
+    })
+
+    const handler = createBotEventHandler(eightBallContainer, [])
+    const validTargetBalls = handler.validTargetBalls()
+
+    expect(validTargetBalls).toHaveLength(1)
+    expect(validTargetBalls[0].label).toBe(8)
+  })
+
+  it("validTargetBalls returns reds, then colours, for snooker", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+
+    const snookerContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "snooker",
+    })
+    snookerContainer.recorder.entries.push({
+      event: { type: EventType.AIM },
+    } as any)
+
+    const handler = createBotEventHandler(snookerContainer, [])
+    const snookerRules = handler.botRules as any
+
+    snookerRules.previousPotRed = false
+    let validTargetBalls = handler.validTargetBalls()
+    expect(validTargetBalls.every((ball) => ball.id >= 7)).toBe(true)
+
+    snookerRules.previousPotRed = true
+    validTargetBalls = handler.validTargetBalls()
+    expect(validTargetBalls.every((ball) => ball.id >= 1 && ball.id <= 6)).toBe(
+      true
+    )
+  })
+
+  it("validTargetBalls returns next colour only when reds are gone in snooker", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+
+    const snookerContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "snooker",
+    })
+    snookerContainer.recorder.entries.push({ event: { type: EventType.AIM } } as any)
+
+    snookerContainer.table.balls.forEach((ball) => {
+      if (ball.id >= 7) {
+        ball.state = State.InPocket
+      }
+    })
+
+    const handler = createBotEventHandler(snookerContainer, [])
+    const snookerRules = handler.botRules as any
+    snookerRules.previousPotRed = false
+
+    const validTargetBalls = handler.validTargetBalls()
+
+    expect(validTargetBalls).toHaveLength(1)
+    expect(validTargetBalls[0].id).toBe(1)
+  })
+
+  it("validTargetBalls excludes the bot cue ball in threecushion", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+
+    const threeCushionContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "threecushion",
+    })
+    threeCushionContainer.recorder.entries.push({
+      event: { type: EventType.AIM },
+    } as any)
+
+    const handler = createBotEventHandler(threeCushionContainer, [])
+    handler.botRules.cueball = threeCushionContainer.table.balls[1]
+
+    const validTargetBalls = handler.validTargetBalls()
+
+    expect(validTargetBalls).toHaveLength(2)
+    expect(validTargetBalls).not.toContain(threeCushionContainer.table.balls[1])
   })
 })

@@ -9,11 +9,9 @@ import { PlaceBallEvent, RespotBody } from "../../events/placeballevent"
 import { WatchEvent } from "../../events/watchevent"
 import { EventUtil } from "../../events/eventutil"
 import { Respot } from "../../utils/respot"
-import { zero } from "../../utils/three-utils"
 import { MatchResult } from "../client/matchresult"
 import { ReplayEncoder } from "../../utils/replay-encoder"
 import { Session } from "../client/session"
-import { AimEvent } from "../../events/aimevent"
 import { Ball } from "../../model/ball"
 import { Vector3 } from "three"
 import { Rules } from "../../controller/rules/rules"
@@ -21,6 +19,10 @@ import { RuleFactory } from "../../controller/rules/rulefactory"
 import { TableGeometry } from "../../view/tablegeometry"
 import { Snooker } from "../../controller/rules/snooker"
 import { SnookerUtils } from "../../controller/rules/snookerutils"
+import { isFirstShot } from "../../utils/utils"
+import { BotShotContext, BotStrategy } from "./botstrategy"
+import { ClawBreak } from "./strategies/clawbreak"
+import { TheFarJaw } from "./strategies/thefarjaw"
 
 class BotContainer {
   table
@@ -45,7 +47,7 @@ export class BotEventHandler {
   ) => void
   protected enqueueMessage: (message: string) => void
   private readonly calculator: AimCalculator
-  private readonly botName: string
+  private readonly strategy: BotStrategy
   protected readonly botRules: Rules
 
   constructor(
@@ -59,8 +61,9 @@ export class BotEventHandler {
     this.publishSequenceToPlayer = publishSequenceToPlayer
     this.enqueueMessage = enqueueMessage
     this.calculator = new AimCalculator()
-    this.botName =
+    const botName =
       new URLSearchParams(globalThis.location.search).get("bot") ?? "ClawBreak"
+    this.strategy = botName === "TheFarJaw" ? new TheFarJaw() : new ClawBreak()
     this.botRules = RuleFactory.create(
       container.rules.rulename,
       new BotContainer(container)
@@ -126,6 +129,90 @@ export class BotEventHandler {
     return 0
   }
 
+  validTargetBalls(): Ball[] {
+    switch (this.container.rules.rulename) {
+      case "eightball":
+        return this.validEightBallTargets(this.botType())
+      case "nineball":
+        return this.validNineBallTargets()
+      case "snooker":
+        return this.validSnookerTargets()
+      case "threecushion":
+        return this.validThreeCushionTargets()
+      default:
+        return []
+    }
+  }
+
+  private validEightBallTargets(botType: number): Ball[] {
+    const cueball = this.container.table.cueball
+    const balls = this.container.table.balls.filter(
+      (ball) => ball !== cueball && ball.onTable()
+    )
+
+    if (botType === 0) {
+      return balls.filter((ball) => ball.label !== 8)
+    }
+
+    const groupBalls = balls.filter((ball) =>
+      this.isEightBallType(ball, botType)
+    )
+    if (groupBalls.length > 0) {
+      return groupBalls
+    }
+
+    return balls.filter((ball) => ball.label === 8)
+  }
+
+  private isEightBallType(ball: Ball, type: number): boolean {
+    if (type === 1) {
+      return (ball.label ?? 0) >= 1 && (ball.label ?? 0) <= 7
+    }
+    if (type === 2) {
+      return (ball.label ?? 0) >= 9 && (ball.label ?? 0) <= 15
+    }
+    return false
+  }
+
+  private validNineBallTargets(): Ball[] {
+    const cueball = this.container.table.cueball
+    const lowestBall = this.container.table.balls
+      .filter((ball) => ball !== cueball && ball.onTable())
+      .sort((a, b) => (a.label ?? 0) - (b.label ?? 0))[0]
+
+    return lowestBall ? [lowestBall] : []
+  }
+
+  private validSnookerTargets(): Ball[] {
+    if (isFirstShot(this.container.recorder)) {
+      return []
+    }
+
+    const snookerRules = this.botRules as Snooker
+    const table = this.container.table
+    const redsOnTable = SnookerUtils.redsOnTable(table)
+    const coloursOnTable = SnookerUtils.coloursOnTable(table)
+
+    if (snookerRules.previousPotRed) {
+      return coloursOnTable
+    }
+    if (redsOnTable.length > 0) {
+      return redsOnTable
+    }
+
+    return coloursOnTable.length > 0 ? [coloursOnTable[0]] : []
+  }
+
+  private validThreeCushionTargets(): Ball[] {
+    if (isFirstShot(this.container.recorder)) {
+      return []
+    }
+
+    return this.container.table.balls.filter(
+      (ball) => ball !== this.botRules.cueball && ball.onTable()
+    )
+  }
+
   private handleGameEnd(): void {
     if (this.container.scoreReporter) {
       let replayData: string | undefined
@@ -136,7 +223,7 @@ export class BotEventHandler {
         console.error("Failed to encode replay data", e)
       }
       const result: MatchResult = {
-        winner: this.botName,
+        winner: this.strategy.name,
         loser: Session.getInstance().playername,
         winnerScore: Session.getInstance().opponentScore(),
         loserScore: Session.getInstance().myScore(),
@@ -332,84 +419,20 @@ export class BotEventHandler {
   }
 
   private aim() {
-    const p1type = Session.getInstance().p1type
-    let botType = 0
-    if (p1type === 1) botType = 2
-    else if (p1type === 2) botType = 1
-    const targetBall = this.botRules.nextCandidateBall(botType)
-    return this.botSelector(targetBall)
+    return this.strategy.aim(this.buildShotContext(), this.calculator)
   }
 
-  private botSelector(targetBall) {
-    if (this.botName === "TheFarJaw") {
-      return this.theFarJaw(targetBall)
+  private buildShotContext(): BotShotContext {
+    const cueBall =
+      this.container.rules.rulename === "threecushion"
+        ? this.botRules.cueball
+        : this.container.table.cueball
+
+    return {
+      table: this.container.table,
+      cueBall,
+      validTargetBalls: this.validTargetBalls(),
+      ballInHand: false,
     }
-    return this.clawBreak(targetBall)
-  }
-
-  private clawBreak(targetBall: Ball) {
-    const table = this.container.table
-    const cueball = table.cueball
-    const targetPoint = targetBall?.pos ?? zero
-    const aimPoint = this.calculator.getAimPoint(cueball.pos, targetPoint)
-    const hitEvent = this.calculator.generateShot(
-      table,
-      0,
-      AimCalculator.DEFAULT_SHOT_POWER,
-      aimPoint ?? undefined
-    )
-    const aimEvent = AimEvent.fromJson(hitEvent.tablejson.aim)
-    return [aimEvent, hitEvent]
-  }
-
-  private theFarJaw(targetBall: Ball) {
-    const table = this.container.table
-    const cueball = table.cueball
-    const targetPoint = targetBall.pos
-    const aimPoint = this.calculator.getAimPoint(
-      cueball.pos,
-      targetPoint,
-      this.calculator.pockets
-    )
-    // now get knuckes for pocket
-    const knuckles = this.calculator.closestKnuckles(
-      this.calculator.findBestPocket(
-        cueball.pos,
-        targetPoint,
-        this.calculator.pockets
-      )
-    )
-
-    // pick more distant knuckle
-    const farKnuckle =
-      targetPoint.distanceTo(knuckles[0]) > targetPoint.distanceTo(knuckles[1])
-        ? knuckles[0]
-        : knuckles[1]
-
-    const farKnuckleAimPoint = this.calculator.getAimPoint(
-      cueball.pos,
-      targetPoint,
-      [farKnuckle]
-    )
-
-    const pocketHitEvent = this.calculator.generateShot(
-      table,
-      0,
-      AimCalculator.DEFAULT_SHOT_POWER,
-      aimPoint,
-      new Vector3(0, 0, 0)
-    )
-    const farKnuckleHitEvent = this.calculator.generateShot(
-      table,
-      0,
-      AimCalculator.MAX_SHOT_POWER,
-      farKnuckleAimPoint,
-      new Vector3(0, -0.3, 0)
-    )
-    const aimEvent = AimEvent.fromJson(pocketHitEvent.tablejson.aim)
-    const farKnuckleAimEvent = AimEvent.fromJson(
-      farKnuckleHitEvent.tablejson.aim
-    )
-    return [aimEvent, farKnuckleAimEvent, farKnuckleHitEvent]
   }
 }
