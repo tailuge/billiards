@@ -1,12 +1,72 @@
-import { Color, MeshPhongMaterial, MeshStandardMaterial } from "three"
+import {
+  Color,
+  MeshPhongMaterial,
+  MeshPhysicalMaterial,
+  MeshStandardMaterial,
+} from "three"
 import { R } from "../model/physics/constants"
 import { BallTextureFactory } from "./balltexturefactory"
+import { BallCubeTextureFactory } from "./ballcubetexturefactory"
 
 export class BallMaterialFactory {
   private static readonly materialCache: Map<
     string,
-    MeshStandardMaterial | MeshPhongMaterial
+    MeshStandardMaterial | MeshPhongMaterial | MeshPhysicalMaterial
   > = new Map()
+
+  static shinyMaterial(color: Color) {
+    new MeshPhysicalMaterial({
+      color: color,
+      roughness: 0.15,
+      metalness: 0,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.12,
+      reflectivity: 0.34,
+    })
+  }
+
+  static createTexturedDotsMaterial(color: Color): MeshPhysicalMaterial {
+    const key = `texturedDots_${color.getHex()}`
+    if (this.materialCache.has(key)) {
+      return this.materialCache.get(key) as MeshPhysicalMaterial
+    }
+
+    const cubeTexture = BallCubeTextureFactory.getOrCreateTexture(color)
+    const material = new MeshPhysicalMaterial({
+      color: color,
+      roughness: 0.1,
+      metalness: 0,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.02,
+      reflectivity: 0.5,
+    })
+
+    material.onBeforeCompile = (shader: any) => {
+      shader.uniforms.uCubeMap = { value: cubeTexture }
+
+      shader.vertexShader = `
+        varying vec3 vLocalPos;
+        ${shader.vertexShader}
+      `.replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+        vLocalPos = position;`
+      )
+
+      shader.fragmentShader = `
+        uniform samplerCube uCubeMap;
+        varying vec3 vLocalPos;
+        ${shader.fragmentShader}
+      `.replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        diffuseColor.rgb = textureCube(uCubeMap, normalize(vLocalPos)).rgb;`
+      )
+    }
+
+    this.materialCache.set(key, material)
+    return material
+  }
 
   static createDottedMaterial(color: Color): MeshPhongMaterial {
     const key = `dotted_${color.getHex()}`

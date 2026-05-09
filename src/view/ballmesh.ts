@@ -10,6 +10,7 @@ import {
   BufferAttribute,
   Vector3,
   MeshStandardMaterial,
+  MeshPhysicalMaterial,
   Scene,
   Line,
 } from "three"
@@ -19,6 +20,7 @@ import { R } from "../model/physics/constants"
 import { Trace } from "./trace"
 import { BallMaterialFactory } from "./ballmaterialfactory"
 import { Session } from "../network/client/session"
+import { BallAppearance } from "./ballappearance"
 
 export class BallMesh {
   private static _ballGeometry: IcosahedronGeometry
@@ -73,9 +75,9 @@ export class BallMesh {
     this.ghosts.forEach((g) => scene.remove(g))
     this.ghosts = []
   }
-  constructor(color, label?: number) {
+  constructor(color, label?: number, appearance?: BallAppearance) {
     this.color = new Color(color)
-    this.initialiseMesh(this.color, label)
+    this.initialiseMesh(this.color, label, appearance)
   }
 
   updateAll(ball, t) {
@@ -110,10 +112,16 @@ export class BallMesh {
     }
   }
 
-  initialiseMesh(color: Color, label?: number) {
+  initialiseMesh(color: Color, label?: number, appearance?: BallAppearance) {
     let geometry: IcosahedronGeometry
-    let material: MeshPhongMaterial | MeshStandardMaterial
-    if (label === undefined) {
+    let material:
+      | MeshPhongMaterial
+      | MeshStandardMaterial
+      | MeshPhysicalMaterial
+    const effectiveAppearance =
+      appearance ?? (label === undefined ? "dotted" : "projected")
+
+    if (effectiveAppearance === "dotted") {
       const key = color.getHex()
       let cached = BallMesh._dottedGeometryCache.get(key)
       if (!cached) {
@@ -123,7 +131,13 @@ export class BallMesh {
       }
       geometry = cached
       material = BallMaterialFactory.createDottedMaterial(color)
+    } else if (effectiveAppearance === "texturedDots") {
+      geometry = BallMesh.getBallGeometry()
+      material = BallMaterialFactory.createTexturedDotsMaterial(color)
     } else {
+      if (label === undefined) {
+        throw new Error("Projected ball material requires a label")
+      }
       geometry = BallMesh.getBallGeometry()
       material = BallMaterialFactory.createProjectedMaterial(label, color)
     }

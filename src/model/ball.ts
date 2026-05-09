@@ -8,6 +8,7 @@ import {
 } from "../model/physics/physics"
 import { BallMesh } from "../view/ballmesh"
 import { Pocket } from "./physics/pocket"
+import { BallAppearance } from "../view/ballappearance"
 
 export enum State {
   Stationary = "Stationary",
@@ -29,13 +30,19 @@ export class Ball {
   public static id = 0
   readonly id = Ball.id++
   readonly label: number | undefined
+  readonly appearance: BallAppearance | undefined
 
   static readonly transition = 0.05
 
-  constructor(pos, color?, label?: number) {
+  constructor(pos, color?, label?: number, appearance?: BallAppearance) {
     this.pos = pos.clone()
     this.label = label
-    this.ballmesh = new BallMesh(color || 0xeeeeee * Math.random(), label)
+    this.appearance = appearance
+    this.ballmesh = new BallMesh(
+      color || 0xeeeeee * Math.random(),
+      label,
+      appearance
+    )
   }
 
   update(t) {

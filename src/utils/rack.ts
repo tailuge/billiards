@@ -5,6 +5,8 @@ import { PocketGeometry } from "../view/pocketgeometry"
 import { Vector3 } from "three"
 import { roundVec, vec } from "./three-utils"
 import { R } from "../model/physics/constants"
+import { Session } from "../network/client/session"
+import { BallAppearance } from "../view/ballappearance"
 
 export class Rack {
   static readonly noise = Math.fround(R * 0.023 + 0.0015 * Math.random())
@@ -49,8 +51,17 @@ export class Rack {
     )
   }
 
+  private static unlabeledAppearance(): BallAppearance | undefined {
+    return Session.getLod() > 1 ? "texturedDots" : undefined
+  }
+
   static cueBall(pos, label?: number) {
-    return new Ball(Rack.jitter(pos), 0xfaebd7, label)
+    return new Ball(
+      Rack.jitter(pos),
+      0xfaebd7,
+      label,
+      Rack.unlabeledAppearance()
+    )
   }
 
   static swapBallPositions(b1: Ball, b2: Ball) {
@@ -146,8 +157,18 @@ export class Rack {
     const dy = TableGeometry.Y / 4
     const threeballs: Ball[] = [
       Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0))), // Ball 0: White
-      new Ball(Rack.jitter(new Vector3(-dx, 0, 0)), 0xe0de36), // Ball 1: Yellow
-      new Ball(Rack.jitter(new Vector3(dx, 0, 0)), 0xff0000), // Ball 2: Red
+      new Ball(
+        Rack.jitter(new Vector3(-dx, 0, 0)),
+        0xe0de36,
+        undefined,
+        Rack.unlabeledAppearance()
+      ), // Ball 1: Yellow
+      new Ball(
+        Rack.jitter(new Vector3(dx, 0, 0)),
+        0xff0000,
+        undefined,
+        Rack.unlabeledAppearance()
+      ), // Ball 2: Red
     ]
     return threeballs
   }
@@ -162,19 +183,54 @@ export class Rack {
 
     const colours = Rack.snookerColourPositions()
     balls.push(
-      new Ball(Rack.jitter(colours[0]), 0xeede36),
-      new Ball(Rack.jitter(colours[1]), 0x0c9664),
-      new Ball(Rack.jitter(colours[2]), 0xbd723a),
-      new Ball(Rack.jitter(colours[3]), 0x0883ee),
-      new Ball(Rack.jitter(colours[4]), 0xffaacc),
-      new Ball(Rack.jitter(colours[5]), 0x010101)
+      new Ball(
+        Rack.jitter(colours[0]),
+        0xeede36,
+        undefined,
+        Rack.unlabeledAppearance()
+      ),
+      new Ball(
+        Rack.jitter(colours[1]),
+        0x0c9664,
+        undefined,
+        Rack.unlabeledAppearance()
+      ),
+      new Ball(
+        Rack.jitter(colours[2]),
+        0xbd723a,
+        undefined,
+        Rack.unlabeledAppearance()
+      ),
+      new Ball(
+        Rack.jitter(colours[3]),
+        0x0883ee,
+        undefined,
+        Rack.unlabeledAppearance()
+      ),
+      new Ball(
+        Rack.jitter(colours[4]),
+        0xffaacc,
+        undefined,
+        Rack.unlabeledAppearance()
+      ),
+      new Ball(
+        Rack.jitter(colours[5]),
+        0x010101,
+        undefined,
+        Rack.unlabeledAppearance()
+      )
     )
 
     const redsToPlay = Math.min(SnookerConfig.reds, 15)
     const triangle = Rack.trianglePositions().slice(0, 15)
     const pocketPos = PocketGeometry.pockets.pocketS.pocket.pos
     triangle.forEach((p, i) => {
-      const ball = new Ball(Rack.jitter(p.add(Rack.down)), 0xee0000)
+      const ball = new Ball(
+        Rack.jitter(p.add(Rack.down)),
+        0xee0000,
+        undefined,
+        Rack.unlabeledAppearance()
+      )
       if (i >= redsToPlay) {
         ball.pos.copy(pocketPos)
         ball.pos.setZ(-8.5 * R)
