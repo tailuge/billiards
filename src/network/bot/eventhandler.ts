@@ -106,9 +106,12 @@ export class BotEventHandler {
       this.botRules.advanceState?.(outcome)
       return
     }
-    const pots = this.container.rules.getAmountScored(outcome)
+    const pots = this.botRules.getAmountScored(outcome)
     this.botRules.advanceState?.(outcome)
     if (pots > 0) {
+      if (this.handleEightBallEarlyPot(outcome)) {
+        return
+      }
       this.handlePot(pots, outcome)
       return
     }
@@ -174,6 +177,34 @@ export class BotEventHandler {
 
     this.handleGameEnd()
     return true
+  }
+
+  private handleEightBallEarlyPot(outcome: Outcome[]): boolean {
+    if (this.container.rules.rulename !== "eightball") {
+      return false
+    }
+
+    const table = this.container.table
+    const cueball = table.cueball
+    const eightBall = table.balls.find((b) => b.label === 8)
+    if (!eightBall || !Outcome.pots(outcome).includes(eightBall)) {
+      return false
+    }
+
+    const session = Session.getInstance()
+    const hasObjectBallsRemaining = table.balls.some(
+      (b) => b !== cueball && b.label !== 8 && b.onTable()
+    )
+
+    if (session.p1type !== 0 && hasObjectBallsRemaining) {
+      const footSpot = new Vector3(TableGeometry.tableX / 2, 0, 0)
+      Respot.respotBehind(footSpot, eightBall, table)
+      eightBall.fround()
+      this.handleFoul("8-ball pocketed early", [], [eightBall])
+      return true
+    }
+
+    return false
   }
 
   private handleFoul(

@@ -347,7 +347,7 @@ describe("BotEventHandler Respot Logic", () => {
   it("should handle pot success and continue turn", () => {
     const eventHandler = createBotEventHandler(container, publishedEvents)
     jest.spyOn(eventHandler.botRules, "foulReason").mockReturnValue(null)
-    jest.spyOn(container.rules, "getAmountScored").mockReturnValue(1)
+    jest.spyOn(eventHandler.botRules, "getAmountScored").mockReturnValue(1)
 
     eventHandler.handle(mockEvent(EventType.BEGIN))
 
@@ -390,6 +390,36 @@ describe("BotEventHandler Respot Logic", () => {
       Outcome.collision(cueball, eightBall, 1),
       Outcome.pot(eightBall, 1),
       Outcome.pot(cueball, 1),
+    ]
+
+    const events: GameEvent[] = []
+    const handler = createBotEventHandler(eightBallContainer, events)
+    handler.handle(mockEvent(EventType.BEGIN))
+
+    const placeBallEvent = events.find((e) => e instanceof PlaceBallEvent)
+    expect(placeBallEvent).toBeInstanceOf(PlaceBallEvent)
+    expect(eightBall.onTable()).toBe(true)
+    expect((placeBallEvent as PlaceBallEvent).respot?.id).toBe(eightBall.id)
+  })
+
+  it("eightball early black after valid hit: bot respots black and gives ball in hand", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+    Session.getInstance().p1type = 1
+
+    const eightBallContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "eightball",
+    })
+    const cueball = eightBallContainer.table.cueball
+    const stripe = eightBallContainer.table.balls.find((b) => b.label === 9)!
+    const eightBall = eightBallContainer.table.balls.find((b) => b.label === 8)!
+    eightBall.state = State.InPocket
+    eightBallContainer.table.outcome = [
+      Outcome.collision(cueball, stripe, 1),
+      Outcome.pot(eightBall, 1),
     ]
 
     const events: GameEvent[] = []
@@ -543,5 +573,77 @@ describe("BotEventHandler Respot Logic", () => {
     expect(events.find((e) => e instanceof StartAimEvent)).toBeDefined()
     expect(events.find((e) => e instanceof PlaceBallEvent)).toBeUndefined()
     expect(black.onTable()).toBe(true)
+  })
+
+  it("threecushion bot keeps turn when point is valid for bot cue ball", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false, true)
+
+    const threeContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "threecushion",
+    })
+
+    const balls = threeContainer.table.balls
+    const playerCueBall = balls[0]
+    const botCueBall = balls[1]
+    const redBall = balls[2]
+    threeContainer.rules.cueball = playerCueBall
+    threeContainer.table.cueball = botCueBall
+
+    const events: GameEvent[] = []
+    const handler = createBotEventHandler(threeContainer, events)
+    handler.botRules.cueball = botCueBall
+
+    threeContainer.table.outcome = [
+      Outcome.cushion(botCueBall, 1),
+      Outcome.cushion(botCueBall, 1),
+      Outcome.cushion(botCueBall, 1),
+      Outcome.collision(botCueBall, playerCueBall, 1),
+      Outcome.collision(botCueBall, redBall, 1),
+    ]
+
+    handler.handle(mockEvent(EventType.BEGIN))
+
+    expect(events.find((e) => e instanceof WatchEvent)).toBeDefined()
+    expect(events.find((e) => e instanceof StartAimEvent)).toBeUndefined()
+  })
+
+  it("threecushion bot passes turn when only player cue ball would score", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false, true)
+
+    const threeContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "threecushion",
+    })
+
+    const balls = threeContainer.table.balls
+    const playerCueBall = balls[0]
+    const botCueBall = balls[1]
+    const redBall = balls[2]
+    threeContainer.rules.cueball = playerCueBall
+    threeContainer.table.cueball = botCueBall
+
+    const events: GameEvent[] = []
+    const handler = createBotEventHandler(threeContainer, events)
+    handler.botRules.cueball = botCueBall
+
+    threeContainer.table.outcome = [
+      Outcome.cushion(playerCueBall, 1),
+      Outcome.cushion(playerCueBall, 1),
+      Outcome.cushion(playerCueBall, 1),
+      Outcome.collision(playerCueBall, botCueBall, 1),
+      Outcome.collision(playerCueBall, redBall, 1),
+    ]
+
+    handler.handle(mockEvent(EventType.BEGIN))
+
+    expect(events.find((e) => e instanceof WatchEvent)).toBeUndefined()
+    expect(events.find((e) => e instanceof StartAimEvent)).toBeDefined()
   })
 })
