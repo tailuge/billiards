@@ -174,4 +174,12 @@ export class AimCalculator {
     // 5. Collision occurs if the closest distance is within the combined radii
     return distSq <= 2 * R * 2 * R
   }
+
+  static ghostBallPosition(cue: Vector3, target: Vector3, overlap: number): Vector3 {
+    const baseAngle = Math.atan2(cue.y - target.y, cue.x - target.x)
+    const offsetAngle = Math.asin(1 - Math.abs(overlap)) * Math.sign(overlap)
+    const angle = baseAngle + offsetAngle
+    return new Vector3(target.x + Math.cos(angle) * 2 * R, target.y + Math.sin(angle) * 2 * R, 0)
+  }
+
 }
