@@ -19,6 +19,8 @@ import { Vector3 } from "three"
 import { Rules } from "../../controller/rules/rules"
 import { RuleFactory } from "../../controller/rules/rulefactory"
 import { TableGeometry } from "../../view/tablegeometry"
+import { Snooker } from "../../controller/rules/snooker"
+import { SnookerUtils } from "../../controller/rules/snookerutils"
 
 class BotContainer {
   table
@@ -179,10 +181,19 @@ export class BotEventHandler {
     outcome: Outcome[],
     respottedOverride?: Ball[]
   ): void {
+    const session = Session.getInstance()
     const cueball = this.container.table.cueball
     const isSnooker = this.container.rules.rulename === "snooker"
     const whitePotted = Outcome.isCueBallPotted(cueball, outcome)
     const ballInHand = !isSnooker || whitePotted
+
+    if (isSnooker) {
+      session.addMyScore(this.snookerFoulPoints(outcome))
+    }
+
+    const { p1: s1, p2: s2 } = session.orderedScoresForHud()
+    this.container.sendScoreUpdate(s1, s2, 0, this.myActivePlayer())
+
     this.container.notify({
       type: "Foul",
       title: "FOUL",
@@ -211,6 +222,21 @@ export class BotEventHandler {
       respot = { id: respotted[0].id, pos: respotted[0].pos.clone() }
     }
     this.publishSequenceToPlayer([new PlaceBallEvent(startPos, respot, true)])
+  }
+
+  private snookerFoulPoints(outcome: Outcome[]): number {
+    const snookerRules = this.botRules as Snooker
+    const info = SnookerUtils.shotInfo(
+      this.container.table,
+      outcome,
+      snookerRules.targetIsRed,
+      snookerRules.previousPotRed
+    )
+    return SnookerUtils.calculateFoul(outcome, info).points
+  }
+
+  private myActivePlayer(): 1 | 2 {
+    return (Session.getInstance().playerIndex + 1) as 1 | 2
   }
 
   private handlePot(pots: number, outcome: Outcome[]): void {

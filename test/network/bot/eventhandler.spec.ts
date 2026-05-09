@@ -486,6 +486,32 @@ describe("BotEventHandler Respot Logic", () => {
     expect(events.find((e) => e instanceof PlaceBallEvent)).toBeUndefined()
   })
 
+  it("snooker foul: bot foul adds points to player score", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+
+    const snookerContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "snooker",
+    })
+    const cueball = snookerContainer.table.cueball
+    cueball.state = State.Stationary
+    snookerContainer.table.outcome = []
+
+    const events: GameEvent[] = []
+    const handler = createBotEventHandler(snookerContainer, events)
+    const sendScoreUpdateSpy = jest.spyOn(snookerContainer, "sendScoreUpdate")
+
+    jest.spyOn(handler.botRules, "foulReason").mockReturnValue("No ball hit")
+
+    handler.handle(mockEvent(EventType.BEGIN))
+
+    expect(Session.getInstance().myScore()).toBe(4)
+    expect(sendScoreUpdateSpy).toHaveBeenCalledWith(4, 0, 0, 1)
+  })
+
   it("snooker foul: bot pots red and black - black is respotted, StartAimEvent sent", () => {
     Ball.id = 0
     const snookerContainer = new Container({

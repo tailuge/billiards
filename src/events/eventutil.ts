@@ -46,7 +46,7 @@ export class EventUtil {
       case EventType.RERACK:
         return RerackEvent.fromJson(parsed)
       case EventType.STARTAIM:
-        return StartAimEvent.fromJson(parsed)
+        return StartAimEvent.fromJson()
       case EventType.NOTIFICATION:
         return NotificationEvent.fromJson(parsed)
       case EventType.SCORE:

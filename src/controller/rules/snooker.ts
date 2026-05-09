@@ -231,7 +231,7 @@ export class Snooker implements Rules {
 
   private switchPlayer(): Controller {
     const table = this.container.table
-    this.container.sendEvent(new StartAimEvent(this.foulPoints))
+    this.container.sendEvent(new StartAimEvent())
     if (this.container.isSinglePlayer) {
       this.container.sendEvent(new WatchEvent(table.serialise()))
       this.startTurn()
