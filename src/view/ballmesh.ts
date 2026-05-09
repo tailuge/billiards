@@ -20,6 +20,20 @@ import { Trace } from "./trace"
 import { BallMaterialFactory } from "./ballmaterialfactory"
 
 export class BallMesh {
+  private static readonly res = BallMesh.parseRes()
+
+  private static parseRes(): number {
+    const urlParams = new globalThis.URLSearchParams(globalThis.location?.search)
+    const resParam = urlParams.get("res")
+    if (resParam) {
+      const parsedRes = Math.round(Number.parseFloat(resParam))
+      if (!Number.isNaN(parsedRes) && parsedRes >= 0) {
+        return parsedRes
+      }
+    }
+    return 1
+  }
+
   private static _ballGeometry: IcosahedronGeometry
   private static _shadowGeometry: CircleGeometry
   private static _shadowMaterial: MeshBasicMaterial
@@ -30,7 +44,7 @@ export class BallMesh {
 
   private static getBallGeometry() {
     if (!this._ballGeometry) {
-      this._ballGeometry = new IcosahedronGeometry(R, 1)
+      this._ballGeometry = new IcosahedronGeometry(R, BallMesh.res)
     }
     return this._ballGeometry
   }
@@ -116,7 +130,7 @@ export class BallMesh {
       const key = color.getHex()
       let cached = BallMesh._dottedGeometryCache.get(key)
       if (!cached) {
-        cached = new IcosahedronGeometry(R, 1)
+        cached = new IcosahedronGeometry(R, BallMesh.res)
         BallMesh.addDots(cached, color)
         BallMesh._dottedGeometryCache.set(key, cached)
       }
