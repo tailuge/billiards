@@ -33,14 +33,20 @@ export class BallMesh {
 
   private static getBallGeometry() {
     if (!this._ballGeometry) {
-      this._ballGeometry = new IcosahedronGeometry(R, Session.getLod())
+      this._ballGeometry = new IcosahedronGeometry(
+        R,
+        Math.max(1, Session.getLod())
+      )
     }
     return this._ballGeometry
   }
 
   private static getShadowGeometry() {
     if (!this._shadowGeometry) {
-      this._shadowGeometry = new CircleGeometry(R * 0.9, 9)
+      this._shadowGeometry = new CircleGeometry(
+        R * 0.9,
+        Session.getLod() <= 1 ? 9 : 24
+      )
       this._shadowGeometry.applyMatrix4(
         new Matrix4().makeTranslation(0, 0, -R * 0.99)
       )
@@ -125,7 +131,7 @@ export class BallMesh {
       const key = color.getHex()
       let cached = BallMesh._dottedGeometryCache.get(key)
       if (!cached) {
-        cached = new IcosahedronGeometry(R, Session.getLod())
+        cached = new IcosahedronGeometry(R, Math.max(1, Session.getLod()))
         BallMesh.addDots(cached, color)
         BallMesh._dottedGeometryCache.set(key, cached)
       }

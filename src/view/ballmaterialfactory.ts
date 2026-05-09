@@ -7,23 +7,13 @@ import {
 import { R } from "../model/physics/constants"
 import { BallTextureFactory } from "./balltexturefactory"
 import { BallCubeTextureFactory } from "./ballcubetexturefactory"
+import { Session } from "../network/client/session"
 
 export class BallMaterialFactory {
   private static readonly materialCache: Map<
     string,
     MeshStandardMaterial | MeshPhongMaterial | MeshPhysicalMaterial
   > = new Map()
-
-  static shinyMaterial(color: Color) {
-    new MeshPhysicalMaterial({
-      color: color,
-      roughness: 0.15,
-      metalness: 0,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.12,
-      reflectivity: 0.34,
-    })
-  }
 
   static createTexturedDotsMaterial(color: Color): MeshPhysicalMaterial {
     const key = `texturedDots_${color.getHex()}`
@@ -103,19 +93,25 @@ export class BallMaterialFactory {
       color,
       size
     )
-    /*
-     * for hard textures
-     *    numberTexture.magFilter = THREE.NearestFilter
-     *    numberTexture.minFilter = THREE.NearestFilter
-     */
-    const material = new MeshStandardMaterial({
-      color: color,
-      roughness: 0.5,
-      metalness: 0,
-      flatShading: true,
-      transparent: false,
-      depthWrite: true,
-    })
+
+    const material =
+      Session.getLod() <= 1
+        ? new MeshStandardMaterial({
+            color: color,
+            roughness: 0.5,
+            metalness: 0,
+            flatShading: true,
+            transparent: false,
+            depthWrite: true,
+          })
+        : new MeshPhysicalMaterial({
+            color: color,
+            roughness: 0.1,
+            metalness: 0,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.02,
+            reflectivity: 0.5,
+          })
 
     material.onBeforeCompile = (shader: any) => {
       shader.uniforms.numberTex = { value: numberTexture }
