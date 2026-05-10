@@ -25,10 +25,7 @@ export class BallMaterialFactory {
     const material = new MeshPhysicalMaterial({
       color: color,
       roughness: 0.1,
-      metalness: 0,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.02,
-      reflectivity: 0.5,
+      metalness: 0.05,
     })
 
     material.onBeforeCompile = (shader: any) => {
