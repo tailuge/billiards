@@ -215,4 +215,58 @@ export class AimCalculator {
         AimCalculator.cornerDistance(b.pos)
     )[0]
   }
+
+  /**
+   * Calculates the tangent vector (exit vector) of the cue ball after impact.
+   */
+  static getTangentVector(
+    cue: Vector3,
+    target: Vector3,
+    ghost: Vector3
+  ): Vector3 {
+    let tx = -(ghost.y - target.y)
+    let ty = ghost.x - target.x
+    if (tx * (ghost.x - cue.x) + ty * (ghost.y - cue.y) < 0) {
+      tx = -tx
+      ty = -ty
+    }
+    return new Vector3(tx, ty, 0).normalize()
+  }
+
+  /**
+   * Returns the Y-coordinate of the long rail closest to the given position.
+   */
+  static getActiveRailY(pos: Vector3): number {
+    return Math.abs(pos.y - TableGeometry.Y) < Math.abs(pos.y + TableGeometry.Y)
+      ? TableGeometry.Y
+      : -TableGeometry.Y
+  }
+
+  /**
+   * Returns true if the tangent vector points towards the specified rail.
+   */
+  static isHeadingToRail(
+    ghost: Vector3,
+    tangent: Vector3,
+    railY: number
+  ): boolean {
+    const directionToRail = railY - ghost.y
+    return (
+      (directionToRail > 0 && tangent.y > 0) ||
+      (directionToRail < 0 && tangent.y < 0)
+    )
+  }
+
+  /**
+   * Calculates a score based on how much the tangent vector points towards the anchor ball.
+   * Lower scores mean pointing "more away".
+   */
+  static getNaturalLongScore(
+    tangent: Vector3,
+    ghost: Vector3,
+    anchor: Vector3
+  ): number {
+    const toAnchor = new Vector3().subVectors(anchor, ghost).normalize()
+    return tangent.dot(toAnchor)
+  }
 }

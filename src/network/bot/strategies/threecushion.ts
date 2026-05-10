@@ -16,20 +16,53 @@ export class ThreeCushion implements BotStrategy {
     const targetBall =
       context.validTargetBalls.find((b) => b !== anchorBall) ||
       context.validTargetBalls[0]
+    const activeRailY = AimCalculator.getActiveRailY(anchorBall.pos)
 
-    const overlap = 0.25
-    const aimPoint = AimCalculator.ghostBallPosition(
-      context.cueBall.pos,
-      targetBall.pos,
-      overlap
-    )
+    const overlaps = [0.25, -0.25]
+    const candidates = overlaps.map((overlap) => {
+      const ghostPos = AimCalculator.ghostBallPosition(
+        context.cueBall.pos,
+        targetBall.pos,
+        overlap
+      )
+      const tangent = AimCalculator.getTangentVector(
+        context.cueBall.pos,
+        targetBall.pos,
+        ghostPos
+      )
+      const conflict = AimCalculator.isHeadingToRail(
+        ghostPos,
+        tangent,
+        activeRailY
+      )
+      const awayScore = AimCalculator.getNaturalLongScore(
+        tangent,
+        ghostPos,
+        anchorBall.pos
+      )
+      return { overlap, ghostPos, conflict, awayScore }
+    })
+
+    const [s1, s2] = candidates
+    let best
+
+    if (s1.conflict && !s2.conflict) {
+      best = s2
+    } else if (!s1.conflict && s2.conflict) {
+      best = s1
+    } else if (s1.conflict && s2.conflict) {
+      best = s1.awayScore < s2.awayScore ? s1 : s2
+    } else {
+      // Neither conflict, default to first choice
+      best = s1
+    }
 
     const shot = calculator.generateShot(
       context.table,
       0,
       AimCalculator.MAX_SHOT_POWER,
-      aimPoint,
-      new Vector3(Math.sign(overlap) * 0.3, 0, 0)
+      best.ghostPos,
+      new Vector3(Math.sign(best.overlap) * 0.3, 0, 0)
     )
 
     return [AimEvent.fromJson(shot.tablejson.aim), shot]
