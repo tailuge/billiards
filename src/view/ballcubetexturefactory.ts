@@ -19,7 +19,10 @@ export class BallCubeTextureFactory {
     const canvas = document.createElement("canvas")
     canvas.width = size
     canvas.height = size
+    dotScale = (color.getHexString() === "ff0000") ?  0.08 : dotScale
+    const dotColor = (color.getHexString() === "ff0000") ? "#ffffff" : this.dotColor
 
+    
     const ctx = canvas.getContext("2d")
     if (ctx) {
       ctx.fillStyle = `#${color.getHexString()}`
@@ -27,7 +30,7 @@ export class BallCubeTextureFactory {
 
       ctx.beginPath()
       ctx.arc(size / 2, size / 2, size * dotScale, 0, Math.PI * 2)
-      ctx.fillStyle = this.dotColor
+      ctx.fillStyle = dotColor
       ctx.fill()
     }
 
