@@ -18,6 +18,18 @@ export class ThreeCushion implements BotStrategy {
       context.validTargetBalls[0]
     const activeRailY = AimCalculator.getActiveRailY(anchorBall.pos)
 
+    const ballNames = ["white", "yellow", "red"]
+    const cueBallId = context.table.balls.indexOf(context.cueBall)
+    const targets = context.validTargetBalls.map((b) => {
+      const id = context.table.balls.indexOf(b)
+      return `${id}-${ballNames[id]}`
+    })
+    console.log(
+      `[ThreeCushionBot] turn: cueball=${cueBallId}-${
+        ballNames[cueBallId]
+      }, targets=[${targets.join(", ")}], anchor=${ballNames[anchorBall.id]}`
+    )
+
     const overlaps = [0.25, -0.25]
     const candidates = overlaps.map((overlap) => {
       const ghostPos = AimCalculator.ghostBallPosition(
@@ -44,6 +56,7 @@ export class ThreeCushion implements BotStrategy {
     })
 
     const [s1, s2] = candidates
+
     let best
 
     if (s1.conflict && !s2.conflict) {

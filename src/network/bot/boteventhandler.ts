@@ -70,7 +70,9 @@ export class BotEventHandler {
       container.rules.rulename,
       new BotContainer(container)
     )
-    this.botRules.secondToPlay()
+    if (container.rules.rulename === "threecushion") {
+      this.botRules.cueball = this.container.table.balls[1]
+    }
   }
 
   /**
@@ -108,6 +110,7 @@ export class BotEventHandler {
     }
     const foulReason = this.botRules.foulReason(outcome, botType)
     if (foulReason) {
+      this.logs.info(`Bot foul: ${foulReason}`)
       if (this.handleEightBallFoul(outcome)) {
         this.botRules.advanceState?.(outcome)
         return
@@ -117,7 +120,12 @@ export class BotEventHandler {
       return
     }
     const pots = this.botRules.getAmountScored(outcome)
-    this.botRules.advanceState?.(outcome)
+    this.logs.info(
+      `Bot handleStationary: cueball=${this.botRules.cueball?.id}, pots=${pots}, outcomeLen=${outcome.length}`
+    )
+    if (this.container.rules.rulename !== "threecushion") {
+      this.botRules.advanceState?.(outcome)
+    }
     if (pots > 0) {
       if (this.handleEightBallEarlyPot(outcome)) {
         return
@@ -215,8 +223,9 @@ export class BotEventHandler {
       return []
     }
 
+    const cueball = this.container.table.balls[1]
     return this.container.table.balls.filter(
-      (ball) => ball !== this.botRules.cueball && ball.onTable()
+      (ball) => ball !== cueball && ball.onTable()
     )
   }
 
@@ -365,6 +374,9 @@ export class BotEventHandler {
   }
 
   private handlePot(pots: number, outcome: Outcome[]): void {
+    this.logs.info(
+      `Bot handlePot: scored ${pots} points. Next cueball=${this.botRules.cueball?.id}`
+    )
     const session = Session.getInstance()
     session.addOpponentScore(pots)
     this.assignEightBallType(session, outcome)
@@ -443,7 +455,7 @@ export class BotEventHandler {
   private buildShotContext(): BotShotContext {
     const cueBall =
       this.container.rules.rulename === "threecushion"
-        ? this.botRules.cueball
+        ? this.container.table.balls[1]
         : this.container.table.cueball
 
     return {
