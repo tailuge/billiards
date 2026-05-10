@@ -49,6 +49,8 @@ export class BotEventHandler {
   private readonly calculator: AimCalculator
   private readonly strategy: BotStrategy
   protected readonly botRules: Rules
+  private shouldStartTurnOnNextControl = false
+  private queuedOwnStartAim = false
 
   constructor(
     logs: Logger,
@@ -78,9 +80,14 @@ export class BotEventHandler {
     this.logs.info(`Bot handling event: ${event.type}`)
     switch (event.type) {
       case EventType.STARTAIM:
+        if (!this.queuedOwnStartAim) {
+          this.shouldStartTurnOnNextControl = true
+        }
+        this.queuedOwnStartAim = false
         this.handleStartAim()
         break
       case EventType.PLACEBALL:
+        this.shouldStartTurnOnNextControl = true
         this.handlePlaceBall(event as PlaceBallEvent)
         break
       case EventType.BEGIN:
@@ -371,6 +378,7 @@ export class BotEventHandler {
     this.publishSequenceToPlayer([
       new WatchEvent(this.container.table.serialise()),
     ])
+    this.queuedOwnStartAim = true
     this.enqueueMessage(EventUtil.serialise(new StartAimEvent()))
   }
 
@@ -393,11 +401,13 @@ export class BotEventHandler {
   }
 
   private handleStartAim(): void {
+    this.startTurnIfNeeded()
     this.logs.show()
     this.publishSequenceToPlayer(this.aim())
   }
 
   private handlePlaceBall(event: PlaceBallEvent): void {
+    this.startTurnIfNeeded()
     const table = this.container.table
 
     if (event.respot) {
@@ -416,6 +426,14 @@ export class BotEventHandler {
     cueball.setStationary()
     cueball.fround()
     this.publishSequenceToPlayer(this.aim())
+  }
+
+  private startTurnIfNeeded(): void {
+    if (!this.shouldStartTurnOnNextControl) {
+      return
+    }
+    this.botRules.startTurn()
+    this.shouldStartTurnOnNextControl=false
   }
 
   private aim() {
