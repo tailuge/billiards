@@ -15,6 +15,8 @@ export interface ShotInfo {
   legalFirstCollision: boolean
   whitePotted: boolean
   targetIsRed: boolean
+  table: Table
+  previousPotRed: boolean
 }
 
 export class SnookerUtils {
@@ -36,6 +38,8 @@ export class SnookerUtils {
       ),
       whitePotted: Outcome.isCueBallPotted(table.cueball, outcome),
       targetIsRed: targetIsRed,
+      table,
+      previousPotRed,
     }
   }
 
@@ -104,7 +108,23 @@ export class SnookerUtils {
       return "Hit red instead of colour"
     }
 
-    return SnookerUtils.pottedBallReason(outcome, shotInfo)
+    const pottedBallReason = SnookerUtils.pottedBallReason(outcome, shotInfo)
+    if (pottedBallReason) {
+      return pottedBallReason
+    }
+
+    if (!shotInfo.legalFirstCollision && !shotInfo.previousPotRed) {
+      const colours = SnookerUtils.coloursOnTable(shotInfo.table).sort(
+        (a, b) => a.id - b.id
+      )
+      if (colours.length > 0) {
+        const hitName = SnookerUtils.colourName(firstBallId)
+        const targetName = SnookerUtils.colourName(colours[0].id)
+        return `Hit ${hitName} instead of ${targetName}`
+      }
+    }
+
+    return null
   }
 
   private static pottedBallReason(

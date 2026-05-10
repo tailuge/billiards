@@ -7,6 +7,7 @@ import { AimCalculator } from "./aimcalculator"
 import { StartAimEvent } from "../../events/startaimevent"
 import { PlaceBallEvent, RespotBody } from "../../events/placeballevent"
 import { WatchEvent } from "../../events/watchevent"
+import { RerackEvent } from "../../events/rerackevent"
 import { EventUtil } from "../../events/eventutil"
 import { Respot } from "../../utils/respot"
 import { MatchResult } from "../client/matchresult"
@@ -319,10 +320,17 @@ export class BotEventHandler {
       ...(ballInHand ? { extra: "Ball in hand" } : {}),
     })
     if (!ballInHand) {
-      ;(respottedOverride ?? this.container.rules.respot(outcome)).forEach(
-        (ball) => ball.fround()
-      )
-      this.publishSequenceToPlayer([new StartAimEvent()])
+      const respotted =
+        respottedOverride ?? this.container.rules.respot(outcome)
+      respotted.forEach((ball) => ball.fround())
+      if (respotted.length > 0) {
+        const respotEvent = RerackEvent.fromJson({
+          balls: respotted.map((b) => b.serialise()),
+        })
+        this.publishSequenceToPlayer([respotEvent, new StartAimEvent()])
+      } else {
+        this.publishSequenceToPlayer([new StartAimEvent()])
+      }
       return
     }
     if (!cueball.onTable()) {
@@ -368,6 +376,7 @@ export class BotEventHandler {
       0,
       this.container.inferActivePlayer()
     )
+    this.container.rules.respot(outcome).forEach((ball) => ball.fround())
     this.publishSequenceToPlayer([
       new WatchEvent(this.container.table.serialise()),
     ])
