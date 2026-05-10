@@ -4,8 +4,8 @@ import { Vector3 } from "three"
 import { AimCalculator } from "../aimcalculator"
 import { BotShotContext, BotStrategy } from "../botstrategy"
 
-export class ThreeCushion implements BotStrategy {
-  readonly name = "ThreeCushion"
+export class ThreeStrategy implements BotStrategy {
+  readonly name = "ThreeStrategy"
 
   aim(context: BotShotContext, calculator: AimCalculator): GameEvent[] {
     if (context.validTargetBalls.length === 0) {
@@ -25,9 +25,9 @@ export class ThreeCushion implements BotStrategy {
       return `${id}-${ballNames[id]}`
     })
     console.log(
-      `[ThreeCushionBot] turn: cueball=${cueBallId}-${
+      `[ThreeStrategy] turn: cueball=${cueBallId}-${
         ballNames[cueBallId]
-      }, targets=[${targets.join(", ")}], anchor=${ballNames[anchorBall.id]}`
+      }, targets=[${targets.join(", ")}], anchor=${ballNames[anchorBall.id]}, (Ypos=${anchorBall.pos.y}) activeRailY=${activeRailY}`
     )
 
     const overlaps = [0.25, -0.25]
@@ -47,28 +47,11 @@ export class ThreeCushion implements BotStrategy {
         tangent,
         activeRailY
       )
-      const awayScore = AimCalculator.getNaturalLongScore(
-        tangent,
-        ghostPos,
-        anchorBall.pos
-      )
-      return { overlap, ghostPos, conflict, awayScore }
+      return { overlap, ghostPos, conflict }
     })
 
     const [s1, s2] = candidates
-
-    let best
-
-    if (s1.conflict && !s2.conflict) {
-      best = s2
-    } else if (!s1.conflict && s2.conflict) {
-      best = s1
-    } else if (s1.conflict && s2.conflict) {
-      best = s1.awayScore < s2.awayScore ? s1 : s2
-    } else {
-      // Neither conflict, default to first choice
-      best = s1
-    }
+    const best = !s1.conflict && s2.conflict ? s2 : s1
 
     const shot = calculator.generateShot(
       context.table,

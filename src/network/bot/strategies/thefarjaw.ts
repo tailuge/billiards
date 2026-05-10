@@ -7,14 +7,14 @@ import { AimCalculator } from "../aimcalculator"
 import { BotShotContext, BotStrategy } from "../botstrategy"
 import { TableGeometry } from "../../../view/tablegeometry"
 
-import { ThreeCushion } from "./threecushion"
+import { ThreeStrategy } from "./threecushionstrategy"
 
 export class TheFarJaw implements BotStrategy {
   readonly name = "TheFarJaw"
 
   aim(context: BotShotContext, calculator: AimCalculator): GameEvent[] {
     if (!TableGeometry.hasPockets) {
-      return new ThreeCushion().aim(context, calculator)
+      return new ThreeStrategy().aim(context, calculator)
     }
 
     const targetBall = this.pickTargetBall(context)
