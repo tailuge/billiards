@@ -433,7 +433,7 @@ export class BotEventHandler {
       return
     }
     this.botRules.startTurn()
-    this.shouldStartTurnOnNextControl=false
+    this.shouldStartTurnOnNextControl = false
   }
 
   private aim() {

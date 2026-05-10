@@ -728,7 +728,9 @@ describe("BotEventHandler Respot Logic", () => {
       assets: Assets.localAssets(),
       ruletype: "snooker",
     })
-    snookerContainer.recorder.entries.push({ event: { type: EventType.AIM } } as any)
+    snookerContainer.recorder.entries.push({
+      event: { type: EventType.AIM },
+    } as any)
 
     snookerContainer.table.balls.forEach((ball) => {
       if (ball.id >= 7) {

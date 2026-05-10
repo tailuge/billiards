@@ -6,6 +6,8 @@ import { atan2 } from "../../utils/utils"
 import { Pocket } from "../../model/physics/pocket"
 import { PocketGeometry } from "../../view/pocketgeometry"
 import { Knuckle } from "../../model/physics/knuckle"
+import { TableGeometry } from "../../view/tablegeometry"
+import { Ball } from "../../model/ball"
 
 /**
  * AimCalculator provides logic for the bot to calculate shot angles and power.
@@ -175,11 +177,42 @@ export class AimCalculator {
     return distSq <= 2 * R * 2 * R
   }
 
-  static ghostBallPosition(cue: Vector3, target: Vector3, overlap: number): Vector3 {
+  static ghostBallPosition(
+    cue: Vector3,
+    target: Vector3,
+    overlap: number
+  ): Vector3 {
     const baseAngle = Math.atan2(cue.y - target.y, cue.x - target.x)
     const offsetAngle = Math.asin(1 - Math.abs(overlap)) * Math.sign(overlap)
     const angle = baseAngle + offsetAngle
-    return new Vector3(target.x + Math.cos(angle) * 2 * R, target.y + Math.sin(angle) * 2 * R, 0)
+    return new Vector3(
+      target.x + Math.cos(angle) * 2 * R,
+      target.y + Math.sin(angle) * 2 * R,
+      0
+    )
+  }
+  /**
+   * Returns the distance to the nearest table corner.
+   */
+  static cornerDistance(pos: Vector3): number {
+    const x = TableGeometry.X
+    const y = TableGeometry.Y
+    return Math.min(
+      pos.distanceTo(new Vector3(-x, y, 0)),
+      pos.distanceTo(new Vector3(x, y, 0)),
+      pos.distanceTo(new Vector3(-x, -y, 0)),
+      pos.distanceTo(new Vector3(x, -y, 0))
+    )
   }
 
+  /**
+   * Finds the ball closest to any corner.
+   */
+  static findAnchor(balls: Ball[]): Ball {
+    return [...balls].sort(
+      (a, b) =>
+        AimCalculator.cornerDistance(a.pos) -
+        AimCalculator.cornerDistance(b.pos)
+    )[0]
+  }
 }

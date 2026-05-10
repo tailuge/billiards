@@ -7,20 +7,21 @@ import { AimCalculator } from "../aimcalculator"
 import { BotShotContext, BotStrategy } from "../botstrategy"
 import { TableGeometry } from "../../../view/tablegeometry"
 
-
+import { ThreeCushion } from "./threecushion"
 
 export class TheFarJaw implements BotStrategy {
   readonly name = "TheFarJaw"
 
   aim(context: BotShotContext, calculator: AimCalculator): GameEvent[] {
+    if (!TableGeometry.hasPockets) {
+      return new ThreeCushion().aim(context, calculator)
+    }
+
     const targetBall = this.pickTargetBall(context)
     if (!targetBall) {
       return []
     }
 
-    if (!TableGeometry.hasPockets) {
-      return this.aimThreeCushion(context, calculator, targetBall)
-    }
     const targetPoint = targetBall.pos
     const aimPoint = calculator.getAimPoint(
       context.cueBall.pos,
@@ -77,24 +78,5 @@ export class TheFarJaw implements BotStrategy {
     }
 
     return Respot.closest(context.cueBall, context.validTargetBalls)
-  }
-
-  private aimThreeCushion(context: BotShotContext, calculator: AimCalculator, targetBall: Ball): GameEvent[] {
-    const overlap = 0.25
-    const aimPoint = AimCalculator.ghostBallPosition(context.cueBall.pos, targetBall.pos, overlap)
-
-    console.log("targetBall.id", targetBall?.id)
-    console.log("targetBall.pos", targetBall?.pos)
-    console.log("cueBall.pos", context.cueBall?.pos)
-    console.log("table.shortSerialise()", context.table.shortSerialise())
-
-    const shot = calculator.generateShot(
-      context.table,
-      0,
-      AimCalculator.MAX_SHOT_POWER,
-      aimPoint,
-      new Vector3(Math.sign(overlap) * 0.3, 0, 0)
-    )
-    return [AimEvent.fromJson(shot.tablejson.aim), shot]
   }
 }

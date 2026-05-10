@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Billiard Heuristic Practice Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root {
+        --felt-color: #1a5e3a;
+        --rail-color: #3d2b1f;
+        --highlight-color: rgba(255, 255, 255, 0.25);
+      }
+
+      body {
+        background-color: #0d0d0d;
+        color: #eee;
+        font-family: "Inter", sans-serif;
+        overflow: hidden;
+        touch-action: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+      #table-wrap {
+        position: relative;
+        width: 90%;
+        max-width: 950px;
+        margin: auto;
+        container-type: size;
+      }
+
+      #table-surface {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: var(--felt-color);
+        border-radius: 8px;
+        box-shadow:
+          inset 0 8px 12px rgba(0, 0, 0, 0.5),
+          inset 0 -8px 12px rgba(0, 0, 0, 0.5),
+          inset 8px 0 12px rgba(0, 0, 0, 0.5),
+          inset -8px 0 12px rgba(0, 0, 0, 0.5);
+        z-index: 1;
+        border: 14px solid var(--rail-color);
+      }
+
+      .ball {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        cursor: grab;
+        user-select: none;
+        z-index: 10;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.7));
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        transition: transform 0.1s ease;
+      }
+      .ball:active {
+        transform: translate(-50%, -50%) scale(1.1);
+        cursor: grabbing;
+      }
+
+      .ball-label {
+        font-weight: 900;
+        pointer-events: none;
+        color: rgba(0, 0, 0, 0.8);
+      }
+      .ball-3 .ball-label {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      #aim-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 5;
+      }
+
+      .aim-line {
+        stroke-width: 2;
+        stroke-dasharray: 6, 4;
+      }
+      .ghost-ball {
+        fill: none;
+        stroke-width: 1.5;
+        stroke-dasharray: 4, 4;
+      }
+      .tangent-line {
+        stroke-width: 2;
+        stroke-dasharray: 3, 3;
+        transition: stroke 0.2s ease;
+      }
+
+      .cushion-highlight {
+        fill: var(--highlight-color);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .cushion-highlight.active {
+        opacity: 1;
+      }
+
+      .btn {
+        background: #1e1e1e;
+        color: #aaa;
+        border: 1px solid #333;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.2s;
+      }
+      .btn:hover {
+        background: #2a2a2a;
+        color: white;
+      }
+      .btn-logic {
+        border-color: #10b981;
+        color: #10b981;
+      }
+
+      #code-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 100;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(6px);
+      }
+
+      #code-content {
+        background: #09090b;
+        border: 1px solid #27272a;
+        padding: 24px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 700px;
+        max-height: 80%;
+        overflow: auto;
+        position: relative;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      }
+
+      pre {
+        font-family:
+          "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas",
+          monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #d1d5db;
+        padding: 1rem;
+        background: #18181b;
+        border-radius: 8px;
+        border: 1px solid #3f3f46;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="text-center mb-4">
+      <h1 class="text-2xl font-bold text-emerald-500">
+        Billiard Heuristic Tool
+      </h1>
+      <p class="text-xs text-zinc-500 uppercase tracking-widest mt-1">
+        Lead: Furthest | Anchor: Closest Rail
+      </p>
+    </div>
+
+    <div id="table-wrap">
+      <div id="table-surface">
+        <svg id="aim-svg">
+          <rect
+            id="rail-top"
+            class="cushion-highlight"
+            x="0"
+            y="0"
+            width="100%"
+            height="8"
+          />
+          <rect
+            id="rail-bottom"
+            class="cushion-highlight"
+            x="0"
+            y="100%"
+            width="100%"
+            height="8"
+          />
+
+          <line id="aim-3-L" class="aim-line" stroke="#f59e0b" opacity="0" />
+          <line id="aim-3-R" class="aim-line" stroke="#f59e0b" opacity="0" />
+          <circle
+            id="ghost-3-L"
+            class="ghost-ball"
+            stroke="#f59e0b"
+            opacity="0"
+          />
+          <circle
+            id="ghost-3-R"
+            class="ghost-ball"
+            stroke="#f59e0b"
+            opacity="0"
+          />
+          <line id="tan-3-L" class="tangent-line" opacity="0" />
+          <line id="tan-3-R" class="tangent-line" opacity="0" />
+
+          <line id="aim-1-L" class="aim-line" stroke="#06b6d4" opacity="0" />
+          <line id="aim-1-R" class="aim-line" stroke="#06b6d4" opacity="0" />
+          <circle
+            id="ghost-1-L"
+            class="ghost-ball"
+            stroke="#06b6d4"
+            opacity="0"
+          />
+          <circle
+            id="ghost-1-R"
+            class="ghost-ball"
+            stroke="#06b6d4"
+            opacity="0"
+          />
+          <line id="tan-1-L" class="tangent-line" opacity="0" />
+          <line id="tan-1-R" class="tangent-line" opacity="0" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="mt-6 flex flex-wrap justify-center gap-2 max-w-2xl px-4">
+      <button class="btn" onclick="resetLayout()">Reset Table</button>
+      <span class="w-px h-6 bg-zinc-800 mx-2 hidden sm:block"></span>
+      <button class="btn btn-logic" onclick="showLogic('cornerDistance')">
+        Object Assignment
+      </button>
+      <button
+        class="btn btn-logic"
+        onclick="showLogic('calculateGhostBallImpactPoint')"
+      >
+        Impact Math
+      </button>
+      <button class="btn btn-logic" onclick="showLogic('isLongCushion')">
+        isLongCushion
+      </button>
+      <button class="btn btn-logic" onclick="showLogic('naturalLongSelect')">
+        naturalLongSelect
+      </button>
+    </div>
+
+    <!-- Modal for showing logic code -->
+    <div id="code-modal" onclick="toggleCodeModal(false)">
+      <div id="code-content" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-center mb-4">
+          <h3
+            id="logic-title"
+            class="text-emerald-500 font-bold uppercase text-xs tracking-widest"
+          >
+            Function Logic
+          </h3>
+          <button
+            onclick="toggleCodeModal(false)"
+            class="text-zinc-500 hover:text-white text-xl leading-none"
+          >
+            &times;
+          </button>
+        </div>
+        <pre id="code-display"></pre>
+      </div>
+    </div>
+
+    <script>
+      const R = 0.03275
+      const HW = R * 43 + R
+      const HH = R * 21 + R
+
+      let balls = []
+      let dragging = null
+
+      const wrap = document.getElementById("table-wrap")
+      const surface = document.getElementById("table-surface")
+
+      function portrait() {
+        return window.innerHeight > window.innerWidth
+      }
+
+      function setAspectRatio() {
+        if (portrait()) wrap.style.aspectRatio = `${HH * 2} / ${HW * 2}`
+        else wrap.style.aspectRatio = `${HW * 2} / ${HH * 2}`
+      }
+
+      function tableToCSS(tx, ty) {
+        if (portrait())
+          return {
+            left: ((HH - ty) / (HH * 2)) * 100,
+            top: ((tx + HW) / (HW * 2)) * 100,
+          }
+        return {
+          left: ((tx + HW) / (HW * 2)) * 100,
+          top: ((ty + HH) / (HH * 2)) * 100,
+        }
+      }
+
+      function clientToTable(clientX, clientY) {
+        const r = surface.getBoundingClientRect()
+        const px = clientX - r.left,
+          py = clientY - r.top
+        if (portrait())
+          return {
+            x: (py / r.height) * (HW * 2) - HW,
+            y: -(px / r.width) * (HH * 2) + HH,
+          }
+        return {
+          x: (px / r.width) * (HW * 2) - HW,
+          y: (py / r.height) * (HH * 2) - HH,
+        }
+      }
+
+      /**
+       * 1. HEURISTIC: Object Assignment
+       * Returns distance to the nearest table corner.
+       */
+      function cornerDistance(ball) {
+        const corners = [
+          { x: HW, y: HH },
+          { x: HW, y: -HH },
+          { x: -HW, y: HH },
+          { x: -HW, y: -HH },
+        ]
+        let minDist = Infinity
+        corners.forEach((c) => {
+          const d = Math.hypot(ball.x - c.x, ball.y - c.y)
+          if (d < minDist) minDist = d
+        })
+        return minDist
+      }
+
+      /**
+       * 2. HEURISTIC: Impact Geometry
+       * Finds the ghost ball position for a specific hit overlap.
+       */
+      function calculateGhostBallImpactPoint(cue, target, overlap, radius) {
+        const dx = cue.x - target.x,
+          dy = cue.y - target.y
+        const baseAngle = Math.atan2(dy, dx)
+        const offsetAngle = Math.asin(1 - Math.abs(overlap))
+        const side = overlap >= 0 ? 1 : -1
+        const finalAngle = baseAngle + side * offsetAngle
+
+        return {
+          x: target.x + Math.cos(finalAngle) * (2 * radius),
+          y: target.y + Math.sin(finalAngle) * (2 * radius),
+        }
+      }
+
+      /**
+       * 3. HEURISTIC: isLongCushion
+       * Detects if the path travels toward the currently highlighted cushion.
+       */
+      function isLongCushion(tangentY, ghostY, activeRailY) {
+        if (activeRailY === null) return false
+        const directionToRail = activeRailY - ghostY
+        // Conflict if tangent Y and distance to rail share the same sign
+        return (
+          (directionToRail > 0 && tangentY > 0) ||
+          (directionToRail < 0 && tangentY < 0)
+        )
+      }
+
+      /**
+       * 4. HEURISTIC: naturalLongSelect
+       * Calculates dot product between tangent and anchor ball to find safer path.
+       */
+      function naturalLongSelect(tanVec, ghostPos, anchorBall) {
+        const vToAnchorX = anchorBall.x - ghostPos.x
+        const vToAnchorY = anchorBall.y - ghostPos.y
+        const mag = Math.hypot(vToAnchorX, vToAnchorY)
+        if (mag === 0) return 0
+        // Dot product measures alignment: lower = more "away"
+        return tanVec.x * (vToAnchorX / mag) + tanVec.y * (vToAnchorY / mag)
+      }
+
+      function updateAimGraphics() {
+        const cue = balls.find((b) => b.id === 0)
+        if (!cue) return
+
+        const targets = [
+          { id: 1, sfx: "1" },
+          { id: 3, sfx: "3" },
+        ]
+        let maxVal = -Infinity,
+          minVal = Infinity,
+          furthestId = -1,
+          closestId = -1
+
+        targets.forEach((t) => {
+          const b = balls.find((ball) => ball.id === t.id)
+          if (b) {
+            const d = cornerDistance(b)
+            if (d > maxVal) {
+              maxVal = d
+              furthestId = b.id
+            }
+            if (d < minVal) {
+              minVal = d
+              closestId = b.id
+            }
+          }
+        })
+
+        const railT = document.getElementById("rail-top"),
+          railB = document.getElementById("rail-bottom")
+        railT.classList.remove("active")
+        railB.classList.remove("active")
+
+        const anchorBall = balls.find((b) => b.id === closestId)
+        let activeRailY = null
+
+        if (anchorBall) {
+          const dPos = Math.abs(anchorBall.y - HH),
+            dNeg = Math.abs(anchorBall.y + HH)
+          if (portrait()) {
+            railT.setAttribute("width", "12")
+            railT.setAttribute("height", "100%")
+            railB.setAttribute("width", "12")
+            railB.setAttribute("height", "100%")
+            railB.setAttribute("x", "calc(100% - 12px)")
+            if (dPos < dNeg) {
+              railT.classList.add("active")
+              activeRailY = HH
+            } else {
+              railB.classList.add("active")
+              activeRailY = -HH
+            }
+          } else {
+            railT.setAttribute("width", "100%")
+            railT.setAttribute("height", "12")
+            railB.setAttribute("width", "100%")
+            railB.setAttribute("height", "12")
+            railB.setAttribute("y", "calc(100% - 12px)")
+            if (dNeg < dPos) {
+              railT.classList.add("active")
+              activeRailY = -HH
+            } else {
+              railB.classList.add("active")
+              activeRailY = HH
+            }
+          }
+        }
+
+        targets.forEach((t) => {
+          const target = balls.find((b) => b.id === t.id)
+          if (!target) return
+
+          const isLead = target.id === furthestId
+          const cueCSS = tableToCSS(cue.x, cue.y)
+          const bPx =
+            (R / (HW * 2)) *
+            (portrait() ? surface.offsetHeight : surface.offsetWidth) *
+            2
+          const tangentData = []
+
+          ;[-0.25, 0.25].forEach((overlap) => {
+            const side = overlap < 0 ? "L" : "R"
+            const al = document.getElementById(`aim-${t.sfx}-${side}`)
+            const gb = document.getElementById(`ghost-${t.sfx}-${side}`)
+            const tanL = document.getElementById(`tan-${t.sfx}-${side}`)
+
+            if (!isLead) {
+              al.setAttribute("opacity", "0")
+              gb.setAttribute("opacity", "0")
+              tanL.setAttribute("opacity", "0")
+              return
+            }
+
+            al.setAttribute("opacity", "0.8")
+            gb.setAttribute("opacity", "0.6")
+            tanL.setAttribute("opacity", "0.9")
+
+            const ghostPos = calculateGhostBallImpactPoint(
+              cue,
+              target,
+              overlap,
+              R
+            )
+            const ghostCSS = tableToCSS(ghostPos.x, ghostPos.y)
+
+            al.setAttribute("x1", `${cueCSS.left}%`)
+            al.setAttribute("y1", `${cueCSS.top}%`)
+            al.setAttribute("x2", `${ghostCSS.left}%`)
+            al.setAttribute("y2", `${ghostCSS.top}%`)
+            gb.setAttribute("cx", `${ghostCSS.left}%`)
+            gb.setAttribute("cy", `${ghostCSS.top}%`)
+            gb.setAttribute("r", bPx / 2 + "px")
+
+            let tx = -(ghostPos.y - target.y),
+              ty = ghostPos.x - target.x
+            if (tx * (ghostPos.x - cue.x) + ty * (ghostPos.y - cue.y) < 0) {
+              tx = -tx
+              ty = -ty
+            }
+            const mag = Math.sqrt(tx * tx + ty * ty)
+            const nTx = tx / mag,
+              nTy = ty / mag
+
+            const endCSS = tableToCSS(
+              ghostPos.x + nTx * 0.6,
+              ghostPos.y + nTy * 0.6
+            )
+            tanL.setAttribute("x1", `${ghostCSS.left}%`)
+            tanL.setAttribute("y1", `${ghostCSS.top}%`)
+            tanL.setAttribute("x2", `${endCSS.left}%`)
+            tanL.setAttribute("y2", `${endCSS.top}%`)
+
+            const conflict = isLongCushion(nTy, ghostPos.y, activeRailY)
+            tangentData.push({ el: tanL, tx: nTx, ty: nTy, conflict, ghostPos })
+          })
+
+          if (isLead && tangentData.length === 2) {
+            const bothConflict =
+              tangentData[0].conflict && tangentData[1].conflict
+            tangentData.forEach((d) => {
+              let color = d.conflict ? "#ef4444" : "#10b981"
+              if (bothConflict && anchorBall) {
+                d.dot = naturalLongSelect(
+                  { x: d.tx, y: d.ty },
+                  d.ghostPos,
+                  anchorBall
+                )
+              }
+              d.color = color
+            })
+
+            if (bothConflict && anchorBall) {
+              const awayIdx = tangentData[0].dot < tangentData[1].dot ? 0 : 1
+              tangentData[awayIdx].color = "#a855f7"
+            }
+            tangentData.forEach((d) => (d.el.style.stroke = d.color))
+          }
+        })
+      }
+
+      function positionBall(ball) {
+        const r = surface.getBoundingClientRect()
+        const sz = (R / (HW * 2)) * (portrait() ? r.height : r.width) * 2
+        const { left, top } = tableToCSS(ball.x, ball.y)
+        ball.el.style.width = sz + "px"
+        ball.el.style.height = sz + "px"
+        ball.el.style.fontSize = sz * 0.6 + "px"
+        ball.el.style.left = left + "%"
+        ball.el.style.top = top + "%"
+        updateAimGraphics()
+      }
+
+      function createBall(id, x, y, color) {
+        const el = document.createElement("div")
+        el.className = `ball ball-${id}`
+        el.style.backgroundColor = color
+        const lbl = document.createElement("span")
+        lbl.className = "ball-label"
+        lbl.textContent = id === 0 ? "" : id
+        el.appendChild(lbl)
+        surface.appendChild(el)
+        const b = { id, x, y, el }
+        balls.push(b)
+        positionBall(b)
+      }
+
+      function resetLayout() {
+        const locs = [
+          [-0.8, 0],
+          [0.4, -0.3],
+          [0.4, 0.3],
+        ]
+        balls.forEach((b, i) => {
+          b.x = locs[i][0]
+          b.y = locs[i][1]
+          positionBall(b)
+        })
+      }
+
+      function toggleCodeModal(show) {
+        document.getElementById("code-modal").style.display = show
+          ? "flex"
+          : "none"
+      }
+
+      function showLogic(fnName) {
+        const fnMap = {
+          cornerDistance: cornerDistance,
+          calculateGhostBallImpactPoint: calculateGhostBallImpactPoint,
+          isLongCushion: isLongCushion,
+          naturalLongSelect: naturalLongSelect,
+        }
+
+        const fn = fnMap[fnName]
+        if (fn) {
+          document.getElementById("logic-title").textContent =
+            `Function: ${fnName}`
+          document.getElementById("code-display").textContent = fn.toString()
+          toggleCodeModal(true)
+        }
+      }
+
+      window.onload = () => {
+        setAspectRatio()
+        createBall(0, -0.8, 0, "#ffffff")
+        createBall(1, 0.4, -0.3, "#facc15")
+        createBall(3, 0.4, 0.3, "#ef4444")
+
+        const handleStart = (e) => {
+          const t = e.touches ? e.touches[0] : e
+          const pos = clientToTable(t.clientX, t.clientY)
+          for (let i = balls.length - 1; i >= 0; i--) {
+            if (Math.hypot(pos.x - balls[i].x, pos.y - balls[i].y) < R * 2.5) {
+              dragging = balls[i]
+              break
+            }
+          }
+        }
+
+        const handleMove = (e) => {
+          if (!dragging) return
+          const t = e.touches ? e.touches[0] : e
+          const pos = clientToTable(t.clientX, t.clientY)
+          dragging.x = Math.max(-(HW - R), Math.min(HW - R, pos.x))
+          dragging.y = Math.max(-(HH - R), Math.min(HH - R, pos.y))
+          positionBall(dragging)
+          if (e.cancelable) e.preventDefault()
+        }
+
+        surface.addEventListener("mousedown", handleStart)
+        surface.addEventListener("touchstart", handleStart, { passive: false })
+        window.addEventListener("mousemove", handleMove)
+        window.addEventListener("touchmove", handleMove, { passive: false })
+        window.addEventListener("mouseup", () => (dragging = null))
+        window.addEventListener("touchend", () => (dragging = null))
+        window.addEventListener("resize", () => {
+          setAspectRatio()
+          balls.forEach(positionBall)
+        })
+      }
+    </script>
+  </body>
+</html>
