@@ -68,7 +68,7 @@ export class BotEventHandler {
       container.rules.rulename,
       new BotContainer(container)
     )
-    this.botRules.cueball = container.table.cueball
+    this.botRules.secondToPlay()
   }
 
   /**
