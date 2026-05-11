@@ -5,11 +5,20 @@ import { Respot } from "../../../utils/respot"
 import { zero } from "../../../utils/three-utils"
 import { AimCalculator } from "../aimcalculator"
 import { BotShotContext, BotStrategy } from "../botstrategy"
+import { TableGeometry } from "../../../view/tablegeometry"
+import { ThreeStrategy } from "./threecushionstrategy"
 
 export class ClawBreak implements BotStrategy {
   readonly name = "ClawBreak"
 
   aim(context: BotShotContext, calculator: AimCalculator): GameEvent[] {
+    if (!TableGeometry.hasPockets) {
+      return new ThreeStrategy(AimCalculator.DEFAULT_SHOT_POWER).aim(
+        context,
+        calculator
+      )
+    }
+
     const targetBall = this.pickTargetBall(context)
     const targetPoint = targetBall?.pos ?? zero
     const aimPoint = calculator.getAimPoint(context.cueBall.pos, targetPoint)

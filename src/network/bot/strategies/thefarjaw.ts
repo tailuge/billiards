@@ -14,7 +14,10 @@ export class TheFarJaw implements BotStrategy {
 
   aim(context: BotShotContext, calculator: AimCalculator): GameEvent[] {
     if (!TableGeometry.hasPockets) {
-      return new ThreeStrategy().aim(context, calculator)
+      return new ThreeStrategy(AimCalculator.MAX_SHOT_POWER).aim(
+        context,
+        calculator
+      )
     }
 
     const targetBall = this.pickTargetBall(context)

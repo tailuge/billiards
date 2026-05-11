@@ -245,7 +245,11 @@ export class AimCalculator {
   /**
    * Returns true if the tangent vector points towards the specified rail.
    */
-  static isHeadingToRail(ghost: Vector3, tangent: Vector3, railY: number): boolean {
+  static isHeadingToRail(
+    ghost: Vector3,
+    tangent: Vector3,
+    railY: number
+  ): boolean {
     return (railY - ghost.y) * tangent.y > 0
   }
 

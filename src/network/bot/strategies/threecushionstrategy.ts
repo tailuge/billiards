@@ -6,6 +6,11 @@ import { BotShotContext, BotStrategy } from "../botstrategy"
 
 export class ThreeStrategy implements BotStrategy {
   readonly name = "ThreeStrategy"
+  private readonly power: number
+
+  constructor(power: number = AimCalculator.MAX_SHOT_POWER) {
+    this.power = power
+  }
 
   aim(context: BotShotContext, calculator: AimCalculator): GameEvent[] {
     if (context.validTargetBalls.length === 0) {
@@ -50,9 +55,7 @@ export class ThreeStrategy implements BotStrategy {
       return { overlap, ghostPos, toLongRail }
     })
 
-    console.log(
-      `[ThreeStrategy] candidates: ${JSON.stringify(candidates)}`
-    )
+    console.log(`[ThreeStrategy] candidates: ${JSON.stringify(candidates)}`)
 
     const [s1, s2] = candidates
     const best = !s1.toLongRail && s2.toLongRail ? s2 : s1
@@ -63,7 +66,7 @@ export class ThreeStrategy implements BotStrategy {
     const shot = calculator.generateShot(
       context.table,
       0,
-      AimCalculator.MAX_SHOT_POWER,
+      this.power,
       best.ghostPos,
       new Vector3(Math.sign(best.overlap) * 0.3, 0, 0)
     )
