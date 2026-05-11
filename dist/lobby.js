@@ -434,7 +434,7 @@
                         <button class="cancel" @click=${this._close}>Close</button>
                     </div>
                 </div>`:""}
-        `}};customElements.define("settings-modal",Ae);var Le=class extends g{static properties={_theme:{type:String,reflect:!0,attribute:"theme"}};static styles=st;constructor(){super(),this._theme=document.documentElement.getAttribute("theme")||"light"}get _ctrl(){return this.shadowRoot.querySelector("online-panel")}render(){return o`
+        `}};customElements.define("settings-modal",Ae);var Le=class extends g{static properties={_theme:{type:String,reflect:!0,attribute:"theme"}};static styles=st;constructor(){super(),console.log("URL:",window.location.href),console.log("Search params:",Object.fromEntries(new URLSearchParams(window.location.search))),this._theme=document.documentElement.getAttribute("theme")||"light"}get _ctrl(){return this.shadowRoot.querySelector("online-panel")}render(){return o`
             <div class="container">
                 <div class="topbar">
                     <img src="assets/threecushion.png" class="logo" alt="Logo">
