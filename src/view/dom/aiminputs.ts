@@ -73,7 +73,7 @@ export class AimInputs {
     if (!("ontouchstart" in globalThis)) {
       id("viewP1")?.addEventListener("dblclick", this.hit)
     }
-    document.addEventListener("wheel", this.mousewheel)
+    document.addEventListener("wheel", this.mousewheel, { passive: false })
   }
 
   setButtonText(text) {
@@ -297,6 +297,10 @@ export class AimInputs {
   }
 
   mousewheel = (e) => {
+    if (e.ctrlKey) {
+      e.preventDefault()
+      return
+    }
     if (this.controlsDisabled) {
       return
     }
