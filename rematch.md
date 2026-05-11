@@ -48,7 +48,7 @@ A "Rematch" button is displayed in the game-over notification. Clicking this but
 ### 3. Redirection to Lobby
 The game redirects the browser to the lobby URL (defined by `LOBBY_URL` in `src/utils/gameover.ts`) with the following parameters:
 ```
-https://scoreboard-tailuge.vercel.app/game?userId=<myId>&userName=<myName>&rematch=<encodedRematchInfo>
+https://billiards.tailuge.workers.dev/lobby.html?userId=<myId>&userName=<myName>&rematch=<encodedRematchInfo>
 ```
 
 ### 4. New Game Initialization
@@ -105,7 +105,7 @@ Here's what actually happens in the code:
                                                                                                                       
   LobbyIndicator.getLobbyUrl() builds the URL when a challenger is present:                                           
                                                                                                                       
-  https://scoreboard-tailuge.vercel.app/game                                                                          
+  https://billiards.tailuge.workers.dev/lobby.html                                                                          
     ?userName=<myName>                                                                                                
     &userId=<myId>                                                                                                    
     &action=join                                                                                                      

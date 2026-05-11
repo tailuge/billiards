@@ -2,6 +2,7 @@ import { expect } from "chai"
 import { LobbyIndicator } from "../../src/view/lobbyindicator"
 import { initDom } from "./dom"
 import { Session } from "../../src/network/client/session"
+import { LOBBY_URL } from "../../src/utils/gameover"
 
 // Mock the @tailuge/messaging module
 jest.mock("@tailuge/messaging", () => ({
@@ -84,7 +85,7 @@ describe("LobbyIndicator", () => {
     expect(document.getElementById("challengeDecline")).to.not.be.null
     expect(countElement?.classList.contains("is-hidden")).to.be.false
     expect(element?.getAttribute("href")).to.equal(
-      "https://scoreboard-tailuge.vercel.app/game?userName=TestPlayer&userId=test-client"
+      LOBBY_URL + "?userName=TestPlayer&userId=test-client"
     )
   })
 
@@ -112,7 +113,7 @@ describe("LobbyIndicator", () => {
 
     div.click()
     expect(openedUrl).to.equal(
-      "https://scoreboard-tailuge.vercel.app/game?userName=TestPlayer&userId=test-client"
+      LOBBY_URL + "?userName=TestPlayer&userId=test-client"
     )
 
     await indicator.stop()

@@ -1,4 +1,4 @@
-export const LOBBY_URL = "https://scoreboard-tailuge.vercel.app/game"
+export const LOBBY_URL = "https://billiards.tailuge.workers.dev/lobby.html"
 
 export const gameOverButtons = {
   lobby: `<button type="button" class="notification-btn" data-notification-action="lobby">Back to Lobby</button>`,
