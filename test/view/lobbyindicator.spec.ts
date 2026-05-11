@@ -37,7 +37,7 @@ describe("LobbyIndicator", () => {
 
     const element = document.getElementById("lobbyOverlay")
     const countElement = element?.querySelector(".lobby-count")
-    expect(countElement?.textContent).to.equal("TestPlayer - 0 👥")
+    expect(countElement?.textContent).to.equal("TestPlayer 👥0")
     expect(countElement?.classList.contains("is-hidden")).to.be.false
   })
 
@@ -154,7 +154,7 @@ describe("LobbyIndicator", () => {
     const countElement = element?.querySelector(".lobby-count") as HTMLElement
 
     await indicator.init()
-    expect(countElement.textContent).to.equal("Player 1 - 0 👥")
+    expect(countElement.textContent).to.equal("Player 1 👥0")
 
     // Access the mock lobby to trigger onUsersChange callback
     const mockLobby = (indicator as any).lobby
@@ -165,18 +165,18 @@ describe("LobbyIndicator", () => {
       { userId: "p1", tableId: "table-1" },
       { userId: "p2", tableId: "table-1" },
     ])
-    expect(countElement.textContent).to.equal("Player 1 - 2 👥 🟢")
+    expect(countElement.textContent).to.equal("Player 1 👥2 🟢")
 
     // Simulate opponent disconnected (not in list)
     onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
-    expect(countElement.textContent).to.equal("Player 1 - 1 👥 🔴")
+    expect(countElement.textContent).to.equal("Player 1 👥1 🔴")
 
     // Simulate opponent at a different table
     onUsersChangeCallback([
       { userId: "p1", tableId: "table-1" },
       { userId: "p2", tableId: "other-table" },
     ])
-    expect(countElement.textContent).to.equal("Player 1 - 2 👥 🔴")
+    expect(countElement.textContent).to.equal("Player 1 👥2 🔴")
 
     await indicator.stop()
   })
@@ -191,7 +191,7 @@ describe("LobbyIndicator", () => {
 
     const element = document.getElementById("lobbyOverlay")
     const countElement = element?.querySelector(".lobby-count") as HTMLElement
-    expect(countElement.textContent).to.equal("Player 1 - 0 👥")
+    expect(countElement.textContent).to.equal("Player 1 👥0")
     await indicator.stop()
 
     // Replay mode
@@ -200,7 +200,7 @@ describe("LobbyIndicator", () => {
     const indicator2 = new LobbyIndicator(false, true, mockRules)
     await indicator2.init()
     const countElement2 = element?.querySelector(".lobby-count") as HTMLElement
-    expect(countElement2.textContent).to.equal("Player 1 - 0 👥")
+    expect(countElement2.textContent).to.equal("Player 1 👥0")
     await indicator2.stop()
   })
 })
