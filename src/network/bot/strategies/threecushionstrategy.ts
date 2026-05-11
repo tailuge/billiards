@@ -42,16 +42,23 @@ export class ThreeStrategy implements BotStrategy {
         targetBall.pos,
         ghostPos
       )
-      const conflict = AimCalculator.isHeadingToRail(
+      const toLongRail = AimCalculator.isHeadingToRail(
         ghostPos,
         tangent,
         activeRailY
       )
-      return { overlap, ghostPos, conflict }
+      return { overlap, ghostPos, toLongRail }
     })
 
+    console.log(
+      `[ThreeStrategy] candidates: ${JSON.stringify(candidates)}`
+    )
+
     const [s1, s2] = candidates
-    const best = !s1.conflict && s2.conflict ? s2 : s1
+    const best = !s1.toLongRail && s2.toLongRail ? s2 : s1
+    console.log(
+      `[ThreeStrategy] best: overlap=${best.overlap}, ghostPos=${best.ghostPos}, toLongRail=${best.toLongRail}`
+    )
 
     const shot = calculator.generateShot(
       context.table,
