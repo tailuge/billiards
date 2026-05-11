@@ -189,7 +189,7 @@ export class LobbyIndicator {
         statusEmoji = " <span class='status-emoji'>🔴</span>"
       }
     }
-    this.countElement.innerHTML = `${this.count} 👥${statusEmoji}`
+    this.countElement.innerHTML = `${session.playername} - ${this.count} 👥${statusEmoji}`
   }
 
   private updateChallengePill(challenged: boolean): void {
