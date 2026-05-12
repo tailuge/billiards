@@ -43,21 +43,39 @@
 
 @media (max-width: 600px) {
   #helpOverlay {
-    top: 6px;
-    left: 6px;
-    max-width: 120px;
+    position: absolute;
+    top: auto;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 92%;
+    width: auto;
   }
   #helpContent {
-    padding: 8px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 14px;
+    padding: 8px 14px;
     border-radius: 8px;
+    background: rgba(0, 0, 0, 0.65);
   }
   #helpContent .help-row {
-    margin-bottom: 5px;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 5px;
+    margin-bottom: 0;
   }
   #helpContent kbd {
+    display: inline;
     font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
   }
   #helpContent .help-row span {
+    display: inline;
     font-size: 10px;
+    white-space: nowrap;
   }
 }
