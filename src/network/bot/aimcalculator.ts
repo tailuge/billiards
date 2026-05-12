@@ -265,4 +265,11 @@ export class AimCalculator {
     const toAnchor = new Vector3().subVectors(anchor, ghost).normalize()
     return tangent.dot(toAnchor)
   }
+
+  /**
+   * Returns true if clockwise spin (running side) is needed based on incident vector and cushion normal.
+   */
+  static isClockwiseSpin(v: Vector3, n: Vector3): boolean {
+    return new Vector3().crossVectors(v, n).z > 0
+  }
 }

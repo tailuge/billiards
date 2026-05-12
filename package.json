@@ -43,7 +43,7 @@
     "@testing-library/dom": "10.4.1",
     "@types/chai": "5.2.3",
     "@types/jest": "30.0.0",
-    "@types/node": "25.6.2",
+    "@types/node": "25.7.0",
     "@types/three": "0.184.1",
     "canvas": "3.2.3",
     "chai": "6.2.2",
@@ -62,7 +62,7 @@
     "swc-loader": "0.2.7",
     "ts-jest": "29.4.9",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.59.2",
+    "typescript-eslint": "8.59.3",
     "webpack": "5.106.2",
     "webpack-cli": "7.0.2",
     "webpack-dev-server": "5.2.4"

@@ -52,7 +52,7 @@ export class ThreeStrategy implements BotStrategy {
         tangent,
         activeRailY
       )
-      return { overlap, ghostPos, toLongRail }
+      return { overlap, ghostPos, tangent, toLongRail }
     })
 
     console.log(`[ThreeStrategy] candidates: ${JSON.stringify(candidates)}`)
@@ -63,12 +63,16 @@ export class ThreeStrategy implements BotStrategy {
       `[ThreeStrategy] best: overlap=${best.overlap}, ghostPos=${best.ghostPos}, toLongRail=${best.toLongRail}`
     )
 
+    const normal = new Vector3(0, activeRailY > 0 ? -1 : 1, 0)
+    const isClockwise = AimCalculator.isClockwiseSpin(best.tangent, normal)
+    const sideSpin = isClockwise ? 0.3 : -0.3
+
     const shot = calculator.generateShot(
       context.table,
       0,
       this.power,
       best.ghostPos,
-      new Vector3(Math.sign(best.overlap) * 0.3, 0, 0)
+      new Vector3(sideSpin, 0, 0)
     )
 
     return [AimEvent.fromJson(shot.tablejson.aim), shot]

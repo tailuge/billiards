@@ -1,41 +1,65 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <title>
-    Why Most Pool Games Feel Wrong — And What Realistic Cushion Physics
-    Actually Looks Like
-  </title>
-  <link rel="icon" type="image/png" href="favicon.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap" rel="stylesheet" />
-  <meta charset="UTF-8" />
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="description"
-    content="Most browser pool games fake the physics. This one doesn't. A look at why cushion behaviour and spin are so hard to get right, and what it feels like when they are." />
-  <meta name="keywords"
-    content="billiards physics, realistic pool game, cushion bounce, spin physics, browser pool game, snooker simulation, 9-ball online" />
-  <meta name="robots" content="index,follow" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="canonical" href="https://tailuge.github.io/billiards/dist/blog1.html" />
-  <meta property="og:title"
-    content="Why Most Pool Games Feel Wrong — And What Realistic Cushion Physics Actually Looks Like" />
-  <meta property="og:description"
-    content="Most browser pool games fake the physics. A look at why cushion behaviour and spin are so hard to get right, and what it feels like when they are." />
-  <meta property="og:type" content="article" />
-  <meta property="og:url" content="https://tailuge.github.io/billiards/dist/blog1.html" />
-  <meta property="og:image" content="https://tailuge.github.io/billiards/dist/images/seo.jpg" />
-  <meta property="og:video" content="https://youtu.be/bAeiRQcQuyg" />
-  <meta property="og:video:type" content="text/html" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Why Most Pool Games Feel Wrong" />
-  <meta name="twitter:description"
-    content="Most browser pool games fake the physics. A look at what realistic cushion behaviour actually looks like." />
-  <meta name="twitter:image" content="https://tailuge.github.io/billiards/dist/images/seo.jpg" />
-  <script type="application/ld+json">
+  <head>
+    <title>
+      Why Most Pool Games Feel Wrong — And What Realistic Cushion Physics
+      Actually Looks Like
+    </title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="description"
+      content="Most browser pool games fake the physics. This one doesn't. A look at why cushion behaviour and spin are so hard to get right, and what it feels like when they are."
+    />
+    <meta
+      name="keywords"
+      content="billiards physics, realistic pool game, cushion bounce, spin physics, browser pool game, snooker simulation, 9-ball online"
+    />
+    <meta name="robots" content="index,follow" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="canonical"
+      href="https://tailuge.github.io/billiards/dist/blog1.html"
+    />
+    <meta
+      property="og:title"
+      content="Why Most Pool Games Feel Wrong — And What Realistic Cushion Physics Actually Looks Like"
+    />
+    <meta
+      property="og:description"
+      content="Most browser pool games fake the physics. A look at why cushion behaviour and spin are so hard to get right, and what it feels like when they are."
+    />
+    <meta property="og:type" content="article" />
+    <meta
+      property="og:url"
+      content="https://tailuge.github.io/billiards/dist/blog1.html"
+    />
+    <meta
+      property="og:image"
+      content="https://tailuge.github.io/billiards/dist/images/seo.jpg"
+    />
+    <meta property="og:video" content="https://youtu.be/bAeiRQcQuyg" />
+    <meta property="og:video:type" content="text/html" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Why Most Pool Games Feel Wrong" />
+    <meta
+      name="twitter:description"
+      content="Most browser pool games fake the physics. A look at what realistic cushion behaviour actually looks like."
+    />
+    <meta
+      name="twitter:image"
+      content="https://tailuge.github.io/billiards/dist/images/seo.jpg"
+    />
+    <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
@@ -63,450 +87,534 @@
         }
       }
     </script>
-  <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background: #0f0f0f;
-      color: #ddd;
-      font-family: Exo, sans-serif;
-      font-weight: 200;
-      font-size: 18px;
-      line-height: 1.75;
-      padding: 0 16px 64px;
-    }
-
-    header {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 48px 0 32px;
-      border-bottom: 1px solid #222;
-    }
-
-    header h1 {
-      font-size: clamp(1.5rem, 4vw, 2.2rem);
-      line-height: 1.25;
-      color: #f0f0f0;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
-    header .meta {
-      font-size: 0.85rem;
-      color: #666;
-      font-family: sans-serif;
-    }
-
-    article {
-      max-width: 720px;
-      margin: 0 auto;
-      padding-top: 40px;
-    }
-
-    h2 {
-      font-size: 1.25rem;
-      color: #c8c8c8;
-      margin: 48px 0 16px;
-      font-weight: 600;
-    }
-
-    p {
-      margin-bottom: 20px;
-      color: #ccc;
-    }
-
-    figure {
-      margin: 36px 0;
-    }
-
-    figure img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 4px;
-      border: 1px solid #222;
-    }
-
-    figcaption {
-      font-size: 0.8rem;
-      color: #555;
-      font-family: sans-serif;
-      margin-top: 8px;
-      text-align: center;
-    }
-
-    .hero-img {
-      max-width: 720px;
-      margin: 32px auto 0;
-      display: block;
-    }
-
-    .hero-img img {
-      width: 100%;
-      height: auto;
-      border-radius: 4px;
-      border: 1px solid #222;
-      display: block;
-    }
-
-    .cta {
-      margin-top: 48px;
-      padding: 24px;
-      border: 1px solid #2a2a2a;
-      border-radius: 6px;
-      background: #141414;
-    }
-
-    .cta p {
-      margin-bottom: 16px;
-      color: #bbb;
-    }
-
-    .cta a {
-      display: inline-block;
-      background: #1e1e1e;
-      color: #ccc;
-      text-decoration: none;
-      padding: 5px 12px;
-      border-radius: 5px;
-      font-size: 0.9rem;
-      font-weight: 200;
-      border: 1px solid #333;
-      margin: 3px 3px 3px 0;
-    }
-
-    .cta a:first-of-type {
-      background: #10b981;
-      color: #fff;
-      border-color: transparent;
-    }
-
-    .cta a:hover {
-      border-color: #555;
-      color: #fff;
-    }
-
-    .cta a:first-of-type:hover {
-      background: #059669;
-    }
-
-    nav.back {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 24px 0 0;
-      font-family: sans-serif;
-      font-size: 0.7rem;
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    nav.back a {
-      color: #888;
-      text-decoration: none;
-    }
-
-    nav.back a:hover {
-      color: #ccc;
-    }
-
-    .side-by-side {
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-      margin: 48px 0;
-    }
-
-    .side-by-side .media {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .side-by-side .content {
-      flex: 1;
-    }
-
-    @media (width >=768px) {
-      .side-by-side {
-        flex-direction: row;
-        align-items: flex-start;
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    }
 
-    figure a {
-      display: block;
-      transition:
-        transform 0.2s,
-        filter 0.2s;
-    }
+      body {
+        background: #0f0f0f;
+        color: #ddd;
+        font-family: Exo, sans-serif;
+        font-weight: 200;
+        font-size: 18px;
+        line-height: 1.75;
+        padding: 0 16px 64px;
+      }
 
-    figure a:hover {
-      transform: scale(1.01);
-      filter: brightness(1.1);
-    }
-  </style>
-</head>
+      header {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 48px 0 32px;
+        border-bottom: 1px solid #222;
+      }
 
-<body>
-  <nav class="back" aria-label="Site navigation">
-    <a href="./index.html">Play</a>
-    <a href="./practice.html">Practice</a>
-    <a href="https://billiards.tailuge.workers.dev/lobby.html" rel="noopener noreferrer">Lobby</a>
-    <a href="https://scoreboard-tailuge.vercel.app/leaderboard" rel="noopener noreferrer">Leaderboard</a>
-    <a href="https://github.com/tailuge/billiards" rel="noopener noreferrer">GitHub</a>
-    <a href="./blog2.html">Blog: Line Up</a>
-    <a href="./blog3.html">Blog: Cushion Physics</a>
-  </nav>
+      header h1 {
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+        line-height: 1.25;
+        color: #f0f0f0;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
 
-  <header>
-    <h1>
-      Why Most Pool Games Feel Wrong — And What Realistic Cushion Physics
-      Actually Looks Like
-    </h1>
-    <p class="meta">April 2026 · 3 min read</p>
-  </header>
+      header .meta {
+        font-size: 0.85rem;
+        color: #666;
+        font-family: sans-serif;
+      }
 
-  <div class="hero-img">
-    <img src="./images/banner.jpg" alt="Browser-based billiards with realistic physics" loading="lazy" />
-  </div>
+      article {
+        max-width: 720px;
+        margin: 0 auto;
+        padding-top: 40px;
+      }
 
-  <div class="cta" style="max-width: 720px; margin: 16px auto 0; padding: 12px">
-    <a href="./index.html">Play now</a>
-    <a href="./practice.html">Practice</a>
-    <a href="https://billiards.tailuge.workers.dev/lobby.html" rel="noopener noreferrer">Join lobby</a>
-    <a href="https://scoreboard-tailuge.vercel.app/leaderboard" rel="noopener noreferrer">Leaderboard</a>
-    <a href="https://github.com/tailuge/billiards" rel="noopener noreferrer">Source on GitHub</a>
-  </div>
+      h2 {
+        font-size: 1.25rem;
+        color: #c8c8c8;
+        margin: 48px 0 16px;
+        font-weight: 600;
+      }
 
-  <article>
-    <p>
-      If you actually play pool or snooker, you've probably tried a browser
-      game at some point and felt something was off within the first few
-      shots. The cue ball comes off the cushion at the wrong angle. Backspin
-      doesn't carry through the way it should. Side spin seems to do nothing,
-      or too much, or something completely unpredictable.
-    </p>
+      p {
+        margin-bottom: 20px;
+        color: #ccc;
+      }
 
-    <p>
-      It's not just aesthetics. It's the physics. And most games don't bother
-      getting it right.
-    </p>
+      figure {
+        margin: 36px 0;
+      }
 
-    <h2>What most games get wrong</h2>
+      figure img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 4px;
+        border: 1px solid #222;
+      }
 
-    <p>
-      The shortcut most billiards games take is treating cushion bounces as
-      simple angle reflections — angle in equals angle out, maybe with a bit
-      of speed loss. That's fine for a game of Pong. It's not fine if you've
-      ever played a real safety or tried to work the cue ball around the
-      table.
-    </p>
+      figcaption {
+        font-size: 0.8rem;
+        color: #555;
+        font-family: sans-serif;
+        margin-top: 8px;
+        text-align: center;
+      }
 
-    <p>
-      Real cushions don't just redirect the ball. They interact with its spin.
-      A ball with running side comes off shallower. A ball with check side
-      kicks wider. Backspin changes the rebound angle in ways that aren't
-      obvious until you've played enough to feel them. None of that happens in
-      a reflection model.
-    </p>
+      .hero-img {
+        max-width: 720px;
+        margin: 32px auto 0;
+        display: block;
+      }
 
-    <p>
-      Ball-to-ball collisions are similarly simplified in most games. Throw —
-      the slight deflection caused by friction between balls at contact — gets
-      ignored entirely. So does the way spin transfers between balls. The
-      result is a game that looks like pool but doesn't play like it.
-    </p>
+      .hero-img img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+        border: 1px solid #222;
+        display: block;
+      }
 
-    <figure>
-      <img src="./images/t1.png" alt="Early physics simulation showing ball trajectories" loading="lazy" />
-      <figcaption>
-        Early build — getting the trajectories right before worrying about
-        anything else
-      </figcaption>
-    </figure>
+      .cta {
+        margin-top: 48px;
+        padding: 24px;
+        border: 1px solid #2a2a2a;
+        border-radius: 6px;
+        background: #141414;
+      }
 
-    <h2>What's different here</h2>
+      .cta p {
+        margin-bottom: 16px;
+        color: #bbb;
+      }
 
-    <p>
-      This simulation is built on published physics research — specifically
-      work on cushion dynamics and ball mechanics that models what actually
-      happens at the contact point. The cushion bounce accounts for the ball's
-      spin at the moment of impact, the height of the contact point above the
-      table, and the friction between ball and cushion. It's a numerical
-      model, not a lookup table.
-    </p>
+      .cta a {
+        display: inline-block;
+        background: #1e1e1e;
+        color: #ccc;
+        text-decoration: none;
+        padding: 5px 12px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        font-weight: 200;
+        border: 1px solid #333;
+        margin: 3px 3px 3px 0;
+      }
 
-    <p>
-      The cushion model follows
-      <a href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf" rel="noopener">Mathavan et al.
-        (2010)</a>, which works out the slip velocities at both the cushion contact point
-      and the table contact point simultaneously during a bounce. The ball's
-      velocity and spin update together through compression and restitution
-      phases — so the cushion "knows" what spin the ball is carrying and
-      responds accordingly. That's why running side shortens the rebound angle
-      and check side widens it, the same way it does on a real table.
-    </p>
+      .cta a:first-of-type {
+        background: #10b981;
+        color: #fff;
+        border-color: transparent;
+      }
 
-    <figure>
-      <img src="./images/t3.png" alt="Realistic cushion bounce with spin interaction" loading="lazy" />
-      <figcaption>
-        Cushion interaction with side spin — the angle changes depending on
-        what the ball is doing
-      </figcaption>
-    </figure>
+      .cta a:hover {
+        border-color: #555;
+        color: #fff;
+      }
 
-    <figure>
-      <img src="./images/mathavangraphs.jpg" alt="Mathavan cushion model validation graphs" loading="lazy" />
-      <figcaption>
-        Validation graphs from the Mathavan model — simulated results match
-        published figures
-      </figcaption>
-    </figure>
+      .cta a:first-of-type:hover {
+        background: #059669;
+      }
 
-    <p>
-      Ball collisions include throw. If you hit a ball with a bit of
-      right-hand side, the object ball doesn't go exactly where the contact
-      point says it should — it gets thrown slightly left. Real players
-      account for this instinctively. It's the kind of thing that's invisible
-      until it's missing.
-    </p>
+      nav.back {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 24px 0 0;
+        font-family: sans-serif;
+        font-size: 0.7rem;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
 
-    <figure>
-      <img src="./images/topview.png" alt="Overhead view of the table showing ball positions and trajectories"
-        loading="lazy" />
-      <figcaption>
-        Top-down view — useful for seeing how the cue ball actually travels
-        after contact
-      </figcaption>
-    </figure>
+      nav.back a {
+        color: #888;
+        text-decoration: none;
+      }
 
-    <h2>Aiming and shot setup</h2>
+      nav.back a:hover {
+        color: #ccc;
+      }
 
-    <p>
-      The aiming system is designed to get out of the way. You set your line,
-      adjust spin if you want it, and hit. The cue ball goes where the physics
-      says it should go — not where a simplified model decided it should.
-    </p>
+      .side-by-side {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        margin: 48px 0;
+      }
 
-    <figure>
-      <img src="./images/nineball1.jpg" alt="Aiming interface showing shot line and spin selection" loading="lazy" />
-      <figcaption>
-        Shot setup — spin offset moves the contact point on the cue ball
-      </figcaption>
-    </figure>
+      .side-by-side .media {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-    <figure>
-      <img src="./images/distant.png" alt="Long table perspective showing full table layout" loading="lazy" />
-      <figcaption>
-        Long shots look and behave differently — the cue ball path matters
-      </figcaption>
-    </figure>
+      .side-by-side .content {
+        flex: 1;
+      }
 
-    <p>
-      It works on mobile too. Touch controls let you aim and apply spin
-      without needing a mouse.
-    </p>
+      @media (width >=768px) {
+        .side-by-side {
+          flex-direction: row;
+          align-items: flex-start;
+        }
+      }
 
-    <figure>
-      <img src="./images/snooker1.jpg" alt="Mobile aiming interface" loading="lazy" />
-      <figcaption>Mobile aiming — same physics, different input</figcaption>
-    </figure>
+      figure a {
+        display: block;
+        transition:
+          transform 0.2s,
+          filter 0.2s;
+      }
 
-    <h2>Practice and multiplayer</h2>
+      figure a:hover {
+        transform: scale(1.01);
+        filter: brightness(1.1);
+      }
+    </style>
+  </head>
 
-    <p>
-      There's a practice mode where you can set up specific layouts —
-      scattered balls, clusters, line-ups — and work on particular shots. No
-      pressure, just the table and the physics.
-    </p>
+  <body>
+    <nav class="back" aria-label="Site navigation">
+      <a href="./index.html">Play</a>
+      <a href="./practice.html">Practice</a>
+      <a
+        href="https://billiards.tailuge.workers.dev/lobby.html"
+        rel="noopener noreferrer"
+        >Lobby</a
+      >
+      <a
+        href="https://scoreboard-tailuge.vercel.app/leaderboard"
+        rel="noopener noreferrer"
+        >Leaderboard</a
+      >
+      <a href="https://github.com/tailuge/billiards" rel="noopener noreferrer"
+        >GitHub</a
+      >
+      <a href="./blog2.html">Blog: Line Up</a>
+      <a href="./blog3.html">Blog: Cushion Physics</a>
+    </nav>
 
-    <figure>
-      <a href="./practice.html">
-        <img src="./images/practiceback.png" alt="9-ball practice layout with balls positioned on the table"
-          loading="lazy" />
-      </a>
-      <figcaption>
-        Practice mode — drag balls into position, then play
-      </figcaption>
-    </figure>
+    <header>
+      <h1>
+        Why Most Pool Games Feel Wrong — And What Realistic Cushion Physics
+        Actually Looks Like
+      </h1>
+      <p class="meta">April 2026 · 3 min read</p>
+    </header>
 
-    <p>
-      There's also a two-player online mode if you want to play against
-      someone. The lobby is public.
-    </p>
+    <div class="hero-img">
+      <img
+        src="./images/banner.jpg"
+        alt="Browser-based billiards with realistic physics"
+        loading="lazy"
+      />
+    </div>
 
-    <figure>
-      <a href="https://billiards.tailuge.workers.dev/lobby.html">
-        <img src="./images/lobby.jpg" alt="Multiplayer lobby showing available games" loading="lazy" />
-      </a>
-      <figcaption>Online lobby — find a game or start one</figcaption>
-    </figure>
+    <div
+      class="cta"
+      style="max-width: 720px; margin: 16px auto 0; padding: 12px"
+    >
+      <a href="./index.html">Play now</a>
+      <a href="./practice.html">Practice</a>
+      <a
+        href="https://billiards.tailuge.workers.dev/lobby.html"
+        rel="noopener noreferrer"
+        >Join lobby</a
+      >
+      <a
+        href="https://scoreboard-tailuge.vercel.app/leaderboard"
+        rel="noopener noreferrer"
+        >Leaderboard</a
+      >
+      <a href="https://github.com/tailuge/billiards" rel="noopener noreferrer"
+        >Source on GitHub</a
+      >
+    </div>
 
-    <figure>
-      <a href="https://billiards.tailuge.workers.dev/lobby.html">
-        <img src="./images/threecushion1.jpg" alt="Spectating a game in progress" loading="lazy" />
-      </a>
-      <figcaption>You can watch games in progress too</figcaption>
-    </figure>
+    <article>
+      <p>
+        If you actually play pool or snooker, you've probably tried a browser
+        game at some point and felt something was off within the first few
+        shots. The cue ball comes off the cushion at the wrong angle. Backspin
+        doesn't carry through the way it should. Side spin seems to do nothing,
+        or too much, or something completely unpredictable.
+      </p>
 
-    <h2>Does it actually feel right?</h2>
+      <p>
+        It's not just aesthetics. It's the physics. And most games don't bother
+        getting it right.
+      </p>
 
-    <div class="side-by-side">
-      <div class="media">
-        <iframe width="315" height="560" src="https://www.youtube.com/embed/jGNB_XLTjnU"
-          title="Three cushion billiards shot" allow="
+      <h2>What most games get wrong</h2>
+
+      <p>
+        The shortcut most billiards games take is treating cushion bounces as
+        simple angle reflections — angle in equals angle out, maybe with a bit
+        of speed loss. That's fine for a game of Pong. It's not fine if you've
+        ever played a real safety or tried to work the cue ball around the
+        table.
+      </p>
+
+      <p>
+        Real cushions don't just redirect the ball. They interact with its spin.
+        A ball with running side comes off shallower. A ball with check side
+        kicks wider. Backspin changes the rebound angle in ways that aren't
+        obvious until you've played enough to feel them. None of that happens in
+        a reflection model.
+      </p>
+
+      <p>
+        Ball-to-ball collisions are similarly simplified in most games. Throw —
+        the slight deflection caused by friction between balls at contact — gets
+        ignored entirely. So does the way spin transfers between balls. The
+        result is a game that looks like pool but doesn't play like it.
+      </p>
+
+      <figure>
+        <img
+          src="./images/t1.png"
+          alt="Early physics simulation showing ball trajectories"
+          loading="lazy"
+        />
+        <figcaption>
+          Early build — getting the trajectories right before worrying about
+          anything else
+        </figcaption>
+      </figure>
+
+      <h2>What's different here</h2>
+
+      <p>
+        This simulation is built on published physics research — specifically
+        work on cushion dynamics and ball mechanics that models what actually
+        happens at the contact point. The cushion bounce accounts for the ball's
+        spin at the moment of impact, the height of the contact point above the
+        table, and the friction between ball and cushion. It's a numerical
+        model, not a lookup table.
+      </p>
+
+      <p>
+        The cushion model follows
+        <a
+          href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
+          rel="noopener"
+          >Mathavan et al. (2010)</a
+        >, which works out the slip velocities at both the cushion contact point
+        and the table contact point simultaneously during a bounce. The ball's
+        velocity and spin update together through compression and restitution
+        phases — so the cushion "knows" what spin the ball is carrying and
+        responds accordingly. That's why running side shortens the rebound angle
+        and check side widens it, the same way it does on a real table.
+      </p>
+
+      <figure>
+        <img
+          src="./images/t3.png"
+          alt="Realistic cushion bounce with spin interaction"
+          loading="lazy"
+        />
+        <figcaption>
+          Cushion interaction with side spin — the angle changes depending on
+          what the ball is doing
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img
+          src="./images/mathavangraphs.jpg"
+          alt="Mathavan cushion model validation graphs"
+          loading="lazy"
+        />
+        <figcaption>
+          Validation graphs from the Mathavan model — simulated results match
+          published figures
+        </figcaption>
+      </figure>
+
+      <p>
+        Ball collisions include throw. If you hit a ball with a bit of
+        right-hand side, the object ball doesn't go exactly where the contact
+        point says it should — it gets thrown slightly left. Real players
+        account for this instinctively. It's the kind of thing that's invisible
+        until it's missing.
+      </p>
+
+      <figure>
+        <img
+          src="./images/topview.png"
+          alt="Overhead view of the table showing ball positions and trajectories"
+          loading="lazy"
+        />
+        <figcaption>
+          Top-down view — useful for seeing how the cue ball actually travels
+          after contact
+        </figcaption>
+      </figure>
+
+      <h2>Aiming and shot setup</h2>
+
+      <p>
+        The aiming system is designed to get out of the way. You set your line,
+        adjust spin if you want it, and hit. The cue ball goes where the physics
+        says it should go — not where a simplified model decided it should.
+      </p>
+
+      <figure>
+        <img
+          src="./images/nineball1.jpg"
+          alt="Aiming interface showing shot line and spin selection"
+          loading="lazy"
+        />
+        <figcaption>
+          Shot setup — spin offset moves the contact point on the cue ball
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img
+          src="./images/distant.png"
+          alt="Long table perspective showing full table layout"
+          loading="lazy"
+        />
+        <figcaption>
+          Long shots look and behave differently — the cue ball path matters
+        </figcaption>
+      </figure>
+
+      <p>
+        It works on mobile too. Touch controls let you aim and apply spin
+        without needing a mouse.
+      </p>
+
+      <figure>
+        <img
+          src="./images/snooker1.jpg"
+          alt="Mobile aiming interface"
+          loading="lazy"
+        />
+        <figcaption>Mobile aiming — same physics, different input</figcaption>
+      </figure>
+
+      <h2>Practice and multiplayer</h2>
+
+      <p>
+        There's a practice mode where you can set up specific layouts —
+        scattered balls, clusters, line-ups — and work on particular shots. No
+        pressure, just the table and the physics.
+      </p>
+
+      <figure>
+        <a href="./practice.html">
+          <img
+            src="./images/practiceback.png"
+            alt="9-ball practice layout with balls positioned on the table"
+            loading="lazy"
+          />
+        </a>
+        <figcaption>
+          Practice mode — drag balls into position, then play
+        </figcaption>
+      </figure>
+
+      <p>
+        There's also a two-player online mode if you want to play against
+        someone. The lobby is public.
+      </p>
+
+      <figure>
+        <a href="https://billiards.tailuge.workers.dev/lobby.html">
+          <img
+            src="./images/lobby.jpg"
+            alt="Multiplayer lobby showing available games"
+            loading="lazy"
+          />
+        </a>
+        <figcaption>Online lobby — find a game or start one</figcaption>
+      </figure>
+
+      <figure>
+        <a href="https://billiards.tailuge.workers.dev/lobby.html">
+          <img
+            src="./images/threecushion1.jpg"
+            alt="Spectating a game in progress"
+            loading="lazy"
+          />
+        </a>
+        <figcaption>You can watch games in progress too</figcaption>
+      </figure>
+
+      <h2>Does it actually feel right?</h2>
+
+      <div class="side-by-side">
+        <div class="media">
+          <iframe
+            width="315"
+            height="560"
+            src="https://www.youtube.com/embed/jGNB_XLTjnU"
+            title="Three cushion billiards shot"
+            allow="
               accelerometer;
               autoplay;
               clipboard-write;
               encrypted-media;
               gyroscope;
               picture-in-picture;
-            " allowfullscreen loading="lazy"
-          style="display: block; border-radius: 4px; border: 1px solid #222"></iframe>
-        <figcaption style="margin-top: 12px">
-          A real three cushion shot — the kind of spin interaction this
-          simulation aims to replicate
-        </figcaption>
+            "
+            allowfullscreen
+            loading="lazy"
+            style="display: block; border-radius: 4px; border: 1px solid #222"
+          ></iframe>
+          <figcaption style="margin-top: 12px">
+            A real three cushion shot — the kind of spin interaction this
+            simulation aims to replicate
+          </figcaption>
+        </div>
+        <div class="content">
+          <p>
+            That's genuinely subjective. The physics is grounded in real
+            research and the numbers check out against published figures, but
+            "feel" is something only a player can judge.
+          </p>
+          <p>
+            Someone who's spent time at a table will notice things a casual
+            player won't — whether the cue ball comes back the right distance
+            after a stun shot, or whether side spin does what it should off
+            multiple cushions, as seen in this three-cushion demonstration.
+          </p>
+          <p>
+            The honest answer is: it feels more right than most. Whether it
+            feels right to you is something you'd have to try for yourself.
+          </p>
+        </div>
       </div>
-      <div class="content">
+
+      <div class="cta">
         <p>
-          That's genuinely subjective. The physics is grounded in real
-          research and the numbers check out against published figures, but
-          "feel" is something only a player can judge.
+          Playable in the browser, no download, no account. Nine-ball, snooker,
+          three-cushion, or practice mode.
         </p>
-        <p>
-          Someone who's spent time at a table will notice things a casual
-          player won't — whether the cue ball comes back the right distance
-          after a stun shot, or whether side spin does what it should off
-          multiple cushions, as seen in this three-cushion demonstration.
-        </p>
-        <p>
-          The honest answer is: it feels more right than most. Whether it
-          feels right to you is something you'd have to try for yourself.
-        </p>
+        <a href="./index.html">Play now</a>
+        <a href="./practice.html">Practice</a>
+        <a
+          href="https://billiards.tailuge.workers.dev/lobby.html"
+          rel="noopener noreferrer"
+          >Join lobby</a
+        >
+        <a
+          href="https://scoreboard-tailuge.vercel.app/leaderboard"
+          rel="noopener noreferrer"
+          >Leaderboard</a
+        >
+        <a href="https://github.com/tailuge/billiards" rel="noopener noreferrer"
+          >Source on GitHub</a
+        >
       </div>
-    </div>
-
-    <div class="cta">
-      <p>
-        Playable in the browser, no download, no account. Nine-ball, snooker,
-        three-cushion, or practice mode.
-      </p>
-      <a href="./index.html">Play now</a>
-      <a href="./practice.html">Practice</a>
-      <a href="https://billiards.tailuge.workers.dev/lobby.html" rel="noopener noreferrer">Join lobby</a>
-      <a href="https://scoreboard-tailuge.vercel.app/leaderboard" rel="noopener noreferrer">Leaderboard</a>
-      <a href="https://github.com/tailuge/billiards" rel="noopener noreferrer">Source on GitHub</a>
-    </div>
-  </article>
-</body>
-
+    </article>
+  </body>
 </html>

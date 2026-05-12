@@ -110,6 +110,24 @@
         opacity: 1;
       }
 
+      #cue-stick-line {
+        stroke: #e2e8f0;
+        stroke-width: 4;
+        stroke-linecap: round;
+        filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
+        stroke-opacity: 0.8;
+        transition: all 0.1s ease;
+      }
+
+      #spin-indicator {
+        font-size: 10px;
+        font-weight: bold;
+        fill: #ffffff;
+        text-anchor: middle;
+        filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 1));
+        pointer-events: none;
+      }
+
       .btn {
         background: #1e1e1e;
         color: #aaa;
@@ -201,6 +219,10 @@
             height="8"
           />
 
+          <line id="cue-stick-line" x1="0" y1="0" x2="0" y2="0" />
+          <text id="spin-indicator" x="0" y="0"></text>
+
+          <!-- Visualization Layers for target balls -->
           <line id="aim-3-L" class="aim-line" stroke="#f59e0b" opacity="0" />
           <line id="aim-3-R" class="aim-line" stroke="#f59e0b" opacity="0" />
           <circle
@@ -256,9 +278,11 @@
       <button class="btn btn-logic" onclick="showLogic('naturalLongSelect')">
         naturalLongSelect
       </button>
+      <button class="btn btn-logic" onclick="showLogic('checkSpinDirection')">
+        Spin Logic
+      </button>
     </div>
 
-    <!-- Modal for showing logic code -->
     <div id="code-modal" onclick="toggleCodeModal(false)">
       <div id="code-content" onclick="event.stopPropagation()">
         <div class="flex justify-between items-center mb-4">
@@ -326,10 +350,6 @@
         }
       }
 
-      /**
-       * 1. HEURISTIC: Object Assignment
-       * Returns distance to the nearest table corner.
-       */
       function cornerDistance(ball) {
         const corners = [
           { x: HW, y: HH },
@@ -345,10 +365,6 @@
         return minDist
       }
 
-      /**
-       * 2. HEURISTIC: Impact Geometry
-       * Finds the ghost ball position for a specific hit overlap.
-       */
       function calculateGhostBallImpactPoint(cue, target, overlap, radius) {
         const dx = cue.x - target.x,
           dy = cue.y - target.y
@@ -363,31 +379,26 @@
         }
       }
 
-      /**
-       * 3. HEURISTIC: isLongCushion
-       * Detects if the path travels toward the currently highlighted cushion.
-       */
       function isLongCushion(tangentY, ghostY, activeRailY) {
         if (activeRailY === null) return false
         const directionToRail = activeRailY - ghostY
-        // Conflict if tangent Y and distance to rail share the same sign
         return (
           (directionToRail > 0 && tangentY > 0) ||
           (directionToRail < 0 && tangentY < 0)
         )
       }
 
-      /**
-       * 4. HEURISTIC: naturalLongSelect
-       * Calculates dot product between tangent and anchor ball to find safer path.
-       */
       function naturalLongSelect(tanVec, ghostPos, anchorBall) {
         const vToAnchorX = anchorBall.x - ghostPos.x
         const vToAnchorY = anchorBall.y - ghostPos.y
         const mag = Math.hypot(vToAnchorX, vToAnchorY)
         if (mag === 0) return 0
-        // Dot product measures alignment: lower = more "away"
         return tanVec.x * (vToAnchorX / mag) + tanVec.y * (vToAnchorY / mag)
+      }
+
+      function checkSpinDirection(vX, vY, nX, nY) {
+        const crossZ = vX * nY - vY * nX
+        return crossZ > 0
       }
 
       function updateAimGraphics() {
@@ -457,6 +468,9 @@
             }
           }
         }
+
+        let bestGhostPos = null
+        let currentSpin = null
 
         targets.forEach((t) => {
           const target = balls.find((b) => b.id === t.id)
@@ -541,13 +555,72 @@
               d.color = color
             })
 
+            let bestIdx = 0
             if (bothConflict && anchorBall) {
-              const awayIdx = tangentData[0].dot < tangentData[1].dot ? 0 : 1
-              tangentData[awayIdx].color = "#a855f7"
+              bestIdx = tangentData[0].dot < tangentData[1].dot ? 0 : 1
+              tangentData[bestIdx].color = "#a855f7"
+            } else {
+              bestIdx = tangentData[0].conflict ? 1 : 0
             }
+
+            const best = tangentData[bestIdx]
+            bestGhostPos = best.ghostPos
+
+            if (activeRailY !== null) {
+              const nX = 0
+              const nY = activeRailY === (portrait() ? HW : HH) ? -1 : 1
+              currentSpin = checkSpinDirection(best.tx, best.ty, nX, nY)
+            }
+
             tangentData.forEach((d) => (d.el.style.stroke = d.color))
           }
         })
+
+        updateCueStick(cue, bestGhostPos, currentSpin)
+      }
+
+      function updateCueStick(cue, ghostPos, isCW) {
+        const cueLine = document.getElementById("cue-stick-line")
+        const spinLabel = document.getElementById("spin-indicator")
+
+        if (!ghostPos || isCW === null) {
+          cueLine.setAttribute("opacity", "0")
+          spinLabel.setAttribute("opacity", "0")
+          return
+        }
+
+        cueLine.setAttribute("opacity", "1")
+        spinLabel.setAttribute("opacity", "1")
+
+        const dx = ghostPos.x - cue.x,
+          dy = ghostPos.y - cue.y
+        const mag = Math.hypot(dx, dy)
+        const ux = dx / mag,
+          uy = dy / mag
+
+        // Lateral offset for side spin visualization
+        const sideFactor = (isCW ? 1 : -1) * R * 0.6
+        const offsetX = -uy * sideFactor
+        const offsetY = ux * sideFactor
+
+        const p1 = tableToCSS(
+          cue.x - ux * 0.08 + offsetX,
+          cue.y - uy * 0.08 + offsetY
+        )
+        const p2 = tableToCSS(
+          cue.x - ux * 0.4 + offsetX,
+          cue.y - uy * 0.4 + offsetY
+        )
+
+        cueLine.setAttribute("x1", `${p1.left}%`)
+        cueLine.setAttribute("y1", `${p1.top}%`)
+        cueLine.setAttribute("x2", `${p2.left}%`)
+        cueLine.setAttribute("y2", `${p2.top}%`)
+
+        spinLabel.setAttribute("x", `${p2.left}%`)
+        spinLabel.setAttribute("y", `${p2.top + 5}%`)
+        spinLabel.textContent = isCW ? "CW SPIN" : "ACW SPIN"
+        spinLabel.style.fill = isCW ? "#a855f7" : "#06b6d4"
       }
 
       function positionBall(ball) {
@@ -601,6 +674,7 @@
           calculateGhostBallImpactPoint: calculateGhostBallImpactPoint,
           isLongCushion: isLongCushion,
           naturalLongSelect: naturalLongSelect,
+          checkSpinDirection: checkSpinDirection,
         }
 
         const fn = fnMap[fnName]
