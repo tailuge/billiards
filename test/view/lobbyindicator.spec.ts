@@ -138,7 +138,7 @@ describe("LobbyIndicator", () => {
 
     indicator.setTableId(null)
     const secondCall = updatePresenceFn.mock.calls[1]
-    expect(secondCall[0]).to.deep.equal({})
+    expect(secondCall[0]).to.deep.equal({ tableId: undefined })
 
     await indicator.stop()
   })

@@ -143,14 +143,10 @@ export class LobbyIndicator {
     this.updateDisplay()
   }
 
-  setTableId(tableId: string | null): void {
-    this.currentTableId = tableId
+  setTableId(tableId: string | null | undefined): void {
+    this.currentTableId = tableId ?? null
     if (this.lobby) {
-      if (tableId) {
-        this.lobby.updatePresence({ tableId })
-      } else {
-        this.lobby.updatePresence({})
-      }
+      this.lobby.updatePresence({ tableId: tableId ?? undefined } as any)
     }
   }
 
