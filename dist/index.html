@@ -20,7 +20,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
     />
-    <link rel="canonical" href="https://tailuge.github.io/billiards/dist/" />
+    <link rel="canonical" href="/" />
     <meta
       property="og:title"
       content="Billiards Pool Game - Free Online Physics Simulator"
@@ -32,15 +32,15 @@
     <meta property="og:type" content="website" />
     <meta
       property="og:url"
-      content="https://tailuge.github.io/billiards/dist/"
+      content="/"
     />
     <meta
       property="og:image"
-      content="https://tailuge.github.io/billiards/dist/images/promo.png"
+      content="images/promo.png"
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:video" content="https://youtu.be/bAeiRQcQuyg" />
+    <meta property="og:video" content="" />
     <meta property="og:video:type" content="text/html" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
@@ -56,8 +56,8 @@
         "@context": "https://schema.org",
         "@type": "VideoGame",
         "name": "Break Builder - Billiards Pool Game",
-        "url": "https://tailuge.github.io/billiards/dist/",
-        "image": "https://tailuge.github.io/billiards/dist/images/promo.png",
+        "url": "https://github.com/Swallow74/billiards",
+        "image": "https://github.com/Swallow74/billiards/raw/master/dist/images/promo.png",
         "description": "Open source pool and billiards simulation game with realistic physics",
         "applicationCategory": "GameApplication",
         "operatingSystem": "Web",
@@ -68,16 +68,7 @@
         },
         "creator": {
           "@type": "Person",
-          "name": "tailuge"
-        },
-        "subjectOf": {
-          "@type": "VideoObject",
-          "name": "Billiards Pool Game Gameplay",
-          "description": "Realistic physics simulation and gameplay of Break Builder pool game.",
-          "thumbnailUrl": "https://tailuge.github.io/billiards/dist/images/promo.png",
-          "contentUrl": "https://youtu.be/bAeiRQcQuyg",
-          "embedUrl": "https://www.youtube.com/embed/bAeiRQcQuyg",
-          "uploadDate": "2026-04-30"
+          "name": "Swallow74"
         }
       }
     </script>
@@ -91,9 +82,44 @@
     <link rel="stylesheet" type="text/css" href="css/lobby.css" />
     <link rel="stylesheet" type="text/css" href="css/menu.css" />
     <link rel="stylesheet" type="text/css" href="css/wood.css" />
+    <link rel="stylesheet" type="text/css" href="css/gamemenu.css" />
   </head>
 
   <body>
+    <div id="gameMenu">
+      <div class="game-menu-card">
+        <div class="game-menu-logo">🎱</div>
+        <div class="game-menu-title">Billiards</div>
+
+        <div class="game-menu-section">
+          <div class="game-menu-label">Gioco</div>
+          <div class="game-menu-options" id="gameTypeOptions">
+            <div class="game-menu-option" data-value="nineball">9-Ball</div>
+            <div class="game-menu-option" data-value="eightball">8-Ball</div>
+            <div class="game-menu-option" data-value="snooker">Snooker</div>
+            <div class="game-menu-option" data-value="threecushion">3 Sponde</div>
+          </div>
+        </div>
+
+        <div class="game-menu-section">
+          <div class="game-menu-label">Avversario</div>
+          <div class="game-menu-options" id="opponentOptions">
+            <div class="game-menu-option" data-value="practice">Pratica</div>
+            <div class="game-menu-option" data-value="bot">Bot ClawBreak</div>
+            <div class="game-menu-option" data-value="bot_farjaw">Bot TheFarJaw</div>
+            <div class="game-menu-option" data-value="bot_bankshot">Bot BankShot</div>
+            <div class="game-menu-option" data-value="bot_drifter">Bot Drifter</div>
+          </div>
+          <div class="game-menu-bot-desc" id="botDesc"></div>
+        </div>
+
+        <div id="inGameSection" class="game-menu-section" style="display:none">
+          <button class="game-menu-resume" id="resumeBtn">Continua</button>
+        </div>
+        <button class="game-menu-play" id="playBtn">Gioca</button>
+      </div>
+    </div>
+
     <h1 hidden>Free Pool, Billiards and Snooker</h1>
     <div id="viewP1" class="view3d">
       <div id="snookerScoreOverlay">
@@ -121,7 +147,7 @@
           <img src="images/promo.png" alt="promo">
           Play free realistic pool online with accurate physics. Open source billiards simulation in your browser.
           billiards, snooker, 9-ball, pool, carom, three-cushion, online game, free, open source, ビリヤード, スヌーカー, 9ボール, 3クッション, オンラインゲーム, 無料, 당구, 스누커, 9볼, 3쿠션, 온라인 게임, 무료
-          Find it on <a href="https://github.com/tailuge/billiards">github</a> 
+          Find it on <a href="https://github.com/Swallow74/billiards">github</a> 
         </pre>
       </div>
       <div class="chatarea">
@@ -210,6 +236,15 @@
         </button>
         <button
           class="menuButton half-height"
+          title="menu"
+          id="gameMenuBtn"
+          type="submit"
+          aria-label="Menu"
+        >
+          ⏸
+        </button>
+        <button
+          class="menuButton half-height"
           title="concede"
           id="concede"
           type="submit"
@@ -247,7 +282,7 @@
         </span>
       </div>
       <a
-        href="https://billiards.tailuge.workers.dev/lobby.html"
+        href="lobby.html"
         class="pill"
         title="Lobby"
         id="lobbyOverlay"
@@ -300,6 +335,133 @@
         </button>
       </div>
     </section>
+    <script>
+      var botDescriptions = {
+        "practice": "Gioca da solo, esercitati con le tue abilità",
+        "bot": "Sfida il bot ClawBreak — tiri precisi e strategici",
+        "bot_farjaw": "Sfida il bot TheFarJaw — tiri con effetto e traiettorie elaborate",
+        "bot_bankshot": "Sfida il bot BankShot — specializzato in tiri di sponda",
+        "bot_drifter": "Sfida il bot Drifter — gioco posizionale e controllato",
+      }
+
+      function closeMenu() {
+        var menu = document.getElementById("gameMenu")
+        menu.classList.remove("visible")
+        menu.classList.add("hidden")
+      }
+
+      function openMenu(inGame) {
+        var menu = document.getElementById("gameMenu")
+        var playBtn = document.getElementById("playBtn")
+        var section = document.getElementById("inGameSection")
+        menu.classList.remove("hidden")
+        menu.classList.add("visible")
+        if (inGame && section) {
+          section.style.display = "block"
+          playBtn.textContent = "Nuova partita"
+        } else {
+          if (section) section.style.display = "none"
+          playBtn.textContent = "Gioca"
+        }
+      }
+
+      function setupMenuChoices(selectedType, selectedOpp) {
+        var typeOptions = document.querySelectorAll("#gameTypeOptions .game-menu-option")
+        var oppOptions = document.querySelectorAll("#opponentOptions .game-menu-option")
+        var botDesc = document.getElementById("botDesc")
+        var playBtn = document.getElementById("playBtn")
+
+        typeOptions.forEach(function(opt) {
+          if (opt.dataset.value === selectedType) opt.classList.add("selected")
+          opt.addEventListener("click", function() {
+            typeOptions.forEach(function(o) { o.classList.remove("selected") })
+            opt.classList.add("selected")
+            selectedType = opt.dataset.value
+          })
+        })
+
+        oppOptions.forEach(function(opt) {
+          if (opt.dataset.value === selectedOpp) opt.classList.add("selected")
+          opt.addEventListener("click", function() {
+            oppOptions.forEach(function(o) { o.classList.remove("selected") })
+            opt.classList.add("selected")
+            selectedOpp = opt.dataset.value
+            botDesc.textContent = botDescriptions[selectedOpp] || ""
+          })
+        })
+
+        botDesc.textContent = botDescriptions[selectedOpp] || ""
+
+        playBtn.addEventListener("click", function() {
+          var botName = ""
+          if (selectedOpp === "bot") {
+            botName = "ClawBreak"
+          } else if (selectedOpp === "bot_farjaw") {
+            botName = "TheFarJaw"
+          } else if (selectedOpp === "bot_bankshot") {
+            botName = "BankShot"
+          } else if (selectedOpp === "bot_drifter") {
+            botName = "Drifter"
+          }
+          var url = location.pathname + "?ruletype=" + selectedType
+          if (botName) {
+            url += "&bot=" + botName
+          } else {
+            url += "&practice=true"
+          }
+          location.href = url
+        })
+      }
+
+      function setupMenuButton() {
+        var menuBtn = document.getElementById("gameMenuBtn")
+        var resumeBtn = document.getElementById("resumeBtn")
+        if (menuBtn) {
+          menuBtn.addEventListener("click", function() {
+            if (window.container && window.container.pause) {
+              window.container.pause()
+              openMenu(true)
+            }
+          })
+        }
+        if (resumeBtn) {
+          resumeBtn.addEventListener("click", resumeGame)
+        }
+      }
+
+      function initMenu() {
+        var params = new URLSearchParams(location.search)
+        var isMultiplayer = params.has("websocketserver") || params.has("replay") || params.has("spectator")
+        var hasGameParams = params.has("bot") || params.has("practice") || isMultiplayer
+
+        setupMenuButton()
+
+        if (hasGameParams) {
+          document.getElementById("gameMenu").classList.add("hidden")
+          return
+        }
+
+        window.__menuActive = true
+
+        var existingRuletype = params.get("ruletype") || "nineball"
+
+        openMenu(false)
+        setupMenuChoices(existingRuletype, "practice")
+      }
+
+      function resumeGame() {
+        closeMenu()
+        if (window.container && window.container.resume) {
+          window.container.resume()
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initMenu)
+      } else {
+        initMenu()
+      }
+    </script>
     <script defer src="three_core.js"></script>
     <script defer src="three_module.js"></script>
     <script defer src="three_examples.js"></script>

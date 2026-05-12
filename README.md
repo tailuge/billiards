@@ -1,37 +1,29 @@
 # billiards
 
-[![codecov](https://codecov.io/gh/tailuge/billiards/branch/master/graph/badge.svg?token=BH11KRAEL0)](https://codecov.io/gh/tailuge/billiards)
-[![CodeFactor](https://www.codefactor.io/repository/github/tailuge/billiards/badge)](https://www.codefactor.io/repository/github/tailuge/billiards)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=tailuge_billiards&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=tailuge_billiards)
-[![Tests](https://github.com/tailuge/billiards/actions/workflows/main.yml/badge.svg)](https://github.com/tailuge/billiards/actions/workflows/main.yml)
-[![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards)
-![GitHub](https://img.shields.io/github/license/tailuge/billiards.svg)
+This is a **fork** of [tailuge/billiards](https://github.com/tailuge/billiards), an open-source project bringing unsophisticated billiards physics written in Typescript to the browser. Playable locally in any modern browser with WebGL support.
 
-[![Demo and Screenshot](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)](https://billiards.tailuge.workers.dev/?bot=TheFarJaw)
+![Screenshot](dist/images/screenshot-2026.png)
 
-This is an open-source project bringing unsophisticated billiards physics written in typescript to the browser.
+## Run locally
 
-## Online Demo
+```shell
+nvm use v24.11.0
+corepack enable
+yarn install
+yarn serve
+```
 
-Demos run in all major desktop and mobile browsers and uses WebGL
+Then open <http://localhost:8080/> to play.
 
-* [Nine ball ⬀](https://billiards.tailuge.workers.dev/?practice=true) make a break and share replay link with friends
-* [Three cushion billiards ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion) the ultimate test of physics and player (average on both counts). You need the [beginner mode ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&practice=true) 
-* [Snooker ⬀](https://billiards.tailuge.workers.dev/?ruletype=snooker) we await the first 147 submission to the leaderboard.
-* Play vs the [Claw ⬀](https://billiards.tailuge.workers.dev/?bot=ClawBreak) and [TheFarJaw ⬀](https://billiards.tailuge.workers.dev/?bot=TheFarJaw).
-* Try [two player](https://billiards.tailuge.workers.dev/lobby.html) online lobby using nchan
-* Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard) hosted on vercel.com
-* Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
-* Set up trick shots and [practice ⬀](https://billiards.tailuge.workers.dev/practice.html). Tune three cushion [physics ⬀](https://tailuge.github.io/billiards/dist/diagrams/three.html). 
+Features: 9-ball, 8-ball, snooker, three-cushion billiards, practice mode, and bot opponents (ClawBreak, TheFarJaw, BankShot, Drifter). 
 
 ## Features
 
-* Backspin, sidespin an cushion bounces well modeled.
+* Backspin, sidespin and cushion bounces well modeled.
 * Presentation using WebGL in any modern browser on mobile, linux, mac or windows.
 * Record and playback breaks.
-* Two player online mode with nchan nginx server.
-* Nine ball, snooker and three cushion billiards rules.
-* Deploys to github pages, vercel.com and render.com with github actions.
+* Nine ball, eight ball, snooker and three cushion billiards rules.
+* Bot opponents with multiple AI strategies.
 * Runs on and was developed mostly on a potato e.g. Raspberry pi 4.
 
 ## Reference material
@@ -76,7 +68,7 @@ $M_{xy} = \frac{7}{5\sqrt{2}} R \mu m g$ , $M_z = \frac{2}{3} \mu m g \rho$
 
 #### collisions
 
-Based on paper by [Alciatore](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) incorporating throw effect due to the small amount of friction between balls. Figures to prove consistency between the [code](./src/model/physics/collisionthrow.ts) and paper [here](https://tailuge.github.io/billiards/dist/diagrams/mathavan.html).
+Based on paper by [Alciatore](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) incorporating throw effect due to the small amount of friction between balls. See [code](./src/model/physics/collisionthrow.ts).
 
 
 For ball $a$:
@@ -113,7 +105,7 @@ $\hat{t}$: tangential unit vector perpendicular to $\hat{n}$.
 
 #### cushion bounce
 
-This is based on a paper by [Mathavan](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf). Many of the [figures](https://tailuge.github.io/billiards/dist/diagrams/mathavan.html) from the paper are recreated to confirm correctness.
+This is based on a paper by [Mathavan](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf).
 
 Slip velocity at cushion contact point I
 
@@ -185,26 +177,11 @@ Some of the Mathavan equations not supplied by the paper were inferred to bridge
 
 ## Useful commands
 
-### Install
+### Build
 
 ```shell
-nvm use v24.11.0
-corepack enable
-yarn set version 4.9.1
-yarn install
-yarn dev
-yarn gltfpack
+yarn build
 ```
-
-This generates artefacts in /dist for prod deployment (e.g. on github static pages)
-
-### Run
-
-```shell
-yarn serve
-```
-
-Then open <http://localhost:8080/> in your browser to play
 
 ### Test
 
@@ -213,21 +190,12 @@ yarn test
 yarn coverage
 ```
 
-### Maintain
+### Lint
 
 ```shell
-yarn deps
-yarn upgrade -L
+yarn lint
 yarn prettify
 ```
-
-### Two player
-
-```shell
-yarn serve
-```
-
-then open <http://localhost:8080/multi.html> to see options, message server is public nchan.
 
 ## Controls
 
@@ -249,31 +217,7 @@ Use mouse, touch screen or keyboard:
 
 <kbd style="border: 1px solid #aaa; border-radius: 0.2em; padding: 0.1em 0.3em; font-size: 0.85em;">Space</kbd> Hit - hold for more power
 
-## Progress snapshots
 
-July 2018
-
-![2018](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t1.png)
-
-July 2019
-
-![2019](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t2.png)
-
-March 2021
-
-![2021](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)
-
-August 2023 (mobile)
-
-top | aim  
-:--:|:--:
-<kbd>![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile1.jpg)</kbd> | <kbd>![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile2.jpg)</kbd>
-
-[![2026](https://img.youtube.com/vi/jGNB_XLTjnU/0.jpg)](https://www.youtube.com/watch?v=jGNB_XLTjnU)
-
-Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=tailuge/billiards&type=Date)](https://star-history.com/#tailuge/billiards&Date)
 
 
 ## Licence 
