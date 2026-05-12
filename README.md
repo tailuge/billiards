@@ -1,6 +1,6 @@
-# billiards
+# green-felt
 
-This is a **fork** of [tailuge/billiards](https://github.com/tailuge/billiards), an open-source project bringing unsophisticated billiards physics written in Typescript to the browser. Playable locally in any modern browser with WebGL support.
+A **fork** of [tailuge/billiards](https://github.com/tailuge/billiards), an open-source project bringing unsophisticated billiards physics written in Typescript to the browser. Playable locally in any modern browser with WebGL support.
 
 ![Screenshot](dist/images/screenshot-2026.png)
 
