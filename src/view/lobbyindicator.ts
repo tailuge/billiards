@@ -21,10 +21,12 @@ export class LobbyIndicator {
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
   private currentTableId: string | null = null
   private readonly replayMode: boolean
+  private readonly isSpectator: boolean
   private opponentOnline: boolean | null = null
   constructor(botMode: boolean, replayMode: boolean, rules: Rules) {
     this.rules = rules
     this.replayMode = replayMode
+    this.isSpectator = Session.getInstance().spectator
     if (botMode) {
       this.ruleType = "bot"
     } else if (replayMode) {
@@ -94,12 +96,14 @@ export class LobbyIndicator {
       userName: string
       ruleType: string
       tableId?: string
+      isSpectator?: boolean
     } = {
       messageType: "presence",
       type: "join",
       userId,
       userName,
       ruleType: this.ruleType,
+      ...(this.isSpectator && { isSpectator: true }),
     }
     if (this.currentTableId) {
       presence.tableId = this.currentTableId
@@ -189,7 +193,7 @@ export class LobbyIndicator {
         statusEmoji = " <span class='status-emoji'>🔴</span>"
       }
     }
-    this.countElement.innerHTML = `${session.playername} 👥${this.count}${statusEmoji}`
+    this.countElement.innerHTML = `${session.playername} ${this.isSpectator ? "👀" : "👥"}${this.count}${statusEmoji}`
   }
 
   private updateChallengePill(challenged: boolean): void {
