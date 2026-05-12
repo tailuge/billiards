@@ -41,6 +41,7 @@ export class End extends Controller {
       }
       this.container.scoreReporter.submitMatchResult(this.result)
     }
+    this.container.lobbyIndicator.setTableId(null)
 
     const wasBotWin = !this.result && Session.isBotMode()
     if (wasBotWin) {
