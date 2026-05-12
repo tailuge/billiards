@@ -1,38 +1,51 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
-- `src/` contains all TypeScript source code. Core areas include `src/model` (physics), `src/view` (rendering/UI), `src/controller` (state system/input/game flow), and `src/network` (multiplayer).
-- `test/` contains Jest tests organized by domain.
-- `dist/` holds built artifacts and assets used for deployment (models, HTML, CSS, images).
-- `dist/index.html` is the main game page.
+## Project
+3D billiards/snooker (Three.js + TypeScript + Webpack). Play at `http://localhost:8080/`.
 
-## Build, Test, and Development Commands
-- `yarn serve` starts the webpack dev server; open `http://localhost:8080/`.
-- `yarn build` produces a production build via webpack.
-- `yarn test` runs Jest with the repo’s config.
-- `yarn coverage` runs Jest with coverage reporting.
-- `yarn lint` runs `tsc --noEmit` and ESLint.
-- `yarn lint:css` runs stylelint on CSS files in `dist/css/`.
-- `yarn prettify` formats JS/TS/JSON/CSS/HTML and caches results.
+## Setup
+```shell
+nvm use v24.11.0
+corepack enable
+yarn install
+```
 
-## Coding Style & Naming Conventions
-- TypeScript is the primary language; keep types explicit at public boundaries.
-- Indentation follows the existing codebase (2 spaces in TS/JS files) no semicolons.
-- Filenames are lower-case and descriptive. Tests use `*.spec.ts` (e.g., `test/model/cushion.spec.ts`).
-- **Always** run ESLint and Prettier after changes `yarn lint` and **`yarn prettify`**.
+## Commands
+| Command | What it does |
+|---------|-------------|
+| `yarn dev` | webpack (single build) |
+| `yarn build` | `version-gen + webpack` (CI uses this) |
+| `yarn serve` | `concurrently "yarn watch" "yarn start-server"` → http://localhost:8080/ |
+| `yarn lint` | `tsc --noEmit && eslint .` |
+| `yarn lint:css` | stylelint on `dist/**/*.{css,html}` |
+| `yarn test` | `jest --config ./test/jest.config.js --verbose --silent` |
+| `yarn coverage` | same as test + coverage |
+| `yarn prettify` | prettier with `--trailing-comma es5 --no-semi` |
+| `yarn gltfpack` | minifies glTF models in `dist/models/` |
 
-## Testing Guidelines
-- Jest is the test runner; configuration is in `test/jest.config.js`.
-- Add tests alongside the affected domain (e.g., physics changes in `test/model`).
-- Run `yarn test` locally before submitting; `yarn coverage` for deeper validation.
-- After making changes, run `yarn lint` and `yarn test`.
+## Quality gate (run in order)
+1. `yarn lint` (tsc + eslint)
+2. `yarn test`
+3. `yarn prettify`
 
-## Configuration Notes
-- Node/Yarn usage matches the README instructions (Yarn 1.x; see `package.json` engines).
+## Architecture
+- **MVC-ish**: `src/model/` (physics), `src/view/` (rendering/UI), `src/controller/` (state machine: aim, playshot, replay, etc.)
+- **Entry points**: `src/index.ts` (main game), `src/diagrams.ts`, `src/mathavan.ts`, `src/compare.ts`
+- **Events**: 23 event types in `src/events/` drive the game loop
+- **Network**: `src/network/client/` (multiplayer client), `src/network/bot/` (AI players)
+- **Physics**: `src/model/physics/` — collision, cushion, pocket, knuckle, throw, mathavan
+- **Test mocks**: GLTFExporter, GLTFLoader, sound in `test/mocks/`
 
-## Basic Quality Checks
+## Conventions
+- No semicolons, 2-space indent, trailing commas where ES5 allows (`prettier --no-semi --trailing-comma es5`)
+- No `any` restrictions, unused vars warn with `_` prefix, `require()` allowed
+- `*.spec.ts` test files mirror `src/` structure under `test/`
+- `VERSION` auto-generated from date into `src/utils/version.ts` by `version-gen`
 
-Before submitting changes, ensure the following commands pass:
-- **Build:** `yarn dev`
-- **Test:** `yarn test`
-- **Format:** `yarn prettify`
+## Gotchas
+- `yarn build` fails if `src/utils/version.ts` is missing (auto-generated)
+- `packageManager: yarn@4.9.1` — **not Yarn v1**
+- ESLint uses flat config (`eslint.config.mjs`), not `.eslintrc`
+- Test config at `test/jest.config.js` (not root), uses SWC transform, jsdom env
+- `dist/*.js` is gitignored except `dist/lobby.js`
+- `.opencode/`, `.jules/`, `.qwen/`, etc. are gitignored

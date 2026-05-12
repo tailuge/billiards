@@ -67,9 +67,10 @@ node_modules/
 
 
 
-# Gemini context
+# Agent context
 
 .opencode/
+AGENTS.md
 .codex
 conductor/
 .jules/
