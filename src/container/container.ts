@@ -40,6 +40,7 @@ import { PlayShot } from "../controller/playshot"
 import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
 import { BallTray } from "../view/ball-tray"
+import { HelpButton } from "../view/help"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -130,6 +131,7 @@ export class Container {
       this.replayMode,
       this.rules
     )
+    new HelpButton()
     this.updateController(new Init(this))
     //  this.updateController(new End(this))
   }
