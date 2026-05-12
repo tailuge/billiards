@@ -1,64 +1,58 @@
-#helpBtn {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.25);
-  font-family: var(--font-family-primary, sans-serif);
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 22px;
-  text-align: center;
-  cursor: pointer;
-  user-select: none;
-  z-index: 500;
-  transition: background 0.2s, color 0.2s;
-}
-#helpBtn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  color: rgba(255, 255, 255, 0.6);
-}
-
 #helpOverlay {
   position: absolute;
-  bottom: 36px;
-  right: 8px;
+  top: 8px;
+  left: 8px;
   z-index: 500;
-  display: none;
-}
-#helpOverlay.visible {
-  display: block;
+  pointer-events: none;
 }
 
 #helpContent {
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.55);
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 8px 12px;
   font-family: var(--font-family-primary, sans-serif);
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.85);
-  line-height: 1.8;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
   white-space: nowrap;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
+
+#helpContent .help-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
 #helpContent kbd {
   display: inline-block;
-  min-width: 90px;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: var(--font-family-mono, monospace);
-  font-size: 11px;
-}
-#helpContent .help-row span {
-  margin-left: 8px;
-}
-#helpContent .help-touch {
-  margin-top: 4px;
-  padding-top: 4px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-#helpContent .help-touch span {
-  font-size: 11px;
+  min-width: 95px;
   color: rgba(255, 255, 255, 0.4);
+  font-family: var(--font-family-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+}
+
+#helpContent .help-row span {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+@media (max-width: 600px) {
+  #helpOverlay {
+    top: 4px;
+    left: 4px;
+  }
+  #helpContent {
+    font-size: 9px;
+    padding: 5px 8px;
+    line-height: 1.5;
+  }
+  #helpContent kbd {
+    min-width: 65px;
+    font-size: 8px;
+  }
+  #helpContent .help-row {
+    gap: 6px;
+  }
 }
