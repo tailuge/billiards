@@ -80,6 +80,7 @@ export class Container {
   private hudActivePlayer: ActivePlayer = 0
   private wasReplay: boolean = false
 
+  paused = false
   last = performance.now()
   readonly step = 0.001953125 * 1
 
@@ -273,7 +274,22 @@ export class Container {
 
   lastEventTime = performance.now()
 
+  pause() {
+    this.paused = true
+  }
+
+  resume() {
+    this.paused = false
+  }
+
   animate(timestamp): void {
+    if (this.paused) {
+      this.view.render()
+      requestAnimationFrame((t) => {
+        this.animate(t)
+      })
+      return
+    }
     this.advance((timestamp - this.last) / 1000)
     this.last = timestamp
     this.processEvents()

@@ -4,7 +4,9 @@ import { getCanvas } from "./utils/dom"
 import { VERSION } from "./utils/version"
 import { ClientErrorReporter } from "./network/client/clienterrorreporter"
 
-initialise()
+if (!(globalThis as any).__menuActive) {
+  initialise()
+}
 
 function initialise() {
   const errorReporter = new ClientErrorReporter(

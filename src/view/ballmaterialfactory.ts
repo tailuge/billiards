@@ -1,19 +1,12 @@
-import {
-  Color,
-  MeshPhongMaterial,
-  MeshPhysicalMaterial,
-  MeshStandardMaterial,
-} from "three"
+import { Color, MeshPhysicalMaterial } from "three"
 import { R } from "../model/physics/constants"
 import { BallTextureFactory } from "./balltexturefactory"
 import { BallCubeTextureFactory } from "./ballcubetexturefactory"
 import { Session } from "../network/client/session"
 
 export class BallMaterialFactory {
-  private static readonly materialCache: Map<
-    string,
-    MeshStandardMaterial | MeshPhongMaterial | MeshPhysicalMaterial
-  > = new Map()
+  private static readonly materialCache: Map<string, MeshPhysicalMaterial> =
+    new Map()
 
   static createTexturedDotsMaterial(color: Color): MeshPhysicalMaterial {
     const key = `texturedDots_${color.getHex()}`
@@ -26,6 +19,10 @@ export class BallMaterialFactory {
       color: color,
       roughness: 0.1,
       metalness: 0.05,
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.1,
+      reflectivity: 0.5,
+      envMapIntensity: 0.6,
     })
 
     material.onBeforeCompile = (shader: any) => {
@@ -55,19 +52,20 @@ export class BallMaterialFactory {
     return material
   }
 
-  static createDottedMaterial(color: Color): MeshPhongMaterial {
+  static createDottedMaterial(color: Color): MeshPhysicalMaterial {
     const key = `dotted_${color.getHex()}`
     if (this.materialCache.has(key)) {
-      return this.materialCache.get(key) as MeshPhongMaterial
+      return this.materialCache.get(key) as MeshPhysicalMaterial
     }
 
-    const material = new MeshPhongMaterial({
-      emissive: 0,
-      flatShading: true,
+    const material = new MeshPhysicalMaterial({
       vertexColors: true,
-      forceSinglePass: true,
-      shininess: 25,
-      specular: 0x555533,
+      roughness: 0.15,
+      metalness: 0.0,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.05,
+      reflectivity: 0.5,
+      envMapIntensity: 0.6,
       transparent: false,
       depthWrite: true,
     })
@@ -79,10 +77,10 @@ export class BallMaterialFactory {
     label: number,
     color: Color,
     size = 256
-  ): MeshStandardMaterial {
+  ): MeshPhysicalMaterial {
     const key = `projected_${label}_${color.getHex()}_${size}`
     if (this.materialCache.has(key)) {
-      return this.materialCache.get(key) as MeshStandardMaterial
+      return this.materialCache.get(key) as MeshPhysicalMaterial
     }
 
     const numberTexture = BallTextureFactory.getOrCreateTexture(
@@ -93,21 +91,25 @@ export class BallMaterialFactory {
 
     const material =
       Session.getLod() <= 1
-        ? new MeshStandardMaterial({
+        ? new MeshPhysicalMaterial({
             color: color,
-            roughness: 0.5,
-            metalness: 0,
-            flatShading: true,
+            roughness: 0.2,
+            metalness: 0.0,
+            clearcoat: 0.7,
+            clearcoatRoughness: 0.05,
+            reflectivity: 0.5,
+            envMapIntensity: 0.6,
             transparent: false,
             depthWrite: true,
           })
         : new MeshPhysicalMaterial({
             color: color,
             roughness: 0.1,
-            metalness: 0,
+            metalness: 0.0,
             clearcoat: 1.0,
             clearcoatRoughness: 0.02,
             reflectivity: 0.5,
+            envMapIntensity: 0.8,
           })
 
     material.onBeforeCompile = (shader: any) => {

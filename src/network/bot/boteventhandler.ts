@@ -23,6 +23,8 @@ import { isFirstShot } from "../../utils/utils"
 import { BotShotContext, BotStrategy } from "./botstrategy"
 import { ClawBreak } from "./strategies/clawbreak"
 import { TheFarJaw } from "./strategies/thefarjaw"
+import { BankShot } from "./strategies/bankshot"
+import { Drifter } from "./strategies/drifter"
 
 class BotContainer {
   table
@@ -65,13 +67,26 @@ export class BotEventHandler {
     this.calculator = new AimCalculator()
     const botName =
       new URLSearchParams(globalThis.location.search).get("bot") ?? "ClawBreak"
-    this.strategy = botName === "TheFarJaw" ? new TheFarJaw() : new ClawBreak()
+    this.strategy = this.selectStrategy(botName)
     this.botRules = RuleFactory.create(
       container.rules.rulename,
       new BotContainer(container)
     )
     if (container.rules.rulename === "threecushion") {
       this.botRules.cueball = this.container.table.balls[1]
+    }
+  }
+
+  private selectStrategy(name: string): BotStrategy {
+    switch (name) {
+      case "TheFarJaw":
+        return new TheFarJaw()
+      case "BankShot":
+        return new BankShot()
+      case "Drifter":
+        return new Drifter()
+      default:
+        return new ClawBreak()
     }
   }
 

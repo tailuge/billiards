@@ -2,7 +2,7 @@ import { Scene, WebGLRenderer, Frustum, Matrix4, AmbientLight } from "three"
 import { Camera } from "./camera"
 import { AimEvent } from "../events/aimevent"
 import { Table } from "../model/table"
-import { Grid } from "./grid"
+import { TableMarkings } from "./tablemarkings"
 import { renderer } from "../utils/webgl"
 import { Assets } from "./assets"
 import { Snooker } from "../controller/rules/snooker"
@@ -91,7 +91,7 @@ export class View {
     this.scene.add(this.assets.table)
     this.table.mesh = this.assets.table
     if (this.assets.rules.asset !== Snooker.tablemodel) {
-      this.scene.add(new Grid().generateLineSegments())
+      this.scene.add(new TableMarkings().generate())
     }
   }
 

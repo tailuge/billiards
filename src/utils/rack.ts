@@ -58,8 +58,8 @@ export class Rack {
   static cueBall(pos, label?: number) {
     return new Ball(
       Rack.jitter(pos),
-      0xfaebd7,
-      label,
+      0xffffff,
+      label ?? 0,
       Rack.unlabeledAppearance()
     )
   }

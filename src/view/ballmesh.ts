@@ -2,14 +2,12 @@ import {
   IcosahedronGeometry,
   Matrix4,
   Mesh,
-  MeshPhongMaterial,
   CircleGeometry,
   MeshBasicMaterial,
   ArrowHelper,
   Color,
   BufferAttribute,
   Vector3,
-  MeshStandardMaterial,
   MeshPhysicalMaterial,
   Scene,
   Line,
@@ -35,7 +33,7 @@ export class BallMesh {
     if (!this._ballGeometry) {
       this._ballGeometry = new IcosahedronGeometry(
         R,
-        Math.max(1, Session.getLod())
+        Math.max(4, Session.getLod())
       )
     }
     return this._ballGeometry
@@ -43,10 +41,7 @@ export class BallMesh {
 
   private static getShadowGeometry() {
     if (!this._shadowGeometry) {
-      this._shadowGeometry = new CircleGeometry(
-        R * 0.9,
-        Session.getLod() <= 1 ? 9 : 24
-      )
+      this._shadowGeometry = new CircleGeometry(R * 0.9, 32)
       this._shadowGeometry.applyMatrix4(
         new Matrix4().makeTranslation(0, 0, -R * 0.99)
       )
@@ -120,10 +115,7 @@ export class BallMesh {
 
   initialiseMesh(color: Color, label?: number, appearance?: BallAppearance) {
     let geometry: IcosahedronGeometry
-    let material:
-      | MeshPhongMaterial
-      | MeshStandardMaterial
-      | MeshPhysicalMaterial
+    let material: MeshPhysicalMaterial
     const effectiveAppearance =
       appearance ?? (label === undefined ? "dotted" : "projected")
 
@@ -131,7 +123,7 @@ export class BallMesh {
       const key = color.getHex()
       let cached = BallMesh._dottedGeometryCache.get(key)
       if (!cached) {
-        cached = new IcosahedronGeometry(R, Math.max(1, Session.getLod()))
+        cached = new IcosahedronGeometry(R, Math.max(4, Session.getLod()))
         BallMesh.addDots(cached, color)
         BallMesh._dottedGeometryCache.set(key, cached)
       }
