@@ -67,3 +67,11 @@ export function setμw(val: number) {
 export function setee(val: number) {
   ee = val
 }
+
+// Tangential impulse fraction relative to paper TP A-14
+// Reduced from theoretical 1.0 as empirical tuning
+export let throwFactor = 0.25
+
+export function setThrowFactor(val: number) {
+  throwFactor = val
+}

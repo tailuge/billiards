@@ -180,12 +180,16 @@ export function muCushion(v: Vector3) {
 
 export function restitutionCushion(v: Vector3) {
   const e = 0.39 + 0.257 * v.x - 0.044 * v.x * v.x
-  return e
+  return Math.max(0, e)
 }
 
 function cartesionToBallCentric(v, w) {
   const mathavan = new Mathavan(m, R, ee, μs, μw)
-  mathavan.solve(v.x, v.y, w.x, w.y, w.z)
+  try {
+    mathavan.solve(v.x, v.y, w.x, w.y, w.z)
+  } catch {
+    return bounceHanBlend(v, w)
+  }
 
   const rv = new Vector3(mathavan.vx, mathavan.vy, 0)
   const rw = new Vector3(mathavan.ωx, mathavan.ωy, mathavan.ωz)
