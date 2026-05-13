@@ -181,7 +181,7 @@
     .topbar h1 { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem; overflow: hidden; }
     .panel-title { font-weight: bold; margin-bottom: 0.25rem; font-size: 0.8rem; color: var(--text-dim); text-align: center; }
-    .main-row { display: flex; gap: 0.2rem; flex-shrink: 0; }
+    .main-row { display: flex; gap: 0.2rem; flex-shrink: 0; margin-bottom: 3px; }
     .main-row .solo { flex: 0 0 auto; }
     .main-row .players { flex: 1; display: flex; flex-direction: column; }
     .info-row { display: flex; flex-direction: column; }
