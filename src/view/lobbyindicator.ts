@@ -189,7 +189,11 @@ export class LobbyIndicator {
         statusEmoji = " <span class='status-emoji'>🔴</span>"
       }
     }
-    this.countElement.innerHTML = `${session.playername} ${this.isSpectator ? "👀" : "👥"}${this.count}${statusEmoji}`
+
+    // if replay mode then set name from queryparam userName
+    const params = new URLSearchParams(globalThis.location?.search ?? "")
+    const name = this.replayMode ? params.get("userName") ?? "Anon" : session.playername
+    this.countElement.innerHTML = `${name} ${this.isSpectator ? "👀" : "👥"}${this.count}${statusEmoji}`
   }
 
   private updateChallengePill(challenged: boolean): void {

@@ -196,7 +196,7 @@ describe("LobbyIndicator", () => {
     const indicator2 = new LobbyIndicator(false, true, mockRules)
     await indicator2.init()
     const countElement2 = element?.querySelector(".lobby-count") as HTMLElement
-    expect(countElement2.textContent).to.equal("Player 1 👥0")
+    expect(countElement2.textContent).to.equal("Anon 👥0")
     await indicator2.stop()
   })
 })
