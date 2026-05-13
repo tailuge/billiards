@@ -57,7 +57,7 @@
     :host { font-family: 'Exo', sans-serif; font-weight: 200; }
 `,v=p`
     :host { font-family: 'Exo', sans-serif; font-weight: 200; }
-    button { cursor: pointer; padding: 0.15rem 0.4rem; border: 1px solid var(--btn-border); border-radius: 4px; background: var(--btn-bg); color: var(--text); font: inherit; font-size: 0.75rem; transition: background-color 0.2s, opacity 0.2s; }
+    button { cursor: pointer; padding: 0.15rem 0.4rem; border: 1px solid var(--btn-border); border-radius: 4px; background: var(--btn-bg); color: var(--text); font: inherit; font-size: 0.75rem; transition: background-color 0.2s, opacity 0.2s; min-width: 24px; min-height: 24px; }
     button:hover { background-color: var(--btn-hover); }
     button:active { background-color: var(--btn-active); }
     button:focus-visible { outline: 2px solid #007bff; outline-offset: 2px; }
@@ -415,7 +415,7 @@
                     <li>${T(i)} <span>${i}</span> <span class="count">${n}</span></li>
                 `)}
             </ul>`}};customElements.define("stats-panel",Me);var Ne=class r extends ${static properties={_open:{state:!0},_notifEnabled:{state:!0},_showStats:{state:!0},_copied:{state:!0}};static LOD_LABELS=["pixelated","polygons","high poly","shaders","antialiased"];static styles=[v,M,p`
-        .burger { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0.1rem 0.3rem; color: var(--text-muted); line-height: 1; }
+        .burger { background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0.1rem 0.3rem; color: var(--text-muted); line-height: 1; min-width: 32px; min-height: 32px; }
         .burger:hover { color: var(--text); background: none; }
         .row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--text); }
         .section-title { font-size: 0.75rem; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-top: 0.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 2px; }
@@ -428,7 +428,7 @@
         }
         @keyframes fadein { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .lod-label { font-weight: bold; color: var(--link); }
-    `];constructor(){super(),this._open=!1,this._showStats=!1,this._copied=!1,this._theme=document.documentElement.getAttribute("theme")||"light",this._notifEnabled=Notification.permission==="granted"}_toggle(e){e.stopPropagation(),this._open=!this._open}_close(){this._open=!1}_setTheme(e){let t=e.target.checked?"dark":"light";this._theme=t,document.documentElement.setAttribute("theme",t),localStorage.setItem("theme",t),this.dispatchEvent(new CustomEvent("theme-changed",{detail:t,bubbles:!0,composed:!0}))}_share(){navigator.share&&/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)?navigator.share({title:document.title,url:location.href}):navigator.clipboard.writeText(location.href).then(()=>{this._copied=!0,setTimeout(()=>{this._copied=!1},2e3)})}async _toggleNotifications(e){if(e.target.checked){let t=await Notification.requestPermission();this._notifEnabled=t==="granted"}else this._notifEnabled=!1;this.requestUpdate()}render(){return o`
+    `];constructor(){super(),this._open=!1,this._showStats=!1,this._copied=!1,this._theme=document.documentElement.getAttribute("theme")||"light",this._notifEnabled=Notification.permission==="granted",this._onKeydown=this._onKeydown.bind(this)}connectedCallback(){super.connectedCallback(),window.addEventListener("keydown",this._onKeydown)}disconnectedCallback(){super.disconnectedCallback(),window.removeEventListener("keydown",this._onKeydown)}_onKeydown(e){this._open&&e.key==="Escape"&&this._close()}_toggle(e){e.stopPropagation(),this._open=!this._open}_close(){this._open=!1}_setTheme(e){let t=e.target.checked?"dark":"light";this._theme=t,document.documentElement.setAttribute("theme",t),localStorage.setItem("theme",t),this.dispatchEvent(new CustomEvent("theme-changed",{detail:t,bubbles:!0,composed:!0}))}_share(){navigator.share&&/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)?navigator.share({title:document.title,url:location.href}):navigator.clipboard.writeText(location.href).then(()=>{this._copied=!0,setTimeout(()=>{this._copied=!1},2e3)})}async _toggleNotifications(e){if(e.target.checked){let t=await Notification.requestPermission();this._notifEnabled=t==="granted"}else this._notifEnabled=!1;this.requestUpdate()}render(){return o`
             <button class="burger" aria-label="Settings" aria-expanded="${this._open}" @click=${this._toggle}>&#9776;</button>
             ${this._open?o`
                 <div class="backdrop" @click=${e=>e.target===e.currentTarget&&this._close()}>
@@ -451,8 +451,8 @@
 
                         <div class="section-title">🎨 Graphics</div>
                         <div class="row" style="flex-direction: column; align-items: flex-start; gap: 2px;">
-                            <label style="font-size: 0.75rem;">Quality: <span class="lod-label">${r.LOD_LABELS[g.lod]||g.lod}</span></label>
-                            <input type="range" min="0" max="4" step="1" .value=${g.lod} @input=${e=>g.setLod(e.target.value)} style="width: 100%;">
+                            <label for="quality-range" style="font-size: 0.75rem;">Quality: <span class="lod-label">${r.LOD_LABELS[g.lod]||g.lod}</span></label>
+                            <input id="quality-range" type="range" min="0" max="4" step="1" .value=${g.lod} @input=${e=>g.setLod(e.target.value)} style="width: 100%;">
                         </div>
 
                         <div class="section-title">🤝 Community</div>
@@ -472,23 +472,25 @@
                 </div>`:""}
         `}};customElements.define("settings-modal",Ne);var Ue=class extends u{static properties={_theme:{type:String,reflect:!0,attribute:"theme"}};static styles=ot;constructor(){super(),console.log("URL:",window.location.href),console.log("Search params:",Object.fromEntries(new URLSearchParams(window.location.search))),this._theme=document.documentElement.getAttribute("theme")||"light"}get _ctrl(){return this.shadowRoot.querySelector("online-panel")}render(){return o`
             <div class="container">
-                <div class="topbar">
-                    <img src="assets/threecushion.png" class="logo" alt="Logo">
+                <header class="topbar">
+                    <img src="assets/threecushion.png" class="logo" alt="Billiards Logo">
                     <h1><a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener">Billiards</a></h1>
                     <user-badge></user-badge>
                     <settings-modal @theme-changed=${e=>{this._theme=e.detail}}></settings-modal>
-                </div>
-                <div class="main-row">
-                    <div class="solo">
-                        <div class="panel">
-                            <div class="panel-title">Solo Practice</div>
-                            <solo-panel></solo-panel>
+                </header>
+                <main>
+                    <div class="main-row">
+                        <div class="solo">
+                            <div class="panel">
+                                <div class="panel-title">Solo Practice</div>
+                                <solo-panel></solo-panel>
+                            </div>
                         </div>
+                        <div class="players panel"><online-panel></online-panel></div>
                     </div>
-                    <div class="players panel"><online-panel></online-panel></div>
-                </div>
-                <div class="info-row"><info-panel></info-panel></div>
-                <footer style="text-align:center;font-size:0.7rem;opacity:0.5;padding:0.5rem 0">
+                    <div class="info-row"><info-panel></info-panel></div>
+                </main>
+                <footer style="text-align:center;font-size:0.7rem;opacity:0.7;padding:0.5rem 0">
                     Thanks for playing at <a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener" style="color:inherit">tailuge/billiards</a>. Stick around and challenge online for a free game or two.
                 </footer>
             </div>
