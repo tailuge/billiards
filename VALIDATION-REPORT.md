@@ -35,3 +35,4 @@ The following pages are present in the `dist/` directory but missing from the si
 1. **Update `sitemap.xml`**: Add missing game modes and diagram pages to improve crawlability and SEO.
 2. **Cleanup**: Remove `<priority>` and `<changefreq>` tags to adhere to modern standards.
 3. **Freshness**: Update `<lastmod>` to the current date (`2026-05-13`) for the new entries.
+4. **Alternate Links**: Added `xhtml:link` elements pointing to the Workers-hosted environment (`https://billiards.tailuge.workers.dev/`) to help search engines understand the relationship between the GitHub Pages and Workers deployments.
