@@ -276,3 +276,4 @@ label {
 #botDebugLog::-webkit-scrollbar-thumb:hover {
   background: #777;
 }
+h1 { font-family: sans-serif; font-size: 12px; color: #555; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 1000; pointer-events: none; margin: 0; }
