@@ -84,9 +84,7 @@ describe("LobbyIndicator", () => {
     expect(document.getElementById("challengePill")?.hidden).to.be.true
     expect(document.getElementById("challengeDecline")).to.not.be.null
     expect(countElement?.classList.contains("is-hidden")).to.be.false
-    expect(element?.getAttribute("href")).to.equal(
-      LOBBY_URL + "?userName=TestPlayer&userId=test-client"
-    )
+    expect(element?.getAttribute("href")).to.equal(LOBBY_URL)
   })
 
   it("handles non-anchor elements and click events", async () => {
@@ -112,9 +110,7 @@ describe("LobbyIndicator", () => {
     }) as any
 
     div.click()
-    expect(openedUrl).to.equal(
-      LOBBY_URL + "?userName=TestPlayer&userId=test-client"
-    )
+    expect(openedUrl).to.equal(LOBBY_URL)
 
     await indicator.stop()
     div.remove()

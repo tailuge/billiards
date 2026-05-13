@@ -215,8 +215,12 @@ export class LobbyIndicator {
       return url.toString()
     }
 
-    url.searchParams.set("userName", session.playername)
-    url.searchParams.set("userId", session.clientId)
+    // if this page was loaded with query param test then set the user name
+    const params = new URLSearchParams(globalThis.location?.search ?? "")
+    if (params.get("test")) {
+      url.searchParams.set("userName", session.playername)
+      url.searchParams.set("userId", session.clientId)
+    }
 
     if (!this.challenger) {
       return url.toString()
