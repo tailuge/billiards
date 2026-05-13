@@ -100,4 +100,9 @@
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/symmetry.html" />
     <lastmod>2026-05-13</lastmod>
   </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/index.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/index.html" />
+    <lastmod>2026-05-13</lastmod>
+  </url>
 </urlset>
