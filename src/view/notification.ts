@@ -254,7 +254,7 @@ export class Notification {
         Rematch.navigate(Session.getInstance())
         break
       case "lobby":
-        Rematch.redirectToLobby(undefined, Session.getInstance())
+        Rematch.redirectToLobby()
         break
     }
   }
