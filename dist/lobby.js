@@ -458,7 +458,9 @@ h1 a { color: inherit; text-decoration: none; }
                             <input id="quality-range" type="range" min="0" max="4" step="1" .value=${f.lod} @input=${e=>f.setLod(e.target.value)} style="width: 100%;">
                         </div>
 
-                        <div class="section-title">🤝 Community</div>
+                        <button class="cancel" @click=${this._close} style="margin-top: 0.5rem;">Close</button>
+
+                        <div class="section-title">Links</div>
                         <div class="row"><a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener"><span>🛠️</span> Support</a></div>
                         <div class="row"><a href="https://scoreboard-tailuge.vercel.app/usage.html" target="_blank" rel="noopener"><span>📊</span> Usage</a></div>
                         <div class="row">
@@ -470,10 +472,9 @@ h1 a { color: inherit; text-decoration: none; }
                         <div class="row"><a href="#" @click=${e=>{e.preventDefault(),this._showStats=!this._showStats}}><span>📈</span> Stats</a></div>
 
                         ${this._showStats?l`<div><strong style="font-size:0.82rem">Recent visitors</strong><stats-panel></stats-panel></div>`:""}
-                        <button class="cancel" @click=${this._close} style="margin-top: 0.5rem;">Close</button>
                     </div>
                 </div>`:""}
-        `}};customElements.define("settings-modal",De);var Ut=112,ze=class extends b{static properties={_theme:{type:String,reflect:!0,attribute:"theme"}};static styles=bt;constructor(){super(),console.log("URL:",window.location.href),console.log("Search params:",Object.fromEntries(new URLSearchParams(window.location.search))),this._theme=document.documentElement.getAttribute("theme")||"light"}get _ctrl(){return this.shadowRoot.querySelector("online-panel")}render(){return l`
+        `}};customElements.define("settings-modal",De);var Ut=115,ze=class extends b{static properties={_theme:{type:String,reflect:!0,attribute:"theme"}};static styles=bt;constructor(){super(),console.log("URL:",window.location.href),console.log("Search params:",Object.fromEntries(new URLSearchParams(window.location.search))),this._theme=document.documentElement.getAttribute("theme")||"light"}get _ctrl(){return this.shadowRoot.querySelector("online-panel")}render(){return l`
             <div class="container">
                 <header class="topbar">
                     <img src="assets/threecushion.png" class="logo" alt="Billiards Logo">
