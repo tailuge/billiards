@@ -27,7 +27,7 @@ export class Replay extends ControllerBase {
   timer
   init
   diagram?: boolean
-  constructor(container, init, shots, retry = false, delay = 1500, diagram?) {
+  constructor(container, init, shots, _retry = false, delay = 1500, diagram?) {
     super(container)
     this.init = init
     this.diagram = diagram
