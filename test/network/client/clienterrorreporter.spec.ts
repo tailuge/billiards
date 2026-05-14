@@ -28,12 +28,9 @@ describe("ClientErrorReporter", () => {
     // Force flush
     ;(reporter as any).flush()
 
-    expect(globalThis.navigator.sendBeacon).toHaveBeenCalled()
-    const payload = JSON.parse(
-      (globalThis.navigator.sendBeacon as jest.Mock).mock.calls[0][1]
-    )
-    expect(payload[0].message).toBe("Test error")
-    expect(payload[0].type).toBe("error")
+    expect(globalThis.navigator.sendBeacon).not.toHaveBeenCalled()
+    expect(globalThis.fetch).not.toHaveBeenCalled()
+    expect((reporter as any).queue).toHaveLength(0)
   })
 
   it("should skip 'Backpack' warning if configured or hardcoded", () => {
@@ -43,5 +40,6 @@ describe("ClientErrorReporter", () => {
     ;(reporter as any).flush()
 
     expect(globalThis.navigator.sendBeacon).not.toHaveBeenCalled()
+    expect(globalThis.fetch).not.toHaveBeenCalled()
   })
 })

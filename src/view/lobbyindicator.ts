@@ -192,7 +192,9 @@ export class LobbyIndicator {
 
     // if replay mode then set name from queryparam userName
     const params = new URLSearchParams(globalThis.location?.search ?? "")
-    const name = this.replayMode ? params.get("userName") ?? "Anon" : session.playername
+    const name = this.replayMode
+      ? (params.get("userName") ?? "Anon")
+      : session.playername
     this.countElement.innerHTML = `${name} ${this.isSpectator ? "👀" : "👥"}${this.count}${statusEmoji}`
   }
 

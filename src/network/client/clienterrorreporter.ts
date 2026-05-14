@@ -43,7 +43,6 @@ export interface ErrorReport {
 }
 
 export class ClientErrorReporter {
-  private readonly endpoint: string
   private readonly sid: string
   private queue: ErrorReport[] = []
   private readonly seen = new Map<string, number>()
@@ -60,7 +59,7 @@ export class ClientErrorReporter {
   private originalConsoleLog?: typeof console.log
 
   constructor(
-    endpoint: string,
+    _endpoint: string,
     options?: {
       maxPerKey?: number
       flushIntervalMs?: number
@@ -68,7 +67,6 @@ export class ClientErrorReporter {
       captureAll?: boolean
     }
   ) {
-    this.endpoint = endpoint
     this.sid = this.generateSid()
     this.maxPerKey = options?.maxPerKey ?? 3
     this.flushIntervalMs = options?.flushIntervalMs ?? 5000
@@ -185,26 +183,11 @@ export class ClientErrorReporter {
     }
   }
 
-  private flush(useBeacon = true) {
+  private flush(_useBeacon = true) {
     try {
       if (!this.queue.length) return
 
-      const payload = JSON.stringify(this.queue)
       this.queue = []
-
-      if (useBeacon && navigator.sendBeacon) {
-        navigator.sendBeacon(this.endpoint, payload)
-        return
-      }
-
-      fetch(this.endpoint, {
-        method: "POST",
-        body: payload,
-        keepalive: true,
-        headers: { "content-type": "application/json" },
-      }).catch(() => {
-        // do nothing
-      })
     } catch {
       // do nothing
     }
