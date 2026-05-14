@@ -93,14 +93,6 @@ describe("Controller Replay", () => {
     done()
   })
 
-  it("Replay and retry moves to Aim", (done) => {
-    container.controller = new Replay(container, state.init, state.shots, true)
-    expect(container.eventQueue.length).to.be.equal(1)
-    container.processEvents()
-    expect(container.controller).to.be.an.instanceof(Aim)
-    done()
-  })
-
   it("BreakEvent takes Aim to Replay", (done) => {
     container.controller = new Aim(container)
     container.eventQueue.push(new BreakEvent(state.init, state.shots))

@@ -39,18 +39,12 @@ export class Replay extends ControllerBase {
     this.container.table.updateFromShortSerialised(this.init)
     console.log(`shots: ${this.shots.length}`)
     console.log(`shots: ${JSON.stringify(this.shots)}`)
-    if (retry) {
-      const retryEvent = new BreakEvent(init, shots, this.diagram)
-      retryEvent.retry = true
-      this.container.eventQueue.push(retryEvent)
-    } else {
-      this.container.view.camera.forceMode(
-        this.diagram
-          ? this.container.view.camera.topView
-          : this.container.view.camera.spectatorView
-      )
-      this.playNextShot(this.delay * 1.5)
-    }
+    const suggestCamera =
+      this.diagram || this.container.rules.rulename == "threecushion"
+        ? this.container.view.camera.topView
+        : this.container.view.camera.spectatorView
+    this.container.view.camera.forceMode(suggestCamera)
+    this.playNextShot(this.delay * 1.5)
   }
 
   override onFirst() {
