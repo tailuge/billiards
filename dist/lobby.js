@@ -252,7 +252,7 @@ h1 a { color: inherit; text-decoration: none; }
             <div class="group hiscores">
                 <div class="group-body">
                     ${i.map(n=>l`
-                        <div class="tbl"><table><caption>${N(n)} <a href="${k}/leaderboard" target="_blank" rel="noopener" style="font-weight:200;font-size:0.75rem">HiScore</a></caption>
+                        <div class="tbl"><table><caption><a href="${k}/leaderboard" target="_blank" rel="noopener" style="font-weight:200;font-size:0.75rem">${N(n)} HiScore</a></caption>
                         <tr><th>Name</th><th></th></tr>
                             ${e[n].slice(0,4).map((a,c)=>l`<tr><td>${Ie(c)} ${a.name}</td><td><replay-button url="${Ce(`${k}/api/rank/${a.id}?ruletype=${n}&lod=${f.lod}`,f.clientId,f.userName)}" label="${a.score}"></replay-button></td></tr>`)}
                         </table></div>
@@ -474,7 +474,7 @@ h1 a { color: inherit; text-decoration: none; }
                         ${this._showStats?l`<div><strong style="font-size:0.82rem">Recent visitors</strong><stats-panel></stats-panel></div>`:""}
                     </div>
                 </div>`:""}
-        `}};customElements.define("settings-modal",De);var Ut=117,ze=class extends b{static properties={_theme:{type:String,reflect:!0,attribute:"theme"}};static styles=bt;constructor(){super(),console.log("URL:",window.location.href),console.log("Search params:",Object.fromEntries(new URLSearchParams(window.location.search))),this._theme=document.documentElement.getAttribute("theme")||"light"}get _ctrl(){return this.shadowRoot.querySelector("online-panel")}render(){return l`
+        `}};customElements.define("settings-modal",De);var Ut=118,ze=class extends b{static properties={_theme:{type:String,reflect:!0,attribute:"theme"}};static styles=bt;constructor(){super(),console.log("URL:",window.location.href),console.log("Search params:",Object.fromEntries(new URLSearchParams(window.location.search))),this._theme=document.documentElement.getAttribute("theme")||"light"}get _ctrl(){return this.shadowRoot.querySelector("online-panel")}render(){return l`
             <div class="container">
                 <header class="topbar">
                     <img src="assets/threecushion.png" class="logo" alt="Billiards Logo">
