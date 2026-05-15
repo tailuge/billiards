@@ -228,6 +228,12 @@ export class LobbyIndicator {
       url.searchParams.set("userId", session.clientId)
     }
 
+    // if the userName is Anon set userId in search params. Allows for challenges
+    if (session.playername == "Anon") {
+      url.searchParams.set("userId", session.clientId)
+    }
+
+
     if (!this.challenger) {
       return url.toString()
     }
