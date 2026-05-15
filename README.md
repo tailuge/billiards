@@ -16,17 +16,19 @@ This is an open-source project bringing unsophisticated billiards physics writte
 Demos run in all major desktop and mobile browsers and uses WebGL
 
 * [Nine ball ⬀](https://billiards.tailuge.workers.dev/?practice=true) make a break and share replay link with friends
-* [Three cushion billiards ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion) the ultimate test of physics and player (average on both counts). You need the [beginner mode ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&practice=true) 
+* [Three cushion billiards ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&lod=4) the ultimate test of physics and player (average on both counts). You need the [beginner mode ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&practice=true) 
 * [Snooker ⬀](https://billiards.tailuge.workers.dev/?ruletype=snooker) we await the first 147 submission to the leaderboard.
+* [8-Ball ⬀](https://billiards.tailuge.workers.dev/?ruletype=eightball&lod=4) try it in Hi-Res mode!
 * Play vs the [Claw ⬀](https://billiards.tailuge.workers.dev/?bot=ClawBreak) and [TheFarJaw ⬀](https://billiards.tailuge.workers.dev/?bot=TheFarJaw).
 * Try [two player](https://billiards.tailuge.workers.dev/lobby.html) online lobby using nchan
 * Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard) hosted on vercel.com
 * Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
-* Set up trick shots and [practice ⬀](https://billiards.tailuge.workers.dev/practice.html). Tune three cushion [physics ⬀](https://tailuge.github.io/billiards/dist/diagrams/three.html). 
+* Set up trick shots and [practice ⬀](https://billiards.tailuge.workers.dev/practice.html). 
+* Tune three cushion [physics ⬀](https://tailuge.github.io/billiards/dist/diagrams/three.html). 
 
 ## Features
 
-* Backspin, sidespin an cushion bounces well modeled.
+* Backspin, sidespin and cushion bounces well modeled.
 * Presentation using WebGL in any modern browser on mobile, linux, mac or windows.
 * Record and playback breaks.
 * Two player online mode with nchan nginx server.
@@ -192,7 +194,7 @@ nvm use v24.11.0
 corepack enable
 yarn set version 4.9.1
 yarn install
-yarn dev
+yarn build
 yarn gltfpack
 ```
 
