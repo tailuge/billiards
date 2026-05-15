@@ -130,6 +130,8 @@ export class BotEventHandler {
       if (this.handleEightBallEarlyPot(outcome)) {
         return
       }
+      const respotted = this.botRules.respot(outcome)
+      respotted.forEach((ball) => ball.fround())
       this.handlePot(pots, outcome)
       return
     }
