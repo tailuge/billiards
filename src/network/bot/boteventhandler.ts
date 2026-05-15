@@ -130,7 +130,13 @@ export class BotEventHandler {
       if (this.handleEightBallEarlyPot(outcome)) {
         return
       }
-      const respotted = this.botRules.respot(outcome)
+      // In snooker, don't respot colours once all reds have been potted
+      const isSnooker = this.container.rules.rulename === "snooker"
+      const redsOnTable = isSnooker
+        ? SnookerUtils.redsOnTable(this.container.table)
+        : []
+      const shouldRespot = !isSnooker || redsOnTable.length > 0
+      const respotted = shouldRespot ? this.botRules.respot(outcome) : []
       respotted.forEach((ball) => ball.fround())
       this.handlePot(pots, outcome)
       return
