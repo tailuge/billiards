@@ -26,6 +26,16 @@ Features: 9-ball, 8-ball, snooker, three-cushion billiards, practice mode, and b
 * Bot opponents with multiple AI strategies.
 * Runs on and was developed mostly on a potato e.g. Raspberry pi 4.
 
+## Fork changes
+
+Modifiche apportate rispetto al progetto originale [tailuge/billiards](https://github.com/tailuge/billiards):
+
+* **Physics improvements** — cushion restitution clamp, Mathavan fallback per collisioni mancanti, refactor `throwFactor` in costanti configurabili.
+* **Visual upgrades** — increased ball polygon detail for smoother spheres, uniform white cue ball.
+* **Help overlay** — always-visible overlay with unobtrusive help button, larger fonts, mobile-friendly horizontal row layout.
+* **README & branding** — renamed to green-felt, screenshot updated, focus on local/offline setup.
+* **Development docs** — `AGENTS.md` with repo guidelines for AI-assisted tooling.
+
 ## Reference material
 
 * Papers on ball mechanics [Han 2005](https://billiards.colostate.edu/physics_articles/Han_paper.pdf)
