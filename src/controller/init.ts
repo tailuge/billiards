@@ -5,7 +5,7 @@ import { WatchAim } from "./watchaim"
 import { ControllerBase } from "./controllerbase"
 import { BreakEvent } from "../events/breakevent"
 import { PlaceBall } from "./placeball"
-import { Replay } from "./replay"
+import { Replay } from "../controller/replay"
 import { Session } from "../network/client/session"
 import { Spectate } from "./spectate"
 import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
@@ -21,7 +21,18 @@ export class Init extends ControllerBase {
     return "Init"
   }
 
+  override onFirst() {
+    const session = Session.getInstance()
+    if (!session.spectator && !this.container.isSinglePlayer && session.first) {
+      this.container.notification.show(
+        { type: "Info", title: "Waiting for opponent" },
+        0
+      )
+    }
+  }
+
   override handleBegin(_: BeginEvent): Controller {
+    this.container.notification.clear()
     if (Session.isSpectator()) {
       return new Spectate(
         this.container,

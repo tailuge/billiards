@@ -390,7 +390,10 @@ export class BotEventHandler {
     this.botRules.currentBreak += pots
     this.assignEightBallType(session, outcome)
 
-    if (this.container.rules.rulename === "snooker" && this.botRules.isEndOfGame(outcome, this.botType())) {
+    if (
+      this.container.rules.rulename === "snooker" &&
+      this.botRules.isEndOfGame(outcome, this.botType())
+    ) {
       this.handleGameEnd()
       return
     }

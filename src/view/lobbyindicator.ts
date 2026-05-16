@@ -233,7 +233,6 @@ export class LobbyIndicator {
       url.searchParams.set("userId", session.clientId)
     }
 
-
     if (!this.challenger) {
       return url.toString()
     }

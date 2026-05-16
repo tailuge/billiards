@@ -11,7 +11,7 @@ xdescribe("Snooker Rules Engine", () => {
     // 2. Initial Transient State
     const initialState = {
       currentBreak: 0,
-      data: { phase: 'BLACK' }
+      data: { phase: "BLACK" },
     }
 
     // 3. Execution

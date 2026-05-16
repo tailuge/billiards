@@ -6,7 +6,7 @@ xdescribe("EightBall Rules Engine - Foul Scenario", () => {
   it("should handle potting the 8-ball early as a foul and switch control", () => {
     // 1. Setup
     // Table with 8-ball and other group balls (simplified simulation)
-    const table = new Table([]) 
+    const table = new Table([])
     const outcome: Outcome[] = [] // Mock: 8-ball potted, but still objects remaining
 
     // 2. Initial Transient State
@@ -14,7 +14,7 @@ xdescribe("EightBall Rules Engine - Foul Scenario", () => {
       currentBreak: 0,
       playerScore: 0,
       opponentScore: 0,
-      data: { group: 'STRIPE' }
+      data: { group: "STRIPE" },
     }
 
     // 3. Execution

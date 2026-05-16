@@ -8,7 +8,8 @@ export class Session {
     readonly spectator: boolean,
     readonly botMode: boolean = false,
     readonly practiceMode: boolean = false,
-    public readonly lod: number = 1
+    readonly lod: number = 1,
+    readonly first: boolean = false
   ) {}
 
   rematchInfo?: RematchInfo | undefined
@@ -66,7 +67,8 @@ export class Session {
     spectator: boolean,
     botMode: boolean = false,
     practiceMode: boolean = false,
-    lod: number = 1
+    lod: number = 1,
+    first: boolean = false
   ) {
     Session.instance = new Session(
       playername,
@@ -75,7 +77,8 @@ export class Session {
       spectator,
       botMode,
       practiceMode,
-      lod
+      lod,
+      first
     )
     Session.instance.initializeScores()
     if (botMode) {

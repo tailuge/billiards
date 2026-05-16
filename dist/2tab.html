@@ -20,7 +20,7 @@
   <script>
     const urlParams = new URLSearchParams(window.location.search)
     const websocketserver =
-      urlParams.get("websocketserver") ?? "ws://localhost:8080"
+      urlParams.get("websocketserver") ?? "ws://localhost:80"
     const ruletype = urlParams.get("ruletype") ?? "nineball"
     const shotClock = urlParams.get("shotClock")
     const practice = urlParams.get("practice")
@@ -32,7 +32,10 @@
     if (practice) {
       url += `&practice=${practice}`
     }
-    window.open(`${url}&userId=p1id&userName=P1&first=true`, "_blank")
-    window.open(`${url}&userId=p2id&userName=P2`, "_blank")
+    console.log(`${url}&userId=p1id&userName=P1&first=true`)
+    console.log(`${url}&userId=p2id&userName=P2`)
+    
+//    window.open(`${url}&userId=p1id&userName=P1&first=true`, "_blank")
+//    window.open(`${url}&userId=p2id&userName=P2`, "_blank")
   </script>
 </html>
