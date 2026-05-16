@@ -223,7 +223,7 @@ export class Notification {
       ) as HTMLElement | null
       const uploadUrl = uploadButton?.dataset.notificationUploadUrl
       if (uploadUrl) {
-        globalThis.open(uploadUrl, "_blank", "noopener,noreferrer")
+        globalThis.location.replace(uploadUrl)
         return
       }
       const button = target?.closest(

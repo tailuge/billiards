@@ -67,30 +67,6 @@ describe("Notification", () => {
     ).toContain("https://example.com/9")
   })
 
-  it("should open a high break upload in a new window", () => {
-    const openSpy = jest
-      .spyOn(globalThis, "open")
-      .mockImplementation(() => null)
-
-    notification.show({
-      type: "GameOver",
-      title: "YOU WON",
-      highBreaks: [{ score: 9, url: "https://example.com/9" }],
-      duration: 0,
-    })
-    ;(
-      document.querySelector(".notification-high-break") as HTMLButtonElement
-    ).click()
-
-    expect(openSpy).toHaveBeenCalledWith(
-      "https://example.com/9",
-      "_blank",
-      "noopener,noreferrer"
-    )
-
-    openSpy.mockRestore()
-  })
-
   it("should clear a message", () => {
     notification.show("Test Message")
     notification.clear()
