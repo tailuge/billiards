@@ -96,9 +96,7 @@
       }
     </style>
     <script>
-      const _t =
-        localStorage.getItem("theme") ||
-        (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      const _t = localStorage.getItem("theme") || "dark"
       document.documentElement.setAttribute("theme", _t)
     </script>
   </head>
