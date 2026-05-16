@@ -387,7 +387,14 @@ export class BotEventHandler {
     )
     const session = Session.getInstance()
     session.addOpponentScore(pots)
+    this.botRules.currentBreak += pots
     this.assignEightBallType(session, outcome)
+
+    if (this.container.rules.rulename === "snooker" && this.botRules.isEndOfGame(outcome, this.botType())) {
+      this.handleGameEnd()
+      return
+    }
+
     const { p1: s1, p2: s2 } = session.orderedScoresForHud()
     this.container.sendScoreUpdate(
       s1,

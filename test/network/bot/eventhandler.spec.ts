@@ -542,6 +542,38 @@ describe("BotEventHandler Respot Logic", () => {
     expect(sendScoreUpdateSpy).toHaveBeenCalledWith(4, 0, 0, 1)
   })
 
+  it("snooker: bot pots final ball and game ends correctly without sending extra StartAimEvent", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+
+    const snookerContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "snooker",
+    })
+
+    const events: GameEvent[] = []
+    const handler = createBotEventHandler(snookerContainer, events)
+    const updateControllerSpy = jest.spyOn(snookerContainer, "updateController")
+
+    // Mock initial check to return false (as if score is stale)
+    jest.spyOn(snookerContainer.rules, "isEndOfGame").mockReturnValue(false)
+    // Mock botRules check to return true (after score update in handlePot)
+    jest.spyOn(handler.botRules, "isEndOfGame").mockReturnValue(true)
+    // Mock foulReason to be null
+    jest.spyOn(handler.botRules, "foulReason").mockReturnValue(null)
+    // Mock scoring
+    jest.spyOn(handler.botRules, "getAmountScored").mockReturnValue(7)
+
+    handler.handle(mockEvent(EventType.BEGIN))
+
+    // Verify handleGameEnd was called
+    expect(updateControllerSpy).toHaveBeenCalled()
+    // Verify NO StartAimEvent was sent (which handlePot would have done otherwise)
+    expect(events.find((e) => e instanceof StartAimEvent)).toBeUndefined()
+  })
+
   it("snooker foul: bot pots red and black - black is respotted, StartAimEvent sent", () => {
     Ball.id = 0
     const snookerContainer = new Container({
