@@ -33,6 +33,7 @@ export class Init extends ControllerBase {
 
   override handleBegin(_: BeginEvent): Controller {
     this.container.notification.clear()
+    this.showTwoPlayerScores()
     if (Session.isSpectator()) {
       return new Spectate(
         this.container,
@@ -56,7 +57,14 @@ export class Init extends ControllerBase {
     this.container.rules.secondToPlay()
     this.container.table.updateFromSerialised(event.json)
     Session.getInstance().playerIndex = 1
+    this.showTwoPlayerScores()
     return new WatchAim(this.container)
+  }
+
+  private showTwoPlayerScores() {
+    if (!this.container.isSinglePlayer) {
+      this.container.updateScoreHud(0, 0, 0)
+    }
   }
 
   override handleBreak(event: BreakEvent): Controller {
