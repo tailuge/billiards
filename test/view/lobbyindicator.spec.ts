@@ -7,6 +7,7 @@ import { LOBBY_URL } from "../../src/utils/gameover"
 // Mock the @tailuge/messaging module
 jest.mock("@tailuge/messaging", () => ({
   MessagingClient: jest.fn().mockImplementation(() => ({
+    setVersion: jest.fn(),
     start: jest.fn(),
     joinLobby: jest.fn().mockResolvedValue({
       onUsersChange: jest.fn(),

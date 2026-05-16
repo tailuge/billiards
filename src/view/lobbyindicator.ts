@@ -3,6 +3,7 @@ import { Session } from "../network/client/session"
 import { Rules } from "../controller/rules/rules"
 import { id } from "../utils/dom"
 import { LOBBY_URL } from "../utils/gameover"
+import { VERSION } from "../utils/version"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
@@ -84,6 +85,7 @@ export class LobbyIndicator {
     this.messagingClient = new MessagingClient({
       baseUrl: LobbyIndicator.NCHAN_URL,
     })
+    this.messagingClient.setVersion(VERSION)
     this.messagingClient.start()
 
     const params = new URLSearchParams(globalThis.location?.search ?? "")
