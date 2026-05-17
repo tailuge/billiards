@@ -431,6 +431,26 @@ describe("Snooker", () => {
     done()
   })
 
+  it("handleGameEnd sends events to other player when current player loses by score", () => {
+    container.isSinglePlayer = false
+    Session.init("1", "Player A", "table", false)
+    const session = Session.getInstance()
+    session.playerIndex = 0
+    session.opponentName = "Player B"
+    broadcastEvents = []
+    container.broadcast = (x) => broadcastEvents.push(x)
+
+    // Player A clears the table, but has lower score than Player B
+    Session.getInstance().updateScoresFromNetwork(10, 20, 0)
+
+    snooker.handleGameEnd(true)
+
+    // Check if any events were broadcast
+    expect(broadcastEvents).to.not.be.empty
+
+    Session.reset()
+  })
+
   afterEach(() => {
     Session.reset()
   })
