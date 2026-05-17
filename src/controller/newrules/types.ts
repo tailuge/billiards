@@ -1,5 +1,5 @@
-import { Table } from "../model/table"
-import { Outcome } from "../model/outcome"
+import { Table } from "../../model/table"
+import { Outcome } from "../../model/outcome"
 
 export type Flow = "CONTINUE" | "SWITCH" | "GAME_OVER"
 export type Action = "START_AIM" | "PLACE_BALL" | "NONE"

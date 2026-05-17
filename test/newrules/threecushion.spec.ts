@@ -1,6 +1,6 @@
 import { Table } from "../../src/model/table"
 import { Outcome, OutcomeType } from "../../src/model/outcome"
-import { NewRules, TransientState } from "../../src/newrules/types"
+import { NewRules, TransientState } from "../../src/controller/newrules/types"
 
 xdescribe("ThreeCushion Rules Engine - Success Scenario", () => {
   it("should declare a successful carom when 3 cushions and 2 collisions are detected", () => {
@@ -25,8 +25,8 @@ xdescribe("ThreeCushion Rules Engine - Success Scenario", () => {
     }
 
     // 3. Execution
-    // const engine: NewRules = new ThreeCushionEngine()
-    // const { result, nextTransientState } = engine.advance(table, initialState, outcome)
+    // const rules: NewRules = new ThreeCushion()
+    // const { result, nextTransientState } = rules.advance(table, initialState, outcome)
 
     // 4. Assertions
     // expect(result.flow).toBe('CONTINUE')

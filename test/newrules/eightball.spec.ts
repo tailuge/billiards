@@ -1,6 +1,6 @@
 import { Table } from "../../src/model/table"
 import { Outcome } from "../../src/model/outcome"
-import { NewRules, TransientState } from "../../src/newrules/types"
+import { NewRules, TransientState } from "../../src/controller/newrules/types"
 
 xdescribe("EightBall Rules Engine - Foul Scenario", () => {
   it("should handle potting the 8-ball early as a foul and switch control", () => {
@@ -18,8 +18,8 @@ xdescribe("EightBall Rules Engine - Foul Scenario", () => {
     }
 
     // 3. Execution
-    // const engine: NewRules = new EightBallEngine()
-    // const { result, nextTransientState } = engine.advance(table, initialState, outcome)
+    // const rules: NewRules = new EightBall()
+    // const { result, nextTransientState } = rules.advance(table, initialState, outcome)
 
     // 4. Assertions
     // expect(result.flow).toBe('SWITCH')

@@ -1,6 +1,6 @@
 import { Table } from "../../src/model/table"
 import { Outcome } from "../../src/model/outcome"
-import { NewRules } from "../../src/newrules/types"
+import { NewRules } from "../../src/controller/newrules/types"
 
 xdescribe("Snooker Rules Engine", () => {
   it("should declare a win when the final black ball is potted", () => {
@@ -15,8 +15,8 @@ xdescribe("Snooker Rules Engine", () => {
     }
 
     // 3. Execution
-    // const engine: NewRules = new SnookerEngine()
-    // const { result, nextTransientState } = engine.advance(table, initialState, outcome)
+    // const rules: NewRules = new Snooker()
+    // const { result, nextTransientState } = rules.advance(table, initialState, outcome)
 
     // 4. Assertions
     // expect(result.flow).toBe('GAME_OVER')
