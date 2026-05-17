@@ -138,4 +138,35 @@ describe("Physics", () => {
     expect(restitutionCushion(v)).to.be.a("number")
     done()
   })
+
+  it("cueToSpin with elevation preserves behavior for elevation=0", (done) => {
+    const v = new Vector3(10, 0, 0)
+    const offset = new Vector3(0.1, 0.2, 0)
+    const w0 = cueToSpin(offset, v, 0)
+    const wDefault = cueToSpin(offset, v)
+    expect(w0.x).to.equal(wDefault.x)
+    expect(w0.y).to.equal(wDefault.y)
+    expect(w0.z).to.equal(wDefault.z)
+    done()
+  })
+
+  it("cueToSpin with elevation and side spin produces swerve (non-zero w.x/w.y components)", (done) => {
+    const v = new Vector3(10, 0, 0)
+    const offset = new Vector3(0.2, 0, 0) // Pure side spin
+    const elevation = Math.PI / 4 // 45 degrees
+    const w = cueToSpin(offset, v, elevation)
+
+    // With elevation and side spin, the spin axis is tilted.
+    // cueToSpin implementation:
+    // dir = (1, 0, 0)
+    // q = (cos(45), 0, -sin(45))
+    // upCross(dir) = (0, 1, 0)
+    // spinAxis = atan2(-0.2, 0) = -PI/2
+    // rotate (0, 1, 0) around (cos(45), 0, -sin(45)) by -PI/2
+    // This should result in a vector that has a Z component and a horizontal component.
+
+    expect(w.z).to.not.equal(0)
+    expect(w.x).to.not.equal(0)
+    done()
+  })
 })

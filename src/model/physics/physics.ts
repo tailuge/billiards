@@ -208,14 +208,19 @@ export function mathavanAdapter(v: Vector3, w: Vector3) {
  *
  * @param offset (x,y,0) from center strike where x,y range from -0.5 to 0.5 the fraction of R from center.
  * @param v velocity of ball after strike
+ * @param elevation angle of cue in radians
  * @returns angular velocity
  */
-export function cueToSpin(offset: Vector3, v: Vector3) {
-  const spinAxis = Math.atan2(-offset.x, offset.y)
-  const spinRate = ((5 / 2) * v.length() * (offset.length() * R)) / (R * R)
+export function cueToSpin(offset: Vector3, v: Vector3, elevation: number = 0) {
+  const cosAlpha = Math.max(1e-3, Math.cos(elevation))
+  const sinAlpha = Math.sin(elevation)
+  const spinRate =
+    ((5 / 2) * v.length() * (offset.length() * R)) / (R * R * cosAlpha)
   const dir = v.clone().normalize()
+  const q = dir.clone().multiplyScalar(cosAlpha).addScaledVector(up, -sinAlpha)
+  const spinAxis = Math.atan2(-offset.x, offset.y)
   const rvel = upCross(dir)
-    .applyAxisAngle(dir, spinAxis)
+    .applyAxisAngle(q, spinAxis)
     .multiplyScalar(spinRate)
   return rvel
 }

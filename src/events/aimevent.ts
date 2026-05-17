@@ -8,6 +8,7 @@ export class AimEvent extends GameEvent {
   offset = new Vector3(0, 0, 0)
   angle = 0
   power = 0
+  elevation = 0
   pos = new Vector3(0, 0, 0)
   i = 0
 
@@ -26,6 +27,7 @@ export class AimEvent extends GameEvent {
     event.angle = json.angle
     event.offset = vec(json.offset)
     event.power = json.power
+    event.elevation = json.elevation || 0
     if (json.i) {
       event.i = json.i
     }
