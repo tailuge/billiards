@@ -41,7 +41,10 @@ export class MatchResultHelper {
 
     const result = this.createMatchResult(rulename, session, amIWinner)
 
-    return new End(container, amIWinner ? result : undefined)
+    return new End(
+      container,
+      amIWinner || Session.isBotMode() ? result : undefined
+    )
   }
 
   private static determineWinner(

@@ -44,12 +44,13 @@ export class End extends Controller {
     this.container.lobbyIndicator.setTableId(undefined)
     console.log("table id cleared")
 
-    const wasBotWin = !this.result && Session.isBotMode()
+    const isWinner = !!this.result && MatchResultHelper.isWinner(this.result)
+    const wasBotWin = Session.isBotMode() && !isWinner
     if (wasBotWin) {
       return
     }
 
-    if (!this.result || MatchResultHelper.isWinner(this.result)) {
+    if (!this.result || isWinner) {
       this.container.particles.initParticles(this.container.view.scene)
     }
 

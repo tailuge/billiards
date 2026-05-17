@@ -238,26 +238,6 @@ export class BotEventHandler {
   }
 
   private handleGameEnd(): void {
-    if (this.container.scoreReporter) {
-      let replayData: string | undefined
-      try {
-        const gameState = this.container.recorder.wholeGame()
-        replayData = ReplayEncoder.crush(JSON.stringify(gameState))
-      } catch (e) {
-        console.error("Failed to encode replay data", e)
-      }
-      const result: MatchResult = {
-        winner: this.strategy.name,
-        loser: Session.getInstance().playername,
-        winnerScore: Session.getInstance().opponentScore(),
-        loserScore: Session.getInstance().myScore(),
-        ruleType: this.container.rules.rulename,
-      }
-      if (replayData) {
-        result.replayData = replayData
-      }
-      this.container.scoreReporter.submitMatchResult(result)
-    }
     this.container.updateController(this.container.rules.handleGameEnd(false))
   }
 
