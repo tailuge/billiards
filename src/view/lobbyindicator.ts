@@ -29,7 +29,7 @@ export class LobbyIndicator {
     this.replayMode = replayMode
     this.isSpectator = Session.getInstance().spectator
     if (botMode) {
-      this.ruleType = "bot"
+      this.ruleType = `${this.rules.rulename}-bot`
     } else if (replayMode) {
       this.ruleType = "replay"
     } else if (Session.getInstance().spectator) {
@@ -85,7 +85,7 @@ export class LobbyIndicator {
     this.messagingClient = new MessagingClient({
       baseUrl: LobbyIndicator.NCHAN_URL,
     })
-    this.messagingClient.setVersion(VERSION)
+    this.messagingClient.setVersion(VERSION+`-${Session.getInstance().lod}`)
     this.messagingClient.start()
 
     const params = new URLSearchParams(globalThis.location?.search ?? "")
