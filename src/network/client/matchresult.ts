@@ -1,5 +1,6 @@
 import { Container } from "../../container/container"
 import { NotificationEvent } from "../../events/notificationevent"
+import { ScoreEvent } from "../../events/scoreevent"
 import { End } from "../../controller/end"
 import { Session } from "./session"
 import { Rematch } from "./rematch"
@@ -86,6 +87,7 @@ export class MatchResultHelper {
       this.notifySpectator(container, subtext, matchScore)
     } else {
       this.notifyLoss(container, subtext, matchScore, hasRematch)
+      this.sendWinNotification(container, matchScore, hasRematch)
     }
   }
 
@@ -169,6 +171,28 @@ export class MatchResultHelper {
         highBreaks: this.getHighBreaks(container),
         icon: "🥈",
         extraClass: "is-loser",
+        extra: gameOverButtons.forMode(false, hasRematch),
+        duration: 0,
+      })
+    )
+  }
+
+  private static sendWinNotification(
+    container: Container,
+    matchScore: string | undefined,
+    hasRematch: boolean = false
+  ) {
+    if (container.isSinglePlayer) return
+    const session = Session.getInstance()
+    container.sendEvent(new ScoreEvent(session.myScore(), session.opponentScore(), 0))
+    container.sendEvent(
+      new NotificationEvent({
+        type: "GameOver",
+        title: "YOU WON",
+        matchScore: matchScore,
+        highBreaks: this.getHighBreaks(container),
+        icon: "🏆",
+        extraClass: "is-winner",
         extra: gameOverButtons.forMode(false, hasRematch),
         duration: 0,
       })
