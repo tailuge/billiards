@@ -7,7 +7,7 @@
 [![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards)
 ![GitHub](https://img.shields.io/github/license/tailuge/billiards.svg)
 
-[![Demo and Screenshot](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)](https://billiards.tailuge.workers.dev/?bot=TheFarJaw)
+[![Demo and Screenshot](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/promo.png)](https://billiards.tailuge.workers.dev/?bot=TheFarJaw)
 
 This is an open-source project bringing unsophisticated billiards physics written in typescript to the browser.
 
