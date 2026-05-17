@@ -30,7 +30,7 @@ export interface NewRules {
   advance(
     table: Table,
     transientState: TransientState,
-    outcome: Outcome
+    outcome: Outcome[]
   ): {
     result: RuleResult
     nextTransientState: TransientState
