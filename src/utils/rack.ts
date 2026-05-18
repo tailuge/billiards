@@ -58,7 +58,7 @@ export class Rack {
   static cueBall(pos, label?: number) {
     return new Ball(
       Rack.jitter(pos),
-      0xfaebd7,
+      0xffffff,
       label,
       Rack.unlabeledAppearance()
     )
@@ -185,37 +185,37 @@ export class Rack {
     balls.push(
       new Ball(
         Rack.jitter(colours[0]),
-        0xeede36,
+        0xffd700,
         undefined,
         Rack.unlabeledAppearance()
       ),
       new Ball(
         Rack.jitter(colours[1]),
-        0x0c9664,
+        0x008000,
         undefined,
         Rack.unlabeledAppearance()
       ),
       new Ball(
         Rack.jitter(colours[2]),
-        0xbd723a,
+        0x8b4513,
         undefined,
         Rack.unlabeledAppearance()
       ),
       new Ball(
         Rack.jitter(colours[3]),
-        0x0883ee,
+        0x0000ff,
         undefined,
         Rack.unlabeledAppearance()
       ),
       new Ball(
         Rack.jitter(colours[4]),
-        0xffaacc,
+        0xff69b4,
         undefined,
         Rack.unlabeledAppearance()
       ),
       new Ball(
         Rack.jitter(colours[5]),
-        0x010101,
+        0x010000,
         undefined,
         Rack.unlabeledAppearance()
       )
