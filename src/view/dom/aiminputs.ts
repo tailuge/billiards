@@ -14,6 +14,8 @@ export class AimInputs {
   readonly cueTipElement
   readonly powerSliderContainerElement
   readonly cuePowerElement
+  readonly tiltSliderContainerElement
+  readonly cueTiltElement
   /** Shared button for both "Hit" and "Place Ball" actions. */
   readonly cueHitElement
   readonly objectBallStyle: CSSStyleDeclaration | undefined
@@ -35,6 +37,8 @@ export class AimInputs {
     this.cueTipElement = id("cueTip")
     this.powerSliderContainerElement = id("powerSliderContainer")
     this.cuePowerElement = id("cuePower")
+    this.tiltSliderContainerElement = id("tiltSliderContainer")
+    this.cueTiltElement = id("cueTilt") as HTMLInputElement
     this.cueHitElement = id("cueHit") as HTMLButtonElement
     if (this.cueHitElement) {
       const params = new URLSearchParams(location.search)
@@ -56,6 +60,7 @@ export class AimInputs {
         Number(this.cuePowerElement.value) * this.container.table.cue.maxPower
       this.updatePowerProgress()
     }
+    this.updateTiltSlider(this.container.table.cue.aim.elevation)
     this.addListeners()
     this.updateVisualState(0, 0)
     if (Session.isSpectator()) {
@@ -68,8 +73,10 @@ export class AimInputs {
     this.cueBallElement?.addEventListener("click", (e) => {
       this.adjustSpin(e)
     })
+    this.cueBallElement?.addEventListener("dblclick", this.toggleTiltControl)
     this.cueHitElement?.addEventListener("click", this.hit)
     this.cuePowerElement?.addEventListener("input", this.powerChanged)
+    this.cueTiltElement?.addEventListener("input", this.tiltChanged)
     if (!("ontouchstart" in globalThis)) {
       id("viewP1")?.addEventListener("dblclick", this.hit)
     }
@@ -84,6 +91,7 @@ export class AimInputs {
     this.controlsDisabled = disabled || Session.isSpectator()
     this.updateHitButton()
     this.updatePowerElement()
+    this.updateTiltElement()
     this.updateCueBall()
     this.updateBallContainer()
     if (this.objectBallStyle) {
@@ -138,6 +146,22 @@ export class AimInputs {
         "is-disabled",
         this.controlsDisabled
       )
+    }
+  }
+
+  private updateTiltElement() {
+    if (this.tiltSliderContainerElement) {
+      this.tiltSliderContainerElement.classList.toggle(
+        "is-disabled",
+        this.controlsDisabled
+      )
+      if (this.controlsDisabled) {
+        this.tiltSliderContainerElement.hidden = true
+      }
+    }
+    if (this.cueTiltElement) {
+      this.cueTiltElement.disabled = this.controlsDisabled
+      this.cueTiltElement.classList.toggle("is-disabled", this.controlsDisabled)
     }
   }
 
@@ -226,10 +250,54 @@ export class AimInputs {
     this.updatePowerProgress()
   }
 
+  tiltChanged = (_) => {
+    if (this.controlsDisabled || !this.cueTiltElement) {
+      return
+    }
+    this.container.table.cue.aim.elevation = Number(this.cueTiltElement.value)
+    this.container.lastEventTime = performance.now()
+  }
+
   updatePowerSlider(power) {
     if (this.cuePowerElement) {
       this.cuePowerElement.value = power
       this.updatePowerProgress()
+    }
+  }
+
+  updateTiltSlider(elevation) {
+    if (this.cueTiltElement) {
+      this.cueTiltElement.value = elevation.toString()
+    }
+  }
+
+  private showTiltControl() {
+    if (!this.tiltSliderContainerElement) {
+      return
+    }
+    this.tiltSliderContainerElement.hidden = false
+    requestAnimationFrame(() => {
+      this.tiltSliderContainerElement?.classList.add("is-open")
+    })
+  }
+
+  toggleTiltControl = (e) => {
+    if (this.controlsDisabled || !this.tiltSliderContainerElement) {
+      return
+    }
+    e.preventDefault?.()
+    e.stopPropagation?.()
+    if (this.tiltSliderContainerElement.hidden) {
+      this.showTiltControl()
+    } else {
+      this.hideTiltControl()
+    }
+  }
+
+  hideTiltControl() {
+    if (this.tiltSliderContainerElement) {
+      this.tiltSliderContainerElement.classList.remove("is-open")
+      this.tiltSliderContainerElement.hidden = true
     }
   }
 
@@ -238,6 +306,7 @@ export class AimInputs {
       return
     }
     this.container.table.cue.setPower(Number(this.cuePowerElement?.value))
+    this.hideTiltControl()
     this.container.inputQueue.push(new Input(0, "SpaceUp"))
   }
 

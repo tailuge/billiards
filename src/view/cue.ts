@@ -129,11 +129,13 @@ export class Cue {
   updateAimInput() {
     this.aimInputs?.updateVisualState(this.aim.offset.x, this.aim.offset.y)
     this.aimInputs?.updatePowerSlider(this.aim.power / this.maxPower)
+    this.aimInputs?.updateTiltSlider?.(this.aim.elevation)
     this.aimInputs?.showOverlap()
   }
 
   private updateCueRotation() {
     this.mesh.rotation.z = this.aim.angle
+    this.tiltMesh.rotation.y = CueMesh.baseTilt + this.aim.elevation
     this.helperMesh.rotation.z = this.aim.angle
     this.shadowMesh.rotation.z = this.aim.angle
   }

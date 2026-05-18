@@ -42,9 +42,30 @@ describe("AimInput", () => {
     done()
   })
 
+  it("double click cue ball toggles tilt slider", (done) => {
+    aiminputs.setDisabled(false)
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true
+    fireEvent.dblClick(aiminputs.cueBallElement)
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.false
+    fireEvent.dblClick(aiminputs.cueBallElement)
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true
+    done()
+  })
+
+  it("tilt slider updates aim elevation", (done) => {
+    aiminputs.setDisabled(false)
+    aiminputs.tiltSliderContainerElement.hidden = false
+    aiminputs.cueTiltElement.value = "0.75"
+    fireEvent.input(aiminputs.cueTiltElement, { target: { value: "0.75" } })
+    expect(container.table.cue.aim.elevation).to.equal(0.75)
+    done()
+  })
+
   it("click hit button", (done) => {
     aiminputs.setDisabled(false)
+    aiminputs.tiltSliderContainerElement.hidden = false
     document.getElementById("cueHit")?.click()
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true
     expect(aiminputs.container.inputQueue).to.be.not.empty
     done()
   })
@@ -78,14 +99,19 @@ describe("AimInput", () => {
   })
 
   it("setDisabled toggles hit, spin and power controls", (done) => {
+    aiminputs.tiltSliderContainerElement.hidden = false
     aiminputs.setDisabled(true)
     expect(aiminputs.cueHitElement.disabled).to.be.true
     expect(aiminputs.cuePowerElement.disabled).to.be.true
+    expect(aiminputs.cueTiltElement.disabled).to.be.true
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true
     expect(aiminputs.cueBallElement.style.pointerEvents).to.equal("none")
 
     aiminputs.setDisabled(false)
     expect(aiminputs.cueHitElement.disabled).to.be.false
     expect(aiminputs.cuePowerElement.disabled).to.be.false
+    expect(aiminputs.cueTiltElement.disabled).to.be.false
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true
     expect(aiminputs.cueBallElement.style.pointerEvents).to.equal("auto")
     done()
   })
@@ -98,9 +124,12 @@ describe("AimInput", () => {
     aiminputs.cuePowerElement.value = 1
     aiminputs.powerChanged({})
     aiminputs.mousewheel({ deltaY: 10 })
+    aiminputs.cueTiltElement.value = 1
+    aiminputs.tiltChanged({})
     aiminputs.adjustSpin({ offsetX: 1, offsetY: 1 })
 
     expect(container.table.cue.aim.power).to.equal(initialPower)
+    expect(container.table.cue.aim.elevation).to.equal(0)
     expect(container.table.cue.aim.offset.equals(initialOffset)).to.be.true
     done()
   })

@@ -147,11 +147,36 @@
       </div>
     </div>
     <div id="panel" class="panel wood-texture">
-      <div id="ballContainerWrapper" class="ballContainerWrapper">
-        <div id="ballContainer" class="ballContainer">
-          <div id="objectBall" class="objectBall"></div>
-          <div id="cueBall" class="cueBall">
-            <div id="cueTip" class="cueTip"></div>
+      <div class="aimControlColumn">
+        <div class="aimingArea">
+          <button
+            class="hitButton timeout-btn"
+            id="cueHit"
+            type="button"
+            aria-label="Hit cue ball"
+          >
+            hit
+          </button>
+        </div>
+        <div id="tiltSliderContainer" class="tiltSliderContainer" hidden>
+          <label for="cueTilt" class="tiltSliderLabel">tilt</label>
+          <input
+            class="tiltSlider"
+            type="range"
+            min="0"
+            max="1.31"
+            step="0.01"
+            value="0"
+            id="cueTilt"
+            aria-label="tilt slider"
+          />
+        </div>
+        <div id="ballContainerWrapper" class="ballContainerWrapper">
+          <div id="ballContainer" class="ballContainer">
+            <div id="objectBall" class="objectBall"></div>
+            <div id="cueBall" class="cueBall">
+              <div id="cueTip" class="cueTip"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -262,16 +287,6 @@
         aria-label="Multiplayer Lobby"
         ><span class="lobby-count"></span
       ></a>
-    </div>
-    <div class="aimingArea">
-      <button
-        class="hitButton timeout-btn"
-        id="cueHit"
-        type="button"
-        aria-label="Hit cue ball"
-      >
-        hit
-      </button>
     </div>
     <section class="constants" id="constants" aria-label="Physical Constants">
       <p>Physical Constants</p>

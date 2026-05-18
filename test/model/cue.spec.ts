@@ -2,6 +2,7 @@ import { expect } from "chai"
 import { Ball } from "../../src/model/ball"
 import { Table } from "../../src/model/table"
 import { Cue } from "../../src/view/cue"
+import { CueMesh } from "../../src/view/cuemesh"
 import { Vector3 } from "three"
 import { zero } from "../../src/utils/three-utils"
 import { R } from "../../src/model/physics/constants"
@@ -104,6 +105,16 @@ describe("Cue", () => {
     const offsetBefore = cue.aim.offset.clone()
     cue.adjustSpin(new Vector3(0.1, 0.1), table)
     expect(cue.aim.offset.equals(offsetBefore)).to.be.true
+  })
+
+  test("moveTo applies aim elevation to cue tilt", () => {
+    const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.aim.elevation = 0.5
+    cue.moveTo(table.cueball.pos)
+    expect(cue.tiltMesh.rotation.y).to.be.closeTo(
+      CueMesh.baseTilt + 0.5,
+      0.0001
+    )
   })
 
   test("setSpin returns early when disabled", () => {
