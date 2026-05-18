@@ -184,7 +184,9 @@ export class MatchResultHelper {
   ) {
     if (container.isSinglePlayer) return
     const session = Session.getInstance()
-    container.sendEvent(new ScoreEvent(session.myScore(), session.opponentScore(), 0))
+    container.sendEvent(
+      new ScoreEvent(session.myScore(), session.opponentScore(), 0)
+    )
     container.sendEvent(
       new NotificationEvent({
         type: "GameOver",

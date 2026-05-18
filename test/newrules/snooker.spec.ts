@@ -14,9 +14,9 @@ describe("Snooker Rules Engine", () => {
       { id: 3, onTable: () => false },
       { id: 4, onTable: () => false },
       { id: 5, onTable: () => false },
-      blackBall
-    ] as any) 
-    
+      blackBall,
+    ] as any)
+
     const outcome: Outcome[] = [Outcome.pot(blackBall, 1.0)]
 
     // 2. Initial Transient State
@@ -29,7 +29,11 @@ describe("Snooker Rules Engine", () => {
 
     // 3. Execution
     const rules: NewRules = new Snooker()
-    const { result, nextTransientState } = rules.advance(table, initialState, outcome)
+    const { result, nextTransientState } = rules.advance(
+      table,
+      initialState,
+      outcome
+    )
 
     // 4. Assertions
     expect(result.flow).toBe("GAME_OVER")

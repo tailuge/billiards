@@ -3,6 +3,7 @@ import { Vector3 } from "three"
 import {
   isGripCushion,
   bounceHan,
+  cueStrike,
   cueToSpin,
   bounceHanBlend,
   mathavanAdapter,
@@ -69,6 +70,22 @@ describe("Physics", () => {
     const offset = new Vector3(0, 2 / 5, 0)
     const w = cueToSpin(offset, v)
     expect(w.length()).to.be.approximately(v.length() / R, 0.01)
+    done()
+  })
+
+  it("cueStrike with zero elevation preserves launch speed", (done) => {
+    const strike = cueStrike(Math.PI / 6, 10, new Vector3(0.1, 0.2, 0), 0)
+    expect(strike.vel.length()).to.be.approximately(10, 1e-9)
+    done()
+  })
+
+  it("cueStrike elevation reduces launch speed by cos(elevation)", (done) => {
+    const elevation = Math.PI / 3
+    const strike = cueStrike(0, 10, new Vector3(0.1, 0, 0), elevation)
+    expect(strike.vel.length()).to.be.approximately(
+      10 * Math.cos(elevation),
+      1e-9
+    )
     done()
   })
 

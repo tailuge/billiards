@@ -203,6 +203,33 @@ export function mathavanAdapter(v: Vector3, w: Vector3) {
 }
 
 /**
+ * Linear and angular velocity applied to a ball after a cue strike.
+ */
+export type CueStrike = {
+  vel: Vector3
+  rvel: Vector3
+}
+
+/**
+ * Resolve a cue strike into linear and angular velocity.
+ */
+export function cueStrike(
+  angle: number,
+  power: number,
+  offset: Vector3,
+  elevation: number = 0
+): CueStrike {
+  const vel = norm(new Vector3(cos(angle), sin(angle), 0)).multiplyScalar(
+    power * Math.cos(elevation)
+  )
+
+  return {
+    vel,
+    rvel: cueToSpin(offset, vel, elevation),
+  }
+}
+
+/**
  * Spin on ball after strike with cue
  * https://billiards.colostate.edu/technical_proofs/new/TP_A-12.pdf
  *
@@ -219,8 +246,6 @@ export function cueToSpin(offset: Vector3, v: Vector3, elevation: number = 0) {
   const dir = v.clone().normalize()
   const q = dir.clone().multiplyScalar(cosAlpha).addScaledVector(up, -sinAlpha)
   const spinAxis = Math.atan2(-offset.x, offset.y)
-  const rvel = upCross(dir)
-    .applyAxisAngle(q, spinAxis)
-    .multiplyScalar(spinRate)
+  const rvel = upCross(dir).applyAxisAngle(q, spinAxis).multiplyScalar(spinRate)
   return rvel
 }

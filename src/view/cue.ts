@@ -5,7 +5,7 @@ import { atan2, sin } from "../utils/utils"
 import { AimEvent } from "../events/aimevent"
 import { AimInputs } from "./dom/aiminputs"
 import { Ball, State } from "../model/ball"
-import { cueToSpin } from "../model/physics/physics"
+import { cueStrike } from "../model/physics/physics"
 import { CueMesh } from "./cuemesh"
 import { Mesh, Vector3, Object3D } from "three"
 import { R } from "../model/physics/constants"
@@ -72,14 +72,13 @@ export class Cue {
   }
 
   hit(ball: Ball) {
-    const aim = this.aim
+    const { angle, power, offset, elevation } = this.aim
     this.t = 0
     this.hittingAnimation = true
     ball.state = State.Sliding
-    ball.vel.copy(
-      unitAtAngle(aim.angle, this.tempVec).multiplyScalar(aim.power)
-    )
-    ball.rvel.copy(cueToSpin(aim.offset, ball.vel, aim.elevation))
+    const strike = cueStrike(angle, power, offset, elevation)
+    ball.vel.copy(strike.vel)
+    ball.rvel.copy(strike.rvel)
   }
 
   aimAtNext(cueball, ball) {
