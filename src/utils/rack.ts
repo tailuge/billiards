@@ -197,19 +197,19 @@ export class Rack {
       ),
       new Ball(
         Rack.jitter(colours[2]),
-        0x8b4513,
+        0x6a2500,
         undefined,
         Rack.unlabeledAppearance()
       ),
       new Ball(
         Rack.jitter(colours[3]),
-        0x0000ff,
+        0x005cb1,
         undefined,
         Rack.unlabeledAppearance()
       ),
       new Ball(
         Rack.jitter(colours[4]),
-        0xff69b4,
+        0xff80b3,
         undefined,
         Rack.unlabeledAppearance()
       ),
