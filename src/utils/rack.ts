@@ -159,7 +159,7 @@ export class Rack {
       Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0))), // Ball 0: White
       new Ball(
         Rack.jitter(new Vector3(-dx, 0, 0)),
-        0xe0de36,
+        0xffd700,
         undefined,
         Rack.unlabeledAppearance()
       ), // Ball 1: Yellow
