@@ -16,6 +16,7 @@ import {
 export type CueMeshes = {
   mesh: Group
   tiltMesh: Group
+  cueBody: Group
 }
 
 export class CueMesh {
@@ -125,13 +126,11 @@ export class CueMesh {
     cueBody.applyMatrix4(
       new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2)
     )
-    cueBody.applyMatrix4(
-      new Matrix4().identity().makeTranslation(-length / 2 - R, 0, R * 0.12)
-    )
+    cueBody.position.set(-length / 2 - R, 0, R * 0.12)
     tiltGroup.rotation.y = this.baseTilt
     tiltGroup.add(cueBody)
     mesh.add(tiltGroup)
-    return { mesh, tiltMesh: tiltGroup }
+    return { mesh, tiltMesh: tiltGroup, cueBody }
   }
 
   static cueGeometry(tipRadius, buttRadius, length, segments = 9) {
