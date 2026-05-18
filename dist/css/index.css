@@ -73,6 +73,7 @@ p {
 .view3d {
   width: 100%;
   flex: 1;
+  min-height: 0;
   cursor: none;
   caret-color: transparent;
   -webkit-user-drag: none;
