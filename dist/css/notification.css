@@ -395,7 +395,7 @@
   background: var(--notification-white-25);
   border-color: var(--notification-white-50);
   box-shadow: var(--notification-shadow-md);
-  transform: translateY(-4px) scale(1.05);
+  transform: translateY(-1px) scale(1.1);
 }
 
 .notification-actions button:focus-visible,
