@@ -11,6 +11,7 @@ jest.mock("@tailuge/messaging", () => ({
     start: jest.fn(),
     joinLobby: jest.fn().mockResolvedValue({
       onUsersChange: jest.fn(),
+      onChat: jest.fn(),
       onChallenge: jest.fn(),
       updatePresence: jest.fn(),
       leave: jest.fn(),
