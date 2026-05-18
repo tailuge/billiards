@@ -6,12 +6,13 @@ export class SnookerScoring {
   static presentGameEnd(
     container: Container,
     rulename: string,
+    isWinner?: boolean,
     endSubtext?: string
   ): End {
     return MatchResultHelper.presentGameEnd(
       container,
       rulename,
-      undefined,
+      isWinner,
       endSubtext
     )
   }

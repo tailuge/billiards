@@ -251,10 +251,13 @@ export class Snooker implements Rules {
     return new Aim(this.container)
   }
 
-  handleGameEnd(_: boolean, endSubtext?: string): Controller {
+  handleGameEnd(isWinner: boolean, endSubtext?: string): Controller {
+    const forcedAmIWinner =
+      Session.isBotMode() && !isWinner ? false : undefined
     return SnookerScoring.presentGameEnd(
       this.container,
       this.rulename,
+      forcedAmIWinner,
       endSubtext
     )
   }
