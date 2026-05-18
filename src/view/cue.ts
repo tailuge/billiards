@@ -155,25 +155,27 @@ export class Cue {
 
     this.cueBody.position.set(
       -this.length / 2 - R + strokeX,
-      0,
-      R * 0.12 + strokeZ
+      this.aim.offset.x * 2 * R,
+      R * 0.12 + strokeZ + this.aim.offset.y * 2 * R
     )
 
     return strokeX
   }
 
-  private updateCuePosition(pos: Vector3, offset: Vector3, strokeX: number) {
-    this.mesh.position.copy(pos).add(offset)
+  private updateCuePosition(pos: Vector3, strokeX: number) {
+    this.mesh.position.copy(pos)
 
     // Project local strokeX through tilt onto the horizontal plane for shadow
     const unitToBall = unitAtAngle(this.aim.angle, this.tempVec)
+    const sideVec = upCross(unitToBall).normalize()
+    const elevation = this.tiltMesh.rotation.y as number
     const projectedStroke =
-      strokeX * Math.cos(this.tiltMesh.rotation.y as number)
+      strokeX * Math.cos(elevation) +
+      (this.cueBody.position.z - R * 0.12) * Math.sin(elevation)
 
-    const horizontalOffset = this.tempVec2.set(offset.x, offset.y, 0)
     this.shadowMesh.position
       .copy(pos)
-      .add(horizontalOffset)
+      .addScaledVector(sideVec, this.cueBody.position.y)
       .addScaledVector(unitToBall, projectedStroke)
     this.shadowMesh.position.z = -R * 0.99
 
@@ -192,7 +194,7 @@ export class Cue {
       R *
       (this.aim.power / this.maxPower)
     const strokeX = this.applyHitAnimation(swing)
-    this.updateCuePosition(pos, offset, strokeX)
+    this.updateCuePosition(pos, strokeX)
   }
 
   hitAnimationCurve(t: number) {
