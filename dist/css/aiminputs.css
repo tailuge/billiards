@@ -13,25 +13,26 @@
 }
 
 .tiltSliderContainer {
-  width: 52px;
-  height: 218px;
-  padding: 6px 8px 8px;
+  width: 60px;
+  height: 240px;
+  padding: 10px;
   border: 1px solid #2d1e16;
   border-radius: 10px;
   background-color: rgb(37 24 10 / 92%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 4px;
+  justify-content: flex-start;
+  gap: 8px;
   opacity: 0;
   transform: translateY(160px);
   pointer-events: none;
   transition:
     opacity 0.5s ease,
     transform 0.5s ease;
-  margin-bottom: -70px;
-  z-index: 0;
+  margin-bottom: 0;
+  margin-left: 36px;
+  z-index: 30;
 }
 
 .tiltSliderContainer[hidden] {
@@ -49,24 +50,24 @@
 }
 
 .tiltSliderLabel {
-  width: 100%;
   flex: 0 0 auto;
   color: #f3e4c1;
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-align: center;
+  width: 100%;
 }
 
 input[type="range"].tiltSlider {
   appearance: slider-vertical;
+  -webkit-appearance: slider-vertical;
   writing-mode: vertical-lr;
   direction: rtl;
   flex: 1 1 auto;
-  width: 28px;
-  min-height: 0;
-  height: 62px;
-  margin: 0;
+  width: 20px;
+  min-height: 180px;
+  margin: 0 auto;
   accent-color: #d1a05c;
   cursor: pointer;
 }
@@ -206,7 +207,6 @@ input[type="range"].tiltSlider:disabled {
   z-index: 1;
   width: 100px;
   height: 100px;
-  margin: 0;
   aspect-ratio: auto;
   border-radius: 10px;
   border-width: 4px;
