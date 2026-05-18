@@ -79,7 +79,7 @@ export class Cue {
     ball.vel.copy(
       unitAtAngle(aim.angle, this.tempVec).multiplyScalar(aim.power)
     )
-    ball.rvel.copy(cueToSpin(aim.offset, ball.vel))
+    ball.rvel.copy(cueToSpin(aim.offset, ball.vel, aim.elevation))
   }
 
   aimAtNext(cueball, ball) {
