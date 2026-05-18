@@ -13,8 +13,14 @@ import {
   ConeGeometry,
 } from "three"
 
+export type CueMeshes = {
+  mesh: Group
+  tiltMesh: Group
+}
+
 export class CueMesh {
   static mesh: Mesh
+  static readonly baseTilt = 0.17
 
   static readonly placermaterial = new MeshPhongMaterial({
     color: 0xffffff,
@@ -111,28 +117,21 @@ export class CueMesh {
     return mesh
   }
 
-  static createCue(tip, but, length) {
-    const group = this.cueGeometry(tip, but, length)
+  static createCue(tip, but, length): CueMeshes {
+    const cueBody = this.cueGeometry(tip, but, length)
+    const tiltGroup = new Group()
     const mesh = new Group()
-    mesh.add(group)
-    mesh.castShadow = false
-    const tilt = 0.17
-    group.applyMatrix4(
-      new Matrix4().identity().makeRotationAxis(new Vector3(1, 0, 0), -tilt)
-    )
-    group.applyMatrix4(
+
+    cueBody.applyMatrix4(
       new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2)
     )
-    group.applyMatrix4(
-      new Matrix4()
-        .identity()
-        .makeTranslation(
-          -length / 2 - R,
-          0,
-          (length / 2) * Math.sin(tilt) + R * 0.25
-        )
+    cueBody.applyMatrix4(
+      new Matrix4().identity().makeTranslation(-length / 2 - R, 0, R * 0.12)
     )
-    return mesh
+    tiltGroup.rotation.y = this.baseTilt
+    tiltGroup.add(cueBody)
+    mesh.add(tiltGroup)
+    return { mesh, tiltMesh: tiltGroup }
   }
 
   static cueGeometry(tipRadius, buttRadius, length, segments = 9) {

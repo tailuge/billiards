@@ -13,6 +13,7 @@ import { cueIntersectsAnything } from "../utils/cueintersect"
 
 export class Cue {
   mesh: Object3D
+  tiltMesh: Object3D
   helperMesh: Mesh
   placerMesh: Object3D
   shadowMesh: Mesh
@@ -32,11 +33,13 @@ export class Cue {
   hitAnimationWeight: number = 0
 
   constructor() {
-    this.mesh = CueMesh.createCue(
+    const cue = CueMesh.createCue(
       (R * 0.07) / 0.5,
       (R * 0.23) / 0.5,
       this.length
     )
+    this.mesh = cue.mesh
+    this.tiltMesh = cue.tiltMesh
     this.helperMesh = CueMesh.createHelper()
     this.placerMesh = CueMesh.createPlacer()
     this.shadowMesh = CueMesh.createShadow(this.length)
