@@ -129,19 +129,13 @@ export class Cue {
     this.aimInputs?.showOverlap()
   }
 
-  moveTo(pos) {
-    this.aim.pos.copy(pos)
+  private updateCueRotation() {
     this.mesh.rotation.z = this.aim.angle
     this.helperMesh.rotation.z = this.aim.angle
     this.shadowMesh.rotation.z = this.aim.angle
-    const offset = this.spinOffset()
-    const swing =
-      (sin(this.t * 1.5 + Math.PI / 2) - 1) *
-      2 *
-      R *
-      (this.aim.power / this.maxPower)
-    const unitToBall = unitAtAngle(this.aim.angle, this.tempVec)
+  }
 
+  private applyHitAnimation(unitToBall: Vector3) {
     this.postHitOffset
       .copy(unitToBall)
       .multiplyScalar(-1)
@@ -156,9 +150,13 @@ export class Cue {
     this.postHitOffset.multiplyScalar(
       this.hitAnimationWeight * this.hitAnimationCurve(this.t) * 2 * R
     )
+  }
 
-    unitToBall.multiplyScalar((1 - this.hitAnimationWeight) * swing)
-
+  private updateCuePosition(
+    pos: Vector3,
+    offset: Vector3,
+    unitToBall: Vector3
+  ) {
     this.mesh.position
       .copy(pos)
       .add(offset)
@@ -172,6 +170,22 @@ export class Cue {
     this.helperMesh.position.copy(pos)
     this.placerMesh.position.copy(pos)
     this.placerMesh.rotation.z = this.t
+  }
+
+  moveTo(pos) {
+    this.aim.pos.copy(pos)
+    this.updateCueRotation()
+    const offset = this.spinOffset()
+    const swing =
+      (sin(this.t * 1.5 + Math.PI / 2) - 1) *
+      2 *
+      R *
+      (this.aim.power / this.maxPower)
+    const unitToBall = unitAtAngle(this.aim.angle, this.tempVec)
+    this.applyHitAnimation(unitToBall)
+
+    unitToBall.multiplyScalar((1 - this.hitAnimationWeight) * swing)
+    this.updateCuePosition(pos, offset, unitToBall)
   }
 
   hitAnimationCurve(t: number) {
