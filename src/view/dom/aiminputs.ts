@@ -268,6 +268,13 @@ export class AimInputs {
   updateTiltSlider(elevation) {
     if (this.cueTiltElement) {
       this.cueTiltElement.value = elevation.toString()
+      if (this.controlsDisabled) {
+        if (elevation > 0) {
+          this.showTiltControl()
+        } else {
+          this.hideTiltControl()
+        }
+      }
     }
   }
 
