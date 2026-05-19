@@ -88,8 +88,7 @@ export class AngleInput extends HTMLElement {
     const x = e.clientX - rect.left - offset
     const y = rect.bottom - e.clientY - offset
 
-    const angleDeg = Math.atan2(y, x) * (180 / Math.PI)
-    this.updateElevation(Math.max(0, Math.min(90, angleDeg)) * (Math.PI / 180))
+    this.updateElevation(Math.atan2(y, x))
   }
 
   private onPointerUp(e: PointerEvent) {
@@ -110,8 +109,12 @@ export class AngleInput extends HTMLElement {
     )
   }
 
+  private clampElevation(rad: number): number {
+    return Math.max(0, Math.min(2 * Math.PI / 5, rad))
+  }
+
   private updateElevation(rad: number) {
-    const clamped = Math.max(0, Math.min(Math.PI / 2, rad))
+    const clamped = this.clampElevation(rad)
     if (this._elevation === clamped) return
 
     this._elevation = clamped

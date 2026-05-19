@@ -433,6 +433,7 @@ export class BotEventHandler {
   private handleStartAim(): void {
     this.startTurnIfNeeded()
     this.logs.show()
+    this.container.table.cue.aim.elevation = 0
     this.publishSequenceToPlayer(this.aim())
   }
 
@@ -455,6 +456,7 @@ export class BotEventHandler {
     )
     cueball.setStationary()
     cueball.fround()
+    this.container.table.cue.aim.elevation = 0
     this.publishSequenceToPlayer(this.aim())
   }
 
