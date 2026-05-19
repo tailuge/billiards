@@ -24,6 +24,10 @@ export abstract class ControllerBase extends Controller {
     if (overlay) {
       const isHidden = overlay.hasAttribute("hidden")
       if (isHidden) {
+        const iframe = overlay.querySelector("iframe")
+        if (iframe && !iframe.getAttribute("src")) {
+          iframe.setAttribute("src", "help.html")
+        }
         overlay.removeAttribute("hidden")
         if (closeBtn && !closeBtn.hasAttribute("data-bound")) {
           closeBtn.setAttribute("data-bound", "true")

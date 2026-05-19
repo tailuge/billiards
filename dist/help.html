@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fine vs Coarse Aim</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap"
+      rel="stylesheet"
+    />
     <style>
       * {
         box-sizing: border-box;
@@ -11,13 +15,19 @@
 
       body {
         margin: 0;
-        font-family: system-ui, sans-serif;
-        background: #111;
+        font-family: "Exo", sans-serif;
+        font-weight: 200;
+        background: transparent;
         color: white;
         display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
         justify-content: center;
         align-items: center;
-        min-height: 100vh;
+        align-content: center;
+        gap: 16px;
+        height: 100vh;
+        padding: 12px;
         overflow: hidden;
       }
 
@@ -52,7 +62,6 @@
         top: 0;
         height: 42%;
       }
-
       .bottom {
         bottom: 0;
         height: 42%;
@@ -102,7 +111,6 @@
         top: -2px;
         transform: translateX(-50%) rotate(-45deg);
       }
-
       .zoom-arrow::after {
         bottom: -2px;
         transform: translateX(-50%) rotate(135deg);
@@ -121,7 +129,6 @@
         gap: 8px;
         margin-bottom: 10px;
       }
-
       .ball {
         width: 10px;
         height: 10px;
@@ -136,7 +143,6 @@
         background: white;
         border-radius: 999px;
       }
-
       .arrow::before,
       .arrow::after {
         content: "";
@@ -147,12 +153,10 @@
         border-top: 3px solid white;
         border-right: 3px solid white;
       }
-
       .arrow::before {
         left: -2px;
         transform: translateY(-50%) rotate(-135deg);
       }
-
       .arrow::after {
         right: -2px;
         transform: translateY(-50%) rotate(45deg);
@@ -161,7 +165,6 @@
       .fine {
         width: 110px;
       }
-
       .coarse {
         width: 240px;
       }
@@ -172,11 +175,46 @@
         font-weight: 700;
         letter-spacing: 0.03em;
       }
-
       .sub {
         margin-top: 6px;
         font-size: 0.78rem;
         opacity: 0.7;
+      }
+
+      .controls-panel {
+        width: min(92vw, 360px);
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      }
+
+      .help-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+        color: #eee;
+      }
+
+      .help-row:last-child {
+        margin-bottom: 0;
+      }
+
+      kbd {
+        background: #333;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-family: "Exo", monospace;
+        border-bottom: 2px solid #555;
+        font-size: 0.85rem;
+        min-width: 32px;
+        text-align: center;
+        display: inline-block;
       }
     </style>
   </head>
@@ -189,9 +227,7 @@
           <div class="ball"></div>
           <div class="ball"></div>
         </div>
-
         <div class="arrow fine"></div>
-
         <div class="label">Fine Aim</div>
         <div class="sub">Small movement = precise adjustment</div>
       </div>
@@ -209,12 +245,26 @@
           <div class="ball"></div>
           <div class="ball"></div>
         </div>
-
         <div class="arrow coarse"></div>
-
         <div class="label">Coarse Aim</div>
         <div class="sub">Large movement = faster turning</div>
       </div>
+    </div>
+
+    <div class="controls-panel">
+      <div class="help-row"><kbd>⇦ ⇨</kbd><span>Aim</span></div>
+      <div class="help-row"><kbd>Ctrl ⇦ ⇨</kbd><span>Fine aim</span></div>
+      <div class="help-row">
+        <kbd>⇧ ⇩</kbd><span>Topspin &amp; backspin</span>
+      </div>
+      <div class="help-row"><kbd>Shift ⇦ ⇨</kbd><span>Side spin</span></div>
+      <div class="help-row">
+        <kbd>Space</kbd><span>Hit — hold for more power</span>
+      </div>
+      <div class="help-row"><kbd>F</kbd><span>Full screen</span></div>
+      <div class="help-row"><kbd>H</kbd><span>Help</span></div>
+      <div class="help-row"><kbd>M</kbd><span>Masse angle</span></div>
+      <div class="help-row"><kbd>O</kbd><span>Camera position</span></div>
     </div>
   </body>
 </html>
