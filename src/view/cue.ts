@@ -151,11 +151,12 @@ export class Cue {
     const curveVal = this.hitAnimationCurve(this.t)
     const hitOffset = this.hitAnimationWeight * curveVal * 2 * R
     const strokeX = (1 - this.hitAnimationWeight) * swing - hitOffset
+    const strokeZ = (0.15 + Math.min(this.t / 5, 0.25)) * hitOffset
 
     this.cueBody.position.set(
       -this.length / 2 - R + strokeX,
       this.aim.offset.x * 2 * R,
-      R * 0.12 + this.aim.offset.y * 2 * R
+      R * 0.12 + strokeZ + this.aim.offset.y * 2 * R
     )
 
     return strokeX
