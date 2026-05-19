@@ -31,7 +31,13 @@ export class End extends Controller {
     if (isDiagram) {
       return
     }
-    if (this.result && this.container.scoreReporter) {
+    if (
+      this.result &&
+      this.container.scoreReporter &&
+      (MatchResultHelper.isWinner(this.result) ||
+        this.container.isSinglePlayer ||
+        Session.isBotMode())
+    ) {
       if (!this.result.replayData) {
         try {
           const gameState = this.container.recorder.wholeGame()

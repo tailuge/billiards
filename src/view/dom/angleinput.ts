@@ -102,7 +102,10 @@ export class AngleInput extends HTMLElement {
       "pointermove",
       this.onPointerMove as EventListener
     )
-    this.area?.removeEventListener("pointerup", this.onPointerUp as EventListener)
+    this.area?.removeEventListener(
+      "pointerup",
+      this.onPointerUp as EventListener
+    )
     this.area?.removeEventListener(
       "pointercancel",
       this.onPointerUp as EventListener
@@ -110,7 +113,7 @@ export class AngleInput extends HTMLElement {
   }
 
   private clampElevation(rad: number): number {
-    return Math.max(0, Math.min(2 * Math.PI / 5, rad))
+    return Math.max(0, Math.min((2 * Math.PI) / 5, rad))
   }
 
   private updateElevation(rad: number) {

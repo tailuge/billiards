@@ -78,12 +78,7 @@ angle-input .ball {
   left: 12%;
   width: 8%;
   height: 8%;
-  background: radial-gradient(
-    circle at 35% 35%,
-    #fff 0%,
-    #ddd 70%,
-    #999 100%
-  );
+  background: radial-gradient(circle at 35% 35%, #fff 0%, #ddd 70%, #999 100%);
   border-radius: 50%;
   transform: translate(-50%, 50%);
   pointer-events: none;
