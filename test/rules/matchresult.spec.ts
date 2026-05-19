@@ -190,6 +190,8 @@ describe("MatchResult Construction", () => {
 
   it("MatchResultHelper should show Lostber subtext in bot mode loss", () => {
     Session.init("test-client", "TestPlayer", "test-table", false, true)
+    Session.getInstance().setMyScore(0)
+    Session.getInstance().setOpponentScore(1)
     container = createNineBallContainer()
     const result = (container.rules as any).handleGameEnd(false)
     expect(result.name).to.equal("End")

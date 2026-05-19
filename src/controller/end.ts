@@ -32,12 +32,14 @@ export class End extends Controller {
       return
     }
     if (this.result && this.container.scoreReporter) {
-      try {
-        const gameState = this.container.recorder.wholeGame()
-        const jsonState = JSON.stringify(gameState)
-        this.result.replayData = ReplayEncoder.crush(jsonState)
-      } catch (e) {
-        console.error("Failed to encode replay data", e)
+      if (!this.result.replayData) {
+        try {
+          const gameState = this.container.recorder.wholeGame()
+          const jsonState = JSON.stringify(gameState)
+          this.result.replayData = ReplayEncoder.crush(jsonState)
+        } catch (e) {
+          console.error("Failed to encode replay data", e)
+        }
       }
       this.container.scoreReporter.submitMatchResult(this.result)
     }

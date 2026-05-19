@@ -122,11 +122,10 @@ export class ThreeCushion implements Rules {
   }
 
   handleGameEnd(isWinner: boolean, endSubtext?: string): Controller {
-    const forcedAmIWinner = Session.isBotMode() && !isWinner ? false : undefined
     return MatchResultHelper.presentGameEnd(
       this.container,
       this.rulename,
-      forcedAmIWinner,
+      isWinner,
       endSubtext
     )
   }
