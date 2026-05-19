@@ -5,83 +5,6 @@ export class AngleInput extends HTMLElement {
 
   constructor() {
     super()
-    this.attachShadow({ mode: "open" })
-    if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = `
-            <style>
-                :host {
-                    display: block;
-                    position: relative;
-                    aspect-ratio: 1;
-                    touch-action: none; /* Prevents scrolling while dragging */
-                    width: 100%;
-                    height: 100%;
-                }
-                .area {
-                    position: relative;
-                    width: 100%;
-                    height: 100%;
-                    background: #111827;
-                    border: 2px solid #374151;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    cursor: grab;
-                    box-sizing: border-box;
-                }
-                .area:active { cursor: grabbing; }
-
-                /* Origin is pinned at 12% bottom-left */
-                .ball {
-                    position: absolute;
-                    bottom: 12%;
-                    left: 12%;
-                    width: 8%;
-                    height: 8%;
-                    background: radial-gradient(circle at 35% 35%, #fff 0%, #ddd 70%, #999 100%);
-                    border-radius: 50%;
-                    transform: translate(-50%, 50%);
-                    pointer-events: none;
-                    z-index: 2;
-                }
-                .rotator {
-                    position: absolute;
-                    bottom: 12%;
-                    left: 12%;
-                    width: 80%;
-                    height: 6%;
-                    transform-origin: 0% 50%;
-                    transform: translate(0, 50%) rotate(calc(-1deg * var(--angle, 0)));
-                    pointer-events: none;
-                    display: flex;
-                    align-items: center;
-                    z-index: 1;
-                }
-                .stick {
-                    display: flex;
-                    width: 100%;
-                    height: 100%;
-                    margin-left: 12%; /* Space between ball and tip */
-                    clip-path: polygon(0% 40%, 100% 20%, 100% 80%, 0% 60%);
-                }
-                .tip     { width: 3%; background: #256bb4; border-radius: 4px 0 0 4px; }
-                .ferrule { width: 6%; background: #e4e4e4; }
-                .shaft   { flex: 1;  background: #f6c386; }
-                .butt    { width: 25%; background: #000; }
-            </style>
-            <div class="area" id="area">
-                <div class="ball"></div>
-                <div class="rotator" id="rot">
-                    <div class="stick">
-                        <div class="tip"></div>
-                        <div class="ferrule"></div>
-                        <div class="shaft"></div>
-                        <div class="butt"></div>
-                    </div>
-                </div>
-            </div>
-        `
-    }
-
     this.onPointerDown = this.onPointerDown.bind(this)
     this.onPointerMove = this.onPointerMove.bind(this)
     this.onPointerUp = this.onPointerUp.bind(this)
@@ -119,7 +42,15 @@ export class AngleInput extends HTMLElement {
   }
 
   connectedCallback() {
-    this.area = this.shadowRoot?.getElementById("area") as HTMLElement
+    if (this.innerHTML.trim() === "") {
+      const template = document.getElementById(
+        "angle-input-template"
+      ) as HTMLTemplateElement
+      if (template) {
+        this.appendChild(template.content.cloneNode(true))
+      }
+    }
+    this.area = this.querySelector("#area") as HTMLElement
     this.updateRadians(Number.parseFloat(this.getAttribute("value") || "0"))
     this.area?.addEventListener(
       "pointerdown",
