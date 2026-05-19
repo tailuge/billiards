@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Billiard Cue Web Component</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #38bdf8;
+        }
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .playground {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+        }
+        .demo-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .label {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            font-family: monospace;
+            color: var(--accent-color);
+        }
+        /* Custom sizing via standard CSS */
+        billiard-cue.small { width: 120px; height: 120px; }
+        billiard-cue.large { width: 240px; height: 240px; }
+    </style>
+</head>
+<body>
+
+    <h1>Interactive Billiard Cue</h1>
+
+    <div class="playground">
+        <div class="demo-card">
+            <billiard-cue id="cue1" class="small" angle="30"></billiard-cue>
+            <div id="val1" class="label">Cue 1: 30°</div>
+        </div>
+        
+        <div class="demo-card">
+            <billiard-cue id="cue2" class="large" angle="60"></billiard-cue>
+            <div id="val2" class="label">Cue 2: 60°</div>
+        </div>
+    </div>
+
+<script>
+class BilliardCue extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this._angle = 0;
+
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: block;
+                    position: relative;
+                    aspect-ratio: 1;
+                    touch-action: none; /* Prevents scrolling while dragging */
+                }
+                .area {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    background: #111827;
+                    border: 2px solid #374151;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    cursor: grab;
+                }
+                .area:active { cursor: grabbing; }
+                
+                /* Origin is pinned at 12% bottom-left */
+                .ball {
+                    position: absolute;
+                    bottom: 12%;
+                    left: 12%;
+                    width: 8%;
+                    height: 8%;
+                    background: radial-gradient(circle at 35% 35%, #fff 0%, #ddd 70%, #999 100%);
+                    border-radius: 50%;
+                    transform: translate(-50%, 50%);
+                    pointer-events: none;
+                    z-index: 2;
+                }
+                .rotator {
+                    position: absolute;
+                    bottom: 12%;
+                    left: 12%;
+                    width: 80%;
+                    height: 6%;
+                    transform-origin: 0% 50%;
+                    transform: translate(0, 50%) rotate(calc(-1deg * var(--angle, 0)));
+                    pointer-events: none;
+                    display: flex;
+                    align-items: center;
+                    z-index: 1;
+                }
+                .stick {
+                    display: flex;
+                    width: 100%;
+                    height: 100%;
+                    margin-left: 12%; /* Space between ball and tip */
+                    clip-path: polygon(0% 40%, 100% 20%, 100% 80%, 0% 60%);
+                }
+                .tip     { width: 3%; background: #256bb4; border-radius: 4px 0 0 4px; }
+                .ferrule { width: 6%; background: #e4e4e4; }
+                .shaft   { flex: 1;  background: #f6c386; }
+                .butt    { width: 25%; background: #000; }
+            </style>
+            <div class="area" id="area">
+                <div class="ball"></div>
+                <div class="rotator" id="rot">
+                    <div class="stick">
+                        <div class="tip"></div>
+                        <div class="ferrule"></div>
+                        <div class="shaft"></div>
+                        <div class="butt"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        this.onPointerDown = this.onPointerDown.bind(this);
+        this.onPointerMove = this.onPointerMove.bind(this);
+        this.onPointerUp = this.onPointerUp.bind(this);
+    }
+
+    static get observedAttributes() { return ['angle']; }
+
+    get angle() { return this._angle; }
+    set angle(val) {
+        const parsed = parseFloat(val);
+        if (!isNaN(parsed)) this.updateAngle(parsed);
+    }
+
+    get radians() { return this._angle * (Math.PI / 180); }
+    set radians(val) { this.angle = val * (180 / Math.PI); }
+
+    connectedCallback() {
+        this.area = this.shadowRoot.getElementById('area');
+        this.updateAngle(parseFloat(this.getAttribute('angle')) || 0);
+        this.area.addEventListener('pointerdown', this.onPointerDown);
+    }
+
+    disconnectedCallback() {
+        this.area.removeEventListener('pointerdown', this.onPointerDown);
+        this.cleanup();
+    }
+
+    attributeChangedCallback(name, oldVal, newVal) {
+        if (name === 'angle' && oldVal !== newVal) this.angle = newVal;
+    }
+
+    onPointerDown(e) {
+        this.area.setPointerCapture(e.pointerId);
+        this.area.addEventListener('pointermove', this.onPointerMove);
+        this.area.addEventListener('pointerup', this.onPointerUp);
+        this.area.addEventListener('pointercancel', this.onPointerUp);
+        this.onPointerMove(e);
+    }
+
+    onPointerMove(e) {
+        const rect = this.area.getBoundingClientRect();
+        const offset = rect.width * 0.12;
+        const x = e.clientX - rect.left - offset;
+        const y = rect.bottom - e.clientY - offset;
+
+        let angleDeg = Math.atan2(y, x) * (180 / Math.PI);
+        this.updateAngle(Math.max(0, Math.min(90, angleDeg)));
+    }
+
+    onPointerUp(e) {
+        this.area.releasePointerCapture(e.pointerId);
+        this.cleanup();
+    }
+
+    cleanup() {
+        this.area.removeEventListener('pointermove', this.onPointerMove);
+        this.area.removeEventListener('pointerup', this.onPointerUp);
+        this.area.removeEventListener('pointercancel', this.onPointerUp);
+    }
+
+    updateAngle(angle) {
+        const clamped = Math.max(0, Math.min(90, Math.round(angle)));
+        if (this._angle === clamped) return;
+
+        this._angle = clamped;
+        this.style.setProperty('--angle', clamped);
+
+        this.dispatchEvent(new CustomEvent('angle-change', {
+            detail: { angle: clamped, radians: clamped * (Math.PI / 180) },
+            bubbles: true,
+            composed: true
+        }));
+    }
+}
+
+customElements.define('billiard-cue', BilliardCue);
+
+// Interactive Wiring
+const cue1 = document.getElementById('cue1');
+const cue2 = document.getElementById('cue2');
+const val1 = document.getElementById('val1');
+const val2 = document.getElementById('val2');
+
+cue1.addEventListener('angle-change', (e) => {
+    val1.textContent = `Cue 1: ${e.detail.angle}°`;
+    // Programmatically make Cue 2 mirror Cue 1 using the radians setter
+    cue2.radians = e.detail.radians;
+});
+
+cue2.addEventListener('angle-change', (e) => {
+    val2.textContent = `Cue 2: ${e.detail.angle}°`;
+});
+</script>
+</body>
+</html>
