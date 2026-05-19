@@ -151,12 +151,11 @@ export class Cue {
     const curveVal = this.hitAnimationCurve(this.t)
     const hitOffset = this.hitAnimationWeight * curveVal * 2 * R
     const strokeX = (1 - this.hitAnimationWeight) * swing - hitOffset
-    const strokeZ = (0.15 + Math.min(this.t / 5, 0.25)) * hitOffset
 
     this.cueBody.position.set(
       -this.length / 2 - R + strokeX,
       this.aim.offset.x * 2 * R,
-      R * 0.12 + strokeZ + this.aim.offset.y * 2 * R
+      R * 0.12 + this.aim.offset.y * 2 * R
     )
 
     return strokeX
@@ -169,15 +168,18 @@ export class Cue {
     const unitToBall = unitAtAngle(this.aim.angle, this.tempVec)
     const sideVec = upCross(unitToBall).normalize()
     const elevation = this.tiltMesh.rotation.y as number
-    const projectedStroke =
-      strokeX * Math.cos(elevation) +
-      (this.cueBody.position.z - R * 0.12) * Math.sin(elevation)
+
+    const localX = strokeX - R
+    const localZ = this.cueBody.position.z
+    const projectedX =
+      localX * Math.cos(elevation) + localZ * Math.sin(elevation)
 
     this.shadowMesh.position
       .copy(pos)
       .addScaledVector(sideVec, this.cueBody.position.y)
-      .addScaledVector(unitToBall, projectedStroke)
+      .addScaledVector(unitToBall, projectedX + R * Math.cos(elevation))
     this.shadowMesh.position.z = -R * 0.99
+    this.shadowMesh.scale.x = Math.cos(elevation)
 
     this.helperMesh.position.copy(pos)
     this.placerMesh.position.copy(pos)
@@ -187,7 +189,6 @@ export class Cue {
   moveTo(pos) {
     this.aim.pos.copy(pos)
     this.updateCueRotation()
-    const offset = this.spinOffset()
     const swing =
       (sin(this.t * 1.5 + Math.PI / 2) - 1) *
       2 *
