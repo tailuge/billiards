@@ -127,7 +127,8 @@ export class Container {
     this.lobbyIndicator = new LobbyIndicator(
       Session.getInstance().botMode,
       this.replayMode,
-      this.rules
+      this.rules,
+      (msg) => this.chat.showMessage(msg)
     )
     this.updateController(new Init(this))
     //  this.updateController(new End(this))

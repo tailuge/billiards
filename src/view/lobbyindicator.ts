@@ -1,4 +1,9 @@
-import { MessagingClient, Lobby } from "@tailuge/messaging"
+import {
+  MessagingClient,
+  Lobby,
+  PresenceMessage,
+  ChatMessage,
+} from "@tailuge/messaging"
 import { Session } from "../network/client/session"
 import { Rules } from "../controller/rules/rules"
 import { id } from "../utils/dom"
@@ -24,9 +29,18 @@ export class LobbyIndicator {
   private readonly replayMode: boolean
   private readonly isSpectator: boolean
   private opponentOnline: boolean | null = null
-  constructor(botMode: boolean, replayMode: boolean, rules: Rules) {
+  private users: PresenceMessage[] = []
+  private readonly onChatMessage?: (msg: string) => void
+
+  constructor(
+    botMode: boolean,
+    replayMode: boolean,
+    rules: Rules,
+    onChatMessage?: (msg: string) => void
+  ) {
     this.rules = rules
     this.replayMode = replayMode
+    this.onChatMessage = onChatMessage
     this.isSpectator = Session.getInstance().spectator
     if (botMode) {
       this.ruleType = `${this.rules.rulename}-bot`
@@ -114,6 +128,7 @@ export class LobbyIndicator {
     this.lobby = await this.messagingClient.joinLobby(presence)
 
     this.lobby.onUsersChange((users) => {
+      this.users = users
       this.count = users.length
       const session = Session.getInstance()
       const opponentId = session.opponentClientId
@@ -127,6 +142,12 @@ export class LobbyIndicator {
         this.opponentOnline = null
       }
       this.updateDisplay()
+    })
+
+    this.lobby.onChat((chat: ChatMessage) => {
+      const sender = this.users.find((u) => u.userId === chat.senderId)
+      const senderName = sender ? sender.userName : "Unknown"
+      this.onChatMessage?.(`${senderName}: ${chat.text}`)
     })
 
     this.lobby.onChallenge((challenge) => {
