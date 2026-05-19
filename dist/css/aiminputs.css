@@ -13,8 +13,8 @@
 }
 
 .tiltSliderContainer {
-  width: 60px;
-  height: 240px;
+  width: 140px;
+  height: 160px;
   padding: 10px;
   border: 1px solid #2d1e16;
   border-radius: 10px;
@@ -59,22 +59,11 @@
   width: 100%;
 }
 
-input[type="range"].tiltSlider {
-  appearance: slider-vertical;
-  -webkit-appearance: slider-vertical;
-  writing-mode: vertical-lr;
-  direction: rtl;
+angle-input {
   flex: 1 1 auto;
-  width: 20px;
-  min-height: 180px;
+  width: 120px;
+  height: 120px;
   margin: 0 auto;
-  accent-color: #d1a05c;
-  cursor: pointer;
-}
-
-input[type="range"].tiltSlider.is-disabled,
-input[type="range"].tiltSlider:disabled {
-  cursor: not-allowed;
 }
 
 .ballContainerWrapper {

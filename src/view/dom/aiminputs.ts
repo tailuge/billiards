@@ -6,6 +6,7 @@ import { Overlap } from "../../utils/overlap"
 import { unitAtAngle } from "../../utils/three-utils"
 import { id } from "../../utils/dom"
 import { TimeoutButton } from "../timeoutbutton"
+import { AngleInput } from "./elevation"
 
 export class AimInputs {
   readonly ballContainerWrapperElement
@@ -15,7 +16,7 @@ export class AimInputs {
   readonly powerSliderContainerElement
   readonly cuePowerElement
   readonly tiltSliderContainerElement
-  readonly cueTiltElement
+  readonly cueTiltElement: AngleInput
   /** Shared button for both "Hit" and "Place Ball" actions. */
   readonly cueHitElement
   readonly objectBallStyle: CSSStyleDeclaration | undefined
@@ -38,7 +39,7 @@ export class AimInputs {
     this.powerSliderContainerElement = id("powerSliderContainer")
     this.cuePowerElement = id("cuePower")
     this.tiltSliderContainerElement = id("tiltSliderContainer")
-    this.cueTiltElement = id("cueTilt") as HTMLInputElement
+    this.cueTiltElement = id("cueTilt") as AngleInput
     this.cueHitElement = id("cueHit") as HTMLButtonElement
     if (this.cueHitElement) {
       const params = new URLSearchParams(location.search)
@@ -161,7 +162,6 @@ export class AimInputs {
     }
     if (this.cueTiltElement) {
       this.cueTiltElement.disabled = this.controlsDisabled
-      this.cueTiltElement.classList.toggle("is-disabled", this.controlsDisabled)
     }
   }
 
@@ -254,7 +254,7 @@ export class AimInputs {
     if (this.controlsDisabled || !this.cueTiltElement) {
       return
     }
-    this.container.table.cue.aim.elevation = Number(this.cueTiltElement.value)
+    this.container.table.cue.aim.elevation = this.cueTiltElement.radians
     this.container.lastEventTime = performance.now()
   }
 
@@ -267,7 +267,7 @@ export class AimInputs {
 
   updateTiltSlider(elevation) {
     if (this.cueTiltElement) {
-      this.cueTiltElement.value = elevation.toString()
+      this.cueTiltElement.radians = elevation
       if (this.controlsDisabled) {
         if (elevation > 0) {
           this.showTiltControl()
