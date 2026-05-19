@@ -6,7 +6,7 @@ import { Overlap } from "../../utils/overlap"
 import { unitAtAngle } from "../../utils/three-utils"
 import { id } from "../../utils/dom"
 import { TimeoutButton } from "../timeoutbutton"
-import { AngleInput } from "./elevation"
+import { AngleInput } from "./angleinput"
 
 export class AimInputs {
   readonly ballContainerWrapperElement
@@ -254,7 +254,7 @@ export class AimInputs {
     if (this.controlsDisabled || !this.cueTiltElement) {
       return
     }
-    this.container.table.cue.aim.elevation = this.cueTiltElement.radians
+    this.container.table.cue.aim.elevation = this.cueTiltElement.elevation
     this.container.lastEventTime = performance.now()
   }
 
@@ -267,7 +267,7 @@ export class AimInputs {
 
   updateTiltSlider(elevation) {
     if (this.cueTiltElement) {
-      this.cueTiltElement.radians = elevation
+      this.cueTiltElement.elevation = elevation
       if (this.controlsDisabled) {
         if (elevation > 0) {
           this.showTiltControl()

@@ -1,5 +1,5 @@
 export class AngleInput extends HTMLElement {
-  private _radians = 0
+  private _elevation = 0
   private _disabled = false
   private area: HTMLElement | null = null
 
@@ -11,22 +11,22 @@ export class AngleInput extends HTMLElement {
   }
 
   get value(): string {
-    return this._radians.toString()
+    return this._elevation.toString()
   }
 
   set value(val: string) {
     const parsed = Number.parseFloat(val)
     if (!Number.isNaN(parsed)) {
-      this.updateRadians(parsed)
+      this.updateElevation(parsed)
     }
   }
 
-  get radians(): number {
-    return this._radians
+  get elevation(): number {
+    return this._elevation
   }
 
-  set radians(val: number) {
-    this.updateRadians(val)
+  set elevation(val: number) {
+    this.updateElevation(val)
   }
 
   get disabled(): boolean {
@@ -51,7 +51,7 @@ export class AngleInput extends HTMLElement {
       }
     }
     this.area = this.querySelector("#area") as HTMLElement
-    this.updateRadians(Number.parseFloat(this.getAttribute("value") || "0"))
+    this.updateElevation(Number.parseFloat(this.getAttribute("value") || "0"))
     this.area?.addEventListener(
       "pointerdown",
       this.onPointerDown as EventListener
@@ -89,7 +89,7 @@ export class AngleInput extends HTMLElement {
     const y = rect.bottom - e.clientY - offset
 
     const angleDeg = Math.atan2(y, x) * (180 / Math.PI)
-    this.updateRadians(Math.max(0, Math.min(90, angleDeg)) * (Math.PI / 180))
+    this.updateElevation(Math.max(0, Math.min(90, angleDeg)) * (Math.PI / 180))
   }
 
   private onPointerUp(e: PointerEvent) {
@@ -110,11 +110,11 @@ export class AngleInput extends HTMLElement {
     )
   }
 
-  private updateRadians(rad: number) {
+  private updateElevation(rad: number) {
     const clamped = Math.max(0, Math.min(Math.PI / 2, rad))
-    if (this._radians === clamped) return
+    if (this._elevation === clamped) return
 
-    this._radians = clamped
+    this._elevation = clamped
     const angleDeg = Math.round(clamped * (180 / Math.PI))
     this.style.setProperty("--angle", angleDeg.toString())
 

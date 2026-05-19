@@ -1,6 +1,6 @@
 import { BrowserContainer } from "./container/browsercontainer"
 import { logusage } from "./utils/usage"
-import { AngleInput } from "./view/dom/elevation"
+import { AngleInput } from "./view/dom/angleinput"
 import { getCanvas } from "./utils/dom"
 import { VERSION } from "./utils/version"
 import { ClientErrorReporter } from "./network/client/clienterrorreporter"
