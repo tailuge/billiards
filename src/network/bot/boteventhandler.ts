@@ -238,6 +238,10 @@ export class BotEventHandler {
   }
 
   private handleGameEnd(): void {
+    const session = Session.getInstance()
+    const { p1, p2 } = session.orderedScoresForHud()
+    const amIWinner = session.playerIndex === 0 ? p1 >= p2 : p2 >= p1
+
     if (this.container.scoreReporter) {
       let replayData: string | undefined
       try {
@@ -246,19 +250,23 @@ export class BotEventHandler {
       } catch (e) {
         console.error("Failed to encode replay data", e)
       }
+
       const result: MatchResult = {
-        winner: this.strategy.name,
-        loser: Session.getInstance().playername,
-        winnerScore: Session.getInstance().opponentScore(),
-        loserScore: Session.getInstance().myScore(),
+        winner: amIWinner ? session.playername : this.strategy.name,
+        loser: amIWinner ? this.strategy.name : session.playername,
+        winnerScore: amIWinner ? session.myScore() : session.opponentScore(),
+        loserScore: amIWinner ? session.opponentScore() : session.myScore(),
         ruleType: this.container.rules.rulename,
+        bot: true,
       }
       if (replayData) {
         result.replayData = replayData
       }
       this.container.scoreReporter.submitMatchResult(result)
     }
-    this.container.updateController(this.container.rules.handleGameEnd(false))
+    this.container.updateController(
+      this.container.rules.handleGameEnd(amIWinner)
+    )
   }
 
   private handleEightBallFoul(outcome: Outcome[]): boolean {

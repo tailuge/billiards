@@ -30,7 +30,7 @@ export class MatchResultHelper {
     container.recorder.wholeGameLink()
 
     const session = Session.getInstance()
-    const amIWinner = this.determineWinner(session, forcedAmIWinner)
+    const amIWinner = this.determineWinner(session, rulename, forcedAmIWinner)
     const subtext = endSubtext ?? this.getScoreSubtext(container)
 
     this.updateRematchInfo(container, session, rulename, amIWinner)
@@ -41,21 +41,36 @@ export class MatchResultHelper {
 
     const result = this.createMatchResult(rulename, session, amIWinner)
 
-    return new End(container, amIWinner ? result : undefined)
+    return new End(container, result)
   }
 
   private static determineWinner(
     session: Session,
+    rulename: string,
     forcedAmIWinner?: boolean
   ): boolean {
-    if (forcedAmIWinner !== undefined) {
-      return forcedAmIWinner
-    }
-
     const { p1, p2 } = session.orderedScoresForHud()
 
     const winnerIndex = p1 >= p2 ? 0 : 1
     const playerIndex = session.playerIndex
+
+    if (forcedAmIWinner !== undefined) {
+      const isWinnerByScore = winnerIndex === playerIndex
+      if (Session.isBotMode()) {
+        // If it's a natural end (forcedAmIWinner came from rules), score should be considered
+        // If it's a concession (forcedAmIWinner=false passed to rules), forcedAmIWinner should be respected.
+        // Rules pass false to handleGameEnd when bot wins by score/legal pot.
+        // But BotEventHandler should now be passing the correct winner based on score.
+        return forcedAmIWinner
+      }
+      // For games like NineBall/EightBall, forcedAmIWinner (potting 9-ball/8-ball) is king.
+      // For Snooker, score is king.
+      if (rulename === "snooker") {
+        return isWinnerByScore
+      }
+      return forcedAmIWinner
+    }
+
     return winnerIndex === playerIndex
   }
 
@@ -163,6 +178,9 @@ export class MatchResultHelper {
     hasRematch: boolean = false
   ) {
     if (container.isSinglePlayer) return
+    const session = Session.getInstance()
+    const { p1, p2 } = session.orderedScoresForHud()
+    container.sendScoreUpdate(p1, p2, 0)
     container.sendEvent(
       new NotificationEvent({
         type: "GameOver",
@@ -184,9 +202,8 @@ export class MatchResultHelper {
   ) {
     if (container.isSinglePlayer) return
     const session = Session.getInstance()
-    container.sendEvent(
-      new ScoreEvent(session.myScore(), session.opponentScore(), 0)
-    )
+    const { p1, p2 } = session.orderedScoresForHud()
+    container.sendEvent(new ScoreEvent(p1, p2, 0))
     container.sendEvent(
       new NotificationEvent({
         type: "GameOver",
@@ -237,7 +254,7 @@ export class MatchResultHelper {
       winner: winnerName,
       winnerScore: winnerScore,
       ruleType: rulename,
-      bot: session.botMode,
+      bot: Session.isBotMode(),
     }
 
     if (session.opponentName) {

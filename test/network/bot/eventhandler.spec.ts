@@ -267,6 +267,8 @@ describe("BotEventHandler Respot Logic", () => {
   })
 
   it("should notify player and stop when game is over", () => {
+    Session.getInstance().setMyScore(0)
+    Session.getInstance().setOpponentScore(1)
     const eventHandler = createBotEventHandler(container, publishedEvents)
     const notifySpy = jest.spyOn(container, "notifyLocal")
 
