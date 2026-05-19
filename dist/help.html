@@ -1,214 +1,220 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fine vs Coarse Aim</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine vs Coarse Aim</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
-    body {
-      margin: 0;
-      font-family: system-ui, sans-serif;
-      background: #111;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      overflow: hidden;
-    }
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #111;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow: hidden;
+      }
 
-    .phone {
-      width: min(92vw, 420px);
-      aspect-ratio: 16 / 9;
-      border: 2px solid #666;
-      border-radius: 22px;
-      overflow: hidden;
-      position: relative;
-      background: linear-gradient(to bottom, #1b2d44 0%, #13212f 50%, #1a1611 100%);
-    }
+      .phone {
+        width: min(92vw, 420px);
+        aspect-ratio: 16 / 9;
+        border: 2px solid #666;
+        border-radius: 22px;
+        overflow: hidden;
+        position: relative;
+        background: linear-gradient(
+          to bottom,
+          #1b2d44 0%,
+          #13212f 50%,
+          #1a1611 100%
+        );
+      }
 
-    .top,
-    .bottom {
-      position: absolute;
-      left: 0;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
+      .top,
+      .bottom {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
 
-    .top {
-      top: 0;
-      height: 42%;
-    }
+      .top {
+        top: 0;
+        height: 42%;
+      }
 
-    .bottom {
-      bottom: 0;
-      height: 42%;
-    }
+      .bottom {
+        bottom: 0;
+        height: 42%;
+      }
 
-    .divider {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      width: 100%;
-      border-top: 2px dashed rgba(255,255,255,0.25);
-      transform: translateY(-50%);
-    }
+      .divider {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 100%;
+        border-top: 2px dashed rgba(255, 255, 255, 0.25);
+        transform: translateY(-50%);
+      }
 
-    .zoom {
-      position: absolute;
-      right: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      opacity: 0.9;
-    }
+      .zoom {
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        opacity: 0.9;
+      }
 
-    .zoom-arrow {
-      width: 4px;
-      height: 90px;
-      background: white;
-      border-radius: 999px;
-      position: relative;
-    }
+      .zoom-arrow {
+        width: 4px;
+        height: 90px;
+        background: white;
+        border-radius: 999px;
+        position: relative;
+      }
 
-    .zoom-arrow::before,
-    .zoom-arrow::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      width: 10px;
-      height: 10px;
-      border-top: 3px solid white;
-      border-right: 3px solid white;
-    }
+      .zoom-arrow::before,
+      .zoom-arrow::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        width: 10px;
+        height: 10px;
+        border-top: 3px solid white;
+        border-right: 3px solid white;
+      }
 
-    .zoom-arrow::before {
-      top: -2px;
-      transform: translateX(-50%) rotate(-45deg);
-    }
+      .zoom-arrow::before {
+        top: -2px;
+        transform: translateX(-50%) rotate(-45deg);
+      }
 
-    .zoom-arrow::after {
-      bottom: -2px;
-      transform: translateX(-50%) rotate(135deg);
-    }
+      .zoom-arrow::after {
+        bottom: -2px;
+        transform: translateX(-50%) rotate(135deg);
+      }
 
-    .zoom-label {
-      font-size: 0.72rem;
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
-      letter-spacing: 0.08em;
-      opacity: 0.7;
-    }
+      .zoom-label {
+        font-size: 0.72rem;
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        letter-spacing: 0.08em;
+        opacity: 0.7;
+      }
 
-    .balls {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
+      .balls {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
 
-    .ball {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: white;
-      opacity: 0.9;
-    }
+      .ball {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: white;
+        opacity: 0.9;
+      }
 
-    .arrow {
-      position: relative;
-      height: 4px;
-      background: white;
-      border-radius: 999px;
-    }
+      .arrow {
+        position: relative;
+        height: 4px;
+        background: white;
+        border-radius: 999px;
+      }
 
-    .arrow::before,
-    .arrow::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      width: 10px;
-      height: 10px;
-      border-top: 3px solid white;
-      border-right: 3px solid white;
-    }
+      .arrow::before,
+      .arrow::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 10px;
+        height: 10px;
+        border-top: 3px solid white;
+        border-right: 3px solid white;
+      }
 
-    .arrow::before {
-      left: -2px;
-      transform: translateY(-50%) rotate(-135deg);
-    }
+      .arrow::before {
+        left: -2px;
+        transform: translateY(-50%) rotate(-135deg);
+      }
 
-    .arrow::after {
-      right: -2px;
-      transform: translateY(-50%) rotate(45deg);
-    }
+      .arrow::after {
+        right: -2px;
+        transform: translateY(-50%) rotate(45deg);
+      }
 
-    .fine {
-      width: 110px;
-    }
+      .fine {
+        width: 110px;
+      }
 
-    .coarse {
-      width: 240px;
-    }
+      .coarse {
+        width: 240px;
+      }
 
-    .label {
-      margin-top: 14px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-    }
+      .label {
+        margin-top: 14px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+      }
 
-    .sub {
-      margin-top: 6px;
-      font-size: 0.78rem;
-      opacity: 0.7;
-    }</style>
-</head>
-<body>
-  <div class="phone">
-    <div class="top">
-      <div class="balls">
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
+      .sub {
+        margin-top: 6px;
+        font-size: 0.78rem;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="phone">
+      <div class="top">
+        <div class="balls">
+          <div class="ball"></div>
+          <div class="ball"></div>
+          <div class="ball"></div>
+          <div class="ball"></div>
+        </div>
+
+        <div class="arrow fine"></div>
+
+        <div class="label">Fine Aim</div>
+        <div class="sub">Small movement = precise adjustment</div>
       </div>
 
-      <div class="arrow fine"></div>
+      <div class="divider"></div>
 
-      <div class="label">Fine Aim</div>
-      <div class="sub">Small movement = precise adjustment</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="zoom">
-      <div class="zoom-arrow"></div>
-      <div class="zoom-label">ZOOM</div>
-    </div>
-
-    <div class="bottom">
-      <div class="balls">
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
+      <div class="zoom">
+        <div class="zoom-arrow"></div>
+        <div class="zoom-label">ZOOM</div>
       </div>
 
-      <div class="arrow coarse"></div>
+      <div class="bottom">
+        <div class="balls">
+          <div class="ball"></div>
+          <div class="ball"></div>
+          <div class="ball"></div>
+        </div>
 
-      <div class="label">Coarse Aim</div>
-      <div class="sub">Large movement = faster turning</div>
+        <div class="arrow coarse"></div>
+
+        <div class="label">Coarse Aim</div>
+        <div class="sub">Large movement = faster turning</div>
+      </div>
     </div>
-</div>
-</body>
+  </body>
 </html>

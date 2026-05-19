@@ -18,6 +18,25 @@ export abstract class ControllerBase extends Controller {
     container.table.proximityIndicator.hide()
   }
 
+  private toggleHelpOverlay() {
+    const overlay = document.getElementById("helpOverlay")
+    const closeBtn = document.getElementById("helpClose")
+    if (overlay) {
+      const isHidden = overlay.hasAttribute("hidden")
+      if (isHidden) {
+        overlay.removeAttribute("hidden")
+        if (closeBtn && !closeBtn.hasAttribute("data-bound")) {
+          closeBtn.setAttribute("data-bound", "true")
+          closeBtn.addEventListener("click", () =>
+            overlay.setAttribute("hidden", "true")
+          )
+        }
+      } else {
+        overlay.setAttribute("hidden", "true")
+      }
+    }
+  }
+
   override handleChat(chatevent: ChatEvent): Controller {
     if (chatevent.message) {
       this.container.chat.showMessage(chatevent.message)
@@ -88,6 +107,9 @@ export abstract class ControllerBase extends Controller {
       case "KeyAUp":
         cue.toggleHelper()
         return true
+      case "KeyHUp":
+        this.toggleHelpOverlay()
+        return true
       case "movementXUp":
         cue.rotateAim(delta * 2, this.container.table)
         return true
@@ -102,7 +124,7 @@ export abstract class ControllerBase extends Controller {
         this.container.view.camera.toggleMode()
         return true
       case "KeyDUp":
-        this.togglePanel()
+        //this.togglePanel()
         return true
       case "KeyFUp":
         this.toggleFullscreen()
