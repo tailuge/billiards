@@ -15,24 +15,44 @@
 
       body {
         margin: 0;
-        font-family: "Exo", sans-serif;
+        font-family: Exo, sans-serif;
         font-weight: 200;
         background: transparent;
         color: white;
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
-        align-content: center;
         gap: 16px;
-        height: 100vh;
-        padding: 12px;
-        overflow: hidden;
+        min-height: 100vh;
+        padding: 48px 12px 16px;
+        overflow: hidden auto;
+      }
+
+      /* Custom slim and premium scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgb(255 255 255 / 20%);
+        border-radius: 4px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgb(255 255 255 / 35%);
+        border: 2px solid transparent;
+        background-clip: padding-box;
       }
 
       .phone {
-        width: min(92vw, 420px);
+        width: 100%;
+        max-width: 360px;
         aspect-ratio: 16 / 9;
         border: 2px solid #666;
         border-radius: 16px;
@@ -62,6 +82,7 @@
         top: 0;
         height: 42%;
       }
+
       .bottom {
         bottom: 0;
         height: 42%;
@@ -72,7 +93,7 @@
         top: 50%;
         left: 0;
         width: 100%;
-        border-top: 2px dashed rgba(255, 255, 255, 0.25);
+        border-top: 2px dashed rgb(255 255 255 / 25%);
         transform: translateY(-50%);
       }
 
@@ -111,6 +132,7 @@
         top: -2px;
         transform: translateX(-50%) rotate(-45deg);
       }
+
       .zoom-arrow::after {
         bottom: -2px;
         transform: translateX(-50%) rotate(135deg);
@@ -129,6 +151,7 @@
         gap: 8px;
         margin-bottom: 10px;
       }
+
       .ball {
         width: 1px;
         height: 1px;
@@ -143,6 +166,7 @@
         background: white;
         border-radius: 999px;
       }
+
       .arrow::before,
       .arrow::after {
         content: "";
@@ -153,10 +177,12 @@
         border-top: 3px solid white;
         border-right: 3px solid white;
       }
+
       .arrow::before {
         left: -2px;
         transform: translateY(-50%) rotate(-135deg);
       }
+
       .arrow::after {
         right: -2px;
         transform: translateY(-50%) rotate(45deg);
@@ -165,6 +191,7 @@
       .fine {
         width: 110px;
       }
+
       .coarse {
         width: 240px;
       }
@@ -175,6 +202,7 @@
         font-weight: 700;
         letter-spacing: 0.03em;
       }
+
       .sub {
         margin-top: 4px;
         font-size: 0.78rem;
@@ -182,12 +210,13 @@
       }
 
       .controls-panel {
-        width: min(92vw, 360px);
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        width: 100%;
+        max-width: 360px;
+        background: rgb(0 0 0 / 40%);
+        border: 1px solid rgb(255 255 255 / 10%);
         border-radius: 8px;
         padding: 20px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 16px rgb(0 0 0 / 30%);
       }
 
       .help-row {
@@ -209,7 +238,7 @@
         color: #fff;
         padding: 2px 8px;
         border-radius: 6px;
-        font-family: "Exo", monospace;
+        font-family: Exo, monospace;
         border-bottom: 2px solid #555;
         font-size: 0.85rem;
         min-width: 32px;
