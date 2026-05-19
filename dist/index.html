@@ -159,18 +159,21 @@
           </button>
         </div>
         <div id="tiltSliderContainer" class="tiltSliderContainer" hidden>
-          <label for="cueTilt" class="tiltSliderLabel">tilt</label>
-          <input
-            class="tiltSlider"
-            type="range"
-            min="0"
-            max="1.31"
-            step="0.01"
-            value="0"
-            id="cueTilt"
-            aria-label="tilt slider"
-          />
+          <angle-input id="cueTilt" aria-label="tilt angle"></angle-input>
         </div>
+        <template id="angle-input-template">
+          <div class="area" id="area">
+            <div class="ball"></div>
+            <div class="rotator" id="rot">
+              <div class="stick">
+                <div class="tip"></div>
+                <div class="ferrule"></div>
+                <div class="shaft"></div>
+                <div class="butt"></div>
+              </div>
+            </div>
+          </div>
+        </template>
         <div id="ballContainerWrapper" class="ballContainerWrapper">
           <div id="ballContainer" class="ballContainer">
             <div id="objectBall" class="objectBall"></div>

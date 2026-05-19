@@ -55,8 +55,8 @@ describe("AimInput", () => {
   it("tilt slider updates aim elevation", (done) => {
     aiminputs.setDisabled(false)
     aiminputs.tiltSliderContainerElement.hidden = false
-    aiminputs.cueTiltElement.value = "0.75"
-    fireEvent.input(aiminputs.cueTiltElement, { target: { value: "0.75" } })
+    aiminputs.cueTiltElement.radians = 0.75
+    fireEvent.input(aiminputs.cueTiltElement)
     expect(container.table.cue.aim.elevation).to.equal(0.75)
     done()
   })
