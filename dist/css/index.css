@@ -294,14 +294,12 @@ label {
   max-height: 600px;
   min-width: 320px;
   min-height: 240px;
-  background: rgb(0 0 0 / 85%);
+  background: rgb(0 0 0 / 50%);
   border: 1px solid rgb(255 255 255 / 15%);
   border-radius: 8px;
   display: flex;
   z-index: 3000;
   box-shadow: 0 8px 32px rgb(0 0 0 / 50%);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 
 #helpOverlay[hidden] {
