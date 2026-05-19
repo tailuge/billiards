@@ -35,7 +35,7 @@
         width: min(92vw, 420px);
         aspect-ratio: 16 / 9;
         border: 2px solid #666;
-        border-radius: 22px;
+        border-radius: 16px;
         overflow: hidden;
         position: relative;
         background: linear-gradient(
@@ -130,8 +130,8 @@
         margin-bottom: 10px;
       }
       .ball {
-        width: 10px;
-        height: 10px;
+        width: 1px;
+        height: 1px;
         border-radius: 50%;
         background: white;
         opacity: 0.9;
@@ -185,7 +185,7 @@
         width: min(92vw, 360px);
         background: rgba(0, 0, 0, 0.4);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
+        border-radius: 8px;
         padding: 20px;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
       }
@@ -225,11 +225,10 @@
           <div class="ball"></div>
           <div class="ball"></div>
           <div class="ball"></div>
-          <div class="ball"></div>
         </div>
         <div class="arrow fine"></div>
         <div class="label">Fine Aim</div>
-        <div class="sub">Small movement = precise adjustment</div>
+        <div class="sub">near top = precise adjustment</div>
       </div>
 
       <div class="divider"></div>
@@ -244,10 +243,12 @@
           <div class="ball"></div>
           <div class="ball"></div>
           <div class="ball"></div>
+          <div class="ball"></div>
+          <div class="ball"></div>
         </div>
         <div class="arrow coarse"></div>
         <div class="label">Coarse Aim</div>
-        <div class="sub">Large movement = faster turning</div>
+        <div class="sub">near bottom = faster turning</div>
       </div>
     </div>
 
@@ -261,6 +262,7 @@
       <div class="help-row">
         <kbd>Space</kbd><span>Hit — hold for more power</span>
       </div>
+      <div class="help-row"><kbd>🖱️ scroll</kbd><span>Shot power</span></div>
       <div class="help-row"><kbd>F</kbd><span>Full screen</span></div>
       <div class="help-row"><kbd>H</kbd><span>Help</span></div>
       <div class="help-row"><kbd>M</kbd><span>Masse angle</span></div>
