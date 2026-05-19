@@ -85,7 +85,7 @@ export abstract class ControllerBase extends Controller {
       case "KeyPUp":
         exportGltf(this.container.view.scene)
         return true
-      case "KeyHUp":
+      case "KeyAUp":
         cue.toggleHelper()
         return true
       case "movementXUp":

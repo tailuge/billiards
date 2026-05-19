@@ -55,7 +55,7 @@ export class CueMesh {
         float intensity = dot(vNormal, lightDirection);
         vec3 color = vec3(1.0, 1.0, 1.0);
         vec3 finalColor = color * intensity;
-        gl_FragColor = vec4(finalColor, 0.05 * (1.0-vUv.y));
+        gl_FragColor = vec4(finalColor, 0.075 * (1.0-vUv.y));
       }
     `,
     wireframe: false,
