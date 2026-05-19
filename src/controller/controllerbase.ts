@@ -111,6 +111,9 @@ export abstract class ControllerBase extends Controller {
       case "KeyAUp":
         cue.toggleHelper()
         return true
+      case "KeyMUp":
+        this.container.table.cue.aimInputs?.toggleTiltControl()
+        return true
       case "KeyHUp":
         this.toggleHelpOverlay()
         return true

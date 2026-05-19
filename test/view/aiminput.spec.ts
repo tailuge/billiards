@@ -52,6 +52,16 @@ describe("AimInput", () => {
     done()
   })
 
+  it("toggleTiltControl without arguments toggles tilt slider", (done) => {
+    aiminputs.setDisabled(false)
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true
+    aiminputs.toggleTiltControl()
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.false
+    aiminputs.toggleTiltControl()
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true
+    done()
+  })
+
   it("tilt slider updates aim elevation", (done) => {
     aiminputs.setDisabled(false)
     aiminputs.tiltSliderContainerElement.hidden = false

@@ -288,12 +288,12 @@ export class AimInputs {
     })
   }
 
-  toggleTiltControl = (e) => {
+  toggleTiltControl = (e?: any) => {
     if (this.controlsDisabled || !this.tiltSliderContainerElement) {
       return
     }
-    e.preventDefault?.()
-    e.stopPropagation?.()
+    e?.preventDefault?.()
+    e?.stopPropagation?.()
     if (this.tiltSliderContainerElement.hidden) {
       this.showTiltControl()
     } else {
