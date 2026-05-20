@@ -8,6 +8,7 @@ export class Menu {
   share: HTMLButtonElement
   camera: HTMLButtonElement
   concede: HTMLButtonElement
+  menu: HTMLButtonElement
 
   disabled = true
 
@@ -17,10 +18,24 @@ export class Menu {
     this.share = this.getElement("share")
     this.camera = this.getElement("camera")
     this.concede = this.getElement("concede")
+    this.menu = this.getElement("menu")
+
     this.setShareVisible(false)
     if (this.camera) {
       this.camera.onclick = (_) => {
         this.adjustCamera()
+      }
+    }
+    if (this.menu) {
+      this.menu.onclick = (_) => {
+        this.toggleHelpOverlay()
+      }
+    }
+    const closeBtn = document.getElementById("helpClose")
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        const overlay = document.getElementById("helpOverlay")
+        overlay?.setAttribute("hidden", "true")
       }
     }
     if (this.concede) {
@@ -78,6 +93,22 @@ export class Menu {
     if (this.concede) {
       this.concede.hidden = !visible
       this.concede.disabled = !visible
+    }
+  }
+
+  toggleHelpOverlay() {
+    const overlay = document.getElementById("helpOverlay")
+    if (overlay) {
+      const isHidden = overlay.hasAttribute("hidden")
+      if (isHidden) {
+        const iframe = overlay.querySelector("iframe")
+        if (iframe && !iframe.getAttribute("src")) {
+          iframe.setAttribute("src", "help.html")
+        }
+        overlay.removeAttribute("hidden")
+      } else {
+        overlay.setAttribute("hidden", "true")
+      }
     }
   }
 }

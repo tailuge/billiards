@@ -2157,12 +2157,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:25.9.0":
-  version: 25.9.0
-  resolution: "@types/node@npm:25.9.0"
+"@types/node@npm:25.9.1":
+  version: 25.9.1
+  resolution: "@types/node@npm:25.9.1"
   dependencies:
     undici-types: "npm:>=7.24.0 <7.24.7"
-  checksum: 10c0/1845f0ce5471213a4f0c887845c50993968ea863c03bb355282b59bdcc877d009a2785f0f506cfc40b8ce7548a21e33ac826e998be62d42b000bfd9ccdc6c910
+  checksum: 10c0/9a04682842bebbcf21a1779dfeab9aa733d7bd7bbc0a0edb641ab3a9a3d43eac543225acf669c334f458f1956443ebc072bc3c72840c543b8b356cab5c82d456
   languageName: node
   linkType: hard
 
@@ -3123,7 +3123,7 @@ __metadata:
     "@testing-library/dom": "npm:10.4.1"
     "@types/chai": "npm:5.2.3"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:25.9.0"
+    "@types/node": "npm:25.9.1"
     "@types/three": "npm:0.184.1"
     canvas: "npm:3.2.3"
     chai: "npm:6.2.2"
@@ -3143,7 +3143,7 @@ __metadata:
     stylelint-config-standard: "npm:^40.0.0"
     swc-loader: "npm:0.2.7"
     three: "npm:0.184.0"
-    ts-jest: "npm:29.4.9"
+    ts-jest: "npm:29.4.10"
     typescript: "npm:6.0.3"
     typescript-eslint: "npm:8.59.4"
     webpack: "npm:5.106.2"
@@ -7866,6 +7866,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"semver@npm:^7.8.0":
+  version: 7.8.0
+  resolution: "semver@npm:7.8.0"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/8f096ca9b80ffd47b308d03f9ce8c873e27e2983f36023c559cdc92c51e8433fc23ebbfe57ec9623fc155636a6961ee989501099841ae4bb1babc8d2b3f048cd
+  languageName: node
+  linkType: hard
+
 "send@npm:~0.19.0, send@npm:~0.19.1":
   version: 0.19.2
   resolution: "send@npm:0.19.2"
@@ -8675,9 +8684,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:29.4.9":
-  version: 29.4.9
-  resolution: "ts-jest@npm:29.4.9"
+"ts-jest@npm:29.4.10":
+  version: 29.4.10
+  resolution: "ts-jest@npm:29.4.10"
   dependencies:
     bs-logger: "npm:^0.2.6"
     fast-json-stable-stringify: "npm:^2.1.0"
@@ -8685,7 +8694,7 @@ __metadata:
     json5: "npm:^2.2.3"
     lodash.memoize: "npm:^4.1.2"
     make-error: "npm:^1.3.6"
-    semver: "npm:^7.7.4"
+    semver: "npm:^7.8.0"
     type-fest: "npm:^4.41.0"
     yargs-parser: "npm:^21.1.1"
   peerDependencies:
@@ -8711,7 +8720,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10c0/901eb382817d1f48fc56b6c9b82de989f176660295695ae1fcd55f06f71d2c107766e1413ab24a59fa964c2ef79a60dd23ac1f382b05ae04f2b454fb4eb5ad4f
+  checksum: 10c0/b11e034c7080c573a7b6b3a2f3f7527e2bf741c32f4b78a33fb2ff0a4eb4ad935dea5178dc5fbc6dc0020eabdeed77fc25589d93a599dc9ebfc3e6a9108cfcef
   languageName: node
   linkType: hard
 

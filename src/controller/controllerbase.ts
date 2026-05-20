@@ -7,6 +7,7 @@ import { ConcedeEvent } from "../events/concedeevent"
 import { Outcome } from "../model/outcome"
 import { Vector3 } from "three"
 import { Session } from "../network/client/session"
+import { Input } from "../events/input"
 
 const flipP1type = (t: number) => (t === 1 ? 2 : 1)
 
@@ -18,32 +19,11 @@ export abstract class ControllerBase extends Controller {
     container.table.proximityIndicator.hide()
   }
 
-  private toggleHelpOverlay() {
-    const overlay = document.getElementById("helpOverlay")
-    const closeBtn = document.getElementById("helpClose")
-    if (overlay) {
-      const isHidden = overlay.hasAttribute("hidden")
-      if (isHidden) {
-        const iframe = overlay.querySelector("iframe")
-        if (iframe && !iframe.getAttribute("src")) {
-          iframe.setAttribute("src", "help.html")
-        }
-        overlay.removeAttribute("hidden")
-        if (closeBtn && !closeBtn.hasAttribute("data-bound")) {
-          closeBtn.setAttribute("data-bound", "true")
-          closeBtn.addEventListener("click", () =>
-            overlay.setAttribute("hidden", "true")
-          )
-        }
-      } else {
-        overlay.setAttribute("hidden", "true")
+  override handleInput(input: Input): Controller {
+    if (input instanceof ChatEvent) {
+      if (input.message) {
+        this.container.chat.showMessage(input.message)
       }
-    }
-  }
-
-  override handleChat(chatevent: ChatEvent): Controller {
-    if (chatevent.message) {
-      this.container.chat.showMessage(chatevent.message)
     }
     return this
   }
@@ -115,7 +95,7 @@ export abstract class ControllerBase extends Controller {
         this.container.table.cue.aimInputs?.toggleTiltControl()
         return true
       case "KeyHUp":
-        this.toggleHelpOverlay()
+        this.container.menu.toggleHelpOverlay()
         return true
       case "movementXUp":
         cue.rotateAim(delta * 2, this.container.table)
@@ -139,13 +119,6 @@ export abstract class ControllerBase extends Controller {
       default:
         return false
     }
-  }
-
-  private togglePanel() {
-    this.container.sliders.toggleVisibility()
-    this.container.table.showSpin(true)
-    this.container.table.showTraces(true)
-    typeof process !== "object" && console.log(this.container.table.serialise())
   }
 
   private toggleFullscreen() {
