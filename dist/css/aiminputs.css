@@ -30,7 +30,7 @@
     opacity 0.5s ease,
     transform 0.5s ease;
   margin-bottom: 0;
-  z-index: 30;
+  z-index: 19;
 }
 
 .tiltSliderContainer[hidden] {
