@@ -31,6 +31,12 @@ describe("Cue", () => {
     expect(cue.intersectsAnything(table)).to.be.true
   })
 
+  test("cue intersection with high elevation angles over the ball", () => {
+    const { cue, table } = createCueAndTable(new Vector3(-3 * R, 0, 0))
+    cue.aim.elevation = 1.2
+    expect(cue.intersectsAnything(table)).to.be.false
+  })
+
   test("cue does not intersect cueball", () => {
     const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
     expect(cue.intersectsAnything(table)).to.be.false

@@ -219,12 +219,11 @@ export function cueStrike(
   offset: Vector3,
   elevation: number = 0
 ): CueStrike {
-  const vel = norm(new Vector3(cos(angle), sin(angle), 0)).multiplyScalar(
-    power * Math.cos(elevation)
-  )
+  const vel = norm(new Vector3(cos(angle), sin(angle), 0)).multiplyScalar(power)
+  const velCos = vel.clone().multiplyScalar(cos(elevation))
 
   return {
-    vel,
+    vel: velCos,
     rvel: cueToSpin(offset, vel, elevation),
   }
 }
