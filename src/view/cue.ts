@@ -73,6 +73,7 @@ export class Cue {
       return
     }
     this.aim.power = Math.fround(value * this.maxPower)
+    this.updateAimInput()
   }
 
   hit(ball: Ball) {

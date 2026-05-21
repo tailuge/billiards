@@ -33,7 +33,7 @@ export class Aim extends ControllerBase {
   override handleInput(input: Input): Controller {
     switch (input.key) {
       case "Space":
-        this.container.table.cue.adjustPower(input.t * this.scale * 0.7)
+        this.container.table.cue.setPower(input.t * this.scale)
         break
       case "SpaceUp":
         return this.playShot()
