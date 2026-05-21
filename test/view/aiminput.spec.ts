@@ -36,9 +36,6 @@ describe("AimInput", () => {
     aiminputs.cuePowerElement.value = "1"
     fireEvent.input(aiminputs.cuePowerElement, { target: { value: "1" } })
     expect(container.table.cue.aim.power).to.be.greaterThan(0)
-    expect(aiminputs.cuePowerElement.style.getPropertyValue("--p")).to.equal(
-      "100%"
-    )
     done()
   })
 

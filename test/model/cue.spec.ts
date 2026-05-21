@@ -79,7 +79,12 @@ describe("Cue", () => {
 
   test("setPower updates power when enabled", () => {
     const { cue } = createCueAndTable(new Vector3(0, 1, 0))
-    cue.aimInputs = { isDisabled: () => false } as any
+    cue.aimInputs = {
+      isDisabled: () => false,
+      updateVisualState: () => {},
+      updatePowerSlider: () => {},
+      showOverlap: () => {},
+    } as any
     cue.setPower(0.5)
     expect(cue.aim.power).to.equal(Math.fround(0.5 * cue.maxPower))
   })
