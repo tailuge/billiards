@@ -30,7 +30,7 @@ export class LobbyIndicator {
   private readonly isSpectator: boolean
   private opponentOnline: boolean | null = null
   private users: PresenceMessage[] = []
-  private readonly onChatMessage?: (msg: string) => void
+  private readonly onChatMessage: ((msg: string) => void) | undefined
 
   constructor(
     botMode: boolean,
