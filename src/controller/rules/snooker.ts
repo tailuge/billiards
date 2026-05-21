@@ -171,7 +171,7 @@ export class Snooker implements Rules {
   }
 
   isEndOfGame(_: Outcome[]): boolean {
-    return Outcome.isClearTable(this.container.table) && this.currentBreak > 0
+    return Outcome.isClearTable(this.container.table)
   }
 
   allowsPlaceBall(): boolean {

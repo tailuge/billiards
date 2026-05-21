@@ -242,7 +242,11 @@ export class BotEventHandler {
     const { p1, p2 } = session.orderedScoresForHud()
     const amIWinner = session.playerIndex === 0 ? p1 >= p2 : p2 >= p1
 
+    console.log("Bot handleGameEnd, p1=" + p1 + ", p2=" + p2)
+    console.log("Bot handleGameEnd, amIWinner=" + amIWinner)
+    console.log("Bot handleGameEnd, session", session)
     this.container.updateController(
+      // here using player rules why?
       this.container.rules.handleGameEnd(amIWinner)
     )
   }
