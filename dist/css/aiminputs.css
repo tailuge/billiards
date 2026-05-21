@@ -318,3 +318,7 @@ angle-input .butt {
   border-radius: 4px;
   z-index: 21;
 }
+
+.ballContainerWrapper.is-disabled .openElevation {
+  display: none;
+}
