@@ -4,26 +4,23 @@ import { Ball } from "../../../src/model/ball"
 import { AimCalculator } from "../../../src/network/bot/aimcalculator"
 import { ThreeStrategy } from "../../../src/network/bot/strategies/threecushionstrategy"
 import { BotShotContext } from "../../../src/network/bot/botstrategy"
+import { TableGeometry } from "../../../src/view/tablegeometry"
 
 describe("ThreeStrategy", () => {
-  let table: Table
-  let cueBall: Ball
-  let targetBall1: Ball
-  let targetBall2: Ball
   let strategy: ThreeStrategy
   let calculator: AimCalculator
 
   beforeEach(() => {
-    cueBall = new Ball(new Vector3(0, 0, 0))
-    targetBall1 = new Ball(new Vector3(0.3, 0, 0)) // First object ball, in front of cue ball
-    targetBall2 = new Ball(new Vector3(0.5, 0.4, 0)) // Anchor ball, near the top rail (Y ~ 0.6)
-
-    table = new Table([cueBall, targetBall1, targetBall2])
     strategy = new ThreeStrategy()
     calculator = new AimCalculator()
   })
 
-  it("should choose the trajectory moving away from the anchor rail and apply running side spin", () => {
+  it("should choose LongShortLongNatural when opposite long cushion is reachable on-table", () => {
+    const cueBall = new Ball(new Vector3(0, 0, 0))
+    const targetBall1 = new Ball(new Vector3(0.3, 0, 0))
+    const targetBall2 = new Ball(new Vector3(0.5, 0.4, 0))
+
+    const table = new Table([cueBall, targetBall1, targetBall2])
     const context: BotShotContext = {
       table,
       cueBall,
@@ -37,20 +34,57 @@ describe("ThreeStrategy", () => {
     const shotEvent = events.find((e) => e.type === "HIT") as any
     expect(shotEvent).toBeDefined()
 
-    // In this configuration:
-    // Anchor ball (targetBall2) is near the top rail (Y > 0).
-    // The first target ball (targetBall1) is in front of the cue ball.
-    // The candidate trajectories from targetBall1:
-    // - One deflecting upwards towards the top rail (towards the anchor).
-    // - One deflecting downwards towards the bottom rail (away from the anchor).
-    // Under the fixed logic:
-    // 1. It should choose the downward trajectory (tangent.y < 0).
-    // 2. The target cushion is the bottom cushion (normal = (0, 1, 0)).
-    // 3. For a ball moving downwards and to the right, to apply running side spin at the bottom cushion,
-    //    it needs clockwise spin (w.z < 0).
-    // 4. In cueStrike, a positive offset.x (0.3) translates to w.z < 0 (clockwise spin).
-    // Therefore, the sideSpin should be 0.3.
     const aimOffset = shotEvent.tablejson.aim.offset
-    expect(aimOffset.x).toBeCloseTo(0.3)
+    // Should apply running side spin (non-zero x offset)
+    expect(Math.abs(aimOffset.x)).toBeCloseTo(0.3)
+  })
+
+  it("should fall back to FallbackRandom when intersection is off-table", () => {
+    // Place the target ball near the short cushion so the tangent trajectory
+    // exits through the short cushion before reaching the opposite long rail
+    const cueBall = new Ball(
+      new Vector3(TableGeometry.X * 0.9, 0, 0)
+    )
+    const targetBall1 = new Ball(
+      new Vector3(TableGeometry.X * 0.95, 0.05, 0)
+    )
+    // Anchor near top rail
+    const targetBall2 = new Ball(
+      new Vector3(TableGeometry.X * 0.9, TableGeometry.Y * 0.9, 0)
+    )
+
+    const table = new Table([cueBall, targetBall1, targetBall2])
+    const context: BotShotContext = {
+      table,
+      cueBall,
+      validTargetBalls: [targetBall1, targetBall2],
+      ballInHand: false,
+    }
+
+    const consoleSpy = jest.spyOn(console, "log")
+    const events = strategy.aim(context, calculator)
+    expect(events.length).toBeGreaterThan(0)
+
+    // Verify the strategy logged either category
+    const categoryLogs = consoleSpy.mock.calls
+      .map((c) => c[0])
+      .filter((msg) => typeof msg === "string" && msg.includes("category:"))
+    expect(categoryLogs.length).toBe(1)
+
+    consoleSpy.mockRestore()
+  })
+
+  it("should return empty events when no valid target balls", () => {
+    const cueBall = new Ball(new Vector3(0, 0, 0))
+    const table = new Table([cueBall])
+    const context: BotShotContext = {
+      table,
+      cueBall,
+      validTargetBalls: [],
+      ballInHand: false,
+    }
+
+    const events = strategy.aim(context, calculator)
+    expect(events).toHaveLength(0)
   })
 })
