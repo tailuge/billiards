@@ -4,10 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fine vs Coarse Aim</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Exo:wght@200;700&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Exo:wght@200;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
     <style>
       * {
         box-sizing: border-box;
@@ -17,15 +27,18 @@
         margin: 0;
         font-family: Exo, sans-serif;
         font-weight: 200;
-        background: transparent;
+        background: #111;
         color: white;
+        min-height: 100vh;
+        overflow: hidden auto;
+      }
+
+      main {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 10px;
-        min-height: 100vh;
         padding: 16px 12px 16px;
-        overflow: hidden auto;
       }
 
       /* Custom slim and premium scrollbar */
@@ -212,7 +225,7 @@
       .controls-panel {
         width: 100%;
         max-width: 360px;
-        background: rgb(0 0 0 / 40%);
+        background: rgb(0 0 0 / 80%);
         border: 1px solid rgb(255 255 255 / 10%);
         border-radius: 8px;
         padding: 10px;
@@ -248,55 +261,57 @@
     </style>
   </head>
   <body>
-    <div class="phone">
-      <div class="top">
-        <div class="balls">
-          <div class="ball"></div>
-          <div class="ball"></div>
-          <div class="ball"></div>
+    <main>
+      <div class="phone">
+        <div class="top">
+          <div class="balls">
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <div class="ball"></div>
+          </div>
+          <div class="arrow fine"></div>
+          <div class="label">Fine Aim</div>
+          <div class="sub">near top = precise adjustment</div>
         </div>
-        <div class="arrow fine"></div>
-        <div class="label">Fine Aim</div>
-        <div class="sub">near top = precise adjustment</div>
-      </div>
 
-      <div class="divider"></div>
+        <div class="divider"></div>
 
-      <div class="zoom">
-        <div class="zoom-arrow"></div>
-        <div class="zoom-label">ZOOM</div>
-      </div>
-
-      <div class="bottom">
-        <div class="balls">
-          <div class="ball"></div>
-          <div class="ball"></div>
-          <div class="ball"></div>
-          <div class="ball"></div>
-          <div class="ball"></div>
+        <div class="zoom">
+          <div class="zoom-arrow"></div>
+          <div class="zoom-label">ZOOM</div>
         </div>
-        <div class="arrow coarse"></div>
-        <div class="label">Coarse Aim</div>
-        <div class="sub">near bottom = faster turning</div>
-      </div>
-    </div>
 
-    <div class="controls-panel">
-      <div class="help-row"><kbd>⇦ ⇨</kbd><span>Aim</span></div>
-      <div class="help-row"><kbd>Ctrl ⇦ ⇨</kbd><span>Fine aim</span></div>
-      <div class="help-row">
-        <kbd>⇧ ⇩</kbd><span>Topspin &amp; backspin</span>
+        <div class="bottom">
+          <div class="balls">
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <div class="ball"></div>
+          </div>
+          <div class="arrow coarse"></div>
+          <div class="label">Coarse Aim</div>
+          <div class="sub">near bottom = faster turning</div>
+        </div>
       </div>
-      <div class="help-row"><kbd>Shift ⇦ ⇨</kbd><span>Side spin</span></div>
-      <div class="help-row">
-        <kbd>Space</kbd><span>Hit — hold for more power</span>
+
+      <div class="controls-panel">
+        <div class="help-row"><kbd>⇦ ⇨</kbd><span>Aim</span></div>
+        <div class="help-row"><kbd>Ctrl ⇦ ⇨</kbd><span>Fine aim</span></div>
+        <div class="help-row">
+          <kbd>⇧ ⇩</kbd><span>Topspin &amp; backspin</span>
+        </div>
+        <div class="help-row"><kbd>Shift ⇦ ⇨</kbd><span>Side spin</span></div>
+        <div class="help-row">
+          <kbd>Space</kbd><span>Hit — hold for more power</span>
+        </div>
+        <div class="help-row"><kbd>🖱️ scroll</kbd><span>Shot power</span></div>
+        <div class="help-row"><kbd>🖱️ dbl click</kbd><span>Hit</span></div>
+        <div class="help-row"><kbd>M</kbd><span>Masse angle</span></div>
+        <div class="help-row"><kbd>O</kbd><span>Camera view</span></div>
+        <div class="help-row"><kbd>F</kbd><span>Full screen</span></div>
+        <div class="help-row"><kbd>H</kbd><span>Help</span></div>
       </div>
-      <div class="help-row"><kbd>🖱️ scroll</kbd><span>Shot power</span></div>
-      <div class="help-row"><kbd>🖱️ dbl click</kbd><span>Hit</span></div>
-      <div class="help-row"><kbd>M</kbd><span>Masse angle</span></div>
-      <div class="help-row"><kbd>O</kbd><span>Camera view</span></div>
-      <div class="help-row"><kbd>F</kbd><span>Full screen</span></div>
-      <div class="help-row"><kbd>H</kbd><span>Help</span></div>
-    </div>
+    </main>
   </body>
 </html>
