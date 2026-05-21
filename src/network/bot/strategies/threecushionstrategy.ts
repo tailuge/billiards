@@ -58,12 +58,15 @@ export class ThreeStrategy implements BotStrategy {
     console.log(`[ThreeStrategy] candidates: ${JSON.stringify(candidates)}`)
 
     const [s1, s2] = candidates
-    const best = !s1.toLongRail && s2.toLongRail ? s2 : s1
+    // Prefer the trajectory moving away from the active rail of the anchor ball
+    const best = !s1.toLongRail ? s1 : s2
     console.log(
       `[ThreeStrategy] best: overlap=${best.overlap}, ghostPos=${best.ghostPos}, toLongRail=${best.toLongRail}`
     )
 
-    const normal = new Vector3(0, activeRailY > 0 ? -1 : 1, 0)
+    // The ball will bounce off the cushion it is heading towards (top if tangent.y > 0, bottom if tangent.y < 0).
+    // The inward normal of the target cushion points in the opposite direction.
+    const normal = new Vector3(0, best.tangent.y > 0 ? -1 : 1, 0)
     const isClockwise = AimCalculator.isClockwiseSpin(best.tangent, normal)
     const sideSpin = isClockwise ? 0.3 : -0.3
 
