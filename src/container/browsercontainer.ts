@@ -91,7 +91,7 @@ export class BrowserContainer {
       this.spectator,
       this.botMode,
       this.practiceMode,
-      Number.parseInt(params.get("lod") ?? "1"),
+      Number.parseInt(params.get("lod") ?? "2"),
       this.first
     )
     Session.getInstance().rematchInfo = Rematch.fromURL(params)
