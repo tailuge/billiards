@@ -288,15 +288,15 @@ label {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(90%, 400px);
-  height: min(90%, 600px);
-  background: rgb(0 0 0 / 75%);
-  border: 1px solid rgb(255 255 255 / 15%);
-  border-radius: 8px;
+  width: min(90%, 380px);
+  height: min(90%, 590px);
+  background: rgb(0 0 0 / 100%);
+  border: 1px solid rgb(255 255 255 / 25%);
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   z-index: 3000;
-  box-shadow: 0 8px 32px rgb(0 0 0 / 50%);
+  box-shadow: 0 8px 16px rgb(0 0 0 / 75%);
 }
 
 #helpOverlay[hidden] {
@@ -312,8 +312,8 @@ label {
 
 .help-footer {
   display: flex;
-  gap: 10px;
-  padding: 12px 20px;
+  gap: 4px;
+  padding: 8px 16px;
   border-top: 1px solid rgb(255 255 255 / 10%);
   justify-content: center;
   align-items: center;

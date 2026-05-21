@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Exo:wght@200;700&display=swap"
       rel="stylesheet"
       media="print"
-      onload="this.media='all'"
+      onload="this.media = 'all'"
     />
     <noscript>
       <link
@@ -41,26 +41,14 @@
         padding: 16px 12px 16px;
       }
 
-      /* Custom slim and premium scrollbar */
+      /* Hide scrollbar for Chrome, Safari, Opera */
       ::-webkit-scrollbar {
-        width: 8px;
+        display: none;
       }
 
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: rgb(255 255 255 / 20%);
-        border-radius: 4px;
-        border: 2px solid transparent;
-        background-clip: padding-box;
-      }
-
-      ::-webkit-scrollbar-thumb:hover {
-        background: rgb(255 255 255 / 35%);
-        border: 2px solid transparent;
-        background-clip: padding-box;
+      /* Hide scrollbar for Firefox */
+      html {
+        scrollbar-width: none;
       }
 
       .phone {
@@ -68,7 +56,7 @@
         max-width: 360px;
         aspect-ratio: 16 / 9;
         border: 2px solid #666;
-        border-radius: 16px;
+        border-radius: 12px;
         overflow: hidden;
         position: relative;
         background: linear-gradient(
@@ -123,7 +111,7 @@
       }
 
       .zoom-arrow {
-        width: 4px;
+        width: 2px;
         height: 90px;
         background: white;
         border-radius: 999px;
@@ -175,7 +163,7 @@
 
       .arrow {
         position: relative;
-        height: 4px;
+        height: 2px;
         background: white;
         border-radius: 999px;
       }
