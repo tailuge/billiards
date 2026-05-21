@@ -16,6 +16,7 @@ export class AimInputs {
   readonly powerSliderContainerElement
   readonly cuePowerElement
   readonly tiltSliderContainerElement
+  readonly openElevationElement
   readonly cueTiltElement: AngleInput
   /** Shared button for both "Hit" and "Place Ball" actions. */
   readonly cueHitElement
@@ -39,6 +40,7 @@ export class AimInputs {
     this.powerSliderContainerElement = id("powerSliderContainer")
     this.cuePowerElement = id("cuePower")
     this.tiltSliderContainerElement = id("tiltSliderContainer")
+    this.openElevationElement = id("openElevation") as HTMLButtonElement
     this.cueTiltElement = id("cueTilt") as AngleInput
     this.cueHitElement = id("cueHit") as HTMLButtonElement
     if (this.cueHitElement) {
@@ -75,6 +77,7 @@ export class AimInputs {
       this.adjustSpin(e)
     })
     this.cueBallElement?.addEventListener("dblclick", this.toggleTiltControl)
+    this.openElevationElement?.addEventListener("click", this.toggleTiltControl)
     this.cueHitElement?.addEventListener("click", this.hit)
     this.cuePowerElement?.addEventListener("input", this.powerChanged)
     this.cueTiltElement?.addEventListener("input", this.tiltChanged)
@@ -162,6 +165,9 @@ export class AimInputs {
     }
     if (this.cueTiltElement) {
       this.cueTiltElement.disabled = this.controlsDisabled
+    }
+    if (this.openElevationElement) {
+      this.openElevationElement.disabled = this.controlsDisabled
     }
   }
 

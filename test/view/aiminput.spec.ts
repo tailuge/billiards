@@ -49,6 +49,16 @@ describe("AimInput", () => {
     done()
   })
 
+  it("openElevation button toggles tilt slider", (done) => {
+    aiminputs.setDisabled(false)
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true
+    fireEvent.click(document.getElementById("openElevation") as HTMLElement)
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.false
+    fireEvent.click(document.getElementById("openElevation") as HTMLElement)
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true
+    done()
+  })
+
   it("toggleTiltControl without arguments toggles tilt slider", (done) => {
     aiminputs.setDisabled(false)
     expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true

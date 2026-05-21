@@ -132,6 +132,7 @@ angle-input .butt {
 
 .ballContainerWrapper {
   flex: 0 0 var(--ball-size-base);
+  width: var(--ball-size-base);
   height: 70px;
   position: relative;
   z-index: 20;
@@ -140,6 +141,7 @@ angle-input .butt {
 
 .ballContainerWrapper.is-disabled {
   flex: 0 0 var(--ball-size-small);
+  width: var(--ball-size-small);
 }
 
 .ballContainer {
@@ -295,4 +297,24 @@ angle-input .butt {
   background:
     linear-gradient(#fff, #fff) padding-box,
     conic-gradient(var(--timer-color) var(--sweep), #e4e4e7 0deg) border-box;
+}
+
+.openElevation {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #2d1e16;
+  background: var(--wood-dark);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border-radius: 4px;
+  z-index: 21;
 }

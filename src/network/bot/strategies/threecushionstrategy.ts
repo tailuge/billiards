@@ -73,14 +73,10 @@ export class ThreeStrategy implements BotStrategy {
 
     switch (category) {
       case "LongShortLongNatural":
-        return this.handleLongShortLongNatural(
-          candidate!,
-          context,
-          calculator
-        )
+        return this.handleLongShortLongNatural(candidate!, context, calculator)
       case "FallbackRandom":
       default:
-        return this.handleFallbackRandom(candidate!,context, calculator)
+        return this.handleFallbackRandom(candidate!, context, calculator)
     }
   }
 
@@ -133,9 +129,7 @@ export class ThreeStrategy implements BotStrategy {
     context: BotShotContext,
     calculator: AimCalculator
   ): GameEvent[] {
-    console.log(
-      `[ThreeStrategy] LongShortLongNatural: overlap=${best.overlap}`
-    )
+    console.log(`[ThreeStrategy] LongShortLongNatural: overlap=${best.overlap}`)
 
     // The ball will bounce off the cushion it is heading towards.
     // The inward normal of the target cushion points in the opposite direction.

@@ -42,12 +42,8 @@ describe("ThreeStrategy", () => {
   it("should fall back to FallbackRandom when intersection is off-table", () => {
     // Place the target ball near the short cushion so the tangent trajectory
     // exits through the short cushion before reaching the opposite long rail
-    const cueBall = new Ball(
-      new Vector3(TableGeometry.X * 0.9, 0, 0)
-    )
-    const targetBall1 = new Ball(
-      new Vector3(TableGeometry.X * 0.95, 0.05, 0)
-    )
+    const cueBall = new Ball(new Vector3(TableGeometry.X * 0.9, 0, 0))
+    const targetBall1 = new Ball(new Vector3(TableGeometry.X * 0.95, 0.05, 0))
     // Anchor near top rail
     const targetBall2 = new Ball(
       new Vector3(TableGeometry.X * 0.9, TableGeometry.Y * 0.9, 0)
