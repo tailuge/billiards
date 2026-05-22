@@ -30,7 +30,7 @@ export class MatchResultHelper {
     container.recorder.wholeGameLink()
 
     const session = Session.getInstance()
-    const amIWinner = this.determineWinner(session, rulename, forcedAmIWinner)
+    const amIWinner = this.determineWinner(session, rulename, forcedAmIWinner, endSubtext)
     const subtext = endSubtext ?? this.getScoreSubtext(container)
 
     this.updateRematchInfo(container, session, rulename, amIWinner)
@@ -47,7 +47,8 @@ export class MatchResultHelper {
   private static determineWinner(
     session: Session,
     rulename: string,
-    forcedAmIWinner?: boolean
+    forcedAmIWinner?: boolean,
+    endSubtext?: string
   ): boolean {
     const { p1, p2 } = session.orderedScoresForHud()
 
@@ -55,6 +56,9 @@ export class MatchResultHelper {
     const playerIndex = session.playerIndex
 
     if (forcedAmIWinner !== undefined) {
+      if (endSubtext?.toLowerCase().includes("conceded")) {
+        return forcedAmIWinner
+      }
       const isWinnerByScore = winnerIndex === playerIndex
       if (Session.isBotMode()) {
         // If it's a natural end (forcedAmIWinner came from rules), score should be considered
