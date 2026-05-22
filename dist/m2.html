@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lobby Test</title>
+    <style>
+        body { margin: 0; display: flex; height: 100vh; font-family: sans-serif; overflow: hidden; scrollbar-width: none; }
+        body::-webkit-scrollbar { display: none; }
+        .pane { flex: 1; display: flex; flex-direction: column; border-right: 1px solid #ddd; overflow: hidden; }
+        .pane:last-child { border-right: none; }
+        .pane-label { background: #333; color: #fff; padding: 0.2rem 0.5rem; font-size: 0.75rem; text-align: center; }
+        iframe { flex: 1; border: none; overflow: hidden; scrollbar-width: none; }
+        iframe::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+    <script>
+        // Read overrides from query params: ?a=Alice&b=Bob&c=Carol
+        const p = new URLSearchParams(location.search);
+        const users = [
+            { id: p.get('aid') || 'alice', name: p.get('a') || 'Alice' },
+            { id: p.get('bid') || 'bob',   name: p.get('b') || 'Bob'   },
+            { id: p.get('cid') || 'carol', name: p.get('c') || 'Carol' },
+        ];
+
+        users.forEach(u => {
+            const pane = document.createElement('div');
+            pane.className = 'pane';
+            pane.innerHTML = `
+                <div class="pane-label">${u.name} (${u.id})</div>
+                <iframe src="lobby.html?userId=${encodeURIComponent(u.id)}&userName=${encodeURIComponent(u.name)}"></iframe>
+            `;
+            document.body.appendChild(pane);
+        });
+
+        // Hide third pane on portrait/mobile
+        const check = () => {
+            const panes = document.querySelectorAll('.pane');
+            if (window.innerHeight > window.innerWidth && panes.length > 2) panes[2].remove();
+        };
+        window.addEventListener('resize', check);
+        check();
+    </script>
+</body>
+</html>
