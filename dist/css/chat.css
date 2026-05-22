@@ -63,6 +63,9 @@
   width: 20ch;
   font-size: 16px;
   padding: 1px;
+  caret-color: black;
+  color: black;
+  background: white;
 }
 
 #inputTextDiv button {
