@@ -154,6 +154,14 @@ export class Replay extends ControllerBase {
       this.playNextShot(this.delay)
     }
     if (this.shots.length === 0 && this.timer === undefined) {
+      const outcome = this.container.table.outcome
+      if (Array.isArray(outcome) && outcome.length) {
+        const first = outcome[0].timestamp
+        outcome.forEach((o) => {
+          const sec = ((o.timestamp - first) / 1000).toFixed(2)
+          console.log(`${o.type} ${sec} sec`)
+        })
+      }
       this.container.notifyLocal(
         {
           type: "Info",
