@@ -20,11 +20,11 @@ export abstract class ControllerBase extends Controller {
   }
 
   override handleInput(input: Input): Controller {
-    if (input instanceof ChatEvent) {
-      if (input.message) {
-        this.container.chat.showMessage(input.message)
-      }
-    }
+    return this
+  }
+
+  override handleChat(chatevent: ChatEvent): Controller {
+    this.container.chat.showMessage(chatevent.message)
     return this
   }
 
