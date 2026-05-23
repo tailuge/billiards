@@ -20,12 +20,14 @@ export class Comment {
       this.toggleMenu()
     }
 
-    const inputTextDiv = document.getElementById("inputTextDiv") as HTMLElement
+    const inputTextDiv = document.getElementById(
+      "inputTextDiv"
+    ) as HTMLDialogElement
     const inputText = document.getElementById("inputText") as HTMLInputElement
 
     const sendText = () => {
       const text = inputText.value.trim()
-      inputTextDiv.hidden = true
+      inputTextDiv.close()
       if (text) {
         this.container.chat.showMessage("<br>" + text)
         this.container.sendChat(text)
@@ -38,7 +40,7 @@ export class Comment {
       btn.addEventListener("click", (_) => {
         if (btn.id === "openTextInput") {
           this.hideMenu()
-          inputTextDiv.hidden = false
+          inputTextDiv.showModal()
           inputText.value = ""
           inputText.focus()
           return
@@ -57,7 +59,7 @@ export class Comment {
 
     document.getElementById("inputSend")?.addEventListener("click", sendText)
     document.getElementById("inputClose")?.addEventListener("click", () => {
-      inputTextDiv.hidden = true
+      inputTextDiv.close()
     })
   }
 
