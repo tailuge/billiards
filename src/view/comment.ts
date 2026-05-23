@@ -40,6 +40,7 @@ export class Comment {
       btn.addEventListener("click", (_) => {
         if (btn.id === "openTextInput") {
           this.hideMenu()
+          this.container.inputLocked = true
           inputTextDiv.showModal()
           inputText.value = ""
           inputText.focus()
@@ -60,6 +61,10 @@ export class Comment {
     document.getElementById("inputSend")?.addEventListener("click", sendText)
     document.getElementById("inputClose")?.addEventListener("click", () => {
       inputTextDiv.close()
+    })
+
+    inputTextDiv.addEventListener("close", () => {
+      this.container.inputLocked = false
     })
   }
 

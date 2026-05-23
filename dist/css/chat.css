@@ -50,13 +50,17 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
-  display: flex;
+  display: none;
   align-items: center;
   pointer-events: auto;
   border: none;
   background: transparent;
   padding: 0;
   margin: 0;
+}
+
+#inputTextDiv[open] {
+  display: flex;
 }
 
 #inputTextDiv::backdrop {
