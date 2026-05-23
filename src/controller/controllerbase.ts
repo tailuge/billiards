@@ -116,6 +116,9 @@ export abstract class ControllerBase extends Controller {
       case "KeyFUp":
         this.toggleFullscreen()
         return true
+      case "KeyCUp":
+        this.container.comment.openChat()
+        return true
       default:
         return false
     }

@@ -39,11 +39,7 @@ export class Comment {
       if (btn.id === "voice") return
       btn.addEventListener("click", (_) => {
         if (btn.id === "openTextInput") {
-          this.hideMenu()
-          this.container.inputLocked = true
-          inputTextDiv.showModal()
-          inputText.value = ""
-          inputText.focus()
+          this.openChat()
           return
         }
         const text = btn.textContent ?? ""
@@ -87,6 +83,18 @@ export class Comment {
   showMenu() {
     if (!this.menu) return
     this.menu.style.display = "grid"
+  }
+
+  openChat() {
+    const inputTextDiv = document.getElementById(
+      "inputTextDiv"
+    ) as HTMLDialogElement
+    const inputText = document.getElementById("inputText") as HTMLInputElement
+    this.hideMenu()
+    this.container.inputLocked = true
+    inputTextDiv.showModal()
+    inputText.value = ""
+    inputText.focus()
   }
 
   hideMenu() {
