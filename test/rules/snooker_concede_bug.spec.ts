@@ -36,9 +36,9 @@ describe("Snooker Concession", () => {
 
     const snookerRules = new Snooker(container)
     const endController = snookerRules.handleGameEnd(false, "opponent conceded")
-    
+
     expect(endController.name).to.equal("End")
-    
+
     const result = (endController as any).result
     expect(result.winner).to.equal("Player2")
   })
@@ -51,9 +51,9 @@ describe("Snooker Concession", () => {
 
     const snookerRules = new Snooker(container)
     const endController = snookerRules.handleGameEnd(false, "opponent conceded")
-    
+
     expect(endController.name).to.equal("End")
-    
+
     const result = (endController as any).result
     expect(result.winner).to.equal("Player2")
   })

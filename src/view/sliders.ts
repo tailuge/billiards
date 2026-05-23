@@ -58,14 +58,14 @@ export class Sliders {
     return getInput(id)
   }
 
-  initialiseSlider(id, initialValue, setter, max = 1) {
+  initialiseSlider(id, initialValue, setter) {
     const slider = this.getInputElement(id)
     if (!slider) {
       return
     }
     slider.step = "0.001"
-    slider.min = "0.01"
-    slider.max = `${max}`
+    slider.min = `${initialValue * 0.1}`
+    slider.max = `${Math.min(initialValue * 4, 1)}`
     slider.value = initialValue
     this.showValue(id, initialValue)
     slider.oninput = (e) => {

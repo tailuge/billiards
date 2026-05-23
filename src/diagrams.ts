@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const sliders = new Sliders(plotAll)
-    sliders.initialiseSlider("s", s, sets, 4)
+    sliders.initialiseSlider("s", s, sets)
 
     if (id("derived")) {
       reportConstants()

@@ -30,7 +30,12 @@ export class MatchResultHelper {
     container.recorder.wholeGameLink()
 
     const session = Session.getInstance()
-    const amIWinner = this.determineWinner(session, rulename, forcedAmIWinner, endSubtext)
+    const amIWinner = this.determineWinner(
+      session,
+      rulename,
+      forcedAmIWinner,
+      endSubtext
+    )
     const subtext = endSubtext ?? this.getScoreSubtext(container)
 
     this.updateRematchInfo(container, session, rulename, amIWinner)
