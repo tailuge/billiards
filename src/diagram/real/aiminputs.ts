@@ -9,6 +9,7 @@ export class AimInputs {
   private readonly position = { x: 0, y: 0 }
   private power = 5
   private direction = 0
+  private readonly flipX: boolean
 
   constructor() {
     this.aimBall = document.getElementById("aim-ball")
@@ -19,6 +20,7 @@ export class AimInputs {
       "direction"
     ) as HTMLInputElement
     this.BALL_CONTAINER_RADIUS = (this.aimBallContainer?.clientWidth || 0) / 2
+    this.flipX = new URLSearchParams(globalThis.location?.search).has("flip")
     this.addEventListeners()
   }
 
@@ -40,7 +42,9 @@ export class AimInputs {
     if (!this.aimBallContainer || !this.aimBall) return
 
     const rect = this.aimBallContainer.getBoundingClientRect()
-    let x = event.clientX - rect.left - rect.width / 2
+    let x = this.flipX
+      ? rect.right - event.clientX - rect.width / 2
+      : event.clientX - rect.left - rect.width / 2
     let y = event.clientY - rect.top - rect.height / 2
 
     // Calculate the distance from the center
