@@ -30,11 +30,9 @@ export class AimInputs {
   private controlsDisabled = true
   private readonly timeoutButton: TimeoutButton | undefined
   private sliderAnimId: number | null = null
-  private readonly flipX: boolean
 
   constructor(container) {
     this.container = container
-    this.flipX = new URLSearchParams(location.search).has("flip")
     this.ballContainerWrapperElement = id("ballContainerWrapper")
     this.ballContainerElement = id("ballContainer")
     this.cueBallElement = id("cueBall")
@@ -201,10 +199,9 @@ export class AimInputs {
       return
     }
     this.readDimensions()
-    const dx = (e.offsetX - this.ballWidth / 2) / this.ballWidth
     this.container.table.cue.setSpin(
       new Vector3(
-        this.flipX ? dx : -dx,
+        -(e.offsetX - this.ballWidth / 2) / this.ballWidth,
         -(e.offsetY - this.ballHeight / 2) / this.ballHeight
       ),
       this.container.table

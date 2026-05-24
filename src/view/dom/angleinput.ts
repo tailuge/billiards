@@ -1,12 +1,10 @@
 export class AngleInput extends HTMLElement {
   private _elevation = 0
   private _disabled = false
-  private _flipX = false
   private area: HTMLElement | null = null
 
   constructor() {
     super()
-    this._flipX = new URLSearchParams(globalThis.location?.search).has("flip")
     this.onPointerDown = this.onPointerDown.bind(this)
     this.onPointerMove = this.onPointerMove.bind(this)
     this.onPointerUp = this.onPointerUp.bind(this)
@@ -87,9 +85,7 @@ export class AngleInput extends HTMLElement {
     if (!this.area) return
     const rect = this.area.getBoundingClientRect()
     const offset = rect.width * 0.12
-    const x = this._flipX
-      ? rect.right - e.clientX - offset
-      : e.clientX - rect.left - offset
+    const x = e.clientX - rect.left - offset
     const y = rect.bottom - e.clientY - offset
 
     this.updateElevation(Math.atan2(y, x))
