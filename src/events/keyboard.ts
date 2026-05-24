@@ -9,6 +9,7 @@ import interact from "interactjs"
 export class Keyboard {
   pressed = {}
   released = {}
+  private readonly flipX: boolean
 
   getEvents() {
     const keys = Object.keys(this.pressed)
@@ -35,6 +36,7 @@ export class Keyboard {
   }
 
   constructor(element: HTMLCanvasElement) {
+    this.flipX = new URLSearchParams(globalThis.location?.search).has("flip")
     this.addHandlers(element)
     if (!/Android|iPhone/i.test(navigator.userAgent)) {
       element.contentEditable = "true"
@@ -62,7 +64,7 @@ export class Keyboard {
     const k = this.released
     const topHalf = e.client.y < e.rect.height / 2
     const factor = topHalf || e.ctrlKey ? 0.5 : 1
-    const dx = e.dx * factor
+    const dx = e.dx * factor * (this.flipX ? -1 : 1)
     const dy = e.dy * 0.8
     k["movementY"] = (k["movementY"] ?? 0) + dy
     k["movementX"] = (k["movementX"] ?? 0) + dx
