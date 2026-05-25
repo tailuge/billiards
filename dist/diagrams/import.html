@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billiard Capture Import & Telemetry Visualizer</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 8px;
+      font-family: monospace;
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    header {
+      border-bottom: 1px double #444;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      text-transform: lowercase;
+      letter-spacing: 0.5px;
+    }
+    .status {
+      color: #00ff66;
+      width: 100%;
+      margin-top: 2px;
+      font-size: 0.8rem;
+    }
+    .status.error {
+      color: #ff3333;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    @media (min-width: 900px) {
+      .container {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+    .panel {
+      border: 1px solid #444;
+      padding: 6px;
+      background: #1a1a1a;
+    }
+    .panel-title {
+      font-weight: bold;
+      border-bottom: 1px dashed #444;
+      padding-bottom: 3px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+    }
+    input[type="file"] {
+      background: #222;
+      border: 1px solid #555;
+      color: #fff;
+      padding: 3px;
+      cursor: pointer;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+    canvas {
+      display: block;
+      background: #0d0d0d;
+      border: 1px solid #333;
+      width: 100%;
+      height: auto;
+    }
+    .table-canvas-container {
+      position: relative;
+    }
+    .sparkline-container {
+      margin: 8px 0;
+      position: relative;
+    }
+    .sparkline-label {
+      position: absolute;
+      top: 2px;
+      left: 5px;
+      font-size: 0.7rem;
+      background: rgba(18, 18, 18, 0.85);
+      padding: 1px 6px;
+      pointer-events: none;
+      color: #888;
+      border: 1px solid #333;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin: 6px 0;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    button {
+      background: #2a2a2a;
+      border: 1px solid #555;
+      color: #fff;
+      padding: 4px 10px;
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    button:hover {
+      background: #3a3a3a;
+      border-color: #888;
+    }
+    button:active {
+      background: #111;
+    }
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+    }
+    input[type="range"] {
+      flex: 1;
+      background: #333;
+      accent-color: #00ff66;
+      cursor: pointer;
+    }
+    select {
+      background: #222;
+      color: #fff;
+      border: 1px solid #555;
+      padding: 2px;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+    pre {
+      margin: 0;
+      font-size: 0.64rem;
+      line-height: 1.25;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .highlight {
+      color: #00ff66;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>billiard capture import</h1>
+    <input type="file" id="file-input" accept=".txt,.json">
+    <div id="status-msg" class="status">Waiting for user telemetry file upload...</div>
+  </header>
+
+  <div class="container">
+    <!-- Visualization Side -->
+    <div class="panel">
+      <div class="panel-title">Table</div>
+      <div class="table-canvas-container">
+        <canvas id="table-canvas" width="800" height="400"></canvas>
+      </div>
+
+      <div class="controls">
+        <div class="control-group">
+          <button id="btn-play-pause">Play</button>
+          <button id="btn-reset">Reset</button>
+          <button id="btn-export" style="border-color: #00ff66;">Export</button>
+        </div>
+        <div class="control-group" style="margin-left: auto;">
+          <span>Speed:</span>
+          <select id="play-speed">
+            <option value="0.25">0.25x</option>
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1.0x</option>
+            <option value="2">2.0x</option>
+            <option value="5">5.0x</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sparkline-container">
+        <div class="sparkline-label">
+          <span style="color: #00ff66;">■ Velocity (m/s)</span> | 
+          <span style="color: #ff3333;">■ -Acceleration &times; 10 (m/s&sup2;)</span> 
+          <span style="color: #666; margin-left: 10px;">- Click to scrub</span>
+        </div>
+        <canvas id="sparkline-canvas" width="800" height="180"></canvas>
+      </div>
+
+      <div class="slider-container">
+        <span>Timeline:</span>
+        <input type="range" id="timeline" min="0" max="100" value="0" step="any">
+      </div>
+    </div>
+
+    <!-- Data Side -->
+    <div class="panel">
+      <div class="panel-title">Data</div>
+      <pre id="telemetry-output">No telemetry file loaded. Please select a valid tracking file.</pre>
+    </div>
+  </div>
+
+  <script>
+    // Constants mapping physical table constraints (meters)
+    const REAL_TABLE_WIDTH = 2.840;  // meters
+    const REAL_TABLE_HEIGHT = 1.421; // meters
+    const DEFAULT_SMOOTHING_WINDOW = 5; // Default window point count
+
+    // Dynamic state
+    let telemetryData = null;
+    let coordinates = []; // parsed tracking arrays
+    let selectedBallColor = null; // tracking ball type identifier
+    let totalTimeMs = 0;
+    let currentTimeMs = 0;
+    let isPlaying = false;
+    let lastAnimFrameTime = null;
+
+    // Filtered physics arrays
+    let physicsStates = []; // array of { timeMs, rawVel, smoothVel, rawAccel, smoothAccel }
+
+    // DOM cache
+    const fileInput = document.getElementById('file-input');
+    const statusMsg = document.getElementById('status-msg');
+    const tableCanvas = document.getElementById('table-canvas');
+    const tableCtx = tableCanvas.getContext('2d');
+    const sparklineCanvas = document.getElementById('sparkline-canvas');
+    const sparklineCtx = sparklineCanvas.getContext('2d');
+    const telemetryOutput = document.getElementById('telemetry-output');
+    const btnPlayPause = document.getElementById('btn-play-pause');
+    const btnReset = document.getElementById('btn-reset');
+    const btnExport = document.getElementById('btn-export');
+    const playSpeedSel = document.getElementById('play-speed');
+    const timeline = document.getElementById('timeline');
+
+    // Load default file on startup
+    fetch('./SS_max_spin_02.txt')
+      .then(r => r.json())
+      .then(data => parseTelemetry(data))
+      .catch(() => {})
+
+    // Handle File Loading
+    fileInput.addEventListener('change', (e) => {
+      handleFileChange();
+    });
+
+    function handleFileChange() {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          telemetryData = JSON.parse(event.target.result);
+          parseTelemetry(telemetryData);
+        } catch (err) {
+          showError("Parsing Error: Invalid JSON structure. " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function showError(msg) {
+      statusMsg.textContent = msg;
+      statusMsg.className = "status error";
+      telemetryOutput.textContent = "Error: System failed to execute dataset instructions.";
+    }
+
+    // Mathematical central moving average filter (symmetric boundary extension)
+    function applyMovingAverage(array, key, windowSize) {
+      const size = array.length;
+      const smoothed = new Array(size);
+      const half = Math.floor(windowSize / 2);
+
+      for (let i = 0; i < size; i++) {
+        let sum = 0;
+        let count = 0;
+        for (let w = -half; w <= half; w++) {
+          const idx = i + w;
+          if (idx >= 0 && idx < size) {
+            sum += array[idx][key];
+            count++;
+          }
+        }
+        smoothed[i] = sum / count;
+      }
+      return smoothed;
+    }
+
+    // Mathematical Parsing and Multi-point Filtering
+    function parseTelemetry(json) {
+      try {
+        if (!json.PathTracking || !Array.isArray(json.PathTracking.DataSets)) {
+          throw new Error("Missing PathTracking.DataSets root hierarchy.");
+        }
+
+        const dataSets = json.PathTracking.DataSets;
+        if (dataSets.length === 0) {
+          throw new Error("No telemetry tracks found inside DataSets.");
+        }
+
+        // Dynamically select target tracking array based on maximum sample counts
+        let targetSet = null;
+        let maxPoints = -1;
+
+        for (let i = 0; i < dataSets.length; i++) {
+          const ds = dataSets[i];
+          if (ds && Array.isArray(ds.Coords)) {
+            if (ds.Coords.length > maxPoints) {
+              maxPoints = ds.Coords.length;
+              targetSet = ds;
+            }
+          }
+        }
+
+        if (!targetSet || maxPoints === 0) {
+          throw new Error("All loaded datasets contain zero coordinates.");
+        }
+
+        selectedBallColor = targetSet.BallColor;
+
+        coordinates = targetSet.Coords.map(pt => {
+          return {
+            timeMs: pt.DeltaT_500us * 0.5,
+            x: pt.X,
+            y: pt.Y
+          };
+        });
+
+        coordinates.sort((a, b) => a.timeMs - b.timeMs);
+        totalTimeMs = coordinates[coordinates.length - 1].timeMs;
+
+        // Stage 1: Compute instantaneous velocity elements
+        const tempPhysics = [];
+        for (let i = 0; i < coordinates.length; i++) {
+          const current = coordinates[i];
+          let rawVel = 0;
+
+          if (i > 0) {
+            const prev = coordinates[i - 1];
+            const dx = current.x - prev.x;
+            const dy = current.y - prev.y;
+            const dt_sec = (current.timeMs - prev.timeMs) / 1000;
+
+            if (dt_sec > 0) {
+              const dx_meters = dx * REAL_TABLE_WIDTH;
+              const dy_meters = dy * REAL_TABLE_HEIGHT;
+              const ds_meters = Math.sqrt(dx_meters * dx_meters + dy_meters * dy_meters);
+              rawVel = ds_meters / dt_sec;
+            }
+          }
+
+          if (!isFinite(rawVel)) rawVel = 0;
+
+          tempPhysics.push({
+            timeMs: current.timeMs,
+            rawVel: rawVel,
+            smoothVel: 0,
+            rawAccel: 0,
+            smoothAccel: 0
+          });
+        }
+
+        // Apply first stage of multipoint central smoothing to velocities
+        const smoothedVelocities = applyMovingAverage(tempPhysics, 'rawVel', DEFAULT_SMOOTHING_WINDOW);
+        for (let i = 0; i < tempPhysics.length; i++) {
+          tempPhysics[i].smoothVel = smoothedVelocities[i];
+        }
+
+        // Stage 2: Compute instantaneous acceleration based on smoothed velocity differences
+        for (let i = 0; i < tempPhysics.length; i++) {
+          let rawAccel = 0;
+          if (i > 0) {
+            const dv = tempPhysics[i].smoothVel - tempPhysics[i - 1].smoothVel;
+            const dt_sec = (tempPhysics[i].timeMs - tempPhysics[i - 1].timeMs) / 1000;
+            if (dt_sec > 0) {
+              rawAccel = dv / dt_sec;
+            }
+          }
+          if (!isFinite(rawAccel)) rawAccel = 0;
+          tempPhysics[i].rawAccel = rawAccel;
+        }
+
+        // Apply second stage of multipoint central smoothing to acceleration
+        const smoothedAccelerations = applyMovingAverage(tempPhysics, 'rawAccel', DEFAULT_SMOOTHING_WINDOW);
+        for (let i = 0; i < tempPhysics.length; i++) {
+          tempPhysics[i].smoothAccel = smoothedAccelerations[i];
+        }
+
+        physicsStates = tempPhysics;
+
+        // Reset tracking states
+        currentTimeMs = 0;
+        lastAnimFrameTime = null;
+        isPlaying = false;
+        btnPlayPause.textContent = "Play";
+
+        // Update Timeline attributes
+        timeline.max = totalTimeMs;
+        timeline.value = 0;
+
+        statusMsg.textContent = `Successfully parsed ${coordinates.length} frames (${totalTimeMs.toFixed(1)} ms). Auto-selected BallColor ${selectedBallColor} (longest track).`;
+        statusMsg.className = "status";
+
+        renderFrame();
+        drawSparkline();
+
+      } catch (err) {
+        showError("Data Error: " + err.message);
+      }
+    }
+
+    // Timeline Drag / Scrub Interactions
+    timeline.addEventListener('input', (e) => {
+      currentTimeMs = parseFloat(e.target.value);
+      renderFrame();
+    });
+
+    sparklineCanvas.addEventListener('mousedown', scrubSparkline);
+    sparklineCanvas.addEventListener('mousemove', (e) => {
+      if (e.buttons === 1) scrubSparkline(e);
+    });
+
+    function scrubSparkline(e) {
+      if (!totalTimeMs) return;
+      const rect = sparklineCanvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const pct = Math.max(0, Math.min(1, clickX / rect.width));
+      currentTimeMs = pct * totalTimeMs;
+      timeline.value = currentTimeMs;
+      renderFrame();
+    }
+
+    // Combined Play/Pause Controller
+    btnPlayPause.addEventListener('click', () => {
+      if (coordinates.length === 0) return;
+      if (!isPlaying) {
+        // Toggle to Play
+        isPlaying = true;
+        btnPlayPause.textContent = "Pause";
+        lastAnimFrameTime = performance.now();
+        requestAnimationFrame(tickPlayback);
+      } else {
+        // Toggle to Pause
+        isPlaying = false;
+        btnPlayPause.textContent = "Play";
+      }
+    });
+
+    btnReset.addEventListener('click', () => {
+      isPlaying = false;
+      btnPlayPause.textContent = "Play";
+      currentTimeMs = 0;
+      timeline.value = 0;
+      renderFrame();
+    });
+
+    // Console Exporter for Selected Ball
+    btnExport.addEventListener('click', () => {
+      if (coordinates.length === 0) {
+        console.warn("Telemetry Exporter: No active dataset to export.");
+        return;
+      }
+      // Map points to compact nested arrays: [t, x, y]
+      const arrayStr = coordinates.map(c => `[${c.timeMs.toFixed(1)},${c.x.toFixed(4)},${c.y.toFixed(4)}]`).join(",");
+      const outputString = `const ball_${selectedBallColor}_tracking = [${arrayStr}];`;
+      
+      console.log(outputString);
+
+      // Flash status feedback
+      const originalText = statusMsg.textContent;
+      statusMsg.textContent = `SUCCESS: BallColor ${selectedBallColor} tracking array string printed to developer console.`;
+      setTimeout(() => {
+        statusMsg.textContent = originalText;
+      }, 4000);
+    });
+
+    function tickPlayback(timestamp) {
+      if (!isPlaying) return;
+
+      if (!lastAnimFrameTime) lastAnimFrameTime = timestamp;
+      const deltaRealTime = timestamp - lastAnimFrameTime;
+      lastAnimFrameTime = timestamp;
+
+      const scale = parseFloat(playSpeedSel.value) || 1.0;
+      currentTimeMs += deltaRealTime * scale;
+
+      if (currentTimeMs >= totalTimeMs) {
+        currentTimeMs = totalTimeMs;
+        isPlaying = false;
+        btnPlayPause.textContent = "Play";
+      }
+
+      timeline.value = currentTimeMs;
+      renderFrame();
+
+      if (isPlaying) {
+        requestAnimationFrame(tickPlayback);
+      }
+    }
+
+    // State Lookups & Linear Interpolation calculations
+    function getBallState(t) {
+      if (coordinates.length === 0) return { x: 0, y: 0, index: 0, speed: 0, accel: 0 };
+
+      // Boundary clamp checks
+      if (t <= coordinates[0].timeMs) {
+        return {
+          x: coordinates[0].x,
+          y: coordinates[0].y,
+          index: 0,
+          speed: physicsStates[0].smoothVel,
+          accel: physicsStates[0].smoothAccel
+        };
+      }
+      if (t >= totalTimeMs) {
+        const lastIdx = coordinates.length - 1;
+        return {
+          x: coordinates[lastIdx].x,
+          y: coordinates[lastIdx].y,
+          index: lastIdx,
+          speed: physicsStates[lastIdx].smoothVel,
+          accel: physicsStates[lastIdx].smoothAccel
+        };
+      }
+
+      // Linear Search for bounding records
+      let idx1 = 0;
+      for (let i = 0; i < coordinates.length - 1; i++) {
+        if (coordinates[i].timeMs <= t && t <= coordinates[i + 1].timeMs) {
+          idx1 = i;
+          break;
+        }
+      }
+      const idx2 = idx1 + 1;
+
+      const p1 = coordinates[idx1];
+      const p2 = coordinates[idx2];
+      const v1 = physicsStates[idx1];
+      const v2 = physicsStates[idx2];
+
+      const dt = p2.timeMs - p1.timeMs;
+      let ratio = 0;
+      if (dt > 0) {
+        ratio = (t - p1.timeMs) / dt;
+      }
+
+      // Interp coordinate and physical derivative functions
+      const interpolatedX = p1.x + (p2.x - p1.x) * ratio;
+      const interpolatedY = p1.y + (p2.y - p1.y) * ratio;
+      const interpolatedSpeed = v1.smoothVel + (v2.smoothVel - v1.smoothVel) * ratio;
+      const interpolatedAccel = v1.smoothAccel + (v2.smoothAccel - v1.smoothAccel) * ratio;
+
+      return {
+        x: isFinite(interpolatedX) ? interpolatedX : p1.x,
+        y: isFinite(interpolatedY) ? interpolatedY : p1.y,
+        index: idx1,
+        speed: isFinite(interpolatedSpeed) ? interpolatedSpeed : v1.smoothVel,
+        accel: isFinite(interpolatedAccel) ? interpolatedAccel : v1.smoothAccel
+      };
+    }
+
+    // Frame update cycles
+    function renderFrame() {
+      if (coordinates.length === 0) return;
+
+      const currentPoint = getBallState(currentTimeMs);
+
+      // Render wireframe simulation
+      drawTable(currentPoint.x, currentPoint.y);
+
+      // Render real-time metrics
+      updateTelemetryOutput(currentPoint);
+
+      // Draw interactive indicator on sparkline
+      drawSparkline();
+    }
+
+    // Render 2D Table elements with less faint Diamond Layout Lines
+    function drawTable(ballX, ballY) {
+      const w = tableCanvas.width;
+      const h = tableCanvas.height;
+
+      tableCtx.clearRect(0, 0, w, h);
+
+      // Draw table cushions
+      tableCtx.strokeStyle = "#444";
+      tableCtx.lineWidth = 10;
+      tableCtx.strokeRect(5, 5, w - 10, h - 10);
+
+      // Draw cloth bounds
+      tableCtx.strokeStyle = "#ffffff";
+      tableCtx.lineWidth = 1;
+      tableCtx.strokeRect(10, 10, w - 20, h - 20);
+
+      // Render bold coordinate layout guides (diamonds) - increased opacity to 0.28
+      tableCtx.strokeStyle = "rgba(255, 255, 255, 0.28)";
+      tableCtx.lineWidth = 1;
+      tableCtx.setLineDash([2, 4]);
+
+      // Long axis guides: divisions at 1/8 increments (diamonds)
+      for (let i = 1; i < 8; i++) {
+        const gridX = 10 + (i / 8) * (w - 20);
+        tableCtx.beginPath();
+        tableCtx.moveTo(gridX, 10);
+        tableCtx.lineTo(gridX, h - 10);
+        tableCtx.stroke();
+      }
+
+      // Short axis guides: divisions at 1/4 increments (diamonds)
+      for (let j = 1; j < 4; j++) {
+        const gridY = 10 + (j / 4) * (h - 20);
+        tableCtx.beginPath();
+        tableCtx.moveTo(10, gridY);
+        tableCtx.lineTo(w - 10, gridY);
+        tableCtx.stroke();
+      }
+
+      tableCtx.setLineDash([]); // Reset dashed lines
+
+      const drawX = 10 + ballX * (w - 20);
+      const drawY = 10 + ballY * (h - 20);
+
+      // Render trajectory tail
+      tableCtx.strokeStyle = "rgba(0, 255, 102, 0.25)";
+      tableCtx.lineWidth = 1.5;
+      tableCtx.beginPath();
+      let drawnAny = false;
+      for (let i = 0; i < coordinates.length; i++) {
+        if (coordinates[i].timeMs > currentTimeMs) break;
+        const trajX = 10 + coordinates[i].x * (w - 20);
+        const trajY = 10 + coordinates[i].y * (h - 20);
+        if (!drawnAny) {
+          tableCtx.moveTo(trajX, trajY);
+          drawnAny = true;
+        } else {
+          tableCtx.lineTo(trajX, trajY);
+        }
+      }
+      tableCtx.stroke();
+
+      // Draw tracking ball element
+      tableCtx.fillStyle = "#00ff66";
+      tableCtx.beginPath();
+      tableCtx.arc(drawX, drawY, 8, 0, 2 * Math.PI);
+      tableCtx.fill();
+
+      tableCtx.strokeStyle = "#ffffff";
+      tableCtx.lineWidth = 1;
+      tableCtx.beginPath();
+      tableCtx.arc(drawX, drawY, 8, 0, 2 * Math.PI);
+      tableCtx.stroke();
+    }
+
+    // Plot velocity and negative acceleration curves on the sparkline Canvas
+    function drawSparkline() {
+      const w = sparklineCanvas.width;
+      const h = sparklineCanvas.height;
+      sparklineCtx.clearRect(0, 0, w, h);
+
+      if (physicsStates.length === 0) return;
+
+      // 1. Calculate dynamic bounds and scale factors strictly bounded to Velocity [0, maxVel]
+      const maxVel = Math.max(...physicsStates.map(v => v.smoothVel)) || 1.0;
+      const highestValue = maxVel;
+      const lowestValue = 0.0;
+      const valueSpan = highestValue - lowestValue;
+
+      // Safe margins
+      const topMargin = 15;
+      const bottomMargin = 15;
+      const plotHeight = h - topMargin - bottomMargin;
+
+      // Helper to map values linearly to physical canvas Y coordinate with strict clipping boundary clamps
+      function valToY(val) {
+        const clampedVal = Math.max(lowestValue, Math.min(highestValue, val));
+        const pct = (clampedVal - lowestValue) / valueSpan;
+        return h - bottomMargin - (pct * plotHeight);
+      }
+
+      // 2. Render baselines and grids
+      const zeroY = valToY(0);
+      
+      // Zero Reference Line
+      sparklineCtx.strokeStyle = "#444";
+      sparklineCtx.lineWidth = 1;
+      sparklineCtx.setLineDash([5, 5]);
+      sparklineCtx.beginPath();
+      sparklineCtx.moveTo(0, zeroY);
+      sparklineCtx.lineTo(w, zeroY);
+      sparklineCtx.stroke();
+      sparklineCtx.setLineDash([]); // Reset line dash
+
+      // Mark acceleration 0 base line explicitly
+      sparklineCtx.strokeStyle = "rgba(255, 51, 51, 0.2)";
+      sparklineCtx.lineWidth = 1;
+      sparklineCtx.beginPath();
+      sparklineCtx.moveTo(0, zeroY);
+      sparklineCtx.lineTo(w, zeroY);
+      sparklineCtx.stroke();
+
+      // 3. Plot Negative Acceleration Line - plotted as (-accel * 10)
+      sparklineCtx.strokeStyle = "rgba(255, 51, 51, 0.85)";
+      sparklineCtx.lineWidth = 1.5;
+      sparklineCtx.beginPath();
+      for (let i = 0; i < physicsStates.length; i++) {
+        const v = physicsStates[i];
+        const px = (v.timeMs / totalTimeMs) * w;
+        const py = valToY(-v.smoothAccel * 10);
+
+        if (i === 0) {
+          sparklineCtx.moveTo(px, py);
+        } else {
+          sparklineCtx.lineTo(px, py);
+        }
+      }
+      sparklineCtx.stroke();
+
+      // 4. Plot Velocity Line (Guaranteed to be within bounds)
+      sparklineCtx.strokeStyle = "#00ff66";
+      sparklineCtx.lineWidth = 2;
+      sparklineCtx.beginPath();
+      for (let i = 0; i < physicsStates.length; i++) {
+        const v = physicsStates[i];
+        const px = (v.timeMs / totalTimeMs) * w;
+        const py = valToY(v.smoothVel);
+
+        if (i === 0) {
+          sparklineCtx.moveTo(px, py);
+        } else {
+          sparklineCtx.lineTo(px, py);
+        }
+      }
+      sparklineCtx.stroke();
+
+      // 5. Draw Progress Scrubbing Indicator line
+      if (totalTimeMs > 0) {
+        const progressPct = currentTimeMs / totalTimeMs;
+        const indicatorX = progressPct * w;
+        sparklineCtx.strokeStyle = "#ffffff";
+        sparklineCtx.lineWidth = 1.5;
+        sparklineCtx.beginPath();
+        sparklineCtx.moveTo(indicatorX, 0);
+        sparklineCtx.lineTo(indicatorX, h);
+        sparklineCtx.stroke();
+      }
+    }
+
+    // Display formatted outputs
+    function updateTelemetryOutput(point) {
+      const rawLines = [
+        `==================================================`,
+        `         RAW UTILITARIAN TELEMETRY DATA           `,
+        `==================================================`,
+        `Status           : Tracking Loaded (BallColor ${selectedBallColor})`,
+        `Playback Progress: [${generateProgressBar(currentTimeMs / totalTimeMs)}]`,
+        `Current Time     : ${currentTimeMs.toFixed(2)} ms / ${totalTimeMs.toFixed(2)} ms`,
+        `Time Step Ratio  : ${(currentTimeMs / 1000).toFixed(4)} s`,
+        `Position X       : ${point.x.toFixed(4)} (Normalized Coordinate)`,
+        `Position Y       : ${point.y.toFixed(4)} (Normalized Coordinate)`,
+        `Table X (Meters) : ${(point.x * REAL_TABLE_WIDTH).toFixed(3)} m`,
+        `Table Y (Meters) : ${(point.y * REAL_TABLE_HEIGHT).toFixed(3)} m`,
+        `Estimated Speed  : ${point.speed.toFixed(3)} m/s`,
+        `Estimated Accel  : ${point.accel.toFixed(3)} m/s²`,
+        `Array Index      : Frame ${point.index + 1} of ${coordinates.length}`,
+        `==================================================`
+      ];
+
+      telemetryOutput.innerHTML = rawLines.join('\n')
+        .replace(/(-?\d+\.\d+)/g, '<span class="highlight">$1</span>')
+        .replace(/(Frame \d+ of \d+)/g, '<span class="highlight">$1</span>');
+    }
+
+    function generateProgressBar(ratio) {
+      if (!isFinite(ratio) || ratio < 0) ratio = 0;
+      if (ratio > 1) ratio = 1;
+      const width = 20;
+      const filled = Math.round(width * ratio);
+      const empty = width - filled;
+      return '#'.repeat(filled) + '-'.repeat(empty);
+    }
+  </script>
+</body>
+</html>
