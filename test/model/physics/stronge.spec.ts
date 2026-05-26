@@ -1,9 +1,6 @@
 import { expect } from "chai"
 import { Vector3 } from "three"
-import {
-  stronge,
-  resolve,
-} from "../../../src/model/physics/stronge"
+import { stronge, resolve } from "../../../src/model/physics/stronge"
 
 describe("Stronge Cushion Model", () => {
   const params = {
@@ -102,6 +99,16 @@ describe("Stronge Cushion Model", () => {
       expect(deltas.w.x).to.be.approximately(0.0, 1e-7)
       expect(deltas.w.y).to.be.approximately(-4.909064176, 1e-7)
       expect(deltas.w.z).to.be.approximately(0.0, 1e-7)
+      done()
+    })
+
+    it("Case: Natural roll into cushion", (done) => {
+      const v = new Vector3(1.0, 0.0, 0.0)
+      const w = new Vector3(0.0, 1.0 / params.R, 0.0) // natural roll: wy = v/R
+      const deltas = stronge(v, w, n, params)
+
+      const vx_final = v.x + deltas.v.x
+      expect(vx_final).to.be.approximately(-0.7, 0.01)
       done()
     })
   })
