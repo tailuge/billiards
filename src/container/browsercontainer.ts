@@ -121,6 +121,7 @@ export class BrowserContainer {
       keyboard: new Keyboard(this.canvas3d),
       id: this.playername,
       relay: this.messageRelay,
+      messagingUrl: this.wss ?? undefined,
       scoreReporter: scoreReporter,
       replayMode: !!this.replay,
       botMode: this.botMode,
@@ -153,7 +154,7 @@ export class BrowserContainer {
   }
 
   private initMultiplayer(scoreReporter: ScoreReporter) {
-    this.messageRelay = new NchanMessageRelay()
+    this.messageRelay = new NchanMessageRelay(this.wss ?? undefined)
     this.container = this.createContainer(scoreReporter)
     this.container.init()
 

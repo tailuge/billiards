@@ -10,6 +10,7 @@ export interface ContainerConfig {
   keyboard?: Keyboard
   id?: string
   relay?: MessageRelay | null
+  messagingUrl?: string
   scoreReporter?: ScoreReporter | null
   replayMode?: boolean
   botMode?: boolean
