@@ -40,13 +40,16 @@ export class DiagramContainer {
   }
 
   start() {
+    const urlParams = new URLSearchParams(window.location.search)
+    const lod = Number.parseInt(urlParams.get("lod") ?? "1", 10)
     Session.init(
       "diagram",
       "diagram",
       "diagram",
       false,
       false,
-      this.practiceMode
+      this.practiceMode,
+      lod
     )
     const keyboard = new Keyboard(this.canvas3d)
     const config: ContainerConfig = {

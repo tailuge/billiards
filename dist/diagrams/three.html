@@ -836,6 +836,25 @@
         if (!surface || !topview?.dataset.state) return
 
         const urlParams = new URLSearchParams(window.location.search)
+        const diagramParams = new URLSearchParams(topview.dataset.state)
+        let changed = false
+
+        urlParams.forEach((value, key) => {
+          if (key === "s") {
+            diagramParams.set("state", value)
+            changed = true
+          } else if (key !== "ps") {
+            diagramParams.set(key, value)
+            changed = true
+          }
+        })
+
+        if (changed) {
+          const nextState = `?${diagramParams.toString()}`
+          topview.dataset.state = nextState
+          topview.setAttribute("data-state", nextState)
+        }
+
         const sharedPresets = urlParams.get("ps")
         if (sharedPresets) {
           try {
@@ -847,15 +866,6 @@
           } catch (e) {
             console.error("Failed to import presets", e)
           }
-        }
-
-        const savedState = urlParams.get("s")
-        if (savedState) {
-          const params = new URLSearchParams(topview.dataset.state)
-          params.set("state", savedState)
-          const overrideUrl = `?${params.toString()}`
-          topview.dataset.state = overrideUrl
-          topview.setAttribute("data-state", overrideUrl)
         }
 
         const params = new URLSearchParams(topview.dataset.state)
