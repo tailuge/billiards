@@ -35,10 +35,17 @@ export function stronge(
   const v_t_mag = n̂_cross_Vc.length()
   const v_t0 = -v_t_mag // <= 0
 
-  const t̂ =
+  // t̂ is the tangent direction for impulse application.
+  // V_c can have a Z component (from ωy spin), which would make the raw
+  // cross-product t̂ point out of the table plane and corrupt v.z / ω.
+  // The Stronge model is 2D (normal + one tangential scalar), so we project
+  // t̂ onto the XY plane and renormalize to stay in the game's x,y,0 convention.
+  const t̂_raw =
     v_t_mag > 0
       ? new Vector3().crossVectors(n̂_cross_Vc, n̂).normalize()
       : new Vector3()
+  const t̂ = new Vector3(t̂_raw.x, t̂_raw.y, 0)
+  if (t̂.lengthSq() > 0) t̂.normalize()
 
   // 3. Scalar solver
   const [v_tf, v_nf] = resolve(v_t0, v_n0, params)
