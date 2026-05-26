@@ -29,26 +29,25 @@ export function stronge(
   const ω_cross_R_n̂ = new Vector3().crossVectors(ω, R_n̂)
   const V_c = v.clone().sub(ω_cross_R_n̂)
 
-  // 2. Decompose into normal/tangent scalars
-  const v_n0 = n̂.dot(V_c) // < 0
-  const n̂_cross_Vc = new Vector3().crossVectors(n̂, V_c)
-  const v_t_mag = n̂_cross_Vc.length()
-  const v_t0 = -v_t_mag // <= 0
+  // 2. Decompose into normal/tangent scalars.
+  // t̂ points in the direction of the tangential contact velocity (matching the
+  // Python decompose_normal_tangent convention). v_t0 is the signed projection
+  // onto t̂, so it is always >= 0 by construction.
+  // We project t̂ onto the XY plane before use: V_c can have a Z component from
+  // ωy spin, which would otherwise leak Z into the velocity/spin deltas and lift
+  // the ball off the table. The Stronge model is 2D so this projection is correct.
+  const v_n0 = n̂.dot(V_c) // < 0 (ball approaching cushion)
+  const V_c_tangential = V_c.clone().addScaledVector(n̂, -v_n0) // V_c - (V_c·n̂)n̂
+  V_c_tangential.z = 0 // project onto table plane
+  const v_t_mag = V_c_tangential.length()
+  const t̂ = v_t_mag > 0 ? V_c_tangential.normalize() : new Vector3()
+  const v_t0 = v_t_mag // >= 0; solver expects v_t0/v_n0 ratio with v_n0 < 0
 
-  // t̂ is the tangent direction for impulse application.
-  // V_c can have a Z component (from ωy spin), which would make the raw
-  // cross-product t̂ point out of the table plane and corrupt v.z / ω.
-  // The Stronge model is 2D (normal + one tangential scalar), so we project
-  // t̂ onto the XY plane and renormalize to stay in the game's x,y,0 convention.
-  const t̂_raw =
-    v_t_mag > 0
-      ? new Vector3().crossVectors(n̂_cross_Vc, n̂).normalize()
-      : new Vector3()
-  const t̂ = new Vector3(t̂_raw.x, t̂_raw.y, 0)
-  if (t̂.lengthSq() > 0) t̂.normalize()
-
-  // 3. Scalar solver
-  const [v_tf, v_nf] = resolve(v_t0, v_n0, params)
+  // 3. Scalar solver expects v_t0 <= 0 (same sign convention as v_n0 < 0).
+  // We negate for the solver, then negate the result back so Δv_t is in the
+  // direction of t̂ (the actual tangential contact velocity direction).
+  const [v_tf_solver, v_nf] = resolve(-v_t0, v_n0, params)
+  const v_tf = -v_tf_solver
 
   // 4. Reconstruct velocity deltas
   const β_n = 1.0

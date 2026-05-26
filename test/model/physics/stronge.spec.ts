@@ -83,5 +83,16 @@ describe("Stronge Cushion Model", () => {
       expect(deltas.w.length()).to.be.greaterThan(0)
       done()
     })
+
+    // Convention matches bounceHan test in physics.spec.ts:
+    // ball travels +x into cushion at +x wall, w.z = -5 = right-hand (clockwise) spin.
+    // Friction at contact transfers momentum: ball should deflect in +y (delta.v.y > 0).
+    it("right-hand spin (w.z < 0) deflects ball in +y on bounce", (done) => {
+      const v = new Vector3(1.0, 0.0, 0.0)
+      const w = new Vector3(0.0, 0.0, -5.0)
+      const deltas = strongeAdapter(v, w)
+      expect(deltas.v.y).to.be.greaterThan(0)
+      done()
+    })
   })
 })
