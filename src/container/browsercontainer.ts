@@ -9,6 +9,7 @@ import {
   bounceHanBlend,
   mathavanAdapter,
 } from "../model/physics/physics"
+import { strongeAdapter } from "../model/physics/stronge"
 import JSONCrush from "jsoncrush"
 import { Assets } from "../view/assets"
 import { SnookerConfig } from "../utils/snookerconfig"
@@ -98,13 +99,14 @@ export class BrowserContainer {
     console.log(Session.getInstance())
   }
 
-cushion(model) {
-
-     switch (model) {
+  cushion(model) {
+    switch (model) {
       case "bounceHan":
         return bounceHan
       case "bounceHanBlend":
         return bounceHanBlend
+      case "stronge":
+        return strongeAdapter
       default:
         return mathavanAdapter
     }

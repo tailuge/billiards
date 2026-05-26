@@ -3,7 +3,12 @@ import { ContainerConfig } from "../container/containerconfig"
 import { Keyboard } from "../events/keyboard"
 import { BreakEvent } from "../events/breakevent"
 import { CameraTop } from "../view/cameratop"
-import { bounceHan, mathavanAdapter } from "../model/physics/physics"
+import {
+  bounceHan,
+  bounceHanBlend,
+  mathavanAdapter,
+} from "../model/physics/physics"
+import { strongeAdapter } from "../model/physics/stronge"
 import { Assets } from "../view/assets"
 import { RealOverlay } from "./real/realoverlay"
 import { id, getButton, getCanvas } from "../utils/dom"
@@ -143,11 +148,17 @@ export class DiagramContainer {
     )
     diagramcontainer.practiceMode = params.has("practice")
     diagramcontainer.replayButton(replaybutton)
-    if (params.get("cushionModel") == "bounceHan") {
+    const model = params.get("cushionModel")
+    if (model == "bounceHan") {
       diagramcontainer.cushionModel = bounceHan
+    } else if (model == "bounceHanBlend") {
+      diagramcontainer.cushionModel = bounceHanBlend
+    } else if (model == "stronge") {
+      diagramcontainer.cushionModel = strongeAdapter
     } else {
       diagramcontainer.cushionModel = mathavanAdapter
     }
+
     return diagramcontainer
   }
 }
