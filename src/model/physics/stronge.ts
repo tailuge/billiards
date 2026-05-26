@@ -51,7 +51,7 @@ export function stronge(
 
   // 4. Reconstruct velocity deltas
   const β_n = 1.0
-  const β_t = 3.5
+  const β_t = 1.0 + (mass * radius * radius) / inertia
   const Δv_n = (v_nf - v_n0) / β_n
   const Δv_t = (v_tf - v_t0) / β_t
 
@@ -67,8 +67,8 @@ export function stronge(
   const ω_new = ω.clone().addScaledVector(torque_dir, inertiaFactor)
 
   return {
-    v: v_new.sub(v),
-    w: ω_new.sub(ω),
+    v: v_new,
+    w: ω_new,
   }
 }
 
@@ -77,7 +77,7 @@ export function strongeAdapter(
   w: Vector3
 ): { v: Vector3; w: Vector3 } {
   const n̂ = new Vector3(-1, 0, 0)
-  return stronge(v, w, n̂, {
+  const result = stronge(v, w, n̂, {
     m,
     R,
     I,
@@ -85,10 +85,12 @@ export function strongeAdapter(
     μ: stronge_μ,
     omega_ratio: stronge_omega_ratio,
   })
+  return {
+    v: result.v.sub(v),
+    w: result.w.sub(w),
+  }
 }
 
-const β_n = 1.0
-const β_t = 3.5
 const k_n = 1e3
 
 function resolve(
@@ -103,8 +105,10 @@ function resolve(
     omega_ratio: number
   }
 ): [number, number] {
-  const { m: mass, e_n, μ, omega_ratio } = params
+  const { m: mass, R: radius, I: inertia, e_n, μ, omega_ratio } = params
 
+  const β_n = 1.0
+  const β_t = 1.0 + (mass * radius * radius) / inertia
   const beta_ratio = β_t / β_n
   const eta_squared = beta_ratio / (omega_ratio * omega_ratio)
 
@@ -146,12 +150,11 @@ function resolve(
       t_c_shift
     )
     const v_tf =
-      v_t0 * Math.cos(omega_t * t_slip) +
       μ *
-        v_n0 *
-        beta_ratio *
-        e_n *
-        (1 + Math.cos((omega_n * t_slip) / e_n + t_c_shift))
+      v_n0 *
+      beta_ratio *
+      e_n *
+      (1 + Math.cos((omega_n * t_slip) / e_n + t_c_shift))
     const v_nf = e_n * v_n0 * Math.cos((omega_n * t_f) / e_n + t_c_shift)
     return [v_tf, v_nf]
   }
@@ -206,7 +209,7 @@ function resolve(
 
   const v_tf =
     v_t_stick_to_slip +
-    β_t * μ * v_n0 * e_n * (1 + Math.cos((omega_n * t_slip) / e_n + t_c_shift))
+    beta_ratio * μ * v_n0 * e_n * (1 + Math.cos((omega_n * t_slip) / e_n + t_c_shift))
 
   const v_nf = e_n * v_n0 * Math.cos((omega_n * t_f) / e_n + t_c_shift)
   return [v_tf, v_nf]
@@ -258,12 +261,11 @@ function findRootInitialStick(
   const v_ratio = v_t0 / v_n0
   const phi_rest = (t: number) => (omega_n * t) / e_n + t_c_shift
 
-  const f = (t: string | number) => {
-    const tNum = Number(t)
+  const f = (t: number): number => {
     const val =
-      Math.abs(-v_ratio * Math.sin(omega_t * tNum)) -
-      μ * eta_squared * (omega_t / omega_n) * Math.sin(phi_rest(tNum))
-    return val.toString()
+      Math.abs(-v_ratio * Math.sin(omega_t * t)) -
+      μ * eta_squared * (omega_t / omega_n) * Math.sin(phi_rest(t))
+    return val
   }
 
   const result = fzero(f, [t_c, t_f], { maxiter: 50 })
@@ -348,16 +350,15 @@ function findRootSlipStickSlip(
 ): number {
   const phi_rest = (t: number) => (omega_n * t) / e_n + t_c_shift
 
-  const f = (t: string | number) => {
-    const tNum = Number(t)
+  const f = (t: number): number => {
     const val =
       Math.abs(
         (omega_n / (μ * v_n0)) *
-          (u_t_at_stick * Math.cos(omega_t * (tNum - t_stick)) -
-            (v_t_at_stick / omega_t) * Math.sin(omega_t * (tNum - t_stick)))
+          (u_t_at_stick * Math.cos(omega_t * (t - t_stick)) -
+            (v_t_at_stick / omega_t) * Math.sin(omega_t * (t - t_stick)))
       ) -
-      eta_squared * Math.sin(phi_rest(tNum))
-    return val.toString()
+      eta_squared * Math.sin(phi_rest(t))
+    return val
   }
 
   const result = fzero(f, [t_c, t_f], { maxiter: 50 })
