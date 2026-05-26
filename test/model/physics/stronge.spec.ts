@@ -2,7 +2,6 @@ import { expect } from "chai"
 import { Vector3 } from "three"
 import {
   stronge,
-  strongeAdapter,
   resolve,
 } from "../../../src/model/physics/stronge"
 
@@ -26,6 +25,7 @@ describe("Stronge Cushion Model", () => {
 
     it("handles High side-spin collision (Gross slip regime)", (done) => {
       const [v_tf, v_nf] = resolve(-3.0, -1.0, params)
+      // Python output for v_t0=-3, v_n0=-1: vt=-1.8099999999999998, vn=0.7
       expect(v_tf).to.be.approximately(-1.81, 1e-7)
       expect(v_nf).to.be.approximately(0.7, 1e-7)
       done()
@@ -33,65 +33,75 @@ describe("Stronge Cushion Model", () => {
 
     it("handles Moderate side-spin collision (Slip-stick-slip regime)", (done) => {
       const [v_tf, v_nf] = resolve(-0.5, -1.0, params)
-      expect(v_tf).to.be.approximately(0.32911428, 1e-7)
+      // Python output for v_t0=-0.5, v_n0=-1: vt=0.3291142832763286, vn=0.7
+      expect(v_tf).to.be.approximately(0.329114283, 1e-7)
       expect(v_nf).to.be.approximately(0.7, 1e-7)
       done()
     })
   })
 
-  describe("Vector stronge() checks", () => {
-    it("resolves direct impact with normal vector", (done) => {
+  describe("Vector stronge() checks against Python reference", () => {
+    const n = new Vector3(-1.0, 0.0, 0.0)
+
+    it("Case: Head-on", (done) => {
       const v = new Vector3(1.0, 0.0, 0.0)
       const w = new Vector3(0.0, 0.0, 0.0)
-      // Normal points from cushion to ball (so -x direction if cushion is at +x)
-      const n = new Vector3(-1.0, 0.0, 0.0)
-
       const deltas = stronge(v, w, n, params)
-      // Normal component: v_n0 = n.dot(v) = -1.0. v_nf should be 0.7, so dv_n = 0.7 - (-1.0) = 1.7.
-      // Reconstructed: dv_n * n = 1.7 * (-1, 0, 0) = (-1.7, 0, 0).
-      // Tangent component: v_t0 = 0. v_tf = 0, so dv_t = 0.
+
       expect(deltas.v.x).to.be.approximately(-1.7, 1e-7)
       expect(deltas.v.y).to.be.approximately(0.0, 1e-7)
       expect(deltas.v.z).to.be.approximately(0.0, 1e-7)
-      expect(deltas.w.length()).to.be.approximately(0.0, 1e-7)
+      expect(deltas.w.x).to.be.approximately(0.0, 1e-7)
+      expect(deltas.w.y).to.be.approximately(0.0, 1e-7)
+      expect(deltas.w.z).to.be.approximately(0.0, 1e-7)
       done()
     })
 
-    it("resolves moderate side-spin impact with spin transfer", (done) => {
-      // Ball travelling at angle with spin
-      const v = new Vector3(1.0, 0.5, 0.0) // travelling +x, +y
-      const w = new Vector3(0.0, 0.0, 0.0)
-      const n = new Vector3(-1.0, 0.0, 0.0)
-
+    it("Case: High side-spin", (done) => {
+      const v = new Vector3(1.0, 0.5, 0.0)
+      const w = new Vector3(0.0, 0.0, -10.0)
       const deltas = stronge(v, w, n, params)
-      // Tangent direction is +y direction (since V_c has +y velocity).
-      // Rebound tangential velocity will be affected.
+
+      // Delta v: (-1.7, -0.06819102304096644, -0.0)
+      // Delta w: (0.0, 0.0, -5.205421606180644)
       expect(deltas.v.x).to.be.approximately(-1.7, 1e-7)
-      expect(deltas.v.y).to.not.equal(0)
-      expect(deltas.w.z).to.not.equal(0)
-      done()
-    })
-  })
-
-  describe("strongeAdapter() checks", () => {
-    it("resolves using default constants from constants.ts", (done) => {
-      const v = new Vector3(1.0, -0.5, 0.0)
-      const w = new Vector3(0.0, 0.0, 0.0)
-      const deltas = strongeAdapter(v, w)
-
-      expect(deltas.v.length()).to.be.greaterThan(0)
-      expect(deltas.w.length()).to.be.greaterThan(0)
+      expect(deltas.v.y).to.be.approximately(-0.068191023, 1e-7)
+      expect(deltas.v.z).to.be.approximately(0.0, 1e-7)
+      expect(deltas.w.x).to.be.approximately(0.0, 1e-7)
+      expect(deltas.w.y).to.be.approximately(0.0, 1e-7)
+      expect(deltas.w.z).to.be.approximately(-5.205421606, 1e-7)
       done()
     })
 
-    // Convention matches bounceHan test in physics.spec.ts:
-    // ball travels +x into cushion at +x wall, w.z = -5 = right-hand (clockwise) spin.
-    // Friction at contact transfers momentum: ball should deflect in +y (delta.v.y > 0).
-    it("right-hand spin (w.z < 0) deflects ball in +y on bounce", (done) => {
+    it("Case: Moderate side-spin", (done) => {
+      const v = new Vector3(1.0, 0.2, 0.0)
+      const w = new Vector3(0.0, 0.0, -2.0)
+      const deltas = stronge(v, w, n, params)
+
+      // Delta v: (-1.7, -0.051606898062282594, -0.0)
+      // Delta w: (0.0, 0.0, -3.939457867349816)
+      expect(deltas.v.x).to.be.approximately(-1.7, 1e-7)
+      expect(deltas.v.y).to.be.approximately(-0.051606898, 1e-7)
+      expect(deltas.v.z).to.be.approximately(0.0, 1e-7)
+      expect(deltas.w.x).to.be.approximately(0.0, 1e-7)
+      expect(deltas.w.y).to.be.approximately(0.0, 1e-7)
+      expect(deltas.w.z).to.be.approximately(-3.939457867, 1e-7)
+      done()
+    })
+
+    it("Case: Side-spin with wy (3D)", (done) => {
       const v = new Vector3(1.0, 0.0, 0.0)
-      const w = new Vector3(0.0, 0.0, -5.0)
-      const deltas = strongeAdapter(v, w)
-      expect(deltas.v.y).to.be.greaterThan(0)
+      const w = new Vector3(0.0, 5.0, 0.0)
+      const deltas = stronge(v, w, n, params)
+
+      // Delta v: (-1.7, 0.0, -0.0)
+      // Delta w: (-0.0, -4.909064176164999, -0.0)
+      expect(deltas.v.x).to.be.approximately(-1.7, 1e-7)
+      expect(deltas.v.y).to.be.approximately(0.0, 1e-7)
+      expect(deltas.v.z).to.be.approximately(0.0, 1e-7)
+      expect(deltas.w.x).to.be.approximately(0.0, 1e-7)
+      expect(deltas.w.y).to.be.approximately(-4.909064176, 1e-7)
+      expect(deltas.w.z).to.be.approximately(0.0, 1e-7)
       done()
     })
   })
