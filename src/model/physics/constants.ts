@@ -68,9 +68,9 @@ export function setee(val: number) {
   ee = val
 }
 
-export let stronge_omega_ratio = 1.7
-export let stronge_e_n = 0.7
-export let stronge_μ = 0.2
+export let stronge_omega_ratio = 1.847
+export let stronge_e_n = 0.979
+export let stronge_μ = 0.161
 
 export function setStrongeOmegaRatio(val: number) {
   stronge_omega_ratio = val

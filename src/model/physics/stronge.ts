@@ -229,7 +229,18 @@ function getInitialStickSlipTime(
 ): number {
   if (Math.abs(v_ratio) < eps) return t_f
   if (Math.abs(v_ratio - initial_stick_thresh) < eps) return t_c
-  return findRootInitialStick(v_t0, v_n0, omega_t, omega_n, e_n, μ, eta_squared, t_c, t_f, t_c_shift)
+  return findRootInitialStick(
+    v_t0,
+    v_n0,
+    omega_t,
+    omega_n,
+    e_n,
+    μ,
+    eta_squared,
+    t_c,
+    t_f,
+    t_c_shift
+  )
 }
 
 function findRootInitialStick(
@@ -305,7 +316,20 @@ function getSlipStickSlipTime(
 ): number {
   if (Math.abs(v_ratio - initial_stick_thresh) < eps) return t_c
   if (Math.abs(v_ratio - gross_slip_thresh) < eps) return t_f
-  return findRootSlipStickSlip(v_n0, μ, eta_squared, omega_t, omega_n, u_t_at_stick, v_t_at_stick, t_stick, t_c, t_f, t_c_shift, e_n)
+  return findRootSlipStickSlip(
+    v_n0,
+    μ,
+    eta_squared,
+    omega_t,
+    omega_n,
+    u_t_at_stick,
+    v_t_at_stick,
+    t_stick,
+    t_c,
+    t_f,
+    t_c_shift,
+    e_n
+  )
 }
 
 function findRootSlipStickSlip(
