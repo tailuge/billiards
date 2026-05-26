@@ -3,7 +3,6 @@ import { Container } from "../../src/container/container"
 import { Assets } from "../../src/view/assets"
 import { Session } from "../../src/network/client/session"
 import { Snooker } from "../../src/controller/rules/snooker"
-import { ConcedeEvent } from "../../src/events/concedeevent"
 
 describe("Snooker Concession", () => {
   let container: Container

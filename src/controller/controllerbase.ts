@@ -7,7 +7,6 @@ import { ConcedeEvent } from "../events/concedeevent"
 import { Outcome } from "../model/outcome"
 import { Vector3 } from "three"
 import { Session } from "../network/client/session"
-import { Input } from "../events/input"
 
 const flipP1type = (t: number) => (t === 1 ? 2 : 1)
 
@@ -17,10 +16,6 @@ export abstract class ControllerBase extends Controller {
   constructor(container) {
     super(container)
     container.table.proximityIndicator.hide()
-  }
-
-  override handleInput(input: Input): Controller {
-    return this
   }
 
   override handleChat(chatevent: ChatEvent): Controller {

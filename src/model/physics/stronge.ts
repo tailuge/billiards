@@ -130,25 +130,21 @@ function resolve(
 
   // Case 2: Initial stick (sticks immediately at t=0)
   if (v_ratio < initial_stick_thresh) {
-    let t_slip = t_f
-    if (Math.abs(v_ratio) < eps) {
-      t_slip = t_f
-    } else if (Math.abs(v_ratio - initial_stick_thresh) < eps) {
-      t_slip = t_c
-    } else {
-      t_slip = findRootInitialStick(
-        v_t0,
-        v_n0,
-        omega_t,
-        omega_n,
-        e_n,
-        μ,
-        eta_squared,
-        t_c,
-        t_f,
-        t_c_shift
-      )
-    }
+    const t_slip = getInitialStickSlipTime(
+      v_ratio,
+      eps,
+      initial_stick_thresh,
+      t_f,
+      t_c,
+      v_t0,
+      v_n0,
+      omega_t,
+      omega_n,
+      e_n,
+      μ,
+      eta_squared,
+      t_c_shift
+    )
     const v_tf =
       v_t0 * Math.cos(omega_t * t_slip) +
       μ *
@@ -185,27 +181,24 @@ function resolve(
       : ((-μ * v_n0 * eta_squared) / omega_n) *
         Math.sin((omega_n * t_stick) / e_n + t_c_shift)
 
-  let t_slip = t_f
-  if (Math.abs(v_ratio - initial_stick_thresh) < eps) {
-    t_slip = t_c
-  } else if (Math.abs(v_ratio - gross_slip_thresh) < eps) {
-    t_slip = t_f
-  } else {
-    t_slip = findRootSlipStickSlip(
-      v_n0,
-      μ,
-      eta_squared,
-      omega_t,
-      omega_n,
-      u_t_at_stick,
-      v_t_at_stick,
-      t_stick,
-      t_c,
-      t_f,
-      t_c_shift,
-      e_n
-    )
-  }
+  const t_slip = getSlipStickSlipTime(
+    v_ratio,
+    eps,
+    initial_stick_thresh,
+    gross_slip_thresh,
+    t_f,
+    t_c,
+    v_n0,
+    μ,
+    eta_squared,
+    omega_t,
+    omega_n,
+    u_t_at_stick,
+    v_t_at_stick,
+    t_stick,
+    t_c_shift,
+    e_n
+  )
 
   const v_t_stick_to_slip =
     omega_t * u_t_at_stick * Math.sin(omega_t * (t_slip - t_stick)) +
@@ -217,6 +210,26 @@ function resolve(
 
   const v_nf = e_n * v_n0 * Math.cos((omega_n * t_f) / e_n + t_c_shift)
   return [v_tf, v_nf]
+}
+
+function getInitialStickSlipTime(
+  v_ratio: number,
+  eps: number,
+  initial_stick_thresh: number,
+  t_f: number,
+  t_c: number,
+  v_t0: number,
+  v_n0: number,
+  omega_t: number,
+  omega_n: number,
+  e_n: number,
+  μ: number,
+  eta_squared: number,
+  t_c_shift: number
+): number {
+  if (Math.abs(v_ratio) < eps) return t_f
+  if (Math.abs(v_ratio - initial_stick_thresh) < eps) return t_c
+  return findRootInitialStick(v_t0, v_n0, omega_t, omega_n, e_n, μ, eta_squared, t_c, t_f, t_c_shift)
 }
 
 function findRootInitialStick(
@@ -270,6 +283,29 @@ function findStickTime(
     const clampedXRest = Math.max(-1.0, Math.min(1.0, x_rest))
     return t_c * (2 / Math.PI) * (Math.acos(clampedXRest) - t_c_shift) * e_n
   }
+}
+
+function getSlipStickSlipTime(
+  v_ratio: number,
+  eps: number,
+  initial_stick_thresh: number,
+  gross_slip_thresh: number,
+  t_f: number,
+  t_c: number,
+  v_n0: number,
+  μ: number,
+  eta_squared: number,
+  omega_t: number,
+  omega_n: number,
+  u_t_at_stick: number,
+  v_t_at_stick: number,
+  t_stick: number,
+  t_c_shift: number,
+  e_n: number
+): number {
+  if (Math.abs(v_ratio - initial_stick_thresh) < eps) return t_c
+  if (Math.abs(v_ratio - gross_slip_thresh) < eps) return t_f
+  return findRootSlipStickSlip(v_n0, μ, eta_squared, omega_t, omega_n, u_t_at_stick, v_t_at_stick, t_stick, t_c, t_f, t_c_shift, e_n)
 }
 
 function findRootSlipStickSlip(
