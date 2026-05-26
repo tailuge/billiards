@@ -185,6 +185,30 @@ $$W_{Z'}^I \ge e_e^2 W_{\text{compression}}$$
 
 Some of the Mathavan equations not supplied by the paper were inferred to bridge gaps for a complete numerical solution.
 
+#### Stronge compliant cushion model
+
+Based on the book *Impact Mechanics* by [Stronge](https://doi.org/10.1017/9781139050227). This analytical model accounts for the compliant nature of cushion deformation and resolves the collision across three slip regimes.
+
+Contact velocity at the cushion contact point:
+
+$$\vec{V}_c = \vec{v} - (\vec{\omega} \times R \hat{n})$$
+
+Regime classification is determined by the ratio $v_{\text{ratio}} = v_{t0} / v_{n0}$ and thresholds involving the friction coefficient $\mu$, restitution $e_n$, and mass-matrix coefficients $\beta$:
+
+$$\text{Gross slip: } v_{\text{ratio}} > \mu \left( (1 + e_n) \beta_{\text{ratio}} - \frac{\eta^2}{e_n} \right)$$
+$$\text{Initial stick: } v_{\text{ratio}} < \mu \eta^2$$
+
+where $\eta^2$ is derived from the frequency ratio $\omega_t/\omega_n$.
+
+Velocity reconstruction from scalar solver results $v_{nf}$ and $v_{tf}$:
+
+$$\Delta v_n = \frac{v_{nf} - v_{n0}}{\beta_n} , \quad \Delta v_t = \frac{v_{tf} - v_{t0}}{\beta_t}$$
+
+Final updates:
+
+$$\vec{v} \leftarrow \vec{v} + \Delta v_n \hat{n} + \Delta v_t \hat{t}$$
+$$\vec{\omega} \leftarrow \vec{\omega} + \frac{mR}{I} (-\hat{n} \times \Delta v_t \hat{t})$$
+
 ## Useful commands
 
 ### Install
