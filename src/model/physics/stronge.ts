@@ -38,7 +38,6 @@ export function stronge(
   // the ball off the table. The Stronge model is 2D so this projection is correct.
   const v_n0 = n̂.dot(V_c) // < 0 (ball approaching cushion)
   const V_c_tangential = V_c.clone().addScaledVector(n̂, -v_n0) // V_c - (V_c·n̂)n̂
-  V_c_tangential.z = 0 // project onto table plane
   const v_t_mag = V_c_tangential.length()
   const t̂ = v_t_mag > 0 ? V_c_tangential.normalize() : new Vector3()
   const v_t0 = v_t_mag // >= 0; solver expects v_t0/v_n0 ratio with v_n0 < 0
@@ -57,6 +56,7 @@ export function stronge(
 
   // 5. Apply linear changes
   const v_new = v.clone().addScaledVector(n̂, Δv_n).addScaledVector(t̂, Δv_t)
+  v_new.z = 0 // project back onto table plane (rvw[1][2] = 0.0 in Python)
 
   // 6. Apply angular change: Δω = (m * R / I) * (-n̂ × Δv_t t̂)
   const negative_n̂ = n̂.clone().negate()
@@ -104,6 +104,10 @@ function resolve(
   }
 ): [number, number] {
   const { m: mass, e_n, μ, omega_ratio } = params
+
+  if (omega_ratio <= 1 || omega_ratio >= 2) {
+    throw new Error(`omega_ratio must be in (1, 2), got ${omega_ratio}`)
+  }
 
   const beta_ratio = β_t / β_n
   const eta_squared = beta_ratio / (omega_ratio * omega_ratio)
@@ -272,7 +276,7 @@ function findRootInitialStick(
       `fzero failed to find root for initial stick: code ${result.code}, solution: ${result.solution}, fval: ${result.fval}`
     )
   }
-  return Number(result.solution)
+  return Math.max(t_c, Math.min(t_f, Number(result.solution)))
 }
 
 function findStickTime(
@@ -366,7 +370,7 @@ function findRootSlipStickSlip(
       `fzero failed to find root for slip-stick-slip: code ${result.code}, solution: ${result.solution}, fval: ${result.fval}`
     )
   }
-  return Number(result.solution)
+  return Math.max(t_stick, Math.min(t_f, Number(result.solution)))
 }
 
 export { resolve }
