@@ -197,6 +197,7 @@ Regime classification is determined by the ratio $v_{\text{ratio}} = v_{t0} / v_
 
 $$\text{Gross slip: } v_{\text{ratio}} > \mu \left( (1 + e_n) \beta_{\text{ratio}} - \frac{\eta^2}{e_n} \right)$$
 $$\text{Initial stick: } v_{\text{ratio}} < \mu \eta^2$$
+$$\text{Slip-stick-slip: } \text{neither of the above}$$
 
 where $\eta^2$ is derived from the frequency ratio $\omega_t/\omega_n$.
 
