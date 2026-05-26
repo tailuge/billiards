@@ -98,8 +98,9 @@ export class BrowserContainer {
     console.log(Session.getInstance())
   }
 
-  cushion(model) {
-    switch (model) {
+cushion(model) {
+
+     switch (model) {
       case "bounceHan":
         return bounceHan
       case "bounceHanBlend":

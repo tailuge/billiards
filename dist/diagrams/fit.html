@@ -539,9 +539,25 @@
         <button id="reset-presets" type="button" class="preset-action">
           reset
         </button>
-        <label for="fit-import" style="padding:2px 8px;cursor:pointer;font-size:11px;border:2px outset #adf;border-radius:2px;background:#c8d8f0;">import</label>
-        <input id="fit-import" type="file" accept=".txt,.json" style="display:none">
-        <span id="fit-status" style="font-size:10px;color:#aaa;"></span>
+        <label
+          for="fit-import"
+          style="
+            padding: 2px 8px;
+            cursor: pointer;
+            font-size: 11px;
+            border: 2px outset #adf;
+            border-radius: 2px;
+            background: #c8d8f0;
+          "
+          >import</label
+        >
+        <input
+          id="fit-import"
+          type="file"
+          accept=".txt,.json"
+          style="display: none"
+        />
+        <span id="fit-status" style="font-size: 10px; color: #aaa"></span>
       </div>
 
       <div class="controls-row">
@@ -584,7 +600,20 @@
             <circle id="aim-arrow-hit" cx="0" cy="0" r="18"></circle>
           </svg>
         </div>
-        <canvas id="ghost-canvas" style="position:absolute;width:92%;height:84%;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:20;opacity:0.6;"></canvas>
+        <canvas
+          id="ghost-canvas"
+          style="
+            position: absolute;
+            width: 92%;
+            height: 84%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0.6;
+          "
+        ></canvas>
       </div>
     </div>
 
@@ -1237,9 +1266,15 @@
 
       // expose for fit-import module
       window._fit = {
-        get tableBalls() { return tableBalls },
-        get aimAngle() { return aimAngle },
-        set aimAngle(v) { aimAngle = v },
+        get tableBalls() {
+          return tableBalls
+        },
+        get aimAngle() {
+          return aimAngle
+        },
+        set aimAngle(v) {
+          aimAngle = v
+        },
         positionBall,
         positionAimArrow,
         syncDiagramState,
@@ -1289,7 +1324,7 @@
 
             const surface = document.getElementById("table-surface")
             const topview = document.querySelector(".topview")
-            fit.tableBalls.forEach(ball => fit.positionBall(surface, ball))
+            fit.tableBalls.forEach((ball) => fit.positionBall(surface, ball))
             fit.positionAimArrow(surface)
             fit.updateSpinVisualState()
             fit.setPowerSliderValue()
@@ -1298,16 +1333,19 @@
             ghost.load(tracks)
 
             document.getElementById("fit-status").textContent =
-              `✓ ${file.name} (${tracks.filter(t => t.length).length} balls)`
+              `✓ ${file.name} (${tracks.filter((t) => t.length).length} balls)`
           } catch (err) {
-            document.getElementById("fit-status").textContent = "✗ " + err.message
+            document.getElementById("fit-status").textContent =
+              "✗ " + err.message
           }
         }
         reader.readAsText(file)
       })
 
       // hook replay to also start ghost overlay
-      document.getElementById("replay")?.addEventListener("click", () => ghost.start())
+      document
+        .getElementById("replay")
+        ?.addEventListener("click", () => ghost.start())
     </script>
     <nav
       style="

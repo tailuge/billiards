@@ -3111,6 +3111,7 @@ __metadata:
     eslint: "npm:10.4.0"
     eslint-plugin-html: "npm:^8.1.4"
     eslint-plugin-sonarjs: "npm:4.0.3"
+    fzero: "npm:^0.2.4"
     http-server: "npm:^14.1.1"
     interactjs: "npm:1.10.27"
     jest: "npm:30.4.2"
@@ -3760,6 +3761,13 @@ __metadata:
   version: 10.6.0
   resolution: "decimal.js@npm:10.6.0"
   checksum: 10c0/07d69fbcc54167a340d2d97de95f546f9ff1f69d2b45a02fd7a5292412df3cd9eb7e23065e532a318f5474a2e1bccf8392fdf0443ef467f97f3bf8cb0477e5aa
+  languageName: node
+  linkType: hard
+
+"decimal.js@npm:^5.0.3":
+  version: 5.0.8
+  resolution: "decimal.js@npm:5.0.8"
+  checksum: 10c0/5bdaec19102b6e6b788dd66c6a42c76f60a4e9c4b07ff55c4538e7c1d90d89c2c43b531a2ac45f6ed1497c63ac60d2d4f67ca8b5f9de9f0b7a57a78b359f4aee
   languageName: node
   linkType: hard
 
@@ -4700,6 +4708,15 @@ __metadata:
   version: 1.0.1
   resolution: "functional-red-black-tree@npm:1.0.1"
   checksum: 10c0/5959eed0375803d9924f47688479bb017e0c6816a0e5ac151e22ba6bfe1d12c41de2f339188885e0aa8eeea2072dad509d8e4448467e816bde0a2ca86a0670d3
+  languageName: node
+  linkType: hard
+
+"fzero@npm:^0.2.4":
+  version: 0.2.4
+  resolution: "fzero@npm:0.2.4"
+  dependencies:
+    decimal.js: "npm:^5.0.3"
+  checksum: 10c0/3cb3502376b1d01eab186816c05745660b6a2d1857e716347c486ab4a7443c340788139e636d00c0686c4975d611dd1d5c5b5fa8b59b97645889749916eeac29
   languageName: node
   linkType: hard
 
