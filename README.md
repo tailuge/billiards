@@ -16,15 +16,15 @@ This is an open-source project bringing unsophisticated billiards physics writte
 Demos run in all major desktop and mobile browsers and uses WebGL
 
 * [Nine ball ⬀](https://billiards.tailuge.workers.dev/?practice=true) make a break and share replay link with friends
-* [Three cushion billiards ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&lod=4) the ultimate test of physics and player (average on both counts). You need the [beginner mode ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&practice=true) 
+* [Three cushion billiards ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&lod=4) the ultimate test of physics and player (average on both counts). You need the [beginner mode ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&practice=true)
 * [Snooker ⬀](https://billiards.tailuge.workers.dev/?ruletype=snooker) we await the first 147 submission to the leaderboard.
 * [8-Ball ⬀](https://billiards.tailuge.workers.dev/?ruletype=eightball&lod=4) try it in Hi-Res mode!
 * Play vs the [Claw ⬀](https://billiards.tailuge.workers.dev/?bot=ClawBreak) and [TheFarJaw ⬀](https://billiards.tailuge.workers.dev/?bot=TheFarJaw).
 * Try [two player](https://billiards.tailuge.workers.dev/lobby.html) online lobby using nchan
 * Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard) hosted on vercel.com
 * Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
-* Set up trick shots and [practice ⬀](https://billiards.tailuge.workers.dev/practice.html). 
-* Tune three cushion [physics ⬀](https://tailuge.github.io/billiards/dist/diagrams/three.html). 
+* Set up trick shots and [practice ⬀](https://billiards.tailuge.workers.dev/practice.html).
+* Tune three cushion [physics ⬀](https://tailuge.github.io/billiards/dist/diagrams/three.html).
 
 ## Features
 
@@ -80,7 +80,6 @@ $M_{xy} = \frac{7}{5\sqrt{2}} R \mu m g$ , $M_z = \frac{2}{3} \mu m g \rho$
 
 Based on paper by [Alciatore](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) incorporating throw effect due to the small amount of friction between balls. Figures to prove consistency between the [code](./src/model/physics/collisionthrow.ts) and paper [here](https://tailuge.github.io/billiards/dist/diagrams/mathavan.html).
 
-
 For ball $a$:
 
 $$\vec{v}_a \leftarrow \vec{v}_a + \frac{J_{\text{normal}}}{m}\hat{n} + \frac{J_{\text{tangential}}}{m}\hat{t}$$
@@ -91,9 +90,7 @@ For ball $b$:
 
 $$\vec{v}_b \leftarrow \vec{v}_b - \frac{J_{\text{normal}}}{m}\hat{n} - \frac{J_{\text{tangential}}}{m}\hat{t}$$
 
-
 $$\vec{\omega}_b \leftarrow \vec{\omega}_b + \frac{1}{I} (\vec{r}_b \times \vec{J}_{\text{tangential}})$$
-
 
 Where:
 
@@ -157,17 +154,15 @@ $$
 (\dot{\omega_x})_{n+1}−(\dot{\omega_x})_n = -\frac{5}{2MR}[\mu_w \sin(\phi) + \mu_s \sin(\phi') \times (\sin(\theta) + \mu_w \sin(\phi)\cos(\theta))]\Delta P_I
 $$
 
-
 $$
 (\dot{\omega_y})_{n+1}−(\dot{\omega_y})_n = -\frac{5}{2MR}[\mu_w \cos(\phi)\sin(\theta) - \mu_s \cos(\phi') \times (\sin(\theta) + \mu_w \sin(\phi)\cos(\theta))]\Delta P_I
 $$
-
 
 $$
 (\dot{\omega_z})_{n+1}−(\dot{\omega_z})_n = \frac{5}{2MR}(\mu_w \cos(\phi)\cos(\theta))\Delta P_I
 $$
 
-$\theta$ is a constant of the angle of cushion contact above ball centre with $\sin(\theta) = 2/5$. $\mu_s$ is the coefficient of sliding friction  between the ball and table surface. $\mu_w$ is the coefficient of sliding friction  between the ball and the cushion. 
+$\theta$ is a constant of the angle of cushion contact above ball centre with $\sin(\theta) = 2/5$. $\mu_s$ is the coefficient of sliding friction  between the ball and table surface. $\mu_w$ is the coefficient of sliding friction  between the ball and the cushion.
 
 Work done by the normal force at contact point $I$ along the $Z'$-axis which is aligned from the ball centre to I
 
@@ -175,7 +170,7 @@ $$
 W_{Z'}^I(P_I^{(n+1)}) = W_{Z'}^I(P_I^{(n)}) + \frac{\Delta P_I}{2} \left( z'_I(P_I^{(n+1)}) + z'_I(P_I^{(n)}) \right)
 $$
 
-The ball is assumed to be bouncing in the +y cushion. Compression phase iterates until 
+The ball is assumed to be bouncing in the +y cushion. Compression phase iterates until
 
 $$\dot{v}_y \le 0$$
 
@@ -248,6 +243,34 @@ yarn upgrade -L
 yarn prettify
 ```
 
+### Markdown review
+
+#### Direct CLI Use
+
+Slopless is English-only. It requires a file path, glob, or stdin input. A bare `npx slopless` exits with code 2.
+
+```shell
+mkdir -p .slopless/findings
+npx slopless "README.md" > ".slopless/findings/$(date +%Y-%m-%d-%H%M%S)--review.json"
+```
+
+* Exit 0 means clean.
+* Exit 1 means findings.
+* Exit 2 means failure.
+* Output is always JSON.
+
+#### Agent Use
+
+Agents should run help first:
+
+```shell
+npx slopless --help
+```
+
+Agents should save raw JSON findings under `.slopless/findings/` in the current
+working directory. Slopless does not choose redirected output filenames, slugs,
+or timestamps.
+
 ### Two player
 
 ```shell
@@ -319,15 +342,10 @@ top | aim
 
 [![2026](https://img.youtube.com/vi/jGNB_XLTjnU/0.jpg)](https://www.youtube.com/watch?v=jGNB_XLTjnU)
 
-
 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=tailuge/billiards&type=Date)](https://star-history.com/#tailuge/billiards&Date)
 
-
-## Licence 
+## Licence
 
 This project is open source and licensed under the GNU General Public License - see the [LICENSE](LICENSE) file for details. Contributions welcome.
-
-
-
