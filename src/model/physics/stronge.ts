@@ -1,5 +1,5 @@
-import fzero from "fzero"
 import { Vector3 } from "three"
+import { bisectionSolver } from "../../utils/utils"
 import {
   m,
   R,
@@ -262,21 +262,15 @@ function findRootInitialStick(
   const v_ratio = v_t0 / v_n0
   const phi_rest = (t: number) => (omega_n * t) / e_n + t_c_shift
 
-  const f = (t: string | number) => {
-    const tNum = Number(t)
-    const val =
-      Math.abs(-v_ratio * Math.sin(omega_t * tNum)) -
-      μ * eta_squared * (omega_t / omega_n) * Math.sin(phi_rest(tNum))
-    return val.toString()
-  }
-
-  const result = fzero(f, [t_c, t_f], { maxiter: 50 })
-  if (result.code !== 1) {
-    throw new Error(
-      `fzero failed to find root for initial stick: code ${result.code}, solution: ${result.solution}, fval: ${result.fval}`
+  const f = (t: number) => {
+    return (
+      Math.abs(-v_ratio * Math.sin(omega_t * t)) -
+      μ * eta_squared * (omega_t / omega_n) * Math.sin(phi_rest(t))
     )
   }
-  return Math.max(t_c, Math.min(t_f, Number(result.solution)))
+
+  const solution = bisectionSolver(f, t_c, t_f, 50)
+  return Math.max(t_c, Math.min(t_f, solution))
 }
 
 function findStickTime(
@@ -352,25 +346,19 @@ function findRootSlipStickSlip(
 ): number {
   const phi_rest = (t: number) => (omega_n * t) / e_n + t_c_shift
 
-  const f = (t: string | number) => {
-    const tNum = Number(t)
-    const val =
+  const f = (t: number) => {
+    return (
       Math.abs(
         (omega_n / (μ * v_n0)) *
-          (u_t_at_stick * Math.cos(omega_t * (tNum - t_stick)) -
-            (v_t_at_stick / omega_t) * Math.sin(omega_t * (tNum - t_stick)))
+          (u_t_at_stick * Math.cos(omega_t * (t - t_stick)) -
+            (v_t_at_stick / omega_t) * Math.sin(omega_t * (t - t_stick)))
       ) -
-      eta_squared * Math.sin(phi_rest(tNum))
-    return val.toString()
-  }
-
-  const result = fzero(f, [t_c, t_f], { maxiter: 50 })
-  if (result.code !== 1) {
-    throw new Error(
-      `fzero failed to find root for slip-stick-slip: code ${result.code}, solution: ${result.solution}, fval: ${result.fval}`
+      eta_squared * Math.sin(phi_rest(t))
     )
   }
-  return Math.max(t_stick, Math.min(t_f, Number(result.solution)))
+
+  const solution = bisectionSolver(f, t_c, t_f, 50)
+  return Math.max(t_stick, Math.min(t_f, solution))
 }
 
 export { resolve }
