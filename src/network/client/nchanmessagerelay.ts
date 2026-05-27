@@ -8,9 +8,11 @@ export class NchanMessageRelay implements MessageRelay {
     ReturnType<typeof setTimeout>
   >()
 
-  constructor(
-    private readonly baseURL: string = "billiards-network.onrender.com"
-  ) {}
+  private readonly baseURL: string
+
+  constructor(baseURL: string = "billiards-network.onrender.com") {
+    this.baseURL = baseURL.replace(/^(https?|wss?):\/\//, "")
+  }
 
   subscribe(
     channel: string,

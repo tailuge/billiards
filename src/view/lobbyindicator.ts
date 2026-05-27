@@ -25,6 +25,7 @@ export class LobbyIndicator {
   private readonly rules: Rules
   private readonly ruleType: string
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
+  private readonly messagingUrl: string
   private currentTableId: string | null = null
   private readonly replayMode: boolean
   private readonly isSpectator: boolean
@@ -36,11 +37,15 @@ export class LobbyIndicator {
     botMode: boolean,
     replayMode: boolean,
     rules: Rules,
-    onChatMessage?: (msg: string) => void
+    onChatMessage?: (msg: string) => void,
+    messagingUrl?: string
   ) {
     this.rules = rules
     this.replayMode = replayMode
     this.onChatMessage = onChatMessage
+    this.messagingUrl = messagingUrl
+      ? `https://${messagingUrl.replace(/^(https?|wss?):\/\//, "")}`
+      : LobbyIndicator.NCHAN_URL
     this.isSpectator = Session.getInstance().spectator
     if (botMode) {
       this.ruleType = `${this.rules.rulename}-bot`
@@ -97,7 +102,7 @@ export class LobbyIndicator {
     const userName = Session.getInstance().playername
 
     this.messagingClient = new MessagingClient({
-      baseUrl: LobbyIndicator.NCHAN_URL,
+      baseUrl: this.messagingUrl,
     })
     this.messagingClient.setVersion(VERSION + `-${Session.getInstance().lod}`)
     this.messagingClient.start()

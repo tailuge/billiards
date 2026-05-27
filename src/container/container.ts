@@ -129,7 +129,8 @@ export class Container {
       Session.getInstance().botMode,
       this.replayMode,
       this.rules,
-      (msg) => this.chat.showMessage(msg)
+      (msg) => this.chat.showMessage(msg),
+      config.messagingUrl
     )
     this.updateController(new Init(this))
     //  this.updateController(new End(this))

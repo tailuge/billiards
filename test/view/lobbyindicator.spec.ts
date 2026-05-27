@@ -1,4 +1,4 @@
-import { expect } from "chai"
+import { MessagingClient } from "@tailuge/messaging"
 import { LobbyIndicator } from "../../src/view/lobbyindicator"
 import { initDom } from "./dom"
 import { Session } from "../../src/network/client/session"
@@ -39,8 +39,8 @@ describe("LobbyIndicator", () => {
 
     const element = document.getElementById("lobbyOverlay")
     const countElement = element?.querySelector(".lobby-count")
-    expect(countElement?.textContent).to.equal("TestPlayer 👥0")
-    expect(countElement?.classList.contains("is-hidden")).to.be.false
+    expect(countElement?.textContent).toBe("TestPlayer 👥0")
+    expect(countElement?.classList.contains("is-hidden")).toBe(false)
   })
 
   it("updates display when challenged", async () => {
@@ -63,17 +63,17 @@ describe("LobbyIndicator", () => {
     })
 
     const countElement = element?.querySelector(".lobby-count")
-    expect(countElement?.classList.contains("is-hidden")).to.be.false
-    expect(document.getElementById("challengePill")?.textContent).to.contain(
+    expect(countElement?.classList.contains("is-hidden")).toBe(false)
+    expect(document.getElementById("challengePill")?.textContent).toContain(
       "Challenge of nineball from Bob"
     )
-    expect(element?.getAttribute("aria-label")).to.contain("CHALLENGE FROM Bob")
+    expect(element?.getAttribute("aria-label")).toContain("CHALLENGE FROM Bob")
 
     const href = element?.getAttribute("href") ?? ""
-    expect(href).to.contain("action=join")
-    expect(href).to.contain("ruletype=nineball")
-    expect(href).to.contain("opponentId=u2")
-    expect(href).to.contain("opponentName=Bob")
+    expect(href).toContain("action=join")
+    expect(href).toContain("ruletype=nineball")
+    expect(href).toContain("opponentId=u2")
+    expect(href).toContain("opponentName=Bob")
 
     // Simulate challenge decline/cancel
     onChallengeCallback({
@@ -83,10 +83,10 @@ describe("LobbyIndicator", () => {
       challengeeId: "default",
       ruleType: "nineball",
     })
-    expect(document.getElementById("challengePill")?.hidden).to.be.true
-    expect(document.getElementById("challengeDecline")).to.not.be.null
-    expect(countElement?.classList.contains("is-hidden")).to.be.false
-    expect(element?.getAttribute("href")).to.equal(LOBBY_URL)
+    expect(document.getElementById("challengePill")?.hidden).toBe(true)
+    expect(document.getElementById("challengeDecline")).not.toBeNull()
+    expect(countElement?.classList.contains("is-hidden")).toBe(false)
+    expect(element?.getAttribute("href")).toBe(LOBBY_URL)
   })
 
   it("handles non-anchor elements and click events", async () => {
@@ -112,7 +112,7 @@ describe("LobbyIndicator", () => {
     }) as any
 
     div.click()
-    expect(openedUrl).to.equal(LOBBY_URL)
+    expect(openedUrl).toBe(LOBBY_URL)
 
     await indicator.stop()
     div.remove()
@@ -129,14 +129,14 @@ describe("LobbyIndicator", () => {
     const updatePresenceFn = mockLobby.updatePresence
 
     indicator.setTableId("table-123")
-    expect(updatePresenceFn.mock.calls.length).to.be.greaterThan(0)
+    expect(updatePresenceFn.mock.calls.length).toBeGreaterThan(0)
 
     const firstCall = updatePresenceFn.mock.calls[0]
-    expect(firstCall[0]).to.deep.equal({ tableId: "table-123" })
+    expect(firstCall[0]).toEqual({ tableId: "table-123" })
 
     indicator.setTableId(null)
     const secondCall = updatePresenceFn.mock.calls[1]
-    expect(secondCall[0]).to.deep.equal({ tableId: undefined })
+    expect(secondCall[0]).toEqual({ tableId: undefined })
 
     await indicator.stop()
   })
@@ -152,7 +152,7 @@ describe("LobbyIndicator", () => {
     const countElement = element?.querySelector(".lobby-count") as HTMLElement
 
     await indicator.init()
-    expect(countElement.textContent).to.equal("Player 1 👥0")
+    expect(countElement.textContent).toBe("Player 1 👥0")
 
     // Access the mock lobby to trigger onUsersChange callback
     const mockLobby = (indicator as any).lobby
@@ -163,18 +163,18 @@ describe("LobbyIndicator", () => {
       { userId: "p1", tableId: "table-1" },
       { userId: "p2", tableId: "table-1" },
     ])
-    expect(countElement.textContent).to.equal("Player 1 👥2 🟢")
+    expect(countElement.textContent).toBe("Player 1 👥2 🟢")
 
     // Simulate opponent disconnected (not in list)
     onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
-    expect(countElement.textContent).to.equal("Player 1 👥1 🔴")
+    expect(countElement.textContent).toBe("Player 1 👥1 🔴")
 
     // Simulate opponent at a different table
     onUsersChangeCallback([
       { userId: "p1", tableId: "table-1" },
       { userId: "p2", tableId: "other-table" },
     ])
-    expect(countElement.textContent).to.equal("Player 1 👥2 🔴")
+    expect(countElement.textContent).toBe("Player 1 👥2 🔴")
 
     await indicator.stop()
   })
@@ -189,7 +189,7 @@ describe("LobbyIndicator", () => {
 
     const element = document.getElementById("lobbyOverlay")
     const countElement = element?.querySelector(".lobby-count") as HTMLElement
-    expect(countElement.textContent).to.equal("Player 1 👥0")
+    expect(countElement.textContent).toBe("Player 1 👥0")
     await indicator.stop()
 
     // Replay mode
@@ -198,7 +198,45 @@ describe("LobbyIndicator", () => {
     const indicator2 = new LobbyIndicator(false, true, mockRules)
     await indicator2.init()
     const countElement2 = element?.querySelector(".lobby-count") as HTMLElement
-    expect(countElement2.textContent).to.equal("Anon 👥0")
+    expect(countElement2.textContent).toBe("Anon 👥0")
     await indicator2.stop()
+  })
+
+  it("uses custom messaging URL when provided", async () => {
+    const mockRules = { rulename: "nineball" } as any
+    const customUrl = "custom.server.com"
+    const indicator = new LobbyIndicator(
+      false,
+      false,
+      mockRules,
+      undefined,
+      customUrl
+    )
+    await indicator.init()
+
+    expect(MessagingClient).toHaveBeenCalledWith({
+      baseUrl: "https://custom.server.com",
+    })
+
+    await indicator.stop()
+  })
+
+  it("handles protocol-prefixed custom messaging URL", async () => {
+    const mockRules = { rulename: "nineball" } as any
+    const customUrl = "wss://custom.server.com"
+    const indicator = new LobbyIndicator(
+      false,
+      false,
+      mockRules,
+      undefined,
+      customUrl
+    )
+    await indicator.init()
+
+    expect(MessagingClient).toHaveBeenCalledWith({
+      baseUrl: "https://custom.server.com",
+    })
+
+    await indicator.stop()
   })
 })
