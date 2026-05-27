@@ -10,6 +10,9 @@ import {
   μs,
   μw,
   ee,
+  stronge_omega_ratio,
+  stronge_e_n,
+  stronge_μ,
   setR,
   sete,
   setm,
@@ -20,6 +23,9 @@ import {
   setμs,
   setμw,
   setee,
+  setStrongeOmegaRatio,
+  setStrongeEN,
+  setStrongeMu,
 } from "../model/physics/constants"
 
 export class Sliders {
@@ -47,6 +53,21 @@ export class Sliders {
     this.initialiseSlider("μs", get("μs", μs), setμs)
     this.initialiseSlider("μw", get("μw", μw), setμw)
     this.initialiseSlider("ee", get("ee", ee), setee)
+    this.initialiseSlider(
+      "stronge_omega_ratio",
+      get("stronge_omega_ratio", stronge_omega_ratio),
+      setStrongeOmegaRatio
+    )
+    this.initialiseSlider(
+      "stronge_e_n",
+      get("stronge_e_n", stronge_e_n),
+      setStrongeEN
+    )
+    this.initialiseSlider(
+      "stronge_μ",
+      get("stronge_μ", stronge_μ),
+      setStrongeMu
+    )
   }
 
   toggleVisibility() {
@@ -65,7 +86,7 @@ export class Sliders {
     }
     slider.step = "0.001"
     slider.min = `${initialValue * 0.1}`
-    slider.max = `${Math.min(initialValue * 4, 1)}`
+    slider.max = `${Math.min(initialValue * 4, 2)}`
     slider.value = initialValue
     this.showValue(id, initialValue)
     slider.oninput = (e) => {
