@@ -87,11 +87,11 @@ export function strongeAdapter(
   })
 }
 
-const β_n = 1.0
-const β_t = 3.5
-const k_n = 1e3
+export const β_n = 1.0
+export const β_t = 3.5
+export const k_n = 1e3
 
-function resolve(
+export function resolve(
   v_t0: number,
   v_n0: number,
   params: {
@@ -247,7 +247,7 @@ function getInitialStickSlipTime(
   )
 }
 
-function findRootInitialStick(
+export function findRootInitialStick(
   v_t0: number,
   v_n0: number,
   omega_t: number,
@@ -273,7 +273,7 @@ function findRootInitialStick(
   return Math.max(t_c, Math.min(t_f, solution))
 }
 
-function findStickTime(
+export function findStickTime(
   v_ratio: number,
   μ: number,
   beta_ratio: number,
@@ -330,7 +330,7 @@ function getSlipStickSlipTime(
   )
 }
 
-function findRootSlipStickSlip(
+export function findRootSlipStickSlip(
   v_n0: number,
   μ: number,
   eta_squared: number,
@@ -361,4 +361,3 @@ function findRootSlipStickSlip(
   return Math.max(t_stick, Math.min(t_f, solution))
 }
 
-export { resolve }

@@ -1,0 +1,76 @@
+<!DOCTYPE html lang="en">
+<html lang="en">
+  <head>
+    <title>
+      Stronge Physics Model - Ball-Cushion Interaction | Break Builder
+    </title>
+    <link rel="icon" type="image/png" href="../favicon.png" />
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="description"
+      content="Interactive diagrams based on the Stronge physics model for billiards ball-cushion dynamics."
+    />
+    <link
+      rel="canonical"
+      href="https://tailuge.github.io/billiards/dist/diagrams/stronge.html"
+    />
+    <meta
+      property="og:title"
+      content="Stronge Physics Model - Ball-Cushion Interaction | Break Builder"
+    />
+    <meta
+      property="og:description"
+      content="Interactive diagrams based on the Stronge physics model for billiards ball-cushion dynamics."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://tailuge.github.io/billiards/dist/diagrams/stronge.html"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <link rel="stylesheet" type="text/css" href="../css/diagrams.css" />
+    <style>
+      .controls {
+        padding: 20px;
+        background: #f0f0f0;
+        margin-bottom: 20px;
+        border-radius: 8px;
+      }
+      .plot-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .plot {
+        flex: 1 1 45%;
+        min-width: 400px;
+        height: 400px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="controls">
+      <label for="interp-slider">Interpolation (x): </label>
+      <input id="interp-slider" type="range" min="0" max="1" step="0.01" value="0.5" style="width: 300px;">
+    </div>
+
+    <div class="plot-container">
+      <div id="initial-stick-force" class="plot"></div>
+      <div id="initial-slip-force" class="plot"></div>
+      <div id="initial-slip-velocity" class="plot"></div>
+    </div>
+
+    <script
+      src="https://cdn.plot.ly/plotly-cartesian-3.0.0-rc.0.min.js"
+      integrity="sha384-k9BNvphELWyBtQVTUBS5YYM9SAb3H4NoA6hxg6YARuWJqdp+yp8F3mJN405LN+KC"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../stronge.js"></script>
+  </body>
+</html>
