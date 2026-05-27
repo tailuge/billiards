@@ -6,6 +6,7 @@ module.exports = {
     diagram: "./src/diagrams.ts",
     mathavan: "./src/mathavan.ts",
     compare: "./src/compare.ts",
+    stronge: "./src/stronge_diagram.ts",
   },
   module: {
     rules: [
