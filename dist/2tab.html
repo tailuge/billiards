@@ -20,7 +20,10 @@
   <script>
     const urlParams = new URLSearchParams(window.location.search)
     const websocketserver =
-      urlParams.get("websocketserver") ?? "ws://localhost:80"
+      urlParams.get("websocketserver") ??
+      (window.location.hostname === "localhost"
+        ? "ws://localhost"
+        : "wss://billiards-network.onrender.com")
     const ruletype = urlParams.get("ruletype") ?? "nineball"
     const shotClock = urlParams.get("shotClock")
     const practice = urlParams.get("practice")

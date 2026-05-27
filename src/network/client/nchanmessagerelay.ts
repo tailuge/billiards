@@ -9,8 +9,14 @@ export class NchanMessageRelay implements MessageRelay {
   >()
 
   private readonly baseURL: string
+  private readonly wsProtocol: string
+  private readonly httpProtocol: string
 
-  constructor(baseURL: string = "billiards-network.onrender.com") {
+  constructor(baseURL: string = "wss://billiards-network.onrender.com") {
+    const isSecure =
+      !baseURL.startsWith("ws://") && !baseURL.startsWith("http://")
+    this.wsProtocol = isSecure ? "wss" : "ws"
+    this.httpProtocol = isSecure ? "https" : "http"
     this.baseURL = baseURL.replace(/^(https?|wss?):\/\//, "")
   }
 
@@ -31,7 +37,7 @@ export class NchanMessageRelay implements MessageRelay {
     backoffDelay: number
   ): void {
     const key = `${prefix}/${channel}`
-    const url = `wss://${this.baseURL}/subscribe/${key}`
+    const url = `${this.wsProtocol}://${this.baseURL}/subscribe/${key}`
     const ws = new WebSocket(url)
 
     this.websockets.set(key, ws)
@@ -96,7 +102,7 @@ export class NchanMessageRelay implements MessageRelay {
   }
 
   publish(channel: string, message: string, prefix = "table"): void {
-    const url = `https://${this.baseURL}/publish/${prefix}/${channel}`
+    const url = `${this.httpProtocol}://${this.baseURL}/publish/${prefix}/${channel}`
     fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -107,7 +113,7 @@ export class NchanMessageRelay implements MessageRelay {
   }
 
   async getOnlineCount(): Promise<number | null> {
-    const url = `https://${this.baseURL}/publish/presence/lobby`
+    const url = `${this.httpProtocol}://${this.baseURL}/publish/presence/lobby`
     try {
       const response = await fetch(url, {
         method: "POST",

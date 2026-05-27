@@ -43,8 +43,11 @@ export class LobbyIndicator {
     this.rules = rules
     this.replayMode = replayMode
     this.onChatMessage = onChatMessage
+    const isInsecure =
+      messagingUrl?.startsWith("ws://") || messagingUrl?.startsWith("http://")
+    const httpProtocol = isInsecure ? "http" : "https"
     this.messagingUrl = messagingUrl
-      ? `https://${messagingUrl.replace(/^(https?|wss?):\/\//, "")}`
+      ? `${httpProtocol}://${messagingUrl.replace(/^(https?|wss?):\/\//, "")}`
       : LobbyIndicator.NCHAN_URL
     this.isSpectator = Session.getInstance().spectator
     if (botMode) {
