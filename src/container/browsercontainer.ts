@@ -34,6 +34,7 @@ export class BrowserContainer {
   tableId
   clientId
   wss
+  lobby
   ruletype
   playername: string
   replay: string | null
@@ -72,6 +73,7 @@ export class BrowserContainer {
     this.replay = params.get("state")
     this.ruletype = params.get("ruletype") ?? "nineball"
     this.wss = params.get("websocketserver")
+    this.lobby = params.get("lobby")
     this.canvas3d = canvas3d
     this.cushionModel = this.cushion(params.get("cushionModel"))
     this.spectator = params.has("spectator")
@@ -121,7 +123,7 @@ export class BrowserContainer {
       keyboard: new Keyboard(this.canvas3d),
       id: this.playername,
       relay: this.messageRelay,
-      messagingUrl: this.wss ?? undefined,
+      messagingUrl: this.lobby ?? undefined,
       scoreReporter: scoreReporter,
       replayMode: !!this.replay,
       botMode: this.botMode,
