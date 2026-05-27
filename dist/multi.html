@@ -92,7 +92,7 @@
 
   <script>
     const server = window.location.origin
-    const wss = server.replace(/^http/, "ws") + "/ws"
+    const wss = server.replace(/^http/, "ws")
     const urlParams = new URLSearchParams(window.location.search)
     const shotClock = urlParams.get("shotClock")
     const wssparam = `websocketserver=${wss}`
