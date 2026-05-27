@@ -114,10 +114,11 @@
       #stronge_e_n::-webkit-slider-thumb,
       #stronge_μ::-webkit-slider-thumb {
         appearance: none;
-        width: 12px;
-        height: 12px;
-        background: #aaa;
-        border-radius: 0;
+        width: 14px;
+        height: 10px;
+        background: #bbb;
+        border: 1px solid #fff;
+        border-radius: 2px;
         cursor: pointer;
       }
 
@@ -134,11 +135,11 @@
       #stronge_omega_ratio::-moz-range-thumb,
       #stronge_e_n::-moz-range-thumb,
       #stronge_μ::-moz-range-thumb {
-        width: 12px;
-        height: 12px;
-        background: #aaa;
-        border-radius: 0;
-        border: none;
+        width: 14px;
+        height: 10px;
+        background: #bbb;
+        border: 1px solid #fff;
+        border-radius: 2px;
         cursor: pointer;
       }
 
@@ -339,40 +340,39 @@
         padding: 4px 0;
       }
 
-      #presets-details summary {
-        cursor: pointer;
-        font-size: 11px;
-        color: #aaa;
-        user-select: none;
-        list-style: none;
-        padding: 2px 6px;
+      #presets-popover {
+        background-color: #222;
+        color: #eee;
         border: 1px solid #444;
-        border-radius: 2px;
-        display: inline-block;
+        border-radius: 4px;
+        padding: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       }
 
-      #presets-details summary::-webkit-details-marker {
-        display: none;
-      }
-
-      #presets-details summary::before {
-        content: "▶ ";
-        font-size: 9px;
-      }
-
-      #presets-details[open] summary::before {
-        content: "▼ ";
-      }
-
-      #presets-details[open] #presets-list {
-        display: flex;
+      #presets-popover::backdrop {
+        background: rgba(0, 0, 0, 0.3);
       }
 
       #presets-list {
         display: flex;
         flex-wrap: wrap;
         gap: 4px;
-        margin-top: 4px;
+      }
+
+      [popovertarget="presets-popover"] {
+        cursor: pointer;
+        font-size: 11px;
+        color: #aaa;
+        user-select: none;
+        padding: 2px 6px;
+        border: 1px solid #444;
+        border-radius: 2px;
+        background: #000;
+      }
+
+      [popovertarget="presets-popover"]::before {
+        content: "▶ ";
+        font-size: 9px;
       }
 
       .preset-btn-container {
@@ -534,10 +534,10 @@
       </div>
 
       <div id="presets-row">
-        <details id="presets-details">
-          <summary>presets</summary>
+        <button popovertarget="presets-popover">presets</button>
+        <div id="presets-popover" popover>
           <div id="presets-list"></div>
-        </details>
+        </div>
         <button id="add-preset" type="button" title="Add current as preset">
           +
         </button>
@@ -1189,6 +1189,7 @@
           presets.splice(index, 1)
           savePresets(presets)
           renderPresets()
+          document.getElementById("presets-popover")?.hidePopover()
         }
       }
 
@@ -1222,6 +1223,7 @@
       }
 
       function applyPreset(preset) {
+        document.getElementById("presets-popover")?.hidePopover()
         const { positions, angle, power, offset, constants } = preset
         const surface = document.getElementById("table-surface")
         const topview = document.querySelector(".topview")
@@ -1290,35 +1292,28 @@
       />
       <div style="margin: 0; line-height: 1.6">
         <p style="margin: 0 0 6px">
-          These three constants govern how the ball behaves at the cushion:
+          Based on the <strong>Stronge impact model</strong>, the physical "feel" of a ball-cushion collision is determined by how normal compression/restitution interacts with tangential friction and compliance over the micro-duration of the hit.
         </p>
         <ul style="margin: 0; padding-left: 16px">
           <li>
-            <strong style="color: #aaa">μs = 0.212</strong> table friction
-            (point C in diagram); controls how much the table surface grips the
-            ball during the bounce higher values slow the ball's slide across
-            the cloth and transfer more energy into spin.
+            <strong style="color: #aaa">stronge_e_n = 0.8979 (Normal Coefficient of Restitution)</strong><br>
+            <em>What it does:</em> Dictates energy retention perpendicular to the cushion.<br>
+            <em>The Feel:</em> Extremely springy and alive. Resembles brand-new tournament-grade rubber cushions (like Artemis blocks). It minimizes "thudding" or energy deadening on direct impacts.
           </li>
-          <li>
-            <strong style="color: #aaa">μw = 0.165</strong> cushion friction
-            (point I in diagram); determines how strongly the cushion face grips
-            the ball on contact increase it and the ball bites into the cushion,
-            altering the rebound angle and adding side-spin; reduce it and the
-            ball skids off more cleanly.
+          <li style="margin-top: 8px">
+            <strong style="color: #aaa">stronge_μ = 0.161 (Friction Coefficient)</strong><br>
+            <em>What it does:</em> Controls the maximum tangential force (grip) the cushion can apply relative to the normal force.<br>
+            <em>The Feel:</em> Slick and slippery. The cushion won't "grab" the ball aggressively, preserving "gross slip" rather than gripping and rolling off. Sidespin (english) alters the rebound angle less dramatically.
           </li>
-          <li>
-            <strong style="color: #aaa">ee = 0.98</strong> cushion restitution;
-            sets how elastic the cushion bounce is values close to 1 return
-            nearly all the normal velocity, while lower values produce a softer,
-            more deadened rebound.
+          <li style="margin-top: 8px">
+            <strong style="color: #aaa">stronge_omega_ratio = 1.9677 (Stiffness/Frequency Ratio)</strong><br>
+            <em>What it does:</em> Defines the ratio between normal and tangential structural frequencies during deformation. Drives eta_squared to ≈0.904.<br>
+            <em>The Feel:</em> Progressive, smooth spin transfer. The ball almost never instantly locks/sticks to the cushion. The transfer of spin into linear velocity feels fluid and delayed rather than jarring or sudden.
           </li>
         </ul>
         <p style="margin: 6px 0 0">
-          Adjust the parameters and share results to discuss. Presets are saved
-          to your browser's local storage (constants are not saved). Use "share
-          all presets" to send your full preset collection to a friend for
-          collaborative research. If you have suggestions for improvement please
-          open an issue on my
+          Adjust the parameters and share results to discuss. Presets are saved to your browser's local storage.
+          Suggestions? Please open an issue on my
           <a href="https://github.com/tailuge/billiards">GitHub repo</a>.
         </p>
       </div>
