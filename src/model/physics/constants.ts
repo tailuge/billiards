@@ -16,6 +16,10 @@ export let μs = 0.2
 // Mathavan coefficient (cushion)
 export let μw = 0.2
 
+// Candidate values
+// Stronge eₙ stronge_e_n=0.8
+// Stronge μ stronge_μ=0.3
+
 export let Mz: number
 export let Mxy: number
 export let I: number
