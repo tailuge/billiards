@@ -88,6 +88,7 @@ export class Sliders {
     slider.min = `${initialValue * 0.1}`
     slider.max = `${Math.min(initialValue * 4, 2)}`
     slider.value = initialValue
+    setter(initialValue)
     this.showValue(id, initialValue)
     slider.oninput = (e) => {
       const val = Number.parseFloat((e.target as HTMLInputElement).value)
