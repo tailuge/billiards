@@ -24,6 +24,7 @@ import { BeginEvent } from "../events/beginevent"
 //import { logNetEvent } from "../utils/event-log"
 import { Logger } from "../network/bot/logger"
 import { getUID } from "../utils/uid"
+import { setmu, setmuS } from "../model/physics/constants"
 
 /**
  * Integrate game container into HTML page
@@ -105,8 +106,11 @@ export class BrowserContainer {
         return bounceHan
       case "bounceHanBlend":
         return bounceHanBlend
-      case "stronge":
+      case "stronge": {
+        setmu(0.0041)
+        setmuS(0.24)
         return strongeAdapter
+      }
       default:
         return mathavanAdapter
     }
