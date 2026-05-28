@@ -7,7 +7,7 @@ export let m = 0.23
 export let R = 0.03275
 export let e = 0.86
 
-// Mathavan cuhsion coefficient of restitution
+// Mathavan cushion coefficient of restitution
 export let ee = 0.84
 
 // Mathavan coefficient (table)
