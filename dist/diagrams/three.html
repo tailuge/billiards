@@ -1292,28 +1292,50 @@
       />
       <div style="margin: 0; line-height: 1.6">
         <p style="margin: 0 0 6px">
-          Based on the <strong>Stronge impact model</strong>, the physical "feel" of a ball-cushion collision is determined by how normal compression/restitution interacts with tangential friction and compliance over the micro-duration of the hit.
+          Based on the <strong>Stronge impact model</strong>, the physical
+          "feel" of a ball-cushion collision is determined by how normal
+          compression/restitution interacts with tangential friction and
+          compliance over the micro-duration of the hit.
         </p>
         <ul style="margin: 0; padding-left: 16px">
           <li>
-            <strong style="color: #aaa">stronge_e_n = 0.8979 (Normal Coefficient of Restitution)</strong><br>
-            <em>What it does:</em> Dictates energy retention perpendicular to the cushion.<br>
-            <em>The Feel:</em> Extremely springy and alive. Resembles brand-new tournament-grade rubber cushions (like Artemis blocks). It minimizes "thudding" or energy deadening on direct impacts.
+            <strong style="color: #aaa"
+              >stronge_e_n = 0.8979 (Normal Coefficient of Restitution)</strong
+            ><br />
+            <em>What it does:</em> Dictates energy retention perpendicular to
+            the cushion.<br />
+            <em>The Feel:</em> Extremely springy and alive. Resembles brand-new
+            tournament-grade rubber cushions (like Artemis blocks). It minimizes
+            "thudding" or energy deadening on direct impacts.
           </li>
           <li style="margin-top: 8px">
-            <strong style="color: #aaa">stronge_μ = 0.161 (Friction Coefficient)</strong><br>
-            <em>What it does:</em> Controls the maximum tangential force (grip) the cushion can apply relative to the normal force.<br>
-            <em>The Feel:</em> Slick and slippery. The cushion won't "grab" the ball aggressively, preserving "gross slip" rather than gripping and rolling off. Sidespin (english) alters the rebound angle less dramatically.
+            <strong style="color: #aaa"
+              >stronge_μ = 0.161 (Friction Coefficient)</strong
+            ><br />
+            <em>What it does:</em> Controls the maximum tangential force (grip)
+            the cushion can apply relative to the normal force.<br />
+            <em>The Feel:</em> Slick and slippery. The cushion won't "grab" the
+            ball aggressively, preserving "gross slip" rather than gripping and
+            rolling off. Sidespin (english) alters the rebound angle less
+            dramatically.
           </li>
           <li style="margin-top: 8px">
-            <strong style="color: #aaa">stronge_omega_ratio = 1.9677 (Stiffness/Frequency Ratio)</strong><br>
-            <em>What it does:</em> Defines the ratio between normal and tangential structural frequencies during deformation. Drives eta_squared to ≈0.904.<br>
-            <em>The Feel:</em> Progressive, smooth spin transfer. The ball almost never instantly locks/sticks to the cushion. The transfer of spin into linear velocity feels fluid and delayed rather than jarring or sudden.
+            <strong style="color: #aaa"
+              >stronge_omega_ratio = 1.9677 (Stiffness/Frequency Ratio)</strong
+            ><br />
+            <em>What it does:</em> Defines the ratio between normal and
+            tangential structural frequencies during deformation. Drives
+            eta_squared to ≈0.904.<br />
+            <em>The Feel:</em> Progressive, smooth spin transfer. The ball
+            almost never instantly locks/sticks to the cushion. The transfer of
+            spin into linear velocity feels fluid and delayed rather than
+            jarring or sudden.
           </li>
         </ul>
         <p style="margin: 6px 0 0">
-          Adjust the parameters and share results to discuss. Presets are saved to your browser's local storage.
-          Suggestions? Please open an issue on my
+          Adjust the parameters and share results to discuss. Presets are saved
+          to your browser's local storage. Suggestions? Please open an issue on
+          my
           <a href="https://github.com/tailuge/billiards">GitHub repo</a>.
         </p>
       </div>

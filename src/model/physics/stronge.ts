@@ -9,18 +9,30 @@ import {
   stronge_omega_ratio,
 } from "./constants"
 
+export const β_n = 1.0
+export const β_t = 3.5
+export const k_n = 1e3
+
+export type StrongeParams = {
+  m: number
+  R: number
+  I: number
+  e_n: number
+  μ: number
+  omega_ratio: number
+}
+
+/**
+ * Resolve a ball-cushion collision and return velocity deltas, not final state.
+ *
+ * `n̂` is the unit cushion normal pointing out of the cushion and toward the
+ * ball. A ball moving into the cushion has `v_n0 < 0`.
+ */
 export function stronge(
   v: Vector3,
   ω: Vector3,
   n̂: Vector3, // Unit cushion normal pointing toward ball
-  params: {
-    m: number
-    R: number
-    I: number
-    e_n: number
-    μ: number
-    omega_ratio: number
-  }
+  params: StrongeParams
 ): { v: Vector3; w: Vector3 } {
   const { R: radius, m: mass, I: inertia } = params
 
@@ -30,12 +42,10 @@ export function stronge(
   const V_c = v.clone().sub(ω_cross_R_n̂)
 
   // 2. Decompose into normal/tangent scalars.
-  // t̂ points in the direction of the tangential contact velocity (matching the
-  // Python decompose_normal_tangent convention). v_t0 is the signed projection
-  // onto t̂, so it is always >= 0 by construction.
-  // We project t̂ onto the XY plane before use: V_c can have a Z component from
-  // ωy spin, which would otherwise leak Z into the velocity/spin deltas and lift
-  // the ball off the table. The Stronge model is 2D so this projection is correct.
+  // TypeScript chooses t̂ in the direction of the tangential contact velocity,
+  // making v_t0 non-negative. Python/C++ use the opposite tangent basis and pass
+  // a non-positive v_t0 to the scalar solver. The sign conversion happens around
+  // the resolve() call below.
   const v_n0 = n̂.dot(V_c) // < 0 (ball approaching cushion)
   const V_c_tangential = V_c.clone().addScaledVector(n̂, -v_n0) // V_c - (V_c·n̂)n̂
   const v_t_mag = V_c_tangential.length()
@@ -49,8 +59,6 @@ export function stronge(
   const v_tf = -v_tf_solver
 
   // 4. Reconstruct velocity deltas
-  const β_n = 1.0
-  const β_t = 3.5
   const Δv_n = (v_nf - v_n0) / β_n
   const Δv_t = (v_tf - v_t0) / β_t
 
@@ -87,21 +95,16 @@ export function strongeAdapter(
   })
 }
 
-export const β_n = 1.0
-export const β_t = 3.5
-export const k_n = 1e3
-
+/**
+ * Scalar Stronge compliant collision solver.
+ *
+ * Inputs use the Python/C++ convention: `v_n0 < 0` and `v_t0 <= 0`.
+ * The returned tuple is `[v_tf, v_nf]` in the same tangent/normal basis.
+ */
 export function resolve(
   v_t0: number,
   v_n0: number,
-  params: {
-    m: number
-    R: number
-    I: number
-    e_n: number
-    μ: number
-    omega_ratio: number
-  }
+  params: StrongeParams
 ): [number, number] {
   const { m: mass, e_n, μ, omega_ratio } = params
 
@@ -132,7 +135,7 @@ export function resolve(
 
   const eps = 1e-9
 
-  // Case 2: Initial stick (sticks immediately at t=0)
+  // Case 2: initial stick, then possible slip during restitution.
   if (v_ratio < initial_stick_thresh) {
     const t_slip = getInitialStickSlipTime(
       v_ratio,
@@ -160,7 +163,7 @@ export function resolve(
     return [v_tf, v_nf]
   }
 
-  // Case 3: Slip→stick→slip
+  // Case 3: initial slip, then stick, then slip again.
   const t_stick = findStickTime(
     v_ratio,
     μ,
@@ -247,6 +250,8 @@ function getInitialStickSlipTime(
   )
 }
 
+// Python uses scipy.optimize.toms748 for these roots. Bisection is sufficient
+// here because the root is bracketed and this is not performance-sensitive.
 export function findRootInitialStick(
   v_t0: number,
   v_n0: number,
@@ -330,6 +335,8 @@ function getSlipStickSlipTime(
   )
 }
 
+// Python uses scipy.optimize.toms748 for these roots. Bisection is sufficient
+// here because the root is bracketed and this is not performance-sensitive.
 export function findRootSlipStickSlip(
   v_n0: number,
   μ: number,
@@ -360,4 +367,3 @@ export function findRootSlipStickSlip(
   const solution = bisectionSolver(f, t_c, t_f, 50)
   return Math.max(t_stick, Math.min(t_f, solution))
 }
-

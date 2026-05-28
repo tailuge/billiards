@@ -211,10 +211,41 @@ are changed this could silently produce nonsense results.
 
 ## Most Likely Source of Residual Error
 
-The Z-zeroing in step 2 is the most structurally significant difference. Python's
-`decompose_normal_tangent` computes the tangent direction from the full 3D contact
-velocity (including any Z component from `ω_y` spin), while TypeScript zeros Z
-before normalising. This means:
+**Update after conductor comparison:** this conclusion is no longer supported by
+the current `src/model/physics/stronge.ts`. The current TypeScript code does
+**not** zero `V_c_tangential.z` before normalising; it computes `t̂` from the full
+3D contact velocity and only zeros `v_new.z` after applying the update, matching
+the Python/C++ pattern.
+
+A dependency-free Python reference derived from `conductor/stronge.py`,
+`conductor/stronge_compliant.py`, and `conductor/BallHalfSpaceCollision.cpp` was
+added at `conductor/stronge_reference.py` for local comparison only. It uses
+bisection instead of SciPy/toms748 so it can run without pooltool/scipy/numba.
+The gated Jest
+comparison in `test/model/physics/stronge.spec.ts` checks direct X-cushion,
+moderate pace (`v = [0.8, 0, 0]`) with:
+
+- pure full right-hand side spin (`w = [0, 0, 1.25 * 0.8 / R]`)
+- full right-hand side spin plus natural roll (`w = [0, 0.8 / R, 1.25 * 0.8 / R]`)
+- ten additional fixed random vector samples with `v.x > 0` into the X cushion
+  and varied `v.y`, `ωx`, `ωy`, and `ωz`
+
+The TypeScript implementation matches the Python reference for `Δv.y` and
+`Δω.z` to `1e-10` in the two focused right-spin cases, and matches the full
+`Δv`/`Δω` vectors to `1e-8` across the fixed random samples. The Python
+comparison is intentionally skipped by default; run it with:
+
+```sh
+STRONGE_PYTHON_REFERENCE=1 yarn exec jest --config ./test/jest.config.js test/model/physics/stronge.spec.ts --runInBand --testNamePattern='Python conductor comparison'
+```
+
+### Superseded Hypothesis
+
+The earlier suspected Z-zeroing difference would have been structurally
+significant if still present. Python's `decompose_normal_tangent` computes the
+tangent direction from the full 3D contact velocity (including any Z component
+from `ω_y` spin), while a TypeScript implementation that zeroed Z before
+normalising would do this:
 
 - `t̂` points in a slightly different direction in 3D space.
 - `Δv_t · t̂` is applied in a different direction to both `v` and `ω`.

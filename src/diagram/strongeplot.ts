@@ -1,6 +1,5 @@
 import {
   findStickTime,
-  findRootInitialStick,
   findRootSlipStickSlip,
   β_n,
   β_t,
@@ -31,7 +30,9 @@ function f_per_m_n(t: number) {
   if (t <= T_C) {
     return ((-OMEGA_N * V_N_0) / β_n) * Math.sin(OMEGA_N * t)
   } else {
-    return ((-OMEGA_N * V_N_0) / β_n) * Math.sin((OMEGA_N * t) / E_N + T_C_SHIFT)
+    return (
+      ((-OMEGA_N * V_N_0) / β_n) * Math.sin((OMEGA_N * t) / E_N + T_C_SHIFT)
+    )
   }
 }
 
@@ -54,7 +55,11 @@ export class StrongePlot {
     const update = () => {
       const interp = slider ? parseFloat(slider.value) : 0.5
       this.plotInitialStick(interp, "initial-stick-force")
-      this.plotInitialSlip(interp, "initial-slip-force", "initial-slip-velocity")
+      this.plotInitialSlip(
+        interp,
+        "initial-slip-force",
+        "initial-slip-velocity"
+      )
     }
     if (slider) {
       slider.addEventListener("input", update)
@@ -64,18 +69,6 @@ export class StrongePlot {
 
   private plotInitialStick(interp: number, elementId: string) {
     const v_t_0 = V_N_0 * MU * interp * ETA_SQUARED
-    const t_slip = findRootInitialStick(
-      v_t_0,
-      V_N_0,
-      OMEGA_T,
-      OMEGA_N,
-      E_N,
-      MU,
-      ETA_SQUARED,
-      T_C,
-      T_F,
-      T_C_SHIFT
-    )
 
     const ts: number[] = []
     const n = 200
@@ -114,7 +107,6 @@ export class StrongePlot {
     layout.title.text = `Initial Stick (x=${interp.toFixed(2)})`
     layout.xaxis.title = "non-dimensional time (t/t_c)"
     layout.yaxis.title = "non-dimensional force"
-
     ;(globalThis as any).Plotly.react(elementId, traces, layout, config)
   }
 
@@ -193,9 +185,7 @@ export class StrongePlot {
     const v_t = ts.map((t) => {
       if (t < t_stick) {
         if (t <= T_C)
-          return (
-            v_t_0 - MU * BETA_RATIO * V_N_0 * (1 - Math.cos(OMEGA_N * t))
-          )
+          return v_t_0 - MU * BETA_RATIO * V_N_0 * (1 - Math.cos(OMEGA_N * t))
         return (
           v_t_0 -
           MU *

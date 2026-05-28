@@ -1,6 +1,15 @@
 import { expect } from "chai"
+import { spawnSync } from "node:child_process"
 import { Vector3 } from "three"
 import { stronge, resolve } from "../../../src/model/physics/stronge"
+import {
+  R,
+  I,
+  m,
+  stronge_e_n,
+  stronge_μ,
+  stronge_omega_ratio,
+} from "../../../src/model/physics/constants"
 
 describe("Stronge Cushion Model", () => {
   const params = {
@@ -110,6 +119,97 @@ describe("Stronge Cushion Model", () => {
       const vx_final = v.x + deltas.v.x
       expect(vx_final).to.be.approximately(-0.7, 0.01)
       done()
+    })
+  })
+
+  const describePythonReference =
+    process.env.STRONGE_PYTHON_REFERENCE === "1" ? describe : describe.skip
+
+  describePythonReference("Python conductor comparison", () => {
+    const gameParams = {
+      m,
+      R,
+      I,
+      e_n: stronge_e_n,
+      μ: stronge_μ,
+      omega_ratio: stronge_omega_ratio,
+    }
+    const n = new Vector3(-1.0, 0.0, 0.0)
+
+    function runPythonReference(v: Vector3, w: Vector3) {
+      const payload = {
+        v: v.toArray(),
+        w: w.toArray(),
+        n: n.toArray(),
+        params: {
+          m: gameParams.m,
+          R: gameParams.R,
+          I: gameParams.I,
+          e_n: gameParams.e_n,
+          mu: gameParams.μ,
+          omega_ratio: gameParams.omega_ratio,
+        },
+      }
+
+      const result = spawnSync(
+        "/usr/bin/python3",
+        ["conductor/stronge_reference.py", JSON.stringify(payload)],
+        {
+          cwd: process.cwd(),
+          encoding: "utf8",
+        }
+      )
+
+      if (result.status !== 0) {
+        throw new Error(result.stderr || result.stdout)
+      }
+
+      return JSON.parse(result.stdout) as {
+        v: [number, number, number]
+        w: [number, number, number]
+        diagnostics: { dv_y: number; dv_t: number; v_t0: number }
+      }
+    }
+
+    it.each([
+      ["pure right-hand side", new Vector3(0.0, 0.0, (1.25 * 0.8) / R)],
+      [
+        "right-hand side with natural roll",
+        new Vector3(0.0, 0.8 / R, (1.25 * 0.8) / R),
+      ],
+    ])(
+      "matches Python for direct X-cushion moderate pace full %s spin",
+      (_, w) => {
+        const v = new Vector3(0.8, 0.0, 0.0)
+        const ts = stronge(v, w, n, gameParams)
+        const py = runPythonReference(v, w)
+
+        expect(ts.v.y).to.be.approximately(py.v[1], 1e-10)
+        expect(ts.w.z).to.be.approximately(py.w[2], 1e-10)
+      }
+    )
+
+    it.each([
+      [0, new Vector3(0.42, -0.31, 0), new Vector3(1.2, 8.5, -14.0)],
+      [1, new Vector3(0.88, 0.17, 0), new Vector3(-3.4, 22.0, 31.0)],
+      [2, new Vector3(1.36, -0.64, 0), new Vector3(5.1, -18.0, -46.0)],
+      [3, new Vector3(0.71, 0.52, 0), new Vector3(-7.3, 4.0, 12.0)],
+      [4, new Vector3(1.92, -0.08, 0), new Vector3(0.6, 33.0, -21.0)],
+      [5, new Vector3(0.29, 0.74, 0), new Vector3(9.0, -7.5, 39.0)],
+      [6, new Vector3(1.14, -0.27, 0), new Vector3(-1.8, 14.2, 5.5)],
+      [7, new Vector3(0.57, 0.03, 0), new Vector3(4.7, -28.0, -33.0)],
+      [8, new Vector3(1.63, 0.41, 0), new Vector3(-6.2, 2.8, 47.0)],
+      [9, new Vector3(0.96, -0.55, 0), new Vector3(2.5, 19.0, -8.0)],
+    ])("matches Python for fixed random sample %s", (_, v, w) => {
+      const ts = stronge(v, w, n, gameParams)
+      const py = runPythonReference(v, w)
+
+      expect(ts.v.x).to.be.approximately(py.v[0], 1e-8)
+      expect(ts.v.y).to.be.approximately(py.v[1], 1e-8)
+      expect(ts.v.z).to.be.approximately(py.v[2], 1e-8)
+      expect(ts.w.x).to.be.approximately(py.w[0], 1e-8)
+      expect(ts.w.y).to.be.approximately(py.w[1], 1e-8)
+      expect(ts.w.z).to.be.approximately(py.w[2], 1e-8)
     })
   })
 })
