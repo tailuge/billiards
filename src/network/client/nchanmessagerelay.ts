@@ -125,8 +125,11 @@ export class NchanMessageRelay implements MessageRelay {
     })
   }
 
-  async getOnlineCount(): Promise<number | null> {
-    const url = `${this.httpProtocol}://${this.baseURL}/publish/presence/lobby`
+  async getOnlineCount(
+    channel = "lobby",
+    prefix = "presence"
+  ): Promise<number | null> {
+    const url = `${this.httpProtocol}://${this.baseURL}/publish/${prefix}/${channel}`
     try {
       const response = await fetch(url, {
         method: "POST",

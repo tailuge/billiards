@@ -5,5 +5,5 @@ export interface MessageRelay {
     prefix?: string
   ): void
   publish(channel: string, message: string, prefix?: string): void
-  getOnlineCount(): Promise<number | null>
+  getOnlineCount(channel?: string, prefix?: string): Promise<number | null>
 }

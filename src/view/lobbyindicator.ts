@@ -91,7 +91,9 @@ export class LobbyIndicator {
         const lobby = encodeURIComponent(
           JSON.stringify(NetworkLogger.getLobbyLogs())
         )
-        const url = `net.html?game=${game}&lobby=${lobby}`
+        const wss = Session.getInstance().tableId ? this.messagingUrl : ""
+        const tableId = Session.getInstance().tableId || ""
+        const url = `net.html?game=${game}&lobby=${lobby}&tableId=${tableId}&wss=${encodeURIComponent(wss)}`
         if (this.onShowOverlay) {
           this.onShowOverlay(url)
         } else {
@@ -175,10 +177,8 @@ export class LobbyIndicator {
             u.userId === opponentId &&
             u.tableId === (this.currentTableId || session.tableId)
         )
-        if (wasOnline !== true && this.opponentOnline === true) {
-          NetworkLogger.logGame(`opponent online: ${opponentId}`)
-        } else if (wasOnline !== false && this.opponentOnline === false) {
-          NetworkLogger.logGame(`opponent offline: ${opponentId}`)
+        if (wasOnline !== false && this.opponentOnline === false) {
+          NetworkLogger.logLobby(`opponent offline: ${opponentId}`)
         }
       } else {
         this.opponentOnline = null

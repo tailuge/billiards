@@ -74,6 +74,7 @@
     <div id="status">
       <span id="dot">●</span>
       <span id="statusText">...</span>
+      <span id="presenceText" style="margin-left: 20px; font-size: 0.8em; color: #888;"></span>
     </div>
     <h1>Network history</h1>
     <table id="histogram">
@@ -119,6 +120,23 @@
       }
       setInterval(updateStatus, 1000)
       updateStatus()
+
+      // Static presence check
+      const tableId = params.get("tableId")
+      const wss = params.get("wss")
+      if (tableId && wss) {
+        const protocol = wss.startsWith("ws://") || wss.startsWith("http://") ? "http" : "https"
+        const baseURL = wss.replace(/^(https?|wss?):\/\//, "")
+        const url = `${protocol}://${baseURL}/publish/table/${tableId}`
+        fetch(url, { method: "POST", headers: { Accept: "application/json" } })
+          .then(r => r.json())
+          .then(data => {
+             if (typeof data.subscribers === "number") {
+                document.getElementById("presenceText").textContent = `[Table subscribers: ${data.subscribers}]`
+             }
+          })
+          .catch(() => {})
+      }
 
       const firstTs = combined.length > 0 ? combined[0].ts : 0
       const formatElapsed = (ts) => {

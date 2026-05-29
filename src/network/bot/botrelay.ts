@@ -130,7 +130,10 @@ export class BotRelay implements MessageRelay {
     }, delay)
   }
 
-  public async getOnlineCount(): Promise<number> {
+  public async getOnlineCount(
+    _channel?: string,
+    _prefix?: string
+  ): Promise<number> {
     return 2
   }
 }

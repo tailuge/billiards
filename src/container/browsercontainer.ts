@@ -217,6 +217,11 @@ export class BrowserContainer {
       this.messageRelay?.subscribe(this.tableId, (e) => {
         this.netEvent(e)
       })
+      this.messageRelay?.getOnlineCount(this.tableId, "table").then((count) => {
+        if (count !== null) {
+          NetworkLogger.logGame(`table presence: ${count}`)
+        }
+      })
       if (!this.first) {
         this.broadcast(new BeginEvent())
       }
