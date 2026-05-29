@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Network Log</title>
+    <style>
+        body { font-family: monospace; background: #111; color: #ccc; padding: 20px; }
+        .log-entry { margin-bottom: 4px; }
+        .time { color: #888; margin-right: 15px; }
+        .label { color: #eee; }
+        .game { border-left: 3px solid #4a9; padding-left: 8px; }
+        .lobby { border-left: 3px solid #a49; padding-left: 8px; }
+    </style>
+</head>
+<body>
+    <div id="log"></div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const game = JSON.parse(decodeURIComponent(params.get('game') || '[]'));
+        const lobby = JSON.parse(decodeURIComponent(params.get('lobby') || '[]'));
+
+        const combined = [
+            ...game.map(e => ({ ...e, type: 'game' })),
+            ...lobby.map(e => ({ ...e, type: 'lobby' }))
+        ].sort((a, b) => a.ts - b.ts);
+
+        const container = document.getElementById('log');
+        combined.forEach(e => {
+            const div = document.createElement('div');
+            div.className = `log-entry ${e.type}`;
+            const timeStr = new Date(e.ts).toISOString().split('T')[1].slice(0, -1);
+
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'time';
+            timeSpan.textContent = timeStr;
+
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'label';
+            labelSpan.textContent = `[${e.type}] ${e.label}`;
+
+            div.appendChild(timeSpan);
+            div.appendChild(labelSpan);
+            container.appendChild(div);
+        });
+    </script>
+</body>
+</html>

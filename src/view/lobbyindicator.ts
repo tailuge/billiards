@@ -9,6 +9,7 @@ import { Rules } from "../controller/rules/rules"
 import { id } from "../utils/dom"
 import { LOBBY_URL } from "../utils/gameover"
 import { VERSION } from "../utils/version"
+import { NetworkLogger } from "../utils/network-logger"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
@@ -82,6 +83,13 @@ export class LobbyIndicator {
       this.element.style.cursor = "pointer"
     }
 
+    this.element.addEventListener("dblclick", (e) => {
+      e.stopPropagation()
+      const game = encodeURIComponent(JSON.stringify(NetworkLogger.getGameLogs()))
+      const lobby = encodeURIComponent(JSON.stringify(NetworkLogger.getLobbyLogs()))
+      globalThis.open(`net.html?game=${game}&lobby=${lobby}`, "_blank")
+    })
+
     id("challengeDecline")?.addEventListener("click", (e) => {
       e.stopPropagation()
       if (this.lobby && this.challenger) {
@@ -100,6 +108,7 @@ export class LobbyIndicator {
 
   async init(): Promise<void> {
     if (!this.element) return
+    NetworkLogger.logLobby("init")
 
     const userId = Session.getInstance().clientId
     const userName = Session.getInstance().playername
@@ -134,8 +143,10 @@ export class LobbyIndicator {
     }
 
     this.lobby = await this.messagingClient.joinLobby(presence)
+    NetworkLogger.logLobby("joined")
 
     this.lobby.onUsersChange((users) => {
+      NetworkLogger.logLobby(`users: ${users.length}`)
       this.users = users
       this.count = users.length
       const session = Session.getInstance()
@@ -153,12 +164,14 @@ export class LobbyIndicator {
     })
 
     this.lobby.onChat((chat: ChatMessage) => {
+      NetworkLogger.logLobby("chat")
       const sender = this.users.find((u) => u.userId === chat.senderId)
       const senderName = sender ? sender.userName : "Unknown"
       this.onChatMessage?.(`${senderName}: ${chat.text}`)
     })
 
     this.lobby.onChallenge((challenge) => {
+      NetworkLogger.logLobby(`challenge: ${challenge.type}`)
       if (challenge.type === "offer") {
         this.challenger = {
           userId: challenge.challengerId,
