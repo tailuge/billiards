@@ -101,14 +101,21 @@ export class Menu {
     if (overlay) {
       const isHidden = overlay.hasAttribute("hidden")
       if (isHidden) {
-        const iframe = overlay.querySelector("iframe")
-        if (iframe && !iframe.getAttribute("src")) {
-          iframe.setAttribute("src", "help.html")
-        }
-        overlay.removeAttribute("hidden")
+        this.showOverlay("help.html")
       } else {
         overlay.setAttribute("hidden", "true")
       }
+    }
+  }
+
+  showOverlay(url: string) {
+    const overlay = document.getElementById("helpOverlay")
+    if (overlay) {
+      const iframe = overlay.querySelector("iframe")
+      if (iframe) {
+        iframe.setAttribute("src", url)
+      }
+      overlay.removeAttribute("hidden")
     }
   }
 }

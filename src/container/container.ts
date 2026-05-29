@@ -130,7 +130,8 @@ export class Container {
       this.replayMode,
       this.rules,
       (msg) => this.chat.showMessage(msg),
-      config.messagingUrl
+      config.messagingUrl,
+      (url) => this.menu.showOverlay(url)
     )
     this.updateController(new Init(this))
     //  this.updateController(new End(this))

@@ -33,17 +33,20 @@ export class LobbyIndicator {
   private opponentOnline: boolean | null = null
   private users: PresenceMessage[] = []
   private readonly onChatMessage: ((msg: string) => void) | undefined
+  private readonly onShowOverlay: ((url: string) => void) | undefined
 
   constructor(
     botMode: boolean,
     replayMode: boolean,
     rules: Rules,
     onChatMessage?: (msg: string) => void,
-    messagingUrl?: string
+    messagingUrl?: string,
+    onShowOverlay?: (url: string) => void
   ) {
     this.rules = rules
     this.replayMode = replayMode
     this.onChatMessage = onChatMessage
+    this.onShowOverlay = onShowOverlay
     const isInsecure =
       messagingUrl?.startsWith("ws://") || messagingUrl?.startsWith("http://")
     const httpProtocol = isInsecure ? "http" : "https"
@@ -88,7 +91,12 @@ export class LobbyIndicator {
         const lobby = encodeURIComponent(
           JSON.stringify(NetworkLogger.getLobbyLogs())
         )
-        globalThis.open(`net.html?game=${game}&lobby=${lobby}`, "_blank")
+        const url = `net.html?game=${game}&lobby=${lobby}`
+        if (this.onShowOverlay) {
+          this.onShowOverlay(url)
+        } else {
+          globalThis.open(url, "_blank")
+        }
         return
       }
 
