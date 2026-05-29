@@ -1,4 +1,5 @@
 import { MessageRelay } from "./messagerelay"
+import { NetworkLogger } from "../../utils/network-logger"
 
 export class NchanMessageRelay implements MessageRelay {
   private readonly websockets = new Map<string, WebSocket>()
@@ -49,6 +50,7 @@ export class NchanMessageRelay implements MessageRelay {
 
         try {
           const parsed = JSON.parse(decoded)
+          NetworkLogger.logGame(`recv: ${parsed.type || "unknown"}`)
           const timestamp = parsed.meta?.ts
 
           if (typeof timestamp === "number") {
@@ -74,6 +76,7 @@ export class NchanMessageRelay implements MessageRelay {
     }
 
     ws.onerror = (error: Event) => {
+      NetworkLogger.logGame("error")
       console.warn(
         "WebSocket error:",
         this.stringifyLog(this.normalizeEvent(error))
@@ -82,14 +85,17 @@ export class NchanMessageRelay implements MessageRelay {
 
     ws.onopen = () => {
       this.clearTimer(key)
+      NetworkLogger.logGame("connected")
       console.log(`Connected to ${url}`)
     }
 
     ws.onclose = (event: CloseEvent) => {
+      NetworkLogger.logGame("disconnected")
       console.log("Disconnected event", event)
       // Only trigger reconnect if this specific instance is still the active one
       if (this.websockets.get(key) === ws) {
         this.websockets.delete(key)
+        NetworkLogger.logGame("reconnecting")
         console.warn(`Disconnected from ${url}. Reconnecting...`)
 
         const nextDelay = Math.min(backoffDelay * 2, 30000)
@@ -102,12 +108,19 @@ export class NchanMessageRelay implements MessageRelay {
   }
 
   publish(channel: string, message: string, prefix = "table"): void {
+    try {
+      const parsed = JSON.parse(message)
+      NetworkLogger.logGame(`sent: ${parsed.type || "unknown"}`)
+    } catch {
+      NetworkLogger.logGame("sent: raw")
+    }
     const url = `${this.httpProtocol}://${this.baseURL}/publish/${prefix}/${channel}`
     fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: message,
     }).catch((error) => {
+      NetworkLogger.logGame("publish error")
       console.error("Publication error for", url, error)
     })
   }
