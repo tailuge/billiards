@@ -13,12 +13,25 @@
         background: #111;
         color: #ccc;
         padding: 20px;
+        font-size: 11px;
       }
       h1 {
-        font-size: 1.2em;
+        font-size: 1.1em;
         color: #fff;
         margin-top: 0;
+        margin-bottom: 15px;
+      }
+      #status {
         margin-bottom: 20px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.2em;
+      }
+      #dot {
+        font-size: 1.5em;
+        line-height: 1;
       }
       .log-entry {
         margin-bottom: 4px;
@@ -26,7 +39,7 @@
       .time {
         color: #888;
         margin-right: 15px;
-        font-size: 0.85em;
+        font-size: 0.8em;
       }
       .label {
         color: #eee;
@@ -42,7 +55,7 @@
       table {
         border-collapse: collapse;
         margin-bottom: 20px;
-        font-size: 0.9em;
+        font-size: 0.8em;
         color: #aaa;
       }
       th,
@@ -58,6 +71,10 @@
     </style>
   </head>
   <body>
+    <div id="status">
+      <span id="dot">●</span>
+      <span id="statusText">...</span>
+    </div>
     <h1>Network history</h1>
     <table id="histogram">
       <thead>
@@ -78,6 +95,30 @@
         ...game.map((e) => ({ ...e, type: "game" })),
         ...lobby.map((e) => ({ ...e, type: "lobby" })),
       ].sort((a, b) => a.ts - b.ts)
+
+      const statusText = document.getElementById("statusText")
+      const dot = document.getElementById("dot")
+
+      function updateStatus() {
+        if (combined.length === 0) {
+          statusText.textContent = "No events"
+          dot.style.color = "#888"
+          return
+        }
+        const lastTs = combined[combined.length - 1].ts
+        const diffSecs = Math.floor((Date.now() - lastTs) / 1000)
+        statusText.textContent = `${diffSecs}s since last event`
+
+        if (diffSecs < 5) {
+          dot.style.color = "#4f4"
+        } else if (diffSecs < 20) {
+          dot.style.color = "#ff4"
+        } else {
+          dot.style.color = "#888"
+        }
+      }
+      setInterval(updateStatus, 1000)
+      updateStatus()
 
       const firstTs = combined.length > 0 ? combined[0].ts : 0
       const formatElapsed = (ts) => {

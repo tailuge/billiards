@@ -175,8 +175,10 @@ export class LobbyIndicator {
             u.userId === opponentId &&
             u.tableId === (this.currentTableId || session.tableId)
         )
-        if (wasOnline !== false && this.opponentOnline === false) {
-          NetworkLogger.logLobby(`opponent offline: ${opponentId}`)
+        if (wasOnline !== true && this.opponentOnline === true) {
+          NetworkLogger.logGame(`opponent online: ${opponentId}`)
+        } else if (wasOnline !== false && this.opponentOnline === false) {
+          NetworkLogger.logGame(`opponent offline: ${opponentId}`)
         }
       } else {
         this.opponentOnline = null
