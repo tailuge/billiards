@@ -4,9 +4,11 @@ import { AngleInput } from "./view/dom/angleinput"
 import { getCanvas } from "./utils/dom"
 import { VERSION } from "./utils/version"
 import { ClientErrorReporter } from "./network/client/clienterrorreporter"
+import { NetworkLogger } from "./utils/network-logger"
 
 customElements.define("angle-input", AngleInput)
 
+NetworkLogger.init()
 initialise()
 
 function initialise() {

@@ -1145,7 +1145,9 @@
         const list = document.getElementById("presets-list")
         if (!list) return
         list.innerHTML = ""
-        const sortedPresets = [...presets].sort((a, b) => a.name.localeCompare(b.name))
+        const sortedPresets = [...presets].sort((a, b) =>
+          a.name.localeCompare(b.name)
+        )
         sortedPresets.forEach((preset) => {
           const container = document.createElement("div")
           container.className = "preset-btn-container"

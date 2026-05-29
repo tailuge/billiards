@@ -100,8 +100,12 @@ export class LobbyIndicator {
     this.element.addEventListener("dblclick", (e) => {
       e.stopPropagation()
       globalThis.clearTimeout(this.clickTimer)
-      const game = encodeURIComponent(JSON.stringify(NetworkLogger.getGameLogs()))
-      const lobby = encodeURIComponent(JSON.stringify(NetworkLogger.getLobbyLogs()))
+      const game = encodeURIComponent(
+        JSON.stringify(NetworkLogger.getGameLogs())
+      )
+      const lobby = encodeURIComponent(
+        JSON.stringify(NetworkLogger.getLobbyLogs())
+      )
       globalThis.open(`net.html?game=${game}&lobby=${lobby}`, "_blank")
     })
 
