@@ -21,10 +21,9 @@ jest.mock("@tailuge/messaging", () => ({
   Lobby: jest.fn(),
 }))
 
-initDom()
-
 describe("LobbyIndicator", () => {
   beforeEach(() => {
+    initDom()
     Session.init("test-client", "TestPlayer", "test-table", false)
   })
 
@@ -39,7 +38,7 @@ describe("LobbyIndicator", () => {
 
     const element = document.getElementById("lobbyOverlay")
     const countElement = element?.querySelector(".lobby-count")
-    expect(countElement?.textContent).toBe("TestPlayer 👥0")
+    expect(countElement?.textContent).toBe("TestPlayer 👥0 ⚪")
     expect(countElement?.classList.contains("is-hidden")).toBe(false)
   })
 
@@ -152,7 +151,7 @@ describe("LobbyIndicator", () => {
     const countElement = element?.querySelector(".lobby-count") as HTMLElement
 
     await indicator.init()
-    expect(countElement.textContent).toBe("Player 1 👥0")
+    expect(countElement.textContent).toBe("Player 1 👥0 ⚪")
 
     // Access the mock lobby to trigger onUsersChange callback
     const mockLobby = (indicator as any).lobby
@@ -189,7 +188,7 @@ describe("LobbyIndicator", () => {
 
     const element = document.getElementById("lobbyOverlay")
     const countElement = element?.querySelector(".lobby-count") as HTMLElement
-    expect(countElement.textContent).toBe("Player 1 👥0")
+    expect(countElement.textContent).toBe("Player 1 👥0 ⚪")
     await indicator.stop()
 
     // Replay mode
@@ -198,7 +197,7 @@ describe("LobbyIndicator", () => {
     const indicator2 = new LobbyIndicator(false, true, mockRules)
     await indicator2.init()
     const countElement2 = element?.querySelector(".lobby-count") as HTMLElement
-    expect(countElement2.textContent).toBe("Anon 👥0")
+    expect(countElement2.textContent).toBe("Anon 👥0 ⚪")
     await indicator2.stop()
   })
 

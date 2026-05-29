@@ -33,7 +33,6 @@ export class LobbyIndicator {
   private opponentOnline: boolean | null = null
   private users: PresenceMessage[] = []
   private readonly onChatMessage: ((msg: string) => void) | undefined
-  private clickTimer: any = null
 
   constructor(
     botMode: boolean,
@@ -80,33 +79,24 @@ export class LobbyIndicator {
     }
 
     this.element.addEventListener("click", (e) => {
-      const navigate = () => {
+      if ((e.target as HTMLElement).closest(".status-emoji")) {
+        e.preventDefault()
+        e.stopPropagation()
+        const game = encodeURIComponent(
+          JSON.stringify(NetworkLogger.getGameLogs())
+        )
+        const lobby = encodeURIComponent(
+          JSON.stringify(NetworkLogger.getLobbyLogs())
+        )
+        globalThis.open(`net.html?game=${game}&lobby=${lobby}`, "_blank")
+        return
+      }
+
+      if (!(this.element instanceof HTMLAnchorElement)) {
         if (typeof globalThis.open === "function") {
           globalThis.open(this.getLobbyUrl(), "_self")
         }
       }
-
-      if (e.detail === 0) {
-        navigate()
-      } else {
-        e.preventDefault()
-        if (e.detail === 1) {
-          globalThis.clearTimeout(this.clickTimer)
-          this.clickTimer = globalThis.setTimeout(navigate, 250)
-        }
-      }
-    })
-
-    this.element.addEventListener("dblclick", (e) => {
-      e.stopPropagation()
-      globalThis.clearTimeout(this.clickTimer)
-      const game = encodeURIComponent(
-        JSON.stringify(NetworkLogger.getGameLogs())
-      )
-      const lobby = encodeURIComponent(
-        JSON.stringify(NetworkLogger.getLobbyLogs())
-      )
-      globalThis.open(`net.html?game=${game}&lobby=${lobby}`, "_blank")
     })
 
     id("challengeDecline")?.addEventListener("click", (e) => {
@@ -244,14 +234,15 @@ export class LobbyIndicator {
       !session.practiceMode &&
       !this.replayMode
 
-    let statusEmoji = ""
+    let status = "⚪"
     if (isTwoPlayer) {
       if (this.opponentOnline === true) {
-        statusEmoji = " <span class='status-emoji'>🟢</span>"
+        status = "🟢"
       } else if (this.opponentOnline === false) {
-        statusEmoji = " <span class='status-emoji'>🔴</span>"
+        status = "🔴"
       }
     }
+    const statusEmoji = ` <span class='status-emoji' title='Network Logs'>${status}</span>`
 
     // if replay mode then set name from queryparam userName
     const params = new URLSearchParams(globalThis.location?.search ?? "")
