@@ -169,11 +169,15 @@ export class LobbyIndicator {
       const session = Session.getInstance()
       const opponentId = session.opponentClientId
       if (opponentId) {
+        const wasOnline = this.opponentOnline
         this.opponentOnline = users.some(
           (u) =>
             u.userId === opponentId &&
             u.tableId === (this.currentTableId || session.tableId)
         )
+        if (wasOnline !== false && this.opponentOnline === false) {
+          NetworkLogger.logLobby(`opponent offline: ${opponentId}`)
+        }
       } else {
         this.opponentOnline = null
       }
