@@ -1145,7 +1145,8 @@
         const list = document.getElementById("presets-list")
         if (!list) return
         list.innerHTML = ""
-        presets.forEach((preset, index) => {
+        const sortedPresets = [...presets].sort((a, b) => a.name.localeCompare(b.name))
+        sortedPresets.forEach((preset) => {
           const container = document.createElement("div")
           container.className = "preset-btn-container"
 
@@ -1159,7 +1160,7 @@
           deleteBtn.className = "preset-action"
           deleteBtn.innerHTML = "×"
           deleteBtn.title = "Delete"
-          deleteBtn.onclick = () => deletePreset(index)
+          deleteBtn.onclick = () => deletePreset(preset)
           container.appendChild(deleteBtn)
 
           list.appendChild(container)
@@ -1185,8 +1186,10 @@
         renderPresets()
       }
 
-      function deletePreset(index) {
-        if (confirm(`Delete preset "${presets[index].name}"?`)) {
+      function deletePreset(preset) {
+        const index = presets.findIndex((p) => p === preset)
+        if (index === -1) return
+        if (confirm(`Delete preset "${preset.name}"?`)) {
           presets.splice(index, 1)
           savePresets(presets)
           renderPresets()
