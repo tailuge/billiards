@@ -3,18 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Network Log</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
     <style>
         body { font-family: monospace; background: #111; color: #ccc; padding: 20px; }
+        h1 { font-size: 1.2em; color: #fff; margin-top: 0; margin-bottom: 20px; }
         .log-entry { margin-bottom: 4px; }
-        .time { color: #888; margin-right: 15px; }
+        .time { color: #888; margin-right: 15px; font-size: 0.85em; }
         .label { color: #eee; }
         .game { border-left: 3px solid #4a9; padding-left: 8px; }
         .lobby { border-left: 3px solid #a49; padding-left: 8px; }
-    </style>
-</head>
-<body>
-    <div id="log"></div>
-    <script>
+        table { border-collapse: collapse; margin-bottom: 20px; font-size: 0.9em; color: #aaa; }
+        th, td { border: 1px solid #333; padding: 4px 12px; text-align: left; }
+        th { background: #222; color: #fff; }
+        </style>
+        </head>
+        <body>
+        <h1>Network history</h1>
+        <table id="histogram">
+        <thead>
+            <tr><th>Message</th><th>Count</th></tr>
+        </thead>
+        <tbody></tbody>
+        </table>
+        <div id="log"></div>
+        <script>
         const params = new URLSearchParams(window.location.search);
         const game = JSON.parse(decodeURIComponent(params.get('game') || '[]'));
         const lobby = JSON.parse(decodeURIComponent(params.get('lobby') || '[]'));
@@ -24,19 +36,57 @@
             ...lobby.map(e => ({ ...e, type: 'lobby' }))
         ].sort((a, b) => a.ts - b.ts);
 
-        const container = document.getElementById('log');
+        const firstTs = combined.length > 0 ? combined[0].ts : 0;
+        const formatElapsed = (ts) => {
+            const diff = ts - firstTs;
+            const totalSecs = Math.floor(diff / 1000);
+            const mins = Math.floor(totalSecs / 60);
+            const secs = totalSecs % 60;
+            return `${String(mins).padStart(2, '0')} min ${String(secs).padStart(2, '0')} sec`;
+        };
+
+        const getBaseLabel = (label) => label.replace(/^(sent|recv):\s*/, '');
+
+        // Histogram
+        const counts = {};
         combined.forEach(e => {
+            const key = `[${e.type}] ${getBaseLabel(e.label)}`;
+            counts[key] = (counts[key] || 0) + 1;
+        });
+
+        const histBody = document.querySelector('#histogram tbody');
+        Object.entries(counts).sort((a, b) => b[1] - a[1]).forEach(([label, count]) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${label}</td><td>${count}</td>`;
+            histBody.appendChild(tr);
+        });
+
+        const collapsed = [];
+        combined.forEach(e => {
+            if (collapsed.length > 0) {
+                const last = collapsed[collapsed.length - 1];
+                if (last.type === e.type && getBaseLabel(last.label) === getBaseLabel(e.label)) {
+                    last.count = (last.count || 1) + 1;
+                    return;
+                }
+            }
+            collapsed.push({ ...e, count: 1 });
+        });
+
+        const container = document.getElementById('log');
+        collapsed.forEach(e => {
             const div = document.createElement('div');
             div.className = `log-entry ${e.type}`;
-            const timeStr = new Date(e.ts).toISOString().split('T')[1].slice(0, -1);
-
+            
             const timeSpan = document.createElement('span');
             timeSpan.className = 'time';
-            timeSpan.textContent = timeStr;
+            timeSpan.textContent = formatElapsed(e.ts);
 
             const labelSpan = document.createElement('span');
             labelSpan.className = 'label';
-            labelSpan.textContent = `[${e.type}] ${e.label}`;
+            const baseLabel = getBaseLabel(e.label);
+            const multiplier = e.count > 1 ? ` x ${e.count}` : '';
+            labelSpan.textContent = `[${e.type}] ${baseLabel}${multiplier}`;
 
             div.appendChild(timeSpan);
             div.appendChild(labelSpan);
