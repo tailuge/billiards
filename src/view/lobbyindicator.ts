@@ -33,6 +33,7 @@ export class LobbyIndicator {
   private opponentOnline: boolean | null = null
   private users: PresenceMessage[] = []
   private readonly onChatMessage: ((msg: string) => void) | undefined
+  private clickTimer: any = null
 
   constructor(
     botMode: boolean,
@@ -75,16 +76,30 @@ export class LobbyIndicator {
       this.element.setAttribute("target", "_self")
       this.element.setAttribute("rel", "noopener")
     } else {
-      this.element.addEventListener("click", () => {
-        if (typeof globalThis.open === "function") {
-          globalThis.open(this.getLobbyUrl(), "_self")
-        }
-      })
       this.element.style.cursor = "pointer"
     }
 
+    this.element.addEventListener("click", (e) => {
+      const navigate = () => {
+        if (typeof globalThis.open === "function") {
+          globalThis.open(this.getLobbyUrl(), "_self")
+        }
+      }
+
+      if (e.detail === 0) {
+        navigate()
+      } else {
+        e.preventDefault()
+        if (e.detail === 1) {
+          globalThis.clearTimeout(this.clickTimer)
+          this.clickTimer = globalThis.setTimeout(navigate, 250)
+        }
+      }
+    })
+
     this.element.addEventListener("dblclick", (e) => {
       e.stopPropagation()
+      globalThis.clearTimeout(this.clickTimer)
       const game = encodeURIComponent(JSON.stringify(NetworkLogger.getGameLogs()))
       const lobby = encodeURIComponent(JSON.stringify(NetworkLogger.getLobbyLogs()))
       globalThis.open(`net.html?game=${game}&lobby=${lobby}`, "_blank")
