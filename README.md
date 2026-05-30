@@ -237,6 +237,30 @@ yarn test
 yarn coverage
 ```
 
+### Desktop app
+
+The browser game can also be wrapped as an Electron desktop app. The desktop
+shell loads the same built `/dist` assets, keeps billiards game and lobby links
+inside the app, opens external links in the system browser, and only allows
+local `file://` navigation within the packaged `dist` directory.
+
+```shell
+yarn build
+yarn desktop          # run the existing dist build in Electron
+yarn desktop:dev      # rebuild first, then run Electron
+yarn desktop:package  # create release/linux-unpacked for local testing
+yarn desktop:dist     # create a distributable package, e.g. AppImage on Linux
+```
+
+Set `ELECTRON_OPEN_DEVTOOLS=1` when you want DevTools to open automatically:
+
+```shell
+ELECTRON_OPEN_DEVTOOLS=1 yarn desktop
+```
+
+Desktop navigation behavior is covered by `test/desktop/navigation.spec.js`.
+Run `yarn test` after changing `desktop/` or any lobby/game routes.
+
 ### Maintain
 
 ```shell
