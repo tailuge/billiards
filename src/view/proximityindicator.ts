@@ -9,11 +9,11 @@ import {
   MeshBasicMaterial,
   Mesh,
   DoubleSide,
-  MeshStandardMaterial,
+  PlaneGeometry,
+  CanvasTexture,
+  LinearFilter,
 } from "three"
-import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry"
 import { R } from "../model/physics/constants"
-import { Assets } from "./assets"
 import { Ball } from "../model/ball"
 
 export class ProximityIndicator {
@@ -73,50 +73,62 @@ export class ProximityIndicator {
   }
 
   private initTexts() {
-    if (Assets.font && this.proximityTexts.length === 0) {
+    if (this.proximityTexts.length === 0) {
       const labels = ["+1", "+2", "+3"]
       labels.forEach((label) => {
-        const textMesh = this.create3DText(label)
-        if (textMesh) {
-          this.proximityTexts.push(textMesh)
-          this.group.add(textMesh)
-        }
+        const textMesh = this.createPlanarText(label)
+        this.proximityTexts.push(textMesh)
+        this.group.add(textMesh)
       })
     }
   }
 
-  private create3DText(text: string): Mesh | null {
-    if (!Assets.font) return null
+  private createTextTexture(text: string): CanvasTexture {
+    const canvas = document.createElement("canvas")
+    canvas.width = 64
+    canvas.height = 64
+    const ctx = canvas.getContext("2d")
 
-    const textGeo = new TextGeometry(text, {
-      font: Assets.font,
-      size: R * 4,
-      height: 0.1 * R,
-      curveSegments: 1,
-      bevelEnabled: false,
+    if (ctx) {
+      // Clear background to full transparency
+      ctx.clearRect(0, 0, 64, 64)
+
+      // Text configuration
+      ctx.font = "bold 44px sans-serif"
+      ctx.fillStyle = "#ffffff"
+      ctx.textAlign = "center"
+      ctx.textBaseline = "middle"
+
+      // Render directly in the center of the 64x64 container
+      ctx.fillText(text, 32, 32)
+    }
+
+    const texture = new CanvasTexture(canvas)
+    texture.minFilter = LinearFilter
+    return texture
+  }
+
+  private createPlanarText(text: string): Mesh {
+    const size = R * 4
+    const geometry = new PlaneGeometry(size, size)
+
+    const texture = this.createTextTexture(text)
+
+    const material = new MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 1.0,
+      side: DoubleSide,
+      depthWrite: false, // Prevents visual artifacts/flickering with rings below it
     })
 
-    textGeo.center()
+    const textMesh = new Mesh(geometry, material)
 
-    const textMat = new MeshStandardMaterial({
-      color: 0xffffff,
-      flatShading: true,
-      roughness: 0.5,
-      metalness: 0.1,
-    })
-
-    const textMesh = new Mesh(textGeo, textMat)
-
-    // Offset so it sits next to the ball, flat on the table bed
-    // In this project, table is in X/Y, Z is height.
-    // The group is already at Z = -0.97*R.
-    // We want the text to be slightly above the rings and ball.
-    // Parent group is added to scene at Z=0? No, table.addToScene adds it to the scene.
-    // Advance(t) calls this.proximityIndicator.showAt(pos) which sets group Z to -0.97*R.
-    // So we want the text relative to the group.
-    textMesh.position.set(0, 1.25 * R * 4, 0)
-    textMesh.rotation.set(0, 0, 0) // Flat on the XY plane (table surface)
-    textMesh.castShadow = true
+    // Position flat on the table (X/Y world plane)
+    // Shifted 1.25 * size along Y as per specification
+    // Z is set to 0.01 relative to parent group to sit just above rings
+    textMesh.position.set(0, 1.25 * size, 0.01)
+    textMesh.rotation.set(0, 0, 0)
     textMesh.visible = false
 
     return textMesh
@@ -152,10 +164,6 @@ export class ProximityIndicator {
     this.fills.forEach((fill, i) => {
       fill.visible = this.minDistance < radii[i] * R
     })
-
-    if (this.proximityTexts.length === 0 && Assets.font) {
-      this.initTexts()
-    }
 
     if (this.proximityTexts.length === 3) {
       this.proximityTexts[0].visible =
