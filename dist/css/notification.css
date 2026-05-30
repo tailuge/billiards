@@ -412,3 +412,8 @@
   background: var(--notification-black-15);
   border-color: var(--notification-black-30);
 }
+
+/* Hidden rematch button - can be shown via class when ready */
+.notification-actions [data-notification-action="rematch"] {
+  display: none;
+}
