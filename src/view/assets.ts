@@ -54,7 +54,7 @@ export class Assets {
     this.table = TableMesh.mesh
     // For local assets (tests/diagrams), we can try to load the font synchronously if possible or just use a placeholder
     // But FontLoader is async. To keep it simple for now, we'll try to load it.
-    if (!Assets.font) {
+    if (typeof Request !== "undefined" && !Assets.font) {
       const fontLoader = new FontLoader()
       fontLoader.load(
         "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",

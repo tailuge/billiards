@@ -91,7 +91,7 @@ export class ProximityIndicator {
     const textGeo = new TextGeometry(text, {
       font: Assets.font,
       size: R * 4,
-      height: 0.08,
+      height: 0.1 * R,
       curveSegments: 1,
       bevelEnabled: false,
     })
@@ -114,7 +114,7 @@ export class ProximityIndicator {
     // Parent group is added to scene at Z=0? No, table.addToScene adds it to the scene.
     // Advance(t) calls this.proximityIndicator.showAt(pos) which sets group Z to -0.97*R.
     // So we want the text relative to the group.
-    textMesh.position.set(0, 1.25 * R * 4, 0.01)
+    textMesh.position.set(0, 1.25 * R * 4, 0)
     textMesh.rotation.set(0, 0, 0) // Flat on the XY plane (table surface)
     textMesh.castShadow = true
     textMesh.visible = false
