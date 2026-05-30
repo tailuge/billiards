@@ -92,6 +92,9 @@ export class Sound {
     if (outcome.type === "Hit") {
       this.play(this.cue, outcome.incidentSpeed / 30)
     }
+    if (outcome.type === "Proximity") {
+      // tbd
+    }
   }
 
   processOutcomes(outcomes) {

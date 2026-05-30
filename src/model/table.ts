@@ -26,6 +26,7 @@ export class Table {
   proximityEnabled = false
   pairs: Pair[]
   outcome: Outcome[] = []
+  time = 0
   cueball: Ball
   cushionModel = bounceHanBlend
   mesh
@@ -54,6 +55,7 @@ export class Table {
   }
 
   advance(t: number) {
+    this.time += t * 1000
     let depth = 0
     while (!this.prepareAdvanceAll(t)) {
       if (depth++ > 100) {
@@ -73,7 +75,8 @@ export class Table {
         this.outcome,
         this.cueball,
         this.balls,
-        this.proximityIndicator
+        this.proximityIndicator,
+        this.time
       )
     }
   }
@@ -97,7 +100,7 @@ export class Table {
   private prepareAdvancePair(a: Ball, b: Ball, t: number) {
     if (Collision.willCollide(a, b, t)) {
       const incidentSpeed = Collision.collide(a, b)
-      this.outcome.push(Outcome.collision(a, b, incidentSpeed))
+      this.outcome.push(Outcome.collision(a, b, incidentSpeed, this.time))
       return false
     }
     return true
@@ -127,20 +130,20 @@ export class Table {
       this.cushionModel
     )
     if (incidentSpeed) {
-      this.outcome.push(Outcome.cushion(a, incidentSpeed))
+      this.outcome.push(Outcome.cushion(a, incidentSpeed, this.time))
       return false
     }
 
     const k = Knuckle.findBouncing(a, t)
     if (k) {
       const knuckleIncidentSpeed = k.bounce(a)
-      this.outcome.push(Outcome.cushion(a, knuckleIncidentSpeed))
+      this.outcome.push(Outcome.cushion(a, knuckleIncidentSpeed, this.time))
       return false
     }
     const p = Pocket.findPocket(PocketGeometry.pocketCenters, a, t)
     if (p) {
       const pocketIncidentSpeed = p.fall(a, t)
-      this.outcome.push(Outcome.pot(a, pocketIncidentSpeed))
+      this.outcome.push(Outcome.pot(a, pocketIncidentSpeed, this.time))
       return false
     }
 
@@ -156,6 +159,7 @@ export class Table {
   }
 
   hit() {
+    this.time = 0
     this.cue.hit(this.cueball)
     this.balls.forEach((b) => {
       b.ballmesh.trace.reset()

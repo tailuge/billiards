@@ -15,32 +15,60 @@ export class Outcome {
   ballB: Ball | null = null
   incidentSpeed: number
 
-  constructor(type, ballA: Ball, ballB: Ball, incidentSpeed) {
+  constructor(
+    type: OutcomeType,
+    ballA: Ball,
+    ballB: Ball,
+    incidentSpeed: number,
+    timestamp: number
+  ) {
     this.type = type
     this.ballA = ballA
     this.ballB = ballB
     this.incidentSpeed = incidentSpeed
-    this.timestamp = Date.now()
+    this.timestamp = timestamp
   }
 
-  static pot(ballA, incidentSpeed) {
-    return new Outcome(OutcomeType.Pot, ballA, ballA, incidentSpeed)
+  static pot(ballA: Ball, incidentSpeed: number, timestamp: number) {
+    return new Outcome(OutcomeType.Pot, ballA, ballA, incidentSpeed, timestamp)
   }
 
-  static cushion(ballA, incidentSpeed) {
-    return new Outcome(OutcomeType.Cushion, ballA, ballA, incidentSpeed)
+  static cushion(ballA: Ball, incidentSpeed: number, timestamp: number) {
+    return new Outcome(
+      OutcomeType.Cushion,
+      ballA,
+      ballA,
+      incidentSpeed,
+      timestamp
+    )
   }
 
-  static collision(ballA, ballB, incidentSpeed) {
-    return new Outcome(OutcomeType.Collision, ballA, ballB, incidentSpeed)
+  static collision(
+    ballA: Ball,
+    ballB: Ball,
+    incidentSpeed: number,
+    timestamp: number
+  ) {
+    return new Outcome(
+      OutcomeType.Collision,
+      ballA,
+      ballB,
+      incidentSpeed,
+      timestamp
+    )
   }
 
-  static hit(ballA, incidentSpeed) {
-    return new Outcome(OutcomeType.Hit, ballA, ballA, incidentSpeed)
+  static hit(ballA: Ball, incidentSpeed: number, timestamp: number) {
+    return new Outcome(OutcomeType.Hit, ballA, ballA, incidentSpeed, timestamp)
   }
 
-  static proximity(ballA, ballB, distance = 0) {
-    return new Outcome(OutcomeType.Proximity, ballA, ballB, distance)
+  static proximity(
+    ballA: Ball,
+    ballB: Ball,
+    distance: number = 0,
+    timestamp: number
+  ) {
+    return new Outcome(OutcomeType.Proximity, ballA, ballB, distance, timestamp)
   }
 
   static isCueBallPotted(cueBall, outcomes: Outcome[]) {

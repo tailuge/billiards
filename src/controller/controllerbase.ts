@@ -47,10 +47,12 @@ export abstract class ControllerBase extends Controller {
   }
 
   hit() {
+    this.container.sound.lastOutcomeTime = -1
     this.container.table.outcome = [
       Outcome.hit(
         this.container.table.cueball,
-        this.container.table.cue.aim.power
+        this.container.table.cue.aim.power,
+        0
       ),
     ]
     this.container.table.hit()

@@ -23,7 +23,8 @@ function updateCushionCount(
 function updateProximityOutcome(
   outcome: Outcome[],
   cueball: Ball,
-  indicator: ProximityIndicator
+  indicator: ProximityIndicator,
+  time: number
 ) {
   if (indicator.hitTarget) return
   const lastOutcome = outcome[outcome.length - 1]
@@ -34,29 +35,60 @@ function updateProximityOutcome(
   if (involved(lastOutcome)) {
     indicator.hitTarget = true
     const distance = 1.99 * R
-    outcome.push(Outcome.proximity(cueball, indicator.target!, distance))
+    outcome.push(
+      Outcome.proximity(
+        cueball,
+        indicator.target!,
+        distance,
+        lastOutcome.timestamp + 1
+      )
+    )
     indicator.setProximity(distance)
     return
   }
   const distance = cueball.pos.distanceTo(indicator.target!.pos)
   if (distance >= 4 * R) return
   if (lastOutcome?.type !== OutcomeType.Proximity) {
-    outcome.push(Outcome.proximity(cueball, indicator.target!, distance))
+    outcome.push(Outcome.proximity(cueball, indicator.target!, distance, time))
     indicator.setProximity(distance)
   } else if (distance < lastOutcome.incidentSpeed) {
-    outcome[outcome.length - 1] = Outcome.proximity(
+    refineProximity(
+      outcome,
       cueball,
       indicator.target!,
-      distance
+      distance,
+      lastOutcome,
+      time
     )
     indicator.setProximity(distance)
+  }
+}
+
+function refineProximity(
+  outcome: Outcome[],
+  cueball: Ball,
+  target: Ball,
+  distance: number,
+  lastOutcome: Outcome,
+  time: number
+) {
+  if (lastOutcome.incidentSpeed > 3 * R && distance <= 3 * R) {
+    outcome.push(Outcome.proximity(cueball, target, distance, time))
+  } else {
+    outcome[outcome.length - 1] = Outcome.proximity(
+      cueball,
+      target,
+      distance,
+      lastOutcome.timestamp
+    )
   }
 }
 
 function trackActiveIndicator(
   outcome: Outcome[],
   cueball: Ball,
-  indicator: ProximityIndicator
+  indicator: ProximityIndicator,
+  time: number
 ) {
   if (indicator.target!.inMotion()) {
     indicator.showAt(indicator.target!.pos)
@@ -72,7 +104,9 @@ function trackActiveIndicator(
       indicator.hitTarget = true
       if (indicator.threeCushionsMet) {
         const distance = 1.99 * R
-        outcome.push(Outcome.proximity(cueball, indicator.target!, distance))
+        outcome.push(
+          Outcome.proximity(cueball, indicator.target!, distance, time)
+        )
         indicator.setProximity(distance)
       }
     }
@@ -81,7 +115,7 @@ function trackActiveIndicator(
     updateCushionCount(outcome, cueball, indicator)
   }
   if (indicator.threeCushionsMet && !indicator.hitTarget) {
-    updateProximityOutcome(outcome, cueball, indicator)
+    updateProximityOutcome(outcome, cueball, indicator, time)
   }
 }
 
@@ -89,10 +123,11 @@ export function checkProximity(
   outcome: Outcome[],
   cueball: Ball,
   balls: Ball[],
-  indicator: ProximityIndicator
+  indicator: ProximityIndicator,
+  time: number
 ): void {
   if (indicator.group.visible && indicator.target) {
-    trackActiveIndicator(outcome, cueball, indicator)
+    trackActiveIndicator(outcome, cueball, indicator, time)
     return
   }
 
