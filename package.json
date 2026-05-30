@@ -4,6 +4,7 @@
   "version": "0.3.1",
   "author": "tailuge",
   "homepage": "https://github.com/tailuge",
+  "main": "desktop/main.cjs",
   "keywords": [
     "billiards",
     "snooker",
@@ -17,9 +18,14 @@
   "scripts": {
     "test": "jest --config ./test/jest.config.js --verbose --silent",
     "coverage": "jest --config ./test/jest.config.js --coverage --silent",
+    "audit": "yarn npm audit --all --recursive --severity high",
     "version-gen": "node -e \"const d=new Date();const v=d.getFullYear().toString().slice(-2)+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'.'+('0'+d.getHours()).slice(-2);require('fs').writeFileSync('src/utils/version.ts', 'export const VERSION = \\'' + v + '\\';\\n')\"",
     "dev": "webpack",
     "build": "npm run version-gen && webpack",
+    "desktop": "electron .",
+    "desktop:dev": "npm run build && electron .",
+    "desktop:package": "npm run build && electron-builder --dir",
+    "desktop:dist": "npm run build && electron-builder",
     "lint": "tsc --noEmit && eslint .",
     "lint:css": "stylelint \"dist/**/*.{css,html}\"",
     "prettify": "prettier --cache true --write --trailing-comma es5 --no-semi {src,test}/**/*.[jt]s dist/**/*.{css,html} *.[jt]s *.json",
@@ -48,6 +54,8 @@
     "canvas": "3.2.3",
     "chai": "6.2.2",
     "concurrently": "10.0.0",
+    "electron": "42.3.0",
+    "electron-builder": "26.8.1",
     "eslint": "10.4.1",
     "eslint-plugin-html": "^8.1.4",
     "eslint-plugin-sonarjs": "4.0.3",
@@ -66,5 +74,35 @@
     "webpack": "5.107.2",
     "webpack-cli": "7.0.3",
     "webpack-dev-server": "5.2.4"
+  },
+  "build": {
+    "appId": "dev.tailuge.billiards",
+    "productName": "Billiards",
+    "files": [
+      "desktop/**/*",
+      "dist/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "icon": "dist/images/billiards.png",
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Game"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.games"
+    }
   }
 }

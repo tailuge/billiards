@@ -35,6 +35,8 @@ module.exports = {
     "assets.ts",
   ],
   coverageReporters: ["text", "json"],
+  testPathIgnorePatterns: ["<rootDir>/release"],
+  modulePathIgnorePatterns: ["<rootDir>/release"],
   testEnvironment: "jsdom",
   moduleNameMapper: {
     ".*GLTFExporter": "<rootDir>/test/mocks/gltfexporter.ts",
