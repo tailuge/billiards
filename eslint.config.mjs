@@ -3,6 +3,17 @@ import tseslint from 'typescript-eslint';
 import html from 'eslint-plugin-html';
 import sonarjs from 'eslint-plugin-sonarjs';
 
+const nodeGlobals = {
+  __dirname: "readonly",
+  module: "readonly",
+  process: "readonly",
+  require: "readonly",
+}
+
+const commonJsRules = {
+  "no-undef": "off",
+}
+
 export default tseslint.config(
   {
     name: 'eslint/recommended',
@@ -27,6 +38,7 @@ export default tseslint.config(
       "dist/*",
       "!dist/picker.html",
       "node_modules/**",
+      "release/**",
       "webpack.config.js",
       "jest.config.js",
       ".yarn/**",
@@ -69,17 +81,19 @@ export default tseslint.config(
     },
   },
   {
+    name: 'billiards/node-files',
+    files: ["desktop/**/*.cjs"],
+    languageOptions: {
+      globals: nodeGlobals,
+    },
+    rules: commonJsRules,
+  },
+  {
     name: 'billiards/test-files',
     files: ["test/**/*.js", "test/**/*.ts"],
     languageOptions: {
-      globals: {
-        module: "readonly",
-        require: "readonly",
-        __dirname: "readonly",
-      },
+      globals: nodeGlobals,
     },
-    rules: {
-      "no-undef": "off",
-    }
+    rules: commonJsRules,
   },
 );
