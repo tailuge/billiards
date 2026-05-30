@@ -33,7 +33,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
 
-      - name: install dependencies
+      - name: Install dependencies
         uses: nick-fields/retry@v3
         with:
           timeout_minutes: 5
@@ -41,13 +41,32 @@ jobs:
           retry_wait_seconds: 10
           command: yarn install --immutable
 
-      - name: build
+      - name: Check formatting
+        run: yarn prettify --check
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Build web app
         run: yarn build
 
-      - name: generate coverage
+      - name: Test
+        run: yarn test --runInBand
+
+      - name: Generate coverage
         run: |
           yarn coverage
           echo done
+
+      - name: Package desktop app
+        run: yarn desktop:package
+
+      - name: Upload desktop artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-linux-unpacked
+          path: release/linux-unpacked/
 
       - name: upload to codecov.io
         uses: codecov/codecov-action@v5
