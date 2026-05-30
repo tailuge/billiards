@@ -10,6 +10,13 @@ const nodeGlobals = {
   require: "readonly",
 }
 
+const testGlobals = {
+  describe: "readonly",
+  expect: "readonly",
+  it: "readonly",
+  ...nodeGlobals,
+}
+
 const commonJsRules = {
   "no-undef": "off",
 }
@@ -92,7 +99,7 @@ export default tseslint.config(
     name: 'billiards/test-files',
     files: ["test/**/*.js", "test/**/*.ts"],
     languageOptions: {
-      globals: nodeGlobals,
+      globals: testGlobals,
     },
     rules: commonJsRules,
   },

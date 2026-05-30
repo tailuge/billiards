@@ -1,65 +1,15 @@
 const { app, BrowserWindow, Menu, shell } = require("electron")
-const fs = require("node:fs")
 const path = require("node:path")
-const { fileURLToPath, pathToFileURL } = require("node:url")
+const { pathToFileURL } = require("node:url")
+const { createNavigation } = require("./navigation.cjs")
 
-const distRoot = path.resolve(__dirname, "..", "dist")
-const indexHtml = path.join(distRoot, "index.html")
-const lobbyHtml = path.join(distRoot, "lobby.html")
+const navigation = createNavigation({
+  distRoot: path.resolve(__dirname, "..", "dist"),
+})
 const isDebug = process.env.ELECTRON_OPEN_DEVTOOLS === "1"
-const gameOrigin = "https://billiards.tailuge.workers.dev"
-
-function isInsideDist(filePath) {
-  const relativePath = path.relative(distRoot, path.resolve(filePath))
-  return (
-    relativePath === "" ||
-    (!relativePath.startsWith("..") && !path.isAbsolute(relativePath))
-  )
-}
-
-function isSafeFileUrl(url) {
-  try {
-    return isInsideDist(fileURLToPath(url))
-  } catch {
-    return false
-  }
-}
-
-function toLocalHtml(pathname) {
-  const relativePath = pathname.replace(/^\/+/, "")
-  const htmlPath = relativePath === "" ? "index.html" : relativePath
-  const filePath = path.join(
-    distRoot,
-    path.extname(htmlPath) ? htmlPath : `${htmlPath}.html`
-  )
-
-  if (!isInsideDist(filePath)) return indexHtml
-  return fs.existsSync(filePath) ? filePath : indexHtml
-}
-
-function toLocalGameUrl(url) {
-  try {
-    const parsedUrl = new URL(url)
-    if (parsedUrl.origin !== gameOrigin) return null
-
-    const filePath = toLocalHtml(parsedUrl.pathname)
-    return pathToFileURL(filePath).href + parsedUrl.search + parsedUrl.hash
-  } catch {
-    return null
-  }
-}
-
-function isExternalUrl(url) {
-  try {
-    const parsedUrl = new URL(url)
-    return ["https:", "http:", "mailto:"].includes(parsedUrl.protocol)
-  } catch {
-    return false
-  }
-}
 
 function openExternalUrl(url) {
-  if (isExternalUrl(url)) {
+  if (navigation.isExternalUrl(url)) {
     shell.openExternal(url)
     return true
   }
@@ -85,12 +35,12 @@ function buildMenu() {
         {
           label: "New Game",
           accelerator: "CmdOrCtrl+N",
-          click: () => loadInActiveWindow(indexHtml),
+          click: () => loadInActiveWindow(navigation.indexHtml),
         },
         {
           label: "Lobby",
           accelerator: "CmdOrCtrl+L",
-          click: () => loadInActiveWindow(lobbyHtml),
+          click: () => loadInActiveWindow(navigation.lobbyHtml),
         },
         { type: "separator" },
         { role: "reload" },
@@ -114,7 +64,7 @@ function buildMenu() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 }
 
-function createWindow(startUrl = pathToFileURL(indexHtml).href) {
+function createWindow(startUrl = pathToFileURL(navigation.indexHtml).href) {
   const mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
@@ -132,7 +82,9 @@ function createWindow(startUrl = pathToFileURL(indexHtml).href) {
   mainWindow.loadURL(startUrl)
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    const appUrl = isSafeFileUrl(url) ? url : toLocalGameUrl(url)
+    const appUrl = navigation.isSafeFileUrl(url)
+      ? url
+      : navigation.toLocalGameUrl(url)
     if (appUrl) {
       createWindow(appUrl)
       return { action: "deny" }
@@ -143,11 +95,11 @@ function createWindow(startUrl = pathToFileURL(indexHtml).href) {
   })
 
   mainWindow.webContents.on("will-navigate", (event, url) => {
-    if (isSafeFileUrl(url)) {
+    if (navigation.isSafeFileUrl(url)) {
       return
     }
 
-    const localUrl = toLocalGameUrl(url)
+    const localUrl = navigation.toLocalGameUrl(url)
     if (localUrl) {
       event.preventDefault()
       mainWindow.loadURL(localUrl)
