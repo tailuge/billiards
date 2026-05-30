@@ -137,6 +137,16 @@ export class ProximityIndicator {
   showAt(pos: Vector3) {
     this.group.position.set(pos.x, pos.y, -0.97 * R)
     this.group.visible = true
+
+    // Dynamic position relative to ball to prevent clipping under cushions
+    // Unit length pointing along line from ball towards center
+    const uFlipped = pos.clone().negate().setZ(0).normalize()
+    const size = R * 4
+    const offset = uFlipped.multiplyScalar(1.25 * size)
+
+    this.proximityTexts.forEach((textMesh) => {
+      textMesh.position.set(offset.x, offset.y, 0.01)
+    })
   }
 
   hide() {
