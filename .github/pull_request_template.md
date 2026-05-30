@@ -7,6 +7,7 @@
 - [ ] I ran `yarn prettify --check` or `yarn prettify`
 - [ ] I ran `yarn lint`
 - [ ] I ran `yarn test --runInBand`
+- [ ] I ran `yarn audit`
 - [ ] I ran `yarn build`
 
 ## Desktop checklist

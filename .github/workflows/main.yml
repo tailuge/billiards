@@ -47,6 +47,9 @@ jobs:
       - name: Lint
         run: yarn lint
 
+      - name: Audit dependencies
+        run: yarn audit
+
       - name: Build web app
         run: yarn build
 

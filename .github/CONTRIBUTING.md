@@ -17,6 +17,7 @@ Before opening a pull request, run the same quality gates as CI:
 yarn prettify --check
 yarn lint
 yarn test --runInBand
+yarn audit
 yarn build
 ```
 

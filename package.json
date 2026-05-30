@@ -18,6 +18,7 @@
   "scripts": {
     "test": "jest --config ./test/jest.config.js --verbose --silent",
     "coverage": "jest --config ./test/jest.config.js --coverage --silent",
+    "audit": "yarn npm audit --all --recursive --severity high",
     "version-gen": "node -e \"const d=new Date();const v=d.getFullYear().toString().slice(-2)+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'.'+('0'+d.getHours()).slice(-2);require('fs').writeFileSync('src/utils/version.ts', 'export const VERSION = \\'' + v + '\\';\\n')\"",
     "dev": "webpack",
     "build": "npm run version-gen && webpack",
