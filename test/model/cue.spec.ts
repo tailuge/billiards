@@ -176,4 +176,21 @@ describe("Cue", () => {
     cue.avoidCueTouchingOtherBall(table)
     expect(cue.aim.offset.length()).to.be.closeTo(cue.offCenterLimit, 0.001)
   })
+
+  test("natural roll applied", () => {
+    const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.aimInputs = {
+      isDisabled: () => false,
+      updateVisualState: () => {},
+      updatePowerSlider: () => {},
+      showOverlap: () => {},
+    } as any
+    cue.setPower(1)
+    cue.setSpin(new Vector3(0, 0.4), table)
+    cue.hit(table.balls[0])
+    expect(table.balls[0].rvel.length()).to.be.approximately(
+      table.balls[0].vel.length() / R,
+      0.01
+    )
+  })
 })
