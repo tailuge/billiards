@@ -19,6 +19,18 @@ export class Cushion {
   ): number | undefined {
     const futurePosition = ball.futurePosition(t)
 
+    if (!hasPockets) {
+      const overX = Math.abs(futurePosition.x) - TableGeometry.tableX
+      const overY = Math.abs(futurePosition.y) - TableGeometry.tableY
+      if (overX > 0 && overY > 0) {
+        const dir =
+          overX >= overY
+            ? futurePosition.x > 0 ? 0 : Math.PI
+            : futurePosition.y > 0 ? -Math.PI / 2 : Math.PI / 2
+        return Cushion.bounceIn(dir, ball, cushionModel)
+      }
+    }
+
     if (Cushion.willBounceLong(futurePosition, hasPockets)) {
       const dir =
         futurePosition.y > TableGeometry.tableY ? -Math.PI / 2 : Math.PI / 2
