@@ -7,6 +7,7 @@ module.exports = {
     mathavan: "./src/mathavan.ts",
     compare: "./src/compare.ts",
     stronge: "./src/stronge_diagram.ts",
+    physics_worker: "./src/worker/physics-worker.ts",
   },
   module: {
     rules: [
