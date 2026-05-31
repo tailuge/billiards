@@ -415,5 +415,5 @@
 
 /* Hidden rematch button - can be shown via class when ready */
 .notification-actions [data-notification-action="rematch"] {
-  display: inline-block;
+  display: none;
 }
