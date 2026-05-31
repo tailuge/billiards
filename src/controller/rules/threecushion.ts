@@ -75,7 +75,7 @@ export class ThreeCushion implements Rules {
   }
 
   rack(): Ball[] {
-    return Rack.three()
+    return Rack.fromInitParam(Rack.three())
   }
 
   update(outcomes: Outcome[]): Controller {
