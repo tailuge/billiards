@@ -1,123 +1,119 @@
-# Design: Headless Billiards Physics Engine for Web Workers
+# Design: Standalone Physics Utility for Web Workers
 
 ## Overview
-The goal is to decouple the billiards physics simulation from the Three.js-based rendering engine to allow it to run in a headless environment (e.g., Web Workers). This enables parallel simulations for parameter optimization, AI training, or running heavy calculations without blocking the main UI thread.
+This design outlines a utility to expose the existing billiards physics engine as a standalone, worker-ready library. The goal is to allow external HTML files to run high-performance, parallel simulations (e.g., for Three-Cushion shot optimization) by providing a standard interface for input and output.
 
-## Architecture
+## Interface & Protocol
 
-### 1. Model-View Decoupling
-Currently, `Table` and `Ball` classes are tightly coupled with `BallMesh`, `Cue`, and `ProximityIndicator`.
-- **Refactoring**: Move all UI-related logic into optional components or a separate `View` layer.
-- **Orientation**: Move rotation logic (quaternions) from `BallMesh` to the `Ball` model.
-- **Headless Table**: Create a `Table` variant (or make the existing one configurable) that can operate without a `Scene` or DOM.
+The utility will use a JSON-based protocol for communication between the main thread and the Web Worker.
 
-### 2. Web Worker Integration
-A new Web Worker (`physics-worker.ts`) will act as the host for the simulation.
-- **Worker Host**: Receives `SimulationConfig`, initializes the `Table`, and runs the `advance` loop.
-- **Batching**: Results are batched into arrays to minimize postMessage overhead.
-- **Worker Pool**: (Optional) For massive parallelization across multiple cores.
+### 1. Input: `SimulationConfig`
+The configuration represents the initial state of the table and physics parameters.
 
-## Protocol Definition
-
-### Input: `SimulationConfig`
 ```json
 {
   "balls": [
-    { "id": 0, "pos": { "x": 0, "y": 0, "z": 0 }, "vel": { "x": 1, "y": 0, "z": 0 } },
-    ...
+    { "id": 0, "pos": { "x": -0.7, "y": 0, "z": 0 }, "color": 0xffffff },
+    { "id": 1, "pos": { "x": 0.7, "y": 0, "z": 0 }, "color": 0xffff00 },
+    { "id": 2, "pos": { "x": 0.5, "y": 0.2, "z": 0 }, "color": 0xff0000 }
   ],
+  "cushionModel": "mathavan",
   "constants": {
     "mu": 0.007,
     "muS": 0.136,
-    ...
+    "muC": 0.85,
+    "e": 0.86
   },
-  "cushionModel": "mathavan",
+  "shot": {
+    "cueBallId": 0,
+    "angle": 0.1,
+    "power": 12.5,
+    "offset": { "x": 0.1, "y": -0.05 },
+    "elevation": 0.05
+  },
   "stepSize": 0.001953125,
   "maxIterations": 200000
 }
 ```
 
-### Output: `SimulationFrame[]`
+### 2. Output: `SimulationFrame[]`
+The worker returns an array (or stream) of frames, each containing the state of all balls at a specific timestep.
+
 ```json
 [
   {
-    "timestamp": 0.00195,
+    "t": 0.00195,
     "balls": [
-      { "id": 0, "pos": [x, y, z], "rot": [x, y, z, w] },
+      {
+        "id": 0,
+        "p": [x, y, z],
+        "q": [x, y, z, w],
+        "v": [vx, vy, vz],
+        "w": [wx, wy, wz]
+      },
       ...
     ],
     "outcomes": [
-      { "type": "Cushion", "ballA": 0, "incidentSpeed": 1.5 }
+      { "type": "Cushion", "ball": 0, "speed": 1.5, "time": 0.12 }
     ]
   },
   ...
 ]
 ```
 
-## Proposed Code Changes
+## Implementation Strategy
 
-### `src/model/ball.ts`
-- Add `quaternion: Quaternion` property.
-- Update `updateVelocity` to also update the quaternion based on `rvel`.
-- Make `ballmesh` optional or move it to a `ViewBall` wrapper.
+### Web Worker (`physics-worker.ts`)
+A new dedicated worker script will:
+1. Initialize the `Table` using the provided ball positions.
+2. Apply the physics constants to the `src/model/physics/constants.ts` module.
+3. Configure the `cushionModel` on the `Table` instance.
+4. Execute the `hit()` and then loop `advance(stepSize)` until `allStationary()`.
+5. Capture ball positions and angular orientations (calculated from `rvel` or maintained as a quaternion) at each step.
+6. Post the results back to the main thread.
 
-### `src/model/table.ts`
-- Make `cue`, `proximityIndicator`, and `mesh` optional.
-- Remove or guard `updateBallMesh` and `checkProximity` calls when running headlessly.
-- Add a `simulate()` method that runs the loop until `allStationary()`.
+### Library Bundle
+A new Webpack entry point will be created to produce a standalone library (`billiards-physics.js`) that can be imported via a `<script>` tag. This bundle will include:
+- The `Table` and `Ball` logic.
+- Physics models (Mathavan, Han, etc.).
+- A helper class to manage the Web Worker lifecycle.
 
-### `src/worker/physics-worker.ts` (New)
-- Entry point for the Web Worker.
-- Handles `onmessage` to start/stop simulations.
-
-### `webpack.config.js`
-- Add a new entry point for the worker: `worker: "./src/worker/physics-worker.ts"`.
-- Create a library target (e.g., `dist/billiards-physics.lib.js`) using `output.library`.
-
-## External Integration
-An external HTML file could import the bundled library and use it as follows:
+## External Usage Example
 
 ```html
-<!-- Standalone bundle for main thread utilities (e.g., config helpers) -->
 <script src="dist/billiards-physics.lib.js"></script>
 <script>
-  // The worker script would be a standalone bundle generated by Webpack
+  // Instantiate the worker using the bundled worker script
   const worker = new Worker('dist/physics-worker.js');
 
-  worker.onmessage = (e) => {
-    const { type, frames, finalState } = e.data;
-    if (type === 'SIM_COMPLETE') {
-      console.log('Simulation finished with', frames.length, 'frames');
-      // finalState can be used for parameter optimization scoring
-    }
+  worker.onmessage = (event) => {
+    const { frames, finalState } = event.data;
+    console.log(`Simulation complete. Generated ${frames.length} frames.`);
+    // analyze results (e.g., check if 3-cushion point was scored)
   };
 
   const config = {
-    balls: [
-      { id: 0, color: 0xffffff, pos: { x: 0, y: 0, z: 0 } }, // Cue ball
-      { id: 1, color: 0xffff00, pos: { x: 1, y: 0, z: 0 } }, // Yellow
-      { id: 2, color: 0xff0000, pos: { x: 0, y: 1, z: 0 } }  // Red
-    ],
+    balls: [...], // standard Three-Cushion setup
     cushionModel: "mathavan",
-    shot: { angle: 0.1, power: 5, offset: { x: 0.1, y: 0.1 } }
+    shot: { angle: 3.14, power: 10, offset: { x: 0, y: 0 } }
   };
 
-  worker.postMessage({ type: 'START_SIM', config });
+  worker.postMessage(config);
 </script>
 ```
 
 ## Pros and Cons
 
 ### Pros
-- **Performance**: Heavy physics calculations don't block the UI.
-- **Parallelism**: Run multiple simulations simultaneously (e.g., for Three-Cushion shot optimization).
-- **Portability**: The physics engine can be used in other projects or headless scripts (Node.js).
-- **Testability**: Easier to write pure-physics unit tests without mocking Three.js.
+- **No Refactoring Needed**: Leveraging the fact that the existing model already runs headlessly (as proven by unit tests).
+- **Parallelism**: Allows running hundreds of simulations in parallel to optimize shot parameters or train AI.
+- **Isolation**: Heavy calculations are offloaded from the UI thread, ensuring the game remains responsive.
+- **Portability**: Provides a clean API for third-party tools to use the physics engine without needing the full Three.js game environment.
 
 ### Cons
-- **Data Transfer**: Sending large arrays of frames via `postMessage` can be expensive (consider `Transferable` objects or TypedArrays).
-- **Code Duplication**: If not careful, orientation logic might be duplicated between Model and View.
-- **Synchronization**: Keeping the View in sync with the Worker's output requires careful timestamp management.
+- **Serialization Overhead**: Transferring thousands of frames via `postMessage` can be slow.
+  - *Mitigation*: Use TypedArrays (Float32Array) for ball data and `Transferable` objects.
+- **Dependency Management**: The worker bundle must include all necessary physics logic, which may increase the total build size if not carefully treeshaken.
 
-## Three-Cushion Support
-The design natively supports Three-Cushion by allowing the caller to specify the `mathavanAdapter` cushion model and the standard ball positions (Yellow, White, Red). The `Outcome` array will provide all the necessary information to validate a point (3 cushions hit before the second ball).
+## Three-Cushion Optimization
+This utility is particularly suited for Three-Cushion billiards. By running simulations in a worker, a "Search" algorithm can iterate through thousands of combinations of `angle`, `power`, and `offset` to find the highest probability of scoring a point, providing real-time "best shot" suggestions or assisting in physics parameter tuning.
