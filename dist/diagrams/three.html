@@ -521,6 +521,14 @@
         white-space: nowrap;
         border: 0;
       }
+
+      .stronge-mode .mathavan-slider {
+        display: none;
+      }
+
+      body:not(.stronge-mode) .stronge-slider {
+        display: none;
+      }
     </style>
   </head>
 
@@ -576,22 +584,36 @@
           <input id="power" type="range" />
         </div>
         <div id="constants">
-          <input id="μs" type="range" />
-          <div>Mathavan <label for="μs"></label></div>
-          <input id="μw" type="range" />
-          <div>Mathavan <label for="μw"></label></div>
-          <input id="ee" type="range" />
-          <div>Cushion restitution <label for="ee"></label></div>
+          <div class="mathavan-slider">
+            <input id="μs" type="range" />
+            <div>Mathavan <label for="μs"></label></div>
+          </div>
+          <div class="mathavan-slider">
+            <input id="μw" type="range" />
+            <div>Mathavan <label for="μw"></label></div>
+          </div>
+          <div class="mathavan-slider">
+            <input id="ee" type="range" />
+            <div>Cushion restitution <label for="ee"></label></div>
+          </div>
+
           <input id="mu" type="range" />
           <div>Han rolling friction <label for="mu"></label></div>
           <input id="muS" type="range" />
           <div>Han sliding friction <label for="muS"></label></div>
-          <input id="stronge_omega_ratio" type="range" />
-          <div>Stronge ω ratio <label for="stronge_omega_ratio"></label></div>
-          <input id="stronge_e_n" type="range" />
-          <div>Stronge eₙ <label for="stronge_e_n"></label></div>
-          <input id="stronge_μ" type="range" />
-          <div>Stronge μ <label for="stronge_μ"></label></div>
+
+          <div class="stronge-slider">
+            <input id="stronge_omega_ratio" type="range" />
+            <div>Stronge ω ratio <label for="stronge_omega_ratio"></label></div>
+          </div>
+          <div class="stronge-slider">
+            <input id="stronge_e_n" type="range" />
+            <div>Stronge eₙ <label for="stronge_e_n"></label></div>
+          </div>
+          <div class="stronge-slider">
+            <input id="stronge_μ" type="range" />
+            <div>Stronge μ <label for="stronge_μ"></label></div>
+          </div>
         </div>
       </div>
       <div id="table-wrap">
@@ -865,6 +887,9 @@
         if (!surface || !topview?.dataset.state) return
 
         const urlParams = new URLSearchParams(window.location.search)
+        if (urlParams.get("cushionModel") === "stronge") {
+          document.body.classList.add("stronge-mode")
+        }
         const diagramParams = new URLSearchParams(topview.dataset.state)
         let changed = false
 
