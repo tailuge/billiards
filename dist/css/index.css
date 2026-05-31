@@ -345,3 +345,54 @@ label {
 #botDebugLog::-webkit-scrollbar-thumb:hover {
   background: #777;
 }
+
+.drill-panel {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+.drill-panel-top {
+  top: 10px;
+  transform: none;
+}
+
+.drill-gap {
+  height: 44px;
+}
+
+.drill-btn {
+  width: 90px;
+  height: 44px;
+  border-radius: 8px;
+  border: 2px solid rgb(255 255 255 / 25%);
+  background: rgb(0 30 60 / 75%);
+  color: antiquewhite;
+  font-size: 13px;
+  font-family: var(--font-family-primary, sans-serif);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    opacity 0.15s,
+    background 0.15s;
+}
+
+.drill-btn:not(:disabled):hover {
+  background: rgb(0 60 110 / 85%);
+  border-color: rgb(255 255 255 / 50%);
+}
+
+.drill-btn:not(:disabled):active {
+  transform: scale(0.96);
+}
+
+.drill-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
