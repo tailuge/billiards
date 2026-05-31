@@ -388,6 +388,7 @@
       #share-all,
       #share-shot,
       #replay,
+      #play-btn,
       #cleartraces {
         padding: 2px 8px;
         cursor: pointer;
@@ -415,6 +416,7 @@
       #share-all:hover,
       #share-shot:hover,
       #replay:hover,
+      #play-btn:hover,
       #cleartraces:hover {
         filter: brightness(0.88);
         transform: translateY(-2px) scale(1.05);
@@ -427,6 +429,7 @@
       #share-all:active,
       #share-shot:active,
       #replay:active,
+      #play-btn:active,
       #cleartraces:active {
         border-style: inset;
         filter: brightness(0.75);
@@ -545,6 +548,7 @@
         <button id="share-all" type="button">share all presets</button>
         <button id="share-shot" type="button">share this shot</button>
         <button id="replay" type="button">replay</button>
+        <button id="play-btn" type="button">play</button>
         <button id="cleartraces" type="button">clear traces</button>
         <button
           id="stronge-btn"
@@ -1070,6 +1074,18 @@
         document.getElementById("power")?.addEventListener("input", (event) => {
           aimPower = Number(event.target.value) * MAX_POWER
           syncDiagramState(topview)
+        })
+
+        document.getElementById("play-btn")?.addEventListener("click", () => {
+          const coords = tableBalls.flatMap((b) => [
+            round6(-b.x),
+            round6(b.y),
+          ])
+          const url = new URL("../index.html", window.location.href)
+          url.searchParams.set("ruletype", "threecushion")
+          url.searchParams.set("practice", "true")
+          url.searchParams.set("init", JSON.stringify(coords))
+          window.location.href = url.toString()
         })
         function shareUrl(url) {
           const shareUrl = url.toString()
