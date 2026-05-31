@@ -87,8 +87,14 @@ export class Ball {
   private passesZero(delta) {
     const vz = passesThroughZero(this.vel, delta.v)
     const wz = passesThroughZero(this.rvel, delta.w)
+
     const halts = this.state === State.Rolling ? vz || wz : vz && wz
-    if (halts && Math.abs(this.rvel.z) < 0.01) {
+
+    // Calculate the actual change being applied to Z spin this frame
+    const zStep = Math.abs(delta.w.z)
+
+    // Dynamically scale the threshold based on the step size, or check if it reverses
+    if (halts && Math.abs(this.rvel.z) <= zStep) {
       this.setStationary()
       return true
     }
