@@ -1,170 +1,631 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>web worker integration example</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>"
+    />
     <style>
-        body { font-family: monospace; background: #111; color: #eee; padding: 10px; max-width: 1400px; margin: 0 auto; font-size: 10px; }
-        #controls { margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; }
-        #inputJson { background: #222; color: #eee; border: 1px solid #444; padding: 5px; height: 200px; width: 100%; font-size: 10px; font-family: monospace; }
-        .results-container { display: flex; gap: 10px; margin-top: 10px; }
-        #output { white-space: pre-wrap; background: #222; padding: 10px; border: 1px solid #444; width: 300px; height: 400px; overflow-y: scroll; font-size: 9px; }
-        #plotCanvas { background: #000; border: 1px solid #444; flex-grow: 1; height: 400px; }
-        button { padding: 5px; cursor: pointer; background: #444; color: #fff; border: 1px solid #666; font-size: 10px; align-self: flex-start; }
-        button:hover { background: #555; }
-        .guide { margin-top: 20px; padding: 10px; background: #1a1a1a; border-left: 4px solid #007acc; font-size: 10px; }
-        h1 { font-size: 14px; margin: 0 0 10px 0; }
-        h2 { color: #007acc; font-size: 12px; margin: 5px 0; }
-        h3 { font-size: 11px; margin: 5px 0; }
-        p { margin: 2px 0; }
-        code { background: #333; padding: 1px 2px; border-radius: 4px; color: #ff79c6; font-size: 9px; }
-        pre { background: #282a36; padding: 5px; border-radius: 4px; overflow-x: auto; color: #f8f8f2; font-size: 9px; margin: 2px 0; }
-    </style>
-</head>
-<body>
-    <h1>web worker integration example</h1>
+      body {
+        font-family: monospace;
+        background: #111;
+        color: #eee;
+        padding: 10px;
+        max-width: 1400px;
+        margin: 0 auto;
+        font-size: 10px;
+      }
+      h1 {
+        font-size: 14px;
+        margin: 0 0 10px 0;
+      }
+      h2 {
+        color: #007acc;
+        font-size: 12px;
+        margin: 5px 0;
+      }
+      h3 {
+        font-size: 11px;
+        margin: 5px 0;
+      }
+      p {
+        margin: 2px 0;
+      }
+      code {
+        background: #333;
+        padding: 1px 2px;
+        border-radius: 4px;
+        color: #ff79c6;
+        font-size: 9px;
+      }
+      pre {
+        background: #282a36;
+        padding: 5px;
+        border-radius: 4px;
+        overflow-x: auto;
+        color: #f8f8f2;
+        font-size: 9px;
+        margin: 2px 0;
+      }
 
-    <div id="controls">
+      .main-layout {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      /* Left panel: inputs */
+      .left-panel {
+        width: 420px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      #inputJson {
+        background: #222;
+        color: #eee;
+        border: 1px solid #444;
+        padding: 5px;
+        height: 300px;
+        width: 100%;
+        font-size: 10px;
+        font-family: monospace;
+        box-sizing: border-box;
+        resize: vertical;
+      }
+
+      /* Right panel: plot + log */
+      .right-panel {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      #plotCanvas {
+        background: #000;
+        border: 1px solid #444;
+        width: 100%;
+        height: 400px;
+      }
+      #log {
+        white-space: pre-wrap;
+        background: #1a1a2e;
+        padding: 8px;
+        border: 1px solid #444;
+        height: 300px;
+        overflow-y: scroll;
+        font-size: 9px;
+        color: #8be9fd;
+        box-sizing: border-box;
+      }
+      .log-checkpoint {
+        color: #50fa7b;
+      }
+      .log-error {
+        color: #ff5555;
+      }
+      .log-result {
+        color: #ffb86c;
+      }
+      .log-ui {
+        color: #bd93f9;
+      }
+      .log-data {
+        color: #ccc;
+      }
+
+      button {
+        padding: 5px 10px;
+        cursor: pointer;
+        background: #444;
+        color: #fff;
+        border: 1px solid #666;
+        font-size: 10px;
+      }
+      button:hover {
+        background: #555;
+      }
+      button:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+      .btn-row {
+        display: flex;
+        gap: 5px;
+      }
+
+      .guide {
+        margin-top: 20px;
+        padding: 10px;
+        background: #1a1a1a;
+        border-left: 4px solid #007acc;
+        font-size: 10px;
+      }
+      .guide table {
+        border-collapse: collapse;
+        margin: 5px 0;
+        width: 100%;
+      }
+      .guide th,
+      .guide td {
+        border: 1px solid #333;
+        padding: 2px 5px;
+        text-align: left;
+        font-size: 9px;
+      }
+      .guide th {
+        background: #222;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Web worker integration example</h1>
+
+    <div class="main-layout">
+      <!-- Left panel: inputs -->
+      <div class="left-panel">
         <label for="inputJson">Input Specification (SimulationConfig):</label>
         <textarea id="inputJson"></textarea>
-        <button id="runSim">Run Simulation</button>
-    </div>
+        <div class="btn-row">
+          <button id="runSim">Run Simulation</button>
+          <button id="clearLog">Clear Log</button>
+        </div>
+      </div>
 
-    <div class="results-container">
-        <div id="output">Results will appear here...</div>
+      <!-- Right panel: plot + log -->
+      <div class="right-panel">
         <canvas id="plotCanvas"></canvas>
+        <div class="btn-row">
+          <button id="showResponse" disabled>
+            Show Response (first 5 frames)
+          </button>
+        </div>
+        <label>Worker Log:</label>
+        <div id="log"></div>
+      </div>
     </div>
 
     <div class="guide">
-        <h2>LLM Agent Usage Guide</h2>
-        <p>This page demonstrates how to use the <strong>Standalone Physics Worker</strong>. It is designed for technical integration.</p>
+      <h2>LLM Agent Integration Guide</h2>
+      <p>
+        The <strong>Standalone Physics Worker</strong> (<code>worker.js</code>)
+        runs the billiards physics engine in a Web Worker thread. Source:
+        <a href="https://github.com/tailuge/billiards" style="color: #007acc"
+          >github.com/tailuge/billiards</a
+        >
+        — see
+        <a
+          href="https://github.com/tailuge/billiards/blob/master/src/worker.ts"
+          style="color: #007acc"
+          >src/worker.ts</a
+        >.
+      </p>
 
-        <h3>1. Worker URL</h3>
-        <pre>const worker = new Worker('worker.js');</pre>
+      <h3>1. Integration Pattern</h3>
+      <pre>
+// Preload the worker once at page load (not per simulation)
+const worker = new Worker('worker.js');
 
-        <h3>2. Constants Override</h3>
-        <p>Pass a <code>params</code> object in the config. Keys should match setters in <code>constants.ts</code> (e.g., <code>"mu": 0.01</code> calls <code>setmu(0.01)</code>).</p>
+// Listen for checkpoint messages during init
+worker.onmessage = (e) => {
+  if (e.data.type === 'CHECKPOINT') {
+    console.log('Worker checkpoint:', e.data.label);
+  }
+  if (e.data.type === 'SIM_COMPLETE') {
+    const { frames, outcomes, computeTime } = e.data;
+    // process results...
+  }
+  if (e.data.type === 'ERROR') {
+    console.error(e.data.error, e.data.stack);
+  }
+};
+
+// Reuse the same worker for multiple simulations
+worker.postMessage(configA);
+// ...wait for SIM_COMPLETE...
+worker.postMessage(configB);
+</pre
+      >
+
+      <h3>2. Message Types (Worker → UI)</h3>
+      <table>
+        <tr>
+          <th>type</th>
+          <th>When</th>
+          <th>Key fields</th>
+        </tr>
+        <tr>
+          <td><code>CHECKPOINT</code></td>
+          <td>At each lifecycle stage</td>
+          <td><code>label</code>, <code>t</code> (performance.now)</td>
+        </tr>
+        <tr>
+          <td><code>SIM_COMPLETE</code></td>
+          <td>Simulation finished</td>
+          <td>
+            <code>frames[]</code>, <code>outcomes[]</code>,
+            <code>computeTime</code>, <code>tableX</code>, <code>tableY</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>ERROR</code></td>
+          <td>On failure</td>
+          <td><code>error</code>, <code>stack</code></td>
+        </tr>
+      </table>
+
+      <h3>3. Checkpoint Labels (in order)</h3>
+      <p>
+        <code>worker.js loaded</code> → <code>Inputs received</code> →
+        <code>Constants set</code> → <code>Table geometry set</code> →
+        <code>Strike applied</code> → <code>Iteration progress</code> (×N) →
+        <code>Simulation loop complete</code> → <code>SIM_COMPLETE</code>
+      </p>
+
+      <h3>4. SimulationConfig Schema</h3>
+      <pre>
+{
+  ruleType: "threecushion" | "snooker" | "eightball",
+  balls: [{ id: number, pos: { x, y, z } }, ...],
+  cushionModel: "mathavan" | "han",
+  shot: {
+    cueBallId: number,
+    angle: number,       // radians
+    power: number,       // m/s impulse scale
+    offset: { x, y },   // spin offset from centre (max ±0.5 of R)
+    elevation: number    // cue elevation radians
+  },
+  stepSize: number,      // simulation time step (default 0.1)
+  maxIterations: number, // hard cap (default 200000)
+  params: { ... }        // physics constant overrides (see below)
+}
+</pre
+      >
+
+      <h3>5. Settable Physics Constants (<code>params</code>)</h3>
+      <p>
+        Pass any of these keys in <code>params</code>. The key maps to
+        <code>set&lt;key&gt;(value)</code> in
+        <a
+          href="https://github.com/tailuge/billiards/blob/master/src/model/physics/constants.ts"
+          style="color: #007acc"
+          >constants.ts</a
+        >.
+      </p>
+      <table>
+        <tr>
+          <th>Key</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td><code>mu</code></td>
+          <td>0.007</td>
+          <td>Rolling friction (Han)</td>
+        </tr>
+        <tr>
+          <td><code>muS</code></td>
+          <td>0.136</td>
+          <td>Sliding friction (Han)</td>
+        </tr>
+        <tr>
+          <td><code>muC</code></td>
+          <td>0.85</td>
+          <td>Cloth-cushion friction</td>
+        </tr>
+        <tr>
+          <td><code>rho</code></td>
+          <td>0.035</td>
+          <td>Spindown rate (Han)</td>
+        </tr>
+        <tr>
+          <td><code>m</code></td>
+          <td>0.23</td>
+          <td>Ball mass (kg)</td>
+        </tr>
+        <tr>
+          <td><code>R</code></td>
+          <td>0.03275</td>
+          <td>Ball radius (m)</td>
+        </tr>
+        <tr>
+          <td><code>e</code></td>
+          <td>0.86</td>
+          <td>Ball-ball coefficient of restitution</td>
+        </tr>
+        <tr>
+          <td><code>ee</code></td>
+          <td>0.84</td>
+          <td>Cushion coefficient of restitution (Mathavan)</td>
+        </tr>
+        <tr>
+          <td><code>μs</code></td>
+          <td>0.2</td>
+          <td>Table friction coefficient (Mathavan)</td>
+        </tr>
+        <tr>
+          <td><code>μw</code></td>
+          <td>0.2</td>
+          <td>Cushion friction coefficient (Mathavan)</td>
+        </tr>
+        <tr>
+          <td><code>StrongeOmegaRatio</code></td>
+          <td>1.847</td>
+          <td>Stronge omega ratio</td>
+        </tr>
+        <tr>
+          <td><code>StrongeEN</code></td>
+          <td>0.979</td>
+          <td>Stronge normal restitution</td>
+        </tr>
+        <tr>
+          <td><code>StrongeMu</code></td>
+          <td>0.161</td>
+          <td>Stronge friction coefficient</td>
+        </tr>
+      </table>
+
+      <h3>6. Best Practices</h3>
+      <ul>
+        <li>
+          <strong>Preload once</strong>: Create the worker at page load. The
+          <code>worker.js loaded</code> checkpoint fires immediately — do not
+          wait for a simulation to confirm it loaded.
+        </li>
+        <li>
+          <strong>Reuse the worker</strong>: Post multiple configs sequentially.
+          The worker resets internal state each time
+          <code>onmessage</code> fires.
+        </li>
+        <li>
+          <strong>Avoid stringify on large responses</strong>:
+          <code>frames[]</code> can contain 1000+ entries. Slice before display
+          or process fields directly.
+        </li>
+        <li>
+          <strong>Monitor checkpoints</strong>: If the worker hangs, the last
+          checkpoint label tells you exactly which stage stalled.
+        </li>
+        <li>
+          <strong>params override order matters</strong>: Setting
+          <code>R</code> or <code>m</code> triggers a <code>refresh()</code> of
+          derived constants (Mz, Mxy, I). Set them before other params that
+          depend on derived values.
+        </li>
+      </ul>
     </div>
 
     <script>
-        const runBtn = document.getElementById('runSim');
-        const output = document.getElementById('output');
-        const inputJson = document.getElementById('inputJson');
-        const canvas = document.getElementById('plotCanvas');
-        const ctx = canvas.getContext('2d');
+      const R = 0.03275
+      const runBtn = document.getElementById("runSim")
+      const clearLogBtn = document.getElementById("clearLog")
+      const showResponseBtn = document.getElementById("showResponse")
+      const logEl = document.getElementById("log")
+      const inputJson = document.getElementById("inputJson")
+      const canvas = document.getElementById("plotCanvas")
+      const ctx = canvas.getContext("2d")
 
-        const defaultConfig = {
-            ruleType: "threecushion",
-            balls: [
-                { id: 0, pos: { x: -0.5, y: 0, z: 0 } },
-                { id: 1, pos: { x: 0.5, y: 0.01, z: 0 } },
-                { id: 2, pos: { x: 0, y: 0.5, z: 0 } }
-            ],
-            cushionModel: "mathavan",
-            shot: {
-                cueBallId: 0,
-                angle: 0,
-                power: 1.5,
-                offset: { x: 0.05, y: 0 },
-                elevation: 0
-            },
-            stepSize: 0.1,
-            minIterations: 1000,
-            params: {
-                "mu": 0.007,
-                "e": 0.86
-            }
-        };
+      let lastResultData = null
 
-        inputJson.value = JSON.stringify(defaultConfig, null, 2);
+      const defaultConfig = {
+        ruleType: "threecushion",
+        balls: [
+          { id: 0, pos: { x: -0.5, y: 0, z: 0 } },
+          { id: 1, pos: { x: 0.5, y: 0.01, z: 0 } },
+          { id: 2, pos: { x: 0, y: 0.5, z: 0 } },
+        ],
+        cushionModel: "mathavan",
+        shot: {
+          cueBallId: 0,
+          angle: 0,
+          power: 0.5,
+          offset: { x: 0.05, y: 0 },
+          elevation: 0,
+        },
+        stepSize: 0.1,
+        maxIterations: 1000,
+        params: {
+          mu: 0.007,
+          muS: 0.136,
+          muC: 0.85,
+          rho: 0.035,
+          m: 0.23,
+          R: 0.03275,
+          e: 0.86,
+          ee: 0.84,
+          μs: 0.2,
+          μw: 0.2,
+        },
+      }
 
-        function plotResults(data) {
-            const w = canvas.width = canvas.offsetWidth;
-            const h = canvas.height = canvas.offsetHeight;
-            ctx.clearRect(0, 0, w, h);
+      inputJson.value = JSON.stringify(defaultConfig, null, 2)
 
-            if (!data.frames || data.frames.length === 0) return;
+      function logMsg(text, cls) {
+        const ts = new Date().toISOString().substring(11, 23)
+        const line = document.createElement("div")
+        line.className = cls || ""
+        line.textContent = `[${ts}] ${text}`
+        logEl.appendChild(line)
+        logEl.scrollTop = logEl.scrollHeight
+        console.log(`[ww.html] ${text}`)
+      }
 
-            const tableX = data.tableX || 1;
-            const tableY = data.tableY || 0.5;
+      function plotResults(data) {
+        const w = (canvas.width = canvas.offsetWidth)
+        const h = (canvas.height = canvas.offsetHeight)
+        ctx.clearRect(0, 0, w, h)
 
-            // Scale to fit canvas while maintaining aspect ratio
-            const padding = 20;
-            const availableW = w - 2 * padding;
-            const availableH = h - 2 * padding;
-            const scale = Math.min(availableW / (2 * tableX), availableH / (2 * tableY));
+        if (!data.frames || data.frames.length === 0) return
 
-            const centerX = w / 2;
-            const centerY = h / 2;
+        const tableX = data.tableX || 1
+        const tableY = data.tableY || 0.5
 
-            // Draw table boundary
-            ctx.strokeStyle = '#444';
-            ctx.strokeRect(centerX - tableX * scale, centerY - tableY * scale, 2 * tableX * scale, 2 * tableY * scale);
+        // Full table boundary includes +R on each side (already in tableX/tableY from worker)
+        // Draw outer boundary at tableX + R (the cushion nose line is at tableX)
+        const drawX = tableX + R
+        const drawY = tableY + R
 
-            const colors = ['#fff', '#ff0', '#f00', '#0f0', '#00f', '#f0f', '#0ff'];
+        const padding = 20
+        const availableW = w - 2 * padding
+        const availableH = h - 2 * padding
+        const scale = Math.min(
+          availableW / (2 * drawX),
+          availableH / (2 * drawY)
+        )
 
-            // Group positions by ball ID
-            const ballPaths = {};
-            data.frames.forEach(frame => {
-                frame.balls.forEach(ball => {
-                    if (!ballPaths[ball.id]) ballPaths[ball.id] = [];
-                    ballPaths[ball.id].push(ball.pos);
-                });
-            });
+        const centerX = w / 2
+        const centerY = h / 2
 
-            // Draw paths
-            Object.keys(ballPaths).forEach((id, index) => {
-                const path = ballPaths[id];
-                ctx.beginPath();
-                ctx.strokeStyle = colors[index % colors.length];
-                ctx.lineWidth = 1;
-                path.forEach((pos, i) => {
-                    const px = centerX + pos[0] * scale;
-                    const py = centerY - pos[1] * scale; // Invert Y for canvas
-                    if (i === 0) ctx.moveTo(px, py);
-                    else ctx.lineTo(px, py);
-                });
-                ctx.stroke();
+        // Outer rail
+        ctx.strokeStyle = "#555"
+        ctx.lineWidth = 2
+        ctx.strokeRect(
+          centerX - drawX * scale,
+          centerY - drawY * scale,
+          2 * drawX * scale,
+          2 * drawY * scale
+        )
 
-                // Draw end position
-                const last = path[path.length - 1];
-                ctx.fillStyle = colors[index % colors.length];
-                ctx.beginPath();
-                ctx.arc(centerX + last[0] * scale, centerY - last[1] * scale, 3, 0, Math.PI * 2);
-                ctx.fill();
-            });
+        // Inner cushion nose line
+        ctx.strokeStyle = "#3a3"
+        ctx.lineWidth = 1
+        ctx.strokeRect(
+          centerX - tableX * scale,
+          centerY - tableY * scale,
+          2 * tableX * scale,
+          2 * tableY * scale
+        )
+
+        const colors = ["#fff", "#ff0", "#f00", "#0f0", "#00f", "#f0f", "#0ff"]
+        const ballRadius = R * scale
+
+        // Group positions by ball ID
+        const ballPaths = {}
+        data.frames.forEach((frame) => {
+          frame.balls.forEach((ball) => {
+            if (!ballPaths[ball.id]) ballPaths[ball.id] = []
+            ballPaths[ball.id].push(ball.pos)
+          })
+        })
+
+        // Draw paths
+        Object.keys(ballPaths).forEach((id, index) => {
+          const path = ballPaths[id]
+          ctx.beginPath()
+          ctx.strokeStyle = colors[index % colors.length]
+          ctx.lineWidth = 1
+          path.forEach((pos, i) => {
+            const px = centerX + pos[0] * scale
+            const py = centerY - pos[1] * scale
+            if (i === 0) ctx.moveTo(px, py)
+            else ctx.lineTo(px, py)
+          })
+          ctx.stroke()
+
+          // Draw start position as hollow circle
+          const first = path[0]
+          ctx.strokeStyle = colors[index % colors.length]
+          ctx.lineWidth = 1
+          ctx.beginPath()
+          ctx.arc(
+            centerX + first[0] * scale,
+            centerY - first[1] * scale,
+            ballRadius,
+            0,
+            Math.PI * 2
+          )
+          ctx.stroke()
+
+          // Draw end position as filled circle
+          const last = path[path.length - 1]
+          ctx.fillStyle = colors[index % colors.length]
+          ctx.beginPath()
+          ctx.arc(
+            centerX + last[0] * scale,
+            centerY - last[1] * scale,
+            ballRadius,
+            0,
+            Math.PI * 2
+          )
+          ctx.fill()
+        })
+      }
+
+      const worker = new Worker("worker.js")
+
+      worker.onmessage = (e) => {
+        const data = e.data
+        console.log("[ww.html] worker message received:", data.type, data)
+
+        if (data.type === "CHECKPOINT") {
+          const detail = { ...data }
+          delete detail.type
+          delete detail.label
+          delete detail.t
+          const extras =
+            Object.keys(detail).length > 0 ? " " + JSON.stringify(detail) : ""
+          logMsg(`✓ ${data.label}${extras}`, "log-checkpoint")
+        } else if (data.type === "SIM_COMPLETE") {
+          logMsg(
+            `✓ SIM_COMPLETE  computeTime=${data.computeTime}  frames=${data.frames.length}  outcomes=${data.outcomes.length}`,
+            "log-result"
+          )
+          lastResultData = data
+          showResponseBtn.disabled = false
+          plotResults(data)
+        } else if (data.type === "ERROR") {
+          logMsg(`✗ ERROR: ${data.error}`, "log-error")
+          if (data.stack) logMsg(data.stack, "log-error")
+        }
+      }
+
+      worker.onerror = (e) => {
+        console.error("Worker Global Error:", e)
+        logMsg(
+          `✗ Worker Global Error: ${e.message} (${e.filename}:${e.lineno})`,
+          "log-error"
+        )
+      }
+
+      runBtn.onclick = () => {
+        logMsg("--- Run clicked ---", "log-ui")
+        lastResultData = null
+        showResponseBtn.disabled = true
+
+        let config
+        try {
+          config = JSON.parse(inputJson.value)
+        } catch (e) {
+          logMsg("✗ Invalid JSON input: " + e.message, "log-error")
+          return
         }
 
-        const worker = new Worker('worker.js');
+        logMsg("Posting config to worker...", "log-ui")
+        worker.postMessage(config)
+        logMsg("postMessage sent", "log-ui")
+      }
 
-        worker.onmessage = (e) => {
-            const data = e.data;
-            if (data.type === 'SIM_COMPLETE' || data.type === 'ERROR') {
-                output.textContent = JSON.stringify(data, null, 2);
-                if (data.type === 'SIM_COMPLETE') {
-                    plotResults(data);
-                }
-            }
-        };
+      clearLogBtn.onclick = () => {
+        logEl.innerHTML = ""
+      }
 
-        worker.onerror = (e) => {
-            console.error("Worker Global Error:", e);
-            output.textContent = "Worker Global Error: Check console";
-        };
-
-        runBtn.onclick = () => {
-            output.textContent = "Starting simulation...";
-
-            let config;
-            try {
-                config = JSON.parse(inputJson.value);
-            } catch (e) {
-                output.textContent = "Invalid JSON input: " + e.message;
-                return;
-            }
-
-            worker.postMessage(config);
-        };
+      showResponseBtn.onclick = () => {
+        if (!lastResultData) return
+        // Slice to first 5 frames to avoid expensive stringify
+        const preview = {
+          ...lastResultData,
+          frames: lastResultData.frames.slice(0, 5),
+          _note: `Showing 5 of ${lastResultData.frames.length} frames`,
+        }
+        logMsg("--- Response Data (first 5 frames) ---", "log-ui")
+        const t0 = performance.now()
+        const text = JSON.stringify(preview, null, 2)
+        const t1 = performance.now()
+        logMsg(`Stringify took ${Math.round(t1 - t0)}ms`, "log-ui")
+        logMsg(text, "log-data")
+      }
     </script>
-</body>
+  </body>
 </html>
