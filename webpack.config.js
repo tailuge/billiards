@@ -7,6 +7,7 @@ module.exports = {
     mathavan: "./src/mathavan.ts",
     compare: "./src/compare.ts",
     stronge: "./src/stronge_diagram.ts",
+    worker: "./src/worker.ts",
   },
   module: {
     rules: [
@@ -72,25 +73,25 @@ module.exports = {
         three_core: {
           test: /[\\/]node_modules[\\/]three[\\/]build[\\/]three\.core\.js/,
           name: "three_core",
-          chunks: "all",
+          chunks: (chunk) => chunk.name !== "worker",
           priority: 30,
         },
         three_module: {
           test: /[\\/]node_modules[\\/]three[\\/]build[\\/]three\.module\.js/,
           name: "three_module",
-          chunks: "all",
+          chunks: (chunk) => chunk.name !== "worker",
           priority: 30,
         },
         three_examples: {
           test: /[\\/]node_modules[\\/]three[\\/]examples[\\/]jsm[\\/]/,
           name: "three_examples",
-          chunks: "all",
+          chunks: (chunk) => chunk.name !== "worker",
           priority: 30,
         },
         messaging: {
           test: /[\\/]node_modules[\\/]@tailuge[\\/]messaging[\\/]/,
           name: "messaging",
-          chunks: "all",
+          chunks: (chunk) => chunk.name !== "worker",
           priority: 20,
         },
       },
