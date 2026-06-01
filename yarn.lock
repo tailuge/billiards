@@ -3107,7 +3107,7 @@ __metadata:
     "@types/three": "npm:0.184.1"
     canvas: "npm:3.2.3"
     chai: "npm:6.2.2"
-    concurrently: "npm:10.0.0"
+    concurrently: "npm:10.0.1"
     eslint: "npm:10.4.1"
     eslint-plugin-html: "npm:^8.1.4"
     eslint-plugin-sonarjs: "npm:4.0.3"
@@ -3604,9 +3604,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:10.0.0":
-  version: 10.0.0
-  resolution: "concurrently@npm:10.0.0"
+"concurrently@npm:10.0.1":
+  version: 10.0.1
+  resolution: "concurrently@npm:10.0.1"
   dependencies:
     chalk: "npm:5.6.2"
     rxjs: "npm:7.8.2"
@@ -3617,7 +3617,7 @@ __metadata:
   bin:
     conc: dist/bin/index.js
     concurrently: dist/bin/index.js
-  checksum: 10c0/66b011be68a4c3e0ddc80ef6dc039d63c6adabcd4cce8e4b3bf4947301cddaedc27c3d22078356db77bf05b4eda156d5bfd8009f981735bb7f16708f1ad241fd
+  checksum: 10c0/c42e32da08bf6af50c627e09f2d544bcede922a68440116643fd4cdbe8cd3e564fbe1f9ae7d1c3af0aaaad29c409abec02e11b9eeea1e66325014740c6cf384f
   languageName: node
   linkType: hard
 
