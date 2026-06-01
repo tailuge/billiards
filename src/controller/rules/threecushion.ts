@@ -33,7 +33,8 @@ export class ThreeCushion implements Rules {
   }
 
   startTurn(): void {
-    // not used
+    this.previousBreak = this.currentBreak
+    this.currentBreak = 0
   }
 
   nextCandidateBall(_p1type?: number): Ball | undefined {
@@ -82,8 +83,9 @@ export class ThreeCushion implements Rules {
     if (Outcome.isThreeCushionPoint(this.cueball, outcomes)) {
       this.container.sound.playSuccess(outcomes.length / 3)
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
-      this.currentBreak++
-      Session.getInstance().addMyScore(this.getAmountScored(outcomes))
+      const scored = this.getAmountScored(outcomes)
+      this.currentBreak += scored
+      Session.getInstance().addMyScore(scored)
 
       if (this.isEndOfGame(outcomes)) {
         return this.handleGameEnd(true)
@@ -91,14 +93,14 @@ export class ThreeCushion implements Rules {
       return new Aim(this.container)
     }
 
-    this.previousBreak = this.currentBreak
-    this.currentBreak = 0
+    this.startTurn()
 
     if (this.container.isSinglePlayer) {
       this.cueball = this.otherPlayersCueBall()
-      this.container.table.cue.aim.i = this.container.table.balls.indexOf(
-        this.cueball
-      )
+      const cue = this.container.table.cue
+      if (cue) {
+        cue.aim.i = this.container.table.balls.indexOf(this.cueball)
+      }
       return new Aim(this.container)
     }
 
