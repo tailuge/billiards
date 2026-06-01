@@ -2,16 +2,70 @@
 <html>
 <head>
     <title>Physics Worker Test</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
     <style>
-        body { font-family: monospace; background: #111; color: #eee; padding: 20px; }
-        #output { white-space: pre-wrap; background: #222; padding: 10px; border: 1px solid #444; margin-top: 10px; height: 400px; overflow-y: scroll; }
-        button { padding: 10px; cursor: pointer; }
+        body { font-family: monospace; background: #111; color: #eee; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        #output { white-space: pre-wrap; background: #222; padding: 10px; border: 1px solid #444; margin-top: 10px; height: 400px; overflow-y: scroll; font-size: 12px; }
+        button { padding: 10px; cursor: pointer; background: #444; color: #fff; border: 1px solid #666; }
+        button:hover { background: #555; }
+        .guide { margin-top: 40px; padding: 20px; background: #1a1a1a; border-left: 4px solid #007acc; }
+        h2 { color: #007acc; }
+        code { background: #333; padding: 2px 4px; border-radius: 4px; color: #ff79c6; }
+        pre { background: #282a36; padding: 15px; border-radius: 8px; overflow-x: auto; color: #f8f8f2; }
     </style>
 </head>
 <body>
     <h1>Physics Worker Test</h1>
     <button id="runSim">Run Simulation</button>
     <div id="output">Results will appear here...</div>
+
+    <div class="guide">
+        <h2>🤖 LLM Agent Usage Guide</h2>
+        <p>This page demonstrates how to use the <strong>Standalone Physics Worker</strong> for the Billiards engine. It is designed to be easily incorporated into external web applications or tools managed by AI agents.</p>
+
+        <h3>1. Include the Worker</h3>
+        <p>Ensure <code>physics_worker.js</code> is available in your distribution. You can instantiate it as a standard Web Worker:</p>
+        <pre>const worker = new Worker('physics_worker.js');</pre>
+
+        <h3>2. Input Specification (SimulationConfig)</h3>
+        <p>Send a message to the worker with the following structure:</p>
+        <pre>{
+  "ruleType": "threecushion", // "threecushion" or "nineball" (sets geometry/pockets)
+  "balls": [
+    { "id": 0, "pos": { "x": -0.5, "y": 0, "z": 0 } } // Required: id and pos {x, y, z}
+  ],
+  "cushionModel": "mathavan",   // "mathavan" or "han"
+  "shot": {
+    "cueBallId": 0,
+    "angle": 0,                // Radians
+    "power": 0.5,              // Magnitude
+    "offset": { "x": 0, "y": 0 }, // Spin offset (-0.3 to 0.3)
+    "elevation": 0             // Cue tilt in radians
+  },
+  "stepSize": 0.01,            // Physics timestep
+  "maxIterations": 10          // Safety limit for the loop
+}</pre>
+
+        <h3>3. Output Specification (SIM_COMPLETE)</h3>
+        <p>The worker responds with a raw JSON object:</p>
+        <pre>{
+  "type": "SIM_COMPLETE",
+  "computeTime": "15ms",
+  "frames": [
+    {
+      "t": 10,
+      "balls": [{ "id": 0, "pos": [x,y,z], "rvel": [wx,wy,wz], "state": "Sliding" }]
+    }
+  ],
+  "outcomes": [
+    { "type": "Collision", "ballA": 0, "ballB": 1, "speed": 5.2, "t": 250 }
+  ]
+}</pre>
+
+        <h3>4. Attribution</h3>
+        <p>If you use this physics utility in your project, kindly include a link back to the original repository: <br>
+        <a href="https://github.com/tailuge/billiards" style="color: #50fa7b;">https://github.com/tailuge/billiards</a></p>
+    </div>
 
     <script>
         const runBtn = document.getElementById('runSim');
