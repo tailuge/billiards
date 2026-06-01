@@ -1,115 +1,166 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Physics Worker Test</title>
+    <title>web worker integration example</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
     <style>
-        body { font-family: monospace; background: #111; color: #eee; padding: 20px; max-width: 1200px; margin: 0 auto; font-size: 12px; }
-        #output { white-space: pre-wrap; background: #222; padding: 10px; border: 1px solid #444; margin-top: 10px; height: 300px; overflow-y: scroll; font-size: 11px; }
-        button { padding: 8px; cursor: pointer; background: #444; color: #fff; border: 1px solid #666; font-size: 12px; }
+        body { font-family: monospace; background: #111; color: #eee; padding: 10px; max-width: 1400px; margin: 0 auto; font-size: 10px; }
+        #controls { margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; }
+        #inputJson { background: #222; color: #eee; border: 1px solid #444; padding: 5px; height: 200px; width: 100%; font-size: 10px; font-family: monospace; }
+        .results-container { display: flex; gap: 10px; margin-top: 10px; }
+        #output { white-space: pre-wrap; background: #222; padding: 10px; border: 1px solid #444; width: 300px; height: 400px; overflow-y: scroll; font-size: 9px; }
+        #plotCanvas { background: #000; border: 1px solid #444; flex-grow: 1; height: 400px; }
+        button { padding: 5px; cursor: pointer; background: #444; color: #fff; border: 1px solid #666; font-size: 10px; align-self: flex-start; }
         button:hover { background: #555; }
-        .guide { margin-top: 30px; padding: 15px; background: #1a1a1a; border-left: 4px solid #007acc; font-size: 12px; }
-        h1 { font-size: 18px; }
-        h2 { color: #007acc; font-size: 16px; }
-        h3 { font-size: 14px; margin-bottom: 5px; }
-        p { margin: 5px 0; }
-        code { background: #333; padding: 2px 4px; border-radius: 4px; color: #ff79c6; font-size: 11px; }
-        pre { background: #282a36; padding: 10px; border-radius: 8px; overflow-x: auto; color: #f8f8f2; font-size: 11px; margin: 5px 0; }
+        .guide { margin-top: 20px; padding: 10px; background: #1a1a1a; border-left: 4px solid #007acc; font-size: 10px; }
+        h1 { font-size: 14px; margin: 0 0 10px 0; }
+        h2 { color: #007acc; font-size: 12px; margin: 5px 0; }
+        h3 { font-size: 11px; margin: 5px 0; }
+        p { margin: 2px 0; }
+        code { background: #333; padding: 1px 2px; border-radius: 4px; color: #ff79c6; font-size: 9px; }
+        pre { background: #282a36; padding: 5px; border-radius: 4px; overflow-x: auto; color: #f8f8f2; font-size: 9px; margin: 2px 0; }
     </style>
 </head>
 <body>
-    <h1>Physics Worker Test</h1>
-    <button id="runSim">Run Simulation</button>
-    <div id="output">Results will appear here...</div>
+    <h1>web worker integration example</h1>
+
+    <div id="controls">
+        <label for="inputJson">Input Specification (SimulationConfig):</label>
+        <textarea id="inputJson"></textarea>
+        <button id="runSim">Run Simulation</button>
+    </div>
+
+    <div class="results-container">
+        <div id="output">Results will appear here...</div>
+        <canvas id="plotCanvas"></canvas>
+    </div>
 
     <div class="guide">
         <h2>LLM Agent Usage Guide</h2>
-        <p>This page demonstrates how to use the <strong>Standalone Physics Worker</strong> for the Billiards engine. It is designed to be easily incorporated into external web applications or tools managed by AI agents.</p>
+        <p>This page demonstrates how to use the <strong>Standalone Physics Worker</strong>. It is designed for technical integration.</p>
 
-        <h3>1. Include the Worker</h3>
-        <p>You can instantiate the worker from the following public URL:</p>
-        <pre>const worker = new Worker('https://tailuge.github.io/billiards/dist/worker.js');</pre>
+        <h3>1. Worker URL</h3>
+        <pre>const worker = new Worker('worker.js');</pre>
 
-        <h3>2. Input Specification (SimulationConfig)</h3>
-        <p>Send a message to the worker with the following structure:</p>
-        <pre>{
-  "ruleType": "threecushion", // "threecushion" or "nineball" (sets geometry/pockets)
-  "balls": [
-    { "id": 0, "pos": { "x": -0.5, "y": 0, "z": 0 } } // Required: id and pos {x, y, z}
-  ],
-  "cushionModel": "mathavan",   // "mathavan" or "han"
-  "shot": {
-    "cueBallId": 0,
-    "angle": 0,                // Radians
-    "power": 0.5,              // Magnitude
-    "offset": { "x": 0, "y": 0 }, // Spin offset (-0.3 to 0.3)
-    "elevation": 0             // Cue tilt in radians
-  },
-  "stepSize": 0.01,            // Physics timestep
-  "maxIterations": 10          // Safety limit for the loop
-}</pre>
-
-        <h3>3. Output Specification (SIM_COMPLETE)</h3>
-        <p>The worker responds with a raw JSON object:</p>
-        <pre>{
-  "type": "SIM_COMPLETE",
-  "computeTime": "15ms",
-  "frames": [
-    {
-      "t": 10,
-      "balls": [{ "id": 0, "pos": [x,y,z], "rvel": [wx,wy,wz], "state": "Sliding" }]
-    }
-  ],
-  "outcomes": [
-    { "type": "Collision", "ballA": 0, "ballB": 1, "speed": 5.2, "t": 250 }
-  ]
-}</pre>
-
-        <h3>4. Attribution</h3>
-        <p>If you use this physics utility in your project, kindly include a link back to the original repository: <br>
-        <a href="https://github.com/tailuge/billiards" style="color: #50fa7b;">https://github.com/tailuge/billiards</a></p>
+        <h3>2. Constants Override</h3>
+        <p>Pass a <code>params</code> object in the config. Keys should match setters in <code>constants.ts</code> (e.g., <code>"mu": 0.01</code> calls <code>setmu(0.01)</code>).</p>
     </div>
 
     <script>
         const runBtn = document.getElementById('runSim');
         const output = document.getElementById('output');
+        const inputJson = document.getElementById('inputJson');
+        const canvas = document.getElementById('plotCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const defaultConfig = {
+            ruleType: "threecushion",
+            balls: [
+                { id: 0, pos: { x: -0.5, y: 0, z: 0 } },
+                { id: 1, pos: { x: 0.5, y: 0.01, z: 0 } },
+                { id: 2, pos: { x: 0, y: 0.5, z: 0 } }
+            ],
+            cushionModel: "mathavan",
+            shot: {
+                cueBallId: 0,
+                angle: 0,
+                power: 1.5,
+                offset: { x: 0.05, y: 0 },
+                elevation: 0
+            },
+            stepSize: 0.1,
+            minIterations: 1000,
+            params: {
+                "mu": 0.007,
+                "e": 0.86
+            }
+        };
+
+        inputJson.value = JSON.stringify(defaultConfig, null, 2);
+
+        function plotResults(data) {
+            const w = canvas.width = canvas.offsetWidth;
+            const h = canvas.height = canvas.offsetHeight;
+            ctx.clearRect(0, 0, w, h);
+
+            if (!data.frames || data.frames.length === 0) return;
+
+            const tableX = data.tableX || 1;
+            const tableY = data.tableY || 0.5;
+
+            // Scale to fit canvas while maintaining aspect ratio
+            const padding = 20;
+            const availableW = w - 2 * padding;
+            const availableH = h - 2 * padding;
+            const scale = Math.min(availableW / (2 * tableX), availableH / (2 * tableY));
+
+            const centerX = w / 2;
+            const centerY = h / 2;
+
+            // Draw table boundary
+            ctx.strokeStyle = '#444';
+            ctx.strokeRect(centerX - tableX * scale, centerY - tableY * scale, 2 * tableX * scale, 2 * tableY * scale);
+
+            const colors = ['#fff', '#ff0', '#f00', '#0f0', '#00f', '#f0f', '#0ff'];
+
+            // Group positions by ball ID
+            const ballPaths = {};
+            data.frames.forEach(frame => {
+                frame.balls.forEach(ball => {
+                    if (!ballPaths[ball.id]) ballPaths[ball.id] = [];
+                    ballPaths[ball.id].push(ball.pos);
+                });
+            });
+
+            // Draw paths
+            Object.keys(ballPaths).forEach((id, index) => {
+                const path = ballPaths[id];
+                ctx.beginPath();
+                ctx.strokeStyle = colors[index % colors.length];
+                ctx.lineWidth = 1;
+                path.forEach((pos, i) => {
+                    const px = centerX + pos[0] * scale;
+                    const py = centerY - pos[1] * scale; // Invert Y for canvas
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                });
+                ctx.stroke();
+
+                // Draw end position
+                const last = path[path.length - 1];
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.beginPath();
+                ctx.arc(centerX + last[0] * scale, centerY - last[1] * scale, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
 
         runBtn.onclick = () => {
             output.textContent = "Starting simulation...";
-            console.log("Starting simulation...");
+
+            let config;
+            try {
+                config = JSON.parse(inputJson.value);
+            } catch (e) {
+                output.textContent = "Invalid JSON input: " + e.message;
+                return;
+            }
 
             const worker = new Worker('worker.js');
 
             worker.onmessage = (e) => {
                 const data = e.data;
-                console.log("Received from worker:", data.type);
                 if (data.type === 'SIM_COMPLETE' || data.type === 'ERROR') {
                     output.textContent = JSON.stringify(data, null, 2);
+                    if (data.type === 'SIM_COMPLETE') {
+                        plotResults(data);
+                    }
                 }
             };
 
             worker.onerror = (e) => {
                 console.error("Worker Global Error:", e);
                 output.textContent = "Worker Global Error: Check console";
-            };
-
-            const config = {
-                ruleType: "threecushion",
-                balls: [
-                    { id: 0, pos: { x: -0.5, y: 0, z: 0 } }, // White
-                    { id: 1, pos: { x: 0.5, y: 0.01, z: 0 } }, // Yellow
-                    { id: 2, pos: { x: 0, y: 0.5, z: 0 } }    // Red
-                ],
-                cushionModel: "mathavan",
-                shot: {
-                    cueBallId: 0,
-                    angle: 0,
-                    power: 0.5,
-                    offset: { x: 0.05, y: 0 },
-                    elevation: 0
-                },
-                stepSize: 0.01,
-                maxIterations: 10
             };
 
             worker.postMessage(config);
