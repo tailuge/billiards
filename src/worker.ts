@@ -1,29 +1,52 @@
 import { Table } from "./model/table"
 import { Ball, State } from "./model/ball"
-import { mathavanAdapter, bounceHanBlend, cueStrike } from "./model/physics/physics"
+import {
+  mathavanAdapter,
+  bounceHanBlend,
+  cueStrike,
+} from "./model/physics/physics"
 import { Vector3 } from "three"
 import { TableGeometry } from "./view/tablegeometry"
 import * as Constants from "./model/physics/constants"
 
+function checkpoint(label: string, detail?: Record<string, unknown>) {
+  const msg = { type: "CHECKPOINT", label, t: performance.now(), ...detail }
+  console.log(`[worker] ${label}`, detail ?? "")
+  self.postMessage(msg)
+}
+
+checkpoint("worker.js loaded")
+
 self.onmessage = (e) => {
-  const startTime = performance.now();
+  const startTime = performance.now()
+  checkpoint("Inputs received", { configKeys: Object.keys(e.data) })
+
   try {
     const config = e.data
-    const { ruleType, balls, cushionModel, shot, stepSize = 0.1, maxIterations = 200000, minIterations = 1000, params = {} } = config
+    const {
+      ruleType,
+      balls,
+      cushionModel,
+      shot,
+      stepSize = 0.1,
+      maxIterations = 200000,
+      params = {},
+    } = config
 
     if (!balls || !shot) {
-      throw new Error("Missing required config: balls or shot");
+      throw new Error("Missing required config: balls or shot")
     }
 
     // Apply physics constant overrides
     for (const [key, value] of Object.entries(params)) {
-      const setterName = `set${key}`;
-      if (typeof (Constants as any)[setterName] === 'function') {
-        (Constants as any)[setterName](Number(value));
+      const setterName = `set${key}`
+      if (typeof (Constants as any)[setterName] === "function") {
+        ;(Constants as any)[setterName](Number(value))
       }
     }
+    checkpoint("Constants set", { params, R: Constants.R })
 
-    const R = Constants.R;
+    const R = Constants.R
 
     // Setup table geometry manually to avoid RuleFactory/heavy dependencies
     if (ruleType === "threecushion") {
@@ -41,11 +64,19 @@ self.onmessage = (e) => {
       TableGeometry.Y = TableGeometry.tableY + R
       TableGeometry.hasPockets = true
     }
+    checkpoint("Table geometry set", {
+      ruleType,
+      tableX: TableGeometry.tableX,
+      tableY: TableGeometry.tableY,
+    })
 
     // Initialize balls
     const ballInstances = balls.map((b: any) => {
-      const ball = new Ball(new Vector3(b.pos.x, b.pos.y, b.pos.z), 0xffffff, b.id)
-      ball.id = b.id
+      const ball = new Ball(
+        new Vector3(b.pos.x, b.pos.y, b.pos.z),
+        0xffffff,
+        b.id
+      )
       return ball
     })
 
@@ -58,52 +89,83 @@ self.onmessage = (e) => {
       table.cushionModel = bounceHanBlend
     }
 
-    table.cueball = table.balls.find(b => b.id === shot.cueBallId) || table.balls[0]
+    table.cueball =
+      table.balls.find((b) => b.id === shot.cueBallId) || table.balls[0]
 
     // Headless hit logic
     table.time = 0
     const offset = new Vector3(shot.offset.x, shot.offset.y, 0)
-    const strike = cueStrike(shot.angle, shot.power, offset, shot.elevation || 0)
+    const strike = cueStrike(
+      shot.angle,
+      shot.power,
+      offset,
+      shot.elevation || 0
+    )
     table.cueball.state = State.Sliding
     table.cueball.vel.copy(strike.vel)
     table.cueball.rvel.copy(strike.rvel)
+    checkpoint("Strike applied", {
+      vel: [strike.vel.x, strike.vel.y, strike.vel.z],
+    })
 
     const frames: any[] = []
     let iterations = 0
+    const progressInterval = 10000
 
     // Simulation loop
-    while ((iterations < minIterations || !table.allStationary()) && iterations < maxIterations) {
+    while (
+      !table.allStationary() &&
+      iterations < maxIterations
+    ) {
       table.advance(stepSize)
 
       frames.push({
         t: table.time,
-        balls: table.balls.map(b => ({
+        balls: table.balls.map((b) => ({
           id: b.id,
           pos: [b.pos.x, b.pos.y, b.pos.z],
           rvel: [b.rvel.x, b.rvel.y, b.rvel.z],
-          state: b.state
-        }))
+          state: b.state,
+        })),
       })
 
       iterations++
+
+      if (iterations % progressInterval === 0) {
+        checkpoint("Iteration progress", { iterations, t: table.time })
+      }
     }
 
-    const endTime = performance.now();
-    self.postMessage({
+    checkpoint("Simulation loop complete", {
+      totalIterations: iterations,
+      simTime: table.time,
+    })
+
+    const endTime = performance.now()
+    const result = {
       type: "SIM_COMPLETE",
       computeTime: `${Math.round(endTime - startTime)}ms`,
       tableX: TableGeometry.tableX,
       tableY: TableGeometry.tableY,
       frames,
-      outcomes: table.outcome.map(o => ({
+      outcomes: table.outcome.map((o) => ({
         type: o.type,
         ballA: o.ballA?.id,
         ballB: o.ballB?.id,
         speed: o.incidentSpeed,
-        t: o.timestamp
-      }))
-    })
+        t: o.timestamp,
+      })),
+    }
+    console.log(
+      `[worker] SIM_COMPLETE computeTime=${result.computeTime} frames=${frames.length}`
+    )
+    self.postMessage(result)
   } catch (error: any) {
-    self.postMessage({ type: "ERROR", error: error.message, stack: error.stack })
+    console.error(`[worker] ERROR`, error)
+    self.postMessage({
+      type: "ERROR",
+      error: error.message,
+      stack: error.stack,
+    })
   }
 }
