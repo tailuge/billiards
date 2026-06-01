@@ -1,19 +1,34 @@
 import { Table } from "../model/table"
-import { Ball } from "../model/ball"
-import { AimEvent } from "../events/aimevent"
-import { mathavanAdapter, bounceHanBlend } from "../model/physics/physics"
+import { Ball, State } from "../model/ball"
+import { mathavanAdapter, bounceHanBlend, cueStrike } from "../model/physics/physics"
 import { Vector3 } from "three"
-import { RuleFactory } from "../controller/rules/rulefactory"
+import { TableGeometry } from "../view/tablegeometry"
+import { R } from "../model/physics/constants"
 
 self.onmessage = (e) => {
   try {
     const config = e.data
     const { ruleType, balls, cushionModel, shot, stepSize = 0.001953125, maxIterations = 200000 } = config
 
-    // Setup rules and table geometry
-    const rules = RuleFactory.create(ruleType || "nineball", null);
-    if (rules.tableGeometry) {
-      rules.tableGeometry();
+    if (!balls || !shot) {
+      throw new Error("Missing required config: balls or shot");
+    }
+
+    // Setup table geometry manually to avoid RuleFactory/heavy dependencies
+    if (ruleType === "threecushion") {
+      const UMB_TABLE_X = 92.36
+      const UMB_TABLE_Y = 46.18
+      TableGeometry.tableX = R * (UMB_TABLE_X / 2 - 1)
+      TableGeometry.tableY = R * (UMB_TABLE_Y / 2 - 1)
+      TableGeometry.X = TableGeometry.tableX + R
+      TableGeometry.Y = TableGeometry.tableY + R
+      TableGeometry.hasPockets = false
+    } else {
+      TableGeometry.tableX = R * 43
+      TableGeometry.tableY = R * 21
+      TableGeometry.X = TableGeometry.tableX + R
+      TableGeometry.Y = TableGeometry.tableY + R
+      TableGeometry.hasPockets = true
     }
 
     // Initialize balls
@@ -32,18 +47,15 @@ self.onmessage = (e) => {
       table.cushionModel = bounceHanBlend
     }
 
-    // Setup shot
-    const aim = new AimEvent()
-    aim.angle = shot.angle
-    aim.power = shot.power
-    aim.offset = new Vector3(shot.offset.x, shot.offset.y, 0)
-    aim.elevation = shot.elevation || 0
-
-    table.cue.aim = aim
     table.cueball = table.balls.find(b => b.id === shot.cueBallId) || table.balls[0]
 
-    // Execute hit
-    table.hit()
+    // Headless hit logic
+    table.time = 0
+    const offset = new Vector3(shot.offset.x, shot.offset.y, 0)
+    const strike = cueStrike(shot.angle, shot.power, offset, shot.elevation || 0)
+    table.cueball.state = State.Sliding
+    table.cueball.vel.copy(strike.vel)
+    table.cueball.rvel.copy(strike.rvel)
 
     const frames: any[] = []
     let iterations = 0

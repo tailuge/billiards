@@ -19,11 +19,13 @@
 
         runBtn.onclick = () => {
             output.textContent = "Starting simulation...";
+            console.log("Starting simulation...");
 
             const worker = new Worker('physics_worker.js');
 
             worker.onmessage = (e) => {
                 const data = e.data;
+                console.log("Received from worker:", data.type);
                 if (data.type === 'SIM_COMPLETE') {
                     output.textContent = JSON.stringify({
                         framesCount: data.frames.length,
@@ -34,6 +36,11 @@
                 } else if (data.type === 'ERROR') {
                     output.textContent = "Worker Error: " + data.error + "\n" + data.stack;
                 }
+            };
+
+            worker.onerror = (e) => {
+                console.error("Worker Global Error:", e);
+                output.textContent = "Worker Global Error: Check console";
             };
 
             const config = {

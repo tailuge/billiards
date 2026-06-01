@@ -21,8 +21,8 @@ interface Pair {
 
 export class Table {
   balls: Ball[]
-  cue = new Cue()
-  proximityIndicator = new ProximityIndicator()
+  cue: Cue | undefined
+  proximityIndicator: ProximityIndicator | undefined
   proximityEnabled = false
   pairs: Pair[]
   outcome: Outcome[] = []
@@ -34,6 +34,10 @@ export class Table {
   constructor(balls: Ball[]) {
     this.cueball = balls[0]
     this.initialiseBalls(balls)
+    if (typeof document !== "undefined") {
+      this.cue = new Cue()
+      this.proximityIndicator = new ProximityIndicator()
+    }
   }
 
   initialiseBalls(balls: Ball[]) {
@@ -70,7 +74,7 @@ export class Table {
       a.update(t)
       a.fround()
     })
-    if (this.proximityEnabled) {
+    if (this.proximityEnabled && this.proximityIndicator) {
       checkProximity(
         this.outcome,
         this.cueball,
@@ -160,20 +164,21 @@ export class Table {
 
   hit() {
     this.time = 0
-    this.cue.hit(this.cueball)
+    this.cue?.hit(this.cueball)
     this.balls.forEach((b) => {
-      b.ballmesh.trace.reset()
+      b.ballmesh?.trace.reset()
     })
   }
 
   serialise() {
     return {
       balls: this.balls.map((b) => b.serialise()),
-      aim: this.cue.aim.copy(),
+      aim: this.cue?.aim.copy(),
     }
   }
 
   serialiseHit() {
+    if (!this.cue) return null
     const aim = this.cue.aim.copy()
     aim.pos.copy(this.cueball.pos)
 
@@ -193,7 +198,7 @@ export class Table {
     if (data.balls) {
       data.balls.forEach((b) => Ball.updateFromSerialised(this.balls[b.id], b))
     }
-    if (data.aim) {
+    if (data.aim && this.cue) {
       this.cue.aim = AimEvent.fromJson(data.aim)
     }
   }
@@ -217,29 +222,37 @@ export class Table {
 
   addToScene(scene) {
     this.balls.forEach((b) => {
-      b.ballmesh.addToScene(scene)
+      b.ballmesh?.addToScene(scene)
     })
-    scene.add(this.cue.mesh)
-    scene.add(this.cue.helperMesh)
-    scene.add(this.cue.placerMesh)
-    scene.add(this.cue.shadowMesh)
-    scene.add(this.proximityIndicator.group)
+    if (this.cue) {
+      scene.add(this.cue.mesh)
+      scene.add(this.cue.helperMesh)
+      scene.add(this.cue.placerMesh)
+      scene.add(this.cue.shadowMesh)
+    }
+    if (this.proximityIndicator) {
+      scene.add(this.proximityIndicator.group)
+    }
   }
 
   showTraces(bool) {
     this.balls.forEach((b) => {
-      b.ballmesh.trace.line.visible = bool
-      b.ballmesh.trace.reset()
+      if (b.ballmesh) {
+        b.ballmesh.trace.line.visible = bool
+        b.ballmesh.trace.reset()
+      }
     })
   }
 
   freezeTraces(scene) {
-    this.balls.forEach((b) => b.ballmesh.freezeTrace(scene))
+    this.balls.forEach((b) => b.ballmesh?.freezeTrace(scene))
   }
 
   showSpin(bool) {
     this.balls.forEach((b) => {
-      b.ballmesh.spinAxisArrow.visible = bool
+      if (b.ballmesh) {
+        b.ballmesh.spinAxisArrow.visible = bool
+      }
     })
   }
 

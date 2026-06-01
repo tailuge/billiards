@@ -28,6 +28,9 @@ export class ProximityIndicator {
   private minDistance: number = Infinity
 
   constructor() {
+    if (typeof document === "undefined") {
+      return
+    }
     this.group.position.z = -0.97 * R // Near table bed
     this.group.visible = false
 
