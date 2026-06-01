@@ -18,55 +18,44 @@
         const output = document.getElementById('output');
 
         runBtn.onclick = () => {
-            console.log("Button clicked");
             output.textContent = "Starting simulation...";
 
-            try {
-                // Use the bundled worker script
-                const worker = new Worker('physics_worker.js');
+            const worker = new Worker('physics_worker.js');
 
-                worker.onmessage = (e) => {
-                    console.log("Main thread received", e.data);
-                    const data = e.data;
-                    if (data.type === 'SIM_COMPLETE') {
-                        output.textContent = JSON.stringify({
-                            framesCount: data.frames.length,
-                            lastFrame: data.frames[data.frames.length - 1],
-                            outcomes: data.outcomes
-                        }, null, 2);
-                    } else if (data.type === 'ERROR') {
-                        output.textContent = "Worker Error: " + data.error + "\n" + data.stack;
-                    }
-                };
+            worker.onmessage = (e) => {
+                const data = e.data;
+                if (data.type === 'SIM_COMPLETE') {
+                    output.textContent = JSON.stringify({
+                        framesCount: data.frames.length,
+                        firstFrame: data.frames[0],
+                        lastFrame: data.frames[data.frames.length - 1],
+                        outcomes: data.outcomes
+                    }, null, 2);
+                } else if (data.type === 'ERROR') {
+                    output.textContent = "Worker Error: " + data.error + "\n" + data.stack;
+                }
+            };
 
-                worker.onerror = (e) => {
-                    console.error("Worker error event", e);
-                    output.textContent = "Worker Error Event: " + e.message;
-                };
+            const config = {
+                ruleType: "threecushion",
+                balls: [
+                    { id: 0, pos: { x: -0.5, y: 0, z: 0 } }, // White
+                    { id: 1, pos: { x: 0.5, y: 0.01, z: 0 } }, // Yellow
+                    { id: 2, pos: { x: 0, y: 0.5, z: 0 } }    // Red
+                ],
+                cushionModel: "mathavan",
+                shot: {
+                    cueBallId: 0,
+                    angle: 0,
+                    power: 5,
+                    offset: { x: 0.05, y: 0 },
+                    elevation: 0.1
+                },
+                stepSize: 0.01,
+                maxIterations: 1000
+            };
 
-                const config = {
-                    balls: [
-                        { id: 0, pos: { x: -0.5, y: 0, z: 0 }, color: 0xffffff }, // Cue ball
-                        { id: 1, pos: { x: 0.5, y: 0.01, z: 0 }, color: 0xff0000 }  // Red ball
-                    ],
-                    cushionModel: "mathavan",
-                    shot: {
-                        cueBallId: 0,
-                        angle: 0,
-                        power: 5,
-                        offset: { x: 0.05, y: 0 },
-                        elevation: 0.1
-                    },
-                    stepSize: 0.01,
-                    maxIterations: 1000
-                };
-
-                console.log("Posting message to worker");
-                worker.postMessage(config);
-            } catch (err) {
-                console.error("Sync error", err);
-                output.textContent = "Sync Error: " + err.message;
-            }
+            worker.postMessage(config);
         };
     </script>
 </body>
