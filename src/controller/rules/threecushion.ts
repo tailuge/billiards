@@ -83,7 +83,7 @@ export class ThreeCushion implements Rules {
       this.container.sound.playSuccess(outcomes.length / 3)
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
       this.currentBreak++
-      Session.getInstance().addMyScore(1)
+      Session.getInstance().addMyScore(this.getAmountScored(outcomes))
 
       if (this.isEndOfGame(outcomes)) {
         return this.handleGameEnd(true)
@@ -145,7 +145,10 @@ export class ThreeCushion implements Rules {
   }
 
   getAmountScored(outcome: Outcome[]): number {
-    return Outcome.isThreeCushionPoint(this.cueball, outcome) ? 1 : 0
+    if (!Outcome.isThreeCushionPoint(this.cueball, outcome)) {
+      return 0
+    }
+    return Outcome.getProximityScore(this.cueball, outcome) || 1
   }
 
   respot(_outcome: Outcome[]): Ball[] {
