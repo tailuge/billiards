@@ -135,6 +135,23 @@
             });
         }
 
+        const worker = new Worker('worker.js');
+
+        worker.onmessage = (e) => {
+            const data = e.data;
+            if (data.type === 'SIM_COMPLETE' || data.type === 'ERROR') {
+                output.textContent = JSON.stringify(data, null, 2);
+                if (data.type === 'SIM_COMPLETE') {
+                    plotResults(data);
+                }
+            }
+        };
+
+        worker.onerror = (e) => {
+            console.error("Worker Global Error:", e);
+            output.textContent = "Worker Global Error: Check console";
+        };
+
         runBtn.onclick = () => {
             output.textContent = "Starting simulation...";
 
@@ -145,23 +162,6 @@
                 output.textContent = "Invalid JSON input: " + e.message;
                 return;
             }
-
-            const worker = new Worker('worker.js');
-
-            worker.onmessage = (e) => {
-                const data = e.data;
-                if (data.type === 'SIM_COMPLETE' || data.type === 'ERROR') {
-                    output.textContent = JSON.stringify(data, null, 2);
-                    if (data.type === 'SIM_COMPLETE') {
-                        plotResults(data);
-                    }
-                }
-            };
-
-            worker.onerror = (e) => {
-                console.error("Worker Global Error:", e);
-                output.textContent = "Worker Global Error: Check console";
-            };
 
             worker.postMessage(config);
         };
