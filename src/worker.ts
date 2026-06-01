@@ -3,17 +3,27 @@ import { Ball, State } from "./model/ball"
 import { mathavanAdapter, bounceHanBlend, cueStrike } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { TableGeometry } from "./view/tablegeometry"
-import { R } from "./model/physics/constants"
+import * as Constants from "./model/physics/constants"
 
 self.onmessage = (e) => {
   const startTime = performance.now();
   try {
     const config = e.data
-    const { ruleType, balls, cushionModel, shot, stepSize = 0.001953125, maxIterations = 200000 } = config
+    const { ruleType, balls, cushionModel, shot, stepSize = 0.1, maxIterations = 200000, minIterations = 1000, params = {} } = config
 
     if (!balls || !shot) {
       throw new Error("Missing required config: balls or shot");
     }
+
+    // Apply physics constant overrides
+    for (const [key, value] of Object.entries(params)) {
+      const setterName = `set${key}`;
+      if (typeof (Constants as any)[setterName] === 'function') {
+        (Constants as any)[setterName](Number(value));
+      }
+    }
+
+    const R = Constants.R;
 
     // Setup table geometry manually to avoid RuleFactory/heavy dependencies
     if (ruleType === "threecushion") {
@@ -62,7 +72,7 @@ self.onmessage = (e) => {
     let iterations = 0
 
     // Simulation loop
-    while (!table.allStationary() && iterations < maxIterations) {
+    while ((iterations < minIterations || !table.allStationary()) && iterations < maxIterations) {
       table.advance(stepSize)
 
       frames.push({
@@ -82,6 +92,8 @@ self.onmessage = (e) => {
     self.postMessage({
       type: "SIM_COMPLETE",
       computeTime: `${Math.round(endTime - startTime)}ms`,
+      tableX: TableGeometry.tableX,
+      tableY: TableGeometry.tableY,
       frames,
       outcomes: table.outcome.map(o => ({
         type: o.type,
