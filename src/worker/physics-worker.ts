@@ -69,7 +69,8 @@ self.onmessage = (e) => {
         balls: table.balls.map(b => ({
           id: b.id,
           pos: [b.pos.x, b.pos.y, b.pos.z],
-          rvel: [b.rvel.x, b.rvel.y, b.rvel.z]
+          rvel: [b.rvel.x, b.rvel.y, b.rvel.z],
+          state: b.state
         }))
       })
 

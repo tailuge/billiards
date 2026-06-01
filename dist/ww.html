@@ -26,15 +26,8 @@
             worker.onmessage = (e) => {
                 const data = e.data;
                 console.log("Received from worker:", data.type);
-                if (data.type === 'SIM_COMPLETE') {
-                    output.textContent = JSON.stringify({
-                        framesCount: data.frames.length,
-                        firstFrame: data.frames[0],
-                        lastFrame: data.frames[data.frames.length - 1],
-                        outcomes: data.outcomes
-                    }, null, 2);
-                } else if (data.type === 'ERROR') {
-                    output.textContent = "Worker Error: " + data.error + "\n" + data.stack;
+                if (data.type === 'SIM_COMPLETE' || data.type === 'ERROR') {
+                    output.textContent = JSON.stringify(data, null, 2);
                 }
             };
 
@@ -54,12 +47,12 @@
                 shot: {
                     cueBallId: 0,
                     angle: 0,
-                    power: 5,
+                    power: 0.5,
                     offset: { x: 0.05, y: 0 },
-                    elevation: 0.1
+                    elevation: 0
                 },
                 stepSize: 0.01,
-                maxIterations: 1000
+                maxIterations: 10
             };
 
             worker.postMessage(config);
