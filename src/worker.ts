@@ -1,9 +1,6 @@
 import { Table } from "./model/table"
 import { Ball, State } from "./model/ball"
-import {
-  mathavanAdapter,
-  cueStrike,
-} from "./model/physics/physics"
+import { mathavanAdapter, cueStrike } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { TableGeometry } from "./view/tablegeometry"
 import * as Constants from "./model/physics/constants"
@@ -113,10 +110,7 @@ self.onmessage = (e) => {
     const progressInterval = 10000
 
     // Simulation loop
-    while (
-      !table.allStationary() &&
-      iterations < maxIterations
-    ) {
+    while (!table.allStationary() && iterations < maxIterations) {
       table.advance(stepSize)
 
       frames.push({

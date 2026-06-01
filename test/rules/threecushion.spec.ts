@@ -200,6 +200,39 @@ describe("ThreeCushion", () => {
       ]
       expect(container.rules.getAmountScored(outcome)).to.equal(1)
     })
+
+    it("returns 3/2/1 based on proximity for three-cushion point", () => {
+      const balls = container.table.balls
+      const R = require("../../src/model/physics/constants").R
+
+      const baseOutcome = [
+        Outcome.collision(balls[0], balls[1], 1),
+        Outcome.cushion(balls[0], 1),
+        Outcome.cushion(balls[0], 1),
+        Outcome.cushion(balls[0], 1),
+      ]
+
+      // <= 2R -> 3 points
+      const score3 = container.rules.getAmountScored([
+        ...baseOutcome,
+        Outcome.proximity(balls[0], balls[2], 1.5 * R, 1),
+      ])
+      expect(score3).to.equal(3)
+
+      // <= 3R -> 2 points
+      const score2 = container.rules.getAmountScored([
+        ...baseOutcome,
+        Outcome.proximity(balls[0], balls[2], 2.5 * R, 1),
+      ])
+      expect(score2).to.equal(2)
+
+      // <= 4R -> 1 point
+      const score1 = container.rules.getAmountScored([
+        ...baseOutcome,
+        Outcome.proximity(balls[0], balls[2], 3.5 * R, 1),
+      ])
+      expect(score1).to.equal(1)
+    })
   })
 
   it("ThreeCushion otherPlayersCueBall and nextCandidateBall", (done) => {

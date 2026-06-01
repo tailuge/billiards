@@ -82,7 +82,7 @@ export class BrowserContainer {
     this.practiceMode = params.has("practice")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
-      Number.parseInt(params.get("raceTo") ?? "5") || 5
+      Number.parseInt(params.get("raceTo") ?? "7") || 7
     console.log(
       `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode}`
     )
