@@ -1,9 +1,9 @@
-import { Table } from "../model/table"
-import { Ball, State } from "../model/ball"
-import { mathavanAdapter, bounceHanBlend, cueStrike } from "../model/physics/physics"
+import { Table } from "./model/table"
+import { Ball, State } from "./model/ball"
+import { mathavanAdapter, bounceHanBlend, cueStrike } from "./model/physics/physics"
 import { Vector3 } from "three"
-import { TableGeometry } from "../view/tablegeometry"
-import { R } from "../model/physics/constants"
+import { TableGeometry } from "./view/tablegeometry"
+import { R } from "./model/physics/constants"
 
 self.onmessage = (e) => {
   const startTime = performance.now();
@@ -33,7 +33,7 @@ self.onmessage = (e) => {
     }
 
     // Initialize balls
-    const ballInstances = balls.map((b) => {
+    const ballInstances = balls.map((b: any) => {
       const ball = new Ball(new Vector3(b.pos.x, b.pos.y, b.pos.z), 0xffffff, b.id)
       ball.id = b.id
       return ball

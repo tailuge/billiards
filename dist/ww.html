@@ -4,14 +4,17 @@
     <title>Physics Worker Test</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
     <style>
-        body { font-family: monospace; background: #111; color: #eee; padding: 20px; max-width: 1200px; margin: 0 auto; }
-        #output { white-space: pre-wrap; background: #222; padding: 10px; border: 1px solid #444; margin-top: 10px; height: 400px; overflow-y: scroll; font-size: 12px; }
-        button { padding: 10px; cursor: pointer; background: #444; color: #fff; border: 1px solid #666; }
+        body { font-family: monospace; background: #111; color: #eee; padding: 20px; max-width: 1200px; margin: 0 auto; font-size: 12px; }
+        #output { white-space: pre-wrap; background: #222; padding: 10px; border: 1px solid #444; margin-top: 10px; height: 300px; overflow-y: scroll; font-size: 11px; }
+        button { padding: 8px; cursor: pointer; background: #444; color: #fff; border: 1px solid #666; font-size: 12px; }
         button:hover { background: #555; }
-        .guide { margin-top: 40px; padding: 20px; background: #1a1a1a; border-left: 4px solid #007acc; }
-        h2 { color: #007acc; }
-        code { background: #333; padding: 2px 4px; border-radius: 4px; color: #ff79c6; }
-        pre { background: #282a36; padding: 15px; border-radius: 8px; overflow-x: auto; color: #f8f8f2; }
+        .guide { margin-top: 30px; padding: 15px; background: #1a1a1a; border-left: 4px solid #007acc; font-size: 12px; }
+        h1 { font-size: 18px; }
+        h2 { color: #007acc; font-size: 16px; }
+        h3 { font-size: 14px; margin-bottom: 5px; }
+        p { margin: 5px 0; }
+        code { background: #333; padding: 2px 4px; border-radius: 4px; color: #ff79c6; font-size: 11px; }
+        pre { background: #282a36; padding: 10px; border-radius: 8px; overflow-x: auto; color: #f8f8f2; font-size: 11px; margin: 5px 0; }
     </style>
 </head>
 <body>
@@ -20,12 +23,12 @@
     <div id="output">Results will appear here...</div>
 
     <div class="guide">
-        <h2>🤖 LLM Agent Usage Guide</h2>
+        <h2>LLM Agent Usage Guide</h2>
         <p>This page demonstrates how to use the <strong>Standalone Physics Worker</strong> for the Billiards engine. It is designed to be easily incorporated into external web applications or tools managed by AI agents.</p>
 
         <h3>1. Include the Worker</h3>
-        <p>Ensure <code>physics_worker.js</code> is available in your distribution. You can instantiate it as a standard Web Worker:</p>
-        <pre>const worker = new Worker('physics_worker.js');</pre>
+        <p>You can instantiate the worker from the following public URL:</p>
+        <pre>const worker = new Worker('https://tailuge.github.io/billiards/dist/worker.js');</pre>
 
         <h3>2. Input Specification (SimulationConfig)</h3>
         <p>Send a message to the worker with the following structure:</p>
@@ -75,7 +78,7 @@
             output.textContent = "Starting simulation...";
             console.log("Starting simulation...");
 
-            const worker = new Worker('physics_worker.js');
+            const worker = new Worker('worker.js');
 
             worker.onmessage = (e) => {
                 const data = e.data;
