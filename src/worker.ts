@@ -8,6 +8,7 @@ import {
 import { Vector3 } from "three"
 import { TableGeometry } from "./view/tablegeometry"
 import * as Constants from "./model/physics/constants"
+import { strongeAdapter } from "./model/physics/stronge"
 
 function checkpoint(label: string, detail?: Record<string, unknown>) {
   const msg = { type: "CHECKPOINT", label, t: performance.now(), ...detail }
@@ -86,7 +87,7 @@ self.onmessage = (e) => {
     if (cushionModel === "mathavan") {
       table.cushionModel = mathavanAdapter
     } else {
-      table.cushionModel = bounceHanBlend
+      table.cushionModel = strongeAdapter
     }
 
     table.cueball =
@@ -143,7 +144,7 @@ self.onmessage = (e) => {
 
     const endTime = performance.now()
     const result = {
-      type: "SIM_COMPLETE",
+      type: "COMPLETE",
       computeTime: `${Math.round(endTime - startTime)}ms`,
       tableX: TableGeometry.tableX,
       tableY: TableGeometry.tableY,
@@ -157,7 +158,7 @@ self.onmessage = (e) => {
       })),
     }
     console.log(
-      `[worker] SIM_COMPLETE computeTime=${result.computeTime} frames=${frames.length}`
+      `[worker] COMPLETE computeTime=${result.computeTime} frames=${frames.length}`
     )
     self.postMessage(result)
   } catch (error: any) {

@@ -213,7 +213,7 @@ worker.onmessage = (e) => {
   if (e.data.type === 'CHECKPOINT') {
     console.log('Worker checkpoint:', e.data.label);
   }
-  if (e.data.type === 'SIM_COMPLETE') {
+  if (e.data.type === 'COMPLETE') {
     const { frames, outcomes, computeTime } = e.data;
     // process results...
   }
@@ -224,7 +224,7 @@ worker.onmessage = (e) => {
 
 // Reuse the same worker for multiple simulations
 worker.postMessage(configA);
-// ...wait for SIM_COMPLETE...
+// ...wait for COMPLETE...
 worker.postMessage(configB);
 </pre
       >
@@ -242,7 +242,7 @@ worker.postMessage(configB);
           <td><code>label</code>, <code>t</code> (performance.now)</td>
         </tr>
         <tr>
-          <td><code>SIM_COMPLETE</code></td>
+          <td><code>COMPLETE</code></td>
           <td>Simulation finished</td>
           <td>
             <code>frames[]</code>, <code>outcomes[]</code>,
@@ -261,7 +261,7 @@ worker.postMessage(configB);
         <code>worker.js loaded</code> → <code>Inputs received</code> →
         <code>Constants set</code> → <code>Table geometry set</code> →
         <code>Strike applied</code> → <code>Iteration progress</code> (×N) →
-        <code>Simulation loop complete</code> → <code>SIM_COMPLETE</code>
+        <code>Simulation loop complete</code> → <code>COMPLETE</code>
       </p>
 
       <h3>4. SimulationConfig Schema</h3>
@@ -269,7 +269,7 @@ worker.postMessage(configB);
 {
   ruleType: "threecushion" | "snooker" | "eightball",
   balls: [{ id: number, pos: { x, y, z } }, ...],
-  cushionModel: "mathavan" | "han",
+  cushionModel: "mathavan" | "stronge",
   shot: {
     cueBallId: number,
     angle: number,       // radians
@@ -309,11 +309,6 @@ worker.postMessage(configB);
           <td><code>muS</code></td>
           <td>0.136</td>
           <td>Sliding friction (Han)</td>
-        </tr>
-        <tr>
-          <td><code>muC</code></td>
-          <td>0.85</td>
-          <td>Cloth-cushion friction</td>
         </tr>
         <tr>
           <td><code>rho</code></td>
@@ -429,7 +424,6 @@ worker.postMessage(configB);
         params: {
           mu: 0.007,
           muS: 0.136,
-          muC: 0.85,
           rho: 0.035,
           m: 0.23,
           R: 0.03275,
@@ -567,9 +561,9 @@ worker.postMessage(configB);
           const extras =
             Object.keys(detail).length > 0 ? " " + JSON.stringify(detail) : ""
           logMsg(`✓ ${data.label}${extras}`, "log-checkpoint")
-        } else if (data.type === "SIM_COMPLETE") {
+        } else if (data.type === "COMPLETE") {
           logMsg(
-            `✓ SIM_COMPLETE  computeTime=${data.computeTime}  frames=${data.frames.length}  outcomes=${data.outcomes.length}`,
+            `✓ COMPLETE  computeTime=${data.computeTime}  frames=${data.frames.length}  outcomes=${data.outcomes.length}`,
             "log-result"
           )
           lastResultData = data
