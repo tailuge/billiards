@@ -68,7 +68,7 @@
         color: #eee;
         border: 1px solid #444;
         padding: 5px;
-        height: 600px;
+        height: 650px;
         width: 100%;
         font-size: 10px;
         font-family: monospace;
@@ -94,7 +94,7 @@
         background: #1a1a2e;
         padding: 8px;
         border: 1px solid #444;
-        height: 300px;
+        height: 200px;
         overflow-y: scroll;
         font-size: 9px;
         color: #8be9fd;
@@ -166,7 +166,6 @@
     <div class="main-layout">
       <!-- Left panel: inputs -->
       <div class="left-panel">
-        <label for="inputJson">Input Specification (SimulationConfig):</label>
         <textarea id="inputJson"></textarea>
         <div class="btn-row">
           <button id="runSim">Run Simulation</button>
@@ -206,7 +205,7 @@
       <h3>1. Integration Pattern</h3>
       <pre>
 // Preload the worker once at page load (not per simulation)
-const worker = new Worker('worker.js');
+const worker = new Worker('https://tailuge.github.io/billiards/dist/worker.js');
 
 // Listen for checkpoint messages during init
 worker.onmessage = (e) => {
@@ -483,7 +482,7 @@ worker.postMessage(configB);
         )
 
         // Inner cushion nose line
-        ctx.strokeStyle = "#3a3"
+        ctx.strokeStyle = "#002"
         ctx.lineWidth = 1
         ctx.strokeRect(
           centerX - tableX * scale,

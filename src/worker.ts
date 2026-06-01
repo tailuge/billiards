@@ -2,7 +2,6 @@ import { Table } from "./model/table"
 import { Ball, State } from "./model/ball"
 import {
   mathavanAdapter,
-  bounceHanBlend,
   cueStrike,
 } from "./model/physics/physics"
 import { Vector3 } from "three"
@@ -29,7 +28,7 @@ self.onmessage = (e) => {
       balls,
       cushionModel,
       shot,
-      stepSize = 0.1,
+      stepSize = 0.001953125,
       maxIterations = 200000,
       params = {},
     } = config
