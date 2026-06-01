@@ -6,6 +6,7 @@ import { TableGeometry } from "../view/tablegeometry"
 import { R } from "../model/physics/constants"
 
 self.onmessage = (e) => {
+  const startTime = performance.now();
   try {
     const config = e.data
     const { ruleType, balls, cushionModel, shot, stepSize = 0.001953125, maxIterations = 200000 } = config
@@ -77,8 +78,10 @@ self.onmessage = (e) => {
       iterations++
     }
 
+    const endTime = performance.now();
     self.postMessage({
       type: "SIM_COMPLETE",
+      computeTime: `${Math.round(endTime - startTime)}ms`,
       frames,
       outcomes: table.outcome.map(o => ({
         type: o.type,
