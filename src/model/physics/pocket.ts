@@ -35,7 +35,7 @@ export class Pocket {
         ball.rvel.addScaledVector(upCross(toCentre), 7 * t * g)
       }
       if (ball.vel.dot(toCentre) < 0) {
-        ball.ballmesh.trace.forceTrace(ball.pos)
+        ball.ballmesh?.trace.forceTrace(ball.pos)
         ball.vel.x = (toCentre.x * ball.vel.length()) / 2
         ball.vel.y = (toCentre.y * ball.vel.length()) / 2
       }

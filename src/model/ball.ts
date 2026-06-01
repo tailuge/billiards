@@ -23,7 +23,7 @@ export class Ball {
   readonly vel: Vector3 = zero.clone()
   readonly rvel: Vector3 = zero.clone()
   readonly futurePos: Vector3 = zero.clone()
-  readonly ballmesh: BallMesh
+  readonly ballmesh: BallMesh | undefined
   state: State = State.Stationary
   pocket: Pocket
 
@@ -38,24 +38,26 @@ export class Ball {
     this.pos = pos.clone()
     this.label = label
     this.appearance = appearance
-    this.ballmesh = new BallMesh(
-      color || 0xeeeeee * Math.random(),
-      label,
-      appearance
-    )
+    if (typeof document !== "undefined") {
+      this.ballmesh = new BallMesh(
+        color || 0xeeeeee * Math.random(),
+        label,
+        appearance
+      )
+    }
   }
 
   update(t) {
     this.updatePosition(t)
     if (this.state == State.Falling) {
-      this.pocket.updateFall(this, t)
+      this.pocket?.updateFall(this, t)
     } else {
       this.updateVelocity(t)
     }
   }
 
   updateMesh(t) {
-    this.ballmesh.updateAll(this, t)
+    this.ballmesh?.updateAll(this, t)
   }
 
   private updatePosition(t: number) {
