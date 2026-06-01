@@ -3,18 +3,22 @@ import { Ball } from "../model/ball"
 import { AimEvent } from "../events/aimevent"
 import { mathavanAdapter, bounceHanBlend } from "../model/physics/physics"
 import { Vector3 } from "three"
-
-console.log("Worker script loaded");
+import { RuleFactory } from "../controller/rules/rulefactory"
 
 self.onmessage = (e) => {
-  console.log("Worker received message", e.data);
   try {
     const config = e.data
-    const { balls, cushionModel, shot, stepSize = 0.001953125, maxIterations = 200000 } = config
+    const { ruleType, balls, cushionModel, shot, stepSize = 0.001953125, maxIterations = 200000 } = config
+
+    // Setup rules and table geometry
+    const rules = RuleFactory.create(ruleType || "nineball", null);
+    if (rules.tableGeometry) {
+      rules.tableGeometry();
+    }
 
     // Initialize balls
     const ballInstances = balls.map((b) => {
-      const ball = new Ball(new Vector3(b.pos.x, b.pos.y, b.pos.z), b.color, b.id)
+      const ball = new Ball(new Vector3(b.pos.x, b.pos.y, b.pos.z), 0xffffff, b.id)
       ball.id = b.id
       return ball
     })
@@ -53,7 +57,6 @@ self.onmessage = (e) => {
         balls: table.balls.map(b => ({
           id: b.id,
           pos: [b.pos.x, b.pos.y, b.pos.z],
-          vel: [b.vel.x, b.vel.y, b.vel.z],
           rvel: [b.rvel.x, b.rvel.y, b.rvel.z]
         }))
       })
@@ -61,7 +64,6 @@ self.onmessage = (e) => {
       iterations++
     }
 
-    console.log("Simulation complete", frames.length);
     self.postMessage({
       type: "SIM_COMPLETE",
       frames,
@@ -74,7 +76,6 @@ self.onmessage = (e) => {
       }))
     })
   } catch (error: any) {
-    console.error("Worker Error", error);
     self.postMessage({ type: "ERROR", error: error.message, stack: error.stack })
   }
 }
