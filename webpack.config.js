@@ -7,7 +7,7 @@ module.exports = {
     mathavan: "./src/mathavan.ts",
     compare: "./src/compare.ts",
     stronge: "./src/stronge_diagram.ts",
-    physics_worker: "./src/worker/physics-worker.ts",
+    worker: "./src/worker.ts",
   },
   module: {
     rules: [
@@ -73,25 +73,25 @@ module.exports = {
         three_core: {
           test: /[\\/]node_modules[\\/]three[\\/]build[\\/]three\.core\.js/,
           name: "three_core",
-          chunks: (chunk) => chunk.name !== "physics_worker",
+          chunks: (chunk) => chunk.name !== "worker",
           priority: 30,
         },
         three_module: {
           test: /[\\/]node_modules[\\/]three[\\/]build[\\/]three\.module\.js/,
           name: "three_module",
-          chunks: (chunk) => chunk.name !== "physics_worker",
+          chunks: (chunk) => chunk.name !== "worker",
           priority: 30,
         },
         three_examples: {
           test: /[\\/]node_modules[\\/]three[\\/]examples[\\/]jsm[\\/]/,
           name: "three_examples",
-          chunks: (chunk) => chunk.name !== "physics_worker",
+          chunks: (chunk) => chunk.name !== "worker",
           priority: 30,
         },
         messaging: {
           test: /[\\/]node_modules[\\/]@tailuge[\\/]messaging[\\/]/,
           name: "messaging",
-          chunks: (chunk) => chunk.name !== "physics_worker",
+          chunks: (chunk) => chunk.name !== "worker",
           priority: 20,
         },
       },

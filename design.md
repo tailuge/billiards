@@ -11,7 +11,7 @@ This design outlines a utility to expose the existing billiards physics engine a
 Implement the simulation loop in a dedicated Web Worker that utilizes the existing `Table` and `Ball` classes. The worker will use `RuleFactory` to correctly set up table geometry and pocket existence based on the requested `ruleType`.
 
 ### Phase 2: Bundling
-Update the build configuration to produce a standalone worker bundle (`physics_worker.js`).
+Update the build configuration to produce a standalone worker bundle (`worker.js`).
 
 ### Phase 3: Verification
 Create a lightweight HTML test page (`ww.html`) to verify the end-to-end flow.
@@ -67,18 +67,18 @@ The worker returns an array of frames. Ball state is simplified to identity, pos
 
 ## Proposed Code Changes
 
-### `src/worker/physics-worker.ts` (New)
+### `src/worker.ts` (New)
 - Entry point for the worker.
 - Receives `SimulationConfig`.
-- Uses `RuleFactory` to initialize table geometry according to `ruleType`.
+- Manually initializes table geometry according to `ruleType`.
 - Initializes `Table` and applies the shot (including `elevation`).
 - Loops `advance()` until `allStationary()`.
-- Captures and sends results with simplified ball state (`id`, `pos`, `rvel`).
+- Captures and sends results with simplified ball state (`id`, `pos`, `rvel`, `state`).
 
 ### `webpack.config.js`
-- Add `physics_worker: "./src/worker/physics-worker.ts"`.
+- Add `worker: "./src/worker.ts"`.
 
 ### `dist/ww.html` (New)
 - Minimal test page in `dist/`.
-- Imports `physics_worker.js` and triggers a sample simulation.
+- Imports `worker.js` and triggers a sample simulation.
 - Prints JSON results to the screen.
