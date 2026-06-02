@@ -448,8 +448,39 @@ const nodeFriendlyWrapper = `
 `;
 
 const worker = new Worker(nodeFriendlyWrapper, { eval: true });
-</pre
-      >
+</pre>
+
+      <h3>9. High-Scale Parallelism & Search</h3>
+      <p>
+        For optimization tasks (e.g., searching for a specific shot), use the
+        multi-platform <code>ww.js</code> module. It provides a
+        <code>runBatch()</code> function that manages a worker pool and
+        aggregates results.
+      </p>
+      <pre>
+import { runBatch } from './ww.js';
+
+// Execute 3 simulations in parallel with angle variance
+const results = await runBatch(baseConfig, 3, 0.001745);
+results.forEach(res => console.log(`Outcome: ${res.outcomes.length} events`));
+</pre>
+
+      <h3>10. Headless Node.js Execution</h3>
+      <p>
+        The same logic runs in Node.js using <code>node:worker_threads</code>.
+        The <code>SimulationRunner</code> in <code>ww.js</code> automatically
+        detects the environment and polyfills the global
+        <code>self</code> context for the physics engine.
+      </p>
+      <p><strong>To run the headless batch example:</strong></p>
+      <pre>
+# From the project root
+node dist/ww-node.js
+</pre>
+      <p>
+        This is the preferred entry point for LLM agents performing large-scale
+        trajectory analysis or parameter tuning without a browser environment.
+      </p>
     </div>
 
     <script type="module">

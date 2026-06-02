@@ -1,6 +1,8 @@
 # generated js files
 dist/*.js
 !dist/lobby.js
+!dist/ww.js
+!dist/ww-node.js
 dist.tsconfig.tsbuildinfo
 
 # Logs
