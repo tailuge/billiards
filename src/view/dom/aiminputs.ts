@@ -201,8 +201,8 @@ export class AimInputs {
     this.readDimensions()
     this.container.table.cue.setSpin(
       new Vector3(
-        -(e.offsetX - this.ballWidth / 2) / this.ballWidth,
-        -(e.offsetY - this.ballHeight / 2) / this.ballHeight
+        -(e.offsetX - this.ballWidth / 2) / (this.ballWidth / 2),
+        -(e.offsetY - this.ballHeight / 2) / (this.ballHeight / 2)
       ),
       this.container.table
     )
@@ -213,8 +213,8 @@ export class AimInputs {
     const elt = this.cueTipElement?.style
     if (elt) {
       // Use percentages so the tip scales automatically with the ball
-      elt.left = ((-x + 0.5) * 100).toString() + "%"
-      elt.top = ((-y + 0.5) * 100).toString() + "%"
+      elt.left = ((-x / 2 + 0.5) * 100).toString() + "%"
+      elt.top = ((-y / 2 + 0.5) * 100).toString() + "%"
       elt.transform = "translate(-50%, -50%)"
     }
     this.showOverlap()

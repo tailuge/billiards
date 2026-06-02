@@ -142,8 +142,8 @@ export class ProximityIndicator {
     this.group.visible = true
 
     // Dynamic position relative to ball to prevent clipping under cushions
-  
-    const sFlipped = new Vector3((-pos.x),(-pos.y), 0)
+
+    const sFlipped = new Vector3(-pos.x, -pos.y, 0)
     const offset = sFlipped.multiplyScalar(R * 4)
 
     this.proximityTexts.forEach((textMesh) => {

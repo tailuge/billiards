@@ -77,24 +77,32 @@ export class Ball {
     }
   }
 
-  private addDelta(t, delta) {
+  private addDelta(t: number, delta: { v: Vector3; w: Vector3 }) {
+    // 1. Mutate by t upfront for the check, matching your existing structure
     delta.v.multiplyScalar(t)
     delta.w.multiplyScalar(t)
-    if (!this.passesZero(delta)) {
+
+    // 2. Separate logic: Let passesZero handle the check, and handle the state mutation cleanly
+    if (this.passesZero(delta)) {
+      this.setStationary()
+    } else {
       this.vel.add(delta.v)
       this.rvel.add(delta.w)
     }
   }
 
-  private passesZero(delta) {
+  private passesZero(delta: { v: Vector3; w: Vector3 }): boolean {
+    // In Sliding state: Both linear and angular friction must overcome momentum to halt.
+    // In Rolling state: Breaking traction on either side forces a transition or a halt.
     const vz = passesThroughZero(this.vel, delta.v)
     const wz = passesThroughZero(this.rvel, delta.w)
     const halts = this.state === State.Rolling ? vz || wz : vz && wz
-    if (halts && Math.abs(this.rvel.z) < 0.01) {
-      this.setStationary()
-      return true
-    }
-    return false
+
+    if (!halts) return false
+
+    // Catch vertical spin (Z-axis) overshoot dynamically.
+    // If the step size is larger than remaining angular velocity, it has spent its energy.
+    return Math.abs(this.rvel.z) <= Math.abs(delta.w.z)
   }
 
   setStationary() {

@@ -531,7 +531,21 @@
     <div id="page">
       <h1>Three cushion research</h1>
       <div class="replaydiagram">
-        <div id="hit-stats" style="position: absolute; bottom: 0; left: 0; background: rgba(0, 0, 0, 0.5); color: white; font-family: monospace; font-size: 10px; padding: 4px; pointer-events: none; z-index: 100;"></div>
+        <div
+          id="hit-stats"
+          style="
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-family: monospace;
+            font-size: 10px;
+            padding: 4px;
+            pointer-events: none;
+            z-index: 100;
+          "
+        ></div>
         <div
           class="topview"
           data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-1.305026,-0.634005,-1.434758,0.601475,-1.310215,0.685593%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.201901,%22y%22:0.221892,%22z%22:0%7D,%22angle%22:0.63687,%22power%22:2.62,%22pos%22:%7B%22x%22:-1.305026,%22y%22:-0.634005,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
@@ -628,7 +642,7 @@
       const TABLE_HALF_WIDTH = (BALL_RADIUS * UMB_TABLE_X) / 2
       const TABLE_HALF_HEIGHT = (BALL_RADIUS * UMB_TABLE_Y) / 2
       const DEFAULT_AIM_LENGTH = 86 * BALL_RADIUS
-      const OFF_CENTER_LIMIT = 0.3
+      const OFF_CENTER_LIMIT = 0.5
       const MAX_POWER = 160 * BALL_RADIUS
       const BALL_COLORS = ["#ffffff", "#ffd700", "#ef4444"]
       const DEFAULT_PRESETS_PARAM =
@@ -759,8 +773,8 @@
       function updateSpinVisualState() {
         const cueTip = document.getElementById("cueTip")
         if (!cueTip) return
-        cueTip.style.left = `${(-aimOffset.x + 0.5) * 100}%`
-        cueTip.style.top = `${(-aimOffset.y + 0.5) * 100}%`
+        cueTip.style.left = `${(-aimOffset.x / 2 + 0.5) * 100}%`
+        cueTip.style.top = `${(-aimOffset.y / 2 + 0.5) * 100}%`
         cueTip.style.transform = "translate(-50%, -50%)"
       }
 
@@ -769,9 +783,11 @@
         if (!cueBall) return
         const rect = cueBall.getBoundingClientRect()
         const spinX =
-          -(pointerEvent.clientX - rect.left - rect.width / 2) / rect.width
+          -(pointerEvent.clientX - rect.left - rect.width / 2) /
+          (rect.width / 2)
         const spinY =
-          -(pointerEvent.clientY - rect.top - rect.height / 2) / rect.height
+          -(pointerEvent.clientY - rect.top - rect.height / 2) /
+          (rect.height / 2)
         aimOffset = normalizeSpinOffset(spinX, spinY)
         updateSpinVisualState()
         updateAimParamsText()
@@ -864,7 +880,7 @@
         if (!cueBall || !cueBallEl || !objectBallEl) return ""
         const speed = aimPower.toFixed(4)
         const objX = window.getComputedStyle(objectBallEl).left
-        const parsedObjX = parseFloat(objX) -6.2
+        const parsedObjX = parseFloat(objX) - 6.2
         const overlap = (100 - Math.abs(parsedObjX)).toFixed(1)
         return `Speed: ${speed} m/s
 Spin X: ${aimOffset.x.toFixed(3)} of R

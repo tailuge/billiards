@@ -72,11 +72,7 @@ export class Spectate extends ControllerBase {
       const scores = session.orderedScoresForHud()
       this.container.updateScoreHud(scores.p1, scores.p2, session.currentBreak)
 
-      if (
-        !session.vsNotificationShown &&
-        names.p1Name &&
-        names.p2Name
-      ) {
+      if (!session.vsNotificationShown && names.p1Name && names.p2Name) {
         this.container.notifyLocal({
           type: "Info",
           title: `${names.p1Name} vs ${names.p2Name}`,

@@ -392,7 +392,10 @@ worker.postMessage(configB);
       </ul>
 
       <h3>7. Parallel Search Pattern</h3>
-      <p>Instantiate multiple workers to perform concurrent simulations. Use the <code>id</code> field to correlate out-of-order responses.</p>
+      <p>
+        Instantiate multiple workers to perform concurrent simulations. Use the
+        <code>id</code> field to correlate out-of-order responses.
+      </p>
       <pre>
 const workerCount = 4;
 const workers = Array.from({ length: workerCount }, () => new Worker('dist/worker.js'));
@@ -417,10 +420,16 @@ async function runParallel(tasks) {
 
   return Promise.all(promises);
 }
-</pre>
+</pre
+      >
 
       <h3>8. Universal Runtime Architecture (Web & Node)</h3>
-      <p>The core <code>worker.js</code> logic can be executed seamlessly in Node.js using <code>node:worker_threads</code> by injecting a tiny global polyfill wrapper. This avoids the need for environment-specific code in the physics engine.</p>
+      <p>
+        The core <code>worker.js</code> logic can be executed seamlessly in
+        Node.js using <code>node:worker_threads</code> by injecting a tiny
+        global polyfill wrapper. This avoids the need for environment-specific
+        code in the physics engine.
+      </p>
       <pre>
 // node-runner.js
 import { Worker } from 'node:worker_threads';
@@ -439,7 +448,8 @@ const nodeFriendlyWrapper = `
 `;
 
 const worker = new Worker(nodeFriendlyWrapper, { eval: true });
-</pre>
+</pre
+      >
     </div>
 
     <script>

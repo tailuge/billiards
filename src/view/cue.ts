@@ -18,7 +18,7 @@ export class Cue {
   helperMesh: Mesh
   placerMesh: Object3D
   shadowMesh: Mesh
-  readonly offCenterLimit = 0.3
+  readonly offCenterLimit = 0.5
   readonly maxPower = 160 * R
   t = 0
   hittingAnimation = false
