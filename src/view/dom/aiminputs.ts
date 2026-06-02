@@ -223,20 +223,22 @@ export class AimInputs {
   showOverlap() {
     if (this.objectBallStyle) {
       const table = this.container.table
-      const dir = unitAtAngle(table.cue.aim.angle)
-      const closest = this.overlap.getOverlapOffset(table.cueball, dir)
-      if (closest) {
-        this.readDimensions()
-        this.objectBallStyle.visibility = "visible"
-        this.objectBallStyle.left =
-          (closest.overlap * this.ballWidth) / 2 +
-          this.cueBallElement.offsetLeft +
-          "px"
-        this.objectBallStyle.backgroundColor = new Color(0, 0, 0)
-          .lerp(closest.ball.ballmesh.color, 0.5)
-          .getStyle()
-      } else {
-        this.objectBallStyle.visibility = "hidden"
+      if (table.cue) {
+        const dir = unitAtAngle(table.cue.aim.angle)
+        const closest = this.overlap.getOverlapOffset(table.cueball, dir)
+        if (closest) {
+          this.readDimensions()
+          this.objectBallStyle.visibility = "visible"
+          this.objectBallStyle.left =
+            (closest.overlap * this.ballWidth) / 2 +
+            this.cueBallElement.offsetLeft +
+            "px"
+          this.objectBallStyle.backgroundColor = new Color(0, 0, 0)
+            .lerp(closest.ball.ballmesh.color, 0.5)
+            .getStyle()
+        } else {
+          this.objectBallStyle.visibility = "hidden"
+        }
       }
     }
   }
