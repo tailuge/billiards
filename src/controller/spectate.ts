@@ -74,7 +74,6 @@ export class Spectate extends ControllerBase {
 
       if (
         !session.vsNotificationShown &&
-        !session.rematchInfo &&
         names.p1Name &&
         names.p2Name
       ) {

@@ -651,10 +651,6 @@ describe("Snooker", () => {
     expect(call).to.deep.include({
       title: "YOU WON",
       subtext: "30 - 20",
-      matchScore: `<div class="match-score-container">
-        <div class="match-score-label">MATCH SCORE</div>
-        <div class="match-score-value">Player A 1 — 0 Player B</div>
-      </div>`,
     })
 
     Session.reset()
@@ -679,10 +675,6 @@ describe("Snooker", () => {
     expect(call).to.deep.include({
       title: "YOU WON",
       subtext: "20 - 20",
-      matchScore: `<div class="match-score-container">
-        <div class="match-score-label">MATCH SCORE</div>
-        <div class="match-score-value">Player A 1 — 0 Player B</div>
-      </div>`,
     })
 
     Session.reset()

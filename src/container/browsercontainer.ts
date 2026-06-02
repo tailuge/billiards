@@ -15,7 +15,6 @@ import { Assets } from "../view/assets"
 import { SnookerConfig } from "../utils/snookerconfig"
 import { ThreeCushionConfig } from "../utils/threecushionconfig"
 import { Session } from "../network/client/session"
-import { Rematch } from "../network/client/rematch"
 import { MessageRelay } from "../network/client/messagerelay"
 import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
 import { BotRelay } from "../network/bot/botrelay"
@@ -96,7 +95,6 @@ export class BrowserContainer {
       Number.parseInt(params.get("lod") ?? "2"),
       this.first
     )
-    Session.getInstance().rematchInfo = Rematch.fromURL(params)
     console.log(Session.getInstance())
   }
 
@@ -161,26 +159,6 @@ export class BrowserContainer {
     this.messageRelay = new NchanMessageRelay(this.wss ?? undefined)
     this.container = this.createContainer(scoreReporter)
     this.container.init()
-
-    const session = Session.getInstance()
-    const rematchInfo = session.rematchInfo
-    if (rematchInfo) {
-      const getName = (uid: string) =>
-        uid === session.clientId
-          ? session.playername
-          : session.opponentName || rematchInfo.opponentName
-
-      const matchScoreText = Rematch.getMatchScoreText(session, {
-        p1Name: getName(rematchInfo.lastScores[0].userId),
-        p2Name: getName(rematchInfo.lastScores[1].userId),
-      })
-
-      this.container.notify({
-        type: "Info",
-        title: "Match Score",
-        matchScore: matchScoreText,
-      } as const)
-    }
   }
 
   onAssetsReady() {
@@ -244,7 +222,6 @@ export class BrowserContainer {
       if (
         !session.vsNotificationShown &&
         !this.botMode &&
-        !session.rematchInfo &&
         !this.spectator &&
         session.playername &&
         session.opponentName

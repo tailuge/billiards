@@ -1,5 +1,3 @@
-import { RematchInfo } from "./rematch"
-
 export class Session {
   constructor(
     public playername: string,
@@ -12,7 +10,6 @@ export class Session {
     readonly first: boolean = false
   ) {}
 
-  rematchInfo?: RematchInfo | undefined
   opponentName?: string
   opponentClientId?: string
   spectatedP1Name?: string
