@@ -18,7 +18,7 @@ export class Cue {
   helperMesh: Mesh
   placerMesh: Object3D
   shadowMesh: Mesh
-  readonly offCenterLimit = 0.5
+  readonly offCenterLimit = 0.3
   readonly maxPower = 160 * R
   t = 0
   hittingAnimation = false
@@ -254,8 +254,8 @@ export class Cue {
 
   spinOffset(aim: AimEvent = this.aim) {
     return upCross(unitAtAngle(aim.angle, this.tempVec2))
-      .multiplyScalar(aim.offset.x * R)
-      .setZ(aim.offset.y * R)
+      .multiplyScalar(aim.offset.x * 2 * R)
+      .setZ(aim.offset.y * 2 * R)
   }
 
   intersectsAnything(table: Table, aim: AimEvent = this.aim) {
