@@ -278,6 +278,20 @@
         cursor: grabbing;
       }
 
+      .collapse-toggle { display: none; }
+      .collapse-label {
+        display: block;
+        padding: 5px;
+        background: #333;
+        color: white;
+        cursor: pointer;
+        text-align: center;
+        border: 1px solid #444;
+        margin: 2px 0;
+      }
+      .collapse-content { display: none; }
+      .collapse-toggle:checked + .collapse-label + .collapse-content { display: block; }
+
       /* --- spin input styles --- */
 
       .controls-row {
@@ -595,22 +609,40 @@
           <input id="power" type="range" />
         </div>
         <div id="constants">
-          <input id="μs" type="range" />
-          <div>Mathavan <label for="μs"></label></div>
-          <input id="μw" type="range" />
-          <div>Mathavan <label for="μw"></label></div>
-          <input id="ee" type="range" />
-          <div>Cushion restitution <label for="ee"></label></div>
-          <input id="mu" type="range" />
-          <div>Han rolling friction <label for="mu"></label></div>
-          <input id="muS" type="range" />
-          <div>Han sliding friction <label for="muS"></label></div>
-          <input id="stronge_omega_ratio" type="range" />
-          <div>Stronge ω ratio <label for="stronge_omega_ratio"></label></div>
-          <input id="stronge_e_n" type="range" />
-          <div>Stronge eₙ <label for="stronge_e_n"></label></div>
-          <input id="stronge_μ" type="range" />
-          <div>Stronge μ <label for="stronge_μ"></label></div>
+          <div class="constant-group">
+            <input type="checkbox" id="mathavan-toggle" class="collapse-toggle">
+            <label for="mathavan-toggle" class="collapse-label">Mathavan</label>
+            <div class="collapse-content">
+              <input id="μs" type="range" />
+              <div>Mathavan <label for="μs"></label></div>
+              <input id="μw" type="range" />
+              <div>Mathavan <label for="μw"></label></div>
+              <input id="ee" type="range" />
+              <div>Cushion restitution <label for="ee"></label></div>
+            </div>
+          </div>
+          <div class="constant-group">
+            <input type="checkbox" id="han-toggle" class="collapse-toggle">
+            <label for="han-toggle" class="collapse-label">Han</label>
+            <div class="collapse-content">
+              <input id="mu" type="range" />
+              <div>Han rolling friction <label for="mu"></label></div>
+              <input id="muS" type="range" />
+              <div>Han sliding friction <label for="muS"></label></div>
+            </div>
+          </div>
+          <div class="constant-group">
+            <input type="checkbox" id="stronge-toggle" class="collapse-toggle">
+            <label for="stronge-toggle" class="collapse-label">Stronge</label>
+            <div class="collapse-content">
+              <input id="stronge_omega_ratio" type="range" />
+              <div>Stronge ω ratio <label for="stronge_omega_ratio"></label></div>
+              <input id="stronge_e_n" type="range" />
+              <div>Stronge eₙ <label for="stronge_e_n"></label></div>
+              <input id="stronge_μ" type="range" />
+              <div>Stronge μ <label for="stronge_μ"></label></div>
+            </div>
+          </div>
         </div>
       </div>
       <div id="table-wrap">
