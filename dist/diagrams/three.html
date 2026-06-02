@@ -859,11 +859,17 @@
 
       function hitfacts() {
         const cueBall = tableBalls[0]
-        if (!cueBall) return ""
+        const cueBallEl = document.getElementById("cueBall")
+        const objectBallEl = document.getElementById("objectBall")
+        if (!cueBall || !cueBallEl || !objectBallEl) return ""
         const speed = aimPower.toFixed(4)
-        return `Speed: ${speed}
-Spin X: ${aimOffset.x.toFixed(3)}
-Spin Y: ${aimOffset.y.toFixed(3)}`
+        const objX = window.getComputedStyle(objectBallEl).left
+        const parsedObjX = parseFloat(objX) -6.2
+        const overlap = (100 - Math.abs(parsedObjX)).toFixed(1)
+        return `Speed: ${speed} m/s
+Spin X: ${aimOffset.x.toFixed(3)} of R
+Spin Y: ${aimOffset.y.toFixed(3)} of R
+Overlap: ${overlap}%`
       }
 
       function buildBall(surface, ball) {
