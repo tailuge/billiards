@@ -3,7 +3,6 @@ import { NotificationEvent } from "../../events/notificationevent"
 import { ScoreEvent } from "../../events/scoreevent"
 import { End } from "../../controller/end"
 import { Session } from "./session"
-import { Rematch } from "./rematch"
 import { gameOverButtons } from "../../utils/gameover"
 import { VERSION } from "../../utils/version"
 import { NotificationHighBreak } from "../../view/notification"
@@ -38,11 +37,7 @@ export class MatchResultHelper {
     )
     const subtext = endSubtext ?? this.getScoreSubtext(container)
 
-    this.updateRematchInfo(container, session, rulename, amIWinner)
-
-    const hasRematch = !!session.rematchInfo
-
-    this.notifyEndState(container, amIWinner, subtext, hasRematch)
+    this.notifyEndState(container, amIWinner, subtext)
 
     const result = this.createMatchResult(rulename, session, amIWinner)
 
@@ -83,35 +78,19 @@ export class MatchResultHelper {
     return winnerIndex === playerIndex
   }
 
-  private static updateRematchInfo(
-    container: Container,
-    session: Session,
-    rulename: string,
-    amIWinner: boolean
-  ): void {
-    Rematch.update(session, rulename, amIWinner, container.isSinglePlayer)
-  }
-
   private static notifyEndState(
     container: Container,
     amIWinner: boolean,
-    subtext: string,
-    hasRematch: boolean
+    subtext: string
   ): void {
-    const session = Session.getInstance()
-    const matchScore =
-      hasRematch && session.rematchInfo
-        ? Rematch.getMatchScoreText(session, session.orderedNamesForHud())
-        : undefined
-
     if (amIWinner) {
-      this.notifyWin(container, subtext, matchScore, hasRematch)
-      this.sendLossNotification(container, matchScore, hasRematch)
+      this.notifyWin(container, subtext)
+      this.sendLossNotification(container)
     } else if (Session.isSpectator()) {
-      this.notifySpectator(container, subtext, matchScore)
+      this.notifySpectator(container, subtext)
     } else {
-      this.notifyLoss(container, subtext, matchScore, hasRematch)
-      this.sendWinNotification(container, matchScore, hasRematch)
+      this.notifyLoss(container, subtext)
+      this.sendWinNotification(container)
     }
   }
 
@@ -119,60 +98,41 @@ export class MatchResultHelper {
     return result.winner === Session.getInstance().playername
   }
 
-  private static notifyWin(
-    container: Container,
-    subtext: string,
-    matchScore: string | undefined,
-    hasRematch: boolean = false
-  ) {
+  private static notifyWin(container: Container, subtext: string) {
     container.notifyLocal({
       type: "GameOver",
       title: "YOU WON",
       subtext: subtext,
-      matchScore: matchScore,
       highBreaks: this.getHighBreaks(container),
       icon: "🏆",
       extraClass: "is-winner",
       extra: gameOverButtons.forMode(
-        container.isSinglePlayer || Session.isBotMode(),
-        hasRematch
+        container.isSinglePlayer || Session.isBotMode()
       ),
       duration: 0,
     })
   }
 
-  private static notifyLoss(
-    container: Container,
-    subtext: string,
-    matchScore: string | undefined,
-    hasRematch: boolean = false
-  ) {
+  private static notifyLoss(container: Container, subtext: string) {
     container.notifyLocal({
       type: "GameOver",
       title: "YOU LOST",
       subtext: Session.isBotMode() ? "Lostber 🦞" : subtext,
-      matchScore: matchScore,
       highBreaks: this.getHighBreaks(container),
       icon: "🥈",
       extraClass: "is-loser",
       extra: gameOverButtons.forMode(
-        container.isSinglePlayer || Session.isBotMode(),
-        hasRematch
+        container.isSinglePlayer || Session.isBotMode()
       ),
       duration: 0,
     })
   }
 
-  private static notifySpectator(
-    container: Container,
-    subtext: string,
-    matchScore: string | undefined
-  ) {
+  private static notifySpectator(container: Container, subtext: string) {
     container.notifyLocal({
       type: "GameOver",
       title: "GAME OVER",
       subtext: subtext,
-      matchScore: matchScore,
       highBreaks: this.getHighBreaks(container),
       icon: "🏆",
       extraClass: "",
@@ -181,11 +141,7 @@ export class MatchResultHelper {
     })
   }
 
-  private static sendLossNotification(
-    container: Container,
-    matchScore: string | undefined,
-    hasRematch: boolean = false
-  ) {
+  private static sendLossNotification(container: Container) {
     if (container.isSinglePlayer) return
     const session = Session.getInstance()
     const { p1, p2 } = session.orderedScoresForHud()
@@ -194,21 +150,16 @@ export class MatchResultHelper {
       new NotificationEvent({
         type: "GameOver",
         title: "YOU LOST",
-        matchScore: matchScore,
         highBreaks: this.getHighBreaks(container),
         icon: "🥈",
         extraClass: "is-loser",
-        extra: gameOverButtons.forMode(false, hasRematch),
+        extra: gameOverButtons.forMode(false),
         duration: 0,
       })
     )
   }
 
-  private static sendWinNotification(
-    container: Container,
-    matchScore: string | undefined,
-    hasRematch: boolean = false
-  ) {
+  private static sendWinNotification(container: Container) {
     if (container.isSinglePlayer) return
     const session = Session.getInstance()
     const { p1, p2 } = session.orderedScoresForHud()
@@ -217,11 +168,10 @@ export class MatchResultHelper {
       new NotificationEvent({
         type: "GameOver",
         title: "YOU WON",
-        matchScore: matchScore,
         highBreaks: this.getHighBreaks(container),
         icon: "🏆",
         extraClass: "is-winner",
-        extra: gameOverButtons.forMode(false, hasRematch),
+        extra: gameOverButtons.forMode(false),
         duration: 0,
       })
     )

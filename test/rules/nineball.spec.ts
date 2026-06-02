@@ -247,15 +247,18 @@ describe("NineBall Rules", () => {
     expect(notifySpy.mock.calls[0][0].title).to.equal("YOU WON")
   })
 
-  it("should trigger game over notification with rematch button in 2-player mode", () => {
+  it("should trigger game over notification with lobby button in 2-player mode", () => {
     container.isSinglePlayer = false
     const notifySpy = jest.spyOn(container, "notifyLocal")
     setupEndGameTable(container)
     const outcome = getEndGameOutcome(container)
     nineball.update(outcome)
     expect(notifySpy.mock.calls[0][0].type).to.equal("GameOver")
-    expect(notifySpy.mock.calls[0][0].extra).to.contain(
+    expect(notifySpy.mock.calls[0][0].extra).to.not.contain(
       'data-notification-action="rematch"'
+    )
+    expect(notifySpy.mock.calls[0][0].extra).to.contain(
+      'data-notification-action="lobby"'
     )
   })
 

@@ -1,6 +1,6 @@
 import { id } from "../utils/dom"
-import { Rematch } from "../network/client/rematch"
 import { Session } from "../network/client/session"
+import { LOBBY_URL } from "../utils/gameover"
 
 export interface NotificationHighBreak {
   score: number
@@ -250,11 +250,8 @@ export class Notification {
       case "replay":
         globalThis.location.reload()
         break
-      case "rematch":
-        Rematch.navigate(Session.getInstance())
-        break
       case "lobby":
-        Rematch.redirectToLobby()
+        globalThis.location.href = LOBBY_URL
         break
     }
   }

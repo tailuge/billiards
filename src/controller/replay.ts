@@ -12,9 +12,8 @@ import { End } from "./end"
 import { ScoreEvent } from "../events/scoreevent"
 import { ChatEvent } from "../events/chatevent"
 import { share, shorten } from "../utils/shorten"
-import { gameOverButtons } from "../utils/gameover"
 import { anglesAlign } from "../utils/three-utils"
-import { Rematch } from "../network/client/rematch"
+import { LOBBY_URL, gameOverButtons } from "../utils/gameover"
 
 export class Replay extends ControllerBase {
   override get name() {
@@ -169,7 +168,7 @@ export class Replay extends ControllerBase {
           extra: gameOverButtons.replay + " " + gameOverButtons.lobby,
         },
         0,
-        { lobby: () => Rematch.redirectToLobby() }
+        { lobby: () => (globalThis.location.href = LOBBY_URL) }
       )
       return new End(this.container)
     }
