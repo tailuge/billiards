@@ -37,7 +37,7 @@ export class MatchResultHelper {
     )
     const subtext = endSubtext ?? this.getScoreSubtext(container)
 
-    this.notifyEndState(container, amIWinner, subtext)
+    this.notifyEndState(container, rulename, amIWinner, subtext)
 
     const result = this.createMatchResult(rulename, session, amIWinner)
 
@@ -80,17 +80,18 @@ export class MatchResultHelper {
 
   private static notifyEndState(
     container: Container,
+    rulename: string,
     amIWinner: boolean,
     subtext: string
   ): void {
     if (amIWinner) {
-      this.notifyWin(container, subtext)
-      this.sendLossNotification(container)
+      this.notifyWin(container, rulename, subtext)
+      this.sendLossNotification(container, rulename)
     } else if (Session.isSpectator()) {
       this.notifySpectator(container, subtext)
     } else {
-      this.notifyLoss(container, subtext)
-      this.sendWinNotification(container)
+      this.notifyLoss(container, rulename, subtext)
+      this.sendWinNotification(container, rulename)
     }
   }
 
@@ -98,7 +99,11 @@ export class MatchResultHelper {
     return result.winner === Session.getInstance().playername
   }
 
-  private static notifyWin(container: Container, subtext: string) {
+  private static notifyWin(
+    container: Container,
+    rulename: string,
+    subtext: string
+  ) {
     container.notifyLocal({
       type: "GameOver",
       title: "YOU WON",
@@ -106,14 +111,16 @@ export class MatchResultHelper {
       highBreaks: this.getHighBreaks(container),
       icon: "🏆",
       extraClass: "is-winner",
-      extra: gameOverButtons.forMode(
-        container.isSinglePlayer || Session.isBotMode()
-      ),
+      extra: this.getGameOverButtons(container, rulename),
       duration: 0,
     })
   }
 
-  private static notifyLoss(container: Container, subtext: string) {
+  private static notifyLoss(
+    container: Container,
+    rulename: string,
+    subtext: string
+  ) {
     container.notifyLocal({
       type: "GameOver",
       title: "YOU LOST",
@@ -121,9 +128,7 @@ export class MatchResultHelper {
       highBreaks: this.getHighBreaks(container),
       icon: "🥈",
       extraClass: "is-loser",
-      extra: gameOverButtons.forMode(
-        container.isSinglePlayer || Session.isBotMode()
-      ),
+      extra: this.getGameOverButtons(container, rulename),
       duration: 0,
     })
   }
@@ -141,7 +146,7 @@ export class MatchResultHelper {
     })
   }
 
-  private static sendLossNotification(container: Container) {
+  private static sendLossNotification(container: Container, rulename: string) {
     if (container.isSinglePlayer) return
     const session = Session.getInstance()
     const { p1, p2 } = session.orderedScoresForHud()
@@ -153,13 +158,13 @@ export class MatchResultHelper {
         highBreaks: this.getHighBreaks(container),
         icon: "🥈",
         extraClass: "is-loser",
-        extra: gameOverButtons.forMode(false),
+        extra: this.getRemoteGameOverButtons(rulename),
         duration: 0,
       })
     )
   }
 
-  private static sendWinNotification(container: Container) {
+  private static sendWinNotification(container: Container, rulename: string) {
     if (container.isSinglePlayer) return
     const session = Session.getInstance()
     const { p1, p2 } = session.orderedScoresForHud()
@@ -171,9 +176,41 @@ export class MatchResultHelper {
         highBreaks: this.getHighBreaks(container),
         icon: "🏆",
         extraClass: "is-winner",
-        extra: gameOverButtons.forMode(false),
+        extra: this.getRemoteGameOverButtons(rulename),
         duration: 0,
       })
+    )
+  }
+
+  private static getGameOverButtons(
+    container: Container,
+    rulename: string
+  ): string {
+    const session = Session.getInstance()
+    const isSinglePlayer = container.isSinglePlayer || Session.isBotMode()
+    const nextTurnId =
+      session.playerIndex === 0 ? session.opponentClientId : session.clientId
+
+    return gameOverButtons.forMode(
+      isSinglePlayer,
+      session.opponentClientId,
+      session.opponentName,
+      rulename,
+      nextTurnId
+    )
+  }
+
+  private static getRemoteGameOverButtons(rulename: string): string {
+    const session = Session.getInstance()
+    const nextTurnId =
+      session.playerIndex === 0 ? session.opponentClientId : session.clientId
+
+    return gameOverButtons.forMode(
+      false,
+      session.clientId,
+      session.playername,
+      rulename,
+      nextTurnId
     )
   }
 

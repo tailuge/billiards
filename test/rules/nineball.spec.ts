@@ -249,16 +249,50 @@ describe("NineBall Rules", () => {
 
   it("should trigger game over notification with lobby button in 2-player mode", () => {
     container.isSinglePlayer = false
+    const session = Session.getInstance()
+    session.setOpponentClientId("opponent-client")
+    session.opponentName = "Opponent"
     const notifySpy = jest.spyOn(container, "notifyLocal")
     setupEndGameTable(container)
     const outcome = getEndGameOutcome(container)
     nineball.update(outcome)
     expect(notifySpy.mock.calls[0][0].type).to.equal("GameOver")
-    expect(notifySpy.mock.calls[0][0].extra).to.not.contain(
+    expect(notifySpy.mock.calls[0][0].extra).to.contain(
       'data-notification-action="rematch"'
     )
     expect(notifySpy.mock.calls[0][0].extra).to.contain(
       'data-notification-action="lobby"'
+    )
+    expect(notifySpy.mock.calls[0][0].extra).to.contain(
+      "opponentId=opponent-client"
+    )
+    expect(notifySpy.mock.calls[0][0].extra).to.contain("opponentName=Opponent")
+    expect(notifySpy.mock.calls[0][0].extra).to.contain("ruletype=nineball")
+    expect(notifySpy.mock.calls[0][0].extra).to.contain(
+      "nextTurnId=opponent-client"
+    )
+  })
+
+  it("should send rematch notification params from the recipient perspective", () => {
+    container.isSinglePlayer = false
+    const session = Session.getInstance()
+    session.setOpponentClientId("opponent-client")
+    session.opponentName = "Opponent"
+    session.playerIndex = 0
+    const sentEvents: any[] = []
+    container.broadcast = (event) => sentEvents.push(event)
+    setupEndGameTable(container)
+    const outcome = getEndGameOutcome(container)
+    nineball.update(outcome)
+    const notificationEvent = sentEvents.find((event) => event.data?.extra)
+    expect(notificationEvent.data.extra).to.contain(
+      'data-notification-action="rematch"'
+    )
+    expect(notificationEvent.data.extra).to.contain("opponentId=test-client")
+    expect(notificationEvent.data.extra).to.contain("opponentName=TestPlayer")
+    expect(notificationEvent.data.extra).to.contain("ruletype=nineball")
+    expect(notificationEvent.data.extra).to.contain(
+      "nextTurnId=opponent-client"
     )
   })
 

@@ -1,5 +1,4 @@
 import { id } from "../utils/dom"
-import { Session } from "../network/client/session"
 import { LOBBY_URL } from "../utils/gameover"
 
 export interface NotificationHighBreak {
@@ -231,11 +230,11 @@ export class Notification {
       ) as HTMLElement | null
       const action = button?.dataset.notificationAction
       if (!action) return
-      this.handleAction(action)
+      this.handleAction(action, button.dataset.notificationUrl)
     })
   }
 
-  private handleAction(action: string) {
+  private handleAction(action: string, url?: string) {
     const handler = this.actionHandlers[action]
     if (handler) {
       handler()
@@ -252,6 +251,11 @@ export class Notification {
         break
       case "lobby":
         globalThis.location.href = LOBBY_URL
+        break
+      case "rematch":
+        if (url) {
+          globalThis.location.href = url
+        }
         break
     }
   }
