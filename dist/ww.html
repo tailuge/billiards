@@ -452,7 +452,9 @@ const worker = new Worker(nodeFriendlyWrapper, { eval: true });
       >
     </div>
 
-    <script>
+    <script type="module">
+      import { runBatch } from './ww.js'
+
       const R = 0.03275
       const runBtn = document.getElementById("runSim")
       const clearLogBtn = document.getElementById("clearLog")
@@ -462,12 +464,12 @@ const worker = new Worker(nodeFriendlyWrapper, { eval: true });
       const canvas = document.getElementById("plotCanvas")
       const ctx = canvas.getContext("2d")
 
-      let lastResultData = null
+      let lastResults = null
 
       function resizeCanvas() {
         canvas.width = canvas.offsetWidth
         canvas.height = canvas.offsetHeight
-        if (lastResultData) plotResults(lastResultData)
+        if (lastResults) plotResults(lastResults)
       }
 
       window.addEventListener("resize", resizeCanvas)
@@ -516,18 +518,17 @@ const worker = new Worker(nodeFriendlyWrapper, { eval: true });
         console.log(`[ww.html] ${text}`)
       }
 
-      function plotResults(data) {
+      function plotResults(results) {
+        if (!Array.isArray(results)) results = [results]
         const w = canvas.width
         const h = canvas.height
         ctx.clearRect(0, 0, w, h)
 
-        if (!data.frames || data.frames.length === 0) return
+        if (results.length === 0) return
 
+        const data = results[0]
         const tableX = data.tableX || 1
         const tableY = data.tableY || 0.5
-
-        // Full table boundary includes +R on each side (already in tableX/tableY from worker)
-        // Draw outer boundary at tableX + R (the cushion nose line is at tableX)
         const drawX = tableX + R
         const drawY = tableY + R
 
@@ -563,99 +564,59 @@ const worker = new Worker(nodeFriendlyWrapper, { eval: true });
         )
 
         const colors = ["#fff", "#ff0", "#f00", "#0f0", "#00f", "#f0f", "#0ff"]
+        const opacities = [1.0, 0.6, 0.3]
         const ballRadius = R * scale
 
-        // Group positions by ball ID
-        const ballPaths = {}
-        data.frames.forEach((frame) => {
-          frame.balls.forEach((ball) => {
-            if (!ballPaths[ball.id]) ballPaths[ball.id] = []
-            ballPaths[ball.id].push(ball.pos)
+        results.forEach((data, resultIndex) => {
+          const globalAlpha = opacities[resultIndex % opacities.length]
+          ctx.globalAlpha = globalAlpha
+
+          // Group positions by ball ID
+          const ballPaths = {}
+          data.frames.forEach((frame) => {
+            frame.balls.forEach((ball) => {
+              if (!ballPaths[ball.id]) ballPaths[ball.id] = []
+              ballPaths[ball.id].push(ball.pos)
+            })
+          })
+
+          // Draw paths
+          Object.keys(ballPaths).forEach((id, index) => {
+            const path = ballPaths[id]
+            ctx.beginPath()
+            ctx.strokeStyle = colors[index % colors.length]
+            ctx.lineWidth = 1
+            path.forEach((pos, i) => {
+              const px = centerX + pos[0] * scale
+              const py = centerY - pos[1] * scale
+              if (i === 0) ctx.moveTo(px, py)
+              else ctx.lineTo(px, py)
+            })
+            ctx.stroke()
+
+            // Draw start/end markers only for the primary result (first one)
+            if (resultIndex === 0) {
+              const first = path[0]
+              ctx.strokeStyle = colors[index % colors.length]
+              ctx.lineWidth = 1
+              ctx.beginPath()
+              ctx.arc(centerX + first[0] * scale, centerY - first[1] * scale, ballRadius, 0, Math.PI * 2)
+              ctx.stroke()
+
+              const last = path[path.length - 1]
+              ctx.fillStyle = colors[index % colors.length]
+              ctx.beginPath()
+              ctx.arc(centerX + last[0] * scale, centerY - last[1] * scale, ballRadius, 0, Math.PI * 2)
+              ctx.fill()
+            }
           })
         })
-
-        // Draw paths
-        Object.keys(ballPaths).forEach((id, index) => {
-          const path = ballPaths[id]
-          ctx.beginPath()
-          ctx.strokeStyle = colors[index % colors.length]
-          ctx.lineWidth = 1
-          path.forEach((pos, i) => {
-            const px = centerX + pos[0] * scale
-            const py = centerY - pos[1] * scale
-            if (i === 0) ctx.moveTo(px, py)
-            else ctx.lineTo(px, py)
-          })
-          ctx.stroke()
-
-          // Draw start position as hollow circle
-          const first = path[0]
-          ctx.strokeStyle = colors[index % colors.length]
-          ctx.lineWidth = 1
-          ctx.beginPath()
-          ctx.arc(
-            centerX + first[0] * scale,
-            centerY - first[1] * scale,
-            ballRadius,
-            0,
-            Math.PI * 2
-          )
-          ctx.stroke()
-
-          // Draw end position as filled circle
-          const last = path[path.length - 1]
-          ctx.fillStyle = colors[index % colors.length]
-          ctx.beginPath()
-          ctx.arc(
-            centerX + last[0] * scale,
-            centerY - last[1] * scale,
-            ballRadius,
-            0,
-            Math.PI * 2
-          )
-          ctx.fill()
-        })
+        ctx.globalAlpha = 1.0
       }
 
-      const worker = new Worker("worker.js")
-
-      worker.onmessage = (e) => {
-        const data = e.data
-        console.log("[ww.html] worker message received:", data.type, data)
-
-        if (data.type === "CHECKPOINT") {
-          const detail = { ...data }
-          delete detail.type
-          delete detail.label
-          delete detail.t
-          const extras =
-            Object.keys(detail).length > 0 ? " " + JSON.stringify(detail) : ""
-          logMsg(`✓ ${data.label}${extras}`, "log-checkpoint")
-        } else if (data.type === "COMPLETE") {
-          logMsg(
-            `✓ COMPLETE [id=${data.id}] computeTime=${data.computeTime} frames=${data.frames.length} outcomes=${data.outcomes.length}`,
-            "log-result"
-          )
-          lastResultData = data
-          showResponseBtn.disabled = false
-          plotResults(data)
-        } else if (data.type === "ERROR") {
-          logMsg(`✗ ERROR [id=${data.id}]: ${data.error}`, "log-error")
-          if (data.stack) logMsg(data.stack, "log-error")
-        }
-      }
-
-      worker.onerror = (e) => {
-        console.error("Worker Global Error:", e)
-        logMsg(
-          `✗ Worker Global Error: ${e.message} (${e.filename}:${e.lineno})`,
-          "log-error"
-        )
-      }
-
-      runBtn.onclick = () => {
-        logMsg("--- Run clicked ---", "log-ui")
-        lastResultData = null
+      runBtn.onclick = async () => {
+        logMsg("--- Run Batch (3 Workers) ---", "log-ui")
+        lastResults = null
         showResponseBtn.disabled = true
 
         let config
@@ -666,9 +627,23 @@ const worker = new Worker(nodeFriendlyWrapper, { eval: true });
           return
         }
 
-        logMsg("Posting config to worker...", "log-ui")
-        worker.postMessage(config)
-        logMsg("postMessage sent", "log-ui")
+        logMsg("Spawning 3 workers with ±0.1° variance...", "log-ui")
+        const t0 = performance.now()
+        try {
+          const results = await runBatch(config, 3, 0.001745)
+          const t1 = performance.now()
+          logMsg(`✓ Batch complete in ${Math.round(t1 - t0)}ms`, "log-result")
+          
+          results.forEach(res => {
+             logMsg(`Sim ${res.id}: ${res.frames.length} frames`, "log-data")
+          })
+
+          lastResults = results
+          showResponseBtn.disabled = false
+          plotResults(results)
+        } catch (err) {
+          logMsg(`✗ Batch failed: ${err.message}`, "log-error")
+        }
       }
 
       clearLogBtn.onclick = () => {
@@ -676,20 +651,17 @@ const worker = new Worker(nodeFriendlyWrapper, { eval: true });
       }
 
       showResponseBtn.onclick = () => {
-        if (!lastResultData) return
-        // Slice to first 5 frames to avoid expensive stringify
-        const preview = {
-          ...lastResultData,
-          frames: lastResultData.frames.slice(0, 5),
-          _note: `Showing 5 of ${lastResultData.frames.length} frames`,
-        }
-        logMsg("--- Response Data (first 5 frames) ---", "log-ui")
-        const t0 = performance.now()
-        const text = JSON.stringify(preview, null, 2)
-        const t1 = performance.now()
-        logMsg(`Stringify took ${Math.round(t1 - t0)}ms`, "log-ui")
-        logMsg(text, "log-data")
+        if (!lastResults) return
+        const preview = lastResults.map(res => ({
+          id: res.id,
+          computeTime: res.computeTime,
+          frameCount: res.frames.length,
+          outcomes: res.outcomes
+        }))
+        logMsg("--- Batch Results Summary ---", "log-ui")
+        logMsg(JSON.stringify(preview, null, 2), "log-data")
       }
     </script>
+
   </body>
 </html>
