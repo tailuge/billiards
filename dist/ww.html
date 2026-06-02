@@ -58,7 +58,7 @@
 
       /* Left panel: inputs */
       .left-panel {
-        width: 420px;
+        width: 300px;
         flex-shrink: 0;
         display: flex;
         flex-direction: column;
@@ -464,6 +464,15 @@ const worker = new Worker(nodeFriendlyWrapper, { eval: true });
 
       let lastResultData = null
 
+      function resizeCanvas() {
+        canvas.width = canvas.offsetWidth
+        canvas.height = canvas.offsetHeight
+        if (lastResultData) plotResults(lastResultData)
+      }
+
+      window.addEventListener("resize", resizeCanvas)
+      window.addEventListener("load", resizeCanvas)
+
       const defaultConfig = {
         id: 1,
         ruleType: "threecushion",
@@ -508,8 +517,8 @@ const worker = new Worker(nodeFriendlyWrapper, { eval: true });
       }
 
       function plotResults(data) {
-        const w = (canvas.width = canvas.offsetWidth)
-        const h = (canvas.height = canvas.offsetHeight)
+        const w = canvas.width
+        const h = canvas.height
         ctx.clearRect(0, 0, w, h)
 
         if (!data.frames || data.frames.length === 0) return
