@@ -536,6 +536,7 @@
     <div id="page">
       <h1>Three cushion research</h1>
       <div class="replaydiagram">
+        <div id="hit-stats" style="position: absolute; bottom: 0; left: 0; background: rgba(0, 0, 0, 0.5); color: white; font-family: monospace; font-size: 10px; padding: 4px; pointer-events: none; z-index: 100;"></div>
         <div
           class="topview"
           data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-1.305026,-0.634005,-1.434758,0.601475,-1.310215,0.685593%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.201901,%22y%22:0.221892,%22z%22:0%7D,%22angle%22:0.63687,%22power%22:2.62,%22pos%22:%7B%22x%22:-1.305026,%22y%22:-0.634005,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
@@ -754,10 +755,10 @@
       }
 
       function updateAimParamsText() {
-        //        console.log(
-        //          `spin x=${aimOffset.x.toFixed(3)} y=${aimOffset.y.toFixed(3)}  ` +
-        //            `power=${aimPower.toFixed(3)}  angle=${aimAngle.toFixed(3)}`
-        //        )
+        const statsEl = document.getElementById("hit-stats")
+        if (statsEl) {
+          statsEl.innerText = hitfacts()
+        }
       }
 
       function normalizeSpinOffset(offsetX, offsetY) {
@@ -870,6 +871,22 @@
         topview.setAttribute("data-state", nextStateUrl)
         updateAimParamsText()
         document.getElementById("replay").click()
+      }
+
+
+      function hitfacts() {
+        const cueBall = tableBalls[0]
+        const cueBallEl = document.getElementById("cueBall")
+        const objectBallEl = document.getElementById("objectBall")
+        if (!cueBall || !cueBallEl || !objectBallEl) return ""
+        const speed = aimPower.toFixed(4)
+        const objX = window.getComputedStyle(objectBallEl).left
+        const parsedObjX = parseFloat(objX) -6.2
+        const overlap = Math.floor((100 - Math.abs(parsedObjX)).toFixed(1))
+        return `Speed: ${speed} m/s
+Spin X: ${(aimOffset.x*-1).toFixed(3)} of R
+Spin Y: ${aimOffset.y.toFixed(3)} of R
+Overlap: ${overlap}%`
       }
 
       function buildBall(surface, ball) {
