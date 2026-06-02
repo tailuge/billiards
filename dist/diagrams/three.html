@@ -524,14 +524,6 @@
         white-space: nowrap;
         border: 0;
       }
-
-      .stronge-mode .mathavan-slider {
-        display: none;
-      }
-
-      body:not(.stronge-mode) .stronge-slider {
-        display: none;
-      }
     </style>
   </head>
 
@@ -565,7 +557,7 @@
           onclick="
             location.href =
               location.href.split('?')[0] +
-              '?cushionModel=stronge&mu=0.004&muS=0.24&stronge_e_n=0.95&stronge_μ=0.16'
+              '?cushionModel=stronge&mu=0.006&muS=0.25&stronge_e_n=0.78&stronge_μ=0.3'
           "
         >
           Stronge
@@ -589,36 +581,22 @@
           <input id="power" type="range" />
         </div>
         <div id="constants">
-          <div class="mathavan-slider">
-            <input id="μs" type="range" />
-            <div>Mathavan <label for="μs"></label></div>
-          </div>
-          <div class="mathavan-slider">
-            <input id="μw" type="range" />
-            <div>Mathavan <label for="μw"></label></div>
-          </div>
-          <div class="mathavan-slider">
-            <input id="ee" type="range" />
-            <div>Cushion restitution <label for="ee"></label></div>
-          </div>
-
+          <input id="μs" type="range" />
+          <div>Mathavan <label for="μs"></label></div>
+          <input id="μw" type="range" />
+          <div>Mathavan <label for="μw"></label></div>
+          <input id="ee" type="range" />
+          <div>Cushion restitution <label for="ee"></label></div>
           <input id="mu" type="range" />
           <div>Han rolling friction <label for="mu"></label></div>
           <input id="muS" type="range" />
           <div>Han sliding friction <label for="muS"></label></div>
-
-          <div class="stronge-slider">
-            <input id="stronge_omega_ratio" type="range" />
-            <div>Stronge ω ratio <label for="stronge_omega_ratio"></label></div>
-          </div>
-          <div class="stronge-slider">
-            <input id="stronge_e_n" type="range" />
-            <div>Stronge eₙ <label for="stronge_e_n"></label></div>
-          </div>
-          <div class="stronge-slider">
-            <input id="stronge_μ" type="range" />
-            <div>Stronge μ <label for="stronge_μ"></label></div>
-          </div>
+          <input id="stronge_omega_ratio" type="range" />
+          <div>Stronge ω ratio <label for="stronge_omega_ratio"></label></div>
+          <input id="stronge_e_n" type="range" />
+          <div>Stronge eₙ <label for="stronge_e_n"></label></div>
+          <input id="stronge_μ" type="range" />
+          <div>Stronge μ <label for="stronge_μ"></label></div>
         </div>
       </div>
       <div id="table-wrap">
@@ -650,7 +628,7 @@
       const TABLE_HALF_WIDTH = (BALL_RADIUS * UMB_TABLE_X) / 2
       const TABLE_HALF_HEIGHT = (BALL_RADIUS * UMB_TABLE_Y) / 2
       const DEFAULT_AIM_LENGTH = 86 * BALL_RADIUS
-      const OFF_CENTER_LIMIT = 0.5
+      const OFF_CENTER_LIMIT = 0.3
       const MAX_POWER = 160 * BALL_RADIUS
       const BALL_COLORS = ["#ffffff", "#ffd700", "#ef4444"]
       const DEFAULT_PRESETS_PARAM =
@@ -763,6 +741,10 @@
         if (statsEl) {
           statsEl.innerText = hitfacts()
         }
+        //        console.log(
+        //          `spin x=${aimOffset.x.toFixed(3)} y=${aimOffset.y.toFixed(3)}  ` +
+        //            `power=${aimPower.toFixed(3)}  angle=${aimAngle.toFixed(3)}`
+        //        )
       }
 
       function normalizeSpinOffset(offsetX, offsetY) {
@@ -777,8 +759,8 @@
       function updateSpinVisualState() {
         const cueTip = document.getElementById("cueTip")
         if (!cueTip) return
-        cueTip.style.left = `${(-aimOffset.x * 0.5 + 0.5) * 100}%`
-        cueTip.style.top = `${(-aimOffset.y * 0.5 + 0.5) * 100}%`
+        cueTip.style.left = `${(-aimOffset.x + 0.5) * 100}%`
+        cueTip.style.top = `${(-aimOffset.y + 0.5) * 100}%`
         cueTip.style.transform = "translate(-50%, -50%)"
       }
 
@@ -787,11 +769,9 @@
         if (!cueBall) return
         const rect = cueBall.getBoundingClientRect()
         const spinX =
-          -(pointerEvent.clientX - rect.left - rect.width / 2) /
-          (rect.width / 2)
+          -(pointerEvent.clientX - rect.left - rect.width / 2) / rect.width
         const spinY =
-          -(pointerEvent.clientY - rect.top - rect.height / 2) /
-          (rect.height / 2)
+          -(pointerEvent.clientY - rect.top - rect.height / 2) / rect.height
         aimOffset = normalizeSpinOffset(spinX, spinY)
         updateSpinVisualState()
         updateAimParamsText()
@@ -877,20 +857,13 @@
         document.getElementById("replay").click()
       }
 
-
       function hitfacts() {
         const cueBall = tableBalls[0]
-        const cueBallEl = document.getElementById("cueBall")
-        const objectBallEl = document.getElementById("objectBall")
-        if (!cueBall || !cueBallEl || !objectBallEl) return ""
+        if (!cueBall) return ""
         const speed = aimPower.toFixed(4)
-        const objX = window.getComputedStyle(objectBallEl).left
-        const parsedObjX = parseFloat(objX) -6.2
-        const overlap = Math.floor((100 - Math.abs(parsedObjX)).toFixed(1))
-        return `Speed: ${speed} m/s
-Spin X: ${(aimOffset.x*-1).toFixed(3)} of R
-Spin Y: ${aimOffset.y.toFixed(3)} of R
-Overlap: ${overlap}%`
+        return `Speed: ${speed}
+Spin X: ${aimOffset.x.toFixed(3)}
+Spin Y: ${aimOffset.y.toFixed(3)}`
       }
 
       function buildBall(surface, ball) {
@@ -908,9 +881,6 @@ Overlap: ${overlap}%`
         if (!surface || !topview?.dataset.state) return
 
         const urlParams = new URLSearchParams(window.location.search)
-        if (urlParams.get("cushionModel") === "stronge") {
-          document.body.classList.add("stronge-mode")
-        }
         const diagramParams = new URLSearchParams(topview.dataset.state)
         let changed = false
 
