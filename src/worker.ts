@@ -16,7 +16,8 @@ checkpoint("worker.js loaded")
 
 self.onmessage = (e) => {
   const startTime = performance.now()
-  checkpoint("Inputs received", { configKeys: Object.keys(e.data) })
+  const { id } = e.data
+  checkpoint("Inputs received", { configKeys: Object.keys(e.data), id })
 
   try {
     const config = e.data
@@ -138,6 +139,7 @@ self.onmessage = (e) => {
     const endTime = performance.now()
     const result = {
       type: "COMPLETE",
+      id,
       computeTime: `${Math.round(endTime - startTime)}ms`,
       tableX: TableGeometry.tableX,
       tableY: TableGeometry.tableY,
@@ -158,6 +160,7 @@ self.onmessage = (e) => {
     console.error(`[worker] ERROR`, error)
     self.postMessage({
       type: "ERROR",
+      id,
       error: error.message,
       stack: error.stack,
     })
