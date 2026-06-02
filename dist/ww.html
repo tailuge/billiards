@@ -390,6 +390,56 @@ worker.postMessage(configB);
           depend on derived values.
         </li>
       </ul>
+
+      <h3>7. Parallel Search Pattern</h3>
+      <p>Instantiate multiple workers to perform concurrent simulations. Use the <code>id</code> field to correlate out-of-order responses.</p>
+      <pre>
+const workerCount = 4;
+const workers = Array.from({ length: workerCount }, () => new Worker('dist/worker.js'));
+
+async function runParallel(tasks) {
+  const promises = tasks.map((task, i) => {
+    return new Promise((resolve, reject) => {
+      const worker = workers[i % workerCount];
+      const correlationId = task.id || `task-${i}-${Date.now()}`;
+
+      const handler = (e) => {
+        if (e.data.id === correlationId && (e.data.type === 'COMPLETE' || e.data.type === 'ERROR')) {
+          worker.removeEventListener('message', handler);
+          e.data.type === 'COMPLETE' ? resolve(e.data) : reject(e.data);
+        }
+      };
+
+      worker.addEventListener('message', handler);
+      worker.postMessage({ ...task, id: correlationId });
+    });
+  });
+
+  return Promise.all(promises);
+}
+</pre>
+
+      <h3>8. Universal Runtime Architecture (Web & Node)</h3>
+      <p>The core <code>worker.js</code> logic can be executed seamlessly in Node.js using <code>node:worker_threads</code> by injecting a tiny global polyfill wrapper. This avoids the need for environment-specific code in the physics engine.</p>
+      <pre>
+// node-runner.js
+import { Worker } from 'node:worker_threads';
+
+const nodeFriendlyWrapper = `
+  const { parentPort } = require('node:worker_threads');
+  // Polyfill the Web Worker global context
+  global.self = global;
+  global.postMessage = (data) => parentPort.postMessage(data);
+  parentPort.on('message', (data) => {
+    if (global.onmessage) global.onmessage({ data });
+  });
+
+  // Load your untouched production worker
+  require('./dist/worker.js');
+`;
+
+const worker = new Worker(nodeFriendlyWrapper, { eval: true });
+</pre>
     </div>
 
     <script>
@@ -405,6 +455,7 @@ worker.postMessage(configB);
       let lastResultData = null
 
       const defaultConfig = {
+        id: 1,
         ruleType: "threecushion",
         balls: [
           { id: 0, pos: { x: -0.5, y: 0, z: 0 } },
@@ -413,7 +464,7 @@ worker.postMessage(configB);
         ],
         cushionModel: "mathavan",
         shot: {
-          cueBallId: 0,  "power": 2.5,
+          cueBallId: 0,
           angle: 0,
           power: 2.5,
           offset: { x: 0.5, y: -0.35 },
@@ -563,14 +614,14 @@ worker.postMessage(configB);
           logMsg(`✓ ${data.label}${extras}`, "log-checkpoint")
         } else if (data.type === "COMPLETE") {
           logMsg(
-            `✓ COMPLETE  computeTime=${data.computeTime}  frames=${data.frames.length}  outcomes=${data.outcomes.length}`,
+            `✓ COMPLETE [id=${data.id}] computeTime=${data.computeTime} frames=${data.frames.length} outcomes=${data.outcomes.length}`,
             "log-result"
           )
           lastResultData = data
           showResponseBtn.disabled = false
           plotResults(data)
         } else if (data.type === "ERROR") {
-          logMsg(`✗ ERROR: ${data.error}`, "log-error")
+          logMsg(`✗ ERROR [id=${data.id}]: ${data.error}`, "log-error")
           if (data.stack) logMsg(data.stack, "log-error")
         }
       }
