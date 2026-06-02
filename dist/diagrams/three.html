@@ -875,15 +875,14 @@
 
       function hitfacts() {
         const cueBall = tableBalls[0]
-        const cueBallEl = document.getElementById("cueBall")
         const objectBallEl = document.getElementById("objectBall")
-        if (!cueBall || !cueBallEl || !objectBallEl) return ""
-        const speed = aimPower.toFixed(4)
+        if (!cueBall || !objectBallEl) return ""
+        const speed = aimPower.toFixed(3)
         const objX = window.getComputedStyle(objectBallEl).left
         const parsedObjX = parseFloat(objX) - 6.2
         const overlap = (100 - Math.abs(parsedObjX)).toFixed(1)
         return `Speed: ${speed} m/s
-Spin X: ${aimOffset.x.toFixed(3)} of R
+Spin X: ${(aimOffset.x*-1).toFixed(3)} of R
 Spin Y: ${aimOffset.y.toFixed(3)} of R
 Overlap: ${overlap}%`
       }
@@ -1172,6 +1171,17 @@ Overlap: ${overlap}%`
             window.history.replaceState(null, "", window.location.pathname)
           }
         }, 1)
+
+        const objectBallTarget = document.getElementById("objectBall")
+        if (objectBallTarget) {
+          const observer = new MutationObserver(() => {
+            updateAimParamsText()
+          })
+          observer.observe(objectBallTarget, {
+            attributes: true,
+            attributeFilter: ["style"],
+          })
+        }
       }
 
       function loadPresets() {
