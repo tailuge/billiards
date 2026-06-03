@@ -168,8 +168,8 @@ export class Cue {
     if (this.cueBody) {
       this.cueBody.position.set(
         -this.length / 2 - R + strokeX,
-        this.aim.offset.x * 2 * R,
-        Math.max(-0.5 * R, strokeZ + this.aim.offset.y * 2 * R)
+        this.aim.offset.x  * R,
+        Math.max(-0.5 * R, strokeZ + this.aim.offset.y * R)
       )
     }
 
@@ -262,8 +262,8 @@ export class Cue {
 
   spinOffset(aim: AimEvent = this.aim) {
     return upCross(unitAtAngle(aim.angle, this.tempVec2))
-      .multiplyScalar(aim.offset.x * 2 * R)
-      .setZ(aim.offset.y * 2 * R)
+      .multiplyScalar(aim.offset.x * R)
+      .setZ(aim.offset.y * R)
   }
 
   intersectsAnything(table: Table, aim: AimEvent = this.aim) {
