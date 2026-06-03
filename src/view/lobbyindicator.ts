@@ -262,6 +262,20 @@ export class LobbyIndicator {
       ? (params.get("userName") ?? "Anon")
       : session.playername
     this.countElement.innerHTML = `${name} ${this.isSpectator ? "👀" : "👥"}${this.count}${statusEmoji}`
+
+    const otherUsers = Array.from(
+      new Set(
+        this.users
+          .filter((u) => u.userId !== session.clientId)
+          .map((u) => u.userName)
+      )
+    ).sort()
+
+    if (otherUsers.length > 0) {
+      this.countElement.title = `Online:\n${otherUsers.join("\n")}`
+    } else {
+      this.countElement.removeAttribute("title")
+    }
   }
 
   private updateChallengePill(challenged: boolean): void {
