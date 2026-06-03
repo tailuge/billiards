@@ -448,7 +448,8 @@ const nodeFriendlyWrapper = `
 `;
 
 const worker = new Worker(nodeFriendlyWrapper, { eval: true });
-</pre>
+</pre
+      >
 
       <h3>9. High-Scale Parallelism & Search</h3>
       <p>
@@ -463,7 +464,8 @@ import { runBatch } from './ww.js';
 // Execute 3 simulations in parallel with angle variance
 const results = await runBatch(baseConfig, 3, 0.001745);
 results.forEach(res => console.log(`Outcome: ${res.outcomes.length} events`));
-</pre>
+</pre
+      >
 
       <h3>10. Headless Node.js Execution</h3>
       <p>
@@ -476,7 +478,8 @@ results.forEach(res => console.log(`Outcome: ${res.outcomes.length} events`));
       <pre>
 # From the project root
 node dist/ww-node.js
-</pre>
+</pre
+      >
       <p>
         This is the preferred entry point for LLM agents performing large-scale
         trajectory analysis or parameter tuning without a browser environment.
@@ -484,7 +487,7 @@ node dist/ww-node.js
     </div>
 
     <script type="module">
-      import { runBatch } from './ww.js'
+      import { runBatch } from "./ww.js"
 
       const R = 0.03275
       const runBtn = document.getElementById("runSim")
@@ -631,13 +634,25 @@ node dist/ww-node.js
               ctx.strokeStyle = colors[index % colors.length]
               ctx.lineWidth = 1
               ctx.beginPath()
-              ctx.arc(centerX + first[0] * scale, centerY - first[1] * scale, ballRadius, 0, Math.PI * 2)
+              ctx.arc(
+                centerX + first[0] * scale,
+                centerY - first[1] * scale,
+                ballRadius,
+                0,
+                Math.PI * 2
+              )
               ctx.stroke()
 
               const last = path[path.length - 1]
               ctx.fillStyle = colors[index % colors.length]
               ctx.beginPath()
-              ctx.arc(centerX + last[0] * scale, centerY - last[1] * scale, ballRadius, 0, Math.PI * 2)
+              ctx.arc(
+                centerX + last[0] * scale,
+                centerY - last[1] * scale,
+                ballRadius,
+                0,
+                Math.PI * 2
+              )
               ctx.fill()
             }
           })
@@ -664,9 +679,9 @@ node dist/ww-node.js
           const results = await runBatch(config, 3, 0.001745)
           const t1 = performance.now()
           logMsg(`✓ Batch complete in ${Math.round(t1 - t0)}ms`, "log-result")
-          
-          results.forEach(res => {
-             logMsg(`Sim ${res.id}: ${res.frames.length} frames`, "log-data")
+
+          results.forEach((res) => {
+            logMsg(`Sim ${res.id}: ${res.frames.length} frames`, "log-data")
           })
 
           lastResults = results
@@ -683,16 +698,15 @@ node dist/ww-node.js
 
       showResponseBtn.onclick = () => {
         if (!lastResults) return
-        const preview = lastResults.map(res => ({
+        const preview = lastResults.map((res) => ({
           id: res.id,
           computeTime: res.computeTime,
           frameCount: res.frames.length,
-          outcomes: res.outcomes
+          outcomes: res.outcomes,
         }))
         logMsg("--- Batch Results Summary ---", "log-ui")
         logMsg(JSON.stringify(preview, null, 2), "log-data")
       }
     </script>
-
   </body>
 </html>

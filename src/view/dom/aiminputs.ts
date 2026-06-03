@@ -21,6 +21,7 @@ export class AimInputs {
   /** Shared button for both "Hit" and "Place Ball" actions. */
   readonly cueHitElement
   readonly objectBallStyle: CSSStyleDeclaration | undefined
+  readonly objectBallOverlap: HTMLElement | null
   readonly container: Container
   readonly overlap: Overlap
 
@@ -57,6 +58,7 @@ export class AimInputs {
       })
     }
     this.objectBallStyle = id("objectBall")?.style
+    this.objectBallOverlap = id("objectBallOverlap")
     this.overlap = new Overlap(this.container.table.balls)
     if (this.cuePowerElement) {
       this.container.table.cue.aim.power =
@@ -236,8 +238,17 @@ export class AimInputs {
           this.objectBallStyle.backgroundColor = new Color(0, 0, 0)
             .lerp(closest.ball.ballmesh.color, 0.5)
             .getStyle()
+          if (this.objectBallOverlap) {
+            const overlapPercent = Math.round(
+              (1 - Math.min(Math.abs(closest.overlap) / 2, 1)) * 100
+            )
+            this.objectBallOverlap.innerText = overlapPercent + "%"
+          }
         } else {
           this.objectBallStyle.visibility = "hidden"
+          if (this.objectBallOverlap) {
+            this.objectBallOverlap.innerText = ""
+          }
         }
       }
     }

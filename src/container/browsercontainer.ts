@@ -105,8 +105,6 @@ export class BrowserContainer {
       case "bounceHanBlend":
         return bounceHanBlend
       case "stronge": {
-        setmu(0.0041)
-        setmuS(0.24)
         return strongeAdapter
       }
       default:

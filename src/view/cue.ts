@@ -10,6 +10,7 @@ import { CueMesh } from "./cuemesh"
 import { Mesh, Vector3, Object3D } from "three"
 import { R } from "../model/physics/constants"
 import { cueIntersectsAnything } from "../utils/cueintersect"
+import { id } from "../utils/dom"
 
 export class Cue {
   mesh: Object3D
@@ -27,6 +28,7 @@ export class Cue {
 
   length = TableGeometry.tableX * 1
 
+  private hitStatsElement: HTMLElement | null = id("hitStats")
   private readonly tempVec = new Vector3()
   private readonly tempVec2 = new Vector3()
   private readonly tempVec3 = new Vector3()
@@ -86,6 +88,12 @@ export class Cue {
     const strike = cueStrike(angle, power, offset, elevation)
     ball.vel.copy(strike.vel)
     ball.rvel.copy(strike.rvel)
+    if (this.hitStatsElement) {
+      this.hitStatsElement.innerText =
+        `Angle: ${angle.toFixed(2)} Power: ${power} ` +
+        `Offset: ${offset.x.toFixed(2)}, ${offset.y.toFixed(2)} Elevation: ${elevation.toFixed(0)} ` +
+        `Vel: ${ball.vel.length().toFixed(2)}m/s rVel: ${ball.rvel.length().toFixed(2)}rad/s`
+    }
   }
 
   aimAtNext(cueball, ball) {

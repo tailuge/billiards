@@ -24,15 +24,20 @@ export function sliding(v, w) {
   return delta
 }
 
+// mag could go to zero but doesnt - needs to take vel and negate it at mag<epsilon
+
 export function rollingFull(w) {
-  const mag = new Vector3(w.x, w.y, 0).length()
+  const mag = Math.hypot(w.x, w.y)
+  const zmag = Math.abs(w.z)
   const k = ((5 / 7) * Mxy) / (m * R) / mag
   const kw = ((5 / 7) * Mxy) / (m * R * R) / mag
   delta.v.set(-k * w.y, k * w.x, 0)
+  // stationary spin down factor to avoid long waits
+  const spindownFactor = mag < 1 && zmag > 30 ? 8 : 1
   delta.w.set(
     -kw * w.x,
     -kw * w.y,
-    -(5 / 2) * (Mz / (m * R * R)) * Math.sign(w.z)
+    -(5 / 2) * (Mz / (m * R * R)) * spindownFactor * Math.sign(w.z)
   )
   return delta
 }
@@ -202,10 +207,7 @@ export function mathavanAdapter(v: Vector3, w: Vector3) {
   return rotateApplyUnrotate(Math.PI / 2, v, w, cartesionToBallCentric)
 }
 
-/**
- * Linear and angular velocity applied to a ball after a cue strike.
- */
-export type CueStrike = {
+export interface CueStrike {
   vel: Vector3
   rvel: Vector3
 }
@@ -219,7 +221,8 @@ export function cueStrike(
   offset: Vector3,
   elevation: number = 0
 ): CueStrike {
-  const vel = norm(new Vector3(cos(angle), sin(angle), 0)).multiplyScalar(power)
+  const speed = power * (1 - 0.25 * offset.lengthSq())
+  const vel = norm(new Vector3(cos(angle), sin(angle), 0)).multiplyScalar(speed)
   const velCos = vel.clone().multiplyScalar(cos(elevation))
 
   return {
@@ -240,8 +243,10 @@ export function cueStrike(
 export function cueToSpin(offset: Vector3, v: Vector3, elevation: number = 0) {
   const cosAlpha = Math.max(1e-3, Math.cos(elevation))
   const sinAlpha = Math.sin(elevation)
+
+  const projection = Math.max(0.5, cosAlpha) // clamp floor
   const spinRate =
-    ((5 / 2) * v.length() * (offset.length() * R)) / (R * R * cosAlpha)
+    ((5 / 2) * v.length() * (offset.length() * R)) / (R * R * projection)
   const dir = v.clone().normalize()
   const q = dir.clone().multiplyScalar(cosAlpha).addScaledVector(up, -sinAlpha)
   const spinAxis = Math.atan2(-offset.x, offset.y)

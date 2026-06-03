@@ -91,7 +91,7 @@ describe("Snooker", () => {
     container.inputQueue.push(new Input(0.1, "SpaceUp"))
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(PlayShot)
-    container.advance(1)
+    container.advance(2)
     container.processEvents()
   }
 
