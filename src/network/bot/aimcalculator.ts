@@ -1,7 +1,7 @@
 import { Vector3 } from "three"
 import { HitEvent } from "../../events/hitevent"
 import { Table } from "../../model/table"
-import { R } from "../../model/physics/constants"
+import { offCenterLimit, R } from "../../model/physics/constants"
 import { atan2 } from "../../utils/utils"
 import { Pocket } from "../../model/physics/pocket"
 import { PocketGeometry } from "../../view/pocketgeometry"
@@ -93,7 +93,7 @@ export class AimCalculator {
     aim.offset = spinOffset
 
     if (cue.intersectsAnything(table, aim)) {
-      aim.offset.set(0, cue.offCenterLimit, 0)
+      aim.offset.set(0, offCenterLimit, 0)
     }
 
     return new HitEvent(table.serialiseHit())

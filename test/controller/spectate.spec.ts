@@ -9,6 +9,7 @@ import { Assets } from "../../src/view/assets"
 import { initDom } from "../view/dom"
 import { Session } from "../../src/network/client/session"
 import { MessageRelay } from "../../src/network/client/messagerelay"
+import { maxPower } from "../../src/model/physics/constants"
 
 initDom()
 
@@ -86,7 +87,7 @@ describe("Spectate Controller", () => {
     const tablejson = container.table.serialise()
     tablejson.aim.offset.x = 0.05
     tablejson.aim.offset.y = -0.2
-    tablejson.aim.power = container.table.cue.maxPower * 0.25
+    tablejson.aim.power = maxPower * 0.25
 
     spectate.handleHit(new HitEvent(tablejson))
 

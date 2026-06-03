@@ -1,7 +1,7 @@
 import { Vector3 } from "three"
 import { AimCalculator } from "../../../src/network/bot/aimcalculator"
 import { Pocket } from "../../../src/model/physics/pocket"
-import { R } from "../../../src/model/physics/constants"
+import { offCenterLimit, R } from "../../../src/model/physics/constants"
 import { Table } from "../../../src/model/table"
 import { Ball } from "../../../src/model/ball"
 
@@ -64,7 +64,7 @@ describe("AimCalculator", () => {
       ) as any
 
       const aimData = hitEvent.tablejson.aim
-      expect(aimData.offset.y).toBe(table.cue.offCenterLimit)
+      expect(aimData.offset.y).toBe(offCenterLimit)
       expect(aimData.offset.x).toBe(0)
     })
 

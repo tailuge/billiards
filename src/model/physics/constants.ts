@@ -36,6 +36,9 @@ export const sinθ = 2 / 5
 // Fixed angle of cushion contact point above ball center
 export const cosθ = Math.sqrt(21) / 5
 
+export const offCenterLimit = 0.45
+export const maxPower = 160 * R
+
 refresh()
 
 function refresh() {

@@ -8,7 +8,7 @@ import { Ball, State } from "../model/ball"
 import { cueStrike } from "../model/physics/physics"
 import { CueMesh } from "./cuemesh"
 import { Mesh, Vector3, Object3D } from "three"
-import { R } from "../model/physics/constants"
+import { maxPower, offCenterLimit, R } from "../model/physics/constants"
 import { cueIntersectsAnything } from "../utils/cueintersect"
 import { id } from "../utils/dom"
 
@@ -19,8 +19,6 @@ export class Cue {
   helperMesh: Mesh
   placerMesh: Object3D
   shadowMesh: Mesh
-  readonly offCenterLimit = 0.5
-  readonly maxPower = 160 * R
   t = 0
   hittingAnimation = false
   aimInputs: AimInputs
@@ -67,7 +65,7 @@ export class Cue {
       return
     }
     this.aim.power = Math.fround(
-      Math.min(this.maxPower, this.aim.power + delta)
+      Math.min(maxPower, this.aim.power + delta)
     )
     this.updateAimInput()
   }
@@ -76,7 +74,7 @@ export class Cue {
     if (!this.aimInputs || this.aimInputs.isDisabled()) {
       return
     }
-    this.aim.power = Math.fround(value * this.maxPower)
+    this.aim.power = Math.fround(value * maxPower)
     this.updateAimInput()
   }
 
@@ -116,8 +114,8 @@ export class Cue {
     if (!this.aimInputs || this.aimInputs.isDisabled()) {
       return
     }
-    if (offset.length() > this.offCenterLimit) {
-      offset.normalize().multiplyScalar(this.offCenterLimit)
+    if (offset.length() > offCenterLimit) {
+      offset.normalize().multiplyScalar(offCenterLimit)
     }
     this.aim.offset.copy(roundVec(offset))
     this.avoidCueTouchingOtherBall(table)
@@ -128,8 +126,8 @@ export class Cue {
     let n = 0
     while (n++ < 20 && this.intersectsAnything(table)) {
       this.aim.offset.y += 0.1
-      if (this.aim.offset.length() > this.offCenterLimit) {
-        this.aim.offset.normalize().multiplyScalar(this.offCenterLimit)
+      if (this.aim.offset.length() > offCenterLimit) {
+        this.aim.offset.normalize().multiplyScalar(offCenterLimit)
       }
     }
 
@@ -140,7 +138,7 @@ export class Cue {
 
   updateAimInput() {
     this.aimInputs?.updateVisualState(this.aim.offset.x, this.aim.offset.y)
-    this.aimInputs?.updatePowerSlider(this.aim.power / this.maxPower)
+    this.aimInputs?.updatePowerSlider(this.aim.power / maxPower)
     this.aimInputs?.updateTiltSlider?.(this.aim.elevation)
     this.aimInputs?.showOverlap()
   }
@@ -212,7 +210,7 @@ export class Cue {
       (sin(this.t * 1.5 + Math.PI / 2) - 1) *
       2 *
       R *
-      (this.aim.power / this.maxPower)
+      (this.aim.power / maxPower)
     const strokeX = this.applyHitAnimation(swing)
     this.updateCuePosition(pos, strokeX)
   }

@@ -13,7 +13,7 @@ import { Graph } from "./diagram/graph"
 import { RollDiagram } from "./diagram/rolldiagram"
 import { Sliders } from "./view/sliders"
 import { DiagramContainer } from "./diagram/diagramcontainer"
-import { I, Mxy, Mz, R } from "./model/physics/constants"
+import { I, maxPower, Mxy, Mz, R } from "./model/physics/constants"
 import { Cue } from "./view/cue"
 import { id } from "./utils/dom"
 
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function reportConstants() {
   const elt = id("derived")
   if (!elt) return
-  const v = new Vector3(new Cue().maxPower, 0, 0)
+  const v = new Vector3(maxPower, 0, 0)
   const w = cueToSpin(new Vector3(0.5), v)
   elt.innerHTML += `Mx,My    = ${Mxy.toFixed(6)}\n`
   elt.innerHTML += `Mz       = ${Mz.toFixed(6)}\n`

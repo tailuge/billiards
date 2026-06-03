@@ -7,6 +7,7 @@ import { unitAtAngle } from "../../utils/three-utils"
 import { id } from "../../utils/dom"
 import { TimeoutButton } from "../timeoutbutton"
 import { AngleInput } from "./angleinput"
+import { maxPower } from "../../model/physics/constants"
 
 export class AimInputs {
   readonly ballContainerWrapperElement
@@ -28,6 +29,7 @@ export class AimInputs {
   ballWidth
   ballHeight
   tipRadius
+  private static readonly TIP_SCALE = 1.3
   private controlsDisabled = true
   private readonly timeoutButton: TimeoutButton | undefined
   private sliderAnimId: number | null = null
@@ -62,7 +64,7 @@ export class AimInputs {
     this.overlap = new Overlap(this.container.table.balls)
     if (this.cuePowerElement) {
       this.container.table.cue.aim.power =
-        Number(this.cuePowerElement.value) * this.container.table.cue.maxPower
+        Number(this.cuePowerElement.value) * maxPower
       this.updatePowerProgress()
     }
     this.updateTiltSlider(this.container.table.cue.aim.elevation)
@@ -203,8 +205,8 @@ export class AimInputs {
     this.readDimensions()
     this.container.table.cue.setSpin(
       new Vector3(
-        -(e.offsetX - this.ballWidth / 2) / (this.ballWidth / 2),
-        -(e.offsetY - this.ballHeight / 2) / (this.ballHeight / 2)
+        -(e.offsetX - this.ballWidth / 2) / (this.ballWidth / 2) / AimInputs.TIP_SCALE,
+        -(e.offsetY - this.ballHeight / 2) / (this.ballHeight / 2) / AimInputs.TIP_SCALE
       ),
       this.container.table
     )
@@ -215,8 +217,8 @@ export class AimInputs {
     const elt = this.cueTipElement?.style
     if (elt) {
       // Use percentages so the tip scales automatically with the ball
-      elt.left = ((-x / 2 + 0.5) * 100).toString() + "%"
-      elt.top = ((-y / 2 + 0.5) * 100).toString() + "%"
+      elt.left = ((-(x * AimInputs.TIP_SCALE) / 2 + 0.5) * 100).toString() + "%"
+      elt.top = ((-(y * AimInputs.TIP_SCALE) / 2 + 0.5) * 100).toString() + "%"
       elt.transform = "translate(-50%, -50%)"
     }
     this.showOverlap()

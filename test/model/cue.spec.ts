@@ -5,7 +5,7 @@ import { Cue } from "../../src/view/cue"
 import { CueMesh } from "../../src/view/cuemesh"
 import { Vector3 } from "three"
 import { zero } from "../../src/utils/three-utils"
-import { R } from "../../src/model/physics/constants"
+import { maxPower, offCenterLimit, R } from "../../src/model/physics/constants"
 
 const t = 0.1
 
@@ -86,7 +86,7 @@ describe("Cue", () => {
       showOverlap: () => {},
     } as any
     cue.setPower(0.5)
-    expect(cue.aim.power).to.equal(Math.fround(0.5 * cue.maxPower))
+    expect(cue.aim.power).to.equal(Math.fround(0.5 * maxPower))
   })
 
   test("setPower returns early when disabled", () => {
@@ -172,8 +172,8 @@ describe("Cue", () => {
     const { cue, table } = createCueAndTable(new Vector3(-3 * R, 0, 0))
     // Trigger the while loop in avoidCueTouchingOtherBall
     // By setting offset such that it intersects and then grows
-    cue.aim.offset.set(0, cue.offCenterLimit)
+    cue.aim.offset.set(0, offCenterLimit,0)
     cue.avoidCueTouchingOtherBall(table)
-    expect(cue.aim.offset.length()).to.be.closeTo(cue.offCenterLimit, 0.001)
+    expect(cue.aim.offset.length()).to.be.closeTo(offCenterLimit, 0.001)
   })
 })
