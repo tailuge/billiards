@@ -179,12 +179,17 @@ describe("Physics", () => {
     done()
   })
 
-  it("rollingFull should work as expected for rolling", (done) => {
+  it("rollingFull should work as expected for rolling and maintain v = Rw relationship", (done) => {
     const w = new Vector3(0, 10, 0)
     const v = new Vector3(10 * R, 0, 0)
     const delta = rollingFull(w, v)
     expect(delta.v.x).to.be.lessThan(0)
     expect(delta.w.y).to.be.lessThan(0)
+
+    // Verify dv_x = R * dw_y
+    expect(delta.v.x).to.be.approximately(R * delta.w.y, 1e-10)
+    // Verify dv_y = -R * dw_x
+    expect(delta.v.y).to.be.approximately(-R * delta.w.x, 1e-10)
     done()
   })
 
