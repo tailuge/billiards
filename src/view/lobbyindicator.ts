@@ -7,7 +7,7 @@ import {
 import { Session } from "../network/client/session"
 import { Rules } from "../controller/rules/rules"
 import { id } from "../utils/dom"
-import { LOBBY_URL } from "../network/client/constants"
+import { LOBBY_URL, DEFAULT_NCHAN_URL } from "../network/client/constants"
 import { VERSION } from "../utils/version"
 import { NetworkLogger } from "../utils/network-logger"
 
@@ -25,7 +25,6 @@ export class LobbyIndicator {
   } | null = null
   private readonly rules: Rules
   private readonly ruleType: string
-  private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
   private readonly messagingUrl: string
   private currentTableId: string | null = null
   private readonly replayMode: boolean
@@ -47,12 +46,14 @@ export class LobbyIndicator {
     this.replayMode = replayMode
     this.onChatMessage = onChatMessage
     this.onShowOverlay = onShowOverlay
+
+    const baseMessagingUrl = messagingUrl || DEFAULT_NCHAN_URL
     const isInsecure =
-      messagingUrl?.startsWith("ws://") || messagingUrl?.startsWith("http://")
+      baseMessagingUrl.startsWith("ws://") ||
+      baseMessagingUrl.startsWith("http://")
     const httpProtocol = isInsecure ? "http" : "https"
-    this.messagingUrl = messagingUrl
-      ? `${httpProtocol}://${messagingUrl.replace(/^(https?|wss?):\/\//, "")}`
-      : LobbyIndicator.NCHAN_URL
+    this.messagingUrl = `${httpProtocol}://${baseMessagingUrl.replace(/^(https?|wss?):\/\//, "")}`
+
     this.isSpectator = Session.getInstance().spectator
     if (botMode) {
       this.ruleType = `${this.rules.rulename}-bot`
@@ -297,12 +298,17 @@ export class LobbyIndicator {
     const url = new URL(LOBBY_URL)
     const session = Session.getInstance()
 
+    const params = new URLSearchParams(globalThis.location?.search ?? "")
+    const wss = params.get("websocketserver")
+    if (wss) {
+      url.searchParams.set("websocketserver", wss)
+    }
+
     if (this.replayMode) {
       return url.toString()
     }
 
     // if this page was loaded with query param test then set the user name
-    const params = new URLSearchParams(globalThis.location?.search ?? "")
     if (params.get("test")) {
       url.searchParams.set("userName", session.playername)
       url.searchParams.set("userId", session.clientId)

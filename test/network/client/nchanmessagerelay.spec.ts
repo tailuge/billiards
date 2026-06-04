@@ -78,6 +78,18 @@ describe("NchanMessageRelay", () => {
       )
       spy.mockRestore()
     })
+
+    it("should respect custom baseURL", async () => {
+      const relay = new NchanMessageRelay("custom-server.com")
+      mockFetch.mockResolvedValueOnce({ ok: true })
+
+      relay.publish("chan1", "hello")
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        "https://custom-server.com/publish/table/chan1",
+        expect.anything()
+      )
+    })
   })
 
   describe("subscribe", () => {

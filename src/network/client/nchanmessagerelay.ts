@@ -1,5 +1,6 @@
 import { MessageRelay } from "./messagerelay"
 import { NetworkLogger } from "../../utils/network-logger"
+import { DEFAULT_NCHAN_URL } from "./constants"
 
 export class NchanMessageRelay implements MessageRelay {
   private readonly websockets = new Map<string, WebSocket>()
@@ -13,7 +14,7 @@ export class NchanMessageRelay implements MessageRelay {
   private readonly wsProtocol: string
   private readonly httpProtocol: string
 
-  constructor(baseURL: string = "wss://billiards-network.onrender.com") {
+  constructor(baseURL: string = DEFAULT_NCHAN_URL) {
     const isSecure =
       !baseURL.startsWith("ws://") && !baseURL.startsWith("http://")
     this.wsProtocol = isSecure ? "wss" : "ws"
