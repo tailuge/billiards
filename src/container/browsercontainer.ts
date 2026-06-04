@@ -210,6 +210,8 @@ export class BrowserContainer {
     if (event.clientId === Session.getInstance().clientId) {
       return
     }
+
+
     //    logNetEvent(this.playername, event, "receive")
     if (event.clientId) {
       Session.getInstance().setOpponentClientId(event.clientId)
@@ -230,6 +232,10 @@ export class BrowserContainer {
             type: "Info",
             title: this.ruletype,
             subtext: `${names.p1Name} vs ${names.p2Name}`,
+            extra:
+              this.ruletype === "threecushion"
+                ? `Race to: ${ThreeCushionConfig.raceTo}`
+                : undefined,
           })
           session.vsNotificationShown = true
         }
