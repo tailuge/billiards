@@ -193,13 +193,13 @@ describe("Physics", () => {
     done()
   })
 
-  it("rollingFull with z spin only should have zero delta.v and horizontal delta.w", (done) => {
+  it("rollingFull with z spin only should kill any horizontal v and w", (done) => {
     const w = new Vector3(1e-10, 0, 10)
-    const v = new Vector3(0, 0, 0)
+    const v = new Vector3(0.01, 0.01, 0)
     const delta = rollingFull(w, v)
-    expect(delta.v.x).to.equal(0)
-    expect(delta.v.y).to.equal(0)
-    expect(delta.w.x).to.equal(0)
+    expect(delta.v.x).to.equal(-0.01)
+    expect(delta.v.y).to.equal(-0.01)
+    expect(delta.w.x).to.equal(-1e-10)
     expect(delta.w.y).to.equal(0)
     expect(delta.w.z).to.be.lessThan(0)
     done()

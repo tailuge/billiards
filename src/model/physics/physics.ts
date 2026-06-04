@@ -32,25 +32,28 @@ export function rollingFull(w: Vector3, v: Vector3) {
   const eps = 1e-8
 
   if (mag < eps) {
-    delta.v.set(0, 0, 0)
+    delta.v.set(-v.x, -v.y, 0)
     const spindownFactor = zmag > 30 ? 8 : 1
     delta.w.set(
-      0,
-      0,
+      -w.x,
+      -w.y,
       -(5 / 2) * (Mz / (m * R * R)) * spindownFactor * Math.sign(w.z)
     )
     return delta
   }
 
   const kw = ((5 / 7) * Mxy) / (m * R * R) / mag
-  delta.v.set(-kw * v.x, -kw * v.y, 0)
+  const dwx = -kw * w.x
+  const dwy = -kw * w.y
+
   // stationary spin down factor to avoid long waits
   const spindownFactor = mag < 1 && zmag > 30 ? 8 : 1
   delta.w.set(
-    -kw * w.x,
-    -kw * w.y,
+    dwx,
+    dwy,
     -(5 / 2) * (Mz / (m * R * R)) * spindownFactor * Math.sign(w.z)
   )
+  delta.v.set(R * (w.y + dwy) - v.x, -R * (w.x + dwx) - v.y, 0)
   return delta
 }
 
