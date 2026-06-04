@@ -13,6 +13,7 @@ import {
   Pze,
   muCushion,
   restitutionCushion,
+  rollingFull,
 } from "../../src/model/physics/physics"
 import {
   I,
@@ -175,6 +176,27 @@ describe("Physics", () => {
 
     expect(w.z).to.not.equal(0)
     expect(w.x).to.not.equal(0)
+    done()
+  })
+
+  it("rollingFull should work as expected for rolling", (done) => {
+    const w = new Vector3(0, 10, 0)
+    const v = new Vector3(10 * R, 0, 0)
+    const delta = rollingFull(w, v)
+    expect(delta.v.x).to.be.lessThan(0)
+    expect(delta.w.y).to.be.lessThan(0)
+    done()
+  })
+
+  it("rollingFull with z spin only should have zero delta.v and horizontal delta.w", (done) => {
+    const w = new Vector3(1e-10, 0, 10)
+    const v = new Vector3(0, 0, 0)
+    const delta = rollingFull(w, v)
+    expect(delta.v.x).to.equal(0)
+    expect(delta.v.y).to.equal(0)
+    expect(delta.w.x).to.equal(0)
+    expect(delta.w.y).to.equal(0)
+    expect(delta.w.z).to.be.lessThan(0)
     done()
   })
 })

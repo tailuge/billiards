@@ -26,12 +26,24 @@ export function sliding(v, w) {
 
 // mag could go to zero but doesnt - needs to take vel and negate it at mag<epsilon
 
-export function rollingFull(w) {
+export function rollingFull(w: Vector3, v: Vector3) {
   const mag = Math.hypot(w.x, w.y)
   const zmag = Math.abs(w.z)
-  const k = ((5 / 7) * Mxy) / (m * R) / mag
+  const eps = 1e-8
+
+  if (mag < eps) {
+    delta.v.set(0, 0, 0)
+    const spindownFactor = zmag > 30 ? 8 : 1
+    delta.w.set(
+      0,
+      0,
+      -(5 / 2) * (Mz / (m * R * R)) * spindownFactor * Math.sign(w.z)
+    )
+    return delta
+  }
+
   const kw = ((5 / 7) * Mxy) / (m * R * R) / mag
-  delta.v.set(-k * w.y, k * w.x, 0)
+  delta.v.set(-kw * v.x, -kw * v.y, 0)
   // stationary spin down factor to avoid long waits
   const spindownFactor = mag < 1 && zmag > 30 ? 8 : 1
   delta.w.set(
