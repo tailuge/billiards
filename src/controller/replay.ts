@@ -13,7 +13,8 @@ import { ScoreEvent } from "../events/scoreevent"
 import { ChatEvent } from "../events/chatevent"
 import { share, shorten } from "../utils/shorten"
 import { anglesAlign } from "../utils/three-utils"
-import { LOBBY_URL, gameOverButtons } from "../utils/gameover"
+import { LOBBY_URL } from "../network/client/constants"
+import { gameOverButtons } from "../utils/gameover"
 
 export class Replay extends ControllerBase {
   override get name() {

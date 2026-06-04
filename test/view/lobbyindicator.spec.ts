@@ -2,7 +2,7 @@ import { MessagingClient } from "@tailuge/messaging"
 import { LobbyIndicator } from "../../src/view/lobbyindicator"
 import { initDom } from "./dom"
 import { Session } from "../../src/network/client/session"
-import { LOBBY_URL } from "../../src/utils/gameover"
+import { LOBBY_URL } from "../../src/network/client/constants"
 
 // Mock the @tailuge/messaging module
 jest.mock("@tailuge/messaging", () => ({

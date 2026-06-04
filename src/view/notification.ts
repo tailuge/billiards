@@ -1,5 +1,5 @@
 import { id } from "../utils/dom"
-import { LOBBY_URL } from "../utils/gameover"
+import { LOBBY_URL } from "../network/client/constants"
 
 export interface NotificationHighBreak {
   score: number

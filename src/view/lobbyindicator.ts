@@ -7,7 +7,7 @@ import {
 import { Session } from "../network/client/session"
 import { Rules } from "../controller/rules/rules"
 import { id } from "../utils/dom"
-import { LOBBY_URL } from "../utils/gameover"
+import { LOBBY_URL } from "../network/client/constants"
 import { VERSION } from "../utils/version"
 import { NetworkLogger } from "../utils/network-logger"
 

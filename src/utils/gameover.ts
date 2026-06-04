@@ -1,4 +1,4 @@
-export const LOBBY_URL = "https://billiards.tailuge.workers.dev/lobby.html"
+import { LOBBY_URL } from "../network/client/constants"
 
 export const gameOverButtons = {
   lobby: `<button type="button" class="notification-btn" data-notification-action="lobby">Back to Lobby</button>`,
