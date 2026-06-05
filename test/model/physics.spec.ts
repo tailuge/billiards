@@ -13,6 +13,7 @@ import {
   Pze,
   muCushion,
   restitutionCushion,
+  rollingFull,
 } from "../../src/model/physics/physics"
 import {
   I,
@@ -175,6 +176,32 @@ describe("Physics", () => {
 
     expect(w.z).to.not.equal(0)
     expect(w.x).to.not.equal(0)
+    done()
+  })
+
+  it("rollingFull should work as expected for rolling and maintain v = Rw relationship", (done) => {
+    const w = new Vector3(0, 10, 0)
+    const v = new Vector3(10 * R, 0, 0)
+    const delta = rollingFull(w, v)
+    expect(delta.v.x).to.be.lessThan(0)
+    expect(delta.w.y).to.be.lessThan(0)
+
+    // Verify dv_x = R * dw_y
+    expect(delta.v.x).to.be.approximately(R * delta.w.y, 1e-10)
+    // Verify dv_y = -R * dw_x
+    expect(delta.v.y).to.be.approximately(-R * delta.w.x, 1e-10)
+    done()
+  })
+
+  it("rollingFull with z spin only should kill any horizontal v and w", (done) => {
+    const w = new Vector3(1e-10, 0, 10)
+    const v = new Vector3(0.01, 0.01, 0)
+    const delta = rollingFull(w, v)
+    expect(delta.v.x).to.equal(-0.01)
+    expect(delta.v.y).to.equal(-0.01)
+    expect(delta.w.x).to.equal(-1e-10)
+    expect(delta.w.y).to.equal(0)
+    expect(delta.w.z).to.be.lessThan(0)
     done()
   })
 })
