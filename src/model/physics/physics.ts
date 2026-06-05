@@ -24,13 +24,13 @@ export function sliding(v, w) {
   return delta
 }
 
-export function rollingFull(w: Vector3, v: Vector3) {
+export function rollingFull(w: Vector3, v: Vector3, t: number) {
   const mag = Math.hypot(w.x, w.y)
   const zmag = Math.abs(w.z)
-  const eps = 1e-5
+  const eps = 0.1
 
   if (mag < eps) {
-    delta.v.set(-v.x, -v.y, 0)
+    delta.v.set(-v.x / t, -v.y / t, 0)
     const spindownFactor = zmag > 30 ? 8 : 1
     delta.w.set(
       -w.x,
@@ -44,11 +44,7 @@ export function rollingFull(w: Vector3, v: Vector3) {
   const dwx = -kw * w.x
   const dwy = -kw * w.y
 
-  delta.w.set(
-    dwx,
-    dwy,
-    -(5 / 2) * (Mz / (m * R * R)) * Math.sign(w.z)
-  )
+  delta.w.set(dwx, dwy, -(5 / 2) * (Mz / (m * R * R)) * Math.sign(w.z))
   delta.v.set(R * (w.y + dwy) - v.x, -R * (w.x + dwx) - v.y, 0)
   return delta
 }

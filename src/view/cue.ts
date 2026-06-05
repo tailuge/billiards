@@ -64,9 +64,7 @@ export class Cue {
     if (!this.aimInputs || this.aimInputs.isDisabled()) {
       return
     }
-    this.aim.power = Math.fround(
-      Math.min(maxPower, this.aim.power + delta)
-    )
+    this.aim.power = Math.fround(Math.min(maxPower, this.aim.power + delta))
     this.updateAimInput()
   }
 
@@ -166,7 +164,7 @@ export class Cue {
     if (this.cueBody) {
       this.cueBody.position.set(
         -this.length / 2 - R + strokeX,
-        this.aim.offset.x  * R,
+        this.aim.offset.x * R,
         Math.max(-0.5 * R, strokeZ + this.aim.offset.y * R)
       )
     }

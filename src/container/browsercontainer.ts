@@ -211,7 +211,6 @@ export class BrowserContainer {
       return
     }
 
-
     //    logNetEvent(this.playername, event, "receive")
     if (event.clientId) {
       Session.getInstance().setOpponentClientId(event.clientId)

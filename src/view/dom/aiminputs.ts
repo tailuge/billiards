@@ -205,8 +205,12 @@ export class AimInputs {
     this.readDimensions()
     this.container.table.cue.setSpin(
       new Vector3(
-        -(e.offsetX - this.ballWidth / 2) / (this.ballWidth / 2) / AimInputs.TIP_SCALE,
-        -(e.offsetY - this.ballHeight / 2) / (this.ballHeight / 2) / AimInputs.TIP_SCALE
+        -(e.offsetX - this.ballWidth / 2) /
+          (this.ballWidth / 2) /
+          AimInputs.TIP_SCALE,
+        -(e.offsetY - this.ballHeight / 2) /
+          (this.ballHeight / 2) /
+          AimInputs.TIP_SCALE
       ),
       this.container.table
     )

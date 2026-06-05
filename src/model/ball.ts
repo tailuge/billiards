@@ -69,7 +69,7 @@ export class Ball {
       if (this.isRolling()) {
         this.state = State.Rolling
         forceRoll(this.vel, this.rvel)
-        this.addDelta(t, rollingFull(this.rvel, this.vel))
+        this.addDelta(t, rollingFull(this.rvel, this.vel, t))
       } else {
         this.state = State.Sliding
         this.addDelta(t, sliding(this.vel, this.rvel))

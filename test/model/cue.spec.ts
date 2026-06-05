@@ -172,7 +172,7 @@ describe("Cue", () => {
     const { cue, table } = createCueAndTable(new Vector3(-3 * R, 0, 0))
     // Trigger the while loop in avoidCueTouchingOtherBall
     // By setting offset such that it intersects and then grows
-    cue.aim.offset.set(0, offCenterLimit,0)
+    cue.aim.offset.set(0, offCenterLimit, 0)
     cue.avoidCueTouchingOtherBall(table)
     expect(cue.aim.offset.length()).to.be.closeTo(offCenterLimit, 0.001)
   })
