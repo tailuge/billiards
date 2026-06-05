@@ -28,7 +28,6 @@ export class ProximityIndicator {
   private minDistance: number = Infinity
   private readonly reusableVec = new Vector3()
 
-
   constructor() {
     if (typeof document === "undefined") {
       return
