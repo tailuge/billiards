@@ -1162,9 +1162,10 @@ Overlap: ${overlap}%`)
 
         document.getElementById("play-btn")?.addEventListener("click", () => {
           const coords = tableBalls.flatMap((b) => [round6(-b.x), round6(b.y)])
-          const url = new URL("../index.html", window.location.href)
+          const url = new URL("https://velikodimov.github.io/billiards/dist/index.html", window.location.href)
           url.searchParams.set("ruletype", "threecushion")
           url.searchParams.set("practice", "true")
+          url.searchParams.set("drill", "true")
           url.searchParams.set("init", JSON.stringify(coords))
           window.location.href = url.toString()
         })
