@@ -1,5 +1,5 @@
-export let mu = 0.007 // Han rolling friction
-export let muS = 0.125 // Han sliding friction
+export let mu = 0.0055 // Han rolling friction
+export let muS = 0.126 // Han sliding friction
 export let rho = 0.045 // Han spindown rate
 
 export let m = 0.23
