@@ -1,4 +1,5 @@
 import { Ball } from "./ball"
+import { R } from "./physics/constants"
 
 export enum OutcomeType {
   Pot = "Pot",
@@ -143,6 +144,22 @@ export class Outcome {
     }
 
     return false
+  }
+
+  static getProximityScore(cueBall: Ball, outcomes: Outcome[]): number {
+    const proximityOutcomes = outcomes.filter(
+      (o) => o.type === OutcomeType.Proximity && o.ballA === cueBall
+    )
+    if (proximityOutcomes.length === 0) return 0
+
+    const minDistance = Math.min(
+      ...proximityOutcomes.map((o) => o.incidentSpeed)
+    )
+
+    if (minDistance <= 2 * R) return 3
+    if (minDistance <= 3 * R) return 2
+    if (minDistance <= 4 * R) return 1
+    return 0
   }
 
   static cueBallFirst(cueBall, outcomes) {

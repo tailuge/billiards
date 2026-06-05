@@ -15,7 +15,6 @@ import { Assets } from "../view/assets"
 import { SnookerConfig } from "../utils/snookerconfig"
 import { ThreeCushionConfig } from "../utils/threecushionconfig"
 import { Session } from "../network/client/session"
-import { Rematch } from "../network/client/rematch"
 import { MessageRelay } from "../network/client/messagerelay"
 import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
 import { BotRelay } from "../network/bot/botrelay"
@@ -85,7 +84,7 @@ export class BrowserContainer {
     this.drillMode = params.has("drill")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
-      Number.parseInt(params.get("raceTo") ?? "5") || 5
+      Number.parseInt(params.get("raceTo") ?? "7") || 7
     console.log(
       `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode}`
     )
@@ -99,7 +98,6 @@ export class BrowserContainer {
       Number.parseInt(params.get("lod") ?? "2"),
       this.first
     )
-    Session.getInstance().rematchInfo = Rematch.fromURL(params)
     console.log(Session.getInstance())
   }
 
@@ -110,8 +108,6 @@ export class BrowserContainer {
       case "bounceHanBlend":
         return bounceHanBlend
       case "stronge": {
-        setmu(0.0041)
-        setmuS(0.24)
         return strongeAdapter
       }
       default:
@@ -168,26 +164,6 @@ export class BrowserContainer {
     this.messageRelay = new NchanMessageRelay(this.wss ?? undefined)
     this.container = this.createContainer(scoreReporter)
     this.container.init()
-
-    const session = Session.getInstance()
-    const rematchInfo = session.rematchInfo
-    if (rematchInfo) {
-      const getName = (uid: string) =>
-        uid === session.clientId
-          ? session.playername
-          : session.opponentName || rematchInfo.opponentName
-
-      const matchScoreText = Rematch.getMatchScoreText(session, {
-        p1Name: getName(rematchInfo.lastScores[0].userId),
-        p2Name: getName(rematchInfo.lastScores[1].userId),
-      })
-
-      this.container.notify({
-        type: "Info",
-        title: "Match Score",
-        matchScore: matchScoreText,
-      } as const)
-    }
   }
 
   onAssetsReady() {
@@ -244,6 +220,7 @@ export class BrowserContainer {
     if (event.clientId === Session.getInstance().clientId) {
       return
     }
+
     //    logNetEvent(this.playername, event, "receive")
     if (event.clientId) {
       Session.getInstance().setOpponentClientId(event.clientId)
@@ -254,7 +231,6 @@ export class BrowserContainer {
       if (
         !session.vsNotificationShown &&
         !this.botMode &&
-        !session.rematchInfo &&
         !this.spectator &&
         session.playername &&
         session.opponentName
@@ -265,6 +241,10 @@ export class BrowserContainer {
             type: "Info",
             title: this.ruletype,
             subtext: `${names.p1Name} vs ${names.p2Name}`,
+            extra:
+              this.ruletype === "threecushion"
+                ? `Race to: ${ThreeCushionConfig.raceTo}`
+                : undefined,
           })
           session.vsNotificationShown = true
         }

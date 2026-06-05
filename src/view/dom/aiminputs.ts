@@ -7,6 +7,7 @@ import { unitAtAngle } from "../../utils/three-utils"
 import { id } from "../../utils/dom"
 import { TimeoutButton } from "../timeoutbutton"
 import { AngleInput } from "./angleinput"
+import { maxPower } from "../../model/physics/constants"
 
 export class AimInputs {
   readonly ballContainerWrapperElement
@@ -21,12 +22,14 @@ export class AimInputs {
   /** Shared button for both "Hit" and "Place Ball" actions. */
   readonly cueHitElement
   readonly objectBallStyle: CSSStyleDeclaration | undefined
+  readonly objectBallOverlap: HTMLElement | null
   readonly container: Container
   readonly overlap: Overlap
 
   ballWidth
   ballHeight
   tipRadius
+  private static readonly TIP_SCALE = 1.3
   private controlsDisabled = true
   private readonly timeoutButton: TimeoutButton | undefined
   private sliderAnimId: number | null = null
@@ -57,10 +60,11 @@ export class AimInputs {
       })
     }
     this.objectBallStyle = id("objectBall")?.style
+    this.objectBallOverlap = id("objectBallOverlap")
     this.overlap = new Overlap(this.container.table.balls)
     if (this.cuePowerElement) {
       this.container.table.cue.aim.power =
-        Number(this.cuePowerElement.value) * this.container.table.cue.maxPower
+        Number(this.cuePowerElement.value) * maxPower
       this.updatePowerProgress()
     }
     this.updateTiltSlider(this.container.table.cue.aim.elevation)
@@ -201,8 +205,12 @@ export class AimInputs {
     this.readDimensions()
     this.container.table.cue.setSpin(
       new Vector3(
-        -(e.offsetX - this.ballWidth / 2) / this.ballWidth,
-        -(e.offsetY - this.ballHeight / 2) / this.ballHeight
+        -(e.offsetX - this.ballWidth / 2) /
+          (this.ballWidth / 2) /
+          AimInputs.TIP_SCALE,
+        -(e.offsetY - this.ballHeight / 2) /
+          (this.ballHeight / 2) /
+          AimInputs.TIP_SCALE
       ),
       this.container.table
     )
@@ -213,8 +221,8 @@ export class AimInputs {
     const elt = this.cueTipElement?.style
     if (elt) {
       // Use percentages so the tip scales automatically with the ball
-      elt.left = ((-x + 0.5) * 100).toString() + "%"
-      elt.top = ((-y + 0.5) * 100).toString() + "%"
+      elt.left = ((-(x * AimInputs.TIP_SCALE) / 2 + 0.5) * 100).toString() + "%"
+      elt.top = ((-(y * AimInputs.TIP_SCALE) / 2 + 0.5) * 100).toString() + "%"
       elt.transform = "translate(-50%, -50%)"
     }
     this.showOverlap()
@@ -223,20 +231,31 @@ export class AimInputs {
   showOverlap() {
     if (this.objectBallStyle) {
       const table = this.container.table
-      const dir = unitAtAngle(table.cue.aim.angle)
-      const closest = this.overlap.getOverlapOffset(table.cueball, dir)
-      if (closest) {
-        this.readDimensions()
-        this.objectBallStyle.visibility = "visible"
-        this.objectBallStyle.left =
-          (closest.overlap * this.ballWidth) / 2 +
-          this.cueBallElement.offsetLeft +
-          "px"
-        this.objectBallStyle.backgroundColor = new Color(0, 0, 0)
-          .lerp(closest.ball.ballmesh.color, 0.5)
-          .getStyle()
-      } else {
-        this.objectBallStyle.visibility = "hidden"
+      if (table.cue) {
+        const dir = unitAtAngle(table.cue.aim.angle)
+        const closest = this.overlap.getOverlapOffset(table.cueball, dir)
+        if (closest) {
+          this.readDimensions()
+          this.objectBallStyle.visibility = "visible"
+          this.objectBallStyle.left =
+            (closest.overlap * this.ballWidth) / 2 +
+            this.cueBallElement.offsetLeft +
+            "px"
+          this.objectBallStyle.backgroundColor = new Color(0, 0, 0)
+            .lerp(closest.ball.ballmesh.color, 0.5)
+            .getStyle()
+          if (this.objectBallOverlap) {
+            const overlapPercent = Math.round(
+              (1 - Math.min(Math.abs(closest.overlap) / 2, 1)) * 100
+            )
+            this.objectBallOverlap.innerText = overlapPercent + "%"
+          }
+        } else {
+          this.objectBallStyle.visibility = "hidden"
+          if (this.objectBallOverlap) {
+            this.objectBallOverlap.innerText = ""
+          }
+        }
       }
     }
   }

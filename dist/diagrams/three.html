@@ -278,6 +278,27 @@
         cursor: grabbing;
       }
 
+      .collapse-toggle {
+        display: none;
+      }
+      .collapse-label {
+        display: block;
+        padding: 5px;
+        background: #333;
+        color: white;
+        cursor: pointer;
+        text-align: center;
+        border: 1px solid #444;
+        margin: 2px 0;
+      }
+      .collapse-content {
+        display: none;
+        padding-top: 6px;
+      }
+      .collapse-toggle:checked + .collapse-label + .collapse-content {
+        display: block;
+      }
+
       /* --- spin input styles --- */
 
       .controls-row {
@@ -307,6 +328,13 @@
         flex-shrink: 0;
         position: relative;
         z-index: 20;
+      }
+      #objectBallOverlap {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: transparent;
+        z-index: 1000;
       }
 
       .ballContainer {
@@ -388,6 +416,7 @@
       #share-all,
       #share-shot,
       #replay,
+      #play-btn,
       #cleartraces {
         padding: 2px 8px;
         cursor: pointer;
@@ -415,6 +444,7 @@
       #share-all:hover,
       #share-shot:hover,
       #replay:hover,
+      #play-btn:hover,
       #cleartraces:hover {
         filter: brightness(0.88);
         transform: translateY(-2px) scale(1.05);
@@ -427,6 +457,7 @@
       #share-all:active,
       #share-shot:active,
       #replay:active,
+      #play-btn:active,
       #cleartraces:active {
         border-style: inset;
         filter: brightness(0.75);
@@ -526,8 +557,23 @@
 
   <body>
     <div id="page">
-      <h1>Three cushion research</h1>
+      <h1 id="page-title">Three cushion research</h1>
       <div class="replaydiagram">
+        <div
+          id="hitStats"
+          style="
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-family: monospace;
+            font-size: 10px;
+            padding: 4px;
+            pointer-events: none;
+            z-index: 100;
+          "
+        ></div>
         <div
           class="topview"
           data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-1.305026,-0.634005,-1.434758,0.601475,-1.310215,0.685593%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.201901,%22y%22:0.221892,%22z%22:0%7D,%22angle%22:0.63687,%22power%22:2.62,%22pos%22:%7B%22x%22:-1.305026,%22y%22:-0.634005,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
@@ -545,6 +591,7 @@
         <button id="share-all" type="button">share all presets</button>
         <button id="share-shot" type="button">share this shot</button>
         <button id="replay" type="button">replay</button>
+        <button id="play-btn" type="button">play</button>
         <button id="cleartraces" type="button">clear traces</button>
         <button
           id="stronge-btn"
@@ -552,7 +599,7 @@
           onclick="
             location.href =
               location.href.split('?')[0] +
-              '?cushionModel=stronge&mu=0.006&muS=0.25&stronge_e_n=0.78&stronge_μ=0.3'
+              '?cushionModel=stronge&mu=0.006&muS=0.25'
           "
         >
           Stronge
@@ -571,27 +618,56 @@
                 <div id="cueTip" class="cueTip"></div>
               </div>
             </div>
+            <div id="objectBallOverlap"></div>
           </div>
           <label for="power" class="sr-only">Power</label>
           <input id="power" type="range" />
         </div>
         <div id="constants">
-          <input id="μs" type="range" />
-          <div>Mathavan <label for="μs"></label></div>
-          <input id="μw" type="range" />
-          <div>Mathavan <label for="μw"></label></div>
-          <input id="ee" type="range" />
-          <div>Cushion restitution <label for="ee"></label></div>
-          <input id="mu" type="range" />
-          <div>Han rolling friction <label for="mu"></label></div>
-          <input id="muS" type="range" />
-          <div>Han sliding friction <label for="muS"></label></div>
-          <input id="stronge_omega_ratio" type="range" />
-          <div>Stronge ω ratio <label for="stronge_omega_ratio"></label></div>
-          <input id="stronge_e_n" type="range" />
-          <div>Stronge eₙ <label for="stronge_e_n"></label></div>
-          <input id="stronge_μ" type="range" />
-          <div>Stronge μ <label for="stronge_μ"></label></div>
+          <div class="constant-group">
+            <input
+              type="checkbox"
+              id="mathavan-toggle"
+              class="collapse-toggle"
+            />
+            <label for="mathavan-toggle" class="collapse-label">Mathavan</label>
+            <div class="collapse-content">
+              <input id="μs" type="range" />
+              <div>Mathavan <label for="μs"></label></div>
+              <input id="μw" type="range" />
+              <div>Mathavan <label for="μw"></label></div>
+              <input id="ee" type="range" />
+              <div>Cushion restitution <label for="ee"></label></div>
+            </div>
+          </div>
+          <div class="constant-group">
+            <input type="checkbox" id="han-toggle" class="collapse-toggle" />
+            <label for="han-toggle" class="collapse-label">Han</label>
+            <div class="collapse-content">
+              <input id="mu" type="range" />
+              <div>Han rolling friction <label for="mu"></label></div>
+              <input id="muS" type="range" />
+              <div>Han sliding friction <label for="muS"></label></div>
+            </div>
+          </div>
+          <div class="constant-group">
+            <input
+              type="checkbox"
+              id="stronge-toggle"
+              class="collapse-toggle"
+            />
+            <label for="stronge-toggle" class="collapse-label">Stronge</label>
+            <div class="collapse-content">
+              <input id="stronge_omega_ratio" type="range" />
+              <div>
+                Stronge ω ratio <label for="stronge_omega_ratio"></label>
+              </div>
+              <input id="stronge_e_n" type="range" />
+              <div>Stronge eₙ <label for="stronge_e_n"></label></div>
+              <input id="stronge_μ" type="range" />
+              <div>Stronge μ <label for="stronge_μ"></label></div>
+            </div>
+          </div>
         </div>
       </div>
       <div id="table-wrap">
@@ -623,7 +699,7 @@
       const TABLE_HALF_WIDTH = (BALL_RADIUS * UMB_TABLE_X) / 2
       const TABLE_HALF_HEIGHT = (BALL_RADIUS * UMB_TABLE_Y) / 2
       const DEFAULT_AIM_LENGTH = 86 * BALL_RADIUS
-      const OFF_CENTER_LIMIT = 0.3
+      const OFF_CENTER_LIMIT = 0.5
       const MAX_POWER = 160 * BALL_RADIUS
       const BALL_COLORS = ["#ffffff", "#ffd700", "#ef4444"]
       const DEFAULT_PRESETS_PARAM =
@@ -731,12 +807,7 @@
         power.value = clamp(aimPower / MAX_POWER, 0, 1).toFixed(2)
       }
 
-      function updateAimParamsText() {
-        //        console.log(
-        //          `spin x=${aimOffset.x.toFixed(3)} y=${aimOffset.y.toFixed(3)}  ` +
-        //            `power=${aimPower.toFixed(3)}  angle=${aimAngle.toFixed(3)}`
-        //        )
-      }
+      function updateAimParamsText() {}
 
       function normalizeSpinOffset(offsetX, offsetY) {
         const length = Math.hypot(offsetX, offsetY)
@@ -750,8 +821,8 @@
       function updateSpinVisualState() {
         const cueTip = document.getElementById("cueTip")
         if (!cueTip) return
-        cueTip.style.left = `${(-aimOffset.x + 0.5) * 100}%`
-        cueTip.style.top = `${(-aimOffset.y + 0.5) * 100}%`
+        cueTip.style.left = `${(-aimOffset.x / 2 + 0.5) * 100}%`
+        cueTip.style.top = `${(-aimOffset.y / 2 + 0.5) * 100}%`
         cueTip.style.transform = "translate(-50%, -50%)"
       }
 
@@ -760,9 +831,11 @@
         if (!cueBall) return
         const rect = cueBall.getBoundingClientRect()
         const spinX =
-          -(pointerEvent.clientX - rect.left - rect.width / 2) / rect.width
+          -(pointerEvent.clientX - rect.left - rect.width / 2) /
+          (rect.width / 2)
         const spinY =
-          -(pointerEvent.clientY - rect.top - rect.height / 2) / rect.height
+          -(pointerEvent.clientY - rect.top - rect.height / 2) /
+          (rect.height / 2)
         aimOffset = normalizeSpinOffset(spinX, spinY)
         updateSpinVisualState()
         updateAimParamsText()
@@ -848,6 +921,18 @@
         document.getElementById("replay").click()
       }
 
+      function hitfacts() {
+        const objectBallEl = document.getElementById("objectBall")
+        const speed = aimPower.toFixed(3)
+        const objX = window.getComputedStyle(objectBallEl).left
+        const parsedObjX = parseFloat(objX) - 6.2
+        const overlap = (100 - Math.abs(parsedObjX)).toFixed(1)
+        console.log(`Speed: ${speed} m/s
+Spin X: ${(aimOffset.x * -1).toFixed(3)} of R
+Spin Y: ${aimOffset.y.toFixed(3)} of R
+Overlap: ${overlap}%`)
+      }
+
       function buildBall(surface, ball) {
         const el = document.createElement("div")
         el.className = "ball"
@@ -863,6 +948,9 @@
         if (!surface || !topview?.dataset.state) return
 
         const urlParams = new URLSearchParams(window.location.search)
+        const cushionModel = urlParams.get("cushionModel") || "Mathavan"
+        document.getElementById("page-title").textContent =
+          `Three cushion research (${cushionModel})`
         const diagramParams = new URLSearchParams(topview.dataset.state)
         let changed = false
 
@@ -1071,6 +1159,15 @@
           aimPower = Number(event.target.value) * MAX_POWER
           syncDiagramState(topview)
         })
+
+        document.getElementById("play-btn")?.addEventListener("click", () => {
+          const coords = tableBalls.flatMap((b) => [round6(-b.x), round6(b.y)])
+          const url = new URL("../index.html", window.location.href)
+          url.searchParams.set("ruletype", "threecushion")
+          url.searchParams.set("practice", "true")
+          url.searchParams.set("init", JSON.stringify(coords))
+          window.location.href = url.toString()
+        })
         function shareUrl(url) {
           const shareUrl = url.toString()
           if (navigator.share) {
@@ -1123,6 +1220,17 @@
             window.history.replaceState(null, "", window.location.pathname)
           }
         }, 1)
+
+        const objectBallTarget = document.getElementById("objectBall")
+        if (objectBallTarget) {
+          const observer = new MutationObserver(() => {
+            updateAimParamsText()
+          })
+          observer.observe(objectBallTarget, {
+            attributes: true,
+            attributeFilter: ["style"],
+          })
+        }
       }
 
       function loadPresets() {
@@ -1297,45 +1405,50 @@
         style="flex-shrink: 0; opacity: 0.8"
       />
       <div style="margin: 0; line-height: 1.6">
-        <p style="margin: 0 0 6px">
-          Based on the <strong>Stronge impact model</strong>, the physical
-          "feel" of a ball-cushion collision is determined by how normal
-          compression/restitution interacts with tangential friction and
-          compliance over the micro-duration of the hit.
-        </p>
-        <ul style="margin: 0; padding-left: 16px">
+        <p style="margin: 0 0 6px"><strong>Mathavan</strong></p>
+        <ul style="margin: 0 0 10px; padding-left: 16px">
+          <li>
+            <strong style="color: #aaa">μs (ball-table sliding friction)</strong
+            ><br />
+            Lower → topspin/backspin/corkscrew take longer to wear off and
+            transition to natural roll.
+          </li>
+          <li style="margin-top: 6px">
+            <strong style="color: #aaa">μw (ball-cushion friction)</strong
+            ><br />
+            Lower → sidespin has less effect changing the rebound angle off the
+            rail, and more sidespin remains on the cueball.
+          </li>
+        </ul>
+        <p style="margin: 0 0 6px"><strong>Stronge</strong></p>
+        <ul style="margin: 0 0 6px; padding-left: 16px">
           <li>
             <strong style="color: #aaa"
-              >stronge_e_n = 0.8979 (Normal Coefficient of Restitution)</strong
-            ><br />
-            <em>What it does:</em> Dictates energy retention perpendicular to
-            the cushion.<br />
-            <em>The Feel:</em> Extremely springy and alive. Resembles brand-new
-            tournament-grade rubber cushions (like Artemis blocks). It minimizes
-            "thudding" or energy deadening on direct impacts.
+              >stronge_e_n (Normal restitution)</strong
+            >
+            — higher = springier cushion, less energy lost on direct impacts.
           </li>
-          <li style="margin-top: 8px">
-            <strong style="color: #aaa"
-              >stronge_μ = 0.161 (Friction Coefficient)</strong
-            ><br />
-            <em>What it does:</em> Controls the maximum tangential force (grip)
-            the cushion can apply relative to the normal force.<br />
-            <em>The Feel:</em> Slick and slippery. The cushion won't "grab" the
-            ball aggressively, preserving "gross slip" rather than gripping and
-            rolling off. Sidespin (english) alters the rebound angle less
-            dramatically.
+          <li style="margin-top: 6px">
+            <strong style="color: #aaa">stronge_μ (Cushion friction)</strong> —
+            lower = slippery cushion, sidespin alters rebound angle less.
           </li>
-          <li style="margin-top: 8px">
+          <li style="margin-top: 6px">
             <strong style="color: #aaa"
-              >stronge_omega_ratio = 1.9677 (Stiffness/Frequency Ratio)</strong
-            ><br />
-            <em>What it does:</em> Defines the ratio between normal and
-            tangential structural frequencies during deformation. Drives
-            eta_squared to ≈0.904.<br />
-            <em>The Feel:</em> Progressive, smooth spin transfer. The ball
-            almost never instantly locks/sticks to the cushion. The transfer of
-            spin into linear velocity feels fluid and delayed rather than
-            jarring or sudden.
+              >stronge_omega_ratio (Stiffness ratio)</strong
+            >
+            — controls normal/tangential frequency ratio; higher = smoother,
+            more delayed spin transfer.
+          </li>
+        </ul>
+        <p style="margin: 6px 0 4px"><strong>Han</strong></p>
+        <ul style="margin: 0 0 6px; padding-left: 16px">
+          <li>
+            <strong style="color: #aaa">muS (sliding friction)</strong> —
+            controls how fast the cue ball "grabs" the cloth with spin.
+          </li>
+          <li style="margin-top: 6px">
+            <strong style="color: #aaa">mu (rolling friction)</strong> —
+            controls how quickly a rolling ball stops.
           </li>
         </ul>
         <p style="margin: 6px 0 0">

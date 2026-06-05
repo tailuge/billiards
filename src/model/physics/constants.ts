@@ -1,14 +1,13 @@
-export const g = 9.8
-export let mu = 0.007 // Han rolling friction
-export let muS = 0.136 // Han sliding friction
-export let muC = 0.85
-export let rho = 0.035 // Han spindown rate
+export let mu = 0.0055 // Han rolling friction
+export let muS = 0.126 // Han sliding friction
+export let rho = 0.045 // Han spindown rate
+
 export let m = 0.23
 export let R = 0.03275
-export let e = 0.86
+export const g = 9.8
 
 // Mathavan cushion coefficient of restitution
-export let ee = 0.84
+export let ee = 0.85
 
 // Mathavan coefficient (table)
 export let μs = 0.2
@@ -16,18 +15,29 @@ export let μs = 0.2
 // Mathavan coefficient (cushion)
 export let μw = 0.2
 
-// Candidate values
-// Stronge eₙ stronge_e_n=0.8
-// Stronge μ stronge_μ=0.3
+// Stronge slip stick ratio (cushion)
+export let stronge_omega_ratio = 1.847
+
+// Stronge restitution (cushion)
+export let stronge_e_n = 0.78
+
+// Stronge friction (cushion)
+export let stronge_μ = 0.3
 
 export let Mz: number
 export let Mxy: number
 export let I: number
 
+export let e = 0.86 // Han cushion coefficient of restitution - unused
+export let muC = 0.85 // Han cushion friction- unused
+
 // Fixed angle of cushion contact point above ball center
 export const sinθ = 2 / 5
 // Fixed angle of cushion contact point above ball center
 export const cosθ = Math.sqrt(21) / 5
+
+export const offCenterLimit = 0.45
+export const maxPower = 160 * R
 
 refresh()
 
@@ -71,10 +81,6 @@ export function setμw(val: number) {
 export function setee(val: number) {
   ee = val
 }
-
-export let stronge_omega_ratio = 1.847
-export let stronge_e_n = 0.979
-export let stronge_μ = 0.161
 
 export function setStrongeOmegaRatio(val: number) {
   stronge_omega_ratio = val

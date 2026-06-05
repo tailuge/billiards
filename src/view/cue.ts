@@ -8,8 +8,9 @@ import { Ball, State } from "../model/ball"
 import { cueStrike } from "../model/physics/physics"
 import { CueMesh } from "./cuemesh"
 import { Mesh, Vector3, Object3D } from "three"
-import { R } from "../model/physics/constants"
+import { maxPower, offCenterLimit, R } from "../model/physics/constants"
 import { cueIntersectsAnything } from "../utils/cueintersect"
+import { id } from "../utils/dom"
 
 export class Cue {
   mesh: Object3D
@@ -18,8 +19,6 @@ export class Cue {
   helperMesh: Mesh
   placerMesh: Object3D
   shadowMesh: Mesh
-  readonly offCenterLimit = 0.3
-  readonly maxPower = 160 * R
   t = 0
   hittingAnimation = false
   aimInputs: AimInputs
@@ -27,23 +26,26 @@ export class Cue {
 
   length = TableGeometry.tableX * 1
 
+  private hitStatsElement: HTMLElement | null = id("hitStats")
   private readonly tempVec = new Vector3()
   private readonly tempVec2 = new Vector3()
   private readonly tempVec3 = new Vector3()
   hitAnimationWeight: number = 0
 
   constructor() {
-    const cue = CueMesh.createCue(
-      (R * 0.07) / 0.5,
-      (R * 0.23) / 0.5,
-      this.length
-    )
-    this.mesh = cue.mesh
-    this.tiltMesh = cue.tiltMesh
-    this.cueBody = cue.cueBody
-    this.helperMesh = CueMesh.createHelper()
-    this.placerMesh = CueMesh.createPlacer()
-    this.shadowMesh = CueMesh.createShadow(this.length)
+    if (typeof document !== "undefined") {
+      const cue = CueMesh.createCue(
+        (R * 0.07) / 0.5,
+        (R * 0.23) / 0.5,
+        this.length
+      )
+      this.mesh = cue.mesh
+      this.tiltMesh = cue.tiltMesh
+      this.cueBody = cue.cueBody
+      this.helperMesh = CueMesh.createHelper()
+      this.placerMesh = CueMesh.createPlacer()
+      this.shadowMesh = CueMesh.createShadow(this.length)
+    }
   }
 
   rotateAim(angle, table: Table) {
@@ -51,9 +53,9 @@ export class Cue {
       return
     }
     this.aim.angle = Math.fround(this.aim.angle + angle)
-    this.mesh.rotation.z = this.aim.angle
-    this.helperMesh.rotation.z = this.aim.angle
-    this.shadowMesh.rotation.z = this.aim.angle
+    if (this.mesh) this.mesh.rotation.z = this.aim.angle
+    if (this.helperMesh) this.helperMesh.rotation.z = this.aim.angle
+    if (this.shadowMesh) this.shadowMesh.rotation.z = this.aim.angle
     this.aimInputs.showOverlap()
     this.avoidCueTouchingOtherBall(table)
   }
@@ -62,9 +64,7 @@ export class Cue {
     if (!this.aimInputs || this.aimInputs.isDisabled()) {
       return
     }
-    this.aim.power = Math.fround(
-      Math.min(this.maxPower, this.aim.power + delta)
-    )
+    this.aim.power = Math.fround(Math.min(maxPower, this.aim.power + delta))
     this.updateAimInput()
   }
 
@@ -72,7 +72,7 @@ export class Cue {
     if (!this.aimInputs || this.aimInputs.isDisabled()) {
       return
     }
-    this.aim.power = Math.fround(value * this.maxPower)
+    this.aim.power = Math.fround(value * maxPower)
     this.updateAimInput()
   }
 
@@ -84,6 +84,12 @@ export class Cue {
     const strike = cueStrike(angle, power, offset, elevation)
     ball.vel.copy(strike.vel)
     ball.rvel.copy(strike.rvel)
+    if (this.hitStatsElement) {
+      this.hitStatsElement.innerText =
+        `Angle: ${angle.toFixed(2)} Power: ${power} ` +
+        `Offset: ${offset.x.toFixed(2)}, ${offset.y.toFixed(2)} Elevation: ${elevation.toFixed(0)} ` +
+        `Vel: ${ball.vel.length().toFixed(2)}m/s rVel: ${ball.rvel.length().toFixed(2)}rad/s`
+    }
   }
 
   aimAtNext(cueball, ball) {
@@ -106,8 +112,8 @@ export class Cue {
     if (!this.aimInputs || this.aimInputs.isDisabled()) {
       return
     }
-    if (offset.length() > this.offCenterLimit) {
-      offset.normalize().multiplyScalar(this.offCenterLimit)
+    if (offset.length() > offCenterLimit) {
+      offset.normalize().multiplyScalar(offCenterLimit)
     }
     this.aim.offset.copy(roundVec(offset))
     this.avoidCueTouchingOtherBall(table)
@@ -118,8 +124,8 @@ export class Cue {
     let n = 0
     while (n++ < 20 && this.intersectsAnything(table)) {
       this.aim.offset.y += 0.1
-      if (this.aim.offset.length() > this.offCenterLimit) {
-        this.aim.offset.normalize().multiplyScalar(this.offCenterLimit)
+      if (this.aim.offset.length() > offCenterLimit) {
+        this.aim.offset.normalize().multiplyScalar(offCenterLimit)
       }
     }
 
@@ -130,16 +136,17 @@ export class Cue {
 
   updateAimInput() {
     this.aimInputs?.updateVisualState(this.aim.offset.x, this.aim.offset.y)
-    this.aimInputs?.updatePowerSlider(this.aim.power / this.maxPower)
+    this.aimInputs?.updatePowerSlider(this.aim.power / maxPower)
     this.aimInputs?.updateTiltSlider?.(this.aim.elevation)
     this.aimInputs?.showOverlap()
   }
 
   private updateCueRotation() {
-    this.mesh.rotation.z = this.aim.angle
-    this.tiltMesh.rotation.y = CueMesh.baseTilt + this.aim.elevation
-    this.helperMesh.rotation.z = this.aim.angle
-    this.shadowMesh.rotation.z = this.aim.angle
+    if (this.mesh) this.mesh.rotation.z = this.aim.angle
+    if (this.tiltMesh)
+      this.tiltMesh.rotation.y = CueMesh.baseTilt + this.aim.elevation
+    if (this.helperMesh) this.helperMesh.rotation.z = this.aim.angle
+    if (this.shadowMesh) this.shadowMesh.rotation.z = this.aim.angle
   }
 
   private applyHitAnimation(swing: number) {
@@ -154,38 +161,44 @@ export class Cue {
     const strokeX = (1 - this.hitAnimationWeight) * swing - hitOffset
     const strokeZ = (0.15 + Math.min(this.t / 5, 0.25)) * hitOffset
 
-    this.cueBody.position.set(
-      -this.length / 2 - R + strokeX,
-      this.aim.offset.x * 2 * R,
-      Math.max(-0.5 * R, strokeZ + this.aim.offset.y * 2 * R)
-    )
+    if (this.cueBody) {
+      this.cueBody.position.set(
+        -this.length / 2 - R + strokeX,
+        this.aim.offset.x * R,
+        Math.max(-0.5 * R, strokeZ + this.aim.offset.y * R)
+      )
+    }
 
     return strokeX
   }
 
   private updateCuePosition(pos: Vector3, strokeX: number) {
-    this.mesh.position.copy(pos)
+    if (this.mesh) this.mesh.position.copy(pos)
 
     // Project local strokeX through tilt onto the horizontal plane for shadow
     const unitToBall = unitAtAngle(this.aim.angle, this.tempVec)
     const sideVec = upCross(unitToBall).normalize()
-    const elevation = this.tiltMesh.rotation.y as number
+    const elevation = this.tiltMesh ? (this.tiltMesh.rotation.y as number) : 0
 
     const localX = strokeX - R
-    const localZ = this.cueBody.position.z
+    const localZ = this.cueBody ? this.cueBody.position.z : 0
     const projectedX =
       localX * Math.cos(elevation) + localZ * Math.sin(elevation)
 
-    this.shadowMesh.position
-      .copy(pos)
-      .addScaledVector(sideVec, this.cueBody.position.y)
-      .addScaledVector(unitToBall, projectedX + R * Math.cos(elevation))
-    this.shadowMesh.position.z = -R * 0.99
-    this.shadowMesh.scale.x = Math.cos(elevation)
+    if (this.shadowMesh) {
+      this.shadowMesh.position
+        .copy(pos)
+        .addScaledVector(sideVec, this.cueBody ? this.cueBody.position.y : 0)
+        .addScaledVector(unitToBall, projectedX + R * Math.cos(elevation))
+      this.shadowMesh.position.z = -R * 0.99
+      this.shadowMesh.scale.x = Math.cos(elevation)
+    }
 
-    this.helperMesh.position.copy(pos)
-    this.placerMesh.position.copy(pos)
-    this.placerMesh.rotation.z = this.t
+    if (this.helperMesh) this.helperMesh.position.copy(pos)
+    if (this.placerMesh) {
+      this.placerMesh.position.copy(pos)
+      this.placerMesh.rotation.z = this.t
+    }
   }
 
   moveTo(pos) {
@@ -195,7 +208,7 @@ export class Cue {
       (sin(this.t * 1.5 + Math.PI / 2) - 1) *
       2 *
       R *
-      (this.aim.power / this.maxPower)
+      (this.aim.power / maxPower)
     const strokeX = this.applyHitAnimation(swing)
     this.updateCuePosition(pos, strokeX)
   }
@@ -231,22 +244,22 @@ export class Cue {
   }
 
   placeBallMode() {
-    this.mesh.visible = false
-    this.shadowMesh.visible = false
-    this.placerMesh.visible = true
+    if (this.mesh) this.mesh.visible = false
+    if (this.shadowMesh) this.shadowMesh.visible = false
+    if (this.placerMesh) this.placerMesh.visible = true
     this.aim.angle = 0
   }
 
   aimMode() {
-    this.mesh.visible = true
-    this.shadowMesh.visible = true
-    this.placerMesh.visible = false
+    if (this.mesh) this.mesh.visible = true
+    if (this.shadowMesh) this.shadowMesh.visible = true
+    if (this.placerMesh) this.placerMesh.visible = false
   }
 
   spinOffset(aim: AimEvent = this.aim) {
     return upCross(unitAtAngle(aim.angle, this.tempVec2))
-      .multiplyScalar(aim.offset.x * 2 * R)
-      .setZ(aim.offset.y * 2 * R)
+      .multiplyScalar(aim.offset.x * R)
+      .setZ(aim.offset.y * R)
   }
 
   intersectsAnything(table: Table, aim: AimEvent = this.aim) {
@@ -254,10 +267,10 @@ export class Cue {
   }
 
   showHelper(b) {
-    this.helperMesh.visible = b
+    if (this.helperMesh) this.helperMesh.visible = b
   }
 
   toggleHelper() {
-    this.showHelper(!this.helperMesh.visible)
+    if (this.helperMesh) this.showHelper(!this.helperMesh.visible)
   }
 }

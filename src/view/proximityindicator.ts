@@ -28,6 +28,9 @@ export class ProximityIndicator {
   private minDistance: number = Infinity
 
   constructor() {
+    if (typeof document === "undefined") {
+      return
+    }
     this.group.position.z = -0.97 * R // Near table bed
     this.group.visible = false
 
@@ -139,10 +142,9 @@ export class ProximityIndicator {
     this.group.visible = true
 
     // Dynamic position relative to ball to prevent clipping under cushions
-    // Sign projection from Point to Center
-    const sFlipped = new Vector3(Math.sign(-pos.x), Math.sign(-pos.y), 0)
-    const size = R * 4
-    const offset = sFlipped.multiplyScalar(1.25 * size)
+
+    const sFlipped = new Vector3(-pos.x, -pos.y, 0)
+    const offset = sFlipped.multiplyScalar(R * 4)
 
     this.proximityTexts.forEach((textMesh) => {
       textMesh.position.set(offset.x, offset.y, 0.01)

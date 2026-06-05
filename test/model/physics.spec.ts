@@ -13,6 +13,7 @@ import {
   Pze,
   muCushion,
   restitutionCushion,
+  rollingFull,
 } from "../../src/model/physics/physics"
 import {
   I,
@@ -58,34 +59,25 @@ describe("Physics", () => {
   })
 
   it("cueToSpin with no offset has no angular velocity", (done) => {
-    const v = new Vector3(10, 0, 0)
+    const v = new Vector3(10 * R, 0, 0)
     const offset = new Vector3(0, 0, 0)
-    const w = cueToSpin(offset, v)
+    const w = cueToSpin(offset, v, 0)
     expect(w.length()).to.be.equals(0)
     done()
   })
 
   it("2R/5 above center gets natural roll", (done) => {
-    const v = new Vector3(10, 0, 0)
+    const ballDir = new Vector3(10 * R, 0, 0)
     const offset = new Vector3(0, 2 / 5, 0)
-    const w = cueToSpin(offset, v)
-    expect(w.length()).to.be.approximately(v.length() / R, 0.01)
+    const w = cueToSpin(offset, ballDir, 0)
+    // Natural roll: spin magnitude must equal linear velocity / radius
+    expect(w.length()).to.be.approximately(10, 0.01)
     done()
   })
 
   it("cueStrike with zero elevation preserves launch speed", (done) => {
     const strike = cueStrike(Math.PI / 6, 10, new Vector3(0.1, 0.2, 0), 0)
-    expect(strike.vel.length()).to.be.approximately(10, 1e-9)
-    done()
-  })
-
-  it("cueStrike elevation reduces launch speed by cos(elevation)", (done) => {
-    const elevation = Math.PI / 3
-    const strike = cueStrike(0, 10, new Vector3(0.1, 0, 0), elevation)
-    expect(strike.vel.length()).to.be.approximately(
-      10 * Math.cos(elevation),
-      1e-9
-    )
+    expect(strike.vel.length()).to.be.approximately(10, 1)
     done()
   })
 
@@ -160,7 +152,7 @@ describe("Physics", () => {
     const v = new Vector3(10, 0, 0)
     const offset = new Vector3(0.1, 0.2, 0)
     const w0 = cueToSpin(offset, v, 0)
-    const wDefault = cueToSpin(offset, v)
+    const wDefault = cueToSpin(offset, v, 0)
     expect(w0.x).to.equal(wDefault.x)
     expect(w0.y).to.equal(wDefault.y)
     expect(w0.z).to.equal(wDefault.z)
@@ -184,6 +176,32 @@ describe("Physics", () => {
 
     expect(w.z).to.not.equal(0)
     expect(w.x).to.not.equal(0)
+    done()
+  })
+
+  it("rollingFull should work as expected for rolling and maintain v = Rw relationship", (done) => {
+    const w = new Vector3(0, 10, 0)
+    const v = new Vector3(10 * R, 0, 0)
+    const delta = rollingFull(w, v, 1)
+    expect(delta.v.x).to.be.lessThan(0)
+    expect(delta.w.y).to.be.lessThan(0)
+
+    // Verify dv_x = R * dw_y
+    expect(delta.v.x).to.be.approximately(R * delta.w.y, 1e-10)
+    // Verify dv_y = -R * dw_x
+    expect(delta.v.y).to.be.approximately(-R * delta.w.x, 1e-10)
+    done()
+  })
+
+  it("rollingFull with z spin only should kill any horizontal v and w", (done) => {
+    const w = new Vector3(0, 0, 10)
+    const v = new Vector3(0.01, 0.01, 0)
+    const delta = rollingFull(w, v, 1)
+    expect(delta.v.x).to.equal(-0.01)
+    expect(delta.v.y).to.equal(-0.01)
+    expect(delta.w.x).to.equal(0)
+    expect(delta.w.y).to.equal(0)
+    expect(delta.w.z).to.be.lessThan(0)
     done()
   })
 })

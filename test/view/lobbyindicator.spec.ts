@@ -2,7 +2,7 @@ import { MessagingClient } from "@tailuge/messaging"
 import { LobbyIndicator } from "../../src/view/lobbyindicator"
 import { initDom } from "./dom"
 import { Session } from "../../src/network/client/session"
-import { LOBBY_URL } from "../../src/utils/gameover"
+import { LOBBY_URL } from "../../src/network/client/constants"
 
 // Mock the @tailuge/messaging module
 jest.mock("@tailuge/messaging", () => ({
@@ -237,5 +237,32 @@ describe("LobbyIndicator", () => {
     })
 
     await indicator.stop()
+  })
+
+  it("updates title with other user names on users change", async () => {
+    const mockRules = { rulename: "nineball" } as any
+    const indicator = new LobbyIndicator(false, false, mockRules)
+    await indicator.init()
+
+    const element = document.getElementById("lobbyOverlay")
+    const countElement = element?.querySelector(".lobby-count") as HTMLElement
+
+    // Access the mock lobby to trigger onUsersChange callback
+    const mockLobby = (indicator as any).lobby
+    const onUsersChangeCallback = mockLobby.onUsersChange.mock.calls[0][0]
+
+    // Simulate several users
+    onUsersChangeCallback([
+      { userId: "test-client", userName: "TestPlayer" },
+      { userId: "u2", userName: "Alice" },
+      { userId: "u3", userName: "Bob" },
+      { userId: "u2", userName: "Alice" }, // Duplicate session for Alice
+    ])
+
+    expect(countElement.getAttribute("title")).toBe("Online:\nAlice\nBob")
+
+    // Empty users (except self)
+    onUsersChangeCallback([{ userId: "test-client", userName: "TestPlayer" }])
+    expect(countElement.hasAttribute("title")).toBe(false)
   })
 })

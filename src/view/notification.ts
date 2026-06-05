@@ -1,6 +1,5 @@
 import { id } from "../utils/dom"
-import { Rematch } from "../network/client/rematch"
-import { Session } from "../network/client/session"
+import { LOBBY_URL } from "../network/client/constants"
 
 export interface NotificationHighBreak {
   score: number
@@ -231,11 +230,11 @@ export class Notification {
       ) as HTMLElement | null
       const action = button?.dataset.notificationAction
       if (!action) return
-      this.handleAction(action)
+      this.handleAction(action, button.dataset.notificationUrl)
     })
   }
 
-  private handleAction(action: string) {
+  private handleAction(action: string, url?: string) {
     const handler = this.actionHandlers[action]
     if (handler) {
       handler()
@@ -250,11 +249,13 @@ export class Notification {
       case "replay":
         globalThis.location.reload()
         break
-      case "rematch":
-        Rematch.navigate(Session.getInstance())
-        break
       case "lobby":
-        Rematch.redirectToLobby()
+        globalThis.location.href = LOBBY_URL
+        break
+      case "rematch":
+        if (url) {
+          globalThis.location.href = url
+        }
         break
     }
   }

@@ -1,0 +1,712 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>web worker integration example</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>"
+    />
+    <style>
+      body {
+        font-family: monospace;
+        background: #111;
+        color: #eee;
+        padding: 10px;
+        max-width: 1400px;
+        margin: 0 auto;
+        font-size: 10px;
+      }
+      h1 {
+        font-size: 14px;
+        margin: 0 0 10px 0;
+      }
+      h2 {
+        color: #007acc;
+        font-size: 12px;
+        margin: 5px 0;
+      }
+      h3 {
+        font-size: 11px;
+        margin: 5px 0;
+      }
+      p {
+        margin: 2px 0;
+      }
+      code {
+        background: #333;
+        padding: 1px 2px;
+        border-radius: 4px;
+        color: #ff79c6;
+        font-size: 9px;
+      }
+      pre {
+        background: #282a36;
+        padding: 5px;
+        border-radius: 4px;
+        overflow-x: auto;
+        color: #f8f8f2;
+        font-size: 9px;
+        margin: 2px 0;
+      }
+
+      .main-layout {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      /* Left panel: inputs */
+      .left-panel {
+        width: 300px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      #inputJson {
+        background: #222;
+        color: #eee;
+        border: 1px solid #444;
+        padding: 5px;
+        height: 650px;
+        width: 100%;
+        font-size: 10px;
+        font-family: monospace;
+        box-sizing: border-box;
+        resize: vertical;
+      }
+
+      /* Right panel: plot + log */
+      .right-panel {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      #plotCanvas {
+        background: #000;
+        border: 1px solid #444;
+        width: 100%;
+        height: 400px;
+      }
+      #log {
+        white-space: pre-wrap;
+        background: #1a1a2e;
+        padding: 8px;
+        border: 1px solid #444;
+        height: 200px;
+        overflow-y: scroll;
+        font-size: 9px;
+        color: #8be9fd;
+        box-sizing: border-box;
+      }
+      .log-checkpoint {
+        color: #50fa7b;
+      }
+      .log-error {
+        color: #ff5555;
+      }
+      .log-result {
+        color: #ffb86c;
+      }
+      .log-ui {
+        color: #bd93f9;
+      }
+      .log-data {
+        color: #ccc;
+      }
+
+      button {
+        padding: 5px 10px;
+        cursor: pointer;
+        background: #444;
+        color: #fff;
+        border: 1px solid #666;
+        font-size: 10px;
+      }
+      button:hover {
+        background: #555;
+      }
+      button:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+      .btn-row {
+        display: flex;
+        gap: 5px;
+      }
+
+      .guide {
+        margin-top: 20px;
+        padding: 10px;
+        background: #1a1a1a;
+        border-left: 4px solid #007acc;
+        font-size: 10px;
+      }
+      .guide table {
+        border-collapse: collapse;
+        margin: 5px 0;
+        width: 100%;
+      }
+      .guide th,
+      .guide td {
+        border: 1px solid #333;
+        padding: 2px 5px;
+        text-align: left;
+        font-size: 9px;
+      }
+      .guide th {
+        background: #222;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Web worker integration example</h1>
+
+    <div class="main-layout">
+      <!-- Left panel: inputs -->
+      <div class="left-panel">
+        <textarea id="inputJson"></textarea>
+        <div class="btn-row">
+          <button id="runSim">Run Simulation</button>
+          <button id="clearLog">Clear Log</button>
+        </div>
+      </div>
+
+      <!-- Right panel: plot + log -->
+      <div class="right-panel">
+        <canvas id="plotCanvas"></canvas>
+        <div class="btn-row">
+          <button id="showResponse" disabled>
+            Show Response (first 5 frames)
+          </button>
+        </div>
+        <label>Worker Log:</label>
+        <div id="log"></div>
+      </div>
+    </div>
+
+    <div class="guide">
+      <h2>LLM Agent Integration Guide</h2>
+      <p>
+        The <strong>Standalone Physics Worker</strong> (<code>worker.js</code>)
+        runs the billiards physics engine in a Web Worker thread. Source:
+        <a href="https://github.com/tailuge/billiards" style="color: #007acc"
+          >github.com/tailuge/billiards</a
+        >
+        — see
+        <a
+          href="https://github.com/tailuge/billiards/blob/master/src/worker.ts"
+          style="color: #007acc"
+          >src/worker.ts</a
+        >.
+      </p>
+
+      <h3>1. Integration Pattern</h3>
+      <pre>
+// Preload the worker once at page load (not per simulation)
+const worker = new Worker('https://tailuge.github.io/billiards/dist/worker.js');
+
+// Listen for checkpoint messages during init
+worker.onmessage = (e) => {
+  if (e.data.type === 'CHECKPOINT') {
+    console.log('Worker checkpoint:', e.data.label);
+  }
+  if (e.data.type === 'COMPLETE') {
+    const { frames, outcomes, computeTime } = e.data;
+    // process results...
+  }
+  if (e.data.type === 'ERROR') {
+    console.error(e.data.error, e.data.stack);
+  }
+};
+
+// Reuse the same worker for multiple simulations
+worker.postMessage(configA);
+// ...wait for COMPLETE...
+worker.postMessage(configB);
+</pre
+      >
+
+      <h3>2. Message Types (Worker → UI)</h3>
+      <table>
+        <tr>
+          <th>type</th>
+          <th>When</th>
+          <th>Key fields</th>
+        </tr>
+        <tr>
+          <td><code>CHECKPOINT</code></td>
+          <td>At each lifecycle stage</td>
+          <td><code>label</code>, <code>t</code> (performance.now)</td>
+        </tr>
+        <tr>
+          <td><code>COMPLETE</code></td>
+          <td>Simulation finished</td>
+          <td>
+            <code>frames[]</code>, <code>outcomes[]</code>,
+            <code>computeTime</code>, <code>tableX</code>, <code>tableY</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>ERROR</code></td>
+          <td>On failure</td>
+          <td><code>error</code>, <code>stack</code></td>
+        </tr>
+      </table>
+
+      <h3>3. Checkpoint Labels (in order)</h3>
+      <p>
+        <code>worker.js loaded</code> → <code>Inputs received</code> →
+        <code>Constants set</code> → <code>Table geometry set</code> →
+        <code>Strike applied</code> → <code>Iteration progress</code> (×N) →
+        <code>Simulation loop complete</code> → <code>COMPLETE</code>
+      </p>
+
+      <h3>4. SimulationConfig Schema</h3>
+      <pre>
+{
+  ruleType: "threecushion" | "snooker" | "eightball",
+  balls: [{ id: number, pos: { x, y, z } }, ...],
+  cushionModel: "mathavan" | "stronge",
+  shot: {
+    cueBallId: number,
+    angle: number,       // radians
+    power: number,       // m/s impulse scale
+    offset: { x, y },   // spin offset from centre (max ±0.5 of R)
+    elevation: number    // cue elevation radians
+  },
+  stepSize: number,      // simulation time step (default 0.001953125)
+  maxIterations: number, // hard cap (default 200000)
+  params: { ... }        // physics constant overrides (see below)
+}
+</pre
+      >
+
+      <h3>5. Settable Physics Constants (<code>params</code>)</h3>
+      <p>
+        Pass any of these keys in <code>params</code>. The key maps to
+        <code>set&lt;key&gt;(value)</code> in
+        <a
+          href="https://github.com/tailuge/billiards/blob/master/src/model/physics/constants.ts"
+          style="color: #007acc"
+          >constants.ts</a
+        >.
+      </p>
+      <table>
+        <tr>
+          <th>Key</th>
+          <th>Default</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td><code>mu</code></td>
+          <td>0.007</td>
+          <td>Rolling friction (Han)</td>
+        </tr>
+        <tr>
+          <td><code>muS</code></td>
+          <td>0.136</td>
+          <td>Sliding friction (Han)</td>
+        </tr>
+        <tr>
+          <td><code>rho</code></td>
+          <td>0.035</td>
+          <td>Spindown rate (Han)</td>
+        </tr>
+        <tr>
+          <td><code>m</code></td>
+          <td>0.23</td>
+          <td>Ball mass (kg)</td>
+        </tr>
+        <tr>
+          <td><code>R</code></td>
+          <td>0.03275</td>
+          <td>Ball radius (m)</td>
+        </tr>
+        <tr>
+          <td><code>e</code></td>
+          <td>0.86</td>
+          <td>Ball-ball coefficient of restitution</td>
+        </tr>
+        <tr>
+          <td><code>ee</code></td>
+          <td>0.84</td>
+          <td>Cushion coefficient of restitution (Mathavan)</td>
+        </tr>
+        <tr>
+          <td><code>μs</code></td>
+          <td>0.2</td>
+          <td>Table friction coefficient (Mathavan)</td>
+        </tr>
+        <tr>
+          <td><code>μw</code></td>
+          <td>0.2</td>
+          <td>Cushion friction coefficient (Mathavan)</td>
+        </tr>
+        <tr>
+          <td><code>StrongeOmegaRatio</code></td>
+          <td>1.847</td>
+          <td>Stronge omega ratio</td>
+        </tr>
+        <tr>
+          <td><code>StrongeEN</code></td>
+          <td>0.979</td>
+          <td>Stronge normal restitution</td>
+        </tr>
+        <tr>
+          <td><code>StrongeMu</code></td>
+          <td>0.161</td>
+          <td>Stronge friction coefficient</td>
+        </tr>
+      </table>
+
+      <h3>6. Best Practices</h3>
+      <ul>
+        <li>
+          <strong>Preload once</strong>: Create the worker at page load. The
+          <code>worker.js loaded</code> checkpoint fires immediately — do not
+          wait for a simulation to confirm it loaded.
+        </li>
+        <li>
+          <strong>Reuse the worker</strong>: Post multiple configs sequentially.
+          The worker resets internal state each time
+          <code>onmessage</code> fires.
+        </li>
+        <li>
+          <strong>Avoid stringify on large responses</strong>:
+          <code>frames[]</code> can contain 1000+ entries. Slice before display
+          or process fields directly.
+        </li>
+        <li>
+          <strong>Monitor checkpoints</strong>: If the worker hangs, the last
+          checkpoint label tells you exactly which stage stalled.
+        </li>
+        <li>
+          <strong>params override order matters</strong>: Setting
+          <code>R</code> or <code>m</code> triggers a <code>refresh()</code> of
+          derived constants (Mz, Mxy, I). Set them before other params that
+          depend on derived values.
+        </li>
+      </ul>
+
+      <h3>7. Parallel Search Pattern</h3>
+      <p>
+        Instantiate multiple workers to perform concurrent simulations. Use the
+        <code>id</code> field to correlate out-of-order responses.
+      </p>
+      <pre>
+const workerCount = 4;
+const workers = Array.from({ length: workerCount }, () => new Worker('dist/worker.js'));
+
+async function runParallel(tasks) {
+  const promises = tasks.map((task, i) => {
+    return new Promise((resolve, reject) => {
+      const worker = workers[i % workerCount];
+      const correlationId = task.id || `task-${i}-${Date.now()}`;
+
+      const handler = (e) => {
+        if (e.data.id === correlationId && (e.data.type === 'COMPLETE' || e.data.type === 'ERROR')) {
+          worker.removeEventListener('message', handler);
+          e.data.type === 'COMPLETE' ? resolve(e.data) : reject(e.data);
+        }
+      };
+
+      worker.addEventListener('message', handler);
+      worker.postMessage({ ...task, id: correlationId });
+    });
+  });
+
+  return Promise.all(promises);
+}
+</pre
+      >
+
+      <h3>8. Universal Runtime Architecture (Web & Node)</h3>
+      <p>
+        The core <code>worker.js</code> logic can be executed seamlessly in
+        Node.js using <code>node:worker_threads</code> by injecting a tiny
+        global polyfill wrapper. This avoids the need for environment-specific
+        code in the physics engine.
+      </p>
+      <pre>
+// node-runner.js
+import { Worker } from 'node:worker_threads';
+
+const nodeFriendlyWrapper = `
+  const { parentPort } = require('node:worker_threads');
+  // Polyfill the Web Worker global context
+  global.self = global;
+  global.postMessage = (data) => parentPort.postMessage(data);
+  parentPort.on('message', (data) => {
+    if (global.onmessage) global.onmessage({ data });
+  });
+
+  // Load your untouched production worker
+  require('./dist/worker.js');
+`;
+
+const worker = new Worker(nodeFriendlyWrapper, { eval: true });
+</pre
+      >
+
+      <h3>9. High-Scale Parallelism & Search</h3>
+      <p>
+        For optimization tasks (e.g., searching for a specific shot), use the
+        multi-platform <code>ww.js</code> module. It provides a
+        <code>runBatch()</code> function that manages a worker pool and
+        aggregates results.
+      </p>
+      <pre>
+import { runBatch } from './ww.js';
+
+// Execute 3 simulations in parallel with angle variance
+const results = await runBatch(baseConfig, 3, 0.001745);
+results.forEach(res => console.log(`Outcome: ${res.outcomes.length} events`));
+</pre
+      >
+
+      <h3>10. Headless Node.js Execution</h3>
+      <p>
+        The same logic runs in Node.js using <code>node:worker_threads</code>.
+        The <code>SimulationRunner</code> in <code>ww.js</code> automatically
+        detects the environment and polyfills the global
+        <code>self</code> context for the physics engine.
+      </p>
+      <p><strong>To run the headless batch example:</strong></p>
+      <pre>
+# From the project root
+node dist/ww-node.js
+</pre
+      >
+      <p>
+        This is the preferred entry point for LLM agents performing large-scale
+        trajectory analysis or parameter tuning without a browser environment.
+      </p>
+    </div>
+
+    <script type="module">
+      import { runBatch } from "./ww.js"
+
+      const R = 0.03275
+      const runBtn = document.getElementById("runSim")
+      const clearLogBtn = document.getElementById("clearLog")
+      const showResponseBtn = document.getElementById("showResponse")
+      const logEl = document.getElementById("log")
+      const inputJson = document.getElementById("inputJson")
+      const canvas = document.getElementById("plotCanvas")
+      const ctx = canvas.getContext("2d")
+
+      let lastResults = null
+
+      function resizeCanvas() {
+        canvas.width = canvas.offsetWidth
+        canvas.height = canvas.offsetHeight
+        if (lastResults) plotResults(lastResults)
+      }
+
+      window.addEventListener("resize", resizeCanvas)
+      window.addEventListener("load", resizeCanvas)
+
+      const defaultConfig = {
+        id: 1,
+        ruleType: "threecushion",
+        balls: [
+          { id: 0, pos: { x: -0.5, y: 0, z: 0 } },
+          { id: 1, pos: { x: 0.5, y: 0.05, z: 0 } },
+          { id: 2, pos: { x: 0, y: 0.5, z: 0 } },
+        ],
+        cushionModel: "mathavan",
+        shot: {
+          cueBallId: 0,
+          angle: 0,
+          power: 2.5,
+          offset: { x: 0.5, y: -0.35 },
+          elevation: 0,
+        },
+        stepSize: 0.001953125,
+        maxIterations: 20000,
+        params: {
+          mu: 0.007,
+          muS: 0.136,
+          rho: 0.035,
+          m: 0.23,
+          R: 0.03275,
+          e: 0.86,
+          ee: 0.84,
+          μs: 0.2,
+          μw: 0.2,
+        },
+      }
+
+      inputJson.value = JSON.stringify(defaultConfig, null, 2)
+
+      function logMsg(text, cls) {
+        const ts = new Date().toISOString().substring(11, 23)
+        const line = document.createElement("div")
+        line.className = cls || ""
+        line.textContent = `[${ts}] ${text}`
+        logEl.appendChild(line)
+        logEl.scrollTop = logEl.scrollHeight
+        console.log(`[ww.html] ${text}`)
+      }
+
+      function plotResults(results) {
+        if (!Array.isArray(results)) results = [results]
+        const w = canvas.width
+        const h = canvas.height
+        ctx.clearRect(0, 0, w, h)
+
+        if (results.length === 0) return
+
+        const data = results[0]
+        const tableX = data.tableX || 1
+        const tableY = data.tableY || 0.5
+        const drawX = tableX + R
+        const drawY = tableY + R
+
+        const padding = 20
+        const availableW = w - 2 * padding
+        const availableH = h - 2 * padding
+        const scale = Math.min(
+          availableW / (2 * drawX),
+          availableH / (2 * drawY)
+        )
+
+        const centerX = w / 2
+        const centerY = h / 2
+
+        // Outer rail
+        ctx.strokeStyle = "#555"
+        ctx.lineWidth = 2
+        ctx.strokeRect(
+          centerX - drawX * scale,
+          centerY - drawY * scale,
+          2 * drawX * scale,
+          2 * drawY * scale
+        )
+
+        // Inner cushion nose line
+        ctx.strokeStyle = "#002"
+        ctx.lineWidth = 1
+        ctx.strokeRect(
+          centerX - tableX * scale,
+          centerY - tableY * scale,
+          2 * tableX * scale,
+          2 * tableY * scale
+        )
+
+        const colors = ["#fff", "#ff0", "#f00", "#0f0", "#00f", "#f0f", "#0ff"]
+        const opacities = [1.0, 0.6, 0.3]
+        const ballRadius = R * scale
+
+        results.forEach((data, resultIndex) => {
+          const globalAlpha = opacities[resultIndex % opacities.length]
+          ctx.globalAlpha = globalAlpha
+
+          // Group positions by ball ID
+          const ballPaths = {}
+          data.frames.forEach((frame) => {
+            frame.balls.forEach((ball) => {
+              if (!ballPaths[ball.id]) ballPaths[ball.id] = []
+              ballPaths[ball.id].push(ball.pos)
+            })
+          })
+
+          // Draw paths
+          Object.keys(ballPaths).forEach((id, index) => {
+            const path = ballPaths[id]
+            ctx.beginPath()
+            ctx.strokeStyle = colors[index % colors.length]
+            ctx.lineWidth = 1
+            path.forEach((pos, i) => {
+              const px = centerX + pos[0] * scale
+              const py = centerY - pos[1] * scale
+              if (i === 0) ctx.moveTo(px, py)
+              else ctx.lineTo(px, py)
+            })
+            ctx.stroke()
+
+            // Draw start/end markers only for the primary result (first one)
+            if (resultIndex === 0) {
+              const first = path[0]
+              ctx.strokeStyle = colors[index % colors.length]
+              ctx.lineWidth = 1
+              ctx.beginPath()
+              ctx.arc(
+                centerX + first[0] * scale,
+                centerY - first[1] * scale,
+                ballRadius,
+                0,
+                Math.PI * 2
+              )
+              ctx.stroke()
+
+              const last = path[path.length - 1]
+              ctx.fillStyle = colors[index % colors.length]
+              ctx.beginPath()
+              ctx.arc(
+                centerX + last[0] * scale,
+                centerY - last[1] * scale,
+                ballRadius,
+                0,
+                Math.PI * 2
+              )
+              ctx.fill()
+            }
+          })
+        })
+        ctx.globalAlpha = 1.0
+      }
+
+      runBtn.onclick = async () => {
+        logMsg("--- Run Batch (3 Workers) ---", "log-ui")
+        lastResults = null
+        showResponseBtn.disabled = true
+
+        let config
+        try {
+          config = JSON.parse(inputJson.value)
+        } catch (e) {
+          logMsg("✗ Invalid JSON input: " + e.message, "log-error")
+          return
+        }
+
+        logMsg("Spawning 3 workers with ±0.1° variance...", "log-ui")
+        const t0 = performance.now()
+        try {
+          const results = await runBatch(config, 3, 0.001745)
+          const t1 = performance.now()
+          logMsg(`✓ Batch complete in ${Math.round(t1 - t0)}ms`, "log-result")
+
+          results.forEach((res) => {
+            logMsg(`Sim ${res.id}: ${res.frames.length} frames`, "log-data")
+          })
+
+          lastResults = results
+          showResponseBtn.disabled = false
+          plotResults(results)
+        } catch (err) {
+          logMsg(`✗ Batch failed: ${err.message}`, "log-error")
+        }
+      }
+
+      clearLogBtn.onclick = () => {
+        logEl.innerHTML = ""
+      }
+
+      showResponseBtn.onclick = () => {
+        if (!lastResults) return
+        const preview = lastResults.map((res) => ({
+          id: res.id,
+          computeTime: res.computeTime,
+          frameCount: res.frames.length,
+          outcomes: res.outcomes,
+        }))
+        logMsg("--- Batch Results Summary ---", "log-ui")
+        logMsg(JSON.stringify(preview, null, 2), "log-data")
+      }
+    </script>
+  </body>
+</html>

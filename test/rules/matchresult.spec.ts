@@ -200,38 +200,6 @@ describe("MatchResult Construction", () => {
     expect(notification?.innerHTML).to.contain("New Game")
   })
 
-  it("MatchResultHelper should use structured match score in notification", () => {
-    container = createNineBallContainer()
-    const session = Session.getInstance()
-    session.opponentName = "TestOpponent"
-    session.opponentClientId = "test-opponent"
-    session.rematchInfo = {
-      opponentId: "test-opponent",
-      opponentName: "TestOpponent",
-      ruleType: "nineball",
-      lastScores: [
-        { userId: "test-client", score: 1 },
-        { userId: "test-opponent", score: 0 },
-      ],
-      nextTurnId: "test-opponent",
-    }
-    setupNineBallTable(container)
-
-    const nineball = container.rules as NineBall
-    const outcome = getNineBallOutcome(container)
-    const endController = nineball.update(outcome) as End
-    endController.onFirst()
-
-    const notification = document.getElementById("notification")
-    const matchScoreElement = notification?.querySelector(
-      ".notification-match-score"
-    )
-    expect(matchScoreElement?.textContent).to.contain("MATCH SCORE")
-    expect(matchScoreElement?.textContent).to.contain(
-      "TestPlayer 1 — 0 TestOpponent"
-    )
-  })
-
   it("MatchResult should include bot flag when playing against bot", () => {
     Session.init("test-client", "TestPlayer", "test-table", false, true) // botMode: true
     container = createNineBallContainer()

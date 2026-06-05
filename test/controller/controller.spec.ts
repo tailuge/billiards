@@ -29,6 +29,7 @@ import { Session } from "../../src/network/client/session"
 import { Spectate } from "../../src/controller/spectate"
 import { Init } from "../../src/controller/init"
 import { ScoreEvent } from "../../src/events/scoreevent"
+import { maxPower } from "../../src/model/physics/constants"
 
 initDom()
 
@@ -148,7 +149,7 @@ describe("Controller", () => {
     const aimEvent = new AimEvent()
     aimEvent.offset.x = 0.1
     aimEvent.offset.y = -0.15
-    aimEvent.power = container.table.cue.maxPower * 0.4
+    aimEvent.power = maxPower * 0.4
     aimEvent.pos.copy(container.table.cueball.pos)
 
     container.eventQueue.push(aimEvent)
@@ -187,7 +188,7 @@ describe("Controller", () => {
     const tablejson = container.table.serialise()
     tablejson.aim.offset.x = 0.05
     tablejson.aim.offset.y = -0.2
-    tablejson.aim.power = container.table.cue.maxPower * 0.25
+    tablejson.aim.power = maxPower * 0.25
     container.eventQueue.push(new HitEvent(tablejson))
     container.processEvents()
 

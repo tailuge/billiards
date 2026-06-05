@@ -15,15 +15,20 @@ export class Aim extends ControllerBase {
   constructor(container) {
     super(container)
     const table = this.container.table
-    table.cue.aimMode()
-    table.cue.showHelper(true)
-    table.cueball = this.container.rules.cueball
-    table.cue.aim.i = table.balls.indexOf(table.cueball)
-    table.cue.moveTo(table.cueball.pos)
-    table.cue.aimAtNext(table.cueball, this.container.rules.nextCandidateBall())
-    table.cue.aim.elevation = 0
-    this.container.view.camera.suggestMode(this.container.view.camera.aimView)
-    table.cue.updateAimInput()
+    if (table.cue) {
+      table.cue.aimMode()
+      table.cue.showHelper(true)
+      table.cueball = this.container.rules.cueball
+      table.cue.aim.i = table.balls.indexOf(table.cueball)
+      table.cue.moveTo(table.cueball.pos)
+      table.cue.aimAtNext(
+        table.cueball,
+        this.container.rules.nextCandidateBall()
+      )
+      table.cue.aim.elevation = 0
+      this.container.view.camera.suggestMode(this.container.view.camera.aimView)
+      table.cue.updateAimInput()
+    }
   }
 
   override onFirst() {

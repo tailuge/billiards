@@ -1,5 +1,3 @@
-import { RematchInfo } from "./rematch"
-
 export class Session {
   constructor(
     public playername: string,
@@ -12,7 +10,6 @@ export class Session {
     readonly first: boolean = false
   ) {}
 
-  rematchInfo?: RematchInfo | undefined
   opponentName?: string
   opponentClientId?: string
   spectatedP1Name?: string
@@ -52,6 +49,9 @@ export class Session {
   }
 
   static hasInitParam(): boolean {
+    if (typeof globalThis.location === "undefined") {
+      return false
+    }
     const params = new URLSearchParams(globalThis.location?.search)
     return params.has("init")
   }
@@ -81,7 +81,7 @@ export class Session {
       first
     )
     Session.instance.initializeScores()
-    if (botMode) {
+    if (botMode && typeof globalThis.location !== "undefined") {
       const urlParams = new URLSearchParams(globalThis.location.search)
       const bot = urlParams.get("bot")
       Session.instance.opponentName = bot ?? "ClawBreak"
