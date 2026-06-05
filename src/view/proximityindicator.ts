@@ -12,11 +12,15 @@ import {
   PlaneGeometry,
   CanvasTexture,
   LinearFilter,
+  WebGLRenderer,
 } from "three"
 import { R } from "../model/physics/constants"
 import { Ball } from "../model/ball"
 
 export class ProximityIndicator {
+  private static atlasTexture: CanvasTexture | null = null
+  private static readonly reusableVec = new Vector3()
+
   readonly group = new Group()
   private readonly borders: LineLoop[] = []
   private readonly fills: Mesh[] = []
@@ -26,6 +30,36 @@ export class ProximityIndicator {
   cushionCount: number = 0
   hitTarget: boolean = false
   private minDistance: number = Infinity
+
+  static prepare(renderer: WebGLRenderer) {
+    if (typeof document === "undefined") return
+    renderer.initTexture(this.getAtlasTexture())
+  }
+
+  private static getAtlasTexture(): CanvasTexture {
+    if (this.atlasTexture) return this.atlasTexture
+
+    const canvas = document.createElement("canvas")
+    canvas.width = 64
+    canvas.height = 192
+    const ctx = canvas.getContext("2d")
+
+    if (ctx) {
+      ctx.clearRect(0, 0, 64, 192)
+      ctx.font = "bold 44px sans-serif"
+      ctx.fillStyle = "#ffffff"
+      ctx.textAlign = "center"
+      ctx.textBaseline = "middle"
+
+      ctx.fillText("+1", 32, 32)
+      ctx.fillText("+2", 32, 96)
+      ctx.fillText("+3", 32, 160)
+    }
+
+    this.atlasTexture = new CanvasTexture(canvas)
+    this.atlasTexture.minFilter = LinearFilter
+    return this.atlasTexture
+  }
 
   constructor() {
     if (typeof document === "undefined") {
@@ -77,45 +111,22 @@ export class ProximityIndicator {
 
   private initTexts() {
     if (this.proximityTexts.length === 0) {
-      const labels = ["+1", "+2", "+3"]
-      labels.forEach((label) => {
-        const textMesh = this.createPlanarText(label)
+      for (let i = 0; i < 3; i++) {
+        const textMesh = this.createPlanarText(i)
         this.proximityTexts.push(textMesh)
         this.group.add(textMesh)
-      })
+      }
     }
   }
 
-  private createTextTexture(text: string): CanvasTexture {
-    const canvas = document.createElement("canvas")
-    canvas.width = 64
-    canvas.height = 64
-    const ctx = canvas.getContext("2d")
-
-    if (ctx) {
-      // Clear background to full transparency
-      ctx.clearRect(0, 0, 64, 64)
-
-      // Text configuration
-      ctx.font = "bold 44px sans-serif"
-      ctx.fillStyle = "#ffffff"
-      ctx.textAlign = "center"
-      ctx.textBaseline = "middle"
-
-      // Render directly in the center of the 64x64 container
-      ctx.fillText(text, 32, 32)
-    }
-
-    const texture = new CanvasTexture(canvas)
-    texture.minFilter = LinearFilter
-    return texture
-  }
-
-  private createPlanarText(text: string): Mesh {
+  private createPlanarText(index: number): Mesh {
     const size = R * 4
     const geometry = new PlaneGeometry(size, size)
 
-    const texture = this.createTextTexture(text)
+    const texture = ProximityIndicator.getAtlasTexture().clone()
+    texture.repeat.set(1, 1 / 3)
+    texture.offset.set(0, (2 - index) / 3)
+    texture.needsUpdate = true
 
     const material = new MeshBasicMaterial({
       map: texture,
@@ -128,9 +139,8 @@ export class ProximityIndicator {
     const textMesh = new Mesh(geometry, material)
 
     // Position flat on the table (X/Y world plane)
-    // Shifted 1.25 * size along Y as per specification
     // Z is set to 0.01 relative to parent group to sit just above rings
-    textMesh.position.set(0, 1.25 * size, 0.01)
+    textMesh.position.set(0, 0, 0.01)
     textMesh.rotation.set(0, 0, 0)
     textMesh.visible = false
 
@@ -142,9 +152,11 @@ export class ProximityIndicator {
     this.group.visible = true
 
     // Dynamic position relative to ball to prevent clipping under cushions
-
-    const sFlipped = new Vector3(-pos.x, -pos.y, 0)
-    const offset = sFlipped.multiplyScalar(R * 4)
+    // Fixed distance 4r from ball center toward table center
+    const offset = ProximityIndicator.reusableVec
+      .set(-pos.x, -pos.y, 0)
+      .normalize()
+      .multiplyScalar(R * 4)
 
     this.proximityTexts.forEach((textMesh) => {
       textMesh.position.set(offset.x, offset.y, 0.01)

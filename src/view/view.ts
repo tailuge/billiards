@@ -6,6 +6,7 @@ import { Grid } from "./grid"
 import { renderer } from "../utils/webgl"
 import { Assets } from "./assets"
 import { Snooker } from "../controller/rules/snooker"
+import { ProximityIndicator } from "./proximityindicator"
 
 export class View {
   readonly scene = new Scene()
@@ -81,6 +82,12 @@ export class View {
     }
 
     this.renderer?.render(this.scene, cam.camera)
+  }
+
+  prepareTable(table: Table) {
+    if (this.renderer && table.proximityIndicator) {
+      ProximityIndicator.prepare(this.renderer)
+    }
   }
 
   private initialiseScene() {
