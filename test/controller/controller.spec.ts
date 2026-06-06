@@ -1,4 +1,5 @@
-import { expect } from "chai"
+import { expect as chaiExpect } from "chai"
+const expect = globalThis.expect
 import { HitEvent, Input } from "../../src/controller/controller"
 import { Container } from "../../src/container/container"
 import { Aim } from "../../src/controller/aim"
@@ -52,25 +53,85 @@ describe("Controller", () => {
 
   it("Container animation loop ok", (done) => {
     container.animate(0)
-    expect(container).to.be.not.null
+    chaiExpect(container).to.be.not.null
     done()
   })
 
   it("Container chat enques message", (done) => {
     container.chat.sendClicked({})
-    expect(broadcastEvents).to.be.lengthOf(1)
+    chaiExpect(broadcastEvents).to.be.lengthOf(1)
+    done()
+  })
+
+  it("Init.onFirst shows 'Waiting for opponent to join' in 2P network mode", (done) => {
+    Session.init("testId", "testPlayer", "testTable", false)
+    container.isSinglePlayer = false
+    const showSpy = jest.spyOn(container.notification, "show")
+
+    container.controller.onFirst()
+
+    expect(showSpy).toHaveBeenCalledWith(
+      { type: "Info", title: "Waiting for opponent to join" },
+      0
+    )
+    done()
+  })
+
+  it("Init.handleBegin does not clear notification if vsNotificationShown is true", (done) => {
+    Session.getInstance().vsNotificationShown = true
+    const clearSpy = jest.spyOn(container.notification, "clear")
+
+    container.eventQueue.push(new BeginEvent())
+    container.processEvents()
+
+    expect(clearSpy).not.toHaveBeenCalled()
     done()
   })
 
   it("Begin takes Init to PlaceBall", (done) => {
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(PlaceBall)
-    expect(broadcastEvents.pop()).to.be.an.instanceof(WatchEvent)
-    expect(document.getElementById("p1Score")?.classList.contains("is-active"))
+    chaiExpect(container.controller).to.be.an.instanceof(PlaceBall)
+    chaiExpect(broadcastEvents.pop()).to.be.an.instanceof(WatchEvent)
+    chaiExpect(document.getElementById("p1Score")?.classList.contains("is-active"))
       .to.be.true
-    expect(document.getElementById("p2Score")?.classList.contains("is-active"))
+    chaiExpect(document.getElementById("p2Score")?.classList.contains("is-active"))
       .to.be.false
+    done()
+  })
+
+  it("netEvent clears notification if vsNotificationShown is false", (done) => {
+    const clearSpy = jest.spyOn(container.notification, "clear")
+    const bc = new (require("../../src/container/browsercontainer").BrowserContainer)(
+      null,
+      new URLSearchParams()
+    )
+    bc.container = container
+
+    bc.netEvent(JSON.stringify({ type: "BEGIN", clientId: "other" }))
+
+    expect(clearSpy).toHaveBeenCalled()
+    done()
+  })
+
+  it("netEvent shows VS notification in correct format once names are known", (done) => {
+    const notifySpy = jest.spyOn(container, "notifyLocal")
+    const bc = new (require("../../src/container/browsercontainer").BrowserContainer)(
+      null,
+      new URLSearchParams("ruletype=nineball")
+    )
+    bc.container = container
+    bc.ruletype = "nineball"
+    Session.init("myId", "Me", "table", false)
+
+    bc.netEvent(JSON.stringify({ type: "BEGIN", clientId: "other", playername: "Opponent" }))
+
+    expect(notifySpy).toHaveBeenCalledWith({
+      type: "Info",
+      title: "nineball, Me vs Opponent",
+      extra: undefined
+    })
+    chaiExpect(Session.getInstance().vsNotificationShown).to.be.true
     done()
   })
 
@@ -78,7 +139,7 @@ describe("Controller", () => {
     Session.init("id", "player", "tableid", true)
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(Spectate)
+    chaiExpect(container.controller).to.be.an.instanceof(Spectate)
     Session.reset()
     done()
   })
@@ -90,7 +151,7 @@ describe("Controller", () => {
     container.eventQueue.push(new BreakEvent())
     container.processEvents()
 
-    expect(container.controller).to.be.an.instanceof(Aim)
+    chaiExpect(container.controller).to.be.an.instanceof(Aim)
 
     // Cleanup
     jest.restoreAllMocks()
@@ -101,10 +162,10 @@ describe("Controller", () => {
   it("WatchEvent takes Init to WatchAim", (done) => {
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchAim)
-    expect(document.getElementById("p1Score")?.classList.contains("is-active"))
+    chaiExpect(container.controller).to.be.an.instanceof(WatchAim)
+    chaiExpect(document.getElementById("p1Score")?.classList.contains("is-active"))
       .to.be.true
-    expect(document.getElementById("p2Score")?.classList.contains("is-active"))
+    chaiExpect(document.getElementById("p2Score")?.classList.contains("is-active"))
       .to.be.false
     done()
   })
@@ -113,9 +174,9 @@ describe("Controller", () => {
     container.controller = new WatchAim(container)
     container.eventQueue.push(new ScoreEvent(4, 2, 0, 1))
     container.processEvents()
-    expect(document.getElementById("p1Score")?.classList.contains("is-active"))
+    chaiExpect(document.getElementById("p1Score")?.classList.contains("is-active"))
       .to.be.true
-    expect(document.getElementById("p2Score")?.classList.contains("is-active"))
+    chaiExpect(document.getElementById("p2Score")?.classList.contains("is-active"))
       .to.be.false
     done()
   })
@@ -124,7 +185,7 @@ describe("Controller", () => {
     container.controller = new WatchAim(container)
     container.eventQueue.push(new HitEvent(container.table.serialise()))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchShot)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchShot)
     done()
   })
 
@@ -132,7 +193,7 @@ describe("Controller", () => {
     container.controller = new WatchAim(container)
     container.eventQueue.push(new AimEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchAim)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchAim)
     done()
   })
 
@@ -155,14 +216,14 @@ describe("Controller", () => {
     container.eventQueue.push(aimEvent)
     container.processEvents()
 
-    expect(container.controller).to.be.an.instanceof(WatchAim)
-    expect(powerSpy.mock.calls).to.not.be.empty
-    expect(visualSpy.mock.calls).to.not.be.empty
+    chaiExpect(container.controller).to.be.an.instanceof(WatchAim)
+    chaiExpect(powerSpy.mock.calls).to.not.be.empty
+    chaiExpect(visualSpy.mock.calls).to.not.be.empty
     const powerArgs = powerSpy.mock.calls[powerSpy.mock.calls.length - 1]
     const visualArgs = visualSpy.mock.calls[visualSpy.mock.calls.length - 1]
-    expect(powerArgs[0]).to.be.approximately(0.4, 0.0001)
-    expect(visualArgs[0]).to.be.approximately(0.1, 0.0001)
-    expect(visualArgs[1]).to.be.approximately(-0.15, 0.0001)
+    chaiExpect(powerArgs[0]).to.be.approximately(0.4, 0.0001)
+    chaiExpect(visualArgs[0]).to.be.approximately(0.1, 0.0001)
+    chaiExpect(visualArgs[1]).to.be.approximately(-0.15, 0.0001)
     done()
   })
 
@@ -170,7 +231,7 @@ describe("Controller", () => {
     container.controller = new WatchAim(container)
     container.eventQueue.push(new RejoinEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchAim)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchAim)
     done()
   })
 
@@ -192,14 +253,14 @@ describe("Controller", () => {
     container.eventQueue.push(new HitEvent(tablejson))
     container.processEvents()
 
-    expect(container.controller).to.be.an.instanceof(WatchShot)
-    expect(powerSpy.mock.calls).to.not.be.empty
-    expect(visualSpy.mock.calls).to.not.be.empty
+    chaiExpect(container.controller).to.be.an.instanceof(WatchShot)
+    chaiExpect(powerSpy.mock.calls).to.not.be.empty
+    chaiExpect(visualSpy.mock.calls).to.not.be.empty
     const powerArgs = powerSpy.mock.calls[powerSpy.mock.calls.length - 1]
     const visualArgs = visualSpy.mock.calls[visualSpy.mock.calls.length - 1]
-    expect(powerArgs[0]).to.be.approximately(0.25, 0.0001)
-    expect(visualArgs[0]).to.be.approximately(0.05, 0.0001)
-    expect(visualArgs[1]).to.be.approximately(-0.2, 0.0001)
+    chaiExpect(powerArgs[0]).to.be.approximately(0.25, 0.0001)
+    chaiExpect(visualArgs[0]).to.be.approximately(0.05, 0.0001)
+    chaiExpect(visualArgs[1]).to.be.approximately(-0.2, 0.0001)
     done()
   })
 
@@ -209,7 +270,7 @@ describe("Controller", () => {
     container.table.cueball.setStationary()
     container.eventQueue.push(new StartAimEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(Aim)
+    chaiExpect(container.controller).to.be.an.instanceof(Aim)
     done()
   })
 
@@ -219,7 +280,7 @@ describe("Controller", () => {
     container.table.cueball.setStationary()
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchAim)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchAim)
     done()
   })
 
@@ -231,7 +292,7 @@ describe("Controller", () => {
     const rerack = new WatchEvent({ ...state, rerack: true })
     container.eventQueue.push(rerack)
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchShot)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchShot)
     done()
   })
 
@@ -239,7 +300,7 @@ describe("Controller", () => {
     container.controller = new WatchShot(container)
     container.eventQueue.push(new AimEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchShot)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchShot)
     done()
   })
 
@@ -249,7 +310,7 @@ describe("Controller", () => {
     container.table.cueball.setStationary()
     container.eventQueue.push(new PlaceBallEvent(zero))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(PlaceBall)
+    chaiExpect(container.controller).to.be.an.instanceof(PlaceBall)
     done()
   })
 
@@ -261,7 +322,7 @@ describe("Controller", () => {
     container.processEvents()
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(Aim)
+    chaiExpect(container.controller).to.be.an.instanceof(Aim)
     done()
   })
 
@@ -273,7 +334,7 @@ describe("Controller", () => {
     container.processEvents()
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchAim)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchAim)
     done()
   })
 
@@ -281,7 +342,7 @@ describe("Controller", () => {
     container.controller = new WatchShot(container)
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchShot)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchShot)
     done()
   })
 
@@ -291,7 +352,7 @@ describe("Controller", () => {
     container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchAim)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchAim)
     done()
   })
 
@@ -306,7 +367,7 @@ describe("Controller", () => {
     )
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(Aim)
+    chaiExpect(container.controller).to.be.an.instanceof(Aim)
     done()
   })
 
@@ -320,7 +381,7 @@ describe("Controller", () => {
     )
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(Aim)
+    chaiExpect(container.controller).to.be.an.instanceof(Aim)
     done()
   })
 
@@ -336,7 +397,7 @@ describe("Controller", () => {
     )
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     done()
   })
 
@@ -347,7 +408,7 @@ describe("Controller", () => {
     container.eventQueue.push(new StationaryEvent())
     container.table.outcome.push(Outcome.pot(container.table.cueball, 1))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(PlaceBall)
+    chaiExpect(container.controller).to.be.an.instanceof(PlaceBall)
     done()
   })
 
@@ -361,9 +422,9 @@ describe("Controller", () => {
     container.broadcast = (x) => broadcastEvents.push(x)
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(PlaceBall)
+    chaiExpect(container.controller).to.be.an.instanceof(PlaceBall)
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(Aim)
+    chaiExpect(container.controller).to.be.an.instanceof(Aim)
     done()
   })
 
@@ -374,7 +435,7 @@ describe("Controller", () => {
     container.eventQueue.push(new StationaryEvent())
     container.table.outcome.push(Outcome.pot(container.table.cueball, 1))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchAim)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchAim)
     done()
   })
 
@@ -382,34 +443,34 @@ describe("Controller", () => {
     container.controller = new End(container)
     container.eventQueue.push(new AbortEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new AimEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new HitEvent(container.table.serialise()))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new WatchEvent(container.table))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new StationaryEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new ChatEvent("", ""))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new BreakEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new PlaceBallEvent(zero))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     container.inputQueue.push(new Input(0.1, "ArrowLeft"))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(Init)
+    chaiExpect(container.controller).to.be.an.instanceof(Init)
     done()
   })
 
@@ -439,13 +500,13 @@ describe("Controller", () => {
     while (count-- > 0) {
       container.processEvents()
     }
-    expect(container.inputQueue.length).to.equal(0)
+    chaiExpect(container.inputQueue.length).to.equal(0)
     done()
   })
 
   it("advance generates no event", (done) => {
     container.advance(0.1)
-    expect(container.eventQueue.length).to.equal(0)
+    chaiExpect(container.eventQueue.length).to.equal(0)
     done()
   })
 
@@ -456,11 +517,11 @@ describe("Controller", () => {
     // BallTray adds entry on advance end if it was moving?
     // No, BallTray logic is in updateBreak which is called elsewhere.
     // However, StationaryEvent is only pushed if not stationary before.
-    expect(container.eventQueue.length).to.equal(1)
+    chaiExpect(container.eventQueue.length).to.equal(1)
     container.table.outcome.push(Outcome.pot(container.table.balls[1], 1))
     container.processEvents()
     container.advance(0.01)
-    expect(container.eventQueue.length).to.equal(0) // Should be 0 after processEvents
+    chaiExpect(container.eventQueue.length).to.equal(0) // Should be 0 after processEvents
     done()
   })
 
@@ -470,7 +531,7 @@ describe("Controller", () => {
     container.table.cueball.setStationary()
     container.eventQueue.push(new ChatEvent("", ""))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchShot)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchShot)
     done()
   })
 
@@ -481,8 +542,8 @@ describe("Controller", () => {
     const showSpy = jest.spyOn(container.notification, "show")
     container.eventQueue.push(new NotificationEvent("test", 100))
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchShot)
-    expect(showSpy.mock.calls[0]).to.deep.equal(["test", 100])
+    chaiExpect(container.controller).to.be.an.instanceof(WatchShot)
+    chaiExpect(showSpy.mock.calls[0]).to.deep.equal(["test", 100])
     done()
   })
 
@@ -491,7 +552,7 @@ describe("Controller", () => {
     container.controller = watchShot
     container.eventQueue.push(new ConcedeEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(WatchShot)
+    chaiExpect(container.controller).to.be.an.instanceof(WatchShot)
     done()
   })
 
@@ -501,7 +562,7 @@ describe("Controller", () => {
     container.table.halt()
     container.eventQueue.push(new ConcedeEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     done()
   })
 
@@ -509,7 +570,7 @@ describe("Controller", () => {
     container.controller = new End(container)
     container.eventQueue.push(new ConcedeEvent())
     container.processEvents()
-    expect(container.controller).to.be.an.instanceof(End)
+    chaiExpect(container.controller).to.be.an.instanceof(End)
     done()
   })
 })

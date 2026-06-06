@@ -23,16 +23,23 @@ export class Init extends ControllerBase {
 
   override onFirst() {
     const session = Session.getInstance()
-    if (!session.spectator && !this.container.isSinglePlayer && session.first) {
+    if (
+      !session.spectator &&
+      !this.container.isSinglePlayer &&
+      !session.botMode &&
+      !this.container.replayMode
+    ) {
       this.container.notification.show(
-        { type: "Info", title: "Waiting for opponent" },
+        { type: "Info", title: "Waiting for opponent to join" },
         0
       )
     }
   }
 
   override handleBegin(_: BeginEvent): Controller {
-    this.container.notification.clear()
+    if (!Session.getInstance().vsNotificationShown) {
+      this.container.notification.clear()
+    }
     this.showTwoPlayerScores()
     if (Session.isSpectator()) {
       return new Spectate(
