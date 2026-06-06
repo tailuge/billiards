@@ -1,12 +1,26 @@
 import { MathUtils, Vector3 } from "three"
 import { Controller } from "../controller"
 import { Outcome } from "../../model/outcome"
+import { Table } from "../../model/table"
 import { TableGeometry } from "../../view/tablegeometry"
 import { ThreeCushion } from "./threecushion"
 import { Aim } from "../aim"
 
 export class Drill extends ThreeCushion {
   preShotState: number[] = []
+
+  override table(): Table {
+    const table = super.table()
+    // No proximity rings / +1/+2/+3 numbers in drill mode. Disabling this also
+    // means no Proximity outcomes are produced, so isThreeCushionPoint only
+    // counts an actual contact with the last ball after >=3 cushions.
+    table.proximityEnabled = false
+    return table
+  }
+
+  hideScoreHud(): boolean {
+    return true
+  }
 
   override allowsPlaceBall(): boolean {
     return true

@@ -363,6 +363,20 @@ label {
   transform: none;
 }
 
+/* When the elevation panel is open the Hit button shifts up; the drill buttons
+   are lifted above it. DrillPanel sets `bottom` inline at runtime by measuring
+   the Hit button's actual top; here we just switch to bottom-anchoring. */
+.drill-panel.elevation-open {
+  top: auto;
+  transform: none;
+}
+
+/* The 44px spacer aligns Preview with the Hit button when centered; it is not
+   needed once the stack is lifted above the elevation panel. */
+.drill-panel.elevation-open .drill-gap {
+  height: 0;
+}
+
 .drill-gap {
   height: 44px;
 }

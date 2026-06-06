@@ -14,6 +14,7 @@ export class DrillPanel {
   private readonly replayBtn: HTMLButtonElement
   private readonly switchBallBtn: HTMLButtonElement
   private readonly previewBtn: HTMLButtonElement
+  private centerPanel!: HTMLDivElement
   private previewActive = false
   private pendingPreview = false
   private ballsWerePlaced = false
@@ -113,6 +114,7 @@ export class DrillPanel {
 
     const centerPanel = document.createElement("div")
     centerPanel.className = "drill-panel"
+    this.centerPanel = centerPanel
     centerPanel.appendChild(this.placeBallsBtn)
     centerPanel.appendChild(this.retryBtn)
     centerPanel.appendChild(this.switchBallBtn)
@@ -165,6 +167,24 @@ export class DrillPanel {
   }
 
   private update(t: number) {
+    // When the elevation panel is open the Hit button shifts up; lift the drill
+    // buttons so their bottom edge sits just above the Hit button's top. The Hit
+    // button's raised position depends on --ball-size-base (smaller on mobile),
+    // so measure it at runtime instead of hard-coding an offset.
+    const tilt = document.getElementById("tiltSliderContainer")
+    const elevationOpen = !!tilt && !(tilt as HTMLElement & { hidden: boolean }).hidden
+    this.centerPanel.classList.toggle("elevation-open", elevationOpen)
+    const hit = document.getElementById("cueHit")
+    const offsetParent = this.centerPanel.offsetParent as HTMLElement | null
+    if (elevationOpen && hit && offsetParent) {
+      const hitRect = hit.getBoundingClientRect()
+      const parentRect = offsetParent.getBoundingClientRect()
+      const bottom = parentRect.bottom - hitRect.top + 12
+      this.centerPanel.style.bottom = `${Math.max(bottom, 0)}px`
+    } else {
+      this.centerPanel.style.bottom = ""
+    }
+
     const stationary = this.container.table.allStationary()
     const ctrl = this.container.controller
     const isAiming = ctrl instanceof Aim

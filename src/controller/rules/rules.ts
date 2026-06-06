@@ -28,4 +28,5 @@ export interface Rules {
   respot(outcome: Outcome[]): Ball[]
   advanceState?(outcome: Outcome[]): void
   initialController?(): Controller
+  hideScoreHud?(): boolean
 }
