@@ -211,33 +211,37 @@ export class BrowserContainer {
       return
     }
 
+    if (!Session.getInstance().vsNotificationShown) {
+      this.container.notification.clear()
+    }
+
     //    logNetEvent(this.playername, event, "receive")
     if (event.clientId) {
       Session.getInstance().setOpponentClientId(event.clientId)
     }
     if (event.playername) {
-      const session = Session.getInstance()
-      session.opponentName = event.playername
-      if (
-        !session.vsNotificationShown &&
-        !this.botMode &&
-        !this.spectator &&
-        session.playername &&
-        session.opponentName
-      ) {
-        const names = session.orderedNamesForHud()
-        if (names.p1Name && names.p2Name) {
-          this.container.notifyLocal({
-            type: "Info",
-            title: this.ruletype,
-            subtext: `${names.p1Name} vs ${names.p2Name}`,
-            extra:
-              this.ruletype === "threecushion"
-                ? `Race to: ${ThreeCushionConfig.raceTo}`
-                : undefined,
-          })
-          session.vsNotificationShown = true
-        }
+      Session.getInstance().opponentName = event.playername
+    }
+
+    const session = Session.getInstance()
+    if (
+      !session.vsNotificationShown &&
+      !this.botMode &&
+      !this.spectator &&
+      session.playername &&
+      session.opponentName
+    ) {
+      const names = session.orderedNamesForHud()
+      if (names.p1Name && names.p2Name) {
+        this.container.notifyLocal({
+          type: "Info",
+          title: `${this.ruletype}, ${names.p1Name} vs ${names.p2Name}`,
+          extra:
+            this.ruletype === "threecushion"
+              ? `Race to: ${ThreeCushionConfig.raceTo}`
+              : undefined,
+        })
+        session.vsNotificationShown = true
       }
     }
     this.container.eventQueue.push(event)
