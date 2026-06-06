@@ -37,51 +37,52 @@ export class CollisionThrow {
       )
 
     const vRelNormalMag = ab.dot(vPoint)
-    const vRel = vPoint.addScaledVector(ab, -vRelNormalMag)
-    const vRelMag = vRel.length()
-    const vRelTangential = abTangent.dot(vRel) // slip velocity perpendicular to line of impact
+    const vRelTangentialVec = vPoint.clone().addScaledVector(ab, -vRelNormalMag)
+    const vRelMag = vRelTangentialVec.length()
 
     const μ = this.dynamicFriction(vRelMag)
-
-    // let normalImpulse = vRelNormalMag;
-    // let tangentialImpulse = Math.min((μ * vRelNormalMag) / vRelMag, 1 / 7) * (-vRelTangential)
-    // matches paper when throwAngle = Math.atan2(tangentialImpulse, normalImpulse)
 
     // Normal impulse (inelastic collision)
     this.normalImpulse = (-(1 + e) * vRelNormalMag) / (2 / m)
 
     // Tangential impulse (frictional constraint)
-    this.tangentialImpulse =
-      0.3 *
-      Math.min((μ * Math.abs(this.normalImpulse)) / vRelMag, 1 / 7) *
-      -vRelTangential
+    let impulseTangential = new Vector3(0, 0, 0)
+    if (vRelMag > 1e-8) {
+      const maxJt_friction = μ * Math.abs(this.normalImpulse)
+      const maxJt_stick = (m / 7) * vRelMag
+      const jtMag = Math.min(maxJt_friction, maxJt_stick)
+      impulseTangential = vRelTangentialVec
+        .clone()
+        .multiplyScalar(-jtMag / vRelMag)
+      this.tangentialImpulse = impulseTangential.dot(abTangent)
+    } else {
+      this.tangentialImpulse = 0
+    }
 
     // Impulse vectors
     const impulseNormal = ab.clone().multiplyScalar(this.normalImpulse)
-    const impulseTangential = abTangent
-      .clone()
-      .multiplyScalar(this.tangentialImpulse)
 
-    // Apply impulses to linear velocities
+    // Apply impulses to linear velocities (constrained to XY plane)
     a.vel
       .addScaledVector(impulseNormal, 1 / m)
       .addScaledVector(impulseTangential, 1 / m)
+    a.vel.z = 0
     b.vel
       .addScaledVector(impulseNormal, -1 / m)
       .addScaledVector(impulseTangential, -1 / m)
+    b.vel.z = 0
 
     // Angular velocity updates
-    const angularImpulseA = ab
-      .clone()
-      .multiplyScalar(-R)
-      .cross(impulseTangential)
-    const angularImpulseB = ab
-      .clone()
-      .multiplyScalar(R)
-      .cross(impulseTangential)
+    // Jt is the tangential impulse applied TO ball A.
+    // The force acts at the contact point relative to ball A: rA = R * ab
+    // Torque for A: tauA = rA x Jt = (R * ab) x Jt
+    // For ball B, the impulse is -Jt and it acts at rB = -R * ab
+    // Torque for B: tauB = rB x (-Jt) = (-R * ab) x (-Jt) = (R * ab) x Jt
+    // Thus both balls receive the SAME angular impulse.
+    const angularImpulse = ab.clone().multiplyScalar(R).cross(impulseTangential)
 
-    a.rvel.addScaledVector(angularImpulseA, 1 / I)
-    b.rvel.addScaledVector(angularImpulseB, 1 / I)
+    a.rvel.addScaledVector(angularImpulse, 1 / I)
+    b.rvel.addScaledVector(angularImpulse, 1 / I)
 
     return vRelNormalMag
   }

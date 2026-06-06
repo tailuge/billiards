@@ -2,10 +2,9 @@ import { Vector3 } from "three"
 import { Ball } from "../model/ball"
 import { up, zero } from "../utils/three-utils"
 import { Collision } from "../model/physics/collision"
+import { R } from "../model/physics/constants"
 
 export class CollisionThrowPlot {
-  public static readonly R: number = 0.029 // ball radius in meters
-
   // Friction parameters
   private static readonly a: number = 0.01 // Minimum friction coefficient
   private static readonly b: number = 0.108 // Range of friction variation
@@ -30,27 +29,32 @@ export class CollisionThrowPlot {
     ϕ: number
   ): number {
     return Math.sqrt(
-      Math.pow(v * Math.sin(ϕ) - ωz * CollisionThrowPlot.R, 2) +
-        Math.pow(Math.cos(ϕ) * ωx * CollisionThrowPlot.R, 2)
+      Math.pow(v * Math.sin(ϕ) - ωz * R, 2) +
+        Math.pow(Math.cos(ϕ) * ωx * R, 2)
     )
   }
 
-  public throwAngle(v: number, ωx: number, ωz: number, ϕ: number): number {
+  public throwAngle(
+    v: number,
+    ωx: number,
+    ωz: number,
+    ϕ: number,
+    e: number = 0.925
+  ): number {
     const vRel = this.relativeVelocity(v, ωx, ωz, ϕ)
     const μ = this.dynamicFriction(vRel)
+    const e_factor = (1 + e) / 2
     const numerator =
-      Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7) *
-      (v * Math.sin(ϕ) - CollisionThrowPlot.R * ωz)
-    const denominator = v * Math.cos(ϕ)
+      Math.min((μ * e_factor * v * Math.cos(ϕ)) / vRel, 1 / 7) *
+      (v * Math.sin(ϕ) - R * ωz)
+    const denominator = e_factor * v * Math.cos(ϕ)
     this.log(`inputs:v=${v}, ωx=${ωx}, ωz=${ωz}, ϕ=${ϕ}`)
     this.log(`   v * Math.sin(ϕ) =${v * Math.sin(ϕ)}`)
-    this.log(`   CollisionThrow.R * ωz =${CollisionThrowPlot.R * ωz}`)
+    this.log(`   R * ωz =${R * ωz}`)
     this.log(
-      `   Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7) =${Math.min((μ * v * Math.cos(ϕ)) / vRel, 1 / 7)}`
+      `   Math.min((μ * e_factor * v * Math.cos(ϕ)) / vRel, 1 / 7) =${Math.min((μ * e_factor * v * Math.cos(ϕ)) / vRel, 1 / 7)}`
     )
-    this.log(
-      `   (v * Math.sin(ϕ) - CollisionThrow.R * ωz) =${v * Math.sin(ϕ) - CollisionThrowPlot.R * ωz}`
-    )
+    this.log(`   (v * Math.sin(ϕ) - R * ωz) =${v * Math.sin(ϕ) - R * ωz}`)
     this.log("")
     this.log("vRel = ", vRel)
     this.log("μ = ", μ)
@@ -70,7 +74,7 @@ export class CollisionThrowPlot {
     a.vel.copy(new Vector3(0, v, 0))
     a.rvel.copy(new Vector3(ωx, 0, ωz))
 
-    const straight = new Vector3(0, 2 * CollisionThrowPlot.R)
+    const straight = new Vector3(0, 2 * R)
     const bpos = straight.applyAxisAngle(up, ϕ)
     const b = new Ball(bpos)
 
