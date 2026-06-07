@@ -1,0 +1,74 @@
+import { readFileSync, writeFileSync } from 'fs'
+import { extractSamples } from './extract.js'
+
+const inputFile = process.argv[2]
+const outputFile = process.argv[3] ?? inputFile.replace(/\.txt$/, '.json')
+
+const json = JSON.parse(readFileSync(inputFile, 'utf8'))
+const samples = extractSamples(json)
+
+const ballIndices = [...new Set(samples.map(s => s.ball))]
+let moverIdx = 0, moverCount = 0
+const reportLines = []
+
+const ballSummaries = ballIndices.map(ball => {
+  const pts = samples.filter(s => s.ball === ball).sort((a, b) => a.t - b.t)
+  const xs = pts.map(s => s.x)
+  const ys = pts.map(s => s.y)
+  const xRange = [Math.min(...xs), Math.max(...xs)]
+  const yRange = [Math.min(...ys), Math.max(...ys)]
+  const first = pts[0]
+
+  let dir = null, speed = null
+  if (pts.length >= 10) {
+    const dx = pts[9].x - pts[0].x, dy = pts[9].y - pts[0].y
+    const dt = pts[9].t - pts[0].t
+    dir = Math.atan2(dy, dx)
+    speed = Math.hypot(dx, dy) / dt
+    if (pts.length > moverCount) { moverCount = pts.length; moverIdx = ball }
+  }
+
+  const dirStr = dir !== null ? `  dir=${dir.toFixed(4)}rad  speed=${speed.toFixed(3)}m/s  → MOVER` : ''
+  const line = `ball ${ball}: ${pts.length} samples  x:[${xRange[0].toFixed(3)}, ${xRange[1].toFixed(3)}]  y:[${yRange[0].toFixed(3)}, ${yRange[1].toFixed(3)}]${dirStr}`
+  console.log(line)
+  reportLines.push(line)
+
+  return { ball, first, dir, speed }
+})
+
+const cueLine = `\nCue ball: dataset ${moverIdx}`
+console.log(cueLine)
+reportLines.push(cueLine)
+
+const simBalls = ballSummaries.map(({ ball, first }) => ({
+  id: ball,
+  pos: { x: first.x, y: first.y, z: 0 }
+}))
+
+const output = {
+  source: inputFile,
+  report: reportLines.join('\n'),
+  sim: {
+    ruleType: "threecushion",
+    balls: simBalls,
+    cushionModel: "mathavan",
+    shot: {
+      cueBallId: moverIdx,
+      angle: ballSummaries[moverIdx].dir,
+      power: ballSummaries[moverIdx].speed,
+      offset: { x: 0, y: 0 },
+      elevation: 0
+    },
+    stepSize: 0.001953125,
+    maxIterations: 20000,
+    params: {
+      mu: 0.007, muS: 0.136, rho: 0.035,
+      m: 0.23, R: 0.03275, e: 0.86, ee: 0.84,
+      μs: 0.2, μw: 0.2
+    }
+  },
+  truth: samples
+}
+
+writeFileSync(outputFile, JSON.stringify(output, null, 2))
+console.log(`\nWrote ${outputFile}`)

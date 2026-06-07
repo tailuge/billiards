@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Data Viewer</title></head>
+<body style="display:flex;flex-direction:column;align-items:center;padding:20px">
+  <input type="file" id="file" accept=".json">
+  <canvas id="c" style="margin-top:16px;border:1px solid #555"></canvas>
+  <pre id="report" style="color:#ccc;margin-top:12px;font-size:13px"></pre>
+<script>
+const HALF_W = 0.03275 * 92.36 / 2
+const HALF_H = 0.03275 * 46.18 / 2
+const COLORS = ['#fff', '#ffd700', '#ef4444']
+const W = 900, H = Math.round(W * HALF_H / HALF_W)
+
+const canvas = document.getElementById('c')
+canvas.width = W; canvas.height = H
+
+function draw(truth) {
+  const ctx = canvas.getContext('2d')
+  ctx.fillStyle = '#333388'
+  ctx.fillRect(0, 0, W, H)
+
+  const tx = x => (x + HALF_W) / (2 * HALF_W) * W
+  const ty = y => (HALF_H - y) / (2 * HALF_H) * H
+
+  for (const { ball, x, y } of truth) {
+    ctx.fillStyle = COLORS[ball] ?? '#fff'
+    ctx.fillRect(tx(x) - 1, ty(y) - 1, 2, 2)
+  }
+}
+
+document.getElementById('file').onchange = e => {
+  const reader = new FileReader()
+  reader.onload = e => {
+    const data = JSON.parse(e.target.result)
+    draw(data.truth)
+    document.getElementById('report').textContent = data.report ?? ''
+  }
+  reader.readAsText(e.target.files[0])
+}
+</script>
+</body>
+</html>
