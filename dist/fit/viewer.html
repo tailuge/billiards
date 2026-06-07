@@ -1,41 +1,135 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><title>Data Viewer</title></head>
-<body style="display:flex;flex-direction:column;align-items:center;padding:20px">
+<head><meta charset="utf-8"><title>Viewer</title></head>
+<body style="display:flex;flex-direction:column;align-items:center;padding:20px;font-family:monospace">
   <input type="file" id="file" accept=".json">
-  <canvas id="c" style="margin-top:16px;border:1px solid #555"></canvas>
-  <pre id="report" style="color:#ccc;margin-top:12px;font-size:13px"></pre>
-<script>
+  <textarea id="shot" rows="9" cols="50" style="margin-top:8px;font-family:monospace;font-size:13px" disabled></textarea>
+  <div style="margin-top:6px;display:flex;gap:8px">
+    <button id="simBtn" disabled>Run Sim</button>
+    <button id="saveBtn" disabled>Save JSON</button>
+  </div>
+  <span id="status" style="color:#555;font-size:13px;margin-top:4px"></span>
+  <canvas id="c" style="margin-top:12px;border:1px solid #ccc"></canvas>
+  <pre id="report" style="margin-top:12px;font-size:13px"></pre>
+<script type="module">
+import { SimulationRunner } from '../ww.js'
+
 const HALF_W = 0.03275 * 92.36 / 2
 const HALF_H = 0.03275 * 46.18 / 2
-const COLORS = ['#fff', '#ffd700', '#ef4444']
+const COLORS = ['#000', '#b8860b', '#c00']
+const SIM_COLORS = ['rgba(0,100,255,0.7)', 'rgba(255,140,0,0.7)', 'rgba(200,0,0,0.7)']
 const W = 900, H = Math.round(W * HALF_H / HALF_W)
 
 const canvas = document.getElementById('c')
 canvas.width = W; canvas.height = H
 
-function draw(truth) {
+const tx = x => (x + HALF_W) / (2 * HALF_W) * W
+const ty = y => (HALF_H - y) / (2 * HALF_H) * H
+
+let currentTruth = [], currentSim = null, simTracks = null, simStep = 0.001953125, loadedData = null
+
+function redraw() {
   const ctx = canvas.getContext('2d')
-  ctx.fillStyle = '#333388'
+  ctx.fillStyle = '#f5f5f0'
   ctx.fillRect(0, 0, W, H)
-
-  const tx = x => (x + HALF_W) / (2 * HALF_W) * W
-  const ty = y => (HALF_H - y) / (2 * HALF_H) * H
-
-  for (const { ball, x, y } of truth) {
-    ctx.fillStyle = COLORS[ball] ?? '#fff'
+  for (const { ball, x, y } of currentTruth) {
+    ctx.fillStyle = COLORS[ball] ?? '#000'
     ctx.fillRect(tx(x) - 1, ty(y) - 1, 2, 2)
+  }
+  if (currentSim) {
+    for (const { id, x, y } of currentSim) {
+      ctx.fillStyle = SIM_COLORS[id] ?? 'rgba(0,0,0,0.5)'
+      ctx.fillRect(tx(x) - 1, ty(y) - 1, 2, 2)
+    }
+    ctx.strokeStyle = 'rgba(255,0,0,0.25)'
+    ctx.lineWidth = 1
+    for (const { ball, t, x, y } of currentTruth) {
+      const track = simTracks[ball]
+      if (!track) continue
+      const i = Math.min(Math.round(t / simStep), track.length - 1)
+      const s = track[i]
+      ctx.beginPath(); ctx.moveTo(tx(x), ty(y)); ctx.lineTo(tx(s.x), ty(s.y)); ctx.stroke()
+    }
   }
 }
 
 document.getElementById('file').onchange = e => {
   const reader = new FileReader()
-  reader.onload = e => {
-    const data = JSON.parse(e.target.result)
-    draw(data.truth)
-    document.getElementById('report').textContent = data.report ?? ''
-  }
+  reader.onload = ev => loadData(JSON.parse(ev.target.result))
   reader.readAsText(e.target.files[0])
+}
+
+function loadData(data) {
+  loadedData = data
+  currentTruth = loadedData.truth
+  currentSim = null
+  simTracks = null
+  document.getElementById('shot').value = JSON.stringify(loadedData.sim.shot, null, 2)
+  document.getElementById('shot').disabled = false
+  document.getElementById('simBtn').disabled = false
+  document.getElementById('saveBtn').disabled = false
+  document.getElementById('report').textContent = loadedData.report ?? ''
+  redraw()
+}
+
+fetch('./SS_max_spin_02.json').then(r => r.json()).then(loadData).catch(() => {})
+
+async function runSim() {
+  const btn = document.getElementById('simBtn')
+  const status = document.getElementById('status')
+  let shot
+  try { shot = JSON.parse(document.getElementById('shot').value) }
+  catch (e) { status.textContent = 'Invalid shot JSON'; return }
+
+  loadedData.sim.shot = shot
+  btn.disabled = true
+  status.textContent = 'Running...'
+  try {
+    const runner = new SimulationRunner('../worker.js', false)
+    const t0 = performance.now()
+    const result = await runner.spawn(loadedData.sim)
+    status.textContent = `Done in ${Math.round(performance.now() - t0)}ms — ${result.frames.length} frames`
+    simStep = loadedData.sim.stepSize ?? 0.001953125
+    simTracks = {}
+    for (const f of result.frames) {
+      for (const b of f.balls) {
+        ;(simTracks[b.id] ??= []).push({ x: b.pos[0], y: b.pos[1] })
+      }
+    }
+    currentSim = result.frames.flatMap(f =>
+      f.balls.map(b => ({ id: b.id, x: b.pos[0], y: b.pos[1] }))
+    )
+    const track0 = simTracks[0]
+    const mover = currentTruth.filter(s => s.ball === 0)
+    const sse = mover.reduce((sum, { t, x, y }) => {
+      const s = track0[Math.min(Math.round(t / simStep), track0.length - 1)]
+      return sum + (x - s.x) ** 2 + (y - s.y) ** 2
+    }, 0)
+    const rmse = Math.sqrt(sse / mover.length)
+    status.textContent += `  RMSE=${(rmse * 100).toFixed(1)}cm`
+    redraw()
+  } catch (err) {
+    status.textContent = `Error: ${err.message}`
+  }
+  btn.disabled = false
+}
+
+document.getElementById('simBtn').onclick = runSim
+
+document.getElementById('saveBtn').onclick = async () => {
+  let shot
+  try { shot = JSON.parse(document.getElementById('shot').value) }
+  catch (e) { document.getElementById('status').textContent = 'Invalid shot JSON'; return }
+  loadedData.sim.shot = shot
+  const blob = new Blob([JSON.stringify(loadedData, null, 2)], { type: 'application/json' })
+  if (window.showSaveFilePicker) {
+    const fh = await window.showSaveFilePicker({ suggestedName: loadedData.source?.split('/').pop()?.replace('.txt', '.json') ?? 'output.json' })
+    const w = await fh.createWritable()
+    await w.write(blob); await w.close()
+  } else {
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'output.json' })
+    a.click()
+  }
 }
 </script>
 </body>

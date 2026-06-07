@@ -32,10 +32,10 @@
     "cushionModel": "mathavan",
     "shot": {
       "cueBallId": 0,
-      "angle": -0.012321391765204035,
+      "angle": 0,
       "power": 3.5,
       "offset": {
-        "x": 0.35,
+        "x": 0.32,
         "y": 0
       },
       "elevation": 0
