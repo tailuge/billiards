@@ -1,5 +1,5 @@
 import { expect as chaiExpect } from "chai"
-import { CollisionThrowPlot } from "../../src/diagram/throw_gpt4o";
+import { CollisionThrowPlot } from "../../../src/diagram/throw_gpt4o";
 
 describe("CollisionThrow Accuracy", () => {
   const model = new CollisionThrowPlot();
@@ -14,6 +14,8 @@ describe("CollisionThrow Accuracy", () => {
     chaiExpect(actual).to.be.closeTo(expected, 1e-4, `Failed for v=${v}, wx=${wx}, wz=${wz}, phi=${phiDeg}`);
   }
 
+  // This test is skipped because the actual engine implementation in src/model/physics/collisionthrow.ts
+  // includes a 0.3 multiplier and uses different mass/radius constants than the paper-referenced model in src/diagram/throw_gpt4o.ts
   it.skip("matches paper formula for various inputs", () => {
     check(1, 0, 0, 15);
     check(1, 0, 0, 30);
