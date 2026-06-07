@@ -1,9 +1,19 @@
 import { expect } from "chai"
-import { Color, MeshPhysicalMaterial, MeshStandardMaterial } from "three"
+import {
+  Color,
+  MeshPhongMaterial,
+  MeshPhysicalMaterial,
+  MeshStandardMaterial,
+} from "three"
 import { BallMaterialFactory } from "../../src/view/ballmaterialfactory"
 import { R } from "../../src/model/physics/constants"
+import { Session } from "../../src/network/client/session"
 
 describe("BallMaterialFactory", () => {
+  beforeEach(() => {
+    Session.reset()
+  })
+
   it("creates a projected material with correct uniforms", () => {
     const color = new Color(0xff0000)
     const label = 8
@@ -67,5 +77,36 @@ describe("BallMaterialFactory", () => {
     expect(shader.fragmentShader).to.contain(
       "textureCube(uCubeMap, normalize(vLocalPos))"
     )
+  })
+
+  it("applies environment map when LOD >= 4", () => {
+    Session.init("test", "player", "table", false, false, false, 4)
+    const color = new Color(0xffffff)
+
+    const dotted = BallMaterialFactory.createDottedMaterial(color)
+    expect(dotted).to.be.an.instanceOf(MeshPhongMaterial)
+    expect(dotted.envMap).to.not.be.null
+
+    const textured = BallMaterialFactory.createTexturedDotsMaterial(color)
+    expect(textured).to.be.an.instanceOf(MeshPhysicalMaterial)
+    expect(textured.envMap).to.not.be.null
+
+    const projected = BallMaterialFactory.createProjectedMaterial(1, color)
+    expect(projected).to.be.an.instanceOf(MeshPhysicalMaterial)
+    expect(projected.envMap).to.not.be.null
+  })
+
+  it("does not apply environment map when LOD < 4", () => {
+    Session.init("test", "player", "table", false, false, false, 3)
+    const color = new Color(0xffffff)
+
+    const dotted = BallMaterialFactory.createDottedMaterial(color)
+    expect(dotted.envMap).to.be.null
+
+    const textured = BallMaterialFactory.createTexturedDotsMaterial(color)
+    expect(textured.envMap).to.be.null
+
+    const projected = BallMaterialFactory.createProjectedMaterial(1, color)
+    expect(projected.envMap).to.be.null
   })
 })

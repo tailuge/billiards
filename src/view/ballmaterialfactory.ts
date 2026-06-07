@@ -7,6 +7,7 @@ import {
 import { R } from "../model/physics/constants"
 import { BallTextureFactory } from "./balltexturefactory"
 import { BallCubeTextureFactory } from "./ballcubetexturefactory"
+import { BallEnvMapFactory } from "./ballenvmapfactory"
 import { Session } from "../network/client/session"
 
 export class BallMaterialFactory {
@@ -16,7 +17,8 @@ export class BallMaterialFactory {
   > = new Map()
 
   static createTexturedDotsMaterial(color: Color): MeshPhysicalMaterial {
-    const key = `texturedDots_${color.getHex()}`
+    const lod = Session.getLod()
+    const key = `texturedDots_${color.getHex()}_lod${lod}`
     if (this.materialCache.has(key)) {
       return this.materialCache.get(key) as MeshPhysicalMaterial
     }
@@ -29,6 +31,7 @@ export class BallMaterialFactory {
       clearcoat: 1.0,
       clearcoatRoughness: 0.02,
       reflectivity: 0.25,
+      envMap: lod >= 4 ? BallEnvMapFactory.getEnvMap() : null,
     })
 
     material.onBeforeCompile = (shader: any) => {
@@ -59,7 +62,8 @@ export class BallMaterialFactory {
   }
 
   static createDottedMaterial(color: Color): MeshPhongMaterial {
-    const key = `dotted_${color.getHex()}`
+    const lod = Session.getLod()
+    const key = `dotted_${color.getHex()}_lod${lod}`
     if (this.materialCache.has(key)) {
       return this.materialCache.get(key) as MeshPhongMaterial
     }
@@ -73,6 +77,7 @@ export class BallMaterialFactory {
       specular: 0x555533,
       transparent: false,
       depthWrite: true,
+      envMap: lod >= 4 ? BallEnvMapFactory.getEnvMap() : null,
     })
     this.materialCache.set(key, material)
     return material
@@ -83,7 +88,8 @@ export class BallMaterialFactory {
     color: Color,
     size = 256
   ): MeshStandardMaterial {
-    const key = `projected_${label}_${color.getHex()}_${size}`
+    const lod = Session.getLod()
+    const key = `projected_${label}_${color.getHex()}_${size}_lod${lod}`
     if (this.materialCache.has(key)) {
       return this.materialCache.get(key) as MeshStandardMaterial
     }
@@ -95,7 +101,7 @@ export class BallMaterialFactory {
     )
 
     const material =
-      Session.getLod() <= 1
+      lod <= 1
         ? new MeshStandardMaterial({
             color: color,
             roughness: 0.5,
@@ -111,6 +117,7 @@ export class BallMaterialFactory {
             clearcoat: 1.0,
             clearcoatRoughness: 0.02,
             reflectivity: 0.25,
+            envMap: lod >= 4 ? BallEnvMapFactory.getEnvMap() : null,
           })
 
     material.onBeforeCompile = (shader: any) => {
