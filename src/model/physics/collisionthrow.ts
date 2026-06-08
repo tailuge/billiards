@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { Ball } from "../ball"
-import { Collision } from "./collision"
+import type { Collision } from "./collision"
 import { I, m, R } from "./constants"
 import { exp } from "../../utils/utils"
 
@@ -17,8 +17,8 @@ export class CollisionThrow {
     return 0.01 + 0.108 * exp(-1.088 * vRel)
   }
 
-  public updateVelocities(a: Ball, b: Ball) {
-    const contact = Collision.positionsAtContact(a, b)
+  public updateVelocities(a: Ball, b: Ball, positionsAtContact: (a: Ball, b: Ball) => { a: Vector3, b: Vector3 }) {
+    const contact = positionsAtContact(a, b)
     a.ballmesh?.trace.forceTrace(contact.a)
     b.ballmesh?.trace.forceTrace(contact.b)
     const ab = contact.b.sub(contact.a).normalize()
