@@ -16,7 +16,11 @@ function runSimSync(simConfig, truth) {
       ;(simTracks[b.id] ??= []).push({ x: b.pos[0], y: b.pos[1] })
     }
   }
-  const rmse = truth ? computeRMSE(truth, simTracks, simStep) : null
+  const trackKeys = Object.keys(simTracks)
+  const track0len = simTracks[0]?.length ?? 'MISSING'
+  const rawRmse = truth ? computeRMSE(truth, simTracks, simStep) : 'NO_TRUTH'
+  console.log(`[runSimSync] frames=${result.frames.length} trackKeys=${JSON.stringify(trackKeys)} track0len=${track0len} truth=${!!truth} rawRmse=${rawRmse}`)
+  const rmse = truth ? rawRmse : null
   return { simTracks, simStep, frames: result.frames, rmse }
 }
 
@@ -34,11 +38,14 @@ export async function runOptimise(simConfig, truth, specs, onStep, signal) {
   const initial = encode(simConfig.params, specs)
 
   // Synchronous target function — no Worker, no cache needed
+  let lastRmse = Infinity
   const target = (norm) => {
     const tuned = decode(norm, specs)
     const config = { ...simConfig, params: { ...simConfig.params, ...tuned } }
     const { rmse } = runSimSync(config, truth)
-    return rmse ?? Infinity
+    lastRmse = rmse ?? Infinity
+    console.log('[opt] trial tuned:', JSON.stringify(tuned), '→ rmse:', lastRmse)
+    return lastRmse
   }
 
   const opt = new Simplex(target, initial, {})
@@ -49,6 +56,7 @@ export async function runOptimise(simConfig, truth, specs, onStep, signal) {
     iter++
 
     const res = opt.result()
+    console.log(`[opt] iter ${iter}: res.value (best-so-far)=${res.value}, lastRmse (this step)=${lastRmse}, converged=${res.converged}`)
     onStep({ iter, rmse: res.value, params: decode(res.location, specs) })
 
     if (res.converged) break

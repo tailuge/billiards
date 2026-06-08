@@ -70,7 +70,8 @@ export function simulateSync(config: any): any {
     tableY: TableGeometry.tableY,
   })
 
-  // Initialize balls
+  // Initialize balls — reset static counter so IDs are stable across repeated calls
+  Ball.id = 0
   const ballInstances = balls.map((b: any) => {
     const ball = new Ball(
       new Vector3(b.pos.x, b.pos.y, b.pos.z),
