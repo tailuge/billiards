@@ -12,45 +12,18 @@
   <canvas id="c" style="margin-top:12px;border:1px solid #ccc"></canvas>
   <pre id="report" style="margin-top:12px;font-size:13px"></pre>
 <script type="module">
-import { SimulationRunner } from '../ww.js'
+import { runSim } from './sim.js'
+import { redraw, HALF_W, HALF_H } from './plot.js'
 
-const HALF_W = 0.03275 * 92.36 / 2
-const HALF_H = 0.03275 * 46.18 / 2
-const COLORS = ['#000', '#b8860b', '#c00']
-const SIM_COLORS = ['rgba(0,100,255,0.7)', 'rgba(255,140,0,0.7)', 'rgba(200,0,0,0.7)']
 const W = 900, H = Math.round(W * HALF_H / HALF_W)
-
 const canvas = document.getElementById('c')
 canvas.width = W; canvas.height = H
 
-const tx = x => (x + HALF_W) / (2 * HALF_W) * W
-const ty = y => (HALF_H - y) / (2 * HALF_H) * H
+let simTracks = null, simStep = 0.001953125, loadedData = null
 
-let currentTruth = [], currentSim = null, simTracks = null, simStep = 0.001953125, loadedData = null
-
-function redraw() {
-  const ctx = canvas.getContext('2d')
-  ctx.fillStyle = '#f5f5f0'
-  ctx.fillRect(0, 0, W, H)
-  for (const { ball, x, y } of currentTruth) {
-    ctx.fillStyle = COLORS[ball] ?? '#000'
-    ctx.fillRect(tx(x) - 1, ty(y) - 1, 2, 2)
-  }
-  if (currentSim) {
-    for (const { id, x, y } of currentSim) {
-      ctx.fillStyle = SIM_COLORS[id] ?? 'rgba(0,0,0,0.5)'
-      ctx.fillRect(tx(x) - 1, ty(y) - 1, 2, 2)
-    }
-    ctx.strokeStyle = 'rgba(255,0,0,0.25)'
-    ctx.lineWidth = 1
-    for (const { ball, t, x, y } of currentTruth) {
-      const track = simTracks[ball]
-      if (!track) continue
-      const i = Math.min(Math.round(t / simStep), track.length - 1)
-      const s = track[i]
-      ctx.beginPath(); ctx.moveTo(tx(x), ty(y)); ctx.lineTo(tx(s.x), ty(s.y)); ctx.stroke()
-    }
-  }
+function updateDrawing() {
+  if (!loadedData) return
+  redraw(canvas, loadedData.truth, simTracks, simStep)
 }
 
 document.getElementById('file').onchange = e => {
@@ -61,20 +34,18 @@ document.getElementById('file').onchange = e => {
 
 function loadData(data) {
   loadedData = data
-  currentTruth = loadedData.truth
-  currentSim = null
   simTracks = null
   document.getElementById('shot').value = JSON.stringify(loadedData.sim.shot, null, 2)
   document.getElementById('shot').disabled = false
   document.getElementById('simBtn').disabled = false
   document.getElementById('saveBtn').disabled = false
   document.getElementById('report').textContent = loadedData.report ?? ''
-  redraw()
+  updateDrawing()
 }
 
 fetch('./SS_max_spin_02.json').then(r => r.json()).then(loadData).catch(() => {})
 
-async function runSim() {
+async function onRunSim() {
   const btn = document.getElementById('simBtn')
   const status = document.getElementById('status')
   let shot
@@ -85,36 +56,22 @@ async function runSim() {
   btn.disabled = true
   status.textContent = 'Running...'
   try {
-    const runner = new SimulationRunner('../worker.js', false)
     const t0 = performance.now()
-    const result = await runner.spawn(loadedData.sim)
+    const result = await runSim(loadedData.sim, loadedData.truth)
     status.textContent = `Done in ${Math.round(performance.now() - t0)}ms — ${result.frames.length} frames`
-    simStep = loadedData.sim.stepSize ?? 0.001953125
-    simTracks = {}
-    for (const f of result.frames) {
-      for (const b of f.balls) {
-        ;(simTracks[b.id] ??= []).push({ x: b.pos[0], y: b.pos[1] })
-      }
+    simStep = result.simStep
+    simTracks = result.simTracks
+    if (result.rmse !== null) {
+      status.textContent += `  RMSE=${(result.rmse * 100).toFixed(1)}cm`
     }
-    currentSim = result.frames.flatMap(f =>
-      f.balls.map(b => ({ id: b.id, x: b.pos[0], y: b.pos[1] }))
-    )
-    const track0 = simTracks[0]
-    const mover = currentTruth.filter(s => s.ball === 0)
-    const sse = mover.reduce((sum, { t, x, y }) => {
-      const s = track0[Math.min(Math.round(t / simStep), track0.length - 1)]
-      return sum + (x - s.x) ** 2 + (y - s.y) ** 2
-    }, 0)
-    const rmse = Math.sqrt(sse / mover.length)
-    status.textContent += `  RMSE=${(rmse * 100).toFixed(1)}cm`
-    redraw()
+    updateDrawing()
   } catch (err) {
     status.textContent = `Error: ${err.message}`
   }
   btn.disabled = false
 }
 
-document.getElementById('simBtn').onclick = runSim
+document.getElementById('simBtn').onclick = onRunSim
 
 document.getElementById('saveBtn').onclick = async () => {
   let shot
