@@ -15,7 +15,7 @@ export function redraw(canvas, truth, simTracks, simStep) {
   ctx.fillRect(0, 0, W, H)
 
   for (const { ball, x, y } of truth) {
-    ctx.fillStyle = COLORS[ball]
+    ctx.fillStyle = COLORS[ball] ?? '#888'
     ctx.fillRect(tx(x) - 1, ty(y) - 1, 2, 2)
   }
 

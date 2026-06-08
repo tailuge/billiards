@@ -15,21 +15,17 @@ and tune physics parameters to minimise positional error (RMSE).
 
 ---
 
-## Phase 1 — Module split (refactor, no new features)
+## Phase 1 — Module split ✅ DONE
 
-**Goal:** viewer.html is getting long. Extract reusable logic before adding optimiser.
-
-Proposed modules alongside `viewer.html`:
+Modules extracted from viewer.html:
 
 | File | Responsibility |
 |---|---|
-| `plot.js` | `redraw(canvas, truth, simTracks, simStep)` — all canvas drawing |
-| `rmse.js` | `computeRMSE(truth, simTracks, simStep)` — error metric |
-| `sim.js` | `runSim(simConfig)` → `{simTracks, simStep, frames, rmse}` — wraps SimulationRunner |
+| `plot.js` | `redraw(canvas, truth, simTracks, simStep)` — all canvas drawing. Exports `HALF_W`, `HALF_H`. |
+| `rmse.js` | `computeRMSE(truth, simTracks, simStep)` — error metric for ball 0 (mover) |
+| `sim.js` | `runSim(simConfig, truth)` → `{simTracks, simStep, frames, rmse}` — wraps SimulationRunner |
 
-`viewer.html` script becomes thin: load data → wire UI events → call modules.
-
-**Confirm before Phase 2:** viewer still works identically after refactor.
+`viewer.html` script is now thin: load data → wire UI events → call modules.
 
 ---
 
