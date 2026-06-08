@@ -155,7 +155,6 @@ export class MatchResultHelper {
       new NotificationEvent({
         type: "GameOver",
         title: "YOU LOST",
-        highBreaks: this.getHighBreaks(container),
         icon: "🥈",
         extraClass: "is-loser",
         extra: this.getRemoteGameOverButtons(rulename),
@@ -173,7 +172,6 @@ export class MatchResultHelper {
       new NotificationEvent({
         type: "GameOver",
         title: "YOU WON",
-        highBreaks: this.getHighBreaks(container),
         icon: "🏆",
         extraClass: "is-winner",
         extra: this.getRemoteGameOverButtons(rulename),

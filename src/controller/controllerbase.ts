@@ -24,7 +24,17 @@ export abstract class ControllerBase extends Controller {
   }
 
   override handleNotification(event: NotificationEvent): Controller {
-    this.container.notification.show(event.data, event.duration)
+    const data = event.data
+    if (
+      typeof data !== "string" &&
+      data.type === "GameOver" &&
+      !data.highBreaks
+    ) {
+      data.highBreaks = this.container.ballTray
+        .getTopBreaks(3)
+        .map(({ score, hiScoreUri }) => ({ score, url: hiScoreUri }))
+    }
+    this.container.notification.show(data, event.duration)
     return this
   }
 
