@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><title>Viewer</title>
+<script src="../worker.js"></script>
 <style>
 * { box-sizing: border-box; margin: 2px; padding: 2px; font-family: monospace; font-size: 12px; }
 body { display: flex; flex-direction: column; align-items: center; padding: 8px; }
@@ -37,6 +38,7 @@ th, td { padding: 1px 4px; }
 <script type="module">
 import { runSim } from './sim.js'
 import { redraw, HALF_W, HALF_H } from './plot.js'
+import { runOptimise } from './optimise.js'
 
 const W = 900, H = Math.round(W * HALF_H / HALF_W)
 const canvas = document.getElementById('c')
@@ -139,14 +141,17 @@ document.getElementById('optBtn').onclick = async () => {
   document.getElementById('stopBtn').disabled = false
   document.getElementById('optStatus').textContent = 'iter 0'
 
-  // TODO: replace with real optimiser when available
   const onStep = ({ iter, rmse, params }) => {
     document.getElementById('optStatus').textContent = `iter ${iter}  RMSE=${(rmse * 100).toFixed(2)}cm`
     loadedData.sim.params = { ...loadedData.sim.params, ...params }
     updateParamDisplay(loadedData.sim.params)
   }
-  console.log('Optimise called with specs:', specs, '— optimiser not yet implemented')
-  document.getElementById('optStatus').textContent = 'Optimiser not yet implemented'
+
+  try {
+    await runOptimise(loadedData.sim, loadedData.truth, specs, onStep, abortController.signal)
+  } catch (err) {
+    document.getElementById('optStatus').textContent = `Error: ${err.message}`
+  }
 
   document.getElementById('optBtn').disabled = false
   document.getElementById('stopBtn').disabled = true
