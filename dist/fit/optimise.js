@@ -1,8 +1,15 @@
 import { Simplex } from 'https://esm.sh/@reside-ic/dfoptim'
 import { computeRMSE } from './rmse.js'
 
-const encode = (params, specs) =>
-  specs.map(s => (params[s.name] - s.min) / (s.max - s.min))
+const getValue = (simConfig, name) => {
+  if (name.startsWith('shot.')) {
+    const path = name.split('.').slice(1)
+    let curr = simConfig.shot
+    for (const p of path) curr = curr[p]
+    return curr
+  }
+  return simConfig.params[name]
+}
 
 const decode = (norm, specs) =>
   Object.fromEntries(specs.map((s, i) => [s.name, s.min + Math.max(0, Math.min(1, norm[i])) * (s.max - s.min)]))
@@ -35,13 +42,26 @@ function runSimSync(simConfig, truth) {
  * @param {AbortSignal} signal
  */
 export async function runOptimise(simConfig, truth, specs, onStep, signal) {
-  const initial = encode(simConfig.params, specs)
+  const initial = specs.map(s => {
+    const val = getValue(simConfig, s.name)
+    return (val - s.min) / (s.max - s.min)
+  })
 
   // Synchronous target function — no Worker, no cache needed
   let lastRmse = Infinity
   const target = (norm) => {
     const tuned = decode(norm, specs)
-    const config = { ...simConfig, params: { ...simConfig.params, ...tuned } }
+    const config = JSON.parse(JSON.stringify(simConfig))
+    for (const [name, val] of Object.entries(tuned)) {
+      if (name.startsWith('shot.')) {
+        const path = name.split('.').slice(1)
+        let curr = config.shot
+        for (let i = 0; i < path.length - 1; i++) curr = curr[path[i]]
+        curr[path[path.length - 1]] = val
+      } else {
+        config.params[name] = val
+      }
+    }
     const { rmse } = runSimSync(config, truth)
     lastRmse = rmse ?? Infinity
     console.log('[opt] trial tuned:', JSON.stringify(tuned), '→ rmse:', lastRmse)

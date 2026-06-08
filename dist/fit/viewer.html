@@ -12,13 +12,15 @@ th, td { padding: 1px 4px; }
 <body>
   <input type="file" id="file" accept=".json">
   <div style="display:flex;gap:8px;align-items:flex-start;margin-top:4px">
-    <div>
+    <div style="display:flex;flex-direction:column;align-items:center">
       <textarea id="shot" rows="10" cols="25" disabled></textarea>
       <div style="display:flex;gap:4px">
         <button id="simBtn" disabled>Run Sim</button>
         <button id="saveBtn" disabled>Save JSON</button>
       </div>
       <span id="status"></span>
+      <canvas id="rmseCanvas" width="200" height="100" style="margin-top:8px;border:1px solid #ccc"></canvas>
+      <span id="rmseLabel">RMSE Convergence</span>
     </div>
     <table id="paramTable" style="border-collapse:collapse">
     <thead><tr>
@@ -45,26 +47,71 @@ const canvas = document.getElementById('c')
 canvas.width = W; canvas.height = H
 
 let simTracks = null, simStep = 0.001953125, loadedData = null
-let abortController = null
+let abortController = null, rmseHistory = []
+
+function drawRMSEGraph(canvas, history) {
+  const ctx = canvas.getContext('2d')
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  const valid = history.filter(v => !isNaN(v) && v !== null && v !== Infinity)
+  if (valid.length < 2) return
+
+  const maxRmse = Math.max(...valid)
+  const minRmse = Math.min(...valid)
+  const range = maxRmse - minRmse || 1
+
+  ctx.beginPath()
+  ctx.strokeStyle = '#007bff'
+  let first = true
+  for (let i = 0; i < history.length; i++) {
+    const v = history[i]
+    if (isNaN(v) || v === null || v === Infinity) continue
+    const x = (i / (history.length - 1)) * canvas.width
+    const y = canvas.height - ((v - minRmse) / range) * canvas.height
+    if (first) { ctx.moveTo(x, y); first = false }
+    else ctx.lineTo(x, y)
+  }
+  ctx.stroke()
+}
 
 function updateDrawing() {
   if (!loadedData) return
   redraw(canvas, loadedData.truth, simTracks, simStep)
 }
 
-function buildParamRows(params) {
+function buildParamRows(sim) {
   const tbody = document.getElementById('paramRows')
   tbody.innerHTML = ''
-  for (const [name, val] of Object.entries(params)) {
+  const allParams = { ...sim.params }
+  if (sim.shot) {
+    allParams['shot.angle'] = sim.shot.angle
+    allParams['shot.power'] = sim.shot.power
+    allParams['shot.elevation'] = sim.shot.elevation
+    if (sim.shot.offset) {
+      allParams['shot.offset.x'] = sim.shot.offset.x
+      allParams['shot.offset.y'] = sim.shot.offset.y
+    }
+  }
+
+  for (const [name, val] of Object.entries(allParams)) {
     const tr = document.createElement('tr')
+    let min = val * 0.5, max = val * 1.5
+    if (Math.abs(max - min) < 1e-7) {
+      min = val - 0.1
+      max = val + 0.1
+    }
     tr.innerHTML = `
       <td><input type="checkbox" data-name="${name}"></td>
       <td>${name}</td>
-      <td><input type="number" data-role="min" data-name="${name}" value="${(val * 0.5).toFixed(5)}" step="any" style="width:80px"></td>
-      <td><input type="number" data-role="max" data-name="${name}" value="${(val * 1.5).toFixed(5)}" step="any" style="width:80px"></td>
-      <td><span id="cur-${name}">${val}</span></td>`
+      <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(5)}" step="any" style="width:80px"></td>
+      <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(5)}" step="any" style="width:80px"></td>
+      <td><span id="cur-${name.replace(/\./g, '-')}">${val}</span></td>`
     tbody.appendChild(tr)
   }
+}
+
+function updateParamDisplay(name, val) {
+  const el = document.getElementById(`cur-${name.replace(/\./g, '-')}`)
+  if (el) el.textContent = typeof val === 'number' ? val.toFixed(6) : val
 }
 
 function getSpecs() {
@@ -79,12 +126,6 @@ function getSpecs() {
   return specs
 }
 
-function updateParamDisplay(params) {
-  for (const [name, val] of Object.entries(params)) {
-    const el = document.getElementById(`cur-${name}`)
-    if (el) el.textContent = typeof val === 'number' ? val.toFixed(6) : val
-  }
-}
 
 document.getElementById('file').onchange = e => {
   const reader = new FileReader()
@@ -95,13 +136,15 @@ document.getElementById('file').onchange = e => {
 function loadData(data) {
   loadedData = data
   simTracks = null
+  rmseHistory = []
+  drawRMSEGraph(document.getElementById('rmseCanvas'), rmseHistory)
   document.getElementById('shot').value = JSON.stringify(loadedData.sim.shot, null, 2)
   document.getElementById('shot').disabled = false
   document.getElementById('simBtn').disabled = false
   document.getElementById('saveBtn').disabled = false
   document.getElementById('optBtn').disabled = false
   document.getElementById('report').textContent = loadedData.report ?? ''
-  buildParamRows(loadedData.sim.params)
+  buildParamRows(loadedData.sim)
   updateDrawing()
 }
 
@@ -140,11 +183,26 @@ document.getElementById('optBtn').onclick = async () => {
   document.getElementById('optBtn').disabled = true
   document.getElementById('stopBtn').disabled = false
   document.getElementById('optStatus').textContent = 'iter 0'
+  rmseHistory = []
+  drawRMSEGraph(document.getElementById('rmseCanvas'), rmseHistory)
 
   const onStep = ({ iter, rmse, params }) => {
     document.getElementById('optStatus').textContent = `iter ${iter}  RMSE=${(rmse * 100).toFixed(2)}cm`
-    loadedData.sim.params = { ...loadedData.sim.params, ...params }
-    updateParamDisplay(loadedData.sim.params)
+    rmseHistory.push(rmse)
+    drawRMSEGraph(document.getElementById('rmseCanvas'), rmseHistory)
+
+    for (const [name, val] of Object.entries(params)) {
+      if (name.startsWith('shot.')) {
+        const path = name.split('.').slice(1)
+        let curr = loadedData.sim.shot
+        for (let i = 0; i < path.length - 1; i++) curr = curr[path[i]]
+        curr[path[path.length - 1]] = val
+      } else {
+        loadedData.sim.params[name] = val
+      }
+      updateParamDisplay(name, val)
+    }
+    document.getElementById('shot').value = JSON.stringify(loadedData.sim.shot, null, 2)
   }
 
   try {
