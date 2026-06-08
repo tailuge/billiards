@@ -12,13 +12,15 @@ th, td { padding: 1px 4px; }
 <body>
   <input type="file" id="file" accept=".json">
   <div style="display:flex;gap:8px;align-items:flex-start;margin-top:4px">
-    <div>
+    <div style="display:flex;flex-direction:column;align-items:center">
       <textarea id="shot" rows="10" cols="25" disabled></textarea>
       <div style="display:flex;gap:4px">
         <button id="simBtn" disabled>Run Sim</button>
         <button id="saveBtn" disabled>Save JSON</button>
       </div>
       <span id="status"></span>
+      <canvas id="rmseCanvas" width="200" height="100" style="margin-top:8px;border:1px solid #ccc"></canvas>
+      <span id="rmseLabel">RMSE Convergence</span>
     </div>
     <table id="paramTable" style="border-collapse:collapse">
     <thead><tr>
@@ -33,13 +35,7 @@ th, td { padding: 1px 4px; }
     </div>
   </div>
 
-  <div style="display:flex;gap:8px;align-items:flex-start">
-    <canvas id="c" style="margin-top:8px;border:1px solid #ccc"></canvas>
-    <div style="display:flex;flex-direction:column;align-items:center">
-      <canvas id="rmseCanvas" width="300" height="150" style="margin-top:8px;border:1px solid #ccc"></canvas>
-      <span id="rmseLabel">RMSE Convergence</span>
-    </div>
-  </div>
+  <canvas id="c" style="margin-top:8px;border:1px solid #ccc"></canvas>
   <pre id="report"></pre>
 <script type="module">
 import { runSim } from './sim.js'
