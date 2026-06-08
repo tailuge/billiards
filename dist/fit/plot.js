@@ -1,7 +1,7 @@
 export const HALF_W = 0.03275 * 92.36 / 2
 export const HALF_H = 0.03275 * 46.18 / 2
 const COLORS = ['#000', '#b8860b', '#c00']
-const SIM_COLORS = ['rgba(0,100,255,0.7)', 'rgba(255,140,0,0.7)', 'rgba(200,0,0,0.7)']
+const SIM_COLORS = ['rgba(0,100,255,0.5)', 'rgba(255,140,0,0.7)', 'rgba(200,0,0,0.7)']
 
 export function redraw(canvas, truth, simTracks, simStep) {
   const W = canvas.width
@@ -15,13 +15,13 @@ export function redraw(canvas, truth, simTracks, simStep) {
   ctx.fillRect(0, 0, W, H)
 
   for (const { ball, x, y } of truth) {
-    ctx.fillStyle = COLORS[ball] ?? '#000'
+    ctx.fillStyle = COLORS[ball]
     ctx.fillRect(tx(x) - 1, ty(y) - 1, 2, 2)
   }
 
   if (simTracks) {
     for (const [id, track] of Object.entries(simTracks)) {
-      ctx.fillStyle = SIM_COLORS[id] ?? 'rgba(0,0,0,0.5)'
+      ctx.fillStyle = SIM_COLORS[id]
       for (const { x, y } of track) {
         ctx.fillRect(tx(x) - 1, ty(y) - 1, 2, 2)
       }

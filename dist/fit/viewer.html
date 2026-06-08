@@ -3,14 +3,14 @@
 <head><meta charset="utf-8"><title>Viewer</title></head>
 <body style="display:flex;flex-direction:column;align-items:center;padding:20px;font-family:monospace">
   <input type="file" id="file" accept=".json">
-  <textarea id="shot" rows="9" cols="50" style="margin-top:8px;font-family:monospace;font-size:13px" disabled></textarea>
-  <div style="margin-top:6px;display:flex;gap:8px">
+  <textarea id="shot" rows="10" cols="50" style="font-family:monospace;font-size:13px" disabled></textarea>
+  <div style="display:flex;gap:8px">
     <button id="simBtn" disabled>Run Sim</button>
     <button id="saveBtn" disabled>Save JSON</button>
   </div>
-  <span id="status" style="color:#555;font-size:13px;margin-top:4px"></span>
-  <canvas id="c" style="margin-top:12px;border:1px solid #ccc"></canvas>
-  <pre id="report" style="margin-top:12px;font-size:13px"></pre>
+  <span id="status" ></span>
+  <canvas id="c" style="border:1px solid #5c59fd"></canvas>
+  <pre id="report" ></pre>
 <script type="module">
 import { runSim } from './sim.js'
 import { redraw, HALF_W, HALF_H } from './plot.js'

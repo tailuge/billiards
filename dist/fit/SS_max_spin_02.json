@@ -1,5 +1,5 @@
 {
-  "source": "dist/fit/SS_max_spin_02.txt",
+  "source": "SS_max_spin_02.txt",
   "report": "ball 0: 300 samples  x:[-1.474, 1.470]  y:[-0.725, 0.716]  dir=-0.0123rad  speed=3.086m/s  → MOVER\nball 1: 3 samples  x:[1.060, 1.091]  y:[0.485, 0.491]\nball 2: 2 samples  x:[1.379, 1.380]  y:[0.384, 0.384]\n\nCue ball: dataset 0",
   "sim": {
     "ruleType": "threecushion",
@@ -33,9 +33,9 @@
     "shot": {
       "cueBallId": 0,
       "angle": 0,
-      "power": 3.5,
+      "power": 3.29,
       "offset": {
-        "x": 0.32,
+        "x": 0.315,
         "y": 0
       },
       "elevation": 0
@@ -43,15 +43,18 @@
     "stepSize": 0.001953125,
     "maxIterations": 20000,
     "params": {
-      "mu": 0.007,
-      "muS": 0.136,
-      "rho": 0.035,
+      "mu": 0.0055,
+      "muS": 0.126,
+      "rho": 0.045,
       "m": 0.23,
       "R": 0.03275,
       "e": 0.86,
-      "ee": 0.84,
       "μs": 0.2,
-      "μw": 0.2
+      "μw": 0.2,
+      "ee": 0.84,
+      "stronge_omega_ratio": 1.847,
+      "stronge_e_n": 0.78,
+      "stronge_μ": 0.3
     }
   },
   "truth": [
