@@ -93,19 +93,22 @@ describe("Controller", () => {
     container.processEvents()
     chaiExpect(container.controller).to.be.an.instanceof(PlaceBall)
     chaiExpect(broadcastEvents.pop()).to.be.an.instanceof(WatchEvent)
-    chaiExpect(document.getElementById("p1Score")?.classList.contains("is-active"))
-      .to.be.true
-    chaiExpect(document.getElementById("p2Score")?.classList.contains("is-active"))
-      .to.be.false
+    chaiExpect(
+      document.getElementById("p1Score")?.classList.contains("is-active")
+    ).to.be.true
+    chaiExpect(
+      document.getElementById("p2Score")?.classList.contains("is-active")
+    ).to.be.false
     done()
   })
 
   it("netEvent clears notification if vsNotificationShown is false", (done) => {
     const clearSpy = jest.spyOn(container.notification, "clear")
-    const bc = new (require("../../src/container/browsercontainer").BrowserContainer)(
-      null,
-      new URLSearchParams()
-    )
+    const bc =
+      new (require("../../src/container/browsercontainer").BrowserContainer)(
+        null,
+        new URLSearchParams()
+      )
     bc.container = container
 
     bc.netEvent(JSON.stringify({ type: "BEGIN", clientId: "other" }))
@@ -116,20 +119,27 @@ describe("Controller", () => {
 
   it("netEvent shows VS notification in correct format once names are known", (done) => {
     const notifySpy = jest.spyOn(container, "notifyLocal")
-    const bc = new (require("../../src/container/browsercontainer").BrowserContainer)(
-      null,
-      new URLSearchParams("ruletype=nineball")
-    )
+    const bc =
+      new (require("../../src/container/browsercontainer").BrowserContainer)(
+        null,
+        new URLSearchParams("ruletype=nineball")
+      )
     bc.container = container
     bc.ruletype = "nineball"
     Session.init("myId", "Me", "table", false)
 
-    bc.netEvent(JSON.stringify({ type: "BEGIN", clientId: "other", playername: "Opponent" }))
+    bc.netEvent(
+      JSON.stringify({
+        type: "BEGIN",
+        clientId: "other",
+        playername: "Opponent",
+      })
+    )
 
     expect(notifySpy).toHaveBeenCalledWith({
       type: "Info",
       title: "nineball, Me vs Opponent",
-      extra: undefined
+      extra: undefined,
     })
     chaiExpect(Session.getInstance().vsNotificationShown).to.be.true
     done()
@@ -163,10 +173,12 @@ describe("Controller", () => {
     container.eventQueue.push(new WatchEvent(container.table.serialise()))
     container.processEvents()
     chaiExpect(container.controller).to.be.an.instanceof(WatchAim)
-    chaiExpect(document.getElementById("p1Score")?.classList.contains("is-active"))
-      .to.be.true
-    chaiExpect(document.getElementById("p2Score")?.classList.contains("is-active"))
-      .to.be.false
+    chaiExpect(
+      document.getElementById("p1Score")?.classList.contains("is-active")
+    ).to.be.true
+    chaiExpect(
+      document.getElementById("p2Score")?.classList.contains("is-active")
+    ).to.be.false
     done()
   })
 
@@ -174,10 +186,12 @@ describe("Controller", () => {
     container.controller = new WatchAim(container)
     container.eventQueue.push(new ScoreEvent(4, 2, 0, 1))
     container.processEvents()
-    chaiExpect(document.getElementById("p1Score")?.classList.contains("is-active"))
-      .to.be.true
-    chaiExpect(document.getElementById("p2Score")?.classList.contains("is-active"))
-      .to.be.false
+    chaiExpect(
+      document.getElementById("p1Score")?.classList.contains("is-active")
+    ).to.be.true
+    chaiExpect(
+      document.getElementById("p2Score")?.classList.contains("is-active")
+    ).to.be.false
     done()
   })
 

@@ -1,183 +1,310 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head><meta charset="utf-8"><title>Viewer</title>
-<script src="../worker.js"></script>
-<style>
-* { box-sizing: border-box; margin: 2px; padding: 2px; font-family: monospace; font-size: 12px; }
-body { display: flex; flex-direction: column; align-items: center; padding: 8px; }
-button { padding: 2px 8px; }
-th, td { padding: 1px 4px; }
-</style>
-</head>
-<body>
-  <input type="file" id="file" accept=".json">
-  <div style="display:flex;gap:8px;align-items:flex-start;margin-top:4px">
-    <div>
-      <textarea id="shot" rows="10" cols="25" disabled></textarea>
-      <div style="display:flex;gap:4px">
-        <button id="simBtn" disabled>Run Sim</button>
-        <button id="saveBtn" disabled>Save JSON</button>
+  <head>
+    <meta charset="utf-8" />
+    <title>Viewer</title>
+    <script src="../worker.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 2px;
+        padding: 2px;
+        font-family: monospace;
+        font-size: 12px;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px;
+      }
+      button {
+        padding: 2px 8px;
+      }
+      th,
+      td {
+        padding: 1px 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="file" id="file" accept=".json" />
+    <div
+      style="display: flex; gap: 8px; align-items: flex-start; margin-top: 4px"
+    >
+      <div>
+        <textarea id="shot" rows="10" cols="25" disabled></textarea>
+        <div style="display: flex; gap: 4px">
+          <button id="simBtn" disabled>Run Sim</button>
+          <button id="saveBtn" disabled>Save JSON</button>
+        </div>
+        <span id="status"></span>
       </div>
-      <span id="status"></span>
+      <table id="paramTable" style="border-collapse: collapse">
+        <thead>
+          <tr>
+            <th>tune</th>
+            <th>param</th>
+            <th>min</th>
+            <th>max</th>
+            <th>current</th>
+          </tr>
+        </thead>
+        <tbody id="paramRows"></tbody>
+      </table>
+      <div style="display: flex; gap: 4px; margin-top: 4px">
+        <button id="optBtn" disabled>Optimise</button>
+        <button id="stopBtn" disabled>Stop</button>
+        <span id="optStatus"></span>
+      </div>
     </div>
-    <table id="paramTable" style="border-collapse:collapse">
-    <thead><tr>
-      <th>tune</th><th>param</th><th>min</th><th>max</th><th>current</th>
-    </tr></thead>
-    <tbody id="paramRows"></tbody>
-  </table>
-    <div style="display:flex;gap:4px;margin-top:4px">
-      <button id="optBtn" disabled>Optimise</button>
-      <button id="stopBtn" disabled>Stop</button>
-      <span id="optStatus"></span>
+
+    <div style="display: flex; gap: 8px; align-items: flex-end">
+      <canvas id="c" style="margin-top: 8px; border: 1px solid #ccc"></canvas>
+      <canvas
+        id="rmseGraph"
+        style="margin-top: 8px; border: 1px solid #ccc"
+      ></canvas>
     </div>
-  </div>
+    <pre id="report"></pre>
+    <script type="module">
+      import { runSim } from "./sim.js"
+      import { redraw, HALF_W, HALF_H } from "./plot.js"
+      import { runOptimise } from "./optimise.js"
 
-  <canvas id="c" style="margin-top:8px;border:1px solid #ccc"></canvas>
-  <pre id="report"></pre>
-<script type="module">
-import { runSim } from './sim.js'
-import { redraw, HALF_W, HALF_H } from './plot.js'
-import { runOptimise } from './optimise.js'
+      const W = 900,
+        H = Math.round((W * HALF_H) / HALF_W)
+      const canvas = document.getElementById("c")
+      canvas.width = W
+      canvas.height = H
 
-const W = 900, H = Math.round(W * HALF_H / HALF_W)
-const canvas = document.getElementById('c')
-canvas.width = W; canvas.height = H
+      const rmseCanvas = document.getElementById("rmseGraph")
+      rmseCanvas.width = 250
+      rmseCanvas.height = 100
 
-let simTracks = null, simStep = 0.001953125, loadedData = null
-let abortController = null
+      let simTracks = null,
+        simStep = 0.001953125,
+        loadedData = null
+      let abortController = null,
+        rmseHistory = []
 
-function updateDrawing() {
-  if (!loadedData) return
-  redraw(canvas, loadedData.truth, simTracks, simStep)
-}
+      function drawRMSEGraph() {
+        const ctx = rmseCanvas.getContext("2d")
+        const w = rmseCanvas.width,
+          h = rmseCanvas.height
+        ctx.fillStyle = "#f0f0f0"
+        ctx.fillRect(0, 0, w, h)
+        if (rmseHistory.length < 2) return
 
-function buildParamRows(params) {
-  const tbody = document.getElementById('paramRows')
-  tbody.innerHTML = ''
-  for (const [name, val] of Object.entries(params)) {
-    const tr = document.createElement('tr')
-    tr.innerHTML = `
+        let max = -Infinity,
+          min = Infinity
+        for (const v of rmseHistory) {
+          if (v > max) max = v
+          if (v < min) min = v
+        }
+        const range = max - min || 1e-9
+
+        ctx.beginPath()
+        ctx.strokeStyle = "#007bff"
+        ctx.lineWidth = 1.5
+        for (let i = 0; i < rmseHistory.length; i++) {
+          const x = (i / (rmseHistory.length - 1)) * w
+          const y = h - ((rmseHistory[i] - min) / range) * (h - 10) - 5
+          if (i === 0) ctx.moveTo(x, y)
+          else ctx.lineTo(x, y)
+        }
+        ctx.stroke()
+        ctx.fillStyle = "#333"
+        ctx.fillText(`max: ${(max * 100).toFixed(2)}cm`, 2, 10)
+        ctx.fillText(`min: ${(min * 100).toFixed(2)}cm`, 2, h - 2)
+      }
+
+      function updateDrawing() {
+        if (!loadedData) return
+        redraw(canvas, loadedData.truth, simTracks, simStep)
+      }
+
+      function buildParamRows(params) {
+        const tbody = document.getElementById("paramRows")
+        tbody.innerHTML = ""
+        for (const [name, val] of Object.entries(params)) {
+          const tr = document.createElement("tr")
+          tr.innerHTML = `
       <td><input type="checkbox" data-name="${name}"></td>
       <td>${name}</td>
       <td><input type="number" data-role="min" data-name="${name}" value="${(val * 0.5).toFixed(5)}" step="any" style="width:80px"></td>
       <td><input type="number" data-role="max" data-name="${name}" value="${(val * 1.5).toFixed(5)}" step="any" style="width:80px"></td>
       <td><span id="cur-${name}">${val}</span></td>`
-    tbody.appendChild(tr)
-  }
-}
+          tbody.appendChild(tr)
+        }
+      }
 
-function getSpecs() {
-  const specs = []
-  for (const cb of document.querySelectorAll('#paramRows input[type=checkbox]')) {
-    if (!cb.checked) continue
-    const name = cb.dataset.name
-    const min = parseFloat(document.querySelector(`input[data-role=min][data-name="${name}"]`).value)
-    const max = parseFloat(document.querySelector(`input[data-role=max][data-name="${name}"]`).value)
-    specs.push({ name, min, max })
-  }
-  return specs
-}
+      function getSpecs() {
+        const specs = []
+        for (const cb of document.querySelectorAll(
+          "#paramRows input[type=checkbox]"
+        )) {
+          if (!cb.checked) continue
+          const name = cb.dataset.name
+          const min = parseFloat(
+            document.querySelector(`input[data-role=min][data-name="${name}"]`)
+              .value
+          )
+          const max = parseFloat(
+            document.querySelector(`input[data-role=max][data-name="${name}"]`)
+              .value
+          )
+          specs.push({ name, min, max })
+        }
+        return specs
+      }
 
-function updateParamDisplay(params) {
-  for (const [name, val] of Object.entries(params)) {
-    const el = document.getElementById(`cur-${name}`)
-    if (el) el.textContent = typeof val === 'number' ? val.toFixed(6) : val
-  }
-}
+      function updateParamDisplay(params) {
+        for (const [name, val] of Object.entries(params)) {
+          const el = document.getElementById(`cur-${name}`)
+          if (el)
+            el.textContent = typeof val === "number" ? val.toFixed(6) : val
+        }
+      }
 
-document.getElementById('file').onchange = e => {
-  const reader = new FileReader()
-  reader.onload = ev => loadData(JSON.parse(ev.target.result))
-  reader.readAsText(e.target.files[0])
-}
+      document.getElementById("file").onchange = (e) => {
+        const reader = new FileReader()
+        reader.onload = (ev) => loadData(JSON.parse(ev.target.result))
+        reader.readAsText(e.target.files[0])
+      }
 
-function loadData(data) {
-  loadedData = data
-  simTracks = null
-  document.getElementById('shot').value = JSON.stringify(loadedData.sim.shot, null, 2)
-  document.getElementById('shot').disabled = false
-  document.getElementById('simBtn').disabled = false
-  document.getElementById('saveBtn').disabled = false
-  document.getElementById('optBtn').disabled = false
-  document.getElementById('report').textContent = loadedData.report ?? ''
-  buildParamRows(loadedData.sim.params)
-  updateDrawing()
-}
+      function loadData(data) {
+        loadedData = data
+        simTracks = null
+        rmseHistory = []
+        drawRMSEGraph()
+        document.getElementById("shot").value = JSON.stringify(
+          loadedData.sim.shot,
+          null,
+          2
+        )
+        document.getElementById("shot").disabled = false
+        document.getElementById("simBtn").disabled = false
+        document.getElementById("saveBtn").disabled = false
+        document.getElementById("optBtn").disabled = false
+        document.getElementById("report").textContent = loadedData.report ?? ""
+        buildParamRows(loadedData.sim.params)
+        updateDrawing()
+      }
 
-fetch('./SS_max_spin_02.json').then(r => r.json()).then(loadData).catch(() => {})
+      fetch("./SS_max_spin_02.json")
+        .then((r) => r.json())
+        .then(loadData)
+        .catch(() => {})
 
-async function onRunSim() {
-  const btn = document.getElementById('simBtn')
-  const status = document.getElementById('status')
-  let shot
-  try { shot = JSON.parse(document.getElementById('shot').value) }
-  catch (e) { status.textContent = 'Invalid shot JSON'; return }
+      async function onRunSim() {
+        const btn = document.getElementById("simBtn")
+        const status = document.getElementById("status")
+        let shot
+        try {
+          shot = JSON.parse(document.getElementById("shot").value)
+        } catch (e) {
+          status.textContent = "Invalid shot JSON"
+          return
+        }
 
-  loadedData.sim.shot = shot
-  btn.disabled = true
-  status.textContent = 'Running...'
-  try {
-    const t0 = performance.now()
-    const result = await runSim(loadedData.sim, loadedData.truth)
-    status.textContent = `Done in ${Math.round(performance.now() - t0)}ms — ${result.frames.length} frames`
-    simStep = result.simStep
-    simTracks = result.simTracks
-    if (result.rmse !== null) status.textContent += `  RMSE=${(result.rmse * 100).toFixed(1)}cm`
-    updateDrawing()
-  } catch (err) {
-    status.textContent = `Error: ${err.message}`
-  }
-  btn.disabled = false
-}
+        loadedData.sim.shot = shot
+        btn.disabled = true
+        status.textContent = "Running..."
+        try {
+          const t0 = performance.now()
+          const result = await runSim(loadedData.sim, loadedData.truth)
+          status.textContent = `Done in ${Math.round(performance.now() - t0)}ms — ${result.frames.length} frames`
+          simStep = result.simStep
+          simTracks = result.simTracks
+          if (result.rmse !== null)
+            status.textContent += `  RMSE=${(result.rmse * 100).toFixed(1)}cm`
+          updateDrawing()
+        } catch (err) {
+          status.textContent = `Error: ${err.message}`
+        }
+        btn.disabled = false
+      }
 
-document.getElementById('simBtn').onclick = onRunSim
+      document.getElementById("simBtn").onclick = onRunSim
 
-document.getElementById('optBtn').onclick = async () => {
-  const specs = getSpecs()
-  if (specs.length === 0) { document.getElementById('optStatus').textContent = 'Check at least one param'; return }
-  abortController = new AbortController()
-  document.getElementById('optBtn').disabled = true
-  document.getElementById('stopBtn').disabled = false
-  document.getElementById('optStatus').textContent = 'iter 0'
+      document.getElementById("optBtn").onclick = async () => {
+        const specs = getSpecs()
+        if (specs.length === 0) {
+          document.getElementById("optStatus").textContent =
+            "Check at least one param"
+          return
+        }
+        abortController = new AbortController()
+        document.getElementById("optBtn").disabled = true
+        document.getElementById("stopBtn").disabled = false
+        document.getElementById("optStatus").textContent = "iter 0"
+        rmseHistory = []
 
-  const onStep = ({ iter, rmse, params }) => {
-    document.getElementById('optStatus').textContent = `iter ${iter}  RMSE=${(rmse * 100).toFixed(2)}cm`
-    loadedData.sim.params = { ...loadedData.sim.params, ...params }
-    updateParamDisplay(loadedData.sim.params)
-  }
+        const onStep = ({ iter, rmse, params, tracks, step }) => {
+          document.getElementById("optStatus").textContent =
+            `iter ${iter}  RMSE=${(rmse * 100).toFixed(2)}cm`
+          loadedData.sim.params = { ...loadedData.sim.params, ...params }
+          updateParamDisplay(loadedData.sim.params)
+          simTracks = tracks
+          simStep = step
+          updateDrawing()
+          rmseHistory.push(rmse)
+          drawRMSEGraph()
+        }
 
-  try {
-    await runOptimise(loadedData.sim, loadedData.truth, specs, onStep, abortController.signal)
-  } catch (err) {
-    document.getElementById('optStatus').textContent = `Error: ${err.message}`
-  }
+        try {
+          await runOptimise(
+            loadedData.sim,
+            loadedData.truth,
+            specs,
+            onStep,
+            abortController.signal
+          )
+        } catch (err) {
+          document.getElementById("optStatus").textContent =
+            `Error: ${err.message}`
+        }
 
-  document.getElementById('optBtn').disabled = false
-  document.getElementById('stopBtn').disabled = true
-}
+        document.getElementById("optBtn").disabled = false
+        document.getElementById("stopBtn").disabled = true
+      }
 
-document.getElementById('stopBtn').onclick = () => {
-  abortController?.abort()
-  document.getElementById('stopBtn').disabled = true
-  document.getElementById('optBtn').disabled = false
-}
+      document.getElementById("stopBtn").onclick = () => {
+        abortController?.abort()
+        document.getElementById("stopBtn").disabled = true
+        document.getElementById("optBtn").disabled = false
+      }
 
-document.getElementById('saveBtn').onclick = async () => {
-  let shot
-  try { shot = JSON.parse(document.getElementById('shot').value) }
-  catch (e) { document.getElementById('status').textContent = 'Invalid shot JSON'; return }
-  loadedData.sim.shot = shot
-  const blob = new Blob([JSON.stringify(loadedData, null, 2)], { type: 'application/json' })
-  if (window.showSaveFilePicker) {
-    const fh = await window.showSaveFilePicker({ suggestedName: loadedData.source?.split('/').pop()?.replace('.txt', '.json') ?? 'output.json' })
-    const w = await fh.createWritable()
-    await w.write(blob); await w.close()
-  } else {
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: 'output.json' })
-    a.click()
-  }
-}
-</script>
-</body>
+      document.getElementById("saveBtn").onclick = async () => {
+        let shot
+        try {
+          shot = JSON.parse(document.getElementById("shot").value)
+        } catch (e) {
+          document.getElementById("status").textContent = "Invalid shot JSON"
+          return
+        }
+        loadedData.sim.shot = shot
+        const blob = new Blob([JSON.stringify(loadedData, null, 2)], {
+          type: "application/json",
+        })
+        if (window.showSaveFilePicker) {
+          const fh = await window.showSaveFilePicker({
+            suggestedName:
+              loadedData.source?.split("/").pop()?.replace(".txt", ".json") ??
+              "output.json",
+          })
+          const w = await fh.createWritable()
+          await w.write(blob)
+          await w.close()
+        } else {
+          const a = Object.assign(document.createElement("a"), {
+            href: URL.createObjectURL(blob),
+            download: "output.json",
+          })
+          a.click()
+        }
+      }
+    </script>
+  </body>
 </html>

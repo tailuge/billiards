@@ -49,7 +49,11 @@ export async function runOptimise(simConfig, truth, specs, onStep, signal) {
     iter++
 
     const res = opt.result()
-    onStep({ iter, rmse: res.value, params: decode(res.location, specs) })
+    const tuned = decode(res.location, specs)
+    const config = { ...simConfig, params: { ...simConfig.params, ...tuned } }
+    const { simTracks, simStep } = runSimSync(config, truth)
+
+    onStep({ iter, rmse: res.value, params: tuned, tracks: simTracks, step: simStep })
 
     if (res.converged) break
 

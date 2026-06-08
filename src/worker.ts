@@ -95,12 +95,7 @@ export function simulateSync(config: any): any {
   // Headless hit logic
   table.time = 0
   const offset = new Vector3(shot.offset.x, shot.offset.y, 0)
-  const strike = cueStrike(
-    shot.angle,
-    shot.power,
-    offset,
-    shot.elevation || 0
-  )
+  const strike = cueStrike(shot.angle, shot.power, offset, shot.elevation || 0)
   table.cueball.state = State.Sliding
   table.cueball.vel.copy(strike.vel)
   table.cueball.rvel.copy(strike.rvel)
