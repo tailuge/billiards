@@ -63,7 +63,7 @@ const output = {
     maxIterations: 20000,
     params: {
       mu: 0.0055, muS: 0.126, rho: 0.045,
-      m: 0.23, R: 0.03275, e: 0.86,
+      m: 0.23,
       μs: 0.2, μw: 0.2, ee: 0.84,
       stronge_omega_ratio: 1.847,
       stronge_e_n: 0.78,

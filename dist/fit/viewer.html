@@ -3,28 +3,32 @@
 <head><meta charset="utf-8"><title>Viewer</title>
 <script src="../worker.js"></script>
 <style>
-* { box-sizing: border-box; margin: 2px; padding: 2px; font-family: monospace; font-size: 12px; }
-body { display: flex; flex-direction: column; align-items: center; padding: 8px; }
-button { padding: 2px 8px; }
-th, td { padding: 1px 4px; }
+* { box-sizing: border-box; margin: 1px; padding: 1px; font-family: monospace; font-size: 11px; }
+body { display: flex; flex-direction: column; align-items: center; padding: 4px; }
+button { padding: 1px 4px; }
+th, td { padding: 0px 0px; }
 </style>
 </head>
 <body>
   <input type="file" id="file" accept=".json">
   <div style="display:flex;gap:8px;align-items:flex-start;margin-top:4px">
     <div style="display:flex;flex-direction:column;align-items:center">
-      <textarea id="shot" rows="10" cols="25" disabled></textarea>
-      <div style="display:flex;gap:4px">
-        <button id="simBtn" disabled>Run Sim</button>
+      <textarea id="shot" rows="12" cols="30" disabled></textarea>
+      <div style="display:flex;gap:2px">
+        <button id="simBtn" disabled>View Shot</button>
         <button id="saveBtn" disabled>Save JSON</button>
       </div>
       <span id="status"></span>
+      <div style="display:flex;gap:4px;align-items:center;margin-top:4px">
+        <label>Trim N:</label>
+        <input type="number" id="trimNInput" value="5" min="0" step="1" style="width:50px">
+      </div>
       <canvas id="rmseCanvas" width="200" height="100" style="margin-top:8px;border:1px solid #ccc"></canvas>
       <span id="rmseLabel">RMSE Convergence</span>
     </div>
     <table id="paramTable" style="border-collapse:collapse">
     <thead><tr>
-      <th>tune</th><th>param</th><th>min</th><th>max</th><th>current</th>
+      <th>tune</th><th>param</th><th>min</th><th>max</th><th>original</th><th>current</th>
     </tr></thead>
     <tbody id="paramRows"></tbody>
   </table>
@@ -41,6 +45,7 @@ th, td { padding: 1px 4px; }
 import { runSim } from './sim.js'
 import { redraw, HALF_W, HALF_H } from './plot.js'
 import { runOptimise } from './optimise.js'
+import { setTrimN, TRIM_N } from './rmse.js'
 
 const W = 900, H = Math.round(W * HALF_H / HALF_W)
 const canvas = document.getElementById('c')
@@ -52,21 +57,22 @@ let abortController = null, rmseHistory = []
 function drawRMSEGraph(canvas, history) {
   const ctx = canvas.getContext('2d')
   ctx.clearRect(0, 0, canvas.width, canvas.height)
-  const valid = history.filter(v => !isNaN(v) && v !== null && v !== Infinity)
+  const valid = history.filter(v => !isNaN(v) && v !== null && v !== Infinity && v > 0)
   if (valid.length < 2) return
 
-  const maxRmse = Math.max(...valid)
-  const minRmse = Math.min(...valid)
-  const range = maxRmse - minRmse || 1
+  const logValid = valid.map(v => Math.log(v))
+  const maxLog = Math.max(...logValid)
+  const minLog = Math.min(...logValid)
+  const range = maxLog - minLog || 1
 
   ctx.beginPath()
   ctx.strokeStyle = '#007bff'
   let first = true
   for (let i = 0; i < history.length; i++) {
     const v = history[i]
-    if (isNaN(v) || v === null || v === Infinity) continue
+    if (isNaN(v) || v === null || v === Infinity || v <= 0) continue
     const x = (i / (history.length - 1)) * canvas.width
-    const y = canvas.height - ((v - minRmse) / range) * canvas.height
+    const y = canvas.height - ((Math.log(v) - minLog) / range) * canvas.height
     if (first) { ctx.moveTo(x, y); first = false }
     else ctx.lineTo(x, y)
   }
@@ -75,7 +81,8 @@ function drawRMSEGraph(canvas, history) {
 
 function updateDrawing() {
   if (!loadedData) return
-  redraw(canvas, loadedData.truth, simTracks, simStep)
+  const trimN = parseInt(document.getElementById('trimNInput').value) || 0
+  redraw(canvas, loadedData.truth, simTracks, simStep, trimN)
 }
 
 function buildParamRows(sim) {
@@ -102,8 +109,9 @@ function buildParamRows(sim) {
     tr.innerHTML = `
       <td><input type="checkbox" data-name="${name}"></td>
       <td>${name}</td>
-      <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(5)}" step="any" style="width:80px"></td>
-      <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(5)}" step="any" style="width:80px"></td>
+      <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(5)}" step="any" style="width:70px"></td>
+      <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(5)}" step="any" style="width:70px"></td>
+      <td>${val}</td>
       <td><span id="cur-${name.replace(/\./g, '-')}">${val}</span></td>`
     tbody.appendChild(tr)
   }
@@ -126,6 +134,11 @@ function getSpecs() {
   return specs
 }
 
+
+document.getElementById('trimNInput').oninput = e => {
+  setTrimN(parseInt(e.target.value) || 0)
+  updateDrawing()
+}
 
 document.getElementById('file').onchange = e => {
   const reader = new FileReader()

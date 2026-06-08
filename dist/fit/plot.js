@@ -3,7 +3,7 @@ export const HALF_H = 0.03275 * 46.18 / 2
 const COLORS = ['#000', '#b8860b', '#c00']
 const SIM_COLORS = ['rgba(0,100,255,0.5)', 'rgba(255,140,0,0.7)', 'rgba(200,0,0,0.7)']
 
-export function redraw(canvas, truth, simTracks, simStep) {
+export function redraw(canvas, truth, simTracks, simStep, trimN = 0) {
   const W = canvas.width
   const H = canvas.height
   const ctx = canvas.getContext('2d')
@@ -27,11 +27,19 @@ export function redraw(canvas, truth, simTracks, simStep) {
       }
     }
 
+    // Build trimmed set for ball 0 red lines
+    const ball0Points = truth.filter(s => s.ball === 0)
+    const trimmedSet = new Set(
+      ball0Points.slice(trimN, ball0Points.length - trimN)
+    )
+
     ctx.strokeStyle = 'rgba(255,0,0,0.25)'
     ctx.lineWidth = 1
-    for (const { ball, t, x, y } of truth) {
+    for (const point of truth) {
+      const { ball, t, x, y } = point
       const track = simTracks[ball]
       if (!track) continue
+      if (ball === 0 && !trimmedSet.has(point)) continue
       const i = Math.min(Math.round(t / simStep), track.length - 1)
       const s = track[i]
       if (s) {
