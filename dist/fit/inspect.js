@@ -40,10 +40,13 @@ const cueLine = `\nCue ball: dataset ${moverIdx}`
 console.log(cueLine)
 reportLines.push(cueLine)
 
-const simBalls = ballSummaries.map(({ ball, first }) => ({
-  id: ball,
-  pos: { x: first.x, y: first.y, z: 0 }
-}))
+// Remap ball ids so mover → 0, former 0 → moverIdx
+const remap = id => id === moverIdx ? 0 : id === 0 ? moverIdx : id
+const remappedSamples = samples.map(s => ({ ...s, ball: remap(s.ball) }))
+
+const simBalls = ballSummaries
+  .map(({ ball, first }) => ({ id: remap(ball), pos: { x: first.x, y: first.y, z: 0 } }))
+  .sort((a, b) => a.id - b.id)
 
 const output = {
   source: inputFile,
@@ -53,7 +56,7 @@ const output = {
     balls: simBalls,
     cushionModel: "mathavan",
     shot: {
-      cueBallId: moverIdx,
+      cueBallId: 0,
       angle: ballSummaries[moverIdx].dir,
       power: ballSummaries[moverIdx].speed,
       offset: { x: 0, y: 0 },
@@ -70,7 +73,7 @@ const output = {
       stronge_μ: 0.3
     }
   },
-  truth: samples
+  truth: remappedSamples
 }
 
 writeFileSync(outputFile, JSON.stringify(output, null, 2))
