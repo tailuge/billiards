@@ -82,12 +82,12 @@ export function setee(val: number) {
   ee = val
 }
 
-export function setStrongeOmegaRatio(val: number) {
+export function setstronge_omega_ratio(val: number) {
   stronge_omega_ratio = val
 }
-export function setStrongeEN(val: number) {
+export function setstronge_e_n(val: number) {
   stronge_e_n = val
 }
-export function setStrongeMu(val: number) {
+export function setstronge_μ(val: number) {
   stronge_μ = val
 }

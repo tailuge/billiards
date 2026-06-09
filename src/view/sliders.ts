@@ -23,9 +23,9 @@ import {
   setμs,
   setμw,
   setee,
-  setStrongeOmegaRatio,
-  setStrongeEN,
-  setStrongeMu,
+  setstronge_omega_ratio,
+  setstronge_e_n,
+  setstronge_μ,
 } from "../model/physics/constants"
 
 export class Sliders {
@@ -56,17 +56,17 @@ export class Sliders {
     this.initialiseSlider(
       "stronge_omega_ratio",
       get("stronge_omega_ratio", stronge_omega_ratio),
-      setStrongeOmegaRatio
+      setstronge_omega_ratio
     )
     this.initialiseSlider(
       "stronge_e_n",
       get("stronge_e_n", stronge_e_n),
-      setStrongeEN
+      setstronge_e_n
     )
     this.initialiseSlider(
       "stronge_μ",
       get("stronge_μ", stronge_μ),
-      setStrongeMu
+      setstronge_μ
     )
   }
 
