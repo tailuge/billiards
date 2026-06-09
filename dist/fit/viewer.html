@@ -28,12 +28,12 @@
     </style>
   </head>
   <body>
-    <input type="file" id="file" accept=".json" />
+    <div style="font-size: 10px; color: #666">bayesian optimiser</div>
     <div
       style="display: flex; gap: 8px; align-items: flex-start; margin-top: 4px"
     >
       <div style="display: flex; flex-direction: column; align-items: center">
-        <textarea id="simEdit" rows="12" cols="30" disabled></textarea>
+        <textarea id="simEdit" rows="12" cols="40" disabled></textarea>
         <div
           style="
             display: flex;
@@ -44,6 +44,8 @@
         >
           <button id="simBtn" disabled>View Shot</button>
           <button id="saveBtn" disabled>Save JSON</button>
+          <input type="file" id="file" accept=".json" style="display: none" />
+          <button onclick="document.getElementById('file').click()">Load</button>
           <button id="optBtn" disabled>Optimise</button>
           <button id="stopBtn" disabled>Stop</button>
         </div>
