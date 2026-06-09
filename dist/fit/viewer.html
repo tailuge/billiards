@@ -90,6 +90,13 @@
     <div style="position: relative; display: inline-block">
       <canvas id="c" style="margin-top: 8px; border: 1px solid #ccc"></canvas>
       <button
+        id="playBtn"
+        style="position: absolute; bottom: 4px; right: 36px; font-size: 10px"
+        disabled
+      >
+        play
+      </button>
+      <button
         id="editBtn"
         style="position: absolute; bottom: 4px; right: 4px; font-size: 10px"
         disabled
@@ -248,6 +255,7 @@
         document.getElementById("saveBtn").disabled = false
         document.getElementById("optBtn").disabled = false
         document.getElementById("editBtn").disabled = false
+        document.getElementById("playBtn").disabled = false
         document.getElementById("report").textContent = loadedData.report ?? ""
         buildParamRows(loadedData.sim)
         updateDrawing()
@@ -362,6 +370,19 @@
             "./edit.html?file=" + encodeURIComponent(loadedFile),
             "_blank"
           )
+      }
+
+      document.getElementById("playBtn").onclick = () => {
+        const sim = loadedData?.sim
+        if (!sim) return
+        const url = new URL("../index.html", window.location.href)
+        url.searchParams.set("ruletype", "threecushion")
+        url.searchParams.set("practice", "true")
+        if (sim.cushionModel) url.searchParams.set("cushionModel", sim.cushionModel)
+        for (const [key, val] of Object.entries(sim.params ?? {})) {
+          url.searchParams.set(key, val)
+        }
+        window.open(url.toString(), "_blank")
       }
 
       document.getElementById("saveBtn").onclick = async () => {

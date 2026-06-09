@@ -23,7 +23,7 @@ import { BeginEvent } from "../events/beginevent"
 //import { logNetEvent } from "../utils/event-log"
 import { Logger } from "../network/bot/logger"
 import { getUID } from "../utils/uid"
-import { setmu, setmuS } from "../model/physics/constants"
+import { applyPhysicsParams } from "../utils/physicsparams"
 
 /**
  * Integrate game container into HTML page
@@ -96,6 +96,7 @@ export class BrowserContainer {
       this.first
     )
     console.log(Session.getInstance())
+    applyPhysicsParams(params)
   }
 
   cushion(model) {
