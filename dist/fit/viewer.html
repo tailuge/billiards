@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>Viewer</title>
+    <link rel="icon" type="image/png" href="../favicon.png" />
     <script src="../worker.js"></script>
     <style>
       * {
@@ -166,7 +167,7 @@
             "shot.offset.x": [-0.45, 0.45],
             "shot.offset.y": [-0.45, 0.45],
             "shot.power": [0.1, 6.5],
-            "shot.angle": [0, Math.PI * 2],
+            "shot.angle": [-Math.PI * 2, Math.PI * 2],
             "shot.elevation": [0, Math.PI / 4],
           }
           let min, max
