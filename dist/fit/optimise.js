@@ -1,4 +1,4 @@
-import { Simplex } from 'https://esm.sh/@reside-ic/dfoptim'
+import pso from 'https://esm.sh/pso'
 import { computeRMSE } from './rmse.js'
 
 const getValue = (simConfig, name) => {
@@ -68,18 +68,32 @@ export async function runOptimise(simConfig, truth, specs, onStep, signal) {
     return lastRmse
   }
 
-  const opt = new Simplex(target, initial, {})
+  const opt = new pso.Optimizer()
+  opt.setOptions({ inertiaWeight: 0.8, social: 0.4, personal: 0.4, pressure: 0.5 })
+  opt.setObjectiveFunction((norm) => -target(norm))
+
+  const intervals = specs.map(() => ({ start: 0, end: 1 }))
+  const populationSize = Math.max(15, specs.length * 3)
+
+  let particleIdx = 0
+  opt.init(populationSize, () => {
+    if (particleIdx++ === 0) {
+      return new pso.Particle(initial.slice(), initial.map(() => 0), opt._options)
+    }
+    return pso.Particle.createRandom(intervals, opt._options, opt.rng.random)
+  })
 
   let iter = 0
   while (!signal?.aborted) {
     opt.step()
     iter++
 
-    const res = opt.result()
-    console.log(`[opt] iter ${iter}: res.value (best-so-far)=${res.value}, lastRmse (this step)=${lastRmse}, converged=${res.converged}`)
-    onStep({ iter, rmse: res.value, params: decode(res.location, specs) })
+    const bestFitness = opt.getBestFitness()
+    const bestPosition = opt.getBestPosition() || initial
+    const rmse = bestFitness === -Infinity ? Infinity : -bestFitness
 
-    if (res.converged) break
+    console.log(`[opt] iter ${iter}: bestRmse=${rmse}, lastRmse (this step)=${lastRmse}`)
+    onStep({ iter, rmse, params: decode(bestPosition, specs) })
 
     // Yield to browser so UI repaints and abort signal can be checked
     await new Promise(r => setTimeout(r, 0))
