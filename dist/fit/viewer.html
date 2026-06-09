@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Viewer</title>
+    <title>Optimiser</title>
     <link rel="icon" type="image/png" href="../favicon.png" />
     <script src="../worker.js"></script>
     <style>
@@ -17,7 +17,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 4px;
+        padding: 2px;
       }
       button {
         padding: 1px 4px;
@@ -29,16 +29,16 @@
     </style>
   </head>
   <body>
-    <div style="font-size: 10px; color: #666">bayesian optimiser</div>
+    <div style="font-size: 10px; color: #666">Constants Optimiser - Nelder-Mead / Particle Swarm</div>
     <div
       style="display: flex; gap: 8px; align-items: flex-start; margin-top: 4px"
     >
       <div style="display: flex; flex-direction: column; align-items: center">
-        <textarea id="simEdit" rows="12" cols="52" disabled></textarea>
+        <textarea id="simEdit" rows="12" cols="66" disabled></textarea>
         <div
           style="
             display: flex;
-            gap: 2px;
+            gap: 1px;
             flex-wrap: wrap;
             justify-content: center;
           "
@@ -55,6 +55,10 @@
             <option value="SS_max_spin_06.json">SS_max_spin_06</option>
             <option value="SS_max_spin_02_trim_stronge.json">SS_max_spin_02_trim_stronge</option>
           </select>
+          <select id="optimiserSelect" style="font-size: 11px; font-family: monospace">
+            <option value="nm">Nelder-Mead</option>
+            <option value="pso">PSO</option>
+          </select>
           <button id="optBtn" disabled>Optimise</button>
           <button id="stopBtn" disabled>Stop</button>
         </div>
@@ -62,7 +66,7 @@
         <span id="optStatus">Iter:0</span>
         <canvas
           id="rmseCanvas"
-          width="380"
+          width="480"
           height="120"
           style="margin-top: 8px; border: 1px solid #ccc"
         ></canvas>
@@ -97,7 +101,7 @@
     <script type="module">
       import { runSim } from "./sim.js"
       import { redraw, HALF_W, HALF_H } from "./plot.js"
-      import { runOptimise } from "./optimise.js"
+      import { runOptimiseNM, runOptimisePSO } from "./optimise.js"
 
       const W = 900,
         H = Math.round((W * HALF_H) / HALF_W)
@@ -169,6 +173,9 @@
             "shot.power": [0.1, 6.5],
             "shot.angle": [-Math.PI * 2, Math.PI * 2],
             "shot.elevation": [0, Math.PI / 4],
+            "stronge_omega_ratio": [1,2],
+            "stronge_e_n": [0.5,1],
+            "ee": [0.5,1],
           }
           let min, max
           if (ranges[name]) {
@@ -324,6 +331,9 @@
         }
 
         try {
+          const runOptimise = document.getElementById("optimiserSelect").value === "pso"
+            ? runOptimisePSO
+            : runOptimiseNM
           await runOptimise(
             loadedData.sim,
             loadedData.truth,
