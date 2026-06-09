@@ -33,7 +33,7 @@
       style="display: flex; gap: 8px; align-items: flex-start; margin-top: 4px"
     >
       <div style="display: flex; flex-direction: column; align-items: center">
-        <textarea id="simEdit" rows="12" cols="40" disabled></textarea>
+        <textarea id="simEdit" rows="12" cols="52" disabled></textarea>
         <div
           style="
             display: flex;
@@ -46,15 +46,23 @@
           <button id="saveBtn" disabled>Save JSON</button>
           <input type="file" id="file" accept=".json" style="display: none" />
           <button onclick="document.getElementById('file').click()">Load</button>
+          <select id="examples" style="font-size: 11px; font-family: monospace; width: 12ch">
+            <option value="">examples</option>
+            <option value="SS_max_spin_02.json">SS_max_spin_02</option>
+            <option value="SS_max_spin_03.json">SS_max_spin_03</option>
+            <option value="SS_max_spin_05.json">SS_max_spin_05</option>
+            <option value="SS_max_spin_06.json">SS_max_spin_06</option>
+            <option value="SS_max_spin_02_trim_stronge.json">SS_max_spin_02_trim_stronge</option>
+          </select>
           <button id="optBtn" disabled>Optimise</button>
           <button id="stopBtn" disabled>Stop</button>
         </div>
         <span id="status"></span>
-        <span id="optStatus"></span>
+        <span id="optStatus">Iter:0</span>
         <canvas
           id="rmseCanvas"
-          width="200"
-          height="100"
+          width="380"
+          height="120"
           style="margin-top: 8px; border: 1px solid #ccc"
         ></canvas>
         <span id="rmseLabel">RMSE Convergence</span>
@@ -154,11 +162,23 @@
 
         for (const [name, val] of Object.entries(allParams)) {
           const tr = document.createElement("tr")
-          let min = val * 0.5,
+          const ranges = {
+            "shot.offset.x": [-0.45, 0.45],
+            "shot.offset.y": [-0.45, 0.45],
+            "shot.power": [0.1, 6.5],
+            "shot.angle": [0, Math.PI * 2],
+            "shot.elevation": [0, Math.PI / 4],
+          }
+          let min, max
+          if (ranges[name]) {
+            ;[min, max] = ranges[name]
+          } else {
+            min = val * 0.5
             max = val * 1.5
-          if (Math.abs(max - min) < 1e-7) {
-            min = val - 0.1
-            max = val + 0.1
+            if (Math.abs(max - min) < 1e-7) {
+              min = val - 0.1
+              max = val + 0.1
+            }
           }
           tr.innerHTML = `
       <td><input type="checkbox" data-name="${name}"></td>
@@ -250,7 +270,7 @@
         try {
           const t0 = performance.now()
           const result = await runSim(loadedData.sim, loadedData.truth)
-          status.textContent = `Done in ${Math.round(performance.now() - t0)}ms — ${result.frames.length} frames`
+          status.textContent = `Shot done in ${Math.round(performance.now() - t0)}ms — ${result.frames.length} steps`
           simStep = result.simStep
           simTracks = result.simTracks
           if (result.rmse !== null)
@@ -361,6 +381,19 @@
           })
           a.click()
         }
+      }
+      document.getElementById("examples").onchange = (e) => {
+        const file = e.target.value
+        if (!file) return
+        loadedFile = file
+        fetch("./" + file)
+          .then((r) => r.json())
+          .then(loadData)
+          .catch((err) => {
+            document.getElementById("status").textContent =
+              "Failed to load " + file
+          })
+        e.target.value = ""
       }
     </script>
   </body>
