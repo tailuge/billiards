@@ -34,11 +34,21 @@
     >
       <div style="display: flex; flex-direction: column; align-items: center">
         <textarea id="simEdit" rows="12" cols="30" disabled></textarea>
-        <div style="display: flex; gap: 2px">
+        <div
+          style="
+            display: flex;
+            gap: 2px;
+            flex-wrap: wrap;
+            justify-content: center;
+          "
+        >
           <button id="simBtn" disabled>View Shot</button>
           <button id="saveBtn" disabled>Save JSON</button>
+          <button id="optBtn" disabled>Optimise</button>
+          <button id="stopBtn" disabled>Stop</button>
         </div>
         <span id="status"></span>
+        <span id="optStatus"></span>
         <canvas
           id="rmseCanvas"
           width="200"
@@ -60,11 +70,6 @@
         </thead>
         <tbody id="paramRows"></tbody>
       </table>
-      <div style="display: flex; gap: 4px; margin-top: 4px">
-        <button id="optBtn" disabled>Optimise</button>
-        <button id="stopBtn" disabled>Stop</button>
-        <span id="optStatus"></span>
-      </div>
     </div>
 
     <div style="position: relative; display: inline-block">
@@ -158,15 +163,15 @@
       <td>${name}</td>
       <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(5)}" step="any" style="width:70px"></td>
       <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(5)}" step="any" style="width:70px"></td>
-      <td>${val}</td>
-      <td><span id="cur-${name.replace(/\./g, "-")}">${val}</span></td>`
+      <td>${val.toFixed(5)}</td>
+      <td><span id="cur-${name.replace(/\./g, "-")}">${val.toFixed(5)}</span></td>`
           tbody.appendChild(tr)
         }
       }
 
       function updateParamDisplay(name, val) {
         const el = document.getElementById(`cur-${name.replace(/\./g, "-")}`)
-        if (el) el.textContent = typeof val === "number" ? val.toFixed(6) : val
+        if (el) el.textContent = typeof val === "number" ? val.toFixed(5) : val
       }
 
       function getSpecs() {
