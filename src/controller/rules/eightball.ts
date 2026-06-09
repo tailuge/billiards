@@ -258,6 +258,7 @@ export class EightBall implements Rules {
       return this.respotEightBallFoul()
     }
 
+    const myGroupBefore = session.p1type
     if (session.p1type === 0) {
       const solids = pots.filter((b) => b.label! >= 1 && b.label! <= 7)
       const stripes = pots.filter((b) => b.label! >= 9 && b.label! <= 15)
@@ -286,6 +287,14 @@ export class EightBall implements Rules {
     this.container.sendEvent(scoreEvent)
 
     this.container.sendEvent(new WatchEvent(table.serialise()))
+
+    if (myGroupBefore !== 0) {
+      const myGroupPotted = pots.some((b) => this.isMyType(b, myGroupBefore))
+      if (!myGroupPotted) {
+        return this.handleMiss()
+      }
+    }
+
     return new Aim(this.container)
   }
 
