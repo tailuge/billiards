@@ -383,11 +383,11 @@
         for (const [key, val] of Object.entries(sim.params ?? {})) {
           url.searchParams.set(key, val)
         }
-        const initData = {
-          balls: sim.balls.flatMap((b) => [b.pos.x, b.pos.y]),
-          shot: sim.shot,
-        }
-        url.searchParams.set("init", JSON.stringify(initData))
+        url.searchParams.set(
+          "init",
+          JSON.stringify(sim.balls.flatMap((b) => [b.pos.x, b.pos.y]))
+        )
+        url.searchParams.set("initShot", JSON.stringify(sim.shot))
         window.open(url.toString(), "_blank")
       }
 

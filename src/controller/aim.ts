@@ -22,11 +22,10 @@ export class Aim extends ControllerBase {
 
       const params = new URLSearchParams(globalThis.location?.search)
       let customShot = false
-      if (params.has("init")) {
+      if (params.has("initShot")) {
         try {
-          const init = JSON.parse(params.get("init")!)
-          if (init.shot) {
-            const shot = init.shot
+          const shot = JSON.parse(params.get("initShot")!)
+          if (shot) {
             if (typeof shot.cueBallId === "number") {
               table.cueball = table.balls[shot.cueBallId] || table.cueball
             }
@@ -43,7 +42,7 @@ export class Aim extends ControllerBase {
             customShot = true
           }
         } catch (e) {
-          console.warn("Failed to parse init shot", e)
+          console.warn("Failed to parse initShot", e)
         }
       }
 
