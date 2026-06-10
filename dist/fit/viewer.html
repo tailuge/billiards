@@ -31,7 +31,7 @@
   <body>
     <div style="font-size: 10px; color: #666">Constants Optimiser - Nelder-Mead / Particle Swarm</div>
     <div
-      style="display: flex; gap: 8px; align-items: flex-start; margin-top: 4px"
+      style="display: flex; gap: 4px; align-items: flex-start; margin-top: 4px"
     >
       <div style="display: flex; flex-direction: column; align-items: center">
         <textarea id="simEdit" rows="12" cols="66" disabled></textarea>
@@ -50,10 +50,15 @@
           <select id="examples" style="font-size: 11px; font-family: monospace; width: 12ch">
             <option value="">examples</option>
             <option value="SS_max_spin_02.json">SS_max_spin_02</option>
+            <option value="SS_max_spin_02_stronge.json">SS_max_spin_02_stronge</option>
+            <option value="SS_max_spin_02_trim_mathavan.json">SS_max_spin_02_trim_mathavan</option>
+            <option value="SS_max_spin_02_trim_stronge.json">SS_max_spin_02_trim_stronge</option>
             <option value="SS_max_spin_03.json">SS_max_spin_03</option>
             <option value="SS_max_spin_05.json">SS_max_spin_05</option>
             <option value="SS_max_spin_06.json">SS_max_spin_06</option>
-            <option value="SS_max_spin_02_trim_stronge.json">SS_max_spin_02_trim_stronge</option>
+            <option value="simple_shot_545599.json">simple_shot_545599</option>
+            <option value="simple_shot_545599_mathavan.json">simple_shot_545599_mathavan</option>
+            <option value="simple_shot_545600.json">simple_shot_545600</option>
           </select>
           <select id="optimiserSelect" style="font-size: 11px; font-family: monospace">
             <option value="nm">Nelder-Mead</option>
@@ -62,13 +67,13 @@
           <button id="optBtn" disabled>Optimise</button>
           <button id="stopBtn" disabled>Stop</button>
         </div>
-        <span id="status"></span>
+        <span id="status">Click 'view shot' to see the simulated path</span>
         <span id="optStatus">Iter:0</span>
         <canvas
           id="rmseCanvas"
           width="480"
-          height="120"
-          style="margin-top: 8px; border: 1px solid #ccc"
+          height="100"
+          style="margin-top: 2px; border: 1px solid #c0c0c0"
         ></canvas>
         <span id="rmseLabel">RMSE Convergence</span>
       </div>
@@ -88,7 +93,7 @@
     </div>
 
     <div style="position: relative; display: inline-block">
-      <canvas id="c" style="margin-top: 8px; border: 1px solid #ccc"></canvas>
+      <canvas id="c" style="margin-top: 0px; border: 1px solid #ccc"></canvas>
       <button
         id="playBtn"
         style="position: absolute; bottom: 4px; right: 36px; font-size: 10px"
@@ -104,7 +109,7 @@
         edit
       </button>
     </div>
-    <pre id="report"></pre>
+    <pre id="report" style="font-size: 9px; "></pre>
     <script type="module">
       import { runSim } from "./sim.js"
       import { redraw, HALF_W, HALF_H } from "./plot.js"
@@ -244,6 +249,7 @@
         loadedData = data
         simTracks = null
         rmseHistory = []
+        document.getElementById("rmseLabel").textContent = `RMSE Convergence - ${loadedFile ?? ""}`
         drawRMSEGraph(document.getElementById("rmseCanvas"), rmseHistory)
         document.getElementById("simEdit").value = JSON.stringify(
           loadedData.sim,
