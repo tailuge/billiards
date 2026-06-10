@@ -104,7 +104,16 @@ export function simulateSync(config: any): any {
     vel: [strike.vel.x, strike.vel.y, strike.vel.z],
   })
 
-  const frames: any[] = []
+  const frames: any[] = [
+    {
+      t: table.time,
+      balls: table.balls.map((b) => ({
+        id: b.id,
+        pos: [b.pos.x, b.pos.y, b.pos.z],
+        state: b.state,
+      })),
+    },
+  ]
   let iterations = 0
   const progressInterval = 10000
 
@@ -117,7 +126,6 @@ export function simulateSync(config: any): any {
       balls: table.balls.map((b) => ({
         id: b.id,
         pos: [b.pos.x, b.pos.y, b.pos.z],
-        rvel: [b.rvel.x, b.rvel.y, b.rvel.z],
         state: b.state,
       })),
     })
