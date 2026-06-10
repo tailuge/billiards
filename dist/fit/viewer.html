@@ -175,14 +175,14 @@
         for (const [name, val] of Object.entries(allParams)) {
           const tr = document.createElement("tr")
           const ranges = {
-            "shot.offset.x": [-0.45, 0.45],
-            "shot.offset.y": [-0.45, 0.45],
-            "shot.power": [0.1, 6.5],
+            "shot.offset.x": [-0.451, 0.451],
+            "shot.offset.y": [-0.451, 0.451],
+            "shot.power": [0.1, 5.25],
             "shot.angle": [-Math.PI * 2, Math.PI * 2],
             "shot.elevation": [0, Math.PI / 4],
-            "stronge_omega_ratio": [1,2],
-            "stronge_e_n": [0.5,1],
-            "ee": [0.5,1],
+            "stronge_omega_ratio": [1.01,1.99],
+            "stronge_e_n": [0.5,0.99],
+            "ee": [0.5,0.99],
           }
           let min, max
           if (ranges[name]) {
