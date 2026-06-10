@@ -378,10 +378,16 @@
         const url = new URL("../index.html", window.location.href)
         url.searchParams.set("ruletype", "threecushion")
         url.searchParams.set("practice", "true")
-        if (sim.cushionModel) url.searchParams.set("cushionModel", sim.cushionModel)
+        if (sim.cushionModel)
+          url.searchParams.set("cushionModel", sim.cushionModel)
         for (const [key, val] of Object.entries(sim.params ?? {})) {
           url.searchParams.set(key, val)
         }
+        const initData = {
+          balls: sim.balls.flatMap((b) => [b.pos.x, b.pos.y]),
+          shot: sim.shot,
+        }
+        url.searchParams.set("init", JSON.stringify(initData))
         window.open(url.toString(), "_blank")
       }
 

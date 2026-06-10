@@ -269,12 +269,17 @@ export class Rack {
     if (!params.has("practice") || !params.has("init")) {
       return balls
     }
-    const data: number[] = JSON.parse(params.get("init")!)
-    balls.forEach((b, i) => {
-      b.pos.x = data[i * 2]
-      b.pos.y = data[i * 2 + 1]
-      b.pos.z = 0
-    })
+    const json = JSON.parse(params.get("init")!)
+    const data: number[] = Array.isArray(json) ? json : json.balls
+    if (data) {
+      balls.forEach((b, i) => {
+        if (i * 2 + 1 < data.length) {
+          b.pos.x = data[i * 2]
+          b.pos.y = data[i * 2 + 1]
+          b.pos.z = 0
+        }
+      })
+    }
     return balls
   }
 }
