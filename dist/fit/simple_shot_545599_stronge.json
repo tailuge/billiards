@@ -3,6 +3,32 @@
   "report": "ball 0: 326 samples  x:[-1.478, 1.467]  y:[-0.723, 0.720]  dir=-2.9895rad  speed=4.193m/s  → MOVER\nball 1: 2 samples  x:[0.757, 0.757]  y:[-0.001, -0.001]\nball 2: 228 samples  x:[-1.474, 1.467]  y:[-0.722, 0.722]  dir=2.6249rad  speed=0.972m/s  → MOVER\n\nCue ball: dataset 0",
   "sim": {
     "ruleType": "threecushion",
+    "cushionModel": "stronge",
+    "shot": {
+      "cueBallId": 0,
+      "angle": -2.991,
+      "power": 4.934192416921456,
+      "offset": {
+        "x": -0.21729528277269344,
+        "y": 0.18695383280706618
+      },
+      "elevation": 0
+    },
+    "params": {
+      "mu": 0.0055,
+      "muS": 0.126,
+      "rho": 0.045,
+      "m": 0.23,
+      "μs": 0.2,
+      "μw": 0.2,
+      "ee": 0.84,
+      "stronge_omega_ratio": 1.1833700442249275,
+      "stronge_e_n": 0.6268915124882066,
+      "stronge_μ": 0.303120784763667,
+      "throw_factor": 0.9088760810664414
+    },
+    "stepSize": 0.001953125,
+    "maxIterations": 20000,
     "balls": [
       {
         "id": 0,
@@ -28,32 +54,7 @@
           "z": 0
         }
       }
-    ],
-    "cushionModel": "stronge",
-    "shot": {
-      "cueBallId": 0,
-      "angle": -2.989494486711733,
-      "power": 4.397064019726071,
-      "offset": {
-        "x": -0.20464545003933685,
-        "y": 0.20795812403053687
-      },
-      "elevation": 0
-    },
-    "stepSize": 0.001953125,
-    "maxIterations": 20000,
-    "params": {
-      "mu": 0.0072514948592516575,
-      "muS": 0.17391775898796663,
-      "rho": 0.03429675889424991,
-      "m": 0.23,
-      "μs": 0.168364648235064,
-      "μw": 0.20658717709062108,
-      "ee": 0.9417794695547876,
-      "stronge_omega_ratio": 1.766708955466024,
-      "stronge_e_n": 0.7697501067064323,
-      "stronge_μ": 0.25674504805376297
-    }
+    ]
   },
   "truth": [
     {

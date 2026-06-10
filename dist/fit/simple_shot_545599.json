@@ -3,6 +3,32 @@
   "report": "ball 0: 326 samples  x:[-1.478, 1.467]  y:[-0.723, 0.720]  dir=-2.9895rad  speed=4.193m/s  → MOVER\nball 1: 2 samples  x:[0.757, 0.757]  y:[-0.001, -0.001]\nball 2: 228 samples  x:[-1.474, 1.467]  y:[-0.722, 0.722]  dir=2.6249rad  speed=0.972m/s  → MOVER\n\nCue ball: dataset 0",
   "sim": {
     "ruleType": "threecushion",
+    "cushionModel": "mathavan",
+    "shot": {
+      "cueBallId": 0,
+      "angle": -2.989494486711733,
+      "power": 4.193438047591088,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "elevation": 0
+    },
+    "params": {
+      "mu": 0.0055,
+      "muS": 0.126,
+      "rho": 0.045,
+      "m": 0.23,
+      "μs": 0.2,
+      "μw": 0.2,
+      "ee": 0.84,
+      "stronge_omega_ratio": 1.76,
+      "stronge_e_n": 0.77,
+      "stronge_μ": 0.25,
+      "throw_factor": 0.3
+    },
+    "stepSize": 0.001953125,
+    "maxIterations": 20000,
     "balls": [
       {
         "id": 0,
@@ -28,32 +54,7 @@
           "z": 0
         }
       }
-    ],
-    "cushionModel": "mathavan",
-    "shot": {
-      "cueBallId": 0,
-      "angle": -2.989494486711733,
-      "power": 4.99,
-      "offset": {
-        "x": -0.234,
-        "y": 0.135
-      },
-      "elevation": 0
-    },
-    "stepSize": 0.001953125,
-    "maxIterations": 20000,
-    "params": {
-      "mu": 0.0055,
-      "muS": 0.126,
-      "rho": 0.045,
-      "m": 0.23,
-      "μs": 0.2,
-      "μw": 0.2,
-      "ee": 0.84,
-      "stronge_omega_ratio": 1.847,
-      "stronge_e_n": 0.78,
-      "stronge_μ": 0.3
-    }
+    ]
   },
   "truth": [
     {
