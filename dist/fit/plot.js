@@ -5,7 +5,7 @@ export const HALF_H = 0.03275 * 46.18 / 2
 const COLORS = ['#000', '#b8860b', '#c00']
 const SIM_COLORS = ['rgba(0,100,255,0.5)', 'rgba(255,140,0,0.7)', 'rgba(200,0,0,0.7)']
 
-export function redraw(canvas, truth, simTracks, simStep) {
+export function redraw(canvas, truth, simTracks, simStep, trackAll = false) {
   const W = canvas.width
   const H = canvas.height
   const ctx = canvas.getContext('2d')
@@ -32,6 +32,7 @@ export function redraw(canvas, truth, simTracks, simStep) {
     ctx.strokeStyle = 'rgba(255,0,0,0.25)'
     ctx.lineWidth = 1
     for (const { ball, t, x, y } of truth) {
+      if (!trackAll && ball !== 0) continue
       const track = simTracks[ball]
       if (!track) continue
       const s = interpolateTrack(track, t, simStep)

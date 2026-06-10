@@ -8,14 +8,17 @@ export function interpolateTrack(track, t, simStep) {
   return { x: a.x + alpha * (b.x - a.x), y: a.y + alpha * (b.y - a.y) }
 }
 
-export function computeRMSE(truth, simTracks, simStep) {
-  const track0 = simTracks[0]
-  if (!track0) return null
-  const mover = truth.filter(s => s.ball === 0)
-  if (mover.length === 0) return 0
-  const sse = mover.reduce((sum, { t, x, y }) => {
-    const s = interpolateTrack(track0, t, simStep)
-    return sum + (x - s.x) ** 2 + (y - s.y) ** 2
-  }, 0)
-  return Math.sqrt(sse / mover.length)
+export function computeRMSE(truth, simTracks, simStep, trackAll = false) {
+  const relevant = trackAll ? truth : truth.filter(s => s.ball === 0)
+  if (relevant.length === 0) return 0
+  let sse = 0
+  let count = 0
+  for (const { ball, t, x, y } of relevant) {
+    const track = simTracks[ball]
+    if (!track) continue
+    const s = interpolateTrack(track, t, simStep)
+    sse += (x - s.x) ** 2 + (y - s.y) ** 2
+    count++
+  }
+  return count > 0 ? Math.sqrt(sse / count) : null
 }

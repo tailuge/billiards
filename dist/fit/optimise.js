@@ -15,7 +15,7 @@ const getValue = (simConfig, name) => {
 const decode = (norm, specs) =>
   Object.fromEntries(specs.map((s, i) => [s.name, s.min + Math.max(0, Math.min(1, norm[i])) * (s.max - s.min)]))
 
-function runSimSync(simConfig, truth) {
+function runSimSync(simConfig, truth, trackAll = false) {
   const result = window.simulateSync(simConfig)
   const simStep = simConfig.stepSize ?? 0.001953125
   const simTracks = {}
@@ -26,13 +26,13 @@ function runSimSync(simConfig, truth) {
   }
   const trackKeys = Object.keys(simTracks)
   const track0len = simTracks[0]?.length ?? 'MISSING'
-  const rawRmse = truth ? computeRMSE(truth, simTracks, simStep) : 'NO_TRUTH'
+  const rawRmse = truth ? computeRMSE(truth, simTracks, simStep, trackAll) : 'NO_TRUTH'
   console.log(`[runSimSync] frames=${result.frames.length} trackKeys=${JSON.stringify(trackKeys)} track0len=${track0len} truth=${!!truth} rawRmse=${rawRmse}`)
   const rmse = truth ? rawRmse : null
   return { simTracks, simStep, frames: result.frames, rmse }
 }
 
-function makeTarget(simConfig, truth, specs) {
+function makeTarget(simConfig, truth, specs, trackAll = false) {
   let lastRmse = Infinity
   const target = (norm) => {
     const tuned = decode(norm, specs)
@@ -47,7 +47,7 @@ function makeTarget(simConfig, truth, specs) {
         config.params[name] = val
       }
     }
-    const { rmse } = runSimSync(config, truth)
+    const { rmse } = runSimSync(config, truth, trackAll)
     lastRmse = rmse ?? Infinity
     console.log('[opt] trial tuned:', JSON.stringify(tuned), '→ rmse:', lastRmse)
     return lastRmse
@@ -62,9 +62,9 @@ function makeInitial(simConfig, specs) {
   })
 }
 
-export async function runOptimiseNM(simConfig, truth, specs, onStep, signal) {
+export async function runOptimiseNM(simConfig, truth, specs, onStep, signal, trackAll = false) {
   const initial = makeInitial(simConfig, specs)
-  const target = makeTarget(simConfig, truth, specs)
+  const target = makeTarget(simConfig, truth, specs, trackAll)
   const opt = new Simplex(target, initial, {})
 
   let iter = 0
@@ -79,9 +79,9 @@ export async function runOptimiseNM(simConfig, truth, specs, onStep, signal) {
   }
 }
 
-export async function runOptimisePSO(simConfig, truth, specs, onStep, signal) {
+export async function runOptimisePSO(simConfig, truth, specs, onStep, signal, trackAll = false) {
   const initial = makeInitial(simConfig, specs)
-  const target = makeTarget(simConfig, truth, specs)
+  const target = makeTarget(simConfig, truth, specs, trackAll)
 
   const opt = new pso.Optimizer()
   opt.setOptions({ inertiaWeight: 0.8, social: 0.4, personal: 0.4, pressure: 0.5 })
