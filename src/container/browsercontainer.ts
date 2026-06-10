@@ -80,8 +80,11 @@ export class BrowserContainer {
     this.botName = params.get("bot") ?? ""
     this.practiceMode = params.has("practice")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
+    const defaultThreeCushionRaceTo =
+      this.practiceMode && this.ruletype === "threecushion" ? "50" : "7"
     ThreeCushionConfig.raceTo =
-      Number.parseInt(params.get("raceTo") ?? "7") || 7
+      Number.parseInt(params.get("raceTo") ?? defaultThreeCushionRaceTo) ||
+      Number.parseInt(defaultThreeCushionRaceTo)
     console.log(
       `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode}`
     )
