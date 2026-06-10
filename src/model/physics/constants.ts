@@ -16,13 +16,13 @@ export let μs = 0.2
 export let μw = 0.2
 
 // Stronge slip stick ratio (cushion)
-export let stronge_omega_ratio = 1.847
+export let stronge_omega_ratio = 1.76
 
 // Stronge restitution (cushion)
-export let stronge_e_n = 0.78
+export let stronge_e_n = 0.77
 
 // Stronge friction (cushion)
-export let stronge_μ = 0.3
+export let stronge_μ = 0.25
 
 export let throw_factor = 0.3
 

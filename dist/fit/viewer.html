@@ -17,35 +17,36 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 2px;
+        padding: 1px;
       }
       button {
         padding: 1px 4px;
       }
       th,
       td {
-        padding: 0px 0px;
+        padding: 0px 2px;
       }
     </style>
   </head>
   <body>
     <div style="font-size: 10px; color: #666">Constants Optimiser - Nelder-Mead / Particle Swarm</div>
     <div
-      style="display: flex; gap: 4px; align-items: flex-start; margin-top: 4px"
+      style="display: flex; gap: 2px; align-items: flex-start; margin-top: 2px"
     >
       <div style="display: flex; flex-direction: column; align-items: center">
-        <textarea id="simEdit" rows="12" cols="66" disabled></textarea>
+        <textarea id="simEdit" rows="12" cols="44" disabled></textarea>
         <div
           style="
             display: flex;
             gap: 1px;
             flex-wrap: wrap;
             justify-content: center;
+            max-width: 350px;
           "
         >
           <button id="simBtn" disabled>View Shot</button>
-          <button id="saveBtn" disabled>Save JSON</button>
           <input type="file" id="file" accept=".json" style="display: none" />
+          <button id="saveBtn" disabled>Save JSON</button>
           <button onclick="document.getElementById('file').click()">Load</button>
           <select id="examples" style="font-size: 11px; font-family: monospace; width: 12ch">
             <option value="">examples</option>
@@ -60,23 +61,23 @@
             <option value="simple_shot_545599_mathavan.json">simple_shot_545599_mathavan</option>
             <option value="simple_shot_545600.json">simple_shot_545600</option>
           </select>
+          <label style="display:flex; align-items:center; gap:1px"><input type="checkbox" id="trackAll">track all</label>
           <select id="optimiserSelect" style="font-size: 11px; font-family: monospace">
             <option value="nm">Nelder-Mead</option>
             <option value="pso">PSO</option>
           </select>
-          <label style="display:flex; align-items:center; gap:2px"><input type="checkbox" id="trackAll">track all</label>
           <button id="optBtn" disabled>Optimise</button>
           <button id="stopBtn" disabled>Stop</button>
         </div>
         <span id="status">Click 'view shot' to see the simulated path</span>
-        <span id="optStatus">Iter:0</span>
+        <span id="optStatus">Iterations:0</span>
         <canvas
           id="rmseCanvas"
-          width="480"
-          height="100"
-          style="margin-top: 2px; border: 1px solid #c0c0c0"
+          width="320"
+          height="86"
+          style="margin-top: 1px; border: 1px solid #c0c0c0"
         ></canvas>
-        <span id="rmseLabel">RMSE Convergence</span>
+        <span id="rmseLabel">RMSE</span>
       </div>
       <table id="paramTable" style="border-collapse: collapse">
         <thead>
@@ -116,7 +117,7 @@
       import { redraw, HALF_W, HALF_H } from "./plot.js"
       import { runOptimiseNM, runOptimisePSO } from "./optimise.js"
 
-      const W = 900,
+      const W = 720,
         H = Math.round((W * HALF_H) / HALF_W)
       const canvas = document.getElementById("c")
       canvas.width = W
@@ -206,10 +207,10 @@
           tr.innerHTML = `
       <td><input type="checkbox" data-name="${name}"></td>
       <td>${name}</td>
-      <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(5)}" step="any" style="width:70px"></td>
-      <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(5)}" step="any" style="width:70px"></td>
-      <td>${val.toFixed(5)}</td>
-      <td><span id="cur-${name.replace(/\./g, "-")}">${val.toFixed(5)}</span></td>`
+      <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(2)}" step="any" style="width:56px"></td>
+      <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(2)}" step="any" style="width:56px"></td>
+      <td>${val.toFixed(4)}</td>
+      <td><span id="cur-${name.replace(/\./g, "-")}">${val.toFixed(4)}</span></td>`
           tbody.appendChild(tr)
         }
       }
@@ -252,7 +253,7 @@
         loadedData = data
         simTracks = null
         rmseHistory = []
-        document.getElementById("rmseLabel").textContent = `RMSE Convergence - ${loadedFile ?? ""}`
+        document.getElementById("rmseLabel").textContent = `RMSE - ${loadedFile ?? ""}`
         drawRMSEGraph(document.getElementById("rmseCanvas"), rmseHistory)
         document.getElementById("simEdit").value = JSON.stringify(
           loadedData.sim,

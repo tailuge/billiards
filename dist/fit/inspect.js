@@ -53,7 +53,6 @@ const output = {
   report: reportLines.join('\n'),
   sim: {
     ruleType: "threecushion",
-    balls: simBalls,
     cushionModel: "mathavan",
     shot: {
       cueBallId: 0,
@@ -62,17 +61,18 @@ const output = {
       offset: { x: 0, y: 0 },
       elevation: 0
     },
-    stepSize: 0.001953125,
-    maxIterations: 20000,
     params: {
       mu: 0.0055, muS: 0.126, rho: 0.045,
       m: 0.23,
       μs: 0.2, μw: 0.2, ee: 0.84,
-      stronge_omega_ratio: 1.847,
-      stronge_e_n: 0.78,
-      stronge_μ: 0.3,
+      stronge_omega_ratio: 1.76,
+      stronge_e_n: 0.77,
+      stronge_μ: 0.25,
       throw_factor: 0.3
-    }
+    },
+    stepSize: 0.001953125,
+    maxIterations: 20000,
+    balls: simBalls,
   },
   truth: remappedSamples
 }
