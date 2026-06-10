@@ -59,6 +59,8 @@
             <option value="simple_shot_545599_mathavan.json">simple_shot_545599_mathavan</option>
             <option value="simple_shot_545599_stronge.json">simple_shot_545599_stronge</option>
             <option value="simple_shot_545600.json">simple_shot_545600</option>
+            <option value="simple_shot_545600_stronge.json">simple_shot_545600_stronge</option>
+            <option value="simple_shot_545600_mathavan.json">simple_shot_545600_mathavan</option>
           </select>
           <label style="display:flex; align-items:center; gap:1px"><input type="checkbox" id="trackAll">track all</label>
           <select id="optimiserSelect" style="font-size: 11px; font-family: monospace">
@@ -270,10 +272,10 @@
         updateDrawing()
       }
 
-      fetch("./SS_max_spin_02.json")
+      fetch("./simple_shot_545600_stronge.json")
         .then((r) => r.json())
         .then((data) => {
-          loadedFile = "SS_max_spin_02.json"
+          loadedFile = "simple_shot_545600_stronge.json"
           loadData(data)
         })
         .catch(() => {})
