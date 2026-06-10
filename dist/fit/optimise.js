@@ -84,7 +84,15 @@ export async function runOptimisePSO(simConfig, truth, specs, onStep, signal, tr
   const target = makeTarget(simConfig, truth, specs, trackAll)
 
   const opt = new pso.Optimizer()
-  opt.setOptions({ inertiaWeight: 0.8, social: 0.4, personal: 0.4, pressure: 0.5 })
+  // 1. Establish your boundary thresholds
+  const maxIterations = 100 // Set an explicit budget for the global exploration phase
+
+  const wStart = 0.9,  wEnd = 0.4
+  const c1Start = 2.0, c1End = 0.7 // Personal
+  const c2Start = 0.7, c2End = 2.0 // Social
+
+  // Initial pass to register options schema
+  opt.setOptions({ inertiaWeight: wStart, personal: c1Start, social: c2Start, pressure: 0.5 })
   opt.setObjectiveFunction((norm) => -target(norm))
 
   const intervals = specs.map(() => ({ start: 0, end: 1 }))
@@ -99,13 +107,38 @@ export async function runOptimisePSO(simConfig, truth, specs, onStep, signal, tr
   })
 
   let iter = 0
-  while (!signal?.aborted && iter < 200) {
+  while (!signal?.aborted && iter < maxIterations) {
+    // 2. Compute dynamic interpolation coefficients based on current timeline
+    const progress = iter / (maxIterations - 1 || 1) // Normalized [0, 1] scale
+
+    const currentInertia  = wStart  - (wStart  - wEnd)  * progress
+    const currentPersonal = c1Start - (c1Start - c1End) * progress
+    const currentSocial   = c2Start - (c2Start - c2End) * progress
+
+    // 3. Update the optimizer's engine configurations safely
+    opt.setOptions({
+      inertiaWeight: currentInertia,
+      personal: currentPersonal,
+      social: currentSocial,
+      pressure: 0.5
+    })
+
+    // Fallback: directly mutate properties if the underlying library instances preserve an independent copy
+    if (opt._options) {
+      opt._options.inertiaWeight = currentInertia
+      opt._options.personal = currentPersonal
+      opt._options.social = currentSocial
+    }
+
     opt.step()
     iter++
+
     const bestFitness = opt.getBestFitness()
     const bestPosition = opt.getBestPosition() || initial
     const rmse = bestFitness === -Infinity ? Infinity : -bestFitness
-    console.log(`[opt] iter ${iter}: bestRmse=${rmse}`)
+
+    console.log(`[opt] iter ${iter}: bestRmse=${rmse} (w=${currentInertia.toFixed(3)}, c1=${currentPersonal.toFixed(3)}, c2=${currentSocial.toFixed(3)})`)
+
     onStep({ iter, rmse, params: decode(bestPosition, specs) })
     await new Promise(r => setTimeout(r, 0))
   }
