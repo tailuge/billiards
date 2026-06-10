@@ -52,7 +52,8 @@
       "ee": 0.987007787812648,
       "stronge_omega_ratio": 1.847,
       "stronge_e_n": 0.78,
-      "stronge_μ": 0.3
+      "stronge_μ": 0.3,
+      "throw_factor": 0.3
     }
   },
   "truth": [

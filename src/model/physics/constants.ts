@@ -24,6 +24,8 @@ export let stronge_e_n = 0.78
 // Stronge friction (cushion)
 export let stronge_μ = 0.3
 
+export let throw_factor = 0.3
+
 export let Mz: number
 export let Mxy: number
 export let I: number
@@ -90,4 +92,8 @@ export function setstronge_e_n(val: number) {
 }
 export function setstronge_μ(val: number) {
   stronge_μ = val
+}
+
+export function setthrow_factor(val: number) {
+  throw_factor = val
 }
