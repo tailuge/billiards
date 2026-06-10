@@ -64,6 +64,7 @@
             <option value="nm">Nelder-Mead</option>
             <option value="pso">PSO</option>
           </select>
+          <label style="display:flex; align-items:center; gap:2px"><input type="checkbox" id="trackAll">track all</label>
           <button id="optBtn" disabled>Optimise</button>
           <button id="stopBtn" disabled>Stop</button>
         </div>
@@ -160,7 +161,8 @@
 
       function updateDrawing() {
         if (!loadedData) return
-        redraw(canvas, loadedData.truth, simTracks, simStep)
+        const trackAll = document.getElementById("trackAll").checked
+        redraw(canvas, loadedData.truth, simTracks, simStep, trackAll)
       }
 
       function buildParamRows(sim) {
@@ -279,6 +281,7 @@
       async function onRunSim() {
         const btn = document.getElementById("simBtn")
         const status = document.getElementById("status")
+        const trackAll = document.getElementById("trackAll").checked
         let sim
         try {
           sim = JSON.parse(document.getElementById("simEdit").value)
@@ -292,7 +295,7 @@
         status.textContent = "Running..."
         try {
           const t0 = performance.now()
-          const result = await runSim(loadedData.sim, loadedData.truth)
+          const result = await runSim(loadedData.sim, loadedData.truth, trackAll)
           status.textContent = `Shot done in ${Math.round(performance.now() - t0)}ms — ${result.frames.length} steps`
           simStep = result.simStep
           simTracks = result.simTracks
@@ -306,9 +309,11 @@
       }
 
       document.getElementById("simBtn").onclick = onRunSim
+      document.getElementById("trackAll").onchange = updateDrawing
 
       document.getElementById("optBtn").onclick = async () => {
         const specs = getSpecs()
+        const trackAll = document.getElementById("trackAll").checked
         if (specs.length === 0) {
           document.getElementById("optStatus").textContent =
             "Check at least one param"
@@ -354,7 +359,8 @@
             loadedData.truth,
             specs,
             onStep,
-            abortController.signal
+            abortController.signal,
+            trackAll
           )
         } catch (err) {
           document.getElementById("optStatus").textContent =
