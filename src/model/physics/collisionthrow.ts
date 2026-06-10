@@ -1,7 +1,7 @@
 import { Vector3 } from "three"
 import { Ball } from "../ball"
 import { Collision } from "./collision"
-import { I, m, R } from "./constants"
+import { I, m, R, throw_factor } from "./constants"
 import { exp } from "../../utils/utils"
 
 /**
@@ -52,7 +52,7 @@ export class CollisionThrow {
 
     // Tangential impulse (frictional constraint)
     this.tangentialImpulse =
-      0.3 *
+      throw_factor *
       Math.min((μ * Math.abs(this.normalImpulse)) / vRelMag, 1 / 7) *
       -vRelTangential
 
