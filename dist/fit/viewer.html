@@ -321,9 +321,18 @@
             "Check at least one param"
           return
         }
+
+        try {
+          loadedData.sim = JSON.parse(document.getElementById("simEdit").value)
+        } catch (e) {
+          document.getElementById("status").textContent = "Invalid sim JSON"
+          return
+        }
+
         abortController = new AbortController()
         document.getElementById("optBtn").disabled = true
         document.getElementById("stopBtn").disabled = false
+        document.getElementById("simEdit").disabled = true
         document.getElementById("optStatus").textContent = "iter 0"
         rmseHistory = []
         drawRMSEGraph(document.getElementById("rmseCanvas"), rmseHistory)
@@ -345,17 +354,13 @@
             }
             updateParamDisplay(name, val)
           }
-          document.getElementById("simEdit").value = JSON.stringify(
-            loadedData.sim,
-            null,
-            2
-          )
         }
 
         try {
-          const runOptimise = document.getElementById("optimiserSelect").value === "pso"
-            ? runOptimisePSO
-            : runOptimiseNM
+          const runOptimise =
+            document.getElementById("optimiserSelect").value === "pso"
+              ? runOptimisePSO
+              : runOptimiseNM
           await runOptimise(
             loadedData.sim,
             loadedData.truth,
@@ -369,8 +374,16 @@
             `Error: ${err.message}`
         }
 
+        document.getElementById("simEdit").value = JSON.stringify(
+          loadedData.sim,
+          null,
+          2
+        )
+        await onRunSim()
+
         document.getElementById("optBtn").disabled = false
         document.getElementById("stopBtn").disabled = true
+        document.getElementById("simEdit").disabled = false
       }
 
       document.getElementById("stopBtn").onclick = () => {
