@@ -50,14 +50,6 @@ export function simulateSync(config: any): any {
     // every run behaves like a fresh worker (ids 0,1,2,… in array order). Safe:
     // the pool runs one job per worker at a time.
     Ball.id = 0
-    const ballInstances = balls.map((b: any) => {
-      const ball = new Ball(
-        new Vector3(b.pos.x, b.pos.y, b.pos.z),
-        0xffffff,
-        b.id
-      )
-      return ball
-    })
   // Apply physics constant overrides
   for (const [key, value] of Object.entries(params)) {
     const setterName = `set${key}`
