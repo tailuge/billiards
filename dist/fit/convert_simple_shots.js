@@ -53,12 +53,31 @@ function convertShot(shot) {
   }
 }
 
-const shotsPath = path.join(__dirname, '..', 'diagrams', 'simple_shots.json')
-const shots = JSON.parse(fs.readFileSync(shotsPath, 'utf8'))
+const defaultShotsPath = path.join(
+  __dirname,
+  '..',
+  'diagrams',
+  'simple_shots.json',
+)
+const inputPath = process.argv[2] || defaultShotsPath
+const shots = JSON.parse(fs.readFileSync(inputPath, 'utf8'))
+
+// When a custom input path is provided, write outputs adjacent to that input.
+// Otherwise, preserve the legacy behaviour of writing next to this script.
+const outputDir = process.argv[2] ? path.dirname(inputPath) : __dirname
+const inputBase = path.basename(inputPath, path.extname(inputPath))
+const basePrefix = inputBase.endsWith('s')
+  ? inputBase.slice(0, -1)
+  : inputBase
+
+console.log(`Reading ${inputPath}`)
 
 for (const shot of shots) {
   const result = convertShot(shot)
-  const outPath = path.join(__dirname, `simple_shot_${shot.shotID}.txt`)
+  const outPath = path.join(
+    outputDir,
+    `${basePrefix}_${shot.shotID}.txt`,
+  )
   fs.writeFileSync(outPath, JSON.stringify(result, null, 4))
   console.log(`Wrote ${outPath}`)
 }
