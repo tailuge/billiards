@@ -27,7 +27,6 @@ function runSimSync(simConfig, truth, trackAll = false) {
   const trackKeys = Object.keys(simTracks)
   const track0len = simTracks[0]?.length ?? 'MISSING'
   const rawRmse = truth ? computeRMSE(truth, simTracks, simStep, trackAll) : 'NO_TRUTH'
-  console.log(`[runSimSync] frames=${result.frames.length} trackKeys=${JSON.stringify(trackKeys)} track0len=${track0len} truth=${!!truth} rawRmse=${rawRmse}`)
   const rmse = truth ? rawRmse : null
   return { simTracks, simStep, frames: result.frames, rmse }
 }
