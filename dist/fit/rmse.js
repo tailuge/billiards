@@ -8,9 +8,9 @@ export function interpolateTrack(track, t, simStep) {
   return { x: a.x + alpha * (b.x - a.x), y: a.y + alpha * (b.y - a.y) }
 }
 
-export function computeRMSE(truth, simTracks, simStep, trackAll = false) {
+export function computeSSE(truth, simTracks, simStep, trackAll = false) {
   const relevant = trackAll ? truth : truth.filter(s => s.ball === 0)
-  if (relevant.length === 0) return 0
+  if (relevant.length === 0) return { sse: 0, count: 0 }
   let sse = 0
   let count = 0
   for (const { ball, t, x, y } of relevant) {
@@ -20,5 +20,10 @@ export function computeRMSE(truth, simTracks, simStep, trackAll = false) {
     sse += (x - s.x) ** 2 + (y - s.y) ** 2
     count++
   }
+  return { sse, count }
+}
+
+export function computeRMSE(truth, simTracks, simStep, trackAll = false) {
+  const { sse, count } = computeSSE(truth, simTracks, simStep, trackAll)
   return count > 0 ? Math.sqrt(sse / count) : null
 }

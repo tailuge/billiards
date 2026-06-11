@@ -1,6 +1,6 @@
 import { Simplex } from 'https://esm.sh/@reside-ic/dfoptim'
 import pso from 'https://esm.sh/pso'
-import { computeRMSE } from './rmse.js'
+import { computeRMSE, computeSSE } from './rmse.js'
 
 const getValue = (simConfig, name) => {
   if (name.startsWith('shot.')) {
@@ -24,39 +24,49 @@ function runSimSync(simConfig, truth, trackAll = false) {
       ;(simTracks[b.id] ??= []).push({ x: b.pos[0], y: b.pos[1] })
     }
   }
-  const trackKeys = Object.keys(simTracks)
-  const track0len = simTracks[0]?.length ?? 'MISSING'
-  const rawRmse = truth ? computeRMSE(truth, simTracks, simStep, trackAll) : 'NO_TRUTH'
-  const rmse = truth ? rawRmse : null
-  return { simTracks, simStep, frames: result.frames, rmse }
+  const { sse, count } = truth ? computeSSE(truth, simTracks, simStep, trackAll) : { sse: 0, count: 0 }
+  const rmse = count > 0 ? Math.sqrt(sse / count) : null
+  return { simTracks, simStep, frames: result.frames, rmse, sse, count }
 }
 
 function makeTarget(simConfig, truth, specs, trackAll = false) {
-  let lastRmse = Infinity
+  const isMulti = Array.isArray(simConfig)
+  const configs = isMulti ? simConfig : [simConfig]
+  const truths = isMulti ? truth : [truth]
+
   const target = (norm) => {
     const tuned = decode(norm, specs)
-    const config = JSON.parse(JSON.stringify(simConfig))
-    for (const [name, val] of Object.entries(tuned)) {
-      if (name.startsWith('shot.')) {
-        const path = name.split('.').slice(1)
-        let curr = config.shot
-        for (let i = 0; i < path.length - 1; i++) curr = curr[path[i]]
-        curr[path[path.length - 1]] = val
-      } else {
-        config.params[name] = val
+    let totalSSE = 0
+    let totalCount = 0
+
+    for (let i = 0; i < configs.length; i++) {
+      const config = JSON.parse(JSON.stringify(configs[i]))
+      for (const [name, val] of Object.entries(tuned)) {
+        if (name.startsWith('shot.')) {
+          const path = name.split('.').slice(1)
+          let curr = config.shot
+          for (let j = 0; j < path.length - 1; j++) curr = curr[path[j]]
+          curr[path[path.length - 1]] = val
+        } else {
+          config.params[name] = val
+        }
       }
+      const { sse, count } = runSimSync(config, truths[i], trackAll)
+      totalSSE += sse
+      totalCount += count
     }
-    const { rmse } = runSimSync(config, truth, trackAll)
-    lastRmse = rmse ?? Infinity
-    console.log('[opt] trial tuned:', JSON.stringify(tuned), '→ rmse:', lastRmse)
-    return lastRmse
+
+    const globalRMSE = totalCount > 0 ? Math.sqrt(totalSSE / totalCount) : Infinity
+    console.log('[opt] trial tuned:', JSON.stringify(tuned), '→ global rmse:', globalRMSE)
+    return globalRMSE
   }
   return target
 }
 
 function makeInitial(simConfig, specs) {
+  const config = Array.isArray(simConfig) ? simConfig[0] : simConfig
   return specs.map(s => {
-    const val = getValue(simConfig, s.name)
+    const val = getValue(config, s.name)
     return (val - s.min) / (s.max - s.min)
   })
 }
