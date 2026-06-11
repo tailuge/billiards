@@ -27,4 +27,6 @@ export interface Rules {
   getAmountScored(outcome: Outcome[]): number
   respot(outcome: Outcome[]): Ball[]
   advanceState?(outcome: Outcome[]): void
+  initialController?(): Controller
+  hideScoreHud?(): boolean
 }

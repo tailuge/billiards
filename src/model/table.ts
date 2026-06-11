@@ -138,17 +138,19 @@ export class Table {
       return false
     }
 
-    const k = Knuckle.findBouncing(a, t)
-    if (k) {
-      const knuckleIncidentSpeed = k.bounce(a)
-      this.outcome.push(Outcome.cushion(a, knuckleIncidentSpeed, this.time))
-      return false
-    }
-    const p = Pocket.findPocket(PocketGeometry.pocketCenters, a, t)
-    if (p) {
-      const pocketIncidentSpeed = p.fall(a, t)
-      this.outcome.push(Outcome.pot(a, pocketIncidentSpeed, this.time))
-      return false
+    if (TableGeometry.hasPockets) {
+      const k = Knuckle.findBouncing(a, t)
+      if (k) {
+        const knuckleIncidentSpeed = k.bounce(a)
+        this.outcome.push(Outcome.cushion(a, knuckleIncidentSpeed, this.time))
+        return false
+      }
+      const p = Pocket.findPocket(PocketGeometry.pocketCenters, a, t)
+      if (p) {
+        const pocketIncidentSpeed = p.fall(a, t)
+        this.outcome.push(Outcome.pot(a, pocketIncidentSpeed, this.time))
+        return false
+      }
     }
 
     return true

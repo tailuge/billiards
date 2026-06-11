@@ -196,12 +196,14 @@ export class Container {
         orderedNames[mySlot] = `${orderedNames[mySlot]}(${typeLabel})`
       }
     }
+    const hideScore = this.rules.hideScoreHud?.() ?? false
     this.hud.updateScores(
       orderedScores.p1,
       orderedScores.p2,
       orderedNames.p1Name,
       orderedNames.p2Name,
-      b
+      hideScore ? 0 : b,
+      hideScore
     )
     this.setHudActivePlayer(active ?? this.inferActivePlayer())
   }

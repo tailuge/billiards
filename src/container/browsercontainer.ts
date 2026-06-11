@@ -23,6 +23,8 @@ import { BeginEvent } from "../events/beginevent"
 //import { logNetEvent } from "../utils/event-log"
 import { Logger } from "../network/bot/logger"
 import { getUID } from "../utils/uid"
+import { setmu, setmuS } from "../model/physics/constants"
+import { DrillPanel } from "../view/drillpanel"
 import { applyPhysicsParams } from "../utils/physicsparams"
 
 /**
@@ -58,6 +60,7 @@ export class BrowserContainer {
   botMode: boolean = false
   botName: string = ""
   practiceMode: boolean = false
+  drillMode: boolean = false
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
     this.now = Date.now()
@@ -79,6 +82,7 @@ export class BrowserContainer {
     this.botMode = params.has("bot")
     this.botName = params.get("bot") ?? ""
     this.practiceMode = params.has("practice")
+    this.drillMode = params.has("drill")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     const defaultThreeCushionRaceTo =
       this.practiceMode && this.ruletype === "threecushion" ? "50" : "7"
@@ -117,11 +121,15 @@ export class BrowserContainer {
   }
 
   private createContainer(scoreReporter: ScoreReporter) {
+    const effectiveRuletype =
+      this.drillMode && this.ruletype === "threecushion"
+        ? "threecushion-drill"
+        : this.ruletype
     const config: ContainerConfig = {
       element: this.canvas3d,
       log: console.log,
       assets: this.assets,
-      ruletype: this.ruletype,
+      ruletype: effectiveRuletype,
       keyboard: new Keyboard(this.canvas3d),
       id: this.playername,
       relay: this.messageRelay,
@@ -177,6 +185,9 @@ export class BrowserContainer {
       this.broadcast(e)
     }
     this.container.table.cushionModel = this.cushionModel
+    if (this.drillMode) {
+      new DrillPanel(this.container)
+    }
     this.setReplayLink()
 
     if (this.spectator) {

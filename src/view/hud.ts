@@ -40,11 +40,18 @@ export class Hud {
     p2: number,
     p1Name?: string,
     p2Name?: string,
-    b: number = 0
+    b: number = 0,
+    hideScore: boolean = false
   ) {
     this.setText(this.p1Element, "")
     this.setText(this.p2Element, "")
     this.setText(this.breakElement, "")
+
+    if (hideScore) {
+      // Drill mode: show the player name only, no score count, no break.
+      this.setText(this.p1Element, p1Name ?? "")
+      return
+    }
 
     if (p1Name && p2Name) {
       this.setText(this.p1Element, `${p1Name} ${p1}`)
