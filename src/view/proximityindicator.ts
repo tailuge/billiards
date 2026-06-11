@@ -8,10 +8,10 @@ import {
   CircleGeometry,
   MeshBasicMaterial,
   Mesh,
-  DoubleSide,
   PlaneGeometry,
   CanvasTexture,
   LinearFilter,
+  FrontSide,
 } from "three"
 import { R } from "../model/physics/constants"
 import { Ball } from "../model/ball"
@@ -26,6 +26,7 @@ export class ProximityIndicator {
   cushionCount: number = 0
   hitTarget: boolean = false
   private minDistance: number = Infinity
+  private readonly reusableVec = new Vector3()
 
   constructor() {
     if (typeof document === "undefined") {
@@ -63,7 +64,7 @@ export class ProximityIndicator {
         color: color,
         transparent: true,
         opacity: fillOpacities[i],
-        side: DoubleSide,
+        side: FrontSide,
         depthWrite: false,
       })
       const fillMesh = new Mesh(fillGeo, fillMat)
@@ -88,13 +89,14 @@ export class ProximityIndicator {
 
   private createTextTexture(text: string): CanvasTexture {
     const canvas = document.createElement("canvas")
-    canvas.width = 64
-    canvas.height = 64
+    const size = 64
+    canvas.width = size
+    canvas.height = size
     const ctx = canvas.getContext("2d")
 
     if (ctx) {
       // Clear background to full transparency
-      ctx.clearRect(0, 0, 64, 64)
+      ctx.clearRect(0, 0, size, size)
 
       // Text configuration
       ctx.font = "bold 44px sans-serif"
@@ -103,7 +105,7 @@ export class ProximityIndicator {
       ctx.textBaseline = "middle"
 
       // Render directly in the center of the 64x64 container
-      ctx.fillText(text, 32, 32)
+      ctx.fillText(text, size / 2, size / 2)
     }
 
     const texture = new CanvasTexture(canvas)
@@ -121,7 +123,7 @@ export class ProximityIndicator {
       map: texture,
       transparent: true,
       opacity: 1.0,
-      side: DoubleSide,
+      side: FrontSide,
       depthWrite: false, // Prevents visual artifacts/flickering with rings below it
     })
 
@@ -138,13 +140,14 @@ export class ProximityIndicator {
   }
 
   showAt(pos: Vector3) {
-    this.group.position.set(pos.x, pos.y, -0.97 * R)
+    this.group.position.set(pos.x, pos.y, -0.991 * R)
     this.group.visible = true
 
-    // Dynamic position relative to ball to prevent clipping under cushions
-
-    const sFlipped = new Vector3(-pos.x, -pos.y, 0)
-    const offset = sFlipped.multiplyScalar(R * 4)
+    // Fixed distance 4r from ball center toward table center
+    const offset = this.reusableVec
+      .set(-pos.x, -pos.y, 0)
+      .normalize()
+      .multiplyScalar(R * 4)
 
     this.proximityTexts.forEach((textMesh) => {
       textMesh.position.set(offset.x, offset.y, 0.01)

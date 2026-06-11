@@ -701,7 +701,7 @@ node dist/ww-node.js
         const preview = lastResults.map((res) => ({
           id: res.id,
           computeTime: res.computeTime,
-          frameCount: res.frames.length,
+          frames: res.frames.slice(0, 3),
           outcomes: res.outcomes,
         }))
         logMsg("--- Batch Results Summary ---", "log-ui")

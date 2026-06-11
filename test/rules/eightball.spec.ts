@@ -8,6 +8,8 @@ import { EightBall } from "../../src/controller/rules/eightball"
 import { Assets } from "../../src/view/assets"
 import { initDom } from "../view/dom"
 import { PlaceBall } from "../../src/controller/placeball"
+import { Aim } from "../../src/controller/aim"
+import { WatchAim } from "../../src/controller/watchaim"
 import { End } from "../../src/controller/end"
 import { Session } from "../../src/network/client/session"
 import { ScoreEvent } from "../../src/events/scoreevent"
@@ -272,5 +274,50 @@ describe("EightBall Rules", () => {
     })
     const candidate = eightball.nextCandidateBall()
     expect(candidate?.label).to.equal(8)
+  })
+
+  it("should continue turn if both own and opponent balls are potted (own hit first)", () => {
+    Session.getInstance().p1type = 1 // Solids
+    const myBall = container.table.balls.find((b) => b.label === 1)!
+    const opponentBall = container.table.balls.find((b) => b.label === 9)!
+
+    const outcome = [
+      Outcome.collision(container.table.cueball, myBall, 1),
+      Outcome.pot(myBall, 1),
+      Outcome.pot(opponentBall, 2),
+    ]
+
+    const nextController = eightball.update(outcome)
+    expect(nextController).to.be.an.instanceof(Aim)
+  })
+
+  it("should end turn if only opponent ball is potted (own hit first)", () => {
+    container.isSinglePlayer = false
+    Session.getInstance().p1type = 1 // Solids
+    const myBall = container.table.balls.find((b) => b.label === 1)!
+    const opponentBall = container.table.balls.find((b) => b.label === 9)!
+
+    const outcome = [
+      Outcome.collision(container.table.cueball, myBall, 1),
+      Outcome.pot(opponentBall, 1),
+    ]
+
+    const nextController = eightball.update(outcome)
+    // Should return WatchAim or handleMiss result which is WatchAim for multiplayer
+    expect(nextController).to.be.an.instanceof(WatchAim)
+  })
+
+  it("should continue turn if any ball potted on open table", () => {
+    Session.getInstance().p1type = 0 // Open table
+    const ball1 = container.table.balls.find((b) => b.label === 1)!
+    const ball9 = container.table.balls.find((b) => b.label === 9)!
+
+    const outcome = [
+      Outcome.collision(container.table.cueball, ball1, 1),
+      Outcome.pot(ball9, 1),
+    ]
+
+    const nextController = eightball.update(outcome)
+    expect(nextController).to.be.an.instanceof(Aim)
   })
 })

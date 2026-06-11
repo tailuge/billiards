@@ -25,6 +25,7 @@ import { Logger } from "../network/bot/logger"
 import { getUID } from "../utils/uid"
 import { setmu, setmuS } from "../model/physics/constants"
 import { DrillPanel } from "../view/drillpanel"
+import { applyPhysicsParams } from "../utils/physicsparams"
 
 /**
  * Integrate game container into HTML page
@@ -83,8 +84,11 @@ export class BrowserContainer {
     this.practiceMode = params.has("practice")
     this.drillMode = params.has("drill")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
+    const defaultThreeCushionRaceTo =
+      this.practiceMode && this.ruletype === "threecushion" ? "50" : "7"
     ThreeCushionConfig.raceTo =
-      Number.parseInt(params.get("raceTo") ?? "7") || 7
+      Number.parseInt(params.get("raceTo") ?? defaultThreeCushionRaceTo) ||
+      Number.parseInt(defaultThreeCushionRaceTo)
     console.log(
       `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode}`
     )
@@ -99,6 +103,7 @@ export class BrowserContainer {
       this.first
     )
     console.log(Session.getInstance())
+    applyPhysicsParams(params)
   }
 
   cushion(model) {
@@ -221,33 +226,37 @@ export class BrowserContainer {
       return
     }
 
+    if (!Session.getInstance().vsNotificationShown) {
+      this.container.notification.clear()
+    }
+
     //    logNetEvent(this.playername, event, "receive")
     if (event.clientId) {
       Session.getInstance().setOpponentClientId(event.clientId)
     }
     if (event.playername) {
-      const session = Session.getInstance()
-      session.opponentName = event.playername
-      if (
-        !session.vsNotificationShown &&
-        !this.botMode &&
-        !this.spectator &&
-        session.playername &&
-        session.opponentName
-      ) {
-        const names = session.orderedNamesForHud()
-        if (names.p1Name && names.p2Name) {
-          this.container.notifyLocal({
-            type: "Info",
-            title: this.ruletype,
-            subtext: `${names.p1Name} vs ${names.p2Name}`,
-            extra:
-              this.ruletype === "threecushion"
-                ? `Race to: ${ThreeCushionConfig.raceTo}`
-                : undefined,
-          })
-          session.vsNotificationShown = true
-        }
+      Session.getInstance().opponentName = event.playername
+    }
+
+    const session = Session.getInstance()
+    if (
+      !session.vsNotificationShown &&
+      !this.botMode &&
+      !this.spectator &&
+      session.playername &&
+      session.opponentName
+    ) {
+      const names = session.orderedNamesForHud()
+      if (names.p1Name && names.p2Name) {
+        this.container.notifyLocal({
+          type: "Info",
+          title: `${this.ruletype}, ${names.p1Name} vs ${names.p2Name}`,
+          extra:
+            this.ruletype === "threecushion"
+              ? `Race to: ${ThreeCushionConfig.raceTo}`
+              : undefined,
+        })
+        session.vsNotificationShown = true
       }
     }
     this.container.eventQueue.push(event)

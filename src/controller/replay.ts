@@ -152,6 +152,8 @@ export class Replay extends ControllerBase {
   }
 
   override handleStationary(_) {
+    const outcome = this.container.table.outcome
+    this.container.recorder.updateBreak(outcome, false, false)
     if (this.shots.length > 0 && this.timer === undefined) {
       this.playNextShot(this.delay)
     }

@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Editor</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #fff;
+        color: #222;
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        padding: 8px 16px;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      header h1 {
+        font-size: 14px;
+        font-weight: 700;
+      }
+      header div {
+        display: flex;
+        gap: 6px;
+      }
+      header button {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #f5f5f5;
+        cursor: pointer;
+      }
+      header button:hover {
+        background: #e8e8e8;
+      }
+      header button:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+      #fileInput {
+        display: none;
+      }
+      main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .canvas-wrap {
+        width: 100%;
+        max-width: 923.6px;
+        aspect-ratio: 2 / 1;
+        position: relative;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #f5f5f0;
+        overflow: hidden;
+      }
+      canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        cursor: crosshair;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Data Editor</h1>
+      <div>
+        <input type="file" id="fileInput" accept=".json" />
+        <button onclick="document.getElementById('fileInput').click()">
+          Load JSON
+        </button>
+        <button id="saveBtn" disabled>Save JSON</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="canvas-wrap">
+        <canvas id="editorCanvas"></canvas>
+      </div>
+    </main>
+
+    <script>
+      const HALF_W = (0.03275 * 92.36) / 2
+      const HALF_H = (0.03275 * 46.18) / 2
+      const COLORS = ["#000", "#b8860b", "#c00"]
+      const SIM_COLORS = [
+        "rgba(0,100,255,0.5)",
+        "rgba(255,140,0,0.7)",
+        "rgba(200,0,0,0.7)",
+      ]
+      const deleteRadius = 15
+
+      let currentData = null
+      let loadedFileName = "dataset.json"
+      let isDrawing = false
+      let mouseX = 0,
+        mouseY = 0
+
+      const canvas = document.getElementById("editorCanvas")
+      const ctx = canvas.getContext("2d")
+
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect()
+        canvas.width = rect.width * window.devicePixelRatio
+        canvas.height = rect.height * window.devicePixelRatio
+        render()
+      }
+      window.addEventListener("resize", resizeCanvas)
+
+      const tx = (x, W) => ((x + HALF_W) / (2 * HALF_W)) * W
+      const ty = (y, H) => ((HALF_H - y) / (2 * HALF_H)) * H
+
+      function render() {
+        const W = canvas.width
+        const H = canvas.height
+        if (W === 0 || H === 0) return
+
+        ctx.fillStyle = "#f5f5f0"
+        ctx.fillRect(0, 0, W, H)
+
+        if (!currentData) {
+          ctx.fillStyle = "#999"
+          ctx.font = "14px monospace"
+          ctx.textAlign = "center"
+          ctx.fillText("Load JSON to begin editing", W / 2, H / 2)
+          return
+        }
+
+        const simTracks = currentData.simTracks || null
+        const simStep = currentData.sim?.stepSize || 0.001953125
+        const truth = currentData.truth
+
+        for (const { ball, x, y } of truth) {
+          ctx.fillStyle = COLORS[ball] ?? "#888"
+          ctx.fillRect(tx(x, W) - 1.5, ty(y, H) - 1.5, 3, 3)
+        }
+
+        if (simTracks) {
+          for (const [id, track] of Object.entries(simTracks)) {
+            ctx.fillStyle = SIM_COLORS[id] || "rgba(128,128,128,0.5)"
+            for (const { x, y } of track) {
+              ctx.fillRect(tx(x, W) - 1, ty(y, H) - 1, 2, 2)
+            }
+          }
+
+          ctx.strokeStyle = "rgba(255,0,0,0.3)"
+          ctx.lineWidth = 1
+          for (const point of truth) {
+            const { ball, t, x, y } = point
+            const track = simTracks[ball]
+            if (!track) continue
+            const i = Math.min(Math.round(t / simStep), track.length - 1)
+            const s = track[i]
+            if (s) {
+              ctx.beginPath()
+              ctx.moveTo(tx(x, W), ty(y, H))
+              ctx.lineTo(tx(s.x, W), ty(s.y, H))
+              ctx.stroke()
+            }
+          }
+        }
+
+        if (mouseX !== 0 || mouseY !== 0) {
+          ctx.beginPath()
+          ctx.arc(mouseX, mouseY, deleteRadius, 0, 2 * Math.PI)
+          ctx.strokeStyle = "rgba(245, 158, 11, 0.6)"
+          ctx.fillStyle = "rgba(245, 158, 11, 0.05)"
+          ctx.fill()
+          ctx.stroke()
+        }
+      }
+
+      function deletePoints(screenX, screenY) {
+        if (!currentData) return
+        const W = canvas.width,
+          H = canvas.height
+        currentData.truth = currentData.truth.filter((point) => {
+          const dx = tx(point.x, W) - screenX
+          const dy = ty(point.y, H) - screenY
+          return Math.sqrt(dx * dx + dy * dy) > deleteRadius
+        })
+        render()
+      }
+
+      async function saveToDisk(filename, data) {
+        const json = JSON.stringify(data, null, 2)
+        if ("showSaveFilePicker" in window) {
+          try {
+            const handle = await window.showSaveFilePicker({
+              suggestedName: filename,
+              types: [
+                {
+                  description: "JSON",
+                  accept: { "application/json": [".json"] },
+                },
+              ],
+            })
+            const writable = await handle.createWritable()
+            await writable.write(json)
+            await writable.close()
+            return
+          } catch (err) {
+            if (err.name === "AbortError") return
+          }
+        }
+        const blob = new Blob([json], { type: "application/json" })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement("a")
+        a.href = url
+        a.download = filename.endsWith(".json")
+          ? filename
+          : `${filename}_edited.json`
+        a.click()
+        URL.revokeObjectURL(url)
+      }
+
+      document.getElementById("fileInput").addEventListener("change", (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+        loadedFileName = file.name
+        const reader = new FileReader()
+        reader.onload = (evt) => {
+          try {
+            currentData = JSON.parse(evt.target.result)
+            document.getElementById("saveBtn").removeAttribute("disabled")
+            resizeCanvas()
+
+            const urlFile = new URLSearchParams(window.location.search).get(
+              "file"
+            )
+            if (urlFile) {
+              loadedFileName = urlFile
+              fetch("./" + encodeURIComponent(urlFile))
+                .then((r) => {
+                  if (!r.ok) throw new Error(r.statusText)
+                  return r.json()
+                })
+                .then((data) => {
+                  currentData = data
+                  document.getElementById("saveBtn").removeAttribute("disabled")
+                  resizeCanvas()
+                })
+                .catch((err) =>
+                  alert("Failed to load " + urlFile + ": " + err.message)
+                )
+            }
+          } catch (err) {
+            alert("Invalid JSON: " + err.message)
+          }
+        }
+        reader.readAsText(file)
+      })
+
+      document.getElementById("saveBtn").addEventListener("click", () => {
+        if (!currentData) return
+        saveToDisk(loadedFileName, currentData)
+      })
+
+      function getCoords(e) {
+        const rect = canvas.getBoundingClientRect()
+        const dpr = window.devicePixelRatio
+        return [(e.clientX - rect.left) * dpr, (e.clientY - rect.top) * dpr]
+      }
+
+      canvas.addEventListener("mousedown", (e) => {
+        if (!currentData) return
+        isDrawing = true
+        ;[mouseX, mouseY] = getCoords(e)
+        deletePoints(mouseX, mouseY)
+      })
+
+      canvas.addEventListener("mousemove", (e) => {
+        ;[mouseX, mouseY] = getCoords(e)
+        if (isDrawing) deletePoints(mouseX, mouseY)
+        else render()
+      })
+
+      window.addEventListener("mouseup", () => {
+        isDrawing = false
+      })
+      canvas.addEventListener("mouseleave", () => {
+        mouseX = 0
+        mouseY = 0
+        render()
+      })
+
+      function getTouchCoords(e) {
+        const rect = canvas.getBoundingClientRect()
+        const dpr = window.devicePixelRatio
+        const t = e.touches[0]
+        return [(t.clientX - rect.left) * dpr, (t.clientY - rect.top) * dpr]
+      }
+
+      canvas.addEventListener("touchstart", (e) => {
+        if (!currentData) return
+        isDrawing = true
+        ;[mouseX, mouseY] = getTouchCoords(e)
+        deletePoints(mouseX, mouseY)
+        e.preventDefault()
+      })
+
+      canvas.addEventListener("touchmove", (e) => {
+        if (!currentData) return
+        ;[mouseX, mouseY] = getTouchCoords(e)
+        deletePoints(mouseX, mouseY)
+        e.preventDefault()
+      })
+
+      canvas.addEventListener("touchend", () => {
+        isDrawing = false
+      })
+
+      resizeCanvas()
+
+      const urlFile = new URLSearchParams(window.location.search).get("file")
+      if (urlFile) {
+        loadedFileName = urlFile
+        fetch("./" + encodeURIComponent(urlFile))
+          .then((r) => {
+            if (!r.ok) throw new Error(r.statusText)
+            return r.json()
+          })
+          .then((data) => {
+            currentData = data
+            document.getElementById("saveBtn").removeAttribute("disabled")
+            resizeCanvas()
+          })
+          .catch((err) =>
+            alert("Failed to load " + urlFile + ": " + err.message)
+          )
+      }
+    </script>
+  </body>
+</html>

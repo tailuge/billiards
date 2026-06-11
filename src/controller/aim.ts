@@ -19,13 +19,42 @@ export class Aim extends ControllerBase {
       table.cue.aimMode()
       table.cue.showHelper(true)
       table.cueball = this.container.rules.cueball
+
+      const params = new URLSearchParams(globalThis.location?.search)
+      let customShot = false
+      if (params.has("initShot")) {
+        try {
+          const shot = JSON.parse(params.get("initShot")!)
+          if (shot) {
+            if (typeof shot.cueBallId === "number") {
+              table.cueball = table.balls[shot.cueBallId] || table.cueball
+            }
+            table.cue.aim.angle = shot.angle ?? table.cue.aim.angle
+            table.cue.aim.power = shot.power ?? table.cue.aim.power
+            if (shot.offset) {
+              table.cue.aim.offset.set(
+                shot.offset.x ?? 0,
+                shot.offset.y ?? 0,
+                0
+              )
+            }
+            table.cue.aim.elevation = shot.elevation ?? 0
+            customShot = true
+          }
+        } catch (e) {
+          console.warn("Failed to parse initShot", e)
+        }
+      }
+
       table.cue.aim.i = table.balls.indexOf(table.cueball)
       table.cue.moveTo(table.cueball.pos)
-      table.cue.aimAtNext(
-        table.cueball,
-        this.container.rules.nextCandidateBall()
-      )
-      table.cue.aim.elevation = 0
+      if (!customShot) {
+        table.cue.aimAtNext(
+          table.cueball,
+          this.container.rules.nextCandidateBall()
+        )
+        table.cue.aim.elevation = 0
+      }
       this.container.view.camera.suggestMode(this.container.view.camera.aimView)
       table.cue.updateAimInput()
     }
