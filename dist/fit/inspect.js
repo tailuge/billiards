@@ -8,7 +8,7 @@ const json = JSON.parse(readFileSync(inputFile, 'utf8'))
 const samples = extractSamples(json)
 
 const ballIndices = [...new Set(samples.map(s => s.ball))]
-let moverIdx = 0, moverCount = 0
+let moverIdx = 0, maxSpeed = 0
 const reportLines = []
 
 const ballSummaries = ballIndices.map(ball => {
@@ -25,17 +25,20 @@ const ballSummaries = ballIndices.map(ball => {
     const dt = pts[9].t - pts[0].t
     dir = Math.atan2(dy, dx)
     speed = Math.hypot(dx, dy) / dt
-    if (pts.length > moverCount) { moverCount = pts.length; moverIdx = ball }
+    if (speed > maxSpeed) { maxSpeed = speed; moverIdx = ball }
   }
 
-  const dirStr = dir !== null ? `  dir=${dir.toFixed(4)}rad  speed=${speed.toFixed(3)}m/s  → MOVER` : ''
-  const line = `ball ${ball}: ${pts.length} samples  x:[${xRange[0].toFixed(3)}, ${xRange[1].toFixed(3)}]  y:[${yRange[0].toFixed(3)}, ${yRange[1].toFixed(3)}]${dirStr}`
-  console.log(line)
-  reportLines.push(line)
-
-  return { ball, first, dir, speed }
+  return { ball, first, dir, speed, pts, xRange, yRange }
 })
 
+ballSummaries.forEach(s => {
+  const dirStr = s.dir !== null ? `  dir=${s.dir.toFixed(4)}rad  speed=${s.speed.toFixed(3)}m/s${s.ball === moverIdx ? '  → MOVER' : ''}` : ''
+  const line = `ball ${s.ball}: ${s.pts.length} samples  x:[${s.xRange[0].toFixed(3)}, ${s.xRange[1].toFixed(3)}]  y:[${s.yRange[0].toFixed(3)}, ${s.yRange[1].toFixed(3)}]${dirStr}`
+  console.log(line)
+  reportLines.push(line)
+})
+
+const moverSummary = ballSummaries.find(s => s.ball === moverIdx)
 const cueLine = `\nCue ball: dataset ${moverIdx}`
 console.log(cueLine)
 reportLines.push(cueLine)
@@ -56,8 +59,8 @@ const output = {
     cushionModel: "mathavan",
     shot: {
       cueBallId: 0,
-      angle: ballSummaries[moverIdx].dir,
-      power: ballSummaries[moverIdx].speed,
+      angle: moverSummary?.dir ?? 0,
+      power: moverSummary?.speed ?? 0,
       offset: { x: 0, y: 0 },
       elevation: 0
     },
