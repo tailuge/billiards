@@ -1,0 +1,206 @@
+import { expect } from "chai"
+import { offCenterLimit, maxPower } from "../src/model/physics/constants"
+import {
+  buildAxisSpecs,
+  runSensitivityAnalysis,
+  firstContactDistance,
+  ShotParams,
+  ParamKey,
+  BallPos,
+} from "../src/sensitivity"
+
+/** Phase 2 gate: grid construction, clamps, disk exclusion, and the BFS +
+ * robustness search over a deterministic mock scorer (no worker). */
+
+const SEED: ShotParams = {
+  angle: 0,
+  power: 2.5,
+  offsetX: 0,
+  offsetY: 0,
+  elevation: 0,
+}
+
+const BALLS: BallPos[] = [
+  { id: 0, pos: { x: -0.5, y: 0, z: 0 } },
+  { id: 1, pos: { x: 0.5, y: 0.05, z: 0 } },
+  { id: 2, pos: { x: 0, y: 0.5, z: 0 } },
+]
+
+function run(
+  selected: ParamKey[],
+  scorer: (s: ShotParams) => boolean,
+  base = SEED
+) {
+  return runSensitivityAnalysis({
+    balls: BALLS,
+    cueBallId: 0,
+    baseShot: base,
+    ruleType: "threecushion",
+    cushionModel: "mathavan",
+    selectedParams: selected,
+    poolSize: 4,
+    scorer: async (s) => scorer(s),
+  })
+}
+
+describe("buildAxisSpecs", () => {
+  it("uses fixed steps and physical clamps for power/spin/elevation", () => {
+    const axes = buildAxisSpecs(
+      SEED,
+      BALLS,
+      0,
+      ["power", "offsetX", "offsetY", "elevation"]
+    )
+    const power = axes.find((a) => a.key === "power")!
+    expect(power.step).to.equal(0.15)
+    expect(power.min).to.equal(0)
+    expect(power.max).to.equal(maxPower)
+
+    const ox = axes.find((a) => a.key === "offsetX")!
+    expect(ox.step).to.equal(0.025)
+    expect(ox.min).to.equal(-offCenterLimit)
+    expect(ox.max).to.equal(offCenterLimit)
+
+    const elev = axes.find((a) => a.key === "elevation")!
+    expect(elev.step).to.equal(0.025)
+    expect(elev.min).to.equal(0)
+    expect(elev.max).to.be.closeTo((2 * Math.PI) / 5, 1e-9)
+  })
+
+  it("derives a wider angle step for a closer first contact", () => {
+    // closer object ball → larger atan(2R/d) → larger step
+    const near: BallPos[] = [
+      { id: 0, pos: { x: 0, y: 0, z: 0 } },
+      { id: 1, pos: { x: 0.2, y: 0, z: 0 } },
+    ]
+    const far: BallPos[] = [
+      { id: 0, pos: { x: 0, y: 0, z: 0 } },
+      { id: 1, pos: { x: 1.5, y: 0, z: 0 } },
+    ]
+    const stepNear = buildAxisSpecs(SEED, near, 0, ["angle"])[0].step
+    const stepFar = buildAxisSpecs(SEED, far, 0, ["angle"])[0].step
+    expect(stepNear).to.be.greaterThan(stepFar)
+  })
+})
+
+describe("firstContactDistance", () => {
+  it("returns distance to a ball directly along the aim ray", () => {
+    const balls: BallPos[] = [
+      { id: 0, pos: { x: 0, y: 0, z: 0 } },
+      { id: 1, pos: { x: 0.4, y: 0, z: 0 } },
+    ]
+    expect(firstContactDistance(balls, 0, 0)).to.be.closeTo(0.4, 1e-9)
+  })
+
+  it("falls back to the cushion when no ball is in the path", () => {
+    const balls: BallPos[] = [{ id: 0, pos: { x: 0, y: 0, z: 0 } }]
+    const d = firstContactDistance(balls, 0, 0)
+    expect(d).to.be.greaterThan(0)
+    expect(Number.isFinite(d)).to.equal(true)
+  })
+})
+
+describe("runSensitivityAnalysis (full grid scan)", () => {
+  it("finds a symmetric square scoring region", async () => {
+    // Score when within 2 steps of the seed on both spin axes (a 5x5 block).
+    const res = await run(["offsetX", "offsetY"], (s) => {
+      const ix = Math.round(s.offsetX / 0.025)
+      const iy = Math.round(s.offsetY / 0.025)
+      return Math.abs(ix) <= 2 && Math.abs(iy) <= 2
+    })
+    expect(res.scoredCount).to.equal(25) // 5x5
+  })
+
+  it("finds scoring cells beyond a failure (disconnected region, 1-D)", async () => {
+    // scorer scores at indices {-1,0,1} and the disconnected island {4};
+    // gap at {2,3}. A flood-fill would find only 3; the full grid finds 4.
+    const res = await run(["power"], (s) => {
+      const i = Math.round((s.power - SEED.power) / 0.15)
+      return (i >= -1 && i <= 1) || i === 4
+    })
+    expect(res.scoredCount).to.equal(4)
+    const idxs = res.scoringPoints
+      .map((p) => Math.round((p.power - SEED.power) / 0.15))
+      .sort((a, b) => a - b)
+    expect(idxs).to.deep.equal([-1, 0, 1, 4])
+  })
+
+  it("finer stepScale yields more cells over the same physical window", async () => {
+    const phys = (s: ShotParams) => Math.abs(s.power - SEED.power) <= 0.2
+    const coarse = await runSensitivityAnalysis({
+      balls: BALLS, cueBallId: 0, baseShot: SEED, ruleType: "threecushion",
+      cushionModel: "mathavan", selectedParams: ["power"], poolSize: 4,
+      scorer: async (s) => phys(s), stepScale: 1,
+    })
+    const fine = await runSensitivityAnalysis({
+      balls: BALLS, cueBallId: 0, baseShot: SEED, ruleType: "threecushion",
+      cushionModel: "mathavan", selectedParams: ["power"], poolSize: 4,
+      scorer: async (s) => phys(s), stepScale: 0.25,
+    })
+    expect(fine.scoredCount).to.be.greaterThan(coarse.scoredCount)
+  })
+
+  it("excludes spin cells outside the off-centre disk", async () => {
+    // Seed near the disk edge; scorer accepts everything. Disk constraint must
+    // still keep every scoring point inside the limit.
+    const base: ShotParams = { ...SEED, offsetX: 0.4, offsetY: 0.0 }
+    const res = await run(["offsetX", "offsetY"], () => true, base)
+    expect(res.scoredCount).to.be.greaterThan(0)
+    for (const p of res.scoringPoints) {
+      expect(Math.hypot(p.offsetX, p.offsetY)).to.be.at.most(offCenterLimit + 1e-9)
+    }
+  })
+
+  it("clamps power to [0, maxPower] (cannot go negative)", async () => {
+    const base: ShotParams = { ...SEED, power: 0.1 }
+    const res = await run(["power"], () => true, base)
+    for (const p of res.scoringPoints) {
+      expect(p.power).to.be.at.least(0)
+      expect(p.power).to.be.at.most(maxPower)
+    }
+  })
+
+  it("expands a non-spin sweep even when the seed spin sits on the disk edge", async () => {
+    // Seed offset right at (slightly over) the 0.45 limit, like a real max-spin
+    // shot. A power-only sweep must not be blocked by the fixed seed offset.
+    const base: ShotParams = {
+      ...SEED,
+      offsetX: -0.2100413739681244,
+      offsetY: 0.3979731500148773,
+    }
+    const res = await run(
+      ["power"],
+      (s) => Math.abs(Math.round((s.power - base.power) / 0.15)) <= 2,
+      base
+    )
+    expect(res.scoredCount).to.equal(5) // -2..+2, not just the seed
+  })
+
+  it("evaluates the whole window even when nothing scores", async () => {
+    const res = await run(["offsetX", "offsetY"], () => false)
+    expect(res.scoredCount).to.equal(0)
+    expect(res.evaluated).to.be.greaterThan(1) // full grid, not just the seed
+  })
+
+  it("respects an abort signal", async () => {
+    const signal = { aborted: true }
+    let err: Error | null = null
+    try {
+      await runSensitivityAnalysis({
+        balls: BALLS,
+        cueBallId: 0,
+        baseShot: SEED,
+        ruleType: "threecushion",
+        cushionModel: "mathavan",
+        selectedParams: ["offsetX", "offsetY"],
+        poolSize: 4,
+        scorer: async () => true,
+        signal,
+      })
+    } catch (e) {
+      err = e as Error
+    }
+    expect(err).to.not.equal(null)
+    expect(err!.message).to.contain("abort")
+  })
+})

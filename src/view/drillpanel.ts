@@ -4,6 +4,8 @@ import { PlaceAllBalls } from "../controller/placeallballs"
 import { DrillReplay } from "../controller/drillreplay"
 import { Drill } from "../controller/rules/drill"
 import { previewShot } from "../model/previewshot"
+import { BallPos, ShotParams } from "../sensitivity"
+import { AnalysisSeed, buildAnalysisUrl } from "../seedlink"
 
 const PREVIEW_DEBOUNCE = 0.15
 
@@ -14,6 +16,7 @@ export class DrillPanel {
   private readonly replayBtn: HTMLButtonElement
   private readonly switchBallBtn: HTMLButtonElement
   private readonly previewBtn: HTMLButtonElement
+  private readonly analyseBtn: HTMLButtonElement
   private centerPanel!: HTMLDivElement
   private previewActive = false
   private pendingPreview = false
@@ -108,6 +111,23 @@ export class DrillPanel {
       }
     })
 
+    this.analyseBtn = this.createBtn("Shot Analysis")
+    this.analyseBtn.addEventListener("click", () => {
+      const seed = this.captureSeed()
+      if (!seed) return
+      const overlay = document.getElementById("analysisOverlay")
+      const iframe = overlay?.querySelector("iframe")
+      if (overlay && iframe) {
+        iframe.removeAttribute("src")
+        iframe.setAttribute("src", buildAnalysisUrl(seed))
+        overlay.removeAttribute("hidden")
+      }
+    })
+
+    document.getElementById("analysisClose")?.addEventListener("click", () => {
+      document.getElementById("analysisOverlay")?.setAttribute("hidden", "true")
+    })
+
     const topPanel = document.createElement("div")
     topPanel.className = "drill-panel drill-panel-top"
     topPanel.appendChild(this.replayBtn)
@@ -123,15 +143,50 @@ export class DrillPanel {
     centerPanel.appendChild(gap)
     centerPanel.appendChild(this.previewBtn)
 
+    const rightPanel = document.createElement("div")
+    rightPanel.className = "drill-panel drill-panel-right"
+    rightPanel.appendChild(this.analyseBtn)
+
     const root = document.getElementById("viewP1")
     root?.appendChild(topPanel)
     root?.appendChild(centerPanel)
+    root?.appendChild(rightPanel)
 
     const prevFrame = container.frame
     container.frame = (t: number) => {
       prevFrame?.(t)
       this.update(t)
     }
+  }
+
+  /** Reconstruct the pre-shot seed (positions + aim + model) of the last shot,
+   * shaped for the standalone analysis page handoff (src/seedlink.ts). */
+  private captureSeed(): AnalysisSeed | null {
+    const drill = this.container.rules as Drill
+    const recorder = this.container.recorder
+    const last = recorder.last()
+    if (last < 0 || !drill.preShotState.length) {
+      console.warn("[shot-analysis] no recorded shot yet — play a shot first")
+      return null
+    }
+    // preShotState is shortSerialise(): flat [x,y] per ball in table order.
+    const state = drill.preShotState
+    const balls: BallPos[] = this.container.table.balls.map((b, i) => ({
+      id: b.id,
+      pos: { x: state[i * 2], y: state[i * 2 + 1], z: 0 },
+    }))
+    const ev = recorder.entries[last].event as any
+    const cueBallId = this.container.table.balls[ev.i ?? 0].id
+    const shot: ShotParams = {
+      angle: ev.angle,
+      power: ev.power,
+      offsetX: ev.offset?.x ?? 0,
+      offsetY: ev.offset?.y ?? 0,
+      elevation: ev.elevation ?? 0,
+    }
+    const cushionModel =
+      new URLSearchParams(location.search).get("cushionModel") ?? "mathavan"
+    return { balls, cueBallId, shot, ruleType: "threecushion", cushionModel }
   }
 
   private createBtn(label: string): HTMLButtonElement {
@@ -205,6 +260,9 @@ export class DrillPanel {
     this.replayBtn.disabled = !isAiming || !hasLastShot
     this.switchBallBtn.disabled = !isAiming || (!hasPreShot && !this.ballsWerePlaced)
     this.previewBtn.disabled = !isAiming
+    // Only meaningful right after a shot that actually scored: in drill mode a
+    // scoring shot increments the break, a miss resets it to 0.
+    this.analyseBtn.disabled = !isAiming || !hasLastShot || drill.currentBreak <= 0
 
     if (this.previewActive) {
       if (!isAiming) {

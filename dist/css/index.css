@@ -310,6 +310,33 @@ label {
   border-radius: 8px;
 }
 
+#analysisOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(95%, 820px);
+  height: min(92%, 760px);
+  background: rgb(0 0 0 / 100%);
+  border: 1px solid rgb(255 255 255 / 25%);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  z-index: 3000;
+  box-shadow: 0 8px 16px rgb(0 0 0 / 75%);
+}
+
+#analysisOverlay[hidden] {
+  display: none !important;
+}
+
+#analysisOverlay iframe {
+  width: 100%;
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+}
+
 .help-footer {
   display: flex;
   gap: 4px;
@@ -325,7 +352,8 @@ label {
 }
 
 .lobby-btn,
-#helpClose {
+#helpClose,
+#analysisClose {
   padding: 6px 6px;
   background: rgb(255 255 255 / 10%);
   color: white;
@@ -337,7 +365,8 @@ label {
 }
 
 .lobby-btn:hover,
-#helpClose:hover {
+#helpClose:hover,
+#analysisClose:hover {
   background: rgb(255 255 255 / 20%);
   border-color: rgb(255 255 255 / 40%);
 }
@@ -360,6 +389,16 @@ label {
 
 .drill-panel-top {
   top: 10px;
+  transform: none;
+}
+
+.drill-panel-right {
+  left: auto;
+  right: 10px;
+  top: auto;
+  /* .outerMenu (hamburger/camera buttons) overflows 39px above #panel's top
+     edge, i.e. above #viewP1's bottom edge; clear that plus a small gap. */
+  bottom: 49px;
   transform: none;
 }
 

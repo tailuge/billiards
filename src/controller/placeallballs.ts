@@ -31,7 +31,6 @@ export class PlaceAllBalls extends ControllerBase {
   override onFirst() {
     this.setupForCurrentBall()
     this.container.table.cue.aimInputs.setDisabled(false)
-    ;(this.container.view.element as HTMLElement).focus()
     this.addDragListeners()
   }
 
@@ -46,6 +45,10 @@ export class PlaceAllBalls extends ControllerBase {
     this.container.table.cue.aimInputs.setButtonText(
       BALL_LABELS[this.currentIndex] ?? "Place Ball"
     )
+    // Re-focus the canvas for each ball in turn, otherwise arrow-key input
+    // only works for the first ball (e.g. after the "Place Balls" button
+    // click left focus on the button) until the user clicks the table.
+    ;(this.container.view.element as HTMLElement).focus()
   }
 
   private addDragListeners() {

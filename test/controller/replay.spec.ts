@@ -223,6 +223,42 @@ describe("Controller Replay", () => {
     done()
   })
 
+  // Regression: Replay used to record the *live* `cue.aim` object as the
+  // recorded shot's event. Once the replay finished, `new Aim(container)`
+  // (e.g. via DrillReplay -> Aim, or the drill-panel's Retry handler) mutates
+  // `cue.aim.angle`/`.elevation`/`.i` in place via `aimAtNext`, which silently
+  // corrupted the just-recorded entry — losing the original shot's parameters
+  // for Retry / Shot Analysis. The replayed shot must be recorded as an
+  // independent copy.
+  it("recorded replay shot is independent of the live cue.aim afterwards", (done) => {
+    jest.clearAllTimers()
+    container.controller = new Replay(
+      container,
+      state.init,
+      state.shots,
+      false,
+      0
+    )
+
+    jest.runOnlyPendingTimers()
+    container.processEvents()
+
+    const recorded = container.recorder.entries[container.recorder.last()]
+      .event as any
+    expect(recorded).to.not.equal(container.table.cue!.aim)
+    expect(recorded.angle).to.equal(state.shots[0].angle)
+    expect(recorded.elevation).to.equal(0)
+    expect(recorded.power).to.equal(state.shots[0].power)
+
+    // Simulate what `new Aim(container)` does to the live aim afterwards.
+    container.table.cue!.aim.angle = 999
+    container.table.cue!.aim.elevation = 1234
+
+    expect(recorded.angle).to.equal(state.shots[0].angle)
+    expect(recorded.elevation).to.equal(0)
+    done()
+  })
+
   it("pre-highlights active player before aim using SCORE.active", (done) => {
     const replayState = {
       init: state.init,

@@ -139,7 +139,9 @@ export class Replay extends ControllerBase {
     clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       this.container.table.proximityIndicator.hide()
-      this.container.eventQueue.push(new HitEvent(this.container.table.cue.aim))
+      this.container.eventQueue.push(
+        new HitEvent(this.container.table.cue.aim.copy())
+      )
       this.timer = undefined
     }, delay)
   }
