@@ -44,17 +44,8 @@ function run(
 }
 
 describe("buildAxisSpecs", () => {
-  it("uses fixed steps and physical clamps for power/spin/elevation", () => {
-    const axes = buildAxisSpecs(
-      SEED,
-      BALLS,
-      0,
-      ["power", "offsetX", "offsetY", "elevation"]
-    )
-    const power = axes.find((a) => a.key === "power")!
-    expect(power.step).to.equal(0.15)
-    expect(power.min).to.equal(0)
-    expect(power.max).to.equal(maxPower)
+  it("uses fixed steps and physical clamps for spin/elevation", () => {
+    const axes = buildAxisSpecs(SEED, BALLS, 0, ["offsetX", "offsetY", "elevation"])
 
     const ox = axes.find((a) => a.key === "offsetX")!
     expect(ox.step).to.equal(0.025)
@@ -65,6 +56,17 @@ describe("buildAxisSpecs", () => {
     expect(elev.step).to.equal(0.025)
     expect(elev.min).to.equal(0)
     expect(elev.max).to.be.closeTo((2 * Math.PI) / 5, 1e-9)
+  })
+
+  it("gives power and aim angle a 21-point (10-each-side) window-relative step", () => {
+    const power = buildAxisSpecs(SEED, BALLS, 0, ["power"])[0]
+    expect(power.min).to.equal(0)
+    expect(power.max).to.equal(maxPower)
+    expect(power.step).to.be.closeTo(0.1, 1e-9) // halfWindow (1.0) / 10
+    expect(power.stepsEachSide).to.equal(10) // 21 simulations
+
+    const angle = buildAxisSpecs(SEED, BALLS, 0, ["angle"])[0]
+    expect(angle.stepsEachSide).to.equal(10) // 21 simulations
   })
 
   it("derives a wider angle step for a closer first contact", () => {
@@ -115,12 +117,12 @@ describe("runSensitivityAnalysis (full grid scan)", () => {
     // scorer scores at indices {-1,0,1} and the disconnected island {4};
     // gap at {2,3}. A flood-fill would find only 3; the full grid finds 4.
     const res = await run(["power"], (s) => {
-      const i = Math.round((s.power - SEED.power) / 0.15)
+      const i = Math.round((s.power - SEED.power) / 0.1)
       return (i >= -1 && i <= 1) || i === 4
     })
     expect(res.scoredCount).to.equal(4)
     const idxs = res.scoringPoints
-      .map((p) => Math.round((p.power - SEED.power) / 0.15))
+      .map((p) => Math.round((p.power - SEED.power) / 0.1))
       .sort((a, b) => a - b)
     expect(idxs).to.deep.equal([-1, 0, 1, 4])
   })
@@ -170,7 +172,7 @@ describe("runSensitivityAnalysis (full grid scan)", () => {
     }
     const res = await run(
       ["power"],
-      (s) => Math.abs(Math.round((s.power - base.power) / 0.15)) <= 2,
+      (s) => Math.abs(Math.round((s.power - base.power) / 0.1)) <= 2,
       base
     )
     expect(res.scoredCount).to.equal(5) // -2..+2, not just the seed

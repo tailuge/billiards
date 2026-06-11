@@ -332,6 +332,11 @@ export const DEFAULT_PARAMS: ParamKey[] = ["offsetX", "offsetY"]
  * step instead of an unmeasurably tiny one. */
 const MIN_ANGLE_HALF_WINDOW = (0.5 * Math.PI) / 180 // 0.5°
 
+/** Steps on each side of the seed for the aim-angle and speed 1-D sweeps, so
+ * each yields 2 * ONE_D_STEPS_EACH_SIDE + 1 = 21 simulations over its physical
+ * half-window. */
+const ONE_D_STEPS_EACH_SIDE = 10
+
 /** Hard safety ceiling on evaluated cells — guards against a runaway flood-fill
  * (e.g. an unbounded scoring region in an unclamped dimension). Not a cost cap. */
 const MAX_CELLS = 200_000
@@ -461,21 +466,23 @@ export function buildAxisSpecs(
         return spec(
           key,
           baseShot.angle,
-          cone / 4,
+          cone / ONE_D_STEPS_EACH_SIDE,
           Number.NEGATIVE_INFINITY,
           Number.POSITIVE_INFINITY,
           cone
         )
       }
-      case "power":
+      case "power": {
+        const halfWindow = Math.max(0.4 * Math.abs(baseShot.power), 0.45)
         return spec(
           key,
           baseShot.power,
-          0.15,
+          halfWindow / ONE_D_STEPS_EACH_SIDE,
           0,
           maxPower,
-          Math.max(0.4 * Math.abs(baseShot.power), 0.45)
+          halfWindow
         )
+      }
       case "offsetX":
         return spec(key, baseShot.offsetX, 0.025, -offCenterLimit, offCenterLimit, 0.2)
       case "offsetY":
