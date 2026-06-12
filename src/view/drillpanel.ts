@@ -273,9 +273,13 @@ export class DrillPanel {
       !isAiming || (!hasPreShot && !this.ballsWerePlaced)
     this.previewBtn.disabled = !isAiming
     // Only meaningful right after a shot that actually scored: in drill mode a
-    // scoring shot increments the break, a miss resets it to 0.
+    // scoring shot increments the break, a miss resets it to 0. Also disabled
+    // while the analysis overlay is open so re-clicking can't re-run the scan.
+    const analysisOpen = !document
+      .getElementById("analysisOverlay")
+      ?.hasAttribute("hidden")
     this.analyseBtn.disabled =
-      !isAiming || !hasLastShot || drill.currentBreak <= 0
+      analysisOpen || !isAiming || !hasLastShot || drill.currentBreak <= 0
 
     if (this.previewActive) {
       if (!isAiming) {
