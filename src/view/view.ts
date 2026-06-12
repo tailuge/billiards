@@ -34,6 +34,8 @@ export class View {
     this.initialiseScene()
   }
 
+  clearLines() {}
+
   update(elapsed, aim: AimEvent) {
     this.camera.update(elapsed, aim)
   }

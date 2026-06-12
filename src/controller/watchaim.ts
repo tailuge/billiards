@@ -18,6 +18,7 @@ export class WatchAim extends ControllerBase {
 
   override onFirst() {
     this.container.table.cue.aimInputs.setDisabled(true)
+    this.container.view.clearLines()
   }
 
   override handleAim(event: AimEvent) {
