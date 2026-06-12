@@ -119,14 +119,23 @@ export class DrillPanel {
       const overlay = document.getElementById("analysisOverlay")
       const iframe = overlay?.querySelector("iframe")
       if (overlay && iframe) {
-        iframe.removeAttribute("src")
-        iframe.setAttribute("src", buildAnalysisUrl(seed))
+        // Blank the iframe before showing the overlay so the previous
+        // analysis isn't flashed while the new page loads, then navigate on
+        // the next frame so the src change is a real reload even when the
+        // shot is unchanged (same URL as last time would otherwise no-op).
+        iframe.src = "about:blank"
         overlay.removeAttribute("hidden")
+        requestAnimationFrame(() => {
+          iframe.src = buildAnalysisUrl(seed)
+        })
       }
     })
 
     document.getElementById("analysisClose")?.addEventListener("click", () => {
-      document.getElementById("analysisOverlay")?.setAttribute("hidden", "true")
+      const overlay = document.getElementById("analysisOverlay")
+      const iframe = overlay?.querySelector("iframe")
+      if (iframe) iframe.src = "about:blank"
+      overlay?.setAttribute("hidden", "true")
     })
 
     const topPanel = document.createElement("div")
