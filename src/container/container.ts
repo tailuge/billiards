@@ -120,9 +120,6 @@ export class Container {
     this.menu = new Menu(this)
     this.comment = new Comment(this)
     this.table.addToScene(this.view.scene)
-    this.view.onLineDrawn = (line) => {
-      this.sendEvent(new ChatEvent(this.id, "", line))
-    }
     this.particles = new ParticleSystem()
     this.hud = new Hud()
     this.notification = new Notification()

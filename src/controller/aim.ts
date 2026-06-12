@@ -62,6 +62,7 @@ export class Aim extends ControllerBase {
 
   override onFirst() {
     this.container.table.showTraces(false)
+    this.container.view.clearLines()
     this.container.table.cue.aimInputs.setDisabled(false)
     this.container.table.cue.aimInputs.setButtonText("Hit")
   }

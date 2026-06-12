@@ -20,13 +20,6 @@ export abstract class ControllerBase extends Controller {
 
   override handleChat(chatevent: ChatEvent): Controller {
     this.container.chat.showMessage(chatevent.message)
-    if (chatevent.line) {
-      this.container.view.addLine(
-        chatevent.line.p1,
-        chatevent.line.p2,
-        chatevent.line.colour
-      )
-    }
     return this
   }
 
