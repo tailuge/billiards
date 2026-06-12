@@ -224,3 +224,92 @@ describe("runSensitivityAnalysis (full grid scan)", () => {
     expect(err!.message).to.contain("abort")
   })
 })
+
+describe('"Expand range" incremental spin scan', () => {
+  // Collect the set of lattice cells a spin scan evaluates, keyed by their
+  // absolute grid index (step 0.025). Seed-centred + fixed step means the keys
+  // are comparable across runs with different windows.
+  async function spinCells(
+    outer: number,
+    inner?: number
+  ): Promise<Set<string>> {
+    const cells = new Set<string>()
+    await runSensitivityAnalysis({
+      balls: BALLS,
+      cueBallId: 0,
+      baseShot: SEED,
+      ruleType: "threecushion",
+      cushionModel: "mathavan",
+      selectedParams: ["offsetX", "offsetY"],
+      poolSize: 4,
+      scorer: async () => true,
+      spinHalfWindow: outer,
+      spinInnerHalfWindow: inner,
+      onEvaluate: (shot) => {
+        const ix = Math.round(shot.offsetX / 0.025)
+        const iy = Math.round(shot.offsetY / 0.025)
+        cells.add(`${ix},${iy}`)
+      },
+    })
+    return cells
+  }
+
+  it("scans only the ring outside the inner window", async () => {
+    const ring = await spinCells(0.5, 0.3) // grow 0.3 -> 0.5
+    expect(ring.size).to.be.greaterThan(0)
+    // Inner box (half-window 0.3) reaches index 12; every ring cell must sit
+    // strictly beyond it on at least one spin axis.
+    for (const key of ring) {
+      const [ix, iy] = key.split(",").map(Number)
+      expect(Math.max(Math.abs(ix), Math.abs(iy))).to.be.greaterThan(12)
+    }
+  })
+
+  it("ring + initial scan tile the wider scan exactly (no gaps, no overlap)", async () => {
+    const initial = await spinCells(0.3)
+    const ring = await spinCells(0.5, 0.3)
+    const full = await spinCells(0.5)
+
+    // Disjoint: the ring never re-runs an already-scanned cell.
+    for (const key of ring) expect(initial.has(key)).to.equal(false)
+    // Complete: their union is exactly the single full scan at 0.5.
+    expect(initial.size + ring.size).to.equal(full.size)
+    const union = new Set([...initial, ...ring])
+    expect(union.size).to.equal(full.size)
+    for (const key of full) expect(union.has(key)).to.equal(true)
+  })
+
+  it("tiles the same way wherever the starting window is (default-independent)", async () => {
+    // Same property starting from 0.2 instead of 0.3 — proves the feature still
+    // works if the default spin half-window is later reduced.
+    const initial = await spinCells(0.2)
+    const ring = await spinCells(0.4, 0.2)
+    const full = await spinCells(0.4)
+
+    for (const key of ring) expect(initial.has(key)).to.equal(false)
+    expect(initial.size + ring.size).to.equal(full.size)
+  })
+
+  it("evaluates nothing once the inner window already covers the disk", async () => {
+    // Inner half-window 0.45 boxes the entire off-centre disk, so no ring remains
+    // — this is the page's "whole ball covered" signal (result.evaluated === 0).
+    let evaluated = 0
+    const res = await runSensitivityAnalysis({
+      balls: BALLS,
+      cueBallId: 0,
+      baseShot: SEED,
+      ruleType: "threecushion",
+      cushionModel: "mathavan",
+      selectedParams: ["offsetX", "offsetY"],
+      poolSize: 4,
+      scorer: async () => true,
+      spinHalfWindow: 0.7,
+      spinInnerHalfWindow: offCenterLimit,
+      onEvaluate: () => {
+        evaluated++
+      },
+    })
+    expect(evaluated).to.equal(0)
+    expect(res.evaluated).to.equal(0)
+  })
+})

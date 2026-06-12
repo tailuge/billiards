@@ -9,11 +9,12 @@
  */
 import { offCenterLimit, R } from "./model/physics/constants"
 import {
+  DEFAULT_SPIN_HALF_WINDOW,
   ParamKey,
   ParamRange,
+  SPIN_EXPAND_STEP,
   Scorer,
   ShotParams,
-  SensitivityResult,
   WorkerPool,
   buildWorkerConfig,
   firstContactDistance,
@@ -103,11 +104,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const barsEl = $("bars")
   const stopBtn = $<HTMLButtonElement>("stop")
   const csvBtn = $<HTMLButtonElement>("csv")
+  const expandBtn = $<HTMLButtonElement>("expandRange")
 
   const signal = { aborted: false }
   const spinPoints: EvalPoint[] = []
   const oneDResults: OneDResult[] = []
   let csvRows: string[] = []
+  // Current outer half-window of the spin scan. Seeded from the engine's default
+  // (never a hard-coded literal) so it stays in lock-step with the initial scan;
+  // each "Expand range" click grows it by SPIN_EXPAND_STEP.
+  let spinWindow = DEFAULT_SPIN_HALF_WINDOW
   const hasResults = () => spinPoints.length > 0 || oneDResults.length > 0
 
   describeSeed(statusEl, seed)
@@ -120,6 +126,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
   csvBtn.addEventListener("click", () => {
     downloadCsv(`shot-analysis-${Date.now()}.csv`, csvRows.join("\n"))
+  })
+
+  /** Scan only the new annular ring between half-windows `inner` and `outer`,
+   * appending its points to the existing scatter. Returns how many cells were
+   * evaluated (0 once the whole off-centre disk is already covered). A fresh pool
+   * is spawned and torn down per call, matching the initial scan's pattern. */
+  async function runSpinExpansion(
+    inner: number,
+    outer: number
+  ): Promise<number> {
+    signal.aborted = false
+    const cores =
+      (typeof navigator !== "undefined" && navigator.hardwareConcurrency) || 4
+    const pool = new WorkerPool(cores, "worker.js")
+    const scorer: Scorer = async (shot) => {
+      const result = await pool.run(
+        buildWorkerConfig(
+          seed!.balls,
+          seed!.cueBallId,
+          shot,
+          seed!.ruleType,
+          seed!.cushionModel
+        )
+      )
+      return isThreeCushionScored(result.outcomes, seed!.cueBallId)
+    }
+    try {
+      const result = await runSensitivityAnalysis({
+        balls: seed!.balls,
+        cueBallId: seed!.cueBallId,
+        baseShot: seed!.shot,
+        ruleType: seed!.ruleType,
+        cushionModel: seed!.cushionModel,
+        selectedParams: ["offsetX", "offsetY"],
+        poolSize: cores,
+        scorer,
+        signal,
+        spinHalfWindow: outer,
+        spinInnerHalfWindow: inner,
+        onEvaluate: (shot, scored) => {
+          csvRows.push(
+            `spin,cell,${scored ? "success" : "fail"},${shot.angle},${shot.power},${shot.offsetX},${shot.offsetY},${shot.elevation}`
+          )
+          spinPoints.push({ shot, scored })
+        },
+        onProgress: (evaluated) => {
+          if (evaluated % 10 === 0) drawPlot(canvas, seed!, spinPoints)
+        },
+      })
+      drawPlot(canvas, seed!, spinPoints)
+      renderSpinSummary(summaryEl, spinPoints)
+      csvBtn.disabled = !hasResults()
+      return result.evaluated
+    } finally {
+      pool.terminate()
+    }
+  }
+
+  expandBtn.addEventListener("click", async () => {
+    expandBtn.disabled = true
+    statusEl.textContent = "Expanding spin range…"
+    try {
+      const evaluated = await runSpinExpansion(
+        spinWindow,
+        spinWindow + SPIN_EXPAND_STEP
+      )
+      if (evaluated === 0) {
+        // The widened window already encloses the whole off-centre disk — there
+        // is nothing left to scan, so leave the button disabled for good.
+        statusEl.textContent = "Whole ball covered — no wider spin to scan."
+      } else {
+        spinWindow += SPIN_EXPAND_STEP
+        expandBtn.disabled = false
+        statusEl.textContent = `Spin range expanded to ±${spinWindow.toFixed(2)}.`
+      }
+    } catch (err) {
+      statusEl.textContent = `Error: ${(err as Error)?.message ?? err}`
+      expandBtn.disabled = false
+    }
   })
 
   /** Run one analysis on the shared pool and render its result in place. */
@@ -159,7 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isSpin) {
       drawPlot(canvas, seed!, spinPoints)
-      renderSummary(summaryEl, result)
+      renderSpinSummary(summaryEl, spinPoints)
     } else {
       oneDResults.push({
         range: result.ranges[0],
@@ -238,6 +323,8 @@ document.addEventListener("DOMContentLoaded", () => {
       pool.terminate()
       stopBtn.disabled = true
       csvBtn.disabled = !hasResults()
+      // "Expand range" becomes available once the spin scan has produced points.
+      expandBtn.disabled = spinPoints.length === 0
     }
   }
 
@@ -361,14 +448,18 @@ function drawPlot(
   ctx.textAlign = "left"
 }
 
-function renderSummary(el: HTMLElement, result: SensitivityResult) {
-  if (result.scoredCount === 0) {
+/** Cumulative summary over every spin point scanned so far (initial scan plus
+ * any "Expand range" rings), so the count keeps growing as the window widens. */
+function renderSpinSummary(el: HTMLElement, points: EvalPoint[]) {
+  const total = points.length
+  const scored = points.filter((p) => p.scored).length
+  if (scored === 0) {
     el.innerHTML = "No scoring variations found in the scanned window."
     return
   }
   el.innerHTML =
-    `${result.scoredCount} of ${result.evaluated} variations score ` +
-    `(${((100 * result.scoredCount) / Math.max(1, result.evaluated)).toFixed(0)}%).`
+    `${scored} of ${total} variations score ` +
+    `(${((100 * scored) / Math.max(1, total)).toFixed(0)}%).`
 }
 
 const BAR_OK = "#2ec27e"

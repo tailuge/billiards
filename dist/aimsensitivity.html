@@ -252,6 +252,27 @@
         color: var(--fail);
         font-size: 15px;
       }
+      /* Anchors the "Expand range" button to the scatter's lower-right corner. */
+      .plot-wrap {
+        position: relative;
+        display: inline-block;
+        max-width: 100%;
+      }
+      .expand-range {
+        position: absolute;
+        right: 10px;
+        bottom: 14px;
+        width: auto;
+        margin-top: 0;
+        padding: 8px 14px;
+        font-size: 14px;
+        /* Muted billiards-felt teal — sits in the dark UI without shouting. */
+        background: #2f7d6e;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+      }
+      .expand-range:hover:not(:disabled) {
+        background: #3a988e;
+      }
     </style>
   </head>
   <body>
@@ -278,7 +299,12 @@
             <span class="fail">misses</span>
             <span class="original">original shot</span>
           </div>
-          <canvas id="plot" width="460" height="460"></canvas>
+          <div class="plot-wrap">
+            <canvas id="plot" width="460" height="460"></canvas>
+            <button id="expandRange" class="expand-range" disabled>
+              Expand range
+            </button>
+          </div>
           <div class="summary" id="summary"></div>
         </div>
 

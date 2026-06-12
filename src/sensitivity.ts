@@ -353,6 +353,16 @@ const ONE_D_STEPS_EACH_SIDE = 10
  * (e.g. an unbounded scoring region in an unclamped dimension). Not a cost cap. */
 const MAX_CELLS = 200_000
 
+/** Default half-window for the 2-D spin scan (offsetX/offsetY). Single source of
+ * truth: the engine seeds the grid from it and the analysis page seeds its
+ * "Expand range" state from it, so the initial scan's reach and the first
+ * expansion's inner boundary can never drift apart. */
+export const DEFAULT_SPIN_HALF_WINDOW = 0.3
+
+/** How much the spin half-window grows per "Expand range" click. Independent of
+ * the default, so the increment is the same wherever the scan starts. */
+export const SPIN_EXPAND_STEP = 0.2
+
 /** Per-parameter grid axis: a step, physical clamp bounds, and how many steps to
  * scan on each side of the seed (the seed value is the grid origin, index 0). */
 export interface AxisSpec {
@@ -444,7 +454,8 @@ export function buildAxisSpecs(
   balls: BallPos[],
   cueBallId: number,
   selected: ParamKey[],
-  stepScale = 1
+  stepScale = 1,
+  spinHalfWindow = DEFAULT_SPIN_HALF_WINDOW
 ): AxisSpec[] {
   // Build a spec from a step + a physical half-window. stepScale shrinks the
   // step (finer grid) without changing the window, so finer steps mean more
@@ -502,7 +513,7 @@ export function buildAxisSpecs(
           0.025,
           -offCenterLimit,
           offCenterLimit,
-          0.2
+          spinHalfWindow
         )
       case "offsetY":
         return spec(
@@ -511,7 +522,7 @@ export function buildAxisSpecs(
           0.025,
           -offCenterLimit,
           offCenterLimit,
-          0.2
+          spinHalfWindow
         )
       case "elevation":
         return spec(
@@ -586,6 +597,14 @@ export interface SensitivityOptions {
   selectedParams?: ParamKey[]
   /** Multiplier on every grid step (<1 = finer/denser grid, more sims). */
   stepScale?: number
+  /** Outer half-window for the spin axes (offsetX/offsetY). Defaults to
+   * DEFAULT_SPIN_HALF_WINDOW. Used by "Expand range" to widen the spin scan. */
+  spinHalfWindow?: number
+  /** Inner half-window for the spin axes: cells whose offset lies inside this
+   * box (centred on the seed, both axes) are skipped — they were already scanned
+   * by a previous, narrower run. Lets "Expand range" simulate only the new ring.
+   * Undefined = no exclusion (the initial scan). */
+  spinInnerHalfWindow?: number
   poolSize?: number
   workerUrl?: string
   /** Injectable scorer (tests). When omitted, a fresh worker is used per shot. */
@@ -612,7 +631,8 @@ export async function runSensitivityAnalysis(
     opts.balls,
     opts.cueBallId,
     selected,
-    opts.stepScale ?? 1
+    opts.stepScale ?? 1,
+    opts.spinHalfWindow ?? DEFAULT_SPIN_HALF_WINDOW
   )
   const start = Date.now()
 
@@ -668,7 +688,27 @@ export async function runSensitivityAnalysis(
       }
       cells = next
     }
-    const validCells = cells.filter((c) => isCellValid(opts.baseShot, axes, c))
+    let validCells = cells.filter((c) => isCellValid(opts.baseShot, axes, c))
+
+    // "Expand range": when an inner half-window is given, drop every cell that a
+    // previous, narrower run already scanned — i.e. cells inside the inner box on
+    // both spin axes. The step/2 tolerance absorbs float rounding so a cell that
+    // sat exactly on the previous window edge is reliably treated as done. The
+    // grid is seed-centred with a fixed step, so old and new points share a
+    // lattice and the survivors are exactly the new annular ring.
+    const inner = opts.spinInnerHalfWindow
+    if (inner !== undefined) {
+      const spinAxes = axes
+        .map((a, i) => ({ a, i }))
+        .filter(({ a }) => a.key === "offsetX" || a.key === "offsetY")
+      if (spinAxes.length > 0) {
+        validCells = validCells.filter((c) =>
+          spinAxes.some(
+            ({ a, i }) => Math.abs(c[i] * a.step) > inner + a.step / 2
+          )
+        )
+      }
+    }
 
     // Evaluate the valid cells concurrently across the pool. Each lane pulls the
     // next cell until the grid is exhausted, the user aborts, or one lane errors
