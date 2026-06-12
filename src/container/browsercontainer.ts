@@ -20,10 +20,8 @@ import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
 import { BotRelay } from "../network/bot/botrelay"
 import { ScoreReporter } from "../network/client/scorereporter"
 import { BeginEvent } from "../events/beginevent"
-//import { logNetEvent } from "../utils/event-log"
 import { Logger } from "../network/bot/logger"
 import { getUID } from "../utils/uid"
-import { setmu, setmuS } from "../model/physics/constants"
 import { DrillPanel } from "../view/drillpanel"
 import { applyPhysicsParams } from "../utils/physicsparams"
 
@@ -84,7 +82,8 @@ export class BrowserContainer {
     this.practiceMode = params.get("practice") !== "false"
     this.drillMode = params.has("drill")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
-    ThreeCushionConfig.raceTo = Number.parseInt(params.get("raceTo") ?? "7") || 7
+    ThreeCushionConfig.raceTo =
+      Number.parseInt(params.get("raceTo") ?? "7") || 7
     console.log(
       `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode} practiceMode: ${this.practiceMode} drillMode: ${this.drillMode}`
     )
