@@ -1,0 +1,318 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Common Optimiser</title>
+    <link rel="icon" type="image/png" href="../favicon.png" />
+    <script src="../worker.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 1px;
+        padding: 1px;
+        font-family: monospace;
+        font-size: 11px;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+      }
+      button {
+        padding: 2px 8px;
+        cursor: pointer;
+      }
+      th,
+      td {
+        padding: 2px 4px;
+        text-align: left;
+      }
+      .container {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        max-width: 1200px;
+        width: 100%;
+      }
+      .controls {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .file-list {
+        border: 1px solid #ccc;
+        padding: 5px;
+        max-height: 200px;
+        overflow-y: auto;
+        background: #f9f9f9;
+      }
+      #rmseCanvas {
+        border: 1px solid #c0c0c0;
+        background: white;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      th {
+        background-color: #ddd;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px">Multi-Shot Physics Optimiser</div>
+
+    <div class="container">
+      <div class="controls">
+        <div style="display: flex; gap: 5px; align-items: center">
+          <input type="file" id="fileInput" accept=".json" multiple />
+          <button id="clearBtn">Clear All</button>
+        </div>
+
+        <div class="file-list" id="fileList">
+          <div style="color: #666; padding: 10px">No files loaded. Select multiple JSON files to begin.</div>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px">
+          <label><input type="checkbox" id="trackAll"> track all</label>
+          <select id="optimiserSelect">
+            <option value="nm">Nelder-Mead</option>
+            <option value="pso">PSO</option>
+          </select>
+          <button id="optBtn" disabled>Start Optimisation</button>
+          <button id="stopBtn" disabled>Stop</button>
+        </div>
+
+        <div id="status" style="font-weight: bold; margin-top: 10px">Status: Idle</div>
+        <div id="optStatus">Iterations: 0</div>
+
+        <canvas id="rmseCanvas" width="400" height="150"></canvas>
+        <div id="rmseLabel" style="text-align: center">Global RMSE</div>
+      </div>
+
+      <div style="flex: 1">
+        <table id="paramTable">
+          <thead>
+            <tr>
+              <th>Tune</th>
+              <th>Parameter</th>
+              <th>Min</th>
+              <th>Max</th>
+              <th>Original</th>
+              <th>Current</th>
+            </tr>
+          </thead>
+          <tbody id="paramRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script type="module">
+      import { runOptimiseNM, runOptimisePSO } from "./optimise.js"
+
+      let allData = []
+      let abortController = null
+      let rmseHistory = []
+
+      const fileInput = document.getElementById("fileInput")
+      const fileList = document.getElementById("fileList")
+      const paramRows = document.getElementById("paramRows")
+      const optBtn = document.getElementById("optBtn")
+      const stopBtn = document.getElementById("stopBtn")
+      const status = document.getElementById("status")
+      const optStatus = document.getElementById("optStatus")
+      const rmseCanvas = document.getElementById("rmseCanvas")
+
+      fileInput.onchange = async (e) => {
+        const files = Array.from(e.target.files)
+        if (files.length === 0) return
+
+        status.textContent = "Status: Loading files..."
+
+        for (const file of files) {
+          try {
+            const text = await file.text()
+            const data = JSON.parse(text)
+            if (data.sim && data.truth) {
+              allData.push({ name: file.name, sim: data.sim, truth: data.truth })
+            }
+          } catch (err) {
+            console.error("Failed to load", file.name, err)
+          }
+        }
+
+        updateUI()
+      }
+
+      document.getElementById("clearBtn").onclick = () => {
+        allData = []
+        fileInput.value = ""
+        updateUI()
+      }
+
+      function updateUI() {
+        // Update file list
+        fileList.innerHTML = ""
+        if (allData.length === 0) {
+          fileList.innerHTML = '<div style="color: #666; padding: 10px">No files loaded.</div>'
+          paramRows.innerHTML = ""
+          optBtn.disabled = true
+          return
+        }
+
+        allData.forEach(d => {
+          const div = document.createElement("div")
+          div.textContent = `• ${d.name}`
+          div.style.padding = "2px"
+          fileList.appendChild(div)
+        })
+
+        // Build param table from the first file
+        buildParamRows(allData[0].sim)
+        optBtn.disabled = false
+        status.textContent = `Status: ${allData.length} files loaded`
+      }
+
+      function buildParamRows(sim) {
+        paramRows.innerHTML = ""
+        // Focus on global params, but allow shot params if someone really wants (though risky in multi-shot)
+        const allParams = { ...sim.params }
+
+        for (const [name, val] of Object.entries(allParams)) {
+          const tr = document.createElement("tr")
+          const ranges = {
+            "stronge_omega_ratio": [1.01, 1.99],
+            "stronge_e_n": [0.5, 0.99],
+            "ee": [0.5, 0.99],
+            "throw_factor": [0, 1],
+          }
+          let [min, max] = ranges[name] || [val * 0.5, val * 1.5]
+          if (Math.abs(max - min) < 1e-7) {
+            min = val - 0.1
+            max = val + 0.1
+          }
+
+          tr.innerHTML = `
+            <td><input type="checkbox" data-name="${name}" ${ranges[name] ? 'checked' : ''}></td>
+            <td>${name}</td>
+            <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(3)}" step="any" style="width:60px"></td>
+            <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(3)}" step="any" style="width:60px"></td>
+            <td>${val.toFixed(5)}</td>
+            <td><span id="cur-${name.replace(/\./g, "-")}">${val.toFixed(5)}</span></td>`
+          paramRows.appendChild(tr)
+        }
+      }
+
+      function getSpecs() {
+        const specs = []
+        for (const cb of document.querySelectorAll("#paramRows input[type=checkbox]")) {
+          if (!cb.checked) continue
+          const name = cb.dataset.name
+          const min = parseFloat(document.querySelector(`input[data-role=min][data-name="${name}"]`).value)
+          const max = parseFloat(document.querySelector(`input[data-role=max][data-name="${name}"]`).value)
+          specs.push({ name, min, max })
+        }
+        return specs
+      }
+
+      function updateParamDisplay(name, val) {
+        const el = document.getElementById(`cur-${name.replace(/\./g, "-")}`)
+        if (el) el.textContent = val.toFixed(6)
+      }
+
+      function drawRMSEGraph(canvas, history) {
+        const ctx = canvas.getContext("2d")
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        const valid = history.filter(v => !isNaN(v) && v !== null && v !== Infinity && v > 0)
+        if (valid.length < 2) return
+
+        const logValid = valid.map(v => Math.log(v))
+        const maxLog = Math.max(...logValid)
+        const minLog = Math.min(...logValid)
+        const range = maxLog - minLog || 1
+
+        ctx.beginPath()
+        ctx.strokeStyle = "#007bff"
+        ctx.lineWidth = 2
+        let first = true
+        for (let i = 0; i < history.length; i++) {
+          const v = history[i]
+          if (isNaN(v) || v === null || v === Infinity || v <= 0) continue
+          const x = (i / (history.length - 1)) * canvas.width
+          const y = canvas.height - ((Math.log(v) - minLog) / range) * canvas.height
+          if (first) {
+            ctx.moveTo(x, y)
+            first = false
+          } else ctx.lineTo(x, y)
+        }
+        ctx.stroke()
+      }
+
+      optBtn.onclick = async () => {
+        const specs = getSpecs()
+        if (specs.length === 0) {
+          alert("Please select at least one parameter to tune.")
+          return
+        }
+
+        const trackAll = document.getElementById("trackAll").checked
+        const method = document.getElementById("optimiserSelect").value
+
+        abortController = new AbortController()
+        optBtn.disabled = true
+        stopBtn.disabled = false
+        rmseHistory = []
+        status.textContent = "Status: Optimising..."
+
+        const configs = allData.map(d => d.sim)
+        const truths = allData.map(d => d.truth)
+
+        const onStep = ({ iter, rmse, params }) => {
+          optStatus.textContent = `Iteration ${iter} | Global RMSE: ${(rmse * 100).toFixed(3)}cm`
+          rmseHistory.push(rmse)
+          drawRMSEGraph(rmseCanvas, rmseHistory)
+          for (const [name, val] of Object.entries(params)) {
+            updateParamDisplay(name, val)
+            // Update all local copies of configs so the final result is reflected
+            configs.forEach(c => {
+              if (name.startsWith("shot.")) {
+                // We generally shouldn't be tuning shot params here, but for consistency:
+                const path = name.split(".").slice(1)
+                let curr = c.shot
+                for (let i = 0; i < path.length - 1; i++) curr = curr[path[i]]
+                curr[path[path.length - 1]] = val
+              } else {
+                c.params[name] = val
+              }
+            })
+          }
+        }
+
+        try {
+          const runOptimise = method === "pso" ? runOptimisePSO : runOptimiseNM
+          await runOptimise(configs, truths, specs, onStep, abortController.signal, trackAll)
+          status.textContent = "Status: Finished"
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            status.textContent = "Status: Stopped"
+          } else {
+            status.textContent = `Status: Error - ${err.message}`
+            console.error(err)
+          }
+        }
+
+        optBtn.disabled = false
+        stopBtn.disabled = true
+      }
+
+      stopBtn.onclick = () => {
+        abortController?.abort()
+      }
+    </script>
+  </body>
+</html>
