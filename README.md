@@ -25,7 +25,7 @@ Demos run in all major desktop and mobile browsers and uses WebGL
 * Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
 * Set up trick shots and [practice ⬀](https://billiards.tailuge.workers.dev/practice.html).
 * Tune three cushion [physics ⬀](https://tailuge.github.io/billiards/dist/diagrams/three.html) and [optimise ⬀](https://tailuge.github.io/billiards/dist/fit/viewer.html) parameters
-* Parallel parameter tuning using [web workers ⬀](https://tailuge.github.io/billiards/dist/ww.html).
+* Parallel [parameter ⬀](https://tailuge.github.io/billiards/dist/fit/common.html) tuning using [web workers ⬀](https://tailuge.github.io/billiards/dist/ww.html).
 * Three cushion trainer and [sensitivity analysis ⬀](https://velikodimov.github.io/billiards/dist/index.html?ruletype=threecushion&practice&drill) from an excellent [fork ⬀](https://github.com/velikodimov/billiards) of this project.
 
 ## Features

@@ -17,33 +17,32 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 10px;
       }
       button {
-        padding: 2px 8px;
+        padding: 2px 1px;
         cursor: pointer;
       }
       th,
       td {
-        padding: 2px 4px;
+        padding: 1px 1px;
         text-align: left;
       }
       .container {
         display: flex;
-        gap: 20px;
+        gap: 4px;
         align-items: flex-start;
-        max-width: 1200px;
+        max-width: 1000px;
         width: 100%;
       }
       .controls {
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 2px;
       }
       .file-list {
         border: 1px solid #ccc;
-        padding: 5px;
+        padding: 1px;
         max-height: 200px;
         overflow-y: auto;
         background: #f9f9f9;
@@ -65,11 +64,11 @@
     </style>
   </head>
   <body>
-    <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px">Multi-Shot Physics Optimiser</div>
+    <div style="font-size: 14px; font-weight: bold; margin-bottom: 2px">Multi-Shot Physics Optimiser</div>
 
     <div class="container">
       <div class="controls">
-        <div style="display: flex; gap: 5px; align-items: center">
+        <div style="display: flex; gap: 1px; align-items: center">
           <button id="loadBtn">Load Selected</button>
           <button id="clearBtn">Clear All</button>
         </div>
@@ -91,7 +90,7 @@
           <label><input type="checkbox" value="shot729.json"> shot729</label><br>
         </div>
 
-        <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px">
+        <div style="display: flex; gap: 2px; align-items: center; margin-top: 2px">
           <label><input type="checkbox" id="trackAll"> track all</label>
           <select id="optimiserSelect">
             <option value="nm">Nelder-Mead</option>
@@ -101,10 +100,10 @@
           <button id="stopBtn" disabled>Stop</button>
         </div>
 
-        <div id="status" style="font-weight: bold; margin-top: 10px">Status: Idle</div>
+        <div id="status" style="font-weight: bold; margin-top: 2px">Status: Idle</div>
         <div id="optStatus">Iterations: 0</div>
 
-        <canvas id="rmseCanvas" width="400" height="150"></canvas>
+        <canvas id="rmseCanvas" width="300" height="100"></canvas>
         <div id="rmseLabel" style="text-align: center">Global RMSE</div>
       </div>
 
@@ -125,7 +124,7 @@
       </div>
     </div>
 
-    <div id="plotContainer" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; width: 100%; justify-content: center;"></div>
+    <div id="plotContainer" style="display: flex; flex-wrap: wrap; gap: 2px; margin-top: 2px; width: 100%; justify-content: center;"></div>
 
     <script type="module">
       import { runSim } from "./sim.js"
@@ -166,6 +165,7 @@
         }
 
         updateUI()
+        await plotAllData()
       }
 
       document.getElementById("clearBtn").onclick = () => {
@@ -186,6 +186,26 @@
         buildParamRows(allData[0].sim)
         optBtn.disabled = false
         status.textContent = `Status: ${allData.length} files loaded`
+      }
+
+      async function plotAllData() {
+        const trackAll = document.getElementById("trackAll").checked
+        plotContainer.innerHTML = ""
+        for (const d of allData) {
+          const res = await runSim(d.sim, d.truth, trackAll)
+          const wrapper = document.createElement("div")
+          wrapper.style.textAlign = "center"
+          const label = document.createElement("div")
+          label.textContent = d.name
+          const canvas = document.createElement("canvas")
+          canvas.width = 300
+          canvas.height = 150
+          canvas.style.border = "1px solid #ccc"
+          wrapper.appendChild(label)
+          wrapper.appendChild(canvas)
+          plotContainer.appendChild(wrapper)
+          redraw(canvas, d.truth, res.simTracks, res.simStep, trackAll)
+        }
       }
 
       function buildParamRows(sim) {
@@ -308,23 +328,8 @@
           await runOptimise(configs, truths, specs, onStep, abortController.signal, trackAll)
           status.textContent = "Status: Finished"
 
-          // Final plotting
-          plotContainer.innerHTML = ""
-          for (const d of allData) {
-            const res = await runSim(d.sim, d.truth, trackAll)
-            const wrapper = document.createElement("div")
-            wrapper.style.textAlign = "center"
-            const label = document.createElement("div")
-            label.textContent = d.name
-            const canvas = document.createElement("canvas")
-            canvas.width = 300
-            canvas.height = 150
-            canvas.style.border = "1px solid #ccc"
-            wrapper.appendChild(label)
-            wrapper.appendChild(canvas)
-            plotContainer.appendChild(wrapper)
-            redraw(canvas, d.truth, res.simTracks, res.simStep, trackAll)
-          }
+          // Final plotting with optimised parameters
+          await plotAllData()
         } catch (err) {
           if (err.name === 'AbortError') {
             status.textContent = "Status: Stopped"
