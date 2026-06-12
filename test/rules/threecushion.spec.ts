@@ -24,7 +24,7 @@ describe("ThreeCushion", () => {
   const rule = "threecushion"
 
   beforeEach(function (done) {
-    Session.init("test-client", "TestPlayer", "test-table", false)
+    Session.init("test-client", "TestPlayer", "test-table", false, false, true)
     container = new Container({
       element: undefined,
       log: (_) => {},
@@ -233,6 +233,37 @@ describe("ThreeCushion", () => {
       ])
       expect(score1).to.equal(1)
     })
+
+    it("returns 1 when three-cushion point scored and practice mode is false", () => {
+      Session.reset()
+      Session.init(
+        "test-client",
+        "TestPlayer",
+        "test-table",
+        false,
+        false,
+        false
+      )
+      const balls = container.table.balls
+      const R = require("../../src/model/physics/constants").R
+      const outcome: Outcome[] = [
+        Outcome.collision(balls[0], balls[1], 1),
+        Outcome.cushion(balls[0], 1),
+        Outcome.cushion(balls[0], 1),
+        Outcome.cushion(balls[0], 1),
+        Outcome.proximity(balls[0], balls[2], 1.5 * R, 1),
+      ]
+      expect(container.rules.getAmountScored(outcome)).to.equal(1)
+    })
+  })
+
+  it("ThreeCushion proximityEnabled is false when practice mode is false", (done) => {
+    Session.reset()
+    Session.init("test-client", "TestPlayer", "test-table", false, false, false)
+    const rules = RuleFactory.create(rule, container)
+    const table = rules.table()
+    expect(table.proximityEnabled).to.be.false
+    done()
   })
 
   it("ThreeCushion otherPlayersCueBall and nextCandidateBall", (done) => {

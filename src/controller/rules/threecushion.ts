@@ -70,7 +70,7 @@ export class ThreeCushion implements Rules {
     this.tableGeometry()
     CameraTop.zoomFactor = 0.92
     const table = new Table(this.rack())
-    table.proximityEnabled = true
+    table.proximityEnabled = Session.isPracticeMode()
     this.cueball = table.cueball
     return table
   }
@@ -149,6 +149,9 @@ export class ThreeCushion implements Rules {
   getAmountScored(outcome: Outcome[]): number {
     if (!Outcome.isThreeCushionPoint(this.cueball, outcome)) {
       return 0
+    }
+    if (!Session.isPracticeMode()) {
+      return 1
     }
     return Outcome.getProximityScore(this.cueball, outcome) || 1
   }
