@@ -2,7 +2,7 @@ import { Table } from "./table"
 import { State } from "./ball"
 import { cueStrike } from "./physics/physics"
 
-export function previewShot(table: Table): boolean {
+export function previewShot(table: Table, dt: number): boolean {
   const saved = table.balls.map((b) => ({
     pos: b.pos.clone(),
     vel: b.vel.clone(),
@@ -27,8 +27,11 @@ export function previewShot(table: Table): boolean {
     cueball.vel.copy(strike.vel)
     cueball.rvel.copy(strike.rvel)
 
-    const dt = 1 / 240
-    for (let i = 0; i < 10000 && !table.allStationary(); i++) {
+    // dt is the live game's fixed physics step (Container.step), so the
+    // previewed trajectory reproduces the actual shot exactly — a coarser step
+    // resolves collisions early and diverges over multi-cushion shots.
+    const maxSteps = Math.ceil(42 / dt) // cap simulated duration (~42s), step-agnostic
+    for (let i = 0; i < maxSteps && !table.allStationary(); i++) {
       table.advance(dt)
       table.updateBallMesh(dt)
     }

@@ -96,7 +96,7 @@ export class DrillPanel {
     this.previewBtn.addEventListener("click", () => {
       if (this.previewActive) {
         this.hidePreview()
-      } else if (previewShot(this.container.table)) {
+      } else if (previewShot(this.container.table, this.container.step)) {
         const aim = this.container.table.cue.aim
         this.previewAimSnapshot = {
           angle: aim.angle,
@@ -219,7 +219,7 @@ export class DrillPanel {
   private runPendingPreview() {
     this.pendingPreview = false
     this.aimStableTime = 0
-    if (previewShot(this.container.table)) {
+    if (previewShot(this.container.table, this.container.step)) {
       const aim = this.container.table.cue.aim
       this.previewAimSnapshot = {
         angle: aim.angle,
