@@ -57,7 +57,10 @@ export class Init extends ControllerBase {
       )
       return new Aim(this.container)
     }
-    return this.container.rules.initialController?.() ?? new PlaceBall(this.container)
+    return (
+      this.container.rules.initialController?.() ??
+      new PlaceBall(this.container)
+    )
   }
 
   override handleWatch(event: WatchEvent): Controller {
@@ -94,6 +97,9 @@ export class Init extends ControllerBase {
       )
       return new Aim(this.container)
     }
-    return this.container.rules.initialController?.() ?? new PlaceBall(this.container)
+    return (
+      this.container.rules.initialController?.() ??
+      new PlaceBall(this.container)
+    )
   }
 }

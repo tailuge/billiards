@@ -12,7 +12,13 @@ const seed: AnalysisSeed = {
     { id: 2, pos: { x: 0.7, y: 0.0, z: 0 } },
   ],
   cueBallId: 0,
-  shot: { angle: 1.234, power: 3.406, offsetX: -0.1, offsetY: 0.2, elevation: 0 },
+  shot: {
+    angle: 1.234,
+    power: 3.406,
+    offsetX: -0.1,
+    offsetY: 0.2,
+    elevation: 0,
+  },
   ruleType: "threecushion",
   cushionModel: "mathavan",
 }

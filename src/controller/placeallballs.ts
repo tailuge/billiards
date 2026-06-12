@@ -63,7 +63,9 @@ export class PlaceAllBalls extends ControllerBase {
       )
       this.raycaster.setFromCamera(ndc, camera)
       const hit = new Vector3()
-      return this.raycaster.ray.intersectPlane(this.tablePlane, hit) ? hit : null
+      return this.raycaster.ray.intersectPlane(this.tablePlane, hit)
+        ? hit
+        : null
     }
 
     const onPointerDown = (e: PointerEvent) => {
@@ -97,7 +99,9 @@ export class PlaceAllBalls extends ControllerBase {
 
     const stopDrag = (e: PointerEvent) => {
       this.isDragging = false
-      try { canvas.releasePointerCapture(e.pointerId) } catch (_) {}
+      try {
+        canvas.releasePointerCapture(e.pointerId)
+      } catch (_) {}
     }
 
     canvas.addEventListener("pointerdown", onPointerDown)

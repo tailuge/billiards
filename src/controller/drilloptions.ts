@@ -33,11 +33,9 @@ export class DrillOptions extends ControllerBase {
         const recorder = this.container.recorder
         const last = recorder.last()
         if (last >= 0) {
-          return new DrillReplay(
-            this.container,
-            this.preShotState,
-            [recorder.entries[last].event]
-          )
+          return new DrillReplay(this.container, this.preShotState, [
+            recorder.entries[last].event,
+          ])
         }
         return this
       }

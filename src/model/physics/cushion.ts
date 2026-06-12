@@ -25,8 +25,12 @@ export class Cushion {
       if (overX > 0 && overY > 0) {
         const dir =
           overX >= overY
-            ? futurePosition.x > 0 ? 0 : Math.PI
-            : futurePosition.y > 0 ? -Math.PI / 2 : Math.PI / 2
+            ? futurePosition.x > 0
+              ? 0
+              : Math.PI
+            : futurePosition.y > 0
+              ? -Math.PI / 2
+              : Math.PI / 2
         return Cushion.bounceIn(dir, ball, cushionModel)
       }
     }

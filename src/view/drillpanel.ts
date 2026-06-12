@@ -58,7 +58,8 @@ export class DrillPanel {
         const aim = this.container.table.cue.aim
         if (prevAim.angle !== undefined) aim.angle = prevAim.angle
         if (prevAim.power !== undefined) aim.power = prevAim.power
-        if (prevAim.offset) aim.offset.set(prevAim.offset.x ?? 0, prevAim.offset.y ?? 0, 0)
+        if (prevAim.offset)
+          aim.offset.set(prevAim.offset.x ?? 0, prevAim.offset.y ?? 0, 0)
         if (prevAim.elevation !== undefined) aim.elevation = prevAim.elevation
         this.container.table.cue.updateAimInput()
       }
@@ -227,7 +228,8 @@ export class DrillPanel {
     // button's raised position depends on --ball-size-base (smaller on mobile),
     // so measure it at runtime instead of hard-coding an offset.
     const tilt = document.getElementById("tiltSliderContainer")
-    const elevationOpen = !!tilt && !(tilt as HTMLElement & { hidden: boolean }).hidden
+    const elevationOpen =
+      !!tilt && !(tilt as HTMLElement & { hidden: boolean }).hidden
     this.centerPanel.classList.toggle("elevation-open", elevationOpen)
     const hit = document.getElementById("cueHit")
     const offsetParent = this.centerPanel.offsetParent as HTMLElement | null
@@ -258,11 +260,13 @@ export class DrillPanel {
       !stationary || isPlacing || isReplaying || this.previewActive
     this.retryBtn.disabled = !isAiming || !hasPreShot
     this.replayBtn.disabled = !isAiming || !hasLastShot
-    this.switchBallBtn.disabled = !isAiming || (!hasPreShot && !this.ballsWerePlaced)
+    this.switchBallBtn.disabled =
+      !isAiming || (!hasPreShot && !this.ballsWerePlaced)
     this.previewBtn.disabled = !isAiming
     // Only meaningful right after a shot that actually scored: in drill mode a
     // scoring shot increments the break, a miss resets it to 0.
-    this.analyseBtn.disabled = !isAiming || !hasLastShot || drill.currentBreak <= 0
+    this.analyseBtn.disabled =
+      !isAiming || !hasLastShot || drill.currentBreak <= 0
 
     if (this.previewActive) {
       if (!isAiming) {

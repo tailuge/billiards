@@ -45,7 +45,11 @@ function run(
 
 describe("buildAxisSpecs", () => {
   it("uses fixed steps and physical clamps for spin/elevation", () => {
-    const axes = buildAxisSpecs(SEED, BALLS, 0, ["offsetX", "offsetY", "elevation"])
+    const axes = buildAxisSpecs(SEED, BALLS, 0, [
+      "offsetX",
+      "offsetY",
+      "elevation",
+    ])
 
     const ox = axes.find((a) => a.key === "offsetX")!
     expect(ox.step).to.equal(0.025)
@@ -130,14 +134,26 @@ describe("runSensitivityAnalysis (full grid scan)", () => {
   it("finer stepScale yields more cells over the same physical window", async () => {
     const phys = (s: ShotParams) => Math.abs(s.power - SEED.power) <= 0.2
     const coarse = await runSensitivityAnalysis({
-      balls: BALLS, cueBallId: 0, baseShot: SEED, ruleType: "threecushion",
-      cushionModel: "mathavan", selectedParams: ["power"], poolSize: 4,
-      scorer: async (s) => phys(s), stepScale: 1,
+      balls: BALLS,
+      cueBallId: 0,
+      baseShot: SEED,
+      ruleType: "threecushion",
+      cushionModel: "mathavan",
+      selectedParams: ["power"],
+      poolSize: 4,
+      scorer: async (s) => phys(s),
+      stepScale: 1,
     })
     const fine = await runSensitivityAnalysis({
-      balls: BALLS, cueBallId: 0, baseShot: SEED, ruleType: "threecushion",
-      cushionModel: "mathavan", selectedParams: ["power"], poolSize: 4,
-      scorer: async (s) => phys(s), stepScale: 0.25,
+      balls: BALLS,
+      cueBallId: 0,
+      baseShot: SEED,
+      ruleType: "threecushion",
+      cushionModel: "mathavan",
+      selectedParams: ["power"],
+      poolSize: 4,
+      scorer: async (s) => phys(s),
+      stepScale: 0.25,
     })
     expect(fine.scoredCount).to.be.greaterThan(coarse.scoredCount)
   })
@@ -149,7 +165,9 @@ describe("runSensitivityAnalysis (full grid scan)", () => {
     const res = await run(["offsetX", "offsetY"], () => true, base)
     expect(res.scoredCount).to.be.greaterThan(0)
     for (const p of res.scoringPoints) {
-      expect(Math.hypot(p.offsetX, p.offsetY)).to.be.at.most(offCenterLimit + 1e-9)
+      expect(Math.hypot(p.offsetX, p.offsetY)).to.be.at.most(
+        offCenterLimit + 1e-9
+      )
     }
   })
 

@@ -29,7 +29,10 @@ export function encodeAnalysisSeed(seed: AnalysisSeed): string {
 }
 
 /** Full `aimsensitivity.html?init=...` URL for a seed. */
-export function buildAnalysisUrl(seed: AnalysisSeed, page = ANALYSIS_PAGE): string {
+export function buildAnalysisUrl(
+  seed: AnalysisSeed,
+  page = ANALYSIS_PAGE
+): string {
   return `${page}?init=${encodeAnalysisSeed(seed)}`
 }
 

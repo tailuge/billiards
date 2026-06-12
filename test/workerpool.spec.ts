@@ -15,13 +15,22 @@ class FakeWorker implements WorkerLike {
 
   postMessage(data: any): void {
     FakeWorker.active++
-    FakeWorker.maxConcurrent = Math.max(FakeWorker.maxConcurrent, FakeWorker.active)
+    FakeWorker.maxConcurrent = Math.max(
+      FakeWorker.maxConcurrent,
+      FakeWorker.active
+    )
     setTimeout(() => {
       // CHECKPOINT must be ignored by the pool.
-      this.onmessage?.({ data: { type: "CHECKPOINT", label: "x" } } as MessageEvent)
+      this.onmessage?.({
+        data: { type: "CHECKPOINT", label: "x" },
+      } as MessageEvent)
       FakeWorker.active-- // this job is finishing before we hand back the result
       this.onmessage?.({
-        data: { type: "COMPLETE", id: data.id, outcomes: [{ type: "echo", speed: data.shot.power }] },
+        data: {
+          type: "COMPLETE",
+          id: data.id,
+          outcomes: [{ type: "echo", speed: data.shot.power }],
+        },
       } as MessageEvent)
     }, 1)
   }

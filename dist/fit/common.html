@@ -64,7 +64,9 @@
     </style>
   </head>
   <body>
-    <div style="font-size: 14px; font-weight: bold; margin-bottom: 2px">Multi-Shot Physics Optimiser</div>
+    <div style="font-size: 14px; font-weight: bold; margin-bottom: 2px">
+      Multi-Shot Physics Optimiser
+    </div>
 
     <div class="container">
       <div class="controls">
@@ -74,24 +76,62 @@
         </div>
 
         <div class="file-list" id="fileList">
-          <label><input type="checkbox" value="SS_max_spin_02.json"> SS_max_spin_02</label><br>
-          <label><input type="checkbox" value="SS_max_spin_02_stronge.json"> SS_max_spin_02_stronge</label><br>
-          <label><input type="checkbox" value="SS_max_spin_03.json"> SS_max_spin_03</label><br>
-          <label><input type="checkbox" value="SS_max_spin_05.json"> SS_max_spin_05</label><br>
-          <label><input type="checkbox" value="SS_max_spin_06.json"> SS_max_spin_06</label><br>
-          <label><input type="checkbox" value="simple_shot_545599.json"> simple_shot_545599</label><br>
-          <label><input type="checkbox" value="simple_shot_545599_mathavan.json"> simple_shot_545599_mathavan</label><br>
-          <label><input type="checkbox" value="simple_shot_545599_stronge.json"> simple_shot_545599_stronge</label><br>
-          <label><input type="checkbox" value="simple_shot_545600.json"> simple_shot_545600</label><br>
-          <label><input type="checkbox" value="simple_shot_545600_stronge.json"> simple_shot_545600_stronge</label><br>
-          <label><input type="checkbox" value="simple_shot_545600_mathavan.json"> simple_shot_545600_mathavan</label><br>
-          <label><input type="checkbox" value="shot34.json"> shot34</label><br>
-          <label><input type="checkbox" value="shot675.json"> shot675</label><br>
-          <label><input type="checkbox" value="shot729.json"> shot729</label><br>
+          <label
+            ><input type="checkbox" value="SS_max_spin_02.json" />
+            SS_max_spin_02</label
+          ><br />
+          <label
+            ><input type="checkbox" value="SS_max_spin_02_stronge.json" />
+            SS_max_spin_02_stronge</label
+          ><br />
+          <label
+            ><input type="checkbox" value="SS_max_spin_03.json" />
+            SS_max_spin_03</label
+          ><br />
+          <label
+            ><input type="checkbox" value="SS_max_spin_05.json" />
+            SS_max_spin_05</label
+          ><br />
+          <label
+            ><input type="checkbox" value="SS_max_spin_06.json" />
+            SS_max_spin_06</label
+          ><br />
+          <label
+            ><input type="checkbox" value="simple_shot_545599.json" />
+            simple_shot_545599</label
+          ><br />
+          <label
+            ><input type="checkbox" value="simple_shot_545599_mathavan.json" />
+            simple_shot_545599_mathavan</label
+          ><br />
+          <label
+            ><input type="checkbox" value="simple_shot_545599_stronge.json" />
+            simple_shot_545599_stronge</label
+          ><br />
+          <label
+            ><input type="checkbox" value="simple_shot_545600.json" />
+            simple_shot_545600</label
+          ><br />
+          <label
+            ><input type="checkbox" value="simple_shot_545600_stronge.json" />
+            simple_shot_545600_stronge</label
+          ><br />
+          <label
+            ><input type="checkbox" value="simple_shot_545600_mathavan.json" />
+            simple_shot_545600_mathavan</label
+          ><br />
+          <label><input type="checkbox" value="shot34.json" /> shot34</label
+          ><br />
+          <label><input type="checkbox" value="shot675.json" /> shot675</label
+          ><br />
+          <label><input type="checkbox" value="shot729.json" /> shot729</label
+          ><br />
         </div>
 
-        <div style="display: flex; gap: 2px; align-items: center; margin-top: 2px">
-          <label><input type="checkbox" id="trackAll"> track all</label>
+        <div
+          style="display: flex; gap: 2px; align-items: center; margin-top: 2px"
+        >
+          <label><input type="checkbox" id="trackAll" /> track all</label>
           <select id="optimiserSelect">
             <option value="nm">Nelder-Mead</option>
             <option value="pso">PSO</option>
@@ -100,7 +140,9 @@
           <button id="stopBtn" disabled>Stop</button>
         </div>
 
-        <div id="status" style="font-weight: bold; margin-top: 2px">Status: Idle</div>
+        <div id="status" style="font-weight: bold; margin-top: 2px">
+          Status: Idle
+        </div>
         <div id="optStatus">Iterations: 0</div>
 
         <canvas id="rmseCanvas" width="300" height="100"></canvas>
@@ -124,7 +166,17 @@
       </div>
     </div>
 
-    <div id="plotContainer" style="display: flex; flex-wrap: wrap; gap: 2px; margin-top: 2px; width: 100%; justify-content: center;"></div>
+    <div
+      id="plotContainer"
+      style="
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+        margin-top: 2px;
+        width: 100%;
+        justify-content: center;
+      "
+    ></div>
 
     <script type="module">
       import { runSim } from "./sim.js"
@@ -146,7 +198,9 @@
       const plotContainer = document.getElementById("plotContainer")
 
       loadBtn.onclick = async () => {
-        const checked = Array.from(fileList.querySelectorAll("input[type=checkbox]:checked")).map(cb => cb.value)
+        const checked = Array.from(
+          fileList.querySelectorAll("input[type=checkbox]:checked")
+        ).map((cb) => cb.value)
         if (checked.length === 0) return
 
         status.textContent = "Status: Loading files..."
@@ -170,7 +224,9 @@
 
       document.getElementById("clearBtn").onclick = () => {
         allData = []
-        Array.from(fileList.querySelectorAll("input[type=checkbox]")).forEach(cb => cb.checked = false)
+        Array.from(fileList.querySelectorAll("input[type=checkbox]")).forEach(
+          (cb) => (cb.checked = false)
+        )
         updateUI()
       }
 
@@ -216,10 +272,10 @@
         for (const [name, val] of Object.entries(allParams)) {
           const tr = document.createElement("tr")
           const ranges = {
-            "stronge_omega_ratio": [1.01, 1.99],
-            "stronge_e_n": [0.5, 0.99],
-            "ee": [0.5, 0.99],
-            "throw_factor": [0, 1],
+            stronge_omega_ratio: [1.01, 1.99],
+            stronge_e_n: [0.5, 0.99],
+            ee: [0.5, 0.99],
+            throw_factor: [0, 1],
           }
           let [min, max] = ranges[name] || [val * 0.5, val * 1.5]
           if (Math.abs(max - min) < 1e-7) {
@@ -228,7 +284,7 @@
           }
 
           tr.innerHTML = `
-            <td><input type="checkbox" data-name="${name}" ${ranges[name] ? 'checked' : ''}></td>
+            <td><input type="checkbox" data-name="${name}" ${ranges[name] ? "checked" : ""}></td>
             <td>${name}</td>
             <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(3)}" step="any" style="width:60px"></td>
             <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(3)}" step="any" style="width:60px"></td>
@@ -240,11 +296,19 @@
 
       function getSpecs() {
         const specs = []
-        for (const cb of document.querySelectorAll("#paramRows input[type=checkbox]")) {
+        for (const cb of document.querySelectorAll(
+          "#paramRows input[type=checkbox]"
+        )) {
           if (!cb.checked) continue
           const name = cb.dataset.name
-          const min = parseFloat(document.querySelector(`input[data-role=min][data-name="${name}"]`).value)
-          const max = parseFloat(document.querySelector(`input[data-role=max][data-name="${name}"]`).value)
+          const min = parseFloat(
+            document.querySelector(`input[data-role=min][data-name="${name}"]`)
+              .value
+          )
+          const max = parseFloat(
+            document.querySelector(`input[data-role=max][data-name="${name}"]`)
+              .value
+          )
           specs.push({ name, min, max })
         }
         return specs
@@ -258,10 +322,12 @@
       function drawRMSEGraph(canvas, history) {
         const ctx = canvas.getContext("2d")
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        const valid = history.filter(v => !isNaN(v) && v !== null && v !== Infinity && v > 0)
+        const valid = history.filter(
+          (v) => !isNaN(v) && v !== null && v !== Infinity && v > 0
+        )
         if (valid.length < 2) return
 
-        const logValid = valid.map(v => Math.log(v))
+        const logValid = valid.map((v) => Math.log(v))
         const maxLog = Math.max(...logValid)
         const minLog = Math.min(...logValid)
         const range = maxLog - minLog || 1
@@ -274,7 +340,8 @@
           const v = history[i]
           if (isNaN(v) || v === null || v === Infinity || v <= 0) continue
           const x = (i / (history.length - 1)) * canvas.width
-          const y = canvas.height - ((Math.log(v) - minLog) / range) * canvas.height
+          const y =
+            canvas.height - ((Math.log(v) - minLog) / range) * canvas.height
           if (first) {
             ctx.moveTo(x, y)
             first = false
@@ -299,8 +366,8 @@
         rmseHistory = []
         status.textContent = "Status: Optimising..."
 
-        const configs = allData.map(d => d.sim)
-        const truths = allData.map(d => d.truth)
+        const configs = allData.map((d) => d.sim)
+        const truths = allData.map((d) => d.truth)
 
         const onStep = ({ iter, rmse, params }) => {
           optStatus.textContent = `Iteration ${iter} | Global RMSE: ${(rmse * 100).toFixed(3)}cm`
@@ -309,7 +376,7 @@
           for (const [name, val] of Object.entries(params)) {
             updateParamDisplay(name, val)
             // Update all local copies of configs so the final result is reflected
-            configs.forEach(c => {
+            configs.forEach((c) => {
               if (name.startsWith("shot.")) {
                 // We generally shouldn't be tuning shot params here, but for consistency:
                 const path = name.split(".").slice(1)
@@ -325,13 +392,20 @@
 
         try {
           const runOptimise = method === "pso" ? runOptimisePSO : runOptimiseNM
-          await runOptimise(configs, truths, specs, onStep, abortController.signal, trackAll)
+          await runOptimise(
+            configs,
+            truths,
+            specs,
+            onStep,
+            abortController.signal,
+            trackAll
+          )
           status.textContent = "Status: Finished"
 
           // Final plotting with optimised parameters
           await plotAllData()
         } catch (err) {
-          if (err.name === 'AbortError') {
+          if (err.name === "AbortError") {
             status.textContent = "Status: Stopped"
           } else {
             status.textContent = `Status: Error - ${err.message}`

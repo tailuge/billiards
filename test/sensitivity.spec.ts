@@ -22,8 +22,10 @@ type Step =
 
 function toSimOutcomes(steps: Step[]): SimOutcome[] {
   return steps.map((s, i) => {
-    if (s.kind === "cushion") return { type: "Cushion", ballA: s.ball, ballB: s.ball, t: i }
-    if (s.kind === "collision") return { type: "Collision", ballA: s.a, ballB: s.b, t: i }
+    if (s.kind === "cushion")
+      return { type: "Cushion", ballA: s.ball, ballB: s.ball, t: i }
+    if (s.kind === "collision")
+      return { type: "Collision", ballA: s.a, ballB: s.b, t: i }
     return { type: "Proximity", ballA: s.a, ballB: s.b, t: i }
   })
 }
@@ -31,14 +33,16 @@ function toSimOutcomes(steps: Step[]): SimOutcome[] {
 function toCanonical(steps: Step[]): { cue: Ball; outcomes: Outcome[] } {
   const balls = new Map<number, Ball>()
   const ball = (id: number) => {
-    if (!balls.has(id)) balls.set(id, new Ball(new Vector3(0, 0, 0), 0xffffff, id))
+    if (!balls.has(id))
+      balls.set(id, new Ball(new Vector3(0, 0, 0), 0xffffff, id))
     return balls.get(id)!
   }
   // ensure cue exists
   ball(CUE)
   const outcomes = steps.map((s, i) => {
     if (s.kind === "cushion") return Outcome.cushion(ball(s.ball), 1, i)
-    if (s.kind === "collision") return Outcome.collision(ball(s.a), ball(s.b), 1, i)
+    if (s.kind === "collision")
+      return Outcome.collision(ball(s.a), ball(s.b), 1, i)
     return Outcome.proximity(ball(s.a), ball(s.b), 0, i)
   })
   return { cue: ball(CUE), outcomes }

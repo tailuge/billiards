@@ -90,7 +90,8 @@ const ANALYSES: { name: string; params: ParamKey[] }[] = [
   { name: "elevation", params: ["elevation"] },
 ]
 
-const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
+const $ = <T extends HTMLElement>(id: string) =>
+  document.getElementById(id) as T
 
 document.addEventListener("DOMContentLoaded", () => {
   const statusEl = $("status")
@@ -390,7 +391,11 @@ function renderBars(el: HTMLElement, results: OneDResult[]) {
 }
 
 export type BarSegment = { w: number; color: string }
-export type BarTick = { pct: number; label: string; align: "start" | "center" | "end" }
+export type BarTick = {
+  pct: number
+  label: string
+  align: "start" | "center" | "end"
+}
 export type BarModel = {
   finite: boolean
   lo: number
@@ -402,7 +407,11 @@ export type BarModel = {
 
 /** Tile [lo, hi] with a green/red segment per evaluated cell (each `step` wide)
  * and neutral grey for any un-scanned stretch. */
-function buildBarSegments(od: OneDResult, lo: number, hi: number): BarSegment[] {
+function buildBarSegments(
+  od: OneDResult,
+  lo: number,
+  hi: number
+): BarSegment[] {
   const segs: BarSegment[] = []
   if (hi <= lo) return segs
   const eps = (hi - lo) * 1e-9 // ignore floating-point slivers between cells
@@ -415,7 +424,8 @@ function buildBarSegments(od: OneDResult, lo: number, hi: number): BarSegment[] 
     const segHi = Math.min(hi, c.value + half)
     const start = Math.max(lo, c.value - half, cursor)
     if (segHi <= start) continue
-    if (start - cursor > eps) segs.push({ w: start - cursor, color: BAR_UNSCANNED })
+    if (start - cursor > eps)
+      segs.push({ w: start - cursor, color: BAR_UNSCANNED })
     segs.push({ w: segHi - start, color: c.scored ? BAR_OK : BAR_FAIL })
     cursor = segHi
   }
@@ -453,7 +463,8 @@ export function computeBarModel(od: OneDResult): BarModel {
   const rawPctOf = (v: number) =>
     span > 0 ? Math.max(0, Math.min(100, ((v - lo) / span) * 100)) : 50
   const pctOf = (v: number) => (mirrored ? 100 - rawPctOf(v) : rawPctOf(v))
-  const valueAtPct = (pct: number) => lo + ((mirrored ? 100 - pct : pct) / 100) * span
+  const valueAtPct = (pct: number) =>
+    lo + ((mirrored ? 100 - pct : pct) / 100) * span
 
   const markerPct = pctOf(r.center)
 

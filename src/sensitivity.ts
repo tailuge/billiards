@@ -141,7 +141,9 @@ export function isThreeCushionScored(
   if (proximity) {
     const collisionCount = new Set(
       cueFirst
-        .filter((o) => o.type === OutcomeType.Collision && o.ballA === cueBallId)
+        .filter(
+          (o) => o.type === OutcomeType.Collision && o.ballA === cueBallId
+        )
         .map((o) => o.ballB)
     ).size
     if (collisionCount === 1 && cushions >= 3) {
@@ -248,14 +250,21 @@ export class WorkerPool {
     }
   }
 
-  private onMessage(slot: { worker: WorkerLike; job: PoolJob | null }, e: MessageEvent) {
+  private onMessage(
+    slot: { worker: WorkerLike; job: PoolJob | null },
+    e: MessageEvent
+  ) {
     const d = e.data
     if (d?.type !== "COMPLETE" && d?.type !== "ERROR") return // ignore CHECKPOINTs
     const job = slot.job
     slot.job = null
     if (job) {
       if (d.type === "COMPLETE") {
-        job.resolve({ id: d.id, outcomes: d.outcomes ?? [], computeTime: d.computeTime })
+        job.resolve({
+          id: d.id,
+          outcomes: d.outcomes ?? [],
+          computeTime: d.computeTime,
+        })
       } else {
         job.reject(new Error(d.error ?? "worker error"))
       }
@@ -263,7 +272,10 @@ export class WorkerPool {
     this.pump()
   }
 
-  private onError(slot: { worker: WorkerLike; job: PoolJob | null }, err: unknown) {
+  private onError(
+    slot: { worker: WorkerLike; job: PoolJob | null },
+    err: unknown
+  ) {
     const job = slot.job
     slot.job = null
     job?.reject(err instanceof Error ? err : new Error(String(err)))
@@ -484,11 +496,32 @@ export function buildAxisSpecs(
         )
       }
       case "offsetX":
-        return spec(key, baseShot.offsetX, 0.025, -offCenterLimit, offCenterLimit, 0.2)
+        return spec(
+          key,
+          baseShot.offsetX,
+          0.025,
+          -offCenterLimit,
+          offCenterLimit,
+          0.2
+        )
       case "offsetY":
-        return spec(key, baseShot.offsetY, 0.025, -offCenterLimit, offCenterLimit, 0.2)
+        return spec(
+          key,
+          baseShot.offsetY,
+          0.025,
+          -offCenterLimit,
+          offCenterLimit,
+          0.2
+        )
       case "elevation":
-        return spec(key, baseShot.elevation, 0.025, 0, (2 * Math.PI) / 5, 0.1745)
+        return spec(
+          key,
+          baseShot.elevation,
+          0.025,
+          0,
+          (2 * Math.PI) / 5,
+          0.1745
+        )
     }
   })
 }
@@ -609,7 +642,10 @@ export async function runSensitivityAnalysis(
 
   const scoring = new Map<string, number[]>() // key -> indices
   let evaluated = 0
-  const concurrency = Math.max(1, opts.scorer ? Math.max(1, poolSize) : poolSize)
+  const concurrency = Math.max(
+    1,
+    opts.scorer ? Math.max(1, poolSize) : poolSize
+  )
 
   try {
     // Guard against an unmanageably large full grid (e.g. fine steps in 5-D).
@@ -684,8 +720,12 @@ export async function runSensitivityAnalysis(
     let scoringMaxIdx = 0
     let hasScoring = false
     for (const indices of scoring.values()) {
-      scoringMinIdx = hasScoring ? Math.min(scoringMinIdx, indices[i]) : indices[i]
-      scoringMaxIdx = hasScoring ? Math.max(scoringMaxIdx, indices[i]) : indices[i]
+      scoringMinIdx = hasScoring
+        ? Math.min(scoringMinIdx, indices[i])
+        : indices[i]
+      scoringMaxIdx = hasScoring
+        ? Math.max(scoringMaxIdx, indices[i])
+        : indices[i]
       hasScoring = true
     }
     return {

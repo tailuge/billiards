@@ -14,14 +14,20 @@ import { ParamRange } from "../src/sensitivity"
  * `scoringMax` are derived from the min/max scored k, mirroring
  * `runSensitivityAnalysis` (center when nothing scored). */
 function sweep(
-  partial: Pick<ParamRange, "key" | "center" | "step" | "physicalMin" | "physicalMax">,
+  partial: Pick<
+    ParamRange,
+    "key" | "center" | "step" | "physicalMin" | "physicalMax"
+  >,
   n: number,
   scoredKs: Set<number>,
   contactDistance?: number
 ): OneDResult {
   const cells: { value: number; scored: boolean }[] = []
   for (let k = -n; k <= n; k++) {
-    cells.push({ value: partial.center + k * partial.step, scored: scoredKs.has(k) })
+    cells.push({
+      value: partial.center + k * partial.step,
+      scored: scoredKs.has(k),
+    })
   }
   const scored = [...scoredKs]
   const scoringMinK = scored.length > 0 ? Math.min(...scored) : 0
@@ -33,7 +39,11 @@ function sweep(
     scoringMin: partial.center + scoringMinK * partial.step,
     scoringMax: partial.center + scoringMaxK * partial.step,
   }
-  return { range, cells, ...(contactDistance !== undefined ? { contactDistance } : {}) }
+  return {
+    range,
+    cells,
+    ...(contactDistance !== undefined ? { contactDistance } : {}),
+  }
 }
 
 const UNSCANNED = "#34343c"
@@ -87,7 +97,13 @@ describe("computeBarModel", () => {
 
   it("elevation (bounded, physical range dwarfs studied window): track shows 2x the studied span, centred on the seed", () => {
     const od = sweep(
-      { key: "elevation", center: 0.5, step: 0.025, physicalMin: 0, physicalMax: (2 * Math.PI) / 5 },
+      {
+        key: "elevation",
+        center: 0.5,
+        step: 0.025,
+        physicalMin: 0,
+        physicalMax: (2 * Math.PI) / 5,
+      },
       7,
       new Set([0, 1, 2, -1])
     )
@@ -103,7 +119,13 @@ describe("computeBarModel", () => {
 
   it("elevation: shown range clamps to the physical lower bound (0) near the seed", () => {
     const od = sweep(
-      { key: "elevation", center: 0.1, step: 0.025, physicalMin: 0, physicalMax: (2 * Math.PI) / 5 },
+      {
+        key: "elevation",
+        center: 0.1,
+        step: 0.025,
+        physicalMin: 0,
+        physicalMax: (2 * Math.PI) / 5,
+      },
       7,
       new Set([0, 1, 2, -1])
     )
@@ -115,7 +137,13 @@ describe("computeBarModel", () => {
 
   it("power (bounded): full physical track with grey outside the studied window", () => {
     const od = sweep(
-      { key: "power", center: 2.57, step: 0.15, physicalMin: 0, physicalMax: 5.24 },
+      {
+        key: "power",
+        center: 2.57,
+        step: 0.15,
+        physicalMin: 0,
+        physicalMax: 5.24,
+      },
       7,
       new Set([0, 1, 2, -1])
     )
@@ -156,7 +184,13 @@ describe("computeBarModel", () => {
 describe("computeBarModel — ruler", () => {
   it("ruler ticks: 5 evenly-spaced positions with formatted values (power, finite axis)", () => {
     const od = sweep(
-      { key: "power", center: 2.57, step: 0.15, physicalMin: 0, physicalMax: 5.24 },
+      {
+        key: "power",
+        center: 2.57,
+        step: 0.15,
+        physicalMin: 0,
+        physicalMax: 5.24,
+      },
       7,
       new Set([0, 1, 2, -1])
     )
@@ -189,28 +223,41 @@ describe("computeBarModel — ruler", () => {
     // Mirrored: the left edge of the bar (pct 0) shows scannedMax, and the
     // right edge (pct 100) shows scannedMin.
     expect(m.ruler[0].label).toBe(
-      formatAngleShift(od.range.scannedMax, od.range.center, od.contactDistance!)
+      formatAngleShift(
+        od.range.scannedMax,
+        od.range.center,
+        od.contactDistance!
+      )
     )
     expect(m.ruler[4].label).toBe(
-      formatAngleShift(od.range.scannedMin, od.range.center, od.contactDistance!)
+      formatAngleShift(
+        od.range.scannedMin,
+        od.range.center,
+        od.contactDistance!
+      )
     )
   })
-
 })
 
 describe("renderOneDBar — DOM additions", () => {
   it("renders 5 ruler ticks with labels below the track", () => {
     const od = sweep(
-      { key: "power", center: 2.57, step: 0.15, physicalMin: 0, physicalMax: 5.24 },
+      {
+        key: "power",
+        center: 2.57,
+        step: 0.15,
+        physicalMin: 0,
+        physicalMax: 5.24,
+      },
       7,
       new Set([0, 1, 2, -1])
     )
     const row = renderOneDBar(od)
     const ticks = row.querySelectorAll(".bar-ruler .bar-tick")
     expect(ticks.length).toBe(5)
-    const labels = Array.from(row.querySelectorAll(".bar-ruler .bar-tick-label")).map(
-      (el) => el.textContent
-    )
+    const labels = Array.from(
+      row.querySelectorAll(".bar-ruler .bar-tick-label")
+    ).map((el) => el.textContent)
     expect(labels[0]).toBe(formatValue("power", 0))
     expect(labels[4]).toBe(formatValue("power", 5.24))
   })
@@ -250,14 +297,19 @@ describe("renderOneDBar — DOM additions", () => {
 
   it("power bar: no 'shifting aim' caption", () => {
     const od = sweep(
-      { key: "power", center: 2.57, step: 0.15, physicalMin: 0, physicalMax: 5.24 },
+      {
+        key: "power",
+        center: 2.57,
+        step: 0.15,
+        physicalMin: 0,
+        physicalMax: 5.24,
+      },
       7,
       new Set([0, 1, 2, -1])
     )
     const row = renderOneDBar(od)
     expect(row.querySelector(".bar-shiftrow")).toBeNull()
   })
-
 })
 
 describe("formatAngleShift", () => {

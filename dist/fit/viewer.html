@@ -29,7 +29,9 @@
     </style>
   </head>
   <body>
-    <div style="font-size: 10px; color: #666">Constants Optimiser - Nelder-Mead / Particle Swarm</div>
+    <div style="font-size: 10px; color: #666">
+      Constants Optimiser - Nelder-Mead / Particle Swarm
+    </div>
     <div
       style="display: flex; gap: 2px; align-items: flex-start; margin-top: 2px"
     >
@@ -47,26 +49,46 @@
           <button id="simBtn" disabled>View Shot</button>
           <input type="file" id="file" accept=".json" style="display: none" />
           <button id="saveBtn" disabled>Save JSON</button>
-          <button onclick="document.getElementById('file').click()">Load</button>
-          <select id="examples" style="font-size: 11px; font-family: monospace; width: 12ch">
+          <button onclick="document.getElementById('file').click()">
+            Load
+          </button>
+          <select
+            id="examples"
+            style="font-size: 11px; font-family: monospace; width: 12ch"
+          >
             <option value="">examples</option>
             <option value="SS_max_spin_02.json">SS_max_spin_02</option>
-            <option value="SS_max_spin_02_stronge.json">SS_max_spin_02_stronge</option>
+            <option value="SS_max_spin_02_stronge.json">
+              SS_max_spin_02_stronge
+            </option>
             <option value="SS_max_spin_03.json">SS_max_spin_03</option>
             <option value="SS_max_spin_05.json">SS_max_spin_05</option>
             <option value="SS_max_spin_06.json">SS_max_spin_06</option>
             <option value="simple_shot_545599.json">simple_shot_545599</option>
-            <option value="simple_shot_545599_mathavan.json">simple_shot_545599_mathavan</option>
-            <option value="simple_shot_545599_stronge.json">simple_shot_545599_stronge</option>
+            <option value="simple_shot_545599_mathavan.json">
+              simple_shot_545599_mathavan
+            </option>
+            <option value="simple_shot_545599_stronge.json">
+              simple_shot_545599_stronge
+            </option>
             <option value="simple_shot_545600.json">simple_shot_545600</option>
-            <option value="simple_shot_545600_stronge.json">simple_shot_545600_stronge</option>
-            <option value="simple_shot_545600_mathavan.json">simple_shot_545600_mathavan</option>
+            <option value="simple_shot_545600_stronge.json">
+              simple_shot_545600_stronge
+            </option>
+            <option value="simple_shot_545600_mathavan.json">
+              simple_shot_545600_mathavan
+            </option>
             <option value="shot34.json">shot34</option>
             <option value="shot675.json">shot675</option>
             <option value="shot729.json">shot729</option>
           </select>
-          <label style="display:flex; align-items:center; gap:1px"><input type="checkbox" id="trackAll">track all</label>
-          <select id="optimiserSelect" style="font-size: 11px; font-family: monospace">
+          <label style="display: flex; align-items: center; gap: 1px"
+            ><input type="checkbox" id="trackAll" />track all</label
+          >
+          <select
+            id="optimiserSelect"
+            style="font-size: 11px; font-family: monospace"
+          >
             <option value="nm">Nelder-Mead</option>
             <option value="pso">PSO</option>
           </select>
@@ -115,7 +137,7 @@
         edit
       </button>
     </div>
-    <pre id="report" style="font-size: 9px; "></pre>
+    <pre id="report" style="font-size: 9px"></pre>
     <script type="module">
       import { runSim } from "./sim.js"
       import { redraw, HALF_W, HALF_H } from "./plot.js"
@@ -192,10 +214,10 @@
             "shot.power": [0.1, 5.25],
             "shot.angle": [-Math.PI * 2, Math.PI * 2],
             "shot.elevation": [0, Math.PI / 4],
-            "stronge_omega_ratio": [1.01,1.99],
-            "stronge_e_n": [0.5,0.99],
-            "ee": [0.5,0.99],
-            "throw_factor": [0, 1],
+            stronge_omega_ratio: [1.01, 1.99],
+            stronge_e_n: [0.5, 0.99],
+            ee: [0.5, 0.99],
+            throw_factor: [0, 1],
           }
           let min, max
           if (ranges[name]) {
@@ -257,7 +279,8 @@
         loadedData = data
         simTracks = null
         rmseHistory = []
-        document.getElementById("rmseLabel").textContent = `RMSE - ${loadedFile ?? ""}`
+        document.getElementById("rmseLabel").textContent =
+          `RMSE - ${loadedFile ?? ""}`
         drawRMSEGraph(document.getElementById("rmseCanvas"), rmseHistory)
         document.getElementById("simEdit").value = JSON.stringify(
           loadedData.sim,
@@ -300,7 +323,11 @@
         status.textContent = "Running..."
         try {
           const t0 = performance.now()
-          const result = await runSim(loadedData.sim, loadedData.truth, trackAll)
+          const result = await runSim(
+            loadedData.sim,
+            loadedData.truth,
+            trackAll
+          )
           status.textContent = `Shot done in ${Math.round(performance.now() - t0)}ms — ${result.frames.length} steps`
           simStep = result.simStep
           simTracks = result.simTracks
