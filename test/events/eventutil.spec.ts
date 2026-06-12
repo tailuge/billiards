@@ -62,9 +62,16 @@ describe("EventUtil", () => {
   })
 
   it("Serialise and deserialise ChatEvent", (done) => {
-    const serialised = EventUtil.serialise(new ChatEvent("a", "m"))
-    const deserialised = EventUtil.fromSerialised(serialised)
+    const line = {
+      p1: { x: 1, y: 2 },
+      p2: { x: 3, y: 4 },
+      colour: "#ff0000",
+    }
+    const serialised = EventUtil.serialise(new ChatEvent("a", "m", line))
+    const deserialised = EventUtil.fromSerialised(serialised) as ChatEvent
     expect(deserialised.type).to.equal(EventType.CHAT)
+    expect(deserialised.line?.colour).to.equal("#ff0000")
+    expect(deserialised.line?.p1.x).to.equal(1)
     done()
   })
 
