@@ -81,16 +81,12 @@ export class BrowserContainer {
     this.first = params.has("first")
     this.botMode = params.has("bot")
     this.botName = params.get("bot") ?? ""
-    this.practiceMode = params.has("practice")
+    this.practiceMode = params.get("practice") !== "false"
     this.drillMode = params.has("drill")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
-    const defaultThreeCushionRaceTo =
-      this.practiceMode && this.ruletype === "threecushion" ? "50" : "7"
-    ThreeCushionConfig.raceTo =
-      Number.parseInt(params.get("raceTo") ?? defaultThreeCushionRaceTo) ||
-      Number.parseInt(defaultThreeCushionRaceTo)
+    ThreeCushionConfig.raceTo = Number.parseInt(params.get("raceTo") ?? "7") || 7
     console.log(
-      `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode}`
+      `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode} practiceMode: ${this.practiceMode} drillMode: ${this.drillMode}`
     )
     Session.init(
       this.clientId,
