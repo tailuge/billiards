@@ -70,12 +70,25 @@
     <div class="container">
       <div class="controls">
         <div style="display: flex; gap: 5px; align-items: center">
-          <input type="file" id="fileInput" accept=".json" multiple />
+          <button id="loadBtn">Load Selected</button>
           <button id="clearBtn">Clear All</button>
         </div>
 
         <div class="file-list" id="fileList">
-          <div style="color: #666; padding: 10px">No files loaded. Select multiple JSON files to begin.</div>
+          <label><input type="checkbox" value="SS_max_spin_02.json"> SS_max_spin_02</label><br>
+          <label><input type="checkbox" value="SS_max_spin_02_stronge.json"> SS_max_spin_02_stronge</label><br>
+          <label><input type="checkbox" value="SS_max_spin_03.json"> SS_max_spin_03</label><br>
+          <label><input type="checkbox" value="SS_max_spin_05.json"> SS_max_spin_05</label><br>
+          <label><input type="checkbox" value="SS_max_spin_06.json"> SS_max_spin_06</label><br>
+          <label><input type="checkbox" value="simple_shot_545599.json"> simple_shot_545599</label><br>
+          <label><input type="checkbox" value="simple_shot_545599_mathavan.json"> simple_shot_545599_mathavan</label><br>
+          <label><input type="checkbox" value="simple_shot_545599_stronge.json"> simple_shot_545599_stronge</label><br>
+          <label><input type="checkbox" value="simple_shot_545600.json"> simple_shot_545600</label><br>
+          <label><input type="checkbox" value="simple_shot_545600_stronge.json"> simple_shot_545600_stronge</label><br>
+          <label><input type="checkbox" value="simple_shot_545600_mathavan.json"> simple_shot_545600_mathavan</label><br>
+          <label><input type="checkbox" value="shot34.json"> shot34</label><br>
+          <label><input type="checkbox" value="shot675.json"> shot675</label><br>
+          <label><input type="checkbox" value="shot729.json"> shot729</label><br>
         </div>
 
         <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px">
@@ -112,37 +125,43 @@
       </div>
     </div>
 
+    <div id="plotContainer" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; width: 100%; justify-content: center;"></div>
+
     <script type="module">
+      import { runSim } from "./sim.js"
+      import { redraw } from "./plot.js"
       import { runOptimiseNM, runOptimisePSO } from "./optimise.js"
 
       let allData = []
       let abortController = null
       let rmseHistory = []
 
-      const fileInput = document.getElementById("fileInput")
       const fileList = document.getElementById("fileList")
+      const loadBtn = document.getElementById("loadBtn")
       const paramRows = document.getElementById("paramRows")
       const optBtn = document.getElementById("optBtn")
       const stopBtn = document.getElementById("stopBtn")
       const status = document.getElementById("status")
       const optStatus = document.getElementById("optStatus")
       const rmseCanvas = document.getElementById("rmseCanvas")
+      const plotContainer = document.getElementById("plotContainer")
 
-      fileInput.onchange = async (e) => {
-        const files = Array.from(e.target.files)
-        if (files.length === 0) return
+      loadBtn.onclick = async () => {
+        const checked = Array.from(fileList.querySelectorAll("input[type=checkbox]:checked")).map(cb => cb.value)
+        if (checked.length === 0) return
 
         status.textContent = "Status: Loading files..."
+        allData = []
 
-        for (const file of files) {
+        for (const filename of checked) {
           try {
-            const text = await file.text()
-            const data = JSON.parse(text)
+            const r = await fetch("./" + filename)
+            const data = await r.json()
             if (data.sim && data.truth) {
-              allData.push({ name: file.name, sim: data.sim, truth: data.truth })
+              allData.push({ name: filename, sim: data.sim, truth: data.truth })
             }
           } catch (err) {
-            console.error("Failed to load", file.name, err)
+            console.error("Failed to load", filename, err)
           }
         }
 
@@ -151,26 +170,17 @@
 
       document.getElementById("clearBtn").onclick = () => {
         allData = []
-        fileInput.value = ""
+        Array.from(fileList.querySelectorAll("input[type=checkbox]")).forEach(cb => cb.checked = false)
         updateUI()
       }
 
       function updateUI() {
-        // Update file list
-        fileList.innerHTML = ""
         if (allData.length === 0) {
-          fileList.innerHTML = '<div style="color: #666; padding: 10px">No files loaded.</div>'
           paramRows.innerHTML = ""
           optBtn.disabled = true
+          status.textContent = "Status: No files loaded"
           return
         }
-
-        allData.forEach(d => {
-          const div = document.createElement("div")
-          div.textContent = `• ${d.name}`
-          div.style.padding = "2px"
-          fileList.appendChild(div)
-        })
 
         // Build param table from the first file
         buildParamRows(allData[0].sim)
@@ -297,6 +307,24 @@
           const runOptimise = method === "pso" ? runOptimisePSO : runOptimiseNM
           await runOptimise(configs, truths, specs, onStep, abortController.signal, trackAll)
           status.textContent = "Status: Finished"
+
+          // Final plotting
+          plotContainer.innerHTML = ""
+          for (const d of allData) {
+            const res = await runSim(d.sim, d.truth, trackAll)
+            const wrapper = document.createElement("div")
+            wrapper.style.textAlign = "center"
+            const label = document.createElement("div")
+            label.textContent = d.name
+            const canvas = document.createElement("canvas")
+            canvas.width = 300
+            canvas.height = 150
+            canvas.style.border = "1px solid #ccc"
+            wrapper.appendChild(label)
+            wrapper.appendChild(canvas)
+            plotContainer.appendChild(wrapper)
+            redraw(canvas, d.truth, res.simTracks, res.simStep, trackAll)
+          }
         } catch (err) {
           if (err.name === 'AbortError') {
             status.textContent = "Status: Stopped"
