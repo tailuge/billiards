@@ -23,7 +23,7 @@ export class Ball {
   readonly vel: Vector3 = zero.clone()
   readonly rvel: Vector3 = zero.clone()
   readonly futurePos: Vector3 = zero.clone()
-  readonly ballmesh: BallMesh | undefined
+  readonly ballmesh!: BallMesh
   state: State = State.Stationary
   pocket: Pocket
 

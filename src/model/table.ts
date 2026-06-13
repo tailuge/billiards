@@ -21,8 +21,8 @@ interface Pair {
 
 export class Table {
   balls: Ball[]
-  cue: Cue | undefined
-  proximityIndicator: ProximityIndicator | undefined
+  cue!: Cue
+  proximityIndicator!: ProximityIndicator
   proximityEnabled = false
   pairs: Pair[]
   outcome: Outcome[] = []
