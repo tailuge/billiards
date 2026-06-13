@@ -50,6 +50,10 @@ export class View {
     this.drawing.clear()
   }
 
+  undoLine() {
+    this.drawing.undo()
+  }
+
   set onLineDrawn(callback: (line: LineData) => void) {
     this.drawing.onLineDrawn = callback
   }

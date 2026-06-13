@@ -91,18 +91,24 @@ export class Drawing {
   }
 
   private updatePreview(p1: Vector3, p2: Vector3) {
-    this.removePreview()
-    const geometry = new BufferGeometry().setFromPoints([
-      p1.clone().add(new Vector3(0, 0, 0.001)),
-      p2.clone().add(new Vector3(0, 0, 0.001)),
-    ])
-    const material = new LineBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.5,
-    })
-    this.previewLine = new Line(geometry, material)
-    this.scene.add(this.previewLine)
+    if (!this.previewLine) {
+      const geometry = new BufferGeometry().setFromPoints([
+        p1.clone().add(new Vector3(0, 0, 0.001)),
+        p2.clone().add(new Vector3(0, 0, 0.001)),
+      ])
+      const material = new LineBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.5,
+      })
+      this.previewLine = new Line(geometry, material)
+      this.scene.add(this.previewLine)
+    } else {
+      this.previewLine.geometry.setFromPoints([
+        p1.clone().add(new Vector3(0, 0, 0.001)),
+        p2.clone().add(new Vector3(0, 0, 0.001)),
+      ])
+    }
   }
 
   private removePreview() {
@@ -122,16 +128,15 @@ export class Drawing {
     const line = new Line(geometry, material)
     this.scene.add(line)
     this.lines.push(line)
+  }
 
-    setTimeout(() => {
+  undo() {
+    const line = this.lines.pop()
+    if (line) {
       this.scene.remove(line)
-      geometry.dispose()
-      material.dispose()
-      const index = this.lines.indexOf(line)
-      if (index > -1) {
-        this.lines.splice(index, 1)
-      }
-    }, 5000)
+      line.geometry.dispose()
+      ;(line.material as LineBasicMaterial).dispose()
+    }
   }
 
   clear() {
