@@ -1,5 +1,7 @@
 import { Scene, WebGLRenderer, Frustum, Matrix4, AmbientLight } from "three"
 import { Camera } from "./camera"
+import { Drawing } from "./drawing"
+import { LineData } from "../events/chatevent"
 import { AimEvent } from "../events/aimevent"
 import { Table } from "../model/table"
 import { Grid } from "./grid"
@@ -18,6 +20,7 @@ export class View {
   table: Table
   loadAssets = true
   assets: Assets
+  drawing: Drawing
 
   // Reuse objects to reduce garbage collection pressure in high-frequency rendering
   private readonly frustum = new Frustum()
@@ -31,10 +34,29 @@ export class View {
     this.camera = new Camera(
       element ? element.offsetWidth / element.offsetHeight : 1
     )
+    this.drawing = new Drawing(
+      this.scene,
+      this.element as HTMLCanvasElement,
+      () => this.camera.camera
+    )
     this.initialiseScene()
   }
 
-  clearLines() {}
+  addLine(data: LineData) {
+    this.drawing.addLine(data)
+  }
+
+  clearLines() {
+    this.drawing.clear()
+  }
+
+  undoLine() {
+    this.drawing.undo()
+  }
+
+  set onLineDrawn(callback: (line: LineData) => void) {
+    this.drawing.onLineDrawn = callback
+  }
 
   update(elapsed, aim: AimEvent) {
     this.camera.update(elapsed, aim)
