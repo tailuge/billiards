@@ -158,7 +158,7 @@ export class Replay extends ControllerBase {
     this.currentInit = JSON.stringify(this.container.table.shortSerialise())
     const aim = this.container.table.cue!.aim
     this.currentShot = JSON.stringify({
-      cueBallId: 0,
+      cueBallId: aim.i,
       angle: aim.angle,
       power: aim.power,
       offset: { x: aim.offset.x, y: aim.offset.y },
