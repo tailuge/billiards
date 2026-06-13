@@ -29,7 +29,7 @@ function updateProximityOutcome(
   if (indicator.hitTarget) return
   const lastOutcome = outcome[outcome.length - 1]
   const involved = (o: Outcome) =>
-    o.type === OutcomeType.Collision &&
+    o?.type === OutcomeType.Collision &&
     ((o.ballA === cueball && o.ballB === indicator.target) ||
       (o.ballB === cueball && o.ballA === indicator.target))
   if (involved(lastOutcome)) {
