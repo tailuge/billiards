@@ -85,9 +85,7 @@ export class Drawing {
       this.addLine(lineData)
     }
     this.removePreview()
-    try {
-      this.canvas.releasePointerCapture(e.pointerId)
-    } catch (_) {}
+    this.canvas.releasePointerCapture(e.pointerId)
   }
 
   private updatePreview(p1: Vector3, p2: Vector3) {
