@@ -2,6 +2,7 @@ import { Container } from "../container/container"
 import { getButton } from "../utils/dom"
 import { Session } from "../network/client/session"
 import { ConcedeEvent } from "../events/concedeevent"
+import { Replay } from "../controller/replay"
 
 export class Menu {
   container: Container
@@ -21,6 +22,22 @@ export class Menu {
     this.concede = this.getElement("concede")
     this.menu = this.getElement("menu")
     this.analysis = this.getElement("analysis")
+
+    if (this.analysis) {
+      this.analysis.onclick = () => {
+        const replay = this.container.controller as Replay
+        if (replay.currentInit && replay.currentShot) {
+          const base = "https://billiards.tailuge.workers.dev/"
+          const params = new URLSearchParams()
+          params.set("ruletype", this.container.rules.rulename)
+          params.set("practice", "")
+          params.set("drill", "")
+          params.set("init", replay.currentInit)
+          params.set("initShot", replay.currentShot)
+          window.open(`${base}?${params.toString()}`, "_blank")
+        }
+      }
+    }
 
     this.setShareVisible(false)
     if (this.camera) {

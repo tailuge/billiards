@@ -22,7 +22,7 @@ export abstract class ControllerBase extends Controller {
     if (chatevent.message) {
       this.container.chat.showMessage(chatevent.message)
     }
-    if (chatevent.line && chatevent.sender !== this.container.id) {
+    if (chatevent.line) {
       this.container.view.addLine(chatevent.line)
     }
     return this
