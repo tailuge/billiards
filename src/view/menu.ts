@@ -9,6 +9,7 @@ export class Menu {
   camera: HTMLButtonElement
   concede: HTMLButtonElement
   menu: HTMLButtonElement
+  analysis: HTMLButtonElement
 
   disabled = true
 
@@ -19,6 +20,7 @@ export class Menu {
     this.camera = this.getElement("camera")
     this.concede = this.getElement("concede")
     this.menu = this.getElement("menu")
+    this.analysis = this.getElement("analysis")
 
     this.setShareVisible(false)
     if (this.camera) {
@@ -93,6 +95,13 @@ export class Menu {
     if (this.concede) {
       this.concede.hidden = !visible
       this.concede.disabled = !visible
+    }
+  }
+
+  setAnalysisVisible(visible: boolean) {
+    if (this.analysis) {
+      this.analysis.hidden = !visible
+      this.analysis.disabled = !visible
     }
   }
 

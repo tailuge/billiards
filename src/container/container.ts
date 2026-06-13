@@ -321,6 +321,7 @@ export class Container {
         controller instanceof Replay ||
           (this.wasReplay && controller instanceof End)
       )
+      this.menu?.setAnalysisVisible(controller instanceof Replay)
       const isTwoPlayer =
         !this.isSinglePlayer &&
         !this.replayMode &&
