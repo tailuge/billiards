@@ -12,13 +12,7 @@ export function logusage() {
   fetch(url, {
     method: "PUT",
     mode: "cors",
+  }).catch(() => {
+    /* silent */
   })
-    .then((response) => {
-      if (!response.ok) {
-        console.error("HTTP error:", response.status, response.statusText)
-      }
-    })
-    .catch((error) => {
-      console.error("Fetch error for", url, error)
-    })
 }
