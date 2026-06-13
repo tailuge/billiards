@@ -27,7 +27,7 @@ export class Menu {
       this.analysis.onclick = () => {
         const replay = this.container.controller as Replay
         if (replay.currentInit && replay.currentShot) {
-          const base = "https://billiards.tailuge.workers.dev/"
+          const base = "https://velikodimov.github.io/billiards/dist/index.html"
           const params = new URLSearchParams()
           params.set("ruletype", this.container.rules.rulename)
           params.set("practice", "")

@@ -321,7 +321,9 @@ export class Container {
         controller instanceof Replay ||
           (this.wasReplay && controller instanceof End)
       )
-      this.menu?.setAnalysisVisible(controller instanceof Replay)
+      this.menu?.setAnalysisVisible(
+        controller instanceof Replay && this.rules.rulename === "threecushion"
+      )
       const isTwoPlayer =
         !this.isSinglePlayer &&
         !this.replayMode &&
