@@ -289,7 +289,7 @@ label {
   left: 50%;
   transform: translate(-50%, -50%);
   width: min(90%, 380px);
-  height: min(90%, 590px);
+  height: min(90%, 620px);
   background: rgb(0 0 0 / 100%);
   border: 1px solid rgb(255 255 255 / 25%);
   border-radius: 12px;
