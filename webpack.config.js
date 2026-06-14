@@ -61,7 +61,10 @@ module.exports = {
             unused: true,
             dead_code: true,
           },
-          mangle: true,
+          mangle: {
+            keepClassNames: true,
+            keepFnNames: true,
+          },
           safari10: true,
         },
       }),
