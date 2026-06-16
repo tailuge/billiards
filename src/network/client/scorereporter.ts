@@ -11,6 +11,10 @@ export class ScoreReporter {
   }
 
   async submitMatchResult(result: MatchResult): Promise<void> {
+    if (this.shouldSkipUpload(result)) {
+      console.log("Skipping match result upload for Alice/Bob")
+      return
+    }
     const url = `https://${this.baseURL}/api/match-results`
     const maxRetries = 3
 
@@ -34,6 +38,18 @@ export class ScoreReporter {
       }
     }
   }
+
+  private shouldSkipUpload(result: MatchResult): boolean {
+    const players = [result.winner, result.loser]
+      .filter((n): n is string => !!n)
+      .map((n) => n.toLowerCase())
+
+    const hasAlice = players.some((n) => n.includes("alice"))
+    const hasBob = players.some((n) => n.includes("bob"))
+
+    return hasAlice && hasBob
+  }
+
 
   private async attemptSubmission(
     url: string,
