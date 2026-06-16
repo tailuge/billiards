@@ -265,7 +265,6 @@ export class Container {
 
     if (this.inputLocked) {
       this.inputQueue = []
-      return
     }
 
     while (this.inputQueue.length > 0) {

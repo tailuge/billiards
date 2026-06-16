@@ -50,8 +50,12 @@ export class Comment {
     })
 
     inputText.addEventListener("keydown", (e) => {
-      e.stopImmediatePropagation()
+      e.stopPropagation()
       if (e.key === "Enter") sendText()
+    })
+
+    inputText.addEventListener("keyup", (e) => {
+      e.stopPropagation()
     })
 
     document.getElementById("inputSend")?.addEventListener("click", sendText)
