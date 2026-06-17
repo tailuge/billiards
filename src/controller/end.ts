@@ -71,7 +71,7 @@ export class End extends Controller {
   }
 
   override handleBreak(event: BreakEvent): Controller {
-    if (event.init) {
+    if (event.shots?.length > 0) {
       this.container.table.updateFromShortSerialised(event.init)
       return new Replay(
         this.container,
@@ -81,6 +81,10 @@ export class End extends Controller {
         1000,
         event.diagram
       )
+    }
+    if (event.init) {
+      this.container.table.updateFromShortSerialised(event.init)
+      return new Aim(this.container)
     }
     return this
   }

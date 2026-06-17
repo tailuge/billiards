@@ -7,7 +7,7 @@ export class BreakEvent extends GameEvent {
   shots
   diagram
   retry
-  constructor(init?, shots?, diagram?) {
+  constructor(init?, shots = [], diagram?) {
     super()
     this.init = init
     this.shots = shots

@@ -34,7 +34,7 @@ export class Replay extends ControllerBase {
     this.init = init
     this.diagram = diagram
     console.log(`init: ${JSON.stringify(init)}`)
-    this.shots = [...shots]
+    this.shots = shots ? [...shots] : []
     this.firstShot = this.shots[0]
     this.delay = diagram ? 0 : delay
     this.container.table.showTraces(true)

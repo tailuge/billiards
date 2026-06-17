@@ -78,7 +78,7 @@ export class Init extends ControllerBase {
   }
 
   override handleBreak(event: BreakEvent): Controller {
-    if (event.init) {
+    if (event.shots?.length > 0) {
       this.container.table.updateFromShortSerialised(event.init)
       return new Replay(
         this.container,
@@ -88,6 +88,10 @@ export class Init extends ControllerBase {
         1500,
         event.diagram
       )
+    }
+    if (event.init) {
+      this.container.table.updateFromShortSerialised(event.init)
+      return new Aim(this.container)
     }
     if (Session.isPracticeMode() && Session.hasInitParam()) {
       this.container.table.cueball.fround()
