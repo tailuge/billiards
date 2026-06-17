@@ -37,6 +37,10 @@ export function exp(theta) {
   return Math.fround(Math.exp(theta))
 }
 
+export function hypot(x, y) {
+  return Math.fround(Math.hypot(x, y))
+}
+
 export function bisectionSolver(
   func: (x: number) => number,
   low: number,
