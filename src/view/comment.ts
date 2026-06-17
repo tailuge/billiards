@@ -50,8 +50,12 @@ export class Comment {
     })
 
     inputText.addEventListener("keydown", (e) => {
-      e.stopImmediatePropagation()
+      e.stopPropagation()
       if (e.key === "Enter") sendText()
+    })
+
+    inputText.addEventListener("keyup", (e) => {
+      e.stopPropagation()
     })
 
     document.getElementById("inputSend")?.addEventListener("click", sendText)
@@ -60,7 +64,6 @@ export class Comment {
     })
 
     inputTextDiv.addEventListener("close", () => {
-      this.container.inputLocked = false
     })
   }
 
@@ -91,7 +94,6 @@ export class Comment {
     ) as HTMLDialogElement
     const inputText = document.getElementById("inputText") as HTMLInputElement
     this.hideMenu()
-    this.container.inputLocked = true
     inputTextDiv.showModal()
     inputText.value = ""
     inputText.focus()

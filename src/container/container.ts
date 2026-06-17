@@ -68,7 +68,6 @@ export class Container {
   hud: Hud
   notification: Notification
   lobbyIndicator: LobbyIndicator
-  inputLocked: boolean = false
   replayMode: boolean = false
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
@@ -263,10 +262,6 @@ export class Container {
       inputs.forEach((i) => this.inputQueue.push(i))
     }
 
-    if (this.inputLocked) {
-      this.inputQueue = []
-      return
-    }
 
     while (this.inputQueue.length > 0) {
       this.lastEventTime = this.last
