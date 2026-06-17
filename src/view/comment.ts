@@ -64,7 +64,6 @@ export class Comment {
     })
 
     inputTextDiv.addEventListener("close", () => {
-      this.container.inputLocked = false
     })
   }
 
@@ -95,7 +94,6 @@ export class Comment {
     ) as HTMLDialogElement
     const inputText = document.getElementById("inputText") as HTMLInputElement
     this.hideMenu()
-    this.container.inputLocked = true
     inputTextDiv.showModal()
     inputText.value = ""
     inputText.focus()
