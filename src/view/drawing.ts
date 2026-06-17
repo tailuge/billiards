@@ -11,6 +11,7 @@ import {
   Camera,
 } from "three"
 import { LineData } from "../events/chatevent"
+import { Session } from "../network/client/session"
 
 export class Drawing {
   private readonly scene: Scene
@@ -79,7 +80,7 @@ export class Drawing {
       const lineData: LineData = {
         p1: { x: this.startPoint.x, y: this.startPoint.y },
         p2: { x: endPoint.x, y: endPoint.y },
-        colour: "#ffffff", // Default color
+        colour: Session.playerIndex() === 1 ? "#ffaa11" : "#ffffff",
       }
       this.onLineDrawn?.(lineData)
       this.addLine(lineData)

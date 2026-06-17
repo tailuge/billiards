@@ -79,7 +79,8 @@ export class BrowserContainer {
     this.first = params.has("first")
     this.botMode = params.has("bot")
     this.botName = params.get("bot") ?? ""
-    this.practiceMode = (this.ruletype !== "nineball" && params.get("practice") !== "false")
+    this.practiceMode =
+      this.ruletype !== "nineball" && params.get("practice") !== "false"
     this.drillMode = params.has("drill")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =

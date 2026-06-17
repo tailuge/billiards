@@ -63,8 +63,7 @@ export class Comment {
       inputTextDiv.close()
     })
 
-    inputTextDiv.addEventListener("close", () => {
-    })
+    inputTextDiv.addEventListener("close", () => {})
   }
 
   setVisible(visible: boolean) {

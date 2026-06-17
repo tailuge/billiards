@@ -50,7 +50,6 @@ export class ScoreReporter {
     return hasAlice && hasBob
   }
 
-
   private async attemptSubmission(
     url: string,
     result: MatchResult

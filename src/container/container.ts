@@ -262,7 +262,6 @@ export class Container {
       inputs.forEach((i) => this.inputQueue.push(i))
     }
 
-
     while (this.inputQueue.length > 0) {
       this.lastEventTime = this.last
       const input = this.inputQueue.shift()

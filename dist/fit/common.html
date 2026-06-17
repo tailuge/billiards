@@ -61,8 +61,8 @@
       th {
         background-color: #ddd;
       }
-      #paramTable th:nth-child(n+7),
-      #paramTable td:nth-child(n+7) {
+      #paramTable th:nth-child(n + 7),
+      #paramTable td:nth-child(n + 7) {
         max-width: 6ch;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -241,7 +241,7 @@
         if (allData.length === 0) {
           paramRows.innerHTML = ""
           document.getElementById("paramHeader").innerHTML =
-            '<tr><th>Tune</th><th>Parameter</th><th>Min</th><th>Max</th><th>Original</th><th>Current</th></tr>'
+            "<tr><th>Tune</th><th>Parameter</th><th>Min</th><th>Max</th><th>Original</th><th>Current</th></tr>"
           optBtn.disabled = true
           status.textContent = "Status: No files loaded"
           return
@@ -277,7 +277,7 @@
 
         // Build dynamic header with per-file columns
         let headerHtml =
-          '<tr><th>Tune</th><th>Parameter</th><th>Min</th><th>Max</th><th>Original</th><th>Current</th>'
+          "<tr><th>Tune</th><th>Parameter</th><th>Min</th><th>Max</th><th>Original</th><th>Current</th>"
         for (const d of allData) {
           const label = d.name.replace(".json", "")
           headerHtml += `<th>${label}</th>`
