@@ -28,7 +28,24 @@ export class Chat {
     if (msg.includes("<")) {
       const template = document.createElement("template")
       template.innerHTML = msg
-      this.chatoutput.appendChild(template.content)
+      const content = template.content
+
+      const allowedTags = ["svg", "circle", "a", "br"]
+
+      const sanitize = (node: Node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const el = node as HTMLElement
+          const tag = el.tagName.toLowerCase()
+          if (!allowedTags.includes(tag)) {
+            el.remove()
+            return
+          }
+        }
+        Array.from(node.childNodes).forEach(sanitize)
+      }
+
+      sanitize(content)
+      this.chatoutput.appendChild(content)
     } else {
       this.chatoutput.appendChild(document.createTextNode(msg))
     }
