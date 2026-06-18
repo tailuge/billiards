@@ -15,6 +15,7 @@ function addMenu() {
   menu.className = "comment-menu"
   menu.style.display = "none"
   menu.innerHTML = `
+    <button class="comment-emoji" data-angle="0"></button>
     <button class="comment-emoji">🍀</button>
     <button class="comment-emoji">🐢</button>
     <button class="comment-emoji">🐑</button>
@@ -42,6 +43,17 @@ beforeEach(function (done) {
 })
 
 describe("Comment", () => {
+  it("hydrates data-angle buttons with SVG", (done) => {
+    const menu = document.getElementById("commentMenu") as HTMLDivElement
+    const angleBtn = menu.querySelector(
+      ".comment-emoji[data-angle]"
+    ) as HTMLButtonElement
+    expect(angleBtn).to.not.be.null
+    expect(angleBtn.innerHTML).to.include("<svg")
+    expect(angleBtn.innerHTML).to.include("<circle")
+    done()
+  })
+
   it("clicking comment button shows menu", (done) => {
     const commentBtn = document.getElementById("comment") as HTMLButtonElement
     const menu = document.getElementById("commentMenu") as HTMLDivElement
@@ -56,7 +68,7 @@ describe("Comment", () => {
     const menu = document.getElementById("commentMenu") as HTMLDivElement
 
     const emojiBtns = menu.querySelectorAll(".comment-emoji")
-    expect(emojiBtns.length).to.equal(9)
+    expect(emojiBtns.length).to.equal(10)
 
     const firstEmoji = emojiBtns[0] as HTMLButtonElement
     fireEvent.click(firstEmoji)

@@ -1,5 +1,6 @@
 import { Container } from "../container/container"
 import { getButton } from "../utils/dom"
+import { ballSvg } from "./chat"
 
 export class Comment {
   container: Container
@@ -15,6 +16,14 @@ export class Comment {
     if (!this.button || !this.menu) {
       return
     }
+
+    // Hydrate ball-SVG buttons
+    this.menu
+      .querySelectorAll<HTMLButtonElement>(".comment-emoji[data-angle]")
+      .forEach((btn) => {
+        const angle = parseInt(btn.dataset.angle ?? "0", 10)
+        btn.innerHTML = ballSvg(isNaN(angle) ? 0 : angle)
+      })
 
     this.button.onclick = (_) => {
       this.toggleMenu()
