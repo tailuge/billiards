@@ -42,7 +42,7 @@ export class Comment {
           this.openChat()
           return
         }
-        const text = btn.textContent ?? ""
+        const text = btn.innerHTML ?? ""
         this.container.chat.showMessage(text)
         this.container.sendChat(text)
         this.hideMenu()
