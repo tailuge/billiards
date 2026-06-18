@@ -31,20 +31,6 @@ export class Chat {
       const content = template.content
 
       const allowedTags = ["svg", "circle", "a", "br"]
-      const allowedAttributes = [
-        "width",
-        "height",
-        "viewbox",
-        "cx",
-        "cy",
-        "r",
-        "fill",
-        "stroke",
-        "stroke-width",
-        "style",
-        "href",
-        "class",
-      ]
 
       const sanitize = (node: Node) => {
         if (node.nodeType === Node.ELEMENT_NODE) {
@@ -54,13 +40,8 @@ export class Chat {
             el.remove()
             return
           }
-          Array.from(el.attributes).forEach((attr) => {
-            if (!allowedAttributes.includes(attr.name.toLowerCase())) {
-              el.removeAttribute(attr.name)
-            }
-          })
         }
-        node.childNodes.forEach(sanitize)
+        Array.from(node.childNodes).forEach(sanitize)
       }
 
       sanitize(content)
