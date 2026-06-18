@@ -9,7 +9,7 @@
   border: none;
   border-radius: 8px;
   padding: 0;
-  z-index: 2000;
+  z-index: 900;
   overflow: hidden;
 }
 
@@ -46,7 +46,7 @@
 
 #inputTextDiv {
   position: absolute;
-  top: 50%;
+  top: 76%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000;
@@ -64,13 +64,13 @@
 }
 
 #inputTextDiv::backdrop {
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(1px);
 }
 
 #inputText {
-  width: 20ch;
-  font-size: 16px;
+  width: 24ch;
+  font-size: 15px;
   padding: 1px;
   caret-color: black;
   color: black;
@@ -78,7 +78,7 @@
 }
 
 #inputTextDiv button {
-  font-size: 16px;
+  font-size: 15px;
   padding: 1px;
   margin-left: 2px;
 }
