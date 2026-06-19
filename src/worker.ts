@@ -23,7 +23,7 @@ function checkpoint(label: string, detail?: Record<string, unknown>) {
   }
 }
 
-function getFastWarpTime(table: Table, R: number): number {
+function getFastWarpTime(table: Table, R: number, clearance: number): number {
   const balls = table.balls.filter((b) => b.onTable())
 
   // 1. No Sliding: Every ball must be in a 'rolling' or 'stationary' state.
@@ -31,22 +31,28 @@ function getFastWarpTime(table: Table, R: number): number {
     return 0
   }
 
+  
   const rollingBalls = balls.filter((b) => b.state === State.Rolling)
 
-  // 2. Cushion Clearance: Every rolling ball must have a distance to the nearest cushion > 4R.
+    // 1.1 Rolling speed must be above 2Rm/s (avoid overshoot at end of roll)
+  if (rollingBalls.some((b) => b.vel.length() < 2*R)) {
+    return 0
+  }
+
+  // 2. Cushion Clearance: Every rolling ball must have a distance to the nearest cushion > clearance.
   for (const b of rollingBalls) {
     const distToCushionX = TableGeometry.tableX - Math.abs(b.pos.x)
     const distToCushionY = TableGeometry.tableY - Math.abs(b.pos.y)
-    if (Math.min(distToCushionX, distToCushionY) <= 4 * R) {
+    if (Math.min(distToCushionX, distToCushionY) <= clearance) {
       return 0
     }
   }
 
-  // 3. Ball Clearance: The distance between any rolling ball and any other ball on the table must be > 4R.
+  // 3. Ball Clearance: The distance between any rolling ball and any other ball on the table must be > clearance.
   for (const bA of rollingBalls) {
     for (const bB of balls) {
       if (bA === bB) continue
-      if (bA.pos.distanceTo(bB.pos) <= 4 * R) {
+      if (bA.pos.distanceTo(bB.pos) <= clearance) {
         return 0
       }
     }
@@ -198,12 +204,13 @@ export function simulateSync(config: any): any {
       })),
     },
   ]
+  const warpClearance = config.warpClearance ?? (4 * R)
   let iterations = 0
   const progressInterval = 10000
 
   // Simulation loop
   while (!table.allStationary() && iterations < maxIterations) {
-    const warpTime = getFastWarpTime(table, R)
+    const warpTime = getFastWarpTime(table, R, warpClearance)
     const dt = warpTime > stepSize ? warpTime * 0.95 : stepSize
 
     table.advance(dt)

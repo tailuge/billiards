@@ -527,6 +527,7 @@ node dist/ww-node.js
         },
         stepSize: 0.001953125,
         maxIterations: 20000,
+        warpClearance: 0.131,
         params: {
           mu: 0.007,
           muS: 0.136,
@@ -681,7 +682,7 @@ node dist/ww-node.js
           logMsg(`✓ Batch complete in ${Math.round(t1 - t0)}ms`, "log-result")
 
           results.forEach((res) => {
-            logMsg(`Sim ${res.id}: ${res.frames.length} frames`, "log-data")
+            logMsg(`Sim ${res.id}: ${res.frames.length} frames | speedup ${res.speedupFactor}`, "log-data")
           })
 
           lastResults = results
@@ -701,6 +702,7 @@ node dist/ww-node.js
         const preview = lastResults.map((res) => ({
           id: res.id,
           computeTime: res.computeTime,
+          speedupFactor: res.speedupFactor,
           frames: res.frames.slice(0, 3),
           outcomes: res.outcomes,
         }))
