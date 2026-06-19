@@ -17,6 +17,16 @@ function checkpoint(label: string, detail?: Record<string, unknown>) {
   }
 }
 
+function getFrame(table: Table) {
+  return {
+    t: table.time,
+    balls: table.balls.map((b) => ({
+      id: b.id,
+      pos: [b.pos.x, b.pos.y],
+    })),
+  }
+}
+
 function getFastWarpTime(table: Table, R: number, clearance: number): number {
   const balls = table.balls.filter((b) => b.onTable())
 
@@ -166,16 +176,7 @@ export function simulateSync(config: any): any {
     vel: [strike.vel.x, strike.vel.y, strike.vel.z],
   })
 
-  const frames: any[] = [
-    {
-      t: table.time,
-      balls: table.balls.map((b) => ({
-        id: b.id,
-        pos: [b.pos.x, b.pos.y],
-        dt: 0,
-      })),
-    },
-  ]
+  const frames: any[] = [getFrame(table)]
   const { warpClearanceR = 1.125 } = config
   let iterations = 0
   const progressInterval = 10000
@@ -190,14 +191,7 @@ export function simulateSync(config: any): any {
 
     table.advance(dt)
 
-    frames.push({
-      t: table.time,
-      balls: table.balls.map((b) => ({
-        id: b.id,
-        pos: [b.pos.x, b.pos.y],
-        dt: dt,
-      })),
-    })
+    frames.push(getFrame(table))
 
     iterations++
 

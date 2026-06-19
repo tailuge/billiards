@@ -493,8 +493,7 @@ node dist/ww-node.js
         speed, the simulation advances by a larger <code>dt</code> instead of
         one small <code>stepSize</code> step. This skips uneventful roll segments
         and reduces iteration count, giving a <strong>speedup factor</strong>
-        (shown in the log as <code>speedup 2.50x</code>). Warp steps appear
-        in <span style="color: #4488ff">blue</span> on the plot.
+        (shown in the log as <code>speedup 2.50x</code>).
       </p>
       <p>
         Set <code>warpClearanceR</code> to a value larger than the table
@@ -622,35 +621,37 @@ node dist/ww-node.js
           const globalAlpha = opacities[resultIndex % opacities.length]
           ctx.globalAlpha = globalAlpha
 
-          // Group positions by ball ID, keeping dt for warp detection
+          // Group positions by ball ID
           const ballPaths = {}
           data.frames.forEach((frame) => {
             frame.balls.forEach((ball) => {
               if (!ballPaths[ball.id]) ballPaths[ball.id] = []
-              ballPaths[ball.id].push({ pos: ball.pos, dt: ball.dt })
+              ballPaths[ball.id].push(ball.pos)
             })
           })
 
-          // Draw paths segment by segment, blue if warp step
+          // Draw paths
           Object.keys(ballPaths).forEach((id, index) => {
             const path = ballPaths[id]
             const baseColor = colors[index % colors.length]
-            for (let i = 0; i < path.length - 1; i++) {
-              const p0 = path[i]
-              const p1 = path[i + 1]
-              ctx.beginPath()
-              ctx.strokeStyle = p1.dt > 0.001953125 ? "#4488ff" : baseColor
-              ctx.lineWidth = 1
-              ctx.moveTo(
-                centerX + p0.pos[0] * scale,
-                centerY - p0.pos[1] * scale
-              )
-              ctx.lineTo(
-                centerX + p1.pos[0] * scale,
-                centerY - p1.pos[1] * scale
-              )
-              ctx.stroke()
+            ctx.strokeStyle = baseColor
+            ctx.lineWidth = 1
+            ctx.beginPath()
+            for (let i = 0; i < path.length; i++) {
+              const p = path[i]
+              if (i === 0) {
+                ctx.moveTo(
+                  centerX + p[0] * scale,
+                  centerY - p[1] * scale
+                )
+              } else {
+                ctx.lineTo(
+                  centerX + p[0] * scale,
+                  centerY - p[1] * scale
+                )
+              }
             }
+            ctx.stroke()
 
             // Draw start/end markers only for the primary result (first one)
             if (resultIndex === 0) {
@@ -659,8 +660,8 @@ node dist/ww-node.js
               ctx.lineWidth = 1
               ctx.beginPath()
               ctx.arc(
-                centerX + first.pos[0] * scale,
-                centerY - first.pos[1] * scale,
+                centerX + first[0] * scale,
+                centerY - first[1] * scale,
                 ballRadius,
                 0,
                 Math.PI * 2
@@ -671,8 +672,8 @@ node dist/ww-node.js
               ctx.fillStyle = baseColor
               ctx.beginPath()
               ctx.arc(
-                centerX + last.pos[0] * scale,
-                centerY - last.pos[1] * scale,
+                centerX + last[0] * scale,
+                centerY - last[1] * scale,
                 ballRadius,
                 0,
                 Math.PI * 2
