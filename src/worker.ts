@@ -27,63 +27,65 @@ function getFrame(table: Table) {
   }
 }
 
+function ballToCushionDist(b: Ball): number {
+  return Math.min(
+    TableGeometry.tableX - Math.abs(b.pos.x),
+    TableGeometry.tableY - Math.abs(b.pos.y)
+  )
+}
+
+function anyCushionTooClose(rollingBalls: Ball[], clearance: number): boolean {
+  return rollingBalls.some((b) => ballToCushionDist(b) <= clearance)
+}
+
+function anyBallTooClose(rollingBalls: Ball[], allBalls: Ball[], clearance: number): boolean {
+  return rollingBalls.some((bA) =>
+    allBalls.some((bB) => bA !== bB && bA.pos.distanceTo(bB.pos) <= clearance)
+  )
+}
+
+function calcMinWarpTime(rollingBalls: Ball[], allBalls: Ball[], R: number): number {
+  let minTime = Infinity
+  for (const bA of rollingBalls) {
+    const vA = bA.vel.length()
+    if (vA === 0) continue
+
+    const tbc = (ballToCushionDist(bA) - R) / vA
+    if (tbc < minTime) minTime = tbc
+
+    for (const bB of allBalls) {
+      if (bA === bB) continue
+      const vB = bB.vel.length()
+      const dist = bA.pos.distanceTo(bB.pos)
+      const tbb = (dist - 2 * R) / (vA + vB)
+      if (tbb < minTime) minTime = tbb
+    }
+  }
+  return minTime === Infinity ? 0 : minTime
+}
+
 function getFastWarpTime(table: Table, R: number, clearance: number): number {
   const balls = table.balls.filter((b) => b.onTable())
 
-  // 1. No Sliding: Every ball must be in a 'rolling' or 'stationary' state.
   if (balls.some((b) => b.state === State.Sliding)) {
     return 0
   }
 
   const rollingBalls = balls.filter((b) => b.state === State.Rolling)
 
-  // 1.1 Rolling speed must be above R m/s (avoid overshoot at end of roll)
   if (rollingBalls.some((b) => b.vel.length() < R)) {
     return 0
   }
 
-  // 2. Cushion Clearance: Every rolling ball must have a distance to the nearest cushion > clearance.
-  for (const b of rollingBalls) {
-    const distToCushionX = TableGeometry.tableX - Math.abs(b.pos.x)
-    const distToCushionY = TableGeometry.tableY - Math.abs(b.pos.y)
-    if (Math.min(distToCushionX, distToCushionY) <= clearance) {
-      return 0
-    }
+  if (anyCushionTooClose(rollingBalls, clearance)) {
+    return 0
   }
 
-  // 3. Ball Clearance: The distance between any rolling ball and any other ball on the table must be > clearance.
-  for (const bA of rollingBalls) {
-    for (const bB of balls) {
-      if (bA === bB) continue
-      if (bA.pos.distanceTo(bB.pos) <= clearance) {
-        return 0
-      }
-    }
+  if (anyBallTooClose(rollingBalls, balls, clearance)) {
+    return 0
   }
 
-  let minWarpTime = Infinity
-
-  for (const bA of rollingBalls) {
-    const vA = bA.vel.length()
-    if (vA === 0) continue
-
-    // Cushion limit: (distance_to_cushion - R) / speed
-    const distToCushionX = TableGeometry.tableX - Math.abs(bA.pos.x)
-    const distToCushionY = TableGeometry.tableY - Math.abs(bA.pos.y)
-    const tbc = (Math.min(distToCushionX, distToCushionY) - R) / vA
-    if (tbc < minWarpTime) minWarpTime = tbc
-
-    // Ball-to-Ball Limit
-    for (const bB of balls) {
-      if (bA === bB) continue
-      const vB = bB.vel.length()
-      const dist = bA.pos.distanceTo(bB.pos)
-      const tbb = (dist - 2 * R) / (vA + vB)
-      if (tbb < minWarpTime) minWarpTime = tbb
-    }
-  }
-
-  return minWarpTime === Infinity ? 0 : minWarpTime
+  return calcMinWarpTime(rollingBalls, balls, R)
 }
 
 export function simulateSync(config: any): any {
