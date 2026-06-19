@@ -52,7 +52,7 @@ function anyBallTooClose(
   )
 }
 
-function calcMinWarpTime(
+export function calcMinWarpTime(
   rollingBalls: Ball[],
   allBalls: Ball[],
   R: number
@@ -67,8 +67,17 @@ function calcMinWarpTime(
 
     for (const bB of allBalls) {
       if (bA === bB) continue
+
+      const dx = bA.pos.x - bB.pos.x
+      const dy = bA.pos.y - bB.pos.y
+      const dvx = bA.vel.x - bB.vel.x
+      const dvy = bA.vel.y - bB.vel.y
+      const dot = dx * dvx + dy * dvy
+
+      if (dot >= 0) continue
+
       const vB = bB.vel.length()
-      const dist = bA.pos.distanceTo(bB.pos)
+      const dist = Math.sqrt(dx * dx + dy * dy)
       const tbb = (dist - 2 * R) / (vA + vB)
       if (tbb < minTime) minTime = tbb
     }
