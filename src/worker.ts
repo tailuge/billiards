@@ -23,6 +23,60 @@ function checkpoint(label: string, detail?: Record<string, unknown>) {
   }
 }
 
+function getFastWarpTime(table: Table, R: number): number {
+  const balls = table.balls.filter((b) => b.onTable())
+
+  // 1. No Sliding: Every ball must be in a 'rolling' or 'stationary' state.
+  if (balls.some((b) => b.state === State.Sliding)) {
+    return 0
+  }
+
+  const rollingBalls = balls.filter((b) => b.state === State.Rolling)
+
+  // 2. Cushion Clearance: Every rolling ball must have a distance to the nearest cushion > 4R.
+  for (const b of rollingBalls) {
+    const distToCushionX = TableGeometry.tableX - Math.abs(b.pos.x)
+    const distToCushionY = TableGeometry.tableY - Math.abs(b.pos.y)
+    if (Math.min(distToCushionX, distToCushionY) <= 4 * R) {
+      return 0
+    }
+  }
+
+  // 3. Ball Clearance: The distance between any rolling ball and any other ball on the table must be > 4R.
+  for (const bA of rollingBalls) {
+    for (const bB of balls) {
+      if (bA === bB) continue
+      if (bA.pos.distanceTo(bB.pos) <= 4 * R) {
+        return 0
+      }
+    }
+  }
+
+  let minWarpTime = Infinity
+
+  for (const bA of rollingBalls) {
+    const vA = bA.vel.length()
+    if (vA === 0) continue
+
+    // Cushion limit: (distance_to_cushion - R) / speed
+    const distToCushionX = TableGeometry.tableX - Math.abs(bA.pos.x)
+    const distToCushionY = TableGeometry.tableY - Math.abs(bA.pos.y)
+    const tbc = (Math.min(distToCushionX, distToCushionY) - R) / vA
+    if (tbc < minWarpTime) minWarpTime = tbc
+
+    // Ball-to-Ball Limit
+    for (const bB of balls) {
+      if (bA === bB) continue
+      const vB = bB.vel.length()
+      const dist = bA.pos.distanceTo(bB.pos)
+      const tbb = (dist - 2 * R) / (vA + vB)
+      if (tbb < minWarpTime) minWarpTime = tbb
+    }
+  }
+
+  return minWarpTime === Infinity ? 0 : minWarpTime
+}
+
 export function simulateSync(config: any): any {
   const startTime = performance.now()
   const {
@@ -149,7 +203,10 @@ export function simulateSync(config: any): any {
 
   // Simulation loop
   while (!table.allStationary() && iterations < maxIterations) {
-    table.advance(stepSize)
+    const warpTime = getFastWarpTime(table, R)
+    const dt = warpTime > stepSize ? warpTime * 0.95 : stepSize
+
+    table.advance(dt)
 
     frames.push({
       t: table.time,
@@ -167,9 +224,16 @@ export function simulateSync(config: any): any {
     }
   }
 
+  const baselineIterations = table.time / (stepSize * 1000)
+  const speedupFactor = iterations > 0 ? baselineIterations / iterations : 1
+  const reductionPct =
+    baselineIterations > 0 ? (1 - iterations / baselineIterations) * 100 : 0
+
   checkpoint("Simulation loop complete", {
     totalIterations: iterations,
     simTime: table.time,
+    speedupFactor: speedupFactor.toFixed(2) + "x",
+    iterationReduction: reductionPct.toFixed(1) + "%",
   })
 
   const endTime = performance.now()
@@ -177,6 +241,10 @@ export function simulateSync(config: any): any {
     type: "COMPLETE",
     id,
     computeTime: `${Math.round(endTime - startTime)}ms`,
+    simulatedTime: table.time,
+    actualIterations: iterations,
+    speedupFactor: speedupFactor.toFixed(2) + "x",
+    iterationReduction: reductionPct.toFixed(1) + "%",
     tableX: TableGeometry.tableX,
     tableY: TableGeometry.tableY,
     frames,
