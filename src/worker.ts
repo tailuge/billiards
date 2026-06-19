@@ -1,11 +1,6 @@
 import { Table } from "./model/table"
 import { Ball, State } from "./model/ball"
-import {
-  mathavanAdapter,
-  cueStrike,
-  bounceHan,
-  bounceHanBlend,
-} from "./model/physics/physics"
+import { mathavanAdapter, cueStrike } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { TableGeometry } from "./view/tablegeometry"
 import * as Constants from "./model/physics/constants"
@@ -30,10 +25,9 @@ function getFastWarpTime(table: Table, R: number, clearance: number): number {
     return 0
   }
 
-  
   const rollingBalls = balls.filter((b) => b.state === State.Rolling)
 
-  // 1.1 Rolling speed must be above 1Rm/s (avoid overshoot at end of roll)
+  // 1.1 Rolling speed must be above R m/s (avoid overshoot at end of roll)
   if (rollingBalls.some((b) => b.vel.length() < R)) {
     return 0
   }
@@ -151,23 +145,6 @@ export function simulateSync(config: any): any {
 
   const table = new Table(ballInstances)
 
-  // Configure cushion model — must mirror browsercontainer.cushion() so the
-  // worker reproduces exactly what the live game simulates (default mathavan).
-  switch (cushionModel) {
-    case "bounceHan":
-      table.cushionModel = bounceHan
-      break
-    case "bounceHanBlend":
-      table.cushionModel = bounceHanBlend
-      break
-    case "stronge":
-      table.cushionModel = strongeAdapter
-      break
-    case "mathavan":
-    default:
-      table.cushionModel = mathavanAdapter
-      break
-  }
   // Configure cushion model
   if (cushionModel === "mathavan") {
     table.cushionModel = mathavanAdapter
@@ -195,18 +172,21 @@ export function simulateSync(config: any): any {
       balls: table.balls.map((b) => ({
         id: b.id,
         pos: [b.pos.x, b.pos.y],
-        dt: 0
+        dt: 0,
       })),
     },
   ]
-  const { warpClearanceR = 4 } = config
+  const { warpClearanceR = 1.125 } = config
   let iterations = 0
   const progressInterval = 10000
 
   // Simulation loop
   while (!table.allStationary() && iterations < maxIterations) {
     const warpTime = getFastWarpTime(table, R, warpClearanceR * R)
-    const dt = warpTime > stepSize ? Math.floor(warpTime/stepSize)*stepSize : stepSize
+    const dt =
+      warpTime > stepSize
+        ? Math.floor(warpTime / stepSize) * stepSize
+        : stepSize
 
     table.advance(dt)
 
@@ -215,7 +195,7 @@ export function simulateSync(config: any): any {
       balls: table.balls.map((b) => ({
         id: b.id,
         pos: [b.pos.x, b.pos.y],
-        dt: dt
+        dt: dt,
       })),
     })
 

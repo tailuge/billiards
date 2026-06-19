@@ -527,7 +527,7 @@ node dist/ww-node.js
         },
         stepSize: 0.001953125,
         maxIterations: 20000,
-        warpClearanceR: 4,
+        warpClearanceR: 1.125,
         params: {
           mu: 0.007,
           muS: 0.136,
@@ -625,8 +625,14 @@ node dist/ww-node.js
               ctx.beginPath()
               ctx.strokeStyle = p1.dt > 0.001953125 ? "#4488ff" : baseColor
               ctx.lineWidth = 1
-              ctx.moveTo(centerX + p0.pos[0] * scale, centerY - p0.pos[1] * scale)
-              ctx.lineTo(centerX + p1.pos[0] * scale, centerY - p1.pos[1] * scale)
+              ctx.moveTo(
+                centerX + p0.pos[0] * scale,
+                centerY - p0.pos[1] * scale
+              )
+              ctx.lineTo(
+                centerX + p1.pos[0] * scale,
+                centerY - p1.pos[1] * scale
+              )
               ctx.stroke()
             }
 
@@ -683,7 +689,10 @@ node dist/ww-node.js
           logMsg(`✓ Batch complete in ${Math.round(t1 - t0)}ms`, "log-result")
 
           results.forEach((res) => {
-            logMsg(`Sim ${res.id}: ${res.frames.length} frames | speedup ${res.speedupFactor}`, "log-data")
+            logMsg(
+              `Sim ${res.id}: ${res.frames.length} frames | speedup ${res.speedupFactor}`,
+              "log-data"
+            )
           })
 
           lastResults = results
