@@ -54,17 +54,6 @@
         padding: 5px;
         width: 60px;
       }
-      #analysis {
-        background: #1a1a1a;
-        padding: 20px;
-        border-radius: 8px;
-        border-left: 4px solid #8be9fd;
-      }
-      h2 { color: #8be9fd; }
-      h3 { color: #50fa7b; margin-top: 20px; }
-      ul { padding-left: 20px; }
-      li { margin-bottom: 10px; }
-      code { background: #333; padding: 2px 4px; border-radius: 4px; }
     </style>
   </head>
   <body>
@@ -80,31 +69,6 @@
     <canvas id="plotCanvas" width="800" height="400"></canvas>
     <div id="log"></div>
 
-    <div id="analysis">
-      <h2>Analysis & Explanation</h2>
-      <p>
-        The <code>warpClearanceR</code> parameter defines a "safety zone" around balls and cushions.
-        When balls are outside this zone, the engine calculates a <code>minTime</code> to the next possible collision
-        using a conservative linear approximation: <code>t = (dist - 2R) / (vA + vB)</code>.
-      </p>
-
-      <h3>Why values < 2 show improved speedup?</h3>
-      <p>
-        Physical balls with radius <code>R</code> cannot have a center-to-center distance less than <code>2R</code> without overlapping.
-        When <code>warpClearanceR < 2</code>, the safety check (<code>distance < clearance</code>) fails to trigger
-        even when balls are at the point of contact. This allows the warping engine to remain active right up until the collision occurs,
-        maximizing the "leap" size.
-        Values &lt; 2 essentially remove the safety buffer that would otherwise force the engine back to
-        standard <code>stepSize</code> integration as balls approach each other.
-      </p>
-
-      <h3>Assumptions & Possible Errors</h3>
-      <ul>
-        <li><strong>Linear Approximation:</strong> <code>calcMinWarpTime</code> assumes balls move in straight lines at constant velocity. While accurate for rolling balls, it doesn't account for path curvature due to spin or friction. The engine compensates by using the full velocity magnitude for its conservative estimate.</li>
-        <li><strong>Numerical Precision:</strong> Warping extremely close to the <code>2R</code> boundary may lead to minor overlaps due to floating-point precision, relying on the collision resolver to "snap" balls back to contact.</li>
-        <li><strong>Missed Transitions:</strong> Large time leaps might bypass the exact moment a ball transitions between states (e.g., stopping exactly at the pocket edge), though the engine currently restricts warping to the <code>Rolling</code> state to minimize this risk.</li>
-      </ul>
-    </div>
 
     <script type="module">
       import { runBatch } from "./ww.js"
@@ -115,8 +79,8 @@
       const runBtn = document.getElementById("runBtn")
       const stepInput = document.getElementById("stepInput")
 
-      const minX = 0.25
-      const maxX = 4.25
+      const minX = 1.5
+      const maxX = 10.0
       const rangeX = maxX - minX
 
       const defaultConfig = {

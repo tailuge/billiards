@@ -34,8 +34,12 @@ function ballToCushionDist(b: Ball): number {
   )
 }
 
-function anyCushionTooClose(rollingBalls: Ball[], clearance: number): boolean {
-  return rollingBalls.some((b) => ballToCushionDist(b) <= clearance)
+function anyCushionTooClose(
+  rollingBalls: Ball[],
+  clearance: number,
+  R: number
+): boolean {
+  return rollingBalls.some((b) => ballToCushionDist(b) <= clearance - R)
 }
 
 function anyBallTooClose(
@@ -85,7 +89,7 @@ function getFastWarpTime(table: Table, R: number, clearance: number): number {
     return 0
   }
 
-  if (anyCushionTooClose(rollingBalls, clearance)) {
+  if (anyCushionTooClose(rollingBalls, clearance, R)) {
     return 0
   }
 
