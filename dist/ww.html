@@ -606,38 +606,39 @@ node dist/ww-node.js
           const globalAlpha = opacities[resultIndex % opacities.length]
           ctx.globalAlpha = globalAlpha
 
-          // Group positions by ball ID
+          // Group positions by ball ID, keeping dt for warp detection
           const ballPaths = {}
           data.frames.forEach((frame) => {
             frame.balls.forEach((ball) => {
               if (!ballPaths[ball.id]) ballPaths[ball.id] = []
-              ballPaths[ball.id].push(ball.pos)
+              ballPaths[ball.id].push({ pos: ball.pos, dt: ball.dt })
             })
           })
 
-          // Draw paths
+          // Draw paths segment by segment, blue if warp step
           Object.keys(ballPaths).forEach((id, index) => {
             const path = ballPaths[id]
-            ctx.beginPath()
-            ctx.strokeStyle = colors[index % colors.length]
-            ctx.lineWidth = 1
-            path.forEach((pos, i) => {
-              const px = centerX + pos[0] * scale
-              const py = centerY - pos[1] * scale
-              if (i === 0) ctx.moveTo(px, py)
-              else ctx.lineTo(px, py)
-            })
-            ctx.stroke()
+            const baseColor = colors[index % colors.length]
+            for (let i = 0; i < path.length - 1; i++) {
+              const p0 = path[i]
+              const p1 = path[i + 1]
+              ctx.beginPath()
+              ctx.strokeStyle = p1.dt > 0.001953125 ? "#4488ff" : baseColor
+              ctx.lineWidth = 1
+              ctx.moveTo(centerX + p0.pos[0] * scale, centerY - p0.pos[1] * scale)
+              ctx.lineTo(centerX + p1.pos[0] * scale, centerY - p1.pos[1] * scale)
+              ctx.stroke()
+            }
 
             // Draw start/end markers only for the primary result (first one)
             if (resultIndex === 0) {
               const first = path[0]
-              ctx.strokeStyle = colors[index % colors.length]
+              ctx.strokeStyle = baseColor
               ctx.lineWidth = 1
               ctx.beginPath()
               ctx.arc(
-                centerX + first[0] * scale,
-                centerY - first[1] * scale,
+                centerX + first.pos[0] * scale,
+                centerY - first.pos[1] * scale,
                 ballRadius,
                 0,
                 Math.PI * 2
@@ -645,11 +646,11 @@ node dist/ww-node.js
               ctx.stroke()
 
               const last = path[path.length - 1]
-              ctx.fillStyle = colors[index % colors.length]
+              ctx.fillStyle = baseColor
               ctx.beginPath()
               ctx.arc(
-                centerX + last[0] * scale,
-                centerY - last[1] * scale,
+                centerX + last.pos[0] * scale,
+                centerY - last.pos[1] * scale,
                 ballRadius,
                 0,
                 Math.PI * 2

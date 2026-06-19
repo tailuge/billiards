@@ -33,8 +33,8 @@ function getFastWarpTime(table: Table, R: number, clearance: number): number {
   
   const rollingBalls = balls.filter((b) => b.state === State.Rolling)
 
-    // 1.1 Rolling speed must be above 2Rm/s (avoid overshoot at end of roll)
-  if (rollingBalls.some((b) => b.vel.length() < 2*R)) {
+  // 1.1 Rolling speed must be above 1Rm/s (avoid overshoot at end of roll)
+  if (rollingBalls.some((b) => b.vel.length() < R)) {
     return 0
   }
 
