@@ -491,15 +491,17 @@ node dist/ww-node.js
         When all rolling balls are well clear of cushions and other balls (by at
         least <code>warpClearanceR × R</code> meters) and moving above a minimum
         speed, the simulation advances by a larger <code>dt</code> instead of
-        one small <code>stepSize</code> step. This skips uneventful roll segments
-        and reduces iteration count, giving a <strong>speedup factor</strong>
-        (shown in the log as <code>speedup 2.50x</code>).
+        one small <code>stepSize</code> step. This skips uneventful roll
+        segments and reduces iteration count, giving a
+        <strong>speedup factor</strong> (shown in the log as
+        <code>speedup 2.50x</code>).
       </p>
       <p>
         Set <code>warpClearanceR</code> to a value larger than the table
         half-width (<strong>~50</strong>) to disable warping entirely — all
         segments will use the base <code>stepSize</code>.
       </p>
+    </div>
 
     <script type="module">
       import { runBatch } from "./ww.js"
@@ -640,15 +642,9 @@ node dist/ww-node.js
             for (let i = 0; i < path.length; i++) {
               const p = path[i]
               if (i === 0) {
-                ctx.moveTo(
-                  centerX + p[0] * scale,
-                  centerY - p[1] * scale
-                )
+                ctx.moveTo(centerX + p[0] * scale, centerY - p[1] * scale)
               } else {
-                ctx.lineTo(
-                  centerX + p[0] * scale,
-                  centerY - p[1] * scale
-                )
+                ctx.lineTo(centerX + p[0] * scale, centerY - p[1] * scale)
               }
             }
             ctx.stroke()
