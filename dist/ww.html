@@ -277,9 +277,10 @@ worker.postMessage(configB);
     offset: { x, y },   // spin offset from centre (max ±0.5 of R)
     elevation: number    // cue elevation radians
   },
-  stepSize: number,      // simulation time step (default 0.001953125)
-  maxIterations: number, // hard cap (default 200000)
-  params: { ... }        // physics constant overrides (see below)
+  stepSize: number,         // simulation time step (default 0.001953125)
+  maxIterations: number,    // hard cap (default 200000)
+  warpClearanceR: number,   // warp clearance in units of R (default 4). Set ~50 to disable warp.
+  params: { ... }           // physics constant overrides (see below)
 }
 </pre
       >
@@ -484,7 +485,22 @@ node dist/ww-node.js
         This is the preferred entry point for LLM agents performing large-scale
         trajectory analysis or parameter tuning without a browser environment.
       </p>
-    </div>
+
+      <h3>11. Time-Warp Optimization</h3>
+      <p>
+        When all rolling balls are well clear of cushions and other balls (by at
+        least <code>warpClearanceR × R</code> meters) and moving above a minimum
+        speed, the simulation advances by a larger <code>dt</code> instead of
+        one small <code>stepSize</code> step. This skips uneventful roll segments
+        and reduces iteration count, giving a <strong>speedup factor</strong>
+        (shown in the log as <code>speedup 2.50x</code>). Warp steps appear
+        in <span style="color: #4488ff">blue</span> on the plot.
+      </p>
+      <p>
+        Set <code>warpClearanceR</code> to a value larger than the table
+        half-width (<strong>~50</strong>) to disable warping entirely — all
+        segments will use the base <code>stepSize</code>.
+      </p>
 
     <script type="module">
       import { runBatch } from "./ww.js"
