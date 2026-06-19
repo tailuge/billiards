@@ -38,13 +38,21 @@ function anyCushionTooClose(rollingBalls: Ball[], clearance: number): boolean {
   return rollingBalls.some((b) => ballToCushionDist(b) <= clearance)
 }
 
-function anyBallTooClose(rollingBalls: Ball[], allBalls: Ball[], clearance: number): boolean {
+function anyBallTooClose(
+  rollingBalls: Ball[],
+  allBalls: Ball[],
+  clearance: number
+): boolean {
   return rollingBalls.some((bA) =>
     allBalls.some((bB) => bA !== bB && bA.pos.distanceTo(bB.pos) <= clearance)
   )
 }
 
-function calcMinWarpTime(rollingBalls: Ball[], allBalls: Ball[], R: number): number {
+function calcMinWarpTime(
+  rollingBalls: Ball[],
+  allBalls: Ball[],
+  R: number
+): number {
   let minTime = Infinity
   for (const bA of rollingBalls) {
     const vA = bA.vel.length()

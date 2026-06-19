@@ -43,7 +43,7 @@
     "@testing-library/dom": "10.4.1",
     "@types/chai": "5.2.3",
     "@types/jest": "30.0.0",
-    "@types/node": "25.9.3",
+    "@types/node": "26.0.0",
     "@types/three": "0.184.1",
     "canvas": "3.2.3",
     "chai": "6.2.2",
