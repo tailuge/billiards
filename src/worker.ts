@@ -88,6 +88,44 @@ function getFastWarpTime(table: Table, R: number, clearance: number): number {
   return calcMinWarpTime(rollingBalls, balls, R)
 }
 
+function configureSimulation(
+  params: Record<string, unknown>,
+  ruleType: string,
+  table: Table,
+  cushionModel: string
+): number {
+  for (const [key, value] of Object.entries(params)) {
+    const setterName = `set${key}`
+    if (typeof (Constants as any)[setterName] === "function") {
+      ;(Constants as any)[setterName](Number(value))
+    }
+  }
+
+  const R = Constants.R
+
+  if (ruleType === "threecushion") {
+    const UMB_TABLE_X = 92.36
+    const UMB_TABLE_Y = 46.18
+    TableGeometry.tableX = R * (UMB_TABLE_X / 2 - 1)
+    TableGeometry.tableY = R * (UMB_TABLE_Y / 2 - 1)
+    TableGeometry.hasPockets = false
+  } else {
+    TableGeometry.tableX = R * 43
+    TableGeometry.tableY = R * 21
+    TableGeometry.hasPockets = true
+  }
+  TableGeometry.X = TableGeometry.tableX + R
+  TableGeometry.Y = TableGeometry.tableY + R
+
+  if (cushionModel === "mathavan") {
+    table.cushionModel = mathavanAdapter
+  } else {
+    table.cushionModel = strongeAdapter
+  }
+
+  return R
+}
+
 export function simulateSync(config: any): any {
   const startTime = performance.now()
   const {
@@ -107,48 +145,6 @@ export function simulateSync(config: any): any {
 
   checkpoint("Inputs received", { configKeys: Object.keys(config), id })
 
-  // Initialize balls.
-  // Ball ids come from a MODULE-GLOBAL counter (Ball.id++), not from the id we
-  // pass in. Across reused-worker messages that counter drifts, so the 2nd+
-  // simulation would build balls with ids that no longer match shot.cueBallId —
-  // breaking the cueball lookup and id-based scoring. Reset it each message so
-  // every run behaves like a fresh worker (ids 0,1,2,… in array order). Safe:
-  // the pool runs one job per worker at a time.
-  Ball.id = 0
-  // Apply physics constant overrides
-  for (const [key, value] of Object.entries(params)) {
-    const setterName = `set${key}`
-    if (typeof (Constants as any)[setterName] === "function") {
-      ;(Constants as any)[setterName](Number(value))
-    }
-  }
-  checkpoint("Constants set", { params, R: Constants.R })
-
-  const R = Constants.R
-
-  // Setup table geometry manually to avoid RuleFactory/heavy dependencies
-  if (ruleType === "threecushion") {
-    const UMB_TABLE_X = 92.36
-    const UMB_TABLE_Y = 46.18
-    TableGeometry.tableX = R * (UMB_TABLE_X / 2 - 1)
-    TableGeometry.tableY = R * (UMB_TABLE_Y / 2 - 1)
-    TableGeometry.X = TableGeometry.tableX + R
-    TableGeometry.Y = TableGeometry.tableY + R
-    TableGeometry.hasPockets = false
-  } else {
-    TableGeometry.tableX = R * 43
-    TableGeometry.tableY = R * 21
-    TableGeometry.X = TableGeometry.tableX + R
-    TableGeometry.Y = TableGeometry.tableY + R
-    TableGeometry.hasPockets = true
-  }
-  checkpoint("Table geometry set", {
-    ruleType,
-    tableX: TableGeometry.tableX,
-    tableY: TableGeometry.tableY,
-  })
-
-  // Initialize balls — reset static counter so IDs are stable across repeated calls
   Ball.id = 0
   const ballInstances = balls.map((b: any) => {
     const ball = new Ball(new Vector3(b.pos.x, b.pos.y, 0), 0xffffff, b.id)
@@ -156,13 +152,7 @@ export function simulateSync(config: any): any {
   })
 
   const table = new Table(ballInstances)
-
-  // Configure cushion model
-  if (cushionModel === "mathavan") {
-    table.cushionModel = mathavanAdapter
-  } else {
-    table.cushionModel = strongeAdapter
-  }
+  const R = configureSimulation(params, ruleType, table, cushionModel)
 
   table.cueball =
     table.balls.find((b) => b.id === shot.cueBallId) || table.balls[0]
