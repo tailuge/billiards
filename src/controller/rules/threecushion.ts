@@ -6,7 +6,6 @@ import { WatchAim } from "../../controller/watchaim"
 import { WatchEvent } from "../../events/watchevent"
 import { Ball } from "../../model/ball"
 import { Outcome } from "../../model/outcome"
-import { R } from "../../model/physics/constants"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
 import { CameraTop } from "../../view/cameratop"
@@ -55,15 +54,7 @@ export class ThreeCushion implements Rules {
   }
 
   tableGeometry(): void {
-    const UMB_TABLE_X = 92.36
-    const UMB_TABLE_Y = 46.18
-
-    TableGeometry.tableX = R * (UMB_TABLE_X / 2 - 1)
-    TableGeometry.tableY = R * (UMB_TABLE_Y / 2 - 1)
-
-    TableGeometry.X = TableGeometry.tableX + R
-    TableGeometry.Y = TableGeometry.tableY + R
-    TableGeometry.hasPockets = false
+    TableGeometry.configureForRule("threecushion")
   }
 
   table(): Table {

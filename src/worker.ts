@@ -103,19 +103,7 @@ function configureSimulation(
 
   const R = Constants.R
 
-  if (ruleType === "threecushion") {
-    const UMB_TABLE_X = 92.36
-    const UMB_TABLE_Y = 46.18
-    TableGeometry.tableX = R * (UMB_TABLE_X / 2 - 1)
-    TableGeometry.tableY = R * (UMB_TABLE_Y / 2 - 1)
-    TableGeometry.hasPockets = false
-  } else {
-    TableGeometry.tableX = R * 43
-    TableGeometry.tableY = R * 21
-    TableGeometry.hasPockets = true
-  }
-  TableGeometry.X = TableGeometry.tableX + R
-  TableGeometry.Y = TableGeometry.tableY + R
+  TableGeometry.configureForRule(ruleType)
 
   if (cushionModel === "mathavan") {
     table.cushionModel = mathavanAdapter
