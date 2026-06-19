@@ -195,16 +195,17 @@ export function simulateSync(config: any): any {
       balls: table.balls.map((b) => ({
         id: b.id,
         pos: [b.pos.x, b.pos.y],
+        dt: 0
       })),
     },
   ]
-  const { warpClearance = 3 * R } = config
+  const { warpClearanceR = 4 } = config
   let iterations = 0
   const progressInterval = 10000
 
   // Simulation loop
   while (!table.allStationary() && iterations < maxIterations) {
-    const warpTime = getFastWarpTime(table, R, warpClearance)
+    const warpTime = getFastWarpTime(table, R, warpClearanceR * R)
     const dt = warpTime > stepSize ? Math.floor(warpTime/stepSize)*stepSize : stepSize
 
     table.advance(dt)
@@ -214,6 +215,7 @@ export function simulateSync(config: any): any {
       balls: table.balls.map((b) => ({
         id: b.id,
         pos: [b.pos.x, b.pos.y],
+        dt: dt
       })),
     })
 
