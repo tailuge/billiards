@@ -123,7 +123,12 @@ export class Drawing {
     const p1 = new Vector3(data.p1.x, data.p1.y, 0.001) // Slightly above table
     const p2 = new Vector3(data.p2.x, data.p2.y, 0.001)
     const geometry = new BufferGeometry().setFromPoints([p1, p2])
-    const material = new LineBasicMaterial({ color: new Color(data.colour) })
+    const material = new LineBasicMaterial({
+      color: new Color(data.colour),
+      opacity: 0.25,
+      linewidth: 2,
+      transparent: true,
+    })
     const line = new Line(geometry, material)
     this.scene.add(line)
     this.lines.push(line)
