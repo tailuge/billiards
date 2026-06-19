@@ -16,7 +16,6 @@ const isWorkerContext =
   self instanceof (globalThis as any).WorkerGlobalScope
 
 function checkpoint(label: string, detail?: Record<string, unknown>) {
-  console.log(`[worker] ${label}`, detail ?? "")
   if (isWorkerContext) {
     const msg = { type: "CHECKPOINT", label, t: performance.now(), ...detail }
     self.postMessage(msg)
@@ -146,11 +145,7 @@ export function simulateSync(config: any): any {
   // Initialize balls — reset static counter so IDs are stable across repeated calls
   Ball.id = 0
   const ballInstances = balls.map((b: any) => {
-    const ball = new Ball(
-      new Vector3(b.pos.x, b.pos.y, b.pos.z),
-      0xffffff,
-      b.id
-    )
+    const ball = new Ball(new Vector3(b.pos.x, b.pos.y, 0), 0xffffff, b.id)
     return ball
   })
 
@@ -199,19 +194,18 @@ export function simulateSync(config: any): any {
       t: table.time,
       balls: table.balls.map((b) => ({
         id: b.id,
-        pos: [b.pos.x, b.pos.y, b.pos.z],
-        state: b.state,
+        pos: [b.pos.x, b.pos.y],
       })),
     },
   ]
-  const warpClearance = config.warpClearance ?? (4 * R)
+  const { warpClearance = 3 * R } = config
   let iterations = 0
   const progressInterval = 10000
 
   // Simulation loop
   while (!table.allStationary() && iterations < maxIterations) {
     const warpTime = getFastWarpTime(table, R, warpClearance)
-    const dt = warpTime > stepSize ? warpTime * 0.95 : stepSize
+    const dt = warpTime > stepSize ? Math.floor(warpTime/stepSize)*stepSize : stepSize
 
     table.advance(dt)
 
@@ -219,8 +213,7 @@ export function simulateSync(config: any): any {
       t: table.time,
       balls: table.balls.map((b) => ({
         id: b.id,
-        pos: [b.pos.x, b.pos.y, b.pos.z],
-        state: b.state,
+        pos: [b.pos.x, b.pos.y],
       })),
     })
 
@@ -233,14 +226,11 @@ export function simulateSync(config: any): any {
 
   const baselineIterations = table.time / (stepSize * 1000)
   const speedupFactor = iterations > 0 ? baselineIterations / iterations : 1
-  const reductionPct =
-    baselineIterations > 0 ? (1 - iterations / baselineIterations) * 100 : 0
 
   checkpoint("Simulation loop complete", {
     totalIterations: iterations,
     simTime: table.time,
     speedupFactor: speedupFactor.toFixed(2) + "x",
-    iterationReduction: reductionPct.toFixed(1) + "%",
   })
 
   const endTime = performance.now()
@@ -251,7 +241,6 @@ export function simulateSync(config: any): any {
     simulatedTime: table.time,
     actualIterations: iterations,
     speedupFactor: speedupFactor.toFixed(2) + "x",
-    iterationReduction: reductionPct.toFixed(1) + "%",
     tableX: TableGeometry.tableX,
     tableY: TableGeometry.tableY,
     frames,
@@ -263,9 +252,6 @@ export function simulateSync(config: any): any {
       t: o.timestamp,
     })),
   }
-  console.log(
-    `[worker] COMPLETE computeTime=${result.computeTime} frames=${frames.length}`
-  )
   return result
 }
 
