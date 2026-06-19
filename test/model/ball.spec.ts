@@ -174,4 +174,42 @@ describe("Ball", () => {
     expect(b.vel.x).to.be.equal(1)
     done()
   })
+
+  it("10 small steps converge to 1 large step for rolling ball", (done) => {
+    const smallStep = 0.01
+    const largeStep = 0.1
+    const smallN = largeStep / smallStep
+
+    const initVel = 1
+    const initRvelY = initVel / R
+
+    // Ball A: many small steps
+    const ballA = new Ball(new Vector3())
+    ballA.vel.x = initVel
+    ballA.rvel.y = initRvelY
+    ballA.state = State.Rolling
+
+    for (let i = 0; i < smallN; i++) {
+      ballA.update(smallStep)
+    }
+
+    // Ball B: one large step
+    const ballB = new Ball(new Vector3())
+    ballB.vel.x = initVel
+    ballB.rvel.y = initRvelY
+    ballB.state = State.Rolling
+
+    ballB.update(largeStep)
+
+    // this proves skip ahead warp advance is ok for rolling balls
+    // only used in webworker calc.
+
+    const eps = 1e-9
+    expect(ballA.pos.x).to.be.closeTo(ballB.pos.x, eps)
+    expect(ballA.pos.y).to.be.closeTo(ballB.pos.y, eps)
+    expect(ballA.vel.x).to.be.closeTo(ballB.vel.x, eps)
+    expect(ballA.vel.y).to.be.closeTo(ballB.vel.y, eps)
+    expect(ballA.rvel.y).to.be.closeTo(ballB.rvel.y, eps)
+    done()
+  })
 })

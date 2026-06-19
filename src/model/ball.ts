@@ -47,11 +47,24 @@ export class Ball {
     }
   }
 
+  readonly velBefore: Vector3 = new Vector3()
+
   update(t) {
-    this.updatePosition(t)
     if (this.state == State.Falling) {
+      this.updatePosition(t)
       this.pocket?.updateFall(this, t)
+    } else if (this.state == State.Rolling) {
+      // A rolling ball can apply the trapezium rule
+      // since it is guaranteed to be decelerating
+      // this allows 'futurePos' which uses just current vel
+      // to be a safe upper bound on actual position
+      this.velBefore.copy(this.vel)
+      this.updateVelocity(t)
+      this.pos.addScaledVector(this.velBefore, t / 2)
+      this.pos.addScaledVector(this.vel, t / 2)
     } else {
+      // sliding ball more conservative less accurate
+      this.updatePosition(t)
       this.updateVelocity(t)
     }
   }

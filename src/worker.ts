@@ -19,7 +19,7 @@ function checkpoint(label: string, detail?: Record<string, unknown>) {
 
 function getFrame(table: Table) {
   return {
-    t: table.time,
+    t: table.time / 1000,
     balls: table.balls.map((b) => ({
       id: b.id,
       pos: [b.pos.x, b.pos.y],
@@ -165,7 +165,7 @@ export function simulateSync(config: any): any {
   })
 
   const frames: any[] = [getFrame(table)]
-  const { warpClearanceR = 51.125 } = config // default off until fixed
+  const { warpClearanceR = 1.125 } = config // default off until fixed
   let iterations = 0
   const progressInterval = 10000
 
