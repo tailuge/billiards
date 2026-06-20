@@ -23,13 +23,18 @@ export function redraw(canvas, truth, simTracks, trackAll = false) {
 
   if (simTracks) {
     for (const [id, track] of Object.entries(simTracks)) {
-      ctx.fillStyle = SIM_COLORS[id]
-      for (const { x, y } of track) {
-        ctx.fillRect(tx(x) - 1, ty(y) - 1, 1, 1)
+      if (track.length < 2) continue
+      ctx.strokeStyle = SIM_COLORS[id]
+      ctx.lineWidth = 0.75
+      ctx.beginPath()
+      ctx.moveTo(tx(track[0].x), ty(track[0].y))
+      for (let i = 1; i < track.length; i++) {
+        ctx.lineTo(tx(track[i].x), ty(track[i].y))
       }
+      ctx.stroke()
     }
 
-    ctx.lineWidth = 0.25
+    ctx.lineWidth = 0.05
     for (const { ball, t, x, y } of truth) {
       if (!trackAll && ball !== 0) continue
       const track = simTracks[ball]
