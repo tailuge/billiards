@@ -48,9 +48,12 @@ export class Collision {
     }
   }
 
-  static readonly model = new CollisionThrow()
+  static model: CollisionThrow
 
   private static updateVelocities(a: Ball, b: Ball) {
+    if (!Collision.model) {
+      Collision.model = new CollisionThrow()
+    }
     const impactSpeed = Collision.model.updateVelocities(a, b)
     a.state = State.Sliding
     b.state = State.Sliding
