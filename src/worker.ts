@@ -94,7 +94,7 @@ function getFastWarpTime(table: Table, R: number, clearance: number): number {
 
   const rollingBalls = balls.filter((b) => b.state === State.Rolling)
 
-  if (rollingBalls.some((b) => b.vel.length() < R/32)) {
+  if (rollingBalls.some((b) => b.vel.length() < R / 32)) {
     return 0
   }
 

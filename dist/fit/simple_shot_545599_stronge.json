@@ -24,8 +24,7 @@
       "ee": 0.84,
       "stronge_omega_ratio": 1.1833700442249275,
       "stronge_e_n": 0.6268915124882066,
-      "stronge_μ": 0.303120784763667,
-      "throw_factor": 0.9088760810664414
+      "stronge_μ": 0.303120784763667
     },
     "stepSize": 0.001953125,
     "maxIterations": 20000,

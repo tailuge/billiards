@@ -60,15 +60,22 @@
     <h1>Warp Clearance Analysis</h1>
 
     <div class="controls">
-      <label>Step Size (X-axis):
-        <input type="number" id="stepInput" value="0.2" min="0.01" max="0.5" step="0.01">
+      <label
+        >Step Size (X-axis):
+        <input
+          type="number"
+          id="stepInput"
+          value="0.2"
+          min="0.01"
+          max="0.5"
+          step="0.01"
+        />
       </label>
       <button id="runBtn">Run Analysis</button>
     </div>
 
     <canvas id="plotCanvas" width="800" height="400"></canvas>
     <div id="log"></div>
-
 
     <script type="module">
       import { runBatch } from "./ww.js"

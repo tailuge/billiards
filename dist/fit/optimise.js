@@ -56,8 +56,9 @@ function makeTarget(simConfig, truth, specs, trackAll = false) {
     }
 
     const globalRMSE = totalCount > 0 ? Math.sqrt(totalSSE / totalCount) : Infinity
-    console.log('[opt] trial tuned:', JSON.stringify(tuned), '→ global rmse:', globalRMSE)
-    return globalRMSE
+    const safe = Number.isNaN(globalRMSE) ? Infinity : globalRMSE
+    console.log('[opt] trial tuned:', JSON.stringify(tuned), '→ global rmse:', globalRMSE, safe !== globalRMSE ? '(clamped NaN → ∞)' : '')
+    return safe
   }
   return target
 }

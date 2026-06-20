@@ -70,8 +70,7 @@ const output = {
       μs: 0.2, μw: 0.2, ee: 0.84,
       stronge_omega_ratio: 1.76,
       stronge_e_n: 0.77,
-      stronge_μ: 0.25,
-      throw_factor: 0.3
+      stronge_μ: 0.25
     },
     stepSize: 0.001953125,
     maxIterations: 20000,
