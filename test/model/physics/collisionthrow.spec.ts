@@ -1,6 +1,7 @@
 import { expect as chaiExpect } from "chai"
 import { Vector3 } from "three"
 import { Ball } from "../../../src/model/ball"
+import { Collision } from "../../../src/model/physics/collision"
 import { CollisionThrow } from "../../../src/model/physics/collisionthrow"
 import { m, R } from "../../../src/model/physics/constants"
 
@@ -18,6 +19,11 @@ describe("CollisionThrow Engine Accuracy", () => {
     // bpos = (2R * sin(phi), 2R * cos(phi), 0)
     const bpos = new Vector3(Math.sin(phi) * 2 * R, Math.cos(phi) * 2 * R, 0)
     const b = new Ball(bpos)
+
+    // Adjust pos to ensure they are at contact (to match updateVelocities expectations)
+    const contact = Collision.positionsAtContact(a, b)
+    a.pos.copy(contact.a)
+    b.pos.copy(contact.b)
 
     model.updateVelocities(a, b)
 
@@ -37,7 +43,13 @@ describe("CollisionThrow Engine Accuracy", () => {
     const vPoint = a.vel
       .clone()
       .sub(b.vel)
-      .add(ab.clone().multiplyScalar(-R).cross(a.rvel))
+      .add(
+        ab
+          .clone()
+          .multiplyScalar(-R)
+          .cross(a.rvel)
+          .sub(ab.clone().multiplyScalar(R).cross(b.rvel))
+      )
     const vn = Math.abs(ab.dot(vPoint))
     const vtVec = vPoint.clone().addScaledVector(ab, -ab.dot(vPoint))
     const vt = vtVec.length()
@@ -45,7 +57,8 @@ describe("CollisionThrow Engine Accuracy", () => {
 
     const Jn = (m / 2) * (1 + e) * vn
     const Jt = Math.min(mu * Jn, (m / 7) * vt)
-    const expectedThrow = (Math.atan2(Jt, Jn) * 180) / Math.PI
+    const expectedThrow =
+      (Math.atan2(Math.abs(Jt), Math.abs(Jn)) * 180) / Math.PI
 
     console.log(
       `v=${v}, wx=${wx}, wz=${wz}, phi=${phiDeg}: Engine=${actualThrow.toFixed(
