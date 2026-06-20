@@ -94,7 +94,7 @@ function getFastWarpTime(table: Table, R: number, clearance: number): number {
 
   const rollingBalls = balls.filter((b) => b.state === State.Rolling)
 
-  if (rollingBalls.some((b) => b.vel.length() < R)) {
+  if (rollingBalls.some((b) => b.vel.length() < R/32)) {
     return 0
   }
 
@@ -166,16 +166,13 @@ export function simulateSync(config: any): any {
   table.cueball =
     table.balls.find((b) => b.id === shot.cueBallId) || table.balls[0]
 
-  // Headless hit logic
+  // Headless hit logics
   table.time = 0
   const offset = new Vector3(shot.offset.x, shot.offset.y, 0)
   const strike = cueStrike(shot.angle, shot.power, offset, shot.elevation || 0)
   table.cueball.state = State.Sliding
   table.cueball.vel.copy(strike.vel)
   table.cueball.rvel.copy(strike.rvel)
-  checkpoint("Strike applied", {
-    vel: [strike.vel.x, strike.vel.y, strike.vel.z],
-  })
 
   const frames: any[] = [getFrame(table)]
   const { warpClearanceR = 2.5 } = config // default off until fixed
@@ -203,12 +200,6 @@ export function simulateSync(config: any): any {
 
   const baselineIterations = table.time / (stepSize * 1000)
   const speedupFactor = iterations > 0 ? baselineIterations / iterations : 1
-
-  checkpoint("Simulation loop complete", {
-    totalIterations: iterations,
-    simTime: table.time,
-    speedupFactor: speedupFactor.toFixed(2) + "x",
-  })
 
   const endTime = performance.now()
   const result = {
