@@ -188,7 +188,7 @@ export class LobbyIndicator {
       NetworkLogger.logLobby("chat")
       const sender = this.users.find((u) => u.userId === chat.senderId)
       const senderName = sender ? sender.userName : "Unknown"
-      this.onChatMessage?.(`${senderName}: ${chat.text}`)
+      this.onChatMessage?.(`[${senderName}: ${chat.text}]`)
     })
 
     this.lobby.onChallenge((challenge) => {

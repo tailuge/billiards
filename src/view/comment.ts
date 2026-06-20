@@ -38,7 +38,7 @@ export class Comment {
       const text = inputText.value.trim()
       inputTextDiv.close()
       if (text) {
-        this.container.chat.showMessage("<br>" + text)
+        this.container.chat.showMessage(text)
         this.container.sendChat(text)
       }
     }

@@ -60,6 +60,9 @@ export class Chat {
       sanitize(content)
       this.chatoutput.appendChild(content)
     } else {
+      if (msg.length > 2) {
+        this.chatoutput.appendChild(document.createElement("br"))
+      }
       this.chatoutput.appendChild(document.createTextNode(msg))
     }
     this.updateScroll()
