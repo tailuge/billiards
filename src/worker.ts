@@ -187,7 +187,7 @@ export function simulateSync(config: any): any {
     const warpTime = getFastWarpTime(table, R, warpClearanceR * R)
     const dt =
       warpTime > stepSize
-        ? Math.floor(warpTime / stepSize) * stepSize
+        ? Math.min(Math.floor(warpTime / stepSize) * stepSize, 25 * stepSize)
         : stepSize
 
     table.advance(dt)
