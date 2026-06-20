@@ -178,7 +178,7 @@ export function simulateSync(config: any): any {
   })
 
   const frames: any[] = [getFrame(table)]
-  const { warpClearanceR = 1.125 } = config // default off until fixed
+  const { warpClearanceR = 2.5 } = config // default off until fixed
   let iterations = 0
   const progressInterval = 10000
 
