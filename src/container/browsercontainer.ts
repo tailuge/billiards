@@ -34,6 +34,7 @@ export class BrowserContainer {
   tableId
   clientId
   wss
+  lobbyUrl
   ruletype
   playername: string
   replay: string | null
@@ -72,7 +73,10 @@ export class BrowserContainer {
       params.get("userId") ?? params.get("clientId") ?? `G_${getUID()}`
     this.replay = params.get("state")
     this.ruletype = params.get("ruletype") ?? "nineball"
-    this.wss = params.get("websocketserver")
+    const lobbyUrl = params.get("lobbyUrl")
+    const wss = params.get("websocketserver")
+    this.lobbyUrl = lobbyUrl
+    this.wss = wss
     this.canvas3d = canvas3d
     this.cushionModel = this.cushion(params.get("cushionModel"))
     this.spectator = params.has("spectator")
@@ -117,7 +121,7 @@ export class BrowserContainer {
     }
   }
 
-  private createContainer(scoreReporter: ScoreReporter) {
+    private createContainer(scoreReporter: ScoreReporter) {
     const effectiveRuletype =
       this.drillMode && this.ruletype === "threecushion"
         ? "threecushion-drill"
@@ -130,7 +134,7 @@ export class BrowserContainer {
       keyboard: new Keyboard(this.canvas3d),
       id: this.playername,
       relay: this.messageRelay,
-      messagingUrl: this.wss ?? undefined,
+      messagingUrl: this.lobbyUrl ?? this.wss ?? undefined,
       scoreReporter: scoreReporter,
       replayMode: !!this.replay,
       botMode: this.botMode,
