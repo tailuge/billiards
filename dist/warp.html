@@ -71,10 +71,22 @@
           step="0.01"
         />
       </label>
+      <label
+        >RMSE Max (Y-axis):
+        <input
+          type="number"
+          id="rmseMaxInput"
+          value="1"
+          min="0.0001"
+          max="10"
+          step="0.1"
+        />
+      </label>
       <button id="runBtn">Run Analysis</button>
     </div>
 
     <canvas id="plotCanvas" width="800" height="400"></canvas>
+    <canvas id="rmseCanvas" width="800" height="400"></canvas>
     <div id="log"></div>
 
     <script type="module">
@@ -82,9 +94,12 @@
 
       const canvas = document.getElementById("plotCanvas")
       const ctx = canvas.getContext("2d")
+      const rmseCanvas = document.getElementById("rmseCanvas")
+      const rmseCtx = rmseCanvas.getContext("2d")
       const logEl = document.getElementById("log")
       const runBtn = document.getElementById("runBtn")
       const stepInput = document.getElementById("stepInput")
+      const rmseMaxInput = document.getElementById("rmseMaxInput")
 
       const minX = 1.5
       const maxX = 10.0
@@ -133,55 +148,121 @@
         const w = canvas.width
         const h = canvas.height
         const pad = 50
-        ctx.clearRect(0, 0, w, h)
-
-        ctx.fillStyle = "#eee"
-        ctx.strokeStyle = "#888"
-        ctx.textAlign = "center"
-
-        // Axes
-        ctx.beginPath()
-        ctx.moveTo(pad, pad)
-        ctx.lineTo(pad, h - pad)
-        ctx.lineTo(w - pad, h - pad)
-        ctx.stroke()
-
-        // X-axis labels
-        for (let x = minX; x <= maxX; x += 0.5) {
-          const px = pad + ((x - minX) / rangeX) * (w - 2 * pad)
-          ctx.fillText(x.toFixed(2), px, h - pad + 15)
-        }
-        ctx.fillText("warpClearanceR (Units of R)", w / 2, h - 10)
-
-        // Y-axis labels (Speedup 1 to 5)
-        ctx.textAlign = "right"
-        for (let y = 1; y <= 5; y++) {
-          const py = h - pad - ((y - 1) / 4) * (h - 2 * pad)
-          ctx.fillText(y + "x", pad - 5, py + 5)
-        }
-        ctx.save()
-        ctx.translate(15, h / 2)
-        ctx.rotate(-Math.PI / 2)
-        ctx.textAlign = "center"
-        ctx.fillText("Speedup Factor", 0, 0)
-        ctx.restore()
-
-        if (dataPoints.length === 0) return
 
         const colors = ["#ff79c6", "#50fa7b", "#8be9fd"]
-        for (let shotIdx = 0; shotIdx < 3; shotIdx++) {
-          ctx.strokeStyle = colors[shotIdx]
-          ctx.lineWidth = 2
+
+        // Plot Speedup
+        {
+          ctx.clearRect(0, 0, w, h)
+          ctx.fillStyle = "#eee"
+          ctx.strokeStyle = "#888"
+          ctx.textAlign = "center"
+
           ctx.beginPath()
-          dataPoints.forEach((pt, i) => {
-            const px = pad + ((pt.clearance - minX) / rangeX) * (w - 2 * pad)
-            const py =
-              h - pad - ((pt.speedups[shotIdx] - 1) / 4) * (h - 2 * pad)
-            if (i === 0) ctx.moveTo(px, py)
-            else ctx.lineTo(px, py)
-          })
+          ctx.moveTo(pad, pad)
+          ctx.lineTo(pad, h - pad)
+          ctx.lineTo(w - pad, h - pad)
           ctx.stroke()
+
+          for (let x = minX; x <= maxX; x += 0.5) {
+            const px = pad + ((x - minX) / rangeX) * (w - 2 * pad)
+            ctx.fillText(x.toFixed(2), px, h - pad + 15)
+          }
+          ctx.fillText("warpClearanceR (Units of R)", w / 2, h - 10)
+
+          ctx.textAlign = "right"
+          for (let y = 1; y <= 5; y++) {
+            const py = h - pad - ((y - 1) / 4) * (h - 2 * pad)
+            ctx.fillText(y + "x", pad - 5, py + 5)
+          }
+          ctx.save()
+          ctx.translate(15, h / 2)
+          ctx.rotate(-Math.PI / 2)
+          ctx.textAlign = "center"
+          ctx.fillText("Speedup Factor", 0, 0)
+          ctx.restore()
+
+          if (dataPoints.length > 0) {
+            for (let shotIdx = 0; shotIdx < 3; shotIdx++) {
+              ctx.strokeStyle = colors[shotIdx]
+              ctx.lineWidth = 2
+              ctx.beginPath()
+              dataPoints.forEach((pt, i) => {
+                const px = pad + ((pt.clearance - minX) / rangeX) * (w - 2 * pad)
+                const py =
+                  h - pad - ((pt.speedups[shotIdx] - 1) / 4) * (h - 2 * pad)
+                if (i === 0) ctx.moveTo(px, py)
+                else ctx.lineTo(px, py)
+              })
+              ctx.stroke()
+            }
+          }
         }
+
+        // Plot RMSE
+        {
+          const ctx = rmseCtx
+          const rmseMax = parseFloat(rmseMaxInput.value) || 1
+          ctx.clearRect(0, 0, w, h)
+          ctx.fillStyle = "#eee"
+          ctx.strokeStyle = "#888"
+          ctx.textAlign = "center"
+
+          ctx.beginPath()
+          ctx.moveTo(pad, pad)
+          ctx.lineTo(pad, h - pad)
+          ctx.lineTo(w - pad, h - pad)
+          ctx.stroke()
+
+          for (let x = minX; x <= maxX; x += 0.5) {
+            const px = pad + ((x - minX) / rangeX) * (w - 2 * pad)
+            ctx.fillText(x.toFixed(2), px, h - pad + 15)
+          }
+          ctx.fillText("warpClearanceR (Units of R)", w / 2, h - 10)
+
+          ctx.textAlign = "right"
+          for (let i = 0; i <= 4; i++) {
+            const val = (rmseMax * i) / 4
+            const py = h - pad - (i / 4) * (h - 2 * pad)
+            ctx.fillText(val.toFixed(4), pad - 5, py + 5)
+          }
+          ctx.save()
+          ctx.translate(15, h / 2)
+          ctx.rotate(-Math.PI / 2)
+          ctx.textAlign = "center"
+          ctx.fillText("RMSE Final Pos", 0, 0)
+          ctx.restore()
+
+          if (dataPoints.length > 0) {
+            for (let shotIdx = 0; shotIdx < 3; shotIdx++) {
+              ctx.strokeStyle = colors[shotIdx]
+              ctx.lineWidth = 2
+              ctx.beginPath()
+              dataPoints.forEach((pt, i) => {
+                const px = pad + ((pt.clearance - minX) / rangeX) * (w - 2 * pad)
+                const py =
+                  h - pad - (pt.rmses[shotIdx] / rmseMax) * (h - 2 * pad)
+                if (i === 0) ctx.moveTo(px, py)
+                else ctx.lineTo(px, py)
+              })
+              ctx.stroke()
+            }
+          }
+        }
+      }
+
+      function computeRMSE(baseline, result) {
+        const bBalls = baseline.frames[baseline.frames.length - 1].balls
+        const rBalls = result.frames[result.frames.length - 1].balls
+        let sse = 0
+        for (let i = 0; i < bBalls.length; i++) {
+          const b = bBalls[i]
+          const r = rBalls.find((rb) => rb.id === b.id)
+          if (r) {
+            sse += (b.pos[0] - r.pos[0]) ** 2 + (b.pos[1] - r.pos[1]) ** 2
+          }
+        }
+        return Math.sqrt(sse / bBalls.length)
       }
 
       runBtn.onclick = async () => {
@@ -190,20 +271,28 @@
         dataPoints = []
         log("Starting analysis...")
 
-        for (let r = minX; r <= maxX + 0.001; r += step) {
-          const config = JSON.parse(JSON.stringify(defaultConfig))
-          config.warpClearanceR = r
-          log(`Testing warpClearanceR = ${r.toFixed(2)}...`)
+        try {
+          log("Computing baseline (warpClearanceR = 50)...")
+          const baselineConfig = JSON.parse(JSON.stringify(defaultConfig))
+          baselineConfig.warpClearanceR = 50
+          const baselines = await runBatch(baselineConfig, 3, 0.001745)
 
-          try {
+          for (let r = minX; r <= maxX + 0.001; r += step) {
+            const config = JSON.parse(JSON.stringify(defaultConfig))
+            config.warpClearanceR = r
+            log(`Testing warpClearanceR = ${r.toFixed(2)}...`)
+
             const results = await runBatch(config, 3, 0.001745)
             const speedups = results.map((res) => parseFloat(res.speedupFactor))
-            dataPoints.push({ clearance: r, speedups })
+            const rmses = results.map((res, i) => computeRMSE(baselines[i], res))
+            dataPoints.push({ clearance: r, speedups, rmses })
             plot()
-          } catch (e) {
-            log("Error: " + e.message)
           }
+        } catch (e) {
+          log("Error: " + e.message)
+          console.error(e)
         }
+
         log("Analysis complete.")
         runBtn.disabled = false
       }
