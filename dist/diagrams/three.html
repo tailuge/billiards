@@ -1166,7 +1166,21 @@ Overlap: ${overlap}%`)
           url.searchParams.set("ruletype", "threecushion")
           url.searchParams.set("practice", "true")
           url.searchParams.set("cushionModel", cushionModel)
-          const CONSTANTS = ["R", "m", "e", "mu", "muS", "muC", "rho", "μs", "μw", "ee", "stronge_omega_ratio", "stronge_e_n", "stronge_μ"]
+          const CONSTANTS = [
+            "R",
+            "m",
+            "e",
+            "mu",
+            "muS",
+            "muC",
+            "rho",
+            "μs",
+            "μw",
+            "ee",
+            "stronge_omega_ratio",
+            "stronge_e_n",
+            "stronge_μ",
+          ]
           CONSTANTS.forEach((key) => {
             const input = document.getElementById(key)
             if (input && input.value !== "") {
@@ -1174,15 +1188,18 @@ Overlap: ${overlap}%`)
             }
           })
           url.searchParams.set("init", JSON.stringify(coords))
-          url.searchParams.set("initShot", JSON.stringify({
-            angle: round6(aimAngle),
-            power: round6(aimPower),
-            offset: {
-              x: round6(aimOffset.x),
-              y: round6(aimOffset.y),
-              z: 0,
-            },
-          }))
+          url.searchParams.set(
+            "initShot",
+            JSON.stringify({
+              angle: round6(aimAngle),
+              power: round6(aimPower),
+              offset: {
+                x: round6(aimOffset.x),
+                y: round6(aimOffset.y),
+                z: 0,
+              },
+            })
+          )
           window.open(url.toString(), "_blank")
         })
         function shareUrl(url) {

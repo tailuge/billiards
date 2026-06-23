@@ -121,7 +121,7 @@ export class BrowserContainer {
     }
   }
 
-    private createContainer(scoreReporter: ScoreReporter) {
+  private createContainer(scoreReporter: ScoreReporter) {
     const effectiveRuletype =
       this.drillMode && this.ruletype === "threecushion"
         ? "threecushion-drill"

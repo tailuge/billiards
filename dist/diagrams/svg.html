@@ -1,270 +1,248 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Three-Cushion Billiards Diagram Tool</title>
-    <!-- Tailwind CSS for clean layout and UI styling -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Billiards Trajectory — SVG</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* All line strokes are universally defined as 1mm (0.001 in our meter coordinate system) */
-        .table-stroke {
-            fill: #ffffff;
-            stroke: #000000;
-            stroke-width: 0.001;
-        }
-        .grid-line {
-            stroke: #000000;
-            stroke-width: 0.001;
-            stroke-dasharray: 0.004 0.004; /* Dotted grid line pattern in meters */
-        }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .table-stroke {
+        fill: #ffffff;
+        stroke: #000000;
+        stroke-width: 0.001;
+      }
+      .grid-line {
+        stroke: #000000;
+        stroke-width: 0.001;
+        stroke-dasharray: 0.004 0.004;
+      }
+      .trajectory-line {
+        fill: none;
+        stroke: #000000;
+        stroke-width: 0.001;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
     </style>
-</head>
-<body class="bg-neutral-50 text-neutral-900 min-h-screen flex flex-col justify-between">
-
-    <!-- Main Workspace (No header or menus) -->
-    <main class="flex-1 flex flex-col items-center justify-center p-6 md:p-12">
-        <div class="w-full max-w-4xl bg-white p-8 rounded-xl border border-neutral-200 shadow-sm flex flex-col items-center">
-            
-            <!-- Centered Responsive SVG Container -->
-            <div class="w-full max-w-2xl">
-                <svg id="billiard-table-svg" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto select-none overflow-visible">
-                    <!-- Dynamic parametric tree rendered centered at (0,0) in meters -->
-                </svg>
-            </div>
-
-        </div>
+  </head>
+  <body
+    class="bg-neutral-50 text-neutral-900 min-h-screen flex flex-col items-center justify-center p-6 md:p-12"
+  >
+    <main
+      class="w-full max-w-4xl bg-white p-8 rounded-xl border border-neutral-200 shadow-sm flex flex-col items-center gap-4"
+    >
+      <!-- SVG Container -->
+      <div class="w-full max-w-2xl">
+        <svg
+          id="billiard-table-svg"
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-full h-auto select-none overflow-visible"
+        >
+          <g id="table-group"></g>
+          <g id="trajectories-group"></g>
+        </svg>
+      </div>
+      <!-- Status -->
+      <div id="worker-status" class="text-xs text-neutral-500 font-mono">
+        Loading worker…
+      </div>
     </main>
 
-    <!-- Calibration Controller Footer -->
-    <footer class="border-t border-neutral-200 bg-white px-6 py-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full justify-items-center">
-        <!-- Slider 1: Cushion Thickness -->
-        <div class="w-full max-w-xs flex flex-col gap-2">
-            <div class="flex justify-between items-center text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                <span>Cushion Thickness</span>
-                <span id="val-cushion-thickness" class="font-mono text-neutral-900">60.0mm</span>
-            </div>
-            <input 
-                type="range" 
-                id="slider-cushion-thickness" 
-                min="10" 
-                max="120" 
-                value="60" 
-                class="w-full h-1 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-black focus:outline-none"
-            >
-        </div>
+    <script type="module">
+      import { SimulationRunner } from "../ww.js"
 
-        <!-- Slider 2: Diamond Distance -->
-        <div class="w-full max-w-xs flex flex-col gap-2">
-            <div class="flex justify-between items-center text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                <span>Diamond Offset</span>
-                <span id="val-diamond-offset" class="font-mono text-neutral-900">100.0mm</span>
-            </div>
-            <input 
-                type="range" 
-                id="slider-diamond-offset" 
-                min="10" 
-                max="250" 
-                value="100" 
-                class="w-full h-1 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-black focus:outline-none"
-            >
-        </div>
+      /************************************************************************
+       * TABLE GEOMETRY (SI METERS)
+       ************************************************************************/
+      const R = 0.03275
+      const UMB_TABLE_X = 92.36
+      const UMB_TABLE_Y = 46.18
 
-        <!-- Slider 3: Outermost Frame Width -->
-        <div class="w-full max-w-xs flex flex-col gap-2">
-            <div class="flex justify-between items-center text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                <span>Outer Rail Thickness</span>
-                <span id="val-frame-offset" class="font-mono text-neutral-900">180.0mm</span>
-            </div>
-            <input 
-                type="range" 
-                id="slider-frame-offset" 
-                min="40" 
-                max="350" 
-                value="180" 
-                class="w-full h-1 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-black focus:outline-none"
-            >
-        </div>
+      const tableX = R * (UMB_TABLE_X / 2 - 1)
+      const tableY = R * (UMB_TABLE_Y / 2 - 1)
 
-        <!-- Slider 4: Diamond Size -->
-        <div class="w-full max-w-xs flex flex-col gap-2">
-            <div class="flex justify-between items-center text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                <span>Diamond Size</span>
-                <span id="val-diamond-size" class="font-mono text-neutral-900">10.0mm</span>
-            </div>
-            <input 
-                type="range" 
-                id="slider-diamond-size" 
-                min="2" 
-                max="25" 
-                step="0.5"
-                value="10.0" 
-                class="w-full h-1 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-black focus:outline-none"
-            >
-        </div>
-    </footer>
+      const X = tableX + R
+      const Y = tableY + R
 
-    <script>
-        /************************************************************************
-         * PHYSICAL CO-ORDINATE SPECIFICATIONS (SI METERS)
-         * * Ball Radius:
-         * R = 0.03275 m (32.75 mm)
-         * * Official UMB Table Proportions (Grid point ratios):
-         * UMB_TABLE_X = 92.36 (total long rail length unit factor)
-         * UMB_TABLE_Y = 46.18 (total short rail width unit factor)
-         * * Derived Boundary Coordinates:
-         * tableX = R * (92.36 / 2 - 1) = 1.479625 m
-         * tableY = R * (46.18 / 2 - 1) = 0.7234475 m
-         * * Absolute Playing Area Bounds (from exact table center 0,0):
-         * X = tableX + R = 1.512395 m  (Half-Width / Half-Length of Playing Area)
-         * Y = tableY + R = 0.7561975 m (Half-Height / Half-Width of Playing Area)
-         * * Total Playing Width:  2 * X = 3.02479 m
-         * Total Playing Height: 2 * Y = 1.512395 m
-         * Ratio: (2 * X) / (2 * Y) = 2.0 (Exact 2:1 Playing Grid)
-         ************************************************************************/
-        const R = 0.03275;
-        const UMB_TABLE_X = 92.36;
-        const UMB_TABLE_Y = 46.18;
+      // Fixed calibration (matches default slider midpoints from original)
+      const cOffset = 0.06 // cushion thickness
+      const dOffset = 0.1 // diamond offset
+      const fOffset = 0.18 // outer frame thickness
+      const dSize = 0.01 // diamond half-width
 
-        const tableX = R * (UMB_TABLE_X / 2 - 1);
-        const tableY = R * (UMB_TABLE_Y / 2 - 1);
+      /************************************************************************
+       * TABLE RENDERING
+       ************************************************************************/
+      const tableSvg = document.getElementById("billiard-table-svg")
 
-        const X = tableX + R; // 1.512395 m
-        const Y = tableY + R; // 0.7561975 m
+      function generateBilliardTable() {
+        const width = X * 2
+        const height = Y * 2
 
-        // UI Slider elements
-        const tableSvg = document.getElementById('billiard-table-svg');
-        const sliderCushionThickness = document.getElementById('slider-cushion-thickness');
-        const sliderDiamondOffset = document.getElementById('slider-diamond-offset');
-        const sliderFrameOffset = document.getElementById('slider-frame-offset');
-        const sliderDiamondSize = document.getElementById('slider-diamond-size');
+        const maxOffset = Math.max(fOffset, dOffset + 0.015)
+        const pad = 0.04
+        const viewBoxWidth = (X + maxOffset + pad) * 2
+        const viewBoxHeight = (Y + maxOffset + pad) * 2
+        const viewBoxX = -viewBoxWidth / 2
+        const viewBoxY = -viewBoxHeight / 2
 
-        const valCushionThickness = document.getElementById('val-cushion-thickness');
-        const valDiamondOffset = document.getElementById('val-diamond-offset');
-        const valFrameOffset = document.getElementById('val-frame-offset');
-        const valDiamondSize = document.getElementById('val-diamond-size');
+        let svgContent = ""
 
-        /**
-         * Pure Parametric SVG Tree Generator (Horizontal Orientation Only)
-         * Computes all coordinate structures relative to centered (0,0) point
-         */
-        function generateBilliardTable(params) {
-            const {
-                cOffset,    // Cushion outer thickness (meters)
-                dOffset,    // Diamond sights offset distance (meters)
-                fOffset,    // Outermost frame thickness (meters)
-                dSize       // Diamond half-width radius (meters)
-            } = params;
+        // Outer frame
+        const fx = -X - fOffset
+        const fy = -Y - fOffset
+        const fw = width + fOffset * 2
+        const fh = height + fOffset * 2
+        svgContent += `  <rect id="outer-frame" x="${fx}" y="${fy}" width="${fw}" height="${fh}" class="table-stroke" />\n`
 
-            const width = X * 2;
-            const height = Y * 2;
+        // Cushion border
+        const cx = -X - cOffset
+        const cy = -Y - cOffset
+        const cw = width + cOffset * 2
+        const ch = height + cOffset * 2
+        svgContent += `  <rect id="cushion-border" x="${cx}" y="${cy}" width="${cw}" height="${ch}" class="table-stroke" />\n`
 
-            // Safe viewBox padding using scale-aware dynamic margins (with 4cm protective pad)
-            const maxOffset = Math.max(fOffset, dOffset + 0.015);
-            const pad = 0.04; 
-            const viewBoxWidth = (X + maxOffset + pad) * 2;
-            const viewBoxHeight = (Y + maxOffset + pad) * 2;
-            const viewBoxX = -viewBoxWidth / 2;
-            const viewBoxY = -viewBoxHeight / 2;
+        // Playing area
+        svgContent += `  <rect id="playing-area" x="${-X}" y="${-Y}" width="${width}" height="${height}" class="table-stroke" />\n`
 
-            let svgContent = '';
-
-            // 1. Outermost Wood Rail Frame Rectangle
-            const fx = -X - fOffset;
-            const fy = -Y - fOffset;
-            const fw = width + (fOffset * 2);
-            const fh = height + (fOffset * 2);
-            svgContent += `  <rect id="outer-frame" x="${fx}" y="${fy}" width="${fw}" height="${fh}" class="table-stroke" />\n`;
-
-            // 2. Inner Cushion Boundary Rectangle
-            const cx = -X - cOffset;
-            const cy = -Y - cOffset;
-            const cw = width + (cOffset * 2);
-            const ch = height + (cOffset * 2);
-            svgContent += `  <rect id="cushion-border" x="${cx}" y="${cy}" width="${cw}" height="${ch}" class="table-stroke" />\n`;
-
-            // 3. Playing Surface Boundary Nose Line
-            svgContent += `  <rect id="playing-area" x="${-X}" y="${-Y}" width="${width}" height="${height}" class="table-stroke" />\n`;
-
-            // 4. Custom Dotted Grid Lines (1mm thickness)
-            // Equal grid intervals across length (8 segments)
-            const gridInterval = (2 * X) / 8; // exactly R * 11.545 = 0.37809875 m
-
-            svgContent += '  <g id="table-grid-lines">\n';
-            // Vertical grid lines (7 segments between bounds)
-            for (let i = -3; i <= 3; i++) {
-                const x = i * gridInterval;
-                svgContent += `    <line x1="${x}" y1="${-Y}" x2="${x}" y2="${Y}" class="grid-line" />\n`;
-            }
-            // Horizontal grid lines (3 segments between bounds)
-            for (let i = -1; i <= 1; i++) {
-                const y = i * gridInterval;
-                svgContent += `    <line x1="${-X}" y1="${y}" x2="${X}" y2="${y}" class="grid-line" />\n`;
-            }
-            svgContent += '  </g>\n';
-
-            // 5. Draw Hollow Diamonds (1mm stroke width)
-            svgContent += '  <g id="diamonds-group">\n';
-            function drawDiamond(x, y) {
-                return `    <polygon points="${x},${y-dSize} ${x+dSize},${y} ${x},${y+dSize} ${x-dSize},${y}" fill="none" stroke="#000000" stroke-width="0.001" />\n`;
-            }
-
-            // Top & Bottom rails (9 diamonds each, including 0-endpoints at corner alignments)
-            for (let i = -4; i <= 4; i++) {
-                const x = i * gridInterval;
-                svgContent += drawDiamond(x, -Y - dOffset); // Top
-                svgContent += drawDiamond(x, Y + dOffset);  // Bottom
-            }
-            // Left & Right rails (5 diamonds each, including corner alignments)
-            for (let i = -2; i <= 2; i++) {
-                const y = i * gridInterval;
-                svgContent += drawDiamond(-X - dOffset, y); // Left
-                svgContent += drawDiamond(X + dOffset, y);  // Right
-            }
-            svgContent += '  </g>\n';
-
-            return {
-                viewBox: `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`,
-                content: svgContent
-            };
+        // Grid lines
+        const gridInterval = (2 * X) / 8
+        svgContent += '  <g id="table-grid-lines">\n'
+        for (let i = -3; i <= 3; i++) {
+          const x = i * gridInterval
+          svgContent += `    <line x1="${x}" y1="${-Y}" x2="${x}" y2="${Y}" class="grid-line" />\n`
         }
-
-        function updateDiagram() {
-            // Convert slider millimeter inputs to meters
-            const cOffset = parseInt(sliderCushionThickness.value) / 1000;
-            const dOffset = parseInt(sliderDiamondOffset.value) / 1000;
-            const fOffset = parseInt(sliderFrameOffset.value) / 1000;
-            const dSize = parseFloat(sliderDiamondSize.value) / 1000;
-
-            // Output readouts to labels
-            valCushionThickness.textContent = sliderCushionThickness.value + 'mm';
-            valDiamondOffset.textContent = sliderDiamondOffset.value + 'mm';
-            valFrameOffset.textContent = sliderFrameOffset.value + 'mm';
-            valDiamondSize.textContent = parseFloat(sliderDiamondSize.value).toFixed(1) + 'mm';
-
-            // Generate Layout
-            const config = { cOffset, dOffset, fOffset, dSize };
-            const result = generateBilliardTable(config);
-
-            // Re-render SVG element tree
-            tableSvg.setAttribute('viewBox', result.viewBox);
-            tableSvg.innerHTML = result.content;
+        for (let i = -1; i <= 1; i++) {
+          const y = i * gridInterval
+          svgContent += `    <line x1="${-X}" y1="${y}" x2="${X}" y2="${y}" class="grid-line" />\n`
         }
+        svgContent += "  </g>\n"
 
-        // Initialize state and events
-        window.onload = function() {
-            updateDiagram();
+        // Diamonds
+        svgContent += '  <g id="diamonds-group">\n'
+        function drawDiamond(x, y) {
+          return `    <polygon points="${x},${y - dSize} ${x + dSize},${y} ${x},${y + dSize} ${x - dSize},${y}" fill="none" stroke="#000000" stroke-width="0.001" />\n`
+        }
+        for (let i = -4; i <= 4; i++) {
+          const x = i * gridInterval
+          svgContent += drawDiamond(x, -Y - dOffset)
+          svgContent += drawDiamond(x, Y + dOffset)
+        }
+        for (let i = -2; i <= 2; i++) {
+          const y = i * gridInterval
+          svgContent += drawDiamond(-X - dOffset, y)
+          svgContent += drawDiamond(X + dOffset, y)
+        }
+        svgContent += "  </g>\n"
 
-            sliderCushionThickness.addEventListener('input', updateDiagram);
-            sliderDiamondOffset.addEventListener('input', updateDiagram);
-            sliderFrameOffset.addEventListener('input', updateDiagram);
-            sliderDiamondSize.addEventListener('input', updateDiagram);
-        };
+        return {
+          viewBox: `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`,
+          content: svgContent,
+        }
+      }
+
+      // Render table immediately
+      const tableResult = generateBilliardTable()
+      tableSvg.setAttribute("viewBox", tableResult.viewBox)
+      document.getElementById("table-group").innerHTML = tableResult.content
+
+      /************************************************************************
+       * WORKER SIMULATION & TRAJECTORY RENDERING
+       ************************************************************************/
+      const statusEl = document.getElementById("worker-status")
+      const trajectoriesGroup = document.getElementById("trajectories-group")
+
+      // Fixed default config from ww.html
+      const defaultConfig = {
+        id: 1,
+        ruleType: "threecushion",
+        balls: [
+          { id: 0, pos: { x: -0.5, y: 0, z: 0 } },
+          { id: 1, pos: { x: 0.5, y: 0.05, z: 0 } },
+          { id: 2, pos: { x: 0, y: 0.5, z: 0 } },
+        ],
+        cushionModel: "mathavan",
+        shot: {
+          cueBallId: 0,
+          angle: 0,
+          power: 2.5,
+          offset: { x: 0.5, y: -0.35 },
+          elevation: 0,
+        },
+        stepSize: 0.001953125,
+        maxIterations: 20000,
+        warpClearanceR: 2.5,
+        params: {
+          mu: 0.007,
+          muS: 0.136,
+          rho: 0.035,
+          m: 0.23,
+          R: 0.03275,
+          e: 0.86,
+          ee: 0.84,
+          μs: 0.2,
+          μw: 0.2,
+        },
+      }
+
+      function renderTrajectories(results) {
+        let svgContent = ""
+
+        results.forEach((result) => {
+          // Collect positions for ball 0 only
+          const path = []
+          result.frames.forEach((frame) => {
+            const ball0 = frame.balls.find((b) => b.id === 0)
+            if (ball0) path.push(ball0.pos)
+          })
+
+          if (path.length < 2) return
+
+          const points = path.map((p) => `${p[0]},${-p[1]}`).join(" ")
+          svgContent += `  <polyline points="${points}" class="trajectory-line" />\n`
+        })
+
+        trajectoriesGroup.innerHTML = svgContent
+      }
+      async function runSimulation() {
+        statusEl.textContent = "Running 3 simulations (±0.1° variance)…"
+
+        const runner = new SimulationRunner("../worker.js")
+        const t0 = performance.now()
+
+        try {
+          const tasks = []
+          const startAngle = defaultConfig.shot.angle
+          for (let i = 0; i < 3; i++) {
+            const config = JSON.parse(JSON.stringify(defaultConfig))
+            config.shot.angle = startAngle + (i - 1) * 0.001745
+            config.id = i
+            tasks.push(runner.spawn(config))
+          }
+
+          const results = await Promise.all(tasks)
+          const elapsed = Math.round(performance.now() - t0)
+
+          const totalFrames = results.reduce(
+            (sum, r) => sum + r.frames.length,
+            0
+          )
+          statusEl.textContent = `Done in ${elapsed}ms — ${results.length} simulations, ${totalFrames} total frames`
+          renderTrajectories(results)
+        } catch (err) {
+          statusEl.textContent = `Error: ${err.message}`
+          console.error("Simulation failed:", err)
+        }
+      }
+
+      runSimulation()
     </script>
-</body>
+  </body>
 </html>

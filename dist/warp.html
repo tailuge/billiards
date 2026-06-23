@@ -188,7 +188,8 @@
               ctx.lineWidth = 2
               ctx.beginPath()
               dataPoints.forEach((pt, i) => {
-                const px = pad + ((pt.clearance - minX) / rangeX) * (w - 2 * pad)
+                const px =
+                  pad + ((pt.clearance - minX) / rangeX) * (w - 2 * pad)
                 const py =
                   h - pad - ((pt.speedups[shotIdx] - 1) / 4) * (h - 2 * pad)
                 if (i === 0) ctx.moveTo(px, py)
@@ -239,7 +240,8 @@
               ctx.lineWidth = 2
               ctx.beginPath()
               dataPoints.forEach((pt, i) => {
-                const px = pad + ((pt.clearance - minX) / rangeX) * (w - 2 * pad)
+                const px =
+                  pad + ((pt.clearance - minX) / rangeX) * (w - 2 * pad)
                 const py =
                   h - pad - (pt.rmses[shotIdx] / rmseMax) * (h - 2 * pad)
                 if (i === 0) ctx.moveTo(px, py)
@@ -284,7 +286,9 @@
 
             const results = await runBatch(config, 3, 0.001745)
             const speedups = results.map((res) => parseFloat(res.speedupFactor))
-            const rmses = results.map((res, i) => computeRMSE(baselines[i], res))
+            const rmses = results.map((res, i) =>
+              computeRMSE(baselines[i], res)
+            )
             dataPoints.push({ clearance: r, speedups, rmses })
             plot()
           }
