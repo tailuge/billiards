@@ -115,14 +115,28 @@ function parseGeometry(rail1, d1, rail2, d2, inset) {
   const ux = dx / dist
   const uy = dy / dist
 
-  // Cue ball position: start + inset * R along the direction
-  const cueX = start.x + ux * inset * R
-  const cueY = start.y + uy * inset * R
-
-  // Shot angle: direction from cue ball toward target
-  const angle = Math.atan2(target.y - cueY, target.x - cueX)
-
-  return { cueX, cueY, angle }
+  // Walk inward from the diamond in steps of R/4 to find the first
+  // position where the ball center sits on the playing surface.
+  // That point is the @0R baseline (ball edge at the cushion nose).
+  const step = R / 4
+  const boundX = tableX
+  const boundY = tableY
+  let d = 0
+  // Safety: max distance to cross the full table diagonal plus offsets
+  const maxD = 2 * (X + dOffset) + R
+  while (d <= maxD) {
+    const cx = start.x + ux * d
+    const cy = start.y + uy * d
+    if (Math.abs(cx) <= boundX && Math.abs(cy) <= boundY) {
+      // Found @0R baseline — now add user's inset
+      const cueX = cx + ux * inset * R
+      const cueY = cy + uy * inset * R
+      const angle = Math.atan2(target.y - cueY, target.x - cueX)
+      return { cueX, cueY, angle }
+    }
+    d += step
+  }
+  throw new Error("Ball cannot be placed on the table along this sight line")
 }
 
 // ——— Shot parsing ———
