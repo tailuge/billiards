@@ -53,13 +53,13 @@ const defaultParams = {
 function diamondPos(rail, index) {
   switch (rail) {
     case "top":
-      return { x: (index - 4) * gridInterval, y: Y + dOffset }
-    case "bottom":
       return { x: (index - 4) * gridInterval, y: -(Y + dOffset) }
+    case "bottom":
+      return { x: (index - 4) * gridInterval, y: Y + dOffset }
     case "left":
-      return { x: -(X + dOffset), y: (index - 2) * gridInterval }
+      return { x: -(X + dOffset), y: -(index - 2) * gridInterval }
     case "right":
-      return { x: X + dOffset, y: (index - 2) * gridInterval }
+      return { x: X + dOffset, y: -(index - 2) * gridInterval }
     default:
       throw new Error(`Unknown rail: "${rail}"`)
   }
@@ -86,8 +86,8 @@ function parseSpin(clockStr, strengthStr) {
   const angle = hour * (Math.PI / 6)
   const s = parseStrength(strengthStr)
   return {
-    x: Math.sin(angle) * s * 0.5,
-    y: Math.cos(angle) * s * 0.5,
+    x: Math.sin(angle) * s * 0.45,
+    y: Math.cos(angle) * s * 0.45,
   }
 }
 

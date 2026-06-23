@@ -114,7 +114,7 @@ function renderTrajectories(trajectoriesGroup, results) {
 
     if (path.length < 2) return
 
-    const points = path.map((p) => `${p[0]},${-p[1]}`).join(" ")
+    const points = path.map((p) => `${p[0]},${p[1]}`).join(" ")
     svgContent += `  <polyline points="${points}" class="trajectory-line" />\n`
   })
 
