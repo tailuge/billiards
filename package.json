@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@swc/core": "1.15.41",
+    "@swc/core": "1.15.43",
     "@swc/jest": "0.2.39",
     "@testing-library/dom": "10.4.1",
     "@types/chai": "5.2.3",
@@ -62,7 +62,7 @@
     "swc-loader": "0.2.7",
     "ts-jest": "29.4.11",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.61.1",
+    "typescript-eslint": "8.62.0",
     "webpack": "5.107.2",
     "webpack-cli": "7.0.3",
     "webpack-dev-server": "5.2.5"
