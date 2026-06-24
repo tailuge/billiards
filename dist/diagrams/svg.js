@@ -5,12 +5,22 @@
  * renders the table to SVG, parses data-shots via dsl.js, runs the
  * physics worker, and draws ball trajectories.
  *
- * Usage from any HTML file in dist/diagrams/:
+ * Two usage modes:
  *
- *   <script type="module">
- *     import { initDiagrams } from "./svg.js"
- *     initDiagrams()
- *   </script>
+ * 1. SVG root (preferred):
+ *    <svg class="billiards-table" data-shots="..."></svg>
+ *    The SVG is the root — JS creates <g> children and status <text>.
+ *
+ * 2. Div container (backward compat):
+ *    <div class="billiards-table" data-shots="...">
+ *      <svg><g class="table-group"></g><g class="trajectories-group"></g></svg>
+ *      <div class="worker-status"></div>
+ *    </div>
+ *
+ * <script type="module">
+ *   import { initDiagrams } from "./svg.js"
+ *   initDiagrams()
+ * </script>
  */
 
 import { SimulationRunner } from "../ww.js"
@@ -32,6 +42,8 @@ const dOffset = 0.1
 const fOffset = 0.18
 const dSize = 0.01
 
+const SVG_NS = "http://www.w3.org/2000/svg"
+
 // ——— Table rendering ———
 
 function generateBilliardTable() {
@@ -39,7 +51,7 @@ function generateBilliardTable() {
   const height = Y * 2
 
   const maxOffset = Math.max(fOffset, dOffset + 0.015)
-  const pad = 0.04
+  const pad = 0.18
   const viewBoxWidth = (X + maxOffset + pad) * 2
   const viewBoxHeight = (Y + maxOffset + pad) * 2
   const viewBoxX = -viewBoxWidth / 2
@@ -80,7 +92,7 @@ function generateBilliardTable() {
   // Diamonds
   svgContent += '  <g id="diamonds-group">\n'
   function drawDiamond(x, y) {
-    return `    <polygon points="${x},${y - dSize} ${x + dSize},${y} ${x},${y + dSize} ${x - dSize},${y}" fill="none" stroke="#000000" stroke-width="0.001" />\n`
+    return `    <polygon points="${x},${y - dSize} ${x + dSize},${y} ${x},${y + dSize} ${x - dSize},${y}" fill="none" stroke="#000000" stroke-width="0.002" />\n`
   }
   for (let i = -4; i <= 4; i++) {
     const x = i * gridInterval
@@ -121,31 +133,97 @@ function renderTrajectories(trajectoriesGroup, results) {
   trajectoriesGroup.innerHTML = svgContent
 }
 
-// ——— Per-element simulation ———
+// ——— Element setup helpers ———
 
-async function runElement(el) {
+function isSvgElement(el) {
+  return el.tagName === "svg" || el.tagName === "SVG"
+}
+
+function setupSvgRoot(el) {
+  if (!el.getAttribute("xmlns")) {
+    el.setAttribute("xmlns", SVG_NS)
+  }
+
+  let tableGroup = el.querySelector(".table-group")
+  if (!tableGroup) {
+    tableGroup = document.createElementNS(SVG_NS, "g")
+    tableGroup.classList.add("table-group")
+    el.appendChild(tableGroup)
+  }
+
+  let trajectoriesGroup = el.querySelector(".trajectories-group")
+  if (!trajectoriesGroup) {
+    trajectoriesGroup = document.createElementNS(SVG_NS, "g")
+    trajectoriesGroup.classList.add("trajectories-group")
+    el.appendChild(trajectoriesGroup)
+  }
+
+  return { svg: el, tableGroup, trajectoriesGroup, statusEl: null, isSvgRoot: true }
+}
+
+function setupDivContainer(el) {
   const svg = el.querySelector("svg")
   const tableGroup = el.querySelector(".table-group")
   const trajectoriesGroup = el.querySelector(".trajectories-group")
   const statusEl = el.querySelector(".worker-status")
 
   if (!svg || !tableGroup || !trajectoriesGroup || !statusEl) {
-    console.warn(
-      "Skipping .billiards-table: missing required child elements",
-      el
-    )
-    return
+    return null
   }
+
+  return { svg, tableGroup, trajectoriesGroup, statusEl, isSvgRoot: false }
+}
+
+function createSvgStatusText(svg) {
+  const textY = Y + fOffset + 0.12
+  const text = document.createElementNS(SVG_NS, "text")
+  text.classList.add("worker-status")
+  text.setAttribute("text-anchor", "middle")
+  text.setAttribute("x", "0")
+  text.setAttribute("y", String(textY))
+  text.setAttribute("font-size", "0.1")
+  text.setAttribute("font-family", "ui-monospace, monospace")
+  text.setAttribute("fill", "#737373")
+  svg.appendChild(text)
+  return text
+}
+
+// ——— Per-element simulation ———
+
+async function runElement(el) {
+  let setup
+  if (isSvgElement(el)) {
+    setup = setupSvgRoot(el)
+  } else {
+    setup = setupDivContainer(el)
+    if (!setup) {
+      console.warn(
+        "Skipping .billiards-table: missing required child elements",
+        el
+      )
+      return
+    }
+  }
+
+  const { svg, tableGroup, trajectoriesGroup, isSvgRoot } = setup
+  let { statusEl } = setup
 
   // Render table immediately
   const tableResult = generateBilliardTable()
   svg.setAttribute("viewBox", tableResult.viewBox)
   tableGroup.innerHTML = tableResult.content
 
+  // For SVG root, create status <text> now that viewBox is set
+  if (isSvgRoot && !statusEl) {
+    statusEl = svg.querySelector(".worker-status")
+    if (!statusEl) {
+      statusEl = createSvgStatusText(svg)
+    }
+  }
+
   // Parse DSL
   const dslText = el.dataset.shots
   if (!dslText) {
-    statusEl.textContent = "No data-shots attribute found"
     return
   }
 
@@ -153,33 +231,33 @@ async function runElement(el) {
   try {
     configs = parseShots(dslText)
   } catch (err) {
-    statusEl.textContent = `DSL parse error: ${err.message}`
+    setStatus(statusEl, `DSL parse error: ${err.message}`)
     console.error("DSL parse error:", err)
     return
   }
 
   if (configs.length === 0) {
-    statusEl.textContent = "No shots to simulate"
+    setStatus(statusEl, "No shots to simulate")
     return
   }
 
-  statusEl.textContent = `Running ${configs.length} simulations…`
-
   const runner = new SimulationRunner("../worker.js")
-  const t0 = performance.now()
 
   try {
     const tasks = configs.map((config) => runner.spawn(config))
     const results = await Promise.all(tasks)
-    const elapsed = Math.round(performance.now() - t0)
 
-    const totalFrames = results.reduce((sum, r) => sum + r.frames.length, 0)
-    statusEl.textContent = `Done in ${elapsed}ms — ${results.length} shots, ${totalFrames} total frames`
+    const figure = el.dataset.figure?.trim()
+    setStatus(statusEl, figure || "")
     renderTrajectories(trajectoriesGroup, results)
   } catch (err) {
-    statusEl.textContent = `Error: ${err.message}`
+    setStatus(statusEl, `Error: ${err.message}`)
     console.error("Simulation failed:", err)
   }
+}
+
+function setStatus(el, message) {
+  if (el) el.textContent = message
 }
 
 // ——— Public API ———

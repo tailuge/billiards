@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Billiards Trajectory — SVG</title>
+    <title>Billiards Trajectory — SVG Diagrams</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
@@ -16,51 +16,56 @@
       .table-stroke {
         fill: #ffffff;
         stroke: #000000;
-        stroke-width: 0.001;
+        stroke-width: 0.002;
       }
       .grid-line {
         stroke: #000000;
-        stroke-width: 0.001;
+        stroke-width: 0.002;
         stroke-dasharray: 0.004 0.004;
       }
       .trajectory-line {
         fill: none;
         stroke: #000000;
-        stroke-width: 0.001;
+        stroke-width: 0.002;
         stroke-linecap: round;
         stroke-linejoin: round;
       }
     </style>
   </head>
-  <body
-    class="bg-neutral-50 text-neutral-900 min-h-screen flex flex-col items-center justify-center p-6 md:p-12"
-  >
-    <main
-      class="billiards-table w-full max-w-4xl bg-white p-8 rounded-xl border border-neutral-200 shadow-sm flex flex-col items-center gap-4"
-      data-shots="
-      bottom:0 -> top:1 @0R | 3 oclock max | 20%; 
-      bottom:0 -> top:2 @0R | 3 oclock max | 20%; 
-      bottom:0 -> top:3 @0R | 3 oclock max | 20%; 
-      bottom:0 -> top:4 @0R | 3 oclock max | 20%; 
-      bottom:0 -> top:5 @0R | 3 oclock max | 20%; 
-      bottom:0 -> top:6 @0R | 3 oclock max | 20%; 
-      bottom:0 -> top:7 @0R | 3 oclock max | 20%; 
-      bottom:0 -> top:8 @0R | 3 oclock max | 20%"
-    >
-      <!-- SVG Container -->
-      <div class="w-full max-w-2xl">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-full h-auto select-none overflow-visible"
-        >
-          <g class="table-group"></g>
-          <g class="trajectories-group"></g>
-        </svg>
-      </div>
-      <!-- Status -->
-      <div class="worker-status text-xs text-neutral-500 font-mono">
-        Loading worker…
-      </div>
+  <body class="bg-neutral-50 text-neutral-900 min-h-screen p-6 md:p-12">
+    <header class="max-w-6xl mx-auto mb-10 text-center">
+      <h1 class="text-2xl md:text-3xl font-semibold tracking-tight">
+        Billiards Diagrams
+      </h1>
+    </header>
+
+    <main class="max-w-6xl mx-auto grid gap-6 sm:grid-cols-1 md:grid-cols-2">
+      <svg
+        class="billiards-table w-full h-auto bg-white rounded-xl border border-neutral-200 shadow-sm p-4"
+        data-shots="
+        bottom:0 -> top:1 @2R | 3 oclock max | 20%;
+        bottom:0 -> top:2 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:3 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:4 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:5 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:6 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:7 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:8 @2R | 3 oclock max | 20%"
+        data-figure="Figure 1.1 - Corner max RHS"
+      ></svg>
+      <svg
+        class="billiards-table w-full h-auto bg-white rounded-xl border border-neutral-200 shadow-sm p-4"
+        data-shots="
+        bottom:4 -> top:1 @2R | 3 oclock max | 20%;
+        bottom:4 -> top:2 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:3 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:4 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:5 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:6 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:7 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:8 @2R | 3 oclock max | 20%"
+        data-figure="Figure 1.2 - Center max RHS"
+      ></svg>
     </main>
 
     <script type="module">
