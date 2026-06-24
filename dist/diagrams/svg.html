@@ -4,44 +4,77 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Billiards Trajectory — SVG Diagrams</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
     <style>
-      body {
-        font-family: "Inter", sans-serif;
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
+
+      body {
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: #fafafa;
+        color: #171717;
+        min-height: 100vh;
+        padding: 1.5rem;
+      }
+
+      @media (width >= 768px) { body { padding: 3rem; } }
+
+      header {
+        max-width: 72rem;
+        margin: 0 auto 2.5rem;
+        text-align: center;
+      }
+
+
+      @media (width >= 768px) { h1 { font-size: 1.875rem; } }
+
+      main {
+        max-width: 72rem;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      svg.billiards-table {
+        width: 100%;
+        height: auto;
+        background: #fff;
+        border-radius: 0.25rem;
+      }
+
       .table-stroke {
-        fill: #ffffff;
-        stroke: #000000;
+        fill: #fff;
+        stroke: #000;
         stroke-width: 0.002;
       }
+
       .grid-line {
-        stroke: #000000;
+        stroke: #000;
         stroke-width: 0.002;
         stroke-dasharray: 0.004 0.004;
       }
+
       .trajectory-line {
         fill: none;
-        stroke: #000000;
+        stroke: #000;
         stroke-width: 0.002;
         stroke-linecap: round;
         stroke-linejoin: round;
       }
     </style>
   </head>
-  <body class="bg-neutral-50 text-neutral-900 min-h-screen p-6 md:p-12">
-    <header class="max-w-6xl mx-auto mb-10 text-center">
-      <h1 class="text-2xl md:text-3xl font-semibold tracking-tight">
+  <body>
+    <header>
+      <h1>
         Billiards Diagrams
       </h1>
     </header>
 
-    <main class="max-w-6xl mx-auto grid gap-6 sm:grid-cols-1 md:grid-cols-2">
+    <main>
       <svg
-        class="billiards-table w-full h-auto bg-white rounded-xl border border-neutral-200 shadow-sm p-4"
+        class="billiards-table"
         data-shots="
         bottom:0 -> top:1 @2R | 3 oclock max | 20%;
         bottom:0 -> top:2 @2R | 3 oclock max | 20%; 
@@ -54,7 +87,7 @@
         data-figure="Figure 1.1 - Corner max RHS"
       ></svg>
       <svg
-        class="billiards-table w-full h-auto bg-white rounded-xl border border-neutral-200 shadow-sm p-4"
+        class="billiards-table"
         data-shots="
         bottom:4 -> top:1 @2R | 3 oclock max | 20%;
         bottom:4 -> top:2 @2R | 3 oclock max | 20%; 
