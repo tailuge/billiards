@@ -16,7 +16,7 @@
  */
 
 import { SimulationRunner } from "../ww.js"
-import { parseShots } from "./dsl.js"
+import { parseShots, maxPower } from "./dsl.js"
 
 // ——— Table geometry (SI meters) ———
 
@@ -125,6 +125,37 @@ function renderTrajectories(trajectoriesGroup, results) {
   trajectoriesGroup.innerHTML = svgContent
 }
 
+function renderInset(insetGroup, config) {
+  const ballR = 0.04
+  const dotR = 0.005
+  const barW = 0.08
+  const barH = 0.01
+
+  const { offset, power } = config.shot
+
+  let svgContent = ""
+
+  // Cue ball circle
+  svgContent += `  <circle cx="0" cy="0" r="${ballR}" fill="#fff" stroke="#000" stroke-width="0.002" />\n`
+
+  // Spin dot
+  // offset.x/y are -0.5 to 0.5. We map them to the ballR.
+  const dx = (offset.x / 0.5) * ballR
+  const dy = (-offset.y / 0.5) * ballR
+  svgContent += `  <circle cx="${dx}" cy="${dy}" r="${dotR}" fill="red" />\n`
+
+  // Power bar background
+  const bx = -barW / 2
+  const by = ballR + 0.015
+  svgContent += `  <rect x="${bx}" y="${by}" width="${barW}" height="${barH}" fill="none" stroke="#000" stroke-width="0.002" />\n`
+
+  // Power bar fill
+  const fillW = (power / maxPower) * barW
+  svgContent += `  <rect x="${bx}" y="${by}" width="${fillW}" height="${barH}" fill="#4ade80" />\n`
+
+  insetGroup.innerHTML = svgContent
+}
+
 // ——— Element setup helpers ———
 
 function setupSvgRoot(el) {
@@ -146,9 +177,27 @@ function setupSvgRoot(el) {
     el.appendChild(trajectoriesGroup)
   }
 
+  let insetGroup = el.querySelector(".inset-group")
+  if (!insetGroup) {
+    insetGroup = document.createElementNS(SVG_NS, "g")
+    insetGroup.classList.add("inset-group")
+    // Position top-left inside frame
+    const ix = -X - fOffset + 0.06
+    const iy = -Y - fOffset + 0.06
+    insetGroup.setAttribute("transform", `translate(${ix}, ${iy})`)
+    el.appendChild(insetGroup)
+  }
+
   const statusEl = el.querySelector(".worker-status") || createSvgStatusText(el)
 
-  return { svg: el, tableGroup, trajectoriesGroup, statusEl, isSvgRoot: true }
+  return {
+    svg: el,
+    tableGroup,
+    trajectoriesGroup,
+    insetGroup,
+    statusEl,
+    isSvgRoot: true,
+  }
 }
 
 function createSvgStatusText(svg) {
@@ -207,6 +256,7 @@ async function runElement(el) {
     const figure = el.dataset.figure?.trim()
     setStatus(statusEl, figure || "")
     renderTrajectories(trajectoriesGroup, results)
+    renderInset(setup.insetGroup, configs[0])
   } catch (err) {
     setStatus(statusEl, `Error: ${err.message}`)
     console.error("Simulation failed:", err)
