@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Export Diagram — Billiards</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 2px;
+        padding: 4px;
+      }
+
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background: #f0f0f0;
+        color: #000;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.25rem;
+      }
+
+      @media (width >= 768px) {
+        body {
+          padding: 3rem;
+        }
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 0.5rem;
+      }
+
+      h1 {
+        font-size: 1.25rem;
+        margin: 0;
+      }
+
+      svg.billiards-table {
+        width: 90%;
+        max-width: 48rem;
+        height: auto;
+        background: #fff;
+        border-radius: 0.25rem;
+        display: block;
+        margin: 0 auto;
+      }
+
+      .table-stroke {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 0.004;
+      }
+
+      .grid-line {
+        stroke: #ccc;
+        stroke-width: 0.002;
+        stroke-dasharray: 0.008 0.008;
+      }
+
+      .trajectory-line {
+        fill: none;
+        stroke: #000;
+        stroke-width: 0.002;
+      }
+
+      #controls {
+        margin-top: 1rem;
+        text-align: center;
+      }
+
+      #play-btn {
+        padding: 8px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        background: #3b82f6;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        transition: background 0.15s;
+      }
+
+      #play-btn:hover {
+        background: #2563eb;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Three Cushion — Export Diagram</h1>
+    </header>
+
+    <svg class="billiards-table"></svg>
+
+    <div id="controls">
+      <button id="play-btn">Play in game</button>
+    </div>
+
+    <script type="module">
+      import { initDiagrams } from "./svg.js"
+
+      const params = new URLSearchParams(window.location.search)
+
+      // Build JSON config from URL params
+      const initRaw = params.get("init")
+      const initShotRaw = params.get("initShot")
+      const cushionModel = params.get("cushionModel") || "mathavan"
+      const ruletype = params.get("ruletype") || "threecushion"
+
+      if (!initRaw || !initShotRaw) {
+        document.querySelector("header h1").textContent =
+          "Missing init or initShot parameters"
+      } else {
+        const init = JSON.parse(initRaw)
+        const initShot = JSON.parse(initShotRaw)
+
+        // Convert flat array [x0,y0,x1,y1,...] to balls array
+        const balls = []
+        for (let i = 0; i < init.length; i += 2) {
+          balls.push({
+            id: i / 2,
+            pos: { x: init[i], y: init[i + 1], z: 0 },
+          })
+        }
+
+        const config = {
+          balls,
+          cushionModel,
+          ruleType: ruletype,
+          shot: {
+            cueBallId: 0,
+            angle: initShot.angle,
+            power: initShot.power,
+            offset: initShot.offset,
+            elevation: 0,
+          },
+        }
+
+        const svg = document.querySelector(".billiards-table")
+        svg.dataset.jsonShots = JSON.stringify([config])
+
+        // Set figure text from params
+        const a = (initShot.angle ?? 0).toFixed(2)
+        const p = (initShot.power ?? 0).toFixed(2)
+        const figText = `Cue at (${init[0].toFixed(2)}, ${init[1].toFixed(2)}) · ${p} m/s · angle ${a}`
+        svg.dataset.figure = figText
+      }
+
+      // Play button — forward to main game
+      document.getElementById("play-btn")?.addEventListener("click", () => {
+        const url = new URL("../index.html", window.location.href)
+        params.forEach((value, key) => {
+          url.searchParams.set(key, value)
+        })
+        url.searchParams.set("practice", "true")
+        window.open(url.toString(), "_blank")
+      })
+
+      initDiagrams()
+    </script>
+  </body>
+</html>

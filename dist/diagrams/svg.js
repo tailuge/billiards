@@ -16,7 +16,7 @@
  */
 
 import { SimulationRunner } from "../ww.js"
-import { parseShots, maxPower } from "./dsl.js"
+import { parseShots, parseJsonShots, maxPower } from "./dsl.js"
 
 // ——— Table geometry (SI meters) ———
 
@@ -110,16 +110,24 @@ function renderTrajectories(trajectoriesGroup, results) {
   let svgContent = ""
 
   results.forEach((result) => {
-    const path = []
+    // Collect all unique ball IDs from all frames
+    const ballIds = new Set()
     result.frames.forEach((frame) => {
-      const ball0 = frame.balls.find((b) => b.id === 0)
-      if (ball0) path.push(ball0.pos)
+      frame.balls.forEach((b) => ballIds.add(b.id))
     })
 
-    if (path.length < 2) return
+    ballIds.forEach((ballId) => {
+      const path = []
+      result.frames.forEach((frame) => {
+        const ball = frame.balls.find((b) => b.id === ballId)
+        if (ball) path.push(ball.pos)
+      })
 
-    const points = path.map((p) => `${p[0]},${p[1]}`).join(" ")
-    svgContent += `  <polyline points="${points}" class="trajectory-line" />\n`
+      if (path.length < 2) return
+
+      const points = path.map((p) => `${p[0]},${p[1]}`).join(" ")
+      svgContent += `  <polyline points="${points}" class="trajectory-line" />\n`
+    })
   })
 
   trajectoriesGroup.innerHTML = svgContent
@@ -156,6 +164,21 @@ function renderInset(insetGroup, config) {
   insetGroup.innerHTML = svgContent
 }
 
+function renderBallPositions(ballsGroup, config) {
+  if (!config.balls || config.balls.length === 0) return
+
+  let svgContent = ""
+  const ballR = R
+
+  config.balls.forEach((ball) => {
+    const cx = ball.pos.x
+    const cy = ball.pos.y
+    svgContent += `  <circle cx="${cx}" cy="${cy}" r="${ballR}" fill="none" stroke="#000" stroke-width="0.002" />\n`
+  })
+
+  ballsGroup.innerHTML = svgContent
+}
+
 // ——— Element setup helpers ———
 
 function setupSvgRoot(el) {
@@ -177,6 +200,13 @@ function setupSvgRoot(el) {
     el.appendChild(trajectoriesGroup)
   }
 
+  let ballsGroup = el.querySelector(".balls-group")
+  if (!ballsGroup) {
+    ballsGroup = document.createElementNS(SVG_NS, "g")
+    ballsGroup.classList.add("balls-group")
+    el.appendChild(ballsGroup)
+  }
+
   let insetGroup = el.querySelector(".inset-group")
   if (!insetGroup) {
     insetGroup = document.createElementNS(SVG_NS, "g")
@@ -190,6 +220,7 @@ function setupSvgRoot(el) {
     svg: el,
     tableGroup,
     trajectoriesGroup,
+    ballsGroup,
     insetGroup,
     statusEl,
     isSvgRoot: true,
@@ -226,19 +257,33 @@ async function runElement(el) {
   svg.setAttribute("viewBox", tableResult.viewBox)
   tableGroup.innerHTML = tableResult.content
 
-  // Parse DSL
+  // Parse DSL and JSON shots
   const dslText = el.dataset.shots
-  if (!dslText) {
+  const jsonText = el.dataset.jsonShots
+
+  if (!dslText && !jsonText) {
     return
   }
 
-  let configs
-  try {
-    configs = parseShots(dslText)
-  } catch (err) {
-    setStatus(statusEl, `DSL parse error: ${err.message}`)
-    console.error("DSL parse error:", err)
-    return
+  let configs = []
+
+  if (dslText) {
+    try {
+      configs = parseShots(dslText)
+    } catch (err) {
+      setStatus(statusEl, `DSL parse error: ${err.message}`)
+      console.error("DSL parse error:", err)
+    }
+  }
+
+  if (jsonText) {
+    try {
+      const jsonConfigs = parseJsonShots(jsonText, configs.length)
+      configs.push(...jsonConfigs)
+    } catch (err) {
+      setStatus(statusEl, `JSON parse error: ${err.message}`)
+      console.error("JSON parse error:", err)
+    }
   }
 
   if (configs.length === 0) {
@@ -255,6 +300,7 @@ async function runElement(el) {
     const figure = el.dataset.figure?.trim()
     setStatus(statusEl, figure || "")
     renderTrajectories(trajectoriesGroup, results)
+    if (jsonText) renderBallPositions(setup.ballsGroup, configs[0])
     renderInset(setup.insetGroup, configs[0])
 
     // Align inset to the right of the status text

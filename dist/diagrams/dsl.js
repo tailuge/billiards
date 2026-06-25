@@ -194,6 +194,32 @@ function parseShot(str) {
   return { cueX, cueY, angle, offsetX: offset.x, offsetY: offset.y, power }
 }
 
+// ——— JSON passthrough ———
+
+/**
+ * Parse a JSON shot array into SimulationConfig objects.
+ *
+ * Passes each object through as-is — no parsing, validation, or transformation
+ * beyond JSON.parse. Auto-assigns id if absent.
+ *
+ * @param {string} jsonText — JSON string of shot config array
+ * @param {number} startId — starting id for auto-assignment (default 0)
+ * @returns {Array} Array of SimulationConfig objects for the physics worker
+ */
+export function parseJsonShots(jsonText, startId = 0) {
+  if (!jsonText || !jsonText.trim()) return []
+
+  const parsed = JSON.parse(jsonText)
+  if (!Array.isArray(parsed)) {
+    throw new Error("JSON shots must be an array")
+  }
+
+  return parsed.map((obj, i) => ({
+    ...obj,
+    id: obj.id != null ? obj.id : startId + i,
+  }))
+}
+
 // ——— Public API ———
 
 /**
