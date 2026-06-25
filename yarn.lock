@@ -1847,12 +1847,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailuge/messaging@npm:1.27.0":
-  version: 1.27.0
-  resolution: "@tailuge/messaging@npm:1.27.0"
+"@tailuge/messaging@npm:1.28.0":
+  version: 1.28.0
+  resolution: "@tailuge/messaging@npm:1.28.0"
   dependencies:
     lit: "npm:^3.3.3"
-  checksum: 10c0/84739fd9d79dcda09541222d5e519a2dc90930d341e2e3c161f727d1f5cf415aa949ec6186a793c0c18341806d87d0519733ad5183e30cb525cb6ba7b6c67ea9
+  checksum: 10c0/bf8be90bf699b1e00550520dd5afa4d66ee2c285ec6f93abdf22d6540fef7869be3733b3cbacb142cdae0bc259cff389862af091f22529e65b8961e5845cf323
   languageName: node
   linkType: hard
 
@@ -2137,12 +2137,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:26.0.0":
-  version: 26.0.0
-  resolution: "@types/node@npm:26.0.0"
+"@types/node@npm:26.0.1":
+  version: 26.0.1
+  resolution: "@types/node@npm:26.0.1"
   dependencies:
     undici-types: "npm:~8.3.0"
-  checksum: 10c0/f36e21634fd8e8ded162ca486508bd8bb229d398a8d5541f6d8c1255968d4464e53327a77f403b216ef98e3b6f6956882eef83e4857d4bc2be9569dd55d37aae
+  checksum: 10c0/31d204333c70124da6bcac7d1f27d8980149fe3f95a8419bfcd19c3e5823705c0e370d71ac34399352e1263b2d5fc41c87af964ec81e5a05a32224d65d8d224e
   languageName: node
   linkType: hard
 
@@ -3099,11 +3099,11 @@ __metadata:
     "@eslint/js": "npm:10.0.1"
     "@swc/core": "npm:1.15.43"
     "@swc/jest": "npm:0.2.39"
-    "@tailuge/messaging": "npm:1.27.0"
+    "@tailuge/messaging": "npm:1.28.0"
     "@testing-library/dom": "npm:10.4.1"
     "@types/chai": "npm:5.2.3"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:26.0.0"
+    "@types/node": "npm:26.0.1"
     "@types/three": "npm:0.184.1"
     canvas: "npm:3.2.3"
     chai: "npm:6.2.2"
@@ -3122,7 +3122,7 @@ __metadata:
     stylelint: "npm:17.13.0"
     stylelint-config-standard: "npm:^40.0.0"
     swc-loader: "npm:0.2.7"
-    three: "npm:0.184.0"
+    three: "npm:0.185.0"
     ts-jest: "npm:29.4.11"
     typescript: "npm:6.0.3"
     typescript-eslint: "npm:8.62.0"
@@ -8648,10 +8648,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.184.0":
-  version: 0.184.0
-  resolution: "three@npm:0.184.0"
-  checksum: 10c0/6af4a36dd97e7082c8daca57af162a36df0ca18337a805913bdb6787dd5b2626face8b51d361a0cb2f767e18fdb1ad7e73ab945ae32647741af9278311f5369d
+"three@npm:0.185.0":
+  version: 0.185.0
+  resolution: "three@npm:0.185.0"
+  checksum: 10c0/6f12f82979d2462ff16d9c5307193037918f7d0d86f1b7db6adfbd80395c24a989bc6db4926aea8a2ab416850faf3d3466a160bcb60b73e29b4bb17a26575eed
   languageName: node
   linkType: hard
 
