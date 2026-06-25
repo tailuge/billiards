@@ -126,10 +126,10 @@ function renderTrajectories(trajectoriesGroup, results) {
 }
 
 function renderInset(insetGroup, config) {
-  const ballR = 0.04
-  const dotR = 0.005
-  const barW = 0.08
-  const barH = 0.01
+  const ballR = 0.06
+  const dotR = 0.012
+  const barW = 0.12
+  const barH = 0.015
 
   const { offset, power } = config.shot
 
@@ -138,20 +138,20 @@ function renderInset(insetGroup, config) {
   // Cue ball circle
   svgContent += `  <circle cx="0" cy="0" r="${ballR}" fill="#fff" stroke="#000" stroke-width="0.002" />\n`
 
-  // Spin dot
-  // offset.x/y are -0.5 to 0.5. We map them to the ballR.
-  const dx = (offset.x / 0.5) * ballR
-  const dy = (-offset.y / 0.5) * ballR
-  svgContent += `  <circle cx="${dx}" cy="${dy}" r="${dotR}" fill="red" />\n`
+  // Spin dot (cue tip position)
+  // offset.x/y are -0.5 to 0.5, scaled to half the ball radius.
+  const dx = offset.x * ballR
+  const dy = -offset.y * ballR
+  svgContent += `  <circle cx="${dx}" cy="${dy}" r="${dotR}" fill="#000" />\n`
 
   // Power bar background
   const bx = -barW / 2
-  const by = ballR + 0.015
+  const by = ballR + 0.02
   svgContent += `  <rect x="${bx}" y="${by}" width="${barW}" height="${barH}" fill="none" stroke="#000" stroke-width="0.002" />\n`
 
   // Power bar fill
   const fillW = (power / maxPower) * barW
-  svgContent += `  <rect x="${bx}" y="${by}" width="${fillW}" height="${barH}" fill="#4ade80" />\n`
+  svgContent += `  <rect x="${bx}" y="${by}" width="${fillW}" height="${barH}" fill="#9ca3af" />\n`
 
   insetGroup.innerHTML = svgContent
 }
@@ -200,11 +200,14 @@ function createSvgStatusText(svg) {
   const textY = Y + fOffset + 0.12
   const text = document.createElementNS(SVG_NS, "text")
   text.classList.add("worker-status")
-  text.setAttribute("text-anchor", "end")
-  text.setAttribute("x", String(X + fOffset - 0.12))
+  text.setAttribute("text-anchor", "middle")
+  text.setAttribute("x", "0")
   text.setAttribute("y", String(textY))
-  text.setAttribute("font-size", "0.1")
-  text.setAttribute("font-family", "ui-monospace, monospace")
+  text.setAttribute("font-size", "0.08")
+  text.setAttribute(
+    "font-family",
+    'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
+  )
   text.setAttribute("fill", "#737373")
   svg.appendChild(text)
   return text
@@ -257,13 +260,13 @@ async function runElement(el) {
     // Align inset to the right of the status text
     try {
       const bbox = statusEl.getBBox()
-      const ix = bbox.x + bbox.width + 0.06
-      const iy = parseFloat(statusEl.getAttribute("y")) - 0.02
+      const ix = bbox.x + bbox.width + 0.12
+      const iy = parseFloat(statusEl.getAttribute("y")) - 0.04
       setup.insetGroup.setAttribute("transform", `translate(${ix}, ${iy})`)
     } catch (e) {
       // Fallback positioning if getBBox is unavailable
-      const ix = X + fOffset - 0.05
-      const iy = Y + fOffset + 0.1
+      const ix = 0.12
+      const iy = Y + fOffset + 0.04
       setup.insetGroup.setAttribute("transform", `translate(${ix}, ${iy})`)
     }
   } catch (err) {
