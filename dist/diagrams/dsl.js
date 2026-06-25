@@ -33,7 +33,7 @@ const X = tableX + R // 1.512395 — half-width of playing area
 const Y = tableY + R // 0.7561975 — half-height of playing area
 const gridInterval = (2 * X) / 8 // 0.37809875
 const dOffset = 0.1 // diamond offset from cushion nose
-const maxPower = 160 * R // 5.24 m/s
+export const maxPower = 160 * R // 5.24 m/s
 
 // Default physics params (matching ww.html)
 const defaultParams = {
