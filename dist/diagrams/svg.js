@@ -181,10 +181,6 @@ function setupSvgRoot(el) {
   if (!insetGroup) {
     insetGroup = document.createElementNS(SVG_NS, "g")
     insetGroup.classList.add("inset-group")
-    // Position top-left inside frame
-    const ix = -X - fOffset + 0.06
-    const iy = -Y - fOffset + 0.06
-    insetGroup.setAttribute("transform", `translate(${ix}, ${iy})`)
     el.appendChild(insetGroup)
   }
 
@@ -204,8 +200,8 @@ function createSvgStatusText(svg) {
   const textY = Y + fOffset + 0.12
   const text = document.createElementNS(SVG_NS, "text")
   text.classList.add("worker-status")
-  text.setAttribute("text-anchor", "middle")
-  text.setAttribute("x", "0")
+  text.setAttribute("text-anchor", "end")
+  text.setAttribute("x", String(X + fOffset - 0.12))
   text.setAttribute("y", String(textY))
   text.setAttribute("font-size", "0.1")
   text.setAttribute("font-family", "ui-monospace, monospace")
@@ -257,6 +253,19 @@ async function runElement(el) {
     setStatus(statusEl, figure || "")
     renderTrajectories(trajectoriesGroup, results)
     renderInset(setup.insetGroup, configs[0])
+
+    // Align inset to the right of the status text
+    try {
+      const bbox = statusEl.getBBox()
+      const ix = bbox.x + bbox.width + 0.06
+      const iy = parseFloat(statusEl.getAttribute("y")) - 0.02
+      setup.insetGroup.setAttribute("transform", `translate(${ix}, ${iy})`)
+    } catch (e) {
+      // Fallback positioning if getBBox is unavailable
+      const ix = X + fOffset - 0.05
+      const iy = Y + fOffset + 0.1
+      setup.insetGroup.setAttribute("transform", `translate(${ix}, ${iy})`)
+    }
   } catch (err) {
     setStatus(statusEl, `Error: ${err.message}`)
     console.error("Simulation failed:", err)
