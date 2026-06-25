@@ -5,17 +5,9 @@
  * renders the table to SVG, parses data-shots via dsl.js, runs the
  * physics worker, and draws ball trajectories.
  *
- * Two usage modes:
- *
- * 1. SVG root (preferred):
+ * SVG root usage:
  *    <svg class="billiards-table" data-shots="..."></svg>
  *    The SVG is the root — JS creates <g> children and status <text>.
- *
- * 2. Div container (backward compat):
- *    <div class="billiards-table" data-shots="...">
- *      <svg><g class="table-group"></g><g class="trajectories-group"></g></svg>
- *      <div class="worker-status"></div>
- *    </div>
  *
  * <script type="module">
  *   import { initDiagrams } from "./svg.js"
@@ -135,10 +127,6 @@ function renderTrajectories(trajectoriesGroup, results) {
 
 // ——— Element setup helpers ———
 
-function isSvgElement(el) {
-  return el.tagName === "svg" || el.tagName === "SVG"
-}
-
 function setupSvgRoot(el) {
   if (!el.getAttribute("xmlns")) {
     el.setAttribute("xmlns", SVG_NS)
@@ -158,20 +146,9 @@ function setupSvgRoot(el) {
     el.appendChild(trajectoriesGroup)
   }
 
-  return { svg: el, tableGroup, trajectoriesGroup, statusEl: null, isSvgRoot: true }
-}
+  const statusEl = el.querySelector(".worker-status") || createSvgStatusText(el)
 
-function setupDivContainer(el) {
-  const svg = el.querySelector("svg")
-  const tableGroup = el.querySelector(".table-group")
-  const trajectoriesGroup = el.querySelector(".trajectories-group")
-  const statusEl = el.querySelector(".worker-status")
-
-  if (!svg || !tableGroup || !trajectoriesGroup || !statusEl) {
-    return null
-  }
-
-  return { svg, tableGroup, trajectoriesGroup, statusEl, isSvgRoot: false }
+  return { svg: el, tableGroup, trajectoriesGroup, statusEl, isSvgRoot: true }
 }
 
 function createSvgStatusText(svg) {
@@ -191,35 +168,15 @@ function createSvgStatusText(svg) {
 // ——— Per-element simulation ———
 
 async function runElement(el) {
-  let setup
-  if (isSvgElement(el)) {
-    setup = setupSvgRoot(el)
-  } else {
-    setup = setupDivContainer(el)
-    if (!setup) {
-      console.warn(
-        "Skipping .billiards-table: missing required child elements",
-        el
-      )
-      return
-    }
-  }
+  const setup = setupSvgRoot(el)
 
-  const { svg, tableGroup, trajectoriesGroup, isSvgRoot } = setup
-  let { statusEl } = setup
+  const { svg, tableGroup, trajectoriesGroup } = setup
+  const { statusEl } = setup
 
   // Render table immediately
   const tableResult = generateBilliardTable()
   svg.setAttribute("viewBox", tableResult.viewBox)
   tableGroup.innerHTML = tableResult.content
-
-  // For SVG root, create status <text> now that viewBox is set
-  if (isSvgRoot && !statusEl) {
-    statusEl = svg.querySelector(".worker-status")
-    if (!statusEl) {
-      statusEl = createSvgStatusText(svg)
-    }
-  }
 
   // Parse DSL
   const dslText = el.dataset.shots
