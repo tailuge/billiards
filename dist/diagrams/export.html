@@ -274,8 +274,12 @@
         const compEl = document.getElementById("computed-svg")
         if (!simEl || !compEl) return
 
-        if (config) {
-          simEl.textContent = JSON.stringify(config, null, 2)
+        const svgElement = document.querySelector(".billiards-table")
+        if (svgElement) {
+          const jsonShots = svgElement.dataset.jsonShots
+          const figure = svgElement.dataset.figure || ""
+          const escaped = jsonShots.replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+          simEl.textContent = `<svg class="billiards-table"\n  data-jsonShots="${escaped}"\n  data-figure="${figure}"\n></svg>`
         }
 
         compEl.textContent = buildStandaloneHtml()
