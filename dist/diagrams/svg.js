@@ -18,6 +18,15 @@
 import { SimulationRunner } from "../ww.js"
 import { parseShots, parseJsonShots, maxPower } from "./dsl.js"
 
+// ——— State management ———
+
+let isEditMode = false
+
+export function toggleEditMode() {
+  isEditMode = !isEditMode
+  return isEditMode
+}
+
 // ——— Table geometry (SI meters) ———
 
 const R = 0.03275
@@ -104,6 +113,130 @@ function generateBilliardTable() {
     viewBox: `${f6(viewBoxX)} ${f6(viewBoxY)} ${f6(viewBoxWidth)} ${f6(viewBoxHeight)}`,
     content: svgContent,
   }
+}
+
+// ——— Coordinate and Diamond utilities ———
+
+function toSvgCoords(svg, event) {
+  const pt = svg.createSVGPoint()
+  pt.x = event.clientX
+  pt.y = event.clientY
+  const svgP = pt.matrixTransform(svg.getScreenCTM().inverse())
+  return { x: svgP.x, y: svgP.y }
+}
+
+function getDiamonds() {
+  const gridInterval = (2 * X) / 8
+  const diamonds = []
+
+  for (let i = -4; i <= 4; i++) {
+    const x = i * gridInterval
+    diamonds.push({ x, y: -Y - dOffset })
+    diamonds.push({ x, y: Y + dOffset })
+  }
+  for (let i = -2; i <= 2; i++) {
+    const y = i * gridInterval
+    diamonds.push({ x: -X - dOffset, y })
+    diamonds.push({ x: X + dOffset, y })
+  }
+  return diamonds
+}
+
+// ——— Editing and Snapping logic ———
+
+function getNearestDiamond(diamonds, coords) {
+  let nearest = null
+  let minDistance = Infinity
+
+  for (const d of diamonds) {
+    const dx = coords.x - d.x
+    const dy = coords.y - d.y
+    const dist = Math.sqrt(dx * dx + dy * dy)
+    if (dist < minDistance) {
+      minDistance = dist
+      nearest = d
+    }
+  }
+
+  if (minDistance <= 2 * R) {
+    return nearest
+  }
+  return null
+}
+
+function enableEditing(el, setup) {
+  const { svg, manualLinesGroup, editingGroup } = setup
+  const diamonds = getDiamonds()
+
+  let activeLine = null
+  let startPoint = null
+
+  // Create snap point indicator
+  const snapPoint = document.createElementNS(SVG_NS, "circle")
+  snapPoint.setAttribute("r", String(R))
+  snapPoint.classList.add("snap-indicator")
+  snapPoint.style.display = "none"
+  editingGroup.appendChild(snapPoint)
+
+  svg.addEventListener("mousemove", (e) => {
+    if (!isEditMode) {
+      snapPoint.style.display = "none"
+      return
+    }
+
+    const mouse = toSvgCoords(svg, e)
+    const nearest = getNearestDiamond(diamonds, mouse)
+
+    if (nearest) {
+      snapPoint.setAttribute("cx", String(nearest.x))
+      snapPoint.setAttribute("cy", String(nearest.y))
+      snapPoint.style.display = "block"
+    } else {
+      snapPoint.style.display = "none"
+    }
+
+    if (activeLine) {
+      const end = nearest || mouse
+      activeLine.setAttribute("x2", String(end.x))
+      activeLine.setAttribute("y2", String(end.y))
+    }
+  })
+
+  svg.addEventListener("mousedown", (e) => {
+    if (!isEditMode) return
+
+    const mouse = toSvgCoords(svg, e)
+    const nearest = getNearestDiamond(diamonds, mouse)
+
+    if (nearest) {
+      startPoint = nearest
+      activeLine = document.createElementNS(SVG_NS, "line")
+      activeLine.setAttribute("x1", String(nearest.x))
+      activeLine.setAttribute("y1", String(nearest.y))
+      activeLine.setAttribute("x2", String(nearest.x))
+      activeLine.setAttribute("y2", String(nearest.y))
+      activeLine.classList.add("manual-line")
+      editingGroup.appendChild(activeLine)
+    }
+  })
+
+  svg.addEventListener("mouseup", (e) => {
+    if (!activeLine) return
+
+    const mouse = toSvgCoords(svg, e)
+    const nearest = getNearestDiamond(diamonds, mouse)
+
+    if (nearest && (nearest.x !== startPoint.x || nearest.y !== startPoint.y)) {
+      activeLine.setAttribute("x2", String(nearest.x))
+      activeLine.setAttribute("y2", String(nearest.y))
+      manualLinesGroup.appendChild(activeLine)
+    } else {
+      activeLine.remove()
+    }
+
+    activeLine = null
+    startPoint = null
+  })
 }
 
 // ——— Trajectory rendering ———
@@ -260,6 +393,20 @@ function setupSvgRoot(el) {
     el.appendChild(insetGroup)
   }
 
+  let manualLinesGroup = el.querySelector(".manual-lines-group")
+  if (!manualLinesGroup) {
+    manualLinesGroup = document.createElementNS(SVG_NS, "g")
+    manualLinesGroup.classList.add("manual-lines-group")
+    el.appendChild(manualLinesGroup)
+  }
+
+  let editingGroup = el.querySelector(".editing-group")
+  if (!editingGroup) {
+    editingGroup = document.createElementNS(SVG_NS, "g")
+    editingGroup.classList.add("editing-group")
+    el.appendChild(editingGroup)
+  }
+
   const statusEl = el.querySelector(".worker-status") || createSvgStatusText(el)
 
   return {
@@ -268,6 +415,8 @@ function setupSvgRoot(el) {
     trajectoriesGroup,
     ballsGroup,
     insetGroup,
+    manualLinesGroup,
+    editingGroup,
     statusEl,
     isSvgRoot: true,
   }
@@ -294,6 +443,7 @@ function createSvgStatusText(svg) {
 
 async function runElement(el) {
   const setup = setupSvgRoot(el)
+  enableEditing(el, setup)
 
   const { svg, tableGroup, trajectoriesGroup } = setup
   const { statusEl } = setup
