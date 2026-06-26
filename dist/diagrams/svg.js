@@ -353,7 +353,7 @@ function renderInset(insetGroup, config) {
 
   // Spin dot (cue tip position)
   // offset.x/y are -0.5 to 0.5, scaled to half the ball radius.
-  const dx = offset.x * ballR;
+  const dx = -offset.x * ballR;
   const dy = -offset.y * ballR;
   svgContent += `  <circle cx="${dx}" cy="${dy}" r="${dotR}" fill="#000" />\n`;
 
