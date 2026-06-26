@@ -51,40 +51,42 @@ function generateBilliardTable() {
 
   let svgContent = ""
 
+  const f6 = (n) => n.toFixed(6)
+
   // Outer frame
   const fx = -X - fOffset
   const fy = -Y - fOffset
   const fw = width + fOffset * 2
   const fh = height + fOffset * 2
-  svgContent += `  <rect id="outer-frame" x="${fx}" y="${fy}" width="${fw}" height="${fh}" class="table-stroke" />\n`
+  svgContent += `  <rect id="outer-frame" x="${f6(fx)}" y="${f6(fy)}" width="${f6(fw)}" height="${f6(fh)}" class="table-stroke" />\n`
 
   // Cushion border
   const cx = -X - cOffset
   const cy = -Y - cOffset
   const cw = width + cOffset * 2
   const ch = height + cOffset * 2
-  svgContent += `  <rect id="cushion-border" x="${cx}" y="${cy}" width="${cw}" height="${ch}" class="table-stroke" />\n`
+  svgContent += `  <rect id="cushion-border" x="${f6(cx)}" y="${f6(cy)}" width="${f6(cw)}" height="${f6(ch)}" class="table-stroke" />\n`
 
   // Playing area
-  svgContent += `  <rect id="playing-area" x="${-X}" y="${-Y}" width="${width}" height="${height}" class="table-stroke" />\n`
+  svgContent += `  <rect id="playing-area" x="${f6(-X)}" y="${f6(-Y)}" width="${f6(width)}" height="${f6(height)}" class="table-stroke" />\n`
 
   // Grid lines
   const gridInterval = (2 * X) / 8
   svgContent += '  <g id="table-grid-lines">\n'
   for (let i = -3; i <= 3; i++) {
     const x = i * gridInterval
-    svgContent += `    <line x1="${x}" y1="${-Y}" x2="${x}" y2="${Y}" class="grid-line" />\n`
+    svgContent += `    <line x1="${f6(x)}" y1="${f6(-Y)}" x2="${f6(x)}" y2="${f6(Y)}" class="grid-line" />\n`
   }
   for (let i = -1; i <= 1; i++) {
     const y = i * gridInterval
-    svgContent += `    <line x1="${-X}" y1="${y}" x2="${X}" y2="${y}" class="grid-line" />\n`
+    svgContent += `    <line x1="${f6(-X)}" y1="${f6(y)}" x2="${f6(X)}" y2="${f6(y)}" class="grid-line" />\n`
   }
   svgContent += "  </g>\n"
 
   // Diamonds
   svgContent += '  <g id="diamonds-group">\n'
   function drawDiamond(x, y) {
-    return `    <polygon points="${x},${y - dSize} ${x + dSize},${y} ${x},${y + dSize} ${x - dSize},${y}" fill="none" stroke="#000000" stroke-width="0.002" />\n`
+    return `    <polygon points="${f6(x)},${f6(y - dSize)} ${f6(x + dSize)},${f6(y)} ${f6(x)},${f6(y + dSize)} ${f6(x - dSize)},${f6(y)}" fill="none" stroke="#000000" stroke-width="0.002" />\n`
   }
   for (let i = -4; i <= 4; i++) {
     const x = i * gridInterval
@@ -99,7 +101,7 @@ function generateBilliardTable() {
   svgContent += "  </g>\n"
 
   return {
-    viewBox: `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`,
+    viewBox: `${f6(viewBoxX)} ${f6(viewBoxY)} ${f6(viewBoxWidth)} ${f6(viewBoxHeight)}`,
     content: svgContent,
   }
 }
@@ -169,7 +171,7 @@ function renderTrajectories(trajectoriesGroup, results) {
       if (path.length < 2) return
 
       const simplifiedPath = simplifyPath(path)
-      const points = simplifiedPath.map((p) => `${p[0]},${p[1]}`).join(" ")
+      const points = simplifiedPath.map((p) => `${p[0].toFixed(6)},${p[1].toFixed(6)}`).join(" ")
       svgContent += `  <polyline points="${points}" class="trajectory-line" />\n`
     })
   })

@@ -167,7 +167,7 @@
         // Set figure text from params
         const a = (initShot.angle ?? 0).toFixed(2)
         const p = (initShot.power ?? 0).toFixed(2)
-        const figText = `Cue at (${init[0].toFixed(2)}, ${init[1].toFixed(2)}) · ${p} m/s · angle ${a}`
+        const figText = `${p} m/s`
         svg.dataset.figure = figText
       }
 
@@ -186,7 +186,7 @@
         const svgElement = document.querySelector(".billiards-table")
         if (!svgElement) return
 
-        const clonedSvg = svgElement.cloneNode(false)
+        const clonedSvg = svgElement.cloneNode(true)
 
         const standaloneHtml = `<!doctype html>
 <html lang="en">
@@ -229,10 +229,6 @@
   </head>
   <body>
     ${clonedSvg.outerHTML}
-    <script type="module">
-      import { initDiagrams } from "./svg.js"
-      initDiagrams()
-    <\/script>
   </body>
 </html>`
 
