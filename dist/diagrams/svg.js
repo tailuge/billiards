@@ -139,6 +139,30 @@ function getDiamonds() {
     diamonds.push({ x: -X - dOffset, y })
     diamonds.push({ x: X + dOffset, y })
   }
+
+  // 1/4-interval snap points between adjacent diamonds on each edge
+  const quarterInterval = gridInterval / 4
+
+  // Top and bottom edges
+  for (let i = -4; i < 4; i++) {
+    const xStart = i * gridInterval
+    for (let q = 1; q <= 3; q++) {
+      const x = xStart + q * quarterInterval
+      diamonds.push({ x, y: -Y - dOffset })
+      diamonds.push({ x, y: Y + dOffset })
+    }
+  }
+
+  // Left and right edges
+  for (let i = -2; i < 2; i++) {
+    const yStart = i * gridInterval
+    for (let q = 1; q <= 3; q++) {
+      const y = yStart + q * quarterInterval
+      diamonds.push({ x: -X - dOffset, y })
+      diamonds.push({ x: X + dOffset, y })
+    }
+  }
+
   return diamonds
 }
 
