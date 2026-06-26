@@ -106,6 +106,49 @@ function generateBilliardTable() {
 
 // ——— Trajectory rendering ———
 
+function simplifyPath(path, cosTolerance = 0.999998477, minLength = 0.01 * R) {
+  if (path.length < 3) return path
+
+  const compressed = [path[0]]
+  let spanStart = path[0]
+  let last = path[1]
+
+  for (let i = 2; i < path.length; i++) {
+    const next = path[i]
+
+    const d1x = last[0] - spanStart[0]
+    const d1y = last[1] - spanStart[1]
+    const d1mag = Math.sqrt(d1x * d1x + d1y * d1y)
+
+    const d2x = next[0] - last[0]
+    const d2y = next[1] - last[1]
+    const d2mag = Math.sqrt(d2x * d2x + d2y * d2y)
+
+    if (d1mag < minLength || d2mag < minLength) {
+      last = next
+      continue
+    }
+
+    const u1x = d1x / d1mag
+    const u1y = d1y / d1mag
+    const u2x = d2x / d2mag
+    const u2y = d2y / d2mag
+
+    const dot = u1x * u2x + u1y * u2y
+
+    if (dot >= cosTolerance) {
+      last = next
+    } else {
+      compressed.push(last)
+      spanStart = last
+      last = next
+    }
+  }
+
+  compressed.push(last)
+  return compressed
+}
+
 function renderTrajectories(trajectoriesGroup, results) {
   let svgContent = ""
 
@@ -125,7 +168,8 @@ function renderTrajectories(trajectoriesGroup, results) {
 
       if (path.length < 2) return
 
-      const points = path.map((p) => `${p[0]},${p[1]}`).join(" ")
+      const simplifiedPath = simplifyPath(path)
+      const points = simplifiedPath.map((p) => `${p[0]},${p[1]}`).join(" ")
       svgContent += `  <polyline points="${points}" class="trajectory-line" />\n`
     })
   })
