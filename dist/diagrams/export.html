@@ -316,20 +316,24 @@
 
         const svgElement = document.querySelector(".billiards-table")
         if (svgElement) {
-          // Simulation SVG: output the full SVG element including manual lines
-          const clone = svgElement.cloneNode(true)
-          // Remove editing group so temp state isn't included
-          const editGroup = clone.querySelector(".editing-group")
-          if (editGroup) editGroup.remove()
-          // Use single quotes for data-json-shots to avoid escaping JSON quotes
-          const jsonShots = clone.dataset.jsonShots
-          const figure = clone.dataset.figure || ""
-          clone.removeAttribute("data-json-shots")
-          clone.removeAttribute("data-figure")
-          simEl.textContent = clone.outerHTML.replace(
-            /<svg /,
-            `<svg data-json-shots='${jsonShots}' data-figure="${figure}" `
-          )
+          // Simulation SVG: only data attrs + user-drawn manual lines
+          const jsonShots = svgElement.dataset.jsonShots
+          const figure = svgElement.dataset.figure || ""
+          const viewBox = svgElement.getAttribute("viewBox")
+
+          // Collect manual lines from the finalized manual-lines group
+          let manualLines = ""
+          const manualLinesGroup = svgElement.querySelector(".manual-lines-group")
+          if (manualLinesGroup) {
+            for (const line of manualLinesGroup.querySelectorAll(".manual-line")) {
+              manualLines += "\n  " + line.outerHTML
+            }
+          }
+
+          simEl.textContent =
+            `<svg class="billiards-table"\n  data-json-shots='${jsonShots}'\n  data-figure="${figure}"` +
+            (viewBox ? `\n  viewBox="${viewBox}"` : "") +
+            `\n  xmlns="http://www.w3.org/2000/svg">${manualLines}\n</svg>`
         }
 
         compEl.textContent = buildStandaloneHtml()
