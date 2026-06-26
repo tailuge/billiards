@@ -84,8 +84,8 @@ export class Sliders {
     if (!slider) {
       return
     }
-    slider.step = "0.001"
-    slider.min = `${initialValue * 0.1}`
+    slider.step = "0.0001"
+    slider.min = slider.step
     slider.max = `${Math.min(initialValue * 4, 2)}`
     slider.value = initialValue
     setter(initialValue)
