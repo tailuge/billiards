@@ -171,7 +171,7 @@ function renderTrajectories(trajectoriesGroup, results) {
       if (path.length < 2) return
 
       const simplifiedPath = simplifyPath(path)
-      const points = simplifiedPath.map((p) => `${p[0].toFixed(6)},${p[1].toFixed(6)}`).join(" ")
+      const points = simplifiedPath.map((p) => `${p[0].toFixed(6)},${(-p[1]).toFixed(6)}`).join(" ")
       svgContent += `  <polyline points="${points}" class="trajectory-line" />\n`
     })
   })
@@ -218,7 +218,7 @@ function renderBallPositions(ballsGroup, config) {
 
   config.balls.forEach((ball) => {
     const cx = ball.pos.x
-    const cy = ball.pos.y
+    const cy = -ball.pos.y
     svgContent += `  <circle cx="${cx}" cy="${cy}" r="${ballR}" fill="none" stroke="#000" stroke-width="0.002" />\n`
   })
 

@@ -53,9 +53,9 @@ const defaultParams = {
 function diamondPos(rail, index) {
   switch (rail) {
     case "top":
-      return { x: (index - 4) * gridInterval, y: -(Y + dOffset) }
-    case "bottom":
       return { x: (index - 4) * gridInterval, y: Y + dOffset }
+    case "bottom":
+      return { x: (index - 4) * gridInterval, y: -(Y + dOffset) }
     case "left":
       return { x: -(X + dOffset), y: -(index - 2) * gridInterval }
     case "right":
