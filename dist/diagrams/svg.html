@@ -77,39 +77,12 @@
         stroke-width: 0.002;
       }
 
-      #edit-mode-toggle {
-        padding: 0.5rem 1rem;
-        font-size: 1rem;
-        cursor: pointer;
-        background: #fff;
-        border: 1px solid #ccc;
-        border-radius: 0.25rem;
-        transition: background 0.2s;
-      }
 
-      #edit-mode-toggle.active {
-        background: #000;
-        color: #fff;
-        border-color: #000;
-      }
-
-      .manual-line {
-        fill: none;
-        stroke: #000;
-        stroke-width: 0.003;
-        stroke-dasharray: 0.06 0.03;
-      }
-
-      .snap-indicator {
-        fill: rgba(0, 0, 0, 0.2);
-        stroke: none;
-      }
     </style>
   </head>
   <body>
     <header>
       <h1>Billiards Diagrams</h1>
-      <button id="edit-mode-toggle">Toggle Edit Mode</button>
     </header>
 
     <main>
@@ -172,21 +145,16 @@
       }]'
         data-figure="Figure 2.1 reverse - 3.00 m/s"
       ></svg>
-      <svg class="billiards-table"
-  data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.756,"y":-0.189,"z":0}},{"id":1,"pos":{"x":-0.756,"y":0,"z":0}},{"id":2,"pos":{"x":0.756,"y":0,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.147099,"power":3.7204,"offset":{"x":-0.252932,"y":0.161324,"z":0},"elevation":0}}]'
-  data-figure="3.72 m/s"
-></svg>
+      <svg
+        class="billiards-table"
+        data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.756,"y":-0.189,"z":0}},{"id":1,"pos":{"x":-0.756,"y":0,"z":0}},{"id":2,"pos":{"x":0.756,"y":0,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.147099,"power":3.7204,"offset":{"x":-0.252932,"y":0.161324,"z":0},"elevation":0}}]'
+        data-figure="3.72 m/s"
+      ></svg>
     </main>
 
     <script type="module">
-      import { initDiagrams, toggleEditMode } from "./svg.js"
+      import { initDiagrams } from "./svg.js"
       initDiagrams()
-
-      const toggleBtn = document.getElementById("edit-mode-toggle")
-      toggleBtn.addEventListener("click", () => {
-        const isActive = toggleEditMode()
-        toggleBtn.classList.toggle("active", isActive)
-      })
     </script>
   </body>
 </html>

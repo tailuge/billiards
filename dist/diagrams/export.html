@@ -93,6 +93,36 @@
         background: #b8b8b8;
       }
 
+      #edit-btn {
+        padding: 8px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        background: #fff;
+        color: #000;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: background 0.2s;
+        margin-left: 8px;
+      }
+
+      #edit-btn.active {
+        background: #000;
+        color: #fff;
+        border-color: #000;
+      }
+
+      .manual-line {
+        fill: none;
+        stroke: #000;
+        stroke-width: 0.003;
+        stroke-dasharray: 0.06 0.03;
+      }
+
+      .snap-indicator {
+        fill: rgba(0, 0, 0, 0.2);
+        stroke: none;
+      }
+
       #export-btn {
         padding: 8px 20px;
         font-size: 1rem;
@@ -154,7 +184,7 @@
 
     <div id="controls">
       <button id="play-btn">Play in game</button>
-      
+      <button id="edit-btn">Edit</button>
     </div>
 
     <div id="panels">
@@ -169,7 +199,7 @@
     </div>
 
     <script type="module">
-      import { initDiagrams } from "./svg.js"
+      import { initDiagrams, toggleEditMode } from "./svg.js"
 
       const params = new URLSearchParams(window.location.search)
 
@@ -225,6 +255,9 @@
         if (!svgElement) return ""
         const clonedSvg = svgElement.cloneNode(true)
         clonedSvg.removeAttribute("data-json-shots")
+        // Remove editing group from export
+        const editGroup = clonedSvg.querySelector(".editing-group")
+        if (editGroup) editGroup.remove()
         return `<!doctype html>
 <html lang="en">
   <head>
@@ -262,6 +295,12 @@
         stroke: #000;
         stroke-width: 0.002;
       }
+      .manual-line {
+        fill: none;
+        stroke: #000;
+        stroke-width: 0.003;
+        stroke-dasharray: 0.06 0.03;
+      }
     </style>
   </head>
   <body>
@@ -277,9 +316,20 @@
 
         const svgElement = document.querySelector(".billiards-table")
         if (svgElement) {
-          const jsonShots = svgElement.dataset.jsonShots
-          const figure = svgElement.dataset.figure || ""
-          simEl.textContent = `<svg class="billiards-table"\n  data-json-shots='${jsonShots}'\n  data-figure="${figure}"\n></svg>`
+          // Simulation SVG: output the full SVG element including manual lines
+          const clone = svgElement.cloneNode(true)
+          // Remove editing group so temp state isn't included
+          const editGroup = clone.querySelector(".editing-group")
+          if (editGroup) editGroup.remove()
+          // Use single quotes for data-json-shots to avoid escaping JSON quotes
+          const jsonShots = clone.dataset.jsonShots
+          const figure = clone.dataset.figure || ""
+          clone.removeAttribute("data-json-shots")
+          clone.removeAttribute("data-figure")
+          simEl.textContent = clone.outerHTML.replace(
+            /<svg /,
+            `<svg data-json-shots='${jsonShots}' data-figure="${figure}" `
+          )
         }
 
         compEl.textContent = buildStandaloneHtml()
@@ -293,6 +343,17 @@
         })
         url.searchParams.set("practice", "true")
         window.open(url.toString(), "_blank")
+      })
+
+      // Edit button — toggle edit mode and update panels when done
+      const editBtn = document.getElementById("edit-btn")
+      editBtn?.addEventListener("click", () => {
+        const isActive = toggleEditMode()
+        editBtn.classList.toggle("active", isActive)
+        if (!isActive) {
+          // Edit mode just turned off — capture final state
+          updatePanels()
+        }
       })
 
       initDiagrams()
