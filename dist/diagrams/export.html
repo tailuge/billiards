@@ -92,6 +92,21 @@
       #play-btn:hover {
         background: #2563eb;
       }
+
+      #export-btn {
+        padding: 8px 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        background: #10b981;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        transition: background 0.15s;
+      }
+
+      #export-btn:hover {
+        background: #059669;
+      }
     </style>
   </head>
   <body>
@@ -103,6 +118,7 @@
 
     <div id="controls">
       <button id="play-btn">Play in game</button>
+      <button id="export-btn">Export standalone</button>
     </div>
 
     <script type="module">
@@ -163,6 +179,66 @@
         })
         url.searchParams.set("practice", "true")
         window.open(url.toString(), "_blank")
+      })
+
+      // Export button — generate standalone HTML
+      document.getElementById("export-btn")?.addEventListener("click", () => {
+        const svgElement = document.querySelector(".billiards-table")
+        if (!svgElement) return
+
+        const clonedSvg = svgElement.cloneNode(false)
+
+        const standaloneHtml = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <base href="https://tailuge.github.io/billiards/dist/diagrams/">
+    <title>Billiards Diagram — Standalone</title>
+    <style>
+      body {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #f0f0f0;
+      }
+      svg.billiards-table {
+        width: 90%;
+        max-width: 48rem;
+        height: auto;
+        background: #fff;
+        border-radius: 0.25rem;
+      }
+      .table-stroke {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 0.004;
+      }
+      .grid-line {
+        stroke: #ccc;
+        stroke-width: 0.002;
+        stroke-dasharray: 0.008 0.008;
+      }
+      .trajectory-line {
+        fill: none;
+        stroke: #000;
+        stroke-width: 0.002;
+      }
+    </style>
+  </head>
+  <body>
+    ${clonedSvg.outerHTML}
+    <script type="module">
+      import { initDiagrams } from "./svg.js"
+      initDiagrams()
+    <\/script>
+  </body>
+</html>`
+
+        const blob = new Blob([standaloneHtml], { type: "text/html" })
+        const url = URL.createObjectURL(blob)
+        window.open(url, "_blank")
       })
 
       initDiagrams()
