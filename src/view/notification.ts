@@ -9,13 +9,13 @@ export interface NotificationHighBreak {
 export interface NotificationData {
   type: "Foul" | "GameOver" | "Info"
   title: string
-  subtext?: string | undefined
-  matchScore?: string | undefined
-  highBreaks?: NotificationHighBreak[] | undefined
-  extra?: string | undefined
-  duration?: number | undefined
-  icon?: string | undefined
-  extraClass?: string | undefined
+  subtext?: string
+  matchScore?: string
+  highBreaks?: NotificationHighBreak[]
+  extra?: string
+  duration?: number
+  icon?: string
+  extraClass?: string
 }
 
 export type NotificationActionHandlers = Record<string, () => void>

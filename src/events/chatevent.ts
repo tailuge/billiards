@@ -11,7 +11,7 @@ export interface LineData {
 export class ChatEvent extends GameEvent {
   sender
   message
-  line?: LineData | undefined
+  line?: LineData
 
   constructor(sender, message, line?: LineData) {
     super()
