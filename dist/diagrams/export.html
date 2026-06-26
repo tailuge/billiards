@@ -323,9 +323,13 @@
 
           // Collect manual lines from the finalized manual-lines group
           let manualLines = ""
-          const manualLinesGroup = svgElement.querySelector(".manual-lines-group")
+          const manualLinesGroup = svgElement.querySelector(
+            ".manual-lines-group"
+          )
           if (manualLinesGroup) {
-            for (const line of manualLinesGroup.querySelectorAll(".manual-line")) {
+            for (const line of manualLinesGroup.querySelectorAll(
+              ".manual-line"
+            )) {
               manualLines += "\n  " + line.outerHTML
             }
           }

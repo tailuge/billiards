@@ -77,7 +77,12 @@
         stroke-width: 0.002;
       }
 
-
+      .manual-line {
+        fill: none;
+        stroke: #4f4f4f;
+        stroke-width: 0.001;
+        stroke-dasharray: 0.06 0.03;
+      }
     </style>
   </head>
   <body>
@@ -86,17 +91,49 @@
     </header>
 
     <main>
-      <svg class="billiards-table"
-  data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.401199,"y":-0.286376,"z":0}},{"id":1,"pos":{"x":-1.479545,"y":-0.723348,"z":0}},{"id":2,"pos":{"x":-1.458881,"y":-0.622021,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.358968,"power":2.1484,"offset":{"x":-0.004,"y":0.449437,"z":0},"elevation":0}}]'
-  data-figure="2.15 m/s"
-  viewBox="-1.872395 -1.116197 3.744790 2.232395"
-  xmlns="http://www.w3.org/2000/svg">
-  <line x1="-1.6123950000000002" y1="0.37809875000000004" x2="1.5123950000000002" y2="-0.8561975000000001" class="manual-line"></line>
-  <line x1="-1.6123950000000002" y1="0.18904937500000002" x2="1.1342962500000002" y2="-0.8561975000000001" class="manual-line"></line>
-  <line x1="-1.6123950000000002" y1="0" x2="0.7561975000000001" y2="-0.8561975000000001" class="manual-line"></line>
-  <line x1="-1.6123950000000002" y1="-0.18904937500000002" x2="0.37809875000000004" y2="-0.8561975000000001" class="manual-line"></line>
-  <line x1="-1.6123950000000002" y1="-0.37809875000000004" x2="0" y2="-0.8561975000000001" class="manual-line"></line>
-</svg>
+      <svg
+        class="billiards-table"
+        data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.401199,"y":-0.286376,"z":0}},{"id":1,"pos":{"x":-1.479545,"y":-0.723348,"z":0}},{"id":2,"pos":{"x":-1.458881,"y":-0.622021,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.358968,"power":2,"offset":{"x":-0.004,"y":0.449437,"z":0},"elevation":0}}]'
+        data-figure="2.15 m/s"
+        viewBox="-1.872395 -1.116197 3.744790 2.232395"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <line
+          x1="-1.6123950000000002"
+          y1="0.37809875000000004"
+          x2="1.5123950000000002"
+          y2="-0.8561975000000001"
+          class="manual-line"
+        ></line>
+        <line
+          x1="-1.6123950000000002"
+          y1="0.18904937500000002"
+          x2="1.1342962500000002"
+          y2="-0.8561975000000001"
+          class="manual-line"
+        ></line>
+        <line
+          x1="-1.6123950000000002"
+          y1="0"
+          x2="0.7561975000000001"
+          y2="-0.8561975000000001"
+          class="manual-line"
+        ></line>
+        <line
+          x1="-1.6123950000000002"
+          y1="-0.18904937500000002"
+          x2="0.37809875000000004"
+          y2="-0.8561975000000001"
+          class="manual-line"
+        ></line>
+        <line
+          x1="-1.6123950000000002"
+          y1="-0.37809875000000004"
+          x2="0"
+          y2="-0.8561975000000001"
+          class="manual-line"
+        ></line>
+      </svg>
       <svg
         class="billiards-table"
         data-shots="
