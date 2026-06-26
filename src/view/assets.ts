@@ -22,7 +22,7 @@ export class Assets {
   loadFromWeb(ready) {
     this.ready = ready
     this.sound = new Sound(true)
-    importGltf("models/background.gltf", (m) => {
+    importGltf("models/room.gltf", (m) => {
       this.background = m.scene
       this.done()
     })
