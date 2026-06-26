@@ -224,6 +224,7 @@
         const svgElement = document.querySelector(".billiards-table")
         if (!svgElement) return ""
         const clonedSvg = svgElement.cloneNode(true)
+        clonedSvg.removeAttribute("data-json-shots")
         return `<!doctype html>
 <html lang="en">
   <head>

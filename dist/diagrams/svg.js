@@ -83,20 +83,20 @@ function generateBilliardTable() {
   }
   svgContent += "  </g>\n"
 
+  // Diamond def
+  svgContent += `  <defs>\n    <polygon id="d" points="0,${f6(-dSize)} ${f6(dSize)},0 0,${f6(dSize)} ${f6(-dSize)},0" fill="none" stroke="#000000" stroke-width="0.002" />\n  </defs>\n`
+
   // Diamonds
   svgContent += '  <g id="diamonds-group">\n'
-  function drawDiamond(x, y) {
-    return `    <polygon points="${f6(x)},${f6(y - dSize)} ${f6(x + dSize)},${f6(y)} ${f6(x)},${f6(y + dSize)} ${f6(x - dSize)},${f6(y)}" fill="none" stroke="#000000" stroke-width="0.002" />\n`
-  }
   for (let i = -4; i <= 4; i++) {
     const x = i * gridInterval
-    svgContent += drawDiamond(x, -Y - dOffset)
-    svgContent += drawDiamond(x, Y + dOffset)
+    svgContent += `    <use href="#d" x="${f6(x)}" y="${f6(-Y - dOffset)}"/>\n`
+    svgContent += `    <use href="#d" x="${f6(x)}" y="${f6(Y + dOffset)}"/>\n`
   }
   for (let i = -2; i <= 2; i++) {
     const y = i * gridInterval
-    svgContent += drawDiamond(-X - dOffset, y)
-    svgContent += drawDiamond(X + dOffset, y)
+    svgContent += `    <use href="#d" x="${f6(-X - dOffset)}" y="${f6(y)}"/>\n`
+    svgContent += `    <use href="#d" x="${f6(X + dOffset)}" y="${f6(y)}"/>\n`
   }
   svgContent += "  </g>\n"
 
