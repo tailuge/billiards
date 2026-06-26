@@ -949,7 +949,7 @@ Overlap: ${overlap}%`)
         if (!surface || !topview?.dataset.state) return
 
         const urlParams = new URLSearchParams(window.location.search)
-        const cushionModel = urlParams.get("cushionModel") || "Mathavan"
+        const cushionModel = (urlParams.get("cushionModel") || "mathavan").toLowerCase()
         document.getElementById("page-title").textContent =
           `Three cushion research (${cushionModel})`
         const diagramParams = new URLSearchParams(topview.dataset.state)

@@ -82,7 +82,7 @@
         padding: 8px 20px;
         font-size: 1rem;
         cursor: pointer;
-        background: #3b82f6;
+        background: #888888;
         color: #fff;
         border: none;
         border-radius: 4px;
@@ -90,7 +90,7 @@
       }
 
       #play-btn:hover {
-        background: #2563eb;
+        background: #b8b8b8;
       }
 
       #export-btn {
@@ -147,19 +147,19 @@
   </head>
   <body>
     <header>
-      <h1>Three Cushion — Export Diagram</h1>
+      <h1>Diagram Export</h1>
     </header>
 
     <svg class="billiards-table"></svg>
 
     <div id="controls">
       <button id="play-btn">Play in game</button>
-      <button id="export-btn">Export standalone</button>
+      
     </div>
 
     <div id="panels">
       <div>
-        <h2>SVG Simulation</h2>
+        <h2>Simulation SVG</h2>
         <pre id="simulation-json"></pre>
       </div>
       <div>
@@ -278,8 +278,7 @@
         if (svgElement) {
           const jsonShots = svgElement.dataset.jsonShots
           const figure = svgElement.dataset.figure || ""
-          const escaped = jsonShots.replace(/&/g, "&amp;").replace(/"/g, "&quot;")
-          simEl.textContent = `<svg class="billiards-table"\n  data-json-shots="${escaped}"\n  data-figure="${figure}"\n></svg>`
+          simEl.textContent = `<svg class="billiards-table"\n  data-json-shots='${jsonShots}'\n  data-figure="${figure}"\n></svg>`
         }
 
         compEl.textContent = buildStandaloneHtml()
@@ -293,13 +292,6 @@
         })
         url.searchParams.set("practice", "true")
         window.open(url.toString(), "_blank")
-      })
-
-      // Export button — generate standalone HTML
-      document.getElementById("export-btn")?.addEventListener("click", () => {
-        const blob = new Blob([buildStandaloneHtml()], { type: "text/html" })
-        const url = URL.createObjectURL(blob)
-        window.open(url, "_blank")
       })
 
       initDiagrams()
