@@ -86,7 +86,7 @@ function parseSpin(clockStr, strengthStr) {
   const angle = hour * (Math.PI / 6)
   const s = parseStrength(strengthStr)
   return {
-    x: Math.sin(angle) * s * 0.45,
+    x: -Math.sin(angle) * s * 0.45,
     y: Math.cos(angle) * s * 0.45,
   }
 }
