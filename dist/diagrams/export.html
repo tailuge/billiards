@@ -279,7 +279,7 @@
           const jsonShots = svgElement.dataset.jsonShots
           const figure = svgElement.dataset.figure || ""
           const escaped = jsonShots.replace(/&/g, "&amp;").replace(/"/g, "&quot;")
-          simEl.textContent = `<svg class="billiards-table"\n  data-jsonShots="${escaped}"\n  data-figure="${figure}"\n></svg>`
+          simEl.textContent = `<svg class="billiards-table"\n  data-json-shots="${escaped}"\n  data-figure="${figure}"\n></svg>`
         }
 
         compEl.textContent = buildStandaloneHtml()
