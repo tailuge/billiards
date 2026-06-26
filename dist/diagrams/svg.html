@@ -76,11 +76,40 @@
         stroke: #000;
         stroke-width: 0.002;
       }
+
+      #edit-mode-toggle {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        cursor: pointer;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        transition: background 0.2s;
+      }
+
+      #edit-mode-toggle.active {
+        background: #000;
+        color: #fff;
+        border-color: #000;
+      }
+
+      .manual-line {
+        fill: none;
+        stroke: #000;
+        stroke-width: 0.003;
+        stroke-dasharray: 0.06 0.03;
+      }
+
+      .snap-indicator {
+        fill: rgba(0, 0, 0, 0.2);
+        stroke: none;
+      }
     </style>
   </head>
   <body>
     <header>
       <h1>Billiards Diagrams</h1>
+      <button id="edit-mode-toggle">Toggle Edit Mode</button>
     </header>
 
     <main>
@@ -150,8 +179,14 @@
     </main>
 
     <script type="module">
-      import { initDiagrams } from "./svg.js"
+      import { initDiagrams, toggleEditMode } from "./svg.js"
       initDiagrams()
+
+      const toggleBtn = document.getElementById("edit-mode-toggle")
+      toggleBtn.addEventListener("click", () => {
+        const isActive = toggleEditMode()
+        toggleBtn.classList.toggle("active", isActive)
+      })
     </script>
   </body>
 </html>
