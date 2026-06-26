@@ -5,9 +5,9 @@ import { NotificationData } from "../view/notification"
 
 export class NotificationEvent extends GameEvent {
   data: NotificationData | string
-  duration?: number | undefined
+  duration?: number
 
-  constructor(data: NotificationData | string, duration?: number | undefined) {
+  constructor(data: NotificationData | string, duration?: number) {
     super()
     this.data = data
     this.duration = duration

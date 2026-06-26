@@ -101,7 +101,9 @@ export class PlaceAllBalls extends ControllerBase {
       this.isDragging = false
       try {
         canvas.releasePointerCapture(e.pointerId)
-      } catch (_) {}
+      } catch {
+        // Ignore errors if pointer capture cannot be released
+      }
     }
 
     canvas.addEventListener("pointerdown", onPointerDown)
