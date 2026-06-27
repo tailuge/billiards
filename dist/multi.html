@@ -91,11 +91,12 @@
   </body>
 
   <script>
-    const wss =
-      window.location.hostname === "localhost"
-        ? "ws://localhost"
-        : "wss://billiards-network.onrender.com"
     const urlParams = new URLSearchParams(window.location.search)
+    const nonlocal = urlParams.has("nonlocal")
+    const wss =
+      window.location.hostname !== "localhost" || nonlocal
+        ? "wss://billiards-network.onrender.com"
+        : "ws://localhost"
     const shotClock = urlParams.get("shotClock")
     const wssparam = `websocketserver=${wss}`
     const elts = document.getElementsByClassName("addwss")

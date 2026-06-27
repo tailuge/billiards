@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Billiards Pool Game - Free Online Physics Simulator</title>
+    <title>Billiards + Pool Free Physics Simulator</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta
       name="description"
-      content="Play free online billiards with realistic physics. Open source and browser-based pool game with multiplayer support. Playable on desktop and mobile."
+      content="Play free online billiards with realistic physics - open source browser game"
     />
     <meta
       name="keywords"
@@ -23,11 +23,11 @@
     <link rel="canonical" href="https://tailuge.github.io/billiards/dist/" />
     <meta
       property="og:title"
-      content="Billiards Pool Game - Free Online Physics Simulator"
+      content="Billiards + Pool Free Physics Simulator"
     />
     <meta
       property="og:description"
-      content="Play pool online with accurate physics. Open source billiards simulation in your browser."
+      content="Play free online billiards with realistic physics - open source browser game"
     />
     <meta property="og:type" content="website" />
     <meta
@@ -85,7 +85,7 @@
           "thumbnailUrl": "https://tailuge.github.io/billiards/dist/images/billiards.png",
           "contentUrl": "https://youtu.be/bAeiRQcQuyg",
           "embedUrl": "https://www.youtube.com/embed/bAeiRQcQuyg",
-          "uploadDate": "2026-04-30"
+          "uploadDate": "2026-04-30T00:00:00+00:00"
         }
       }
     </script>
@@ -115,7 +115,13 @@
       <div id="helpOverlay" hidden>
         <iframe></iframe>
         <div class="help-footer">
-          <button class="lobby-btn" onclick="window.location.href = '/lobby'">
+          <button
+            class="lobby-btn"
+            onclick="
+              window.location.href =
+                'https://billiards.tailuge.workers.dev/lobby'
+            "
+          >
             Visit Lobby
           </button>
           <span class="help-text">to set graphics mode and player name</span>
@@ -228,14 +234,20 @@
           🗨
         </button>
         <div id="commentMenu" class="comment-menu" style="display: none">
+          <button class="comment-emoji" data-angle="315"></button>
+          <button class="comment-emoji" data-angle="0"></button>
+          <button class="comment-emoji" data-angle="45"></button>
+          <button class="comment-emoji" data-angle="270"></button>
+          <button class="comment-emoji" data-angle="180"></button>
+          <button class="comment-emoji" data-angle="90"></button>
           <button class="comment-emoji">🍀</button>
           <button class="comment-emoji">🍷</button>
           <button class="comment-emoji">🐑</button>
+          <button class="comment-emoji">⛺</button>
           <button class="comment-emoji">👏</button>
           <button class="comment-emoji">👓</button>
           <button id="openTextInput" class="comment-emoji">✉️</button>
           <button class="comment-emoji">🎖️</button>
-          <button class="comment-emoji">🦈</button>
           <button class="comment-emoji">👀</button>
         </div>
         <button
@@ -273,6 +285,16 @@
           hidden
         >
           🏳️
+        </button>
+        <button
+          class="menuButton"
+          title="shot analysis"
+          id="analysis"
+          type="submit"
+          aria-label="Shot analysis"
+          hidden
+        >
+          🔍
         </button>
         <button
           class="menuButton half-height"

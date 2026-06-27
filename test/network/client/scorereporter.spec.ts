@@ -267,4 +267,38 @@ describe("ScoreReporter", () => {
       expect.objectContaining({ name: "AbortError" })
     )
   })
+
+  it("should skip upload if players names contain Alice and Bob (substrings)", async () => {
+    const reporter = new ScoreReporter()
+    const aliceBobResult: MatchResult = {
+      winner: "Alice1",
+      loser: "2Bob3",
+      winnerScore: 10,
+      loserScore: 5,
+      ruleType: "snooker",
+    }
+
+    await reporter.submitMatchResult(aliceBobResult)
+    expect(mockFetch).not.toHaveBeenCalled()
+    expect(console.log).toHaveBeenCalledWith(
+      "Skipping match result upload for Alice/Bob"
+    )
+  })
+
+  it("should skip upload if both names contain Alice and Bob reversed", async () => {
+    const reporter = new ScoreReporter()
+    const bobAliceResult: MatchResult = {
+      winner: "the-bob-inator",
+      loser: "princess_alice",
+      winnerScore: 10,
+      loserScore: 5,
+      ruleType: "snooker",
+    }
+
+    await reporter.submitMatchResult(bobAliceResult)
+    expect(mockFetch).not.toHaveBeenCalled()
+    expect(console.log).toHaveBeenCalledWith(
+      "Skipping match result upload for Alice/Bob"
+    )
+  })
 })

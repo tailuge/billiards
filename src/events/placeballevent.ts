@@ -11,10 +11,10 @@ export interface RespotBody {
 
 export class PlaceBallEvent extends GameEvent {
   pos
-  respot?: RespotBody | undefined
-  useStartPos?: boolean | undefined
+  respot?: RespotBody
+  useStartPos?: boolean
 
-  constructor(pos, respot?: RespotBody | undefined, useStartPos?: boolean) {
+  constructor(pos, respot?: RespotBody, useStartPos?: boolean) {
     super()
     this.pos = pos
     this.respot = respot

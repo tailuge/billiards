@@ -61,6 +61,13 @@
       th {
         background-color: #ddd;
       }
+      #paramTable th:nth-child(n + 7),
+      #paramTable td:nth-child(n + 7) {
+        max-width: 6ch;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     </style>
   </head>
   <body>
@@ -151,7 +158,7 @@
 
       <div style="flex: 1">
         <table id="paramTable">
-          <thead>
+          <thead id="paramHeader">
             <tr>
               <th>Tune</th>
               <th>Parameter</th>
@@ -233,13 +240,14 @@
       function updateUI() {
         if (allData.length === 0) {
           paramRows.innerHTML = ""
+          document.getElementById("paramHeader").innerHTML =
+            "<tr><th>Tune</th><th>Parameter</th><th>Min</th><th>Max</th><th>Original</th><th>Current</th></tr>"
           optBtn.disabled = true
           status.textContent = "Status: No files loaded"
           return
         }
 
-        // Build param table from the first file
-        buildParamRows(allData[0].sim)
+        buildParamTable(allData)
         optBtn.disabled = false
         status.textContent = `Status: ${allData.length} files loaded`
       }
@@ -260,13 +268,25 @@
           wrapper.appendChild(label)
           wrapper.appendChild(canvas)
           plotContainer.appendChild(wrapper)
-          redraw(canvas, d.truth, res.simTracks, res.simStep, trackAll)
+          redraw(canvas, d.truth, res.simTracks, trackAll)
         }
       }
 
-      function buildParamRows(sim) {
+      function buildParamTable(allData) {
+        const sim = allData[0].sim
+
+        // Build dynamic header with per-file columns
+        let headerHtml =
+          "<tr><th>Tune</th><th>Parameter</th><th>Min</th><th>Max</th><th>Original</th><th>Current</th>"
+        for (const d of allData) {
+          const label = d.name.replace(".json", "")
+          headerHtml += `<th>${label}</th>`
+        }
+        headerHtml += "</tr>"
+        document.getElementById("paramHeader").innerHTML = headerHtml
+
+        // Build parameter rows
         paramRows.innerHTML = ""
-        // Focus on global params, but allow shot params if someone really wants (though risky in multi-shot)
         const allParams = { ...sim.params }
 
         for (const [name, val] of Object.entries(allParams)) {
@@ -275,7 +295,6 @@
             stronge_omega_ratio: [1.01, 1.99],
             stronge_e_n: [0.5, 0.99],
             ee: [0.5, 0.99],
-            throw_factor: [0, 1],
           }
           let [min, max] = ranges[name] || [val * 0.5, val * 1.5]
           if (Math.abs(max - min) < 1e-7) {
@@ -283,13 +302,21 @@
             max = val + 0.1
           }
 
+          // Build per-file columns
+          let fileCols = ""
+          for (const d of allData) {
+            const fileVal = d.sim.params[name]
+            fileCols += `<td>${fileVal !== undefined ? fileVal.toFixed(3) : "-"}</td>`
+          }
+
           tr.innerHTML = `
             <td><input type="checkbox" data-name="${name}" ${ranges[name] ? "checked" : ""}></td>
             <td>${name}</td>
             <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(3)}" step="any" style="width:60px"></td>
             <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(3)}" step="any" style="width:60px"></td>
-            <td>${val.toFixed(5)}</td>
-            <td><span id="cur-${name.replace(/\./g, "-")}">${val.toFixed(5)}</span></td>`
+            <td>${val.toFixed(3)}</td>
+            <td><span id="cur-${name.replace(/\./g, "-")}">${val.toFixed(3)}</span></td>
+            ${fileCols}`
           paramRows.appendChild(tr)
         }
       }
@@ -316,7 +343,7 @@
 
       function updateParamDisplay(name, val) {
         const el = document.getElementById(`cur-${name.replace(/\./g, "-")}`)
-        if (el) el.textContent = val.toFixed(6)
+        if (el) el.textContent = val.toFixed(3)
       }
 
       function drawRMSEGraph(canvas, history) {

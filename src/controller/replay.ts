@@ -27,6 +27,8 @@ export class Replay extends ControllerBase {
   timer
   init
   diagram?: boolean
+  currentInit = ""
+  currentShot = ""
   constructor(container, init, shots, _retry = false, delay = 1500, diagram?) {
     super(container)
     this.init = init
@@ -147,8 +149,21 @@ export class Replay extends ControllerBase {
   }
 
   override handleHit(_: HitEvent) {
+    this.snapshotBeforeHit()
     this.hit()
     return this
+  }
+
+  private snapshotBeforeHit() {
+    this.currentInit = JSON.stringify(this.container.table.shortSerialise())
+    const aim = this.container.table.cue!.aim
+    this.currentShot = JSON.stringify({
+      cueBallId: aim.i,
+      angle: aim.angle,
+      power: aim.power,
+      offset: { x: aim.offset.x, y: aim.offset.y },
+      elevation: aim.elevation || 0,
+    })
   }
 
   override handleStationary(_) {

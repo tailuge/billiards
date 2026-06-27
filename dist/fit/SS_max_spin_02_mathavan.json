@@ -3,14 +3,14 @@
   "report": "ball 0: 300 samples  x:[-1.474, 1.470]  y:[-0.725, 0.716]  dir=-0.0123rad  speed=3.086m/s  → MOVER\nball 1: 3 samples  x:[1.060, 1.091]  y:[0.485, 0.491]\nball 2: 2 samples  x:[1.379, 1.380]  y:[0.384, 0.384]\n\nCue ball: dataset 0",
   "sim": {
     "ruleType": "threecushion",
-    "cushionModel": "stronge",
+    "cushionModel": "mathavan",
     "shot": {
       "cueBallId": 0,
-      "angle": -0.012321391765204035,
-      "power": 3.085858004781463,
+      "angle": -0.002,
+      "power": 3.325387359041016,
       "offset": {
-        "x": 0.4,
-        "y": 0
+        "x": 0.436067430739226,
+        "y": 0.03999786387843812
       },
       "elevation": 0
     },
@@ -19,9 +19,9 @@
       "muS": 0.126,
       "rho": 0.045,
       "m": 0.23,
-      "μs": 0.2,
-      "μw": 0.2,
-      "ee": 0.84,
+      "μs": 0.20006438223068684,
+      "μw": 0.1617320055787193,
+      "ee": 0.8210781023044418,
       "stronge_omega_ratio": 1.76,
       "stronge_e_n": 0.77,
       "stronge_μ": 0.25

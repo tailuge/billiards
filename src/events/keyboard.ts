@@ -80,6 +80,7 @@ export class Keyboard {
     element.focus()
 
     interact(element).draggable({
+      mouseButtons: 1,
       listeners: {
         move: (e) => {
           this.mousetouch(e)

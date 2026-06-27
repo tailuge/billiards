@@ -14,7 +14,6 @@ import { RollDiagram } from "./diagram/rolldiagram"
 import { Sliders } from "./view/sliders"
 import { DiagramContainer } from "./diagram/diagramcontainer"
 import { I, maxPower, Mxy, Mz, R } from "./model/physics/constants"
-import { Cue } from "./view/cue"
 import { id } from "./utils/dom"
 
 let p1, p2, p3, p4, p5

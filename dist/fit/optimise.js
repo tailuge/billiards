@@ -1,6 +1,6 @@
 import { Simplex } from 'https://esm.sh/@reside-ic/dfoptim'
 import pso from 'https://esm.sh/pso'
-import { computeRMSE, computeSSE } from './rmse.js'
+import { computeSSE } from './rmse.js'
 
 const getValue = (simConfig, name) => {
   if (name.startsWith('shot.')) {
@@ -17,16 +17,15 @@ const decode = (norm, specs) =>
 
 function runSimSync(simConfig, truth, trackAll = false) {
   const result = window.simulateSync(simConfig)
-  const simStep = simConfig.stepSize ?? 0.001953125
   const simTracks = {}
   for (const f of result.frames) {
     for (const b of f.balls) {
-      ;(simTracks[b.id] ??= []).push({ x: b.pos[0], y: b.pos[1] })
+      ;(simTracks[b.id] ??= []).push({ x: b.pos[0], y: b.pos[1], t: f.t })
     }
   }
-  const { sse, count } = truth ? computeSSE(truth, simTracks, simStep, trackAll) : { sse: 0, count: 0 }
+  const { sse, count } = truth ? computeSSE(truth, simTracks, trackAll) : { sse: 0, count: 0 }
   const rmse = count > 0 ? Math.sqrt(sse / count) : null
-  return { simTracks, simStep, frames: result.frames, rmse, sse, count }
+  return { simTracks, frames: result.frames, rmse, sse, count }
 }
 
 function makeTarget(simConfig, truth, specs, trackAll = false) {
@@ -57,8 +56,9 @@ function makeTarget(simConfig, truth, specs, trackAll = false) {
     }
 
     const globalRMSE = totalCount > 0 ? Math.sqrt(totalSSE / totalCount) : Infinity
-    console.log('[opt] trial tuned:', JSON.stringify(tuned), '→ global rmse:', globalRMSE)
-    return globalRMSE
+    const safe = Number.isNaN(globalRMSE) ? Infinity : globalRMSE
+    console.log('[opt] trial tuned:', JSON.stringify(tuned), '→ global rmse:', globalRMSE, safe !== globalRMSE ? '(clamped NaN → ∞)' : '')
+    return safe
   }
   return target
 }

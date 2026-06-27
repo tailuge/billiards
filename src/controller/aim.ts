@@ -3,6 +3,7 @@ import { Controller, HitEvent, Input } from "./controller"
 import { ControllerBase } from "./controllerbase"
 import { PlayShot } from "./playshot"
 import { Replay } from "./replay"
+import { gameOverButtons } from "../utils/gameover"
 
 /**
  * Aim using input events.
@@ -85,6 +86,24 @@ export class Aim extends ControllerBase {
   }
 
   override handleBreak(breakEvent: BreakEvent): Controller {
+    if (!breakEvent.shots || breakEvent.shots.length === 0) {
+      // Broken multiplayer state: both players think they're active.
+      // Sync table state and show error notification.
+      if (breakEvent.init) {
+        this.container.table.updateFromShortSerialised(breakEvent.init)
+      }
+      this.container.notifyLocal(
+        {
+          type: "Info",
+          title: "System error",
+          subtext: "please return to lobby",
+          extra: gameOverButtons.lobby,
+          icon: "⚠️",
+        },
+        0
+      )
+      return this
+    }
     return new Replay(
       this.container,
       breakEvent.init,

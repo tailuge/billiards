@@ -2,6 +2,7 @@ import { Container } from "../container/container"
 import { getButton } from "../utils/dom"
 import { Session } from "../network/client/session"
 import { ConcedeEvent } from "../events/concedeevent"
+import { Replay } from "../controller/replay"
 
 export class Menu {
   container: Container
@@ -9,6 +10,7 @@ export class Menu {
   camera: HTMLButtonElement
   concede: HTMLButtonElement
   menu: HTMLButtonElement
+  analysis: HTMLButtonElement
 
   disabled = true
 
@@ -19,6 +21,23 @@ export class Menu {
     this.camera = this.getElement("camera")
     this.concede = this.getElement("concede")
     this.menu = this.getElement("menu")
+    this.analysis = this.getElement("analysis")
+
+    if (this.analysis) {
+      this.analysis.onclick = () => {
+        const replay = this.container.controller as Replay
+        if (replay.currentInit && replay.currentShot) {
+          const base = "https://velikodimov.github.io/billiards/dist/index.html"
+          const params = new URLSearchParams()
+          params.set("ruletype", this.container.rules.rulename)
+          params.set("practice", "")
+          params.set("drill", "")
+          params.set("init", replay.currentInit)
+          params.set("initShot", replay.currentShot)
+          window.open(`${base}?${params.toString()}`, "_blank")
+        }
+      }
+    }
 
     this.setShareVisible(false)
     if (this.camera) {
@@ -93,6 +112,13 @@ export class Menu {
     if (this.concede) {
       this.concede.hidden = !visible
       this.concede.disabled = !visible
+    }
+  }
+
+  setAnalysisVisible(visible: boolean) {
+    if (this.analysis) {
+      this.analysis.hidden = !visible
+      this.analysis.disabled = !visible
     }
   }
 

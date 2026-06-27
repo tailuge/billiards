@@ -1,5 +1,5 @@
 import { Vector3 } from "three"
-import { sin, cos } from "../../utils/utils"
+import { sin, cos, hypot } from "../../utils/utils"
 import { norm, upCross, up } from "../../utils/three-utils"
 import { muS, muC, g, m, Mz, Mxy, R, I, e, ee, μs, μw } from "./constants"
 import { Mathavan } from "./mathavan"
@@ -14,7 +14,6 @@ export function surfaceVelocityFull(v, w) {
 }
 
 const delta = { v: new Vector3(), w: new Vector3() }
-Object.freeze(delta)
 
 export function sliding(v, w) {
   const va = surfaceVelocity(v, w)
@@ -25,17 +24,18 @@ export function sliding(v, w) {
 }
 
 export function rollingFull(w: Vector3, v: Vector3, t: number) {
-  const mag = Math.hypot(w.x, w.y)
+  const mag = hypot(w.x, w.y)
   const zmag = Math.abs(w.z)
+  const zsign = Math.sign(w.z)
   const eps = 0.1
 
   if (mag < eps) {
     delta.v.set(-v.x / t, -v.y / t, 0)
-    const spindownFactor = zmag > 30 ? 8 : 1
+    const spindownFactor = zmag > 24 ? 12 : 1
     delta.w.set(
       -w.x,
       -w.y,
-      -(5 / 2) * (Mz / (m * R * R)) * spindownFactor * Math.sign(w.z)
+      -(5 / 2) * (Mz / (m * R * R)) * spindownFactor * zsign
     )
     return delta
   }
@@ -44,7 +44,7 @@ export function rollingFull(w: Vector3, v: Vector3, t: number) {
   const dwx = -kw * w.x
   const dwy = -kw * w.y
 
-  delta.w.set(dwx, dwy, -(5 / 2) * (Mz / (m * R * R)) * Math.sign(w.z))
+  delta.w.set(dwx, dwy, -(5 / 2) * (Mz / (m * R * R)) * zsign)
   delta.v.set(R * (w.y + dwy) - v.x, -R * (w.x + dwx) - v.y, 0)
   return delta
 }

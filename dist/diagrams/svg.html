@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Billiards Trajectory — SVG Diagrams</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 2px;
+        padding: 4px;
+      }
+
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background: #f0f0f0;
+        color: #000000;
+        min-height: 100vh;
+        padding: 0.25rem;
+      }
+
+      @media (width >= 768px) {
+        body {
+          padding: 3rem;
+        }
+      }
+
+      header {
+        max-width: 72rem;
+        margin: 0 auto 0.25rem;
+        text-align: center;
+      }
+
+      @media (width >= 768px) {
+        h1 {
+          font-size: 1.875rem;
+        }
+      }
+
+      main {
+        max-width: 72rem;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+
+      svg.billiards-table {
+        width: 90%;
+        height: auto;
+        background: #fff;
+        border-radius: 0.25rem;
+      }
+
+      .table-stroke {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 0.004;
+      }
+
+      .grid-line {
+        stroke: #ccc;
+        stroke-width: 0.002;
+        stroke-dasharray: 0.008 0.008;
+      }
+
+      .trajectory-line {
+        fill: none;
+        stroke: #000;
+        stroke-width: 0.002;
+      }
+
+      .manual-line {
+        fill: none;
+        stroke: #4f4f4f;
+        stroke-width: 0.001;
+        stroke-dasharray: 0.06 0.03;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Billiards Diagrams</h1>
+    </header>
+
+    <main>
+      <svg
+        class="billiards-table"
+        data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.401199,"y":-0.286376,"z":0}},{"id":1,"pos":{"x":-1.479545,"y":-0.723348,"z":0}},{"id":2,"pos":{"x":-1.458881,"y":-0.622021,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.358968,"power":2,"offset":{"x":-0.004,"y":0.449437,"z":0},"elevation":0}}]'
+        data-figure="2.15 m/s"
+        viewBox="-1.872395 -1.116197 3.744790 2.232395"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <line
+          x1="-1.6123950000000002"
+          y1="0.37809875000000004"
+          x2="1.5123950000000002"
+          y2="-0.8561975000000001"
+          class="manual-line"
+        ></line>
+        <line
+          x1="-1.6123950000000002"
+          y1="0.18904937500000002"
+          x2="1.1342962500000002"
+          y2="-0.8561975000000001"
+          class="manual-line"
+        ></line>
+        <line
+          x1="-1.6123950000000002"
+          y1="0"
+          x2="0.7561975000000001"
+          y2="-0.8561975000000001"
+          class="manual-line"
+        ></line>
+        <line
+          x1="-1.6123950000000002"
+          y1="-0.18904937500000002"
+          x2="0.37809875000000004"
+          y2="-0.8561975000000001"
+          class="manual-line"
+        ></line>
+        <line
+          x1="-1.6123950000000002"
+          y1="-0.37809875000000004"
+          x2="0"
+          y2="-0.8561975000000001"
+          class="manual-line"
+        ></line>
+      </svg>
+      <svg
+        class="billiards-table"
+        data-shots="
+        bottom:0 -> top:1 @2R | 3 oclock max | 20%;
+        bottom:0 -> top:2 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:3 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:4 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:5 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:6 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:7 @2R | 3 oclock max | 20%; 
+        bottom:0 -> top:8 @2R | 3 oclock max | 20%"
+        data-figure="Figure 1.1 - Corner max running RHS"
+      ></svg>
+      <svg
+        class="billiards-table"
+        data-shots="
+        bottom:4 -> top:1 @2R | 3 oclock max | 20%;
+        bottom:4 -> top:2 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:3 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:4 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:5 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:6 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:7 @2R | 3 oclock max | 20%; 
+        bottom:4 -> top:8 @2R | 3 oclock max | 20%"
+        data-figure="Figure 1.2 - Center max RHS"
+      ></svg>
+      <svg
+        class="billiards-table"
+        data-shots="
+        bottom:8 -> top:0 @2R | 3 oclock max | 20%;
+        bottom:8 -> top:1 @2R | 3 oclock max | 20%;
+        bottom:8 -> top:2 @2R | 3 oclock max | 20%; 
+        bottom:8 -> top:3 @2R | 3 oclock max | 20%; 
+        bottom:8 -> top:4 @2R | 3 oclock max | 20%; 
+        bottom:8 -> top:5 @2R | 3 oclock max | 20%; 
+        bottom:8 -> top:6 @2R | 3 oclock max | 20%; 
+        bottom:8 -> top:7 @2R | 3 oclock max | 20%"
+        data-figure="Figure 1.3 - Corner max check RHS"
+      ></svg>
+    </main>
+
+    <script type="module">
+      import { initDiagrams } from "./svg.js"
+      initDiagrams()
+    </script>
+  </body>
+</html>

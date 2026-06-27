@@ -1,5 +1,6 @@
 import { Container } from "../container/container"
 import { getButton } from "../utils/dom"
+import { ballSvg } from "./chat"
 
 export class Comment {
   container: Container
@@ -16,6 +17,14 @@ export class Comment {
       return
     }
 
+    // Hydrate ball-SVG buttons
+    this.menu
+      .querySelectorAll<HTMLButtonElement>(".comment-emoji[data-angle]")
+      .forEach((btn) => {
+        const angle = parseInt(btn.dataset.angle ?? "0", 10)
+        btn.innerHTML = ballSvg(isNaN(angle) ? 0 : angle)
+      })
+
     this.button.onclick = (_) => {
       this.toggleMenu()
     }
@@ -29,7 +38,7 @@ export class Comment {
       const text = inputText.value.trim()
       inputTextDiv.close()
       if (text) {
-        this.container.chat.showMessage("<br>" + text)
+        this.container.chat.showMessage(text)
         this.container.sendChat(text)
       }
     }
@@ -42,7 +51,7 @@ export class Comment {
           this.openChat()
           return
         }
-        const text = btn.textContent ?? ""
+        const text = btn.innerHTML ?? ""
         this.container.chat.showMessage(text)
         this.container.sendChat(text)
         this.hideMenu()
@@ -50,8 +59,12 @@ export class Comment {
     })
 
     inputText.addEventListener("keydown", (e) => {
-      e.stopImmediatePropagation()
+      e.stopPropagation()
       if (e.key === "Enter") sendText()
+    })
+
+    inputText.addEventListener("keyup", (e) => {
+      e.stopPropagation()
     })
 
     document.getElementById("inputSend")?.addEventListener("click", sendText)
@@ -59,9 +72,7 @@ export class Comment {
       inputTextDiv.close()
     })
 
-    inputTextDiv.addEventListener("close", () => {
-      this.container.inputLocked = false
-    })
+    inputTextDiv.addEventListener("close", () => {})
   }
 
   setVisible(visible: boolean) {
@@ -91,7 +102,6 @@ export class Comment {
     ) as HTMLDialogElement
     const inputText = document.getElementById("inputText") as HTMLInputElement
     this.hideMenu()
-    this.container.inputLocked = true
     inputTextDiv.showModal()
     inputText.value = ""
     inputText.focus()

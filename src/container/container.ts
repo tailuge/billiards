@@ -68,7 +68,6 @@ export class Container {
   hud: Hud
   notification: Notification
   lobbyIndicator: LobbyIndicator
-  inputLocked: boolean = false
   replayMode: boolean = false
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
@@ -120,6 +119,9 @@ export class Container {
     this.menu = new Menu(this)
     this.comment = new Comment(this)
     this.table.addToScene(this.view.scene)
+    this.view.onLineDrawn = (line) => {
+      this.sendEvent(new ChatEvent(this.id, "", line))
+    }
     this.particles = new ParticleSystem()
     this.hud = new Hud()
     this.notification = new Notification()
@@ -260,11 +262,6 @@ export class Container {
       inputs.forEach((i) => this.inputQueue.push(i))
     }
 
-    if (this.inputLocked) {
-      this.inputQueue = []
-      return
-    }
-
     while (this.inputQueue.length > 0) {
       this.lastEventTime = this.last
       const input = this.inputQueue.shift()
@@ -317,6 +314,9 @@ export class Container {
       this.menu?.setShareVisible(
         controller instanceof Replay ||
           (this.wasReplay && controller instanceof End)
+      )
+      this.menu?.setAnalysisVisible(
+        controller instanceof Replay && this.rules.rulename === "threecushion"
       )
       const isTwoPlayer =
         !this.isSinglePlayer &&

@@ -36,7 +36,7 @@ export function previewShot(table: Table, dt: number): boolean {
       table.updateBallMesh(dt)
     }
     success = true
-  } catch (_) {
+  } catch {
     // physics error (e.g. depth exceeded for close-together balls) — restore below
   } finally {
     table.balls.forEach((b, i) => {

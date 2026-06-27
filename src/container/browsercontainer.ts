@@ -34,6 +34,7 @@ export class BrowserContainer {
   tableId
   clientId
   wss
+  lobbyUrl
   ruletype
   playername: string
   replay: string | null
@@ -72,14 +73,19 @@ export class BrowserContainer {
       params.get("userId") ?? params.get("clientId") ?? `G_${getUID()}`
     this.replay = params.get("state")
     this.ruletype = params.get("ruletype") ?? "nineball"
-    this.wss = params.get("websocketserver")
+    const lobbyUrl = params.get("lobbyUrl")
+    const wss = params.get("websocketserver")
+    this.lobbyUrl = lobbyUrl
+    this.wss = wss
     this.canvas3d = canvas3d
     this.cushionModel = this.cushion(params.get("cushionModel"))
     this.spectator = params.has("spectator")
     this.first = params.has("first")
     this.botMode = params.has("bot")
     this.botName = params.get("bot") ?? ""
-    this.practiceMode = params.get("practice") !== "false"
+    this.practiceMode = params.has("practice")
+      ? params.get("practice") !== "false"
+      : this.ruletype !== "nineball"
     this.drillMode = params.has("drill")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
@@ -128,7 +134,7 @@ export class BrowserContainer {
       keyboard: new Keyboard(this.canvas3d),
       id: this.playername,
       relay: this.messageRelay,
-      messagingUrl: this.wss ?? undefined,
+      messagingUrl: this.lobbyUrl ?? this.wss ?? undefined,
       scoreReporter: scoreReporter,
       replayMode: !!this.replay,
       botMode: this.botMode,

@@ -35,15 +35,15 @@ export type CushionModelName =
 /** One outcome as returned by the worker (ballA/ballB are ids, frames discarded). */
 export interface SimOutcome {
   type: string
-  ballA?: number | undefined
-  ballB?: number | undefined
-  speed?: number | undefined
-  t?: number | undefined
+  ballA?: number
+  ballB?: number
+  speed?: number
+  t?: number
 }
 
 /** A request posted to the worker. */
 export interface WorkerConfig {
-  id?: number | string | undefined
+  id?: number | string
   ruleType: string
   balls: BallPos[]
   cushionModel: string

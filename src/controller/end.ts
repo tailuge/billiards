@@ -12,9 +12,9 @@ export class End extends Controller {
     return "End"
   }
 
-  private readonly result?: MatchResult | undefined
+  private readonly result?: MatchResult
 
-  constructor(container: Container, result?: MatchResult | undefined) {
+  constructor(container: Container, result?: MatchResult) {
     super(container)
     this.result = result
   }
