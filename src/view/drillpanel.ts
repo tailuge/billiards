@@ -36,6 +36,7 @@ export class DrillPanel {
 
     this.placeBallsBtn = this.createBtn("Place Balls")
     this.placeBallsBtn.addEventListener("click", () => {
+      this.container.lastEventTime = performance.now()
       if (this.container.table.allStationary()) {
         this.container.updateController(new PlaceAllBalls(this.container))
       }
@@ -43,6 +44,7 @@ export class DrillPanel {
 
     this.retryBtn = this.createBtn("Retry")
     this.retryBtn.addEventListener("click", () => {
+      this.container.lastEventTime = performance.now()
       const drill = this.container.rules as Drill
       const recorder = this.container.recorder
       const last = recorder.last()
@@ -67,6 +69,7 @@ export class DrillPanel {
 
     this.replayBtn = this.createBtn("Replay")
     this.replayBtn.addEventListener("click", () => {
+      this.container.lastEventTime = performance.now()
       const drill = this.container.rules as Drill
       const recorder = this.container.recorder
       const last = recorder.last()
@@ -81,6 +84,7 @@ export class DrillPanel {
 
     this.switchBallBtn = this.createBtn("Switch Ball")
     this.switchBallBtn.addEventListener("click", () => {
+      this.container.lastEventTime = performance.now()
       const drill = this.container.rules as Drill
       const balls = this.container.table.balls
       drill.cueball = drill.cueball === balls[0] ? balls[1] : balls[0]
@@ -94,6 +98,7 @@ export class DrillPanel {
 
     this.previewBtn = this.createBtn("Preview")
     this.previewBtn.addEventListener("click", () => {
+      this.container.lastEventTime = performance.now()
       if (this.previewActive) {
         this.hidePreview()
       } else if (previewShot(this.container.table, this.container.step)) {
@@ -132,6 +137,7 @@ export class DrillPanel {
     })
 
     document.getElementById("analysisClose")?.addEventListener("click", () => {
+      this.container.lastEventTime = performance.now()
       const overlay = document.getElementById("analysisOverlay")
       const iframe = overlay?.querySelector("iframe")
       if (iframe) iframe.src = "about:blank"
