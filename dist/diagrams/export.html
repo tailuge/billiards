@@ -78,22 +78,7 @@
         text-align: center;
       }
 
-      #play-btn {
-        padding: 8px 20px;
-        font-size: 1rem;
-        cursor: pointer;
-        background: #888888;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        transition: background 0.15s;
-      }
-
-      #play-btn:hover {
-        background: #b8b8b8;
-      }
-
-      #edit-btn {
+      .btn {
         padding: 8px 20px;
         font-size: 1rem;
         cursor: pointer;
@@ -105,7 +90,15 @@
         margin-left: 8px;
       }
 
-      #edit-btn.active {
+      .btn:first-child {
+        margin-left: 0;
+      }
+
+      .btn:hover {
+        background: #e5e5e5;
+      }
+
+      .btn.active {
         background: #000;
         color: #fff;
         border-color: #000;
@@ -121,21 +114,6 @@
       .snap-indicator {
         fill: rgba(0, 0, 0, 0.2);
         stroke: none;
-      }
-
-      #export-btn {
-        padding: 8px 20px;
-        font-size: 1rem;
-        cursor: pointer;
-        background: #10b981;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        transition: background 0.15s;
-      }
-
-      #export-btn:hover {
-        background: #059669;
       }
 
       #panels {
@@ -183,8 +161,9 @@
     <svg class="billiards-table"></svg>
 
     <div id="controls">
-      <button id="play-btn">Play in game</button>
-      <button id="edit-btn">Edit</button>
+      <button id="play-btn" class="btn">Play in game</button>
+      <button id="edit-btn" class="btn">Edit</button>
+      <button id="png-btn" class="btn">Open PNG</button>
     </div>
 
     <div id="panels">
@@ -351,6 +330,61 @@
         })
         url.searchParams.set("practice", "true")
         window.open(url.toString(), "_blank")
+      })
+
+      // Open PNG button — generate PNG from SVG and open in new tab
+      document.getElementById("png-btn")?.addEventListener("click", async () => {
+        const svgElement = document.querySelector(".billiards-table")
+        if (!svgElement) return
+
+        // Clone and clean up the SVG (remove editing artifacts)
+        const clone = svgElement.cloneNode(true)
+        const editGroup = clone.querySelector(".editing-group")
+        if (editGroup) editGroup.remove()
+        clone.removeAttribute("data-json-shots")
+        clone.removeAttribute("data-figure")
+
+        // Embed page CSS into the SVG so it renders standalone
+        const pageStyle = document.querySelector("style")
+        if (pageStyle) {
+          const svgStyle = document.createElementNS("http://www.w3.org/2000/svg", "style")
+          svgStyle.textContent = pageStyle.textContent
+          clone.insertBefore(svgStyle, clone.firstChild)
+        }
+
+        // Serialize to data URL
+        const serializer = new XMLSerializer()
+        const svgString = serializer.serializeToString(clone)
+        const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" })
+        const svgUrl = URL.createObjectURL(svgBlob)
+
+        // Use the SVG's actual rendered pixel size, not viewBox coordinates
+        const rect = svgElement.getBoundingClientRect()
+        const width = rect.width
+        const height = rect.height
+
+        const canvas = document.createElement("canvas")
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext("2d")
+
+        // Set explicit width/height on the clone so it renders at full pixel size
+        clone.setAttribute("width", String(width))
+        clone.setAttribute("height", String(height))
+
+        const img = new Image()
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+          URL.revokeObjectURL(svgUrl)
+
+          canvas.toBlob((blob) => {
+            if (!blob) return
+            const pngUrl = URL.createObjectURL(blob)
+            window.open(pngUrl, "_blank")
+            setTimeout(() => URL.revokeObjectURL(pngUrl), 1000)
+          }, "image/png")
+        }
+        img.src = svgUrl
       })
 
       // Edit button — toggle edit mode and update panels when done
