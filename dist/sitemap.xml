@@ -31,6 +31,16 @@
     <lastmod>2026-05-13</lastmod>
   </url>
   <url>
+    <loc>https://tailuge.github.io/billiards/dist/ww.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/ww.html" />
+    <lastmod>2026-05-13</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/fit/viewer.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/fit/viewer.html" />
+    <lastmod>2026-05-13</lastmod>
+  </url>
+  <url>
     <loc>https://tailuge.github.io/billiards/dist/multi.html</loc>
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/multi.html" />
     <lastmod>2026-05-13</lastmod>
@@ -58,6 +68,16 @@
   <url>
     <loc>https://tailuge.github.io/billiards/dist/diagrams/three.html</loc>
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/three.html" />
+    <lastmod>2026-05-13</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/svg.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/svg.html" />
+    <lastmod>2026-05-13</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/export.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/export.html" />
     <lastmod>2026-05-13</lastmod>
   </url>
   <url>
