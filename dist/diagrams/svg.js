@@ -52,11 +52,12 @@ function generateBilliardTable() {
   const height = Y * 2;
 
   const maxOffset = Math.max(fOffset, dOffset + 0.015);
-  const pad = 0.18;
-  const viewBoxWidth = (X + maxOffset + pad) * 2;
-  const viewBoxHeight = (Y + maxOffset + pad) * 2;
+  const pad = 0.2;
+  const halfPad = pad / 2;
+  const viewBoxWidth = (X + maxOffset + halfPad) * 2;
+  const viewBoxHeight = (Y + maxOffset + halfPad) + (Y + maxOffset + pad);
   const viewBoxX = -viewBoxWidth / 2;
-  const viewBoxY = -viewBoxHeight / 2;
+  const viewBoxY = -(Y + maxOffset + halfPad);
 
   let svgContent = "";
 
