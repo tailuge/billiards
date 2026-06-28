@@ -121,7 +121,9 @@ export class BallMesh {
   initialiseMesh(color: Color, label?: number, appearance?: BallAppearance) {
     let geometry: IcosahedronGeometry
     let material:
-      MeshPhongMaterial | MeshStandardMaterial | MeshPhysicalMaterial
+      | MeshPhongMaterial
+      | MeshStandardMaterial
+      | MeshPhysicalMaterial
     const effectiveAppearance =
       appearance ?? (label === undefined ? "dotted" : "projected")
 

@@ -226,7 +226,8 @@ worker.onmessage = (e) => {
 worker.postMessage(configA);
 // ...wait for COMPLETE...
 worker.postMessage(configB);
-</pre>
+</pre
+      >
 
       <h3>2. Message Types (Worker → UI)</h3>
       <table>
@@ -281,7 +282,8 @@ worker.postMessage(configB);
   warpClearanceR: number,   // warp clearance in units of R (default 4). Set ~50 to disable warp.
   params: { ... }           // physics constant overrides (see below)
 }
-</pre>
+</pre
+      >
 
       <h3>5. Settable Physics Constants (<code>params</code>)</h3>
       <p>
@@ -419,7 +421,8 @@ async function runParallel(tasks) {
 
   return Promise.all(promises);
 }
-</pre>
+</pre
+      >
 
       <h3>8. Universal Runtime Architecture (Web & Node)</h3>
       <p>
@@ -446,7 +449,8 @@ const nodeFriendlyWrapper = `
 `;
 
 const worker = new Worker(nodeFriendlyWrapper, { eval: true });
-</pre>
+</pre
+      >
 
       <h3>9. High-Scale Parallelism & Search</h3>
       <p>
@@ -461,7 +465,8 @@ import { runBatch } from './ww.js';
 // Execute 3 simulations in parallel with angle variance
 const results = await runBatch(baseConfig, 3, 0.001745);
 results.forEach(res => console.log(`Outcome: ${res.outcomes.length} events`));
-</pre>
+</pre
+      >
 
       <h3>10. Headless Node.js Execution</h3>
       <p>
@@ -474,7 +479,8 @@ results.forEach(res => console.log(`Outcome: ${res.outcomes.length} events`));
       <pre>
 # From the project root
 node dist/ww-node.js
-</pre>
+</pre
+      >
       <p>
         This is the preferred entry point for LLM agents performing large-scale
         trajectory analysis or parameter tuning without a browser environment.

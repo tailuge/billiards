@@ -1,17 +1,17 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
   <head>
-    <title>당구 + 포켓볼 무료 물리 시뮬레이터</title>
+    <title>Billiards + Pool Free Physics Simulator</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta
       name="description"
-      content="현실적인 물리가 적용된 무료 온라인 당구 게임을 즐겨보세요 - 오픈 소스 브라우저 게임"
+      content="Play free online billiards with realistic physics - open source browser game"
     />
     <meta
       name="keywords"
-      content="당구, 3쿠션, 스누커, 9볼, 8볼, 포켓볼, 캐롬, 무료 게임, 오픈 소스, 시뮬레이터, billiards, snooker, pool, carom, three-cushion, free, open source"
+      content="billiards, snooker, 9-ball, 8-ball, pool, carom, three-cushion, free, open source, driebanden, ビリヤード, 9ボール, 3クッション, 無料, 당구, 스누커, 3쿠션, Bida 3 băng, Biliar 3 bantalan, Üç bant"
     />
     <meta name="robots" content="index,follow" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -21,10 +21,13 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
     />
     <link rel="canonical" href="https://tailuge.github.io/billiards/dist/" />
-    <meta property="og:title" content="당구 + 포켓볼 무료 물리 시뮬레이터" />
+    <meta
+      property="og:title"
+      content="Billiards + Pool Free Physics Simulator"
+    />
     <meta
       property="og:description"
-      content="현실적인 물리가 적용된 무료 온라인 당구 게임을 즐겨보세요 - 오픈 소스 브라우저 게임"
+      content="Play free online billiards with realistic physics - open source browser game"
     />
     <meta property="og:type" content="website" />
     <meta
@@ -40,19 +43,22 @@
     <meta property="og:video" content="https://youtu.be/bAeiRQcQuyg" />
     <meta property="og:video:type" content="text/html" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="당구 + 포켓볼 무료 물리 시뮬레이터" />
+    <meta
+      name="twitter:title"
+      content="Billiards Pool and Snooker Game - Free"
+    />
     <meta
       name="twitter:description"
-      content="정교한 물리 엔진 기반의 무료 온라인 당구 게임입니다. 브라우저에서 바로 실행하세요."
+      content="Play pool online with accurate physics. Open source and browser-based."
     />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "VideoGame",
-        "name": "Break Builder - 당구 시뮬레이션 게임",
+        "name": "Break Builder - Billiards Pool Game",
         "url": "https://tailuge.github.io/billiards/dist/",
         "image": "https://tailuge.github.io/billiards/dist/images/billiards.png",
-        "description": "현실적인 물리가 적용된 오픈 소스 당구 및 포켓볼 시뮬레이션 게임",
+        "description": "Open source pool and billiards simulation game with realistic physics",
         "applicationCategory": "GameApplication",
         "operatingSystem": "Web",
         "offers": {
@@ -96,7 +102,7 @@
   </head>
 
   <body>
-    <h1 hidden>무료 당구, 포켓볼 및 스누커 시뮬레이터</h1>
+    <h1 hidden>Free Pool, Billiards and Snooker</h1>
     <div id="viewP1" class="view3d">
       <div id="snookerScoreOverlay">
         <div id="snookerScore" aria-live="polite">
@@ -116,16 +122,16 @@
                 'https://billiards.tailuge.workers.dev/lobby'
             "
           >
-            로비 방문
+            Visit Lobby
           </button>
-          <span class="help-text">그래픽 모드 및 플레이어 이름 설정</span>
-          <button id="helpClose">닫기</button>
+          <span class="help-text">to set graphics mode and player name</span>
+          <button id="helpClose">close</button>
         </div>
       </div>
       <div id="analysisOverlay" hidden>
         <iframe></iframe>
         <div class="help-footer">
-          <button id="analysisClose">닫기</button>
+          <button id="analysisClose">close</button>
         </div>
       </div>
       <div id="botDebugOverlay">
@@ -135,17 +141,17 @@
             <button
               id="botDebugClear"
               type="button"
-              aria-label="디버그 로그 삭제"
+              aria-label="Clear debug log"
             >
-              기록 삭제
+              Clear
             </button>
           </div>
         </header>
         <pre id="botDebugLog" aria-live="polite">
-          <img src="images/billiards.png" alt="당구 포켓볼 게임 홍보 - 현실적인 물리 시뮬레이션">
-          현실적인 물리가 적용된 무료 온라인 당구 게임을 즐겨보세요. 오픈 소스 브라우저 시뮬레이션입니다.
-          당구, 스누커, 9볼, 포켓볼, 캐롬, 3쿠션, 온라인 게임, 무료, 오픈 소스, billiards, snooker, pool, 3-cushion, online game, free, open source
-          <a href="https://github.com/tailuge/billiards">GitHub</a>에서 소스 코드를 확인하세요.
+          <img src="images/billiards.png" alt="Billiards Pool Game Promo - Realistic Physics Simulation">
+          Play free realistic pool online with accurate physics. Open source billiards simulation in your browser.
+          billiards, snooker, 9-ball, pool, carom, three-cushion, online game, free, open source, ビリヤード, スヌーカー, 9ボール, 3クッション, オンラインゲーム, 無料, 당구, 스누커, 9볼, 3쿠션, 온라인 게임, 무료
+          Find it on <a href="https://github.com/tailuge/billiards">github</a>
         </pre>
       </div>
       <div class="chatarea">
@@ -155,14 +161,14 @@
         <input
           id="inputText"
           type="text"
-          placeholder="메시지 입력..."
+          placeholder="Enter text here..."
           maxlength="24"
           autofocus
           autocomplete="off"
-          aria-label="채팅 메시지 입력"
+          aria-label="Chat message input"
         />
-        <button id="inputSend">전송</button>
-        <button id="inputClose">닫기</button>
+        <button id="inputSend">send</button>
+        <button id="inputClose">close</button>
       </dialog>
     </div>
     <div id="panel" class="panel wood-texture">
@@ -172,13 +178,13 @@
             class="hitButton timeout-btn"
             id="cueHit"
             type="button"
-            aria-label="수구 타격"
+            aria-label="Hit cue ball"
           >
-            타격
+            hit
           </button>
         </div>
         <div id="tiltSliderContainer" class="tiltSliderContainer" hidden>
-          <angle-input id="cueTilt" aria-label="경사각"></angle-input>
+          <angle-input id="cueTilt" aria-label="tilt angle"></angle-input>
         </div>
         <template id="angle-input-template">
           <div class="area" id="area">
@@ -213,16 +219,16 @@
           step="0.01"
           value="0.65"
           id="cuePower"
-          aria-label="파워 조절"
+          aria-label="power slider"
         />
       </div>
       <div class="outerMenu">
         <button
           class="menuButton half-height"
-          title="댓글"
+          title="comment"
           id="comment"
           type="submit"
-          aria-label="댓글"
+          aria-label="Comment"
           hidden
         >
           🗨
@@ -246,10 +252,10 @@
         </div>
         <button
           class="menuButton"
-          title="공유"
+          title="share"
           id="share"
           type="submit"
-          aria-label="리플레이 링크 공유"
+          aria-label="Share replay link"
           hidden
         >
           <svg
@@ -272,30 +278,30 @@
         </button>
         <button
           class="menuButton half-height"
-          title="기권"
+          title="concede"
           id="concede"
           type="submit"
-          aria-label="기권"
+          aria-label="Concede"
           hidden
         >
           🏳️
         </button>
         <button
           class="menuButton"
-          title="샷 분석"
+          title="shot analysis"
           id="analysis"
           type="submit"
-          aria-label="샷 분석"
+          aria-label="Shot analysis"
           hidden
         >
           🔍
         </button>
         <button
           class="menuButton half-height"
-          title="메뉴"
+          title="menu"
           id="menu"
           type="submit"
-          aria-label="메뉴"
+          aria-label="Menu"
         >
           <svg
             width="24"
@@ -312,10 +318,10 @@
         </button>
         <button
           class="menuButton"
-          title="뷰 전환"
+          title="view"
           id="camera"
           type="submit"
-          aria-label="카메라 뷰 토글"
+          aria-label="Toggle camera view"
         >
           🎥
         </button>
@@ -334,21 +340,21 @@
     <div id="lobbyContainer">
       <div class="challenge-row">
         <span id="challengePill" class="challenge-pill" hidden>
-          <button id="challengeAccept">수락</button>
-          <button id="challengeDecline">거절</button>
+          <button id="challengeAccept">accept</button>
+          <button id="challengeDecline">decline</button>
         </span>
       </div>
       <a
         href="https://billiards.tailuge.workers.dev/lobby.html"
         class="pill"
-        title="로비"
+        title="Lobby"
         id="lobbyOverlay"
-        aria-label="멀티플레이어 로비"
+        aria-label="Multiplayer Lobby"
         ><span class="lobby-count"></span
       ></a>
     </div>
-    <section class="constants" id="constants" aria-label="물리 상수">
-      <p>물리 상수</p>
+    <section class="constants" id="constants" aria-label="Physical Constants">
+      <p>Physical Constants</p>
       <div class="nw">
         <input id="R" type="range" /><label for="R">R</label>
       </div>
@@ -377,7 +383,9 @@
         <input id="μw" type="range" /><label for="μw">μw</label>
       </div>
       <div class="nw">
-        <button id="network" aria-label="네트워크 설정 토글">네트워크🗲</button>
+        <button id="network" aria-label="Toggle network settings">
+          network🗲
+        </button>
       </div>
     </section>
     <script defer src="three_core.js"></script>

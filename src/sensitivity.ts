@@ -27,7 +27,10 @@ export interface ShotParams {
 
 /** Cushion models the worker can simulate (mirrors browsercontainer.cushion()). */
 export type CushionModelName =
-  "mathavan" | "stronge" | "bounceHan" | "bounceHanBlend"
+  | "mathavan"
+  | "stronge"
+  | "bounceHan"
+  | "bounceHanBlend"
 
 /** One outcome as returned by the worker (ballA/ballB are ids, frames discarded). */
 export interface SimOutcome {
