@@ -333,59 +333,66 @@
       })
 
       // Open PNG button — generate PNG from SVG and open in new tab
-      document.getElementById("png-btn")?.addEventListener("click", async () => {
-        const svgElement = document.querySelector(".billiards-table")
-        if (!svgElement) return
+      document
+        .getElementById("png-btn")
+        ?.addEventListener("click", async () => {
+          const svgElement = document.querySelector(".billiards-table")
+          if (!svgElement) return
 
-        // Clone and clean up the SVG (remove editing artifacts)
-        const clone = svgElement.cloneNode(true)
-        const editGroup = clone.querySelector(".editing-group")
-        if (editGroup) editGroup.remove()
-        clone.removeAttribute("data-json-shots")
-        clone.removeAttribute("data-figure")
+          // Clone and clean up the SVG (remove editing artifacts)
+          const clone = svgElement.cloneNode(true)
+          const editGroup = clone.querySelector(".editing-group")
+          if (editGroup) editGroup.remove()
+          clone.removeAttribute("data-json-shots")
+          clone.removeAttribute("data-figure")
 
-        // Embed page CSS into the SVG so it renders standalone
-        const pageStyle = document.querySelector("style")
-        if (pageStyle) {
-          const svgStyle = document.createElementNS("http://www.w3.org/2000/svg", "style")
-          svgStyle.textContent = pageStyle.textContent
-          clone.insertBefore(svgStyle, clone.firstChild)
-        }
+          // Embed page CSS into the SVG so it renders standalone
+          const pageStyle = document.querySelector("style")
+          if (pageStyle) {
+            const svgStyle = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "style"
+            )
+            svgStyle.textContent = pageStyle.textContent
+            clone.insertBefore(svgStyle, clone.firstChild)
+          }
 
-        // Serialize to data URL
-        const serializer = new XMLSerializer()
-        const svgString = serializer.serializeToString(clone)
-        const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" })
-        const svgUrl = URL.createObjectURL(svgBlob)
+          // Serialize to data URL
+          const serializer = new XMLSerializer()
+          const svgString = serializer.serializeToString(clone)
+          const svgBlob = new Blob([svgString], {
+            type: "image/svg+xml;charset=utf-8",
+          })
+          const svgUrl = URL.createObjectURL(svgBlob)
 
-        // Use the SVG's actual rendered pixel size, not viewBox coordinates
-        const rect = svgElement.getBoundingClientRect()
-        const width = rect.width * 2
-        const height = rect.height * 2
+          // Use the SVG's actual rendered pixel size, not viewBox coordinates
+          const rect = svgElement.getBoundingClientRect()
+          const width = rect.width * 2
+          const height = rect.height * 2
 
-        const canvas = document.createElement("canvas")
-        canvas.width = width
-        canvas.height = height
-        const ctx = canvas.getContext("2d")
+          const canvas = document.createElement("canvas")
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext("2d")
 
-        // Set explicit width/height on the clone so it renders at double pixel size
-        clone.setAttribute("width", String(width))
-        clone.setAttribute("height", String(height))
+          // Set explicit width/height on the clone so it renders at double pixel size
+          clone.setAttribute("width", String(width))
+          clone.setAttribute("height", String(height))
 
-        const img = new Image()
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-          URL.revokeObjectURL(svgUrl)
+          const img = new Image()
+          img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+            URL.revokeObjectURL(svgUrl)
 
-          canvas.toBlob((blob) => {
-            if (!blob) return
-            const pngUrl = URL.createObjectURL(blob)
-            window.open(pngUrl, "_blank")
-            setTimeout(() => URL.revokeObjectURL(pngUrl), 1000)
-          }, "image/png")
-        }
-        img.src = svgUrl
-      })
+            canvas.toBlob((blob) => {
+              if (!blob) return
+              const pngUrl = URL.createObjectURL(blob)
+              window.open(pngUrl, "_blank")
+              setTimeout(() => URL.revokeObjectURL(pngUrl), 1000)
+            }, "image/png")
+          }
+          img.src = svgUrl
+        })
 
       // Edit button — toggle edit mode and update panels when done
       const editBtn = document.getElementById("edit-btn")
