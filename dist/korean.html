@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <title>당구 + 포켓볼 무료 물리 시뮬레이터</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="description"
+      content="현실적인 물리가 적용된 무료 온라인 당구 게임을 즐겨보세요 - 오픈 소스 브라우저 게임"
+    />
+    <meta
+      name="keywords"
+      content="당구, 3쿠션, 스누커, 9볼, 8볼, 포켓볼, 캐롬, 무료 게임, 오픈 소스, 시뮬레이터, billiards, snooker, pool, carom, three-cushion, free, open source"
+    />
+    <meta name="robots" content="index,follow" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <link rel="canonical" href="https://tailuge.github.io/billiards/dist/korean.html" />
+    <meta property="og:title" content="당구 + 포켓볼 무료 물리 시뮬레이터" />
+    <meta
+      property="og:description"
+      content="현실적인 물리가 적용된 무료 온라인 당구 게임을 즐겨보세요 - 오픈 소스 브라우저 게임"
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://tailuge.github.io/billiards/dist/korean.html"
+    />
+    <meta
+      property="og:image"
+      content="https://tailuge.github.io/billiards/dist/images/billiards.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:video" content="https://youtu.be/bAeiRQcQuyg" />
+    <meta property="og:video:type" content="text/html" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="당구 + 포켓볼 무료 물리 시뮬레이터" />
+    <meta
+      name="twitter:description"
+      content="정교한 물리 엔진 기반의 무료 온라인 당구 게임입니다. 브라우저에서 바로 실행하세요."
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "Break Builder - 당구 시뮬레이션 게임",
+        "url": "https://tailuge.github.io/billiards/dist/korean.html",
+        "image": "https://tailuge.github.io/billiards/dist/images/billiards.png",
+        "description": "현실적인 물리가 적용된 오픈 소스 당구 및 포켓볼 시뮬레이션 게임",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Break Builder",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://tailuge.github.io/billiards/dist/favicon.png"
+          }
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "tailuge"
+        },
+        "subjectOf": {
+          "@type": "VideoObject",
+          "name": "Billiards Pool Game Gameplay",
+          "description": "Realistic physics simulation and gameplay of Break Builder pool game.",
+          "thumbnailUrl": "https://tailuge.github.io/billiards/dist/images/billiards.png",
+          "contentUrl": "https://youtu.be/bAeiRQcQuyg",
+          "embedUrl": "https://www.youtube.com/embed/bAeiRQcQuyg",
+          "uploadDate": "2026-04-30T00:00:00+00:00"
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: #1a5e3a;
+      }
+
+      .container {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 20px 0;
+      }
+
+      kbd {
+        background-color: #eee;
+        border-radius: 3px;
+        border: 1px solid #b4b4b4;
+        box-shadow:
+          0 1px 1px rgb(0 0 0 / 20%),
+          0 2px 0 0 rgb(255 255 255 / 70%) inset;
+        color: #333;
+        display: inline-block;
+        font-size: 0.85em;
+        font-weight: 700;
+        line-height: 1;
+        padding: 2px 4px;
+        white-space: nowrap;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 20px 0;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      .demo-links ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .demo-links li {
+        margin-bottom: 10px;
+      }
+
+      .demo-links a {
+        text-decoration: none;
+        color: #1a5e3a;
+        font-weight: bold;
+      }
+
+      .demo-links a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>3쿠션 당구 물리 시뮬레이터 (Billiards)</h1>
+
+      <p>
+        이 프로젝트는 Typescript로 작성된 정교한 당구 물리 엔진을 브라우저에서
+        구현한 오픈 소스 프로젝트입니다.
+      </p>
+
+      <img src="images/promo.png" alt="데모 및 스크린샷" />
+
+      <h2>온라인 데모</h2>
+      <p>
+        데모는 모든 주요 데스크톱 및 모바일 브라우저에서 실행되며 WebGL을
+        사용합니다.
+      </p>
+
+      <div class="demo-links">
+        <ul>
+          <li>
+            <a href="index.html?practice=true">나인볼 ⬀</a> - 브레이크 샷을
+            기록하고 리플레이 링크를 친구들과 공유하세요.
+          </li>
+          <li>
+            <a href="index.html?ruletype=threecushion&lod=4">3쿠션 당구 ⬀</a> -
+            물리 엔진과 플레이어의 기량을 시험하는 궁극의 테스트입니다.
+            입문자라면
+            <a href="index.html?ruletype=threecushion&practice=true"
+              >비기너 모드 ⬀</a
+            >를 추천하며, 특정 배치 연습을 위해
+            <a href="index.html?ruletype=threecushion&practice&drill"
+              >연습 모드 ⬀</a
+            >를 활용해보세요.
+          </li>
+          <li>
+            <a href="index.html?ruletype=snooker">스누커 ⬀</a> - 리더보드에 첫
+            147점 기록이 올라오기를 기다리고 있습니다.
+          </li>
+          <li>
+            <a href="index.html?ruletype=eightball&lod=4">8볼 ⬀</a> - 고해상도
+            모드로 즐겨보세요!
+          </li>
+          <li>
+            봇과의 대결: <a href="index.html?bot=ClawBreak">Claw ⬀</a> 및
+            <a href="index.html?bot=TheFarJaw">TheFarJaw ⬀</a>.
+          </li>
+          <li>
+            <a href="lobby.html">2인 플레이 온라인 로비 ⬀</a> - nchan을 사용한
+            온라인 대전.
+          </li>
+          <li>
+            <a href="https://scoreboard-tailuge.vercel.app/leaderboard"
+              >리더보드 ⬀</a
+            >
+            - 최고 득점 기록을 확인하세요.
+          </li>
+          <li>
+            <a href="diagrams/diagrams.html">물리 엔진 분석 ⬀</a> - 물리 상수를
+            조정하며 궤적을 확인하세요.
+          </li>
+          <li>
+            <a href="practice.html">예술구 및 연습 ⬀</a> - 트릭 샷을 설정하고
+            연습하세요.
+          </li>
+          <li>
+            <a href="diagrams/three.html">3쿠션 물리 튜닝 ⬀</a> 및
+            <a href="fit/viewer.html">파라미터 최적화 ⬀</a>.
+          </li>
+        </ul>
+      </div>
+
+      <h2>주요 기능</h2>
+      <ul>
+        <li>
+          백스핀(끌어치기), 사이드스핀(회전), 쿠션 반발력이 정교하게
+          모델링되었습니다.
+        </li>
+        <li>
+          WebGL을 사용하여 모바일, 리눅스, 맥, 윈도우의 모든 현대적 브라우저에서
+          구동됩니다.
+        </li>
+        <li>브레이크 샷 기록 및 재생 기능을 지원합니다.</li>
+        <li>nchan 엔진 서버를 통한 온라인 2인 대전 모드를 지원합니다.</li>
+        <li>나인볼, 스누커, 3쿠션 당구 규칙이 구현되어 있습니다.</li>
+        <li>
+          라즈베리 파이 4와 같은 저사양 기기에서도 원활하게 작동하도록
+          최적화되었습니다.
+        </li>
+      </ul>
+
+      <h2>참고 자료</h2>
+      <p>
+        공의 역학, 쿠션 반발력, 최대 회전량 등에 대한 학술적 논문을 바탕으로
+        정밀하게 설계되었습니다. Han (2005), Mathavan (2010), Stronge의 충격
+        역학 모델 등을 참조하였습니다.
+      </p>
+
+      <h2>조작 방법</h2>
+      <p>마우스, 터치 스크린 또는 키보드를 사용하세요:</p>
+
+      <table>
+        <tr>
+          <th>조작</th>
+          <th>설명</th>
+        </tr>
+        <tr>
+          <td><kbd>⇦</kbd> <kbd>⇨</kbd></td>
+          <td>조준 (Aim)</td>
+        </tr>
+        <tr>
+          <td><kbd>Control</kbd> + <kbd>⇦</kbd> <kbd>⇨</kbd></td>
+          <td>정밀 조준</td>
+        </tr>
+        <tr>
+          <td><kbd>⇧</kbd> <kbd>⇩</kbd></td>
+          <td>상단 회전(밀어치기) 및 하단 회전(끌어치기)</td>
+        </tr>
+        <tr>
+          <td><kbd>Shift</kbd> + <kbd>⇦</kbd> <kbd>⇨</kbd></td>
+          <td>좌우 회전 (사이드 스핀)</td>
+        </tr>
+        <tr>
+          <td><kbd>Space</kbd></td>
+          <td>타격 - 길게 누르면 파워가 증가합니다.</td>
+        </tr>
+        <tr>
+          <td><kbd>A</kbd></td>
+          <td>조준 가이드 토글</td>
+        </tr>
+        <tr>
+          <td><kbd>M</kbd></td>
+          <td>맛세(Massé) 각도 조절</td>
+        </tr>
+        <tr>
+          <td><kbd>O</kbd></td>
+          <td>카메라 뷰 전환</td>
+        </tr>
+        <tr>
+          <td><kbd>F</kbd></td>
+          <td>전체 화면</td>
+        </tr>
+        <tr>
+          <td><kbd>C</kbd></td>
+          <td>채팅</td>
+        </tr>
+        <tr>
+          <td><kbd>H</kbd></td>
+          <td>도움말</td>
+        </tr>
+        <tr>
+          <td><kbd>+</kbd> <kbd>-</kbd></td>
+          <td>카메라 높이 조절</td>
+        </tr>
+        <tr>
+          <td>마우스 휠</td>
+          <td>샷 파워 조절</td>
+        </tr>
+        <tr>
+          <td>더블 클릭</td>
+          <td>타격</td>
+        </tr>
+      </table>
+
+      <h2>개발 현황</h2>
+      <p>2018년부터 현재까지 꾸준히 발전해 오고 있습니다.</p>
+      <div
+        style="
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          justify-content: center;
+        "
+      >
+        <figure>
+          <img src="images/t1.png" alt="2018" style="width: 200px" />
+          <figcaption align="center">2018년 7월</figcaption>
+        </figure>
+        <figure>
+          <img src="images/t2.png" alt="2019" style="width: 200px" />
+          <figcaption align="center">2019년 7월</figcaption>
+        </figure>
+        <figure>
+          <img src="images/t3.png" alt="2021" style="width: 200px" />
+          <figcaption align="center">2021년 3월</figcaption>
+        </figure>
+      </div>
+
+      <p>모바일 버전 (2023년 8월):</p>
+      <div style="display: flex; gap: 10px; justify-content: center">
+        <img src="images/mobile1.jpg" alt="모바일1" style="width: 200px" />
+        <img src="images/mobile2.jpg" alt="모바일2" style="width: 200px" />
+      </div>
+
+      <p>
+        <a href="https://github.com/tailuge/billiards">GitHub 프로젝트 페이지</a
+        >에서 더 많은 정보를 확인하세요.
+      </p>
+    </div>
+  </body>
+</html>
