@@ -37,6 +37,17 @@ export class PlayShot extends ControllerBase {
       this.container.rules.nextCandidateBall()
     )
 
+    if (globalThis.parent !== (globalThis as any)) {
+      globalThis.parent.postMessage(
+        {
+          type: "stationary",
+          outcome: this.container.table.outcome.map((o) => o.serialise()),
+          table: this.container.table.serialise(),
+        },
+        "*"
+      )
+    }
+
     return nextController
   }
 

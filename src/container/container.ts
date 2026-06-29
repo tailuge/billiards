@@ -260,15 +260,6 @@ export class Container {
     if (!stateBefore && this.table.allStationary()) {
       this.eventQueue.push(new StationaryEvent())
       this.table.cue.hittingAnimation = false
-      if (globalThis.parent !== (globalThis as any)) {
-        globalThis.parent.postMessage(
-          {
-            type: "stationary",
-            outcome: this.table.outcome.map((o) => o.serialise()),
-          },
-          "*"
-        )
-      }
     }
     this.sound.processOutcomes(this.table.outcome)
   }
