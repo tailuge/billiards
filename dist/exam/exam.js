@@ -13,7 +13,20 @@ function saveResults(results) {
   localStorage.setItem(storageKey, JSON.stringify(results));
 }
 
+function buildSummaryList() {
+  const questionList = document.getElementById("questionList");
+  if (!questionList || questionList.children.length > 0) return;
+  const blocks = document.querySelectorAll(".question-block");
+  blocks.forEach((block) => {
+    const h3 = block.querySelector("h3");
+    const li = document.createElement("li");
+    li.innerHTML = `${h3 ? h3.textContent : `Question ${qId}`} <span class="status-unknown">❓ Unknown</span>`;
+    questionList.appendChild(li);
+  });
+}
+
 export function updateUI() {
+  buildSummaryList();
   const results = getResults();
 
   // Update question list summary

@@ -58,27 +58,20 @@ header {
   color: #ef4444;
 }
 
-.questions {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
 .question-block {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
   background: #fff;
-  margin-bottom: 2rem;
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
-}
-
-.question-content {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
 @media (width >= 768px) {
-  .question-content {
+  .question-block {
     flex-direction: row;
     align-items: flex-start;
   }
