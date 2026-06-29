@@ -195,6 +195,7 @@ function enableEditing(el, setup) {
   const diamonds = getDiamonds();
 
   let activeLine = null;
+  let activeEllipse = null;
   let startPoint = null;
 
   // Create snap point indicator
@@ -211,7 +212,8 @@ function enableEditing(el, setup) {
     }
 
     const mouse = toSvgCoords(svg, e);
-    const nearest = getNearestDiamond(diamonds, mouse);
+    const nearest =
+      activeEllipse || e.ctrlKey ? null : getNearestDiamond(diamonds, mouse);
 
     if (nearest) {
       snapPoint.setAttribute("cx", String(nearest.x));
@@ -225,6 +227,13 @@ function enableEditing(el, setup) {
       const end = nearest || mouse;
       activeLine.setAttribute("x2", String(end.x));
       activeLine.setAttribute("y2", String(end.y));
+    } else if (activeEllipse) {
+      const dx = Math.abs(mouse.x - startPoint.x);
+      const dy = Math.abs(mouse.y - startPoint.y);
+      activeEllipse.setAttribute("cx", String((mouse.x + startPoint.x) / 2));
+      activeEllipse.setAttribute("cy", String((mouse.y + startPoint.y) / 2));
+      activeEllipse.setAttribute("rx", String(dx / 2));
+      activeEllipse.setAttribute("ry", String(dy / 2));
     }
   });
 
@@ -232,36 +241,59 @@ function enableEditing(el, setup) {
     if (!isEditMode) return;
 
     const mouse = toSvgCoords(svg, e);
-    const nearest = getNearestDiamond(diamonds, mouse);
 
-    if (nearest) {
-      startPoint = nearest;
-      activeLine = document.createElementNS(SVG_NS, "line");
-      activeLine.setAttribute("x1", String(nearest.x));
-      activeLine.setAttribute("y1", String(nearest.y));
-      activeLine.setAttribute("x2", String(nearest.x));
-      activeLine.setAttribute("y2", String(nearest.y));
-      activeLine.classList.add("manual-line");
-      editingGroup.appendChild(activeLine);
+    if (e.ctrlKey) {
+      startPoint = mouse;
+      activeEllipse = document.createElementNS(SVG_NS, "ellipse");
+      activeEllipse.setAttribute("cx", String(mouse.x));
+      activeEllipse.setAttribute("cy", String(mouse.y));
+      activeEllipse.setAttribute("rx", "0");
+      activeEllipse.setAttribute("ry", "0");
+      activeEllipse.classList.add("fine-stroke");
+      editingGroup.appendChild(activeEllipse);
+    } else {
+      const nearest = getNearestDiamond(diamonds, mouse);
+      if (nearest) {
+        startPoint = nearest;
+        activeLine = document.createElementNS(SVG_NS, "line");
+        activeLine.setAttribute("x1", String(nearest.x));
+        activeLine.setAttribute("y1", String(nearest.y));
+        activeLine.setAttribute("x2", String(nearest.x));
+        activeLine.setAttribute("y2", String(nearest.y));
+        activeLine.classList.add("manual-line");
+        editingGroup.appendChild(activeLine);
+      }
     }
   });
 
   svg.addEventListener("mouseup", (e) => {
-    if (!activeLine) return;
+    if (activeLine) {
+      const mouse = toSvgCoords(svg, e);
+      const nearest = getNearestDiamond(diamonds, mouse);
 
-    const mouse = toSvgCoords(svg, e);
-    const nearest = getNearestDiamond(diamonds, mouse);
-
-    if (nearest && (nearest.x !== startPoint.x || nearest.y !== startPoint.y)) {
-      activeLine.setAttribute("x2", String(nearest.x));
-      activeLine.setAttribute("y2", String(nearest.y));
-      manualLinesGroup.appendChild(activeLine);
-    } else {
-      activeLine.remove();
+      if (
+        nearest &&
+        (nearest.x !== startPoint.x || nearest.y !== startPoint.y)
+      ) {
+        activeLine.setAttribute("x2", String(nearest.x));
+        activeLine.setAttribute("y2", String(nearest.y));
+        manualLinesGroup.appendChild(activeLine);
+      } else {
+        activeLine.remove();
+      }
+      activeLine = null;
+      startPoint = null;
+    } else if (activeEllipse) {
+      const rx = parseFloat(activeEllipse.getAttribute("rx"));
+      const ry = parseFloat(activeEllipse.getAttribute("ry"));
+      if (rx > 0.001 || ry > 0.001) {
+        manualLinesGroup.appendChild(activeEllipse);
+      } else {
+        activeEllipse.remove();
+      }
+      activeEllipse = null;
+      startPoint = null;
     }
-
-    activeLine = null;
-    startPoint = null;
   });
 }
 
@@ -389,9 +421,11 @@ function renderBallPositions(ballsGroup, config) {
 // ——— Element setup helpers ———
 
 function moveManualElements(el, manualLinesGroup) {
-  // Move any direct-child manual-line elements into manualLinesGroup
+  // Move any direct-child manual-line/fine-stroke elements into manualLinesGroup
   // so they render on top of the table background.
-  const existing = el.querySelectorAll(":scope > .manual-line");
+  const existing = el.querySelectorAll(
+    ":scope > .manual-line, :scope > .fine-stroke"
+  );
   existing.forEach((line) => manualLinesGroup.appendChild(line));
 }
 
@@ -399,13 +433,45 @@ function injectManualLineStyles() {
   if (document.getElementById("manual-line-styles")) return;
   const style = document.createElement("style");
   style.id = "manual-line-styles";
-  style.textContent = `.manual-line { fill: none; stroke: #000; stroke-width: 0.002; }`;
+  style.textContent = `.manual-line { fill: none; stroke: #000; stroke-width: 0.002; }
+.fine-stroke { stroke: #000; stroke-width: 0.001; fill: url(#crosshatch); }`;
   document.head.appendChild(style);
 }
 
 function setupSvgRoot(el) {
   if (!el.getAttribute("xmlns")) {
     el.setAttribute("xmlns", SVG_NS);
+  }
+
+  let defs = el.querySelector("defs");
+  if (!defs) {
+    defs = document.createElementNS(SVG_NS, "defs");
+    el.insertBefore(defs, el.firstChild);
+  }
+  if (!defs.querySelector("#crosshatch")) {
+    const pattern = document.createElementNS(SVG_NS, "pattern");
+    pattern.setAttribute("id", "crosshatch");
+    pattern.setAttribute("patternUnits", "userSpaceOnUse");
+    pattern.setAttribute("width", "0.01");
+    pattern.setAttribute("height", "0.01");
+    pattern.setAttribute("patternTransform", "rotate(45)");
+    const l1 = document.createElementNS(SVG_NS, "line");
+    l1.setAttribute("x1", "0");
+    l1.setAttribute("y1", "0");
+    l1.setAttribute("x2", "0");
+    l1.setAttribute("y2", "0.01");
+    l1.setAttribute("stroke", "#000");
+    l1.setAttribute("stroke-width", "0.001");
+    const l2 = document.createElementNS(SVG_NS, "line");
+    l2.setAttribute("x1", "0");
+    l2.setAttribute("y1", "0");
+    l2.setAttribute("x2", "0.01");
+    l2.setAttribute("y2", "0");
+    l2.setAttribute("stroke", "#000");
+    l2.setAttribute("stroke-width", "0.001");
+    pattern.appendChild(l1);
+    pattern.appendChild(l2);
+    defs.appendChild(pattern);
   }
 
   let tableGroup = el.querySelector(".table-group");

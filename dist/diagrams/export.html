@@ -111,6 +111,12 @@
         stroke-dasharray: 0.06 0.03;
       }
 
+      .fine-stroke {
+        stroke: #000;
+        stroke-width: 0.001;
+        fill: url(#crosshatch);
+      }
+
       .snap-indicator {
         fill: rgba(0, 0, 0, 0.2);
         stroke: none;
@@ -280,6 +286,11 @@
         stroke-width: 0.003;
         stroke-dasharray: 0.06 0.03;
       }
+      .fine-stroke {
+        stroke: #000;
+        stroke-width: 0.001;
+        fill: url(#crosshatch);
+      }
     </style>
   </head>
   <body>
@@ -306,9 +317,7 @@
             ".manual-lines-group"
           )
           if (manualLinesGroup) {
-            for (const line of manualLinesGroup.querySelectorAll(
-              ".manual-line"
-            )) {
+            for (const line of manualLinesGroup.children) {
               manualLines += "\n  " + line.outerHTML
             }
           }
