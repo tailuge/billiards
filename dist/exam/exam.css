@@ -78,6 +78,7 @@ header {
 @media (width >= 500px) {
   #shotList {
     columns: 2;
+    column-gap: 6rem;
   }
 }
 
