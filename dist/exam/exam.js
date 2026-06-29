@@ -1,5 +1,5 @@
 import { initDiagrams } from "../diagrams/svg.js";
-import { parseShots, parseJsonShots } from "../diagrams/dsl.js";
+import { parseShots, parseJsonShots, maxPower } from "../diagrams/dsl.js";
 
 const STORAGE_KEY_PREFIX = "exam_results_";
 const storageKey = STORAGE_KEY_PREFIX + window.location.pathname;
@@ -132,6 +132,14 @@ export function initExam() {
   const overlay = document.getElementById("gameOverlay");
   const iframe = document.getElementById("gameIframe");
   const closeBtn = document.getElementById("closeGame");
+  const resetBtn = document.getElementById("resetExam");
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      localStorage.removeItem(storageKey);
+      updateUI();
+    });
+  }
 
   const blocks = Array.from(document.querySelectorAll(".question-block"));
   document.querySelectorAll(".play-btn").forEach((btn) => {
@@ -151,13 +159,21 @@ export function initExam() {
       if (configs.length > 0) {
         const config = configs[0];
         const init = config.balls.flatMap((b) => [b.pos.x, b.pos.y]);
+
+        // Power 50%, Spin 0,0, Aim +-5 Deg
+        const randomAngle = (Math.random() - 0.5) * 2 * 0.0872665;
         const initShot = {
           ...config.shot,
+          power: maxPower * 0.5,
+          offset: { x: 0, y: 0 },
+          angle: config.shot.angle + randomAngle,
           i: config.shot.cueBallId,
           pos: config.balls[config.shot.cueBallId].pos,
         };
 
-        const url = `../index.html?ruletype=threecushion&exam=true&practice=true&init=${encodeURIComponent(JSON.stringify(init))}&initShot=${encodeURIComponent(JSON.stringify(initShot))}`;
+        const ruleType = config.ruleType || "threecushion";
+
+        const url = `../index.html?ruletype=${ruleType}&exam=true&practice=true&init=${encodeURIComponent(JSON.stringify(init))}&initShot=${encodeURIComponent(JSON.stringify(initShot))}`;
         iframe.src = url;
         overlay.classList.add("active");
       }
@@ -167,7 +183,11 @@ export function initExam() {
   window.addEventListener("message", (event) => {
     if (event.data.type === "stationary" && currentQuestionId) {
       const outcomes = event.data.outcome;
-      const isSuccess = outcomes.some((o) => o.type === "Proximity");
+      const isSuccess = outcomes.some(
+        (o) =>
+          o.type === "Proximity" ||
+          (o.type === "Pot" && o.ballA && o.ballA.id !== 0)
+      );
 
       // Update storage
       const results = getResults();
