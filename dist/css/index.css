@@ -887,7 +887,7 @@ body.analysis-mode #commentMenu {
   font-size: 15px;
 }
 
-.expand-range {
+.spin-show {
   position: absolute;
   left: 10px;
   bottom: 14px;
@@ -902,8 +902,17 @@ body.analysis-mode #commentMenu {
   box-shadow: 0 1px 4px rgb(0 0 0 / 40%);
 }
 
-.expand-range:hover:not(:disabled) {
+.spin-show:hover:not(:disabled) {
   background: #3a988e;
+}
+
+/* The spin scatter is currently the live display (blue = the live/active
+ * accent, matching .bar-row.active .bar-show). Needs an explicit :hover
+ * override too — otherwise .spin-show:hover (2 selectors) outranks
+ * .spin-show.active (also 2) on hover and the green flashes back. */
+.spin-show.active,
+.spin-show.active:hover {
+  background: #4aa3ff;
 }
 
 .analysis-toolbar {
