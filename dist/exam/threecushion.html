@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Three-Cushion Exam</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: #f0f0f0;
+        color: #333;
+        line-height: 1.6;
+        padding: 1rem;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .summary {
+        max-width: 800px;
+        margin: 0 auto 2rem;
+        background: #fff;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+      }
+
+      .summary h2 {
+        margin-bottom: 1rem;
+      }
+
+      .summary ul {
+        list-style: none;
+      }
+
+      .summary li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .status-unknown {
+        color: #888;
+      }
+      .status-pass {
+        color: #22c55e;
+      }
+      .status-fail {
+        color: #ef4444;
+      }
+
+      .questions {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .question-block {
+        background: #fff;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+      }
+
+      .question-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      @media (width >= 768px) {
+        .question-content {
+          flex-direction: row;
+          align-items: flex-start;
+        }
+
+        .question-text,
+        .question-diagram {
+          flex: 1;
+        }
+      }
+
+      .question-diagram svg.billiards-table {
+        width: 100%;
+        height: auto;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      /* SVG styles from svg.html */
+      .table-stroke {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 0.004;
+      }
+
+      .grid-line {
+        stroke: #ccc;
+        stroke-width: 0.002;
+        stroke-dasharray: 0.008 0.008;
+      }
+
+      .trajectory-line {
+        fill: none;
+        stroke: #000;
+        stroke-width: 0.002;
+      }
+
+      .manual-line {
+        fill: none;
+        stroke: #4f4f4f;
+        stroke-width: 0.001;
+        stroke-dasharray: 0.06 0.03;
+      }
+
+      .play-btn {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.75rem 1.5rem;
+        background-color: #2563eb;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .play-btn:hover {
+        background-color: #1d4ed8;
+      }
+
+      /* Iframe overlay */
+      #gameOverlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgb(0 0 0 / 80%);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #gameOverlay.active {
+        display: flex;
+      }
+
+      .iframe-container {
+        width: 75%;
+        height: 75%;
+        background: #000;
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .iframe-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #fff;
+        color: #000;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Three-Cushion Exam</h1>
+    </header>
+
+    <section class="summary">
+      <h2>Question List</h2>
+      <ul id="questionList">
+        <li>Question 1 <span class="status-unknown">Unknown</span></li>
+        <li>Question 2 <span class="status-unknown">Unknown</span></li>
+        <li>Question 3 <span class="status-unknown">Unknown</span></li>
+      </ul>
+    </section>
+
+    <main class="questions">
+      <div class="question-block" id="q1">
+        <div class="question-content">
+          <div class="question-text">
+            <h3>Question 1: Standard Three-Cushion Break</h3>
+            <p>
+              Execute the standard break shot. Aim to hit the first object ball
+              such that the cue ball travels around three cushions and hits the
+              second object ball.
+            </p>
+            <button class="play-btn" data-q="1">Play Shot</button>
+          </div>
+          <div class="question-diagram">
+            <svg
+              class="billiards-table"
+              data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.401199,"y":-0.286376,"z":0}},{"id":1,"pos":{"x":-1.479545,"y":-0.723348,"z":0}},{"id":2,"pos":{"x":-1.458881,"y":-0.622021,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.358968,"power":2,"offset":{"x":-0.004,"y":0.449437,"z":0},"elevation":0}}]'
+              data-figure="2.15 m/s"
+              viewBox="-1.872395 -1.116197 3.744790 2.232395"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <line
+                x1="-1.6123950000000002"
+                y1="0.37809875000000004"
+                x2="1.5123950000000002"
+                y2="-0.8561975000000001"
+                class="manual-line"
+              ></line>
+              <line
+                x1="-1.6123950000000002"
+                y1="0.18904937500000002"
+                x2="1.1342962500000002"
+                y2="-0.8561975000000001"
+                class="manual-line"
+              ></line>
+              <line
+                x1="-1.6123950000000002"
+                y1="0"
+                x2="0.7561975000000001"
+                y2="-0.8561975000000001"
+                class="manual-line"
+              ></line>
+              <line
+                x1="-1.6123950000000002"
+                y1="-0.18904937500000002"
+                x2="0.37809875000000004"
+                y2="-0.8561975000000001"
+                class="manual-line"
+              ></line>
+              <line
+                x1="-1.6123950000000002"
+                y1="-0.37809875000000004"
+                x2="0"
+                y2="-0.8561975000000001"
+                class="manual-line"
+              ></line>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-block" id="q2">
+        <div class="question-content">
+          <div class="question-text">
+            <h3>Question 2: Corner Max Running English</h3>
+            <p>
+              Hit the ball into the corner with maximum running English to
+              observe the trajectory across the table.
+            </p>
+            <button class="play-btn" data-q="2">Play Shot</button>
+          </div>
+          <div class="question-diagram">
+            <svg
+              class="billiards-table"
+              data-shots="bottom:0 -> top:1 @2R | 3 oclock max | 20%"
+              data-figure="Figure 1.1 - Corner max running RHS"
+            ></svg>
+          </div>
+        </div>
+      </div>
+
+        <div class="question-block" id="q3">
+            <div class="question-content">
+                <div class="question-text">
+                    <h3>Question 3: Corner Max Check English</h3>
+                    <p>
+                        Explore the effect of reverse English (check English) when
+                        hitting into the corner.
+                    </p>
+                    <button class="play-btn" data-q="3">Play Shot</button>
+                </div>
+                <div class="question-diagram">
+                    <svg
+                        class="billiards-table"
+                        data-shots="bottom:8 -> top:0 @2R | 3 oclock max | 20%"
+                        data-figure="Figure 1.3 - Corner max check RHS"
+                    ></svg>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="gameOverlay">
+      <div class="iframe-container">
+        <button class="close-btn" id="closeGame">Close</button>
+        <iframe id="gameIframe" src=""></iframe>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initDiagrams } from "../diagrams/svg.js";
+      import { parseShots, parseJsonShots } from "../diagrams/dsl.js";
+
+      initDiagrams();
+
+      const overlay = document.getElementById("gameOverlay");
+      const iframe = document.getElementById("gameIframe");
+      const closeBtn = document.getElementById("closeGame");
+
+      document.querySelectorAll(".play-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const qBlock = btn.closest(".question-block");
+          const svg = qBlock.querySelector(".billiards-table");
+
+          let configs = [];
+          if (svg.dataset.jsonShots) {
+            configs = parseJsonShots(svg.dataset.jsonShots);
+          } else if (svg.dataset.shots) {
+            configs = parseShots(svg.dataset.shots);
+          }
+
+          if (configs.length > 0) {
+            const config = configs[0];
+            // The game expects a replay state with 'init' balls and 'shots' array.
+            const replayState = {
+              init: config.balls,
+              shots: [config.shot],
+            };
+            const stateStr = JSON.stringify(replayState);
+            const url = `../index.html?ruletype=threecushion&state=${encodeURIComponent(stateStr)}`;
+            iframe.src = url;
+            overlay.classList.add("active");
+          }
+        });
+      });
+
+      closeBtn.addEventListener("click", () => {
+        overlay.classList.remove("active");
+        iframe.src = "";
+      });
+    </script>
+  </body>
+</html>
