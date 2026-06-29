@@ -19,32 +19,25 @@ import { SimulationRunner } from "../ww.js";
 import { parseShots, parseJsonShots, maxPower } from "./dsl.js";
 import { generatePoolTable } from "./pooltable.js";
 
-// ——— State management ———
 
-let isEditMode = false;
-
-export function toggleEditMode() {
-  isEditMode = !isEditMode;
-  return isEditMode;
-}
 
 // ——— Table geometry (SI meters) ———
 
-const R = 0.03275;
+export const R = 0.03275;
 const UMB_TABLE_X = 92.36;
 const UMB_TABLE_Y = 46.18;
 const tableX = R * (UMB_TABLE_X / 2 - 1);
 const tableY = R * (UMB_TABLE_Y / 2 - 1);
-const X = tableX + R;
-const Y = tableY + R;
+export const X = tableX + R;
+export const Y = tableY + R;
 
 // Fixed calibration (matches default slider midpoints from original)
 const cOffset = 0.06;
 const dOffset = 0.1;
-const fOffset = 0.18;
+export const fOffset = 0.18;
 const dSize = 0.01;
 
-const SVG_NS = "http://www.w3.org/2000/svg";
+export const SVG_NS = "http://www.w3.org/2000/svg";
 
 // ——— Table rendering ———
 
@@ -119,7 +112,7 @@ function generateBilliardTable() {
 
 // ——— Coordinate and Diamond utilities ———
 
-function toSvgCoords(svg, event) {
+export function toSvgCoords(svg, event) {
   const pt = svg.createSVGPoint();
   pt.x = event.clientX;
   pt.y = event.clientY;
@@ -127,7 +120,7 @@ function toSvgCoords(svg, event) {
   return { x: svgP.x, y: svgP.y };
 }
 
-function getDiamonds() {
+export function getDiamonds() {
   const gridInterval = (2 * X) / 8;
   const diamonds = [];
 
@@ -170,7 +163,7 @@ function getDiamonds() {
 
 // ——— Editing and Snapping logic ———
 
-function getNearestDiamond(diamonds, coords) {
+export function getNearestDiamond(diamonds, coords) {
   let nearest = null;
   let minDistance = Infinity;
 
@@ -188,113 +181,6 @@ function getNearestDiamond(diamonds, coords) {
     return nearest;
   }
   return null;
-}
-
-function enableEditing(el, setup) {
-  const { svg, manualLinesGroup, editingGroup } = setup;
-  const diamonds = getDiamonds();
-
-  let activeLine = null;
-  let activeEllipse = null;
-  let startPoint = null;
-
-  // Create snap point indicator
-  const snapPoint = document.createElementNS(SVG_NS, "circle");
-  snapPoint.setAttribute("r", String(R));
-  snapPoint.classList.add("snap-indicator");
-  snapPoint.style.display = "none";
-  editingGroup.appendChild(snapPoint);
-
-  svg.addEventListener("mousemove", (e) => {
-    if (!isEditMode) {
-      snapPoint.style.display = "none";
-      return;
-    }
-
-    const mouse = toSvgCoords(svg, e);
-    const nearest =
-      activeEllipse || e.ctrlKey ? null : getNearestDiamond(diamonds, mouse);
-
-    if (nearest) {
-      snapPoint.setAttribute("cx", String(nearest.x));
-      snapPoint.setAttribute("cy", String(nearest.y));
-      snapPoint.style.display = "block";
-    } else {
-      snapPoint.style.display = "none";
-    }
-
-    if (activeLine) {
-      const end = nearest || mouse;
-      activeLine.setAttribute("x2", String(end.x));
-      activeLine.setAttribute("y2", String(end.y));
-    } else if (activeEllipse) {
-      const dx = Math.abs(mouse.x - startPoint.x);
-      const dy = Math.abs(mouse.y - startPoint.y);
-      activeEllipse.setAttribute("cx", String((mouse.x + startPoint.x) / 2));
-      activeEllipse.setAttribute("cy", String((mouse.y + startPoint.y) / 2));
-      activeEllipse.setAttribute("rx", String(dx / 2));
-      activeEllipse.setAttribute("ry", String(dy / 2));
-    }
-  });
-
-  svg.addEventListener("mousedown", (e) => {
-    if (!isEditMode) return;
-
-    const mouse = toSvgCoords(svg, e);
-
-    if (e.ctrlKey) {
-      startPoint = mouse;
-      activeEllipse = document.createElementNS(SVG_NS, "ellipse");
-      activeEllipse.setAttribute("cx", String(mouse.x));
-      activeEllipse.setAttribute("cy", String(mouse.y));
-      activeEllipse.setAttribute("rx", "0");
-      activeEllipse.setAttribute("ry", "0");
-      activeEllipse.classList.add("fine-stroke");
-      editingGroup.appendChild(activeEllipse);
-    } else {
-      const nearest = getNearestDiamond(diamonds, mouse);
-      if (nearest) {
-        startPoint = nearest;
-        activeLine = document.createElementNS(SVG_NS, "line");
-        activeLine.setAttribute("x1", String(nearest.x));
-        activeLine.setAttribute("y1", String(nearest.y));
-        activeLine.setAttribute("x2", String(nearest.x));
-        activeLine.setAttribute("y2", String(nearest.y));
-        activeLine.classList.add("manual-line");
-        editingGroup.appendChild(activeLine);
-      }
-    }
-  });
-
-  svg.addEventListener("mouseup", (e) => {
-    if (activeLine) {
-      const mouse = toSvgCoords(svg, e);
-      const nearest = getNearestDiamond(diamonds, mouse);
-
-      if (
-        nearest &&
-        (nearest.x !== startPoint.x || nearest.y !== startPoint.y)
-      ) {
-        activeLine.setAttribute("x2", String(nearest.x));
-        activeLine.setAttribute("y2", String(nearest.y));
-        manualLinesGroup.appendChild(activeLine);
-      } else {
-        activeLine.remove();
-      }
-      activeLine = null;
-      startPoint = null;
-    } else if (activeEllipse) {
-      const rx = parseFloat(activeEllipse.getAttribute("rx"));
-      const ry = parseFloat(activeEllipse.getAttribute("ry"));
-      if (rx > 0.001 || ry > 0.001) {
-        manualLinesGroup.appendChild(activeEllipse);
-      } else {
-        activeEllipse.remove();
-      }
-      activeEllipse = null;
-      startPoint = null;
-    }
-  });
 }
 
 // ——— Trajectory rendering ———
@@ -433,46 +319,16 @@ function injectManualLineStyles() {
   if (document.getElementById("manual-line-styles")) return;
   const style = document.createElement("style");
   style.id = "manual-line-styles";
-  style.textContent = `.manual-line { fill: none; stroke: #000; stroke-width: 0.002; }
-.fine-stroke { stroke: #000; stroke-width: 0.001; fill: url(#crosshatch); }`;
+  style.textContent = `.manual-line { fill: none; stroke: #000; stroke-width: 0.002; }`;
   document.head.appendChild(style);
 }
 
-function setupSvgRoot(el) {
+export function setupSvgRoot(el) {
   if (!el.getAttribute("xmlns")) {
     el.setAttribute("xmlns", SVG_NS);
   }
 
-  let defs = el.querySelector("defs");
-  if (!defs) {
-    defs = document.createElementNS(SVG_NS, "defs");
-    el.insertBefore(defs, el.firstChild);
-  }
-  if (!defs.querySelector("#crosshatch")) {
-    const pattern = document.createElementNS(SVG_NS, "pattern");
-    pattern.setAttribute("id", "crosshatch");
-    pattern.setAttribute("patternUnits", "userSpaceOnUse");
-    pattern.setAttribute("width", "0.01");
-    pattern.setAttribute("height", "0.01");
-    pattern.setAttribute("patternTransform", "rotate(45)");
-    const l1 = document.createElementNS(SVG_NS, "line");
-    l1.setAttribute("x1", "0");
-    l1.setAttribute("y1", "0");
-    l1.setAttribute("x2", "0");
-    l1.setAttribute("y2", "0.01");
-    l1.setAttribute("stroke", "#000");
-    l1.setAttribute("stroke-width", "0.001");
-    const l2 = document.createElementNS(SVG_NS, "line");
-    l2.setAttribute("x1", "0");
-    l2.setAttribute("y1", "0");
-    l2.setAttribute("x2", "0.01");
-    l2.setAttribute("y2", "0");
-    l2.setAttribute("stroke", "#000");
-    l2.setAttribute("stroke-width", "0.001");
-    pattern.appendChild(l1);
-    pattern.appendChild(l2);
-    defs.appendChild(pattern);
-  }
+
 
   let tableGroup = el.querySelector(".table-group");
   if (!tableGroup) {
@@ -555,7 +411,7 @@ function createSvgStatusText(svg) {
 
 async function runElement(el, ruletype) {
   const setup = setupSvgRoot(el);
-  enableEditing(el, setup);
+
 
   const { svg, tableGroup, trajectoriesGroup } = setup;
   const { statusEl } = setup;

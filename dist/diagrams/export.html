@@ -112,9 +112,9 @@
       }
 
       .fine-stroke {
+        fill: none;
         stroke: #000;
         stroke-width: 0.001;
-        fill: url(#crosshatch);
       }
 
       .snap-indicator {
@@ -184,7 +184,13 @@
     </div>
 
     <script type="module">
-      import { initDiagrams, toggleEditMode } from "./svg.js"
+      let isEditMode = false
+      window.toggleEditMode = function() {
+        isEditMode = !isEditMode
+        return isEditMode
+      }
+
+      import { initDiagrams, setupSvgRoot, R, X, Y, fOffset, SVG_NS, toSvgCoords, getDiamonds, getNearestDiamond } from "./svg.js"
 
       const params = new URLSearchParams(window.location.search)
 
@@ -287,9 +293,9 @@
         stroke-dasharray: 0.06 0.03;
       }
       .fine-stroke {
+        fill: none;
         stroke: #000;
         stroke-width: 0.001;
-        fill: url(#crosshatch);
       }
     </style>
   </head>
@@ -406,7 +412,7 @@
       // Edit button — toggle edit mode and update panels when done
       const editBtn = document.getElementById("edit-btn")
       editBtn?.addEventListener("click", () => {
-        const isActive = toggleEditMode()
+        const isActive = window.toggleEditMode()
         editBtn.classList.toggle("active", isActive)
         if (!isActive) {
           // Edit mode just turned off — capture final state
@@ -414,7 +420,108 @@
         }
       })
 
+
+      function enableEditing(el, setup) {
+        const { svg, manualLinesGroup, editingGroup } = setup
+        const diamonds = getDiamonds()
+
+        let activeLine = null
+        let activeEllipse = null
+        let startPoint = null
+
+        const snapPoint = document.createElementNS(SVG_NS, 'circle')
+        snapPoint.setAttribute('r', String(R))
+        snapPoint.classList.add('snap-indicator')
+        snapPoint.style.display = 'none'
+        editingGroup.appendChild(snapPoint)
+
+        svg.addEventListener('mousemove', (e) => {
+          if (!isEditMode) {
+            snapPoint.style.display = 'none'
+            return
+          }
+          const mouse = toSvgCoords(svg, e)
+          const nearest = activeEllipse || e.ctrlKey ? null : getNearestDiamond(diamonds, mouse)
+          if (nearest) {
+            snapPoint.setAttribute('cx', String(nearest.x))
+            snapPoint.setAttribute('cy', String(nearest.y))
+            snapPoint.style.display = 'block'
+          } else {
+            snapPoint.style.display = 'none'
+          }
+          if (activeLine) {
+            const end = nearest || mouse
+            activeLine.setAttribute('x2', String(end.x))
+            activeLine.setAttribute('y2', String(end.y))
+          } else if (activeEllipse) {
+            const dx = Math.abs(mouse.x - startPoint.x)
+            const dy = Math.abs(mouse.y - startPoint.y)
+            activeEllipse.setAttribute('cx', String((mouse.x + startPoint.x) / 2))
+            activeEllipse.setAttribute('cy', String((mouse.y + startPoint.y) / 2))
+            activeEllipse.setAttribute('rx', String(dx / 2))
+            activeEllipse.setAttribute('ry', String(dy / 2))
+          }
+        })
+
+        svg.addEventListener('mousedown', (e) => {
+          if (!isEditMode) return
+          const mouse = toSvgCoords(svg, e)
+          if (e.ctrlKey) {
+            startPoint = mouse
+            activeEllipse = document.createElementNS(SVG_NS, 'ellipse')
+            activeEllipse.setAttribute('cx', String(mouse.x))
+            activeEllipse.setAttribute('cy', String(mouse.y))
+            activeEllipse.setAttribute('rx', '0')
+            activeEllipse.setAttribute('ry', '0')
+            activeEllipse.classList.add('fine-stroke')
+            editingGroup.appendChild(activeEllipse)
+          } else {
+            const nearest = getNearestDiamond(diamonds, mouse)
+            if (nearest) {
+              startPoint = nearest
+              activeLine = document.createElementNS(SVG_NS, 'line')
+              activeLine.setAttribute('x1', String(nearest.x))
+              activeLine.setAttribute('y1', String(nearest.y))
+              activeLine.setAttribute('x2', String(nearest.x))
+              activeLine.setAttribute('y2', String(nearest.y))
+              activeLine.classList.add('manual-line')
+              editingGroup.appendChild(activeLine)
+            }
+          }
+        })
+
+        svg.addEventListener('mouseup', (e) => {
+          if (activeLine) {
+            const mouse = toSvgCoords(svg, e)
+            const nearest = getNearestDiamond(diamonds, mouse)
+            if (nearest && (nearest.x !== startPoint.x || nearest.y !== startPoint.y)) {
+              activeLine.setAttribute('x2', String(nearest.x))
+              activeLine.setAttribute('y2', String(nearest.y))
+              manualLinesGroup.appendChild(activeLine)
+            } else {
+              activeLine.remove()
+            }
+            activeLine = null
+            startPoint = null
+          } else if (activeEllipse) {
+            const rx = parseFloat(activeEllipse.getAttribute('rx'))
+            const ry = parseFloat(activeEllipse.getAttribute('ry'))
+            if (rx > 0.001 || ry > 0.001) {
+              manualLinesGroup.appendChild(activeEllipse)
+            } else {
+              activeEllipse.remove()
+            }
+            activeEllipse = null
+            startPoint = null
+          }
+        })
+      }
+
       initDiagrams(ruletype)
+      for (const svgEl of document.querySelectorAll(".billiards-table")) {
+        enableEditing(svgEl, setupSvgRoot(svgEl))
+      }
+
 
       // Update panels after simulation renders
       setTimeout(updatePanels, 500)
