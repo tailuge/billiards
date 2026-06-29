@@ -155,6 +155,55 @@ export function isThreeCushionScored(
 }
 
 /**
+ * A coarse fingerprint of a shot's result for the cue ball: how many cushions it
+ * contacted, which object balls it hit (in encounter order), and whether it
+ * scored. Used to confirm the worker reproduces the same shot the live game
+ * showed — the parity guard for the analysis (see verifySeed / signaturesMatch).
+ */
+export interface OutcomeSignature {
+  cushions: number
+  ballsHit: number[]
+  scored: boolean
+}
+
+/** Derive an OutcomeSignature from worker outcomes (SimOutcome[]). */
+export function outcomeSignature(
+  outcomes: SimOutcome[],
+  cueBallId: number
+): OutcomeSignature {
+  const cueFirst = cueBallFirst(cueBallId, outcomes).filter(
+    (o) => o.ballA === cueBallId
+  )
+  let cushions = 0
+  const ballsHit: number[] = []
+  for (const o of cueFirst) {
+    if (o.type === OutcomeType.Cushion) {
+      cushions++
+    } else if (
+      o.type === OutcomeType.Collision &&
+      o.ballB !== undefined &&
+      !ballsHit.includes(o.ballB)
+    ) {
+      ballsHit.push(o.ballB)
+    }
+  }
+  return { cushions, ballsHit, scored: isThreeCushionScored(outcomes, cueBallId) }
+}
+
+/** True when two signatures describe the same shot result. */
+export function signaturesMatch(
+  a: OutcomeSignature,
+  b: OutcomeSignature
+): boolean {
+  return (
+    a.scored === b.scored &&
+    a.cushions === b.cushions &&
+    a.ballsHit.length === b.ballsHit.length &&
+    a.ballsHit.every((id, i) => id === b.ballsHit[i])
+  )
+}
+
+/**
  * Run a single shot in a fresh Web Worker, resolve with its outcomes, and
  * terminate the worker. Frames are discarded on receipt.
  */
@@ -298,9 +347,11 @@ export interface WorkerLike {
 }
 
 /**
- * Verify the seed shot scores when re-simulated in the worker. Used to guard
- * the analysis: if a genuinely-played scoring shot fails to reproduce, the
- * physics inputs (model, positions) don't match and the analysis is meaningless.
+ * Re-simulate the seed shot in the worker and return its OutcomeSignature. Used
+ * to guard the analysis: the caller compares this against the shot's actual
+ * (main-thread) outcome — if they diverge, the physics inputs (model, positions)
+ * don't match and the scan would be meaningless. Works for scoring AND missed
+ * seeds; the guard is about reproduction fidelity, not whether the shot scored.
  */
 export async function verifySeed(
   balls: BallPos[],
@@ -309,7 +360,7 @@ export async function verifySeed(
   ruleType: string,
   cushionModel: string,
   workerUrl = "worker.js"
-): Promise<boolean> {
+): Promise<OutcomeSignature> {
   const config = buildWorkerConfig(
     balls,
     cueBallId,
@@ -319,7 +370,7 @@ export async function verifySeed(
     "seed"
   )
   const result = await simulateShot(config, workerUrl)
-  return isThreeCushionScored(result.outcomes, cueBallId)
+  return outcomeSignature(result.outcomes, cueBallId)
 }
 
 // ===========================================================================
@@ -348,6 +399,13 @@ const MIN_ANGLE_HALF_WINDOW = (0.5 * Math.PI) / 180 // 0.5°
  * each yields 2 * ONE_D_STEPS_EACH_SIDE + 1 = 21 simulations over its physical
  * half-window. */
 const ONE_D_STEPS_EACH_SIDE = 10
+
+/** Grid step for the spin axes (offsetX/offsetY) — the lattice every spin scan
+ * is built on (anchored at the seed's spin). Exported so the UI can SNAP a
+ * clicked spin pick to the nearest valid point on this exact lattice instead
+ * of allowing an arbitrary continuous position (which wouldn't align with any
+ * scanned/scannable cell). */
+export const SPIN_GRID_STEP = 0.025
 
 /** Hard safety ceiling on evaluated cells — guards against a runaway flood-fill
  * (e.g. an unbounded scoring region in an unclamped dimension). Not a cost cap. */
@@ -496,10 +554,14 @@ export function buildAxisSpecs(
         )
       }
       case "power": {
-        const halfWindow = Math.max(0.4 * Math.abs(baseShot.power), 0.45)
+        // Always scan the FULL physical range — simpler than a window relative
+        // to the current power, and it matches the bar's displayed track (which
+        // already spans [0, maxPower] regardless of the scanned window), so the
+        // whole bar gets scanned cell-by-cell instead of leaving a grey margin.
+        const halfWindow = maxPower / 2
         return spec(
           key,
-          baseShot.power,
+          halfWindow, // centre = the midpoint of [0, maxPower]
           halfWindow / ONE_D_STEPS_EACH_SIDE,
           0,
           maxPower,
@@ -510,7 +572,7 @@ export function buildAxisSpecs(
         return spec(
           key,
           baseShot.offsetX,
-          0.025,
+          SPIN_GRID_STEP,
           -offCenterLimit,
           offCenterLimit,
           spinHalfWindow
@@ -519,7 +581,7 @@ export function buildAxisSpecs(
         return spec(
           key,
           baseShot.offsetY,
-          0.025,
+          SPIN_GRID_STEP,
           -offCenterLimit,
           offCenterLimit,
           spinHalfWindow
@@ -540,6 +602,26 @@ export function buildAxisSpecs(
 /** Value of a parameter at a given grid index along its axis. */
 function valueAt(axis: AxisSpec, index: number): number {
   return axis.center + index * axis.step
+}
+
+/** Build a display `ParamRange` from an axis spec WITHOUT running any
+ * simulation. Lets the UI render an empty (un-scanned) 1-D bar — the studied
+ * window, ruler and seed marker are all derivable from the axis geometry;
+ * `scoringMin/Max` default to the centre (no scored cells yet). Mirrors the
+ * `ranges` block in `runSensitivityAnalysis` so empty and scanned bars share
+ * one window definition. */
+export function paramRangeOf(axis: AxisSpec): ParamRange {
+  return {
+    key: axis.key,
+    center: axis.center,
+    step: axis.step,
+    physicalMin: axis.min,
+    physicalMax: axis.max,
+    scannedMin: Math.max(valueAt(axis, -axis.stepsEachSide), axis.min),
+    scannedMax: Math.min(valueAt(axis, axis.stepsEachSide), axis.max),
+    scoringMin: axis.center,
+    scoringMax: axis.center,
+  }
 }
 
 /** Build a full ShotParams for a cell (selected params from indices, the rest
