@@ -73,6 +73,12 @@ export class Container {
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
   frame: (timestamp: number) => void
+  /** Multiplier applied to real elapsed time before it's converted to physics
+   * steps in `advance()`. 1 everywhere except the shot-analysis view, which
+   * sets this higher so shot playback feels snappier without changing the
+   * fixed physics step (`this.step`) and therefore without affecting
+   * simulation accuracy. */
+  timeScale = 1
 
   private hudScores = {
     p1: 0,
@@ -241,7 +247,7 @@ export class Container {
   advance(elapsed) {
     this.frame?.(elapsed)
 
-    const steps = Math.floor(elapsed / this.step)
+    const steps = Math.floor((elapsed * this.timeScale) / this.step)
     const computedElapsed = steps * this.step
     const stateBefore = this.table.allStationary()
     for (let i = 0; i < steps; i++) {

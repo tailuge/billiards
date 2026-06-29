@@ -152,6 +152,55 @@ export function isThreeCushionScored(
 }
 
 /**
+ * A coarse fingerprint of a shot's result for the cue ball: how many cushions it
+ * contacted, which object balls it hit (in encounter order), and whether it
+ * scored. Used to confirm the worker reproduces the same shot the live game
+ * showed — the parity guard for the analysis (see verifySeed / signaturesMatch).
+ */
+export interface OutcomeSignature {
+  cushions: number
+  ballsHit: number[]
+  scored: boolean
+}
+
+/** Derive an OutcomeSignature from worker outcomes (SimOutcome[]). */
+export function outcomeSignature(
+  outcomes: SimOutcome[],
+  cueBallId: number
+): OutcomeSignature {
+  const cueFirst = cueBallFirst(cueBallId, outcomes).filter(
+    (o) => o.ballA === cueBallId
+  )
+  let cushions = 0
+  const ballsHit: number[] = []
+  for (const o of cueFirst) {
+    if (o.type === OutcomeType.Cushion) {
+      cushions++
+    } else if (
+      o.type === OutcomeType.Collision &&
+      o.ballB !== undefined &&
+      !ballsHit.includes(o.ballB)
+    ) {
+      ballsHit.push(o.ballB)
+    }
+  }
+  return { cushions, ballsHit, scored: isThreeCushionScored(outcomes, cueBallId) }
+}
+
+/** True when two signatures describe the same shot result. */
+export function signaturesMatch(
+  a: OutcomeSignature,
+  b: OutcomeSignature
+): boolean {
+  return (
+    a.scored === b.scored &&
+    a.cushions === b.cushions &&
+    a.ballsHit.length === b.ballsHit.length &&
+    a.ballsHit.every((id, i) => id === b.ballsHit[i])
+  )
+}
+
+/**
  * Run a single shot in a fresh Web Worker, resolve with its outcomes, and
  * terminate the worker. Frames are discarded on receipt.
  */
@@ -295,9 +344,11 @@ export interface WorkerLike {
 }
 
 /**
- * Verify the seed shot scores when re-simulated in the worker. Used to guard
- * the analysis: if a genuinely-played scoring shot fails to reproduce, the
- * physics inputs (model, positions) don't match and the analysis is meaningless.
+ * Re-simulate the seed shot in the worker and return its OutcomeSignature. Used
+ * to guard the analysis: the caller compares this against the shot's actual
+ * (main-thread) outcome — if they diverge, the physics inputs (model, positions)
+ * don't match and the scan would be meaningless. Works for scoring AND missed
+ * seeds; the guard is about reproduction fidelity, not whether the shot scored.
  */
 export async function verifySeed(
   balls: BallPos[],
@@ -306,7 +357,7 @@ export async function verifySeed(
   ruleType: string,
   cushionModel: string,
   workerUrl = "worker.js"
-): Promise<boolean> {
+): Promise<OutcomeSignature> {
   const config = buildWorkerConfig(
     balls,
     cueBallId,
@@ -316,7 +367,7 @@ export async function verifySeed(
     "seed"
   )
   const result = await simulateShot(config, workerUrl)
-  return isThreeCushionScored(result.outcomes, cueBallId)
+  return outcomeSignature(result.outcomes, cueBallId)
 }
 
 // ===========================================================================
@@ -346,9 +397,22 @@ const MIN_ANGLE_HALF_WINDOW = (0.5 * Math.PI) / 180 // 0.5°
  * half-window. */
 const ONE_D_STEPS_EACH_SIDE = 10
 
+/** Grid step for the spin axes (offsetX/offsetY) — the lattice every spin scan
+ * is built on (anchored at the seed's spin). Exported so the UI can SNAP a
+ * clicked spin pick to the nearest valid point on this exact lattice instead
+ * of allowing an arbitrary continuous position (which wouldn't align with any
+ * scanned/scannable cell). */
+export const SPIN_GRID_STEP = 0.025
+
 /** Hard safety ceiling on evaluated cells — guards against a runaway flood-fill
  * (e.g. an unbounded scoring region in an unclamped dimension). Not a cost cap. */
 const MAX_CELLS = 200_000
+
+/** Default half-window for the 2-D spin scan (offsetX/offsetY). Equal to the
+ * physical limit (`offCenterLimit`) so the initial (and every) scan covers the
+ * whole legal contact-point disk in one pass — there is no narrower default to
+ * widen later. */
+export const DEFAULT_SPIN_HALF_WINDOW = offCenterLimit
 
 /** Per-parameter grid axis: a step, physical clamp bounds, and how many steps to
  * scan on each side of the seed (the seed value is the grid origin, index 0). */
@@ -441,7 +505,8 @@ export function buildAxisSpecs(
   balls: BallPos[],
   cueBallId: number,
   selected: ParamKey[],
-  stepScale = 1
+  stepScale = 1,
+  spinHalfWindow = DEFAULT_SPIN_HALF_WINDOW
 ): AxisSpec[] {
   // Build a spec from a step + a physical half-window. stepScale shrinks the
   // step (finer grid) without changing the window, so finer steps mean more
@@ -482,10 +547,14 @@ export function buildAxisSpecs(
         )
       }
       case "power": {
-        const halfWindow = Math.max(0.4 * Math.abs(baseShot.power), 0.45)
+        // Always scan the FULL physical range — simpler than a window relative
+        // to the current power, and it matches the bar's displayed track (which
+        // already spans [0, maxPower] regardless of the scanned window), so the
+        // whole bar gets scanned cell-by-cell instead of leaving a grey margin.
+        const halfWindow = maxPower / 2
         return spec(
           key,
-          baseShot.power,
+          halfWindow, // centre = the midpoint of [0, maxPower]
           halfWindow / ONE_D_STEPS_EACH_SIDE,
           0,
           maxPower,
@@ -493,23 +562,25 @@ export function buildAxisSpecs(
         )
       }
       case "offsetX":
-        return spec(
-          key,
-          baseShot.offsetX,
-          0.025,
-          -offCenterLimit,
-          offCenterLimit,
-          0.2
-        )
-      case "offsetY":
-        return spec(
-          key,
-          baseShot.offsetY,
-          0.025,
-          -offCenterLimit,
-          offCenterLimit,
-          0.2
-        )
+      case "offsetY": {
+        // The lattice stays anchored (phase-locked) at the seed's own offset —
+        // not at 0 — so the seed's exact spin always lands on a scanned cell
+        // and matches the click-snap grid (snapSpin in analysisrender.ts),
+        // which is anchored the same way. But the WINDOW must still reach
+        // exactly as far past 0 as it would if center WERE 0: with
+        // spinHalfWindow == offCenterLimit (the whole-disk default), a plain
+        // center ± spinHalfWindow window would overshoot the near edge and
+        // undershoot the far edge whenever the seed isn't already centred
+        // (the bug this fixes — half the ball wasn't scanned). Padding by the
+        // seed's own distance from 0 compensates for the offset lattice
+        // origin without changing the window's effective size for callers
+        // that pass an explicit, smaller spinHalfWindow (e.g. "Expand range"'s
+        // old ring math, still covered by tests) — isCellValid's disk-radius
+        // check trims the corners back to the circle either way.
+        const center = baseShot[key]
+        const halfWindow = spinHalfWindow + Math.abs(center)
+        return spec(key, center, SPIN_GRID_STEP, -offCenterLimit, offCenterLimit, halfWindow)
+      }
       case "elevation":
         return spec(
           key,
@@ -526,6 +597,26 @@ export function buildAxisSpecs(
 /** Value of a parameter at a given grid index along its axis. */
 function valueAt(axis: AxisSpec, index: number): number {
   return axis.center + index * axis.step
+}
+
+/** Build a display `ParamRange` from an axis spec WITHOUT running any
+ * simulation. Lets the UI render an empty (un-scanned) 1-D bar — the studied
+ * window, ruler and seed marker are all derivable from the axis geometry;
+ * `scoringMin/Max` default to the centre (no scored cells yet). Mirrors the
+ * `ranges` block in `runSensitivityAnalysis` so empty and scanned bars share
+ * one window definition. */
+export function paramRangeOf(axis: AxisSpec): ParamRange {
+  return {
+    key: axis.key,
+    center: axis.center,
+    step: axis.step,
+    physicalMin: axis.min,
+    physicalMax: axis.max,
+    scannedMin: Math.max(valueAt(axis, -axis.stepsEachSide), axis.min),
+    scannedMax: Math.min(valueAt(axis, axis.stepsEachSide), axis.max),
+    scoringMin: axis.center,
+    scoringMax: axis.center,
+  }
 }
 
 /** Build a full ShotParams for a cell (selected params from indices, the rest
@@ -583,6 +674,14 @@ export interface SensitivityOptions {
   selectedParams?: ParamKey[]
   /** Multiplier on every grid step (<1 = finer/denser grid, more sims). */
   stepScale?: number
+  /** Outer half-window for the spin axes (offsetX/offsetY). Defaults to
+   * DEFAULT_SPIN_HALF_WINDOW. Used by "Expand range" to widen the spin scan. */
+  spinHalfWindow?: number
+  /** Inner half-window for the spin axes: cells whose offset lies inside this
+   * box (centred on the seed, both axes) are skipped — they were already scanned
+   * by a previous, narrower run. Lets "Expand range" simulate only the new ring.
+   * Undefined = no exclusion (the initial scan). */
+  spinInnerHalfWindow?: number
   poolSize?: number
   workerUrl?: string
   /** Injectable scorer (tests). When omitted, a fresh worker is used per shot. */
@@ -609,7 +708,8 @@ export async function runSensitivityAnalysis(
     opts.balls,
     opts.cueBallId,
     selected,
-    opts.stepScale ?? 1
+    opts.stepScale ?? 1,
+    opts.spinHalfWindow ?? DEFAULT_SPIN_HALF_WINDOW
   )
   const start = Date.now()
 
@@ -665,7 +765,27 @@ export async function runSensitivityAnalysis(
       }
       cells = next
     }
-    const validCells = cells.filter((c) => isCellValid(opts.baseShot, axes, c))
+    let validCells = cells.filter((c) => isCellValid(opts.baseShot, axes, c))
+
+    // "Expand range": when an inner half-window is given, drop every cell that a
+    // previous, narrower run already scanned — i.e. cells inside the inner box on
+    // both spin axes. The step/2 tolerance absorbs float rounding so a cell that
+    // sat exactly on the previous window edge is reliably treated as done. The
+    // grid is seed-centred with a fixed step, so old and new points share a
+    // lattice and the survivors are exactly the new annular ring.
+    const inner = opts.spinInnerHalfWindow
+    if (inner !== undefined) {
+      const spinAxes = axes
+        .map((a, i) => ({ a, i }))
+        .filter(({ a }) => a.key === "offsetX" || a.key === "offsetY")
+      if (spinAxes.length > 0) {
+        validCells = validCells.filter((c) =>
+          spinAxes.some(
+            ({ a, i }) => Math.abs(c[i] * a.step) > inner + a.step / 2
+          )
+        )
+      }
+    }
 
     // Evaluate the valid cells concurrently across the pool. Each lane pulls the
     // next cell until the grid is exhausted, the user aborts, or one lane errors

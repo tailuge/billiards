@@ -62,15 +62,28 @@ describe("buildAxisSpecs", () => {
     expect(elev.max).to.be.closeTo((2 * Math.PI) / 5, 1e-9)
   })
 
-  it("gives power and aim angle a 21-point (10-each-side) window-relative step", () => {
+  it("gives aim angle a 21-point (10-each-side) window-relative step", () => {
+    const angle = buildAxisSpecs(SEED, BALLS, 0, ["angle"])[0]
+    expect(angle.stepsEachSide).to.equal(10) // 21 simulations
+  })
+
+  it("always scans power's FULL physical range, centred at its midpoint, regardless of the seed power", () => {
     const power = buildAxisSpecs(SEED, BALLS, 0, ["power"])[0]
     expect(power.min).to.equal(0)
     expect(power.max).to.equal(maxPower)
-    expect(power.step).to.be.closeTo(0.1, 1e-9) // halfWindow (1.0) / 10
-    expect(power.stepsEachSide).to.equal(10) // 21 simulations
+    expect(power.center).to.be.closeTo(maxPower / 2, 1e-9)
+    expect(power.step).to.be.closeTo(maxPower / 2 / 10, 1e-9)
+    expect(power.stepsEachSide).to.equal(10) // 21 simulations over [0, maxPower]
 
-    const angle = buildAxisSpecs(SEED, BALLS, 0, ["angle"])[0]
-    expect(angle.stepsEachSide).to.equal(10) // 21 simulations
+    // A very different seed power doesn't change the window at all.
+    const otherPower = buildAxisSpecs(
+      { ...SEED, power: 0.2 },
+      BALLS,
+      0,
+      ["power"]
+    )[0]
+    expect(otherPower.center).to.equal(power.center)
+    expect(otherPower.step).to.equal(power.step)
   })
 
   it("derives a wider angle step for a closer first contact", () => {
@@ -118,15 +131,19 @@ describe("runSensitivityAnalysis (full grid scan)", () => {
   })
 
   it("finds scoring cells beyond a failure (disconnected region, 1-D)", async () => {
-    // scorer scores at indices {-1,0,1} and the disconnected island {4};
-    // gap at {2,3}. A flood-fill would find only 3; the full grid finds 4.
+    // Power's grid is centred at maxPower/2 regardless of SEED.power (it always
+    // scans the full [0, maxPower] range — see buildAxisSpecs). scorer scores at
+    // indices {-1,0,1} and the disconnected island {4}; gap at {2,3}. A
+    // flood-fill would find only 3; the full grid finds 4.
+    const step = maxPower / 2 / 10
+    const center = maxPower / 2
     const res = await run(["power"], (s) => {
-      const i = Math.round((s.power - SEED.power) / 0.1)
+      const i = Math.round((s.power - center) / step)
       return (i >= -1 && i <= 1) || i === 4
     })
     expect(res.scoredCount).to.equal(4)
     const idxs = res.scoringPoints
-      .map((p) => Math.round((p.power - SEED.power) / 0.1))
+      .map((p) => Math.round((p.power - center) / step))
       .sort((a, b) => a - b)
     expect(idxs).to.deep.equal([-1, 0, 1, 4])
   })
@@ -188,9 +205,11 @@ describe("runSensitivityAnalysis (full grid scan)", () => {
       offsetX: -0.2100413739681244,
       offsetY: 0.3979731500148773,
     }
+    const step = maxPower / 2 / 10
+    const center = maxPower / 2
     const res = await run(
       ["power"],
-      (s) => Math.abs(Math.round((s.power - base.power) / 0.1)) <= 2,
+      (s) => Math.abs(Math.round((s.power - center) / step)) <= 2,
       base
     )
     expect(res.scoredCount).to.equal(5) // -2..+2, not just the seed
@@ -222,5 +241,94 @@ describe("runSensitivityAnalysis (full grid scan)", () => {
     }
     expect(err).to.not.equal(null)
     expect(err!.message).to.contain("abort")
+  })
+})
+
+describe('"Expand range" incremental spin scan', () => {
+  // Collect the set of lattice cells a spin scan evaluates, keyed by their
+  // absolute grid index (step 0.025). Seed-centred + fixed step means the keys
+  // are comparable across runs with different windows.
+  async function spinCells(
+    outer: number,
+    inner?: number
+  ): Promise<Set<string>> {
+    const cells = new Set<string>()
+    await runSensitivityAnalysis({
+      balls: BALLS,
+      cueBallId: 0,
+      baseShot: SEED,
+      ruleType: "threecushion",
+      cushionModel: "mathavan",
+      selectedParams: ["offsetX", "offsetY"],
+      poolSize: 4,
+      scorer: async () => true,
+      spinHalfWindow: outer,
+      spinInnerHalfWindow: inner,
+      onEvaluate: (shot) => {
+        const ix = Math.round(shot.offsetX / 0.025)
+        const iy = Math.round(shot.offsetY / 0.025)
+        cells.add(`${ix},${iy}`)
+      },
+    })
+    return cells
+  }
+
+  it("scans only the ring outside the inner window", async () => {
+    const ring = await spinCells(0.5, 0.3) // grow 0.3 -> 0.5
+    expect(ring.size).to.be.greaterThan(0)
+    // Inner box (half-window 0.3) reaches index 12; every ring cell must sit
+    // strictly beyond it on at least one spin axis.
+    for (const key of ring) {
+      const [ix, iy] = key.split(",").map(Number)
+      expect(Math.max(Math.abs(ix), Math.abs(iy))).to.be.greaterThan(12)
+    }
+  })
+
+  it("ring + initial scan tile the wider scan exactly (no gaps, no overlap)", async () => {
+    const initial = await spinCells(0.3)
+    const ring = await spinCells(0.5, 0.3)
+    const full = await spinCells(0.5)
+
+    // Disjoint: the ring never re-runs an already-scanned cell.
+    for (const key of ring) expect(initial.has(key)).to.equal(false)
+    // Complete: their union is exactly the single full scan at 0.5.
+    expect(initial.size + ring.size).to.equal(full.size)
+    const union = new Set([...initial, ...ring])
+    expect(union.size).to.equal(full.size)
+    for (const key of full) expect(union.has(key)).to.equal(true)
+  })
+
+  it("tiles the same way wherever the starting window is (default-independent)", async () => {
+    // Same property starting from 0.2 instead of 0.3 — proves the feature still
+    // works if the default spin half-window is later reduced.
+    const initial = await spinCells(0.2)
+    const ring = await spinCells(0.4, 0.2)
+    const full = await spinCells(0.4)
+
+    for (const key of ring) expect(initial.has(key)).to.equal(false)
+    expect(initial.size + ring.size).to.equal(full.size)
+  })
+
+  it("evaluates nothing once the inner window already covers the disk", async () => {
+    // Inner half-window 0.45 boxes the entire off-centre disk, so no ring remains
+    // — this is the page's "whole ball covered" signal (result.evaluated === 0).
+    let evaluated = 0
+    const res = await runSensitivityAnalysis({
+      balls: BALLS,
+      cueBallId: 0,
+      baseShot: SEED,
+      ruleType: "threecushion",
+      cushionModel: "mathavan",
+      selectedParams: ["offsetX", "offsetY"],
+      poolSize: 4,
+      scorer: async () => true,
+      spinHalfWindow: 0.7,
+      spinInnerHalfWindow: offCenterLimit,
+      onEvaluate: () => {
+        evaluated++
+      },
+    })
+    expect(evaluated).to.equal(0)
+    expect(res.evaluated).to.equal(0)
   })
 })

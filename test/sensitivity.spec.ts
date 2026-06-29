@@ -2,7 +2,12 @@ import { expect } from "chai"
 import { Vector3 } from "three"
 import { Ball } from "../src/model/ball"
 import { Outcome } from "../src/model/outcome"
-import { isThreeCushionScored, SimOutcome } from "../src/sensitivity"
+import {
+  isThreeCushionScored,
+  outcomeSignature,
+  signaturesMatch,
+  SimOutcome,
+} from "../src/sensitivity"
 
 /**
  * Phase 1 gate: the id-based isThreeCushionScored must agree with the canonical
@@ -148,5 +153,89 @@ describe("isThreeCushionScored", () => {
 
   it("fails on an empty outcome list", () => {
     check([], false)
+  })
+})
+
+describe("outcomeSignature / signaturesMatch", () => {
+  it("captures cushions, balls hit (encounter order), and scored", () => {
+    const sig = outcomeSignature(
+      toSimOutcomes([
+        { kind: "cushion", ball: CUE },
+        { kind: "cushion", ball: CUE },
+        { kind: "cushion", ball: CUE },
+        { kind: "collision", a: CUE, b: B1 },
+        { kind: "collision", a: CUE, b: B2 },
+      ]),
+      CUE
+    )
+    expect(sig).to.deep.equal({
+      cushions: 3,
+      ballsHit: [B1, B2],
+      scored: true,
+    })
+  })
+
+  it("normalises reversed collisions and ignores non-cue cushions", () => {
+    const sig = outcomeSignature(
+      toSimOutcomes([
+        { kind: "cushion", ball: B1 }, // not the cue — must not count
+        { kind: "cushion", ball: CUE },
+        { kind: "collision", a: B1, b: CUE }, // reversed — cueBallFirst fixes
+      ]),
+      CUE
+    )
+    expect(sig).to.deep.equal({
+      cushions: 1,
+      ballsHit: [B1],
+      scored: false,
+    })
+  })
+
+  it("a missed shot still produces a (non-scoring) signature", () => {
+    const sig = outcomeSignature(
+      toSimOutcomes([
+        { kind: "cushion", ball: CUE },
+        { kind: "collision", a: CUE, b: B1 },
+      ]),
+      CUE
+    )
+    expect(sig.scored).to.equal(false)
+    expect(sig).to.deep.equal({ cushions: 1, ballsHit: [B1], scored: false })
+  })
+
+  it("signaturesMatch: equal for identical results, both missed", () => {
+    const miss: SimOutcome[] = toSimOutcomes([
+      { kind: "cushion", ball: CUE },
+      { kind: "collision", a: CUE, b: B1 },
+    ])
+    expect(
+      signaturesMatch(
+        outcomeSignature(miss, CUE),
+        outcomeSignature(miss, CUE)
+      )
+    ).to.equal(true)
+  })
+
+  it("signaturesMatch: differs on cushion count / balls hit / scored", () => {
+    const base = outcomeSignature(
+      toSimOutcomes([
+        { kind: "cushion", ball: CUE },
+        { kind: "cushion", ball: CUE },
+        { kind: "cushion", ball: CUE },
+        { kind: "collision", a: CUE, b: B1 },
+        { kind: "collision", a: CUE, b: B2 },
+      ]),
+      CUE
+    )
+    const fewerCushions = outcomeSignature(
+      toSimOutcomes([
+        { kind: "cushion", ball: CUE },
+        { kind: "cushion", ball: CUE },
+        { kind: "collision", a: CUE, b: B1 },
+        { kind: "collision", a: CUE, b: B2 },
+      ]),
+      CUE
+    )
+    expect(signaturesMatch(base, fewerCushions)).to.equal(false)
   })
 })

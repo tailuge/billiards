@@ -279,7 +279,7 @@ export class AimInputs {
     if (this.controlsDisabled || !this.cueTiltElement) {
       return
     }
-    this.container.table.cue.aim.elevation = this.cueTiltElement.elevation
+    this.container.table.cue.setElevation(this.cueTiltElement.elevation)
     this.container.lastEventTime = performance.now()
   }
 
@@ -303,7 +303,7 @@ export class AimInputs {
     }
   }
 
-  private showTiltControl() {
+  showTiltControl() {
     if (!this.tiltSliderContainerElement) {
       return
     }

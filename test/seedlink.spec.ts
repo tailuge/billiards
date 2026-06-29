@@ -1,9 +1,4 @@
-import {
-  AnalysisSeed,
-  buildAnalysisUrl,
-  decodeAnalysisSeed,
-  encodeAnalysisSeed,
-} from "../src/seedlink"
+import { AnalysisSeed, buildModeUrl } from "../src/seedlink"
 
 const seed: AnalysisSeed = {
   balls: [
@@ -23,23 +18,44 @@ const seed: AnalysisSeed = {
   cushionModel: "mathavan",
 }
 
-describe("seedlink round-trip", () => {
-  it("encode → decode reproduces the seed", () => {
-    const decoded = decodeAnalysisSeed(encodeAnalysisSeed(seed))
-    expect(decoded).toEqual(seed)
+const BASE = "https://example.test/index.html"
+
+describe("buildModeUrl", () => {
+  it("encodes balls as a flat init array and the shot as initShot", () => {
+    const params = new URLSearchParams(
+      buildModeUrl(seed, "analysis", BASE).split("?")[1]
+    )
+    expect(JSON.parse(params.get("init")!)).toEqual([
+      0.1, -0.2, -0.5, 0.3, 0.7, 0.0,
+    ])
+    expect(JSON.parse(params.get("initShot")!)).toEqual({
+      cueBallId: 0,
+      angle: 1.234,
+      power: 3.406,
+      offset: { x: -0.1, y: 0.2 },
+      elevation: 0,
+    })
   })
 
-  it("decodes through URLSearchParams the way the page reads it", () => {
-    const url = buildAnalysisUrl(seed)
-    const init = new URLSearchParams(url.split("?")[1]).get("init")!
-    expect(decodeAnalysisSeed(init)).toEqual(seed)
+  it("sets the mode flag (analysis or drill) plus practice + ruletype", () => {
+    const analysis = new URLSearchParams(
+      buildModeUrl(seed, "analysis", BASE).split("?")[1]
+    )
+    expect(analysis.has("analysis")).toBe(true)
+    expect(analysis.has("drill")).toBe(false)
+    expect(analysis.has("practice")).toBe(true)
+    expect(analysis.get("ruletype")).toBe("threecushion")
+
+    const drill = new URLSearchParams(
+      buildModeUrl(seed, "drill", BASE).split("?")[1]
+    )
+    expect(drill.has("drill")).toBe(true)
+    expect(drill.has("analysis")).toBe(false)
   })
 
-  it("buildAnalysisUrl targets the analysis page", () => {
-    expect(buildAnalysisUrl(seed)).toMatch(/^aimsensitivity\.html\?init=/)
-  })
-
-  it("decodes plain JSON payloads too", () => {
-    expect(decodeAnalysisSeed(JSON.stringify(seed))).toEqual(seed)
+  it("targets the given base url", () => {
+    expect(buildModeUrl(seed, "drill", BASE)).toMatch(
+      /^https:\/\/example\.test\/index\.html\?/
+    )
   })
 })

@@ -8,7 +8,6 @@ module.exports = {
     compare: "./src/compare.ts",
     stronge: "./src/stronge_diagram.ts",
     worker: "./src/worker.ts",
-    aimsensitivity: "./src/aimsensitivity.ts",
   },
   module: {
     rules: [

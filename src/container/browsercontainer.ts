@@ -23,6 +23,7 @@ import { BeginEvent } from "../events/beginevent"
 import { Logger } from "../network/bot/logger"
 import { getUID } from "../utils/uid"
 import { DrillPanel } from "../view/drillpanel"
+import { AnalysisPanel } from "../view/analysispanel"
 import { applyPhysicsParams } from "../utils/physicsparams"
 
 /**
@@ -60,6 +61,7 @@ export class BrowserContainer {
   botName: string = ""
   practiceMode: boolean = false
   drillMode: boolean = false
+  analysisMode: boolean = false
   examMode: boolean = false
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
@@ -88,6 +90,7 @@ export class BrowserContainer {
       ? params.get("practice") !== "false"
       : this.ruletype !== "nineball"
     this.drillMode = params.has("drill")
+    this.analysisMode = params.has("analysis")
     this.examMode = params.has("exam")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
@@ -124,8 +127,10 @@ export class BrowserContainer {
   }
 
   private createContainer(scoreReporter: ScoreReporter) {
+    // Analysis mode reuses the drill rules (no rings/popups); only its panel and
+    // layout differ.
     const effectiveRuletype =
-      this.drillMode && this.ruletype === "threecushion"
+      (this.drillMode || this.analysisMode) && this.ruletype === "threecushion"
         ? "threecushion-drill"
         : this.ruletype
     const config: ContainerConfig = {
@@ -133,7 +138,7 @@ export class BrowserContainer {
       log: console.log,
       assets: this.assets,
       ruletype: effectiveRuletype,
-      keyboard: new Keyboard(this.canvas3d),
+      keyboard: new Keyboard(this.canvas3d, { disabled: this.analysisMode }),
       id: this.playername,
       relay: this.messageRelay,
       messagingUrl: this.lobbyUrl ?? this.wss ?? undefined,
@@ -189,7 +194,9 @@ export class BrowserContainer {
       this.broadcast(e)
     }
     this.container.table.cushionModel = this.cushionModel
-    if (this.drillMode) {
+    if (this.analysisMode) {
+      new AnalysisPanel(this.container)
+    } else if (this.drillMode) {
       new DrillPanel(this.container)
     }
     this.setReplayLink()
