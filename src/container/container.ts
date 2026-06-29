@@ -69,6 +69,7 @@ export class Container {
   notification: Notification
   lobbyIndicator: LobbyIndicator
   replayMode: boolean = false
+  examMode: boolean = false
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
   frame: (timestamp: number) => void
@@ -101,6 +102,7 @@ export class Container {
     } = config
     this.log = log
     this.replayMode = replayMode
+    this.examMode = config.examMode ?? false
     this.isSinglePlayer = isSinglePlayer
     this.rules = RuleFactory.create(ruletype, this)
     this.table = this.rules.table()

@@ -323,10 +323,12 @@
       const overlay = document.getElementById("gameOverlay");
       const iframe = document.getElementById("gameIframe");
       const closeBtn = document.getElementById("closeGame");
+      let currentQuestionId = null;
 
       document.querySelectorAll(".play-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           const qBlock = btn.closest(".question-block");
+          currentQuestionId = btn.getAttribute("data-q");
           const svg = qBlock.querySelector(".billiards-table");
 
           let configs = [];
@@ -338,17 +340,31 @@
 
           if (configs.length > 0) {
             const config = configs[0];
-            // The game expects a replay state with 'init' balls and 'shots' array.
+            // The game expects a replay state with 'init' balls (flat array) and 'shots' array.
             const replayState = {
-              init: config.balls,
+              init: config.balls.flatMap((b) => [b.pos.x, b.pos.y]),
               shots: [config.shot],
             };
             const stateStr = JSON.stringify(replayState);
-            const url = `../index.html?ruletype=threecushion&state=${encodeURIComponent(stateStr)}`;
+            const url = `../index.html?ruletype=threecushion&exam=true&state=${encodeURIComponent(stateStr)}`;
             iframe.src = url;
             overlay.classList.add("active");
           }
         });
+      });
+
+      window.addEventListener("message", (event) => {
+        if (event.data.type === "shotOutcome" && currentQuestionId) {
+          const statusSpan = document.querySelectorAll("#questionList li span")[
+            parseInt(currentQuestionId) - 1
+          ];
+          if (statusSpan) {
+            statusSpan.textContent = event.data.isPoint ? "Pass" : "Fail";
+            statusSpan.className = event.data.isPoint
+              ? "status-pass"
+              : "status-fail";
+          }
+        }
       });
 
       closeBtn.addEventListener("click", () => {
