@@ -1,0 +1,187 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background: #f0f0f0;
+  color: #333;
+  line-height: 1.6;
+  padding: 1rem;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.summary {
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+}
+
+.summary h2 {
+  margin-bottom: 1rem;
+}
+
+.summary ul {
+  list-style: none;
+}
+
+.summary li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.status-unknown {
+  color: #888;
+}
+
+.status-pass {
+  color: #22c55e;
+}
+
+.status-fail {
+  color: #ef4444;
+}
+
+.questions {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.question-block {
+  background: #fff;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+}
+
+.question-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (width >= 768px) {
+  .question-content {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .question-text,
+  .question-diagram {
+    flex: 1;
+  }
+}
+
+.question-diagram svg.billiards-table {
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* SVG styles from svg.html */
+.table-stroke {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 0.004;
+}
+
+.grid-line {
+  stroke: #ccc;
+  stroke-width: 0.002;
+  stroke-dasharray: 0.008 0.008;
+}
+
+.trajectory-line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 0.002;
+}
+
+.manual-line {
+  fill: none;
+  stroke: #4f4f4f;
+  stroke-width: 0.001;
+  stroke-dasharray: 0.06 0.03;
+}
+
+.play-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #2563eb;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.play-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Iframe overlay */
+#gameOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(0 0 0 / 80%);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+#gameOverlay.active {
+  display: flex;
+}
+
+.iframe-container {
+  width: 75%;
+  height: 75%;
+  background: #000;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}

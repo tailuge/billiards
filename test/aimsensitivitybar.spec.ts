@@ -336,7 +336,13 @@ describe("formatAngleShift", () => {
 describe("barPctOf / barValueAtPct (click mapping)", () => {
   it("round-trips value→pct→value on a finite (speed) axis", () => {
     const od = sweep(
-      { key: "power", center: 2.5, step: 0.1, physicalMin: 0, physicalMax: 5.24 },
+      {
+        key: "power",
+        center: 2.5,
+        step: 0.1,
+        physicalMin: 0,
+        physicalMax: 5.24,
+      },
       10,
       new Set([0])
     )
@@ -370,7 +376,13 @@ describe("barPctOf / barValueAtPct (click mapping)", () => {
 
   it("clamps out-of-range percentages to the track ends", () => {
     const od = sweep(
-      { key: "power", center: 2.5, step: 0.1, physicalMin: 0, physicalMax: 5.24 },
+      {
+        key: "power",
+        center: 2.5,
+        step: 0.1,
+        physicalMin: 0,
+        physicalMax: 5.24,
+      },
       10,
       new Set([0])
     )

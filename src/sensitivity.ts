@@ -184,7 +184,11 @@ export function outcomeSignature(
       ballsHit.push(o.ballB)
     }
   }
-  return { cushions, ballsHit, scored: isThreeCushionScored(outcomes, cueBallId) }
+  return {
+    cushions,
+    ballsHit,
+    scored: isThreeCushionScored(outcomes, cueBallId),
+  }
 }
 
 /** True when two signatures describe the same shot result. */
@@ -579,7 +583,14 @@ export function buildAxisSpecs(
         // check trims the corners back to the circle either way.
         const center = baseShot[key]
         const halfWindow = spinHalfWindow + Math.abs(center)
-        return spec(key, center, SPIN_GRID_STEP, -offCenterLimit, offCenterLimit, halfWindow)
+        return spec(
+          key,
+          center,
+          SPIN_GRID_STEP,
+          -offCenterLimit,
+          offCenterLimit,
+          halfWindow
+        )
       }
       case "elevation":
         return spec(

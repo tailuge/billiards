@@ -76,12 +76,9 @@ describe("buildAxisSpecs", () => {
     expect(power.stepsEachSide).to.equal(10) // 21 simulations over [0, maxPower]
 
     // A very different seed power doesn't change the window at all.
-    const otherPower = buildAxisSpecs(
-      { ...SEED, power: 0.2 },
-      BALLS,
-      0,
-      ["power"]
-    )[0]
+    const otherPower = buildAxisSpecs({ ...SEED, power: 0.2 }, BALLS, 0, [
+      "power",
+    ])[0]
     expect(otherPower.center).to.equal(power.center)
     expect(otherPower.step).to.equal(power.step)
   })

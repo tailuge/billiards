@@ -286,7 +286,10 @@ export function runAnalysisInto(
    * and a same-grid not-yet-simulated point otherwise — never a continuous
    * value either way. */
   function nearestGridValue(range: ParamRange, value: number): number {
-    const clamped = Math.max(range.scannedMin, Math.min(range.scannedMax, value))
+    const clamped = Math.max(
+      range.scannedMin,
+      Math.min(range.scannedMax, value)
+    )
     const k = Math.round((clamped - range.center) / range.step)
     return range.center + k * range.step
   }
@@ -321,9 +324,14 @@ export function runAnalysisInto(
    * exact point is already part of the scatter. */
   function commitMarkerAsDot() {
     if (!markerResult) return
-    if (findAt(spinPoints, markerResult.shot.offsetX, markerResult.shot.offsetY))
+    if (
+      findAt(spinPoints, markerResult.shot.offsetX, markerResult.shot.offsetY)
+    )
       return
-    const point: EvalPoint = { shot: markerResult.shot, scored: markerResult.scored }
+    const point: EvalPoint = {
+      shot: markerResult.shot,
+      scored: markerResult.scored,
+    }
     spinPoints.push(point)
     csvRows.push(
       `spin,cell,${point.scored ? "success" : "fail"},${point.shot.angle},${point.shot.power},${point.shot.offsetX},${point.shot.offsetY},${point.shot.elevation}`
@@ -647,9 +655,7 @@ export function runAnalysisInto(
       ) as HTMLElement | null
       if (!row) continue
       const marker = row.querySelector(".bar-marker") as HTMLElement | null
-      const liveCell = row.querySelector(
-        ".bar-live-cell"
-      ) as HTMLElement | null
+      const liveCell = row.querySelector(".bar-live-cell") as HTMLElement | null
       const m = computeBarModel(od)
       const snapped = nearestGridValue(od.range, liveShot[key])
       const pct = barPctOf(m, snapped)
@@ -817,7 +823,10 @@ export function runAnalysisInto(
       seed.cushionModel,
       workerUrl
     )
-    csvRows[1] = csvRows[1].replace("pending", seedSig.scored ? "success" : "fail")
+    csvRows[1] = csvRows[1].replace(
+      "pending",
+      seedSig.scored ? "success" : "fail"
+    )
 
     // Parity guard: when the caller knows the shot's actual outcome, the worker
     // must reproduce it (scored OR missed). A mismatch means the physics inputs
@@ -865,7 +874,8 @@ export function runAnalysisInto(
     const showBtn = (e.target as HTMLElement).closest(".bar-show")
     if (!showBtn) return
     const key = (showBtn.closest(".bar-row") as HTMLElement | null)?.dataset.key
-    if (key === "angle" || key === "power" || key === "elevation") void runOneD(key)
+    if (key === "angle" || key === "power" || key === "elevation")
+      void runOneD(key)
   })
 
   if (opts.onPick) {
@@ -956,7 +966,8 @@ export function runAnalysisInto(
       round(shot.offsetY) !== round(liveShot.offsetY)
     const oneDStale =
       activeOneD !== null &&
-      oneDFixedSig(activeOneD.key, shot) !== oneDFixedSig(activeOneD.key, liveShot)
+      oneDFixedSig(activeOneD.key, shot) !==
+        oneDFixedSig(activeOneD.key, liveShot)
     if (activeView === "spin" && spinMoved && !baseChanged) {
       commitMarkerAsDot()
     }
@@ -977,7 +988,11 @@ export function runAnalysisInto(
     // active (the bug this fixes).
     if (spinMoved || baseChanged) {
       const snapped = snapSpin(shot.offsetX, shot.offsetY)
-      void requestMarkerColor({ ...shot, offsetX: snapped.x, offsetY: snapped.y })
+      void requestMarkerColor({
+        ...shot,
+        offsetX: snapped.x,
+        offsetY: snapped.y,
+      })
     }
     if (activeView !== "spin") {
       collapseSpinToPoint()

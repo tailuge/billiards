@@ -209,10 +209,7 @@ describe("outcomeSignature / signaturesMatch", () => {
       { kind: "collision", a: CUE, b: B1 },
     ])
     expect(
-      signaturesMatch(
-        outcomeSignature(miss, CUE),
-        outcomeSignature(miss, CUE)
-      )
+      signaturesMatch(outcomeSignature(miss, CUE), outcomeSignature(miss, CUE))
     ).to.equal(true)
   })
 
