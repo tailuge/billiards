@@ -7,6 +7,7 @@ import { Replay } from "../controller/replay"
 export class Menu {
   container: Container
   share: HTMLButtonElement
+  diagram: HTMLButtonElement
   camera: HTMLButtonElement
   concede: HTMLButtonElement
   menu: HTMLButtonElement
@@ -18,6 +19,7 @@ export class Menu {
     this.container = container
 
     this.share = this.getElement("share")
+    this.diagram = this.getElement("diagram")
     this.camera = this.getElement("camera")
     this.concede = this.getElement("concede")
     this.menu = this.getElement("menu")
@@ -39,7 +41,22 @@ export class Menu {
       }
     }
 
+    if (this.diagram) {
+      this.diagram.onclick = () => {
+        const replay = this.container.controller as Replay
+        if (replay.currentInit && replay.currentShot) {
+          const base = "diagrams/export.html"
+          const params = new URLSearchParams()
+          params.set("ruletype", this.container.rules.rulename)
+          params.set("init", replay.currentInit)
+          params.set("initShot", replay.currentShot)
+          window.open(`${base}?${params.toString()}`, "_blank")
+        }
+      }
+    }
+
     this.setShareVisible(false)
+    this.setDiagramVisible(false)
     if (this.camera) {
       this.camera.onclick = (_) => {
         this.adjustCamera()
@@ -106,6 +123,14 @@ export class Menu {
     }
     this.share.hidden = !visible
     this.share.disabled = !visible
+  }
+
+  setDiagramVisible(visible: boolean) {
+    if (!this.diagram) {
+      return
+    }
+    this.diagram.hidden = !visible
+    this.diagram.disabled = !visible
   }
 
   setConcedeVisible(visible: boolean) {
