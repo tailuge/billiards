@@ -104,5 +104,22 @@ const POOL_TABLE_SVG_CONTENT = `
 
 export const POOL_SCALE = 1.0
 
-// export function that returns scaled table svg
+const POOL_MAX_X = 1.512
+const POOL_MAX_Y = 0.849
+const POOL_PAD_TOP = 0.05
+const POOL_PAD_BOTTOM = 0.28
+const POOL_PAD_SIDE = 0.05
+
+export function generatePoolTable() {
+  const f6 = (n) => n.toFixed(6)
+  const minX = -(POOL_MAX_X + POOL_PAD_SIDE)
+  const minY = -(POOL_MAX_Y + POOL_PAD_TOP)
+  const width = 2 * (POOL_MAX_X + POOL_PAD_SIDE)
+  const height = (POOL_MAX_Y + POOL_PAD_TOP) + (POOL_MAX_Y + POOL_PAD_BOTTOM)
+  const viewBox = `${f6(minX)} ${f6(minY)} ${f6(width)} ${f6(height)}`
+  return {
+    viewBox,
+    content: POOL_TABLE_SVG_CONTENT,
+  }
+}
 
