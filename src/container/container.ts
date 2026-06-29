@@ -256,7 +256,10 @@ export class Container {
       this.table.cue.hittingAnimation = false
       if (globalThis.parent !== (globalThis as any)) {
         globalThis.parent.postMessage(
-          { type: "stationary", outcome: this.table.outcome },
+          {
+            type: "stationary",
+            outcome: this.table.outcome.map((o) => o.serialise()),
+          },
           "*"
         )
       }
