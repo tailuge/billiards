@@ -15,18 +15,25 @@ function saveResults(results) {
 
 function calculateAssessment(results) {
   const blocks = document.querySelectorAll(".question-block");
-  if (blocks.length === 0) return { label: "Unknown", className: "unknown" };
+  const totalQuestions = blocks.length;
+  if (totalQuestions === 0) return { label: "Unknown", className: "unknown" };
+
+  let passedQuestions = 0;
   let totalAttempts = 0;
-  let totalSuccesses = 0;
-  Object.keys(results).forEach((qId) => {
+  blocks.forEach((_, index) => {
+    const qId = String(index + 1);
     const r = results[qId];
     if (r) {
       totalAttempts += r.attempted;
-      totalSuccesses += r.success;
+      if (r.success > 0) {
+        passedQuestions++;
+      }
     }
   });
+
   if (totalAttempts === 0) return { label: "Unknown", className: "unknown" };
-  const pct = totalSuccesses / totalAttempts;
+
+  const pct = passedQuestions / totalQuestions;
   if (pct < 0.25) return { label: "Beginner", className: "beginner" };
   if (pct < 0.5) return { label: "Good", className: "good" };
   if (pct < 0.75) return { label: "Strong", className: "strong" };
@@ -92,8 +99,11 @@ export function updateUI() {
   }
 
   // Update play buttons and their stats
+  const blocks = Array.from(document.querySelectorAll(".question-block"));
   document.querySelectorAll(".play-btn").forEach((btn) => {
-    const qId = btn.getAttribute("data-q");
+    const qBlock = btn.closest(".question-block");
+    const index = blocks.indexOf(qBlock);
+    const qId = String(index + 1);
     const result = results[qId] || { success: 0, attempted: 0 };
 
     let icon = "❓";
@@ -123,10 +133,12 @@ export function initExam() {
   const iframe = document.getElementById("gameIframe");
   const closeBtn = document.getElementById("closeGame");
 
+  const blocks = Array.from(document.querySelectorAll(".question-block"));
   document.querySelectorAll(".play-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const qBlock = btn.closest(".question-block");
-      currentQuestionId = btn.getAttribute("data-q");
+      const index = blocks.indexOf(qBlock);
+      currentQuestionId = String(index + 1);
       const svg = qBlock.querySelector(".billiards-table");
 
       let configs = [];

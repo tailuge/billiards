@@ -113,9 +113,12 @@ header {
     align-items: flex-start;
   }
 
-  .question-text,
-  .question-diagram {
+  .question-text {
     flex: 1;
+  }
+
+  .question-diagram {
+    flex: 2;
   }
 }
 
