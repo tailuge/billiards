@@ -39,9 +39,15 @@ header {
   margin-bottom: 0.5rem;
 }
 
+.assessment-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
 .assessment {
   font-weight: bold;
-  margin-bottom: 0.5rem;
 }
 
 .assessment.unknown {
@@ -171,6 +177,20 @@ header {
 
 .play-btn:hover {
   background-color: #1d4ed8;
+}
+
+.reset-btn {
+  padding: 0.25rem 0.5rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.reset-btn:hover {
+  background-color: #dc2626;
 }
 
 /* Iframe overlay */
