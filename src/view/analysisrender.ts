@@ -13,7 +13,6 @@ import {
   OutcomeSignature,
   ParamKey,
   ParamRange,
-  SPIN_EXPAND_STEP,
   SPIN_GRID_STEP,
   Scorer,
   ShotParams,
@@ -98,7 +97,7 @@ const PANEL_HTML = `
       <div class="plot-wrap">
         <canvas data-an="plot" width="420" height="420"></canvas>
         <div data-an="spinMarker" class="spin-marker" hidden></div>
-        <button data-an="expand" class="expand-range" disabled>Expand range</button>
+        <button data-an="spinShow" class="spin-show" disabled>Show</button>
       </div>
     </div>
     <div class="col-bars">
@@ -169,16 +168,12 @@ export function runAnalysisInto(
   const barsEl = $("bars")
   const stopBtn = $<HTMLButtonElement>("stop")
   const csvBtn = $<HTMLButtonElement>("csv")
-  const expandBtn = $<HTMLButtonElement>("expand")
+  const spinShowBtn = $<HTMLButtonElement>("spinShow")
 
   const signal = { aborted: false }
   let spinPoints: EvalPoint[] = []
   const oneDResults: OneDResult[] = []
   let csvRows: string[] = []
-  // Current outer half-window of the spin scan. Seeded from the engine's default
-  // (never a hard-coded literal) so it stays in lock-step with the initial scan;
-  // each "Expand range" click grows it by SPIN_EXPAND_STEP.
-  let spinWindow = DEFAULT_SPIN_HALF_WINDOW
   const hasResults = () => spinCache.size > 0 || oneDCache.size > 0
 
   // --- on-demand / interactive state -------------------------------------
@@ -227,18 +222,10 @@ export function runAnalysisInto(
   const oneDMarkerCache = new Map<string, boolean>()
   // Caches so revisiting a shot is instant (scans are expensive). The spin
   // scatter is keyed by its fixed base (aim/speed/elevation only — not spin,
-  // which it sweeps); each 1-D sweep is keyed by the full shot. `center` is the
-  // (offsetX, offsetY) the scan's grid is anchored to — fixed at whichever spin
-  // was live when the scan was first run, NEVER the live spin afterwards, so
-  // "Expand range" can keep growing the SAME lattice (see doExpand).
-  const spinCache = new Map<
-    string,
-    {
-      points: EvalPoint[]
-      window: number
-      center: { offsetX: number; offsetY: number }
-    }
-  >()
+  // which it sweeps); each 1-D sweep is keyed by the full shot. Each entry
+  // already covers the WHOLE legal disk (DEFAULT_SPIN_HALF_WINDOW ==
+  // offCenterLimit), so there's nothing further to grow.
+  const spinCache = new Map<string, { points: EvalPoint[] }>()
   const oneDCache = new Map<string, OneDResult>()
   // Empty (un-scanned) bars: grey track + ruler + markers, centred on the seed
   // ("initial shot parameters"). Built once with no simulation; reused to clear
@@ -246,8 +233,6 @@ export function runAnalysisInto(
   const emptyBars: Record<string, OneDResult> = {}
   for (const k of ONE_D_KEYS) emptyBars[k] = buildEmptyOneD(k)
 
-  // Disables "Expand range" for good once the widened window covers the disk.
-  let spinExhausted = false
   const round = (v: number) => Math.round(v * 1e4) / 1e4
   /** Full-shot key — the 1-D sweep cache's identity. */
   const sig5 = (s: ShotParams) =>
@@ -500,18 +485,13 @@ export function runAnalysisInto(
     return { pool, scorer, cores }
   }
 
-  /** Scan the annular ring between half-windows `inner`..`outer` of the spin
-   * plane around `base`, appending its points to the scatter. Returns the cell
-   * count (0 once the whole off-centre disk is covered). */
-  async function scanSpinRing(
-    base: ShotParams,
-    inner: number,
-    outer: number
-  ): Promise<number> {
+  /** Scan the whole legal spin disk around `base`, appending its points to the
+   * scatter. */
+  async function scanSpinDisk(base: ShotParams): Promise<void> {
     signal.aborted = false
     const { pool, scorer, cores } = makePool()
     try {
-      const result = await runSensitivityAnalysis({
+      await runSensitivityAnalysis({
         balls: seed.balls,
         cueBallId: seed.cueBallId,
         baseShot: base,
@@ -521,8 +501,7 @@ export function runAnalysisInto(
         poolSize: cores,
         scorer,
         signal,
-        spinHalfWindow: outer,
-        spinInnerHalfWindow: inner,
+        spinHalfWindow: DEFAULT_SPIN_HALF_WINDOW,
         onEvaluate: (shot, scored) => {
           csvRows.push(
             `spin,cell,${scored ? "success" : "fail"},${shot.angle},${shot.power},${shot.offsetX},${shot.offsetY},${shot.elevation}`
@@ -533,7 +512,6 @@ export function runAnalysisInto(
           if (evaluated % 10 === 0) plotGeom = drawPlot(canvas, spinPoints)
         },
       })
-      return result.evaluated
     } finally {
       pool.terminate()
     }
@@ -546,16 +524,10 @@ export function runAnalysisInto(
     const cached = spinCache.get(sig)
     if (cached) {
       spinPoints = cached.points.slice()
-      spinWindow = cached.window
     } else {
       spinPoints = []
-      spinWindow = DEFAULT_SPIN_HALF_WINDOW
-      await scanSpinRing(base, 0, spinWindow)
-      spinCache.set(sig, {
-        points: spinPoints.slice(),
-        window: spinWindow,
-        center: { offsetX: base.offsetX, offsetY: base.offsetY },
-      })
+      await scanSpinDisk(base)
+      spinCache.set(sig, { points: spinPoints.slice() })
     }
   }
 
@@ -733,7 +705,6 @@ export function runAnalysisInto(
     const cached = spinCache.get(sig)
     if (cached) {
       spinPoints = cached.points.slice()
-      spinWindow = cached.window
       plotGeom = drawPlot(canvas, spinPoints)
     } else {
       spinPoints = []
@@ -754,80 +725,28 @@ export function runAnalysisInto(
     updateMarkerFill() // re-applies the already-known result, now shown regardless of activeView
   }
 
-  /** The spin button reads "Expand range" only while spin is the active display
-   * AND a scatter is cached for the live aim/speed/elevation; otherwise "Show"
-   * (which also reclaims the spin display from whichever bar is active). */
+  /** The spin button is just "Show" (it reclaims the spin display from
+   * whichever bar is active); its enabled state varies with `busy`, and it
+   * gets the same blue "active" accent as a bar's Show button (.bar-row.active
+   * .bar-show) whenever the spin scatter is the live display. */
   function refreshSpinButton() {
-    if (busy) {
-      expandBtn.disabled = true
-      return
-    }
-    const populated =
-      activeView === "spin" && spinCache.has(spinBaseSig(liveShot))
-    expandBtn.textContent = populated ? "Expand range" : "Show"
-    expandBtn.disabled = populated && spinExhausted
+    spinShowBtn.disabled = busy
+    spinShowBtn.classList.toggle("active", activeView === "spin")
   }
 
-  expandBtn.addEventListener("click", () => {
+  spinShowBtn.addEventListener("click", () => {
     if (busy) return
-    if (activeView === "spin" && spinCache.has(spinBaseSig(liveShot)))
-      void doExpand()
-    else void showSpin()
+    void showSpin()
   })
 
-  /** "Expand range": scan the next ring of the spin disk and fold it into the
-   * cached scatter. Always grows from the scan's ORIGINAL centre (stored in the
-   * cache, never the live spin marker's position) — re-centring on wherever you
-   * last clicked would build a grid that doesn't tile with what's already
-   * scanned (a different lattice phase), producing a misaligned/holey result. */
-  async function doExpand() {
-    busy = true
-    refreshSpinButton()
-    statusEl.textContent = "Expanding spin range…"
-    try {
-      const sig = spinBaseSig(liveShot)
-      const center = spinCache.get(sig)?.center ?? {
-        offsetX: liveShot.offsetX,
-        offsetY: liveShot.offsetY,
-      }
-      const base: ShotParams = { ...liveShot, ...center }
-      const evaluated = await scanSpinRing(
-        base,
-        spinWindow,
-        spinWindow + SPIN_EXPAND_STEP
-      )
-      if (evaluated === 0) {
-        spinExhausted = true
-        statusEl.textContent = "Whole ball covered — no wider spin to scan."
-      } else {
-        spinWindow += SPIN_EXPAND_STEP
-        spinCache.set(sig, {
-          points: spinPoints.slice(),
-          window: spinWindow,
-          center,
-        })
-        statusEl.textContent = `Spin range expanded to ±${spinWindow.toFixed(2)}.`
-      }
-      plotGeom = drawPlot(canvas, spinPoints)
-      positionMarkers()
-    } catch (err) {
-      statusEl.textContent = `Error: ${(err as Error)?.message ?? err}`
-    } finally {
-      busy = false
-      csvBtn.disabled = !hasResults()
-      refreshSpinButton()
-    }
-  }
-
   /** Spin "Show": reclaims the spin display from whichever bar was active
-   * (mutual exclusivity), then scans the 2-D scatter for the live
-   * aim/speed/elevation, caches it, and displays it. */
+   * (mutual exclusivity), then scans the whole legal spin disk for the live
+   * aim/speed/elevation (or reuses the cache), and displays it. */
   async function showSpin() {
     busy = true
-    expandBtn.disabled = true
+    refreshSpinButton()
     statusEl.textContent = "Scanning spin…"
     try {
-      spinExhausted = false
       activeView = "spin"
       activeOneD = null
       refreshBars() // all three bars go back to empty
@@ -855,7 +774,7 @@ export function runAnalysisInto(
   async function runOneD(key: ParamKey) {
     if (busy) return
     busy = true
-    expandBtn.disabled = true
+    refreshSpinButton()
     if (key === "elevation") opts.onShowElevation?.()
     statusEl.textContent = `Analysing ${PARAM_LABELS[key]}…`
     try {
@@ -1066,7 +985,6 @@ export function runAnalysisInto(
       return
     }
     if (baseChanged) {
-      spinExhausted = false
       updateSpinDisplay()
     } else {
       positionMarkers()

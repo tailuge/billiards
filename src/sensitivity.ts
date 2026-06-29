@@ -411,15 +411,11 @@ export const SPIN_GRID_STEP = 0.025
  * (e.g. an unbounded scoring region in an unclamped dimension). Not a cost cap. */
 const MAX_CELLS = 200_000
 
-/** Default half-window for the 2-D spin scan (offsetX/offsetY). Single source of
- * truth: the engine seeds the grid from it and the analysis page seeds its
- * "Expand range" state from it, so the initial scan's reach and the first
- * expansion's inner boundary can never drift apart. */
-export const DEFAULT_SPIN_HALF_WINDOW = 0.3
-
-/** How much the spin half-window grows per "Expand range" click. Independent of
- * the default, so the increment is the same wherever the scan starts. */
-export const SPIN_EXPAND_STEP = 0.2
+/** Default half-window for the 2-D spin scan (offsetX/offsetY). Equal to the
+ * physical limit (`offCenterLimit`) so the initial (and every) scan covers the
+ * whole legal contact-point disk in one pass — there is no narrower default to
+ * widen later. */
+export const DEFAULT_SPIN_HALF_WINDOW = offCenterLimit
 
 /** Per-parameter grid axis: a step, physical clamp bounds, and how many steps to
  * scan on each side of the seed (the seed value is the grid origin, index 0). */
@@ -569,23 +565,25 @@ export function buildAxisSpecs(
         )
       }
       case "offsetX":
-        return spec(
-          key,
-          baseShot.offsetX,
-          SPIN_GRID_STEP,
-          -offCenterLimit,
-          offCenterLimit,
-          spinHalfWindow
-        )
-      case "offsetY":
-        return spec(
-          key,
-          baseShot.offsetY,
-          SPIN_GRID_STEP,
-          -offCenterLimit,
-          offCenterLimit,
-          spinHalfWindow
-        )
+      case "offsetY": {
+        // The lattice stays anchored (phase-locked) at the seed's own offset —
+        // not at 0 — so the seed's exact spin always lands on a scanned cell
+        // and matches the click-snap grid (snapSpin in analysisrender.ts),
+        // which is anchored the same way. But the WINDOW must still reach
+        // exactly as far past 0 as it would if center WERE 0: with
+        // spinHalfWindow == offCenterLimit (the whole-disk default), a plain
+        // center ± spinHalfWindow window would overshoot the near edge and
+        // undershoot the far edge whenever the seed isn't already centred
+        // (the bug this fixes — half the ball wasn't scanned). Padding by the
+        // seed's own distance from 0 compensates for the offset lattice
+        // origin without changing the window's effective size for callers
+        // that pass an explicit, smaller spinHalfWindow (e.g. "Expand range"'s
+        // old ring math, still covered by tests) — isCellValid's disk-radius
+        // check trims the corners back to the circle either way.
+        const center = baseShot[key]
+        const halfWindow = spinHalfWindow + Math.abs(center)
+        return spec(key, center, SPIN_GRID_STEP, -offCenterLimit, offCenterLimit, halfWindow)
+      }
       case "elevation":
         return spec(
           key,
