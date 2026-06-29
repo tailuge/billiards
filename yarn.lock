@@ -3108,7 +3108,7 @@ __metadata:
     canvas: "npm:3.2.3"
     chai: "npm:6.2.2"
     concurrently: "npm:10.0.3"
-    eslint: "npm:10.5.0"
+    eslint: "npm:10.6.0"
     eslint-plugin-html: "npm:^8.1.4"
     eslint-plugin-sonarjs: "npm:4.1.0"
     http-server: "npm:^14.1.1"
@@ -3118,7 +3118,7 @@ __metadata:
     jsoncrush: "npm:^1.1.8"
     node-notifier: "npm:^10.0.1"
     postcss-html: "npm:^1.8.1"
-    prettier: "npm:3.8.5"
+    prettier: "npm:3.9.1"
     stylelint: "npm:17.14.0"
     stylelint-config-standard: "npm:^40.0.0"
     swc-loader: "npm:0.2.7"
@@ -4209,9 +4209,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:10.5.0":
-  version: 10.5.0
-  resolution: "eslint@npm:10.5.0"
+"eslint@npm:10.6.0":
+  version: 10.6.0
+  resolution: "eslint@npm:10.6.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.8.0"
     "@eslint-community/regexpp": "npm:^4.12.2"
@@ -4250,7 +4250,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/e1f7a1d442027e5478945cb07b6a382adc3f149fbfd3dbc14951a7a9fa312546b27fb35b0556897ca1d04539ad16ee85bda75ad9f724873e1153d1fbca0d6145
+  checksum: 10c0/ebe0261fc750afb7f1a0c5a14f5288e57b971e0bee9754b1620132d22ad0c23690183977b0c9514ffa7ad460768d689d3fb9792ad9267b6c6205e2e0c17d8563
   languageName: node
   linkType: hard
 
@@ -7445,12 +7445,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.8.5":
-  version: 3.8.5
-  resolution: "prettier@npm:3.8.5"
+"prettier@npm:3.9.1":
+  version: 3.9.1
+  resolution: "prettier@npm:3.9.1"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/57ba3cd8ddc0cebcb31038f09081da5c8633ff1823ff5e5cf3496918b3b839f76a21e06050fd1a2c41547f44fedea2c28d7a4a26f0b2ed40eb60428c54c297ea
+  checksum: 10c0/036bd6dadad577356440945deb3271668c6b6e4094e2873ffa54e14131c21915d4eefad94f53d21a08776aa1c0f5a40dcb01151c2af753f9596e15f5e97fad9d
   languageName: node
   linkType: hard
 

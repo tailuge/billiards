@@ -17,6 +17,7 @@
 
 import { SimulationRunner } from "../ww.js";
 import { parseShots, parseJsonShots, maxPower } from "./dsl.js";
+import { generatePoolTable } from "./pooltable.js";
 
 // ——— State management ———
 
@@ -486,7 +487,7 @@ function createSvgStatusText(svg) {
 
 // ——— Per-element simulation ———
 
-async function runElement(el) {
+async function runElement(el, ruletype) {
   const setup = setupSvgRoot(el);
   enableEditing(el, setup);
 
@@ -494,7 +495,8 @@ async function runElement(el) {
   const { statusEl } = setup;
 
   // Render table immediately
-  const tableResult = generateBilliardTable();
+  const isPool = ruletype && ruletype !== "threecushion"
+  const tableResult = isPool ? generatePoolTable() : generateBilliardTable();
   svg.setAttribute("viewBox", tableResult.viewBox);
   tableGroup.innerHTML = tableResult.content;
 
@@ -572,12 +574,12 @@ function setStatus(el, message) {
  * Initialize all .billiards-table elements on the page.
  * Renders the table and runs any data-shots simulations.
  */
-export function initDiagrams() {
+export function initDiagrams(ruletype) {
   injectManualLineStyles();
   const divs = document.querySelectorAll(".billiards-table");
   if (divs.length === 0) {
     console.warn("No .billiards-table elements found on page");
     return;
   }
-  divs.forEach((el) => runElement(el));
+  divs.forEach((el) => runElement(el, ruletype));
 }

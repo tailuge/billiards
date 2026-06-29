@@ -315,6 +315,10 @@ export class Container {
         controller instanceof Replay ||
           (this.wasReplay && controller instanceof End)
       )
+      this.menu?.setDiagramVisible(
+        controller instanceof Replay ||
+          (this.wasReplay && controller instanceof End)
+      )
       this.menu?.setAnalysisVisible(
         controller instanceof Replay && this.rules.rulename === "threecushion"
       )

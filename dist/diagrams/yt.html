@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pool Table</title>
+    <style>
+      body {
+        margin: 0;
+        background: #fff;
+        text-align: center;
+      }
+      img {
+        width: 75vw;
+        height: auto;
+        display: block;
+        margin: 16px auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div id="player" style="margin: 16px auto"></div>
+      <div id="loading">Loading player...</div>
+
+      <button id="play-default-btn" disabled>Play</button>
+      <p><span id="timer">0.0s / 6.5s</span></p>
+      <p id="dimensions"></p>
+    </div>
+
+    <script>
+      const tag = document.createElement("script")
+      tag.src = "https://www.youtube.com/iframe_api"
+      const firstScriptTag = document.getElementsByTagName("script")[0]
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag)
+
+      let player
+      let updateTimer
+      let activeStartTime = 0
+      let activeStopTime = 6.5
+
+      const playDefaultBtn = document.getElementById("play-default-btn")
+      const loadingOverlay = document.getElementById("loading")
+      const timerText = document.getElementById("timer")
+
+      window.onYouTubeIframeAPIReady = function () {
+        player = new YT.Player("player", {
+          videoId: "EG-me1-3Mb8",
+          playerVars: {
+            playsinline: 1,
+            controls: 0,
+            rel: 0,
+            modestbranding: 1,
+            mute: 1,
+          },
+          events: {
+            onReady: onPlayerReady,
+            onStateChange: onPlayerStateChange,
+          },
+        })
+      }
+
+      async function onPlayerReady(event) {
+        loadingOverlay.innerText = ""
+        try {
+          const r = await fetch(
+            "https://www.youtube.com/oembed?url=https://www.youtube.com/shorts/EG-me1-3Mb8&format=json"
+          )
+          const data = await r.json()
+          const pw = data.width,
+            ph = data.height
+          const playerEl = document.getElementById("player")
+          const aspect = ph / pw
+          let w, h
+          if (aspect > 1) {
+            h = 640
+            w = Math.round(h / aspect)
+          } else {
+            w = 640
+            h = Math.round(w * aspect)
+          }
+          playerEl.style.width = w + "px"
+          playerEl.style.height = h + "px"
+          player.setSize(w, h)
+          document.getElementById("dimensions").innerText = w + "x" + h
+        } catch (e) {
+          document.getElementById("dimensions").innerText = "could not fetch"
+        }
+        playDefaultBtn.disabled = false
+        playDefaultBtn.innerText = "Play"
+      }
+
+      function onPlayerStateChange(event) {
+        if (event.data === YT.PlayerState.PLAYING) {
+          clearInterval(updateTimer)
+          updateTimer = setInterval(checkTime, 50)
+        } else {
+          clearInterval(updateTimer)
+        }
+      }
+
+      function checkTime() {
+        if (!player) return
+        const currentTime = player.getCurrentTime()
+        timerText.innerText = `${currentTime.toFixed(1)}s / ${activeStopTime.toFixed(1)}s`
+
+        if (currentTime < activeStartTime) {
+          player.seekTo(activeStartTime, true)
+        }
+
+        if (currentTime >= activeStopTime) {
+          player.pauseVideo()
+          player.seekTo(activeStartTime, true)
+          timerText.innerText = `${activeStartTime.toFixed(1)}s / ${activeStopTime.toFixed(1)}s`
+        }
+      }
+
+      function executePlayback(start, stop) {
+        if (!player) return
+        if (start < 0) start = 0
+        if (stop <= start) stop = start + 1
+        activeStartTime = start
+        activeStopTime = stop
+        clearInterval(updateTimer)
+        player.seekTo(activeStartTime, true)
+        player.playVideo()
+      }
+
+      playDefaultBtn.addEventListener("click", () => {
+        executePlayback(0, 6.5)
+      })
+    </script>
+    <img src="pooltable.svg" />
+  </body>
+</html>

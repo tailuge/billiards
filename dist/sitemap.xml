@@ -3,106 +3,131 @@
   <url>
     <loc>https://tailuge.github.io/billiards/dist/</loc>
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/lobby.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/lobby.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/practice.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/practice.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/2p.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/2p.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/3r.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/3r.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/2tab.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/2tab.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/multi.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/multi.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/blog1.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/blog1.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/blog2.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/blog2.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/blog3.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/blog3.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/embed.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/embed.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/diagrams/three.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/three.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/diagrams/diagrams.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/diagrams.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/diagrams/diamond.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/diamond.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/diagrams/mathavan.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/mathavan.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/diagrams/nineball.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/nineball.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/diagrams/odd.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/odd.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/diagrams/plot.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/plot.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/diagrams/roll.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/roll.html" />
-    <lastmod>2026-05-13</lastmod>
-  </url>
-  <url>
-    <loc>https://tailuge.github.io/billiards/dist/diagrams/symmetry.html</loc>
-    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/symmetry.html" />
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-06-29</lastmod>
   </url>
   <url>
     <loc>https://tailuge.github.io/billiards/index.html</loc>
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/index.html" />
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/lobby.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/lobby.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/practice.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/practice.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/2p.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/2p.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/3r.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/3r.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/2tab.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/2tab.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/ww.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/ww.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/fit/viewer.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/fit/viewer.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/multi.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/multi.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/blog1.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/blog1.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/blog2.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/blog2.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/blog3.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/blog3.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/embed.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/embed.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/three.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/three.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/svg.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/svg.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/export.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/export.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/diagrams.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/diagrams.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/diamond.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/diamond.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/mathavan.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/mathavan.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/nineball.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/nineball.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/odd.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/odd.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/plot.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/plot.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/roll.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/roll.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/diagrams/symmetry.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/diagrams/symmetry.html" />
+    <lastmod>2026-06-29</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/korean.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/korean.html" />
+    <lastmod>2026-06-29</lastmod>
   </url>
 </urlset>
