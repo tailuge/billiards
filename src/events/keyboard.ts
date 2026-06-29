@@ -10,6 +10,7 @@ export class Keyboard {
   pressed = {}
   released = {}
   private readonly flipX: boolean
+  private readonly disabled: boolean
 
   getEvents() {
     const keys = Object.keys(this.pressed)
@@ -35,8 +36,9 @@ export class Keyboard {
     return result
   }
 
-  constructor(element: HTMLCanvasElement) {
+  constructor(element: HTMLCanvasElement, opts: { disabled?: boolean } = {}) {
     this.flipX = new URLSearchParams(globalThis.location?.search).has("flip")
+    this.disabled = opts.disabled ?? false
     this.addHandlers(element)
     if (!/Android|iPhone/i.test(navigator.userAgent)) {
       element.contentEditable = "true"
@@ -44,6 +46,7 @@ export class Keyboard {
   }
 
   keydown = (e) => {
+    if (this.disabled) return
     this.pressed[e.code] ??= performance.now()
     e.stopImmediatePropagation()
     if (e.key !== "F12") {
@@ -52,6 +55,7 @@ export class Keyboard {
   }
 
   keyup = (e) => {
+    if (this.disabled) return
     this.released[e.code] = performance.now() - this.pressed[e.code]
     delete this.pressed[e.code]
     e.stopImmediatePropagation()
