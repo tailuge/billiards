@@ -6,9 +6,11 @@ import {
   renderOneDBar,
   formatValue,
   formatAngleShift,
+  barPctOf,
+  barValueAtPct,
   OneDResult,
-} from "../src/aimsensitivity"
-import { ParamRange } from "../src/sensitivity"
+} from "../src/view/analysisrender"
+import { AxisSpec, ParamRange, paramRangeOf } from "../src/sensitivity"
 
 /** Build a 1-D sweep with cells at center + k*step for k in [-n, n]. `scoringMin`/
  * `scoringMax` are derived from the min/max scored k, mirroring
@@ -328,5 +330,158 @@ describe("formatAngleShift", () => {
 
   it("returns '0.00' at the seed centre", () => {
     expect(formatAngleShift(-0.05, -0.05, 1.0)).toBe("0.00")
+  })
+})
+
+describe("barPctOf / barValueAtPct (click mapping)", () => {
+  it("round-trips value→pct→value on a finite (speed) axis", () => {
+    const od = sweep(
+      { key: "power", center: 2.5, step: 0.1, physicalMin: 0, physicalMax: 5.24 },
+      10,
+      new Set([0])
+    )
+    const m = computeBarModel(od)
+    for (const v of [0.5, 2.5, 4.0, 5.0]) {
+      expect(barValueAtPct(m, barPctOf(m, v))).toBeCloseTo(v, 6)
+    }
+  })
+
+  it("round-trips on the mirrored (aim-shift) axis and respects the flip", () => {
+    const od = sweep(
+      {
+        key: "angle",
+        center: 0,
+        step: 0.01,
+        physicalMin: Number.NEGATIVE_INFINITY,
+        physicalMax: Number.POSITIVE_INFINITY,
+      },
+      8,
+      new Set([0])
+    )
+    const m = computeBarModel(od)
+    expect(m.mirrored).toBe(true)
+    // Mirrored: the maximum value sits at the LEFT edge (pct 0).
+    expect(barPctOf(m, m.hi)).toBeCloseTo(0, 6)
+    expect(barPctOf(m, m.lo)).toBeCloseTo(100, 6)
+    for (const v of [m.lo, m.lo + (m.hi - m.lo) * 0.3, m.hi]) {
+      expect(barValueAtPct(m, barPctOf(m, v))).toBeCloseTo(v, 6)
+    }
+  })
+
+  it("clamps out-of-range percentages to the track ends", () => {
+    const od = sweep(
+      { key: "power", center: 2.5, step: 0.1, physicalMin: 0, physicalMax: 5.24 },
+      10,
+      new Set([0])
+    )
+    const m = computeBarModel(od)
+    expect(barValueAtPct(m, -20)).toBeCloseTo(m.lo, 6)
+    expect(barValueAtPct(m, 130)).toBeCloseTo(m.hi, 6)
+  })
+})
+
+describe("paramRangeOf (empty-bar range, no simulation)", () => {
+  it("derives the display range from an axis spec", () => {
+    const axis: AxisSpec = {
+      key: "power",
+      center: 2.5,
+      step: 0.1,
+      min: 0,
+      max: 10,
+      stepsEachSide: 10,
+    }
+    const r = paramRangeOf(axis)
+    expect(r.key).toBe("power")
+    expect(r.center).toBe(2.5)
+    expect(r.step).toBe(0.1)
+    expect(r.physicalMin).toBe(0)
+    expect(r.physicalMax).toBe(10)
+    expect(r.scannedMin).toBeCloseTo(1.5) // 2.5 - 10*0.1
+    expect(r.scannedMax).toBeCloseTo(3.5) // 2.5 + 10*0.1
+    // No scored cells yet → scoring range collapses to the centre.
+    expect(r.scoringMin).toBe(2.5)
+    expect(r.scoringMax).toBe(2.5)
+  })
+
+  it("clamps the scanned window to the physical bounds", () => {
+    const axis: AxisSpec = {
+      key: "elevation",
+      center: 0.1,
+      step: 0.025,
+      min: 0,
+      max: 1.2566,
+      stepsEachSide: 10,
+    }
+    const r = paramRangeOf(axis)
+    expect(r.scannedMin).toBe(0) // 0.1 - 0.25 = -0.15, clamped to 0
+    expect(r.scannedMax).toBeCloseTo(0.35)
+  })
+})
+
+describe("computeBarModel — empty (un-scanned) bar", () => {
+  it("is one full-width grey segment with a full ruler and centred marker", () => {
+    const range = paramRangeOf({
+      key: "power",
+      center: 2.5,
+      step: 0.1,
+      min: 0,
+      max: 5,
+      stepsEachSide: 10,
+    })
+    const od: OneDResult = { range, cells: [] }
+    const m = computeBarModel(od)
+    expect(m.segments).toHaveLength(1)
+    expect(m.segments[0].color).toBe(UNSCANNED)
+    expect(m.segments[0].w).toBeCloseTo(m.hi - m.lo)
+    expect(m.ruler).toHaveLength(5)
+    // Power's track is the full physical range; the seed sits at its centre.
+    expect(m.markerPct).toBeCloseTo(50)
+  })
+})
+
+describe("renderOneDBar — Show button + marker", () => {
+  it("renders a Show button carrying the row's key, plus one white marker", () => {
+    const range = paramRangeOf({
+      key: "angle",
+      center: 0,
+      step: 0.01,
+      min: Number.NEGATIVE_INFINITY,
+      max: Number.POSITIVE_INFINITY,
+      stepsEachSide: 10,
+    })
+    const od: OneDResult = { range, cells: [], contactDistance: 1 }
+    const row = renderOneDBar(od)
+    expect(row.dataset.key).toBe("angle")
+    const btn = row.querySelector<HTMLButtonElement>(".bar-show")
+    expect(btn).not.toBeNull()
+    expect(btn!.textContent).toBe("Show")
+    // The Show button lives in the row header, not inside the clickable track.
+    expect(row.querySelector(".bar-track .bar-show")).toBeNull()
+    // Exactly one (white) marker — the current shot. No seed marker anymore.
+    expect(row.querySelectorAll(".bar-marker")).toHaveLength(1)
+    expect(row.querySelectorAll(".bar-seed-marker")).toHaveLength(0)
+  })
+
+  it("renders left/right step buttons flanking the track+ruler column, not inside the clipped track", () => {
+    const range = paramRangeOf({
+      key: "power",
+      center: 2.5,
+      step: 0.1,
+      min: 0,
+      max: 5.24,
+      stepsEachSide: 10,
+    })
+    const od: OneDResult = { range, cells: [] }
+    const row = renderOneDBar(od)
+    const left = row.querySelector<HTMLButtonElement>(".bar-step--left")
+    const right = row.querySelector<HTMLButtonElement>(".bar-step--right")
+    expect(left).not.toBeNull()
+    expect(right).not.toBeNull()
+    // Not clipped by .bar-track's overflow:hidden.
+    expect(row.querySelector(".bar-track .bar-step")).toBeNull()
+    // Both flank a shared track+ruler column.
+    const trackrow = row.querySelector(".bar-trackrow")
+    expect(trackrow?.querySelector(".bar-trackcol .bar-track")).not.toBeNull()
+    expect(trackrow?.querySelector(".bar-trackcol .bar-ruler")).not.toBeNull()
   })
 })
