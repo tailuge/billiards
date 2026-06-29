@@ -62,6 +62,7 @@ export class BrowserContainer {
   practiceMode: boolean = false
   drillMode: boolean = false
   analysisMode: boolean = false
+  examMode: boolean = false
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
     this.now = Date.now()
@@ -90,6 +91,7 @@ export class BrowserContainer {
       : this.ruletype !== "nineball"
     this.drillMode = params.has("drill")
     this.analysisMode = params.has("analysis")
+    this.examMode = params.has("exam")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
       Number.parseInt(params.get("raceTo") ?? "7") || 7
@@ -144,6 +146,7 @@ export class BrowserContainer {
       replayMode: !!this.replay,
       botMode: this.botMode,
       isSinglePlayer: !this.wss && !this.botMode && !this.replay,
+      examMode: this.examMode,
     }
     return new Container(config)
   }

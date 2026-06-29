@@ -15,4 +15,5 @@ export interface ContainerConfig {
   replayMode?: boolean
   botMode?: boolean
   isSinglePlayer?: boolean
+  examMode?: boolean
 }
