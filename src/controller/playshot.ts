@@ -1,7 +1,6 @@
 import { Controller, Input } from "./controller"
 import { ControllerBase } from "./controllerbase"
 import { Session } from "../network/client/session"
-import { Outcome } from "../model/outcome"
 
 /**
  * PlayShot starts balls rolling using cue state, applies rules to outcome
@@ -32,15 +31,6 @@ export class PlayShot extends ControllerBase {
 
     const isPartOfBreak = this.container.rules.isPartOfBreak(outcome)
     const isEndOfGame = this.container.rules.isEndOfGame(outcome)
-
-    if (this.container.examMode && globalThis.parent !== (globalThis as any)) {
-      const isPoint = Outcome.isThreeCushionPoint(
-        table.cueball,
-        table.outcome
-      )
-      globalThis.parent.postMessage({ type: "shotOutcome", isPoint }, "*")
-    }
-
     this.container.recorder.updateBreak(outcome, isPartOfBreak, isEndOfGame)
     table.cue?.aimAtNext(
       table.cueball,

@@ -23,19 +23,13 @@ export class AimEvent extends GameEvent {
 
   static fromJson(json) {
     const event = new AimEvent()
-    if (json.pos) {
-      event.pos = vec(json.pos)
-    }
+    event.pos = vec(json.pos)
     event.angle = json.angle
-    if (json.offset) {
-      event.offset = vec(json.offset)
-    }
+    event.offset = vec(json.offset)
     event.power = json.power
     event.elevation = json.elevation || 0
-    if (json.i !== undefined) {
+    if (json.i) {
       event.i = json.i
-    } else if (json.cueBallId !== undefined) {
-      event.i = json.cueBallId
     }
     return event
   }

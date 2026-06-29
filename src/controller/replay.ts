@@ -11,7 +11,6 @@ import { PlaceBallEvent } from "../events/placeballevent"
 import { End } from "./end"
 import { ScoreEvent } from "../events/scoreevent"
 import { ChatEvent } from "../events/chatevent"
-import { Outcome } from "../model/outcome"
 import { share, shorten } from "../utils/shorten"
 import { anglesAlign } from "../utils/three-utils"
 import { LOBBY_URL } from "../network/client/constants"
@@ -175,18 +174,6 @@ export class Replay extends ControllerBase {
     }
     if (this.shots.length === 0 && this.timer === undefined) {
       const outcome = this.container.table.outcome
-
-      if (
-        this.container.examMode &&
-        globalThis.parent !== (globalThis as any)
-      ) {
-        const isPoint = Outcome.isThreeCushionPoint(
-          this.container.table.cueball,
-          this.container.table.outcome
-        )
-        globalThis.parent.postMessage({ type: "shotOutcome", isPoint }, "*")
-      }
-
       if (Array.isArray(outcome) && outcome.length) {
         const first = outcome[0].timestamp
         outcome.forEach((o) => {
