@@ -19,32 +19,25 @@ import { SimulationRunner } from "../ww.js";
 import { parseShots, parseJsonShots, maxPower } from "./dsl.js";
 import { generatePoolTable } from "./pooltable.js";
 
-// ——— State management ———
 
-let isEditMode = false;
-
-export function toggleEditMode() {
-  isEditMode = !isEditMode;
-  return isEditMode;
-}
 
 // ——— Table geometry (SI meters) ———
 
-const R = 0.03275;
+export const R = 0.03275;
 const UMB_TABLE_X = 92.36;
 const UMB_TABLE_Y = 46.18;
 const tableX = R * (UMB_TABLE_X / 2 - 1);
 const tableY = R * (UMB_TABLE_Y / 2 - 1);
-const X = tableX + R;
-const Y = tableY + R;
+export const X = tableX + R;
+export const Y = tableY + R;
 
 // Fixed calibration (matches default slider midpoints from original)
 const cOffset = 0.06;
 const dOffset = 0.1;
-const fOffset = 0.18;
+export const fOffset = 0.18;
 const dSize = 0.01;
 
-const SVG_NS = "http://www.w3.org/2000/svg";
+export const SVG_NS = "http://www.w3.org/2000/svg";
 
 // ——— Table rendering ———
 
@@ -119,7 +112,7 @@ function generateBilliardTable() {
 
 // ——— Coordinate and Diamond utilities ———
 
-function toSvgCoords(svg, event) {
+export function toSvgCoords(svg, event) {
   const pt = svg.createSVGPoint();
   pt.x = event.clientX;
   pt.y = event.clientY;
@@ -127,7 +120,7 @@ function toSvgCoords(svg, event) {
   return { x: svgP.x, y: svgP.y };
 }
 
-function getDiamonds() {
+export function getDiamonds() {
   const gridInterval = (2 * X) / 8;
   const diamonds = [];
 
@@ -170,7 +163,7 @@ function getDiamonds() {
 
 // ——— Editing and Snapping logic ———
 
-function getNearestDiamond(diamonds, coords) {
+export function getNearestDiamond(diamonds, coords) {
   let nearest = null;
   let minDistance = Infinity;
 
@@ -188,81 +181,6 @@ function getNearestDiamond(diamonds, coords) {
     return nearest;
   }
   return null;
-}
-
-function enableEditing(el, setup) {
-  const { svg, manualLinesGroup, editingGroup } = setup;
-  const diamonds = getDiamonds();
-
-  let activeLine = null;
-  let startPoint = null;
-
-  // Create snap point indicator
-  const snapPoint = document.createElementNS(SVG_NS, "circle");
-  snapPoint.setAttribute("r", String(R));
-  snapPoint.classList.add("snap-indicator");
-  snapPoint.style.display = "none";
-  editingGroup.appendChild(snapPoint);
-
-  svg.addEventListener("mousemove", (e) => {
-    if (!isEditMode) {
-      snapPoint.style.display = "none";
-      return;
-    }
-
-    const mouse = toSvgCoords(svg, e);
-    const nearest = getNearestDiamond(diamonds, mouse);
-
-    if (nearest) {
-      snapPoint.setAttribute("cx", String(nearest.x));
-      snapPoint.setAttribute("cy", String(nearest.y));
-      snapPoint.style.display = "block";
-    } else {
-      snapPoint.style.display = "none";
-    }
-
-    if (activeLine) {
-      const end = nearest || mouse;
-      activeLine.setAttribute("x2", String(end.x));
-      activeLine.setAttribute("y2", String(end.y));
-    }
-  });
-
-  svg.addEventListener("mousedown", (e) => {
-    if (!isEditMode) return;
-
-    const mouse = toSvgCoords(svg, e);
-    const nearest = getNearestDiamond(diamonds, mouse);
-
-    if (nearest) {
-      startPoint = nearest;
-      activeLine = document.createElementNS(SVG_NS, "line");
-      activeLine.setAttribute("x1", String(nearest.x));
-      activeLine.setAttribute("y1", String(nearest.y));
-      activeLine.setAttribute("x2", String(nearest.x));
-      activeLine.setAttribute("y2", String(nearest.y));
-      activeLine.classList.add("manual-line");
-      editingGroup.appendChild(activeLine);
-    }
-  });
-
-  svg.addEventListener("mouseup", (e) => {
-    if (!activeLine) return;
-
-    const mouse = toSvgCoords(svg, e);
-    const nearest = getNearestDiamond(diamonds, mouse);
-
-    if (nearest && (nearest.x !== startPoint.x || nearest.y !== startPoint.y)) {
-      activeLine.setAttribute("x2", String(nearest.x));
-      activeLine.setAttribute("y2", String(nearest.y));
-      manualLinesGroup.appendChild(activeLine);
-    } else {
-      activeLine.remove();
-    }
-
-    activeLine = null;
-    startPoint = null;
-  });
 }
 
 // ——— Trajectory rendering ———
@@ -389,9 +307,11 @@ function renderBallPositions(ballsGroup, config) {
 // ——— Element setup helpers ———
 
 function moveManualElements(el, manualLinesGroup) {
-  // Move any direct-child manual-line elements into manualLinesGroup
+  // Move any direct-child manual-line/fine-stroke elements into manualLinesGroup
   // so they render on top of the table background.
-  const existing = el.querySelectorAll(":scope > .manual-line");
+  const existing = el.querySelectorAll(
+    ":scope > .manual-line, :scope > .fine-stroke"
+  );
   existing.forEach((line) => manualLinesGroup.appendChild(line));
 }
 
@@ -403,10 +323,12 @@ function injectManualLineStyles() {
   document.head.appendChild(style);
 }
 
-function setupSvgRoot(el) {
+export function setupSvgRoot(el) {
   if (!el.getAttribute("xmlns")) {
     el.setAttribute("xmlns", SVG_NS);
   }
+
+
 
   let tableGroup = el.querySelector(".table-group");
   if (!tableGroup) {
@@ -489,7 +411,7 @@ function createSvgStatusText(svg) {
 
 async function runElement(el, ruletype) {
   const setup = setupSvgRoot(el);
-  enableEditing(el, setup);
+
 
   const { svg, tableGroup, trajectoriesGroup } = setup;
   const { statusEl } = setup;
