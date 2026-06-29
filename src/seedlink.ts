@@ -1,16 +1,14 @@
 /**
- * Seed handoff between the live game and the standalone analysis page.
+ * Seed handoff for the shot analysis view.
  *
- * The drill panel encodes the pre-shot state (balls + cue + shot + model) into a
- * URL query param and opens `aimsensitivity.html?init=...` in a new tab — the
- * same JSONCrush path the replay links use (see src/view/link-formatter.ts), so
- * the game page is never disturbed. The analysis page decodes it back.
+ * Both drill and analysis are query-flag modes of index.html. Switching between
+ * them (or opening either from the replay magnifying glass) re-opens the same
+ * shot via the `init` / `initShot` params the live game already parses
+ * (src/utils/rack.ts applies `init`; src/controller/aim.ts applies `initShot`).
  */
-import JSONCrush from "jsoncrush"
-import { ReplayEncoder } from "./utils/replay-encoder"
 import { BallPos, ShotParams } from "./sensitivity"
 
-/** Everything the analysis page needs to reproduce and explore a shot. */
+/** Everything needed to reproduce and explore a shot. */
 export interface AnalysisSeed {
   balls: BallPos[]
   cueBallId: number
@@ -19,47 +17,38 @@ export interface AnalysisSeed {
   cushionModel: string
 }
 
-/** Default page the analysis opens in. */
-export const ANALYSIS_PAGE = "aimsensitivity.html"
+export type GameMode = "analysis" | "drill"
 
-/** Encode a seed into a URL-safe query value (JSONCrush + full URI encoding). */
-export function encodeAnalysisSeed(seed: AnalysisSeed): string {
-  const json = JSON.stringify(seed)
-  return ReplayEncoder.fullyEncodeURI(ReplayEncoder.crush(json))
-}
-
-/** Full `aimsensitivity.html?init=...` URL for a seed. */
-export function buildAnalysisUrl(
-  seed: AnalysisSeed,
-  page = ANALYSIS_PAGE
-): string {
-  return `${page}?init=${encodeAnalysisSeed(seed)}`
+/** The current index.html URL without its query string — switching modes stays
+ * on the same origin/deployment the game is already running on. */
+function currentPageUrl(): string {
+  return (globalThis.location?.href ?? "index.html").split("?")[0]
 }
 
 /**
- * Decode the `init` query value back into a seed. In normal use the value comes
- * from URLSearchParams.get (already percent-decoded), but we also accept a still
- * URI-encoded value and plain JSON, so the decode is symmetric with
- * encodeAnalysisSeed regardless of who un-percent-encoded it.
+ * Build an index.html URL that re-opens this shot in `analysis` or `drill` mode,
+ * encoded with the same `init`/`initShot` params the live game parses.
+ * `cueBallId` is the cue ball's INDEX in the balls array — aim.ts reads it as
+ * `table.balls[cueBallId]`.
  */
-export function decodeAnalysisSeed(initParam: string): AnalysisSeed {
-  let uriDecoded = initParam
-  try {
-    uriDecoded = decodeURIComponent(initParam)
-  } catch {
-    // already decoded (or contains a stray %) — fall through with the original
-  }
-  for (const candidate of [initParam, uriDecoded]) {
-    try {
-      return JSON.parse(candidate) as AnalysisSeed
-    } catch {
-      /* not plain JSON */
-    }
-    try {
-      return JSON.parse(JSONCrush.uncrush(candidate)) as AnalysisSeed
-    } catch {
-      /* not crushed in this form */
-    }
-  }
-  throw new Error("unrecognised init payload")
+export function buildModeUrl(
+  seed: AnalysisSeed,
+  mode: GameMode,
+  base = currentPageUrl()
+): string {
+  const init = JSON.stringify(seed.balls.flatMap((b) => [b.pos.x, b.pos.y]))
+  const initShot = JSON.stringify({
+    cueBallId: seed.cueBallId,
+    angle: seed.shot.angle,
+    power: seed.shot.power,
+    offset: { x: seed.shot.offsetX, y: seed.shot.offsetY },
+    elevation: seed.shot.elevation,
+  })
+  const params = new URLSearchParams()
+  params.set("ruletype", "threecushion")
+  params.set("practice", "")
+  params.set(mode, "")
+  params.set("init", init)
+  params.set("initShot", initShot)
+  return `${base}?${params.toString()}`
 }
