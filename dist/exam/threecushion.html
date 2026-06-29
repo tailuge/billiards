@@ -305,19 +305,14 @@
 
           if (configs.length > 0) {
             const config = configs[0];
-            // The game expects a replay state with 'init' balls (flat array) and 'shots' array.
-            const replayState = {
-              init: config.balls.flatMap((b) => [b.pos.x, b.pos.y]),
-              shots: [
-                {
-                  ...config.shot,
-                  i: config.shot.cueBallId,
-                  pos: config.balls[config.shot.cueBallId].pos,
-                },
-              ],
+            const init = config.balls.flatMap((b) => [b.pos.x, b.pos.y]);
+            const initShot = {
+              ...config.shot,
+              i: config.shot.cueBallId,
+              pos: config.balls[config.shot.cueBallId].pos,
             };
-            const stateStr = JSON.stringify(replayState);
-            const url = `../index.html?ruletype=threecushion&exam=true&state=${encodeURIComponent(stateStr)}`;
+
+            const url = `../index.html?ruletype=threecushion&exam=true&practice=true&init=${encodeURIComponent(JSON.stringify(init))}&initShot=${encodeURIComponent(JSON.stringify(initShot))}`;
             iframe.src = url;
             overlay.classList.add("active");
             outcomeDisplay.style.display = "none";
@@ -336,6 +331,12 @@
             li.textContent = `${o.type}: ${o.ballA?.id}${o.ballB ? " -> " + o.ballB.id : ""} (${o.incidentSpeed.toFixed(2)})`;
             outcomeList.appendChild(li);
           });
+
+          // Close the iframe after a short delay so the user can see the final state
+          setTimeout(() => {
+            overlay.classList.remove("active");
+            iframe.src = "";
+          }, 1500);
         }
       });
 
