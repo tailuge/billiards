@@ -5,7 +5,7 @@ import { DrillReplay } from "../controller/drillreplay"
 import { Drill } from "../controller/rules/drill"
 import { previewShot } from "../model/previewshot"
 import { BallPos, ShotParams } from "../sensitivity"
-import { AnalysisSeed, buildAnalysisUrl } from "../seedlink"
+import { AnalysisSeed, buildModeUrl } from "../seedlink"
 
 const PREVIEW_DEBOUNCE = 0.15
 
@@ -36,6 +36,7 @@ export class DrillPanel {
 
     this.placeBallsBtn = this.createBtn("Place Balls")
     this.placeBallsBtn.addEventListener("click", () => {
+      this.container.lastEventTime = performance.now()
       if (this.container.table.allStationary()) {
         this.container.updateController(new PlaceAllBalls(this.container))
       }
@@ -43,6 +44,7 @@ export class DrillPanel {
 
     this.retryBtn = this.createBtn("Retry")
     this.retryBtn.addEventListener("click", () => {
+      this.container.lastEventTime = performance.now()
       const drill = this.container.rules as Drill
       const recorder = this.container.recorder
       const last = recorder.last()
@@ -67,6 +69,7 @@ export class DrillPanel {
 
     this.replayBtn = this.createBtn("Replay")
     this.replayBtn.addEventListener("click", () => {
+      this.container.lastEventTime = performance.now()
       const drill = this.container.rules as Drill
       const recorder = this.container.recorder
       const last = recorder.last()
@@ -81,6 +84,7 @@ export class DrillPanel {
 
     this.switchBallBtn = this.createBtn("Switch Ball")
     this.switchBallBtn.addEventListener("click", () => {
+      this.container.lastEventTime = performance.now()
       const drill = this.container.rules as Drill
       const balls = this.container.table.balls
       drill.cueball = drill.cueball === balls[0] ? balls[1] : balls[0]
@@ -94,6 +98,7 @@ export class DrillPanel {
 
     this.previewBtn = this.createBtn("Preview")
     this.previewBtn.addEventListener("click", () => {
+      this.container.lastEventTime = performance.now()
       if (this.previewActive) {
         this.hidePreview()
       } else if (previewShot(this.container.table, this.container.step)) {
@@ -116,26 +121,9 @@ export class DrillPanel {
     this.analyseBtn.addEventListener("click", () => {
       const seed = this.captureSeed()
       if (!seed) return
-      const overlay = document.getElementById("analysisOverlay")
-      const iframe = overlay?.querySelector("iframe")
-      if (overlay && iframe) {
-        // Blank the iframe before showing the overlay so the previous
-        // analysis isn't flashed while the new page loads, then navigate on
-        // the next frame so the src change is a real reload even when the
-        // shot is unchanged (same URL as last time would otherwise no-op).
-        iframe.src = "about:blank"
-        overlay.removeAttribute("hidden")
-        requestAnimationFrame(() => {
-          iframe.src = buildAnalysisUrl(seed)
-        })
-      }
-    })
-
-    document.getElementById("analysisClose")?.addEventListener("click", () => {
-      const overlay = document.getElementById("analysisOverlay")
-      const iframe = overlay?.querySelector("iframe")
-      if (iframe) iframe.src = "about:blank"
-      overlay?.setAttribute("hidden", "true")
+      // Open the full-page analysis view in a new tab (same shot, same origin);
+      // the drill tab stays alive so practice state is preserved.
+      window.open(buildModeUrl(seed, "analysis"), "_blank")
     })
 
     const topPanel = document.createElement("div")
@@ -170,7 +158,7 @@ export class DrillPanel {
   }
 
   /** Reconstruct the pre-shot seed (positions + aim + model) of the last shot,
-   * shaped for the standalone analysis page handoff (src/seedlink.ts). */
+   * shaped for the analysis-mode handoff (src/seedlink.ts). */
   private captureSeed(): AnalysisSeed | null {
     const drill = this.container.rules as Drill
     const recorder = this.container.recorder
@@ -272,14 +260,9 @@ export class DrillPanel {
     this.switchBallBtn.disabled =
       !isAiming || (!hasPreShot && !this.ballsWerePlaced)
     this.previewBtn.disabled = !isAiming
-    // Only meaningful right after a shot that actually scored: in drill mode a
-    // scoring shot increments the break, a miss resets it to 0. Also disabled
-    // while the analysis overlay is open so re-clicking can't re-run the scan.
-    const analysisOpen = !document
-      .getElementById("analysisOverlay")
-      ?.hasAttribute("hidden")
-    this.analyseBtn.disabled =
-      analysisOpen || !isAiming || !hasLastShot || drill.currentBreak <= 0
+    // Available after any played shot — analysis runs on missed shots too, not
+    // just scoring ones (it scans the same range and shows where it would score).
+    this.analyseBtn.disabled = !isAiming || !hasLastShot
 
     if (this.previewActive) {
       if (!isAiming) {

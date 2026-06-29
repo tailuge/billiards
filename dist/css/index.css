@@ -310,33 +310,6 @@ label {
   border-radius: 8px;
 }
 
-#analysisOverlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(95%, 820px);
-  height: min(92%, 760px);
-  background: rgb(0 0 0 / 100%);
-  border: 1px solid rgb(255 255 255 / 25%);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  z-index: 3000;
-  box-shadow: 0 8px 16px rgb(0 0 0 / 75%);
-}
-
-#analysisOverlay[hidden] {
-  display: none !important;
-}
-
-#analysisOverlay iframe {
-  width: 100%;
-  flex: 1;
-  border: none;
-  border-radius: 8px;
-}
-
 .help-footer {
   display: flex;
   gap: 4px;
@@ -352,8 +325,7 @@ label {
 }
 
 .lobby-btn,
-#helpClose,
-#analysisClose {
+#helpClose {
   padding: 6px 6px;
   background: rgb(255 255 255 / 10%);
   color: white;
@@ -365,8 +337,7 @@ label {
 }
 
 .lobby-btn:hover,
-#helpClose:hover,
-#analysisClose:hover {
+#helpClose:hover {
   background: rgb(255 255 255 / 20%);
   border-color: rgb(255 255 255 / 40%);
 }
@@ -447,5 +418,509 @@ label {
 
 .drill-btn:disabled {
   opacity: 0.3;
+  cursor: default;
+}
+
+/* ===========================================================================
+   Shot analysis split-screen mode (?ruletype=threecushion&practice&analysis)
+   Left: live 3D table (#viewP1). Right: results panel (#analysisPanel). The
+   table pane is responsively sized so CameraTop orients it (upright in a
+   narrow pane, horizontal in a wide one) automatically.
+   =========================================================================== */
+/* Grid: table top-left, the game's control panel bottom-left, analysis panel
+   down the right. Using grid (not flex) keeps #panel's own internal layout
+   (cue-ball spin widget, hit button, power slider) intact — we just hand it the
+   bottom-left cell and hide the menu buttons. */
+body.analysis-mode {
+  display: grid;
+  grid-template-columns: 72% 28%;
+  grid-template-rows: 1fr auto;
+  grid-template-areas:
+    "table panel"
+    "controls panel";
+}
+
+body.analysis-mode #viewP1 {
+  grid-area: table;
+  width: auto;
+  height: 100%;
+  /* Let the table cell shrink: the WebGL canvas carries an explicit pixel size,
+     which would otherwise become the cell's min-content size and overflow. */
+  min-width: 0;
+  min-height: 0;
+}
+
+/* The renderer sets an explicit pixel size on its canvas; cap it to the cell. */
+body.analysis-mode #viewP1 > canvas {
+  max-width: 100%;
+}
+
+/* Keep the control panel, but show only the aim controls the analysis view
+   wants (cue-ball spin + elevation, hit button, speed slider). Hide the game
+   menu/share/concede/comment buttons; the camera toggle is the floating button. */
+body.analysis-mode #panel {
+  grid-area: controls;
+  background: transparent;
+  border-top: 0;
+}
+
+body.analysis-mode .outerMenu,
+body.analysis-mode #commentMenu {
+  display: none;
+}
+
+#analysisPanel {
+  grid-area: panel;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: #15151a;
+  border-left: 1px solid #2a2a30;
+  color: #eee;
+  font-family: system-ui, sans-serif;
+  overflow-y: auto;
+}
+
+.analysis-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid #2a2a30;
+}
+
+.analysis-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.analysis-content {
+  padding: 14px;
+}
+
+/* Floating camera-toggle, lower-right of the table pane (only active control). */
+.analysis-camera-btn {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid rgb(255 255 255 / 25%);
+  background: rgb(0 30 60 / 75%);
+  color: antiquewhite;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.analysis-camera-btn:hover {
+  background: rgb(0 60 110 / 85%);
+}
+
+/* Stack table / controls / analysis vertically on portrait/narrow screens. */
+@media (orientation: portrait) {
+  body.analysis-mode {
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr auto 45%;
+    grid-template-areas:
+      "table"
+      "controls"
+      "panel";
+  }
+  #analysisPanel {
+    border-left: 0;
+    border-top: 1px solid #2a2a30;
+  }
+}
+
+/* --- analysis results (ported from the former standalone page) --- */
+#analysisPanel h2 {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #9aa0a6;
+  margin: 16px 0 8px;
+}
+
+.analysis-status {
+  color: #9aa0a6;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.analysis-results .legend {
+  display: flex;
+  gap: 14px;
+  font-size: 13px;
+  color: #9aa0a6;
+  margin: 8px 0;
+}
+
+.analysis-results .legend span::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.analysis-results .legend .ok::before {
+  background: #2ec27e;
+}
+
+.analysis-results .legend .fail::before {
+  background: #e0556b;
+}
+
+.analysis-results .legend .original::before {
+  background: transparent;
+  border: 2px solid #fff;
+}
+
+.plot-wrap {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.analysis-content canvas {
+  background: #0d0d10;
+  border-radius: 6px;
+  display: block;
+  max-width: 100%;
+  height: auto;
+  image-rendering: auto;
+}
+
+.bars {
+  margin-top: 14px;
+}
+
+.bar-row {
+  margin: 16px 0;
+}
+
+.bar-label {
+  font-size: 14px;
+  color: #9aa0a6;
+  margin-bottom: 2px;
+}
+
+/* Header row of a 1-D bar: the on-demand "Show" button left of the label. */
+.bar-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.bar-head .bar-label {
+  margin-bottom: 0;
+}
+
+.bar-show {
+  flex: none;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #fff;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #2f7d6e;
+}
+
+.bar-show:hover:not(:disabled) {
+  background: #3a988e;
+}
+
+.bar-show:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* The bar whose 1-D sweep is currently shown (blue = the live/active accent). */
+.bar-row.active .bar-show {
+  background: #4aa3ff;
+}
+
+.bar-row.active .bar-label {
+  color: #cfd3d8;
+}
+
+.bar-shiftrow {
+  position: relative;
+  height: 16px;
+  font-size: 13px;
+  color: #9aa0a6;
+  margin-bottom: 2px;
+}
+
+.bar-shift-label {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+
+.bar-shift-label--left {
+  padding-right: calc(6px + 3ch);
+}
+
+.bar-shift-label--right {
+  padding-left: calc(6px + 3ch);
+}
+
+/* Row containing the track+ruler column flanked by the two step buttons.
+   flex-start (not center) — .bar-trackcol holds the track AND the taller
+   ruler below it, so centering against the whole column would push the
+   buttons below the track; flex-start aligns them with the track itself,
+   the column's first/top child. */
+.bar-trackrow {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.bar-trackcol {
+  flex: 1;
+  min-width: 0;
+}
+
+.bar-track {
+  position: relative;
+  display: flex;
+  height: 16px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #0d0d10;
+}
+
+.bar-cell {
+  flex: 1;
+}
+
+/* A small colored patch under the marker, showing the live point's result
+   (red/green, matching the scatter dot colors) even when the bar hasn't been
+   Shown — also doubles as a visual cue for the size of one grid step.
+   Positioned/sized by positionMarkers; colored via .scored/.missed by
+   updateBarLiveCellFill, always on, independent of which bar is "active". */
+.bar-live-cell {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  background: transparent;
+  pointer-events: none;
+}
+
+.bar-live-cell.scored {
+  background: #2ec27e;
+}
+
+.bar-live-cell.missed {
+  background: #e0556b;
+}
+
+/* The bowtie marker = the current shot's value on that bar (two triangles
+   meeting at the marker's position). Always plain white — coloring it
+   directly used to camouflage it against an identically-colored cell once
+   the bar was Shown (the live-cell patch above now carries the color
+   instead). Positioned by AnalysisPanel via left %. */
+.bar-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  margin-left: -6px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.bar-marker::before,
+.bar-marker::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.bar-marker::before {
+  left: 0;
+  border-width: 8px 6px 8px 0;
+  border-color: transparent #fff transparent transparent;
+}
+
+.bar-marker::after {
+  right: 0;
+  border-width: 8px 0 8px 6px;
+  border-color: transparent transparent transparent #fff;
+}
+
+/* Step buttons: move the marker exactly one grid step left/right. Solid CSS
+   triangles (same construction as the marker) so the two read as one visual
+   language; muted grey by default, white on hover, dimmed once the studied
+   window's edge is reached (no further step possible). */
+.bar-step {
+  flex: none;
+  width: 14px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+}
+
+.bar-step::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.bar-step--left::before {
+  right: 1px;
+  border-width: 6px 7px 6px 0;
+  border-color: transparent #cdd1d6 transparent transparent;
+}
+
+.bar-step--right::before {
+  left: 1px;
+  border-width: 6px 0 6px 7px;
+  border-color: transparent transparent transparent #cdd1d6;
+}
+
+.bar-step--left:hover:not(:disabled)::before {
+  border-right-color: #fff;
+}
+
+.bar-step--right:hover:not(:disabled)::before {
+  border-left-color: #fff;
+}
+
+.bar-step:disabled {
+  cursor: default;
+}
+
+.bar-step--left:disabled::before {
+  border-right-color: #3a3a40;
+}
+
+.bar-step--right:disabled::before {
+  border-left-color: #3a3a40;
+}
+
+/* The single white ring = the current shot's spin on the scatter. Positioned by
+   AnalysisPanel via left/top %. */
+.spin-marker {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 3;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 50%);
+}
+
+/* Filled with the live point's simulated result (green/red, matching the
+   scatter dot colors) once known; hollow/white while pending or while a 1-D
+   bar is the active display. */
+.spin-marker.scored {
+  background: #2ec27e;
+}
+
+.spin-marker.missed {
+  background: #e0556b;
+}
+
+.bar-ruler {
+  position: relative;
+  height: 22px;
+  margin-top: 2px;
+}
+
+.bar-tick {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+}
+
+.bar-tick--start {
+  align-items: flex-start;
+  transform: none;
+}
+
+.bar-tick--end {
+  align-items: flex-end;
+  transform: translateX(-100%);
+}
+
+.bar-tick-mark {
+  width: 1px;
+  height: 4px;
+  background: #51515a;
+}
+
+.bar-tick-label {
+  font-size: 12px;
+  color: #9aa0a6;
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+.analysis-results .error {
+  color: #e0556b;
+  font-size: 15px;
+}
+
+.expand-range {
+  position: absolute;
+  left: 10px;
+  bottom: 14px;
+  width: auto;
+  padding: 8px 14px;
+  font-size: 14px;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #2f7d6e;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 40%);
+}
+
+.expand-range:hover:not(:disabled) {
+  background: #3a988e;
+}
+
+.analysis-toolbar {
+  display: none;
+}
+
+.analysis-toolbar button.secondary {
+  background: #34343c;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#analysisPanel button:disabled {
+  opacity: 0.5;
   cursor: default;
 }

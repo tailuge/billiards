@@ -33,7 +33,8 @@ export class Menu {
           const params = new URLSearchParams()
           params.set("ruletype", this.container.rules.rulename)
           params.set("practice", "")
-          params.set("drill", "")
+          // Open the full-page shot analysis view directly (was drill mode).
+          params.set("analysis", "")
           params.set("init", replay.currentInit)
           params.set("initShot", replay.currentShot)
           window.open(`${base}?${params.toString()}`, "_blank")

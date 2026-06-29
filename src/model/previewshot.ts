@@ -1,8 +1,16 @@
 import { Table } from "./table"
 import { State } from "./ball"
+import { Outcome } from "./outcome"
 import { cueStrike } from "./physics/physics"
 
-export function previewShot(table: Table, dt: number): boolean {
+/**
+ * Simulate the cue's current aim on the main thread, leaving the trajectory
+ * traces visible while restoring the balls to their starting positions. Returns
+ * the shot's outcomes (a snapshot, since `table.outcome` is restored afterwards)
+ * on success, or null if the physics threw. Callers that only need a success
+ * flag can treat the return value as truthy/falsy.
+ */
+export function previewShot(table: Table, dt: number): Outcome[] | null {
   const saved = table.balls.map((b) => ({
     pos: b.pos.clone(),
     vel: b.vel.clone(),
@@ -12,7 +20,7 @@ export function previewShot(table: Table, dt: number): boolean {
   }))
   const savedOutcome = table.outcome
 
-  let success = false
+  let captured: Outcome[] | null = null
   try {
     table.outcome = []
     table.balls.forEach((b) => {
@@ -35,7 +43,7 @@ export function previewShot(table: Table, dt: number): boolean {
       table.advance(dt)
       table.updateBallMesh(dt)
     }
-    success = true
+    captured = table.outcome.slice()
   } catch {
     // physics error (e.g. depth exceeded for close-together balls) — restore below
   } finally {
@@ -49,12 +57,12 @@ export function previewShot(table: Table, dt: number): boolean {
     })
     table.outcome = savedOutcome
     table.proximityIndicator.hide()
-    if (!success) {
+    if (!captured) {
       table.balls.forEach((b) => {
         b.ballmesh.trace.line.visible = false
         b.ballmesh.trace.reset()
       })
     }
   }
-  return success
+  return captured
 }

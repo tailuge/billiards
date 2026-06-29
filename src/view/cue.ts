@@ -23,6 +23,16 @@ export class Cue {
   hittingAnimation = false
   aimInputs: AimInputs
   aim: AimEvent = new AimEvent()
+  /** Analysis-mode-only limits (set by AnalysisPanel) clamping how far the
+   * table view can push aim angle / elevation, matching what the analysis
+   * panel itself displays as the "aim shift" / "elevation" tolerance window.
+   * null outside analysis mode (no restriction). */
+  aimLimits: {
+    angleMin: number
+    angleMax: number
+    elevationMin: number
+    elevationMax: number
+  } | null = null
 
   length = TableGeometry.tableX * 1
 
@@ -53,6 +63,12 @@ export class Cue {
       return
     }
     this.aim.angle = Math.fround(this.aim.angle + angle)
+    if (this.aimLimits) {
+      this.aim.angle = Math.min(
+        this.aimLimits.angleMax,
+        Math.max(this.aimLimits.angleMin, this.aim.angle)
+      )
+    }
     if (this.mesh) this.mesh.rotation.z = this.aim.angle
     if (this.helperMesh) this.helperMesh.rotation.z = this.aim.angle
     if (this.shadowMesh) this.shadowMesh.rotation.z = this.aim.angle
@@ -117,6 +133,21 @@ export class Cue {
     }
     this.aim.offset.copy(roundVec(offset))
     this.avoidCueTouchingOtherBall(table)
+    this.updateAimInput()
+  }
+
+  setElevation(value: number) {
+    if (!this.aimInputs || this.aimInputs.isDisabled()) {
+      return
+    }
+    let elevation = value
+    if (this.aimLimits) {
+      elevation = Math.min(
+        this.aimLimits.elevationMax,
+        Math.max(this.aimLimits.elevationMin, elevation)
+      )
+    }
+    this.aim.elevation = elevation
     this.updateAimInput()
   }
 
