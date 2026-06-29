@@ -215,10 +215,6 @@
               second object ball.
             </p>
             <button class="play-btn" data-q="1">Play Shot</button>
-            <div id="outcomeDisplay" style="margin-top: 1rem; padding: 1rem; background: #f9f9f9; border-radius: 4px; display: none;">
-              <strong>Outcome:</strong>
-              <ul id="outcomeList" style="margin-top: 0.5rem; font-family: monospace; font-size: 0.9rem;"></ul>
-            </div>
           </div>
           <div class="question-diagram">
             <svg
@@ -278,72 +274,8 @@
     </div>
 
     <script type="module">
-      import { initDiagrams } from "../diagrams/svg.js";
-      import { parseShots, parseJsonShots } from "../diagrams/dsl.js";
-
-      initDiagrams();
-
-      const overlay = document.getElementById("gameOverlay");
-      const iframe = document.getElementById("gameIframe");
-      const closeBtn = document.getElementById("closeGame");
-      const outcomeDisplay = document.getElementById("outcomeDisplay");
-      const outcomeList = document.getElementById("outcomeList");
-      let currentQuestionId = null;
-
-      document.querySelectorAll(".play-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const qBlock = btn.closest(".question-block");
-          currentQuestionId = btn.getAttribute("data-q");
-          const svg = qBlock.querySelector(".billiards-table");
-
-          let configs = [];
-          if (svg.dataset.jsonShots) {
-            configs = parseJsonShots(svg.dataset.jsonShots);
-          } else if (svg.dataset.shots) {
-            configs = parseShots(svg.dataset.shots);
-          }
-
-          if (configs.length > 0) {
-            const config = configs[0];
-            const init = config.balls.flatMap((b) => [b.pos.x, b.pos.y]);
-            const initShot = {
-              ...config.shot,
-              i: config.shot.cueBallId,
-              pos: config.balls[config.shot.cueBallId].pos,
-            };
-
-            const url = `../index.html?ruletype=threecushion&exam=true&practice=true&init=${encodeURIComponent(JSON.stringify(init))}&initShot=${encodeURIComponent(JSON.stringify(initShot))}`;
-            iframe.src = url;
-            overlay.classList.add("active");
-            outcomeDisplay.style.display = "none";
-            outcomeList.innerHTML = "";
-          }
-        });
-      });
-
-      window.addEventListener("message", (event) => {
-        if (event.data.type === "stationary" && currentQuestionId) {
-          const outcomes = event.data.outcome;
-          outcomeDisplay.style.display = "block";
-          outcomeList.innerHTML = "";
-          outcomes.forEach((o) => {
-            const li = document.createElement("li");
-            li.textContent = `${o.type}: ${o.ballA?.id}${o.ballB ? " -> " + o.ballB.id : ""} (${o.incidentSpeed.toFixed(2)})`;
-            outcomeList.appendChild(li);
-          });
-
-          // Close the iframe after a short delay so the user can see the final state
-          setTimeout(() => {
-            overlay.classList.remove("active");
-            iframe.src = "";
-          }, 1500);
-        }
-      });
-
-      closeBtn.addEventListener("click", () => {
-        overlay.classList.remove("active");
-        iframe.src = "";
-      });
+      import { initExam } from "./exam.js";
+      initExam();
     </script>
   </body>
 </html>
