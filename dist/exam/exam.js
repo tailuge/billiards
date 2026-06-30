@@ -266,6 +266,43 @@ export function initExam() {
     })
   })
 
+  // Edit button for localhost — opens diagram export page
+  if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+    blocks.forEach((block) => {
+      const playBtn = block.querySelector(".play-btn")
+      if (!playBtn) return
+      const editBtn = document.createElement("button")
+      editBtn.textContent = "Edit"
+      editBtn.className = "edit-btn"
+      editBtn.style.cssText = "margin-left:0.5rem;cursor:pointer"
+      playBtn.parentNode.insertBefore(editBtn, playBtn.nextSibling)
+      editBtn.addEventListener("click", () => {
+        const svg = block.querySelector(".billiards-table")
+        if (!svg) return
+        let configs = []
+        if (svg.dataset.jsonShots) {
+          configs = parseJsonShots(svg.dataset.jsonShots)
+        } else if (svg.dataset.shots) {
+          configs = parseShots(svg.dataset.shots)
+        }
+        if (configs.length === 0) return
+        const cfg = configs[0]
+        const init = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])
+        const shot = {
+          angle: cfg.shot.angle,
+          power: cfg.shot.power,
+          offset: cfg.shot.offset,
+        }
+        const p = new URLSearchParams()
+        p.set("ruletype", cfg.ruleType || "threecushion")
+        p.set("cushionModel", cfg.cushionModel || "mathavan")
+        p.set("init", JSON.stringify(init))
+        p.set("initShot", JSON.stringify(shot))
+        window.open(`../diagrams/export.html?${p}`, "_blank")
+      })
+    })
+  }
+
   window.addEventListener("message", (event) => {
     if (event.data.type === "stationary" && currentQuestionId) {
       const outcomes = event.data.outcome
