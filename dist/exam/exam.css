@@ -35,11 +35,26 @@ header h1 a:hover {
   opacity: 0.7;
 }
 
+.assessment-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0.5rem;
+  z-index: 100;
+  background: #fff;
+  padding: 0.75rem 1rem;
+  margin: 0 auto 0.75rem;
+  max-width: 800px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+}
+
 .summary {
   max-width: 800px;
   margin: 0 auto 1rem;
   background: #fff;
-  padding: 0.5rem;
+  padding: 0.75rem 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 }
@@ -51,13 +66,6 @@ body > h2 {
 }
 
 .summary h2 {
-  margin-bottom: 0.5rem;
-}
-
-.assessment-line {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   margin-bottom: 0.5rem;
 }
 
