@@ -10,7 +10,12 @@ export class ReplayEncoder {
   }
 
   static crush(data: string): string {
-    return JSONCrush.crush(data)
+    console.time("ReplayEncoder.crush")
+    try {
+      return JSONCrush.crush(data)
+    } finally {
+      console.timeEnd("ReplayEncoder.crush")
+    }
   }
 
   static createState(

@@ -305,10 +305,30 @@ export class BrowserContainer {
   }
 
   parse(s) {
+    console.time("BrowserContainer.parse")
     try {
-      return JSON.parse(s)
+      try {
+        console.time("BrowserContainer.parse.json")
+        return JSON.parse(s)
+      } finally {
+        console.timeEnd("BrowserContainer.parse.json")
+      }
     } catch {
-      return JSON.parse(JSONCrush.uncrush(s))
+      try {
+        console.time("BrowserContainer.parse.uncrush")
+        console.time("BrowserContainer.uncrush")
+        const uncrushed = JSONCrush.uncrush(s)
+        console.timeEnd("BrowserContainer.uncrush")
+
+        console.time("BrowserContainer.parse.jsonAfterUncrush")
+        const result = JSON.parse(uncrushed)
+        console.timeEnd("BrowserContainer.parse.jsonAfterUncrush")
+        return result
+      } finally {
+        console.timeEnd("BrowserContainer.parse.uncrush")
+      }
+    } finally {
+      console.timeEnd("BrowserContainer.parse")
     }
   }
 
