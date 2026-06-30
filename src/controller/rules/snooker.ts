@@ -188,7 +188,7 @@ export class Snooker implements Rules {
   }
 
   rack(): Ball[] {
-    return Rack.snooker()
+    return Rack.fromInitParam(Rack.snooker())
   }
 
   nextCandidateBall(_p1type?: number): Ball | undefined {

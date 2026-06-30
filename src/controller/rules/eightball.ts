@@ -58,7 +58,7 @@ export class EightBall implements Rules {
   }
 
   rack(): Ball[] {
-    return Rack.eightBall()
+    return Rack.fromInitParam(Rack.eightBall())
   }
 
   secondToPlay(): void {

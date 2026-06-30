@@ -3,7 +3,8 @@ import { parseShots, parseJsonShots, maxPower } from "../diagrams/dsl.js"
 
 const R = 0.03275
 
-function proximityPoints(outcomes) {
+function proximityPoints(outcomes, ruleType) {
+  if (ruleType !== "threecushion") return 0
   const prox = outcomes.filter(
     (o) => o.type === "Proximity" && o.ballA && o.ballA.id === 0
   )
@@ -24,8 +25,10 @@ function potPoints(outcomes, ruleType, noPot) {
 }
 
 function maxPoints(hasEllipse, ruleType, noPot) {
-  const potBonus = (ruleType !== "threecushion" && !noPot) ? 3 : 0
-  return 3 + (hasEllipse ? 1 : 0) + potBonus
+  if (ruleType === "threecushion") {
+    return 3 + (hasEllipse ? 1 : 0)
+  }
+  return (hasEllipse ? 1 : 0) + (noPot ? 0 : 3)
 }
 
 const STORAGE_KEY_PREFIX = "exam_results_"
@@ -297,7 +300,7 @@ export function initExam() {
 
       // Score this attempt
       const pts =
-        proximityPoints(outcomes) +
+        proximityPoints(outcomes, currentRuleType) +
         (ellipseHit ? 1 : 0) +
         potPoints(outcomes, currentRuleType, currentNoPot)
       const max = maxPoints(currentEllipseCheck !== null, currentRuleType, currentNoPot)
