@@ -1,6 +1,33 @@
 import { initDiagrams } from "../diagrams/svg.js"
 import { parseShots, parseJsonShots, maxPower } from "../diagrams/dsl.js"
 
+const R = 0.03275
+
+function proximityPoints(outcomes) {
+  const prox = outcomes.filter(
+    (o) => o.type === "Proximity" && o.ballA && o.ballA.id === 0
+  )
+  if (prox.length === 0) return 0
+  const d = Math.min(...prox.map((p) => p.incidentSpeed))
+  if (d <= 2 * R) return 3
+  if (d <= 3 * R) return 2
+  if (d <= 4 * R) return 1
+  return 0
+}
+
+function potPoints(outcomes, ruleType, noPot) {
+  if (ruleType === "threecushion" || noPot) return 0
+  return (
+    outcomes.filter((o) => o.type === "Pot" && o.ballA && o.ballA.id !== 0)
+      .length * 3
+  )
+}
+
+function maxPoints(hasEllipse, ruleType, noPot) {
+  const potBonus = (ruleType !== "threecushion" && !noPot) ? 3 : 0
+  return 3 + (hasEllipse ? 1 : 0) + potBonus
+}
+
 const STORAGE_KEY_PREFIX = "exam_results_"
 const storageKey = STORAGE_KEY_PREFIX + window.location.pathname
 
@@ -18,26 +45,32 @@ function calculateAssessment(results) {
   const totalQuestions = blocks.length
   if (totalQuestions === 0) return { label: "Unknown", className: "unknown" }
 
-  let passedQuestions = 0
-  let totalAttempts = 0
+  let totalPoints = 0
+  let totalMax = 0
+  let attempted = 0
   blocks.forEach((_, index) => {
     const qId = String(index + 1)
     const r = results[qId]
     if (r) {
-      totalAttempts += r.attempted
-      if (r.success > 0) {
-        passedQuestions++
-      }
+      totalPoints += r.totalPoints || 0
+      totalMax += r.totalMax || 0
+      attempted += r.attempted || 0
     }
   })
 
-  if (totalAttempts === 0) return { label: "Unknown", className: "unknown" }
+  if (attempted === 0 || totalMax === 0) return { label: "Unknown", className: "unknown" }
 
-  const pct = passedQuestions / totalQuestions
-  if (pct < 0.25) return { label: "Beginner", className: "beginner" }
-  if (pct < 0.5) return { label: "Good", className: "good" }
-  if (pct < 0.75) return { label: "Strong", className: "strong" }
-  return { label: "Excellent", className: "excellent" }
+  const pct = totalPoints / totalMax
+  if (pct < 0.1) return { label: "Beginner", className: "beginner" }
+  if (pct < 0.2) return { label: "Novice", className: "novice" }
+  if (pct < 0.3) return { label: "Learner", className: "learner" }
+  if (pct < 0.4) return { label: "Developing", className: "developing" }
+  if (pct < 0.5) return { label: "Intermediate", className: "intermediate" }
+  if (pct < 0.6) return { label: "Competent", className: "competent" }
+  if (pct < 0.7) return { label: "Proficient", className: "proficient" }
+  if (pct < 0.8) return { label: "Advanced", className: "advanced" }
+  if (pct < 0.9) return { label: "Expert", className: "expert" }
+  return { label: "Master", className: "master" }
 }
 
 function updateAssessment() {
@@ -72,22 +105,22 @@ export function updateUI() {
     const listItems = shotList.querySelectorAll("li")
     listItems.forEach((li, index) => {
       const qId = String(index + 1)
-      const result = results[qId] || { success: 0, attempted: 0 }
+      const result = results[qId] || { totalPoints: 0, totalMax: 0, attempted: 0 }
 
       let statusClass = "status-unknown"
       let statusText = "Unknown"
       let icon = "❓"
 
-      if (result.attempted > 0) {
-        if (result.success > 0) {
+      if (result.attempted > 0 && result.totalMax > 0) {
+        const cumPct = Math.round((result.totalPoints / result.totalMax) * 100)
+        if (cumPct >= 50) {
           statusClass = "status-pass"
-          statusText = "Pass"
           icon = "✅"
         } else {
           statusClass = "status-fail"
-          statusText = "Fail"
           icon = "❌"
         }
+        statusText = `${cumPct}%, ${result.attempted} attempt${result.attempted > 1 ? "s" : ""}`
       }
 
       const statusSpan = li.querySelector("span")
@@ -104,11 +137,14 @@ export function updateUI() {
     const qBlock = btn.closest(".question-block")
     const index = blocks.indexOf(qBlock)
     const qId = String(index + 1)
-    const result = results[qId] || { success: 0, attempted: 0 }
+    const result = results[qId] || { totalPoints: 0, totalMax: 0, attempted: 0 }
 
     let icon = "❓"
-    if (result.attempted > 0) {
-      icon = result.success > 0 ? "✅" : "❌"
+    let statText = ""
+    if (result.attempted > 0 && result.totalMax > 0) {
+      const cumPct = Math.round((result.totalPoints / result.totalMax) * 100)
+      icon = cumPct >= 50 ? "✅" : "❌"
+      statText = `${cumPct}%, ${result.attempted} attempt${result.attempted > 1 ? "s" : ""}`
     }
 
     let statsSpan = btn.nextElementSibling
@@ -120,14 +156,16 @@ export function updateUI() {
       btn.parentNode.insertBefore(statsSpan, btn.nextSibling)
     }
 
-    const newText = `${icon} ${result.success}/${result.attempted}`
+    const newText = `${icon} ${statText}`
     if (statsSpan.textContent !== newText) {
       const hadContent = statsSpan.textContent !== ""
       statsSpan.textContent = newText
 
       // Set pass/fail class for ring animation color
       statsSpan.classList.remove("q-pass", "q-fail")
-      statsSpan.classList.add(result.success > 0 ? "q-pass" : "q-fail")
+      const pctVal =
+        result.totalMax > 0 ? result.totalPoints / result.totalMax : 0
+      statsSpan.classList.add(pctVal >= 0.5 ? "q-pass" : "q-fail")
 
       if (hadContent) {
         statsSpan.classList.remove("updated")
@@ -145,6 +183,8 @@ export function updateUI() {
 
 let currentQuestionId = null
 let currentEllipseCheck = null
+let currentRuleType = null
+let currentNoPot = false
 
 export function initExam() {
   // Read ruleType from the first SVG's data-json-shots for correct table rendering
@@ -175,6 +215,8 @@ export function initExam() {
       const qBlock = btn.closest(".question-block")
       const index = blocks.indexOf(qBlock)
       currentQuestionId = String(index + 1)
+      currentRuleType = null
+      currentNoPot = false
       const svg = qBlock.querySelector(".billiards-table")
 
       const ellipse = svg.querySelector("ellipse[data-id]")
@@ -187,6 +229,7 @@ export function initExam() {
             ry: parseFloat(ellipse.getAttribute("ry")),
           }
         : null
+      currentNoPot = svg.dataset.nopot !== undefined
 
       let configs = []
       if (svg.dataset.jsonShots) {
@@ -211,6 +254,7 @@ export function initExam() {
         }
 
         const ruleType = config.ruleType || "threecushion"
+        currentRuleType = ruleType
 
         const url = `../index.html?ruletype=${ruleType}&exam=true&practice=true&init=${encodeURIComponent(JSON.stringify(init))}&initShot=${encodeURIComponent(JSON.stringify(initShot))}`
         iframe.src = url
@@ -251,31 +295,26 @@ export function initExam() {
         }
       }
 
-      const outcomesPass = outcomes.some((o) => {
-        const pass =
-          o.type === "Proximity" ||
-          (o.type === "Pot" && o.ballA && o.ballA.id !== 0)
-        if (pass) {
-          console.log("outcome pass", {
-            type: o.type,
-            ballA: o.ballA,
-            ballB: o.ballB,
-          })
-        }
-        return pass
-      })
-
-      const isSuccess = ellipseHit || outcomesPass
+      // Score this attempt
+      const pts =
+        proximityPoints(outcomes) +
+        (ellipseHit ? 1 : 0) +
+        potPoints(outcomes, currentRuleType, currentNoPot)
+      const max = maxPoints(currentEllipseCheck !== null, currentRuleType, currentNoPot)
+      const pct = max > 0 ? Math.round((pts / max) * 100) : 0
+      console.log("exam score", { pts, max, pct, outcomes })
 
       // Update storage
       const results = getResults()
       if (!results[currentQuestionId]) {
-        results[currentQuestionId] = { success: 0, attempted: 0 }
+        results[currentQuestionId] = { totalPoints: 0, totalMax: 0, attempted: 0 }
       }
       results[currentQuestionId].attempted++
-      if (isSuccess) {
-        results[currentQuestionId].success++
-      }
+      results[currentQuestionId].totalPoints += pts
+      results[currentQuestionId].totalMax += max
+      results[currentQuestionId].lastPct = pct
+      results[currentQuestionId].lastPts = pts
+      results[currentQuestionId].lastMax = max
       saveResults(results)
 
       // Close iframe immediately
@@ -287,6 +326,8 @@ export function initExam() {
 
       currentQuestionId = null
       currentEllipseCheck = null
+      currentRuleType = null
+      currentNoPot = false
     }
   })
 
@@ -296,6 +337,8 @@ export function initExam() {
       iframe.src = ""
       currentQuestionId = null
       currentEllipseCheck = null
+      currentRuleType = null
+      currentNoPot = false
     })
   }
 

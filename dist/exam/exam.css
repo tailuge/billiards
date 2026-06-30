@@ -54,21 +54,16 @@ header {
   color: #888;
 }
 
-.assessment.beginner {
-  color: #ef4444;
-}
-
-.assessment.good {
-  color: #f59e0b;
-}
-
-.assessment.strong {
-  color: #3b82f6;
-}
-
-.assessment.excellent {
-  color: #22c55e;
-}
+.assessment.beginner { color: #ef4444; }
+.assessment.novice { color: #f97316; }
+.assessment.learner { color: #f59e0b; }
+.assessment.developing { color: #eab308; }
+.assessment.intermediate { color: #84cc16; }
+.assessment.competent { color: #22c55e; }
+.assessment.proficient { color: #10b981; }
+.assessment.advanced { color: #14b8a6; }
+.assessment.expert { color: #06b6d4; }
+.assessment.master { color: #8b5cf6; }
 
 #shotList {
   list-style: none;
