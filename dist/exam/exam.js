@@ -234,7 +234,7 @@ export function initExam() {
     link.textContent = "\uD83D\uDD0D"
     link.target = "_blank"
     link.rel = "noopener"
-    link.style.cssText = "position:absolute;bottom:4px;right:4px;font-size:14px;cursor:pointer;text-decoration:none;z-index:10;opacity:0.6"
+    link.style.cssText = "position:absolute;bottom:20px;right:20px;font-size:16px;cursor:pointer;text-decoration:none;z-index:10;opacity:0.6"
     link.title = "Open in analysis view"
 
     const init = JSON.stringify(configs[0].balls.flatMap((b) => [b.pos.x, b.pos.y]))
@@ -253,6 +253,54 @@ export function initExam() {
     params.set("initShot", initShot)
     link.href = `https://velikodimov.github.io/billiards/dist/index.html?${params}`
     parent.appendChild(link)
+
+    const cfg = configs[0]
+    const ballsPos = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])
+
+    const editBtn = document.createElement("button")
+    editBtn.textContent = "\u270F\uFE0F"
+    editBtn.className = "edit-btn"
+    editBtn.style.cssText = "position:absolute;bottom:20px;right:56px;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;background:none;border:none;padding:0"
+    editBtn.title = "Open in diagram editor"
+    editBtn.addEventListener("click", () => {
+      const shot = {
+        angle: cfg.shot.angle,
+        power: cfg.shot.power,
+        offset: cfg.shot.offset,
+      }
+      const p = new URLSearchParams()
+      p.set("ruletype", cfg.ruleType || "threecushion")
+      p.set("cushionModel", cfg.cushionModel || "mathavan")
+      p.set("init", JSON.stringify(ballsPos))
+      p.set("initShot", JSON.stringify(shot))
+      window.open(`../diagrams/export.html?${p}`, "_blank")
+    })
+    parent.appendChild(editBtn)
+
+    const setupBtn = document.createElement("button")
+    setupBtn.textContent = "\uD83D\uDD27"
+    setupBtn.className = "setup-btn"
+    setupBtn.style.cssText = "position:absolute;bottom:20px;right:92px;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;background:none;border:none;padding:0"
+    setupBtn.title = "Open in three cushion research view"
+    setupBtn.addEventListener("click", () => {
+      const cueBall = cfg.balls[cfg.shot.cueBallId]
+      const state = {
+        diagram: true,
+        init: ballsPos,
+        shots: [{
+          type: "AIM",
+          angle: cfg.shot.angle,
+          power: cfg.shot.power,
+          offset: cfg.shot.offset,
+          pos: { x: cueBall.pos.x, y: cueBall.pos.y, z: 0 },
+          i: cfg.shot.cueBallId,
+        }],
+      }
+      const p = new URLSearchParams()
+      p.set("s", JSON.stringify(state))
+      window.open(`../diagrams/three.html?${p}`, "_blank")
+    })
+    parent.appendChild(setupBtn)
   })
 
   const overlay = document.getElementById("gameOverlay")
@@ -320,43 +368,6 @@ export function initExam() {
       }
     })
   })
-
-  // Edit button for localhost — opens diagram export page
-  if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-    blocks.forEach((block) => {
-      const playBtn = block.querySelector(".play-btn")
-      if (!playBtn) return
-      const editBtn = document.createElement("button")
-      editBtn.textContent = "Edit"
-      editBtn.className = "edit-btn"
-      editBtn.style.cssText = "margin-left:0.5rem;cursor:pointer"
-      playBtn.parentNode.insertBefore(editBtn, playBtn.nextSibling)
-      editBtn.addEventListener("click", () => {
-        const svg = block.querySelector(".billiards-table")
-        if (!svg) return
-        let configs = []
-        if (svg.dataset.jsonShots) {
-          configs = parseJsonShots(svg.dataset.jsonShots)
-        } else if (svg.dataset.shots) {
-          configs = parseShots(svg.dataset.shots)
-        }
-        if (configs.length === 0) return
-        const cfg = configs[0]
-        const init = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])
-        const shot = {
-          angle: cfg.shot.angle,
-          power: cfg.shot.power,
-          offset: cfg.shot.offset,
-        }
-        const p = new URLSearchParams()
-        p.set("ruletype", cfg.ruleType || "threecushion")
-        p.set("cushionModel", cfg.cushionModel || "mathavan")
-        p.set("init", JSON.stringify(init))
-        p.set("initShot", JSON.stringify(shot))
-        window.open(`../diagrams/export.html?${p}`, "_blank")
-      })
-    })
-  }
 
   window.addEventListener("message", (event) => {
     if (event.data.type === "stationary" && currentQuestionId) {
