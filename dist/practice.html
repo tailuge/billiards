@@ -230,12 +230,16 @@
       .controls {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        width: 100%;
+        gap: 4px;
+        width: 95%;
         max-width: 820px;
         flex-shrink: 0;
         justify-content: center;
-        margin-top: var(--controls-gap);
+        position: fixed;
+        bottom: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
       }
 
       button {
@@ -261,8 +265,8 @@
         background: #1e1e1e;
         color: #aaa;
         border: 1px solid #333;
-        padding: 7px 13px;
-        font-size: 11px;
+        padding: 4px 8px;
+        font-size: 10px;
         letter-spacing: 0.03em;
         box-shadow: 0 2px 6px rgb(0 0 0 / 40%);
       }
@@ -276,8 +280,8 @@
       .btn-play {
         background: linear-gradient(135deg, #10b981, #059669);
         color: #fff;
-        padding: 8px 22px;
-        font-size: 14px;
+        padding: 6px 14px;
+        font-size: 12px;
         box-shadow: 0 4px 12px rgb(16 185 129 / 35%);
       }
 
@@ -289,13 +293,13 @@
         background: #1e1e1e;
         color: #aaa;
         border: 1px solid #333;
-        padding: 7px 13px;
-        font-size: 11px;
+        padding: 4px 8px;
+        font-size: 10px;
         letter-spacing: 0.03em;
         box-shadow: 0 2px 6px rgb(0 0 0 / 40%);
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
       }
 
       .btn-secondary:hover {
@@ -305,13 +309,9 @@
       }
 
       .btn-secondary svg {
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
         stroke-width: 2.5;
-      }
-
-      #blogBtn {
-        margin-left: auto;
       }
     </style>
   </head>
