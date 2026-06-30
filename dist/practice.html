@@ -395,9 +395,35 @@
         "#fbbf24",
       ]
 
+      const SNOOKER_COLORS = [
+        "#ffffff",
+        "#16a34a",
+        "#ffd700",
+        "#8B4513",
+        "#2563eb",
+        "#ff69b4",
+        "#111111",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+        "#ef4444",
+      ]
+
       // ── State ──────────────────────────────────────────────────
       let balls = []
       let dragging = null // { ball, startTableX, startTableY }
+      let isSnooker = false
 
       const wrap = document.getElementById("table-wrap")
       const surface = document.getElementById("table-surface")
@@ -487,7 +513,7 @@
           ball.id === 0 ? "Cue ball" : `${ball.id}-ball`
         )
 
-        if (ball.id !== 0) {
+        if (ball.id !== 0 && !isSnooker) {
           const lbl = document.createElement("span")
           lbl.className = "ball-label"
           lbl.textContent = ball.id
@@ -593,24 +619,40 @@
       // ── Init ───────────────────────────────────────────────────
       function init() {
         setAspectRatio()
-        for (let i = 0; i <= 9; i++) {
-          balls.push({ id: i, x: 0, y: 0, color: BALL_COLORS[i], el: null })
-        }
-        balls.forEach(buildBall)
 
         const params = new URLSearchParams(window.location.search)
+        const ruletype = params.get("ruletype")
+        isSnooker = ruletype === "snooker"
+        const colors = isSnooker ? SNOOKER_COLORS : BALL_COLORS
+
         if (params.has("init")) {
           try {
             const data = JSON.parse(params.get("init"))
-            balls.forEach((b, i) => {
-              b.x = -data[i * 2]
-              b.y = data[i * 2 + 1]
-            })
+            const count = data.length / 2
+            for (let i = 0; i < count; i++) {
+              const color = colors[i] || "#888"
+              balls.push({
+                id: i,
+                x: -data[i * 2],
+                y: data[i * 2 + 1],
+                color,
+                el: null,
+              })
+            }
+            balls.forEach(buildBall)
             balls.forEach(positionBall)
           } catch (e) {
+            for (let i = 0; i <= 9; i++) {
+              balls.push({ id: i, x: 0, y: 0, color: colors[i], el: null })
+            }
+            balls.forEach(buildBall)
             applyPreset("corners")
           }
         } else {
+          for (let i = 0; i <= 9; i++) {
+            balls.push({ id: i, x: 0, y: 0, color: colors[i], el: null })
+          }
+          balls.forEach(buildBall)
           applyPreset("corners")
         }
       }
@@ -654,6 +696,10 @@
         ])
         const url = new URL(window.location.origin + window.location.pathname)
         url.searchParams.set("init", JSON.stringify(coords))
+        const ruletype = new URLSearchParams(window.location.search).get(
+          "ruletype"
+        )
+        if (ruletype) url.searchParams.set("ruletype", ruletype)
 
         const shareData = {
           title: "9-Ball Practice Layout",

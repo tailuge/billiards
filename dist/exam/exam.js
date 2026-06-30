@@ -221,8 +221,11 @@ export function initExam() {
     } else if (svg.dataset.shots) {
       configs = parseShots(svg.dataset.shots)
     }
-    const ruleType = configs[0]?.ruleType || "threecushion"
-    if (ruleType !== "threecushion") return
+    if (configs.length === 0) return
+    const cfg = configs[0]
+    const ruleType = cfg.ruleType || "threecushion"
+    const isThreeCushion = ruleType === "threecushion"
+    const ballsPos = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])
 
     const parent = svg.parentElement
     if (!parent) return
@@ -230,32 +233,32 @@ export function initExam() {
     if (prevPos !== "relative" && prevPos !== "absolute" && prevPos !== "fixed") {
       parent.style.position = "relative"
     }
-    const link = document.createElement("a")
-    link.textContent = "\uD83D\uDD0D"
-    link.target = "_blank"
-    link.rel = "noopener"
-    link.style.cssText = "position:absolute;bottom:20px;right:20px;font-size:16px;cursor:pointer;text-decoration:none;z-index:10;opacity:0.6"
-    link.title = "Open in analysis view"
 
-    const init = JSON.stringify(configs[0].balls.flatMap((b) => [b.pos.x, b.pos.y]))
-    const initShot = JSON.stringify({
-      cueBallId: configs[0].shot.cueBallId,
-      angle: configs[0].shot.angle,
-      power: configs[0].shot.power,
-      offset: configs[0].shot.offset,
-      elevation: configs[0].shot.elevation ?? 0,
-    })
-    const params = new URLSearchParams()
-    params.set("ruletype", "threecushion")
-    params.set("practice", "")
-    params.set("analysis", "")
-    params.set("init", init)
-    params.set("initShot", initShot)
-    link.href = `https://velikodimov.github.io/billiards/dist/index.html?${params}`
-    parent.appendChild(link)
+    if (isThreeCushion) {
+      const link = document.createElement("a")
+      link.textContent = "\uD83D\uDD0D"
+      link.target = "_blank"
+      link.rel = "noopener"
+      link.style.cssText = "position:absolute;bottom:20px;right:20px;font-size:16px;cursor:pointer;text-decoration:none;z-index:10;opacity:0.6"
+      link.title = "Open in analysis view"
 
-    const cfg = configs[0]
-    const ballsPos = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])
+      const init = JSON.stringify(cfg.balls.flatMap((b) => [b.pos.x, b.pos.y]))
+      const initShot = JSON.stringify({
+        cueBallId: cfg.shot.cueBallId,
+        angle: cfg.shot.angle,
+        power: cfg.shot.power,
+        offset: cfg.shot.offset,
+        elevation: cfg.shot.elevation ?? 0,
+      })
+      const params = new URLSearchParams()
+      params.set("ruletype", "threecushion")
+      params.set("practice", "")
+      params.set("analysis", "")
+      params.set("init", init)
+      params.set("initShot", initShot)
+      link.href = `https://velikodimov.github.io/billiards/dist/index.html?${params}`
+      parent.appendChild(link)
+    }
 
     const editBtn = document.createElement("button")
     editBtn.textContent = "\u270F\uFE0F"
@@ -281,24 +284,32 @@ export function initExam() {
     setupBtn.textContent = "\uD83D\uDD27"
     setupBtn.className = "setup-btn"
     setupBtn.style.cssText = "position:absolute;bottom:20px;right:92px;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;background:none;border:none;padding:0"
-    setupBtn.title = "Open in three cushion research view"
+    setupBtn.title = isThreeCushion ? "Open in three cushion research view" : "Open in practice layout view"
     setupBtn.addEventListener("click", () => {
-      const cueBall = cfg.balls[cfg.shot.cueBallId]
-      const state = {
-        diagram: true,
-        init: ballsPos,
-        shots: [{
-          type: "AIM",
-          angle: cfg.shot.angle,
-          power: cfg.shot.power,
-          offset: cfg.shot.offset,
-          pos: { x: cueBall.pos.x, y: cueBall.pos.y, z: 0 },
-          i: cfg.shot.cueBallId,
-        }],
+      if (isThreeCushion) {
+        const cueBall = cfg.balls[cfg.shot.cueBallId]
+        const state = {
+          diagram: true,
+          init: ballsPos,
+          shots: [{
+            type: "AIM",
+            angle: cfg.shot.angle,
+            power: cfg.shot.power,
+            offset: cfg.shot.offset,
+            pos: { x: cueBall.pos.x, y: cueBall.pos.y, z: 0 },
+            i: cfg.shot.cueBallId,
+          }],
+        }
+        const p = new URLSearchParams()
+        p.set("s", JSON.stringify(state))
+        window.open(`../diagrams/three.html?${p}`, "_blank")
+      } else {
+        const init = cfg.balls.flatMap((b) => [b.pos.x, -b.pos.y])
+        const p = new URLSearchParams()
+        p.set("ruletype", cfg.ruleType)
+        p.set("init", JSON.stringify(init))
+        window.open(`../practice.html?${p}`, "_blank")
       }
-      const p = new URLSearchParams()
-      p.set("s", JSON.stringify(state))
-      window.open(`../diagrams/three.html?${p}`, "_blank")
     })
     parent.appendChild(setupBtn)
   })
