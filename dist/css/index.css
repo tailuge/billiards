@@ -326,7 +326,7 @@ label {
 
 .lobby-btn,
 #helpClose {
-  padding: 6px 6px;
+  padding: 6px;
   background: rgb(255 255 255 / 10%);
   color: white;
   border: 1px solid rgb(255 255 255 / 20%);
@@ -364,12 +364,10 @@ label {
 }
 
 .drill-panel-right {
-  left: auto;
-  right: 10px;
-  top: auto;
+  inset: auto 10px 49px auto;
+
   /* .outerMenu (hamburger/camera buttons) overflows 39px above #panel's top
      edge, i.e. above #viewP1's bottom edge; clear that plus a small gap. */
-  bottom: 49px;
   transform: none;
 }
 
@@ -427,23 +425,21 @@ label {
    table pane is responsively sized so CameraTop orients it (upright in a
    narrow pane, horizontal in a wide one) automatically.
    =========================================================================== */
+
 /* Grid: table top-left, the game's control panel bottom-left, analysis panel
    down the right. Using grid (not flex) keeps #panel's own internal layout
    (cue-ball spin widget, hit button, power slider) intact — we just hand it the
    bottom-left cell and hide the menu buttons. */
 body.analysis-mode {
   display: grid;
-  grid-template-columns: 72% 28%;
-  grid-template-rows: 1fr auto;
-  grid-template-areas:
-    "table panel"
-    "controls panel";
+  grid-template: "table panel" 1fr "controls panel" auto / 72% 28%;
 }
 
 body.analysis-mode #viewP1 {
   grid-area: table;
   width: auto;
   height: 100%;
+
   /* Let the table cell shrink: the WebGL canvas carries an explicit pixel size,
      which would otherwise become the cell's min-content size and overflow. */
   min-width: 0;
@@ -524,13 +520,9 @@ body.analysis-mode #commentMenu {
 /* Stack table / controls / analysis vertically on portrait/narrow screens. */
 @media (orientation: portrait) {
   body.analysis-mode {
-    grid-template-columns: 100%;
-    grid-template-rows: 1fr auto 45%;
-    grid-template-areas:
-      "table"
-      "controls"
-      "panel";
+    grid-template: "table" 1fr "controls" auto "panel" 45% / 100%;
   }
+
   #analysisPanel {
     border-left: 0;
     border-top: 1px solid #2a2a30;

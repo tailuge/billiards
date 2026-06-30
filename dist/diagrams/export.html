@@ -118,7 +118,7 @@
       }
 
       .snap-indicator {
-        fill: rgba(0, 0, 0, 0.2);
+        fill: rgb(0 0 0 / 20%);
         stroke: none;
       }
 
@@ -151,11 +151,10 @@
         padding: 0.5rem;
         font-size: 0.7rem;
         line-height: 1.3;
-        overflow-x: auto;
+        overflow: auto;
         white-space: pre-wrap;
         word-break: break-all;
         max-height: 40vh;
-        overflow-y: auto;
       }
     </style>
   </head>
@@ -168,6 +167,7 @@
 
     <div id="controls">
       <button id="play-btn" class="btn">Play in game</button>
+      <button id="setup-btn" class="btn">Setup</button>
       <button id="edit-btn" class="btn">Edit</button>
       <button id="png-btn" class="btn">Open PNG</button>
     </div>
@@ -356,6 +356,58 @@
         })
         url.searchParams.set("practice", "true")
         window.open(url.toString(), "_blank")
+      })
+
+      // Setup button — forward to three.html or practice.html
+      document.getElementById("setup-btn")?.addEventListener("click", () => {
+        if (!config) return
+        if (ruletype === "threecushion") {
+          const cueBall = config.balls[config.shot.cueBallId]
+          const ballsPos = config.balls.flatMap((b) => [b.pos.x, b.pos.y])
+          const state = {
+            diagram: true,
+            init: ballsPos,
+            shots: [
+              {
+                type: "AIM",
+                angle: config.shot.angle,
+                power: config.shot.power,
+                offset: config.shot.offset,
+                pos: { x: cueBall.pos.x, y: cueBall.pos.y, z: 0 },
+                i: config.shot.cueBallId,
+              },
+            ],
+          }
+          const url = new URL("three.html", window.location.href)
+          url.searchParams.set("s", JSON.stringify(state))
+          url.searchParams.set("cushionModel", cushionModel)
+          const CONSTANTS = [
+            "R",
+            "m",
+            "e",
+            "mu",
+            "muS",
+            "muC",
+            "rho",
+            "μs",
+            "μw",
+            "ee",
+            "stronge_omega_ratio",
+            "stronge_e_n",
+            "stronge_μ",
+          ]
+          CONSTANTS.forEach((key) => {
+            const val = params.get(key)
+            if (val) url.searchParams.set(key, val)
+          })
+          window.open(url.toString(), "_blank")
+        } else {
+          const init = config.balls.flatMap((b) => [b.pos.x, -b.pos.y])
+          const url = new URL("../practice.html", window.location.href)
+          url.searchParams.set("ruletype", ruletype)
+          url.searchParams.set("init", JSON.stringify(init))
+          window.open(url.toString(), "_blank")
+        }
       })
 
       // Open PNG button — generate PNG from SVG and open in new tab
