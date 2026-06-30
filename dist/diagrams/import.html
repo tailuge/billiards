@@ -12,7 +12,6 @@
         background-color: #121212;
         color: #e0e0e0;
       }
-
       header {
         border-bottom: 1px double #444;
         padding-bottom: 4px;
@@ -23,43 +22,36 @@
         flex-wrap: wrap;
         gap: 10px;
       }
-
       h1 {
         margin: 0;
         font-size: 1.1rem;
         text-transform: lowercase;
         letter-spacing: 0.5px;
       }
-
       .status {
-        color: #0f6;
+        color: #00ff66;
         width: 100%;
         margin-top: 2px;
         font-size: 0.8rem;
       }
-
       .status.error {
-        color: #f33;
+        color: #ff3333;
       }
-
       .container {
         display: grid;
         grid-template-columns: 1fr;
         gap: 8px;
       }
-
-      @media (width >= 900px) {
+      @media (min-width: 900px) {
         .container {
           grid-template-columns: 2fr 1fr;
         }
       }
-
       .panel {
         border: 1px solid #444;
         padding: 6px;
         background: #1a1a1a;
       }
-
       .panel-title {
         font-weight: bold;
         border-bottom: 1px dashed #444;
@@ -68,7 +60,6 @@
         text-transform: uppercase;
         font-size: 0.82rem;
       }
-
       input[type="file"] {
         background: #222;
         border: 1px solid #555;
@@ -78,7 +69,6 @@
         font-family: monospace;
         font-size: 0.8rem;
       }
-
       canvas {
         display: block;
         background: #0d0d0d;
@@ -86,28 +76,24 @@
         width: 100%;
         height: auto;
       }
-
       .table-canvas-container {
         position: relative;
       }
-
       .sparkline-container {
         margin: 8px 0;
         position: relative;
       }
-
       .sparkline-label {
         position: absolute;
         top: 2px;
         left: 5px;
         font-size: 0.7rem;
-        background: rgb(18 18 18 / 85%);
+        background: rgba(18, 18, 18, 0.85);
         padding: 1px 6px;
         pointer-events: none;
         color: #888;
         border: 1px solid #333;
       }
-
       .controls {
         display: flex;
         gap: 10px;
@@ -115,13 +101,11 @@
         align-items: center;
         flex-wrap: wrap;
       }
-
       .control-group {
         display: flex;
         align-items: center;
         gap: 5px;
       }
-
       button {
         background: #2a2a2a;
         border: 1px solid #555;
@@ -133,30 +117,25 @@
         cursor: pointer;
         text-transform: uppercase;
       }
-
       button:hover {
         background: #3a3a3a;
         border-color: #888;
       }
-
       button:active {
         background: #111;
       }
-
       .slider-container {
         display: flex;
         align-items: center;
         gap: 8px;
         margin: 6px 0;
       }
-
       input[type="range"] {
         flex: 1;
         background: #333;
-        accent-color: #0f6;
+        accent-color: #00ff66;
         cursor: pointer;
       }
-
       select {
         background: #222;
         color: #fff;
@@ -165,7 +144,6 @@
         font-family: monospace;
         font-size: 0.8rem;
       }
-
       pre {
         margin: 0;
         font-size: 0.64rem;
@@ -174,9 +152,8 @@
         white-space: pre-wrap;
         word-break: break-all;
       }
-
       .highlight {
-        color: #0f6;
+        color: #00ff66;
       }
     </style>
   </head>
@@ -201,7 +178,7 @@
           <div class="control-group">
             <button id="btn-play-pause">Play</button>
             <button id="btn-reset">Reset</button>
-            <button id="btn-export" style="border-color: #0f6">
+            <button id="btn-export" style="border-color: #00ff66">
               Export
             </button>
           </div>
@@ -219,8 +196,8 @@
 
         <div class="sparkline-container">
           <div class="sparkline-label">
-            <span style="color: #0f6">■ Velocity (m/s)</span> |
-            <span style="color: #f33"
+            <span style="color: #00ff66">■ Velocity (m/s)</span> |
+            <span style="color: #ff3333"
               >■ -Acceleration &times; 10 (m/s&sup2;)</span
             >
             <span style="color: #666; margin-left: 10px">- Click to scrub</span>

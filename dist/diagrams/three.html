@@ -281,7 +281,6 @@
       .collapse-toggle {
         display: none;
       }
-
       .collapse-label {
         display: block;
         padding: 5px;
@@ -292,12 +291,10 @@
         border: 1px solid #444;
         margin: 2px 0;
       }
-
       .collapse-content {
         display: none;
         padding-top: 6px;
       }
-
       .collapse-toggle:checked + .collapse-label + .collapse-content {
         display: block;
       }
@@ -332,7 +329,6 @@
         position: relative;
         z-index: 20;
       }
-
       #objectBallOverlap {
         position: absolute;
         bottom: 0;
@@ -378,12 +374,12 @@
         border: 1px solid #444;
         border-radius: 4px;
         padding: 8px;
-        box-shadow: 0 4px 12px rgb(0 0 0 / 50%);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         max-width: 500px;
       }
 
       #presets-popover::backdrop {
-        background: rgb(0 0 0 / 30%);
+        background: rgba(0, 0, 0, 0.3);
       }
 
       #presets-list {
@@ -569,7 +565,7 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            background: rgb(0 0 0 / 50%);
+            background: rgba(0, 0, 0, 0.5);
             color: white;
             font-family: monospace;
             font-size: 10px;

@@ -380,26 +380,6 @@
           }
           const url = new URL("three.html", window.location.href)
           url.searchParams.set("s", JSON.stringify(state))
-          url.searchParams.set("cushionModel", cushionModel)
-          const CONSTANTS = [
-            "R",
-            "m",
-            "e",
-            "mu",
-            "muS",
-            "muC",
-            "rho",
-            "μs",
-            "μw",
-            "ee",
-            "stronge_omega_ratio",
-            "stronge_e_n",
-            "stronge_μ",
-          ]
-          CONSTANTS.forEach((key) => {
-            const val = params.get(key)
-            if (val) url.searchParams.set(key, val)
-          })
           window.open(url.toString(), "_blank")
         } else {
           const init = config.balls.flatMap((b) => [b.pos.x, -b.pos.y])

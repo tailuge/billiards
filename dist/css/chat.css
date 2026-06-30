@@ -64,7 +64,7 @@
 }
 
 #inputTextDiv::backdrop {
-  background-color: rgb(0 0 0 / 30%);
+  background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(1px);
 }
 

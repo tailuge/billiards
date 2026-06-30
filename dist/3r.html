@@ -23,13 +23,13 @@
       :root {
         --felt-color: #1a5e3a;
         --rail-color: #3d2b1f;
-        --highlight-color: rgb(255 255 255 / 25%);
+        --highlight-color: rgba(255, 255, 255, 0.25);
       }
 
       body {
         background-color: #0d0d0d;
         color: #eee;
-        font-family: Inter, sans-serif;
+        font-family: "Inter", sans-serif;
         overflow: hidden;
         touch-action: none;
         display: flex;
@@ -54,10 +54,10 @@
         background-color: var(--felt-color);
         border-radius: 8px;
         box-shadow:
-          inset 0 8px 12px rgb(0 0 0 / 50%),
-          inset 0 -8px 12px rgb(0 0 0 / 50%),
-          inset 8px 0 12px rgb(0 0 0 / 50%),
-          inset -8px 0 12px rgb(0 0 0 / 50%);
+          inset 0 8px 12px rgba(0, 0, 0, 0.5),
+          inset 0 -8px 12px rgba(0, 0, 0, 0.5),
+          inset 8px 0 12px rgba(0, 0, 0, 0.5),
+          inset -8px 0 12px rgba(0, 0, 0, 0.5);
         z-index: 1;
         border: 14px solid var(--rail-color);
       }
@@ -72,11 +72,10 @@
         justify-content: center;
         align-items: center;
         border-radius: 50%;
-        filter: drop-shadow(2px 2px 3px rgb(0 0 0 / 70%));
-        border: 1px solid rgb(0 0 0 / 20%);
+        filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.7));
+        border: 1px solid rgba(0, 0, 0, 0.2);
         transition: transform 0.1s ease;
       }
-
       .ball:active {
         transform: translate(-50%, -50%) scale(1.1);
         cursor: grabbing;
@@ -85,11 +84,10 @@
       .ball-label {
         font-weight: 900;
         pointer-events: none;
-        color: rgb(0 0 0 / 80%);
+        color: rgba(0, 0, 0, 0.8);
       }
-
       .ball-3 .ball-label {
-        color: rgb(255 255 255 / 90%);
+        color: rgba(255, 255, 255, 0.9);
       }
 
       #aim-svg {
@@ -106,13 +104,11 @@
         stroke-width: 2;
         stroke-dasharray: 6, 4;
       }
-
       .ghost-ball {
         fill: none;
         stroke-width: 1.5;
         stroke-dasharray: 4, 4;
       }
-
       .tangent-line {
         stroke-width: 2;
         stroke-dasharray: 3, 3;
@@ -124,7 +120,6 @@
         opacity: 0;
         transition: opacity 0.3s ease;
       }
-
       .cushion-highlight.active {
         opacity: 1;
       }
@@ -133,7 +128,7 @@
         stroke: #e2e8f0;
         stroke-width: 4;
         stroke-linecap: round;
-        filter: drop-shadow(2px 2px 2px rgb(0 0 0 / 50%));
+        filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
         stroke-opacity: 0.8;
         transition: all 0.1s ease;
       }
@@ -141,9 +136,9 @@
       #spin-indicator {
         font-size: 10px;
         font-weight: bold;
-        fill: #fff;
+        fill: #ffffff;
         text-anchor: middle;
-        filter: drop-shadow(0 0 2px rgb(0 0 0 / 100%));
+        filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 1));
         pointer-events: none;
       }
 
@@ -158,12 +153,10 @@
         letter-spacing: 1px;
         transition: all 0.2s;
       }
-
       .btn:hover {
         background: #2a2a2a;
         color: white;
       }
-
       .btn-logic {
         border-color: #10b981;
         color: #10b981;
@@ -175,7 +168,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgb(0 0 0 / 85%);
+        background: rgba(0, 0, 0, 0.85);
         z-index: 100;
         display: none;
         align-items: center;
@@ -193,12 +186,12 @@
         max-height: 80%;
         overflow: auto;
         position: relative;
-        box-shadow: 0 25px 50px -12px rgb(0 0 0 / 50%);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
       }
 
       pre {
         font-family:
-          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas",
           monospace;
         font-size: 13px;
         line-height: 1.6;
