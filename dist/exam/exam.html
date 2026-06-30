@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>University Billiards Exam - Front Sheet</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap"
+        rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Inter, sans-serif;
             background: #f3f4f6;
@@ -18,14 +26,18 @@
             padding: 8px 16px;
             overflow: hidden;
         }
-        .serif { font-family: 'Playfair Display', Georgia, serif; }
+
+        .serif {
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+
         .paper {
             max-width: 42rem;
             width: 100%;
             margin: 0 auto;
             background: #fff;
             border-radius: 6px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,.1);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, .1);
             border: 1px solid #e5e7eb;
             border-top: 8px solid #002147;
             padding: 20px 32px;
@@ -34,68 +46,246 @@
             flex-grow: 1;
             overflow-y: auto;
         }
+
         h1 {
             font-size: 1.25rem;
             letter-spacing: .15em;
             text-transform: uppercase;
             color: #002147;
         }
+
         h2 {
             font-size: 1.125rem;
             color: #1f2937;
         }
-        .uppercase { text-transform: uppercase; }
-        .tracking-wide { letter-spacing: .05em; }
-        .tracking-wider { letter-spacing: .1em; }
-        .tracking-widest { letter-spacing: .2em; }
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .text-xs { font-size: .75rem; }
-        .text-sm { font-size: .875rem; }
-        .font-semibold { font-weight: 600; }
-        .font-bold { font-weight: 700; }
-        .italic { font-style: italic; }
-        .text-slate-400 { color: #94a3b8; }
-        .text-slate-500 { color: #64748b; }
-        .text-slate-600 { color: #475569; }
-        .text-slate-700 { color: #334155; }
-        .text-slate-900 { color: #1f2937; }
-        .border-slate-200 { border-color: #e2e8f0; }
-        .border-slate-300 { border-color: #cbd5e1; }
-        .bg-slate-50 { background: #f8fafc; }
-        .shrink-0 { flex-shrink: 0; }
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        .mb-1 { margin-bottom: 4px; }
-        .mb-2 { margin-bottom: 8px; }
-        .mb-3 { margin-bottom: 12px; }
-        .mb-4 { margin-bottom: 16px; }
-        .mt-0\.5 { margin-top: 2px; }
-        .mt-4 { margin-top: 16px; }
-        .py-2 { padding-top: 8px; padding-bottom: 8px; }
-        .pt-2 { padding-top: 8px; }
-        .pt-3 { padding-top: 12px; }
-        .pb-1 { padding-bottom: 4px; }
-        .pb-1\.5 { padding-bottom: 6px; }
-        .py-1\.5 { padding-top: 6px; padding-bottom: 6px; }
-        .pt-1\.5 { padding-top: 6px; }
-        .p-2\.5 { padding: 10px; }
-        .pr-1 { padding-right: 4px; }
-        .grid { display: grid; }
-        .grid-cols-2 { grid-template-columns: 1fr 1fr; }
-        .border-y { border-top-width: 1px; border-bottom-width: 1px; border-style: solid; }
-        .border-t { border-top-width: 1px; border-style: solid; }
-        .border-b { border-bottom-width: 1px; border-style: solid; }
-        .border { border-width: 1px; border-style: solid; }
-        .rounded { border-radius: 6px; }
-        .border-slate-100 { border-color: #f1f5f9; }
-        .overflow-y-auto { overflow-y: auto; }
-        .leading-relaxed { line-height: 1.625; }
-        .w-full { width: 100%; }
-        .no-print { display: block; }
-        .actions { max-width: 42rem; width: 100%; margin: 0 auto; display: flex; justify-content: flex-end; gap: 8px; flex-shrink: 0; margin-bottom: 4px; }
-        .divider { width: 64px; height: 1px; background: #cbd5e1; margin: 8px auto; }
-        table { width: 100%; }
-        td { padding: 0; vertical-align: baseline; }
+
+        .uppercase {
+            text-transform: uppercase;
+        }
+
+        .tracking-wide {
+            letter-spacing: .05em;
+        }
+
+        .tracking-wider {
+            letter-spacing: .1em;
+        }
+
+        .tracking-widest {
+            letter-spacing: .2em;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-xs {
+            font-size: .75rem;
+        }
+
+        .text-sm {
+            font-size: .875rem;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .italic {
+            font-style: italic;
+        }
+
+        .text-slate-400 {
+            color: #94a3b8;
+        }
+
+        .text-slate-500 {
+            color: #64748b;
+        }
+
+        .text-slate-600 {
+            color: #475569;
+        }
+
+        .text-slate-700 {
+            color: #334155;
+        }
+
+        .text-slate-900 {
+            color: #1f2937;
+        }
+
+        .border-slate-200 {
+            border-color: #e2e8f0;
+        }
+
+        .border-slate-300 {
+            border-color: #cbd5e1;
+        }
+
+        .bg-slate-50 {
+            background: #f8fafc;
+        }
+
+        .shrink-0 {
+            flex-shrink: 0;
+        }
+
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .mb-1 {
+            margin-bottom: 4px;
+        }
+
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+
+        .mb-3 {
+            margin-bottom: 12px;
+        }
+
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+
+        .mt-0\.5 {
+            margin-top: 2px;
+        }
+
+        .mt-4 {
+            margin-top: 16px;
+        }
+
+        .py-2 {
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+
+        .pt-2 {
+            padding-top: 8px;
+        }
+
+        .pt-3 {
+            padding-top: 12px;
+        }
+
+        .pb-1 {
+            padding-bottom: 4px;
+        }
+
+        .pb-1\.5 {
+            padding-bottom: 6px;
+        }
+
+        .py-1\.5 {
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+
+        .pt-1\.5 {
+            padding-top: 6px;
+        }
+
+        .p-2\.5 {
+            padding: 10px;
+        }
+
+        .pr-1 {
+            padding-right: 4px;
+        }
+
+        .grid {
+            display: grid;
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .border-y {
+            border-top-width: 1px;
+            border-bottom-width: 1px;
+            border-style: solid;
+        }
+
+        .border-t {
+            border-top-width: 1px;
+            border-style: solid;
+        }
+
+        .border-b {
+            border-bottom-width: 1px;
+            border-style: solid;
+        }
+
+        .border {
+            border-width: 1px;
+            border-style: solid;
+        }
+
+        .rounded {
+            border-radius: 6px;
+        }
+
+        .border-slate-100 {
+            border-color: #f1f5f9;
+        }
+
+        .overflow-y-auto {
+            overflow-y: auto;
+        }
+
+        .leading-relaxed {
+            line-height: 1.625;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .no-print {
+            display: block;
+        }
+
+        .actions {
+            max-width: 42rem;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+            margin-bottom: 4px;
+        }
+
+        .divider {
+            width: 64px;
+            height: 1px;
+            background: #cbd5e1;
+            margin: 8px auto;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        td {
+            padding: 0;
+            vertical-align: baseline;
+        }
+
         .btn {
             display: inline-block;
             padding: 6px 12px;
@@ -113,27 +303,69 @@
             letter-spacing: .05em;
             transition: all .15s;
         }
-        .btn:hover { border-color: #1f2937; color: #111827; }
-        .btn-sm { padding: 4px 10px; }
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 24rem; margin: 0 auto; }
-        @media (max-width: 768px) {
-            body { padding: 8px; }
-            .paper { padding: 16px; }
-            h1 { font-size: 1.125rem; }
+
+        .btn:hover {
+            border-color: #1f2937;
+            color: #111827;
         }
+
+        .btn-sm {
+            padding: 4px 10px;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            max-width: 24rem;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+
+            .paper {
+                padding: 16px;
+            }
+
+            h1 {
+                font-size: 1.125rem;
+            }
+        }
+
         @media print {
-            body { background: #fff; }
-            .paper { box-shadow: none; border: none; max-width: 100% !important; margin: 0 !important; padding: 0 !important; height: auto !important; }
-            .no-print { display: none !important; }
+            body {
+                background: #fff;
+            }
+
+            .paper {
+                box-shadow: none;
+                border: none;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                height: auto !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <div class="actions no-print">
         <a href="javascript:window.print()" class="btn btn-sm">
-            <svg class="w-3.5 h-3.5" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+            <svg class="w-3.5 h-3.5"
+                style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                </path>
             </svg>
             Print
         </a>
@@ -144,18 +376,20 @@
         <div class="text-center mb-3 shrink-0">
             <h1 class="serif font-bold">University Billiards Exam</h1>
             <p class="text-xs tracking-widest uppercase text-slate-500 font-semibold mt-0\.5">
-                Honor Board of Applied Dynamics &amp; Geometrical Mechanics
+                Faculty of Mathematical Recreation
             </p>
             <div class="divider"></div>
         </div>
 
         <div class="grid grid-cols-2 border-y border-slate-200 py-2 mb-3 text-xs text-slate-700 shrink-0">
             <div>
-                <p class="font-bold uppercase text-xs tracking-wider text-slate-400" style="font-size:9px;">Examination Period</p>
+                <p class="font-bold uppercase text-xs tracking-wider text-slate-400" style="font-size:9px;">Examination
+                    Period</p>
                 <p class="serif font-semibold text-slate-900">Trinity Term 2026</p>
             </div>
             <div class="text-right">
-                <p class="font-bold uppercase text-xs tracking-wider text-slate-400" style="font-size:9px;">Paper Reference</p>
+                <p class="font-bold uppercase text-xs tracking-wider text-slate-400" style="font-size:9px;">Paper
+                    Reference</p>
                 <p class="serif font-semibold text-slate-900">UB-MEC-402X</p>
             </div>
         </div>
@@ -163,7 +397,7 @@
         <div class="text-center mb-3 shrink-0">
             <h2 class="serif font-bold">PHYSICS OF INCOMPRESSIBLE SPHERES</h2>
             <p class="text-xs italic text-slate-500 mt-0\.5">
-                Mathematical Analysis of Elastic Collision Vectors, Friction Coefficients, and Boundary Refraction
+                Mathematical Analysis
             </p>
         </div>
 
@@ -176,36 +410,61 @@
                     </tr>
                     <tr class="border-b border-slate-200">
                         <td class="py-1\.5 font-semibold text-slate-600">Reading Time:</td>
-                        <td class="py-1\.5 text-slate-900">Candidates are allocated 10 minutes of reading time before writing.</td>
+                        <td class="py-1\.5 text-slate-900">Candidates are allocated 10 minutes of reading time before
+                            writing.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="text-xs text-slate-700 leading-relaxed overflow-y-auto pr-1 mb-4" style="margin-top:0;">
-            <h3 class="serif text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-1" style="margin-bottom:8px;">
+            <h3 class="serif text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-1"
+                style="margin-bottom:8px;">
                 Instructions to Candidates
             </h3>
 
             <div style="margin-top:8px;">
-                <p><span class="font-semibold text-slate-900">1. Silence and Conduct:</span> Strictly quiet conditions must be maintained throughout the examination hall. Candidates are forbidden to communicate with, assist, or disrupt any other individual during the session.</p>
+                <p><span class="font-semibold text-slate-900">1. Commencement:</span> Candidates must not commence the
+                    examination until instructed to do so by the Invigilator. Adequate time should be taken beforehand
+                    to read all instructions and verify that equipment is functioning correctly.</p>
             </div>
+
             <div style="margin-top:8px;">
-                <p><span class="font-semibold text-slate-900">2. Academic Regulations:</span> Candidates must present themselves in compliance with formal academic dress guidelines and regulations as specified by the University Exams Registry.</p>
+                <p><span class="font-semibold text-slate-900">2. Silence and Conduct:</span> Examination conditions are
+                    strictly silent. Candidates must neither communicate with nor assist any other candidate. Any
+                    conduct liable to distract, inconvenience, or confer an unfair advantage is prohibited.</p>
             </div>
+
             <div style="margin-top:8px;">
-                <p><span class="font-semibold text-slate-900">3. Permitted Equipment:</span> Only approved, non-programmable scientific calculators, regulation writing utensils, and architectural drawing instruments are permitted at the examination desks. No wireless, electronic, or communication-capable devices are allowed.</p>
+                <p><span class="font-semibold text-slate-900">3. Examination Conditions:</span> Candidates must complete
+                    the examination independently in a quiet environment free from interruption. Mobile telephones and all external reference
+                    materials are strictly forbidden unless expressly authorised by the Examiner.</p>
             </div>
+
             <div style="margin-top:8px;">
-                <p><span class="font-semibold text-slate-900">4. Queries:</span> If a candidate requires assistance, discovers a mechanical issue in their terminal, or requires additional scripts, they must raise their hand in silence and await the arrival of an Invigilator.</p>
+                <p><span class="font-semibold text-slate-900">4. Dress and Equipment:</span> Candidates are expected to
+                    present themselves in attire appropriate to a formal academic assessment. A regulation cue, reliable
+                    internet connection, and a pointing device capable of accurate shot selection are required.</p>
             </div>
+
             <div style="margin-top:8px;">
-                <p><span class="font-semibold text-slate-900">5. Conclusion:</span> Upon the final instruction to cease writing, candidates must immediately place all writing materials flat on the desk and remain seated until all examination materials are gathered and verified.</p>
+                <p><span class="font-semibold text-slate-900">5. Assessment:</span> Unless otherwise stated, exercises
+                    may be attempted multiple times. Credit will be awarded only where the stated objective has been
+                    achieved. Accuracy, judgement, cue-ball control, positional play, and consistency form part of the
+                    assessment.</p>
+            </div>
+
+            <div style="margin-top:8px;">
+                <p><span class="font-semibold text-slate-900">6. Conclusion:</span> Upon the instruction to conclude the
+                    examination, candidates must immediately cease play, refrain from further interaction with the
+                    examination interface, and remain seated until all submissions have been received and verified by
+                    the Invigilator.</p>
             </div>
         </div>
 
         <div class="border border-slate-300 p-3 shrink-0" style="border-radius:6px;">
-            <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 text-center" style="font-size:10px;">
+            <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 text-center"
+                style="font-size:10px;">
                 To be completed by the Candidate: Select Examination Discipline
             </p>
             <div class="btn-group">
@@ -214,11 +473,14 @@
             </div>
         </div>
 
-        <div class="mt-4 pt-2 border-t border-slate-100 text-center text-xs text-slate-700 shrink-0" style="font-size:10px;">
-            <p>&copy; University Examinations Registry. DO NOT TURN OVER THIS PAGE UNTIL AUTHORIZED BY THE INVIGILATOR.</p>
+        <div class="mt-4 pt-2 border-t border-slate-100 text-center text-xs text-slate-700 shrink-0"
+            style="font-size:10px;">
+            <p>&copy; University Examinations Registry. DO NOT TURN OVER THIS PAGE UNTIL AUTHORIZED BY THE INVIGILATOR.
+            </p>
         </div>
 
     </div>
 
 </body>
+
 </html>
