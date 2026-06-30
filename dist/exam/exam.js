@@ -213,8 +213,17 @@ export function initExam() {
   }
   initDiagrams(ruletype)
 
-  // Analysis link (magnifying glass) for each SVG
+  // Analysis link (magnifying glass) for each three-cushion SVG
   document.querySelectorAll(".billiards-table").forEach((svg) => {
+    let configs = []
+    if (svg.dataset.jsonShots) {
+      configs = parseJsonShots(svg.dataset.jsonShots)
+    } else if (svg.dataset.shots) {
+      configs = parseShots(svg.dataset.shots)
+    }
+    const ruleType = configs[0]?.ruleType || "threecushion"
+    if (ruleType !== "threecushion") return
+
     const parent = svg.parentElement
     if (!parent) return
     const prevPos = parent.style.position
@@ -225,33 +234,24 @@ export function initExam() {
     link.textContent = "\uD83D\uDD0D"
     link.target = "_blank"
     link.rel = "noopener"
-    link.style.cssText = "position:absolute;bottom:4px;right:4px;font-size:20px;cursor:pointer;text-decoration:none;z-index:10;opacity:0.6"
+    link.style.cssText = "position:absolute;bottom:4px;right:4px;font-size:14px;cursor:pointer;text-decoration:none;z-index:10;opacity:0.6"
     link.title = "Open in analysis view"
 
-    let configs = []
-    if (svg.dataset.jsonShots) {
-      configs = parseJsonShots(svg.dataset.jsonShots)
-    } else if (svg.dataset.shots) {
-      configs = parseShots(svg.dataset.shots)
-    }
-    if (configs.length > 0) {
-      const cfg = configs[0]
-      const init = JSON.stringify(cfg.balls.flatMap((b) => [b.pos.x, b.pos.y]))
-      const initShot = JSON.stringify({
-        cueBallId: cfg.shot.cueBallId,
-        angle: cfg.shot.angle,
-        power: cfg.shot.power,
-        offset: cfg.shot.offset,
-        elevation: cfg.shot.elevation ?? 0,
-      })
-      const params = new URLSearchParams()
-      params.set("ruletype", cfg.ruleType || "threecushion")
-      params.set("practice", "")
-      params.set("analysis", "")
-      params.set("init", init)
-      params.set("initShot", initShot)
-      link.href = `https://velikodimov.github.io/billiards/dist/index.html?${params}`
-    }
+    const init = JSON.stringify(configs[0].balls.flatMap((b) => [b.pos.x, b.pos.y]))
+    const initShot = JSON.stringify({
+      cueBallId: configs[0].shot.cueBallId,
+      angle: configs[0].shot.angle,
+      power: configs[0].shot.power,
+      offset: configs[0].shot.offset,
+      elevation: configs[0].shot.elevation ?? 0,
+    })
+    const params = new URLSearchParams()
+    params.set("ruletype", "threecushion")
+    params.set("practice", "")
+    params.set("analysis", "")
+    params.set("init", init)
+    params.set("initShot", initShot)
+    link.href = `https://velikodimov.github.io/billiards/dist/index.html?${params}`
     parent.appendChild(link)
   })
 
