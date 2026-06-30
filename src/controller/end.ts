@@ -41,7 +41,8 @@ export class End extends Controller {
       if (!this.result.replayData) {
         try {
           const gameState = this.container.recorder.wholeGame()
-          this.result.replayData = ReplayEncoder.crush(gameState)
+          const jsonState = JSON.stringify(gameState)
+          this.result.replayData = ReplayEncoder.crush(jsonState)
         } catch (e) {
           console.error("Failed to encode replay data", e)
         }

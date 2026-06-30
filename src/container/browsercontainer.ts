@@ -10,6 +10,7 @@ import {
   mathavanAdapter,
 } from "../model/physics/physics"
 import { strongeAdapter } from "../model/physics/stronge"
+import JSONCrush from "jsoncrush"
 import { Assets } from "../view/assets"
 import { SnookerConfig } from "../utils/snookerconfig"
 import { ThreeCushionConfig } from "../utils/threecushionconfig"
@@ -304,7 +305,11 @@ export class BrowserContainer {
   }
 
   parse(s) {
-    return ReplayEncoder.parse(s)
+    try {
+      return JSON.parse(s)
+    } catch {
+      return JSON.parse(JSONCrush.uncrush(s))
+    }
   }
 
   offerUpload() {
