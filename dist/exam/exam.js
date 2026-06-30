@@ -213,6 +213,48 @@ export function initExam() {
   }
   initDiagrams(ruletype)
 
+  // Analysis link (magnifying glass) for each SVG
+  document.querySelectorAll(".billiards-table").forEach((svg) => {
+    const parent = svg.parentElement
+    if (!parent) return
+    const prevPos = parent.style.position
+    if (prevPos !== "relative" && prevPos !== "absolute" && prevPos !== "fixed") {
+      parent.style.position = "relative"
+    }
+    const link = document.createElement("a")
+    link.textContent = "\uD83D\uDD0D"
+    link.target = "_blank"
+    link.rel = "noopener"
+    link.style.cssText = "position:absolute;bottom:4px;right:4px;font-size:20px;cursor:pointer;text-decoration:none;z-index:10;opacity:0.6"
+    link.title = "Open in analysis view"
+
+    let configs = []
+    if (svg.dataset.jsonShots) {
+      configs = parseJsonShots(svg.dataset.jsonShots)
+    } else if (svg.dataset.shots) {
+      configs = parseShots(svg.dataset.shots)
+    }
+    if (configs.length > 0) {
+      const cfg = configs[0]
+      const init = JSON.stringify(cfg.balls.flatMap((b) => [b.pos.x, b.pos.y]))
+      const initShot = JSON.stringify({
+        cueBallId: cfg.shot.cueBallId,
+        angle: cfg.shot.angle,
+        power: cfg.shot.power,
+        offset: cfg.shot.offset,
+        elevation: cfg.shot.elevation ?? 0,
+      })
+      const params = new URLSearchParams()
+      params.set("ruletype", cfg.ruleType || "threecushion")
+      params.set("practice", "")
+      params.set("analysis", "")
+      params.set("init", init)
+      params.set("initShot", initShot)
+      link.href = `https://velikodimov.github.io/billiards/dist/index.html?${params}`
+    }
+    parent.appendChild(link)
+  })
+
   const overlay = document.getElementById("gameOverlay")
   const iframe = document.getElementById("gameIframe")
   const closeBtn = document.getElementById("closeGame")
