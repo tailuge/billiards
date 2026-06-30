@@ -45,25 +45,39 @@ function saveResults(results) {
 
 function calculateAssessment(results) {
   const blocks = document.querySelectorAll(".question-block")
-  const totalQuestions = blocks.length
-  if (totalQuestions === 0) return { label: "Unknown", className: "unknown" }
+  if (blocks.length === 0) return { label: "Unknown", className: "unknown" }
 
-  let totalPoints = 0
-  let totalMax = 0
+  let totalScored = 0
+  let totalPossible = 0
   let attempted = 0
-  blocks.forEach((_, index) => {
+
+  const firstSvg = document.querySelector(".billiards-table")
+  let ruleType = "threecushion"
+  if (firstSvg?.dataset.jsonShots) {
+    try {
+      ruleType = JSON.parse(firstSvg.dataset.jsonShots)[0]?.ruleType || "threecushion"
+    } catch {}
+  }
+
+  blocks.forEach((block, index) => {
     const qId = String(index + 1)
+    const svg = block.querySelector(".billiards-table")
+    if (!svg) return
+    const hasEllipse = svg.querySelector("ellipse[data-id]") !== null
+    const noPot = svg.dataset.nopot !== undefined
+    const max = maxPoints(hasEllipse, ruleType, noPot)
+    totalPossible += max
+
     const r = results[qId]
     if (r) {
-      totalPoints += r.totalPoints || 0
-      totalMax += r.totalMax || 0
+      totalScored += r.bestPoints !== undefined ? r.bestPoints : (r.lastPts || 0)
       attempted += r.attempted || 0
     }
   })
 
-  if (attempted === 0 || totalMax === 0) return { label: "Unknown", className: "unknown" }
+  if (attempted === 0 || totalPossible === 0) return { label: "Unknown", className: "unknown" }
 
-  const pct = totalPoints / totalMax
+  const pct = totalScored / totalPossible
   if (pct < 0.1) return { label: "Beginner", className: "beginner" }
   if (pct < 0.2) return { label: "Novice", className: "novice" }
   if (pct < 0.3) return { label: "Learner", className: "learner" }
@@ -114,16 +128,16 @@ export function updateUI() {
       let statusText = "Unknown"
       let icon = "❓"
 
-      if (result.attempted > 0 && result.totalMax > 0) {
-        const cumPct = Math.round((result.totalPoints / result.totalMax) * 100)
-        if (cumPct >= 50) {
+      if (result.attempted > 0) {
+        const displayPct = result.lastPct !== undefined ? result.lastPct : (result.totalMax > 0 ? Math.round((result.totalPoints / result.totalMax) * 100) : 0)
+        if (displayPct >= 50) {
           statusClass = "status-pass"
           icon = "✅"
         } else {
           statusClass = "status-fail"
           icon = "❌"
         }
-        statusText = `${cumPct}%, ${result.attempted} attempt${result.attempted > 1 ? "s" : ""}`
+        statusText = `${displayPct}%, ${result.attempted} attempt${result.attempted > 1 ? "s" : ""}`
       }
 
       const statusSpan = li.querySelector("span")
@@ -144,10 +158,10 @@ export function updateUI() {
 
     let icon = "❓"
     let statText = ""
-    if (result.attempted > 0 && result.totalMax > 0) {
-      const cumPct = Math.round((result.totalPoints / result.totalMax) * 100)
-      icon = cumPct >= 50 ? "✅" : "❌"
-      statText = `${cumPct}%, ${result.attempted} attempt${result.attempted > 1 ? "s" : ""}`
+    if (result.attempted > 0) {
+      const displayPct = result.lastPct !== undefined ? result.lastPct : (result.totalMax > 0 ? Math.round((result.totalPoints / result.totalMax) * 100) : 0)
+      icon = displayPct >= 50 ? "✅" : "❌"
+      statText = `${displayPct}%, ${result.attempted} attempt${result.attempted > 1 ? "s" : ""}`
     }
 
     let statsSpan = btn.nextElementSibling
@@ -166,9 +180,8 @@ export function updateUI() {
 
       // Set pass/fail class for ring animation color
       statsSpan.classList.remove("q-pass", "q-fail")
-      const pctVal =
-        result.totalMax > 0 ? result.totalPoints / result.totalMax : 0
-      statsSpan.classList.add(pctVal >= 0.5 ? "q-pass" : "q-fail")
+      const displayPct = result.lastPct !== undefined ? result.lastPct : (result.totalMax > 0 ? Math.round((result.totalPoints / result.totalMax) * 100) : 0)
+      statsSpan.classList.add(displayPct >= 50 ? "q-pass" : "q-fail")
 
       if (hadContent) {
         statsSpan.classList.remove("updated")
@@ -315,6 +328,7 @@ export function initExam() {
       results[currentQuestionId].attempted++
       results[currentQuestionId].totalPoints += pts
       results[currentQuestionId].totalMax += max
+      results[currentQuestionId].bestPoints = Math.max(results[currentQuestionId].bestPoints || 0, pts)
       results[currentQuestionId].lastPct = pct
       results[currentQuestionId].lastPts = pts
       results[currentQuestionId].lastMax = max
