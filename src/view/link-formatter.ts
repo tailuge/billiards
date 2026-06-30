@@ -12,15 +12,13 @@ export class LinkFormatter {
   }
 
   getReplayUri(state: any): string {
-    const serialised = typeof state === "string" ? state : JSON.stringify(state)
-    const compressed = ReplayEncoder.crush(serialised)
+    const compressed = ReplayEncoder.crush(state)
     return `${this.replayUrl}${ReplayEncoder.fullyEncodeURI(compressed)}`
   }
 
   getHiScoreUri(state: any, score: number): string {
     state.score = score
-    const serialised = JSON.stringify(state)
-    const compressed = ReplayEncoder.crush(serialised)
+    const compressed = ReplayEncoder.crush(state)
     const session = Session.getInstance()
     return `${this.hiScoreUrl}?ruletype=${
       this.container.rules.rulename

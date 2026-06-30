@@ -40,20 +40,10 @@ export class End extends Controller {
     ) {
       if (!this.result.replayData) {
         try {
-          console.time("End.replayGeneration")
-          console.time("End.recorderWholeGame")
           const gameState = this.container.recorder.wholeGame()
-          console.timeEnd("End.recorderWholeGame")
-
-          console.time("End.JSONStringify")
-          const jsonState = JSON.stringify(gameState)
-          console.timeEnd("End.JSONStringify")
-
-          this.result.replayData = ReplayEncoder.crush(jsonState)
+          this.result.replayData = ReplayEncoder.crush(gameState)
         } catch (e) {
           console.error("Failed to encode replay data", e)
-        } finally {
-          console.timeEnd("End.replayGeneration")
         }
       }
       this.container.scoreReporter.submitMatchResult(this.result)

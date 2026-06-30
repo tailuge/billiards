@@ -10,7 +10,6 @@ import {
   mathavanAdapter,
 } from "../model/physics/physics"
 import { strongeAdapter } from "../model/physics/stronge"
-import JSONCrush from "jsoncrush"
 import { Assets } from "../view/assets"
 import { SnookerConfig } from "../utils/snookerconfig"
 import { ThreeCushionConfig } from "../utils/threecushionconfig"
@@ -305,31 +304,7 @@ export class BrowserContainer {
   }
 
   parse(s) {
-    console.time("BrowserContainer.parse")
-    try {
-      try {
-        console.time("BrowserContainer.parse.json")
-        return JSON.parse(s)
-      } finally {
-        console.timeEnd("BrowserContainer.parse.json")
-      }
-    } catch {
-      try {
-        console.time("BrowserContainer.parse.uncrush")
-        console.time("BrowserContainer.uncrush")
-        const uncrushed = JSONCrush.uncrush(s)
-        console.timeEnd("BrowserContainer.uncrush")
-
-        console.time("BrowserContainer.parse.jsonAfterUncrush")
-        const result = JSON.parse(uncrushed)
-        console.timeEnd("BrowserContainer.parse.jsonAfterUncrush")
-        return result
-      } finally {
-        console.timeEnd("BrowserContainer.parse.uncrush")
-      }
-    } finally {
-      console.timeEnd("BrowserContainer.parse")
-    }
+    return ReplayEncoder.parse(s)
   }
 
   offerUpload() {
