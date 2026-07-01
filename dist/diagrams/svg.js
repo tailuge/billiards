@@ -269,22 +269,22 @@ function renderInset(insetGroup, config) {
   let svgContent = "";
 
   // Cue ball circle
-  svgContent += `  <circle cx="0" cy="0" r="${ballR}" fill="#fff" stroke="#000" stroke-width="0.002" />\n`;
+  svgContent += `  <circle cx="0" cy="0" r="${ballR}" fill="none" stroke="#000" stroke-width="0.002" />\n`;
 
   // Spin dot (cue tip position)
   // offset.x/y are -0.5 to 0.5, scaled to half the ball radius.
   const dx = -offset.x * ballR;
   const dy = -offset.y * ballR;
-  svgContent += `  <circle cx="${dx}" cy="${dy}" r="${dotR}" fill="#000" />\n`;
+  svgContent += `  <circle cx="${dx}" cy="${dy}" r="${dotR}" fill="none" stroke="#000" stroke-width="0.002" />\n`;
 
   // Power bar background
   const bx = -barW / 2;
   const by = ballR + 0.02;
   svgContent += `  <rect x="${bx}" y="${by}" width="${barW}" height="${barH}" fill="none" stroke="#000" stroke-width="0.002" />\n`;
 
-  // Power bar fill
+  // Power bar level indicator
   const fillW = (power / maxPower) * barW;
-  svgContent += `  <rect x="${bx}" y="${by}" width="${fillW}" height="${barH}" fill="#9ca3af" />\n`;
+  svgContent += `  <line x1="${bx + fillW}" y1="${by}" x2="${bx + fillW}" y2="${by + barH}" stroke="#000" stroke-width="0.002" />\n`;
 
   insetGroup.innerHTML = svgContent;
 }

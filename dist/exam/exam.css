@@ -192,7 +192,7 @@ body > h2 {
 
 /* SVG styles from svg.html */
 .table-stroke {
-  fill: #fff;
+  fill: none;
   stroke: #000;
   stroke-width: 0.004;
 }
