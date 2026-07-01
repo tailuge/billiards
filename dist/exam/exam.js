@@ -239,7 +239,7 @@ export function initExam() {
       link.textContent = "\uD83D\uDD0D"
       link.target = "_blank"
       link.rel = "noopener"
-      link.style.cssText = "position:absolute;bottom:20px;right:20px;font-size:16px;cursor:pointer;text-decoration:none;z-index:10;opacity:0.6"
+      link.style.cssText = "position:absolute;bottom:4%;right:5%;font-size:16px;cursor:pointer;text-decoration:none;z-index:10;opacity:0.6;filter:grayscale(1)"
       link.title = "Open in analysis view"
 
       const init = JSON.stringify(cfg.balls.flatMap((b) => [b.pos.x, b.pos.y]))
@@ -263,7 +263,7 @@ export function initExam() {
     const editBtn = document.createElement("button")
     editBtn.textContent = "\u270F\uFE0F"
     editBtn.className = "edit-btn"
-    editBtn.style.cssText = "position:absolute;bottom:20px;right:56px;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;background:none;border:none;padding:0"
+    editBtn.style.cssText = "position:absolute;bottom:4%;right:10%;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;filter:grayscale(1);background:none;border:none;padding:0"
     editBtn.title = "Open in diagram editor"
     editBtn.addEventListener("click", () => {
       const shot = {
@@ -283,7 +283,7 @@ export function initExam() {
     const setupBtn = document.createElement("button")
     setupBtn.textContent = "\uD83D\uDD27"
     setupBtn.className = "setup-btn"
-    setupBtn.style.cssText = "position:absolute;bottom:20px;right:92px;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;background:none;border:none;padding:0"
+    setupBtn.style.cssText = "position:absolute;bottom:4%;right:15%;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;filter:grayscale(1);background:none;border:none;padding:0"
     setupBtn.title = isThreeCushion ? "Open in three cushion research view" : "Open in practice layout view"
     setupBtn.addEventListener("click", () => {
       if (isThreeCushion) {
