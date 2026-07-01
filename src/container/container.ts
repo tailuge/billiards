@@ -87,6 +87,9 @@ export class Container {
   private hudActivePlayer: ActivePlayer = 0
   private wasReplay: boolean = false
 
+  lastShotInit?: string
+  lastShotData?: string
+
   last = performance.now()
   readonly step = 0.001953125 * 1
 
@@ -305,6 +308,18 @@ export class Container {
     })
   }
 
+  updateLastShot() {
+    this.lastShotInit = JSON.stringify(this.table.shortSerialise())
+    const aim = this.table.cue!.aim
+    this.lastShotData = JSON.stringify({
+      cueBallId: aim.i,
+      angle: aim.angle,
+      power: aim.power,
+      offset: { x: aim.offset.x, y: aim.offset.y },
+      elevation: aim.elevation || 0,
+    })
+  }
+
   updateController(controller: Controller) {
     this.wasReplay = this.wasReplay || controller instanceof Replay
     if (controller !== this.controller) {
@@ -328,7 +343,9 @@ export class Container {
           (this.wasReplay && controller instanceof End)
       )
       this.menu?.setAnalysisVisible(
-        controller instanceof Replay && this.rules.rulename === "threecushion"
+        (controller instanceof Replay ||
+          (this.wasReplay && controller instanceof End)) &&
+          this.rules.rulename === "threecushion"
       )
       const isTwoPlayer =
         !this.isSinglePlayer &&
