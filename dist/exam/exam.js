@@ -24,11 +24,11 @@ function potPoints(outcomes, ruleType, noPot) {
   )
 }
 
-function maxPoints(hasEllipse, ruleType, noPot) {
+function maxPoints(ellipseCount, ruleType, noPot) {
   if (ruleType === "threecushion") {
-    return 3 + (hasEllipse ? 1 : 0)
+    return 3 + ellipseCount
   }
-  return (hasEllipse ? 1 : 0) + (noPot ? 0 : 3)
+  return ellipseCount + (noPot ? 0 : 3)
 }
 
 function qIdForBlock(block) {
@@ -75,9 +75,9 @@ function calculateAssessment(results) {
     const qId = qIdForBlock(block)
     const svg = block.querySelector(".billiards-table")
     if (!svg) return
-    const hasEllipse = svg.querySelector("ellipse[data-id]") !== null
+    const ellipseCount = svg.querySelectorAll("ellipse[data-id]").length
     const noPot = svg.dataset.nopot !== undefined
-    const max = maxPoints(hasEllipse, ruleType, noPot)
+    const max = maxPoints(ellipseCount, ruleType, noPot)
     totalPossible += max
 
     const r = results[qId]
@@ -244,7 +244,7 @@ export function updateUI() {
 }
 
 let currentQuestionId = null
-let currentEllipseCheck = null
+let currentEllipseChecks = null
 let currentRuleType = null
 let currentNoPot = false
 
@@ -380,15 +380,15 @@ export function initExam() {
       currentNoPot = false
       const svg = qBlock.querySelector(".billiards-table")
 
-      const ellipse = svg.querySelector("ellipse[data-id]")
-      currentEllipseCheck = ellipse
-        ? {
-            ballId: parseInt(ellipse.dataset.id, 10),
-            cx: parseFloat(ellipse.getAttribute("cx")),
-            cy: parseFloat(ellipse.getAttribute("cy")),
-            rx: parseFloat(ellipse.getAttribute("rx")),
-            ry: parseFloat(ellipse.getAttribute("ry")),
-          }
+      const ellipses = svg.querySelectorAll("ellipse[data-id]")
+      currentEllipseChecks = ellipses.length > 0
+        ? Array.from(ellipses).map((e) => ({
+            ballId: parseInt(e.dataset.id, 10),
+            cx: parseFloat(e.getAttribute("cx")),
+            cy: parseFloat(e.getAttribute("cy")),
+            rx: parseFloat(e.getAttribute("rx")),
+            ry: parseFloat(e.getAttribute("ry")),
+          }))
         : null
       currentNoPot = svg.dataset.nopot !== undefined
 
@@ -428,40 +428,40 @@ export function initExam() {
     if (event.data.type === "stationary" && currentQuestionId) {
       const outcomes = event.data.outcome
 
-      let ellipseHit = false
-      if (currentEllipseCheck && event.data.table?.balls) {
-        const targetBall = event.data.table.balls.find(
-          (b) => b.id === currentEllipseCheck.ballId
-        )
-        if (targetBall) {
-          const dx = targetBall.pos.x - currentEllipseCheck.cx
-          const svgY = -targetBall.pos.y
-          const dy = svgY - currentEllipseCheck.cy
-          const ex =
-            (dx * dx) / (currentEllipseCheck.rx * currentEllipseCheck.rx)
-          const ey =
-            (dy * dy) / (currentEllipseCheck.ry * currentEllipseCheck.ry)
-          ellipseHit = ex + ey <= 1
-          console.log("ellipse check", {
-            ballPos: targetBall.pos,
-            svgY,
-            ellipse: currentEllipseCheck,
-            dx,
-            dy,
-            ex,
-            ey,
-            sum: ex + ey,
-            ellipseHit,
-          })
+      let ellipseHits = 0
+      if (currentEllipseChecks && event.data.table?.balls) {
+        for (const ec of currentEllipseChecks) {
+          const targetBall = event.data.table.balls.find(
+            (b) => b.id === ec.ballId
+          )
+          if (targetBall) {
+            const dx = targetBall.pos.x - ec.cx
+            const svgY = -targetBall.pos.y
+            const dy = svgY - ec.cy
+            const ex = (dx * dx) / (ec.rx * ec.rx)
+            const ey = (dy * dy) / (ec.ry * ec.ry)
+            if (ex + ey <= 1) ellipseHits++
+            console.log("ellipse check", {
+              ballId: ec.ballId,
+              ballPos: targetBall.pos,
+              svgY,
+              dx,
+              dy,
+              ex,
+              ey,
+              sum: ex + ey,
+              hit: ex + ey <= 1,
+            })
+          }
         }
       }
 
       // Score this attempt
       const pts =
         proximityPoints(outcomes, currentRuleType) +
-        (ellipseHit ? 1 : 0) +
+        ellipseHits +
         potPoints(outcomes, currentRuleType, currentNoPot)
-      const max = maxPoints(currentEllipseCheck !== null, currentRuleType, currentNoPot)
+      const max = maxPoints(currentEllipseChecks ? currentEllipseChecks.length : 0, currentRuleType, currentNoPot)
       const pct = max > 0 ? Math.round((pts / max) * 100) : 0
       console.log("exam score", { pts, max, pct, outcomes })
 
@@ -487,7 +487,7 @@ export function initExam() {
       updateUI()
 
       currentQuestionId = null
-      currentEllipseCheck = null
+      currentEllipseChecks = null
       currentRuleType = null
       currentNoPot = false
     }
@@ -498,7 +498,7 @@ export function initExam() {
       overlay.classList.remove("active")
       iframe.src = ""
       currentQuestionId = null
-      currentEllipseCheck = null
+      currentEllipseChecks = null
       currentRuleType = null
       currentNoPot = false
     })
