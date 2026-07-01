@@ -31,6 +31,17 @@ function maxPoints(hasEllipse, ruleType, noPot) {
   return (hasEllipse ? 1 : 0) + (noPot ? 0 : 3)
 }
 
+function qIdForBlock(block) {
+  const svg = block.querySelector(".billiards-table")
+  let h = 0
+  const s = svg ? svg.outerHTML : String(Math.random())
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h) + s.charCodeAt(i)
+    h |= 0
+  }
+  return "q" + Math.abs(h).toString(36)
+}
+
 const STORAGE_KEY_PREFIX = "exam_results_"
 const storageKey = STORAGE_KEY_PREFIX + window.location.pathname
 
@@ -60,8 +71,8 @@ function calculateAssessment(results) {
     } catch {}
   }
 
-  blocks.forEach((block, index) => {
-    const qId = String(index + 1)
+  blocks.forEach((block) => {
+    const qId = qIdForBlock(block)
     const svg = block.querySelector(".billiards-table")
     if (!svg) return
     const hasEllipse = svg.querySelector("ellipse[data-id]") !== null
@@ -138,10 +149,12 @@ function buildSummaryList() {
   const shotList = document.getElementById("shotList")
   if (!shotList || shotList.children.length > 0) return
   const blocks = document.querySelectorAll(".question-block")
-  blocks.forEach((block, index) => {
+  blocks.forEach((block) => {
     const h3 = block.querySelector("h3")
     const li = document.createElement("li")
-    li.innerHTML = `${h3 ? h3.textContent : `Shot ${index + 1}`} <span class="status-unknown">❓ Unknown</span>`
+    const qId = qIdForBlock(block)
+    li.dataset.qid = qId
+    li.innerHTML = `${h3 ? h3.textContent : `Shot ${qId}`} <span class="status-unknown">❓ Unknown</span>`
     shotList.appendChild(li)
   })
 }
@@ -155,8 +168,8 @@ export function updateUI() {
   const shotList = document.getElementById("shotList")
   if (shotList) {
     const listItems = shotList.querySelectorAll("li")
-    listItems.forEach((li, index) => {
-      const qId = String(index + 1)
+    listItems.forEach((li) => {
+      const qId = li.dataset.qid
       const result = results[qId] || { totalPoints: 0, totalMax: 0, attempted: 0 }
 
       let statusClass = "status-unknown"
@@ -184,11 +197,9 @@ export function updateUI() {
   }
 
   // Update play buttons and their stats
-  const blocks = Array.from(document.querySelectorAll(".question-block"))
   document.querySelectorAll(".play-btn").forEach((btn) => {
     const qBlock = btn.closest(".question-block")
-    const index = blocks.indexOf(qBlock)
-    const qId = String(index + 1)
+    const qId = qIdForBlock(qBlock)
     const result = results[qId] || { totalPoints: 0, totalMax: 0, attempted: 0 }
 
     let icon = "❓"
@@ -361,12 +372,10 @@ export function initExam() {
     })
   }
 
-  const blocks = Array.from(document.querySelectorAll(".question-block"))
   document.querySelectorAll(".play-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const qBlock = btn.closest(".question-block")
-      const index = blocks.indexOf(qBlock)
-      currentQuestionId = String(index + 1)
+      currentQuestionId = qIdForBlock(qBlock)
       currentRuleType = null
       currentNoPot = false
       const svg = qBlock.querySelector(".billiards-table")
