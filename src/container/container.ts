@@ -40,6 +40,7 @@ import { PlayShot } from "../controller/playshot"
 import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
 import { BallTray } from "../view/ball-tray"
+import { ExportUtils } from "../utils/export-utils"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -86,6 +87,9 @@ export class Container {
   }
   private hudActivePlayer: ActivePlayer = 0
   private wasReplay: boolean = false
+
+  lastShotInit?: string
+  lastShotData?: string
 
   last = performance.now()
   readonly step = 0.001953125 * 1
@@ -305,6 +309,12 @@ export class Container {
     })
   }
 
+  updateLastShot() {
+    const snapshot = ExportUtils.captureSnapshot(this.table)
+    this.lastShotInit = snapshot.init
+    this.lastShotData = snapshot.shot
+  }
+
   updateController(controller: Controller) {
     this.wasReplay = this.wasReplay || controller instanceof Replay
     if (controller !== this.controller) {
@@ -328,7 +338,9 @@ export class Container {
           (this.wasReplay && controller instanceof End)
       )
       this.menu?.setAnalysisVisible(
-        controller instanceof Replay && this.rules.rulename === "threecushion"
+        (controller instanceof Replay ||
+          (this.wasReplay && controller instanceof End)) &&
+          this.rules.rulename === "threecushion"
       )
       const isTwoPlayer =
         !this.isSinglePlayer &&

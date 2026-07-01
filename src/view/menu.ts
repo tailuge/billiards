@@ -2,7 +2,7 @@ import { Container } from "../container/container"
 import { getButton } from "../utils/dom"
 import { Session } from "../network/client/session"
 import { ConcedeEvent } from "../events/concedeevent"
-import { Replay } from "../controller/replay"
+import { ExportUtils } from "../utils/export-utils"
 
 export class Menu {
   container: Container
@@ -26,34 +26,11 @@ export class Menu {
     this.analysis = this.getElement("analysis")
 
     if (this.analysis) {
-      this.analysis.onclick = () => {
-        const replay = this.container.controller as Replay
-        if (replay.currentInit && replay.currentShot) {
-          const base = "https://velikodimov.github.io/billiards/dist/index.html"
-          const params = new URLSearchParams()
-          params.set("ruletype", this.container.rules.rulename)
-          params.set("practice", "")
-          // Open the full-page shot analysis view directly (was drill mode).
-          params.set("analysis", "")
-          params.set("init", replay.currentInit)
-          params.set("initShot", replay.currentShot)
-          window.open(`${base}?${params.toString()}`, "_blank")
-        }
-      }
+      this.analysis.onclick = () => this.handleExport(true)
     }
 
     if (this.diagram) {
-      this.diagram.onclick = () => {
-        const replay = this.container.controller as Replay
-        if (replay.currentInit && replay.currentShot) {
-          const base = "diagrams/export.html"
-          const params = new URLSearchParams()
-          params.set("ruletype", this.container.rules.rulename)
-          params.set("init", replay.currentInit)
-          params.set("initShot", replay.currentShot)
-          window.open(`${base}?${params.toString()}`, "_blank")
-        }
-      }
+      this.diagram.onclick = () => this.handleExport(false)
     }
 
     this.setShareVisible(false)
@@ -106,6 +83,20 @@ export class Menu {
           }
         )
       }
+    }
+  }
+
+  private handleExport(isAnalysis: boolean) {
+    const init = this.container.lastShotInit
+    const shot = this.container.lastShotData
+    if (init && shot) {
+      const url = ExportUtils.getExportUrl(
+        isAnalysis,
+        this.container.rules.rulename,
+        init,
+        shot
+      )
+      window.open(url, "_blank")
     }
   }
 
