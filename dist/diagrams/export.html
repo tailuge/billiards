@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Export Diagram — Billiards</title>
+    <link rel="stylesheet" href="../css/ball-colors.css" />
     <style>
       *,
       *::before,
@@ -56,7 +57,7 @@
       }
 
       .table-stroke {
-        fill: #fff;
+        fill: none;
         stroke: #000;
         stroke-width: 0.004;
       }
@@ -65,12 +66,6 @@
         stroke: #ccc;
         stroke-width: 0.002;
         stroke-dasharray: 0.008 0.008;
-      }
-
-      .trajectory-line {
-        fill: none;
-        stroke: #000;
-        stroke-width: 0.002;
       }
 
       #controls {
@@ -118,8 +113,8 @@
       }
 
       .snap-indicator {
-        fill: rgb(0 0 0 / 20%);
-        stroke: none;
+        fill: none;
+        stroke: rgb(0 0 0 / 20%);
       }
 
       #panels {
@@ -267,6 +262,7 @@
     <meta charset="UTF-8" />
     <base href="https://tailuge.github.io/billiards/dist/diagrams/">
     <title>Billiards Diagram — Standalone</title>
+    <link rel="stylesheet" href="../css/ball-colors.css" />
     <style>
       body {
         margin: 0;
@@ -284,7 +280,7 @@
         border-radius: 0.25rem;
       }
       .table-stroke {
-        fill: #fff;
+        fill: none;
         stroke: #000;
         stroke-width: 0.004;
       }
@@ -292,11 +288,6 @@
         stroke: #ccc;
         stroke-width: 0.002;
         stroke-dasharray: 0.008 0.008;
-      }
-      .trajectory-line {
-        fill: none;
-        stroke: #000;
-        stroke-width: 0.002;
       }
       .manual-line {
         fill: none;

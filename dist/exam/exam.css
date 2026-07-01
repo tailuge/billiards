@@ -192,7 +192,7 @@ body > h2 {
 
 /* SVG styles from svg.html */
 .table-stroke {
-  fill: #fff;
+  fill: none;
   stroke: #000;
   stroke-width: 0.004;
 }
@@ -201,16 +201,6 @@ body > h2 {
   stroke: #ccc;
   stroke-width: 0.002;
   stroke-dasharray: 0.008 0.008;
-}
-
-.trajectory-line {
-  fill: none;
-  stroke: #000;
-  stroke-width: 0.002;
-}
-
-.traj-0 {
-  stroke-width: 0.004;
 }
 
 .manual-line {
