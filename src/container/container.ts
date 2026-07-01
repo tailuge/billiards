@@ -40,6 +40,7 @@ import { PlayShot } from "../controller/playshot"
 import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
 import { BallTray } from "../view/ball-tray"
+import { ExportUtils } from "../utils/export-utils"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -309,15 +310,9 @@ export class Container {
   }
 
   updateLastShot() {
-    this.lastShotInit = JSON.stringify(this.table.shortSerialise())
-    const aim = this.table.cue!.aim
-    this.lastShotData = JSON.stringify({
-      cueBallId: aim.i,
-      angle: aim.angle,
-      power: aim.power,
-      offset: { x: aim.offset.x, y: aim.offset.y },
-      elevation: aim.elevation || 0,
-    })
+    const snapshot = ExportUtils.captureSnapshot(this.table)
+    this.lastShotInit = snapshot.init
+    this.lastShotData = snapshot.shot
   }
 
   updateController(controller: Controller) {

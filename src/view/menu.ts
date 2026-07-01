@@ -2,6 +2,7 @@ import { Container } from "../container/container"
 import { getButton } from "../utils/dom"
 import { Session } from "../network/client/session"
 import { ConcedeEvent } from "../events/concedeevent"
+import { ExportUtils } from "../utils/export-utils"
 
 export class Menu {
   container: Container
@@ -89,18 +90,13 @@ export class Menu {
     const init = this.container.lastShotInit
     const shot = this.container.lastShotData
     if (init && shot) {
-      const base = isAnalysis
-        ? "https://velikodimov.github.io/billiards/dist/index.html"
-        : "diagrams/export.html"
-      const params = new URLSearchParams()
-      params.set("ruletype", this.container.rules.rulename)
-      if (isAnalysis) {
-        params.set("practice", "")
-        params.set("analysis", "")
-      }
-      params.set("init", init)
-      params.set("initShot", shot)
-      window.open(`${base}?${params.toString()}`, "_blank")
+      const url = ExportUtils.getExportUrl(
+        isAnalysis,
+        this.container.rules.rulename,
+        init,
+        shot
+      )
+      window.open(url, "_blank")
     }
   }
 
