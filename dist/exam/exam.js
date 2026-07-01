@@ -122,16 +122,16 @@ function calculateAssessment(results) {
 }
 
 function updateAssessment() {
-  const el = document.getElementById("assessment")
-  if (!el) return
+  const levelEl = document.getElementById("assessmentLevel")
+  const completionEl = document.getElementById("completionPct")
+  const scoreEl = document.getElementById("scorePct")
+  if (!levelEl) return
   const results = getResults()
   const { label, className, completionPct, scorePct } = calculateAssessment(results)
-  if (label === "Unknown") {
-    el.textContent = "Assessment: Unknown"
-  } else {
-    el.textContent = `Assessment: ${label} (${completionPct}% complete, ${scorePct}% score)`
-  }
-  el.className = `assessment ${className}`
+  levelEl.textContent = `Assessment: ${label}`
+  levelEl.className = `assessment-item assessment ${className}`
+  completionEl.textContent = label === "Unknown" ? "—" : `completion: ${completionPct}%`
+  scoreEl.textContent = label === "Unknown" ? "—" : `score: ${scorePct}%`
 }
 
 function buildSummaryList() {
