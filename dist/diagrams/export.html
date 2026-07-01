@@ -56,18 +56,6 @@
         margin: 0 auto;
       }
 
-      .table-stroke {
-        fill: none;
-        stroke: #000;
-        stroke-width: 0.004;
-      }
-
-      .grid-line {
-        stroke: #ccc;
-        stroke-width: 0.002;
-        stroke-dasharray: 0.008 0.008;
-      }
-
       #controls {
         margin-top: 0.4rem;
         text-align: center;
@@ -97,19 +85,6 @@
         background: #000;
         color: #fff;
         border-color: #000;
-      }
-
-      .manual-line {
-        fill: none;
-        stroke: #4f4f4f;
-        stroke-width: 0.001;
-        stroke-dasharray: 0.06 0.03;
-      }
-
-      .fine-stroke {
-        fill: none;
-        stroke: #000;
-        stroke-width: 0.001;
       }
 
       .snap-indicator {
@@ -280,27 +255,6 @@
         background: #fff;
         border-radius: 0.25rem;
       }
-      .table-stroke {
-        fill: none;
-        stroke: #000;
-        stroke-width: 0.004;
-      }
-      .grid-line {
-        stroke: #ccc;
-        stroke-width: 0.002;
-        stroke-dasharray: 0.008 0.008;
-      }
-      .manual-line {
-        fill: none;
-        stroke: #000;
-        stroke-width: 0.003;
-        stroke-dasharray: 0.06 0.03;
-      }
-      .fine-stroke {
-        fill: none;
-        stroke: #000;
-        stroke-width: 0.001;
-      }
     </style>
   </head>
   <body>
@@ -409,14 +363,24 @@
           clone.removeAttribute("data-json-shots")
           clone.removeAttribute("data-figure")
 
-          // Embed page CSS into the SVG so it renders standalone
-          const pageStyle = document.querySelector("style")
-          if (pageStyle) {
+          // Embed all page CSS rules into the SVG so it renders standalone correctly
+          let combinedCss = ""
+          for (const sheet of document.styleSheets) {
+            try {
+              for (const rule of sheet.cssRules) {
+                combinedCss += rule.cssText + "\n"
+              }
+            } catch (e) {
+              console.warn("Could not read stylesheet rules:", e)
+            }
+          }
+
+          if (combinedCss) {
             const svgStyle = document.createElementNS(
               "http://www.w3.org/2000/svg",
               "style"
             )
-            svgStyle.textContent = pageStyle.textContent
+            svgStyle.textContent = combinedCss
             clone.insertBefore(svgStyle, clone.firstChild)
           }
 

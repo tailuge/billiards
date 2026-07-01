@@ -190,31 +190,12 @@ body > h2 {
   border-radius: 4px;
 }
 
-/* SVG styles from svg.html */
-.table-stroke {
-  fill: none;
-  stroke: #000;
-  stroke-width: 0.004;
-}
-
-.grid-line {
-  stroke: #ccc;
-  stroke-width: 0.002;
-  stroke-dasharray: 0.008 0.008;
-}
-
+/* SVG Diagram Style Overrides */
 .manual-line {
-  fill: none;
-  stroke: #4f4f4f;
-  stroke-width: 0.001;
-  stroke-dasharray: 0.06 0.03;
   opacity: 0.5;
 }
 
 .fine-stroke {
-  fill: none;
-  stroke: #000;
-  stroke-width: 0.001;
   stroke-dasharray: 0.06 0.03;
 }
 
