@@ -428,7 +428,11 @@ export function initExam() {
         currentRuleType = ruleType
 
         const url = `../index.html?ruletype=${ruleType}&exam=true&practice=true&init=${encodeURIComponent(JSON.stringify(init))}&initShot=${encodeURIComponent(JSON.stringify(initShot))}`
-        iframe.src = url
+        if (iframe.contentWindow && iframe.src) {
+          iframe.contentWindow.location.replace(url)
+        } else {
+          iframe.src = url
+        }
         overlay.classList.add("active")
       }
     })
@@ -491,7 +495,6 @@ export function initExam() {
 
       // Close iframe immediately
       overlay.classList.remove("active")
-      iframe.src = ""
 
       // Update UI
       updateUI()
@@ -506,7 +509,6 @@ export function initExam() {
   if (closeBtn) {
     closeBtn.addEventListener("click", () => {
       overlay.classList.remove("active")
-      iframe.src = ""
       currentQuestionId = null
       currentEllipseChecks = null
       currentRuleType = null
