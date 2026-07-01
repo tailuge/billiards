@@ -33,8 +33,18 @@ function maxPoints(ellipseCount, ruleType, noPot) {
 
 function qIdForBlock(block) {
   const svg = block.querySelector(".billiards-table")
+  const h3 = block.querySelector("h3")
   let h = 0
-  const s = svg ? svg.outerHTML : String(Math.random())
+  let s = ""
+  if (svg) {
+    s += svg.dataset.jsonShots || svg.dataset.shots || ""
+    if (svg.dataset.nopot !== undefined) s += "nopot"
+    s += svg.dataset.figure || ""
+    const ellipses = svg.querySelectorAll("ellipse")
+    for (const e of ellipses) s += e.outerHTML
+  }
+  if (h3) s += h3.textContent
+  if (!s) s = String(Math.random())
   for (let i = 0; i < s.length; i++) {
     h = ((h << 5) - h) + s.charCodeAt(i)
     h |= 0
