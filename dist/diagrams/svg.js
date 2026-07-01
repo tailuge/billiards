@@ -251,7 +251,8 @@ function renderTrajectories(trajectoriesGroup, results) {
       const points = simplifiedPath
         .map((p) => `${p[0].toFixed(6)},${(-p[1]).toFixed(6)}`)
         .join(" ");
-      svgContent += `  <polyline points="${points}" class="trajectory-line" />\n`;
+      const lineOpacity = ballId === 0 ? 1 : ballId === 1 ? 0.75 : 0.5
+      svgContent += `  <polyline points="${points}" class="trajectory-line traj-${ballId}" stroke-opacity="${lineOpacity}" />\n`;
     });
   });
 
