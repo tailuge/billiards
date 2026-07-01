@@ -386,7 +386,7 @@
           url.searchParams.set("s", JSON.stringify(state))
           window.open(url.toString(), "_blank")
         } else {
-          const init = config.balls.flatMap((b) => [b.pos.x, -b.pos.y])
+          const init = config.balls.flatMap((b) => [b.pos.x, b.pos.y])
           const url = new URL("../practice.html", window.location.href)
           url.searchParams.set("ruletype", ruletype)
           url.searchParams.set("init", JSON.stringify(init))

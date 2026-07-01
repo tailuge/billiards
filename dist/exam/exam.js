@@ -350,7 +350,7 @@ export function initExam() {
         p.set("s", JSON.stringify(state))
         window.open(`../diagrams/three.html?${p}`, "_blank")
       } else {
-        const init = cfg.balls.flatMap((b) => [b.pos.x, -b.pos.y])
+        const init = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])
         const p = new URLSearchParams()
         p.set("ruletype", cfg.ruleType)
         p.set("init", JSON.stringify(init))

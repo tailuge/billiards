@@ -133,7 +133,7 @@
         --table-height-portrait: 80vh;
         --table-width-landscape: 85%;
         --controls-gap: 30px;
-        --p: 2px;
+        --p: 1px;
       }
 
       #table-bg {
@@ -381,6 +381,7 @@
       const R = 0.03275
       const HW = R * 43 + R // half-width  (X)
       const HH = R * 21 + R // half-height (Y)
+      const BALL_BORDER_RATIO = 0.08
 
       const BALL_COLORS = [
         "#ffffff",
@@ -397,8 +398,8 @@
 
       const SNOOKER_COLORS = [
         "#ffffff",
-        "#16a34a",
         "#ffd700",
+        "#16a34a",
         "#8B4513",
         "#2563eb",
         "#ff69b4",
@@ -453,8 +454,8 @@
           }
         }
         return {
-          left: ((tx + HW) / (HW * 2)) * 100,
-          top: ((ty + HH) / (HH * 2)) * 100,
+          left: ((-tx + HW) / (HW * 2)) * 100,
+          top: ((-ty + HH) / (HH * 2)) * 100,
         }
       }
 
@@ -499,6 +500,10 @@
         ball.el.style.width = sz + "px"
         ball.el.style.height = sz + "px"
         ball.el.style.fontSize = sz * 0.78 + "px"
+        ball.el.style.setProperty(
+          "--p",
+          Math.max(1, Math.round(sz * BALL_BORDER_RATIO)) + "px"
+        )
         ball.el.style.left = left + "%"
         ball.el.style.top = top + "%"
       }
