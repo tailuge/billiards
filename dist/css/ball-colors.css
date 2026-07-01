@@ -166,3 +166,34 @@
 .threecushion .trajectory-line {
   stroke: #000;
 }
+
+/* SVG Diagram Shared Styles */
+.table-stroke {
+  fill: none;
+  stroke: #000;
+  stroke-width: 0.004;
+}
+
+.grid-line {
+  stroke: #ccc;
+  stroke-width: 0.002;
+  stroke-dasharray: 0.008 0.008;
+}
+
+.manual-line {
+  fill: none;
+  stroke: #4f4f4f;
+  stroke-width: 0.001;
+  stroke-dasharray: 0.06 0.03;
+}
+
+.fine-stroke {
+  fill: none;
+  stroke: #000;
+  stroke-width: 0.001;
+}
+
+.worker-status {
+  pointer-events: none;
+  user-select: none;
+}

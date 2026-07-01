@@ -315,14 +315,6 @@ function moveManualElements(el, manualLinesGroup) {
   existing.forEach((line) => manualLinesGroup.appendChild(line));
 }
 
-function injectManualLineStyles() {
-  if (document.getElementById("manual-line-styles")) return;
-  const style = document.createElement("style");
-  style.id = "manual-line-styles";
-  style.textContent = `.manual-line { fill: none; stroke: #000; stroke-width: 0.002; }`;
-  document.head.appendChild(style);
-}
-
 export function setupSvgRoot(el) {
   if (!el.getAttribute("xmlns")) {
     el.setAttribute("xmlns", SVG_NS);
@@ -497,7 +489,6 @@ function setStatus(el, message) {
  * Renders the table and runs any data-shots simulations.
  */
 export function initDiagrams(ruletype) {
-  injectManualLineStyles();
   const divs = document.querySelectorAll(".billiards-table");
   if (divs.length === 0) {
     console.warn("No .billiards-table elements found on page");
