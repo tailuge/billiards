@@ -36,7 +36,7 @@
     "@tailuge/messaging": "1.28.0",
     "interactjs": "1.10.27",
     "jsoncrush": "^1.1.8",
-    "three": "0.185.0"
+    "three": "0.185.1"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
@@ -45,7 +45,7 @@
     "@testing-library/dom": "10.4.1",
     "@types/chai": "5.2.3",
     "@types/jest": "30.0.0",
-    "@types/node": "26.0.1",
+    "@types/node": "26.1.0",
     "@types/three": "0.185.0",
     "canvas": "3.2.3",
     "chai": "6.2.2",

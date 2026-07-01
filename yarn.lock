@@ -2137,12 +2137,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:26.0.1":
-  version: 26.0.1
-  resolution: "@types/node@npm:26.0.1"
+"@types/node@npm:26.1.0":
+  version: 26.1.0
+  resolution: "@types/node@npm:26.1.0"
   dependencies:
     undici-types: "npm:~8.3.0"
-  checksum: 10c0/31d204333c70124da6bcac7d1f27d8980149fe3f95a8419bfcd19c3e5823705c0e370d71ac34399352e1263b2d5fc41c87af964ec81e5a05a32224d65d8d224e
+  checksum: 10c0/61c22ad1ef215e24138cb8b7368fb68bab9de4c123b3f23d411749b015ba1b7d22f878ad54add26a0b69068d7e07c04af665069d8571b6c6c3b9b2fb73b7bd91
   languageName: node
   linkType: hard
 
@@ -3103,7 +3103,7 @@ __metadata:
     "@testing-library/dom": "npm:10.4.1"
     "@types/chai": "npm:5.2.3"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:26.0.1"
+    "@types/node": "npm:26.1.0"
     "@types/three": "npm:0.185.0"
     canvas: "npm:3.2.3"
     chai: "npm:6.2.2"
@@ -3123,7 +3123,7 @@ __metadata:
     stylelint-config-standard: "npm:^40.0.0"
     swc-loader: "npm:0.2.7"
     terser-webpack-plugin: "npm:^5.6.1"
-    three: "npm:0.185.0"
+    three: "npm:0.185.1"
     ts-jest: "npm:29.4.11"
     typescript: "npm:6.0.3"
     typescript-eslint: "npm:8.62.1"
@@ -8681,10 +8681,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.185.0":
-  version: 0.185.0
-  resolution: "three@npm:0.185.0"
-  checksum: 10c0/6f12f82979d2462ff16d9c5307193037918f7d0d86f1b7db6adfbd80395c24a989bc6db4926aea8a2ab416850faf3d3466a160bcb60b73e29b4bb17a26575eed
+"three@npm:0.185.1":
+  version: 0.185.1
+  resolution: "three@npm:0.185.1"
+  checksum: 10c0/d15d3fa934f53c9fd6706965ff9946f55653bc728cf582e68acb03421c0179d7662f7d270e14bcf72923e140c36779e7fba6b0f6e542e07deade7342f63c8bdf
   languageName: node
   linkType: hard
 
