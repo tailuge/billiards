@@ -49,7 +49,8 @@ function calculateAssessment(results) {
 
   let totalScored = 0
   let totalPossible = 0
-  let attempted = 0
+  let attemptedCount = 0
+  let questionsAttempted = 0
 
   const firstSvg = document.querySelector(".billiards-table")
   let ruleType = "threecushion"
@@ -71,31 +72,65 @@ function calculateAssessment(results) {
     const r = results[qId]
     if (r) {
       totalScored += r.bestPoints !== undefined ? r.bestPoints : (r.lastPts || 0)
-      attempted += r.attempted || 0
+      attemptedCount += r.attempted || 0
+      if (r.attempted > 0) questionsAttempted++
     }
   })
 
-  if (attempted === 0 || totalPossible === 0) return { label: "Unknown", className: "unknown" }
+  if (attemptedCount === 0 || totalPossible === 0) return { label: "Unknown", className: "unknown" }
 
-  const pct = totalScored / totalPossible
-  if (pct < 0.1) return { label: "Beginner", className: "beginner" }
-  if (pct < 0.2) return { label: "Novice", className: "novice" }
-  if (pct < 0.3) return { label: "Learner", className: "learner" }
-  if (pct < 0.4) return { label: "Developing", className: "developing" }
-  if (pct < 0.5) return { label: "Intermediate", className: "intermediate" }
-  if (pct < 0.6) return { label: "Competent", className: "competent" }
-  if (pct < 0.7) return { label: "Proficient", className: "proficient" }
-  if (pct < 0.8) return { label: "Advanced", className: "advanced" }
-  if (pct < 0.9) return { label: "Expert", className: "expert" }
-  return { label: "Master", className: "master" }
+  const scorePct = totalScored / totalPossible
+  const completionPct = questionsAttempted / blocks.length
+
+  let label = "Master"
+  let className = "master"
+  if (scorePct < 0.1) {
+    label = "Beginner"
+    className = "beginner"
+  } else if (scorePct < 0.2) {
+    label = "Novice"
+    className = "novice"
+  } else if (scorePct < 0.3) {
+    label = "Learner"
+    className = "learner"
+  } else if (scorePct < 0.4) {
+    label = "Developing"
+    className = "developing"
+  } else if (scorePct < 0.5) {
+    label = "Intermediate"
+    className = "intermediate"
+  } else if (scorePct < 0.6) {
+    label = "Competent"
+    className = "competent"
+  } else if (scorePct < 0.7) {
+    label = "Proficient"
+    className = "proficient"
+  } else if (scorePct < 0.8) {
+    label = "Advanced"
+    className = "advanced"
+  } else if (scorePct < 0.9) {
+    label = "Expert"
+    className = "expert"
+  }
+
+  return {
+    label,
+    className,
+    completionPct: Math.round(completionPct * 100),
+    scorePct: Math.round(scorePct * 100),
+  }
 }
 
 function updateAssessment() {
   const el = document.getElementById("assessment")
   if (!el) return
   const results = getResults()
-  const { label, className } = calculateAssessment(results)
-  el.textContent = `Assessment: ${label}`
+  const { label, className, completionPct, scorePct } = calculateAssessment(results)
+  if (label === "Unknown") {
+    el.textContent = "Assessment: Unknown"
+  } else {
+    el.textContent = `Assessment: ${label} (${completionPct}% complete, ${scorePct}% score)`
+  }
   el.className = `assessment ${className}`
 }
 
