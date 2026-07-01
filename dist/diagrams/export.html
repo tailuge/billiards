@@ -115,6 +115,7 @@
       .snap-indicator {
         fill: none;
         stroke: rgb(0 0 0 / 20%);
+        stroke-width: 0.01;
       }
 
       #panels {
@@ -476,7 +477,7 @@
         let startPoint = null
 
         const snapPoint = document.createElementNS(SVG_NS, "circle")
-        snapPoint.setAttribute("r", String(R))
+        snapPoint.setAttribute("r", "0.04")
         snapPoint.classList.add("snap-indicator")
         snapPoint.style.display = "none"
         editingGroup.appendChild(snapPoint)

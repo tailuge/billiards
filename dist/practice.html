@@ -470,8 +470,8 @@
           return { x: tx, y: ty }
         }
         return {
-          x: (px / r.width) * (HW * 2) - HW,
-          y: (py / r.height) * (HH * 2) - HH,
+          x: HW - (px / r.width) * (HW * 2),
+          y: HH - (py / r.height) * (HH * 2),
         }
       }
 
