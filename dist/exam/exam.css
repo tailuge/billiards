@@ -46,6 +46,7 @@ header h1 a:hover {
   padding: 0.25rem 0.3rem;
   margin: 0 auto 0.5rem;
   max-width: 800px;
+  border: 1px solid #000;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
 }
