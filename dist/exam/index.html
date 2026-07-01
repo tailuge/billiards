@@ -4,6 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>University Billiards Exam - Front Sheet</title>
+    <meta
+      name="description"
+      content="Online Three-Cushion and Snooker exams with automated machine assessment. Test your billiards skills with realistic physics simulation. 3쿠션 및 스누커 온라인 시험 - 정교한 물리 엔진 기반의 자동 채점 시스템."
+    />
+    <meta
+      name="keywords"
+      content="three-cushion, snooker, billiards exam, carom, 3쿠션, 당구, 스누커, 당구 시험, Five & Half System, diamond system, 파이브 앤 하프, 제각돌리기, 뒤돌리기, 앞돌리기, 옆돌리기, 뱅크샷, 대회전, 수구, 적구, 밀어치기, 끌어치기, 맛세이"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📜</text></svg>"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -37,7 +49,7 @@
         margin: 0 auto;
         background: #fff;
         border-radius: 6px;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 25px -5px rgb(0 0 0 / 10%);
         border: 1px solid #e5e7eb;
         border-top: 8px solid #002147;
         padding: 20px 32px;
@@ -321,7 +333,43 @@
         margin: 0 auto;
       }
 
-      @media (max-width: 768px) {
+      .print-icon {
+        width: 14px;
+        height: 14px;
+        display: inline;
+        vertical-align: middle;
+        margin-right: 4px;
+      }
+
+      .label-xs {
+        font-size: 9px;
+      }
+
+      .w-1-3 {
+        width: 33%;
+      }
+
+      .mt-0 {
+        margin-top: 0;
+      }
+
+      .mb-2-5 {
+        margin-bottom: 10px;
+      }
+
+      .mt-2 {
+        margin-top: 8px;
+      }
+
+      .rounded-sm {
+        border-radius: 6px;
+      }
+
+      .label-sm {
+        font-size: 10px;
+      }
+
+      @media (width <= 768px) {
         body {
           padding: 8px;
         }
@@ -360,14 +408,7 @@
     <div class="actions no-print">
       <a href="javascript:window.print()" class="btn btn-sm">
         <svg
-          class="w-3.5 h-3.5"
-          style="
-            width: 14px;
-            height: 14px;
-            display: inline;
-            vertical-align: middle;
-            margin-right: 4px;
-          "
+          class="w-3.5 h-3.5 print-icon"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -399,8 +440,7 @@
       >
         <div>
           <p
-            class="font-bold uppercase text-xs tracking-wider text-slate-400"
-            style="font-size: 9px"
+            class="font-bold uppercase text-xs tracking-wider text-slate-400 label-xs"
           >
             Examination Period
           </p>
@@ -408,8 +448,7 @@
         </div>
         <div class="text-right">
           <p
-            class="font-bold uppercase text-xs tracking-wider text-slate-400"
-            style="font-size: 9px"
+            class="font-bold uppercase text-xs tracking-wider text-slate-400 label-xs"
           >
             Paper Reference
           </p>
@@ -430,10 +469,7 @@
         <table>
           <tbody>
             <tr class="border-b border-slate-200">
-              <td
-                class="pb-1\.5 font-semibold text-slate-600"
-                style="width: 33%"
-              >
+              <td class="pb-1\.5 font-semibold text-slate-600 w-1-3">
                 Time Allowed:
               </td>
               <td class="pb-1\.5 text-slate-900">Three (3) Hours</td>
@@ -452,17 +488,15 @@
       </div>
 
       <div
-        class="text-xs text-slate-700 leading-relaxed overflow-y-auto pr-1 mb-4"
-        style="margin-top: 0"
+        class="text-xs text-slate-700 leading-relaxed overflow-y-auto pr-1 mb-4 mt-0"
       >
         <h3
-          class="serif text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-1"
-          style="margin-bottom: 8px"
+          class="serif text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-1 mb-2"
         >
           Instructions to Candidates
         </h3>
 
-        <div style="margin-top: 8px">
+        <div class="mt-2">
           <p>
             <span class="font-semibold text-slate-900">1. Commencement:</span>
             Candidates must not commence the examination until instructed to do
@@ -472,7 +506,7 @@
           </p>
         </div>
 
-        <div style="margin-top: 8px">
+        <div class="mt-2">
           <p>
             <span class="font-semibold text-slate-900"
               >2. Silence and Conduct:</span
@@ -484,7 +518,7 @@
           </p>
         </div>
 
-        <div style="margin-top: 8px">
+        <div class="mt-2">
           <p>
             <span class="font-semibold text-slate-900"
               >3. Examination Conditions:</span
@@ -496,7 +530,7 @@
           </p>
         </div>
 
-        <div style="margin-top: 8px">
+        <div class="mt-2">
           <p>
             <span class="font-semibold text-slate-900"
               >4. Dress and Equipment:</span
@@ -508,7 +542,7 @@
           </p>
         </div>
 
-        <div style="margin-top: 8px">
+        <div class="mt-2">
           <p>
             <span class="font-semibold text-slate-900">5. Assessment:</span>
             Unless otherwise stated, exercises may be attempted multiple times.
@@ -518,7 +552,7 @@
           </p>
         </div>
 
-        <div style="margin-top: 8px">
+        <div class="mt-2">
           <p>
             <span class="font-semibold text-slate-900">6. Conclusion:</span>
             Upon the instruction to conclude the examination, candidates must
@@ -529,13 +563,9 @@
         </div>
       </div>
 
-      <div
-        class="border border-slate-300 p-3 shrink-0"
-        style="border-radius: 6px"
-      >
+      <div class="border border-slate-300 p-3 shrink-0 rounded-sm">
         <p
-          class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 text-center"
-          style="font-size: 10px"
+          class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 text-center label-sm"
         >
           To be completed by the Candidate: Select Examination Discipline
         </p>
@@ -546,8 +576,7 @@
       </div>
 
       <div
-        class="mt-4 pt-2 border-t border-slate-100 text-center text-xs text-slate-700 shrink-0"
-        style="font-size: 10px"
+        class="mt-4 pt-2 border-t border-slate-100 text-center text-xs text-slate-700 shrink-0 label-sm"
       >
         <p>
           &copy; University Examinations Registry. DO NOT TURN OVER THIS PAGE
