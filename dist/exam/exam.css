@@ -203,16 +203,6 @@ body > h2 {
   stroke-dasharray: 0.008 0.008;
 }
 
-.trajectory-line {
-  fill: none;
-  stroke: #000;
-  stroke-width: 0.002;
-}
-
-.traj-0 {
-  stroke-width: 0.004;
-}
-
 .manual-line {
   fill: none;
   stroke: #4f4f4f;

@@ -1,0 +1,200 @@
+.ball {
+  stroke: #000;
+  stroke-width: 0.002;
+}
+
+.trajectory-line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 0.002;
+  stroke-opacity: 0.5;
+}
+
+.traj-0 {
+  stroke-opacity: 1;
+}
+
+.traj-1 {
+  stroke-opacity: 0.75;
+}
+
+/* Default / Pool Colors */
+.ball-0,
+.traj-0 {
+  fill: #fff;
+  stroke: #fff;
+}
+
+.ball-1,
+.traj-1 {
+  fill: #ffd900;
+  stroke: #ffd900;
+}
+
+.ball-2,
+.traj-2 {
+  fill: #00f;
+  stroke: #00f;
+}
+
+.ball-3,
+.traj-3 {
+  fill: #f00;
+  stroke: #f00;
+}
+
+.ball-4,
+.traj-4 {
+  fill: #800080;
+  stroke: #800080;
+}
+
+.ball-5,
+.traj-5 {
+  fill: #f30;
+  stroke: #f30;
+}
+
+.ball-6,
+.traj-6 {
+  fill: #008000;
+  stroke: #008000;
+}
+
+.ball-7,
+.traj-7 {
+  fill: #600;
+  stroke: #600;
+}
+
+.ball-8,
+.traj-8 {
+  fill: #000;
+  stroke: #000;
+}
+
+.ball-9,
+.traj-9 {
+  fill: #ff0;
+  stroke: #ff0;
+}
+
+.ball-10,
+.traj-10 {
+  fill: #00f;
+  stroke: #00f;
+}
+
+.ball-11,
+.traj-11 {
+  fill: #f00;
+  stroke: #f00;
+}
+
+.ball-12,
+.traj-12 {
+  fill: #800080;
+  stroke: #800080;
+}
+
+.ball-13,
+.traj-13 {
+  fill: #f80;
+  stroke: #f80;
+}
+
+.ball-14,
+.traj-14 {
+  fill: #008000;
+  stroke: #008000;
+}
+
+.ball-15,
+.traj-15 {
+  fill: #600;
+  stroke: #600;
+}
+
+/* Snooker Overrides */
+.snooker .ball-1,
+.snooker .traj-1 {
+  fill: #ffd700;
+  stroke: #ffd700;
+}
+
+.snooker .ball-2,
+.snooker .traj-2 {
+  fill: #008000;
+  stroke: #008000;
+}
+
+.snooker .ball-3,
+.snooker .traj-3 {
+  fill: #6a2500;
+  stroke: #6a2500;
+}
+
+.snooker .ball-4,
+.snooker .traj-4 {
+  fill: #005cb1;
+  stroke: #005cb1;
+}
+
+.snooker .ball-5,
+.snooker .traj-5 {
+  fill: #ff80b3;
+  stroke: #ff80b3;
+}
+
+.snooker .ball-6,
+.snooker .traj-6 {
+  fill: #010000;
+  stroke: #010000;
+}
+
+.snooker .ball-7,
+.snooker .traj-7,
+.snooker .ball-8,
+.snooker .traj-8,
+.snooker .ball-9,
+.snooker .traj-9,
+.snooker .ball-10,
+.snooker .traj-10,
+.snooker .ball-11,
+.snooker .traj-11,
+.snooker .ball-12,
+.snooker .traj-12,
+.snooker .ball-13,
+.snooker .traj-13,
+.snooker .ball-14,
+.snooker .traj-14,
+.snooker .ball-15,
+.snooker .traj-15,
+.snooker .ball-16,
+.snooker .traj-16,
+.snooker .ball-17,
+.snooker .traj-17,
+.snooker .ball-18,
+.snooker .traj-18,
+.snooker .ball-19,
+.snooker .traj-19,
+.snooker .ball-20,
+.snooker .traj-20,
+.snooker .ball-21,
+.snooker .traj-21 {
+  fill: #e00;
+  stroke: #e00;
+}
+
+/* Three-Cushion Overrides */
+.threecushion .ball-1,
+.threecushion .traj-1 {
+  fill: #ffd700;
+  stroke: #ffd700;
+}
+
+.threecushion .ball-2,
+.threecushion .traj-2 {
+  fill: #f00;
+  stroke: #f00;
+}

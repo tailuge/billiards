@@ -251,8 +251,7 @@ function renderTrajectories(trajectoriesGroup, results) {
       const points = simplifiedPath
         .map((p) => `${p[0].toFixed(6)},${(-p[1]).toFixed(6)}`)
         .join(" ");
-      const lineOpacity = ballId === 0 ? 1 : ballId === 1 ? 0.75 : 0.5
-      svgContent += `  <polyline points="${points}" class="trajectory-line traj-${ballId}" stroke-opacity="${lineOpacity}" />\n`;
+      svgContent += `  <polyline points="${points}" class="trajectory-line traj-${ballId}" />\n`;
     });
   });
 
@@ -299,7 +298,7 @@ function renderBallPositions(ballsGroup, config) {
   config.balls.forEach((ball) => {
     const cx = ball.pos.x;
     const cy = -ball.pos.y;
-    svgContent += `  <circle cx="${cx}" cy="${cy}" r="${ballR}" fill="none" stroke="#000" stroke-width="0.002" />\n`;
+    svgContent += `  <circle cx="${cx}" cy="${cy}" r="${ballR}" class="ball ball-${ball.id}" />\n`;
   });
 
   ballsGroup.innerHTML = svgContent;
@@ -413,8 +412,8 @@ function createSvgStatusText(svg) {
 async function runElement(el, ruletype) {
   const setup = setupSvgRoot(el);
 
-
   const { svg, tableGroup, trajectoriesGroup } = setup;
+  if (ruletype) svg.classList.add(ruletype);
   const { statusEl } = setup;
 
   // Render table immediately
