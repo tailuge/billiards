@@ -20,17 +20,8 @@ export class Cushion {
     const futurePosition = ball.futurePosition(t)
 
     if (!hasPockets) {
-      const overX = Math.abs(futurePosition.x) - TableGeometry.tableX
-      const overY = Math.abs(futurePosition.y) - TableGeometry.tableY
-      if (overX > 0 && overY > 0) {
-        let dir: number
-        if (overX >= overY) {
-          dir = futurePosition.x > 0 ? 0 : Math.PI
-        } else {
-          dir = futurePosition.y > 0 ? -Math.PI / 2 : Math.PI / 2
-        }
-        return Cushion.bounceIn(dir, ball, cushionModel)
-      }
+      const result = Cushion.bounceCornerNoPockets(ball, cushionModel)
+      if (result !== undefined) return result
     }
 
     if (Cushion.willBounceLong(futurePosition, hasPockets)) {
@@ -45,6 +36,23 @@ export class Cushion {
     }
 
     return undefined
+  }
+
+  private static bounceCornerNoPockets(
+    ball: Ball,
+    cushionModel
+  ): number | undefined {
+    const overX = Math.abs(ball.futurePos.x) - TableGeometry.tableX
+    const overY = Math.abs(ball.futurePos.y) - TableGeometry.tableY
+    if (overX <= 0 || overY <= 0) return undefined
+
+    let dir: number
+    if (overX >= overY) {
+      dir = ball.futurePos.x > 0 ? 0 : Math.PI
+    } else {
+      dir = ball.futurePos.y > 0 ? -Math.PI / 2 : Math.PI / 2
+    }
+    return Cushion.bounceIn(dir, ball, cushionModel)
   }
 
   static willBounceShort(futurePosition, hasPockets) {
