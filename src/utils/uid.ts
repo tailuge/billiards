@@ -1,9 +1,7 @@
 import { VERSION } from "./version"
 
 function generateRandomHex4(): string {
-  return "xxxx".replace(/x/g, () =>
-    Math.floor(Math.random() * 16).toString(16)
-  )
+  return "xxxx".replace(/x/g, () => Math.floor(Math.random() * 16).toString(16))
 }
 
 function getAnonId(): string {

@@ -16,7 +16,7 @@ export class Aim extends ControllerBase {
   constructor(container) {
     super(container)
     const table = this.container.table
-    if (table.cue) {
+    
       table.cue.aimMode()
       table.cue.showHelper(true)
       table.cueball = this.container.rules.cueball
@@ -24,26 +24,18 @@ export class Aim extends ControllerBase {
       const params = new URLSearchParams(globalThis.location?.search)
       let customShot = false
       if (params.has("initShot")) {
-        try {
-          const shot = JSON.parse(params.get("initShot")!)
-          if (shot) {
-            if (typeof shot.cueBallId === "number") {
-              table.cueball = table.balls[shot.cueBallId] || table.cueball
-            }
-            table.cue.aim.angle = shot.angle ?? table.cue.aim.angle
-            table.cue.aim.power = shot.power ?? table.cue.aim.power
-            if (shot.offset) {
-              table.cue.aim.offset.set(
-                shot.offset.x ?? 0,
-                shot.offset.y ?? 0,
-                0
-              )
-            }
-            table.cue.aim.elevation = shot.elevation ?? 0
-            customShot = true
+        const shot = JSON.parse(params.get("initShot")!)
+        if (shot) {
+          if (typeof shot.cueBallId === "number") {
+            table.cueball = table.balls[shot.cueBallId] || table.cueball
           }
-        } catch (e) {
-          console.warn("Failed to parse initShot", e)
+          table.cue.aim.angle = shot.angle ?? table.cue.aim.angle
+          table.cue.aim.power = shot.power ?? table.cue.aim.power
+          if (shot.offset) {
+            table.cue.aim.offset.set(shot.offset.x ?? 0, shot.offset.y ?? 0, 0)
+          }
+          table.cue.aim.elevation = shot.elevation ?? 0
+          customShot = true
         }
       }
 
@@ -58,7 +50,7 @@ export class Aim extends ControllerBase {
       }
       this.container.view.camera.suggestMode(this.container.view.camera.aimView)
       table.cue.updateAimInput()
-    }
+    
   }
 
   override onFirst() {
