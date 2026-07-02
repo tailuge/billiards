@@ -149,6 +149,7 @@ function configureSimulation(
   table: Table,
   cushionModel: string
 ): number {
+  Constants.configureForRule(ruleType)
   for (const [key, value] of Object.entries(params)) {
     const setterName = `set${key}`
     if (typeof (Constants as any)[setterName] === "function") {

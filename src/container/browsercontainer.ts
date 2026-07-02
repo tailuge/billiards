@@ -110,7 +110,7 @@ export class BrowserContainer {
       this.first
     )
     console.log(Session.getInstance())
-    applyPhysicsParams(params)
+    applyPhysicsParams(params, this.ruletype)
   }
 
   cushion(model) {
