@@ -18,12 +18,14 @@ function checkpoint(label: string, detail?: Record<string, unknown>) {
 }
 
 function getFrame(table: Table) {
+  const balls: { id: number; pos: number[] }[] = []
+  for (let i = 0; i < table.balls.length; i++) {
+    const b = table.balls[i]
+    balls.push({ id: b.id, pos: [b.pos.x, b.pos.y] })
+  }
   return {
     t: table.time / 1000,
-    balls: table.balls.map((b) => ({
-      id: b.id,
-      pos: [b.pos.x, b.pos.y],
-    })),
+    balls,
   }
 }
 
@@ -39,7 +41,12 @@ function anyCushionTooClose(
   clearance: number,
   R: number
 ): boolean {
-  return rollingBalls.some((b) => ballToCushionDist(b) <= clearance - R)
+  for (let i = 0; i < rollingBalls.length; i++) {
+    if (ballToCushionDist(rollingBalls[i]) <= clearance - R) {
+      return true
+    }
+  }
+  return false
 }
 
 function anyBallTooClose(
@@ -47,9 +54,16 @@ function anyBallTooClose(
   allBalls: Ball[],
   clearance: number
 ): boolean {
-  return rollingBalls.some((bA) =>
-    allBalls.some((bB) => bA !== bB && bA.pos.distanceTo(bB.pos) <= clearance)
-  )
+  for (let i = 0; i < rollingBalls.length; i++) {
+    const bA = rollingBalls[i]
+    for (let j = 0; j < allBalls.length; j++) {
+      const bB = allBalls[j]
+      if (bA !== bB && bA.pos.distanceTo(bB.pos) <= clearance) {
+        return true
+      }
+    }
+  }
+  return false
 }
 
 function minTimeToBallCollision(
@@ -92,16 +106,30 @@ export function calcMinWarpTime(
 }
 
 function getFastWarpTime(table: Table, R: number, clearance: number): number {
-  const balls = table.balls.filter((b) => b.onTable())
-
-  if (balls.some((b) => b.state === State.Sliding)) {
-    return 0
+  const balls: Ball[] = []
+  for (let i = 0; i < table.balls.length; i++) {
+    if (table.balls[i].onTable()) {
+      balls.push(table.balls[i])
+    }
   }
 
-  const rollingBalls = balls.filter((b) => b.state === State.Rolling)
+  for (let i = 0; i < balls.length; i++) {
+    if (balls[i].state === State.Sliding) {
+      return 0
+    }
+  }
 
-  if (rollingBalls.some((b) => b.vel.length() < R / 32)) {
-    return 0
+  const rollingBalls: Ball[] = []
+  for (let i = 0; i < balls.length; i++) {
+    if (balls[i].state === State.Rolling) {
+      rollingBalls.push(balls[i])
+    }
+  }
+
+  for (let i = 0; i < rollingBalls.length; i++) {
+    if (rollingBalls[i].vel.length() < R / 32) {
+      return 0
+    }
   }
 
   if (anyCushionTooClose(rollingBalls, clearance, R)) {
@@ -180,8 +208,8 @@ export function simulateSync(config: any): any {
   table.cueball.vel.copy(strike.vel)
   table.cueball.rvel.copy(strike.rvel)
 
-  const frames: any[] = [getFrame(table)]
-  const { warpClearanceR = 2.5 } = config // default off until fixed
+  const { warpClearanceR = 2.5, recordTrajectory = true } = config
+  const frames: any[] = recordTrajectory ? [getFrame(table)] : []
   let iterations = 0
   const progressInterval = 10000
 
@@ -195,7 +223,9 @@ export function simulateSync(config: any): any {
 
     table.advance(dt)
 
-    frames.push(getFrame(table))
+    if (recordTrajectory) {
+      frames.push(getFrame(table))
+    }
 
     iterations++
 
