@@ -24,7 +24,15 @@ describe("ThreeCushion", () => {
   const rule = "threecushion"
 
   beforeEach(function (done) {
-    Session.init("test-client", "TestPlayer", "test-table", false, false, false, true)
+    Session.init(
+      "test-client",
+      "TestPlayer",
+      "test-table",
+      false,
+      false,
+      false,
+      true
+    )
     container = new Container({
       element: undefined,
       log: (_) => {},
@@ -284,7 +292,15 @@ describe("ThreeCushion", () => {
   it("Proximity outcome emitted when cue ball within 4R in practice mode", (done) => {
     // Initialize session with practice mode
     Session.reset()
-    Session.init("test-client", "TestPlayer", "test-table", false, false, false, true)
+    Session.init(
+      "test-client",
+      "TestPlayer",
+      "test-table",
+      false,
+      false,
+      false,
+      true
+    )
 
     const practiceContainer = new Container({
       element: undefined,
@@ -348,7 +364,15 @@ describe("ThreeCushion", () => {
 
   it("Proximity indicator does not update after cue ball hits target before 3 cushions", (done) => {
     Session.reset()
-    Session.init("test-client", "TestPlayer", "test-table", false, false, false, true)
+    Session.init(
+      "test-client",
+      "TestPlayer",
+      "test-table",
+      false,
+      false,
+      false,
+      true
+    )
 
     const practiceContainer = new Container({
       element: undefined,
