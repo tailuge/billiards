@@ -23,14 +23,12 @@ export class Cushion {
       const overX = Math.abs(futurePosition.x) - TableGeometry.tableX
       const overY = Math.abs(futurePosition.y) - TableGeometry.tableY
       if (overX > 0 && overY > 0) {
-        const dir =
-          overX >= overY
-            ? futurePosition.x > 0
-              ? 0
-              : Math.PI
-            : futurePosition.y > 0
-              ? -Math.PI / 2
-              : Math.PI / 2
+        let dir: number
+        if (overX >= overY) {
+          dir = futurePosition.x > 0 ? 0 : Math.PI
+        } else {
+          dir = futurePosition.y > 0 ? -Math.PI / 2 : Math.PI / 2
+        }
         return Cushion.bounceIn(dir, ball, cushionModel)
       }
     }
