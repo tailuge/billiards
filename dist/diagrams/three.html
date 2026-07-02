@@ -713,6 +713,7 @@
 
       let tableBalls = []
       let presets = []
+      let cueBallId = 0
       let draggingBall = null
       let draggingAim = false
       let draggingSpin = false
@@ -825,6 +826,31 @@
         cueTip.style.left = `${(-aimOffset.x / 2 + 0.5) * 100}%`
         cueTip.style.top = `${(-aimOffset.y / 2 + 0.5) * 100}%`
         cueTip.style.transform = "translate(-50%, -50%)"
+
+        const cueBallEl = document.getElementById("cueBall")
+        if (cueBallEl) {
+          if (cueBallId === 1) {
+            cueBallEl.style.background = `radial-gradient(
+              circle at 35% 35%,
+              #fff 0%,
+              #ffd700 10%,
+              #e6c300 30%,
+              #ccae00 65%,
+              #b39800 90%,
+              #998200 100%
+            )`
+          } else {
+            cueBallEl.style.background = `radial-gradient(
+              circle at 35% 35%,
+              #fff 0%,
+              rgb(255 255 255) 10%,
+              rgb(220 220 220) 30%,
+              #a0a0a0 65%,
+              #606060 90%,
+              #404040 100%
+            )`
+          }
+        }
       }
 
       function setSpinFromPointer(pointerEvent) {
@@ -853,7 +879,7 @@
       }
 
       function positionAimArrow(surface) {
-        const cueBall = tableBalls[0]
+        const cueBall = tableBalls[cueBallId]
         const aimLayer = document.getElementById("aim-layer")
         const aimLine = document.getElementById("aim-arrow-line")
         const aimHead = document.getElementById("aim-arrow-head")
@@ -901,11 +927,10 @@
           round6(ball.x),
           round6(ball.y),
         ])
-        if (state.shots?.[0]?.pos) {
-          state.shots[0].pos.x = state.init[0]
-          state.shots[0].pos.y = state.init[1]
-        }
         if (state.shots?.[0]) {
+          state.shots[0].pos.x = state.init[cueBallId * 2]
+          state.shots[0].pos.y = state.init[cueBallId * 2 + 1]
+          state.shots[0].i = cueBallId
           state.shots[0].angle = round6(aimAngle)
           state.shots[0].power = round6(aimPower)
           state.shots[0].offset = {
@@ -990,6 +1015,7 @@ Overlap: ${overlap}%`)
         const state = JSON.parse(params.get("state"))
         const init = state.init ?? []
         const shot = state.shots?.[0] ?? {}
+        cueBallId = shot.i ?? 0
         aimAngle = normalizeAngle(shot.angle ?? 0)
         aimLength = DEFAULT_AIM_LENGTH
         aimOffset = normalizeSpinOffset(
@@ -1085,7 +1111,7 @@ Overlap: ${overlap}%`)
           if (!draggingAim) return
           event.preventDefault()
 
-          const cueBall = tableBalls[0]
+          const cueBall = tableBalls[cueBallId]
           if (!cueBall) return
 
           const pointer = event.touches ? event.touches[0] : event
@@ -1193,6 +1219,7 @@ Overlap: ${overlap}%`)
           url.searchParams.set(
             "initShot",
             JSON.stringify({
+              cueBallId,
               angle: round6(aimAngle),
               power: round6(aimPower),
               offset: {
@@ -1236,6 +1263,7 @@ Overlap: ${overlap}%`)
           url.searchParams.set(
             "initShot",
             JSON.stringify({
+              cueBallId,
               angle: round6(aimAngle),
               power: round6(aimPower),
               offset: {
@@ -1362,6 +1390,7 @@ Overlap: ${overlap}%`)
         const newPreset = {
           name: name.slice(0, 16),
           positions: tableBalls.map((b) => [round6(b.x), round6(b.y)]),
+          i: cueBallId,
           angle: round6(aimAngle),
           power: round6(aimPower),
           offset: {
@@ -1417,7 +1446,7 @@ Overlap: ${overlap}%`)
 
       function applyPreset(preset) {
         document.getElementById("presets-popover")?.hidePopover()
-        const { positions, angle, power, offset, constants } = preset
+        const { positions, i, angle, power, offset, constants } = preset
         const surface = document.getElementById("table-surface")
         const topview = document.querySelector(".topview")
         if (!surface || !topview) return
@@ -1425,6 +1454,7 @@ Overlap: ${overlap}%`)
           tableBalls[i].x = x
           tableBalls[i].y = y
         })
+        cueBallId = i ?? 0
         aimAngle = normalizeAngle(angle)
         aimPower = clamp(power, 0, MAX_POWER)
         aimOffset = offset ?? { x: 0, y: 0, z: 0 }
