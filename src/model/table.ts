@@ -180,7 +180,6 @@ export class Table {
   }
 
   serialiseHit() {
-    if (!this.cue) return null
     const aim = this.cue.aim.copy()
     aim.pos.copy(this.cueball.pos)
 
