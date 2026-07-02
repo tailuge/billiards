@@ -18,6 +18,9 @@ export class Camera {
   private readonly lookTarget = new Vector3()
   private readonly tempVec = new Vector3()
 
+  private distance = R * 18
+  private fovOffset = 0
+
   elapsed: number
   private t = 0
 
@@ -28,7 +31,7 @@ export class Camera {
   }
 
   orbitView(_: AimEvent) {
-    this.camera.fov = 45
+    this.camera.fov = 45 + this.fovOffset
     const orbitR = R * 70
     const orbitH = R * 33
     this.target.set(
@@ -44,14 +47,17 @@ export class Camera {
   spectatorView(aim: AimEvent) {
     const h = 25 * R
     const portrait = this.camera.aspect < 0.8
-    this.camera.fov = portrait ? 60 : 40
+    this.camera.fov = (portrait ? 60 : 40) + this.fovOffset
     if (h < 10 * R) {
       const factor = 100 * (10 * R - h)
       this.camera.fov -= factor * (portrait ? 3 : 1)
     }
     this.target
       .copy(aim.pos)
-      .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -R * 30)
+      .addScaledVector(
+        unitAtAngle(aim.angle, this.tempVec),
+        -(this.distance + R * 12)
+      )
     this.camera.position.lerp(this.target, 0.1)
     this.camera.position.z = h
     this.camera.up = up
@@ -77,14 +83,14 @@ export class Camera {
   aimView(aim: AimEvent, fraction = 0.08) {
     const h = this.height
     const portrait = this.camera.aspect < 0.8
-    this.camera.fov = portrait ? 60 : 40
+    this.camera.fov = (portrait ? 60 : 40) + this.fovOffset
     if (h < 10 * R) {
       const factor = 100 * (10 * R - h)
       this.camera.fov -= factor * (portrait ? 3 : 1)
     }
     this.target
       .copy(aim.pos)
-      .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -R * 18)
+      .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -this.distance)
     this.camera.position.lerp(this.target, fraction)
     this.camera.position.z = h
     this.camera.up = up
@@ -101,6 +107,15 @@ export class Camera {
     if (this.height < R * 105) {
       this.suggestMode(this.aimView)
     }
+  }
+
+  adjustFov(delta: number) {
+    this.fovOffset = MathUtils.clamp(this.fovOffset + delta, -30, 60)
+  }
+
+  adjustDistance(delta: number) {
+    delta = this.distance < 10 * R ? delta / 8 : delta
+    this.distance = MathUtils.clamp(this.distance + delta, R * 2, R * 100)
   }
 
   suggestMode(mode) {
