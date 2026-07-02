@@ -17,7 +17,7 @@
     "strictFunctionTypes": true,
     "strictPropertyInitialization": false,
     "noImplicitOverride": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
     "moduleResolution": "Bundler",
     "target": "ES2018",
     "types": ["node"],
