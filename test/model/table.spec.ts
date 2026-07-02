@@ -153,7 +153,7 @@ describe("Table", () => {
     const data = JSON.stringify(table.serialise())
     const obj = JSON.parse(data)
     const table2 = Table.fromSerialised(obj)
-    expect(table2.balls.length).to.be.equal(3)
+    expect(table2.balls).to.have.lengthOf(3)
     done()
   })
 
@@ -193,7 +193,7 @@ describe("Table", () => {
     expect(hit.aim.pos.x).to.equal(table.cueball.pos.x)
     expect(hit.aim.pos.y).to.equal(table.cueball.pos.y)
     expect(hit.aim.pos.z).to.equal(table.cueball.pos.z)
-    expect(hit.aim.pos.x).to.not.equal(-0.7205)
+    expect(hit.aim.pos.x).not.to.be.closeTo(-0.7205, 1e-6)
     done()
   })
 })

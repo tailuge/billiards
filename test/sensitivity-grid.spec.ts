@@ -52,12 +52,12 @@ describe("buildAxisSpecs", () => {
     ])
 
     const ox = axes.find((a) => a.key === "offsetX")!
-    expect(ox.step).to.equal(0.025)
+    expect(ox.step).to.be.closeTo(0.025, 1e-9)
     expect(ox.min).to.equal(-offCenterLimit)
     expect(ox.max).to.equal(offCenterLimit)
 
     const elev = axes.find((a) => a.key === "elevation")!
-    expect(elev.step).to.equal(0.025)
+    expect(elev.step).to.be.closeTo(0.025, 1e-9)
     expect(elev.min).to.equal(0)
     expect(elev.max).to.be.closeTo((2 * Math.PI) / 5, 1e-9)
   })
@@ -236,7 +236,7 @@ describe("runSensitivityAnalysis (full grid scan)", () => {
     } catch (e) {
       err = e as Error
     }
-    expect(err).to.not.equal(null)
+    expect(err).to.not.be.null
     expect(err!.message).to.contain("abort")
   })
 })

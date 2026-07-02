@@ -26,13 +26,13 @@ describe("BallTray", () => {
   test("addShot groups consecutive pots", () => {
     // First pot
     tray.addShot(true, 1, [], {})
-    expect(trayList.querySelectorAll(".break-group").length).toBe(1)
-    expect(trayList.querySelectorAll(".ball-item").length).toBe(1)
+    expect(trayList.querySelectorAll(".break-group")).toHaveLength(1)
+    expect(trayList.querySelectorAll(".ball-item")).toHaveLength(1)
 
     // Second pot
     tray.addShot(true, 1, [], {})
-    expect(trayList.querySelectorAll(".break-group").length).toBe(1)
-    expect(trayList.querySelectorAll(".ball-item").length).toBe(2)
+    expect(trayList.querySelectorAll(".break-group")).toHaveLength(1)
+    expect(trayList.querySelectorAll(".ball-item")).toHaveLength(2)
   })
 
   test("addShot breaks group on miss", () => {
@@ -40,16 +40,16 @@ describe("BallTray", () => {
     tray.addShot(true, 1, [], {})
     // Miss
     tray.addShot(false, 0, [], {})
-    expect(trayList.querySelectorAll(".break-group").length).toBe(1)
-    expect(trayList.querySelectorAll(".ball-item").length).toBe(2)
+    expect(trayList.querySelectorAll(".break-group")).toHaveLength(1)
+    expect(trayList.querySelectorAll(".ball-item")).toHaveLength(2)
     // Next pot should be in new group
     tray.addShot(true, 1, [], {})
-    expect(trayList.querySelectorAll(".break-group").length).toBe(2)
+    expect(trayList.querySelectorAll(".break-group")).toHaveLength(2)
   })
 
   test("addBreak creates new group", () => {
     tray.addBreak({}, 3)
-    expect(trayList.querySelectorAll(".break-group").length).toBe(1)
+    expect(trayList.querySelectorAll(".break-group")).toHaveLength(1)
     expect(trayList.querySelector(".break-group")?.innerHTML).toContain(
       "hiscore-url"
     )
@@ -90,7 +90,7 @@ describe("BallTray", () => {
 
   test("addGame adds a game link with Ⓡ symbol", () => {
     tray.addGame({})
-    expect(trayList.querySelectorAll(".ball-item").length).toBe(1)
+    expect(trayList.querySelectorAll(".ball-item")).toHaveLength(1)
     const link = trayList.querySelector(".ball-item") as HTMLElement
     expect(link.innerHTML).toContain("Ⓡ")
   })

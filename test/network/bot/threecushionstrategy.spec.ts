@@ -65,7 +65,7 @@ describe("ThreeStrategy", () => {
     const categoryLogs = consoleSpy.mock.calls
       .map((c) => c[0])
       .filter((msg) => typeof msg === "string" && msg.includes("category:"))
-    expect(categoryLogs.length).toBe(1)
+    expect(categoryLogs).toHaveLength(1)
 
     consoleSpy.mockRestore()
   })

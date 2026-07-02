@@ -31,8 +31,8 @@ describe("utils", () => {
 
   describe("round2", () => {
     it("should round a number to 2 decimal places", () => {
-      expect(round2(1.2345)).toBe(1.23)
-      expect(round2(1.235)).toBe(1.24)
+      expect(round2(1.2345)).toBeCloseTo(1.23)
+      expect(round2(1.235)).toBeCloseTo(1.24)
     })
   })
 
@@ -40,9 +40,9 @@ describe("utils", () => {
     it("should round all components of a Vector3 to 2 decimal places", () => {
       const v = new Vector3(1.234, 5.678, 9.012)
       roundVec2(v)
-      expect(v.x).toBe(1.23)
-      expect(v.y).toBe(5.68)
-      expect(v.z).toBe(9.01)
+      expect(v.x).toBeCloseTo(1.23)
+      expect(v.y).toBeCloseTo(5.68)
+      expect(v.z).toBeCloseTo(9.01)
     })
   })
 

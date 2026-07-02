@@ -68,7 +68,7 @@ describe("Comment", () => {
     const menu = document.getElementById("commentMenu") as HTMLDivElement
 
     const emojiBtns = menu.querySelectorAll(".comment-emoji")
-    expect(emojiBtns.length).to.equal(10)
+    expect(emojiBtns).to.have.lengthOf(10)
 
     const firstEmoji = emojiBtns[0] as HTMLButtonElement
     fireEvent.click(firstEmoji)

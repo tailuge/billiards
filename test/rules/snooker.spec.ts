@@ -41,6 +41,10 @@ describe("Snooker", () => {
   const rule = "snooker"
   let table: Table
 
+  afterEach(() => {
+    Session.reset()
+  })
+
   beforeEach(function (done) {
     Ball.id = 0
     Session.init("1", "Player A", "table", false)
@@ -448,10 +452,6 @@ describe("Snooker", () => {
     // Check if any events were broadcast
     expect(broadcastEvents).to.not.be.empty
 
-    Session.reset()
-  })
-
-  afterEach(() => {
     Session.reset()
   })
 

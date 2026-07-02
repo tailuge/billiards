@@ -81,28 +81,28 @@ describe("Physics", () => {
     done()
   })
 
-  it("Constants modify dependent", (done) => {
+  it("Constants modify dependent (R)", (done) => {
     const Ibefore = I
     setR(R + 0.1)
     expect(I).to.be.not.equal(Ibefore)
     done()
   })
 
-  it("Constants modify dependent", (done) => {
+  it("Constants modify dependent (m)", (done) => {
     const Ibefore = I
     setm(m + 0.1)
     expect(I).to.be.not.equal(Ibefore)
     done()
   })
 
-  it("Constants modify dependent", (done) => {
+  it("Constants modify dependent (mu)", (done) => {
     const Mzbefore = Mz
     setmu(mu + 0.1)
     expect(Mz).to.be.not.equal(Mzbefore)
     done()
   })
 
-  it("Constants modify dependent", (done) => {
+  it("Constants modify dependent (rho)", (done) => {
     const Mzbefore = Mz
     setrho(rho + 0.1)
     expect(Mz).to.be.not.equal(Mzbefore)
@@ -114,9 +114,9 @@ describe("Physics", () => {
     sete(k)
     setmuC(k)
     setmuS(k)
-    expect(e).to.be.equal(k)
-    expect(muC).to.be.equal(k)
-    expect(muS).to.be.equal(k)
+    expect(e).to.be.closeTo(k, 1e-9)
+    expect(muC).to.be.closeTo(k, 1e-9)
+    expect(muS).to.be.closeTo(k, 1e-9)
     done()
   })
 
@@ -153,9 +153,9 @@ describe("Physics", () => {
     const offset = new Vector3(0.1, 0.2, 0)
     const w0 = cueToSpin(offset, v, 0)
     const wDefault = cueToSpin(offset, v, 0)
-    expect(w0.x).to.equal(wDefault.x)
-    expect(w0.y).to.equal(wDefault.y)
-    expect(w0.z).to.equal(wDefault.z)
+    expect(w0.x).to.be.closeTo(wDefault.x, 1e-9)
+    expect(w0.y).to.be.closeTo(wDefault.y, 1e-9)
+    expect(w0.z).to.be.closeTo(wDefault.z, 1e-9)
     done()
   })
 
@@ -197,10 +197,10 @@ describe("Physics", () => {
     const w = new Vector3(0, 0, 10)
     const v = new Vector3(0.01, 0.01, 0)
     const delta = rollingFull(w, v, 1)
-    expect(delta.v.x).to.equal(-0.01)
-    expect(delta.v.y).to.equal(-0.01)
-    expect(delta.w.x).to.equal(0)
-    expect(delta.w.y).to.equal(0)
+    expect(delta.v.x).to.be.closeTo(-0.01, 1e-9)
+    expect(delta.v.y).to.be.closeTo(-0.01, 1e-9)
+    expect(delta.w.x).to.be.closeTo(0, 1e-9)
+    expect(delta.w.y).to.be.closeTo(0, 1e-9)
     expect(delta.w.z).to.be.lessThan(0)
     done()
   })

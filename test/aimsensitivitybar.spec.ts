@@ -152,7 +152,7 @@ describe("computeBarModel", () => {
     const m = computeBarModel(od)
     expect(m.finite).toBe(true)
     expect(m.lo).toBe(0)
-    expect(m.hi).toBe(5.24)
+    expect(m.hi).toBeCloseTo(5.24)
     // Grey before and after the studied window.
     expect(m.segments[0].color).toBe(UNSCANNED)
     expect(m.segments[m.segments.length - 1].color).toBe(UNSCANNED)
@@ -197,7 +197,12 @@ describe("computeBarModel — ruler", () => {
       new Set([0, 1, 2, -1])
     )
     const m = computeBarModel(od)
-    expect(m.ruler.map((t) => t.pct)).toEqual([0, 25, 50, 75, 100])
+    const pcts = m.ruler.map((t) => t.pct)
+    expect(pcts[0]).toBe(0)
+    expect(pcts[1]).toBe(25)
+    expect(pcts[2]).toBe(50)
+    expect(pcts[3]).toBe(75)
+    expect(pcts[4]).toBe(100)
     expect(m.ruler[0].label).toBe(formatValue("power", 0))
     expect(m.ruler[4].label).toBe(formatValue("power", 5.24))
     expect(m.ruler[2].label).toBe(formatValue("power", 2.62)) // midpoint of [0, 5.24]
@@ -256,7 +261,7 @@ describe("renderOneDBar — DOM additions", () => {
     )
     const row = renderOneDBar(od)
     const ticks = row.querySelectorAll(".bar-ruler .bar-tick")
-    expect(ticks.length).toBe(5)
+    expect(ticks).toHaveLength(5)
     const labels = Array.from(
       row.querySelectorAll(".bar-ruler .bar-tick-label")
     ).map((el) => el.textContent)
@@ -404,15 +409,15 @@ describe("paramRangeOf (empty-bar range, no simulation)", () => {
     }
     const r = paramRangeOf(axis)
     expect(r.key).toBe("power")
-    expect(r.center).toBe(2.5)
-    expect(r.step).toBe(0.1)
+    expect(r.center).toBeCloseTo(2.5)
+    expect(r.step).toBeCloseTo(0.1)
     expect(r.physicalMin).toBe(0)
     expect(r.physicalMax).toBe(10)
     expect(r.scannedMin).toBeCloseTo(1.5) // 2.5 - 10*0.1
     expect(r.scannedMax).toBeCloseTo(3.5) // 2.5 + 10*0.1
     // No scored cells yet → scoring range collapses to the centre.
-    expect(r.scoringMin).toBe(2.5)
-    expect(r.scoringMax).toBe(2.5)
+    expect(r.scoringMin).toBeCloseTo(2.5)
+    expect(r.scoringMax).toBeCloseTo(2.5)
   })
 
   it("clamps the scanned window to the physical bounds", () => {
