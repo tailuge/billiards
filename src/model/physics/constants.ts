@@ -47,15 +47,6 @@ function refresh() {
   I = (2 / 5) * m * R * R
 }
 
-export function configureForRule(ruleType: string) {
-  if (!ruleType.startsWith("threecushion")) {
-    mu = 0.0055 * 1.1
-  } else {
-    mu = 0.0055
-  }
-  refresh()
-}
-
 export function setR(val: number) {
   R = val
   refresh()

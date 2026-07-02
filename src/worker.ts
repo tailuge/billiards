@@ -4,6 +4,7 @@ import { mathavanAdapter, cueStrike } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { TableGeometry } from "./view/tablegeometry"
 import * as Constants from "./model/physics/constants"
+import { RuleFactory } from "./controller/rules/rulefactory"
 import { strongeAdapter } from "./model/physics/stronge"
 
 const isWorkerContext =
@@ -149,7 +150,7 @@ function configureSimulation(
   table: Table,
   cushionModel: string
 ): number {
-  Constants.configureForRule(ruleType)
+  RuleFactory.create(ruleType, null).configurePhysics?.()
   for (const [key, value] of Object.entries(params)) {
     const setterName = `set${key}`
     if (typeof (Constants as any)[setterName] === "function") {

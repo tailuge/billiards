@@ -24,6 +24,7 @@ import { Logger } from "../network/bot/logger"
 import { getUID } from "../utils/uid"
 import { DrillPanel } from "../view/drillpanel"
 import { AnalysisPanel } from "../view/analysispanel"
+import { RuleFactory } from "../controller/rules/rulefactory"
 import { applyPhysicsParams } from "../utils/physicsparams"
 
 /**
@@ -110,7 +111,8 @@ export class BrowserContainer {
       this.first
     )
     console.log(Session.getInstance())
-    applyPhysicsParams(params, this.ruletype)
+    RuleFactory.create(this.ruletype, null).configurePhysics?.()
+    applyPhysicsParams(params)
   }
 
   cushion(model) {

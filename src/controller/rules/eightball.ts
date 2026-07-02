@@ -20,6 +20,7 @@ import { StartAimEvent } from "../../events/startaimevent"
 import { ScoreEvent } from "../../events/scoreevent"
 import { roundVec } from "../../utils/three-utils"
 import { Respot } from "../../utils/respot"
+import { setmu } from "../../model/physics/constants"
 import { RerackEvent } from "../../events/rerackevent"
 
 const flipType = (t: number) => {
@@ -43,6 +44,10 @@ export class EightBall implements Rules {
   startTurn(): void {
     this.previousBreak = this.currentBreak
     this.currentBreak = 0
+  }
+
+  configurePhysics(): void {
+    setmu(0.0055 * 1.1)
   }
 
   readonly asset = "models/p8.min.gltf"

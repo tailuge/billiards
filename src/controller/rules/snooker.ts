@@ -7,6 +7,7 @@ import { Rack } from "../../utils/rack"
 import { Controller } from "../controller"
 import { Rules } from "./rules"
 import { Respot } from "../../utils/respot"
+import { setmu } from "../../model/physics/constants"
 import { Aim } from "../aim"
 import { WatchAim } from "../watchaim"
 import { Container } from "../../container/container"
@@ -185,6 +186,10 @@ export class Snooker implements Rules {
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     this.previousBreak = this.currentBreak
     this.currentBreak = 0
+  }
+
+  configurePhysics(): void {
+    setmu(0.0055 * 1.1)
   }
 
   rack(): Ball[] {

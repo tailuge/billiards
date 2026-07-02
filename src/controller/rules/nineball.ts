@@ -15,6 +15,7 @@ import { Rules } from "./rules"
 import { R } from "../../model/physics/constants"
 import { Respot } from "../../utils/respot"
 import { TableGeometry } from "../../view/tablegeometry"
+import { setmu } from "../../model/physics/constants"
 import { StartAimEvent } from "../../events/startaimevent"
 import { MatchResultHelper } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
@@ -36,6 +37,10 @@ export class NineBall implements Rules {
   startTurn(): void {
     this.previousBreak = this.currentBreak
     this.currentBreak = 0
+  }
+
+  configurePhysics(): void {
+    setmu(0.0055 * 1.1)
   }
 
   nextCandidateBall(_p1type?: number): Ball | undefined {

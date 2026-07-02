@@ -29,4 +29,5 @@ export interface Rules {
   advanceState?(outcome: Outcome[]): void
   initialController?(): Controller
   hideScoreHud?(): boolean
+  configurePhysics?(): void
 }

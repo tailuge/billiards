@@ -14,6 +14,7 @@ import { Rules } from "./rules"
 import { isFirstShot } from "../../utils/utils"
 import { zero } from "../../utils/three-utils"
 import { Respot } from "../../utils/respot"
+import { setmu } from "../../model/physics/constants"
 import { ThreeCushionConfig } from "../../utils/threecushionconfig"
 import { StartAimEvent } from "../../events/startaimevent"
 import { MatchResultHelper } from "../../network/client/matchresult"
@@ -34,6 +35,10 @@ export class ThreeCushion implements Rules {
   startTurn(): void {
     this.previousBreak = this.currentBreak
     this.currentBreak = 0
+  }
+
+  configurePhysics(): void {
+    setmu(0.0055)
   }
 
   nextCandidateBall(_p1type?: number): Ball | undefined {
