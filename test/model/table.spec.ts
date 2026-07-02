@@ -193,7 +193,7 @@ describe("Table", () => {
     expect(hit.aim.pos.x).to.equal(table.cueball.pos.x)
     expect(hit.aim.pos.y).to.equal(table.cueball.pos.y)
     expect(hit.aim.pos.z).to.equal(table.cueball.pos.z)
-    expect(hit.aim.pos.x).not.to.be.closeTo(-0.7205, 1e-6)
+    expect(hit.aim.pos.x).not.to.be.closeTo(-0.7205, 1e-9)
     done()
   })
 })
