@@ -10,12 +10,7 @@ export class ReplayEncoder {
   }
 
   static crush(data: string): string {
-    console.log("crush start")
-    const start = performance.now()
-    const result = JSONCrush.crush(data)
-    const end = performance.now()
-    console.log(`crush end: ${(end - start).toFixed(2)}ms`)
-    return result
+    return JSONCrush.crush(data)
   }
 
   static createState(
