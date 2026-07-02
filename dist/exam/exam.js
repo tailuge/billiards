@@ -32,6 +32,7 @@ function maxPoints(ellipseCount, ruleType, noPot) {
 }
 
 function qIdForBlock(block) {
+  if (block.id) return block.id
   const svg = block.querySelector(".billiards-table")
   const h3 = block.querySelector("h3")
   let h = 0
@@ -46,10 +47,12 @@ function qIdForBlock(block) {
   if (h3) s += h3.textContent
   if (!s) s = String(Math.random())
   for (let i = 0; i < s.length; i++) {
-    h = ((h << 5) - h) + s.charCodeAt(i)
+    h = (h << 5) - h + s.charCodeAt(i)
     h |= 0
   }
-  return "q" + Math.abs(h).toString(36)
+  const qId = "q" + Math.abs(h).toString(36)
+  block.id = qId
+  return qId
 }
 
 const STORAGE_KEY_PREFIX = "exam_results_"
@@ -77,7 +80,8 @@ function calculateAssessment(results) {
   let ruleType = "threecushion"
   if (firstSvg?.dataset.jsonShots) {
     try {
-      ruleType = JSON.parse(firstSvg.dataset.jsonShots)[0]?.ruleType || "threecushion"
+      ruleType =
+        JSON.parse(firstSvg.dataset.jsonShots)[0]?.ruleType || "threecushion"
     } catch {}
   }
 
@@ -92,13 +96,14 @@ function calculateAssessment(results) {
 
     const r = results[qId]
     if (r) {
-      totalScored += r.bestPoints !== undefined ? r.bestPoints : (r.lastPts || 0)
+      totalScored += r.bestPoints !== undefined ? r.bestPoints : r.lastPts || 0
       attemptedCount += r.attempted || 0
       if (r.attempted > 0) questionsAttempted++
     }
   })
 
-  if (attemptedCount === 0 || totalPossible === 0) return { label: "Unknown", className: "unknown" }
+  if (attemptedCount === 0 || totalPossible === 0)
+    return { label: "Unknown", className: "unknown" }
 
   const scorePct = totalScored / totalPossible
   const completionPct = questionsAttempted / blocks.length
@@ -148,10 +153,12 @@ function updateAssessment() {
   const scoreEl = document.getElementById("scorePct")
   if (!levelEl) return
   const results = getResults()
-  const { label, className, completionPct, scorePct } = calculateAssessment(results)
+  const { label, className, completionPct, scorePct } =
+    calculateAssessment(results)
   levelEl.textContent = `Assessment: ${label}`
   levelEl.className = `assessment-item assessment ${className}`
-  completionEl.textContent = label === "Unknown" ? "—" : `completion: ${completionPct}%`
+  completionEl.textContent =
+    label === "Unknown" ? "—" : `completion: ${completionPct}%`
   scoreEl.textContent = label === "Unknown" ? "—" : `score: ${scorePct}%`
 }
 
@@ -164,9 +171,16 @@ function buildSummaryList() {
     const li = document.createElement("li")
     const qId = qIdForBlock(block)
     li.dataset.qid = qId
-    li.innerHTML = `${h3 ? h3.textContent : `Shot ${qId}`} <span class="status-unknown">❓ Unknown</span>`
+    li.innerHTML = `<a href="#${qId}">${h3 ? h3.textContent : `Shot ${qId}`}</a> <span class="status-unknown">❓ Unknown</span>`
     shotList.appendChild(li)
   })
+
+  if (window.location.hash) {
+    const target = document.querySelector(window.location.hash)
+    if (target) {
+      setTimeout(() => target.scrollIntoView(), 100)
+    }
+  }
 }
 
 export function updateUI() {
@@ -180,14 +194,23 @@ export function updateUI() {
     const listItems = shotList.querySelectorAll("li")
     listItems.forEach((li) => {
       const qId = li.dataset.qid
-      const result = results[qId] || { totalPoints: 0, totalMax: 0, attempted: 0 }
+      const result = results[qId] || {
+        totalPoints: 0,
+        totalMax: 0,
+        attempted: 0,
+      }
 
       let statusClass = "status-unknown"
       let statusText = "Unknown"
       let icon = "❓"
 
       if (result.attempted > 0) {
-        const displayPct = result.lastPct !== undefined ? result.lastPct : (result.totalMax > 0 ? Math.round((result.totalPoints / result.totalMax) * 100) : 0)
+        const displayPct =
+          result.lastPct !== undefined
+            ? result.lastPct
+            : result.totalMax > 0
+              ? Math.round((result.totalPoints / result.totalMax) * 100)
+              : 0
         if (displayPct >= 50) {
           statusClass = "status-pass"
           icon = "✅"
@@ -215,7 +238,12 @@ export function updateUI() {
     let icon = "❓"
     let statText = ""
     if (result.attempted > 0) {
-      const displayPct = result.lastPct !== undefined ? result.lastPct : (result.totalMax > 0 ? Math.round((result.totalPoints / result.totalMax) * 100) : 0)
+      const displayPct =
+        result.lastPct !== undefined
+          ? result.lastPct
+          : result.totalMax > 0
+            ? Math.round((result.totalPoints / result.totalMax) * 100)
+            : 0
       icon = displayPct >= 50 ? "✅" : "❌"
       statText = `${displayPct}%, ${result.attempted} attempt${result.attempted > 1 ? "s" : ""}`
     }
@@ -236,7 +264,12 @@ export function updateUI() {
 
       // Set pass/fail class for ring animation color
       statsSpan.classList.remove("q-pass", "q-fail")
-      const displayPct = result.lastPct !== undefined ? result.lastPct : (result.totalMax > 0 ? Math.round((result.totalPoints / result.totalMax) * 100) : 0)
+      const displayPct =
+        result.lastPct !== undefined
+          ? result.lastPct
+          : result.totalMax > 0
+            ? Math.round((result.totalPoints / result.totalMax) * 100)
+            : 0
       statsSpan.classList.add(displayPct >= 50 ? "q-pass" : "q-fail")
 
       if (hadContent) {
@@ -286,7 +319,11 @@ export function initExam() {
     const parent = svg.parentElement
     if (!parent) return
     const prevPos = parent.style.position
-    if (prevPos !== "relative" && prevPos !== "absolute" && prevPos !== "fixed") {
+    if (
+      prevPos !== "relative" &&
+      prevPos !== "absolute" &&
+      prevPos !== "fixed"
+    ) {
       parent.style.position = "relative"
     }
 
@@ -295,7 +332,8 @@ export function initExam() {
       link.textContent = "\uD83D\uDD0D"
       link.target = "_blank"
       link.rel = "noopener"
-      link.style.cssText = "position:absolute;bottom:4%;right:5%;font-size:16px;cursor:pointer;text-decoration:none;z-index:10;opacity:0.6;filter:grayscale(1)"
+      link.style.cssText =
+        "position:absolute;bottom:4%;right:5%;font-size:16px;cursor:pointer;text-decoration:none;z-index:10;opacity:0.6;filter:grayscale(1)"
       link.title = "Open in analysis view"
 
       const init = JSON.stringify(cfg.balls.flatMap((b) => [b.pos.x, b.pos.y]))
@@ -319,7 +357,8 @@ export function initExam() {
     const editBtn = document.createElement("button")
     editBtn.textContent = "\u270F\uFE0F"
     editBtn.className = "edit-btn"
-    editBtn.style.cssText = "position:absolute;bottom:4%;right:10%;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;filter:grayscale(1);background:none;border:none;padding:0"
+    editBtn.style.cssText =
+      "position:absolute;bottom:4%;right:10%;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;filter:grayscale(1);background:none;border:none;padding:0"
     editBtn.title = "Open in diagram editor"
     editBtn.addEventListener("click", () => {
       const shot = {
@@ -339,22 +378,27 @@ export function initExam() {
     const setupBtn = document.createElement("button")
     setupBtn.textContent = "\uD83D\uDD27"
     setupBtn.className = "setup-btn"
-    setupBtn.style.cssText = "position:absolute;bottom:4%;right:15%;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;filter:grayscale(1);background:none;border:none;padding:0"
-    setupBtn.title = isThreeCushion ? "Open in three cushion research view" : "Open in practice layout view"
+    setupBtn.style.cssText =
+      "position:absolute;bottom:4%;right:15%;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;filter:grayscale(1);background:none;border:none;padding:0"
+    setupBtn.title = isThreeCushion
+      ? "Open in three cushion research view"
+      : "Open in practice layout view"
     setupBtn.addEventListener("click", () => {
       if (isThreeCushion) {
         const cueBall = cfg.balls[cfg.shot.cueBallId]
         const state = {
           diagram: true,
           init: ballsPos,
-          shots: [{
-            type: "AIM",
-            angle: cfg.shot.angle,
-            power: cfg.shot.power,
-            offset: cfg.shot.offset,
-            pos: { x: cueBall.pos.x, y: cueBall.pos.y, z: 0 },
-            i: cfg.shot.cueBallId,
-          }],
+          shots: [
+            {
+              type: "AIM",
+              angle: cfg.shot.angle,
+              power: cfg.shot.power,
+              offset: cfg.shot.offset,
+              pos: { x: cueBall.pos.x, y: cueBall.pos.y, z: 0 },
+              i: cfg.shot.cueBallId,
+            },
+          ],
         }
         const p = new URLSearchParams()
         p.set("s", JSON.stringify(state))
@@ -391,15 +435,16 @@ export function initExam() {
       const svg = qBlock.querySelector(".billiards-table")
 
       const ellipses = svg.querySelectorAll("ellipse[data-id]")
-      currentEllipseChecks = ellipses.length > 0
-        ? Array.from(ellipses).map((e) => ({
-            ballId: parseInt(e.dataset.id, 10),
-            cx: parseFloat(e.getAttribute("cx")),
-            cy: parseFloat(e.getAttribute("cy")),
-            rx: parseFloat(e.getAttribute("rx")),
-            ry: parseFloat(e.getAttribute("ry")),
-          }))
-        : null
+      currentEllipseChecks =
+        ellipses.length > 0
+          ? Array.from(ellipses).map((e) => ({
+              ballId: parseInt(e.dataset.id, 10),
+              cx: parseFloat(e.getAttribute("cx")),
+              cy: parseFloat(e.getAttribute("cy")),
+              rx: parseFloat(e.getAttribute("rx")),
+              ry: parseFloat(e.getAttribute("ry")),
+            }))
+          : null
       currentNoPot = svg.dataset.nopot !== undefined
 
       let configs = []
@@ -475,19 +520,30 @@ export function initExam() {
         proximityPoints(outcomes, currentRuleType) +
         ellipseHits +
         potPoints(outcomes, currentRuleType, currentNoPot)
-      const max = maxPoints(currentEllipseChecks ? currentEllipseChecks.length : 0, currentRuleType, currentNoPot)
+      const max = maxPoints(
+        currentEllipseChecks ? currentEllipseChecks.length : 0,
+        currentRuleType,
+        currentNoPot
+      )
       const pct = max > 0 ? Math.round((pts / max) * 100) : 0
       console.log("exam score", { pts, max, pct, outcomes })
 
       // Update storage
       const results = getResults()
       if (!results[currentQuestionId]) {
-        results[currentQuestionId] = { totalPoints: 0, totalMax: 0, attempted: 0 }
+        results[currentQuestionId] = {
+          totalPoints: 0,
+          totalMax: 0,
+          attempted: 0,
+        }
       }
       results[currentQuestionId].attempted++
       results[currentQuestionId].totalPoints += pts
       results[currentQuestionId].totalMax += max
-      results[currentQuestionId].bestPoints = Math.max(results[currentQuestionId].bestPoints || 0, pts)
+      results[currentQuestionId].bestPoints = Math.max(
+        results[currentQuestionId].bestPoints || 0,
+        pts
+      )
       results[currentQuestionId].lastPct = pct
       results[currentQuestionId].lastPts = pts
       results[currentQuestionId].lastMax = max
