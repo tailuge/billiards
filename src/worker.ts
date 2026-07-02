@@ -52,6 +52,23 @@ function anyBallTooClose(
   )
 }
 
+function minTimeToBallCollision(
+  bA: Ball,
+  vA: number,
+  bB: Ball,
+  R: number
+): number | undefined {
+  const dx = bA.pos.x - bB.pos.x
+  const dy = bA.pos.y - bB.pos.y
+  const dvx = bA.vel.x - bB.vel.x
+  const dvy = bA.vel.y - bB.vel.y
+  const dot = dx * dvx + dy * dvy
+  if (dot >= 0) return undefined
+  const vB = bB.vel.length()
+  const dist = Math.sqrt(dx * dx + dy * dy)
+  return (dist - 2 * R) / (vA + vB)
+}
+
 export function calcMinWarpTime(
   rollingBalls: Ball[],
   allBalls: Ball[],
@@ -67,19 +84,8 @@ export function calcMinWarpTime(
 
     for (const bB of allBalls) {
       if (bA === bB) continue
-
-      const dx = bA.pos.x - bB.pos.x
-      const dy = bA.pos.y - bB.pos.y
-      const dvx = bA.vel.x - bB.vel.x
-      const dvy = bA.vel.y - bB.vel.y
-      const dot = dx * dvx + dy * dvy
-
-      if (dot >= 0) continue
-
-      const vB = bB.vel.length()
-      const dist = Math.sqrt(dx * dx + dy * dy)
-      const tbb = (dist - 2 * R) / (vA + vB)
-      if (tbb < minTime) minTime = tbb
+      const tbb = minTimeToBallCollision(bA, vA, bB, R)
+      if (tbb !== undefined && tbb < minTime) minTime = tbb
     }
   }
   return minTime === Infinity ? 0 : minTime
