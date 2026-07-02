@@ -16,41 +16,40 @@ export class Aim extends ControllerBase {
   constructor(container) {
     super(container)
     const table = this.container.table
-    
-      table.cue.aimMode()
-      table.cue.showHelper(true)
-      table.cueball = this.container.rules.cueball
 
-      const params = new URLSearchParams(globalThis.location?.search)
-      let customShot = false
-      if (params.has("initShot")) {
-        const shot = JSON.parse(params.get("initShot")!)
-        if (shot) {
-          if (typeof shot.cueBallId === "number") {
-            table.cueball = table.balls[shot.cueBallId] || table.cueball
-          }
-          table.cue.aim.angle = shot.angle ?? table.cue.aim.angle
-          table.cue.aim.power = shot.power ?? table.cue.aim.power
-          if (shot.offset) {
-            table.cue.aim.offset.set(shot.offset.x ?? 0, shot.offset.y ?? 0, 0)
-          }
-          table.cue.aim.elevation = shot.elevation ?? 0
-          customShot = true
+    table.cue.aimMode()
+    table.cue.showHelper(true)
+    table.cueball = this.container.rules.cueball
+
+    const params = new URLSearchParams(globalThis.location?.search)
+    let customShot = false
+    if (params.has("initShot")) {
+      const shot = JSON.parse(params.get("initShot")!)
+      if (shot) {
+        if (typeof shot.cueBallId === "number") {
+          table.cueball = table.balls[shot.cueBallId] || table.cueball
         }
+        table.cue.aim.angle = shot.angle ?? table.cue.aim.angle
+        table.cue.aim.power = shot.power ?? table.cue.aim.power
+        if (shot.offset) {
+          table.cue.aim.offset.set(shot.offset.x ?? 0, shot.offset.y ?? 0, 0)
+        }
+        table.cue.aim.elevation = shot.elevation ?? 0
+        customShot = true
       }
+    }
 
-      table.cue.aim.i = table.balls.indexOf(table.cueball)
-      table.cue.moveTo(table.cueball.pos)
-      if (!customShot) {
-        table.cue.aimAtNext(
-          table.cueball,
-          this.container.rules.nextCandidateBall()
-        )
-        table.cue.aim.elevation = 0
-      }
-      this.container.view.camera.suggestMode(this.container.view.camera.aimView)
-      table.cue.updateAimInput()
-    
+    table.cue.aim.i = table.balls.indexOf(table.cueball)
+    table.cue.moveTo(table.cueball.pos)
+    if (!customShot) {
+      table.cue.aimAtNext(
+        table.cueball,
+        this.container.rules.nextCandidateBall()
+      )
+      table.cue.aim.elevation = 0
+    }
+    this.container.view.camera.suggestMode(this.container.view.camera.aimView)
+    table.cue.updateAimInput()
   }
 
   override onFirst() {
