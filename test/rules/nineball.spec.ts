@@ -43,6 +43,7 @@ function initNineBall(practiceMode = false): {
     "test-table",
     false,
     false,
+    false,
     practiceMode
   )
   const container = new Container({

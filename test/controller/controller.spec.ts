@@ -156,7 +156,7 @@ describe("Controller", () => {
 
   it("BreakEvent takes Init to Aim in practice mode with init param", (done) => {
     jest.spyOn(Session, "hasInitParam").mockReturnValue(true)
-    Session.init("testId", "testPlayer", "testTable", false, false, true)
+    Session.init("testId", "testPlayer", "testTable", false, false, false, true)
 
     container.eventQueue.push(new BreakEvent())
     container.processEvents()

@@ -104,6 +104,7 @@ export class BrowserContainer {
       this.tableId,
       this.spectator,
       this.botMode,
+      this.examMode,
       this.practiceMode,
       Number.parseInt(params.get("lod") ?? "2"),
       this.first

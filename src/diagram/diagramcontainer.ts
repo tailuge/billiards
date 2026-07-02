@@ -48,6 +48,7 @@ export class DiagramContainer {
       "diagram",
       false,
       false,
+      false,
       this.practiceMode,
       lod
     )

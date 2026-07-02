@@ -56,6 +56,8 @@ export class LobbyIndicator {
     this.isSpectator = Session.getInstance().spectator
     if (botMode) {
       this.ruleType = `${this.rules.rulename}-bot`
+    } else if (Session.isExamMode()) {
+      this.ruleType = `${this.rules.rulename}-exam`
     } else if (replayMode) {
       this.ruleType = "replay"
     } else if (Session.getInstance().spectator) {

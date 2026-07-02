@@ -5,6 +5,7 @@ export class Session {
     readonly tableId: string,
     readonly spectator: boolean,
     readonly botMode: boolean = false,
+    readonly examMode: boolean = false,
     readonly practiceMode: boolean = false,
     readonly lod: number = 1,
     readonly first: boolean = false
@@ -24,7 +25,7 @@ export class Session {
   private static readonly fallbackOpponentClientId = "opponent"
 
   static getInstance(): Session {
-    Session.instance ??= new Session("", "", "", false, false, false)
+    Session.instance ??= new Session("", "", "", false, false, false, false)
     return Session.instance
   }
 
@@ -38,6 +39,10 @@ export class Session {
 
   static isBotMode(): boolean {
     return Session.getInstance().botMode
+  }
+
+  static isExamMode(): boolean {
+    return Session.getInstance().examMode
   }
 
   static isPracticeMode(): boolean {
@@ -66,6 +71,7 @@ export class Session {
     tableId: string,
     spectator: boolean,
     botMode: boolean = false,
+    examMode: boolean = false,
     practiceMode: boolean = false,
     lod: number = 1,
     first: boolean = false
@@ -76,6 +82,7 @@ export class Session {
       tableId,
       spectator,
       botMode,
+      examMode,
       practiceMode,
       lod,
       first
