@@ -1,87 +1,58 @@
-# Simulation and Rendering Loop Performance Analysis Report (Churn & Bottlenecks)
+# Simulation and Rendering Loop Churn Analysis Report (Object Allocation Ranking)
 
-This report identifies areas of high churn (frequent object allocation and garbage collection pressure) and redundant calculations within the critical simulation and rendering loops, specifically focusing on 3D rendering and non-physics logic.
+This report ranks the sources of object allocation (churn) within the 3D simulation and rendering loops. High churn increases Garbage Collection (GC) frequency, which can lead to frame-time instability and stuttering.
 
-## 1. Object Churn (Memory Management)
+## Ranking of Churn Sources
 
-Frequent allocation of short-lived objects in the main loop leads to increased GC pressure and potential frame stutters.
+| Rank | Source Type | Frequency | Location(s) | Impact |
+| :--- | :--- | :--- | :--- | :--- |
+| **1** | **Outcome Allocations** | Per Physics Step | `src/utils/proximity.ts`, `src/model/table.ts` | High (Frequent per-step allocation) |
+| **2** | **Vector Cloning/Creation** | Per Frame | `src/view/camera.ts`, `src/view/drawing.ts` | High (Constant per-frame allocation) |
+| **3** | **Array Filter/Map/Set** | Per Frame | `src/container/container.ts`, `src/utils/proximity.ts` | Medium (Intermediate object churn) |
+| **4** | **String/JSON Churn** | Per Network Event | `src/network/client/nchanmessagerelay.ts` | Low (Dependent on network traffic) |
 
-### 1.1 Vector Cloning in Hot Paths
-*   **File:** `src/view/camera.ts`
-*   **Method:** `spectatorView`, `aimView`, `topView`
-*   **Issue:** `aim.pos.clone()` is used frequently during camera updates.
-*   **Impact:** Allocates a new `Vector3` every frame for camera positioning.
-*   **File:** `src/view/drawing.ts`
-*   **Method:** `updatePreview`
-*   **Issue:** `p1.clone().add(new Vector3(0, 0, 0.001))` and `new Vector3(0, 0, 0.001)` are called during mouse/pointer move.
-*   **Impact:** High-frequency allocations during user interaction.
-*   **Recommendation:** Use pre-allocated scratch vectors and `.copy()` or `.set()`.
+---
 
-### 1.2 Trace Logic Allocations
-*   **File:** `src/view/trace.ts`
-*   **Method:** `freeze`
-*   **Issue:** Creates `new Float32Array` and `new BufferGeometry` when freezing a trace. While not called every frame, it can be triggered during active gameplay transitions.
-*   **Method:** `addPoint`
-*   **Issue:** Triggers `needsUpdate = true` on buffer attributes, which is necessary but expensive when done for every small movement.
+## 1. Outcome Allocations (Highest Impact)
 
-### 1.3 Event and Data Conversion
-*   **File:** `src/container/container.ts`
-*   **Method:** `processEvents`
-*   **Issue:** Shifting from `inputQueue` and `eventQueue` happens every frame.
-*   **Impact:** Minor, but creates array-shifting churn if queues are deep.
+The simulation engine generates `Outcome` objects for every collision, cushion bounce, and proximity check.
 
-## 2. Redundant Calculations
+*   **Location:** `src/utils/proximity.ts` (`updateProximityOutcome`, `refineProximity`), `src/model/table.ts` (`prepareAdvancePair`, `prepareAdvanceToCushions`).
+*   **Churn:** Calls `Outcome.proximity()`, `Outcome.collision()`, etc., which create `new Outcome(...)`.
+*   **Issue:** In `checkProximity`, `Outcome` objects are pushed to a growing array and often replaced/refined. This happens inside the physics loop (`advance`), which may run multiple steps per frame.
+*   **Optimization:** Use an object pool for `Outcome` instances or represent outcomes using typed arrays if historical tracking is only needed for the current shot.
 
-Expensive mathematical operations performed multiple times per frame when a single cached value would suffice.
+## 2. Vector Cloning/Creation (High Impact)
 
-### 2.1 Multiple Length and Normalization Calls
-*   **File:** `src/view/ballmesh.ts`
-*   **Method:** `updateAll` and `updateArrows`
-*   **Issue:** `ball.rvel.lengthSq()` is checked, then `updateRotation` calls `rvel.length()`, and `updateArrows` calls `rvel.length()` again. `norm(rvel)` is also called, which internally calculates length yet again.
-*   **Impact:** Square root operations are relatively expensive.
-*   **Recommendation:** Calculate length once at the start of `updateAll` and pass it down or store it in a local variable.
+Explicit cloning and new vector instantiation in high-frequency update methods.
 
-### 2.2 Camera Trigonometry
-*   **File:** `src/view/camera.ts`
-*   **Method:** `orbitView`
-*   **Issue:** `Math.sin(this.t / 5)` and `Math.cos(this.t / 5)` are calculated independently.
-*   **Impact:** Redundant trig for same input.
-*   **Recommendation:** Use a single value or cached result if `t` hasn't changed significantly.
+*   **Location 1:** `src/view/camera.ts` (`spectatorView`, `aimView`, `topView`).
+    *   **Churn:** `aim.pos.clone()` and `unitAtAngle(..., this.tempVec)` (which potentially returns a new vector or modifies one).
+*   **Location 2:** `src/view/drawing.ts` (`updatePreview`).
+    *   **Churn:** `p1.clone().add(new Vector3(0, 0, 0.001))`.
+*   **Issue:** These methods run every frame (Camera) or every mouse move (Drawing). `Vector3` allocations are small but very numerous.
+*   **Optimization:** Use pre-allocated "scratch" vectors and the `.copy()`, `.add()`, and `.set()` methods to avoid new object creation.
 
-### 2.3 Particle System Matrix Updates
-*   **File:** `src/view/particle-system.ts`
-*   **Method:** `update`
-*   **Issue:** Iterates over thousands of particles, performing `dummy.updateMatrix()` and `instancedMesh.setMatrixAt()` for every active particle every frame.
-*   **Impact:** Massive CPU overhead for high particle counts.
-*   **Recommendation:** Only update matrices for particles that are still in motion (`pState !== 2`).
+## 3. Array Transformation Churn (Medium Impact)
 
-## 3. Layout Thrashing (DOM Access)
+Use of functional array methods (`filter`, `map`, `some`) creates intermediate array objects.
 
-Accessing DOM properties that force the browser to recalculate styles or layout during the animation frame.
+*   **Location 1:** `src/container/container.ts` (`animate`).
+    *   **Churn:** `Object.keys(this.pressed).filter(...)` (via `this.keyboard.getEvents()`).
+*   **Location 2:** `src/utils/proximity.ts` (`checkProximity`, `updateCushionCount`).
+    *   **Churn:** `balls.filter(b => b.inMotion())`, `outcome.filter(...)`.
+*   **Issue:** These filters create new array instances every frame or physics step.
+*   **Optimization:** Use traditional `for` loops or `forEach` with a stable result array to avoid creating short-lived intermediate arrays.
 
-### 3.1 Redundant Size Checks
-*   **File:** `src/view/view.ts`
-*   **Method:** `updateSize`, `sizeChanged`, `renderCamera`
-*   **Issue:** `this.element.offsetWidth` and `this.element.offsetHeight` are accessed multiple times per frame across different methods.
-*   **Impact:** Touching `offsetWidth/Height` forces layout recalculation (Reflow).
-*   **Recommendation:** Cache these values once at the beginning of the `animate` loop or use a `ResizeObserver` to update them only when necessary.
+## 4. State Snapshotting (Low to Medium Impact)
 
-## 4. Logical Flow & Timing
+Capturing the full state of the table for replays or analysis.
 
-### 4.1 Frame Advance Logic
-*   **File:** `src/container/container.ts`
-*   **Method:** `animate` and `advance`
-*   **Issue:** `performance.now()` is called multiple times. `Math.floor((elapsed * this.timeScale) / this.step)` is calculated every frame.
-*   **Impact:** Minor, but adds up in high-refresh-rate environments.
-*   **Recommendation:** Pass the timestamp from `requestAnimationFrame` more consistently and consolidate the step calculation.
-
-### 4.2 Visibility Checks
-*   **File:** `src/view/view.ts`
-*   **Method:** `isInMotionNotVisible`
-*   **Issue:** Uses `this.projScreenMatrix.multiplyMatrices` every time it's called.
-*   **Impact:** Matrix multiplication is a relatively heavy operation for a simple visibility check that only checks one ball per frame anyway.
-*   **Recommendation:** Cache the projection matrix if the camera hasn't moved.
+*   **Location:** `src/container/container.ts` (`updateLastShot`).
+    *   **Churn:** `ExportUtils.captureSnapshot(this.table)` creates a large JSON-serializable object.
+*   **Issue:** While not happening every frame, it happens at the end of every shot and periodically in some modes.
+*   **Optimization:** Update a persistent state object incrementally rather than serializing the whole table.
 
 ## Summary
 
-The primary bottlenecks are **redundant vector normalization/length calculations** in `BallMesh` and **layout thrashing** in `View`. Secondary concern is **Object Churn** in `Camera` and `Drawing` (e.g., `p1.clone().add(...)`). Addressing these would significantly improve frame time consistency and reduce garbage collection pauses.
+To minimize GC pressure, the priority should be moving **Outcome tracking** to a non-allocating structure and replacing **Vector cloning** in the camera/drawing logic with scratch vector usage. Reducing intermediate **Array filtering** in the physics and input loops will further stabilize the memory footprint.
