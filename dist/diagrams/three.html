@@ -594,6 +594,7 @@
         <button id="play-btn" type="button">play</button>
         <button id="svg-btn" type="button">svg</button>
         <button id="cleartraces" type="button">clear traces</button>
+        <button id="solution-btn" type="button">solution</button>
         <button
           id="stronge-btn"
           type="button"
@@ -1273,6 +1274,34 @@ Overlap: ${overlap}%`)
               },
             })
           )
+          window.open(url.toString(), "_blank")
+        })
+
+        document.getElementById("solution-btn")?.addEventListener("click", () => {
+          const coords = tableBalls.flatMap((b) => [round6(b.x), round6(b.y)])
+          const url = new URL("../fit/solution.html", window.location.href)
+          url.searchParams.set("init", JSON.stringify(coords))
+          const CONSTANTS = [
+            "R",
+            "m",
+            "e",
+            "mu",
+            "muS",
+            "muC",
+            "rho",
+            "μs",
+            "μw",
+            "ee",
+            "stronge_omega_ratio",
+            "stronge_e_n",
+            "stronge_μ",
+          ]
+          CONSTANTS.forEach((key) => {
+            const input = document.getElementById(key)
+            if (input && input.value !== "") {
+              url.searchParams.set(key, input.value)
+            }
+          })
           window.open(url.toString(), "_blank")
         })
         function shareUrl(url) {

@@ -119,6 +119,25 @@
             text-align: center;
             color: #666;
         }
+
+        .sol-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            margin-top: 4px;
+        }
+
+        .sol-link {
+            text-decoration: none;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            transition: opacity 0.15s, transform 0.15s;
+        }
+
+        .sol-link:hover {
+            opacity: 1;
+            transform: scale(1.3);
+        }
     </style>
 </head>
 <body>
@@ -159,7 +178,6 @@
     <script type="module">
         const R = 0.03275;
         const maxPower = 160 * R; // Default maxPower in the engine
-        const TWO_R = 2 * R;
 
         const statusText = document.getElementById('status-text');
         const progressBar = document.getElementById('progress-bar');
@@ -171,6 +189,7 @@
         // Parse query parameters
         const urlParams = new URLSearchParams(window.location.search);
         const initParam = urlParams.get('init');
+        const cushionModel = urlParams.get('cushionModel') || 'mathavan';
 
         let ballPositions = [];
         if (initParam) {
@@ -204,8 +223,8 @@
                 angles.push(i * Math.PI / 90);
             }
 
-            const powerPercents = [0.25, 0.50, 0.75, 1.00];
-            const offsetValues = [-0.4, -0.2, 0.0, 0.2, 0.4];
+            const powerPercents = [0.25, 0.50, 0.75];
+            const offsetValues = [-0.4, 0.0, 0.4];
 
             const tasks = [];
             for (const angle of angles) {
@@ -254,7 +273,7 @@
 
                 worker.onmessage = (e) => {
                     if (e.data.type === 'COMPLETE') {
-                        processResult(e.data);
+                        processResult(task, e.data);
                         completed++;
                         if (completed % 100 === 0 || completed === totalTasks) {
                             updateUI();
@@ -267,9 +286,21 @@
                     }
                 };
 
+                const params = {};
+                const CONSTANTS = [
+                    'R','m','e','mu','muS','muC','rho',
+                    'μs','μw','ee',
+                    'stronge_omega_ratio','stronge_e_n','stronge_μ'
+                ];
+                CONSTANTS.forEach(key => {
+                    const val = urlParams.get(key);
+                    if (val !== null) params[key] = val;
+                });
+
                 worker.postMessage({
                     id: taskIndex,
                     ruleType: "threecushion",
+                    cushionModel: cushionModel,
                     balls: balls,
                     shot: {
                         cueBallId: 0,
@@ -279,23 +310,81 @@
                         elevation: 0
                     },
                     recordTrajectory: false,
-                    params: {}
+                    params: params
                 });
             };
 
-            function processResult(data) {
-                // Look for proximity < 2R
-                // The worker returns distance in 'speed' field for Proximity outcomes
-                const proximity = data.outcomes.find(o => o.type === 'Proximity' && o.speed < TWO_R);
-                if (proximity) {
+            // Returns the index of the scoring outcome (inclusive), or -1 if no point scored.
+            function getScoringCutoff(outcomes, cueBallId) {
+                let cushions = 0;
+                const cannons = new Set();
+                for (let i = 0; i < outcomes.length; i++) {
+                    const o = outcomes[i];
+                    if (o.type === 'Cushion' && o.ballA === cueBallId) {
+                        cushions++;
+                    }
+                    if (o.type === 'Collision') {
+                        if (o.ballA === cueBallId) {
+                            cannons.add(o.ballB);
+                        } else if (o.ballB === cueBallId) {
+                            cannons.add(o.ballA);
+                        }
+                        if (cannons.size >= 2) {
+                            return cushions >= 3 ? i : -1;
+                        }
+                    }
+                }
+                return -1;
+            }
+
+            function processResult(task, data) {
+                const cutoff = getScoringCutoff(data.outcomes, 0);
+                if (cutoff >= 0) {
                     foundCount++;
-                    // Pattern: sequence of outcome types
+                    // Truncate at scoring point, only cueball-involving outcomes
                     const patternStr = data.outcomes
+                        .slice(0, cutoff + 1)
+                        .filter(o => o.ballA === 0 || o.ballB === 0)
                         .map(o => o.type.toLowerCase())
                         .join(', ');
 
-                    patterns.set(patternStr, (patterns.get(patternStr) || 0) + 1);
+                    let entry = patterns.get(patternStr);
+                    if (!entry) {
+                        entry = { count: 0, solutions: [] };
+                        patterns.set(patternStr, entry);
+                    }
+                    entry.count++;
+                    entry.solutions.push({
+                        angle: task.angle,
+                        power: task.power,
+                        ox: task.ox,
+                        oy: task.oy
+                    });
                 }
+            }
+
+            function buildExportUrl(task) {
+                const url = new URL('../diagrams/export.html', window.location.href);
+                url.searchParams.set('ruletype', 'threecushion');
+                url.searchParams.set('cushionModel', cushionModel);
+                url.searchParams.set('init', JSON.stringify(ballPositions));
+                url.searchParams.set('initShot', JSON.stringify({
+                    cueBallId: 0,
+                    angle: +task.angle.toFixed(6),
+                    power: +task.power.toFixed(6),
+                    offset: { x: +task.ox.toFixed(6), y: +task.oy.toFixed(6), z: 0 }
+                }));
+                // Forward any physics constants
+                const CONSTANTS = [
+                    'R','m','e','mu','muS','muC','rho',
+                    'μs','μw','ee',
+                    'stronge_omega_ratio','stronge_e_n','stronge_μ'
+                ];
+                CONSTANTS.forEach(key => {
+                    const val = urlParams.get(key);
+                    if (val !== null) url.searchParams.set(key, val);
+                });
+                return url.toString();
             }
 
             function finishSearch() {
@@ -304,18 +393,20 @@
                 statusText.style.color = "#51cf66";
                 updateUI();
 
-                // Render patterns table
-                const sortedPatterns = [...patterns.entries()].sort((a, b) => b[1] - a[1]);
+                const sortedPatterns = [...patterns.entries()].sort((a, b) => b[1].count - a[1].count);
                 resultsBody.innerHTML = '';
 
                 if (sortedPatterns.length === 0) {
                     resultsBody.innerHTML = '<tr><td colspan="2" class="empty-msg">No solutions found within criteria.</td></tr>';
                 } else {
-                    for (const [pattern, count] of sortedPatterns) {
+                    for (const [pattern, entry] of sortedPatterns) {
                         const tr = document.createElement('tr');
+                        const linksHtml = entry.solutions.map((sol, i) =>
+                            `<a href="${buildExportUrl(sol)}" target="_blank" class="sol-link" title="#${i + 1}: a=${sol.angle.toFixed(3)} p=${sol.power.toFixed(3)} ox=${sol.ox.toFixed(2)} oy=${sol.oy.toFixed(2)}">⚫</a>`
+                        ).join('');
                         tr.innerHTML = `
-                            <td class="pattern-col">${pattern}</td>
-                            <td class="count-col">${count}</td>
+                            <td class="pattern-col">${pattern}<br><span class="sol-links">${linksHtml}</span></td>
+                            <td class="count-col">${entry.count}</td>
                         `;
                         resultsBody.appendChild(tr);
                     }
