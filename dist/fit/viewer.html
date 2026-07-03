@@ -112,7 +112,7 @@
             <th>param</th>
             <th>min</th>
             <th>max</th>
-            <th>original</th>
+            <th>system</th>
             <th>current</th>
           </tr>
         </thead>
@@ -191,6 +191,20 @@
         redraw(canvas, loadedData.truth, simTracks, trackAll)
       }
 
+      const defaults = {
+        mu: 0.0055,
+        muS: 0.126,
+        rho: 0.045,
+        m: 0.23,
+        R: 0.03275,
+        ee: 0.85,
+        "μs": 0.2,
+        "μw": 0.2,
+        stronge_omega_ratio: 1.76,
+        stronge_e_n: 0.77,
+        "stronge_μ": 0.25,
+        warpClearanceR: 2.05,
+      }
       function buildParamRows(sim) {
         const tbody = document.getElementById("paramRows")
         tbody.innerHTML = ""
@@ -231,9 +245,9 @@
           tr.innerHTML = `
       <td><input type="checkbox" data-name="${name}"></td>
       <td>${name}</td>
-      <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(2)}" step="any" style="width:56px"></td>
-      <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(2)}" step="any" style="width:56px"></td>
-      <td>${val.toFixed(4)}</td>
+      <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(3)}" step="any" style="width:56px"></td>
+      <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(3)}" step="any" style="width:56px"></td>
+      <td>${defaults.hasOwnProperty(name) ? defaults[name].toFixed(4) : val.toFixed(4)}</td>
       <td><span id="cur-${name.replace(/\./g, "-")}">${val.toFixed(4)}</span></td>`
           tbody.appendChild(tr)
         }

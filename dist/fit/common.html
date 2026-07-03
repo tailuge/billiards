@@ -164,7 +164,7 @@
               <th>Parameter</th>
               <th>Min</th>
               <th>Max</th>
-              <th>Original</th>
+              <th>System</th>
               <th>Current</th>
             </tr>
           </thead>
@@ -241,7 +241,7 @@
         if (allData.length === 0) {
           paramRows.innerHTML = ""
           document.getElementById("paramHeader").innerHTML =
-            "<tr><th>Tune</th><th>Parameter</th><th>Min</th><th>Max</th><th>Original</th><th>Current</th></tr>"
+            "<tr><th>Tune</th><th>Parameter</th><th>Min</th><th>Max</th><th>System</th><th>Current</th></tr>"
           optBtn.disabled = true
           status.textContent = "Status: No files loaded"
           return
@@ -272,12 +272,26 @@
         }
       }
 
+      const defaults = {
+        mu: 0.0055,
+        muS: 0.126,
+        rho: 0.045,
+        m: 0.23,
+        R: 0.03275,
+        ee: 0.85,
+        "μs": 0.2,
+        "μw": 0.2,
+        stronge_omega_ratio: 1.76,
+        stronge_e_n: 0.77,
+        "stronge_μ": 0.25,
+        warpClearanceR: 2.05,
+      }
       function buildParamTable(allData) {
         const sim = allData[0].sim
 
         // Build dynamic header with per-file columns
         let headerHtml =
-          "<tr><th>Tune</th><th>Parameter</th><th>Min</th><th>Max</th><th>Original</th><th>Current</th>"
+          "<tr><th>Tune</th><th>Parameter</th><th>Min</th><th>Max</th><th>System</th><th>Current</th>"
         for (const d of allData) {
           const label = d.name.replace(".json", "")
           headerHtml += `<th>${label}</th>`
@@ -314,7 +328,7 @@
             <td>${name}</td>
             <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(3)}" step="any" style="width:60px"></td>
             <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(3)}" step="any" style="width:60px"></td>
-            <td>${val.toFixed(3)}</td>
+            <td>${defaults.hasOwnProperty(name) ? defaults[name].toFixed(3) : val.toFixed(3)}</td>
             <td><span id="cur-${name.replace(/\./g, "-")}">${val.toFixed(3)}</span></td>
             ${fileCols}`
           paramRows.appendChild(tr)
