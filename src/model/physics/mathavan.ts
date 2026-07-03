@@ -1,4 +1,4 @@
-import { atan2, cos, pow, sin, sqrt } from "../../utils/utils"
+import { atan2, cos, sin, sqrt } from "../../utils/utils"
 import { cosθ, sinθ } from "./constants"
 
 export class Mathavan {
@@ -51,13 +51,13 @@ export class Mathavan {
     const v_yC = this.vy + this.ωx * R
 
     // Update slip speeds and angles at the cushion (I)
-    this.s = sqrt(pow(v_xI, 2) + pow(v_yI, 2))
+    this.s = sqrt(v_xI * v_xI + v_yI * v_yI)
     this.φ = atan2(v_yI, v_xI)
     if (this.φ < 0) {
       this.φ += 2 * Math.PI
     }
     // Update slip speeds and angles at the table (C)
-    this.sʹ = sqrt(pow(v_xC, 2) + pow(v_yC, 2))
+    this.sʹ = sqrt(v_xC * v_xC + v_yC * v_yC)
     this.φʹ = atan2(v_yC, v_xC)
     if (this.φʹ < 0) {
       this.φʹ += 2 * Math.PI
