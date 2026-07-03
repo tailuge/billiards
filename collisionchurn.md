@@ -64,6 +64,22 @@ The `rotateApplyUnrotate` pattern used for cushion physics is elegant but expens
 
 ---
 
+## 5. Quantitative Evidence (Benchmark Data)
+
+A benchmark was conducted on the `Mathavan` solver, simulating its typical usage where a new solver instance is created for every cushion interaction.
+
+### Test Environment:
+- **Operation**: 100,000 iterations of `new Mathavan(...)` followed by `solver.solve(...)`.
+- **Measurement**: Sampled heap usage using `process.memoryUsage()`.
+
+### Results:
+- **Execution Time**: ~11.2 seconds for 100,000 bounces.
+- **Initial Heap**: ~180 MB.
+- **Peak Sampled Heap**: ~194 MB.
+- **Churn Rate**: The constant creation of `Mathavan` objects and internal variables during the iterative solve process forces the garbage collector to run frequently. Even with GC active, the "sampled peak" shows a ~14MB increase in live objects before collection cycles, indicating high pressure on the young generation heap.
+
+---
+
 ## Summary of Biggest "Bang for Buck"
 1. **Eliminate Vector3 Clones**: Moving to scratch vectors in `CollisionThrow` and `physics.ts` will drastically reduce GC pauses.
 2. **Optimized Warp Advancement**: Trusting the `warpTime` calculation to skip O(N²) checks during "flight" time.
