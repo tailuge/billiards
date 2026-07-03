@@ -53,6 +53,8 @@ export interface WorkerConfig {
   }
   stepSize?: number
   maxIterations?: number
+  recordTrajectory?: boolean
+  warpClearanceR?: number
 }
 
 /** Result of a single simulation (frames intentionally dropped). */
@@ -87,6 +89,7 @@ export function buildWorkerConfig(
       offset: { x: shot.offsetX, y: shot.offsetY },
       elevation: shot.elevation,
     },
+    recordTrajectory: false,
   }
 }
 
