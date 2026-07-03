@@ -131,6 +131,18 @@ export abstract class ControllerBase extends Controller {
       case "KeyCUp":
         this.container.comment.openChat()
         return true
+      case "Digit1":
+        this.container.view.camera.adjustFov(-delta * 20)
+        return true
+      case "Digit2":
+        this.container.view.camera.adjustFov(delta * 20)
+        return true
+      case "Digit3":
+        this.container.view.camera.adjustDistance(-delta * 8)
+        return true
+      case "Digit4":
+        this.container.view.camera.adjustDistance(delta * 8)
+        return true
       default:
         return false
     }
