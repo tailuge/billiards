@@ -57,6 +57,7 @@ header p {
 .card-title {
   font-size: 1.05rem;
   margin: 0.5rem 0 0.25rem;
+  text-align: center;
 }
 
 .card-desc {

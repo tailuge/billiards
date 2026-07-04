@@ -10,8 +10,9 @@ Companion to `speedrun-spec.md` (game changes **✅ done**). Covers the `dist/sp
 
 ```
 dist/speedrun/
-  index.html    — Landing page (static HTML)
-  speedrun.js   — All logic (module)
+  index.html    — Landing page ✅
+  speedrun.js   — Module: SVG rendering, iframe overlay, timer, postMessage ✅
+  speedrun.css  — Card layout, overlay, timer, close button styles ✅
 ```
 
 No server-side code — this spec defines the contract that the existing scoreboard app (`scoreboard-tailuge.vercel.app`) will implement.
@@ -20,12 +21,12 @@ No server-side code — this spec defines the contract that the existing scorebo
 
 ## 2. Page Layout
 
-### 2.1 Overall structure
+### 2.1 Overall structure ✅
 
 Single scrolling page with:
-- **Header bar**: Title "Speedrun Challenge", player name (from `?playername=` URL param, default `"Anon"`).
-- **2-column CSS grid** of position cards (flexes to 1 column on narrow screens).
-- **Iframe overlay** (`#gameOverlay`) — hidden by default, covers the full screen when active.
+- **Header bar**: Title "Speedrun Challenge", player name (from `?userName=` URL param, default `"Anon"`).
+- **CSS grid** of position cards (auto-fill, min 320px).
+- **Iframe overlay** (`#gameOverlay`) — hidden by default, covers the full screen when active. Includes a close button (✕).
 
 ### 2.2 Position card (compact)
 
@@ -49,9 +50,9 @@ Each card is a self-contained unit:
 - **Rankings list**: Top **3** fastest times for this position. Each entry shows rank, player name, time (formatted as `ss.tenths`), and a **▶** button to open the replay.
 - Cards sit in a 2-column flex grid (→ 1 column on narrow screens). The page shows ~4 cards at a time.
 
-### 2.3 No close button on overlay
+### 2.3 Overlay close behavior
 
-The iframe overlay has **no close button**. It auto-closes when the game sends a `speedrun-result` message. If the iframe hangs, the user refreshes the page.
+The iframe overlay has a **close button (✕)** for manual dismissal. It also auto-closes on receiving a `speedrun-result` postMessage (after a 300ms delay so the user sees the timer stop).
 
 ---
 
@@ -101,15 +102,15 @@ Each speedrun position is defined as an SVG element with `data-json-shots` attri
 
 ### 3.3 SVG rendering
 
-`speedrun.js` renders each SVG using inline table drawing (simple table outline + ball circles). No dependency on `svg.js`. The speedrun page calls `renderSpeedrunDiagram(svgEl)` on page load.
+`speedrun.js` renders each SVG using `initDiagrams()` from `../diagrams/svg.js` (same as exam pages). The speedrun page calls `initDiagrams("nineball")` on page load.
 
-For the iframe URL, the `init` param is extracted from `data-json-shots`:
+For the iframe URL, the `init` param is extracted from `data-json-shots`, and **all original page query params are passed through** to the game:
 ```js
 const config = JSON.parse(svg.dataset.jsonShots)[0]
 const init = JSON.stringify(config.balls.flatMap(b => [b.pos.x, b.pos.y]))
 const initShot = JSON.stringify(config.shot)
-const ruleType = config.ruleType
-const url = `../index.html?ruletype=${ruleType}&speedrun&practice&init=${encodeURIComponent(init)}&initShot=${encodeURIComponent(initShot)}&playername=${playerName}`
+const passThrough = window.location.search.replace(/^\?/, "&")
+const url = `../index.html?ruletype=${config.ruleType}&speedrun&practice&init=${encodeURIComponent(init)}&initShot=${encodeURIComponent(initShot)}${passThrough}`
 ```
 
 ### 3.4 Start with one example
@@ -131,11 +132,11 @@ The page starts with **one nineball position card** in the HTML. More positions 
 </div>
 ```
 
-### 4.2 Timer
+### 4.2 Timer ✅
 
 - **Location**: Inside the overlay, at **top-center**, above the iframe.
-- **Style**: Large white-on-dark digital clock, font-size ~3rem, monospace digits. Format: `ss.tenths` (e.g. `12.5`, `103.2`).
-- **Behavior**: Starts when the iframe loads (`iframe.onload`). Updates every 100ms using `performance.now()` or `Date.now()`. Stops on receiving `speedrun-result` message. Resets to `0.0s` when overlay closes.
+- **Style**: White-on-dark monospace, font-size 2.2rem, text-shadow. Format: `s.s` (e.g. `0.0s`, `12.5s`).
+- **Behavior**: Starts when the Play button is clicked (before iframe loads). Updates every 100ms using `performance.now()`. Stops on receiving `speedrun-result` message. Resets to `0.0s` on next play.
 
 ### 4.3 Opening the iframe
 
@@ -148,7 +149,7 @@ When a "▶ Play" button is clicked:
 
 The existing `practice` mode is used because the game has `init + initShot` logic for practice mode — no game changes needed for the iframe to render the correct ball positions.
 
-### 4.4 Receiving results (postMessage)
+### 4.4 Receiving results (postMessage) ✅
 
 The game sends two message shapes (see `speedrun-spec.md` §5):
 
@@ -161,20 +162,16 @@ The game sends two message shapes (see `speedrun-spec.md` §5):
 { "type": "speedrun-result", "status": "complete", "matchResult": {...}, "replayUrl": "..." }
 ```
 
+Current implementation — stops timer, logs to console, closes overlay after 300ms delay. **API POST not yet wired.**
+
 ```js
 window.addEventListener("message", (event) => {
   if (event.data.type !== "speedrun-result") return
-
   const { status, matchResult, replayUrl, reason } = event.data
-
-  // Stop timer
-  // Close overlay
-  if (status === "complete") {
-    // POST to /api/speedrun-results with timeSec + replayUrl
-    // Update card's ranking list
-  } else {
-    // Show failure reason briefly, then allow retry
-  }
+  const elapsed = stopTimer()
+  // TODO: POST to /api/speedrun-results
+  // TODO: Update card's ranking list
+  setTimeout(closeOverlay, 300)
 })
 ```
 
@@ -299,65 +296,56 @@ No dedup. Each POST creates a new record. The speedrun page may show the user's 
 
 ### 6.1 Responsibilities
 
-1. **Parse URL params** — read `?playername=` from the page URL. Default to `"Anon"`.
-2. **Render SVGs** — call `renderSpeedrunDiagram(svgEl)` for each `.billiards-table` SVG on page load.
-3. **Build cards** — for each SVG with `data-position-id`, create the card wrapper, extract `data-label` + `data-description`, add Play button, render rankings placeholder.
-4. **Fetch rankings** — on page load, `GET /api/speedrun-results`, group by `positionId`, sort, show top 3 per position card.
-5. **Handle Play clicks** — construct iframe URL, open overlay, start timer.
-6. **Handle postMessage** — on `speedrun-result`:
-   - Stop timer
-   - Close overlay
-   - `POST /api/speedrun-results` with the result data
-   - Re-fetch rankings and update the card
-7. **Handle replay clicks** — on clicking a ranking entry's ▶ button, `GET /api/speedrun-results/{id}`, open the returned `replayUrl` in a new tab.
+| # | Task | Status |
+|---|------|--------|
+| 1 | **Parse URL params** — read `?userName=` (same as main app). Default to `"Anon"`. Pass all params through to game iframe. | ✅ |
+| 2 | **Render SVGs** — call `initDiagrams("nineball")` from `../diagrams/svg.js`. | ✅ |
+| 3 | **Build cards** — cards are static HTML (one `article.speedrun-card` per position). | ✅ |
+| 4 | **Fetch rankings** — `GET /api/speedrun-results`, group by `positionId`, sort, show top 3. | TODO |
+| 5 | **Handle Play clicks** — construct iframe URL with passthrough params, open overlay, start timer. | ✅ |
+| 6 | **Handle postMessage** — on `speedrun-result`: stop timer, log result, close overlay after 300ms. | ✅ |
+| 7 | **POST result** — `POST /api/speedrun-results` with timeSec + matchResult + replayUrl. | TODO |
+| 8 | **Handle replay clicks** — on clicking a ranking entry, open `replayUrl` in new tab. | TODO |
 
-### 6.2 SVG rendering function (`renderSpeedrunDiagram`)
+### 6.2 SVG rendering
 
-```js
-function renderSpeedrunDiagram(svgEl) {
-  const jsonText = svgEl.dataset.jsonShots
-  const config = JSON.parse(jsonText)[0]
-  const balls = config.balls
-  const isPool = config.ruleType !== "threecushion"
-
-  // Set viewBox based on table geometry (same constants as svg.js)
-  // Draw table outline, cushions, pockets (if pool)
-  // Draw ball circles with appropriate colors
-  // Add cue ball marker
-}
-```
-
-Simplified table rendering: a rectangle for the table, some circles for balls. Not as feature-rich as `svg.js` but self-contained.
+Uses `initDiagrams("nineball")` from `../diagrams/svg.js` — the same infrastructure as exam pages. Renders full table with grid, diamonds, cushions, pockets, and ball circles. Simpler than originally planned (reuses existing code instead of building a custom renderer).
 
 ---
 
-## 7. Implementation Order
+## 7. Implementation Status
 
 ### Step 0: Game changes ✅ DONE
-- `Session.speedrunMode`, browser query param detection, `PlayShot` failure postMessage, `End` success postMessage.
+- `Session.speedrunMode`, browser query param detection, `PlayShot` failure postMessage, `End` success postMessage. 576 tests pass.
 
-### Step 1: Create `dist/speedrun/index.html`
-- HTML skeleton with header, player name display, one example SVG + card, iframe overlay with timer.
+### Step 1: `dist/speedrun/index.html` ✅ DONE
+- HTML skeleton with header, player name display, one nineball position card, iframe overlay with close button + timer.
 
-### Step 2: Create `dist/speedrun/speedrun.js`
-- SVG rendering function (table + balls).
-- Card building (extract from SVGs, add play button, rankings placeholder).
-- Iframe overlay open/close logic.
-- Timer logic (start/stop/update).
+### Step 2: `dist/speedrun/speedrun.js` — Core features ✅ DONE
+- SVG rendering via `initDiagrams`.
+- Iframe overlay open/close.
+- Timer (start on click, 100ms update, `performance.now()`).
 - postMessage listener.
-- API calls (POST + GET).
-- Rankings display.
-- Replay button (GET by uid → open URL).
+- Query param passthrough to game URL.
 
-### Step 3: Implement the API on the scoreboard server
+### Step 3: `dist/speedrun/speedrun.css` ✅ DONE
+- Card grid layout, overlay, timer, close button styles.
+
+### Step 4: API integration TODO
+- `POST /api/speedrun-results` on speedrun complete.
+- `GET /api/speedrun-results` to fetch rankings.
+- Rankings list rendering in cards.
+- Replay links.
+
+### Step 5: Implement the API on the scoreboard server TODO
 - `POST /api/speedrun-results` — store result.
 - `GET /api/speedrun-results` — list all results.
 - `GET /api/speedrun-results/{id}` — single result with replayUrl.
 
-### Step 4: Test end-to-end
+### Step 6: Test end-to-end TODO
 - Open `dist/speedrun/index.html` locally.
 - Click Play → iframe opens with the game at the correct position.
-- Play a shot → game sends `speedrun-result` → overlay closes → result is displayed and POSTed.
+- Play a shot → game sends `speedrun-result` → overlay closes.
 
 ---
 

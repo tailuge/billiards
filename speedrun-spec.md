@@ -24,13 +24,12 @@ Add a speedrun challenge mode to the billiards game. Triggered via `&speedrun` q
 | `speedrun` | `&speedrun` | yes (flag) | Activates speedrun mode |
 | `init` | `&init=[x1,y1,…]` | yes | Existing format (see `Rack.fromInitParam`) |
 | `ruletype` | `&ruletype=nineball` | optional | Defaults to `"nineball"` |
-| `playername` | `&playername=Alice` | optional | Default `"Anon"` |
-| `practice` | `&practice` | recommended | Enables `initShot` handling for exact ball placement |
-| `initShot` | `&initShot={…}` | recommended | Initial shot params (cue angle, power, etc.) |
+| `userName` | `&userName=Alice` | optional | Player name (same param as main app). Default `"Anon"` |
+| `userId` | `&userId=abc123` | optional | Player ID (same param as main app) |
 
-**Example iframe URL:**
+**Example iframe URL** (constructed by speedrun page — all original query params passed through):
 ```
-?ruletype=nineball&speedrun&practice&init=[0.5,-0.3,…]&initShot={…}&playername=Alice
+?ruletype=nineball&speedrun&practice&init=[0.5,-0.3,…]&initShot={…}&userName=Alice&userId=abc123
 ```
 
 ---
@@ -165,13 +164,25 @@ Possible reasons: `"Cue ball potted"`, `"Wrong ball hit first"`, `"No ball hit"`
 
 ---
 
-## 8. dist/speedrun/ Page (Phase 2 — TODO)
+## 8. dist/speedrun/ Page (Phase 2 — In Progress)
 
-See `speedrun-api-spec.md` for the landing page, position cards, iframe overlay, timer, and REST API contract. The page:
-- Starts a timer when the game iframe loads
-- Listens for `speedrun-result` postMessage
-- On fail: closes overlay, shows failure reason
-- On complete: stops timer, closes overlay, POSTs result to API, updates rankings
+See `speedrun-api-spec.md` for the landing page, position cards, iframe overlay, timer, and REST API contract.
+
+### 8.1 Done ✅
+
+| File | What |
+|---|---|
+| `dist/speedrun/index.html` | Landing page with header, one nineball position card (SVG table + Play button + rankings placeholder), iframe overlay with close button and timer display |
+| `dist/speedrun/speedrun.js` | SVG rendering via `initDiagrams()`, iframe overlay open/close, timer (starts on click, 100ms interval), `postMessage` listener for `speedrun-result`, `userName` param passthrough |
+| `dist/speedrun/speedrun.css` | Card grid layout, overlay styles, timer display, close button |
+
+### 8.2 TODO
+
+- Fetch rankings from API (`GET /api/speedrun-results`)
+- POST results to API on complete
+- Rankings list rendering in cards
+- Replay links in rankings
+- Additional position cards
 
 ---
 

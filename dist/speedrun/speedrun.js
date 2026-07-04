@@ -7,9 +7,12 @@ let currentCard = null
 
 export function initSpeedrun() {
   const params = new URLSearchParams(window.location.search)
-  const playerName = params.get("playername") ?? "Anon"
+  const playerName = params.get("userName") ?? "Anon"
   const nameEl = document.getElementById("playerName")
   if (nameEl) nameEl.textContent = `Player: ${playerName}`
+
+  // Save original query string for passthrough to game (strip leading ?)
+  const passThrough = window.location.search.replace(/^\?/, "&")
 
   initDiagrams("nineball")
 
@@ -42,7 +45,7 @@ export function initSpeedrun() {
         `&speedrun&practice` +
         `&init=${encodeURIComponent(init)}` +
         `&initShot=${encodeURIComponent(initShot)}` +
-        `&playername=${encodeURIComponent(playerName)}`
+        passThrough
 
       // Cancel any pending close so we don't wipe the new iframe
       if (closeTimeout) {
