@@ -3,22 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Three Cushion Solution Searcher</title>
+    <title>The Cushion Solutions</title>
     <link rel="icon" type="image/png" href="../favicon.png" />
     <link rel="stylesheet" href="../css/ball-colors.css" />
     <style>
         body {
             font-family: sans-serif;
+            font-size: 0.8rem;
             margin: 0;
-            padding: 12px;
+            padding: 6px;
+        }
+        h1 {
+            font-size: 1.1rem;
+            margin: 0 0 4px;
+        }
+        h2 {
+            font-size: 0.9rem;
+            margin: 4px 0;
+        }
+        #status-area {
+            font-size: 0.8rem;
+            margin-bottom: 6px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
+            font-size: 0.75rem;
         }
         th, td {
-            padding: 2px 6px;
+            padding: 1px 3px;
             text-align: left;
             border: 1px solid #ccc;
         }
@@ -27,7 +41,7 @@
         }
         .count-col {
             text-align: right;
-            width: 60px;
+            width: 28px;
         }
         .pattern-col {
             font-family: monospace;
@@ -52,15 +66,16 @@
         .main-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 10px;
         }
         .tables-col {
-            flex: 0 0 30%;
-            min-width: 220px;
+            flex: 0 0 25%;
+            min-width: 200px;
         }
         .diagram-col {
             flex: 1 1 300px;
             min-width: 250px;
+            position: relative;
         }
         svg.billiards-table {
             width: 100%;
@@ -70,10 +85,9 @@
     </style>
 </head>
 <body>
-    <h1>Three Cushion Solution Searcher</h1>
+    <h1>The Cushion Solutions</h1>
 
     <div id="status-area">
-        <div id="status-text">Initialising...</div>
         <div><progress id="progress-bar" value="0" max="100" style="width:100%"></progress></div>
         <div id="stats">
             <span id="stat-progress">Progress: 0 / 0</span>
@@ -82,10 +96,6 @@
         </div>
     </div>
 
-    <p id="info-msg">
-        Searching space: Angle (180 steps), Power (4 steps), Offset X/Y (5 steps each). Total: 18,000 combinations.
-    </p>
-
     <div class="main-grid">
         <div class="tables-col">
             <h2>Ball first</h2>
@@ -93,8 +103,8 @@
                 <thead>
                     <tr>
                         <th>Pattern</th>
-                        <th>Links</th>
-                        <th class="count-col">Count</th>
+                        <th>View</th>
+                        <th class="count-col">#</th>
                     </tr>
                 </thead>
                 <tbody id="results-body-ball">
@@ -107,8 +117,8 @@
                 <thead>
                     <tr>
                         <th>Pattern</th>
-                        <th>Links</th>
-                        <th class="count-col">Count</th>
+                        <th>View</th>
+                        <th class="count-col">#</th>
                     </tr>
                 </thead>
                 <tbody id="results-body-cushion">
@@ -119,6 +129,7 @@
 
         <div class="diagram-col">
             <svg class="billiards-table"></svg>
+            <button id="setup-btn" class="setup-btn" title="Open in three cushion research view" style="position:absolute;bottom:4%;right:5%;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;filter:grayscale(1);background:none;border:none;padding:0">🔧</button>
         </div>
     </div>
 
@@ -128,7 +139,6 @@
         const R = 0.03275;
         const maxPower = 160 * R;
 
-        const statusText = document.getElementById('status-text');
         const progressBar = document.getElementById('progress-bar');
         const statProgress = document.getElementById('stat-progress');
         const statFound = document.getElementById('stat-found');
@@ -136,6 +146,30 @@
         const resultsBodyBall = document.getElementById('results-body-ball');
         const resultsBodyCushion = document.getElementById('results-body-cushion');
         const diagramSvg = document.querySelector('.billiards-table');
+        const setupBtn = document.getElementById('setup-btn');
+        let currentConfig = null;
+
+        setupBtn.addEventListener('click', () => {
+            if (!currentConfig) return;
+            const cfg = currentConfig[0];
+            const cueBall = cfg.balls[cfg.shot.cueBallId];
+            const ballsPos = cfg.balls.flatMap(b => [b.pos.x, b.pos.y]);
+            const state = {
+                diagram: true,
+                init: ballsPos,
+                shots: [{
+                    type: 'AIM',
+                    angle: cfg.shot.angle,
+                    power: cfg.shot.power,
+                    offset: cfg.shot.offset,
+                    pos: { x: cueBall.pos.x, y: cueBall.pos.y, z: 0 },
+                    i: cfg.shot.cueBallId
+                }]
+            };
+            const p = new URLSearchParams();
+            p.set('s', JSON.stringify(state));
+            window.open(`../diagrams/three.html?${p}`, '_blank');
+        });
 
         const urlParams = new URLSearchParams(window.location.search);
         const initParam = urlParams.get('init');
@@ -154,9 +188,7 @@
         initDiagrams('threecushion');
 
         if (!initParam) {
-            statusText.textContent = "Waiting for 'init' parameter (e.g. ?init=[x0,y0,x1,y1,x2,y2])";
         } else if (ballPositions.length < 6 || ballPositions.some(isNaN)) {
-            statusText.textContent = "Error: Invalid 'init' parameter. Expected JSON array of at least 6 coordinates.";
         } else {
             startSearch();
         }
@@ -172,7 +204,29 @@
                 angles.push(i * Math.PI / 90);
             }
 
-            const powerPercents = [0.25, 0.50, 0.75];
+            // Inject collision-window angles aimed at each non-cueball ball.
+            // Triangle: base = distance between centers, opposite = 2R → halfAngle = asin(2R/d).
+            // Generate 10 angles spanning the collision cone around the direct aim line.
+            function generateBallAimAngles(cueBall, targetBalls) {
+                const extra = [];
+                for (const target of targetBalls) {
+                    const dx = target.pos.x - cueBall.pos.x;
+                    const dy = target.pos.y - cueBall.pos.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist <= 2 * R) continue;
+                    const aimAngle = Math.atan2(dy, dx);
+                    const halfAngle = Math.asin(2 * R / dist);
+                    for (let k = 0; k < 10; k++) {
+                        const offset = -halfAngle + k * (2 * halfAngle) / 9;
+                        extra.push(aimAngle + offset);
+                    }
+                }
+                return extra;
+            }
+            const extraAngles = generateBallAimAngles(balls[0], balls.slice(1));
+            for (const a of extraAngles) angles.push(a);
+
+            const powerPercents = [0.3, 0.50, 0.85];
             const offsetValues = [-0.4, 0.0, 0.4];
 
             const tasks = [];
@@ -189,7 +243,6 @@
 
             const totalTasks = tasks.length;
             statProgress.textContent = `Progress: 0 / ${totalTasks}`;
-            statusText.textContent = `Searching ${totalTasks} combinations...`;
             progressBar.max = totalTasks;
 
             let completed = 0;
@@ -302,7 +355,7 @@
                         .slice(0, patternEnd)
                         .filter(o => o.ballA === 0 || o.ballB === 0)
                         .map(o => o.type === 'Cushion' ? '⌻' : o.type === 'Collision' ? '◉' : o.type.toLowerCase())
-                        .join(', ');
+                        .join('');
 
                     let entry = patterns.get(patternStr);
                     if (!entry) {
@@ -343,6 +396,7 @@
                         }
                     }];
                     diagramSvg.dataset.jsonShots = JSON.stringify(config);
+                    currentConfig = config;
                     diagramSvg.querySelectorAll('.table-group, .trajectories-group, .balls-group, .inset-group').forEach(g => g.remove());
                     await initDiagrams('threecushion');
                 } finally {
@@ -389,8 +443,6 @@
             });
 
             function finishSearch() {
-                const elapsed = (performance.now() - startTime) / 1000;
-                statusText.textContent = `Search complete in ${elapsed.toFixed(1)}s. Found ${foundCount} valid shots.`;
                 updateUI();
 
                 const sortedPatterns = [...patterns.entries()].sort((a, b) => b[1].count - a[1].count);
