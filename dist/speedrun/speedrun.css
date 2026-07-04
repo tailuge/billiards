@@ -117,7 +117,7 @@ header p {
 
 /* Iframe overlay */
 #gameOverlay {
-  display: none;
+  display: flex;
   position: fixed;
   top: 0;
   left: 0;
@@ -127,10 +127,14 @@ header p {
   z-index: 1000;
   justify-content: center;
   align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
 }
 
 #gameOverlay.active {
-  display: flex;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .iframe-container {
@@ -140,6 +144,12 @@ header p {
   position: relative;
   border-radius: 8px;
   overflow: hidden;
+  transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+}
+
+#gameOverlay.closing .iframe-container {
+  transform: scale(0);
+  opacity: 0;
 }
 
 .iframe-container iframe {
@@ -187,7 +197,7 @@ header p {
 
 /* Fail modal */
 #failModal {
-  display: none;
+  display: flex;
   position: fixed;
   top: 0;
   left: 0;
@@ -197,10 +207,13 @@ header p {
   z-index: 2000;
   justify-content: center;
   align-items: center;
+  opacity: 0;
+  pointer-events: none;
 }
 
 #failModal.active {
-  display: flex;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .fail-card {

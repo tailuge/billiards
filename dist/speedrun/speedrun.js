@@ -70,6 +70,7 @@ export function initSpeedrun() {
         clearTimeout(closeTimeout)
         closeTimeout = null
       }
+      overlay.classList.remove("closing")
       currentCard = card
       iframe.src = url
       overlay.classList.add("active")
@@ -85,10 +86,10 @@ export function initSpeedrun() {
   // --- Fail modal ---
   let failTimer = null
 
-  function showFailModal(reason) {
-    failReason.textContent = reason
+  function showFailModal(elapsed, reason) {
+    failReason.innerHTML = `${reason}<br>@ ${elapsed.toFixed(1)} seconds`
     failModal.classList.add("active")
-    failTimer = setTimeout(hideFailModal, 3000)
+    failTimer = setTimeout(hideFailModal, 5000)
   }
 
   function hideFailModal() {
@@ -110,7 +111,7 @@ export function initSpeedrun() {
 
     if (status === "fail") {
       closeOverlay()
-      showFailModal(reason)
+      showFailModal(elapsed, reason)
       return
     }
 
@@ -122,9 +123,6 @@ export function initSpeedrun() {
         replayUrl,
       })
     }
-
-    // Close overlay after a brief pause so the user sees the timer stop
-    setTimeout(closeOverlay, 300)
   })
 
   // --- Timer helpers ---
@@ -147,12 +145,15 @@ export function initSpeedrun() {
 
   function closeOverlay() {
     stopTimer()
-    overlay.classList.remove("active")
-    // Delay clearing iframe so the game can finish any pending work
+    if (closeTimeout) {
+      clearTimeout(closeTimeout)
+    }
+    overlay.classList.add("closing")
     closeTimeout = setTimeout(() => {
+      overlay.classList.remove("active", "closing")
       iframe.src = ""
       closeTimeout = null
-    }, 100)
+    }, 300)
     currentCard = null
   }
 }
