@@ -162,20 +162,32 @@ The game sends two message shapes (see `speedrun-spec.md` §5):
 { "type": "speedrun-result", "status": "complete", "matchResult": {...}, "replayUrl": "..." }
 ```
 
-Current implementation — stops timer, logs to console, closes overlay after 300ms delay. **API POST not yet wired.**
+Current implementation:
+- **Fail**: Closes overlay immediately, shows `#failModal` with "Failed!" + reason + OK button (auto-dismisses after 3s). ✅
+- **Success**: Closes overlay immediately, logs to console. Success modal **not yet implemented** (TODO).
+- **API POST** not yet wired (TODO).
 
-```js
-window.addEventListener("message", (event) => {
-  if (event.data.type !== "speedrun-result") return
-  const { status, matchResult, replayUrl, reason } = event.data
-  const elapsed = stopTimer()
-  // TODO: POST to /api/speedrun-results
-  // TODO: Update card's ranking list
-  setTimeout(closeOverlay, 300)
-})
+### 4.5 Success modal (TODO)
+
+On a successful speedrun clear, show a centered modal similar to the fail modal but with success styling:
+
+```
+┌─────────────────────────┐
+│       🏆 Success!       │
+│                         │
+│      Time: 12.5s        │
+│      Rank: #3 🥉        │
+│   (new leaderboard!)    │
+│                         │
+│         [OK]            │
+└─────────────────────────┘
 ```
 
-**Note**: On failure, the game continues running (game doesn't stop itself). The page closes the iframe on receiving the fail message.
+- Shows time taken (from elapsed timer value)
+- Shows leaderboard rank (returned from API POST response), or "—" if not top-3
+- Shows "new leaderboard!" indicator if rank ≤ 3
+- OK button dismisses; auto-dismiss after 5s (longer than fail modal since user may want to read it)
+- Reuses the `#failModal` div (or rename to `#resultModal` with dual styles)
 
 ---
 
@@ -352,6 +364,7 @@ Uses `initDiagrams()` from `../diagrams/svg.js`. Each SVG's `data-json-shots` co
 
 ## 8. Open Questions / Future
 
+- **Success modal**: Green-styled modal showing time + leaderboard rank. Reuses fail modal pattern. Planned UX in §4.5.
 - **More positions**: Copy the `<article class="speedrun-card">` pattern and set `data-json-shots` with the desired position. No manual `id` needed — `positionId()` derives a stable hash.
 - **Replay URL format**: The base URL for reconstruction could be the page's own origin, or a configurable constant.
 - **Server cleanup**: The server should cap at top N per position to keep the response small.

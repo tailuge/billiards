@@ -172,13 +172,15 @@ See `speedrun-api-spec.md` for the landing page, position cards, iframe overlay,
 
 | File | What |
 |---|---|
-| `dist/speedrun/index.html` | Landing page with header, two position cards (nineball + snooker), iframe overlay with close button and timer display |
-| `dist/speedrun/speedrun.js` | `initDiagrams()` (per-SVG ruleType, mixed types work), `positionId()` (hash of `data-json-shots`), iframe overlay open/close, timer, `postMessage` listener, passthrough params |
-| `dist/speedrun/speedrun.css` | Card grid layout, overlay styles, timer display, close button |
-| `dist/diagrams/svg.js` | `initDiagrams()` takes no arg — each SVG extracts its own `ruleType` from `data-json-shots`. Enables mixed ruleTypes on one page. |
+| `dist/speedrun/index.html` | Landing page with header, two position cards (nineball + snooker), iframe overlay with close button + timer, `#failModal` for failure feedback |
+| `dist/speedrun/speedrun.js` | `initDiagrams()` (per-SVG ruleType), `positionId()` (content hash), iframe overlay, timer, `postMessage` listener, fail modal (reason + OK, 3s auto-dismiss), passthrough params |
+| `dist/speedrun/speedrun.css` | Card grid, overlay, timer, close button, fail modal styles |
+| `dist/diagrams/svg.js` | `initDiagrams()` takes no arg — each SVG extracts its own `ruleType` from `data-json-shots` |
+| `src/controller/playshot.ts` | Speedrun foul/pot check moved **before** `rules.update()` to prevent snooker state mutation bug |
 
 ### 8.2 TODO
 
+- **Success modal**: Show time taken + leaderboard rank on speedrun complete (see `speedrun-api-spec.md` §4.5)
 - Fetch rankings from API (`GET /api/speedrun-results`)
 - POST results to API on complete
 - Rankings list rendering in cards

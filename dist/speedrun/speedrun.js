@@ -35,6 +35,9 @@ export function initSpeedrun() {
   const iframe = document.getElementById("gameIframe")
   const closeBtn = document.getElementById("closeGame")
   const timerDisplay = document.getElementById("timerDisplay")
+  const failModal = document.getElementById("failModal")
+  const failReason = document.getElementById("failReason")
+  const failOkBtn = document.getElementById("failOkBtn")
 
   // --- Play button: open iframe overlay ---
   document.querySelectorAll(".speedrun-card").forEach((card) => {
@@ -79,6 +82,25 @@ export function initSpeedrun() {
     closeBtn.addEventListener("click", closeOverlay)
   }
 
+  // --- Fail modal ---
+  let failTimer = null
+
+  function showFailModal(reason) {
+    failReason.textContent = reason
+    failModal.classList.add("active")
+    failTimer = setTimeout(hideFailModal, 3000)
+  }
+
+  function hideFailModal() {
+    failModal.classList.remove("active")
+    if (failTimer) {
+      clearTimeout(failTimer)
+      failTimer = null
+    }
+  }
+
+  failOkBtn.addEventListener("click", hideFailModal)
+
   // --- postMessage: game result ---
   window.addEventListener("message", (event) => {
     if (event.data.type !== "speedrun-result") return
@@ -87,8 +109,14 @@ export function initSpeedrun() {
     const elapsed = stopTimer()
 
     if (status === "fail") {
-      console.log(`Speedrun failed: ${reason} (${elapsed.toFixed(1)}s)`)
-    } else if (status === "complete") {
+      closeOverlay()
+      showFailModal(reason)
+      return
+    }
+
+    closeOverlay()
+
+    if (status === "complete") {
       console.log(`Speedrun complete! ${elapsed.toFixed(1)}s`, {
         matchResult,
         replayUrl,

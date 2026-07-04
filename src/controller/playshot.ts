@@ -23,6 +23,18 @@ export class PlayShot extends ControllerBase {
   override handleStationary(_) {
     const table = this.container.table
     const outcome = table.outcome
+
+    // Speedrun failure check must run BEFORE rules.update() mutates state
+    // (snooker's update() changes targetIsRed/previousPotRed which foulReason reads)
+    let speedrunFoul: string | null = null
+    let speedrunNoPot = false
+    if (Session.isSpeedrunMode()) {
+      speedrunFoul = this.container.rules.foulReason(outcome)
+      if (!speedrunFoul && Outcome.potCount(outcome) === 0) {
+        speedrunNoPot = true
+      }
+    }
+
     const nextController = this.container.rules.update(outcome)
     const { p1: s1, p2: s2 } = Session.getInstance().orderedScoresForHud()
 
@@ -49,19 +61,16 @@ export class PlayShot extends ControllerBase {
       )
     }
 
-    if (Session.isSpeedrunMode()) {
-      const foul = this.container.rules.foulReason(outcome)
-      if (foul) {
-        globalThis.parent?.postMessage(
-          { type: "speedrun-result", status: "fail", reason: foul },
-          "*"
-        )
-      } else if (Outcome.potCount(outcome) === 0) {
-        globalThis.parent?.postMessage(
-          { type: "speedrun-result", status: "fail", reason: "No pot" },
-          "*"
-        )
-      }
+    if (speedrunFoul) {
+      globalThis.parent?.postMessage(
+        { type: "speedrun-result", status: "fail", reason: speedrunFoul },
+        "*"
+      )
+    } else if (speedrunNoPot) {
+      globalThis.parent?.postMessage(
+        { type: "speedrun-result", status: "fail", reason: "No pot" },
+        "*"
+      )
     }
 
     return nextController
