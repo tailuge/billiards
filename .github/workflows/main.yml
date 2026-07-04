@@ -23,10 +23,10 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
@@ -50,7 +50,7 @@ jobs:
           echo done
 
       - name: upload to codecov.io
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v5
         with:
           directory: ./coverage/
           plugins: noop
@@ -61,7 +61,7 @@ jobs:
 
       - name: upload build artifact
         if: github.ref == 'refs/heads/master' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: dist-artifact
           path: dist/
@@ -81,32 +81,33 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
       - name: download build artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v4
         with:
           name: dist-artifact
           path: dist/
 
-      - name: cleanup for deployment
+      - name: prepare deployment
         run: |
-          cp dist/redirect.html index.html
-          cp dist/robots.txt robots.txt
-          cp dist/sitemap.xml sitemap.xml
-          cp dist/google2eba932626b1b383.html google2eba932626b1b383.html
-          cp dist/naver200febfca14870e645245d6808f2a89e.html naver200febfca14870e645245d6808f2a89e.html
+          mkdir _site
+          cp -R dist _site/
+          cp _site/dist/redirect.html _site/index.html
+          cp _site/dist/robots.txt _site/
+          cp _site/dist/sitemap.xml _site/
+          cp _site/dist/google2eba932626b1b383.html _site/ || true
+          cp _site/dist/naver200febfca14870e645245d6808f2a89e.html _site/ || true
           echo "Removing unnecessary files for deployment"
-          rm -rf node_modules src test .github LICENSE yarn.lock
-          rm -rf dist/models/*.blend dist/models/d-snooker.gltf dist/models/p8.gltf dist/models/snooker.gltf dist/models/d-snooker.bin dist/models/p8.bin dist/models/snooker.bin
-          du -a * | sort -n
+          rm -rf _site/dist/models/*.blend _site/dist/models/d-snooker.gltf _site/dist/models/p8.gltf _site/dist/models/snooker.gltf _site/dist/models/d-snooker.bin _site/dist/models/p8.bin _site/dist/models/snooker.bin
+          ls -R _site/
 
       - name: Upload artifact
         if: github.ref == 'refs/heads/master' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-        uses: actions/upload-pages-artifact@v5
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: "./"
+          path: "_site"
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v4
