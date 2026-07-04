@@ -108,10 +108,9 @@
             width: 100%;
         }
 
-        #setup-btn {
+        .diagram-btn {
             position: absolute;
             bottom: 4%;
-            right: 5%;
             font-size: 16px;
             cursor: pointer;
             z-index: 10;
@@ -120,6 +119,15 @@
             background: none;
             border: none;
             padding: 0;
+            text-decoration: none;
+        }
+
+        #setup-btn {
+            right: 5%;
+        }
+
+        #analysis-btn {
+            right: 13%;
         }
 
         @media (width <= 600px) {
@@ -197,7 +205,8 @@
         <div class="diagram-col">
             <div class="diagram-wrapper">
                 <svg class="billiards-table"></svg>
-                <button id="setup-btn" class="setup-btn" title="Open in three cushion research view">🔧</button>
+                <a id="analysis-btn" class="diagram-btn" title="Open in analysis view">🔍</a>
+                <button id="setup-btn" class="diagram-btn" title="Open in three cushion research view">🔧</button>
             </div>
         </div>
     </div>
@@ -216,6 +225,7 @@
         const resultsBodyCushion = document.getElementById('results-body-cushion');
         const diagramSvg = document.querySelector('.billiards-table');
         const setupBtn = document.getElementById('setup-btn');
+        const analysisBtn = document.getElementById('analysis-btn');
         let currentConfig = null;
 
         setupBtn.addEventListener('click', () => {
@@ -238,6 +248,27 @@
             const p = new URLSearchParams();
             p.set('s', JSON.stringify(state));
             window.open(`../diagrams/three.html?${p}`, '_blank');
+        });
+
+        analysisBtn.addEventListener('click', (e) => {
+            if (!currentConfig) return;
+            e.preventDefault();
+            const cfg = currentConfig[0];
+            const ballsPos = cfg.balls.flatMap(b => [b.pos.x, b.pos.y]);
+            const initShot = JSON.stringify({
+                cueBallId: cfg.shot.cueBallId,
+                angle: cfg.shot.angle,
+                power: cfg.shot.power,
+                offset: cfg.shot.offset,
+                elevation: cfg.shot.elevation ?? 0,
+            });
+            const params = new URLSearchParams();
+            params.set('ruletype', 'threecushion');
+            params.set('practice', '');
+            params.set('analysis', '');
+            params.set('init', JSON.stringify(ballsPos));
+            params.set('initShot', initShot);
+            window.open(`../index.html?${params}`, '_blank');
         });
 
         const urlParams = new URLSearchParams(window.location.search);

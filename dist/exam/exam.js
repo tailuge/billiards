@@ -350,7 +350,7 @@ export function initExam() {
       params.set("analysis", "")
       params.set("init", init)
       params.set("initShot", initShot)
-      link.href = `https://velikodimov.github.io/billiards/dist/index.html?${params}`
+      link.href = `../index.html?${params}`
       parent.appendChild(link)
     }
 
