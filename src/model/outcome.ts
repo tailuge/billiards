@@ -34,14 +34,23 @@ export class Outcome {
     return new Outcome(OutcomeType.Pot, ballA, ballA, incidentSpeed, timestamp)
   }
 
-  static cushion(ballA: Ball, incidentSpeed: number, timestamp: number) {
-    return new Outcome(
+  static cushion(
+    ballA: Ball,
+    incidentSpeed: number,
+    timestamp: number,
+    side?: number
+  ) {
+    const outcome = new Outcome(
       OutcomeType.Cushion,
       ballA,
       ballA,
       incidentSpeed,
       timestamp
     )
+    if (side !== undefined) {
+      outcome.ballB = { id: side } as any
+    }
+    return outcome
   }
 
   static collision(

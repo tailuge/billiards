@@ -42,7 +42,7 @@ describe("Cushion", () => {
     const pos = new Vector3(TableGeometry.tableX, 0, 0)
     const ball = new Ball(pos)
     ball.vel.x = 1
-    expect(Cushion.bounceAny(ball, t)).to.be.greaterThan(0)
+    expect(Cushion.bounceAny(ball, t)?.speed).to.be.greaterThan(0)
     expect(Cushion.bounceAny(ball, t)).to.be.undefined
     expect(ball.vel.x).to.be.below(0)
     done()
@@ -52,7 +52,7 @@ describe("Cushion", () => {
     const pos = new Vector3(-TableGeometry.tableX, 0, 0)
     const ball = new Ball(pos)
     ball.vel.x = -1
-    expect(Cushion.bounceAny(ball, t)).to.be.greaterThan(0)
+    expect(Cushion.bounceAny(ball, t)?.speed).to.be.greaterThan(0)
     expect(Cushion.bounceAny(ball, t)).to.be.undefined
     expect(ball.vel.x).to.be.above(0)
     done()
@@ -62,7 +62,7 @@ describe("Cushion", () => {
     const pos = new Vector3(TableGeometry.tableX / 2, TableGeometry.tableY, 0)
     const ball = new Ball(pos)
     ball.vel.y = 1
-    expect(Cushion.bounceAny(ball, t)).to.be.greaterThan(0)
+    expect(Cushion.bounceAny(ball, t)?.speed).to.be.greaterThan(0)
     expect(Cushion.bounceAny(ball, t)).to.be.undefined
     expect(ball.vel.y).to.be.below(0)
     done()
@@ -72,7 +72,7 @@ describe("Cushion", () => {
     const pos = new Vector3(TableGeometry.tableX / 2, -TableGeometry.tableY, 0)
     const ball = new Ball(pos)
     ball.vel.y = -1
-    expect(Cushion.bounceAny(ball, t)).to.be.greaterThan(0)
+    expect(Cushion.bounceAny(ball, t)?.speed).to.be.greaterThan(0)
     expect(Cushion.bounceAny(ball, t)).to.be.undefined
     expect(ball.vel.y).to.be.above(0)
     done()
@@ -82,7 +82,7 @@ describe("Cushion", () => {
     const pos = new Vector3(TableGeometry.tableX, 0, 0)
     const ball = new Ball(pos)
     ball.vel.x = 1
-    expect(Cushion.bounceAny(ball, t, false)).to.be.greaterThan(0)
+    expect(Cushion.bounceAny(ball, t, false)?.speed).to.be.greaterThan(0)
     expect(Cushion.bounceAny(ball, t, false)).to.be.undefined
     expect(ball.vel.x).to.be.below(0)
     done()

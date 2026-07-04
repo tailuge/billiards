@@ -452,7 +452,14 @@
                     const patternStr = data.outcomes
                         .slice(0, patternEnd)
                         .filter(o => o.ballA === 0 || o.ballB === 0)
-                        .map(o => o.type === 'Cushion' ? '⌻' : o.type === 'Collision' ? '◉' : o.type.toLowerCase())
+                        .map(o => {
+                            if (o.type === 'Cushion') {
+                                if (o.ballB === 76) return 'L';
+                                if (o.ballB === 83) return 'S';
+                                return '⌻';
+                            }
+                            return o.type === 'Collision' ? '◉' : o.type.toLowerCase();
+                        })
                         .join('');
 
                     let entry = patterns.get(patternStr);
@@ -546,7 +553,7 @@
                 const sortedPatterns = [...patterns.entries()].sort((a, b) => b[1].count - a[1].count);
 
                 const ballFirst = sortedPatterns.filter(([p]) => p.startsWith('◉'));
-                const cushionFirst = sortedPatterns.filter(([p]) => p.startsWith('⌻'));
+                const cushionFirst = sortedPatterns.filter(([p]) => !p.startsWith('◉'));
 
                 renderTable(resultsBodyBall, ballFirst);
                 renderTable(resultsBodyCushion, cushionFirst);
