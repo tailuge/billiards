@@ -149,7 +149,7 @@ export class Snooker implements Rules {
   }
 
   tableGeometry(): void {
-    TableGeometry.hasPockets = true
+    TableGeometry.configureForRule("snooker")
   }
 
   table(): Table {
