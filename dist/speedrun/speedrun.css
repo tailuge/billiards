@@ -1,0 +1,185 @@
+html {
+  font-size: 87.5%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background: #f0f0f0;
+  color: #333;
+  line-height: 1.6;
+  padding: 0.5rem;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+header h1 {
+  font-size: 1.5rem;
+}
+
+header p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Card grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Single card */
+.speedrun-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-size: 1.05rem;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.card-desc {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+/* SVG table preview */
+.billiards-table {
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: block;
+}
+
+/* Play button */
+.play-btn {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.15s;
+}
+
+.play-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Rankings */
+.rankings {
+  margin-top: 0.75rem;
+  border-top: 1px solid #eee;
+  padding-top: 0.5rem;
+}
+
+.rankings h4 {
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  color: #888;
+}
+
+.rankings-empty {
+  font-size: 0.8rem;
+  color: #aaa;
+  font-style: italic;
+}
+
+/* Iframe overlay */
+#gameOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(0 0 0 / 85%);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+#gameOverlay.active {
+  display: flex;
+}
+
+.iframe-container {
+  width: 80%;
+  height: 80%;
+  background: #000;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Timer display */
+.timer-display {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-family: "Courier New", monospace;
+  font-size: 2.2rem;
+  font-weight: bold;
+  z-index: 10;
+  text-shadow: 0 0 8px rgb(0 0 0 / 60%);
+  pointer-events: none;
+}
+
+/* Close button */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #fff;
+  color: #000;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  line-height: 1;
+  z-index: 1010;
+}
+
+.close-btn:hover {
+  background: #ddd;
+}
