@@ -454,8 +454,9 @@
                         .filter(o => o.ballA === 0 || o.ballB === 0)
                         .map(o => {
                             if (o.type === 'Cushion') {
-                                if (o.ballB === 76) return 'L';
-                                if (o.ballB === 83) return 'S';
+                                const sideId = o.ballB?.id ?? o.ballB;
+                                if (sideId === 76) return 'L';
+                                if (sideId === 83) return 'S';
                                 return '⌻';
                             }
                             return o.type === 'Collision' ? '◉' : o.type.toLowerCase();

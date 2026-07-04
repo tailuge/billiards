@@ -127,16 +127,22 @@ export class Table {
       return true
     }
 
-    const result = Cushion.bounceAny(
+    const incidentSpeed = Cushion.bounceAny(
       a,
       t,
       TableGeometry.hasPockets,
       this.cushionModel
     )
-    if (result && result.speed) {
-      this.outcome.push(
-        Outcome.cushion(a, result.speed, this.time, result.side)
-      )
+    if (incidentSpeed) {
+      const outcome = Outcome.cushion(a, incidentSpeed, this.time)
+      if (Cushion.willBounceLong(futurePosition, TableGeometry.hasPockets)) {
+        outcome.ballB = { id: 76 } as any // 'L'
+      } else if (
+        Cushion.willBounceShort(futurePosition, TableGeometry.hasPockets)
+      ) {
+        outcome.ballB = { id: 83 } as any // 'S'
+      }
+      this.outcome.push(outcome)
       return false
     }
 
