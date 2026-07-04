@@ -95,14 +95,14 @@ Each speedrun position is defined as an SVG element with `data-json-shots` attri
 
 | Attribute | Purpose |
 |---|---|
-| `data-json-shots` | Ball positions + ruleType + initial shot params (reuses exam format). Used to render the SVG preview and to construct the iframe URL. |
-| `data-position-id` | Stable ID for this position, sent in API calls (e.g. `nineball-break`). |
-| `data-label` | Display name shown on the card. |
-| `data-description` | Short description shown below the title. |
+| `data-json-shots` | Ball positions + ruleType + initial shot params. The `ruleType` field drives per-SVG table rendering and ball colors (extracted by `svg.js`). Also used to construct the iframe URL. |
+| `h3.card-title` | Display name shown on the card. Also contributes to the content-hash position ID. |
+
+**Position IDs are derived**, not explicit. `speedrun.js` hashes `data-json-shots` into a stable ID (e.g. `p2a3k9f`), cached on `card.id`. Same pattern as exam's `qIdForBlock()`. No `data-position-id` attribute needed.
 
 ### 3.3 SVG rendering
 
-`speedrun.js` renders each SVG using `initDiagrams()` from `../diagrams/svg.js` (same as exam pages). The speedrun page calls `initDiagrams("nineball")` on page load.
+`speedrun.js` calls `initDiagrams()` from `../diagrams/svg.js` (same as exam pages). No argument needed — `svg.js` extracts `ruleType` from each SVG's `data-json-shots` and renders the correct table type + ball colors per card. Mixed ruleTypes (nineball + snooker) on one page work correctly.
 
 For the iframe URL, the `init` param is extracted from `data-json-shots`, and **all original page query params are passed through** to the game:
 ```js
@@ -113,9 +113,9 @@ const passThrough = window.location.search.replace(/^\?/, "&")
 const url = `../index.html?ruletype=${config.ruleType}&speedrun&practice&init=${encodeURIComponent(init)}&initShot=${encodeURIComponent(initShot)}${passThrough}`
 ```
 
-### 3.4 Start with one example
+### 3.4 Current cards
 
-The page starts with **one nineball position card** in the HTML. More positions are added by copying the SVG + card pattern.
+The page has two position cards: **9-Ball on The Pockets** (nineball) and **SnookerClearance** (snooker). More positions are added by copying the `<article class="speedrun-card">` pattern — no manual `id` needed (auto-derived from content hash).
 
 ---
 
@@ -299,8 +299,8 @@ No dedup. Each POST creates a new record. The speedrun page may show the user's 
 | # | Task | Status |
 |---|------|--------|
 | 1 | **Parse URL params** — read `?userName=` (same as main app). Default to `"Anon"`. Pass all params through to game iframe. | ✅ |
-| 2 | **Render SVGs** — call `initDiagrams("nineball")` from `../diagrams/svg.js`. | ✅ |
-| 3 | **Build cards** — cards are static HTML (one `article.speedrun-card` per position). | ✅ |
+| 2 | **Render SVGs** — call `initDiagrams()` (per-SVG ruleType, mixed types work). | ✅ |
+| 3 | **Derive position IDs** — hash `data-json-shots` into stable ID, cached on `card.id`. | ✅ |
 | 4 | **Fetch rankings** — `GET /api/speedrun-results`, group by `positionId`, sort, show top 3. | TODO |
 | 5 | **Handle Play clicks** — construct iframe URL with passthrough params, open overlay, start timer. | ✅ |
 | 6 | **Handle postMessage** — on `speedrun-result`: stop timer, log result, close overlay after 300ms. | ✅ |
@@ -309,7 +309,7 @@ No dedup. Each POST creates a new record. The speedrun page may show the user's 
 
 ### 6.2 SVG rendering
 
-Uses `initDiagrams("nineball")` from `../diagrams/svg.js` — the same infrastructure as exam pages. Renders full table with grid, diamonds, cushions, pockets, and ball circles. Simpler than originally planned (reuses existing code instead of building a custom renderer).
+Uses `initDiagrams()` from `../diagrams/svg.js`. Each SVG's `data-json-shots` contains its `ruleType` — `svg.js` extracts it per-element for correct table type and ball colors. Mixed ruleTypes (nineball + snooker) on one page work correctly.
 
 ---
 
@@ -322,7 +322,8 @@ Uses `initDiagrams("nineball")` from `../diagrams/svg.js` — the same infrastru
 - HTML skeleton with header, player name display, one nineball position card, iframe overlay with close button + timer.
 
 ### Step 2: `dist/speedrun/speedrun.js` — Core features ✅ DONE
-- SVG rendering via `initDiagrams`.
+- SVG rendering via `initDiagrams()` (per-SVG ruleType from `data-json-shots`).
+- Content-hash `positionId()` for API position IDs.
 - Iframe overlay open/close.
 - Timer (start on click, 100ms update, `performance.now()`).
 - postMessage listener.
@@ -351,7 +352,6 @@ Uses `initDiagrams("nineball")` from `../diagrams/svg.js` — the same infrastru
 
 ## 8. Open Questions / Future
 
-- **SVG colors**: Ball colors should match the ruletype (nineball uses specific colors per label).
-- **Space to add more positions**: The HTML is designed so new positions are added by copying the SVG element and adjusting `data-json-shots`.
+- **More positions**: Copy the `<article class="speedrun-card">` pattern and set `data-json-shots` with the desired position. No manual `id` needed — `positionId()` derives a stable hash.
 - **Replay URL format**: The base URL for reconstruction could be the page's own origin, or a configurable constant.
 - **Server cleanup**: The server should cap at top N per position to keep the response small.

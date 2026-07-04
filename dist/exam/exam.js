@@ -292,15 +292,7 @@ let currentRuleType = null
 let currentNoPot = false
 
 export function initExam() {
-  // Read ruleType from the first SVG's data-json-shots for correct table rendering
-  const firstSvg = document.querySelector(".billiards-table")
-  let ruletype
-  if (firstSvg?.dataset.jsonShots) {
-    try {
-      ruletype = JSON.parse(firstSvg.dataset.jsonShots)[0]?.ruleType
-    } catch {}
-  }
-  initDiagrams(ruletype)
+  initDiagrams()
 
   // Analysis link (magnifying glass) for each three-cushion SVG
   document.querySelectorAll(".billiards-table").forEach((svg) => {

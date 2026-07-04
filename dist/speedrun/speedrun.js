@@ -5,6 +5,21 @@ let timerInterval = null
 let closeTimeout = null
 let currentCard = null
 
+/** Hash data-json-shots → stable content-based position ID */
+function positionId(card) {
+  if (card.id) return card.id
+  const svg = card.querySelector(".billiards-table")
+  const s = svg?.dataset.jsonShots ?? ""
+  let h = 0
+  for (let i = 0; i < s.length; i++) {
+    h = (h << 5) - h + s.charCodeAt(i)
+    h |= 0
+  }
+  const id = "p" + Math.abs(h).toString(36)
+  card.id = id
+  return id
+}
+
 export function initSpeedrun() {
   const params = new URLSearchParams(window.location.search)
   const playerName = params.get("userName") ?? "Anon"
@@ -14,7 +29,7 @@ export function initSpeedrun() {
   // Save original query string for passthrough to game (strip leading ?)
   const passThrough = window.location.search.replace(/^\?/, "&")
 
-  initDiagrams("nineball")
+  initDiagrams()
 
   const overlay = document.getElementById("gameOverlay")
   const iframe = document.getElementById("gameIframe")

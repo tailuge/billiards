@@ -401,20 +401,12 @@ function createSvgStatusText(svg) {
 
 // ——— Per-element simulation ———
 
-async function runElement(el, ruletype) {
+async function runElement(el) {
   const setup = setupSvgRoot(el);
 
-  const { svg, tableGroup, trajectoriesGroup } = setup;
-  if (ruletype) svg.classList.add(ruletype);
-  const { statusEl } = setup;
+  const { svg, tableGroup, trajectoriesGroup, statusEl } = setup;
 
-  // Render table immediately
-  const isPool = ruletype && ruletype !== "threecushion"
-  const tableResult = isPool ? generatePoolTable() : generateBilliardTable();
-  svg.setAttribute("viewBox", tableResult.viewBox);
-  tableGroup.innerHTML = tableResult.content;
-
-  // Parse DSL and JSON shots
+  // Parse DSL and JSON shots first — ruleType lives in the data
   const dslText = el.dataset.shots;
   const jsonText = el.dataset.jsonShots;
 
@@ -442,6 +434,15 @@ async function runElement(el, ruletype) {
       console.error("JSON parse error:", err);
     }
   }
+
+  const ruletype = configs[0]?.ruleType;
+
+  // Render table with correct type and class
+  const isPool = ruletype && ruletype !== "threecushion"
+  const tableResult = isPool ? generatePoolTable() : generateBilliardTable();
+  svg.setAttribute("viewBox", tableResult.viewBox);
+  tableGroup.innerHTML = tableResult.content;
+  if (ruletype) svg.classList.add(ruletype);
 
   if (configs.length === 0) {
     setStatus(statusEl, "No shots to simulate");
@@ -488,11 +489,11 @@ function setStatus(el, message) {
  * Initialize all .billiards-table elements on the page.
  * Renders the table and runs any data-shots simulations.
  */
-export function initDiagrams(ruletype) {
+export function initDiagrams() {
   const divs = document.querySelectorAll(".billiards-table");
   if (divs.length === 0) {
     console.warn("No .billiards-table elements found on page");
     return;
   }
-  divs.forEach((el) => runElement(el, ruletype));
+  divs.forEach((el) => runElement(el));
 }

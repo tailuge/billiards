@@ -304,7 +304,7 @@
       }
 
       // Init empty diagram
-      initDiagrams("threecushion")
+      initDiagrams()
 
       if (
         initParam &&
@@ -557,7 +557,7 @@
                 ".table-group, .trajectories-group, .balls-group, .inset-group"
               )
               .forEach((g) => g.remove())
-            await initDiagrams("threecushion")
+            await initDiagrams()
           } finally {
             diagramLoading = false
           }
