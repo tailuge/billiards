@@ -136,11 +136,11 @@ export class Table {
     if (incidentSpeed) {
       const outcome = Outcome.cushion(a, incidentSpeed, this.time)
       if (Cushion.willBounceLong(futurePosition, TableGeometry.hasPockets)) {
-        outcome.ballB = { id: 76 } as any // 'L'
+        outcome.ballB = 76 as any // 'L'
       } else if (
         Cushion.willBounceShort(futurePosition, TableGeometry.hasPockets)
       ) {
-        outcome.ballB = { id: 83 } as any // 'S'
+        outcome.ballB = 83 as any // 'S'
       }
       this.outcome.push(outcome)
       return false

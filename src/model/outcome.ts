@@ -178,7 +178,7 @@ export class Outcome {
       timestamp: this.timestamp,
       incidentSpeed: this.incidentSpeed,
       ballA: this.ballA ? { id: this.ballA.id } : null,
-      ballB: this.ballB ? { id: this.ballB.id } : null,
+      ballB: this.ballB ? { id: this.ballB.id ?? this.ballB } : null,
     }
   }
 }

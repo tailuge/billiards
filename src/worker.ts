@@ -251,7 +251,7 @@ export function simulateSync(config: any): any {
     outcomes: table.outcome.map((o) => ({
       type: o.type,
       ballA: o.ballA?.id,
-      ballB: o.ballB?.id,
+      ballB: o.ballB?.id ?? o.ballB,
       speed: o.incidentSpeed,
       t: o.timestamp,
     })),
