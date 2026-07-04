@@ -187,9 +187,7 @@
         // Init empty diagram
         initDiagrams('threecushion');
 
-        if (!initParam) {
-        } else if (ballPositions.length < 6 || ballPositions.some(isNaN)) {
-        } else {
+        if (initParam && ballPositions.length >= 6 && !ballPositions.some(isNaN)) {
             startSearch();
         }
 
