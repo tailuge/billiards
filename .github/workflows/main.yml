@@ -72,7 +72,6 @@ jobs:
     if: github.ref == 'refs/heads/master' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
 
     permissions:
-      contents: read
       pages: write
       id-token: write
 
@@ -81,31 +80,26 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: download build artifact
         uses: actions/download-artifact@v4
         with:
           name: dist-artifact
           path: dist/
 
-      - name: cleanup for deployment
+      - name: prepare deployment
         run: |
-          cp dist/redirect.html index.html
-          cp dist/robots.txt robots.txt
-          cp dist/sitemap.xml sitemap.xml
-          cp dist/google2eba932626b1b383.html google2eba932626b1b383.html
-          cp dist/naver200febfca14870e645245d6808f2a89e.html naver200febfca14870e645245d6808f2a89e.html
+          mkdir _site
+          cp -R dist/* _site/
+          cp _site/redirect.html _site/index.html
           echo "Removing unnecessary files for deployment"
-          rm -rf node_modules src test .github LICENSE yarn.lock
-          rm -rf dist/models/*.blend dist/models/d-snooker.gltf dist/models/p8.gltf dist/models/snooker.gltf dist/models/d-snooker.bin dist/models/p8.bin dist/models/snooker.bin
-          du -a * | sort -n
+          rm -rf _site/models/*.blend _site/models/d-snooker.gltf _site/models/p8.gltf _site/models/snooker.gltf _site/models/d-snooker.bin _site/models/p8.bin _site/models/snooker.bin
+          ls -R _site/
 
       - name: Upload artifact
         if: github.ref == 'refs/heads/master' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "./"
+          path: "_site"
 
       - name: Deploy to GitHub Pages
         id: deployment
