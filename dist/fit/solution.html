@@ -2,21 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Three Cushion Solution Searcher</title>
     <link rel="icon" type="image/png" href="../favicon.png" />
+    <link rel="stylesheet" href="../css/ball-colors.css" />
     <style>
         body {
             font-family: sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 12px;
         }
         table {
-            width: 30%;
+            width: 100%;
             border-collapse: collapse;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
         th, td {
-            padding: 4px 8px;
+            padding: 2px 6px;
             text-align: left;
             border: 1px solid #ccc;
         }
@@ -25,7 +27,7 @@
         }
         .count-col {
             text-align: right;
-            width: 80px;
+            width: 60px;
         }
         .pattern-col {
             font-family: monospace;
@@ -37,11 +39,33 @@
         .sol-links {
             display: flex;
             flex-wrap: wrap;
-            gap: 2px;
-            margin-top: 2px;
+            gap: 1px;
         }
         .sol-link {
             text-decoration: none;
+            cursor: pointer;
+        }
+        .sol-link.active {
+            font-weight: bold;
+        }
+
+        .main-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .tables-col {
+            flex: 0 0 30%;
+            min-width: 220px;
+        }
+        .diagram-col {
+            flex: 1 1 300px;
+            min-width: 250px;
+        }
+        svg.billiards-table {
+            width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
         }
     </style>
 </head>
@@ -62,35 +86,45 @@
         Searching space: Angle (180 steps), Power (4 steps), Offset X/Y (5 steps each). Total: 18,000 combinations.
     </p>
 
-    <h2>Ball first</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Pattern</th>
-                <th>Links</th>
-                <th class="count-col">Count</th>
-            </tr>
-        </thead>
-        <tbody id="results-body-ball">
-            <tr><td colspan="3" class="empty-msg">Waiting for search to start...</td></tr>
-        </tbody>
-    </table>
+    <div class="main-grid">
+        <div class="tables-col">
+            <h2>Ball first</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pattern</th>
+                        <th>Links</th>
+                        <th class="count-col">Count</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body-ball">
+                    <tr><td colspan="3" class="empty-msg">Waiting for search to start...</td></tr>
+                </tbody>
+            </table>
 
-    <h2>Cushion first</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Pattern</th>
-                <th>Links</th>
-                <th class="count-col">Count</th>
-            </tr>
-        </thead>
-        <tbody id="results-body-cushion">
-            <tr><td colspan="3" class="empty-msg">Waiting for search to start...</td></tr>
-        </tbody>
-    </table>
+            <h2>Cushion first</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pattern</th>
+                        <th>Links</th>
+                        <th class="count-col">Count</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body-cushion">
+                    <tr><td colspan="3" class="empty-msg">Waiting for search to start...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="diagram-col">
+            <svg class="billiards-table"></svg>
+        </div>
+    </div>
 
     <script type="module">
+        import { initDiagrams } from "../diagrams/svg.js";
+
         const R = 0.03275;
         const maxPower = 160 * R;
 
@@ -101,6 +135,7 @@
         const statTime = document.getElementById('stat-time');
         const resultsBodyBall = document.getElementById('results-body-ball');
         const resultsBodyCushion = document.getElementById('results-body-cushion');
+        const diagramSvg = document.querySelector('.billiards-table');
 
         const urlParams = new URLSearchParams(window.location.search);
         const initParam = urlParams.get('init');
@@ -114,6 +149,9 @@
                 ballPositions = initParam.split(',').map(Number);
             }
         }
+
+        // Init empty diagram
+        initDiagrams('threecushion');
 
         if (!initParam) {
             statusText.textContent = "Waiting for 'init' parameter (e.g. ?init=[x0,y0,x1,y1,x2,y2])";
@@ -281,28 +319,37 @@
                 }
             }
 
-            function buildExportUrl(task) {
-                const url = new URL('../diagrams/export.html', window.location.href);
-                url.searchParams.set('ruletype', 'threecushion');
-                url.searchParams.set('cushionModel', cushionModel);
-                url.searchParams.set('init', JSON.stringify(ballPositions));
-                url.searchParams.set('initShot', JSON.stringify({
-                    cueBallId: 0,
-                    angle: +task.angle.toFixed(6),
-                    power: +task.power.toFixed(6),
-                    offset: { x: +task.ox.toFixed(6), y: +task.oy.toFixed(6), z: 0 }
-                }));
-                const CONSTANTS = [
-                    'R','m','e','mu','muS','muC','rho',
-                    'μs','μw','ee',
-                    'stronge_omega_ratio','stronge_e_n','stronge_μ'
-                ];
-                CONSTANTS.forEach(key => {
-                    const val = urlParams.get(key);
-                    if (val !== null) url.searchParams.set(key, val);
-                });
-                return url.toString();
+            let currentActiveLink = null;
+            let diagramLoading = false;
+
+            async function showDiagram(task) {
+                if (diagramLoading) return;
+                diagramLoading = true;
+                try {
+                    const balls = [];
+                    for (let i = 0; i < ballPositions.length; i += 2) {
+                        balls.push({ id: i / 2, pos: { x: ballPositions[i], y: ballPositions[i+1], z: 0 } });
+                    }
+                    const config = [{
+                        balls,
+                        cushionModel,
+                        ruleType: 'threecushion',
+                        shot: {
+                            cueBallId: 0,
+                            angle: +task.angle.toFixed(6),
+                            power: +task.power.toFixed(6),
+                            offset: { x: +task.ox.toFixed(6), y: +task.oy.toFixed(6), z: 0 },
+                            elevation: 0
+                        }
+                    }];
+                    diagramSvg.dataset.jsonShots = JSON.stringify(config);
+                    diagramSvg.querySelectorAll('.table-group, .trajectories-group, .balls-group, .inset-group').forEach(g => g.remove());
+                    await initDiagrams('threecushion');
+                } finally {
+                    diagramLoading = false;
+                }
             }
+
 
             function renderTable(tbody, sortedPatterns) {
                 tbody.innerHTML = '';
@@ -311,9 +358,10 @@
                 } else {
                     for (const [pattern, entry] of sortedPatterns) {
                         const tr = document.createElement('tr');
-                        const linksHtml = entry.solutions.map((sol, i) =>
-                            `<a href="${buildExportUrl(sol)}" target="_blank" class="sol-link" title="#${i + 1}: a=${sol.angle.toFixed(3)} p=${sol.power.toFixed(3)} ox=${sol.ox.toFixed(2)} oy=${sol.oy.toFixed(2)}">⇗</a>`
-                        ).join('');
+                        const linksHtml = entry.solutions.map((sol, i) => {
+                            const encoded = encodeURIComponent(JSON.stringify(sol));
+                            return `<a class="sol-link" data-task="${encoded}" title="#${i + 1}: a=${sol.angle.toFixed(3)} p=${sol.power.toFixed(3)} ox=${sol.ox.toFixed(2)} oy=${sol.oy.toFixed(2)}">⇗</a>`;
+                        }).join('');
                         tr.innerHTML = `
                             <td class="pattern-col">${pattern}</td>
                             <td><span class="sol-links">${linksHtml}</span></td>
@@ -323,6 +371,22 @@
                     }
                 }
             }
+
+            // Delegated click handler for inline diagram links
+            document.addEventListener('click', async (e) => {
+                const link = e.target.closest('.sol-link');
+                if (!link || !link.dataset.task) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Update active state
+                if (currentActiveLink) currentActiveLink.classList.remove('active');
+                link.classList.add('active');
+                currentActiveLink = link;
+
+                const task = JSON.parse(decodeURIComponent(link.dataset.task));
+                await showDiagram(task);
+            });
 
             function finishSearch() {
                 const elapsed = (performance.now() - startTime) / 1000;
