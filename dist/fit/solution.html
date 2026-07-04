@@ -6,187 +6,102 @@
     <link rel="icon" type="image/png" href="../favicon.png" />
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1a1a;
-            color: #e0e0e0;
+            font-family: sans-serif;
             margin: 0;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
-
-        .container {
-            max-width: 900px;
-            width: 100%;
-            background-color: #262626;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgb(0 0 0 / 50%);
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            margin-top: 0;
-            color: #4dabf7;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-
-        #status-area {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #333;
-            border-radius: 4px;
-            border-left: 4px solid #4dabf7;
-        }
-
-        #progress-bar-container {
-            width: 100%;
-            height: 12px;
-            background-color: #444;
-            border-radius: 6px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        #progress-bar {
-            width: 0%;
-            height: 100%;
-            background-color: #4dabf7;
-            transition: width 0.1s linear;
-        }
-
-        #stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #aaa;
-            font-family: monospace;
-        }
-
-        .results-container {
-            margin-top: 20px;
-            overflow-x: auto;
-        }
-
         table {
-            width: 100%;
+            width: 30%;
             border-collapse: collapse;
+            margin-bottom: 24px;
         }
-
         th, td {
-            padding: 12px;
+            padding: 4px 8px;
             text-align: left;
-            border-bottom: 1px solid #444;
+            border: 1px solid #ccc;
         }
-
         th {
-            background-color: #333;
-            color: #4dabf7;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-weight: bold;
         }
-
-        tr:hover {
-            background-color: #2d2d2d;
+        .count-col {
+            text-align: right;
+            width: 80px;
         }
-
         .pattern-col {
             font-family: monospace;
-            color: #ff79c6;
-            font-size: 0.9rem;
         }
-
-        .count-col {
-            font-weight: bold;
-            text-align: right;
-            width: 100px;
-            color: #50fa7b;
-        }
-
-        .info-msg {
-            padding: 10px;
-            background: #2b2f3a;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            color: #8be9fd;
-        }
-
         .empty-msg {
             text-align: center;
-            color: #666;
+            color: #999;
         }
-
         .sol-links {
             display: flex;
             flex-wrap: wrap;
             gap: 2px;
-            margin-top: 4px;
+            margin-top: 2px;
         }
-
         .sol-link {
             text-decoration: none;
-            font-size: 0.85rem;
-            opacity: 0.7;
-            transition: opacity 0.15s, transform 0.15s;
-        }
-
-        .sol-link:hover {
-            opacity: 1;
-            transform: scale(1.3);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Three Cushion Solution Searcher</h1>
+    <h1>Three Cushion Solution Searcher</h1>
 
-        <div id="status-area">
-            <div id="status-text">Initialising...</div>
-            <div id="progress-bar-container">
-                <div id="progress-bar"></div>
-            </div>
-            <div id="stats">
-                <span id="stat-progress">Progress: 0 / 0</span>
-                <span id="stat-found">Solutions: 0</span>
-                <span id="stat-time">Time: 0s</span>
-            </div>
-        </div>
-
-        <div class="info-msg" id="info-msg">
-            Searching space: Angle (180 steps), Power (4 steps), Offset X/Y (5 steps each). Total: 18,000 combinations.
-        </div>
-
-        <div class="results-container">
-            <table id="results-table">
-                <thead>
-                    <tr>
-                        <th>Outcome Pattern (Types)</th>
-                        <th class="count-col">Count</th>
-                    </tr>
-                </thead>
-                <tbody id="results-body">
-                    <tr><td colspan="2" class="empty-msg">Waiting for search to start...</td></tr>
-                </tbody>
-            </table>
+    <div id="status-area">
+        <div id="status-text">Initialising...</div>
+        <div><progress id="progress-bar" value="0" max="100" style="width:100%"></progress></div>
+        <div id="stats">
+            <span id="stat-progress">Progress: 0 / 0</span>
+            <span id="stat-found">Solutions: 0</span>
+            <span id="stat-time">Time: 0s</span>
         </div>
     </div>
 
+    <p id="info-msg">
+        Searching space: Angle (180 steps), Power (4 steps), Offset X/Y (5 steps each). Total: 18,000 combinations.
+    </p>
+
+    <h2>Ball first</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Pattern</th>
+                <th>Links</th>
+                <th class="count-col">Count</th>
+            </tr>
+        </thead>
+        <tbody id="results-body-ball">
+            <tr><td colspan="3" class="empty-msg">Waiting for search to start...</td></tr>
+        </tbody>
+    </table>
+
+    <h2>Cushion first</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Pattern</th>
+                <th>Links</th>
+                <th class="count-col">Count</th>
+            </tr>
+        </thead>
+        <tbody id="results-body-cushion">
+            <tr><td colspan="3" class="empty-msg">Waiting for search to start...</td></tr>
+        </tbody>
+    </table>
+
     <script type="module">
         const R = 0.03275;
-        const maxPower = 160 * R; // Default maxPower in the engine
+        const maxPower = 160 * R;
 
         const statusText = document.getElementById('status-text');
         const progressBar = document.getElementById('progress-bar');
         const statProgress = document.getElementById('stat-progress');
         const statFound = document.getElementById('stat-found');
         const statTime = document.getElementById('stat-time');
-        const resultsBody = document.getElementById('results-body');
+        const resultsBodyBall = document.getElementById('results-body-ball');
+        const resultsBodyCushion = document.getElementById('results-body-cushion');
 
-        // Parse query parameters
         const urlParams = new URLSearchParams(window.location.search);
         const initParam = urlParams.get('init');
         const cushionModel = urlParams.get('cushionModel') || 'mathavan';
@@ -196,17 +111,14 @@
             try {
                 ballPositions = JSON.parse(initParam);
             } catch (e) {
-                // Fallback for comma separated
                 ballPositions = initParam.split(',').map(Number);
             }
         }
 
         if (!initParam) {
             statusText.textContent = "Waiting for 'init' parameter (e.g. ?init=[x0,y0,x1,y1,x2,y2])";
-            statusText.style.color = "#ff922b";
         } else if (ballPositions.length < 6 || ballPositions.some(isNaN)) {
             statusText.textContent = "Error: Invalid 'init' parameter. Expected JSON array of at least 6 coordinates.";
-            statusText.style.color = "#ff6b6b";
         } else {
             startSearch();
         }
@@ -217,7 +129,6 @@
                 balls.push({ id: i / 2, pos: { x: ballPositions[i], y: ballPositions[i+1], z: 0 } });
             }
 
-            // Define search space
             const angles = [];
             for (let i = 0; i < 180; i++) {
                 angles.push(i * Math.PI / 90);
@@ -241,6 +152,7 @@
             const totalTasks = tasks.length;
             statProgress.textContent = `Progress: 0 / ${totalTasks}`;
             statusText.textContent = `Searching ${totalTasks} combinations...`;
+            progressBar.max = totalTasks;
 
             let completed = 0;
             let foundCount = 0;
@@ -248,12 +160,11 @@
             let nextTaskIndex = 0;
             const startTime = performance.now();
 
-            const concurrency = Math.min(navigator.hardwareConcurrency || 4, 8); // Cap at 8 for stability
+            const concurrency = Math.min(navigator.hardwareConcurrency || 4, 8);
             const workers = Array.from({ length: concurrency }, () => new Worker('../worker.js'));
 
             const updateUI = () => {
-                const pct = (completed / totalTasks) * 100;
-                progressBar.style.width = `${pct}%`;
+                progressBar.value = completed;
                 statProgress.textContent = `Progress: ${completed} / ${totalTasks}`;
                 statFound.textContent = `Solutions: ${foundCount}`;
                 statTime.textContent = `Time: ${Math.round((performance.now() - startTime) / 1000)}s`;
@@ -314,7 +225,6 @@
                 });
             };
 
-            // Returns the index of the scoring outcome (inclusive), or -1 if no point scored.
             function getScoringCutoff(outcomes, cueBallId) {
                 let cushions = 0;
                 const cannons = new Set();
@@ -341,11 +251,19 @@
                 const cutoff = getScoringCutoff(data.outcomes, 0);
                 if (cutoff >= 0) {
                     foundCount++;
-                    // Truncate at scoring point, only cueball-involving outcomes
+                    const contacted = new Set();
+                    let patternEnd = cutoff + 1;
+                    for (let i = 0; i <= cutoff; i++) {
+                        const o = data.outcomes[i];
+                        if (o.type === 'Collision' && (o.ballA === 0 || o.ballB === 0)) {
+                            contacted.add(o.ballA === 0 ? o.ballB : o.ballA);
+                            if (contacted.size >= 2) { patternEnd = i + 1; break; }
+                        }
+                    }
                     const patternStr = data.outcomes
-                        .slice(0, cutoff + 1)
+                        .slice(0, patternEnd)
                         .filter(o => o.ballA === 0 || o.ballB === 0)
-                        .map(o => o.type.toLowerCase())
+                        .map(o => o.type === 'Cushion' ? '⌻' : o.type === 'Collision' ? '◉' : o.type.toLowerCase())
                         .join(', ');
 
                     let entry = patterns.get(patternStr);
@@ -374,7 +292,6 @@
                     power: +task.power.toFixed(6),
                     offset: { x: +task.ox.toFixed(6), y: +task.oy.toFixed(6), z: 0 }
                 }));
-                // Forward any physics constants
                 const CONSTANTS = [
                     'R','m','e','mu','muS','muC','rho',
                     'μs','μw','ee',
@@ -387,33 +304,40 @@
                 return url.toString();
             }
 
-            function finishSearch() {
-                const elapsed = (performance.now() - startTime) / 1000;
-                statusText.textContent = `Search complete in ${elapsed.toFixed(1)}s. Found ${foundCount} valid shots.`;
-                statusText.style.color = "#51cf66";
-                updateUI();
-
-                const sortedPatterns = [...patterns.entries()].sort((a, b) => b[1].count - a[1].count);
-                resultsBody.innerHTML = '';
-
+            function renderTable(tbody, sortedPatterns) {
+                tbody.innerHTML = '';
                 if (sortedPatterns.length === 0) {
-                    resultsBody.innerHTML = '<tr><td colspan="2" class="empty-msg">No solutions found within criteria.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="3" class="empty-msg">None</td></tr>';
                 } else {
                     for (const [pattern, entry] of sortedPatterns) {
                         const tr = document.createElement('tr');
                         const linksHtml = entry.solutions.map((sol, i) =>
-                            `<a href="${buildExportUrl(sol)}" target="_blank" class="sol-link" title="#${i + 1}: a=${sol.angle.toFixed(3)} p=${sol.power.toFixed(3)} ox=${sol.ox.toFixed(2)} oy=${sol.oy.toFixed(2)}">⚫</a>`
+                            `<a href="${buildExportUrl(sol)}" target="_blank" class="sol-link" title="#${i + 1}: a=${sol.angle.toFixed(3)} p=${sol.power.toFixed(3)} ox=${sol.ox.toFixed(2)} oy=${sol.oy.toFixed(2)}">⇗</a>`
                         ).join('');
                         tr.innerHTML = `
-                            <td class="pattern-col">${pattern}<br><span class="sol-links">${linksHtml}</span></td>
+                            <td class="pattern-col">${pattern}</td>
+                            <td><span class="sol-links">${linksHtml}</span></td>
                             <td class="count-col">${entry.count}</td>
                         `;
-                        resultsBody.appendChild(tr);
+                        tbody.appendChild(tr);
                     }
                 }
             }
 
-            // Start all workers
+            function finishSearch() {
+                const elapsed = (performance.now() - startTime) / 1000;
+                statusText.textContent = `Search complete in ${elapsed.toFixed(1)}s. Found ${foundCount} valid shots.`;
+                updateUI();
+
+                const sortedPatterns = [...patterns.entries()].sort((a, b) => b[1].count - a[1].count);
+
+                const ballFirst = sortedPatterns.filter(([p]) => p.startsWith('◉'));
+                const cushionFirst = sortedPatterns.filter(([p]) => p.startsWith('⌻'));
+
+                renderTable(resultsBodyBall, ballFirst);
+                renderTable(resultsBodyCushion, cushionFirst);
+            }
+
             workers.forEach(w => runNext(w));
         }
     </script>
