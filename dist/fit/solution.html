@@ -13,52 +13,64 @@
             margin: 0;
             padding: 6px;
         }
+
         h1 {
             font-size: 1.1rem;
             margin: 0 0 4px;
         }
+
         h2 {
             font-size: 0.9rem;
             margin: 4px 0;
         }
+
         #status-area {
             font-size: 0.8rem;
             margin-bottom: 6px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 10px;
             font-size: 0.75rem;
         }
+
         th, td {
             padding: 1px 3px;
             text-align: left;
             border: 1px solid #ccc;
         }
+
         th {
             font-weight: bold;
         }
+
         .count-col {
             text-align: right;
             width: 28px;
         }
+
         .pattern-col {
             font-family: monospace;
         }
+
         .empty-msg {
             text-align: center;
             color: #999;
         }
+
         .sol-links {
             display: flex;
             flex-wrap: wrap;
             gap: 1px;
         }
+
         .sol-link {
             text-decoration: none;
             cursor: pointer;
         }
+
         .sol-link.active {
             font-weight: bold;
         }
@@ -68,19 +80,73 @@
             flex-wrap: wrap;
             gap: 10px;
         }
+
         .tables-col {
             flex: 0 0 25%;
             min-width: 200px;
         }
+
         .diagram-col {
             flex: 1 1 300px;
             min-width: 250px;
             position: relative;
         }
+
+        .diagram-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
         svg.billiards-table {
             width: 100%;
             height: auto;
             border: 1px solid #ccc;
+        }
+
+        #progress-bar {
+            width: 100%;
+        }
+
+        #setup-btn {
+            position: absolute;
+            bottom: 4%;
+            right: 5%;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 10;
+            opacity: 0.6;
+            filter: grayscale(1);
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        @media (width <= 600px) {
+            .main-grid {
+                flex-direction: column-reverse;
+            }
+
+            .tables-col {
+                flex: auto;
+                width: 100%;
+            }
+
+            .diagram-col {
+                height: 130vw;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                min-width: unset;
+                flex: none;
+                width: 100%;
+            }
+
+            .diagram-wrapper {
+                width: 120vw;
+                transform: rotate(90deg);
+                flex-shrink: 0;
+            }
         }
     </style>
 </head>
@@ -88,7 +154,7 @@
     <h1>The Cushion Solutions</h1>
 
     <div id="status-area">
-        <div><progress id="progress-bar" value="0" max="100" style="width:100%"></progress></div>
+        <div><progress id="progress-bar" value="0" max="100"></progress></div>
         <div id="stats">
             <span id="stat-progress">Progress: 0 / 0</span>
             <span id="stat-found">Solutions: 0</span>
@@ -128,8 +194,10 @@
         </div>
 
         <div class="diagram-col">
-            <svg class="billiards-table"></svg>
-            <button id="setup-btn" class="setup-btn" title="Open in three cushion research view" style="position:absolute;bottom:4%;right:5%;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;filter:grayscale(1);background:none;border:none;padding:0">🔧</button>
+            <div class="diagram-wrapper">
+                <svg class="billiards-table"></svg>
+                <button id="setup-btn" class="setup-btn" title="Open in three cushion research view">🔧</button>
+            </div>
         </div>
     </div>
 
