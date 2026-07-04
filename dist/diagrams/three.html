@@ -541,7 +541,6 @@
     <div id="page">
       <h1 id="page-title">Three cushion research</h1>
       <div class="replaydiagram">
-
         <div
           class="topview"
           data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-1.305026,-0.634005,-1.434758,0.601475,-1.310215,0.685593%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.201901,%22y%22:0.221892,%22z%22:0%7D,%22angle%22:0.63687,%22power%22:2.62,%22pos%22:%7B%22x%22:-1.305026,%22y%22:-0.634005,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
@@ -1245,33 +1244,35 @@ Overlap: ${overlap}%`)
           window.open(url.toString(), "_blank")
         })
 
-        document.getElementById("solution-btn")?.addEventListener("click", () => {
-          const coords = tableBalls.flatMap((b) => [round6(b.x), round6(b.y)])
-          const url = new URL("../fit/solution.html", window.location.href)
-          url.searchParams.set("init", JSON.stringify(coords))
-          const CONSTANTS = [
-            "R",
-            "m",
-            "e",
-            "mu",
-            "muS",
-            "muC",
-            "rho",
-            "μs",
-            "μw",
-            "ee",
-            "stronge_omega_ratio",
-            "stronge_e_n",
-            "stronge_μ",
-          ]
-          CONSTANTS.forEach((key) => {
-            const input = document.getElementById(key)
-            if (input && input.value !== "") {
-              url.searchParams.set(key, input.value)
-            }
+        document
+          .getElementById("solution-btn")
+          ?.addEventListener("click", () => {
+            const coords = tableBalls.flatMap((b) => [round6(b.x), round6(b.y)])
+            const url = new URL("../fit/solution.html", window.location.href)
+            url.searchParams.set("init", JSON.stringify(coords))
+            const CONSTANTS = [
+              "R",
+              "m",
+              "e",
+              "mu",
+              "muS",
+              "muC",
+              "rho",
+              "μs",
+              "μw",
+              "ee",
+              "stronge_omega_ratio",
+              "stronge_e_n",
+              "stronge_μ",
+            ]
+            CONSTANTS.forEach((key) => {
+              const input = document.getElementById(key)
+              if (input && input.value !== "") {
+                url.searchParams.set(key, input.value)
+              }
+            })
+            window.open(url.toString(), "_blank")
           })
-          window.open(url.toString(), "_blank")
-        })
         function shareUrl(url) {
           const shareUrl = url.toString()
           if (navigator.share) {

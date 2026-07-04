@@ -30,7 +30,6 @@ export class TableGeometry {
       TableGeometry.tableY = R * 21
       TableGeometry.hasPockets = true
       setmu(mu * 1.3)
-
     }
     TableGeometry.X = TableGeometry.tableX + R
     TableGeometry.Y = TableGeometry.tableY + R

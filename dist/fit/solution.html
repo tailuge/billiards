@@ -1,559 +1,624 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Cushion Solutions</title>
     <link rel="icon" type="image/png" href="../favicon.png" />
     <link rel="stylesheet" href="../css/ball-colors.css" />
     <style>
-        body {
-            font-family: sans-serif;
-            font-size: 0.8rem;
-            margin: 0;
-            padding: 4px;
-        }
+      body {
+        font-family: sans-serif;
+        font-size: 0.8rem;
+        margin: 0;
+        padding: 4px;
+      }
 
-        h1 {
-            font-size: 1.1rem;
-            margin: 0 0 2px;
-        }
+      h1 {
+        font-size: 1.1rem;
+        margin: 0 0 2px;
+      }
 
-        h2 {
-            font-size: 0.9rem;
-            margin: 2px 0;
-        }
+      h2 {
+        font-size: 0.9rem;
+        margin: 2px 0;
+      }
 
-        #status-area {
-            font-size: 0.8rem;
-            margin-bottom: 2px;
-        }
+      #status-area {
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+      }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 4px;
-            font-size: 0.75rem;
-        }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 4px;
+        font-size: 0.75rem;
+      }
 
-        th, td {
-            padding: 1px 3px;
-            text-align: left;
-            border: 1px solid #ccc;
-        }
+      th,
+      td {
+        padding: 1px 3px;
+        text-align: left;
+        border: 1px solid #ccc;
+      }
 
-        th {
-            font-weight: bold;
-        }
+      th {
+        font-weight: bold;
+      }
 
-        .count-col {
-            text-align: right;
-            width: 28px;
-        }
+      .count-col {
+        text-align: right;
+        width: 28px;
+      }
 
-        .pattern-col {
-            font-family: monospace;
-        }
+      .pattern-col {
+        font-family: monospace;
+      }
 
-        .empty-msg {
-            text-align: center;
-            color: #999;
-        }
+      .empty-msg {
+        text-align: center;
+        color: #999;
+      }
 
-        .sol-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1px;
-        }
+      .sol-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1px;
+      }
 
-        .sol-link {
-            text-decoration: none;
-            cursor: pointer;
-        }
+      .sol-link {
+        text-decoration: none;
+        cursor: pointer;
+      }
 
-        .sol-link.active {
-            font-weight: bold;
-        }
+      .sol-link.active {
+        font-weight: bold;
+      }
 
+      .main-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+
+      .tables-col {
+        flex: 0 0 25%;
+        min-width: 200px;
+      }
+
+      .diagram-col {
+        flex: 1 1 300px;
+        min-width: 250px;
+        position: relative;
+      }
+
+      .diagram-wrapper {
+        position: relative;
+        width: 100%;
+      }
+
+      svg.billiards-table {
+        width: 100%;
+        height: auto;
+        border: 1px solid #ccc;
+        display: block;
+      }
+
+      #progress-bar {
+        width: 100%;
+      }
+
+      .diagram-btn {
+        position: absolute;
+        bottom: 4%;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 10;
+        opacity: 0.6;
+        filter: grayscale(1);
+        background: none;
+        border: none;
+        padding: 0;
+        text-decoration: none;
+      }
+
+      #setup-btn {
+        right: 5%;
+      }
+
+      #analysis-btn {
+        right: 13%;
+      }
+
+      @media (width <= 600px) {
         .main-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
+          flex-direction: column-reverse;
         }
 
         .tables-col {
-            flex: 0 0 25%;
-            min-width: 200px;
+          flex: auto;
+          width: 100%;
         }
 
         .diagram-col {
-            flex: 1 1 300px;
-            min-width: 250px;
-            position: relative;
+          height: 121vw;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          min-width: unset;
+          flex: none;
+          width: 100%;
         }
 
         .diagram-wrapper {
-            position: relative;
-            width: 100%;
+          width: 120vw;
+          transform: rotate(90deg);
+          flex-shrink: 0;
         }
-
-        svg.billiards-table {
-            width: 100%;
-            height: auto;
-            border: 1px solid #ccc;
-            display: block;
-        }
-
-        #progress-bar {
-            width: 100%;
-        }
-
-        .diagram-btn {
-            position: absolute;
-            bottom: 4%;
-            font-size: 16px;
-            cursor: pointer;
-            z-index: 10;
-            opacity: 0.6;
-            filter: grayscale(1);
-            background: none;
-            border: none;
-            padding: 0;
-            text-decoration: none;
-        }
-
-        #setup-btn {
-            right: 5%;
-        }
-
-        #analysis-btn {
-            right: 13%;
-        }
-
-        @media (width <= 600px) {
-            .main-grid {
-                flex-direction: column-reverse;
-            }
-
-            .tables-col {
-                flex: auto;
-                width: 100%;
-            }
-
-            .diagram-col {
-                height: 121vw;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                overflow: hidden;
-                min-width: unset;
-                flex: none;
-                width: 100%;
-            }
-
-            .diagram-wrapper {
-                width: 120vw;
-                transform: rotate(90deg);
-                flex-shrink: 0;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>The Cushion Solutions</h1>
 
     <div id="status-area">
-        <div><progress id="progress-bar" value="0" max="100"></progress></div>
-        <div id="stats">
-            <span id="stat-progress">Progress: 0 / 0</span>
-            <span id="stat-found">Solutions: 0</span>
-            <span id="stat-time">Time: 0s</span>
-        </div>
+      <div><progress id="progress-bar" value="0" max="100"></progress></div>
+      <div id="stats">
+        <span id="stat-progress">Progress: 0 / 0</span>
+        <span id="stat-found">Solutions: 0</span>
+        <span id="stat-time">Time: 0s</span>
+      </div>
     </div>
 
     <div class="main-grid">
-        <div class="tables-col">
-            <h2>Ball first</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Pattern</th>
-                        <th>View</th>
-                        <th class="count-col">#</th>
-                    </tr>
-                </thead>
-                <tbody id="results-body-ball">
-                    <tr><td colspan="3" class="empty-msg">Waiting for search to start...</td></tr>
-                </tbody>
-            </table>
+      <div class="tables-col">
+        <h2>Ball first</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>View</th>
+              <th class="count-col">#</th>
+            </tr>
+          </thead>
+          <tbody id="results-body-ball">
+            <tr>
+              <td colspan="3" class="empty-msg">
+                Waiting for search to start...
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-            <h2>Cushion first</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Pattern</th>
-                        <th>View</th>
-                        <th class="count-col">#</th>
-                    </tr>
-                </thead>
-                <tbody id="results-body-cushion">
-                    <tr><td colspan="3" class="empty-msg">Waiting for search to start...</td></tr>
-                </tbody>
-            </table>
-        </div>
+        <h2>Cushion first</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>View</th>
+              <th class="count-col">#</th>
+            </tr>
+          </thead>
+          <tbody id="results-body-cushion">
+            <tr>
+              <td colspan="3" class="empty-msg">
+                Waiting for search to start...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        <div class="diagram-col">
-            <div class="diagram-wrapper">
-                <svg class="billiards-table"></svg>
-                <a id="analysis-btn" class="diagram-btn" title="Open in analysis view">🔍</a>
-                <button id="setup-btn" class="diagram-btn" title="Open in three cushion research view">🔧</button>
-            </div>
+      <div class="diagram-col">
+        <div class="diagram-wrapper">
+          <svg class="billiards-table"></svg>
+          <a id="analysis-btn" class="diagram-btn" title="Open in analysis view"
+            >🔍</a
+          >
+          <button
+            id="setup-btn"
+            class="diagram-btn"
+            title="Open in three cushion research view"
+          >
+            🔧
+          </button>
         </div>
+      </div>
     </div>
 
     <script type="module">
-        import { initDiagrams } from "../diagrams/svg.js";
+      import { initDiagrams } from "../diagrams/svg.js"
 
-        const R = 0.03275;
-        const maxPower = 160 * R;
+      const R = 0.03275
+      const maxPower = 160 * R
 
-        const progressBar = document.getElementById('progress-bar');
-        const statProgress = document.getElementById('stat-progress');
-        const statFound = document.getElementById('stat-found');
-        const statTime = document.getElementById('stat-time');
-        const resultsBodyBall = document.getElementById('results-body-ball');
-        const resultsBodyCushion = document.getElementById('results-body-cushion');
-        const diagramSvg = document.querySelector('.billiards-table');
-        const setupBtn = document.getElementById('setup-btn');
-        const analysisBtn = document.getElementById('analysis-btn');
-        let currentConfig = null;
+      const progressBar = document.getElementById("progress-bar")
+      const statProgress = document.getElementById("stat-progress")
+      const statFound = document.getElementById("stat-found")
+      const statTime = document.getElementById("stat-time")
+      const resultsBodyBall = document.getElementById("results-body-ball")
+      const resultsBodyCushion = document.getElementById("results-body-cushion")
+      const diagramSvg = document.querySelector(".billiards-table")
+      const setupBtn = document.getElementById("setup-btn")
+      const analysisBtn = document.getElementById("analysis-btn")
+      let currentConfig = null
 
-        setupBtn.addEventListener('click', () => {
-            if (!currentConfig) return;
-            const cfg = currentConfig[0];
-            const cueBall = cfg.balls[cfg.shot.cueBallId];
-            const ballsPos = cfg.balls.flatMap(b => [b.pos.x, b.pos.y]);
-            const state = {
-                diagram: true,
-                init: ballsPos,
-                shots: [{
-                    type: 'AIM',
-                    angle: cfg.shot.angle,
-                    power: cfg.shot.power,
-                    offset: cfg.shot.offset,
-                    pos: { x: cueBall.pos.x, y: cueBall.pos.y, z: 0 },
-                    i: cfg.shot.cueBallId
-                }]
-            };
-            const p = new URLSearchParams();
-            p.set('s', JSON.stringify(state));
-            window.open(`../diagrams/three.html?${p}`, '_blank');
-        });
+      setupBtn.addEventListener("click", () => {
+        if (!currentConfig) return
+        const cfg = currentConfig[0]
+        const cueBall = cfg.balls[cfg.shot.cueBallId]
+        const ballsPos = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])
+        const state = {
+          diagram: true,
+          init: ballsPos,
+          shots: [
+            {
+              type: "AIM",
+              angle: cfg.shot.angle,
+              power: cfg.shot.power,
+              offset: cfg.shot.offset,
+              pos: { x: cueBall.pos.x, y: cueBall.pos.y, z: 0 },
+              i: cfg.shot.cueBallId,
+            },
+          ],
+        }
+        const p = new URLSearchParams()
+        p.set("s", JSON.stringify(state))
+        window.open(`../diagrams/three.html?${p}`, "_blank")
+      })
 
-        analysisBtn.addEventListener('click', (e) => {
-            if (!currentConfig) return;
-            e.preventDefault();
-            const cfg = currentConfig[0];
-            const ballsPos = cfg.balls.flatMap(b => [b.pos.x, b.pos.y]);
-            const initShot = JSON.stringify({
-                cueBallId: cfg.shot.cueBallId,
-                angle: cfg.shot.angle,
-                power: cfg.shot.power,
-                offset: cfg.shot.offset,
-                elevation: cfg.shot.elevation ?? 0,
-            });
-            const params = new URLSearchParams();
-            params.set('ruletype', 'threecushion');
-            params.set('practice', '');
-            params.set('analysis', '');
-            params.set('init', JSON.stringify(ballsPos));
-            params.set('initShot', initShot);
-            window.open(`../index.html?${params}`, '_blank');
-        });
+      analysisBtn.addEventListener("click", (e) => {
+        if (!currentConfig) return
+        e.preventDefault()
+        const cfg = currentConfig[0]
+        const ballsPos = cfg.balls.flatMap((b) => [b.pos.x, b.pos.y])
+        const initShot = JSON.stringify({
+          cueBallId: cfg.shot.cueBallId,
+          angle: cfg.shot.angle,
+          power: cfg.shot.power,
+          offset: cfg.shot.offset,
+          elevation: cfg.shot.elevation ?? 0,
+        })
+        const params = new URLSearchParams()
+        params.set("ruletype", "threecushion")
+        params.set("practice", "")
+        params.set("analysis", "")
+        params.set("init", JSON.stringify(ballsPos))
+        params.set("initShot", initShot)
+        window.open(`../index.html?${params}`, "_blank")
+      })
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const initParam = urlParams.get('init');
-        const cushionModel = urlParams.get('cushionModel') || 'mathavan';
+      const urlParams = new URLSearchParams(window.location.search)
+      const initParam = urlParams.get("init")
+      const cushionModel = urlParams.get("cushionModel") || "mathavan"
 
-        let ballPositions = [];
-        if (initParam) {
-            try {
-                ballPositions = JSON.parse(initParam);
-            } catch (e) {
-                ballPositions = initParam.split(',').map(Number);
+      let ballPositions = []
+      if (initParam) {
+        try {
+          ballPositions = JSON.parse(initParam)
+        } catch (e) {
+          ballPositions = initParam.split(",").map(Number)
+        }
+      }
+
+      // Init empty diagram
+      initDiagrams("threecushion")
+
+      if (
+        initParam &&
+        ballPositions.length >= 6 &&
+        !ballPositions.some(isNaN)
+      ) {
+        startSearch()
+      }
+
+      async function startSearch() {
+        const balls = []
+        for (let i = 0; i < ballPositions.length; i += 2) {
+          balls.push({
+            id: i / 2,
+            pos: { x: ballPositions[i], y: ballPositions[i + 1], z: 0 },
+          })
+        }
+
+        const angles = []
+        for (let i = 0; i < 180; i++) {
+          angles.push((i * Math.PI) / 90)
+        }
+
+        // Inject collision-window angles aimed at each non-cueball ball.
+        // Triangle: base = distance between centers, opposite = 2R → halfAngle = asin(2R/d).
+        // Generate 10 angles spanning the collision cone around the direct aim line.
+        function generateBallAimAngles(cueBall, targetBalls) {
+          const extra = []
+          for (const target of targetBalls) {
+            const dx = target.pos.x - cueBall.pos.x
+            const dy = target.pos.y - cueBall.pos.y
+            const dist = Math.sqrt(dx * dx + dy * dy)
+            if (dist <= 2 * R) continue
+            const aimAngle = Math.atan2(dy, dx)
+            const halfAngle = Math.asin((2 * R) / dist)
+            for (let k = 0; k < 10; k++) {
+              const offset = -halfAngle + (k * (2 * halfAngle)) / 9
+              extra.push(aimAngle + offset)
             }
+          }
+          return extra
+        }
+        const extraAngles = generateBallAimAngles(balls[0], balls.slice(1))
+        for (const a of extraAngles) angles.push(a)
+
+        const powerPercents = [0.3, 0.5, 0.85]
+        const offsetValues = [-0.4, 0.0, 0.4]
+
+        const tasks = []
+        for (const angle of angles) {
+          for (const pPct of powerPercents) {
+            const power = pPct * maxPower
+            for (const ox of offsetValues) {
+              for (const oy of offsetValues) {
+                tasks.push({ angle, power, ox, oy })
+              }
+            }
+          }
         }
 
-        // Init empty diagram
-        initDiagrams('threecushion');
+        const totalTasks = tasks.length
+        statProgress.textContent = `Progress: 0 / ${totalTasks}`
+        progressBar.max = totalTasks
 
-        if (initParam && ballPositions.length >= 6 && !ballPositions.some(isNaN)) {
-            startSearch();
+        let completed = 0
+        let foundCount = 0
+        const patterns = new Map()
+        let nextTaskIndex = 0
+        const startTime = performance.now()
+
+        const concurrency = Math.min(navigator.hardwareConcurrency || 4, 8)
+        const workers = Array.from(
+          { length: concurrency },
+          () => new Worker("../worker.js")
+        )
+
+        const updateUI = () => {
+          progressBar.value = completed
+          statProgress.textContent = `Progress: ${completed} / ${totalTasks}`
+          statFound.textContent = `Solutions: ${foundCount}`
+          statTime.textContent = `Time: ${Math.round((performance.now() - startTime) / 1000)}s`
         }
 
-        async function startSearch() {
-            const balls = [];
+        const runNext = (worker) => {
+          if (nextTaskIndex >= totalTasks) {
+            worker.terminate()
+            if (completed === totalTasks) {
+              finishSearch()
+            }
+            return
+          }
+
+          const taskIndex = nextTaskIndex++
+          const task = tasks[taskIndex]
+
+          worker.onmessage = (e) => {
+            if (e.data.type === "COMPLETE") {
+              processResult(task, e.data)
+              completed++
+              if (completed % 100 === 0 || completed === totalTasks) {
+                updateUI()
+              }
+              runNext(worker)
+            } else if (e.data.type === "ERROR") {
+              console.error("Worker error:", e.data.error)
+              completed++
+              runNext(worker)
+            }
+          }
+
+          const params = {}
+          const CONSTANTS = [
+            "R",
+            "m",
+            "e",
+            "mu",
+            "muS",
+            "muC",
+            "rho",
+            "μs",
+            "μw",
+            "ee",
+            "stronge_omega_ratio",
+            "stronge_e_n",
+            "stronge_μ",
+          ]
+          CONSTANTS.forEach((key) => {
+            const val = urlParams.get(key)
+            if (val !== null) params[key] = val
+          })
+
+          worker.postMessage({
+            id: taskIndex,
+            ruleType: "threecushion",
+            cushionModel: cushionModel,
+            balls: balls,
+            shot: {
+              cueBallId: 0,
+              angle: task.angle,
+              power: task.power,
+              offset: { x: task.ox, y: task.oy },
+              elevation: 0,
+            },
+            recordTrajectory: false,
+            params: params,
+          })
+        }
+
+        function getScoringCutoff(outcomes, cueBallId) {
+          let cushions = 0
+          const cannons = new Set()
+          for (let i = 0; i < outcomes.length; i++) {
+            const o = outcomes[i]
+            if (o.type === "Cushion" && o.ballA === cueBallId) {
+              cushions++
+            }
+            if (o.type === "Collision") {
+              if (o.ballA === cueBallId) {
+                cannons.add(o.ballB)
+              } else if (o.ballB === cueBallId) {
+                cannons.add(o.ballA)
+              }
+              if (cannons.size >= 2) {
+                return cushions >= 3 ? i : -1
+              }
+            }
+          }
+          return -1
+        }
+
+        function processResult(task, data) {
+          const cutoff = getScoringCutoff(data.outcomes, 0)
+          if (cutoff >= 0) {
+            foundCount++
+            const contacted = new Set()
+            let patternEnd = cutoff + 1
+            for (let i = 0; i <= cutoff; i++) {
+              const o = data.outcomes[i]
+              if (o.type === "Collision" && (o.ballA === 0 || o.ballB === 0)) {
+                contacted.add(o.ballA === 0 ? o.ballB : o.ballA)
+                if (contacted.size >= 2) {
+                  patternEnd = i + 1
+                  break
+                }
+              }
+            }
+            const patternStr = data.outcomes
+              .slice(0, patternEnd)
+              .filter((o) => o.ballA === 0 || o.ballB === 0)
+              .map((o) =>
+                o.type === "Cushion"
+                  ? "⌻"
+                  : o.type === "Collision"
+                    ? "◉"
+                    : o.type.toLowerCase()
+              )
+              .join("")
+
+            let entry = patterns.get(patternStr)
+            if (!entry) {
+              entry = { count: 0, solutions: [] }
+              patterns.set(patternStr, entry)
+            }
+            entry.count++
+            entry.solutions.push({
+              angle: task.angle,
+              power: task.power,
+              ox: task.ox,
+              oy: task.oy,
+            })
+          }
+        }
+
+        let currentActiveLink = null
+        let diagramLoading = false
+
+        async function showDiagram(task) {
+          if (diagramLoading) return
+          diagramLoading = true
+          try {
+            const balls = []
             for (let i = 0; i < ballPositions.length; i += 2) {
-                balls.push({ id: i / 2, pos: { x: ballPositions[i], y: ballPositions[i+1], z: 0 } });
+              balls.push({
+                id: i / 2,
+                pos: { x: ballPositions[i], y: ballPositions[i + 1], z: 0 },
+              })
             }
+            const config = [
+              {
+                balls,
+                cushionModel,
+                ruleType: "threecushion",
+                shot: {
+                  cueBallId: 0,
+                  angle: +task.angle.toFixed(6),
+                  power: +task.power.toFixed(6),
+                  offset: {
+                    x: +task.ox.toFixed(6),
+                    y: +task.oy.toFixed(6),
+                    z: 0,
+                  },
+                  elevation: 0,
+                },
+              },
+            ]
+            diagramSvg.dataset.jsonShots = JSON.stringify(config)
+            currentConfig = config
+            diagramSvg
+              .querySelectorAll(
+                ".table-group, .trajectories-group, .balls-group, .inset-group"
+              )
+              .forEach((g) => g.remove())
+            await initDiagrams("threecushion")
+          } finally {
+            diagramLoading = false
+          }
+        }
 
-            const angles = [];
-            for (let i = 0; i < 180; i++) {
-                angles.push(i * Math.PI / 90);
-            }
-
-            // Inject collision-window angles aimed at each non-cueball ball.
-            // Triangle: base = distance between centers, opposite = 2R → halfAngle = asin(2R/d).
-            // Generate 10 angles spanning the collision cone around the direct aim line.
-            function generateBallAimAngles(cueBall, targetBalls) {
-                const extra = [];
-                for (const target of targetBalls) {
-                    const dx = target.pos.x - cueBall.pos.x;
-                    const dy = target.pos.y - cueBall.pos.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist <= 2 * R) continue;
-                    const aimAngle = Math.atan2(dy, dx);
-                    const halfAngle = Math.asin(2 * R / dist);
-                    for (let k = 0; k < 10; k++) {
-                        const offset = -halfAngle + k * (2 * halfAngle) / 9;
-                        extra.push(aimAngle + offset);
-                    }
-                }
-                return extra;
-            }
-            const extraAngles = generateBallAimAngles(balls[0], balls.slice(1));
-            for (const a of extraAngles) angles.push(a);
-
-            const powerPercents = [0.3, 0.50, 0.85];
-            const offsetValues = [-0.4, 0.0, 0.4];
-
-            const tasks = [];
-            for (const angle of angles) {
-                for (const pPct of powerPercents) {
-                    const power = pPct * maxPower;
-                    for (const ox of offsetValues) {
-                        for (const oy of offsetValues) {
-                            tasks.push({ angle, power, ox, oy });
-                        }
-                    }
-                }
-            }
-
-            const totalTasks = tasks.length;
-            statProgress.textContent = `Progress: 0 / ${totalTasks}`;
-            progressBar.max = totalTasks;
-
-            let completed = 0;
-            let foundCount = 0;
-            const patterns = new Map();
-            let nextTaskIndex = 0;
-            const startTime = performance.now();
-
-            const concurrency = Math.min(navigator.hardwareConcurrency || 4, 8);
-            const workers = Array.from({ length: concurrency }, () => new Worker('../worker.js'));
-
-            const updateUI = () => {
-                progressBar.value = completed;
-                statProgress.textContent = `Progress: ${completed} / ${totalTasks}`;
-                statFound.textContent = `Solutions: ${foundCount}`;
-                statTime.textContent = `Time: ${Math.round((performance.now() - startTime) / 1000)}s`;
-            };
-
-            const runNext = (worker) => {
-                if (nextTaskIndex >= totalTasks) {
-                    worker.terminate();
-                    if (completed === totalTasks) {
-                        finishSearch();
-                    }
-                    return;
-                }
-
-                const taskIndex = nextTaskIndex++;
-                const task = tasks[taskIndex];
-
-                worker.onmessage = (e) => {
-                    if (e.data.type === 'COMPLETE') {
-                        processResult(task, e.data);
-                        completed++;
-                        if (completed % 100 === 0 || completed === totalTasks) {
-                            updateUI();
-                        }
-                        runNext(worker);
-                    } else if (e.data.type === 'ERROR') {
-                        console.error("Worker error:", e.data.error);
-                        completed++;
-                        runNext(worker);
-                    }
-                };
-
-                const params = {};
-                const CONSTANTS = [
-                    'R','m','e','mu','muS','muC','rho',
-                    'μs','μw','ee',
-                    'stronge_omega_ratio','stronge_e_n','stronge_μ'
-                ];
-                CONSTANTS.forEach(key => {
-                    const val = urlParams.get(key);
-                    if (val !== null) params[key] = val;
-                });
-
-                worker.postMessage({
-                    id: taskIndex,
-                    ruleType: "threecushion",
-                    cushionModel: cushionModel,
-                    balls: balls,
-                    shot: {
-                        cueBallId: 0,
-                        angle: task.angle,
-                        power: task.power,
-                        offset: { x: task.ox, y: task.oy },
-                        elevation: 0
-                    },
-                    recordTrajectory: false,
-                    params: params
-                });
-            };
-
-            function getScoringCutoff(outcomes, cueBallId) {
-                let cushions = 0;
-                const cannons = new Set();
-                for (let i = 0; i < outcomes.length; i++) {
-                    const o = outcomes[i];
-                    if (o.type === 'Cushion' && o.ballA === cueBallId) {
-                        cushions++;
-                    }
-                    if (o.type === 'Collision') {
-                        if (o.ballA === cueBallId) {
-                            cannons.add(o.ballB);
-                        } else if (o.ballB === cueBallId) {
-                            cannons.add(o.ballA);
-                        }
-                        if (cannons.size >= 2) {
-                            return cushions >= 3 ? i : -1;
-                        }
-                    }
-                }
-                return -1;
-            }
-
-            function processResult(task, data) {
-                const cutoff = getScoringCutoff(data.outcomes, 0);
-                if (cutoff >= 0) {
-                    foundCount++;
-                    const contacted = new Set();
-                    let patternEnd = cutoff + 1;
-                    for (let i = 0; i <= cutoff; i++) {
-                        const o = data.outcomes[i];
-                        if (o.type === 'Collision' && (o.ballA === 0 || o.ballB === 0)) {
-                            contacted.add(o.ballA === 0 ? o.ballB : o.ballA);
-                            if (contacted.size >= 2) { patternEnd = i + 1; break; }
-                        }
-                    }
-                    const patternStr = data.outcomes
-                        .slice(0, patternEnd)
-                        .filter(o => o.ballA === 0 || o.ballB === 0)
-                        .map(o => o.type === 'Cushion' ? '⌻' : o.type === 'Collision' ? '◉' : o.type.toLowerCase())
-                        .join('');
-
-                    let entry = patterns.get(patternStr);
-                    if (!entry) {
-                        entry = { count: 0, solutions: [] };
-                        patterns.set(patternStr, entry);
-                    }
-                    entry.count++;
-                    entry.solutions.push({
-                        angle: task.angle,
-                        power: task.power,
-                        ox: task.ox,
-                        oy: task.oy
-                    });
-                }
-            }
-
-            let currentActiveLink = null;
-            let diagramLoading = false;
-
-            async function showDiagram(task) {
-                if (diagramLoading) return;
-                diagramLoading = true;
-                try {
-                    const balls = [];
-                    for (let i = 0; i < ballPositions.length; i += 2) {
-                        balls.push({ id: i / 2, pos: { x: ballPositions[i], y: ballPositions[i+1], z: 0 } });
-                    }
-                    const config = [{
-                        balls,
-                        cushionModel,
-                        ruleType: 'threecushion',
-                        shot: {
-                            cueBallId: 0,
-                            angle: +task.angle.toFixed(6),
-                            power: +task.power.toFixed(6),
-                            offset: { x: +task.ox.toFixed(6), y: +task.oy.toFixed(6), z: 0 },
-                            elevation: 0
-                        }
-                    }];
-                    diagramSvg.dataset.jsonShots = JSON.stringify(config);
-                    currentConfig = config;
-                    diagramSvg.querySelectorAll('.table-group, .trajectories-group, .balls-group, .inset-group').forEach(g => g.remove());
-                    await initDiagrams('threecushion');
-                } finally {
-                    diagramLoading = false;
-                }
-            }
-
-
-            function renderTable(tbody, sortedPatterns) {
-                tbody.innerHTML = '';
-                if (sortedPatterns.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="3" class="empty-msg">None</td></tr>';
-                } else {
-                    for (const [pattern, entry] of sortedPatterns) {
-                        const tr = document.createElement('tr');
-                        const linksHtml = entry.solutions.map((sol, i) => {
-                            const encoded = encodeURIComponent(JSON.stringify(sol));
-                            return `<a class="sol-link" data-task="${encoded}" title="#${i + 1}: a=${sol.angle.toFixed(3)} p=${sol.power.toFixed(3)} ox=${sol.ox.toFixed(2)} oy=${sol.oy.toFixed(2)}">⇗</a>`;
-                        }).join('');
-                        tr.innerHTML = `
+        function renderTable(tbody, sortedPatterns) {
+          tbody.innerHTML = ""
+          if (sortedPatterns.length === 0) {
+            tbody.innerHTML =
+              '<tr><td colspan="3" class="empty-msg">None</td></tr>'
+          } else {
+            for (const [pattern, entry] of sortedPatterns) {
+              const tr = document.createElement("tr")
+              const linksHtml = entry.solutions
+                .map((sol, i) => {
+                  const encoded = encodeURIComponent(JSON.stringify(sol))
+                  return `<a class="sol-link" data-task="${encoded}" title="#${i + 1}: a=${sol.angle.toFixed(3)} p=${sol.power.toFixed(3)} ox=${sol.ox.toFixed(2)} oy=${sol.oy.toFixed(2)}">⇗</a>`
+                })
+                .join("")
+              tr.innerHTML = `
                             <td class="pattern-col">${pattern}</td>
                             <td><span class="sol-links">${linksHtml}</span></td>
                             <td class="count-col">${entry.count}</td>
-                        `;
-                        tbody.appendChild(tr);
-                    }
-                }
+                        `
+              tbody.appendChild(tr)
             }
-
-            // Delegated click handler for inline diagram links
-            document.addEventListener('click', async (e) => {
-                const link = e.target.closest('.sol-link');
-                if (!link || !link.dataset.task) return;
-                e.preventDefault();
-                e.stopPropagation();
-
-                // Update active state
-                if (currentActiveLink) currentActiveLink.classList.remove('active');
-                link.classList.add('active');
-                currentActiveLink = link;
-
-                const task = JSON.parse(decodeURIComponent(link.dataset.task));
-                await showDiagram(task);
-            });
-
-            function finishSearch() {
-                updateUI();
-
-                const sortedPatterns = [...patterns.entries()].sort((a, b) => b[1].count - a[1].count);
-
-                const ballFirst = sortedPatterns.filter(([p]) => p.startsWith('◉'));
-                const cushionFirst = sortedPatterns.filter(([p]) => p.startsWith('⌻'));
-
-                renderTable(resultsBodyBall, ballFirst);
-                renderTable(resultsBodyCushion, cushionFirst);
-            }
-
-            workers.forEach(w => runNext(w));
+          }
         }
+
+        // Delegated click handler for inline diagram links
+        document.addEventListener("click", async (e) => {
+          const link = e.target.closest(".sol-link")
+          if (!link || !link.dataset.task) return
+          e.preventDefault()
+          e.stopPropagation()
+
+          // Update active state
+          if (currentActiveLink) currentActiveLink.classList.remove("active")
+          link.classList.add("active")
+          currentActiveLink = link
+
+          const task = JSON.parse(decodeURIComponent(link.dataset.task))
+          await showDiagram(task)
+        })
+
+        function finishSearch() {
+          updateUI()
+
+          const sortedPatterns = [...patterns.entries()].sort(
+            (a, b) => b[1].count - a[1].count
+          )
+
+          const ballFirst = sortedPatterns.filter(([p]) => p.startsWith("◉"))
+          const cushionFirst = sortedPatterns.filter(([p]) => p.startsWith("⌻"))
+
+          renderTable(resultsBodyBall, ballFirst)
+          renderTable(resultsBodyCushion, cushionFirst)
+        }
+
+        workers.forEach((w) => runNext(w))
+      }
     </script>
-</body>
+  </body>
 </html>
