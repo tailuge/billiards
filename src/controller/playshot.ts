@@ -1,6 +1,7 @@
 import { Controller, Input } from "./controller"
 import { ControllerBase } from "./controllerbase"
 import { Session } from "../network/client/session"
+import { Outcome } from "../model/outcome"
 
 /**
  * PlayShot starts balls rolling using cue state, applies rules to outcome
@@ -46,6 +47,21 @@ export class PlayShot extends ControllerBase {
         },
         "*"
       )
+    }
+
+    if (Session.isSpeedrunMode()) {
+      const foul = this.container.rules.foulReason(outcome)
+      if (foul) {
+        globalThis.parent?.postMessage(
+          { type: "speedrun-result", status: "fail", reason: foul },
+          "*"
+        )
+      } else if (Outcome.potCount(outcome) === 0) {
+        globalThis.parent?.postMessage(
+          { type: "speedrun-result", status: "fail", reason: "No pot" },
+          "*"
+        )
+      }
     }
 
     return nextController

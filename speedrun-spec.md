@@ -1,12 +1,19 @@
-# Speedrun Challenge — Specification
+# Speedrun Challenge — Specification (Game Changes Only)
 
 ## 1. Overview
 
-Add a speedrun challenge mode to the billiards game. The mode is triggered via URL query parameters and communicates results back to a parent iframe via `postMessage`. Results include elapsed time and a replay link. A companion landing page at `dist/speedrun/` allows users to pick initial positions, view rankings, and **displays the timer** — no HUD changes in the game itself.
+Add a speedrun challenge mode to the billiards game. Triggered via `&speedrun` query param. Communicates results back to a parent iframe via `postMessage`. A companion landing page at `dist/speedrun/` handles the timer, position selection, and rankings — **no HUD/timer changes in the game itself**.
 
-**Trigger**: `&speedrun` query param (alongside `&init=[...]` for ball positions).
+**Two game-side intercept points, both rule-agnostic:**
 
-**Minimal intervention**: The existing rule controllers (NineBall, EightBall, Snooker) are **not** modified. The game's HTML/CSS/JS for the HUD is **not** changed. The speedrun behaviour is added at the **PlayShot.handleStationary()** interception point and in the **End** controller. The timer display lives entirely on the speedrun landing page.
+| Intercept | Where | What |
+|---|---|---|
+| Failure detection | `PlayShot.handleStationary()` | After `rules.update()`, if foul or miss → `postMessage` fail to parent. Game continues normally; parent kills iframe in ~ms. |
+| Success notification | `End.onFirst()` | After MatchResult is uploaded to scoreboard → `postMessage` complete to parent with matchResult + replayUrl. |
+
+**State**: `Session.speedrunMode` boolean, accessed via `Session.isSpeedrunMode()`. Same pattern as `isExamMode()`, `isBotMode()`, `isPracticeMode()`.
+
+**Zero rule changes**. Uses `rules.foulReason(outcome)` from the Rules interface — works for NineBall, EightBall, Snooker, and any future ruletype.
 
 ---
 
@@ -15,113 +22,108 @@ Add a speedrun challenge mode to the billiards game. The mode is triggered via U
 | Param | Example | Required | Notes |
 |---|---|---|---|
 | `speedrun` | `&speedrun` | yes (flag) | Activates speedrun mode |
-| `init` | `&init=[x1,y1,x2,y2,…]` | yes | Initial ball positions (existing format, see `Rack.fromInitParam`) |
+| `init` | `&init=[x1,y1,…]` | yes | Existing format (see `Rack.fromInitParam`) |
 | `ruletype` | `&ruletype=nineball` | optional | Defaults to `"nineball"` |
-| `playername` | `&playername=Alice` | optional | Player name for result upload. Default `"Anon"` |
+| `playername` | `&playername=Alice` | optional | Default `"Anon"` |
+| `practice` | `&practice` | recommended | Enables `initShot` handling for exact ball placement |
+| `initShot` | `&initShot={…}` | recommended | Initial shot params (cue angle, power, etc.) |
 
-### Example URL
+**Example iframe URL:**
+```
+?ruletype=nineball&speedrun&practice&init=[0.5,-0.3,…]&initShot={…}&playername=Alice
+```
+
+---
+
+## 3. Game Flow (Two Intercept Points)
+
+### 3.1 PlayShot.handleStationary() — Failure detection
+
+After `rules.update(outcome)` has processed the shot (updating `currentBreak`, score, etc.), check for speedrun failure. The existing `rules.update()` call is not skipped — internal state must be updated. We only intercept to send a message.
 
 ```
-?ruletype=nineball&speedrun&init=[0.5,-0.3, -0.8,-0.2,…]&playername=Alice
+PlayShot.handleStationary(_):
+    outcome = table.outcome
+    nextController = rules.update(outcome)   // normal processing
+    // ... existing score/recorder updates ...
+
+    if Session.isSpeedrunMode():
+        foul = rules.foulReason(outcome)
+        if foul:
+            parent.postMessage({type:"speedrun-result", status:"fail", reason: foul})
+        elif Outcome.potCount(outcome) === 0:
+            parent.postMessage({type:"speedrun-result", status:"fail", reason: "No pot"})
+        // else: pots were made, continue playing
+        // CRITICAL: always return nextController — game carries on
+
+    return nextController
 ```
 
----
+**On failure, the game does NOT stop or transition to End.** It continues normally (returns whatever `rules.update()` produced — Aim, PlaceBall, etc.). The parent page receives the postMessage and closes the iframe in milliseconds. This is the same pattern as the exam diagram postMessage already in `PlayShot.handleStationary()`.
 
-## 3. Supported Ruletypes
+Both checks are **rule-agnostic**:
+- `rules.foulReason(outcome)` → works for NineBall, EightBall, Snooker, ThreeCushion
+- `Outcome.potCount(outcome) === 0` → generic "no pots made" check
 
-| Ruletype | Win condition | Failure condition |
-|---|---|---|
-| `nineball` | Pot the 9-ball legally | Any foul, or miss (no pot) on any shot |
-| `eightball` | Pot the 8-ball after clearing assigned group | Any foul, or miss (no pot) on any shot |
-| `snooker` | Clear all reds + colours from the init setup | Any foul, or miss (no pot) on any shot |
+### 3.2 End.onFirst() — Success notification
 
-**Run scope**: Includes the break shot. The init position is the full setup (e.g. the rack). The run continues until success (winning ball potted) or failure (foul or miss).
+When the player pots the winning ball, `rules.update(outcome)` returns `End` (via `MatchResultHelper.presentGameEnd()`). `End.onFirst()` already submits the MatchResult to the scoreboard and encodes the replay data.
 
----
+At the **end** of `End.onFirst()`, add:
 
-## 4. Timer
+```
+if Session.isSpeedrunMode() and result and MatchResultHelper.isWinner(result):
+    gameState = recorder.wholeGame()
+    replayUrl = linkFormatter.getReplayUri(gameState)
+    parent.postMessage({
+        type: "speedrun-result",
+        status: "complete",
+        matchResult: result,
+        replayUrl
+    })
+```
 
-The elapsed-time clock is **entirely handled by the speedrun landing page** (`dist/speedrun/`). The game has **no awareness of time at all**.
-
-- **Start**: The speedrun page starts a timer when it opens the game iframe.
-- **Stop**: The speedrun page stops the timer when it receives a `speedrun-result` postMessage (success or fail).
-- **Display**: The speedrun page formats and displays the elapsed time as `ss.tenths` (e.g. `12.5`, `103.2`).
-
-This means the game code has **zero changes** related to timing — no start time storage, no elapsed time computation, no match result fields for time.
-
-### Why no in-game time tracking?
-
-- Eliminates all time-related code changes in the game.
-- The speedrun page has full control over timer accuracy, display, and format.
-- No need to modify the `MatchResult` interface or the score reporter.
-- The game's only job: play the game and message the outcome.
+This fires **after** `scoreReporter.submitMatchResult(result)` so the scoreboard has the result by the time the parent gets the message.
 
 ---
 
-## 5. Game Flow & Interception
+## 4. Session State
 
-### 5.1 PlayShot.handleStationary() — Speedrun check
+Add to `Session`:
 
-When the controller is `PlayShot` and `&speedrun` is active, after the balls settle:
+```ts
+readonly speedrunMode: boolean = false
 
-1. **Check for foul**: If `rules.foulReason(outcome) !== null`, the run has failed.
-   - Determine the reason string (e.g. `"Cue ball potted"`, `"No ball hit"`, `"Wrong ball hit first"`).
-   - `postMessage` to parent: `{ type: "speedrun-result", status: "fail", reason: "…" }`
-   - Transition to `End` controller (or a new minimal speedrun-end state).
+static isSpeedrunMode(): boolean {
+    return Session.getInstance().speedrunMode
+}
+```
 
-2. **Check for miss**: If no foul but also no pots (`Outcome.potCount(outcome) === 0`), the run has failed.
-   - `postMessage` to parent: `{ type: "speedrun-result", status: "fail", reason: "No pot" }`
-   - Transition to `End` controller.
+Detected in `BrowserContainer` constructor:
+```ts
+this.speedrun = params.has("speedrun")
+// ... passed to Session.init() alongside other mode flags ...
+```
 
-3. **Check for win**: If the rule detects end-of-game (`rules.isEndOfGame(outcome)` and no foul), the run has succeeded.
-   - Construct the MatchResult (normal game end flow — no time fields needed).
-   - Construct a **full replay URL** (the current page URL with the encoded state).
-   - `postMessage` to parent:
-     ```json
-     {
-       "type": "speedrun-result",
-       "status": "complete",
-       "matchResult": { … },
-       "replayUrl": "https://…/index.html?ruletype=nineball&state=…"
-     }
-     ```
-   - Submit the MatchResult to the existing scoreboard API (`/api/match-results`) — same as normal game end (no time fields added).
-   - The game's normal "YOU WON" notification still appears in-game.
-
-### 5.2 End controller — Speedrun enhancement
-
-When the `End` controller initialises in speedrun mode, the normal game-over notification is shown (does not need modification). The important work (postMessage + optional API upload) happens in `PlayShot.handleStationary()` or in `End.onFirst()`.
-
-**Design decision: where to put the speedrun logic?**
-
-Option A (recommended — minimal):
-- Add speedrun checks directly in `PlayShot.handleStationary()` before returning `nextController`.
-- On success: compute time, build replay URL, postMessage, submit MatchResult, then return the normal `End` controller.
-- On fail: postMessage with reason, then return the `End` controller.
-
-Option B:
-- Add a wrapper layer that intercepts the stationary event chain.
-- Keep PlayShot unchanged.
-
-The spec recommends Option A as it's minimal and aligns with the "rules untouched" principle.
-
-### 5.3 No time tracking in the game
-
-The game does **not** track, compute, or report any elapsed time. The parent page controls the timer entirely.
-
-No start time storage is needed in the game.
+No need to pass through `ContainerConfig` or `Container` — the mode is on `Session`, accessible from any controller.
 
 ---
 
-## 6. MatchResult — No Changes
+## 5. postMessage Protocol (iframe → parent)
 
-The `MatchResult` interface is **unchanged**. No new fields are needed because the game does not handle timing. The speedrun page records the time locally and may submit it to the rankings API separately (out of scope for this spec).
+### Failure (from PlayShot)
 
----
+```json
+{
+  "type": "speedrun-result",
+  "status": "fail",
+  "reason": "Cue ball potted"
+}
+```
 
-## 7. postMessage Protocol (iframe → parent)
+Possible reasons: `"Cue ball potted"`, `"Wrong ball hit first"`, `"No ball hit"`, `"No cushion after contact"`, `"No pot"`.
 
-### Success message
+### Success (from End)
 
 ```json
 {
@@ -136,119 +138,45 @@ The `MatchResult` interface is **unchanged**. No new fields are needed because t
 }
 ```
 
-### Failure message
-
-```json
-{
-  "type": "speedrun-result",
-  "status": "fail",
-  "reason": "Cue ball potted"
-}
-```
-
-**Note**: No time field in either message — the parent page tracks and displays the time.
-
-Possible reasons: `"Cue ball potted"`, `"Wrong ball hit first"`, `"No ball hit"`, `"No cushion after contact"`, `"No pot"`.
+**No time field in either message** — the parent page tracks and displays elapsed time.
 
 ---
 
-## 8. dist/speedrun/ Page
+## 6. What Is NOT Changed
 
-### 8.1 Location & structure
-
-A new static HTML page at `dist/speedrun/index.html` with:
-
-```
-dist/speedrun/
-  index.html    — Landing page with position selection + rankings
-  speedrun.js   — JS module for page logic
-```
-
-### 8.2 Page layout
-
-- **Header**: Title "Speedrun Challenge", brief description. Player name shown from URL param or default.
-- **Timer display**: A prominent clock showing elapsed time (starts when iframe opens, updated by the page itself or from game's reported time). Format: `ss.tenths`.
-- **Position cards**: One card per initial position per ruletype. Each card contains:
-  - Position name/description (e.g. "Nineball Break", "Eightball Mid-Table")
-  - A "Play" button
-  - Rankings list: top times for that position (name, time, date) fetched from scoreboard API
-  - Latest personal result (from this session)
-- **Iframe overlay**: When "Play" is clicked, opens an iframe overlay (same pattern as `dist/exam/`).
-  - Iframe URL: `../index.html?ruletype=…&speedrun&init=[…]&playername=…`
-  - Close button (optional, user can also refresh).
-- **Timer while playing**: While the iframe overlay is open, the speedrun page displays a live timer (started when iframe loads, stopped on `speedrun-result` message).
-- **Auto-close on result**: On receiving `speedrun-result` postMessage, close the iframe overlay, stop the timer, and update the position card with the result.
-
-### 8.3 Initial positions
-
-Hardcoded as a JS data array in `speedrun.js`. 1–2 conceptually described positions per ruletype (specific coordinates defined during implementation).
-
-Example structure:
-
-```typescript
-const SPEEDRUN_POSITIONS = [
-  {
-    id: "nineball-break",
-    ruleType: "nineball",
-    label: "Nineball Break",
-    description: "Standard nineball rack. Pot the 9-ball as fast as possible.",
-    init: [/* x1,y1, x2,y2, … */],
-  },
-  {
-    id: "nineball-mid",
-    ruleType: "nineball",
-    label: "Nineball Mid-Table",
-    description: "Cue ball and 9-ball in open position.",
-    init: [/* … */],
-  },
-  // eightball, snooker positions...
-]
-```
-
-### 8.4 Rankings display
-
-Per position, show a list of top results (e.g. top 10), sorted by time ascending (fastest first).
-
-Each ranking entry shows:
-- Rank number
-- Player name
-- Time (formatted as ss.tenths, e.g. `12.45s`)
-- Date (optional)
-
-The rankings are fetched from the scoreboard API:
-```
-GET https://scoreboard-tailuge.vercel.app/api/speedrun-rankings?position=nineball-break&limit=10
-```
-
-(Implementation of this API endpoint is out of scope for this spec — it belongs to the separate scoreboard app.)
-
-### 8.5 Style
-
-Minimal/utility style. Clean HTML with basic CSS. No heavy framework. Light background, simple cards, readable fonts (system-ui stack). Iframe overlay with dark backdrop (same as exam pattern).
+- **No rules changes** — NineBall, EightBall, Snooker rules untouched
+- **No MatchResult changes** — no time fields
+- **No HUD/HTML/CSS changes** — normal "YOU WON"/"FOUL" notifications still appear
+- **No new controller** — reuse existing `PlayShot` and `End`
+- **No timing code** in the game — parent page owns the clock
 
 ---
 
-## 9. Implementation Steps (Ordered)
+## 7. Files Changed (Phase 1 — Game) ✅ DONE
 
-### Phase 1: Core game changes (only 2 steps)
+| File | Lines | Change |
+|---|---|---|
+| `src/network/client/session.ts` | +8 | `speedrunMode` field, `isSpeedrunMode()` static, `init()` wiring |
+| `src/container/browsercontainer.ts` | +4 | `params.has("speedrun")` detection, pass to `Session.init()` |
+| `src/controller/playshot.ts` | +13 | Import `Outcome`, foul/miss check → `postMessage` fail |
+| `src/controller/end.ts` | +15 | After match result upload → `postMessage` complete with replayUrl |
 
-1. **Detect `&speedrun`** — expose a boolean flag (e.g. `globalThis.isSpeedrun`) or pass it through the existing config/container path.
-2. **Add speedrun logic to `PlayShot.handleStationary()`** — on foul/miss: postMessage with reason + end the game. On win: postMessage with result + replay URL + submit MatchResult normally.
-
-**No changes to MatchResult, no time tracking, no HUD/HTML/CSS changes. The game just sends a message when the run ends.**
-
-### Phase 2: Iframe parent / landing page
-
-5. **Create `dist/speedrun/index.html`** — static HTML page with header, timer display, position cards, rankings slots, iframe overlay.
-6. **Create `dist/speedrun/speedrun.js`** — JS module with position data, iframe management, timer logic, postMessage listener, rankings rendering.
-7. **Style the speedrun page** — minimal CSS (inline or small stylesheet).
+**Total: ~40 lines across 4 files. All 576 existing tests pass. Zero rule changes.**
 
 ---
 
-## 10. Open Questions / Future Considerations
+## 8. dist/speedrun/ Page (Phase 2 — TODO)
 
-- **Rankings API**: The scoreboard server needs a `GET /api/speedrun-rankings` endpoint (and probably a `POST /api/match-results` on the same endpoint already handles storage). This is a separate implementation for the scoreboard app.
-- **Snooker speedrun positions**: Since snooker "clear table" is long, speedrun init positions for snooker should be smaller challenges (e.g. "clear the colours", "pot red + position on black") rather than full-table clears.
-- **Early exit**: Currently no mechanism to cancel mid-run. Could add an abort button later.
-- **Multiple init positions per ruletype**: The spec allows 1–2 per ruletype, expandable later.
-- **Local storage for personal bests**: Could be added to the speedrun page to track the user's own best times per position between visits.
+See `speedrun-api-spec.md` for the landing page, position cards, iframe overlay, timer, and REST API contract. The page:
+- Starts a timer when the game iframe loads
+- Listens for `speedrun-result` postMessage
+- On fail: closes overlay, shows failure reason
+- On complete: stops timer, closes overlay, POSTs result to API, updates rankings
+
+---
+
+## 9. Open Questions
+
+- **Rankings API**: Scoreboard server needs `POST/GET /api/speedrun-results`. Separate implementation.
+- **Snooker positions**: Should be smaller challenges (e.g. "clear the colours") rather than full-table clears.
+- **Early exit**: No cancel mechanism. Parent can always close the iframe.

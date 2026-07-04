@@ -63,6 +63,24 @@ export class End extends Controller {
 
     const highBreaks = MatchResultHelper.getHighBreaks(this.container)
     this.container.notification?.updateHighBreaks(highBreaks)
+
+    if (
+      Session.isSpeedrunMode() &&
+      this.result &&
+      MatchResultHelper.isWinner(this.result)
+    ) {
+      const gameState = this.container.recorder.wholeGame()
+      const replayUrl = this.container.linkFormatter.getReplayUri(gameState)
+      globalThis.parent?.postMessage(
+        {
+          type: "speedrun-result",
+          status: "complete",
+          matchResult: this.result,
+          replayUrl,
+        },
+        "*"
+      )
+    }
   }
 
   override handleBegin(_: BeginEvent): Controller {

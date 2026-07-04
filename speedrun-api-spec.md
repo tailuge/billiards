@@ -1,6 +1,8 @@
 # Speedrun Page & API Specification
 
-Companion to `speedrun-spec.md`. Covers the `dist/speedrun/` landing page, the REST API for rankings, and the data format for positions.
+Companion to `speedrun-spec.md` (game changes **✅ done**). Covers the `dist/speedrun/` landing page, iframe overlay with timer, and the REST API contract for rankings.
+
+**Game → page communication**: The game sends `postMessage` on failure (from `PlayShot.handleStationary`) and on success (from `End.onFirst`). The page owns the timer. No timing code in the game.
 
 ---
 
@@ -148,6 +150,17 @@ The existing `practice` mode is used because the game has `init + initShot` logi
 
 ### 4.4 Receiving results (postMessage)
 
+The game sends two message shapes (see `speedrun-spec.md` §5):
+
+**Failure** (from `PlayShot.handleStationary`):
+```json
+{ "type": "speedrun-result", "status": "fail", "reason": "Cue ball potted" }
+```
+**Success** (from `End.onFirst`, after match result uploaded):
+```json
+{ "type": "speedrun-result", "status": "complete", "matchResult": {...}, "replayUrl": "..." }
+```
+
 ```js
 window.addEventListener("message", (event) => {
   if (event.data.type !== "speedrun-result") return
@@ -156,10 +169,16 @@ window.addEventListener("message", (event) => {
 
   // Stop timer
   // Close overlay
-  // Submit to server
-  // Update card's ranking list
+  if (status === "complete") {
+    // POST to /api/speedrun-results with timeSec + replayUrl
+    // Update card's ranking list
+  } else {
+    // Show failure reason briefly, then allow retry
+  }
 })
 ```
+
+**Note**: On failure, the game continues running (game doesn't stop itself). The page closes the iframe on receiving the fail message.
 
 ---
 
@@ -313,6 +332,9 @@ Simplified table rendering: a rectangle for the table, some circles for balls. N
 ---
 
 ## 7. Implementation Order
+
+### Step 0: Game changes ✅ DONE
+- `Session.speedrunMode`, browser query param detection, `PlayShot` failure postMessage, `End` success postMessage.
 
 ### Step 1: Create `dist/speedrun/index.html`
 - HTML skeleton with header, player name display, one example SVG + card, iframe overlay with timer.

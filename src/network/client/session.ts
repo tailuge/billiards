@@ -8,7 +8,8 @@ export class Session {
     readonly examMode: boolean = false,
     readonly practiceMode: boolean = false,
     readonly lod: number = 1,
-    readonly first: boolean = false
+    readonly first: boolean = false,
+    readonly speedrunMode: boolean = false
   ) {}
 
   opponentName?: string
@@ -49,6 +50,10 @@ export class Session {
     return Session.instance?.practiceMode ?? false
   }
 
+  static isSpeedrunMode(): boolean {
+    return Session.getInstance().speedrunMode
+  }
+
   static getLod(): number {
     return Session.getInstance().lod
   }
@@ -74,7 +79,8 @@ export class Session {
     examMode: boolean = false,
     practiceMode: boolean = false,
     lod: number = 1,
-    first: boolean = false
+    first: boolean = false,
+    speedrunMode: boolean = false
   ) {
     Session.instance = new Session(
       playername,
@@ -85,7 +91,8 @@ export class Session {
       examMode,
       practiceMode,
       lod,
-      first
+      first,
+      speedrunMode
     )
     Session.instance.initializeScores()
     if (botMode && typeof globalThis.location !== "undefined") {
