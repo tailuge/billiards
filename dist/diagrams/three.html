@@ -361,7 +361,7 @@
       #presets-row {
         display: flex;
         flex-flow: row wrap;
-        gap: 8px;
+        gap: 4px;
         align-items: center;
         width: 92%;
         margin: 0 auto;
@@ -407,62 +407,44 @@
       .preset-btn-container {
         display: inline-flex;
         align-items: center;
-        padding: 0 4px;
-      }
-
-      .preset-btn,
-      .preset-action,
-      #add-preset,
-      #share-all,
-      #share-shot,
-      #replay,
-      #play-btn,
-      #cleartraces {
-        padding: 2px 8px;
-        cursor: pointer;
-        font-size: 11px;
-        border: 2px outset #ddd;
-        border-radius: 2px;
-        transition:
-          transform 0.15s ease,
-          filter 0.15s ease,
-          box-shadow 0.15s ease,
-          background-color 0.15s ease;
       }
 
       .preset-action {
         background-color: #f0c8c8;
+        padding: 2px 6px;
+        border-radius: 2px;
+        transition:
+          filter 0.15s ease,
+          transform 0.15s ease;
+      }
+
+      .preset-action:hover {
+        filter: brightness(0.88);
+        transform: translateY(-1px) scale(1.05);
+      }
+
+      .preset-action:active {
+        filter: brightness(0.75);
+        transform: translateY(1px) scale(0.97);
       }
 
       #replay {
         background-color: #c8f0c8;
+        padding: 2px 6px;
+        border-radius: 2px;
+        transition:
+          filter 0.15s ease,
+          transform 0.15s ease;
       }
 
-      .preset-btn:hover,
-      .preset-action:hover,
-      #add-preset:hover,
-      #share-all:hover,
-      #share-shot:hover,
-      #replay:hover,
-      #play-btn:hover,
-      #cleartraces:hover {
+      #replay:hover {
         filter: brightness(0.88);
-        transform: translateY(-2px) scale(1.05);
-        box-shadow: 0 4px 10px rgb(0 0 0 / 40%);
+        transform: translateY(-1px) scale(1.05);
       }
 
-      .preset-btn:active,
-      .preset-action:active,
-      #add-preset:active,
-      #share-all:active,
-      #share-shot:active,
-      #replay:active,
-      #play-btn:active,
-      #cleartraces:active {
-        border-style: inset;
+      #replay:active {
         filter: brightness(0.75);
-        transform: translateY(2px) scale(0.97);
-        box-shadow: none;
+        transform: translateY(1px) scale(0.97);
       }
 
       .cueBall {
@@ -559,21 +541,7 @@
     <div id="page">
       <h1 id="page-title">Three cushion research</h1>
       <div class="replaydiagram">
-        <div
-          id="hitStats"
-          style="
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            font-family: monospace;
-            font-size: 10px;
-            padding: 4px;
-            pointer-events: none;
-            z-index: 100;
-          "
-        ></div>
+
         <div
           class="topview"
           data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-1.305026,-0.634005,-1.434758,0.601475,-1.310215,0.685593%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.201901,%22y%22:0.221892,%22z%22:0%7D,%22angle%22:0.63687,%22power%22:2.62,%22pos%22:%7B%22x%22:-1.305026,%22y%22:-0.634005,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
@@ -588,9 +556,8 @@
         <button id="add-preset" type="button" title="Add current as preset">
           +
         </button>
-        <button id="share-all" type="button">share all presets</button>
-        <button id="share-shot" type="button">share this shot</button>
-        <button id="replay" type="button">replay</button>
+        <button id="share-all" type="button">share presets</button>
+        <button id="share-shot" type="button">share shot</button>
         <button id="play-btn" type="button">play</button>
         <button id="svg-btn" type="button">svg</button>
         <button id="cleartraces" type="button">clear traces</button>
@@ -609,6 +576,7 @@
         <button id="reset-presets" type="button" class="preset-action">
           reset
         </button>
+        <button id="replay" type="button">replay</button>
       </div>
 
       <div class="controls-row">
