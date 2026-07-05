@@ -13,15 +13,15 @@ html {
 body {
   font-family: "Exo 2", sans-serif;
   font-weight: 200;
-  background: #000;
-  color: #eee;
+  background: #0f172a;
+  color: #e2e8f0;
   line-height: 1.4;
   padding: 0.25rem;
 }
 
 header {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 header h1 {
@@ -30,7 +30,7 @@ header h1 {
 }
 
 header p {
-  color: #aaa;
+  color: #cbd5e1;
   font-size: 0.9rem;
 }
 
@@ -38,86 +38,128 @@ header p {
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 0.5rem;
+  gap: 0.3rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 /* Single card */
 .speedrun-card {
-  background: #111;
+  background: #1e293b;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgb(255 255 255 / 5%);
-  padding: 0.4rem;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 30%);
+  padding: 0.25rem;
   display: flex;
   flex-direction: column;
-  border: 1px solid #333;
+  border: 1px solid #334155;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
+}
+
+.speedrun-card:hover {
+  border-color: #6366f1;
+  box-shadow: 0 4px 16px rgb(99 102 241 / 25%);
+  transform: translateY(-2px);
 }
 
 .card-title {
   font-size: 1rem;
-  margin: 0.2rem 0;
+  margin: 0.15rem 0;
   text-align: center;
   font-weight: 200;
 }
 
 .card-desc {
   font-size: 0.85rem;
-  color: #666;
-  margin-bottom: 0.5rem;
+  color: #cbd5e1;
+  margin-bottom: 0.3rem;
 }
 
 /* SVG table preview */
 .billiards-table {
   width: 100%;
   height: auto;
-  background: #000;
-  border: 1px solid #444;
-  border-radius: 4px;
+  background: #ffffff;
+  border: 1px solid #475569;
+  border-radius: 20px;
   display: block;
 }
 
 .play-rank-wrapper {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
+  gap: 0.3rem;
+  margin-top: 0.25rem;
   align-items: stretch;
 }
 
 /* Play button */
 .play-btn {
   display: block;
-  padding: 0.5rem 1rem;
-  background-color: #2563eb;
+  padding: 0.35rem 0.75rem;
+  background: linear-gradient(135deg, #6366f1, #2563eb, #1d4ed8);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
-  transition: background-color 0.15s;
+  transition:
+    box-shadow 0.2s,
+    transform 0.15s;
   flex: 0 0 auto;
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 30%),
+    inset 0 1px 0 rgb(255 255 255 / 15%);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.02em;
+}
+
+.play-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 25%),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
 }
 
 .play-btn:hover {
-  background-color: #1d4ed8;
+  box-shadow:
+    0 4px 14px rgb(99 102 241 / 45%),
+    inset 0 1px 0 rgb(255 255 255 / 20%);
+  transform: translateY(-1px);
+}
+
+.play-btn:hover::before {
+  left: 150%;
 }
 
 /* Rankings */
 .rankings {
   flex: 1;
-  border-left: 1px solid #333;
-  padding-left: 0.5rem;
-  min-height: 80px;
+  border-left: 1px solid #334155;
+  padding-left: 0.3rem;
+  min-height: 60px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .rankings h4 {
-  font-size: 0.75rem;
-  margin-bottom: 0.1rem;
-  color: #666;
+  font-size: 0.7rem;
+  margin-bottom: 0.05rem;
+  color: #cbd5e1;
   text-transform: uppercase;
   letter-spacing: 0.05rem;
   font-weight: 200;
@@ -125,7 +167,7 @@ header p {
 
 .rankings-empty {
   font-size: 0.8rem;
-  color: #555;
+  color: #cbd5e1;
   font-style: italic;
 }
 
@@ -138,10 +180,10 @@ header p {
 .rankings-list li {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.1rem 0;
+  gap: 0.25rem;
+  padding: 0.05rem 0;
   font-size: 0.85rem;
-  border-bottom: 1px solid #222;
+  border-bottom: 1px solid #1e293b;
 }
 
 .rankings-list li:last-child {
@@ -164,14 +206,14 @@ header p {
 
 .rank-time {
   font-family: "Exo 2", monospace;
-  color: #888;
+  color: #cbd5e1;
 }
 
 .rank-replay {
   text-decoration: none;
   color: #2563eb;
-  font-size: 0.9rem;
-  padding: 0 0.25rem;
+  font-size: 0.85rem;
+  padding: 0 0.15rem;
 }
 
 .rank-replay:hover {
@@ -186,7 +228,7 @@ header p {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgb(0 0 0 / 85%);
+  background: rgb(15 23 42 / 90%);
   z-index: 1000;
   justify-content: center;
   align-items: center;
@@ -203,7 +245,7 @@ header p {
 .iframe-container {
   width: 90%;
   height: 90%;
-  background: #000;
+  background: #0f172a;
   position: relative;
   border-radius: 8px;
   overflow: hidden;
@@ -268,7 +310,7 @@ header p {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgb(0 0 0 / 50%);
+  background: rgb(15 23 42 / 70%);
   z-index: 2000;
   justify-content: center;
   align-items: center;
@@ -282,27 +324,27 @@ header p {
 }
 
 .result-card {
-  background: #111;
-  border: 1px solid #333;
-  color: #eee;
-  border-radius: 12px;
-  padding: 1.5rem;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  border-radius: 10px;
+  padding: 1rem;
   text-align: center;
-  box-shadow: 0 8px 32px rgb(0 0 0 / 80%);
+  box-shadow: 0 8px 32px rgb(0 0 0 / 50%);
   max-width: 320px;
   width: 90%;
 }
 
 .result-card h2 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  margin-bottom: 0.3rem;
   font-weight: 200;
 }
 
 .result-card p {
-  font-size: 1.1rem;
-  color: #aaa;
-  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  color: #cbd5e1;
+  margin-bottom: 0.75rem;
 }
 
 #resultModal.fail .result-card h2 {
@@ -314,16 +356,46 @@ header p {
 }
 
 #resultOkBtn {
-  padding: 0.5rem 2rem;
-  background: #2563eb;
+  padding: 0.35rem 1.25rem;
+  background: linear-gradient(135deg, #6366f1, #2563eb, #1d4ed8);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
+  transition: box-shadow 0.2s;
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 30%),
+    inset 0 1px 0 rgb(255 255 255 / 15%);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.02em;
+}
+
+#resultOkBtn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 25%),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
 }
 
 #resultOkBtn:hover {
-  background: #1d4ed8;
+  box-shadow:
+    0 4px 14px rgb(99 102 241 / 45%),
+    inset 0 1px 0 rgb(255 255 255 / 20%);
+}
+
+#resultOkBtn:hover::before {
+  left: 150%;
 }

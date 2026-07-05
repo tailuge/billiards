@@ -223,11 +223,10 @@ export function initSpeedrun() {
     resultModal.className = type // "fail" or "success"
 
     if (type === "success") {
-      resultTitle.textContent = "🏆 Success!"
+      resultTitle.textContent = "Speedrun Cleared!"
       resultBody.innerHTML =
         `Time: ${data.elapsed.toFixed(1)}s<br>` +
-        `Rank: ${data.rank ?? "—"}<br>` +
-        `<a href="${data.replayUrl}" target="_blank">Replay</a>`
+        `Rank: ${data.rank ?? "Too Slow"}`
     } else {
       resultTitle.textContent = "Attempt Failed"
       resultBody.innerHTML =
@@ -292,13 +291,11 @@ export function initSpeedrun() {
       if (rank !== null) {
         resultBody.innerHTML =
           `Time: ${elapsed.toFixed(1)}s<br>` +
-          `Rank: ${rank}<br>` +
-          `<a href="${replayUrl}" target="_blank">Replay</a>`
+          `Rank: ${rank}`
       } else {
         resultBody.innerHTML =
           `Time: ${elapsed.toFixed(1)}s<br>` +
-          `Rank: —<br>` +
-          `<a href="${replayUrl}" target="_blank">Replay</a>`
+          `Rank: Too Slow`
       }
     } else {
       showResultModal("success", { elapsed, matchResult, replayUrl })

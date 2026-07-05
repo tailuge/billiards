@@ -96,10 +96,10 @@ export class Snooker implements Rules {
       return this.foul(outcome, info)
     }
 
-    const coloursRemaining = SnookerUtils.coloursOnTable(
+    const ballsRemaining = SnookerUtils.ballsOnTable(
       this.container.table
     ).length
-    if (this.previousPotRed && coloursRemaining > 1) {
+    if (this.previousPotRed && ballsRemaining > 0) {
       this.respotColours(outcome)
       this.currentBreak += id + 1
       Session.getInstance().addMyScore(id + 1)

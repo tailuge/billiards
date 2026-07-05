@@ -155,6 +155,10 @@ export class SnookerUtils {
     return table.balls.slice(1, 7).filter((ball: Ball) => ball.onTable())
   }
 
+  static ballsOnTable(table: Table): Ball[] {
+    return table.balls.filter((ball: Ball) => ball.id !== 0 && ball.onTable())
+  }
+
   static colourName(id: number): string {
     const names: { [key: number]: string } = {
       1: "Yellow",
