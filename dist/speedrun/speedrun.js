@@ -93,7 +93,8 @@ export function initSpeedrun() {
       resultTitle.textContent = "🏆 Success!"
       resultBody.innerHTML =
         `Time: ${data.elapsed.toFixed(1)}s<br>` +
-        `Rank: ${data.rank ?? "—"}`
+        `Rank: ${data.rank ?? "—"}<br>` +
+        `<a href="${data.replayUrl}" target="_blank">Replay</a>`
     } else {
       resultTitle.textContent = "Attempt Failed"
       resultBody.innerHTML =
