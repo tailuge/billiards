@@ -84,20 +84,14 @@ export function initSpeedrun() {
   }
 
   // --- Fail modal ---
-  let failTimer = null
 
   function showFailModal(elapsed, reason) {
     failReason.innerHTML = `${reason}<br>@ ${elapsed.toFixed(1)} seconds`
     failModal.classList.add("active")
-    failTimer = setTimeout(hideFailModal, 5000)
   }
 
   function hideFailModal() {
     failModal.classList.remove("active")
-    if (failTimer) {
-      clearTimeout(failTimer)
-      failTimer = null
-    }
   }
 
   failOkBtn.addEventListener("click", hideFailModal)

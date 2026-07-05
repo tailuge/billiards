@@ -382,6 +382,8 @@
       const HW = R * 43 + R // half-width  (X)
       const HH = R * 21 + R // half-height (Y)
       const BALL_BORDER_RATIO = 0.08
+      const REMOVE_Y = -0.786
+      const REMOVE_MARGIN = 0.05
 
       const BALL_COLORS = [
         "#ffffff",
@@ -554,10 +556,18 @@
         e.preventDefault()
         const touch = e.touches ? e.touches[0] : e
         const pos = clientToTable(touch.clientX, touch.clientY)
+
         const nx = Math.max(-(HW - R), Math.min(HW - R, pos.x))
         const ny = Math.max(-(HH - R), Math.min(HH - R, pos.y))
 
-        if (!collides(dragging, nx, ny)) {
+        if (
+          Math.abs(pos.x) <= REMOVE_MARGIN &&
+          pos.y >= REMOVE_Y - REMOVE_MARGIN &&
+          pos.y <= REMOVE_Y + REMOVE_MARGIN
+        ) {
+          dragging.x = 0
+          dragging.y = REMOVE_Y
+        } else if (!collides(dragging, nx, ny)) {
           dragging.x = nx
           dragging.y = ny
         } else {

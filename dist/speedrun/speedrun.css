@@ -138,13 +138,15 @@ header p {
 }
 
 .iframe-container {
-  width: 80%;
-  height: 80%;
+  width: 90%;
+  height: 90%;
   background: #000;
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+  transition:
+    transform 0.3s ease-in,
+    opacity 0.3s ease-in;
 }
 
 #gameOverlay.closing .iframe-container {
@@ -161,7 +163,7 @@ header p {
 /* Timer display */
 .timer-display {
   position: absolute;
-  top: 10px;
+  top: 50px;
   left: 50%;
   transform: translateX(-50%);
   color: #fff;
