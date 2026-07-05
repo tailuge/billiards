@@ -39,6 +39,8 @@ function formatTime(sec) {
   return sec.toFixed(1) + "s"
 }
 
+export const renderTrophy = (i) => ["🏆", "🥈", "🥉", "🎖️"][i] ?? ""
+
 /** Render rankings list inside a card's .rankings div */
 function renderRankings(card, entries) {
   const rankingsDiv = card.querySelector(".rankings")
@@ -62,7 +64,7 @@ function renderRankings(card, entries) {
   entries.forEach((entry, i) => {
     const li = document.createElement("li")
     li.innerHTML =
-      `<span class="rank">#${i + 1}</span>` +
+      `<span class="rank">${renderTrophy(i)}</span>` +
       ` <span class="rank-name">${escapeHtml(entry.playerName)}</span>` +
       ` <span class="rank-time">${formatTime(entry.timeSec)}</span>` +
       ` <a class="rank-replay" href="${API_BASE}/api/speedrun-results/${entry.id}" target="_blank" title="Watch replay">▶</a>`
