@@ -63,11 +63,15 @@ function renderRankings(card, entries) {
 
   entries.forEach((entry, i) => {
     const li = document.createElement("li")
+    li.title = "Watch replay"
     li.innerHTML =
       `<span class="rank">${renderTrophy(i)}</span>` +
       ` <span class="rank-name">${escapeHtml(entry.playerName)}</span>` +
       ` <span class="rank-time">${formatTime(entry.timeSec)}</span>` +
-      ` <a class="rank-replay" href="${API_BASE}/api/speedrun-results/${entry.id}" target="_blank" title="Watch replay">▶</a>`
+      ` <span class="rank-replay">▶</span>`
+    li.addEventListener("click", () => {
+      window.open(`${API_BASE}/api/speedrun-results/${entry.id}`, "_blank", "noopener")
+    })
     ol.appendChild(li)
   })
 
