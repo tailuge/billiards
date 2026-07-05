@@ -35,9 +35,10 @@ export function initSpeedrun() {
   const iframe = document.getElementById("gameIframe")
   const closeBtn = document.getElementById("closeGame")
   const timerDisplay = document.getElementById("timerDisplay")
-  const failModal = document.getElementById("failModal")
-  const failReason = document.getElementById("failReason")
-  const failOkBtn = document.getElementById("failOkBtn")
+  const resultModal = document.getElementById("resultModal")
+  const resultTitle = document.getElementById("resultTitle")
+  const resultBody = document.getElementById("resultBody")
+  const resultOkBtn = document.getElementById("resultOkBtn")
 
   // --- Play button: open iframe overlay ---
   document.querySelectorAll(".speedrun-card").forEach((card) => {
@@ -83,18 +84,30 @@ export function initSpeedrun() {
     closeBtn.addEventListener("click", closeOverlay)
   }
 
-  // --- Fail modal ---
+  // --- Result modal (fail + success) ---
 
-  function showFailModal(elapsed, reason) {
-    failReason.innerHTML = `${reason}<br>@ ${elapsed.toFixed(1)} seconds`
-    failModal.classList.add("active")
+  function showResultModal(type, data) {
+    resultModal.className = type // "fail" or "success"
+
+    if (type === "success") {
+      resultTitle.textContent = "🏆 Success!"
+      resultBody.innerHTML =
+        `Time: ${data.elapsed.toFixed(1)}s<br>` +
+        `Rank: ${data.rank ?? "—"}`
+    } else {
+      resultTitle.textContent = "Attempt Failed"
+      resultBody.innerHTML =
+        `${data.reason}<br>@ ${data.elapsed.toFixed(1)} seconds`
+    }
+
+    resultModal.classList.add("active")
   }
 
-  function hideFailModal() {
-    failModal.classList.remove("active")
+  function hideResultModal() {
+    resultModal.classList.remove("active")
   }
 
-  failOkBtn.addEventListener("click", hideFailModal)
+  resultOkBtn.addEventListener("click", hideResultModal)
 
   // --- postMessage: game result ---
   window.addEventListener("message", (event) => {
@@ -105,17 +118,14 @@ export function initSpeedrun() {
 
     if (status === "fail") {
       closeOverlay()
-      showFailModal(elapsed, reason)
+      showResultModal("fail", { elapsed, reason })
       return
     }
 
     closeOverlay()
 
     if (status === "complete") {
-      console.log(`Speedrun complete! ${elapsed.toFixed(1)}s`, {
-        matchResult,
-        replayUrl,
-      })
+      showResultModal("success", { elapsed, matchResult, replayUrl })
     }
   })
 

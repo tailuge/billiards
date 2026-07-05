@@ -197,8 +197,8 @@ header p {
   background: #ddd;
 }
 
-/* Fail modal */
-#failModal {
+/* Result modal (shared fail + success) */
+#resultModal {
   display: flex;
   position: fixed;
   top: 0;
@@ -213,12 +213,12 @@ header p {
   pointer-events: none;
 }
 
-#failModal.active {
+#resultModal.active {
   opacity: 1;
   pointer-events: auto;
 }
 
-.fail-card {
+.result-card {
   background: #fff;
   border-radius: 12px;
   padding: 2rem 2.5rem;
@@ -228,19 +228,26 @@ header p {
   width: 90%;
 }
 
-.fail-card h2 {
+.result-card h2 {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
-  color: #dc2626;
 }
 
-.fail-card p {
+.result-card p {
   font-size: 1.1rem;
   color: #555;
   margin-bottom: 1.5rem;
 }
 
-#failOkBtn {
+#resultModal.fail .result-card h2 {
+  color: #dc2626;
+}
+
+#resultModal.success .result-card h2 {
+  color: #16a34a;
+}
+
+#resultOkBtn {
   padding: 0.5rem 2rem;
   background: #2563eb;
   color: #fff;
@@ -251,6 +258,6 @@ header p {
   cursor: pointer;
 }
 
-#failOkBtn:hover {
+#resultOkBtn:hover {
   background: #1d4ed8;
 }

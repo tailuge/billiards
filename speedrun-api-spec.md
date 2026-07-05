@@ -115,7 +115,7 @@ const url = `../index.html?ruletype=${config.ruleType}&speedrun&practice&init=${
 
 ### 3.4 Current cards
 
-The page has two position cards: **9-Ball on The Pockets** (nineball) and **SnookerClearance** (snooker). More positions are added by copying the `<article class="speedrun-card">` pattern — no manual `id` needed (auto-derived from content hash).
+The page has three position cards: **9-Ball on The Pockets** (nineball), **Snooker Clearance** (snooker), and **Line up 32** (snooker). More positions are added by copying the `<article class="speedrun-card">` pattern — no manual `id` needed (auto-derived from content hash).
 
 ---
 
@@ -163,31 +163,30 @@ The game sends two message shapes (see `speedrun-spec.md` §5):
 ```
 
 Current implementation:
-- **Fail**: Closes overlay immediately, shows `#failModal` with "Failed!" + reason + OK button (auto-dismisses after 3s). ✅
-- **Success**: Closes overlay immediately, logs to console. Success modal **not yet implemented** (TODO).
+- **Fail**: Closes overlay immediately, shows `#resultModal` (fail variant) with "Attempt Failed" + reason + time + OK button (no auto-dismiss). ✅
+- **Success**: Closes overlay immediately, shows `#resultModal` (success variant) with "🏆 Success!" + time + rank placeholder + OK button (no auto-dismiss). ✅
 - **API POST** not yet wired (TODO).
 
-### 4.5 Success modal (TODO)
+### 4.5 Success modal ✅
 
-On a successful speedrun clear, show a centered modal similar to the fail modal but with success styling:
+On a successful speedrun clear, shows the unified `#resultModal` with success styling:
 
 ```
 ┌─────────────────────────┐
 │       🏆 Success!       │
 │                         │
 │      Time: 12.5s        │
-│      Rank: #3 🥉        │
-│   (new leaderboard!)    │
+│      Rank: —            │
 │                         │
 │         [OK]            │
 └─────────────────────────┘
 ```
 
 - Shows time taken (from elapsed timer value)
-- Shows leaderboard rank (returned from API POST response), or "—" if not top-3
-- Shows "new leaderboard!" indicator if rank ≤ 3
-- OK button dismisses; auto-dismiss after 5s (longer than fail modal since user may want to read it)
-- Reuses the `#failModal` div (or rename to `#resultModal` with dual styles)
+- Shows leaderboard rank (placeholder "—" until API integration)
+- Green title styling via `#resultModal.success .result-card h2`
+- OK button dismisses; no auto-dismiss
+- Shares the `#resultModal` div with the fail variant (CSS class toggle: `.fail` vs `.success`)
 
 ---
 
@@ -315,7 +314,7 @@ No dedup. Each POST creates a new record. The speedrun page may show the user's 
 | 3 | **Derive position IDs** — hash `data-json-shots` into stable ID, cached on `card.id`. | ✅ |
 | 4 | **Fetch rankings** — `GET /api/speedrun-results`, group by `positionId`, sort, show top 3. | TODO |
 | 5 | **Handle Play clicks** — construct iframe URL with passthrough params, open overlay, start timer. | ✅ |
-| 6 | **Handle postMessage** — on `speedrun-result`: stop timer, log result, close overlay after 300ms. | ✅ |
+| 6 | **Handle postMessage** — on `speedrun-result`: stop timer, close overlay after 300ms, show `#resultModal` (fail or success). | ✅ |
 | 7 | **POST result** — `POST /api/speedrun-results` with timeSec + matchResult + replayUrl. | TODO |
 | 8 | **Handle replay clicks** — on clicking a ranking entry, open `replayUrl` in new tab. | TODO |
 
@@ -364,7 +363,7 @@ Uses `initDiagrams()` from `../diagrams/svg.js`. Each SVG's `data-json-shots` co
 
 ## 8. Open Questions / Future
 
-- **Success modal**: Green-styled modal showing time + leaderboard rank. Reuses fail modal pattern. Planned UX in §4.5.
+- **Rank display**: Currently shows placeholder "—". Will show real rank from API POST response once integrated.
 - **More positions**: Copy the `<article class="speedrun-card">` pattern and set `data-json-shots` with the desired position. No manual `id` needed — `positionId()` derives a stable hash.
 - **Replay URL format**: The base URL for reconstruction could be the page's own origin, or a configurable constant.
 - **Server cleanup**: The server should cap at top N per position to keep the response small.
