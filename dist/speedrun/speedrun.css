@@ -20,6 +20,7 @@ body {
 }
 
 header {
+  position: relative;
   text-align: center;
   margin-bottom: 0.5rem;
 }
@@ -29,9 +30,28 @@ header h1 {
   font-weight: 200;
 }
 
-header p {
-  color: #cbd5e1;
+.lobby-btn {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(135deg, #6366f1, #2563eb, #1d4ed8);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
   font-size: 0.9rem;
+  font-weight: 600;
+  transition: box-shadow 0.2s;
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 30%),
+    inset 0 1px 0 rgb(255 255 255 / 15%);
+  letter-spacing: 0.02em;
+}
+
+.lobby-btn:hover {
+  box-shadow:
+    0 4px 14px rgb(99 102 241 / 45%),
+    inset 0 1px 0 rgb(255 255 255 / 20%);
 }
 
 /* Card grid */

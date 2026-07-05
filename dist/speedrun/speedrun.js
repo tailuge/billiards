@@ -156,8 +156,6 @@ async function submitResult(card, playerName, timeSec, ruleType, replayUrl) {
 export function initSpeedrun() {
   const params = new URLSearchParams(window.location.search)
   const playerName = params.get("userName") ?? "Anon"
-  const nameEl = document.getElementById("playerName")
-  if (nameEl) nameEl.textContent = `Player: ${playerName}`
 
   // Save original query string for passthrough to game (strip leading ?)
   const passThrough = window.location.search.replace(/^\?/, "&")
@@ -206,6 +204,7 @@ export function initSpeedrun() {
       }
       overlay.classList.remove("closing")
       currentCard = card
+      history.pushState({ speedrun: true }, "")
       iframe.src = url
       overlay.classList.add("active")
       startTimer()
@@ -216,6 +215,13 @@ export function initSpeedrun() {
   if (closeBtn) {
     closeBtn.addEventListener("click", closeOverlay)
   }
+
+  // --- Back button: close overlay instead of navigating away ---
+  window.addEventListener("popstate", () => {
+    if (overlay.classList.contains("active")) {
+      closeOverlay()
+    }
+  })
 
   // --- Result modal (fail + success) ---
 
