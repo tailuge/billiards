@@ -1,0 +1,329 @@
+html {
+  font-size: 87.5%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Exo 2", sans-serif;
+  font-weight: 200;
+  background: #000;
+  color: #eee;
+  line-height: 1.4;
+  padding: 0.25rem;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  font-weight: 200;
+}
+
+header p {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+/* Card grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 0.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Single card */
+.speedrun-card {
+  background: #111;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgb(255 255 255 / 5%);
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #333;
+}
+
+.card-title {
+  font-size: 1rem;
+  margin: 0.2rem 0;
+  text-align: center;
+  font-weight: 200;
+}
+
+.card-desc {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+/* SVG table preview */
+.billiards-table {
+  width: 100%;
+  height: auto;
+  background: #000;
+  border: 1px solid #444;
+  border-radius: 4px;
+  display: block;
+}
+
+.play-rank-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  align-items: stretch;
+}
+
+/* Play button */
+.play-btn {
+  display: block;
+  padding: 0.5rem 1rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background-color 0.15s;
+  flex: 0 0 auto;
+}
+
+.play-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Rankings */
+.rankings {
+  flex: 1;
+  border-left: 1px solid #333;
+  padding-left: 0.5rem;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.rankings h4 {
+  font-size: 0.75rem;
+  margin-bottom: 0.1rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  font-weight: 200;
+}
+
+.rankings-empty {
+  font-size: 0.8rem;
+  color: #555;
+  font-style: italic;
+}
+
+.rankings-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rankings-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.1rem 0;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #222;
+}
+
+.rankings-list li:last-child {
+  border-bottom: none;
+}
+
+.rank {
+  font-weight: 700;
+  color: #2563eb;
+  min-width: 1.2rem;
+  text-align: center;
+}
+
+.rank-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-time {
+  font-family: "Exo 2", monospace;
+  color: #888;
+}
+
+.rank-replay {
+  text-decoration: none;
+  color: #2563eb;
+  font-size: 0.9rem;
+  padding: 0 0.25rem;
+}
+
+.rank-replay:hover {
+  color: #1d4ed8;
+}
+
+/* Iframe overlay */
+#gameOverlay {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(0 0 0 / 85%);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+#gameOverlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.iframe-container {
+  width: 90%;
+  height: 90%;
+  background: #000;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  transition:
+    transform 0.3s ease-in,
+    opacity 0.3s ease-in;
+}
+
+#gameOverlay.closing .iframe-container {
+  transform: scale(0);
+  opacity: 0;
+}
+
+.iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Timer display */
+.timer-display {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-family: "Courier New", monospace;
+  font-size: 2.2rem;
+  font-weight: bold;
+  z-index: 10;
+  text-shadow: 0 0 8px rgb(0 0 0 / 60%);
+  pointer-events: none;
+}
+
+/* Close button */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #fff;
+  color: #000;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  line-height: 1;
+  z-index: 1010;
+}
+
+.close-btn:hover {
+  background: #ddd;
+}
+
+/* Result modal (shared fail + success) */
+#resultModal {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(0 0 0 / 50%);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#resultModal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.result-card {
+  background: #111;
+  border: 1px solid #333;
+  color: #eee;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 80%);
+  max-width: 320px;
+  width: 90%;
+}
+
+.result-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 200;
+}
+
+.result-card p {
+  font-size: 1.1rem;
+  color: #aaa;
+  margin-bottom: 1.5rem;
+}
+
+#resultModal.fail .result-card h2 {
+  color: #dc2626;
+}
+
+#resultModal.success .result-card h2 {
+  color: #16a34a;
+}
+
+#resultOkBtn {
+  padding: 0.5rem 2rem;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#resultOkBtn:hover {
+  background: #1d4ed8;
+}

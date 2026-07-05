@@ -58,6 +58,8 @@ export class LobbyIndicator {
       this.ruleType = `${this.rules.rulename}-bot`
     } else if (Session.isExamMode()) {
       this.ruleType = `${this.rules.rulename}-exam`
+    } else if (Session.isSpeedrunMode()) {
+      this.ruleType = `${this.rules.rulename}-speedrun`
     } else if (replayMode) {
       this.ruleType = "replay"
     } else if (Session.getInstance().spectator) {

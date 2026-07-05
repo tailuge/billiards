@@ -61,7 +61,7 @@ export class NineBall implements Rules {
   readonly asset = "models/p8.min.gltf"
 
   tableGeometry(): void {
-    TableGeometry.hasPockets = true
+    TableGeometry.configureForRule("nineball")
   }
 
   table(): Table {

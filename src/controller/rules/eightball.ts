@@ -48,7 +48,7 @@ export class EightBall implements Rules {
   readonly asset = "models/p8.min.gltf"
 
   tableGeometry(): void {
-    TableGeometry.hasPockets = true
+    TableGeometry.configureForRule("eightball")
   }
 
   table(): Table {

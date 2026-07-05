@@ -1,6 +1,7 @@
 import { Controller, Input } from "./controller"
 import { ControllerBase } from "./controllerbase"
 import { Session } from "../network/client/session"
+import { Outcome } from "../model/outcome"
 
 /**
  * PlayShot starts balls rolling using cue state, applies rules to outcome
@@ -22,6 +23,18 @@ export class PlayShot extends ControllerBase {
   override handleStationary(_) {
     const table = this.container.table
     const outcome = table.outcome
+
+    // Speedrun failure check must run BEFORE rules.update() mutates state
+    // (snooker's update() changes targetIsRed/previousPotRed which foulReason reads)
+    let speedrunFoul: string | null = null
+    let speedrunNoPot = false
+    if (Session.isSpeedrunMode()) {
+      speedrunFoul = this.container.rules.foulReason(outcome)
+      if (!speedrunFoul && Outcome.potCount(outcome) === 0) {
+        speedrunNoPot = true
+      }
+    }
+
     const nextController = this.container.rules.update(outcome)
     const { p1: s1, p2: s2 } = Session.getInstance().orderedScoresForHud()
 
@@ -44,6 +57,18 @@ export class PlayShot extends ControllerBase {
           outcome: this.container.table.outcome.map((o) => o.serialise()),
           table: this.container.table.serialise(),
         },
+        "*"
+      )
+    }
+
+    if (speedrunFoul) {
+      globalThis.parent?.postMessage(
+        { type: "speedrun-result", status: "fail", reason: speedrunFoul },
+        "*"
+      )
+    } else if (speedrunNoPot) {
+      globalThis.parent?.postMessage(
+        { type: "speedrun-result", status: "fail", reason: "No pot" },
         "*"
       )
     }

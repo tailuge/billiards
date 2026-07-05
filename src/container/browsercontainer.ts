@@ -63,6 +63,7 @@ export class BrowserContainer {
   drillMode: boolean = false
   analysisMode: boolean = false
   examMode: boolean = false
+  speedrun: boolean = false
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
     this.now = Date.now()
@@ -92,6 +93,7 @@ export class BrowserContainer {
     this.drillMode = params.has("drill")
     this.analysisMode = params.has("analysis")
     this.examMode = params.has("exam")
+    this.speedrun = params.has("speedrun")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
       Number.parseInt(params.get("raceTo") ?? "7") || 7
@@ -107,7 +109,8 @@ export class BrowserContainer {
       this.examMode,
       this.practiceMode,
       Number.parseInt(params.get("lod") ?? "2"),
-      this.first
+      this.first,
+      this.speedrun
     )
     console.log(Session.getInstance())
     applyPhysicsParams(params)
