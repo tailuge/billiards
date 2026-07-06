@@ -81,14 +81,20 @@
           <button id="loadBtn">Load Selected</button>
           <button id="clearBtn">Clear All</button>
           <button id="resetBtn">Reset</button>
+          <button id="restoreBestBtn" disabled>Restore Best</button>
         </div>
 
         <div class="file-list" id="fileList">
-          <label><input type="checkbox" value="fit1.json" checked /> fit1</label><br />
-          <label><input type="checkbox" value="fit2.json" checked /> fit2</label><br />
-          <label><input type="checkbox" value="fit3.json" checked /> fit3</label><br />
-          <label><input type="checkbox" value="fit4.json" checked /> fit4</label><br />
-          <label><input type="checkbox" value="fit5.json" checked /> fit5</label><br />
+          <label><input type="checkbox" value="fit1.json" checked /> fit1</label
+          ><br />
+          <label><input type="checkbox" value="fit2.json" checked /> fit2</label
+          ><br />
+          <label><input type="checkbox" value="fit3.json" checked /> fit3</label
+          ><br />
+          <label><input type="checkbox" value="fit4.json" checked /> fit4</label
+          ><br />
+          <label><input type="checkbox" value="fit5.json" checked /> fit5</label
+          ><br />
         </div>
 
         <div
@@ -144,17 +150,21 @@
     <script type="module">
       import { runSim } from "./sim.js"
       import { redraw } from "./plot.js"
+      import { computeSSE } from "./rmse.js"
       import { runOptimiseNM, runOptimisePSO } from "./optimise.js"
 
       let allData = []
       let abortController = null
       let rmseHistory = []
+      let bestParams = null
+      let bestRmse = Infinity
 
       const fileList = document.getElementById("fileList")
       const loadBtn = document.getElementById("loadBtn")
       const paramRows = document.getElementById("paramRows")
       const optBtn = document.getElementById("optBtn")
       const stopBtn = document.getElementById("stopBtn")
+      const restoreBestBtn = document.getElementById("restoreBestBtn")
       const status = document.getElementById("status")
       const optStatus = document.getElementById("optStatus")
       const rmseCanvas = document.getElementById("rmseCanvas")
@@ -168,6 +178,9 @@
 
         status.textContent = "Status: Loading files..."
         allData = []
+        bestParams = null
+        bestRmse = Infinity
+        restoreBestBtn.disabled = true
 
         for (const filename of checked) {
           try {
@@ -187,6 +200,9 @@
 
       document.getElementById("clearBtn").onclick = () => {
         allData = []
+        bestParams = null
+        bestRmse = Infinity
+        restoreBestBtn.disabled = true
         Array.from(fileList.querySelectorAll("input[type=checkbox]")).forEach(
           (cb) => (cb.checked = false)
         )
@@ -199,12 +215,22 @@
           const sysText = tds[4].textContent.trim()
           const sysVal = parseFloat(sysText)
           if (isNaN(sysVal)) continue
-          const name = tr.querySelector('input[type=checkbox]').dataset.name
+          const name = tr.querySelector("input[type=checkbox]").dataset.name
           for (const d of allData) {
             d.sim.params[name] = sysVal
           }
           updateParamDisplay(name, sysVal)
         }
+        await plotAllData()
+      }
+
+      restoreBestBtn.onclick = async () => {
+        if (!bestParams) return
+        applyParams(
+          bestParams,
+          allData.map((d) => d.sim)
+        )
+        status.textContent = `Status: Restored best RMSE ${(bestRmse * 100).toFixed(3)}cm`
         await plotAllData()
       }
 
@@ -334,11 +360,11 @@
         const sys = parseFloat(el.dataset.sys)
         const cur = parseFloat(el.textContent)
         if (Math.abs(cur - sys) < 1e-9) {
-          el.style.background = ''
+          el.style.background = ""
         } else if (cur > sys) {
-          el.style.background = '#ffcccc'
+          el.style.background = "#ffcccc"
         } else {
-          el.style.background = '#cce5ff'
+          el.style.background = "#cce5ff"
         }
       }
 
@@ -348,6 +374,50 @@
           el.textContent = val.toFixed(3)
           colorCurrent(el)
         }
+      }
+
+      function getConfigParam(config, name) {
+        if (name.startsWith("shot.")) {
+          const path = name.split(".").slice(1)
+          let curr = config.shot
+          for (const p of path) curr = curr[p]
+          return curr
+        }
+        return config.params[name]
+      }
+
+      function getCurrentParams(specs, config) {
+        return Object.fromEntries(
+          specs.map((s) => [s.name, getConfigParam(config, s.name)])
+        )
+      }
+
+      function applyParams(params, configs) {
+        for (const [name, val] of Object.entries(params)) {
+          updateParamDisplay(name, val)
+          configs.forEach((c) => {
+            if (name.startsWith("shot.")) {
+              const path = name.split(".").slice(1)
+              let curr = c.shot
+              for (let i = 0; i < path.length - 1; i++) curr = curr[path[i]]
+              curr[path[path.length - 1]] = val
+            } else {
+              c.params[name] = val
+            }
+          })
+        }
+      }
+
+      async function computeGlobalRMSE(configs, truths, trackAll) {
+        let totalSSE = 0
+        let totalCount = 0
+        for (let i = 0; i < configs.length; i++) {
+          const res = await runSim(configs[i], truths[i], trackAll)
+          const { sse, count } = computeSSE(truths[i], res.simTracks, trackAll)
+          totalSSE += sse
+          totalCount += count
+        }
+        return totalCount > 0 ? Math.sqrt(totalSSE / totalCount) : Infinity
       }
 
       function drawRMSEGraph(canvas, history) {
@@ -395,29 +465,32 @@
         optBtn.disabled = true
         stopBtn.disabled = false
         rmseHistory = []
-        status.textContent = "Status: Optimising..."
+        bestParams = null
+        bestRmse = Infinity
+        restoreBestBtn.disabled = true
+        status.textContent = "Status: Measuring starting RMSE..."
 
         const configs = allData.map((d) => d.sim)
         const truths = allData.map((d) => d.truth)
+        bestParams = getCurrentParams(specs, configs[0])
+        try {
+          bestRmse = await computeGlobalRMSE(configs, truths, trackAll)
+        } catch (err) {
+          bestRmse = Infinity
+          console.warn("Failed to measure starting RMSE", err)
+        }
+        restoreBestBtn.disabled = false
+        status.textContent = "Status: Optimising..."
 
         const onStep = ({ iter, rmse, params }) => {
           optStatus.textContent = `Iteration ${iter} | Global RMSE: ${(rmse * 100).toFixed(3)}cm`
           rmseHistory.push(rmse)
           drawRMSEGraph(rmseCanvas, rmseHistory)
-          for (const [name, val] of Object.entries(params)) {
-            updateParamDisplay(name, val)
-            // Update all local copies of configs so the final result is reflected
-            configs.forEach((c) => {
-              if (name.startsWith("shot.")) {
-                // We generally shouldn't be tuning shot params here, but for consistency:
-                const path = name.split(".").slice(1)
-                let curr = c.shot
-                for (let i = 0; i < path.length - 1; i++) curr = curr[path[i]]
-                curr[path[path.length - 1]] = val
-              } else {
-                c.params[name] = val
-              }
-            })
+          applyParams(params, configs)
+          if (Number.isFinite(rmse) && rmse < bestRmse) {
+            bestRmse = rmse
+            bestParams = { ...params }
+            restoreBestBtn.disabled = false
           }
         }
 
