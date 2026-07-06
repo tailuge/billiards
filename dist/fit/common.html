@@ -80,59 +80,15 @@
         <div style="display: flex; gap: 1px; align-items: center">
           <button id="loadBtn">Load Selected</button>
           <button id="clearBtn">Clear All</button>
+          <button id="resetBtn">Reset</button>
         </div>
 
         <div class="file-list" id="fileList">
-          <label
-            ><input type="checkbox" value="SS_max_spin_02.json" />
-            SS_max_spin_02</label
-          ><br />
-          <label
-            ><input type="checkbox" value="SS_max_spin_02_stronge.json" />
-            SS_max_spin_02_stronge</label
-          ><br />
-          <label
-            ><input type="checkbox" value="SS_max_spin_03.json" />
-            SS_max_spin_03</label
-          ><br />
-          <label
-            ><input type="checkbox" value="SS_max_spin_05.json" />
-            SS_max_spin_05</label
-          ><br />
-          <label
-            ><input type="checkbox" value="SS_max_spin_06.json" />
-            SS_max_spin_06</label
-          ><br />
-          <label
-            ><input type="checkbox" value="simple_shot_545599.json" />
-            simple_shot_545599</label
-          ><br />
-          <label
-            ><input type="checkbox" value="simple_shot_545599_mathavan.json" />
-            simple_shot_545599_mathavan</label
-          ><br />
-          <label
-            ><input type="checkbox" value="simple_shot_545599_stronge.json" />
-            simple_shot_545599_stronge</label
-          ><br />
-          <label
-            ><input type="checkbox" value="simple_shot_545600.json" />
-            simple_shot_545600</label
-          ><br />
-          <label
-            ><input type="checkbox" value="simple_shot_545600_stronge.json" />
-            simple_shot_545600_stronge</label
-          ><br />
-          <label
-            ><input type="checkbox" value="simple_shot_545600_mathavan.json" />
-            simple_shot_545600_mathavan</label
-          ><br />
-          <label><input type="checkbox" value="shot34.json" /> shot34</label
-          ><br />
-          <label><input type="checkbox" value="shot675.json" /> shot675</label
-          ><br />
-          <label><input type="checkbox" value="shot729.json" /> shot729</label
-          ><br />
+          <label><input type="checkbox" value="fit1.json" checked /> fit1</label><br />
+          <label><input type="checkbox" value="fit2.json" checked /> fit2</label><br />
+          <label><input type="checkbox" value="fit3.json" checked /> fit3</label><br />
+          <label><input type="checkbox" value="fit4.json" checked /> fit4</label><br />
+          <label><input type="checkbox" value="fit5.json" checked /> fit5</label><br />
         </div>
 
         <div
@@ -237,6 +193,21 @@
         updateUI()
       }
 
+      document.getElementById("resetBtn").onclick = async () => {
+        for (const tr of paramRows.querySelectorAll("tr")) {
+          const tds = tr.querySelectorAll("td")
+          const sysText = tds[4].textContent.trim()
+          const sysVal = parseFloat(sysText)
+          if (isNaN(sysVal)) continue
+          const name = tr.querySelector('input[type=checkbox]').dataset.name
+          for (const d of allData) {
+            d.sim.params[name] = sysVal
+          }
+          updateParamDisplay(name, sysVal)
+        }
+        await plotAllData()
+      }
+
       function updateUI() {
         if (allData.length === 0) {
           paramRows.innerHTML = ""
@@ -306,9 +277,12 @@
         for (const [name, val] of Object.entries(allParams)) {
           const tr = document.createElement("tr")
           const ranges = {
-            stronge_omega_ratio: [1.01, 1.99],
-            stronge_e_n: [0.5, 0.99],
+            μs: [0.01, 0.99],
+            μw: [0.01, 0.99],
             ee: [0.5, 0.99],
+            mu: [0.001, 0.02],
+            muS: [0.01, 0.5],
+            rho: [0.001, 0.5],
           }
           let [min, max] = ranges[name] || [val * 0.5, val * 1.5]
           if (Math.abs(max - min) < 1e-7) {
@@ -329,9 +303,10 @@
             <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(3)}" step="any" style="width:60px"></td>
             <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(3)}" step="any" style="width:60px"></td>
             <td>${defaults.hasOwnProperty(name) ? defaults[name].toFixed(3) : val.toFixed(3)}</td>
-            <td><span id="cur-${name.replace(/\./g, "-")}">${val.toFixed(3)}</span></td>
+            <td><span id="cur-${name.replace(/\./g, "-")}" data-sys="${defaults.hasOwnProperty(name) ? defaults[name] : val}">${val.toFixed(3)}</span></td>
             ${fileCols}`
           paramRows.appendChild(tr)
+          colorCurrent(tr.querySelector('span[id^="cur-"]'))
         }
       }
 
@@ -355,9 +330,24 @@
         return specs
       }
 
+      function colorCurrent(el) {
+        const sys = parseFloat(el.dataset.sys)
+        const cur = parseFloat(el.textContent)
+        if (Math.abs(cur - sys) < 1e-9) {
+          el.style.background = ''
+        } else if (cur > sys) {
+          el.style.background = '#ffcccc'
+        } else {
+          el.style.background = '#cce5ff'
+        }
+      }
+
       function updateParamDisplay(name, val) {
         const el = document.getElementById(`cur-${name.replace(/\./g, "-")}`)
-        if (el) el.textContent = val.toFixed(3)
+        if (el) {
+          el.textContent = val.toFixed(3)
+          colorCurrent(el)
+        }
       }
 
       function drawRMSEGraph(canvas, history) {
