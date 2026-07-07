@@ -408,7 +408,11 @@
         }
       }
 
-      if (initParam && ballPositions.length >= 6 && !ballPositions.some(isNaN)) {
+      if (
+        initParam &&
+        ballPositions.length >= 6 &&
+        !ballPositions.some(isNaN)
+      ) {
         await showDiagram({ angle: 0, power: 0.01, ox: 0, oy: 0 })
         startSearch()
       } else {
@@ -626,11 +630,12 @@
           )
 
           const ballFirst = sortedPatterns.filter(([p]) => p.startsWith("◉"))
-          const cushionFirst = sortedPatterns.filter(([p]) =>
-            p.startsWith("L") ||
-            p.startsWith("l") ||
-            p.startsWith("S") ||
-            p.startsWith("s")
+          const cushionFirst = sortedPatterns.filter(
+            ([p]) =>
+              p.startsWith("L") ||
+              p.startsWith("l") ||
+              p.startsWith("S") ||
+              p.startsWith("s")
           )
 
           renderTable(resultsBodyBall, ballFirst)

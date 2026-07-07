@@ -27,8 +27,7 @@ export class Cushion {
     if (Cushion.willBounceLong(futurePosition, hasPockets)) {
       const dir =
         futurePosition.y > TableGeometry.tableY ? -Math.PI / 2 : Math.PI / 2
-      const cushion =
-        futurePosition.y > TableGeometry.tableY ? "L" : "l"
+      const cushion = futurePosition.y > TableGeometry.tableY ? "L" : "l"
       return {
         incidentSpeed: Cushion.bounceIn(dir, ball, cushionModel),
         cushion,
@@ -37,8 +36,7 @@ export class Cushion {
 
     if (Cushion.willBounceShort(futurePosition, hasPockets)) {
       const dir = futurePosition.x > TableGeometry.tableX ? 0 : Math.PI
-      const cushion =
-        futurePosition.x > TableGeometry.tableX ? "S" : "s"
+      const cushion = futurePosition.x > TableGeometry.tableX ? "S" : "s"
       return {
         incidentSpeed: Cushion.bounceIn(dir, ball, cushionModel),
         cushion,

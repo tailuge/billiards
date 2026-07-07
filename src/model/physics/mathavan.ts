@@ -110,8 +110,7 @@ export class Mathavan {
     // Update centroid velocity components
     this.vx -=
       (1 / M) *
-      (μw * this.cosφ +
-        μs * this.cosφʹ * (sinθ + μw * this.sinφ * cosθ)) *
+      (μw * this.cosφ + μs * this.cosφʹ * (sinθ + μw * this.sinφ * cosθ)) *
       ΔP
     this.vy -=
       (1 / M) *
@@ -129,8 +128,7 @@ export class Mathavan {
 
     this.ωx +=
       -(5 / (2 * M * R)) *
-      (μw * this.sinφ +
-        μs * this.sinφʹ * (sinθ + μw * this.sinφ * cosθ)) *
+      (μw * this.sinφ + μs * this.sinφʹ * (sinθ + μw * this.sinφ * cosθ)) *
       ΔP
     this.ωy +=
       -(5 / (2 * M * R)) *
