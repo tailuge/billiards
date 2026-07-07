@@ -108,6 +108,11 @@ header h1 {
   box-shadow: inset 0 0 1px 1px #1e293b87;
 }
 
+/* Solid fill for balls on speedrun cards */
+.billiards-table .ball {
+  --ball-fill: var(--ball-stroke);
+}
+
 .play-rank-wrapper {
   display: flex;
   gap: 0.3rem;
