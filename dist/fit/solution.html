@@ -242,6 +242,12 @@
       const R = 0.03275
       const maxPower = 160 * R
 
+      const clock = (h) => ({
+        ox: 0.4 * Math.cos((h * Math.PI) / 6),
+        oy: -0.4 * Math.sin((h * Math.PI) / 6),
+      })
+      const OFFSETS = [12, 1, 3, 5, 7, 9, 11].map(clock)
+
       const progressBar = document.getElementById("progress-bar")
       const statProgress = document.getElementById("stat-progress")
       const statFound = document.getElementById("stat-found")
@@ -359,16 +365,13 @@
         for (const a of extraAngles) angles.push(a)
 
         const powerPercents = [0.3, 0.5, 0.85]
-        const offsetValues = [-0.4, 0.0, 0.4]
 
         const tasks = []
         for (const angle of angles) {
           for (const pPct of powerPercents) {
             const power = pPct * maxPower
-            for (const ox of offsetValues) {
-              for (const oy of offsetValues) {
-                tasks.push({ angle, power, ox, oy })
-              }
+            for (const { ox, oy } of OFFSETS) {
+              tasks.push({ angle, power, ox, oy })
             }
           }
         }
