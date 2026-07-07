@@ -1,0 +1,35 @@
+{
+  "short_name": "Billiards",
+  "name": "Multiplayer Billiards Lobby",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-maskable.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "./lobby.html",
+  "background_color": "#1a1a1a",
+  "display": "standalone",
+  "scope": "./",
+  "theme_color": "#1a1a1a",
+  "categories": [
+    "games",
+    "sports",
+    "entertainment"
+  ],
+  "description": "Free multiplayer lobby for Billiards. Find matches, challenge players, and play realistic pool online."
+}

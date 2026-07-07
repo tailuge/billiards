@@ -44,6 +44,10 @@
       name="twitter:description"
       content="Free multiplayer lobby for Billiards. Find matches and play realistic pool online."
     />
+    <meta
+      name="twitter:image"
+      content="https://tailuge.github.io/billiards/dist/images/billiards.png"
+    />
 
     <script type="application/ld+json">
       {
@@ -68,11 +72,14 @@
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Exo:wght@200;600&display=swap"
       rel="stylesheet"
     />
     <link rel="icon" type="image/png" href="assets/threecushion.png" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1a1a1a" />
     <style>
       html,
       body {
@@ -101,5 +108,22 @@
     <lobby-app></lobby-app>
 
     <script src="lobby.js" type="module"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js").then(
+            (registration) => {
+              console.log(
+                "ServiceWorker registration successful with scope: ",
+                registration.scope
+              )
+            },
+            (err) => {
+              console.log("ServiceWorker registration failed: ", err)
+            }
+          )
+        })
+      }
+    </script>
   </body>
 </html>
