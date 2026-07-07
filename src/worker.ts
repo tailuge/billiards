@@ -254,6 +254,7 @@ export function simulateSync(config: any): any {
       ballB: o.ballB?.id,
       speed: o.incidentSpeed,
       t: o.timestamp,
+      cushion: o.cushion,
     })),
   }
   return result
