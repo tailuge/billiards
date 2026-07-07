@@ -10,6 +10,9 @@ const isWorkerContext =
   typeof (globalThis as any).WorkerGlobalScope !== "undefined" &&
   self instanceof (globalThis as any).WorkerGlobalScope
 
+const _rollingBalls: Ball[] = []
+const _onTableBalls: Ball[] = []
+
 function checkpoint(label: string, detail?: Record<string, unknown>) {
   if (isWorkerContext) {
     const msg = { type: "CHECKPOINT", label, t: performance.now(), ...detail }
@@ -34,6 +37,36 @@ function ballToCushionDist(b: Ball): number {
     TableGeometry.tableX - Math.abs(b.pos.x),
     TableGeometry.tableY - Math.abs(b.pos.y)
   )
+}
+
+function anyCushionTooClose(
+  rollingBalls: Ball[],
+  clearance: number,
+  R: number
+): boolean {
+  for (let i = 0; i < rollingBalls.length; i++) {
+    if (ballToCushionDist(rollingBalls[i]) <= clearance - R) {
+      return true
+    }
+  }
+  return false
+}
+
+function anyBallTooClose(
+  rollingBalls: Ball[],
+  allBalls: Ball[],
+  clearance: number
+): boolean {
+  for (let i = 0; i < rollingBalls.length; i++) {
+    const bA = rollingBalls[i]
+    for (let j = 0; j < allBalls.length; j++) {
+      const bB = allBalls[j]
+      if (bA !== bB && bA.pos.distanceTo(bB.pos) <= clearance) {
+        return true
+      }
+    }
+  }
+  return false
 }
 
 function minTimeToBallCollision(
@@ -76,40 +109,32 @@ export function calcMinWarpTime(
 }
 
 function getFastWarpTime(table: Table, R: number, clearance: number): number {
+  _onTableBalls.length = 0
+  _rollingBalls.length = 0
+
   for (let i = 0; i < table.balls.length; i++) {
     const b = table.balls[i]
-    if (b.onTable() && b.state === State.Sliding) return 0
-  }
+    if (!b.onTable()) continue
 
-  let minTime = Infinity
+    if (b.state === State.Sliding) return 0
 
-  for (let i = 0; i < table.balls.length; i++) {
-    const bA = table.balls[i]
-    if (!bA.onTable() || bA.state !== State.Rolling) continue
+    _onTableBalls.push(b)
 
-    const vA = bA.vel.length()
-    if (vA < R / 32) return 0
-
-    const distToCushion = ballToCushionDist(bA)
-    if (distToCushion <= clearance - R) return 0
-
-    const tbc = (distToCushion - R) / vA
-    if (tbc < minTime) minTime = tbc
-
-    for (let j = 0; j < table.balls.length; j++) {
-      if (i === j) continue
-      const bB = table.balls[j]
-      if (!bB.onTable()) continue
-
-      const dist = bA.pos.distanceTo(bB.pos)
-      if (dist <= clearance) return 0
-
-      const tbb = minTimeToBallCollision(bA, vA, bB, R)
-      if (tbb !== undefined && tbb < minTime) minTime = tbb
+    if (b.state === State.Rolling) {
+      if (b.vel.length() < R / 32) return 0
+      _rollingBalls.push(b)
     }
   }
 
-  return minTime === Infinity ? 0 : minTime
+  if (anyCushionTooClose(_rollingBalls, clearance, R)) {
+    return 0
+  }
+
+  if (anyBallTooClose(_rollingBalls, _onTableBalls, clearance)) {
+    return 0
+  }
+
+  return calcMinWarpTime(_rollingBalls, _onTableBalls, R)
 }
 
 function configureSimulation(
