@@ -76,7 +76,10 @@ export function stronge(
   const Δv_t = (v_tf - v_t0) / β_t
 
   // 5. Apply linear changes
-  const v_new = v_new_v.copy(v).addScaledVector(n̂, Δv_n).addScaledVector(t̂, Δv_t)
+  const v_new = v_new_v
+    .copy(v)
+    .addScaledVector(n̂, Δv_n)
+    .addScaledVector(t̂, Δv_t)
   v_new.z = 0 // project back onto table plane (rvw[1][2] = 0.0 in Python)
 
   // 6. Apply angular change: Δω = (m * R / I) * (-n̂ × Δv_t t̂)

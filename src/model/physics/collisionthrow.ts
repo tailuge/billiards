@@ -37,12 +37,7 @@ export class CollisionThrow {
     const vPoint = vPoint_v
       .copy(a.vel)
       .sub(b.vel)
-      .add(
-        temp_v
-          .copy(ab)
-          .multiplyScalar(-R)
-          .cross(a.rvel)
-      )
+      .add(temp_v.copy(ab).multiplyScalar(-R).cross(a.rvel))
       .sub(temp_v.copy(ab).multiplyScalar(R).cross(b.rvel))
 
     const vRelNormalMag = ab.dot(vPoint)
@@ -69,7 +64,9 @@ export class CollisionThrow {
     }
 
     // Impulse vectors
-    const impulseNormal = impulseNormal_v.copy(ab).multiplyScalar(this.normalImpulse)
+    const impulseNormal = impulseNormal_v
+      .copy(ab)
+      .multiplyScalar(this.normalImpulse)
 
     // Apply impulses to linear velocities (constrained to XY plane)
     a.vel
