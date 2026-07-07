@@ -200,6 +200,11 @@ body > h2 {
   border-radius: 4px;
 }
 
+/* Solid fill for balls on exam pages */
+.billiards-table .ball {
+  --ball-fill: var(--ball-stroke);
+}
+
 /* SVG Diagram Style Overrides */
 .manual-line {
   opacity: 0.5;
