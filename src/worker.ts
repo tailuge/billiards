@@ -105,42 +105,40 @@ export function calcMinWarpTime(
   return minTime === Infinity ? 0 : minTime
 }
 
+const _rollingBalls: Ball[] = []
+const _onTableBalls: Ball[] = []
+
 function getFastWarpTime(table: Table, R: number, clearance: number): number {
-  const balls: Ball[] = []
+  _rollingBalls.length = 0
+  _onTableBalls.length = 0
+
   for (let i = 0; i < table.balls.length; i++) {
-    if (table.balls[i].onTable()) {
-      balls.push(table.balls[i])
+    const b = table.balls[i]
+    if (b.onTable()) {
+      _onTableBalls.push(b)
+      if (b.state === State.Sliding) {
+        return 0
+      }
+      if (b.state === State.Rolling) {
+        if (b.vel.length() < R / 32) {
+          return 0
+        }
+        _rollingBalls.push(b)
+      }
     }
   }
 
-  for (let i = 0; i < balls.length; i++) {
-    if (balls[i].state === State.Sliding) {
-      return 0
-    }
-  }
+  if (_rollingBalls.length === 0) return 0
 
-  const rollingBalls: Ball[] = []
-  for (let i = 0; i < balls.length; i++) {
-    if (balls[i].state === State.Rolling) {
-      rollingBalls.push(balls[i])
-    }
-  }
-
-  for (let i = 0; i < rollingBalls.length; i++) {
-    if (rollingBalls[i].vel.length() < R / 32) {
-      return 0
-    }
-  }
-
-  if (anyCushionTooClose(rollingBalls, clearance, R)) {
+  if (anyCushionTooClose(_rollingBalls, clearance, R)) {
     return 0
   }
 
-  if (anyBallTooClose(rollingBalls, balls, clearance)) {
+  if (anyBallTooClose(_rollingBalls, _onTableBalls, clearance)) {
     return 0
   }
 
-  return calcMinWarpTime(rollingBalls, balls, R)
+  return calcMinWarpTime(_rollingBalls, _onTableBalls, R)
 }
 
 function configureSimulation(
@@ -190,7 +188,7 @@ export function simulateSync(config: any): any {
 
   Ball.id = 0
   const ballInstances = balls.map((b: any) => {
-    const ball = new Ball(new Vector3(b.pos.x, b.pos.y, 0), 0xffffff, b.id)
+    const ball = new Ball({ x: b.pos.x, y: b.pos.y, z: 0 }, 0xffffff, b.id)
     return ball
   })
 
@@ -276,6 +274,6 @@ if (isWorkerContext) {
       })
     }
   }
-} else {
+} else if (typeof self !== "undefined") {
   ;(self as any).simulateSync = simulateSync
 }

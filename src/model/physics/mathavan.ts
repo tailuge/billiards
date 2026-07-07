@@ -1,4 +1,4 @@
-import { atan2, cos, sin, sqrt } from "../../utils/utils"
+import { cos, sin, sqrt } from "../../utils/utils"
 import { cosθ, sinθ } from "./constants"
 
 export class Mathavan {
@@ -17,9 +17,11 @@ export class Mathavan {
 
   // slip speed and angles at I and C
   s: number
-  φ: number
   sʹ: number
-  φʹ: number
+  cos_phi: number
+  sin_phi: number
+  cos_phi_prime: number
+  sin_phi_prime: number
 
   i: number = 0
   N = 100
@@ -52,15 +54,22 @@ export class Mathavan {
 
     // Update slip speeds and angles at the cushion (I)
     this.s = sqrt(v_xI * v_xI + v_yI * v_yI)
-    this.φ = atan2(v_yI, v_xI)
-    if (this.φ < 0) {
-      this.φ += 2 * Math.PI
+    if (this.s > 1e-9) {
+      this.cos_phi = v_xI / this.s
+      this.sin_phi = v_yI / this.s
+    } else {
+      this.cos_phi = 0
+      this.sin_phi = 0
     }
+
     // Update slip speeds and angles at the table (C)
     this.sʹ = sqrt(v_xC * v_xC + v_yC * v_yC)
-    this.φʹ = atan2(v_yC, v_xC)
-    if (this.φʹ < 0) {
-      this.φʹ += 2 * Math.PI
+    if (this.sʹ > 1e-9) {
+      this.cos_phi_prime = v_xC / this.sʹ
+      this.sin_phi_prime = v_yC / this.sʹ
+    } else {
+      this.cos_phi_prime = 0
+      this.sin_phi_prime = 0
     }
   }
 
@@ -93,39 +102,30 @@ export class Mathavan {
   private updateVelocity(ΔP: number): void {
     const μs = this.μs
     const μw = this.μw
-    const M = this.M
+    const invM = 1 / this.M
+
+    const common = sinθ + μw * this.sin_phi * cosθ
 
     // Update centroid velocity components
     this.vx -=
-      (1 / M) *
-      (μw * cos(this.φ) +
-        μs * cos(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
-      ΔP
+      invM * (μw * this.cos_phi + μs * this.cos_phi_prime * common) * ΔP
     this.vy -=
-      (1 / M) *
-      (cosθ -
-        μw * sinθ * sin(this.φ) +
-        μs * sin(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
+      invM *
+      (cosθ - μw * sinθ * this.sin_phi + μs * this.sin_phi_prime * common) *
       ΔP
   }
 
   private updateAngularVelocity(ΔP: number): void {
     const μs = this.μs
     const μw = this.μw
-    const M = this.M
-    const R = this.R
+    const inv2MR5 = 5 / (2 * this.M * this.R)
 
-    this.ωx +=
-      -(5 / (2 * M * R)) *
-      (μw * sin(this.φ) +
-        μs * sin(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
-      ΔP
+    const common = sinθ + μw * this.sin_phi * cosθ
+
+    this.ωx += -inv2MR5 * (μw * this.sin_phi + μs * this.sin_phi_prime * common) * ΔP
     this.ωy +=
-      -(5 / (2 * M * R)) *
-      (μw * cos(this.φ) * sinθ -
-        μs * cos(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
-      ΔP
-    this.ωz += (5 / (2 * M * R)) * (μw * cos(this.φ) * cosθ) * ΔP
+      -inv2MR5 * (μw * this.cos_phi * sinθ - μs * this.cos_phi_prime * common) * ΔP
+    this.ωz += inv2MR5 * (μw * this.cos_phi * cosθ) * ΔP
   }
 
   private updateWorkDone(ΔP: number, vyPrev: number): void {

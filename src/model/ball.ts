@@ -35,7 +35,7 @@ export class Ball {
   static readonly transition = 0.05
 
   constructor(pos, color?, label?: number, appearance?: BallAppearance) {
-    this.pos = pos.clone()
+    this.pos = pos instanceof Vector3 ? pos.clone() : new Vector3(pos.x, pos.y, pos.z ?? 0)
     this.label = label
     this.appearance = appearance
     if (typeof document !== "undefined") {
@@ -50,6 +50,7 @@ export class Ball {
   readonly velBefore: Vector3 = new Vector3()
 
   update(t) {
+    if (this.state === State.Stationary) return
     if (this.state == State.Falling) {
       this.updatePosition(t)
       this.pocket?.updateFall(this, t)

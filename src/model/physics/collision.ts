@@ -19,6 +19,8 @@ export class Collision {
 
   static readonly p = new Vector3()
   static readonly v = new Vector3()
+  static readonly contactA = new Vector3()
+  static readonly contactB = new Vector3()
 
   static positionsAtContact(a: Ball, b: Ball) {
     this.p.subVectors(a.pos, b.pos)
@@ -29,8 +31,8 @@ export class Collision {
 
     if (aCoeff === 0) {
       return {
-        a: a.pos.clone(),
-        b: b.pos.clone(),
+        a: this.contactA.copy(a.pos),
+        b: this.contactB.copy(b.pos),
       }
     }
 
@@ -43,8 +45,8 @@ export class Collision {
       discriminant < 0 ? 0 : (-bCoeff - Math.sqrt(discriminant)) / (2 * aCoeff)
 
     return {
-      a: new Vector3().copy(a.pos).addScaledVector(a.vel, t),
-      b: new Vector3().copy(b.pos).addScaledVector(b.vel, t),
+      a: this.contactA.copy(a.pos).addScaledVector(a.vel, t),
+      b: this.contactB.copy(b.pos).addScaledVector(b.vel, t),
     }
   }
 

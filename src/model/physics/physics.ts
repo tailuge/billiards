@@ -1,7 +1,20 @@
 import { Vector3 } from "three"
 import { sin, cos, hypot } from "../../utils/utils"
 import { norm, upCross, up } from "../../utils/three-utils"
-import { muS, muC, g, m, Mz, Mxy, R, I, e, ee, μs, μw } from "./constants"
+import {
+  muC,
+  m,
+  R,
+  I,
+  e,
+  ee,
+  μs,
+  μw,
+  muS_g,
+  sliding_w_coeff,
+  spindown_coeff,
+  rolling_w_coeff_base,
+} from "./constants"
 import { Mathavan } from "./mathavan"
 
 export function surfaceVelocity(v, w) {
@@ -17,9 +30,9 @@ const delta = { v: new Vector3(), w: new Vector3() }
 
 export function sliding(v, w) {
   const va = surfaceVelocity(v, w)
-  delta.v.copy(norm(va).multiplyScalar(-muS * g))
-  delta.w.copy(norm(upCross(va)).multiplyScalar(((5 / 2) * muS * g) / R))
-  delta.w.setZ(-(5 / 2) * (Mz / (m * R * R)) * Math.sign(w.z))
+  delta.v.copy(norm(va).multiplyScalar(-muS_g))
+  delta.w.copy(norm(upCross(va)).multiplyScalar(sliding_w_coeff))
+  delta.w.setZ(-spindown_coeff * Math.sign(w.z))
   return delta
 }
 
@@ -32,19 +45,15 @@ export function rollingFull(w: Vector3, v: Vector3, t: number) {
   if (mag < eps) {
     delta.v.set(-v.x / t, -v.y / t, 0)
     const spindownFactor = zmag > 24 ? 12 : 1
-    delta.w.set(
-      -w.x,
-      -w.y,
-      -(5 / 2) * (Mz / (m * R * R)) * spindownFactor * zsign
-    )
+    delta.w.set(-w.x, -w.y, -spindown_coeff * spindownFactor * zsign)
     return delta
   }
 
-  const kw = ((5 / 7) * Mxy) / (m * R * R) / mag
+  const kw = rolling_w_coeff_base / mag
   const dwx = -kw * w.x
   const dwy = -kw * w.y
 
-  delta.w.set(dwx, dwy, -(5 / 2) * (Mz / (m * R * R)) * zsign)
+  delta.w.set(dwx, dwy, -spindown_coeff * zsign)
   delta.v.set(R * (w.y + dwy) - v.x, -R * (w.x + dwx) - v.y, 0)
   return delta
 }

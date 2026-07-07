@@ -28,6 +28,11 @@ export let Mz: number
 export let Mxy: number
 export let I: number
 
+export let muS_g: number
+export let sliding_w_coeff: number
+export let spindown_coeff: number
+export let rolling_w_coeff_base: number
+
 export let e = 0.86 // Han cushion coefficient of restitution - unused
 export let muC = 0.85 // Han cushion friction- unused
 
@@ -45,6 +50,11 @@ function refresh() {
   Mz = ((mu * m * g * 2) / 3) * rho
   Mxy = (7 / (5 * Math.sqrt(2))) * R * mu * m * g
   I = (2 / 5) * m * R * R
+
+  muS_g = muS * g
+  sliding_w_coeff = (2.5 * muS_g) / R
+  spindown_coeff = 2.5 * (Mz / (m * R * R))
+  rolling_w_coeff_base = (5 / 7) * (Mxy / (m * R * R))
 }
 
 export function setR(val: number) {
@@ -65,6 +75,7 @@ export function setrho(val: number) {
 }
 export function setmuS(val: number) {
   muS = val
+  refresh()
 }
 export function sete(val: number) {
   e = val
