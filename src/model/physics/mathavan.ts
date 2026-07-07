@@ -21,6 +21,12 @@ export class Mathavan {
   sʹ: number
   φʹ: number
 
+  // cached trig values for φ and φʹ (hot path)
+  sinφ: number
+  cosφ: number
+  sinφʹ: number
+  cosφʹ: number
+
   i: number = 0
   N = 100
 
@@ -62,6 +68,12 @@ export class Mathavan {
     if (this.φʹ < 0) {
       this.φʹ += 2 * Math.PI
     }
+
+    // Cache trig values for hot path
+    this.sinφ = sin(this.φ)
+    this.cosφ = cos(this.φ)
+    this.sinφʹ = sin(this.φʹ)
+    this.cosφʹ = cos(this.φʹ)
   }
 
   public compressionPhase(): void {
@@ -98,14 +110,14 @@ export class Mathavan {
     // Update centroid velocity components
     this.vx -=
       (1 / M) *
-      (μw * cos(this.φ) +
-        μs * cos(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
+      (μw * this.cosφ +
+        μs * this.cosφʹ * (sinθ + μw * this.sinφ * cosθ)) *
       ΔP
     this.vy -=
       (1 / M) *
       (cosθ -
-        μw * sinθ * sin(this.φ) +
-        μs * sin(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
+        μw * sinθ * this.sinφ +
+        μs * this.sinφʹ * (sinθ + μw * this.sinφ * cosθ)) *
       ΔP
   }
 
@@ -117,15 +129,15 @@ export class Mathavan {
 
     this.ωx +=
       -(5 / (2 * M * R)) *
-      (μw * sin(this.φ) +
-        μs * sin(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
+      (μw * this.sinφ +
+        μs * this.sinφʹ * (sinθ + μw * this.sinφ * cosθ)) *
       ΔP
     this.ωy +=
       -(5 / (2 * M * R)) *
-      (μw * cos(this.φ) * sinθ -
-        μs * cos(this.φʹ) * (sinθ + μw * sin(this.φ) * cosθ)) *
+      (μw * this.cosφ * sinθ -
+        μs * this.cosφʹ * (sinθ + μw * this.sinφ * cosθ)) *
       ΔP
-    this.ωz += (5 / (2 * M * R)) * (μw * cos(this.φ) * cosθ) * ΔP
+    this.ωz += (5 / (2 * M * R)) * (μw * this.cosφ * cosθ) * ΔP
   }
 
   private updateWorkDone(ΔP: number, vyPrev: number): void {
