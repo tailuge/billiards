@@ -127,14 +127,16 @@ export class Table {
       return true
     }
 
-    const incidentSpeed = Cushion.bounceAny(
+    const result = Cushion.bounceAny(
       a,
       t,
       TableGeometry.hasPockets,
       this.cushionModel
     )
-    if (incidentSpeed) {
-      this.outcome.push(Outcome.cushion(a, incidentSpeed, this.time))
+    if (result && result.incidentSpeed) {
+      this.outcome.push(
+        Outcome.cushion(a, result.incidentSpeed, this.time, result.cushion)
+      )
       return false
     }
 

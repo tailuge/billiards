@@ -16,7 +16,7 @@ export class Cushion {
     t: number,
     hasPockets: boolean = true,
     cushionModel = bounceHanBlend
-  ): number | undefined {
+  ): { incidentSpeed: number; cushion: string } | undefined {
     const futurePosition = ball.futurePosition(t)
 
     if (!hasPockets) {
@@ -27,12 +27,22 @@ export class Cushion {
     if (Cushion.willBounceLong(futurePosition, hasPockets)) {
       const dir =
         futurePosition.y > TableGeometry.tableY ? -Math.PI / 2 : Math.PI / 2
-      return Cushion.bounceIn(dir, ball, cushionModel)
+      const cushion =
+        futurePosition.y > TableGeometry.tableY ? "L" : "l"
+      return {
+        incidentSpeed: Cushion.bounceIn(dir, ball, cushionModel),
+        cushion,
+      }
     }
 
     if (Cushion.willBounceShort(futurePosition, hasPockets)) {
       const dir = futurePosition.x > TableGeometry.tableX ? 0 : Math.PI
-      return Cushion.bounceIn(dir, ball, cushionModel)
+      const cushion =
+        futurePosition.x > TableGeometry.tableX ? "S" : "s"
+      return {
+        incidentSpeed: Cushion.bounceIn(dir, ball, cushionModel),
+        cushion,
+      }
     }
 
     return undefined
@@ -41,18 +51,24 @@ export class Cushion {
   private static bounceCornerNoPockets(
     ball: Ball,
     cushionModel
-  ): number | undefined {
+  ): { incidentSpeed: number; cushion: string } | undefined {
     const overX = Math.abs(ball.futurePos.x) - TableGeometry.tableX
     const overY = Math.abs(ball.futurePos.y) - TableGeometry.tableY
     if (overX <= 0 || overY <= 0) return undefined
 
     let dir: number
+    let cushion: string
     if (overX >= overY) {
       dir = ball.futurePos.x > 0 ? 0 : Math.PI
+      cushion = ball.futurePos.x > 0 ? "S" : "s"
     } else {
       dir = ball.futurePos.y > 0 ? -Math.PI / 2 : Math.PI / 2
+      cushion = ball.futurePos.y > 0 ? "L" : "l"
     }
-    return Cushion.bounceIn(dir, ball, cushionModel)
+    return {
+      incidentSpeed: Cushion.bounceIn(dir, ball, cushionModel),
+      cushion,
+    }
   }
 
   static willBounceShort(futurePosition, hasPockets) {

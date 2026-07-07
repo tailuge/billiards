@@ -15,32 +15,41 @@ export class Outcome {
   ballA: Ball | null = null
   ballB: Ball | null = null
   incidentSpeed: number
+  cushion?: string
 
   constructor(
     type: OutcomeType,
     ballA: Ball,
     ballB: Ball,
     incidentSpeed: number,
-    timestamp: number
+    timestamp: number,
+    cushion?: string
   ) {
     this.type = type
     this.ballA = ballA
     this.ballB = ballB
     this.incidentSpeed = incidentSpeed
     this.timestamp = timestamp
+    this.cushion = cushion
   }
 
   static pot(ballA: Ball, incidentSpeed: number, timestamp: number) {
     return new Outcome(OutcomeType.Pot, ballA, ballA, incidentSpeed, timestamp)
   }
 
-  static cushion(ballA: Ball, incidentSpeed: number, timestamp: number) {
+  static cushion(
+    ballA: Ball,
+    incidentSpeed: number,
+    timestamp: number,
+    cushion?: string
+  ) {
     return new Outcome(
       OutcomeType.Cushion,
       ballA,
       ballA,
       incidentSpeed,
-      timestamp
+      timestamp,
+      cushion
     )
   }
 
@@ -173,12 +182,16 @@ export class Outcome {
   }
 
   serialise() {
-    return {
+    const s: any = {
       type: this.type,
       timestamp: this.timestamp,
       incidentSpeed: this.incidentSpeed,
       ballA: this.ballA ? { id: this.ballA.id } : null,
       ballB: this.ballB ? { id: this.ballB.id } : null,
     }
+    if (this.cushion) {
+      s.cushion = this.cushion
+    }
+    return s
   }
 }
