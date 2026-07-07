@@ -2,6 +2,7 @@
   fill: var(--ball-fill, none);
   stroke: var(--ball-stroke, #000);
   stroke-width: 0.002;
+  filter: drop-shadow(0px 0.002px 0.004px rgba(0, 0, 0, 0.9));
 }
 
 .trajectory-line {
