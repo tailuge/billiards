@@ -54,6 +54,16 @@
 
       .pattern-col {
         font-family: monospace;
+        font-size: 1rem;
+      }
+
+      .ball-1 {
+        color: #ffd700;
+        text-shadow: 0 0 1px #000;
+      }
+
+      .ball-2 {
+        color: #f00;
       }
 
       .empty-msg {
@@ -494,13 +504,14 @@
             const patternStr = data.outcomes
               .slice(0, patternEnd)
               .filter((o) => o.ballA === 0 || o.ballB === 0)
-              .map((o) =>
-                o.type === "Cushion"
-                  ? o.cushion ?? "⌻"
-                  : o.type === "Collision"
-                    ? "◉"
-                    : o.type.toLowerCase()
-              )
+              .map((o) => {
+                if (o.type === "Cushion") return o.cushion ?? "⌻"
+                if (o.type === "Collision") {
+                  const otherId = o.ballA === 0 ? o.ballB : o.ballA
+                  return `◉${otherId}`
+                }
+                return o.type.toLowerCase()
+              })
               .join("")
 
             let entry = patterns.get(patternStr)
@@ -520,6 +531,13 @@
 
         let currentActiveLink = null
         let diagramLoading = false
+
+        function renderPattern(pattern) {
+          return pattern.replace(
+            /◉(\d+)/g,
+            (_, id) => `<span class="ball-${id}">◉</span>`
+          )
+        }
 
         async function showDiagram(task) {
           if (diagramLoading) return
@@ -578,7 +596,7 @@
                 })
                 .join("")
               tr.innerHTML = `
-                            <td class="pattern-col">${pattern}</td>
+                            <td class="pattern-col">${renderPattern(pattern)}</td>
                             <td><span class="sol-links">${linksHtml}</span></td>
                             <td class="count-col">${entry.count}</td>
                         `
