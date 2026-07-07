@@ -105,30 +105,25 @@ export function calcMinWarpTime(
   return minTime === Infinity ? 0 : minTime
 }
 
+const balls: Ball[] = []
+const rollingBalls: Ball[] = []
+
 function getFastWarpTime(table: Table, R: number, clearance: number): number {
-  const balls: Ball[] = []
+  balls.length = 0
+  rollingBalls.length = 0
   for (let i = 0; i < table.balls.length; i++) {
-    if (table.balls[i].onTable()) {
-      balls.push(table.balls[i])
-    }
-  }
-
-  for (let i = 0; i < balls.length; i++) {
-    if (balls[i].state === State.Sliding) {
-      return 0
-    }
-  }
-
-  const rollingBalls: Ball[] = []
-  for (let i = 0; i < balls.length; i++) {
-    if (balls[i].state === State.Rolling) {
-      rollingBalls.push(balls[i])
-    }
-  }
-
-  for (let i = 0; i < rollingBalls.length; i++) {
-    if (rollingBalls[i].vel.length() < R / 32) {
-      return 0
+    const ball = table.balls[i]
+    if (ball.onTable()) {
+      if (ball.state === State.Sliding) {
+        return 0
+      }
+      if (ball.state === State.Rolling) {
+        if (ball.vel.length() < R / 32) {
+          return 0
+        }
+        rollingBalls.push(ball)
+      }
+      balls.push(ball)
     }
   }
 
