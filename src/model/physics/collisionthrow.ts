@@ -4,6 +4,15 @@ import { Collision } from "./collision"
 import { I, m, R } from "./constants"
 import { exp } from "../../utils/utils"
 
+const ab_v = new Vector3()
+const abTangent_v = new Vector3()
+const vPoint_v = new Vector3()
+const vRelTangentialVec_v = new Vector3()
+const impulseTangential_v = new Vector3()
+const impulseNormal_v = new Vector3()
+const angularImpulse_v = new Vector3()
+const temp_v = new Vector3()
+
 /**
  * Based on
  * https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf
@@ -21,23 +30,25 @@ export class CollisionThrow {
     const contact = Collision.positionsAtContact(a, b)
     a.ballmesh?.trace.forceTrace(contact.a)
     b.ballmesh?.trace.forceTrace(contact.b)
-    const ab = contact.b.sub(contact.a).normalize()
-    const abTangent = new Vector3(-ab.y, ab.x, 0)
+    const ab = ab_v.subVectors(contact.b, contact.a).normalize()
+    const abTangent = abTangent_v.set(-ab.y, ab.x, 0)
 
     const e = 0.925
-    const vPoint = a.vel
-      .clone()
+    const vPoint = vPoint_v
+      .copy(a.vel)
       .sub(b.vel)
       .add(
-        ab
-          .clone()
+        temp_v
+          .copy(ab)
           .multiplyScalar(-R)
           .cross(a.rvel)
-          .sub(ab.clone().multiplyScalar(R).cross(b.rvel))
       )
+      .sub(temp_v.copy(ab).multiplyScalar(R).cross(b.rvel))
 
     const vRelNormalMag = ab.dot(vPoint)
-    const vRelTangentialVec = vPoint.clone().addScaledVector(ab, -vRelNormalMag)
+    const vRelTangentialVec = vRelTangentialVec_v
+      .copy(vPoint)
+      .addScaledVector(ab, -vRelNormalMag)
     const vRelMag = vRelTangentialVec.length()
 
     const μ = this.dynamicFriction(vRelMag)
@@ -46,21 +57,19 @@ export class CollisionThrow {
     this.normalImpulse = (-(1 + e) * vRelNormalMag) / (2 / m)
 
     // Tangential impulse (frictional constraint)
-    let impulseTangential = new Vector3(0, 0, 0)
+    const impulseTangential = impulseTangential_v.set(0, 0, 0)
     if (vRelMag > 1e-8) {
       const maxJt_friction = μ * Math.abs(this.normalImpulse)
       const maxJt_stick = (m / 7) * vRelMag
       const jtMag = Math.min(maxJt_friction, maxJt_stick)
-      impulseTangential = vRelTangentialVec
-        .clone()
-        .multiplyScalar(-jtMag / vRelMag)
+      impulseTangential.copy(vRelTangentialVec).multiplyScalar(-jtMag / vRelMag)
       this.tangentialImpulse = impulseTangential.dot(abTangent)
     } else {
       this.tangentialImpulse = 0
     }
 
     // Impulse vectors
-    const impulseNormal = ab.clone().multiplyScalar(this.normalImpulse)
+    const impulseNormal = impulseNormal_v.copy(ab).multiplyScalar(this.normalImpulse)
 
     // Apply impulses to linear velocities (constrained to XY plane)
     a.vel
@@ -79,7 +88,10 @@ export class CollisionThrow {
     // For ball B, the impulse is -Jt and it acts at rB = -R * ab
     // Torque for B: tauB = rB x (-Jt) = (-R * ab) x (-Jt) = (R * ab) x Jt
     // Thus both balls receive the SAME angular impulse.
-    const angularImpulse = ab.clone().multiplyScalar(R).cross(impulseTangential)
+    const angularImpulse = angularImpulse_v
+      .copy(ab)
+      .multiplyScalar(R)
+      .cross(impulseTangential)
 
     a.rvel.addScaledVector(angularImpulse, 1 / I)
     b.rvel.addScaledVector(angularImpulse, 1 / I)

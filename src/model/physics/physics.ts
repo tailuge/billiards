@@ -55,9 +55,12 @@ export function forceRoll(v, w) {
   w.setZ(wz)
 }
 
+const vr_v = new Vector3()
+const wr_v = new Vector3()
+
 export function rotateApplyUnrotate(theta, v, w, model) {
-  const vr = v.clone().applyAxisAngle(up, theta)
-  const wr = w.clone().applyAxisAngle(up, theta)
+  const vr = vr_v.copy(v).applyAxisAngle(up, theta)
+  const wr = wr_v.copy(w).applyAxisAngle(up, theta)
 
   const delta = model(vr, wr)
 

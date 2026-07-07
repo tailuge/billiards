@@ -22,6 +22,17 @@ export type StrongeParams = {
   omega_ratio: number
 }
 
+const R_n̂_v = new Vector3()
+const ω_cross_R_n̂_v = new Vector3()
+const V_c_v = new Vector3()
+const V_c_tangential_v = new Vector3()
+const t̂_v = new Vector3()
+const v_new_v = new Vector3()
+const negative_n̂_v = new Vector3()
+const Δv_t_t̂_v = new Vector3()
+const torque_dir_v = new Vector3()
+const ω_new_v = new Vector3()
+
 /**
  * Resolve a ball-cushion collision and return velocity deltas, not final state.
  *
@@ -37,9 +48,9 @@ export function stronge(
   const { R: radius, m: mass, I: inertia } = params
 
   // 1. Contact velocity at cushion contact point: V_c = v - (ω × R n̂)
-  const R_n̂ = n̂.clone().multiplyScalar(radius)
-  const ω_cross_R_n̂ = new Vector3().crossVectors(ω, R_n̂)
-  const V_c = v.clone().sub(ω_cross_R_n̂)
+  const R_n̂ = R_n̂_v.copy(n̂).multiplyScalar(radius)
+  const ω_cross_R_n̂ = ω_cross_R_n̂_v.crossVectors(ω, R_n̂)
+  const V_c = V_c_v.copy(v).sub(ω_cross_R_n̂)
 
   // 2. Decompose into normal/tangent scalars.
   // TypeScript chooses t̂ in the direction of the tangential contact velocity,
@@ -47,9 +58,11 @@ export function stronge(
   // a non-positive v_t0 to the scalar solver. The sign conversion happens around
   // the resolve() call below.
   const v_n0 = n̂.dot(V_c) // < 0 (ball approaching cushion)
-  const V_c_tangential = V_c.clone().addScaledVector(n̂, -v_n0) // V_c - (V_c·n̂)n̂
+  const V_c_tangential = V_c_tangential_v.copy(V_c).addScaledVector(n̂, -v_n0) // V_c - (V_c·n̂)n̂
   const v_t_mag = V_c_tangential.length()
-  const t̂ = v_t_mag > 0 ? V_c_tangential.normalize() : new Vector3()
+  const t̂ = t̂_v.copy(V_c_tangential)
+  if (v_t_mag > 0) t̂.normalize()
+  else t̂.set(0, 0, 0)
   const v_t0 = v_t_mag // >= 0; solver expects v_t0/v_n0 ratio with v_n0 < 0
 
   // 3. Scalar solver expects v_t0 <= 0 (same sign convention as v_n0 < 0).
@@ -63,20 +76,20 @@ export function stronge(
   const Δv_t = (v_tf - v_t0) / β_t
 
   // 5. Apply linear changes
-  const v_new = v.clone().addScaledVector(n̂, Δv_n).addScaledVector(t̂, Δv_t)
+  const v_new = v_new_v.copy(v).addScaledVector(n̂, Δv_n).addScaledVector(t̂, Δv_t)
   v_new.z = 0 // project back onto table plane (rvw[1][2] = 0.0 in Python)
 
   // 6. Apply angular change: Δω = (m * R / I) * (-n̂ × Δv_t t̂)
-  const negative_n̂ = n̂.clone().negate()
-  const Δv_t_t̂ = t̂.clone().multiplyScalar(Δv_t)
-  const torque_dir = new Vector3().crossVectors(negative_n̂, Δv_t_t̂)
+  const negative_n̂ = negative_n̂_v.copy(n̂).negate()
+  const Δv_t_t̂ = Δv_t_t̂_v.copy(t̂).multiplyScalar(Δv_t)
+  const torque_dir = torque_dir_v.crossVectors(negative_n̂, Δv_t_t̂)
 
   const inertiaFactor = (mass * radius) / inertia
-  const ω_new = ω.clone().addScaledVector(torque_dir, inertiaFactor)
+  const ω_new = ω_new_v.copy(ω).addScaledVector(torque_dir, inertiaFactor)
 
   return {
-    v: v_new.sub(v),
-    w: ω_new.sub(ω),
+    v: new Vector3().copy(v_new).sub(v),
+    w: new Vector3().copy(ω_new).sub(ω),
   }
 }
 
