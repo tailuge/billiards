@@ -152,20 +152,14 @@
         }
 
         .diagram-col {
-          height: 121vw;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
           min-width: unset;
           flex: none;
           width: 100%;
         }
 
         .diagram-wrapper {
-          width: 120vw;
-          transform: rotate(90deg);
-          flex-shrink: 0;
+          width: 90%;
+          margin: 0 auto;
         }
       }
     </style>
@@ -629,11 +623,12 @@
           )
 
           const ballFirst = sortedPatterns.filter(([p]) => p.startsWith("◉"))
-          const cushionFirst = sortedPatterns.filter(([p]) =>
-            p.startsWith("L") ||
-            p.startsWith("l") ||
-            p.startsWith("S") ||
-            p.startsWith("s")
+          const cushionFirst = sortedPatterns.filter(
+            ([p]) =>
+              p.startsWith("L") ||
+              p.startsWith("l") ||
+              p.startsWith("S") ||
+              p.startsWith("s")
           )
 
           renderTable(resultsBodyBall, ballFirst)
