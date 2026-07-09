@@ -46,7 +46,7 @@
     "@types/chai": "5.2.3",
     "@types/jest": "30.0.0",
     "@types/node": "26.1.1",
-    "@types/three": "0.185.0",
+    "@types/three": "0.185.1",
     "canvas": "3.2.3",
     "chai": "6.2.2",
     "concurrently": "10.0.3",
