@@ -36,7 +36,7 @@
     "@tailuge/messaging": "1.28.0",
     "interactjs": "1.10.27",
     "jsoncrush": "^1.1.8",
-    "three": "0.185.1"
+    "three": "0.184.0"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
