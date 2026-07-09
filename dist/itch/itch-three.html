@@ -1,174 +1,400 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Three Cushion Billiards - Free Online 3-Cushion Carom Game</title>
-<link rel="icon" type="image/png" href="https://billiards.tailuge.workers.dev/favicon.png" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta
-  name="description"
-  content="Play free online three-cushion billiards with realistic physics. Race to 7, 15, or 30 points. Open source browser game."
-/>
-<meta
-  name="keywords"
-  content="three-cushion, 3-cushion, carom, billiards, free, open source, browser game, driebanden, 3쿠션, 당구, 3クッション, ビリヤード, 3 bant bilardo, Üç bant, 3 băng, Bida 3 băng"
-/>
-<meta name="robots" content="index,follow" />
-<link rel="canonical" href="https://billiards.tailuge.workers.dev/itch/itch-three.html" />
-<meta
-  property="og:title"
-  content="Three Cushion Billiards - Free Online 3-Cushion Carom Game"
-/>
-<meta
-  property="og:description"
-  content="Play free online three-cushion billiards with realistic physics. Race to 7, 15, or 30 points."
-/>
-<meta property="og:type" content="website" />
-<meta
-  property="og:url"
-  content="https://billiards.tailuge.workers.dev/itch/itch-three.html"
-/>
-<meta
-  property="og:image"
-  content="https://billiards.tailuge.workers.dev/assets/threecushion.png"
-/>
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta
-  name="twitter:title"
-  content="Three Cushion Billiards - Free Online Carom Game"
-/>
-<meta
-  name="twitter:description"
-  content="Play three-cushion billiards online with accurate physics. Open source and browser-based."
-/>
-<script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "VideoGame",
-    "name": "Three Cushion Billiards - Free Online Carom Game",
-    "url": "https://billiards.tailuge.workers.dev/itch/itch-three.html",
-    "image": "https://billiards.tailuge.workers.dev/assets/threecushion.png",
-    "description": "Open source three-cushion billiards simulation game with realistic physics. Race to 7, 15, or 30 points.",
-    "applicationCategory": "GameApplication",
-    "operatingSystem": "Web",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Break Builder",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://billiards.tailuge.workers.dev/favicon.png"
+  <head>
+    <meta charset="UTF-8" />
+    <title>Three Cushion Billiards - Free Online 3-Cushion Carom Game</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://billiards.tailuge.workers.dev/favicon.png"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Play free online three-cushion billiards with realistic physics. Race to 7, 15, or 30 points. Open source browser game."
+    />
+    <meta
+      name="keywords"
+      content="three-cushion, 3-cushion, carom, billiards, free, open source, browser game, driebanden, 3쿠션, 당구, 3クッション, ビリヤード, 3 bant bilardo, Üç bant, 3 băng, Bida 3 băng"
+    />
+    <meta name="robots" content="index,follow" />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/itch/itch-three.html"
+    />
+    <meta
+      property="og:title"
+      content="Three Cushion Billiards - Free Online 3-Cushion Carom Game"
+    />
+    <meta
+      property="og:description"
+      content="Play free online three-cushion billiards with realistic physics. Race to 7, 15, or 30 points."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://billiards.tailuge.workers.dev/itch/itch-three.html"
+    />
+    <meta
+      property="og:image"
+      content="https://billiards.tailuge.workers.dev/assets/threecushion.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Three Cushion Billiards - Free Online Carom Game"
+    />
+    <meta
+      name="twitter:description"
+      content="Play three-cushion billiards online with accurate physics. Open source and browser-based."
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "Three Cushion Billiards - Free Online Carom Game",
+        "url": "https://billiards.tailuge.workers.dev/itch/itch-three.html",
+        "image": "https://billiards.tailuge.workers.dev/assets/threecushion.png",
+        "description": "Open source three-cushion billiards simulation game with realistic physics. Race to 7, 15, or 30 points.",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Break Builder",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://billiards.tailuge.workers.dev/favicon.png"
+          }
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "tailuge"
+        }
       }
-    },
-    "creator": {
-      "@type": "Person",
-      "name": "tailuge"
-    }
-  }
-</script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:radial-gradient(circle at center,#0a3d25 0%,#030712 100%);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px;overflow:hidden}
-.launcher-box{width:100%;max-width:480px;display:flex;flex-direction:column;gap:12px;align-items:center}
-.header-group{text-align:center;margin-bottom:2px}
-.header-title{font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.6)}
-.header-langs{font-size:11px;font-weight:700;color:#10b981;margin-top:2px;letter-spacing:.05em;text-shadow:0 1px 3px rgba(0,0,0,.5)}
-.grid-primary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
-.btn-3d{position:relative;background:linear-gradient(180deg,#1e293b 0%,#0f172a 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 1px 3px rgba(0,0,0,.4),0 6px 12px -3px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.1);border-bottom:5px solid #040811;border-radius:12px;text-decoration:none;color:inherit;display:flex;flex-direction:column;overflow:hidden;transition:all .1s cubic-bezier(.25,.8,.25,1)}
-.btn-3d::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,.08) 0%,transparent 100%);pointer-events:none}
-.btn-3d:active{transform:translateY(3px);border-bottom-width:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 2px 4px rgba(0,0,0,.5)}
-.img-container{position:relative;height:72px;display:flex;align-items:center;justify-content:center;padding:6px;background:rgba(16,185,129,.03)}
-.img-container img{max-height:100%;max-width:100%;object-fit:contain;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5));transition:transform .2s}
-.btn-3d:hover img{transform:scale(1.08)}
-.score-badge{position:absolute;bottom:4px;right:6px;background:rgba(0,0,0,.8);backdrop-filter:blur(4px);padding:1px 5px;border-radius:4px;border:1px solid rgba(255,255,255,.15);display:flex;align-items:baseline;gap:1px}
-.score-num{font-size:14px;font-weight:900;color:#10b981}
-.score-lbl{font-size:7.5px;color:#cbd5e1;font-weight:600}
-.lang-card{padding:6px 8px;background:rgba(2,6,23,.7);border-top:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;gap:2px;font-size:10px}
-.lang-card p{margin:0;border-left:2px solid #475569;padding-left:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#cbd5e1}
-.lang-card p.primary{border-color:#10b981;font-weight:bold;color:#fff}
-.btn-3d:hover p.primary{color:#10b981}
-.grid-secondary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;margin-top:2px}
-.sub-3d{position:relative;background:linear-gradient(180deg,#0f172a 0%,#020617 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 4px 10px -2px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.08);border-bottom:4px solid #02040a;border-radius:12px;text-decoration:none;color:inherit;text-align:center;padding:8px 6px;transition:all .1s ease}
-.sub-3d:active{transform:translateY(2px);border-bottom-width:2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 2px 4px rgba(0,0,0,.4)}
-.sub-title{display:flex;align-items:center;justify-content:center;gap:5px;font-weight:bold;font-size:12px;color:#f1f5f9}
-.sub-3d:hover .sub-title{color:#10b981}
-.sub-emoji{font-size:13px;line-height:1}
-.sub-langs{font-size:8.5px;color:#94a3b8;margin-top:2px}
-@media (max-width:480px){.header-title{font-size:18px}.header-langs{font-size:10px}.img-container{height:64px}.lang-card{font-size:9px}}
-</style>
-</head>
-<body>
-<div class="launcher-box">
-<div class="header-group">
-<h1 class="header-title">3-Cushion Billiards</h1>
-<div class="header-langs">3쿠션 당구 • 3クッション • 3 Bant Bilardo</div>
-</div>
-<div class="grid-primary">
-<a href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&lod=4&raceTo=7" class="btn-3d">
-<div class="img-container">
-<img src="https://billiards.tailuge.workers.dev/assets/threecushion.png" alt="Three Cushion">
-<div class="score-badge">
-<span class="score-num">7</span><span class="score-lbl">PTS</span>
-</div>
-</div>
-<div class="lang-card">
-<p class="primary">Race to 7</p>
-<p>7점 매치</p>
-<p>7点勝負</p>
-<p>7 Sayı Yarışı</p>
-</div>
-</a>
-<a href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&lod=4&raceTo=15" class="btn-3d">
-<div class="img-container">
-<img src="https://billiards.tailuge.workers.dev/assets/threecushion.png" alt="Three Cushion">
-<div class="score-badge">
-<span class="score-num">15</span><span class="score-lbl">PTS</span>
-</div>
-</div>
-<div class="lang-card">
-<p class="primary">Race to 15</p>
-<p>15점 매치</p>
-<p>15点勝負</p>
-<p>15 Sayı Yarışı</p>
-</div>
-</a>
-<a href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&lod=4&raceTo=30" class="btn-3d">
-<div class="img-container">
-<img src="https://billiards.tailuge.workers.dev/assets/threecushion.png" alt="Three Cushion">
-<div class="score-badge">
-<span class="score-num">30</span><span class="score-lbl">PTS</span>
-</div>
-</div>
-<div class="lang-card">
-<p class="primary">Race to 30</p>
-<p>30점 매치</p>
-<p>30점 승부</p>
-<p>30 Sayı Yarışı</p>
-</div>
-</a>
-</div>
-<div class="grid-secondary">
-<a href="https://billiards.tailuge.workers.dev/lobby" class="sub-3d">
-<div class="sub-title">
-<span class="sub-emoji">🏠</span>
-<span>Lobby</span>
-</div>
-<p class="sub-langs">로비 • ロビー • Lobi</p>
-</a>
-<a href="https://billiards.tailuge.workers.dev/diagrams/three" class="sub-3d">
-<div class="sub-title">
-<span class="sub-emoji">🔬</span>
-<span>Research</span>
-</div>
-<p class="sub-langs">연구 • 研究 • Araştırma</p>
-</a>
-</div>
-</div>
-</body>
+    </script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: radial-gradient(circle at center, #0a3d25 0%, #030712 100%);
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        overflow: hidden;
+      }
+      .launcher-box {
+        width: 100%;
+        max-width: 480px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+      }
+      .header-group {
+        text-align: center;
+        margin-bottom: 2px;
+      }
+      .header-title {
+        font-size: 20px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #fff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+      }
+      .header-langs {
+        font-size: 11px;
+        font-weight: 700;
+        color: #10b981;
+        margin-top: 2px;
+        letter-spacing: 0.05em;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      }
+      .grid-primary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        width: 100%;
+      }
+      .btn-3d {
+        position: relative;
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.25),
+          0 1px 3px rgba(0, 0, 0, 0.4),
+          0 6px 12px -3px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 5px solid #040811;
+        border-radius: 12px;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: all 0.1s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+      .btn-3d::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.08) 0%,
+          transparent 100%
+        );
+        pointer-events: none;
+      }
+      .btn-3d:active {
+        transform: translateY(3px);
+        border-bottom-width: 2px;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.15),
+          0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      .img-container {
+        position: relative;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px;
+        background: rgba(16, 185, 129, 0.03);
+      }
+      .img-container img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+        transition: transform 0.2s;
+      }
+      .btn-3d:hover img {
+        transform: scale(1.08);
+      }
+      .score-badge {
+        position: absolute;
+        bottom: 4px;
+        right: 6px;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(4px);
+        padding: 1px 5px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: baseline;
+        gap: 1px;
+      }
+      .score-num {
+        font-size: 14px;
+        font-weight: 900;
+        color: #10b981;
+      }
+      .score-lbl {
+        font-size: 7.5px;
+        color: #cbd5e1;
+        font-weight: 600;
+      }
+      .lang-card {
+        padding: 6px 8px;
+        background: rgba(2, 6, 23, 0.7);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 10px;
+      }
+      .lang-card p {
+        margin: 0;
+        border-left: 2px solid #475569;
+        padding-left: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #cbd5e1;
+      }
+      .lang-card p.primary {
+        border-color: #10b981;
+        font-weight: bold;
+        color: #fff;
+      }
+      .btn-3d:hover p.primary {
+        color: #10b981;
+      }
+      .grid-secondary {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        width: 100%;
+        margin-top: 2px;
+      }
+      .sub-3d {
+        position: relative;
+        background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.15),
+          0 4px 10px -2px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-bottom: 4px solid #02040a;
+        border-radius: 12px;
+        text-decoration: none;
+        color: inherit;
+        text-align: center;
+        padding: 8px 6px;
+        transition: all 0.1s ease;
+      }
+      .sub-3d:active {
+        transform: translateY(2px);
+        border-bottom-width: 2px;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.1),
+          0 2px 4px rgba(0, 0, 0, 0.4);
+      }
+      .sub-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-weight: bold;
+        font-size: 12px;
+        color: #f1f5f9;
+      }
+      .sub-3d:hover .sub-title {
+        color: #10b981;
+      }
+      .sub-emoji {
+        font-size: 13px;
+        line-height: 1;
+      }
+      .sub-langs {
+        font-size: 8.5px;
+        color: #94a3b8;
+        margin-top: 2px;
+      }
+      @media (max-width: 480px) {
+        .header-title {
+          font-size: 18px;
+        }
+        .header-langs {
+          font-size: 10px;
+        }
+        .img-container {
+          height: 64px;
+        }
+        .lang-card {
+          font-size: 9px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="launcher-box">
+      <div class="header-group">
+        <h1 class="header-title">3-Cushion Billiards</h1>
+        <div class="header-langs">
+          3쿠션 당구 • 3クッション • 3 Bant Bilardo
+        </div>
+      </div>
+      <div class="grid-primary">
+        <a
+          href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&lod=4&raceTo=7&userName=Itchy"
+          class="btn-3d"
+        >
+          <div class="img-container">
+            <img
+              src="https://billiards.tailuge.workers.dev/assets/threecushion.png"
+              alt="Three Cushion"
+            />
+            <div class="score-badge">
+              <span class="score-num">7</span><span class="score-lbl">PTS</span>
+            </div>
+          </div>
+          <div class="lang-card">
+            <p class="primary">Race to 7</p>
+            <p>7점 매치</p>
+            <p>7点勝負</p>
+            <p>7 Sayı Yarışı</p>
+          </div>
+        </a>
+        <a
+          href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&lod=4&raceTo=15&userName=Itchy"
+          class="btn-3d"
+        >
+          <div class="img-container">
+            <img
+              src="https://billiards.tailuge.workers.dev/assets/threecushion.png"
+              alt="Three Cushion"
+            />
+            <div class="score-badge">
+              <span class="score-num">15</span
+              ><span class="score-lbl">PTS</span>
+            </div>
+          </div>
+          <div class="lang-card">
+            <p class="primary">Race to 15</p>
+            <p>15점 매치</p>
+            <p>15点勝負</p>
+            <p>15 Sayı Yarışı</p>
+          </div>
+        </a>
+        <a
+          href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&lod=4&raceTo=30&userName=Itchy"
+          class="btn-3d"
+        >
+          <div class="img-container">
+            <img
+              src="https://billiards.tailuge.workers.dev/assets/threecushion.png"
+              alt="Three Cushion"
+            />
+            <div class="score-badge">
+              <span class="score-num">30</span
+              ><span class="score-lbl">PTS</span>
+            </div>
+          </div>
+          <div class="lang-card">
+            <p class="primary">Race to 30</p>
+            <p>30점 매치</p>
+            <p>30点勝負</p>
+            <p>30 Sayı Yarışı</p>
+          </div>
+        </a>
+      </div>
+      <div class="grid-secondary">
+        <a href="https://billiards.tailuge.workers.dev/lobby" class="sub-3d">
+          <div class="sub-title">
+            <span class="sub-emoji">🏠</span>
+            <span>Lobby</span>
+          </div>
+          <p class="sub-langs">로비 • ロビー • Lobi</p>
+        </a>
+        <a
+          href="https://billiards.tailuge.workers.dev/diagrams/three"
+          class="sub-3d"
+        >
+          <div class="sub-title">
+            <span class="sub-emoji">🔬</span>
+            <span>Research</span>
+          </div>
+          <p class="sub-langs">연구 • 研究 • Araştırma</p>
+        </a>
+      </div>
+    </div>
+  </body>
 </html>
