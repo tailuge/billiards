@@ -310,10 +310,14 @@
         updateDrawing()
       }
 
-      fetch("./simple_shot_545600_stronge.json")
+      const urlFile = new URLSearchParams(window.location.search).get("file")
+      const defaultFile = urlFile ?? "simple_shot_545600_stronge.json"
+      // Full paths (starting with /) are fetched as-is for file:// protocol usage
+      const fetchUrl = defaultFile.startsWith("/") ? defaultFile : "./" + defaultFile
+      fetch(fetchUrl)
         .then((r) => r.json())
         .then((data) => {
-          loadedFile = "simple_shot_545600_stronge.json"
+          loadedFile = defaultFile
           loadData(data)
         })
         .catch(() => {})
