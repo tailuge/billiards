@@ -35,7 +35,6 @@ export function shorten(url, action) {
 export function share(url) {
   const shareData = {
     title: "Billiards",
-    text: `Replay break`,
     url: url,
   }
   if (navigator.canShare?.(shareData)) {
