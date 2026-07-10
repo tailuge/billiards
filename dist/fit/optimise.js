@@ -2,6 +2,76 @@ import { Simplex } from "https://esm.sh/@reside-ic/dfoptim"
 import pso from "https://esm.sh/pso"
 import { computeSSE } from "./rmse.js"
 
+class WorkerPool {
+  constructor(workerPath, size) {
+    this.workerPath = workerPath
+    this.size = size
+    this.workers = []
+    this.idleWorkers = []
+    this.queue = []
+    this.terminated = false
+
+    for (let i = 0; i < size; i++) {
+      const w = new Worker(this.workerPath)
+      this.workers.push(w)
+      this.idleWorkers.push(w)
+    }
+  }
+
+  run(config) {
+    return new Promise((resolve, reject) => {
+      if (this.terminated) {
+        reject(new DOMException("Aborted", "AbortError"))
+        return
+      }
+      const task = { config, resolve, reject }
+      this.queue.push(task)
+      this._next()
+    })
+  }
+
+  _next() {
+    if (this.terminated || this.queue.length === 0 || this.idleWorkers.length === 0) return
+    const task = this.queue.shift()
+    const worker = this.idleWorkers.pop()
+
+    worker.onmessage = (e) => {
+      if (this.terminated) return
+      if (e.data.type === "COMPLETE") {
+        this.idleWorkers.push(worker)
+        task.resolve(e.data)
+        this._next()
+      } else if (e.data.type === "ERROR") {
+        this.idleWorkers.push(worker)
+        task.reject(new Error(e.data.error))
+        this._next()
+      }
+    }
+
+    worker.onerror = (err) => {
+      if (this.terminated) return
+      this.idleWorkers.push(worker)
+      task.reject(err)
+      this._next()
+    }
+
+    worker.postMessage(task.config)
+  }
+
+  terminate() {
+    this.terminated = true
+    for (const w of this.workers) {
+      w.terminate()
+    }
+    for (const task of this.queue) {
+      task.reject(new DOMException("Aborted", "AbortError"))
+    }
+    this.workers = []
+    this.idleWorkers = []
+    this.queue = []
+  }
+}
+
 const getValue = (simConfig, name) => {
   if (name.startsWith("shot.")) {
     const path = name.split(".").slice(1)
@@ -158,80 +228,176 @@ export async function runOptimisePSO(
   signal,
   trackAll = false
 ) {
-  const initial = makeInitial(simConfig, specs)
-  const target = makeTarget(simConfig, truth, specs, trackAll)
+  const concurrency = Math.min(navigator.hardwareConcurrency || 4, 8)
+  const workerUrl = new URL("../worker.js", import.meta.url)
+  const pool = new WorkerPool(workerUrl, concurrency)
 
-  const opt = new pso.Optimizer()
-  // 1. Establish your boundary thresholds
-  const maxIterations = 100 // Set an explicit budget for the global exploration phase
+  try {
+    const initial = makeInitial(simConfig, specs)
 
-  const wStart = 0.9,
-    wEnd = 0.4
-  const c1Start = 2.0,
-    c1End = 0.7 // Personal
-  const c2Start = 0.7,
-    c2End = 2.0 // Social
+    const isMulti = Array.isArray(simConfig)
+    const configs = isMulti ? simConfig : [simConfig]
+    const truths = isMulti ? truth : [truth]
 
-  // Initial pass to register options schema
-  opt.setOptions({
-    inertiaWeight: wStart,
-    personal: c1Start,
-    social: c2Start,
-    pressure: 0.5,
-  })
-  opt.setObjectiveFunction((norm) => -target(norm))
+    const asyncTarget = (norm, callback) => {
+      if (signal?.aborted) {
+        callback(-Infinity)
+        return
+      }
 
-  const intervals = specs.map(() => ({ start: 0, end: 1 }))
-  const populationSize = Math.max(15, specs.length * 3)
+      const tuned = decode(norm, specs)
+      if (!tuned) {
+        callback(-Infinity)
+        return
+      }
 
-  let particleIdx = 0
-  opt.init(populationSize, () => {
-    if (particleIdx++ === 0) {
-      return new pso.Particle(
-        initial.slice(),
-        initial.map(() => 0),
-        opt._options
-      )
+      const simPromises = configs.map((cfg, idx) => {
+        const configCopy = JSON.parse(JSON.stringify(cfg))
+        for (const [name, val] of Object.entries(tuned)) {
+          if (name.startsWith("shot.")) {
+            const path = name.split(".").slice(1)
+            let curr = configCopy.shot
+            for (let j = 0; j < path.length - 1; j++) curr = curr[path[j]]
+            curr[path[path.length - 1]] = val
+          } else {
+            configCopy.params[name] = val
+          }
+        }
+        return pool.run(configCopy).then((result) => {
+          const simTracks = {}
+          for (const f of result.frames) {
+            for (const b of f.balls) {
+              ;(simTracks[b.id] ??= []).push({ x: b.pos[0], y: b.pos[1], t: f.t })
+            }
+          }
+          const { sse, count } = truths[idx]
+            ? computeSSE(truths[idx], simTracks, trackAll)
+            : { sse: 0, count: 0 }
+          return { sse, count }
+        })
+      })
+
+      Promise.all(simPromises)
+        .then((results) => {
+          let totalSSE = 0
+          let totalCount = 0
+          for (const r of results) {
+            if (!Number.isFinite(r.sse) || !Number.isFinite(r.count) || r.count < 0) {
+              callback(-Infinity)
+              return
+            }
+            totalSSE += r.sse
+            totalCount += r.count
+          }
+          const globalRMSE = totalCount > 0 ? Math.sqrt(totalSSE / totalCount) : Infinity
+          const safe = Number.isFinite(globalRMSE) ? globalRMSE : Infinity
+          console.log(
+            "[opt] trial tuned:",
+            JSON.stringify(tuned),
+            "→ global rmse:",
+            globalRMSE,
+            safe !== globalRMSE ? "(clamped invalid → ∞)" : ""
+          )
+          callback(-safe)
+        })
+        .catch((err) => {
+          console.warn(
+            "[opt] rejected trial:",
+            JSON.stringify(tuned),
+            err?.message || err
+          )
+          callback(-Infinity)
+        })
     }
-    return pso.Particle.createRandom(intervals, opt._options, opt.rng.random)
-  })
 
-  let iter = 0
-  while (!signal?.aborted && iter < maxIterations) {
-    // 2. Compute dynamic interpolation coefficients based on current timeline
-    const progress = iter / (maxIterations - 1 || 1) // Normalized [0, 1] scale
+    const opt = new pso.Optimizer()
+    // 1. Establish your boundary thresholds
+    const maxIterations = 100 // Set an explicit budget for the global exploration phase
 
-    const currentInertia = wStart - (wStart - wEnd) * progress
-    const currentPersonal = c1Start - (c1Start - c1End) * progress
-    const currentSocial = c2Start - (c2Start - c2End) * progress
+    const wStart = 0.9,
+      wEnd = 0.4
+    const c1Start = 2.0,
+      c1End = 0.7 // Personal
+    const c2Start = 0.7,
+      c2End = 2.0 // Social
 
-    // 3. Update the optimizer's engine configurations safely
+    // Initial pass to register options schema
     opt.setOptions({
-      inertiaWeight: currentInertia,
-      personal: currentPersonal,
-      social: currentSocial,
+      inertiaWeight: wStart,
+      personal: c1Start,
+      social: c2Start,
       pressure: 0.5,
     })
+    opt.setObjectiveFunction(asyncTarget, { async: true })
 
-    // Fallback: directly mutate properties if the underlying library instances preserve an independent copy
-    if (opt._options) {
-      opt._options.inertiaWeight = currentInertia
-      opt._options.personal = currentPersonal
-      opt._options.social = currentSocial
+    const intervals = specs.map(() => ({ start: 0, end: 1 }))
+    const populationSize = Math.max(15, specs.length * 3)
+
+    let particleIdx = 0
+    opt.init(populationSize, () => {
+      if (particleIdx++ === 0) {
+        return new pso.Particle(
+          initial.slice(),
+          initial.map(() => 0),
+          opt._options
+        )
+      }
+      return pso.Particle.createRandom(intervals, opt._options, opt.rng.random)
+    })
+
+    let iter = 0
+    while (!signal?.aborted && iter < maxIterations) {
+      // 2. Compute dynamic interpolation coefficients based on current timeline
+      const progress = iter / (maxIterations - 1 || 1) // Normalized [0, 1] scale
+
+      const currentInertia = wStart - (wStart - wEnd) * progress
+      const currentPersonal = c1Start - (c1Start - c1End) * progress
+      const currentSocial = c2Start - (c2Start - c2End) * progress
+
+      // 3. Update the optimizer's engine configurations safely
+      opt.setOptions({
+        inertiaWeight: currentInertia,
+        personal: currentPersonal,
+        social: currentSocial,
+        pressure: 0.5,
+      })
+
+      // Fallback: directly mutate properties if the underlying library instances preserve an independent copy
+      if (opt._options) {
+        opt._options.inertiaWeight = currentInertia
+        opt._options.personal = currentPersonal
+        opt._options.social = currentSocial
+      }
+
+      await new Promise((resolve, reject) => {
+        if (signal?.aborted) {
+          reject(new DOMException("Aborted", "AbortError"))
+          return
+        }
+        const onAbort = () => {
+          reject(new DOMException("Aborted", "AbortError"))
+        }
+        signal?.addEventListener("abort", onAbort)
+        opt.step(() => {
+          signal?.removeEventListener("abort", onAbort)
+          resolve()
+        })
+      })
+
+      iter++
+
+      const bestFitness = opt.getBestFitness()
+      const bestPosition = opt.getBestPosition() || initial
+      const rmse = bestFitness === -Infinity ? Infinity : -bestFitness
+
+      console.log(
+        `[opt] iter ${iter}: bestRmse=${rmse} (w=${currentInertia.toFixed(3)}, c1=${currentPersonal.toFixed(3)}, c2=${currentSocial.toFixed(3)})`
+      )
+
+      onStep({ iter, rmse, params: decode(bestPosition, specs) || {} })
+      await new Promise((r) => setTimeout(r, 0))
     }
-
-    opt.step()
-    iter++
-
-    const bestFitness = opt.getBestFitness()
-    const bestPosition = opt.getBestPosition() || initial
-    const rmse = bestFitness === -Infinity ? Infinity : -bestFitness
-
-    console.log(
-      `[opt] iter ${iter}: bestRmse=${rmse} (w=${currentInertia.toFixed(3)}, c1=${currentPersonal.toFixed(3)}, c2=${currentSocial.toFixed(3)})`
-    )
-
-    onStep({ iter, rmse, params: decode(bestPosition, specs) || {} })
-    await new Promise((r) => setTimeout(r, 0))
+  } finally {
+    pool.terminate()
   }
 }
