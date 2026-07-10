@@ -26,6 +26,14 @@
       td {
         padding: 0px 2px;
       }
+      .tol-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+      }
+      .tol-input {
+        width: 45px;
+      }
     </style>
   </head>
   <body>
@@ -49,6 +57,16 @@
           <button id="simBtn" disabled>View Shot</button>
           <input type="file" id="file" accept=".json" style="display: none" />
           <button id="saveBtn" disabled>Save JSON</button>
+          <button id="simplifyBtn" disabled>Simplify</button>
+          <label class="tol-label"
+            >Tol(mm):<input
+              type="number"
+              id="simplifyTol"
+              value="0.25"
+              min="0"
+              step="0.05"
+              class="tol-input"
+          /></label>
           <button onclick="document.getElementById('file').click()">
             Load
           </button>
@@ -142,6 +160,7 @@
       import { runSim } from "./sim.js"
       import { redraw, HALF_W, HALF_H } from "./plot.js"
       import { runOptimiseNM, runOptimisePSO } from "./optimise.js"
+      import { simplifyTruth } from "./simplify.js"
 
       const W = 720,
         H = Math.round((W * HALF_H) / HALF_W)
@@ -302,6 +321,7 @@
         document.getElementById("simEdit").disabled = false
         document.getElementById("simBtn").disabled = false
         document.getElementById("saveBtn").disabled = false
+        document.getElementById("simplifyBtn").disabled = false
         document.getElementById("optBtn").disabled = false
         document.getElementById("editBtn").disabled = false
         document.getElementById("playBtn").disabled = false
@@ -313,7 +333,9 @@
       const urlFile = new URLSearchParams(window.location.search).get("file")
       const defaultFile = urlFile ?? "simple_shot_545600_stronge.json"
       // Full paths (starting with /) are fetched as-is for file:// protocol usage
-      const fetchUrl = defaultFile.startsWith("/") ? defaultFile : "./" + defaultFile
+      const fetchUrl = defaultFile.startsWith("/")
+        ? defaultFile
+        : "./" + defaultFile
       fetch(fetchUrl)
         .then((r) => r.json())
         .then((data) => {
@@ -356,6 +378,28 @@
       }
 
       document.getElementById("simBtn").onclick = onRunSim
+      document.getElementById("trackAll").onchange = updateDrawing
+
+      document.getElementById("simplifyBtn").onclick = () => {
+        if (!loadedData || !loadedData.truth) return
+        const tolVal = parseFloat(document.getElementById("simplifyTol").value)
+        if (isNaN(tolVal) || tolVal < 0) {
+          document.getElementById("status").textContent =
+            "Invalid tolerance value"
+          return
+        }
+
+        const originalCount = loadedData.truth.length
+        const simplifiedTruth = simplifyTruth(loadedData.truth, tolVal)
+        loadedData.truth = simplifiedTruth
+
+        const newCount = simplifiedTruth.length
+        const pct = ((newCount / originalCount) * 100).toFixed(1)
+        document.getElementById("status").textContent =
+          `Simplified: ${originalCount} -> ${newCount} samples (${pct}%) at ${tolVal}mm`
+
+        updateDrawing()
+      }
       document.getElementById("trackAll").onchange = updateDrawing
 
       document.getElementById("optBtn").onclick = async () => {
