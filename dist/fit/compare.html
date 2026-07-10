@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/ball-colors.css" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        background: #f0f0f0;
+        padding: 0.5rem;
+      }
+      .page {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .controls-bar {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-size: 11px;
+      }
+      .controls-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: flex-start;
+      }
+      .constant-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+      .collapse-toggle {
+        display: none;
+      }
+      .collapse-label {
+        display: block;
+        padding: 3px 6px;
+        background: #eee;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 10px;
+        text-align: center;
+        user-select: none;
+      }
+      .collapse-toggle:checked + .collapse-label {
+        background: #ddd;
+      }
+      .collapse-content {
+        display: none;
+        padding: 4px 0 0;
+      }
+      .collapse-toggle:checked + .collapse-label + .collapse-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .constant-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10px;
+        color: #555;
+      }
+      .constant-row input[type="range"] {
+        width: 640px;
+        height: 4px;
+        accent-color: #888;
+      }
+      .constant-row span.val {
+        display: inline-block;
+        width: 44px;
+        text-align: right;
+        font-family: monospace;
+        font-size: 10px;
+      }
+
+      /* Overlay pair */
+      .pair-wrapper {
+        position: relative;
+        width: 100%;
+      }
+      .pair-wrapper + .pair-wrapper {
+        margin-top: 8px;
+      }
+
+      /* Both SVGs */
+      svg.billiards-table {
+        width: 100%;
+        height: auto;
+        display: block;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+
+      /* Adjusted SVG overlays the default SVG */
+      svg.billiards-table.adjusted {
+        position: absolute;
+        inset: 0;
+        background: transparent;
+      }
+
+      /* Dashed trajectories on adjusted overlay */
+      svg.billiards-table.adjusted .trajectory-line {
+        stroke-dasharray: 0.015 0.01;
+      }
+
+      /* Edit button */
+      .edit-btn {
+        position: absolute;
+        bottom: 4%;
+        right: 5%;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 10;
+        opacity: 0.5;
+        background: none;
+        border: none;
+        padding: 0;
+        text-decoration: none;
+        filter: grayscale(1);
+      }
+      .edit-btn:hover {
+        opacity: 0.9;
+        filter: none;
+      }
+
+      .manual-line {
+        opacity: 0.5;
+      }
+      .fine-stroke {
+        stroke-dasharray: 0.06 0.03;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="controls-bar">
+        <div class="controls-row">
+          <div class="constant-group">
+            <input type="checkbox" id="han-toggle" class="collapse-toggle" />
+            <label for="han-toggle" class="collapse-label">Han</label>
+            <div class="collapse-content">
+              <div class="constant-row">
+                <label for="mu">mu</label>
+                <input id="mu" type="range" min="0.0001" max="0.02" step="0.0001" value="0.0055" />
+                <span class="val" id="mu-val">0.0055</span>
+              </div>
+              <div class="constant-row">
+                <label for="muS">muS</label>
+                <input id="muS" type="range" min="0.0001" max="0.5" step="0.0001" value="0.126" />
+                <span class="val" id="muS-val">0.126</span>
+              </div>
+            </div>
+          </div>
+          <div class="constant-group">
+            <input type="checkbox" id="mathavan-toggle" class="collapse-toggle" />
+            <label for="mathavan-toggle" class="collapse-label">Mathavan</label>
+            <div class="collapse-content">
+              <div class="constant-row">
+                <label for="μs">μs</label>
+                <input id="μs" type="range" min="0.0001" max="0.99" step="0.0001" value="0.2" />
+                <span class="val" id="μs-val">0.20</span>
+              </div>
+              <div class="constant-row">
+                <label for="μw">μw</label>
+                <input id="μw" type="range" min="0.0001" max="0.99" step="0.0001" value="0.2" />
+                <span class="val" id="μw-val">0.20</span>
+              </div>
+              <div class="constant-row">
+                <label for="ee">ee</label>
+                <input id="ee" type="range" min="0.0001" max="0.99" step="0.0001" value="0.85" />
+                <span class="val" id="ee-val">0.85</span>
+              </div>
+            </div>
+          </div>
+          <div class="constant-group">
+            <input type="checkbox" id="stronge-toggle" class="collapse-toggle" />
+            <label for="stronge-toggle" class="collapse-label">Stronge</label>
+            <div class="collapse-content">
+              <div class="constant-row">
+                <label for="stronge_omega_ratio">ω ratio</label>
+                <input id="stronge_omega_ratio" type="range" min="0.0001" max="1.99" step="0.0001" value="1.76" />
+                <span class="val" id="stronge_omega_ratio-val">1.76</span>
+              </div>
+              <div class="constant-row">
+                <label for="stronge_e_n">eₙ</label>
+                <input id="stronge_e_n" type="range" min="0.0001" max="0.99" step="0.0001" value="0.77" />
+                <span class="val" id="stronge_e_n-val">0.77</span>
+              </div>
+              <div class="constant-row">
+                <label for="stronge_μ">μ</label>
+                <input id="stronge_μ" type="range" min="0.0001" max="0.99" step="0.0001" value="0.25" />
+                <span class="val" id="stronge_μ-val">0.25</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <svg
+        class="billiards-table"
+        data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.215634,"y":0.4309,"z":0}},{"id":1,"pos":{"x":0.505003,"y":0.419325,"z":0}},{"id":2,"pos":{"x":-0.752108,"y":0.703665,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.06926,"power":2.358,"offset":{"x":-0.330662,"y":0.305226,"z":0},"elevation":0}}]'
+        data-figure="2.36 m/s"
+        viewBox="-1.792395 -1.036198 3.584790 2.172395"
+        xmlns="http://www.w3.org/2000/svg"
+      ></svg>
+
+      <svg class="billiards-table"
+  data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.361711,"y":0.715988,"z":0}},{"id":1,"pos":{"x":0.637776,"y":0.229463,"z":0}},{"id":2,"pos":{"x":0.336882,"y":-0.039422,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":5.848069,"power":2.6724,"offset":{"x":0.033937,"y":0.395928,"z":0},"elevation":0}}]'
+  data-figure="2.67 m/s"
+  viewBox="-1.792395 -1.036198 3.584790 2.172395"
+  xmlns="http://www.w3.org/2000/svg">
+</svg>
+
+    </div>
+
+    <script type="module">
+      import { initDiagrams } from "../diagrams/svg.js"
+
+      const SLIDER_IDS = [
+        "mu", "muS",
+        "μs", "μw", "ee",
+        "stronge_omega_ratio", "stronge_e_n", "stronge_μ",
+      ]
+
+      function getParams() {
+        const params = {}
+        for (const id of SLIDER_IDS) {
+          const el = document.getElementById(id)
+          if (el) params[id] = Number(el.value)
+        }
+        return params
+      }
+
+      function makeAdjustedSvg(source) {
+        const jsonShots = JSON.parse(source.dataset.jsonShots)
+        const withParams = jsonShots.map((cfg) => ({
+          ...cfg,
+          params: getParams(),
+        }))
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+        svg.setAttribute("class", "billiards-table adjusted")
+        svg.setAttribute("data-json-shots", JSON.stringify(withParams))
+        svg.setAttribute("data-figure", source.dataset.figure || "")
+        svg.setAttribute("viewBox", source.getAttribute("viewBox") || "")
+        svg.setAttribute("xmlns", "http://www.w3.org/2000/svg")
+        return svg
+      }
+
+      function makeEditBtn(sourceSvg) {
+        const btn = document.createElement("button")
+        btn.className = "edit-btn"
+        btn.title = "Edit in three cushion research view"
+        btn.textContent = "🔧"
+        btn.addEventListener("click", () => {
+          const config = JSON.parse(sourceSvg.dataset.jsonShots)[0]
+          const ballsPos = config.balls.flatMap((b) => [b.pos.x, b.pos.y])
+          const cueBall = config.balls[config.shot.cueBallId]
+          const state = {
+            diagram: true,
+            init: ballsPos,
+            shots: [
+              {
+                type: "AIM",
+                angle: config.shot.angle,
+                power: config.shot.power,
+                offset: config.shot.offset,
+                pos: { x: cueBall.pos.x, y: cueBall.pos.y, z: 0 },
+                i: config.shot.cueBallId,
+              },
+            ],
+          }
+          const p = new URLSearchParams()
+          p.set("s", JSON.stringify(state))
+          window.open(`../diagrams/three.html?${p}`, "_blank")
+        })
+        return btn
+      }
+
+      function setup() {
+        const sources = document.querySelectorAll(
+          ".page > svg.billiards-table"
+        )
+        for (const source of sources) {
+          const wrapper = document.createElement("div")
+          wrapper.className = "pair-wrapper"
+          source.parentNode.insertBefore(wrapper, source)
+
+          const adjusted = makeAdjustedSvg(source)
+          wrapper.appendChild(source)
+          wrapper.appendChild(adjusted)
+
+          const editBtn = makeEditBtn(source)
+          wrapper.appendChild(editBtn)
+        }
+      }
+
+      function refreshAdjusted() {
+        const params = getParams()
+        for (const svg of document.querySelectorAll("svg.billiards-table.adjusted")) {
+          const jsonShots = JSON.parse(svg.dataset.jsonShots)
+          const withParams = jsonShots.map((cfg) => ({ ...cfg, params }))
+          svg.dataset.jsonShots = JSON.stringify(withParams)
+          svg.querySelectorAll(
+            ".trajectories-group, .balls-group, .inset-group"
+          ).forEach((g) => g.remove())
+        }
+        initDiagrams()
+      }
+
+      // Wire slider value displays and refresh
+      for (const slider of document.querySelectorAll(".constant-row input[type=range]")) {
+        const valEl = document.getElementById(slider.id + "-val")
+        if (valEl) {
+          slider.addEventListener("input", () => {
+            valEl.textContent = Number(slider.value).toFixed(
+              slider.step < 1 ? 4 : 2
+            )
+            refreshAdjusted()
+          })
+        }
+      }
+
+      setup()
+      initDiagrams()
+    </script>
+  </body>
+</html>
