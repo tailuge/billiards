@@ -258,33 +258,35 @@ function renderTrajectories(trajectoriesGroup, results) {
   trajectoriesGroup.innerHTML = svgContent;
 }
 
-function renderInset(insetGroup, config) {
+function renderInset(insetGroup, configs) {
   const ballR = 0.06;
   const dotR = 0.012;
   const barW = 0.12;
   const barH = 0.015;
 
-  const { offset, power } = config.shot;
-
   let svgContent = "";
 
-  // Cue ball circle
-  svgContent += `  <circle cx="0" cy="0" r="${ballR}" fill="none" stroke="#000" stroke-width="0.002" />\n`;
+  for (const config of configs) {
+    const { offset, power } = config.shot;
 
-  // Spin dot (cue tip position)
-  // offset.x/y are -0.5 to 0.5, scaled to half the ball radius.
-  const dx = -offset.x * ballR;
-  const dy = -offset.y * ballR;
-  svgContent += `  <circle cx="${dx}" cy="${dy}" r="${dotR}" fill="none" stroke="#000" stroke-width="0.002" />\n`;
+    // Cue ball circle
+    svgContent += `  <circle cx="0" cy="0" r="${ballR}" fill="none" stroke="#000" stroke-width="0.0015" />\n`;
 
-  // Power bar background
-  const bx = -barW / 2;
-  const by = ballR + 0.02;
-  svgContent += `  <rect x="${bx}" y="${by}" width="${barW}" height="${barH}" fill="none" stroke="#000" stroke-width="0.002" />\n`;
+    // Spin dot (cue tip position)
+    // offset.x/y are -0.5 to 0.5, scaled to half the ball radius.
+    const dx = -offset.x * ballR;
+    const dy = -offset.y * ballR;
+    svgContent += `  <circle cx="${dx}" cy="${dy}" r="${dotR}" fill="none" stroke="#000" stroke-width="0.0015" />\n`;
 
-  // Power bar level indicator
-  const fillW = (power / maxPower) * barW;
-  svgContent += `  <line x1="${bx + fillW}" y1="${by}" x2="${bx + fillW}" y2="${by + barH}" stroke="#000" stroke-width="0.002" />\n`;
+    // Power bar background
+    const bx = -barW / 2;
+    const by = ballR + 0.02;
+    svgContent += `  <rect x="${bx}" y="${by}" width="${barW}" height="${barH}" fill="none" stroke="#000" stroke-width="0.0015" />\n`;
+
+    // Power bar level indicator
+    const fillW = (power / maxPower) * barW;
+    svgContent += `  <line x1="${bx + fillW}" y1="${by}" x2="${bx + fillW}" y2="${by + barH}" stroke="#000" stroke-width="0.0015" />\n`;
+  }
 
   insetGroup.innerHTML = svgContent;
 }
@@ -459,7 +461,7 @@ async function runElement(el) {
     setStatus(statusEl, figure || "");
     renderTrajectories(trajectoriesGroup, results);
     if (jsonText) renderBallPositions(setup.ballsGroup, configs[0]);
-    renderInset(setup.insetGroup, configs[0]);
+    renderInset(setup.insetGroup, configs);
 
     // Align inset to the right of the status text
     try {
