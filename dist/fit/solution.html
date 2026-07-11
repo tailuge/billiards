@@ -252,10 +252,7 @@
       const R = 0.03275
       const maxPower = 160 * R
 
-      const clock = (h) => ({
-        ox: 0.4 * Math.cos((h * Math.PI) / 6),
-        oy: -0.4 * Math.sin((h * Math.PI) / 6),
-      })
+      const clock = (h) => ({  ox: 0.4 * Math.sin((h * Math.PI) / 6),  oy: 0.4 * Math.cos((h * Math.PI) / 6),})
       const OFFSETS = [12, 1, 3, 5, 7, 9, 11].map(clock)
 
       const progressBar = document.getElementById("progress-bar")
