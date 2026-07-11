@@ -5,6 +5,19 @@ import { CameraTop } from "./cameratop"
 import { R } from "../model/physics/constants"
 
 export class Camera {
+  static defaultHeight = R * 8
+  static defaultDistance = R * 18
+  static defaultFovOffset = 0
+
+  static configureForRule(ruleType: string) {
+    if (ruleType === "threecushion") {
+      Camera.defaultHeight = R * 23
+      Camera.defaultDistance = R * 22
+      Camera.defaultFovOffset = 6
+      CameraTop.zoomFactor = 0.92
+    }
+  }
+
   constructor(aspectRatio) {
     this.camera = new PerspectiveCamera(45, aspectRatio, R, R * 1000)
   }
@@ -12,14 +25,14 @@ export class Camera {
   camera: PerspectiveCamera
   mode = this.topView
   private mainMode = this.aimView
-  private height = R * 8
+  private height = Camera.defaultHeight
 
   private readonly target = new Vector3()
   private readonly lookTarget = new Vector3()
   private readonly tempVec = new Vector3()
 
-  private distance = R * 18
-  private fovOffset = 0
+  private distance = Camera.defaultDistance
+  private fovOffset = Camera.defaultFovOffset
 
   elapsed: number
   private t = 0

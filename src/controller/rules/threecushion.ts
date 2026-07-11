@@ -8,7 +8,7 @@ import { Ball } from "../../model/ball"
 import { Outcome } from "../../model/outcome"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
-import { CameraTop } from "../../view/cameratop"
+import { Camera } from "../../view/camera"
 import { TableGeometry } from "../../view/tablegeometry"
 import { Rules } from "./rules"
 import { isFirstShot } from "../../utils/utils"
@@ -59,7 +59,7 @@ export class ThreeCushion implements Rules {
 
   table(): Table {
     this.tableGeometry()
-    CameraTop.zoomFactor = 0.92
+    Camera.configureForRule("threecushion")
     const table = new Table(this.rack())
     table.proximityEnabled = Session.isPracticeMode()
     this.cueball = table.cueball
