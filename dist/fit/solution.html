@@ -52,6 +52,16 @@
         width: 28px;
       }
 
+      .clickable-count {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      .clickable-count.active {
+        font-weight: bold;
+        color: #007bff;
+      }
+
       .pattern-col {
         font-family: monospace;
         font-size: 1rem;
@@ -279,24 +289,23 @@
               pos: { x: ballPositions[i], y: ballPositions[i + 1], z: 0 },
             })
           }
-          const config = [
-            {
-              balls,
-              cushionModel,
-              ruleType: "threecushion",
-              shot: {
-                cueBallId: 0,
-                angle: +task.angle.toFixed(6),
-                power: +task.power.toFixed(6),
-                offset: {
-                  x: +task.ox.toFixed(6),
-                  y: +task.oy.toFixed(6),
-                  z: 0,
-                },
-                elevation: 0,
+          const tasks = Array.isArray(task) ? task : [task]
+          const config = tasks.map((t) => ({
+            balls,
+            cushionModel,
+            ruleType: "threecushion",
+            shot: {
+              cueBallId: 0,
+              angle: +t.angle.toFixed(6),
+              power: +t.power.toFixed(6),
+              offset: {
+                x: +t.ox.toFixed(6),
+                y: +t.oy.toFixed(6),
+                z: 0,
               },
+              elevation: 0,
             },
-          ]
+          }))
           diagramSvg.dataset.jsonShots = JSON.stringify(config)
           currentConfig = config
           diagramSvg
@@ -324,10 +333,13 @@
                 return `<a class="sol-link" data-task="${encoded}" title="#${i + 1}: a=${sol.angle.toFixed(3)} p=${sol.power.toFixed(3)} ox=${sol.ox.toFixed(2)} oy=${sol.oy.toFixed(2)}">⇗</a>`
               })
               .join("")
+            const encodedTasks = encodeURIComponent(
+              JSON.stringify(entry.solutions)
+            )
             tr.innerHTML = `
                             <td class="pattern-col">${renderPattern(pattern)}</td>
                             <td><span class="sol-links">${linksHtml}</span></td>
-                            <td class="count-col">${entry.count}</td>
+                            <td class="count-col clickable-count" data-tasks="${encodedTasks}" title="Overlay all ${entry.count} solutions">${entry.count}</td>
                         `
             tbody.appendChild(tr)
           }
@@ -337,17 +349,33 @@
       // Delegated click handler for inline diagram links
       document.addEventListener("click", async (e) => {
         const link = e.target.closest(".sol-link")
-        if (!link || !link.dataset.task) return
-        e.preventDefault()
-        e.stopPropagation()
+        if (link && link.dataset.task) {
+          e.preventDefault()
+          e.stopPropagation()
 
-        // Update active state
-        if (currentActiveLink) currentActiveLink.classList.remove("active")
-        link.classList.add("active")
-        currentActiveLink = link
+          // Update active state
+          if (currentActiveLink) currentActiveLink.classList.remove("active")
+          link.classList.add("active")
+          currentActiveLink = link
 
-        const task = JSON.parse(decodeURIComponent(link.dataset.task))
-        await showDiagram(task)
+          const task = JSON.parse(decodeURIComponent(link.dataset.task))
+          await showDiagram(task)
+          return
+        }
+
+        const countCol = e.target.closest(".clickable-count")
+        if (countCol && countCol.dataset.tasks) {
+          e.preventDefault()
+          e.stopPropagation()
+
+          // Update active state
+          if (currentActiveLink) currentActiveLink.classList.remove("active")
+          countCol.classList.add("active")
+          currentActiveLink = countCol
+
+          const tasks = JSON.parse(decodeURIComponent(countCol.dataset.tasks))
+          await showDiagram(tasks)
+        }
       })
 
       setupBtn.addEventListener("click", () => {
