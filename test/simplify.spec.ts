@@ -75,7 +75,7 @@ describe("simplifyTruth", () => {
     const samples = [
       { ball: 0, t: 0.0, x: -1.47, y: 0.0 },
       { ball: 0, t: 0.5, x: -1.45, y: 0.0 },
-      { ball: 0, t: 1.0, x: -1.40, y: 0.0 },
+      { ball: 0, t: 1.0, x: -1.4, y: 0.0 },
     ]
     const simplified = simplifyTruth(samples, 0.25)
     // Point B must not be removed despite being perfectly collinear, because it's within 2R of cushion.
