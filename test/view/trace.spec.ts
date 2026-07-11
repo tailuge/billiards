@@ -8,6 +8,7 @@ describe("Trace", () => {
 
   beforeEach(function (done) {
     trace.reset()
+    trace.line.visible = true
     done()
   })
 

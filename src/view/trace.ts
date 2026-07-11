@@ -38,11 +38,17 @@ export class Trace {
   }
 
   forceTrace(pos) {
+    if (!this.line.visible) {
+      return
+    }
     this.lastVel.z = 1
     this.addTraceGiven(pos, this.lastVel, 1, 0.1, 1)
   }
 
   addTrace(pos, vel) {
+    if (!this.line.visible) {
+      return
+    }
     if (vel.length() === 0) {
       return
     }

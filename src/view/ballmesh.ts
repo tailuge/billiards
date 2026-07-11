@@ -87,8 +87,16 @@ export class BallMesh {
   }
 
   updateAll(ball, t) {
+    const isStationary = ball.state === State.Stationary
+    const positionChanged = !this.mesh.position.equals(ball.pos)
+    if (isStationary && !positionChanged) {
+      return
+    }
+
     this.updatePosition(ball.pos)
-    this.updateArrows(ball.pos, ball.rvel, ball.state)
+    if (this.spinAxisArrow.visible) {
+      this.updateArrows(ball.pos, ball.rvel, ball.state)
+    }
     if (ball.rvel.lengthSq() !== 0) {
       this.updateRotation(ball.rvel, t)
       this.trace.addTrace(ball.pos, ball.vel)
