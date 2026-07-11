@@ -67,7 +67,6 @@ export class BallMesh {
   trace: Trace
   color: Color
   private ghosts: Line[] = []
-  private _dirty = true
 
   freezeTrace(scene: Scene) {
     const count = this.trace.geometry.drawRange.count
@@ -90,10 +89,9 @@ export class BallMesh {
   updateAll(ball, t) {
     const isStationary = ball.state === State.Stationary
     const positionChanged = !this.mesh.position.equals(ball.pos)
-    if (isStationary && !positionChanged && !this._dirty) {
+    if (isStationary && !positionChanged) {
       return
     }
-    this._dirty = !isStationary
 
     this.updatePosition(ball.pos)
     if (this.spinAxisArrow.visible) {
