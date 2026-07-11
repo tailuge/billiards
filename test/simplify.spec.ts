@@ -67,4 +67,18 @@ describe("simplifyTruth", () => {
       { ball: 1, t: 1.0, x: 1.0, y: 1.0 },
     ])
   })
+
+  it("should never remove points within 2r of cushion", () => {
+    // Left cushion is at -1.479645.
+    // Point at x = -1.45, y = 0.0 is within 2R (0.0655) of left cushion.
+    // Points are collinear: A(-1.47, 0.0) -> B(-1.45, 0.0) -> C(-1.40, 0.0).
+    const samples = [
+      { ball: 0, t: 0.0, x: -1.47, y: 0.0 },
+      { ball: 0, t: 0.5, x: -1.45, y: 0.0 },
+      { ball: 0, t: 1.0, x: -1.40, y: 0.0 },
+    ]
+    const simplified = simplifyTruth(samples, 0.25)
+    // Point B must not be removed despite being perfectly collinear, because it's within 2R of cushion.
+    expect(simplified).toEqual(samples)
+  })
 })
