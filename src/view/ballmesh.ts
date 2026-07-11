@@ -88,12 +88,12 @@ export class BallMesh {
   }
 
   updateAll(ball, t) {
-    const isResting = ball.state === State.Stationary || ball.state === State.InPocket
+    const isStationary = ball.state === State.Stationary
     const positionChanged = !this.mesh.position.equals(ball.pos)
-    if (isResting && !positionChanged && !this._dirty) {
+    if (isStationary && !positionChanged && !this._dirty) {
       return
     }
-    this._dirty = !isResting
+    this._dirty = !isStationary
 
     this.updatePosition(ball.pos)
     if (this.spinAxisArrow.visible) {
