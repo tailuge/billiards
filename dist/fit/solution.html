@@ -606,6 +606,29 @@
           return -1
         }
 
+        function canonicalDisplayPattern(patternStr) {
+          let cushions = 0
+          let thirdCushionIndex = -1
+
+          for (let i = 0; i < patternStr.length; i++) {
+            if ("LlSs".includes(patternStr[i])) {
+              cushions++
+              if (cushions === 3) {
+                thirdCushionIndex = i
+                break
+              }
+            }
+          }
+
+          if (thirdCushionIndex < 0) return patternStr
+
+          const prefix = patternStr.slice(0, thirdCushionIndex + 1)
+          const balls = [...patternStr.slice(thirdCushionIndex + 1)].filter(
+            (c) => c === "◉"
+          )
+
+          return prefix + balls.map(() => ".*◉").join("")
+        }
         function processResult(task, data) {
           const cutoff = getScoringCutoff(data.outcomes, 0)
           if (cutoff >= 0) {
@@ -635,10 +658,11 @@
               })
               .join("")
 
-            let entry = patterns.get(patternStr)
+            const canonicalPattern = canonicalDisplayPattern(patternStr)
+            let entry = patterns.get(canonicalPattern)
             if (!entry) {
               entry = { count: 0, solutions: [] }
-              patterns.set(patternStr, entry)
+              patterns.set(canonicalPattern, entry)
             }
             entry.count++
             entry.solutions.push({
