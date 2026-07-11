@@ -103,8 +103,40 @@ class MinHeap {
 }
 
 /**
- * Computes the deletion cost of a node by evaluating the maximum Euclidean error
- * over the interval between its predecessor and successor if the node is removed.
+ * Computes the minimum perpendicular distance from point P(px, py) to the line segment connecting A(ax, ay) and B(bx, by).
+ */
+function distanceToLineSegment(px, py, ax, ay, bx, by) {
+  const dx = bx - ax
+  const dy = by - ay
+  const lenSq = dx * dx + dy * dy
+  if (lenSq === 0) {
+    return Math.hypot(px - ax, py - ay)
+  }
+  let t = ((px - ax) * dx + (py - ay) * dy) / lenSq
+  t = Math.max(0, Math.min(1, t))
+  const projX = ax + t * dx
+  const projY = ay + t * dy
+  return Math.hypot(px - projX, py - projY)
+}
+
+/**
+ * Checks if a point (x, y) is within 2R of any of the four cushions of the three-cushion billiard table.
+ */
+function isWithin2ROfCushion(x, y) {
+  const R = 0.03275
+  const tableX = R * 45.18
+  const tableY = R * 22.09
+  const limit = 2 * R
+
+  const distToCushionX = tableX - Math.abs(x)
+  const distToCushionY = tableY - Math.abs(y)
+
+  return distToCushionX <= limit || distToCushionY <= limit
+}
+
+/**
+ * Computes the deletion cost of a node by evaluating the maximum perpendicular distance
+ * of all intermediate points over the interval between its predecessor and successor if the node is removed.
  *
  * @param {ListNode} node - The candidate node.
  * @param {Array} originalSamples - The full array of original samples for this ball.
@@ -114,21 +146,16 @@ function computeDeletionCost(node, originalSamples) {
   if (!node.prev || !node.next) {
     return Infinity
   }
+  if (isWithin2ROfCushion(node.x, node.y)) {
+    return Infinity
+  }
   const p = node.prev
   const s = node.next
-
-  const tempTrack = [
-    { t: p.t, x: p.x, y: p.y },
-    { t: s.t, x: s.x, y: s.y }
-  ]
 
   let maxError = 0
   for (let k = p.index + 1; k < s.index; k++) {
     const orig = originalSamples[k]
-    const { point: interpolated } = interpolateTrack(tempTrack, orig.t, 0)
-    const dx = interpolated.x - orig.x
-    const dy = interpolated.y - orig.y
-    const err = Math.hypot(dx, dy)
+    const err = distanceToLineSegment(orig.x, orig.y, p.x, p.y, s.x, s.y)
     if (err > maxError) {
       maxError = err
     }
