@@ -8,215 +8,123 @@
       href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.8em%22 font-size=%2290%22>═</text></svg>"
     />
     <link rel="stylesheet" href="../css/ball-colors.css" />
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        font-family: system-ui, sans-serif;
-        background: #f0f0f0;
-        padding: 2px;
-      }
-      .page {
-        max-width: 800px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-      .controls-bar {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 2px 4px;
-        font-size: 11px;
-      }
-      .controls-row {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-      .constant-group {
-        display: flex;
-        flex-direction: column;
-        gap: 1px;
-      }
-      .group-label {
-        font-weight: 600;
-        font-size: 10px;
-        text-align: center;
-        padding: 2px;
-      }
-      .constant-row {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 10px;
-        color: #555;
-        width: 100%;
-      }
-      .constant-row input[type="range"] {
-        flex: 1;
-        height: 4px;
-        accent-color: #888;
-      }
-      .constant-row span.val {
-        display: inline-block;
-        width: 44px;
-        text-align: right;
-        font-family: monospace;
-        font-size: 10px;
-      }
-      .pair-wrapper {
-        position: relative;
-        width: 100%;
-      }
-      svg.billiards-table {
-        width: 100%;
-        height: auto;
-        display: block;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-      }
-      svg.billiards-table.adjusted {
-        position: absolute;
-        inset: 0;
-        background: transparent;
-      }
-      svg.billiards-table.adjusted .trajectory-line {
-        stroke-dasharray: 0.015 0.01;
-      }
-      .edit-btn {
-        position: absolute;
-        bottom: 4%;
-        right: 5%;
-        font-size: 16px;
-        cursor: pointer;
-        z-index: 10;
-        opacity: 0.5;
-        background: none;
-        border: none;
-        padding: 0;
-        filter: grayscale(1);
-      }
-      .edit-btn:hover {
-        opacity: 0.9;
-        filter: none;
-      }
-    </style>
+    <link rel="stylesheet" href="compare.css" />
   </head>
   <body>
     <div class="page">
       <div class="controls-bar">
         <div class="controls-row">
-          <div class="constant-group">
-            <div class="group-label">Han</div>
-            <div class="constant-row">
-              <label for="mu">mu</label>
-              <input
-                id="mu"
-                type="range"
-                min="0.0001"
-                max="0.02"
-                step="0.0001"
-                value="0.0055"
-              />
-              <span class="val" id="mu-val">0.0055</span>
+          <details class="constant-group">
+            <summary class="group-label">Han</summary>
+            <div class="group-content">
+              <div class="constant-row">
+                <label for="mu">mu</label>
+                <input
+                  id="mu"
+                  type="range"
+                  min="0.0001"
+                  max="0.02"
+                  step="0.0001"
+                  value="0.0055"
+                />
+                <span class="val" id="mu-val">0.0055</span>
+              </div>
+              <div class="constant-row">
+                <label for="muS">muS</label>
+                <input
+                  id="muS"
+                  type="range"
+                  min="0.0001"
+                  max="0.5"
+                  step="0.0001"
+                  value="0.126"
+                />
+                <span class="val" id="muS-val">0.126</span>
+              </div>
             </div>
-            <div class="constant-row">
-              <label for="muS">muS</label>
-              <input
-                id="muS"
-                type="range"
-                min="0.0001"
-                max="0.5"
-                step="0.0001"
-                value="0.126"
-              />
-              <span class="val" id="muS-val">0.126</span>
+          </details>
+          <details class="constant-group">
+            <summary class="group-label">Mathavan</summary>
+            <div class="group-content">
+              <div class="constant-row">
+                <label for="μs">μs</label>
+                <input
+                  id="μs"
+                  type="range"
+                  min="0.0001"
+                  max="0.99"
+                  step="0.0001"
+                  value="0.2"
+                />
+                <span class="val" id="μs-val">0.20</span>
+              </div>
+              <div class="constant-row">
+                <label for="μw">μw</label>
+                <input
+                  id="μw"
+                  type="range"
+                  min="0.0001"
+                  max="0.99"
+                  step="0.0001"
+                  value="0.2"
+                />
+                <span class="val" id="μw-val">0.20</span>
+              </div>
+              <div class="constant-row">
+                <label for="ee">ee</label>
+                <input
+                  id="ee"
+                  type="range"
+                  min="0.0001"
+                  max="0.99"
+                  step="0.0001"
+                  value="0.85"
+                />
+                <span class="val" id="ee-val">0.85</span>
+              </div>
             </div>
-          </div>
-          <div class="constant-group">
-            <div class="group-label">Mathavan</div>
-            <div class="constant-row">
-              <label for="μs">μs</label>
-              <input
-                id="μs"
-                type="range"
-                min="0.0001"
-                max="0.99"
-                step="0.0001"
-                value="0.2"
-              />
-              <span class="val" id="μs-val">0.20</span>
+          </details>
+          <details class="constant-group">
+            <summary class="group-label">Stronge</summary>
+            <div class="group-content">
+              <div class="constant-row">
+                <label for="stronge_omega_ratio">ω ratio</label>
+                <input
+                  id="stronge_omega_ratio"
+                  type="range"
+                  min="0.0001"
+                  max="1.99"
+                  step="0.0001"
+                  value="1.76"
+                />
+                <span class="val" id="stronge_omega_ratio-val">1.76</span>
+              </div>
+              <div class="constant-row">
+                <label for="stronge_e_n">eₙ</label>
+                <input
+                  id="stronge_e_n"
+                  type="range"
+                  min="0.0001"
+                  max="0.99"
+                  step="0.0001"
+                  value="0.77"
+                />
+                <span class="val" id="stronge_e_n-val">0.77</span>
+              </div>
+              <div class="constant-row">
+                <label for="stronge_μ">μ</label>
+                <input
+                  id="stronge_μ"
+                  type="range"
+                  min="0.0001"
+                  max="0.99"
+                  step="0.0001"
+                  value="0.25"
+                />
+                <span class="val" id="stronge_μ-val">0.25</span>
+              </div>
             </div>
-            <div class="constant-row">
-              <label for="μw">μw</label>
-              <input
-                id="μw"
-                type="range"
-                min="0.0001"
-                max="0.99"
-                step="0.0001"
-                value="0.2"
-              />
-              <span class="val" id="μw-val">0.20</span>
-            </div>
-            <div class="constant-row">
-              <label for="ee">ee</label>
-              <input
-                id="ee"
-                type="range"
-                min="0.0001"
-                max="0.99"
-                step="0.0001"
-                value="0.85"
-              />
-              <span class="val" id="ee-val">0.85</span>
-            </div>
-          </div>
-          <div class="constant-group">
-            <div class="group-label">Stronge</div>
-            <div class="constant-row">
-              <label for="stronge_omega_ratio">ω ratio</label>
-              <input
-                id="stronge_omega_ratio"
-                type="range"
-                min="0.0001"
-                max="1.99"
-                step="0.0001"
-                value="1.76"
-              />
-              <span class="val" id="stronge_omega_ratio-val">1.76</span>
-            </div>
-            <div class="constant-row">
-              <label for="stronge_e_n">eₙ</label>
-              <input
-                id="stronge_e_n"
-                type="range"
-                min="0.0001"
-                max="0.99"
-                step="0.0001"
-                value="0.77"
-              />
-              <span class="val" id="stronge_e_n-val">0.77</span>
-            </div>
-            <div class="constant-row">
-              <label for="stronge_μ">μ</label>
-              <input
-                id="stronge_μ"
-                type="range"
-                min="0.0001"
-                max="0.99"
-                step="0.0001"
-                value="0.25"
-              />
-              <span class="val" id="stronge_μ-val">0.25</span>
-            </div>
-          </div>
+          </details>
         </div>
       </div>
 
@@ -339,10 +247,16 @@
         initDiagrams()
       }
 
-      // Wire slider value displays and refresh
+      // Set tick marks at initial values and wire slider value displays and refresh
       for (const slider of document.querySelectorAll(
         ".constant-row input[type=range]"
       )) {
+        const min = Number(slider.min) || 0
+        const max = Number(slider.max) || 100
+        const initialVal = Number(slider.getAttribute("value")) || 0
+        const percent = ((initialVal - min) / (max - min)) * 100
+        slider.style.setProperty("--tick-percent", `${percent}%`)
+
         const valEl = document.getElementById(slider.id + "-val")
         if (valEl) {
           slider.addEventListener("input", () => {

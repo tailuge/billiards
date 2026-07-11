@@ -1,0 +1,169 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #f0f0f0;
+  padding: 2px;
+}
+
+.page {
+  margin: 0 auto;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 8px;
+  padding: 8px;
+}
+
+.controls-bar {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+.controls-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.constant-group {
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background: #fcfcfc;
+  padding: 4px;
+}
+
+.constant-group[open] {
+  background: #fff;
+  border-color: #ccc;
+}
+
+.group-label {
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 4px;
+  user-select: none;
+  outline: none;
+}
+
+.group-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 4px;
+}
+
+.constant-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #555;
+  width: 100%;
+}
+
+.constant-row input[type="range"] {
+  appearance: none;
+  flex: 1;
+  height: 4px;
+  background: linear-gradient(
+    to right,
+    #ddd 0%,
+    #ddd var(--tick-percent, 0%),
+    #333 var(--tick-percent, 0%),
+    #333 calc(var(--tick-percent, 0%) + 2px),
+    #ddd calc(var(--tick-percent, 0%) + 2px),
+    #ddd 100%
+  );
+  border-radius: 2px;
+  outline: none;
+}
+
+.constant-row input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #666;
+  cursor: pointer;
+  margin-top: -3px;
+}
+
+.constant-row input[type="range"]::-webkit-slider-thumb:hover {
+  background: #333;
+}
+
+.constant-row input[type="range"]::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #666;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.constant-row input[type="range"]::-moz-range-thumb:hover {
+  background: #333;
+}
+
+.constant-row span.val {
+  display: inline-block;
+  width: 44px;
+  text-align: right;
+  font-family: monospace;
+  font-size: 10px;
+}
+
+.pair-wrapper {
+  position: relative;
+  width: 600px;
+  max-width: 100%;
+  flex: 0 0 auto;
+}
+
+svg.billiards-table {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+svg.billiards-table.adjusted {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+}
+
+svg.billiards-table.adjusted .trajectory-line {
+  stroke-dasharray: 0.015 0.01;
+}
+
+.edit-btn {
+  position: absolute;
+  bottom: 4%;
+  right: 5%;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0.5;
+  background: none;
+  border: none;
+  padding: 0;
+  filter: grayscale(1);
+}
+
+.edit-btn:hover {
+  opacity: 0.9;
+  filter: none;
+}
