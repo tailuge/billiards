@@ -1,8 +1,8 @@
 # Scaling Plan for 3-Cushion Billiard Table Size
 
-This document outlines the design and implementation steps for scaling the 3D three-cushion table asset (`threecushion.min.gltf`) and the corresponding physics engine boundaries to support smaller table sizes (9ft or 8ft) based on a URL query parameter `tableSize`.
+This document outlines the design and implementation steps for scaling the 3D three-cushion table asset (`threecushion.min.gltf`), the corresponding physics engine boundaries, and the exported SVG diagrams (`export.html`, `svg.js`) to support smaller table sizes (9ft or 8ft) based on a URL query parameter `tableSize`.
 
-The standard tournament billiard table size (10ft) is used as the base reference. Scaling will be applied only to the horizontal layout plane ($X$ and $Y$ axes), preserving the vertical height ($Z$ axis) to ensure physically accurate ball-cushion contact points, ball drop depths, and floor alignment.
+The standard tournament billiard table size (10ft) is used as the base reference. Scaling will be applied only to the horizontal layout plane ($X$ and $Y$ axes), preserving the vertical height ($Z$ axis) to ensure physically accurate ball-cushion contact points, ball drop depths, and floor alignment. Scaling is specifically gated and applied only to **three-cushion** rules/tables.
 
 ---
 
@@ -79,7 +79,7 @@ export function importGltf(path, ready) {
 
 To ensure the physical collision boundaries exactly match the scaled visual table mesh, `TableGeometry` must be scaled accordingly.
 
-Update `TableGeometry.configureForRule(ruleType, tableSize)` to accept a `tableSize` parameter:
+Update `TableGeometry.configureForRule(ruleType, tableSize)` to accept a `tableSize` parameter, applying scaling **exclusively** to `threecushion` tables:
 
 ```typescript
 export class TableGeometry {
@@ -101,8 +101,9 @@ export class TableGeometry {
       TableGeometry.tableY = R * (UMB_TABLE_Y / 2 - 1) * sizeScale
       TableGeometry.hasPockets = false
     } else {
-      TableGeometry.tableX = R * 43 * sizeScale
-      TableGeometry.tableY = R * 21 * sizeScale
+      // Standard / pocket tables remain unmodified (no scaling applied)
+      TableGeometry.tableX = R * 43
+      TableGeometry.tableY = R * 21
       TableGeometry.hasPockets = true
       setmu(mu * 1.2)
     }
@@ -153,8 +154,58 @@ function configureSimulation(
 
 ---
 
-## 6. Implementation Summary
+## 6. SVG Diagram Scaling: `dist/diagrams/export.html` and `svg.js`
+
+To scale the 2D exported SVG diagrams for three-cushion rules without modifying non-three-cushion rules:
+
+### A. Modifying module-level constants in `dist/diagrams/svg.js`
+In `svg.js`, the table bounds and dimensions are parsed on load based on search parameters:
+
+```javascript
+const urlParams = new URLSearchParams(window.location.search);
+const tableSize = parseFloat(urlParams.get("tableSize") || "10");
+// Only apply scaling if the rule type is three-cushion (or defaults to it)
+const sizeScale = (urlParams.get("ruletype") === "threecushion" || !urlParams.get("ruletype"))
+  ? tableSize / 10
+  : 1.0;
+
+export const R = 0.03275;
+const UMB_TABLE_X = 92.36;
+const UMB_TABLE_Y = 46.18;
+const tableX = R * (UMB_TABLE_X / 2 - 1) * sizeScale;
+const tableY = R * (UMB_TABLE_Y / 2 - 1) * sizeScale;
+export const X = tableX + R;
+export const Y = tableY + R;
+```
+
+### B. Forwarding the Table Size inside `dist/diagrams/export.html`
+When `export.html` constructs the simulation configuration payload, it should pass `tableSize` inside `config.params` so that the worker physics thread simulates the trajectories using matching boundaries:
+
+```javascript
+        const tableSizeParam = parseFloat(params.get("tableSize") || "10");
+
+        config = {
+          balls,
+          cushionModel,
+          ruleType: ruletype,
+          shot: {
+            cueBallId: initShot.cueBallId ?? 0,
+            angle: initShot.angle,
+            power: initShot.power,
+            offset: initShot.offset,
+            elevation: initShot.elevation ?? 0,
+          },
+          params: {
+            tableSize: tableSizeParam // Forward size to physics simulation worker!
+          }
+        }
+```
+
+---
+
+## 7. Implementation Summary
 
 1. **Horizontal Scaling Only:** Visual scaling is performed in 3D scene space by applying the scale factor exclusively to `scale.x` and `scale.y` of the loaded `gltf.scene`.
 2. **Seamless Physics Integration:** Dynamic boundary scaling is handled inside the static `TableGeometry` configuration, making it automatically compatible with all existing collision and advance integration logic.
-3. **No Code Changes:** No existing source code is modified in this stage, maintaining full compatibility and a clean workspace state.
+3. **SVG Export Harmonization:** The 2D SVG dimensions and diamonds scale dynamically and matching simulation trajectories are requested from the web worker by forwarding the `tableSize` parameter inside `config.params`.
+4. **No Code Changes:** No existing source code is modified in this stage, maintaining full compatibility and a clean workspace state.
