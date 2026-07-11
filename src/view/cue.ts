@@ -173,11 +173,18 @@ export class Cue {
   }
 
   private updateCueRotation() {
-    if (this.mesh) this.mesh.rotation.z = this.aim.angle
-    if (this.tiltMesh)
-      this.tiltMesh.rotation.y = CueMesh.baseTilt + this.aim.elevation
-    if (this.helperMesh) this.helperMesh.rotation.z = this.aim.angle
-    if (this.shadowMesh) this.shadowMesh.rotation.z = this.aim.angle
+    if (this.mesh && this.mesh.visible) {
+      this.mesh.rotation.z = this.aim.angle
+      if (this.tiltMesh) {
+        this.tiltMesh.rotation.y = CueMesh.baseTilt + this.aim.elevation
+      }
+    }
+    if (this.helperMesh && this.helperMesh.visible) {
+      this.helperMesh.rotation.z = this.aim.angle
+    }
+    if (this.shadowMesh && this.shadowMesh.visible) {
+      this.shadowMesh.rotation.z = this.aim.angle
+    }
   }
 
   private applyHitAnimation(swing: number) {
@@ -192,7 +199,7 @@ export class Cue {
     const strokeX = (1 - this.hitAnimationWeight) * swing - hitOffset
     const strokeZ = (0.15 + Math.min(this.t / 5, 0.25)) * hitOffset
 
-    if (this.cueBody) {
+    if (this.cueBody && (this.mesh && this.mesh.visible)) {
       this.cueBody.position.set(
         -this.length / 2 - R + strokeX,
         this.aim.offset.x * R,
@@ -204,19 +211,21 @@ export class Cue {
   }
 
   private updateCuePosition(pos: Vector3, strokeX: number) {
-    if (this.mesh) this.mesh.position.copy(pos)
+    if (this.mesh && this.mesh.visible) {
+      this.mesh.position.copy(pos)
+    }
 
-    // Project local strokeX through tilt onto the horizontal plane for shadow
-    const unitToBall = unitAtAngle(this.aim.angle, this.tempVec)
-    const sideVec = upCross(unitToBall).normalize()
-    const elevation = this.tiltMesh ? (this.tiltMesh.rotation.y as number) : 0
+    if (this.shadowMesh && this.shadowMesh.visible) {
+      // Project local strokeX through tilt onto the horizontal plane for shadow
+      const unitToBall = unitAtAngle(this.aim.angle, this.tempVec)
+      const sideVec = upCross(unitToBall).normalize()
+      const elevation = this.tiltMesh ? (this.tiltMesh.rotation.y as number) : 0
 
-    const localX = strokeX - R
-    const localZ = this.cueBody ? this.cueBody.position.z : 0
-    const projectedX =
-      localX * Math.cos(elevation) + localZ * Math.sin(elevation)
+      const localX = strokeX - R
+      const localZ = this.cueBody ? this.cueBody.position.z : 0
+      const projectedX =
+        localX * Math.cos(elevation) + localZ * Math.sin(elevation)
 
-    if (this.shadowMesh) {
       this.shadowMesh.position
         .copy(pos)
         .addScaledVector(sideVec, this.cueBody ? this.cueBody.position.y : 0)
@@ -225,8 +234,10 @@ export class Cue {
       this.shadowMesh.scale.x = Math.cos(elevation)
     }
 
-    if (this.helperMesh) this.helperMesh.position.copy(pos)
-    if (this.placerMesh) {
+    if (this.helperMesh && this.helperMesh.visible) {
+      this.helperMesh.position.copy(pos)
+    }
+    if (this.placerMesh && this.placerMesh.visible) {
       this.placerMesh.position.copy(pos)
       this.placerMesh.rotation.z = this.t
     }
