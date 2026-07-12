@@ -30,6 +30,7 @@ export class Camera {
   private readonly target = new Vector3()
   private readonly lookTarget = new Vector3()
   private readonly tempVec = new Vector3()
+  private readonly tempVec2 = new Vector3()
 
   private distance = Camera.defaultDistance
   private fovOffset = Camera.defaultFovOffset
@@ -75,8 +76,8 @@ export class Camera {
     this.camera.position.z = h
     this.camera.up = up
     this.lookTarget.lerp(
-      aim.pos
-        .clone()
+      this.tempVec2
+        .copy(aim.pos)
         .addScaledVector(unitAtAngle(aim.angle, this.tempVec), R * 10),
       0.03
     )

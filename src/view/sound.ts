@@ -11,6 +11,8 @@ export class Sound {
   success
 
   lastOutcomeTime = 0
+  lastOutcomeIndex = 0
+  lastOutcomesRef: any[] | null = null
   loadAssets
 
   constructor(loadAssets) {
@@ -98,14 +100,25 @@ export class Sound {
   }
 
   processOutcomes(outcomes) {
-    outcomes.every((outcome) => {
+    // Optimize processOutcomes to avoid scanning from index 0 every frame.
+    // We cache the last checked outcomes array reference and track the next outcome index.
+    if (
+      this.lastOutcomeTime === -1 ||
+      outcomes !== this.lastOutcomesRef ||
+      this.lastOutcomeIndex > outcomes.length
+    ) {
+      this.lastOutcomeIndex = 0
+      this.lastOutcomesRef = outcomes
+    }
+    for (let i = this.lastOutcomeIndex; i < outcomes.length; i++) {
+      const outcome = outcomes[i]
       if (outcome.timestamp > this.lastOutcomeTime) {
         this.lastOutcomeTime = outcome.timestamp
+        this.lastOutcomeIndex = i + 1
         this.outcomeToSound(outcome)
-        return false
+        break
       }
-      return true
-    })
+    }
   }
 
   playNotify() {
