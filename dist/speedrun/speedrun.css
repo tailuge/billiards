@@ -430,3 +430,14 @@ header h1 {
 #resultOkBtn:hover::before {
   left: 150%;
 }
+
+/* ?run=id filtering — hide all cards except the matching one */
+html[data-run] .card-grid > .speedrun-card:not(.active-run) {
+  display: none;
+}
+
+/* Icon buttons on card SVGs */
+.icon-btn:hover {
+  opacity: 0.9 !important;
+  filter: none !important;
+}

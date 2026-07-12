@@ -344,6 +344,72 @@ export function initSpeedrun() {
     currentCard = null
   }
 
+  // --- Icons on each card diagram (share + practice) following exam.html pattern ---
+  document.querySelectorAll(".speedrun-card .billiards-table").forEach((svg) => {
+    const card = svg.closest(".speedrun-card")
+
+    // Wrap SVG in a positioned container so icons sit on the diagram, not the card
+    const wrapper = document.createElement("div")
+    wrapper.style.position = "relative"
+    wrapper.style.display = "block"
+    svg.parentElement.insertBefore(wrapper, svg)
+    wrapper.appendChild(svg)
+
+    // Share button (🔗) — copy/share current URL + ?run=id
+    const shareBtn = document.createElement("button")
+    shareBtn.textContent = "\uD83D\uDD17"
+    shareBtn.className = "icon-btn share-btn"
+    shareBtn.style.cssText =
+      "position:absolute;bottom:4%;right:5%;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;filter:grayscale(1);background:none;border:none;padding:0;line-height:1"
+    shareBtn.title = "Copy share link"
+    shareBtn.addEventListener("click", (e) => {
+      e.stopPropagation()
+      const pid = positionId(card)
+      const url = location.origin + location.pathname + "?run=" + pid
+      if (navigator.share) {
+        navigator.share({ url }).catch(() => {})
+      } else {
+        navigator.clipboard.writeText(url).then(() => {
+          shareBtn.textContent = "\u2705"
+          shareBtn.style.filter = "none"
+          shareBtn.style.opacity = "1"
+          setTimeout(() => {
+            shareBtn.textContent = "\uD83D\uDD17"
+            shareBtn.style.filter = "grayscale(1)"
+            shareBtn.style.opacity = "0.6"
+          }, 1500)
+        }).catch(() => {})
+      }
+    })
+    wrapper.appendChild(shareBtn)
+
+    // Practice button (🔧) — open in practice.html with the shot setup
+    const practiceBtn = document.createElement("button")
+    practiceBtn.textContent = "\uD83D\uDD27"
+    practiceBtn.className = "icon-btn practice-btn"
+    practiceBtn.style.cssText =
+      "position:absolute;bottom:4%;right:10%;font-size:16px;cursor:pointer;z-index:10;opacity:0.6;filter:grayscale(1);background:none;border:none;padding:0;line-height:1"
+    practiceBtn.title = "Open in practice view"
+    practiceBtn.addEventListener("click", (e) => {
+      e.stopPropagation()
+      let configs
+      try {
+        configs = JSON.parse(svg.dataset.jsonShots)
+      } catch {
+        return
+      }
+      const config = configs[0]
+      const init = JSON.stringify(
+        config.balls.flatMap((b) => [b.pos.x, b.pos.y])
+      )
+      const p = new URLSearchParams()
+      p.set("ruletype", config.ruleType)
+      p.set("init", init)
+      window.open("../practice.html?" + p, "_blank")
+    })
+    wrapper.appendChild(practiceBtn)
+  })
+
   // Fetch rankings on page load
   fetchRankings()
 }

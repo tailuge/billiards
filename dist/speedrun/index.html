@@ -223,6 +223,32 @@
       </div>
     </div>
 
+    <script>
+      // ?run=id filtering via CSS — sets data-run on <html> + .active-run on matching card
+      (function () {
+        var params = new URLSearchParams(window.location.search)
+        var runId = params.get("run")
+        if (!runId) return
+        var cards = document.querySelectorAll(".speedrun-card")
+        var found = false
+        cards.forEach(function (card) {
+          var svg = card.querySelector(".billiards-table")
+          var s = svg ? svg.dataset.jsonShots || "" : ""
+          var h = 0
+          for (var i = 0; i < s.length; i++) {
+            h = (h << 5) - h + s.charCodeAt(i)
+            h |= 0
+          }
+          var id = "p" + Math.abs(h).toString(36)
+          card.id = id
+          if (id === runId) {
+            card.classList.add("active-run")
+            found = true
+          }
+        })
+        if (found) document.documentElement.dataset.run = runId
+      })()
+    </script>
     <script type="module">
       import { initSpeedrun } from "./speedrun.js"
       initSpeedrun()
