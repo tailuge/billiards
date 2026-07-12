@@ -15,6 +15,8 @@ export class View {
   camera: Camera
   windowWidth = 1
   windowHeight = 1
+  private cachedWidth = 1
+  private cachedHeight = 1
   private lastFov = 0
   readonly element
   table: Table
@@ -31,6 +33,22 @@ export class View {
     this.table = table
     this.assets = assets
     this.renderer = renderer(element)
+
+    if (element) {
+      this.cachedWidth = element.offsetWidth
+      this.cachedHeight = element.offsetHeight
+      this.windowWidth = element.offsetWidth
+      this.windowHeight = element.offsetHeight
+
+      if (typeof ResizeObserver !== "undefined") {
+        const observer = new ResizeObserver(() => {
+          this.cachedWidth = element.offsetWidth
+          this.cachedHeight = element.offsetHeight
+        })
+        observer.observe(element)
+      }
+    }
+
     this.camera = new Camera(
       element ? element.offsetWidth / element.offsetHeight : 1
     )
@@ -63,17 +81,30 @@ export class View {
   }
 
   sizeChanged() {
+    // Avoid reading offsetWidth/offsetHeight in high-frequency loops when ResizeObserver is supported.
+    // This prevents layout thrashing.
+    if (typeof ResizeObserver === "undefined") {
+      return (
+        this.windowWidth != this.element?.offsetWidth ||
+        this.windowHeight != this.element?.offsetHeight
+      )
+    }
     return (
-      this.windowWidth != this.element?.offsetWidth ||
-      this.windowHeight != this.element?.offsetHeight
+      this.windowWidth !== this.cachedWidth ||
+      this.windowHeight !== this.cachedHeight
     )
   }
 
   updateSize() {
     const hasChanged = this.sizeChanged()
     if (hasChanged) {
-      this.windowWidth = this.element?.offsetWidth
-      this.windowHeight = this.element?.offsetHeight
+      if (typeof ResizeObserver === "undefined") {
+        this.windowWidth = this.element?.offsetWidth
+        this.windowHeight = this.element?.offsetHeight
+      } else {
+        this.windowWidth = this.cachedWidth
+        this.windowHeight = this.cachedHeight
+      }
     }
     return hasChanged
   }

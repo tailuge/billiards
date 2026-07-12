@@ -13,6 +13,10 @@ import {
 import { LineData } from "../events/chatevent"
 import { Session } from "../network/client/session"
 
+const tempV1 = new Vector3()
+const tempV2 = new Vector3()
+const offsetZ = new Vector3(0, 0, 0.001)
+
 export class Drawing {
   private readonly scene: Scene
   private readonly canvas: HTMLCanvasElement
@@ -92,8 +96,8 @@ export class Drawing {
   private updatePreview(p1: Vector3, p2: Vector3) {
     if (!this.previewLine) {
       const geometry = new BufferGeometry().setFromPoints([
-        p1.clone().add(new Vector3(0, 0, 0.001)),
-        p2.clone().add(new Vector3(0, 0, 0.001)),
+        tempV1.copy(p1).add(offsetZ),
+        tempV2.copy(p2).add(offsetZ),
       ])
       const material = new LineBasicMaterial({
         color: 0xffffff,
@@ -104,8 +108,8 @@ export class Drawing {
       this.scene.add(this.previewLine)
     } else {
       this.previewLine.geometry.setFromPoints([
-        p1.clone().add(new Vector3(0, 0, 0.001)),
-        p2.clone().add(new Vector3(0, 0, 0.001)),
+        tempV1.copy(p1).add(offsetZ),
+        tempV2.copy(p2).add(offsetZ),
       ])
     }
   }
