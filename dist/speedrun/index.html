@@ -225,7 +225,7 @@
 
     <script>
       // ?run=id filtering via CSS — sets data-run on <html> + .active-run on matching card
-      (function () {
+      ;(function () {
         var params = new URLSearchParams(window.location.search)
         var runId = params.get("run")
         if (!runId) return

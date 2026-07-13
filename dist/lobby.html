@@ -19,10 +19,7 @@
       href="https://tailuge.github.io/billiards/dist/lobby.html"
     />
 
-    <meta
-      property="og:title"
-      content="Tailuge Billiards"
-    />
+    <meta property="og:title" content="Tailuge Billiards" />
     <meta
       property="og:description"
       content="Free multiplayer lobby for Billiards. Find matches and play realistic pool online."
@@ -42,10 +39,7 @@
     <meta property="og:video:type" content="text/html" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="Multiplayer Billiards - Free"
-    />
+    <meta name="twitter:title" content="Multiplayer Billiards - Free" />
     <meta
       name="twitter:description"
       content="Free multiplayer lobby for Billiards. Find matches and play realistic pool online."
@@ -85,6 +79,10 @@
     />
     <link rel="icon" type="image/png" href="assets/threecushion.png" />
     <link rel="manifest" href="manifest.json" />
+    <meta
+      name="ocs-site-verification"
+      content="7e2c8724a132bd19fa2cac60ae730ba5"
+    />
     <meta name="theme-color" content="#1a1a1a" />
     <style>
       html,
@@ -96,7 +94,10 @@
         scrollbar-width: none;
         background: #f5f5f5;
       }
-      html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        display: none;
+      }
       html[theme="dark"],
       html[theme="dark"] body {
         background: #1a1a1a;
@@ -112,14 +113,20 @@
 
     <script src="lobby.js" type="module"></script>
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('sw.js').then((registration) => {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          }, (err) => {
-            console.log('ServiceWorker registration failed: ', err);
-          });
-        });
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js").then(
+            (registration) => {
+              console.log(
+                "ServiceWorker registration successful with scope: ",
+                registration.scope
+              )
+            },
+            (err) => {
+              console.log("ServiceWorker registration failed: ", err)
+            }
+          )
+        })
       }
     </script>
   </body>
