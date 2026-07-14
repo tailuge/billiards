@@ -66,8 +66,8 @@ export class ThreeCushion implements Rules {
     const sizeScale = this.getTableSize() / 10
     if (sizeScale !== 1) {
       const adjust = 0.022
-      scene.scale.x *= sizeScale * (1+adjust)
-      scene.scale.y *= sizeScale * (1+(2*adjust))
+      scene.scale.x *= sizeScale * (1 + adjust)
+      scene.scale.y *= sizeScale * (1 + 2 * adjust)
       scene.updateMatrix()
       scene.updateMatrixWorld()
     }
