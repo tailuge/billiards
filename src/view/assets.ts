@@ -17,8 +17,8 @@ export class Assets {
     texturePath: "assets/cat.jpg",
     textureRepeatU: 1,
     textureRepeatV: 2,
-    clothColor: 0xff0000,
-    cushionColor: 0xff0000,
+    clothColor: 0xba934e,
+    cushionColor: 0xba934e,
   }
 
   ready
