@@ -19,7 +19,8 @@ export class ReplayEncoder {
     start: number = 0,
     score: number = 0,
     wholeGame: boolean = false,
-    players?: { player1: string; player2: string }
+    players?: { player1: string; player2: string },
+    tableSize?: number
   ) {
     const state: any = {
       init: init,
@@ -32,6 +33,9 @@ export class ReplayEncoder {
     }
     if (players) {
       state.players = players
+    }
+    if (tableSize !== undefined && tableSize !== 10) {
+      state.tableSize = tableSize
     }
     return state
   }

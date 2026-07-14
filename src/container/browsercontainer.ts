@@ -25,6 +25,7 @@ import { getUID } from "../utils/uid"
 import { DrillPanel } from "../view/drillpanel"
 import { AnalysisPanel } from "../view/analysispanel"
 import { applyPhysicsParams } from "../utils/physicsparams"
+import { TableGeometry } from "../view/tablegeometry"
 
 /**
  * Integrate game container into HTML page
@@ -46,6 +47,7 @@ export class BrowserContainer {
     now: number
     score: number
     players?: { player1: string; player2: string }
+    tableSize?: number
   } = {
     init: null,
     shots: [],
@@ -158,6 +160,28 @@ export class BrowserContainer {
   }
 
   start() {
+    // If replay state embeds a non-default tableSize and the URL doesn't have
+    // one yet, add it and redirect so that TableGeometry, scaleTableModel, and
+    // Camera all see the correct value from the start.
+    if (this.replay) {
+      try {
+        const state = this.parse(this.replay)
+        const stateTableSize = state.tableSize
+        if (
+          stateTableSize !== undefined &&
+          stateTableSize !== 10 &&
+          !new URLSearchParams(globalThis.location.search).has("tableSize")
+        ) {
+          const url = new URL(globalThis.location.href)
+          url.searchParams.set("tableSize", String(stateTableSize))
+          globalThis.location.href = url.toString()
+          return
+        }
+      } catch {
+        // If parsing fails, proceed normally
+      }
+    }
+
     this.assets = new Assets(this.ruletype)
     if (this.localMesh) {
       this.assets.createLocal()
@@ -305,6 +329,12 @@ export class BrowserContainer {
     if (this.breakState.players) {
       session.playername = this.breakState.players.player1
       session.opponentName = this.breakState.players.player2
+    }
+    if (
+      this.breakState.tableSize !== undefined &&
+      this.breakState.tableSize !== 10
+    ) {
+      TableGeometry.configureForRule(this.ruletype, this.breakState.tableSize)
     }
     const orderedScores = session.orderedScoresForHud()
     this.container.updateScoreHud(orderedScores.p1, orderedScores.p2, 0, 0)

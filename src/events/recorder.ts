@@ -88,7 +88,8 @@ export class Recorder {
       this.start,
       Session.getInstance().myScore(),
       true,
-      this.getPlayerNames()
+      this.getPlayerNames(),
+      this.getTableSize()
     )
   }
 
@@ -119,7 +120,8 @@ export class Recorder {
       0,
       0,
       false,
-      this.getPlayerNames()
+      this.getPlayerNames(),
+      this.getTableSize()
     )
   }
 
@@ -132,7 +134,8 @@ export class Recorder {
         this.breakStartTime,
         this.container.rules.previousBreak,
         false,
-        this.getPlayerNames()
+        this.getPlayerNames(),
+        this.getTableSize()
       )
     }
     return undefined
@@ -235,5 +238,10 @@ export class Recorder {
     }
 
     return shots
+  }
+
+  private getTableSize(): number {
+    const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
+    return parseFloat(urlParams.get("tableSize") || "10")
   }
 }
