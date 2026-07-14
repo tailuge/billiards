@@ -201,6 +201,8 @@
           })
         }
 
+        const tableSizeParam = parseFloat(params.get("tableSize") || "10")
+
         config = {
           balls,
           cushionModel,
@@ -211,6 +213,9 @@
             power: initShot.power,
             offset: initShot.offset,
             elevation: initShot.elevation ?? 0,
+          },
+          params: {
+            tableSize: tableSizeParam,
           },
         }
 

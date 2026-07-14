@@ -27,6 +27,7 @@ export class Assets {
       this.done()
     })
     importGltf(this.rules.asset, (m) => {
+      this.rules.scaleTableModel?.(m.scene)
       this.table = m.scene
       TableMesh.mesh = m.scene.children[0]
       this.done()

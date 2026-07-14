@@ -64,6 +64,7 @@ export class BrowserContainer {
   analysisMode: boolean = false
   examMode: boolean = false
   speedrun: boolean = false
+  localMesh: boolean = false
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
     this.now = Date.now()
@@ -94,6 +95,7 @@ export class BrowserContainer {
     this.analysisMode = params.has("analysis")
     this.examMode = params.has("exam")
     this.speedrun = params.has("speedrun")
+    this.localMesh = params.has("localmesh")
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
       Number.parseInt(params.get("raceTo") ?? "7") || 7
@@ -157,9 +159,14 @@ export class BrowserContainer {
 
   start() {
     this.assets = new Assets(this.ruletype)
-    this.assets.loadFromWeb(() => {
+    if (this.localMesh) {
+      this.assets.createLocal()
       this.onAssetsReady()
-    })
+    } else {
+      this.assets.loadFromWeb(() => {
+        this.onAssetsReady()
+      })
+    }
   }
 
   private initBotMode(scoreReporter: ScoreReporter) {

@@ -53,8 +53,24 @@ export class ThreeCushion implements Rules {
     this.cueball = this.container.table.balls[1]
   }
 
+  private getTableSize(): number {
+    const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
+    return parseFloat(urlParams.get("tableSize") || "10")
+  }
+
   tableGeometry(): void {
-    TableGeometry.configureForRule("threecushion")
+    TableGeometry.configureForRule("threecushion", this.getTableSize())
+  }
+
+  scaleTableModel(scene): void {
+    const sizeScale = this.getTableSize() / 10
+    if (sizeScale !== 1) {
+      const adjust = 0.022
+      scene.scale.x *= sizeScale * (1+adjust)
+      scene.scale.y *= sizeScale * (1+(2*adjust))
+      scene.updateMatrix()
+      scene.updateMatrixWorld()
+    }
   }
 
   table(): Table {

@@ -26,8 +26,13 @@ import { generatePoolTable } from "./pooltable.js";
 export const R = 0.03275;
 const UMB_TABLE_X = 92.36;
 const UMB_TABLE_Y = 46.18;
-const tableX = R * (UMB_TABLE_X / 2 - 1);
-const tableY = R * (UMB_TABLE_Y / 2 - 1);
+const urlParams = new URLSearchParams(window.location.search);
+const tableSize = parseFloat(urlParams.get("tableSize") || "10");
+const sizeScale = (urlParams.get("ruletype") === "threecushion" || !urlParams.get("ruletype"))
+  ? tableSize / 10
+  : 1.0;
+const tableX = R * (UMB_TABLE_X / 2 - 1) * sizeScale;
+const tableY = R * (UMB_TABLE_Y / 2 - 1) * sizeScale;
 export const X = tableX + R;
 export const Y = tableY + R;
 

@@ -18,12 +18,13 @@ export class TableGeometry {
     TableGeometry.Y = TableGeometry.tableY + R
   }
 
-  static configureForRule(ruleType: string): void {
+  static configureForRule(ruleType: string, tableSize: number = 10): void {
+    const sizeScale = tableSize / 10
     if (ruleType === "threecushion") {
       const UMB_TABLE_X = 92.36
       const UMB_TABLE_Y = 46.18
-      TableGeometry.tableX = R * (UMB_TABLE_X / 2 - 1)
-      TableGeometry.tableY = R * (UMB_TABLE_Y / 2 - 1)
+      TableGeometry.tableX = R * (UMB_TABLE_X / 2 - 1) * sizeScale
+      TableGeometry.tableY = R * (UMB_TABLE_Y / 2 - 1) * sizeScale
       TableGeometry.hasPockets = false
     } else {
       TableGeometry.tableX = R * 43
