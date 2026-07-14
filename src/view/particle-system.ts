@@ -15,6 +15,7 @@ export interface ParticleSystemConfig {
   tableWidth?: number
   tableLength?: number
   tableZ?: number
+  tableSize?: number
   scaleX?: number
   scaleY?: number
   stopThreshold?: number
@@ -28,6 +29,7 @@ const DEFAULT_CONFIG: Required<ParticleSystemConfig> = {
   tableWidth: 88,
   tableLength: 44,
   tableZ: -R * 3.5,
+  tableSize: 10,
   scaleX: 0.99 * R,
   scaleY: 0.98 * R,
   stopThreshold: 0.25,
@@ -56,6 +58,9 @@ export class ParticleSystem {
 
   constructor(config: ParticleSystemConfig = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config }
+    const sizeScale = this.config.tableSize / 10
+    this.config.scaleX *= sizeScale
+    this.config.scaleY *= sizeScale
     this.count = this.config.tableWidth * this.config.tableLength
   }
 

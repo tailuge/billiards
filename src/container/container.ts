@@ -134,7 +134,11 @@ export class Container {
     this.view.onLineDrawn = (line) => {
       this.sendEvent(new ChatEvent(this.id, "", line))
     }
-    this.particles = new ParticleSystem()
+    const tableSize = parseFloat(
+      new URLSearchParams(globalThis.location?.search ?? "").get("tableSize") ||
+        "10"
+    )
+    this.particles = new ParticleSystem({ tableSize })
     this.hud = new Hud()
     this.notification = new Notification()
     this.relay = relay
