@@ -153,8 +153,7 @@ function configureSimulation(
 
   const R = Constants.R
 
-  const tableSize =
-    params.tableSize !== undefined ? Number(params.tableSize) : undefined
+  const tableSize = params.tableSize !== undefined ? Number(params.tableSize) : undefined
   TableGeometry.configureForRule(ruleType, tableSize)
 
   if (cushionModel === "mathavan") {

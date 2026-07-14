@@ -28,8 +28,7 @@ export function importGltf(path, ready) {
       if (path.includes("background")) {
         gltf.scene.scale.set(scale, scale, scale)
       } else {
-        const sizeScale =
-          TableGeometry.sizeScale !== undefined ? TableGeometry.sizeScale : 1.0
+        const sizeScale = TableGeometry.sizeScale !== undefined ? TableGeometry.sizeScale : 1.0
         gltf.scene.scale.set(scale * sizeScale, scale * sizeScale, scale)
       }
       gltf.scene.matrixAutoUpdate = false

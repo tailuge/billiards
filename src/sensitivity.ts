@@ -79,12 +79,9 @@ export function buildWorkerConfig(
   cushionModel: string,
   id?: number | string
 ): WorkerConfig {
-  const urlParams =
-    typeof globalThis !== "undefined" &&
-    globalThis.location &&
-    globalThis.location.search
-      ? new URLSearchParams(globalThis.location.search)
-      : null
+  const urlParams = typeof globalThis !== "undefined" && globalThis.location && globalThis.location.search
+    ? new URLSearchParams(globalThis.location.search)
+    : null
   const tableSizeParam = urlParams?.get("tableSize")
   const params: Record<string, unknown> = {}
   if (tableSizeParam) {

@@ -29,27 +29,17 @@ export class PocketGeometry {
   }
 
   static scaleToRadius(R: number) {
-    const sizeScale =
-      TableGeometry && TableGeometry.sizeScale !== undefined
-        ? TableGeometry.sizeScale
-        : 1.0
-    const tableX =
-      TableGeometry && TableGeometry.tableX !== undefined
-        ? TableGeometry.tableX
-        : R * 43
-    const tableY =
-      TableGeometry && TableGeometry.tableY !== undefined
-        ? TableGeometry.tableY
-        : R * 21
+    const tableX = TableGeometry && TableGeometry.tableX !== undefined ? TableGeometry.tableX : R * 43
+    const tableY = TableGeometry && TableGeometry.tableY !== undefined ? TableGeometry.tableY : R * 21
 
-    PocketGeometry.PX = tableX + R * (0.8 / 0.5) * sizeScale
-    PocketGeometry.PY = tableY + R * (0.8 / 0.5) * sizeScale
-    PocketGeometry.knuckleInset = ((R * 1.6) / 0.5) * sizeScale
-    PocketGeometry.knuckleRadius = ((R * 0.31) / 0.5) * sizeScale
-    PocketGeometry.middleKnuckleInset = ((R * 1.385) / 0.5) * sizeScale
-    PocketGeometry.middleKnuckleRadius = ((R * 0.2) / 0.5) * sizeScale
-    PocketGeometry.cornerRadius = ((R * 1.1) / 0.5) * sizeScale
-    PocketGeometry.middleRadius = ((R * 0.9) / 0.5) * sizeScale
+    PocketGeometry.PX = tableX + R * (0.8 / 0.5)
+    PocketGeometry.PY = tableY + R * (0.8 / 0.5)
+    PocketGeometry.knuckleInset = (R * 1.6) / 0.5
+    PocketGeometry.knuckleRadius = (R * 0.31) / 0.5
+    PocketGeometry.middleKnuckleInset = (R * 1.385) / 0.5
+    PocketGeometry.middleKnuckleRadius = (R * 0.2) / 0.5
+    PocketGeometry.cornerRadius = (R * 1.1) / 0.5
+    PocketGeometry.middleRadius = (R * 0.9) / 0.5
     PocketGeometry.pocketLayout(R, tableX, tableY)
     PocketGeometry.enumerateCenters()
     PocketGeometry.enumerateKnuckles()

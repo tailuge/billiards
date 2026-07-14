@@ -1,11 +1,7 @@
 import { R, mu, setmu } from "../model/physics/constants"
 
 function getUrlTableSize(): number | undefined {
-  if (
-    typeof globalThis !== "undefined" &&
-    globalThis.location &&
-    globalThis.location.search
-  ) {
+  if (typeof globalThis !== "undefined" && globalThis.location && globalThis.location.search) {
     const urlParams = new URLSearchParams(globalThis.location.search)
     const val = urlParams.get("tableSize")
     if (val) {
@@ -45,10 +41,7 @@ export class TableGeometry {
   }
 
   static configureForRule(ruleType: string, tableSize?: number): void {
-    const defaultSize =
-      ruleType === "threecushion"
-        ? TableGeometry.DEFAULT_SIZE_THREECUSHION
-        : TableGeometry.DEFAULT_SIZE_POOL
+    const defaultSize = ruleType === "threecushion" ? TableGeometry.DEFAULT_SIZE_THREECUSHION : TableGeometry.DEFAULT_SIZE_POOL
     const urlSize = getUrlTableSize()
 
     let size = defaultSize
