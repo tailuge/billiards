@@ -90,11 +90,14 @@ export class Menu {
     const init = this.container.lastShotInit
     const shot = this.container.lastShotData
     if (init && shot) {
+      const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
+      const tableSize = parseFloat(urlParams.get("tableSize") || "10")
       const url = ExportUtils.getExportUrl(
         isAnalysis,
         this.container.rules.rulename,
         init,
-        shot
+        shot,
+        tableSize
       )
       window.open(url, "_blank")
     }

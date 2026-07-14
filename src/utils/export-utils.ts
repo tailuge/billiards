@@ -23,7 +23,8 @@ export class ExportUtils {
     isAnalysis: boolean,
     rulename: string,
     init: string,
-    shot: string
+    shot: string,
+    tableSize?: number
   ): string {
     const base = isAnalysis
       ? "https://velikodimov.github.io/billiards/dist/index.html"
@@ -36,6 +37,9 @@ export class ExportUtils {
     }
     params.set("init", init)
     params.set("initShot", shot)
+    if (tableSize !== undefined && tableSize !== 10) {
+      params.set("tableSize", String(tableSize))
+    }
     return `${base}?${params.toString()}`
   }
 }
