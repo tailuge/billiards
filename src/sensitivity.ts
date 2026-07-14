@@ -9,6 +9,7 @@
  */
 import { OutcomeType } from "./model/outcome"
 import { R, offCenterLimit, maxPower } from "./model/physics/constants"
+import { TableGeometry } from "./view/tablegeometry"
 
 /** A ball's id and position, as accepted by the worker. */
 export interface BallPos {
@@ -55,6 +56,7 @@ export interface WorkerConfig {
   maxIterations?: number
   recordTrajectory?: boolean
   warpClearanceR?: number
+  params?: Record<string, unknown>
 }
 
 /** Result of a single simulation (frames intentionally dropped). */
@@ -77,6 +79,18 @@ export function buildWorkerConfig(
   cushionModel: string,
   id?: number | string
 ): WorkerConfig {
+  const urlParams =
+    typeof globalThis !== "undefined" &&
+    globalThis.location &&
+    globalThis.location.search
+      ? new URLSearchParams(globalThis.location.search)
+      : null
+  const tableSizeParam = urlParams?.get("tableSize")
+  const params: Record<string, unknown> = {}
+  if (tableSizeParam) {
+    params.tableSize = parseFloat(tableSizeParam)
+  }
+
   return {
     id,
     ruleType,
@@ -90,6 +104,7 @@ export function buildWorkerConfig(
       elevation: shot.elevation,
     },
     recordTrajectory: false,
+    params,
   }
 }
 
@@ -458,11 +473,9 @@ export interface SensitivityResult {
 /** Threecushion playing area (cushion-nose half-extents), mirroring the geometry
  * the worker sets up in src/worker.ts. */
 function threeCushionPlayArea(): { tableX: number; tableY: number } {
-  const UMB_TABLE_X = 92.36
-  const UMB_TABLE_Y = 46.18
   return {
-    tableX: R * (UMB_TABLE_X / 2 - 1),
-    tableY: R * (UMB_TABLE_Y / 2 - 1),
+    tableX: TableGeometry.tableX,
+    tableY: TableGeometry.tableY,
   }
 }
 

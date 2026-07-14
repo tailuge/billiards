@@ -17,24 +17,40 @@ export class PocketGeometry {
   static cornerRadius: number
   static middleRadius: number
 
-  static pockets
-  static knuckles
-  static pocketCenters
+  static pockets: any
+  static knuckles: any
+  static pocketCenters: any
 
   static {
     PocketGeometry.scaleToRadius(R)
+    TableGeometry.registerOnConfigured(() => {
+      PocketGeometry.scaleToRadius(R)
+    })
   }
 
-  static scaleToRadius(R) {
-    PocketGeometry.PX = TableGeometry.tableX + R * (0.8 / 0.5)
-    PocketGeometry.PY = TableGeometry.tableY + R * (0.8 / 0.5)
-    PocketGeometry.knuckleInset = (R * 1.6) / 0.5
-    PocketGeometry.knuckleRadius = (R * 0.31) / 0.5
-    PocketGeometry.middleKnuckleInset = (R * 1.385) / 0.5
-    PocketGeometry.middleKnuckleRadius = (R * 0.2) / 0.5
-    PocketGeometry.cornerRadius = (R * 1.1) / 0.5
-    PocketGeometry.middleRadius = (R * 0.9) / 0.5
-    PocketGeometry.pocketLayout(R)
+  static scaleToRadius(R: number) {
+    const sizeScale =
+      TableGeometry && TableGeometry.sizeScale !== undefined
+        ? TableGeometry.sizeScale
+        : 1.0
+    const tableX =
+      TableGeometry && TableGeometry.tableX !== undefined
+        ? TableGeometry.tableX
+        : R * 43
+    const tableY =
+      TableGeometry && TableGeometry.tableY !== undefined
+        ? TableGeometry.tableY
+        : R * 21
+
+    PocketGeometry.PX = tableX + R * (0.8 / 0.5) * sizeScale
+    PocketGeometry.PY = tableY + R * (0.8 / 0.5) * sizeScale
+    PocketGeometry.knuckleInset = ((R * 1.6) / 0.5) * sizeScale
+    PocketGeometry.knuckleRadius = ((R * 0.31) / 0.5) * sizeScale
+    PocketGeometry.middleKnuckleInset = ((R * 1.385) / 0.5) * sizeScale
+    PocketGeometry.middleKnuckleRadius = ((R * 0.2) / 0.5) * sizeScale
+    PocketGeometry.cornerRadius = ((R * 1.1) / 0.5) * sizeScale
+    PocketGeometry.middleRadius = ((R * 0.9) / 0.5) * sizeScale
+    PocketGeometry.pocketLayout(R, tableX, tableY)
     PocketGeometry.enumerateCenters()
     PocketGeometry.enumerateKnuckles()
   }
@@ -67,7 +83,24 @@ export class PocketGeometry {
     ]
   }
 
-  static pocketLayout(R) {
+  static pocketLayout(R: number, tableX?: number, tableY?: number) {
+    let tX = R * 43
+    if (tableX !== undefined) {
+      tX = tableX
+    } else if (TableGeometry && TableGeometry.tableX !== undefined) {
+      tX = TableGeometry.tableX
+    }
+
+    let tY = R * 21
+    if (tableY !== undefined) {
+      tY = tableY
+    } else if (TableGeometry && TableGeometry.tableY !== undefined) {
+      tY = TableGeometry.tableY
+    }
+
+    const X = tX + R
+    const Y = tY + R
+
     PocketGeometry.pockets = {
       pocketNW: {
         pocket: new Pocket(
@@ -76,16 +109,16 @@ export class PocketGeometry {
         ),
         knuckleNE: new Knuckle(
           new Vector3(
-            -TableGeometry.X + PocketGeometry.knuckleInset,
-            TableGeometry.Y + PocketGeometry.knuckleRadius,
+            -X + PocketGeometry.knuckleInset,
+            Y + PocketGeometry.knuckleRadius,
             0
           ),
           PocketGeometry.knuckleRadius
         ),
         knuckleSW: new Knuckle(
           new Vector3(
-            -TableGeometry.X - PocketGeometry.knuckleRadius,
-            TableGeometry.Y - PocketGeometry.knuckleInset,
+            -X - PocketGeometry.knuckleRadius,
+            Y - PocketGeometry.knuckleInset,
             0
           ),
           PocketGeometry.knuckleRadius
@@ -99,7 +132,7 @@ export class PocketGeometry {
         knuckleNE: new Knuckle(
           new Vector3(
             PocketGeometry.middleKnuckleInset,
-            TableGeometry.Y + PocketGeometry.middleKnuckleRadius,
+            Y + PocketGeometry.middleKnuckleRadius,
             0
           ),
           PocketGeometry.middleKnuckleRadius
@@ -107,7 +140,7 @@ export class PocketGeometry {
         knuckleNW: new Knuckle(
           new Vector3(
             -PocketGeometry.middleKnuckleInset,
-            TableGeometry.Y + PocketGeometry.middleKnuckleRadius,
+            Y + PocketGeometry.middleKnuckleRadius,
             0
           ),
           PocketGeometry.middleKnuckleRadius
@@ -121,7 +154,7 @@ export class PocketGeometry {
         knuckleSE: new Knuckle(
           new Vector3(
             PocketGeometry.middleKnuckleInset,
-            -TableGeometry.Y - PocketGeometry.middleKnuckleRadius,
+            -Y - PocketGeometry.middleKnuckleRadius,
             0
           ),
           PocketGeometry.middleKnuckleRadius
@@ -129,7 +162,7 @@ export class PocketGeometry {
         knuckleSW: new Knuckle(
           new Vector3(
             -PocketGeometry.middleKnuckleInset,
-            -TableGeometry.Y - PocketGeometry.middleKnuckleRadius,
+            -Y - PocketGeometry.middleKnuckleRadius,
             0
           ),
           PocketGeometry.middleKnuckleRadius
@@ -142,16 +175,16 @@ export class PocketGeometry {
         ),
         knuckleNW: new Knuckle(
           new Vector3(
-            TableGeometry.X - PocketGeometry.knuckleInset,
-            TableGeometry.Y + PocketGeometry.knuckleRadius,
+            X - PocketGeometry.knuckleInset,
+            Y + PocketGeometry.knuckleRadius,
             0
           ),
           PocketGeometry.knuckleRadius
         ),
         knuckleSE: new Knuckle(
           new Vector3(
-            TableGeometry.X + PocketGeometry.knuckleRadius,
-            TableGeometry.Y - PocketGeometry.knuckleInset,
+            X + PocketGeometry.knuckleRadius,
+            Y - PocketGeometry.knuckleInset,
             0
           ),
           PocketGeometry.knuckleRadius
@@ -164,16 +197,16 @@ export class PocketGeometry {
         ),
         knuckleNE: new Knuckle(
           new Vector3(
-            TableGeometry.X + PocketGeometry.knuckleRadius,
-            -TableGeometry.Y + PocketGeometry.knuckleInset,
+            X + PocketGeometry.knuckleRadius,
+            -Y + PocketGeometry.knuckleInset,
             0
           ),
           PocketGeometry.knuckleRadius
         ),
         knuckleSW: new Knuckle(
           new Vector3(
-            TableGeometry.X - PocketGeometry.knuckleInset,
-            -TableGeometry.Y - PocketGeometry.knuckleRadius,
+            X - PocketGeometry.knuckleInset,
+            -Y - PocketGeometry.knuckleRadius,
             0
           ),
           PocketGeometry.knuckleRadius
@@ -186,16 +219,16 @@ export class PocketGeometry {
         ),
         knuckleSE: new Knuckle(
           new Vector3(
-            -TableGeometry.X + PocketGeometry.knuckleInset,
-            -TableGeometry.Y - PocketGeometry.knuckleRadius,
+            -X + PocketGeometry.knuckleInset,
+            -Y - PocketGeometry.knuckleRadius,
             0
           ),
           PocketGeometry.knuckleRadius
         ),
         knuckleNW: new Knuckle(
           new Vector3(
-            -TableGeometry.X - PocketGeometry.knuckleRadius,
-            -TableGeometry.Y + PocketGeometry.knuckleInset,
+            -X - PocketGeometry.knuckleRadius,
+            -Y + PocketGeometry.knuckleInset,
             0
           ),
           PocketGeometry.knuckleRadius
