@@ -14,11 +14,12 @@ import { TableGeometry } from "./tablegeometry"
 
 export class Assets {
   private static readonly tableCustomization = {
-    texturePath: "assets/cat.jpg",
+    texturePath: "assets/wave.jpg",
     textureRepeatU: 1,
     textureRepeatV: 2,
-    clothColor: 0xba934e,
+    clothColor: 0xdac39e,
     cushionColor: 0xba934e,
+    clothshadeColor: 0x896e42,
   }
 
   ready
@@ -79,7 +80,10 @@ export class Assets {
         : [child.material]
       for (const mat of materials) {
         const name = mat.name?.toLowerCase() ?? ""
-        if (name.includes("cloth")) {
+        if (name.includes("clothshade")) {
+          mat.color.set(cfg.clothshadeColor)
+          mat.needsUpdate = true
+        } else if (name.includes("cloth")) {
           this.fixClothUVs(child)
         } else if (name.includes("cushion")) {
           mat.color.set(cfg.cushionColor)
@@ -100,7 +104,7 @@ export class Assets {
             ? child.material
             : [child.material]
           for (const mat of materials) {
-            if (mat.name?.toLowerCase().includes("cloth")) {
+            if (mat.name?.toLowerCase() === "cloth") {
               mat.map = texture
               mat.color.set(cfg.clothColor)
               mat.needsUpdate = true
