@@ -10,9 +10,12 @@ export class Grid {
   })
 
   public generateLineSegments() {
+    const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
+    const tableSize = parseFloat(urlParams.get("tableSize") || "10")
+    
     const points = [
-      this.point(0, (-11.13 * R) / 0.5),
-      this.point(0, (11.13 * R) / 0.5),
+      this.point(0, ((tableSize / 10) * (-11.13 * R)) / 0.5),
+      this.point(0, ((tableSize / 10) * (11.13 * R)) / 0.5),
     ]
 
     const stepx = TableGeometry.X / 4
