@@ -58,10 +58,22 @@ export class ParticleSystem {
 
   constructor(config: ParticleSystemConfig = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config }
+    if (!config.backgroundColor) {
+      this.config.backgroundColor = ParticleSystem.deriveBackgroundColor()
+    }
     const sizeScale = this.config.tableSize / 10
     this.config.scaleX *= sizeScale
     this.config.scaleY *= sizeScale
     this.count = this.config.tableWidth * this.config.tableLength
+  }
+
+  private static deriveBackgroundColor(): string {
+    const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
+    const tableSize = parseFloat(urlParams.get("tableSize") || "10")
+    const ruleType = urlParams.get("ruletype") ?? ""
+    if (tableSize === 5) return "#c2a05a"
+    if (ruleType === "snooker") return "#0a5c2b"
+    return "#040b9f"
   }
 
   initParticles(scene: Scene) {
