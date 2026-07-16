@@ -804,4 +804,30 @@ describe("BotEventHandler Respot Logic", () => {
     expect(validTargetBalls).toHaveLength(2)
     expect(validTargetBalls).not.toContain(threeCushionContainer.table.balls[1])
   })
+
+  it("validTargetBalls excludes both the bot cue ball (yellow) and the opponent cue ball (white) in sagu, leaving only the two red balls", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+
+    const saguContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "sagu",
+    })
+    saguContainer.recorder.entries.push({
+      event: { type: EventType.AIM },
+    } as any)
+
+    const handler = createBotEventHandler(saguContainer, [])
+    handler.botRules.cueball = saguContainer.table.balls[1]
+
+    const validTargetBalls = handler.validTargetBalls()
+
+    expect(validTargetBalls).toHaveLength(2)
+    expect(validTargetBalls).not.toContain(saguContainer.table.balls[0])
+    expect(validTargetBalls).not.toContain(saguContainer.table.balls[1])
+    expect(validTargetBalls).toContain(saguContainer.table.balls[2])
+    expect(validTargetBalls).toContain(saguContainer.table.balls[3])
+  })
 })
