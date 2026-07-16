@@ -9,12 +9,23 @@ import { StartAimEvent } from "../../events/startaimevent"
 import { Session } from "../../network/client/session"
 import { Rack } from "../../utils/rack"
 import { ThreeCushionConfig } from "../../utils/threecushionconfig"
+import { Table } from "../../model/table"
+import { Camera } from "../../view/camera"
 
 export class Sagu extends ThreeCushion {
   rulename = "sagu"
 
   rack(): Ball[] {
     return Rack.fromInitParam(Rack.fourBall())
+  }
+
+  table(): Table {
+    this.tableGeometry()
+    Camera.configureForRule("sagu")
+    const table = new Table(this.rack())
+    table.proximityEnabled = false
+    this.cueball = table.cueball
+    return table
   }
 
   isSuccessfulShot(outcomes: Outcome[]): boolean {
