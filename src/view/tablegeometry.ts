@@ -20,7 +20,7 @@ export class TableGeometry {
 
   static configureForRule(ruleType: string, tableSize: number = 10): void {
     const sizeScale = tableSize / 10
-    if (ruleType === "threecushion") {
+    if (ruleType === "threecushion" || ruleType === "sagu") {
       const UMB_TABLE_X = 92.36
       const UMB_TABLE_Y = 46.18
       TableGeometry.tableX = R * (UMB_TABLE_X / 2 - 1) * sizeScale

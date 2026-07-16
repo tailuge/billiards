@@ -173,6 +173,33 @@ export class Rack {
     return threeballs
   }
 
+  static fourBall(): Ball[] {
+    const dx = TableGeometry.X / 2
+    const dy = TableGeometry.Y / 4
+    const fourballs: Ball[] = [
+      Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0))), // Ball 0: White (P1 Cue)
+      new Ball(
+        Rack.jitter(new Vector3(-dx, dy, 0)),
+        0xffd700, // Ball 1: Yellow (P2 Cue)
+        undefined,
+        Rack.unlabeledAppearance()
+      ),
+      new Ball(
+        Rack.jitter(new Vector3(dx, -dy, 0)),
+        0xff0000, // Ball 2: Red A
+        undefined,
+        Rack.unlabeledAppearance()
+      ),
+      new Ball(
+        Rack.jitter(new Vector3(dx, dy, 0)),
+        0xff0000, // Ball 3: Red B
+        undefined,
+        Rack.unlabeledAppearance()
+      ),
+    ]
+    return fourballs
+  }
+
   static readonly sixth = (TableGeometry.Y * 2) / 6
   static readonly baulk = (-1.5 * TableGeometry.X * 2) / 5
 
