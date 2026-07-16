@@ -10,7 +10,7 @@ export class Camera {
   static defaultFovOffset = 0
 
   static configureForRule(ruleType: string) {
-    if (ruleType === "threecushion") {
+    if (ruleType === "threecushion" || ruleType === "sagu") {
       Camera.defaultHeight = R * 23
       Camera.defaultDistance = R * 22
       Camera.defaultFovOffset = 6
