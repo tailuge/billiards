@@ -82,7 +82,8 @@ describe("Sagu", () => {
     done()
   })
 
-  it("Sagu miss (hitting only one red ball) switches players", (done) => {
+  it("Sagu miss (hitting only one red ball) switches players and does not trigger foul notification", (done) => {
+    const notifySpy = jest.spyOn(container, "notify")
     container.controller = new PlayShot(container)
     container.isSinglePlayer = false
     container.table.cueball.setStationary()
@@ -94,10 +95,12 @@ describe("Sagu", () => {
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
     expect(Session.getInstance().myScore()).to.equal(0)
+    expect(notifySpy.mock.calls).to.have.lengthOf(0)
     done()
   })
 
-  it("Sagu sub-cue foul (hitting opponent's cueball) is a foul and switches players", (done) => {
+  it("Sagu sub-cue foul (hitting opponent's cueball) triggers a foul notification and switches players", (done) => {
+    const notifySpy = jest.spyOn(container, "notify")
     container.controller = new PlayShot(container)
     container.isSinglePlayer = false
     container.table.cueball.setStationary()
@@ -115,10 +118,17 @@ describe("Sagu", () => {
     expect(container.controller).to.be.an.instanceof(WatchAim)
     // No score increment because of the foul
     expect(Session.getInstance().myScore()).to.equal(0)
+    expect(notifySpy.mock.calls).to.have.lengthOf(1)
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "Foul",
+      title: "FOUL",
+      subtext: "Foul: Contacted the opponent's cue ball!",
+    })
     done()
   })
 
-  it("Sagu no-hit foul switches players", (done) => {
+  it("Sagu no-hit foul triggers a foul notification and switches players", (done) => {
+    const notifySpy = jest.spyOn(container, "notify")
     container.controller = new PlayShot(container)
     container.isSinglePlayer = false
     container.table.cueball.setStationary()
@@ -130,6 +140,12 @@ describe("Sagu", () => {
     container.processEvents()
     expect(container.controller).to.be.an.instanceof(WatchAim)
     expect(Session.getInstance().myScore()).to.equal(0)
+    expect(notifySpy.mock.calls).to.have.lengthOf(1)
+    expect(notifySpy.mock.calls[0][0]).to.deep.equal({
+      type: "Foul",
+      title: "FOUL",
+      subtext: "Foul: No ball hit",
+    })
     done()
   })
 
