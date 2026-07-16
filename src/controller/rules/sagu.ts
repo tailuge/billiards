@@ -130,6 +130,15 @@ export class Sagu extends ThreeCushion {
 
     this.startTurn()
 
+    const reason = this.foulReason(outcomes)
+    if (reason) {
+      this.container.notify({
+        type: "Foul",
+        title: "FOUL",
+        subtext: reason,
+      })
+    }
+
     if (this.container.isSinglePlayer) {
       this.cueball = this.otherPlayersCueBall()
       const cue = this.container.table.cue
