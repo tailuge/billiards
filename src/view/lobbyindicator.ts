@@ -54,7 +54,10 @@ export class LobbyIndicator {
       ? `${httpProtocol}://${messagingUrl.replace(/^(https?|wss?):\/\//, "")}`
       : LobbyIndicator.NCHAN_URL
     this.isSpectator = Session.getInstance().spectator
-    const tableSize = parseFloat(new URLSearchParams(globalThis.location?.search ?? "").get("tableSize") || "10")
+    const tableSize = parseFloat(
+      new URLSearchParams(globalThis.location?.search ?? "").get("tableSize") ||
+        "10"
+    )
     if (tableSize === 5) {
       this.ruleType = `${this.rules.rulename}-mini`
     } else if (botMode) {

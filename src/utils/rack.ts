@@ -176,23 +176,28 @@ export class Rack {
   static fourBall(): Ball[] {
     const dx = TableGeometry.X / 2
     const dy = TableGeometry.Y / 4
+
+    // Far cushion is at 2 * dx.
+    // Halfway between foot spot (dx) and far cushion is dx * 1.5.
+    const yellowX = dx * 1.5
+
     const fourballs: Ball[] = [
-      Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0))), // Ball 0: White (P1 Cue)
+      Rack.cueBall(Rack.jitter(new Vector3(-dx, -dy, 0))), // Ball 0: White (P1 Cue - offset on head string)
       new Ball(
-        Rack.jitter(new Vector3(-dx, dy, 0)),
-        0xffd700, // Ball 1: Yellow (P2 Cue)
+        Rack.jitter(new Vector3(yellowX, 0, 0)),
+        0xffd700, // Ball 1: Yellow (P2 Cue - between foot spot and far cushion)
         undefined,
         Rack.unlabeledAppearance()
       ),
       new Ball(
-        Rack.jitter(new Vector3(dx, -dy, 0)),
-        0xff0000, // Ball 2: Red A
+        Rack.jitter(new Vector3(-dx, 0, 0)),
+        0xff0000, // Ball 2: Red A (Head spot, beside white)
         undefined,
         Rack.unlabeledAppearance()
       ),
       new Ball(
-        Rack.jitter(new Vector3(dx, dy, 0)),
-        0xff0000, // Ball 3: Red B
+        Rack.jitter(new Vector3(dx, 0, 0)),
+        0xff0000, // Ball 3: Red B (Foot spot)
         undefined,
         Rack.unlabeledAppearance()
       ),

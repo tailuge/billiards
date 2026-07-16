@@ -152,7 +152,9 @@ describe("Sagu", () => {
     container.processEvents()
     // Turn is passed because standard carom is not valid on the final shot
     expect(container.controller).to.be.an.instanceof(WatchAim)
-    expect(Session.getInstance().myScore()).to.equal(ThreeCushionConfig.raceTo - 1)
+    expect(Session.getInstance().myScore()).to.equal(
+      ThreeCushionConfig.raceTo - 1
+    )
     done()
   })
 

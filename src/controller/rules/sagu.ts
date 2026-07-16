@@ -27,7 +27,10 @@ export class Sagu extends ThreeCushion {
   }
 
   private hitsBothReds(outcomes: Outcome[]): boolean {
-    const redBalls = [this.container.table.balls[2], this.container.table.balls[3]]
+    const redBalls = [
+      this.container.table.balls[2],
+      this.container.table.balls[3],
+    ]
     const hitReds = new Set<Ball>()
 
     for (const o of outcomes) {
@@ -43,12 +46,13 @@ export class Sagu extends ThreeCushion {
   }
 
   private isSaguThreeCushionShot(outcomes: Outcome[]): boolean {
-    const redBalls = [this.container.table.balls[2], this.container.table.balls[3]]
+    const redBalls = [
+      this.container.table.balls[2],
+      this.container.table.balls[3],
+    ]
     const filteredOutcomes = outcomes.filter((o) => {
       if (o.type === OutcomeType.Collision) {
-        const isRed =
-          redBalls.includes(o.ballA!) ||
-          redBalls.includes(o.ballB!)
+        const isRed = redBalls.includes(o.ballA!) || redBalls.includes(o.ballB!)
         const isCueBall = o.ballA === this.cueball || o.ballB === this.cueball
         return isCueBall && isRed
       }
