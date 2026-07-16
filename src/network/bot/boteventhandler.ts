@@ -68,7 +68,7 @@ export class BotEventHandler {
       container.rules.rulename,
       new BotContainer(container)
     )
-    if (container.rules.rulename === "threecushion") {
+    if (container.rules.rulename === "threecushion" || container.rules.rulename === "sagu") {
       this.botRules.cueball = this.container.table.balls[1]
     }
   }
@@ -121,7 +121,7 @@ export class BotEventHandler {
     this.logs.info(
       `Bot handleStationary: cueball=${this.botRules.cueball?.id}, pots=${pots}, outcomeLen=${outcome.length}`
     )
-    if (this.container.rules.rulename !== "threecushion") {
+    if (this.container.rules.rulename !== "threecushion" && this.container.rules.rulename !== "sagu") {
       this.botRules.advanceState?.(outcome)
     }
     if (pots > 0) {
@@ -160,6 +160,8 @@ export class BotEventHandler {
         return this.validSnookerTargets()
       case "threecushion":
         return this.validThreeCushionTargets()
+      case "sagu":
+        return this.validSaguTargets()
       default:
         return []
     }
@@ -232,6 +234,18 @@ export class BotEventHandler {
     const cueball = this.container.table.balls[1]
     return this.container.table.balls.filter(
       (ball) => ball !== cueball && ball.onTable()
+    )
+  }
+
+  private validSaguTargets(): Ball[] {
+    if (isFirstShot(this.container.recorder)) {
+      return []
+    }
+
+    const cueball = this.container.table.balls[1]
+    const opponentCue = this.container.table.balls[0]
+    return this.container.table.balls.filter(
+      (ball) => ball !== cueball && ball !== opponentCue && ball.onTable()
     )
   }
 
@@ -462,7 +476,8 @@ export class BotEventHandler {
 
   private buildShotContext(): BotShotContext {
     const cueBall =
-      this.container.rules.rulename === "threecushion"
+      this.container.rules.rulename === "threecushion" ||
+      this.container.rules.rulename === "sagu"
         ? this.container.table.balls[1]
         : this.container.table.cueball
 
