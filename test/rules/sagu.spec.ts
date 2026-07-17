@@ -208,9 +208,7 @@ describe("Sagu", () => {
 
     const balls = container.table.balls
     // Foul: hit opponent's cueball
-    container.table.outcome.push(
-      Outcome.collision(balls[0], balls[1], 1)
-    )
+    container.table.outcome.push(Outcome.collision(balls[0], balls[1], 1))
 
     container.processEvents()
     expect(Session.getInstance().myScore()).to.equal(1)
@@ -222,9 +220,7 @@ describe("Sagu", () => {
     container.table.cueball.setStationary()
     container.eventQueue.push(new StationaryEvent())
 
-    container.table.outcome.push(
-      Outcome.collision(balls[0], balls[1], 1)
-    )
+    container.table.outcome.push(Outcome.collision(balls[0], balls[1], 1))
 
     container.processEvents()
     expect(Session.getInstance().myScore()).to.equal(0)
@@ -252,7 +248,7 @@ describe("Sagu", () => {
       0,
       false,
       false,
-      true // p2Star should be true
+      true, // p2Star should be true
     ])
     done()
   })
@@ -270,7 +266,7 @@ describe("Sagu", () => {
 
     it("respects player specific target when evaluating final cushion shot condition", (done) => {
       getHandicapsSpy.mockReturnValue({
-        "test-client": 4
+        "test-client": 4,
       })
 
       const session = Session.getInstance()
@@ -301,7 +297,7 @@ describe("Sagu", () => {
     it("evaluates dynamic star position on HUD score updates", (done) => {
       getHandicapsSpy.mockReturnValue({
         "test-client": 4,
-        "opponent": 15
+        opponent: 15,
       })
 
       const session = Session.getInstance()
@@ -315,7 +311,9 @@ describe("Sagu", () => {
       const updateScoresSpy = jest.spyOn(container.hud, "updateScores")
       container.updateScoreHud(3, 14, 0)
 
-      expect(updateScoresSpy.mock.calls[updateScoresSpy.mock.calls.length - 1]).to.deep.equal([
+      expect(
+        updateScoresSpy.mock.calls[updateScoresSpy.mock.calls.length - 1]
+      ).to.deep.equal([
         3,
         14,
         "TestPlayer(4)",
@@ -323,7 +321,7 @@ describe("Sagu", () => {
         0,
         false,
         true, // p1Star
-        true  // p2Star
+        true, // p2Star
       ])
       done()
     })

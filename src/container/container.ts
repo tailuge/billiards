@@ -210,7 +210,8 @@ export class Container {
     const orderedNames = session.orderedNamesForHud()
 
     // Format handicap append next to player names
-    const isHandicapRule = this.rules.rulename === "sagu" || this.rules.rulename === "threecushion"
+    const isHandicapRule =
+      this.rules.rulename === "sagu" || this.rules.rulename === "threecushion"
     const handicaps = session.getHandicaps()
     const hasHandicaps = isHandicapRule && Object.keys(handicaps).length > 0
 
@@ -218,8 +219,14 @@ export class Container {
     let p2Target = ThreeCushionConfig.raceTo
 
     if (hasHandicaps) {
-      const p1ClientId = session.playerIndex === 0 ? session.clientId : (session.opponentClientId ?? "opponent")
-      const p2ClientId = session.playerIndex === 0 ? (session.opponentClientId ?? "opponent") : session.clientId
+      const p1ClientId =
+        session.playerIndex === 0
+          ? session.clientId
+          : (session.opponentClientId ?? "opponent")
+      const p2ClientId =
+        session.playerIndex === 0
+          ? (session.opponentClientId ?? "opponent")
+          : session.clientId
 
       p1Target = session.getRaceTargetForPlayer(p1ClientId)
       p2Target = session.getRaceTargetForPlayer(p2ClientId)

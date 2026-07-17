@@ -68,7 +68,10 @@ export class BotEventHandler {
       container.rules.rulename,
       new BotContainer(container)
     )
-    if (container.rules.rulename === "threecushion" || container.rules.rulename === "sagu") {
+    if (
+      container.rules.rulename === "threecushion" ||
+      container.rules.rulename === "sagu"
+    ) {
       this.botRules.cueball = this.container.table.balls[1]
     }
   }
@@ -121,7 +124,10 @@ export class BotEventHandler {
     this.logs.info(
       `Bot handleStationary: cueball=${this.botRules.cueball?.id}, pots=${pots}, outcomeLen=${outcome.length}`
     )
-    if (this.container.rules.rulename !== "threecushion" && this.container.rules.rulename !== "sagu") {
+    if (
+      this.container.rules.rulename !== "threecushion" &&
+      this.container.rules.rulename !== "sagu"
+    ) {
       this.botRules.advanceState?.(outcome)
     }
     if (pots > 0) {

@@ -201,7 +201,7 @@ describe("ThreeCushion", () => {
     it("resolves player specific targets using getRaceTargetForPlayer", () => {
       getHandicapsSpy.mockReturnValue({
         "test-client": 18,
-        "bot": 5
+        bot: 5,
       })
 
       const session = Session.getInstance()
@@ -220,7 +220,7 @@ describe("ThreeCushion", () => {
     it("respects dynamic player and opponent targets in isEndOfGame", () => {
       getHandicapsSpy.mockReturnValue({
         "test-client": 12,
-        "opponent": 8
+        opponent: 8,
       })
 
       const session = Session.getInstance()
@@ -243,7 +243,7 @@ describe("ThreeCushion", () => {
     it("appends handicap value next to player names in HUD when handicaps are defined", () => {
       getHandicapsSpy.mockReturnValue({
         "test-client": 12,
-        "opponent": 8
+        opponent: 8,
       })
 
       const session = Session.getInstance()
@@ -253,8 +253,12 @@ describe("ThreeCushion", () => {
       const updateScoresSpy = jest.spyOn(container.hud, "updateScores")
       container.updateScoreHud(3, 4, 0)
 
-      expect(updateScoresSpy.mock.calls[updateScoresSpy.mock.calls.length - 1][2]).to.equal("TestPlayer(12)")
-      expect(updateScoresSpy.mock.calls[updateScoresSpy.mock.calls.length - 1][3]).to.equal("Bot(8)")
+      expect(
+        updateScoresSpy.mock.calls[updateScoresSpy.mock.calls.length - 1][2]
+      ).to.equal("TestPlayer(12)")
+      expect(
+        updateScoresSpy.mock.calls[updateScoresSpy.mock.calls.length - 1][3]
+      ).to.equal("Bot(8)")
     })
   })
 

@@ -222,14 +222,17 @@ export class Session {
    * Retrieves a map of user ID to handicap value from the URL query parameters.
    */
   getHandicaps(): Record<string, number> {
-    if (typeof globalThis.location === "undefined" || !globalThis.location.search) {
+    if (
+      typeof globalThis.location === "undefined" ||
+      !globalThis.location.search
+    ) {
       return {}
     }
     const params = new URLSearchParams(globalThis.location.search)
     const handicaps: Record<string, number> = {}
     for (const [k, v] of params) {
-      if (k.startsWith('handicap_')) {
-        const userId = k.replace('handicap_', '')
+      if (k.startsWith("handicap_")) {
+        const userId = k.replace("handicap_", "")
         handicaps[userId] = Number.parseInt(v) || 5
       }
     }

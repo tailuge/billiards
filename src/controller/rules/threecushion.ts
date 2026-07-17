@@ -126,8 +126,14 @@ export class ThreeCushion implements Rules {
 
   isEndOfGame(_: Outcome[]): boolean {
     const session = Session.getInstance()
-    const p1ClientId = session.playerIndex === 0 ? session.clientId : (session.opponentClientId ?? "opponent")
-    const p2ClientId = session.playerIndex === 0 ? (session.opponentClientId ?? "opponent") : session.clientId
+    const p1ClientId =
+      session.playerIndex === 0
+        ? session.clientId
+        : (session.opponentClientId ?? "opponent")
+    const p2ClientId =
+      session.playerIndex === 0
+        ? (session.opponentClientId ?? "opponent")
+        : session.clientId
 
     const p1Target = session.getRaceTargetForPlayer(p1ClientId)
     const p2Target = session.getRaceTargetForPlayer(p2ClientId)
