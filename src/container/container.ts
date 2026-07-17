@@ -208,6 +208,30 @@ export class Container {
     const orderedScores = session.orderedScoresForHud()
     this.hudScores = orderedScores
     const orderedNames = session.orderedNamesForHud()
+
+    // Format handicap append next to player names
+    const isHandicapRule = this.rules.rulename === "sagu" || this.rules.rulename === "threecushion"
+    const handicaps = session.getHandicaps()
+    const hasHandicaps = isHandicapRule && Object.keys(handicaps).length > 0
+
+    let p1Target = ThreeCushionConfig.raceTo
+    let p2Target = ThreeCushionConfig.raceTo
+
+    if (hasHandicaps) {
+      const p1ClientId = session.playerIndex === 0 ? session.clientId : (session.opponentClientId ?? "opponent")
+      const p2ClientId = session.playerIndex === 0 ? (session.opponentClientId ?? "opponent") : session.clientId
+
+      p1Target = session.getRaceTargetForPlayer(p1ClientId)
+      p2Target = session.getRaceTargetForPlayer(p2ClientId)
+
+      if (orderedNames.p1Name) {
+        orderedNames.p1Name = `${orderedNames.p1Name}(${p1Target})`
+      }
+      if (orderedNames.p2Name) {
+        orderedNames.p2Name = `${orderedNames.p2Name}(${p2Target})`
+      }
+    }
+
     if (this.rules.rulename === "eightball" && session.p1type !== 0) {
       const typeLabel = session.p1type === 1 ? "solids" : "stripes"
       const mySlot = session.playerIndex === 0 ? "p1Name" : "p2Name"
@@ -217,8 +241,8 @@ export class Container {
     }
     const hideScore = this.rules.hideScoreHud?.() ?? false
     const isSagu = this.rules.rulename === "sagu"
-    const p1Star = isSagu && orderedScores.p1 === ThreeCushionConfig.raceTo - 1
-    const p2Star = isSagu && orderedScores.p2 === ThreeCushionConfig.raceTo - 1
+    const p1Star = isSagu && orderedScores.p1 === p1Target - 1
+    const p2Star = isSagu && orderedScores.p2 === p2Target - 1
 
     this.hud.updateScores(
       orderedScores.p1,

@@ -31,7 +31,8 @@ export class Sagu extends ThreeCushion {
   isSuccessfulShot(outcomes: Outcome[]): boolean {
     const session = Session.getInstance()
     const myCurrentScore = session.myScore()
-    if (myCurrentScore === ThreeCushionConfig.raceTo - 1) {
+    const myTarget = session.getRaceTargetForPlayer(session.clientId)
+    if (myCurrentScore === myTarget - 1) {
       return !this.foulReason(outcomes) && this.isSaguThreeCushionShot(outcomes)
     }
     return !this.foulReason(outcomes) && this.hitsBothReds(outcomes)

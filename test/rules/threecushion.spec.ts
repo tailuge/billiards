@@ -187,6 +187,77 @@ describe("ThreeCushion", () => {
     done()
   })
 
+  describe("Handicap system", () => {
+    let getHandicapsSpy: jest.SpyInstance
+
+    beforeEach(() => {
+      getHandicapsSpy = jest.spyOn(Session.prototype, "getHandicaps")
+    })
+
+    afterEach(() => {
+      getHandicapsSpy.mockRestore()
+    })
+
+    it("resolves player specific targets using getRaceTargetForPlayer", () => {
+      getHandicapsSpy.mockReturnValue({
+        "test-client": 18,
+        "bot": 5
+      })
+
+      const session = Session.getInstance()
+      expect(session.getRaceTargetForPlayer("test-client")).to.equal(18)
+      expect(session.getRaceTargetForPlayer("bot")).to.equal(5)
+      expect(session.getRaceTargetForPlayer("non-existent")).to.equal(5)
+    })
+
+    it("defaults to 7 if no handicaps are defined in the URL", () => {
+      getHandicapsSpy.mockReturnValue({})
+
+      const session = Session.getInstance()
+      expect(session.getRaceTargetForPlayer("test-client")).to.equal(7)
+    })
+
+    it("respects dynamic player and opponent targets in isEndOfGame", () => {
+      getHandicapsSpy.mockReturnValue({
+        "test-client": 12,
+        "opponent": 8
+      })
+
+      const session = Session.getInstance()
+      session.opponentClientId = "opponent"
+      const rules = RuleFactory.create(rule, container)
+
+      // Both players under targets
+      session.updateScoresFromNetwork(11, 7, 0)
+      expect(rules.isEndOfGame([])).to.be.false
+
+      // Player 2 reaches target
+      session.updateScoresFromNetwork(11, 8, 0)
+      expect(rules.isEndOfGame([])).to.be.true
+
+      // Player 1 reaches target
+      session.updateScoresFromNetwork(12, 7, 0)
+      expect(rules.isEndOfGame([])).to.be.true
+    })
+
+    it("appends handicap value next to player names in HUD when handicaps are defined", () => {
+      getHandicapsSpy.mockReturnValue({
+        "test-client": 12,
+        "opponent": 8
+      })
+
+      const session = Session.getInstance()
+      session.opponentName = "Bot"
+      session.opponentClientId = "opponent"
+
+      const updateScoresSpy = jest.spyOn(container.hud, "updateScores")
+      container.updateScoreHud(3, 4, 0)
+
+      expect(updateScoresSpy.mock.calls[updateScoresSpy.mock.calls.length - 1][2]).to.equal("TestPlayer(12)")
+      expect(updateScoresSpy.mock.calls[updateScoresSpy.mock.calls.length - 1][3]).to.equal("Bot(8)")
+    })
+  })
+
   describe("getAmountScored", () => {
     it("returns 0 when no three-cushion point", () => {
       const balls = container.table.balls
