@@ -325,7 +325,7 @@
       // Setup button — forward to three.html or practice.html
       document.getElementById("setup-btn")?.addEventListener("click", () => {
         if (!config) return
-        if (ruletype === "threecushion") {
+        if (ruletype === "threecushion" || ruletype === "sagu") {
           const cueBall = config.balls[config.shot.cueBallId]
           const ballsPos = config.balls.flatMap((b) => [b.pos.x, b.pos.y])
           const state = {
@@ -344,6 +344,7 @@
           }
           const url = new URL("three.html", window.location.href)
           url.searchParams.set("s", JSON.stringify(state))
+          url.searchParams.set("ruletype", ruletype)
           window.open(url.toString(), "_blank")
         } else {
           const init = config.balls.flatMap((b) => [b.pos.x, b.pos.y])
