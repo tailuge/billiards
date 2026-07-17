@@ -16,6 +16,7 @@ import { Recorder } from "../events/recorder"
 import { LinkFormatter } from "../view/link-formatter"
 import { Rules } from "../controller/rules/rules"
 import { RuleFactory } from "../controller/rules/rulefactory"
+import { ThreeCushionConfig } from "../utils/threecushionconfig"
 import { Menu } from "../view/menu"
 import { Comment } from "../view/comment"
 import { Hud } from "../view/hud"
@@ -215,13 +216,19 @@ export class Container {
       }
     }
     const hideScore = this.rules.hideScoreHud?.() ?? false
+    const isSagu = this.rules.rulename === "sagu"
+    const p1Star = isSagu && orderedScores.p1 === ThreeCushionConfig.raceTo - 1
+    const p2Star = isSagu && orderedScores.p2 === ThreeCushionConfig.raceTo - 1
+
     this.hud.updateScores(
       orderedScores.p1,
       orderedScores.p2,
       orderedNames.p1Name,
       orderedNames.p2Name,
       hideScore ? 0 : b,
-      hideScore
+      hideScore,
+      p1Star,
+      p2Star
     )
     this.setHudActivePlayer(active ?? this.inferActivePlayer())
   }
