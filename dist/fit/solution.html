@@ -623,11 +623,7 @@
           if (thirdCushionIndex < 0) return patternStr
 
           const prefix = patternStr.slice(0, thirdCushionIndex + 1)
-          const balls = [...patternStr.slice(thirdCushionIndex + 1)].filter(
-            (c) => c === "◉"
-          )
-
-          return prefix + balls.map(() => ".*◉").join("")
+          return prefix + ".*◉"
         }
         function processResult(task, data) {
           const cutoff = getScoringCutoff(data.outcomes, 0)
