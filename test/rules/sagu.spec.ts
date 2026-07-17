@@ -197,4 +197,63 @@ describe("Sagu", () => {
     expect(Session.getInstance().myScore()).to.equal(ThreeCushionConfig.raceTo)
     done()
   })
+
+  it("Sagu foul subtracts 1 from the player's score but does not go below 0", (done) => {
+    // 1. Initial score = 2
+    Session.getInstance().setMyScore(2)
+    container.controller = new PlayShot(container)
+    container.isSinglePlayer = false
+    container.table.cueball.setStationary()
+    container.eventQueue.push(new StationaryEvent())
+
+    const balls = container.table.balls
+    // Foul: hit opponent's cueball
+    container.table.outcome.push(
+      Outcome.collision(balls[0], balls[1], 1)
+    )
+
+    container.processEvents()
+    expect(Session.getInstance().myScore()).to.equal(1)
+
+    // 2. Initial score = 0
+    Session.getInstance().setMyScore(0)
+    container.controller = new PlayShot(container)
+    container.isSinglePlayer = false
+    container.table.cueball.setStationary()
+    container.eventQueue.push(new StationaryEvent())
+
+    container.table.outcome.push(
+      Outcome.collision(balls[0], balls[1], 1)
+    )
+
+    container.processEvents()
+    expect(Session.getInstance().myScore()).to.equal(0)
+    done()
+  })
+
+  it("Sagu HUD displays a ⭐ beside the score if a player is at raceTo - 1", (done) => {
+    const session = Session.getInstance()
+    session.opponentName = "Bot"
+
+    // Set my score to 3, opponent score to raceTo - 1 (6)
+    session.setMyScore(3)
+    session.setOpponentScore(ThreeCushionConfig.raceTo - 1)
+
+    const updateScoresSpy = jest.spyOn(container.hud, "updateScores")
+
+    container.updateScoreHud(session.myScore(), session.opponentScore(), 0)
+
+    expect(updateScoresSpy.mock.calls).to.have.lengthOf(1)
+    expect(updateScoresSpy.mock.calls[0]).to.deep.equal([
+      3,
+      ThreeCushionConfig.raceTo - 1,
+      "TestPlayer",
+      "Bot",
+      0,
+      false,
+      false,
+      true // p2Star should be true
+    ])
+    done()
+  })
 })

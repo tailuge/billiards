@@ -41,7 +41,9 @@ export class Hud {
     p1Name?: string,
     p2Name?: string,
     b: number = 0,
-    hideScore: boolean = false
+    hideScore: boolean = false,
+    p1Star: boolean = false,
+    p2Star: boolean = false
   ) {
     this.setText(this.p1Element, "")
     this.setText(this.p2Element, "")
@@ -53,15 +55,18 @@ export class Hud {
       return
     }
 
+    const p1Str = p1Star ? `${p1}⭐` : `${p1}`
+    const p2Str = p2Star ? `⭐${p2}` : `${p2}`
+
     if (p1Name && p2Name) {
-      this.setText(this.p1Element, `${p1Name} ${p1}`)
-      this.setText(this.p2Element, `${p2} ${p2Name}`)
+      this.setText(this.p1Element, `${p1Name} ${p1Str}`)
+      this.setText(this.p2Element, `${p2Str} ${p2Name}`)
     } else if (p1Name) {
-      this.setText(this.p1Element, `${p1Name} ${p1}`)
+      this.setText(this.p1Element, `${p1Name} ${p1Str}`)
     } else if (p2Name) {
-      this.setText(this.p2Element, `${p2} ${p2Name}`)
+      this.setText(this.p2Element, `${p2Str} ${p2Name}`)
     } else {
-      this.setText(this.p1Element, `${p1}`)
+      this.setText(this.p1Element, `${p1Str}`)
     }
 
     if (b > 0) {

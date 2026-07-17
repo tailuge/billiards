@@ -335,6 +335,10 @@ export class BotEventHandler {
       session.addMyScore(this.snookerFoulPoints(outcome))
     }
 
+    if (this.container.rules.rulename === "sagu") {
+      session.setOpponentScore(Math.max(0, session.opponentScore() - 1))
+    }
+
     const { p1: s1, p2: s2 } = session.orderedScoresForHud()
     this.container.sendScoreUpdate(s1, s2, 0, this.myActivePlayer())
 
