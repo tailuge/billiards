@@ -54,4 +54,34 @@ describe("Session", () => {
     expect(session.opponentName).to.equal("ClawBreak")
     expect(session.opponentScore()).to.equal(0)
   })
+
+  describe("getRaceTargetForPlayer", () => {
+    afterEach(() => {
+      jest.restoreAllMocks()
+    })
+
+    it("returns ThreeCushionConfig.raceTo when no handicaps are defined", () => {
+      Session.init("c1", "u1", "t1", false)
+      const session = Session.getInstance()
+      jest.spyOn(session, "getHandicaps").mockReturnValue({})
+
+      const { ThreeCushionConfig } = require("../../src/utils/threecushionconfig")
+      const originalRaceTo = ThreeCushionConfig.raceTo
+      try {
+        ThreeCushionConfig.raceTo = 5
+        expect(session.getRaceTargetForPlayer("c1")).to.equal(5)
+      } finally {
+        ThreeCushionConfig.raceTo = originalRaceTo
+      }
+    })
+
+    it("returns custom handicap or default 5 when handicaps exist", () => {
+      Session.init("c1", "u1", "t1", false)
+      const session = Session.getInstance()
+      jest.spyOn(session, "getHandicaps").mockReturnValue({ c1: 4 })
+
+      expect(session.getRaceTargetForPlayer("c1")).to.equal(4)
+      expect(session.getRaceTargetForPlayer("other")).to.equal(5)
+    })
+  })
 })
