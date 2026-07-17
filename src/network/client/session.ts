@@ -1,3 +1,5 @@
+import { ThreeCushionConfig } from "../../utils/threecushionconfig"
+
 export class Session {
   constructor(
     public playername: string,
@@ -249,7 +251,7 @@ export class Session {
     const hasAnyHandicap = Object.keys(handicaps).length > 0
 
     if (!hasAnyHandicap) {
-      return 7 // ThreeCushionConfig.raceTo is 7
+      return ThreeCushionConfig.raceTo
     }
 
     // If a handicap exists in URL for this client, use it; otherwise, default to 5 (handles opponent or bot)
