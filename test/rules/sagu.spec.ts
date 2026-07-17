@@ -256,4 +256,76 @@ describe("Sagu", () => {
     ])
     done()
   })
+
+  describe("Sagu Handicap specific behaviors", () => {
+    let getHandicapsSpy: jest.SpyInstance
+
+    beforeEach(() => {
+      getHandicapsSpy = jest.spyOn(Session.prototype, "getHandicaps")
+    })
+
+    afterEach(() => {
+      getHandicapsSpy.mockRestore()
+    })
+
+    it("respects player specific target when evaluating final cushion shot condition", (done) => {
+      getHandicapsSpy.mockReturnValue({
+        "test-client": 4
+      })
+
+      const session = Session.getInstance()
+      session.opponentClientId = "opponent"
+
+      // We are at myTarget - 1 = 3 points
+      session.setMyScore(3)
+
+      container.controller = new PlayShot(container)
+      container.isSinglePlayer = false
+
+      container.table.cueball.setStationary()
+      container.eventQueue.push(new StationaryEvent())
+
+      const balls = container.table.balls
+      // Hitting both reds directly without 3 cushions should NOT qualify as successful shot at target - 1
+      container.table.outcome.push(
+        Outcome.collision(balls[0], balls[2], 1),
+        Outcome.collision(balls[0], balls[3], 1)
+      )
+
+      container.processEvents()
+      expect(container.controller).to.be.an.instanceof(WatchAim)
+      expect(session.myScore()).to.equal(3)
+      done()
+    })
+
+    it("evaluates dynamic star position on HUD score updates", (done) => {
+      getHandicapsSpy.mockReturnValue({
+        "test-client": 4,
+        "opponent": 15
+      })
+
+      const session = Session.getInstance()
+      session.opponentName = "Bot"
+      session.opponentClientId = "opponent"
+
+      // Player 1 at target - 1 = 3, Player 2 at target - 1 = 14
+      session.setMyScore(3)
+      session.setOpponentScore(14)
+
+      const updateScoresSpy = jest.spyOn(container.hud, "updateScores")
+      container.updateScoreHud(3, 14, 0)
+
+      expect(updateScoresSpy.mock.calls[updateScoresSpy.mock.calls.length - 1]).to.deep.equal([
+        3,
+        14,
+        "TestPlayer(4)",
+        "Bot(15)",
+        0,
+        false,
+        true, // p1Star
+        true  // p2Star
+      ])
+      done()
+    })
+  })
 })

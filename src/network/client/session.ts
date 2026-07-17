@@ -217,4 +217,39 @@ export class Session {
     }
     this.currentBreak = breakScore
   }
+
+  /**
+   * Retrieves a map of user ID to handicap value from the URL query parameters.
+   */
+  getHandicaps(): Record<string, number> {
+    if (typeof globalThis.location === "undefined" || !globalThis.location.search) {
+      return {}
+    }
+    const params = new URLSearchParams(globalThis.location.search)
+    const handicaps: Record<string, number> = {}
+    for (const [k, v] of params) {
+      if (k.startsWith('handicap_')) {
+        const userId = k.replace('handicap_', '')
+        handicaps[userId] = Number.parseInt(v) || 5
+      }
+    }
+    return handicaps
+  }
+
+  /**
+   * Resolves the race target for a specific player by their client ID.
+   * - If no player has a handicap specified, returns the default ThreeCushionConfig.raceTo (7).
+   * - If at least one player has a handicap specified, any player (or bot) without an explicit handicap defaults to 5.
+   */
+  getRaceTargetForPlayer(clientId: string): number {
+    const handicaps = this.getHandicaps()
+    const hasAnyHandicap = Object.keys(handicaps).length > 0
+
+    if (!hasAnyHandicap) {
+      return 7 // ThreeCushionConfig.raceTo is 7
+    }
+
+    // If a handicap exists in URL for this client, use it; otherwise, default to 5 (handles opponent or bot)
+    return handicaps[clientId] ?? 5
+  }
 }
