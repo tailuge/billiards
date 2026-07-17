@@ -226,6 +226,33 @@
   stroke: #e00;
 }
 
+/* Sagu Overrides: 4-ball carom -- balls 2 & 3 are red object balls */
+.sagu .ball {
+  --ball-stroke: #000;
+}
+
+.sagu .trajectory-line {
+  stroke: #000;
+}
+
+.sagu .ball-1 {
+  --ball-stroke: #ffd700;
+}
+
+.sagu .traj-1 {
+  stroke: #ffd700;
+}
+
+.sagu .ball-2,
+.sagu .ball-3 {
+  --ball-stroke: #f00;
+}
+
+.sagu .traj-2,
+.sagu .traj-3 {
+  stroke: #f00;
+}
+
 /* Three-Cushion Overrides: remain as it was (no colour) */
 
 /* We ensure any colored strokes are reset to black for threecushion */
