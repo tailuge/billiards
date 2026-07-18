@@ -8,6 +8,18 @@
 
 
 const POOL_TABLE_SVG_CONTENT = `
+    <defs>
+      <radialGradient id="pool-blue-gradient" cx="50%" cy="35%" r="65%" fx="50%" fy="25%">
+        <stop offset="0%" stop-color="#3b95d8" />
+        <stop offset="50%" stop-color="#2b7bb9" />
+        <stop offset="100%" stop-color="#1d5886" />
+      </radialGradient>
+      <radialGradient id="snooker-green-gradient" cx="50%" cy="35%" r="65%" fx="50%" fy="25%">
+        <stop offset="0%" stop-color="#11833d" />
+        <stop offset="50%" stop-color="#0a5c2b" />
+        <stop offset="100%" stop-color="#063d1c" />
+      </radialGradient>
+    </defs>
     <style>
       path, line, polyline { fill: none; stroke: #000; stroke-width: 0.003; stroke-linecap: round; stroke-linejoin: round; }
       .pool-cloth { fill: none; stroke: none; }

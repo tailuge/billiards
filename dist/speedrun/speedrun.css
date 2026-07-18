@@ -101,16 +101,13 @@ header h1 {
 .billiards-table {
   width: 100%;
   height: auto;
-  background: #fff;
-  border: 1px solid #000;
-  border-radius: 20px;
+  background: transparent;
   display: block;
-  box-shadow: inset 0 0 1px 1px #1e293b87;
 }
 
 /* Pool Table Coloring */
 .billiards-table .pool-cloth {
-  fill: #2b7bb9;
+  fill: url(#pool-blue-gradient);
 }
 
 .billiards-table .pool-surround {
@@ -135,7 +132,7 @@ header h1 {
 
 /* Snooker Table Coloring */
 .billiards-table.snooker .pool-cloth {
-  fill: #0a5c2b;
+  fill: url(#snooker-green-gradient);
 }
 
 .billiards-table.snooker .pool-cushion {
