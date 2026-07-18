@@ -218,8 +218,6 @@ export class MatchResultHelper {
 
     let whiteInnings = 0
     let yellowInnings = 0
-    let whitePoints = 0
-    let yellowPoints = 0
 
     let previousCueBallIndex: number | null = null
 
@@ -234,21 +232,11 @@ export class MatchResultHelper {
         }
         previousCueBallIndex = currentCueBallIndex
       }
-
-      if (entry.isPartOfBreak) {
-        if (currentCueBallIndex === 0) {
-          whitePoints++
-        } else {
-          yellowPoints++
-        }
-      }
     }
 
     return {
       whiteInnings,
       yellowInnings,
-      whitePoints,
-      yellowPoints,
     }
   }
 
@@ -259,18 +247,10 @@ export class MatchResultHelper {
     if (rulename === "threecushion" || rulename === "sagu") {
       const stats = this.calculateInningsStats(container)
       if (container.isSinglePlayer) {
-        const whiteAvg =
-          stats.whiteInnings > 0
-            ? (stats.whitePoints / stats.whiteInnings).toFixed(2)
-            : "0.00"
-        const yellowAvg =
-          stats.yellowInnings > 0
-            ? (stats.yellowPoints / stats.yellowInnings).toFixed(2)
-            : "0.00"
-        return (
-          `White: ${stats.whitePoints} (Avg: ${whiteAvg} over ${stats.whiteInnings} inn)\n` +
-          `Yellow: ${stats.yellowPoints} (Avg: ${yellowAvg} over ${stats.yellowInnings} inn)`
-        )
+        const score = Session.getInstance().myScore()
+        const totalInnings = stats.whiteInnings + stats.yellowInnings
+        const avg = totalInnings > 0 ? (score / totalInnings).toFixed(2) : "0.00"
+        return `Score: ${score} (Avg: ${avg} over ${totalInnings} inn)`
       } else {
         const { p1, p2 } = Session.getInstance().orderedScoresForHud()
         const names = Session.getInstance().orderedNamesForHud()
