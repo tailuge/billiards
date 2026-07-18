@@ -35,7 +35,7 @@ export class MatchResultHelper {
       forcedAmIWinner,
       endSubtext
     )
-    const subtext = endSubtext ?? this.getScoreSubtext(container)
+    const subtext = endSubtext ?? this.getScoreSubtext(container, rulename)
 
     this.notifyEndState(container, rulename, amIWinner, subtext)
 
@@ -212,7 +212,84 @@ export class MatchResultHelper {
     )
   }
 
-  private static getScoreSubtext(container: Container): string {
+  private static calculateInningsStats(container: Container) {
+    const entries = container.recorder.entries
+    const shots = entries.filter((e) => e.event && e.event.type === "AIM")
+
+    let whiteInnings = 0
+    let yellowInnings = 0
+    let whitePoints = 0
+    let yellowPoints = 0
+
+    let previousCueBallIndex: number | null = null
+
+    for (const entry of shots) {
+      const currentCueBallIndex = (entry.event as any).i ?? 0
+
+      if (currentCueBallIndex !== previousCueBallIndex) {
+        if (currentCueBallIndex === 0) {
+          whiteInnings++
+        } else {
+          yellowInnings++
+        }
+        previousCueBallIndex = currentCueBallIndex
+      }
+
+      if (entry.isPartOfBreak) {
+        if (currentCueBallIndex === 0) {
+          whitePoints++
+        } else {
+          yellowPoints++
+        }
+      }
+    }
+
+    return {
+      whiteInnings,
+      yellowInnings,
+      whitePoints,
+      yellowPoints,
+    }
+  }
+
+  private static getScoreSubtext(
+    container: Container,
+    rulename: string
+  ): string {
+    if (rulename === "threecushion" || rulename === "sagu") {
+      const stats = this.calculateInningsStats(container)
+      if (container.isSinglePlayer) {
+        const whiteAvg =
+          stats.whiteInnings > 0
+            ? (stats.whitePoints / stats.whiteInnings).toFixed(2)
+            : "0.00"
+        const yellowAvg =
+          stats.yellowInnings > 0
+            ? (stats.yellowPoints / stats.yellowInnings).toFixed(2)
+            : "0.00"
+        return (
+          `White: ${stats.whitePoints} (Avg: ${whiteAvg} over ${stats.whiteInnings} inn)\n` +
+          `Yellow: ${stats.yellowPoints} (Avg: ${yellowAvg} over ${stats.yellowInnings} inn)`
+        )
+      } else {
+        const { p1, p2 } = Session.getInstance().orderedScoresForHud()
+        const names = Session.getInstance().orderedNamesForHud()
+        const p1Name = names.p1Name || "Player 1"
+        const p2Name = names.p2Name || "Player 2"
+
+        const p1Innings = stats.whiteInnings
+        const p2Innings = stats.yellowInnings
+
+        const p1Avg = p1Innings > 0 ? (p1 / p1Innings).toFixed(2) : "0.00"
+        const p2Avg = p2Innings > 0 ? (p2 / p2Innings).toFixed(2) : "0.00"
+
+        return (
+          `${p1Name}: ${p1} (Avg: ${p1Avg} over ${p1Innings} inn)\n` +
+          `${p2Name}: ${p2} (Avg: ${p2Avg} over ${p2Innings} inn)`
+        )
+      }
+    }
+
     if (container.isSinglePlayer) {
       return `Score: ${Session.getInstance().myScore()}`
     }

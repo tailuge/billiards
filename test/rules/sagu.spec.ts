@@ -408,18 +408,34 @@ describe("Sagu", () => {
 
       // Direct hit without 3-cushions should fail
       const outcome1 = [
-        Outcome.collision(container.table.balls[0], container.table.balls[2], 1),
-        Outcome.collision(container.table.balls[0], container.table.balls[3], 1),
+        Outcome.collision(
+          container.table.balls[0],
+          container.table.balls[2],
+          1
+        ),
+        Outcome.collision(
+          container.table.balls[0],
+          container.table.balls[3],
+          1
+        ),
       ]
       expect(rules.isSuccessfulShot(outcome1)).to.be.false
 
       // 3-cushions should succeed
       const outcome2 = [
-        Outcome.collision(container.table.balls[0], container.table.balls[2], 1),
+        Outcome.collision(
+          container.table.balls[0],
+          container.table.balls[2],
+          1
+        ),
         Outcome.cushion(container.table.balls[0], 1),
         Outcome.cushion(container.table.balls[0], 1),
         Outcome.cushion(container.table.balls[0], 1),
-        Outcome.collision(container.table.balls[0], container.table.balls[3], 1),
+        Outcome.collision(
+          container.table.balls[0],
+          container.table.balls[3],
+          1
+        ),
       ]
       expect(rules.isSuccessfulShot(outcome2)).to.be.true
 
@@ -431,18 +447,34 @@ describe("Sagu", () => {
 
       // Bot direct hit should fail
       const outcome3 = [
-        Outcome.collision(container.table.balls[1], container.table.balls[2], 1),
-        Outcome.collision(container.table.balls[1], container.table.balls[3], 1),
+        Outcome.collision(
+          container.table.balls[1],
+          container.table.balls[2],
+          1
+        ),
+        Outcome.collision(
+          container.table.balls[1],
+          container.table.balls[3],
+          1
+        ),
       ]
       expect(rules.isSuccessfulShot(outcome3)).to.be.false
 
       // Bot 3-cushions should succeed
       const outcome4 = [
-        Outcome.collision(container.table.balls[1], container.table.balls[2], 1),
+        Outcome.collision(
+          container.table.balls[1],
+          container.table.balls[2],
+          1
+        ),
         Outcome.cushion(container.table.balls[1], 1),
         Outcome.cushion(container.table.balls[1], 1),
         Outcome.cushion(container.table.balls[1], 1),
-        Outcome.collision(container.table.balls[1], container.table.balls[3], 1),
+        Outcome.collision(
+          container.table.balls[1],
+          container.table.balls[3],
+          1
+        ),
       ]
       expect(rules.isSuccessfulShot(outcome4)).to.be.true
 
