@@ -248,6 +248,7 @@ describe("MatchResult Construction", () => {
 
       // Simulate recorded shots in single player mode
       container.isSinglePlayer = true
+      Session.getInstance().setMyScore(2)
 
       // Inning 1 (White)
       container.recorder.entries.push({
@@ -294,8 +295,7 @@ describe("MatchResult Construction", () => {
         container,
         "threecushion"
       )
-      expect(subtext).to.contain("White: 2 (Avg: 1.00 over 2")
-      expect(subtext).to.contain("Yellow: 0 (Avg: 0.00 over 1")
+      expect(subtext).to.equal("Score: 2 (Avg: 0.67 over 3 inn)")
     })
 
     it("should calculate correct innings and averages in multiplayer mode", () => {
