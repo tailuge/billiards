@@ -189,14 +189,6 @@ export class Container {
       controller instanceof PlaceBall ||
       controller instanceof PlayShot
     ) {
-      if (this.isSinglePlayer) {
-        const isCaromRule =
-          this.rules.rulename === "sagu" || this.rules.rulename === "threecushion"
-        if (isCaromRule) {
-          const isPlayer1 = this.rules.cueball === this.table.balls[0]
-          return isPlayer1 ? this.myHudSlot() : this.opponentHudSlot()
-        }
-      }
       return this.myHudSlot()
     }
     if (controller instanceof WatchAim || controller instanceof WatchShot) {

@@ -92,14 +92,7 @@ export class ThreeCushion implements Rules {
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
       const scored = this.getAmountScored(outcomes)
       this.currentBreak += scored
-
-      const session = Session.getInstance()
-      const isPlayer1 = this.cueball === this.container.table.balls[0]
-      if (this.container.isSinglePlayer && !isPlayer1) {
-        session.addOpponentScore(scored)
-      } else {
-        session.addMyScore(scored)
-      }
+      Session.getInstance().addMyScore(scored)
 
       if (this.isEndOfGame(outcomes)) {
         return this.handleGameEnd(true)

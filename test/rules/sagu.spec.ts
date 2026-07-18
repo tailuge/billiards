@@ -349,7 +349,7 @@ describe("Sagu", () => {
       done()
     })
 
-    it("Sagu single player - Yellow cueball successful shot increments opponentScore", (done) => {
+    it("Sagu single player - Yellow cueball successful shot increments myScore (combined total)", (done) => {
       container.isSinglePlayer = true
       const rules = container.rules as Sagu
       rules.cueball = container.table.balls[1] // Yellow (P2)
@@ -365,9 +365,9 @@ describe("Sagu", () => {
       )
 
       container.processEvents()
-      expect(Session.getInstance().myScore()).to.equal(0)
-      expect(Session.getInstance().opponentScore()).to.equal(1)
-      expect(container.inferActivePlayer()).to.equal(2) // P2 highlighted
+      expect(Session.getInstance().myScore()).to.equal(1)
+      expect(Session.getInstance().opponentScore()).to.equal(0)
+      expect(container.inferActivePlayer()).to.equal(1) // P1 highlighted
       done()
     })
 
@@ -388,6 +388,7 @@ describe("Sagu", () => {
         log: (_) => {},
         assets: Assets.localAssets(),
         ruletype: rule,
+        isSinglePlayer: false,
       })
 
       const session = Session.getInstance()

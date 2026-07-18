@@ -30,6 +30,12 @@ export class Sagu extends ThreeCushion {
 
   private getShooterScoreAndTarget(): { score: number; target: number } {
     const session = Session.getInstance()
+    if (this.container.isSinglePlayer) {
+      const score = session.myScore()
+      const target = session.getRaceTargetForPlayer(session.clientId)
+      return { score, target }
+    }
+
     const balls = this.container.table.balls
     const isPlayer1 = this.cueball === balls[0]
 
@@ -150,13 +156,7 @@ export class Sagu extends ThreeCushion {
       const scored = this.getAmountScored(outcomes)
       this.currentBreak += scored
 
-      const session = Session.getInstance()
-      const isPlayer1 = this.cueball === this.container.table.balls[0]
-      if (this.container.isSinglePlayer && !isPlayer1) {
-        session.addOpponentScore(scored)
-      } else {
-        session.addMyScore(scored)
-      }
+      Session.getInstance().addMyScore(scored)
 
       if (this.isEndOfGame(outcomes)) {
         return this.handleGameEnd(true)
@@ -169,12 +169,7 @@ export class Sagu extends ThreeCushion {
     const reason = this.foulReason(outcomes)
     if (reason) {
       const session = Session.getInstance()
-      const isPlayer1 = this.cueball === this.container.table.balls[0]
-      if (this.container.isSinglePlayer && !isPlayer1) {
-        session.setOpponentScore(Math.max(0, session.opponentScore() - 1))
-      } else {
-        session.setMyScore(Math.max(0, session.myScore() - 1))
-      }
+      session.setMyScore(Math.max(0, session.myScore() - 1))
 
       this.container.notify({
         type: "Foul",
