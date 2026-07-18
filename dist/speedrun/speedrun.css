@@ -148,6 +148,28 @@ header h1 {
   --ball-fill: var(--ball-stroke);
 }
 
+.billiards-table .ball-0 {
+  --ball-stroke: #000;
+  --ball-fill: #fff;
+}
+
+/* Make inset group components (spin offset & power indicators) visible on dark background */
+.billiards-table .inset-group circle,
+.billiards-table .inset-group rect,
+.billiards-table .inset-group line {
+  stroke: #cbd5e1;
+}
+
+/* Make status text under the table legible */
+.billiards-table .worker-status {
+  fill: #cbd5e1;
+}
+
+/* Ensure carom / pocketless tables have a solid white background inside their border */
+.billiards-table #outer-frame {
+  fill: #fff;
+}
+
 .play-rank-wrapper {
   display: flex;
   gap: 0.3rem;
