@@ -108,6 +108,27 @@ header h1 {
   box-shadow: inset 0 0 1px 1px #1e293b87;
 }
 
+/* Pool Table Coloring */
+.billiards-table .pool-cloth {
+  fill: #2b7bb9;
+}
+.billiards-table .pool-surround {
+  fill: #855e42;
+  stroke: #5d3f2b;
+}
+.billiards-table .pool-cushion {
+  fill: #24699e;
+  stroke: #16466b;
+}
+.billiards-table .pool-pocket {
+  fill: #111111;
+  stroke: #000000;
+}
+.billiards-table .pool-corner-piece {
+  fill: #c0c0c0;
+  stroke: #8a8a8a;
+}
+
 /* Solid fill for balls on speedrun cards */
 .billiards-table .ball {
   --ball-fill: var(--ball-stroke);
