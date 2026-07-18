@@ -21,6 +21,11 @@
 }
 
 /* Default / Pool Colors */
+.ball-0 {
+  --ball-fill: #fff !important;
+  --ball-stroke: #000;
+}
+
 .ball-1 {
   --ball-stroke: #ffd900;
 }
