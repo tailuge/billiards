@@ -28,11 +28,45 @@ export class Sagu extends ThreeCushion {
     return table
   }
 
-  isSuccessfulShot(outcomes: Outcome[]): boolean {
+  private getShooterScoreAndTarget(): { score: number; target: number } {
     const session = Session.getInstance()
-    const myCurrentScore = session.myScore()
-    const myTarget = session.getRaceTargetForPlayer(session.clientId)
-    if (myCurrentScore === myTarget - 1) {
+    if (this.container.isSinglePlayer) {
+      const score = session.myScore()
+      const target = session.getRaceTargetForPlayer(session.clientId)
+      return { score, target }
+    }
+
+    const balls = this.container.table.balls
+    const isPlayer1 = this.cueball === balls[0]
+
+    let score: number
+    let clientId: string
+
+    if (isPlayer1) {
+      if (session.playerIndex === 0) {
+        score = session.myScore()
+        clientId = session.clientId
+      } else {
+        score = session.opponentScore()
+        clientId = session.opponentClientId ?? "opponent"
+      }
+    } else {
+      if (session.playerIndex === 0) {
+        score = session.opponentScore()
+        clientId = session.opponentClientId ?? "opponent"
+      } else {
+        score = session.myScore()
+        clientId = session.clientId
+      }
+    }
+
+    const target = session.getRaceTargetForPlayer(clientId)
+    return { score, target }
+  }
+
+  isSuccessfulShot(outcomes: Outcome[]): boolean {
+    const { score, target } = this.getShooterScoreAndTarget()
+    if (score === target - 1) {
       return !this.foulReason(outcomes) && this.isSaguThreeCushionShot(outcomes)
     }
     return !this.foulReason(outcomes) && this.hitsBothReds(outcomes)
@@ -121,6 +155,7 @@ export class Sagu extends ThreeCushion {
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))
       const scored = this.getAmountScored(outcomes)
       this.currentBreak += scored
+
       Session.getInstance().addMyScore(scored)
 
       if (this.isEndOfGame(outcomes)) {

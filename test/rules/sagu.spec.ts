@@ -326,4 +326,127 @@ describe("Sagu", () => {
       done()
     })
   })
+
+  describe("Sagu local single-player and Bot final-point validations", () => {
+    it("Sagu single player - White cueball successful shot increments myScore", (done) => {
+      container.isSinglePlayer = true
+      const rules = container.rules as Sagu
+      rules.cueball = container.table.balls[0] // White
+      container.controller = new PlayShot(container)
+      container.table.balls[0].setStationary()
+      container.eventQueue.push(new StationaryEvent())
+
+      const balls = container.table.balls
+      container.table.outcome.push(
+        Outcome.collision(balls[0], balls[2], 1),
+        Outcome.collision(balls[0], balls[3], 1)
+      )
+
+      container.processEvents()
+      expect(Session.getInstance().myScore()).to.equal(1)
+      expect(Session.getInstance().opponentScore()).to.equal(0)
+      expect(container.inferActivePlayer()).to.equal(1) // P1 highlighted
+      done()
+    })
+
+    it("Sagu single player - Yellow cueball successful shot increments myScore (combined total)", (done) => {
+      container.isSinglePlayer = true
+      const rules = container.rules as Sagu
+      rules.cueball = container.table.balls[1] // Yellow (P2)
+      container.table.cueball = container.table.balls[1]
+      container.controller = new PlayShot(container)
+      container.table.balls[1].setStationary()
+      container.eventQueue.push(new StationaryEvent())
+
+      const balls = container.table.balls
+      container.table.outcome.push(
+        Outcome.collision(balls[1], balls[2], 1),
+        Outcome.collision(balls[1], balls[3], 1)
+      )
+
+      container.processEvents()
+      expect(Session.getInstance().myScore()).to.equal(1)
+      expect(Session.getInstance().opponentScore()).to.equal(0)
+      expect(container.inferActivePlayer()).to.equal(1) // P1 highlighted
+      done()
+    })
+
+    it("Sagu bot mode - final cushion shot validation checks actual shooter score and target", (done) => {
+      // Setup BOT mode
+      Session.init(
+        "human-client",
+        "Lukey",
+        "test-table",
+        false,
+        true, // botMode = true
+        false,
+        true
+      )
+      // Reinstate container to pick up Bot Mode from Session
+      container = new Container({
+        element: undefined,
+        log: (_) => {},
+        assets: Assets.localAssets(),
+        ruletype: rule,
+        isSinglePlayer: false,
+      })
+
+      const session = Session.getInstance()
+      session.opponentClientId = "bot"
+      session.opponentName = "Claw"
+
+      const humanTarget = session.getRaceTargetForPlayer("human-client") // e.g. 7
+      const botTarget = session.getRaceTargetForPlayer("bot") // e.g. 7
+
+      // 1. Human at match point, bot at 3.
+      // Human shoots (White cueball). Human MUST play a 3-cushion shot to score.
+      session.setMyScore(humanTarget - 1)
+      session.setOpponentScore(3)
+
+      const rules = container.rules as Sagu
+      rules.cueball = container.table.balls[0] // Human cueball (White)
+
+      // Direct hit without 3-cushions should fail
+      const outcome1 = [
+        Outcome.collision(container.table.balls[0], container.table.balls[2], 1),
+        Outcome.collision(container.table.balls[0], container.table.balls[3], 1),
+      ]
+      expect(rules.isSuccessfulShot(outcome1)).to.be.false
+
+      // 3-cushions should succeed
+      const outcome2 = [
+        Outcome.collision(container.table.balls[0], container.table.balls[2], 1),
+        Outcome.cushion(container.table.balls[0], 1),
+        Outcome.cushion(container.table.balls[0], 1),
+        Outcome.cushion(container.table.balls[0], 1),
+        Outcome.collision(container.table.balls[0], container.table.balls[3], 1),
+      ]
+      expect(rules.isSuccessfulShot(outcome2)).to.be.true
+
+      // 2. Human at 3, Bot at match point.
+      // Bot shoots (Yellow cueball). Bot MUST play a 3-cushion shot to score.
+      session.setMyScore(3)
+      session.setOpponentScore(botTarget - 1)
+      rules.cueball = container.table.balls[1] // Bot cueball (Yellow)
+
+      // Bot direct hit should fail
+      const outcome3 = [
+        Outcome.collision(container.table.balls[1], container.table.balls[2], 1),
+        Outcome.collision(container.table.balls[1], container.table.balls[3], 1),
+      ]
+      expect(rules.isSuccessfulShot(outcome3)).to.be.false
+
+      // Bot 3-cushions should succeed
+      const outcome4 = [
+        Outcome.collision(container.table.balls[1], container.table.balls[2], 1),
+        Outcome.cushion(container.table.balls[1], 1),
+        Outcome.cushion(container.table.balls[1], 1),
+        Outcome.cushion(container.table.balls[1], 1),
+        Outcome.collision(container.table.balls[1], container.table.balls[3], 1),
+      ]
+      expect(rules.isSuccessfulShot(outcome4)).to.be.true
+
+      done()
+    })
+  })
 })
