@@ -1,4 +1,4 @@
-import { PerspectiveCamera, MathUtils, Vector3 } from "three"
+import { PerspectiveCamera, MathUtils, Vector3, Frustum, Matrix4 } from "three"
 import { up, zero, unitAtAngle } from "../utils/three-utils"
 import { AimEvent } from "../events/aimevent"
 import { CameraTop } from "./cameratop"
@@ -34,6 +34,7 @@ export class Camera {
 
   private distance = Camera.defaultDistance
   private fovOffset = Camera.defaultFovOffset
+  savedDistance?: number
 
   elapsed: number
   private t = 0
@@ -132,7 +133,93 @@ export class Camera {
     this.distance = MathUtils.clamp(this.distance + delta, R * 2, R * 100)
   }
 
+  restoreSavedDistance() {
+    if (this.savedDistance !== undefined) {
+      this.distance = this.savedDistance
+      this.savedDistance = undefined
+    }
+  }
+
+  stepBackToFitAllBalls(balls: any[], aim: AimEvent) {
+    const frustum = new Frustum()
+    const projScreenMatrix = new Matrix4()
+
+    const h = this.height
+    const portrait = this.camera.aspect < 0.8
+    const tempFov = (portrait ? 60 : 40) + this.fovOffset
+    const fov = h < 10 * R ? tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1) : tempFov
+
+    const originalPosition = this.camera.position.clone()
+    const originalRotation = this.camera.rotation.clone()
+    const originalMatrixWorld = this.camera.matrixWorld.clone()
+    const originalMatrixWorldInverse = this.camera.matrixWorldInverse.clone()
+    const originalProjectionMatrix = this.camera.projectionMatrix.clone()
+    const originalFov = this.camera.fov
+
+    this.camera.fov = fov
+    this.camera.updateProjectionMatrix()
+
+    let foundDistance = this.distance
+    const maxDistance = R * 120
+    const step = R
+
+    for (let testDistance = this.distance; testDistance <= maxDistance; testDistance += step) {
+      const targetPos = this.tempVec2
+        .copy(aim.pos)
+        .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -testDistance)
+
+      this.camera.position.copy(targetPos)
+      this.camera.position.z = h
+      this.camera.up.copy(up)
+
+      const tempLookTarget = this.tempVec
+        .copy(aim.pos)
+        .addScaledVector(up, h / 2)
+
+      this.camera.lookAt(tempLookTarget)
+      this.camera.updateMatrixWorld(true)
+      this.camera.matrixWorldInverse.copy(this.camera.matrixWorld).invert()
+
+      projScreenMatrix.multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse)
+      frustum.setFromProjectionMatrix(projScreenMatrix)
+
+      let allIn = true
+      for (const b of balls) {
+        if (!b.onTable()) continue
+        const mesh = b.ballmesh?.mesh
+        const inFrustum = mesh ? frustum.intersectsObject(mesh) : frustum.containsPoint(b.pos)
+        if (!inFrustum) {
+          allIn = false
+          break
+        }
+      }
+
+      if (allIn) {
+        foundDistance = testDistance
+        break
+      }
+    }
+
+    // Restore original camera state
+    this.camera.position.copy(originalPosition)
+    this.camera.rotation.copy(originalRotation)
+    this.camera.matrixWorld.copy(originalMatrixWorld)
+    this.camera.matrixWorldInverse.copy(originalMatrixWorldInverse)
+    this.camera.projectionMatrix.copy(originalProjectionMatrix)
+    this.camera.fov = originalFov
+
+    if (foundDistance !== this.distance) {
+      if (this.savedDistance === undefined) {
+        this.savedDistance = this.distance
+      }
+      this.distance = foundDistance
+    }
+  }
+
   suggestMode(mode) {
+    if (mode !== this.aimView) {
+      this.restoreSavedDistance()
+    }
     if (this.mainMode === this.aimView) {
       this.mode = mode
     }
@@ -145,6 +232,9 @@ export class Camera {
   }
 
   forceMode(mode) {
+    if (mode !== this.aimView) {
+      this.restoreSavedDistance()
+    }
     this.mode = mode
     this.mainMode = mode
   }
@@ -156,6 +246,7 @@ export class Camera {
   }
 
   toggleMode() {
+    this.restoreSavedDistance()
     if (this.mode === this.topView) {
       this.mode = this.aimView
     } else {
