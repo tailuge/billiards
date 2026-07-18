@@ -7,7 +7,10 @@ import { Snooker } from "../../src/controller/rules/snooker"
 import { Session } from "../../src/network/client/session"
 import { Outcome } from "../../src/model/outcome"
 import { End } from "../../src/controller/end"
-import { MatchResult, MatchResultHelper } from "../../src/network/client/matchresult"
+import {
+  MatchResult,
+  MatchResultHelper,
+} from "../../src/network/client/matchresult"
 import { Ball, State } from "../../src/model/ball"
 import { ScoreReporter } from "../../src/network/client/scorereporter"
 

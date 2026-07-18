@@ -249,7 +249,8 @@ export class MatchResultHelper {
       if (container.isSinglePlayer) {
         const score = Session.getInstance().myScore()
         const totalInnings = stats.whiteInnings + stats.yellowInnings
-        const avg = totalInnings > 0 ? (score / totalInnings).toFixed(2) : "0.00"
+        const avg =
+          totalInnings > 0 ? (score / totalInnings).toFixed(2) : "0.00"
         return `Score: ${score} (Avg: ${avg} over ${totalInnings} inn)`
       } else {
         const { p1, p2 } = Session.getInstance().orderedScoresForHud()
