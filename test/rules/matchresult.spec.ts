@@ -7,7 +7,7 @@ import { Snooker } from "../../src/controller/rules/snooker"
 import { Session } from "../../src/network/client/session"
 import { Outcome } from "../../src/model/outcome"
 import { End } from "../../src/controller/end"
-import { MatchResult } from "../../src/network/client/matchresult"
+import { MatchResult, MatchResultHelper } from "../../src/network/client/matchresult"
 import { Ball, State } from "../../src/model/ball"
 import { ScoreReporter } from "../../src/network/client/scorereporter"
 
@@ -235,5 +235,114 @@ describe("MatchResult Construction", () => {
       notification?.querySelectorAll(".notification-high-break").length
     ).to.equal(3)
     expect(notification?.querySelector(".notification-actions")).to.exist
+  })
+
+  describe("ThreeCushion & Sagu Innings & Average Tracking", () => {
+    it("should calculate correct innings and averages in single player mode", () => {
+      container = new Container({
+        element: undefined,
+        log: (_) => {},
+        assets: Assets.localAssets("threecushion"),
+        ruletype: "threecushion",
+      })
+
+      // Simulate recorded shots in single player mode
+      container.isSinglePlayer = true
+
+      // Inning 1 (White)
+      container.recorder.entries.push({
+        state: [],
+        event: { type: "AIM", i: 0 } as any,
+        pots: 0,
+        isPartOfBreak: true,
+        time: Date.now(),
+      })
+      container.recorder.entries.push({
+        state: [],
+        event: { type: "AIM", i: 0 } as any,
+        pots: 0,
+        isPartOfBreak: false,
+        time: Date.now(),
+      })
+
+      // Inning 1 (Yellow)
+      container.recorder.entries.push({
+        state: [],
+        event: { type: "AIM", i: 1 } as any,
+        pots: 0,
+        isPartOfBreak: false,
+        time: Date.now(),
+      })
+
+      // Inning 2 (White)
+      container.recorder.entries.push({
+        state: [],
+        event: { type: "AIM", i: 0 } as any,
+        pots: 0,
+        isPartOfBreak: true,
+        time: Date.now(),
+      })
+      container.recorder.entries.push({
+        state: [],
+        event: { type: "AIM", i: 0 } as any,
+        pots: 0,
+        isPartOfBreak: false,
+        time: Date.now(),
+      })
+
+      const subtext = (MatchResultHelper as any).getScoreSubtext(
+        container,
+        "threecushion"
+      )
+      expect(subtext).to.contain("White: 2 (Avg: 1.00 over 2")
+      expect(subtext).to.contain("Yellow: 0 (Avg: 0.00 over 1")
+    })
+
+    it("should calculate correct innings and averages in multiplayer mode", () => {
+      container = new Container({
+        element: undefined,
+        log: (_) => {},
+        assets: Assets.localAssets("threecushion"),
+        ruletype: "threecushion",
+      })
+
+      container.isSinglePlayer = false
+      const session = Session.getInstance()
+      session.playername = "Player 1"
+      session.opponentName = "Player 2"
+      session.playerIndex = 0
+      session.updateScoresFromNetwork(10, 5, 0)
+
+      // Simulate recorded shots: Player 1 (White), Player 2 (Yellow)
+      container.recorder.entries.push({
+        state: [],
+        event: { type: "AIM", i: 0 } as any,
+        pots: 0,
+        isPartOfBreak: true,
+        time: Date.now(),
+      })
+      container.recorder.entries.push({
+        state: [],
+        event: { type: "AIM", i: 0 } as any,
+        pots: 0,
+        isPartOfBreak: false,
+        time: Date.now(),
+      })
+
+      container.recorder.entries.push({
+        state: [],
+        event: { type: "AIM", i: 1 } as any,
+        pots: 0,
+        isPartOfBreak: false,
+        time: Date.now(),
+      })
+
+      const subtext = (MatchResultHelper as any).getScoreSubtext(
+        container,
+        "threecushion"
+      )
+      expect(subtext).to.contain("Player 1: 10 (Avg: 10.00 over 1 inn)")
+      expect(subtext).to.contain("Player 2: 5 (Avg: 5.00 over 1 inn)")
+    })
   })
 })

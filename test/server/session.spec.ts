@@ -65,7 +65,9 @@ describe("Session", () => {
       const session = Session.getInstance()
       jest.spyOn(session, "getHandicaps").mockReturnValue({})
 
-      const { ThreeCushionConfig } = require("../../src/utils/threecushionconfig")
+      const {
+        ThreeCushionConfig,
+      } = require("../../src/utils/threecushionconfig")
       const originalRaceTo = ThreeCushionConfig.raceTo
       try {
         ThreeCushionConfig.raceTo = 5
