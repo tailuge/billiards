@@ -140,14 +140,60 @@ export class Camera {
     }
   }
 
+  private computeStepBackFov(h: number): number {
+    const portrait = this.camera.aspect < 0.8
+    const tempFov = (portrait ? 60 : 40) + this.fovOffset
+    return h < 10 * R ? tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1) : tempFov
+  }
+
+  private areAllBallsInFrustum(frustum: Frustum, balls: any[]): boolean {
+    for (const b of balls) {
+      if (!b.onTable()) continue
+      const mesh = b.ballmesh?.mesh
+      const inFrustum = mesh ? frustum.intersectsObject(mesh) : frustum.containsPoint(b.pos)
+      if (!inFrustum) {
+        return false
+      }
+    }
+    return true
+  }
+
+  private tryDistanceFit(
+    testDistance: number,
+    h: number,
+    aim: AimEvent,
+    frustum: Frustum,
+    projScreenMatrix: Matrix4,
+    balls: any[]
+  ): boolean {
+    const targetPos = this.tempVec2
+      .copy(aim.pos)
+      .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -testDistance)
+
+    this.camera.position.copy(targetPos)
+    this.camera.position.z = h
+    this.camera.up.copy(up)
+
+    const tempLookTarget = this.tempVec
+      .copy(aim.pos)
+      .addScaledVector(up, h / 2)
+
+    this.camera.lookAt(tempLookTarget)
+    this.camera.updateMatrixWorld(true)
+    this.camera.matrixWorldInverse.copy(this.camera.matrixWorld).invert()
+
+    projScreenMatrix.multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse)
+    frustum.setFromProjectionMatrix(projScreenMatrix)
+
+    return this.areAllBallsInFrustum(frustum, balls)
+  }
+
   stepBackToFitAllBalls(balls: any[], aim: AimEvent) {
     const frustum = new Frustum()
     const projScreenMatrix = new Matrix4()
 
     const h = this.height
-    const portrait = this.camera.aspect < 0.8
-    const tempFov = (portrait ? 60 : 40) + this.fovOffset
-    const fov = h < 10 * R ? tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1) : tempFov
+    const fov = this.computeStepBackFov(h)
 
     const originalPosition = this.camera.position.clone()
     const originalRotation = this.camera.rotation.clone()
@@ -163,39 +209,9 @@ export class Camera {
     const maxDistance = R * 120
     const step = R
 
-    for (let testDistance = this.distance; testDistance <= maxDistance; testDistance += step) {
-      const targetPos = this.tempVec2
-        .copy(aim.pos)
-        .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -testDistance)
-
-      this.camera.position.copy(targetPos)
-      this.camera.position.z = h
-      this.camera.up.copy(up)
-
-      const tempLookTarget = this.tempVec
-        .copy(aim.pos)
-        .addScaledVector(up, h / 2)
-
-      this.camera.lookAt(tempLookTarget)
-      this.camera.updateMatrixWorld(true)
-      this.camera.matrixWorldInverse.copy(this.camera.matrixWorld).invert()
-
-      projScreenMatrix.multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse)
-      frustum.setFromProjectionMatrix(projScreenMatrix)
-
-      let allIn = true
-      for (const b of balls) {
-        if (!b.onTable()) continue
-        const mesh = b.ballmesh?.mesh
-        const inFrustum = mesh ? frustum.intersectsObject(mesh) : frustum.containsPoint(b.pos)
-        if (!inFrustum) {
-          allIn = false
-          break
-        }
-      }
-
-      if (allIn) {
-        foundDistance = testDistance
+    for (let d = this.distance; d <= maxDistance; d += step) {
+      if (this.tryDistanceFit(d, h, aim, frustum, projScreenMatrix, balls)) {
+        foundDistance = d
         break
       }
     }
