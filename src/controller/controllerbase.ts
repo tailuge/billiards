@@ -134,6 +134,16 @@ export abstract class ControllerBase extends Controller {
       case "KeyOUp":
         this.container.view.camera.toggleMode()
         return true
+      case "KeyZ":
+      case "KeyZUp":
+        const camera = this.container.view.camera
+        if (camera.mode === camera.aimView) {
+          camera.stepBackToFitAllBalls(
+            this.container.table.balls,
+            this.container.table.cue.aim
+          )
+        }
+        return true
       case "KeyDUp":
         //this.togglePanel()
         return true
