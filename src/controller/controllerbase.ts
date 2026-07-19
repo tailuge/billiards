@@ -54,6 +54,18 @@ export abstract class ControllerBase extends Controller {
         session.playerIndex === 0 ? event.p1type : flipP1type(event.p1type)
     }
     this.container.updateScoreHud(event.p1, event.p2, event.b, event.active)
+
+    const rulename = this.container.rules.rulename
+    if (
+      (rulename === "threecushion" || rulename === "sagu") &&
+      this.container.rules.isEndOfGame([]) &&
+      this.name !== "End"
+    ) {
+      const myTarget = session.getRaceTargetForPlayer(session.clientId)
+      const amIWinner = session.myScore() >= myTarget
+      return this.container.rules.handleGameEnd(amIWinner)
+    }
+
     return this
   }
 
