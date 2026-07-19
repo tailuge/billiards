@@ -119,6 +119,8 @@ header h1 {
 .billiards-table .pool-cushion {
   fill: #24699e;
   stroke: #16466b;
+  filter: url(#cushion-shadow);
+  clip-path: url(#cloth-clip);
 }
 
 .billiards-table .pool-pocket {

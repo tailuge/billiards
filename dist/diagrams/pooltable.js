@@ -19,6 +19,12 @@ const POOL_TABLE_SVG_CONTENT = `
         <stop offset="50%" stop-color="#0a5c2b" />
         <stop offset="100%" stop-color="#063d1c" />
       </radialGradient>
+      <clipPath id="cloth-clip">
+        <rect x="-1.380" y="-0.720" width="2.760" height="1.440"></rect>
+      </clipPath>
+      <filter id="cushion-shadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="0" stdDeviation="0.015" flood-color="#000" flood-opacity="0.6"/>
+      </filter>
     </defs>
     <style>
       path, line, polyline { fill: none; stroke: #000; stroke-width: 0.003; stroke-linecap: round; stroke-linejoin: round; }
