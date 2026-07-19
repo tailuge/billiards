@@ -143,14 +143,18 @@ export class Camera {
   private computeStepBackFov(h: number): number {
     const portrait = this.camera.aspect < 0.8
     const tempFov = (portrait ? 60 : 40) + this.fovOffset
-    return h < 10 * R ? tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1) : tempFov
+    return h < 10 * R
+      ? tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1)
+      : tempFov
   }
 
   private areAllBallsInFrustum(frustum: Frustum, balls: any[]): boolean {
     for (const b of balls) {
       if (!b.onTable()) continue
       const mesh = b.ballmesh?.mesh
-      const inFrustum = mesh ? frustum.intersectsObject(mesh) : frustum.containsPoint(b.pos)
+      const inFrustum = mesh
+        ? frustum.intersectsObject(mesh)
+        : frustum.containsPoint(b.pos)
       if (!inFrustum) {
         return false
       }
@@ -174,15 +178,16 @@ export class Camera {
     this.camera.position.z = h
     this.camera.up.copy(up)
 
-    const tempLookTarget = this.tempVec
-      .copy(aim.pos)
-      .addScaledVector(up, h / 2)
+    const tempLookTarget = this.tempVec.copy(aim.pos).addScaledVector(up, h / 2)
 
     this.camera.lookAt(tempLookTarget)
     this.camera.updateMatrixWorld(true)
     this.camera.matrixWorldInverse.copy(this.camera.matrixWorld).invert()
 
-    projScreenMatrix.multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse)
+    projScreenMatrix.multiplyMatrices(
+      this.camera.projectionMatrix,
+      this.camera.matrixWorldInverse
+    )
     frustum.setFromProjectionMatrix(projScreenMatrix)
 
     return this.areAllBallsInFrustum(frustum, balls)

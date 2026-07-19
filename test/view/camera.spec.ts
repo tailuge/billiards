@@ -33,12 +33,12 @@ describe("Camera", () => {
     const balls = [
       {
         onTable: () => true,
-        pos: new Vector3(0, 0, 0)
+        pos: new Vector3(0, 0, 0),
       },
       {
         onTable: () => true,
-        pos: new Vector3(1.0, 1.0, 0)
-      }
+        pos: new Vector3(1.0, 1.0, 0),
+      },
     ]
 
     const aim = new AimEvent()
