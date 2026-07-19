@@ -112,8 +112,9 @@ header h1 {
 }
 
 .billiards-table .pool-surround {
-  fill: #855e42;
-  stroke: #5d3f2b;
+  fill: url(#premium-wood-gradient);
+  stroke: #1b100b;
+  stroke-width: 0.006;
 }
 
 .billiards-table .pool-cushion {
@@ -128,9 +129,12 @@ header h1 {
   stroke: #000;
 }
 
-.billiards-table .pool-corner-piece {
-  fill: #c0c0c0;
-  stroke: #8a8a8a;
+.billiards-table .pool-corner-piece,
+.billiards-table .pool-corner-piece path {
+  fill: none !important;
+  stroke: #160b06 !important;
+  stroke-width: 0.003 !important;
+  opacity: 0.35 !important;
 }
 
 /* Snooker Table Coloring */

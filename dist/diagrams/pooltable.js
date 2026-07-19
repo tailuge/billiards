@@ -25,6 +25,13 @@ const POOL_TABLE_SVG_CONTENT = `
       <filter id="cushion-shadow" x="-20%" y="-20%" width="140%" height="140%">
         <feDropShadow dx="0" dy="0" stdDeviation="0.015" flood-color="#000" flood-opacity="0.6"/>
       </filter>
+      <linearGradient id="premium-wood-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#3C2D26" />
+        <stop offset="25%" stop-color="#50392C" />
+        <stop offset="50%" stop-color="#664735" />
+        <stop offset="75%" stop-color="#50392C" />
+        <stop offset="100%" stop-color="#322722" />
+      </linearGradient>
     </defs>
     <style>
       path, line, polyline { fill: none; stroke: #000; stroke-width: 0.003; stroke-linecap: round; stroke-linejoin: round; }
