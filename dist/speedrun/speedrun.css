@@ -22,7 +22,8 @@ body {
 header {
   position: relative;
   text-align: center;
-  margin-bottom: 0.5rem;
+  max-width: 1200px;
+  margin: 0 auto 0.5rem;
 }
 
 header h1 {
