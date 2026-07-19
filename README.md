@@ -9,23 +9,24 @@
 
 [![Demo and Screenshot](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/promo.png)](https://billiards.tailuge.workers.dev/?bot=TheFarJaw)
 
-This is an open-source project bringing unsophisticated billiards physics written in typescript to the browser.
+This is an open-source project bringing unsophisticated billiards physics written in TypeScript to the browser.
 
 ## Online Demo
 
-Demos run in all major desktop and mobile browsers and uses WebGL
+Demos run in all major desktop and mobile browsers and use WebGL
 
 * [Nine ball ⬀](https://billiards.tailuge.workers.dev/?practice=true) make a break and share replay link with friends
 * [Three cushion billiards ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&lod=4) the ultimate test of physics and player (average on both counts). You need the [beginner mode ⬀](https://billiards.tailuge.workers.dev/?ruletype=threecushion&practice=true). Try the [practice mode ⬀](https://velikodimov.github.io/billiards/dist/index.html?ruletype=threecushion&practice&drill) to drill specific shots.
+* [Sagu ⬀](https://billiards.tailuge.workers.dev/?ruletype=sagu) Korean four-ball carom game. Try [sagu on a 5ft table ⬀](https://billiards.tailuge.workers.dev/?ruletype=sagu&tableSize=5).
 * [Snooker ⬀](https://billiards.tailuge.workers.dev/?ruletype=snooker) we await the first 147 submission to the leaderboard.
 * [8-Ball ⬀](https://billiards.tailuge.workers.dev/?ruletype=eightball&lod=4) try it in Hi-Res mode!
 * Play vs the [Claw ⬀](https://billiards.tailuge.workers.dev/?bot=ClawBreak) and [TheFarJaw ⬀](https://billiards.tailuge.workers.dev/?bot=TheFarJaw).
 * Try [two player](https://billiards.tailuge.workers.dev/lobby.html) online lobby using nchan
-* Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard) hosted on vercel.com
+* Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard) hosted on Vercel.
 * Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
 * Set up trick shots and [practice ⬀](https://billiards.tailuge.workers.dev/practice.html).
 * Tune three cushion [physics ⬀](https://tailuge.github.io/billiards/dist/diagrams/three.html) and [optimise ⬀](https://tailuge.github.io/billiards/dist/fit/viewer.html) parameters
-* Parallel [parameter ⬀](https://tailuge.github.io/billiards/dist/fit/common.html) tuning using [web workers ⬀](https://tailuge.github.io/billiards/dist/ww.html).
+* Parallel [parameter ⬀](https://tailuge.github.io/billiards/dist/fit/common.html) tuning using [Web Workers ⬀](https://tailuge.github.io/billiards/dist/ww.html).
 * Three cushion trainer and [sensitivity analysis ⬀](https://velikodimov.github.io/billiards/dist/index.html?ruletype=threecushion&practice&drill) from an excellent [fork ⬀](https://github.com/velikodimov/billiards) of this project.
 
 ## Features
@@ -34,14 +35,14 @@ Demos run in all major desktop and mobile browsers and uses WebGL
 * Presentation using WebGL in any modern browser on mobile, linux, mac or windows.
 * Record and playback breaks.
 * Two player online mode with nchan nginx server.
-* Nine ball, snooker and three cushion billiards rules.
-* Deploys to github pages, vercel.com and render.com with github actions.
-* Runs on and was developed mostly on a potato e.g. Raspberry pi 4.
+* Nine ball, snooker, three cushion and Sagu billiards rules.
+* Deploys to GitHub Pages, Vercel and Render with GitHub Actions.
+* Runs on and was developed mostly on a potato e.g. Raspberry Pi 4.
 
 ## Reference material
 
 * Papers on ball mechanics [Han 2005](https://billiards.colostate.edu/physics_articles/Han_paper.pdf)
-with important corrections by [Kiefl](https://ekiefl.github.io/2020/04/24/pooltool-theory/#3-han-2005").
+with important corrections by [Kiefl](https://ekiefl.github.io/2020/04/24/pooltool-theory/#3-han-2005).
 * [cushions](https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf), [max spin](https://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf),
 simulation and constants [1](https://savoirs.usherbrooke.ca/bitstream/handle/11143/6598/MR91690.pdf?sequence=1)
 [2](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.89.4627&rep=rep1&type=pdf)
@@ -140,7 +141,7 @@ $$
 s' = \sqrt{(ẋ_C)^2 + (ẏ_C)^2}
 $$
 
-Numerical solutions for the centroid velocity of the ball during compression and resititution phases.
+Numerical solutions for the centroid velocity of the ball during compression and restitution phases.
 
 $$
 (\dot{v_x})_{n+1} - (\dot{v_x})_n = - \frac{1}{M} \left[\mu_w \cos(\phi) + \mu_s \cos(\phi') \cdot (\sin \theta + \mu_w \sin(\phi) \cos \theta)\right] \Delta P_I
@@ -164,7 +165,7 @@ $$
 (\dot{\omega_z})_{n+1}−(\dot{\omega_z})_n = \frac{5}{2MR}(\mu_w \cos(\phi)\cos(\theta))\Delta P_I
 $$
 
-$\theta$ is a constant of the angle of cushion contact above ball centre with $\sin(\theta) = 2/5$. $\mu_s$ is the coefficient of sliding friction  between the ball and table surface. $\mu_w$ is the coefficient of sliding friction  between the ball and the cushion.
+$\theta$ is a constant of the angle of cushion contact above ball centre with $\sin(\theta) = 2/5$. $\mu_s$ is the coefficient of sliding friction between the ball and table surface. $\mu_w$ is the coefficient of sliding friction between the ball and the cushion.
 
 Work done by the normal force at contact point $I$ along the $Z'$-axis which is aligned from the ball centre to I
 
