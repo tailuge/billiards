@@ -274,10 +274,26 @@ body > h2 {
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.85rem;
+  margin-left: 0.25rem;
 }
 
 .reset-btn:hover {
   background-color: #dc2626;
+}
+
+.lobby-btn {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: #2563eb;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.lobby-btn:hover {
+  background-color: #1d4ed8;
 }
 
 /* Iframe overlay */
