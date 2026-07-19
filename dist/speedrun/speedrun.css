@@ -464,7 +464,16 @@ header h1 {
 
 /* ?run=id filtering — hide all cards except the matching one */
 html[data-run] .card-grid > .speedrun-card:not(.active-run) {
-  display: none;
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
 }
 
 /* Icon buttons on card SVGs */
