@@ -8,6 +8,7 @@ import { Rack } from "../../src/utils/rack"
 import { R } from "../../src/model/physics/constants"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
 import { Collision } from "../../src/model/physics/collision"
+import { ShotStartUtils } from "../../src/utils/shotstart"
 
 const t = 0.01
 
@@ -49,9 +50,16 @@ describe("Table", () => {
     a.state = State.Sliding
     const b = new Ball(new Vector3(R * 0.9, 0, 0))
     const table = new Table([a, b])
-    expect(() => {
-      table.advance(t)
-    }).to.throw("Depth exceeded resolving collisions")
+    // advance() now calls reportDepthExceeded() (console.error) before the
+    // throw; silence it so non-silent test runs stay clean.
+    const spy = jest.spyOn(console, "error").mockImplementation(() => {})
+    try {
+      expect(() => {
+        table.advance(t)
+      }).to.throw("Depth exceeded resolving collisions")
+    } finally {
+      spy.mockRestore()
+    }
     done()
   })
 
@@ -180,6 +188,52 @@ describe("Table", () => {
   it("shortSerialise", (done) => {
     const table = new Table(Rack.diamond())
     expect(table.shortSerialise()).to.be.length((9 + 1) * 2)
+    done()
+  })
+
+  it("hit() captures shot start conditions (delegates to ShotStartUtils)", (done) => {
+    const table = new Table(Rack.diamond())
+    table.cue.aim.angle = 0.42
+    table.cue.aim.power = 1.7
+    table.cue.aim.offset.set(0.05, -0.08, 0)
+    table.cue.aim.elevation = 0.3
+    const expectedBalls = table.shortSerialise()
+    table.hit()
+    expect(table.shotStartConditions).to.not.be.undefined
+    const c = table.shotStartConditions!
+    expect(c.balls).to.deep.equal(expectedBalls)
+    expect(c.cueBallId).to.equal(0)
+    expect(c.angle).to.equal(0.42)
+    expect(c.power).to.equal(1.7)
+    expect(c.offsetX).to.equal(0.05)
+    expect(c.offsetY).to.equal(-0.08)
+    expect(c.elevation).to.equal(0.3)
+    done()
+  })
+
+  it("advance() reports initial conditions on depth-exceeded throw", (done) => {
+    const a = new Ball(zero)
+    a.vel.x = 1
+    a.state = State.Sliding
+    const b = new Ball(new Vector3(R * 0.9, 0, 0))
+    const table = new Table([a, b])
+    // Populate the snapshot so reportDepthExceeded has data to print.
+    table.shotStartConditions = ShotStartUtils.capture(table, {
+      cueBallId: 0,
+      angle: 0,
+      power: 1,
+    })
+    const spy = jest.spyOn(console, "error").mockImplementation(() => {})
+    try {
+      expect(() => {
+        table.advance(t)
+      }).to.throw("Depth exceeded resolving collisions")
+      expect(spy.mock.calls).to.not.be.empty
+      const msg = spy.mock.calls[0][0] as string
+      expect(msg).to.contain("Recreation link")
+    } finally {
+      spy.mockRestore()
+    }
     done()
   })
 

@@ -13,6 +13,7 @@ import { zero } from "../utils/three-utils"
 import { R } from "./physics/constants"
 import { ProximityIndicator } from "../view/proximityindicator"
 import { checkProximity } from "../utils/proximity"
+import { ShotStartUtils, type ShotStartConditions } from "../utils/shotstart"
 
 interface Pair {
   a: Ball
@@ -30,6 +31,10 @@ export class Table {
   cueball: Ball
   cushionModel = bounceHanBlend
   mesh
+  /** Initial conditions of the current shot, captured in `hit()` so a depth-
+   * exceeded exception can print a recreation link. Undefined until a shot
+   * starts. Capture/build/report logic lives in `ShotStartUtils`. */
+  shotStartConditions?: ShotStartConditions
 
   constructor(balls: Ball[]) {
     this.cueball = balls[0]
@@ -63,10 +68,7 @@ export class Table {
     let depth = 0
     while (!this.prepareAdvanceAll(t)) {
       if (depth++ > 100) {
-        console.log(
-          "Depth exceeded resolving collisions",
-          JSON.stringify(this.shortSerialise())
-        )
+        ShotStartUtils.reportDepthExceeded(this, this.shotStartConditions)
         throw new Error("Depth exceeded resolving collisions")
       }
     }
@@ -167,6 +169,7 @@ export class Table {
   }
 
   hit() {
+    this.shotStartConditions = ShotStartUtils.capture(this)
     this.time = 0
     this.cue?.hit(this.cueball)
     this.balls.forEach((b) => {
