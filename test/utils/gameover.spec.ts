@@ -19,7 +19,12 @@ describe("gameOverButtons", () => {
         globalThis.history.replaceState({}, "", "?")
       }
 
-      const html = gameOverButtons.rematch("opponent-123", "Alice", "sagu", "turn-123")
+      const html = gameOverButtons.rematch(
+        "opponent-123",
+        "Alice",
+        "sagu",
+        "turn-123"
+      )
       expect(html).toContain("opponentId=opponent-123")
       expect(html).toContain("opponentName=Alice")
       expect(html).toContain("ruletype=sagu")
@@ -35,7 +40,12 @@ describe("gameOverButtons", () => {
         )
       }
 
-      const html = gameOverButtons.rematch("opponent-123", "Alice", "sagu", "turn-123")
+      const html = gameOverButtons.rematch(
+        "opponent-123",
+        "Alice",
+        "sagu",
+        "turn-123"
+      )
       expect(html).toContain("opponentId=opponent-123")
       expect(html).toContain("opponentName=Alice")
       expect(html).toContain("ruletype=sagu")

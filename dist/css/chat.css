@@ -19,6 +19,7 @@
   padding: 2px;
   font-size: 16px;
   color: #ccc;
+  text-shadow: 1px 1px 0 black;
   overflow-wrap: anywhere;
   text-align: right;
 }
