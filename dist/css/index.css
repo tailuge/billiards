@@ -43,6 +43,11 @@ p {
   color: yellow;
   text-align: center;
   filter: drop-shadow(0.08em 0.08em black);
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
 }
 
 #snookerScoreOverlay {
@@ -52,8 +57,13 @@ p {
 }
 
 .p1Score,
-.p2Score {
+.p2Score,
+.hudMiddle {
   font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .p1Score.is-active,
