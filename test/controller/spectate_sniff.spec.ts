@@ -35,7 +35,6 @@ describe("Spectate Name Sniffing", () => {
         capturedCallback = callback
       },
       publish: () => {},
-      getOnlineCount: () => Promise.resolve(null),
     }
   })
 

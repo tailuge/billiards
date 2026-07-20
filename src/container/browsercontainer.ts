@@ -16,7 +16,7 @@ import { SnookerConfig } from "../utils/snookerconfig"
 import { ThreeCushionConfig } from "../utils/threecushionconfig"
 import { Session } from "../network/client/session"
 import { MessageRelay } from "../network/client/messagerelay"
-import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
+import { MessagingMessageRelay } from "../network/client/messagingmessagerelay"
 import { BotRelay } from "../network/bot/botrelay"
 import { ScoreReporter } from "../network/client/scorereporter"
 import { BeginEvent } from "../events/beginevent"
@@ -210,7 +210,7 @@ export class BrowserContainer {
   }
 
   private initMultiplayer(scoreReporter: ScoreReporter) {
-    this.messageRelay = new NchanMessageRelay(this.wss ?? undefined)
+    this.messageRelay = new MessagingMessageRelay(this.wss ?? undefined)
     this.container = this.createContainer(scoreReporter)
     this.container.init()
   }

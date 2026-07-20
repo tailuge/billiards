@@ -201,11 +201,4 @@ describe("BotRelay", () => {
       expect(callback).not.toHaveBeenCalled()
     })
   })
-
-  describe("getOnlineCount", () => {
-    it("should return 2", async () => {
-      const count = await botRelay.getOnlineCount()
-      expect(count).toBe(2)
-    })
-  })
 })
