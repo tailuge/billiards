@@ -6,6 +6,7 @@ import { Table } from "../../model/table"
 import { Controller } from "../controller"
 import { Rules } from "./rules"
 import { TableGeometry } from "../../view/tablegeometry"
+import { PocketGeometry } from "../../view/pocketgeometry"
 import { Rack } from "../../utils/rack"
 import { isFirstShot } from "../../utils/utils"
 import { R } from "../../model/physics/constants"
@@ -47,8 +48,14 @@ export class EightBall implements Rules {
 
   readonly asset = "models/p8.min.gltf"
 
+  private getTableSize(): number {
+    const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
+    return parseFloat(urlParams.get("tableSize") || "10")
+  }
+
   tableGeometry(): void {
-    TableGeometry.configureForRule("eightball")
+    TableGeometry.configureForRule("eightball", this.getTableSize())
+    PocketGeometry.scaleToRadius(R)
   }
 
   table(): Table {

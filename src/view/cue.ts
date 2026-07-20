@@ -194,7 +194,7 @@ export class Cue {
 
     if (this.cueBody) {
       this.cueBody.position.set(
-        -this.length / 2 - R + strokeX,
+        -this.length / 2 - R*1.1 + strokeX,
         this.aim.offset.x * R,
         Math.max(-0.5 * R, strokeZ + this.aim.offset.y * R)
       )

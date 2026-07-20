@@ -10,6 +10,8 @@ import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
 import { Camera } from "../../view/camera"
 import { TableGeometry } from "../../view/tablegeometry"
+import { PocketGeometry } from "../../view/pocketgeometry"
+import { R } from "../../model/physics/constants"
 import { Rules } from "./rules"
 import { isFirstShot } from "../../utils/utils"
 import { zero } from "../../utils/three-utils"
@@ -60,6 +62,7 @@ export class ThreeCushion implements Rules {
 
   tableGeometry(): void {
     TableGeometry.configureForRule("threecushion", this.getTableSize())
+    PocketGeometry.scaleToRadius(R)
   }
 
   scaleTableModel(scene): void {

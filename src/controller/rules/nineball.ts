@@ -15,6 +15,7 @@ import { Rules } from "./rules"
 import { R } from "../../model/physics/constants"
 import { Respot } from "../../utils/respot"
 import { TableGeometry } from "../../view/tablegeometry"
+import { PocketGeometry } from "../../view/pocketgeometry"
 import { StartAimEvent } from "../../events/startaimevent"
 import { MatchResultHelper } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
@@ -60,8 +61,14 @@ export class NineBall implements Rules {
 
   readonly asset = "models/p8.min.gltf"
 
+  private getTableSize(): number {
+    const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
+    return parseFloat(urlParams.get("tableSize") || "10")
+  }
+
   tableGeometry(): void {
-    TableGeometry.configureForRule("nineball")
+    TableGeometry.configureForRule("nineball", this.getTableSize())
+    PocketGeometry.scaleToRadius(R)
   }
 
   table(): Table {

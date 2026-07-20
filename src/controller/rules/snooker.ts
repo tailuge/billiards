@@ -13,6 +13,8 @@ import { Container } from "../../container/container"
 import { Ball } from "../../model/ball"
 import { Table } from "../../model/table"
 import { TableGeometry } from "../../view/tablegeometry"
+import { PocketGeometry } from "../../view/pocketgeometry"
+import { R } from "../../model/physics/constants"
 import { PlaceBall } from "../placeball"
 import { PlaceBallEvent } from "../../events/placeballevent"
 import { isFirstShot } from "../../utils/utils"
@@ -151,8 +153,14 @@ export class Snooker implements Rules {
     return this.switchPlayer()
   }
 
+  private getTableSize(): number {
+    const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
+    return parseFloat(urlParams.get("tableSize") || "10")
+  }
+
   tableGeometry(): void {
-    TableGeometry.configureForRule("snooker")
+    TableGeometry.configureForRule("snooker", this.getTableSize())
+    PocketGeometry.scaleToRadius(R)
   }
 
   table(): Table {

@@ -26,6 +26,8 @@ import { DrillPanel } from "../view/drillpanel"
 import { AnalysisPanel } from "../view/analysispanel"
 import { applyPhysicsParams } from "../utils/physicsparams"
 import { TableGeometry } from "../view/tablegeometry"
+import { PocketGeometry } from "../view/pocketgeometry"
+import { R } from "../model/physics/constants"
 
 /**
  * Integrate game container into HTML page
@@ -335,6 +337,7 @@ export class BrowserContainer {
       this.breakState.tableSize !== 10
     ) {
       TableGeometry.configureForRule(this.ruletype, this.breakState.tableSize)
+      PocketGeometry.scaleToRadius(R)
     }
     const orderedScores = session.orderedScoresForHud()
     this.container.updateScoreHud(orderedScores.p1, orderedScores.p2, 0, 0)

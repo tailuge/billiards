@@ -27,8 +27,8 @@ export class TableGeometry {
       TableGeometry.tableY = R * (UMB_TABLE_Y / 2 - 1) * sizeScale
       TableGeometry.hasPockets = false
     } else {
-      TableGeometry.tableX = R * 43
-      TableGeometry.tableY = R * 21
+      TableGeometry.tableX = R * 43 * sizeScale
+      TableGeometry.tableY = R * 21 * sizeScale
       TableGeometry.hasPockets = true
       setmu(mu * 1.2)
     }
