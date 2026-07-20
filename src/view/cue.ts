@@ -187,7 +187,12 @@ export class Cue {
       this.hitAnimationWeight *= 0.97
     }
 
-    const curveVal = this.hitAnimationCurve(this.t)
+    let curveVal = this.hitAnimationCurve(this.t)
+    if (curveVal < 0) {
+      const powerRatio = this.aim.power / maxPower
+      const factor = 0.5 + 0.5 * powerRatio
+      curveVal *= factor
+    }
     const hitOffset = this.hitAnimationWeight * curveVal * 2 * R
     const strokeX = (1 - this.hitAnimationWeight) * swing - hitOffset
     const strokeZ = (0.15 + Math.min(this.t / 5, 0.25)) * hitOffset
