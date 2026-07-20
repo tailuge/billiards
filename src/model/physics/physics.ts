@@ -33,8 +33,8 @@ export function rollingFull(w: Vector3, v: Vector3, t: number) {
     delta.v.set(-v.x / t, -v.y / t, 0)
     const spindownFactor = zmag > 24 ? 12 : 1
     delta.w.set(
-      -w.x,
-      -w.y,
+      -w.x / t,
+      -w.y / t,
       -(5 / 2) * (Mz / (m * R * R)) * spindownFactor * zsign
     )
     return delta

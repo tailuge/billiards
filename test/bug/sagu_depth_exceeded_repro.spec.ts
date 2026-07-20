@@ -32,7 +32,7 @@ const aimJson = {
 }
 
 describe("Sagu Depth Exceeded Repro", () => {
-  it("throws exception 'Depth exceeded resolving collisions' during replay of the crashing shot", () => {
+  it("completes replay of the shot successfully without throwing depth exceeded exception", () => {
     Ball.id = 0
 
     // Apply rule and table size configuration (Sagu, tableSize = 5)
@@ -56,6 +56,7 @@ describe("Sagu Depth Exceeded Repro", () => {
       }
     }
 
-    expect(runReplay).to.throw("Depth exceeded resolving collisions")
+    expect(runReplay).not.to.throw()
+    expect(table.allStationary()).to.be.true
   })
 })
