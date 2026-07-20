@@ -3,12 +3,22 @@ import { id } from "../utils/dom"
 export class Hud {
   p1Element: HTMLElement | null
   p2Element: HTMLElement | null
+  middleElement: HTMLElement | null
   breakElement: HTMLElement | null
 
   constructor() {
     this.p1Element = id("p1Score")
     this.p2Element = id("p2Score")
     this.breakElement = id("breakScore")
+
+    let middle = id("hudMiddle")
+    if (!middle && this.p1Element && this.p1Element.parentNode) {
+      middle = document.createElement("div")
+      middle.id = "hudMiddle"
+      middle.className = "hudMiddle"
+      this.p1Element.parentNode.insertBefore(middle, this.p2Element)
+    }
+    this.middleElement = middle
   }
 
   setActivePlayer(active: 0 | 1 | 2) {
@@ -22,9 +32,16 @@ export class Hud {
     }
   }
 
+  private setHTML(element: HTMLElement | null, html: string) {
+    if (element) {
+      element.innerHTML = html
+    }
+  }
+
   updateBreak(score: number) {
     this.setText(this.p1Element, "")
     this.setText(this.p2Element, "")
+    this.setText(this.middleElement, "")
     if (score > 0 && this.breakElement) {
       this.breakElement.textContent = ""
       this.breakElement.appendChild(document.createTextNode("Break"))
@@ -47,6 +64,7 @@ export class Hud {
   ) {
     this.setText(this.p1Element, "")
     this.setText(this.p2Element, "")
+    this.setText(this.middleElement, "")
     this.setText(this.breakElement, "")
 
     if (hideScore) {
@@ -59,14 +77,15 @@ export class Hud {
     const p2Str = p2Star ? `⭐${p2}` : `${p2}`
 
     if (p1Name && p2Name) {
-      this.setText(this.p1Element, `${p1Name} ${p1Str}`)
-      this.setText(this.p2Element, `${p2Str} ${p2Name}`)
+      this.setHTML(this.p1Element, `<div class="hud-name">${p1Name}</div><div class="hud-value">${p1Str}</div>`)
+      this.setHTML(this.p2Element, `<div class="hud-name">${p2Name}</div><div class="hud-value">${p2Str}</div>`)
+      this.setHTML(this.middleElement, `<div class="hud-name">Vs</div><div class="hud-value">:</div>`)
     } else if (p1Name) {
-      this.setText(this.p1Element, `${p1Name} ${p1Str}`)
+      this.setHTML(this.p1Element, `<div class="hud-name">${p1Name}</div><div class="hud-value">${p1Str}</div>`)
     } else if (p2Name) {
-      this.setText(this.p2Element, `${p2Str} ${p2Name}`)
+      this.setHTML(this.p2Element, `<div class="hud-name">${p2Name}</div><div class="hud-value">${p2Str}</div>`)
     } else {
-      this.setText(this.p1Element, `${p1Str}`)
+      this.setHTML(this.p1Element, `<div class="hud-value">${p1Str}</div>`)
     }
 
     if (b > 0) {
