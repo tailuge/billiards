@@ -56,6 +56,7 @@ describe("Sagu Depth Exceeded Repro", () => {
       }
     }
 
-    expect(runReplay).to.throw("Depth exceeded resolving collisions")
+    expect(runReplay).not.to.throw()
+    expect(table.allStationary()).to.be.true
   })
 })

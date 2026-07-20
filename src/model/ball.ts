@@ -126,7 +126,6 @@ export class Ball {
 
   isRolling() {
     return (
-      this.vel.lengthSq() !== 0 &&
       this.rvel.lengthSq() !== 0 &&
       surfaceVelocityFull(this.vel, this.rvel).length() < Ball.transition
     )

@@ -87,7 +87,7 @@ describe("Ball", () => {
   it("topspin spins less over time", (done) => {
     const ball = new Ball(new Vector3())
     ball.vel.x = 0
-    ball.rvel.y = 1
+    ball.rvel.y = 10
     ball.state = State.Sliding
     expect(ball.isRolling()).to.be.false
     ball.update(t)
