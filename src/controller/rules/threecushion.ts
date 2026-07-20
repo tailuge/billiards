@@ -9,9 +9,7 @@ import { Outcome } from "../../model/outcome"
 import { Table } from "../../model/table"
 import { Rack } from "../../utils/rack"
 import { Camera } from "../../view/camera"
-import { TableGeometry } from "../../view/tablegeometry"
-import { PocketGeometry } from "../../view/pocketgeometry"
-import { R } from "../../model/physics/constants"
+import { TableConfig } from "../../view/tableconfig"
 import { Rules } from "./rules"
 import { isFirstShot } from "../../utils/utils"
 import { zero } from "../../utils/three-utils"
@@ -55,18 +53,12 @@ export class ThreeCushion implements Rules {
     this.cueball = this.container.table.balls[1]
   }
 
-  private getTableSize(): number {
-    const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
-    return parseFloat(urlParams.get("tableSize") || "10")
-  }
-
   tableGeometry(): void {
-    TableGeometry.configureForRule("threecushion", this.getTableSize())
-    PocketGeometry.scaleToRadius(R)
+    TableConfig.apply(this.rulename, TableConfig.tableSizeFromUrl())
   }
 
   scaleTableModel(scene): void {
-    const sizeScale = this.getTableSize() / 10
+    const sizeScale = TableConfig.tableSizeFromUrl() / 10
     if (sizeScale !== 1) {
       const adjust = 0.022
       scene.scale.x *= sizeScale * (1 + adjust)

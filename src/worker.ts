@@ -3,7 +3,7 @@ import { Ball, State } from "./model/ball"
 import { mathavanAdapter, cueStrike } from "./model/physics/physics"
 import { Vector3 } from "three"
 import { TableGeometry } from "./view/tablegeometry"
-import { PocketGeometry } from "./view/pocketgeometry"
+import { TableConfig } from "./view/tableconfig"
 import * as Constants from "./model/physics/constants"
 import { strongeAdapter } from "./model/physics/stronge"
 
@@ -155,8 +155,7 @@ function configureSimulation(
   const R = Constants.R
   const tableSize = Number(params.tableSize ?? 10)
 
-  TableGeometry.configureForRule(ruleType, tableSize)
-  PocketGeometry.scaleToRadius(R)
+  TableConfig.apply(ruleType, tableSize)
 
   if (cushionModel === "mathavan") {
     table.cushionModel = mathavanAdapter
