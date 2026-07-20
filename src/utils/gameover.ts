@@ -21,6 +21,27 @@ export const gameOverButtons = {
     url.searchParams.set("ruletype", ruletype)
     url.searchParams.set("nextTurnId", nextTurnId)
 
+    if (typeof globalThis !== "undefined" && globalThis.location) {
+      const systemParams = new Set([
+        "userId",
+        "userName",
+        "tableId",
+        "websocketserver",
+        "first",
+        "spectator",
+        "opponentId",
+        "opponentName",
+        "ruletype",
+        "nextTurnId",
+      ])
+      const currentParams = new URLSearchParams(globalThis.location.search)
+      for (const [key, val] of currentParams.entries()) {
+        if (!systemParams.has(key)) {
+          url.searchParams.set(key, val)
+        }
+      }
+    }
+
     return `<button type="button" class="notification-btn" data-notification-action="rematch" data-notification-url="${url.toString()}">Rematch</button>`
   },
 
