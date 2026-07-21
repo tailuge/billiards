@@ -101,7 +101,7 @@
 
 #notificationOverlay {
   position: absolute;
-  top: 60px;
+  top: 66px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -235,7 +235,7 @@
   gap: var(--notification-space-1);
   width: 100%;
   padding: var(--notification-space-2) var(--notification-space-4)
-    var(--notification-space-3);
+    var(--notification-space-1);
   border-top: 1px solid var(--notification-score-border);
   background: rgb(0 0 0 / 9%);
 }
