@@ -63,3 +63,37 @@ export function bisectionSolver(
   }
   return (a + b) / 2
 }
+
+// Emoji ranges covering: animals, food, plants, objects, activities,
+// travel, transport — excluding smileys, flags, hearts, and abstract symbols.
+const emojiIncludeRanges: [number, number][] = [
+  [0x1f310, 0x1f31f], // globe, moon, star
+  [0x1f321, 0x1f3ff], // thermometer to miscellaneous
+  [0x1f400, 0x1f492], // rat to wedding (animals, plants, food, objects)
+  [0x1f4a0, 0x1f4ff], // diamond to prayer beads (skip hearts 0x1f493-0x1f49f)
+  [0x1f500, 0x1f53d], // twisted arrows to down-pointing triangle
+  [0x1f550, 0x1f567], // clocks
+  [0x1f680, 0x1f6ff], // rocket to transport & misc
+  [0x1f900, 0x1f9ff], // supplemental symbols & objects
+  [0x1fa70, 0x1faff], // extended-A (objects, animals)
+]
+
+let _emojiCount = 0
+function emojiTotal(): number {
+  if (_emojiCount) return _emojiCount
+  _emojiCount = emojiIncludeRanges.reduce(
+    (sum, [lo, hi]) => sum + (hi - lo + 1),
+    0
+  )
+  return _emojiCount
+}
+
+export function randomEmoji(): string {
+  let index = Math.floor(Math.random() * emojiTotal())
+  for (const [lo, hi] of emojiIncludeRanges) {
+    const size = hi - lo + 1
+    if (index < size) return String.fromCodePoint(lo + index)
+    index -= size
+  }
+  return "🎱"
+}
