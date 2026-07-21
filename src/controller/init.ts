@@ -8,7 +8,7 @@ import { PlaceBall } from "./placeball"
 import { Replay } from "../controller/replay"
 import { Session } from "../network/client/session"
 import { Spectate } from "./spectate"
-import { NchanMessageRelay } from "../network/client/nchanmessagerelay"
+import { MessagingMessageRelay } from "../network/client/messagingmessagerelay"
 import { Aim } from "./aim"
 
 /**
@@ -44,7 +44,7 @@ export class Init extends ControllerBase {
     if (Session.isSpectator()) {
       return new Spectate(
         this.container,
-        this.container.relay ?? new NchanMessageRelay(),
+        this.container.relay ?? new MessagingMessageRelay(),
         Session.getInstance().tableId
       )
     }

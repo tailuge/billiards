@@ -81,9 +81,15 @@ export class Hud {
       this.setHTML(this.p2Element, `<div class="hud-name">${p2Name}</div><div class="hud-value">${p2Str}</div>`)
       this.setHTML(this.middleElement, `<div class="hud-name">:</div><div class="hud-value"></div>`)
     } else if (p1Name) {
-      this.setHTML(this.p1Element, `<div class="hud-name">${p1Name}</div><div class="hud-value">${p1Str}</div>`)
+      this.setHTML(
+        this.p1Element,
+        `<div class="hud-name">${p1Name}</div><div class="hud-value">${p1Str}</div>`
+      )
     } else if (p2Name) {
-      this.setHTML(this.p2Element, `<div class="hud-name">${p2Name}</div><div class="hud-value">${p2Str}</div>`)
+      this.setHTML(
+        this.p2Element,
+        `<div class="hud-name">${p2Name}</div><div class="hud-value">${p2Str}</div>`
+      )
     } else {
       this.setHTML(this.p1Element, `<div class="hud-value">${p1Str}</div>`)
     }

@@ -36,7 +36,6 @@ describe("Spectate Controller", () => {
     const messageRelay: MessageRelay = {
       subscribe: () => {},
       publish: () => {},
-      getOnlineCount: () => Promise.resolve(null),
     }
     const spectate = new Spectate(container, messageRelay, "test-table")
 
@@ -57,7 +56,6 @@ describe("Spectate Controller", () => {
     const messageRelay: MessageRelay = {
       subscribe: () => {},
       publish: () => {},
-      getOnlineCount: () => Promise.resolve(null),
     }
     const spectate = new Spectate(container, messageRelay, "test-table")
 
@@ -72,7 +70,6 @@ describe("Spectate Controller", () => {
     const messageRelay: MessageRelay = {
       subscribe: () => {},
       publish: () => {},
-      getOnlineCount: () => Promise.resolve(null),
     }
     const spectate = new Spectate(container, messageRelay, "test-table")
     const powerSpy = jest.spyOn(

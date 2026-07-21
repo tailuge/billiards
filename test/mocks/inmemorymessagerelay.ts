@@ -23,8 +23,4 @@ export class InMemoryMessageRelay implements MessageRelay {
       subscribers.forEach((callback) => callback(message))
     }
   }
-
-  async getOnlineCount(): Promise<number | null> {
-    return 1
-  }
 }
