@@ -57,6 +57,7 @@ export abstract class ControllerBase extends Controller {
 
     const rulename = this.container.rules.rulename
     if (
+      !this.container.replayMode &&
       (rulename === "threecushion" || rulename === "sagu") &&
       this.container.rules.isEndOfGame([]) &&
       this.name !== "End"

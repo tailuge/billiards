@@ -77,18 +77,9 @@ export class Hud {
     const p2Str = p2Star ? `⭐${p2}` : `${p2}`
 
     if (p1Name && p2Name) {
-      this.setHTML(
-        this.p1Element,
-        `<div class="hud-name">${p1Name}</div><div class="hud-value">${p1Str}</div>`
-      )
-      this.setHTML(
-        this.p2Element,
-        `<div class="hud-name">${p2Name}</div><div class="hud-value">${p2Str}</div>`
-      )
-      this.setHTML(
-        this.middleElement,
-        `<div class="hud-name">Vs</div><div class="hud-value">:</div>`
-      )
+      this.setHTML(this.p1Element, `<div class="hud-name">${p1Name}</div><div class="hud-value">${p1Str}</div>`)
+      this.setHTML(this.p2Element, `<div class="hud-name">${p2Name}</div><div class="hud-value">${p2Str}</div>`)
+      this.setHTML(this.middleElement, `<div class="hud-name">:</div><div class="hud-value"></div>`)
     } else if (p1Name) {
       this.setHTML(
         this.p1Element,

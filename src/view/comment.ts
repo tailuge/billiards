@@ -1,5 +1,6 @@
 import { Container } from "../container/container"
 import { getButton } from "../utils/dom"
+import { randomEmoji } from "../utils/utils"
 import { ballSvg } from "./chat"
 
 export class Comment {
@@ -94,6 +95,11 @@ export class Comment {
   showMenu() {
     if (!this.menu) return
     this.menu.style.display = "grid"
+    this.menu
+      .querySelectorAll<HTMLButtonElement>(".comment-random")
+      .forEach((btn) => {
+        btn.innerHTML = randomEmoji()
+      })
   }
 
   openChat() {
