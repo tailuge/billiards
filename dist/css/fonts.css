@@ -1,7 +1,9 @@
 /* Global Font Configuration */
 
-/* Import Exo from Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Exo:wght@200&display=swap");
+/*
+ * Exo font is loaded directly in index.html and plot.html using <link rel="preconnect"> and <link rel="stylesheet">.
+ * This avoids the render-blocking @import CSS network waterfall and improves Time-to-First-Paint.
+ */
 
 /* Central font custom property - change --font-family-primary to update fonts globally */
 :root {
