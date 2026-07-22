@@ -265,4 +265,98 @@ describe("LobbyIndicator", () => {
     onUsersChangeCallback([{ userId: "test-client", userName: "TestPlayer" }])
     expect(countElement.hasAttribute("title")).toBe(false)
   })
+
+  it("logs disconnect and sends unplug emoji when opponent disconnects, and reconnect when they reconnect", async () => {
+    Session.init("p1", "Player 1", "table-1", false)
+    Session.getInstance().setOpponentClientId("p2")
+
+    const mockRules = { rulename: "nineball" } as any
+    const mockOnChatMessage = jest.fn()
+    const indicator = new LobbyIndicator(
+      false,
+      false,
+      mockRules,
+      mockOnChatMessage
+    )
+
+    await indicator.init()
+
+    const mockLobby = (indicator as any).lobby
+    const onUsersChangeCallback = mockLobby.onUsersChange.mock.calls[0][0]
+
+    // 1. Initial status: opponent not on table yet (opponentOnline is false)
+    onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
+    expect(mockOnChatMessage).not.toHaveBeenCalled()
+
+    // 2. Opponent joins table (opponentOnline becomes true)
+    onUsersChangeCallback([
+      { userId: "p1", tableId: "table-1" },
+      { userId: "p2", tableId: "table-1" },
+    ])
+    // Still shouldn't have disconnect or reconnect message on initial join
+    expect(mockOnChatMessage).not.toHaveBeenCalled()
+
+    // Clear any mock log state for the game logs
+    const { NetworkLogger } = require("../../src/utils/network-logger")
+    const getGameLogLabels = () =>
+      NetworkLogger.getGameLogs().map((log: any) => log.label)
+
+    // 3. Opponent disconnects (opponentOnline goes from true to false)
+    onUsersChangeCallback([{ userId: "p1", tableId: "table-1" }])
+    expect(mockOnChatMessage).toHaveBeenCalledWith("<br>🔌")
+    expect(getGameLogLabels()).toContain("opponent disconnect: p2")
+
+    mockOnChatMessage.mockClear()
+
+    // 4. Opponent reconnects (opponentOnline goes from false to true)
+    onUsersChangeCallback([
+      { userId: "p1", tableId: "table-1" },
+      { userId: "p2", tableId: "table-1" },
+    ])
+    expect(mockOnChatMessage).toHaveBeenCalledWith("<br>⚡")
+    expect(getGameLogLabels()).toContain("opponent reconnect: p2")
+
+    await indicator.stop()
+  })
+
+  it("logs local player offline and reconnect events with unique emojis", async () => {
+    Session.init("p1", "Player 1", "table-1", false)
+
+    const mockRules = { rulename: "nineball" } as any
+    const mockOnChatMessage = jest.fn()
+    const indicator = new LobbyIndicator(
+      false,
+      false,
+      mockRules,
+      mockOnChatMessage
+    )
+
+    await indicator.init()
+
+    // 1. Simulate local player going offline
+    const offlineEvent = new window.Event("offline")
+    globalThis.dispatchEvent(offlineEvent)
+    expect(mockOnChatMessage).toHaveBeenCalledWith("<br>🚫")
+
+    mockOnChatMessage.mockClear()
+
+    // 2. Simulate websocket/lobby reconnecting
+    const mockLobby = (indicator as any).lobby
+    const joinLobbyCall = (indicator as any).messagingClient.joinLobby
+    const joinLobbyOptions = joinLobbyCall.mock.calls[0][1]
+
+    expect(joinLobbyOptions).toBeDefined()
+    expect(joinLobbyOptions.onReconnect).toBeDefined()
+
+    // Trigger onReconnect callback
+    joinLobbyOptions.onReconnect()
+    expect(mockOnChatMessage).toHaveBeenCalledWith("<br>📶")
+
+    const { NetworkLogger } = require("../../src/utils/network-logger")
+    const getGameLogLabels = () =>
+      NetworkLogger.getGameLogs().map((log: any) => log.label)
+    expect(getGameLogLabels()).toContain("lobby reconnect")
+
+    await indicator.stop()
+  })
 })

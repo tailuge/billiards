@@ -31,9 +31,11 @@ export class LobbyIndicator {
   private readonly replayMode: boolean
   private readonly isSpectator: boolean
   private opponentOnline: boolean | null = null
+  private opponentSeen = false
   private users: PresenceMessage[] = []
   private readonly onChatMessage: ((msg: string) => void) | undefined
   private readonly onShowOverlay: ((url: string) => void) | undefined
+  private readonly offlineHandler: () => void
 
   constructor(
     botMode: boolean,
@@ -43,6 +45,9 @@ export class LobbyIndicator {
     messagingUrl?: string,
     onShowOverlay?: (url: string) => void
   ) {
+    this.offlineHandler = () => {
+      this.onChatMessage?.("<br>🚫")
+    }
     this.rules = rules
     this.replayMode = replayMode
     this.onChatMessage = onChatMessage
@@ -169,8 +174,15 @@ export class LobbyIndicator {
       presence.tableId = this.currentTableId
     }
 
-    this.lobby = await this.messagingClient.joinLobby(presence)
+    this.lobby = await this.messagingClient.joinLobby(presence, {
+      onReconnect: () => {
+        NetworkLogger.logLobby("lobby reconnect")
+        NetworkLogger.logGame("lobby reconnect")
+        this.onChatMessage?.("<br>📶")
+      },
+    })
     NetworkLogger.logLobby("joined")
+    globalThis.addEventListener?.("offline", this.offlineHandler)
 
     this.lobby.onUsersChange((users) => {
       NetworkLogger.logLobby(`users: ${users.length}`)
@@ -185,8 +197,29 @@ export class LobbyIndicator {
             u.userId === opponentId &&
             u.tableId === (this.currentTableId || session.tableId)
         )
+        const isTwoPlayer =
+          opponentId !== "bot" &&
+          !session.botMode &&
+          !session.practiceMode &&
+          !this.replayMode
+
         if (wasOnline !== false && this.opponentOnline === false) {
           NetworkLogger.logLobby(`opponent offline: ${opponentId}`)
+        }
+
+        if (isTwoPlayer) {
+          if (wasOnline === true && this.opponentOnline === false) {
+            NetworkLogger.logGame(`opponent disconnect: ${opponentId}`)
+            this.onChatMessage?.("<br>🔌")
+          } else if (wasOnline === false && this.opponentOnline === true) {
+            if (this.opponentSeen) {
+              NetworkLogger.logGame(`opponent reconnect: ${opponentId}`)
+              this.onChatMessage?.("<br>⚡")
+            }
+          }
+          if (this.opponentOnline) {
+            this.opponentSeen = true
+          }
         }
       } else {
         this.opponentOnline = null
@@ -337,6 +370,7 @@ export class LobbyIndicator {
 
   async stop(): Promise<void> {
     try {
+      globalThis.removeEventListener?.("offline", this.offlineHandler)
       if (this.lobby) {
         await this.lobby.leave()
       }
