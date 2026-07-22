@@ -452,7 +452,10 @@
             canvas.toBlob((blob) => {
               if (!blob) return
               const pngUrl = URL.createObjectURL(blob)
-              window.open(pngUrl, "_blank")
+              const a = document.createElement("a")
+              a.href = pngUrl
+              a.download = "diagram.png"
+              a.click()
               setTimeout(() => URL.revokeObjectURL(pngUrl), 1000)
             }, "image/png")
           }
