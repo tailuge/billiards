@@ -31,6 +31,7 @@ export class LobbyIndicator {
   private readonly replayMode: boolean
   private readonly isSpectator: boolean
   private opponentOnline: boolean | null = null
+  private opponentSeen = false
   private users: PresenceMessage[] = []
   private readonly onChatMessage: ((msg: string) => void) | undefined
   private readonly onShowOverlay: ((url: string) => void) | undefined
@@ -185,8 +186,29 @@ export class LobbyIndicator {
             u.userId === opponentId &&
             u.tableId === (this.currentTableId || session.tableId)
         )
+        const isTwoPlayer =
+          opponentId !== "bot" &&
+          !session.botMode &&
+          !session.practiceMode &&
+          !this.replayMode
+
         if (wasOnline !== false && this.opponentOnline === false) {
           NetworkLogger.logLobby(`opponent offline: ${opponentId}`)
+        }
+
+        if (isTwoPlayer) {
+          if (wasOnline === true && this.opponentOnline === false) {
+            NetworkLogger.logGame(`opponent disconnect: ${opponentId}`)
+            this.onChatMessage?.("<br>🔌")
+          } else if (wasOnline === false && this.opponentOnline === true) {
+            if (this.opponentSeen) {
+              NetworkLogger.logGame(`opponent reconnect: ${opponentId}`)
+              this.onChatMessage?.("<br>⚡")
+            }
+          }
+          if (this.opponentOnline) {
+            this.opponentSeen = true
+          }
         }
       } else {
         this.opponentOnline = null
