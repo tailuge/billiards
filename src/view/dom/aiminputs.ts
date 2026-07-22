@@ -16,6 +16,7 @@ export class AimInputs {
   readonly cueTipElement
   readonly powerSliderContainerElement
   readonly cuePowerElement
+  readonly cuePowerPercentElement: HTMLElement | null
   readonly tiltSliderContainerElement
   readonly openElevationElement
   readonly cueTiltElement: AngleInput
@@ -42,6 +43,7 @@ export class AimInputs {
     this.cueTipElement = id("cueTip")
     this.powerSliderContainerElement = id("powerSliderContainer")
     this.cuePowerElement = id("cuePower")
+    this.cuePowerPercentElement = id("powerPercent")
     this.tiltSliderContainerElement = id("tiltSliderContainer")
     this.openElevationElement = id("openElevation") as HTMLButtonElement
     this.cueTiltElement = id("cueTilt") as AngleInput
@@ -264,6 +266,9 @@ export class AimInputs {
     if (this.cuePowerElement) {
       const percent = Number(this.cuePowerElement.value) * 100
       this.cuePowerElement.style.setProperty("--p", percent + "%")
+      if (this.cuePowerPercentElement) {
+        this.cuePowerPercentElement.innerText = Math.round(percent) + "%"
+      }
     }
   }
 
@@ -395,6 +400,9 @@ export class AimInputs {
     const percent = val * 100
     this.cuePowerElement.value = val.toString()
     this.cuePowerElement.style.setProperty("--p", percent + "%")
+    if (this.cuePowerPercentElement) {
+      this.cuePowerPercentElement.innerText = Math.round(percent) + "%"
+    }
   }
 
   mousewheel = (e) => {
