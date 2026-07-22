@@ -8,18 +8,17 @@ import { WatchEvent } from "../../events/watchevent"
 import { StartAimEvent } from "../../events/startaimevent"
 import { Session } from "../../network/client/session"
 import { Rack } from "../../utils/rack"
-import { ThreeCushionConfig } from "../../utils/threecushionconfig"
 import { Table } from "../../model/table"
 import { Camera } from "../../view/camera"
 
 export class Sagu extends ThreeCushion {
-  rulename = "sagu"
+  override rulename = "sagu"
 
-  rack(): Ball[] {
+  override rack(): Ball[] {
     return Rack.fromInitParam(Rack.fourBall())
   }
 
-  table(): Table {
+  override table(): Table {
     this.tableGeometry()
     Camera.configureForRule("sagu")
     const table = new Table(this.rack())
@@ -83,7 +82,7 @@ export class Sagu extends ThreeCushion {
       if (o.type === OutcomeType.Collision) {
         if (o.ballA === this.cueball && redBalls.includes(o.ballB!)) {
           hitReds.add(o.ballB!)
-        } else if (o.ballB === this.cueball && redBalls.includes(o.ballA)) {
+        } else if (o.ballB === this.cueball && redBalls.includes(o.ballA!)) {
           hitReds.add(o.ballA!)
         }
       }
@@ -107,7 +106,7 @@ export class Sagu extends ThreeCushion {
     return Outcome.isThreeCushionPoint(this.cueball, filteredOutcomes)
   }
 
-  foulReason(outcomes: Outcome[]): string | null {
+  override foulReason(outcomes: Outcome[]): string | null {
     // 1. Check if the opponent's cue ball was struck (Sub-cue Foul)
     const opponentCue = this.otherPlayersCueBall()
     const hitOpponent = outcomes.some(
@@ -135,21 +134,21 @@ export class Sagu extends ThreeCushion {
     return null
   }
 
-  getAmountScored(outcome: Outcome[]): number {
+  override getAmountScored(outcome: Outcome[]): number {
     return this.isSuccessfulShot(outcome) ? 1 : 0
   }
 
-  isPartOfBreak(outcome: Outcome[]): boolean {
+  override isPartOfBreak(outcome: Outcome[]): boolean {
     return this.isSuccessfulShot(outcome)
   }
 
-  advanceState(outcomes: Outcome[]): void {
+  override advanceState(outcomes: Outcome[]): void {
     if (!this.isSuccessfulShot(outcomes)) {
       this.cueball = this.otherPlayersCueBall()
     }
   }
 
-  update(outcomes: Outcome[]): Controller {
+  override update(outcomes: Outcome[]): Controller {
     if (this.isSuccessfulShot(outcomes)) {
       this.container.sound.playSuccess(outcomes.length / 3)
       this.container.sendEvent(new WatchEvent(this.container.table.serialise()))

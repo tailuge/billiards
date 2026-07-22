@@ -188,39 +188,11 @@ export class LobbyIndicator {
       NetworkLogger.logLobby(`users: ${users.length}`)
       this.users = users
       this.count = users.length
-      const session = Session.getInstance()
-      const opponentId = session.opponentClientId
+      const opponentId = Session.getInstance().opponentClientId
       if (opponentId) {
         const wasOnline = this.opponentOnline
-        this.opponentOnline = users.some(
-          (u) =>
-            u.userId === opponentId &&
-            u.tableId === (this.currentTableId || session.tableId)
-        )
-        const isTwoPlayer =
-          opponentId !== "bot" &&
-          !session.botMode &&
-          !session.practiceMode &&
-          !this.replayMode
-
-        if (wasOnline !== false && this.opponentOnline === false) {
-          NetworkLogger.logLobby(`opponent offline: ${opponentId}`)
-        }
-
-        if (isTwoPlayer) {
-          if (wasOnline === true && this.opponentOnline === false) {
-            NetworkLogger.logGame(`opponent disconnect: ${opponentId}`)
-            this.onChatMessage?.("<br>🔌")
-          } else if (wasOnline === false && this.opponentOnline === true) {
-            if (this.opponentSeen) {
-              NetworkLogger.logGame(`opponent reconnect: ${opponentId}`)
-              this.onChatMessage?.("<br>⚡")
-            }
-          }
-          if (this.opponentOnline) {
-            this.opponentSeen = true
-          }
-        }
+        this.opponentOnline = this.isOpponentPresent(users, opponentId)
+        this.handleOpponentStatusChange(wasOnline, opponentId)
       } else {
         this.opponentOnline = null
       }
@@ -281,13 +253,7 @@ export class LobbyIndicator {
     if (!this.countElement) return
 
     const session = Session.getInstance()
-    const opponentId = session.opponentClientId
-    const isTwoPlayer =
-      !!opponentId &&
-      opponentId !== "bot" &&
-      !session.botMode &&
-      !session.practiceMode &&
-      !this.replayMode
+    const isTwoPlayer = this.isTwoPlayerGame()
 
     let status = "⚪"
     if (isTwoPlayer) {
@@ -366,6 +332,54 @@ export class LobbyIndicator {
     url.searchParams.set("opponentName", this.challenger.userName)
 
     return url.toString()
+  }
+
+  private isOpponentPresent(
+    users: PresenceMessage[],
+    opponentId: string
+  ): boolean {
+    const session = Session.getInstance()
+    return users.some(
+      (u) =>
+        u.userId === opponentId &&
+        u.tableId === (this.currentTableId || session.tableId)
+    )
+  }
+
+  private isTwoPlayerGame(): boolean {
+    const session = Session.getInstance()
+    const opponentId = session.opponentClientId
+    return (
+      !!opponentId &&
+      opponentId !== "bot" &&
+      !session.botMode &&
+      !session.practiceMode &&
+      !this.replayMode
+    )
+  }
+
+  private handleOpponentStatusChange(
+    wasOnline: boolean | null,
+    opponentId: string
+  ): void {
+    if (wasOnline !== false && this.opponentOnline === false) {
+      NetworkLogger.logLobby(`opponent offline: ${opponentId}`)
+    }
+
+    if (!this.isTwoPlayerGame()) return
+
+    if (wasOnline === true && this.opponentOnline === false) {
+      NetworkLogger.logGame(`opponent disconnect: ${opponentId}`)
+      this.onChatMessage?.("<br>🔌")
+    } else if (wasOnline === false && this.opponentOnline === true) {
+      if (this.opponentSeen) {
+        NetworkLogger.logGame(`opponent reconnect: ${opponentId}`)
+        this.onChatMessage?.("<br>⚡")
+      }
+    }
+    if (this.opponentOnline) {
+      this.opponentSeen = true
+    }
   }
 
   async stop(): Promise<void> {
