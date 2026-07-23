@@ -184,6 +184,21 @@ export class BrowserContainer {
       }
     }
 
+    // If we're spectating a '-mini' rule (e.g. ?ruletype=nineball-mini&spectator),
+    // trim the suffix and add &tableSize=5 to the URL so geometry/scaling see
+    // the small table from the first frame (mirrors the replay-mode reload above).
+    if (
+      this.spectator &&
+      this.ruletype.endsWith("-mini") &&
+      !new URLSearchParams(globalThis.location.search).has("tableSize")
+    ) {
+      const url = new URL(globalThis.location.href)
+      url.searchParams.set("ruletype", this.ruletype.replace(/-mini$/, ""))
+      url.searchParams.set("tableSize", "5")
+      globalThis.location.href = url.toString()
+      return
+    }
+
     this.assets = new Assets(this.ruletype)
     if (this.localMesh) {
       this.assets.createLocal()
