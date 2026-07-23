@@ -97,3 +97,19 @@ export function randomEmoji(): string {
   }
   return "🎱"
 }
+
+export const ruleTypeMap: Record<
+  string,
+  { emoji: string; title: string }
+> = {
+  nineball: { emoji: "⑨", title: "nineball" },
+  eightball: { emoji: "🎱", title: "eightball" },
+  snooker: { emoji: "🔴", title: "snooker" },
+  threecushion: { emoji: "③", title: "threecushion" },
+  sagu: { emoji: "④", title: "sagu" },
+}
+
+export function getRuleEmoji(ruleType: string): string {
+  const base = ruleType.split("-")[0]
+  return ruleTypeMap[base]?.emoji ?? ruleType
+}
