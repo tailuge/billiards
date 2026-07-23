@@ -10,6 +10,7 @@ import { id } from "../utils/dom"
 import { LOBBY_URL } from "../network/client/constants"
 import { VERSION } from "../utils/version"
 import { NetworkLogger } from "../utils/network-logger"
+import { getRuleEmoji } from "../utils/utils"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
@@ -293,7 +294,7 @@ export class LobbyIndicator {
     this.challengePill.hidden = !challenged
     if (challenged) {
       const textNode = this.challengePill.childNodes[0]
-      const msg = `Challenge of ${this.challenger!.ruleType} from ${this.challenger!.userName} `
+      const msg = `${getRuleEmoji(this.challenger!.ruleType)} ${this.challenger!.userName} `
       if (textNode?.nodeType === Node.TEXT_NODE) {
         textNode.textContent = msg
       } else {
