@@ -293,7 +293,7 @@ export class LobbyIndicator {
     this.challengePill.hidden = !challenged
     if (challenged) {
       const textNode = this.challengePill.childNodes[0]
-      const msg = `Challenge of ${this.challenger!.ruleType} from ${this.challenger!.userName} `
+      const msg = `${this.challenger!.ruleType} ${this.challenger!.userName} `
       if (textNode?.nodeType === Node.TEXT_NODE) {
         textNode.textContent = msg
       } else {
