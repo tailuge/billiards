@@ -1,101 +1,131 @@
 import { MessagingMessageRelay } from "../../../src/network/client/messagingmessagerelay"
-import { NchanClient } from "@tailuge/messaging"
+import { MessagingClient, Table } from "@tailuge/messaging"
 import { Session } from "../../../src/network/client/session"
 
+// Mock the Table class methods we care about
+const mockTable = {
+  onOpponentLeft: jest.fn(),
+  onMessage: jest.fn(),
+  publish: jest.fn().mockResolvedValue(undefined),
+}
+
+// Mock MessagingClient so joinTable returns our mock table
 jest.mock("@tailuge/messaging", () => {
   return {
-    NchanClient: jest.fn().mockImplementation(() => {
-      return {
-        subscribeTable: jest.fn(),
-        publishTable: jest.fn().mockResolvedValue(undefined),
-      }
-    }),
+    MessagingClient: jest.fn().mockImplementation(() => ({
+      joinTable: jest.fn().mockResolvedValue(mockTable),
+    })),
+    Table: jest.fn(),
   }
 })
 
 describe("MessagingMessageRelay", () => {
+  let mockClient: jest.Mocked<MessagingClient>
+
   beforeEach(() => {
+    jest.clearAllMocks()
+    mockTable.onOpponentLeft.mockClear()
+    mockTable.onMessage.mockClear()
+    mockTable.publish.mockClear()
     Session.init("test-client", "TestPlayer", "test-table", false)
+    mockClient = new (MessagingClient as any)({ baseUrl: "http://test" })
   })
 
-  it("should initialize NchanClient with proper protocol and url format", () => {
-    new MessagingMessageRelay()
-    expect(NchanClient).toHaveBeenCalledWith(
-      "https://billiards-network.onrender.com"
-    )
-
-    new MessagingMessageRelay("ws://localhost:8080")
-    expect(NchanClient).toHaveBeenCalledWith("http://localhost:8080")
-
-    new MessagingMessageRelay("wss://my-server.com")
-    expect(NchanClient).toHaveBeenCalledWith("https://my-server.com")
-  })
-
-  it("should subscribe to channel and unwrap TableMessage envelope", () => {
+  it("should connect and join the table with the correct tableId and clientId", async () => {
     const relay = new MessagingMessageRelay()
-    const mockNchanInstance = (relay as any).nchan
+    await relay.connect(mockClient, "test-table")
 
-    const mockSub = { stop: jest.fn() }
-    let recordedCallback: ((data: string) => void) | undefined
-    mockNchanInstance.subscribeTable.mockImplementation(
-      (channel: string, onMessage: (data: string) => void) => {
-        recordedCallback = onMessage
-        return mockSub
-      }
+    expect(mockClient.joinTable).toHaveBeenCalledWith(
+      "test-table",
+      "test-client"
     )
+  })
+
+  it("should register onOpponentLeft handler and call callback when opponent leaves", async () => {
+    const relay = new MessagingMessageRelay()
+    const onOpponentLeft = jest.fn()
+    await relay.connect(mockClient, "test-table", onOpponentLeft)
+
+    expect(mockTable.onOpponentLeft).toHaveBeenCalledWith(expect.any(Function))
+
+    // Simulate the library firing the opponent-left event
+    const registeredHandler = mockTable.onOpponentLeft.mock.calls[0][0]
+    registeredHandler()
+    expect(onOpponentLeft).toHaveBeenCalled()
+  })
+
+  it("should subscribe to channel and deliver unwrapped message data to callback", async () => {
+    const relay = new MessagingMessageRelay()
+    await relay.connect(mockClient, "test-table")
 
     const gameCallback = jest.fn()
     relay.subscribe("test-chan", gameCallback)
 
-    expect(mockNchanInstance.subscribeTable).toHaveBeenCalledWith(
-      "test-chan",
-      expect.any(Function)
-    )
-
-    // Send a message envelope
+    // Simulate the library delivering a TableMessage envelope
+    const registeredHandler = mockTable.onMessage.mock.calls[0][0]
     const envelope = {
-      type: "test-type",
+      type: "MyEvent",
       senderId: "other-client",
       data: { key: "value" },
     }
-    recordedCallback!(JSON.stringify(envelope))
-    expect(gameCallback).toHaveBeenCalledWith(JSON.stringify({ key: "value" }))
+    registeredHandler(envelope)
 
-    // Test non-JSON message passing through as-is
-    recordedCallback!("raw-string")
-    expect(gameCallback).toHaveBeenCalledWith("raw-string")
+    expect(gameCallback).toHaveBeenCalledWith(JSON.stringify({ key: "value" }))
   })
 
-  it("should publish a message by wrapping it in TableMessage envelope", async () => {
+  it("should not deliver messages with type 'table:leave' to subscribers", async () => {
     const relay = new MessagingMessageRelay()
-    const mockNchanInstance = (relay as any).nchan
+    await relay.connect(mockClient, "test-table")
+
+    const gameCallback = jest.fn()
+    relay.subscribe("test-chan", gameCallback)
+
+    const registeredHandler = mockTable.onMessage.mock.calls[0][0]
+    registeredHandler({ type: "table:leave", senderId: "other", data: {} })
+
+    expect(gameCallback).not.toHaveBeenCalled()
+  })
+
+  it("should publish a JSON message wrapped with its type and data", async () => {
+    const relay = new MessagingMessageRelay()
+    await relay.connect(mockClient, "test-table")
 
     const rawMessage = JSON.stringify({ type: "MyEvent", value: 123 })
     relay.publish("test-chan", rawMessage)
 
-    expect(mockNchanInstance.publishTable).toHaveBeenCalledWith(
-      "test-chan",
-      {
-        type: "MyEvent",
-        data: { type: "MyEvent", value: 123 },
-      },
-      "test-client"
-    )
+    // Allow microtask queue to flush
+    await Promise.resolve()
+
+    expect(mockTable.publish).toHaveBeenCalledWith("MyEvent", {
+      type: "MyEvent",
+      value: 123,
+    })
   })
 
   it("should publish raw strings with 'unknown' type", async () => {
     const relay = new MessagingMessageRelay()
-    const mockNchanInstance = (relay as any).nchan
+    await relay.connect(mockClient, "test-table")
 
     relay.publish("test-chan", "raw-text")
+    await Promise.resolve()
 
-    expect(mockNchanInstance.publishTable).toHaveBeenCalledWith(
-      "test-chan",
-      {
-        type: "unknown",
-        data: "raw-text",
-      },
-      "test-client"
-    )
+    expect(mockTable.publish).toHaveBeenCalledWith("unknown", "raw-text")
+  })
+
+  it("should not publish if connect has not been called", async () => {
+    const relay = new MessagingMessageRelay()
+
+    relay.publish("test-chan", JSON.stringify({ type: "SomeEvent" }))
+    await Promise.resolve()
+
+    expect(mockTable.publish).not.toHaveBeenCalled()
+  })
+
+  it("should not connect a second time if already connected", async () => {
+    const relay = new MessagingMessageRelay()
+    await relay.connect(mockClient, "test-table")
+    await relay.connect(mockClient, "test-table")
+
+    expect(mockClient.joinTable).toHaveBeenCalledTimes(1)
   })
 })

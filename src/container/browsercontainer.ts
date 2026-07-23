@@ -27,6 +27,8 @@ import { AnalysisPanel } from "../view/analysispanel"
 import { applyPhysicsParams } from "../utils/physicsparams"
 import { TableConfig } from "../view/tableconfig"
 
+import { NetworkLogger } from "../utils/network-logger"
+
 /**
  * Integrate game container into HTML page
  */
@@ -210,7 +212,7 @@ export class BrowserContainer {
   }
 
   private initMultiplayer(scoreReporter: ScoreReporter) {
-    this.messageRelay = new MessagingMessageRelay(this.wss ?? undefined)
+    this.messageRelay = new MessagingMessageRelay()
     this.container = this.createContainer(scoreReporter)
     this.container.init()
   }
@@ -237,6 +239,7 @@ export class BrowserContainer {
     this.setReplayLink()
 
     if (this.spectator) {
+      this.connectRelayIfNeeded()
       this.container.eventQueue.push(new BeginEvent())
     } else {
       this.initGameLoop()
@@ -249,7 +252,31 @@ export class BrowserContainer {
     globalThis.container = this.container
   }
 
-  private initGameLoop() {
+  private async connectRelay(): Promise<void> {
+    if (!(this.wss && this.messageRelay instanceof MessagingMessageRelay))
+      return
+    const relay = this.messageRelay
+    const li = this.container.lobbyIndicator
+    await li.init()
+    const mc = li.getMessagingClient()
+    if (!mc) return
+    await relay.connect(mc, this.tableId, () => {
+      NetworkLogger.logGame(`opponent disconnect: table leave`)
+      this.container.chat.showMessage("<br>🔌")
+      this.container.notifyLocal({
+        type: "Info",
+        title: "Opponent left the game",
+      })
+    })
+  }
+
+  private connectRelayIfNeeded(): void {
+    this.connectRelay() // fire-and-forget for spectator path
+  }
+
+  private async initGameLoop() {
+    await this.connectRelay()
+
     if (this.wss) {
       this.messageRelay?.subscribe(this.tableId, (e) => {
         this.netEvent(e)

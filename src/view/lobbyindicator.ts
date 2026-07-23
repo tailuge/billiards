@@ -17,6 +17,7 @@ export class LobbyIndicator {
   private readonly countElement: HTMLSpanElement | null
   private readonly challengePill: HTMLElement | null
   private messagingClient: MessagingClient | null = null
+  private initPromise: Promise<void> | null = null
   private lobby: Lobby | null = null
   private count = 0
   private challenger: {
@@ -141,6 +142,13 @@ export class LobbyIndicator {
 
   async init(): Promise<void> {
     if (!this.element) return
+    if (this.initPromise) return this.initPromise
+    this.initPromise = this.doInit()
+    return this.initPromise
+  }
+
+  private async doInit(): Promise<void> {
+    if (!this.element) return
     NetworkLogger.logLobby("init")
 
     const userId = Session.getInstance().clientId
@@ -222,6 +230,11 @@ export class LobbyIndicator {
     })
 
     this.updateDisplay()
+  }
+
+  /** Expose the MessagingClient for use by MessagingMessageRelay. */
+  getMessagingClient(): MessagingClient | null {
+    return this.messagingClient
   }
 
   setTableId(tableId: string | null | undefined): void {
@@ -365,18 +378,6 @@ export class LobbyIndicator {
   ): void {
     if (wasOnline !== false && this.opponentOnline === false) {
       NetworkLogger.logLobby(`opponent offline: ${opponentId}`)
-    }
-
-    if (!this.isTwoPlayerGame()) return
-
-    if (wasOnline === true && this.opponentOnline === false) {
-      NetworkLogger.logGame(`opponent disconnect: ${opponentId}`)
-      this.onChatMessage?.("<br>🔌")
-    } else if (wasOnline === false && this.opponentOnline === true) {
-      if (this.opponentSeen) {
-        NetworkLogger.logGame(`opponent reconnect: ${opponentId}`)
-        this.onChatMessage?.("<br>⚡")
-      }
     }
     if (this.opponentOnline) {
       this.opponentSeen = true

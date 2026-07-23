@@ -32,11 +32,13 @@ export class NetworkLogger {
   }
 
   static logGame(label: string) {
+    console.log(`[net:game] ${label}`)
     this.gameLogs.push({ ts: Date.now(), label })
     if (this.gameLogs.length > this.MAX_LOGS) this.gameLogs.shift()
   }
 
   static logLobby(label: string) {
+    console.log(`[net:lobby] ${label}`)
     this.lobbyLogs.push({ ts: Date.now(), label })
     if (this.lobbyLogs.length > this.MAX_LOGS) this.lobbyLogs.shift()
   }

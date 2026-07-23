@@ -147,6 +147,7 @@ describe("Controller", () => {
 
   it("Begin takes Init to Spectate when session set", (done) => {
     Session.init("id", "player", "tableid", true)
+    container.relay = { subscribe: jest.fn(), publish: jest.fn() }
     container.eventQueue.push(new BeginEvent())
     container.processEvents()
     chaiExpect(container.controller).to.be.an.instanceof(Spectate)
