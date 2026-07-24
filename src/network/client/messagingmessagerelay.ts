@@ -17,6 +17,34 @@ export class MessagingMessageRelay implements MessageRelay {
    * one-shot notification (the library's Table watchdog may fire before
    * a separately-registered callback runs).
    */
+  /**
+   * Wait until the library reports that both non-spectator players have
+   * joined this table channel. Resolves immediately if both are already
+   * known, or if the underlying Table is from an older library version
+   * that does not expose `bothJoined`. Rejects with Error on timeout.
+   *
+   * This closes the join race where one side could publish a BeginEvent
+   * before the opponent had subscribed to the table channel.
+   */
+  async awaitBothJoined(timeoutMs: number = 8000): Promise<void> {
+    const bothJoined = (
+      this.table as unknown as { bothJoined?: Promise<void> }
+    )?.bothJoined
+    if (!bothJoined) return // older lib or not connected: best-effort no-op
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const timeout = new Promise<void>((_, reject) => {
+      timer = setTimeout(
+        () => reject(new Error(`bothJoined timed out after ${timeoutMs}ms`)),
+        timeoutMs
+      )
+    })
+    try {
+      await Promise.race([bothJoined, timeout])
+    } finally {
+      if (timer) clearTimeout(timer)
+    }
+  }
+
   async connect(
     messagingClient: MessagingClient,
     tableId: string,

@@ -3,7 +3,12 @@ import { MessagingClient, Table } from "@tailuge/messaging"
 import { Session } from "../../../src/network/client/session"
 
 // Mock the Table class methods we care about
-const mockTable = {
+const mockTable: {
+  onOpponentLeft: jest.Mock
+  onMessage: jest.Mock
+  publish: jest.Mock
+  bothJoined?: Promise<void>
+} = {
   onOpponentLeft: jest.fn(),
   onMessage: jest.fn(),
   publish: jest.fn().mockResolvedValue(undefined),
@@ -127,5 +132,50 @@ describe("MessagingMessageRelay", () => {
     await relay.connect(mockClient, "test-table")
 
     expect(mockClient.joinTable).toHaveBeenCalledTimes(1)
+  })
+
+  describe("awaitBothJoined", () => {
+    beforeEach(() => {
+      mockTable.bothJoined = undefined
+    })
+
+    it("resolves immediately when bothJoined has already resolved", async () => {
+      const relay = new MessagingMessageRelay()
+      await relay.connect(mockClient, "test-table")
+      mockTable.bothJoined = Promise.resolve()
+
+      await expect(relay.awaitBothJoined(1000)).resolves.toBeUndefined()
+    })
+
+    it("resolves when bothJoined resolves during the wait", async () => {
+      const relay = new MessagingMessageRelay()
+      await relay.connect(mockClient, "test-table")
+      let resolveBoth: () => void = () => {}
+      mockTable.bothJoined = new Promise<void>((resolve) => {
+        resolveBoth = resolve
+      })
+
+      const pending = relay.awaitBothJoined(1000)
+      resolveBoth()
+      await expect(pending).resolves.toBeUndefined()
+    })
+
+    it("rejects with Error when bothJoined does not resolve before timeout", async () => {
+      const relay = new MessagingMessageRelay()
+      await relay.connect(mockClient, "test-table")
+      mockTable.bothJoined = new Promise<void>(() => undefined) // never resolves
+
+      await expect(relay.awaitBothJoined(50)).rejects.toThrow(
+        /bothJoined timed out/
+      )
+    })
+
+    it("is a no-op when the underlying Table has no bothJoined field (older lib)", async () => {
+      const relay = new MessagingMessageRelay()
+      await relay.connect(mockClient, "test-table")
+      mockTable.bothJoined = undefined
+
+      await expect(relay.awaitBothJoined(50)).resolves.toBeUndefined()
+    })
   })
 })
