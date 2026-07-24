@@ -14,6 +14,7 @@ import JSONCrush from "jsoncrush"
 import { Assets } from "../view/assets"
 import { SnookerConfig } from "../utils/snookerconfig"
 import { ThreeCushionConfig } from "../utils/threecushionconfig"
+import { logNetEvent } from "../utils/event-log"
 import { Session } from "../network/client/session"
 import { MessageRelay } from "../network/client/messagerelay"
 import { MessagingMessageRelay } from "../network/client/messagingmessagerelay"
@@ -315,7 +316,7 @@ export class BrowserContainer {
       this.container.notification.clear()
     }
 
-    //    logNetEvent(this.playername, event, "receive")
+    logNetEvent(this.playername, event, "receive")
     if (event.clientId) {
       Session.getInstance().setOpponentClientId(event.clientId)
     }
@@ -351,7 +352,7 @@ export class BrowserContainer {
     if (this.messageRelay) {
       event.clientId = Session.getInstance().clientId
       event.playername = Session.getInstance().playername
-      //      logNetEvent(this.playername, event, "broadcast")
+      logNetEvent(this.playername, event, "broadcast")
       this.messageRelay.publish(this.tableId, EventUtil.serialise(event))
     }
   }
