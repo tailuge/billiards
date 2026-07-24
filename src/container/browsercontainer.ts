@@ -42,6 +42,9 @@ export class BrowserContainer {
   playername: string
   replay: string | null
   messageRelay: MessageRelay | null = null
+  public readonly bothJoined: Promise<void>
+  public onBothJoined?: () => void
+  private resolveBothJoined!: () => void
   breakState: {
     init: any
     shots: any[]
@@ -70,6 +73,9 @@ export class BrowserContainer {
   localMesh: boolean = false
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
+    this.bothJoined = new Promise<void>((resolve) => {
+      this.resolveBothJoined = resolve
+    })
     this.now = Date.now()
     this.playername =
       params.get("userName") ??
@@ -241,6 +247,11 @@ export class BrowserContainer {
       this.initMultiplayer(scoreReporter)
     }
 
+    this.container.bothJoined.then(() => {
+      this.resolveBothJoined()
+      this.onBothJoined?.()
+    })
+
     this.container.broadcast = (e) => {
       this.broadcast(e)
     }
@@ -257,6 +268,10 @@ export class BrowserContainer {
       this.container.eventQueue.push(new BeginEvent())
     } else {
       this.initGameLoop()
+    }
+
+    if (this.container.isSinglePlayer || this.botMode || !!this.replay) {
+      this.container.triggerBothJoined()
     }
 
     // trigger animation loops
@@ -325,6 +340,15 @@ export class BrowserContainer {
     }
 
     const session = Session.getInstance()
+    if (
+      !this.botMode &&
+      !this.spectator &&
+      session.playername &&
+      session.opponentName
+    ) {
+      this.container.triggerBothJoined()
+    }
+
     if (
       !session.vsNotificationShown &&
       !this.botMode &&
