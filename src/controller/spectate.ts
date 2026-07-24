@@ -24,9 +24,6 @@ export class Spectate extends ControllerBase {
     this.messageRelay.subscribe(this.tableId, (message) => {
       const event = EventUtil.fromSerialised(message)
       this.messages.push(event)
-      if (!(event instanceof AimEvent)) {
-        console.log("Spectate event: ", message)
-      }
 
       this.sniffNames(event)
 
@@ -39,11 +36,8 @@ export class Spectate extends ControllerBase {
         event instanceof RerackEvent
       ) {
         this.container.eventQueue.push(event)
-      } else {
-        console.log("unprocessed message: ", message)
       }
     })
-    console.log("Spectate")
   }
 
   private sniffNames(event: GameEvent) {
@@ -91,7 +85,6 @@ export class Spectate extends ControllerBase {
   }
 
   override handleHit(event: HitEvent) {
-    console.log("Spectate Hit")
     this.container.table.updateFromSerialised(event.tablejson)
     this.container.table.cue.updateAimInput()
     this.container.table.outcome = []
@@ -110,7 +103,6 @@ export class Spectate extends ControllerBase {
     if (respot) {
       const ball = this.container.table.balls.find((b) => b.id === respot.id)
       if (ball) {
-        console.log("Respotting ball", ball.id, "to", respot.pos)
         ball.pos.copy(respot.pos)
         ball.setStationary()
       }

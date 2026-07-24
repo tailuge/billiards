@@ -98,10 +98,7 @@ export function randomEmoji(): string {
   return "🎱"
 }
 
-export const ruleTypeMap: Record<
-  string,
-  { emoji: string; title: string }
-> = {
+export const ruleTypeMap: Record<string, { emoji: string; title: string }> = {
   nineball: { emoji: "⑨", title: "nineball" },
   eightball: { emoji: "🎱", title: "eightball" },
   snooker: { emoji: "🔴", title: "snooker" },
