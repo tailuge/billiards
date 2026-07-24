@@ -74,6 +74,10 @@ export class Spectate extends ControllerBase {
         session.vsNotificationShown = true
       }
     }
+
+    if (session.spectatedP1Name && session.spectatedP2Name) {
+      this.container.triggerBothJoined()
+    }
   }
 
   override handleAim(event: AimEvent) {

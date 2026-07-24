@@ -65,6 +65,10 @@ export class Container {
   id: string
   isSinglePlayer: boolean = true
   rules: Rules
+  public readonly bothJoined: Promise<void>
+  public onBothJoined?: () => void
+  private resolveBothJoined!: () => void
+  private hasTriggeredBothJoined = false
   menu: Menu
   comment: Comment
   hud: Hud
@@ -99,6 +103,9 @@ export class Container {
   log: (text: string) => void
 
   constructor(config: ContainerConfig) {
+    this.bothJoined = new Promise<void>((resolve) => {
+      this.resolveBothJoined = resolve
+    })
     const {
       element,
       log,
@@ -275,6 +282,13 @@ export class Container {
     if (changed) {
       this.sendEvent(new ScoreEvent(p1, p2, b, activePlayer))
     }
+  }
+
+  triggerBothJoined() {
+    if (this.hasTriggeredBothJoined) return
+    this.hasTriggeredBothJoined = true
+    this.resolveBothJoined()
+    this.onBothJoined?.()
   }
 
   notify(data: NotificationData | string, duration?: number) {
