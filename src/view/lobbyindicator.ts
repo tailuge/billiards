@@ -194,7 +194,6 @@ export class LobbyIndicator {
     globalThis.addEventListener?.("offline", this.offlineHandler)
 
     this.lobby.onUsersChange((users) => {
-      NetworkLogger.logLobby(`users: ${users.length}`)
       this.users = users
       this.count = users.length
       const opponentId = Session.getInstance().opponentClientId

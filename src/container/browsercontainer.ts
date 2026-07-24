@@ -27,7 +27,6 @@ import { AnalysisPanel } from "../view/analysispanel"
 import { applyPhysicsParams } from "../utils/physicsparams"
 import { TableConfig } from "../view/tableconfig"
 
-import { NetworkLogger } from "../utils/network-logger"
 
 /**
  * Integrate game container into HTML page
@@ -276,7 +275,6 @@ export class BrowserContainer {
     const mc = li.getMessagingClient()
     if (!mc) return
     await relay.connect(mc, this.tableId, () => {
-      NetworkLogger.logGame(`opponent disconnect: table leave`)
       this.container.chat.showMessage("<br>🔌")
       this.container.notifyLocal({
         type: "Info",
