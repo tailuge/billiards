@@ -22,6 +22,7 @@ import { MessagingMessageRelay } from "../network/client/messagingmessagerelay"
 import { BotRelay } from "../network/bot/botrelay"
 import { ScoreReporter } from "../network/client/scorereporter"
 import { BeginEvent } from "../events/beginevent"
+import { RejoinEvent } from "../events/rejoinevent"
 import { Logger } from "../network/bot/logger"
 import { getUID } from "../utils/uid"
 import { DrillPanel } from "../view/drillpanel"
@@ -313,6 +314,8 @@ export class BrowserContainer {
       }
       if (!this.first) {
         this.broadcast(new BeginEvent())
+      } else {
+        this.broadcast(new RejoinEvent())
       }
     }
 

@@ -1,5 +1,6 @@
 import { BeginEvent } from "../events/beginevent"
 import { WatchEvent } from "../events/watchevent"
+import { RejoinEvent } from "../events/rejoinevent"
 import { Controller } from "./controller"
 import { WatchAim } from "./watchaim"
 import { ControllerBase } from "./controllerbase"
@@ -33,6 +34,13 @@ export class Init extends ControllerBase {
         0
       )
     }
+  }
+
+  override handleRejoin(event: RejoinEvent): Controller {
+    if (!Session.getInstance().first) {
+      this.container.broadcast(new BeginEvent())
+    }
+    return this
   }
 
   override handleBegin(_: BeginEvent): Controller {
