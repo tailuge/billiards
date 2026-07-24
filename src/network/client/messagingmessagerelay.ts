@@ -92,3 +92,37 @@ export class MessagingMessageRelay implements MessageRelay {
     })
   }
 }
+
+// Patch Table to queue incoming messages before onMessage is called.
+// This handles the race window where messages (like BeginEvent) can arrive
+// during joinTable's subsequent asynchronous operations (e.g. lobby update presence)
+// before the caller has registered the onMessage listener.
+const originalJoin = Table.prototype.join
+const originalOnMessage = Table.prototype.onMessage
+
+Table.prototype.join = async function (this: Table) {
+  const self = this as any
+  if (!self._messageQueue) {
+    self._messageQueue = []
+    originalOnMessage.call(this, (msg) => {
+      if (self._onMessageCallback) {
+        self._onMessageCallback(msg)
+      } else {
+        self._messageQueue.push(msg)
+      }
+    })
+  }
+  return originalJoin.apply(this)
+}
+
+Table.prototype.onMessage = function (this: Table, callback: (msg: any) => void) {
+  const self = this as any
+  self._onMessageCallback = callback
+  if (self._messageQueue && self._messageQueue.length > 0) {
+    const queue = self._messageQueue
+    self._messageQueue = []
+    for (const msg of queue) {
+      callback(msg)
+    }
+  }
+}

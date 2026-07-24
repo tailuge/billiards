@@ -22,7 +22,6 @@ import { MessagingMessageRelay } from "../network/client/messagingmessagerelay"
 import { BotRelay } from "../network/bot/botrelay"
 import { ScoreReporter } from "../network/client/scorereporter"
 import { BeginEvent } from "../events/beginevent"
-import { RejoinEvent } from "../events/rejoinevent"
 import { Logger } from "../network/bot/logger"
 import { getUID } from "../utils/uid"
 import { DrillPanel } from "../view/drillpanel"
@@ -290,16 +289,19 @@ export class BrowserContainer {
   }
 
   private async initGameLoop() {
-    await this.connectRelay()
-
     if (this.wss) {
       // Subscribe FIRST so the relay's pending callback list is populated
-      // before we wait for both sides to join. Without this ordering, an
+      // before we connect/join the table. Without this ordering, an
       // opponent who sent BeginEvent before our subscribe() ran would drop
       // on the floor (Race 2).
       this.messageRelay?.subscribe(this.tableId, (e) => {
         this.netEvent(e)
       })
+    }
+
+    await this.connectRelay()
+
+    if (this.wss) {
       if (
         this.messageRelay instanceof MessagingMessageRelay &&
         !this.replay
@@ -314,8 +316,6 @@ export class BrowserContainer {
       }
       if (!this.first) {
         this.broadcast(new BeginEvent())
-      } else {
-        this.broadcast(new RejoinEvent())
       }
     }
 
