@@ -531,6 +531,20 @@ body.analysis-mode #commentMenu {
   background: rgb(0 60 110 / 85%);
 }
 
+/* Camera state classes set dynamically via JS */
+.menuButton.aim {
+  /* default aim view - no extra styling needed */
+}
+
+.menuButton.aimz {
+  /* zoomed-out aim view - slightly larger emoji */
+  font-size: 28px;
+}
+
+.menuButton.topview {
+  /* top-down view */
+}
+
 /* Stack table / controls / analysis vertically on portrait/narrow screens. */
 @media (orientation: portrait) {
   body.analysis-mode {

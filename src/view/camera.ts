@@ -26,6 +26,7 @@ export class Camera {
   mode = this.topView
   private mainMode = this.aimView
   private height = Camera.defaultHeight
+  isZoomedOut = false
 
   private readonly target = new Vector3()
   private readonly lookTarget = new Vector3()
@@ -143,9 +144,11 @@ export class Camera {
   private computeStepBackFov(h: number): number {
     const portrait = this.camera.aspect < 0.8
     const tempFov = (portrait ? 60 : 40) + this.fovOffset
-    return h < 10 * R
-      ? tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1)
-      : tempFov
+    const fov =
+      h < 10 * R
+        ? tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1)
+        : tempFov
+    return fov - 3
   }
 
   private areAllBallsInFrustum(frustum: Frustum, balls: any[]): boolean {
@@ -243,12 +246,16 @@ export class Camera {
     }
     if (this.mainMode === this.aimView) {
       this.mode = mode
+      this.isZoomedOut = false
+      this.updateCameraButtonClass(mode === this.topView ? "topview" : "aim")
     }
     if (
       this.mainMode === this.spectatorView &&
       (mode === this.topView || mode === this.spectatorView)
     ) {
       this.mode = mode
+      this.isZoomedOut = false
+      this.updateCameraButtonClass(mode === this.topView ? "topview" : "aim")
     }
   }
 
@@ -258,6 +265,8 @@ export class Camera {
     }
     this.mode = mode
     this.mainMode = mode
+    this.isZoomedOut = false
+    this.updateCameraButtonClass(mode === this.topView ? "topview" : "aim")
   }
 
   forceMove(aim: AimEvent) {
@@ -266,12 +275,51 @@ export class Camera {
     }
   }
 
+  cycleMode(balls: any[], aim: AimEvent) {
+    if (this.mode === this.aimView && !this.isZoomedOut) {
+      this.stepBackToFitAllBalls(balls, aim)
+      if (this.savedDistance === undefined) {
+        // All balls already in view — skip aimz, go straight to topview
+        this.mode = this.topView
+        this.mainMode = this.topView
+        this.updateCameraButtonClass("topview")
+      } else {
+        this.isZoomedOut = true
+        this.updateCameraButtonClass("aimz")
+      }
+    } else if (this.mode === this.aimView && this.isZoomedOut) {
+      this.restoreSavedDistance()
+      this.mode = this.topView
+      this.mainMode = this.topView
+      this.isZoomedOut = false
+      this.updateCameraButtonClass("topview")
+    } else {
+      this.restoreSavedDistance()
+      this.mode = this.aimView
+      this.mainMode = this.aimView
+      this.isZoomedOut = false
+      this.updateCameraButtonClass("aim")
+    }
+  }
+
+  private updateCameraButtonClass(state: "aim" | "aimz" | "topview") {
+    const btn = document.getElementById("camera")
+    if (btn) {
+      btn.classList.remove("aim", "aimz", "topview")
+      btn.classList.add(state)
+      btn.textContent = state === "topview" ? "🎥ᵀ" : "🎥"
+    }
+  }
+
   toggleMode() {
     this.restoreSavedDistance()
+    this.isZoomedOut = false
     if (this.mode === this.topView) {
       this.mode = this.aimView
+      this.updateCameraButtonClass("aim")
     } else {
       this.mode = this.topView
+      this.updateCameraButtonClass("topview")
     }
     this.mainMode = this.mode
   }

@@ -104,7 +104,11 @@ export class Menu {
   }
 
   adjustCamera() {
-    this.container.view.camera.toggleMode()
+    const camera = this.container.view.camera
+    camera.cycleMode(
+      this.container.table.balls,
+      this.container.table.cue.aim
+    )
     this.container.lastEventTime = performance.now()
   }
 
