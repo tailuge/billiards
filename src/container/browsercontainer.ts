@@ -302,10 +302,7 @@ export class BrowserContainer {
     await this.connectRelay()
 
     if (this.wss) {
-      if (
-        this.messageRelay instanceof MessagingMessageRelay &&
-        !this.replay
-      ) {
+      if (this.messageRelay instanceof MessagingMessageRelay && !this.replay) {
         try {
           await this.messageRelay.awaitBothJoined(8000)
         } catch (e) {

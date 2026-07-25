@@ -145,9 +145,7 @@ export class Camera {
     const portrait = this.camera.aspect < 0.8
     const tempFov = (portrait ? 60 : 40) + this.fovOffset
     const fov =
-      h < 10 * R
-        ? tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1)
-        : tempFov
+      h < 10 * R ? tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1) : tempFov
     return fov - 3
   }
 

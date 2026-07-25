@@ -27,9 +27,8 @@ export class MessagingMessageRelay implements MessageRelay {
    * before the opponent had subscribed to the table channel.
    */
   async awaitBothJoined(timeoutMs: number = 8000): Promise<void> {
-    const bothJoined = (
-      this.table as unknown as { bothJoined?: Promise<void> }
-    )?.bothJoined
+    const bothJoined = (this.table as unknown as { bothJoined?: Promise<void> })
+      ?.bothJoined
     if (!bothJoined) return // older lib or not connected: best-effort no-op
     let timer: ReturnType<typeof setTimeout> | undefined
     const timeout = new Promise<void>((_, reject) => {
@@ -115,7 +114,10 @@ Table.prototype.join = async function (this: Table) {
   return originalJoin.apply(this)
 }
 
-Table.prototype.onMessage = function (this: Table, callback: (msg: any) => void) {
+Table.prototype.onMessage = function (
+  this: Table,
+  callback: (msg: any) => void
+) {
   const self = this as any
   self._onMessageCallback = callback
   if (self._messageQueue && self._messageQueue.length > 0) {
