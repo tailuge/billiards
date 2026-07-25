@@ -33,7 +33,6 @@ export class LobbyIndicator {
   private readonly replayMode: boolean
   private readonly isSpectator: boolean
   private opponentOnline: boolean | null = null
-  private opponentSeen = false
   private users: PresenceMessage[] = []
   private readonly onChatMessage: ((msg: string) => void) | undefined
   private readonly onShowOverlay: ((url: string) => void) | undefined
@@ -377,9 +376,6 @@ export class LobbyIndicator {
   ): void {
     if (wasOnline !== false && this.opponentOnline === false) {
       NetworkLogger.logLobby(`opponent offline: ${opponentId}`)
-    }
-    if (this.opponentOnline) {
-      this.opponentSeen = true
     }
   }
 
