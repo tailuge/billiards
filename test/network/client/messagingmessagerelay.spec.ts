@@ -1,5 +1,5 @@
 import { MessagingMessageRelay } from "../../../src/network/client/messagingmessagerelay"
-import { MessagingClient, Table } from "@tailuge/messaging"
+import { MessagingClient } from "@tailuge/messaging"
 import { Session } from "../../../src/network/client/session"
 
 // Mock the Table class methods we care about
@@ -33,7 +33,7 @@ describe("MessagingMessageRelay", () => {
     mockTable.onMessage.mockClear()
     mockTable.publish.mockClear()
     Session.init("test-client", "TestPlayer", "test-table", false)
-    mockClient = new (MessagingClient as any)({ baseUrl: "http://test" })
+    mockClient = new (MessagingClient as any)({ baseUrl: "https://test" })
   })
 
   it("should connect and join the table with the correct tableId and clientId", async () => {
