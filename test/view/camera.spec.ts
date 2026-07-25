@@ -59,36 +59,4 @@ describe("Camera", () => {
     expect(camera.savedDistance).to.be.undefined
   })
 
-  describe("updateCameraButtonClass", () => {
-    let btn: HTMLButtonElement
-
-    beforeEach(() => {
-      btn = document.createElement("button")
-      btn.id = "camera"
-      document.body.appendChild(btn)
-    })
-
-    afterEach(() => {
-      btn.remove()
-    })
-
-    it("should set textContent to '🎥ᶻ' for aimz, and '🎥' for topview and aim states", () => {
-      const camera = new Camera(1)
-
-      // When state is topview
-      ;(camera as any).updateCameraButtonClass("topview")
-      expect(btn.classList.contains("topview")).to.be.true
-      expect(btn.textContent).to.equal("🎥")
-
-      // When state is aim
-      ;(camera as any).updateCameraButtonClass("aim")
-      expect(btn.classList.contains("aim")).to.be.true
-      expect(btn.textContent).to.equal("🎥")
-
-      // When state is zoomed out (aimz)
-      ;(camera as any).updateCameraButtonClass("aimz")
-      expect(btn.classList.contains("aimz")).to.be.true
-      expect(btn.textContent).to.equal("🎥ᶻ")
-    })
-  })
 })

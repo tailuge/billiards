@@ -305,7 +305,7 @@ export class Camera {
     if (btn) {
       btn.classList.remove("aim", "aimz", "topview")
       btn.classList.add(state)
-      btn.textContent = state === "aimz" ? "🎥ᶻ" : "🎥"
+      btn.textContent = state === "aimz" ? "🎥ᶻ" : state === "topview" ? "🎥ᵀ" : "🎥"
     }
   }
 
