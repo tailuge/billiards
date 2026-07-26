@@ -68,8 +68,7 @@ describe("MessagingMessageRelay", () => {
     relay.subscribe("test-chan", gameCallback)
 
     // Simulate the library delivering a TableMessage envelope
-    const registeredHandler =
-      mockClient.joinTable.mock.calls[0][2].onMessage
+    const registeredHandler = mockClient.joinTable.mock.calls[0][2].onMessage
     const envelope = {
       type: "MyEvent",
       senderId: "other-client",
@@ -87,8 +86,7 @@ describe("MessagingMessageRelay", () => {
     const gameCallback = jest.fn()
     relay.subscribe("test-chan", gameCallback)
 
-    const registeredHandler =
-      mockClient.joinTable.mock.calls[0][2].onMessage
+    const registeredHandler = mockClient.joinTable.mock.calls[0][2].onMessage
     registeredHandler({ type: "table:leave", senderId: "other", data: {} })
 
     expect(gameCallback).not.toHaveBeenCalled()

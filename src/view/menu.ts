@@ -3,6 +3,8 @@ import { getButton } from "../utils/dom"
 import { Session } from "../network/client/session"
 import { ConcedeEvent } from "../events/concedeevent"
 import { ExportUtils } from "../utils/export-utils"
+import { WatchAim } from "../controller/watchaim"
+import { WatchShot } from "../controller/watchshot"
 
 export class Menu {
   container: Container
@@ -105,7 +107,25 @@ export class Menu {
 
   adjustCamera() {
     const camera = this.container.view.camera
-    camera.cycleMode(this.container.table.balls, this.container.table.cue.aim)
+    const controller = this.container.controller
+    if (
+      (controller instanceof WatchAim || controller instanceof WatchShot) &&
+      camera.mode === camera.topView
+    ) {
+      const balls = this.container.table.balls
+      const aim = this.container.table.cue.aim
+      camera.mode = camera.aimView
+      camera.stepBackToFitAllBalls(balls, aim)
+      if (camera.savedDistance !== undefined) {
+        camera.isZoomedOut = true
+        camera.updateCameraButtonClass("aimz")
+      } else {
+        camera.isZoomedOut = false
+        camera.updateCameraButtonClass("aim")
+      }
+    } else {
+      camera.cycleMode(this.container.table.balls, this.container.table.cue.aim)
+    }
     this.container.lastEventTime = performance.now()
   }
 

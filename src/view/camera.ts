@@ -144,8 +144,11 @@ export class Camera {
   private computeStepBackFov(h: number): number {
     const portrait = this.camera.aspect < 0.8
     const tempFov = (portrait ? 60 : 40) + this.fovOffset
-    const fov =
-      h < 10 * R ? tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1) : tempFov
+    let fov = tempFov
+    if (h < 10 * R) {
+      const factor = portrait ? 3 : 1
+      fov = tempFov - 100 * (10 * R - h) * factor
+    }
     return fov - 3
   }
 
@@ -300,12 +303,18 @@ export class Camera {
     }
   }
 
-  private updateCameraButtonClass(state: "aim" | "aimz" | "topview") {
+  updateCameraButtonClass(state: "aim" | "aimz" | "topview") {
     const btn = document.getElementById("camera")
     if (btn) {
       btn.classList.remove("aim", "aimz", "topview")
       btn.classList.add(state)
-      btn.textContent = state === "aimz" ? "🎥ᶻ" : state === "topview" ? "🎥ᵀ" : "🎥"
+      if (state === "aimz") {
+        btn.textContent = "🎥ᶻ"
+      } else if (state === "topview") {
+        btn.textContent = "🎥ᵀ"
+      } else {
+        btn.textContent = "🎥"
+      }
     }
   }
 
