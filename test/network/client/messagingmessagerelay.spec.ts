@@ -7,11 +7,13 @@ const mockTable: {
   onOpponentLeft: jest.Mock
   onMessage: jest.Mock
   publish: jest.Mock
+  onBothJoined?: jest.Mock
   bothJoined?: Promise<void>
 } = {
   onOpponentLeft: jest.fn(),
   onMessage: jest.fn(),
   publish: jest.fn().mockResolvedValue(undefined),
+  onBothJoined: jest.fn(),
 }
 
 // Mock MessagingClient so joinTable returns our mock table
@@ -32,6 +34,7 @@ describe("MessagingMessageRelay", () => {
     mockTable.onOpponentLeft.mockClear()
     mockTable.onMessage.mockClear()
     mockTable.publish.mockClear()
+    mockTable.onBothJoined?.mockClear()
     Session.init("test-client", "TestPlayer", "test-table", false)
     mockClient = new (MessagingClient as any)({ baseUrl: "https://test" })
   })
@@ -132,6 +135,25 @@ describe("MessagingMessageRelay", () => {
     await relay.connect(mockClient, "test-table")
 
     expect(mockClient.joinTable).toHaveBeenCalledTimes(1)
+  })
+
+  it("should register onBothJoined callback and republish joined on bothJoined", async () => {
+    const relay = new MessagingMessageRelay()
+    await relay.connect(mockClient, "test-table")
+
+    expect(mockTable.onBothJoined).toHaveBeenCalledWith(expect.any(Function))
+
+    // Trigger the callback
+    const callback = mockTable.onBothJoined?.mock.calls[0][0]
+    callback()
+
+    // Allow any microtasks to flush
+    await Promise.resolve()
+
+    // It should publish 'joined' with the correct clientId
+    expect(mockTable.publish).toHaveBeenCalledWith("joined", {
+      id: "test-client",
+    })
   })
 
   describe("awaitBothJoined", () => {

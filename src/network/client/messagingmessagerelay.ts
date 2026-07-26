@@ -45,6 +45,18 @@ export class MessagingMessageRelay implements MessageRelay {
         for (const cb of this.pendingCallbacks) cb(data)
       }
     })
+    if (!session.spectator && typeof this.table.onBothJoined === "function") {
+      this.table.onBothJoined(() => {
+        this.table
+          ?.publish("joined", { id: session.clientId })
+          .catch((error) => {
+            console.error(
+              "Failed to republish joined message on bothJoined",
+              error
+            )
+          })
+      })
+    }
   }
 
   subscribe(
