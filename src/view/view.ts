@@ -110,7 +110,7 @@ export class View {
   }
 
   render() {
-    if (this.isInMotionNotVisible()) {
+    if (this.isInMotionNotVisible() && !this.camera.isZoomedOut) {
       this.camera.suggestMode(this.camera.topView)
     }
     this.renderCamera(this.camera)

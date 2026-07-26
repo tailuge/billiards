@@ -273,6 +273,19 @@ export class Camera {
     }
   }
 
+  cycleModeToAimz(balls: any[], aim: AimEvent) {
+    this.mode = this.aimView
+    this.mainMode = this.aimView
+    this.stepBackToFitAllBalls(balls, aim)
+    if (this.savedDistance === undefined) {
+      this.isZoomedOut = false
+      this.updateCameraButtonClass("aim")
+    } else {
+      this.isZoomedOut = true
+      this.updateCameraButtonClass("aimz")
+    }
+  }
+
   cycleMode(balls: any[], aim: AimEvent) {
     if (this.mode === this.aimView && !this.isZoomedOut) {
       this.stepBackToFitAllBalls(balls, aim)

@@ -8,8 +8,10 @@ import { WatchEvent } from "../../events/watchevent"
 import { StartAimEvent } from "../../events/startaimevent"
 import { Session } from "../../network/client/session"
 import { Rack } from "../../utils/rack"
+import { Respot } from "../../utils/respot"
 import { Table } from "../../model/table"
 import { Camera } from "../../view/camera"
+import { isFirstShot } from "../../utils/utils"
 
 export class Sagu extends ThreeCushion {
   override rulename = "sagu"
@@ -140,6 +142,17 @@ export class Sagu extends ThreeCushion {
 
   override isPartOfBreak(outcome: Outcome[]): boolean {
     return this.isSuccessfulShot(outcome)
+  }
+
+  override nextCandidateBall(_p1type?: number): Ball | undefined {
+    if (isFirstShot(this.container.recorder)) {
+      return undefined
+    }
+    const opponentCue = this.otherPlayersCueBall()
+    const redBalls = this.container.table.balls.filter(
+      (ball) => ball !== this.cueball && ball !== opponentCue
+    )
+    return Respot.furthest(this.cueball, redBalls)
   }
 
   override advanceState(outcomes: Outcome[]): void {

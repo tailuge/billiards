@@ -1,4 +1,5 @@
 import { Container } from "../container/container"
+import { WatchShot } from "../controller/watchshot"
 import { getButton } from "../utils/dom"
 import { Session } from "../network/client/session"
 import { ConcedeEvent } from "../events/concedeevent"
@@ -105,7 +106,17 @@ export class Menu {
 
   adjustCamera() {
     const camera = this.container.view.camera
-    camera.cycleMode(this.container.table.balls, this.container.table.cue.aim)
+    if (
+      this.container.controller instanceof WatchShot &&
+      camera.mode === camera.topView
+    ) {
+      camera.cycleModeToAimz(
+        this.container.table.balls,
+        this.container.table.cue.aim
+      )
+    } else {
+      camera.cycleMode(this.container.table.balls, this.container.table.cue.aim)
+    }
     this.container.lastEventTime = performance.now()
   }
 
