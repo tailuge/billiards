@@ -42,7 +42,8 @@ describe("MessagingMessageRelay", () => {
 
     expect(mockClient.joinTable).toHaveBeenCalledWith(
       "test-table",
-      "test-client"
+      "test-client",
+      { onMessage: expect.any(Function) }
     )
   })
 
@@ -67,7 +68,8 @@ describe("MessagingMessageRelay", () => {
     relay.subscribe("test-chan", gameCallback)
 
     // Simulate the library delivering a TableMessage envelope
-    const registeredHandler = mockTable.onMessage.mock.calls[0][0]
+    const registeredHandler =
+      mockClient.joinTable.mock.calls[0][2].onMessage
     const envelope = {
       type: "MyEvent",
       senderId: "other-client",
@@ -85,7 +87,8 @@ describe("MessagingMessageRelay", () => {
     const gameCallback = jest.fn()
     relay.subscribe("test-chan", gameCallback)
 
-    const registeredHandler = mockTable.onMessage.mock.calls[0][0]
+    const registeredHandler =
+      mockClient.joinTable.mock.calls[0][2].onMessage
     registeredHandler({ type: "table:leave", senderId: "other", data: {} })
 
     expect(gameCallback).not.toHaveBeenCalled()

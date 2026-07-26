@@ -1,4 +1,4 @@
-import { MessagingClient, Table } from "@tailuge/messaging"
+import { MessagingClient, Table, TableMessage } from "@tailuge/messaging"
 import { MessageRelay } from "./messagerelay"
 import { Session } from "./session"
 import { NetworkLogger } from "../../utils/network-logger"
@@ -32,18 +32,25 @@ export class MessagingMessageRelay implements MessageRelay {
   ): Promise<void> {
     if (this.table) return
     const session = Session.getInstance()
-    this.table = session.spectator
-      ? await messagingClient.spectateTable(tableId, session.clientId)
-      : await messagingClient.joinTable(tableId, session.clientId)
-    this.table.onOpponentLeft(() => {
-      NetworkLogger.logGame(`opponent left: table ${tableId}`)
-      onOpponentLeft?.()
-    })
-    this.table.onMessage((msg) => {
+    // Register the message listener before join() subscribes so that messages
+    // arriving during the join handshake are not dropped to an empty listener
+    // array. Requires @tailuge/messaging >= 1.36.0 (onMessage in options).
+    const onMessage = (msg: TableMessage) => {
       if (msg.type !== "table:leave") {
         const data = JSON.stringify(msg.data)
         for (const cb of this.pendingCallbacks) cb(data)
       }
+    }
+    this.table = session.spectator
+      ? await messagingClient.spectateTable(tableId, session.clientId, {
+          onMessage,
+        })
+      : await messagingClient.joinTable(tableId, session.clientId, {
+          onMessage,
+        })
+    this.table.onOpponentLeft(() => {
+      NetworkLogger.logGame(`opponent left: table ${tableId}`)
+      onOpponentLeft?.()
     })
   }
 
