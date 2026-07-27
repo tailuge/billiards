@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shot Trajectories</title>
+<style>
+  body {
+    margin: 0;
+    padding: 16px;
+    background: #111;
+    color: #ddd;
+    font-family: system-ui, sans-serif;
+  }
+  h1 {
+    font-size: 16px;
+    margin: 0 0 12px;
+  }
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .shot {
+    border: 1px solid #333;
+    border-radius: 4px;
+    background: #1a1a1a;
+    padding: 1px;
+  }
+  .shot svg {
+    display: block;
+  }
+  .shot .label {
+    font-size: 10px;
+    text-align: center;
+    margin-top: 2px;
+    color: #888;
+  }
+</style>
+</head>
+<body>
+<h1>Shot Trajectories</h1>
+<div class="grid" id="grid"></div>
+<script type="module">
+  const BALL_COLORS = { '1': '#f0f0f0', '2': '#f5c842', '3': '#e04040' }
+  const BALL_RADIUS = 0.03275
+  const TW = BALL_RADIUS * 92.36  /* full table width  ~3.025m */
+  const TH = BALL_RADIUS * 46.18  /* full table height ~1.513m */
+  const PAD = 0
+  const VB = [-(TW/2+PAD), -(TH/2+PAD), TW+2*PAD, TH+2*PAD]  /* viewBox */
+
+  const W = 200, H = 100
+
+  function renderShot(shot) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    svg.setAttribute('viewBox', VB.join(' '))
+    svg.setAttribute('width', W)
+    svg.setAttribute('height', H)
+
+    /* table rectangle */
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.setAttribute('x', -TW/2)
+    rect.setAttribute('y', -TH/2)
+    rect.setAttribute('width', TW)
+    rect.setAttribute('height', TH)
+    rect.setAttribute('fill', '#1a3a1a')
+    rect.setAttribute('stroke', '#2a5a2a')
+    rect.setAttribute('stroke-width', '0.01')
+    svg.appendChild(rect)
+
+    for (const [id, ball] of Object.entries(shot.balls)) {
+      const color = BALL_COLORS[id] || '#888'
+      const n = ball.t.length
+      if (n < 2) continue
+
+      /* polyline for trajectory */
+      const pts = []
+      for (let i = 0; i < n; i++) {
+        pts.push(`${ball.x[i].toFixed(6)},${ball.y[i].toFixed(6)}`)
+      }
+      const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline')
+      poly.setAttribute('points', pts.join(' '))
+      poly.setAttribute('fill', 'none')
+      poly.setAttribute('stroke', color)
+      poly.setAttribute('stroke-width', '0.008')
+      poly.setAttribute('stroke-linecap', 'round')
+      poly.setAttribute('stroke-linejoin', 'round')
+      svg.appendChild(poly)
+
+      /* start dot */
+      const start = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+      start.setAttribute('cx', ball.x[0])
+      start.setAttribute('cy', ball.y[0])
+      start.setAttribute('r', BALL_RADIUS)
+      start.setAttribute('fill', color)
+      start.setAttribute('stroke', '#000')
+      start.setAttribute('stroke-width', '0.004')
+      svg.appendChild(start)
+    }
+
+    return svg
+  }
+
+  const resp = await fetch('trajectories.json')
+  const shots = await resp.json()
+
+  const grid = document.getElementById('grid')
+  for (const shot of shots) {
+    const wrap = document.createElement('div')
+    wrap.className = 'shot'
+
+    const svg = renderShot(shot)
+    wrap.appendChild(svg)
+
+    const label = document.createElement('div')
+    label.className = 'label'
+    label.textContent = `shot ${shot.id}`
+    wrap.appendChild(label)
+
+    grid.appendChild(wrap)
+  }
+</script>
+</body>
+</html>
