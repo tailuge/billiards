@@ -36,6 +36,29 @@
     margin-top: 2px;
     color: #888;
   }
+  .shot:hover {
+    border-color: #666;
+    cursor: pointer;
+  }
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .overlay.open { display: flex; }
+  .overlay svg { display: block; }
+  .overlay .close {
+    color: #aaa;
+    font-size: 14px;
+    margin-top: 8px;
+    cursor: pointer;
+  }
+  .overlay .close:hover { color: #fff; }
 </style>
 </head>
 <body>
@@ -50,12 +73,13 @@
   const VB = [-(TW/2+PAD), -(TH/2+PAD), TW+2*PAD, TH+2*PAD]  /* viewBox */
 
   const W = 200, H = 100
+  const BIG_W = 800, BIG_H = 400
 
-  function renderShot(shot) {
+  function renderShot(shot, w, h) {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
     svg.setAttribute('viewBox', VB.join(' '))
-    svg.setAttribute('width', W)
-    svg.setAttribute('height', H)
+    svg.setAttribute('width', w)
+    svg.setAttribute('height', h)
 
     /* table rectangle */
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -76,7 +100,7 @@
       /* polyline for trajectory */
       const pts = []
       for (let i = 0; i < n; i++) {
-        pts.push(`${ball.x[i].toFixed(6)},${ball.y[i].toFixed(6)}`)
+        pts.push(`${ball.x[i]},${-ball.y[i]}`)
       }
       const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline')
       poly.setAttribute('points', pts.join(' '))
@@ -90,7 +114,7 @@
       /* start dot */
       const start = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
       start.setAttribute('cx', ball.x[0])
-      start.setAttribute('cy', ball.y[0])
+      start.setAttribute('cy', -ball.y[0])
       start.setAttribute('r', BALL_RADIUS)
       start.setAttribute('fill', color)
       start.setAttribute('stroke', '#000')
@@ -109,7 +133,7 @@
     const wrap = document.createElement('div')
     wrap.className = 'shot'
 
-    const svg = renderShot(shot)
+    const svg = renderShot(shot, W, H)
     wrap.appendChild(svg)
 
     const label = document.createElement('div')
@@ -117,8 +141,102 @@
     label.textContent = `shot ${shot.id}`
     wrap.appendChild(label)
 
+    wrap.addEventListener('click', () => openOverlay(shot))
+
     grid.appendChild(wrap)
   }
+
+  /* overlay */
+  const overlay = document.createElement('div')
+  overlay.className = 'overlay'
+  overlay.innerHTML = '<div class="close">click anywhere or press Esc to close</div>'
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) closeOverlay()
+  })
+  document.body.appendChild(overlay)
+
+  function findMover(shot) {
+    let moverId = null, minT1 = Infinity
+    for (const [id, ball] of Object.entries(shot.balls)) {
+      if (ball.t.length >= 2 && ball.t[1] < minT1) {
+        minT1 = ball.t[1]
+        moverId = id
+      }
+    }
+    return moverId
+  }
+
+  function remapShot(shot, moverId) {
+    if (moverId === '1') return shot
+    const balls = { ...shot.balls }
+    const mover = balls[moverId]
+    const ball1 = balls['1']
+    balls['1'] = mover
+    balls[moverId] = ball1
+    return { ...shot, balls }
+  }
+
+  function launchThree(shot) {
+    const ball1 = shot.balls['1']
+    if (!ball1) return
+    const idx5 = Math.min(5, ball1.t.length - 1)
+    const dx = ball1.x[idx5] - ball1.x[1]
+    const dy = ball1.y[idx5] - ball1.y[1]
+    const dt = ball1.t[idx5] - ball1.t[1]
+    const angle = Math.atan2(dy, dx)
+    const speed = dt > 0 ? Math.hypot(dx, dy) / dt : 0
+    const init = []
+    for (const id of ['1', '2', '3']) {
+      const b = shot.balls[id]
+      init.push(b ? b.x[0] : 0, b ? b.y[0] : 0)
+    }
+    const state = {
+      init,
+      shots: [{
+        type: 'AIM',
+        offset: { x: 0, y: 0, z: 0 },
+        angle,
+        power: speed,
+        pos: { x: ball1.x[0], y: ball1.y[0], z: 0 },
+        i: 0
+      }]
+    }
+    const url = `../diagrams/three.html?s=${encodeURIComponent(JSON.stringify(state))}`
+    window.open(url, '_blank')
+  }
+
+  function openOverlay(shot) {
+    const moverId = findMover(shot)
+    const remapped = remapShot(shot, moverId)
+    const big = renderShot(remapped, BIG_W, BIG_H)
+    const wrap = document.createElement('div')
+    wrap.className = 'diagram'
+    wrap.style.position = 'relative'
+    wrap.appendChild(big)
+    const playBtn = document.createElement('button')
+    playBtn.style.position = 'absolute'
+    playBtn.style.bottom = '0'
+    playBtn.style.right = '0'
+    playBtn.textContent = '▶'
+    playBtn.addEventListener('click', e => {
+      e.stopPropagation()
+      launchThree(remapped)
+    })
+    wrap.appendChild(playBtn)
+    /* remove old diagram if any */
+    const old = overlay.querySelector('.diagram')
+    if (old) old.remove()
+    overlay.insertBefore(wrap, overlay.firstChild)
+    overlay.classList.add('open')
+  }
+
+  function closeOverlay() {
+    overlay.classList.remove('open')
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeOverlay()
+  })
 </script>
 </body>
 </html>
