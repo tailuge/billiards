@@ -4,7 +4,7 @@ import { TableGeometry } from "../../src/view/tablegeometry"
 import { TableMesh } from "../../src/view/tablemesh"
 import { Cushion } from "../../src/model/physics/cushion"
 import { Knuckle } from "../../src/model/physics/knuckle"
-import { Vector3 } from "three"
+import { Vector3, Vector3Like } from "three"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
 import { R } from "../../src/model/physics/constants"
 import { bounceHan, bounceHanBlend } from "../../src/model/physics/physics"
@@ -22,7 +22,7 @@ afterEach(() => {
   globalThis.console = jestConsole
 })
 
-function bounceInXWithSpin(rvel) {
+function bounceInXWithSpin(rvel: Vector3) {
   const pos = new Vector3(TableGeometry.tableX, 0, 0)
   const ball = new Ball(pos)
   ball.vel.x = 1
