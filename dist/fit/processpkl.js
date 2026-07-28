@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const INPUT = path.join(__dirname, "20221225_2_Match_Ersin_Cemal.json");
+const INPUT = process.argv[2];
 const OUTPUT = path.join(__dirname, "trajectories.json");
 
 // Snap to 50 Hz (0.02 s intervals)
