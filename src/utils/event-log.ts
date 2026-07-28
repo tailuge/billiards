@@ -16,7 +16,12 @@ export function logNetEvent(
   if (session.botMode || session.spectator) {
     return
   }
-  if (event.type === EventType.AIM) {
+  if (
+    event.type === EventType.AIM ||
+    event.type === EventType.STARTAIM ||
+    event.type === EventType.WATCHAIM ||
+    event.type === EventType.CHAT
+  ) {
     return
   }
   NetworkLogger.logGame(
