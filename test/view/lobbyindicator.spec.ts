@@ -288,7 +288,6 @@ describe("LobbyIndicator", () => {
     mockOnChatMessage.mockClear()
 
     // 2. Simulate websocket/lobby reconnecting
-    const mockLobby = (indicator as any).lobby
     const joinLobbyCall = (indicator as any).messagingClient.joinLobby
     const joinLobbyOptions = joinLobbyCall.mock.calls[0][1]
 

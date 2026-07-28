@@ -203,11 +203,11 @@ describe("Table", () => {
     const c = table.shotStartConditions!
     expect(c.balls).to.deep.equal(expectedBalls)
     expect(c.cueBallId).to.equal(0)
-    expect(c.angle).to.equal(0.42)
-    expect(c.power).to.equal(1.7)
-    expect(c.offsetX).to.equal(0.05)
-    expect(c.offsetY).to.equal(-0.08)
-    expect(c.elevation).to.equal(0.3)
+    expect(c.angle).to.closeTo(0.42, 1e-9)
+    expect(c.power).to.closeTo(1.7, 1e-9)
+    expect(c.offsetX).to.closeTo(0.05, 1e-9)
+    expect(c.offsetY).to.closeTo(-0.08, 1e-9)
+    expect(c.elevation).to.closeTo(0.3, 1e-9)
     done()
   })
 
