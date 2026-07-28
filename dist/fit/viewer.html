@@ -102,7 +102,7 @@
           </select>
           <select
             id="trajectoryShots"
-            style="font-size: 11px; font-family: monospace; width: 15ch"
+            style="font-size: 11px; font-family: monospace; width: 18ch"
           >
             <option value="">trajectory shots</option>
           </select>
@@ -230,6 +230,20 @@
         stronge_μ: 0.25,
         warpClearanceR: 2.05,
       }
+      function colorCurrent(el) {
+        if (!el) return
+        const sys = parseFloat(el.dataset.sys)
+        const cur = parseFloat(el.textContent)
+        if (isNaN(sys) || isNaN(cur)) return
+        if (Math.abs(cur - sys) < 1e-9) {
+          el.style.background = ""
+        } else if (cur > sys) {
+          el.style.background = "#ffcccc"
+        } else {
+          el.style.background = "#cce5ff"
+        }
+      }
+
       function buildParamRows(sim) {
         const tbody = document.getElementById("paramRows")
         tbody.innerHTML = ""
@@ -267,20 +281,25 @@
               max = val + 0.1
             }
           }
+          const sysVal = defaults.hasOwnProperty(name) ? defaults[name] : val
           tr.innerHTML = `
       <td><input type="checkbox" data-name="${name}"></td>
       <td>${name}</td>
       <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(3)}" step="any" style="width:56px"></td>
       <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(3)}" step="any" style="width:56px"></td>
-      <td>${defaults.hasOwnProperty(name) ? defaults[name].toFixed(4) : val.toFixed(4)}</td>
-      <td><span id="cur-${name.replace(/\./g, "-")}">${val.toFixed(4)}</span></td>`
+      <td>${sysVal.toFixed(4)}</td>
+      <td><span id="cur-${name.replace(/\./g, "-")}" data-sys="${sysVal}">${val.toFixed(4)}</span></td>`
           tbody.appendChild(tr)
+          colorCurrent(tr.querySelector('span[id^="cur-"]'))
         }
       }
 
       function updateParamDisplay(name, val) {
         const el = document.getElementById(`cur-${name.replace(/\./g, "-")}`)
-        if (el) el.textContent = typeof val === "number" ? val.toFixed(5) : val
+        if (el) {
+          el.textContent = typeof val === "number" ? val.toFixed(4) : val
+          colorCurrent(el)
+        }
       }
 
       function getSpecs() {
@@ -338,6 +357,7 @@
         document.getElementById("report").textContent = loadedData.report ?? ""
         buildParamRows(loadedData.sim)
         updateDrawing()
+        onRunSim()
       }
 
       const urlFile = new URLSearchParams(window.location.search).get("file")
@@ -378,8 +398,10 @@
           )
           status.textContent = `Shot done in ${Math.round(performance.now() - t0)}ms — ${result.frames.length} steps`
           simTracks = result.simTracks
-          if (result.rmse !== null)
+          if (result.rmse !== null) {
             status.textContent += `  RMSE=${(result.rmse * 100).toFixed(1)}cm`
+            document.getElementById("optStatus").textContent = `Initial RMSE: ${(result.rmse * 100).toFixed(2)}cm`
+          }
           updateDrawing()
         } catch (err) {
           status.textContent = `Error: ${err.message}`
