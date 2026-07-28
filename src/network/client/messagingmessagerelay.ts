@@ -35,18 +35,24 @@ export class MessagingMessageRelay implements MessageRelay {
     // Register the message listener before join() subscribes so that messages
     // arriving during the join handshake are not dropped to an empty listener
     // array. Requires @tailuge/messaging >= 1.36.0 (onMessage in options).
+    // onBothJoined must be registered in the constructor (>= 1.37.0).
     const onMessage = (msg: TableMessage) => {
       if (msg.type !== "table:leave") {
         const data = JSON.stringify(msg.data)
         for (const cb of this.pendingCallbacks) cb(data)
       }
     }
+    const onBothJoined = () => {
+      NetworkLogger.logGame(`net: both joined table ${tableId}`)
+    }
     this.table = session.spectator
       ? await messagingClient.spectateTable(tableId, session.clientId, {
           onMessage,
+          onBothJoined,
         })
       : await messagingClient.joinTable(tableId, session.clientId, {
           onMessage,
+          onBothJoined,
         })
     this.table.onOpponentLeft(() => {
       NetworkLogger.logGame(`opponent left: table ${tableId}`)

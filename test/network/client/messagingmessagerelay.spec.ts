@@ -43,7 +43,7 @@ describe("MessagingMessageRelay", () => {
     expect(mockClient.joinTable).toHaveBeenCalledWith(
       "test-table",
       "test-client",
-      { onMessage: expect.any(Function) }
+      { onMessage: expect.any(Function), onBothJoined: expect.any(Function) }
     )
   })
 
