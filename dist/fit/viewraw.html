@@ -49,12 +49,21 @@
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        box-sizing: border-box;
+        padding: 16px;
       }
       .overlay.open {
         display: flex;
       }
+      .overlay .diagram {
+        width: 100%;
+        max-width: 800px;
+        box-sizing: border-box;
+      }
       .overlay svg {
         display: block;
+        width: 100%;
+        height: auto;
       }
       .overlay .close {
         color: #aaa;
