@@ -137,6 +137,82 @@ describe("MessagingMessageRelay", () => {
     expect(mockClient.joinTable).toHaveBeenCalledTimes(1)
   })
 
+  it("queues publishes during connect() and flushes them once table is ready (slow-party timing fix)", async () => {
+    // This test simulates the scenario where:
+    // 1. Slow party (mobile, &first) calls connect(), which calls joinTable()
+    // 2. joinTable() internally awaits table.join() which awaits publish("joined")
+    // 3. During that await, the WebSocket is live and BeginEvent from fast party arrives
+    // 4. handleBegin fires, tries to send WatchEvent via publish()
+    // 5. publish() sees this.table is null → queues the publish instead of dropping it
+    // 6. Once connect() completes, the queued WatchEvent is flushed → fast party gets it
+
+    const relay = new MessagingMessageRelay()
+
+    // Simulate initGameLoop subscribing the netEvent callback before connectRelay
+    const gameCallback = jest.fn()
+    relay.subscribe("test-table", gameCallback)
+
+    // Make joinTable capture onMessage but NOT resolve yet (simulating slow "joined" publish)
+    let capturedOnMessage: Function | undefined
+    let resolveJoin: (value: any) => void
+    mockClient.joinTable.mockImplementationOnce((_tableId, _clientId, options) => {
+      capturedOnMessage = options.onMessage
+      return new Promise((resolve) => {
+        resolveJoin = resolve
+      })
+    })
+
+    // Start connect but DON'T await — leaves this.table null (like slow connection)
+    const connectPromise = relay.connect(mockClient, "test-table")
+
+    // joinTable was called, so onMessage was captured (registered with Table's messageListeners)
+    expect(mockClient.joinTable).toHaveBeenCalled()
+
+    // Simulate BeginEvent arriving via the Table's WebSocket → onMessage
+    // Receiving works fine: onMessage → pendingCallbacks → gameCallback
+    capturedOnMessage!({
+      type: "BEGIN",
+      senderId: "other-client",
+      data: { type: "BEGIN", clientId: "other-client" },
+    })
+    expect(gameCallback).toHaveBeenCalledWith(
+      JSON.stringify({ type: "BEGIN", clientId: "other-client" })
+    )
+
+    // Game processes BeginEvent, tries to respond with WatchEvent via publish()
+    relay.publish(
+      "test-table",
+      JSON.stringify({ type: "WATCHAIM", json: { balls: [] } })
+    )
+    await Promise.resolve()
+
+    // publish is queued — this.table is still null, but nothing is dropped
+    expect((relay as any).table).toBeNull()
+    expect(mockTable.publish).not.toHaveBeenCalled()
+
+    // After connect() resolves, the queued publish is flushed automatically
+    resolveJoin!(mockTable)
+    await connectPromise
+
+    // The queued WatchEvent from above is now published
+    expect(mockTable.publish).toHaveBeenCalledWith("WATCHAIM", {
+      type: "WATCHAIM",
+      json: { balls: [] },
+    })
+
+    // Subsequent publishes work normally
+    mockTable.publish.mockClear()
+    relay.publish(
+      "test-table",
+      JSON.stringify({ type: "WATCHAIM", json: { balls: [] } })
+    )
+    await Promise.resolve()
+    expect(mockTable.publish).toHaveBeenCalledWith("WATCHAIM", {
+      type: "WATCHAIM",
+      json: { balls: [] },
+    })
+  })
+
   describe("awaitBothJoined", () => {
     beforeEach(() => {
       mockTable.bothJoined = undefined

@@ -6,6 +6,11 @@ import { NetworkLogger } from "../../utils/network-logger"
 export class MessagingMessageRelay implements MessageRelay {
   private table: Table | null = null
   private pendingCallbacks: Array<(message: string) => void> = []
+  private pendingPublishes: Array<{
+    channel: string
+    message: string
+    prefix?: string
+  }> = []
 
   constructor() {}
 
@@ -45,19 +50,31 @@ export class MessagingMessageRelay implements MessageRelay {
     const onBothJoined = () => {
       NetworkLogger.logGame(`net: both joined table ${tableId}`)
     }
-    this.table = session.spectator
-      ? await messagingClient.spectateTable(tableId, session.clientId, {
-          onMessage,
-          onBothJoined,
-        })
-      : await messagingClient.joinTable(tableId, session.clientId, {
-          onMessage,
-          onBothJoined,
-        })
-    this.table.onOpponentLeft(() => {
-      NetworkLogger.logGame(`opponent left: table ${tableId}`)
-      onOpponentLeft?.()
-    })
+    try {
+      this.table = session.spectator
+        ? await messagingClient.spectateTable(tableId, session.clientId, {
+            onMessage,
+            onBothJoined,
+          })
+        : await messagingClient.joinTable(tableId, session.clientId, {
+            onMessage,
+            onBothJoined,
+          })
+      this.table.onOpponentLeft(() => {
+        NetworkLogger.logGame(`opponent left: table ${tableId}`)
+        onOpponentLeft?.()
+      })
+
+      // Flush any publishes that were queued while connect was in-flight.
+      // Without this, a slow connect() (e.g. mobile with &first) would drop
+      // the WatchEvent sent in response to the opponent's BeginEvent, because
+      // the WebSocket is live before this.table is assigned.
+      for (const pending of this.pendingPublishes) {
+        this.publish(pending.channel, pending.message, pending.prefix)
+      }
+    } finally {
+      this.pendingPublishes = []
+    }
   }
 
   subscribe(
@@ -69,7 +86,14 @@ export class MessagingMessageRelay implements MessageRelay {
   }
 
   publish(_channel: string, message: string, _prefix?: string): void {
-    if (!this.table) return
+    if (!this.table) {
+      this.pendingPublishes.push({
+        channel: _channel,
+        message,
+        prefix: _prefix,
+      })
+      return
+    }
     let type = "unknown"
     let data: unknown = message
     try {
