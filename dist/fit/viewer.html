@@ -100,6 +100,12 @@
             <option value="shot675.json">shot675</option>
             <option value="shot729.json">shot729</option>
           </select>
+          <select
+            id="trajectoryShots"
+            style="font-size: 11px; font-family: monospace; width: 15ch"
+          >
+            <option value="">trajectory shots</option>
+          </select>
           <label style="display: flex; align-items: center; gap: 1px"
             ><input type="checkbox" id="trackAll" />track all</label
           >
@@ -302,7 +308,11 @@
         if (!file) return
         loadedFile = file.name
         const reader = new FileReader()
-        reader.onload = (ev) => loadData(JSON.parse(ev.target.result))
+        reader.onload = (ev) => {
+          loadData(JSON.parse(ev.target.result))
+          const trajSelect = document.getElementById("trajectoryShots")
+          if (trajSelect) trajSelect.value = ""
+        }
         reader.readAsText(file)
       }
 
@@ -543,12 +553,136 @@
         loadedFile = file
         fetch("./" + file)
           .then((r) => r.json())
-          .then(loadData)
+          .then((data) => {
+            loadData(data)
+            const trajSelect = document.getElementById("trajectoryShots")
+            if (trajSelect) trajSelect.value = ""
+          })
           .catch((err) => {
             document.getElementById("status").textContent =
               "Failed to load " + file
           })
         e.target.value = ""
+      }
+
+      function convertTrajectoryShot(shot) {
+        let moverId = null
+        let minT1 = Infinity
+        for (const [id, ball] of Object.entries(shot.balls)) {
+          if (ball.t.length >= 2 && ball.t[1] < minT1) {
+            minT1 = ball.t[1]
+            moverId = id
+          }
+        }
+        if (moverId === null) {
+          moverId = Object.keys(shot.balls)[0] || "1"
+        }
+
+        const otherIds = Object.keys(shot.balls).filter((id) => id !== moverId).sort()
+        const ballMapping = {}
+        ballMapping[moverId] = 0
+        if (otherIds[0] !== undefined) ballMapping[otherIds[0]] = 1
+        if (otherIds[1] !== undefined) ballMapping[otherIds[1]] = 2
+
+        const truth = []
+        for (const [origId, b] of Object.entries(shot.balls)) {
+          const ballId = ballMapping[origId]
+          for (let i = 0; i < b.t.length; i++) {
+            truth.push({
+              ball: ballId,
+              t: b.t[i],
+              x: b.x[i],
+              y: b.y[i],
+            })
+          }
+        }
+        truth.sort((a, b) => {
+          if (a.t !== b.t) return a.t - b.t
+          return a.ball - b.ball
+        })
+
+        const balls = []
+        for (const [origId, b] of Object.entries(shot.balls)) {
+          const ballId = ballMapping[origId]
+          balls.push({
+            id: ballId,
+            pos: {
+              x: b.x[0],
+              y: b.y[0],
+              z: 0,
+            },
+          })
+        }
+        balls.sort((a, b) => a.id - b.id)
+
+        const cueBall = shot.balls[moverId]
+        let angle = 0
+        let power = 0
+        if (cueBall && cueBall.t.length >= 2) {
+          const t0_idx = cueBall.t.length > 1 ? 1 : 0
+          const idx5 = Math.min(5, cueBall.t.length - 1)
+          const dx = cueBall.x[idx5] - cueBall.x[t0_idx]
+          const dy = cueBall.y[idx5] - cueBall.y[t0_idx]
+          const dt = cueBall.t[idx5] - cueBall.t[t0_idx]
+          angle = Math.atan2(dy, dx)
+          power = dt > 0 ? Math.hypot(dx, dy) / dt : 0
+        }
+
+        const sim = {
+          ruleType: "threecushion",
+          cushionModel: "mathavan",
+          shot: {
+            cueBallId: 0,
+            angle: angle,
+            power: power,
+            offset: { x: 0, y: 0 },
+            elevation: 0,
+          },
+          params: { ...defaults },
+          stepSize: 0.001953125,
+          maxIterations: 20000,
+          balls: balls,
+        }
+
+        return {
+          source: `trajectories.json (shot ${shot.id})`,
+          report: `Converted Shot ID ${shot.id}\nCue ball: ${moverId} -> 0\nOthers: ${otherIds.join(", ")}`,
+          sim: sim,
+          truth: truth,
+        }
+      }
+
+      let trajectories = null
+      fetch("./trajectories.json")
+        .then((r) => r.json())
+        .then((data) => {
+          trajectories = data
+          const select = document.getElementById("trajectoryShots")
+          select.innerHTML = '<option value="">trajectory shots</option>'
+          data.forEach((shot, index) => {
+            const opt = document.createElement("option")
+            opt.value = index
+            opt.textContent = `Shot ${shot.id ?? index}`
+            select.appendChild(opt)
+          })
+        })
+        .catch((err) => {
+          console.warn("Failed to load trajectories.json", err)
+        })
+
+      document.getElementById("trajectoryShots").onchange = (e) => {
+        const indexVal = e.target.value
+        if (indexVal === "") return
+        const idx = parseInt(indexVal, 10)
+        if (isNaN(idx) || !trajectories || !trajectories[idx]) return
+
+        const shot = trajectories[idx]
+        loadedFile = `trajectories.json [Shot ${shot.id ?? idx}]`
+        const converted = convertTrajectoryShot(shot)
+        loadData(converted)
+
+        const examplesSelect = document.getElementById("examples")
+        if (examplesSelect) examplesSelect.value = ""
       }
     </script>
   </body>
