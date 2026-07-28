@@ -11,6 +11,7 @@ export class MessagingMessageRelay implements MessageRelay {
     message: string
     prefix?: string
   }> = []
+  private lastProcessedTimestamp: number = -1
 
   constructor() {}
 
@@ -43,6 +44,13 @@ export class MessagingMessageRelay implements MessageRelay {
     // onBothJoined must be registered in the constructor (>= 1.37.0).
     const onMessage = (msg: TableMessage) => {
       if (msg.type !== "table:leave") {
+        const timestamp = msg.meta?.ts
+        if (typeof timestamp === "number") {
+          if (timestamp < this.lastProcessedTimestamp) {
+            return
+          }
+          this.lastProcessedTimestamp = timestamp
+        }
         const data = JSON.stringify(msg.data)
         for (const cb of this.pendingCallbacks) cb(data)
       }
