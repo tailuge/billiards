@@ -58,4 +58,5 @@ describe("Camera", () => {
     expect((camera as any).distance).to.equal(initialDistance)
     expect(camera.savedDistance).to.be.undefined
   })
+
 })
