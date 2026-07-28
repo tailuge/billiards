@@ -79,6 +79,53 @@ describe("MessagingMessageRelay", () => {
     expect(gameCallback).toHaveBeenCalledWith(JSON.stringify({ key: "value" }))
   })
 
+  it("should deduplicate messages based on meta.ts timestamp", async () => {
+    const relay = new MessagingMessageRelay()
+    await relay.connect(mockClient, "test-table")
+
+    const gameCallback = jest.fn()
+    relay.subscribe("test-chan", gameCallback)
+
+    const registeredHandler = mockClient.joinTable.mock.calls[0][2].onMessage
+
+    // First message with meta.ts = 100
+    registeredHandler({
+      type: "MyEvent",
+      senderId: "other-client",
+      data: { key: "one" },
+      meta: { ts: 100 },
+    })
+    expect(gameCallback).toHaveBeenCalledWith(JSON.stringify({ key: "one" }))
+
+    // Message with same timestamp (meta.ts = 100) -> allowed (ts < lastTs check)
+    registeredHandler({
+      type: "MyEvent",
+      senderId: "other-client",
+      data: { key: "duplicate" },
+      meta: { ts: 100 },
+    })
+    expect(gameCallback).toHaveBeenCalledWith(JSON.stringify({ key: "duplicate" }))
+
+    // Older message (meta.ts = 99) -> ignored/filtered
+    gameCallback.mockClear()
+    registeredHandler({
+      type: "MyEvent",
+      senderId: "other-client",
+      data: { key: "old" },
+      meta: { ts: 99 },
+    })
+    expect(gameCallback).not.toHaveBeenCalled()
+
+    // Newer message (meta.ts = 101) -> allowed
+    registeredHandler({
+      type: "MyEvent",
+      senderId: "other-client",
+      data: { key: "new" },
+      meta: { ts: 101 },
+    })
+    expect(gameCallback).toHaveBeenCalledWith(JSON.stringify({ key: "new" }))
+  })
+
   it("should not deliver messages with type 'table:leave' to subscribers", async () => {
     const relay = new MessagingMessageRelay()
     await relay.connect(mockClient, "test-table")
