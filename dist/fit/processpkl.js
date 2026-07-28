@@ -39,20 +39,56 @@ function normY(y) {
   return +((y - Y_MID) * Y_SCALE).toFixed(3);
 }
 
+function dedensify(tArr, xArr, yArr) {
+  const keptT = [];
+  const keptX = [];
+  const keptY = [];
+
+  if (tArr.length > 0) {
+    keptT.push(tArr[0]);
+    keptX.push(xArr[0]);
+    keptY.push(yArr[0]);
+
+    for (let idx = 1; idx < tArr.length; idx++) {
+      const cx = xArr[idx];
+      const cy = yArr[idx];
+      const lx = keptX[keptX.length - 1];
+      const ly = keptY[keptY.length - 1];
+
+      // Distance threshold: 2mm (0.002 meters)
+      const dist = Math.hypot(cx - lx, cy - ly);
+      if (dist >= 0.002) {
+        keptT.push(tArr[idx]);
+        keptX.push(cx);
+        keptY.push(cy);
+      }
+    }
+  }
+
+  return { t: keptT, x: keptX, y: keptY };
+}
+
 function processShot(shot, i) {
   const balls = {};
   for (const [ballId, ball] of Object.entries(shot.balls)) {
-    balls[ballId] = {
-      t: ball.t.map(snapT),
-      x: ball.x.map(normX),
-      y: ball.y.map(normY),
-    };
+    const tMapped = ball.t.map(snapT);
+    const xMapped = ball.x.map(normX);
+    const yMapped = ball.y.map(normY);
+
+    balls[ballId] = dedensify(tMapped, xMapped, yMapped);
   }
   return { id: i, balls };
 }
 
-const raw = JSON.parse(fs.readFileSync(INPUT, "utf-8"));
-const processed = raw.map(processShot);
+if (require.main === module) {
+  const raw = JSON.parse(fs.readFileSync(INPUT, "utf-8"));
+  const processed = raw.map(processShot);
 
-fs.writeFileSync(OUTPUT, JSON.stringify(processed));
-console.log(`Wrote ${processed.length} shots to ${OUTPUT}`);
+  fs.writeFileSync(OUTPUT, JSON.stringify(processed));
+  console.log(`Wrote ${processed.length} shots to ${OUTPUT}`);
+}
+
+module.exports = {
+  dedensify,
+  processShot,
+};
