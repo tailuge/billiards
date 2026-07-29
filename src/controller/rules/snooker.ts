@@ -185,6 +185,8 @@ export class Snooker implements Rules {
     scene.updateMatrixWorld(true)
 
     scene.traverse((child: any) => {
+      console.log(child.name || child.type, child.type || "—",
+        child.matrix ? child.matrix.elements : "no matrix")
       if (child.isMesh) {
         const mesh = child
         let geometry = mesh.geometry
