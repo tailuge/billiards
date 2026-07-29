@@ -1,6 +1,5 @@
 import { Vector3 } from "three"
 import { Session } from "../../network/client/session"
-import { R } from "../../model/physics/constants"
 
 import { WatchEvent } from "../../events/watchevent"
 import { Outcome } from "../../model/outcome"
@@ -160,10 +159,16 @@ export class Snooker implements Rules {
     const tableSize = TableConfig.tableSizeFromUrl()
     if (tableSize !== 12) return
 
-    const offsetX = 8.6 * R
-    const cutX = 10 * R
-
-    scene.updateMatrixWorld(true)
+    // Tunable: right/far quarter gets 2*stretch, middle half gets stretch, near quarter stays.
+    // Group position is adjusted to re-center the table automatically.
+    const stretchX = 1420
+    const stretchY = 700
+    const modelExtentX = 16000
+    const modelExtentY = 9200
+    const group = scene.children[0]
+    if (!group) return
+    const gsx = group.scale.x
+    const gsy = group.scale.y
 
     scene.traverse((child: any) => {
       if (child.isMesh) {
@@ -182,24 +187,30 @@ export class Snooker implements Rules {
         mesh.geometry = geometry
         const newPosition = geometry.attributes.position
 
-        const p = new Vector3()
         for (let i = 0; i < newPosition.count; i++) {
-          p.fromBufferAttribute(newPosition, i)
-          mesh.localToWorld(p)
-
-          if (p.x > cutX) {
-            p.x += offsetX
-          } else if (p.x < -cutX) {
-            p.x -= offsetX
+          const x = newPosition.getX(i)
+          const y = newPosition.getY(i)
+          if (x > modelExtentX * 0.75) {
+            newPosition.setX(i, x + 2 * stretchX)
+          } else if (x > modelExtentX * 0.25) {
+            newPosition.setX(i, x + stretchX)
           }
-          mesh.worldToLocal(p)
-          newPosition.setXYZ(i, p.x, p.y, p.z)
+          if (y > modelExtentY * 0.75) {
+            newPosition.setY(i, y + 2 * stretchY)
+          } else if (y > modelExtentY * 0.25) {
+            newPosition.setY(i, y + stretchY)
+          }
         }
         newPosition.needsUpdate = true
         geometry.computeBoundingBox()
         geometry.computeBoundingSphere()
       }
     })
+
+    // Re-center: vertex shifts move model center by ~stretch in local coords.
+    // Compensate by shifting the Group node back.
+    group.position.x -= stretchX * gsx
+    group.position.y -= stretchY * gsy
   }
 
   table(): Table {
