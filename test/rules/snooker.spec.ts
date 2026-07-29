@@ -8,7 +8,7 @@ import { Input } from "../../src/events/input"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
 import { R } from "../../src/model/physics/constants"
 import { Ball, State } from "../../src/model/ball"
-import { Vector3 } from "three"
+import { Vector3, Scene, Mesh, BufferGeometry, Float32BufferAttribute } from "three"
 import { PlayShot } from "../../src/controller/playshot"
 import { Aim } from "../../src/controller/aim"
 import { AimEvent } from "../../src/events/aimevent"
@@ -704,5 +704,80 @@ describe("Snooker", () => {
     markAllRedsPotted()
     snooker.previousPotRed = false
     expect(snooker.nextCandidateBall()!.id).to.be.within(1, 6)
+  })
+
+  describe("scaleTableModel for tableSize 12", () => {
+    it("stretches vertices correctly against 4 planes and leaves 0,0,0 unchanged", () => {
+      // 1. Set url query params to tableSize=12
+      globalThis.history.replaceState(null, "", "?tableSize=12")
+
+      // 2. Create mock scene and mesh with geometry
+      const scene = new Scene()
+      const geometry = new BufferGeometry()
+
+      // Define three vertices:
+      // A: (1, 1, 0) -> positive X, positive Y
+      // B: (-1, -1, 0) -> negative X, negative Y
+      // C: (0, 0, 0) -> exactly on the origin/planes
+      const vertices = new Float32Array([
+        1.0, 1.0, 0.0,
+        -1.0, -1.0, 0.0,
+        0.0, 0.0, 0.0
+      ])
+
+      geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3))
+      const mesh = new Mesh(geometry)
+      scene.add(mesh)
+
+      // 3. Call scaleTableModel
+      snooker.scaleTableModel(scene)
+
+      // 4. Calculate expected offsets
+      const sizeScale = 12 / 10
+      const expectedOffsetX = (sizeScale - 1) * R * 43
+      const expectedOffsetY = (sizeScale - 1) * R * 21
+
+      const position = geometry.attributes.position
+
+      // Vertex 0: (1, 1, 0) should be moved by +expectedOffsetX, +expectedOffsetY
+      expect(position.getX(0)).to.be.closeTo(1.0 + expectedOffsetX, 1e-6)
+      expect(position.getY(0)).to.be.closeTo(1.0 + expectedOffsetY, 1e-6)
+      expect(position.getZ(0)).to.equal(0.0)
+
+      // Vertex 1: (-1, -1, 0) should be moved by -expectedOffsetX, -expectedOffsetY
+      expect(position.getX(1)).to.be.closeTo(-1.0 - expectedOffsetX, 1e-6)
+      expect(position.getY(1)).to.be.closeTo(-1.0 - expectedOffsetY, 1e-6)
+      expect(position.getZ(1)).to.equal(0.0)
+
+      // Vertex 2: (0, 0, 0) should not move because d is not > 0 for any plane at 0,0,0
+      expect(position.getX(2)).to.equal(0.0)
+      expect(position.getY(2)).to.equal(0.0)
+      expect(position.getZ(2)).to.equal(0.0)
+
+      // Clean up search query
+      globalThis.history.replaceState(null, "", "?")
+    })
+
+    it("does nothing when tableSize is not 12", () => {
+      globalThis.history.replaceState(null, "", "?tableSize=10")
+
+      const scene = new Scene()
+      const geometry = new BufferGeometry()
+      const vertices = new Float32Array([
+        1.0, 1.0, 0.0
+      ])
+      geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3))
+      const mesh = new Mesh(geometry)
+      scene.add(mesh)
+
+      snooker.scaleTableModel(scene)
+
+      const position = geometry.attributes.position
+      expect(position.getX(0)).to.equal(1.0)
+      expect(position.getY(0)).to.equal(1.0)
+      expect(position.getZ(0)).to.equal(0.0)
+
+      globalThis.history.replaceState(null, "", "?")
+    })
   })
 })
