@@ -1,4 +1,4 @@
-import { Vector3, Plane } from "three"
+import { Vector3 } from "three"
 import { Session } from "../../network/client/session"
 import { R } from "../../model/physics/constants"
 
@@ -161,32 +161,11 @@ export class Snooker implements Rules {
     if (tableSize !== 12) return
 
     const offsetX = 8.6 * R
-    const offsetY = 4.3 * R
-
-    const planes = [
-      {
-        plane: new Plane().setFromNormalAndCoplanarPoint(
-          new Vector3(1, 0, 0),
-          new Vector3(10 * R, 0, 0)
-        ),
-        offset: offsetX,
-        label: "rightHalf (x>10R)",
-      },
-/*      {
-        plane: new Plane().setFromNormalAndCoplanarPoint(
-          new Vector3(-1, 0, 0),
-          new Vector3(-10 * R, 0, 0)
-        ),
-        offset: offsetX,
-        label: "leftHalf (x<-10R)",
-      },*/
-    ]
+    const cutX = 10 * R
 
     scene.updateMatrixWorld(true)
 
     scene.traverse((child: any) => {
-      console.log(child.name || child.type, child.type || "—",
-        child.matrix ? child.matrix.elements : "no matrix")
       if (child.isMesh) {
         const mesh = child
         let geometry = mesh.geometry
@@ -196,6 +175,10 @@ export class Snooker implements Rules {
 
         // Clone to avoid modifying shared geometry (GLTF shares geometry between meshes)
         geometry = geometry.clone()
+
+        if (geometry.index) {
+          geometry = geometry.toNonIndexed()
+        }
         mesh.geometry = geometry
         const newPosition = geometry.attributes.position
 
@@ -203,11 +186,11 @@ export class Snooker implements Rules {
         for (let i = 0; i < newPosition.count; i++) {
           p.fromBufferAttribute(newPosition, i)
           mesh.localToWorld(p)
-          for (const { plane, offset } of planes) {
-            const d = plane.distanceToPoint(p)
-            if (d > 0) {
-              p.addScaledVector(plane.normal, offset)
-            }
+
+          if (p.x > cutX) {
+            p.x += offsetX
+          } else if (p.x < -cutX) {
+            p.x -= offsetX
           }
           mesh.worldToLocal(p)
           newPosition.setXYZ(i, p.x, p.y, p.z)
