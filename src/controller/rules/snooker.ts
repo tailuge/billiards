@@ -1,5 +1,6 @@
-import { Vector3 } from "three"
+import { Vector3, Plane } from "three"
 import { Session } from "../../network/client/session"
+import { R } from "../../model/physics/constants"
 
 import { WatchEvent } from "../../events/watchevent"
 import { Outcome } from "../../model/outcome"
@@ -153,6 +154,49 @@ export class Snooker implements Rules {
 
   tableGeometry(): void {
     TableConfig.apply(this.rulename, TableConfig.tableSizeFromUrl())
+  }
+
+  scaleTableModel(scene: any): void {
+    const tableSize = TableConfig.tableSizeFromUrl()
+    if (tableSize !== 12) return
+
+    const sizeScale = tableSize / 10
+    const offsetX = (sizeScale - 1) * R * 43
+    const offsetY = (sizeScale - 1) * R * 21
+
+    const planes = [
+      { plane: new Plane(new Vector3(1, 0, 0), 0), offset: offsetX },
+      { plane: new Plane(new Vector3(-1, 0, 0), 0), offset: offsetX },
+      { plane: new Plane(new Vector3(0, 1, 0), 0), offset: offsetY },
+      { plane: new Plane(new Vector3(0, -1, 0), 0), offset: offsetY }
+    ]
+
+    scene.traverse((child: any) => {
+      if (child.isMesh) {
+        const mesh = child
+        const geometry = mesh.geometry
+        if (!geometry) return
+        const position = geometry.attributes.position
+        if (!position) return
+
+        const p = new Vector3()
+        for (let i = 0; i < position.count; i++) {
+          p.fromBufferAttribute(position, i)
+          for (const { plane, offset } of planes) {
+            const d = plane.distanceToPoint(p)
+            if (d > 0) {
+              p.addScaledVector(plane.normal, offset)
+            }
+          }
+          position.setXYZ(i, p.x, p.y, p.z)
+        }
+        position.needsUpdate = true
+        geometry.computeVertexNormals()
+      }
+    })
+
+    scene.updateMatrix()
+    scene.updateMatrixWorld()
   }
 
   table(): Table {
