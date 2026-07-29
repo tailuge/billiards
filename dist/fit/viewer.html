@@ -400,7 +400,8 @@
           simTracks = result.simTracks
           if (result.rmse !== null) {
             status.textContent += `  RMSE=${(result.rmse * 100).toFixed(1)}cm`
-            document.getElementById("optStatus").textContent = `Initial RMSE: ${(result.rmse * 100).toFixed(2)}cm`
+            document.getElementById("optStatus").textContent =
+              `Initial RMSE: ${(result.rmse * 100).toFixed(2)}cm`
           }
           updateDrawing()
         } catch (err) {
@@ -600,7 +601,9 @@
           moverId = Object.keys(shot.balls)[0] || "1"
         }
 
-        const otherIds = Object.keys(shot.balls).filter((id) => id !== moverId).sort()
+        const otherIds = Object.keys(shot.balls)
+          .filter((id) => id !== moverId)
+          .sort()
         const ballMapping = {}
         ballMapping[moverId] = 0
         if (otherIds[0] !== undefined) ballMapping[otherIds[0]] = 1

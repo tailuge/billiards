@@ -104,7 +104,9 @@ describe("MessagingMessageRelay", () => {
       data: { key: "duplicate" },
       meta: { ts: 100 },
     })
-    expect(gameCallback).toHaveBeenCalledWith(JSON.stringify({ key: "duplicate" }))
+    expect(gameCallback).toHaveBeenCalledWith(
+      JSON.stringify({ key: "duplicate" })
+    )
 
     // Older message (meta.ts = 99) -> ignored/filtered
     gameCallback.mockClear()
