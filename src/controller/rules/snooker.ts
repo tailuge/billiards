@@ -160,43 +160,61 @@ export class Snooker implements Rules {
     const tableSize = TableConfig.tableSizeFromUrl()
     if (tableSize !== 12) return
 
-    const sizeScale = tableSize / 10
-    const offsetX = (sizeScale - 1) * R * 43
-    const offsetY = (sizeScale - 1) * R * 21
+    const offsetX = 8.6 * R
+    const offsetY = 4.3 * R
 
     const planes = [
-      { plane: new Plane(new Vector3(1, 0, 0), 0), offset: offsetX },
-      { plane: new Plane(new Vector3(-1, 0, 0), 0), offset: offsetX },
-      { plane: new Plane(new Vector3(0, 1, 0), 0), offset: offsetY },
-      { plane: new Plane(new Vector3(0, -1, 0), 0), offset: offsetY }
+      {
+        plane: new Plane().setFromNormalAndCoplanarPoint(
+          new Vector3(1, 0, 0),
+          new Vector3(10 * R, 0, 0)
+        ),
+        offset: offsetX,
+        label: "rightHalf (x>10R)",
+      },
+/*      {
+        plane: new Plane().setFromNormalAndCoplanarPoint(
+          new Vector3(-1, 0, 0),
+          new Vector3(-10 * R, 0, 0)
+        ),
+        offset: offsetX,
+        label: "leftHalf (x<-10R)",
+      },*/
     ]
+
+    scene.updateMatrixWorld(true)
 
     scene.traverse((child: any) => {
       if (child.isMesh) {
         const mesh = child
-        const geometry = mesh.geometry
+        let geometry = mesh.geometry
         if (!geometry) return
         const position = geometry.attributes.position
         if (!position) return
 
+        // Clone to avoid modifying shared geometry (GLTF shares geometry between meshes)
+        geometry = geometry.clone()
+        mesh.geometry = geometry
+        const newPosition = geometry.attributes.position
+
         const p = new Vector3()
-        for (let i = 0; i < position.count; i++) {
-          p.fromBufferAttribute(position, i)
+        for (let i = 0; i < newPosition.count; i++) {
+          p.fromBufferAttribute(newPosition, i)
+          mesh.localToWorld(p)
           for (const { plane, offset } of planes) {
             const d = plane.distanceToPoint(p)
             if (d > 0) {
               p.addScaledVector(plane.normal, offset)
             }
           }
-          position.setXYZ(i, p.x, p.y, p.z)
+          mesh.worldToLocal(p)
+          newPosition.setXYZ(i, p.x, p.y, p.z)
         }
-        position.needsUpdate = true
-        geometry.computeVertexNormals()
+        newPosition.needsUpdate = true
+        geometry.computeBoundingBox()
+        geometry.computeBoundingSphere()
       }
     })
-
-    scene.updateMatrix()
-    scene.updateMatrixWorld()
   }
 
   table(): Table {
