@@ -447,7 +447,9 @@ async function runElement(el) {
 
   // Render table with correct type and class
   const isPool = ruletype && ruletype !== "threecushion" && ruletype !== "sagu"
-  const tableResult = isPool ? generatePoolTable() : generateBilliardTable();
+  const dx = parseFloat(urlParams.get("dx") || "0")
+  const dy = parseFloat(urlParams.get("dy") || "0")
+  const tableResult = isPool ? generatePoolTable(dx, dy) : generateBilliardTable();
   svg.setAttribute("viewBox", tableResult.viewBox);
   tableGroup.innerHTML = tableResult.content;
   if (ruletype) svg.classList.add(ruletype);
