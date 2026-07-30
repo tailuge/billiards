@@ -31,7 +31,7 @@ export class Snooker implements Rules {
   foulPoints = 0
   rulename = "snooker"
 
-  static readonly tablemodel = "models/d-snooker.min.gltf"
+  static readonly tablemodel = "models/snooker.min.gltf"
 
   readonly container: Container
 
