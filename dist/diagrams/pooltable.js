@@ -6,6 +6,8 @@
  *
  */
 
+import { transformPoolTableSvg } from "./scale.js"
+export { transformPoolTableSvg }
 
 const POOL_TABLE_SVG_CONTENT = `
     <defs>
@@ -137,19 +139,34 @@ const POOL_PAD_TOP = 0.05
 const POOL_PAD_BOTTOM = 0.28
 const POOL_PAD_SIDE = 0.05
 
-export function generatePoolTable() {
+export function generatePoolTable(dx = 0, dy = 0) {
   const f6 = (n) => n.toFixed(6)
-  const s = POOL_SCALE
-  const maxX = POOL_MAX_X * s
-  const maxY = POOL_MAX_Y * s
-  const minX = -(maxX + POOL_PAD_SIDE)
-  const minY = -(maxY + POOL_PAD_TOP)
-  const width = 2 * (maxX + POOL_PAD_SIDE)
-  const height = (maxY + POOL_PAD_TOP) + (maxY + POOL_PAD_BOTTOM)
-  const viewBox = `${f6(minX)} ${f6(minY)} ${f6(width)} ${f6(height)}`
-  const content = `<g transform="scale(${s})">\n${POOL_TABLE_SVG_CONTENT}  </g>\n`
-  return {
-    viewBox,
-    content,
+  if (dx === 0 && dy === 0) {
+    const s = POOL_SCALE
+    const maxX = POOL_MAX_X * s
+    const maxY = POOL_MAX_Y * s
+    const minX = -(maxX + POOL_PAD_SIDE)
+    const minY = -(maxY + POOL_PAD_TOP)
+    const width = 2 * (maxX + POOL_PAD_SIDE)
+    const height = (maxY + POOL_PAD_TOP) + (maxY + POOL_PAD_BOTTOM)
+    const viewBox = `${f6(minX)} ${f6(minY)} ${f6(width)} ${f6(height)}`
+    const content = `<g transform="scale(${s})">\n${POOL_TABLE_SVG_CONTENT}  </g>\n`
+    return {
+      viewBox,
+      content,
+    }
+  } else {
+    const maxX = POOL_MAX_X + dx
+    const maxY = POOL_MAX_Y + dy
+    const minX = -(maxX + POOL_PAD_SIDE)
+    const minY = -(maxY + POOL_PAD_TOP)
+    const width = 2 * (maxX + POOL_PAD_SIDE)
+    const height = (maxY + POOL_PAD_TOP) + (maxY + POOL_PAD_BOTTOM)
+    const viewBox = `${f6(minX)} ${f6(minY)} ${f6(width)} ${f6(height)}`
+    const content = transformPoolTableSvg(POOL_TABLE_SVG_CONTENT, dx, dy)
+    return {
+      viewBox,
+      content,
+    }
   }
 }
