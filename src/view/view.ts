@@ -145,9 +145,8 @@ export class View {
     }
     this.scene.add(this.assets.table)
     this.table.mesh = this.assets.table
-    if (this.assets.rules.asset !== Snooker.tablemodel) {
-      this.scene.add(new Grid().generateLineSegments())
-    }
+    const isSnooker = this.assets.rules.asset === Snooker.tablemodel
+    this.scene.add(new Grid().generateLineSegments(isSnooker))
   }
 
   ballToCheck = 0
