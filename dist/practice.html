@@ -375,10 +375,10 @@
     <script>
       // ── Physics constants ──────────────────────────────────────
       const R = 0.03275
-      const HW = R * 43 + R // half-width  (X)
-      const HH = R * 21 + R // half-height (Y)
+      let HW = R * 43 + R // half-width  (X)
+      let HH = R * 21 + R // half-height (Y)
       const BALL_BORDER_RATIO = 0.08
-      const REMOVE_Y = -0.786
+      let REMOVE_Y = -0.786
       const REMOVE_MARGIN = 0.05
 
       const BALL_COLORS = [
@@ -423,6 +423,7 @@
       let balls = []
       let dragging = null // { ball, startTableX, startTableY }
       let isSnooker = false
+      let tableSize = "10"
 
       const wrap = document.getElementById("table-wrap")
       const surface = document.getElementById("table-surface")
@@ -629,11 +630,16 @@
 
       // ── Init ───────────────────────────────────────────────────
       function init() {
-        setAspectRatio()
-
         const params = new URLSearchParams(window.location.search)
         const ruletype = params.get("ruletype")
         isSnooker = ruletype === "snooker"
+        tableSize = params.get("tableSize") || "10"
+        const sizeScale = parseFloat(tableSize) / 10
+        HW = (R * 43 + R) * sizeScale
+        HH = (R * 21 + R) * sizeScale
+        REMOVE_Y = -0.786 * sizeScale
+        setAspectRatio()
+
         const colors = isSnooker ? SNOOKER_COLORS : BALL_COLORS
 
         if (params.has("init")) {
@@ -687,6 +693,7 @@
           +b.y.toFixed(4),
         ])
         const params = new URLSearchParams(window.location.search)
+        if (params.get("tableSize") === "10") params.delete("tableSize")
         params.set("practice", "true")
         params.set("init", JSON.stringify(coords))
         window.location.href = `./index.html?${params.toString()}`
