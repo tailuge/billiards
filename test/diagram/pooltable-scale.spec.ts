@@ -22,7 +22,7 @@ describe("Pool Table SVG Deformation", () => {
     const dx = 0.1
     const dy = 0.05
     const output = transformPoolTableSvg(TEST_SVG_FRAGMENT, dx, dy)
-    expect(output).toContain("M1.462,0.614L1.486,0.638")
+    expect(output).toContain("M1.462,0.664L1.486,0.688")
   })
 
   it("should preserve pocket local geometry exactly (only translation)", () => {

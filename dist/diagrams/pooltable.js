@@ -144,8 +144,8 @@ export function transformPoolTableSvg(svg, dx, dy) {
   const doc = parser.parseFromString(parsedString, "image/svg+xml");
   const root = doc.documentElement;
 
-  const cutX = 1.327;
-  const cutY = 0.663;
+  const cutX = 0.756;
+  const cutY = 0.4245;
 
   function deformX(x, dxVal) {
     if (x > cutX) return x + dxVal;
