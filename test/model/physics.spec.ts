@@ -32,6 +32,8 @@ import {
   setmuC,
   setmuS,
   setrho,
+  base_mu,
+  setPhysicsMu,
 } from "../../src/model/physics/constants"
 
 describe("Physics", () => {
@@ -202,6 +204,33 @@ describe("Physics", () => {
     expect(delta.w.x).to.be.closeTo(0, 1e-9)
     expect(delta.w.y).to.be.closeTo(0, 1e-9)
     expect(delta.w.z).to.be.lessThan(0)
+    done()
+  })
+
+  it("should support tableGeometry and prevent compounding mu scaling", (done) => {
+    const { TableGeometry } = require("../../src/view/tablegeometry")
+
+    // Set a base mu
+    setmu(0.0055)
+    expect(base_mu).to.equal(0.0055)
+    expect(mu).to.equal(0.0055)
+
+    // Configure snooker/pocket rules
+    TableGeometry.configureForRule("snooker", 12)
+    expect(base_mu).to.equal(0.0055)
+    expect(mu).to.be.closeTo(0.0055 * 1.2, 1e-9)
+
+    // Configure snooker/pocket rules again (e.g. replay/reload)
+    TableGeometry.configureForRule("snooker", 12)
+    // base_mu remains 0.0055 and mu remains exactly 0.0055 * 1.2 (no compounding)
+    expect(base_mu).to.equal(0.0055)
+    expect(mu).to.be.closeTo(0.0055 * 1.2, 1e-9)
+
+    // Configure carom/pocketless rules
+    TableGeometry.configureForRule("threecushion", 10)
+    expect(base_mu).to.equal(0.0055)
+    expect(mu).to.equal(0.0055) // Resets back to base_mu
+
     done()
   })
 })

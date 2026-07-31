@@ -1,3 +1,4 @@
+export let base_mu = 0.0055
 export let mu = 0.0055 // Han rolling friction
 export let muS = 0.126 // Han sliding friction
 export let rho = 0.045 // Han spindown rate
@@ -56,6 +57,11 @@ export function setm(val: number) {
   refresh()
 }
 export function setmu(val: number) {
+  base_mu = val
+  mu = val
+  refresh()
+}
+export function setPhysicsMu(val: number) {
   mu = val
   refresh()
 }
