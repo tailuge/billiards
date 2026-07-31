@@ -1,4 +1,4 @@
-import { R, mu, setmu } from "../model/physics/constants"
+import { R, setmu } from "../model/physics/constants"
 
 export class TableGeometry {
   static tableX: number
@@ -30,7 +30,7 @@ export class TableGeometry {
       TableGeometry.tableX = R * 43 * sizeScale
       TableGeometry.tableY = R * 21 * sizeScale
       TableGeometry.hasPockets = true
-      setmu(mu * 1.2)
+      setmu(0.0066)
     }
     TableGeometry.X = TableGeometry.tableX + R
     TableGeometry.Y = TableGeometry.tableY + R
