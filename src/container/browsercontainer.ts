@@ -275,13 +275,20 @@ export class BrowserContainer {
     await li.init()
     const mc = li.getMessagingClient()
     if (!mc) return
-    await relay.connect(mc, this.tableId, () => {
-      this.container.chat.showMessage("<br>🔌")
-      this.container.notifyLocal({
-        type: "Info",
-        title: "Opponent left the game",
-      })
-    })
+    await relay.connect(
+      mc,
+      this.tableId,
+      () => {
+        this.container.chat.showMessage("<br>🔌")
+        this.container.notifyLocal({
+          type: "Info",
+          title: "Opponent left the game",
+        })
+      },
+      () => {
+        this.container.chat.showMessage("<br>⚡")
+      }
+    )
   }
 
   private connectRelayIfNeeded(): void {

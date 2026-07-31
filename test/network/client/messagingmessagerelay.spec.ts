@@ -5,11 +5,13 @@ import { Session } from "../../../src/network/client/session"
 // Mock the Table class methods we care about
 const mockTable: {
   onOpponentLeft: jest.Mock
+  onOpponentRejoined: jest.Mock
   onMessage: jest.Mock
   publish: jest.Mock
   bothJoined?: Promise<void>
 } = {
   onOpponentLeft: jest.fn(),
+  onOpponentRejoined: jest.fn(),
   onMessage: jest.fn(),
   publish: jest.fn().mockResolvedValue(undefined),
 }
@@ -30,6 +32,7 @@ describe("MessagingMessageRelay", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockTable.onOpponentLeft.mockClear()
+    mockTable.onOpponentRejoined.mockClear()
     mockTable.onMessage.mockClear()
     mockTable.publish.mockClear()
     Session.init("test-client", "TestPlayer", "test-table", false)
