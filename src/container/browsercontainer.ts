@@ -27,7 +27,6 @@ import { getUID } from "../utils/uid"
 import { DrillPanel } from "../view/drillpanel"
 import { AnalysisPanel } from "../view/analysispanel"
 import { applyPhysicsParams } from "../utils/physicsparams"
-import { TableConfig } from "../view/tableconfig"
 
 /**
  * Integrate game container into HTML page
@@ -393,12 +392,6 @@ export class BrowserContainer {
     if (this.breakState.players) {
       session.playername = this.breakState.players.player1
       session.opponentName = this.breakState.players.player2
-    }
-    if (
-      this.breakState.tableSize !== undefined &&
-      this.breakState.tableSize !== 10
-    ) {
-      TableConfig.apply(this.ruletype, this.breakState.tableSize)
     }
     const orderedScores = session.orderedScoresForHud()
     this.container.updateScoreHud(orderedScores.p1, orderedScores.p2, 0, 0)

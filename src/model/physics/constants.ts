@@ -56,6 +56,9 @@ export function setm(val: number) {
   refresh()
 }
 export function setmu(val: number) {
+  if (val !== mu) {
+    console.log(`[physics] mu changed: ${mu} -> ${val}`)
+  }
   mu = val
   refresh()
 }
