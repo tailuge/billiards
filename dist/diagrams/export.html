@@ -376,14 +376,16 @@
           const url = new URL("three.html", window.location.href)
           url.searchParams.set("s", JSON.stringify(state))
           url.searchParams.set("ruletype", ruletype)
-          if (tableSizeParam !== 10) url.searchParams.set("tableSize", String(tableSizeParam))
+          if (tableSizeParam !== 10)
+            url.searchParams.set("tableSize", String(tableSizeParam))
           window.open(url.toString(), "_blank")
         } else {
           const init = config.balls.flatMap((b) => [b.pos.x, b.pos.y])
           const url = new URL("../practice.html", window.location.href)
           url.searchParams.set("ruletype", ruletype)
           url.searchParams.set("init", JSON.stringify(init))
-          if (tableSizeParam !== 10) url.searchParams.set("tableSize", String(tableSizeParam))
+          if (tableSizeParam !== 10)
+            url.searchParams.set("tableSize", String(tableSizeParam))
           window.open(url.toString(), "_blank")
         }
       })

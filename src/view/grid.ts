@@ -60,7 +60,10 @@ export class Grid {
     // ── Baulk line ──────────────────────────────────────────────
     const baulkX = Rack.baulk
     const tableY = TableGeometry.tableY
-    points.push(this.point(baulkX, -tableY-2*R), this.point(baulkX, tableY + 2*R))
+    points.push(
+      this.point(baulkX, -tableY - 2 * R),
+      this.point(baulkX, tableY + 2 * R)
+    )
 
     // ── D semicircle (π/2 → 3π/2, the negative-x / baulk-cushion side) ──
     const cx = Rack.baulk
