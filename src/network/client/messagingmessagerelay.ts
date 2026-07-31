@@ -50,6 +50,7 @@ export class MessagingMessageRelay implements MessageRelay {
             return
           }
           this.lastProcessedTimestamp = timestamp
+          console.log("lastProcessedTimestamp", this.lastProcessedTimestamp)
         }
         const data = JSON.stringify(msg.data)
         for (const cb of this.pendingCallbacks) cb(data)

@@ -8,13 +8,7 @@ import { Input } from "../../src/events/input"
 import { PocketGeometry } from "../../src/view/pocketgeometry"
 import { R } from "../../src/model/physics/constants"
 import { Ball, State } from "../../src/model/ball"
-import {
-  Vector3,
-  Scene,
-  Mesh,
-  BufferGeometry,
-  Float32BufferAttribute,
-} from "three"
+import { Vector3 } from "three"
 import { PlayShot } from "../../src/controller/playshot"
 import { Aim } from "../../src/controller/aim"
 import { AimEvent } from "../../src/events/aimevent"

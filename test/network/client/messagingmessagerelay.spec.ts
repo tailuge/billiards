@@ -200,7 +200,7 @@ describe("MessagingMessageRelay", () => {
     relay.subscribe("test-table", gameCallback)
 
     // Make joinTable capture onMessage but NOT resolve yet (simulating slow "joined" publish)
-    let capturedOnMessage: Function | undefined
+    let capturedOnMessage: ((message: unknown) => void) | undefined
     let resolveJoin: (value: any) => void
     mockClient.joinTable.mockImplementationOnce(
       (_tableId, _clientId, options) => {
