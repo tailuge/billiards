@@ -34,7 +34,8 @@ export class MessagingMessageRelay implements MessageRelay {
   async connect(
     messagingClient: MessagingClient,
     tableId: string,
-    onOpponentLeft?: () => void
+    onOpponentLeft?: () => void,
+    onOpponentRejoined?: () => void
   ): Promise<void> {
     if (this.table) return
     const session = Session.getInstance()
@@ -72,6 +73,10 @@ export class MessagingMessageRelay implements MessageRelay {
       this.table.onOpponentLeft(() => {
         NetworkLogger.logGame(`opponent left: table ${tableId}`)
         onOpponentLeft?.()
+      })
+      this.table.onOpponentRejoined(() => {
+        NetworkLogger.logGame(`opponent rejoined: table ${tableId}`)
+        onOpponentRejoined?.()
       })
 
       // Flush any publishes that were queued while connect was in-flight.
