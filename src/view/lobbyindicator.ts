@@ -65,9 +65,7 @@ export class LobbyIndicator {
       new URLSearchParams(globalThis.location?.search ?? "").get("tableSize") ||
         "10"
     )
-    if (this.tableSize === 5) {
-      this.ruleType = `${this.rules.rulename}-mini`
-    } else if (botMode) {
+    if (botMode) {
       this.ruleType = `${this.rules.rulename}-bot`
     } else if (Session.isExamMode()) {
       this.ruleType = `${this.rules.rulename}-exam`

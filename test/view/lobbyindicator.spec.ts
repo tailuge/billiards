@@ -119,6 +119,28 @@ describe("LobbyIndicator", () => {
     globalThis.open = originalOpen
   })
 
+  it("uses canonical rule names while preserving tableSize in presence", async () => {
+    const originalSearch = globalThis.location.search
+    globalThis.history.replaceState({}, "", "?tableSize=5")
+
+    try {
+      for (const rulename of ["sagu", "threecushion"]) {
+        Session.init("test-client", "TestPlayer", "test-table", false)
+        const indicator = new LobbyIndicator(false, false, { rulename } as any)
+        await indicator.init()
+
+        const messagingClient = (indicator as any).messagingClient
+        const presence = messagingClient.joinLobby.mock.calls[0][0]
+        expect(presence.ruleType).toBe(rulename)
+        expect(presence.options).toEqual({ tableSize: 5 })
+
+        await indicator.stop()
+      }
+    } finally {
+      globalThis.history.replaceState({}, "", originalSearch || "?")
+    }
+  })
+
   it("setTableId updates presence", async () => {
     const mockRules = { rulename: "nineball" } as any
     const indicator = new LobbyIndicator(false, false, mockRules)
