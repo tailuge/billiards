@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@tailuge/messaging": "1.39.0",
-    "interactjs": "1.10.27",
+    "interactjs": "1.10.28",
     "jsoncrush": "^1.1.8",
     "three": "0.185.1"
   },
@@ -46,7 +46,7 @@
     "@types/chai": "5.2.3",
     "@types/jest": "30.0.0",
     "@types/node": "26.1.2",
-    "@types/three": "0.185.1",
+    "@types/three": "0.185.3",
     "canvas": "3.2.3",
     "chai": "6.2.2",
     "concurrently": "10.0.4",
@@ -57,7 +57,7 @@
     "jest": "30.4.2",
     "jest-environment-jsdom": "30.4.1",
     "node-notifier": "^10.0.1",
-    "postcss-html": "^1.8.1",
+    "postcss-html": "2.0.0",
     "prettier": "3.9.6",
     "stylelint": "17.14.1",
     "stylelint-config-standard": "^40.0.0",

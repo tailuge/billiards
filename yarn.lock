@@ -693,10 +693,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@interactjs/types@npm:1.10.27":
-  version: 1.10.27
-  resolution: "@interactjs/types@npm:1.10.27"
-  checksum: 10c0/767afe37cd932ed248712dc0aa9c912b18af1104ec26829d655daaeef57d13c8e9e973c9f59e4be978d66fe7e86b77f58dec4688bb2e5d38b838d5a38cb27cf4
+"@interactjs/types@npm:1.10.28":
+  version: 1.10.28
+  resolution: "@interactjs/types@npm:1.10.28"
+  checksum: 10c0/abc3295087f2f0a8e32b3d703d53790a161660bd337836a042f0b855588a043808c9f6351ab3015c1fc1236ac75fc90f724e10e33f5903515041a55b99c8971c
   languageName: node
   linkType: hard
 
@@ -2162,9 +2162,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/three@npm:0.185.1":
-  version: 0.185.1
-  resolution: "@types/three@npm:0.185.1"
+"@types/three@npm:0.185.3":
+  version: 0.185.3
+  resolution: "@types/three@npm:0.185.3"
   dependencies:
     "@dimforge/rapier3d-compat": "npm:~0.12.0"
     "@tweenjs/tween.js": "npm:~23.1.3"
@@ -2172,7 +2172,7 @@ __metadata:
     "@types/webxr": "npm:>=0.5.17"
     fflate: "npm:~0.8.2"
     meshoptimizer: "npm:~1.1.1"
-  checksum: 10c0/e036368ba2c2358520330f21494693c3acc3888d5c44c05fa8b8a9058d434a668179e842f5bb6dc8462af8445c1ef9a1104e181b23f5f3366dd5565e274afd87
+  checksum: 10c0/8ff94f6e77a8f8ef29f43e967916e6aed5e59d33d948007ef5fa320788684a9d56cfa002df90fd5a19056f554d946fcb3d7b6f7fa954fa6c61caa5a97254d888
   languageName: node
   linkType: hard
 
@@ -3021,7 +3021,7 @@ __metadata:
     "@types/chai": "npm:5.2.3"
     "@types/jest": "npm:30.0.0"
     "@types/node": "npm:26.1.2"
-    "@types/three": "npm:0.185.1"
+    "@types/three": "npm:0.185.3"
     canvas: "npm:3.2.3"
     chai: "npm:6.2.2"
     concurrently: "npm:10.0.4"
@@ -3029,12 +3029,12 @@ __metadata:
     eslint-plugin-html: "npm:^8.1.4"
     eslint-plugin-sonarjs: "npm:4.2.0"
     http-server: "npm:^14.1.1"
-    interactjs: "npm:1.10.27"
+    interactjs: "npm:1.10.28"
     jest: "npm:30.4.2"
     jest-environment-jsdom: "npm:30.4.1"
     jsoncrush: "npm:^1.1.8"
     node-notifier: "npm:^10.0.1"
-    postcss-html: "npm:^1.8.1"
+    postcss-html: "npm:2.0.0"
     prettier: "npm:3.9.6"
     stylelint: "npm:17.14.1"
     stylelint-config-standard: "npm:^40.0.0"
@@ -3814,7 +3814,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domutils@npm:^3.0.1, domutils@npm:^3.2.2":
+"domutils@npm:^3.1.0, domutils@npm:^3.2.2":
   version: 3.2.2
   resolution: "domutils@npm:3.2.2"
   dependencies:
@@ -3911,7 +3911,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"entities@npm:^4.2.0, entities@npm:^4.4.0":
+"entities@npm:^4.2.0, entities@npm:^4.5.0":
   version: 4.5.0
   resolution: "entities@npm:4.5.0"
   checksum: 10c0/5b039739f7621f5d1ad996715e53d964035f75ad3b9a4d38c6b3804bb226e282ffeae2443624d8fdd9c47d8e926ae9ac009c54671243f0c3294c26af7cc85250
@@ -4929,15 +4929,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"htmlparser2@npm:^8.0.0":
-  version: 8.0.2
-  resolution: "htmlparser2@npm:8.0.2"
+"htmlparser2@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "htmlparser2@npm:9.1.0"
   dependencies:
     domelementtype: "npm:^2.3.0"
     domhandler: "npm:^5.0.3"
-    domutils: "npm:^3.0.1"
-    entities: "npm:^4.4.0"
-  checksum: 10c0/609cca85886d0bf2c9a5db8c6926a89f3764596877492e2caa7a25a789af4065bc6ee2cdc81807fe6b1d03a87bf8a373b5a754528a4cc05146b713c20575aab4
+    domutils: "npm:^3.1.0"
+    entities: "npm:^4.5.0"
+  checksum: 10c0/394f6323efc265bbc791d8c0d96bfe95984e0407565248521ab92e2dc7668e5ceeca7bc6ed18d408b9ee3b25032c5743368a4280d280332d782821d5d467ad8f
   languageName: node
   linkType: hard
 
@@ -5161,12 +5161,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"interactjs@npm:1.10.27":
-  version: 1.10.27
-  resolution: "interactjs@npm:1.10.27"
+"interactjs@npm:1.10.28":
+  version: 1.10.28
+  resolution: "interactjs@npm:1.10.28"
   dependencies:
-    "@interactjs/types": "npm:1.10.27"
-  checksum: 10c0/35532c636fc7cf8273999d314c9738994bfc4a1a384fd64658420055e93456aa6333a865e04b1765d39ee4e29f898854c3f3451a7a88a09141e32115cc6112e2
+    "@interactjs/types": "npm:1.10.28"
+  checksum: 10c0/ad6bb86e256fabd90a2ddde21e1c80beee2d30f22bef9f0f29a5372b5e6908e4dbefa6ca25feade2622203378b82627c1f274c9b22bcfbcd37b122215037b069
   languageName: node
   linkType: hard
 
@@ -6672,15 +6672,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.3.11":
-  version: 3.3.11
-  resolution: "nanoid@npm:3.3.11"
-  bin:
-    nanoid: bin/nanoid.cjs
-  checksum: 10c0/40e7f70b3d15f725ca072dfc4f74e81fcf1fbb02e491cf58ac0c79093adc9b0a73b152bcde57df4b79cd097e13023d7504acb38404a4da7bc1cd8e887b82fe0b
-  languageName: node
-  linkType: hard
-
 "nanoid@npm:^3.3.16":
   version: 3.3.16
   resolution: "nanoid@npm:3.3.16"
@@ -7138,24 +7129,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-html@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "postcss-html@npm:1.8.1"
+"postcss-html@npm:2.0.0":
+  version: 2.0.0
+  resolution: "postcss-html@npm:2.0.0"
   dependencies:
-    htmlparser2: "npm:^8.0.0"
+    htmlparser2: "npm:^9.1.0"
     js-tokens: "npm:^9.0.0"
-    postcss: "npm:^8.5.0"
-    postcss-safe-parser: "npm:^6.0.0"
-  checksum: 10c0/2db37b710ae4d5cf8493ae982a381c7c1dfed328eb1806c4aa9220b166a0a44a636275beebf072efb41a38017dd35f47216e7cde682c10c8c69e30807d4126c6
-  languageName: node
-  linkType: hard
-
-"postcss-safe-parser@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "postcss-safe-parser@npm:6.0.0"
+    postcss-safe-parser: "npm:^7.0.1"
   peerDependencies:
-    postcss: ^8.3.3
-  checksum: 10c0/5b0997b63de6ab4afb4b718a52dd7902e465c21d1f2e516762bcb59047787459b4dc5713132f6a19c9c8c483043b20b8a380a55fb61152ee66cbffcddf3b57f0
+    postcss: ^8.5.0
+  checksum: 10c0/7c11a7711faf56cedcdf288bbc18091b1ea5ad49327689fd049b454cc336950147f620763a2bf0b0cbcc11c1ace540d9a91de965458a5eb789a803a8ebde3b65
   languageName: node
   linkType: hard
 
@@ -7182,17 +7165,6 @@ __metadata:
   version: 4.2.0
   resolution: "postcss-value-parser@npm:4.2.0"
   checksum: 10c0/f4142a4f56565f77c1831168e04e3effd9ffcc5aebaf0f538eee4b2d465adfd4b85a44257bb48418202a63806a7da7fe9f56c330aebb3cac898e46b4cbf49161
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^8.5.0":
-  version: 8.5.13
-  resolution: "postcss@npm:8.5.13"
-  dependencies:
-    nanoid: "npm:^3.3.11"
-    picocolors: "npm:^1.1.1"
-    source-map-js: "npm:^1.2.1"
-  checksum: 10c0/3aa7c8cbdfbfd99b34406a433cef56d164dd135fc9cb9e63d487cc363291f877a55ec7b8ff6ec15348c17c2d98a43be46bfad671e6340403041a3e79f70c2f2f
   languageName: node
   linkType: hard
 
