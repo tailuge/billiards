@@ -131,11 +131,17 @@ describe("LobbyIndicator", () => {
     expect(updatePresenceFn.mock.calls.length).toBeGreaterThan(0)
 
     const firstCall = updatePresenceFn.mock.calls[0]
-    expect(firstCall[0]).toEqual({ tableId: "table-123" })
+    expect(firstCall[0]).toEqual({
+      tableId: "table-123",
+      options: { tableSize: 10 },
+    })
 
     indicator.setTableId(null)
     const secondCall = updatePresenceFn.mock.calls[1]
-    expect(secondCall[0]).toEqual({ tableId: undefined })
+    expect(secondCall[0]).toEqual({
+      tableId: undefined,
+      options: { tableSize: 10 },
+    })
 
     await indicator.stop()
   })

@@ -27,6 +27,7 @@ export class LobbyIndicator {
   } | null = null
   private readonly rules: Rules
   private readonly ruleType: string
+  private readonly tableSize: number
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
   private readonly messagingUrl: string
   private currentTableId: string | null = null
@@ -60,11 +61,11 @@ export class LobbyIndicator {
       ? `${httpProtocol}://${messagingUrl.replace(/^(https?|wss?):\/\//, "")}`
       : LobbyIndicator.NCHAN_URL
     this.isSpectator = Session.getInstance().spectator
-    const tableSize = parseFloat(
+    this.tableSize = parseFloat(
       new URLSearchParams(globalThis.location?.search ?? "").get("tableSize") ||
         "10"
     )
-    if (tableSize === 5) {
+    if (this.tableSize === 5) {
       this.ruleType = `${this.rules.rulename}-mini`
     } else if (botMode) {
       this.ruleType = `${this.rules.rulename}-bot`
@@ -170,12 +171,14 @@ export class LobbyIndicator {
       ruleType: string
       tableId?: string
       isSpectator?: boolean
+      options?: { tableSize?: number }
     } = {
       messageType: "presence",
       type: "join",
       userId,
       userName,
       ruleType: this.ruleType,
+      options: { tableSize: this.tableSize },
       ...(this.isSpectator && { isSpectator: true }),
     }
     if (this.currentTableId) {
@@ -237,7 +240,10 @@ export class LobbyIndicator {
   setTableId(tableId: string | null | undefined): void {
     this.currentTableId = tableId ?? null
     if (this.lobby) {
-      this.lobby.updatePresence({ tableId: tableId ?? undefined } as any)
+      this.lobby.updatePresence({
+        tableId: tableId ?? undefined,
+        options: { tableSize: this.tableSize },
+      } as any)
     }
   }
 
