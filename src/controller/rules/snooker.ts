@@ -21,6 +21,13 @@ import { SnookerUtils, ShotInfo } from "./snookerutils"
 import { SnookerScoring } from "./snookerscoring"
 import { StartAimEvent } from "../../events/startaimevent"
 import { RerackEvent } from "../../events/rerackevent"
+import { scaleTableModel } from "../../utils/table-scaler"
+
+const tableModelStretchBySize: Record<number, { x: number; y: number }> = {
+  // 6ft values copied from the 12ft table for manual tuning.
+  6: { x: -2800, y: -1350 },
+  12: { x: 1420, y: 700 },
+}
 
 export class Snooker implements Rules {
   cueball: Ball
@@ -156,61 +163,10 @@ export class Snooker implements Rules {
   }
 
   scaleTableModel(scene: any): void {
-    const tableSize = TableConfig.tableSizeFromUrl()
-    if (tableSize !== 12) return
+    const stretch = tableModelStretchBySize[TableConfig.tableSizeFromUrl()]
+    if (!stretch) return
 
-    // Tunable: right/far quarter gets 2*stretch, middle half gets stretch, near quarter stays.
-    // Group position is adjusted to re-center the table automatically.
-    const stretchX = 1420
-    const stretchY = 700
-    const modelExtentX = 16000
-    const modelExtentY = 9200
-    const group = scene.children[0]
-    if (!group) return
-    const gsx = group.scale.x
-    const gsy = group.scale.y
-
-    scene.traverse((child: any) => {
-      if (child.isMesh) {
-        const mesh = child
-        let geometry = mesh.geometry
-        if (!geometry) return
-        const position = geometry.attributes.position
-        if (!position) return
-
-        // Clone to avoid modifying shared geometry (GLTF shares geometry between meshes)
-        geometry = geometry.clone()
-
-        if (geometry.index) {
-          geometry = geometry.toNonIndexed()
-        }
-        mesh.geometry = geometry
-        const newPosition = geometry.attributes.position
-
-        for (let i = 0; i < newPosition.count; i++) {
-          const x = newPosition.getX(i)
-          const y = newPosition.getY(i)
-          if (x > modelExtentX * 0.75) {
-            newPosition.setX(i, x + 2 * stretchX)
-          } else if (x > modelExtentX * 0.25) {
-            newPosition.setX(i, x + stretchX)
-          }
-          if (y > modelExtentY * 0.75) {
-            newPosition.setY(i, y + 2 * stretchY)
-          } else if (y > modelExtentY * 0.25) {
-            newPosition.setY(i, y + stretchY)
-          }
-        }
-        newPosition.needsUpdate = true
-        geometry.computeBoundingBox()
-        geometry.computeBoundingSphere()
-      }
-    })
-
-    // Re-center: vertex shifts move model center by ~stretch in local coords.
-    // Compensate by shifting the Group node back.
-    group.position.x -= stretchX * gsx
-    group.position.y -= stretchY * gsy
+    scaleTableModel(scene, stretch.x, stretch.y)
   }
 
   table(): Table {
