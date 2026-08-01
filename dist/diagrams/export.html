@@ -350,6 +350,8 @@
         if (initRaw) url.searchParams.set("init", initRaw)
         if (initShotRaw) url.searchParams.set("initShot", initShotRaw)
         if (cushionModel) url.searchParams.set("cushionModel", cushionModel)
+        if (tableSizeParam !== 10)
+          url.searchParams.set("tableSize", String(tableSizeParam))
         window.open(url.toString(), "_blank")
       })
 

@@ -133,14 +133,25 @@ const POOL_TABLE_SVG_CONTENT = `
 
 export const POOL_SCALE = 1.09
 
+// Placeholder deformation values for manually tuning non-standard pool tables.
+// The 6ft values intentionally mirror the 12ft values in the opposite direction.
+export const POOL_TABLE_STRETCH_BY_SIZE = {
+  6: { dx: -0.44, dy: -0.22 },
+  12: { dx: 0.4, dy: 0.2 },
+}
+
 const POOL_MAX_X = 1.512
 const POOL_MAX_Y = 0.849
 const POOL_PAD_TOP = 0.05
 const POOL_PAD_BOTTOM = 0.28
 const POOL_PAD_SIDE = 0.05
 
-export function generatePoolTable(dx = 0, dy = 0) {
+export function generatePoolTable(tableSize = 10) {
   const f6 = (n) => n.toFixed(6)
+  const stretch = POOL_TABLE_STRETCH_BY_SIZE[tableSize]
+  const dx = stretch?.dx ?? 0
+  const dy = stretch?.dy ?? 0
+
   if (dx === 0 && dy === 0) {
     const s = POOL_SCALE
     const maxX = POOL_MAX_X * s

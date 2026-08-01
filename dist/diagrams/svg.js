@@ -17,7 +17,10 @@
 
 import { SimulationRunner } from "../ww.js";
 import { parseShots, parseJsonShots, maxPower } from "./dsl.js";
-import { generatePoolTable } from "./pooltable.js";
+import {
+  generatePoolTable,
+  POOL_TABLE_STRETCH_BY_SIZE,
+} from "./pooltable.js";
 
 
 
@@ -447,19 +450,20 @@ async function runElement(el) {
 
   // Render table with correct type and class
   const isPool = ruletype && ruletype !== "threecushion" && ruletype !== "sagu"
-  const jsonTableSize = configs[0]?.params?.tableSize
-  let dx = 0, dy = 0
-  if (jsonTableSize === 12) {
-    dx = 0.4
-    dy = 0.2
-  }
-  const tableResult = isPool ? generatePoolTable(dx, dy) : generateBilliardTable();
+  const jsonTableSize = configs[0]?.params?.tableSize ?? 10
+  const tableResult = isPool
+    ? generatePoolTable(jsonTableSize)
+    : generateBilliardTable();
   svg.setAttribute("viewBox", tableResult.viewBox);
   tableGroup.innerHTML = tableResult.content;
   if (ruletype) svg.classList.add(ruletype);
 
-  if (isPool && dy !== 0) {
-    const textY = parseFloat(statusEl.getAttribute("y")) + dy * 0.75
+  const tableStretch = isPool
+    ? POOL_TABLE_STRETCH_BY_SIZE[jsonTableSize]
+    : null
+  if (tableStretch?.dy) {
+    const textY =
+      parseFloat(statusEl.getAttribute("y")) + tableStretch.dy * 0.75
     statusEl.setAttribute("y", String(textY))
   }
 
