@@ -766,7 +766,7 @@
 		{
 			"bufferView":32,
 			"componentType":5126,
-			"count":388,
+			"count":436,
 			"max":[
 				-0.5913658142089844,
 				7.260039329528809,
@@ -782,19 +782,19 @@
 		{
 			"bufferView":33,
 			"componentType":5126,
-			"count":388,
+			"count":436,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":34,
 			"componentType":5126,
-			"count":388,
+			"count":436,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":35,
 			"componentType":5123,
-			"count":768,
+			"count":864,
 			"type":"SCALAR"
 		},
 		{
@@ -1095,104 +1095,104 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":4656,
+			"byteLength":5232,
 			"byteOffset":45168,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":4656,
-			"byteOffset":49824,
+			"byteLength":5232,
+			"byteOffset":50400,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3104,
-			"byteOffset":54480,
+			"byteLength":3488,
+			"byteOffset":55632,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1536,
-			"byteOffset":57584,
+			"byteLength":1728,
+			"byteOffset":59120,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":768,
-			"byteOffset":59120,
+			"byteOffset":60848,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":768,
-			"byteOffset":59888,
+			"byteOffset":61616,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":512,
-			"byteOffset":60656,
+			"byteOffset":62384,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":240,
-			"byteOffset":61168,
+			"byteOffset":62896,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":2160,
-			"byteOffset":61408,
+			"byteOffset":63136,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2160,
-			"byteOffset":63568,
+			"byteOffset":65296,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1440,
-			"byteOffset":65728,
+			"byteOffset":67456,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":624,
-			"byteOffset":67168,
+			"byteOffset":68896,
 			"target":34963
 		},
 		{
 			"buffer":0,
 			"byteLength":4320,
-			"byteOffset":67792,
+			"byteOffset":69520,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4320,
-			"byteOffset":72112,
+			"byteOffset":73840,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":2880,
-			"byteOffset":76432,
+			"byteOffset":78160,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1248,
-			"byteOffset":79312,
+			"byteOffset":81040,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":80560,
+			"byteLength":82288,
 			"uri":"snooker.bin"
 		}
 	]
