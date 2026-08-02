@@ -3,32 +3,31 @@ import { MessageRelay } from "./messagerelay"
 import { Session } from "./session"
 import { NetworkLogger } from "../../utils/network-logger"
 
+/**
+ * MessageRelay backed by @tailuge/messaging.
+ *
+ * The library now owns the transport details this relay previously worked
+ * around:
+ *  - `onMessage`/`onBothJoined` are construction-time options, so no messages
+ *    are dropped during the join handshake.
+ *  - `Table.publish()` buffers into a bounded outbox that waits for socket
+ *    readiness, sends in order, and retries transient failures.
+ *  - Reconnect buffer replays are deduplicated internally via server `msgId`
+ *    (never by `meta.ts`, which is only event time).
+ *  - `joined`/`table:leave` are handled internally and filtered from
+ *    `onMessage`; use `onOpponentLeft`/`onOpponentRejoined` for lifecycle.
+ *  - `table.bothJoined` is a one-shot promise for the two-player handshake.
+ */
 export class MessagingMessageRelay implements MessageRelay {
   private table: Table | null = null
-  private pendingCallbacks: Array<(message: string) => void> = []
-  private pendingPublishes: Array<{
-    channel: string
-    message: string
-    prefix?: string
-  }> = []
-  private lastProcessedTimestamp: number = -1
+  private subscribers: Array<(message: string) => void> = []
 
   constructor() {}
 
-  async awaitBothJoined(timeoutMs: number = 8000): Promise<void> {
-    if (!this.table || !this.table.bothJoined) return
-    let timer: ReturnType<typeof setTimeout> | undefined
-    const timeout = new Promise<void>((_, reject) => {
-      timer = setTimeout(
-        () => reject(new Error(`bothJoined timed out after ${timeoutMs}ms`)),
-        timeoutMs
-      )
-    })
-    try {
-      await Promise.race([this.table.bothJoined, timeout])
-    } finally {
-      if (timer) clearTimeout(timer)
-    }
+  /** Resolves once both players have joined the table (one-shot handshake). */
+  async awaitBothJoined(): Promise<void> {
+    if (!this.table) return
+    await this.table.bothJoined
   }
 
   async connect(
@@ -39,56 +38,33 @@ export class MessagingMessageRelay implements MessageRelay {
   ): Promise<void> {
     if (this.table) return
     const session = Session.getInstance()
-    // Register the message listener before join() subscribes so that messages
-    // arriving during the join handshake are not dropped to an empty listener
-    // array. Requires @tailuge/messaging >= 1.36.0 (onMessage in options).
-    // onBothJoined must be registered in the constructor (>= 1.37.0).
+    // onMessage/onBothJoined must be registered on the first call that creates
+    // the table; later joinTable() calls reuse the existing Table and do not
+    // add or replace listeners.
     const onMessage = (msg: TableMessage) => {
-      if (msg.type !== "table:leave") {
-        const timestamp = msg.meta?.ts
-        if (typeof timestamp === "number") {
-          if (timestamp < this.lastProcessedTimestamp) {
-            return
-          }
-          this.lastProcessedTimestamp = timestamp
-          console.log("lastProcessedTimestamp", this.lastProcessedTimestamp)
-        }
-        const data = JSON.stringify(msg.data)
-        for (const cb of this.pendingCallbacks) cb(data)
-      }
+      const data = JSON.stringify(msg.data)
+      for (const cb of this.subscribers) cb(data)
     }
     const onBothJoined = () => {
       NetworkLogger.logGame(`net: both joined table ${tableId}`)
     }
-    try {
-      this.table = session.spectator
-        ? await messagingClient.spectateTable(tableId, session.clientId, {
-            onMessage,
-            onBothJoined,
-          })
-        : await messagingClient.joinTable(tableId, session.clientId, {
-            onMessage,
-            onBothJoined,
-          })
-      this.table.onOpponentLeft(() => {
-        NetworkLogger.logGame(`opponent left: table ${tableId}`)
-        onOpponentLeft?.()
-      })
-      this.table.onOpponentRejoined(() => {
-        NetworkLogger.logGame(`opponent rejoined: table ${tableId}`)
-        onOpponentRejoined?.()
-      })
-
-      // Flush any publishes that were queued while connect was in-flight.
-      // Without this, a slow connect() (e.g. mobile with &first) would drop
-      // the WatchEvent sent in response to the opponent's BeginEvent, because
-      // the WebSocket is live before this.table is assigned.
-      for (const pending of this.pendingPublishes) {
-        this.publish(pending.channel, pending.message, pending.prefix)
-      }
-    } finally {
-      this.pendingPublishes = []
-    }
+    this.table = session.spectator
+      ? await messagingClient.spectateTable(tableId, session.clientId, {
+          onMessage,
+          onBothJoined,
+        })
+      : await messagingClient.joinTable(tableId, session.clientId, {
+          onMessage,
+          onBothJoined,
+        })
+    this.table.onOpponentLeft(() => {
+      NetworkLogger.logGame(`opponent left: table ${tableId}`)
+      onOpponentLeft?.()
+    })
+    this.table.onOpponentRejoined(() => {
+      NetworkLogger.logGame(`opponent rejoined: table ${tableId}`)
+      onOpponentRejoined?.()
+    })
   }
 
   subscribe(
@@ -96,18 +72,11 @@ export class MessagingMessageRelay implements MessageRelay {
     callback: (message: string) => void,
     _prefix?: string
   ): void {
-    this.pendingCallbacks.push(callback)
+    this.subscribers.push(callback)
   }
 
   publish(_channel: string, message: string, _prefix?: string): void {
-    if (!this.table) {
-      this.pendingPublishes.push({
-        channel: _channel,
-        message,
-        prefix: _prefix,
-      })
-      return
-    }
+    if (!this.table) return
     let type = "unknown"
     let data: unknown = message
     try {
@@ -117,6 +86,9 @@ export class MessagingMessageRelay implements MessageRelay {
     } catch {
       // Raw string, pass as data
     }
+    // Safe immediately: joinTable() returns the session before its background
+    // handshake completes, and the library outbox holds publishes until the
+    // subscription is live.
     this.table.publish(type, data).catch((error) => {
       console.error("Publication error for table", _channel, error)
     })

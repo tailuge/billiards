@@ -169,14 +169,14 @@ export class LobbyIndicator {
       ruleType: string
       tableId?: string
       isSpectator?: boolean
-      options?: { tableSize?: number }
+      options?: Record<string, string>
     } = {
       messageType: "presence",
       type: "join",
       userId,
       userName,
       ruleType: this.ruleType,
-      options: { tableSize: this.tableSize },
+      options: { tableSize: String(this.tableSize) },
       ...(this.isSpectator && { isSpectator: true }),
     }
     if (this.currentTableId) {
@@ -240,8 +240,8 @@ export class LobbyIndicator {
     if (this.lobby) {
       this.lobby.updatePresence({
         tableId: tableId ?? undefined,
-        options: { tableSize: this.tableSize },
-      } as any)
+        options: { tableSize: String(this.tableSize) },
+      })
     }
   }
 

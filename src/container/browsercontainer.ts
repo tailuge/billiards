@@ -15,7 +15,6 @@ import { Assets } from "../view/assets"
 import { SnookerConfig } from "../utils/snookerconfig"
 import { ThreeCushionConfig } from "../utils/threecushionconfig"
 import { logNetEvent } from "../utils/event-log"
-import { NetworkLogger } from "../utils/network-logger"
 import { Session } from "../network/client/session"
 import { MessageRelay } from "../network/client/messagerelay"
 import { MessagingMessageRelay } from "../network/client/messagingmessagerelay"
@@ -281,10 +280,10 @@ export class BrowserContainer {
 
   private async initGameLoop() {
     if (this.wss) {
-      // Subscribe FIRST so the relay's pending callback list is populated
-      // before we connect/join the table. Without this ordering, an
-      // opponent who sent BeginEvent before our subscribe() ran would drop
-      // on the floor (Race 2).
+      // Subscribe FIRST so the relay's subscriber list is populated before
+      // we connect/join the table. Without this ordering, an opponent who
+      // sent BeginEvent before our subscribe() ran would drop on the floor
+      // (Race 2).
       this.messageRelay?.subscribe(this.tableId, (e) => {
         this.netEvent(e)
       })
@@ -294,13 +293,9 @@ export class BrowserContainer {
 
     if (this.wss) {
       if (this.messageRelay instanceof MessagingMessageRelay && !this.replay) {
-        try {
-          await this.messageRelay.awaitBothJoined(8000)
-        } catch (e) {
-          NetworkLogger.logGame(
-            `net: ${this.playername} bothJoined wait timed out`
-          )
-        }
+        // One-shot handshake promise; the library retries the join handshake
+        // until accepted so it cannot hang.
+        await this.messageRelay.awaitBothJoined()
       }
       if (!this.first) {
         this.broadcast(new BeginEvent())
