@@ -48,7 +48,7 @@ export class LobbyIndicator {
     onShowOverlay?: (url: string) => void
   ) {
     this.offlineHandler = () => {
-      this.onChatMessage?.("<br>🚫")
+      this.onChatMessage?.("🚫")
     }
     this.rules = rules
     this.replayMode = replayMode
@@ -187,7 +187,7 @@ export class LobbyIndicator {
       onReconnect: () => {
         NetworkLogger.logLobby("lobby reconnect")
         NetworkLogger.logGame("lobby reconnect")
-        this.onChatMessage?.("<br>📶")
+        this.onChatMessage?.("📶")
       },
     })
     NetworkLogger.logLobby("joined")

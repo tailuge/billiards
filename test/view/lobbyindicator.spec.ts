@@ -311,7 +311,7 @@ describe("LobbyIndicator", () => {
     // 1. Simulate local player going offline
     const offlineEvent = new window.Event("offline")
     globalThis.dispatchEvent(offlineEvent)
-    expect(mockOnChatMessage).toHaveBeenCalledWith("<br>🚫")
+    expect(mockOnChatMessage).toHaveBeenCalledWith("🚫")
 
     mockOnChatMessage.mockClear()
 
@@ -324,7 +324,7 @@ describe("LobbyIndicator", () => {
 
     // Trigger onReconnect callback
     joinLobbyOptions.onReconnect()
-    expect(mockOnChatMessage).toHaveBeenCalledWith("<br>📶")
+    expect(mockOnChatMessage).toHaveBeenCalledWith("📶")
 
     const { NetworkLogger } = require("../../src/utils/network-logger")
     const getGameLogLabels = () =>
