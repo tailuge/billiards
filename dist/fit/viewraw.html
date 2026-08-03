@@ -163,7 +163,7 @@
       const shots = await resp.json()
 
       const grid = document.getElementById("grid")
-      for (const shot of shots) {
+      shots.forEach((shot, index) => {
         const wrap = document.createElement("div")
         wrap.className = "shot"
 
@@ -175,10 +175,10 @@
         label.textContent = `shot ${shot.id}`
         wrap.appendChild(label)
 
-        wrap.addEventListener("click", () => openOverlay(shot))
+        wrap.addEventListener("click", () => openOverlay(shot, index))
 
         grid.appendChild(wrap)
-      }
+      })
 
       /* overlay */
       const overlay = document.createElement("div")
@@ -243,7 +243,7 @@
         window.open(url, "_blank")
       }
 
-      function openOverlay(shot) {
+      function openOverlay(shot, index) {
         const moverId = findMover(shot)
         const remapped = remapShot(shot, moverId)
         const big = renderShot(remapped, BIG_W, BIG_H)
@@ -251,16 +251,29 @@
         wrap.className = "diagram"
         wrap.style.position = "relative"
         wrap.appendChild(big)
+
         const playBtn = document.createElement("button")
         playBtn.style.position = "absolute"
-        playBtn.style.bottom = "0"
-        playBtn.style.right = "0"
+        playBtn.style.bottom = "4px"
+        playBtn.style.right = "4px"
         playBtn.textContent = "▶"
         playBtn.addEventListener("click", (e) => {
           e.stopPropagation()
           launchThree(remapped)
         })
         wrap.appendChild(playBtn)
+
+        const viewBtn = document.createElement("button")
+        viewBtn.style.position = "absolute"
+        viewBtn.style.bottom = "4px"
+        viewBtn.style.right = "36px"
+        viewBtn.textContent = "🔍"
+        viewBtn.addEventListener("click", (e) => {
+          e.stopPropagation()
+          window.open(`./viewer.html?index=${index}`, "_blank")
+        })
+        wrap.appendChild(viewBtn)
+
         /* remove old diagram if any */
         const old = overlay.querySelector(".diagram")
         if (old) old.remove()

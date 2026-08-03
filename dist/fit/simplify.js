@@ -1,132 +1,12 @@
-import { interpolateTrack } from './rmse.js'
+const R = 0.03275
 
 /**
- * Node representation for the doubly-linked list of trajectory points.
+ * Checks if a point (x, y) is within 3*R of any of the four cushions of the three-cushion billiard table.
  */
-class ListNode {
-  constructor(index, sample) {
-    this.index = index // Original index in the sorted samples array
-    this.t = sample.t
-    this.x = sample.x
-    this.y = sample.y
-    this.ball = sample.ball
-    this.prev = null
-    this.next = null
-    this.cost = Infinity // Cost of deleting this node
-    this.heapIndex = -1 // Index in the binary min-heap
-  }
-}
-
-/**
- * An updatable binary min-heap for managing candidate points for deletion.
- */
-class MinHeap {
-  constructor() {
-    this.data = []
-  }
-
-  size() {
-    return this.data.length
-  }
-
-  push(node) {
-    node.heapIndex = this.data.length
-    this.data.push(node)
-    this.up(this.data.length - 1)
-  }
-
-  pop() {
-    if (this.data.length === 0) return null
-    const min = this.data[0]
-    const last = this.data.pop()
-    if (this.data.length > 0) {
-      this.data[0] = last
-      last.heapIndex = 0
-      this.down(0)
-    }
-    min.heapIndex = -1
-    return min
-  }
-
-  update(node) {
-    const idx = node.heapIndex
-    if (idx !== -1) {
-      this.up(idx)
-      this.down(idx)
-    }
-  }
-
-  remove(node) {
-    const idx = node.heapIndex
-    if (idx !== -1) {
-      const last = this.data.pop()
-      if (idx < this.data.length) {
-        this.data[idx] = last
-        last.heapIndex = idx
-        this.up(idx)
-        this.down(idx)
-      }
-      node.heapIndex = -1
-    }
-  }
-
-  up(i) {
-    while (i > 0) {
-      const p = (i - 1) >> 1
-      if (this.data[i].cost >= this.data[p].cost) break
-      this.swap(i, p)
-      i = p
-    }
-  }
-
-  down(i) {
-    const len = this.data.length
-    while ((i << 1) + 1 < len) {
-      let left = (i << 1) + 1
-      let right = left + 1
-      let best = i
-      if (this.data[left].cost < this.data[best].cost) best = left
-      if (right < len && this.data[right].cost < this.data[best].cost) best = right
-      if (best === i) break
-      this.swap(i, best);
-      i = best
-    }
-  }
-
-  swap(i, j) {
-    const tmp = this.data[i]
-    this.data[i] = this.data[j]
-    this.data[j] = tmp
-    this.data[i].heapIndex = i
-    this.data[j].heapIndex = j
-  }
-}
-
-/**
- * Computes the minimum perpendicular distance from point P(px, py) to the line segment connecting A(ax, ay) and B(bx, by).
- */
-function distanceToLineSegment(px, py, ax, ay, bx, by) {
-  const dx = bx - ax
-  const dy = by - ay
-  const lenSq = dx * dx + dy * dy
-  if (lenSq === 0) {
-    return Math.hypot(px - ax, py - ay)
-  }
-  let t = ((px - ax) * dx + (py - ay) * dy) / lenSq
-  t = Math.max(0, Math.min(1, t))
-  const projX = ax + t * dx
-  const projY = ay + t * dy
-  return Math.hypot(px - projX, py - projY)
-}
-
-/**
- * Checks if a point (x, y) is within 2R of any of the four cushions of the three-cushion billiard table.
- */
-function isWithin2ROfCushion(x, y) {
-  const R = 0.03275
+export function isWithin3ROfCushion(x, y) {
   const tableX = R * 45.18
   const tableY = R * 22.09
-  const limit = 2 * R
+  const limit = 3 * R
 
   const distToCushionX = tableX - Math.abs(x)
   const distToCushionY = tableY - Math.abs(y)
@@ -135,116 +15,75 @@ function isWithin2ROfCushion(x, y) {
 }
 
 /**
- * Computes the deletion cost of a node by evaluating the maximum perpendicular distance
- * of all intermediate points over the interval between its predecessor and successor if the node is removed.
- *
- * @param {ListNode} node - The candidate node.
- * @param {Array} originalSamples - The full array of original samples for this ball.
- * @returns {number} The maximum Euclidean distance error.
+ * Linearly interpolates a ball's position at a specific timestamp.
  */
-function computeDeletionCost(node, originalSamples) {
-  if (!node.prev || !node.next) {
-    return Infinity
+export function getBallPosAtTime(samples, t) {
+  if (!samples || samples.length === 0) return null
+  if (t <= samples[0].t) {
+    return { x: samples[0].x, y: samples[0].y }
   }
-  if (isWithin2ROfCushion(node.x, node.y)) {
-    return Infinity
+  if (t >= samples[samples.length - 1].t) {
+    return { x: samples[samples.length - 1].x, y: samples[samples.length - 1].y }
   }
-  const p = node.prev
-  const s = node.next
 
-  let maxError = 0
-  for (let k = p.index + 1; k < s.index; k++) {
-    const orig = originalSamples[k]
-    const err = distanceToLineSegment(orig.x, orig.y, p.x, p.y, s.x, s.y)
-    if (err > maxError) {
-      maxError = err
+  let low = 0
+  let high = samples.length - 1
+  while (low <= high) {
+    const mid = (low + high) >> 1
+    if (samples[mid].t === t) {
+      return { x: samples[mid].x, y: samples[mid].y }
+    } else if (samples[mid].t < t) {
+      low = mid + 1
+    } else {
+      high = mid - 1
     }
   }
-  return maxError
+
+  const p1 = samples[high]
+  const p2 = samples[low]
+  if (!p1 || !p2) return null
+  const dt = p2.t - p1.t
+  if (dt === 0) return { x: p1.x, y: p1.y }
+  const alpha = (t - p1.t) / dt
+  return {
+    x: p1.x + alpha * (p2.x - p1.x),
+    y: p1.y + alpha * (p2.y - p1.y)
+  }
 }
 
 /**
- * Simplifies a single ball's trajectory using the decimation algorithm.
- *
- * @param {Array} samples - Array of trajectory samples of form {ball, t, x, y}.
- * @param {number} tolerance - Tolerance threshold in meters.
- * @returns {Array} The simplified array of samples.
+ * Checks if a ball is within 3*R proximity of any other ball at that time.
  */
-function simplifyBallTrajectory(samples, tolerance) {
-  if (samples.length <= 2) {
-    return samples
-  }
+export function isNearOtherBall(currentBallId, p, t, ballGroups) {
+  const limit = 3 * R
 
-  const n = samples.length
-  const nodes = new Array(n)
-  for (let i = 0; i < n; i++) {
-    nodes[i] = new ListNode(i, samples[i])
-  }
+  for (const [otherBallIdStr, otherSamples] of Object.entries(ballGroups)) {
+    const otherBallId = parseInt(otherBallIdStr, 10)
+    if (otherBallId === currentBallId) continue
 
-  for (let i = 0; i < n; i++) {
-    if (i > 0) nodes[i].prev = nodes[i - 1]
-    if (i < n - 1) nodes[i].next = nodes[i + 1]
-  }
+    const otherPos = getBallPosAtTime(otherSamples, t)
+    if (!otherPos) continue
 
-  const heap = new MinHeap()
-
-  for (let i = 1; i < n - 1; i++) {
-    nodes[i].cost = computeDeletionCost(nodes[i], samples)
-    heap.push(nodes[i])
-  }
-
-  while (heap.size() > 0) {
-    const minNode = heap.pop()
-    if (minNode.cost > tolerance) {
-      break
-    }
-
-    // Permanently remove minNode from the linked list
-    const p = minNode.prev
-    const s = minNode.next
-    p.next = s
-    s.prev = p
-
-    // Recompute cost for predecessor if it is an interior node
-    if (p.prev !== null) {
-      p.cost = computeDeletionCost(p, samples)
-      heap.update(p)
-    }
-
-    // Recompute cost for successor if it is an interior node
-    if (s.next !== null) {
-      s.cost = computeDeletionCost(s, samples)
-      heap.update(s)
+    const dist = Math.hypot(p.x - otherPos.x, p.y - otherPos.y)
+    if (dist <= limit) {
+      return true
     }
   }
-
-  // Reconstruct simplified array of samples
-  const result = []
-  let curr = nodes[0]
-  while (curr !== null) {
-    result.push({
-      ball: curr.ball,
-      t: curr.t,
-      x: curr.x,
-      y: curr.y
-    })
-    curr = curr.next
-  }
-
-  return result
+  return false
 }
 
 /**
- * Simplifies the multi-ball trajectory data, grouping by ball.
+ * Simplifies the multi-ball trajectory data to have equal density along the path,
+ * except that it preserves points within 3*R of cushions and other balls.
  *
  * @param {Array} truth - Original flat trajectory array of [{ball, t, x, y}, ...].
- * @param {number} toleranceInMm - Configurable tolerance threshold in millimeters.
+ * @param {number} minDistanceInMm - Configurable minimum distance between points in millimeters.
  * @returns {Array} The simplified flat trajectory array.
  */
-export function simplifyTruth(truth, toleranceInMm) {
+export function simplifyTruth(truth, minDistanceInMm) {
   if (!truth || truth.length === 0) return []
 
-  const toleranceInMeters = toleranceInMm / 1000
+  const minDistanceInMeters = minDistanceInMm / 1000
 
   // Group by ball ID
   const groups = {}
@@ -253,14 +92,50 @@ export function simplifyTruth(truth, toleranceInMm) {
     groups[s.ball].push(s)
   }
 
+  // Sort groups by t
+  for (const ballStr of Object.keys(groups)) {
+    groups[ballStr].sort((a, b) => a.t - b.t)
+  }
+
   const simplifiedGroups = []
   for (const [ballStr, samples] of Object.entries(groups)) {
-    // Sort by timestamp to be absolutely safe
-    samples.sort((a, b) => a.t - b.t)
-    const simplified = simplifyBallTrajectory(samples, toleranceInMeters)
+    const ballId = parseInt(ballStr, 10)
+    if (samples.length <= 2) {
+      simplifiedGroups.push(samples)
+      continue
+    }
+
+    const simplified = []
+    // Always keep the first point
+    simplified.push(samples[0])
+    let lastKept = samples[0]
+
+    for (let i = 1; i < samples.length - 1; i++) {
+      const p = samples[i]
+      if (isWithin3ROfCushion(p.x, p.y)) {
+        simplified.push(p)
+        lastKept = p
+        continue
+      }
+      if (isNearOtherBall(ballId, p, p.t, groups)) {
+        simplified.push(p)
+        lastKept = p
+        continue
+      }
+
+      // Check distance from lastKept to p
+      const dist = Math.hypot(p.x - lastKept.x, p.y - lastKept.y)
+      if (dist >= minDistanceInMeters) {
+        simplified.push(p)
+        lastKept = p
+      }
+    }
+
+    // Always keep the last point
+    simplified.push(samples[samples.length - 1])
     simplifiedGroups.push(simplified)
   }
 
-  // Concatenate simplified trajectories, maintaining ball groupings order
+  // Concatenate simplified trajectories, preserving ball grouping order
   return simplifiedGroups.flat()
 }
