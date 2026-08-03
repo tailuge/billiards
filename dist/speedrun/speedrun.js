@@ -7,6 +7,18 @@ let timerInterval = null
 let closeTimeout = null
 let currentCard = null
 
+/**
+ * Read the optional tableSize from a shot config's params and return it as a
+ * query-string fragment (&tableSize=N). Returns "" for the default 10ft table.
+ */
+function tableSizeParam(cfg) {
+  const size = cfg?.params?.tableSize
+  const n = Number(size)
+  return size !== undefined && Number.isFinite(n) && n !== 10
+    ? `&tableSize=${n}`
+    : ""
+}
+
 /** Hash data-json-shots → stable content-based position ID */
 function positionId(card) {
   if (card.id) return card.id
@@ -199,6 +211,7 @@ export function initSpeedrun() {
         `&speedrun&practice` +
         `&init=${encodeURIComponent(init)}` +
         `&initShot=${encodeURIComponent(initShot)}` +
+        tableSizeParam(config) +
         passThrough
 
       // Cancel any pending close so we don't wipe the new iframe
@@ -405,7 +418,7 @@ export function initSpeedrun() {
       const p = new URLSearchParams()
       p.set("ruletype", config.ruleType)
       p.set("init", init)
-      window.open("../practice.html?" + p, "_blank")
+      window.open("../practice.html?" + p + tableSizeParam(config), "_blank")
     })
     wrapper.appendChild(practiceBtn)
   })

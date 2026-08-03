@@ -3,6 +3,18 @@ import { parseShots, parseJsonShots, maxPower } from "../diagrams/dsl.js"
 
 const R = 0.03275
 
+/**
+ * Read the optional tableSize from a shot config's params and return it as a
+ * query-string fragment (&tableSize=N). Returns "" for the default 10ft table.
+ */
+function tableSizeParam(cfg) {
+  const size = cfg?.params?.tableSize
+  const n = Number(size)
+  return size !== undefined && Number.isFinite(n) && n !== 10
+    ? `&tableSize=${n}`
+    : ""
+}
+
 function proximityPoints(outcomes, ruleType) {
   if (ruleType !== "threecushion") return 0
   const prox = outcomes.filter(
@@ -363,7 +375,7 @@ export function initExam() {
       p.set("cushionModel", cfg.cushionModel || "mathavan")
       p.set("init", JSON.stringify(ballsPos))
       p.set("initShot", JSON.stringify(shot))
-      window.open(`../diagrams/export.html?${p}`, "_blank")
+      window.open(`../diagrams/export.html?${p}${tableSizeParam(cfg)}`, "_blank")
     })
     parent.appendChild(editBtn)
 
@@ -400,7 +412,7 @@ export function initExam() {
         const p = new URLSearchParams()
         p.set("ruletype", cfg.ruleType)
         p.set("init", JSON.stringify(init))
-        window.open(`../practice.html?${p}`, "_blank")
+        window.open(`../practice.html?${p}${tableSizeParam(cfg)}`, "_blank")
       }
     })
     parent.appendChild(setupBtn)
@@ -464,7 +476,7 @@ export function initExam() {
         const ruleType = config.ruleType || "threecushion"
         currentRuleType = ruleType
 
-        const url = `../index.html?ruletype=${ruleType}&exam=true&practice=true&init=${encodeURIComponent(JSON.stringify(init))}&initShot=${encodeURIComponent(JSON.stringify(initShot))}`
+        const url = `../index.html?ruletype=${ruleType}&exam=true&practice=true&init=${encodeURIComponent(JSON.stringify(init))}&initShot=${encodeURIComponent(JSON.stringify(initShot))}${tableSizeParam(config)}`
         if (iframe.contentWindow && iframe.src) {
           iframe.contentWindow.location.replace(url)
         } else {
