@@ -262,14 +262,10 @@ export class BrowserContainer {
       mc,
       this.tableId,
       () => {
-        this.container.chat.showMessage("<br>🔌")
-        this.container.notifyLocal({
-          type: "Info",
-          title: "Opponent left the game",
-        })
+        this.container.chat.showMessage("🔌")
       },
       () => {
-        this.container.chat.showMessage("<br>⚡")
+        this.container.chat.showMessage("⚡")
       }
     )
   }
