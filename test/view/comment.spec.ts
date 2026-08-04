@@ -32,6 +32,15 @@ function addMenu() {
 beforeEach(function (done) {
   document.querySelectorAll(".comment-menu").forEach((el) => el.remove())
   addMenu()
+  const inputTextDiv = document.getElementById(
+    "inputTextDiv"
+  ) as HTMLDialogElement
+  inputTextDiv.open = false
+  if (!inputTextDiv.show) {
+    inputTextDiv.show = () => {
+      inputTextDiv.open = true
+    }
+  }
   container = new Container({
     element: document.getElementById("viewP1"),
     log: (_) => {},
@@ -54,12 +63,17 @@ describe("Comment", () => {
     done()
   })
 
-  it("clicking comment button shows menu", (done) => {
+  it("clicking comment button opens chat input and emoji menu", (done) => {
     const commentBtn = document.getElementById("comment") as HTMLButtonElement
     const menu = document.getElementById("commentMenu") as HTMLDivElement
+    const inputTextDiv = document.getElementById(
+      "inputTextDiv"
+    ) as HTMLDialogElement
 
     expect(menu.style.display).to.equal("none")
+    expect(inputTextDiv.open).to.equal(false)
     fireEvent.click(commentBtn)
+    expect(inputTextDiv.open).to.equal(true)
     expect(menu.style.display).to.equal("grid")
     done()
   })
