@@ -2,36 +2,14 @@ import { expect } from "chai"
 import { initDom } from "./dom"
 import { fireEvent } from "@testing-library/dom"
 import { Container } from "../../src/container/container"
-import { Comment } from "../../src/view/comment"
 import { Assets } from "../../src/view/assets"
 
 initDom()
 
 let container: Container
 
-function addMenu() {
-  const menu = document.createElement("div")
-  menu.id = "commentMenu"
-  menu.className = "comment-menu"
-  menu.style.display = "none"
-  menu.innerHTML = `
-    <button class="comment-emoji" data-angle="0"></button>
-    <button class="comment-emoji">🍀</button>
-    <button class="comment-emoji">🐢</button>
-    <button class="comment-emoji">🐑</button>
-    <button class="comment-emoji">👏</button>
-    <button class="comment-emoji">🧸</button>
-    <button class="comment-emoji">🧙‍♂️</button>
-    <button class="comment-emoji">🎖️</button>
-    <button class="comment-emoji">🦈</button>
-    <button class="comment-emoji">👀</button>
-  `
-  document.body.appendChild(menu)
-}
-
 beforeEach(function (done) {
-  document.querySelectorAll(".comment-menu").forEach((el) => el.remove())
-  addMenu()
+  initDom()
   const inputTextDiv = document.getElementById(
     "inputTextDiv"
   ) as HTMLDialogElement
@@ -41,55 +19,84 @@ beforeEach(function (done) {
       inputTextDiv.open = true
     }
   }
+  if (!inputTextDiv.close) {
+    inputTextDiv.close = () => {
+      inputTextDiv.open = false
+    }
+  }
   container = new Container({
     element: document.getElementById("viewP1"),
     log: (_) => {},
     assets: Assets.localAssets(),
   })
-  const comment = new Comment(container)
-  expect(comment).to.not.be.undefined
   done()
 })
 
 describe("Comment", () => {
-  it("hydrates data-angle buttons with SVG", (done) => {
-    const menu = document.getElementById("commentMenu") as HTMLDivElement
-    const angleBtn = menu.querySelector(
-      ".comment-emoji[data-angle]"
-    ) as HTMLButtonElement
-    expect(angleBtn).to.not.be.null
-    expect(angleBtn.innerHTML).to.include("<svg")
-    expect(angleBtn.innerHTML).to.include("<circle")
-    done()
-  })
-
-  it("clicking comment button opens only the emoji menu; again closes it", (done) => {
+  it("comment button toggles the new chat area", () => {
     const commentBtn = document.getElementById("comment") as HTMLButtonElement
-    const menu = document.getElementById("commentMenu") as HTMLDivElement
     const inputTextDiv = document.getElementById(
       "inputTextDiv"
     ) as HTMLDialogElement
 
-    expect(menu.style.display).to.equal("none")
     expect(inputTextDiv.open).to.equal(false)
     fireEvent.click(commentBtn)
-    expect(menu.style.display).to.equal("grid")
-    expect(inputTextDiv.open).to.equal(false)
+    expect(inputTextDiv.open).to.equal(true)
     fireEvent.click(commentBtn)
-    expect(menu.style.display).to.equal("none")
-    done()
+    expect(inputTextDiv.open).to.equal(false)
   })
 
-  it("clicking an emoji sends a chat event with that emoji", (done) => {
-    const menu = document.getElementById("commentMenu") as HTMLDivElement
+  it("does not include the old emoji panel", () => {
+    expect(document.getElementById("commentMenu")).to.equal(null)
+    expect(document.querySelector(".comment-emoji")).to.equal(null)
+  })
 
-    const emojiBtns = menu.querySelectorAll(".comment-emoji")
-    expect(emojiBtns).to.have.lengthOf(10)
+  it("toggles the chat input between text and random emoji modes", () => {
+    const inputTextDiv = document.getElementById(
+      "inputTextDiv"
+    ) as HTMLDialogElement
+    const toggle = document.getElementById(
+      "toggleChatMode"
+    ) as HTMLButtonElement
+    const emojiList = document.getElementById("chatEmojiList") as HTMLDivElement
 
-    const firstEmoji = emojiBtns[0] as HTMLButtonElement
-    fireEvent.click(firstEmoji)
+    expect(inputTextDiv.classList.contains("emoji-mode")).to.equal(false)
+    fireEvent.click(toggle)
 
-    expect(menu.style.display).to.equal("none")
-    done()
+    expect(inputTextDiv.classList.contains("emoji-mode")).to.equal(true)
+    expect(toggle.getAttribute("aria-label")).to.equal("Switch to text mode")
+    expect(emojiList.querySelectorAll(".chat-emoji")).to.have.lengthOf(12)
+    const shownEmojis = emojiList.textContent ?? ""
+    ;["🚬", "🥃", "🍀", "👏", "🎖️", "👀"].forEach((emoji) => {
+      expect(shownEmojis).to.include(emoji)
+    })
+
+    fireEvent.click(toggle)
+    expect(inputTextDiv.classList.contains("emoji-mode")).to.equal(false)
+    expect(toggle.getAttribute("aria-label")).to.equal("Switch to emoji mode")
+  })
+
+  it("clicking a chat emoji sends it without closing the picker", () => {
+    const toggle = document.getElementById(
+      "toggleChatMode"
+    ) as HTMLButtonElement
+    const emojiList = document.getElementById("chatEmojiList") as HTMLDivElement
+    const sendChat = jest.spyOn(container, "sendChat")
+
+    fireEvent.click(toggle)
+    const emojiButton = emojiList.querySelector(
+      ".chat-emoji"
+    ) as HTMLButtonElement
+    const emoji = emojiButton.textContent
+    fireEvent.click(emojiButton)
+
+    expect(sendChat.mock.calls).to.have.length.greaterThan(0)
+    expect(sendChat.mock.calls[0][0]).to.equal(emoji)
+    expect(
+      (
+        document.getElementById("inputTextDiv") as HTMLDialogElement
+      ).classList.contains("emoji-mode")
+    ).to.equal(true)
+    sendChat.mockRestore()
   })
 })

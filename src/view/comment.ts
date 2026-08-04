@@ -1,39 +1,37 @@
 import { Container } from "../container/container"
 import { getButton } from "../utils/dom"
 import { randomEmojis } from "../utils/utils"
-import { ballSvg } from "./chat"
 
 export class Comment {
   container: Container
   button: HTMLButtonElement | null
-  menu: HTMLDivElement | null
 
   constructor(container: Container) {
     this.container = container
-
     this.button = getButton("comment")
-    this.menu = document.getElementById("commentMenu") as HTMLDivElement
 
-    if (!this.button || !this.menu) {
+    if (!this.button) {
       return
     }
 
-    // Hydrate ball-SVG buttons
-    this.menu
-      .querySelectorAll<HTMLButtonElement>(".comment-emoji[data-angle]")
-      .forEach((btn) => {
-        const angle = parseInt(btn.dataset.angle ?? "0", 10)
-        btn.innerHTML = ballSvg(isNaN(angle) ? 0 : angle)
-      })
-
-    this.button.onclick = (_) => {
-      this.toggleMenu()
+    this.button.onclick = () => {
+      const menuDropdown = document.getElementById(
+        "menuDropdown"
+      ) as HTMLDetailsElement | null
+      if (menuDropdown) {
+        menuDropdown.open = false
+      }
+      this.toggleChat()
     }
 
     const inputTextDiv = document.getElementById(
       "inputTextDiv"
     ) as HTMLDialogElement
     const inputText = document.getElementById("inputText") as HTMLInputElement
+    const emojiList = document.getElementById("chatEmojiList") as HTMLDivElement
+    const toggleChatMode = document.getElementById(
+      "toggleChatMode"
+    ) as HTMLButtonElement
 
     const sendText = () => {
       const text = inputText.value.trim()
@@ -45,21 +43,6 @@ export class Comment {
       // Keep the input open so further messages can be typed; close via ✖ or Esc.
       inputText.focus()
     }
-
-    const emojiButtons = this.menu.querySelectorAll(".comment-emoji")
-    emojiButtons.forEach((btn) => {
-      if (btn.id === "voice") return
-      btn.addEventListener("click", (_) => {
-        if (btn.id === "openTextInput") {
-          this.openChat()
-          return
-        }
-        const text = btn.innerHTML ?? ""
-        this.container.chat.showMessage(text)
-        this.container.sendChat(text)
-        this.hideMenu()
-      })
-    })
 
     inputText.addEventListener("keydown", (e) => {
       e.stopPropagation()
@@ -76,10 +59,31 @@ export class Comment {
       this.closeChat()
     })
 
-    inputTextDiv.addEventListener("close", () => {})
+    toggleChatMode?.addEventListener("click", () => {
+      const emojiMode = inputTextDiv.classList.toggle("emoji-mode")
+      toggleChatMode.setAttribute(
+        "aria-label",
+        emojiMode ? "Switch to text mode" : "Switch to emoji mode"
+      )
+      if (emojiMode) {
+        const emojis = randomEmojis(12)
+        emojiList.innerHTML = ""
+        emojis.forEach((emoji) => {
+          const button = document.createElement("button")
+          button.type = "button"
+          button.className = "chat-emoji"
+          button.textContent = emoji
+          button.setAttribute("aria-label", `Send ${emoji}`)
+          button.addEventListener("click", () => {
+            this.container.chat.showMessage(emoji)
+            this.container.sendChat(emoji)
+          })
+          emojiList.appendChild(button)
+        })
+      }
+    })
 
-    // Esc closes the chat even when focus has moved to the game canvas
-    // (the input's own keydown handler covers the case where it has focus).
+    // Esc closes the chat even when focus has moved to the game canvas.
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && inputTextDiv.open) {
         this.closeChat()
@@ -94,24 +98,15 @@ export class Comment {
     }
   }
 
-  toggleMenu() {
-    if (!this.menu) return
-    if (this.menu.style.display === "none") {
-      this.showMenu()
+  toggleChat() {
+    const inputTextDiv = document.getElementById(
+      "inputTextDiv"
+    ) as HTMLDialogElement
+    if (inputTextDiv.open) {
+      this.closeChat()
     } else {
-      this.hideMenu()
+      this.openChat()
     }
-  }
-
-  showMenu() {
-    if (!this.menu) return
-    this.menu.style.display = "grid"
-    const randomButtons =
-      this.menu.querySelectorAll<HTMLButtonElement>(".comment-random")
-    const emojis = randomEmojis(randomButtons.length)
-    randomButtons.forEach((btn, i) => {
-      btn.innerHTML = emojis[i]
-    })
   }
 
   openChat() {
@@ -119,7 +114,10 @@ export class Comment {
       "inputTextDiv"
     ) as HTMLDialogElement
     const inputText = document.getElementById("inputText") as HTMLInputElement
-    this.hideMenu()
+    inputTextDiv.classList.remove("emoji-mode")
+    document
+      .getElementById("toggleChatMode")
+      ?.setAttribute("aria-label", "Switch to emoji mode")
     inputTextDiv.show()
     inputText.value = ""
     inputText.focus()
@@ -133,11 +131,5 @@ export class Comment {
     // Non-modal dialogs don't return focus automatically — hand it back to the
     // game canvas so keyboard controls (arrows, F for fullscreen, etc.) resume.
     ;(this.container.view.element as HTMLElement | null)?.focus()
-  }
-
-  hideMenu() {
-    if (this.menu) {
-      this.menu.style.display = "none"
-    }
   }
 }

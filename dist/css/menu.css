@@ -86,13 +86,6 @@
   display: none;
 }
 
-.menuItems #commentMenu {
-  position: absolute;
-  right: 0;
-  bottom: calc(100% + 1px);
-  margin-bottom: 0;
-}
-
 .menuDropdown:not([open]) .menuItems {
   display: none;
 }
@@ -105,54 +98,6 @@
 
 .menuButton.half-height {
   height: 35px;
-}
-
-.comment-menu {
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  margin-bottom: 4px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0px;
-  background: rgb(34 34 34 / 70%);
-  border: 1px solid rgb(255 255 255 / 10%);
-  padding: 0px;
-  border-radius: 6px;
-  box-shadow: 0 2px 10px rgb(0 0 0 / 0%);
-  z-index: 10000;
-}
-
-.comment-emoji {
-  width: 32px;
-  height: 32px;
-  font-size: 20px;
-  background: #ededed;
-  border: 1px solid #888888;
-  border-radius: 3px;
-  cursor: pointer;
-  padding: 0;
-  text-shadow: 1px 1px 0 black;
-}
-
-.comment-emoji:hover {
-  background: #444;
-  border-color: #666;
-}
-
-@keyframes voice-throb {
-  0%,
-  100% {
-    background-color: rgb(220 0 0 / 30%);
-  }
-
-  50% {
-    background-color: rgb(220 0 0 / 90%);
-  }
-}
-
-.voice-ringing {
-  animation: voice-throb 1.4s ease-in-out infinite;
 }
 
 .menuButton[hidden] {

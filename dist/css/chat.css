@@ -88,6 +88,45 @@
   display: flex;
 }
 
+#chatEmojiList {
+  display: none;
+  flex: 1;
+  min-width: 0;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0;
+}
+
+#inputTextDiv .chat-emoji {
+  all: unset;
+  display: block;
+  min-width: 0;
+  font-size: 18px;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+}
+
+.chat-emoji:hover {
+  background: rgb(255 255 255 / 12%);
+}
+
+#inputTextDiv.emoji-mode #inputText,
+#inputTextDiv.emoji-mode #inputSend {
+  display: none;
+}
+
+#inputTextDiv.emoji-mode #chatEmojiList {
+  display: grid;
+}
+
+#inputTextDiv.emoji-mode .chat-text-mode-icon {
+  display: none;
+}
+
+#inputTextDiv:not(.emoji-mode) .chat-emoji-mode-icon {
+  display: none;
+}
+
 #inputText {
   /* Fill the available space between the spin column and the buttons */
   flex: 1;
@@ -114,8 +153,8 @@
 
 #inputTextDiv button {
   font-size: 15px;
-  padding: 2px 12px;
-  min-width: 32px;
+  padding: 2px 4px;
+  min-width: 24px;
   border: none;
   border-radius: 999px;
   color: white;
@@ -127,6 +166,14 @@
 
 #inputTextDiv button:active {
   transform: scale(0.95);
+}
+
+#toggleChatMode {
+  background: #555;
+}
+
+#toggleChatMode:hover {
+  background: #666;
 }
 
 #inputSend {

@@ -97,7 +97,7 @@ export function randomEmoji(): string {
 }
 
 // Emoji that are guaranteed to appear in the random emoji slots (placed randomly)
-const alwaysEmojis = ["🚬", "🥃", "🍀"]
+const alwaysEmojis = ["🚬", "🥃", "🍀", "👏", "🎖️", "👀"]
 
 // Build a list of `count` unique emojis containing the alwaysEmojis,
 // shuffled so the fixed emojis land in random positions.

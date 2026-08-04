@@ -110,8 +110,14 @@ export class View {
   }
 
   render() {
-    const isGracePeriod = this.camera.aimGraceStartT !== undefined && (this.camera.t - this.camera.aimGraceStartT < 5)
-    if (!isGracePeriod && this.isInMotionNotVisible() && !this.camera.isZoomedOut) {
+    const isGracePeriod =
+      this.camera.aimGraceStartT !== undefined &&
+      this.camera.t - this.camera.aimGraceStartT < 5
+    if (
+      !isGracePeriod &&
+      this.isInMotionNotVisible() &&
+      !this.camera.isZoomedOut
+    ) {
       this.camera.suggestMode(this.camera.topView)
     }
     this.renderCamera(this.camera)
