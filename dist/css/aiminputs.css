@@ -1,5 +1,5 @@
 :root {
-  --ball-size-base: 152px;
+  --ball-size-base: 140px;
   --ball-size-small: 70px;
 }
 
@@ -260,15 +260,16 @@ angle-input .butt {
 .hitButton {
   position: relative;
   z-index: 1;
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 70px;
   aspect-ratio: auto;
-  border-radius: 10px;
+  border-radius: 6px;
   border-width: 4px;
-  font-size: 24px;
+  font-size: 22px;
   user-select: none;
   box-sizing: border-box;
   padding: 0;
+  box-shadow: 1px 1px 0 rgb(0 0 0 / 40%);
 }
 
 .hitButton:disabled {

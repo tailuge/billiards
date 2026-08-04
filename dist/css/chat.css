@@ -18,7 +18,7 @@
   overflow: hidden auto;
   padding: 2px;
   font-size: 16px;
-  color: #ccc;
+  color: #eee;
   text-shadow: 1px 1px 0 black;
   overflow-wrap: anywhere;
   text-align: right;
@@ -63,9 +63,12 @@
   display: none;
   align-items: center;
   pointer-events: auto;
-  border: none;
-  background: transparent;
-  padding: 0;
+  background: #333;
+  border: 1px solid #555;
+  border-radius: 999px;
+  padding: 2px 3px;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 40%);
   margin: 0;
 }
 
@@ -78,17 +81,54 @@
   flex: 1;
   min-width: 0;
   font-size: 15px;
-  padding: 1px;
-  caret-color: black;
-  color: black;
-  background: white;
+  padding: 1px 4px;
+  caret-color: white;
+  color: white;
+  background: transparent;
+  border: none;
+  outline: none;
   /* .view3d sets cursor: none, which would hide the text caret over the input */
   cursor: text;
 }
 
+#inputText::placeholder {
+  color: #999;
+}
+
+#inputText::selection {
+  background: #555;
+  color: white;
+}
+
 #inputTextDiv button {
   font-size: 15px;
-  padding: 1px;
-  margin-left: 2px;
+  padding: 2px 12px;
   min-width: 32px;
+  border: none;
+  border-radius: 999px;
+  color: white;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease;
+}
+
+#inputTextDiv button:active {
+  transform: scale(0.95);
+}
+
+#inputSend {
+  background: #2e8b57;
+}
+
+#inputSend:hover {
+  background: #3da066;
+}
+
+#inputClose {
+  background: #555;
+}
+
+#inputClose:hover {
+  background: #d64545;
 }
