@@ -63,7 +63,7 @@ describe("Comment", () => {
     done()
   })
 
-  it("clicking comment button opens chat input and emoji menu", (done) => {
+  it("clicking comment button opens only the emoji menu; again closes it", (done) => {
     const commentBtn = document.getElementById("comment") as HTMLButtonElement
     const menu = document.getElementById("commentMenu") as HTMLDivElement
     const inputTextDiv = document.getElementById(
@@ -73,8 +73,10 @@ describe("Comment", () => {
     expect(menu.style.display).to.equal("none")
     expect(inputTextDiv.open).to.equal(false)
     fireEvent.click(commentBtn)
-    expect(inputTextDiv.open).to.equal(true)
     expect(menu.style.display).to.equal("grid")
+    expect(inputTextDiv.open).to.equal(false)
+    fireEvent.click(commentBtn)
+    expect(menu.style.display).to.equal("none")
     done()
   })
 

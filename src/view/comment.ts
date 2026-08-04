@@ -27,8 +27,7 @@ export class Comment {
       })
 
     this.button.onclick = (_) => {
-      this.openChat()
-      this.showMenu()
+      this.toggleMenu()
     }
 
     const inputTextDiv = document.getElementById(
