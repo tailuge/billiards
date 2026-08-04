@@ -11,7 +11,7 @@ export class Camera {
 
   static configureForRule(ruleType: string) {
     if (ruleType === "threecushion" || ruleType === "sagu") {
-      Camera.defaultHeight = R * 23
+      Camera.defaultHeight = R * 20
       Camera.defaultDistance = R * 22
       Camera.defaultFovOffset = 6
       CameraTop.zoomFactor = 0.92
@@ -36,6 +36,7 @@ export class Camera {
   private distance = Camera.defaultDistance
   private fovOffset = Camera.defaultFovOffset
   savedDistance?: number
+  savedHeight?: number
 
   elapsed: number
   private t = 0
@@ -139,14 +140,17 @@ export class Camera {
       this.distance = this.savedDistance
       this.savedDistance = undefined
     }
+    if (this.savedHeight !== undefined) {
+      this.height = this.savedHeight
+      this.savedHeight = undefined
+    }
   }
 
   private computeStepBackFov(h: number): number {
     const portrait = this.camera.aspect < 0.8
     const tempFov = (portrait ? 60 : 40) + this.fovOffset
-    const fov =
-      h < 10 * R ? tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1) : tempFov
-    return fov - 3
+    const lowHeightFov = tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1)
+    return (h < 10 * R ? lowHeightFov : tempFov) - 3
   }
 
   private areAllBallsInFrustum(frustum: Frustum, balls: any[]): boolean {
@@ -198,27 +202,66 @@ export class Camera {
     const frustum = new Frustum()
     const projScreenMatrix = new Matrix4()
 
-    const h = this.height
-    const fov = this.computeStepBackFov(h)
-
     const originalPosition = this.camera.position.clone()
     const originalRotation = this.camera.rotation.clone()
     const originalMatrixWorld = this.camera.matrixWorld.clone()
     const originalMatrixWorldInverse = this.camera.matrixWorldInverse.clone()
     const originalProjectionMatrix = this.camera.projectionMatrix.clone()
     const originalFov = this.camera.fov
+    const originalHeight = this.height
 
-    this.camera.fov = fov
-    this.camera.updateProjectionMatrix()
+    const setFovForHeight = (h: number) => {
+      this.camera.fov = this.computeStepBackFov(h)
+      this.camera.updateProjectionMatrix()
+    }
 
     let foundDistance = this.distance
+    let foundHeight = this.height
     const maxDistance = R * 120
     const step = R
 
+    // Find the smallest distance at the current height that brings all balls
+    // into view
+    setFovForHeight(this.height)
     for (let d = this.distance; d <= maxDistance; d += step) {
-      if (this.tryDistanceFit(d, h, aim, frustum, projScreenMatrix, balls)) {
+      if (
+        this.tryDistanceFit(
+          d,
+          this.height,
+          aim,
+          frustum,
+          projScreenMatrix,
+          balls
+        )
+      ) {
         foundDistance = d
         break
+      }
+    }
+
+    // Raise the height in proportion to how far we stepped back so the
+    // zoomed-out view looks down on the whole table from a higher vantage
+    // point. Walk back down until every ball still fits in the frustum.
+    const raisedHeight = Math.min(
+      this.height * (foundDistance / this.distance),
+      R * 40
+    )
+    if (raisedHeight > this.height) {
+      for (let h = raisedHeight; h >= this.height; h -= step) {
+        setFovForHeight(h)
+        if (
+          this.tryDistanceFit(
+            foundDistance,
+            h,
+            aim,
+            frustum,
+            projScreenMatrix,
+            balls
+          )
+        ) {
+          foundHeight = h
+          break
+        }
       }
     }
 
@@ -229,12 +272,15 @@ export class Camera {
     this.camera.matrixWorldInverse.copy(originalMatrixWorldInverse)
     this.camera.projectionMatrix.copy(originalProjectionMatrix)
     this.camera.fov = originalFov
+    this.height = originalHeight
 
-    if (foundDistance !== this.distance) {
+    if (foundDistance !== this.distance || foundHeight !== this.height) {
       if (this.savedDistance === undefined) {
         this.savedDistance = this.distance
+        this.savedHeight = this.height
       }
       this.distance = foundDistance
+      this.height = foundHeight
     }
   }
 
@@ -318,8 +364,12 @@ export class Camera {
     if (btn) {
       btn.classList.remove("aim", "aimz", "topview")
       btn.classList.add(state)
-      btn.textContent =
-        state === "aimz" ? "🎥ᶻ" : state === "topview" ? "🎥ᵀ" : "🎥"
+      const labels: Record<string, string> = {
+        aim: "🎥",
+        aimz: "🎥ᶻ",
+        topview: "🎥ᵀ",
+      }
+      btn.textContent = labels[state]
     }
   }
 

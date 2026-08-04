@@ -25,7 +25,7 @@ describe("Camera", () => {
     expect(target.z).to.be.greaterThan(0)
   })
 
-  it("stepBackToFitAllBalls steps back and restores original distance on toggleMode", () => {
+  it("stepBackToFitAllBalls steps back, raises height and restores on toggleMode", () => {
     const camera = new Camera(1)
     camera.forceMode(camera.aimView)
 
@@ -46,16 +46,22 @@ describe("Camera", () => {
     aim.angle = 0
 
     const initialDistance = (camera as any).distance
+    const initialHeight = (camera as any).height
 
     camera.stepBackToFitAllBalls(balls, aim)
 
     const steppedDistance = (camera as any).distance
+    const steppedHeight = (camera as any).height
 
     expect(steppedDistance).to.be.greaterThan(initialDistance)
+    expect(steppedHeight).to.be.greaterThan(initialHeight)
     expect(camera.savedDistance).to.equal(initialDistance)
+    expect(camera.savedHeight).to.equal(initialHeight)
 
     camera.toggleMode()
     expect((camera as any).distance).to.equal(initialDistance)
+    expect((camera as any).height).to.equal(initialHeight)
     expect(camera.savedDistance).to.be.undefined
+    expect(camera.savedHeight).to.be.undefined
   })
 })
