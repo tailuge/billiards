@@ -47,13 +47,18 @@
 
 #inputTextDiv {
   /* Just above the 70px control panel (#panel): the dialog lives inside
-     #viewP1 which sits directly on top of the panel. */
+     #viewP1 which sits directly on top of the panel. Stretched between the
+     spin column (152px, left) and the button column (70px, right) so it can
+     never cover either, at any window width. */
   position: absolute;
+  /* dialogs default to width: fit-content from the UA stylesheet, which stops
+     left/right offsets from stretching the box — force width back to auto so
+     the input fills the whole corridor. */
+  width: auto;
   top: auto;
   bottom: 1px;
-  left: 50%;
-  right: auto;
-  transform: translateX(-50%);
+  left: 160px; /* 152px spin column + 8px gap */
+  right: 80px; /* button column */
   z-index: 1000;
   display: none;
   align-items: center;
@@ -69,7 +74,9 @@
 }
 
 #inputText {
-  width: 24ch;
+  /* Fill the available space between the spin column and the buttons */
+  flex: 1;
+  min-width: 0;
   font-size: 15px;
   padding: 1px;
   caret-color: black;
