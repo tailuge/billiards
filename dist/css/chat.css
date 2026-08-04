@@ -46,30 +46,42 @@
 }
 
 #inputTextDiv {
-  /* Just above the 70px control panel (#panel): the dialog lives inside
-     #viewP1 which sits directly on top of the panel. Stretched between the
-     spin column (152px, left) and the button column (70px, right) so it can
-     never cover either, at any window width. */
+  /* Corridor shell: defines the safe zone between aim inputs (left) and
+     menu buttons (right). The inner div is centered within this corridor. */
   position: absolute;
-  /* dialogs default to width: fit-content from the UA stylesheet, which stops
-     left/right offsets from stretching the box — force width back to auto so
-     the input fills the whole corridor. */
   width: auto;
   top: auto;
-  bottom: 1px;
+  bottom: 4px; /* 3px up from original 1px */
   left: 160px; /* 152px spin column + 8px gap */
   right: 80px; /* button column */
   z-index: 1000;
   display: none;
   align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+#inputTextDiv[open] {
+  display: flex;
+}
+
+#inputTextDivInner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  max-width: 360px;
   pointer-events: auto;
   background: #333;
   border: 1px solid #555;
   border-radius: 999px;
   padding: 2px 3px;
-  gap: 4px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 40%);
-  margin: 0;
+  box-shadow: none;
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 60%));
 }
 
 #inputTextDiv[open] {

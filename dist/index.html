@@ -164,17 +164,19 @@
         <div id="chatoutput" class="chatoutput"></div>
       </div>
       <dialog id="inputTextDiv">
-        <input
-          id="inputText"
-          type="text"
-          placeholder="Enter text here..."
-          maxlength="64"
-          autofocus
-          autocomplete="off"
-          aria-label="Chat message input"
-        />
-        <button id="inputSend" aria-label="Send chat message">➤</button>
-        <button id="inputClose" aria-label="Close chat input">✖</button>
+        <div id="inputTextDivInner">
+          <input
+            id="inputText"
+            type="text"
+            placeholder="Enter text here..."
+            maxlength="64"
+            autofocus
+            autocomplete="off"
+            aria-label="Chat message input"
+          />
+          <button id="inputSend" aria-label="Send chat message">➤</button>
+          <button id="inputClose" aria-label="Close chat input">✖</button>
+        </div>
       </dialog>
     </div>
     <div id="panel" class="panel wood-texture">
