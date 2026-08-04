@@ -92,6 +92,12 @@
   gap: 0;
 }
 
+@media (max-width: 500px) {
+  #chatEmojiList {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+
 #inputTextDiv .chat-emoji {
   all: unset;
   display: block;
