@@ -51,10 +51,12 @@
      spin column (152px, left) and the button column (70px, right) so it can
      never cover either, at any window width. */
   position: absolute;
-  /* dialogs default to width: fit-content from the UA stylesheet, which stops
-     left/right offsets from stretching the box — force width back to auto so
-     the input fills the whole corridor. */
-  width: auto;
+  /* dialogs default to width: fit-content from the UA stylesheet. We keep
+     it as fit-content but set a min-width and max-width so that the input is
+     constrained to the size of its content instead of stretching unnecessarily,
+     avoiding a large empty grey area. */
+  width: fit-content;
+  min-width: 320px;
   top: auto;
   bottom: 4px; /* positioned up 3px from 1px */
   left: max(160px, calc(50% - 406px)); /* 152px spin column + 8px gap, centered up to 812px */
