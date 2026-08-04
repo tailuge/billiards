@@ -98,6 +98,31 @@ export function randomEmoji(): string {
   return "🎱"
 }
 
+// Emoji that are guaranteed to appear in the random emoji slots (placed randomly)
+const alwaysEmojis = ["🚬", "🥃", "🍀"]
+
+// Build a list of `count` unique emojis containing the alwaysEmojis,
+// shuffled so the fixed emojis land in random positions.
+export function randomEmojis(count: number): string[] {
+  const result: string[] = [...alwaysEmojis]
+  const used = new Set(result)
+  // Cap at the total pool size to guarantee the loop terminates
+  const target = Math.min(count, emojiTotal() + alwaysEmojis.length)
+  while (result.length < target) {
+    const emoji = randomEmoji()
+    if (!used.has(emoji)) {
+      used.add(emoji)
+      result.push(emoji)
+    }
+  }
+  // Fisher-Yates shuffle so the always-emojis are randomly placed
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[result[i], result[j]] = [result[j], result[i]]
+  }
+  return result
+}
+
 export const ruleTypeMap: Record<string, { emoji: string; title: string }> = {
   nineball: { emoji: "⑨", title: "nineball" },
   eightball: { emoji: "🎱", title: "eightball" },

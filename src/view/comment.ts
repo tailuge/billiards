@@ -1,6 +1,6 @@
 import { Container } from "../container/container"
 import { getButton } from "../utils/dom"
-import { randomEmoji } from "../utils/utils"
+import { randomEmojis } from "../utils/utils"
 import { ballSvg } from "./chat"
 
 export class Comment {
@@ -95,43 +95,12 @@ export class Comment {
   showMenu() {
     if (!this.menu) return
     this.menu.style.display = "grid"
-    this.menu
-      .querySelectorAll<HTMLButtonElement>(".comment-random")
-      .forEach((btn) => {
-        btn.innerHTML = randomEmoji()
-      })
-
-    const beverageEmojis = "☕🍵🧃🥤🧋🍶🍺🍻🥂🍷🥃🍸🍹🍾🧉🧊🥛🍼☕️"
-    // Split the beverage string into individual emojis, handling variation selectors correctly
-    const beverageList: string[] = []
-    for (let i = 0; i < beverageEmojis.length; i++) {
-      const char = beverageEmojis[i]
-      const codePoint = beverageEmojis.codePointAt(i)
-      if (codePoint !== undefined && codePoint > 0xffff) {
-        beverageList.push(String.fromCodePoint(codePoint))
-        i++ // skip the low surrogate
-      } else {
-        // If next char is variation selector, combine them
-        if (
-          i + 1 < beverageEmojis.length &&
-          beverageEmojis.charCodeAt(i + 1) === 0xfe0f
-        ) {
-          beverageList.push(char + beverageEmojis[i + 1])
-          i++
-        } else {
-          beverageList.push(char)
-        }
-      }
-    }
-
-    this.menu
-      .querySelectorAll<HTMLButtonElement>(".comment-emoji.beverage")
-      .forEach((btn) => {
-        if (beverageList.length > 0) {
-          const randomIndex = Math.floor(Math.random() * beverageList.length)
-          btn.innerHTML = beverageList[randomIndex]
-        }
-      })
+    const randomButtons =
+      this.menu.querySelectorAll<HTMLButtonElement>(".comment-random")
+    const emojis = randomEmojis(randomButtons.length)
+    randomButtons.forEach((btn, i) => {
+      btn.innerHTML = emojis[i]
+    })
   }
 
   openChat() {
