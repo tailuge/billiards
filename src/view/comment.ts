@@ -35,6 +35,8 @@ export class Comment {
     ) as HTMLDialogElement
     const inputText = document.getElementById("inputText") as HTMLInputElement
 
+    const isMobile = "ontouchstart" in globalThis
+
     const sendText = () => {
       const text = inputText.value.trim()
       if (text) {
@@ -42,8 +44,21 @@ export class Comment {
         this.container.sendChat(text)
         inputText.value = ""
       }
-      // Keep the input open so further messages can be typed; close via ✖ or Esc.
-      inputText.focus()
+      if (isMobile) {
+        this.closeChat()
+      } else {
+        // Keep the input open so further messages can be typed; close via ✖ or Esc.
+        inputText.focus()
+      }
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", () => {
+        this.adjustInputPosition()
+      })
+      window.visualViewport.addEventListener("scroll", () => {
+        this.adjustInputPosition()
+      })
     }
 
     const emojiButtons = this.menu.querySelectorAll(".comment-emoji")
@@ -114,6 +129,19 @@ export class Comment {
     })
   }
 
+  adjustInputPosition() {
+    const inputTextDiv = document.getElementById("inputTextDiv")
+    const viewP1 = document.getElementById("viewP1")
+    if (!inputTextDiv || !viewP1 || !window.visualViewport) {
+      return
+    }
+    const rect = viewP1.getBoundingClientRect()
+    const visualViewportBottom = window.visualViewport.offsetTop + window.visualViewport.height
+    const distance = rect.bottom - visualViewportBottom
+    const lift = Math.max(0, distance)
+    inputTextDiv.style.bottom = `${4 + lift}px`
+  }
+
   openChat() {
     const inputTextDiv = document.getElementById(
       "inputTextDiv"
@@ -123,6 +151,7 @@ export class Comment {
     inputTextDiv.show()
     inputText.value = ""
     inputText.focus()
+    this.adjustInputPosition()
   }
 
   closeChat() {
@@ -130,6 +159,7 @@ export class Comment {
       "inputTextDiv"
     ) as HTMLDialogElement
     inputTextDiv.close()
+    inputTextDiv.style.bottom = ""
     // Non-modal dialogs don't return focus automatically — hand it back to the
     // game canvas so keyboard controls (arrows, F for fullscreen, etc.) resume.
     ;(this.container.view.element as HTMLElement | null)?.focus()

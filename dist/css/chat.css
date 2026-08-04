@@ -56,9 +56,10 @@
      the input fills the whole corridor. */
   width: auto;
   top: auto;
-  bottom: 1px;
-  left: 160px; /* 152px spin column + 8px gap */
-  right: 80px; /* button column */
+  bottom: 4px; /* positioned up 3px from 1px */
+  left: max(160px, calc(50% - 406px)); /* 152px spin column + 8px gap, centered up to 812px */
+  right: max(80px, calc(50% - 406px)); /* button column, centered up to 812px */
+  max-width: 812px;
   z-index: 1000;
   display: none;
   align-items: center;
@@ -68,8 +69,8 @@
   border-radius: 999px;
   padding: 2px 3px;
   gap: 4px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 40%);
-  margin: 0;
+  box-shadow: 2px 2px 0 rgb(0 0 0 / 50%); /* non blur drop shadow 2px */
+  margin: 0 auto;
 }
 
 #inputTextDiv[open] {
