@@ -87,8 +87,9 @@
 
 .menuItems #commentMenu {
   position: absolute;
-  right: calc(100% + 4px);
-  bottom: 0;
+  right: 0;
+  bottom: calc(100% + 1px);
+  margin-bottom: 0;
 }
 
 .menuDropdown:not([open]) .menuItems {
