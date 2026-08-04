@@ -71,7 +71,7 @@ describe("Camera", () => {
       {
         onTable: () => true,
         pos: new Vector3(0, 0, 0),
-      }
+      },
     ]
 
     it("sets aimGraceStartT to current t in toggleMode", () => {
