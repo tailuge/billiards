@@ -39,7 +39,8 @@ export class Camera {
   savedHeight?: number
 
   elapsed: number
-  private t = 0
+  t = 0
+  aimGraceStartT?: number
 
   update(elapsed, aim: AimEvent) {
     this.elapsed = elapsed
@@ -320,6 +321,7 @@ export class Camera {
   }
 
   cycleModeToAimz(balls: any[], aim: AimEvent) {
+    const wasTopView = this.mode === this.topView
     this.mode = this.aimView
     this.mainMode = this.aimView
     this.stepBackToFitAllBalls(balls, aim)
@@ -329,6 +331,9 @@ export class Camera {
     } else {
       this.isZoomedOut = true
       this.updateCameraButtonClass("aimz")
+    }
+    if (wasTopView) {
+      this.aimGraceStartT = this.t
     }
   }
 
@@ -356,6 +361,7 @@ export class Camera {
       this.mainMode = this.aimView
       this.isZoomedOut = false
       this.updateCameraButtonClass("aim")
+      this.aimGraceStartT = this.t
     }
   }
 
@@ -379,6 +385,7 @@ export class Camera {
     if (this.mode === this.topView) {
       this.mode = this.aimView
       this.updateCameraButtonClass("aim")
+      this.aimGraceStartT = this.t
     } else {
       this.mode = this.topView
       this.updateCameraButtonClass("topview")

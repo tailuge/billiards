@@ -46,4 +46,32 @@ describe("View", () => {
     expect(view.isInMotionNotVisible()).to.be.false
     done()
   })
+
+  it("does not suggest topView when isInMotionNotVisible is true but within grace period", (done) => {
+    table.hasPockets = false
+    const view = new View(canvas3d, table, Assets.localAssets())
+
+    // Set camera to aimView and configure grace period
+    view.camera.forceMode(view.camera.aimView)
+    view.camera.aimGraceStartT = 1.0
+    view.camera.t = 3.0 // elapsed time is 2 seconds, which is less than 5 seconds (grace period active)
+
+    // Override isInMotionNotVisible to return true
+    view.isInMotionNotVisible = () => true
+
+    // Spy suggestMode
+    let suggestModeCalled = false
+    view.camera.suggestMode = (_mode) => {
+      suggestModeCalled = true
+    }
+
+    view.render()
+    expect(suggestModeCalled).to.be.false
+
+    // Advance t past grace period (e.g. 6.1 seconds since grace start)
+    view.camera.t = 7.1
+    view.render()
+    expect(suggestModeCalled).to.be.true
+    done()
+  })
 })

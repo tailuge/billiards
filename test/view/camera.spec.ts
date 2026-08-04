@@ -64,4 +64,47 @@ describe("Camera", () => {
     expect(camera.savedDistance).to.be.undefined
     expect(camera.savedHeight).to.be.undefined
   })
+
+  describe("Camera transition grace period", () => {
+    const { Vector3 } = require("three")
+    const balls = [
+      {
+        onTable: () => true,
+        pos: new Vector3(0, 0, 0),
+      }
+    ]
+
+    it("sets aimGraceStartT to current t in toggleMode", () => {
+      const camera = new Camera(1)
+      camera.forceMode(camera.topView)
+      camera.update(3.5, new AimEvent()) // set t to 3.5
+      expect(camera.aimGraceStartT).to.be.undefined
+
+      camera.toggleMode()
+      expect(camera.mode).to.equal(camera.aimView)
+      expect(camera.aimGraceStartT).to.be.closeTo(3.5, 0.001)
+    })
+
+    it("sets aimGraceStartT to current t in cycleMode", () => {
+      const camera = new Camera(1)
+      camera.forceMode(camera.topView)
+      camera.update(4.2, new AimEvent()) // set t to 4.2
+      expect(camera.aimGraceStartT).to.be.undefined
+
+      camera.cycleMode(balls, new AimEvent())
+      expect(camera.mode).to.equal(camera.aimView)
+      expect(camera.aimGraceStartT).to.be.closeTo(4.2, 0.001)
+    })
+
+    it("sets aimGraceStartT to current t in cycleModeToAimz", () => {
+      const camera = new Camera(1)
+      camera.forceMode(camera.topView)
+      camera.update(1.8, new AimEvent()) // set t to 1.8
+      expect(camera.aimGraceStartT).to.be.undefined
+
+      camera.cycleModeToAimz(balls, new AimEvent())
+      expect(camera.mode).to.equal(camera.aimView)
+      expect(camera.aimGraceStartT).to.be.closeTo(1.8, 0.001)
+    })
+  })
 })
