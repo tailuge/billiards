@@ -62,29 +62,11 @@
   gap: 4px;
   box-shadow: 2px 2px 0 rgb(0 0 0 / 50%); /* non blur drop shadow 2px */
   box-sizing: border-box;
-}
 
-@media (max-width: 640px) {
-  #inputTextDiv {
-    /* Stretched between the spin column (152px, left) and the button column (70px, right)
-       so it can never cover either on small screens. */
-    left: 160px; /* 152px spin column + 8px gap */
-    right: 80px; /* button column */
-    width: auto;
-    margin: 0;
-  }
-}
-
-@media (min-width: 641px) {
-  #inputTextDiv {
-    /* Center perfectly relative to the viewport/screen on larger displays without setting both left/right
-       to prevent the native browser <dialog> stretching/layout overlay bugs (keeping left/right transparent). */
-    left: 50%;
-    transform: translateX(-50%);
-    width: fit-content;
-    min-width: 320px;
-    max-width: 812px;
-  }
+  /* Constraints and centering relative to the screen to prevent native <dialog> stretching */
+  left: max(160px, calc(50% - 406px));
+  right: max(80px, calc(50% - 406px));
+  margin: 0;
 }
 
 #inputTextDiv[open] {
