@@ -46,10 +46,14 @@
 }
 
 #inputTextDiv {
+  /* Just above the 70px control panel (#panel): the dialog lives inside
+     #viewP1 which sits directly on top of the panel. */
   position: absolute;
-  top: 76%;
+  top: auto;
+  bottom: 1px;
   left: 50%;
-  transform: translate(-50%, -50%);
+  right: auto;
+  transform: translateX(-50%);
   z-index: 1000;
   display: none;
   align-items: center;
@@ -64,11 +68,6 @@
   display: flex;
 }
 
-#inputTextDiv::backdrop {
-  background-color: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(1px);
-}
-
 #inputText {
   width: 24ch;
   font-size: 15px;
@@ -76,10 +75,13 @@
   caret-color: black;
   color: black;
   background: white;
+  /* .view3d sets cursor: none, which would hide the text caret over the input */
+  cursor: text;
 }
 
 #inputTextDiv button {
   font-size: 15px;
   padding: 1px;
   margin-left: 2px;
+  min-width: 32px;
 }

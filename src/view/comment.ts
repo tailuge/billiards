@@ -37,11 +37,13 @@ export class Comment {
 
     const sendText = () => {
       const text = inputText.value.trim()
-      inputTextDiv.close()
       if (text) {
         this.container.chat.showMessage(text)
         this.container.sendChat(text)
+        inputText.value = ""
       }
+      // Keep the input open so further messages can be typed; close via ✖ or Esc.
+      inputText.focus()
     }
 
     const emojiButtons = this.menu.querySelectorAll(".comment-emoji")
@@ -62,6 +64,7 @@ export class Comment {
     inputText.addEventListener("keydown", (e) => {
       e.stopPropagation()
       if (e.key === "Enter") sendText()
+      if (e.key === "Escape") this.closeChat()
     })
 
     inputText.addEventListener("keyup", (e) => {
@@ -70,10 +73,18 @@ export class Comment {
 
     document.getElementById("inputSend")?.addEventListener("click", sendText)
     document.getElementById("inputClose")?.addEventListener("click", () => {
-      inputTextDiv.close()
+      this.closeChat()
     })
 
     inputTextDiv.addEventListener("close", () => {})
+
+    // Esc closes the chat even when focus has moved to the game canvas
+    // (the input's own keydown handler covers the case where it has focus).
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && inputTextDiv.open) {
+        this.closeChat()
+      }
+    })
   }
 
   setVisible(visible: boolean) {
@@ -109,9 +120,19 @@ export class Comment {
     ) as HTMLDialogElement
     const inputText = document.getElementById("inputText") as HTMLInputElement
     this.hideMenu()
-    inputTextDiv.showModal()
+    inputTextDiv.show()
     inputText.value = ""
     inputText.focus()
+  }
+
+  closeChat() {
+    const inputTextDiv = document.getElementById(
+      "inputTextDiv"
+    ) as HTMLDialogElement
+    inputTextDiv.close()
+    // Non-modal dialogs don't return focus automatically — hand it back to the
+    // game canvas so keyboard controls (arrows, F for fullscreen, etc.) resume.
+    ;(this.container.view.element as HTMLElement | null)?.focus()
   }
 
   hideMenu() {

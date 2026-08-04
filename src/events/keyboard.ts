@@ -45,8 +45,14 @@ export class Keyboard {
     }
   }
 
+  /** True while the chat input is focused, so typing there never reaches the game. */
+  private chatFocused() {
+    const active = document.activeElement as HTMLElement | null
+    return !!active?.closest("#inputTextDiv")
+  }
+
   keydown = (e) => {
-    if (this.disabled) return
+    if (this.disabled || this.chatFocused()) return
     this.pressed[e.code] ??= performance.now()
     e.stopImmediatePropagation()
     if (e.key !== "F12") {
@@ -55,7 +61,7 @@ export class Keyboard {
   }
 
   keyup = (e) => {
-    if (this.disabled) return
+    if (this.disabled || this.chatFocused()) return
     this.released[e.code] = performance.now() - this.pressed[e.code]
     delete this.pressed[e.code]
     e.stopImmediatePropagation()
@@ -80,6 +86,12 @@ export class Keyboard {
   private addHandlers(element: HTMLCanvasElement) {
     element.addEventListener("keydown", this.keydown)
     element.addEventListener("keyup", this.keyup)
+    // A key released while focus has moved elsewhere (e.g. into the chat input)
+    // never reaches this canvas — clear held state so it isn't stuck.
+    element.addEventListener("blur", () => {
+      this.pressed = {}
+      this.released = {}
+    })
     element.addEventListener("dragstart", (e) => e.preventDefault())
     element.focus()
 
