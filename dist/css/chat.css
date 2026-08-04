@@ -47,21 +47,10 @@
 
 #inputTextDiv {
   /* Just above the 70px control panel (#panel): the dialog lives inside
-     #viewP1 which sits directly on top of the panel. Stretched between the
-     spin column (152px, left) and the button column (70px, right) so it can
-     never cover either, at any window width. */
+     #viewP1 which sits directly on top of the panel. */
   position: absolute;
-  /* dialogs default to width: fit-content from the UA stylesheet. We keep
-     it as fit-content but set a min-width and max-width so that the input is
-     constrained to the size of its content instead of stretching unnecessarily,
-     avoiding a large empty grey area. */
-  width: fit-content;
-  min-width: 320px;
   top: auto;
   bottom: 4px; /* positioned up 3px from 1px */
-  left: max(160px, calc(50% - 406px)); /* 152px spin column + 8px gap, centered up to 812px */
-  right: max(80px, calc(50% - 406px)); /* button column, centered up to 812px */
-  max-width: 812px;
   z-index: 1000;
   display: none;
   align-items: center;
@@ -72,7 +61,30 @@
   padding: 2px 3px;
   gap: 4px;
   box-shadow: 2px 2px 0 rgb(0 0 0 / 50%); /* non blur drop shadow 2px */
-  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  #inputTextDiv {
+    /* Stretched between the spin column (152px, left) and the button column (70px, right)
+       so it can never cover either on small screens. */
+    left: 160px; /* 152px spin column + 8px gap */
+    right: 80px; /* button column */
+    width: auto;
+    margin: 0;
+  }
+}
+
+@media (min-width: 641px) {
+  #inputTextDiv {
+    /* Center perfectly relative to the viewport/screen on larger displays without setting both left/right
+       to prevent the native browser <dialog> stretching/layout overlay bugs (keeping left/right transparent). */
+    left: 50%;
+    transform: translateX(-50%);
+    width: fit-content;
+    min-width: 320px;
+    max-width: 812px;
+  }
 }
 
 #inputTextDiv[open] {
