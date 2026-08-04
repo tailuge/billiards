@@ -25,7 +25,6 @@ p {
   margin: 0 0 1em;
 }
 
-
 #snookerScore {
   font-family: var(--font-family-primary);
   font-size: 32px;
@@ -163,7 +162,6 @@ a {
   max-width: 50%;
   font-size: 12px;
 }
-
 
 label {
   display: inline-block;

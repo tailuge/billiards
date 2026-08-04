@@ -121,7 +121,6 @@
   pointer-events: auto;
 }
 
-
 @keyframes notificationFoldDown {
   from {
     opacity: 0;

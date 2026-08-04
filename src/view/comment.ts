@@ -66,20 +66,7 @@ export class Comment {
         emojiMode ? "Switch to text mode" : "Switch to emoji mode"
       )
       if (emojiMode) {
-        const emojis = randomEmojis(12)
-        emojiList.innerHTML = ""
-        emojis.forEach((emoji) => {
-          const button = document.createElement("button")
-          button.type = "button"
-          button.className = "chat-emoji"
-          button.textContent = emoji
-          button.setAttribute("aria-label", `Send ${emoji}`)
-          button.addEventListener("click", () => {
-            this.container.chat.showMessage(emoji)
-            this.container.sendChat(emoji)
-          })
-          emojiList.appendChild(button)
-        })
+        this.populateEmojiList(emojiList)
       }
     })
 
@@ -88,6 +75,24 @@ export class Comment {
       if (e.key === "Escape" && inputTextDiv.open) {
         this.closeChat()
       }
+    })
+  }
+
+  private populateEmojiList(emojiList: HTMLDivElement) {
+    const emojiCount = window.matchMedia("(max-width: 500px)").matches ? 8 : 12
+    const emojis = randomEmojis(emojiCount)
+    emojiList.innerHTML = ""
+    emojis.forEach((emoji) => {
+      const button = document.createElement("button")
+      button.type = "button"
+      button.className = "chat-emoji"
+      button.textContent = emoji
+      button.setAttribute("aria-label", `Send ${emoji}`)
+      button.addEventListener("click", () => {
+        this.container.chat.showMessage(emoji)
+        this.container.sendChat(emoji)
+      })
+      emojiList.appendChild(button)
     })
   }
 
@@ -114,10 +119,13 @@ export class Comment {
       "inputTextDiv"
     ) as HTMLDialogElement
     const inputText = document.getElementById("inputText") as HTMLInputElement
-    inputTextDiv.classList.remove("emoji-mode")
+    inputTextDiv.classList.add("emoji-mode")
     document
       .getElementById("toggleChatMode")
-      ?.setAttribute("aria-label", "Switch to emoji mode")
+      ?.setAttribute("aria-label", "Switch to text mode")
+    this.populateEmojiList(
+      document.getElementById("chatEmojiList") as HTMLDivElement
+    )
     inputTextDiv.show()
     inputText.value = ""
     inputText.focus()

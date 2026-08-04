@@ -213,6 +213,9 @@ export class BrowserContainer {
     this.messageRelay = new MessagingMessageRelay()
     this.container = this.createContainer(scoreReporter)
     this.container.init()
+    if (this.wss && !this.replay && !this.spectator) {
+      this.container.comment.openChat()
+    }
   }
 
   onAssetsReady() {
