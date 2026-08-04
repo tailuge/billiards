@@ -21,6 +21,65 @@ beforeEach(function (done) {
 })
 
 describe("Menu", () => {
+  it("menu opens the secondary controls without opening help", (done) => {
+    const menu = document.getElementById("menu") as HTMLElement
+    const dropdown = document.getElementById(
+      "menuDropdown"
+    ) as HTMLDetailsElement
+    const helpOverlay = document.getElementById("helpOverlay")
+
+    expect(dropdown.open).to.be.false
+    fireEvent.click(menu)
+
+    expect(dropdown.open).to.be.true
+    expect(helpOverlay?.hasAttribute("hidden")).to.be.true
+    done()
+  })
+
+  it("help button opens and close button hides the help overlay", (done) => {
+    const help = document.getElementById("help") as HTMLButtonElement
+    const overlay = document.getElementById("helpOverlay")
+    const iframe = overlay?.querySelector("iframe")
+
+    expect(help.textContent?.trim()).to.equal("ℹ️")
+    fireEvent.click(help)
+
+    expect(overlay?.hasAttribute("hidden")).to.be.false
+    expect(iframe?.getAttribute("src")).to.equal("help.html")
+
+    fireEvent.click(document.getElementById("helpClose") as HTMLButtonElement)
+    expect(overlay?.hasAttribute("hidden")).to.be.true
+    done()
+  })
+
+  it("visibility controls are independent", (done) => {
+    const menu = new Menu(container)
+    const share = document.getElementById("share") as HTMLButtonElement
+    const diagram = document.getElementById("diagram") as HTMLButtonElement
+    const concede = document.getElementById("concede") as HTMLButtonElement
+    const analysis = document.getElementById("analysis") as HTMLButtonElement
+
+    menu.setShareVisible(true)
+    expect(share.hidden).to.be.false
+    expect(diagram.hidden).to.be.true
+    expect(concede.hidden).to.be.true
+    expect(analysis.hidden).to.be.true
+
+    menu.setDiagramVisible(true)
+    expect(share.hidden).to.be.false
+    expect(diagram.hidden).to.be.false
+    expect(concede.hidden).to.be.true
+    expect(analysis.hidden).to.be.true
+
+    menu.setConcedeVisible(true)
+    expect(concede.hidden).to.be.false
+    expect(analysis.hidden).to.be.true
+
+    menu.setAnalysisVisible(true)
+    expect(analysis.hidden).to.be.false
+    done()
+  })
+
   it("camera", (done) => {
     const toggleview = document.getElementById("camera") as HTMLButtonElement
     expect(container.view.camera.mode).to.be.equal(

@@ -230,16 +230,104 @@
         <span id="powerPercent" class="powerPercent">65%</span>
       </div>
       <div class="outerMenu">
-        <button
-          class="menuButton half-height"
-          title="comment"
-          id="comment"
-          type="submit"
-          aria-label="Comment"
-          hidden
-        >
-          🗨
-        </button>
+        <details id="menuDropdown" class="menuDropdown">
+          <summary
+            class="menuButton half-height"
+            title="menu"
+            id="menu"
+            aria-label="Menu"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#000"
+              stroke-width="2"
+            >
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </summary>
+          <div id="menuItems" class="menuItems">
+            <button
+              class="menuButton half-height"
+              title="comment"
+              id="comment"
+              type="button"
+              aria-label="Comment"
+              hidden
+            >
+              🗨
+            </button>
+            <button
+              class="menuButton half-height"
+              title="diagram"
+              id="diagram"
+              type="button"
+              aria-label="Diagram"
+              hidden
+            >
+              📸
+            </button>
+            <button
+              class="menuButton half-height"
+              title="share"
+              id="share"
+              type="button"
+              aria-label="Share replay link"
+              hidden
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+            </button>
+            <button
+              class="menuButton half-height"
+              title="concede"
+              id="concede"
+              type="button"
+              aria-label="Concede"
+              hidden
+            >
+              🏳️
+            </button>
+            <button
+              class="menuButton half-height"
+              title="shot analysis"
+              id="analysis"
+              type="button"
+              aria-label="Shot analysis"
+              hidden
+            >
+              🔍
+            </button>
+            <button
+              class="menuButton half-height"
+              title="help"
+              id="help"
+              type="button"
+              aria-label="Help"
+            >
+              ℹ️
+            </button>
+          </div>
+        </details>
         <div id="commentMenu" class="comment-menu" style="display: none">
           <button class="comment-emoji" data-angle="315"></button>
           <button class="comment-emoji" data-angle="0"></button>
@@ -264,86 +352,10 @@
           <button class="comment-emoji">🎖️</button>
         </div>
         <button
-          class="menuButton half-height"
-          title="diagram"
-          id="diagram"
-          type="submit"
-          aria-label="Diagram"
-          hidden
-        >
-          📸
-        </button>
-        <button
-          class="menuButton half-height"
-          title="share"
-          id="share"
-          type="submit"
-          aria-label="Share replay link"
-          hidden
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="18" cy="5" r="3"></circle>
-            <circle cx="6" cy="12" r="3"></circle>
-            <circle cx="18" cy="19" r="3"></circle>
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-          </svg>
-        </button>
-        <button
-          class="menuButton half-height"
-          title="concede"
-          id="concede"
-          type="submit"
-          aria-label="Concede"
-          hidden
-        >
-          🏳️
-        </button>
-        <button
-          class="menuButton half-height"
-          title="shot analysis"
-          id="analysis"
-          type="submit"
-          aria-label="Shot analysis"
-          hidden
-        >
-          🔍
-        </button>
-        <button
-          class="menuButton half-height"
-          title="menu"
-          id="menu"
-          type="submit"
-          aria-label="Menu"
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </button>
-        <button
           class="menuButton aim"
           title="view"
           id="camera"
-          type="submit"
+          type="button"
           aria-label="Toggle camera view"
         >
           🎥

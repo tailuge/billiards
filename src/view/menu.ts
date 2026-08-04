@@ -11,8 +11,9 @@ export class Menu {
   diagram: HTMLButtonElement
   camera: HTMLButtonElement
   concede: HTMLButtonElement
-  menu: HTMLButtonElement
+  help: HTMLButtonElement
   analysis: HTMLButtonElement
+  menuDropdown: HTMLDetailsElement | null
 
   disabled = true
 
@@ -23,8 +24,11 @@ export class Menu {
     this.diagram = this.getElement("diagram")
     this.camera = this.getElement("camera")
     this.concede = this.getElement("concede")
-    this.menu = this.getElement("menu")
+    this.help = this.getElement("help")
     this.analysis = this.getElement("analysis")
+    this.menuDropdown = document.getElementById(
+      "menuDropdown"
+    ) as HTMLDetailsElement | null
 
     if (this.analysis) {
       this.analysis.onclick = () => this.handleExport(true)
@@ -41,9 +45,12 @@ export class Menu {
         this.adjustCamera()
       }
     }
-    if (this.menu) {
-      this.menu.onclick = (_) => {
+    if (this.help) {
+      this.help.onclick = (_) => {
         this.toggleHelpOverlay()
+        if (this.menuDropdown) {
+          this.menuDropdown.open = false
+        }
       }
     }
     const closeBtn = document.getElementById("helpClose")
