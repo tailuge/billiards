@@ -25,17 +25,6 @@ p {
   margin: 0 0 1em;
 }
 
-.flex-container {
-  display: flex;
-  align-items: stretch;
-  background-color: #2e9097;
-}
-
-.flex-container > div {
-  background-color: #1c802d;
-  border: 1px;
-  color: grey;
-}
 
 #snookerScore {
   font-family: var(--font-family-primary);
@@ -175,9 +164,6 @@ a {
   font-size: 12px;
 }
 
-.nw {
-  display: inline-block;
-}
 
 label {
   display: inline-block;

@@ -10,12 +10,3 @@
   background-repeat: no-repeat;
 }
 
-.wood-frame {
-  padding: 8px;
-  border-radius: 0 0 8px;
-  box-shadow:
-    2px 2px 10px rgb(0 0 0 / 40%),
-    inset -1px -1px 4px rgb(0 0 0 / 30%);
-  border-right: 2px solid #2d1e16;
-  border-bottom: 2px solid #2d1e16;
-}
