@@ -92,7 +92,7 @@ export class Camera {
     this.camera.fov = CameraTop.fov
     this.camera.position.lerp(
       CameraTop.viewPoint(this.camera.aspect, this.camera.fov, this.tempVec),
-      0.9
+      0.99999
     )
     this.camera.up = up
     this.camera.lookAt(zero)
