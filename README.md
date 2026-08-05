@@ -28,6 +28,7 @@ Demos run in all major desktop and mobile browsers and use WebGL
 * Tune three cushion [physics ⬀](https://tailuge.github.io/billiards/dist/diagrams/three.html) and [optimise ⬀](https://tailuge.github.io/billiards/dist/fit/viewer.html) parameters
 * Parallel [parameter ⬀](https://tailuge.github.io/billiards/dist/fit/common.html) tuning using [Web Workers ⬀](https://tailuge.github.io/billiards/dist/ww.html).
 * Three cushion trainer and [sensitivity analysis ⬀](https://velikodimov.github.io/billiards/dist/index.html?ruletype=threecushion&practice&drill) from an excellent [fork ⬀](https://github.com/velikodimov/billiards) of this project.
+* Another great spin off extension for [Italian 5 pin](https://gameland.altervista.org/italian_billiards/lobby.html).
 
 ## Features
 
