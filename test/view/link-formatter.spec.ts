@@ -1,6 +1,7 @@
 import { Container } from "../../src/container/container"
 import { EventType } from "../../src/events/eventtype"
 import { Assets } from "../../src/view/assets"
+import { ReplayCodec } from "../../src/utils/replay-codec"
 import { canvas3d, initDom } from "./dom"
 
 initDom()
@@ -53,8 +54,7 @@ describe("LinkFormatter", () => {
 
     const url = new URL(uri)
     const compressed = url.searchParams.get("state")!
-    const uncrushed = require("jsoncrush").default.uncrush(compressed)
-    const payload = JSON.parse(uncrushed)
+    const payload = ReplayCodec.decode(compressed)
 
     expect(payload.score).toBe(10)
   })

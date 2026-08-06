@@ -1,4 +1,4 @@
-import JSONCrush from "jsoncrush"
+import { ReplayCodec } from "./replay-codec"
 
 export class ReplayEncoder {
   static fullyEncodeURI(uri: string): string {
@@ -10,7 +10,7 @@ export class ReplayEncoder {
   }
 
   static crush(data: string): string {
-    return JSONCrush.crush(data)
+    return ReplayCodec.encode(data)
   }
 
   static createState(
