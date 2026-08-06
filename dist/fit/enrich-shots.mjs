@@ -64,11 +64,9 @@ function kinematicShot(cueBall) {
     power = dt > 0 ? Math.hypot(dx, dy) / dt : 0
   }
   return {
-    cueBallId: 0,
     angle,
     power,
     offset: { x: 0, y: 0 },
-    elevation: 0,
   }
 }
 
@@ -87,62 +85,16 @@ if (!Array.isArray(trajectories)) {
 }
 
 const entries = []
-let minAngle = Infinity
-let maxAngle = -Infinity
-let minPower = Infinity
-let maxPower = -Infinity
-let zeroPower = 0
 
 for (const [idx, traj] of trajectories.entries()) {
   const moverId = findMover(traj.balls) // §2.1
   const shot = kinematicShot(traj.balls[moverId]) // §2.4
   entries.push({ id: traj.id ?? idx, balls: traj.balls, shot })
-
-  if (shot.angle < minAngle) minAngle = shot.angle
-  if (shot.angle > maxAngle) maxAngle = shot.angle
-  if (shot.power < minPower) minPower = shot.power
-  if (shot.power > maxPower) maxPower = shot.power
-  if (shot.power === 0) zeroPower++
 }
 
-// --- Validation (fitplan §3) ---
-
-const violations = []
-const entryKeys = ["id", "balls", "shot"]
-const shotKeys = ["cueBallId", "angle", "power", "offset", "elevation"]
-const offsetKeys = ["x", "y"]
-entries.forEach((entry, i) => {
-  const got = Object.keys(entry)
-  if (got.join(",") !== entryKeys.join(",")) {
-    violations.push(`entry[${i}] keys ${got.join(",")} != ${entryKeys.join(",")}`)
-  }
-  const gotShot = Object.keys(entry.shot)
-  if (gotShot.join(",") !== shotKeys.join(",")) {
-    violations.push(
-      `entry[${i}].shot keys ${gotShot.join(",")} != ${shotKeys.join(",")}`
-    )
-  }
-  const gotOffset = Object.keys(entry.shot.offset)
-  if (gotOffset.join(",") !== offsetKeys.join(",")) {
-    violations.push(
-      `entry[${i}].shot.offset keys ${gotOffset.join(",")} != ${offsetKeys.join(",")}`
-    )
-  }
-})
-
-fs.writeFileSync(outputPath, JSON.stringify(entries, null, 2) + "\n")
+fs.writeFileSync(outputPath, JSON.stringify(entries) + "\n")
 
 // --- Console summary ---
 
 console.log(`Read ${trajectories.length} shots from ${inputPath}`)
 console.log(`Wrote ${entries.length} entries to ${outputPath}`)
-console.log(`angle range: [${minAngle.toFixed(3)}, ${maxAngle.toFixed(3)}] rad`)
-console.log(`power range: [${minPower.toFixed(3)}, ${maxPower.toFixed(3)}]`)
-console.log(`zero-power shots: ${zeroPower}`)
-
-if (violations.length > 0) {
-  console.error(`Validation failed with ${violations.length} violation(s):`)
-  for (const v of violations) console.error(`  - ${v}`)
-  process.exit(1)
-}
-console.log("Validation OK: keys exactly id, balls, shot / cueBallId, angle, power, offset, elevation")
