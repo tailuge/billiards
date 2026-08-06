@@ -17,3 +17,13 @@ https://www.reddit.com/r/billiards/comments/1upm8vu/speedrun/
 https://billard-aktuell.de/forum/viewtopic.php?t=59609
 
 https://www.appimagehub.com/p/2365428/
+
+---
+
+snooker
+
+https://forums.azbilliards.com/threads/open-source-snooker-simulator.589056/
+
+https://billard-aktuell.de/forum/viewtopic.php?t=59628
+
+
