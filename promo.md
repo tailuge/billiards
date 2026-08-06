@@ -26,4 +26,5 @@ https://forums.azbilliards.com/threads/open-source-snooker-simulator.589056/
 
 https://billard-aktuell.de/forum/viewtopic.php?t=59628
 
+https://www.reddit.com/r/snooker/comments/1vgyywz/open_source_simulator/
 
