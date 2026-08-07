@@ -298,12 +298,13 @@ export class AimInputs {
   updateTiltSlider(elevation) {
     if (this.cueTiltElement) {
       this.cueTiltElement.elevation = elevation
-      if (this.controlsDisabled) {
-        if (elevation > 0) {
-          this.showTiltControl()
-        } else {
-          this.hideTiltControl()
-        }
+      // Show the tilt control whenever the cue is elevated (e.g. auto-raised to
+      // clear another ball), so the player can see and adjust it. When disabled
+      // (spectator/replay) hide it again once elevation returns to zero.
+      if (elevation > 0) {
+        this.showTiltControl()
+      } else if (this.controlsDisabled) {
+        this.hideTiltControl()
       }
     }
   }

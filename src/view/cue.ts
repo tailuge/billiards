@@ -160,7 +160,16 @@ export class Cue {
       }
     }
 
-    if (n > 1) {
+    // Once the offset is clamped at offCenterLimit, raise the elevation
+    // instead (0.01 at a time, up to a maximum of 0.05). Use the setter so
+    // the elevation indicator updates and any analysis-mode aimLimits apply.
+    let elevationSteps = 0
+    while (elevationSteps < 5 && this.intersectsAnything(table)) {
+      this.setElevation(this.aim.elevation + 0.01)
+      elevationSteps++
+    }
+
+    if (n > 1 || elevationSteps > 0) {
       this.updateAimInput()
     }
   }

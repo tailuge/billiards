@@ -79,6 +79,14 @@ describe("AimInput", () => {
     done()
   })
 
+  it("elevation raise shows the tilt control", (done) => {
+    aiminputs.setDisabled(false)
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true
+    container.table.cue.setElevation(0.05)
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.false
+    done()
+  })
+
   it("click hit button", (done) => {
     aiminputs.setDisabled(false)
     aiminputs.tiltSliderContainerElement.hidden = false

@@ -21,7 +21,7 @@ export type CueMeshes = {
 
 export class CueMesh {
   static mesh: Mesh
-  static readonly baseTilt = 0.17
+  static readonly baseTilt = 0.12
 
   static readonly placermaterial = new MeshPhongMaterial({
     color: 0xffffff,
@@ -133,7 +133,7 @@ export class CueMesh {
     return { mesh, tiltMesh: tiltGroup, cueBody }
   }
 
-  static cueGeometry(tipRadius, buttRadius, length, segments = 9) {
+  static cueGeometry(tipRadius, buttRadius, length, segments = 11) {
     const group = new Group()
 
     // Material Definitions

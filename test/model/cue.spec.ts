@@ -25,6 +25,16 @@ function createCueAndTable(ballPosition: Vector3) {
   return { cue, table }
 }
 
+function aimInputsStub(extra: Record<string, unknown> = {}) {
+  return {
+    isDisabled: () => false,
+    updateVisualState: () => {},
+    updatePowerSlider: () => {},
+    showOverlap: () => {},
+    ...extra,
+  } as any
+}
+
 describe("Cue", () => {
   test("cue intersection with ball infront of cueball", () => {
     const { cue, table } = createCueAndTable(new Vector3(-3 * R, 0, 0))
@@ -175,5 +185,19 @@ describe("Cue", () => {
     cue.aim.offset.set(0, offCenterLimit, 0)
     cue.avoidCueTouchingOtherBall(table)
     expect(cue.aim.offset.length()).to.be.closeTo(offCenterLimit, 0.001)
+  })
+
+  test("avoidCueTouchingOtherBall raises elevation for a real intersection", () => {
+    const { cue, table } = createCueAndTable(new Vector3(-4 * R, 0, 0))
+    cue.aimInputs = aimInputsStub()
+    // Offset clamped at offCenterLimit and the cue still intersects the ball
+    // ahead, so the elevation phase must raise elevation to clear it (the
+    // raise needed here is ~0.02, within the 0.05 cap)
+    cue.aim.offset.set(0, offCenterLimit, 0)
+    cue.avoidCueTouchingOtherBall(table)
+    expect(cue.aim.elevation).to.be.greaterThan(0)
+    expect(cue.aim.elevation).to.be.at.most(0.05)
+    // The cue should now be clear of the ball
+    expect(cue.intersectsAnything(table)).to.be.false
   })
 })

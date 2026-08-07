@@ -6,13 +6,13 @@ import { R } from "../model/physics/constants"
 
 export class Camera {
   static defaultHeight = R * 8
-  static defaultDistance = R * 18
+  static defaultDistance = R * 22
   static defaultFovOffset = 0
 
   static configureForRule(ruleType: string) {
     if (ruleType === "threecushion" || ruleType === "sagu") {
-      Camera.defaultHeight = R * 20
-      Camera.defaultDistance = R * 22
+      Camera.defaultHeight = R * 19
+      Camera.defaultDistance = R * 24
       Camera.defaultFovOffset = 6
       CameraTop.zoomFactor = 0.92
     }
