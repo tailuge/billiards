@@ -81,7 +81,8 @@
     urlParams.set("tableId", unique)
     const base = `index.html?${urlParams.toString()}`
     document.getElementById("P1").src =
-      `${base}&userId=p1id&userName=P1&first=true`
-    document.getElementById("P2").src = `${base}&userId=p2id&userName=P2`
+      `${base}&userId=p1id&userName=P1&first=true&opponent.userId=p2id&opponent.userName=P2`
+    document.getElementById("P2").src =
+      `${base}&userId=p2id&userName=P2&opponent.userId=p1id&opponent.userName=P1`
   </script>
 </html>
