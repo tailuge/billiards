@@ -33,15 +33,6 @@ describe("ReplayCodec", () => {
     expect(decoded).toEqual(sampleData)
   })
 
-  it("should successfully decode legacy prefixless fflate payloads", () => {
-    const encodedWithPrefix = ReplayCodec.encode(sampleData)
-    const prefixless = encodedWithPrefix.slice(2) // remove 'f~'
-
-    // Decoding of legacy prefixless payloads
-    const decoded = ReplayCodec.decode(prefixless)
-    expect(decoded).toEqual(sampleData)
-  })
-
   it("should throw an error for completely invalid or corrupted data format", () => {
     expect(() => {
       ReplayCodec.decode("invalid_garbage_data_not_json_or_base64")

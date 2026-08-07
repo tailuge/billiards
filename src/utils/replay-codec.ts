@@ -44,12 +44,7 @@ export class ReplayCodec {
       const uncrushed = JSONCrush.uncrush(unescapedBlob)
       return JSON.parse(uncrushed)
     } catch (err) {
-      // 3. Fallback for old legacy payload that used raw uncrushed fflate without prefix
-      try {
-        return this._decodeFflate(unescapedBlob)
-      } catch {
-        throw new Error("Failed to parse replay blob: invalid or corrupted data format.")
-      }
+      throw new Error("Failed to parse replay blob: invalid or corrupted data format.")
     }
   }
 
