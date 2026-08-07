@@ -14,9 +14,9 @@ export const gameOverButtons = {
     if (!opponentId || !nextTurnId) return ""
 
     const url = new URL(LOBBY_URL)
-    url.searchParams.set("opponentId", opponentId)
+    url.searchParams.set("opponent.userId", opponentId)
     if (opponentName) {
-      url.searchParams.set("opponentName", opponentName)
+      url.searchParams.set("opponent.userName", opponentName)
     }
     url.searchParams.set("ruletype", ruletype)
     url.searchParams.set("nextTurnId", nextTurnId)
@@ -29,6 +29,8 @@ export const gameOverButtons = {
         "websocketserver",
         "first",
         "spectator",
+        "opponent.userId",
+        "opponent.userName",
         "opponentId",
         "opponentName",
         "ruletype",

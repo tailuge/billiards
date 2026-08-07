@@ -116,6 +116,7 @@ export class BrowserContainer {
       this.first,
       this.speedrun
     )
+    Session.getInstance().applyUrlParams(params)
     console.log(Session.getInstance())
     applyPhysicsParams(params)
   }
@@ -319,12 +320,6 @@ export class BrowserContainer {
     }
 
     logNetEvent(this.playername, event, "receive")
-    if (event.clientId) {
-      Session.getInstance().setOpponentClientId(event.clientId)
-    }
-    if (event.playername) {
-      Session.getInstance().opponentName = event.playername
-    }
 
     const session = Session.getInstance()
     if (

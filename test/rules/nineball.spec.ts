@@ -265,9 +265,11 @@ describe("NineBall Rules", () => {
       'data-notification-action="lobby"'
     )
     expect(notifySpy.mock.calls[0][0].extra).to.contain(
-      "opponentId=opponent-client"
+      "opponent.userId=opponent-client"
     )
-    expect(notifySpy.mock.calls[0][0].extra).to.contain("opponentName=Opponent")
+    expect(notifySpy.mock.calls[0][0].extra).to.contain(
+      "opponent.userName=Opponent"
+    )
     expect(notifySpy.mock.calls[0][0].extra).to.contain("ruletype=nineball")
     expect(notifySpy.mock.calls[0][0].extra).to.contain(
       "nextTurnId=opponent-client"
@@ -289,8 +291,12 @@ describe("NineBall Rules", () => {
     expect(notificationEvent.data.extra).to.contain(
       'data-notification-action="rematch"'
     )
-    expect(notificationEvent.data.extra).to.contain("opponentId=test-client")
-    expect(notificationEvent.data.extra).to.contain("opponentName=TestPlayer")
+    expect(notificationEvent.data.extra).to.contain(
+      "opponent.userId=test-client"
+    )
+    expect(notificationEvent.data.extra).to.contain(
+      "opponent.userName=TestPlayer"
+    )
     expect(notificationEvent.data.extra).to.contain("ruletype=nineball")
     expect(notificationEvent.data.extra).to.contain(
       "nextTurnId=opponent-client"

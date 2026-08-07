@@ -25,8 +25,8 @@ describe("gameOverButtons", () => {
         "sagu",
         "turn-123"
       )
-      expect(html).toContain("opponentId=opponent-123")
-      expect(html).toContain("opponentName=Alice")
+      expect(html).toContain("opponent.userId=opponent-123")
+      expect(html).toContain("opponent.userName=Alice")
       expect(html).toContain("ruletype=sagu")
       expect(html).toContain("nextTurnId=turn-123")
     })
@@ -46,8 +46,8 @@ describe("gameOverButtons", () => {
         "sagu",
         "turn-123"
       )
-      expect(html).toContain("opponentId=opponent-123")
-      expect(html).toContain("opponentName=Alice")
+      expect(html).toContain("opponent.userId=opponent-123")
+      expect(html).toContain("opponent.userName=Alice")
       expect(html).toContain("ruletype=sagu")
       expect(html).toContain("nextTurnId=turn-123")
 

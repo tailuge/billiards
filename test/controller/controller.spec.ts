@@ -122,11 +122,11 @@ describe("Controller", () => {
     const bc =
       new (require("../../src/container/browsercontainer").BrowserContainer)(
         null,
-        new URLSearchParams("ruletype=nineball")
+        new URLSearchParams(
+          "ruletype=nineball&userName=Me&userId=myId&opponent.userId=other&opponent.userName=Opponent"
+        )
       )
     bc.container = container
-    bc.ruletype = "nineball"
-    Session.init("myId", "Me", "table", false)
 
     bc.netEvent(
       JSON.stringify({

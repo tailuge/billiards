@@ -343,8 +343,8 @@ export class LobbyIndicator {
 
     url.searchParams.set("action", "join")
     url.searchParams.set("ruletype", this.challenger.ruleType)
-    url.searchParams.set("opponentId", this.challenger.userId)
-    url.searchParams.set("opponentName", this.challenger.userName)
+    url.searchParams.set("opponent.userId", this.challenger.userId)
+    url.searchParams.set("opponent.userName", this.challenger.userName)
 
     return url.toString()
   }

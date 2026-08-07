@@ -16,6 +16,8 @@ export class Session {
 
   opponentName?: string
   opponentClientId?: string
+  opponentParams: Record<string, string> = {}
+  customParams: Record<string, string> = {}
   spectatedP1Name?: string
   spectatedP2Name?: string
   vsNotificationShown: boolean = false
@@ -130,6 +132,31 @@ export class Session {
       previousOpponentKey in this.scoreByClientId
     ) {
       delete this.scoreByClientId[previousOpponentKey]
+    }
+  }
+
+  /**
+   * Populates opponent details and custom attributes from URL query
+   * parameters (opponent.userId / opponent.userName / opponent.custom.* and
+   * custom.*). Legacy opponentId / opponentName params are accepted as
+   * fallbacks. New-style params take precedence when both are present.
+   */
+  applyUrlParams(params: URLSearchParams): void {
+    const opponentId = params.get("opponent.userId") ?? params.get("opponentId")
+    if (opponentId && opponentId !== this.clientId) {
+      this.setOpponentClientId(opponentId)
+    }
+    const opponentName =
+      params.get("opponent.userName") ?? params.get("opponentName")
+    if (opponentName) {
+      this.opponentName = opponentName
+    }
+    for (const [key, value] of params) {
+      if (key.startsWith("opponent.custom.")) {
+        this.opponentParams[key.slice("opponent.custom.".length)] = value
+      } else if (key.startsWith("custom.")) {
+        this.customParams[key.slice("custom.".length)] = value
+      }
     }
   }
 

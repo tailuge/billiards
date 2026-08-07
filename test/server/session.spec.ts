@@ -55,6 +55,72 @@ describe("Session", () => {
     expect(session.opponentScore()).to.equal(0)
   })
 
+  describe("applyUrlParams", () => {
+    it("parses opponent.userId and opponent.userName", () => {
+      Session.init("c1", "u1", "t1", false)
+      const session = Session.getInstance()
+      session.applyUrlParams(
+        new URLSearchParams("opponent.userId=c2&opponent.userName=Bob")
+      )
+      expect(session.opponentClientId).to.equal("c2")
+      expect(session.opponentName).to.equal("Bob")
+      expect(session.getScoreByClientId("c2")).to.equal(0)
+    })
+
+    it("falls back to legacy opponentId and opponentName params", () => {
+      Session.init("c1", "u1", "t1", false)
+      const session = Session.getInstance()
+      session.applyUrlParams(
+        new URLSearchParams("opponentId=c2&opponentName=Bob")
+      )
+      expect(session.opponentClientId).to.equal("c2")
+      expect(session.opponentName).to.equal("Bob")
+    })
+
+    it("prefers new-style opponent params over legacy ones", () => {
+      Session.init("c1", "u1", "t1", false)
+      const session = Session.getInstance()
+      session.applyUrlParams(
+        new URLSearchParams(
+          "opponentId=c2&opponentName=Bob&opponent.userId=c3&opponent.userName=Alice"
+        )
+      )
+      expect(session.opponentClientId).to.equal("c3")
+      expect(session.opponentName).to.equal("Alice")
+    })
+
+    it("parses opponent.custom.* and custom.* into param maps", () => {
+      Session.init("c1", "u1", "t1", false)
+      const session = Session.getInstance()
+      session.applyUrlParams(
+        new URLSearchParams(
+          "opponent.custom.cue=1&custom.cue=2&custom.wall=red"
+        )
+      )
+      expect(session.opponentParams).to.deep.equal({ cue: "1" })
+      expect(session.customParams).to.deep.equal({ cue: "2", wall: "red" })
+    })
+
+    it("leaves opponent fields untouched when no params are present", () => {
+      Session.init("c1", "u1", "t1", false)
+      const session = Session.getInstance()
+      session.setOpponentClientId("c2")
+      session.applyUrlParams(new URLSearchParams(""))
+      expect(session.opponentClientId).to.equal("c2")
+      expect(session.opponentName).to.be.undefined
+      expect(session.opponentParams).to.deep.equal({})
+      expect(session.customParams).to.deep.equal({})
+    })
+
+    it("ignores opponent.userId equal to own clientId", () => {
+      Session.init("c1", "u1", "t1", false)
+      const session = Session.getInstance()
+      session.applyUrlParams(new URLSearchParams("opponent.userId=c1"))
+      expect(session.opponentClientId).to.be.undefined
+      expect(session.opponentScore()).to.equal(0)
+    })
+  })
+
   describe("getRaceTargetForPlayer", () => {
     afterEach(() => {
       jest.restoreAllMocks()

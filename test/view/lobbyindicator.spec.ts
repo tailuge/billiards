@@ -71,8 +71,8 @@ describe("LobbyIndicator", () => {
     const href = element?.getAttribute("href") ?? ""
     expect(href).toContain("action=join")
     expect(href).toContain("ruletype=nineball")
-    expect(href).toContain("opponentId=u2")
-    expect(href).toContain("opponentName=Bob")
+    expect(href).toContain("opponent.userId=u2")
+    expect(href).toContain("opponent.userName=Bob")
 
     // Simulate challenge decline/cancel
     onChallengeCallback({
