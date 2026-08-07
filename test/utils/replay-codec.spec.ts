@@ -27,9 +27,10 @@ describe("ReplayCodec", () => {
     const jsonString = JSON.stringify(sampleData)
     const crushed = JSONCrush.crush(jsonString)
     const encodedUri = encodeURIComponent(crushed)
+    const params = new URLSearchParams(`state=${encodedUri}`)
 
-    // ReplayCodec.decode should decode the legacy JSONCrush input successfully
-    const decoded = ReplayCodec.decode(encodedUri)
+    // URLSearchParams decodes the state before ReplayCodec receives it.
+    const decoded = ReplayCodec.decode(params.get("state"))
     expect(decoded).toEqual(sampleData)
   })
 

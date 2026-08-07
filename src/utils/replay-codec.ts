@@ -26,25 +26,29 @@ export class ReplayCodec {
   }
 
   /**
-   * Decodes blob parameter back to JS object.
+   * Decodes an already URI-decoded blob parameter back to a JS object.
    * Auto-detects format (fflate vs. legacy JSONCrush) for 100% backward compatibility.
    */
   static decode(blob: string | null): any {
     if (!blob) return null
 
-    const unescapedBlob = decodeURIComponent(blob)
+    // The URLSearchParams caller decodes the state parameter before passing it
+    // here. Decode the payload exactly once at the URL boundary.
+    const payload = blob
 
     // 1. Check for fflate format prefix ('f~')
-    if (unescapedBlob.startsWith("f~")) {
-      return this._decodeFflate(unescapedBlob.slice(2))
+    if (payload.startsWith("f~")) {
+      return this._decodeFflate(payload.slice(2))
     }
 
     // 2. Fallback to Legacy JSONCrush handling
     try {
-      const uncrushed = JSONCrush.uncrush(unescapedBlob)
+      const uncrushed = JSONCrush.uncrush(payload)
       return JSON.parse(uncrushed)
     } catch (err) {
-      throw new Error("Failed to parse replay blob: invalid or corrupted data format.")
+      throw new Error(
+        "Failed to parse replay blob: invalid or corrupted data format."
+      )
     }
   }
 
