@@ -67,28 +67,6 @@ describe("Session", () => {
       expect(session.getScoreByClientId("c2")).to.equal(0)
     })
 
-    it("falls back to legacy opponentId and opponentName params", () => {
-      Session.init("c1", "u1", "t1", false)
-      const session = Session.getInstance()
-      session.applyUrlParams(
-        new URLSearchParams("opponentId=c2&opponentName=Bob")
-      )
-      expect(session.opponentClientId).to.equal("c2")
-      expect(session.opponentName).to.equal("Bob")
-    })
-
-    it("prefers new-style opponent params over legacy ones", () => {
-      Session.init("c1", "u1", "t1", false)
-      const session = Session.getInstance()
-      session.applyUrlParams(
-        new URLSearchParams(
-          "opponentId=c2&opponentName=Bob&opponent.userId=c3&opponent.userName=Alice"
-        )
-      )
-      expect(session.opponentClientId).to.equal("c3")
-      expect(session.opponentName).to.equal("Alice")
-    })
-
     it("parses opponent.custom.* and custom.* into param maps", () => {
       Session.init("c1", "u1", "t1", false)
       const session = Session.getInstance()
