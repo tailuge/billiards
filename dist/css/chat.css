@@ -106,6 +106,9 @@
   line-height: 1.25;
   text-align: center;
   cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease;
 }
 
 .chat-emoji:hover {
