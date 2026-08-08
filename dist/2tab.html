@@ -34,7 +34,13 @@
     console.log(`${url}&userId=p1id&userName=P1&first=true`)
     console.log(`${url}&userId=p2id&userName=P2`)
 
-    window.open(`${url}&userId=p1id&userName=P1&first=true`, "_blank")
-    window.open(`${url}&userId=p2id&userName=P2`, "_blank")
+    window.open(
+      `${url}&userId=p1id&userName=P1&first=true&opponent.userId=p2id&opponent.userName=P2`,
+      "_blank"
+    )
+    window.open(
+      `${url}&userId=p2id&userName=P2&opponent.userId=p1id&opponent.userName=P1`,
+      "_blank"
+    )
   </script>
 </html>
