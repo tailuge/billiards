@@ -138,16 +138,15 @@ export class Session {
   /**
    * Populates opponent details and custom attributes from URL query
    * parameters (opponent.userId / opponent.userName / opponent.custom.* and
-   * custom.*). Legacy opponentId / opponentName params are accepted as
-   * fallbacks. New-style params take precedence when both are present.
+   * custom.*).
    */
   applyUrlParams(params: URLSearchParams): void {
-    const opponentId = params.get("opponent.userId") ?? params.get("opponentId")
+    const opponentId = params.get("opponent.userId")
     if (opponentId && opponentId !== this.clientId) {
       this.setOpponentClientId(opponentId)
     }
     const opponentName =
-      params.get("opponent.userName") ?? params.get("opponentName")
+      params.get("opponent.userName")
     if (opponentName) {
       this.opponentName = opponentName
     }
