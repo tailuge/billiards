@@ -29,10 +29,9 @@ export const gameOverButtons = {
         "websocketserver",
         "first",
         "spectator",
+        "lod",
         "opponent.userId",
         "opponent.userName",
-        "opponentId",
-        "opponentName",
         "ruletype",
         "nextTurnId",
       ])
