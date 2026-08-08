@@ -38,7 +38,11 @@ export const gameOverButtons = {
       ])
       const currentParams = new URLSearchParams(globalThis.location.search)
       for (const [key, val] of currentParams.entries()) {
-        if (!systemParams.has(key)) {
+        if (
+          !systemParams.has(key) &&
+          !key.startsWith("custom.") &&
+          !key.startsWith("opponent.custom.")
+        ) {
           url.searchParams.set(key, val)
         }
       }
