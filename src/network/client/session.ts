@@ -145,8 +145,7 @@ export class Session {
     if (opponentId && opponentId !== this.clientId) {
       this.setOpponentClientId(opponentId)
     }
-    const opponentName =
-      params.get("opponent.userName")
+    const opponentName = params.get("opponent.userName")
     if (opponentName) {
       this.opponentName = opponentName
     }
