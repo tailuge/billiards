@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cue Mesh Viewer</title>
+  <title>Cue Customiser</title>
   <style>
     :root {
       --bg: #12161d;
@@ -28,7 +28,7 @@
       position: fixed;
       top: 16px;
       left: 16px;
-      width: 264px;
+      width: 272px;
       padding: 14px 16px 12px;
       background: var(--panel);
       border: 1px solid var(--panel-border);
@@ -36,6 +36,8 @@
       box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
       backdrop-filter: blur(8px);
       user-select: none;
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
     }
     #params h1 {
       margin: 0 0 2px;
@@ -44,72 +46,64 @@
       letter-spacing: 0.02em;
     }
     #params .sub {
-      margin: 0 0 12px;
+      margin: 0 0 10px;
       font-size: 11px;
       color: var(--muted);
     }
-    .row { margin-bottom: 10px; }
-    .row .head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 3px;
+
+    .group {
+      border-top: 1px solid var(--panel-border);
+      padding-top: 6px;
+      margin-top: 10px;
     }
-    .row label { font-size: 12px; color: var(--muted); }
-    .row .val {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 12px;
-      color: var(--text);
+    #params > .group:first-of-type {
+      border-top: none;
+      margin-top: 0;
+      padding-top: 0;
     }
-    .row input[type="range"] {
-      width: 100%;
-      height: 4px;
-      -webkit-appearance: none;
-      appearance: none;
-      background: #2a323e;
-      border-radius: 2px;
-      outline: none;
-      cursor: pointer;
-    }
-    .row input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: 2px solid #0f141b;
-      transition: transform 0.1s ease;
-    }
-    .row input[type="range"]::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
-    }
-    .row input[type="range"]::-moz-range-thumb {
-      width: 13px;
-      height: 13px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: 2px solid #0f141b;
-    }
-    .row input[type="range"]::-moz-range-track {
-      background: #2a323e;
-      border-radius: 2px;
-      height: 4px;
+    .group-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 4px 0 10px;
     }
 
+    .swatch-row { margin-bottom: 10px; }
+    .swatch-row label {
+      font-size: 12px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 5px;
+    }
+    .swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+    .swatch {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.18);
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .swatch:hover { transform: scale(1.2); }
+    .swatch.active {
+      box-shadow: 0 0 0 2px var(--accent);
+      transform: scale(1.12);
+    }
     .check {
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 12px;
       color: var(--muted);
-      margin: 12px 0 8px;
+      margin: 10px 0 0;
       cursor: pointer;
     }
     .check input { accent-color: var(--accent); }
 
     #params .hint {
-      margin: 6px 0 0;
+      margin: 12px 0 0;
       font-size: 11px;
       color: var(--muted);
       border-top: 1px solid var(--panel-border);
@@ -128,14 +122,30 @@
 <body>
   <div id="view"></div>
   <aside id="params">
-    <h1>Cue Mesh Viewer</h1>
-    <p class="sub">Z-up scene &middot; port of src/view/cuemesh.ts</p>
-    <div id="rows"></div>
+    <h1>Cue Customiser</h1>
+    <p class="sub">Carom3D style &middot; Z-up &middot; port of src/view/cuemesh.ts</p>
+
+    <div class="group">
+      <div class="group-title">Finish</div>
+      <div class="swatch-row" data-key="shaftColour">
+        <label>Shaft colour</label><div class="swatches"></div>
+      </div>
+      <div class="swatch-row" data-key="buttColour">
+        <label>Butt colour</label><div class="swatches"></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">Texture</div>
+      <label class="check">
+        <input type="checkbox" id="grain" checked /> Wood grain
+      </label>
+    </div>
+
     <label class="check">
-      <input type="checkbox" id="autorotate" checked />
-      Auto-rotate
+      <input type="checkbox" id="autorotate" checked /> Auto-rotate
     </label>
-    <p class="hint">Drag to orbit &middot; scroll to zoom &middot; sliders rebuild the cue</p>
+    <p class="hint">Drag to orbit &middot; scroll to zoom &middot; colours apply live</p>
   </aside>
 
   <script type="module">
@@ -149,8 +159,26 @@
     const R = 0.03275 // ball radius (m)
     const UP = new THREE.Vector3(0, 0, 1) // scene is Z-up
 
-    const ashWoodMat = new THREE.MeshPhongMaterial({ color: 0xd2b48c, shininess: 50 })
-    const ebonyMat = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 80 })
+    // Fixed geometry (the game defaults; sliders removed on purpose)
+    const GEO = {
+      tip: (R * 0.07) / 0.5, // 4.585 mm
+      butt: (R * 0.23) / 0.5, // 15.065 mm
+      length: 1.47,
+      segments: 11,
+      baseTilt: 0.12,
+      elevation: 0,
+    }
+
+    // Customisation state (Carom3D-style)
+    const state = {
+      shaftColour: "#d2b48c", // natural ash
+      buttColour: "#1a1a1a", // ebony
+      grain: true,
+    }
+
+    // Materials (shared singletons, mutated on rebuild)
+    const shaftMat = new THREE.MeshPhongMaterial({ color: 0xd2b48c, shininess: 50 })
+    const buttMat = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 80 })
     const ferruleMat = new THREE.MeshPhongMaterial({ color: 0xe5e5e5, shininess: 100 })
     const tipMat = new THREE.MeshPhongMaterial({ color: 0x4a7c9a, shininess: 5 })
 
@@ -166,7 +194,7 @@
       // 1. Butt
       const butt = new THREE.Mesh(
         new THREE.CylinderGeometry(buttRadius * 0.9, buttRadius, buttLength, segments),
-        ebonyMat
+        buttMat
       )
       butt.position.y = -length / 2 + buttLength / 2
       group.add(butt)
@@ -174,7 +202,7 @@
       // 2. Shaft
       const shaft = new THREE.Mesh(
         new THREE.CylinderGeometry(tipRadius, buttRadius * 0.9, shaftLength, segments),
-        ashWoodMat
+        shaftMat
       )
       shaft.position.y = butt.position.y + buttLength / 2 + shaftLength / 2
       group.add(shaft)
@@ -213,6 +241,62 @@
       tiltMesh.add(cueBody)
       mesh.add(tiltMesh)
       return { mesh, tiltMesh, cueBody }
+    }
+
+    // ------------------------------------------------------------------
+    // Procedural wood grain (canvas texture, stripes along the length)
+    // ------------------------------------------------------------------
+    function mulberry32(a) {
+      return function () {
+        a |= 0
+        a = (a + 0x6d2b79f5) | 0
+        let t = Math.imul(a ^ (a >>> 15), 1 | a)
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+      }
+    }
+
+    function woodGrainTexture(hex, seed = 7) {
+      const w = 64
+      const h = 512
+      const canvas = document.createElement("canvas")
+      canvas.width = w
+      canvas.height = h
+      const ctx = canvas.getContext("2d")
+
+      ctx.fillStyle = hex
+      ctx.fillRect(0, 0, w, h)
+
+      // Wavy darker/lighter streaks running down the length
+      const rng = mulberry32(seed)
+      for (let i = 0; i < 140; i++) {
+        const x = rng() * w
+        const y = rng() * h
+        const len = h * (0.4 + rng() * 0.6)
+        ctx.strokeStyle = rng() > 0.45 ? "rgba(0,0,0,0.14)" : "rgba(255,255,255,0.07)"
+        ctx.lineWidth = 0.5 + rng() * 1.6
+        ctx.beginPath()
+        const amp = 0.4 + rng() * 1.6
+        ctx.moveTo(x, y)
+        for (let yy = 0; yy < len; yy += 6) {
+          ctx.lineTo(x + Math.sin(yy * (0.05 + rng() * 0.06)) * amp, y + yy)
+        }
+        ctx.stroke()
+      }
+
+      // Subtle vertical tonal variation
+      const grad = ctx.createLinearGradient(0, 0, 0, h)
+      grad.addColorStop(0, "rgba(255,255,255,0.06)")
+      grad.addColorStop(0.5, "rgba(0,0,0,0.05)")
+      grad.addColorStop(1, "rgba(255,255,255,0.04)")
+      ctx.fillStyle = grad
+      ctx.fillRect(0, 0, w, h)
+
+      const tex = new THREE.CanvasTexture(canvas)
+      tex.wrapS = THREE.RepeatWrapping
+      tex.repeat.set(4, 1)
+      tex.colorSpace = THREE.SRGBColorSpace
+      return tex
     }
 
     // ------------------------------------------------------------------
@@ -258,75 +342,86 @@
     )
 
     // ------------------------------------------------------------------
-    // Parameter panel -> rebuild cue
+    // Rebuild
     // ------------------------------------------------------------------
-    const params = [
-      { key: "length", label: "Cue length", min: 0.6, max: 2.4, step: 0.01, value: 1.47, fmt: (v) => v.toFixed(2) + " m" },
-      { key: "tip", label: "Tip radius", min: 0.5, max: 8, step: 0.05, value: 4.585, fmt: (v) => v.toFixed(2) + " mm" },
-      { key: "butt", label: "Butt radius", min: 4, max: 30, step: 0.1, value: 15.065, fmt: (v) => v.toFixed(2) + " mm" },
-      { key: "segments", label: "Segments", min: 4, max: 32, step: 1, value: 11, fmt: (v) => String(Math.round(v)) },
-      { key: "baseTilt", label: "Base tilt", min: 0, max: 0.3, step: 0.005, value: 0.12, fmt: (v) => v.toFixed(3) },
-      { key: "elevation", label: "Elevation", min: 0, max: 0.3, step: 0.005, value: 0, fmt: (v) => v.toFixed(3) },
-    ]
+    function applyMaterials() {
+      shaftMat.color.set(state.shaftColour)
+      buttMat.color.set(state.buttColour)
 
-    function readParams() {
-      const p = {}
-      for (const q of params) p[q.key] = q.value
-      return {
-        length: p.length,
-        tip: p.tip / 1000, // mm -> m
-        butt: p.butt / 1000,
-        segments: Math.round(p.segments),
-        baseTilt: p.baseTilt,
-        elevation: p.elevation,
+      const shaftMap = state.grain ? woodGrainTexture(state.shaftColour) : null
+      const buttMap = state.grain ? woodGrainTexture(state.buttColour, 11) : null
+      if (shaftMat.map !== shaftMap) {
+        shaftMat.map = shaftMap
+        shaftMat.needsUpdate = true
+      }
+      if (buttMat.map !== buttMap) {
+        buttMat.map = buttMap
+        buttMat.needsUpdate = true
       }
     }
 
     let rig = null
     function rebuild() {
-      const p = readParams()
       if (rig) scene.remove(rig)
+      applyMaterials()
 
-      const { mesh, tiltMesh } = createCue(p.tip, p.butt, p.length, p.segments, p.baseTilt)
-      tiltMesh.rotation.y = p.baseTilt + p.elevation
+      const { mesh, tiltMesh, cueBody } = createCue(
+        GEO.tip,
+        GEO.butt,
+        GEO.length,
+        GEO.segments,
+        GEO.baseTilt
+      )
+      tiltMesh.rotation.y = GEO.baseTilt + GEO.elevation
 
       // Center the cue on the origin; ball sits at the tip, touching it.
+      // (tip sits at rig-local x = -R, so the ball goes at the pivot)
       rig = new THREE.Group()
+      rig.position.x = GEO.length / 2 + R
       rig.add(mesh)
-      ball.position.set(p.length / 2 + R, 0, R)
+      ball.position.set(0, 0, R)
       rig.add(ball)
       scene.add(rig)
     }
 
-    const rows = document.getElementById("rows")
-    for (const p of params) {
-      const row = document.createElement("div")
-      row.className = "row"
-
-      const head = document.createElement("div")
-      head.className = "head"
-      const label = document.createElement("label")
-      label.textContent = p.label
-      const val = document.createElement("span")
-      val.className = "val"
-      val.textContent = p.fmt(p.value)
-      head.append(label, val)
-
-      const input = document.createElement("input")
-      input.type = "range"
-      input.min = p.min
-      input.max = p.max
-      input.step = p.step
-      input.value = p.value
-      input.addEventListener("input", () => {
-        p.value = parseFloat(input.value)
-        val.textContent = p.fmt(p.value)
-        rebuild()
-      })
-
-      row.append(head, input)
-      rows.appendChild(row)
+    // ------------------------------------------------------------------
+    // Panel: swatches + toggles
+    // ------------------------------------------------------------------
+    const SWATCHES = {
+      shaftColour: [
+        "#d2b48c", // natural ash
+        "#26282b", // carbon fibre
+      ],
+      buttColour: [
+        "#1a1a1a", "#0d0d0d", "#3a2a1e", "#6e2f1f", "#5a2f1e",
+        "#1f3a5f", "#6e1f1f", "#1f4a3a", "#4a2a5a",
+      ],
     }
+
+    for (const row of document.querySelectorAll(".swatch-row")) {
+      const key = row.dataset.key
+      const box = row.querySelector(".swatches")
+      for (const hex of SWATCHES[key]) {
+        const b = document.createElement("button")
+        b.className = "swatch" + (hex === state[key] ? " active" : "")
+        b.style.background = hex
+        b.title = hex
+        b.addEventListener("click", () => {
+          state[key] = hex
+          for (const s of box.querySelectorAll(".swatch")) {
+            s.classList.toggle("active", s === b)
+          }
+          rebuild()
+        })
+        box.appendChild(b)
+      }
+    }
+
+    const grainToggle = document.getElementById("grain")
+    grainToggle.addEventListener("change", (e) => {
+      state.grain = e.target.checked
+      rebuild()
+    })
 
     rebuild()
 
