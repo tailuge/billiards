@@ -339,7 +339,7 @@ export class Container {
   animate(timestamp): void {
     let elapsed = (timestamp - this.last) / 1000
     if (this.fastForwardActive) {
-      elapsed *= 4
+      elapsed *= 8
     }
     this.advance(elapsed)
     this.last = timestamp
