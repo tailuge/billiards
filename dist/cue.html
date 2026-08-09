@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cue Mesh Viewer</title>
+  <style>
+    :root {
+      --bg: #12161d;
+      --panel: rgba(18, 22, 29, 0.86);
+      --panel-border: #2a323e;
+      --text: #e6edf3;
+      --muted: #8b95a5;
+      --accent: #4a9eff;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
+    }
+    #view { position: fixed; inset: 0; }
+    #view canvas { display: block; }
+
+    #params {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      width: 264px;
+      padding: 14px 16px 12px;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(8px);
+      user-select: none;
+    }
+    #params h1 {
+      margin: 0 0 2px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    #params .sub {
+      margin: 0 0 12px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .row { margin-bottom: 10px; }
+    .row .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 3px;
+    }
+    .row label { font-size: 12px; color: var(--muted); }
+    .row .val {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      color: var(--text);
+    }
+    .row input[type="range"] {
+      width: 100%;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #2a323e;
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    .row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #0f141b;
+      transition: transform 0.1s ease;
+    }
+    .row input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+    .row input[type="range"]::-moz-range-thumb {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #0f141b;
+    }
+    .row input[type="range"]::-moz-range-track {
+      background: #2a323e;
+      border-radius: 2px;
+      height: 4px;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 12px 0 8px;
+      cursor: pointer;
+    }
+    .check input { accent-color: var(--accent); }
+
+    #params .hint {
+      margin: 6px 0 0;
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px solid var(--panel-border);
+      padding-top: 8px;
+    }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="view"></div>
+  <aside id="params">
+    <h1>Cue Mesh Viewer</h1>
+    <p class="sub">Z-up scene &middot; port of src/view/cuemesh.ts</p>
+    <div id="rows"></div>
+    <label class="check">
+      <input type="checkbox" id="autorotate" checked />
+      Auto-rotate
+    </label>
+    <p class="hint">Drag to orbit &middot; scroll to zoom &middot; sliders rebuild the cue</p>
+  </aside>
+
+  <script type="module">
+    import * as THREE from "three"
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js"
+
+    // ------------------------------------------------------------------
+    // Port of src/view/cuemesh.ts  (R and up taken from
+    // src/model/physics/constants.ts and src/utils/three-utils.ts)
+    // ------------------------------------------------------------------
+    const R = 0.03275 // ball radius (m)
+    const UP = new THREE.Vector3(0, 0, 1) // scene is Z-up
+
+    const ashWoodMat = new THREE.MeshPhongMaterial({ color: 0xd2b48c, shininess: 50 })
+    const ebonyMat = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 80 })
+    const ferruleMat = new THREE.MeshPhongMaterial({ color: 0xe5e5e5, shininess: 100 })
+    const tipMat = new THREE.MeshPhongMaterial({ color: 0x4a7c9a, shininess: 5 })
+
+    // Four-part cue (butt / shaft / ferrule / tip) built along +Y,
+    // exactly as in CueMesh.cueGeometry.
+    function cueGeometry(tipRadius, buttRadius, length, segments = 11) {
+      const group = new THREE.Group()
+
+      const buttLength = length * 0.28
+      const shaftLength = length * 0.71
+      const ferruleLength = length * 0.007
+
+      // 1. Butt
+      const butt = new THREE.Mesh(
+        new THREE.CylinderGeometry(buttRadius * 0.9, buttRadius, buttLength, segments),
+        ebonyMat
+      )
+      butt.position.y = -length / 2 + buttLength / 2
+      group.add(butt)
+
+      // 2. Shaft
+      const shaft = new THREE.Mesh(
+        new THREE.CylinderGeometry(tipRadius, buttRadius * 0.9, shaftLength, segments),
+        ashWoodMat
+      )
+      shaft.position.y = butt.position.y + buttLength / 2 + shaftLength / 2
+      group.add(shaft)
+
+      // 3. Ferrule
+      const ferrule = new THREE.Mesh(
+        new THREE.CylinderGeometry(tipRadius, tipRadius, ferruleLength, segments),
+        ferruleMat
+      )
+      ferrule.position.y = shaft.position.y + shaftLength / 2 + ferruleLength / 2
+      group.add(ferrule)
+
+      // 4. Tip
+      const tipHeight = 0.0055
+      const tip = new THREE.Mesh(
+        new THREE.CylinderGeometry(tipRadius * 0.93, tipRadius, tipHeight, segments),
+        tipMat
+      )
+      tip.position.y = ferrule.position.y + ferruleLength / 2 + tipHeight / 2
+      tip.name = "cueTip"
+      group.add(tip)
+
+      return group
+    }
+
+    // Equivalent of CueMesh.createCue: rotates the cue into the X-Y plane
+    // (Z-up) so it lies along X with the tip near the ball at the origin.
+    function createCue(tip, but, length, segments = 11, baseTilt = 0.12) {
+      const cueBody = cueGeometry(tip, but, length, segments)
+      const tiltMesh = new THREE.Group()
+      const mesh = new THREE.Group()
+
+      cueBody.applyMatrix4(new THREE.Matrix4().makeRotationAxis(UP, -Math.PI / 2))
+      cueBody.position.set(-length / 2 - R, 0, R * 0.12)
+      tiltMesh.rotation.y = baseTilt
+      tiltMesh.add(cueBody)
+      mesh.add(tiltMesh)
+      return { mesh, tiltMesh, cueBody }
+    }
+
+    // ------------------------------------------------------------------
+    // Scene (Z-up)
+    // ------------------------------------------------------------------
+    const view = document.getElementById("view")
+    const scene = new THREE.Scene()
+    scene.up.set(0, 0, 1)
+    scene.background = new THREE.Color(0x141a22)
+
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.01, 20)
+    camera.up.set(0, 0, 1)
+    camera.position.set(1.5, 1.5, 2.2)
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    view.appendChild(renderer.domElement)
+
+    const controls = new OrbitControls(camera, renderer.domElement)
+    controls.enableDamping = true
+    controls.autoRotate = true
+    controls.autoRotateSpeed = 1.2
+    document.getElementById("autorotate").addEventListener("change", (e) => {
+      controls.autoRotate = e.target.checked
+    })
+
+    // Lights
+    scene.add(new THREE.HemisphereLight(0xbfd4ff, 0x1a1410, 0.9))
+    const sun = new THREE.DirectionalLight(0xffffff, 2.2)
+    sun.position.set(2, 3, 4)
+    scene.add(sun)
+
+    // Ground grid lying in the X-Y plane (Z is up)
+    const grid = new THREE.GridHelper(6, 48, 0x3a4356, 0x232a38)
+    grid.rotation.x = Math.PI / 2
+    scene.add(grid)
+
+    // Cue ball at the origin (surface touches the cue tip, as in game)
+    const ball = new THREE.Mesh(
+      new THREE.SphereGeometry(R, 32, 24),
+      new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 90 })
+    )
+
+    // ------------------------------------------------------------------
+    // Parameter panel -> rebuild cue
+    // ------------------------------------------------------------------
+    const params = [
+      { key: "length", label: "Cue length", min: 0.6, max: 2.4, step: 0.01, value: 1.47, fmt: (v) => v.toFixed(2) + " m" },
+      { key: "tip", label: "Tip radius", min: 0.5, max: 8, step: 0.05, value: 4.585, fmt: (v) => v.toFixed(2) + " mm" },
+      { key: "butt", label: "Butt radius", min: 4, max: 30, step: 0.1, value: 15.065, fmt: (v) => v.toFixed(2) + " mm" },
+      { key: "segments", label: "Segments", min: 4, max: 32, step: 1, value: 11, fmt: (v) => String(Math.round(v)) },
+      { key: "baseTilt", label: "Base tilt", min: 0, max: 0.3, step: 0.005, value: 0.12, fmt: (v) => v.toFixed(3) },
+      { key: "elevation", label: "Elevation", min: 0, max: 0.3, step: 0.005, value: 0, fmt: (v) => v.toFixed(3) },
+    ]
+
+    function readParams() {
+      const p = {}
+      for (const q of params) p[q.key] = q.value
+      return {
+        length: p.length,
+        tip: p.tip / 1000, // mm -> m
+        butt: p.butt / 1000,
+        segments: Math.round(p.segments),
+        baseTilt: p.baseTilt,
+        elevation: p.elevation,
+      }
+    }
+
+    let rig = null
+    function rebuild() {
+      const p = readParams()
+      if (rig) scene.remove(rig)
+
+      const { mesh, tiltMesh } = createCue(p.tip, p.butt, p.length, p.segments, p.baseTilt)
+      tiltMesh.rotation.y = p.baseTilt + p.elevation
+
+      // Center the cue on the origin; ball sits at the tip, touching it.
+      rig = new THREE.Group()
+      rig.add(mesh)
+      ball.position.set(p.length / 2 + R, 0, R)
+      rig.add(ball)
+      scene.add(rig)
+    }
+
+    const rows = document.getElementById("rows")
+    for (const p of params) {
+      const row = document.createElement("div")
+      row.className = "row"
+
+      const head = document.createElement("div")
+      head.className = "head"
+      const label = document.createElement("label")
+      label.textContent = p.label
+      const val = document.createElement("span")
+      val.className = "val"
+      val.textContent = p.fmt(p.value)
+      head.append(label, val)
+
+      const input = document.createElement("input")
+      input.type = "range"
+      input.min = p.min
+      input.max = p.max
+      input.step = p.step
+      input.value = p.value
+      input.addEventListener("input", () => {
+        p.value = parseFloat(input.value)
+        val.textContent = p.fmt(p.value)
+        rebuild()
+      })
+
+      row.append(head, input)
+      rows.appendChild(row)
+    }
+
+    rebuild()
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight
+      camera.updateProjectionMatrix()
+      renderer.setSize(window.innerWidth, window.innerHeight)
+    })
+
+    function animate() {
+      requestAnimationFrame(animate)
+      controls.update()
+      renderer.render(scene, camera)
+    }
+    animate()
+  </script>
+</body>
+</html>
