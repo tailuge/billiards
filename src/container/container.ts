@@ -71,6 +71,7 @@ export class Container {
   notification: Notification
   lobbyIndicator: LobbyIndicator
   replayMode: boolean = false
+  fastForwardActive: boolean = false
   examMode: boolean = false
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
@@ -336,7 +337,11 @@ export class Container {
   lastEventTime = performance.now()
 
   animate(timestamp): void {
-    this.advance((timestamp - this.last) / 1000)
+    let elapsed = (timestamp - this.last) / 1000
+    if (this.fastForwardActive) {
+      elapsed *= 2
+    }
+    this.advance(elapsed)
     this.last = timestamp
     this.processEvents()
     const needsRender =
@@ -384,6 +389,12 @@ export class Container {
           (this.wasReplay && controller instanceof End)) &&
           this.rules.rulename === "threecushion"
       )
+      this.menu?.setFfwdVisible(
+        controller instanceof Replay
+      )
+      if (!(controller instanceof Replay)) {
+        this.fastForwardActive = false
+      }
       const isTwoPlayer =
         !this.isSinglePlayer &&
         !this.replayMode &&
