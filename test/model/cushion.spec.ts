@@ -102,25 +102,14 @@ describe("Cushion", () => {
     done()
   })
 
-  it("bounces off X cushion with rolling spin", (done) => {
-    const ball = bounceInXWithSpin(new Vector3(0, 1, 0))
+  it.each([
+    ["rolling", 1],
+    ["top", 2],
+    ["back", -2],
+  ])("bounces off X cushion with %s spin", (_, spinY) => {
+    const ball = bounceInXWithSpin(new Vector3(0, spinY, 0))
     expect(ball.vel.x).to.be.below(0)
     expect(ball.vel.y).to.be.approximately(0, 0.01)
-    done()
-  })
-
-  it("bounces off X cushion with top spin", (done) => {
-    const ball = bounceInXWithSpin(new Vector3(0, 2, 0))
-    expect(ball.vel.x).to.be.below(0)
-    expect(ball.vel.y).to.be.approximately(0, 0.01)
-    done()
-  })
-
-  it("bounces off X cushion with back spin", (done) => {
-    const ball = bounceInXWithSpin(new Vector3(0, -2, 0))
-    expect(ball.vel.x).to.be.below(0)
-    expect(ball.vel.y).to.be.approximately(0, 0.01)
-    done()
   })
 
   it("bounces off X cushion with top and rhs", (done) => {

@@ -35,8 +35,22 @@ describe("ReplayCodec", () => {
   })
 
   it("should throw an error for completely invalid or corrupted data format", () => {
-    expect(() => {
+    const decode = () =>
       ReplayCodec.decode("invalid_garbage_data_not_json_or_base64")
-    }).toThrow("Failed to parse replay blob: invalid or corrupted data format.")
+
+    let thrownError: unknown
+    try {
+      decode()
+    } catch (error) {
+      thrownError = error
+    }
+
+    expect(thrownError).toBeInstanceOf(Error)
+    const error = thrownError as Error & { cause?: unknown }
+    expect(error.message).toBe(
+      "Failed to parse replay blob: invalid or corrupted data format."
+    )
+    expect(error.cause).toBeInstanceOf(Error)
+    expect(error.cause).not.toBe(error)
   })
 })

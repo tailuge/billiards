@@ -20,6 +20,8 @@ export class ReplayCodec {
     const base64 = btoa(binary)
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
+      // This regex is intentionally retained for RFC 4648 padding removal.
+      // eslint-disable-next-line sonarjs/super-linear-regex
       .replace(/=+$/, "")
 
     return `f~${base64}`
@@ -46,8 +48,11 @@ export class ReplayCodec {
       const uncrushed = JSONCrush.uncrush(payload)
       return JSON.parse(uncrushed)
     } catch (err) {
-      throw new Error(
-        "Failed to parse replay blob: invalid or corrupted data format."
+      throw Object.assign(
+        new Error(
+          "Failed to parse replay blob: invalid or corrupted data format."
+        ),
+        { cause: err }
       )
     }
   }
