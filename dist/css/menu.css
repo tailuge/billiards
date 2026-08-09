@@ -1,3 +1,16 @@
+/* Static top-down minimap (D key), pinned to the top-left of the screen. */
+#minimap {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  display: block;
+  pointer-events: none;
+}
+
+#minimap[hidden] {
+  display: none;
+}
+
 /* Outer Menu */
 .outerMenu {
   display: flex;

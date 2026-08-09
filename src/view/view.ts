@@ -8,6 +8,7 @@ import { Grid } from "./grid"
 import { renderer } from "../utils/webgl"
 import { Assets } from "./assets"
 import { Snooker } from "../controller/rules/snooker"
+import { Minimap } from "./minimap"
 
 export class View {
   readonly scene = new Scene()
@@ -23,6 +24,7 @@ export class View {
   loadAssets = true
   assets: Assets
   drawing: Drawing
+  minimap: Minimap
 
   // Reuse objects to reduce garbage collection pressure in high-frequency rendering
   private readonly frustum = new Frustum()
@@ -57,6 +59,7 @@ export class View {
       this.element as HTMLCanvasElement,
       () => this.camera.camera
     )
+    this.minimap = new Minimap(this.scene, this.renderer)
     this.initialiseScene()
   }
 

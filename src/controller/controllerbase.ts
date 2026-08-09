@@ -142,8 +142,11 @@ export abstract class ControllerBase extends Controller {
           this.container.table.cue.aim
         )
         return true
+      case "KeyD":
+        this.container.view.minimap.keyDown()
+        return true
       case "KeyDUp":
-        //this.togglePanel()
+        this.container.view.minimap.keyUp()
         return true
       case "KeyFUp":
         this.toggleFullscreen()
