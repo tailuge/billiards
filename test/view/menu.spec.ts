@@ -80,6 +80,37 @@ describe("Menu", () => {
     done()
   })
 
+  it("fast-forward button visibility and active state control", (done) => {
+    const menu = new Menu(container)
+    const ffwd = document.getElementById("ffwd") as HTMLButtonElement
+
+    // 1. Verify initially hidden
+    expect(ffwd.hidden).to.be.true
+
+    // 2. Verify setFfwdVisible(true) makes it visible
+    menu.setFfwdVisible(true)
+    expect(ffwd.hidden).to.be.false
+
+    // 3. Verify mousedown sets container.fastForwardActive to true
+    expect(container.fastForwardActive).to.be.false
+    fireEvent.mouseDown(ffwd)
+    expect(container.fastForwardActive).to.be.true
+
+    // 4. Verify mouseup sets container.fastForwardActive to false
+    fireEvent.mouseUp(ffwd)
+    expect(container.fastForwardActive).to.be.false
+
+    // 5. Verify touchstart sets container.fastForwardActive to true
+    fireEvent.touchStart(ffwd)
+    expect(container.fastForwardActive).to.be.true
+
+    // 6. Verify touchend sets container.fastForwardActive to false
+    fireEvent.touchEnd(ffwd)
+    expect(container.fastForwardActive).to.be.false
+
+    done()
+  })
+
   it("camera", (done) => {
     const toggleview = document.getElementById("camera") as HTMLButtonElement
     expect(container.view.camera.mode).to.be.equal(

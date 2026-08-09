@@ -13,6 +13,7 @@ export class Menu {
   concede: HTMLButtonElement
   help: HTMLButtonElement
   analysis: HTMLButtonElement
+  ffwd: HTMLButtonElement
   menuDropdown: HTMLDetailsElement | null
 
   disabled = true
@@ -26,6 +27,7 @@ export class Menu {
     this.concede = this.getElement("concede")
     this.help = this.getElement("help")
     this.analysis = this.getElement("analysis")
+    this.ffwd = this.getElement("ffwd")
     this.menuDropdown = document.getElementById(
       "menuDropdown"
     ) as HTMLDetailsElement | null
@@ -34,12 +36,36 @@ export class Menu {
       this.analysis.onclick = () => this.handleExport(true)
     }
 
+    if (this.ffwd) {
+      this.ffwd.onmousedown = (e) => {
+        e.preventDefault()
+        this.container.fastForwardActive = true
+      }
+      this.ffwd.ontouchstart = (e) => {
+        e.preventDefault()
+        this.container.fastForwardActive = true
+      }
+      this.ffwd.onmouseup = () => {
+        this.container.fastForwardActive = false
+      }
+      this.ffwd.onmouseleave = () => {
+        this.container.fastForwardActive = false
+      }
+      this.ffwd.ontouchend = () => {
+        this.container.fastForwardActive = false
+      }
+      this.ffwd.ontouchcancel = () => {
+        this.container.fastForwardActive = false
+      }
+    }
+
     if (this.diagram) {
       this.diagram.onclick = () => this.handleExport(false)
     }
 
     this.setShareVisible(false)
     this.setDiagramVisible(false)
+    this.setFfwdVisible(false)
     if (this.camera) {
       this.camera.onclick = (_) => {
         this.adjustCamera()
@@ -158,6 +184,13 @@ export class Menu {
     if (this.analysis) {
       this.analysis.hidden = !visible
       this.analysis.disabled = !visible
+    }
+  }
+
+  setFfwdVisible(visible: boolean) {
+    if (this.ffwd) {
+      this.ffwd.hidden = !visible
+      this.ffwd.disabled = !visible
     }
   }
 
