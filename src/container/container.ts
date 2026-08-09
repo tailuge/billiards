@@ -339,7 +339,7 @@ export class Container {
   animate(timestamp): void {
     let elapsed = (timestamp - this.last) / 1000
     if (this.fastForwardActive) {
-      elapsed *= 2
+      elapsed *= 4
     }
     this.advance(elapsed)
     this.last = timestamp
@@ -389,9 +389,7 @@ export class Container {
           (this.wasReplay && controller instanceof End)) &&
           this.rules.rulename === "threecushion"
       )
-      this.menu?.setFfwdVisible(
-        controller instanceof Replay
-      )
+      this.menu?.setFfwdVisible(controller instanceof Replay)
       if (!(controller instanceof Replay)) {
         this.fastForwardActive = false
       }
