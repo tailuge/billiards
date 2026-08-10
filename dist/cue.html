@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cue Customiser</title>
   <style>
     :root {
       --bg: #12161d;
@@ -131,6 +130,10 @@
       <div class="swatch-row" data-key="buttColour">
         <label>Butt colour</label><div class="swatches"></div>
       </div>
+      <div class="slider-row">
+        <label for="buttRatio">Butt length <span id="buttRatioVal"></span></label>
+        <input type="range" id="buttRatio" min="0.15" max="0.5" step="0.01" value="0.28" />
+      </div>
     </div>
 
     <div class="group">
@@ -190,16 +193,52 @@
       baseTilt: 0.12,
     }
 
-    // Customisation state (Carom3D-style)
-    const state = {
+    // Customisation state (Carom3D-style). Persisted as a single object
+    // in localStorage so choices survive reloads and work when the page
+    // is embedded as an iframe (storage access is guarded in case the
+    // host sandboxes the frame without allow-same-origin).
+    const DEFAULT_STATE = {
       shaftColour: "#d2b48c", // natural ash (also the splice wood)
       buttColour: "#0d0d0d", // ebony
       jointColour: "#2b2f36", // phenolic resin collar
       jointLength: 0.02, // m, collar height at the shaft/butt junction
       ferruleColour: "#e5e5e5", // ivory ferrule
       ferruleLength: 0.01, // m, ferrule height at the tip end
+      buttRatio: 0.28, // fraction of the cue taken by the butt
       grain: true,
+      autorotate: true,
     }
+    const STORAGE_KEY = "cueCustomiser"
+
+    function clampNum(v, min, max, fallback) {
+      return Number.isFinite(v) ? Math.min(max, Math.max(min, v)) : fallback
+    }
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || {}
+        const merged = { ...DEFAULT_STATE, ...saved }
+        // Guard against hand-edited/corrupt storage: numeric fields must
+        // be finite and stay inside their slider ranges so the geometry
+        // can never break (e.g. a negative shaft length).
+        merged.jointLength = clampNum(merged.jointLength, 0.004, 0.1, DEFAULT_STATE.jointLength)
+        merged.ferruleLength = clampNum(merged.ferruleLength, 0.004, 0.025, DEFAULT_STATE.ferruleLength)
+        merged.buttRatio = clampNum(merged.buttRatio, 0.15, 0.5, DEFAULT_STATE.buttRatio)
+        return merged
+      } catch {
+        return { ...DEFAULT_STATE }
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+      } catch {
+        // Storage unavailable (private mode / sandboxed iframe)
+      }
+    }
+
+    const state = loadState()
 
     // Materials (shared singletons, mutated on rebuild)
     const shaftMat = new THREE.MeshPhongMaterial({ color: 0xd2b48c, shininess: 50 })
@@ -228,14 +267,15 @@
     // replaced by interlocking forearm prongs and butt-base sockets, plus
     // a joint collar band at the shaft/butt junction.
     function cueGeometry(tipRadius, buttRadius, length, segments = 11, opts = {}) {
-      const { jointLength = 0.02, ferruleLength = 0.01 } = opts
+      const { jointLength = 0.02, ferruleLength = 0.01, buttRatio = 0.28 } = opts
       const group = new THREE.Group()
 
-      const buttLength = length * 0.28
-      // Shaft + ferrule = a fixed 0.717 of the length, so a longer ferrule
-      // eats into the shaft and the tip stays at the design position
-      // (no clipping into the ball as the ferrule slider moves).
-      const shaftLength = length * (0.71 + 0.007) - jointLength - ferruleLength
+      // Butt length is a ratio of the overall length, so adjusting it
+      // rebalances shaft vs butt without changing the total. The ferrule
+      // and collar eat into the shaft so the tip stays at the design
+      // position (no clipping into the ball as the sliders move).
+      const buttLength = length * buttRatio
+      const shaftLength = length * (1 - buttRatio) - jointLength - ferruleLength
 
       // --- Spliced butt ---
       const buttBottomY = -length / 2
@@ -534,10 +574,14 @@
 
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableDamping = true
-    controls.autoRotate = true
+    controls.autoRotate = state.autorotate
     controls.autoRotateSpeed = 1.2
-    document.getElementById("autorotate").addEventListener("change", (e) => {
+    const autorotateToggle = document.getElementById("autorotate")
+    autorotateToggle.checked = state.autorotate
+    autorotateToggle.addEventListener("change", (e) => {
+      state.autorotate = e.target.checked
       controls.autoRotate = e.target.checked
+      saveState()
     })
 
     // Lights
@@ -582,6 +626,7 @@
       const { mesh } = createCue(GEO.tip, GEO.butt, GEO.length, GEO.segments, GEO.baseTilt, {
         jointLength: state.jointLength,
         ferruleLength: state.ferruleLength,
+        buttRatio: state.buttRatio,
       })
 
       // Center the cue on the origin (the tip reaches the pivot, where
@@ -630,15 +675,18 @@
             s.classList.toggle("active", s === b)
           }
           rebuild()
+          saveState()
         })
         box.appendChild(b)
       }
     }
 
     const grainToggle = document.getElementById("grain")
+    grainToggle.checked = state.grain
     grainToggle.addEventListener("change", (e) => {
       state.grain = e.target.checked
       rebuild()
+      saveState()
     })
 
     const jointSlider = document.getElementById("jointLength")
@@ -647,17 +695,33 @@
     const ferruleLengthVal = document.getElementById("ferruleLengthVal")
     const fmtLen = (v) =>
       v < 0.01 ? (v * 1000).toFixed(0) + " mm" : (v * 100).toFixed(1) + " cm"
+    jointSlider.value = state.jointLength
     jointLengthVal.textContent = fmtLen(state.jointLength)
     jointSlider.addEventListener("input", (e) => {
       state.jointLength = parseFloat(e.target.value)
       jointLengthVal.textContent = fmtLen(state.jointLength)
       rebuild()
+      saveState()
     })
+    ferruleSlider.value = state.ferruleLength
     ferruleLengthVal.textContent = fmtLen(state.ferruleLength)
     ferruleSlider.addEventListener("input", (e) => {
       state.ferruleLength = parseFloat(e.target.value)
       ferruleLengthVal.textContent = fmtLen(state.ferruleLength)
       rebuild()
+      saveState()
+    })
+
+    const buttSlider = document.getElementById("buttRatio")
+    const buttRatioVal = document.getElementById("buttRatioVal")
+    const fmtPct = (v) => Math.round(v * 100) + "%"
+    buttSlider.value = state.buttRatio
+    buttRatioVal.textContent = fmtPct(state.buttRatio)
+    buttSlider.addEventListener("input", (e) => {
+      state.buttRatio = parseFloat(e.target.value)
+      buttRatioVal.textContent = fmtPct(state.buttRatio)
+      rebuild()
+      saveState()
     })
 
     rebuild()
