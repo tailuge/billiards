@@ -1,743 +1,853 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg: #12161d;
-      --panel: rgba(18, 22, 29, 0.86);
-      --panel-border: #2a323e;
-      --text: #e6edf3;
-      --muted: #8b95a5;
-      --accent: #4a9eff;
-    }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; height: 100%; overflow: hidden; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        Helvetica, Arial, sans-serif;
-    }
-    #view { position: fixed; inset: 0; }
-    #view canvas { display: block; }
-
-    #params {
-      position: fixed;
-      top: 16px;
-      left: 16px;
-      width: 272px;
-      padding: 14px 16px 12px;
-      background: var(--panel);
-      border: 1px solid var(--panel-border);
-      border-radius: 12px;
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
-      backdrop-filter: blur(8px);
-      user-select: none;
-      max-height: calc(100vh - 32px);
-      overflow-y: auto;
-    }
-    .group {
-      border-top: 1px solid var(--panel-border);
-      padding-top: 6px;
-      margin-top: 10px;
-    }
-    #params > .group:first-of-type {
-      border-top: none;
-      margin-top: 0;
-      padding-top: 0;
-    }
-    .group-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--muted);
-      margin: 4px 0 10px;
-    }
-
-    .swatch-row { margin-bottom: 10px; }
-    .swatch-row label {
-      font-size: 12px;
-      color: var(--muted);
-      display: block;
-      margin-bottom: 5px;
-    }
-    .swatches { display: flex; flex-wrap: wrap; gap: 6px; }
-    .swatch {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.18);
-      cursor: pointer;
-      padding: 0;
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-    }
-    .swatch:hover { transform: scale(1.2); }
-    .swatch.active {
-      box-shadow: 0 0 0 2px var(--accent);
-      transform: scale(1.12);
-    }
-    .check {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--muted);
-      margin: 10px 0 0;
-      cursor: pointer;
-    }
-    .check input { accent-color: var(--accent); }
-
-    .slider-row { margin-bottom: 10px; }
-    .slider-row label {
-      font-size: 12px;
-      color: var(--muted);
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 5px;
-    }
-    .slider-row label span {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 11px;
-      color: var(--text);
-    }
-    .slider-row input[type="range"] {
-      width: 100%;
-      accent-color: var(--accent);
-      cursor: pointer;
-    }
-
-  </style>
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        --bg: #12161d;
+        --panel: rgba(18, 22, 29, 0.86);
+        --panel-border: #2a323e;
+        --text: #e6edf3;
+        --muted: #8b95a5;
+        --accent: #4a9eff;
       }
-    }
-  </script>
-</head>
-<body>
-  <div id="view"></div>
-  <aside id="params">
-    <div class="group">
-      <div class="group-title">Finish</div>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+      }
+      #view {
+        position: fixed;
+        inset: 0;
+      }
+      #view canvas {
+        display: block;
+      }
+
+      #params {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        width: 90px;
+        padding: 8px;
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: 10px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(8px);
+        user-select: none;
+        max-height: calc(100vh - 16px);
+        overflow-y: auto;
+      }
+
+      .swatch-row,
+      .slider-row {
+        margin-bottom: 8px;
+      }
+      .swatch-row label,
+      .slider-row label {
+        color: var(--muted);
+        font-size: 10px;
+        white-space: nowrap;
+        margin-bottom: 3px;
+      }
+      .swatch-row label {
+        display: block;
+        text-align: center;
+      }
+      .swatches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        justify-content: center;
+      }
+      .swatch {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(255, 255, 255, 0.18);
+        cursor: pointer;
+        padding: 0;
+        transition:
+          transform 0.1s ease,
+          box-shadow 0.1s ease;
+      }
+      .swatch:hover {
+        transform: scale(1.25);
+      }
+      .swatch.active {
+        box-shadow: 0 0 0 2px var(--accent);
+        transform: scale(1.15);
+      }
+      .check {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        color: var(--muted);
+        font-size: 11px;
+        margin: 4px 0 0;
+        cursor: pointer;
+      }
+      .check input {
+        accent-color: var(--accent);
+      }
+
+      .slider-row label {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 3px;
+      }
+      .slider-row label span {
+        color: var(--text);
+      }
+      .slider-row input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="view"></div>
+    <aside id="params">
       <div class="swatch-row" data-key="shaftColour">
-        <label>Shaft colour</label><div class="swatches"></div>
+        <label title="Shaft colour">Shaft</label>
+        <div class="swatches"></div>
       </div>
       <div class="swatch-row" data-key="buttColour">
-        <label>Butt colour</label><div class="swatches"></div>
+        <label title="Butt colour">Butt</label>
+        <div class="swatches"></div>
       </div>
       <div class="slider-row">
-        <label for="buttRatio">Butt length <span id="buttRatioVal"></span></label>
-        <input type="range" id="buttRatio" min="0.15" max="0.5" step="0.01" value="0.28" />
+        <label for="buttRatio">Butt <span id="buttRatioVal"></span></label>
+        <input
+          type="range"
+          id="buttRatio"
+          min="0.15"
+          max="0.5"
+          step="0.01"
+          value="0.4"
+        />
       </div>
-    </div>
-
-    <div class="group">
-      <div class="group-title">Joint</div>
       <div class="swatch-row" data-key="jointColour">
-        <label>Material</label><div class="swatches"></div>
+        <label title="Joint material">Joint</label>
+        <div class="swatches"></div>
       </div>
       <div class="slider-row">
-        <label for="jointLength">Collar length <span id="jointLengthVal"></span></label>
-        <input type="range" id="jointLength" min="0.004" max="0.1" step="0.001" value="0.02" />
+        <label for="jointLength"
+          >Collar <span id="jointLengthVal"></span
+        ></label>
+        <input
+          type="range"
+          id="jointLength"
+          min="0.004"
+          max="0.03"
+          step="0.001"
+          value="0.004"
+        />
       </div>
-    </div>
-
-    <div class="group">
-      <div class="group-title">Tip</div>
       <div class="swatch-row" data-key="ferruleColour">
-        <label>Ferrule</label><div class="swatches"></div>
+        <label title="Ferrule colour">Ferrule</label>
+        <div class="swatches"></div>
       </div>
       <div class="slider-row">
-        <label for="ferruleLength">Ferrule length <span id="ferruleLengthVal"></span></label>
-        <input type="range" id="ferruleLength" min="0.004" max="0.025" step="0.001" value="0.01" />
+        <label for="ferruleLength"
+          >Ferrule <span id="ferruleLengthVal"></span
+        ></label>
+        <input
+          type="range"
+          id="ferruleLength"
+          min="0.004"
+          max="0.02"
+          step="0.001"
+          value="0.015"
+        />
       </div>
-    </div>
 
-    <div class="group">
-      <div class="group-title">Texture</div>
       <label class="check">
-        <input type="checkbox" id="grain" checked /> Wood grain
+        <input type="checkbox" id="grain" checked /> Grain
       </label>
-    </div>
+    </aside>
 
-    <label class="check">
-      <input type="checkbox" id="autorotate" checked /> Auto-rotate
-    </label>
-  </aside>
+    <script type="module">
+      import * as THREE from "three"
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js"
 
-  <script type="module">
-    import * as THREE from "three"
-    import { OrbitControls } from "three/addons/controls/OrbitControls.js"
+      const R = 0.03275 // ball radius (m)
+      const UP = new THREE.Vector3(0, 0, 1) // scene is Z-up
 
-    // ------------------------------------------------------------------
-    // Port of src/view/cuemesh.ts  (R and up taken from
-    // src/model/physics/constants.ts and src/utils/three-utils.ts)
-    // The butt carries a 4-point full splice and the shaft/butt joint
-    // collar (phenolic resin or brass) ported from
-    // dist/procedural_cue_splice_visualizer.html
-    // ------------------------------------------------------------------
-    const R = 0.03275 // ball radius (m)
-    const UP = new THREE.Vector3(0, 0, 1) // scene is Z-up
-
-    // Fixed geometry (the game defaults; sliders removed on purpose)
-    const GEO = {
-      tip: (R * 0.07) / 0.5, // 4.585 mm
-      butt: (R * 0.23) / 0.5, // 15.065 mm
-      length: 1.47,
-      segments: 11,
-      baseTilt: 0.12,
-    }
-
-    // Customisation state (Carom3D-style). Persisted as a single object
-    // in localStorage so choices survive reloads and work when the page
-    // is embedded as an iframe (storage access is guarded in case the
-    // host sandboxes the frame without allow-same-origin).
-    const DEFAULT_STATE = {
-      shaftColour: "#d2b48c", // natural ash (also the splice wood)
-      buttColour: "#0d0d0d", // ebony
-      jointColour: "#2b2f36", // phenolic resin collar
-      jointLength: 0.02, // m, collar height at the shaft/butt junction
-      ferruleColour: "#e5e5e5", // ivory ferrule
-      ferruleLength: 0.01, // m, ferrule height at the tip end
-      buttRatio: 0.28, // fraction of the cue taken by the butt
-      grain: true,
-      autorotate: true,
-    }
-    const STORAGE_KEY = "cueCustomiser"
-
-    function clampNum(v, min, max, fallback) {
-      return Number.isFinite(v) ? Math.min(max, Math.max(min, v)) : fallback
-    }
-
-    function loadState() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || {}
-        const merged = { ...DEFAULT_STATE, ...saved }
-        // Guard against hand-edited/corrupt storage: numeric fields must
-        // be finite and stay inside their slider ranges so the geometry
-        // can never break (e.g. a negative shaft length).
-        merged.jointLength = clampNum(merged.jointLength, 0.004, 0.1, DEFAULT_STATE.jointLength)
-        merged.ferruleLength = clampNum(merged.ferruleLength, 0.004, 0.025, DEFAULT_STATE.ferruleLength)
-        merged.buttRatio = clampNum(merged.buttRatio, 0.15, 0.5, DEFAULT_STATE.buttRatio)
-        return merged
-      } catch {
-        return { ...DEFAULT_STATE }
+      const GEO = {
+        tip: (R * 0.07) / 0.5,
+        butt: (R * 0.23) / 0.5,
+        length: 1.47,
+        segments: 11,
+        baseTilt: 0.12,
       }
-    }
 
-    function saveState() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-      } catch {
-        // Storage unavailable (private mode / sandboxed iframe)
+      // Persisted as a single object in localStorage; storage access is
+      // guarded so the page works inside a sandboxed iframe.
+      const DEFAULT_STATE = {
+        shaftColour: "#d2b48c",
+        buttColour: "#0d0d0d",
+        jointColour: "#2b2f36",
+        jointLength: 0.004, // 4 mm collar
+        ferruleColour: "#e5e5e5",
+        ferruleLength: 0.015, // 1.5 cm ferrule
+        buttRatio: 0.4,
+        grain: true,
       }
-    }
+      const STORAGE_KEY = "cue"
 
-    const state = loadState()
-
-    // Materials (shared singletons, mutated on rebuild)
-    const shaftMat = new THREE.MeshPhongMaterial({ color: 0xd2b48c, shininess: 50 })
-    const buttMat = new THREE.MeshPhongMaterial({ color: 0x0d0d0d, shininess: 80 })
-    const jointMat = new THREE.MeshPhongMaterial({ color: 0x2b2f36, shininess: 25 })
-    const ferruleMat = new THREE.MeshPhongMaterial({ color: 0xe5e5e5, shininess: 100 })
-    const tipMat = new THREE.MeshPhongMaterial({ color: 0x4a7c9a, shininess: 5 })
-
-    // Joint collar finishes: phenolic resin (matte) vs polished brass
-    const BRASS_STYLE = { shininess: 150, specular: 0xfff2c8 }
-    const JOINT_STYLES = {
-      "#2b2f36": { shininess: 25, specular: 0x333333 },
-      "#e5e5e5": { shininess: 100, specular: 0x111111 }, // ivory phenolic
-      "#d9a62e": BRASS_STYLE,
-      "#c7ccd6": { shininess: 160, specular: 0xffffff },
-    }
-
-    // Ferrule finishes: ivory plastic vs brass
-    const FERRULE_STYLES = {
-      "#e5e5e5": { shininess: 100, specular: 0x111111 },
-      "#d9a62e": BRASS_STYLE,
-    }
-
-    // Spliced butt / joint collar / shaft / ferrule / tip built along +Y,
-    // exactly as in CueMesh.cueGeometry but with the single butt cylinder
-    // replaced by interlocking forearm prongs and butt-base sockets, plus
-    // a joint collar band at the shaft/butt junction.
-    function cueGeometry(tipRadius, buttRadius, length, segments = 11, opts = {}) {
-      const { jointLength = 0.02, ferruleLength = 0.01, buttRatio = 0.28 } = opts
-      const group = new THREE.Group()
-
-      // Butt length is a ratio of the overall length, so adjusting it
-      // rebalances shaft vs butt without changing the total. The ferrule
-      // and collar eat into the shaft so the tip stays at the design
-      // position (no clipping into the ball as the sliders move).
-      const buttLength = length * buttRatio
-      const shaftLength = length * (1 - buttRatio) - jointLength - ferruleLength
-
-      // --- Spliced butt ---
-      const buttBottomY = -length / 2
-      const spliceTopY = buttBottomY + buttLength
-      const spliceLength = buttLength * 0.38 // depth of the 4 points
-
-      // Tapered radius along the butt (matches the old cylinder:
-      // buttRadius at the bottom -> buttRadius * 0.9 at the top)
-      const radiusAtY = (y) => {
-        const t = (y - buttBottomY) / buttLength
-        return buttRadius * (1 - 0.1 * t)
+      function clampNum(v, min, max, fallback) {
+        return Number.isFinite(v) ? Math.min(max, Math.max(min, v)) : fallback
       }
-      // UV v-coordinate, continuous across the whole butt for the grain
-      const vAtY = (y) => (y - buttBottomY) / buttLength
 
-      // 1. Butt: 4-point full splice (upper forearm prongs slotting
-      //    into matching lower butt-base sockets)
-      const splice = createSpliceGeometries(
-        spliceTopY,
-        buttBottomY,
+      function loadState() {
+        try {
+          const saved =
+            JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || {}
+          const merged = { ...DEFAULT_STATE, ...saved }
+          // Keep corrupt/hand-edited values inside their slider ranges.
+          merged.jointLength = clampNum(
+            merged.jointLength,
+            0.004,
+            0.03,
+            DEFAULT_STATE.jointLength
+          )
+          merged.ferruleLength = clampNum(
+            merged.ferruleLength,
+            0.004,
+            0.02,
+            DEFAULT_STATE.ferruleLength
+          )
+          merged.buttRatio = clampNum(
+            merged.buttRatio,
+            0.15,
+            0.5,
+            DEFAULT_STATE.buttRatio
+          )
+          return merged
+        } catch {
+          return { ...DEFAULT_STATE }
+        }
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+        } catch {}
+      }
+
+      const state = loadState()
+
+      const shaftMat = new THREE.MeshPhongMaterial({
+        color: 0xd2b48c,
+        shininess: 50,
+      })
+      const buttMat = new THREE.MeshPhongMaterial({
+        color: 0x0d0d0d,
+        shininess: 80,
+      })
+      const jointMat = new THREE.MeshPhongMaterial({
+        color: 0x2b2f36,
+        shininess: 25,
+      })
+      const ferruleMat = new THREE.MeshPhongMaterial({
+        color: 0xe5e5e5,
+        shininess: 100,
+      })
+      const tipMat = new THREE.MeshPhongMaterial({
+        color: 0x4a7c9a,
+        shininess: 5,
+      })
+
+      const BRASS_STYLE = { shininess: 150, specular: 0xfff2c8 }
+      const JOINT_STYLES = {
+        "#2b2f36": { shininess: 25, specular: 0x333333 },
+        "#e5e5e5": { shininess: 100, specular: 0x111111 },
+        "#d9a62e": BRASS_STYLE,
+        "#c7ccd6": { shininess: 160, specular: 0xffffff },
+      }
+      const FERRULE_STYLES = {
+        "#e5e5e5": { shininess: 100, specular: 0x111111 },
+        "#d9a62e": BRASS_STYLE,
+      }
+
+      // Butt / collar / shaft / ferrule / tip built along +Y. The butt is a
+      // 4-point full splice and a collar band sits at the shaft/butt joint.
+      function cueGeometry(
+        tipRadius,
+        buttRadius,
+        length,
+        segments = 11,
+        opts = {}
+      ) {
+        const {
+          jointLength = 0.004,
+          ferruleLength = 0.015,
+          buttRatio = 0.4,
+        } = opts
+        const group = new THREE.Group()
+
+        // Butt length is a ratio of the total so the cue stays the same size;
+        // the collar and ferrule eat into the shaft.
+        const buttLength = length * buttRatio
+        const shaftLength =
+          length * (1 - buttRatio) - jointLength - ferruleLength
+
+        const buttBottomY = -length / 2
+        const spliceTopY = buttBottomY + buttLength
+        const spliceLength = buttLength * 0.38
+
+        const radiusAtY = (y) => {
+          const t = (y - buttBottomY) / buttLength
+          return buttRadius * (1 - 0.1 * t)
+        }
+        const vAtY = (y) => (y - buttBottomY) / buttLength
+
+        const splice = createSpliceGeometries(
+          spliceTopY,
+          buttBottomY,
+          spliceLength,
+          radiusAtY,
+          vAtY
+        )
+
+        group.add(new THREE.Mesh(splice.upper, shaftMat))
+        group.add(new THREE.Mesh(splice.lower, buttMat))
+
+        const cap = new THREE.Mesh(
+          new THREE.CircleGeometry(buttRadius, 24),
+          buttMat
+        )
+        cap.rotation.x = Math.PI / 2
+        cap.position.y = buttBottomY
+        group.add(cap)
+
+        const jointRadius = buttRadius * 0.9
+        const joint = new THREE.Mesh(
+          new THREE.CylinderGeometry(
+            jointRadius,
+            jointRadius,
+            jointLength,
+            segments
+          ),
+          jointMat
+        )
+        joint.position.y = spliceTopY + jointLength / 2
+        group.add(joint)
+
+        const shaft = new THREE.Mesh(
+          new THREE.CylinderGeometry(
+            tipRadius,
+            jointRadius,
+            shaftLength,
+            segments
+          ),
+          shaftMat
+        )
+        shaft.position.y = spliceTopY + jointLength + shaftLength / 2
+        group.add(shaft)
+
+        const ferrule = new THREE.Mesh(
+          new THREE.CylinderGeometry(
+            tipRadius,
+            tipRadius,
+            ferruleLength,
+            segments
+          ),
+          ferruleMat
+        )
+        ferrule.position.y =
+          shaft.position.y + shaftLength / 2 + ferruleLength / 2
+        group.add(ferrule)
+
+        const tipHeight = 0.0055
+        const tip = new THREE.Mesh(
+          new THREE.CylinderGeometry(
+            tipRadius * 0.93,
+            tipRadius,
+            tipHeight,
+            segments
+          ),
+          tipMat
+        )
+        tip.position.y = ferrule.position.y + ferruleLength / 2 + tipHeight / 2
+        tip.name = "cueTip"
+        group.add(tip)
+
+        return group
+      }
+
+      // The seam between the two woods follows a triangular wave around the
+      // circumference (one period per splice point), so the forearm wood ends
+      // in 4 prongs slotting into matching sockets in the butt wood.
+      function createSpliceGeometries(
+        startY,
+        endY,
         spliceLength,
         radiusAtY,
         vAtY
-      )
+      ) {
+        const N = 24
+        const P = 4
 
-      const forearm = new THREE.Mesh(splice.upper, shaftMat) // splice wood = shaft wood
-      group.add(forearm)
+        const upperPos = []
+        const upperNorm = []
+        const upperUV = []
+        const lowerPos = []
+        const lowerNorm = []
+        const lowerUV = []
 
-      const butt = new THREE.Mesh(splice.lower, buttMat)
-      group.add(butt)
+        for (let i = 0; i < N; i++) {
+          const next = (i + 1) % N
 
-      // Flat disc closing the bottom of the splice ring (24 segments
-      // match the splice's radial resolution so the rim lines up)
-      const cap = new THREE.Mesh(new THREE.CircleGeometry(buttRadius, 24), buttMat)
-      cap.rotation.x = Math.PI / 2 // face -Y, toward the bottom
-      cap.position.y = buttBottomY
-      group.add(cap)
+          const u1 = i / N
+          const u2 = (i + 1) / N
 
-      // 2. Joint collar: flush band between the splice top and the shaft
-      const jointRadius = buttRadius * 0.9
-      const joint = new THREE.Mesh(
-        new THREE.CylinderGeometry(jointRadius, jointRadius, jointLength, segments),
-        jointMat
-      )
-      joint.position.y = spliceTopY + jointLength / 2
-      group.add(joint)
+          const a1 = u1 * Math.PI * 2
+          const a2 = u2 * Math.PI * 2
 
-      // 3. Shaft
-      const shaft = new THREE.Mesh(
-        new THREE.CylinderGeometry(tipRadius, jointRadius, shaftLength, segments),
-        shaftMat
-      )
-      shaft.position.y = spliceTopY + jointLength + shaftLength / 2
-      group.add(shaft)
+          // 1 at each point tip, 0 between the points
+          const wave1 = 1 - Math.abs(2 * (((i * P) / N) % 1) - 1)
+          const wave2 = 1 - Math.abs(2 * (((next * P) / N) % 1) - 1)
 
-      // 4. Ferrule
-      const ferrule = new THREE.Mesh(
-        new THREE.CylinderGeometry(tipRadius, tipRadius, ferruleLength, segments),
-        ferruleMat
-      )
-      ferrule.position.y = shaft.position.y + shaftLength / 2 + ferruleLength / 2
-      group.add(ferrule)
+          const seamY1 = startY - wave1 * spliceLength
+          const seamY2 = startY - wave2 * spliceLength
 
-      // 5. Tip
-      const tipHeight = 0.0055
-      const tip = new THREE.Mesh(
-        new THREE.CylinderGeometry(tipRadius * 0.93, tipRadius, tipHeight, segments),
-        tipMat
-      )
-      tip.position.y = ferrule.position.y + ferruleLength / 2 + tipHeight / 2
-      tip.name = "cueTip"
-      group.add(tip)
+          const rTop = radiusAtY(startY)
+          const rSeam1 = radiusAtY(seamY1)
+          const rSeam2 = radiusAtY(seamY2)
+          const rBottom = radiusAtY(endY)
 
-      return group
-    }
+          const pTop1 = new THREE.Vector3(
+            Math.cos(a1) * rTop,
+            startY,
+            Math.sin(a1) * rTop
+          )
+          const pTop2 = new THREE.Vector3(
+            Math.cos(a2) * rTop,
+            startY,
+            Math.sin(a2) * rTop
+          )
+          const pSeam1 = new THREE.Vector3(
+            Math.cos(a1) * rSeam1,
+            seamY1,
+            Math.sin(a1) * rSeam1
+          )
+          const pSeam2 = new THREE.Vector3(
+            Math.cos(a2) * rSeam2,
+            seamY2,
+            Math.sin(a2) * rSeam2
+          )
+          const pBot1 = new THREE.Vector3(
+            Math.cos(a1) * rBottom,
+            endY,
+            Math.sin(a1) * rBottom
+          )
+          const pBot2 = new THREE.Vector3(
+            Math.cos(a2) * rBottom,
+            endY,
+            Math.sin(a2) * rBottom
+          )
 
-    // ------------------------------------------------------------------
-    // 4-point full splice: interlocking upper (forearm prongs) and
-    // lower (butt base) wood. Port of createSpliceGeometries from
-    // dist/procedural_cue_splice_visualizer.html: the seam between the
-    // two woods follows a triangular wave around the circumference
-    // (wave = 1 - |2*phase - 1|, one period per splice point), so the
-    // forearm wood ends in P pointed prongs that slot into matching
-    // sockets cut into the butt wood.
-    // ------------------------------------------------------------------
-    function createSpliceGeometries(startY, endY, spliceLength, radiusAtY, vAtY) {
-      const N = 24 // radial segments (P * 6 so each point tip hits a vertex)
-      const P = 4 // splice points
+          addSpliceQuad(
+            upperPos,
+            upperNorm,
+            upperUV,
+            pTop1,
+            pSeam1,
+            pTop2,
+            pSeam2,
+            u1,
+            vAtY(startY),
+            u1,
+            vAtY(seamY1),
+            u2,
+            vAtY(startY),
+            u2,
+            vAtY(seamY2)
+          )
 
-      const upperPos = []
-      const upperNorm = []
-      const upperUV = []
-      const lowerPos = []
-      const lowerNorm = []
-      const lowerUV = []
-
-      for (let i = 0; i < N; i++) {
-        const next = (i + 1) % N
-
-        const u1 = i / N
-        const u2 = (i + 1) / N
-
-        const a1 = u1 * Math.PI * 2
-        const a2 = u2 * Math.PI * 2
-
-        // Triangular wave: 1 at each point tip, 0 between the points
-        const wave1 = 1 - Math.abs(2 * (((i * P) / N) % 1) - 1)
-        const wave2 = 1 - Math.abs(2 * (((next * P) / N) % 1) - 1)
-
-        const seamY1 = startY - wave1 * spliceLength
-        const seamY2 = startY - wave2 * spliceLength
-
-        const rTop = radiusAtY(startY)
-        const rSeam1 = radiusAtY(seamY1)
-        const rSeam2 = radiusAtY(seamY2)
-        const rBottom = radiusAtY(endY)
-
-        const pTop1 = new THREE.Vector3(Math.cos(a1) * rTop, startY, Math.sin(a1) * rTop)
-        const pTop2 = new THREE.Vector3(Math.cos(a2) * rTop, startY, Math.sin(a2) * rTop)
-        const pSeam1 = new THREE.Vector3(
-          Math.cos(a1) * rSeam1,
-          seamY1,
-          Math.sin(a1) * rSeam1
-        )
-        const pSeam2 = new THREE.Vector3(
-          Math.cos(a2) * rSeam2,
-          seamY2,
-          Math.sin(a2) * rSeam2
-        )
-        const pBot1 = new THREE.Vector3(Math.cos(a1) * rBottom, endY, Math.sin(a1) * rBottom)
-        const pBot2 = new THREE.Vector3(Math.cos(a2) * rBottom, endY, Math.sin(a2) * rBottom)
-
-        // Upper wood: forearm prongs running from the top down to the seam
-        addSpliceQuad(
-          upperPos,
-          upperNorm,
-          upperUV,
-          pTop1,
-          pSeam1,
-          pTop2,
-          pSeam2,
-          u1,
-          vAtY(startY),
-          u1,
-          vAtY(seamY1),
-          u2,
-          vAtY(startY),
-          u2,
-          vAtY(seamY2)
-        )
-
-        // Lower wood: butt base running from the seam down to the end
-        addSpliceQuad(
-          lowerPos,
-          lowerNorm,
-          lowerUV,
-          pSeam1,
-          pBot1,
-          pSeam2,
-          pBot2,
-          u1,
-          vAtY(seamY1),
-          u1,
-          vAtY(endY),
-          u2,
-          vAtY(seamY2),
-          u2,
-          vAtY(endY)
-        )
-      }
-
-      const upperGeo = new THREE.BufferGeometry()
-      upperGeo.setAttribute("position", new THREE.Float32BufferAttribute(upperPos, 3))
-      upperGeo.setAttribute("normal", new THREE.Float32BufferAttribute(upperNorm, 3))
-      upperGeo.setAttribute("uv", new THREE.Float32BufferAttribute(upperUV, 2))
-
-      const lowerGeo = new THREE.BufferGeometry()
-      lowerGeo.setAttribute("position", new THREE.Float32BufferAttribute(lowerPos, 3))
-      lowerGeo.setAttribute("normal", new THREE.Float32BufferAttribute(lowerNorm, 3))
-      lowerGeo.setAttribute("uv", new THREE.Float32BufferAttribute(lowerUV, 2))
-
-      return { upper: upperGeo, lower: lowerGeo }
-    }
-
-    // Push a quad as two triangles with outward radial normals. Wound
-    // counter-clockwise when viewed from outside so the faces render
-    // with front-face culling enabled.
-    function addSpliceQuad(pos, norm, uv, v1, v2, v3, v4, u1, uv1, u2, uv2, u3, uv3, u4, uv4) {
-      pos.push(v1.x, v1.y, v1.z, v3.x, v3.y, v3.z, v2.x, v2.y, v2.z)
-      pos.push(v3.x, v3.y, v3.z, v4.x, v4.y, v4.z, v2.x, v2.y, v2.z)
-
-      const n1 = new THREE.Vector3(v1.x, 0, v1.z).normalize()
-      const n2 = new THREE.Vector3(v2.x, 0, v2.z).normalize()
-      const n3 = new THREE.Vector3(v3.x, 0, v3.z).normalize()
-      const n4 = new THREE.Vector3(v4.x, 0, v4.z).normalize()
-
-      norm.push(n1.x, n1.y, n1.z, n3.x, n3.y, n3.z, n2.x, n2.y, n2.z)
-      norm.push(n3.x, n3.y, n3.z, n4.x, n4.y, n4.z, n2.x, n2.y, n2.z)
-
-      uv.push(u1, uv1, u3, uv3, u2, uv2)
-      uv.push(u3, uv3, u4, uv4, u2, uv2)
-    }
-
-    // Equivalent of CueMesh.createCue: rotates the cue into the X-Y plane
-    // (Z-up) so it lies along X with the tip at the origin pivot.
-    function createCue(tip, but, length, segments = 11, baseTilt = 0.12, opts = {}) {
-      const cueBody = cueGeometry(tip, but, length, segments, opts)
-      const tiltMesh = new THREE.Group()
-      const mesh = new THREE.Group()
-
-      cueBody.applyMatrix4(new THREE.Matrix4().makeRotationAxis(UP, -Math.PI / 2))
-      cueBody.position.set(-length / 2 - R, 0, R * 0.12)
-      tiltMesh.rotation.y = baseTilt
-      tiltMesh.add(cueBody)
-      mesh.add(tiltMesh)
-      return { mesh, tiltMesh, cueBody }
-    }
-
-    // ------------------------------------------------------------------
-    // Procedural wood grain (canvas texture, stripes along the length)
-    // ------------------------------------------------------------------
-    function mulberry32(a) {
-      return function () {
-        a |= 0
-        a = (a + 0x6d2b79f5) | 0
-        let t = Math.imul(a ^ (a >>> 15), 1 | a)
-        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-      }
-    }
-
-    function woodGrainTexture(hex, seed = 7) {
-      const w = 64
-      const h = 512
-      const canvas = document.createElement("canvas")
-      canvas.width = w
-      canvas.height = h
-      const ctx = canvas.getContext("2d")
-
-      ctx.fillStyle = hex
-      ctx.fillRect(0, 0, w, h)
-
-      // Wavy darker/lighter streaks running down the length
-      const rng = mulberry32(seed)
-      for (let i = 0; i < 140; i++) {
-        const x = rng() * w
-        const y = rng() * h
-        const len = h * (0.4 + rng() * 0.6)
-        ctx.strokeStyle = rng() > 0.45 ? "rgba(0,0,0,0.14)" : "rgba(255,255,255,0.07)"
-        ctx.lineWidth = 0.5 + rng() * 1.6
-        ctx.beginPath()
-        const amp = 0.4 + rng() * 1.6
-        ctx.moveTo(x, y)
-        for (let yy = 0; yy < len; yy += 6) {
-          ctx.lineTo(x + Math.sin(yy * (0.05 + rng() * 0.06)) * amp, y + yy)
+          addSpliceQuad(
+            lowerPos,
+            lowerNorm,
+            lowerUV,
+            pSeam1,
+            pBot1,
+            pSeam2,
+            pBot2,
+            u1,
+            vAtY(seamY1),
+            u1,
+            vAtY(endY),
+            u2,
+            vAtY(seamY2),
+            u2,
+            vAtY(endY)
+          )
         }
-        ctx.stroke()
+
+        const upperGeo = new THREE.BufferGeometry()
+        upperGeo.setAttribute(
+          "position",
+          new THREE.Float32BufferAttribute(upperPos, 3)
+        )
+        upperGeo.setAttribute(
+          "normal",
+          new THREE.Float32BufferAttribute(upperNorm, 3)
+        )
+        upperGeo.setAttribute(
+          "uv",
+          new THREE.Float32BufferAttribute(upperUV, 2)
+        )
+
+        const lowerGeo = new THREE.BufferGeometry()
+        lowerGeo.setAttribute(
+          "position",
+          new THREE.Float32BufferAttribute(lowerPos, 3)
+        )
+        lowerGeo.setAttribute(
+          "normal",
+          new THREE.Float32BufferAttribute(lowerNorm, 3)
+        )
+        lowerGeo.setAttribute(
+          "uv",
+          new THREE.Float32BufferAttribute(lowerUV, 2)
+        )
+
+        return { upper: upperGeo, lower: lowerGeo }
       }
 
-      // Subtle vertical tonal variation
-      const grad = ctx.createLinearGradient(0, 0, 0, h)
-      grad.addColorStop(0, "rgba(255,255,255,0.06)")
-      grad.addColorStop(0.5, "rgba(0,0,0,0.05)")
-      grad.addColorStop(1, "rgba(255,255,255,0.04)")
-      ctx.fillStyle = grad
-      ctx.fillRect(0, 0, w, h)
+      function addSpliceQuad(
+        pos,
+        norm,
+        uv,
+        v1,
+        v2,
+        v3,
+        v4,
+        u1,
+        uv1,
+        u2,
+        uv2,
+        u3,
+        uv3,
+        u4,
+        uv4
+      ) {
+        pos.push(v1.x, v1.y, v1.z, v3.x, v3.y, v3.z, v2.x, v2.y, v2.z)
+        pos.push(v3.x, v3.y, v3.z, v4.x, v4.y, v4.z, v2.x, v2.y, v2.z)
 
-      const tex = new THREE.CanvasTexture(canvas)
-      tex.wrapS = THREE.RepeatWrapping
-      tex.repeat.set(4, 1)
-      tex.colorSpace = THREE.SRGBColorSpace
-      return tex
-    }
+        const n1 = new THREE.Vector3(v1.x, 0, v1.z).normalize()
+        const n2 = new THREE.Vector3(v2.x, 0, v2.z).normalize()
+        const n3 = new THREE.Vector3(v3.x, 0, v3.z).normalize()
+        const n4 = new THREE.Vector3(v4.x, 0, v4.z).normalize()
 
-    // ------------------------------------------------------------------
-    // Scene (Z-up)
-    // ------------------------------------------------------------------
-    const view = document.getElementById("view")
-    const scene = new THREE.Scene()
-    scene.up.set(0, 0, 1)
-    scene.background = new THREE.Color(0x141a22)
+        norm.push(n1.x, n1.y, n1.z, n3.x, n3.y, n3.z, n2.x, n2.y, n2.z)
+        norm.push(n3.x, n3.y, n3.z, n4.x, n4.y, n4.z, n2.x, n2.y, n2.z)
 
-    const camera = new THREE.PerspectiveCamera(
-      40,
-      window.innerWidth / window.innerHeight,
-      0.01,
-      20
-    )
-    camera.up.set(0, 0, 1)
-    camera.position.set(1.5, 1.5, 2.2)
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true })
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    view.appendChild(renderer.domElement)
-
-    const controls = new OrbitControls(camera, renderer.domElement)
-    controls.enableDamping = true
-    controls.autoRotate = state.autorotate
-    controls.autoRotateSpeed = 1.2
-    const autorotateToggle = document.getElementById("autorotate")
-    autorotateToggle.checked = state.autorotate
-    autorotateToggle.addEventListener("change", (e) => {
-      state.autorotate = e.target.checked
-      controls.autoRotate = e.target.checked
-      saveState()
-    })
-
-    // Lights
-    scene.add(new THREE.HemisphereLight(0xbfd4ff, 0x1a1410, 0.9))
-    const sun = new THREE.DirectionalLight(0xffffff, 2.2)
-    sun.position.set(2, 3, 4)
-    scene.add(sun)
-
-    // Ground grid lying in the X-Y plane (Z is up)
-    const grid = new THREE.GridHelper(6, 48, 0x3a4356, 0x232a38)
-    grid.rotation.x = Math.PI / 2
-    scene.add(grid)
-
-    // ------------------------------------------------------------------
-    // Rebuild
-    // ------------------------------------------------------------------
-    function applyMaterials() {
-      shaftMat.color.set(state.shaftColour)
-      buttMat.color.set(state.buttColour)
-      jointMat.color.set(state.jointColour)
-      const jointStyle = JOINT_STYLES[state.jointColour]
-      if (jointStyle) {
-        jointMat.shininess = jointStyle.shininess
-        jointMat.specular.set(jointStyle.specular)
+        uv.push(u1, uv1, u3, uv3, u2, uv2)
+        uv.push(u3, uv3, u4, uv4, u2, uv2)
       }
-      ferruleMat.color.set(state.ferruleColour)
-      const ferruleStyle = FERRULE_STYLES[state.ferruleColour] || FERRULE_STYLES["#e5e5e5"]
-      ferruleMat.shininess = ferruleStyle.shininess
-      ferruleMat.specular.set(ferruleStyle.specular)
 
-      shaftMat.map = state.grain ? woodGrainTexture(state.shaftColour) : null
-      shaftMat.needsUpdate = true
-      buttMat.map = state.grain ? woodGrainTexture(state.buttColour, 11) : null
-      buttMat.needsUpdate = true
-    }
+      // Rotate the cue into the X-Y plane (Z-up) so it lies along X with the
+      // tip at the origin pivot.
+      function createCue(
+        tip,
+        but,
+        length,
+        segments = 11,
+        baseTilt = 0.12,
+        opts = {}
+      ) {
+        const cueBody = cueGeometry(tip, but, length, segments, opts)
+        const tiltMesh = new THREE.Group()
+        const mesh = new THREE.Group()
 
-    let rig = null
-    function rebuild() {
-      if (rig) scene.remove(rig)
-      applyMaterials()
+        cueBody.applyMatrix4(
+          new THREE.Matrix4().makeRotationAxis(UP, -Math.PI / 2)
+        )
+        cueBody.position.set(-length / 2 - R, 0, R * 0.12)
+        tiltMesh.rotation.y = baseTilt
+        tiltMesh.add(cueBody)
+        mesh.add(tiltMesh)
+        return { mesh, tiltMesh, cueBody }
+      }
 
-      const { mesh } = createCue(GEO.tip, GEO.butt, GEO.length, GEO.segments, GEO.baseTilt, {
-        jointLength: state.jointLength,
-        ferruleLength: state.ferruleLength,
-        buttRatio: state.buttRatio,
+      function mulberry32(a) {
+        return function () {
+          a |= 0
+          a = (a + 0x6d2b79f5) | 0
+          let t = Math.imul(a ^ (a >>> 15), 1 | a)
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+        }
+      }
+
+      function woodGrainTexture(hex, seed = 7) {
+        const w = 64
+        const h = 512
+        const canvas = document.createElement("canvas")
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext("2d")
+
+        ctx.fillStyle = hex
+        ctx.fillRect(0, 0, w, h)
+
+        const rng = mulberry32(seed)
+        for (let i = 0; i < 140; i++) {
+          const x = rng() * w
+          const y = rng() * h
+          const len = h * (0.4 + rng() * 0.6)
+          ctx.strokeStyle =
+            rng() > 0.45 ? "rgba(0,0,0,0.14)" : "rgba(255,255,255,0.07)"
+          ctx.lineWidth = 0.5 + rng() * 1.6
+          ctx.beginPath()
+          const amp = 0.4 + rng() * 1.6
+          ctx.moveTo(x, y)
+          for (let yy = 0; yy < len; yy += 6) {
+            ctx.lineTo(x + Math.sin(yy * (0.05 + rng() * 0.06)) * amp, y + yy)
+          }
+          ctx.stroke()
+        }
+
+        const grad = ctx.createLinearGradient(0, 0, 0, h)
+        grad.addColorStop(0, "rgba(255,255,255,0.06)")
+        grad.addColorStop(0.5, "rgba(0,0,0,0.05)")
+        grad.addColorStop(1, "rgba(255,255,255,0.04)")
+        ctx.fillStyle = grad
+        ctx.fillRect(0, 0, w, h)
+
+        const tex = new THREE.CanvasTexture(canvas)
+        tex.wrapS = THREE.RepeatWrapping
+        tex.repeat.set(4, 1)
+        tex.colorSpace = THREE.SRGBColorSpace
+        return tex
+      }
+
+      const view = document.getElementById("view")
+      const scene = new THREE.Scene()
+      scene.up.set(0, 0, 1)
+      scene.background = new THREE.Color(0x141a22)
+
+      const camera = new THREE.PerspectiveCamera(
+        40,
+        window.innerWidth / window.innerHeight,
+        0.01,
+        20
+      )
+      camera.up.set(0, 0, 1)
+      camera.position.set(0.8, 0.8, 1.2)
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true })
+      renderer.shadowMap.enabled = true
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      view.appendChild(renderer.domElement)
+
+      const controls = new OrbitControls(camera, renderer.domElement)
+      controls.enableDamping = true
+      controls.autoRotate = true
+      controls.autoRotateSpeed = 1.2
+
+      scene.add(new THREE.HemisphereLight(0xbfd4ff, 0x1a1410, 0.9))
+      const sun = new THREE.DirectionalLight(0xffffff, 2.2)
+      sun.position.set(2, 3, 4)
+      sun.castShadow = true
+      sun.shadow.mapSize.set(1024, 1024)
+      sun.shadow.camera.left = -1.6
+      sun.shadow.camera.right = 1.6
+      sun.shadow.camera.top = 1.6
+      sun.shadow.camera.bottom = -1.6
+      sun.shadow.camera.near = 0.1
+      sun.shadow.camera.far = 10
+      sun.shadow.camera.updateProjectionMatrix()
+      scene.add(sun)
+
+      // Pool-table blue grid surface lying in the X-Y plane (Z is up);
+      // the white grid lines draw on top of it.
+      const surface = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.75, 0.75),
+        new THREE.MeshPhongMaterial({ color: 0x1a6b9e, shininess: 60 })
+      )
+      surface.receiveShadow = true
+      surface.position.z = -0.001 // just below the grid to avoid z-fighting
+      scene.add(surface)
+
+      // Thin white grid, lines double the previous spacing (0.25)
+      const grid = new THREE.GridHelper(0.75, 3, 0xffffff, 0xffffff)
+      grid.rotation.x = Math.PI / 2
+      grid.material.transparent = true
+      grid.material.opacity = 0.4
+      scene.add(grid)
+
+      function applyMaterials() {
+        shaftMat.color.set(state.shaftColour)
+        buttMat.color.set(state.buttColour)
+        jointMat.color.set(state.jointColour)
+        const jointStyle = JOINT_STYLES[state.jointColour]
+        if (jointStyle) {
+          jointMat.shininess = jointStyle.shininess
+          jointMat.specular.set(jointStyle.specular)
+        }
+        ferruleMat.color.set(state.ferruleColour)
+        const ferruleStyle =
+          FERRULE_STYLES[state.ferruleColour] || FERRULE_STYLES["#e5e5e5"]
+        ferruleMat.shininess = ferruleStyle.shininess
+        ferruleMat.specular.set(ferruleStyle.specular)
+
+        shaftMat.map = state.grain ? woodGrainTexture(state.shaftColour) : null
+        shaftMat.needsUpdate = true
+        buttMat.map = state.grain
+          ? woodGrainTexture(state.buttColour, 11)
+          : null
+        buttMat.needsUpdate = true
+      }
+
+      let rig = null
+      function rebuild() {
+        if (rig) scene.remove(rig)
+        applyMaterials()
+
+        const { mesh } = createCue(
+          GEO.tip,
+          GEO.butt,
+          GEO.length,
+          GEO.segments,
+          GEO.baseTilt,
+          {
+            jointLength: state.jointLength,
+            ferruleLength: state.ferruleLength,
+            buttRatio: state.buttRatio,
+          }
+        )
+
+        // Center the cue on the origin with the tip at the pivot.
+        rig = new THREE.Group()
+        rig.position.x = GEO.length / 2 + R
+        rig.add(mesh)
+        rig.traverse((o) => {
+          if (o.isMesh) o.castShadow = true
+        })
+        scene.add(rig)
+      }
+
+      const SWATCHES = {
+        shaftColour: ["#d2b48c", "#26282b"],
+        buttColour: [
+          "#0d0d0d",
+          "#6e2f1f",
+          "#5a2f1e",
+          "#1f3a5f",
+          "#1f4a3a",
+          "#4a2a5a",
+        ],
+        jointColour: ["#2b2f36", "#e5e5e5", "#d9a62e", "#c7ccd6"],
+        ferruleColour: ["#e5e5e5", "#d9a62e"],
+      }
+
+      for (const row of document.querySelectorAll(".swatch-row")) {
+        const key = row.dataset.key
+        const box = row.querySelector(".swatches")
+        for (const hex of SWATCHES[key]) {
+          const b = document.createElement("button")
+          b.className = "swatch" + (hex === state[key] ? " active" : "")
+          b.style.background = hex
+          b.title = hex
+          b.addEventListener("click", () => {
+            state[key] = hex
+            for (const s of box.querySelectorAll(".swatch")) {
+              s.classList.toggle("active", s === b)
+            }
+            rebuild()
+            saveState()
+          })
+          box.appendChild(b)
+        }
+      }
+
+      const grainToggle = document.getElementById("grain")
+      grainToggle.checked = state.grain
+      grainToggle.addEventListener("change", (e) => {
+        state.grain = e.target.checked
+        rebuild()
+        saveState()
       })
 
-      // Center the cue on the origin (the tip reaches the pivot, where
-      // the ball would sit in game)
-      rig = new THREE.Group()
-      rig.position.x = GEO.length / 2 + R
-      rig.add(mesh)
-      scene.add(rig)
-    }
-
-    // ------------------------------------------------------------------
-    // Panel: swatches + toggles
-    // ------------------------------------------------------------------
-    const SWATCHES = {
-      shaftColour: [
-        "#d2b48c", // natural ash
-        "#26282b", // carbon fibre
-      ],
-      buttColour: [
-        "#0d0d0d", "#6e2f1f", "#5a2f1e",
-        "#1f3a5f", "#1f4a3a", "#4a2a5a",
-      ],
-      jointColour: [
-        "#2b2f36", // phenolic resin
-        "#e5e5e5", // ivory phenolic
-        "#d9a62e", // brass
-        "#c7ccd6", // silver
-      ],
-      ferruleColour: [
-        "#e5e5e5", // ivory
-        "#d9a62e", // brass
-      ],
-    }
-
-    for (const row of document.querySelectorAll(".swatch-row")) {
-      const key = row.dataset.key
-      const box = row.querySelector(".swatches")
-      for (const hex of SWATCHES[key]) {
-        const b = document.createElement("button")
-        b.className = "swatch" + (hex === state[key] ? " active" : "")
-        b.style.background = hex
-        b.title = hex
-        b.addEventListener("click", () => {
-          state[key] = hex
-          for (const s of box.querySelectorAll(".swatch")) {
-            s.classList.toggle("active", s === b)
-          }
-          rebuild()
-          saveState()
-        })
-        box.appendChild(b)
-      }
-    }
-
-    const grainToggle = document.getElementById("grain")
-    grainToggle.checked = state.grain
-    grainToggle.addEventListener("change", (e) => {
-      state.grain = e.target.checked
-      rebuild()
-      saveState()
-    })
-
-    const jointSlider = document.getElementById("jointLength")
-    const jointLengthVal = document.getElementById("jointLengthVal")
-    const ferruleSlider = document.getElementById("ferruleLength")
-    const ferruleLengthVal = document.getElementById("ferruleLengthVal")
-    const fmtLen = (v) =>
-      v < 0.01 ? (v * 1000).toFixed(0) + " mm" : (v * 100).toFixed(1) + " cm"
-    jointSlider.value = state.jointLength
-    jointLengthVal.textContent = fmtLen(state.jointLength)
-    jointSlider.addEventListener("input", (e) => {
-      state.jointLength = parseFloat(e.target.value)
+      const jointSlider = document.getElementById("jointLength")
+      const jointLengthVal = document.getElementById("jointLengthVal")
+      const ferruleSlider = document.getElementById("ferruleLength")
+      const ferruleLengthVal = document.getElementById("ferruleLengthVal")
+      const fmtLen = (v) =>
+        v < 0.01 ? (v * 1000).toFixed(0) + "mm" : (v * 100).toFixed(1) + "cm"
+      jointSlider.value = state.jointLength
       jointLengthVal.textContent = fmtLen(state.jointLength)
-      rebuild()
-      saveState()
-    })
-    ferruleSlider.value = state.ferruleLength
-    ferruleLengthVal.textContent = fmtLen(state.ferruleLength)
-    ferruleSlider.addEventListener("input", (e) => {
-      state.ferruleLength = parseFloat(e.target.value)
+      jointSlider.addEventListener("input", (e) => {
+        state.jointLength = parseFloat(e.target.value)
+        jointLengthVal.textContent = fmtLen(state.jointLength)
+        rebuild()
+        saveState()
+      })
+      ferruleSlider.value = state.ferruleLength
       ferruleLengthVal.textContent = fmtLen(state.ferruleLength)
-      rebuild()
-      saveState()
-    })
+      ferruleSlider.addEventListener("input", (e) => {
+        state.ferruleLength = parseFloat(e.target.value)
+        ferruleLengthVal.textContent = fmtLen(state.ferruleLength)
+        rebuild()
+        saveState()
+      })
 
-    const buttSlider = document.getElementById("buttRatio")
-    const buttRatioVal = document.getElementById("buttRatioVal")
-    const fmtPct = (v) => Math.round(v * 100) + "%"
-    buttSlider.value = state.buttRatio
-    buttRatioVal.textContent = fmtPct(state.buttRatio)
-    buttSlider.addEventListener("input", (e) => {
-      state.buttRatio = parseFloat(e.target.value)
+      const buttSlider = document.getElementById("buttRatio")
+      const buttRatioVal = document.getElementById("buttRatioVal")
+      const fmtPct = (v) => Math.round(v * 100) + "%"
+      buttSlider.value = state.buttRatio
       buttRatioVal.textContent = fmtPct(state.buttRatio)
+      buttSlider.addEventListener("input", (e) => {
+        state.buttRatio = parseFloat(e.target.value)
+        buttRatioVal.textContent = fmtPct(state.buttRatio)
+        rebuild()
+        saveState()
+      })
+
       rebuild()
-      saveState()
-    })
 
-    rebuild()
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+        renderer.setSize(window.innerWidth, window.innerHeight)
+      })
 
-    window.addEventListener("resize", () => {
-      camera.aspect = window.innerWidth / window.innerHeight
-      camera.updateProjectionMatrix()
-      renderer.setSize(window.innerWidth, window.innerHeight)
-    })
-
-    function animate() {
-      requestAnimationFrame(animate)
-      controls.update()
-      renderer.render(scene, camera)
-    }
-    animate()
-  </script>
-</body>
+      function animate() {
+        requestAnimationFrame(animate)
+        controls.update()
+        renderer.render(scene, camera)
+      }
+      animate()
+    </script>
+  </body>
 </html>
