@@ -206,8 +206,10 @@
         baseTilt: 0.12,
       }
 
-      // Persisted as a single object in localStorage; storage access is
-      // guarded so the page works inside a sandboxed iframe.
+      // Persisted as `custom.cue` inside the shared `custom` dict in
+      // localStorage; storage access is guarded so the page works inside a
+      // sandboxed iframe. The dict holds siblings like custom.skin, so we
+      // never write the whole dict.
       const DEFAULT_STATE = {
         shaftColour: "#d2b48c",
         buttColour: "#0d0d0d",
@@ -218,45 +220,51 @@
         buttRatio: 0.4,
         grain: true,
       }
-      const STORAGE_KEY = "cue"
 
       function clampNum(v, min, max, fallback) {
         return Number.isFinite(v) ? Math.min(max, Math.max(min, v)) : fallback
       }
 
-      function loadState() {
+      function readCustom() {
         try {
-          const saved =
-            JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || {}
-          const merged = { ...DEFAULT_STATE, ...saved }
-          // Keep corrupt/hand-edited values inside their slider ranges.
-          merged.jointLength = clampNum(
-            merged.jointLength,
-            0.004,
-            0.03,
-            DEFAULT_STATE.jointLength
-          )
-          merged.ferruleLength = clampNum(
-            merged.ferruleLength,
-            0.004,
-            0.02,
-            DEFAULT_STATE.ferruleLength
-          )
-          merged.buttRatio = clampNum(
-            merged.buttRatio,
-            0.15,
-            0.5,
-            DEFAULT_STATE.buttRatio
-          )
-          return merged
+          return JSON.parse(localStorage.getItem("custom") || "null") || {}
         } catch {
-          return { ...DEFAULT_STATE }
+          return {}
         }
       }
 
+      function loadState() {
+        const merged = { ...DEFAULT_STATE, ...(readCustom().cue || {}) }
+        // Keep corrupt/hand-edited values inside their slider ranges.
+        merged.jointLength = clampNum(
+          merged.jointLength,
+          0.004,
+          0.03,
+          DEFAULT_STATE.jointLength
+        )
+        merged.ferruleLength = clampNum(
+          merged.ferruleLength,
+          0.004,
+          0.02,
+          DEFAULT_STATE.ferruleLength
+        )
+        merged.buttRatio = clampNum(
+          merged.buttRatio,
+          0.15,
+          0.5,
+          DEFAULT_STATE.buttRatio
+        )
+        return merged
+      }
+
+      // Read-modify-write: preserve siblings like custom.skin. Field types are
+      // kept as-is (numbers stay numbers, booleans stay booleans); the lobby
+      // flattens this to custom.cue.<param> URL params when generating a game.
       function saveState() {
         try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+          const custom = readCustom()
+          custom.cue = state
+          localStorage.setItem("custom", JSON.stringify(custom))
         } catch {}
       }
 
