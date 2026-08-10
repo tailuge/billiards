@@ -39,18 +39,6 @@
       max-height: calc(100vh - 32px);
       overflow-y: auto;
     }
-    #params h1 {
-      margin: 0 0 2px;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-    }
-    #params .sub {
-      margin: 0 0 10px;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
     .group {
       border-top: 1px solid var(--panel-border);
       padding-top: 6px;
@@ -102,13 +90,26 @@
     }
     .check input { accent-color: var(--accent); }
 
-    #params .hint {
-      margin: 12px 0 0;
-      font-size: 11px;
+    .slider-row { margin-bottom: 10px; }
+    .slider-row label {
+      font-size: 12px;
       color: var(--muted);
-      border-top: 1px solid var(--panel-border);
-      padding-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 5px;
     }
+    .slider-row label span {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      color: var(--text);
+    }
+    .slider-row input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
   </style>
   <script type="importmap">
     {
@@ -122,9 +123,6 @@
 <body>
   <div id="view"></div>
   <aside id="params">
-    <h1>Cue Customiser</h1>
-    <p class="sub">Carom3D style &middot; Z-up &middot; port of src/view/cuemesh.ts</p>
-
     <div class="group">
       <div class="group-title">Finish</div>
       <div class="swatch-row" data-key="shaftColour">
@@ -132,6 +130,28 @@
       </div>
       <div class="swatch-row" data-key="buttColour">
         <label>Butt colour</label><div class="swatches"></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">Joint</div>
+      <div class="swatch-row" data-key="jointColour">
+        <label>Material</label><div class="swatches"></div>
+      </div>
+      <div class="slider-row">
+        <label for="jointLength">Collar length <span id="jointLengthVal"></span></label>
+        <input type="range" id="jointLength" min="0.004" max="0.1" step="0.001" value="0.02" />
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-title">Tip</div>
+      <div class="swatch-row" data-key="ferruleColour">
+        <label>Ferrule</label><div class="swatches"></div>
+      </div>
+      <div class="slider-row">
+        <label for="ferruleLength">Ferrule length <span id="ferruleLengthVal"></span></label>
+        <input type="range" id="ferruleLength" min="0.004" max="0.025" step="0.001" value="0.01" />
       </div>
     </div>
 
@@ -145,7 +165,6 @@
     <label class="check">
       <input type="checkbox" id="autorotate" checked /> Auto-rotate
     </label>
-    <p class="hint">Drag to orbit &middot; scroll to zoom &middot; colours apply live</p>
   </aside>
 
   <script type="module">
@@ -155,6 +174,9 @@
     // ------------------------------------------------------------------
     // Port of src/view/cuemesh.ts  (R and up taken from
     // src/model/physics/constants.ts and src/utils/three-utils.ts)
+    // The butt carries a 4-point full splice and the shaft/butt joint
+    // collar (phenolic resin or brass) ported from
+    // dist/procedural_cue_splice_visualizer.html
     // ------------------------------------------------------------------
     const R = 0.03275 // ball radius (m)
     const UP = new THREE.Vector3(0, 0, 1) // scene is Z-up
@@ -166,48 +188,116 @@
       length: 1.47,
       segments: 11,
       baseTilt: 0.12,
-      elevation: 0,
     }
 
     // Customisation state (Carom3D-style)
     const state = {
-      shaftColour: "#d2b48c", // natural ash
-      buttColour: "#1a1a1a", // ebony
+      shaftColour: "#d2b48c", // natural ash (also the splice wood)
+      buttColour: "#0d0d0d", // ebony
+      jointColour: "#2b2f36", // phenolic resin collar
+      jointLength: 0.02, // m, collar height at the shaft/butt junction
+      ferruleColour: "#e5e5e5", // ivory ferrule
+      ferruleLength: 0.01, // m, ferrule height at the tip end
       grain: true,
     }
 
     // Materials (shared singletons, mutated on rebuild)
     const shaftMat = new THREE.MeshPhongMaterial({ color: 0xd2b48c, shininess: 50 })
-    const buttMat = new THREE.MeshPhongMaterial({ color: 0x1a1a1a, shininess: 80 })
+    const buttMat = new THREE.MeshPhongMaterial({ color: 0x0d0d0d, shininess: 80 })
+    const jointMat = new THREE.MeshPhongMaterial({ color: 0x2b2f36, shininess: 25 })
     const ferruleMat = new THREE.MeshPhongMaterial({ color: 0xe5e5e5, shininess: 100 })
     const tipMat = new THREE.MeshPhongMaterial({ color: 0x4a7c9a, shininess: 5 })
 
-    // Four-part cue (butt / shaft / ferrule / tip) built along +Y,
-    // exactly as in CueMesh.cueGeometry.
-    function cueGeometry(tipRadius, buttRadius, length, segments = 11) {
+    // Joint collar finishes: phenolic resin (matte) vs polished brass
+    const BRASS_STYLE = { shininess: 150, specular: 0xfff2c8 }
+    const JOINT_STYLES = {
+      "#2b2f36": { shininess: 25, specular: 0x333333 },
+      "#d9a62e": BRASS_STYLE,
+      "#c7ccd6": { shininess: 160, specular: 0xffffff },
+    }
+
+    // Ferrule finishes: ivory plastic vs brass
+    const FERRULE_STYLES = {
+      "#e5e5e5": { shininess: 100, specular: 0x111111 },
+      "#d9a62e": BRASS_STYLE,
+    }
+
+    // Spliced butt / joint collar / shaft / ferrule / tip built along +Y,
+    // exactly as in CueMesh.cueGeometry but with the single butt cylinder
+    // replaced by interlocking forearm prongs and butt-base sockets, plus
+    // a joint collar band at the shaft/butt junction.
+    function cueGeometry(tipRadius, buttRadius, length, segments = 11, opts = {}) {
+      const { jointLength = 0.02, ferruleLength = 0.01 } = opts
       const group = new THREE.Group()
 
       const buttLength = length * 0.28
-      const shaftLength = length * 0.71
-      const ferruleLength = length * 0.007
+      // Shaft + ferrule = a fixed 0.717 of the length, so a longer ferrule
+      // eats into the shaft and the tip stays at the design position
+      // (no clipping into the ball as the ferrule slider moves).
+      const shaftLength = length * (0.71 + 0.007) - jointLength - ferruleLength
 
-      // 1. Butt
-      const butt = new THREE.Mesh(
-        new THREE.CylinderGeometry(buttRadius * 0.9, buttRadius, buttLength, segments),
-        buttMat
+      // --- Spliced butt ---
+      const buttBottomY = -length / 2
+      const spliceTopY = buttBottomY + buttLength
+      const spliceLength = buttLength * 0.38 // depth of the 4 points
+      const endCapLength = 0.025
+
+      // Tapered radius along the butt (matches the old cylinder:
+      // buttRadius at the bottom -> buttRadius * 0.9 at the top)
+      const radiusAtY = (y) => {
+        const t = (y - buttBottomY) / buttLength
+        return buttRadius * (1 - 0.1 * t)
+      }
+      // UV v-coordinate, continuous across the whole butt for the grain
+      const vAtY = (y) => (y - buttBottomY) / buttLength
+
+      // 1. Butt: 4-point full splice (upper forearm prongs slotting
+      //    into matching lower butt-base sockets)
+      const splice = createSpliceGeometries(
+        spliceTopY,
+        buttBottomY + endCapLength,
+        spliceLength,
+        radiusAtY,
+        vAtY
       )
-      butt.position.y = -length / 2 + buttLength / 2
+
+      const forearm = new THREE.Mesh(splice.upper, shaftMat) // splice wood = shaft wood
+      group.add(forearm)
+
+      const butt = new THREE.Mesh(splice.lower, buttMat)
       group.add(butt)
 
-      // 2. Shaft
+      // Capped end piece so the spliced butt isn't hollow at the bottom
+      const cap = new THREE.Mesh(
+        new THREE.CylinderGeometry(
+          radiusAtY(buttBottomY + endCapLength),
+          buttRadius,
+          endCapLength,
+          segments
+        ),
+        buttMat
+      )
+      cap.position.y = buttBottomY + endCapLength / 2
+      group.add(cap)
+
+      // 2. Joint collar: flush band between the splice top and the shaft
+      const jointRadius = buttRadius * 0.9
+      const joint = new THREE.Mesh(
+        new THREE.CylinderGeometry(jointRadius, jointRadius, jointLength, segments),
+        jointMat
+      )
+      joint.position.y = spliceTopY + jointLength / 2
+      group.add(joint)
+
+      // 3. Shaft
       const shaft = new THREE.Mesh(
-        new THREE.CylinderGeometry(tipRadius, buttRadius * 0.9, shaftLength, segments),
+        new THREE.CylinderGeometry(tipRadius, jointRadius, shaftLength, segments),
         shaftMat
       )
-      shaft.position.y = butt.position.y + buttLength / 2 + shaftLength / 2
+      shaft.position.y = spliceTopY + jointLength + shaftLength / 2
       group.add(shaft)
 
-      // 3. Ferrule
+      // 4. Ferrule
       const ferrule = new THREE.Mesh(
         new THREE.CylinderGeometry(tipRadius, tipRadius, ferruleLength, segments),
         ferruleMat
@@ -215,7 +305,7 @@
       ferrule.position.y = shaft.position.y + shaftLength / 2 + ferruleLength / 2
       group.add(ferrule)
 
-      // 4. Tip
+      // 5. Tip
       const tipHeight = 0.0055
       const tip = new THREE.Mesh(
         new THREE.CylinderGeometry(tipRadius * 0.93, tipRadius, tipHeight, segments),
@@ -228,10 +318,137 @@
       return group
     }
 
+    // ------------------------------------------------------------------
+    // 4-point full splice: interlocking upper (forearm prongs) and
+    // lower (butt base) wood. Port of createSpliceGeometries from
+    // dist/procedural_cue_splice_visualizer.html: the seam between the
+    // two woods follows a triangular wave around the circumference
+    // (wave = 1 - |2*phase - 1|, one period per splice point), so the
+    // forearm wood ends in P pointed prongs that slot into matching
+    // sockets cut into the butt wood.
+    // ------------------------------------------------------------------
+    function createSpliceGeometries(startY, endY, spliceLength, radiusAtY, vAtY) {
+      const N = 24 // radial segments (P * 6 so each point tip hits a vertex)
+      const P = 4 // splice points
+
+      const upperPos = []
+      const upperNorm = []
+      const upperUV = []
+      const lowerPos = []
+      const lowerNorm = []
+      const lowerUV = []
+
+      for (let i = 0; i < N; i++) {
+        const next = (i + 1) % N
+
+        const u1 = i / N
+        const u2 = (i + 1) / N
+
+        const a1 = u1 * Math.PI * 2
+        const a2 = u2 * Math.PI * 2
+
+        // Triangular wave: 1 at each point tip, 0 between the points
+        const wave1 = 1 - Math.abs(2 * (((i * P) / N) % 1) - 1)
+        const wave2 = 1 - Math.abs(2 * (((next * P) / N) % 1) - 1)
+
+        const seamY1 = startY - wave1 * spliceLength
+        const seamY2 = startY - wave2 * spliceLength
+
+        const rTop = radiusAtY(startY)
+        const rSeam1 = radiusAtY(seamY1)
+        const rSeam2 = radiusAtY(seamY2)
+        const rBottom = radiusAtY(endY)
+
+        const pTop1 = new THREE.Vector3(Math.cos(a1) * rTop, startY, Math.sin(a1) * rTop)
+        const pTop2 = new THREE.Vector3(Math.cos(a2) * rTop, startY, Math.sin(a2) * rTop)
+        const pSeam1 = new THREE.Vector3(
+          Math.cos(a1) * rSeam1,
+          seamY1,
+          Math.sin(a1) * rSeam1
+        )
+        const pSeam2 = new THREE.Vector3(
+          Math.cos(a2) * rSeam2,
+          seamY2,
+          Math.sin(a2) * rSeam2
+        )
+        const pBot1 = new THREE.Vector3(Math.cos(a1) * rBottom, endY, Math.sin(a1) * rBottom)
+        const pBot2 = new THREE.Vector3(Math.cos(a2) * rBottom, endY, Math.sin(a2) * rBottom)
+
+        // Upper wood: forearm prongs running from the top down to the seam
+        addSpliceQuad(
+          upperPos,
+          upperNorm,
+          upperUV,
+          pTop1,
+          pSeam1,
+          pTop2,
+          pSeam2,
+          u1,
+          vAtY(startY),
+          u1,
+          vAtY(seamY1),
+          u2,
+          vAtY(startY),
+          u2,
+          vAtY(seamY2)
+        )
+
+        // Lower wood: butt base running from the seam down to the end
+        addSpliceQuad(
+          lowerPos,
+          lowerNorm,
+          lowerUV,
+          pSeam1,
+          pBot1,
+          pSeam2,
+          pBot2,
+          u1,
+          vAtY(seamY1),
+          u1,
+          vAtY(endY),
+          u2,
+          vAtY(seamY2),
+          u2,
+          vAtY(endY)
+        )
+      }
+
+      const upperGeo = new THREE.BufferGeometry()
+      upperGeo.setAttribute("position", new THREE.Float32BufferAttribute(upperPos, 3))
+      upperGeo.setAttribute("normal", new THREE.Float32BufferAttribute(upperNorm, 3))
+      upperGeo.setAttribute("uv", new THREE.Float32BufferAttribute(upperUV, 2))
+
+      const lowerGeo = new THREE.BufferGeometry()
+      lowerGeo.setAttribute("position", new THREE.Float32BufferAttribute(lowerPos, 3))
+      lowerGeo.setAttribute("normal", new THREE.Float32BufferAttribute(lowerNorm, 3))
+      lowerGeo.setAttribute("uv", new THREE.Float32BufferAttribute(lowerUV, 2))
+
+      return { upper: upperGeo, lower: lowerGeo }
+    }
+
+    // Push a quad as two triangles with outward radial normals. Wound
+    // counter-clockwise when viewed from outside so the faces render
+    // with front-face culling enabled.
+    function addSpliceQuad(pos, norm, uv, v1, v2, v3, v4, u1, uv1, u2, uv2, u3, uv3, u4, uv4) {
+      pos.push(v1.x, v1.y, v1.z, v3.x, v3.y, v3.z, v2.x, v2.y, v2.z)
+      pos.push(v3.x, v3.y, v3.z, v4.x, v4.y, v4.z, v2.x, v2.y, v2.z)
+
+      const n1 = new THREE.Vector3(v1.x, 0, v1.z).normalize()
+      const n2 = new THREE.Vector3(v2.x, 0, v2.z).normalize()
+      const n3 = new THREE.Vector3(v3.x, 0, v3.z).normalize()
+      const n4 = new THREE.Vector3(v4.x, 0, v4.z).normalize()
+
+      norm.push(n1.x, n1.y, n1.z, n3.x, n3.y, n3.z, n2.x, n2.y, n2.z)
+      norm.push(n3.x, n3.y, n3.z, n4.x, n4.y, n4.z, n2.x, n2.y, n2.z)
+
+      uv.push(u1, uv1, u3, uv3, u2, uv2)
+      uv.push(u3, uv3, u4, uv4, u2, uv2)
+    }
+
     // Equivalent of CueMesh.createCue: rotates the cue into the X-Y plane
-    // (Z-up) so it lies along X with the tip near the ball at the origin.
-    function createCue(tip, but, length, segments = 11, baseTilt = 0.12) {
-      const cueBody = cueGeometry(tip, but, length, segments)
+    // (Z-up) so it lies along X with the tip at the origin pivot.
+    function createCue(tip, but, length, segments = 11, baseTilt = 0.12, opts = {}) {
+      const cueBody = cueGeometry(tip, but, length, segments, opts)
       const tiltMesh = new THREE.Group()
       const mesh = new THREE.Group()
 
@@ -307,7 +524,12 @@
     scene.up.set(0, 0, 1)
     scene.background = new THREE.Color(0x141a22)
 
-    const camera = new THREE.PerspectiveCamera(40, 1, 0.01, 20)
+    const camera = new THREE.PerspectiveCamera(
+      40,
+      window.innerWidth / window.innerHeight,
+      0.01,
+      20
+    )
     camera.up.set(0, 0, 1)
     camera.position.set(1.5, 1.5, 2.2)
 
@@ -335,29 +557,27 @@
     grid.rotation.x = Math.PI / 2
     scene.add(grid)
 
-    // Cue ball at the origin (surface touches the cue tip, as in game)
-    const ball = new THREE.Mesh(
-      new THREE.SphereGeometry(R, 32, 24),
-      new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 90 })
-    )
-
     // ------------------------------------------------------------------
     // Rebuild
     // ------------------------------------------------------------------
     function applyMaterials() {
       shaftMat.color.set(state.shaftColour)
       buttMat.color.set(state.buttColour)
+      jointMat.color.set(state.jointColour)
+      const jointStyle = JOINT_STYLES[state.jointColour]
+      if (jointStyle) {
+        jointMat.shininess = jointStyle.shininess
+        jointMat.specular.set(jointStyle.specular)
+      }
+      ferruleMat.color.set(state.ferruleColour)
+      const ferruleStyle = FERRULE_STYLES[state.ferruleColour] || FERRULE_STYLES["#e5e5e5"]
+      ferruleMat.shininess = ferruleStyle.shininess
+      ferruleMat.specular.set(ferruleStyle.specular)
 
-      const shaftMap = state.grain ? woodGrainTexture(state.shaftColour) : null
-      const buttMap = state.grain ? woodGrainTexture(state.buttColour, 11) : null
-      if (shaftMat.map !== shaftMap) {
-        shaftMat.map = shaftMap
-        shaftMat.needsUpdate = true
-      }
-      if (buttMat.map !== buttMap) {
-        buttMat.map = buttMap
-        buttMat.needsUpdate = true
-      }
+      shaftMat.map = state.grain ? woodGrainTexture(state.shaftColour) : null
+      shaftMat.needsUpdate = true
+      buttMat.map = state.grain ? woodGrainTexture(state.buttColour, 11) : null
+      buttMat.needsUpdate = true
     }
 
     let rig = null
@@ -365,22 +585,16 @@
       if (rig) scene.remove(rig)
       applyMaterials()
 
-      const { mesh, tiltMesh, cueBody } = createCue(
-        GEO.tip,
-        GEO.butt,
-        GEO.length,
-        GEO.segments,
-        GEO.baseTilt
-      )
-      tiltMesh.rotation.y = GEO.baseTilt + GEO.elevation
+      const { mesh } = createCue(GEO.tip, GEO.butt, GEO.length, GEO.segments, GEO.baseTilt, {
+        jointLength: state.jointLength,
+        ferruleLength: state.ferruleLength,
+      })
 
-      // Center the cue on the origin; ball sits at the tip, touching it.
-      // (tip sits at rig-local x = -R, so the ball goes at the pivot)
+      // Center the cue on the origin (the tip reaches the pivot, where
+      // the ball would sit in game)
       rig = new THREE.Group()
       rig.position.x = GEO.length / 2 + R
       rig.add(mesh)
-      ball.position.set(0, 0, R)
-      rig.add(ball)
       scene.add(rig)
     }
 
@@ -393,8 +607,17 @@
         "#26282b", // carbon fibre
       ],
       buttColour: [
-        "#1a1a1a", "#0d0d0d", "#3a2a1e", "#6e2f1f", "#5a2f1e",
-        "#1f3a5f", "#6e1f1f", "#1f4a3a", "#4a2a5a",
+        "#0d0d0d", "#6e2f1f", "#5a2f1e",
+        "#1f3a5f", "#1f4a3a", "#4a2a5a",
+      ],
+      jointColour: [
+        "#2b2f36", // phenolic resin
+        "#d9a62e", // brass
+        "#c7ccd6", // silver
+      ],
+      ferruleColour: [
+        "#e5e5e5", // ivory
+        "#d9a62e", // brass
       ],
     }
 
@@ -420,6 +643,25 @@
     const grainToggle = document.getElementById("grain")
     grainToggle.addEventListener("change", (e) => {
       state.grain = e.target.checked
+      rebuild()
+    })
+
+    const jointSlider = document.getElementById("jointLength")
+    const jointLengthVal = document.getElementById("jointLengthVal")
+    const ferruleSlider = document.getElementById("ferruleLength")
+    const ferruleLengthVal = document.getElementById("ferruleLengthVal")
+    const fmtLen = (v) =>
+      v < 0.01 ? (v * 1000).toFixed(0) + " mm" : (v * 100).toFixed(1) + " cm"
+    jointLengthVal.textContent = fmtLen(state.jointLength)
+    jointSlider.addEventListener("input", (e) => {
+      state.jointLength = parseFloat(e.target.value)
+      jointLengthVal.textContent = fmtLen(state.jointLength)
+      rebuild()
+    })
+    ferruleLengthVal.textContent = fmtLen(state.ferruleLength)
+    ferruleSlider.addEventListener("input", (e) => {
+      state.ferruleLength = parseFloat(e.target.value)
+      ferruleLengthVal.textContent = fmtLen(state.ferruleLength)
       rebuild()
     })
 
