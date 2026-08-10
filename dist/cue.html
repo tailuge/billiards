@@ -212,6 +212,7 @@
     const BRASS_STYLE = { shininess: 150, specular: 0xfff2c8 }
     const JOINT_STYLES = {
       "#2b2f36": { shininess: 25, specular: 0x333333 },
+      "#e5e5e5": { shininess: 100, specular: 0x111111 }, // ivory phenolic
       "#d9a62e": BRASS_STYLE,
       "#c7ccd6": { shininess: 160, specular: 0xffffff },
     }
@@ -240,7 +241,6 @@
       const buttBottomY = -length / 2
       const spliceTopY = buttBottomY + buttLength
       const spliceLength = buttLength * 0.38 // depth of the 4 points
-      const endCapLength = 0.025
 
       // Tapered radius along the butt (matches the old cylinder:
       // buttRadius at the bottom -> buttRadius * 0.9 at the top)
@@ -255,7 +255,7 @@
       //    into matching lower butt-base sockets)
       const splice = createSpliceGeometries(
         spliceTopY,
-        buttBottomY + endCapLength,
+        buttBottomY,
         spliceLength,
         radiusAtY,
         vAtY
@@ -267,17 +267,11 @@
       const butt = new THREE.Mesh(splice.lower, buttMat)
       group.add(butt)
 
-      // Capped end piece so the spliced butt isn't hollow at the bottom
-      const cap = new THREE.Mesh(
-        new THREE.CylinderGeometry(
-          radiusAtY(buttBottomY + endCapLength),
-          buttRadius,
-          endCapLength,
-          segments
-        ),
-        buttMat
-      )
-      cap.position.y = buttBottomY + endCapLength / 2
+      // Flat disc closing the bottom of the splice ring (24 segments
+      // match the splice's radial resolution so the rim lines up)
+      const cap = new THREE.Mesh(new THREE.CircleGeometry(buttRadius, 24), buttMat)
+      cap.rotation.x = Math.PI / 2 // face -Y, toward the bottom
+      cap.position.y = buttBottomY
       group.add(cap)
 
       // 2. Joint collar: flush band between the splice top and the shaft
@@ -612,6 +606,7 @@
       ],
       jointColour: [
         "#2b2f36", // phenolic resin
+        "#e5e5e5", // ivory phenolic
         "#d9a62e", // brass
         "#c7ccd6", // silver
       ],
