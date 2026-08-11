@@ -37,7 +37,6 @@
     "fflate": "^0.8.3",
     "interactjs": "1.10.28",
     "jsoncrush": "^1.1.8",
-    "puppeteer-core": "^25.6.0",
     "three": "0.185.1"
   },
   "devDependencies": {
