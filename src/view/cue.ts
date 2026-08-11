@@ -6,7 +6,7 @@ import { AimEvent } from "../events/aimevent"
 import { AimInputs } from "./dom/aiminputs"
 import { Ball, State } from "../model/ball"
 import { cueStrike } from "../model/physics/physics"
-import { CueMesh } from "./cuemesh"
+import { CueMesh, CueParams } from "./cuemesh"
 import { Group, Mesh, Vector3, Object3D } from "three"
 import { maxPower, offCenterLimit, R } from "../model/physics/constants"
 import { cueIntersectsAnything } from "../utils/cueintersect"
@@ -45,12 +45,13 @@ export class Cue {
   private readonly tempVec3 = new Vector3()
   hitAnimationWeight: number = 0
 
-  constructor() {
+  constructor(opts?: CueParams) {
     if (typeof document !== "undefined") {
       const cue = CueMesh.createCue(
         (R * 0.07) / 0.5,
         (R * 0.23) / 0.5,
-        this.length
+        this.length,
+        opts
       )
       this.mesh = cue.mesh
       this.tiltMesh = cue.tiltMesh

@@ -3,6 +3,8 @@ import { Collision } from "./physics/collision"
 import { Knuckle } from "./physics/knuckle"
 import { Pocket } from "./physics/pocket"
 import { Cue } from "../view/cue"
+import { cueParamsFromCustom } from "../utils/cueparams"
+import { Session } from "../network/client/session"
 import { Ball, State } from "./ball"
 import { AimEvent } from "../events/aimevent"
 import { TableGeometry } from "../view/tablegeometry"
@@ -40,7 +42,9 @@ export class Table {
     this.cueball = balls[0]
     this.initialiseBalls(balls)
     if (typeof document !== "undefined") {
-      this.cue = new Cue()
+      this.cue = new Cue(
+        cueParamsFromCustom(Session.getInstance().customParams)
+      )
       this.proximityIndicator = new ProximityIndicator()
     }
   }
