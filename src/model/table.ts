@@ -231,10 +231,7 @@ export class Table {
       b.ballmesh?.addToScene(scene)
     })
     if (this.cue) {
-      scene.add(this.cue.mesh)
-      scene.add(this.cue.helperMesh)
-      scene.add(this.cue.placerMesh)
-      scene.add(this.cue.shadowMesh)
+      scene.add(this.cue.root)
     }
     if (this.proximityIndicator) {
       scene.add(this.proximityIndicator.group)

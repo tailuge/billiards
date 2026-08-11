@@ -6,6 +6,17 @@ make the in-game cue geometry a visual duplicate of `dist/cue.html`.
 
 ---
 
+## 0. Status
+
+| Part | Status |
+|------|--------|
+| §3 geometry port (`CueParams` / `DEFAULT_CUE_PARAMS`, splice geometry, materials, wood grain) | ✅ Implemented + tested (`test/model/cuemesh.spec.ts`) |
+| §2 step 1 — per-cue `root` group mounting the four sub-objects | ✅ Implemented (`Cue.root`; `Table.addToScene()` mounts it) |
+| §2 step 2 — aim transforms hoisted onto the root | ✅ Implemented (root carries `position` + `rotation.z`; shadow is a local offset; world result identical) |
+| §2 steps 3–5 — `cueP1`/`cueP2`, two-root mounting, container toggle | ☐ Pending |
+
+---
+
 ## 1. Chosen Approach: Two Pre-instantiated Cues under a Per-Cue Root Group
 
 Two distinct `Cue` instances (`cueP1` and `cueP2`) are fully created at startup.
@@ -50,7 +61,7 @@ At runtime, we simply toggle the root's visibility
 
 1.  **`src/view/cue.ts`**: The main controller for the cue's representation,
     shadow, helper line, and movement calculations. Owns the per-cue `root`
-    group and moves the shared aim transforms onto it.
+    group and applies the shared aim transforms to it (steps 1–2 implemented).
 2.  **`src/model/table.ts`**: Currently holds and instantiates the single `cue`
     reference (`this.cue = new Cue()`). Will hold `cueP1`/`cueP2` and mount
     their roots.
@@ -59,8 +70,9 @@ At runtime, we simply toggle the root's visibility
 
 ### Steps:
 
-1.  Add a root group to `Cue` (`src/view/cue.ts`) and mount the four existing
-    sub-objects under it instead of leaving them as loose scene children:
+1.  ✅ **Done** — Add a root group to `Cue` (`src/view/cue.ts`) and mount the
+    four existing sub-objects under it instead of leaving them as loose scene
+    children:
 
     ```typescript
     root = new Group()
@@ -68,9 +80,9 @@ At runtime, we simply toggle the root's visibility
     this.root.add(this.mesh, this.helperMesh, this.placerMesh, this.shadowMesh)
     ```
 
-2.  Apply the shared aim transforms to `root` — once, instead of per object.
-    In `rotateAim`, `updateCueRotation` and `updateCuePosition`, the three
-    per-object writes become:
+2.  ✅ **Done** — Apply the shared aim transforms to `root` — once, instead of
+    per object. In `rotateAim`, `updateCueRotation` and `updateCuePosition`,
+    the three per-object writes become:
 
     ```typescript
     this.root.rotation.z = this.aim.angle
@@ -96,16 +108,16 @@ At runtime, we simply toggle the root's visibility
         body/shadow) are unchanged — they still operate inside the active
         player's visible root
 
-3.  Update `src/model/table.ts` to hold both cues, each built with its
-    player's cue params (see §3):
+3.  ☐ **Todo** — Update `src/model/table.ts` to hold both cues, each built
+    with its player's cue params (see §3):
 
     ```typescript
     cueP1!: Cue
     cueP2!: Cue
     ```
 
-4.  Update `Table.addToScene()` in `src/model/table.ts` to mount just the two
-    roots:
+4.  ☐ **Todo** — Update `Table.addToScene()` in `src/model/table.ts` to mount
+    just the two roots:
 
     ```typescript
     addToScene(scene) {
@@ -115,10 +127,10 @@ At runtime, we simply toggle the root's visibility
     }
     ```
 
-5.  Toggle in `src/container/container.ts` on controller transitions, and keep
-    `table.cue` pointing at the active instance so the existing `table.cue`
-    call sites keep working unchanged. (Table has no notion of whose turn it
-    is — the container does, via `inferActivePlayer`.)
+5.  ☐ **Todo** — Toggle in `src/container/container.ts` on controller
+    transitions, and keep `table.cue` pointing at the active instance so the
+    existing `table.cue` call sites keep working unchanged. (Table has no
+    notion of whose turn it is — the container does, via `inferActivePlayer`.)
 
     ```typescript
     private setActiveCue(active: ActivePlayer) {
@@ -139,6 +151,9 @@ At runtime, we simply toggle the root's visibility
 Make `src/view/cuemesh.ts` render the same cue as `dist/cue.html` by default
 (cue.html's defaults now; player preferences later). This is the per-player
 parameterization that §2 instantiates once per player.
+
+**Status: ✅ implemented** — `test/model/cuemesh.spec.ts` covers the port
+(defaults, full-length span, part count, grain toggle, `createCue` hierarchy).
 
 ### Params surface and defaults
 
@@ -205,5 +220,8 @@ The returned `Group` shape is unchanged, so `createCue`'s rotation / position
 -   Threading `Session.customParams` / `Session.opponentParams` (already
     parsed from `custom.*` / `opponent.custom.*` URL params in
     `Session.applyUrlParams`) into `CueParams` per player.
--   Validation: no new tests required; existing `yarn lint` / `yarn test`
-    suffice (cue.spec.ts already exercises `createCue` / `baseTilt`).
+-   Validation: `test/model/cuemesh.spec.ts` covers the port (defaults, span,
+    part count, grain toggle, `createCue` hierarchy); the existing
+    `test/model/cue.spec.ts` still exercises `createCue` / `baseTilt`.
+    `yarn lint` / `yarn test` pass (the four pre-existing sonarjs lint errors
+    in untouched files remain on master).

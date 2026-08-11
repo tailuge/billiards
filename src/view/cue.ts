@@ -7,7 +7,7 @@ import { AimInputs } from "./dom/aiminputs"
 import { Ball, State } from "../model/ball"
 import { cueStrike } from "../model/physics/physics"
 import { CueMesh } from "./cuemesh"
-import { Mesh, Vector3, Object3D } from "three"
+import { Group, Mesh, Vector3, Object3D } from "three"
 import { maxPower, offCenterLimit, R } from "../model/physics/constants"
 import { cueIntersectsAnything } from "../utils/cueintersect"
 import { id } from "../utils/dom"
@@ -19,6 +19,9 @@ export class Cue {
   helperMesh: Mesh
   placerMesh: Object3D
   shadowMesh: Mesh
+  /** Scene-mounted group parenting the four cue sub-objects, so the whole cue
+   * (body, helper line, shadow, placer) can be shown/hidden as one unit. */
+  root: Group
   t = 0
   hittingAnimation = false
   aimInputs: AimInputs
@@ -55,6 +58,13 @@ export class Cue {
       this.helperMesh = CueMesh.createHelper()
       this.placerMesh = CueMesh.createPlacer()
       this.shadowMesh = CueMesh.createShadow(this.length)
+      this.root = new Group()
+      this.root.add(
+        this.mesh,
+        this.helperMesh,
+        this.placerMesh,
+        this.shadowMesh
+      )
     }
   }
 
@@ -69,9 +79,7 @@ export class Cue {
         Math.max(this.aimLimits.angleMin, this.aim.angle)
       )
     }
-    if (this.mesh) this.mesh.rotation.z = this.aim.angle
-    if (this.helperMesh) this.helperMesh.rotation.z = this.aim.angle
-    if (this.shadowMesh) this.shadowMesh.rotation.z = this.aim.angle
+    if (this.root) this.root.rotation.z = this.aim.angle
     this.aimInputs.showOverlap()
     this.avoidCueTouchingOtherBall(table)
   }
@@ -182,11 +190,9 @@ export class Cue {
   }
 
   private updateCueRotation() {
-    if (this.mesh) this.mesh.rotation.z = this.aim.angle
+    if (this.root) this.root.rotation.z = this.aim.angle
     if (this.tiltMesh)
       this.tiltMesh.rotation.y = CueMesh.baseTilt + this.aim.elevation
-    if (this.helperMesh) this.helperMesh.rotation.z = this.aim.angle
-    if (this.shadowMesh) this.shadowMesh.rotation.z = this.aim.angle
   }
 
   private applyHitAnimation(swing: number) {
@@ -218,11 +224,9 @@ export class Cue {
   }
 
   private updateCuePosition(pos: Vector3, strokeX: number) {
-    if (this.mesh) this.mesh.position.copy(pos)
+    if (this.root) this.root.position.copy(pos)
 
     // Project local strokeX through tilt onto the horizontal plane for shadow
-    const unitToBall = unitAtAngle(this.aim.angle, this.tempVec)
-    const sideVec = upCross(unitToBall).normalize()
     const elevation = this.tiltMesh ? (this.tiltMesh.rotation.y as number) : 0
 
     const localX = strokeX - R
@@ -230,18 +234,20 @@ export class Cue {
     const projectedX =
       localX * Math.cos(elevation) + localZ * Math.sin(elevation)
 
+    // The root carries the cue-ball position and the aim rotation, so the
+    // shadow only needs a local offset: the old world-space terms (`pos`,
+    // `sideVec`, `unitToBall`) were exactly the root's rotation applied to
+    // this local point, so the world result is identical.
     if (this.shadowMesh) {
-      this.shadowMesh.position
-        .copy(pos)
-        .addScaledVector(sideVec, this.cueBody ? this.cueBody.position.y : 0)
-        .addScaledVector(unitToBall, projectedX + R * Math.cos(elevation))
-      this.shadowMesh.position.z = -R * 0.99
+      this.shadowMesh.position.set(
+        projectedX + R * Math.cos(elevation),
+        this.cueBody ? this.cueBody.position.y : 0,
+        -R * 0.99
+      )
       this.shadowMesh.scale.x = Math.cos(elevation)
     }
 
-    if (this.helperMesh) this.helperMesh.position.copy(pos)
     if (this.placerMesh) {
-      this.placerMesh.position.copy(pos)
       this.placerMesh.rotation.z = this.t
     }
   }

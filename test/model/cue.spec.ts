@@ -3,7 +3,7 @@ import { Ball } from "../../src/model/ball"
 import { Table } from "../../src/model/table"
 import { Cue } from "../../src/view/cue"
 import { CueMesh } from "../../src/view/cuemesh"
-import { Vector3 } from "three"
+import { Quaternion, Vector3 } from "three"
 import { zero } from "../../src/utils/three-utils"
 import { maxPower, offCenterLimit, R } from "../../src/model/physics/constants"
 
@@ -151,6 +151,47 @@ describe("Cue", () => {
     const visibleBefore = cue.helperMesh.visible
     cue.toggleHelper()
     expect(cue.helperMesh.visible).to.equal(!visibleBefore)
+  })
+
+  test("cue root groups the four sub-objects", () => {
+    const cue = new Cue()
+    expect(cue.root.children).to.have.lengthOf(4)
+    expect(cue.root.children).to.include(cue.mesh)
+    expect(cue.root.children).to.include(cue.helperMesh)
+    expect(cue.root.children).to.include(cue.placerMesh)
+    expect(cue.root.children).to.include(cue.shadowMesh)
+  })
+
+  test("aim transforms are hoisted onto the root", () => {
+    const cue = new Cue()
+    cue.aim.angle = 0.7
+    cue.moveTo(new Vector3(1.5, -2.5, 0))
+    expect(cue.root.position.x).to.be.closeTo(1.5, 0.0001)
+    expect(cue.root.position.y).to.be.closeTo(-2.5, 0.0001)
+    expect(cue.root.rotation.z).to.be.closeTo(0.7, 0.0001)
+    // the children no longer carry the shared aim transforms
+    expect(cue.mesh.rotation.z).to.equal(0)
+    expect(cue.helperMesh.rotation.z).to.equal(0)
+    expect(cue.shadowMesh.rotation.z).to.equal(0)
+    expect(cue.mesh.position.length()).to.equal(0)
+    expect(cue.helperMesh.position.length()).to.equal(0)
+    expect(cue.shadowMesh.position.z).to.be.closeTo(-R * 0.99, 0.0001)
+  })
+
+  test("shadow world orientation follows the aim angle through the root", () => {
+    const cue = new Cue()
+    cue.aim.angle = 0.7
+    cue.moveTo(new Vector3(1, -2, 0))
+    cue.root.updateMatrixWorld(true)
+    const quat = new Quaternion()
+    cue.shadowMesh.getWorldQuaternion(quat)
+    const dir = new Vector3(1, 0, 0).applyQuaternion(quat)
+    expect(dir.x).to.be.closeTo(Math.cos(0.7), 0.0001)
+    expect(dir.y).to.be.closeTo(Math.sin(0.7), 0.0001)
+    // the shadow lies flat just above the table surface
+    const world = new Vector3()
+    cue.shadowMesh.getWorldPosition(world)
+    expect(world.z).to.be.closeTo(-R * 0.99, 0.0001)
   })
 
   test("rotateAim calls showOverlap if aimInputs present", () => {
