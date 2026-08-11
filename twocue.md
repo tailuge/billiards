@@ -14,7 +14,7 @@ make the in-game cue geometry a visual duplicate of `dist/cue.html`.
 | §2 step 1 — shared aim `root` group for both players' cues | ✅ Implemented (`Cue.root`; `Table.addToScene()` mounts it; the second mesh set is step 3) |
 | §2 step 2 — aim transforms hoisted onto the shared root | ✅ Implemented (root carries `position` + `rotation.z`; shadow is a local offset; world result identical) |
 | §3 URL params — `custom.cue.*` → `CueParams` (single player) | ✅ Implemented (`src/utils/cueparams.ts`; `Cue(opts)`; `Table` reads `Session.customParams`) |
-| §2 steps 3–5 — second mesh set, shared helper/placer/shadow, `inferActivePlayer`-driven visibility | ☐ Pending |
+| §2 steps 3–5 — second mesh set, shared helper/placer/shadow, controller-driven visibility | ✅ Implemented (`Cue` builds `p1`/`p2`; `Table` passes both players' params; `Container.setActiveCue` toggles on controller transitions — p1 is always my cue, p2 always the opponent's) |
 
 ---
 
@@ -36,8 +36,11 @@ Inside the shared root:
     same `Cue.length`), so only a single instance of each is needed.
 
 At runtime the container toggles `p1.visible` / `p2.visible` — one
-boolean per player, driven by the **existing** `inferActivePlayer(controller)`
-logic on every controller transition. No new state, no pointer juggling.
+boolean per player, driven directly by the controller type on every
+controller transition: **`p1` is always *my* cue** (shown while I'm in
+`Aim`/`PlaceBall`/`PlayShot`) and **`p2` is always the opponent's cue**
+(shown while I'm in `WatchAim`/`WatchShot`). No `playerIndex` or HUD-slot
+indirection, no new state, no pointer juggling.
 
 *   **Aim Transforms Apply Unchanged, Once:** `position = cue-ball pos` and
     `rotation.z = aim.angle` are written to the shared root instead of to
@@ -64,10 +67,10 @@ logic on every controller transition. No new state, no pointer juggling.
 *   **Maximum Flexibility:** Each player can have completely different 3D
     models, textures, shaders, and geometry. Player 1 can use a traditional
     wooden cue, while Player 2 uses a futuristic carbon-fiber model.
-*   **Code Simplicity:** The toggle reuses `inferActivePlayer`, which the
-    container already computes on every controller transition; the duplicated
-    position/rotation writes across `mesh`/`helperMesh`/`shadowMesh` collapse
-    into a single root write.
+*   **Code Simplicity:** The toggle is a direct `instanceof` check on the
+    controller (`Aim`/`PlaceBall`/`PlayShot` → `p1`, `WatchAim`/`WatchShot`
+    → `p2`); the duplicated position/rotation writes across
+    `mesh`/`helperMesh`/`shadowMesh` collapse into a single root write.
 *   **Slightly Higher Startup Memory:** Keeping two simple
     geometries/material sets in memory (which is negligible for a low-poly cue
     model).
@@ -83,8 +86,8 @@ logic on every controller transition. No new state, no pointer juggling.
 2.  **`src/model/table.ts`**: Currently holds and instantiates the single `cue`
     reference (`this.cue = new Cue()`). Will pass both players' params into
     `Cue` (see §3) and mount the one root.
-3.  **`src/container/container.ts`**: Responsible for driving the active turn
-    via `this.inferActivePlayer(controller)` and toggling the two mesh sets.
+3.  **`src/container/container.ts`**: Responsible for toggling the two mesh
+    sets directly from the controller type on every transition.
 
 ### Steps:
 
@@ -124,7 +127,7 @@ logic on every controller transition. No new state, no pointer juggling.
     -   `placeBallMode()` / `aimMode()` child-level toggles (placer vs
         body/shadow) are unchanged — they still operate inside the shared root
 
-3.  ☐ **Todo** — Build both players' mesh sets inside `Cue`. The constructor
+3.  ✅ **Done** — Build both players' mesh sets inside `Cue`. The constructor
     takes both players' cue params (see §3) and creates two cue bodies, each
     wrapped in its own `Group` for visibility, plus the single shared
     helper/placer/shadow:
@@ -154,7 +157,7 @@ logic on every controller transition. No new state, no pointer juggling.
     they are created with no `CueParams` and both cues share `Cue.length`, so
     one instance of each serves both players.
 
-4.  ☐ **Todo** — Update `src/model/table.ts` to pass both players' params to
+4.  ✅ **Done** — Update `src/model/table.ts` to pass both players' params to
     `Cue` and mount the one shared root:
 
     ```typescript
@@ -163,14 +166,16 @@ logic on every controller transition. No new state, no pointer juggling.
     if (this.cue) scene.add(this.cue.root)
     ```
 
-    (`p1Params` / `p2Params` resolve from `Session.customParams` /
-    `opponentParams` by `playerIndex`, see §4.)
+    (`p1Params` = `Session.customParams`, `p2Params` =
+    `Session.opponentParams` — no `playerIndex`, see §4.)
 
-5.  ☐ **Todo** — Toggle in `src/container/container.ts` on controller
-    transitions, reusing the existing `inferActivePlayer(controller)` — no
-    `table.cue` repointing needed, since transforms already flow to the shared
-    root every frame. The container already knows whose turn it is; the
-    controllers decide:
+5.  ✅ **Done** — Toggle in `src/container/container.ts` on controller
+    transitions, driven directly by the controller type — no `table.cue`
+    repointing and **no `playerIndex`/HUD-slot indirection** (that was tried
+    first and double-swapped the cues for the second player, because
+    `playerIndex` is only set to `1` after the table is built). The rule is
+    exactly what it looks like: my cue when I aim, opponent's cue when I
+    watch:
 
     | controller                         | cue shown |
     |------------------------------------|-----------|
@@ -178,16 +183,29 @@ logic on every controller transition. No new state, no pointer juggling.
     | `WatchAim`, `WatchShot`            | `p2` (opponent's) |
 
     ```typescript
-    private setActiveCue(active: ActivePlayer) {
-      const { p1, p2 } = this.table.cue
-      p1.visible = active === 1
-      p2.visible = active === 2
+    private setActiveCue(controller: Controller) {
+      const cue = this.table.cue
+      if (!cue?.p1) return
+      const mine =
+        controller instanceof Aim ||
+        controller instanceof PlaceBall ||
+        controller instanceof PlayShot
+      const theirs =
+        controller instanceof WatchAim || controller instanceof WatchShot
+      if (mine) {
+        cue.p1.visible = true
+        cue.p2.visible = false
+      } else if (theirs) {
+        cue.p1.visible = false
+        cue.p2.visible = true
+      }
     }
-    ```
-
-    In single-player games `p2.visible` is simply never set to `true`: it
+    ```    In single-player games there are no Watch controllers, so `p2.visible`
     stays `false` from startup, exactly as the single mesh-set behaviour does
-    today.
+    today. In bot games the opponent's turn goes through `WatchAim`/
+    `WatchShot`, so `p2` shows with default styling (a bot's `opponentParams`
+    are empty) — harmless, since the two mesh sets differ only by player
+    params and visibility.
 
 ---
 
@@ -263,10 +281,9 @@ The returned `Group` shape is unchanged, so `createCue`'s rotation / position
 ### Out of scope (follow-ups)
 
 - Threading `Session.opponentParams` (`opponent.custom.cue.*`) into `p2`
-  when step 3 lands (see §4); single-player threading of
-  `Session.customParams` is implemented in `src/utils/cueparams.ts`
-  (`parseTypedValue` + `cueParamsFromCustom`) and wired through
-  `Cue(opts?)` / `Table`.
+  is implemented in `src/utils/cueparams.ts` (`parseTypedValue` +
+  `cueParamsFromCustom`) and wired through `Cue(opts?, opponentOpts?)` /
+  `Table`; same for single-player `Session.customParams` into `p1`.
 - Validation: `test/model/cuemesh.spec.ts` covers the port (defaults, span,
   part count, grain toggle, `createCue` hierarchy); the existing
   `test/model/cue.spec.ts` still exercises `createCue` / `baseTilt`;
@@ -315,21 +332,25 @@ Example (single player, the exact shape `cue.html` produces):
     named in code; missing fields fall back to `DEFAULT_CUE_PARAMS` and
     unknown keys are ignored.
 4.  **Build** (`src/model/table.ts` → `Cue(opts?)` →
-    `CueMesh.createCue(tip, but, length, opts)`): `Table` constructs the
-    single cue from `cueParamsFromCustom(Session.getInstance().customParams)`.
-    With no params present this returns `DEFAULT_CUE_PARAMS`, so ordinary
-    games look unchanged.
+    `CueMesh.createCue(tip, but, length, opts)`): `Table` constructs the cue
+    from `cueParamsFromCustom(Session.getInstance().customParams)` as `p1`
+    (my cue) and `cueParamsFromCustom(Session.getInstance().opponentParams)`
+    as `p2` (opponent's cue). With no params present this returns
+    `DEFAULT_CUE_PARAMS`, so ordinary games look unchanged.
 
-### Two-player assignment (step 3 pending)
+### Two-player assignment
 
-When the second mesh set lands, each player's cue body is built from its
-player's record, resolved by `Session.playerIndex` (mirroring
-`orderedNamesForHud`):
+Each player's cue body is built from its player's record, unconditionally:
+`p1` is always **my** cue (from `customParams`) and `p2` is always the
+**opponent's** cue (from `opponentParams`). No `playerIndex` resolution —
+the mapping must not depend on it, because the table is constructed before
+`playerIndex` is set to `1` (it happens in `Init.handleWatch`), which is what
+caused the second player to see the wrong cue when params were swapped by
+`playerIndex`:
 
-| playerIndex | p1 params      | p2 params      |
-|-------------|----------------|----------------|
-| 0           | `customParams`   | `opponentParams`   |
-| 1           | `opponentParams` | `customParams`     |
+| param            | p1 params      | p2 params        |
+|------------------|----------------|------------------|
+| mine             | `customParams`   | `opponentParams`   |
 
 Bots and single-player matches have an empty `opponentParams`, so `p2` falls
 back to defaults and its group never shows (`p2.visible = false`).

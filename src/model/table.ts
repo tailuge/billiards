@@ -42,8 +42,13 @@ export class Table {
     this.cueball = balls[0]
     this.initialiseBalls(balls)
     if (typeof document !== "undefined") {
+      const session = Session.getInstance()
+      // p1 is always MY cue (customParams), p2 is always the opponent's cue
+      // (opponentParams). No playerIndex indirection: the cue shown follows
+      // the controller (Aim → p1, WatchAim → p2), not the HUD slot.
       this.cue = new Cue(
-        cueParamsFromCustom(Session.getInstance().customParams)
+        cueParamsFromCustom(session.customParams),
+        cueParamsFromCustom(session.opponentParams)
       )
       this.proximityIndicator = new ProximityIndicator()
     }

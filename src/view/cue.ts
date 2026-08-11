@@ -6,7 +6,7 @@ import { AimEvent } from "../events/aimevent"
 import { AimInputs } from "./dom/aiminputs"
 import { Ball, State } from "../model/ball"
 import { cueStrike } from "../model/physics/physics"
-import { CueMesh, CueParams } from "./cuemesh"
+import { CueMesh, CueMeshes, CueParams } from "./cuemesh"
 import { Group, Mesh, Vector3, Object3D } from "three"
 import { maxPower, offCenterLimit, R } from "../model/physics/constants"
 import { cueIntersectsAnything } from "../utils/cueintersect"
@@ -19,9 +19,20 @@ export class Cue {
   helperMesh: Mesh
   placerMesh: Object3D
   shadowMesh: Mesh
-  /** Scene-mounted group parenting the four cue sub-objects, so the whole cue
-   * (body, helper line, shadow, placer) can be shown/hidden as one unit. */
+  /** Scene-mounted group parenting the two per-player mesh sets and the
+   * shared helper/placer/shadow, so the whole cue can be shown/hidden as one
+   * unit. Carries the aim transforms (position + rotation.z). */
   root: Group
+  /** MY cue body group (built from my `customParams`); shown while I'm
+   * aiming/placing/shooting. */
+  p1: Group
+  /** The opponent's cue body group (built from their `opponentParams`);
+   * shown while I'm watching them aim/shoot. */
+  p2: Group
+  /** The two created cue bodies (my cue first, then the opponent's). The
+   * child-local aim-derived writes (tilt, hit-animation stroke, mesh
+   * visibility) loop over both; the shared root carries the aim transforms. */
+  cues: CueMeshes[] = []
   t = 0
   hittingAnimation = false
   aimInputs: AimInputs
@@ -45,7 +56,7 @@ export class Cue {
   private readonly tempVec3 = new Vector3()
   hitAnimationWeight: number = 0
 
-  constructor(opts?: CueParams) {
+  constructor(opts?: CueParams, opponentOpts?: CueParams) {
     if (typeof document !== "undefined") {
       const cue = CueMesh.createCue(
         (R * 0.07) / 0.5,
@@ -53,19 +64,33 @@ export class Cue {
         this.length,
         opts
       )
+      const opponentCue = CueMesh.createCue(
+        (R * 0.07) / 0.5,
+        (R * 0.23) / 0.5,
+        this.length,
+        opponentOpts
+      )
+      this.cues.push(cue, opponentCue)
       this.mesh = cue.mesh
       this.tiltMesh = cue.tiltMesh
       this.cueBody = cue.cueBody
+      this.p1 = new Group()
+      this.p2 = new Group()
+      this.p1.add(cue.mesh)
+      this.p2.add(opponentCue.mesh)
       this.helperMesh = CueMesh.createHelper()
       this.placerMesh = CueMesh.createPlacer()
       this.shadowMesh = CueMesh.createShadow(this.length)
       this.root = new Group()
       this.root.add(
-        this.mesh,
+        this.p1,
+        this.p2,
         this.helperMesh,
         this.placerMesh,
         this.shadowMesh
       )
+      // My cue shows from startup; the opponent's shows only while watching.
+      this.p2.visible = false
     }
   }
 
@@ -192,8 +217,10 @@ export class Cue {
 
   private updateCueRotation() {
     if (this.root) this.root.rotation.z = this.aim.angle
-    if (this.tiltMesh)
-      this.tiltMesh.rotation.y = CueMesh.baseTilt + this.aim.elevation
+    const tilt = CueMesh.baseTilt + this.aim.elevation
+    for (const c of this.cues) {
+      c.tiltMesh.rotation.y = tilt
+    }
   }
 
   private applyHitAnimation(swing: number) {
@@ -213,8 +240,8 @@ export class Cue {
     const strokeX = (1 - this.hitAnimationWeight) * swing - hitOffset
     const strokeZ = (0.15 + Math.min(this.t / 5, 0.25)) * hitOffset
 
-    if (this.cueBody) {
-      this.cueBody.position.set(
+    for (const c of this.cues) {
+      c.cueBody.position.set(
         -this.length / 2 - R * 1.1 + strokeX,
         this.aim.offset.x * R,
         Math.max(-0.5 * R, strokeZ + this.aim.offset.y * R)
@@ -296,14 +323,14 @@ export class Cue {
   }
 
   placeBallMode() {
-    if (this.mesh) this.mesh.visible = false
+    for (const c of this.cues) c.mesh.visible = false
     if (this.shadowMesh) this.shadowMesh.visible = false
     if (this.placerMesh) this.placerMesh.visible = true
     this.aim.angle = 0
   }
 
   aimMode() {
-    if (this.mesh) this.mesh.visible = true
+    for (const c of this.cues) c.mesh.visible = true
     if (this.shadowMesh) this.shadowMesh.visible = true
     if (this.placerMesh) this.placerMesh.visible = false
   }

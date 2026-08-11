@@ -3,7 +3,7 @@ import { Ball } from "../../src/model/ball"
 import { Table } from "../../src/model/table"
 import { Cue } from "../../src/view/cue"
 import { CueMesh } from "../../src/view/cuemesh"
-import { Quaternion, Vector3 } from "three"
+import { Mesh, MeshPhongMaterial, Object3D, Quaternion, Vector3 } from "three"
 import { zero } from "../../src/utils/three-utils"
 import { maxPower, offCenterLimit, R } from "../../src/model/physics/constants"
 
@@ -153,13 +153,31 @@ describe("Cue", () => {
     expect(cue.helperMesh.visible).to.equal(!visibleBefore)
   })
 
-  test("cue root groups the four sub-objects", () => {
+  test("cue root groups both mesh sets and the shared sub-objects", () => {
     const cue = new Cue()
-    expect(cue.root.children).to.have.lengthOf(4)
-    expect(cue.root.children).to.include(cue.mesh)
+    expect(cue.root.children).to.have.lengthOf(5)
+    expect(cue.root.children).to.include(cue.p1)
+    expect(cue.root.children).to.include(cue.p2)
     expect(cue.root.children).to.include(cue.helperMesh)
     expect(cue.root.children).to.include(cue.placerMesh)
     expect(cue.root.children).to.include(cue.shadowMesh)
+    expect(cue.p1.children).to.include(cue.mesh)
+    expect(cue.p2.children).to.have.lengthOf(1)
+    // p1 shown from startup; p2 shown only on the opponent's turn
+    expect(cue.p1.visible).to.be.true
+    expect(cue.p2.visible).to.be.false
+  })
+
+  test("p1 and p2 cue bodies are built from each player's params", () => {
+    const cue = new Cue({ buttColour: "#ff0000" }, { buttColour: "#00ff00" })
+    const colours = (cueBody: Object3D) =>
+      cueBody.children
+        .map((c) => (c as Mesh).material)
+        .filter((m) => m instanceof MeshPhongMaterial)
+        .map((m) => (m as MeshPhongMaterial).color.getHexString())
+    expect(colours(cue.cueBody)).to.include("ff0000")
+    expect(colours(cue.cues[1].cueBody)).to.include("00ff00")
+    expect(colours(cue.cueBody)).not.to.include("00ff00")
   })
 
   test("aim transforms are hoisted onto the root", () => {

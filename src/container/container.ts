@@ -203,6 +203,29 @@ export class Container {
     this.hud.setActivePlayer(active)
   }
 
+  /** Shows MY cue (p1) while I'm aiming/placing/shooting and the opponent's
+   * cue (p2) while I'm watching them — driven directly by the controller
+   * type, with no playerIndex/HUD-slot indirection. p1 is always my cue and
+   * p2 is always the opponent's. Non-turn controllers (Init/End) leave the
+   * cue as-is. */
+  private setActiveCue(controller: Controller) {
+    const cue = this.table.cue
+    if (!cue?.p1) return
+    const mine =
+      controller instanceof Aim ||
+      controller instanceof PlaceBall ||
+      controller instanceof PlayShot
+    const theirs =
+      controller instanceof WatchAim || controller instanceof WatchShot
+    if (mine) {
+      cue.p1.visible = true
+      cue.p2.visible = false
+    } else if (theirs) {
+      cue.p1.visible = false
+      cue.p2.visible = true
+    }
+  }
+
   updateScoreHud(p1: number, p2: number, b: number, active?: ActivePlayer) {
     const session = Session.getInstance()
     session.updateScoresFromNetwork(p1, p2, b)
@@ -368,6 +391,7 @@ export class Container {
       // a     const playerName = Session.getInstance().playername
       // b     this.log(`${playerName}: Transition to ${controller.name}`)
       this.controller = controller
+      this.setActiveCue(controller)
       const active = this.inferActivePlayer(controller)
       if (
         active !== 0 ||
