@@ -119,6 +119,29 @@
         accent-color: var(--accent);
         cursor: pointer;
       }
+
+      .done-row {
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid var(--panel-border);
+      }
+      .done-row button {
+        width: 100%;
+        padding: 5px 0;
+        border: 1px solid var(--panel-border);
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 11px;
+        cursor: pointer;
+        transition: filter 0.1s ease;
+      }
+      .done-row button:hover {
+        filter: brightness(1.15);
+      }
+      .done-row button:active {
+        filter: brightness(0.9);
+      }
     </style>
     <script type="importmap">
       {
@@ -189,6 +212,10 @@
       <label class="check">
         <input type="checkbox" id="grain" checked /> Grain
       </label>
+
+      <div class="done-row">
+        <button id="done">Done</button>
+      </div>
     </aside>
 
     <script type="module">
@@ -856,6 +883,17 @@
         renderer.render(scene, camera)
       }
       animate()
+
+      // Tell the embedding page we're finished, so it can close the iframe.
+      // `type: "done"` is a shared signal any iframe host can listen for.
+      // Guarded so the page still works standalone (window.parent is then
+      // this window and the message is harmlessly self-posted).
+      const doneBtn = document.getElementById("done")
+      doneBtn?.addEventListener("click", () => {
+        try {
+          window.parent.postMessage({ type: "done" }, "*")
+        } catch {}
+      })
     </script>
   </body>
 </html>
