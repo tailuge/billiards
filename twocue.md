@@ -1,4 +1,4 @@
-# Per-Player Cues: Two Pre-instantiated Cues with Visibility Toggling
+# Per-Player Cues: Two Pre-instantiated Cues under a Common Root Group
 
 This document describes the chosen design for showing a unique cue
 styling/geometry for each player in a 2-player match, together with the plan to
@@ -6,12 +6,26 @@ make the in-game cue geometry a visual duplicate of `dist/cue.html`.
 
 ---
 
-## 1. Chosen Approach: Two Pre-instantiated Cues with Visibility Toggling
+## 1. Chosen Approach: Two Pre-instantiated Cues under a Per-Cue Root Group
 
-Two distinct `Cue` instances (`cueP1` and `cueP2`) are fully created at startup
-and added to the Three.js scene. At runtime, we simply toggle their visibility
-(`.visible = true` / `.visible = false`).
+Two distinct `Cue` instances (`cueP1` and `cueP2`) are fully created at startup.
+Each cue mounts all four of its sub-objects — the cue body (`mesh`), the aim
+helper line (`helperMesh`), the place-ball indicator (`placerMesh`) and the
+shadow (`shadowMesh`) — as children of a single per-cue root `Group` (`root`).
+At runtime, we simply toggle the root's visibility
+(`root.visible = true` / `root.visible = false`).
 
+*   **Seamless, Atomic Toggling:** One boolean flips the entire cue — body,
+    helper line, shadow and placer — so the inactive player's cue can never be
+    half-visible. (Toggling the four sub-meshes individually would mean keeping
+    four flags in sync and risks leaving the inactive player's helper line or
+    shadow lingering on the table.)
+*   **Aiming Animations Apply Unchanged, Once:** The transforms the sub-objects
+    already share — `position = cue-ball pos` and `rotation.z = aim.angle` —
+    are applied to the root instead of being written to three different
+    objects (`mesh`, `helperMesh`, `shadowMesh`). Child-local transforms are
+    untouched: `tiltMesh.rotation.y = baseTilt + elevation`, the `cueBody`
+    hit-animation stroke, `shadowMesh.scale.x`, and the `placerMesh` spin.
 *   **Outstanding Runtime Performance:** Toggling `.visible` in Three.js is
     extremely fast. When `.visible` is `false`, Three.js completely bypasses
     frustum culling, CPU matrix world updates (`updateMatrixWorld`), and GPU
@@ -23,7 +37,9 @@ and added to the Three.js scene. At runtime, we simply toggle their visibility
     models, textures, shaders, and geometry. Player 1 can use a traditional
     wooden cue, while Player 2 uses a futuristic carbon-fiber model.
 *   **Code Simplicity:** Simple boolean toggling replaces
-    material-finding/traversal logic.
+    material-finding/traversal logic, and the duplicated position/rotation
+    writes across `mesh`/`helperMesh`/`shadowMesh` collapse into a single root
+    write.
 *   **Slightly Higher Startup Memory:** Keeping two simple
     geometries/material sets in memory (which is negligible for a low-poly cue
     model).
@@ -33,54 +49,88 @@ and added to the Three.js scene. At runtime, we simply toggle their visibility
 ### Pointer Locations:
 
 1.  **`src/view/cue.ts`**: The main controller for the cue's representation,
-    shadow, helper line, and movement calculations.
+    shadow, helper line, and movement calculations. Owns the per-cue `root`
+    group and moves the shared aim transforms onto it.
 2.  **`src/model/table.ts`**: Currently holds and instantiates the single `cue`
-    reference (`this.cue = new Cue()`).
+    reference (`this.cue = new Cue()`). Will hold `cueP1`/`cueP2` and mount
+    their roots.
 3.  **`src/container/container.ts`**: Responsible for driving the active turn
-    via `this.inferActivePlayer(controller)`.
+    via `this.inferActivePlayer(controller)` and toggling the roots.
 
 ### Steps:
 
-1.  Update `src/model/table.ts` to hold both cues, each built with its player's
-    cue params (see §3):
+1.  Add a root group to `Cue` (`src/view/cue.ts`) and mount the four existing
+    sub-objects under it instead of leaving them as loose scene children:
+
+    ```typescript
+    root = new Group()
+    // in the constructor, after creating the sub-objects:
+    this.root.add(this.mesh, this.helperMesh, this.placerMesh, this.shadowMesh)
+    ```
+
+2.  Apply the shared aim transforms to `root` — once, instead of per object.
+    In `rotateAim`, `updateCueRotation` and `updateCuePosition`, the three
+    per-object writes become:
+
+    ```typescript
+    this.root.rotation.z = this.aim.angle
+    this.root.position.copy(pos)
+    ```
+
+    `mesh`, `helperMesh` and `shadowMesh` keep position/rotation `0`; the root
+    carries the aim rotation and translation for the whole subtree. Child-local
+    work stays exactly where it is today:
+
+    -   `tiltMesh.rotation.y = CueMesh.baseTilt + this.aim.elevation` (inside
+        `mesh`)
+    -   the `cueBody` hit-animation stroke (inside `tiltMesh`)
+    -   `shadowMesh`: the world-space terms (`pos`, `sideVec`, `unitToBall`)
+        move to the root; its local position becomes the offset
+        `(projectedX + R*cos(elevation), cueBody.position.y, -R*0.99)`, and
+        `scale.x = cos(elevation)` is unchanged. The old `sideVec`/`unitToBall`
+        math is exactly the root's rotation basis, so the world result is
+        identical.
+    -   `placerMesh.rotation.z = this.t` stays local (it spins independently
+        of the aim angle)
+    -   `placeBallMode()` / `aimMode()` child-level toggles (placer vs
+        body/shadow) are unchanged — they still operate inside the active
+        player's visible root
+
+3.  Update `src/model/table.ts` to hold both cues, each built with its
+    player's cue params (see §3):
 
     ```typescript
     cueP1!: Cue
     cueP2!: Cue
     ```
 
-2.  Update `Table.addToScene()` in `src/model/table.ts` to mount both:
+4.  Update `Table.addToScene()` in `src/model/table.ts` to mount just the two
+    roots:
 
     ```typescript
     addToScene(scene) {
       // Add balls, etc.
-      if (this.cueP1) scene.add(this.cueP1.mesh)
-      if (this.cueP2) scene.add(this.cueP2.mesh)
+      if (this.cueP1) scene.add(this.cueP1.root)
+      if (this.cueP2) scene.add(this.cueP2.root)
     }
     ```
 
-3.  Implement a wrapper property/method on `Table` to easily access the
-    "active" cue:
+5.  Toggle in `src/container/container.ts` on controller transitions, and keep
+    `table.cue` pointing at the active instance so the existing `table.cue`
+    call sites keep working unchanged. (Table has no notion of whose turn it
+    is — the container does, via `inferActivePlayer`.)
 
     ```typescript
-    get activeCue(): Cue {
-      return this.currentTurnPlayerIndex === 0 ? this.cueP1 : this.cueP2
+    private setActiveCue(active: ActivePlayer) {
+      const { cueP1, cueP2 } = this.table
+      cueP1.root.visible = active === 1
+      cueP2.root.visible = active === 2
+      this.table.cue = active === 1 ? cueP1 : cueP2
     }
     ```
 
-4.  Toggle visibility in `src/container/container.ts` on controller
-    transitions:
-
-    ```typescript
-    const active = this.inferActivePlayer(controller)
-    if (active === 1) {
-      this.table.cueP1.mesh.visible = true
-      this.table.cueP2.mesh.visible = false
-    } else if (active === 2) {
-      this.table.cueP1.mesh.visible = false
-      this.table.cueP2.mesh.visible = true
-    }
-    ```
+    In single-player games `cueP2` is simply never shown: its root stays
+    `visible = false` from startup.
 
 ---
 
