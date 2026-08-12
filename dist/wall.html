@@ -40,8 +40,15 @@
       body {
         background: var(--bg);
         color: var(--text);
-        font-family: "Exo", -apple-system, BlinkMacSystemFont, "Segoe UI",
-          Roboto, Helvetica, Arial, sans-serif;
+        font-family:
+          "Exo",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
         font-weight: 200;
         user-select: none;
       }
@@ -302,7 +309,9 @@
     <!-- Emoji picker panel -->
     <aside id="params">
       <div class="profile-row">
-        <button id="emoji-btn" class="emoji-btn" title="Choose emoji">😀</button>
+        <button id="emoji-btn" class="emoji-btn" title="Choose emoji">
+          😀
+        </button>
         <div class="profile-meta">
           <span id="profile-name" class="profile-name">Lukey</span>
           <span id="profile-elo" class="profile-elo">ELO 1805</span>
@@ -727,6 +736,20 @@
       )
       scene.add(instancedMesh)
 
+      // Dark grey shadow material (no transparency)
+      const shadowMaterial = new THREE.MeshBasicMaterial({
+        color: 0x1a1a1a,
+        side: THREE.DoubleSide,
+      })
+
+      // Shadow instanced mesh matching the same geometry and instance count (Single GPU efficiency)
+      const shadowMesh = new THREE.InstancedMesh(
+        planarTriGeom,
+        shadowMaterial,
+        TOTAL_INSTANCES
+      )
+      scene.add(shadowMesh)
+
       const dummy = new THREE.Object3D()
       const color = new THREE.Color()
       const instancesData = []
@@ -799,12 +822,7 @@
         plateCtx.fillRect(0, 0, plateCanvas.width, plateCanvas.height)
         plateCtx.strokeStyle = "#3a4350"
         plateCtx.lineWidth = 4
-        plateCtx.strokeRect(
-          2,
-          2,
-          plateCanvas.width - 4,
-          plateCanvas.height - 4
-        )
+        plateCtx.strokeRect(2, 2, plateCanvas.width - 4, plateCanvas.height - 4)
 
         plateCtx.textAlign = "center"
         plateCtx.textBaseline = "middle"
@@ -864,8 +882,7 @@
           const item = instancesData[i]
           const pixelIndex = i * 4
 
-          const alpha =
-            pixelData === null ? 0 : pixelData[pixelIndex + 3] / 255
+          const alpha = pixelData === null ? 0 : pixelData[pixelIndex + 3] / 255
 
           if (alpha > 0.1) {
             const r = pixelData[pixelIndex] / 255
@@ -969,6 +986,7 @@
         for (let i = 0; i < TOTAL_INSTANCES; i++) {
           const item = instancesData[i]
 
+          // Render main triangles
           dummy.position.set(item.posX, item.posY, item.z)
           dummy.rotation.set(item.rotX, item.rotY, item.rotZ)
           dummy.scale.set(item.scale, item.scale, item.scale)
@@ -978,11 +996,21 @@
 
           color.setRGB(item.r, item.g, item.b)
           instancedMesh.setColorAt(i, color)
+
+          // Render fake shadow flat against the wall
+          dummy.position.set(item.posX, item.posY, -0.395)
+          dummy.rotation.set(0, 0, item.rotZ)
+          dummy.scale.set(item.scale, item.scale, item.scale)
+          dummy.updateMatrix()
+
+          shadowMesh.setMatrixAt(i, dummy.matrix)
         }
 
         instancedMesh.instanceMatrix.needsUpdate = true
         if (instancedMesh.instanceColor)
           instancedMesh.instanceColor.needsUpdate = true
+
+        shadowMesh.instanceMatrix.needsUpdate = true
 
         controls.update()
         renderer.render(scene, camera)
