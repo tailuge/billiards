@@ -121,6 +121,23 @@
         font-size: 0.7rem;
         color: var(--muted);
       }
+      .profile-name[contenteditable="true"],
+      .profile-elo[contenteditable="true"] {
+        cursor: text;
+        outline: none;
+        border-radius: 3px;
+        padding: 0 2px;
+        transition: background-color 0.15s ease;
+      }
+      .profile-name[contenteditable="true"]:hover,
+      .profile-elo[contenteditable="true"]:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .profile-name[contenteditable="true"]:focus,
+      .profile-elo[contenteditable="true"]:focus {
+        background: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 0 1px var(--accent);
+      }
       .check-row {
         display: flex;
         gap: 6px;
@@ -289,8 +306,20 @@
           📺
         </button>
         <div class="profile-meta">
-          <span id="profile-name" class="profile-name">Lukey</span>
-          <span id="profile-elo" class="profile-elo">ELO 1805</span>
+          <span
+            id="profile-name"
+            class="profile-name"
+            contenteditable="true"
+            title="Edit name"
+            >Lukey</span
+          >
+          <span
+            id="profile-elo"
+            class="profile-elo"
+            contenteditable="true"
+            title="Edit ELO"
+            >1805</span
+          >
         </div>
       </div>
       <div class="check-row">
@@ -341,6 +370,24 @@
       function loadState() {
         const saved = { ...(readCustom().wall || {}) }
         delete saved.bgColour
+
+        // Also check flat keys in localStorage as fallbacks/overrides
+        try {
+          const flatEmoji = localStorage.getItem("custom.wall.emoji")
+          if (flatEmoji !== null) saved.emoji = flatEmoji
+          const flatName = localStorage.getItem("custom.wall.name")
+          if (flatName !== null) saved.name = flatName
+          const flatElo = localStorage.getItem("custom.wall.elo")
+          if (flatElo !== null) saved.elo = flatElo
+
+          const flatShowEmoji = localStorage.getItem("custom.wall.showEmoji")
+          if (flatShowEmoji !== null) saved.showEmoji = flatShowEmoji === "true"
+          const flatShowName = localStorage.getItem("custom.wall.showName")
+          if (flatShowName !== null) saved.showName = flatShowName === "true"
+          const flatShowElo = localStorage.getItem("custom.wall.showElo")
+          if (flatShowElo !== null) saved.showElo = flatShowElo === "true"
+        } catch {}
+
         const merged = { ...DEFAULT_STATE, ...saved }
         if (typeof merged.emoji !== "string" || merged.emoji.length === 0) {
           merged.emoji = DEFAULT_STATE.emoji
@@ -368,6 +415,23 @@
             emoji: state.emoji || DEFAULT_STATE.emoji,
           }
           localStorage.setItem("custom", JSON.stringify(custom))
+
+          // Also save to flat keys in localStorage
+          localStorage.setItem(
+            "custom.wall.emoji",
+            state.emoji || DEFAULT_STATE.emoji
+          )
+          localStorage.setItem(
+            "custom.wall.name",
+            state.name || DEFAULT_STATE.name
+          )
+          localStorage.setItem(
+            "custom.wall.elo",
+            state.elo || DEFAULT_STATE.elo
+          )
+          localStorage.setItem("custom.wall.showEmoji", String(state.showEmoji))
+          localStorage.setItem("custom.wall.showName", String(state.showName))
+          localStorage.setItem("custom.wall.showElo", String(state.showElo))
         } catch {}
       }
 
@@ -483,6 +547,21 @@
                 list.push(char)
               }
             }
+          }
+
+          // Generate country flag pairs from Regional Indicator Symbols A-Z (0x1F1E6 to 0x1F1FF)
+          for (let i = 0; i < 26; i++) {
+            for (let j = 0; j < 26; j++) {
+              const char1 = String.fromCodePoint(0x1f1e6 + i)
+              const char2 = String.fromCodePoint(0x1f1e6 + j)
+              list.push(char1 + char2)
+            }
+          }
+
+          // Add other common flag sequences
+          const extraFlags = ["🏳️‍🌈", "🏳️‍⚧️", "🏴‍☠️"]
+          for (const f of extraFlags) {
+            list.push(f)
           }
 
           return list
@@ -1118,6 +1197,7 @@
           saveState()
         },
       })
+      window.picker = picker
 
       // The panel always shows the emoji, name and ELO; the checkboxes only
       // control the 3D model (emoji wall + name/ELO plate below it).
@@ -1144,6 +1224,52 @@
       emojiBtn.textContent = state.emoji
       profileNameEl.textContent = state.name
       profileEloEl.textContent = `ELO ${state.elo}`
+
+      // Name & ELO inline editing event listeners
+      profileNameEl.addEventListener("blur", () => {
+        const val = profileNameEl.textContent.trim()
+        if (val) {
+          state.name = val
+          emojiWall.setState({ name: val })
+          saveState()
+        } else {
+          profileNameEl.textContent = state.name
+        }
+      })
+      profileNameEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault()
+          profileNameEl.blur()
+        }
+      })
+
+      profileEloEl.addEventListener("focus", () => {
+        let val = profileEloEl.textContent.trim()
+        if (val.toUpperCase().startsWith("ELO ")) {
+          profileEloEl.textContent = val.slice(4).trim()
+        }
+      })
+      profileEloEl.addEventListener("blur", () => {
+        let val = profileEloEl.textContent.trim()
+        if (val.toUpperCase().startsWith("ELO ")) {
+          val = val.slice(4).trim()
+        }
+        if (val) {
+          state.elo = val
+          profileEloEl.textContent = `ELO ${val}`
+          emojiWall.setState({ elo: val })
+          saveState()
+        } else {
+          profileEloEl.textContent = `ELO ${state.elo}`
+        }
+      })
+      profileEloEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault()
+          profileEloEl.blur()
+        }
+      })
+
       // Redraw once the webfont has loaded so the plaque text uses Exo.
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(emojiWall.drawPlate)
