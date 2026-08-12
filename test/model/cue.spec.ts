@@ -36,6 +36,10 @@ function aimInputsStub(extra: Record<string, unknown> = {}) {
 }
 
 describe("Cue", () => {
+  beforeEach(() => {
+    Cue.helperEnabled = true
+  })
+
   test("cue intersection with ball infront of cueball", () => {
     const { cue, table } = createCueAndTable(new Vector3(-3 * R, 0, 0))
     expect(cue.intersectsAnything(table)).to.be.true

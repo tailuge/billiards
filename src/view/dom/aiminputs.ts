@@ -8,6 +8,7 @@ import { id } from "../../utils/dom"
 import { TimeoutButton } from "../timeoutbutton"
 import { AngleInput } from "./angleinput"
 import { maxPower } from "../../model/physics/constants"
+import { Cue } from "../cue"
 
 export class AimInputs {
   readonly ballContainerWrapperElement
@@ -233,7 +234,7 @@ export class AimInputs {
   showOverlap() {
     if (this.objectBallStyle) {
       const table = this.container.table
-      if (table.cue) {
+      if (table.cue && Cue.helperEnabled) {
         const dir = unitAtAngle(table.cue.aim.angle)
         const closest = this.overlap.getOverlapOffset(table.cueball, dir)
         if (closest) {
@@ -252,12 +253,12 @@ export class AimInputs {
             )
             this.objectBallOverlap.innerText = overlapPercent + "%"
           }
-        } else {
-          this.objectBallStyle.visibility = "hidden"
-          if (this.objectBallOverlap) {
-            this.objectBallOverlap.innerText = ""
-          }
+          return
         }
+      }
+      this.objectBallStyle.visibility = "hidden"
+      if (this.objectBallOverlap) {
+        this.objectBallOverlap.innerText = ""
       }
     }
   }
