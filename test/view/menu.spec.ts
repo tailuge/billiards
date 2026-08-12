@@ -6,11 +6,10 @@ import { Menu } from "../../src/view/menu"
 import { Assets } from "../../src/view/assets"
 import { Session } from "../../src/network/client/session"
 
-initDom()
-
 let container: Container
 
 beforeEach(function (done) {
+  initDom()
   container = new Container({
     element: document.getElementById("viewP1"),
     log: (_) => {},
@@ -58,6 +57,12 @@ describe("Menu", () => {
     const diagram = document.getElementById("diagram") as HTMLButtonElement
     const concede = document.getElementById("concede") as HTMLButtonElement
     const analysis = document.getElementById("analysis") as HTMLButtonElement
+
+    // Reset all to hidden to test independent visibility transitions
+    menu.setShareVisible(false)
+    menu.setDiagramVisible(false)
+    menu.setConcedeVisible(false)
+    menu.setAnalysisVisible(false)
 
     menu.setShareVisible(true)
     expect(share.hidden).to.be.false
@@ -124,6 +129,41 @@ describe("Menu", () => {
     expect(notification?.innerHTML).to.contain("Lostber 🦞")
 
     Session.reset()
+    done()
+  })
+
+  it("concede button is visible in single player mode by default", (done) => {
+    const concede = document.getElementById("concede") as HTMLButtonElement
+    // Since container starts in single player mode, it should be visible immediately after container construction
+    expect(concede.hidden).to.be.false
+    expect(concede.disabled).to.be.false
+    done()
+  })
+
+  it("concede confirm in single player mode triggers game over and shows lobby button", (done) => {
+    expect(container.isSinglePlayer).to.be.true
+
+    // Update controller to ensure the button is visible and active
+    container.updateController(container.controller)
+
+    const concede = document.getElementById("concede") as HTMLButtonElement
+    fireEvent.click(concede)
+
+    const notification = document.getElementById("notification")
+    expect(notification?.innerHTML).to.contain("Concede Game")
+    expect(notification?.innerHTML).to.contain("game will end")
+
+    const confirm = document.querySelector(
+      "[data-notification-action='concede-confirm']"
+    ) as HTMLButtonElement
+    fireEvent.click(confirm)
+
+    expect(container.controller.name).to.equal("End")
+    expect(notification?.innerHTML).to.contain("YOU LOST")
+    expect(notification?.innerHTML).to.contain("data-notification-action=\"lobby\"")
+    expect(notification?.innerHTML).to.contain("Back to Lobby")
+    expect(notification?.innerHTML).to.contain("New Game")
+
     done()
   })
 })
