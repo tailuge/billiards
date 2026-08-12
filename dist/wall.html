@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>3D Emoji Wall</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Exo:wght@200;600&display=swap"
+      rel="stylesheet"
+    />
     <!-- Same three.js version as cue.html -->
     <script type="importmap">
       {
@@ -14,17 +20,41 @@
       }
     </script>
     <style>
-      body,
-      html {
+      :root {
+        --bg: #12161d;
+        --panel: rgba(18, 22, 29, 0.86);
+        --panel-border: #2a323e;
+        --text: #e6edf3;
+        --muted: #8b95a5;
+        --accent: #4a9eff;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
         margin: 0;
-        padding: 0;
-        width: 100%;
         height: 100%;
         overflow: hidden;
-        background-color: #f1f5f9;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Exo", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
+        font-weight: 200;
         user-select: none;
       }
-      canvas {
+      button,
+      input {
+        font-family: inherit;
+        font-weight: 200;
+      }
+      #view {
+        position: fixed;
+        inset: 0;
+      }
+      #view canvas {
         display: block;
         width: 100vw;
         height: 100vh;
@@ -32,38 +62,272 @@
       #sampler {
         display: none;
       }
-      #next-btn {
-        position: absolute;
-        top: 24px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 10;
-        background: rgba(255, 255, 255, 0.8);
+
+      /* Emoji picker panel, styled like cue.html's #params */
+      #params {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        width: 170px;
+        padding: 8px;
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: 10px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
         backdrop-filter: blur(8px);
-        color: #1e293b;
-        font-size: 12px;
-        font-weight: 600;
-        font-family: sans-serif;
-        padding: 8px 16px;
-        border-radius: 9999px;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        user-select: none;
+        max-height: calc(100vh - 16px);
+        overflow-y: auto;
+      }
+      .profile-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .emoji-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1.7rem;
+        line-height: 1;
+        border: 1px solid var(--panel-border);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.04);
         cursor: pointer;
         transition:
-          background 0.15s ease,
+          background-color 0.15s ease,
+          border-color 0.15s ease;
+      }
+      .emoji-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .emoji-btn.active {
+        border-color: var(--accent);
+      }
+      .profile-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+      .profile-name {
+        font-size: 0.85rem;
+        font-weight: 200;
+      }
+      .profile-elo {
+        font-size: 0.7rem;
+        color: var(--muted);
+      }
+      .check-row {
+        display: flex;
+        gap: 6px;
+        margin: 8px 0;
+      }
+      .check {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        color: var(--muted);
+        font-size: 9px;
+        cursor: pointer;
+      }
+      .check input {
+        accent-color: var(--accent);
+      }
+      .colour-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 8px 0;
+      }
+      .colour-row label {
+        color: var(--muted);
+        font-size: 9px;
+      }
+      .colour-row input[type="color"] {
+        width: 32px;
+        height: 18px;
+        padding: 0;
+        border: 1px solid var(--panel-border);
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.04);
+        cursor: pointer;
+      }
+
+      /* Emoji picker (ported from emoji.html, dark theme) */
+      .emoji-display-input {
+        width: 100%;
+        height: 40px;
+        font-size: 1.3rem;
+        text-align: center;
+        border: 1px solid var(--panel-border);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.15s ease;
+      }
+      .emoji-display-input:focus {
+        border-color: var(--accent);
+      }
+
+      .emoji-grid-wrapper {
+        height: 330px;
+        margin: 8px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* 6x20 = 120 cells per page, same pageSize as before */
+      .emoji-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: repeat(20, 1fr);
+        gap: 3px;
+        width: 100%;
+        height: 100%;
+      }
+
+      .emoji-cell {
+        aspect-ratio: 1 / 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        border-radius: 5px;
+        cursor: pointer;
+        background: transparent;
+        border: 1px solid transparent;
+        transition:
+          background-color 0.1s ease,
           transform 0.1s ease;
+        line-height: 1;
+        padding: 0;
+        /* Prevents wide unicode glyphs from expanding grid tracks */
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        color: var(--text);
       }
-      #next-btn:hover {
-        background: #fff;
+
+      .emoji-cell.empty {
+        cursor: default;
+        pointer-events: none;
+        visibility: hidden;
       }
-      #next-btn:active {
-        transform: translateX(-50%) scale(0.95);
+
+      .emoji-cell:hover:not(.empty) {
+        background-color: rgba(255, 255, 255, 0.08);
+        transform: scale(1.15);
+        z-index: 2;
+      }
+
+      .emoji-cell:active:not(.empty) {
+        transform: scale(0.95);
+      }
+
+      .emoji-cell.selected {
+        background-color: rgba(74, 158, 255, 0.18);
+        border-color: var(--accent);
+      }
+
+      .emoji-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 8px;
+        border-top: 1px solid var(--panel-border);
+      }
+
+      .emoji-nav-btn {
+        width: 42px;
+        text-align: center;
+        padding: 3px 0;
+        font-size: 0.6rem;
+        font-weight: 200;
+        color: var(--text);
+        background-color: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--panel-border);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        flex-shrink: 0;
+      }
+
+      .emoji-nav-btn:hover:not(:disabled) {
+        background-color: rgba(255, 255, 255, 0.12);
+      }
+
+      .emoji-nav-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .emoji-page-indicator {
+        font-size: 0.55rem;
+        font-weight: 200;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+        text-align: center;
+      }
+
+      .done-row {
+        margin-top: 8px;
+        padding-top: 6px;
+        border-top: 1px solid var(--panel-border);
+      }
+      .done-row button {
+        width: 100%;
+        padding: 5px 0;
+        border: 1px solid var(--panel-border);
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 11px;
+        cursor: pointer;
+        transition: filter 0.1s ease;
+      }
+      .done-row button:hover {
+        filter: brightness(1.15);
+      }
+      .done-row button:active {
+        filter: brightness(0.9);
       }
     </style>
   </head>
   <body>
-    <!-- Single Minimal Button -->
-    <button id="next-btn">Random Emoji ✨</button>
+    <div id="view"></div>
+
+    <!-- Emoji picker panel -->
+    <aside id="params">
+      <div class="profile-row">
+        <button id="emoji-btn" class="emoji-btn" title="Choose emoji">😀</button>
+        <div class="profile-meta">
+          <span id="profile-name" class="profile-name">Lukey</span>
+          <span id="profile-elo" class="profile-elo">ELO 1805</span>
+        </div>
+      </div>
+      <div class="check-row">
+        <label class="check">
+          <input type="checkbox" id="show-emoji" checked /> Emoji
+        </label>
+        <label class="check">
+          <input type="checkbox" id="show-name" checked /> Name
+        </label>
+        <label class="check">
+          <input type="checkbox" id="show-elo" checked /> ELO
+        </label>
+      </div>
+      <div class="colour-row">
+        <label for="bg-colour">Background</label>
+        <input type="color" id="bg-colour" value="#8b5a2b" />
+      </div>
+      <div id="emoji-picker-mount" style="display: none"></div>
+      <div class="done-row">
+        <button id="done">Done</button>
+      </div>
+    </aside>
 
     <!-- Hidden Sampler Canvas -->
     <canvas id="sampler" width="24" height="24"></canvas>
@@ -76,6 +340,64 @@
       const TOTAL_INSTANCES = GRID_SIZE * GRID_SIZE // 576
       // The emoji wall is scaled to 50%; the room geometry is not
       const WALL_SCALE = 0.5
+
+      // Persisted as `custom.wall` inside the shared `custom` dict in
+      // localStorage; storage access is guarded so the page works inside a
+      // sandboxed iframe. The dict holds siblings like custom.cue, so we
+      // never write the whole dict.
+      const DEFAULT_STATE = {
+        emoji: "😀",
+        name: "Lukey",
+        elo: "1805",
+        showEmoji: true,
+        showName: true,
+        showElo: true,
+        bgColour: "#8b5a2b",
+      }
+
+      function readCustom() {
+        try {
+          return JSON.parse(localStorage.getItem("custom") || "null") || {}
+        } catch {
+          return {}
+        }
+      }
+
+      function loadState() {
+        const merged = { ...DEFAULT_STATE, ...(readCustom().wall || {}) }
+        if (typeof merged.emoji !== "string" || merged.emoji.length === 0) {
+          merged.emoji = DEFAULT_STATE.emoji
+        }
+        if (typeof merged.name !== "string" || merged.name.length === 0) {
+          merged.name = DEFAULT_STATE.name
+        }
+        if (typeof merged.elo !== "string" || merged.elo.length === 0) {
+          merged.elo = DEFAULT_STATE.elo
+        }
+        for (const key of ["showEmoji", "showName", "showElo"]) {
+          if (typeof merged[key] !== "boolean") merged[key] = DEFAULT_STATE[key]
+        }
+        if (!/^#[0-9a-f]{6}$/i.test(merged.bgColour)) {
+          merged.bgColour = DEFAULT_STATE.bgColour
+        }
+        return merged
+      }
+
+      // Read-modify-write: preserve siblings like custom.cue. An empty
+      // emoji is coerced to the default so it never persists blank; the
+      // wall itself just stays blanked for the rest of the session.
+      function saveState() {
+        try {
+          const custom = readCustom()
+          custom.wall = {
+            ...state,
+            emoji: state.emoji || DEFAULT_STATE.emoji,
+          }
+          localStorage.setItem("custom", JSON.stringify(custom))
+        } catch {}
+      }
+
+      const state = loadState()
 
       // Hidden sampling canvas
       const samplerCanvas = document.getElementById("sampler")
@@ -92,28 +414,216 @@
         return samplerCtx.getImageData(0, 0, GRID_SIZE, GRID_SIZE).data
       }
 
-      // Pick a random codepoint from the main Unicode emoji blocks
-      function randomEmoji() {
-        const blocks = [
-          [0x1f300, 0x1f5ff], // Miscellaneous Symbols and Pictographs
-          [0x1f600, 0x1f64f], // Emoticons
-          [0x1f680, 0x1f6ff], // Transport and Map Symbols
-          [0x1f900, 0x1f9ff], // Supplemental Symbols and Pictographs
-          [0x1fa70, 0x1faff], // Symbols and Pictographs Extended-A
-          [0x2600, 0x27bf], // Miscellaneous Symbols / Dingbats
-        ]
-        const [start, end] = blocks[Math.floor(Math.random() * blocks.length)]
-        const code = start + Math.floor(Math.random() * (end - start + 1))
-        let emoji = String.fromCodePoint(code)
-        // Variation selector forces emoji (color) presentation for BMP glyphs
-        if (code < 0x10000) emoji += "\uFE0F"
-        return emoji
+      // Emoji picker (ported from dist/emoji.html)
+      class EmojiPicker {
+        constructor(options = {}) {
+          this.container =
+            typeof options.container === "string"
+              ? document.querySelector(options.container)
+              : options.container
+
+          this.pageSize = options.pageSize || 120
+          this.initialEmoji = options.initialEmoji || "😀"
+          this.onSelect = options.onSelect || null
+
+          this.currentPage = 0
+          this.selectedEmoji = this.initialEmoji
+
+          // Generate full Unicode emoji list purely in JS memory
+          this.emojis = this.generateUnicodeEmojiList()
+
+          this.init()
+        }
+
+        init() {
+          if (!this.container) return
+
+          // Container structure
+          this.pickerEl = document.createElement("div")
+          this.pickerEl.className = "emoji-picker-container"
+
+          // 1. Large Input Box
+          this.inputBox = document.createElement("input")
+          this.inputBox.type = "text"
+          this.inputBox.className = "emoji-display-input"
+          this.inputBox.value = this.selectedEmoji
+
+          this.inputBox.addEventListener("input", (e) => {
+            this.selectedEmoji = e.target.value
+            this.highlightMatchingCell()
+            if (this.onSelect) this.onSelect(this.selectedEmoji)
+          })
+
+          // 2. Emoji Grid Container
+          this.gridWrapper = document.createElement("div")
+          this.gridWrapper.className = "emoji-grid-wrapper"
+
+          this.gridEl = document.createElement("div")
+          this.gridEl.className = "emoji-grid"
+          this.gridWrapper.appendChild(this.gridEl)
+
+          // 3. Navigation Controls
+          this.navEl = document.createElement("div")
+          this.navEl.className = "emoji-nav"
+
+          this.prevBtn = document.createElement("button")
+          this.prevBtn.type = "button"
+          this.prevBtn.className = "emoji-nav-btn"
+          this.prevBtn.textContent = "◀"
+          this.prevBtn.title = "Previous page"
+          this.prevBtn.addEventListener("click", () => this.prevPage())
+
+          this.pageIndicator = document.createElement("span")
+          this.pageIndicator.className = "emoji-page-indicator"
+
+          this.nextBtn = document.createElement("button")
+          this.nextBtn.type = "button"
+          this.nextBtn.className = "emoji-nav-btn"
+          this.nextBtn.textContent = "▶"
+          this.nextBtn.title = "Next page"
+          this.nextBtn.addEventListener("click", () => this.nextPage())
+
+          this.navEl.appendChild(this.prevBtn)
+          this.navEl.appendChild(this.pageIndicator)
+          this.navEl.appendChild(this.nextBtn)
+
+          // Assemble Picker
+          this.pickerEl.appendChild(this.inputBox)
+          this.pickerEl.appendChild(this.gridWrapper)
+          this.pickerEl.appendChild(this.navEl)
+
+          this.container.appendChild(this.pickerEl)
+
+          // Initial render of page 0
+          this.renderPage()
+        }
+
+        generateUnicodeEmojiList() {
+          // Extended standard Unicode Emoji Code Point Ranges
+          const ranges = [
+            [0x1f600, 0x1f64f], // Emoticons / Smileys
+            [0x1f300, 0x1f5ff], // Misc Symbols & Pictographs
+            [0x1f680, 0x1f6ff], // Transport & Map Symbols
+            [0x1f900, 0x1f9ff], // Supplemental Symbols & Pictographs
+            [0x1fa70, 0x1faff], // Symbols & Pictographs Extended-A
+            [0x2600, 0x26ff], // Misc Symbols
+            [0x2700, 0x27bf], // Dingbats
+            [0x231a, 0x231b], // Watches
+            [0x23f0, 0x23f3], // Clocks
+            [0x2b50, 0x2b55], // Stars and Shapes
+          ]
+
+          // Regex test to ensure code points correspond to valid pictographic emojis
+          const emojiRegex = /\p{Extended_Pictographic}/u
+          const list = []
+
+          for (const [start, end] of ranges) {
+            for (let code = start; code <= end; code++) {
+              const char = String.fromCodePoint(code)
+              if (emojiRegex.test(char)) {
+                list.push(char)
+              }
+            }
+          }
+
+          return list
+        }
+
+        renderPage() {
+          if (!this.emojis || this.emojis.length === 0) return
+
+          this.gridEl.innerHTML = ""
+
+          const totalPages = Math.ceil(this.emojis.length / this.pageSize)
+          if (this.currentPage < 0) this.currentPage = 0
+          if (this.currentPage >= totalPages) this.currentPage = totalPages - 1
+
+          const startIndex = this.currentPage * this.pageSize
+          const endIndex = Math.min(
+            startIndex + this.pageSize,
+            this.emojis.length
+          )
+          const pageItems = this.emojis.slice(startIndex, endIndex)
+
+          const fragment = document.createDocumentFragment()
+
+          pageItems.forEach((emojiStr) => {
+            const cell = document.createElement("button")
+            cell.type = "button"
+            cell.className = "emoji-cell"
+            cell.textContent = emojiStr
+            cell.dataset.emoji = emojiStr
+
+            if (emojiStr === this.selectedEmoji) {
+              cell.classList.add("selected")
+            }
+
+            cell.addEventListener("click", () => {
+              this.selectEmoji(emojiStr)
+            })
+
+            fragment.appendChild(cell)
+          })
+
+          // Fill remaining grid slots on incomplete pages with invisible placeholders
+          // so height, width, and button placement remain 100% static
+          const remainingSlots = this.pageSize - pageItems.length
+          for (let i = 0; i < remainingSlots; i++) {
+            const emptyCell = document.createElement("div")
+            emptyCell.className = "emoji-cell empty"
+            fragment.appendChild(emptyCell)
+          }
+
+          this.gridEl.appendChild(fragment)
+
+          // Update Page Controls
+          this.pageIndicator.textContent = `Page ${this.currentPage + 1} of ${totalPages}`
+          this.prevBtn.disabled = this.currentPage === 0
+          this.nextBtn.disabled = this.currentPage === totalPages - 1
+        }
+
+        selectEmoji(emojiStr) {
+          this.selectedEmoji = emojiStr
+          this.inputBox.value = emojiStr
+          this.highlightMatchingCell()
+
+          if (typeof this.onSelect === "function") {
+            this.onSelect(emojiStr)
+          }
+        }
+
+        highlightMatchingCell() {
+          const cells = this.gridEl.querySelectorAll(".emoji-cell")
+          cells.forEach((cell) => {
+            if (cell.dataset.emoji === this.selectedEmoji) {
+              cell.classList.add("selected")
+            } else {
+              cell.classList.remove("selected")
+            }
+          })
+        }
+
+        nextPage() {
+          const totalPages = Math.ceil(this.emojis.length / this.pageSize)
+          if (this.currentPage < totalPages - 1) {
+            this.currentPage++
+            this.renderPage()
+          }
+        }
+
+        prevPage() {
+          if (this.currentPage > 0) {
+            this.currentPage--
+            this.renderPage()
+          }
+        }
       }
 
       // Scene Setup
+      const view = document.getElementById("view")
       const scene = new THREE.Scene()
-      scene.background = new THREE.Color(0xeef2f6)
-      scene.fog = new THREE.FogExp2(0xeef2f6, 0.012)
+      scene.background = new THREE.Color(0x141a22)
+      scene.fog = new THREE.FogExp2(0x141a22, 0.012)
 
       const camera = new THREE.PerspectiveCamera(
         45,
@@ -128,7 +638,7 @@
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
       renderer.toneMapping = THREE.ACESFilmicToneMapping
       renderer.toneMappingExposure = 1.15
-      document.body.appendChild(renderer.domElement)
+      view.appendChild(renderer.domElement)
 
       const controls = new OrbitControls(camera, renderer.domElement)
       controls.enableDamping = true
@@ -254,21 +764,114 @@
         }
       }
 
-      function updateWall(emoji) {
-        const pixelData = getEmojiPixelData(emoji)
+      // Name/ELO plate: a thin rectangle mounted on the wall below the
+      // background cuboid, textured with the player name and ELO. The
+      // "Show name" / "Show ELO" checkboxes toggle which parts are drawn
+      // (the plate is hidden when both are off).
+      const plateCanvas = document.createElement("canvas")
+      plateCanvas.width = 512
+      plateCanvas.height = 96
+      const plateCtx = plateCanvas.getContext("2d")
+
+      const plateTexture = new THREE.CanvasTexture(plateCanvas)
+      plateTexture.colorSpace = THREE.SRGBColorSpace
+
+      const plateMat = new THREE.MeshBasicMaterial({
+        map: plateTexture,
+        transparent: true,
+        depthWrite: false,
+      })
+
+      // 512/96 = 4.0/0.75, so the texture keeps its aspect ratio on the plane.
+      const plate = new THREE.Mesh(new THREE.PlaneGeometry(4.0, 0.75), plateMat)
+      // The recess cuboid spans y in [-5.45, 5.45]; mount the plaque below it.
+      plate.position.set(0, -6.3, -0.55)
+      scene.add(plate)
+
+      function drawPlate() {
+        plate.visible = state.showName || state.showElo
+        if (!plate.visible) return
+
+        plateCtx.clearRect(0, 0, plateCanvas.width, plateCanvas.height)
+
+        // Dark grey plaque with a subtle border, mounted below the emoji.
+        plateCtx.fillStyle = "#222a33"
+        plateCtx.fillRect(0, 0, plateCanvas.width, plateCanvas.height)
+        plateCtx.strokeStyle = "#3a4350"
+        plateCtx.lineWidth = 4
+        plateCtx.strokeRect(
+          2,
+          2,
+          plateCanvas.width - 4,
+          plateCanvas.height - 4
+        )
+
+        plateCtx.textAlign = "center"
+        plateCtx.textBaseline = "middle"
+
+        const nameText = state.showName ? state.name : ""
+        const eloText = state.showElo ? `ELO ${state.elo}` : ""
+        const sep = nameText && eloText ? "  ·  " : ""
+
+        // Prefer 60px Exo but shrink to fit long names/ELOs on the plaque.
+        let fontPx = 60
+        let totalWidth = 0
+        do {
+          plateCtx.font = `200 ${fontPx}px 'Exo', sans-serif`
+          const nameWidth = nameText ? plateCtx.measureText(nameText).width : 0
+          const sepWidth = sep ? plateCtx.measureText(sep).width : 0
+          const eloWidth = eloText ? plateCtx.measureText(eloText).width : 0
+          totalWidth = nameWidth + sepWidth + eloWidth
+          if (totalWidth > plateCanvas.width - 24 && fontPx > 32) {
+            fontPx -= 4
+          } else {
+            break
+          }
+        } while (true)
+
+        const y = plateCanvas.height / 2
+        const nameWidth = nameText ? plateCtx.measureText(nameText).width : 0
+        const sepWidth = sep ? plateCtx.measureText(sep).width : 0
+        const eloWidth = eloText ? plateCtx.measureText(eloText).width : 0
+        let x = plateCanvas.width / 2 - totalWidth / 2
+
+        if (nameText) {
+          plateCtx.fillStyle = "#e6edf3"
+          plateCtx.fillText(nameText, x + nameWidth / 2, y)
+          x += nameWidth
+        }
+        if (sep) {
+          plateCtx.fillStyle = "#8b95a5"
+          plateCtx.fillText(sep, x + sepWidth / 2, y)
+          x += sepWidth
+        }
+        if (eloText) {
+          plateCtx.fillStyle = "#8b95a5"
+          plateCtx.fillText(eloText, x + eloWidth / 2, y)
+        }
+
+        plateTexture.needsUpdate = true
+      }
+
+      // The wall follows the picker choice (persisted across visits). When
+      // the "Show emoji" checkbox is off the wall is blanked entirely.
+      function updateWall() {
+        const pixelData = state.showEmoji
+          ? getEmojiPixelData(state.emoji)
+          : null
 
         for (let i = 0; i < TOTAL_INSTANCES; i++) {
           const item = instancesData[i]
           const pixelIndex = i * 4
 
-          const r = pixelData[pixelIndex] / 255
-          const g = pixelData[pixelIndex + 1] / 255
-          const b = pixelData[pixelIndex + 2] / 255
-          const alpha = pixelData[pixelIndex + 3] / 255
-
-          const luminance = 0.299 * r + 0.587 * g + 0.114 * b
+          const alpha =
+            pixelData === null ? 0 : pixelData[pixelIndex + 3] / 255
 
           if (alpha > 0.1) {
+            const r = pixelData[pixelIndex] / 255
+            const g = pixelData[pixelIndex + 1] / 255
+            const b = pixelData[pixelIndex + 2] / 255
+            const luminance = 0.299 * r + 0.587 * g + 0.114 * b
             item.r = r
             item.g = g
             item.b = b
@@ -284,25 +887,75 @@
         }
       }
 
-      function triggerNextRandomEmoji() {
-        updateWall(randomEmoji())
+      const emojiBtn = document.getElementById("emoji-btn")
+      const profileNameEl = document.getElementById("profile-name")
+      const profileEloEl = document.getElementById("profile-elo")
+      const showEmojiBox = document.getElementById("show-emoji")
+      const showNameBox = document.getElementById("show-name")
+      const showEloBox = document.getElementById("show-elo")
+      const pickerMount = document.getElementById("emoji-picker-mount")
+
+      // The current emoji acts as the button that opens/closes the picker
+      // inside the panel; the wall follows the picker choice (persisted).
+      let pickerOpen = false
+      emojiBtn.addEventListener("click", () => {
+        pickerOpen = !pickerOpen
+        pickerMount.style.display = pickerOpen ? "" : "none"
+        emojiBtn.classList.toggle("active", pickerOpen)
+      })
+
+      const picker = new EmojiPicker({
+        container: "#emoji-picker-mount",
+        pageSize: 120,
+        initialEmoji: state.emoji,
+        onSelect: (emoji) => {
+          state.emoji = emoji
+          emojiBtn.textContent = emoji
+          updateWall()
+          saveState()
+        },
+      })
+
+      // The panel always shows the emoji, name and ELO; the checkboxes only
+      // control the 3D model (emoji wall + name/ELO plate below it).
+      showEmojiBox.checked = state.showEmoji
+      showNameBox.checked = state.showName
+      showEloBox.checked = state.showElo
+
+      showEmojiBox.addEventListener("change", (e) => {
+        state.showEmoji = e.target.checked
+        updateWall()
+        saveState()
+      })
+      showNameBox.addEventListener("change", (e) => {
+        state.showName = e.target.checked
+        drawPlate()
+        saveState()
+      })
+      showEloBox.addEventListener("change", (e) => {
+        state.showElo = e.target.checked
+        drawPlate()
+        saveState()
+      })
+
+      // Background colour of the emoji cuboid.
+      const bgColourInput = document.getElementById("bg-colour")
+      bgColourInput.value = state.bgColour
+      recessMat.color.set(state.bgColour)
+      bgColourInput.addEventListener("input", (e) => {
+        state.bgColour = e.target.value
+        recessMat.color.set(state.bgColour)
+        saveState()
+      })
+
+      emojiBtn.textContent = state.emoji
+      profileNameEl.textContent = state.name
+      profileEloEl.textContent = `ELO ${state.elo}`
+      drawPlate()
+      // Redraw once the webfont has loaded so the plaque text uses Exo.
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(drawPlate)
       }
-
-      document.getElementById("next-btn").addEventListener("click", (e) => {
-        e.stopPropagation()
-        triggerNextRandomEmoji()
-      })
-
-      let mouseDownTime = 0
-      window.addEventListener("mousedown", () => {
-        mouseDownTime = Date.now()
-      })
-      window.addEventListener("click", (e) => {
-        if (e.target.closest("button")) return
-        if (Date.now() - mouseDownTime < 200) {
-          triggerNextRandomEmoji()
-        }
-      })
 
       window.addEventListener("resize", () => {
         camera.aspect = window.innerWidth / window.innerHeight
@@ -335,8 +988,19 @@
         renderer.render(scene, camera)
       }
 
-      updateWall(randomEmoji())
+      updateWall()
       animate()
+
+      // Tell the embedding page we're finished, so it can close the iframe.
+      // `type: "done"` is a shared signal any iframe host can listen for.
+      // Guarded so the page still works standalone (window.parent is then
+      // this window and the message is harmlessly self-posted).
+      const doneBtn = document.getElementById("done")
+      doneBtn?.addEventListener("click", () => {
+        try {
+          window.parent.postMessage({ type: "done" }, "*")
+        } catch {}
+      })
     </script>
   </body>
 </html>
