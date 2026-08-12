@@ -330,7 +330,7 @@
       </div>
       <div class="colour-row">
         <label for="bg-colour">Background</label>
-        <input type="color" id="bg-colour" value="#4a4e54" />
+        <input type="color" id="bg-colour" value="#888888" />
       </div>
       <div id="emoji-picker-mount" style="display: none"></div>
       <div class="done-row">
@@ -347,8 +347,6 @@
 
       const GRID_SIZE = 24
       const TOTAL_INSTANCES = GRID_SIZE * GRID_SIZE // 576
-      // The emoji wall is scaled to 50%; the room geometry is not
-      const WALL_SCALE = 0.5
 
       // Persisted as `custom.wall` inside the shared `custom` dict in
       // localStorage; storage access is guarded so the page works inside a
@@ -361,7 +359,7 @@
         showEmoji: true,
         showName: true,
         showElo: true,
-        bgColour: "#4a4e54",
+        bgColour: "#888888",
       }
 
       function readCustom() {
@@ -663,15 +661,17 @@
         roughness: 0.92,
         metalness: 0.02,
       })
-      const recessMat = new THREE.MeshStandardMaterial({
-        color: 0x4a4e54,
-        roughness: 0.85,
-        metalness: 0.05,
-      }) // grey background panel
-      const frameMat = new THREE.MeshStandardMaterial({
-        color: 0xcbd5e1,
-        roughness: 0.5,
+      const borderMat = new THREE.MeshStandardMaterial({
+        color: 0x1f1f1f,
+        roughness: 0.4,
         metalness: 0.1,
+        side: THREE.DoubleSide,
+      })
+      const borderShadowMat = new THREE.MeshBasicMaterial({
+        color: 0x000000,
+        transparent: true,
+        opacity: 0.35,
+        side: THREE.DoubleSide,
       })
       const floorMat = new THREE.MeshStandardMaterial({
         color: 0xd3dce6,
@@ -679,25 +679,96 @@
         metalness: 0.15,
       })
 
+      /**
+       * Creates a minimal 2D planar rectangular border (hollow rectangle)
+       * geometry in the XY plane. Uses 8 vertices and 8 triangles (16 indices).
+       * Ported from dist/border.html and generalized to a rectangle.
+       *
+       * @param {number} width - Inner width of the frame hole
+       * @param {number} height - Inner height of the frame hole
+       * @param {number} thickness - Width of the border frame
+       * @returns {THREE.BufferGeometry} Minimal polygonal 2D border geometry
+       */
+      function createBorderGeometry(width, height, thickness) {
+        const halfW = width / 2
+        const halfH = height / 2
+        const halfOuterW = halfW + thickness
+        const halfOuterH = halfH + thickness
+
+        // 8 Vertices defining the 2D planar frame
+        // 0-3: Outer rectangle corners, 4-7: Inner rectangle corners
+        const vertices = new Float32Array([
+          -halfOuterW,
+          halfOuterH,
+          0,
+          halfOuterW,
+          halfOuterH,
+          0,
+          halfOuterW,
+          -halfOuterH,
+          0,
+          -halfOuterW,
+          -halfOuterH,
+          0,
+          -halfW,
+          halfH,
+          0,
+          halfW,
+          halfH,
+          0,
+          halfW,
+          -halfH,
+          0,
+          -halfW,
+          -halfH,
+          0,
+        ])
+
+        // Normals pointing forward (+Z)
+        const normals = new Float32Array([
+          0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
+          1,
+        ])
+
+        // UV Coordinates
+        const uvs = new Float32Array([
+          0, 1, 1, 1, 1, 0, 0, 0, 0.2, 0.8, 0.8, 0.8, 0.8, 0.2, 0.2, 0.2,
+        ])
+
+        // Triangles with Counter-Clockwise winding order
+        const indices = [
+          0, 4, 5, 0, 5, 1, 1, 5, 6, 1, 6, 2, 2, 6, 7, 2, 7, 3, 3, 7, 4, 3, 4,
+          0,
+        ]
+
+        const geometry = new THREE.BufferGeometry()
+        geometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(vertices, 3)
+        )
+        geometry.setAttribute("normal", new THREE.BufferAttribute(normals, 3))
+        geometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2))
+        geometry.setIndex(indices)
+        return geometry
+      }
+
       const roomGroup = new THREE.Group()
 
       const backWall = new THREE.Mesh(new THREE.BoxGeometry(50, 36, 1), wallMat)
       backWall.position.set(0, 0, -1.2)
       roomGroup.add(backWall)
 
-      const recessFrame = new THREE.Mesh(
-        new THREE.BoxGeometry(12.25, 10.9, 0.4),
-        recessMat
-      )
-      recessFrame.position.set(0, 0, -0.6)
-      roomGroup.add(recessFrame)
+      // Flat planar border (same 12.55 x 11.2 outer footprint as the old
+      // cuboids), floating just off the wall surface.
+      const borderGeometry = createBorderGeometry(12.25, 10.9, 0.15)
+      const borderMesh = new THREE.Mesh(borderGeometry, borderMat)
+      borderMesh.position.z = -0.65
+      roomGroup.add(borderMesh)
 
-      const shadowFrame = new THREE.Mesh(
-        new THREE.BoxGeometry(12.55, 11.2, 0.2),
-        frameMat
-      )
-      shadowFrame.position.set(0, 0, -0.95)
-      roomGroup.add(shadowFrame)
+      // Fake drop shadow of the border, offset in XY and flush against the wall.
+      const borderShadowMesh = new THREE.Mesh(borderGeometry, borderShadowMat)
+      borderShadowMesh.position.set(0.08, -0.08, -0.69)
+      roomGroup.add(borderShadowMesh)
 
       const floor = new THREE.Mesh(new THREE.PlaneGeometry(50, 40), floorMat)
       floor.rotation.x = -Math.PI / 2
@@ -719,7 +790,7 @@
       scene.add(gallerySpot.target)
 
       // Instanced pure planar triangle mesh (1 GPU draw call)
-      const planarTriGeom = new THREE.CircleGeometry(0.58 * WALL_SCALE, 3)
+      const planarTriGeom = new THREE.CircleGeometry(0.29, 3)
       planarTriGeom.rotateZ(Math.PI / 6)
 
       const material = new THREE.MeshStandardMaterial({
@@ -754,8 +825,8 @@
       const color = new THREE.Color()
       const instancesData = []
 
-      const SPACING_X = 0.95 * WALL_SCALE
-      const SPACING_Y = 0.84 * WALL_SCALE
+      const SPACING_X = 0.475
+      const SPACING_Y = 0.42
       const HALF_GRID = (GRID_SIZE - 1) / 2
 
       for (let y = 0; y < GRID_SIZE; y++) {
@@ -807,7 +878,7 @@
 
       // 512/96 = 4.0/0.75, so the texture keeps its aspect ratio on the plane.
       const plate = new THREE.Mesh(new THREE.PlaneGeometry(4.0, 0.75), plateMat)
-      // The recess cuboid spans y in [-5.45, 5.45]; mount the plaque below it.
+      // The border's inner hole spans y in [-5.45, 5.45]; mount the plaque below it.
       plate.position.set(0, -6.3, -0.55)
       scene.add(plate)
 
@@ -893,13 +964,13 @@
             item.g = g
             item.b = b
             item.scale = 1.0
-            // Cuboid front face is at z = -0.4; keep a small ~0.1 gap,
-            // then lift triangles by pixel luminance (max 0.2)
+            // The wall front face is at z = -0.7; float the glyphs off it
+            // and lift them by pixel luminance (max 0.2)
             item.z = luminance * 0.5 - 0.3
           } else {
             // Empty cells are hidden entirely (no background triangles)
             item.scale = 0
-            item.z = -0.4 * WALL_SCALE
+            item.z = 0
           }
         }
       }
@@ -955,13 +1026,13 @@
         saveState()
       })
 
-      // Background colour of the emoji cuboid.
+      // Background colour of the wall behind the emoji.
       const bgColourInput = document.getElementById("bg-colour")
       bgColourInput.value = state.bgColour
-      recessMat.color.set(state.bgColour)
+      wallMat.color.set(state.bgColour)
       bgColourInput.addEventListener("input", (e) => {
         state.bgColour = e.target.value
-        recessMat.color.set(state.bgColour)
+        wallMat.color.set(state.bgColour)
         saveState()
       })
 
@@ -998,7 +1069,7 @@
           instancedMesh.setColorAt(i, color)
 
           // Render fake shadow flat against the wall
-          dummy.position.set(item.posX, item.posY, -0.395)
+          dummy.position.set(item.posX, item.posY, -0.69)
           dummy.rotation.set(0, 0, item.rotZ)
           dummy.scale.set(item.scale, item.scale, item.scale)
           dummy.updateMatrix()
