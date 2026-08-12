@@ -5,6 +5,7 @@ import { Container } from "../../src/container/container"
 import { fireEvent } from "@testing-library/dom"
 import { Assets } from "../../src/view/assets"
 import { Session } from "../../src/network/client/session"
+import { Cue } from "../../src/view/cue"
 
 initDom()
 
@@ -157,6 +158,17 @@ describe("AimInput", () => {
     expect(container.table.cue.aim.power).to.equal(initialPower)
     expect(container.table.cue.aim.elevation).to.equal(0)
     expect(container.table.cue.aim.offset.equals(initialOffset)).to.be.true
+    done()
+  })
+
+  it("respects Cue.helperEnabled for object ball overlap", (done) => {
+    aiminputs.setDisabled(false)
+    Cue.helperEnabled = false
+    aiminputs.showOverlap()
+    expect(aiminputs.objectBallStyle?.visibility).to.equal("hidden")
+    if (aiminputs.objectBallOverlap) {
+      expect(aiminputs.objectBallOverlap.textContent).to.equal("")
+    }
     done()
   })
 })

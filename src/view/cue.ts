@@ -345,11 +345,17 @@ export class Cue {
     return cueIntersectsAnything(table, aim, this.spinOffset(aim))
   }
 
+  static helperEnabled = true
+
   showHelper(b) {
-    if (this.helperMesh) this.helperMesh.visible = b
+    if (this.helperMesh) this.helperMesh.visible = b && Cue.helperEnabled
   }
 
   toggleHelper() {
-    if (this.helperMesh) this.showHelper(!this.helperMesh.visible)
+    Cue.helperEnabled = !Cue.helperEnabled
+    if (this.helperMesh) {
+      this.helperMesh.visible = !this.helperMesh.visible
+    }
+    this.aimInputs?.showOverlap()
   }
 }
