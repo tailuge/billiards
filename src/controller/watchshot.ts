@@ -7,11 +7,15 @@ import { RerackEvent } from "../events/rerackevent"
 import { Session } from "../network/client/session"
 import { BeginEvent } from "../events/beginevent"
 import { HitEvent } from "../events/hitevent"
+import { ScoreEvent } from "../events/scoreevent"
 
 export class WatchShot extends ControllerBase {
   override get name(): string {
     return "WatchShot"
   }
+
+  private scoreEventReceived = false
+
   constructor(container, _hitEvent?: HitEvent) {
     super(container)
     this.container.table.outcome = []
@@ -22,6 +26,11 @@ export class WatchShot extends ControllerBase {
     this.container.table.cue.aimInputs.setDisabled(true)
   }
 
+  override handleScore(event: ScoreEvent) {
+    this.scoreEventReceived = true
+    return super.handleScore(event)
+  }
+
   override handleStationary(_) {
     if (Session.isBotMode()) {
       this.container.sendEvent(new BeginEvent())
@@ -29,6 +38,14 @@ export class WatchShot extends ControllerBase {
 
     const outcome = this.container.table.outcome
     if (this.container.rules.isEndOfGame(outcome) && !Session.isBotMode()) {
+      if (this.container.rules.rulename === "snooker" && !this.scoreEventReceived) {
+        const points = this.container.rules.getAmountScored(outcome)
+        if (points > 0) {
+          Session.getInstance().addOpponentScore(points)
+          const { p1, p2 } = Session.getInstance().orderedScoresForHud()
+          this.container.updateScoreHud(p1, p2, 0)
+        }
+      }
       return this.container.rules.handleGameEnd(false)
     }
     return this
