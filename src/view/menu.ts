@@ -92,7 +92,7 @@ export class Menu {
           {
             type: "Info",
             title: "Concede Game",
-            subtext: "opponent will win",
+            subtext: this.container.isSinglePlayer ? "game will end" : "opponent will win",
             extra:
               '<button class="notification-btn" data-notification-action="concede-confirm">Concede</button>' +
               '<button class="notification-btn" data-notification-action="concede-cancel">Play on</button>',
@@ -102,7 +102,7 @@ export class Menu {
           {
             "concede-confirm": () => {
               this.container.notification.clear()
-              if (Session.isBotMode()) {
+              if (this.container.isSinglePlayer || Session.isBotMode()) {
                 this.container.updateController(
                   this.container.rules.handleGameEnd(false)
                 )

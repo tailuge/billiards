@@ -422,7 +422,8 @@ export class Container {
         !this.replayMode &&
         !Session.isBotMode() &&
         !Session.isSpectator()
-      this.menu?.setConcedeVisible(isTwoPlayer)
+      const showConcede = !this.replayMode && !Session.isSpectator()
+      this.menu?.setConcedeVisible(showConcede)
       this.comment?.setVisible(isTwoPlayer)
 
       this.controller.onFirst()
