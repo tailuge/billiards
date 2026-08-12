@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Emoji Wall</title>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #f1f5f9;
+        user-select: none;
+      }
+      canvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+      }
+      #sampler {
+        display: none;
+      }
+      #next-btn {
+        position: absolute;
+        top: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(8px);
+        color: #1e293b;
+        font-size: 12px;
+        font-weight: 600;
+        font-family: sans-serif;
+        padding: 8px 16px;
+        border-radius: 9999px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        transition:
+          background 0.15s ease,
+          transform 0.1s ease;
+      }
+      #next-btn:hover {
+        background: #fff;
+      }
+      #next-btn:active {
+        transform: translateX(-50%) scale(0.95);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Single Minimal Button -->
+    <button id="next-btn">Random Emoji ✨</button>
+
+    <!-- Hidden Sampler Canvas -->
+    <canvas id="sampler" width="24" height="24"></canvas>
+
+    <script>
+      const GRID_SIZE = 24
+      const TOTAL_INSTANCES = GRID_SIZE * GRID_SIZE // 576
+      // The emoji wall is scaled to 50%; the room geometry is not
+      const WALL_SCALE = 0.5
+
+      // Hidden sampling canvas
+      const samplerCanvas = document.getElementById("sampler")
+      const samplerCtx = samplerCanvas.getContext("2d", {
+        willReadFrequently: true,
+      })
+
+      function getEmojiPixelData(emoji) {
+        samplerCtx.clearRect(0, 0, GRID_SIZE, GRID_SIZE)
+        samplerCtx.font = "19px sans-serif"
+        samplerCtx.textAlign = "center"
+        samplerCtx.textBaseline = "middle"
+        samplerCtx.fillText(emoji, GRID_SIZE / 2, GRID_SIZE / 2 + 1)
+        return samplerCtx.getImageData(0, 0, GRID_SIZE, GRID_SIZE).data
+      }
+
+      // Pick a random codepoint from the main Unicode emoji blocks
+      function randomEmoji() {
+        const blocks = [
+          [0x1f300, 0x1f5ff], // Miscellaneous Symbols and Pictographs
+          [0x1f600, 0x1f64f], // Emoticons
+          [0x1f680, 0x1f6ff], // Transport and Map Symbols
+          [0x1f900, 0x1f9ff], // Supplemental Symbols and Pictographs
+          [0x1fa70, 0x1faff], // Symbols and Pictographs Extended-A
+          [0x2600, 0x27bf], // Miscellaneous Symbols / Dingbats
+        ]
+        const [start, end] = blocks[Math.floor(Math.random() * blocks.length)]
+        const code = start + Math.floor(Math.random() * (end - start + 1))
+        let emoji = String.fromCodePoint(code)
+        // Variation selector forces emoji (color) presentation for BMP glyphs
+        if (code < 0x10000) emoji += "\uFE0F"
+        return emoji
+      }
+
+      // Scene Setup
+      const scene = new THREE.Scene()
+      scene.background = new THREE.Color(0xeef2f6)
+      scene.fog = new THREE.FogExp2(0xeef2f6, 0.012)
+
+      const camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      )
+      camera.position.set(0, 0, 26)
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true })
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      renderer.toneMapping = THREE.ACESFilmicToneMapping
+      renderer.toneMappingExposure = 1.15
+      document.body.appendChild(renderer.domElement)
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement)
+      controls.enableDamping = true
+      controls.dampingFactor = 0.05
+      controls.maxDistance = 38
+      controls.minDistance = 10
+      controls.maxPolarAngle = Math.PI / 2 + 0.02
+      controls.target.set(0, 0, 0)
+
+      // Room Geometry & Materials
+      const wallMat = new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        roughness: 0.92,
+        metalness: 0.02,
+      })
+      const recessMat = new THREE.MeshStandardMaterial({
+        color: 0x8b5a2b,
+        roughness: 0.85,
+        metalness: 0.05,
+      }) // brown background panel
+      const frameMat = new THREE.MeshStandardMaterial({
+        color: 0xcbd5e1,
+        roughness: 0.5,
+        metalness: 0.1,
+      })
+      const floorMat = new THREE.MeshStandardMaterial({
+        color: 0xd3dce6,
+        roughness: 0.35,
+        metalness: 0.15,
+      })
+
+      const roomGroup = new THREE.Group()
+
+      const backWall = new THREE.Mesh(new THREE.BoxGeometry(50, 36, 1), wallMat)
+      backWall.position.set(0, 0, -1.2)
+      roomGroup.add(backWall)
+
+      const recessFrame = new THREE.Mesh(
+        new THREE.BoxGeometry(12.25, 10.9, 0.4),
+        recessMat
+      )
+      recessFrame.position.set(0, 0, -0.6)
+      roomGroup.add(recessFrame)
+
+      const shadowFrame = new THREE.Mesh(
+        new THREE.BoxGeometry(12.55, 11.2, 0.2),
+        frameMat
+      )
+      shadowFrame.position.set(0, 0, -0.95)
+      roomGroup.add(shadowFrame)
+
+      const floor = new THREE.Mesh(new THREE.PlaneGeometry(50, 40), floorMat)
+      floor.rotation.x = -Math.PI / 2
+      floor.position.set(0, -12, 18)
+      roomGroup.add(floor)
+
+      scene.add(roomGroup)
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.85)
+      scene.add(ambientLight)
+
+      const gallerySpot = new THREE.SpotLight(0xfffdfa, 2.0)
+      gallerySpot.position.set(0, 15, 12)
+      gallerySpot.target.position.set(0, 0, 0)
+      gallerySpot.angle = Math.PI / 3.2
+      gallerySpot.penumbra = 0.6
+      scene.add(gallerySpot)
+      scene.add(gallerySpot.target)
+
+      // Instanced pure planar triangle mesh (1 GPU draw call)
+      const planarTriGeom = new THREE.CircleGeometry(0.58 * WALL_SCALE, 3)
+      planarTriGeom.rotateZ(Math.PI / 6)
+
+      const material = new THREE.MeshStandardMaterial({
+        roughness: 0.35,
+        metalness: 0.1,
+        flatShading: true,
+        side: THREE.DoubleSide,
+      })
+
+      const instancedMesh = new THREE.InstancedMesh(
+        planarTriGeom,
+        material,
+        TOTAL_INSTANCES
+      )
+      scene.add(instancedMesh)
+
+      const dummy = new THREE.Object3D()
+      const color = new THREE.Color()
+      const instancesData = []
+
+      const SPACING_X = 0.95 * WALL_SCALE
+      const SPACING_Y = 0.84 * WALL_SCALE
+      const HALF_GRID = (GRID_SIZE - 1) / 2
+
+      for (let y = 0; y < GRID_SIZE; y++) {
+        for (let x = 0; x < GRID_SIZE; x++) {
+          const index = y * GRID_SIZE + x
+          const posX = (x - HALF_GRID) * SPACING_X
+          const posY = (HALF_GRID - y) * SPACING_Y
+
+          // Static concentric wave orientation
+          const dist = Math.hypot(x - HALF_GRID, y - HALF_GRID)
+          const rotZ = dist * 0.4
+          const rotX = Math.sin(dist * 0.5) * 0.3
+
+          instancesData.push({
+            index,
+            x,
+            y,
+            posX,
+            posY,
+            rotX,
+            rotY: 0,
+            rotZ,
+            z: 0,
+            scale: 0.1,
+            r: 0.1,
+            g: 0.1,
+            b: 0.15,
+          })
+        }
+      }
+
+      function updateWall(emoji) {
+        const pixelData = getEmojiPixelData(emoji)
+
+        for (let i = 0; i < TOTAL_INSTANCES; i++) {
+          const item = instancesData[i]
+          const pixelIndex = i * 4
+
+          const r = pixelData[pixelIndex] / 255
+          const g = pixelData[pixelIndex + 1] / 255
+          const b = pixelData[pixelIndex + 2] / 255
+          const alpha = pixelData[pixelIndex + 3] / 255
+
+          const luminance = 0.299 * r + 0.587 * g + 0.114 * b
+
+          if (alpha > 0.1) {
+            item.r = r
+            item.g = g
+            item.b = b
+            item.scale = 1.0
+            // Cuboid front face is at z = -0.4; keep a small ~0.1 gap,
+            // then lift triangles by pixel luminance (max 0.2)
+            item.z = luminance * 0.5 - 0.3
+          } else {
+            // Empty cells are hidden entirely (no background triangles)
+            item.scale = 0
+            item.z = -0.4 * WALL_SCALE
+          }
+        }
+      }
+
+      function triggerNextRandomEmoji() {
+        updateWall(randomEmoji())
+      }
+
+      document.getElementById("next-btn").addEventListener("click", (e) => {
+        e.stopPropagation()
+        triggerNextRandomEmoji()
+      })
+
+      let mouseDownTime = 0
+      window.addEventListener("mousedown", () => {
+        mouseDownTime = Date.now()
+      })
+      window.addEventListener("click", (e) => {
+        if (e.target.closest("button")) return
+        if (Date.now() - mouseDownTime < 200) {
+          triggerNextRandomEmoji()
+        }
+      })
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+        renderer.setSize(window.innerWidth, window.innerHeight)
+      })
+
+      function animate() {
+        requestAnimationFrame(animate)
+
+        for (let i = 0; i < TOTAL_INSTANCES; i++) {
+          const item = instancesData[i]
+
+          dummy.position.set(item.posX, item.posY, item.z)
+          dummy.rotation.set(item.rotX, item.rotY, item.rotZ)
+          dummy.scale.set(item.scale, item.scale, item.scale)
+          dummy.updateMatrix()
+
+          instancedMesh.setMatrixAt(i, dummy.matrix)
+
+          color.setRGB(item.r, item.g, item.b)
+          instancedMesh.setColorAt(i, color)
+        }
+
+        instancedMesh.instanceMatrix.needsUpdate = true
+        if (instancedMesh.instanceColor)
+          instancedMesh.instanceColor.needsUpdate = true
+
+        controls.update()
+        renderer.render(scene, camera)
+      }
+
+      updateWall(randomEmoji())
+      animate()
+    </script>
+  </body>
+</html>
