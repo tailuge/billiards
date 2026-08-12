@@ -4,10 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>3D Emoji Wall</title>
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- OrbitControls -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Same three.js version as cue.html -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+        }
+      }
+    </script>
     <style>
       body,
       html {
@@ -63,7 +68,10 @@
     <!-- Hidden Sampler Canvas -->
     <canvas id="sampler" width="24" height="24"></canvas>
 
-    <script>
+    <script type="module">
+      import * as THREE from "three"
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js"
+
       const GRID_SIZE = 24
       const TOTAL_INSTANCES = GRID_SIZE * GRID_SIZE // 576
       // The emoji wall is scaled to 50%; the room geometry is not
@@ -122,7 +130,7 @@
       renderer.toneMappingExposure = 1.15
       document.body.appendChild(renderer.domElement)
 
-      const controls = new THREE.OrbitControls(camera, renderer.domElement)
+      const controls = new OrbitControls(camera, renderer.domElement)
       controls.enableDamping = true
       controls.dampingFactor = 0.05
       controls.maxDistance = 38
