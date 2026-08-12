@@ -160,7 +160,9 @@ describe("Menu", () => {
 
     expect(container.controller.name).to.equal("End")
     expect(notification?.innerHTML).to.contain("YOU LOST")
-    expect(notification?.innerHTML).to.contain("data-notification-action=\"lobby\"")
+    expect(notification?.innerHTML).to.contain(
+      'data-notification-action="lobby"'
+    )
     expect(notification?.innerHTML).to.contain("Back to Lobby")
     expect(notification?.innerHTML).to.contain("New Game")
 

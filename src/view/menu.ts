@@ -92,7 +92,9 @@ export class Menu {
           {
             type: "Info",
             title: "Concede Game",
-            subtext: this.container.isSinglePlayer ? "game will end" : "opponent will win",
+            subtext: this.container.isSinglePlayer
+              ? "game will end"
+              : "opponent will win",
             extra:
               '<button class="notification-btn" data-notification-action="concede-confirm">Concede</button>' +
               '<button class="notification-btn" data-notification-action="concede-cancel">Play on</button>',
