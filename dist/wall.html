@@ -485,7 +485,6 @@
             }
           }
 
-          // Generate all 676 combinations of Regional Indicator Symbols A-Z (country flags)
           for (let first = 0x1f1e6; first <= 0x1f1ff; first++) {
             for (let second = 0x1f1e6; second <= 0x1f1ff; second++) {
               list.push(
@@ -494,18 +493,9 @@
             }
           }
 
-          // Add standard flag sequences (Rainbow, Transgender, Pirate, subdivision flags like England, Scotland, Wales)
-          const standardFlags = [
-            "🏳️‍🌈", // Rainbow Flag
-            "🏳️‍⚧️", // Transgender Flag
-            "🏴‍☠️", // Pirate Flag
-            "🏴󠁧󠁢󠁥󠁮󠁧󠁿", // England
-            "🏴󠁧󠁢󠁳󠁣󠁴󠁿", // Scotland
-            "🏴󠁧󠁢󠁷󠁬󠁳󠁿", // Wales
-          ]
+          const standardFlags = ["🏳️‍🌈", "🏳️‍⚧️", "🏴‍☠️", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🏴󠁧󠁢󠁷󠁬󠁳󠁿"]
           list.push(...standardFlags)
 
-          // Add Fitzpatrick skin tone modifiers applied to various base emojis
           const baseSkinToneEmojis = [
             "👋",
             "✋",
@@ -530,7 +520,6 @@
             }
           }
 
-          // Add Keycaps
           const keycaps = [
             "0️⃣",
             "1️⃣",
@@ -547,7 +536,6 @@
           ]
           list.push(...keycaps)
 
-          // Add standard ZWJ sequences
           const zwjSequences = [
             "🧑‍🚀",
             "🧑‍🚒",
