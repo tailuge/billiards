@@ -88,25 +88,6 @@
         gap: 8px;
         margin-bottom: 8px;
       }
-      .emoji-btn {
-        width: 44px;
-        height: 44px;
-        font-size: 1.7rem;
-        line-height: 1;
-        border: 1px solid var(--panel-border);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.04);
-        cursor: pointer;
-        transition:
-          background-color 0.15s ease,
-          border-color 0.15s ease;
-      }
-      .emoji-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-      .emoji-btn.active {
-        border-color: var(--accent);
-      }
       .profile-meta {
         display: flex;
         flex-direction: column;
@@ -265,14 +246,11 @@
     <!-- Emoji picker panel -->
     <aside id="params">
       <div class="profile-row">
-        <button id="emoji-btn" class="emoji-btn" title="Choose emoji">
-          📺
-        </button>
         <div class="profile-meta">
           <span id="profile-name" class="profile-name">Lukey</span>
         </div>
       </div>
-      <div id="emoji-picker-mount" style="display: none"></div>
+      <div id="emoji-picker-mount"></div>
       <div class="done-row">
         <button id="done">Done</button>
       </div>
@@ -1089,18 +1067,7 @@
         },
       })
 
-      const emojiBtn = document.getElementById("emoji-btn")
       const profileNameEl = document.getElementById("profile-name")
-      const pickerMount = document.getElementById("emoji-picker-mount")
-
-      // The current emoji acts as the button that opens/closes the picker
-      // inside the panel; the wall follows the picker choice (persisted).
-      let pickerOpen = false
-      emojiBtn.addEventListener("click", () => {
-        pickerOpen = !pickerOpen
-        pickerMount.style.display = pickerOpen ? "" : "none"
-        emojiBtn.classList.toggle("active", pickerOpen)
-      })
 
       const picker = new EmojiPicker({
         container: "#emoji-picker-mount",
@@ -1108,7 +1075,6 @@
         initialEmoji: state.emoji,
         onSelect: (emoji) => {
           state.emoji = emoji
-          emojiBtn.textContent = emoji
           emojiWall.setState({ emoji })
           saveState()
         },
@@ -1125,7 +1091,6 @@
         saveState()
       }
 
-      emojiBtn.textContent = state.emoji
       profileNameEl.textContent = userName
       // Redraw once the webfont has loaded so the plaque text uses Exo.
       if (document.fonts && document.fonts.ready) {
