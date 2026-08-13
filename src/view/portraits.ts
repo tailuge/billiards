@@ -10,6 +10,29 @@ import {
 
 export const DEFAULT_EMOJI = "📺"
 
+// Regional-indicator symbol for "A" (U+1F1E6); the letters A–Z are contiguous.
+const REGIONAL_INDICATOR_A = 0x1f1e6
+
+/**
+ * Best-effort flag emoji for the player's browser locale (e.g. "en-GB" →
+ * 🇬🇧). Reads the BCP 47 region subtag from `navigator.language` and converts
+ * it to a pair of regional-indicator symbols; falls back to `DEFAULT_EMOJI`
+ * when the locale carries no usable two-letter region.
+ */
+export function localeFlagEmoji(): string {
+  if (typeof navigator === "undefined") return DEFAULT_EMOJI
+  const locale = navigator.language
+  // en-US is a near-universal OS default that rarely reflects the player's
+  // real country, so show a globe instead of a misleading 🇺🇸.
+  if (locale.toLowerCase() === "en-us") return "🌎"
+  const region = locale.split("-").pop()?.toUpperCase() ?? ""
+  if (!/^[A-Z]{2}$/.test(region)) return DEFAULT_EMOJI
+  return String.fromCodePoint(
+    REGIONAL_INDICATOR_A + (region.charCodeAt(0) - 65),
+    REGIONAL_INDICATOR_A + (region.charCodeAt(1) - 65)
+  )
+}
+
 export interface PortraitMode {
   roomVisible: boolean
   singlePlayer: boolean
@@ -25,9 +48,10 @@ export interface PortraitSpec {
 /**
  * Decides which portraits to show for the current mode, separated from how
  * they are rendered. `mine` is always on the +X wall and the opponent on the
- * −X wall. Emoji is optional at every level (falls back to DEFAULT_EMOJI);
- * names are optional (the plaque hides when empty), so replay/spectator modes
- * work even though their emoji data is absent.
+ * −X wall. Emoji is optional at every level (falls back to a locale flag, or
+ * DEFAULT_EMOJI when the browser exposes no region); names are optional (the
+ * plaque hides when empty), so replay/spectator modes work even though their
+ * emoji data is absent.
  */
 export function portraitSpecs(
   mode: PortraitMode,
@@ -41,12 +65,12 @@ export function portraitSpecs(
   if (session.spectator) {
     return [
       {
-        emoji: DEFAULT_EMOJI,
+        emoji: localeFlagEmoji(),
         name: session.spectatedP1Name || undefined,
         placement: PLUS_X_WALL,
       },
       {
-        emoji: DEFAULT_EMOJI,
+        emoji: localeFlagEmoji(),
         name: session.spectatedP2Name || undefined,
         placement: MINUS_X_WALL,
       },
@@ -54,7 +78,7 @@ export function portraitSpecs(
   }
 
   const mine: PortraitSpec = {
-    emoji: session.customParams["emoji"] || DEFAULT_EMOJI,
+    emoji: session.customParams["emoji"] || localeFlagEmoji(),
     name: session.playername || undefined,
     placement: PLUS_X_WALL,
   }
@@ -63,7 +87,7 @@ export function portraitSpecs(
   return [
     mine,
     {
-      emoji: session.opponentParams["emoji"] || DEFAULT_EMOJI,
+      emoji: session.opponentParams["emoji"] || localeFlagEmoji(),
       name: session.opponentName || undefined,
       placement: MINUS_X_WALL,
     },
