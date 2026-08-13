@@ -56,15 +56,21 @@ export abstract class ControllerBase extends Controller {
     this.container.updateScoreHud(event.p1, event.p2, event.b, event.active)
 
     const rulename = this.container.rules.rulename
-    if (
-      !this.container.replayMode &&
-      (rulename === "threecushion" || rulename === "sagu") &&
-      this.container.rules.isEndOfGame([]) &&
-      this.name !== "End"
-    ) {
-      const myTarget = session.getRaceTargetForPlayer(session.clientId)
-      const amIWinner = session.myScore() >= myTarget
-      return this.container.rules.handleGameEnd(amIWinner)
+    if (!this.container.replayMode && this.name !== "End") {
+      if (
+        (rulename === "threecushion" || rulename === "sagu") &&
+        this.container.rules.isEndOfGame([])
+      ) {
+        const myTarget = session.getRaceTargetForPlayer(session.clientId)
+        const amIWinner = session.myScore() >= myTarget
+        return this.container.rules.handleGameEnd(amIWinner)
+      }
+      // Snooker ends by clearing the table; the shooter is authoritative for
+      // the final score, so the watcher must conclude from the received
+      // ScoreEvent (synced above) rather than from its own local physics.
+      if (rulename === "snooker" && this.container.rules.isEndOfGame([])) {
+        return this.container.rules.handleGameEnd(false)
+      }
     }
 
     return this

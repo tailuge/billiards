@@ -21,6 +21,10 @@ import { Table } from "../../src/model/table"
 import { zero } from "../../src/utils/three-utils"
 import { Session } from "../../src/network/client/session"
 import { End } from "../../src/controller/end"
+import { WatchShot } from "../../src/controller/watchshot"
+import { ScoreEvent } from "../../src/events/scoreevent"
+import { StationaryEvent } from "../../src/events/stationaryevent"
+import { MatchResult } from "../../src/network/client/matchresult"
 
 initDom()
 
@@ -629,6 +633,43 @@ describe("Snooker", () => {
       Session.reset()
     }
   )
+
+  it("watcher concludes snooker from final ScoreEvent, not stale local physics", () => {
+    container.isSinglePlayer = false
+    Session.init("1", "Player A", "table", false)
+    const session = Session.getInstance()
+    session.playerIndex = 0
+    session.opponentName = "Player B"
+    broadcastEvents = []
+    container.broadcast = (x) => broadcastEvents.push(x)
+
+    // Winner (me) is ahead 50-30, but the opponent just potted the final ball:
+    // their real score is 37 and the authoritative ScoreEvent hasn't arrived yet.
+    session.updateScoresFromNetwork(50, 30, 0)
+
+    // Clear the table locally as the watcher's own physics would.
+    table.balls.forEach((b) => {
+      if (b !== table.cueball) b.state = State.InPocket
+    })
+
+    const watchShot = new WatchShot(container)
+
+    // Local stationary must NOT end the game for snooker (this was the race).
+    expect(watchShot.handleStationary(new StationaryEvent())).to.equal(
+      watchShot
+    )
+
+    // The authoritative final ScoreEvent ends the game with synced scores.
+    const endController = watchShot.handleScore(new ScoreEvent(50, 37, 0))
+    expect(endController).to.be.instanceOf(End)
+    const result = (endController as any).result as MatchResult
+    expect(result.winner).to.equal("Player A")
+    expect(result.winnerScore).to.equal(50)
+    expect(result.loser).to.equal("Player B")
+    expect(result.loserScore).to.equal(37)
+
+    Session.reset()
+  })
 
   it("nextCandidateBall logic", () => {
     // First shot should return undefined
