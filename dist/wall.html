@@ -776,11 +776,14 @@
         const borderGeometry = createBorderGeometry(1.225, 1.09, 0.015)
         const borderMesh = new THREE.Mesh(borderGeometry, borderMat)
         borderMesh.position.x = -0.065
+        // TEMP: hide the portrait border frame (matches portrait.ts).
+        borderMesh.visible = false
         wallGroup.add(borderMesh)
 
         // Fake drop shadow of the border, offset in local YZ and flush against the wall.
         const borderShadowMesh = new THREE.Mesh(borderGeometry, borderShadowMat)
         borderShadowMesh.position.set(-0.069, 0.008, -0.008)
+        borderShadowMesh.visible = false
         wallGroup.add(borderShadowMesh)
 
         // Instanced pure planar triangle mesh (1 GPU draw call), lying in the
@@ -907,13 +910,13 @@
           depthWrite: false,
         })
 
-        // 512/96 = 0.4/0.075, so the texture keeps its aspect ratio on the plane.
+        // 512/96 = 0.6/0.1125, so the texture keeps its aspect ratio on the plane.
         const plate = new THREE.Mesh(
-          createWallQuadGeometry(0.4, 0.075),
+          createWallQuadGeometry(0.6, 0.1125),
           plateMat
         )
         // The border's inner hole spans z in [-0.545, 0.545]; mount the plaque below it.
-        plate.position.set(-0.055, 0, -0.63)
+        plate.position.set(-0.055, 0, -0.6)
         wallGroup.add(plate)
 
         function drawPlate() {
