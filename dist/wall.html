@@ -71,7 +71,7 @@
         position: fixed;
         top: 8px;
         left: 8px;
-        width: 240px;
+        width: 180px;
         padding: 8px;
         background: var(--panel);
         border: 1px solid var(--panel-border);
@@ -123,10 +123,10 @@
         justify-content: center;
       }
 
-      /* 8x15 = 120 cells per page, same pageSize as before */
+      /* 6x15 = 90 cells per page */
       .emoji-grid {
         display: grid;
-        grid-template-columns: repeat(8, 1fr);
+        grid-template-columns: repeat(6, 1fr);
         grid-template-rows: repeat(15, 1fr);
         gap: 3px;
         width: 100%;
@@ -318,7 +318,7 @@
               ? document.querySelector(options.container)
               : options.container
 
-          this.pageSize = options.pageSize || 120
+          this.pageSize = options.pageSize || 90
           this.initialEmoji = options.initialEmoji || "📺"
           this.onSelect = options.onSelect || null
 
@@ -606,14 +606,14 @@
       const renderer = new THREE.WebGLRenderer({ antialias: true })
       renderer.setSize(window.innerWidth, window.innerHeight)
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-      renderer.toneMapping = THREE.ACESFilmicToneMapping
-      renderer.toneMappingExposure = 1.15
+      // Match the game (src/utils/webgl.ts): no filmic tone-mapping curve.
+      renderer.toneMapping = THREE.NoToneMapping
       view.appendChild(renderer.domElement)
 
       const controls = new OrbitControls(camera, renderer.domElement)
       controls.enableDamping = true
       controls.dampingFactor = 0.05
-      controls.maxDistance = 3.8
+      controls.maxDistance = 8
       controls.minDistance = 1
       controls.maxPolarAngle = Math.PI / 2 + 0.02
       controls.target.set(0, 0, 0)
@@ -1061,17 +1061,30 @@
       floor.position.set(1.8, 0, -1.2)
       scene.add(floor)
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.85)
+      // Lighting mirrors the two KHR_lights_punctual point lights in
+      // threecushion.gltf, plus the game's dim green ambient (view.ts).
+      // glTF positions are scaled by the game's R/0.5 import factor (0.0655)
+      // and placed in front of the wall.
+      const ambientLight = new THREE.AmbientLight(0x009922, 0.3)
       scene.add(ambientLight)
-      // SpotLight intensity follows the inverse-square law, so it drops 100x
-      // when all scene distances are reduced by 10x.
-      const gallerySpot = new THREE.SpotLight(0xfffdfa, 0.02)
-      gallerySpot.position.set(1.2, 0, 1.5)
-      gallerySpot.target.position.set(0, 0, 0)
-      gallerySpot.angle = Math.PI / 3.2
-      gallerySpot.penumbra = 0.6
-      scene.add(gallerySpot)
-      scene.add(gallerySpot.target)
+
+      const warmLight = new THREE.PointLight(0xffffff, 5.435141387578143)
+      warmLight.color.setRGB(
+        0.8555447459220886,
+        0.8347910046577454,
+        0.6743659973144531
+      )
+      warmLight.position.set(4.0, 0.03, 1.244)
+      scene.add(warmLight)
+
+      const coolLight = new THREE.PointLight(0xffffff, 5.435141387578143)
+      coolLight.color.setRGB(
+        0.6981927156448364,
+        0.6981927156448364,
+        0.6981927156448364
+      )
+      coolLight.position.set(6.0, -0.012, 1.31)
+      scene.add(coolLight)
 
       const emojiWall = createEmojiWall(scene, {
         ...state,
@@ -1086,7 +1099,7 @@
 
       const picker = new EmojiPicker({
         container: "#emoji-picker-mount",
-        pageSize: 120,
+        pageSize: 90,
         initialEmoji: state.emoji,
         onSelect: (emoji) => {
           state.emoji = emoji
