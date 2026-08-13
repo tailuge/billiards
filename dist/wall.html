@@ -790,7 +790,7 @@
         planarTriGeom.rotateY(Math.PI / 2)
 
         const material = new THREE.MeshStandardMaterial({
-          roughness: 0.35,
+          roughness: 0.9,
           metalness: 0.1,
           flatShading: true,
         })
@@ -1061,8 +1061,8 @@
       floor.position.set(1.8, 0, -1.2)
       scene.add(floor)
 
-      // Lighting mirrors the two KHR_lights_punctual point lights in
-      // threecushion.gltf, plus the game's dim green ambient (view.ts).
+      // Two point lights mirror threecushion.gltf (KHR_lights_punctual), plus
+      // the game's dim green ambient (view.ts).
       // glTF positions are scaled by the game's R/0.5 import factor (0.0655)
       // and placed in front of the wall.
       const ambientLight = new THREE.AmbientLight(0x009922, 0.3)
@@ -1074,7 +1074,7 @@
         0.8347910046577454,
         0.6743659973144531
       )
-      warmLight.position.set(4.0, 0.03, 1.244)
+      warmLight.position.set(1.244, 0.03, 1.244)
       scene.add(warmLight)
 
       const coolLight = new THREE.PointLight(0xffffff, 5.435141387578143)
@@ -1083,7 +1083,7 @@
         0.6981927156448364,
         0.6981927156448364
       )
-      coolLight.position.set(6.0, -0.012, 1.31)
+      coolLight.position.set(1.31, -0.012, 1.31)
       scene.add(coolLight)
 
       const emojiWall = createEmojiWall(scene, {

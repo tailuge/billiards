@@ -112,11 +112,14 @@ export class Portrait {
     const borderGeometry = Portrait.createBorderGeometry(1.225, 1.09, 0.015)
     const borderMesh = new Mesh(borderGeometry, borderMat)
     borderMesh.position.x = -0.065
+    // TEMP: hide the portrait border frame.
+    borderMesh.visible = false
     this.group.add(borderMesh)
 
     // Fake drop shadow of the border, flush against the wall.
     const borderShadowMesh = new Mesh(borderGeometry, borderShadowMat)
     borderShadowMesh.position.set(-0.069, 0.008, -0.008)
+    borderShadowMesh.visible = false
     this.group.add(borderShadowMesh)
 
     // Instanced planar triangles (1 GPU draw call), lying in the wall plane
@@ -126,7 +129,7 @@ export class Portrait {
     planarTriGeom.rotateY(Math.PI / 2)
 
     const material = new MeshStandardMaterial({
-      roughness: 0.35,
+      roughness: 0.9,
       metalness: 0.1,
       flatShading: true,
     })
@@ -187,10 +190,13 @@ export class Portrait {
       transparent: true,
       depthWrite: false,
     })
-    // 512/96 = 0.4/0.075, so the texture keeps its aspect ratio on the plane.
-    this.plate = new Mesh(Portrait.createWallQuadGeometry(0.4, 0.075), plateMat)
+    // 512/96 = 0.6/0.1125, so the texture keeps its aspect ratio on the plane.
+    this.plate = new Mesh(
+      Portrait.createWallQuadGeometry(0.6, 0.1125),
+      plateMat
+    )
     // The border's inner hole spans z in [-0.545, 0.545]; mount below it.
-    this.plate.position.set(-0.055, 0, -0.63)
+    this.plate.position.set(-0.055, 0, -0.6)
     this.group.add(this.plate)
 
     // Orient + position + scale the whole overlay, then add it to the scene.
