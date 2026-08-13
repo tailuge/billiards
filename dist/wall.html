@@ -116,30 +116,10 @@
       .profile-name {
         font-size: 0.85rem;
         font-weight: 200;
-        outline: none;
-        border-bottom: 1px dashed transparent;
-        transition: border-color 0.15s ease;
-        padding: 1px 2px;
-        border-radius: 3px;
-      }
-      .profile-name:hover,
-      .profile-name:focus {
-        border-bottom-color: var(--accent);
-        background: rgba(255, 255, 255, 0.04);
       }
       .profile-elo {
         font-size: 0.7rem;
         color: var(--muted);
-        outline: none;
-        border-bottom: 1px dashed transparent;
-        transition: border-color 0.15s ease;
-        padding: 1px 2px;
-        border-radius: 3px;
-      }
-      .profile-elo:hover,
-      .profile-elo:focus {
-        border-bottom-color: var(--accent);
-        background: rgba(255, 255, 255, 0.04);
       }
       .check-row {
         display: flex;
@@ -309,20 +289,8 @@
           📺
         </button>
         <div class="profile-meta">
-          <span
-            id="profile-name"
-            class="profile-name"
-            contenteditable="true"
-            title="Edit name"
-            >Lukey</span
-          >
-          <span
-            id="profile-elo"
-            class="profile-elo"
-            contenteditable="true"
-            title="Edit ELO"
-            >ELO 1805</span
-          >
+          <span id="profile-name" class="profile-name">Lukey</span>
+          <span id="profile-elo" class="profile-elo">ELO 1805</span>
         </div>
       </div>
       <div class="check-row">
@@ -372,22 +340,6 @@
 
       function loadState() {
         const saved = { ...(readCustom().wall || {}) }
-        try {
-          const flatEmoji = localStorage.getItem("custom.wall.emoji")
-          if (flatEmoji !== null) saved.emoji = flatEmoji
-          const flatName = localStorage.getItem("custom.wall.name")
-          if (flatName !== null) saved.name = flatName
-          const flatElo = localStorage.getItem("custom.wall.elo")
-          if (flatElo !== null) saved.elo = flatElo
-
-          const flatShowEmoji = localStorage.getItem("custom.wall.showEmoji")
-          if (flatShowEmoji !== null) saved.showEmoji = flatShowEmoji === "true"
-          const flatShowName = localStorage.getItem("custom.wall.showName")
-          if (flatShowName !== null) saved.showName = flatShowName === "true"
-          const flatShowElo = localStorage.getItem("custom.wall.showElo")
-          if (flatShowElo !== null) saved.showElo = flatShowElo === "true"
-        } catch {}
-
         delete saved.bgColour
         const merged = { ...DEFAULT_STATE, ...saved }
         if (typeof merged.emoji !== "string" || merged.emoji.length === 0) {
@@ -408,7 +360,6 @@
       // Read-modify-write: preserve siblings like custom.cue. An empty
       // emoji is coerced to the default so it never persists blank; the
       // wall itself just stays blanked for the rest of the session.
-      // Also write to flat dotted keys in localStorage.
       function saveState() {
         try {
           const custom = readCustom()
@@ -417,22 +368,6 @@
             emoji: state.emoji || DEFAULT_STATE.emoji,
           }
           localStorage.setItem("custom", JSON.stringify(custom))
-
-          localStorage.setItem(
-            "custom.wall.emoji",
-            state.emoji || DEFAULT_STATE.emoji
-          )
-          localStorage.setItem(
-            "custom.wall.name",
-            state.name || DEFAULT_STATE.name
-          )
-          localStorage.setItem(
-            "custom.wall.elo",
-            state.elo || DEFAULT_STATE.elo
-          )
-          localStorage.setItem("custom.wall.showEmoji", String(state.showEmoji))
-          localStorage.setItem("custom.wall.showName", String(state.showName))
-          localStorage.setItem("custom.wall.showElo", String(state.showElo))
         } catch {}
       }
 
@@ -1298,43 +1233,6 @@
       emojiBtn.textContent = state.emoji
       profileNameEl.textContent = state.name
       profileEloEl.textContent = `ELO ${state.elo}`
-
-      // Block enter key on profile-name and profile-elo, save changes on input, blur cleanly
-      const setupEditableSpan = (el, stateKey, formatPrefix = "") => {
-        el.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") {
-            e.preventDefault()
-            el.blur()
-          }
-        })
-        el.addEventListener("focus", () => {
-          // Temporarily strip the prefix (e.g., "ELO ") to edit raw value
-          let val = el.textContent
-          if (formatPrefix && val.startsWith(formatPrefix)) {
-            el.textContent = val.substring(formatPrefix.length)
-          }
-        })
-        el.addEventListener("input", () => {
-          let val = el.textContent.trim()
-          state[stateKey] = val || (stateKey === "elo" ? "0" : "Anon")
-          emojiWall.setState({ [stateKey]: state[stateKey] })
-          saveState()
-        })
-        el.addEventListener("blur", () => {
-          let val = el.textContent.trim()
-          if (!val) {
-            val = stateKey === "elo" ? "0" : "Anon"
-          }
-          state[stateKey] = val
-          el.textContent = formatPrefix + val
-          emojiWall.setState({ [stateKey]: val })
-          saveState()
-        })
-      }
-
-      setupEditableSpan(profileNameEl, "name")
-      setupEditableSpan(profileEloEl, "elo", "ELO ")
-
       // Redraw once the webfont has loaded so the plaque text uses Exo.
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(emojiWall.drawPlate)
