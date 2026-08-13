@@ -71,7 +71,7 @@
         position: fixed;
         top: 8px;
         left: 8px;
-        width: 170px;
+        width: 240px;
         padding: 8px;
         background: var(--panel);
         border: 1px solid var(--panel-border);
@@ -117,26 +117,6 @@
         font-size: 0.85rem;
         font-weight: 200;
       }
-      .profile-elo {
-        font-size: 0.7rem;
-        color: var(--muted);
-      }
-      .check-row {
-        display: flex;
-        gap: 6px;
-        margin: 8px 0;
-      }
-      .check {
-        display: flex;
-        align-items: center;
-        gap: 3px;
-        color: var(--muted);
-        font-size: 9px;
-        cursor: pointer;
-      }
-      .check input {
-        accent-color: var(--accent);
-      }
       /* Emoji picker (ported from emoji.html, dark theme) */
       .emoji-display-input {
         width: 100%;
@@ -162,11 +142,11 @@
         justify-content: center;
       }
 
-      /* 6x20 = 120 cells per page, same pageSize as before */
+      /* 8x15 = 120 cells per page, same pageSize as before */
       .emoji-grid {
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        grid-template-rows: repeat(20, 1fr);
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(15, 1fr);
         gap: 3px;
         width: 100%;
         height: 100%;
@@ -177,7 +157,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.8rem;
+        font-size: 1rem;
         border-radius: 5px;
         cursor: pointer;
         background: transparent;
@@ -290,19 +270,7 @@
         </button>
         <div class="profile-meta">
           <span id="profile-name" class="profile-name">Lukey</span>
-          <span id="profile-elo" class="profile-elo">ELO 1805</span>
         </div>
-      </div>
-      <div class="check-row">
-        <label class="check">
-          <input type="checkbox" id="show-emoji" checked /> Emoji
-        </label>
-        <label class="check">
-          <input type="checkbox" id="show-name" checked /> Name
-        </label>
-        <label class="check">
-          <input type="checkbox" id="show-elo" checked /> ELO
-        </label>
       </div>
       <div id="emoji-picker-mount" style="display: none"></div>
       <div class="done-row">
@@ -317,17 +285,14 @@
       const GRID_SIZE = 24
       const TOTAL_INSTANCES = GRID_SIZE * GRID_SIZE // 576
 
-      // Persisted as `custom.wall` inside the shared `custom` dict in
+      // Persisted as `custom.emoji` inside the shared `custom` dict in
       // localStorage; storage access is guarded so the page works inside a
       // sandboxed iframe. The dict holds siblings like custom.cue, so we
-      // never write the whole dict.
+      // never write the whole dict. The wall stores only the chosen emoji;
+      // the player name comes from the userName query param and is not
+      // persisted.
       const DEFAULT_STATE = {
         emoji: "📺",
-        name: "Lukey",
-        elo: "1805",
-        showEmoji: true,
-        showName: true,
-        showElo: true,
       }
 
       function readCustom() {
@@ -339,39 +304,33 @@
       }
 
       function loadState() {
-        const saved = { ...(readCustom().wall || {}) }
-        delete saved.bgColour
-        const merged = { ...DEFAULT_STATE, ...saved }
-        if (typeof merged.emoji !== "string" || merged.emoji.length === 0) {
-          merged.emoji = DEFAULT_STATE.emoji
-        }
-        if (typeof merged.name !== "string" || merged.name.length === 0) {
-          merged.name = DEFAULT_STATE.name
-        }
-        if (typeof merged.elo !== "string" || merged.elo.length === 0) {
-          merged.elo = DEFAULT_STATE.elo
-        }
-        for (const key of ["showEmoji", "showName", "showElo"]) {
-          if (typeof merged[key] !== "boolean") merged[key] = DEFAULT_STATE[key]
-        }
-        return merged
+        const savedEmoji = readCustom().emoji
+        const emoji =
+          typeof savedEmoji === "string" && savedEmoji.length > 0
+            ? savedEmoji
+            : DEFAULT_STATE.emoji
+        return { emoji }
       }
 
-      // Read-modify-write: preserve siblings like custom.cue. An empty
-      // emoji is coerced to the default so it never persists blank; the
-      // wall itself just stays blanked for the rest of the session.
+      // Read-modify-write: preserve siblings like custom.cue. The wall owns
+      // a single key, custom.emoji; an empty emoji is coerced to the
+      // default so it never persists blank. Any legacy custom.wall dict
+      // from earlier versions is dropped so only custom.emoji remains.
       function saveState() {
         try {
           const custom = readCustom()
-          custom.wall = {
-            ...state,
-            emoji: state.emoji || DEFAULT_STATE.emoji,
-          }
+          custom.emoji = state.emoji || DEFAULT_STATE.emoji
+          delete custom.wall
           localStorage.setItem("custom", JSON.stringify(custom))
         } catch {}
       }
 
       const state = loadState()
+
+      // The player name is passed in by the embedding page and is never
+      // persisted.
+      const userName =
+        new URLSearchParams(window.location.search).get("userName") || ""
 
       // Emoji picker (ported from dist/emoji.html)
       class EmojiPicker {
@@ -474,6 +433,11 @@
 
           // Regex test to ensure code points correspond to valid pictographic emojis
           const emojiRegex = /\p{Extended_Pictographic}/u
+          // Only characters that accept a skin-tone modifier (people, hands,
+          // body parts) can legally be combined with one. Testing the whole
+          // Extended_Pictographic set here produces illegal sequences like
+          // "💢🏼" (anger symbol + skin tone), which render as two glyphs.
+          const modifierBaseRegex = /\p{Emoji_Modifier_Base}/u
           const list = []
 
           for (const [start, end] of ranges) {
@@ -485,12 +449,19 @@
             }
           }
 
-          for (let first = 0x1f1e6; first <= 0x1f1ff; first++) {
-            for (let second = 0x1f1e6; second <= 0x1f1ff; second++) {
-              list.push(
-                String.fromCodePoint(first) + String.fromCodePoint(second)
+          // Only emit assigned regional-indicator pairs (taken from Unicode's
+          // emoji-sequences.txt RGI_Emoji_Flag_Sequence list). The other 417
+          // pairs are unassigned and render as two bare letter glyphs.
+          const validFlagCodes =
+            "ACADAEAFAGAIALAMAOAQARASATAUAWAXAZBABBBDBEBFBGBHBIBJBLBMBNBOBQBRBSBTBVBWBYBZCACCCDCFCGCHCICKCLCMCNCOCPCQCRCUCVCWCXCYCZDEDGDJDKDMDODZEAECEEEGEHERESETEUFIFJFKFMFOFRGAGBGDGEGFGGGHGIGLGMGNGPGQGRGSGTGUGWGYHKHMHNHRHTHUICIDIEILIMINIOIQIRISITJEJMJOJPKEKGKHKIKMKNKPKRKWKYKZLALBLCLILKLRLSLTLULVLYMAMCMDMEMFMGMHMKMLMMMNMOMPMQMRMSMTMUMVMWMXMYMZNANCNENFNGNINLNONPNRNUNZOMPAPEPFPGPHPKPLPMPNPRPSPTPWPYQARERORSRURWSASBSCSDSESGSHSISJSKSLSMSNSOSRSSSTSVSXSYSZTATCTDTFTGTHTJTKTLTMTNTOTRTTTVTWTZUAUGUMUNUSUYUZVAVCVEVGVIVNVUWFWSXKYEYTZAZMZW"
+          for (let i = 0; i < validFlagCodes.length; i += 2) {
+            const cc = validFlagCodes.substr(i, 2)
+            list.push(
+              String.fromCodePoint(
+                0x1f1e6 + cc.charCodeAt(0) - 65,
+                0x1f1e6 + cc.charCodeAt(1) - 65
               )
-            }
+            )
           }
 
           list.push(String.fromCodePoint(0x1f3f3, 0xfe0f, 0x200d, 0x1f308))
@@ -518,7 +489,7 @@
           for (const [start, end] of modifierRanges) {
             for (let code = start; code <= end; code++) {
               const char = String.fromCodePoint(code)
-              if (emojiRegex.test(char)) {
+              if (modifierBaseRegex.test(char)) {
                 for (const mod of modifiers) {
                   list.push(char + String.fromCodePoint(mod))
                 }
@@ -532,11 +503,12 @@
           list.push(String.fromCodePoint(35, 0xfe0f, 0x20e3))
           list.push(String.fromCodePoint(42, 0xfe0f, 0x20e3))
 
+          // (0x1f3ef castle and 0x1f3f3 white flag were dropped: person + ZWJ
+          // + castle/white-flag are not valid emoji sequences.)
           const zwjBases = [0x1f468, 0x1f469, 0x1f9d1]
           const zwjObjects = [
-            0x1f3a4, 0x1f3a8, 0x1f3eb, 0x1f3ef, 0x1f3f3, 0x1f4bb, 0x1f4bc,
-            0x1f527, 0x1f52c, 0x1f680, 0x1f692, 0x1f9b0, 0x1f9b1, 0x1f9b2,
-            0x1f9b3,
+            0x1f3a4, 0x1f3a8, 0x1f3eb, 0x1f4bb, 0x1f4bc, 0x1f527, 0x1f52c,
+            0x1f680, 0x1f692, 0x1f9b0, 0x1f9b1, 0x1f9b2, 0x1f9b3,
           ]
           for (const base of zwjBases) {
             for (const obj of zwjObjects) {
@@ -684,10 +656,6 @@
         const state = {
           emoji: options.emoji ?? "📺",
           name: options.name ?? "",
-          elo: options.elo ?? "",
-          showEmoji: options.showEmoji ?? true,
-          showName: options.showName ?? true,
-          showElo: options.showElo ?? true,
         }
 
         const samplerCanvas = document.createElement("canvas")
@@ -897,10 +865,8 @@
           }
         }
 
-        // Name/ELO plate: a thin rectangle mounted on the wall below the
-        // border, textured with the player name and ELO. The "Show name" /
-        // "Show ELO" checkboxes toggle which parts are drawn (the plate is
-        // hidden when both are off).
+        // Name plate: a thin rectangle mounted on the wall below the border,
+        // textured with the player name.
 
         /**
          * Minimal quad in the wall plane (YZ), facing the camera (+X), with
@@ -963,7 +929,7 @@
         wallGroup.add(plate)
 
         function drawPlate() {
-          plate.visible = state.showName || state.showElo
+          plate.visible = state.name.length > 0
           if (!plate.visible) return
 
           plateCtx.clearRect(0, 0, plateCanvas.width, plateCanvas.height)
@@ -983,21 +949,12 @@
           plateCtx.textAlign = "center"
           plateCtx.textBaseline = "middle"
 
-          const nameText = state.showName ? state.name : ""
-          const eloText = state.showElo ? `ELO ${state.elo}` : ""
-          const sep = nameText && eloText ? "  ·  " : ""
-
-          // Prefer 60px Exo but shrink to fit long names/ELOs on the plaque.
+          // Prefer 60px Exo but shrink to fit long names on the plaque.
           let fontPx = 60
           let totalWidth = 0
           do {
             plateCtx.font = `200 ${fontPx}px 'Exo', sans-serif`
-            const nameWidth = nameText
-              ? plateCtx.measureText(nameText).width
-              : 0
-            const sepWidth = sep ? plateCtx.measureText(sep).width : 0
-            const eloWidth = eloText ? plateCtx.measureText(eloText).width : 0
-            totalWidth = nameWidth + sepWidth + eloWidth
+            totalWidth = plateCtx.measureText(state.name).width
             if (totalWidth > plateCanvas.width - 24 && fontPx > 32) {
               fontPx -= 4
             } else {
@@ -1005,43 +962,25 @@
             }
           } while (true)
 
-          const y = plateCanvas.height / 2
-          const nameWidth = nameText ? plateCtx.measureText(nameText).width : 0
-          const sepWidth = sep ? plateCtx.measureText(sep).width : 0
-          const eloWidth = eloText ? plateCtx.measureText(eloText).width : 0
-          let x = plateCanvas.width / 2 - totalWidth / 2
-
-          if (nameText) {
-            plateCtx.fillStyle = "#e6edf3"
-            plateCtx.fillText(nameText, x + nameWidth / 2, y)
-            x += nameWidth
-          }
-          if (sep) {
-            plateCtx.fillStyle = "#8b95a5"
-            plateCtx.fillText(sep, x + sepWidth / 2, y)
-            x += sepWidth
-          }
-          if (eloText) {
-            plateCtx.fillStyle = "#8b95a5"
-            plateCtx.fillText(eloText, x + eloWidth / 2, y)
-          }
+          plateCtx.fillStyle = "#e6edf3"
+          plateCtx.fillText(
+            state.name,
+            plateCanvas.width / 2,
+            plateCanvas.height / 2
+          )
 
           plateTexture.needsUpdate = true
         }
 
-        // The wall follows the picker choice (persisted across visits). When
-        // the "Show emoji" checkbox is off the wall is blanked entirely.
+        // The wall follows the picker choice (persisted across visits).
         function updateWall() {
-          const pixelData = state.showEmoji
-            ? getEmojiPixelData(state.emoji)
-            : null
+          const pixelData = getEmojiPixelData(state.emoji)
 
           for (let i = 0; i < TOTAL_INSTANCES; i++) {
             const item = instancesData[i]
             const pixelIndex = i * 4
 
-            const alpha =
-              pixelData === null ? 0 : pixelData[pixelIndex + 3] / 255
+            const alpha = pixelData[pixelIndex + 3] / 255
 
             if (alpha > 0.1) {
               const r = pixelData[pixelIndex] / 255
@@ -1143,6 +1082,7 @@
 
       const emojiWall = createEmojiWall(scene, {
         ...state,
+        name: userName,
         orientation: {
           normal: new THREE.Vector3(1, 0, 0),
           up: new THREE.Vector3(0, 0, 1),
@@ -1151,10 +1091,6 @@
 
       const emojiBtn = document.getElementById("emoji-btn")
       const profileNameEl = document.getElementById("profile-name")
-      const profileEloEl = document.getElementById("profile-elo")
-      const showEmojiBox = document.getElementById("show-emoji")
-      const showNameBox = document.getElementById("show-name")
-      const showEloBox = document.getElementById("show-elo")
       const pickerMount = document.getElementById("emoji-picker-mount")
 
       // The current emoji acts as the button that opens/closes the picker
@@ -1178,31 +1114,19 @@
         },
       })
 
-      // The panel always shows the emoji, name and ELO; the checkboxes only
-      // control the 3D model (emoji wall + name/ELO plate below it).
-      showEmojiBox.checked = state.showEmoji
-      showNameBox.checked = state.showName
-      showEloBox.checked = state.showElo
-
-      showEmojiBox.addEventListener("change", (e) => {
-        state.showEmoji = e.target.checked
-        emojiWall.setState({ showEmoji: state.showEmoji })
+      // Drop any persisted emoji the generator no longer produces (e.g. an
+      // illegal skin-tone combo like "💢🏼" saved before the generator was
+      // fixed) and fall back to the default.
+      if (!picker.emojis.includes(state.emoji)) {
+        state.emoji = DEFAULT_STATE.emoji
+        picker.selectedEmoji = state.emoji
+        picker.inputBox.value = state.emoji
+        emojiWall.setState({ emoji: state.emoji })
         saveState()
-      })
-      showNameBox.addEventListener("change", (e) => {
-        state.showName = e.target.checked
-        emojiWall.setState({ showName: state.showName })
-        saveState()
-      })
-      showEloBox.addEventListener("change", (e) => {
-        state.showElo = e.target.checked
-        emojiWall.setState({ showElo: state.showElo })
-        saveState()
-      })
+      }
 
       emojiBtn.textContent = state.emoji
-      profileNameEl.textContent = state.name
-      profileEloEl.textContent = `ELO ${state.elo}`
+      profileNameEl.textContent = userName
       // Redraw once the webfont has loaded so the plaque text uses Exo.
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(emojiWall.drawPlate)
