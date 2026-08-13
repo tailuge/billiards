@@ -62,6 +62,7 @@ export class Spectate extends ControllerBase {
     }
 
     if (changed) {
+      this.container.view.portraits.refresh()
       const names = session.orderedNamesForHud()
       const scores = session.orderedScoresForHud()
       this.container.updateScoreHud(scores.p1, scores.p2, session.currentBreak)

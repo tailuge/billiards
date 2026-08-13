@@ -1,6 +1,7 @@
 import { Keyboard } from "../events/keyboard"
 import { MessageRelay } from "../network/client/messagerelay"
 import { ScoreReporter } from "../network/client/scorereporter"
+import { PortraitMode } from "../view/portraits"
 
 export interface ContainerConfig {
   element: any
@@ -16,4 +17,5 @@ export interface ContainerConfig {
   botMode?: boolean
   isSinglePlayer?: boolean
   examMode?: boolean
+  portraitMode?: PortraitMode
 }

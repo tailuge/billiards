@@ -111,6 +111,7 @@ export class Container {
       scoreReporter = null,
       replayMode = false,
       isSinglePlayer = true,
+      portraitMode,
     } = config
     this.log = log
     this.replayMode = replayMode
@@ -118,7 +119,7 @@ export class Container {
     this.isSinglePlayer = isSinglePlayer
     this.rules = RuleFactory.create(ruletype, this)
     this.table = this.rules.table()
-    this.view = new View(element, this.table, assets)
+    this.view = new View(element, this.table, assets, portraitMode)
     this.table.cue.aimInputs = new AimInputs(this)
     if (keyboard) {
       this.keyboard = keyboard

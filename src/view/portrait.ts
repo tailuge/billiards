@@ -216,7 +216,8 @@ export class Portrait {
   }
 
   setState(patch: { emoji?: string; name?: string }): void {
-    Object.assign(this.state, patch)
+    if (patch.emoji !== undefined) this.state.emoji = patch.emoji
+    if (patch.name !== undefined) this.state.name = patch.name
     this.updateWall()
     this.bake()
     this.drawPlate()

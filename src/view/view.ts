@@ -9,6 +9,7 @@ import { renderer } from "../utils/webgl"
 import { Assets } from "./assets"
 import { Snooker } from "../controller/rules/snooker"
 import { Minimap } from "./minimap"
+import { Portraits, PortraitMode } from "./portraits"
 
 export class View {
   readonly scene = new Scene()
@@ -25,15 +26,24 @@ export class View {
   assets: Assets
   drawing: Drawing
   minimap: Minimap
+  portraits: Portraits
+
+  private readonly portraitMode: PortraitMode
 
   // Reuse objects to reduce garbage collection pressure in high-frequency rendering
   private readonly frustum = new Frustum()
   private readonly projScreenMatrix = new Matrix4()
 
-  constructor(element, table, assets) {
+  constructor(
+    element,
+    table,
+    assets,
+    portraitMode: PortraitMode = { roomVisible: false, singlePlayer: true }
+  ) {
     this.element = element
     this.table = table
     this.assets = assets
+    this.portraitMode = portraitMode
     this.renderer = renderer(element)
 
     if (element) {
@@ -157,6 +167,7 @@ export class View {
     this.table.mesh = this.assets.table
     const isSnooker = this.assets.rules.asset === Snooker.tablemodel
     this.scene.add(new Grid().generateLineSegments(isSnooker))
+    this.portraits = new Portraits(this.scene, this.portraitMode)
   }
 
   ballToCheck = 0

@@ -137,6 +137,7 @@ export class BrowserContainer {
       (this.drillMode || this.analysisMode) && this.ruletype === "threecushion"
         ? "threecushion-drill"
         : this.ruletype
+    const isSinglePlayer = !this.wss && !this.botMode && !this.replay
     const config: ContainerConfig = {
       element: this.canvas3d,
       log: console.log,
@@ -149,8 +150,12 @@ export class BrowserContainer {
       scoreReporter: scoreReporter,
       replayMode: !!this.replay,
       botMode: this.botMode,
-      isSinglePlayer: !this.wss && !this.botMode && !this.replay,
+      isSinglePlayer,
       examMode: this.examMode,
+      portraitMode: {
+        roomVisible: !this.localMesh,
+        singlePlayer: isSinglePlayer,
+      },
     }
     return new Container(config)
   }
@@ -362,6 +367,7 @@ export class BrowserContainer {
       session.playername = this.breakState.players.player1
       session.opponentName = this.breakState.players.player2
     }
+    this.container.view.portraits.refresh()
     const orderedScores = session.orderedScoresForHud()
     this.container.updateScoreHud(orderedScores.p1, orderedScores.p2, 0, 0)
     const breakEvent = new BreakEvent(

@@ -18,7 +18,7 @@ faithful TypeScript port of a single, well-isolated wall-rendering function.
 | wall.html refactor (§2) | ✅ Done |
 | `Portrait` class (`src/view/portrait.ts`) | ✅ Done |
 | Placement constants (`src/view/portraitplacements.ts`) | ✅ Done |
-| Wiring into the scene / assets-ready path (§4) | Planned (deferred) |
+| Wiring into the scene / assets-ready path (§4) | ✅ Done |
 | Tests | Deferred — "app still builds" check only (`tsc` + `eslint` + `webpack`) |
 
 ---
@@ -65,12 +65,15 @@ for both the −X and +X walls (the orientation basis is derived from
 
 | Wall | position (x, y, z) | orientation normal | orientation up | scale |
 |------|--------------------|--------------------|----------------|-------|
-| −X | (−5.24 + offset, 0, 1.05) | +X `(1,0,0)` | +Z `(0,0,1)` | 3 |
-| +X | (+5.24 − offset, 0, 1.05) | −X `(−1,0,0)` | +Z `(0,0,1)` | 3 |
+| −X | (−5.09 + offset, 0, 0.55) | +X `(1,0,0)` | +Z `(0,0,1)` | 0.75 |
+| +X | (+5.09 − offset, 0, 0.55) | −X `(−1,0,0)` | +Z `(0,0,1)` | 0.75 |
 
+- `WALL_X = 5.09` ≈ 3% inset of the true ±5.24 face, so the overlay sits
+  inside the room instead of clipping outside the wall.
 - `PORTRAIT_OFFSET = 0.02` floats the overlay inward from the wall face to
   avoid z-fighting.
-- `PORTRAIT_SCALE = 3` → portrait ≈ 3.77 × 3.36, inside the 5.24 × 3.93 wall.
+- `PORTRAIT_Z = 0.55` sits just above table height.
+- `PORTRAIT_SCALE = 0.75` → portrait ≈ 0.94 × 0.84, inside the wall.
 
 These are starting points; the exact offset/scale get tuned when wiring lands.
 They are confined to the placement module so `Portrait` stays unit-agnostic.
@@ -134,9 +137,9 @@ export class Portrait {
 
 ### 3.2 `src/view/portraitplacements.ts` — hard-coded walls
 
-`WALL_X = 5.24`, `PORTRAIT_SCALE = 3`, `PORTRAIT_OFFSET = 0.02`,
-`PORTRAIT_Z = 1.05`, plus `MINUS_X_WALL` and `PLUS_X_WALL` placement objects
-(`PortraitPlacement = { position, orientation }`).
+`WALL_X = 5.09` (≈3% inset of the ±5.24 face), `PORTRAIT_SCALE = 0.75`,
+`PORTRAIT_OFFSET = 0.02`, `PORTRAIT_Z = 0.55`, plus `MINUS_X_WALL` and
+`PLUS_X_WALL` placement objects (`PortraitPlacement = { position, orientation }`).
 
 ---
 
@@ -151,7 +154,7 @@ change.
 ### 4.1 Specs and policy
 
 ```typescript
-// planned: src/view/portraits.ts
+// src/view/portraits.ts (implemented)
 const DEFAULT_EMOJI = "📺"   // wall.html's DEFAULT_STATE.emoji
 
 interface PortraitSpec {
@@ -169,10 +172,18 @@ interface PortraitMode {
 function portraitSpecs(mode: PortraitMode, s: Session): PortraitSpec[] {
   if (!mode.roomVisible) return []
 
+  // mine is always on the +X wall, the opponent on the −X wall.
+  if (s.spectator) {
+    return [
+      { emoji: DEFAULT_EMOJI, name: s.spectatedP1Name || undefined, placement: PLUS_X_WALL },
+      { emoji: DEFAULT_EMOJI, name: s.spectatedP2Name || undefined, placement: MINUS_X_WALL },
+    ]
+  }
+
   const mine: PortraitSpec = {
     emoji: s.customParams["emoji"] || DEFAULT_EMOJI,
     name: s.playername || undefined,
-    placement: MINUS_X_WALL,
+    placement: PLUS_X_WALL,
   }
   if (mode.singlePlayer) return [mine]
 
@@ -181,15 +192,14 @@ function portraitSpecs(mode: PortraitMode, s: Session): PortraitSpec[] {
     {
       emoji: s.opponentParams["emoji"] || DEFAULT_EMOJI,
       name: s.opponentName || undefined,
-      placement: PLUS_X_WALL,
+      placement: MINUS_X_WALL,
     },
   ]
 }
 
-function createPortraits(scene: Scene, specs: PortraitSpec[]): Portrait[] {
-  return specs.map(
-    (spec) => new Portrait(scene, { ...spec, scale: spec.scale ?? PORTRAIT_SCALE })
-  )
+class Portraits {
+  constructor(scene: Scene, mode: PortraitMode) { /* one Portrait per spec */ }
+  refresh(): void { /* re-reads Session and setState's each portrait */ }
 }
 ```
 
@@ -219,28 +229,31 @@ Notes:
   portraits. `roomVisible` is the explicit opt-out rather than relying on that
   fact alone.
 
-### 4.3 Where mode intent lives
+### 4.3 Where mode intent lives — implemented
 
-Carry the mode intent through `ContainerConfig` so each container states its
-intent once, and the wiring just consumes it:
+`ContainerConfig.portraitMode` carries the mode intent once; the wiring just
+consumes it:
 
 ```typescript
-// planned: src/container/containerconfig.ts
+// src/container/containerconfig.ts (implemented)
 portraitMode?: PortraitMode
-// BrowserContainer (game)   → { roomVisible: true,  singlePlayer: this.isSinglePlayer && !this.replay }
-// DiagramContainer (diagram) → { roomVisible: false, singlePlayer: true }
+// BrowserContainer (game)  → { roomVisible: !this.localMesh, singlePlayer: isSinglePlayer }
+// DiagramContainer (diagram) → undefined (View defaults to roomVisible: false → no portraits)
 ```
 
-Then `View` (which already owns `scene` and `assets.background`) creates the
-portraits once assets are ready:
+`Container` passes it to `View`, which creates the portraits in
+`initialiseScene()` once the background/table are in the scene:
 
 ```typescript
-// planned: src/view/view.ts (initialiseScene or after background is added)
-this.portraits = createPortraits(
-  this.scene,
-  portraitSpecs(mode, Session.getInstance())
-)
+// src/view/view.ts (implemented)
+this.portraits = new Portraits(this.scene, this.portraitMode)
 ```
+
+Late-arriving names call `view.portraits.refresh()`:
+
+- `BrowserContainer.startReplay` after inferring `playername`/`opponentName`
+  from `breakState.players`;
+- `Spectate.sniffNames` when `spectatedP1Name`/`spectatedP2Name` are set.
 
 "Create at asset-load, add to scene, done" — no per-frame work, and any future
 mode is a one-line change to the policy/table, not to `Portrait`.
@@ -263,12 +276,12 @@ mode is a one-line change to the policy/table, not to `Portrait`.
 
 ## 6. Caveats & Risks
 
-- **+X wall is mirror-imaged.** For `normal = −X`, the orientation basis maps
-  local +Y (width) to world −Y, so glyphs/plaque text on the +X wall are
-  horizontally mirrored relative to the −X wall. For symmetric emoji this is
-  invisible; for text-like emoji (flags, ™, ©, arrows) it shows. Mitigation
-  (if desired later): horizontally flip the sampled pixel data for the
-  mirrored wall. Not blocking.
+- **+X wall is mirror-imaged** (this is *mine*, since mine is on +X). For
+  `normal = −X`, the orientation basis maps local +Y (width) to world −Y, so
+  glyphs/plaque text on the +X wall are horizontally mirrored relative to the
+  −X wall. For symmetric emoji this is invisible; for text-like emoji (flags,
+  ™, ©, arrows) it shows. Mitigation (if desired later): horizontally flip the
+  sampled pixel data for the mirrored wall. Not blocking.
 - **Camera may rarely frame the walls.** Gameplay cameras (`aimView`,
   `topView`) look steeply down at the table; the portraits live far off to the
   sides (X = ±5.24). Verify framing during wiring before tuning scale/position.
