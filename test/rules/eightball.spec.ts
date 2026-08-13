@@ -10,6 +10,8 @@ import { initDom } from "../view/dom"
 import { PlaceBall } from "../../src/controller/placeball"
 import { Aim } from "../../src/controller/aim"
 import { WatchAim } from "../../src/controller/watchaim"
+import { WatchShot } from "../../src/controller/watchshot"
+import { WatchEvent } from "../../src/events/watchevent"
 import { End } from "../../src/controller/end"
 import { Session } from "../../src/network/client/session"
 import { ScoreEvent } from "../../src/events/scoreevent"
@@ -305,6 +307,34 @@ describe("EightBall Rules", () => {
     const nextController = eightball.update(outcome)
     // Should return WatchAim or handleMiss result which is WatchAim for multiplayer
     expect(nextController).to.be.an.instanceof(WatchAim)
+  })
+
+  it("should hand the turn to the watcher after potting only the opponent's ball", () => {
+    const sentEvents: any[] = []
+    container.broadcast = (event) => sentEvents.push(event)
+    container.isSinglePlayer = false
+    Session.getInstance().p1type = 1 // Solids
+    const myBall = container.table.balls.find((b) => b.label === 1)!
+    const opponentBall = container.table.balls.find((b) => b.label === 9)!
+
+    const outcome = [
+      Outcome.collision(container.table.cueball, myBall, 1),
+      Outcome.pot(opponentBall, 1),
+    ]
+
+    eightball.update(outcome)
+
+    // A turn pass must not be preceded by a WatchEvent, which would bump the
+    // watcher out of WatchShot so it drops the StartAimEvent (and both players
+    // end up stuck in WatchAim).
+    expect(sentEvents.some((e) => e instanceof WatchEvent)).to.be.false
+
+    // Simulate the watcher applying the emitted events in order.
+    let watcher: any = new WatchShot(container)
+    for (const event of sentEvents) {
+      watcher = event.applyToController(watcher)
+    }
+    expect(watcher).to.be.an.instanceof(Aim)
   })
 
   it("should continue turn if any ball potted on open table", () => {

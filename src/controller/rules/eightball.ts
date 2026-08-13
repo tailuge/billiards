@@ -287,8 +287,6 @@ export class EightBall implements Rules {
     )
     this.container.sendEvent(scoreEvent)
 
-    this.container.sendEvent(new WatchEvent(table.serialise()))
-
     if (myGroupBefore !== 0) {
       const myGroupPotted = pots.some((b) => this.isMyType(b, myGroupBefore))
       if (!myGroupPotted) {
@@ -296,6 +294,7 @@ export class EightBall implements Rules {
       }
     }
 
+    this.container.sendEvent(new WatchEvent(table.serialise()))
     return new Aim(this.container)
   }
 
