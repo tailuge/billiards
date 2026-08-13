@@ -619,22 +619,34 @@
       controls.target.set(0, 0, 0)
 
       /**
-       * Creates the reusable wall overlay: border, emoji instances,
-       * shadows, and name/ELO plaque. Geometry is authored in local YZ space
-       * with +X as its facing normal and +Z as up; `orientation` maps that
-       * local frame onto any wall in the scene. The background wall, floor,
-       * and lighting remain the caller's responsibility.
+       * Creates a static emoji portrait: border, emoji instances, fake
+       * shadows, and an optional name plaque. Geometry is authored in local
+       * YZ space with +X as its facing normal and +Z as up; `orientation`
+       * maps that local frame onto any wall in the scene, `position` places
+       * it, and `scale` sizes it. The overlay is baked once on creation and
+       * never animated, so it can be dropped into any scene (e.g. the
+       * in-game room walls) exactly like a static glTF asset. The background
+       * wall, floor, and lighting remain the caller's responsibility.
+       *
+       * All polygons are single-sided and face +X in local space, so the
+       * wall's normal must point toward the viewer (the interior of the
+       * room) for the portrait to be visible.
        *
        * @param {THREE.Scene} scene - Scene to which the overlay is added
-       * @param {object} options - Initial state and wall orientation
-       * @param {object} options.orientation - Wall normal and up vectors
-       * @returns {{setState: function, drawPlate: function, tick: function}}
+       * @param {object} options - Initial state and wall placement
+       * @param {string} [options.emoji] - Emoji glyph to render (default "📺")
+       * @param {string} [options.name] - Optional name shown on the plaque
+       * @param {THREE.Vector3} [options.position] - Overlay origin
+       * @param {object} [options.orientation] - Wall normal and up vectors
+       * @param {number} [options.scale] - Uniform scale (default 1)
+       * @returns {{setState: function, drawPlate: function}}
        */
       function createEmojiWall(scene, options = {}) {
         const state = {
           emoji: options.emoji ?? "📺",
           name: options.name ?? "",
         }
+        const scale = options.scale ?? 1
 
         const samplerCanvas = document.createElement("canvas")
         samplerCanvas.width = GRID_SIZE
@@ -652,18 +664,17 @@
           return samplerCtx.getImageData(0, 0, GRID_SIZE, GRID_SIZE).data
         }
 
-        // Room Geometry & Materials
+        // Room Geometry & Materials. Single-sided polygons: every mesh faces
+        // +X in local space, so orient the wall's normal toward the viewer.
         const borderMat = new THREE.MeshStandardMaterial({
           color: 0x1f1f1f,
           roughness: 0.4,
           metalness: 0.1,
-          side: THREE.DoubleSide,
         })
         const borderShadowMat = new THREE.MeshBasicMaterial({
           color: 0x000000,
           transparent: true,
           opacity: 0.35,
-          side: THREE.DoubleSide,
         })
         /**
          * Creates a minimal 2D planar rectangular border (hollow rectangle)
@@ -757,6 +768,7 @@
           new THREE.Matrix4().makeBasis(normal, right, up)
         )
         if (options.position) wallGroup.position.copy(options.position)
+        wallGroup.scale.setScalar(scale)
         scene.add(wallGroup)
 
         // Flat planar border (same 1.255 x 1.12 outer footprint as the old
@@ -781,7 +793,6 @@
           roughness: 0.35,
           metalness: 0.1,
           flatShading: true,
-          side: THREE.DoubleSide,
         })
 
         const instancedMesh = new THREE.InstancedMesh(
@@ -794,7 +805,6 @@
         // Dark grey shadow material (no transparency)
         const shadowMaterial = new THREE.MeshBasicMaterial({
           color: 0x1a1a1a,
-          side: THREE.DoubleSide,
         })
 
         // Shadow instanced mesh matching the same geometry and instance count (Single GPU efficiency)
@@ -983,14 +993,18 @@
         function setState(patch) {
           Object.assign(state, patch)
           updateWall()
+          bake()
           drawPlate()
         }
 
-        function tick() {
+        // Writes the static instance matrices/colours a single time. The
+        // portrait never changes after this, so there is no per-frame tick:
+        // the transforms are baked on creation and again on each setState.
+        function bake() {
           for (let i = 0; i < TOTAL_INSTANCES; i++) {
             const item = instancesData[i]
 
-            // Render main triangles
+            // Main triangles
             dummy.position.set(item.lift, item.posY, item.posZ)
             dummy.rotation.set(item.rotX, item.rotY, 0)
             dummy.scale.set(item.scale, item.scale, item.scale)
@@ -1001,7 +1015,7 @@
             color.setRGB(item.r, item.g, item.b)
             instancedMesh.setColorAt(i, color)
 
-            // Render fake shadow flat against the wall (in-plane spin only)
+            // Fake shadow flat against the wall (in-plane spin only)
             dummy.position.set(-0.069, item.posY, item.posZ)
             dummy.rotation.set(item.rotX, 0, 0)
             dummy.scale.set(item.scale, item.scale, item.scale)
@@ -1018,9 +1032,10 @@
         }
 
         updateWall()
+        bake()
         drawPlate()
 
-        return { setState, drawPlate, tick }
+        return { setState, drawPlate }
       }
 
       // Scene-only backdrop, floor, and lighting. The reusable emoji overlay
@@ -1105,7 +1120,6 @@
 
       function animate() {
         requestAnimationFrame(animate)
-        emojiWall.tick()
         controls.update()
         renderer.render(scene, camera)
       }
