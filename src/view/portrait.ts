@@ -129,8 +129,8 @@ export class Portrait {
     planarTriGeom.rotateY(Math.PI / 2)
 
     const material = new MeshStandardMaterial({
-      roughness: 0.9,
-      metalness: 0.1,
+      roughness: 0.8,
+      metalness: 0.5,
       flatShading: true,
     })
     this.instancedMesh = new InstancedMesh(

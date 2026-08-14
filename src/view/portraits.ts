@@ -47,11 +47,12 @@ export interface PortraitSpec {
 
 /**
  * Decides which portraits to show for the current mode, separated from how
- * they are rendered. `mine` is always on the +X wall and the opponent on the
- * −X wall. Emoji is optional at every level (falls back to a locale flag, or
- * DEFAULT_EMOJI when the browser exposes no region); names are optional (the
- * plaque hides when empty), so replay/spectator modes work even though their
- * emoji data is absent.
+ * they are rendered. In single-player `mine` sits on the +X wall; in live
+ * two-player the portraits swap walls (`mine` on −X, opponent on +X). Emoji
+ * is optional at every level (falls back to a locale flag, or DEFAULT_EMOJI
+ * when the browser exposes no region); names are optional (the plaque hides
+ * when empty), so replay/spectator modes work even though their emoji data is
+ * absent.
  */
 export function portraitSpecs(
   mode: PortraitMode,
@@ -85,12 +86,14 @@ export function portraitSpecs(
   }
   if (mode.singlePlayer) return [mine]
 
+  // Live two-player: swap walls so my portrait is on the −X wall and the
+  // opponent on the +X wall.
   return [
-    mine,
+    { ...mine, placement: minusXWall(wallX) },
     {
       emoji: session.opponentParams["emoji"] || localeFlagEmoji(),
       name: session.opponentName || undefined,
-      placement: minusXWall(wallX),
+      placement: plusXWall(wallX),
     },
   ]
 }
