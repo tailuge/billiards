@@ -71,6 +71,7 @@ export class View {
     )
     this.minimap = new Minimap(this.scene, this.renderer)
     this.initialiseScene()
+    this.camera.tableMesh = this.table.mesh
   }
 
   addLine(data: LineData) {

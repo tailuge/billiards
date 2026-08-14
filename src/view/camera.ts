@@ -1,4 +1,12 @@
-import { PerspectiveCamera, MathUtils, Vector3 } from "three"
+import {
+  PerspectiveCamera,
+  MathUtils,
+  Vector3,
+  Frustum,
+  Matrix4,
+  Box3,
+  Object3D,
+} from "three"
 import { up, zero, unitAtAngle } from "../utils/three-utils"
 import { AimEvent } from "../events/aimevent"
 import { CameraTop } from "./cameratop"
@@ -29,16 +37,23 @@ export class Camera {
   private mainMode = this.aimView
   private height = Camera.defaultHeight
   isZoomedOut = false
+  tableMesh?: Object3D
 
   private readonly target = new Vector3()
   private readonly lookTarget = new Vector3()
   private readonly tempVec = new Vector3()
   private readonly tempVec2 = new Vector3()
+  private readonly frustum = new Frustum()
+  private readonly projScreenMatrix = new Matrix4()
+  private readonly tableBox = new Box3()
+  private readonly corner = new Vector3()
 
   private distance = Camera.defaultDistance
   private fovOffset = Camera.defaultFovOffset
   private aimzHeight = Camera.aimzHeight
   private aimzDistance = Camera.aimzDistance
+  private lastAimzDistance = -1
+  private computedAimzDistance?: number
 
   elapsed: number
   t = 0
@@ -104,8 +119,77 @@ export class Camera {
     this.aimFrom(aim, this.height, this.distance, this.height / 2, fraction)
   }
 
-  aimzView(aim: AimEvent, fraction = 0.08) {
-    this.aimFrom(aim, this.aimzHeight, this.aimzDistance, R * 2, fraction)
+  aimzView(aim: AimEvent, fraction = 0.2) {
+    if (this.computedAimzDistance === undefined) {
+      this.computedAimzDistance = this.aimzDistanceFor(aim)
+    }
+    this.aimFrom(
+      aim,
+      this.aimzHeight,
+      this.computedAimzDistance,
+      R * 2,
+      fraction
+    )
+  }
+
+  /** Walk the camera back from R*20 until the whole table is inside the
+   * frustum (or R*100 is reached), so aimz shows the full table. */
+  private aimzDistanceFor(aim: AimEvent): number {
+    if (!this.tableMesh) {
+      return this.aimzDistance
+    }
+    this.tableBox.setFromObject(this.tableMesh)
+    // Shrink the bounding box to 90% of its size so the camera doesn't pull
+    // back further than the visible table actually requires.
+    const center = this.tableBox.getCenter(this.tempVec)
+    const half = this.tableBox.getSize(this.tempVec2).multiplyScalar(0.45)
+    this.tableBox.min.copy(center).sub(half)
+    this.tableBox.max.copy(center).add(half)
+    for (let d = R * 40; d <= R * 100; d += R * 2) {
+      this.aimFrom(aim, this.aimzHeight, d, R * 2, 1)
+      this.camera.updateProjectionMatrix()
+      this.camera.updateMatrixWorld()
+      this.frustum.setFromProjectionMatrix(
+        this.projScreenMatrix.multiplyMatrices(
+          this.camera.projectionMatrix,
+          this.camera.matrixWorldInverse
+        )
+      )
+      if (this.tableInView()) {
+        this.logAimzDistance(d)
+        return d
+      }
+    }
+    this.logAimzDistance(R * 100)
+    return R * 100
+  }
+
+  private logAimzDistance(d: number) {
+    if (d === this.lastAimzDistance) {
+      return
+    }
+    this.lastAimzDistance = d
+    const units = Math.round((d / R) * 100) / 100
+    console.log(
+      d >= R * 100
+        ? `aimz distance = max (${units}R)`
+        : `aimz distance = ${units}R`
+    )
+  }
+
+  private tableInView(): boolean {
+    const { min, max } = this.tableBox
+    for (let i = 0; i < 8; i++) {
+      this.corner.set(
+        i & 1 ? max.x : min.x,
+        i & 2 ? max.y : min.y,
+        i & 4 ? max.z : min.z
+      )
+      if (!this.frustum.containsPoint(this.corner)) {
+        return false
+      }
+    }
+    return true
   }
 
   private aimFrom(
@@ -203,6 +287,7 @@ export class Camera {
   private enterAimz() {
     this.aimzHeight = Camera.aimzHeight
     this.aimzDistance = Camera.aimzDistance
+    this.computedAimzDistance = undefined
     this.mode = this.aimzView
     this.mainMode = this.aimView
     this.isZoomedOut = true
