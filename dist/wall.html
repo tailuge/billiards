@@ -275,7 +275,10 @@
 
       function readCustom() {
         try {
-          return JSON.parse(localStorage.getItem("custom") || "null") || {}
+          const res = JSON.parse(localStorage.getItem("custom") || "null")
+          return res && typeof res === "object" && !Array.isArray(res)
+            ? res
+            : {}
         } catch {
           return {}
         }
