@@ -1,4 +1,12 @@
-import { Group, Mesh, MeshLambertMaterial, PlaneGeometry } from "three"
+import {
+  BufferAttribute,
+  BufferGeometry,
+  Color,
+  Group,
+  Mesh,
+  MeshLambertMaterial,
+  PlaneGeometry,
+} from "three"
 import { TableGeometry } from "./tablegeometry"
 
 /**
@@ -47,9 +55,17 @@ export class Room {
   }
 
   private addFloor(room: Group) {
-    const materials = Room.floorColors.map(
-      (color) => new MeshLambertMaterial({ color })
-    )
+    // Merge every surviving tile into a single indexed geometry with per-vertex
+    // colours, so the whole checkerboard floor is one mesh and one draw call
+    // (instead of one mesh per tile). The hole under the table is kept to avoid
+    // shading fragments the table will cover anyway.
+    const positions: number[] = []
+    const colors: number[] = []
+    const normals: number[] = []
+    const indices: number[] = []
+    const color = new Color()
+    const half = this.tile / 2
+
     for (let i = -this.cols; i < this.cols; i++) {
       const x = (i + 0.5) * this.tile
       for (let j = -this.rows; j <= this.rows; j++) {
@@ -57,14 +73,52 @@ export class Room {
         if (Math.abs(x) < TableGeometry.X && Math.abs(y) < TableGeometry.Y) {
           continue // hole under the table
         }
-        const mesh = new Mesh(
-          new PlaneGeometry(this.tile, this.tile),
-          materials[Math.abs(i + j) % 2]
+        color.setHex(Room.floorColors[Math.abs(i + j) % 2])
+        const base = positions.length / 3
+        // Four corners of the tile, counter-clockwise viewed from +Z.
+        positions.push(
+          x - half,
+          y - half,
+          Room.floorZ,
+          x + half,
+          y - half,
+          Room.floorZ,
+          x + half,
+          y + half,
+          Room.floorZ,
+          x - half,
+          y + half,
+          Room.floorZ
         )
-        mesh.position.set(x, y, Room.floorZ)
-        room.add(mesh)
+        for (let k = 0; k < 4; k++) {
+          colors.push(color.r, color.g, color.b)
+          normals.push(0, 0, 1)
+        }
+        indices.push(base, base + 1, base + 2, base, base + 2, base + 3)
       }
     }
+
+    const geometry = new BufferGeometry()
+    geometry.setAttribute(
+      "position",
+      new BufferAttribute(new Float32Array(positions), 3)
+    )
+    geometry.setAttribute(
+      "color",
+      new BufferAttribute(new Float32Array(colors), 3)
+    )
+    geometry.setAttribute(
+      "normal",
+      new BufferAttribute(new Float32Array(normals), 3)
+    )
+    geometry.setIndex(indices)
+    geometry.computeBoundingSphere()
+
+    const mesh = new Mesh(
+      geometry,
+      new MeshLambertMaterial({ vertexColors: true })
+    )
+    room.add(mesh)
   }
 
   private addWalls(room: Group) {
