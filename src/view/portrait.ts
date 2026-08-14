@@ -193,6 +193,15 @@ export class Portrait {
     )
     if (options.position) this.group.position.copy(options.position)
     this.group.scale.setScalar(scale)
+
+    // The portrait never moves after construction, so bake its transform once
+    // and freeze matrix updates (three.js would otherwise recompute the local
+    // and world matrices every frame).
+    this.group.updateMatrix()
+    this.group.updateMatrixWorld(true)
+    this.group.matrixAutoUpdate = false
+    this.group.matrixWorldAutoUpdate = false
+
     scene.add(this.group)
 
     this.updateWall()
