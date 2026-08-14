@@ -185,18 +185,21 @@ export class Portrait {
     this.plateCtx = this.plateCanvas.getContext("2d")
     this.plateTexture = new CanvasTexture(this.plateCanvas)
     this.plateTexture.colorSpace = SRGBColorSpace
+    // Canvas 2D draws premultiplied, so tell three to match or the text will
+    // pick up a dark fringe against the now-transparent background.
+    this.plateTexture.premultiplyAlpha = true
     const plateMat = new MeshBasicMaterial({
       map: this.plateTexture,
       transparent: true,
       depthWrite: false,
     })
-    // 512/96 = 0.6/0.1125, so the texture keeps its aspect ratio on the plane.
+    // 512/96 = 0.9/0.16875, so the texture keeps its aspect ratio on the plane.
     this.plate = new Mesh(
-      Portrait.createWallQuadGeometry(0.6, 0.1125),
+      Portrait.createWallQuadGeometry(0.9, 0.16875),
       plateMat
     )
     // The border's inner hole spans z in [-0.545, 0.545]; mount below it.
-    this.plate.position.set(-0.055, 0, -0.6)
+    this.plate.position.set(-0.055, 0, -0.55)
     this.group.add(this.plate)
 
     // Orient + position + scale the whole overlay, then add it to the scene.
@@ -322,38 +325,35 @@ export class Portrait {
 
     ctx.clearRect(0, 0, this.plateCanvas.width, this.plateCanvas.height)
 
-    // Dark grey plaque with a subtle border.
-    ctx.fillStyle = "#222a33"
-    ctx.fillRect(0, 0, this.plateCanvas.width, this.plateCanvas.height)
-    ctx.strokeStyle = "#3a4350"
-    ctx.lineWidth = 4
-    ctx.strokeRect(
-      2,
-      2,
-      this.plateCanvas.width - 4,
-      this.plateCanvas.height - 4
-    )
-
     ctx.textAlign = "center"
     ctx.textBaseline = "middle"
 
     // Prefer 60px Exo but shrink to fit long names on the plaque.
     let fontPx = 60
-    ctx.font = `200 ${fontPx}px 'Exo', sans-serif`
+    ctx.font = `700 ${fontPx}px 'Exo', sans-serif`
     while (
       ctx.measureText(this.state.name).width > this.plateCanvas.width - 24 &&
       fontPx > 32
     ) {
       fontPx -= 4
-      ctx.font = `200 ${fontPx}px 'Exo', sans-serif`
+      ctx.font = `700 ${fontPx}px 'Exo', sans-serif`
     }
 
+    // Transparent plaque: no background fill, just the text and a soft drop
+    // shadow. The canvas alpha channel carries both, so the quad stays
+    // see-through everywhere else (the material is already transparent).
+    ctx.shadowColor = "rgba(0, 0, 0, 0.95)"
+    ctx.shadowBlur = 5
+    ctx.shadowOffsetY = 4
     ctx.fillStyle = "#e6edf3"
     ctx.fillText(
       this.state.name,
       this.plateCanvas.width / 2,
       this.plateCanvas.height / 2
     )
+    ctx.shadowColor = "transparent"
+    ctx.shadowBlur = 0
+    ctx.shadowOffsetY = 0
 
     this.plateTexture.needsUpdate = true
   }
