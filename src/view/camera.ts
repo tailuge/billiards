@@ -1,4 +1,4 @@
-import { PerspectiveCamera, MathUtils, Vector3, Frustum, Matrix4 } from "three"
+import { PerspectiveCamera, MathUtils, Vector3 } from "three"
 import { up, zero, unitAtAngle } from "../utils/three-utils"
 import { AimEvent } from "../events/aimevent"
 import { CameraTop } from "./cameratop"
@@ -8,6 +8,8 @@ export class Camera {
   static defaultHeight = R * 8
   static defaultDistance = R * 22
   static defaultFovOffset = 0
+  static aimzHeight = R * 40
+  static aimzDistance = R * 100
 
   static configureForRule(ruleType: string) {
     if (ruleType === "threecushion" || ruleType === "sagu") {
@@ -35,8 +37,8 @@ export class Camera {
 
   private distance = Camera.defaultDistance
   private fovOffset = Camera.defaultFovOffset
-  savedDistance?: number
-  savedHeight?: number
+  private aimzHeight = Camera.aimzHeight
+  private aimzDistance = Camera.aimzDistance
 
   elapsed: number
   t = 0
@@ -99,7 +101,20 @@ export class Camera {
   }
 
   aimView(aim: AimEvent, fraction = 0.08) {
-    const h = this.height
+    this.aimFrom(aim, this.height, this.distance, this.height / 2, fraction)
+  }
+
+  aimzView(aim: AimEvent, fraction = 0.08) {
+    this.aimFrom(aim, this.aimzHeight, this.aimzDistance, R * 2, fraction)
+  }
+
+  private aimFrom(
+    aim: AimEvent,
+    h: number,
+    distance: number,
+    lookHeight: number,
+    fraction: number
+  ) {
     const portrait = this.camera.aspect < 0.8
     this.camera.fov = (portrait ? 60 : 40) + this.fovOffset
     if (h < 10 * R) {
@@ -108,15 +123,19 @@ export class Camera {
     }
     this.target
       .copy(aim.pos)
-      .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -this.distance)
+      .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -distance)
     this.camera.position.lerp(this.target, fraction)
     this.camera.position.z = h
     this.camera.up = up
-    this.lookTarget.copy(aim.pos).addScaledVector(up, h / 2)
+    this.lookTarget.copy(aim.pos).addScaledVector(up, lookHeight)
     this.camera.lookAt(this.lookTarget)
   }
 
   adjustHeight(delta) {
+    if (this.mode === this.aimzView) {
+      this.aimzHeight = MathUtils.clamp(this.aimzHeight + delta, R * 6, R * 120)
+      return
+    }
     delta = this.height < 10 * R ? delta / 8 : delta
     this.height = MathUtils.clamp(this.height + delta, R * 6, R * 120)
     if (this.height > R * 110) {
@@ -132,163 +151,19 @@ export class Camera {
   }
 
   adjustDistance(delta: number) {
+    if (this.mode === this.aimzView) {
+      this.aimzDistance = MathUtils.clamp(
+        this.aimzDistance + delta,
+        R * 2,
+        R * 100
+      )
+      return
+    }
     delta = this.distance < 10 * R ? delta / 8 : delta
     this.distance = MathUtils.clamp(this.distance + delta, R * 2, R * 100)
   }
 
-  restoreSavedDistance() {
-    if (this.savedDistance !== undefined) {
-      this.distance = this.savedDistance
-      this.savedDistance = undefined
-    }
-    if (this.savedHeight !== undefined) {
-      this.height = this.savedHeight
-      this.savedHeight = undefined
-    }
-  }
-
-  private computeStepBackFov(h: number): number {
-    const portrait = this.camera.aspect < 0.8
-    const tempFov = (portrait ? 60 : 40) + this.fovOffset
-    const lowHeightFov = tempFov - 100 * (10 * R - h) * (portrait ? 3 : 1)
-    return (h < 10 * R ? lowHeightFov : tempFov) - 3
-  }
-
-  private areAllBallsInFrustum(frustum: Frustum, balls: any[]): boolean {
-    for (const b of balls) {
-      if (!b.onTable()) continue
-      const mesh = b.ballmesh?.mesh
-      const inFrustum = mesh
-        ? frustum.intersectsObject(mesh)
-        : frustum.containsPoint(b.pos)
-      if (!inFrustum) {
-        return false
-      }
-    }
-    return true
-  }
-
-  private tryDistanceFit(
-    testDistance: number,
-    h: number,
-    aim: AimEvent,
-    frustum: Frustum,
-    projScreenMatrix: Matrix4,
-    balls: any[]
-  ): boolean {
-    const targetPos = this.tempVec2
-      .copy(aim.pos)
-      .addScaledVector(unitAtAngle(aim.angle, this.tempVec), -testDistance)
-
-    this.camera.position.copy(targetPos)
-    this.camera.position.z = h
-    this.camera.up.copy(up)
-
-    const tempLookTarget = this.tempVec.copy(aim.pos).addScaledVector(up, h / 2)
-
-    this.camera.lookAt(tempLookTarget)
-    this.camera.updateMatrixWorld(true)
-    this.camera.matrixWorldInverse.copy(this.camera.matrixWorld).invert()
-
-    projScreenMatrix.multiplyMatrices(
-      this.camera.projectionMatrix,
-      this.camera.matrixWorldInverse
-    )
-    frustum.setFromProjectionMatrix(projScreenMatrix)
-
-    return this.areAllBallsInFrustum(frustum, balls)
-  }
-
-  stepBackToFitAllBalls(balls: any[], aim: AimEvent) {
-    const frustum = new Frustum()
-    const projScreenMatrix = new Matrix4()
-
-    const originalPosition = this.camera.position.clone()
-    const originalRotation = this.camera.rotation.clone()
-    const originalMatrixWorld = this.camera.matrixWorld.clone()
-    const originalMatrixWorldInverse = this.camera.matrixWorldInverse.clone()
-    const originalProjectionMatrix = this.camera.projectionMatrix.clone()
-    const originalFov = this.camera.fov
-    const originalHeight = this.height
-
-    const setFovForHeight = (h: number) => {
-      this.camera.fov = this.computeStepBackFov(h)
-      this.camera.updateProjectionMatrix()
-    }
-
-    let foundDistance = this.distance
-    let foundHeight = this.height
-    const maxDistance = R * 120
-    const step = R
-
-    // Find the smallest distance at the current height that brings all balls
-    // into view
-    setFovForHeight(this.height)
-    for (let d = this.distance; d <= maxDistance; d += step) {
-      if (
-        this.tryDistanceFit(
-          d,
-          this.height,
-          aim,
-          frustum,
-          projScreenMatrix,
-          balls
-        )
-      ) {
-        foundDistance = d
-        break
-      }
-    }
-
-    // Raise the height in proportion to how far we stepped back so the
-    // zoomed-out view looks down on the whole table from a higher vantage
-    // point. Walk back down until every ball still fits in the frustum.
-    const raisedHeight = Math.min(
-      this.height * (foundDistance / this.distance),
-      R * 40
-    )
-    if (raisedHeight > this.height) {
-      for (let h = raisedHeight; h >= this.height; h -= step) {
-        setFovForHeight(h)
-        if (
-          this.tryDistanceFit(
-            foundDistance,
-            h,
-            aim,
-            frustum,
-            projScreenMatrix,
-            balls
-          )
-        ) {
-          foundHeight = h
-          break
-        }
-      }
-    }
-
-    // Restore original camera state
-    this.camera.position.copy(originalPosition)
-    this.camera.rotation.copy(originalRotation)
-    this.camera.matrixWorld.copy(originalMatrixWorld)
-    this.camera.matrixWorldInverse.copy(originalMatrixWorldInverse)
-    this.camera.projectionMatrix.copy(originalProjectionMatrix)
-    this.camera.fov = originalFov
-    this.height = originalHeight
-
-    if (foundDistance !== this.distance || foundHeight !== this.height) {
-      if (this.savedDistance === undefined) {
-        this.savedDistance = this.distance
-        this.savedHeight = this.height
-      }
-      this.distance = foundDistance
-      this.height = foundHeight
-    }
-  }
-
   suggestMode(mode) {
-    if (mode !== this.aimView) {
-      this.restoreSavedDistance()
-    }
     if (this.mainMode === this.aimView) {
       this.mode = mode
       this.isZoomedOut = false
@@ -305,9 +180,6 @@ export class Camera {
   }
 
   forceMode(mode) {
-    if (mode !== this.aimView) {
-      this.restoreSavedDistance()
-    }
     this.mode = mode
     this.mainMode = mode
     this.isZoomedOut = false
@@ -320,43 +192,32 @@ export class Camera {
     }
   }
 
-  cycleModeToAimz(balls: any[], aim: AimEvent) {
+  cycleModeToAimz() {
     const wasTopView = this.mode === this.topView
-    this.mode = this.aimView
-    this.mainMode = this.aimView
-    this.stepBackToFitAllBalls(balls, aim)
-    if (this.savedDistance === undefined) {
-      this.isZoomedOut = false
-      this.updateCameraButtonClass("aim")
-    } else {
-      this.isZoomedOut = true
-      this.updateCameraButtonClass("aimz")
-    }
+    this.enterAimz()
     if (wasTopView) {
       this.aimGraceStartT = this.t
     }
   }
 
-  cycleMode(balls: any[], aim: AimEvent) {
-    if (this.mode === this.aimView && !this.isZoomedOut) {
-      this.stepBackToFitAllBalls(balls, aim)
-      if (this.savedDistance === undefined) {
-        // All balls already in view — skip aimz, go straight to topview
-        this.mode = this.topView
-        this.mainMode = this.topView
-        this.updateCameraButtonClass("topview")
-      } else {
-        this.isZoomedOut = true
-        this.updateCameraButtonClass("aimz")
-      }
-    } else if (this.mode === this.aimView && this.isZoomedOut) {
-      this.restoreSavedDistance()
+  private enterAimz() {
+    this.aimzHeight = Camera.aimzHeight
+    this.aimzDistance = Camera.aimzDistance
+    this.mode = this.aimzView
+    this.mainMode = this.aimView
+    this.isZoomedOut = true
+    this.updateCameraButtonClass("aimz")
+  }
+
+  cycleMode() {
+    if (this.mode === this.aimView) {
+      this.enterAimz()
+    } else if (this.mode === this.aimzView) {
       this.mode = this.topView
       this.mainMode = this.topView
       this.isZoomedOut = false
       this.updateCameraButtonClass("topview")
     } else {
-      this.restoreSavedDistance()
       this.mode = this.aimView
       this.mainMode = this.aimView
       this.isZoomedOut = false
@@ -380,7 +241,6 @@ export class Camera {
   }
 
   toggleMode() {
-    this.restoreSavedDistance()
     this.isZoomedOut = false
     if (this.mode === this.topView) {
       this.mode = this.aimView

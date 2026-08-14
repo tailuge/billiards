@@ -145,12 +145,9 @@ export class Menu {
       this.container.controller instanceof WatchShot &&
       camera.mode === camera.topView
     ) {
-      camera.cycleModeToAimz(
-        this.container.table.balls,
-        this.container.table.cue.aim
-      )
+      camera.cycleModeToAimz()
     } else {
-      camera.cycleMode(this.container.table.balls, this.container.table.cue.aim)
+      camera.cycleMode()
     }
     this.container.lastEventTime = performance.now()
   }

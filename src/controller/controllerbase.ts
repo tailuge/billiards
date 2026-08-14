@@ -90,7 +90,10 @@ export abstract class ControllerBase extends Controller {
       ),
     ]
     this.container.table.hit()
-    this.container.view.camera.suggestMode(this.container.view.camera.aimView)
+    const camera = this.container.view.camera
+    if (camera.mode !== camera.aimzView) {
+      camera.suggestMode(camera.aimView)
+    }
     this.container.table.cue.showHelper(false)
   }
 
@@ -143,10 +146,7 @@ export abstract class ControllerBase extends Controller {
         return true
       case "KeyZ":
       case "KeyZUp":
-        this.container.view.camera.cycleMode(
-          this.container.table.balls,
-          this.container.table.cue.aim
-        )
+        this.container.view.camera.cycleMode()
         return true
       case "KeyD":
         this.container.view.minimap.keyDown()
