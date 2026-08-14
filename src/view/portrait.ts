@@ -49,8 +49,8 @@ interface InstanceData {
 }
 
 /**
- * A static emoji portrait: border frame, instanced emoji triangles, fake
- * shadows, and an optional name plaque. Faithful TS port of `dist/wall.html`'s
+ * A static emoji portrait: instanced emoji triangles, fake shadows, and an
+ * optional name plaque. Faithful TS port of `dist/wall.html`'s
  * `createEmojiWall`. Geometry is authored in local YZ space with +X as the
  * facing normal and +Z as up; `orientation` maps that local frame onto any
  * wall in the scene, `position` places it, and `scale` sizes it. The overlay
@@ -97,30 +97,6 @@ export class Portrait {
 
     // Single-sided materials: every mesh faces +X in local space, so the
     // wall's normal must point toward the viewer.
-    const borderMat = new MeshStandardMaterial({
-      color: 0x1f1f1f,
-      roughness: 0.4,
-      metalness: 0.1,
-    })
-    const borderShadowMat = new MeshBasicMaterial({
-      color: 0x000000,
-      transparent: true,
-      opacity: 0.35,
-    })
-
-    // Flat planar border, floating just off the wall surface.
-    const borderGeometry = Portrait.createBorderGeometry(1.225, 1.09, 0.015)
-    const borderMesh = new Mesh(borderGeometry, borderMat)
-    borderMesh.position.x = -0.065
-    // TEMP: hide the portrait border frame.
-    borderMesh.visible = false
-    this.group.add(borderMesh)
-
-    // Fake drop shadow of the border, flush against the wall.
-    const borderShadowMesh = new Mesh(borderGeometry, borderShadowMat)
-    borderShadowMesh.position.set(-0.069, 0.008, -0.008)
-    borderShadowMesh.visible = false
-    this.group.add(borderShadowMesh)
 
     // Instanced planar triangles (1 GPU draw call), lying in the wall plane
     // and facing +X.
@@ -178,10 +154,10 @@ export class Portrait {
       }
     }
 
-    // Name plaque: a thin textured quad mounted below the border.
+    // Name plaque: a thin textured quad mounted below the portrait.
     this.plateCanvas = document.createElement("canvas")
-    this.plateCanvas.width = 512
-    this.plateCanvas.height = 96
+    this.plateCanvas.width = 256
+    this.plateCanvas.height = 48
     this.plateCtx = this.plateCanvas.getContext("2d")
     this.plateTexture = new CanvasTexture(this.plateCanvas)
     this.plateTexture.colorSpace = SRGBColorSpace
@@ -193,12 +169,12 @@ export class Portrait {
       transparent: true,
       depthWrite: false,
     })
-    // 512/96 = 0.9/0.16875, so the texture keeps its aspect ratio on the plane.
+    // 256/48 = 0.9/0.16875, so the texture keeps its aspect ratio on the plane.
     this.plate = new Mesh(
       Portrait.createWallQuadGeometry(0.9, 0.16875),
       plateMat
     )
-    // The border's inner hole spans z in [-0.545, 0.545]; mount below it.
+    // Mount the plaque below the portrait.
     this.plate.position.set(-0.055, 0, -0.55)
     this.group.add(this.plate)
 
@@ -328,14 +304,14 @@ export class Portrait {
     ctx.textAlign = "center"
     ctx.textBaseline = "middle"
 
-    // Prefer 60px Exo but shrink to fit long names on the plaque.
-    let fontPx = 60
+    // Prefer 30px Exo but shrink to fit long names on the plaque.
+    let fontPx = 30
     ctx.font = `700 ${fontPx}px 'Exo', sans-serif`
     while (
-      ctx.measureText(this.state.name).width > this.plateCanvas.width - 24 &&
-      fontPx > 32
+      ctx.measureText(this.state.name).width > this.plateCanvas.width - 12 &&
+      fontPx > 16
     ) {
-      fontPx -= 4
+      fontPx -= 2
       ctx.font = `700 ${fontPx}px 'Exo', sans-serif`
     }
 
@@ -343,9 +319,9 @@ export class Portrait {
     // shadow. The canvas alpha channel carries both, so the quad stays
     // see-through everywhere else (the material is already transparent).
     ctx.shadowColor = "rgba(0, 0, 0, 0.95)"
-    ctx.shadowBlur = 5
-    ctx.shadowOffsetY = 4
-    ctx.fillStyle = "#e6edf3"
+    ctx.shadowBlur = 2.5
+    ctx.shadowOffsetY = 2
+    ctx.fillStyle = "#c9d1d9"
     ctx.fillText(
       this.state.name,
       this.plateCanvas.width / 2,
@@ -356,67 +332,6 @@ export class Portrait {
     ctx.shadowOffsetY = 0
 
     this.plateTexture.needsUpdate = true
-  }
-
-  /**
-   * Minimal 2D planar rectangular border (hollow rectangle) in the YZ plane,
-   * facing +X. 8 vertices, 8 triangles (16 indices).
-   */
-  private static createBorderGeometry(
-    width: number,
-    height: number,
-    thickness: number
-  ): BufferGeometry {
-    const halfW = width / 2
-    const halfH = height / 2
-    const halfOuterW = halfW + thickness
-    const halfOuterH = halfH + thickness
-
-    const vertices = new Float32Array([
-      0,
-      -halfOuterW,
-      halfOuterH,
-      0,
-      halfOuterW,
-      halfOuterH,
-      0,
-      halfOuterW,
-      -halfOuterH,
-      0,
-      -halfOuterW,
-      -halfOuterH,
-      0,
-      -halfW,
-      halfH,
-      0,
-      halfW,
-      halfH,
-      0,
-      halfW,
-      -halfH,
-      0,
-      -halfW,
-      -halfH,
-    ])
-
-    const normals = new Float32Array([
-      1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
-    ])
-
-    const uvs = new Float32Array([
-      0, 1, 1, 1, 1, 0, 0, 0, 0.2, 0.8, 0.8, 0.8, 0.8, 0.2, 0.2, 0.2,
-    ])
-
-    const indices = [
-      0, 4, 5, 0, 5, 1, 1, 5, 6, 1, 6, 2, 2, 6, 7, 2, 7, 3, 3, 7, 4, 3, 4, 0,
-    ]
-
-    const geometry = new BufferGeometry()
-    geometry.setAttribute("position", new BufferAttribute(vertices, 3))
-    geometry.setAttribute("normal", new BufferAttribute(normals, 3))
-    geometry.setAttribute("uv", new BufferAttribute(uvs, 2))
-    geometry.setIndex(indices)
-    return geometry
   }
 
   /**
