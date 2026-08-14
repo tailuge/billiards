@@ -2,8 +2,8 @@ import { Scene } from "three"
 import { Session } from "../network/client/session"
 import { Portrait } from "./portrait"
 import {
-  MINUS_X_WALL,
-  PLUS_X_WALL,
+  minusXWall,
+  plusXWall,
   PORTRAIT_SCALE,
   PortraitPlacement,
 } from "./portraitplacements"
@@ -55,7 +55,8 @@ export interface PortraitSpec {
  */
 export function portraitSpecs(
   mode: PortraitMode,
-  session: Session
+  session: Session,
+  wallX: number
 ): PortraitSpec[] {
   if (!mode.roomVisible) return []
 
@@ -67,12 +68,12 @@ export function portraitSpecs(
       {
         emoji: localeFlagEmoji(),
         name: session.spectatedP1Name || undefined,
-        placement: PLUS_X_WALL,
+        placement: plusXWall(wallX),
       },
       {
         emoji: localeFlagEmoji(),
         name: session.spectatedP2Name || undefined,
-        placement: MINUS_X_WALL,
+        placement: minusXWall(wallX),
       },
     ]
   }
@@ -80,7 +81,7 @@ export function portraitSpecs(
   const mine: PortraitSpec = {
     emoji: session.customParams["emoji"] || localeFlagEmoji(),
     name: session.playername || undefined,
-    placement: PLUS_X_WALL,
+    placement: plusXWall(wallX),
   }
   if (mode.singlePlayer) return [mine]
 
@@ -89,7 +90,7 @@ export function portraitSpecs(
     {
       emoji: session.opponentParams["emoji"] || localeFlagEmoji(),
       name: session.opponentName || undefined,
-      placement: MINUS_X_WALL,
+      placement: minusXWall(wallX),
     },
   ]
 }
@@ -104,9 +105,10 @@ export class Portraits {
 
   constructor(
     scene: Scene,
-    private readonly mode: PortraitMode
+    private readonly mode: PortraitMode,
+    private readonly wallX: number
   ) {
-    this.list = portraitSpecs(mode, Session.getInstance()).map(
+    this.list = portraitSpecs(mode, Session.getInstance(), wallX).map(
       (spec) =>
         new Portrait(scene, {
           emoji: spec.emoji,
@@ -119,7 +121,7 @@ export class Portraits {
   }
 
   refresh(): void {
-    const specs = portraitSpecs(this.mode, Session.getInstance())
+    const specs = portraitSpecs(this.mode, Session.getInstance(), this.wallX)
     specs.forEach((spec, i) => {
       this.list[i]?.setState({ emoji: spec.emoji, name: spec.name ?? "" })
     })

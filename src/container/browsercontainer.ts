@@ -185,7 +185,7 @@ export class BrowserContainer {
 
     this.assets = new Assets(this.ruletype)
     if (this.localMesh) {
-      this.assets.createLocal()
+      this.assets.createLocal(true)
       this.onAssetsReady()
     } else {
       this.assets.loadFromWeb(() => {

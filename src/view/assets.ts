@@ -4,6 +4,7 @@ import {
   RepeatWrapping,
   Float32BufferAttribute,
   BufferGeometry,
+  Group,
 } from "three"
 import { RuleFactory } from "../controller/rules/rulefactory"
 import { importGltf } from "../utils/gltf"
@@ -11,6 +12,7 @@ import { Rules } from "../controller/rules/rules"
 import { Sound } from "./sound"
 import { TableMesh } from "./tablemesh"
 import { TableGeometry } from "./tablegeometry"
+import { Room } from "./room"
 
 export class Assets {
   private static readonly tableCustomization = {
@@ -24,7 +26,8 @@ export class Assets {
 
   ready
   rules: Rules
-  background: Mesh
+  background: Group
+  room: Room
   table: Mesh
 
   sound: Sound
@@ -37,10 +40,8 @@ export class Assets {
   loadFromWeb(ready) {
     this.ready = ready
     this.sound = new Sound(true)
-    importGltf("models/background.gltf", (m) => {
-      this.background = m.scene
-      this.done()
-    })
+    this.room = new Room()
+    this.background = this.room.generateRoom()
     importGltf(this.rules.asset, (m) => {
       this.rules.scaleTableModel?.(m.scene)
       if (this.isTableSize5()) {
@@ -52,10 +53,14 @@ export class Assets {
     })
   }
 
-  createLocal() {
+  createLocal(withRoom = false) {
     this.sound = new Sound(false)
     TableMesh.mesh = new TableMesh().generateTable(TableGeometry.hasPockets)
     this.table = TableMesh.mesh
+    if (withRoom) {
+      this.room = new Room()
+      this.background = this.room.generateRoom()
+    }
   }
 
   static localAssets(ruletype = "") {

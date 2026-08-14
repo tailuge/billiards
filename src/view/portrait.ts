@@ -141,7 +141,7 @@ export class Portrait {
     this.group.add(this.instancedMesh)
 
     // Dark grey instance shadow material (no transparency).
-    const shadowMaterial = new MeshBasicMaterial({ color: 0x1a1a1a })
+    const shadowMaterial = new MeshBasicMaterial({ color: 0x404040 })
     this.shadowMesh = new InstancedMesh(
       planarTriGeom,
       shadowMaterial,

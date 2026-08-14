@@ -167,7 +167,11 @@ export class View {
     this.table.mesh = this.assets.table
     const isSnooker = this.assets.rules.asset === Snooker.tablemodel
     this.scene.add(new Grid().generateLineSegments(isSnooker))
-    this.portraits = new Portraits(this.scene, this.portraitMode)
+    this.portraits = new Portraits(
+      this.scene,
+      this.portraitMode,
+      this.assets.room?.xWall ?? 0
+    )
   }
 
   ballToCheck = 0
