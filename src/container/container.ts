@@ -6,6 +6,7 @@ import { Table } from "../model/table"
 import { View } from "../view/view"
 import { Init } from "../controller/init"
 import { AimInputs } from "../view/dom/aiminputs"
+import { Cue } from "../view/cue"
 import { Keyboard } from "../events/keyboard"
 import { Sound } from "../view/sound"
 import { Chat } from "../view/chat"
@@ -160,7 +161,9 @@ export class Container {
     if (this.freeAim) {
       // "freeaim=true": hide the aim helper (no shot preview line) and apply
       // the "7" aim camera preset; the A toggle is disabled so it stays off.
+      Cue.helperEnabled = false
       this.table.cue.showHelper(false)
+      this.table.cue.aimInputs?.showOverlap()
       this.view.camera.setAimPreset()
     }
     this.updateController(new Init(this))

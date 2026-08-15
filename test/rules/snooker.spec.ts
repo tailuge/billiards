@@ -22,7 +22,9 @@ import { zero } from "../../src/utils/three-utils"
 import { Session } from "../../src/network/client/session"
 import { End } from "../../src/controller/end"
 import { WatchShot } from "../../src/controller/watchshot"
+import { WatchAim } from "../../src/controller/watchaim"
 import { ScoreEvent } from "../../src/events/scoreevent"
+import { EventType } from "../../src/events/eventtype"
 import { StationaryEvent } from "../../src/events/stationaryevent"
 import { MatchResult } from "../../src/network/client/matchresult"
 
@@ -532,6 +534,57 @@ describe("Snooker", () => {
 
   it("placeBall constrained to D", (done) => {
     expect(snooker.placeBall(zero).length()).to.be.greaterThan(0)
+    done()
+  })
+
+  it("potting final black to level scores respots black and ball in hand", (done) => {
+    markAllRedsPotted()
+    for (let id = 1; id <= 5; id++) {
+      table.balls[id].state = State.InPocket
+    }
+    snooker.targetIsRed = false
+    snooker.previousPotRed = false
+    Session.getInstance().updateScoresFromNetwork(30, 37, 0)
+
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[6], 1),
+      Outcome.pot(table.balls[6], 1),
+    ]
+    table.balls[6].state = State.InPocket
+
+    const next = snooker.update(outcome)
+
+    expect(next).to.be.instanceOf(PlaceBall)
+    expect(table.balls[6].onTable()).to.be.true
+    expect(Session.getInstance().myScore()).to.equal(37)
+    done()
+  })
+
+  it("2-player: potting final black to level hands ball in hand to opponent", (done) => {
+    container.isSinglePlayer = false
+    markAllRedsPotted()
+    for (let id = 1; id <= 5; id++) {
+      table.balls[id].state = State.InPocket
+    }
+    snooker.targetIsRed = false
+    snooker.previousPotRed = false
+    Session.getInstance().updateScoresFromNetwork(30, 37, 0)
+
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[6], 1),
+      Outcome.pot(table.balls[6], 1),
+    ]
+    table.balls[6].state = State.InPocket
+
+    const next = snooker.update(outcome)
+
+    expect(next).to.be.instanceOf(WatchAim)
+    expect(table.balls[6].onTable()).to.be.true
+    expect(broadcastEvents.some((e) => e.type === EventType.PLACEBALL)).to.be
+      .true
+    expect(broadcastEvents.some((e) => e.type === EventType.RERACK)).to.be.true
     done()
   })
 

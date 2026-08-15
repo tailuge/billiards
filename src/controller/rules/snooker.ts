@@ -128,9 +128,32 @@ export class Snooker implements Rules {
     this.currentBreak += id + 1
     Session.getInstance().addMyScore(id + 1)
 
+    if (
+      id === 6 &&
+      Outcome.isClearTable(this.container.table) &&
+      Session.getInstance().myScore() === Session.getInstance().opponentScore()
+    ) {
+      return this.respottedBlack(outcome)
+    }
+
     this.previousPotRed = false
     this.targetIsRed = SnookerUtils.redsOnTable(this.container.table).length > 0
     return this.continueBreak()
+  }
+
+  private respottedBlack(outcome: Outcome[]): Controller {
+    this.respotColours(outcome)
+    this.container.notify({
+      type: "Info",
+      title: "Black respotted",
+      subtext: "Scores level — ball in hand from the D",
+    })
+    this.startTurn()
+    if (this.container.isSinglePlayer) {
+      return new PlaceBall(this.container)
+    }
+    this.container.sendEvent(new PlaceBallEvent(zero))
+    return new WatchAim(this.container)
   }
 
   private foul(outcome: Outcome[], info: ShotInfo): Controller {

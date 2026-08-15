@@ -234,7 +234,7 @@ export class AimInputs {
   showOverlap() {
     if (this.objectBallStyle) {
       const table = this.container.table
-      if (table.cue && Cue.helperEnabled) {
+      if (table.cue && Cue.helperEnabled && !this.container.freeAim) {
         const dir = unitAtAngle(table.cue.aim.angle)
         const closest = this.overlap.getOverlapOffset(table.cueball, dir)
         if (closest) {
