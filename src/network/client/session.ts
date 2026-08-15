@@ -104,6 +104,7 @@ export class Session {
       const bot = urlParams.get("bot")
       Session.instance.opponentName = bot ?? "ClawBreak"
       Session.instance.setOpponentClientId("bot")
+      Session.instance.opponentParams["emoji"] = "🤖"
     }
   }
 
