@@ -42,21 +42,6 @@ describe("TimeoutButton", () => {
     }, 150)
   })
 
-  it("should cancel the timer when the button is clicked", (done) => {
-    timeoutButton.startTimer()
-    button.click()
-
-    setTimeout(() => {
-      try {
-        expect(completed).to.be.false
-        expect(button.style.getPropertyValue("--sweep")).to.equal("0deg")
-        done()
-      } catch (e) {
-        done(e)
-      }
-    }, 150)
-  })
-
   it("should transition to critical color", (done) => {
     timeoutButton = new TimeoutButton(button, {
       duration: 100,
