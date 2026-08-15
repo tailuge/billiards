@@ -155,6 +155,7 @@ export class BrowserContainer {
       portraitMode: {
         roomVisible: !this.localMesh,
         singlePlayer: isSinglePlayer,
+        replay: !!this.replay,
       },
     }
     return new Container(config)

@@ -9,6 +9,7 @@ import {
 } from "./portraitplacements"
 
 export const DEFAULT_EMOJI = "📺"
+export const GLOBE_EMOJI = "🌎"
 
 // Regional-indicator symbol for "A" (U+1F1E6); the letters A–Z are contiguous.
 const REGIONAL_INDICATOR_A = 0x1f1e6
@@ -24,7 +25,7 @@ export function localeFlagEmoji(): string {
   const locale = navigator.language
   // en-US is a near-universal OS default that rarely reflects the player's
   // real country, so show a globe instead of a misleading 🇺🇸.
-  if (locale.toLowerCase() === "en-us") return "🌎"
+  if (locale.toLowerCase() === "en-us") return GLOBE_EMOJI
   const region = locale.split("-").pop()?.toUpperCase() ?? ""
   if (!/^[A-Z]{2}$/.test(region)) return DEFAULT_EMOJI
   return String.fromCodePoint(
@@ -36,6 +37,7 @@ export function localeFlagEmoji(): string {
 export interface PortraitMode {
   roomVisible: boolean
   singlePlayer: boolean
+  replay?: boolean
 }
 
 export interface PortraitSpec {
@@ -63,24 +65,28 @@ export function portraitSpecs(
 
   // Spectators watch two other players; their own emoji/name are irrelevant
   // and the watched players' emojis are not transported, so names come from
-  // the spectated fields and emojis fall back to the default.
+  // the spectated fields and emojis fall back to the default TV.
   if (session.spectator) {
     return [
       {
-        emoji: localeFlagEmoji(),
+        emoji: DEFAULT_EMOJI,
         name: session.spectatedP1Name || undefined,
         placement: plusXWall(wallX),
       },
       {
-        emoji: localeFlagEmoji(),
+        emoji: DEFAULT_EMOJI,
         name: session.spectatedP2Name || undefined,
         placement: minusXWall(wallX),
       },
     ]
   }
 
+  // Replay never records a player emoji, so both players show a globe.
+  const myEmoji = mode.replay
+    ? GLOBE_EMOJI
+    : session.customParams["emoji"] || localeFlagEmoji()
   const mine: PortraitSpec = {
-    emoji: session.customParams["emoji"] || localeFlagEmoji(),
+    emoji: myEmoji,
     name: session.playername || undefined,
     placement: plusXWall(wallX),
   }
@@ -91,7 +97,9 @@ export function portraitSpecs(
   return [
     { ...mine, placement: minusXWall(wallX) },
     {
-      emoji: session.opponentParams["emoji"] || localeFlagEmoji(),
+      emoji: mode.replay
+        ? GLOBE_EMOJI
+        : session.opponentParams["emoji"] || localeFlagEmoji(),
       name: session.opponentName || undefined,
       placement: plusXWall(wallX),
     },
