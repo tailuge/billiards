@@ -31,6 +31,7 @@ import { Spectate } from "../../src/controller/spectate"
 import { Init } from "../../src/controller/init"
 import { ScoreEvent } from "../../src/events/scoreevent"
 import { maxPower } from "../../src/model/physics/constants"
+import { Cue } from "../../src/view/cue"
 
 initDom()
 
@@ -516,6 +517,44 @@ describe("Controller", () => {
       container.processEvents()
     }
     chaiExpect(container.inputQueue.length).to.equal(0)
+    done()
+  })
+
+  it("A toggles the aim helper without freeaim", (done) => {
+    Cue.helperEnabled = true
+    container.controller = new Aim(container)
+    container.inputQueue.push(new Input(0.1, "KeyAUp"))
+    container.processEvents()
+    chaiExpect(Cue.helperEnabled).to.be.false
+    done()
+  })
+
+  it("freeaim disables the A aim-helper toggle", (done) => {
+    Cue.helperEnabled = true
+    container.freeAim = true
+    container.controller = new Aim(container)
+    container.inputQueue.push(new Input(0.1, "KeyAUp"))
+    container.processEvents()
+    chaiExpect(Cue.helperEnabled).to.be.true
+    done()
+  })
+
+  it("freeaim hides the aim helper and applies the aim camera preset", (done) => {
+    const freeAimContainer = new Container({
+      element: document.getElementById("viewP1"),
+      log: (_) => {},
+      assets: Assets.localAssets(),
+      freeAim: true,
+    })
+    chaiExpect(freeAimContainer.table.cue.helperMesh.visible).to.be.false
+    done()
+  })
+
+  it("freeaim keeps the aim helper hidden when entering Aim", (done) => {
+    Cue.helperEnabled = true
+    container.freeAim = true
+    container.controller = new Aim(container)
+    chaiExpect(container.table.cue.helperMesh.visible).to.be.false
     done()
   })
 

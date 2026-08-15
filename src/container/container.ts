@@ -73,6 +73,7 @@ export class Container {
   replayMode: boolean = false
   fastForwardActive: boolean = false
   examMode: boolean = false
+  freeAim: boolean = false
   relay: MessageRelay | null = null
   scoreReporter: ScoreReporter | null = null
   frame: (timestamp: number) => void
@@ -112,11 +113,13 @@ export class Container {
       replayMode = false,
       isSinglePlayer = true,
       portraitMode,
+      freeAim = false,
     } = config
     this.log = log
     this.replayMode = replayMode
     this.examMode = config.examMode ?? false
     this.isSinglePlayer = isSinglePlayer
+    this.freeAim = freeAim
     this.rules = RuleFactory.create(ruletype, this)
     this.table = this.rules.table()
     this.view = new View(element, this.table, assets, portraitMode)
@@ -154,6 +157,12 @@ export class Container {
       config.messagingUrl,
       (url) => this.menu.showOverlay(url)
     )
+    if (this.freeAim) {
+      // "freeaim=true": hide the aim helper (no shot preview line) and apply
+      // the "7" aim camera preset; the A toggle is disabled so it stays off.
+      this.table.cue.showHelper(false)
+      this.view.camera.setAimPreset()
+    }
     this.updateController(new Init(this))
     //  this.updateController(new End(this))
   }

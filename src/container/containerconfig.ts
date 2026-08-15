@@ -18,4 +18,5 @@ export interface ContainerConfig {
   isSinglePlayer?: boolean
   examMode?: boolean
   portraitMode?: PortraitMode
+  freeAim?: boolean
 }

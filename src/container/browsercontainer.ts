@@ -67,6 +67,7 @@ export class BrowserContainer {
   examMode: boolean = false
   speedrun: boolean = false
   localMesh: boolean = false
+  freeAim: boolean = false
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
     this.now = Date.now()
@@ -93,6 +94,7 @@ export class BrowserContainer {
     this.examMode = params.has("exam")
     this.speedrun = params.has("speedrun")
     this.localMesh = params.has("localmesh")
+    this.freeAim = params.get("freeaim") === "true"
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
       Number.parseInt(params.get("raceTo") ?? "7") || 7
@@ -157,6 +159,7 @@ export class BrowserContainer {
         singlePlayer: isSinglePlayer,
         replay: !!this.replay,
       },
+      freeAim: this.freeAim,
     }
     return new Container(config)
   }

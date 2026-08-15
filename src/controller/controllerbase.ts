@@ -123,7 +123,9 @@ export abstract class ControllerBase extends Controller {
         exportGltf(this.container.view.scene)
         return true
       case "KeyAUp":
-        cue.toggleHelper()
+        if (!this.container.freeAim) {
+          cue.toggleHelper()
+        }
         return true
       case "KeyMUp":
         this.container.table.cue.aimInputs?.toggleTiltControl()

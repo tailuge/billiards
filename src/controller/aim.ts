@@ -18,7 +18,7 @@ export class Aim extends ControllerBase {
     const table = this.container.table
 
     table.cue.aimMode()
-    table.cue.showHelper(true)
+    table.cue.showHelper(!this.container.freeAim)
     table.cueball = this.container.rules.cueball
     table.cue.aim.offset.set(0, 0, 0)
 
