@@ -136,10 +136,10 @@ export abstract class ControllerBase extends Controller {
         return true
       case "movementYUp":
       case "NumpadSubtract":
-        this.container.view.camera.adjustHeight(delta * 8)
+        this.container.view.camera.adjustHeight(delta * 4)
         return true
       case "NumpadAdd":
-        this.container.view.camera.adjustHeight(-delta * 8)
+        this.container.view.camera.adjustHeight(-delta * 4)
         return true
       case "KeyOUp":
         this.container.view.camera.toggleMode()
@@ -167,10 +167,19 @@ export abstract class ControllerBase extends Controller {
         this.container.view.camera.adjustFov(delta * 20)
         return true
       case "Digit3":
-        this.container.view.camera.adjustDistance(-delta * 8)
+        this.container.view.camera.adjustDistance(-delta * 4)
         return true
       case "Digit4":
-        this.container.view.camera.adjustDistance(delta * 8)
+        this.container.view.camera.adjustDistance(delta * 4)
+        return true
+      case "Digit5":
+        this.container.view.camera.adjustLook(-delta * 0.25)
+        return true
+      case "Digit6":
+        this.container.view.camera.adjustLook(delta * 0.25)
+        return true
+      case "Digit7Up":
+        this.container.view.camera.setAimPreset()
         return true
       default:
         return false

@@ -20,6 +20,7 @@ export class Aim extends ControllerBase {
     table.cue.aimMode()
     table.cue.showHelper(true)
     table.cueball = this.container.rules.cueball
+    table.cue.aim.offset.set(0, 0, 0)
 
     const params = new URLSearchParams(globalThis.location?.search)
     let customShot = false

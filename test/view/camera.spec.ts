@@ -1,6 +1,8 @@
 import { expect } from "chai"
 import { Camera } from "../../src/view/camera"
 import { AimEvent } from "../../src/events/aimevent"
+import { Cue } from "../../src/view/cue"
+import { R } from "../../src/model/physics/constants"
 
 describe("Camera", () => {
   it("increments t in update", () => {
@@ -23,6 +25,40 @@ describe("Camera", () => {
 
     const target = (camera as any).target
     expect(target.z).to.be.greaterThan(0)
+  })
+
+  it("aimView lerps at 0.08 with helper on and 0.22 with helper off", () => {
+    const camera = new Camera(1)
+    const aim = new AimEvent()
+    const fractions: number[] = []
+    ;(camera as any).aimFrom = (
+      _aim: AimEvent,
+      _h: number,
+      _d: number,
+      _lh: number,
+      fraction: number
+    ) => {
+      fractions.push(fraction)
+    }
+
+    Cue.helperEnabled = true
+    camera.aimView(aim)
+    Cue.helperEnabled = false
+    camera.aimView(aim)
+    Cue.helperEnabled = true
+
+    expect(fractions).to.eql([0.08, 0.22])
+  })
+
+  it("adjustLook nudges the look height and clamps it", () => {
+    const camera = new Camera(1)
+    const before = (camera as any).lookHeight
+    camera.adjustLook(R * 2)
+    expect((camera as any).lookHeight).to.equal(before + R * 2)
+    camera.adjustLook(-R * 1000)
+    expect((camera as any).lookHeight).to.equal(R)
+    camera.adjustLook(R * 1000)
+    expect((camera as any).lookHeight).to.equal(R * 8)
   })
 
   it("cycleMode cycles through aim, aimz and topview", () => {

@@ -10,6 +10,7 @@ import {
 import { up, zero, unitAtAngle } from "../utils/three-utils"
 import { AimEvent } from "../events/aimevent"
 import { CameraTop } from "./cameratop"
+import { Cue } from "./cue"
 import { R } from "../model/physics/constants"
 
 export class Camera {
@@ -18,6 +19,10 @@ export class Camera {
   static defaultFovOffset = 0
   static aimzHeight = R * 40
   static aimzDistance = R * 100
+  static aimLerp = 0.08
+  static aimLerpNoHelper = 0.22
+  static aimPresetHeight = R * 9
+  static aimPresetDistance = R * 35
 
   static configureForRule(ruleType: string) {
     if (ruleType === "threecushion" || ruleType === "sagu") {
@@ -36,6 +41,7 @@ export class Camera {
   mode = this.topView
   private mainMode = this.aimView
   private height = Camera.defaultHeight
+  private lookHeight = Camera.defaultHeight / 2
   isZoomedOut = false
   tableMesh?: Object3D
 
@@ -115,8 +121,11 @@ export class Camera {
     this.camera.lookAt(zero)
   }
 
-  aimView(aim: AimEvent, fraction = 0.08) {
-    this.aimFrom(aim, this.height, this.distance, this.height / 2, fraction)
+  aimView(
+    aim: AimEvent,
+    fraction = Cue.helperEnabled ? Camera.aimLerp : Camera.aimLerpNoHelper
+  ) {
+    this.aimFrom(aim, this.height, this.distance, this.lookHeight, fraction)
   }
 
   aimzView(aim: AimEvent, fraction = 0.2) {
@@ -245,6 +254,16 @@ export class Camera {
     }
     delta = this.distance < 10 * R ? delta / 8 : delta
     this.distance = MathUtils.clamp(this.distance + delta, R * 2, R * 100)
+  }
+
+  adjustLook(delta: number) {
+    this.lookHeight = MathUtils.clamp(this.lookHeight + delta, R, R * 8)
+  }
+
+  setAimPreset() {
+    this.height = Camera.aimPresetHeight
+    this.distance = Camera.aimPresetDistance
+    this.lookHeight = Camera.aimPresetHeight / 2
   }
 
   suggestMode(mode) {
