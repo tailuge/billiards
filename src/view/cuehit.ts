@@ -133,6 +133,13 @@ export class CueHit {
     if (!this.armed || this.active || !e.isPrimary || e.button !== 0) {
       return
     }
+    // CueHit listens on #viewP1 (the div the renderer canvas lives in), so
+    // pointerdowns on the chat dialog bubble up here. Ignore them so clicking
+    // the chat input / emoji list never engages the cue. Only checked at press
+    // start, so an in-flight captured pull-back is unaffected.
+    if ((e.target as Element | null)?.closest?.("#inputTextDiv")) {
+      return
+    }
     if (!this.hitCue(e)) {
       return
     }
