@@ -57,7 +57,7 @@ jobs:
           files: ./coverage/coverage-final.json
 
       - name: delete coverage and blend files
-        run: rm -rf coverage dist/models/*.blend dist/models/d-snooker.gltf dist/models/p8.gltf dist/models/snooker.gltf dist/models/d-snooker.bin dist/models/p8.bin dist/models/snooker.bin
+        run: rm -rf coverage dist/models/*.blend dist/models/p8.gltf dist/models/snooker.gltf dist/models/p8.bin dist/models/snooker.bin
 
       - name: upload build artifact
         if: github.ref == 'refs/heads/master' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
@@ -98,7 +98,7 @@ jobs:
           cp dist/naver200febfca14870e645245d6808f2a89e.html naver200febfca14870e645245d6808f2a89e.html
           echo "Removing unnecessary files for deployment"
           rm -rf node_modules src test .github LICENSE yarn.lock
-          rm -rf dist/models/*.blend dist/models/d-snooker.gltf dist/models/p8.gltf dist/models/snooker.gltf dist/models/d-snooker.bin dist/models/p8.bin dist/models/snooker.bin
+          rm -rf dist/models/*.blend dist/models/p8.gltf dist/models/snooker.gltf dist/models/p8.bin dist/models/snooker.bin
           du -a * | sort -n
 
       - name: Upload artifact
