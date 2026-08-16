@@ -112,8 +112,9 @@ existing `swing` term, which is driven by `Cue.t` and reaches its maximum
 retraction when `sin(t * 1.5 + Math.PI / 2)` hits `-1` (i.e. `t = 2π/3`). The
 gesture reuses this: `CueHit` maps the pull to a `dragT` phase (`0` at rest →
 `2π/3` fully retracted) and writes it to `Cue.dragT`, which `moveTo` uses in
-place of the free-running `t` (with a fixed full-power amplitude while
-dragging). No new geometry or animation system. On fire, the existing
+place of the free-running `t` (with a fixed, amplified amplitude while
+dragging — see `Cue.dragPullAmplifier`). No new geometry or animation system.
+On fire, the existing
 `hittingAnimation` / `hitAnimationCurve` stroke plays exactly as it does today.
 
 ---

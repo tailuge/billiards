@@ -287,9 +287,10 @@ export class Cue {
     this.aim.pos.copy(pos)
     this.updateCueRotation()
     const t = this.dragT ?? this.t
-    // While dragging the amplitude is fixed (full retraction at dragT = T_FULL);
-    // otherwise the idle swing scales with power as before.
-    const powerScale = this.dragT === null ? this.aim.power / maxPower : 1
+    // While dragging the amplitude is fixed and amplified (full retraction at
+    // dragT = T_FULL); otherwise the idle swing scales with power as before.
+    const powerScale =
+      this.dragT === null ? this.aim.power / maxPower : Cue.dragPullAmplifier
     const swing = (sin(t * 1.5 + Math.PI / 2) - 1) * 2 * R * powerScale
     const strokeX = this.applyHitAnimation(swing)
     this.updateCuePosition(pos, strokeX)
@@ -347,6 +348,10 @@ export class Cue {
   intersectsAnything(table: Table, aim: AimEvent = this.aim) {
     return cueIntersectsAnything(table, aim, this.spinOffset(aim))
   }
+
+  /** Multiplies the cue retraction while the CueHit drag gesture is active, so
+   * pull-back is more pronounced than the idle power-scaled swing. Tuneable. */
+  static readonly dragPullAmplifier = 2.5
 
   static helperEnabled = true
 

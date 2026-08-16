@@ -19,8 +19,9 @@ export class CueHit {
   private static readonly DEADZONE_PX = 10
   /** Lowest power a fired shot may have (5%). Gesture only. */
   private static readonly MIN_POWER = 0.05
-  /** Forward pointer speed (px/s) that maps to 100% power. Tuneable. */
-  private static readonly V_FULL = 800
+  /** Forward pointer speed (px/s) that maps to 100% power. Tuneable.
+   * Doubled from the original 800 to halve the deduced shot power. */
+  private static readonly V_FULL = 1600
   /** Forward pointer speed (px/s) below which a push is a cancel, not a shot. */
   private static readonly V_MIN = 120
   /** Pointer px for a full cue retraction. Tuneable. */
