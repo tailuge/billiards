@@ -28,6 +28,7 @@ export class LobbyIndicator {
   private readonly rules: Rules
   private readonly ruleType: string
   private readonly tableSize: number
+  private readonly freeAim: boolean
   private static readonly NCHAN_URL = "https://billiards-network.onrender.com"
   private readonly messagingUrl: string
   private currentTableId: string | null = null
@@ -65,6 +66,9 @@ export class LobbyIndicator {
       new URLSearchParams(globalThis.location?.search ?? "").get("tableSize") ||
         "10"
     )
+    this.freeAim =
+      new URLSearchParams(globalThis.location?.search ?? "").get("freeaim") ===
+      "true"
     if (botMode) {
       this.ruleType = `${this.rules.rulename}-bot`
     } else if (Session.isExamMode()) {
@@ -176,7 +180,10 @@ export class LobbyIndicator {
       userId,
       userName,
       ruleType: this.ruleType,
-      options: { tableSize: String(this.tableSize) },
+      options: {
+        tableSize: String(this.tableSize),
+        ...(this.freeAim && { freeaim: "true" }),
+      },
       ...(this.isSpectator && { isSpectator: true }),
     }
     if (this.currentTableId) {
@@ -240,7 +247,10 @@ export class LobbyIndicator {
     if (this.lobby) {
       this.lobby.updatePresence({
         tableId: tableId ?? undefined,
-        options: { tableSize: String(this.tableSize) },
+        options: {
+          tableSize: String(this.tableSize),
+          ...(this.freeAim && { freeaim: "true" }),
+        },
       })
     }
   }
