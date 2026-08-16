@@ -12,7 +12,8 @@ disturb the other mouse gestures (aim rotate, camera height, spin).
 ## 1. Chosen approach
 
 A small self-contained pointer-gesture class, `CueHit`
-(`src/view/cuehit.ts`), is owned by the `Aim` controller. It listens for
+(`src/view/cuehit.ts`), is owned by `Container` and armed only while `Aim` is
+the active controller. It listens for
 `pointerdown`/`pointermove`/`pointerup` on the canvas, decides whether the
 gesture started on the cue, tracks pull-back / push-forward, and finally
 reuses the exact same fire path the Hit button uses today.
@@ -70,7 +71,10 @@ This is the **only** hit test — there is no screen-region fallback.
   camera-height exactly as today.
 
 The gesture only ever runs in the `Aim` controller, never in `PlaceBall`
-(which has its own table-drag) or `WatchAim`.
+(which has its own table-drag) or `WatchAim`. Being in `Aim` is the single
+lifecycle driver: `Container.updateController` enables `CueHit` on `Aim` and
+disables it on every other controller (see §6 step 4), so it can never start
+— or linger — outside your own aim turn.
 
 ---
 
@@ -80,8 +84,8 @@ The gesture only ever runs in the `Aim` controller, never in `PlaceBall`
 Idle → Pulling (drag down) → Pushing (drag up) → Fire | Cancel → Idle
 ```
 
-- **pointerdown on cue** — record start position, `canvas.setPointerCapture`,
-  set `cuehit.active = true`, enter `Pulling`.
+- **pointerdown on cue** — record start position, `canvas.setPointerCapture`
+  (which makes `cuehit.active` true), enter `Pulling`.
 - **pull back** — as the pointer moves down-screen, the cue visually retracts.
   Track a signed `pull` amount (screen px below the start point). A small
   deadzone (~10 px) ignores jitter.
@@ -194,9 +198,9 @@ To keep a cue-drag from also rotating aim / changing height:
    hands back to the interact drag mid-press).
 2. Guard `Keyboard.mousetouch`: `if (cueHit.active) return`. One guard covers
    both `draggable.move` and `gesturable.onmove`, so **no** `movementX` /
-   `movementY` accumulate and no `movementXUp` / `movementYUp` are emitted.
-3. Belt-and-braces: `Aim.handleInput` / `commonKeyHandler` also ignore
-   `movementXUp` / `movementYUp` while the gesture is active.
+   `movementY` accumulate and no `movementXUp` / `movementYUp` are emitted —
+   there is nothing further to ignore, so no belt-and-braces check is needed
+   in `handleInput` / `commonKeyHandler`.
 
 The spin ball (`AimInputs.cueBallElement`) and the `+`/`-` height keys
 (`NumpadAdd`/`NumpadSubtract`) are unrelated — the canvas gesture never
@@ -208,27 +212,28 @@ dispatches to the spin widget and the keyboard keys are untouched.
 
 **Progress:** `CueHit` implements the state machine, raycast hit test,
 velocity averaging, and power mapping (exposing `active` / `dragT` / `phase`).
-It is wired in — `Aim.onFirst` creates/enables it, the `Keyboard.mousetouch`
-guard is in place, and `Cue.dragT` gives the pull-back retraction, so the
+It is wired in — the `Keyboard.mousetouch` guard and `Cue.dragT` give the
+pull-back retraction, the Aim-scoped lifecycle arms/disarms it, and the
 gesture fires shots with visual feedback. The remaining work is the invisible
-fat hit mesh. Tuneable constants live at the top of the class: `DEADZONE_PX`,
-`MIN_POWER`, `V_FULL`, `V_MIN`, `MAX_PULL_PX`, `T_FULL`.
+fat hit mesh. Tuneable constants live at the top of the class:
+`DEADZONE_PX`, `MIN_POWER`, `V_FULL`, `V_MIN`, `MAX_PULL_PX`, `T_FULL`.
 
 ### Pointer locations
 
 1. **`src/view/cuehit.ts` (DONE)** — `CueHit` class: the gesture state machine,
    pointer listeners, velocity averaging, power mapping, and queueing
    `Input(0, "SpaceUp")` on fire.
-2. **`src/controller/aim.ts` (DONE)** — create/enable `CueHit` in `onFirst`
-   when `Aim` starts.
+2. **`src/controller/aim.ts`** — no `CueHit` code; arming is driven purely by
+   the controller type in `Container.updateController`.
 3. **`src/view/cue.ts`** (DONE for drag) — `dragT` drives the `swing` term in
    `moveTo` so pull/push retract the cue. **Remaining:** add the invisible fat
    hit mesh (same length, fatter radius) as a child of `mesh` and expose it
    (or `mesh`) for picking.
 4. **`src/events/keyboard.ts` (DONE)** — early-return in `mousetouch` while the
    gesture is active (the guard in §5).
-5. **`src/container/container.ts` (DONE)** — holds the single `cueHit`
-   instance so both `Keyboard` and `Aim` can see it.
+5. **`src/container/container.ts` (DONE)** — lazily creates the single
+   `cueHit` and, in `updateController`, enables it on `Aim` and disables it on
+   any other controller (the lifecycle driver; see step 4).
 
 ### Steps
 
@@ -244,11 +249,13 @@ fat hit mesh. Tuneable constants live at the top of the class: `DEADZONE_PX`,
    (updates the power indicator), then queue `Input(0, "SpaceUp")` so it flows
    through `Aim.handleInput` → `playShot()` → `updateController(PlayShot)`. On
    cancel, clear `Cue.dragT` and reset — leave power unchanged.
-4. **Hook into `Aim`** ✅ (create/enable) — `Aim.onFirst` creates the single
-   `CueHit` (stored on `Container`) and calls `enable()`. **Remaining:**
-   `disable()` when leaving Aim (e.g. centrally in `Container.updateController`
-   when `Aim` is replaced); the `aimInputs.isDisabled()` pointerdown guard
-   already prevents firing outside Aim in the meantime.
+4. **Lifecycle (Aim-scoped)** ✅ — `Container.updateController` lazily creates
+   the single `CueHit`, enables it when the new controller is `Aim`, and
+   disables it otherwise. `disable()` unarms the gesture, resets state, and
+   removes listeners — but if a press is still in flight it defers the release
+   (capture + listener teardown) to `pointerup`/`pointercancel`, so the trailing
+   drag after a fired shot stays suppressed across the Aim → PlayShot
+   transition. The `aimInputs.isDisabled()` pointerdown check is dropped.
 5. **Guard `Keyboard`** ✅ — `mousetouch` returns early when `cuehit.active`
    (§5), wired via `container.keyboard.mousetouchGuard`, so aim rotate /
    camera height never fire from a cue-drag.
@@ -269,8 +276,9 @@ fat hit mesh. Tuneable constants live at the top of the class: `DEADZONE_PX`,
 - **Drag continues after the shot fires** → the pointer stays captured until
   release, so the leftover movement never feeds aim/height (the guard stays on
   until `pointerup`/`pointercancel`).
-- **Disabled state** → no listeners while `aimInputs.isDisabled()` (spectator,
-  replay, bot turn, WatchAim).
+- **Not in Aim** → the gesture is unarmed; spectator, replay, bot turn, and
+  WatchAim never start a drag, and the listeners are removed once any
+  in-flight press ends (see step 4).
 - **Multi-touch / pinch** → ignore secondary pointers; only the first pointer
   drives the gesture.
 - **Slow but valid push** → fires at the `MIN_POWER` floor (5%) when the

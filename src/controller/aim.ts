@@ -3,7 +3,6 @@ import { Controller, HitEvent, Input } from "./controller"
 import { ControllerBase } from "./controllerbase"
 import { PlayShot } from "./playshot"
 import { Replay } from "./replay"
-import { CueHit } from "../view/cuehit"
 import { gameOverButtons } from "../utils/gameover"
 
 /**
@@ -59,12 +58,6 @@ export class Aim extends ControllerBase {
     this.container.view.clearLines()
     this.container.table.cue.aimInputs.setDisabled(false)
     this.container.table.cue.aimInputs.setButtonText("Hit")
-    let cueHit = this.container.cueHit
-    if (!cueHit) {
-      cueHit = new CueHit(this.container)
-      this.container.cueHit = cueHit
-    }
-    cueHit.enable()
   }
 
   override handleInput(input: Input): Controller {

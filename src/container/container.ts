@@ -450,6 +450,22 @@ export class Container {
       this.comment?.setVisible(isTwoPlayer)
 
       this.controller.onFirst()
+      this.updateCueHit(controller)
+    }
+  }
+
+  /** CueHit is armed only while Aim is the active controller: enable it on
+   * entry and disable it on every other transition. Disabling defers teardown
+   * until the pointer is released if a press is still in flight, so the
+   * trailing drag after a fired shot stays suppressed. */
+  private updateCueHit(controller: Controller) {
+    if (controller instanceof Aim) {
+      if (!this.cueHit) {
+        this.cueHit = new CueHit(this)
+      }
+      this.cueHit.enable()
+    } else {
+      this.cueHit?.disable()
     }
   }
 }

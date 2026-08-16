@@ -7,7 +7,8 @@ import type { Container } from "../container/container"
  * forward. The forward speed becomes the shot power and the hit fires when
  * the cue returns to its rest position (pull ≈ 0).
  *
- * Owned by `Aim` (created and enabled in `Aim.onFirst`). Firing queues
+ * Owned by `Container` and armed only while `Aim` is the active controller
+ * (`Container.updateController` enables/disables it). Firing queues
  * `Input(0, "SpaceUp")` so the shot flows through `Aim.handleInput` →
  * `playShot()` → `updateController(PlayShot)` exactly like the Hit button.
  * Pull-back drives `Cue.dragT` for the visual retraction; the invisible fat
@@ -33,6 +34,7 @@ export class CueHit {
   private readonly raycaster = new Raycaster()
   private readonly ndc = new Vector2()
 
+  private armed = false
   private state: "Idle" | "Pulling" | "Pushing" = "Idle"
   private pointerId: number | null = null
   private startY = 0
@@ -69,6 +71,7 @@ export class CueHit {
   }
 
   enable() {
+    this.armed = true
     if (this.removeListeners) {
       return
     }
@@ -86,8 +89,16 @@ export class CueHit {
   }
 
   disable() {
-    this.releasePointer()
+    this.armed = false
     this.reset()
+    // A press in flight keeps the capture and listeners until pointerup /
+    // pointercancel so the trailing drag after a fired shot stays suppressed.
+    if (this.pointerId === null) {
+      this.teardown()
+    }
+  }
+
+  private teardown() {
     this.removeListeners?.()
     this.removeListeners = null
   }
@@ -114,11 +125,7 @@ export class CueHit {
   }
 
   private onPointerDown = (e: PointerEvent) => {
-    if (this.active || !e.isPrimary || e.button !== 0) {
-      return
-    }
-    const aimInputs = this.container.table.cue.aimInputs
-    if (!aimInputs || aimInputs.isDisabled()) {
+    if (!this.armed || this.active || !e.isPrimary || e.button !== 0) {
       return
     }
     if (!this.hitCue(e)) {
@@ -181,6 +188,7 @@ export class CueHit {
     }
     this.releasePointer()
     this.reset()
+    this.teardownIfUnarmed()
   }
 
   private onPointerCancel = (e: PointerEvent) => {
@@ -189,6 +197,15 @@ export class CueHit {
     }
     this.releasePointer()
     this.reset()
+    this.teardownIfUnarmed()
+  }
+
+  /** If we were disabled mid-press (left Aim), finish the teardown once the
+   * pointer is released. */
+  private teardownIfUnarmed() {
+    if (!this.armed) {
+      this.teardown()
+    }
   }
 
   private resolveAtZero() {
@@ -235,8 +252,8 @@ export class CueHit {
   }
 
   /** Release the captured pointer and end ownership of the interaction. Only
-   * called on pointerup/pointercancel/disable — the capture is kept for the
-   * whole press so the trailing drag after a fired shot stays suppressed. */
+   * called on pointerup/pointercancel — the capture is kept for the whole
+   * press so the trailing drag after a fired shot stays suppressed. */
   private releasePointer() {
     if (this.pointerId !== null) {
       const canvas = this.container.view.element as HTMLElement
