@@ -64,13 +64,21 @@ export class SnookerUtils {
     }
   }
 
-  static calculateFoul(outcome: Outcome[], shotInfo: ShotInfo): FoulResult {
-    const points = SnookerUtils.foulPoints(outcome, shotInfo)
+  static calculateFoul(
+    outcome: Outcome[],
+    shotInfo: ShotInfo,
+    ballOnValue: number
+  ): FoulResult {
+    const points = SnookerUtils.foulPoints(outcome, shotInfo, ballOnValue)
     const reason = SnookerUtils.foulReason(outcome, shotInfo)
     return { points, reason }
   }
 
-  private static foulPoints(outcome: Outcome[], shotInfo: ShotInfo): number {
+  private static foulPoints(
+    outcome: Outcome[],
+    shotInfo: ShotInfo,
+    ballOnValue: number
+  ): number {
     const potted = Outcome.pots(outcome)
       .map((b) => b.id)
       .filter((id) => id < 7)
@@ -78,7 +86,25 @@ export class SnookerUtils {
     if (firstCollisionId > 6) {
       firstCollisionId = 0
     }
-    return Math.max(3, firstCollisionId, ...potted) + 1
+    return Math.max(3, ballOnValue - 1, firstCollisionId, ...potted) + 1
+  }
+
+  // Value of the ball "on": the lowest colour when in the colours phase,
+  // otherwise the 4-point minimum (red is worth 1; after a red the nominated
+  // colour is not tracked).
+  static ballOnValue(
+    table: Table,
+    targetIsRed: boolean,
+    previousPotRed: boolean
+  ): number {
+    if (targetIsRed || previousPotRed) {
+      return 4
+    }
+    const colours = SnookerUtils.coloursOnTable(table)
+    if (colours.length === 0) {
+      return 4
+    }
+    return Math.min(...colours.map((b) => b.id)) + 1
   }
 
   private static foulReason(

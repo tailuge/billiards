@@ -386,7 +386,15 @@ export class BotEventHandler {
       snookerRules.targetIsRed,
       snookerRules.previousPotRed
     )
-    return SnookerUtils.calculateFoul(outcome, info).points
+    return SnookerUtils.calculateFoul(
+      outcome,
+      info,
+      SnookerUtils.ballOnValue(
+        this.container.table,
+        snookerRules.targetIsRed,
+        snookerRules.previousPotRed
+      )
+    ).points
   }
 
   private myActivePlayer(): 1 | 2 {

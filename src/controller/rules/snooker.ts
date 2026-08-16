@@ -157,7 +157,15 @@ export class Snooker implements Rules {
   }
 
   private foul(outcome: Outcome[], info: ShotInfo): Controller {
-    const foulResult = SnookerUtils.calculateFoul(outcome, info)
+    const foulResult = SnookerUtils.calculateFoul(
+      outcome,
+      info,
+      SnookerUtils.ballOnValue(
+        this.container.table,
+        this.targetIsRed,
+        this.previousPotRed
+      )
+    )
     this.foulPoints = foulResult.points
     Session.getInstance().addOpponentScore(this.foulPoints)
 
@@ -349,7 +357,15 @@ export class Snooker implements Rules {
       this.targetIsRed,
       this.previousPotRed
     )
-    return SnookerUtils.calculateFoul(outcome, info).reason
+    return SnookerUtils.calculateFoul(
+      outcome,
+      info,
+      SnookerUtils.ballOnValue(
+        this.container.table,
+        this.targetIsRed,
+        this.previousPotRed
+      )
+    ).reason
   }
 
   getAmountScored(outcome: Outcome[]): number {

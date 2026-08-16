@@ -396,6 +396,36 @@ describe("Snooker", () => {
     done()
   })
 
+  it("foul in colours phase is at least the value of the ball on", (done) => {
+    snooker.targetIsRed = false
+    snooker.previousPotRed = false
+    markAllRedsPotted()
+    table.balls[1].state = State.InPocket // yellow
+    table.balls[2].state = State.InPocket // green
+    table.balls[3].state = State.InPocket // brown
+
+    snooker.update([Outcome.hit(table.cueball, 1)]) // miss everything
+    expect(snooker.foulPoints).to.be.equal(5) // blue is on
+    done()
+  })
+
+  it("hitting a higher colour first in colours phase still scores that colour", (done) => {
+    snooker.targetIsRed = false
+    snooker.previousPotRed = false
+    markAllRedsPotted()
+    table.balls[1].state = State.InPocket // yellow
+    table.balls[2].state = State.InPocket // green
+    table.balls[3].state = State.InPocket // brown
+
+    const outcome: Outcome[] = [
+      Outcome.hit(table.cueball, 1),
+      Outcome.collision(table.cueball, table.balls[5], 1), // hit pink
+    ]
+    snooker.update(outcome)
+    expect(snooker.foulPoints).to.be.equal(6)
+    done()
+  })
+
   it("target colour but pot red", (done) => {
     snooker.targetIsRed = false
     const outcome: Outcome[] = [
