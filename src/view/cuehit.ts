@@ -119,9 +119,9 @@ export class CueHit {
       -((e.clientY - rect.top) / rect.height) * 2 + 1
     )
     this.raycaster.setFromCamera(this.ndc, this.container.view.camera.camera)
-    // table.cue.mesh is the visible cue geometry (tiltMesh → cueBody). The
-    // future invisible fat hit mesh will be a child of it, so this same ray
-    // picks it up. root is deliberately NOT used (it also parents the helper,
+    // table.cue.mesh holds the visible cue geometry (tiltMesh → cueBody) plus
+    // the invisible fat hit zone (cueHitZone), so this same recursive ray picks
+    // up both. root is deliberately NOT used (it also parents the helper,
     // shadow and placer meshes).
     return (
       this.raycaster.intersectObjects([this.container.table.cue.mesh], true)

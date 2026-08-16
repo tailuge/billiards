@@ -61,6 +61,9 @@ type MaterialStyle = {
 export class CueMesh {
   static mesh: Mesh
   static readonly baseTilt = 0.12
+  /** Multiplier on the cue butt radius for the invisible fat hit zone used by
+   * CueHit's pointerdown raycast (a wider tap target on touch, not longer). */
+  static readonly fatHitRadiusFactor = 3
 
   static readonly placermaterial = new MeshPhongMaterial({
     color: 0xffffff,
@@ -185,8 +188,30 @@ export class CueMesh {
     cueBody.position.set(-length / 2 - R, 0, R * 0.12)
     tiltGroup.rotation.y = this.baseTilt
     tiltGroup.add(cueBody)
+    tiltGroup.add(
+      CueMesh.createFatHit(length, but * CueMesh.fatHitRadiusFactor)
+    )
     mesh.add(tiltGroup)
     return { mesh, tiltMesh: tiltGroup, cueBody }
+  }
+
+  /**
+   * Invisible, fat cylinder aligned with the cue (same length, wider radius).
+   * Used only for CueHit's pointerdown hit test, so it never follows the
+   * dragT retraction or hit-animation stroke. `visible=false` still raycasts
+   * (three's Raycaster tests layers, not visibility).
+   */
+  static createFatHit(length: number, radius: number): Mesh {
+    const geometry = new CylinderGeometry(radius, radius, length, 8, 1, false)
+    geometry.applyMatrix4(
+      new Matrix4().identity().makeRotationAxis(up, -Math.PI / 2)
+    )
+    const material = new MeshBasicMaterial()
+    const mesh = new Mesh(geometry, material)
+    mesh.position.set(-length / 2 - R, 0, R * 0.12)
+    mesh.visible = false
+    mesh.name = "cueHitZone"
+    return mesh
   }
 
   /**

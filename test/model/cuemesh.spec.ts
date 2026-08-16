@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { Box3, Group, Mesh, MeshPhongMaterial } from "three"
+import { Box3, CylinderGeometry, Group, Mesh, MeshPhongMaterial } from "three"
 import { R } from "../../src/model/physics/constants"
 import { CueMesh, DEFAULT_CUE_PARAMS } from "../../src/view/cuemesh"
 
@@ -66,5 +66,18 @@ describe("CueMesh geometry port", () => {
     expect(mesh.type).to.equal("Group")
     expect(tiltMesh.rotation.y).to.equal(CueMesh.baseTilt)
     expect(cueBody.children.length).to.be.greaterThan(0)
+  })
+
+  test("createCue adds an invisible fat hit zone with triple butt radius", () => {
+    const { mesh } = CueMesh.createCue(tip, butt, length)
+    const fatHit = mesh.getObjectByName("cueHitZone") as Mesh
+    expect(fatHit).to.not.be.undefined
+    expect(fatHit.visible).to.be.false
+    const geo = fatHit.geometry as CylinderGeometry
+    expect(geo.parameters.radiusTop).to.be.closeTo(
+      butt * CueMesh.fatHitRadiusFactor,
+      0.001
+    )
+    expect(geo.parameters.height).to.be.closeTo(length, 0.001)
   })
 })
