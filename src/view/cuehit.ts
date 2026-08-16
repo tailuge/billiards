@@ -25,6 +25,8 @@ export class CueHit {
   private static readonly V_FULL = 1600
   /** Forward pointer speed (px/s) below which a push is a cancel, not a shot. */
   private static readonly V_MIN = 120
+  /** Consecutive backward pointer moves needed to start a fresh speed window. */
+  private static readonly BACKWARD_RESET_SAMPLES = 3
   /** Pointer px for a full cue retraction. Tuneable. */
   private static readonly MAX_PULL_PX = 250
   /** Cue `t` phase at which the swing reaches its maximum retraction. */
@@ -44,6 +46,7 @@ export class CueHit {
   private pullPx = 0
   private maxPullPx = 0
   private speedSamples: number[] = []
+  private backwardSamples = 0
   private removeListeners: (() => void) | null = null
 
   constructor(container: Container) {
@@ -156,6 +159,7 @@ export class CueHit {
     this.pullPx = 0
     this.maxPullPx = 0
     this.speedSamples = []
+    this.backwardSamples = 0
   }
 
   private onPointerMove = (e: PointerEvent) => {
@@ -199,11 +203,7 @@ export class CueHit {
     }
 
     if (this.state === "Pushing") {
-      // Collect forward (upward) speed samples; the final half of them is
-      // averaged at the zero point, so a slow early push doesn't dilute it.
-      if (dy < 0) {
-        this.speedSamples.push(-dy / dt)
-      }
+      this.updatePushingSpeed(dy, dt)
       if (this.pullPx <= 0) {
         this.lastY = e.clientY
         this.lastT = now
@@ -214,6 +214,21 @@ export class CueHit {
 
     this.lastY = e.clientY
     this.lastT = now
+  }
+
+  private updatePushingSpeed(dy: number, dt: number) {
+    // Ignore isolated backward noise, but start a fresh speed window after
+    // three consecutive backward moves. This prevents an earlier forward
+    // section from diluting the final forward push.
+    if (dy > 0) {
+      this.backwardSamples++
+      if (this.backwardSamples >= CueHit.BACKWARD_RESET_SAMPLES) {
+        this.speedSamples = []
+      }
+    } else if (dy < 0) {
+      this.backwardSamples = 0
+      this.speedSamples.push(-dy / dt)
+    }
   }
 
   private onPointerUp = (e: PointerEvent) => {
@@ -282,6 +297,7 @@ export class CueHit {
     this.pullPx = 0
     this.maxPullPx = 0
     this.speedSamples = []
+    this.backwardSamples = 0
     this.container.table.cue.dragT = null
   }
 
