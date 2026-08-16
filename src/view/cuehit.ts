@@ -75,7 +75,12 @@ export class CueHit {
     if (this.removeListeners) {
       return
     }
-    const canvas = this.container.view.element as HTMLElement
+    const canvas = this.container.view.element as HTMLElement | undefined
+    if (!canvas) {
+      // Headless/test environments have no render target; stay armed so the
+      // gesture can be driven programmatically but never attach listeners.
+      return
+    }
     canvas.addEventListener("pointerdown", this.onPointerDown)
     canvas.addEventListener("pointermove", this.onPointerMove)
     canvas.addEventListener("pointerup", this.onPointerUp)
