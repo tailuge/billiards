@@ -94,7 +94,7 @@
 
 @media (max-width: 500px) {
   #chatEmojiList {
-    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
 

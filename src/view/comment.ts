@@ -79,7 +79,7 @@ export class Comment {
   }
 
   private populateEmojiList(emojiList: HTMLDivElement) {
-    const emojiCount = window.matchMedia("(max-width: 500px)").matches ? 8 : 12
+    const emojiCount = window.matchMedia("(max-width: 500px)").matches ? 6 : 12
     const emojis = randomEmojis(emojiCount)
     emojiList.innerHTML = ""
     emojis.forEach((emoji) => {
