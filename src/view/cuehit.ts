@@ -35,8 +35,9 @@ export class CueHit {
   private readonly ndc = new Vector2()
 
   private armed = false
-  private state: "Idle" | "Pulling" | "Pushing" = "Idle"
+  private state: "Idle" | "Pending" | "Pulling" | "Pushing" = "Idle"
   private pointerId: number | null = null
+  private startX = 0
   private startY = 0
   private lastY = 0
   private lastT = 0
@@ -56,7 +57,7 @@ export class CueHit {
     return this.pointerId !== null
   }
 
-  get phase(): "Idle" | "Pulling" | "Pushing" {
+  get phase(): "Idle" | "Pending" | "Pulling" | "Pushing" {
     return this.state
   }
 
@@ -143,18 +144,18 @@ export class CueHit {
     if (!this.hitCue(e)) {
       return
     }
-    e.preventDefault()
+    // Take ownership of the press but stay Pending: capture, preventDefault
+    // and the dragT retraction are deferred until vertical motion wins, so a
+    // sideways swipe can fall back to the aim drag instead.
     this.pointerId = e.pointerId
-    this.state = "Pulling"
+    this.state = "Pending"
+    this.startX = e.clientX
     this.startY = e.clientY
     this.lastY = e.clientY
     this.lastT = performance.now()
     this.pullPx = 0
     this.maxPullPx = 0
     this.speedSamples = []
-    this.container.table.cue.dragT = this.dragT
-    const canvas = this.container.view.element as HTMLElement
-    canvas.setPointerCapture(e.pointerId)
   }
 
   private onPointerMove = (e: PointerEvent) => {
@@ -164,8 +165,29 @@ export class CueHit {
     const now = performance.now()
     const dt = Math.max(now - this.lastT, 1) / 1000
     const dy = e.clientY - this.lastY
-
     this.pullPx = e.clientY - this.startY
+
+    if (this.state === "Pending") {
+      // Decide between a strike and an aim swipe. Reject when the motion is
+      // more sideways than vertical (|dx| > 2|dy|): clear pointerId so the
+      // mousetouch guard flips off and the aim drag resumes. Otherwise commit
+      // once a real downward pull has travelled the deadzone.
+      const dx = e.clientX - this.startX
+      if (Math.abs(dx) > 2 * Math.abs(this.pullPx)) {
+        this.reset()
+        this.pointerId = null
+        return
+      }
+      if (this.pullPx > CueHit.DEADZONE_PX) {
+        this.state = "Pulling"
+        e.preventDefault()
+        ;(this.container.view.element as HTMLElement).setPointerCapture(
+          e.pointerId
+        )
+      }
+      return
+    }
+
     this.container.table.cue.dragT = this.dragT
 
     if (this.state === "Pulling") {
