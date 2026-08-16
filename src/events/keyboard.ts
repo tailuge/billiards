@@ -11,6 +11,9 @@ export class Keyboard {
   released = {}
   private readonly flipX: boolean
   private readonly disabled: boolean
+  /** Early-return guard for mousetouch; set by Container to suppress
+   * aim-rotate / camera-height drags while the CueHit gesture is active. */
+  mousetouchGuard: (() => boolean) | null = null
 
   getEvents() {
     const keys = Object.keys(this.pressed)
@@ -71,6 +74,7 @@ export class Keyboard {
   }
 
   mousetouch = (e) => {
+    if (this.mousetouchGuard?.()) return
     const k = this.released
     const topHalf = e.client.y < e.rect.height / 2
     const factor = topHalf || e.ctrlKey ? 0.5 : 1

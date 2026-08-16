@@ -1,16 +1,17 @@
 import { Raycaster, Vector2 } from "three"
+import { Input } from "../events/input"
 import type { Container } from "../container/container"
-import type { Aim } from "../controller/aim"
 
 /**
  * Drag-to-strike gesture: click the 3D cue, pull it back, then push it
  * forward. The forward speed becomes the shot power and the hit fires when
  * the cue returns to its rest position (pull ≈ 0).
  *
- * NOT WIRED IN YET — this class is intentionally standalone. It is never
- * instantiated anywhere; `Aim` will own it and call `enable()`/`disable()`
- * once the surrounding plumbing (Cue.dragBack visual offset, Keyboard guard,
- * fat hit mesh) lands.
+ * Owned by `Aim` (created and enabled in `Aim.onFirst`). Firing queues
+ * `Input(0, "SpaceUp")` so the shot flows through `Aim.handleInput` →
+ * `playShot()` → `updateController(PlayShot)` exactly like the Hit button.
+ * Pull-back drives `Cue.dragT` for the visual retraction; the invisible fat
+ * hit mesh is still to be added.
  *
  * Screen-vertical convention: down = pull the cue back, up = push it forward.
  */
@@ -22,11 +23,12 @@ export class CueHit {
   private static readonly V_FULL = 800
   /** Forward pointer speed (px/s) below which a push is a cancel, not a shot. */
   private static readonly V_MIN = 120
-  /** Pointer px → cue retraction in world units. Tuneable. */
-  private static readonly PX_TO_WORLD = 0.0005
+  /** Pointer px for a full cue retraction. Tuneable. */
+  private static readonly MAX_PULL_PX = 250
+  /** Cue `t` phase at which the swing reaches its maximum retraction. */
+  private static readonly T_FULL = (2 * Math.PI) / 3
 
   private readonly container: Container
-  private readonly aim: Aim
   private readonly raycaster = new Raycaster()
   private readonly ndc = new Vector2()
 
@@ -40,24 +42,29 @@ export class CueHit {
   private speedSamples: number[] = []
   private removeListeners: (() => void) | null = null
 
-  constructor(container: Container, aim: Aim) {
+  constructor(container: Container) {
     this.container = container
-    this.aim = aim
   }
 
-  /** True while a gesture is in progress (drives the Keyboard.mousetouch guard). */
+  /** True from cue pointerdown until pointerup/pointercancel — even after the
+   * shot has fired — so the trailing drag never feeds the interactjs
+   * aim/height drag (drives the Keyboard.mousetouch guard). */
   get active(): boolean {
-    return this.state !== "Idle"
+    return this.pointerId !== null
   }
 
   get phase(): "Idle" | "Pulling" | "Pushing" {
     return this.state
   }
 
-  /** Current cue retraction in world units (positive = retracted). Consumed by
-   * the future Cue wiring as `strokeX - cueHit.dragBack`. */
-  get dragBack(): number {
-    return Math.max(0, this.pullPx) * CueHit.PX_TO_WORLD
+  /** Cue `t` phase for the current pull (null when idle): 0 = cue at rest,
+   * T_FULL = fully retracted. Written to `Cue.dragT` as the pointer moves. */
+  get dragT(): number | null {
+    if (this.state === "Idle") {
+      return null
+    }
+    const ratio = Math.min(1, Math.max(0, this.pullPx) / CueHit.MAX_PULL_PX)
+    return ratio * CueHit.T_FULL
   }
 
   enable() {
@@ -69,17 +76,16 @@ export class CueHit {
     canvas.addEventListener("pointermove", this.onPointerMove)
     canvas.addEventListener("pointerup", this.onPointerUp)
     canvas.addEventListener("pointercancel", this.onPointerCancel)
-    canvas.addEventListener("keydown", this.onKeyDown)
     this.removeListeners = () => {
       canvas.removeEventListener("pointerdown", this.onPointerDown)
       canvas.removeEventListener("pointermove", this.onPointerMove)
       canvas.removeEventListener("pointerup", this.onPointerUp)
       canvas.removeEventListener("pointercancel", this.onPointerCancel)
-      canvas.removeEventListener("keydown", this.onKeyDown)
     }
   }
 
   disable() {
+    this.releasePointer()
     this.reset()
     this.removeListeners?.()
     this.removeListeners = null
@@ -126,6 +132,7 @@ export class CueHit {
     this.pullPx = 0
     this.maxPullPx = 0
     this.speedSamples = []
+    this.container.table.cue.dragT = this.dragT
     const canvas = this.container.view.element as HTMLElement
     canvas.setPointerCapture(e.pointerId)
   }
@@ -139,6 +146,7 @@ export class CueHit {
     const dy = e.clientY - this.lastY
 
     this.pullPx = e.clientY - this.startY
+    this.container.table.cue.dragT = this.dragT
 
     if (this.state === "Pulling") {
       this.maxPullPx = Math.max(this.maxPullPx, this.pullPx)
@@ -170,6 +178,7 @@ export class CueHit {
     if (e.pointerId !== this.pointerId) {
       return
     }
+    this.releasePointer()
     this.reset()
   }
 
@@ -177,13 +186,8 @@ export class CueHit {
     if (e.pointerId !== this.pointerId) {
       return
     }
+    this.releasePointer()
     this.reset()
-  }
-
-  private onKeyDown = (e: KeyboardEvent) => {
-    if (e.code === "Escape" && this.active) {
-      this.reset()
-    }
   }
 
   private resolveAtZero() {
@@ -215,7 +219,10 @@ export class CueHit {
     // setPower updates the slider/percent to the deduced power before the shot
     // (playShot disables the inputs, so this must happen first).
     this.container.table.cue.setPower(ratio)
-    this.aim.playShot()
+    // Queue the same input the Hit button uses so the shot follows the
+    // standard path: Aim.handleInput("SpaceUp") → playShot() → the returned
+    // PlayShot reaches updateController() and advances the state machine.
+    this.container.inputQueue.push(new Input(0, "SpaceUp"))
   }
 
   private reset() {
@@ -223,6 +230,13 @@ export class CueHit {
     this.pullPx = 0
     this.maxPullPx = 0
     this.speedSamples = []
+    this.container.table.cue.dragT = null
+  }
+
+  /** Release the captured pointer and end ownership of the interaction. Only
+   * called on pointerup/pointercancel/disable — the capture is kept for the
+   * whole press so the trailing drag after a fired shot stays suppressed. */
+  private releasePointer() {
     if (this.pointerId !== null) {
       const canvas = this.container.view.element as HTMLElement
       try {

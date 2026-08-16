@@ -34,6 +34,9 @@ export class Cue {
    * visibility) loop over both; the shared root carries the aim transforms. */
   cues: CueMeshes[] = []
   t = 0
+  /** When non-null, the aim swing uses this fixed phase instead of the
+   * free-running `t` (set by the CueHit drag gesture; null resumes idle). */
+  dragT: number | null = null
   hittingAnimation = false
   aimInputs: AimInputs
   aim: AimEvent = new AimEvent()
@@ -283,11 +286,11 @@ export class Cue {
   moveTo(pos) {
     this.aim.pos.copy(pos)
     this.updateCueRotation()
-    const swing =
-      (sin(this.t * 1.5 + Math.PI / 2) - 1) *
-      2 *
-      R *
-      (this.aim.power / maxPower)
+    const t = this.dragT ?? this.t
+    // While dragging the amplitude is fixed (full retraction at dragT = T_FULL);
+    // otherwise the idle swing scales with power as before.
+    const powerScale = this.dragT === null ? this.aim.power / maxPower : 1
+    const swing = (sin(t * 1.5 + Math.PI / 2) - 1) * 2 * R * powerScale
     const strokeX = this.applyHitAnimation(swing)
     this.updateCuePosition(pos, strokeX)
   }

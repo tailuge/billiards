@@ -12,8 +12,7 @@ disturb the other mouse gestures (aim rotate, camera height, spin).
 ## 1. Chosen approach
 
 A small self-contained pointer-gesture class, `CueHit`
-(`src/view/cuehit.ts` — **created, not yet wired in**), will be owned by the
-`Aim` controller. It listens for
+(`src/view/cuehit.ts`), is owned by the `Aim` controller. It listens for
 `pointerdown`/`pointermove`/`pointerup` on the canvas, decides whether the
 gesture started on the cue, tracks pull-back / push-forward, and finally
 reuses the exact same fire path the Hit button uses today.
@@ -22,9 +21,15 @@ Everything it produces is funneled into the existing shot pipeline, so it is
 purely an *input* addition:
 
 ```
-gesture fires → set cue.aim.power → Aim.playShot() → HitEvent → PlayShot
-              → ControllerBase.hit() → Outcome.hit(cueball, power, 0) → table.hit()
+gesture fires → set cue.aim.power → push Input(0,"SpaceUp") → Aim.handleInput
+              → Aim.playShot() → updateController(PlayShot) → ControllerBase.hit()
+              → Outcome.hit(cueball, power, 0) → table.hit()
 ```
+
+`Aim.playShot()` returns the new `PlayShot` controller, and
+`Container.updateController` installs it — the state machine only advances if
+that return value reaches `updateController`, so the gesture queues `SpaceUp`
+rather than calling `playShot()` directly.
 
 No new events, no new state, no serialisation changes, no network changes.
 
@@ -53,7 +58,7 @@ This is the **only** hit test — there is no screen-region fallback.
   as a child of `table.cue.mesh` (still a raycast, not a screen box), and
   include it in the same `intersectObjects` call. It is only needed for the
   `pointerdown` hit test (the cue is at rest then), so it does not need to
-  follow the `dragBack` retraction.
+  follow the `dragT` retraction.
 - **Cue tip exclusion (future)** — the cue's tip mesh is named `cueTip`
   (`src/view/cuemesh.ts`). If a 3D cue-ball click for `offsetXY` (spin) is
   added later, exclude that mesh from this hit test (filter
@@ -87,11 +92,12 @@ Idle → Pulling (drag down) → Pushing (drag up) → Fire | Cancel → Idle
   collected samples (by count).
 - **fire** — when the cue reaches its rest position again (tip ≈ ball, i.e.
   `pull ≈ 0`) while pushing with a non-trivial speed, the hit happens:
-  map the averaged forward speed to power, `cue.setPower(ratio)`, then call
-  `Aim.playShot()`.
+  map the averaged forward speed to power, `cue.setPower(ratio)`, then queue
+  the same `Input(0, "SpaceUp")` the Hit button uses (never call
+  `Aim.playShot()` directly — its returned `PlayShot` must reach
+  `updateController`).
 - **cancel** — releasing the pointer while still pulled back (never pushed, or
-  forward speed below the minimum) cancels: the cue eases back to rest, no
-  shot. `Escape` also cancels.
+  forward speed below the minimum) cancels: the cue eases back to rest,  no shot.
 
 **Pull-back alone never changes power.** Power comes only from the forward
 (push) motion. If the player pulls back and releases *without* pushing past
@@ -101,12 +107,14 @@ there is no "release adjusts power" behaviour.
 ### Visual feedback (pull back / push forward)
 
 The cue body position is already computed in `Cue.applyHitAnimation` /
-`Cue.moveTo` (`cueBody.position.set(...)` in `src/view/cue.ts`) via a
-`strokeX` offset. Add a `Cue.dragBack` value (world units) that is subtracted
-from `strokeX`; the gesture writes to it as the pointer moves, so the cue
-retracts/extends in sync with the pointer with no new geometry or animation
-system. On fire, the existing `hittingAnimation` / `hitAnimationCurve` stroke
-plays exactly as it does today.
+`Cue.moveTo` (`cueBody.position.set(...)` in `src/view/cue.ts`) via the
+existing `swing` term, which is driven by `Cue.t` and reaches its maximum
+retraction when `sin(t * 1.5 + Math.PI / 2)` hits `-1` (i.e. `t = 2π/3`). The
+gesture reuses this: `CueHit` maps the pull to a `dragT` phase (`0` at rest →
+`2π/3` fully retracted) and writes it to `Cue.dragT`, which `moveTo` uses in
+place of the free-running `t` (with a fixed full-power amplitude while
+dragging). No new geometry or animation system. On fire, the existing
+`hittingAnimation` / `hitAnimationCurve` stroke plays exactly as it does today.
 
 ---
 
@@ -137,12 +145,13 @@ fire only if avg >= V_MIN                          // else → cancel
 
 ### Updating the power indicator on fire
 
-Call `cue.setPower(ratio)` **before** `Aim.playShot()`. `setPower` →
-`updateAimInput()` → `updatePowerSlider()` already updates the slider value and
-the `powerPercent` text to the deduced power. `playShot()` then disables the
-inputs, and `PlayShot.onFirst()` runs the existing `animateSliderHit()`, which
-strokes 0 → target and **ends at the deduced power** (identical to the Hit
-button today). This requires no changes to the existing display code.
+Call `cue.setPower(ratio)` **before** queueing the `SpaceUp` input. `setPower`
+→ `updateAimInput()` → `updatePowerSlider()` already updates the slider value
+and the `powerPercent` text to the deduced power. When the queued input is
+processed, `playShot()` disables the inputs, and `PlayShot.onFirst()` runs the
+existing `animateSliderHit()`, which strokes 0 → target and **ends at the
+deduced power** (identical to the Hit button today). This requires no changes
+to the existing display code.
 
 ---
 
@@ -154,11 +163,12 @@ or re-routed:
 - Space (`Aim.handleInput` `Space` / `SpaceUp`), the power slider
   (`AimInputs.powerChanged`), the mousewheel (`AimInputs.mousewheel`), and the
   Hit button (`AimInputs.hit` → `Input(0,"SpaceUp")`) all keep working.
-- The gesture writes the same `aim.power` and calls the same `Aim.playShot()`,
-  so it lands in the same `HitEvent` → `PlayShot` → `ControllerBase.hit()`
-  path — rules, bots, replays, spectating, and the shot clock are untouched.
-- `Aim.playShot()` already clears `container.inputQueue`, so no stale inputs
-  leak into the shot when the gesture fires.
+- The gesture writes the same `aim.power` and queues the same
+  `Input(0, "SpaceUp")` the Hit button uses, so it lands in the same
+  `HitEvent` → `PlayShot` → `ControllerBase.hit()` path — rules, bots,
+  replays, spectating, and the shot clock are untouched.
+- `Aim.playShot()` clears `container.inputQueue` when it runs, so no stale
+  inputs leak into the shot when the gesture fires.
 
 ---
 
@@ -177,8 +187,10 @@ emitted as `movementXUp` / `movementYUp` and handled in
 
 To keep a cue-drag from also rotating aim / changing height:
 
-1. Set `cuehit.active = true` in `pointerdown` (before any interact `move`
-   fires) and clear it in `pointerup` / `pointercancel`.
+1. `cuehit.active` stays true from `pointerdown` on the cue until
+   `pointerup` / `pointercancel` — including after the shot has fired — so the
+   trailing drag after the zero point is also suppressed (the gesture never
+   hands back to the interact drag mid-press).
 2. Guard `Keyboard.mousetouch`: `if (cueHit.active) return`. One guard covers
    both `draggable.move` and `gesturable.onmove`, so **no** `movementX` /
    `movementY` accumulate and no `movementXUp` / `movementYUp` are emitted.
@@ -193,27 +205,29 @@ dispatches to the spin widget and the keyboard keys are untouched.
 
 ## 6. Implementation blueprint
 
-**Progress:** `src/view/cuehit.ts` exists as a standalone class — never
-imported or instantiated. It already implements the state machine, raycast
-hit test, velocity averaging, power mapping, and exposes `active` / `dragBack`
-/ `phase`. Steps 2–6 below are the remaining wiring. Tuneable constants live
-at the top of the class: `DEADZONE_PX`, `MIN_POWER`, `V_FULL`, `V_MIN`,
-`PX_TO_WORLD`.
+**Progress:** `CueHit` implements the state machine, raycast hit test,
+velocity averaging, and power mapping (exposing `active` / `dragT` / `phase`).
+It is wired in — `Aim.onFirst` creates/enables it, the `Keyboard.mousetouch`
+guard is in place, and `Cue.dragT` gives the pull-back retraction, so the
+gesture fires shots with visual feedback. The remaining work is the invisible
+fat hit mesh. Tuneable constants live at the top of the class: `DEADZONE_PX`,
+`MIN_POWER`, `V_FULL`, `V_MIN`, `MAX_PULL_PX`, `T_FULL`.
 
 ### Pointer locations
 
-1. **`src/view/cuehit.ts` (DONE, standalone)** — `CueHit` class: the gesture state machine,
-   pointer listeners, velocity averaging, power mapping, and the call into
-   `Aim.playShot()`.
-2. **`src/controller/aim.ts`** — create/enable `CueHit` when `Aim` starts and
-   disable it on leaving (the fire path reuses `this.playShot()`).
-3. **`src/view/cue.ts`** — add a `dragBack` visual offset to the existing
-   `strokeX` computation; add the invisible fat hit mesh (same length,
-   fatter radius) as a child of `mesh` and expose it (or `mesh`) for picking.
-4. **`src/events/keyboard.ts`** — early-return in `mousetouch` while the
+1. **`src/view/cuehit.ts` (DONE)** — `CueHit` class: the gesture state machine,
+   pointer listeners, velocity averaging, power mapping, and queueing
+   `Input(0, "SpaceUp")` on fire.
+2. **`src/controller/aim.ts` (DONE)** — create/enable `CueHit` in `onFirst`
+   when `Aim` starts.
+3. **`src/view/cue.ts`** (DONE for drag) — `dragT` drives the `swing` term in
+   `moveTo` so pull/push retract the cue. **Remaining:** add the invisible fat
+   hit mesh (same length, fatter radius) as a child of `mesh` and expose it
+   (or `mesh`) for picking.
+4. **`src/events/keyboard.ts` (DONE)** — early-return in `mousetouch` while the
    gesture is active (the guard in §5).
-5. **`src/container/container.ts`** (optional) — hold the single `cueHit`
-   instance / `cueHitActive` flag so both `Keyboard` and `Aim` can see it.
+5. **`src/container/container.ts` (DONE)** — holds the single `cueHit`
+   instance so both `Keyboard` and `Aim` can see it.
 
 ### Steps
 
@@ -222,21 +236,24 @@ at the top of the class: `DEADZONE_PX`, `MIN_POWER`, `V_FULL`, `V_MIN`,
    `PlaceAllBalls` uses), with `setPointerCapture`. Hit test on pointerdown
    per §1 (raycast `table.cue.mesh`, including the invisible fat hit mesh).
 2. **Track the gesture** ✅ (in class) — `pull` (signed px), `phase`
-   (`Pulling`/`Pushing`), running average of forward speed, `active` flag.
-   Remaining: `Cue.dragBack` reads from the class (step 6).
-3. **Fire** ✅ (in class) — on `pull ≈ 0` during a push (or a fast release), compute power
-   per §3, clamp to `[MIN_POWER, 1]`, `this.container.table.cue.setPower(ratio)`
-   (updates the power indicator), then call `aim.playShot()`. On cancel, zero
-   `Cue.dragBack` and reset — leave power unchanged.
-4. **Hook into `Aim`** — in `Aim`'s constructor/`onFirst`, enable the gesture
-   (`cuehit.enable()`); disable it when leaving Aim (e.g. in `PlayShot`'s
-   entry, or centrally when `Aim` is replaced). Skip entirely when
-   `aimInputs.isDisabled()` (spectator/replay/watch).
-5. **Guard `Keyboard`** — `mousetouch` returns early when `cuehit.active` (§5),
-   so aim rotate / camera height never fire from a cue-drag.
-6. **Visual offset** — add `Cue.dragBack` into the `strokeX` term in
-   `applyHitAnimation`, so pull/push animate the cue without touching the rest
-   of the hit animation.
+   (`Pulling`/`Pushing`), running average of forward speed, `active` flag,
+   and a `dragT` phase that `Cue` reads for the visual retraction.
+3. **Fire** ✅ (in class) — on `pull ≈ 0` during a push, compute power per §3,
+   clamp to `[MIN_POWER, 1]`, `this.container.table.cue.setPower(ratio)`
+   (updates the power indicator), then queue `Input(0, "SpaceUp")` so it flows
+   through `Aim.handleInput` → `playShot()` → `updateController(PlayShot)`. On
+   cancel, clear `Cue.dragT` and reset — leave power unchanged.
+4. **Hook into `Aim`** ✅ (create/enable) — `Aim.onFirst` creates the single
+   `CueHit` (stored on `Container`) and calls `enable()`. **Remaining:**
+   `disable()` when leaving Aim (e.g. centrally in `Container.updateController`
+   when `Aim` is replaced); the `aimInputs.isDisabled()` pointerdown guard
+   already prevents firing outside Aim in the meantime.
+5. **Guard `Keyboard`** ✅ — `mousetouch` returns early when `cuehit.active`
+   (§5), wired via `container.keyboard.mousetouchGuard`, so aim rotate /
+   camera height never fire from a cue-drag.
+6. **Visual offset** ✅ — `Cue.moveTo` uses `dragT` (written by the gesture) in
+   place of the free-running `t` for the `swing` term, so pull/push retract the
+   cue without touching the rest of the hit animation.
 
 ---
 
@@ -247,7 +264,10 @@ at the top of the class: `DEADZONE_PX`, `MIN_POWER`, `V_FULL`, `V_MIN`,
 - **Click off the cue** → hit test misses; `CueHit` idle; normal aim/height
   drag proceeds unchanged.
 - **Drag off the canvas** → pointer capture keeps events coming; cancel on
-  `pointercancel`/`Escape`.
+  `pointercancel`.
+- **Drag continues after the shot fires** → the pointer stays captured until
+  release, so the leftover movement never feeds aim/height (the guard stays on
+  until `pointerup`/`pointercancel`).
 - **Disabled state** → no listeners while `aimInputs.isDisabled()` (spectator,
   replay, bot turn, WatchAim).
 - **Multi-touch / pinch** → ignore secondary pointers; only the first pointer
@@ -257,7 +277,7 @@ at the top of the class: `DEADZONE_PX`, `MIN_POWER`, `V_FULL`, `V_MIN`,
 - **Cue-ball spin click near the tip (future)** — once a 3D cue-ball click
   for spin is added, exclude the `cueTip` mesh from the hit test (§1) so the
   cue drag does not swallow clicks on the ball.
-- **Shot clock** — unaffected; firing goes through the same `playShot()` the
+- **Shot clock** — unaffected; firing goes through the same `SpaceUp` input the
   Hit button triggers.
 
 ---

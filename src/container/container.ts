@@ -7,6 +7,7 @@ import { View } from "../view/view"
 import { Init } from "../controller/init"
 import { AimInputs } from "../view/dom/aiminputs"
 import { Cue } from "../view/cue"
+import { CueHit } from "../view/cuehit"
 import { Keyboard } from "../events/keyboard"
 import { Sound } from "../view/sound"
 import { Chat } from "../view/chat"
@@ -57,6 +58,7 @@ export class Container {
   inputQueue: Input[] = []
   eventQueue: GameEvent[] = []
   keyboard?: Keyboard
+  cueHit?: CueHit
   sound: Sound
   chat: Chat
   sliders: Sliders
@@ -127,6 +129,7 @@ export class Container {
     this.table.cue.aimInputs = new AimInputs(this)
     if (keyboard) {
       this.keyboard = keyboard
+      keyboard.mousetouchGuard = () => this.cueHit?.active ?? false
     }
     this.sound = assets.sound
     this.chat = new Chat(this.sendChat)
