@@ -19,6 +19,7 @@ export class Camera {
   static defaultFovOffset = 0
   static aimzHeight = R * 40
   static aimzDistance = R * 100
+  static aimzDefaultLerp = 0.2
   static aimLerp = 0.08
   static aimLerpNoHelper = 0.22
   static aimPresetHeight = R * 9
@@ -44,6 +45,9 @@ export class Camera {
   private lookHeight = Camera.defaultHeight / 2
   isZoomedOut = false
   tableMesh?: Object3D
+  /** Smoothing used when tracking in the zoomed-out aimz view. WatchAim and
+   * Spectate override this to Camera.aimLerp for a gentler follow. */
+  aimzLerp = Camera.aimzDefaultLerp
 
   private readonly target = new Vector3()
   private readonly lookTarget = new Vector3()
@@ -128,7 +132,7 @@ export class Camera {
     this.aimFrom(aim, this.height, this.distance, this.lookHeight, fraction)
   }
 
-  aimzView(aim: AimEvent, fraction = 0.2) {
+  aimzView(aim: AimEvent, fraction = this.aimzLerp) {
     if (this.computedAimzDistance === undefined) {
       this.computedAimzDistance = this.aimzDistanceFor(aim)
     }

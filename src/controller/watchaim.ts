@@ -3,6 +3,7 @@ import { HitEvent } from "../events/hitevent"
 import { BreakEvent } from "../events/breakevent"
 import { WatchShot } from "./watchshot"
 import { ControllerBase } from "./controllerbase"
+import { Camera } from "../view/camera"
 
 export class WatchAim extends ControllerBase {
   override get name() {
@@ -14,6 +15,7 @@ export class WatchAim extends ControllerBase {
     this.container.table.cueball = this.container.rules.otherPlayersCueBall()
     this.container.table.cue.moveTo(this.container.table.cueball.pos)
     const camera = this.container.view.camera
+    camera.aimzLerp = Camera.aimLerp
     camera.suggestMode(Math.random() < 0.5 ? camera.topView : camera.aimzView)
   }
 

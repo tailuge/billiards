@@ -4,6 +4,7 @@ import { ControllerBase } from "./controllerbase"
 import { PlayShot } from "./playshot"
 import { Replay } from "./replay"
 import { gameOverButtons } from "../utils/gameover"
+import { Camera } from "../view/camera"
 
 /**
  * Aim using input events.
@@ -49,6 +50,7 @@ export class Aim extends ControllerBase {
       )
       table.cue.aim.elevation = 0
     }
+    this.container.view.camera.aimzLerp = Camera.aimzDefaultLerp
     this.container.view.camera.suggestMode(this.container.view.camera.aimView)
     table.cue.updateAimInput()
   }

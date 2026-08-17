@@ -50,6 +50,10 @@ export class MatchResultHelper {
     forcedAmIWinner?: boolean,
     endSubtext?: string
   ): boolean {
+    if (Session.isSpectator()) {
+      return false
+    }
+
     const { p1, p2 } = session.orderedScoresForHud()
 
     const winnerIndex = p1 >= p2 ? 0 : 1
