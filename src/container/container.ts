@@ -8,6 +8,7 @@ import { Init } from "../controller/init"
 import { AimInputs } from "../view/dom/aiminputs"
 import { Cue } from "../view/cue"
 import { CueHit } from "../view/cuehit"
+import { CueBallSpin } from "../view/cueballspin"
 import { Keyboard } from "../events/keyboard"
 import { Sound } from "../view/sound"
 import { Chat } from "../view/chat"
@@ -59,6 +60,7 @@ export class Container {
   eventQueue: GameEvent[] = []
   keyboard?: Keyboard
   cueHit?: CueHit
+  cueBallSpin?: CueBallSpin
   sound: Sound
   chat: Chat
   sliders: Sliders
@@ -129,7 +131,8 @@ export class Container {
     this.table.cue.aimInputs = new AimInputs(this)
     if (keyboard) {
       this.keyboard = keyboard
-      keyboard.mousetouchGuard = () => this.cueHit?.active ?? false
+      keyboard.mousetouchGuard = () =>
+        this.cueHit?.active || this.cueBallSpin?.active || false
     }
     this.sound = assets.sound
     this.chat = new Chat(this.sendChat)
@@ -454,18 +457,23 @@ export class Container {
     }
   }
 
-  /** CueHit is armed only while Aim is the active controller: enable it on
-   * entry and disable it on every other transition. Disabling defers teardown
-   * until the pointer is released if a press is still in flight, so the
-   * trailing drag after a fired shot stays suppressed. */
+  /** CueHit and CueBallSpin are armed only while Aim is the active controller:
+   * enable them on entry and disable them on every other transition. Disabling
+   * defers teardown until the pointer is released if a press is still in flight,
+   * so trailing drags stay suppressed. */
   private updateCueHit(controller: Controller) {
     if (controller instanceof Aim) {
       if (!this.cueHit) {
         this.cueHit = new CueHit(this)
       }
       this.cueHit.enable()
+      if (!this.cueBallSpin) {
+        this.cueBallSpin = new CueBallSpin(this)
+      }
+      this.cueBallSpin.enable()
     } else {
       this.cueHit?.disable()
+      this.cueBallSpin?.disable()
     }
   }
 }
