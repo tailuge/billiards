@@ -7,7 +7,7 @@ import { AimInputs } from "./dom/aiminputs"
 import { Ball, State } from "../model/ball"
 import { cueStrike } from "../model/physics/physics"
 import { CueMesh, CueMeshes, CueParams } from "./cuemesh"
-import { Group, Mesh, Vector3, Object3D } from "three"
+import { Group, MathUtils, Mesh, Vector3, Object3D } from "three"
 import { maxPower, offCenterLimit, R } from "../model/physics/constants"
 import { cueIntersectsAnything } from "../utils/cueintersect"
 import { id } from "../utils/dom"
@@ -250,6 +250,18 @@ export class Cue {
         this.aim.offset.x * R,
         Math.max(-0.5 * R, strokeZ + this.aim.offset.y * R)
       )
+      // Visual-only squirt: rotate the cue about its tip by the squirt angle
+      // so the butt deflects while the tip stays on the contact point. The
+      // aim line, camera and physics are untouched (the ball still leaves
+      // along aim.angle; offset only adds spin).
+      const squirt = this.squirtAngle()
+      const tipX = c.cueBody.position.x + this.length / 2
+      const tipY = c.cueBody.position.y
+      // cueBody already has a -90° base rotation from CueMesh.createCue(),
+      // which aligns the generated Y-axis geometry with the table's X axis.
+      c.cueBody.rotation.z = -Math.PI / 2 + squirt
+      c.cueBody.position.x = tipX - (this.length / 2) * Math.cos(squirt)
+      c.cueBody.position.y = tipY - (this.length / 2) * Math.sin(squirt)
     }
 
     return strokeX
@@ -271,9 +283,16 @@ export class Cue {
     // `sideVec`, `unitToBall`) were exactly the root's rotation applied to
     // this local point, so the world result is identical.
     if (this.shadowMesh) {
+      // Swing the shadow with the same squirt rotation, keeping its near end
+      // under the cue tip (the shadow plane spans -length-R .. -R locally).
+      const squirt = this.squirtAngle()
+      const tipY =
+        (this.cueBody ? this.cueBody.position.y : 0) +
+        (this.length / 2) * Math.sin(squirt)
+      this.shadowMesh.rotation.z = squirt
       this.shadowMesh.position.set(
-        projectedX + R * Math.cos(elevation),
-        this.cueBody ? this.cueBody.position.y : 0,
+        projectedX + R * Math.cos(elevation) - R + R * Math.cos(squirt),
+        tipY + R * Math.sin(squirt),
         -R * 0.99
       )
       this.shadowMesh.scale.x = Math.cos(elevation)
@@ -338,6 +357,17 @@ export class Cue {
     for (const c of this.cues) c.mesh.visible = true
     if (this.shadowMesh) this.shadowMesh.visible = true
     if (this.placerMesh) this.placerMesh.visible = false
+  }
+
+  /** Squirt angle (radians) for the current lateral offset: the visual
+   * deflection of the cue, applied to the rendered cue only. `aim.offset.x`
+   * is already normalised (clamped to +-offCenterLimit), so a full sideways
+   * offset yields `maxSquirtAngle` (0.5 degrees). */
+  squirtAngle() {
+    const maxSquirtAngle = MathUtils.degToRad(0.5)
+    return Math.atan(
+      (Math.tan(maxSquirtAngle) * this.aim.offset.x) / offCenterLimit
+    )
   }
 
   spinOffset(aim: AimEvent = this.aim) {
