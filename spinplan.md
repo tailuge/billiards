@@ -1,49 +1,166 @@
-# Plan: drag on the 3D cue ball to set spin
+# Plan: cue-ball spin and cue gesture ownership
 
-Follow the same pattern as `src/view/cuehit.ts` — a pointer gesture armed only while
-`Aim` is the active controller, owned by `Container`, plugging into the existing
-`Cue.setSpin` path. No new spin logic.
+## Current implementation
 
-## Gesture (new small class, e.g. `CueBallSpin` in `src/view/`)
+### Cue-ball spin gesture
 
-- **Arming**: same as `CueHit` — enabled/disabled from `Container.updateCueHit`
-  alongside it (only while `Aim` is active). Also bail if `cue.aimInputs.isDisabled()`.
-- **Pointer down**: raycast the *current* cue ball mesh
-  `container.table.cueball.ballmesh.mesh` (recursive, like `CueHit.hitCue`).
-  Because it reads `table.cueball` on every press, threecushion (`balls[1]`),
-  sagu, drills, and analysis all just work — never hardcode `balls[0]`.
-- **Capture**: take the `pointerId`, setPointerCapture, and keep `active` true
-  until pointerup/cancel (mirror `CueHit`).
-- **Drag**: map the pointer offset from the ball's screen centre to an offset
-  in `[-0.45, 0.45]` (ball screen radius = `offCenterLimit` 0.45; drag beyond the
-  ball clips). Feed it into the **existing** entry point, exactly like the 2D
-  ball and the analysis pick do:
-  `container.table.cue.setSpin(new Vector3(x, y, 0), table)`
-  — this already clamps, runs `avoidCueTouchingOtherBall`, and calls
-  `updateAimInput()` (2D cue-tip UI, overlap). Also set
-  `container.lastEventTime = performance.now()` like `AimInputs.adjustSpin`.
-- **Release**: release capture, clear `pointerId`, reset.
+`src/view/cueballspin.ts` is implemented and is owned by `Container`.
 
-## Not double-handled as aim / zoom
+- It is armed while `Aim` is the active controller through
+  `Container.updateCueHit`.
+- It raycasts the current `table.cueball.ballmesh.mesh`, so it works with
+  three-cushion, sagu, drills, and analysis without assuming `balls[0]`.
+- It captures the pointer and remains active until `pointerup` or
+  `pointercancel`.
+- It maps the pointer's screen offset from the projected cue-ball centre into
+  the existing `[-0.45, 0.45]` spin range.
+- It sends the result through the existing `Cue.setSpin` path, preserving
+  clamping, collision avoidance, 2D cue-tip updates, and overlap updates.
+- It updates `container.lastEventTime` so the view remains active during the
+  gesture.
 
-The interactjs drag that becomes aim-left/right (`movementX` → `rotateAim`) and
-zoom up/down (`movementY` → `camera.adjustHeight`) is suppressed while
-`keyboard.mousetouchGuard` returns true — today that's
-`() => this.cueHit?.active ?? false` (`container.ts`). Extend the guard to also
-return true while the spin gesture owns a pointer (e.g.
-`() => this.cueHit?.active || this.cueBallSpin?.active ?? false`), so a spin
-drag never also rotates the aim or zooms.
+### Cue-hit gesture
 
-## Visualisation / flow to opponents
+`src/view/cuehit.ts` is also implemented and is armed alongside
+`CueBallSpin` while `Aim` is active.
 
-Nothing new: `setSpin` → `updateAimInput` already moves the 2D cue-tip UI, and
-the analysis panel polls `table.cue.aim` per frame so its spin marker follows
-live. The shot's `HitEvent` carries the aim to the opponent — same as the
-existing 2D ball UI. No reimplementation of any adjustment.
+- It raycasts the visible cue and the invisible, wider `cueHitZone`.
+- It starts in a pending state so sideways movement can fall back to the
+  normal aim drag.
+- A downward pull retracts the cue; an upward push measures speed and derives
+  shot power.
+- It queues the normal `SpaceUp` input path rather than bypassing shot logic.
+- Its active state is included in `Keyboard.mousetouchGuard`, so ordinary aim
+  and camera drags are suppressed during the gesture.
+
+### Render-only cue squirt
+
+`src/view/cue.ts` now applies a visual-only squirt twist based on lateral spin:
+
+- `aim.offset.x` is used directly because it is already normalised to the
+  `offCenterLimit` range.
+- The maximum visual squirt angle is currently **0.5 degrees** at full lateral
+  offset.
+- The cue rotates around its tip, keeping the tip planted while the butt
+  deflects.
+- The existing `-90°` cue-geometry alignment is preserved; squirt is added to
+  that base rotation.
+- The cue shadow follows the visual deflection.
+- Aim angle, camera position, hit testing, and shot physics are unchanged.
+
+## Known issue: CueHit and CueBallSpin can both own one pointer
+
+Both gesture classes attach independent `pointerdown`, `pointermove`,
+`pointerup`, and `pointercancel` listeners to the same canvas. Their hit tests
+are independent:
+
+- `CueHit` raycasts the cue and its wider `cueHitZone`.
+- `CueBallSpin` raycasts the cue ball.
+
+Near the cue-tip/cue-ball contact area, one screen-space ray can intersect both
+objects. Both handlers can then accept the same `pointerdown`, store the same
+`pointerId`, and become active. `preventDefault()` does not stop another
+listener on the same canvas, and pointer capture does not provide application-
+level ownership arbitration.
+
+The current `mousetouchGuard` only suppresses the normal interactjs aim drag
+when either gesture is active; it does not choose which gesture owns the
+pointer.
+
+## Proposed fix: one decision point at pointerdown, `pointerId` is the lock
+
+Keep the two gesture classes, but route every press through a single decision
+point. Only one class ever sets `pointerId`, and `pointerId` itself is the only
+mutual-exclusion state. No separate owner slot.
+
+### Policy (the explicit "choice at the start")
+
+Because the cue ball is the more specific target and the fat `cueHitZone`
+overlaps it, a press is decided once as:
+
+1. **Spin** when the ray hits the cue ball (`CueBallSpin`'s existing hit test);
+   otherwise
+2. **Hit** when the ray hits the cue or its fat hit zone (`CueHit`'s existing
+   hit test);
+   otherwise
+3. Nothing — the press falls through to the normal aim drag.
+
+One ray, two hit tests, one outcome. No listener-order dependence because the
+two tests are run by a single handler, not by two competing handlers.
+
+### Mechanics
+
+- Keep the decision inside the two gesture classes, not `Container`.
+  `CueHit` already owns the cue raycast and the pending fallback, so it becomes
+  the single pointerdown entry point: it runs the spin hit test first (reusing
+  `CueBallSpin`'s hit test), then its own cue/fat-zone hit test, and starts
+  exactly one of the two gestures. `Container.updateCueHit` continues to do
+  nothing but `enable()`/`disable()`.
+- `CueBallSpin` stops registering its own `pointerdown` listener and exposes a
+  small `start(e)` method holding the code its current `onPointerDown` runs
+  after the hit test succeeds (set `pointerId`, capture, `preventDefault`,
+  first spin update). `CueHit` calls `CueBallSpin.start(e)` on a spin press;
+  otherwise it proceeds as it does today. The coupling is one-directional —
+  `CueHit` → `CueBallSpin` — which is acceptable because the two inputs are
+  already closely related and the classes already share `container`.
+- Each class keeps its own `active` getter (`pointerId !== null`) and its
+  existing move/up/cancel handlers, all already guarded on `pointerId`. Since
+  only one class's `pointerId` is set, only that class reacts to the rest of
+  the gesture — this is the whole mutual-exclusion mechanism, so
+  `mousetouchGuard` keeps reading the two `active` flags unchanged.
+- `CueHit`'s pending fallback is unchanged: a sideways swipe clears
+  `pointerId`, which is the same release path the spin and hit gestures already
+  use, so the pointer becomes available to the normal aim drag.
+- No changes to `preventDefault`, pointer capture, or teardown timing are
+  needed beyond starting only one class.
+
+### Why this over a general-purpose arbiter
+
+A shared `tryClaimGesture(owner)` slot adds a second piece of ownership state
+that has to be kept in sync with `pointerId` on every path: `pointerup`,
+`pointercancel`, the sideways-swipe fallback, `fire()`, and controller
+switches. Since both gestures already track `pointerId` and gate all their
+handlers on it, one class running both hit tests at `pointerdown` gets the same
+mutual exclusion for free and adds no state to `Container`.
+`stopImmediatePropagation()` is rejected because it makes the outcome depend on
+listener order; a `Container`-owned router is rejected because it spreads the
+hit geometry decision across a third place. The single class-local entry point
+is the smallest code change that removes the double-ownership bug.
+
+### Edge cases
+
+- **Press hits both cue ball and cue tip**: spin wins, by the policy above.
+  `CueHit` delegates to `CueBallSpin` and never sets its own `pointerId`, so no
+  duplicate ownership can occur.
+- **Press hits only the cue or fat zone**: hit wins, as today.
+- **Press hits neither**: neither `pointerId` is set; the interactjs aim drag
+  proceeds normally.
+- **Controller leaves `Aim` mid-gesture**: the winning class already defers
+  listener teardown until `pointerup`/`pointercancel`, and `pointerId` remains
+  the single source of truth, so the trailing drag stays suppressed as before.
+- **Sideways swipe after a pending hit**: unchanged — `CueHit` clears
+  `pointerId` and the aim drag resumes.
+
+## Suggested verification
+
+Add coverage for the single decision point rather than each gesture in
+isolation:
+
+- A press that hits both cue ball and cue activates only spin.
+- A press that hits only the cue/fat zone activates only hit.
+- A press that hits neither leaves both gestures idle and reaches the normal
+  aim drag.
+- During a spin drag, the hit gesture's handlers never react to move/up/cancel.
+- During a hit drag, the spin gesture's handlers never react to move/up/cancel.
+- `pointerup`, `pointercancel`, and the sideways-swipe fallback each clear the
+  winning class's `pointerId`.
+- Leaving `Aim` mid-gesture does not leak a stale `pointerId` into the next
+  `Aim` session.
 
 ## Out of scope
 
-- No changes to `Cue.setSpin`, `avoidCueTouchingOtherBall`, aim inputs, analysis,
-  or networking.
-- Tests: optional unit test following `CueHit`'s headless-friendly shape
-  (no render target → no listeners, gesture drivable programmatically).
+- No changes to `Cue.setSpin`, `avoidCueTouchingOtherBall`, aim inputs,
+  networking, camera aiming, or shot physics.
+- The fix should not alter the existing spin mapping or cue-hit power
+  calculation.
+- `Container` gains no new gesture-routing state or hit-test logic.

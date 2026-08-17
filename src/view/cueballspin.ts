@@ -3,9 +3,11 @@ import type { Container } from "../container/container"
 import { offCenterLimit, R } from "../model/physics/constants"
 
 /**
- * Drag-to-spin gesture: pointerdown on the 3D cue ball and drag to adjust spin.
+ * Drag-to-spin gesture: drag on the 3D cue ball to adjust spin.
  *
  * Owned by `Container` and armed only while `Aim` is the active controller.
+ * `CueHit` owns the canvas pointerdown listener and delegates here (via
+ * `start`) when a press hits the cue ball, so only one gesture owns a pointer.
  * Feeds spin offset into `table.cue.setSpin`, exactly matching the 2D ball UI.
  */
 export class CueBallSpin {
@@ -39,12 +41,10 @@ export class CueBallSpin {
       // Headless/test environments have no render target
       return
     }
-    canvas.addEventListener("pointerdown", this.onPointerDown)
     canvas.addEventListener("pointermove", this.onPointerMove)
     canvas.addEventListener("pointerup", this.onPointerUp)
     canvas.addEventListener("pointercancel", this.onPointerCancel)
     this.removeListeners = () => {
-      canvas.removeEventListener("pointerdown", this.onPointerDown)
       canvas.removeEventListener("pointermove", this.onPointerMove)
       canvas.removeEventListener("pointerup", this.onPointerUp)
       canvas.removeEventListener("pointercancel", this.onPointerCancel)
@@ -63,7 +63,7 @@ export class CueBallSpin {
     this.removeListeners = null
   }
 
-  private hitCueBall(e: PointerEvent): boolean {
+  hitCueBall(e: PointerEvent): boolean {
     const canvas = this.container.view?.element as HTMLElement | undefined
     if (!canvas) {
       return false
@@ -139,23 +139,13 @@ export class CueBallSpin {
     this.container.lastEventTime = performance.now()
   }
 
-  private onPointerDown = (e: PointerEvent) => {
-    if (
-      !this.armed ||
-      this.active ||
-      !e.isPrimary ||
-      e.button !== 0 ||
-      this.container.table?.cue?.aimInputs?.isDisabled()
-    ) {
+  /** Begin a spin drag for a press `CueHit` has already decided hits the cue
+   * ball (it runs `hitCueBall` first). Owns the pointer until pointerup /
+   * pointercancel. */
+  start(e: PointerEvent) {
+    if (!this.armed || this.active) {
       return
     }
-    if ((e.target as Element | null)?.closest?.("#inputTextDiv")) {
-      return
-    }
-    if (!this.hitCueBall(e)) {
-      return
-    }
-
     this.pointerId = e.pointerId
     const canvas = this.container.view?.element as HTMLElement | undefined
     try {

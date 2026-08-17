@@ -30,7 +30,7 @@ export class Chat {
       template.innerHTML = msg
       const content = template.content
 
-      const allowedTags = ["svg", "circle", "a", "br"]
+      const allowedTags = ["a", "br"]
 
       const sanitize = (node: Node) => {
         if (node.nodeType === Node.ELEMENT_NODE) {

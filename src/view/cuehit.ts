@@ -1,6 +1,7 @@
 import { Raycaster, Vector2 } from "three"
 import { Input } from "../events/input"
 import type { Container } from "../container/container"
+import type { CueBallSpin } from "./cueballspin"
 
 /**
  * Drag-to-strike gesture: click the 3D cue, pull it back, then push it
@@ -15,6 +16,8 @@ import type { Container } from "../container/container"
  * hit mesh is still to be added.
  *
  * Screen-vertical convention: down = pull the cue back, up = push it forward.
+ * Owns the shared pointerdown decision: presses on the cue ball delegate to
+ * `CueBallSpin` before the cue's own hit test runs.
  */
 export class CueHit {
   private static readonly DEADZONE_PX = 10
@@ -52,6 +55,10 @@ export class CueHit {
   constructor(container: Container) {
     this.container = container
   }
+
+  /** The cue-ball spin gesture this hit gesture delegates to when a press
+   * lands on the cue ball (wired by Container). */
+  spin: CueBallSpin | null = null
 
   /** True from cue pointerdown until pointerup/pointercancel — even after the
    * shot has fired — so the trailing drag never feeds the interactjs
@@ -142,6 +149,12 @@ export class CueHit {
     // the chat input / emoji list never engages the cue. Only checked at press
     // start, so an in-flight captured pull-back is unaffected.
     if ((e.target as Element | null)?.closest?.("#inputTextDiv")) {
+      return
+    }
+    // The cue ball wins the overlapping zone at the tip: hand the press to the
+    // spin gesture so both never own the same pointer.
+    if (this.spin?.hitCueBall(e)) {
+      this.spin.start(e)
       return
     }
     if (!this.hitCue(e)) {

@@ -469,6 +469,7 @@ export class Container {
       this.cueHit.enable()
       if (!this.cueBallSpin) {
         this.cueBallSpin = new CueBallSpin(this)
+        this.cueHit.spin = this.cueBallSpin
       }
       this.cueBallSpin.enable()
     } else {
