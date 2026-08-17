@@ -162,6 +162,9 @@ export abstract class ControllerBase extends Controller {
       case "KeyCUp":
         this.container.comment.openChat()
         return true
+      case "KeyKUp":
+        this.toggleChromeless()
+        return true
       case "Digit1":
         this.container.view.camera.adjustFov(-delta * 20)
         return true
@@ -194,5 +197,10 @@ export abstract class ControllerBase extends Controller {
     } else if (document.exitFullscreen) {
       document.exitFullscreen()
     }
+  }
+
+  private toggleChromeless() {
+    document.body.classList.toggle("chromeless")
+    window.dispatchEvent(new Event("resize"))
   }
 }

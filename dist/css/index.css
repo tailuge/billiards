@@ -106,6 +106,16 @@ canvas {
   position: relative;
 }
 
+body.chromeless #panel {
+  height: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .aimControlColumn {
   display: flex;
   flex-direction: column;
