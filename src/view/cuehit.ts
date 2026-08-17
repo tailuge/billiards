@@ -22,7 +22,7 @@ export class CueHit {
   private static readonly MIN_POWER = 0.05
   /** Forward pointer speed (px/s) that maps to 100% power. Tuneable.
    * Doubled from the original 800 to halve the deduced shot power. */
-  private static readonly V_FULL = 1600
+  private static readonly V_FULL = 2400
   /** Forward pointer speed (px/s) below which a push is a cancel, not a shot. */
   private static readonly V_MIN = 120
   /** Consecutive backward pointer moves needed to start a fresh speed window. */

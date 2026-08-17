@@ -165,6 +165,7 @@ export class Cue {
     if (!this.aimInputs || this.aimInputs.isDisabled()) {
       return
     }
+    this.t = 0
     if (offset.length() > offCenterLimit) {
       offset.normalize().multiplyScalar(offCenterLimit)
     }
