@@ -17,10 +17,12 @@ export class Spectate extends ControllerBase {
   messageRelay: MessageRelay
   tableId: string
   messages: GameEvent[] = []
+  private activePlayer: 0 | 1 | 2 = 0
   constructor(container, messageRelay, tableId) {
     super(container)
     this.messageRelay = messageRelay
     this.tableId = tableId
+    this.suggestRandomWatchCamera()
     this.messageRelay.subscribe(this.tableId, (message) => {
       const event = EventUtil.fromSerialised(message)
       this.messages.push(event)
@@ -38,6 +40,21 @@ export class Spectate extends ControllerBase {
         this.container.eventQueue.push(event)
       }
     })
+  }
+
+  /** Randomly suggest either the top-down or the zoomed-out aim view, so the
+   * spectator's camera varies like WatchAim's does per turn. */
+  private suggestRandomWatchCamera() {
+    const camera = this.container.view.camera
+    camera.suggestMode(Math.random() < 0.5 ? camera.topView : camera.aimzView)
+  }
+
+  override handleScore(event: ScoreEvent): Controller {
+    if (event.active !== 0 && event.active !== this.activePlayer) {
+      this.activePlayer = event.active
+      this.suggestRandomWatchCamera()
+    }
+    return super.handleScore(event)
   }
 
   private sniffNames(event: GameEvent) {

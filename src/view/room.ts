@@ -39,10 +39,10 @@ export class Room {
     this.tile = TableGeometry.X / 3
     // Whole tiles from the centre line to each X wall. The 6-tile footprint is
     // even, so a tile boundary sits on the centre line.
-    this.cols = Math.ceil((TableGeometry.X + Room.clearance) / this.tile)
+    this.cols = Math.round((TableGeometry.X + Room.clearance) / this.tile)
     // Whole tiles across half the Y axis. The 3-tile footprint is odd, so a
     // tile is centred on the centre line and the walls land on a half-tile edge.
-    this.rows = Math.ceil((TableGeometry.Y + Room.clearance) / this.tile - 0.5)
+    this.rows = Math.round((TableGeometry.Y + Room.clearance) / this.tile - 0.5)
     this.xWall = this.cols * this.tile
     this.yWall = (this.rows + 0.5) * this.tile
   }
