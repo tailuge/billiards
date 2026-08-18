@@ -546,6 +546,26 @@ body.analysis-mode #commentMenu {
   }
 }
 
+/* Chromeless mode (L key toggles body.chromeless): collapse the lower control
+   panel while keeping the right-hand menu column (hamburger/submenu + camera
+   button) visible. .outerMenu is taller than #panel and overflows above its
+   top edge, so overflow must stay visible; the panel's visibility:hidden and
+   pointer-events:none are re-asserted on .outerMenu to bring it back. */
+body.chromeless #panel {
+  height: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  overflow: visible;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.chromeless #panel .outerMenu {
+  visibility: visible;
+  pointer-events: auto;
+}
+
 /* --- analysis results (ported from the former standalone page) --- */
 #analysisPanel h2 {
   font-size: 14px;
