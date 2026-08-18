@@ -160,7 +160,7 @@ export abstract class ControllerBase extends Controller {
         this.toggleFullscreen()
         return true
       case "KeyLUp":
-        document.body.classList.toggle("chromeless")
+        this.container.menu.toggleChromeless()
         return true
       case "KeyCUp":
         this.container.comment.openChat()

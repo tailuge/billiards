@@ -566,6 +566,15 @@ body.chromeless #panel .outerMenu {
   pointer-events: auto;
 }
 
+/* AimInputs sets an inline visibility:visible on the spin-area overlap ball,
+   which would override #panel's inherited visibility:hidden and leak the spin
+   widget back onto the table. display:none hides it (and the hit button,
+   tilt/elevation and power slider) regardless of inline styles. */
+body.chromeless #panel .aimControlColumn,
+body.chromeless #panel .powerSliderContainer {
+  display: none;
+}
+
 /* --- analysis results (ported from the former standalone page) --- */
 #analysisPanel h2 {
   font-size: 14px;

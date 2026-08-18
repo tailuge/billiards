@@ -14,6 +14,7 @@ export class Menu {
   help: HTMLButtonElement
   analysis: HTMLButtonElement
   ffwd: HTMLButtonElement
+  chromeless: HTMLButtonElement
   menuDropdown: HTMLDetailsElement | null
 
   disabled = true
@@ -28,6 +29,7 @@ export class Menu {
     this.help = this.getElement("help")
     this.analysis = this.getElement("analysis")
     this.ffwd = this.getElement("ffwd")
+    this.chromeless = this.getElement("chromeless")
     this.menuDropdown = document.getElementById(
       "menuDropdown"
     ) as HTMLDetailsElement | null
@@ -74,6 +76,14 @@ export class Menu {
     if (this.help) {
       this.help.onclick = (_) => {
         this.toggleHelpOverlay()
+        if (this.menuDropdown) {
+          this.menuDropdown.open = false
+        }
+      }
+    }
+    if (this.chromeless) {
+      this.chromeless.onclick = (_) => {
+        this.toggleChromeless()
         if (this.menuDropdown) {
           this.menuDropdown.open = false
         }
@@ -191,6 +201,10 @@ export class Menu {
       this.ffwd.hidden = !visible
       this.ffwd.disabled = !visible
     }
+  }
+
+  toggleChromeless() {
+    document.body.classList.toggle("chromeless")
   }
 
   toggleHelpOverlay() {
