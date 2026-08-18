@@ -7,6 +7,8 @@ import { Assets } from "../../src/view/assets"
 import { Session } from "../../src/network/client/session"
 import { Cue } from "../../src/view/cue"
 
+import { PlaceBall } from "../../src/controller/placeball"
+
 initDom()
 
 describe("AimInput", () => {
@@ -169,6 +171,33 @@ describe("AimInput", () => {
     if (aiminputs.objectBallOverlap) {
       expect(aiminputs.objectBallOverlap.textContent).to.equal("")
     }
+    done()
+  })
+
+  it("viewportHit allows double click to place ball during PlaceBall mode", (done) => {
+    aiminputs.setDisabled(false)
+    container.controller = new PlaceBall(container)
+    container.inputQueue = []
+    aiminputs.viewportHit({ pointerType: "touch" })
+    expect(container.inputQueue).to.not.be.empty
+    expect(container.inputQueue[0].key).to.equal("SpaceUp")
+    done()
+  })
+
+  it("viewportHit rejects hit during Aim mode on touch devices", (done) => {
+    aiminputs.setDisabled(false)
+    container.inputQueue = []
+    aiminputs.viewportHit({ pointerType: "touch" })
+    expect(container.inputQueue).to.be.empty
+    done()
+  })
+
+  it("viewportHit allows hit during Aim mode on non-touch devices", (done) => {
+    aiminputs.setDisabled(false)
+    container.inputQueue = []
+    aiminputs.viewportHit({ pointerType: "mouse" })
+    expect(container.inputQueue).to.not.be.empty
+    expect(container.inputQueue[0].key).to.equal("SpaceUp")
     done()
   })
 })

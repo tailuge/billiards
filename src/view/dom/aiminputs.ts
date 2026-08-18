@@ -8,6 +8,7 @@ import { id } from "../../utils/dom"
 import { TimeoutButton } from "../timeoutbutton"
 import { AngleInput } from "./angleinput"
 import { maxPower } from "../../model/physics/constants"
+import { PlaceBall } from "../../controller/placeball"
 import { Cue } from "../cue"
 
 export class AimInputs {
@@ -88,9 +89,7 @@ export class AimInputs {
     this.cueHitElement?.addEventListener("click", this.hit)
     this.cuePowerElement?.addEventListener("input", this.powerChanged)
     this.cueTiltElement?.addEventListener("input", this.tiltChanged)
-    if (!("ontouchstart" in globalThis)) {
-      id("viewP1")?.addEventListener("dblclick", this.hit)
-    }
+    id("viewP1")?.addEventListener("dblclick", this.viewportHit)
     document.addEventListener("wheel", this.mousewheel, { passive: false })
   }
 
@@ -347,6 +346,18 @@ export class AimInputs {
     this.container.table.cue.setPower(Number(this.cuePowerElement?.value))
     this.hideTiltControl()
     this.container.inputQueue.push(new Input(0, "SpaceUp"))
+  }
+
+  viewportHit = (e?: any) => {
+    if (this.controlsDisabled) {
+      return
+    }
+    const isTouch =
+      e?.pointerType === "touch" ||
+      (e?.pointerType !== "mouse" && "ontouchstart" in globalThis)
+    if (this.container.controller instanceof PlaceBall || !isTouch) {
+      this.hit(e)
+    }
   }
 
   /**
