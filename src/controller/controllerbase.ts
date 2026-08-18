@@ -137,6 +137,10 @@ export abstract class ControllerBase extends Controller {
         cue.rotateAim(delta * 2, this.container.table)
         return true
       case "movementYUp":
+        if (!cue.aimInputs?.isDisabled()) {
+          this.container.view.camera.adjustHeight(delta * 4)
+        }
+        return true
       case "NumpadSubtract":
         this.container.view.camera.adjustHeight(delta * 4)
         return true
