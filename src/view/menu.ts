@@ -89,6 +89,11 @@ export class Menu {
         }
       }
     }
+    if (this.container.freeAim) {
+      // Free-aim games start chromeless; the L key (or menu button) can still
+      // toggle out of it.
+      document.body.classList.add("chromeless")
+    }
     const closeBtn = document.getElementById("helpClose")
     if (closeBtn) {
       closeBtn.onclick = () => {

@@ -50,6 +50,21 @@ describe("Menu", () => {
     done()
   })
 
+  it("free aim starts chromeless and L toggle exits it", (done) => {
+    const freeAimContainer = new Container({
+      element: document.getElementById("viewP1"),
+      log: (_) => {},
+      assets: Assets.localAssets(),
+      freeAim: true,
+    })
+
+    expect(document.body.classList.contains("chromeless")).to.be.true
+
+    freeAimContainer.menu.toggleChromeless()
+    expect(document.body.classList.contains("chromeless")).to.be.false
+    done()
+  })
+
   it("visibility controls are independent", (done) => {
     const menu = new Menu(container)
     const share = document.getElementById("share") as HTMLButtonElement
