@@ -161,6 +161,7 @@ export abstract class ControllerBase extends Controller {
         return true
       case "KeyLUp":
         this.container.menu.toggleChromeless()
+        this.container.view.camera.setAimPreset()
         return true
       case "KeyCUp":
         this.container.comment.openChat()
