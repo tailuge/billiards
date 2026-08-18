@@ -97,6 +97,33 @@ describe("AimInput", () => {
     done()
   })
 
+  it("double click viewP1 triggers hit regardless of touch support", (done) => {
+    aiminputs.setDisabled(false)
+    aiminputs.tiltSliderContainerElement.hidden = false
+    aiminputs.container.inputQueue = []
+    fireEvent.dblClick(document.getElementById("viewP1") as HTMLElement)
+    expect(aiminputs.tiltSliderContainerElement.hidden).to.be.true
+    expect(aiminputs.container.inputQueue).to.be.not.empty
+
+    // Verify when ontouchstart is defined on globalThis
+    const originalOntouchstart = (globalThis as any).ontouchstart
+    ;(globalThis as any).ontouchstart = () => {}
+    try {
+      const touchInputs = new AimInputs(container)
+      touchInputs.setDisabled(false)
+      touchInputs.container.inputQueue = []
+      fireEvent.dblClick(document.getElementById("viewP1") as HTMLElement)
+      expect(touchInputs.container.inputQueue).to.be.not.empty
+    } finally {
+      if (originalOntouchstart === undefined) {
+        delete (globalThis as any).ontouchstart
+      } else {
+        ;(globalThis as any).ontouchstart = originalOntouchstart
+      }
+    }
+    done()
+  })
+
   it("mouse wheel updates power", (done) => {
     aiminputs.setDisabled(false)
     const initialPower = Number(aiminputs.cuePowerElement.value)
