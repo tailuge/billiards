@@ -63,7 +63,7 @@ export class CueMesh {
   static readonly baseTilt = 0.12
   /** Multiplier on the cue butt radius for the invisible fat hit zone used by
    * CueHit's pointerdown raycast (a wider tap target on touch, not longer). */
-  static readonly fatHitRadiusFactor = 3
+  static readonly fatHitRadiusFactor = 4
 
   static readonly placermaterial = new MeshPhongMaterial({
     color: 0xffffff,

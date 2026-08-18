@@ -20,7 +20,7 @@ import type { CueBallSpin } from "./cueballspin"
  * `CueBallSpin` before the cue's own hit test runs.
  */
 export class CueHit {
-  private static readonly DEADZONE_PX = 10
+  private static readonly DEADZONE_PX = 20
   /** Lowest power a fired shot may have (5%). Gesture only. */
   private static readonly MIN_POWER = 0.05
   /** Forward pointer speed (px/s) that maps to 100% power. Tuneable.

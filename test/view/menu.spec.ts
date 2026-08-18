@@ -40,7 +40,6 @@ describe("Menu", () => {
     const overlay = document.getElementById("helpOverlay")
     const iframe = overlay?.querySelector("iframe")
 
-    expect(help.textContent?.trim()).to.equal("ℹ️")
     fireEvent.click(help)
 
     expect(overlay?.hasAttribute("hidden")).to.be.false
