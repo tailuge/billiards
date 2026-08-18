@@ -3,7 +3,7 @@
 ## Project Structure & Module Organization
 - `src/` contains all TypeScript source code. Core areas include `src/model` (physics), `src/view` (rendering/UI), `src/controller` (state system/input/game flow), and `src/network` (multiplayer).
 - `test/` contains Jest tests organized by domain.
-- `dist/` holds built artifacts and assets used for deployment (models, HTML, CSS, images).
+- `dist/` holds built artifacts and assets used for deployment (and models, HTML, CSS, images that are not built).
 - `dist/index.html` is the main game page.
 
 ## Build, Test, and Development Commands
