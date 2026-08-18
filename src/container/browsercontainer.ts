@@ -68,6 +68,7 @@ export class BrowserContainer {
   speedrun: boolean = false
   localMesh: boolean = false
   freeAim: boolean = false
+  raceTo: number | null = null
   readonly botDelay: number = 500
   constructor(canvas3d, params) {
     this.now = Date.now()
@@ -98,6 +99,7 @@ export class BrowserContainer {
     SnookerConfig.reds = Number.parseInt(params.get("reds") ?? "15") || 15
     ThreeCushionConfig.raceTo =
       Number.parseInt(params.get("raceTo") ?? "7") || 7
+    this.raceTo = params.has("raceTo") ? ThreeCushionConfig.raceTo : null
     console.log(
       `clientId: ${this.clientId} playername: ${this.playername} tableId: ${this.tableId} spectator: ${this.spectator} botMode: ${this.botMode} practiceMode: ${this.practiceMode} drillMode: ${this.drillMode}`
     )
@@ -231,6 +233,10 @@ export class BrowserContainer {
       this.initBotMode(scoreReporter)
     } else {
       this.initMultiplayer(scoreReporter)
+    }
+
+    if (this.raceTo !== null) {
+      this.container.chat.showMessage(`race to : ${this.raceTo}`)
     }
 
     this.container.broadcast = (e) => {
