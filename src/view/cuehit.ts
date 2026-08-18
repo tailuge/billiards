@@ -185,22 +185,23 @@ export class CueHit {
     this.pullPx = e.clientY - this.startY
 
     if (this.state === "Pending") {
-      // Decide between a strike and an aim swipe. Reject when the motion is
-      // more sideways than vertical (|dx| > 2|dy|): clear pointerId so the
-      // mousetouch guard flips off and the aim drag resumes. Otherwise commit
-      // once a real downward pull has travelled the deadzone.
       const dx = e.clientX - this.startX
-      if (Math.abs(dx) > 2 * Math.abs(this.pullPx)) {
-        this.reset()
-        this.pointerId = null
-        return
-      }
+      const absDx = Math.abs(dx)
+
       if (this.pullPx > CueHit.DEADZONE_PX) {
+        if (absDx > 2 * this.pullPx) {
+          this.reset()
+          this.pointerId = null
+          return
+        }
         this.state = "Pulling"
         e.preventDefault()
         ;(this.container.view.element as HTMLElement).setPointerCapture(
           e.pointerId
         )
+      } else if (absDx > CueHit.DEADZONE_PX) {
+        this.reset()
+        this.pointerId = null
       }
       return
     }
