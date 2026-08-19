@@ -27,35 +27,27 @@ describe("Snooker Concession", () => {
     container.isSinglePlayer = false
   })
 
-  it("Player 1 concedes while losing, Player 2 should be winner", () => {
-    // Setup: Player 1 (me) has 20, Player 2 (opponent) has 50
-    const session = Session.getInstance()
-    session.setMyScore(20)
-    session.setOpponentScore(50)
+  it.each([
+    // myScore, opponentScore, endSubtext
+    [20, 50, "opponent conceded"],
+    [50, 30, "opponent conceded"],
+    [50, 30, "You conceded"],
+  ])(
+    "conceding player loses regardless of score (my %s - opp %s, subtext '%s')",
+    (myScore, opponentScore, endSubtext) => {
+      const session = Session.getInstance()
+      session.setMyScore(myScore)
+      session.setOpponentScore(opponentScore)
 
-    const snookerRules = new Snooker(container)
-    const endController = snookerRules.handleGameEnd(false, "opponent conceded")
+      const snookerRules = new Snooker(container)
+      const endController = snookerRules.handleGameEnd(false, endSubtext)
 
-    expect(endController.name).to.equal("End")
+      expect(endController.name).to.equal("End")
 
-    const result = (endController as any).result
-    expect(result.winner).to.equal("Player2")
-  })
-
-  it("Player 1 concedes while leading, Player 2 should be winner", () => {
-    // Setup: Player 1 (me) has 50, Player 2 (opponent) has 30
-    const session = Session.getInstance()
-    session.setMyScore(50)
-    session.setOpponentScore(30)
-
-    const snookerRules = new Snooker(container)
-    const endController = snookerRules.handleGameEnd(false, "opponent conceded")
-
-    expect(endController.name).to.equal("End")
-
-    const result = (endController as any).result
-    expect(result.winner).to.equal("Player2")
-  })
+      const result = (endController as any).result
+      expect(result.winner).to.equal("Player2")
+    }
+  )
 
   afterEach(() => {
     Session.reset()

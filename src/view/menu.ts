@@ -119,13 +119,15 @@ export class Menu {
           {
             "concede-confirm": () => {
               this.container.notification.clear()
+              // The "conceded" marker makes the conceding player lose
+              // regardless of score (see MatchResultHelper.determineWinner).
               if (this.container.isSinglePlayer || Session.isBotMode()) {
                 this.container.updateController(
-                  this.container.rules.handleGameEnd(false)
+                  this.container.rules.handleGameEnd(false, "You conceded")
                 )
               } else {
                 this.container.updateController(
-                  this.container.rules.handleGameEnd(false)
+                  this.container.rules.handleGameEnd(false, "You conceded")
                 )
                 this.container.sendEvent(new ConcedeEvent())
               }
