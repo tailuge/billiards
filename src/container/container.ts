@@ -444,8 +444,10 @@ export class Container {
           (this.wasReplay && controller instanceof End)) &&
           this.rules.rulename === "threecushion"
       )
-      this.menu?.setFfwdVisible(controller instanceof Replay)
-      if (!(controller instanceof Replay)) {
+      const canFastForward =
+        controller instanceof Replay || Session.isSpectator()
+      this.menu?.setFfwdVisible(canFastForward)
+      if (!canFastForward) {
         this.fastForwardActive = false
       }
       const isTwoPlayer =
