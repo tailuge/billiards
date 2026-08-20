@@ -322,7 +322,7 @@ top | aim
 
 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=tailuge/billiards&type=Date)](https://star-history.com/#tailuge/billiards&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=tailuge/billiards)](https://star-history.dera.page/#tailuge/billiards)
 
 ## Licence
 
