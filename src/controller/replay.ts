@@ -12,7 +12,6 @@ import { End } from "./end"
 import { ScoreEvent } from "../events/scoreevent"
 import { ChatEvent } from "../events/chatevent"
 import { share, shorten } from "../utils/shorten"
-import { anglesAlign } from "../utils/three-utils"
 import { LOBBY_URL } from "../network/client/constants"
 import { gameOverButtons } from "../utils/gameover"
 
@@ -40,11 +39,7 @@ export class Replay extends ControllerBase {
     this.container.table.updateFromShortSerialised(this.init)
     console.log(`shots: ${this.shots.length}`)
     console.log(`shots: ${JSON.stringify(this.shots)}`)
-    const suggestCamera =
-      this.diagram || this.container.rules.rulename == "threecushion"
-        ? this.container.view.camera.topView
-        : this.container.view.camera.spectatorView
-    this.container.view.camera.forceMode(suggestCamera)
+    this.container.view.camera.forceMode(this.container.view.camera.aimView)
     this.playNextShot(this.delay * 1.5)
   }
 
@@ -108,6 +103,15 @@ export class Replay extends ControllerBase {
     return true
   }
 
+  private suggestRandomCamera() {
+    const camera = this.container.view.camera
+    if (Math.random() < 0.5) {
+      camera.suggestMode(camera.topView)
+    } else {
+      camera.cycleModeToAimz()
+    }
+  }
+
   playNextShot(delay) {
     const shot = this.shots.shift()
     if (!shot) {
@@ -126,19 +130,12 @@ export class Replay extends ControllerBase {
     this.container.table.cueball = this.container.table.balls[aim.i]
     console.log(this.container.table.cueball.pos.distanceTo(aim.pos))
 
-    const canPan =
-      anglesAlign(this.container.table.cue.aim.angle, aim.angle, 0.8) ||
-      this.container.view.camera.mode === this.container.view.camera.topView
     this.container.table.cueball.pos.copy(aim.pos)
     this.container.table.cue.aim = aim
     this.container.updateLastShot()
     this.container.table.cue.updateAimInput()
     this.container.table.cue.t = 1
-    this.container.view.camera.suggestMode(
-      canPan
-        ? this.container.view.camera.spectatorView
-        : this.container.view.camera.topView
-    )
+    this.suggestRandomCamera()
     clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       this.container.table.proximityIndicator.hide()
