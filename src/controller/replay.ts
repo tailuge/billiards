@@ -106,7 +106,9 @@ export class Replay extends ControllerBase {
 
   private updateShotCamera() {
     const camera = this.container.view.camera
-    if (this.shotIndex % 2 === 0) {
+    if (this.diagram) {
+      camera.forceMode(camera.topView)
+    } else if (this.shotIndex % 2 === 0) {
       camera.cycleModeToAimz()
     } else {
       camera.forceMode(camera.topView)

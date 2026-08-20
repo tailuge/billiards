@@ -55,7 +55,6 @@
           "
         >
           <button id="simBtn" disabled>View Shot</button>
-          <input type="file" id="file" accept=".json" style="display: none" />
           <button id="saveBtn" disabled>Save JSON</button>
           <button id="simplifyBtn" disabled>Simplify</button>
           <label class="tol-label"
@@ -70,39 +69,6 @@
               style="width: 80px"
             /><span id="simplifyTolVal">100</span></label
           >
-          <button onclick="document.getElementById('file').click()">
-            Load
-          </button>
-          <select
-            id="examples"
-            style="font-size: 11px; font-family: monospace; width: 12ch"
-          >
-            <option value="">examples</option>
-            <option value="SS_max_spin_02.json">SS_max_spin_02</option>
-            <option value="SS_max_spin_02_stronge.json">
-              SS_max_spin_02_stronge
-            </option>
-            <option value="SS_max_spin_03.json">SS_max_spin_03</option>
-            <option value="SS_max_spin_05.json">SS_max_spin_05</option>
-            <option value="SS_max_spin_06.json">SS_max_spin_06</option>
-            <option value="simple_shot_545599.json">simple_shot_545599</option>
-            <option value="simple_shot_545599_mathavan.json">
-              simple_shot_545599_mathavan
-            </option>
-            <option value="simple_shot_545599_stronge.json">
-              simple_shot_545599_stronge
-            </option>
-            <option value="simple_shot_545600.json">simple_shot_545600</option>
-            <option value="simple_shot_545600_stronge.json">
-              simple_shot_545600_stronge
-            </option>
-            <option value="simple_shot_545600_mathavan.json">
-              simple_shot_545600_mathavan
-            </option>
-            <option value="shot34.json">shot34</option>
-            <option value="shot675.json">shot675</option>
-            <option value="shot729.json">shot729</option>
-          </select>
           <select
             id="trajectoryShots"
             style="font-size: 11px; font-family: monospace; width: 18ch"
@@ -325,19 +291,6 @@
         return specs
       }
 
-      document.getElementById("file").onchange = (e) => {
-        const file = e.target.files[0]
-        if (!file) return
-        loadedFile = file.name
-        const reader = new FileReader()
-        reader.onload = (ev) => {
-          loadData(JSON.parse(ev.target.result))
-          const trajSelect = document.getElementById("trajectoryShots")
-          if (trajSelect) trajSelect.value = ""
-        }
-        reader.readAsText(file)
-      }
-
       function loadData(data) {
         loadedData = data
         simTracks = null
@@ -364,23 +317,7 @@
       }
 
       const urlParams = new URLSearchParams(window.location.search)
-      const urlFile = urlParams.get("file")
       const urlIndex = urlParams.get("index") ?? urlParams.get("shot")
-
-      if (urlIndex === null) {
-        const defaultFile = urlFile ?? "simple_shot_545600_stronge.json"
-        // Full paths (starting with /) are fetched as-is for file:// protocol usage
-        const fetchUrl = defaultFile.startsWith("/")
-          ? defaultFile
-          : "./" + defaultFile
-        fetch(fetchUrl)
-          .then((r) => r.json())
-          .then((data) => {
-            loadedFile = defaultFile
-            loadData(data)
-          })
-          .catch(() => {})
-      }
 
       async function onRunSim() {
         const btn = document.getElementById("simBtn")
@@ -587,24 +524,6 @@
           a.click()
         }
       }
-      document.getElementById("examples").onchange = (e) => {
-        const file = e.target.value
-        if (!file) return
-        loadedFile = file
-        fetch("./" + file)
-          .then((r) => r.json())
-          .then((data) => {
-            loadData(data)
-            const trajSelect = document.getElementById("trajectoryShots")
-            if (trajSelect) trajSelect.value = ""
-          })
-          .catch((err) => {
-            document.getElementById("status").textContent =
-              "Failed to load " + file
-          })
-        e.target.value = ""
-      }
-
       function convertTrajectoryShot(shot) {
         let moverId = null
         let minT1 = Infinity
@@ -708,19 +627,17 @@
             select.appendChild(opt)
           })
 
-          if (urlIndex !== null) {
-            const idx = parseInt(urlIndex, 10)
-            if (!isNaN(idx) && data[idx]) {
-              select.value = idx
-              const shot = data[idx]
-              loadedFile = `trajectories.json [Shot ${shot.id ?? idx}]`
-              const converted = convertTrajectoryShot(shot)
-              loadData(converted)
-
-              const examplesSelect = document.getElementById("examples")
-              if (examplesSelect) examplesSelect.value = ""
-            }
-          }
+          const requestedIndex =
+            urlIndex === null ? NaN : parseInt(urlIndex, 10)
+          const idx =
+            !isNaN(requestedIndex) && data[requestedIndex]
+              ? requestedIndex
+              : Math.floor(Math.random() * data.length)
+          const shot = data[idx]
+          select.value = idx
+          loadedFile = `trajectories.json [Shot ${shot.id ?? idx}]`
+          const converted = convertTrajectoryShot(shot)
+          loadData(converted)
         })
         .catch((err) => {
           console.warn("Failed to load trajectories.json", err)
@@ -736,9 +653,6 @@
         loadedFile = `trajectories.json [Shot ${shot.id ?? idx}]`
         const converted = convertTrajectoryShot(shot)
         loadData(converted)
-
-        const examplesSelect = document.getElementById("examples")
-        if (examplesSelect) examplesSelect.value = ""
       }
     </script>
   </body>
