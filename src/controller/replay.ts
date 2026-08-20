@@ -27,6 +27,8 @@ export class Replay extends ControllerBase {
   init
   diagram?: boolean
 
+  private shotIndex = 0
+
   constructor(container, init, shots, _retry = false, delay = 1500, diagram?) {
     super(container)
     this.init = init
@@ -39,7 +41,6 @@ export class Replay extends ControllerBase {
     this.container.table.updateFromShortSerialised(this.init)
     console.log(`shots: ${this.shots.length}`)
     console.log(`shots: ${JSON.stringify(this.shots)}`)
-    this.container.view.camera.forceMode(this.container.view.camera.aimView)
     this.playNextShot(this.delay * 1.5)
   }
 
@@ -103,13 +104,14 @@ export class Replay extends ControllerBase {
     return true
   }
 
-  private suggestRandomCamera() {
+  private updateShotCamera() {
     const camera = this.container.view.camera
-    if (Math.random() < 0.5) {
-      camera.suggestMode(camera.topView)
-    } else {
+    if (this.shotIndex % 2 === 0) {
       camera.cycleModeToAimz()
+    } else {
+      camera.forceMode(camera.topView)
     }
+    this.shotIndex++
   }
 
   playNextShot(delay) {
@@ -135,7 +137,7 @@ export class Replay extends ControllerBase {
     this.container.updateLastShot()
     this.container.table.cue.updateAimInput()
     this.container.table.cue.t = 1
-    this.suggestRandomCamera()
+    this.updateShotCamera()
     clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       this.container.table.proximityIndicator.hide()
@@ -186,6 +188,7 @@ export class Replay extends ControllerBase {
     if (event.retry) {
       return this.retry()
     }
+    this.shotIndex = 0
     this.playNextShot(this.delay)
     return this
   }

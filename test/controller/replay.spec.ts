@@ -298,4 +298,70 @@ describe("Controller Replay", () => {
     expect(p2.classList.contains("is-active")).to.be.true
     done()
   })
+
+  it("starts in aimZ mode and alternates each shot with topView without flipping to aimView", (done) => {
+    jest.clearAllTimers()
+    const multiShotState = {
+      init: state.init,
+      shots: [
+        {
+          type: "AIM",
+          offset: { x: 0, y: 0, z: 0 },
+          angle: 0,
+          power: 1,
+          pos: { x: -11, y: 0, z: 0 },
+        },
+        {
+          type: "AIM",
+          offset: { x: 0, y: 0, z: 0 },
+          angle: 0,
+          power: 1,
+          pos: { x: -11, y: 0, z: 0 },
+        },
+        {
+          type: "AIM",
+          offset: { x: 0, y: 0, z: 0 },
+          angle: 0,
+          power: 1,
+          pos: { x: -11, y: 0, z: 0 },
+        },
+      ],
+    }
+
+    const camera = container.view.camera
+    const replay = new Replay(
+      container,
+      multiShotState.init,
+      multiShotState.shots as any,
+      false,
+      0
+    )
+
+    // First shot should start in aimzView
+    expect(camera.mode).to.equal(camera.aimzView)
+
+    // Run scheduled timer for 1st shot
+    jest.runOnlyPendingTimers()
+
+    // Trigger hit for 1st shot - camera must stay aimzView
+    replay.hit()
+    expect(camera.mode).to.equal(camera.aimzView)
+
+    // Process next shot (2nd shot) after stationary
+    replay.handleStationary(null as any)
+    expect(camera.mode).to.equal(camera.topView)
+
+    // Run scheduled timer for 2nd shot
+    jest.runOnlyPendingTimers()
+
+    // Trigger hit for 2nd shot - camera must stay topView and NOT flip to aimView
+    replay.hit()
+    expect(camera.mode).to.equal(camera.topView)
+
+    // Process next shot (3rd shot) after stationary
+    replay.handleStationary(null as any)
+    expect(camera.mode).to.equal(camera.aimzView)
+
+    done()
+  })
 })
