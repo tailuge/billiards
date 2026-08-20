@@ -9,7 +9,7 @@ export class Session {
     readonly botMode: boolean = false,
     readonly examMode: boolean = false,
     readonly practiceMode: boolean = false,
-    readonly lod: number = 1,
+    public lod: number = 1,
     readonly first: boolean = false,
     readonly speedrunMode: boolean = false
   ) {}

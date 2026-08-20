@@ -41,7 +41,9 @@ export class DiagramContainer {
 
   start() {
     const urlParams = new URLSearchParams(window.location.search)
-    const lod = Number.parseInt(urlParams.get("lod") ?? "1", 10)
+    const lod = this.replay
+      ? 4
+      : Number.parseInt(urlParams.get("lod") ?? "1", 10)
     Session.init(
       "diagram",
       "diagram",

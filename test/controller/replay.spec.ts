@@ -13,6 +13,7 @@ import {
 } from "../../src/controller/controller"
 import { Aim } from "../../src/controller/aim"
 import { End } from "../../src/controller/end"
+import { Session } from "../../src/network/client/session"
 import { canvas3d, initDom } from "../view/dom"
 import { Assets } from "../../src/view/assets"
 
@@ -362,6 +363,21 @@ describe("Controller Replay", () => {
     replay.handleStationary(null as any)
     expect(camera.mode).to.equal(camera.aimzView)
 
+    done()
+  })
+
+  it("forces LOD to 4 in replay mode", (done) => {
+    const mockKeyboard = { getEvents: () => [] }
+    const replayContainer = new Container({
+      element: canvas3d,
+      log: (_) => {},
+      assets: Assets.localAssets(),
+      ruletype: "nineball",
+      keyboard: mockKeyboard as any,
+      id: () => {},
+      replayMode: true,
+    })
+    expect(Session.getLod()).to.equal(4)
     done()
   })
 })
