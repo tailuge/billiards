@@ -172,8 +172,8 @@ export class Container {
       this.table.cue.aimInputs?.showOverlap()
       this.view.camera.setAimPreset()
     }
-    if (this.replayMode) {
-      // Replay starts chromeless; the L key (or menu button) can still toggle.
+    if (this.replayMode || Session.isSpectator()) {
+      // Replay and spectate start chromeless; the L key (or menu button) can still toggle.
       document.body.classList.add("chromeless")
       Session.getInstance().lod = 4
     }
