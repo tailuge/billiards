@@ -15,6 +15,7 @@ import { Aim } from "../../src/controller/aim"
 import { End } from "../../src/controller/end"
 import { canvas3d, initDom } from "../view/dom"
 import { Assets } from "../../src/view/assets"
+import { Camera } from "../../src/view/camera"
 
 initDom()
 
@@ -296,6 +297,49 @@ describe("Controller Replay", () => {
     )
     const p2 = document.getElementById("p2Score") as HTMLElement
     expect(p2.classList.contains("is-active")).to.be.true
+    done()
+  })
+
+  it("sets camera aimzLerp and alternates between aimzView and topView across shots", (done) => {
+    jest.clearAllTimers()
+    const multiShotState = {
+      init: state.init,
+      shots: [
+        state.shots[0],
+        state.shots[0],
+        state.shots[0],
+      ],
+    }
+    const replay = new Replay(
+      container,
+      multiShotState.init,
+      multiShotState.shots as any,
+      false,
+      100
+    )
+    container.controller = replay
+
+    expect(container.view.camera.aimzLerp).to.equal(Camera.aimLerp)
+    // First shot played on construction: initial toggle is false so camera mode is aimzView
+    expect(container.view.camera.mode).to.equal(container.view.camera.aimzView)
+
+    // Advance timer to trigger HitEvent and process stationary to trigger playNextShot for 2nd shot
+    jest.runOnlyPendingTimers()
+    container.processEvents()
+    container.table.cueball.setStationary()
+    container.eventQueue.push(new StationaryEvent())
+    container.processEvents()
+
+    expect(container.view.camera.mode).to.equal(container.view.camera.topView)
+
+    // Trigger playNextShot for 3rd shot
+    jest.runOnlyPendingTimers()
+    container.processEvents()
+    container.table.cueball.setStationary()
+    container.eventQueue.push(new StationaryEvent())
+    container.processEvents()
+
+    expect(container.view.camera.mode).to.equal(container.view.camera.aimzView)
     done()
   })
 })

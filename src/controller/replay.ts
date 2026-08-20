@@ -14,6 +14,8 @@ import { ChatEvent } from "../events/chatevent"
 import { share, shorten } from "../utils/shorten"
 import { LOBBY_URL } from "../network/client/constants"
 import { gameOverButtons } from "../utils/gameover"
+import { Camera } from "../view/camera"
+import { Outcome } from "../model/outcome"
 
 export class Replay extends ControllerBase {
   override get name() {
@@ -26,6 +28,7 @@ export class Replay extends ControllerBase {
   timer
   init
   diagram?: boolean
+  private cameraToggle = false
 
   constructor(container, init, shots, _retry = false, delay = 1500, diagram?) {
     super(container)
@@ -39,7 +42,7 @@ export class Replay extends ControllerBase {
     this.container.table.updateFromShortSerialised(this.init)
     console.log(`shots: ${this.shots.length}`)
     console.log(`shots: ${JSON.stringify(this.shots)}`)
-    this.container.view.camera.forceMode(this.container.view.camera.aimView)
+    this.container.view.camera.aimzLerp = Camera.aimLerp
     this.playNextShot(this.delay * 1.5)
   }
 
@@ -103,13 +106,14 @@ export class Replay extends ControllerBase {
     return true
   }
 
-  private suggestRandomCamera() {
+  private alternateCamera() {
     const camera = this.container.view.camera
-    if (Math.random() < 0.5) {
+    if (this.cameraToggle) {
       camera.suggestMode(camera.topView)
     } else {
       camera.cycleModeToAimz()
     }
+    this.cameraToggle = !this.cameraToggle
   }
 
   playNextShot(delay) {
@@ -135,7 +139,7 @@ export class Replay extends ControllerBase {
     this.container.updateLastShot()
     this.container.table.cue.updateAimInput()
     this.container.table.cue.t = 1
-    this.suggestRandomCamera()
+    this.alternateCamera()
     clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       this.container.table.proximityIndicator.hide()
@@ -144,6 +148,19 @@ export class Replay extends ControllerBase {
       )
       this.timer = undefined
     }, delay)
+  }
+
+  override hit() {
+    this.container.sound.lastOutcomeTime = -1
+    this.container.table.outcome = [
+      Outcome.hit(
+        this.container.table.cueball,
+        this.container.table.cue.aim.power,
+        0
+      ),
+    ]
+    this.container.table.hit()
+    this.container.table.cue.showHelper(false)
   }
 
   override handleHit(_: HitEvent) {
