@@ -172,6 +172,10 @@ export class Container {
       this.table.cue.aimInputs?.showOverlap()
       this.view.camera.setAimPreset()
     }
+    if (this.replayMode) {
+      // Replay starts chromeless; the L key (or menu button) can still toggle.
+      document.body.classList.add("chromeless")
+    }
     this.updateController(new Init(this))
     //  this.updateController(new End(this))
   }
