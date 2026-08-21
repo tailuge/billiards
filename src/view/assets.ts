@@ -14,14 +14,26 @@ import { TableMesh } from "./tablemesh"
 import { TableGeometry } from "./tablegeometry"
 import { Room } from "./room"
 
+type TableCustomization = {
+  texturePath?: string
+  textureRepeatU?: number
+  textureRepeatV?: number
+  clothTextureColor?: number
+  clothColor?: number
+  cushionColor?: number
+  clothshadeColor?: number
+}
+
 export class Assets {
-  private static readonly tableCustomization = {
-    texturePath: "assets/wave.jpg",
-    textureRepeatU: 1,
-    textureRepeatV: 2,
-    clothColor: 0xdac39e,
-    cushionColor: 0xba934e,
-    clothshadeColor: 0x896e42,
+  private static readonly tableCustomizations: Record<string, TableCustomization> = {
+    threecushion: {
+      texturePath: "assets/wave.jpg",
+      textureRepeatU: 1,
+      textureRepeatV: 2,
+      clothColor: 0xdac39e,
+      cushionColor: 0xba934e,
+      clothshadeColor: 0x896e42,
+    },
   }
 
   ready
@@ -45,7 +57,10 @@ export class Assets {
     importGltf(this.rules.asset, (m) => {
       this.rules.scaleTableModel?.(m.scene)
       if (this.isTableSize5()) {
-        this.customizeTableScene(m.scene)
+        this.customizeTableScene(
+          m.scene,
+          Assets.tableCustomizations.threecushion
+        )
       }
       this.table = m.scene
       TableMesh.mesh = m.scene.children[0]
@@ -74,9 +89,7 @@ export class Assets {
     return parseFloat(urlParams.get("tableSize") || "10") === 5
   }
 
-  private customizeTableScene(scene): void {
-    const cfg = Assets.tableCustomization
-
+  private customizeTableScene(scene, cfg: TableCustomization): void {
     // Sync pass: fix cloth UVs, recolor cushions
     scene.traverse((child) => {
       if (!child.isMesh) return
@@ -86,11 +99,13 @@ export class Assets {
       for (const mat of materials) {
         const name = mat.name?.toLowerCase() ?? ""
         if (name.includes("clothshade")) {
+          if (cfg.clothshadeColor === undefined) continue
           mat.color.set(cfg.clothshadeColor)
           mat.needsUpdate = true
         } else if (name.includes("cloth")) {
           this.fixClothUVs(child)
         } else if (name.includes("cushion")) {
+          if (cfg.cushionColor === undefined) continue
           mat.color.set(cfg.cushionColor)
           mat.needsUpdate = true
         }
@@ -98,11 +113,12 @@ export class Assets {
     })
 
     // Async pass: load and apply cloth texture
+    if (cfg.texturePath === undefined) return
     new TextureLoader().load(
       cfg.texturePath,
       (texture) => {
         texture.wrapS = texture.wrapT = RepeatWrapping
-        texture.repeat.set(cfg.textureRepeatU, cfg.textureRepeatV)
+        texture.repeat.set(cfg.textureRepeatU ?? 1, cfg.textureRepeatV ?? 1)
         scene.traverse((child) => {
           if (!child.isMesh) return
           const materials = Array.isArray(child.material)
