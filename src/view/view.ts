@@ -167,7 +167,9 @@ export class View {
     this.scene.add(this.assets.table)
     this.table.mesh = this.assets.table
     const isSnooker = this.assets.rules.asset === Snooker.tablemodel
-    this.scene.add(new Grid().generateLineSegments(isSnooker))
+    this.scene.add(
+      new Grid(this.assets.gridLineColor).generateLineSegments(isSnooker)
+    )
     this.portraits = new Portraits(
       this.scene,
       this.portraitMode,

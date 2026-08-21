@@ -5,6 +5,8 @@ import {
   Float32BufferAttribute,
   BufferGeometry,
   Group,
+  CanvasTexture,
+  SRGBColorSpace,
 } from "three"
 import { RuleFactory } from "../controller/rules/rulefactory"
 import { importGltf } from "../utils/gltf"
@@ -22,10 +24,14 @@ type TableCustomization = {
   clothColor?: number
   cushionColor?: number
   clothshadeColor?: number
+  gridLineColor?: number
 }
 
 export class Assets {
-  private static readonly tableCustomizations: Record<string, TableCustomization> = {
+  private static readonly tableCustomizations: Record<
+    string,
+    TableCustomization
+  > = {
     threecushion: {
       texturePath: "assets/wave.jpg",
       textureRepeatU: 1,
@@ -34,7 +40,17 @@ export class Assets {
       cushionColor: 0xba934e,
       clothshadeColor: 0x896e42,
     },
+    eightball: {
+      clothTextureColor: 0x9b2226,
+      clothColor: 0xffffff,
+      cushionColor: 0x9b2226,
+      clothshadeColor: 0x5e1518,
+      gridLineColor: 0x5e1518,
+    },
   }
+
+  private static readonly clothTextureCache: Map<number, CanvasTexture> =
+    new Map()
 
   ready
   rules: Rules
@@ -43,10 +59,16 @@ export class Assets {
   table: Mesh
 
   sound: Sound
+  readonly ruletype
 
   constructor(ruletype) {
+    this.ruletype = ruletype
     this.rules = RuleFactory.create(ruletype, null)
     this.rules.tableGeometry()
+  }
+
+  get gridLineColor(): number | undefined {
+    return Assets.tableCustomizations[this.ruletype]?.gridLineColor
   }
 
   loadFromWeb(ready) {
@@ -56,7 +78,10 @@ export class Assets {
     this.background = this.room.generateRoom()
     importGltf(this.rules.asset, (m) => {
       this.rules.scaleTableModel?.(m.scene)
-      if (this.isTableSize5()) {
+      const cfg = Assets.tableCustomizations[this.ruletype]
+      if (this.ruletype === "eightball" && cfg) {
+        this.customizeTableScene(m.scene, cfg)
+      } else if (this.isTableSize5()) {
         this.customizeTableScene(
           m.scene,
           Assets.tableCustomizations.threecushion
@@ -112,30 +137,61 @@ export class Assets {
       }
     })
 
-    // Async pass: load and apply cloth texture
+    // Apply cloth texture: procedural solid color, or loaded from file
+    if (cfg.clothTextureColor !== undefined) {
+      this.applyClothTexture(
+        scene,
+        Assets.clothTexture(cfg.clothTextureColor),
+        cfg
+      )
+      return
+    }
     if (cfg.texturePath === undefined) return
     new TextureLoader().load(
       cfg.texturePath,
       (texture) => {
-        texture.wrapS = texture.wrapT = RepeatWrapping
-        texture.repeat.set(cfg.textureRepeatU ?? 1, cfg.textureRepeatV ?? 1)
-        scene.traverse((child) => {
-          if (!child.isMesh) return
-          const materials = Array.isArray(child.material)
-            ? child.material
-            : [child.material]
-          for (const mat of materials) {
-            if (mat.name?.toLowerCase() === "cloth") {
-              mat.map = texture
-              mat.color.set(cfg.clothColor)
-              mat.needsUpdate = true
-            }
-          }
-        })
+        this.applyClothTexture(scene, texture, cfg)
       },
       undefined,
       () => console.warn("Failed to load table cloth texture")
     )
+  }
+
+  private static clothTexture(color: number): CanvasTexture {
+    const cached = Assets.clothTextureCache.get(color)
+    if (cached) return cached
+
+    const canvas = document.createElement("canvas")
+    canvas.width = 16
+    canvas.height = 16
+    const ctx = canvas.getContext("2d")
+    if (ctx) {
+      ctx.fillStyle = `#${color.toString(16).padStart(6, "0")}`
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+    }
+
+    const texture = new CanvasTexture(canvas)
+    texture.colorSpace = SRGBColorSpace
+    Assets.clothTextureCache.set(color, texture)
+    return texture
+  }
+
+  private applyClothTexture(scene, texture, cfg: TableCustomization): void {
+    texture.wrapS = texture.wrapT = RepeatWrapping
+    texture.repeat.set(cfg.textureRepeatU ?? 1, cfg.textureRepeatV ?? 1)
+    scene.traverse((child) => {
+      if (!child.isMesh) return
+      const materials = Array.isArray(child.material)
+        ? child.material
+        : [child.material]
+      for (const mat of materials) {
+        if (mat.name?.toLowerCase() === "cloth") {
+          mat.map = texture
+          mat.color.set(cfg.clothColor)
+          mat.needsUpdate = true
+        }
+      }
+    })
   }
 
   private fixClothUVs(mesh): void {

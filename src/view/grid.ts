@@ -4,17 +4,21 @@ import { R } from "../model/physics/constants"
 import { Rack } from "../utils/rack"
 
 export class Grid {
-  readonly material = new LineBasicMaterial({
-    color: 0x000084,
-    opacity: 0.15,
-    transparent: true,
-  })
+  readonly material: LineBasicMaterial
 
   readonly snookerMaterial = new LineBasicMaterial({
     color: 0xffffff,
     opacity: 0.18,
     transparent: true,
   })
+
+  constructor(lineColor = 0x000084) {
+    this.material = new LineBasicMaterial({
+      color: lineColor,
+      opacity: 0.15,
+      transparent: true,
+    })
+  }
 
   public generateLineSegments(isSnooker = false) {
     if (isSnooker) {
