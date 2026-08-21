@@ -104,24 +104,47 @@ zero-power shots (degenerate trajectories) — a first-pass sanity check.
 `optimise.js` imports its optimizers from `https://esm.sh/...` CDN URLs and its
 PSO path constructs browser `Worker`s. Browsers support both; **Node cannot
 resolve `https://` import specifiers** and has no `Worker` global — hence the
-viewer runs it in HTML. But both libraries exist on npm:
+viewer runs it in HTML.
 
-| Library | npm | Used for |
+**Reuse strategy (decided: vendored bundles, no `package.json` change).**
+Both libraries are vendored as self-contained ESM bundles in
+`dist/fit/vendor/` — byte-for-byte the same modules esm.sh serves the browser,
+so optimizer behaviour is identical. No runtime or dev dependencies are added
+to the repo's `package.json`; no reimplementation.
+
+| File | Source (esm.sh) | Verified in Node |
 |---|---|---|
-| `@reside-ic/dfoptim` | `1.0.0` | `Simplex` (Nelder-Mead) — `.step()` / `.result()` |
-| `pso` | `1.0.0` | `Optimizer` / `Particle` (optional, see 4.6) |
+| `dist/fit/vendor/dfoptim.mjs` | `@reside-ic/dfoptim@1.0.0` es2022 bundle | 8 KB, zero imports; named exports `Simplex`, `Brent`, `fitSimplex`, `fitBrent`; `Simplex.step()/.result()` work |
+| `dist/fit/vendor/pso.mjs` | `pso@1.0.0` es2022 bundle | 4 KB, zero imports; **single default export** `{ Interval, Particle, Optimizer }` (note: `import pso from "./vendor/pso.mjs"`, matching `optimise.js`'s default import); async objective + `Particle.createRandom` verified |
 
-**Reuse strategy** (identical optimizer behaviour, no browser):
-- Vendor `@reside-ic/dfoptim`'s esm.sh bundle into `dist/fit/vendor/dfoptim.mjs`
-  (one-time `curl https://esm.sh/@reside-ic/dfoptim?bundle` — no `package.json`
-  change, repo stays untouched). Alternative if a dependency is preferred:
-  `yarn add @reside-ic/dfoptim`.
-- Mirror `optimise.js`'s `makeTarget` / `makeInitial` / `decode` / `runOptimiseNM`
-  wiring verbatim in a Node module, importing the vendored `Simplex`.
-- Swap only the simulation call: `window.simulateSync` → `global.simulateSync`
-  (Node setup in §4.2) and the Worker pool (not used by NM).
+Re-vendoring (if ever needed): fetch the `es2022/*.bundle.mjs` URL each esm.sh
+stub redirects to (the plain `?bundle` URL returns a redirect stub, not the
+code), prepend a provenance header, and re-verify with a smoke import.
+
+**Wiring** — mirror `optimise.js`'s `makeTarget` / `makeInitial` / `decode` /
+`runOptimiseNM` verbatim in a Node module, importing the vendored `Simplex`:
+- Swap the simulation call: `window.simulateSync` → `global.simulateSync`
+  (Node setup in §4.2).
 - Reuse `dist/fit/rmse.js` (`computeSSE` / `computeRMSE`) unchanged as the
   objective — already verified importable from Node.
+
+### 4.1.1 PSO in Node — serial (decided)
+
+The `pso` library vendors cleanly, but `optimise.js`'s `WorkerPool`
+(optimise.js:5) is browser-only (`new Worker(url)`), so it is **not** ported.
+Instead the PSO objective evaluates particles **serially** with
+`global.simulateSync`: the `pso.Optimizer` accepts an async callback objective,
+so the pool drops out without changing the algorithm — same update rules,
+same results, single-threaded.
+
+Cost: PSO needs ~1500+ evals/run (15 particles × 100 iters) vs NM's
+~300–400, so serial PSO is roughly 4–5× slower per run. Consequences:
+
+- **NM is the batch default.** PSO is a per-shot option for shots where NM
+  stalls (reported `converged: false`).
+- If batch wall time ever demands it, a `node:worker_threads` port of the
+  pool is the later upgrade path (§4.5) — the serial objective is the same
+  code with the pool swapped back in.
 
 ### 4.2 Running the physics engine in Node (verified)
 
@@ -149,13 +172,60 @@ const result = global.simulateSync(sim)   // { frames:[{t, balls:[{id,pos:[x,y]}
 | `shot.offset.x` | x | `[-0.451, 0.451]` | `0` |
 | `shot.offset.y` | y | `[-0.451, 0.451]` | `0` |
 
+**Which fields are fitted is user-selectable per run.** Whatever is not
+selected stays frozen at its seed value (kinematic estimate for angle/power,
+`0,0` for offsets).
+
+#### CLI
+
+```
+node dist/fit/fit-shots.mjs [options]
+
+--optimise shot.power,shot.offset.x,shot.offset.y
+        Comma-separated subset of: shot.angle, shot.power,
+        shot.offset.x, shot.offset.y.
+        Default: shot.power,shot.offset.x,shot.offset.y.
+        Unknown names → error listing valid options.
+
+--optimiser nm|pso
+        Nelder-Mead (default) or serial PSO (§4.1.1).
+        PSO mainly useful for 4D+ fits where NM stalls.
+
+--ids 3,17,42   Only fit these shot ids (subset selection).
+--all           RMSE against all balls (default: cue ball only, matches viewer).
+--max-evals N   Eval budget per shot (default ~400 for 3D).
+--input/--output  Paths (defaults: trajectories.json / shots.json in dist/fit).
+```
+
+**Input/output model (decided):**
+- Pure **input → output transform**; not tied to specific filenames. Output
+  schema (§4.4) is a superset of the input schema (`trajectories.json`
+  format), so **an output can be fed back in as `--input`**: if an entry
+  already has a `shot` field it is used as the seed (prior fit refined
+  further); otherwise the Stage-1 kinematic estimate seeds it.
+- **Incremental writes, no completeness/resume checking.** Each finished
+  entry is appended to the output file as JSON lines are accumulated; a
+  crash may leave the file half-written/garbled — that's fine, just re-run
+  the batch from the input.
+- **Halt on failure**: if simulation fails or RMSE is non-finite for a shot,
+  the script stops immediately with a non-zero exit. No special provision
+  for degenerate shots — the pipeline tries them like any other and the
+  RMSE metadata shows the result.
+- Fitted angles are **normalised to [-π, π]** in the output.
+- Eval budgets: NM capped by `--max-evals` (default ~400 for 3D); PSO runs a
+  fixed 100 iterations (viewer parity).
+
 - **Objective**: simulate with trial `shot` (sim skeleton from §2.5) → build
   `simTracks` from `result.frames` → `computeRMSE(truth, simTracks, trackAll=false)`
-  (cue ball only, the viewer default). Return `Infinity` on any failure.
-- **Stopping**: `Simplex.result().converged`, or cap at `--max-evals` (default
-  ~400 for 4D).
-- **Output per shot**: write the fitted `shot` back into the entry immediately
-  (crash-safe, resume-friendly: skip ids already present in `shots.json`).
+  (cue ball only unless `--all`). Return `Infinity` on any failure.
+- **Stopping**: `Simplex.result().converged`, or cap at `--max-evals`.
+- **Progress output**, one line per shot as it completes:
+  ```
+  Shot #1   rmse 54.3cm -> 23.0cm   (412 evals, converged)
+  Shot #2   rmse 12.1cm -> 12.0cm   (stalled)
+  ```
+  followed by a final summary (mean/median before→after, worst outliers,
+  converged count).
 
 ### 4.4 Stage-2 output schema (metadata added — decided)
 
@@ -167,12 +237,27 @@ const result = global.simulateSync(sim)   // { frames:[{t, balls:[{id,pos:[x,y]}
             "offset": { "x": ..., "y": ... }, "elevation": 0 },
   "mover": "1",
   "ballMapping": { "1": 0, "2": 1, "3": 2 },
-  "fit": { "rmseCm": 37.2, "evals": 401, "elapsedMs": 900, "converged": true }
+  "fit": {
+    "rmseBeforeCm": 54.3,
+    "rmseAfterCm": 23.0,
+    "evals": 412,
+    "elapsedMs": 900,
+    "converged": true,
+    "fitted": ["shot.power", "shot.offset.x", "shot.offset.y"],
+    "optimiser": "nm"
+  }
 }]
 ```
 
-`mover` / `ballMapping` / `fit` are required for QA and for re-loading the shot
-into the simulator later.
+`mover` / `ballMapping` are required for QA and for re-loading the shot into
+the simulator later. The extra `fit` keys are ignored by existing tooling
+(`convertTrajectoryShot` reads only `id`/`balls`; sim consumers read
+`shot`/`balls`) but support filtering:
+
+- quality: `fit.rmseAfterCm < 40`
+- improvement ratio: `rmseAfterCm / rmseBeforeCm` (near 1.0 = fit barely helped;
+  candidates for a PSO pass or `--optimise shot.angle,...`)
+- provenance: `fitted` + `optimiser` record exactly how each entry was produced.
 
 ### 4.5 Runtime (measured/estimated)
 
@@ -185,11 +270,6 @@ into the simulator later.
 
 ### 4.6 Optional / future
 
-- **PSO** (`pso` npm package): its WorkerPool is browser-only; a Node port would
-  need worker_threads or serial step. Only worth it if NM converges poorly on
-  some shots (4D NM on a noisy objective can stall — mark `converged:false` and
-  report, don't fail the batch).
-- **trackAll** mode (fit against all balls, not just the cue ball) via a flag.
 - **Global-parameter optimisation**: once `shots.json` is trustworthy, feed
   shot+truth pairs into the multi-shot common-parameters pipeline (`common.md`).
 
@@ -213,9 +293,17 @@ into the simulator later.
 - No HTML UI for Stage 1/2 (an `enrich.html` page remains a possible later
   addition for visual QA).
 
-## 7. Open decisions
+## 7. Decisions (resolved)
 
-1. **Vendoring method**: `curl` esm.sh bundle into `dist/fit/vendor/` (no repo
-   change — recommended) vs `yarn add @reside-ic/dfoptim`.
-2. **PSO in Stage 2**: skip (recommended) or port with worker_threads.
-3. **`trackAll`**: cue-ball-only (recommended, matches viewer) or all balls.
+1. **Dependency strategy**: vendored self-contained ESM bundles in
+   `dist/fit/vendor/` (`dfoptim.mjs`, `pso.mjs`) — no `package.json` change,
+   no devDependencies, no reimplementation (§4.1).
+2. **PSO**: vendored + **serial** evaluation (no WorkerPool port). NM is the
+   batch default; PSO selectable via `--optimiser pso` for stalled shots (§4.1.1).
+3. **`trackAll`**: cue-ball-only by default (matches viewer); `--all` flag.
+4. **Field selection**: `--optimise` CLI flag over
+   `shot.angle|shot.power|shot.offset.x|shot.offset.y`; default
+   `shot.power,shot.offset.x,shot.offset.y`; unfitted params stay at seed (§4.3).
+5. **RMSE metadata**: per-entry `fit` object with before/after RMSE, evals,
+   convergence, fitted fields and optimiser — ignored by existing tooling,
+   filterable later (§4.4).

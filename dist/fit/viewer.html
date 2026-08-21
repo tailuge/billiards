@@ -589,16 +589,30 @@
           power = dt > 0 ? Math.hypot(dx, dy) / dt : 0
         }
 
+        /* prefer a fitted shot (from fit-shots.mjs) over the kinematic seed */
+        const shotParams = shot.shot
+          ? {
+              cueBallId: 0,
+              angle: shot.shot.angle ?? angle,
+              power: shot.shot.power ?? power,
+              offset: {
+                x: shot.shot.offset?.x ?? 0,
+                y: shot.shot.offset?.y ?? 0,
+              },
+              elevation: shot.shot.elevation ?? 0,
+            }
+          : {
+              cueBallId: 0,
+              angle: angle,
+              power: power,
+              offset: { x: 0, y: 0 },
+              elevation: 0,
+            }
+
         const sim = {
           ruleType: "threecushion",
           cushionModel: "mathavan",
-          shot: {
-            cueBallId: 0,
-            angle: angle,
-            power: power,
-            offset: { x: 0, y: 0 },
-            elevation: 0,
-          },
+          shot: shotParams,
           params: { ...defaults },
           stepSize: 0.001953125,
           maxIterations: 20000,
@@ -606,15 +620,19 @@
         }
 
         return {
-          source: `trajectories.json (shot ${shot.id})`,
-          report: `Converted Shot ID ${shot.id}\nCue ball: ${moverId} -> 0\nOthers: ${otherIds.join(", ")}`,
+          source: `shots.json (shot ${shot.id})`,
+          report:
+            `Converted Shot ID ${shot.id}\nCue ball: ${moverId} -> 0\nOthers: ${otherIds.join(", ")}` +
+            (shot.fit
+              ? `\nFitted (${shot.fit.optimiser}): ${shot.fit.rmseBeforeCm}cm -> ${shot.fit.rmseAfterCm}cm`
+              : ""),
           sim: sim,
           truth: truth,
         }
       }
 
       let trajectories = null
-      fetch("./trajectories.json")
+      fetch("./shots.json")
         .then((r) => r.json())
         .then((data) => {
           trajectories = data
@@ -635,12 +653,12 @@
               : Math.floor(Math.random() * data.length)
           const shot = data[idx]
           select.value = idx
-          loadedFile = `trajectories.json [Shot ${shot.id ?? idx}]`
+          loadedFile = `shots.json [Shot ${shot.id ?? idx}]`
           const converted = convertTrajectoryShot(shot)
           loadData(converted)
         })
         .catch((err) => {
-          console.warn("Failed to load trajectories.json", err)
+          console.warn("Failed to load shots.json", err)
         })
 
       document.getElementById("trajectoryShots").onchange = (e) => {
@@ -650,7 +668,7 @@
         if (isNaN(idx) || !trajectories || !trajectories[idx]) return
 
         const shot = trajectories[idx]
-        loadedFile = `trajectories.json [Shot ${shot.id ?? idx}]`
+        loadedFile = `shots.json [Shot ${shot.id ?? idx}]`
         const converted = convertTrajectoryShot(shot)
         loadData(converted)
       }

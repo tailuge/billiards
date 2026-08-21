@@ -159,8 +159,15 @@
         return svg
       }
 
-      const resp = await fetch("trajectories.json")
+      const resp = await fetch("shots.json")
       const shots = await resp.json()
+
+      /* sort best -> worst by fitted RMSE (entries without fit metadata last) */
+      const rmseOf = (s) =>
+        s.fit && Number.isFinite(s.fit.rmseAfterCm)
+          ? s.fit.rmseAfterCm
+          : Infinity
+      shots.sort((a, b) => rmseOf(a) - rmseOf(b))
 
       const grid = document.getElementById("grid")
       shots.forEach((shot, index) => {
@@ -172,7 +179,9 @@
 
         const label = document.createElement("div")
         label.className = "label"
-        label.textContent = `shot ${shot.id}`
+        label.textContent = shot.fit
+          ? `shot ${shot.id} · ${shot.fit.rmseBeforeCm}→${shot.fit.rmseAfterCm}cm`
+          : `shot ${shot.id}`
         wrap.appendChild(label)
 
         wrap.addEventListener("click", () => openOverlay(shot, index))
@@ -271,7 +280,7 @@
         viewBtn.textContent = "🔍"
         viewBtn.addEventListener("click", (e) => {
           e.stopPropagation()
-          window.open(`./viewer.html?index=${index}`, "_blank")
+          window.open(`./viewer.html?shot=${shot.id}`, "_blank")
         })
         wrap.appendChild(viewBtn)
 
