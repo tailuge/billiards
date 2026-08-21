@@ -1787,12 +1787,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailuge/messaging@npm:1.40.0":
-  version: 1.40.0
-  resolution: "@tailuge/messaging@npm:1.40.0"
+"@tailuge/messaging@npm:1.41.0":
+  version: 1.41.0
+  resolution: "@tailuge/messaging@npm:1.41.0"
   dependencies:
     lit: "npm:^3.3.3"
-  checksum: 10c0/f0db9962f2f625d3ea4f27471cf4678f31bdb2a5f46d63c011154a445f7cdc65605effbc21e6c84581b60523de6475cce86a0da7780b43ec1f64443d240e1812
+  checksum: 10c0/39d44076b33589e5c71a3b6e4cdb5cb922ab80ecc404d1ceeb6d72af57f27bf6a92923af16b3cc0a7f63283933ab648e512b8671d44ef7dc4f2dfdb2412a4857
   languageName: node
   linkType: hard
 
@@ -2984,7 +2984,7 @@ __metadata:
     "@eslint/js": "npm:10.0.1"
     "@swc/core": "npm:1.16.1"
     "@swc/jest": "npm:0.2.39"
-    "@tailuge/messaging": "npm:1.40.0"
+    "@tailuge/messaging": "npm:1.41.0"
     "@testing-library/dom": "npm:10.4.1"
     "@types/chai": "npm:5.2.3"
     "@types/jest": "npm:30.0.0"
@@ -2993,7 +2993,7 @@ __metadata:
     canvas: "npm:3.2.3"
     chai: "npm:6.2.2"
     concurrently: "npm:10.0.5"
-    eslint: "npm:10.8.1"
+    eslint: "npm:10.9.0"
     eslint-plugin-html: "npm:^8.1.4"
     eslint-plugin-sonarjs: "npm:4.2.0"
     fflate: "npm:^0.8.3"
@@ -4024,9 +4024,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:10.8.1":
-  version: 10.8.1
-  resolution: "eslint@npm:10.8.1"
+"eslint@npm:10.9.0":
+  version: 10.9.0
+  resolution: "eslint@npm:10.9.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.8.0"
     "@eslint-community/regexpp": "npm:^4.12.2"
@@ -4065,7 +4065,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/0c4720a43ef2052829db18e37aa79adb5f0a62137bdf4a4f8e9507bbbbf888ba0669fc03e4b7139d8f27b59b051bbbcd0a3988b068c30fa934a766d60a81f599
+  checksum: 10c0/bc6c9f4a5c0b97e37ab1aa1753ae30ad5b0cf43a25ca3dcfff937f2b47243654c3ca34e37f71006474a3c1b95d6d4e046149facc6d66af4af6e993a619c23509
   languageName: node
   linkType: hard
 

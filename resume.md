@@ -7,7 +7,10 @@ game, restore the local game to the correct controller and table state without
 restarting the rack, using `localStorage` only.
 
 **Non-goals:** mid-shot recovery (velocities/spin are not serialised and don't
-need to be), spectator resume, bot/practice/drill games, cross-device resume.
+need to be), refreshing while your *own* shot is in flight (after the `HIT` is
+published but before the turn boundary settles — the stored entry is still the
+previous turn boundary and cannot re-simulate it, so this falls back to a
+fresh rack), spectator resume, bot/practice/drill games, cross-device resume.
 
 ## Current behaviour after refresh
 
@@ -58,17 +61,17 @@ is a stored string.
 
 ### Payload
 
-Key: `resume.<tableId>`. The `tableId` alone is sufficient: it is the Nchan
-channel name, so it uniquely identifies the game session — everything else in
-the URL (`ruletype`, `userId`, ...) is either re-derived from the URL on load
-or validated against the payload before restore. A single fixed prefix keeps
-the store tidy and makes "clear all resume state" a prefix scan. Per-table
-keying means two concurrent games in different tabs never collide.
+Key: `resume.<clientId>` — one slot per player, not per table. Two players
+sharing a browser (or two local test iframes) have distinct `userId`s, so
+their slots never collide, and a player's new game simply overwrites their own
+old slot. The payload still carries `tableId` so a stale tab (reopened after
+the same client started a fresh game) is detected and ignored on load. No TTL,
+no prefix scan, no explicit cleanup of other table ids.
 
 ```jsonc
 {
-  "savedAt": 1774892219839,          // Date.now() at write, for expiry
-  "controller": "WatchAim",          // "Aim" | "WatchAim" | "PlaceBall" | "PlaceAllBalls"
+  "tableId": "nchan-channel-id",     // validation: discard if this tab's tableId differs (stale tab)
+  "controller": "WatchAim",          // "Aim" | "WatchAim" | "PlaceBall" (PlaceAllBalls is drill-only, never in 2-player)
   "tablejson": { ... },              // table.serialise() — stationary
   "score": { "p1": 3, "p2": 1, "b": 2, "active": 1 },
   "msgId": "nchan-msg-id-watermark", // last message id we processed
@@ -76,18 +79,17 @@ keying means two concurrent games in different tabs never collide.
 }
 ```
 
-No schema version field until a second version exists; `ruletype`/`tableId`
-are not stored — the key already carries `tableId` and `ruletype` comes from
-the URL. Only `playerIndex` is genuinely not URL-derivable.
+No schema version field until a second version exists. `ruletype` comes from
+the URL and is not stored; `tableId` is stored only for the stale-tab
+validation below. `playerIndex` is not URL-derivable. `PlaceAllBalls` appears
+in the controller enum for completeness but is drill-only (`DrillPanel`) and
+never returned by 2-player `rules.update`, so it won't occur in practice.
 
-### Expiry
+### Validation on load
 
-On load, discard the entry when any of these hold:
-
-- `Date.now() - savedAt > TTL` (suggest 12h; a table left overnight is dead
-  anyway),
-- `playerIndex` doesn't match (both players sharing a browser would otherwise
-  restore the wrong side).
+Discard the entry when its stored `tableId` doesn't match the current tab's
+`tableId` — a stale tab reopened after the same client started a fresh game.
+(The new game already overwrote the slot, so this is just a cheap guard.)
 
 Also delete the entry when the `End` controller is reached (game over) — never
 resume into a finished game. The delete belongs in `End.onFirst`, not the
@@ -97,17 +99,30 @@ controller isn't returned through it (`src/controller/playshot.ts:43`).
 ## Write path
 
 One hook, at the point a turn boundary settles. `Container.sendScoreUpdate`
-(`src/container/container.ts:322`) is the natural place: it already fires with
-the post-shot score/active player, runs on both clients, and every rules
-outcome (`pot`, `foul` → `PlaceBallEvent`, `miss` → `StartAimEvent`) passes
-through it. At that moment the table is stationary, so `table.serialise()` is
-valid.
+(`src/container/container.ts:322`) is the natural place: it fires with the
+post-shot score/active player and every rules outcome (`pot`, `foul` →
+`PlaceBallEvent`, `miss` → `StartAimEvent`) passes through it. At that moment
+the table is stationary, so `table.serialise()` is valid.
+
+`sendScoreUpdate` is called from `PlayShot.handleStationary`
+(`src/controller/playshot.ts:43`), i.e. **only on the shooter's client** — the
+watcher does not write at the opponent's turn boundaries. That is fine, not a
+bug: the watcher's entry is written at their own last shot, when the stored
+controller is already `WatchAim` (the opponent's next turn), and any later
+turns are reconstructed from the buffer replay (opponent `HIT` → `WatchShot`,
+then `ScoreEvent`/`StartAimEvent`). A watcher therefore refreshes at most one
+shot behind, and the replay catches them up.
 
 The controller name to store is the one `rules.update` returned / will return
-(`Aim`, `WatchAim`, `PlaceBall`, `PlaceAllBalls`).
+(`Aim`, `WatchAim`, `PlaceBall`).
 
 The watermark needs the `msgId` of the last *received* message — see plumbing
-below. Writes happen in **every 2-player mode, agnostic of rule type**, and
+below. Because the write happens at shot resolution, several seconds after the
+`HIT` was published, our own `HIT` echo has always arrived by then, so the
+watermark naturally covers our own shot; the only messages with a larger msgId
+are our own turn-boundary broadcasts, which self-echo suppression drops (they
+are already reflected in the snapshot). Writes happen in **every 2-player
+mode, agnostic of rule type**, and
 nowhere else. The gate is the negation of the existing single-player check
 (`browsercontainer.ts:144`): networked session (`wss` set) and not spectator,
 not bot, not replay. Practice/drill are local 1-player modes and fall outside
@@ -118,13 +133,13 @@ to true for every non-nineball ruletype (`browsercontainer.ts:90`).
 
 In `BrowserContainer`, after URL params are parsed and before `Init` runs:
 
-1. Read `resume.<tableId>`; validate per the expiry rules. On any
+1. Read `resume.<clientId>`; validate `tableId` matches. On any
    miss, fall through to the existing fresh-game path untouched.
 2. `table.updateFromSerialised(entry.tablejson)` (velocities zero — fine, the
    snapshot is stationary by construction).
 3. Seed score/HUD from `entry.score`.
-4. Instantiate the stored controller directly (`Aim`, `WatchAim`, `PlaceBall`,
-   `PlaceAllBalls`) instead of letting `Init` broadcast a fresh `WatchEvent`
+4. Instantiate the stored controller directly (`Aim`, `WatchAim`, `PlaceBall`)
+   instead of letting `Init` broadcast a fresh `WatchEvent`
    (`src/controller/init.ts:65`). `playerIndex` comes from the URL/Session as
    today; the stored `active` in score decides whose turn the HUD shows.
 5. Install the watermark in the net event path. Replay is in-order, so no
@@ -133,13 +148,13 @@ In `BrowserContainer`, after URL params are parsed and before `Init` runs:
    msgId is seen, then process everything after it.** If the watermark never
    appears (truncated buffer) everything replays — same as today's reconnect
    behaviour, and safe.
-6. **Bypass self-echo during replay.** Normally `netEvent` drops events whose
-   `clientId` equals our own (`browsercontainer.ts:324`). During buffer replay
-   that check must be suspended: if we refreshed while *our own* shot was in
-   flight, our replayed `HIT` would otherwise be dropped, we'd never
-   re-simulate it, and we would diverge permanently from the opponent (who did
-   simulate it). Processing our own hit params through `WatchShot` is fine —
-   simulation is deterministic, which the architecture already relies on.
+6. **Keep self-echo suppression on during replay.** `netEvent` drops events
+   whose `clientId` equals our own (`browsercontainer.ts:324`); that stays.
+   The snapshot already reflects our own turn-boundary broadcasts
+   (`ScoreEvent`/`StartAimEvent`/`PlaceBallEvent`), so replaying them would be
+   redundant. The only reason to bypass self-echo would be to re-process our
+   own in-flight `HIT`, which is out of scope (see non-goals) — so no bypass
+   is added.
 7. Clear the stored entry once consumed (a crash during resume then falls back
    to a fresh rack rather than a half-applied one).
 8. Verify the post-restore `BeginEvent` broadcast (`browsercontainer.ts:310`)
@@ -171,9 +186,10 @@ design. The lib could absorb it entirely:
 - `joinTable`/`spectateTable` accept a `resumeFromMsgId` option — Nchan
   supports positional subscribe (`last_id`), so the buffer would replay *only
   messages after the watermark* and the app-side filter disappears.
-- Expose `table.lastMsgId` (the lib already tracks every msgId it sees,
-  `table.js:353`) so the app reads it at save time instead of needing the
-  relay signature change above.
+- Expose `table.lastMsgId`. The lib already records every msgId it sees in
+  `seenMsgIds` (`table.js` `handleIncomingMessage`), but no `lastMsgId` getter
+  exists yet — it would need to be added — so the app could read it at save
+  time instead of needing the relay signature change above.
 
 With that, changes 1–2 in the summary shrink to zero app-side filtering code.
 Until then the plan above works standalone.
@@ -190,22 +206,24 @@ the lib dedups re-deliveries it has already emitted this session; the app
 watermark skips history from before the refresh, once, on first join. No
 conflict, no double-filtering.
 
-### Why a new game never enters resume
+### Why a new game never resumes into the old one
 
-`tableId` is a client-generated channel id created fresh per challenge
-(`lobby.d.ts:98`), so every new game has a new key and `resume.<tableId>`
-misses → fresh-game path. Defence in depth: the entry is also deleted once
-consumed, expires via TTL, and is rejected if `playerIndex` differs.
+Keying by `clientId` means a new game writes to the same slot and simply
+overwrites the old entry — no stale resume survives. Defence in depth: the
+entry is deleted once consumed, deleted at `End`, and rejected on load if its
+stored `tableId` doesn't match the current tab. (`tableId` is a
+client-generated channel id created fresh per challenge, `lobby.js:199`, so it
+changes every game.)
 
 ## Effort estimate
 
 | Item | Size |
 |---|---|
-| `ResumeStore` util (get/put/clear, TTL, try/catch) + unit tests | ~0.5 day |
+| `ResumeStore` util (get/put/clear, try/catch) + unit tests | ~0.5 day |
 | Relay msgId surfacing | trivial (<10 lines) |
-| `BrowserContainer`: restore path, watermark skip, replay-time self-echo bypass, gate | ~1 day |
+| `BrowserContainer`: restore path, watermark skip, gate | ~1 day |
 | Write hook in `sendScoreUpdate` + delete in `End.onFirst` | ~0.25 day |
-| Controller-by-name construction (`Aim`/`WatchAim`/`PlaceBall`/`PlaceAllBalls`) | ~0.25 day |
+| Controller-by-name construction (`Aim`/`WatchAim`/`PlaceBall`) | ~0.25 day |
 | Two-container integration test harness + tests | ~1–1.5 days |
 | Manual pass: refresh scenarios × rule types | ~0.5 day |
 
@@ -220,18 +238,22 @@ remove roughly half of the `BrowserContainer` item if done later.
   `HIT` replays with a newer msgId). The *opponent* is unaffected — they just
   see us rejoin (`onOpponentRejoined` hook already exists,
   `messagingmessagerelay.ts:64`); no special handling needed on either side.
+- **Own shot in flight at refresh:** out of scope. A refresh after our `HIT`
+  is published but before the turn boundary settles falls back to a fresh rack
+  — the stored entry is still the *previous* turn boundary and cannot
+  re-simulate the in-flight shot (see non-goals).
 - **Buffer truncation:** Nchan buffers are bounded (~2000). For a 2-player
   game a turn boundary is written every few messages, so the watermark stays
   well inside the buffer for any realistic session; accepted as out of scope.
-- **Ball-in-hand / break-off:** `PlaceBall`/`PlaceAllBalls` restore fine from
-  the snapshot; the pending `PlaceBallEvent` need not be re-sent by the
-  opponent (the restored controller already expects placement).
+- **Ball-in-hand / break-off:** `PlaceBall` restores fine from the snapshot;
+  the pending `PlaceBallEvent` need not be re-sent by the opponent (the
+  restored controller already expects placement).
 - **Both players refresh:** each restores its own entry; both then replay the
   buffer consistently because the watermark + deterministic controllers are
   per-client.
-- **Stale entry after opponent started a new game on same tableId:** a new
-  game gets a new `tableId`, so the old entry simply expires via TTL; no
-  explicit invalidation needed.
+- **Stale entry after starting a new game:** a new game writes to the same
+  `resume.<clientId>` slot, overwriting the old entry; no explicit
+  invalidation needed.
 
 ## Testing
 
@@ -240,23 +262,24 @@ remove roughly half of the `BrowserContainer` item if done later.
 - Unit: watermark replay drops everything before the exact watermark msgId,
   passes everything after, and degrades to full replay when absent (extend
   `test/` around `EventUtil.fromSerialised` / a fake relay).
-- Unit: own-clientId events are processed during replay but suppressed in
-  normal play.
+- Unit: own-clientId events are suppressed during replay exactly as in normal
+  play (the snapshot already reflects our own turn-boundary broadcasts).
 - Integration-style (fake relay, two containers): play N shots, "refresh" one
   container (rebuild from stored entry + replayed buffer), assert both
   containers reach identical controller + score after the next shot.
 - Manual: refresh mid-opponent-shot, refresh during own aim, refresh on
-  ball-in-hand, expiry after TTL.
+  ball-in-hand; two local iframes with distinct `userId` params each
+  restoring independently.
 
 ## Summary of changes
 
 1. `MessagingMessageRelay`: surface `meta.msgId` to subscribers.
-2. `BrowserContainer`: track latest msgId; watermark skip + replay-time
-   self-echo bypass in `netEvent`; restore path before `Init`; gate on
+2. `BrowserContainer`: track latest msgId; watermark skip in `netEvent`
+   (self-echo suppression retained); restore path before `Init`; gate on
    networked 2-player (not `practiceMode`).
 3. `Container.sendScoreUpdate` (or a small `ResumeStore` util it calls):
    write the snapshot entry; `End.onFirst`: delete it.
-4. New util `src/utils/resumestore.ts`: get/put/clear + TTL + schema
-   validation, keyed `resume.<tableId>`.
+4. New util `src/utils/resumestore.ts`: get/put/clear + tableId validation,
+   keyed `resume.<clientId>`.
 
 No protocol changes; everything else reuses the existing controller flow.

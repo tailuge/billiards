@@ -368,7 +368,7 @@ describe("Controller Replay", () => {
 
   it("forces LOD to 4 in replay mode", (done) => {
     const mockKeyboard = { getEvents: () => [] }
-    const replayContainer = new Container({
+    new Container({
       element: canvas3d,
       log: (_) => {},
       assets: Assets.localAssets(),
