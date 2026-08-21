@@ -490,6 +490,23 @@ describe("Controller", () => {
     done()
   })
 
+  it("Aim applies the nine-ball input power multiplier to Hit", () => {
+    const aim = new Aim(container)
+    const initialPower = maxPower * 0.5
+    container.table.cue.aim.power = initialPower
+    const sendEventSpy = jest
+      .spyOn(container, "sendEvent")
+      .mockImplementation(() => {})
+
+    aim.playShot()
+
+    const hitEvent = sendEventSpy.mock.calls[0][0]
+    expect(hitEvent).toBeInstanceOf(HitEvent)
+    expect((hitEvent as HitEvent).tablejson.aim.power).toBe(
+      Math.fround(initialPower * 1.2)
+    )
+  })
+
   it("Aim handles all inputs", (done) => {
     container.controller = new Aim(container)
     container.inputQueue.push(

@@ -4,6 +4,7 @@ import { ControllerBase } from "./controllerbase"
 import { PlayShot } from "./playshot"
 import { Replay } from "./replay"
 import { gameOverButtons } from "../utils/gameover"
+import { isFirstShot } from "../utils/utils"
 import { Camera } from "../view/camera"
 
 /**
@@ -112,6 +113,15 @@ export class Aim extends ControllerBase {
     this.container.inputQueue.length = 0
     this.container.view.minimap.hide()
     this.container.table.cue.aimInputs.setDisabled(true)
+    const rulename = this.container.rules.rulename
+    if (
+      (rulename === "eightball" || rulename === "nineball") &&
+      isFirstShot(this.container.recorder)
+    ) {
+      this.container.table.cue.aim.power = Math.fround(
+        this.container.table.cue.aim.power * 1.2
+      )
+    }
     const hitEvent = new HitEvent(this.container.table.serialiseHit())
     this.container.sendEvent(hitEvent)
     return new PlayShot(this.container)
