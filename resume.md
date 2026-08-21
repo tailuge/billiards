@@ -74,6 +74,7 @@ no prefix scan, no explicit cleanup of other table ids.
   "controller": "WatchAim",          // "Aim" | "WatchAim" | "PlaceBall" (PlaceAllBalls is drill-only, never in 2-player)
   "tablejson": { ... },              // table.serialise() — stationary
   "score": { "p1": 3, "p2": 1, "b": 2, "active": 1 },
+  "p1type": 1,                       // Session.p1type at save time (eightball group assignment)
   "msgId": "nchan-msg-id-watermark", // last message id we processed
   "playerIndex": 1                   // Session.playerIndex at save time
 }
@@ -84,6 +85,15 @@ the URL and is not stored; `tableId` is stored only for the stale-tab
 validation below. `playerIndex` is not URL-derivable. `PlaceAllBalls` appears
 in the controller enum for completeness but is drill-only (`DrillPanel`) and
 never returned by 2-player `rules.update`, so it won't occur in practice.
+
+**Why `p1type` must be stored:** eightball group assignment (solids/stripes)
+is set incrementally via events (`ControllerBase.handleScore`,
+`controllerbase.ts:49-54`) — typically at a turn boundary *earlier* than the
+snapshot, so its broadcast has msgId ≤ watermark and the replay filter drops
+it. Restoring without `p1type` leaves `Session.p1type === 0` (unassigned) and
+the resumed eightball game cannot determine ball groups. On restore, seed
+`Session.p1type` from the payload before entering the stored controller.
+(`nextCandidateBall` in `eightball.ts:96` reads it from `Session`.)
 
 ### Validation on load
 
@@ -103,6 +113,19 @@ One hook, at the point a turn boundary settles. `Container.sendScoreUpdate`
 post-shot score/active player and every rules outcome (`pot`, `foul` →
 `PlaceBallEvent`, `miss` → `StartAimEvent`) passes through it. At that moment
 the table is stationary, so `table.serialise()` is valid.
+
+**Caveat: the save must NOT be gated on the `changed` check.**
+`sendScoreUpdate` only broadcasts a `ScoreEvent` when score/HUD values
+actually changed (`container.ts:322-331`), but a turn can settle with
+unchanged score digits (e.g. a foul with no pot still flips active player —
+though `activePlayer` is part of the changed check, other future paths may not
+be). Write the snapshot unconditionally at the top of the hook, before the
+`changed` guard.
+
+Also store `Session.p1type` in the payload here (see *Payload* above) — it is
+the only Session state not recoverable from table/score/controller, and it
+must be captured on every write since group assignment can change mid-game
+(open table → first legal pot).
 
 `sendScoreUpdate` is called from `PlayShot.handleStationary`
 (`src/controller/playshot.ts:43`), i.e. **only on the shooter's client** — the
@@ -137,7 +160,9 @@ In `BrowserContainer`, after URL params are parsed and before `Init` runs:
    miss, fall through to the existing fresh-game path untouched.
 2. `table.updateFromSerialised(entry.tablejson)` (velocities zero — fine, the
    snapshot is stationary by construction).
-3. Seed score/HUD from `entry.score`.
+3. Seed score/HUD from `entry.score`, and seed `Session.p1type` from
+   `entry.p1type` (see *Payload* — the group-assignment event that originally
+   set it has msgId ≤ watermark and will never replay).
 4. Instantiate the stored controller directly (`Aim`, `WatchAim`, `PlaceBall`)
    instead of letting `Init` broadcast a fresh `WatchEvent`
    (`src/controller/init.ts:65`). `playerIndex` comes from the URL/Session as
@@ -245,6 +270,17 @@ remove roughly half of the `BrowserContainer` item if done later.
 - **Buffer truncation:** Nchan buffers are bounded (~2000). For a 2-player
   game a turn boundary is written every few messages, so the watermark stays
   well inside the buffer for any realistic session; accepted as out of scope.
+- **Break-off placement constraint after resume:** `NineBall.placeBall`
+  clamps via `isFirstShot(this.container.recorder)` (`nineball.ts:53`), and
+  the Recorder is not part of the snapshot — so after a resume,
+  `isFirstShot` may return a wrong answer and misapply/miss the baulk-line
+  clamp on ball-in-hand placement. **Out of scope for now: the Recorder /
+  first-shot mechanism is changing in other planned work; revisit this once
+  that lands rather than patching around it here.**
+- **`End.onFirst` delete must fire on both clients:** verify `End` is entered
+  locally on each client (via replayed end-of-game events), not only on the
+  shooter's — otherwise one side keeps a resumable entry for a finished game
+  (harmless due to the tableId guard, but stale).
 - **Ball-in-hand / break-off:** `PlaceBall` restores fine from the snapshot;
   the pending `PlaceBallEvent` need not be re-sent by the opponent (the
   restored controller already expects placement).
@@ -264,9 +300,14 @@ remove roughly half of the `BrowserContainer` item if done later.
   `test/` around `EventUtil.fromSerialised` / a fake relay).
 - Unit: own-clientId events are suppressed during replay exactly as in normal
   play (the snapshot already reflects our own turn-boundary broadcasts).
+- Unit: eightball restore seeds `Session.p1type` from the payload and
+  `nextCandidateBall` resolves groups correctly immediately after resume
+  (no replayed event needed).
 - Integration-style (fake relay, two containers): play N shots, "refresh" one
   container (rebuild from stored entry + replayed buffer), assert both
-  containers reach identical controller + score after the next shot.
+  containers reach identical controller + score after the next shot. Include
+  an eightball scenario where group assignment happened ≥1 turn before the
+  refresh.
 - Manual: refresh mid-opponent-shot, refresh during own aim, refresh on
   ball-in-hand; two local iframes with distinct `userId` params each
   restoring independently.
@@ -275,10 +316,13 @@ remove roughly half of the `BrowserContainer` item if done later.
 
 1. `MessagingMessageRelay`: surface `meta.msgId` to subscribers.
 2. `BrowserContainer`: track latest msgId; watermark skip in `netEvent`
-   (self-echo suppression retained); restore path before `Init`; gate on
-   networked 2-player (not `practiceMode`).
+   (self-echo suppression retained); restore path before `Init`; seed
+   `Session.p1type` on restore; gate on networked 2-player (not
+   `practiceMode`).
 3. `Container.sendScoreUpdate` (or a small `ResumeStore` util it calls):
-   write the snapshot entry; `End.onFirst`: delete it.
+   write the snapshot entry unconditionally (not gated on the `changed`
+   check), including `Session.p1type`; `End.onFirst`: delete it (both
+   clients).
 4. New util `src/utils/resumestore.ts`: get/put/clear + tableId validation,
    keyed `resume.<clientId>`.
 
