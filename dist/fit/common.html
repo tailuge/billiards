@@ -78,23 +78,23 @@
     <div class="container">
       <div class="controls">
         <div style="display: flex; gap: 1px; align-items: center">
-          <button id="loadBtn">Load Selected</button>
+          <button id="loadBtn">Load shots.json</button>
           <button id="clearBtn">Clear All</button>
           <button id="resetBtn">Reset</button>
           <button id="restoreBestBtn" disabled>Restore Best</button>
         </div>
 
         <div class="file-list" id="fileList">
-          <label><input type="checkbox" value="fit1.json" checked /> fit1</label
-          ><br />
-          <label><input type="checkbox" value="fit2.json" checked /> fit2</label
-          ><br />
-          <label><input type="checkbox" value="fit3.json" checked /> fit3</label
-          ><br />
-          <label><input type="checkbox" value="fit4.json" checked /> fit4</label
-          ><br />
-          <label><input type="checkbox" value="fit5.json" checked /> fit5</label
-          ><br />
+          <label
+            >max RMSE (cm)
+            <input
+              type="number"
+              id="maxRmse"
+              value="20"
+              min="0"
+              step="any"
+              style="width: 70px"
+          /></label>
         </div>
 
         <div
@@ -159,7 +159,6 @@
       let bestParams = null
       let bestRmse = Infinity
 
-      const fileList = document.getElementById("fileList")
       const loadBtn = document.getElementById("loadBtn")
       const paramRows = document.getElementById("paramRows")
       const optBtn = document.getElementById("optBtn")
@@ -170,29 +169,102 @@
       const rmseCanvas = document.getElementById("rmseCanvas")
       const plotContainer = document.getElementById("plotContainer")
 
-      loadBtn.onclick = async () => {
-        const checked = Array.from(
-          fileList.querySelectorAll("input[type=checkbox]:checked")
-        ).map((cb) => cb.value)
-        if (checked.length === 0) return
+      // Mirrors viewer.html convertTrajectoryShot for shots.json entries.
+      function findMover(balls) {
+        let moverId = null
+        let minT1 = Infinity
+        for (const [id, ball] of Object.entries(balls)) {
+          if (ball.t.length >= 2 && ball.t[1] < minT1) {
+            minT1 = ball.t[1]
+            moverId = id
+          }
+        }
+        if (moverId === null) {
+          moverId = Object.keys(balls)[0] || "1"
+        }
+        return moverId
+      }
 
-        status.textContent = "Status: Loading files..."
-        allData = []
+      // Mirrors viewer.html convertTrajectoryShot for shots.json entries.
+      function convertEntry(entry) {
+        const moverId = entry.mover ?? findMover(entry.balls)
+        const mapping = entry.ballMapping ?? (() => {
+          const otherIds = Object.keys(entry.balls)
+            .filter((id) => id !== moverId)
+            .sort()
+          const m = { [moverId]: 0 }
+          if (otherIds[0] !== undefined) m[otherIds[0]] = 1
+          if (otherIds[1] !== undefined) m[otherIds[1]] = 2
+          return m
+        })()
+
+        const truth = []
+        for (const [origId, b] of Object.entries(entry.balls)) {
+          const ballId = mapping[origId]
+          for (let i = 0; i < b.t.length; i++) {
+            truth.push({ ball: ballId, t: b.t[i], x: b.x[i], y: b.y[i] })
+          }
+        }
+        truth.sort((a, b) => (a.t !== b.t ? a.t - b.t : a.ball - b.ball))
+
+        const simBalls = Object.entries(entry.balls).map(([origId, b]) => ({
+          id: mapping[origId],
+          pos: { x: b.x[0], y: b.y[0], z: 0 },
+        }))
+        simBalls.sort((a, b) => a.id - b.id)
+
+        const s = entry.shot ?? {}
+        const sim = {
+          ruleType: "threecushion",
+          cushionModel: "mathavan",
+          shot: {
+            cueBallId: 0,
+            angle: s.angle ?? 0,
+            power: s.power ?? 0,
+            offset: { x: s.offset?.x ?? 0, y: s.offset?.y ?? 0 },
+            elevation: s.elevation ?? 0,
+          },
+          params: { ...defaults },
+          stepSize: 0.001953125,
+          maxIterations: 20000,
+          balls: simBalls,
+        }
+        return { sim, truth }
+      }
+
+      loadBtn.onclick = async () => {
+        const maxRmse = parseFloat(
+          document.getElementById("maxRmse").value
+        )
+        if (!Number.isFinite(maxRmse) || maxRmse < 0) {
+          status.textContent = "Status: invalid max RMSE"
+          return
+        }
+
+        status.textContent = "Status: Loading shots.json..."
+        try {
+          const r = await fetch("./shots.json")
+          const entries = await r.json()
+          allData = []
+          for (const entry of entries) {
+            const rmse = entry.fit?.rmseAfterCm
+            if (!Number.isFinite(rmse) || rmse >= maxRmse) continue
+            const { sim, truth } = convertEntry(entry)
+            allData.push({
+              name: `shot ${entry.id} (${rmse.toFixed(1)}cm)`,
+              sim,
+              truth,
+            })
+          }
+        } catch (err) {
+          console.error("Failed to load shots.json", err)
+          status.textContent = "Status: Error loading shots.json"
+          return
+        }
+
         bestParams = null
         bestRmse = Infinity
         restoreBestBtn.disabled = true
-
-        for (const filename of checked) {
-          try {
-            const r = await fetch("./" + filename)
-            const data = await r.json()
-            if (data.sim && data.truth) {
-              allData.push({ name: filename, sim: data.sim, truth: data.truth })
-            }
-          } catch (err) {
-            console.error("Failed to load", filename, err)
-          }
-        }
 
         updateUI()
         await plotAllData()
@@ -203,9 +275,6 @@
         bestParams = null
         bestRmse = Infinity
         restoreBestBtn.disabled = true
-        Array.from(fileList.querySelectorAll("input[type=checkbox]")).forEach(
-          (cb) => (cb.checked = false)
-        )
         updateUI()
       }
 
@@ -286,12 +355,15 @@
       function buildParamTable(allData) {
         const sim = allData[0].sim
 
-        // Build dynamic header with per-file columns
+        // Build dynamic header with per-shot columns (omitted when many
+        // shots are loaded — the shared "Current" column is what matters)
+        const showPerShotCols = allData.length <= 12
         let headerHtml =
           "<tr><th>Tune</th><th>Parameter</th><th>Min</th><th>Max</th><th>System</th><th>Current</th>"
-        for (const d of allData) {
-          const label = d.name.replace(".json", "")
-          headerHtml += `<th>${label}</th>`
+        if (showPerShotCols) {
+          for (const d of allData) {
+            headerHtml += `<th>${d.name}</th>`
+          }
         }
         headerHtml += "</tr>"
         document.getElementById("paramHeader").innerHTML = headerHtml
@@ -316,11 +388,13 @@
             max = val + 0.1
           }
 
-          // Build per-file columns
+          // Build per-shot columns
           let fileCols = ""
-          for (const d of allData) {
-            const fileVal = d.sim.params[name]
-            fileCols += `<td>${fileVal !== undefined ? fileVal.toFixed(3) : "-"}</td>`
+          if (showPerShotCols) {
+            for (const d of allData) {
+              const fileVal = d.sim.params[name]
+              fileCols += `<td>${fileVal !== undefined ? fileVal.toFixed(3) : "-"}</td>`
+            }
           }
 
           tr.innerHTML = `
