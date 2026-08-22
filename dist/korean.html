@@ -24,10 +24,7 @@
       hreflang="en"
       href="https://billiards.tailuge.workers.dev/lobby"
     />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta property="og:title" content="무료 온라인 당구 게임 - 3쿠션 · 사구" />
     <meta
       property="og:description"
@@ -193,9 +190,15 @@
         text-align: center;
         margin: 12px 0 0;
       }
-      .rules p,
-      .rules li {
+      .mode-note {
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+        margin: 8px 0 0;
+      }
+      .features li {
         font-size: 1rem;
+        margin: 8px 0;
       }
       footer {
         margin-top: 40px;
@@ -225,49 +228,66 @@
       />
 
       <div class="cta-row">
-        <a class="btn btn-3c" href="/?ruletype=threecushion&userName=%ED%9A%8C%EC%A0%84%EB%A7%88%EB%B2%95%EC%82%AC&lod=4&raceTo=7">3쿠션 시작 ⬀</a>
-        <a class="btn btn-sagu" href="/?ruletype=sagu&userName=%EC%82%AC%EA%B5%AC%EC%8B%A0%EB%8F%99&lod=4">사구 시작 ⬀</a>
+        <a
+          class="btn btn-3c"
+          href="/?ruletype=threecushion&userName=%ED%9A%8C%EC%A0%84%EB%A7%88%EB%B2%95%EC%82%AC&lod=4&raceTo=7"
+          >3쿠션 시작 ⬀</a
+        >
+        <a
+          class="btn btn-sagu"
+          href="/?ruletype=sagu&userName=%EC%82%AC%EA%B5%AC%EC%8B%A0%EB%8F%99&lod=4"
+          >사구 시작 ⬀</a
+        >
       </div>
       <p class="beginner">
         처음이신가요? 작은 5자 테이블로 구성된
-        <a class="btn-small" href="/?ruletype=threecushion&userName=%ED%9A%8C%EC%A0%84%EB%A7%88%EB%B2%95%EC%82%AC&lod=4&raceTo=7&tableSize=5">비기너 모드 ⬀</a>
+        <a
+          class="btn-small"
+          href="/?ruletype=threecushion&userName=%ED%9A%8C%EC%A0%84%EB%A7%88%EB%B2%95%EC%82%AC&lod=4&raceTo=7&tableSize=5"
+          >비기너 모드 ⬀</a
+        >
         로 가볍게 시작해보세요.
       </p>
       <p class="cta-row">
-        <a class="btn btn-lobby" href="/lobby">온라인 로비에서 실제 상대와 대전하기 ⬀</a>
+        <a class="btn btn-lobby" href="/lobby"
+          >온라인 로비에서 실제 상대와 대전하기 ⬀</a
+        >
       </p>
       <p class="tagline">
         설치 없이 브라우저에서 바로 실행 · 완전 무료 · 모바일/PC 모두 지원
       </p>
+      <p class="mode-note">
+        3쿠션: 쿠션 3번 후 양쪽 공 hit로 득점 · 사구: 두 목구를 모두 맞히면 득점
+      </p>
 
-      <h2>3쿠션 당구란?</h2>
-      <div class="rules">
-        <p>
-          자신의 큐공(수구)으로 상대 공을 포함한 <strong>두 개의 공을
-          모두 맞히기 전에 쿠션을 세 번 이상</strong> 접촉시키면 득점하는
-          캐롬 당구입니다. 회전(스핀)과 쿠션 활용이 승부의 핵심으로,
-          물리적 이해와 기량이 필요한 당구의 최정상 종목입니다.
-        </p>
+      <h2>왜 이 게임인가요?</h2>
+      <div class="features">
         <ul>
-          <li>공 3개: 내 수구 1개 + 목표 공 2개</li>
-          <li>쿠션 3회 이상 접촉 후 양쪽 공 모두 hit → 1득점</li>
-          <li>먼저 목표 점수(race to 7)에 도달하면 승리</li>
-        </ul>
-      </div>
-
-      <h2>사구(四球)란?</h2>
-      <div class="rules">
-        <p>
-          한국에서 사랑받는 네 개의 공으로 하는 캐롬 당구(4구)입니다.
-          수구로 <strong>나머지 두 개의 목구를 모두 맞히면</strong> 득점하며,
-          쿠션을 먼저 맞고 성공하면 더 높은 점수를 얻습니다. 규칙이 단순해
-          입문자도 금방 즐길 수 있지만, 고득점을 위해서는 정교한 배치와
-          회전 조절이 필요합니다.
-        </p>
-        <ul>
-          <li>공 4개: 수구 1개 + 목구 2개 + 상대 수구 1개</li>
-          <li>수구로 두 목구를 모두 맞히면 득점</li>
-          <li>단순한 규칙, 깊은 전략 — 한국의 국민 당구</li>
+          <li>
+            <strong>논문 기반 정밀 물리</strong> — Han 2005, Mathavan 2010 등 공
+            역학 연구를 구현한 WebGL 물리 엔진. 백스핀, 사이드스핀, 쿠션
+            반발까지 실제와 같습니다.
+          </li>
+          <li>
+            <strong>설치·가입 없이 무료</strong> — 브라우저에서 바로 실행.
+            모바일과 PC 모두 지원.
+          </li>
+          <li>
+            <strong>3쿠션 · 사구(4구)</strong> — 한국 플레이어를 위한 두 종목
+            모두 지원.
+          </li>
+          <li>
+            <strong>온라인 대전 & 봇 연습</strong> — 로비에서 실제 상대와
+            대국하거나, 접속자가 없을 때는 봇과 언제든 연습.
+          </li>
+          <li>
+            <strong>연습 도구</strong> — 조준 가이드, 샷 분석, 비기너용 작은
+            테이블, 맛세(Massé)까지 지원.
+          </li>
+          <li>
+            <strong>오픈 소스</strong> — 2018년부터 꾸준히 발전해 온 GitHub
+            프로젝트.
+          </li>
         </ul>
       </div>
 
@@ -320,34 +340,31 @@
         </tr>
       </table>
       <p>
-        모바일에서는 화면을 드래그해 조준하고, 파워 게이지를 이용해
-        타격할 수 있습니다.
+        모바일에서는 화면을 드래그해 조준하고, 파워 게이지를 이용해 타격할 수
+        있습니다.
       </p>
 
       <h2>온라인 대전</h2>
       <p>
-        <a href="/lobby">온라인 로비</a>에 접속하면 현재 접속 중인
-        플레이어 목록에서 상대를 선택해 바로 대국할 수 있습니다.
-        게임이 끝나면 로비로 돌아와 다른 상대에게 도전할 수도 있습니다.
-        접속자가 없을 때는 봇(<strong>ClawBreak</strong>,
-        <strong>TheFarJaw</strong>)과 언제든 연습 대국을 즐기세요.
+        <a href="/lobby">온라인 로비</a>에 접속하면 현재 접속 중인 플레이어
+        목록에서 상대를 선택해 바로 대국할 수 있습니다. 게임이 끝나면 로비로
+        돌아와 다른 상대에게 도전할 수도 있습니다. 접속자가 없을 때는
+        봇(<strong>ClawBreak</strong>, <strong>TheFarJaw</strong>)과 언제든 연습
+        대국을 즐기세요.
       </p>
 
       <footer>
-        <h2>프로젝트 소개</h2>
         <p>
-          이 게임은 학술 논문(Han 2005, Mathavan 2010 등)의 공 역학 모델을
-          바탕으로 정밀하게 구현된 오픈 소스 WebGL 물리 엔진으로 만들어졌습니다.
-          백스핀, 사이드스핀, 쿠션 반발력이 실제에 가깝게 시뮬레이션되며
-          저사양 기기에서도 원활하게 실행됩니다. 2018년부터 꾸준히
-          발전해 왔습니다.
+          이 게임은 학술 논문의 공 역학 모델을 바탕으로 정밀하게 구현된 오픈
+          소스 WebGL 물리 엔진으로 만들어졌습니다.
         </p>
         <p>
-          <a href="https://github.com/tailuge/billiards">GitHub 프로젝트 페이지</a>
-          에서 소스 코드와 더 많은 정보를 확인하세요.
-          리더보드는
-          <a href="https://scoreboard-tailuge.vercel.app/leaderboard">여기</a>에서
-          확인할 수 있습니다.
+          <a href="https://github.com/tailuge/billiards"
+            >GitHub 프로젝트 페이지</a
+          >
+          에서 소스 코드와 더 많은 정보를 확인하세요. 리더보드는
+          <a href="https://scoreboard-tailuge.vercel.app/leaderboard">여기</a
+          >에서 확인할 수 있습니다.
         </p>
       </footer>
     </div>
@@ -358,7 +375,7 @@
           method: "PUT",
           mode: "cors",
           signal: AbortSignal.timeout(10000),
-        }).catch(() => {});
+        }).catch(() => {})
       }
     </script>
   </body>
