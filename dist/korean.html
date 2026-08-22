@@ -76,298 +76,1136 @@
       }
     </script>
     <style>
-      body {
-        font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-        line-height: 1.7;
-        color: #333;
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 16px;
-        background-color: #f4f4f4;
+      :root {
+        --ink: #17201d;
+        --ink-soft: #27332e;
+        --baize: #193d32;
+        --baize-light: #255544;
+        --ivory: #f1eadc;
+        --paper: #e7dfcf;
+        --muted: #a7b2aa;
+        --line: rgb(241 234 220 / 18%);
+        --gold: #d3ae68;
+        --gold-soft: #efd49c;
+        --coral: #c97657;
+        --shadow: 0 18px 50px rgb(0 0 0 / 24%);
+
+        color-scheme: dark;
       }
-      .container {
-        background-color: #fff;
-        padding: 32px 24px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
-      }
-      h1,
-      h2,
-      h3 {
-        color: #1a5e3a;
-      }
-      h1 {
-        font-size: 1.5rem;
-        text-align: center;
-        margin-bottom: 8px;
-      }
-      img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-        margin: 20px auto;
-        border-radius: 6px;
-      }
-      kbd {
-        background-color: #eee;
-        border-radius: 3px;
-        border: 1px solid #b4b4b4;
-        box-shadow:
-          0 1px 1px rgb(0 0 0 / 20%),
-          0 2px 0 0 rgb(255 255 255 / 70%) inset;
-        color: #333;
-        display: inline-block;
-        font-size: 0.85em;
-        font-weight: 700;
-        line-height: 1;
-        padding: 2px 4px;
-        white-space: nowrap;
-      }
-      table {
-        border-collapse: collapse;
-        width: 100%;
-        margin: 20px 0;
-      }
-      th,
-      td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-      .cta-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        justify-content: center;
-        margin: 24px 0 8px;
-      }
-      .btn {
-        display: block;
-        padding: 18px 28px;
-        border-radius: 10px;
-        font-size: 1.15rem;
-        font-weight: bold;
-        text-decoration: none;
-        text-align: center;
-        color: #fff;
-        min-width: 220px;
+
+      * {
         box-sizing: border-box;
       }
-      .btn:hover {
-        filter: brightness(1.08);
+
+      html {
+        scroll-behavior: smooth;
+        background: var(--ink);
       }
-      .btn-3c {
-        background-color: #1a5e3a;
+
+      body {
+        margin: 0;
+        background: var(--ink);
+        color: var(--ivory);
+        font-family:
+          "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
       }
-      .btn-sagu {
-        background-color: #b3541e;
+
+      ::selection {
+        background: var(--gold);
+        color: var(--ink);
       }
-      .btn-lobby {
-        background-color: #445;
-        font-size: 1rem;
-        padding: 14px 22px;
+
+      a {
+        color: var(--gold-soft);
+        text-underline-offset: 3px;
       }
-      .btn-small {
-        display: inline-block;
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 0.95rem;
-        font-weight: bold;
+
+      a:hover {
+        color: #fff4d9;
+      }
+
+      a:focus-visible,
+      button:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 4px;
+      }
+
+      .skip-link {
+        position: absolute;
+        top: -100px;
+        left: 16px;
+        z-index: 10;
+        padding: 8px 14px;
+        background: var(--gold);
+        color: var(--ink);
+        font-weight: 800;
         text-decoration: none;
-        color: #fff;
-        background-color: #5a7d64;
       }
-      .tagline {
-        text-align: center;
-        color: #666;
-        font-size: 0.95rem;
-        margin-top: 4px;
+
+      .skip-link:focus {
+        top: 16px;
       }
-      .beginner {
-        text-align: center;
-        margin: 12px 0 0;
-      }
-      .mode-note {
-        text-align: center;
-        color: #666;
-        font-size: 0.9rem;
-        margin: 8px 0 0;
-      }
-      .features li {
-        font-size: 1rem;
-        margin: 8px 0;
-      }
+
+      .site-header,
+      main,
       footer {
-        margin-top: 40px;
-        border-top: 1px solid #ddd;
-        padding-top: 20px;
-        color: #777;
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .site-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        min-height: 76px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--ivory);
+        font-size: 0.95rem;
+        font-weight: 900;
+        letter-spacing: 0.02em;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 31px;
+        height: 31px;
+        place-items: center;
+        border: 2px solid var(--gold);
+        border-radius: 50%;
+        color: var(--gold);
+        font-size: 0.78rem;
+        font-weight: 900;
+      }
+
+      .site-nav {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .site-nav a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+
+      .site-nav a:hover {
+        color: var(--ivory);
+      }
+
+      .site-nav .nav-lobby {
+        padding: 7px 12px;
+        border: 1px solid var(--gold);
+        color: var(--gold-soft);
+      }
+
+      main {
+        overflow: hidden;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+        align-items: center;
+        gap: clamp(36px, 6vw, 88px);
+        min-height: 640px;
+        padding: 68px 0 72px;
+      }
+
+      .eyebrow,
+      .section-kicker,
+      .mode-index,
+      .hero-status,
+      .feature-label {
+        color: var(--gold);
+        font-family: Arial, sans-serif;
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        line-height: 1.3;
+        text-transform: uppercase;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 21px;
+      }
+
+      .eyebrow::before {
+        display: block;
+        width: 25px;
+        height: 2px;
+        background: var(--gold);
+        content: "";
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 620px;
+        margin-bottom: 24px;
+        color: var(--ivory);
+        font-size: clamp(2.65rem, 5.5vw, 5.25rem);
+        font-weight: 900;
+        letter-spacing: -0.05em;
+        line-height: 1.08;
+        word-break: keep-all;
+      }
+
+      h1 em {
+        color: var(--gold);
+        font-style: normal;
+      }
+
+      .hero-lede {
+        max-width: 510px;
+        margin-bottom: 30px;
+        color: var(--muted);
+        font-size: 1.03rem;
+        word-break: keep-all;
+      }
+
+      .hero-actions,
+      .mode-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .btn {
+        display: inline-flex;
+        min-height: 52px;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 21px;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        font-size: 0.95rem;
+        font-weight: 900;
+        line-height: 1.2;
+        text-align: center;
+        text-decoration: none;
+        transition:
+          transform 160ms ease,
+          background-color 160ms ease,
+          border-color 160ms ease,
+          color 160ms ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn-primary {
+        background: var(--gold);
+        color: var(--ink);
+      }
+
+      .btn-primary:hover {
+        background: #e5c27d;
+        color: var(--ink);
+      }
+
+      .btn-secondary {
+        border-color: rgb(241 234 220 / 38%);
+        background: transparent;
+        color: var(--ivory);
+      }
+
+      .btn-secondary:hover {
+        border-color: var(--ivory);
+        color: #fff;
+      }
+
+      .btn-quiet {
+        min-height: 42px;
+        border-color: rgb(241 234 220 / 24%);
+        color: var(--ivory);
+        font-size: 0.82rem;
+      }
+
+      .hero-notes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin: 28px 0 0;
+        padding: 17px 0 0;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.76rem;
+      }
+
+      .hero-notes span::before {
+        margin-right: 7px;
+        color: var(--gold);
+        content: "●";
+        font-size: 0.55rem;
+        vertical-align: 2px;
+      }
+
+      .hero-visual {
+        position: relative;
+        margin: 0;
+      }
+
+      .hero-visual::before {
+        position: absolute;
+        inset: -16px -16px 16px 16px;
+        border: 1px solid rgb(211 174 104 / 42%);
+        content: "";
+        pointer-events: none;
+      }
+
+      .hero-visual img {
+        position: relative;
+        display: block;
+        width: 100%;
+        max-width: 630px;
+        margin: 0;
+        border: 8px solid #0d1915;
+        box-shadow: var(--shadow);
+      }
+
+      .hero-caption {
+        position: absolute;
+        right: 18px;
+        bottom: 17px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 11px;
+        background: var(--ink);
+        color: var(--ivory);
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .hero-caption::before {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #8acb82;
+        box-shadow: 0 0 0 3px rgb(138 203 130 / 17%);
+        content: "";
+      }
+
+      .hero-status {
+        display: flex;
+        justify-content: space-between;
+        margin: 17px 0 0;
+        color: var(--muted);
+        font-size: 0.63rem;
+      }
+
+      .hero-status strong {
+        color: var(--gold);
+      }
+
+      .section {
+        padding: 78px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 28px;
+        margin-bottom: 30px;
+      }
+
+      .section-heading h2 {
+        max-width: 560px;
+        margin: 8px 0 0;
+        color: var(--ivory);
+        font-size: clamp(1.8rem, 3.5vw, 3rem);
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        line-height: 1.15;
+        word-break: keep-all;
+      }
+
+      :where(.section-heading) p {
+        max-width: 330px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+        text-align: right;
+        word-break: keep-all;
+      }
+
+      .mode-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .mode-card {
+        position: relative;
+        display: flex;
+        min-height: 300px;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 27px;
+        overflow: hidden;
+        border: 1px solid rgb(241 234 220 / 18%);
+      }
+
+      .mode-card::after {
+        position: absolute;
+        right: -30px;
+        bottom: -58px;
+        width: 190px;
+        height: 190px;
+        border: 1px solid rgb(241 234 220 / 17%);
+        border-radius: 50%;
+        content: "";
+      }
+
+      .mode-card-three {
+        background: var(--baize);
+      }
+
+      .mode-card-sagu {
+        background: #5b392c;
+      }
+
+      .mode-card-sagu .mode-index {
+        color: #f2c79c;
+      }
+
+      .mode-card h3 {
+        position: relative;
+        z-index: 1;
+        margin: 16px 0 10px;
+        font-size: clamp(1.8rem, 3vw, 2.6rem);
+        font-weight: 900;
+        letter-spacing: -0.05em;
+      }
+
+      :where(.mode-card) p {
+        position: relative;
+        z-index: 1;
+        max-width: 410px;
+        margin-bottom: 24px;
+        color: rgb(241 234 220 / 78%);
+        font-size: 0.9rem;
+        word-break: keep-all;
+      }
+
+      .mode-card .btn {
+        position: relative;
+        z-index: 1;
+        width: fit-content;
+      }
+
+      .mode-card-three .btn {
+        background: var(--ivory);
+        color: var(--baize);
+      }
+
+      .mode-card-sagu .btn {
+        background: #f0c793;
+        color: #40271f;
+      }
+
+      .mode-card-three .btn:hover {
+        background: #fff;
+      }
+
+      .beginner-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-top: 14px;
+        padding: 19px 22px;
+        border: 1px solid var(--line);
+        background: var(--ink-soft);
+      }
+
+      :where(.beginner-bar) p {
+        margin: 0;
+        color: var(--muted);
         font-size: 0.9rem;
       }
-      @media (max-width: 480px) {
-        .container {
-          padding: 20px 14px;
+
+      .beginner-bar strong {
+        color: var(--ivory);
+      }
+
+      .features-section {
+        background: var(--ivory);
+        color: var(--ink);
+      }
+
+      .features-section .section-kicker,
+      .features-section .feature-label {
+        color: #8c6725;
+      }
+
+      .features-section .section-heading h2 {
+        color: var(--ink);
+      }
+
+      :where(.features-section) :where(.section-heading) p {
+        color: #5f6c64;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-top: 1px solid rgb(23 32 29 / 22%);
+        border-left: 1px solid rgb(23 32 29 / 22%);
+      }
+
+      .feature-item {
+        min-height: 178px;
+        padding: 22px 21px;
+        border-right: 1px solid rgb(23 32 29 / 22%);
+        border-bottom: 1px solid rgb(23 32 29 / 22%);
+      }
+
+      .feature-item strong {
+        display: block;
+        margin: 13px 0 8px;
+        font-size: 1.05rem;
+        line-height: 1.35;
+        word-break: keep-all;
+      }
+
+      .feature-item p {
+        margin: 0;
+        color: #5f6c64;
+        font-size: 0.84rem;
+        line-height: 1.7;
+        word-break: keep-all;
+      }
+
+      .feature-number {
+        color: #8c6725;
+        font-family: Arial, sans-serif;
+        font-size: 0.72rem;
+        font-weight: 800;
+      }
+
+      .split-section {
+        display: grid;
+        grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+        gap: clamp(30px, 7vw, 100px);
+        align-items: start;
+      }
+
+      .split-section .section-heading {
+        display: block;
+        margin-bottom: 0;
+      }
+
+      .split-section :where(.section-heading) p {
+        margin-top: 20px;
+        text-align: left;
+      }
+
+      .multiplayer-panel {
+        padding: 28px;
+        border-left: 3px solid var(--gold);
+        background: var(--ink-soft);
+      }
+
+      :where(.multiplayer-panel) p {
+        margin-bottom: 22px;
+        color: var(--muted);
+        word-break: keep-all;
+      }
+
+      .bot-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 24px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .bot-list li {
+        padding: 5px 9px;
+        border: 1px solid var(--line);
+        color: var(--gold-soft);
+        font-family: Arial, sans-serif;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .controls-section {
+        background: #202a26;
+      }
+
+      .controls-intro {
+        max-width: 650px;
+        margin: -13px 0 27px;
+        color: var(--muted);
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+      }
+
+      table {
+        width: 100%;
+        min-width: 520px;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+
+      th,
+      td {
+        padding: 13px 17px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      th {
+        background: rgb(0 0 0 / 16%);
+        color: var(--gold);
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      td:first-child {
+        width: 34%;
+        color: var(--ivory);
+        font-weight: 700;
+      }
+
+      td:last-child {
+        color: var(--muted);
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      kbd {
+        display: inline-block;
+        min-width: 27px;
+        padding: 2px 6px;
+        border: 1px solid rgb(241 234 220 / 28%);
+        border-bottom-width: 2px;
+        border-radius: 3px;
+        background: #101714;
+        color: var(--ivory);
+        font-family: Arial, sans-serif;
+        font-size: 0.7rem;
+        font-weight: 700;
+        line-height: 1.5;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      kbd:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 4px;
+      }
+
+      .mobile-note {
+        margin: 20px 0 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      footer {
+        padding: 34px 0 52px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      :where(footer) p {
+        max-width: 760px;
+        margin-bottom: 10px;
+      }
+
+      :where(footer) p:last-child {
+        margin-bottom: 0;
+      }
+
+      @media (width <= 800px) {
+        .site-header,
+        main,
+        footer {
+          width: min(100% - 28px, 620px);
         }
-        .btn {
+
+        .site-nav {
+          gap: 13px;
+        }
+
+        .site-nav a:not(.nav-lobby) {
+          display: none;
+        }
+
+        .hero {
+          grid-template-columns: 1fr;
+          gap: 38px;
+          min-height: 0;
+          padding: 49px 0 58px;
+        }
+
+        h1 {
+          max-width: 590px;
+          font-size: clamp(2.7rem, 12vw, 4.3rem);
+        }
+
+        .hero-visual {
+          width: calc(100% - 9px);
+          margin-left: 9px;
+        }
+
+        .section {
+          padding: 58px 0;
+        }
+
+        .section-heading {
+          display: block;
+          margin-bottom: 24px;
+        }
+
+        :where(.section-heading) p {
+          margin-top: 12px;
+          text-align: left;
+        }
+
+        .feature-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .split-section {
+          grid-template-columns: 1fr;
+          gap: 26px;
+        }
+      }
+
+      @media (width <= 540px) {
+        .site-header,
+        main,
+        footer {
+          width: calc(100% - 28px);
+        }
+
+        .site-header {
+          min-height: 65px;
+        }
+
+        .brand {
+          font-size: 0.84rem;
+        }
+
+        .hero {
+          padding-top: 40px;
+        }
+
+        .hero-lede {
+          font-size: 0.94rem;
+        }
+
+        .hero-actions,
+        .mode-actions {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .hero-actions .btn,
+        .mode-actions .btn {
           width: 100%;
+        }
+
+        .hero-notes {
+          gap: 8px 15px;
+          font-size: 0.72rem;
+        }
+
+        .hero-visual img {
+          border-width: 5px;
+        }
+
+        .hero-caption {
+          right: 10px;
+          bottom: 10px;
+          font-size: 0.65rem;
+        }
+
+        .mode-grid,
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .mode-card {
+          min-height: 260px;
+          padding: 22px;
+        }
+
+        .beginner-bar {
+          display: block;
+          padding: 17px;
+        }
+
+        .beginner-bar .btn {
+          width: 100%;
+          margin-top: 14px;
+        }
+
+        .feature-item {
+          min-height: 0;
+          padding: 19px;
+        }
+
+        .multiplayer-panel {
+          padding: 21px;
+        }
+
+        th,
+        td {
+          padding: 11px 13px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .btn {
+          transition: none;
         }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>무료 온라인 당구 게임 — 3쿠션 · 사구</h1>
+    <a class="skip-link" href="#content">본문으로 이동</a>
 
-      <img
-        src="images/three630x500.png"
-        alt="3쿠션 당구 게임 화면"
-        style="max-width: 630px; width: 100%"
-      />
+    <header class="site-header">
+      <a class="brand" href="/korean" aria-label="온라인 당구 게임 홈">
+        <span class="brand-mark">B</span>
+        <span>TAILUGE BILLIARDS</span>
+      </a>
+      <nav class="site-nav" aria-label="주요 메뉴">
+        <a href="#modes">게임 선택</a>
+        <a href="#features">특징</a>
+        <a href="#controls">조작 방법</a>
+        <a class="nav-lobby" href="/lobby">온라인 로비 ↗</a>
+      </nav>
+    </header>
 
-      <div class="cta-row">
-        <a
-          class="btn btn-3c"
-          href="/?ruletype=threecushion&userName=%ED%9A%8C%EC%A0%84%EB%A7%88%EB%B2%95%EC%82%AC&lod=4&raceTo=7"
-          >3쿠션 시작 ⬀</a
-        >
-        <a
-          class="btn btn-sagu"
-          href="/?ruletype=sagu&userName=%EC%82%AC%EA%B5%AC%EC%8B%A0%EB%8F%99&lod=4"
-          >사구 시작 ⬀</a
-        >
-      </div>
-      <p class="beginner">
-        처음이신가요? 작은 5자 테이블로 구성된
-        <a
-          class="btn-small"
-          href="/?ruletype=threecushion&userName=%ED%9A%8C%EC%A0%84%EB%A7%88%EB%B2%95%EC%82%AC&lod=4&raceTo=7&tableSize=5"
-          >비기너 모드 ⬀</a
-        >
-        로 가볍게 시작해보세요.
-      </p>
-      <p class="cta-row">
-        <a class="btn btn-lobby" href="/lobby"
-          >온라인 로비에서 실제 상대와 대전하기 ⬀</a
-        >
-      </p>
-      <p class="tagline">
-        설치 없이 브라우저에서 바로 실행 · 완전 무료 · 모바일/PC 모두 지원
-      </p>
-      <p class="mode-note">
-        3쿠션: 쿠션 3번 후 양쪽 공 hit로 득점 · 사구: 두 목구를 모두 맞히면 득점
-      </p>
+    <main id="content">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow">ONLINE BILLIARDS / FREE TO PLAY</p>
+          <h1 id="hero-title">브라우저에서 바로, <em>당구 한 판.</em></h1>
+          <p class="hero-lede">
+            설치 없이 즐기는 무료 온라인 당구 게임. 현실적인 물리 엔진으로
+            3쿠션과 사구를 플레이하고, 모바일과 PC에서 바로 시작하세요.
+          </p>
+          <div class="hero-actions">
+            <a
+              class="btn btn-primary"
+              href="/?ruletype=threecushion&userName=%ED%9A%8C%EC%A0%84%EB%A7%88%EB%B2%95%EC%82%AC&lod=4&raceTo=7"
+              >3쿠션 시작 ↗</a
+            >
+            <a
+              class="btn btn-secondary"
+              href="/?ruletype=sagu&userName=%EC%82%AC%EA%B5%AC%EC%8B%A0%EB%8F%99&lod=4"
+              >사구 시작 ↗</a
+            >
+          </div>
+          <div class="hero-notes" aria-label="게임 안내">
+            <span>설치·가입 없이</span>
+            <span>완전 무료</span>
+            <span>모바일 / PC</span>
+          </div>
+        </div>
 
-      <h2>왜 이 게임인가요?</h2>
-      <div class="features">
-        <ul>
-          <li>
-            <strong>논문 기반 정밀 물리</strong> — Han 2005, Mathavan 2010 등 공
-            역학 연구를 구현한 WebGL 물리 엔진. 백스핀, 사이드스핀, 쿠션
-            반발까지 실제와 같습니다.
-          </li>
-          <li>
-            <strong>설치·가입 없이 무료</strong> — 브라우저에서 바로 실행.
-            모바일과 PC 모두 지원.
-          </li>
-          <li>
-            <strong>3쿠션 · 사구(4구)</strong> — 한국 플레이어를 위한 두 종목
-            모두 지원.
-          </li>
-          <li>
-            <strong>온라인 대전 & 봇 연습</strong> — 로비에서 실제 상대와
-            대국하거나, 접속자가 없을 때는 봇과 언제든 연습.
-          </li>
-          <li>
-            <strong>연습 도구</strong> — 조준 가이드, 샷 분석, 비기너용 작은
-            테이블, 맛세(Massé)까지 지원.
-          </li>
-          <li>
-            <strong>오픈 소스</strong> — 2018년부터 꾸준히 발전해 온 GitHub
-            프로젝트.
-          </li>
-        </ul>
-      </div>
+        <figure class="hero-visual">
+          <img
+            src="images/three630x500.png"
+            alt="3쿠션 당구 게임 화면"
+            width="630"
+            height="500"
+          />
+          <figcaption class="hero-caption">REAL PHYSICS ENGINE</figcaption>
+          <p class="hero-status">
+            <span>THREE-CUSHION / PRACTICE TABLE</span>
+            <strong>READY TO PLAY</strong>
+          </p>
+        </figure>
+      </section>
 
-      <h2>조작 방법</h2>
-      <p>마우스, 터치 스크린 또는 키보드로 플레이할 수 있습니다:</p>
-      <table>
-        <tr>
-          <th>조작</th>
-          <th>설명</th>
-        </tr>
-        <tr>
-          <td><kbd>⇦</kbd> <kbd>⇨</kbd></td>
-          <td>조준 (Aim)</td>
-        </tr>
-        <tr>
-          <td><kbd>Control</kbd> + <kbd>⇦</kbd> <kbd>⇨</kbd></td>
-          <td>정밀 조준</td>
-        </tr>
-        <tr>
-          <td><kbd>⇧</kbd> <kbd>⇩</kbd></td>
-          <td>밀어치기 / 끌어치기 (상·하단 회전)</td>
-        </tr>
-        <tr>
-          <td><kbd>Shift</kbd> + <kbd>⇦</kbd> <kbd>⇨</kbd></td>
-          <td>사이드 스핀 (좌우 회전)</td>
-        </tr>
-        <tr>
-          <td><kbd>Space</kbd></td>
-          <td>타격 - 길게 누르면 파워가 증가합니다.</td>
-        </tr>
-        <tr>
-          <td><kbd>A</kbd></td>
-          <td>조준 가이드 토글</td>
-        </tr>
-        <tr>
-          <td><kbd>M</kbd></td>
-          <td>맛세(Massé) 각도 조절</td>
-        </tr>
-        <tr>
-          <td><kbd>O</kbd></td>
-          <td>카메라 뷰 전환</td>
-        </tr>
-        <tr>
-          <td><kbd>F</kbd></td>
-          <td>전체 화면</td>
-        </tr>
-        <tr>
-          <td>마우스 휠 / 더블 클릭</td>
-          <td>샷 파워 조절 / 타격</td>
-        </tr>
-      </table>
-      <p>
-        모바일에서는 화면을 드래그해 조준하고, 파워 게이지를 이용해 타격할 수
-        있습니다.
-      </p>
+      <section class="section" id="modes" aria-labelledby="modes-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">CHOOSE YOUR TABLE</p>
+            <h2 id="modes-title">오늘은 어떤 게임을<br />시작할까요?</h2>
+          </div>
+          <p>
+            익숙한 종목을 고르고 바로 플레이하세요. 짧은 연습부터 온라인
+            대전까지 한 곳에서 이어집니다.
+          </p>
+        </div>
 
-      <h2>온라인 대전</h2>
-      <p>
-        <a href="/lobby">온라인 로비</a>에 접속하면 현재 접속 중인 플레이어
-        목록에서 상대를 선택해 바로 대국할 수 있습니다. 게임이 끝나면 로비로
-        돌아와 다른 상대에게 도전할 수도 있습니다. 접속자가 없을 때는
-        봇(<strong>ClawBreak</strong>, <strong>TheFarJaw</strong>)과 언제든 연습
-        대국을 즐기세요.
-      </p>
+        <div class="mode-grid">
+          <article class="mode-card mode-card-three">
+            <div>
+              <span class="mode-index">01 / MAIN MODE</span>
+              <h3>3쿠션</h3>
+              <p>
+                쿠션 3번 후 양쪽 공을 맞히면 득점. 백스핀과 사이드스핀까지
+                정밀하게 구현한 한국식 캐롬 게임입니다.
+              </p>
+            </div>
+            <div class="mode-actions">
+              <a
+                class="btn"
+                href="/?ruletype=threecushion&userName=%ED%9A%8C%EC%A0%84%EB%A7%88%EB%B2%95%EC%82%AC&lod=4&raceTo=7"
+                >3쿠션 시작 ↗</a
+              >
+            </div>
+          </article>
 
-      <footer>
-        <p>
-          이 게임은 학술 논문의 공 역학 모델을 바탕으로 정밀하게 구현된 오픈
-          소스 WebGL 물리 엔진으로 만들어졌습니다.
-        </p>
-        <p>
-          <a href="https://github.com/tailuge/billiards"
-            >GitHub 프로젝트 페이지</a
+          <article class="mode-card mode-card-sagu">
+            <div>
+              <span class="mode-index">02 / CLASSIC MODE</span>
+              <h3>사구 <small>(4구)</small></h3>
+              <p>
+                두 목구를 모두 맞히면 득점. 간결한 규칙으로 감각적인 샷을
+                연습하고 사구 게임의 재미를 느껴보세요.
+              </p>
+            </div>
+            <div class="mode-actions">
+              <a
+                class="btn"
+                href="/?ruletype=sagu&userName=%EC%82%AC%EA%B5%AC%EC%8B%A0%EB%8F%99&lod=4"
+                >사구 시작 ↗</a
+              >
+            </div>
+          </article>
+        </div>
+
+        <div class="beginner-bar">
+          <p>
+            <strong>처음이신가요?</strong> 작은 5자 테이블로 구성된 비기너
+            모드로 가볍게 시작해보세요.
+          </p>
+          <a
+            class="btn btn-quiet"
+            href="/?ruletype=threecushion&userName=%ED%9A%8C%EC%A0%84%EB%A7%88%EB%B2%95%EC%82%AC&lod=4&raceTo=7&tableSize=5"
+            >비기너 모드 ↗</a
           >
-          에서 소스 코드와 더 많은 정보를 확인하세요. 리더보드는
-          <a href="https://scoreboard-tailuge.vercel.app/leaderboard">여기</a
-          >에서 확인할 수 있습니다.
+        </div>
+      </section>
+
+      <section
+        class="section features-section"
+        id="features"
+        aria-labelledby="features-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">WHY THIS GAME</p>
+            <h2 id="features-title">
+              당구의 감각은 살리고,<br />진입은 가볍게.
+            </h2>
+          </div>
+          <p>
+            실제 당구에 가까운 물리와 누구나 바로 시작할 수 있는 접근성을 함께
+            담았습니다.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-item">
+            <span class="feature-number">01</span>
+            <strong>논문 기반 정밀 물리</strong>
+            <p>
+              Han 2005, Mathavan 2010 등 공 역학 연구를 구현한 WebGL 물리 엔진.
+              백스핀, 사이드스핀, 쿠션 반발까지 실제와 같습니다.
+            </p>
+          </article>
+          <article class="feature-item">
+            <span class="feature-number">02</span>
+            <strong>설치·가입 없이 무료</strong>
+            <p>브라우저에서 바로 실행. 모바일과 PC 모두 지원합니다.</p>
+          </article>
+          <article class="feature-item">
+            <span class="feature-number">03</span>
+            <strong>3쿠션 · 사구(4구)</strong>
+            <p>한국 플레이어를 위한 두 종목 모두 지원합니다.</p>
+          </article>
+          <article class="feature-item">
+            <span class="feature-number">04</span>
+            <strong>온라인 대전 &amp; 봇 연습</strong>
+            <p>
+              로비에서 실제 상대와 대국하거나, 접속자가 없을 때는 봇과 언제든
+              연습할 수 있습니다.
+            </p>
+          </article>
+          <article class="feature-item">
+            <span class="feature-number">05</span>
+            <strong>연습 도구</strong>
+            <p>
+              조준 가이드, 샷 분석, 비기너용 작은 테이블, 맛세(Massé)까지
+              지원합니다.
+            </p>
+          </article>
+          <article class="feature-item">
+            <span class="feature-number">06</span>
+            <strong>오픈 소스</strong>
+            <p>2018년부터 꾸준히 발전해 온 GitHub 프로젝트입니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section
+        class="section split-section"
+        aria-labelledby="multiplayer-title"
+      >
+        <div class="section-heading">
+          <p class="section-kicker">MULTIPLAYER LOBBY</p>
+          <h2 id="multiplayer-title">혼자 연습했다면,<br />이제 실전으로.</h2>
+          <p>
+            온라인 로비에서 현재 접속 중인 플레이어를 만나 바로 대국하세요.
+            게임이 끝나면 다른 상대에게 다시 도전할 수도 있습니다.
+          </p>
+        </div>
+        <div class="multiplayer-panel">
+          <p>
+            <a href="/lobby">온라인 로비</a>에 접속하면 현재 접속 중인 플레이어
+            목록에서 상대를 선택해 바로 대국할 수 있습니다. 접속자가 없을 때는
+            봇(<strong>ClawBreak</strong>, <strong>TheFarJaw</strong>)과 언제든
+            연습 대국을 즐기세요.
+          </p>
+          <ul class="bot-list" aria-label="연습 가능한 봇">
+            <li>ClawBreak / BOT</li>
+            <li>TheFarJaw / BOT</li>
+          </ul>
+          <a class="btn btn-primary" href="/lobby">온라인 로비에서 대전 ↗</a>
+        </div>
+      </section>
+
+      <section
+        class="section controls-section"
+        id="controls"
+        aria-labelledby="controls-title"
+      >
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">CONTROLS</p>
+            <h2 id="controls-title">손에 맞는 조작으로<br />정확하게 샷을.</h2>
+          </div>
+        </div>
+        <p class="controls-intro">
+          마우스, 터치 스크린 또는 키보드로 플레이할 수 있습니다.
         </p>
-      </footer>
-    </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">조작</th>
+                <th scope="col">설명</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><kbd>⇦</kbd> <kbd>⇨</kbd></td>
+                <td>조준 (Aim)</td>
+              </tr>
+              <tr>
+                <td><kbd>Control</kbd> + <kbd>⇦</kbd> <kbd>⇨</kbd></td>
+                <td>정밀 조준</td>
+              </tr>
+              <tr>
+                <td><kbd>⇧</kbd> <kbd>⇩</kbd></td>
+                <td>밀어치기 / 끌어치기 (상·하단 회전)</td>
+              </tr>
+              <tr>
+                <td><kbd>Shift</kbd> + <kbd>⇦</kbd> <kbd>⇨</kbd></td>
+                <td>사이드 스핀 (좌우 회전)</td>
+              </tr>
+              <tr>
+                <td><kbd>Space</kbd></td>
+                <td>타격 - 길게 누르면 파워가 증가합니다.</td>
+              </tr>
+              <tr>
+                <td><kbd>A</kbd></td>
+                <td>조준 가이드 토글</td>
+              </tr>
+              <tr>
+                <td><kbd>M</kbd></td>
+                <td>맛세(Massé) 각도 조절</td>
+              </tr>
+              <tr>
+                <td><kbd>O</kbd></td>
+                <td>카메라 뷰 전환</td>
+              </tr>
+              <tr>
+                <td><kbd>F</kbd></td>
+                <td>전체 화면</td>
+              </tr>
+              <tr>
+                <td>마우스 휠 / 더블 클릭</td>
+                <td>샷 파워 조절 / 타격</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mobile-note">
+          모바일에서는 화면을 드래그해 조준하고, 파워 게이지를 이용해 타격할 수
+          있습니다.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        이 게임은 학술 논문의 공 역학 모델을 바탕으로 정밀하게 구현된 오픈 소스
+        WebGL 물리 엔진으로 만들어졌습니다.
+      </p>
+      <p>
+        <a href="https://github.com/tailuge/billiards"
+          >GitHub 프로젝트 페이지</a
+        >
+        에서 소스 코드와 더 많은 정보를 확인하세요. 리더보드는
+        <a href="https://scoreboard-tailuge.vercel.app/leaderboard">여기</a>에서
+        확인할 수 있습니다.
+      </p>
+    </footer>
+
     <script>
       // Fire-and-forget usage tracking (skips localhost)
       if (!["localhost", "127.0.0.1"].includes(location.hostname)) {
