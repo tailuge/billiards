@@ -86,6 +86,16 @@
 
         <div class="file-list" id="fileList">
           <label
+            >min RMSE (cm)
+            <input
+              type="number"
+              id="minRmse"
+              value="0"
+              min="0"
+              step="any"
+              style="width: 70px"
+          /></label>
+          <label
             >max RMSE (cm)
             <input
               type="number"
@@ -188,15 +198,17 @@
       // Mirrors viewer.html convertTrajectoryShot for shots.json entries.
       function convertEntry(entry) {
         const moverId = entry.mover ?? findMover(entry.balls)
-        const mapping = entry.ballMapping ?? (() => {
-          const otherIds = Object.keys(entry.balls)
-            .filter((id) => id !== moverId)
-            .sort()
-          const m = { [moverId]: 0 }
-          if (otherIds[0] !== undefined) m[otherIds[0]] = 1
-          if (otherIds[1] !== undefined) m[otherIds[1]] = 2
-          return m
-        })()
+        const mapping =
+          entry.ballMapping ??
+          (() => {
+            const otherIds = Object.keys(entry.balls)
+              .filter((id) => id !== moverId)
+              .sort()
+            const m = { [moverId]: 0 }
+            if (otherIds[0] !== undefined) m[otherIds[0]] = 1
+            if (otherIds[1] !== undefined) m[otherIds[1]] = 2
+            return m
+          })()
 
         const truth = []
         for (const [origId, b] of Object.entries(entry.balls)) {
@@ -233,11 +245,15 @@
       }
 
       loadBtn.onclick = async () => {
-        const maxRmse = parseFloat(
-          document.getElementById("maxRmse").value
-        )
-        if (!Number.isFinite(maxRmse) || maxRmse < 0) {
-          status.textContent = "Status: invalid max RMSE"
+        const minRmse = parseFloat(document.getElementById("minRmse").value)
+        const maxRmse = parseFloat(document.getElementById("maxRmse").value)
+        if (
+          !Number.isFinite(minRmse) ||
+          minRmse < 0 ||
+          !Number.isFinite(maxRmse) ||
+          maxRmse < 0
+        ) {
+          status.textContent = "Status: invalid RMSE range"
           return
         }
 
@@ -248,7 +264,8 @@
           allData = []
           for (const entry of entries) {
             const rmse = entry.fit?.rmseAfterCm
-            if (!Number.isFinite(rmse) || rmse >= maxRmse) continue
+            if (!Number.isFinite(rmse) || rmse < minRmse || rmse >= maxRmse)
+              continue
             const { sim, truth } = convertEntry(entry)
             allData.push({
               name: `shot ${entry.id} (${rmse.toFixed(1)}cm)`,
@@ -403,7 +420,7 @@
             <td><input type="number" data-role="min" data-name="${name}" value="${min.toFixed(3)}" step="any" style="width:60px"></td>
             <td><input type="number" data-role="max" data-name="${name}" value="${max.toFixed(3)}" step="any" style="width:60px"></td>
             <td>${defaults.hasOwnProperty(name) ? defaults[name].toFixed(3) : val.toFixed(3)}</td>
-            <td><span id="cur-${name.replace(/\./g, "-")}" data-sys="${defaults.hasOwnProperty(name) ? defaults[name] : val}">${val.toFixed(3)}</span></td>
+            <td><span id="cur-${name.replace(/\./g, "-")}" data-sys="${defaults.hasOwnProperty(name) ? defaults[name] : val}" data-cur="${val}">${val.toFixed(3)}</span></td>
             ${fileCols}`
           paramRows.appendChild(tr)
           colorCurrent(tr.querySelector('span[id^="cur-"]'))
@@ -432,7 +449,7 @@
 
       function colorCurrent(el) {
         const sys = parseFloat(el.dataset.sys)
-        const cur = parseFloat(el.textContent)
+        const cur = parseFloat(el.dataset.cur)
         if (Math.abs(cur - sys) < 1e-9) {
           el.style.background = ""
         } else if (cur > sys) {
@@ -445,6 +462,7 @@
       function updateParamDisplay(name, val) {
         const el = document.getElementById(`cur-${name.replace(/\./g, "-")}`)
         if (el) {
+          el.dataset.cur = val
           el.textContent = val.toFixed(3)
           colorCurrent(el)
         }
