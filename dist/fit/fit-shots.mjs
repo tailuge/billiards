@@ -13,7 +13,8 @@
 // Usage:
 //   node fit-shots.mjs [--optimise shot.power,shot.offset.x,shot.offset.y]
 //                      [--optimiser nm|pso] [--ids 3,17,42] [--all]
-//                      [--max-evals 400] [--input in.json] [--output out.json]
+//                      [--max-evals 400] [--report] [--min-rmse CM]
+//                      [--input in.json] [--output out.json]
 //
 // Positional [input] [output] also work (like enrich-shots.mjs).
 
@@ -57,6 +58,9 @@ function usage() {
   --ids 3,17,42      only fit these shot ids
   --all              RMSE against all balls (default: cue ball only)
   --max-evals N      NM eval budget per shot (default 400)
+  --report           no optimisation: evaluate and report seed RMSE only
+  --min-rmse CM      only fit shots with seed RMSE above CM (cm); shots at or
+                     below are copied through to the output unchanged
   --input/--output   paths (defaults: trajectories.json / shots.json)`)
   process.exit(1)
 }
@@ -67,6 +71,8 @@ const opts = {
   ids: null,
   all: false,
   maxEvals: 400,
+  report: false,
+  minRmse: null,
   input: null,
   output: null,
   positional: [],
@@ -84,6 +90,14 @@ for (let i = 0; i < argv.length; i++) {
     opts.all = true
   } else if (a === "--max-evals") {
     opts.maxEvals = Number.parseInt(argv[++i], 10)
+  } else if (a === "--report") {
+    opts.report = true
+  } else if (a === "--min-rmse") {
+    opts.minRmse = Number(argv[++i])
+    if (!Number.isFinite(opts.minRmse) || opts.minRmse < 0) {
+      console.error("--min-rmse expects a non-negative number (cm)")
+      process.exit(1)
+    }
   } else if (a === "--input") {
     opts.input = argv[++i]
   } else if (a === "--output") {
@@ -426,6 +440,7 @@ const specs = opts.optimise.map((name) => ({
 }))
 
 const results = []
+const counts = { skipped: 0, unimproved: 0, improved: 0 }
 const t0All = Date.now()
 
 try {
@@ -436,8 +451,10 @@ try {
     const moverId = findMover(entry.balls)
     const mapping = ballMappingFor(entry.balls, moverId)
     const truth = buildTruth(entry.balls, mapping)
-    const shot = seedShot(entry, moverId)
-    const baseSim = buildSim(shot, entry.balls, mapping)
+    // Ratchet: never replace an existing fit with a worse one.
+    const seed = seedShot(entry, moverId)
+    let shot = JSON.parse(JSON.stringify(seed))
+    const baseSim = buildSim(seed, entry.balls, mapping)
 
     const t0 = Date.now()
 
@@ -448,26 +465,50 @@ try {
       )
     }
 
-    const run =
-      opts.optimiser === "pso"
-        ? await runPSO(specs, baseSim, truth)
-        : runNM(specs, baseSim, truth, opts.maxEvals)
-
-    const tuned = decode(run.location, specs)
-    if (!tuned) {
-      throw new Error(`shot id ${id}: optimiser returned invalid location`)
-    }
-    for (const [name, val] of Object.entries(tuned)) {
-      setValue(shot, name, val)
-    }
-    if ("shot.angle" in tuned) {
-      shot.angle = normaliseAngle(shot.angle)
+    if (opts.minRmse !== null && seedRmse * 100 <= opts.minRmse) {
+      results.push(JSON.parse(JSON.stringify(entry)))
+      counts.skipped++
+      fs.writeFileSync(outputPath, JSON.stringify(results))
+      console.log(
+        `Shot #${results.length} (id ${id})  rmse ${(seedRmse * 100).toFixed(1)}cm  [below --min-rmse, copied through]`
+      )
+      continue
     }
 
-    const fittedRmse = rmseFor(buildSim(shot, entry.balls, mapping), truth)
-    if (!Number.isFinite(fittedRmse)) {
-      throw new Error(`shot id ${id}: non-finite RMSE at fitted parameters`)
+    let fittedRmse = seedRmse
+    let improved = false
+    let run = { evals: 0, converged: false }
+    if (!opts.report) {
+      run =
+        opts.optimiser === "pso"
+          ? await runPSO(specs, baseSim, truth)
+          : runNM(specs, baseSim, truth, opts.maxEvals)
+
+      const tuned = decode(run.location, specs)
+      if (!tuned) {
+        throw new Error(`shot id ${id}: optimiser returned invalid location`)
+      }
+      for (const [name, val] of Object.entries(tuned)) {
+        setValue(shot, name, val)
+      }
+      if ("shot.angle" in tuned) {
+        shot.angle = normaliseAngle(shot.angle)
+      }
+
+      fittedRmse = rmseFor(buildSim(shot, entry.balls, mapping), truth)
+      improved =
+        Number.isFinite(fittedRmse) && fittedRmse < seedRmse - 1e-12
+      if (!improved) {
+        if (!Number.isFinite(fittedRmse)) {
+          console.log(
+            `Shot id ${id}: non-finite RMSE at fitted parameters; keeping seed`
+          )
+        }
+        shot = seed
+        fittedRmse = seedRmse
+      }
     }
+    counts[improved ? "improved" : "unimproved"]++
 
     results.push({
       id,
@@ -478,6 +519,7 @@ try {
       fit: {
         rmseBeforeCm: +(seedRmse * 100).toFixed(2),
         rmseAfterCm: +(fittedRmse * 100).toFixed(2),
+        improved,
         evals: run.evals,
         elapsedMs: Date.now() - t0,
         converged: !!run.converged,
@@ -492,6 +534,7 @@ try {
 
     console.log(
       `Shot #${results.length} (id ${id})  rmse ${(seedRmse * 100).toFixed(1)}cm -> ${(fittedRmse * 100).toFixed(1)}cm` +
+        (improved ? "" : opts.report ? "  [report]" : "  [kept seed]") +
         `  (${run.evals} evals, ${run.converged ? "converged" : "stalled"})`
     )
   }
@@ -504,25 +547,27 @@ try {
 // --- Summary ---
 
 if (results.length > 0) {
-  const before = results.map((r) => r.fit.rmseBeforeCm).sort((a, b) => a - b)
-  const after = results.map((r) => r.fit.rmseAfterCm).sort((a, b) => a - b)
+  // Copied-through entries keep their original metadata and may have no
+  // `fit` (e.g. raw trajectory input) — exclude them from RMSE stats.
+  const fitted = results.filter((r) => r.fit)
+  const before = fitted.map((r) => r.fit.rmseBeforeCm).sort((a, b) => a - b)
+  const after = fitted.map((r) => r.fit.rmseAfterCm).sort((a, b) => a - b)
   const mean = (xs) => xs.reduce((s, x) => s + x, 0) / xs.length
   const median = (xs) =>
     xs.length % 2
       ? xs[(xs.length - 1) / 2]
       : (xs[xs.length / 2 - 1] + xs[xs.length / 2]) / 2
-  const convergedCount = results.filter((r) => r.fit.converged).length
-  const worst = [...results]
-    .sort((a, b) => b.fit.rmseAfterCm - a.fit.rmseAfterCm)
-    .slice(0, 5)
+  const convergedCount = fitted.filter((r) => r.fit.converged).length
 
   console.log(`\nFitted ${results.length}/${entries.length} shots in ${((Date.now() - t0All) / 1000).toFixed(1)}s`)
-  console.log(`RMSE mean   ${mean(before).toFixed(1)}cm -> ${mean(after).toFixed(1)}cm`)
-  console.log(`RMSE median ${median(before).toFixed(1)}cm -> ${median(after).toFixed(1)}cm`)
-  console.log(`Converged ${convergedCount}/${results.length}`)
   console.log(
-    `Worst after-fit: ${worst.map((r) => `id ${r.id} (${r.fit.rmseAfterCm.toFixed(1)}cm)`).join(", ")}`
+    `Improved ${counts.improved}, kept seed ${counts.unimproved}, skipped ${counts.skipped}`
   )
+  if (fitted.length > 0) {
+    console.log(`RMSE mean   ${mean(before).toFixed(1)}cm -> ${mean(after).toFixed(1)}cm`)
+    console.log(`RMSE median ${median(before).toFixed(1)}cm -> ${median(after).toFixed(1)}cm`)
+    console.log(`Converged ${convergedCount}/${fitted.length}`)
+  }
   console.log(`Wrote ${outputPath}`)
 } else {
   console.log("No shots matched the selection")

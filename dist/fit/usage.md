@@ -34,6 +34,9 @@ Defaults: input `trajectories.json`, output `shots.json`, Nelder-Mead over
 --ids 3,17,42      only fit these shot ids
 --all              RMSE against all balls (default: cue ball only)
 --max-evals N      NM eval budget per shot (default 400)
+--report           no optimisation: evaluate and report seed RMSE only
+--min-rmse CM      only fit shots whose seed RMSE is above CM (cm); shots at
+                   or below are copied through to the output unchanged
 --input  file.json input path (or first positional arg)
 --output file.json output path (or second positional arg)
 ```
@@ -42,6 +45,36 @@ Defaults: input `trajectories.json`, output `shots.json`, Nelder-Mead over
 
 Output entries carry the fitted `shot`, so an output can be fed back as
 `--input`: existing fitted values become the seed and are refined further.
+Refits are ratcheted — a shot whose refit comes out worse than its seed
+keeps the seed parameters, so feeding `shots.json` back into itself can
+never degrade a fit.
+
+### Common recipes
+
+Full re-fit of every shot scored against all balls, using PSO seeded from
+the current fits (in-place: output defaults to `shots.json`, and the
+ratchet protects existing results):
+
+```bash
+node fit-shots.mjs --all --optimiser pso --input shots.json
+```
+
+Same, but only tune cue angle and tip offset (power stays at its seed):
+
+```bash
+node fit-shots.mjs --all --optimiser pso \
+  --optimise shot.angle,shot.offset.x,shot.offset.y \
+  --input shots.json
+```
+
+Spend the eval budget only on bad shots: anything already at or below
+20 cm seed RMSE is copied through untouched, so a re-run only touches
+the stragglers:
+
+```bash
+node fit-shots.mjs --all --optimiser pso --min-rmse 20 --input shots.json
+```
+
 Typical refinement of stragglers:
 
 ```bash
