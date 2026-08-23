@@ -26,6 +26,7 @@ import { getUID } from "../utils/uid"
 import { DrillPanel } from "../view/drillpanel"
 import { AnalysisPanel } from "../view/analysispanel"
 import { applyPhysicsParams } from "../utils/physicsparams"
+import { ResumeStore } from "../utils/resumestore"
 
 /**
  * Integrate game container into HTML page
@@ -319,7 +320,8 @@ export class BrowserContainer {
     }
   }
 
-  netEvent(e: string) {
+  netEvent(e: string, msgId?: string) {
+    ResumeStore.noteMsgId(msgId)
     const event = EventUtil.fromSerialised(e)
     if (event.clientId === Session.getInstance().clientId) {
       return

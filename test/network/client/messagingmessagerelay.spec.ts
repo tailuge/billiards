@@ -76,7 +76,51 @@ describe("MessagingMessageRelay", () => {
     }
     registeredHandler(envelope)
 
-    expect(gameCallback).toHaveBeenCalledWith(JSON.stringify({ key: "value" }))
+    expect(gameCallback).toHaveBeenCalledWith(
+      JSON.stringify({ key: "value" }),
+      undefined
+    )
+  })
+
+  it("passes the server msgId through to subscribers when present", async () => {
+    const relay = new MessagingMessageRelay()
+    await relay.connect(mockClient, "test-table")
+
+    const gameCallback = jest.fn()
+    relay.subscribe("test-chan", gameCallback)
+
+    const registeredHandler = mockClient.joinTable.mock.calls[0][2].onMessage
+    registeredHandler({
+      type: "MyEvent",
+      senderId: "other-client",
+      data: { key: "value" },
+      meta: { msgId: "msg-7" },
+    })
+
+    expect(gameCallback).toHaveBeenCalledWith(
+      JSON.stringify({ key: "value" }),
+      "msg-7"
+    )
+  })
+
+  it("delivers undefined msgId when the envelope has no meta", async () => {
+    const relay = new MessagingMessageRelay()
+    await relay.connect(mockClient, "test-table")
+
+    const gameCallback = jest.fn()
+    relay.subscribe("test-chan", gameCallback)
+
+    const registeredHandler = mockClient.joinTable.mock.calls[0][2].onMessage
+    registeredHandler({
+      type: "MyEvent",
+      senderId: "other-client",
+      data: { key: "value" },
+    })
+
+    expect(gameCallback).toHaveBeenCalledWith(
+      JSON.stringify({ key: "value" }),
+      undefined
+    )
   })
 
   it("delivers messages to subscribers while joinTable is still resolving (construction-time onMessage)", async () => {
@@ -110,7 +154,8 @@ describe("MessagingMessageRelay", () => {
       data: { type: "BEGIN", clientId: "other-client" },
     })
     expect(gameCallback).toHaveBeenCalledWith(
-      JSON.stringify({ type: "BEGIN", clientId: "other-client" })
+      JSON.stringify({ type: "BEGIN", clientId: "other-client" }),
+      undefined
     )
 
     resolveJoin!(mockTable)

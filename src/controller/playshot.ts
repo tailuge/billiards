@@ -40,7 +40,7 @@ export class PlayShot extends ControllerBase {
 
     const b = this.container.rules.currentBreak
     const active = this.container.inferActivePlayer(nextController)
-    this.container.sendScoreUpdate(s1, s2, b, active)
+    this.container.sendScoreUpdate(s1, s2, b, active, nextController.name)
 
     const isPartOfBreak = this.container.rules.isPartOfBreak(outcome)
     const isEndOfGame = this.container.rules.isEndOfGame(outcome)

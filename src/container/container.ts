@@ -46,6 +46,7 @@ import { WatchAim } from "../controller/watchaim"
 import { WatchShot } from "../controller/watchshot"
 import { BallTray } from "../view/ball-tray"
 import { ExportUtils } from "../utils/export-utils"
+import { ResumeStore } from "../utils/resumestore"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -321,8 +322,17 @@ export class Container {
     }
   }
 
-  sendScoreUpdate(p1: number, p2: number, b: number, active?: ActivePlayer) {
+  sendScoreUpdate(
+    p1: number,
+    p2: number,
+    b: number,
+    active?: ActivePlayer,
+    nextControllerName?: string
+  ) {
     const activePlayer = active ?? this.inferActivePlayer()
+    if (nextControllerName && !this.isSinglePlayer) {
+      this.saveResumeEntry(nextControllerName, p1, p2, b, activePlayer)
+    }
     const changed =
       this.hudScores.p1 !== p1 ||
       this.hudScores.p2 !== p2 ||
@@ -332,6 +342,31 @@ export class Container {
     if (changed) {
       this.sendEvent(new ScoreEvent(p1, p2, b, activePlayer))
     }
+  }
+
+  /** Persist a turn-boundary snapshot for post-refresh resume. Only called
+   * in networked two-player games (not single player, bot, replay or
+   * spectator). Unconditional: a turn can settle without the score digits
+   * changing, so this must not be gated on the `changed` check. */
+  private saveResumeEntry(
+    controller: string,
+    p1: number,
+    p2: number,
+    b: number,
+    active: ActivePlayer
+  ) {
+    if (this.replayMode || Session.isSpectator() || Session.isBotMode()) {
+      return
+    }
+    const session = Session.getInstance()
+    ResumeStore.save({
+      tableId: session.tableId,
+      controller,
+      tablejson: this.table.serialise(),
+      score: { p1, p2, b, active },
+      p1type: session.p1type,
+      playerIndex: session.playerIndex,
+    })
   }
 
   notify(data: NotificationData | string, duration?: number) {

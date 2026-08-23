@@ -1,5 +1,27 @@
 # resume.md — Resuming a 2-player game after a full page refresh
 
+## Status
+
+**Phase 1 (save-only, no behaviour change) is implemented:**
+
+- `src/utils/resumestore.ts` — `ResumeStore` (save/load/clear/noteMsgId),
+  keyed `resume.<clientId>`, stale-`tableId` guard, no fallback handling.
+  Watermark kept on `Session.lastMsgId` (reset per game).
+- `MessagingMessageRelay` + `MessageRelay` interface — subscribers now
+  receive `(message, msgId?)`; `BotRelay` unaffected.
+- `BrowserContainer.netEvent(e, msgId?)` notes the watermark before the
+  self-echo check.
+- `Container.sendScoreUpdate(..., nextControllerName?)` writes the snapshot
+  unconditionally before the `changed` guard (`saveResumeEntry`), gated to
+  networked non-spectator/bot/replay games; `PlayShot.handleStationary`
+  passes `nextController.name`.
+- `End.onFirst` clears the slot.
+- Tests: `test/utils/resumestore.spec.ts`, msgId cases in the relay spec.
+
+**Phase 2 (not started):** restore path in `BrowserContainer` (steps 1–8 of
+*Restore path*), watermark skip in the net event path, controller-by-name
+construction, consume-and-clear on load.
+
 ## Goal
 
 After a full refresh (or accidental tab close + reopen) of a 2-player network
@@ -200,8 +222,9 @@ watermark filters the past, and a `HIT` newer than the watermark drives
 (b) match the watermark on restore. `BotRelay` is unaffected (local
 sequence, no msgId → never filters).
 
-All `localStorage` access in the resume store is wrapped in try/catch
-(private mode / quota errors) and falls through to a fresh game.
+All `localStorage` access in the resume store is direct — no try/catch, no
+private-mode/quota fallback. If storage is unavailable or an entry is corrupt,
+resume fails and a fresh game starts; not coding for that case.
 
 ### Preferred end state: push this into @tailuge/messaging
 
@@ -244,16 +267,15 @@ changes every game.)
 
 | Item | Size |
 |---|---|
-| `ResumeStore` util (get/put/clear, try/catch) + unit tests | ~0.5 day |
+| `ResumeStore` util (get/put/clear, no fallback) + light unit tests | ~0.25 day |
 | Relay msgId surfacing | trivial (<10 lines) |
 | `BrowserContainer`: restore path, watermark skip, gate | ~1 day |
 | Write hook in `sendScoreUpdate` + delete in `End.onFirst` | ~0.25 day |
 | Controller-by-name construction (`Aim`/`WatchAim`/`PlaceBall`) | ~0.25 day |
-| Two-container integration test harness + tests | ~1–1.5 days |
-| Manual pass: refresh scenarios × rule types | ~0.5 day |
+| Light-touch tests + manual pass: refresh scenarios × rule types | ~0.5 day |
 
-**Total: ~3.5–4 developer-days**, assuming the fake-relay test harness is
-built as part of this. The optional `@tailuge/messaging` change
+**Total: ~2–2.5 developer-days** (no fallback code, deliberately light
+testing). The optional `@tailuge/messaging` change
 (`resumeFromMsgId` + `lastMsgId`) is **not required** for the MVP and would
 remove roughly half of the `BrowserContainer` item if done later.
 
@@ -293,37 +315,27 @@ remove roughly half of the `BrowserContainer` item if done later.
 
 ## Testing
 
-- Unit: serialise → localStorage-shaped payload → `updateFromSerialised`
-  round-trip for each rules type (positions + potted-ball absence).
-- Unit: watermark replay drops everything before the exact watermark msgId,
-  passes everything after, and degrades to full replay when absent (extend
-  `test/` around `EventUtil.fromSerialised` / a fake relay).
-- Unit: own-clientId events are suppressed during replay exactly as in normal
-  play (the snapshot already reflects our own turn-boundary broadcasts).
-- Unit: eightball restore seeds `Session.p1type` from the payload and
-  `nextCandidateBall` resolves groups correctly immediately after resume
-  (no replayed event needed).
-- Integration-style (fake relay, two containers): play N shots, "refresh" one
-  container (rebuild from stored entry + replayed buffer), assert both
-  containers reach identical controller + score after the next shot. Include
-  an eightball scenario where group assignment happened ≥1 turn before the
-  refresh.
-- Manual: refresh mid-opponent-shot, refresh during own aim, refresh on
-  ball-in-hand; two local iframes with distinct `userId` params each
-  restoring independently.
+Deliberately light touch — no fake-relay harness, no two-container
+integration rig:
+
+- Unit: `ResumeStore` save/load round-trip, watermark capture, per-client
+  keying, stale `tableId` rejection, clear (no fallback/quota tests).
+- Unit: relay passes `meta.msgId` through to subscribers.
+- Manual: play a few shots in a 2-player game, refresh, confirm the entry in
+  devtools (`resume.<clientId>`); repeat once with eightball after a group is
+  assigned to confirm `p1type` is captured. The restore path itself gets a
+  manual pass when phase 2 lands.
 
 ## Summary of changes
 
-1. `MessagingMessageRelay`: surface `meta.msgId` to subscribers.
-2. `BrowserContainer`: track latest msgId; watermark skip in `netEvent`
+1. ✅ `MessagingMessageRelay`: surface `meta.msgId` to subscribers.
+2. `BrowserContainer`: track latest msgId ✅; watermark skip in `netEvent`
    (self-echo suppression retained); restore path before `Init`; seed
-   `Session.p1type` on restore; gate on networked 2-player (not
-   `practiceMode`).
-3. `Container.sendScoreUpdate` (or a small `ResumeStore` util it calls):
-   write the snapshot entry unconditionally (not gated on the `changed`
-   check), including `Session.p1type`; `End.onFirst`: delete it (both
-   clients).
-4. New util `src/utils/resumestore.ts`: get/put/clear + tableId validation,
+   `Session.p1type` on restore — **phase 2**.
+3. ✅ `Container.sendScoreUpdate` (via `ResumeStore`): writes the snapshot
+   entry unconditionally (not gated on the `changed` check), including
+   `Session.p1type`; `End.onFirst`: deletes it.
+4. ✅ New util `src/utils/resumestore.ts`: get/put/clear + tableId validation,
    keyed `resume.<clientId>`.
 
 No protocol changes; everything else reuses the existing controller flow.

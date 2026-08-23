@@ -20,7 +20,7 @@ import { NetworkLogger } from "../../utils/network-logger"
  */
 export class MessagingMessageRelay implements MessageRelay {
   private table: Table | null = null
-  private subscribers: Array<(message: string) => void> = []
+  private subscribers: Array<(message: string, msgId?: string) => void> = []
 
   constructor() {}
 
@@ -43,7 +43,7 @@ export class MessagingMessageRelay implements MessageRelay {
     // add or replace listeners.
     const onMessage = (msg: TableMessage) => {
       const data = JSON.stringify(msg.data)
-      for (const cb of this.subscribers) cb(data)
+      for (const cb of this.subscribers) cb(data, msg.meta?.msgId)
     }
     const onBothJoined = () => {
       NetworkLogger.logGame(`net: both joined table ${tableId}`)
@@ -69,7 +69,7 @@ export class MessagingMessageRelay implements MessageRelay {
 
   subscribe(
     _channel: string,
-    callback: (message: string) => void,
+    callback: (message: string, msgId?: string) => void,
     _prefix?: string
   ): void {
     this.subscribers.push(callback)

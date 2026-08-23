@@ -4,6 +4,7 @@ import { Container } from "../container/container"
 import { MatchResult, MatchResultHelper } from "../network/client/matchresult"
 import { ReplayEncoder } from "../utils/replay-encoder"
 import { Session } from "../network/client/session"
+import { ResumeStore } from "../utils/resumestore"
 import { BreakEvent } from "../events/breakevent"
 import { Replay } from "./replay"
 
@@ -20,6 +21,7 @@ export class End extends Controller {
   }
 
   override onFirst(): void {
+    ResumeStore.clear()
     const isDiagram = this.container.id === "diagram"
     this.container.view.camera.forceMode(
       isDiagram

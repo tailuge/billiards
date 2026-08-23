@@ -25,6 +25,8 @@ export class Session {
   private scoreByClientId: Record<string, number> = {}
   currentBreak: number = 0
   p1type: number = 0
+  /** Server msgId of the last received table message (resume watermark). */
+  lastMsgId?: string
 
   private static instance: Session | undefined
   private static readonly fallbackOpponentClientId = "opponent"
