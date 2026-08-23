@@ -9,6 +9,7 @@ import { AimInputs } from "../view/dom/aiminputs"
 import { Cue } from "../view/cue"
 import { CueHit } from "../view/cuehit"
 import { CueBallSpin } from "../view/cueballspin"
+import { PointerTap } from "../view/pointertap"
 import { Keyboard } from "../events/keyboard"
 import { Sound } from "../view/sound"
 import { Chat } from "../view/chat"
@@ -61,6 +62,7 @@ export class Container {
   keyboard?: Keyboard
   cueHit?: CueHit
   cueBallSpin?: CueBallSpin
+  pointerTap?: PointerTap
   sound: Sound
   chat: Chat
   sliders: Sliders
@@ -461,6 +463,7 @@ export class Container {
 
       this.controller.onFirst()
       this.updateCueHit(controller)
+      this.updatePointerTap(controller)
     }
   }
 
@@ -482,6 +485,19 @@ export class Container {
     } else {
       this.cueHit?.disable()
       this.cueBallSpin?.disable()
+    }
+  }
+
+  /** PointerTap (trackpad click-to-aim) follows the same arming pattern as
+   * CueHit: enabled only while Aim is the active controller. */
+  private updatePointerTap(controller: Controller) {
+    if (controller instanceof Aim) {
+      if (!this.pointerTap) {
+        this.pointerTap = new PointerTap(this)
+      }
+      this.pointerTap.enable()
+    } else {
+      this.pointerTap?.disable()
     }
   }
 }
