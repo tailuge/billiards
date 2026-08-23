@@ -226,7 +226,10 @@ export class Camera {
     this.camera.position.lerp(this.target, fraction)
     this.camera.position.z = h
     this.camera.up = up
-    this.lookTarget.copy(aim.pos).addScaledVector(up, lookHeight)
+    this.lookTarget.lerp(
+      this.tempVec2.copy(aim.pos).addScaledVector(up, lookHeight),
+      fraction
+    )
     this.camera.lookAt(this.lookTarget)
   }
 

@@ -23,7 +23,7 @@ export class Spectate extends ControllerBase {
     super(container)
     this.messageRelay = messageRelay
     this.tableId = tableId
-    this.container.view.camera.aimzLerp = Camera.aimLerp
+    this.container.view.camera.aimzLerp = 0.04
     this.suggestRandomWatchCamera()
     this.messageRelay.subscribe(this.tableId, (message) => {
       const event = EventUtil.fromSerialised(message)

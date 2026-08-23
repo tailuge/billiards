@@ -15,7 +15,7 @@ export class WatchAim extends ControllerBase {
     this.container.table.cueball = this.container.rules.otherPlayersCueBall()
     this.container.table.cue.moveTo(this.container.table.cueball.pos)
     const camera = this.container.view.camera
-    camera.aimzLerp = Camera.aimLerp
+    camera.aimzLerp = 0.04
     camera.suggestMode(Math.random() < 0.5 ? camera.topView : camera.aimzView)
   }
 
