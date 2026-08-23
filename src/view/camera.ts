@@ -23,7 +23,9 @@ export class Camera {
   static aimLerp = 0.08
   static aimLerpNoHelper = 0.22
   static aimPresetHeight = R * 9
-  static aimPresetDistance = R * 35
+  static aimPresetDistance = R * 32
+  static aimPresetHeightPortrait = R * 8
+  static aimPresetDistancePortrait = R * 22
 
   static configureForRule(ruleType: string) {
     if (ruleType === "threecushion" || ruleType === "sagu") {
@@ -265,9 +267,14 @@ export class Camera {
   }
 
   setAimPreset() {
-    this.height = Camera.aimPresetHeight
-    this.distance = Camera.aimPresetDistance
-    this.lookHeight = Camera.aimPresetHeight / 2
+    const portrait = this.camera.aspect < 0.8
+    this.height = portrait
+      ? Camera.aimPresetHeightPortrait
+      : Camera.aimPresetHeight
+    this.distance = portrait
+      ? Camera.aimPresetDistancePortrait
+      : Camera.aimPresetDistance
+    this.lookHeight = this.height / 2
   }
 
   suggestMode(mode) {
