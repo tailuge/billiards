@@ -9,7 +9,6 @@ import { RerackEvent } from "../events/rerackevent"
 import { BreakEvent } from "../events/breakevent"
 import { Session } from "../network/client/session"
 import { EventType } from "../events/eventtype"
-import { Camera } from "../view/camera"
 
 export class Spectate extends ControllerBase {
   override get name() {

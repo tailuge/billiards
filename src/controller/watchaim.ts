@@ -3,7 +3,6 @@ import { HitEvent } from "../events/hitevent"
 import { BreakEvent } from "../events/breakevent"
 import { WatchShot } from "./watchshot"
 import { ControllerBase } from "./controllerbase"
-import { Camera } from "../view/camera"
 
 export class WatchAim extends ControllerBase {
   override get name() {
