@@ -489,9 +489,10 @@ export class Container {
   }
 
   /** PointerTap (trackpad click-to-aim) follows the same arming pattern as
-   * CueHit: enabled only while Aim is the active controller. */
+   * CueHit: enabled only while Aim or PlaceBall is the active controller
+   * (hover deltas drive aim rotation / ball placement respectively). */
   private updatePointerTap(controller: Controller) {
-    if (controller instanceof Aim) {
+    if (controller instanceof Aim || controller instanceof PlaceBall) {
       if (!this.pointerTap) {
         this.pointerTap = new PointerTap(this)
       }

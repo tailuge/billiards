@@ -33,9 +33,9 @@ export function isTap(
  * code path the interactjs drag feeds — so the aim rotates exactly as if the
  * mouse were dragged. The next tap or Escape exits.
  *
- * Owned by `Container` and armed only while `Aim` is the active controller,
- * mirroring `CueHit`. No tap ever fires a shot; firing stays with the Hit
- * button / Space / double-click / drag-to-stroke.
+ * Owned by `Container` and armed while `Aim` or `PlaceBall` is the active
+ * controller, mirroring `CueHit`. No tap ever fires a shot or places the ball;
+ * those stay with the Hit button / Space / double-click / drag-to-stroke.
  */
 export class PointerTap {
   private readonly container: Container
