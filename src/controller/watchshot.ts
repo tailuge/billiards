@@ -28,6 +28,7 @@ export class WatchShot extends ControllerBase {
     }
 
     const outcome = this.container.table.outcome
+    this.container.recorder.updateBreak(outcome, false, false)
     if (
       this.container.rules.rulename !== "snooker" &&
       this.container.rules.isEndOfGame(outcome) &&

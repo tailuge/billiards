@@ -1,72 +1,40 @@
-# Ball Tray Plan
+# Ball Tray Plan (Simplified)
 
 ## Goal
 
-In live two-player games, show shots from both players in one tray. Keep replay links for every shot and break, but show the highscore upload link only for breaks made by the local player. Opponent breaks must not contribute upload links or top-break upload results.
+In live two-player games, display the opponent's shots in the ball tray as a series of isolated, ungrouped shots (without break grouping or highscore upload links). Each opponent shot appears in the tray with its individual replay link, while local breaks continue to function normally with highscore upload support.
 
-## Changes
+## Design Rationale
 
-1. **`src/controller/watchshot.ts`**
-   - In `handleStationary()`, compute `isPartOfBreak` and `isEndOfGame` from
-     `this.container.rules`, then call
-     `recorder.updateBreak(outcome, isPartOfBreak, isEndOfGame, "opponent")`.
-   - Do this before the existing end-of-game handling so the final opponent
-     shot is recorded.
-   - `isPartOfBreak` and `isEndOfGame` mirror the `PlayShot` logic:
-     `this.container.rules.isPartOfBreak(outcome)` and
-     `this.container.rules.isEndOfGame(outcome)`.
+- **Ungrouped Opponent Shots**: Opponent shots are passed to `recorder.updateBreak(outcome, false, false)` as individual, non-break shots (`isPartOfBreak = false`).
+- **Zero Schema/Model Changes**: `Recorder` and `BallTray` already support recording and rendering individual non-break shots (`addShotToTray`). By treating opponent shots as isolated non-break shots, `addBreakToTray` is never invoked for the opponent.
+- **No Highscore Links for Opponent**: Since `BallTray.getTopBreaks()` only counts breaks (`isBreak === true`) with highscore URIs, opponent shots are automatically excluded from top breaks and game-over highscore prompts.
 
-2. **`src/events/recorder.ts`**
-   - Add an `origin: "local" | "opponent"` parameter to `updateBreak()`,
-     defaulting to `"local"` (all existing callers unchanged).
-   - Thread `origin` through to `addShotToTray()` and `addBreakToTray()`.
-   - No changes to `record()`, replay encoding, or the recorder's `entries`
-     array — origin only affects the tray, not event recording.
+## Proposed Changes
 
-3. **`src/view/ball-tray.ts`**
-   - Add an optional `origin: "local" | "opponent"` field to `ShotEntry`.
-   - Accept `origin` in `addShot()` and `addBreak()`, storing it on the entry.
-   - Always render opponent shot and break replay links (replay link is
-     always present).
-   - Create `hiScoreUri` only when `origin` is undefined or `"local"`; omit
-     the 🏆 pill for opponent breaks.
-   - `getTopBreaks()` already filters on `typeof entry.hiScoreUri === "string"`,
-     so opponent breaks are automatically excluded from game-over highscore
-     prompts — no change needed.
+### Controller
 
-4. **Tests**
-   - Add one focused `WatchShot`/recorder test proving an opponent shot adds tray entries.
-   - Extend the existing ball-tray test to prove a local break gets a highscore link and an opponent break does not.
-   - Do not add broad multiplayer or UI tests unless the focused tests expose a regression.
+#### [MODIFY] [watchshot.ts](file:///home/august/git/billiards/src/controller/watchshot.ts)
 
-## End-of-game upload: unchanged
+- In `handleStationary()`, extract `outcome = this.container.table.outcome` and call `this.container.recorder.updateBreak(outcome, false, false)` prior to game-end check.
+- This ensures every completed opponent shot records its outcome and adds an individual shot entry with a replay link to `ballTray`.
 
-Both players see only their own breaks in the GameOver screen and highscore
-upload, before and after this change:
+### Tests
 
-- `MatchResultHelper.notifyWin/Loss` calls `getHighBreaks(container)` →
-  `ballTray.getTopBreaks(3)`.
-- `getTopBreaks` returns only entries where `typeof entry.hiScoreUri === "string"`.
-- Opponent-origin breaks never get `hiScoreUri`, so they pass through the tray
-  visually (replay links only) but never appear in the upload list.
-- Each player's tray contains shots from both sides, but only the local
-  player's breaks surface in `getTopBreaks`. Net effect is identical to
-  today — the opponent's previously-empty tray becomes populated but only
-  with non-uploadable entries.
+#### [MODIFY] [watchshot.spec.ts](file:///home/august/git/billiards/test/controller/watchshot.spec.ts)
 
-## Verification
+- Add a unit test verifying that `handleStationary` on `WatchShot` calls `recorder.updateBreak(outcome, false, false)` and adds a shot entry to `ballTray`.
 
-Run only the focused tests first:
+## Verification Plan
 
+### Automated Tests
 ```bash
-yarn test test/view/ball-tray.spec.ts test/controller/controller.spec.ts
-```
-
-Then run the required repository checks after implementation:
-
-```bash
+yarn test test/controller/watchshot.spec.ts test/view/ball-tray.spec.ts
 yarn lint
 yarn test
 yarn prettify
 yarn build
 ```
+
+### Manual Verification
+- Start dev server (`yarn serve`), trigger an opponent shot in multiplayer/spectate mode, and verify opponent shot icons appear in the ball tray with clickable replay links but without break tags or highscore prompts.
