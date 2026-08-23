@@ -80,4 +80,9 @@
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/turkish.html" />
     <lastmod>2026-08-23</lastmod>
   </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/chinese.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/chinese.html" />
+    <lastmod>2026-08-23</lastmod>
+  </url>
 </urlset>
