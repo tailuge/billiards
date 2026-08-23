@@ -1,0 +1,976 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <title>
+      Ücretsiz Online 3 Bant Bilardo Oyunu | Kayıt Yok, Tarayıcıda Hemen Oyna
+    </title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="description"
+      content="Kurulum ve üyelik gerektirmeden tarayıcıda hemen oynanan ücretsiz online bilardo oyunu. 3 bantı gerçekçi fizik motoruyla, PC ve mobilde oynayın. Online karşılıklı maç desteği."
+    />
+    <meta name="robots" content="index,follow" />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/turkish"
+    />
+    <link
+      rel="alternate"
+      hreflang="tr"
+      href="https://billiards.tailuge.workers.dev/turkish"
+    />
+    <link
+      rel="alternate"
+      hreflang="ko"
+      href="https://billiards.tailuge.workers.dev/korean"
+    />
+    <link
+      rel="alternate"
+      hreflang="ja"
+      href="https://billiards.tailuge.workers.dev/japanese"
+    />
+    <link
+      rel="alternate"
+      hreflang="en"
+      href="https://billiards.tailuge.workers.dev/lobby"
+    />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href="https://billiards.tailuge.workers.dev/lobby"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      property="og:title"
+      content="Ücretsiz Online 3 Bant Bilardo Oyunu | Tarayıcıda Hemen Oyna"
+    />
+    <meta
+      property="og:description"
+      content="Kurulum gerektirmeden tarayıcıdan oynanan ücretsiz bilardo oyunu. Gerçekçi fizik motoruyla 3 bant; PC ve mobil uyumlu, online maç dahil."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta
+      property="og:url"
+      content="https://billiards.tailuge.workers.dev/turkish"
+    />
+    <meta
+      property="og:image"
+      content="https://billiards.tailuge.workers.dev/images/three630x500.png"
+    />
+    <meta property="og:image:width" content="630" />
+    <meta property="og:image:height" content="500" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Ücretsiz Online 3 Bant Bilardo Oyunu | Tarayıcıda Hemen Oyna"
+    />
+    <meta
+      name="twitter:description"
+      content="Kurulum gerektirmeden tarayıcıdan oynanan ücretsiz bilardo oyunu. 3 bantı hemen oynayın."
+    />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/images/three630x500.png"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "Ücretsiz Online 3 Bant Bilardo Oyunu",
+        "alternateName": [
+          "online bilardo",
+          "ücretsiz bilardo oyunu",
+          "3 bant oyunu",
+          "3 bant bilardo",
+          "karambol bilardo",
+          "tarayıcı bilardo oyunu",
+          "bilardo online maç"
+        ],
+        "url": "https://billiards.tailuge.workers.dev/turkish",
+        "image": "https://billiards.tailuge.workers.dev/images/three630x500.png",
+        "description": "Kurulum ve üyelik gerektirmeden tarayıcıda hemen oynanan ücretsiz online bilardo oyunu. 3 bantı gerçekçi fizik motoruyla oynayın; PC ve mobilde online karşılıklı maç mümkün.",
+        "inLanguage": ["tr"],
+        "genre": ["Sports Game", "Simulation Game"],
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web",
+        "gamePlatform": ["Web Browser", "PC", "Mobile"],
+        "playMode": ["SinglePlayer", "MultiPlayer"],
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "TRY"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "tailuge"
+        }
+      }
+    </script>
+    <style>
+      :root {
+        --bg: #0b1611;
+        --bg-deep: #08110d;
+        --panel: #10231a;
+        --green: #1a6b44;
+        --line: rgb(255 255 255 / 8%);
+        --line-strong: rgb(255 255 255 / 16%);
+        --accent: #d9a441;
+        --accent-bright: #eec368;
+        --text: #f1eee4;
+        --text-soft: #bac3b8;
+        --text-dim: #828d83;
+
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background: var(--bg);
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: #1a1206;
+      }
+
+      a {
+        color: var(--accent-bright);
+        text-underline-offset: 3px;
+      }
+
+      a:hover {
+        color: #f7dda2;
+      }
+
+      a:focus-visible,
+      button:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 4px;
+      }
+
+      .skip-link {
+        position: absolute;
+        top: -100px;
+        left: 16px;
+        z-index: 10;
+        padding: 8px 14px;
+        background: var(--accent);
+        color: #1a1206;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .skip-link:focus {
+        top: 16px;
+      }
+
+      header.site,
+      main,
+      footer.site {
+        width: calc(100% - 40px);
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      /* ── Buttons ─────────────────────────── */
+
+      .btn {
+        display: inline-flex;
+        min-height: 50px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 26px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-size: 0.98rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1.25;
+        text-align: center;
+        text-decoration: none;
+        transition:
+          transform 140ms ease,
+          background-color 140ms ease,
+          border-color 140ms ease,
+          color 140ms ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #1a1206;
+        box-shadow: 0 6px 22px rgb(217 164 65 / 25%);
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-bright);
+        color: #1a1206;
+      }
+
+      .btn-secondary {
+        border-color: var(--line-strong);
+        background: rgb(255 255 255 / 5%);
+        color: var(--text);
+      }
+
+      .btn-secondary:hover {
+        border-color: rgb(255 255 255 / 34%);
+        background: rgb(255 255 255 / 10%);
+        color: #fff;
+      }
+
+      /* ── Header ──────────────────────────── */
+
+      header.site {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 64px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        font-size: 0.88rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 30px;
+        height: 30px;
+        place-items: center;
+        border-radius: 7px;
+        background: var(--green);
+        color: #fff;
+        font-size: 0.76rem;
+        font-weight: 900;
+        letter-spacing: 0;
+      }
+
+      .site-nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      .site-nav a:not(.nav-lobby) {
+        display: none;
+        color: var(--text-soft);
+        text-decoration: none;
+      }
+
+      .site-nav a:not(.nav-lobby):hover {
+        color: var(--text);
+      }
+
+      .nav-lobby {
+        padding: 8px 16px;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #1a1206 !important;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .nav-lobby:hover {
+        background: var(--accent-bright);
+        color: #1a1206 !important;
+      }
+
+      main {
+        overflow: hidden;
+      }
+
+      /* ── Hero ────────────────────────────── */
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr;
+        align-items: center;
+        gap: 40px;
+        padding: 52px 0 64px;
+      }
+
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgb(26 107 68 / 28%);
+        color: #7fd39f;
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .hero-tag::before {
+        display: block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #7fd39f;
+        content: "";
+      }
+
+      .hero h1 {
+        margin-bottom: 16px;
+        font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        line-height: 1.24;
+      }
+
+      .hero h1 em {
+        color: var(--accent-bright);
+        font-style: normal;
+      }
+
+      .hero-desc {
+        max-width: 480px;
+        margin-bottom: 30px;
+        color: var(--text-soft);
+        font-size: 1rem;
+      }
+
+      .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .hero-actions .btn {
+        min-height: 56px;
+        font-size: 1.05rem;
+      }
+
+      .hero-note {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        margin: 22px 0 0;
+        color: var(--text-dim);
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .hero-visual {
+        position: relative;
+        margin: 0;
+      }
+
+      .hero-visual img {
+        display: block;
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+        box-shadow: 0 20px 60px rgb(0 0 0 / 50%);
+      }
+
+      .hero-visual figcaption {
+        margin-top: 10px;
+        color: var(--text-dim);
+        font-size: 0.78rem;
+        text-align: right;
+      }
+
+      /* ── Sections ────────────────────────── */
+
+      .section {
+        padding: 64px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-label {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--accent);
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+
+      .section h2 {
+        max-width: 620px;
+        margin-bottom: 16px;
+        font-size: clamp(1.45rem, 3vw, 2.15rem);
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        line-height: 1.32;
+      }
+
+      .section-lede {
+        max-width: 560px;
+        margin-bottom: 36px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      /* ── Games ───────────────────────────── */
+
+      .games-section {
+        background: linear-gradient(180deg, var(--bg) 0%, #0e1e17 100%);
+      }
+
+      .mode-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .mode-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 30px 26px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .mode-card-three {
+        grid-column: 1 / -1;
+        border-color: rgb(33 150 83 / 30%);
+        background: linear-gradient(135deg, #123324 0%, #1a4a31 100%);
+      }
+
+      .mode-card h3 {
+        margin-bottom: 8px;
+        font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+
+      .mode-card h3 small {
+        color: var(--text-dim);
+        font-size: 0.62em;
+        font-weight: 700;
+      }
+
+      .mode-card p {
+        max-width: 420px;
+        margin-bottom: 0;
+        color: rgb(255 255 255 / 70%);
+        font-size: 0.92rem;
+      }
+
+      .mode-card .btn {
+        width: fit-content;
+      }
+
+      .practice-line {
+        margin: 20px 0 0;
+        color: var(--text-dim);
+        font-size: 0.86rem;
+      }
+
+      /* ── Multiplayer ─────────────────────── */
+
+      .multiplayer-panel {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 32px 26px;
+        border-radius: 14px;
+        border: 1px solid var(--line-strong);
+        background:
+          radial-gradient(
+            120% 160% at 100% 0%,
+            rgb(26 107 68 / 30%) 0%,
+            transparent 60%
+          ),
+          var(--panel);
+      }
+
+      .multiplayer-panel p {
+        max-width: 520px;
+        margin-bottom: 24px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      .bot-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 26px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .bot-list li {
+        padding: 5px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgb(255 255 255 / 4%);
+        color: var(--accent-bright);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .bot-list-label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-dim);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .multiplayer-panel .btn {
+        width: fit-content;
+      }
+
+      /* ── Features ────────────────────────── */
+
+      .features-section {
+        background: linear-gradient(180deg, var(--bg) 0%, #0e1e17 100%);
+      }
+
+      .feature-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0;
+        max-width: 780px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid var(--line);
+      }
+
+      .feature-list li {
+        display: grid;
+        grid-template-columns: 22px 1fr;
+        gap: 14px;
+        padding: 20px 4px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .feature-list li::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        margin-top: 9px;
+        border-radius: 2px;
+        background: var(--accent);
+        transform: rotate(45deg);
+      }
+
+      .feature-list strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 1rem;
+        letter-spacing: -0.01em;
+      }
+
+      .feature-list p {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 0.88rem;
+      }
+
+      .other-modes {
+        max-width: 780px;
+        margin: 24px 0 0;
+        color: var(--text-dim);
+        font-size: 0.86rem;
+      }
+
+      /* ── Final CTA ───────────────────────── */
+
+      .final-cta {
+        padding: 88px 0 96px;
+        border-top: 1px solid var(--line);
+        background:
+          radial-gradient(
+            90% 130% at 50% 115%,
+            rgb(26 107 68 / 38%) 0%,
+            transparent 70%
+          ),
+          var(--bg-deep);
+        text-align: center;
+      }
+
+      .final-cta h2 {
+        max-width: none;
+        margin-bottom: 14px;
+        font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+      }
+
+      .final-cta p {
+        max-width: 480px;
+        margin: 0 auto 32px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      .final-cta .hero-actions {
+        justify-content: center;
+        grid-template-columns: 1fr;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+
+      /* ── Footer ──────────────────────────── */
+
+      footer.site {
+        padding: 32px 0 48px;
+        border-top: 1px solid var(--line);
+        color: var(--text-dim);
+        font-size: 0.8rem;
+      }
+
+      footer.site p {
+        max-width: 720px;
+        margin-bottom: 8px;
+      }
+
+      footer.site p:last-child {
+        margin-bottom: 0;
+      }
+
+      /* ── Responsive ──────────────────────── */
+
+      @media (width >= 640px) {
+        .hero-actions,
+        .final-cta .hero-actions {
+          grid-template-columns: auto auto;
+          justify-content: start;
+        }
+
+        .final-cta .hero-actions {
+          justify-content: center;
+        }
+      }
+
+      @media (width >= 900px) {
+        .site-nav a:not(.nav-lobby) {
+          display: inline-block;
+        }
+
+        .hero {
+          grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+          gap: 56px;
+          padding: 72px 0 80px;
+        }
+
+        .multiplayer-panel {
+          grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+          align-items: center;
+          padding: 40px;
+        }
+
+        .multiplayer-side {
+          justify-self: end;
+          text-align: left;
+        }
+
+        .feature-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          column-gap: 40px;
+        }
+
+        .feature-list li:nth-last-child(-n + 2) {
+          border-bottom: 0;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .btn {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">İçeriğe geç</a>
+
+    <header class="site">
+      <a class="brand" href="/turkish" aria-label="Online bilardo ana sayfa">
+        <span class="brand-mark">B</span>
+        <span>TAILUGE BILLIARDS</span>
+      </a>
+      <nav class="site-nav" aria-label="Ana menü">
+        <a href="#ucbant">3 Bant</a>
+        <a href="#multiplayer">Online Maç</a>
+        <a href="#features">Özellikler</a>
+        <a class="nav-lobby" href="/lobby">Online Lobi</a>
+      </nav>
+    </header>
+
+    <main id="content">
+      <!-- ── Hero ───────────────────────────────── -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <p class="hero-tag">Ücretsiz · Kayıt yok · Tarayıcıda hemen oyna</p>
+          <h1 id="hero-title">
+            Kurulum gerektirmeyen <em>ücretsiz online 3 bant bilardo</em>
+          </h1>
+          <p class="hero-desc">
+            Üyelik de indirme de gerekmiyor. PC'de ya da mobilde, sayfayı
+            açtığınız anda bilardo masasındasınız. Gerçekçi fizik motoruyla 3
+            bantı ücretsiz oynayın.
+          </p>
+          <div class="hero-actions">
+            <a
+              class="btn btn-primary"
+              href="/?ruletype=threecushion&userName=Bilardo%20Sever&lod=4&raceTo=7"
+              >3 Bant Oyna</a
+            >
+            <a class="btn btn-secondary" href="/lobby">Online Lobi</a>
+          </div>
+          <p class="hero-note">
+            <span>PC ve mobil destekli</span>
+            <span>Fare · dokunmatik kontrol</span>
+            <span>Online karşılıklı maç</span>
+          </p>
+        </div>
+
+        <figure class="hero-visual">
+          <img
+            src="images/three630x500.png"
+            alt="3 bant online bilardo oyununun gerçek oynanış ekranı"
+            width="630"
+            height="500"
+          />
+          <figcaption>Gerçek oyun ekranı</figcaption>
+        </figure>
+      </section>
+
+      <!-- ── 3-cushion ──────────────────────────── -->
+      <section
+        class="section games-section"
+        id="ucbant"
+        aria-labelledby="ucbant-title"
+      >
+        <p class="section-label">3 Bant</p>
+        <h2 id="ucbant-title">Gerçek masa hissiyle, 3 bant simülasyonu</h2>
+        <p class="section-lede">
+          Spinin tutması, ince açılar, bantlardan sekmeler — gerçek bilardo
+          masasıyla aynı davranışı sergileyen fizik motoruyla, karambol
+          bilardonun zirvesini tarayıcıda deneyimleyin.
+        </p>
+
+        <div class="mode-grid">
+          <article class="mode-card mode-card-three">
+            <div>
+              <h3>3 Bant <small>Üç Bant</small></h3>
+              <p>
+                İleri akan top, geri dönen top, yandan verilen spin — her detayı
+                hassasiyetle işleyen fizik motorunda ustalığınızı gösterin.
+              </p>
+            </div>
+            <a
+              class="btn btn-primary"
+              href="/?ruletype=threecushion&userName=Bilardo%20Sever&lod=4&raceTo=7"
+              >3 Bant Oyna</a
+            >
+          </article>
+        </div>
+
+        <p class="practice-line">
+          Yeni mi başladınız? Küçük masalı
+          <a
+            href="/?ruletype=threecushion&userName=Bilardo%20Sever&lod=4&raceTo=7&tableSize=5"
+            >pratik modu</a
+          >nda elinizi alıştırın, sonra tam ölçü masaya geçin.
+        </p>
+      </section>
+
+      <!-- ── Multiplayer ────────────────────────── -->
+      <section
+        class="section"
+        id="multiplayer"
+        aria-labelledby="multiplayer-title"
+      >
+        <p class="section-label">Online Maç</p>
+        <h2 id="multiplayer-title">
+          Tek başına oynamak bitti; gerçek rakipler lobide sizi bekliyor
+        </h2>
+        <p class="section-lede">
+          Online bilardonun asıl keyfi maçta saklıdır. Lobiye girin, şu anda
+          oynayanları görün; rakibinizi seçtiğiniz anda maç başlar.
+        </p>
+
+        <div class="multiplayer-panel">
+          <div>
+            <p>
+              <a href="/lobby">Online lobide</a> bağlı oyuncuları görüp
+              dilediğinize meydan okuyun. Bir maç bitince başka bir rakiple
+              kaldığınız yerden devam edin. Bağlantının az olduğu saatlerde,
+              gerçekçi botlarla istediğiniz zaman antrenman maçı
+              oynayabilirsiniz.
+            </p>
+            <a class="btn btn-primary" href="/lobby">Online Lobiye Gir</a>
+          </div>
+          <div class="multiplayer-side">
+            <span class="bot-list-label"
+              >Her zaman hazır bekleyen antrenman botları</span
+            >
+            <ul class="bot-list" aria-label="Antrenman yapabileceğiniz botlar">
+              <li>ClawBreak</li>
+              <li>TheFarJaw</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Features ───────────────────────────── -->
+      <section
+        class="section features-section"
+        id="features"
+        aria-labelledby="features-title"
+      >
+        <p class="section-label">Özellikler</p>
+        <h2 id="features-title">Tarayıcının içindeki gerçek bilardo masası</h2>
+        <p class="section-lede">
+          Uzun uzun anlatmaya gerek yok. Bir kez vurun, gerisini top anlatır —
+          tıpkı gerçeğinde olduğu gibi akar.
+        </p>
+
+        <ul class="feature-list">
+          <li>
+            <div>
+              <strong>Gerçekçi fizik motoru</strong>
+              <p>
+                Spinin ve açının topla etkisi, bantlardan sekme dahil, gerçek
+                bilardo hissi aynen yeniden üretildi.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>PC'de de mobilde de</strong>
+              <p>
+                PC'de fareyle, mobilde dokunarak doğal biçimde nişan alın ve
+                vurun. Uygulama gerekmez; tarayıcıda doğrudan çalışır.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Tamamen ücretsiz, kayıt yok</strong>
+              <p>
+                3 bant da online maç da dahil tüm modlar ücretsizdir. Üyelik
+                derdi yoktur.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Açık kaynak proje</strong>
+              <p>
+                2018'den bu yana GitHub'da açık olarak geliştirilen, WebGL
+                tabanlı bir bilardo oyunudur.
+              </p>
+            </div>
+          </li>
+        </ul>
+
+        <p class="other-modes">
+          Diğer bir mod olarak, dört topla oynanan
+          <a href="/?ruletype=sagu&userName=Bilardo%20Sever&lod=4"
+            >Dört Top (Sagu)</a
+          >
+          ile de oynayabilirsiniz.
+        </p>
+      </section>
+
+      <!-- ── Final CTA ──────────────────────────── -->
+      <section class="final-cta" aria-labelledby="final-title">
+        <h2 id="final-title">Masa hazır, sıra sizde</h2>
+        <p>
+          Ne kurulum ne kayıt ne de ücret var. Tek tıkla ilk vuruşunuzu yapın.
+        </p>
+        <div class="hero-actions">
+          <a
+            class="btn btn-primary"
+            href="/?ruletype=threecushion&userName=Bilardo%20Sever&lod=4&raceTo=7"
+            >3 Bant Oyna</a
+          >
+          <a class="btn btn-secondary" href="/lobby">Online Lobi</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site">
+      <p>
+        Akademik makalelerdeki top dinamiği modelinden kendi uygulamamız olan
+        WebGL fizik motoruyla geliştirilmiş, açık kaynak bir bilardo oyunudur.
+      </p>
+      <p>
+        Kaynak koduna
+        <a href="https://github.com/tailuge/billiards"
+          >GitHub proje sayfasından</a
+        >, skor tablosuna ise
+        <a href="https://scoreboard-tailuge.vercel.app/leaderboard">buradan</a>
+        ulaşabilirsiniz.
+      </p>
+    </footer>
+
+    <script>
+      // Fire-and-forget usage tracking (skips localhost)
+      if (!["localhost", "127.0.0.1"].includes(location.hostname)) {
+        fetch("https://scoreboard-tailuge.vercel.app/api/usage/turkish", {
+          method: "PUT",
+          mode: "cors",
+          signal: AbortSignal.timeout(10000),
+        }).catch(() => {})
+      }
+    </script>
+  </body>
+</html>
