@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Table Colour Picker</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+        }
+      }
+    </script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #141a22;
+      }
+      #view {
+        position: fixed;
+        inset: 0;
+      }
+      #hint {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        padding: 6px 10px;
+        background: rgba(18, 22, 29, 0.86);
+        border: 1px solid #2a323e;
+        border-radius: 8px;
+        color: #e6edf3;
+        font: 13px sans-serif;
+        user-select: none;
+      }
+      #picker {
+        position: fixed;
+        top: -100px;
+        left: -100px;
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="view"></div>
+    <div id="hint">Click a part of the table to recolour it</div>
+    <input id="picker" type="color" />
+    <script type="module">
+      import * as THREE from "three"
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js"
+      import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"
+
+      const view = document.getElementById("view")
+      const hint = document.getElementById("hint")
+      const picker = document.getElementById("picker")
+
+      const scene = new THREE.Scene()
+      scene.background = new THREE.Color(0x141a22)
+      scene.up = new THREE.Vector3(0, 0, 1)
+
+      const camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.01,
+        100
+      )
+      camera.up.set(0, 0, 1)
+      camera.position.set(2.5, -2.5, 2)
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true })
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+      renderer.toneMapping = THREE.NoToneMapping
+      view.appendChild(renderer.domElement)
+
+      const controls = new OrbitControls(camera, renderer.domElement)
+      controls.enableDamping = true
+      controls.dampingFactor = 0.05
+      controls.target.set(0, 0, 0)
+
+      function applyColour(name, hex) {
+        for (const mat of matchingMaterials({ name })) {
+          mat.color.set(hex)
+          mat.needsUpdate = true
+        }
+      }
+
+      // Colours are stored in the query string (one param per material name,
+      // lowercase) so the URL can be shared. replaceState keeps the address
+      // bar in sync without polluting history.
+      function encodeColours() {
+        const params = new URLSearchParams(window.location.search)
+        const seen = new Set()
+        scene.traverse((child) => {
+          if (!child.isMesh) return
+          for (const mat of materialsOf(child)) {
+            if (mat && !seen.has(mat.name)) {
+              seen.add(mat.name)
+              params.set(mat.name.toLowerCase(), mat.color.getHexString())
+            }
+          }
+        })
+        window.history.replaceState(null, "", "?" + params.toString())
+      }
+
+      function decodeColours() {
+        const params = new URLSearchParams(window.location.search)
+        for (const [name, hex] of params) {
+          if (/^[0-9a-f]{6}$/i.test(hex)) applyColour(name, "#" + hex)
+        }
+      }
+
+      const R = 0.03275
+      new GLTFLoader().load("models/p8.gltf", (gltf) => {
+        gltf.scene.scale.set(R / 0.5, R / 0.5, R / 0.5)
+        gltf.scene.matrixAutoUpdate = false
+        gltf.scene.updateMatrix()
+        gltf.scene.updateMatrixWorld()
+        scene.add(gltf.scene)
+        decodeColours()
+      })
+
+      function materialsOf(mesh) {
+        return Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+      }
+
+      // All materials in the scene sharing the clicked material's name
+      // (case-insensitive, since URL params are lowercased).
+      function matchingMaterials(source) {
+        const name = source.name.toLowerCase()
+        const found = new Set()
+        scene.traverse((child) => {
+          if (child.isMesh) {
+            for (const mat of materialsOf(child)) {
+              if (mat && mat.name.toLowerCase() === name) found.add(mat)
+            }
+          }
+        })
+        return [...found]
+      }
+
+      function toHex(color) {
+        return "#" + color.getHexString()
+      }
+
+      const raycaster = new THREE.Raycaster()
+      const pointer = new THREE.Vector2()
+
+      // Distinguish a click from an orbit drag.
+      let downX = 0
+      let downY = 0
+      renderer.domElement.addEventListener("pointerdown", (e) => {
+        downX = e.clientX
+        downY = e.clientY
+      })
+      renderer.domElement.addEventListener("pointerup", (e) => {
+        if (Math.hypot(e.clientX - downX, e.clientY - downY) > 5) return
+
+        pointer.set(
+          (e.clientX / window.innerWidth) * 2 - 1,
+          -(e.clientY / window.innerHeight) * 2 + 1
+        )
+        raycaster.setFromCamera(pointer, camera)
+        const hits = raycaster.intersectObjects(scene.children, true)
+        const hit = hits.find((h) => {
+          const mats = materialsOf(h.object)
+          return mats.length > 0
+        })
+        if (!hit) return
+
+        const mat = materialsOf(hit.object)[0]
+        hint.textContent = "Selected: " + mat.name
+        picker.value = toHex(mat.color)
+        picker.dataset.name = mat.name.toLowerCase()
+        picker.click()
+      })
+
+      picker.addEventListener("input", () => {
+        const name = picker.dataset.name
+        applyColour(name, picker.value)
+        encodeColours()
+      })
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+        renderer.setSize(window.innerWidth, window.innerHeight)
+      })
+
+      function animate() {
+        requestAnimationFrame(animate)
+        controls.update()
+        renderer.render(scene, camera)
+      }
+      animate()
+    </script>
+  </body>
+</html>
