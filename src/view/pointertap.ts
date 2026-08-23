@@ -28,7 +28,8 @@ export function isTap(
  * Trackpad-friendly click-to-aim: a tap on the view (a press/release pair
  * that stays within slop and duration and is not claimed by CueHit or
  * CueBallSpin) toggles aim-adjust mode. While active, horizontal hover-move
- * deltas are pushed onto the input queue as `movementXUp` inputs — the same
+ * deltas are pushed onto the input queue as `movementXUp` inputs and vertical
+ * deltas as `movementYUp` (camera height/zoom) — the same
  * code path the interactjs drag feeds — so the aim rotates exactly as if the
  * mouse were dragged. The next tap or Escape exits.
  *
@@ -46,6 +47,7 @@ export class PointerTap {
   private startT = 0
   private pointerId: number | null = null
   private lastHoverX: number | null = null
+  private lastHoverY: number | null = null
   private flipX: boolean
   private removeListeners: (() => void) | null = null
 
@@ -87,6 +89,7 @@ export class PointerTap {
     this.armed = false
     this.pointerId = null
     this.lastHoverX = null
+    this.lastHoverY = null
     this.exitAdjust()
     this.removeListeners?.()
     this.removeListeners = null
@@ -137,14 +140,24 @@ export class PointerTap {
     }
     if (this.lastHoverX !== null) {
       let dx = e.clientX - this.lastHoverX
+      // Same factors as Keyboard.mousetouch so hover feels like drag.
+      let dy = (e.clientY - (this.lastHoverY ?? e.clientY)) * 0.8
       if (this.flipX) {
         dx = -dx
+      }
+      // Dominant axis wins vertically, as with drag.
+      if (Math.abs(dx) > Math.abs(dy)) {
+        dy = 0
       }
       if (dx !== 0) {
         this.container.inputQueue.push(new Input(dx, "movementXUp"))
       }
+      if (dy !== 0) {
+        this.container.inputQueue.push(new Input(dy, "movementYUp"))
+      }
     }
     this.lastHoverX = e.clientX
+    this.lastHoverY = e.clientY
   }
 
   private onPointerUp = (e: PointerEvent) => {
@@ -158,6 +171,7 @@ export class PointerTap {
     }
     this.adjustActive = !this.adjustActive
     this.lastHoverX = this.adjustActive ? e.clientX : null
+    this.lastHoverY = this.adjustActive ? e.clientY : null
     const canvas = this.container.view.element as HTMLElement | undefined
     if (canvas) {
       canvas.style.cursor = this.adjustActive ? "crosshair" : ""
