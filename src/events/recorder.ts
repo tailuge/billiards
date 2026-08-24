@@ -144,7 +144,8 @@ export class Recorder {
   updateBreak(
     outcome: Outcome[],
     isPartOfBreak: boolean,
-    isEndOfGame: boolean
+    isEndOfGame: boolean,
+    isOpponent: boolean = false
   ) {
     const potCount = Outcome.potCount(outcome)
     const lastIndex = this.last()
@@ -160,7 +161,8 @@ export class Recorder {
     this.addShotToTray(
       isPartOfBreak || isEndOfGame,
       potCount,
-      Outcome.pots(outcome)
+      Outcome.pots(outcome),
+      isOpponent
     )
 
     if (isEndOfGame) {
@@ -178,10 +180,16 @@ export class Recorder {
     }
   }
 
-  addShotToTray(isPartOfBreak, potCount, balls) {
+  addShotToTray(isPartOfBreak, potCount, balls, isOpponent = false) {
     const lastShot = this.lastShot()
     if (lastShot) {
-      this.container.ballTray.addShot(isPartOfBreak, potCount, balls, lastShot)
+      this.container.ballTray.addShot(
+        isPartOfBreak,
+        potCount,
+        balls,
+        lastShot,
+        isOpponent
+      )
     }
   }
 

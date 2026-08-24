@@ -4,6 +4,7 @@ import { Ball, State } from "../../src/model/ball"
 import { WatchShot } from "../../src/controller/watchshot"
 import { PlaceBallEvent } from "../../src/events/placeballevent"
 import { WatchEvent } from "../../src/events/watchevent"
+import { HitEvent } from "../../src/events/hitevent"
 import { Vector3 } from "three"
 import { Assets } from "../../src/view/assets"
 import { initDom } from "../view/dom"
@@ -64,5 +65,37 @@ describe("WatchShot Controller", () => {
     expect(ball.pos.x).to.equal(0)
     expect(ball.pos.y).to.equal(0)
     expect(ball.state).to.equal(State.Stationary)
+  })
+
+  it("should display opponent shot in ballTray on handleStationary", () => {
+    container.recorder.record(new HitEvent(container.table.serialiseHit()))
+    const watchShot = new WatchShot(container)
+    expect(container.ballTray.entries).to.have.lengthOf(0)
+
+    watchShot.handleStationary(null)
+    expect(container.ballTray.entries).to.have.lengthOf(1)
+    expect(container.ballTray.entries[0].icon).to.equal("⊙")
+  })
+
+  it("should display opponent shot in ballTray on handleStartAim if handleStationary was bypassed", () => {
+    container.recorder.record(new HitEvent(container.table.serialiseHit()))
+    const watchShot = new WatchShot(container)
+    expect(container.ballTray.entries).to.have.lengthOf(0)
+
+    watchShot.handleStartAim(null)
+    expect(container.ballTray.entries).to.have.lengthOf(1)
+    expect(container.ballTray.entries[0].icon).to.equal("⊙")
+  })
+
+  it("should display opponent shot exactly once even if both handleStationary and handleWatch run", () => {
+    container.recorder.record(new HitEvent(container.table.serialiseHit()))
+    const watchShot = new WatchShot(container)
+    expect(container.ballTray.entries).to.have.lengthOf(0)
+
+    watchShot.handleStationary(null)
+    watchShot.handleWatch(new WatchEvent(container.table.serialise()))
+
+    expect(container.ballTray.entries).to.have.lengthOf(1)
+    expect(container.ballTray.entries[0].icon).to.equal("⊙")
   })
 })

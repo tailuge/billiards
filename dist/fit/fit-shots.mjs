@@ -49,7 +49,7 @@ const VALID_FIELDS = {
   "shot.offset.x": [-0.451, 0.451],
   "shot.offset.y": [-0.451, 0.451],
 }
-const DEFAULT_OPTIMISE = ["shot.power", "shot.offset.x", "shot.offset.y"]
+const DEFAULT_OPTIMISE = ["shot.angle", "shot.power", "shot.offset.x", "shot.offset.y"]
 
 function usage() {
   console.error(`Usage: node fit-shots.mjs [options] [input.json] [output.json]

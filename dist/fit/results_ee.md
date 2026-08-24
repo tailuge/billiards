@@ -1,114 +1,70 @@
-# ee parameter study — results
+# ee parameter study — results (v2)
 
-Date: 2026-08-24
-Question: is the system Mathavan cushion-restitution constant `ee` (default
-`0.85`) optimal for fitting the recorded trajectory data, with cushion
-friction held at the adopted `μw = 0.18`?
+Date: 2026-08-24 (v2 revises the morning study of the same date)
+Question: where is the Mathavan cushion-restitution optimum `ee` under the
+current protocol — cushion friction pinned at adopted **μw = 0.17**,
+`shot.angle` in the per-shot fit vector, degenerate shots removed?
 
-**Verdict: keep `ee = 0.85`** — no change to system defaults.
-Unlike rho/μs/muS, `ee` is **strongly identified**: the objective rises
-steeply away from the default in both directions (+0.33 cm already at −5 %,
-+0.99 at +5 %, up to +5.8 cm at ±15 %). A fine grid (±1–4 %) shows a smooth
-bowl centred on 0.85 with no interior dip. No candidate improved anywhere,
-so per protocol nothing was sent to held-out.
+**Verdict: keep `ee = 0.85`.**
+The pilot hinted the peak had drifted up (`ee=0.87`, Δmedian −0.13 cm) with
+an asymmetric bowl — lower wall steep (+1.53 at 0.81), upper gentle
+(+0.38 at 0.89). Held-out testing kills it: `ee=0.87` lands **+0.34 cm**
+worse (28/58 improved, sign-p 0.90), `ee=0.88` +1.32. As in the morning
+study (symmetric ±5 % walls of +0.3/+1.0 cm), `ee` remains strongly
+identified and centred on the default; only its local asymmetry changed,
+which is within panel noise.
 
 ---
 
 ## Methodology
 
-Identical protocol to the previous studies (`results_μw.md`,
-`results_rho.md`, `results_muS.md`, `results_μs.md`): repeated NM passes per
-point until aggregate median improves < 0.02 cm (max 6), median aggregation,
-sign tests vs a **freshly-fitted centre**, all points under
-**`--pin muw=0.18`**.
+Standard pass-pipeline protocol (`--pin muw=0.17`, repeated NM passes until
+median improves < 0.02 cm, `--max-passes 10`, median aggregation vs
+freshly-fitted centre). Panels: pilot `sweep-trim.json` (12 shots),
+held-out `heldout-trim.json` (58 shots).
 
-Data sets as before: pilot = 12 shots (`sweep.json`, RMSE ∈ (9,10) cm),
-clean-10 excludes regime-flippers 32/92.
-
-Two grids:
-
-| grid | values |
-|---|---|
-| coarse | 0.7225, 0.765, 0.8075, 0.8925, 0.935, 0.9775 (−15…+15 %) |
-| fine | 0.82, 0.83, 0.84, 0.86, 0.87, 0.88 (−3.5…+3.5 %) |
+Grid: fine steps around default plus sentinels —
+`ee` = 0.81, 0.83, 0.84, 0.85(base), 0.86, 0.87, 0.89.
 
 ## Results
 
-### 1. Coarse pilot profile over ee
+### Pilot (12 shots) — Δmedian RMSE (cm) vs centre (med 7.89)
 
-Δmedian RMSE (cm) vs freshly-fitted centre (μw=0.18, ee=0.85):
+| ee | −5 % | −2 % | −1 % | base | +1 % | +2 % | +5 % |
+|---|---|---|---|---|---|---|---|
+| value | 0.81 | 0.83 | 0.84 | 0.85 | 0.86 | 0.87 | 0.89 |
+| Δmedian | **+1.53** | +0.83 | +0.38 | 0 | +0.21 | **−0.13** | +0.38 |
 
-| ee | vs default | all 12 | clean 10 |
-|---|---|---|---|
-| 0.7225 | −15 % | +5.82 | +5.38 |
-| 0.765 | −10 % | +2.46 | +2.77 |
-| 0.8075 | −5 % | +0.33 | +0.86 |
-| 0.85 (base) | 0 | 0 | 0 |
-| 0.8925 | +5 % | +0.99 | +0.79 |
-| 0.935 | +10 % | +4.46 | +4.28 |
-| 0.9775 | +15 % | +5.53 | +5.58 |
+### Held-out (58 shots)
 
-Steep, roughly symmetric degradation; on clean-10 *every* shot but one is
-worse at ±10 % and beyond (largest id 114 +44/+48 cm). The mild asymmetry at
-±5 % (lower cheaper than higher on all-12, reversed on clean-10) is within
-flipper noise — no evidence of skew.
+| ee | median (cm) | Δmedian | wins | sign-p |
+|---|---|---|---|---|
+| base 0.85 (μw=0.17) | 12.50 | — | | |
+| 0.87 | 12.85 | +0.34 | 28/58 | 0.896 |
+| 0.88 | 13.82 | +1.32 | 24/58 | 0.237 |
 
-### 2. Fine pilot profile over ee (all 12)
+## History
 
-| ee | Δmedian |
-|---|---|
-| 0.82 | +0.36 |
-| 0.83 | +0.15 |
-| 0.84 | **+0.10** |
-| 0.85 (base) | 0 |
-| 0.86 | +0.14 |
-| 0.87 | +0.21 |
-| 0.88 | +0.52 |
-
-Monotone rise away from 0.85 on both sides at ~1–2 cm per 0.05 of ee; the
-minimum of the tested set is the default itself. The μw-style narrow-dip
-scenario is excluded.
-
-### Held-out
-
-Not run: no candidate improved in any pilot subset.
-
-## Interpretation
-
-Cushion restitution dominates post-bounce ball speeds, so nearly every
-multi-cushion shot pins it down hard — in contrast to rho/μs (flat) and muS
-(noisy). Together with the earlier ±5 % corner checks, the cushion model's
-constants are now confirmed well-calibrated except for μw, whose adopted
-0.18 remains the single real improvement found.
-
-## Caveats
-
-- Resolution ±1 %; a dip narrower/shallower than that is irrelevant at
-  current noise levels (~0.05 cm).
-- Only ee varied under pinned μw=0.18; joint (ee × μw) interaction not mapped.
-- Flipper ids dominate tails as usual.
+| round | anchor / setup | result |
+|---|---|---|
+| v1 morning | defaults (μw=0.20), 3-param fits, full panel | sharp symmetric bowl at 0.85; ±5 % → +0.33/+0.99 |
+| **v2** | μw=0.17 pin, angle-fitted, trimmed panel | same verdict; mild upper-side softening, 0.87 pilot dip failed held-out |
 
 ## Reproducing
 
-From the repo root (note: quote `--param` args, `|` is a shell pipe):
-
 ```sh
-# 1. Coarse pilot, all 12 shots (~2 min)
-node dist/fit/sweep-params.mjs --pin muw=0.18 \
-    --param 'ee=0.7225|0.765|0.8075|0.8925|0.935|0.9775' \
-    --out-dir dist/fit/corners/ee-all12
+# pilot (~4 min)
+node dist/fit/sweep-params.mjs --pin muw=0.17 \
+    --param 'ee=0.81|0.83|0.84|0.86|0.87|0.89' \
+    --input dist/fit/sweep-trim.json --max-passes 10 \
+    --out-dir dist/fit/corners/ee2-pilot
 
-# 2. Coarse pilot, clean 10 (~1.5 min)
-node dist/fit/sweep-params.mjs --pin muw=0.18 \
-    --param 'ee=0.7225|0.765|0.8075|0.8925|0.935|0.9775' \
-    --ids 24,56,62,84,94,105,114,128,166,172 \
-    --out-dir dist/fit/corners/ee-clean10
-
-# 3. Fine pilot around default (~1 min)
-node dist/fit/sweep-params.mjs --pin muw=0.18 \
-    --param 'ee=0.82|0.83|0.84|0.86|0.87|0.88' \
-    --out-dir dist/fit/corners/ee-fine
+# held-out (~10 min)
+node dist/fit/sweep-params.mjs --pin muw=0.17 \
+    --param 'ee=0.87|0.88' \
+    --input dist/fit/heldout-trim.json --max-passes 10 \
+    --out-dir dist/fit/corners/ee2-heldout
 ```
 
 Machine-readable outputs:
-`dist/fit/corners/{ee-all12,ee-clean10,ee-fine}/sweep-results.json`.
+`dist/fit/corners/{ee2-pilot,ee2-heldout}/sweep-results.json`.

@@ -9,6 +9,8 @@ import { BeginEvent } from "../events/beginevent"
 import { HitEvent } from "../events/hitevent"
 
 export class WatchShot extends ControllerBase {
+  private recorded = false
+
   override get name(): string {
     return "WatchShot"
   }
@@ -22,13 +24,20 @@ export class WatchShot extends ControllerBase {
     this.container.table.cue.aimInputs.setDisabled(true)
   }
 
+  private recordShot() {
+    if (this.recorded) return
+    this.recorded = true
+    const outcome = this.container.table.outcome
+    this.container.recorder.updateBreak(outcome, false, false, true)
+  }
+
   override handleStationary(_) {
     if (Session.isBotMode()) {
       this.container.sendEvent(new BeginEvent())
     }
 
+    this.recordShot()
     const outcome = this.container.table.outcome
-    this.container.recorder.updateBreak(outcome, false, false)
     if (
       this.container.rules.rulename !== "snooker" &&
       this.container.rules.isEndOfGame(outcome) &&
@@ -40,11 +49,13 @@ export class WatchShot extends ControllerBase {
   }
 
   override handleStartAim(_) {
+    this.recordShot()
     this.container.rules.startTurn()
     return new Aim(this.container)
   }
 
   override handlePlaceBall(event: PlaceBallEvent) {
+    this.recordShot()
     const respot = event.respot
     if (respot) {
       const ball = this.container.table.balls.find((b) => b.id === respot.id)
@@ -62,6 +73,7 @@ export class WatchShot extends ControllerBase {
   }
 
   override handleWatch(event) {
+    this.recordShot()
     if ("rerack" in event.json) {
       console.log("Respot")
       RerackEvent.applyBallinfoToTable(this.container.table, event.json)

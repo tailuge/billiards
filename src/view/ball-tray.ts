@@ -58,7 +58,13 @@ export class BallTray {
     this.updateVisibility()
   }
 
-  addShot(isPartOfBreak: boolean, potCount: number, balls: any[], state: any) {
+  addShot(
+    isPartOfBreak: boolean,
+    potCount: number,
+    balls: any[],
+    state: any,
+    isOpponent: boolean = false
+  ) {
     const pots = potCount > 1 ? potCount - 1 : 0
     let color = "#ffffff"
     if (balls.length > 0) {
@@ -68,7 +74,14 @@ export class BallTray {
       }
     }
 
-    const icon = "⚈".repeat(pots) + (isPartOfBreak ? "⚈" : "⚆")
+    let icon = "⚆"
+    if (isOpponent) {
+      icon = "⊙"
+    } else if (isPartOfBreak) {
+      icon = "⚈".repeat(pots + 1)
+    } else {
+      icon = "⚈".repeat(pots) + "⚆"
+    }
     const replayUri = this.container.linkFormatter.getReplayUri(state)
 
     let label = "Shot"

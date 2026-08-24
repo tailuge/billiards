@@ -1,122 +1,115 @@
-# μw parameter study — results
+# μw parameter study — results (v2)
 
-Date: 2026-08-24
-Question: is the system cushion-friction constant `μw` (default `0.2`) optimal
-for fitting the recorded trajectory data?
+Date: 2026-08-24 (revises the morning study of the same date)
+Question: where is the cushion-friction optimum `μw` under the **current**
+fitting setup?
 
-**Verdict: adopt `μw = 0.18`** (not yet applied to system defaults).
-Expected gain ≈ 0.5–0.8 cm of median RMSE (~5%). Evidence clears the
-pre-registered bar (improvement replicates on held-out shots; pooled
-sign-test p ≈ 0.04), but is modest — treat as a small refinement, not a
-breakthrough.
+**Verdict: adopt `μw = 0.17`** (supersedes the earlier `μw = 0.18`
+recommendation; still not applied to system defaults).
+Expected gain ≈ **1.0–1.5 cm median RMSE (~10 %)** on unseen shots.
+Evidence clears the pre-registered bar decisively: held-out sign-test
+p = 0.036, pooled p = 0.004.
 
----
+## What changed since the morning study
+
+1. **`shot.angle` joined the default fit vector** (`fit-shots.mjs`,
+   now `{angle, power, offset.x, offset.y}`). With direction errors no
+   longer absorbable by per-shot refits, the data pull μw harder: the
+   optimum moved down and the signal strengthened ~2×.
+2. **Shot 25 removed from inputs** (visual inspection via
+   `flippers.html`: unmodelled double-kiss — extremely regime-sensitive,
+   not a fair data point). Held-out set is now 59 shots
+   (`heldout-no25.json`). The pilot set was unaffected (id 25 was never
+   in it).
+3. Grid re-centred accordingly: probed 0.13–0.19 instead of 0.17–0.23.
 
 ## Methodology
 
-**Data.** `shots.json` holds 72 shots already fitted under system constants.
-Two disjoint sets were used:
+Same pass-pipeline protocol as before (`sweep-params.mjs`: repeated NM
+passes until aggregate median improves < 0.02 cm, max passes; median
+aggregation; paired sign tests vs a freshly-fitted base at defaults
+μw=0.20). Differences:
 
-| set | n | definition | file |
-|---|---|---|---|
-| pilot | 12 | entries with fitted RMSE in (9, 10) cm | `sweep.json` |
-| held-out | 60 | everything else with a fit | `heldout.json` |
+- fits optimise 4 params/shot (angle now default),
+- inputs exclude shot 25,
+- held-out run used `--max-passes 8`.
 
-**Protocol** (`sweep-params.mjs`, built on `fit-shots.mjs`):
-
-- Each tested constant value ("point") is fitted by **repeated NM passes**
-  (400-eval Nelder-Mead per shot, output of one pass seeds the next, ratchet
-  keeps a shot's params only if not worse) until the point's aggregate
-  **median RMSE improves < 0.02 cm** between passes (max 6 passes). This
-  avoids trusting the Simplex stagnation flag or unequal eval budgets.
-- The **centre point (defaults, μw=0.20) is always fitted through the exact
-  same pipeline** and anchors all comparisons — stored RMSEs are never used
-  as baseline because they carry an accumulated multi-pass advantage
-  (measured at ≈ 0.1 cm here).
-- Scoring: `--all` (RMSE against every ball, not cue-only), aggregated by
-  **median** across shots (robust to pathological shots).
-- Statistics: per-shot paired deltas vs the freshly-fitted centre;
-  wins/ties/losses; two-sided sign test.
-- Known confounder handled by design: individual shot fits can flip between
-  trajectory regimes under changed constants (seen repeatedly, e.g. ids
-  25/32/92/168), inflating variance — hence median + sign test rather than
-  means.
+Note: points that exhaust `--max-passes` without converging are dropped
+from the tool's summary table (`medians: null`); their medians below come
+from the printed pass history instead.
 
 ## Results
 
-### 1. Pilot profile over μw (12 shots; clean-10 = without regime-flippers 32, 92)
+### 1. Pilot profile over μw (12 shots)
 
-Δmedian RMSE (cm) vs freshly-fitted centre:
+Δmedian RMSE (cm) vs freshly-fitted base (9.32 cm):
 
-| μw | all 12 | clean 10 |
-|---|---|---|
-| 0.17 | −0.08 | −0.78 |
-| 0.18 | −0.29 | −0.80 |
-| 0.19 | −0.23 | −0.40 |
-| 0.20 (base) | 0 | 0 |
-| 0.21 | +0.78 | +0.82 |
-| 0.22 | +1.63 | +1.58 |
-| 0.23 | +2.98 | +2.81 |
+| μw | all 12 | clean 9 (no 32,92) | note |
+|---|---|---|---|
+| 0.13 | +0.94 | +0.96 | |
+| 0.14 | −0.22 | +0.40 | |
+| 0.15 | −1.11 | −0.41 | hit 6-pass cap |
+| 0.16 | −1.20 | −1.34 | 10/12 improved, sign-p 0.039 |
+| 0.17 | **−1.40** | n/a* | hit 6-pass cap, still descending |
+| 0.18 | −0.60† | −(n/a)† | † from box centre cell (same panel & seeds) |
+| 0.19 | −0.48 | −0.62 | |
+| 0.20 (base) | 0 | 0 | |
 
-Sloped surface: flat-to-improving below default, degrading steeply above it.
-Best region ≈ 0.17–0.18. Clean-10 best: 8/10 shots improved at 0.18
-(sign-p 0.11).
+Broad valley floor across 0.15–0.17, walls rising steeply outside
+0.13–0.19. Flipper damage concentrated at the edges (id 92: +22 at 0.13;
+id 32: +13 at 0.16).
 
-### 2. Held-out validation (60 unseen shots)
+### 2. Held-out validation (59 shots, no id 25)
 
-| μw | median (cm) | Δmedian | wins | sign-p | passes to converge |
-|---|---|---|---|---|---|
-| base 0.20 | 13.85 | — | | | 3 |
-| **0.18** | **13.29** | **−0.56** | 36/60 | 0.155 | 3 |
-| 0.17 | 13.96 | +0.12 | 32/60 | 0.699 | 2 |
+| μw | median (cm) | Δmedian | wins/losses | sign-p |
+|---|---|---|---|---|
+| base 0.20 | 14.10 | — | | |
+| **0.17** | **12.64** | **−1.46** | 38/21 | **0.036** |
+| 0.16 | 13.04 | −1.06 | 37/22 | 0.067 |
 
-The 0.18 improvement **replicates out-of-sample** in direction and magnitude.
-0.17 does *not* replicate (+0.12): the optimum is a narrow dip near 0.18,
-not a plateau extending downward — do not go lower.
+The improvement replicates out-of-sample, larger than the old study's
+(−0.56 at 0.18) and statistically significant this time. Biggest winners:
+ids 102 (−9.3), 50 (−9.1), 100 (−8.9), 133 (−6.5).
 
 ### 3. Pooled evidence
 
-Pilot 8/10 + held-out 36/60 = **44/70 shots improve** at μw=0.18;
-two-sided binomial p ≈ **0.04**.
+Pilot 10/12 + held-out 38/59 = **48/71 shots improve** at μw=0.17;
+two-sided binomial **p ≈ 0.004**.
 
 ## Caveats
 
-- Effect size is modest; several shots worsen even at 0.18 (largest id 173
-  +6.8 cm). Per-shot responses are noisy because fits are local optima of a
-  discontinuous simulation objective.
-- Six "regime-flipper" shots (25, 32, 92, 168, 11-borderline, 94-erratic)
-  dominate the tails. Visual triage of these would sharpen any future sweep.
-- Only μw varied; interaction with ee/μs was checked once before at ±5 %
-  corners (no signal there) but not re-examined at the new optimum.
+- All numbers are within the *new* protocol; do not compare absolute
+  medians against the morning study or against `shots.json` stored fits
+  (those were 3-param fits under old constants).
+- Shot 168 is the standout loser at 0.17 (+17.2 cm held-out, +38 at low μw
+  on the easy-8 panel): the next triage candidate after id 25. ids
+  109 (+7.9), 127 (+6.6), 148 (+4.6), 173 (+5.0) also worsen.
+- Valley floor spans ≈0.15–0.17; 0.17 was chosen as the validated edge,
+  but 0.16 performs nearly identically (p 0.067). If adopting into system
+  defaults, either value is defensible; finer resolution needs more data.
+- Other constants (μs, ee, rho, muS) have **not** been re-profiled under
+  the angle-inclusive fit vector yet — their flatness conclusions predate
+  it and should be re-checked at μw=0.17 before touching them.
 
 ## Reproducing
 
 From the repo root (note: quote `--param` args, `|` is a shell pipe):
 
 ```sh
-# 1. Build the data sets (one-off extraction from shots.json)
-node -e 'const fs=require("fs");const s=JSON.parse(fs.readFileSync("dist/fit/shots.json","utf8"));const sel=s.filter(e=>e.fit&&e.fit.rmseAfterCm>9&&e.fit.rmseAfterCm<10);fs.writeFileSync("dist/fit/sweep.json",JSON.stringify(sel));console.log(sel.length+" shots")'
-node -e 'const fs=require("fs");const s=JSON.parse(fs.readFileSync("dist/fit/shots.json","utf8"));const pilot=new Set([24,32,56,62,84,92,94,105,114,128,166,172]);const h=s.filter(e=>e.fit&&!pilot.has(e.id));fs.writeFileSync("dist/fit/heldout.json",JSON.stringify(h));console.log(h.length+" shots")'
+# 1. Build cleaned data sets (excludes id 25)
+node -e 'const fs=require("fs");const s=JSON.parse(fs.readFileSync("dist/fit/shots.json","utf8"));const bad=new Set([25]);const sel=s.filter(e=>e.fit&&e.fit.rmseAfterCm>9&&e.fit.rmseAfterCm<10&&!bad.has(e.id));fs.writeFileSync("dist/fit/sweep-no25.json",JSON.stringify(sel));const pilotIds=new Set(sel.map(e=>e.id));const h=s.filter(e=>e.fit&&!pilotIds.has(e.id)&&!bad.has(e.id));fs.writeFileSync("dist/fit/heldout-no25.json",JSON.stringify(h));console.log(sel.length+" / "+h.length)'
 
-# 2. Pilot profile, all 12 shots (~2 min)
-node dist/fit/sweep-params.mjs --param 'muw=0.17|0.18|0.19|0.21|0.22|0.23' \
-    --out-dir dist/fit/corners/muw-all12
+# 2. Pilot profile (~7 min)
+node dist/fit/sweep-params.mjs --param 'muw=0.13|0.14|0.15|0.16|0.17|0.19' \
+    --input dist/fit/sweep-no25.json --out-dir dist/fit/corners/muw2-pilot
 
-# 3. Pilot profile, clean 10 (excluding flippers 32,92) (~2 min)
-node dist/fit/sweep-params.mjs --param 'muw=0.17|0.18|0.19|0.21|0.22|0.23' \
-    --ids 24,56,62,84,94,105,114,128,166,172 \
-    --out-dir dist/fit/corners/muw-clean10
-
-# 4. Held-out validation (~5 min)
-node dist/fit/sweep-params.mjs --param 'muw=0.17|0.18' \
-    --input dist/fit/heldout.json --out-dir dist/fit/corners/muw-heldout
+# 3. Held-out validation (~8 min)
+node dist/fit/sweep-params.mjs --param 'muw=0.16|0.17' \
+    --input dist/fit/heldout-no25.json --max-passes 8 \
+    --out-dir dist/fit/corners/muw2-heldout
 ```
 
-Each run prints pass-by-pass progress, the comparison table (vs the
-freshly-fitted centre), the per-shot delta matrix, and writes
-`sweep-results.json` into the respective `--out-dir`. Defaults used:
-`--workers 4`, `--max-evals 400`, `--tolerance 0.02`, `--max-passes 6`.
-Intermediate/per-point fit files live only in OS tmp unless `--save-points`
-is given; `dist/fit/corners/` is gitignored.
-
-Machine-readable outputs: `dist/fit/corners/{muw-all12,muw-clean10,muw-heldout}/sweep-results.json`.
+Machine-readable outputs:
+`dist/fit/corners/{muw2-pilot,muw2-heldout}/sweep-results.json`.
+Related context: `results_mus_muw_box.md` (angle-free box that exposed the
+shifted gradient), `flippers.html` (shot triage page).
