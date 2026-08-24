@@ -1,0 +1,332 @@
+{
+  "generatedAt": "2026-08-24T09:06:14.665Z",
+  "input": "/home/august/git/billiards/dist/fit/sweep.json",
+  "protocol": {
+    "toleranceCm": 0.02,
+    "maxPasses": 6,
+    "maxEvals": null,
+    "workers": 4
+  },
+  "seedReport": {
+    "medianCm": 9.32,
+    "note": "stored-seed quality before any sweep fitting (informational)",
+    "perShotCm": {
+      "24": 9.64,
+      "56": 9.57,
+      "62": 9.03,
+      "84": 9.15,
+      "94": 9.28,
+      "105": 9.36,
+      "114": 9.88,
+      "128": 9.08,
+      "166": 9.1,
+      "172": 9.55
+    }
+  },
+  "base": {
+    "label": "base",
+    "medianCm": 9.19,
+    "meanCm": 9.242,
+    "perShotCm": {
+      "24": 9.63,
+      "56": 9.57,
+      "62": 8.31,
+      "84": 9.15,
+      "94": 9.23,
+      "105": 9.36,
+      "114": 9.88,
+      "128": 9.08,
+      "166": 9.1,
+      "172": 9.11
+    },
+    "passes": [
+      {
+        "pass": 1,
+        "medianCm": 9.27
+      },
+      {
+        "pass": 2,
+        "medianCm": 9.195,
+        "deltaCm": -0.075
+      },
+      {
+        "pass": 3,
+        "medianCm": 9.19,
+        "deltaCm": -0.005
+      }
+    ],
+    "converged": true
+  },
+  "points": [
+    {
+      "label": "muw0.18",
+      "params": {
+        "muw": 0.18
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 8.945
+        },
+        {
+          "pass": 2,
+          "medianCm": 8.39,
+          "deltaCm": -0.555
+        },
+        {
+          "pass": 3,
+          "medianCm": 8.39,
+          "deltaCm": 0
+        }
+      ],
+      "medianCm": 8.39,
+      "meanCm": 8.558,
+      "wins": 8,
+      "ties": 0,
+      "losses": 2,
+      "perShot": {
+        "24": -1.39,
+        "56": -0.08,
+        "62": -1.73,
+        "84": -1.43,
+        "94": 3.54,
+        "105": -0.02,
+        "114": -2.77,
+        "128": -0.54,
+        "166": -2.71,
+        "172": 0.29
+      },
+      "secs": "13.0",
+      "tag": "A",
+      "deltaMedianCm": -0.8,
+      "signTestP": 0.1094
+    },
+    {
+      "label": "muw0.17",
+      "params": {
+        "muw": 0.17
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 8.46
+        },
+        {
+          "pass": 2,
+          "medianCm": 8.435,
+          "deltaCm": -0.025
+        },
+        {
+          "pass": 3,
+          "medianCm": 8.41,
+          "deltaCm": -0.025
+        },
+        {
+          "pass": 4,
+          "medianCm": 8.41,
+          "deltaCm": 0
+        }
+      ],
+      "medianCm": 8.41,
+      "meanCm": 8.414,
+      "wins": 7,
+      "ties": 0,
+      "losses": 3,
+      "perShot": {
+        "24": -1.67,
+        "56": -0.08,
+        "62": -2.22,
+        "84": -1.55,
+        "94": 3.55,
+        "105": 0.09,
+        "114": -3.64,
+        "128": -0.22,
+        "166": -3.9,
+        "172": 1.36
+      },
+      "secs": "17.9",
+      "tag": "B",
+      "deltaMedianCm": -0.78,
+      "signTestP": 0.3438
+    },
+    {
+      "label": "muw0.19",
+      "params": {
+        "muw": 0.19
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 8.79
+        },
+        {
+          "pass": 2,
+          "medianCm": 8.79,
+          "deltaCm": 0
+        }
+      ],
+      "medianCm": 8.79,
+      "meanCm": 9.044,
+      "wins": 7,
+      "ties": 0,
+      "losses": 3,
+      "perShot": {
+        "24": -0.82,
+        "56": 0.13,
+        "62": -0.94,
+        "84": -0.78,
+        "94": 3.52,
+        "105": -0.08,
+        "114": -1.5,
+        "128": -0.31,
+        "166": -1.29,
+        "172": 0.09
+      },
+      "secs": "8.4",
+      "tag": "C",
+      "deltaMedianCm": -0.4,
+      "signTestP": 0.3438
+    },
+    {
+      "label": "muw0.21",
+      "params": {
+        "muw": 0.21
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 10.02
+        },
+        {
+          "pass": 2,
+          "medianCm": 10.015,
+          "deltaCm": -0.005
+        }
+      ],
+      "medianCm": 10.015,
+      "meanCm": 10.411,
+      "wins": 2,
+      "ties": 0,
+      "losses": 8,
+      "perShot": {
+        "24": 0.69,
+        "56": -0.23,
+        "62": 1.55,
+        "84": 0.82,
+        "94": 5.17,
+        "105": 0.19,
+        "114": 1.41,
+        "128": 0.98,
+        "166": 1.45,
+        "172": -0.34
+      },
+      "secs": "8.0",
+      "tag": "D",
+      "deltaMedianCm": 0.825,
+      "signTestP": 0.1094
+    },
+    {
+      "label": "muw0.22",
+      "params": {
+        "muw": 0.22
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 10.89
+        },
+        {
+          "pass": 2,
+          "medianCm": 10.78,
+          "deltaCm": -0.11
+        },
+        {
+          "pass": 3,
+          "medianCm": 10.775,
+          "deltaCm": -0.005
+        }
+      ],
+      "medianCm": 10.775,
+      "meanCm": 11.739,
+      "wins": 4,
+      "ties": 0,
+      "losses": 6,
+      "perShot": {
+        "24": 1.64,
+        "56": -0.64,
+        "62": 2.57,
+        "84": 1.69,
+        "94": -2.81,
+        "105": -0.46,
+        "114": 2.64,
+        "128": 1.63,
+        "166": 18.91,
+        "172": -0.2
+      },
+      "secs": "12.9",
+      "tag": "E",
+      "deltaMedianCm": 1.585,
+      "signTestP": 0.7539
+    },
+    {
+      "label": "muw0.23",
+      "params": {
+        "muw": 0.23
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 12.51
+        },
+        {
+          "pass": 2,
+          "medianCm": 12.22,
+          "deltaCm": -0.29
+        },
+        {
+          "pass": 3,
+          "medianCm": 12.03,
+          "deltaCm": -0.19
+        },
+        {
+          "pass": 4,
+          "medianCm": 11.995,
+          "deltaCm": -0.035
+        },
+        {
+          "pass": 5,
+          "medianCm": 11.995,
+          "deltaCm": 0
+        }
+      ],
+      "medianCm": 11.995,
+      "meanCm": 12.759,
+      "wins": 2,
+      "ties": 0,
+      "losses": 8,
+      "perShot": {
+        "24": 2.44,
+        "56": -0.65,
+        "62": 3.61,
+        "84": 2.58,
+        "94": 16.38,
+        "105": 0.71,
+        "114": 4.19,
+        "128": 3.29,
+        "166": 3.66,
+        "172": -1.04
+      },
+      "secs": "21.0",
+      "tag": "F",
+      "deltaMedianCm": 2.805,
+      "signTestP": 0.1094
+    }
+  ],
+  "failures": []
+}
