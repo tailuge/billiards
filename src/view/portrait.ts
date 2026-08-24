@@ -108,8 +108,8 @@ export class Portrait {
       roughness: 0.8,
       metalness: 0.5,
       flatShading: true,
-      emissive: new Color(0x111122),
-      emissiveIntensity: 0.25,
+      emissive: new Color(0x222222),
+      emissiveIntensity: 0.2,
     })
     this.instancedMesh = new InstancedMesh(
       planarTriGeom,
