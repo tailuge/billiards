@@ -24,4 +24,7 @@ function initialise() {
   const browserContainer = new BrowserContainer(canvas3d, params)
   browserContainer.start()
   logusage()
+  document
+    .querySelectorAll(".seo-description")
+    .forEach((el) => el.remove())
 }

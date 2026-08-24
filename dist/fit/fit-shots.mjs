@@ -14,6 +14,7 @@
 //   node fit-shots.mjs [--optimise shot.power,shot.offset.x,shot.offset.y]
 //                      [--optimiser nm|pso] [--ids 3,17,42] [--all]
 //                      [--max-evals 400] [--report] [--min-rmse CM]
+//                      [--max-rmse CM] [--param k=v ...]
 //                      [--input in.json] [--output out.json]
 //
 // Positional [input] [output] also work (like enrich-shots.mjs).
@@ -61,6 +62,12 @@ function usage() {
   --report           no optimisation: evaluate and report seed RMSE only
   --min-rmse CM      only fit shots with seed RMSE above CM (cm); shots at or
                      below are copied through to the output unchanged
+  --max-rmse CM      only process shots with seed RMSE at or below CM (cm);
+                     shots above are dropped from output and summary
+  --param k=v        physics-param override, repeatable / comma-separated,
+                     e.g. --param rho=0.0454,mu=0.006 (keys: mu muS rho m R
+                     ee mus muw stronge_omega_ratio stronge_e_n stronge_mu;
+                     mus/muw are ASCII aliases for μs/μw)
   --input/--output   paths (defaults: trajectories.json / shots.json)`)
   process.exit(1)
 }
@@ -73,6 +80,8 @@ const opts = {
   maxEvals: 400,
   report: false,
   minRmse: null,
+  maxRmse: null,
+  params: [],
   input: null,
   output: null,
   positional: [],
@@ -98,6 +107,14 @@ for (let i = 0; i < argv.length; i++) {
       console.error("--min-rmse expects a non-negative number (cm)")
       process.exit(1)
     }
+  } else if (a === "--max-rmse") {
+    opts.maxRmse = Number(argv[++i])
+    if (!Number.isFinite(opts.maxRmse) || opts.maxRmse < 0) {
+      console.error("--max-rmse expects a non-negative number (cm)")
+      process.exit(1)
+    }
+  } else if (a === "--param") {
+    opts.params.push(...argv[++i].split(",").map((s) => s.trim()))
   } else if (a === "--input") {
     opts.input = argv[++i]
   } else if (a === "--output") {
@@ -156,6 +173,38 @@ const PARAMS = {
   stronge_μ: 0.25,
   warpClearanceR: 2.05,
 }
+
+const PARAM_ALIASES = { mus: "μs", muw: "μw", stronge_mu: "stronge_μ" }
+
+function parseParamOverrides(tokens) {
+  const overrides = {}
+  for (const token of tokens) {
+    if (!token) continue
+    const eq = token.indexOf("=")
+    if (eq < 1 || eq === token.length - 1) {
+      console.error(`--param expects key=value, got "${token}"`)
+      process.exit(1)
+    }
+    const rawKey = token.slice(0, eq).trim()
+    const key = PARAM_ALIASES[rawKey] ?? rawKey
+    const value = Number(token.slice(eq + 1))
+    if (!(key in PARAMS)) {
+      console.error(
+        `Unknown --param key "${rawKey}"\nValid keys: ${Object.keys(PARAMS).join(", ")}`
+      )
+      process.exit(1)
+    }
+    if (!Number.isFinite(value)) {
+      console.error(`--param ${rawKey} expects a finite number, got "${token.slice(eq + 1)}"`)
+      process.exit(1)
+    }
+    overrides[key] = value
+  }
+  return overrides
+}
+
+const paramOverrides = parseParamOverrides(opts.params)
+const EFFECTIVE_PARAMS = { ...PARAMS, ...paramOverrides }
 
 function findMover(balls) {
   let moverId = null
@@ -237,7 +286,7 @@ function buildSim(shot, balls, mapping) {
     ruleType: "threecushion",
     cushionModel: "mathavan",
     shot,
-    params: { ...PARAMS },
+    params: { ...EFFECTIVE_PARAMS },
     stepSize: 0.001953125,
     maxIterations: 20000,
     balls: simBalls,
@@ -475,6 +524,14 @@ try {
       continue
     }
 
+    if (opts.maxRmse !== null && seedRmse * 100 > opts.maxRmse) {
+      counts.skipped++
+      console.log(
+        `Shot id ${id}  rmse ${(seedRmse * 100).toFixed(1)}cm  [above --max-rmse, skipped]`
+      )
+      continue
+    }
+
     let fittedRmse = seedRmse
     let improved = false
     let run = { evals: 0, converged: false }
@@ -525,6 +582,9 @@ try {
         converged: !!run.converged,
         fitted: specs.map((s) => s.name),
         optimiser: opts.optimiser,
+        ...(Object.keys(paramOverrides).length > 0
+          ? { params: { ...paramOverrides } }
+          : {}),
       },
     })
 
@@ -560,6 +620,13 @@ if (results.length > 0) {
   const convergedCount = fitted.filter((r) => r.fit.converged).length
 
   console.log(`\nFitted ${results.length}/${entries.length} shots in ${((Date.now() - t0All) / 1000).toFixed(1)}s`)
+  if (Object.keys(paramOverrides).length > 0) {
+    console.log(
+      `Params ${Object.entries(paramOverrides)
+        .map(([k, v]) => `${k}=${v}`)
+        .join(" ")}`
+    )
+  }
   console.log(
     `Improved ${counts.improved}, kept seed ${counts.unimproved}, skipped ${counts.skipped}`
   )

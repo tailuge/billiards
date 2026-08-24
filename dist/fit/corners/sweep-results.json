@@ -1,0 +1,451 @@
+{
+  "generatedAt": "2026-08-24T08:51:44.006Z",
+  "input": "/home/august/git/billiards/dist/fit/sweep.json",
+  "protocol": {
+    "toleranceCm": 0.02,
+    "maxPasses": 6,
+    "maxEvals": null,
+    "workers": 4
+  },
+  "seedReport": {
+    "medianCm": 9.32,
+    "note": "stored-seed quality before any sweep fitting (informational)",
+    "perShotCm": {
+      "24": 9.64,
+      "32": 9.25,
+      "56": 9.57,
+      "62": 9.03,
+      "84": 9.15,
+      "92": 9.76,
+      "94": 9.28,
+      "105": 9.36,
+      "114": 9.88,
+      "128": 9.08,
+      "166": 9.1,
+      "172": 9.55
+    }
+  },
+  "base": {
+    "label": "base",
+    "medianCm": 9.235,
+    "meanCm": 9.285,
+    "perShotCm": {
+      "24": 9.63,
+      "32": 9.24,
+      "56": 9.57,
+      "62": 8.31,
+      "84": 9.15,
+      "92": 9.76,
+      "94": 9.23,
+      "105": 9.36,
+      "114": 9.88,
+      "128": 9.08,
+      "166": 9.1,
+      "172": 9.11
+    },
+    "passes": [
+      {
+        "pass": 1,
+        "medianCm": 9.27
+      },
+      {
+        "pass": 2,
+        "medianCm": 9.24,
+        "deltaCm": -0.03
+      },
+      {
+        "pass": 3,
+        "medianCm": 9.235,
+        "deltaCm": -0.005
+      }
+    ],
+    "converged": true
+  },
+  "points": [
+    {
+      "label": "mus0.19_muw0.21_ee0.8925",
+      "params": {
+        "mus": 0.19,
+        "muw": 0.21,
+        "ee": 0.8925
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 9.53
+        },
+        {
+          "pass": 2,
+          "medianCm": 9.415,
+          "deltaCm": -0.115
+        },
+        {
+          "pass": 3,
+          "medianCm": 9.41,
+          "deltaCm": -0.005
+        }
+      ],
+      "medianCm": 9.41,
+      "meanCm": 9.684,
+      "wins": 7,
+      "ties": 0,
+      "losses": 5,
+      "perShot": {
+        "24": -1.39,
+        "32": 6.95,
+        "56": 0.5,
+        "62": 1.22,
+        "84": -0.32,
+        "92": 1.13,
+        "94": -3.87,
+        "105": -0.03,
+        "114": -0.39,
+        "128": -0.34,
+        "166": -0.5,
+        "172": 1.83
+      },
+      "secs": "15.4",
+      "tag": "A",
+      "deltaMedianCm": 0.175,
+      "signTestP": 0.7744
+    },
+    {
+      "label": "mus0.21_muw0.21_ee0.8925",
+      "params": {
+        "mus": 0.21,
+        "muw": 0.21,
+        "ee": 0.8925
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 9.44
+        },
+        {
+          "pass": 2,
+          "medianCm": 9.44,
+          "deltaCm": 0
+        }
+      ],
+      "medianCm": 9.44,
+      "meanCm": 9.922,
+      "wins": 7,
+      "ties": 0,
+      "losses": 5,
+      "perShot": {
+        "24": -1.36,
+        "32": 5.88,
+        "56": 0.65,
+        "62": 1.51,
+        "84": -0.39,
+        "92": 0.93,
+        "94": -0.59,
+        "105": -0.02,
+        "114": -0.34,
+        "128": -0.37,
+        "166": -0.49,
+        "172": 2.23
+      },
+      "secs": "14.7",
+      "tag": "B",
+      "deltaMedianCm": 0.205,
+      "signTestP": 0.7744
+    },
+    {
+      "label": "mus0.19_muw0.19_ee0.8925",
+      "params": {
+        "mus": 0.19,
+        "muw": 0.19,
+        "ee": 0.8925
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 9.475
+        },
+        {
+          "pass": 2,
+          "medianCm": 9.475,
+          "deltaCm": 0
+        }
+      ],
+      "medianCm": 9.475,
+      "meanCm": 11.639,
+      "wins": 4,
+      "ties": 0,
+      "losses": 8,
+      "perShot": {
+        "24": -2.14,
+        "32": 12.21,
+        "56": 1.08,
+        "62": 0.27,
+        "84": -1.73,
+        "92": 17.7,
+        "94": 4.81,
+        "105": 0.42,
+        "114": -2.49,
+        "128": 0.09,
+        "166": -3.05,
+        "172": 1.08
+      },
+      "secs": "14.6",
+      "tag": "C",
+      "deltaMedianCm": 0.24,
+      "signTestP": 0.3877
+    },
+    {
+      "label": "mus0.21_muw0.19_ee0.8925",
+      "params": {
+        "mus": 0.21,
+        "muw": 0.19,
+        "ee": 0.8925
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 9.59
+        },
+        {
+          "pass": 2,
+          "medianCm": 9.56,
+          "deltaCm": -0.03
+        },
+        {
+          "pass": 3,
+          "medianCm": 9.55,
+          "deltaCm": -0.01
+        }
+      ],
+      "medianCm": 9.55,
+      "meanCm": 12.233,
+      "wins": 4,
+      "ties": 0,
+      "losses": 8,
+      "perShot": {
+        "24": -2.2,
+        "32": 15.32,
+        "56": 1.14,
+        "62": 0.56,
+        "84": -2.16,
+        "92": 20.89,
+        "94": 5.45,
+        "105": 0.43,
+        "114": -2.76,
+        "128": 0.23,
+        "166": -3.1,
+        "172": 1.58
+      },
+      "secs": "17.5",
+      "tag": "D",
+      "deltaMedianCm": 0.315,
+      "signTestP": 0.3877
+    },
+    {
+      "label": "mus0.21_muw0.19_ee0.8075",
+      "params": {
+        "mus": 0.21,
+        "muw": 0.19,
+        "ee": 0.8075
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 9.98
+        },
+        {
+          "pass": 2,
+          "medianCm": 9.865,
+          "deltaCm": -0.115
+        },
+        {
+          "pass": 3,
+          "medianCm": 9.865,
+          "deltaCm": 0
+        }
+      ],
+      "medianCm": 9.865,
+      "meanCm": 13.22,
+      "wins": 4,
+      "ties": 0,
+      "losses": 8,
+      "perShot": {
+        "24": 1.6,
+        "32": 37.32,
+        "56": -0.92,
+        "62": 0.27,
+        "84": 0.82,
+        "92": 9.63,
+        "94": -3.89,
+        "105": -0.34,
+        "114": 0.86,
+        "128": 2.27,
+        "166": 0.66,
+        "172": -1.06
+      },
+      "secs": "15.4",
+      "tag": "E",
+      "deltaMedianCm": 0.63,
+      "signTestP": 0.3877
+    },
+    {
+      "label": "mus0.19_muw0.19_ee0.8075",
+      "params": {
+        "mus": 0.19,
+        "muw": 0.19,
+        "ee": 0.8075
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 10.475
+        },
+        {
+          "pass": 2,
+          "medianCm": 10.295,
+          "deltaCm": -0.18
+        },
+        {
+          "pass": 3,
+          "medianCm": 10.25,
+          "deltaCm": -0.045
+        },
+        {
+          "pass": 4,
+          "medianCm": 10.24,
+          "deltaCm": -0.01
+        }
+      ],
+      "medianCm": 10.24,
+      "meanCm": 13.06,
+      "wins": 3,
+      "ties": 0,
+      "losses": 9,
+      "perShot": {
+        "24": 1.52,
+        "32": 14.83,
+        "56": -0.9,
+        "62": 0.27,
+        "84": 0.85,
+        "92": 9.98,
+        "94": 16.24,
+        "105": -0.45,
+        "114": 0.6,
+        "128": 2.57,
+        "166": 0.63,
+        "172": -0.84
+      },
+      "secs": "24.0",
+      "tag": "F",
+      "deltaMedianCm": 1.005,
+      "signTestP": 0.146
+    },
+    {
+      "label": "mus0.21_muw0.21_ee0.8075",
+      "params": {
+        "mus": 0.21,
+        "muw": 0.21,
+        "ee": 0.8075
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 11.5
+        },
+        {
+          "pass": 2,
+          "medianCm": 11.45,
+          "deltaCm": -0.05
+        },
+        {
+          "pass": 3,
+          "medianCm": 11.45,
+          "deltaCm": 0
+        }
+      ],
+      "medianCm": 11.45,
+      "meanCm": 10.927,
+      "wins": 3,
+      "ties": 0,
+      "losses": 9,
+      "perShot": {
+        "24": 2.96,
+        "32": 0.5,
+        "56": -0.77,
+        "62": 3.39,
+        "84": 2.05,
+        "92": 6.17,
+        "94": -4.76,
+        "105": 0.43,
+        "114": 3.62,
+        "128": 4.62,
+        "166": 3.52,
+        "172": -2.03
+      },
+      "secs": "15.6",
+      "tag": "G",
+      "deltaMedianCm": 2.215,
+      "signTestP": 0.146
+    },
+    {
+      "label": "mus0.19_muw0.21_ee0.8075",
+      "params": {
+        "mus": 0.19,
+        "muw": 0.21,
+        "ee": 0.8075
+      },
+      "converged": true,
+      "passes": [
+        {
+          "pass": 1,
+          "medianCm": 12.165
+        },
+        {
+          "pass": 2,
+          "medianCm": 12.135,
+          "deltaCm": -0.03
+        },
+        {
+          "pass": 3,
+          "medianCm": 12.02,
+          "deltaCm": -0.115
+        },
+        {
+          "pass": 4,
+          "medianCm": 12.015,
+          "deltaCm": -0.005
+        }
+      ],
+      "medianCm": 12.015,
+      "meanCm": 11.704,
+      "wins": 3,
+      "ties": 0,
+      "losses": 9,
+      "perShot": {
+        "24": 3.47,
+        "32": 9.52,
+        "56": -0.75,
+        "62": 3.2,
+        "84": 2.11,
+        "92": 5.97,
+        "94": -4.56,
+        "105": 0.22,
+        "114": 3.68,
+        "128": 4.76,
+        "166": 3.42,
+        "172": -2.01
+      },
+      "secs": "19.4",
+      "tag": "H",
+      "deltaMedianCm": 2.78,
+      "signTestP": 0.146
+    }
+  ],
+  "failures": []
+}
