@@ -7,7 +7,6 @@ export interface ResumeEntry {
   tablejson: unknown
   score: { p1: number; p2: number; b: number; active: number }
   p1type: number
-  playerIndex: number
   msgId?: string
 }
 

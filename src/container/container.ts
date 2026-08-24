@@ -365,7 +365,6 @@ export class Container {
       tablejson: this.table.serialise(),
       score: { p1, p2, b, active },
       p1type: session.p1type,
-      playerIndex: session.playerIndex,
     })
   }
 

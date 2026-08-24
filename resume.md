@@ -18,9 +18,15 @@
 - `End.onFirst` clears the slot.
 - Tests: `test/utils/resumestore.spec.ts`, msgId cases in the relay spec.
 
-**Phase 2 (not started):** restore path in `BrowserContainer` (steps 1–8 of
-*Restore path*), watermark skip in the net event path, controller-by-name
-construction, consume-and-clear on load.
+**Phase 2 (implemented):** restore path in `BrowserContainer` (`tryResume`,
+called after subscribe but before connect so the filter arms first),
+watermark skip in `netEvent`, controller-by-name construction
+(`resumeController`: `Aim`/`WatchAim`/`PlaceBall`), entry retained on load
+(restore is idempotent; cleanup via `End`, next save, tableId guard).
+Decisions applied: `playerIndex` is re-derived from the URL (`first` flag) and
+is no longer stored in the payload; no watermark-missed fallback logic —
+drop-until-seen only (if the watermark never appears, messages stay dropped;
+accepted as-is). Manual verification of refresh scenarios pending.
 
 ## Goal
 
@@ -97,16 +103,19 @@ no prefix scan, no explicit cleanup of other table ids.
   "tablejson": { ... },              // table.serialise() — stationary
   "score": { "p1": 3, "p2": 1, "b": 2, "active": 1 },
   "p1type": 1,                       // Session.p1type at save time (eightball group assignment)
-  "msgId": "nchan-msg-id-watermark", // last message id we processed
-  "playerIndex": 1                   // Session.playerIndex at save time
+  "msgId": "nchan-msg-id-watermark"  // last message id we processed
 }
 ```
 
 No schema version field until a second version exists. `ruletype` comes from
 the URL and is not stored; `tableId` is stored only for the stale-tab
-validation below. `playerIndex` is not URL-derivable. `PlaceAllBalls` appears
-in the controller enum for completeness but is drill-only (`DrillPanel`) and
-never returned by 2-player `rules.update`, so it won't occur in practice.
+validation below. `playerIndex` is not stored either — the URL carries both
+players' identities (`userId`/`userName`, `opponent.userId`/`opponent.userName`)
+plus the `first` flag, so on load the refresher's role is re-derived exactly as
+a live join assigns it (`first` present → playerIndex 0, else 1).
+`PlaceAllBalls` appears in the controller enum for completeness but is
+drill-only (`DrillPanel`) and never returned by 2-player `rules.update`, so it
+won't occur in practice.
 
 **Why `p1type` must be stored:** eightball group assignment (solids/stripes)
 is set incrementally via events (`ControllerBase.handleScore`,
@@ -187,14 +196,15 @@ In `BrowserContainer`, after URL params are parsed and before `Init` runs:
    set it has msgId ≤ watermark and will never replay).
 4. Instantiate the stored controller directly (`Aim`, `WatchAim`, `PlaceBall`)
    instead of letting `Init` broadcast a fresh `WatchEvent`
-   (`src/controller/init.ts:65`). `playerIndex` comes from the URL/Session as
-   today; the stored `active` in score decides whose turn the HUD shows.
+   (`src/controller/init.ts:65`). `playerIndex` is re-derived from the URL
+   (`first` present → 0, else 1) — same assignment a live join produces; the
+   stored `active` in score decides whose turn the HUD shows.
 5. Install the watermark in the net event path. Replay is in-order, so no
    comparison is needed (and lexicographic `<=` on `ts.sequence`-style ids
    would be wrong anyway): **drop every message until the exact watermark
-   msgId is seen, then process everything after it.** If the watermark never
-   appears (truncated buffer) everything replays — same as today's reconnect
-   behaviour, and safe.
+   msgId is seen, then process everything after it.** No fallback logic: if
+   the watermark never appears (e.g. truncated buffer) messages stay dropped —
+   accepted as-is, keeping the filter to one comparison.
 6. **Keep self-echo suppression on during replay.** `netEvent` drops events
    whose `clientId` equals our own (`browsercontainer.ts:324`); that stays.
    The snapshot already reflects our own turn-boundary broadcasts
@@ -202,8 +212,12 @@ In `BrowserContainer`, after URL params are parsed and before `Init` runs:
    redundant. The only reason to bypass self-echo would be to re-process our
    own in-flight `HIT`, which is out of scope (see non-goals) — so no bypass
    is added.
-7. Clear the stored entry once consumed (a crash during resume then falls back
-   to a fresh rack rather than a half-applied one).
+7. **Retain the stored entry on load — do not consume-and-clear.** Restore is
+   idempotent: the same entry plus the same buffer (≥ watermark) replays to
+   the same state, so a second reload without a new shot re-resumes from the
+   same boundary instead of falling back to a fresh rack (which the
+   `WatchEvent` handshake would then propagate to the opponent too). Cleanup
+   stays with `End.onFirst`, the next save, and the tableId guard.
 8. Verify the post-restore `BeginEvent` broadcast (`browsercontainer.ts:310`)
    hitting the restored controller is a harmless no-op (`handleBegin` via
    `ControllerBase` for `Aim`/`WatchAim`; check `PlaceBall`).
@@ -258,10 +272,9 @@ conflict, no double-filtering.
 
 Keying by `clientId` means a new game writes to the same slot and simply
 overwrites the old entry — no stale resume survives. Defence in depth: the
-entry is deleted once consumed, deleted at `End`, and rejected on load if its
-stored `tableId` doesn't match the current tab. (`tableId` is a
-client-generated channel id created fresh per challenge, `lobby.js:199`, so it
-changes every game.)
+entry is deleted at `End` and rejected on load if its stored `tableId`
+doesn't match the current tab. (`tableId` is a client-generated channel id
+created fresh per challenge, `lobby.js:199`, so it changes every game.)
 
 ## Effort estimate
 
@@ -306,6 +319,15 @@ remove roughly half of the `BrowserContainer` item if done later.
 - **Ball-in-hand / break-off:** `PlaceBall` restores fine from the snapshot;
   the pending `PlaceBallEvent` need not be re-sent by the opponent (the
   restored controller already expects placement).
+- **Threecushion/Sagu cue-ball ownership (fixed):** each player owns their own
+  cue ball (p1 → `balls[0]`, p2 → `balls[1]`) and role assignment normally
+  happens once in `Init.handleWatch` via `rules.secondToPlay()`. Resume bypasses
+  `Init`, so a refreshed second player would keep the fresh-rules default and
+  aim/fire/score with the wrong ball. `tryResume` therefore calls
+  `rules.secondToPlay()` when `!first` before constructing the stored
+  controller — exactly what a live join does; no-op for other rules. Ownership
+  is static per role, so role + controller name fully determine the correct
+  ball at any turn boundary; no payload change needed.
 - **Both players refresh:** each restores its own entry; both then replay the
   buffer consistently because the watermark + deterministic controllers are
   per-client.
@@ -329,9 +351,10 @@ integration rig:
 ## Summary of changes
 
 1. ✅ `MessagingMessageRelay`: surface `meta.msgId` to subscribers.
-2. `BrowserContainer`: track latest msgId ✅; watermark skip in `netEvent`
-   (self-echo suppression retained); restore path before `Init`; seed
-   `Session.p1type` on restore — **phase 2**.
+2. ✅ `BrowserContainer`: track latest msgId; watermark skip in `netEvent`
+   (self-echo suppression retained); restore path (`tryResume`) before the
+   relay connects, before `Init` can run; seed `Session.p1type` on restore;
+   `playerIndex` re-derived from the URL `first` flag (not stored).
 3. ✅ `Container.sendScoreUpdate` (via `ResumeStore`): writes the snapshot
    entry unconditionally (not gated on the `changed` check), including
    `Session.p1type`; `End.onFirst`: deletes it.

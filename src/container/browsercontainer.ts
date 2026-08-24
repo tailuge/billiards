@@ -27,6 +27,10 @@ import { DrillPanel } from "../view/drillpanel"
 import { AnalysisPanel } from "../view/analysispanel"
 import { applyPhysicsParams } from "../utils/physicsparams"
 import { ResumeStore } from "../utils/resumestore"
+import { Aim } from "../controller/aim"
+import { WatchAim } from "../controller/watchaim"
+import { PlaceBall } from "../controller/placeball"
+import { Controller } from "../controller/controller"
 
 /**
  * Integrate game container into HTML page
@@ -42,6 +46,16 @@ export class BrowserContainer {
   playername: string
   replay: string | null
   messageRelay: MessageRelay | null = null
+  /** Resume watermark: msgId of the last message already reflected in the
+   * restored snapshot. While set, netEvent drops the buffered replay up to
+   * and including this id, then processes everything after it as live. */
+  private resumeWatermark?: string
+  /** Buffered messages dropped while the watermark filter is armed. */
+  private resumeSkipped = 0
+  /** True after a successful restore; traces the first events processed. */
+  private resumed = false
+  /** Count of post-resume events traced so far. */
+  private resumeTraced = 0
   breakState: {
     init: any
     shots: any[]
@@ -295,9 +309,16 @@ export class BrowserContainer {
       // we connect/join the table. Without this ordering, an opponent who
       // sent BeginEvent before our subscribe() ran would drop on the floor
       // (Race 2).
-      this.messageRelay?.subscribe(this.tableId, (e) => {
-        this.netEvent(e)
+      this.messageRelay?.subscribe(this.tableId, (e, msgId) => {
+        this.netEvent(e, msgId)
       })
+    }
+
+    // Restore before connecting so the watermark filter is armed before any
+    // buffered replay can be delivered (subscribe above only registers the
+    // callback; messages start flowing once connectRelay() resolves).
+    if (this.wss && !this.replay) {
+      this.tryResume()
     }
 
     await this.connectRelay()
@@ -320,11 +341,103 @@ export class BrowserContainer {
     }
   }
 
+  /** Phase 2 resume: rebuild table, score and controller from the stored
+   * turn-boundary snapshot instead of running Init's fresh rack. Runs after
+   * subscribe() but before connectRelay(), so the watermark filter is armed
+   * before the replayed buffer can arrive. The entry is retained, not
+   * consumed: restore is idempotent (same entry + buffer replays to the same
+   * state), so a second reload without a new shot re-resumes from the same
+   * boundary instead of resetting both players to a fresh rack. Cleanup stays
+   * with End.onFirst (game over), the next save (new boundary), and the
+   * tableId guard (stale tab). Self-echo suppression stays on: the snapshot
+   * already reflects our own broadcasts. */
+  private tryResume() {
+    const entry = ResumeStore.load(this.tableId)
+    if (!entry) {
+      console.log("resume: no stored entry (or stale tableId), starting fresh")
+      return
+    }
+    const session = Session.getInstance()
+    // Role/opponent identity come from the URL (`first` flag plus the
+    // opponent.* params applied at construction), same assignment a live join
+    // produces; playerIndex must be set before updateScoreHud maps p1/p2 onto
+    // my/opponent scores.
+    session.playerIndex = this.first ? 0 : 1
+    session.p1type = entry.p1type
+    // Mirror Init.handleWatch for the second player: ThreeCushion/Sagu give
+    // each player their own cue ball (p2 owns balls[1]) and this is the only
+    // place role-based ownership is assigned. Without it a refreshed second
+    // player keeps the fresh-rules default and resumes into Aim/WatchAim with
+    // the wrong ball. No-op for every other rule type.
+    if (!this.first) {
+      this.container.rules.secondToPlay()
+    }
+    // Restore the table BEFORE constructing the controller so Aim/WatchAim
+    // constructors (cue placement, aim-at-next, camera) see restored ball
+    // positions rather than the fresh rack.
+    this.container.table.updateFromSerialised(entry.tablejson)
+    const controller = this.resumeController(entry.controller)
+    if (!controller) {
+      console.log(`resume: unknown controller ${entry.controller}, aborting`)
+      return
+    }
+    const cueBall = (entry.tablejson as { aim?: { i?: number } } | undefined)
+      ?.aim?.i
+    console.log(
+      `resume: restoring ${entry.controller} from msgId ${entry.msgId ?? "<none>"}, ` +
+        `score ${entry.score.p1}-${entry.score.p2} b${entry.score.b} active ${entry.score.active}, ` +
+        `cueBall ${cueBall}`
+    )
+    this.resumeWatermark = entry.msgId
+    this.container.updateScoreHud(
+      entry.score.p1,
+      entry.score.p2,
+      entry.score.b,
+      entry.score.active as 0 | 1 | 2
+    )
+    this.container.updateController(controller)
+    this.resumed = true
+  }
+
+  private resumeController(name: string): Controller | null {
+    switch (name) {
+      case "Aim":
+        return new Aim(this.container)
+      case "WatchAim":
+        return new WatchAim(this.container)
+      case "PlaceBall":
+        return new PlaceBall(this.container)
+      default:
+        return null
+    }
+  }
+
   netEvent(e: string, msgId?: string) {
     ResumeStore.noteMsgId(msgId)
+    if (this.resumeWatermark !== undefined) {
+      // Post-refresh buffer replay: drop everything up to and including the
+      // watermark msgId (the snapshot already reflects it), then let the rest
+      // flow through the ordinary path. No fallback logic if the watermark
+      // never appears — accepted as-is.
+      this.resumeSkipped++
+      if (msgId === this.resumeWatermark) {
+        console.log(
+          `resume: watermark ${this.resumeWatermark} reached after skipping ` +
+            `${this.resumeSkipped} buffered messages; processing live`
+        )
+        this.resumeWatermark = undefined
+      }
+      return
+    }
     const event = EventUtil.fromSerialised(e)
     if (event.clientId === Session.getInstance().clientId) {
       return
+    }
+    if (this.resumed && this.resumeTraced < 5) {
+      this.resumeTraced++
+      console.log(
+        `resume: processing ${event.constructor.name} (${this.resumeTraced})`
+      )
     }
 
     if (!Session.getInstance().vsNotificationShown) {

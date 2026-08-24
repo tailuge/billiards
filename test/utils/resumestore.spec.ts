@@ -7,7 +7,6 @@ const entry = (tableId = "table-1"): Omit<ResumeEntry, "msgId"> => ({
   tablejson: { balls: [], aim: undefined },
   score: { p1: 3, p2: 1, b: 2, active: 1 },
   p1type: 1,
-  playerIndex: 1,
 })
 
 describe("ResumeStore", () => {
