@@ -18,6 +18,7 @@
 // Usage:
 //   node sweep-params.mjs --param mus=0.19|0.21 --param muw=0.19|0.21
 //                         --param ee=0.8075|0.8925
+//                         [--pin muw=0.18]
 //                         [--input sweep.json] [--out-dir corners]
 //                         [--workers 4] [--max-evals N] [--ids 1,2]
 //                         [--tolerance 0.02] [--max-passes 6]
@@ -26,6 +27,10 @@
 //
 // Param values are "|" separated; the sweep runs the cartesian product
 // (2 values per axis = box corners).
+//
+// --pin holds a constant at a non-default value for the WHOLE experiment
+// (centre included), e.g. investigating rho while holding the adopted
+// muw=0.18: every point, base first, is fitted under that override.
 
 import fs from "node:fs"
 import os from "node:os"
@@ -40,6 +45,8 @@ function usage() {
   console.error(`Usage: node sweep-params.mjs --param key=v1|v2 [...] [options]
   --param k=a|b      axis of the sweep; repeat per constant; cartesian product
                      of all axes is evaluated (2 values = box corners)
+  --pin k=v[,k=v]    constant override applied to EVERY point incl. the base
+                     (hold a parameter fixed while sweeping another)
   --input FILE       shot entries to fit (default: sweep.json next to script)
   --out-dir DIR      directory for sweep-results.json (default: corners/)
   --workers N        concurrent fit-shots processes per pass (default 4)
@@ -61,6 +68,7 @@ const opts = {
   input: null,
   outDir: null,
   params: [],
+  pins: [],
   workers: 4,
   maxEvals: null,
   ids: null,
@@ -77,6 +85,8 @@ for (let i = 0; i < argv.length; i++) {
   const a = argv[i]
   if (a === "--param") {
     opts.params.push(argv[++i])
+  } else if (a === "--pin") {
+    opts.pins.push(argv[++i])
   } else if (a === "--input") {
     opts.input = argv[++i]
   } else if (a === "--out-dir") {
@@ -161,6 +171,33 @@ function cartesian(i = 0, acc = []) {
   return rows
 }
 
+// --- Pins and points ---
+
+const pins = opts.pins.flatMap((token) =>
+  token.split(",").map((kv) => {
+    const eq = kv.indexOf("=")
+    if (eq < 1 || eq === kv.length - 1) {
+      console.error(`--pin expects key=v, got "${kv}"`)
+      process.exit(1)
+    }
+    return { key: kv.slice(0, eq).trim(), value: Number(kv.slice(eq + 1)) }
+  })
+)
+for (const p of pins) {
+  if (!Number.isFinite(p.value)) {
+    console.error(`--pin ${p.key} expects a finite number`)
+    process.exit(1)
+  }
+  const clash = axes.find((a) => a.key === p.key)
+  if (clash) {
+    console.error(
+      `--pin ${p.key} conflicts with swept axis "${p.key}"; a constant cannot also vary`
+    )
+    process.exit(1)
+  }
+}
+const pinKv = pins.map((p) => `${p.key}=${p.value}`).join(",") || null
+
 // Centre point first: same pipeline as everything else, no param overrides.
 const points = [{ label: "base", kv: null, values: null }]
 for (const values of cartesian()) {
@@ -231,7 +268,8 @@ function runNode(args) {
 
 function fitArgs(outputPath, kv, inputOverride) {
   const args = ["--all", "--input", inputOverride ?? inputPath, "--output", outputPath]
-  if (kv !== null) args.push("--param", kv)
+  const fullKv = [kv, pinKv].filter(Boolean).join(",") || null
+  if (fullKv !== null) args.push("--param", fullKv)
   args.push("--ids", ids.join(","))
   if (opts.maxEvals !== null) args.push("--max-evals", String(opts.maxEvals))
   return args
@@ -264,6 +302,7 @@ const t0All = Date.now()
 const refPath = path.join(tmpDir, "seed-report.json")
 console.log(`Scoring seed quality…`)
 const refArgs = ["--report", "--all", "--input", inputPath, "--output", refPath]
+if (pinKv) refArgs.push("--param", pinKv)
 if (idFilter) refArgs.push("--ids", ids.join(","))
 const refRun = await runNode(refArgs)
 if (refRun.code !== 0) {
@@ -445,7 +484,7 @@ candidates.forEach((c, i) => {
 })
 
 console.log(
-  `\n== Points vs freshly-fitted base (${baseMedian.toFixed(2)}cm median, ${baseMean.toFixed(2)} mean) ==`
+  `\n== Points vs freshly-fitted base${pinKv ? ` [${pinKv}]` : ""} (${baseMedian.toFixed(2)}cm median, ${baseMean.toFixed(2)} mean) ==`
 )
 console.log(`tag  point                              med    dMed   mean   w/t/l   sign-p  passes`)
 for (const c of candidates) {
@@ -458,7 +497,7 @@ for (const c of candidates) {
       (c.converged ? "" : "*")
   )
 }
-console.log(`base (defaults)                      ${baseMedian.toFixed(2).padStart(5)}  ${"+0.00".padStart(6)}  ${baseMean.toFixed(2).padStart(5)}`)
+console.log(`base (defaults${pinKv ? ` + ${pinKv}` : ""})${" ".repeat(Math.max(0, 24 - (pinKv ? pinKv.length : 0)))}${baseMedian.toFixed(2).padStart(5)}  ${"+0.00".padStart(6)}  ${baseMean.toFixed(2).padStart(5)}`)
 console.log(`(* = hit --max-passes without reaching --tolerance)`)
 
 if (candidates.length > 0) {
@@ -493,6 +532,7 @@ fs.writeFileSync(
         maxPasses: opts.maxPasses,
         maxEvals: opts.maxEvals,
         workers: opts.workers,
+        pin: pins.length > 0 ? Object.fromEntries(pins.map((p) => [p.key, p.value])) : null,
       },
       seedReport: {
         medianCm: +median(seedVals.map((s) => s.cm)).toFixed(3),
@@ -500,7 +540,7 @@ fs.writeFileSync(
         perShotCm: Object.fromEntries(seedVals.map((s) => [s.id, s.cm])),
       },
       base: {
-        label: "base",
+        label: pinKv ? `base (${pinKv})` : "base",
         medianCm: +baseMedian.toFixed(3),
         meanCm: +baseMean.toFixed(3),
         perShotCm: Object.fromEntries(baseById),
