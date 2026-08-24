@@ -10,7 +10,9 @@
         margin: 2em auto;
         padding: 0 1em;
       }
-      a { color: #0366d6; }
+      a {
+        color: #0366d6;
+      }
       table {
         border-collapse: collapse;
         margin: 1em 0;
@@ -49,16 +51,15 @@
     <h1>Regime-flipper shots</h1>
     <p>
       Shots whose per-shot fits jump between trajectory regimes when physics
-      constants change slightly, dominating the tails of every parameter
-      study (see <code>results_μw.md</code>, <code>results_muS.md</code>,
+      constants change slightly, dominating the tails of every parameter study
+      (see <code>results_μw.md</code>, <code>results_muS.md</code>,
       <code>results_mus_muw_box.md</code>).
     </p>
     <p>
       Links pass the array <b>index</b> into <code>shots.json</code>
       (<code>viewer.html?index=N</code>). If a link opens the wrong shot, the
       file was refitted and reordered since this page was generated — use the
-      dropdown inside the viewer instead.
-      Generated: 2026-08-24.
+      dropdown inside the viewer instead. Generated: 2026-08-24.
     </p>
     <table>
       <tr>
@@ -69,57 +70,93 @@
         <th>observed behaviour (Δmedian RMSE under small constant changes)</th>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=10">25</a></td><td>10</td><td>18.58</td>
-        <td><span class="tag" style="background:#d4edda">removed</span></td>
-        <td>EXCLUDED from inputs 2026-08-24 after visual inspection: unmodelled double-kiss, extremely regime-sensitive (+27 cm swings). Not a fair data point.</td>
+        <td><a href="viewer.html?index=10">25</a></td>
+        <td>10</td>
+        <td>18.58</td>
+        <td><span class="tag" style="background: #d4edda">removed</span></td>
+        <td>
+          EXCLUDED from inputs 2026-08-24 after visual inspection: unmodelled
+          double-kiss, extremely regime-sensitive (+27 cm swings). Not a fair
+          data point.
+        </td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=15">32</a></td><td>15</td><td>9.25</td>
+        <td><a href="viewer.html?index=15">32</a></td>
+        <td>15</td>
+        <td>9.25</td>
         <td><span class="tag canonical">canonical</span></td>
-        <td>pilot flippers 32/92 excluded from clean-10; ±5 cm swings in box runs</td>
+        <td>
+          pilot flippers 32/92 excluded from clean-10; ±5 cm swings in box runs
+        </td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=40">92</a></td><td>40</td><td>9.76</td>
+        <td><a href="viewer.html?index=40">92</a></td>
+        <td>40</td>
+        <td>9.76</td>
         <td><span class="tag canonical">canonical</span></td>
-        <td>+3…+44 across μs×μw box cells; fit lands in different regimes per run</td>
+        <td>
+          +3…+44 across μs×μw box cells; fit lands in different regimes per run
+        </td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=64">168</a></td><td>64</td><td>5.36</td>
+        <td><a href="viewer.html?index=64">168</a></td>
+        <td>64</td>
+        <td>5.36</td>
         <td><span class="tag canonical">canonical</span></td>
-        <td>fit well today yet +37.8 at muw=0.17 on easy-8 panel — flip-proof is not</td>
+        <td>
+          fit well today yet +37.8 at muw=0.17 on easy-8 panel — flip-proof is
+          not
+        </td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=4">11</a></td><td>4</td><td>4.48</td>
+        <td><a href="viewer.html?index=4">11</a></td>
+        <td>4</td>
+        <td>4.48</td>
         <td><span class="tag borderline">borderline</span></td>
         <td>+14.3 (muS), +5.5 (rho) held-out; +15.0 at muw=0.17 easy-8</td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=41">94</a></td><td>41</td><td>9.28</td>
+        <td><a href="viewer.html?index=41">94</a></td>
+        <td>41</td>
+        <td>9.28</td>
         <td><span class="tag borderline">borderline</span></td>
         <td>flagged "erratic" in μw study; milder swings (±0.3–12)</td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=17">36</a></td><td>17</td><td>17.84</td>
-        <td><span class="tag" style="background:#d4edda">removed</span></td>
-        <td>EXCLUDED from inputs 2026-08-24 after visual inspection: double-kiss / cliff-edge — no optimiser can cross it. Not a fair data point.</td>
+        <td><a href="viewer.html?index=17">36</a></td>
+        <td>17</td>
+        <td>17.84</td>
+        <td><span class="tag" style="background: #d4edda">removed</span></td>
+        <td>
+          EXCLUDED from inputs 2026-08-24 after visual inspection: double-kiss /
+          cliff-edge — no optimiser can cross it. Not a fair data point.
+        </td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=2">5</a></td><td>2</td><td>15.55</td>
+        <td><a href="viewer.html?index=2">5</a></td>
+        <td>2</td>
+        <td>15.55</td>
         <td><span class="tag session">session find</span></td>
         <td>+6.0 (rho), +5.4 (muS) held-out</td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=66">171</a></td><td>66</td><td>16.24</td>
+        <td><a href="viewer.html?index=66">171</a></td>
+        <td>66</td>
+        <td>16.24</td>
         <td><span class="tag session">session find</span></td>
         <td>+8.1 (muS); also +6.8 in μw study (largest there)</td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=65">169</a></td><td>65</td><td>18.86</td>
+        <td><a href="viewer.html?index=65">169</a></td>
+        <td>65</td>
+        <td>18.86</td>
         <td><span class="tag session">session find</span></td>
         <td>−3.8 (both rho & muS) — flips in the favourable direction too</td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=59">148</a></td><td>59</td><td>10.65</td>
+        <td><a href="viewer.html?index=59">148</a></td>
+        <td>59</td>
+        <td>10.65</td>
         <td><span class="tag borderline">borderline</span></td>
         <td>−2.0…−3.8 held-out swings; smallest of the set</td>
       </tr>

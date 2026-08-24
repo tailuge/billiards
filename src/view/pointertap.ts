@@ -1,11 +1,32 @@
 import { Input } from "../events/input"
 import type { Container } from "../container/container"
+import { id } from "../utils/dom"
 
 /** Max pointer displacement (px) between down and up for a click to count
  * as a tap. */
 const TAP_SLOP_PX = 8
 /** Max duration (ms) of a down/up pair for it to count as a tap. */
 const TAP_MS = 500
+/** Padding (px) around the Hit button where taps never enter aim-adjust
+ * mode, so a mis-aimed trackpad click reaching for the button does not
+ * toggle the mode. */
+const HIT_BUTTON_MARGIN_PX = 20
+
+/** True when (x, y) lies inside rect inflated by margin on all sides.
+ * Extracted pure so the boundaries can be unit tested headless. */
+export function isNearRect(
+  x: number,
+  y: number,
+  r: { left: number; top: number; right: number; bottom: number },
+  margin: number
+): boolean {
+  return (
+    x >= r.left - margin &&
+    x <= r.right + margin &&
+    y >= r.top - margin &&
+    y <= r.bottom + margin
+  )
+}
 
 /** True when a press/release pair is a tap: small displacement, short
  * duration, primary button, not touch, press did not start in the chat
@@ -168,6 +189,20 @@ export class PointerTap {
     this.pointerId = null
     if (!isTap(this.startX, this.startY, this.startT, e)) {
       return
+    }
+    // A tap that would enter adjust mode near the Hit button is treated as a
+    // mis-aimed strike at the button and ignored. Exiting stays allowed —
+    // that is deliberate. The button lives in #panel below the view, so only
+    // near-misses land here; when it is hidden (spectator/replay) its rect
+    // still exists and taps there stay swallowed.
+    if (!this.adjustActive) {
+      const hitRect = id("cueHit")?.getBoundingClientRect()
+      if (
+        hitRect &&
+        isNearRect(e.clientX, e.clientY, hitRect, HIT_BUTTON_MARGIN_PX)
+      ) {
+        return
+      }
     }
     this.adjustActive = !this.adjustActive
     this.lastHoverX = this.adjustActive ? e.clientX : null
