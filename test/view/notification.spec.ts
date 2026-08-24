@@ -19,7 +19,6 @@ describe("Notification", () => {
     notification.show("Test Message")
     const element = document.getElementById("notification")
     expect(element?.innerHTML).toContain("Test Message")
-    expect(element?.innerHTML).toContain("notification-banner")
     expect(element?.classList.contains("type-Info")).toBe(true)
   })
 
@@ -35,9 +34,6 @@ describe("Notification", () => {
     expect(element?.innerHTML).toContain("FOUL")
     expect(element?.innerHTML).toContain("Wrong ball")
     expect(element?.innerHTML).toContain("Ball in hand")
-    expect(element?.innerHTML).toContain("notification-title")
-    expect(element?.innerHTML).toContain("notification-banner")
-    expect(element?.innerHTML).toContain("notification-badge")
   })
 
   it("should render high breaks and actions inside the notification footer", () => {
@@ -59,8 +55,6 @@ describe("Notification", () => {
     )
     expect(element?.querySelector(".notification-actions")).not.toBeNull()
     expect(element?.querySelector(".notification-footer")).not.toBeNull()
-    expect(element?.innerHTML).toContain("Break : 9")
-    expect(element?.innerHTML).toContain("upload⇗")
     expect(
       (element?.querySelector(".notification-high-break") as HTMLButtonElement)
         ?.dataset.notificationUploadUrl

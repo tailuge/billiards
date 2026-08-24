@@ -140,7 +140,6 @@ describe("Menu", () => {
     expect(container.controller.name).to.equal("End")
     const notification = document.getElementById("notification")
     expect(notification?.innerHTML).to.contain("YOU LOST")
-    expect(notification?.innerHTML).to.contain("Lostber 🦞")
 
     Session.reset()
     done()

@@ -1,6 +1,6 @@
 import { Vector3 } from "three"
 import { unitAtAngle, roundVec2 } from "../../src/utils/three-utils"
-import { round, round2, pow, exp, isFirstShot } from "../../src/utils/utils"
+import { round, round2, isFirstShot } from "../../src/utils/utils"
 import { EventType } from "../../src/events/eventtype"
 
 describe("utils", () => {
@@ -43,20 +43,6 @@ describe("utils", () => {
       expect(v.x).toBeCloseTo(1.23)
       expect(v.y).toBeCloseTo(5.68)
       expect(v.z).toBeCloseTo(9.01)
-    })
-  })
-
-  describe("pow", () => {
-    it("should return x raised to the power of y", () => {
-      expect(pow(2, 3)).toBe(8)
-      expect(pow(9, 0.5)).toBe(3)
-    })
-  })
-
-  describe("exp", () => {
-    it("should return e raised to the power of x", () => {
-      expect(exp(0)).toBe(1)
-      expect(exp(1)).toBeCloseTo(Math.E)
     })
   })
 

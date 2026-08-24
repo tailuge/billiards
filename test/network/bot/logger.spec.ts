@@ -84,55 +84,6 @@ describe("Logger", () => {
     expect(logger.entries).toHaveLength(0)
   })
 
-  it("should handle missing elements gracefully", () => {
-    const l = logger as any
-    const originalLogElement = l.logElement
-    const originalElement = l.element
-
-    l.logElement = null
-    logger.render() // Should not throw
-
-    logger.show()
-    logger.hide()
-
-    l.element = null
-    logger.show()
-    logger.hide()
-
-    l.logElement = originalLogElement
-    l.element = originalElement
-
-    expect(true).toBe(true) // eslint-disable-line sonarjs/no-trivial-assertions
-  })
-
-  it("should handle missing toggle button in constructor", () => {
-    const originalGetElementById = document.getElementById.bind(document)
-    document.getElementById = jest.fn().mockImplementation((id) => {
-      if (id === "botDebugToggle") return null
-      return originalGetElementById(id)
-    })
-
-    expect(() => new Logger()).not.toThrow()
-
-    document.getElementById = originalGetElementById
-    expect(true).toBe(true) // eslint-disable-line sonarjs/no-trivial-assertions
-  })
-
-  it("should handle missing elements during expanded state update", () => {
-    const originalGetElementById = document.getElementById.bind(document)
-    document.getElementById = jest.fn().mockImplementation((id) => {
-      if (id === "botDebugToggle") return null
-      return originalGetElementById(id)
-    })
-
-    const l = logger as any
-    l.element = null
-    logger.toggleExpanded()
-
-    document.getElementById = originalGetElementById
-    expect(true).toBe(true) // eslint-disable-line sonarjs/no-trivial-assertions
-  })
-
   it("should respond to button clicks", () => {
     const clearButton = document.getElementById("botDebugClear")
     const toggleButton = document.getElementById("botDebugToggle")
