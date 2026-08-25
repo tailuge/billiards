@@ -15,7 +15,8 @@
       {
         "imports": {
           "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
-          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/",
+          "emoji-json": "https://cdn.jsdelivr.net/npm/unicode-emoji-json@0.9.0/data-ordered-emoji.json"
         }
       }
     </script>
@@ -259,6 +260,7 @@
     <script type="module">
       import * as THREE from "three"
       import { OrbitControls } from "three/addons/controls/OrbitControls.js"
+      import emojis from "emoji-json" with { type: "json" }
 
       const GRID_SIZE = 24
       const TOTAL_INSTANCES = GRID_SIZE * GRID_SIZE // 576
@@ -328,8 +330,8 @@
           this.currentPage = 0
           this.selectedEmoji = this.initialEmoji
 
-          // Generate full Unicode emoji list purely in JS memory
-          this.emojis = this.generateUnicodeEmojiList()
+          // Full Unicode emoji list (from unicode-emoji-json via the import map)
+          this.emojis = emojis
 
           this.init()
         }
@@ -395,109 +397,6 @@
 
           // Initial render of page 0
           this.renderPage()
-        }
-
-        generateUnicodeEmojiList() {
-          // Extended standard Unicode Emoji Code Point Ranges
-          const ranges = [
-            [0x1f600, 0x1f64f], // Emoticons / Smileys
-            [0x1f300, 0x1f5ff], // Misc Symbols & Pictographs
-            [0x1f680, 0x1f6ff], // Transport & Map Symbols
-            [0x1f900, 0x1f9ff], // Supplemental Symbols & Pictographs
-            [0x1fa70, 0x1faff], // Symbols & Pictographs Extended-A
-            [0x2600, 0x26ff], // Misc Symbols
-            [0x2700, 0x27bf], // Dingbats
-            [0x231a, 0x231b], // Watches
-            [0x23f0, 0x23f3], // Clocks
-            [0x2b50, 0x2b55], // Stars and Shapes
-          ]
-
-          // Regex test to ensure code points correspond to valid pictographic emojis
-          const emojiRegex = /\p{Extended_Pictographic}/u
-          // Only characters that accept a skin-tone modifier (people, hands,
-          // body parts) can legally be combined with one. Testing the whole
-          // Extended_Pictographic set here produces illegal sequences like
-          // "💢🏼" (anger symbol + skin tone), which render as two glyphs.
-          const modifierBaseRegex = /\p{Emoji_Modifier_Base}/u
-          const list = []
-
-          for (const [start, end] of ranges) {
-            for (let code = start; code <= end; code++) {
-              const char = String.fromCodePoint(code)
-              if (emojiRegex.test(char)) {
-                list.push(char)
-              }
-            }
-          }
-
-          // Only emit assigned regional-indicator pairs (taken from Unicode's
-          // emoji-sequences.txt RGI_Emoji_Flag_Sequence list). The other 417
-          // pairs are unassigned and render as two bare letter glyphs.
-          const validFlagCodes =
-            "ACADAEAFAGAIALAMAOAQARASATAUAWAXAZBABBBDBEBFBGBHBIBJBLBMBNBOBQBRBSBTBVBWBYBZCACCCDCFCGCHCICKCLCMCNCOCPCQCRCUCVCWCXCYCZDEDGDJDKDMDODZEAECEEEGEHERESETEUFIFJFKFMFOFRGAGBGDGEGFGGGHGIGLGMGNGPGQGRGSGTGUGWGYHKHMHNHRHTHUICIDIEILIMINIOIQIRISITJEJMJOJPKEKGKHKIKMKNKPKRKWKYKZLALBLCLILKLRLSLTLULVLYMAMCMDMEMFMGMHMKMLMMMNMOMPMQMRMSMTMUMVMWMXMYMZNANCNENFNGNINLNONPNRNUNZOMPAPEPFPGPHPKPLPMPNPRPSPTPWPYQARERORSRURWSASBSCSDSESGSHSISJSKSLSMSNSOSRSSSTSVSXSYSZTATCTDTFTGTHTJTKTLTMTNTOTRTTTVTWTZUAUGUMUNUSUYUZVAVCVEVGVIVNVUWFWSXKYEYTZAZMZW"
-          for (let i = 0; i < validFlagCodes.length; i += 2) {
-            const cc = validFlagCodes.substr(i, 2)
-            list.push(
-              String.fromCodePoint(
-                0x1f1e6 + cc.charCodeAt(0) - 65,
-                0x1f1e6 + cc.charCodeAt(1) - 65
-              )
-            )
-          }
-
-          list.push(String.fromCodePoint(0x1f3f3, 0xfe0f, 0x200d, 0x1f308))
-          list.push(
-            String.fromCodePoint(0x1f3f3, 0xfe0f, 0x200d, 0x26a2, 0xfe0f)
-          )
-          list.push(String.fromCodePoint(0x1f3f4, 0x200d, 0x2620, 0xfe0f))
-
-          const subdivisionCodes = [
-            [0x1f3f4, 0x67, 0x62, 0x65, 0x6e, 0x67, 0x7f],
-            [0x1f3f4, 0x67, 0x62, 0x73, 0x63, 0x74, 0x7f],
-            [0x1f3f4, 0x67, 0x62, 0x77, 0x6c, 0x73, 0x7f],
-          ]
-          for (const seq of subdivisionCodes) {
-            const chars = seq.map((c, i) => (i === 0 ? c : 0xe0000 + c))
-            list.push(String.fromCodePoint(...chars))
-          }
-
-          const modifierRanges = [
-            [0x1f440, 0x1f4aa],
-            [0x1f466, 0x1f487],
-            [0x1f910, 0x1f93e],
-          ]
-          const modifiers = [0x1f3fb, 0x1f3fc, 0x1f3fd, 0x1f3fe, 0x1f3ff]
-          for (const [start, end] of modifierRanges) {
-            for (let code = start; code <= end; code++) {
-              const char = String.fromCodePoint(code)
-              if (modifierBaseRegex.test(char)) {
-                for (const mod of modifiers) {
-                  list.push(char + String.fromCodePoint(mod))
-                }
-              }
-            }
-          }
-
-          for (let i = 48; i <= 57; i++) {
-            list.push(String.fromCodePoint(i, 0xfe0f, 0x20e3))
-          }
-          list.push(String.fromCodePoint(35, 0xfe0f, 0x20e3))
-          list.push(String.fromCodePoint(42, 0xfe0f, 0x20e3))
-
-          // (0x1f3ef castle and 0x1f3f3 white flag were dropped: person + ZWJ
-          // + castle/white-flag are not valid emoji sequences.)
-          const zwjBases = [0x1f468, 0x1f469, 0x1f9d1]
-          const zwjObjects = [
-            0x1f3a4, 0x1f3a8, 0x1f3eb, 0x1f4bb, 0x1f4bc, 0x1f527, 0x1f52c,
-            0x1f680, 0x1f692, 0x1f9b0, 0x1f9b1, 0x1f9b2, 0x1f9b3,
-          ]
-          for (const base of zwjBases) {
-            for (const obj of zwjObjects) {
-              list.push(String.fromCodePoint(base, 0x200d, obj))
-            }
-          }
-
-          return list
         }
 
         renderPage() {

@@ -64,36 +64,29 @@ export function bisectionSolver(
   return (a + b) / 2
 }
 
-// Emoji ranges covering: animals, food, plants, objects, activities,
-// travel, transport — excluding smileys, flags, hearts, and abstract symbols.
-const emojiIncludeRanges: [number, number][] = [
-  [0x1f310, 0x1f31f], // globe, moon, star
-  [0x1f321, 0x1f3ff], // thermometer to miscellaneous
-  [0x1f400, 0x1f492], // rat to wedding (animals, plants, food, objects)
-  [0x1f4a0, 0x1f4ff], // diamond to prayer beads (skip hearts 0x1f493-0x1f49f)
-  [0x1f500, 0x1f53d], // twisted arrows to down-pointing triangle
-  [0x1f550, 0x1f567], // clocks
-  [0x1f680, 0x1f6ff], // rocket to transport & misc
-]
-
-let _emojiCount = 0
-function emojiTotal(): number {
-  if (_emojiCount) return _emojiCount
-  _emojiCount = emojiIncludeRanges.reduce(
-    (sum, [lo, hi]) => sum + (hi - lo + 1),
-    0
-  )
-  return _emojiCount
-}
-
-export function randomEmoji(): string {
-  let index = Math.floor(Math.random() * emojiTotal())
-  for (const [lo, hi] of emojiIncludeRanges) {
-    const size = hi - lo + 1
-    if (index < size) return String.fromCodePoint(lo + index)
-    index -= size
+// Chat emoji pool: every single-codepoint RGI emoji, generated via the
+// Unicode RGI_Emoji property (ES2024 /v flag) instead of a hardcoded list.
+// Older browsers that reject the regex fall back to a small literal set.
+let chatPool: string[] | null = null
+function chatEmojiPool(): string[] {
+  if (!chatPool) {
+    try {
+      const re = new RegExp("\\p{RGI_Emoji}", "v")
+      chatPool = []
+      for (const [lo, hi] of [
+        [0x2000, 0x2bff],
+        [0x1f000, 0x1fbff],
+      ]) {
+        for (let cp = lo; cp <= hi; cp++) {
+          const ch = String.fromCodePoint(cp)
+          if (re.test(ch)) chatPool.push(ch)
+        }
+      }
+    } catch {
+      chatPool = ["🍺", "🌵", "🐕", "⚓", "🚀", "⏰", "🔑", "💡"]
+    }
   }
-  return "🎱"
+  return chatPool
 }
 
 // Emoji that are guaranteed to appear in the random emoji slots (placed randomly)
@@ -102,23 +95,15 @@ const alwaysEmojis = ["🚬", "🥃", "🍀", "👏", "🎖️", "👀"]
 // Build a list of `count` unique emojis containing the alwaysEmojis,
 // shuffled so the fixed emojis land in random positions.
 export function randomEmojis(count: number): string[] {
-  const result: string[] = [...alwaysEmojis]
-  const used = new Set(result)
-  // Cap at the total pool size to guarantee the loop terminates
-  const target = Math.min(count, emojiTotal() + alwaysEmojis.length)
-  while (result.length < target) {
-    const emoji = randomEmoji()
-    if (!used.has(emoji)) {
-      used.add(emoji)
-      result.push(emoji)
-    }
-  }
-  // Fisher-Yates shuffle so the always-emojis are randomly placed
-  for (let i = result.length - 1; i > 0; i--) {
+  const pool = [...chatEmojiPool()].filter((e) => !alwaysEmojis.includes(e))
+  for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[result[i], result[j]] = [result[j], result[i]]
+    ;[pool[i], pool[j]] = [pool[j], pool[i]]
   }
-  return result
+  return [...alwaysEmojis, ...pool].slice(
+    0,
+    Math.max(count, alwaysEmojis.length)
+  )
 }
 
 export const ruleTypeMap: Record<string, { emoji: string; title: string }> = {
