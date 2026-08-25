@@ -9,6 +9,9 @@ import { BallTextureFactory } from "./balltexturefactory"
 import { BallCubeTextureFactory } from "./ballcubetexturefactory"
 import { Session } from "../network/client/session"
 
+// Brightness multiplier at full pocket depth (1 = no fade, 0 = black)
+const POCKET_SHADE = 0.4
+
 export class BallMaterialFactory {
   private static readonly materialCache: Map<
     string,
@@ -36,21 +39,24 @@ export class BallMaterialFactory {
 
       shader.vertexShader = `
         varying vec3 vLocalPos;
+        varying float vShade;
         ${shader.vertexShader}
       `.replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
-        vLocalPos = position;`
+        vLocalPos = position;
+        vShade = clamp(-modelMatrix[3].z * ${(1 / (4 * R)).toFixed(2)}, 0.0, 1.0);`
       )
 
       shader.fragmentShader = `
         uniform samplerCube uCubeMap;
         varying vec3 vLocalPos;
+        varying float vShade;
         ${shader.fragmentShader}
       `.replace(
         "#include <color_fragment>",
         `#include <color_fragment>
-        diffuseColor.rgb = textureCube(uCubeMap, normalize(vLocalPos)).rgb;`
+        diffuseColor.rgb = textureCube(uCubeMap, normalize(vLocalPos)).rgb * mix(1.0, ${POCKET_SHADE}, vShade);`
       )
     }
 
@@ -74,6 +80,24 @@ export class BallMaterialFactory {
       transparent: false,
       depthWrite: true,
     })
+    material.onBeforeCompile = (shader: any) => {
+      shader.vertexShader = `
+        varying float vShade;
+        ${shader.vertexShader}
+      `.replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+        vShade = clamp(-modelMatrix[3].z * ${(1 / (4 * R)).toFixed(2)}, 0.0, 1.0);`
+      )
+      shader.fragmentShader = `
+        varying float vShade;
+        ${shader.fragmentShader}
+      `.replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        diffuseColor.rgb *= mix(1.0, ${POCKET_SHADE}, vShade);`
+      )
+    }
     this.materialCache.set(key, material)
     return material
   }
@@ -120,12 +144,14 @@ export class BallMaterialFactory {
       shader.vertexShader = shader.vertexShader.replace(
         "#include <common>",
         `#include <common>
-         varying vec3 vLocalPosition;`
+         varying vec3 vLocalPosition;
+         varying float vShade;`
       )
       shader.vertexShader = shader.vertexShader.replace(
         "#include <begin_vertex>",
         `#include <begin_vertex>
-         vLocalPosition = position;`
+         vLocalPosition = position;
+         vShade = clamp(-modelMatrix[3].z * ${(1 / (4 * R)).toFixed(2)}, 0.0, 1.0);`
       )
 
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -133,7 +159,8 @@ export class BallMaterialFactory {
         `#include <common>
         uniform sampler2D numberTex;
         uniform float invScale;
-        varying vec3 vLocalPosition;`
+        varying vec3 vLocalPosition;
+        varying float vShade;`
       )
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <color_fragment>",
@@ -160,7 +187,7 @@ export class BallMaterialFactory {
         // -0.5 to -1.0 usually restores the "crisp" look.
         vec4 texColor = textureGrad(numberTex, projUv, dx * 0.5, dy * 0.5);
      
-        diffuseColor.rgb = texColor.rgb;`
+        diffuseColor.rgb = texColor.rgb * mix(1.0, ${POCKET_SHADE}, vShade);`
       )
     }
     this.materialCache.set(key, material)
