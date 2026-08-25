@@ -74,11 +74,13 @@ export class BallTray {
       }
     }
 
-    const icon = isOpponent
-      ? "⊙"
-      : isPartOfBreak
-        ? "⚈".repeat(pots + 1)
-        : "⚈".repeat(pots) + "⚆"
+    let icon = "⚈".repeat(pots) + "⚆"
+    if (isPartOfBreak) {
+      icon = "⚈".repeat(pots + 1)
+    }
+    if (isOpponent) {
+      icon = "⊙"
+    }
     const replayUri = this.container.linkFormatter.getReplayUri(state)
 
     let label = "Shot"
@@ -168,7 +170,9 @@ export class BallTray {
 
   private updateVisibility() {
     if (this.trayElement) {
-      this.trayElement.style.display = this.entries.length > 0 ? "flex" : "none"
+      const visible = this.entries.length > 0
+      this.trayElement.hidden = !visible
+      this.trayElement.style.display = visible ? "flex" : "none"
     }
   }
 

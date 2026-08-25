@@ -159,7 +159,7 @@ export class Portrait {
     // Name plaque: a thin textured quad mounted below the portrait.
     this.plateCanvas = document.createElement("canvas")
     this.plateCanvas.width = 256
-    this.plateCanvas.height = 48
+    this.plateCanvas.height = 32
     this.plateCtx = this.plateCanvas.getContext("2d")
     this.plateTexture = new CanvasTexture(this.plateCanvas)
     this.plateTexture.colorSpace = SRGBColorSpace
@@ -171,9 +171,9 @@ export class Portrait {
       transparent: true,
       depthWrite: false,
     })
-    // 256/48 = 0.9/0.16875, so the texture keeps its aspect ratio on the plane.
+    // 256/32 = 0.9/0.1125, so the texture keeps its aspect ratio on the plane.
     this.plate = new Mesh(
-      Portrait.createWallQuadGeometry(0.9, 0.16875),
+      Portrait.createWallQuadGeometry(0.9, 0.1125),
       plateMat
     )
     // Mount the plaque below the portrait.
@@ -315,23 +315,23 @@ export class Portrait {
     ctx.textAlign = "center"
     ctx.textBaseline = "middle"
 
-    // Prefer 30px Exo but shrink to fit long names on the plaque.
-    let fontPx = 30
+    // Prefer 20px Exo but shrink to fit long names on the plaque.
+    let fontPx = 20
     ctx.font = `700 ${fontPx}px 'Exo', sans-serif`
     while (
       ctx.measureText(this.state.name).width > this.plateCanvas.width - 12 &&
-      fontPx > 16
+      fontPx > 12
     ) {
       fontPx -= 2
       ctx.font = `700 ${fontPx}px 'Exo', sans-serif`
     }
 
-    // Transparent plaque: no background fill, just the text and a soft drop
+    // Transparent plaque: no background fill, just the text and a hard drop
     // shadow. The canvas alpha channel carries both, so the quad stays
     // see-through everywhere else (the material is already transparent).
     ctx.shadowColor = "rgba(0, 0, 0, 0.95)"
-    ctx.shadowBlur = 2.5
-    ctx.shadowOffsetY = 2
+    ctx.shadowBlur = 1
+    ctx.shadowOffsetY = 1
     ctx.fillStyle = "#c9d1d9"
     ctx.fillText(
       this.state.name,

@@ -902,12 +902,15 @@
       }
       animate()
 
-      // Tell the embedding page we're finished, so it can close the iframe.
-      // `type: "done"` is a shared signal any iframe host can listen for.
-      // Guarded so the page still works standalone (window.parent is then
-      // this window and the message is harmlessly self-posted).
+      // Tell the embedding page we're finished, or return to the lobby when
+      // the cue editor is opened directly rather than inside an iframe.
       const doneBtn = document.getElementById("done")
       doneBtn?.addEventListener("click", () => {
+        if (window.self === window.top) {
+          window.location.href = "lobby.html"
+          return
+        }
+
         try {
           window.parent.postMessage({ type: "done" }, "*")
         } catch {}
