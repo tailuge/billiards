@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Exo:wght@200;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Exo:wght@200;600;700&display=swap"
       rel="stylesheet"
     />
     <!-- Same three.js version as cue.html -->
@@ -900,12 +900,15 @@
         }
 
         const plateCanvas = document.createElement("canvas")
-        plateCanvas.width = 512
-        plateCanvas.height = 96
+        plateCanvas.width = 256
+        plateCanvas.height = 32
         const plateCtx = plateCanvas.getContext("2d")
 
         const plateTexture = new THREE.CanvasTexture(plateCanvas)
         plateTexture.colorSpace = THREE.SRGBColorSpace
+        // Canvas 2D draws premultiplied, so tell three to match or the text
+        // will pick up a dark fringe against the now-transparent background.
+        plateTexture.premultiplyAlpha = true
 
         const plateMat = new THREE.MeshBasicMaterial({
           map: plateTexture,
@@ -913,13 +916,13 @@
           depthWrite: false,
         })
 
-        // 512/96 = 0.6/0.1125, so the texture keeps its aspect ratio on the plane.
+        // 256/32 = 1.08/0.135, so the texture keeps its aspect ratio on the plane.
         const plate = new THREE.Mesh(
-          createWallQuadGeometry(0.6, 0.1125),
+          createWallQuadGeometry(1.08, 0.135),
           plateMat
         )
-        // The border's inner hole spans z in [-0.545, 0.545]; mount the plaque below it.
-        plate.position.set(-0.055, 0, -0.6)
+        // Mount the plaque below the portrait.
+        plate.position.set(-0.055, 0, -0.55)
         wallGroup.add(plate)
 
         function drawPlate() {
@@ -928,40 +931,29 @@
 
           plateCtx.clearRect(0, 0, plateCanvas.width, plateCanvas.height)
 
-          // Dark grey plaque with a subtle border, mounted below the emoji.
-          plateCtx.fillStyle = "#222a33"
-          plateCtx.fillRect(0, 0, plateCanvas.width, plateCanvas.height)
-          plateCtx.strokeStyle = "#3a4350"
-          plateCtx.lineWidth = 4
-          plateCtx.strokeRect(
-            2,
-            2,
-            plateCanvas.width - 4,
-            plateCanvas.height - 4
-          )
-
           plateCtx.textAlign = "center"
           plateCtx.textBaseline = "middle"
 
-          // Prefer 60px Exo but shrink to fit long names on the plaque.
-          let fontPx = 60
-          let totalWidth = 0
-          do {
-            plateCtx.font = `200 ${fontPx}px 'Exo', sans-serif`
-            totalWidth = plateCtx.measureText(state.name).width
-            if (totalWidth > plateCanvas.width - 24 && fontPx > 32) {
-              fontPx -= 4
-            } else {
-              break
-            }
-          } while (true)
+          // Names are capped at 12 chars, which fits comfortably at 20px on
+          // the 256px canvas (widest case ~220px vs the 244px limit).
+          plateCtx.font = "700 20px 'Exo', sans-serif"
 
-          plateCtx.fillStyle = "#e6edf3"
+          // Transparent plaque: no background fill, just the text and a hard
+          // drop shadow. The canvas alpha channel carries both, so the quad
+          // stays see-through everywhere else (the material is already
+          // transparent).
+          plateCtx.shadowColor = "rgba(0, 0, 0, 0.95)"
+          plateCtx.shadowBlur = 1
+          plateCtx.shadowOffsetY = 1
+          plateCtx.fillStyle = "#c9d1d9"
           plateCtx.fillText(
             state.name,
             plateCanvas.width / 2,
             plateCanvas.height / 2
           )
+          plateCtx.shadowColor = "transparent"
+          plateCtx.shadowBlur = 0
+          plateCtx.shadowOffsetY = 0
 
           plateTexture.needsUpdate = true
         }

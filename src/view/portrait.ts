@@ -315,16 +315,9 @@ export class Portrait {
     ctx.textAlign = "center"
     ctx.textBaseline = "middle"
 
-    // Prefer 20px Exo but shrink to fit long names on the plaque.
-    let fontPx = 20
-    ctx.font = `700 ${fontPx}px 'Exo', sans-serif`
-    while (
-      ctx.measureText(this.state.name).width > this.plateCanvas.width - 12 &&
-      fontPx > 12
-    ) {
-      fontPx -= 2
-      ctx.font = `700 ${fontPx}px 'Exo', sans-serif`
-    }
+    // Names are capped at 12 chars, which fits comfortably at 20px on the
+    // 256px canvas (widest case ~220px vs the 244px limit).
+    ctx.font = "700 20px 'Exo', sans-serif"
 
     // Transparent plaque: no background fill, just the text and a hard drop
     // shadow. The canvas alpha channel carries both, so the quad stays
