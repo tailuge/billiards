@@ -74,14 +74,11 @@ export class BallTray {
       }
     }
 
-    let icon = "⚆"
-    if (isOpponent) {
-      icon = "⊙"
-    } else if (isPartOfBreak) {
-      icon = "⚈".repeat(pots + 1)
-    } else {
-      icon = "⚈".repeat(pots) + "⚆"
-    }
+    const icon = isOpponent
+      ? "⊙"
+      : isPartOfBreak
+        ? "⚈".repeat(pots + 1)
+        : "⚈".repeat(pots) + "⚆"
     const replayUri = this.container.linkFormatter.getReplayUri(state)
 
     let label = "Shot"

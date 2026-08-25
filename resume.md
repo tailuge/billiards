@@ -37,8 +37,9 @@ restarting the rack, using `localStorage` only.
 **Non-goals:** mid-shot recovery (velocities/spin are not serialised and don't
 need to be), refreshing while your *own* shot is in flight (after the `HIT` is
 published but before the turn boundary settles — the stored entry is still the
-previous turn boundary and cannot re-simulate it, so this falls back to a
-fresh rack), spectator resume, bot/practice/drill games, cross-device resume.
+previous turn boundary and cannot re-simulate it; this diverges and is
+deferred to **Future work** below), spectator resume, bot/practice/drill
+games, cross-device resume.
 
 ## Current behaviour after refresh
 
@@ -298,10 +299,12 @@ remove roughly half of the `BrowserContainer` item if done later.
   `HIT` replays with a newer msgId). The *opponent* is unaffected — they just
   see us rejoin (`onOpponentRejoined` hook already exists,
   `messagingmessagerelay.ts:64`); no special handling needed on either side.
-- **Own shot in flight at refresh:** out of scope. A refresh after our `HIT`
-  is published but before the turn boundary settles falls back to a fresh rack
-  — the stored entry is still the *previous* turn boundary and cannot
-  re-simulate the in-flight shot (see non-goals).
+- **Own shot in flight at refresh:** out of scope for now — a refresh after
+  our `HIT` is published but before the turn boundary settles restores the
+  *previous* boundary and drops the in-flight shot, while the opponent (who
+  simulated it) waits forever for the shooter's boundary broadcasts. Real and
+  diverging; recovery is designed but not implemented — see **Future work**
+  below.
 - **Buffer truncation:** Nchan buffers are bounded (~2000). For a 2-player
   game a turn boundary is written every few messages, so the watermark stays
   well inside the buffer for any realistic session; accepted as out of scope.
@@ -334,6 +337,73 @@ remove roughly half of the `BrowserContainer` item if done later.
 - **Stale entry after starting a new game:** a new game writes to the same
   `resume.<clientId>` slot, overwriting the old entry; no explicit
   invalidation needed.
+
+## Future work: recovering an own in-flight shot
+
+Refreshing while our own shot rolls is the one remaining divergence, and it is
+a real one: rolling time is long (multi-second shots are normal), so over a
+session a crash or connection issue inside that window is statistically
+likely. Observed failure: the refresher restores the *previous* boundary
+(start-of-shot positions) believing it is still their turn; the opponent
+finished simulating via `WatchShot` and now waits forever for the boundary
+broadcasts (`ScoreEvent`/`StartAimEvent`) that only `PlayShot.handleStationary`
+on the shooter's client ever sends. Both clients diverge.
+
+The key observation that makes local recovery feasible: **the shot is fully
+determined by (pre-shot stationary table + hit params), and we already have
+both.**
+
+- The stored entry *is* the pre-shot state — balls do not move between a turn
+  boundary and the shot taken during that turn.
+- The published `HitEvent` carries everything needed to re-simulate
+  (`cueBallId`, angle, power, offset, elevation).
+- We can assume the `HIT` reached the opponent (publishes are reliable/
+  retried by the library outbox). So this is purely about **local** recovery:
+  re-simulate the shot on reload, then resolve the turn as the shooter again —
+  running `rules.update` normally and publishing fresh boundary broadcasts.
+  No protocol change; the opponent just waits a little longer for a boundary
+  that arrives late instead of never.
+
+Sketch: at `HIT` publish time, record the hit params in the resume payload (or
+a sibling slot) as a "pending shot"; on load, if a pending shot exists, apply
+the entry snapshot, replay the hit locally through `PlayShot`'s normal path,
+and continue. Clear the pending marker when the next boundary settles.
+
+### Issues any solution must handle
+
+1. **Never re-publish the `HIT`.** The opponent already processed it; a second
+   copy double-simulates. Recovery replays the hit *locally only* — but the
+   nchan buffer will also redeliver our own `HIT` (msgId > watermark), which
+   self-echo suppression drops. Decide deliberately whether recovery consumes
+   the stored params (simplest) or the replayed echo (bypassing suppression
+   for exactly that one message — fiddly).
+2. **Where the pending hit is captured.** The current save hook fires at the
+   previous boundary, before the in-flight shot exists. Either extend
+   `saveResumeEntry` with a pending-hit field written at publish time, or let
+   the watermark filter pass our own `HIT` through to a recovery handler.
+   Both keep writes shooter-side only.
+3. **Rules resolution happens once, by exactly one client.** The refresher
+   becomes the resolver again and broadcasts fresh boundary events; the
+   opponent never saw originals, so there are no duplicates to suppress — but
+   if *both* players refreshed mid-shot, nobody resolves. Accept (same class
+   as today).
+4. **Determinism.** Re-simulation must match what the opponent watched:
+   same physics code + same params is deterministic, but the recovered run
+   must not depend on local state the refresh discarded (Recorder/first-shot,
+   cue spin visuals are fine to differ).
+5. **UI during recovery.** The player should watch their shot again
+   (`WatchShot`-style playback from the restored snapshot), not stare at a
+   frozen aim view for the seconds the re-simulation takes.
+6. **Cleanup coherence.** The pending marker must be cleared when the shot
+   resolves (next boundary save supersedes it) and at `End`, or a stale
+   pending hit would replay an old shot onto a much later resume.
+7. **Interaction with Recorder/first-shot work.** Same caveat as the
+   break-off clamp above: outcome-dependent rules paths that read the
+   Recorder may still be wrong post-resume; revisit together.
+8. **Heavier alternatives rejected:** watcher-takeover protocols (race-prone
+   against the returning player) and server-side arbitration (no server logic
+   today). The lib-level `resumeFromMsgId` positional subscribe would simplify
+   the watermark but does nothing for this case by itself.
 
 ## Testing
 
