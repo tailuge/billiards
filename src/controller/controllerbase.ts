@@ -10,6 +10,8 @@ import { Session } from "../network/client/session"
 
 const flipP1type = (t: number) => (t === 1 ? 2 : 1)
 
+const flipX = new URLSearchParams(globalThis.location?.search).has("flip")
+
 export abstract class ControllerBase extends Controller {
   readonly scale = 0.001
 
@@ -134,7 +136,7 @@ export abstract class ControllerBase extends Controller {
         this.container.menu.toggleHelpOverlay()
         return true
       case "movementXUp":
-        cue.rotateAim(delta * 2, this.container.table)
+        cue.rotateAim((flipX ? -delta : delta) * 2, this.container.table)
         return true
       case "movementYUp":
         if (!cue.aimInputs?.isDisabled()) {
@@ -161,7 +163,7 @@ export abstract class ControllerBase extends Controller {
         this.container.view.minimap.keyUp()
         return true
       case "KeyFUp":
-        this.toggleFullscreen()
+        this.container.menu.toggleFullscreen()
         return true
       case "KeyLUp":
         this.container.menu.toggleChromeless()
@@ -193,14 +195,6 @@ export abstract class ControllerBase extends Controller {
         return true
       default:
         return false
-    }
-  }
-
-  private toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen()
-    } else if (document.exitFullscreen) {
-      document.exitFullscreen()
     }
   }
 }

@@ -15,6 +15,7 @@ export class Menu {
   analysis: HTMLButtonElement
   ffwd: HTMLButtonElement
   chromeless: HTMLButtonElement
+  fullscreen: HTMLButtonElement
   menuDropdown: HTMLDetailsElement | null
 
   disabled = true
@@ -30,6 +31,7 @@ export class Menu {
     this.analysis = this.getElement("analysis")
     this.ffwd = this.getElement("ffwd")
     this.chromeless = this.getElement("chromeless")
+    this.fullscreen = this.getElement("fullscreen")
     this.menuDropdown = document.getElementById(
       "menuDropdown"
     ) as HTMLDetailsElement | null
@@ -63,6 +65,15 @@ export class Menu {
 
     if (this.diagram) {
       this.diagram.onclick = () => this.handleExport(false)
+    }
+
+    if (this.fullscreen) {
+      this.fullscreen.onclick = (_) => {
+        this.toggleFullscreen()
+        if (this.menuDropdown) {
+          this.menuDropdown.open = false
+        }
+      }
     }
 
     this.setShareVisible(false)
@@ -212,6 +223,14 @@ export class Menu {
 
   toggleChromeless() {
     document.body.classList.toggle("chromeless")
+  }
+
+  toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen()
+    } else if (document.exitFullscreen) {
+      document.exitFullscreen()
+    }
   }
 
   toggleHelpOverlay() {

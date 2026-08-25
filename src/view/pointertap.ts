@@ -69,12 +69,10 @@ export class PointerTap {
   private pointerId: number | null = null
   private lastHoverX: number | null = null
   private lastHoverY: number | null = null
-  private flipX: boolean
   private removeListeners: (() => void) | null = null
 
   constructor(container: Container) {
     this.container = container
-    this.flipX = new URLSearchParams(globalThis.location?.search).has("flip")
   }
 
   get adjusting(): boolean {
@@ -160,12 +158,9 @@ export class PointerTap {
       return
     }
     if (this.lastHoverX !== null) {
-      let dx = e.clientX - this.lastHoverX
+      const dx = e.clientX - this.lastHoverX
       // Same factors as Keyboard.mousetouch so hover feels like drag.
       let dy = (e.clientY - (this.lastHoverY ?? e.clientY)) * 0.8
-      if (this.flipX) {
-        dx = -dx
-      }
       // Dominant axis wins vertically, as with drag.
       if (Math.abs(dx) > Math.abs(dy)) {
         dy = 0
