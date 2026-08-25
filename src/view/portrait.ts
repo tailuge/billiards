@@ -171,9 +171,9 @@ export class Portrait {
       transparent: true,
       depthWrite: false,
     })
-    // 256/32 = 0.9/0.1125, so the texture keeps its aspect ratio on the plane.
+    // 256/32 = 1.08/0.135, so the texture keeps its aspect ratio on the plane.
     this.plate = new Mesh(
-      Portrait.createWallQuadGeometry(0.9, 0.1125),
+      Portrait.createWallQuadGeometry(1.08, 0.135),
       plateMat
     )
     // Mount the plaque below the portrait.
