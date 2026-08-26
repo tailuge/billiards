@@ -34,6 +34,9 @@ Defaults: input `trajectories.json`, output `shots.json`, Nelder-Mead over
 --ids 3,17,42      only fit these shot ids
 --all              RMSE against all balls (default: cue ball only)
 --max-evals N      NM eval budget per shot (default 400)
+--cutoff S         score only truth samples with t <= S seconds (default 4);
+                   0 disables the time cutoff. The simulation itself also
+                   stops at S+1 s (worker `maxTime`) so tails aren't simulated
 --report           no optimisation: evaluate and report seed RMSE only
 --min-rmse CM      only fit shots whose seed RMSE is above CM (cm); shots at
                    or below are copied through to the output unchanged
@@ -104,7 +107,10 @@ Filtering candidates for refinement: high `rmseAfterCm`, or
 ### Caveats
 
 - RMSE values are only comparable between runs scored the same way
-  (same weighting, same cue-ball vs `--all` setting).
+  (same weighting, same cue-ball vs `--all` setting, same `--cutoff`).
+- Scoring weights each sample `1/(1+t)` (cue ball 1.5x other balls) and
+  ignores truth samples past the cutoff (`rmse.js`, default 4 s), so late
+  friction mismatches don't dominate the fit.
 - A crash mid-batch can leave the output half-written — just re-run from
   the input. The script halts with a non-zero exit on any simulation failure.
 

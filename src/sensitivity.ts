@@ -53,6 +53,8 @@ export interface WorkerConfig {
   }
   stepSize?: number
   maxIterations?: number
+  /** Stop the simulation after this many seconds of simulated time (null: run to rest). */
+  maxTime?: number
   recordTrajectory?: boolean
   warpClearanceR?: number
 }

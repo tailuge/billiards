@@ -78,6 +78,15 @@
           <label style="display: flex; align-items: center; gap: 1px"
             ><input type="checkbox" id="trackAll" />track all</label
           >
+          <label style="display: flex; align-items: center; gap: 1px"
+            >cutoff(s):<input
+              type="number"
+              id="cutoffInput"
+              value="4"
+              min="0"
+              step="0.5"
+              style="width: 40px"
+          /></label>
           <select
             id="optimiserSelect"
             style="font-size: 11px; font-family: monospace"
@@ -179,10 +188,15 @@
         ctx.stroke()
       }
 
+      function readCutoff() {
+        const v = parseFloat(document.getElementById("cutoffInput").value)
+        return Number.isFinite(v) ? v : null
+      }
+
       function updateDrawing() {
         if (!loadedData) return
         const trackAll = document.getElementById("trackAll").checked
-        redraw(canvas, loadedData.truth, simTracks, trackAll)
+        redraw(canvas, loadedData.truth, simTracks, trackAll, readCutoff())
       }
 
       const defaults = {
@@ -317,12 +331,14 @@
       }
 
       const urlParams = new URLSearchParams(window.location.search)
-      const urlIndex = urlParams.get("index") ?? urlParams.get("shot")
+      const urlIndex = urlParams.get("index")
+      const urlShotId = urlParams.get("shot")
 
       async function onRunSim() {
         const btn = document.getElementById("simBtn")
         const status = document.getElementById("status")
         const trackAll = document.getElementById("trackAll").checked
+        const cutoff = readCutoff()
         let sim
         try {
           sim = JSON.parse(document.getElementById("simEdit").value)
@@ -339,7 +355,8 @@
           const result = await runSim(
             loadedData.sim,
             loadedData.truth,
-            trackAll
+            trackAll,
+            cutoff
           )
           status.textContent = `Shot done in ${Math.round(performance.now() - t0)}ms — ${result.frames.length} steps`
           simTracks = result.simTracks
@@ -357,6 +374,10 @@
 
       document.getElementById("simBtn").onclick = onRunSim
       document.getElementById("trackAll").onchange = updateDrawing
+      document.getElementById("cutoffInput").onchange = () => {
+        updateDrawing()
+        onRunSim()
+      }
 
       const simplifyTolInput = document.getElementById("simplifyTol")
       const simplifyTolValSpan = document.getElementById("simplifyTolVal")
@@ -392,6 +413,7 @@
       document.getElementById("optBtn").onclick = async () => {
         const specs = getSpecs()
         const trackAll = document.getElementById("trackAll").checked
+        const cutoff = readCutoff()
         if (specs.length === 0) {
           document.getElementById("optStatus").textContent =
             "Check at least one param"
@@ -443,7 +465,8 @@
             specs,
             onStep,
             abortController.signal,
-            trackAll
+            trackAll,
+            cutoff
           )
         } catch (err) {
           document.getElementById("optStatus").textContent =
@@ -645,12 +668,19 @@
             select.appendChild(opt)
           })
 
-          const requestedIndex =
-            urlIndex === null ? NaN : parseInt(urlIndex, 10)
-          const idx =
-            !isNaN(requestedIndex) && data[requestedIndex]
-              ? requestedIndex
-              : Math.floor(Math.random() * data.length)
+          // ?index=N addresses shots.json positionally; ?shot=<id> matches
+          // the shot's own id (ids don't equal array positions).
+          let idx
+          if (urlIndex !== null) {
+            const i = parseInt(urlIndex, 10)
+            idx = !isNaN(i) && data[i] ? i : NaN
+          } else if (urlShotId !== null) {
+            const i = data.findIndex((e) => e.id === Number(urlShotId))
+            idx = i >= 0 ? i : NaN
+          } else {
+            idx = NaN
+          }
+          if (isNaN(idx)) idx = Math.floor(Math.random() * data.length)
           const shot = data[idx]
           select.value = idx
           loadedFile = `shots.json [Shot ${shot.id ?? idx}]`

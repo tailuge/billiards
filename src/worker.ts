@@ -176,6 +176,7 @@ export function simulateSync(config: any): any {
     shot,
     stepSize = 0.001953125,
     maxIterations = 200000,
+    maxTime = null,
     params = {},
   } = config
 
@@ -211,7 +212,11 @@ export function simulateSync(config: any): any {
   const progressInterval = 10000
 
   // Simulation loop
-  while (!table.allStationary() && iterations < maxIterations) {
+  while (
+    !table.allStationary() &&
+    iterations < maxIterations &&
+    (maxTime == null || table.time < maxTime * 1000)
+  ) {
     const warpTime = getFastWarpTime(table, R, warpClearanceR * R)
     const dt =
       warpTime > stepSize

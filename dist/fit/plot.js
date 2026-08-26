@@ -5,10 +5,13 @@ export const HALF_H = 0.03275 * 46.18 / 2
 const COLORS = ['#fff', '#ff0', '#f00']
 const SIM_COLORS = ['rgba(255, 255, 255, 1)', 'rgba(255, 251, 0, 1)', 'rgba(255, 0, 0, 1)']
 
-export function redraw(canvas, truth, simTracks, trackAll = false) {
+export function redraw(canvas, truth, simTracks, trackAll = false, cutoff = null) {
   const W = canvas.width
   const H = canvas.height
   const ctx = canvas.getContext('2d')
+  // Only draw the scored window: samples past `cutoff` are excluded from the
+  // RMSE, so don't plot them either (null = no cutoff, show everything).
+  const limit = cutoff == null || !Number.isFinite(cutoff) ? Infinity : cutoff
 
   const tx = x => (x + HALF_W) / (2 * HALF_W) * W
   const ty = y => (HALF_H - y) / (2 * HALF_H) * H
@@ -16,26 +19,29 @@ export function redraw(canvas, truth, simTracks, trackAll = false) {
   ctx.fillStyle = '#3b3f88ff'
   ctx.fillRect(0, 0, W, H)
 
-  for (const { ball, x, y } of truth) {
+  for (const { ball, t, x, y } of truth) {
+    if (t > limit) continue
     ctx.fillStyle = COLORS[ball] ?? '#888'
     ctx.fillRect(tx(x) - 1, ty(y) - 1, 2, 2)
   }
 
   if (simTracks) {
     for (const [id, track] of Object.entries(simTracks)) {
-      if (track.length < 2) continue
+      const cut = track.filter(p => p.t <= limit)
+      if (cut.length < 2) continue
       ctx.strokeStyle = SIM_COLORS[id]
       ctx.lineWidth = 0.75
       ctx.beginPath()
-      ctx.moveTo(tx(track[0].x), ty(track[0].y))
-      for (let i = 1; i < track.length; i++) {
-        ctx.lineTo(tx(track[i].x), ty(track[i].y))
+      ctx.moveTo(tx(cut[0].x), ty(cut[0].y))
+      for (let i = 1; i < cut.length; i++) {
+        ctx.lineTo(tx(cut[i].x), ty(cut[i].y))
       }
       ctx.stroke()
     }
 
     ctx.lineWidth = 0.05
     for (const { ball, t, x, y } of truth) {
+      if (t > limit) continue
       if (!trackAll && ball !== 0) continue
       const track = simTracks[ball]
       if (!track) continue

@@ -26,7 +26,7 @@ import { fileURLToPath } from "node:url"
 
 import { Simplex } from "./vendor/dfoptim.mjs"
 import pso from "./vendor/pso.mjs"
-import { computeSSE } from "./rmse.js"
+import { computeSSE, RMSE_CUTOFF_T } from "./rmse.js"
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url))
 
@@ -64,6 +64,8 @@ function usage() {
                      below are copied through to the output unchanged
   --max-rmse CM      only process shots with seed RMSE at or below CM (cm);
                      shots above are dropped from output and summary
+  --cutoff S         score only truth samples with t <= S seconds (default 4);
+                     0 disables the time cutoff
   --param k=v        physics-param override, repeatable / comma-separated,
                      e.g. --param rho=0.0454,mu=0.006 (keys: mu muS rho m R
                      ee mus muw stronge_omega_ratio stronge_e_n stronge_mu;
@@ -81,6 +83,7 @@ const opts = {
   report: false,
   minRmse: null,
   maxRmse: null,
+  cutoff: RMSE_CUTOFF_T,
   params: [],
   input: null,
   output: null,
@@ -113,6 +116,14 @@ for (let i = 0; i < argv.length; i++) {
       console.error("--max-rmse expects a non-negative number (cm)")
       process.exit(1)
     }
+  } else if (a === "--cutoff") {
+    opts.cutoff = Number(argv[++i])
+    if (!Number.isFinite(opts.cutoff) || opts.cutoff < 0) {
+      console.error("--cutoff expects a non-negative number (seconds)")
+      process.exit(1)
+    }
+    // 0 means no time cutoff
+    if (opts.cutoff === 0) opts.cutoff = null
   } else if (a === "--param") {
     opts.params.push(...argv[++i].split(",").map((s) => s.trim()))
   } else if (a === "--input") {
@@ -289,6 +300,9 @@ function buildSim(shot, balls, mapping) {
     params: { ...EFFECTIVE_PARAMS },
     stepSize: 0.001953125,
     maxIterations: 20000,
+    // Stop simulation just past the scoring window: nothing past `cutoff`
+    // is scored, so the long slow tail doesn't need simulating.
+    ...(opts.cutoff ? { maxTime: opts.cutoff + 1 } : {}),
     balls: simBalls,
   }
 }
@@ -308,7 +322,7 @@ function simTracksFrom(frames) {
 function rmseFor(config, truth) {
   const result = simulateSync(config)
   const tracks = simTracksFrom(result.frames)
-  const { sse, count } = computeSSE(truth, tracks, opts.all)
+  const { sse, count } = computeSSE(truth, tracks, opts.all, opts.cutoff)
   if (!Number.isFinite(sse) || !Number.isFinite(count) || count <= 0) {
     return Infinity
   }

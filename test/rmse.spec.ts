@@ -12,12 +12,12 @@ describe("rmse and sse weighting", () => {
       0: [{ x: 2.0, y: 0.0, t: 0 }],
     }
     // error is dx = 1.0, dy = 0.0 => distance squared is 1.0
-    // wi = 3.0 (cue ball)
-    // sse = 3.0 * 1.0 = 3.0
-    // count = 3.0
+    // wi = 1.5 (cue ball) / (1 + 0) = 1.5
+    // sse = 1.5 * 1.0 = 1.5
+    // count = 1.5
     const resSSE = computeSSE(truth, simTracks)
-    expect(resSSE.sse).toBeCloseTo(3.0)
-    expect(resSSE.count).toBeCloseTo(3.0)
+    expect(resSSE.sse).toBeCloseTo(1.5)
+    expect(resSSE.count).toBeCloseTo(1.5)
 
     const rmse = computeRMSE(truth, simTracks)
     expect(rmse).toBeCloseTo(1.0)
@@ -29,19 +29,19 @@ describe("rmse and sse weighting", () => {
       0: [{ x: 3.0, y: 0.0, t: 1.0 }],
     }
     // error is dx = 2.0, dy = 0.0 => distance squared is 4.0
-    // wi = 3.0 (cue ball)
-    // sse = 3.0 * 4.0 = 12.0
-    // count = 3.0
+    // wi = 1.5 (cue ball) / (1 + 1) = 0.75
+    // sse = 0.75 * 4.0 = 3.0
+    // count = 0.75
     const resSSE = computeSSE(truth, simTracks)
-    expect(resSSE.sse).toBeCloseTo(12.0)
-    expect(resSSE.count).toBeCloseTo(3.0)
+    expect(resSSE.sse).toBeCloseTo(3.0)
+    expect(resSSE.count).toBeCloseTo(0.75)
 
     const rmse = computeRMSE(truth, simTracks)
-    // rmse = sqrt(sse / count) = sqrt(12.0 / 3.0) = 2.0
+    // rmse = sqrt(sse / count) = sqrt(3.0 / 0.75) = 2.0
     expect(rmse).toBeCloseTo(2.0)
   })
 
-  it("should weight early and late errors of the same magnitude equally", () => {
+  it("should weight an early error more heavily than the same error later", () => {
     const simTracks = {
       0: [
         { x: 0, y: 0, t: 0.0 },
@@ -49,41 +49,28 @@ describe("rmse and sse weighting", () => {
       ],
     }
 
-    // Case A: error at t=0 is 1.0, error at t=1 is 0.0
+    // Case A: error 1.0 at t=0, 0.0 at t=1
     const truthA = [
-      { ball: 0, t: 0.0, x: 1.0, y: 0.0 }, // error = 1.0, w = 3.0
-      { ball: 0, t: 1.0, x: 1.0, y: 0.0 }, // error = 0.0, w = 3.0
+      { ball: 0, t: 0.0, x: 1.0, y: 0.0 }, // error = 1.0, wi = 1.5
+      { ball: 0, t: 1.0, x: 1.0, y: 0.0 }, // error = 0.0, wi = 0.75
     ]
-    const sseA = computeSSE(truthA, simTracks)
-    // sse = 3.0 * (1.0^2) + 3.0 * (0.0^2) = 3.0
-    // count = 6.0
-    expect(sseA.sse).toBeCloseTo(3.0)
-    expect(sseA.count).toBeCloseTo(6.0)
     const rmseA = computeRMSE(truthA, simTracks)
-    expect(rmseA).toBeCloseTo(Math.sqrt(1.0 / 2.0))
 
-    // Case B: error at t=0 is 0.0, error at t=1 is 1.0
+    // Case B: error 0.0 at t=0, 1.0 at t=1
     const truthB = [
-      { ball: 0, t: 0.0, x: 0.0, y: 0.0 }, // error = 0.0, w = 3.0
-      { ball: 0, t: 1.0, x: 2.0, y: 0.0 }, // error = 1.0, w = 3.0
+      { ball: 0, t: 0.0, x: 0.0, y: 0.0 }, // error = 0.0, wi = 1.5
+      { ball: 0, t: 1.0, x: 2.0, y: 0.0 }, // error = 1.0, wi = 0.75
     ]
-    const sseB = computeSSE(truthB, simTracks)
-    // sse = 3.0 * (0.0^2) + 3.0 * (1.0^2) = 3.0
-    // count = 6.0
-    expect(sseB.sse).toBeCloseTo(3.0)
-    expect(sseB.count).toBeCloseTo(6.0)
     const rmseB = computeRMSE(truthB, simTracks)
-    expect(rmseB).toBeCloseTo(Math.sqrt(1.0 / 2.0))
 
-    // Flat weighting: early and late errors contribute equally
     expect(rmseA).not.toBeNull()
     expect(rmseB).not.toBeNull()
     if (rmseA !== null && rmseB !== null) {
-      expect(rmseA).toBeCloseTo(rmseB)
+      expect(rmseA).toBeGreaterThan(rmseB)
     }
   })
 
-  it("should weight cue ball samples 3x other balls", () => {
+  it("should weight cue ball samples 1.5x other balls", () => {
     const simTracks = {
       0: [{ x: 1.0, y: 0.0, t: 0 }],
       1: [{ x: 0.0, y: 0.0, t: 0 }],
@@ -93,10 +80,33 @@ describe("rmse and sse weighting", () => {
       { ball: 1, t: 0, x: 1.0, y: 0.0 },
     ]
     const res = computeSSE(truth, simTracks, true)
-    expect(res.sse).toBeCloseTo(3 * 1.0 + 1 * 1.0)
-    expect(res.count).toBeCloseTo(4.0)
+    expect(res.sse).toBeCloseTo(1.5 * 1.0 + 1 * 1.0)
+    expect(res.count).toBeCloseTo(2.5)
 
     const rmse = computeRMSE(truth, simTracks, true)
     expect(rmse).toBeCloseTo(1.0)
+  })
+
+  it("should exclude truth samples beyond the cutoff", () => {
+    const simTracks = {
+      0: [
+        { x: 1.0, y: 0.0, t: 0 },
+        { x: 1.0, y: 0.0, t: 5 },
+      ],
+    }
+    const truth = [
+      { ball: 0, t: 0, x: 0.0, y: 0.0 }, // error 1.0, wi = 1.5
+      { ball: 0, t: 5, x: 0.0, y: 0.0 }, // error 1.0, wi = 1.5 / 6 = 0.25
+    ]
+
+    // Default cutoff of 4 s excludes the t=5 sample.
+    const res = computeSSE(truth, simTracks)
+    expect(res.sse).toBeCloseTo(1.5)
+    expect(res.count).toBeCloseTo(1.5)
+
+    // A null cutoff disables truncation and includes both samples.
+    const resFull = computeSSE(truth, simTracks, false, null)
+    expect(resFull.sse).toBeCloseTo(1.5 + 0.25)
+    expect(resFull.count).toBeCloseTo(1.75)
   })
 })

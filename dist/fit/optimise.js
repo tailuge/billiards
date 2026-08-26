@@ -1,6 +1,6 @@
 import { Simplex } from "https://esm.sh/@reside-ic/dfoptim"
 import pso from "https://esm.sh/pso"
-import { computeSSE } from "./rmse.js"
+import { computeSSE, RMSE_CUTOFF_T } from "./rmse.js"
 
 class WorkerPool {
   constructor(workerPath, size) {
@@ -105,7 +105,7 @@ const decode = (norm, specs) => {
   return Object.fromEntries(entries)
 }
 
-function runSimSync(simConfig, truth, trackAll = false) {
+function runSimSync(simConfig, truth, trackAll = false, cutoff = RMSE_CUTOFF_T) {
   const result = window.simulateSync(simConfig)
   const simTracks = {}
   for (const f of result.frames) {
@@ -114,13 +114,13 @@ function runSimSync(simConfig, truth, trackAll = false) {
     }
   }
   const { sse, count } = truth
-    ? computeSSE(truth, simTracks, trackAll)
+    ? computeSSE(truth, simTracks, trackAll, cutoff)
     : { sse: 0, count: 0 }
   const rmse = count > 0 ? Math.sqrt(sse / count) : null
   return { simTracks, frames: result.frames, rmse, sse, count }
 }
 
-function makeTarget(simConfig, truth, specs, trackAll = false) {
+function makeTarget(simConfig, truth, specs, trackAll = false, cutoff = RMSE_CUTOFF_T) {
   const isMulti = Array.isArray(simConfig)
   const configs = isMulti ? simConfig : [simConfig]
   const truths = isMulti ? truth : [truth]
@@ -146,7 +146,7 @@ function makeTarget(simConfig, truth, specs, trackAll = false) {
           }
         }
 
-        const { sse, count } = runSimSync(config, truths[i], trackAll)
+        const { sse, count } = runSimSync(config, truths[i], trackAll, cutoff)
         if (!Number.isFinite(sse) || !Number.isFinite(count) || count < 0) {
           return Infinity
         }
@@ -200,10 +200,11 @@ export async function runOptimiseNM(
   specs,
   onStep,
   signal,
-  trackAll = false
+  trackAll = false,
+  cutoff = RMSE_CUTOFF_T
 ) {
   const initial = makeInitial(simConfig, specs)
-  const target = makeTarget(simConfig, truth, specs, trackAll)
+  const target = makeTarget(simConfig, truth, specs, trackAll, cutoff)
   const opt = new Simplex(target, initial, {})
 
   let iter = 0
@@ -226,7 +227,8 @@ export async function runOptimisePSO(
   specs,
   onStep,
   signal,
-  trackAll = false
+  trackAll = false,
+  cutoff = RMSE_CUTOFF_T
 ) {
   const concurrency = Math.min(navigator.hardwareConcurrency || 4, 8)
   const workerUrl = new URL("../worker.js", import.meta.url)
@@ -271,7 +273,7 @@ export async function runOptimisePSO(
             }
           }
           const { sse, count } = truths[idx]
-            ? computeSSE(truths[idx], simTracks, trackAll)
+            ? computeSSE(truths[idx], simTracks, trackAll, cutoff)
             : { sse: 0, count: 0 }
           return { sse, count }
         })
