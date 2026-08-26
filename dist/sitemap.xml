@@ -81,6 +81,16 @@
     <lastmod>2026-08-23</lastmod>
   </url>
   <url>
+    <loc>https://tailuge.github.io/billiards/german.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/german.html" />
+    <lastmod>2026-08-26</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/vietnamese.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/vietnamese.html" />
+    <lastmod>2026-08-26</lastmod>
+  </url>
+  <url>
     <loc>https://tailuge.github.io/billiards/chinese.html</loc>
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/chinese.html" />
     <lastmod>2026-08-23</lastmod>
