@@ -20,7 +20,7 @@ export function computeSSE(truth, simTracks, trackAll = false) {
     let lo = cursors[ball] ?? 0
     const { point, lo: newLo } = interpolateTrack(track, t, lo)
     cursors[ball] = newLo
-    const wi = 1
+    const wi = ball === 0 ? 3 : 1
     sse += wi * ((x - point.x) ** 2 + (y - point.y) ** 2)
     count += wi
   }

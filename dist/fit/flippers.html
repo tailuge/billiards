@@ -2,11 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Regime-flipper shots</title>
+    <title>Knife-edge &amp; dominant shots</title>
     <style>
       body {
         font-family: system-ui, sans-serif;
-        max-width: 60em;
+        max-width: 78em;
         margin: 2em auto;
         padding: 0 1em;
       }
@@ -16,156 +16,538 @@
       table {
         border-collapse: collapse;
         margin: 1em 0;
+        font-size: 0.9em;
       }
       th,
       td {
         border: 1px solid #ccc;
-        padding: 0.35em 0.8em;
+        padding: 0.3em 0.7em;
         text-align: left;
       }
       th {
         background: #f4f4f4;
+      }
+      td.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
       }
       .tag {
         font-size: 0.8em;
         padding: 0.1em 0.5em;
         border-radius: 0.5em;
         background: #eee;
-      }
-      .canonical {
-        background: #ffd9d9;
-      }
-      .session {
-        background: #fff3c4;
-      }
-      .borderline {
-        background: #e2ecff;
+        white-space: nowrap;
       }
       p,
       li {
         color: #333;
       }
+      h2 {
+        margin-top: 2em;
+      }
     </style>
   </head>
   <body>
-    <h1>Regime-flipper shots</h1>
+    <h1>Knife-edge &amp; dominant shots</h1>
     <p>
-      Shots whose per-shot fits jump between trajectory regimes when physics
-      constants change slightly, dominating the tails of every parameter study
-      (see <code>results_μw.md</code>, <code>results_muS.md</code>,
-      <code>results_mus_muw_box.md</code>).
+      Generated 2026-08-26 by <code>flippers-gen.mjs</code> from <b>20</b> sweep
+      runs in <code>corners/*/sweep-results.json</code>
+      (72 distinct shots, 1824 per-shot measurements). A
+      &ldquo;measurement&rdquo; is one shot&rsquo;s ΔRMSE under one constants
+      change in one study.
     </p>
     <p>
-      Links pass the array <b>index</b> into <code>shots.json</code>
-      (<code>viewer.html?index=N</code>). If a link opens the wrong shot, the
-      file was refitted and reordered since this page was generated — use the
-      dropdown inside the viewer instead. Generated: 2026-08-24.
+      <b>Dominant</b>: &ge;3 swings &ge;10 cm or worst swing &ge;20 cm — it
+      blows out the tails of parameter studies. <b>Knife-edge</b>: swings in
+      both directions (&ge;&plusmn;5 cm, at least four &ge;5 cm) — its fit lands
+      in different trajectory regimes depending on constants/seed. Either =
+      removal candidate; both is worst. Thresholds calibrated to the breakout
+      tier (quiet majority: median worst-swing ~7 cm).
     </p>
+
+    <h2>Removal candidates (22)</h2>
     <table>
       <tr>
-        <th>shot id</th>
-        <th>index</th>
-        <th>RMSE (cm)</th>
-        <th>flag</th>
-        <th>observed behaviour (Δmedian RMSE under small constant changes)</th>
+        <th>shot</th>
+        <th>RMSE cm<br />(champ / defaults)</th>
+        <th>Δrange (cm)</th>
+        <th>worst |Δ|</th>
+        <th>unstable &ge;2cm</th>
+        <th>&ge;5 / &ge;10 cm</th>
+        <th>σ</th>
+        <th>worst case</th>
+        <th>verdict</th>
       </tr>
+
       <tr>
-        <td><a href="viewer.html?index=10">25</a></td>
-        <td>10</td>
-        <td>18.58</td>
-        <td><span class="tag" style="background: #d4edda">removed</span></td>
-        <td>
-          EXCLUDED from inputs 2026-08-24 after visual inspection: unmodelled
-          double-kiss, extremely regime-sensitive (+27 cm swings). Not a fair
-          data point.
-        </td>
+        <td><a href="viewer.html?index=51">114</a></td>
+        <td>— / —</td>
+        <td class="num">-4.4 … +35.1</td>
+        <td class="num">35.1</td>
+        <td class="num">43/76</td>
+        <td class="num">17 / 17</td>
+        <td class="num">11.2</td>
+        <td>adopt-pilot/muS0.09_ee0.88</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
       </tr>
       <tr>
         <td><a href="viewer.html?index=15">32</a></td>
-        <td>15</td>
-        <td>9.25</td>
-        <td><span class="tag canonical">canonical</span></td>
+        <td>— / —</td>
+        <td class="num">-6.9 … +36.8</td>
+        <td class="num">36.8</td>
+        <td class="num">55/70</td>
+        <td class="num">28 / 16</td>
+        <td class="num">8.8</td>
+        <td>muw-all12/muw0.23</td>
         <td>
-          pilot flippers 32/92 excluded from clean-10; ±5 cm swings in box runs
+          <span class="tag" style="background: #ffd9d9">dominant</span>
+          <span class="tag" style="background: #ffd9d9">knife-edge</span>
         </td>
       </tr>
       <tr>
         <td><a href="viewer.html?index=40">92</a></td>
-        <td>40</td>
-        <td>9.76</td>
-        <td><span class="tag canonical">canonical</span></td>
+        <td>— / —</td>
+        <td class="num">-2.9 … +44.3</td>
+        <td class="num">44.3</td>
+        <td class="num">39/70</td>
+        <td class="num">22 / 14</td>
+        <td class="num">11.1</td>
+        <td>mus-muw-box/mus0.17_muw0.17</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
+      </tr>
+      <tr>
         <td>
-          +3…+44 across μs×μw box cells; fit lands in different regimes per run
+          <a href="viewer.html?index=10">25</a
+          ><span class="tag" style="background: #d4edda">removed</span>
         </td>
+        <td>— / —</td>
+        <td class="num">-0.4 … +44.1</td>
+        <td class="num">44.1</td>
+        <td class="num">6/9</td>
+        <td class="num">6 / 6</td>
+        <td class="num">16.1</td>
+        <td>adopt-heldout2/muS0.107_ee0.85</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
       </tr>
       <tr>
         <td><a href="viewer.html?index=64">168</a></td>
-        <td>64</td>
-        <td>5.36</td>
-        <td><span class="tag canonical">canonical</span></td>
+        <td>22.4 / 5.4</td>
+        <td class="num">-17.1 … +37.8</td>
+        <td class="num">37.8</td>
+        <td class="num">6/19</td>
+        <td class="num">6 / 6</td>
+        <td class="num">13.4</td>
+        <td>easy8-muw/muw0.17</td>
         <td>
-          fit well today yet +37.8 at muw=0.17 on easy-8 panel — flip-proof is
-          not
+          <span class="tag" style="background: #ffd9d9">dominant</span>
+          <span class="tag" style="background: #ffd9d9">knife-edge</span>
         </td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=63">166</a></td>
+        <td>— / —</td>
+        <td class="num">-3.9 … +21.3</td>
+        <td class="num">21.3</td>
+        <td class="num">34/76</td>
+        <td class="num">7 / 5</td>
+        <td class="num">5.4</td>
+        <td>mus-muw-box/mus0.17_muw0.17</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=67">172</a></td>
+        <td>— / —</td>
+        <td class="num">-2.6 … +54.8</td>
+        <td class="num">54.8</td>
+        <td class="num">10/76</td>
+        <td class="num">4 / 4</td>
+        <td class="num">12.2</td>
+        <td>adopt-pilot2/muw0.17_muS0.0739_ee0.845</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
       </tr>
       <tr>
         <td><a href="viewer.html?index=4">11</a></td>
-        <td>4</td>
-        <td>4.48</td>
-        <td><span class="tag borderline">borderline</span></td>
-        <td>+14.3 (muS), +5.5 (rho) held-out; +15.0 at muw=0.17 easy-8</td>
+        <td>3.3 / 4.5</td>
+        <td class="num">-1.2 … +18.2</td>
+        <td class="num">18.2</td>
+        <td class="num">4/19</td>
+        <td class="num">4 / 4</td>
+        <td class="num">6.8</td>
+        <td>ee2-heldout/ee0.88</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=41">94</a></td>
-        <td>41</td>
-        <td>9.28</td>
-        <td><span class="tag borderline">borderline</span></td>
-        <td>flagged "erratic" in μw study; milder swings (±0.3–12)</td>
+        <td><a href="viewer.html?index=37">84</a></td>
+        <td>— / —</td>
+        <td class="num">-2.3 … +39.9</td>
+        <td class="num">39.9</td>
+        <td class="num">11/76</td>
+        <td class="num">3 / 3</td>
+        <td class="num">7.8</td>
+        <td>adopt-pilot/muS0.0739_ee0.865</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=17">36</a></td>
-        <td>17</td>
-        <td>17.84</td>
-        <td><span class="tag" style="background: #d4edda">removed</span></td>
+        <td><a href="viewer.html?index=9">24</a></td>
+        <td>— / —</td>
+        <td class="num">-2.0 … +29.2</td>
+        <td class="num">29.2</td>
+        <td class="num">7/76</td>
+        <td class="num">3 / 2</td>
+        <td class="num">3.8</td>
+        <td>adopt-pilot/muS0.0739_ee0.85</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=16">33</a></td>
+        <td>14.9 / 18.7</td>
+        <td class="num">-4.8 … +36.4</td>
+        <td class="num">36.4</td>
+        <td class="num">9/15</td>
+        <td class="num">2 / 2</td>
+        <td class="num">11.3</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=45">100</a></td>
+        <td>6.6 / 17.1</td>
+        <td class="num">-10.4 … +8.0</td>
+        <td class="num">10.4</td>
+        <td class="num">8/15</td>
+        <td class="num">7 / 1</td>
+        <td class="num">4.9</td>
+        <td>adopt-heldout4/muw0.17_ee0.865</td>
+        <td><span class="tag" style="background: #ffd9d9">knife-edge</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=49">109</a></td>
+        <td>23.9 / 18.5</td>
+        <td class="num">-1.3 … +28.4</td>
+        <td class="num">28.4</td>
+        <td class="num">6/15</td>
+        <td class="num">4 / 1</td>
+        <td class="num">7.2</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=3">8</a></td>
+        <td>10.5 / 14.9</td>
+        <td class="num">-6.4 … +24.3</td>
+        <td class="num">24.3</td>
+        <td class="num">10/15</td>
+        <td class="num">4 / 1</td>
+        <td class="num">7.3</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
         <td>
-          EXCLUDED from inputs 2026-08-24 after visual inspection: double-kiss /
-          cliff-edge — no optimiser can cross it. Not a fair data point.
+          <span class="tag" style="background: #ffd9d9">dominant</span>
+          <span class="tag" style="background: #ffd9d9">knife-edge</span>
         </td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=2">5</a></td>
-        <td>2</td>
-        <td>15.55</td>
-        <td><span class="tag session">session find</span></td>
-        <td>+6.0 (rho), +5.4 (muS) held-out</td>
+        <td><a href="viewer.html?index=59">148</a></td>
+        <td>13.1 / 10.7</td>
+        <td class="num">+0.0 … +49.1</td>
+        <td class="num">49.1</td>
+        <td class="num">9/15</td>
+        <td class="num">3 / 1</td>
+        <td class="num">11.7</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
       </tr>
       <tr>
         <td><a href="viewer.html?index=66">171</a></td>
-        <td>66</td>
-        <td>16.24</td>
-        <td><span class="tag session">session find</span></td>
-        <td>+8.1 (muS); also +6.8 in μw study (largest there)</td>
+        <td>16.4 / 16.2</td>
+        <td class="num">-4.5 … +24.9</td>
+        <td class="num">24.9</td>
+        <td class="num">8/15</td>
+        <td class="num">3 / 1</td>
+        <td class="num">6.5</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=52">127</a></td>
+        <td>18.5 / 14.8</td>
+        <td class="num">+0.0 … +41.4</td>
+        <td class="num">41.4</td>
+        <td class="num">7/15</td>
+        <td class="num">2 / 1</td>
+        <td class="num">10.0</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=34">75</a></td>
+        <td>15.3 / 12.8</td>
+        <td class="num">-2.6 … +31.9</td>
+        <td class="num">31.9</td>
+        <td class="num">4/15</td>
+        <td class="num">1 / 1</td>
+        <td class="num">8.0</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
       </tr>
       <tr>
         <td><a href="viewer.html?index=65">169</a></td>
-        <td>65</td>
-        <td>18.86</td>
-        <td><span class="tag session">session find</span></td>
-        <td>−3.8 (both rho & muS) — flips in the favourable direction too</td>
+        <td>20.7 / 18.9</td>
+        <td class="num">-5.0 … +28.7</td>
+        <td class="num">28.7</td>
+        <td class="num">6/15</td>
+        <td class="num">1 / 1</td>
+        <td class="num">7.6</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
       </tr>
       <tr>
-        <td><a href="viewer.html?index=59">148</a></td>
-        <td>59</td>
-        <td>10.65</td>
-        <td><span class="tag borderline">borderline</span></td>
-        <td>−2.0…−3.8 held-out swings; smallest of the set</td>
+        <td><a href="viewer.html?index=58">140</a></td>
+        <td>16.2 / 17.8</td>
+        <td class="num">-2.6 … +21.4</td>
+        <td class="num">21.4</td>
+        <td class="num">3/15</td>
+        <td class="num">1 / 1</td>
+        <td class="num">5.7</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #ffd9d9">dominant</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=21">44</a></td>
+        <td>19.4 / 14.2</td>
+        <td class="num">-8.0 … +8.2</td>
+        <td class="num">8.2</td>
+        <td class="num">11/15</td>
+        <td class="num">5 / 0</td>
+        <td class="num">4.5</td>
+        <td>muw-heldout/muw0.17</td>
+        <td><span class="tag" style="background: #ffd9d9">knife-edge</span></td>
+      </tr>
+      <tr>
+        <td>
+          <a href="viewer.html?index=2">5</a
+          ><span class="tag" style="background: #d4edda">removed</span>
+        </td>
+        <td>9.6 / 15.6</td>
+        <td class="num">-5.9 … +8.7</td>
+        <td class="num">8.7</td>
+        <td class="num">9/15</td>
+        <td class="num">4 / 0</td>
+        <td class="num">4.3</td>
+        <td>muw-heldout/muw0.17</td>
+        <td><span class="tag" style="background: #ffd9d9">knife-edge</span></td>
       </tr>
     </table>
+
+    <h2>Watch list (17)</h2>
+    <p>Knife-edge <em>or</em> dominant, not both — inspect before deciding.</p>
+    <table>
+      <tr>
+        <th>shot</th>
+        <th>RMSE cm<br />(champ / defaults)</th>
+        <th>Δrange (cm)</th>
+        <th>worst |Δ|</th>
+        <th>unstable &ge;2cm</th>
+        <th>&ge;5 / &ge;10 cm</th>
+        <th>σ</th>
+        <th>worst case</th>
+        <th>verdict</th>
+      </tr>
+
+      <tr>
+        <td><a href="viewer.html?index=41">94</a></td>
+        <td>— / —</td>
+        <td class="num">-2.8 … +16.4</td>
+        <td class="num">16.4</td>
+        <td class="num">49/76</td>
+        <td class="num">10 / 2</td>
+        <td class="num">3.3</td>
+        <td>muw-all12/muw0.23</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=47">102</a></td>
+        <td>4.6 / 14.8</td>
+        <td class="num">-10.3 … +0.0</td>
+        <td class="num">10.3</td>
+        <td class="num">7/15</td>
+        <td class="num">6 / 2</td>
+        <td class="num">4.2</td>
+        <td>muw2-heldout/muw0.16</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=42">95</a></td>
+        <td>11.7 / 7.0</td>
+        <td class="num">-0.8 … +19.7</td>
+        <td class="num">19.7</td>
+        <td class="num">5/19</td>
+        <td class="num">3 / 2</td>
+        <td class="num">6.1</td>
+        <td>adopt-easy8/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=25">51</a></td>
+        <td>13.6 / 15.2</td>
+        <td class="num">-2.3 … +18.1</td>
+        <td class="num">18.1</td>
+        <td class="num">5/15</td>
+        <td class="num">2 / 1</td>
+        <td class="num">5.1</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=18">39</a></td>
+        <td>16.5 / 15.3</td>
+        <td class="num">+0.0 … +18.0</td>
+        <td class="num">18.0</td>
+        <td class="num">8/15</td>
+        <td class="num">2 / 1</td>
+        <td class="num">4.3</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=44">99</a></td>
+        <td>14.6 / 18.9</td>
+        <td class="num">-5.8 … +18.0</td>
+        <td class="num">18.0</td>
+        <td class="num">7/15</td>
+        <td class="num">2 / 1</td>
+        <td class="num">5.4</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=26">52</a></td>
+        <td>12.3 / 12.3</td>
+        <td class="num">-2.2 … +19.7</td>
+        <td class="num">19.7</td>
+        <td class="num">4/15</td>
+        <td class="num">1 / 1</td>
+        <td class="num">5.1</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=62">159</a></td>
+        <td>15.4 / 19.4</td>
+        <td class="num">-4.0 … +15.9</td>
+        <td class="num">15.9</td>
+        <td class="num">8/15</td>
+        <td class="num">1 / 1</td>
+        <td class="num">4.7</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=6">14</a></td>
+        <td>14.9 / 13.9</td>
+        <td class="num">-0.9 … +14.4</td>
+        <td class="num">14.4</td>
+        <td class="num">6/15</td>
+        <td class="num">1 / 1</td>
+        <td class="num">3.5</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=24">50</a></td>
+        <td>7.9 / 17.6</td>
+        <td class="num">-9.7 … +0.0</td>
+        <td class="num">9.7</td>
+        <td class="num">10/15</td>
+        <td class="num">6 / 0</td>
+        <td class="num">3.1</td>
+        <td>adopt-heldout4/muw0.17_ee0.865</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=29">56</a></td>
+        <td>— / —</td>
+        <td class="num">-7.4 … +1.3</td>
+        <td class="num">7.4</td>
+        <td class="num">6/76</td>
+        <td class="num">6 / 0</td>
+        <td class="num">1.9</td>
+        <td>adopt-pilot2/muw0.17_muS0.0739_ee0.885</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=55">133</a></td>
+        <td>5.5 / 12.4</td>
+        <td class="num">-7.4 … +4.4</td>
+        <td class="num">7.4</td>
+        <td class="num">8/15</td>
+        <td class="num">6 / 0</td>
+        <td class="num">4.0</td>
+        <td>adopt-heldout4/muw0.17_ee0.855</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=68">173</a></td>
+        <td>15.8 / 9.0</td>
+        <td class="num">-1.6 … +6.8</td>
+        <td class="num">6.8</td>
+        <td class="num">9/15</td>
+        <td class="num">6 / 0</td>
+        <td class="num">2.8</td>
+        <td>adopt-heldout4/muw0.17_ee0.865</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=27">54</a></td>
+        <td>15.3 / 16.6</td>
+        <td class="num">-1.8 … +8.9</td>
+        <td class="num">8.9</td>
+        <td class="num">3/15</td>
+        <td class="num">3 / 0</td>
+        <td class="num">3.6</td>
+        <td>adopt-heldout/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=5">12</a></td>
+        <td>4.3 / 3.6</td>
+        <td class="num">-0.4 … +7.4</td>
+        <td class="num">7.4</td>
+        <td class="num">3/19</td>
+        <td class="num">3 / 0</td>
+        <td class="num">2.6</td>
+        <td>adopt-easy8/muS0.0739_muw0.1702_ee0.8856</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=31">64</a></td>
+        <td>6.2 / 12.7</td>
+        <td class="num">-6.5 … +0.0</td>
+        <td class="num">6.5</td>
+        <td class="num">9/15</td>
+        <td class="num">3 / 0</td>
+        <td class="num">2.0</td>
+        <td>adopt-heldout4/muw0.17_ee0.865</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+      <tr>
+        <td><a href="viewer.html?index=19">41</a></td>
+        <td>8.6 / 13.3</td>
+        <td class="num">-6.1 … +0.0</td>
+        <td class="num">6.1</td>
+        <td class="num">10/15</td>
+        <td class="num">3 / 0</td>
+        <td class="num">1.8</td>
+        <td>adopt-heldout4/muw0.17_ee0.855</td>
+        <td><span class="tag" style="background: #fff3c4">borderline</span></td>
+      </tr>
+    </table>
+
     <p>
-      Triage ideas: check whether the recorded track has gaps/bounces the sim
-      cannot reproduce (pocket rattle, double kiss), whether the fitted cue
-      params sit on a bound, or whether two visually distinct sims have
-      near-equal RMSE (the degeneracy itself).
+      Links pass the array index into <code>shots.json</code>. RMSE columns come
+      from the saved <code>corners/adopt-heldout4</code> fits (held-out ids
+      only; — otherwise). Triage tips: unmodelled double-kiss/pocket rattle in
+      the recorded track, cue params pinned on a bound, or two visually distinct
+      sims with near-equal RMSE.
     </p>
   </body>
 </html>
