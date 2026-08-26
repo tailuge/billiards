@@ -34,11 +34,8 @@ After a full refresh (or accidental tab close + reopen) of a 2-player network
 game, restore the local game to the correct controller and table state without
 restarting the rack, using `localStorage` only.
 
-**Non-goals:** mid-shot recovery (velocities/spin are not serialised and don't
-need to be), refreshing while your *own* shot is in flight (after the `HIT` is
-published but before the turn boundary settles — the stored entry is still the
-previous turn boundary and cannot re-simulate it; this diverges and is
-deferred to **Future work** below), spectator resume, bot/practice/drill
+**Non-goals:** mid-shot physics vector restoration (velocities/spin mid-roll are not serialised and don't
+need to be), spectator resume, bot/practice/drill
 games, cross-device resume.
 
 ## Current behaviour after refresh
@@ -100,11 +97,12 @@ no prefix scan, no explicit cleanup of other table ids.
 ```jsonc
 {
   "tableId": "nchan-channel-id",     // validation: discard if this tab's tableId differs (stale tab)
-  "controller": "WatchAim",          // "Aim" | "WatchAim" | "PlaceBall" (PlaceAllBalls is drill-only, never in 2-player)
-  "tablejson": { ... },              // table.serialise() — stationary
+  "controller": "WatchAim",          // "Aim" | "WatchAim" | "PlaceBall" | "PlayShot"
+  "tablejson": { ... },              // table.serialise() — stationary pre-shot or boundary state
   "score": { "p1": 3, "p2": 1, "b": 2, "active": 1 },
   "p1type": 1,                       // Session.p1type at save time (eightball group assignment)
-  "msgId": "nchan-msg-id-watermark"  // last message id we processed
+  "msgId": "nchan-msg-id-watermark", // last message id we processed
+  "pendingHit": { ... }              // optional: hitEvent.tablejson captured in-flight when shooter hits cue ball
 }
 ```
 
@@ -338,72 +336,49 @@ remove roughly half of the `BrowserContainer` item if done later.
   `resume.<clientId>` slot, overwriting the old entry; no explicit
   invalidation needed.
 
-## Future work: recovering an own in-flight shot
+## In-Flight Shot Recovery Proposal (Own shot rolling at refresh)
 
-Refreshing while our own shot rolls is the one remaining divergence, and it is
-a real one: rolling time is long (multi-second shots are normal), so over a
-session a crash or connection issue inside that window is statistically
-likely. Observed failure: the refresher restores the *previous* boundary
-(start-of-shot positions) believing it is still their turn; the opponent
-finished simulating via `WatchShot` and now waits forever for the boundary
-broadcasts (`ScoreEvent`/`StartAimEvent`) that only `PlayShot.handleStationary`
-on the shooter's client ever sends. Both clients diverge.
+Refreshing while your own shot rolls is a known gap: rolling time is multi-second, so a refresh or crash inside that window leaves the opponent waiting forever in `WatchShot` for turn-boundary broadcasts (`ScoreEvent`/`StartAimEvent`) that only `PlayShot.handleStationary` on the shooter's client ever sends.
 
-The key observation that makes local recovery feasible: **the shot is fully
-determined by (pre-shot stationary table + hit params), and we already have
-both.**
+The key observation that makes local recovery clean and reliable: **a shot is fully determined by (pre-shot stationary table snapshot + hit params), and both can be stored locally.**
 
-- The stored entry *is* the pre-shot state — balls do not move between a turn
-  boundary and the shot taken during that turn.
-- The published `HitEvent` carries everything needed to re-simulate
-  (`cueBallId`, angle, power, offset, elevation).
-- We can assume the `HIT` reached the opponent (publishes are reliable/
-  retried by the library outbox). So this is purely about **local** recovery:
-  re-simulate the shot on reload, then resolve the turn as the shooter again —
-  running `rules.update` normally and publishing fresh boundary broadcasts.
-  No protocol change; the opponent just waits a little longer for a boundary
-  that arrives late instead of never.
+### Design & Data Flow
 
-Sketch: at `HIT` publish time, record the hit params in the resume payload (or
-a sibling slot) as a "pending shot"; on load, if a pending shot exists, apply
-the entry snapshot, replay the hit locally through `PlayShot`'s normal path,
-and continue. Clear the pending marker when the next boundary settles.
+#### 1. In-Flight Capture (Write Path)
+When the active player executes a shot in `Aim.playShot()`:
+- `hitEvent` (`HitEvent`) is created containing `table.serialiseHit()` (cue ball index, angle, power, offset, elevation).
+- Before or upon broadcasting `hitEvent` to the network, `ResumeStore` updates the stored entry for `resume.<clientId>` in `localStorage`.
+- The entry preserves the pre-shot stationary `tablejson` (or updates `pendingHit`), adding:
+  ```jsonc
+  "pendingHit": hitEvent.tablejson
+  ```
+- The entry's `controller` field is set to `"PlayShot"`.
 
-### Issues any solution must handle
+#### 2. Reload / Restore Path
+When `BrowserContainer.tryResume()` runs post-refresh:
+1. `ResumeStore.load(tableId)` retrieves the saved entry.
+2. If `entry.pendingHit` is present:
+   - Restore the pre-shot stationary table state (`table.updateFromSerialised(entry.tablejson)`).
+   - Restore score HUD and `Session.p1type`.
+   - Apply the stored `pendingHit` parameters to the table cue aim (`table.cue.aim`).
+   - Instantiate `PlayShot` locally (`new PlayShot(this.container)`), which immediately triggers `this.hit()` to start local physics simulation.
+   - **MUST NOT publish `HitEvent` on reload:** The network broadcast is strictly bypassed. The opponent already received the original live `HitEvent` when the shot was originally taken and is already in `WatchShot`.
+3. Network buffer replay filter:
+   - The Nchan buffer will re-deliver the shooter's original `HitEvent` (msgId > watermark).
+   - `BrowserContainer.netEvent` self-echo suppression drops events where `event.clientId === session.clientId`. Thus, the replayed `HitEvent` is safely dropped and does not double-trigger local simulation.
 
-1. **Never re-publish the `HIT`.** The opponent already processed it; a second
-   copy double-simulates. Recovery replays the hit *locally only* — but the
-   nchan buffer will also redeliver our own `HIT` (msgId > watermark), which
-   self-echo suppression drops. Decide deliberately whether recovery consumes
-   the stored params (simplest) or the replayed echo (bypassing suppression
-   for exactly that one message — fiddly).
-2. **Where the pending hit is captured.** The current save hook fires at the
-   previous boundary, before the in-flight shot exists. Either extend
-   `saveResumeEntry` with a pending-hit field written at publish time, or let
-   the watermark filter pass our own `HIT` through to a recovery handler.
-   Both keep writes shooter-side only.
-3. **Rules resolution happens once, by exactly one client.** The refresher
-   becomes the resolver again and broadcasts fresh boundary events; the
-   opponent never saw originals, so there are no duplicates to suppress — but
-   if *both* players refreshed mid-shot, nobody resolves. Accept (same class
-   as today).
-4. **Determinism.** Re-simulation must match what the opponent watched:
-   same physics code + same params is deterministic, but the recovered run
-   must not depend on local state the refresh discarded (Recorder/first-shot,
-   cue spin visuals are fine to differ).
-5. **UI during recovery.** The player should watch their shot again
-   (`WatchShot`-style playback from the restored snapshot), not stare at a
-   frozen aim view for the seconds the re-simulation takes.
-6. **Cleanup coherence.** The pending marker must be cleared when the shot
-   resolves (next boundary save supersedes it) and at `End`, or a stale
-   pending hit would replay an old shot onto a much later resume.
-7. **Interaction with Recorder/first-shot work.** Same caveat as the
-   break-off clamp above: outcome-dependent rules paths that read the
-   Recorder may still be wrong post-resume; revisit together.
-8. **Heavier alternatives rejected:** watcher-takeover protocols (race-prone
-   against the returning player) and server-side arbitration (no server logic
-   today). The lib-level `resumeFromMsgId` positional subscribe would simplify
-   the watermark but does nothing for this case by itself.
+#### 3. Turn Boundary Settlement & Cleanup
+- The restored local `PlayShot` instance simulates physics until all balls come to rest (`handleStationary`).
+- `rules.update(outcome)` runs locally to evaluate pots, fouls, and calculate the next controller state.
+- `Container.sendScoreUpdate` fires:
+  - Broadcasts `ScoreEvent` (and turn-transition events) over the network. The opponent (who had finished `WatchShot` and was waiting) receives the boundary event and seamlessly transitions turns.
+  - Calls `ResumeStore.save(...)` with the new post-shot stationary table snapshot, settled scores, and next controller name.
+  - Because standard boundary snapshot saves omit `pendingHit`, `pendingHit` is automatically **cleared** from `localStorage`.
+
+### Summary of Rules & Constraints for In-Flight Recovery
+- **Local-Only Execution:** In-flight recovery is strictly local to the refresher's client. No network events are published on page reload until the shot comes to rest.
+- **Single Resolution Authority:** The refresher remains the single authority responsible for resolving shot outcomes and broadcasting the turn boundary `ScoreEvent`.
+- **Idempotency & Cleanup:** Settling the shot overwrites `resume.<clientId>` with a standard boundary snapshot, removing `pendingHit` and keeping storage clean.
 
 ## Testing
 
