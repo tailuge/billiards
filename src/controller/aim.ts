@@ -51,6 +51,7 @@ export class Aim extends ControllerBase {
       )
       table.cue.aim.elevation = 0
     }
+    table.cue.avoidCueTouchingOtherBall(table)
     this.container.view.camera.aimzLerp = Camera.aimzDefaultLerp
     this.container.view.camera.suggestMode(this.container.view.camera.aimView)
     table.cue.updateAimInput()

@@ -21,7 +21,7 @@ export class Camera {
   static aimzDistance = R * 100
   static aimzDefaultLerp = 0.2
   static aimLerp = 0.08
-  static aimLerpNoHelper = 0.22
+  static aimLerpNoHelper = 0.25
   static aimPresetHeight = R * 9
   static aimPresetDistance = R * 32
   static aimPresetHeightPortrait = R * 8

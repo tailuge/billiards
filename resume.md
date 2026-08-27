@@ -363,15 +363,66 @@ stored payload and records pending-hit metadata; it does not read or act on
 The pending hit is written immediately after the normal `HIT` send. It is
 shooter-side only, uses the existing boundary snapshot as its base, and does
 not replace the watermark with the `HIT` id. If no valid boundary entry exists,
-no pending metadata is written; this preserves the current fresh-game behavior.
-
-### Remaining implementation scope
+no pending metadata is written; this preserves the current fresh-game behavior.### Remaining implementation scope
 
 - Restore and locally replay a stored pending hit.
 - Ensure recovery never republishes the `HIT`.
 - Clear `pendingHit` when the next boundary snapshot is saved.
-- Add recovery/controller tests and manually verify refresh during a rolling
-  shot.
+- Add recovery/controller tests and manually verify refresh during a rolling shot.
+
+### Agreed recovery implementation approach
+
+Reuse the existing hit-processing path rather than duplicating shot setup. Add a
+private method such as:
+
+```ts
+private processHit(event: HitEvent, publish = true): void
+```
+
+The method contains the shared hit validation/setup, controller transition, and
+shot-start behavior. Its default is deliberately `true` so existing callers
+retain their current publishing behavior without modification. The reload
+recovery path explicitly calls `processHit(recoveredEvent, false)` to suppress
+the duplicate network `HIT`. Keep the change local to the hit
+handler/controller so other call sites need minimal or no modification.
+
+The `HitEvent` shape must not gain a `localOnly`, `publish`, or `recovery`
+property. The recovered shot constructs the same ordinary `HitEvent` as a live
+shot; the publish decision is an in-process method argument and is never
+serialized, relayed, or sent over the wire. This keeps the network payload
+small and preserves compatibility with existing clients and event parsing.
+
+`pendingHit` in localStorage is used only to decide that recovery should be
+attempted and to provide the hit parameters. The hit handler must not inspect
+localStorage to decide whether to publish. Persistence and execution context
+are separate: stale or malformed storage must not silently suppress a later
+legitimate hit. An explicit `publish` argument makes the recovered invocation
+unambiguously local-only while normal hit handling remains explicitly
+publishable.
+
+Recovery sequence:
+
+1. Validate/load the boundary entry and its `pendingHit` against the current
+   table.
+2. Restore the stationary table/session/controller state and install the
+   watermark before replay can be processed.
+3. Claim the pending recovery in memory before joining/replaying the channel,
+   so the buffered original self-echo cannot trigger a second local shot.
+4. Construct a normal `HitEvent` from the stored parameters.
+5. Invoke the shared private path as `processHit(recoveredEvent)` (default
+   `publish = false`), after the normal runtime/controller initialization is
+   ready.
+6. Keep existing self-echo suppression: the original network `HIT` is not
+   republished and its buffered self-echo is dropped.
+7. Let normal stationary resolution run once and publish fresh score/turn
+   boundary events.
+8. Save the next boundary without `pendingHit`; also clear it on `End`.
+
+The private method's default should not be used as an ambient storage-based
+switch. Its `true` default preserves the existing behavior for all current
+callers; only the explicit reload recovery invocation passes `false`. This
+minimizes changes elsewhere while making duplicate network publication
+impossible for the recovered invocation.
 
 ### Explicitly out of scope
 
@@ -416,16 +467,20 @@ and continue. Clear the pending marker when the next boundary settles.
 ### Issues any solution must handle
 
 1. **Never re-publish the `HIT`.** The opponent already processed it; a second
-   copy double-simulates. Recovery replays the hit *locally only* — but the
-   nchan buffer will also redeliver our own `HIT` (msgId > watermark), which
-   self-echo suppression drops. Decide deliberately whether recovery consumes
-   the stored params (simplest) or the replayed echo (bypassing suppression
-   for exactly that one message — fiddly).
+   copy double-simulates. Recovery creates the ordinary `HitEvent` and invokes
+   the shared private `processHit(event)` path with its default `publish =
+   false`; it does not add a local-only field to the event. The nchan buffer may
+   also redeliver our own `HIT` (msgId > watermark), which existing self-echo
+   suppression drops. Claim the pending recovery before replay to prevent any
+   duplicate local processing.
 2. **Where the pending hit is captured.** The current save hook fires at the
-   previous boundary, before the in-flight shot exists. Either extend
-   `saveResumeEntry` with a pending-hit field written at publish time, or let
-   the watermark filter pass our own `HIT` through to a recovery handler.
-   Both keep writes shooter-side only.
+   previous boundary, before the in-flight shot exists. Extend
+   `saveResumeEntry` with a `pendingHit` field written at publish time. The
+   persisted field triggers reload recovery and supplies its parameters, but
+   the hit handler must not read localStorage to choose publication behavior;
+   that decision is the private method's in-process `publish` argument. This
+   keeps writes shooter-side only and avoids stale-storage suppression of
+   future normal hits.
 3. **Rules resolution happens once, by exactly one client.** The refresher
    becomes the resolver again and broadcasts fresh boundary events; the
    opponent never saw originals, so there are no duplicates to suppress — but

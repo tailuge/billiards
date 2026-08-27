@@ -47,7 +47,7 @@ describe("Camera", () => {
     camera.aimView(aim)
     Cue.helperEnabled = true
 
-    expect(fractions).to.eql([0.08, 0.22])
+    expect(fractions).to.eql([0.08, 0.25])
   })
 
   it("adjustLook nudges the look height and clamps it", () => {
