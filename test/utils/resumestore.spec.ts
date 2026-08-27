@@ -34,6 +34,19 @@ describe("ResumeStore", () => {
     expect(loaded!.msgId).toBeUndefined()
   })
 
+  it("saves and loads a pending hit", () => {
+    const pendingHit = {
+      cueBallId: 0,
+      angle: 1.25,
+      power: 0.75,
+      offset: { x: 0.1, y: -0.2, z: 0 },
+      elevation: 0.3,
+    }
+    ResumeStore.save({ ...entry(), pendingHit })
+
+    expect(ResumeStore.load("table-1")!.pendingHit).toEqual(pendingHit)
+  })
+
   it("keeps only the latest watermark", () => {
     ResumeStore.noteMsgId("msg-1")
     ResumeStore.noteMsgId("msg-2")

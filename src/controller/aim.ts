@@ -124,6 +124,7 @@ export class Aim extends ControllerBase {
     }
     const hitEvent = new HitEvent(this.container.table.serialiseHit())
     this.container.sendEvent(hitEvent)
+    this.container.savePendingHit()
     return new PlayShot(this.container)
   }
 }

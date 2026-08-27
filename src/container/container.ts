@@ -348,6 +348,28 @@ export class Container {
    * in networked two-player games (not single player, bot, replay or
    * spectator). Unconditional: a turn can settle without the score digits
    * changing, so this must not be gated on the `changed` check. */
+  savePendingHit() {
+    if (this.replayMode || Session.isSpectator() || Session.isBotMode()) {
+      return
+    }
+    const session = Session.getInstance()
+    const entry = ResumeStore.load(session.tableId)
+    if (!entry) {
+      return
+    }
+    const aim = this.table.cue.aim
+    ResumeStore.save({
+      ...entry,
+      pendingHit: {
+        cueBallId: this.table.balls.indexOf(this.table.cueball),
+        angle: aim.angle,
+        power: aim.power,
+        offset: { x: aim.offset.x, y: aim.offset.y, z: aim.offset.z },
+        elevation: aim.elevation,
+      },
+    })
+  }
+
   private saveResumeEntry(
     controller: string,
     p1: number,

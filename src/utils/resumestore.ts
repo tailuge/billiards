@@ -1,12 +1,21 @@
 import { Session } from "../network/client/session"
 
 /** Snapshot of a settled turn boundary, persisted for post-refresh resume. */
+export interface PendingHit {
+  cueBallId: number
+  angle: number
+  power: number
+  offset: { x: number; y: number; z: number }
+  elevation: number
+}
+
 export interface ResumeEntry {
   tableId: string
   controller: string
   tablejson: unknown
   score: { p1: number; p2: number; b: number; active: number }
   p1type: number
+  pendingHit?: PendingHit
   msgId?: string
 }
 

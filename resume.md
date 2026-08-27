@@ -26,7 +26,7 @@ watermark skip in `netEvent`, controller-by-name construction
 Decisions applied: `playerIndex` is re-derived from the URL (`first` flag) and
 is no longer stored in the payload; no watermark-missed fallback logic —
 drop-until-seen only (if the watermark never appears, messages stay dropped;
-accepted as-is). Manual verification of refresh scenarios pending.
+accepted as-is). Manual verification of refresh scenarios is complete and passed. The remaining known functional gap is recovery when the shooter refreshes after publishing `HIT` but before the shot becomes stationary; implementation planning for that recovery is included below.
 
 ## Goal
 
@@ -337,6 +337,50 @@ remove roughly half of the `BrowserContainer` item if done later.
 - **Stale entry after starting a new game:** a new game writes to the same
   `resume.<clientId>` slot, overwriting the old entry; no explicit
   invalidation needed.
+
+## Addendum: first step toward recovering an own in-flight shot
+
+Manual testing is complete and the existing turn-boundary resume behavior is
+accepted. The primary remaining gap is an own shot in flight: after the shooter
+publishes `HIT` but before the turn boundary settles, a refresh restores the
+previous boundary and the opponent can wait forever for boundary broadcasts.
+
+The agreed implementation is deliberately incremental and behavior-preserving:
+
+1. Add an optional `pendingHit` to the resume payload containing the exact hit
+   parameters (`cueBallId`, angle, power, offset, and elevation).
+2. Immediately after the shooter sends `HIT`, persist those parameters while
+   retaining the existing stationary turn-boundary snapshot and watermark.
+3. In a later step, reload a pending shot by restoring that boundary and
+   simulating the hit locally without publishing a duplicate `HIT`.
+4. Let normal stationary resolution publish the boundary events and overwrite
+   the entry without `pendingHit`.
+
+**Progress:** steps 1 and 2 are now implemented. This change only extends the
+stored payload and records pending-hit metadata; it does not read or act on
+`pendingHit` during reload, so current runtime behavior is unchanged.
+
+The pending hit is written immediately after the normal `HIT` send. It is
+shooter-side only, uses the existing boundary snapshot as its base, and does
+not replace the watermark with the `HIT` id. If no valid boundary entry exists,
+no pending metadata is written; this preserves the current fresh-game behavior.
+
+### Remaining implementation scope
+
+- Restore and locally replay a stored pending hit.
+- Ensure recovery never republishes the `HIT`.
+- Clear `pendingHit` when the next boundary snapshot is saved.
+- Add recovery/controller tests and manually verify refresh during a rolling
+  shot.
+
+### Explicitly out of scope
+
+- Both players refreshing during the same in-flight shot.
+- Watcher takeover or a new network protocol.
+- Nchan buffer truncation or missing-watermark fallback.
+- Recorder/first-shot reconstruction.
+- Persisting moving velocities or exact mid-shot visual position.
+- Storage fallback/quota/private-mode handling.
 
 ## Future work: recovering an own in-flight shot
 
