@@ -114,332 +114,334 @@
 
   <body>
     <h1 hidden>Free Pool, Billiards and Snooker</h1>
-    <div id="viewP1" class="view3d">
-      <div id="snookerScoreOverlay">
-        <div id="snookerScore" aria-live="polite">
-          <div id="breakScore" class="breakScore"></div>
-        </div>
-      </div>
-      <div id="notificationOverlay">
-        <div id="notification" aria-live="assertive" role="alert"></div>
-      </div>
-      <div id="helpOverlay" hidden>
-        <p class="seo-description">
-          Play free online billiards, pool and snooker with realistic physics
-          simulation in your browser. 8-ball, 9-ball, and three-cushion carom
-          games. Open source, no download required — just play.
-        </p>
-        <p class="seo-description" lang="ko">
-          사실적인 물리 시뮬레이션으로 무료 온라인 당구, 풀, 스누커를
-          브라우저에서 즐기세요. 8볼, 9볼, 3쿠션 캐롬 게임. 오픈 소스, 다운로드
-          불필요 — 바로 플레이하세요.
-        </p>
-        <p class="seo-description" lang="tr">
-          Gerçekçi fizik simülasyonu ile ücretsiz çevrimiçi bilardo, havuz ve
-          snooker oynayın. 8-top, 9-top ve üç bant karambol oyunları. Açık
-          kaynak, indirme gerekmez — hemen oynayın.
-        </p>
-        <iframe></iframe>
-        <div class="help-footer">
-          <button
-            class="lobby-btn"
-            onclick="
-              window.location.href =
-                'https://billiards.tailuge.workers.dev/lobby'
-            "
-          >
-            Visit Lobby
-          </button>
-          <span class="help-text">to set graphics mode and player name </span>
-          <button id="helpClose">close</button>
-        </div>
-      </div>
-      <div id="botDebugOverlay">
-        <header>
-          <span id="botDebugToggle">🦞</span>
-          <div>
-            <button
-              id="botDebugClear"
-              type="button"
-              aria-label="Clear debug log"
-            >
-              Clear
-            </button>
+    <main>
+      <div id="viewP1" class="view3d">
+        <div id="snookerScoreOverlay">
+          <div id="snookerScore" aria-live="polite">
+            <div id="breakScore" class="breakScore"></div>
           </div>
-        </header>
-        <pre id="botDebugLog" aria-live="polite">
+        </div>
+        <div id="notificationOverlay">
+          <div id="notification" aria-live="assertive" role="alert"></div>
+        </div>
+        <div id="helpOverlay" hidden>
+          <p class="seo-description">
+            Play free online billiards, pool and snooker with realistic physics
+            simulation in your browser. 8-ball, 9-ball, and three-cushion carom
+            games. Open source, no download required — just play.
+          </p>
+          <p class="seo-description" lang="ko">
+            사실적인 물리 시뮬레이션으로 무료 온라인 당구, 풀, 스누커를
+            브라우저에서 즐기세요. 8볼, 9볼, 3쿠션 캐롬 게임. 오픈 소스,
+            다운로드 불필요 — 바로 플레이하세요.
+          </p>
+          <p class="seo-description" lang="tr">
+            Gerçekçi fizik simülasyonu ile ücretsiz çevrimiçi bilardo, havuz ve
+            snooker oynayın. 8-top, 9-top ve üç bant karambol oyunları. Açık
+            kaynak, indirme gerekmez — hemen oynayın.
+          </p>
+          <iframe></iframe>
+          <div class="help-footer">
+            <button
+              class="lobby-btn"
+              onclick="
+                window.location.href =
+                  'https://billiards.tailuge.workers.dev/lobby'
+              "
+            >
+              Visit Lobby
+            </button>
+            <span class="help-text">to set graphics mode and player name </span>
+            <button id="helpClose">close</button>
+          </div>
+        </div>
+        <div id="botDebugOverlay">
+          <header>
+            <span id="botDebugToggle">🦞</span>
+            <div>
+              <button
+                id="botDebugClear"
+                type="button"
+                aria-label="Clear debug log"
+              >
+                Clear
+              </button>
+            </div>
+          </header>
+          <pre id="botDebugLog" aria-live="polite">
           <!-- loading="lazy" avoids downloading this 143KB image on initial paint since botDebugOverlay starts hidden/closed -->
           <img src="images/billiards.png" loading="lazy" alt="Billiards Pool Game Promo - Realistic Physics Simulation">
           Play free realistic pool online with accurate physics. Open source billiards simulation in your browser.
           billiards, snooker, 9-ball, pool, carom, three-cushion, online game, free, open source, ビリヤード, スヌーカー, 9ボール, 3クッション, オンラインゲーム, 無料, 당구, 스누커, 9볼, 3쿠션, 온라인 게임, 무료
           Find it on <a href="https://github.com/tailuge/billiards">github</a>
         </pre>
+        </div>
+        <div class="chatarea">
+          <div id="chatoutput" class="chatoutput"></div>
+        </div>
+        <dialog id="inputTextDiv" contenteditable="false">
+          <div id="inputTextDivInner">
+            <input
+              id="inputText"
+              type="text"
+              placeholder="Enter text here..."
+              maxlength="64"
+              autofocus
+              autocomplete="off"
+              aria-label="Chat message input"
+            />
+            <div id="chatEmojiList" aria-label="Emoji messages"></div>
+            <button id="inputSend" aria-label="Send chat message">➤</button>
+            <button id="toggleChatMode" aria-label="Switch to emoji mode">
+              <span class="chat-text-mode-icon">👾</span>
+              <span class="chat-emoji-mode-icon">⌨️</span>
+            </button>
+            <button id="inputClose" aria-label="Close chat input">✖</button>
+          </div>
+        </dialog>
       </div>
-      <div class="chatarea">
-        <div id="chatoutput" class="chatoutput"></div>
-      </div>
-      <dialog id="inputTextDiv" contenteditable="false">
-        <div id="inputTextDivInner">
-          <input
-            id="inputText"
-            type="text"
-            placeholder="Enter text here..."
-            maxlength="64"
-            autofocus
-            autocomplete="off"
-            aria-label="Chat message input"
-          />
-          <div id="chatEmojiList" aria-label="Emoji messages"></div>
-          <button id="inputSend" aria-label="Send chat message">➤</button>
-          <button id="toggleChatMode" aria-label="Switch to emoji mode">
-            <span class="chat-text-mode-icon">👾</span>
-            <span class="chat-emoji-mode-icon">⌨️</span>
-          </button>
-          <button id="inputClose" aria-label="Close chat input">✖</button>
-        </div>
-      </dialog>
-    </div>
-    <div id="panel" class="panel wood-texture">
-      <div class="aimControlColumn">
-        <div class="aimingArea">
-          <button
-            class="hitButton timeout-btn"
-            id="cueHit"
-            type="button"
-            aria-label="Hit cue ball"
-          >
-            hit
-          </button>
-        </div>
-        <div id="tiltSliderContainer" class="tiltSliderContainer" hidden>
-          <angle-input id="cueTilt" aria-label="tilt angle"></angle-input>
-        </div>
-        <template id="angle-input-template">
-          <div class="area" id="area">
-            <div class="ball"></div>
-            <div class="rotator" id="rot">
-              <div class="stick">
-                <div class="tip"></div>
-                <div class="ferrule"></div>
-                <div class="shaft"></div>
-                <div class="butt"></div>
+      <div id="panel" class="panel wood-texture">
+        <div class="aimControlColumn">
+          <div class="aimingArea">
+            <button
+              class="hitButton timeout-btn"
+              id="cueHit"
+              type="button"
+              aria-label="Hit cue ball"
+            >
+              hit
+            </button>
+          </div>
+          <div id="tiltSliderContainer" class="tiltSliderContainer" hidden>
+            <angle-input id="cueTilt" aria-label="tilt angle"></angle-input>
+          </div>
+          <template id="angle-input-template">
+            <div class="area" id="area">
+              <div class="ball"></div>
+              <div class="rotator" id="rot">
+                <div class="stick">
+                  <div class="tip"></div>
+                  <div class="ferrule"></div>
+                  <div class="shaft"></div>
+                  <div class="butt"></div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <div id="ballContainerWrapper" class="ballContainerWrapper">
+            <button id="openElevation" class="openElevation">+</button>
+            <div id="ballContainer" class="ballContainer">
+              <div id="objectBall" class="objectBall"></div>
+              <div id="cueBall" class="cueBall">
+                <div id="cueTip" class="cueTip"></div>
               </div>
             </div>
           </div>
-        </template>
-        <div id="ballContainerWrapper" class="ballContainerWrapper">
-          <button id="openElevation" class="openElevation">+</button>
-          <div id="ballContainer" class="ballContainer">
-            <div id="objectBall" class="objectBall"></div>
-            <div id="cueBall" class="cueBall">
-              <div id="cueTip" class="cueTip"></div>
-            </div>
-          </div>
         </div>
-      </div>
-      <div id="powerSliderContainer" class="powerSliderContainer">
-        <div class="power-track"></div>
-        <input
-          class="powerSlider"
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value="0.65"
-          id="cuePower"
-          aria-label="power slider"
-        />
-        <span id="powerPercent" class="powerPercent">65%</span>
-      </div>
-      <div class="outerMenu">
-        <details id="menuDropdown" class="menuDropdown">
-          <summary
-            class="menuButton half-height"
-            title="menu"
-            id="menu"
-            aria-label="Menu"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#000"
-              stroke-width="2"
-            >
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-          </summary>
-          <div id="menuItems" class="menuItems">
-            <button
+        <div id="powerSliderContainer" class="powerSliderContainer">
+          <div class="power-track"></div>
+          <input
+            class="powerSlider"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.65"
+            id="cuePower"
+            aria-label="power slider"
+          />
+          <span id="powerPercent" class="powerPercent">65%</span>
+        </div>
+        <div class="outerMenu">
+          <details id="menuDropdown" class="menuDropdown">
+            <summary
               class="menuButton half-height"
-              title="comment"
-              id="comment"
-              type="button"
-              aria-label="Comment"
-              hidden
-            >
-              🗨
-            </button>
-            <button
-              class="menuButton half-height"
-              title="diagram"
-              id="diagram"
-              type="button"
-              aria-label="Diagram"
-              hidden
-            >
-              📸
-            </button>
-            <button
-              class="menuButton half-height"
-              title="fullscreen"
-              id="fullscreen"
-              type="button"
-              aria-label="Fullscreen"
-            >
-              ⛶
-            </button>
-            <button
-              class="menuButton half-height"
-              title="fast forward"
-              id="ffwd"
-              type="button"
-              aria-label="Fast forward"
-              hidden
-            >
-              ⏩︎
-            </button>
-            <button
-              class="menuButton half-height"
-              title="share"
-              id="share"
-              type="button"
-              aria-label="Share replay link"
-              hidden
+              title="menu"
+              id="menu"
+              aria-label="Menu"
             >
               <svg
-                xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="currentColor"
+                stroke="#000"
                 stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
               >
-                <circle cx="18" cy="5" r="3"></circle>
-                <circle cx="6" cy="12" r="3"></circle>
-                <circle cx="18" cy="19" r="3"></circle>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
               </svg>
-            </button>
-            <button
-              class="menuButton half-height"
-              title="concede"
-              id="concede"
-              type="button"
-              aria-label="Concede"
-              hidden
-            >
-              🏳️
-            </button>
-            <button
-              class="menuButton half-height"
-              title="shot analysis"
-              id="analysis"
-              type="button"
-              aria-label="Shot analysis"
-              hidden
-            >
-              🔍
-            </button>
-            <button
-              class="menuButton half-height"
-              title="chromeless (L)"
-              id="chromeless"
-              type="button"
-              aria-label="Toggle chromeless mode"
-            >
-              👁︎
-            </button>
-            <button
-              class="menuButton half-height"
-              title="help"
-              id="help"
-              type="button"
-              aria-label="Help"
-            >
-              𝑖
-            </button>
-          </div>
-        </details>
-        <canvas
-          id="minimap"
-          width="252"
-          height="136"
-          aria-label="Table minimap"
-          hidden
-        ></canvas>
-        <button
-          class="menuButton aim"
-          title="view"
-          id="camera"
-          type="button"
-          aria-label="Toggle camera view"
-        >
-          🎥
-        </button>
+            </summary>
+            <div id="menuItems" class="menuItems">
+              <button
+                class="menuButton half-height"
+                title="comment"
+                id="comment"
+                type="button"
+                aria-label="Comment"
+                hidden
+              >
+                🗨
+              </button>
+              <button
+                class="menuButton half-height"
+                title="diagram"
+                id="diagram"
+                type="button"
+                aria-label="Diagram"
+                hidden
+              >
+                📸
+              </button>
+              <button
+                class="menuButton half-height"
+                title="fullscreen"
+                id="fullscreen"
+                type="button"
+                aria-label="Fullscreen"
+              >
+                ⛶
+              </button>
+              <button
+                class="menuButton half-height"
+                title="fast forward"
+                id="ffwd"
+                type="button"
+                aria-label="Fast forward"
+                hidden
+              >
+                ⏩︎
+              </button>
+              <button
+                class="menuButton half-height"
+                title="share"
+                id="share"
+                type="button"
+                aria-label="Share replay link"
+                hidden
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+              </button>
+              <button
+                class="menuButton half-height"
+                title="concede"
+                id="concede"
+                type="button"
+                aria-label="Concede"
+                hidden
+              >
+                🏳️
+              </button>
+              <button
+                class="menuButton half-height"
+                title="shot analysis"
+                id="analysis"
+                type="button"
+                aria-label="Shot analysis"
+                hidden
+              >
+                🔍
+              </button>
+              <button
+                class="menuButton half-height"
+                title="chromeless (L)"
+                id="chromeless"
+                type="button"
+                aria-label="Toggle chromeless mode"
+              >
+                👁︎
+              </button>
+              <button
+                class="menuButton half-height"
+                title="help"
+                id="help"
+                type="button"
+                aria-label="Help"
+              >
+                𝑖
+              </button>
+            </div>
+          </details>
+          <canvas
+            id="minimap"
+            width="252"
+            height="136"
+            aria-label="Table minimap"
+            hidden
+          ></canvas>
+          <button
+            class="menuButton aim"
+            title="view"
+            id="camera"
+            type="button"
+            aria-label="Toggle camera view"
+          >
+            🎥
+          </button>
+        </div>
       </div>
-    </div>
 
-    <div
-      id="ballTray"
-      class="tray-container"
-      aria-live="polite"
-      role="log"
-      hidden
-    >
-      <div class="nav-btn btn-left" id="trayLeft">❮</div>
-      <div class="ball-tray-list" id="ballTrayList"></div>
-      <div class="nav-btn btn-right" id="trayRight">❯</div>
-    </div>
-    <div class="tray-score-container">
-      <div id="p1Score" class="p1Score"></div>
-      <div id="p2Score" class="p2Score"></div>
-    </div>
-    <div id="lobbyContainer">
-      <div class="challenge-row">
-        <span id="challengePill" class="challenge-pill" hidden>
-          <button
-            id="challengeAccept"
-            type="button"
-            aria-label="Accept challenge"
-          >
-            ✅
-          </button>
-          <button
-            id="challengeDecline"
-            type="button"
-            aria-label="Decline challenge"
-          >
-            ❌
-          </button>
-        </span>
+      <div
+        id="ballTray"
+        class="tray-container"
+        aria-live="polite"
+        role="log"
+        hidden
+      >
+        <div class="nav-btn btn-left" id="trayLeft">❮</div>
+        <div class="ball-tray-list" id="ballTrayList"></div>
+        <div class="nav-btn btn-right" id="trayRight">❯</div>
       </div>
-      <a
-        href="https://billiards.tailuge.workers.dev/lobby.html"
-        class="pill"
-        title="Lobby"
-        id="lobbyOverlay"
-        aria-label="Multiplayer Lobby"
-        ><span class="lobby-count"></span
-      ></a>
-    </div>
+      <div class="tray-score-container">
+        <div id="p1Score" class="p1Score"></div>
+        <div id="p2Score" class="p2Score"></div>
+      </div>
+      <div id="lobbyContainer">
+        <div class="challenge-row">
+          <span id="challengePill" class="challenge-pill" hidden>
+            <button
+              id="challengeAccept"
+              type="button"
+              aria-label="Accept challenge"
+            >
+              ✅
+            </button>
+            <button
+              id="challengeDecline"
+              type="button"
+              aria-label="Decline challenge"
+            >
+              ❌
+            </button>
+          </span>
+        </div>
+        <a
+          href="https://billiards.tailuge.workers.dev/lobby.html"
+          class="pill"
+          title="Lobby"
+          id="lobbyOverlay"
+          aria-label="Multiplayer Lobby"
+          ><span class="lobby-count"></span
+        ></a>
+      </div>
+    </main>
     <script defer src="three_core.js"></script>
     <script defer src="three_module.js"></script>
     <script defer src="three_examples.js"></script>

@@ -11,6 +11,10 @@ html {
   flex-direction: column;
 }
 
+main {
+  display: contents;
+}
+
 ::selection {
   color: white;
 }
