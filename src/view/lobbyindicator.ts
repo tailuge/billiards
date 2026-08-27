@@ -265,8 +265,8 @@ export class LobbyIndicator {
     this.element.setAttribute(
       "aria-label",
       challenged
-        ? `Multiplayer Lobby - CHALLENGE FROM ${this.challenger!.userName}!`
-        : `Multiplayer Lobby - ${this.count} online`
+        ? `${this.element.textContent?.trim() ?? ""} CHALLENGE FROM ${this.challenger!.userName}`
+        : (this.element.textContent?.trim() ?? "")
     )
 
     if (this.element instanceof HTMLAnchorElement) {

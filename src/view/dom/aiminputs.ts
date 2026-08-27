@@ -94,7 +94,10 @@ export class AimInputs {
   }
 
   setButtonText(text) {
-    this.cueHitElement && (this.cueHitElement.innerText = text)
+    if (this.cueHitElement) {
+      this.cueHitElement.innerText = text
+      this.cueHitElement.setAttribute("aria-label", text)
+    }
   }
 
   setDisabled(disabled: boolean) {
