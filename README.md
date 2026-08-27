@@ -1,4 +1,4 @@
-# billiards
+# Billiards - Free online pool and billiards game
 
 [![codecov](https://codecov.io/gh/tailuge/billiards/branch/master/graph/badge.svg?token=BH11KRAEL0)](https://codecov.io/gh/tailuge/billiards)
 [![CodeFactor](https://www.codefactor.io/repository/github/tailuge/billiards/badge)](https://www.codefactor.io/repository/github/tailuge/billiards)
@@ -7,7 +7,7 @@
 [![Open in Gitpod](https://img.shields.io/badge/Gitpod-Open%20in%20Gitpod-%230092CF.svg)](https://gitpod.io/#https://github.com/tailuge/billiards)
 ![GitHub](https://img.shields.io/github/license/tailuge/billiards.svg)
 
-[![Demo and Screenshot](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/promo.png)](https://billiards.tailuge.workers.dev/?bot=TheFarJaw)
+[![Free online 3D pool and billiards game running in a browser, WebGL table viewed from behind the cue ball](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/promo.png)](https://billiards.tailuge.workers.dev/?bot=TheFarJaw)
 
 This is an open-source project bringing unsophisticated billiards physics written in TypeScript to the browser.
 
@@ -21,7 +21,7 @@ Demos run in all major desktop and mobile browsers and use WebGL
 * [Snooker ⬀](https://billiards.tailuge.workers.dev/?ruletype=snooker&lod=4&tableSize=12) we await the first 147 submission to the leaderboard.
 * [8-Ball ⬀](https://billiards.tailuge.workers.dev/?ruletype=eightball&lod=4) try it in Hi-Res mode!
 * Play vs the [Claw ⬀](https://billiards.tailuge.workers.dev/?bot=ClawBreak) and [TheFarJaw ⬀](https://billiards.tailuge.workers.dev/?bot=TheFarJaw).
-* Try [two player](https://billiards.tailuge.workers.dev/lobby.html) online lobby using nchan
+* Try [Multiplayer online](https://billiards.tailuge.workers.dev/lobby.html) pool lobby using nchan
 * Try to get on the leaderboard of highest [breaks](https://scoreboard-tailuge.vercel.app/leaderboard) hosted on Vercel.
 * Inspect physics and tweak constants using [diagrams](https://tailuge.github.io/billiards/dist/diagrams/diagrams.html).
 * Set up trick shots and [practice ⬀](https://billiards.tailuge.workers.dev/practice.html).
@@ -302,23 +302,23 @@ Use mouse, touch screen or keyboard:
 
 July 2018
 
-![2018](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t1.png)
+![WebGL pool table rendered in the browser, July 2018](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t1.png)
 
 July 2019
 
-![2019](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t2.png)
+![Ball shading and spin effects added to the WebGL table, July 2019](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t2.png)
 
 March 2021
 
-![2021](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)
+![Snooker style table and refined cue rendering, March 2021](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/t3.png)
 
 August 2023 (mobile)
 
 top | aim  
 :--:|:--:
-<kbd>![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile1.jpg)</kbd> | <kbd>![2023](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile2.jpg)</kbd>
+<kbd>![Top-down camera view for planning shots on a mobile screen](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile1.jpg)</kbd> | <kbd>![Aim view along the cue on a mobile touchscreen](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile2.jpg)</kbd>
 
-[![2026](https://img.youtube.com/vi/jGNB_XLTjnU/0.jpg)](https://www.youtube.com/watch?v=jGNB_XLTjnU)
+[![Billiards gameplay video from 2026](https://img.youtube.com/vi/jGNB_XLTjnU/0.jpg)](https://www.youtube.com/watch?v=jGNB_XLTjnU)
 
 Star History
 
