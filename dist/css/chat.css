@@ -52,8 +52,8 @@
   width: auto;
   top: auto;
   bottom: 4px; /* 3px up from original 1px */
-  left: 160px; /* 152px spin column + 8px gap */
-  right: 80px; /* button column */
+  left: 148px; /* tightened to preserve emoji width */
+  right: 78px; /* button column */
   z-index: 1000;
   display: none;
   align-items: center;
