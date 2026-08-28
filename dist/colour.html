@@ -46,12 +46,13 @@
   </head>
   <body>
     <div id="view"></div>
-    <div id="hint">Click a part of the table to recolour it</div>
+    <div id="hint">Click a part of the table or room to recolour it</div>
     <input id="picker" type="color" />
     <script type="module">
       import * as THREE from "three"
       import { OrbitControls } from "three/addons/controls/OrbitControls.js"
       import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"
+      import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js"
 
       const view = document.getElementById("view")
       const hint = document.getElementById("hint")
@@ -80,6 +81,10 @@
       controls.enableDamping = true
       controls.dampingFactor = 0.05
       controls.target.set(0, 0, 0)
+
+      // Same single dim ambient light as the game (src/view/view.ts); all
+      // other lighting comes from the lights embedded in the gltf.
+      scene.add(new THREE.AmbientLight(0x009922, 0.3))
 
       function applyColour(name, hex) {
         for (const mat of matchingMaterials({ name })) {
@@ -114,6 +119,8 @@
       }
 
       const R = 0.03275
+      // Added before the table loads so saved URL colours reach the room too.
+      scene.add(buildRoom())
       new GLTFLoader().load("models/p8.gltf", (gltf) => {
         gltf.scene.scale.set(R / 0.5, R / 0.5, R / 0.5)
         gltf.scene.matrixAutoUpdate = false
@@ -122,6 +129,113 @@
         scene.add(gltf.scene)
         decodeColours()
       })
+
+      // Simple JS port of src/view/room.ts: a low-poly room around the table
+      // with a checkerboard tiled floor (hole left under the table) and one
+      // pastel colour per wall, sized from the table footprint like the game's
+      // Room (TableGeometry.X = R * 44, Y = R * 22, 2m clearance). The room
+      // uses the same Lambert materials as the game, with no image textures.
+      function buildRoom() {
+        const clearance = 2
+        const floorZ = -0.75
+        const wallHeight = 4
+        const floorColors = [0xe6e2d8, 0xd4cfc3]
+        const wallColors = [0xf2c9c9, 0xc9d6f2, 0xcdeccd, 0xf2e8c9]
+
+        const X = R * 44
+        const Y = R * 22
+        const tile = X / 3
+        const cols = Math.round((X + clearance) / tile)
+        const rows = Math.round((Y + clearance) / tile - 0.5)
+        const xWall = cols * tile
+        const yWall = (rows + 0.5) * tile
+
+        const room = new THREE.Group()
+
+        // Merge tiles into one geometry per checker colour so a click
+        // recolours every tile of that colour.
+        const tiles = [[], []]
+        for (let i = -cols; i < cols; i++) {
+          const x = (i + 0.5) * tile
+          for (let j = -rows; j <= rows; j++) {
+            const y = j * tile
+            if (Math.abs(x) < X && Math.abs(y) < Y) {
+              continue // hole under the table
+            }
+            const tileGeometry = new THREE.PlaneGeometry(tile, tile)
+            tileGeometry.translate(x, y, floorZ)
+            tiles[Math.abs(i + j) % 2].push(tileGeometry)
+          }
+        }
+        tiles.forEach((set, parity) => {
+          room.add(
+            new THREE.Mesh(
+              mergeGeometries(set),
+              namedMaterial(
+                parity === 0 ? "floorlight" : "floordark",
+                floorColors[parity]
+              )
+            )
+          )
+        })
+
+        // Single-sided wall planes whose front faces point inward.
+        const walls = [
+          {
+            x: -xWall,
+            y: 0,
+            w: wallHeight,
+            h: 2 * yWall,
+            rx: 0,
+            ry: Math.PI / 2,
+            color: wallColors[0],
+          },
+          {
+            x: xWall,
+            y: 0,
+            w: wallHeight,
+            h: 2 * yWall,
+            rx: 0,
+            ry: -Math.PI / 2,
+            color: wallColors[1],
+          },
+          {
+            x: 0,
+            y: -yWall,
+            w: 2 * xWall,
+            h: wallHeight,
+            rx: -Math.PI / 2,
+            ry: 0,
+            color: wallColors[2],
+          },
+          {
+            x: 0,
+            y: yWall,
+            w: 2 * xWall,
+            h: wallHeight,
+            rx: Math.PI / 2,
+            ry: 0,
+            color: wallColors[3],
+          },
+        ]
+        walls.forEach((wall, i) => {
+          const mesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(wall.w, wall.h),
+            namedMaterial("wall" + i, wall.color)
+          )
+          mesh.rotation.set(wall.rx, wall.ry, 0)
+          mesh.position.set(wall.x, wall.y, floorZ + wallHeight / 2)
+          room.add(mesh)
+        })
+
+        return room
+      }
+
+      function namedMaterial(name, hex) {
+        const material = new THREE.MeshLambertMaterial({ color: hex })
+        material.name = name
+        return material
+      }
 
       function materialsOf(mesh) {
         return Array.isArray(mesh.material) ? mesh.material : [mesh.material]
