@@ -17,6 +17,8 @@ export interface MatchResult {
   version?: string
   userAgent?: string
   bot?: boolean
+  freeaim?: boolean
+  tableSize?: number
 }
 
 export class MatchResultHelper {
@@ -320,6 +322,18 @@ export class MatchResultHelper {
 
     result.version = VERSION
     result.userAgent = navigator?.userAgent
+
+    if (typeof globalThis.location !== "undefined") {
+      const params = new URLSearchParams(globalThis.location.search)
+      if (params.get("freeaim") === "true") {
+        result.freeaim = true
+      }
+      const tableSize = Number.parseFloat(params.get("tableSize") || "10")
+      if (tableSize < 10) {
+        result.tableSize = tableSize
+      }
+    }
+
     return result
   }
 }
