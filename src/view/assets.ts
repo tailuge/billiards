@@ -40,6 +40,20 @@ export class Assets {
       cushionColor: 0xba934e,
       clothshadeColor: 0x896e42,
     },
+    eightball6: {
+      clothTextureColor: 0x512da8,
+      clothColor: 0xffffff,
+      cushionColor: 0x512da8,
+      clothshadeColor: 0x311b92,
+      gridLineColor: 0x311b92,
+    },
+    nineball6: {
+      clothTextureColor: 0x00695c,
+      clothColor: 0xffffff,
+      cushionColor: 0x00695c,
+      clothshadeColor: 0x004d40,
+      gridLineColor: 0x004d40,
+    },
     eightball: {
       clothTextureColor: 0x9b2226,
       clothColor: 0xffffff,
@@ -68,7 +82,12 @@ export class Assets {
   }
 
   get gridLineColor(): number | undefined {
-    return Assets.tableCustomizations[this.ruletype]?.gridLineColor
+    const tableSize = this.tableSizeFromUrl()
+    const cfg =
+      tableSize === 6
+        ? Assets.tableCustomizations[`${this.ruletype}6`]
+        : Assets.tableCustomizations[this.ruletype]
+    return cfg?.gridLineColor
   }
 
   loadFromWeb(ready) {
@@ -78,8 +97,12 @@ export class Assets {
     this.background = this.room.generateRoom()
     importGltf(this.rules.asset, (m) => {
       this.rules.scaleTableModel?.(m.scene)
-      const cfg = Assets.tableCustomizations[this.ruletype]
-      if (this.ruletype === "eightball" && cfg) {
+      const tableSize = this.tableSizeFromUrl()
+      const cfg =
+        tableSize === 6
+          ? Assets.tableCustomizations[`${this.ruletype}6`]
+          : Assets.tableCustomizations[this.ruletype]
+      if (cfg) {
         this.customizeTableScene(m.scene, cfg)
       } else if (this.isTableSize5()) {
         this.customizeTableScene(
@@ -109,9 +132,13 @@ export class Assets {
     return assets
   }
 
-  private isTableSize5(): boolean {
+  private tableSizeFromUrl(): number {
     const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
-    return parseFloat(urlParams.get("tableSize") || "10") === 5
+    return parseFloat(urlParams.get("tableSize") || "10")
+  }
+
+  private isTableSize5(): boolean {
+    return this.tableSizeFromUrl() === 5
   }
 
   private customizeTableScene(scene, cfg: TableCustomization): void {
