@@ -33,9 +33,9 @@ export function scaleTableModel(
     for (let i = 0; i < position.count; i++) {
       const x = position.getX(i)
       const y = position.getY(i)
-      if (x > modelExtentX * 0.75) {
+      if (x > modelExtentX * 0.6) {
         position.setX(i, x + 2 * stretchX)
-      } else if (x > modelExtentX * 0.25) {
+      } else if (x > modelExtentX * 0.4) {
         position.setX(i, x + stretchX)
       }
       if (y > modelExtentY * 0.75) {
