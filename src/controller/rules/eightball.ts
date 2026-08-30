@@ -22,6 +22,7 @@ import { ScoreEvent } from "../../events/scoreevent"
 import { roundVec } from "../../utils/three-utils"
 import { Respot } from "../../utils/respot"
 import { RerackEvent } from "../../events/rerackevent"
+import { scaleTableModel } from "../../utils/table-scaler"
 
 const flipType = (t: number) => {
   if (t === 1) return 2
@@ -50,6 +51,13 @@ export class EightBall implements Rules {
 
   tableGeometry(): void {
     TableConfig.apply(this.rulename, TableConfig.tableSizeFromUrl())
+  }
+
+  scaleTableModel(scene: any): void {
+    const tableSize = TableConfig.tableSizeFromUrl()
+    if (tableSize === 6) {
+      scaleTableModel(scene, -2800, -1350)
+    }
   }
 
   table(): Table {

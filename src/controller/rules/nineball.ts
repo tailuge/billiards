@@ -21,6 +21,7 @@ import { MatchResultHelper } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
 import { isFirstShot } from "../../utils/utils"
 import { roundVec } from "../../utils/three-utils"
+import { scaleTableModel } from "../../utils/table-scaler"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -63,6 +64,13 @@ export class NineBall implements Rules {
 
   tableGeometry(): void {
     TableConfig.apply(this.rulename, TableConfig.tableSizeFromUrl())
+  }
+
+  scaleTableModel(scene: any): void {
+    const tableSize = TableConfig.tableSizeFromUrl()
+    if (tableSize === 6) {
+      scaleTableModel(scene, -2800, -1350)
+    }
   }
 
   table(): Table {
