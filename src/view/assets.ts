@@ -48,11 +48,11 @@ export class Assets {
       gridLineColor: 0x5e1675,
     },
     nineball6: {
-      clothTextureColor: 0x00afa0,
+      clothTextureColor: 0x2f7691,
       clothColor: 0xffffff,
-      cushionColor: 0x00afa0,
-      clothshadeColor: 0x007a70,
-      gridLineColor: 0x007a70,
+      cushionColor: 0x2f7691,
+      clothshadeColor: 0x1d4858,
+      gridLineColor: 0x1d4858,
     },
     eightball: {
       clothTextureColor: 0x9b2226,
