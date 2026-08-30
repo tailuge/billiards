@@ -91,13 +91,14 @@ export class EightBall implements Rules {
       const max = new Vector3(TableGeometry.tableX, TableGeometry.tableY)
       const min = new Vector3(-TableGeometry.tableX, -TableGeometry.tableY)
       if (isFirstShot(this.container.recorder)) {
-        const baulkline = (-R * 11) / 0.5
+        const baulkline =
+          ((-R * 11) / 0.5) * (TableConfig.tableSizeFromUrl() / 10)
         max.setX(baulkline)
         min.setX(baulkline)
       }
       return target.clone().clamp(min, max)
     }
-    const baulkline = (-R * 11) / 0.5
+    const baulkline = ((-R * 11) / 0.5) * (TableConfig.tableSizeFromUrl() / 10)
     return new Vector3(baulkline, 0, 0)
   }
 

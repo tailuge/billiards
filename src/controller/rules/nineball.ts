@@ -47,7 +47,7 @@ export class NineBall implements Rules {
   }
 
   placeBall(target?: Vector3): Vector3 {
-    const baulkline = (-R * 11) / 0.5
+    const baulkline = ((-R * 11) / 0.5) * (TableConfig.tableSizeFromUrl() / 10)
     if (target) {
       const max = new Vector3(TableGeometry.tableX, TableGeometry.tableY)
       const min = new Vector3(-TableGeometry.tableX, -TableGeometry.tableY)

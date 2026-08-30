@@ -15,6 +15,8 @@ import { WatchEvent } from "../../src/events/watchevent"
 import { End } from "../../src/controller/end"
 import { Session } from "../../src/network/client/session"
 import { ScoreEvent } from "../../src/events/scoreevent"
+import { TableGeometry } from "../../src/view/tablegeometry"
+import { R } from "../../src/model/physics/constants"
 
 initDom()
 
@@ -208,6 +210,19 @@ describe("EightBall Rules", () => {
     const nextController = eightball.update(outcome)
     expect(nextController).to.be.an.instanceof(End)
     expect(eightball.isEndOfGame(outcome)).to.be.false // foul means no win
+  })
+
+  it("should scale the breakoff line with the table size", () => {
+    const defaultBreakoff = eightball.placeBall().x
+    globalThis.history.replaceState({}, "", "?tableSize=5")
+    eightball.tableGeometry()
+
+    expect(eightball.placeBall().x).to.equal(defaultBreakoff * 0.5)
+    expect(eightball.placeBall().x).to.equal(-((R * 11) / 0.5) * 0.5)
+
+    globalThis.history.replaceState({}, "", "?tableSize=10")
+    eightball.tableGeometry()
+    expect(TableGeometry.tableX).to.equal(R * 43)
   })
 
   it("should allow placeBall anywhere on the table after a foul", () => {

@@ -12,6 +12,7 @@ import { WatchAim } from "../../src/controller/watchaim"
 import { End } from "../../src/controller/end"
 import { Session } from "../../src/network/client/session"
 import { RerackEvent } from "../../src/events/rerackevent"
+import { R } from "../../src/model/physics/constants"
 
 initDom()
 
@@ -314,6 +315,18 @@ describe("NineBall Rules", () => {
     const shots = container.recorder.shots
     expect(shots[shots.length - 1]).to.be.an.instanceof(PlaceBallEvent)
     expect(shots[shots.length - 2]).to.be.an.instanceof(RerackEvent)
+  })
+
+  it("should scale the breakoff line with the table size", () => {
+    const defaultBreakoff = nineball.placeBall().x
+    globalThis.history.replaceState({}, "", "?tableSize=5")
+    nineball.tableGeometry()
+
+    expect(nineball.placeBall().x).to.equal(defaultBreakoff * 0.5)
+    expect(nineball.placeBall().x).to.equal(-((R * 11) / 0.5) * 0.5)
+
+    globalThis.history.replaceState({}, "", "?tableSize=10")
+    nineball.tableGeometry()
   })
 
   it("should cover placeBall and other methods", () => {
