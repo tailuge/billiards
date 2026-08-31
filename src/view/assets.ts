@@ -83,10 +83,7 @@ export class Assets {
 
   get gridLineColor(): number | undefined {
     const tableSize = this.tableSizeFromUrl()
-    const cfg =
-      tableSize === 6
-        ? Assets.tableCustomizations[`${this.ruletype}6`]
-        : Assets.tableCustomizations[this.ruletype]
+    const cfg = this.tableCustomizationForSize(tableSize)
     return cfg?.gridLineColor
   }
 
@@ -97,18 +94,9 @@ export class Assets {
     this.background = this.room.generateRoom()
     importGltf(this.rules.asset, (m) => {
       this.rules.scaleTableModel?.(m.scene)
-      const tableSize = this.tableSizeFromUrl()
-      const cfg =
-        tableSize === 6
-          ? Assets.tableCustomizations[`${this.ruletype}6`]
-          : Assets.tableCustomizations[this.ruletype]
+      const cfg = this.tableCustomizationForSize(this.tableSizeFromUrl())
       if (cfg) {
         this.customizeTableScene(m.scene, cfg)
-      } else if (this.isTableSize5()) {
-        this.customizeTableScene(
-          m.scene,
-          Assets.tableCustomizations.threecushion
-        )
       }
       this.table = m.scene
       TableMesh.mesh = m.scene.children[0]
@@ -137,8 +125,17 @@ export class Assets {
     return parseFloat(urlParams.get("tableSize") || "10")
   }
 
-  private isTableSize5(): boolean {
-    return this.tableSizeFromUrl() === 5
+  private tableCustomizationForSize(
+    tableSize: number
+  ): TableCustomization | undefined {
+    if (tableSize === 10) return undefined
+    if (tableSize === 6) {
+      return Assets.tableCustomizations[`${this.ruletype}6`]
+    }
+    if (tableSize === 5) {
+      return Assets.tableCustomizations.threecushion
+    }
+    return Assets.tableCustomizations[this.ruletype]
   }
 
   private customizeTableScene(scene, cfg: TableCustomization): void {
