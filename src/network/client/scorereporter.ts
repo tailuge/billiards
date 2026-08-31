@@ -40,12 +40,12 @@ export class ScoreReporter {
     }
   }
 
-  submitTournamentResult(
+  async submitTournamentResult(
     tournamentId: string,
     challengeId: string,
     winnerId: string,
     loserId?: string
-  ): void {
+  ): Promise<void> {
     const url = `${ARENA_BASE_URL}/api/arena/${encodeURIComponent(
       tournamentId
     )}/result`
@@ -61,16 +61,37 @@ export class ScoreReporter {
       payload.loserId = loserId
     }
 
-    void fetch(url, {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    }).catch((error) => {
-      console.error("Error submitting tournament result to", url, error)
+    console.log("Uploading tournament arena result:", {
+      url,
+      payload,
     })
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+      let responseBody: string
+      try {
+        responseBody = await response.text()
+      } catch (error) {
+        responseBody = `Could not read response body: ${String(error)}`
+      }
+      console.log("Tournament arena result full response:", {
+        response,
+        ok: response.ok,
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+        body: responseBody,
+      })
+    } catch (error) {
+      console.error("Error submitting tournament result to", url, error)
+    }
   }
 
   private shouldSkipUpload(result: MatchResult): boolean {

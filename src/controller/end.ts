@@ -25,7 +25,7 @@ async function submitResults(
     return
   }
 
-  scoreReporter.submitTournamentResult(
+  await scoreReporter.submitTournamentResult(
     session.tournamentId,
     session.tableId,
     result.winnerId,

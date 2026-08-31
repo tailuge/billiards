@@ -62,9 +62,16 @@ describe("ScoreReporter", () => {
 
   it("should submit a tournament result to the local arena API", async () => {
     const reporter = new ScoreReporter()
-    mockFetch.mockResolvedValueOnce({ ok: true })
+    const arenaResponse = {
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      headers: "arena-response-headers",
+      text: () => Promise.resolve('{"recorded":true}'),
+    }
+    mockFetch.mockResolvedValueOnce(arenaResponse)
 
-    reporter.submitTournamentResult(
+    await reporter.submitTournamentResult(
       "tournament/1",
       "table-1",
       "winner-1",
@@ -83,6 +90,28 @@ describe("ScoreReporter", () => {
           winnerId: "winner-1",
           loserId: "loser-1",
         }),
+      }
+    )
+    expect(console.log).toHaveBeenCalledWith(
+      "Uploading tournament arena result:",
+      {
+        url: "http://localhost/api/arena/tournament%2F1/result",
+        payload: {
+          challengeId: "table-1",
+          winnerId: "winner-1",
+          loserId: "loser-1",
+        },
+      }
+    )
+    expect(console.log).toHaveBeenCalledWith(
+      "Tournament arena result full response:",
+      {
+        response: arenaResponse,
+        ok: true,
+        status: 200,
+        statusText: "OK",
+        headers: "arena-response-headers",
+        body: '{"recorded":true}',
       }
     )
   })
