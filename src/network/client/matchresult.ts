@@ -9,7 +9,9 @@ import { NotificationHighBreak } from "../../view/notification"
 
 export interface MatchResult {
   winner: string
+  winnerId?: string
   loser?: string
+  loserId?: string
   winnerScore: number
   loserScore?: number
   ruleType: string
@@ -102,7 +104,10 @@ export class MatchResultHelper {
   }
 
   static isWinner(result: MatchResult): boolean {
-    return result.winner === Session.getInstance().playername
+    const session = Session.getInstance()
+    return result.winnerId
+      ? result.winnerId === session.clientId
+      : result.winner === session.playername
   }
 
   private static notifyWin(
@@ -308,8 +313,12 @@ export class MatchResultHelper {
     const winnerScore = iWon ? myScore : opponentScore
     const loserScore = iWon ? opponentScore : myScore
 
+    const opponentId = session.opponentClientId ?? "opponent"
+    const winnerId = iWon ? session.clientId : opponentId
+    const loserId = iWon ? opponentId : session.clientId
     const result: MatchResult = {
       winner: winnerName,
+      winnerId: winnerId,
       winnerScore: winnerScore,
       ruleType: rulename,
       bot: Session.isBotMode(),
@@ -317,6 +326,7 @@ export class MatchResultHelper {
 
     if (session.opponentName) {
       result.loser = loserName
+      result.loserId = loserId
       result.loserScore = loserScore
     }
 

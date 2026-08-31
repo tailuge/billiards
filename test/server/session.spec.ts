@@ -18,6 +18,23 @@ describe("Session", () => {
     expect(Session.getInstance().clientId).to.equal("c1")
   })
 
+  it("stores the tournament id for the game session", () => {
+    Session.init(
+      "c1",
+      "u1",
+      "t1",
+      false,
+      false,
+      false,
+      false,
+      1,
+      false,
+      false,
+      "tournament-1"
+    )
+    expect(Session.getInstance().tournamentId).to.equal("tournament-1")
+  })
+
   it("can set opponentName", () => {
     Session.init("c1", "u1", "t1", false)
     const session = Session.getInstance()

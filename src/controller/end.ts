@@ -8,6 +8,31 @@ import { ResumeStore } from "../utils/resumestore"
 import { BreakEvent } from "../events/breakevent"
 import { Replay } from "./replay"
 
+async function submitResults(
+  container: Container,
+  result: MatchResult
+): Promise<void> {
+  const scoreReporter = container.scoreReporter
+  const session = Session.getInstance()
+  if (!scoreReporter) return
+
+  await scoreReporter.submitMatchResult(result)
+  if (
+    !session.tournamentId ||
+    !result.winnerId ||
+    !MatchResultHelper.isWinner(result)
+  ) {
+    return
+  }
+
+  scoreReporter.submitTournamentResult(
+    session.tournamentId,
+    session.tableId,
+    result.winnerId,
+    result.loserId
+  )
+}
+
 export class End extends Controller {
   override get name(): string {
     return "End"
@@ -49,7 +74,7 @@ export class End extends Controller {
           console.error("Failed to encode replay data", e)
         }
       }
-      this.container.scoreReporter.submitMatchResult(this.result)
+      void submitResults(this.container, this.result)
     }
     this.container.lobbyIndicator.setTableId(undefined)
     console.log("table id cleared")

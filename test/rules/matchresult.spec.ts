@@ -72,6 +72,7 @@ describe("MatchResult Construction", () => {
     container = createNineBallContainer()
     const session = Session.getInstance()
     session.opponentName = "TestOpponent"
+    session.setOpponentClientId("opponent")
     setupNineBallTable(container)
 
     const nineball = container.rules as NineBall
@@ -80,7 +81,9 @@ describe("MatchResult Construction", () => {
     const result = (endController as any).result as MatchResult
 
     expect(result.winner).to.equal("TestPlayer")
+    expect(result.winnerId).to.equal("test-client")
     expect(result.loser).to.equal("TestOpponent")
+    expect(result.loserId).to.equal("opponent")
     expect(result.loserScore).to.equal(0)
   })
 

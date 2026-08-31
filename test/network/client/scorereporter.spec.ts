@@ -60,6 +60,33 @@ describe("ScoreReporter", () => {
     )
   })
 
+  it("should submit a tournament result to the local arena API", async () => {
+    const reporter = new ScoreReporter()
+    mockFetch.mockResolvedValueOnce({ ok: true })
+
+    reporter.submitTournamentResult(
+      "tournament/1",
+      "table-1",
+      "winner-1",
+      "loser-1"
+    )
+    expect(mockFetch).toHaveBeenCalledWith(
+      "http://localhost/api/arena/tournament%2F1/result",
+      {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          challengeId: "table-1",
+          winnerId: "winner-1",
+          loserId: "loser-1",
+        }),
+      }
+    )
+  })
+
   it("should send the match result as a JSON POST request", async () => {
     const reporter = new ScoreReporter()
     mockFetch.mockResolvedValueOnce({ ok: true })

@@ -116,7 +116,8 @@ export class BrowserContainer {
       this.practiceMode,
       this.replay ? 4 : Number.parseInt(params.get("lod") ?? "2"),
       this.first,
-      this.speedrun
+      this.speedrun,
+      params.get("tournamentId") ?? undefined
     )
     Session.getInstance().applyUrlParams(params)
     console.log(Session.getInstance())

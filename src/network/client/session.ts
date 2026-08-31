@@ -11,7 +11,8 @@ export class Session {
     readonly practiceMode: boolean = false,
     public lod: number = 1,
     readonly first: boolean = false,
-    readonly speedrunMode: boolean = false
+    readonly speedrunMode: boolean = false,
+    readonly tournamentId?: string
   ) {}
 
   opponentName?: string
@@ -86,7 +87,8 @@ export class Session {
     practiceMode: boolean = false,
     lod: number = 1,
     first: boolean = false,
-    speedrunMode: boolean = false
+    speedrunMode: boolean = false,
+    tournamentId?: string
   ) {
     Session.instance = new Session(
       playername,
@@ -98,7 +100,8 @@ export class Session {
       practiceMode,
       lod,
       first,
-      speedrunMode
+      speedrunMode,
+      tournamentId
     )
     Session.instance.initializeScores()
     if (botMode && typeof globalThis.location !== "undefined") {

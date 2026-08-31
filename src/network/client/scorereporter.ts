@@ -1,5 +1,6 @@
 // src/network/client/scorereporter.ts
 import { MatchResult } from "./matchresult"
+import { ARENA_BASE_URL } from "./constants"
 
 export class ScoreReporter {
   private readonly baseURL: string
@@ -24,8 +25,8 @@ export class ScoreReporter {
     )
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      const success = await this.attemptSubmission(url, result)
-      if (success) return
+      const completed = await this.attemptSubmission(url, result)
+      if (completed) return
 
       if (attempt < maxRetries) {
         const delay = Math.pow(2, attempt) * 1000
@@ -37,6 +38,39 @@ export class ScoreReporter {
         await new Promise((resolve) => setTimeout(resolve, delay))
       }
     }
+  }
+
+  submitTournamentResult(
+    tournamentId: string,
+    challengeId: string,
+    winnerId: string,
+    loserId?: string
+  ): void {
+    const url = `${ARENA_BASE_URL}/api/arena/${encodeURIComponent(
+      tournamentId
+    )}/result`
+    const payload: {
+      challengeId: string
+      winnerId: string
+      loserId?: string
+    } = {
+      challengeId,
+      winnerId,
+    }
+    if (loserId) {
+      payload.loserId = loserId
+    }
+
+    void fetch(url, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }).catch((error) => {
+      console.error("Error submitting tournament result to", url, error)
+    })
   }
 
   private shouldSkipUpload(result: MatchResult): boolean {
@@ -76,10 +110,10 @@ export class ScoreReporter {
       }
 
       await this.handleErrorResponse(response)
-      // If it's a client error (4xx), don't retry, except maybe 429
+      // If it's a client error (4xx), don't retry, except 429.
       const { status } = response
       if (status >= 400 && status < 500 && status !== 429) {
-        return true // Stop retrying by returning true (though submission failed)
+        return true
       }
     } catch (error) {
       clearTimeout(timeoutId)

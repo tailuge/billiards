@@ -8,3 +8,6 @@ export const LOBBY_URL = isLocalhost
   ? "http://localhost/lobby.html"
   : "https://billiards.tailuge.workers.dev/lobby.html"
 export const LOBBY_NCHAN_URL = "wss://billiards-network.onrender.com"
+export const ARENA_BASE_URL = isLocalhost
+  ? "http://localhost"
+  : "https://billiards-network.onrender.com"
