@@ -13,7 +13,7 @@ export let ee = 0.85
 export let μs = 0.2
 
 // Mathavan coefficient (cushion)
-export let μw = 0.2
+export let μw = 0.175
 
 // Stronge slip stick ratio (cushion)
 export let stronge_omega_ratio = 1.76

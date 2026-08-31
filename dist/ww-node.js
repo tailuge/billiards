@@ -27,7 +27,7 @@ const defaultConfig = {
     e: 0.86,
     ee: 0.84,
     μs: 0.2,
-    μw: 0.2,
+    μw: 0.175,
   },
 };
 
