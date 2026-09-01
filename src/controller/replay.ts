@@ -12,7 +12,7 @@ import { End } from "./end"
 import { ScoreEvent } from "../events/scoreevent"
 import { ChatEvent } from "../events/chatevent"
 import { share, shorten } from "../utils/shorten"
-import { LOBBY_URL } from "../network/client/constants"
+import { getLobbyUrl } from "../network/client/constants"
 import { gameOverButtons } from "../utils/gameover"
 
 export class Replay extends ControllerBase {
@@ -170,7 +170,14 @@ export class Replay extends ControllerBase {
           extra: gameOverButtons.replay + " " + gameOverButtons.lobby,
         },
         0,
-        { lobby: () => (globalThis.location.href = LOBBY_URL) }
+        {
+          lobby: () =>
+            (globalThis.location.href = getLobbyUrl(
+              new URLSearchParams(globalThis.location.search).get(
+                "tournamentId"
+              ) ?? undefined
+            )),
+        }
       )
       return new End(this.container)
     }

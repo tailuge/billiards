@@ -1,5 +1,5 @@
 import { id } from "../utils/dom"
-import { LOBBY_URL } from "../network/client/constants"
+import { getLobbyUrl } from "../network/client/constants"
 
 export interface NotificationHighBreak {
   score: number
@@ -250,7 +250,10 @@ export class Notification {
         globalThis.location.reload()
         break
       case "lobby":
-        globalThis.location.href = LOBBY_URL
+        globalThis.location.href = getLobbyUrl(
+          new URLSearchParams(globalThis.location.search).get("tournamentId") ??
+            undefined
+        )
         break
       case "rematch":
         if (url) {

@@ -1,4 +1,5 @@
 import { gameOverButtons } from "../../src/utils/gameover"
+import { getLobbyUrl } from "../../src/network/client/constants"
 
 describe("gameOverButtons", () => {
   let originalSearch: string
@@ -11,6 +12,18 @@ describe("gameOverButtons", () => {
     if (globalThis.history && globalThis.location) {
       globalThis.history.replaceState({}, "", originalSearch || "?")
     }
+  })
+
+  describe("lobby URL", () => {
+    it("uses the arena page with the tournament id", () => {
+      expect(getLobbyUrl("tournament/123")).toBe(
+        "http://localhost/arena.html?tournamentId=tournament%2F123"
+      )
+    })
+
+    it("uses the lobby page without a tournament id", () => {
+      expect(getLobbyUrl()).toBe("http://localhost/lobby.html")
+    })
   })
 
   describe("rematch", () => {

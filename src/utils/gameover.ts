@@ -1,4 +1,4 @@
-import { LOBBY_URL } from "../network/client/constants"
+import { getLobbyUrl } from "../network/client/constants"
 
 export const gameOverButtons = {
   lobby: `<button type="button" class="notification-btn" data-notification-action="lobby">Back to Lobby</button>`,
@@ -13,7 +13,7 @@ export const gameOverButtons = {
   ): string {
     if (!opponentId || !nextTurnId) return ""
 
-    const url = new URL(LOBBY_URL)
+    const url = new URL(getLobbyUrl())
     url.searchParams.set("opponent.userId", opponentId)
     if (opponentName) {
       url.searchParams.set("opponent.userName", opponentName)
