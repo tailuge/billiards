@@ -165,6 +165,7 @@ export class LobbyIndicator {
     const params = new URLSearchParams(globalThis.location?.search ?? "")
     this.currentTableId = params.get("tableId")
 
+    const tournamentId = Session.getInstance().tournamentId
     const presence: {
       messageType: "presence"
       type: "join"
@@ -172,6 +173,7 @@ export class LobbyIndicator {
       userName: string
       ruleType: string
       tableId?: string
+      arenaId?: string
       isSpectator?: boolean
       options?: Record<string, string>
     } = {
@@ -185,6 +187,7 @@ export class LobbyIndicator {
         ...(this.freeAim && { freeaim: "true" }),
       },
       ...(this.isSpectator && { isSpectator: true }),
+      ...(tournamentId && { arenaId: tournamentId }),
     }
     if (this.currentTableId) {
       presence.tableId = this.currentTableId
@@ -245,8 +248,10 @@ export class LobbyIndicator {
   setTableId(tableId: string | null | undefined): void {
     this.currentTableId = tableId ?? null
     if (this.lobby) {
+      const tournamentId = Session.getInstance().tournamentId
       this.lobby.updatePresence({
         tableId: tableId ?? undefined,
+        ...(tournamentId && { arenaId: tournamentId }),
         options: {
           tableSize: String(this.tableSize),
           ...(this.freeAim && { freeaim: "true" }),

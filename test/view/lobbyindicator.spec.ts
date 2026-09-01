@@ -42,6 +42,38 @@ describe("LobbyIndicator", () => {
     expect(countElement?.classList.contains("is-hidden")).toBe(false)
   })
 
+  it("includes arenaId in presence when tournamentId is set", async () => {
+    Session.init(
+      "test-client",
+      "TestPlayer",
+      "test-table",
+      false,
+      false,
+      false,
+      false,
+      2,
+      true,
+      false,
+      "arena-123"
+    )
+    const mockRules = { rulename: "nineball" } as any
+    const indicator = new LobbyIndicator(false, false, mockRules)
+    await indicator.init()
+
+    const mockClient = (indicator as any).messagingClient
+    const joinLobbyPresence = mockClient.joinLobby.mock.calls[0][0]
+    expect(joinLobbyPresence.arenaId).toBe("arena-123")
+
+    // setTableId should also propagate arenaId
+    const mockLobby = (indicator as any).lobby
+    indicator.setTableId("new-table")
+    expect(mockLobby.updatePresence).toHaveBeenCalledWith(
+      expect.objectContaining({ arenaId: "arena-123" })
+    )
+
+    await indicator.stop()
+  })
+
   it("updates display when challenged", async () => {
     const element = document.getElementById("lobbyOverlay")
     const mockRules = { rulename: "nineball" } as any
