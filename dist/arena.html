@@ -10,7 +10,9 @@
     <link rel="icon" type="image/png" href="../assets/threecushion.png" />
     <script>
       try {
-        document.documentElement.setAttribute('theme', localStorage.getItem('theme') || 'dark');
+        const params = new URLSearchParams(window.location.search);
+        const theme = params.get('theme') || localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('theme', theme);
         document.documentElement.style.colorScheme = document.documentElement.getAttribute('theme');
       } catch (_e) {
         document.documentElement.setAttribute('theme', 'dark');
