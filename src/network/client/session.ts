@@ -49,6 +49,14 @@ export class Session {
     return Session.getInstance().botMode
   }
 
+  static getBotUserId(): string {
+    const botName =
+      typeof globalThis.location !== "undefined"
+        ? new URLSearchParams(globalThis.location.search).get("bot")
+        : undefined
+    return `bot-${(botName ?? "ClawBreak").toLowerCase()}`
+  }
+
   static isExamMode(): boolean {
     return Session.getInstance().examMode
   }
@@ -108,7 +116,7 @@ export class Session {
       const urlParams = new URLSearchParams(globalThis.location.search)
       const bot = urlParams.get("bot")
       Session.instance.opponentName = bot ?? "ClawBreak"
-      Session.instance.setOpponentClientId("bot")
+      Session.instance.setOpponentClientId(Session.getBotUserId())
       Session.instance.opponentParams["emoji"] = "🤖"
     }
   }

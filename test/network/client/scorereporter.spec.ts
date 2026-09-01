@@ -1,6 +1,7 @@
 // test/network/client/scorereporter.spec.ts
 import { ScoreReporter } from "../../../src/network/client/scorereporter"
 import { MatchResult } from "../../../src/network/client/matchresult"
+import { Session } from "../../../src/network/client/session"
 
 describe("ScoreReporter", () => {
   let mockFetch: jest.Mock
@@ -16,6 +17,7 @@ describe("ScoreReporter", () => {
   })
 
   afterEach(() => {
+    Session.reset()
     globalThis.fetch = originalFetch
     jest.restoreAllMocks()
     jest.useRealTimers()
@@ -58,6 +60,15 @@ describe("ScoreReporter", () => {
       `https://${customBaseURL}/api/match-results`,
       expect.any(Object)
     )
+  })
+
+  it("should derive the bot user ID from the bot URL parameter", () => {
+    const originalSearch = globalThis.location.search
+    globalThis.history.replaceState({}, "", "?bot=ClawBreak")
+
+    expect(Session.getBotUserId()).toBe("bot-clawbreak")
+
+    globalThis.history.replaceState({}, "", originalSearch || "/")
   })
 
   it("should submit a tournament result to the local arena API", async () => {

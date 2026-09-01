@@ -313,7 +313,9 @@ export class MatchResultHelper {
     const winnerScore = iWon ? myScore : opponentScore
     const loserScore = iWon ? opponentScore : myScore
 
-    const opponentId = session.opponentClientId ?? "opponent"
+    const opponentId = Session.isBotMode()
+      ? Session.getBotUserId()
+      : (session.opponentClientId ?? "opponent")
     const winnerId = iWon ? session.clientId : opponentId
     const loserId = iWon ? opponentId : session.clientId
     const result: MatchResult = {
