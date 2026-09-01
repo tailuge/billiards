@@ -21,6 +21,7 @@ export interface MatchResult {
   bot?: boolean
   freeaim?: boolean
   tableSize?: number
+  arenaId?: string
 }
 
 export class MatchResultHelper {
@@ -334,6 +335,10 @@ export class MatchResultHelper {
 
     result.version = VERSION
     result.userAgent = navigator?.userAgent
+
+    if (session.tournamentId) {
+      result.arenaId = session.tournamentId
+    }
 
     if (typeof globalThis.location !== "undefined") {
       const params = new URLSearchParams(globalThis.location.search)

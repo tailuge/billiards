@@ -2,6 +2,7 @@
 import { ScoreReporter } from "../../../src/network/client/scorereporter"
 import { MatchResult } from "../../../src/network/client/matchresult"
 import { Session } from "../../../src/network/client/session"
+import { MatchResultHelper } from "../../../src/network/client/matchresult"
 
 describe("ScoreReporter", () => {
   let mockFetch: jest.Mock
@@ -69,6 +70,42 @@ describe("ScoreReporter", () => {
     expect(Session.getBotUserId()).toBe("bot-clawbreak")
 
     globalThis.history.replaceState({}, "", originalSearch || "/")
+  })
+
+  it("adds arenaId to match results when tournamentId is set", () => {
+    Session.init(
+      "client-1",
+      "Player 1",
+      "table-1",
+      false,
+      false,
+      false,
+      false,
+      1,
+      false,
+      false,
+      "arena-123"
+    )
+    const session = Session.getInstance()
+    session.setMyScore(9)
+    session.opponentName = "Player 2"
+    session.setOpponentScore(7)
+
+    const result = (MatchResultHelper as any).createMatchResult(
+      "nineball",
+      session,
+      true
+    )
+
+    expect(result.arenaId).toBe("arena-123")
+  })
+
+  it("does not add arenaId to match results without a tournamentId", () => {
+    const reporter = new ScoreReporter()
+    const resultWithoutArena = { ...sampleMatchResult }
+
+    expect(resultWithoutArena).not.toHaveProperty("arenaId")
+    expect(reporter).toBeDefined()
   })
 
   it("should submit a tournament result to the local arena API", async () => {
