@@ -17,11 +17,7 @@ async function submitResults(
   if (!scoreReporter) return
 
   await scoreReporter.submitMatchResult(result)
-  if (
-    !session.tournamentId ||
-    !result.winnerId ||
-    !MatchResultHelper.isWinner(result)
-  ) {
+  if (!session.tournamentId || !result.winnerId) {
     return
   }
 
