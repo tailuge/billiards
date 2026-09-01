@@ -8,6 +8,7 @@ import {
   PlaneGeometry,
 } from "three"
 import { TableGeometry } from "./tablegeometry"
+import { Session } from "../network/client/session"
 
 /**
  * Procedural, low-poly room that replaces dist/models/background.gltf. It is
@@ -22,6 +23,8 @@ export class Room {
 
   private static readonly floorColors = [0xe6e2d8, 0xd4cfc3]
   private static readonly wallColors = [0xf2c9c9, 0xc9d6f2, 0xcdeccd, 0xf2e8c9]
+  private static readonly tournamentFloorColors = [0x000000, 0x003b3b]
+  private static readonly tournamentWallColor = 0x000000
 
   // Wall-plane distances from the room centre, computed once at construction
   // from the already-configured table geometry so the room (and anything
@@ -64,6 +67,9 @@ export class Room {
     const normals: number[] = []
     const indices: number[] = []
     const color = new Color()
+    const floorColors = Session.getInstance().tournamentId
+      ? Room.tournamentFloorColors
+      : Room.floorColors
     const half = this.tile / 2
 
     for (let i = -this.cols; i < this.cols; i++) {
@@ -73,7 +79,7 @@ export class Room {
         if (Math.abs(x) < TableGeometry.X && Math.abs(y) < TableGeometry.Y) {
           continue // hole under the table
         }
-        color.setHex(Room.floorColors[Math.abs(i + j) % 2])
+        color.setHex(floorColors[Math.abs(i + j) % 2])
         const base = positions.length / 3
         // Four corners of the tile, counter-clockwise viewed from +Z.
         positions.push(
@@ -134,7 +140,9 @@ export class Room {
         h: 2 * this.yWall,
         rx: 0,
         ry: Math.PI / 2,
-        color: Room.wallColors[0],
+        color: Session.getInstance().tournamentId
+          ? Room.tournamentWallColor
+          : Room.wallColors[0],
       },
       {
         x: this.xWall,
@@ -143,7 +151,9 @@ export class Room {
         h: 2 * this.yWall,
         rx: 0,
         ry: -Math.PI / 2,
-        color: Room.wallColors[1],
+        color: Session.getInstance().tournamentId
+          ? Room.tournamentWallColor
+          : Room.wallColors[1],
       },
       {
         x: 0,
@@ -152,7 +162,9 @@ export class Room {
         h: Room.wallHeight,
         rx: -Math.PI / 2,
         ry: 0,
-        color: Room.wallColors[2],
+        color: Session.getInstance().tournamentId
+          ? Room.tournamentWallColor
+          : Room.wallColors[2],
       },
       {
         x: 0,
@@ -161,7 +173,9 @@ export class Room {
         h: Room.wallHeight,
         rx: Math.PI / 2,
         ry: 0,
-        color: Room.wallColors[3],
+        color: Session.getInstance().tournamentId
+          ? Room.tournamentWallColor
+          : Room.wallColors[3],
       },
     ]
     for (const wall of walls) {
