@@ -7,7 +7,6 @@ import { Session } from "../network/client/session"
 import { ResumeStore } from "../utils/resumestore"
 import { BreakEvent } from "../events/breakevent"
 import { Replay } from "./replay"
-import { getUID } from "../utils/uid"
 
 async function submitResults(
   container: Container,
@@ -24,7 +23,7 @@ async function submitResults(
 
   const challengeId =
     Session.isBotMode() && session.tableId === "default"
-      ? `G_${getUID()}`
+      ? `G_${Date.now().toString()}`
       : session.tableId
 
   await scoreReporter.submitTournamentResult(
