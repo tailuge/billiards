@@ -16,6 +16,7 @@ export class WatchShot extends ControllerBase {
   }
   constructor(container, _hitEvent?: HitEvent) {
     super(container)
+    this.container.sound.lastOutcomeTime = -1
     this.container.table.outcome = []
     this.container.table.hit()
   }
