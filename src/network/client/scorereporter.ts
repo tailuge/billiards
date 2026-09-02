@@ -42,7 +42,7 @@ export class ScoreReporter {
 
   async submitTournamentResult(
     tournamentId: string,
-    challengeId: string,
+    tableId: string,
     winnerId: string,
     loserId?: string
   ): Promise<void> {
@@ -54,7 +54,7 @@ export class ScoreReporter {
       winnerId: string
       loserId?: string
     } = {
-      challengeId,
+      challengeId: tableId,
       winnerId,
     }
     if (loserId) {
