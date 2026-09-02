@@ -206,7 +206,8 @@ export class MatchResultHelper {
       session.opponentClientId,
       session.opponentName,
       rulename,
-      nextTurnId
+      nextTurnId,
+      session.tournamentId
     )
   }
 
@@ -220,7 +221,8 @@ export class MatchResultHelper {
       session.clientId,
       session.playername,
       rulename,
-      nextTurnId
+      nextTurnId,
+      session.tournamentId
     )
   }
 

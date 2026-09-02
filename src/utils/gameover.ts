@@ -55,8 +55,12 @@ export const gameOverButtons = {
     opponentId?: string,
     opponentName?: string,
     ruletype?: string,
-    nextTurnId?: string
+    nextTurnId?: string,
+    tournamentId?: string
   ): string {
+    if (tournamentId) {
+      return this.lobby.replace("Back to Lobby", "Back to Arena")
+    }
     if (isSinglePlayer) {
       return this.newGame + " " + this.lobby
     }

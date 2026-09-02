@@ -24,6 +24,22 @@ describe("gameOverButtons", () => {
     it("uses the lobby page without a tournament id", () => {
       expect(getLobbyUrl()).toBe("http://localhost/lobby.html")
     })
+
+    it("uses only the arena button when a tournament id is present", () => {
+      const html = gameOverButtons.forMode(
+        false,
+        "opponent-123",
+        "Alice",
+        "nineball",
+        "turn-123",
+        "tournament/123"
+      )
+
+      expect(html).toContain("Back to Arena")
+      expect(html).not.toContain("Back to Lobby")
+      expect(html).not.toContain("Rematch")
+      expect(html.match(/<button\b/g)).toHaveLength(1)
+    })
   })
 
   describe("rematch", () => {
