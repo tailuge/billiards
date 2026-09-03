@@ -130,7 +130,8 @@ export class View {
     if (
       !isGracePeriod &&
       this.isInMotionNotVisible() &&
-      !this.camera.isZoomedOut
+      (this.camera.mode === this.camera.aimView ||
+        this.camera.mode === this.camera.aimzView)
     ) {
       this.camera.suggestMode(this.camera.topView)
     }

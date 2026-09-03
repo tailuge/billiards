@@ -18,7 +18,7 @@ export class Camera {
   static defaultDistance = R * 22
   static defaultFovOffset = 0
   static aimzHeight = R * 40
-  static aimzDistance = R * 100
+  static aimzDistance = R * 95
   static aimzDefaultLerp = 0.2
   static aimLerp = 0.08
   static aimLerpNoHelper = 0.25
@@ -148,7 +148,7 @@ export class Camera {
   }
 
   /** Walk the camera back from R*20 until the whole table is inside the
-   * frustum (or R*100 is reached), so aimz shows the full table. */
+   * frustum (or R*95 is reached), so aimz shows the full table. */
   private aimzDistanceFor(aim: AimEvent): number {
     if (!this.tableMesh) {
       return this.aimzDistance
@@ -160,7 +160,7 @@ export class Camera {
     const half = this.tableBox.getSize(this.tempVec2).multiplyScalar(0.45)
     this.tableBox.min.copy(center).sub(half)
     this.tableBox.max.copy(center).add(half)
-    for (let d = R * 40; d <= R * 100; d += R * 2) {
+    for (let d = R * 40; d <= R * 95; d += R * 2) {
       this.aimFrom(aim, this.aimzHeight, d, R * 2, 1)
       this.camera.updateProjectionMatrix()
       this.camera.updateMatrixWorld()
@@ -175,8 +175,8 @@ export class Camera {
         return d
       }
     }
-    this.logAimzDistance(R * 100)
-    return R * 100
+    this.logAimzDistance(R * 95)
+    return R * 95
   }
 
   private logAimzDistance(d: number) {
@@ -186,7 +186,7 @@ export class Camera {
     this.lastAimzDistance = d
     const units = Math.round((d / R) * 100) / 100
     console.log(
-      d >= R * 100
+      d >= R * 95
         ? `aimz distance = max (${units}R)`
         : `aimz distance = ${units}R`
     )
@@ -257,7 +257,7 @@ export class Camera {
       this.aimzDistance = MathUtils.clamp(
         this.aimzDistance + delta,
         R * 2,
-        R * 100
+        R * 95
       )
       return
     }
