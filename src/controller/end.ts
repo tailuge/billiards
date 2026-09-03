@@ -16,23 +16,31 @@ async function submitResults(
   const session = Session.getInstance()
   if (!scoreReporter) return
 
-  await scoreReporter.submitMatchResult(result)
-  if (!session.tournamentId || !result.winnerId) {
-    return
+  const matchPromise = scoreReporter.submitMatchResult(result).catch((e) => {
+    console.error("Error submitting match result:", e)
+  })
+
+  let tournamentPromise: Promise<void> | undefined
+  if (session.tournamentId && result.winnerId) {
+    const challengeId =
+      Session.isBotMode() && session.tableId === "default"
+        ? `G_${Date.now().toString()}`
+        : session.tableId
+
+    tournamentPromise = scoreReporter
+      .submitTournamentResult(
+        session.tournamentId,
+        challengeId,
+        result.winnerId,
+        result.loserId,
+        result.winnerId?.startsWith("bot-") ? undefined : result.beserk
+      )
+      .catch((e) => {
+        console.error("Error submitting tournament result:", e)
+      })
   }
 
-  const challengeId =
-    Session.isBotMode() && session.tableId === "default"
-      ? `G_${Date.now().toString()}`
-      : session.tableId
-
-  await scoreReporter.submitTournamentResult(
-    session.tournamentId,
-    challengeId,
-    result.winnerId,
-    result.loserId,
-    result.winnerId?.startsWith("bot-") ? undefined : result.beserk
-  )
+  await Promise.allSettled([matchPromise, tournamentPromise])
 }
 
 export class End extends Controller {

@@ -221,6 +221,48 @@ describe("MatchResult Construction", () => {
     expect(result.bot).to.be.true
   })
 
+  it("should upload tournament result even if match result submission fails in bot mode loss", async () => {
+    Session.init(
+      "test-client",
+      "TestPlayer",
+      "test-table",
+      false,
+      true, // botMode
+      false,
+      false,
+      1,
+      false,
+      false,
+      "arena-123" // tournamentId
+    )
+    container = createNineBallContainer()
+    const scoreReporter = new ScoreReporter()
+    const submitMatchSpy = jest
+      .spyOn(scoreReporter, "submitMatchResult")
+      .mockRejectedValue(new Error("Scoreboard server down"))
+    const submitTournamentSpy = jest
+      .spyOn(scoreReporter, "submitTournamentResult")
+      .mockResolvedValue(undefined)
+
+    container.scoreReporter = scoreReporter
+    const endController = (container.rules as any).handleGameEnd(false) as End
+
+    endController.onFirst()
+
+    // Flush promises to let async submitResults finish
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    expect(submitMatchSpy.mock.calls.length).to.equal(1)
+    expect(submitTournamentSpy.mock.calls.length).to.equal(1)
+    expect(submitTournamentSpy.mock.calls[0]).to.deep.equal([
+      "arena-123",
+      "test-table",
+      "bot-clawbreak",
+      "test-client",
+      undefined,
+    ])
+  })
+
   it("MatchResultHelper should show the top 3 high breaks in game over notification", () => {
     container = createNineBallContainer()
     container.ballTray.addBreak({ shots: [] }, 4)

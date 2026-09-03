@@ -627,6 +627,32 @@ describe("BotEventHandler Respot Logic", () => {
     expect(events.find((e) => e instanceof StartAimEvent)).toBeUndefined()
   })
 
+  it("threecushion: bot scores winning point in handlePot and game ends correctly", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false)
+
+    const threeContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "threecushion",
+    })
+
+    const events: GameEvent[] = []
+    const handler = createBotEventHandler(threeContainer, events)
+    const updateControllerSpy = jest.spyOn(threeContainer, "updateController")
+
+    jest.spyOn(threeContainer.rules, "isEndOfGame").mockReturnValue(false)
+    jest.spyOn(handler.botRules, "isEndOfGame").mockReturnValue(true)
+    jest.spyOn(handler.botRules, "foulReason").mockReturnValue(null)
+    jest.spyOn(handler.botRules, "getAmountScored").mockReturnValue(1)
+
+    handler.handle(mockEvent(EventType.BEGIN))
+
+    expect(updateControllerSpy).toHaveBeenCalled()
+    expect(events.find((e) => e instanceof WatchEvent)).toBeUndefined()
+  })
+
   it("snooker foul: bot pots red and black - black is respotted, StartAimEvent sent", () => {
     Ball.id = 0
     const snookerContainer = new Container({
