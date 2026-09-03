@@ -24,6 +24,7 @@ export class AimInputs {
   readonly cueTiltElement: AngleInput
   /** Shared button for both "Hit" and "Place Ball" actions. */
   readonly cueHitElement
+  readonly trayTimerElement: HTMLElement | null
   readonly objectBallStyle: CSSStyleDeclaration | undefined
   readonly objectBallOverlap: HTMLElement | null
   readonly container: Container
@@ -50,6 +51,10 @@ export class AimInputs {
     this.openElevationElement = id("openElevation") as HTMLButtonElement
     this.cueTiltElement = id("cueTilt") as AngleInput
     this.cueHitElement = id("cueHit") as HTMLButtonElement
+    this.trayTimerElement = id("trayTimer")
+    if (this.trayTimerElement && this.container.freeAim) {
+      this.trayTimerElement.hidden = false
+    }
     if (this.cueHitElement) {
       const params = new URLSearchParams(location.search)
       const shotClockSeconds = params.get("shotClock")
@@ -58,12 +63,16 @@ export class AimInputs {
         : 20000
       const beserk = params.get("beserk") === "true"
       const duration = beserk ? baseDuration / 2 : baseDuration
-      this.timeoutButton = new TimeoutButton(this.cueHitElement, {
-        duration,
-        onComplete: () => {
-          this.cueHitElement?.click()
+      this.timeoutButton = new TimeoutButton(
+        this.cueHitElement,
+        {
+          duration,
+          onComplete: () => {
+            this.cueHitElement?.click()
+          },
         },
-      })
+        this.trayTimerElement
+      )
     }
     this.objectBallStyle = id("objectBall")?.style
     this.objectBallOverlap = id("objectBallOverlap")

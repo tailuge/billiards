@@ -17,6 +17,23 @@
   pointer-events: auto;
 }
 
+.tray-timer {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    var(--timer-color, #10b981) var(--progress, 0%),
+    transparent var(--progress, 0%)
+  );
+  border-radius: 0 0 2px 2px;
+  z-index: 1502;
+  pointer-events: none;
+}
+
 .tray-score-container {
   position: absolute;
   top: 32px;
