@@ -19,11 +19,11 @@
 
 .tray-timer {
   position: absolute;
-  top: 30px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 160px;
-  height: 2px;
+  height: 3px;
   background: linear-gradient(
     to right,
     var(--timer-color, #10b981) var(--progress, 0%),
