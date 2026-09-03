@@ -106,7 +106,10 @@ export class BotEventHandler {
     const outcome = this.container.table.outcome
     const botType = this.botType()
     if (this.container.rules.isEndOfGame(outcome, botType)) {
-      this.handleGameEnd()
+      const botWinsByFinalBall =
+        this.container.rules.rulename === "nineball" ||
+        this.container.rules.rulename === "eightball"
+      this.handleGameEnd(botWinsByFinalBall ? false : undefined)
       return
     }
     const foulReason = this.botRules.foulReason(outcome, botType)
@@ -255,16 +258,18 @@ export class BotEventHandler {
     )
   }
 
-  private handleGameEnd(): void {
-    const session = Session.getInstance()
-    const { p1, p2 } = session.orderedScoresForHud()
-    const amIWinner = session.playerIndex === 0 ? p1 >= p2 : p2 >= p1
+  private handleGameEnd(amIWinner?: boolean): void {
+    if (amIWinner === undefined) {
+      const session = Session.getInstance()
+      const { p1, p2 } = session.orderedScoresForHud()
+      amIWinner = session.playerIndex === 0 ? p1 >= p2 : p2 >= p1
 
-    console.log("Bot handleGameEnd, p1=" + p1 + ", p2=" + p2)
-    console.log("Bot handleGameEnd, amIWinner=" + amIWinner)
-    console.log("Bot handleGameEnd, session", session)
+      console.log("Bot handleGameEnd, p1=" + p1 + ", p2=" + p2)
+      console.log("Bot handleGameEnd, amIWinner=" + amIWinner)
+      console.log("Bot handleGameEnd, session", session)
+    }
+
     this.container.updateController(
-      // here using player rules why?
       this.container.rules.handleGameEnd(amIWinner)
     )
   }
@@ -294,7 +299,8 @@ export class BotEventHandler {
       return true
     }
 
-    this.handleGameEnd()
+    // Pocketing the 8 on a foul loses the game, so the human player wins.
+    this.handleGameEnd(true)
     return true
   }
 

@@ -285,6 +285,57 @@ describe("BotEventHandler Respot Logic", () => {
     )
   })
 
+  it("should report the bot as winner when it legally pots the 9 while behind", () => {
+    Session.getInstance().setMyScore(8)
+    Session.getInstance().setOpponentScore(2)
+    const eventHandler = createBotEventHandler(container, publishedEvents)
+    const handleGameEndSpy = jest.spyOn(container.rules, "handleGameEnd")
+
+    jest.spyOn(container.rules, "isEndOfGame").mockReturnValue(true)
+
+    eventHandler.handle(mockEvent(EventType.BEGIN))
+
+    expect(handleGameEndSpy).toHaveBeenCalledWith(false)
+  })
+
+  it("should report the human as winner when the bot fouls while potting the 8", () => {
+    Ball.id = 0
+    Session.init("test-client", "TestPlayer", "test-table", false, true)
+    Session.getInstance().p1type = 1
+
+    const eightBallContainer = new Container({
+      element: undefined,
+      log: (_: any) => {},
+      assets: Assets.localAssets(),
+      ruletype: "eightball",
+    })
+    const cueball = eightBallContainer.table.cueball
+    const eightBall = eightBallContainer.table.balls.find((b) => b.label === 8)!
+    eightBallContainer.table.balls.forEach((ball) => {
+      if (ball !== cueball && ball !== eightBall) {
+        ball.state = State.InPocket
+      }
+    })
+    eightBallContainer.table.outcome = [
+      Outcome.pot(eightBall, 1),
+      Outcome.pot(cueball, 1),
+    ]
+
+    const events: GameEvent[] = []
+    const eventHandler = createBotEventHandler(eightBallContainer, events)
+    const handleGameEndSpy = jest.spyOn(
+      eightBallContainer.rules,
+      "handleGameEnd"
+    )
+    jest
+      .spyOn(eventHandler.botRules, "foulReason")
+      .mockReturnValue("Cue ball potted")
+
+    eventHandler.handle(mockEvent(EventType.BEGIN))
+
+    expect(handleGameEndSpy).toHaveBeenCalledWith(true)
+  })
+
   it("should handle foul with cue ball already on table", () => {
     const cueball = container.table.cueball
     cueball.state = State.Stationary
