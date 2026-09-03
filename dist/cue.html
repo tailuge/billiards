@@ -12,26 +12,29 @@
     <style>
       :root {
         --bg: #12161d;
-        --panel: rgba(18, 22, 29, 0.86);
+        --panel: rgb(18 22 29 / 86%);
         --panel-border: #2a323e;
         --text: #e6edf3;
         --muted: #8b95a5;
         --accent: #4a9eff;
       }
+
       * {
         box-sizing: border-box;
       }
+
       html,
       body {
         margin: 0;
         height: 100%;
         overflow: hidden;
       }
+
       body {
         background: var(--bg);
         color: var(--text);
         font-family:
-          "Exo",
+          Exo,
           -apple-system,
           BlinkMacSystemFont,
           "Segoe UI",
@@ -41,15 +44,18 @@
           sans-serif;
         font-weight: 200;
       }
+
       button,
       input {
         font-family: inherit;
         font-weight: 200;
       }
+
       #view {
         position: fixed;
         inset: 0;
       }
+
       #view canvas {
         display: block;
       }
@@ -63,7 +69,7 @@
         background: var(--panel);
         border: 1px solid var(--panel-border);
         border-radius: 10px;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+        box-shadow: 0 8px 28px rgb(0 0 0 / 45%);
         backdrop-filter: blur(8px);
         user-select: none;
         max-height: calc(100vh - 16px);
@@ -74,6 +80,7 @@
       .slider-row {
         margin-bottom: 8px;
       }
+
       .swatch-row label,
       .slider-row label {
         color: var(--muted);
@@ -81,34 +88,40 @@
         white-space: nowrap;
         margin-bottom: 3px;
       }
+
       .swatch-row label {
         display: block;
         text-align: center;
       }
+
       .swatches {
         display: flex;
         flex-wrap: wrap;
         gap: 5px;
         justify-content: center;
       }
+
       .swatch {
         width: 14px;
         height: 14px;
         border-radius: 50%;
-        border: 1.5px solid rgba(255, 255, 255, 0.18);
+        border: 1.5px solid rgb(255 255 255 / 18%);
         cursor: pointer;
         padding: 0;
         transition:
           transform 0.1s ease,
           box-shadow 0.1s ease;
       }
+
       .swatch:hover {
         transform: scale(1.25);
       }
+
       .swatch.active {
         box-shadow: 0 0 0 2px var(--accent);
         transform: scale(1.15);
       }
+
       .check {
         display: flex;
         align-items: center;
@@ -119,6 +132,7 @@
         margin: 4px 0 0;
         cursor: pointer;
       }
+
       .check input {
         accent-color: var(--accent);
       }
@@ -129,9 +143,11 @@
         align-items: baseline;
         gap: 3px;
       }
+
       .slider-row label span {
         color: var(--text);
       }
+
       .slider-row input[type="range"] {
         width: 100%;
         accent-color: var(--accent);
@@ -143,6 +159,7 @@
         padding-top: 8px;
         border-top: 1px solid var(--panel-border);
       }
+
       .done-row button {
         width: 100%;
         padding: 5px 0;
@@ -154,9 +171,11 @@
         cursor: pointer;
         transition: filter 0.1s ease;
       }
+
       .done-row button:hover {
         filter: brightness(1.15);
       }
+
       .done-row button:active {
         filter: brightness(0.9);
       }

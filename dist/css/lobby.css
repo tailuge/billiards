@@ -36,7 +36,7 @@
 .challenge-pill {
   display: inline-flex;
   align-items: center;
-  background-color: rgb(145, 12, 12);
+  background-color: rgb(145 12 12);
   color: #fff;
   padding: 0 4px;
   border-radius: 8px;
@@ -62,9 +62,9 @@
 }
 
 #challengeAccept {
-  background: rgba(129, 235, 129, 0.828);
+  background: rgb(129 235 129 / 82.8%);
 }
 
 #challengeDecline {
-  background: rgba(182, 71, 71, 0.492);
+  background: rgb(182 71 71 / 49.2%);
 }

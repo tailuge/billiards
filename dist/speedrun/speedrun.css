@@ -108,11 +108,11 @@ header h1 {
 
 /* Pool Table Coloring */
 .billiards-table .pool-cloth {
-  fill: url(#pool-blue-gradient);
+  fill: url("#pool-blue-gradient");
 }
 
 .billiards-table .pool-surround {
-  fill: url(#premium-wood-gradient);
+  fill: url("#premium-wood-gradient");
   stroke: #1b100b;
   stroke-width: 0.006;
 }
@@ -120,8 +120,8 @@ header h1 {
 .billiards-table .pool-cushion {
   fill: #24699e;
   stroke: #16466b;
-  filter: url(#cushion-shadow);
-  clip-path: url(#cloth-clip);
+  filter: url("#cushion-shadow");
+  clip-path: url("#cloth-clip");
 }
 
 .billiards-table .pool-pocket {
@@ -139,7 +139,7 @@ header h1 {
 
 /* Snooker Table Coloring */
 .billiards-table.snooker .pool-cloth {
-  fill: url(#snooker-green-gradient);
+  fill: url("#snooker-green-gradient");
 }
 
 .billiards-table.snooker .pool-cushion {

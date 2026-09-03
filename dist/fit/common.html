@@ -13,20 +13,24 @@
         font-family: monospace;
         font-size: 11px;
       }
+
       body {
         display: flex;
         flex-direction: column;
         align-items: center;
       }
+
       button {
         padding: 2px 1px;
         cursor: pointer;
       }
+
       th,
       td {
-        padding: 1px 1px;
+        padding: 1px;
         text-align: left;
       }
+
       .container {
         display: flex;
         gap: 4px;
@@ -34,12 +38,14 @@
         max-width: 1000px;
         width: 100%;
       }
+
       .controls {
         flex: 1;
         display: flex;
         flex-direction: column;
         gap: 2px;
       }
+
       .file-list {
         border: 1px solid #ccc;
         padding: 1px;
@@ -47,20 +53,25 @@
         overflow-y: auto;
         background: #f9f9f9;
       }
+
       #rmseCanvas {
         border: 1px solid #c0c0c0;
         background: white;
       }
+
       table {
         border-collapse: collapse;
         width: 100%;
       }
+
       tr:nth-child(even) {
         background-color: #f2f2f2;
       }
+
       th {
         background-color: #ddd;
       }
+
       #paramTable th:nth-child(n + 7),
       #paramTable td:nth-child(n + 7) {
         max-width: 6ch;

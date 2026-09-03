@@ -12,39 +12,46 @@
         color: #ddd;
         font-family: system-ui, sans-serif;
       }
+
       h1 {
         font-size: 16px;
         margin: 0 0 12px;
       }
+
       .grid {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
       }
+
       .shot {
         border: 1px solid #333;
         border-radius: 4px;
         background: #1a1a1a;
         padding: 1px;
       }
+
       .shot svg {
         display: block;
       }
+
       .shot .label {
         font-size: 10px;
         text-align: center;
         margin-top: 2px;
         color: #888;
       }
+
       .shot:hover {
         border-color: #666;
         cursor: pointer;
       }
+
       .overlay {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.85);
+        background: rgb(0 0 0 / 85%);
         z-index: 1000;
         justify-content: center;
         align-items: center;
@@ -52,25 +59,30 @@
         box-sizing: border-box;
         padding: 16px;
       }
+
       .overlay.open {
         display: flex;
       }
+
       .overlay .diagram {
         width: 100%;
         max-width: 800px;
         box-sizing: border-box;
       }
+
       .overlay svg {
         display: block;
         width: 100%;
         height: auto;
       }
+
       .overlay .close {
         color: #aaa;
         font-size: 14px;
         margin-top: 8px;
         cursor: pointer;
       }
+
       .overlay .close:hover {
         color: #fff;
       }

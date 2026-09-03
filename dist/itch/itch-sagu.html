@@ -83,6 +83,7 @@
         margin: 0;
         padding: 0;
       }
+
       body {
         font-family:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -96,6 +97,7 @@
         padding: 12px;
         overflow: hidden;
       }
+
       .launcher-box {
         width: 100%;
         max-width: 480px;
@@ -104,40 +106,45 @@
         gap: 12px;
         align-items: center;
       }
+
       .header-group {
         text-align: center;
         margin-bottom: 2px;
       }
+
       .header-title {
         font-size: 20px;
         font-weight: 900;
         text-transform: uppercase;
         letter-spacing: 0.1em;
         color: #fff;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+        text-shadow: 0 2px 4px rgb(0 0 0 / 60%);
       }
+
       .header-langs {
         font-size: 11px;
         font-weight: 700;
         color: #10b981;
         margin-top: 2px;
         letter-spacing: 0.05em;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        text-shadow: 0 1px 3px rgb(0 0 0 / 50%);
       }
+
       .grid-primary {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 10px;
         width: 100%;
       }
+
       .btn-3d {
         position: relative;
         background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.25),
-          0 1px 3px rgba(0, 0, 0, 0.4),
-          0 6px 12px -3px rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+          inset 0 1px 0 rgb(255 255 255 / 25%),
+          0 1px 3px rgb(0 0 0 / 40%),
+          0 6px 12px -3px rgb(0 0 0 / 60%);
+        border: 1px solid rgb(255 255 255 / 10%);
         border-bottom: 5px solid #040811;
         border-radius: 12px;
         text-decoration: none;
@@ -147,6 +154,7 @@
         overflow: hidden;
         transition: all 0.1s cubic-bezier(0.25, 0.8, 0.25, 1);
       }
+
       .btn-3d::after {
         content: "";
         position: absolute;
@@ -156,18 +164,20 @@
         height: 50%;
         background: linear-gradient(
           180deg,
-          rgba(255, 255, 255, 0.08) 0%,
+          rgb(255 255 255 / 8%) 0%,
           transparent 100%
         );
         pointer-events: none;
       }
+
       .btn-3d:active {
         transform: translateY(3px);
         border-bottom-width: 2px;
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.15),
-          0 2px 4px rgba(0, 0, 0, 0.5);
+          inset 0 1px 0 rgb(255 255 255 / 15%),
+          0 2px 4px rgb(0 0 0 / 50%);
       }
+
       .img-container {
         position: relative;
         height: 72px;
@@ -175,50 +185,57 @@
         align-items: center;
         justify-content: center;
         padding: 6px;
-        background: rgba(16, 185, 129, 0.03);
+        background: rgb(16 185 129 / 3%);
       }
+
       .img-container img {
         max-height: 100%;
         max-width: 100%;
         object-fit: contain;
-        filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.5));
+        filter: drop-shadow(0 3px 5px rgb(0 0 0 / 50%));
         transition: transform 0.2s;
       }
+
       .btn-3d:hover img {
         transform: scale(1.08);
       }
+
       .score-badge {
         position: absolute;
         bottom: 4px;
         right: 6px;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgb(0 0 0 / 80%);
         backdrop-filter: blur(4px);
         padding: 1px 5px;
         border-radius: 4px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid rgb(255 255 255 / 15%);
         display: flex;
         align-items: baseline;
         gap: 1px;
       }
+
       .score-num {
         font-size: 14px;
         font-weight: 900;
         color: #10b981;
       }
+
       .score-lbl {
         font-size: 7.5px;
         color: #cbd5e1;
         font-weight: 600;
       }
+
       .lang-card {
         padding: 6px 8px;
-        background: rgba(2, 6, 23, 0.7);
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgb(2 6 23 / 70%);
+        border-top: 1px solid rgb(255 255 255 / 5%);
         display: flex;
         flex-direction: column;
         gap: 2px;
         font-size: 10px;
       }
+
       .lang-card p {
         margin: 0;
         border-left: 2px solid #475569;
@@ -228,14 +245,17 @@
         text-overflow: ellipsis;
         color: #cbd5e1;
       }
+
       .lang-card p.primary {
         border-color: #10b981;
         font-weight: bold;
         color: #fff;
       }
+
       .btn-3d:hover p.primary {
         color: #10b981;
       }
+
       .grid-secondary {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -243,13 +263,14 @@
         width: 100%;
         margin-top: 2px;
       }
+
       .sub-3d {
         position: relative;
         background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.15),
-          0 4px 10px -2px rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+          inset 0 1px 0 rgb(255 255 255 / 15%),
+          0 4px 10px -2px rgb(0 0 0 / 50%);
+        border: 1px solid rgb(255 255 255 / 8%);
         border-bottom: 4px solid #02040a;
         border-radius: 12px;
         text-decoration: none;
@@ -258,13 +279,15 @@
         padding: 8px 6px;
         transition: all 0.1s ease;
       }
+
       .sub-3d:active {
         transform: translateY(2px);
         border-bottom-width: 2px;
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.1),
-          0 2px 4px rgba(0, 0, 0, 0.4);
+          inset 0 1px 0 rgb(255 255 255 / 10%),
+          0 2px 4px rgb(0 0 0 / 40%);
       }
+
       .sub-title {
         display: flex;
         align-items: center;
@@ -274,28 +297,35 @@
         font-size: 12px;
         color: #f1f5f9;
       }
+
       .sub-3d:hover .sub-title {
         color: #10b981;
       }
+
       .sub-emoji {
         font-size: 13px;
         line-height: 1;
       }
+
       .sub-langs {
         font-size: 8.5px;
         color: #94a3b8;
         margin-top: 2px;
       }
-      @media (max-width: 480px) {
+
+      @media (width <= 480px) {
         .header-title {
           font-size: 18px;
         }
+
         .header-langs {
           font-size: 10px;
         }
+
         .img-container {
           height: 64px;
         }
+
         .lang-card {
           font-size: 9px;
         }

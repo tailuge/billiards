@@ -23,26 +23,29 @@
     <style>
       :root {
         --bg: #12161d;
-        --panel: rgba(18, 22, 29, 0.86);
+        --panel: rgb(18 22 29 / 86%);
         --panel-border: #2a323e;
         --text: #e6edf3;
         --muted: #8b95a5;
         --accent: #4a9eff;
       }
+
       * {
         box-sizing: border-box;
       }
+
       html,
       body {
         margin: 0;
         height: 100%;
         overflow: hidden;
       }
+
       body {
         background: var(--bg);
         color: var(--text);
         font-family:
-          "Exo",
+          Exo,
           -apple-system,
           BlinkMacSystemFont,
           "Segoe UI",
@@ -53,20 +56,24 @@
         font-weight: 200;
         user-select: none;
       }
+
       button,
       input {
         font-family: inherit;
         font-weight: 200;
       }
+
       #view {
         position: fixed;
         inset: 0;
       }
+
       #view canvas {
         display: block;
         width: 100vw;
         height: 100vh;
       }
+
       /* Emoji picker panel, styled like cue.html's #params */
       #params {
         position: fixed;
@@ -77,28 +84,32 @@
         background: var(--panel);
         border: 1px solid var(--panel-border);
         border-radius: 10px;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+        box-shadow: 0 8px 28px rgb(0 0 0 / 45%);
         backdrop-filter: blur(8px);
         user-select: none;
         max-height: calc(100vh - 16px);
         overflow-y: auto;
       }
+
       .profile-row {
         display: flex;
         align-items: center;
         gap: 8px;
         margin-bottom: 8px;
       }
+
       .profile-meta {
         display: flex;
         flex-direction: column;
         gap: 2px;
         min-width: 0;
       }
+
       .profile-name {
         font-size: 0.85rem;
         font-weight: 200;
       }
+
       /* Emoji picker (ported from emoji.html, dark theme) */
       .emoji-display-input {
         width: 100%;
@@ -107,11 +118,12 @@
         text-align: center;
         border: 1px solid var(--panel-border);
         border-radius: 8px;
-        background: rgba(255, 255, 255, 0.04);
+        background: rgb(255 255 255 / 4%);
         color: var(--text);
         outline: none;
         transition: border-color 0.15s ease;
       }
+
       .emoji-display-input:focus {
         border-color: var(--accent);
       }
@@ -149,6 +161,7 @@
           transform 0.1s ease;
         line-height: 1;
         padding: 0;
+
         /* Prevents wide unicode glyphs from expanding grid tracks */
         min-width: 0;
         min-height: 0;
@@ -163,7 +176,7 @@
       }
 
       .emoji-cell:hover:not(.empty) {
-        background-color: rgba(255, 255, 255, 0.08);
+        background-color: rgb(255 255 255 / 8%);
         transform: scale(1.15);
         z-index: 2;
       }
@@ -173,7 +186,7 @@
       }
 
       .emoji-cell.selected {
-        background-color: rgba(74, 158, 255, 0.18);
+        background-color: rgb(74 158 255 / 18%);
         border-color: var(--accent);
       }
 
@@ -192,7 +205,7 @@
         font-size: 0.6rem;
         font-weight: 200;
         color: var(--text);
-        background-color: rgba(255, 255, 255, 0.06);
+        background-color: rgb(255 255 255 / 6%);
         border: 1px solid var(--panel-border);
         border-radius: 6px;
         cursor: pointer;
@@ -201,7 +214,7 @@
       }
 
       .emoji-nav-btn:hover:not(:disabled) {
-        background-color: rgba(255, 255, 255, 0.12);
+        background-color: rgb(255 255 255 / 12%);
       }
 
       .emoji-nav-btn:disabled {
@@ -222,6 +235,7 @@
         padding-top: 6px;
         border-top: 1px solid var(--panel-border);
       }
+
       .done-row button {
         width: 100%;
         padding: 5px 0;
@@ -233,9 +247,11 @@
         cursor: pointer;
         transition: filter 0.1s ease;
       }
+
       .done-row button:hover {
         filter: brightness(1.15);
       }
+
       .done-row button:active {
         filter: brightness(0.9);
       }

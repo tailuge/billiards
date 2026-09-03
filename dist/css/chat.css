@@ -50,10 +50,7 @@
      menu buttons (right). The inner div is centered within this corridor. */
   position: absolute;
   width: auto;
-  top: auto;
-  bottom: 4px; /* 3px up from original 1px */
-  left: 148px; /* tightened to preserve emoji width */
-  right: 78px; /* button column */
+  inset: auto 78px 4px 148px; /* 3px up from original 1px */ /* tightened to preserve emoji width */ /* button column */
   z-index: 1000;
   display: none;
   align-items: center;
@@ -92,7 +89,7 @@
   gap: 0;
 }
 
-@media (max-width: 500px) {
+@media (width <= 500px) {
   #chatEmojiList {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
@@ -143,6 +140,7 @@
   background: transparent;
   border: none;
   outline: none;
+
   /* .view3d sets cursor: none, which would hide the text caret over the input */
   cursor: text;
 }
