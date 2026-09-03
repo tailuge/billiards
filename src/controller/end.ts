@@ -30,7 +30,8 @@ async function submitResults(
     session.tournamentId,
     challengeId,
     result.winnerId,
-    result.loserId
+    result.loserId,
+    result.beserk
   )
 }
 

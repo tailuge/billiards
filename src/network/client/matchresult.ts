@@ -22,6 +22,7 @@ export interface MatchResult {
   freeaim?: boolean
   tableSize?: number
   arenaId?: string
+  beserk?: boolean
 }
 
 export class MatchResultHelper {
@@ -343,16 +344,23 @@ export class MatchResultHelper {
     }
 
     if (typeof globalThis.location !== "undefined") {
-      const params = new URLSearchParams(globalThis.location.search)
-      if (params.get("freeaim") === "true") {
-        result.freeaim = true
-      }
-      const tableSize = Number.parseFloat(params.get("tableSize") || "10")
-      if (tableSize < 10) {
-        result.tableSize = tableSize
-      }
+      this.applyUrlParamsToResult(result)
     }
 
     return result
+  }
+
+  private static applyUrlParamsToResult(result: MatchResult): void {
+    const params = new URLSearchParams(globalThis.location.search)
+    if (params.get("freeaim") === "true") {
+      result.freeaim = true
+    }
+    const tableSize = Number.parseFloat(params.get("tableSize") || "10")
+    if (tableSize < 10) {
+      result.tableSize = tableSize
+    }
+    if (params.get("beserk") === "true") {
+      result.beserk = true
+    }
   }
 }

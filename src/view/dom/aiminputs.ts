@@ -53,9 +53,11 @@ export class AimInputs {
     if (this.cueHitElement) {
       const params = new URLSearchParams(location.search)
       const shotClockSeconds = params.get("shotClock")
-      const duration = shotClockSeconds
+      const baseDuration = shotClockSeconds
         ? Number(shotClockSeconds) * 1000
         : 20000
+      const beserk = params.get("beserk") === "true"
+      const duration = beserk ? baseDuration / 2 : baseDuration
       this.timeoutButton = new TimeoutButton(this.cueHitElement, {
         duration,
         onComplete: () => {
