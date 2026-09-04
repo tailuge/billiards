@@ -114,7 +114,7 @@ export class BrowserContainer {
       this.botMode,
       this.examMode,
       this.practiceMode,
-      this.replay ? 4 : Number.parseInt(params.get("lod") ?? "2"),
+      this.replay ? 4 : Number.parseInt(params.get("lod") ?? "4"),
       this.first,
       this.speedrun,
       params.get("tournamentId") ?? undefined

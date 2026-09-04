@@ -188,6 +188,13 @@
         color: #bbb;
       }
 
+      figure a {
+        display: block;
+        transition:
+          transform 0.2s,
+          filter 0.2s;
+      }
+
       .cta a {
         display: inline-block;
         background: #1e1e1e;
@@ -201,6 +208,16 @@
         margin: 3px 3px 3px 0;
       }
 
+      nav.back a {
+        color: #888;
+        text-decoration: none;
+      }
+
+      figure a:hover {
+        transform: scale(1.01);
+        filter: brightness(1.1);
+      }
+
       .cta a:first-of-type {
         background: #10b981;
         color: #fff;
@@ -210,6 +227,10 @@
       .cta a:hover {
         border-color: #555;
         color: #fff;
+      }
+
+      nav.back a:hover {
+        color: #ccc;
       }
 
       .cta a:first-of-type:hover {
@@ -225,15 +246,6 @@
         display: flex;
         gap: 20px;
         flex-wrap: wrap;
-      }
-
-      nav.back a {
-        color: #888;
-        text-decoration: none;
-      }
-
-      nav.back a:hover {
-        color: #ccc;
       }
 
       .side-by-side {
@@ -261,17 +273,6 @@
         }
       }
 
-      figure a {
-        display: block;
-        transition:
-          transform 0.2s,
-          filter 0.2s;
-      }
-
-      figure a:hover {
-        transform: scale(1.01);
-        filter: brightness(1.1);
-      }
     </style>
   </head>
 

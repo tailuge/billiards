@@ -75,6 +75,34 @@
         justify-content: center;
       }
 
+      .diagram button {
+        padding: 4px 12px;
+        font-size: 8px;
+        font-family: inherit;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .diagram-group button {
+        padding: 4px 8px;
+        font-size: 8px;
+        font-family: inherit;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .diagram button:hover {
+        background: #f0f0f0;
+      }
+
+      .diagram-group button:hover {
+        background: #f0f0f0;
+      }
+
       #controls button,
       #controls select,
       #controls input[type="file"] {
@@ -158,20 +186,6 @@
         margin: 0;
       }
 
-      .diagram button {
-        padding: 4px 12px;
-        font-size: 8px;
-        font-family: inherit;
-        background: #fff;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        cursor: pointer;
-      }
-
-      .diagram button:hover {
-        background: #f0f0f0;
-      }
-
       /* Aim Section Styles */
       #aim-controls {
         display: flex;
@@ -214,9 +228,20 @@
         align-items: center;
       }
 
+      .diagram-group label {
+        font-size: 8px;
+        color: #444;
+        min-width: 30px;
+      }
+
       #aim-power-direction label {
         font-size: 8px;
         color: #444;
+      }
+
+      .diagram-group input[type="range"] {
+        width: 150px; /* Shorter sliders */
+        margin: 0;
       }
 
       #aim-power-direction input[type="range"] {
@@ -245,31 +270,6 @@
         grid-template-columns: auto 1fr;
         gap: 5px;
         align-items: center;
-      }
-
-      .diagram-group label {
-        font-size: 8px;
-        color: #444;
-        min-width: 30px;
-      }
-
-      .diagram-group input[type="range"] {
-        width: 150px; /* Shorter sliders */
-        margin: 0;
-      }
-
-      .diagram-group button {
-        padding: 4px 8px;
-        font-size: 8px;
-        font-family: inherit;
-        background: #fff;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        cursor: pointer;
-      }
-
-      .diagram-group button:hover {
-        background: #f0f0f0;
       }
     </style>
   </head>

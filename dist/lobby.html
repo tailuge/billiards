@@ -15,10 +15,7 @@
     <meta name="robots" content="index,follow" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-    <meta
-      property="og:title"
-      content="Tailuge Billiards"
-    />
+    <meta property="og:title" content="Tailuge Billiards" />
     <meta
       property="og:description"
       content="Free multiplayer billiards — 무료 온라인 당구 게임. 3쿠션, 9볼, 스누커를 실제 물리 엔진으로 즐기고 다른 플레이어에게 도전하세요."
@@ -38,10 +35,7 @@
     <meta property="og:video:type" content="text/html" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="Multiplayer Billiards - Free"
-    />
+    <meta name="twitter:title" content="Multiplayer Billiards - Free" />
     <meta
       name="twitter:description"
       content="Free multiplayer billiards — 무료 온라인 당구 게임. 3쿠션, 9볼, 스누커를 실제 물리 엔진으로 즐기고 다른 플레이어에게 도전하세요."
@@ -83,7 +77,10 @@
     />
     <link rel="icon" type="image/png" href="assets/threecushion.png" />
     <link rel="manifest" href="manifest.json" />
-    <meta name="ocs-site-verification" content="7e2c8724a132bd19fa2cac60ae730ba5" />
+    <meta
+      name="ocs-site-verification"
+      content="7e2c8724a132bd19fa2cac60ae730ba5"
+    />
     <meta name="theme-color" content="#1a1a1a" />
     <style>
       html,
@@ -95,7 +92,12 @@
         scrollbar-width: none;
         background: #f5f5f5;
       }
-      html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        display: none;
+      }
+
       html[theme="dark"],
       html[theme="dark"] body {
         background: #1a1a1a;
@@ -129,10 +131,10 @@
 
     <script src="lobby.js" type="module"></script>
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('sw.js');
-        });
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js")
+        })
       }
     </script>
   </body>

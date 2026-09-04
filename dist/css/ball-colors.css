@@ -18,6 +18,7 @@
 
 .traj-1 {
   stroke-opacity: 0.75;
+  stroke: #ffd900;
 }
 
 /* Default / Pool Colors */
@@ -28,10 +29,6 @@
 
 .ball-1 {
   --ball-stroke: #ffd900;
-}
-
-.traj-1 {
-  stroke: #ffd900;
 }
 
 .ball-2 {
