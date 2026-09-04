@@ -336,7 +336,7 @@
         grid-area: 3 / 1 / 4 / 2;
     }
     .container { max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 0.2rem; flex: 1; }
-`];var he=953,pe=n=>`v${Math.floor(n/100)}.${String(n%100).padStart(2,"0")}`,j="https://scoreboard-tailuge.vercel.app",O=typeof localStorage<"u"&&localStorage.getItem("useProxy")==="true"?"nchanproxy.tailuge.workers.dev":"billiards-network.onrender.com",ue=typeof window<"u"&&(window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"),X=ue?`ws://${window.location.hostname}:80`:`wss://${O}`,Ht=ue?"./active.html":"https://billiards-network.onrender.com/active.html",A=typeof window<"u"&&window.location.hostname.includes("vercel"),Dt=n=>{let e=Math.floor((Date.now()-n)/1e3);if(e<60)return`${e}s ago`;let t=Math.floor(e/60);if(t<60)return`${t}m ago`;let s=Math.floor(t/60);return s<24?`${s}h ago`:`${Math.floor(s/24)}d ago`},Bt={connected:!1,users:[],challenges:{},currentMatch:null};function Ft(n,e){let t={...n.challenges},s=i=>i.challengerId===e.myId?i.challengeeId:i.challengerId;switch(e.type){case"CONNECTED":return{...n,connected:e.payload};case"SETTLED":return{...n,settled:e.payload};case"USERS_UPDATE":return{...n,users:e.payload};case"CHALLENGE_SENT":return{...n,challenges:{...t,[e.payload.challengeeId]:{...e.payload,status:"pending"}}};case"CHALLENGE_MSG":{let i=e.payload,r=s(i);if(i.type==="offer"){if(n.currentMatch)return n;let a=t[i.challengerId];if(a&&a.challengerId===e.myId&&a.status==="pending"&&e.myId>i.challengerId)return n;(!t[i.challengerId]||t[i.challengerId].tableId!==i.tableId)&&(t[i.challengerId]={...i,status:"pending"})}else if(i.type==="accept"&&!n.currentMatch){let a=t[r];if(!a||a.tableId!==i.tableId)return n;let c=i.options||a.options,l=i.nextTurnId||a.nextTurnId,h=e.myId===i.challengerId,d=h?i.challengeeId:i.challengerId,p=h?i.custom||{}:a.custom||{},u=h?a.recipientName:a.challengerName;return delete t[r],{...n,challenges:t,currentMatch:{tableId:i.tableId,ruleType:i.ruleType,options:c,isFirst:l===i.challengerId||l===i.challengeeId?l===e.myId:i.challengerId===e.myId,opponentId:d,opponentName:u,opponentCustom:p}}}else i.type==="decline"?t[i.challengeeId]&&(t[i.challengeeId]={...t[i.challengeeId],status:"declined"}):i.type==="cancel"&&delete t[s(i)];return{...n,challenges:t}}case"CHALLENGE_DISMISS":return delete t[e.payload],{...n,challenges:t};default:return n}}function ze(n="",e="",t="",s={},i=void 0){let r={bot:{emoji:"\u{1F916}",title:"bot"},nineball:{emoji:"\u2468",title:"nineball"},eightball:{emoji:"\u{1F3B1}",title:"eightball"},snooker:{emoji:"\u{1F534}",title:"snooker"},threecushion:{emoji:"\u2462",title:"threecushion"},sagu:{emoji:"\u2463",title:"sagu"}},a=r[e],c=["5","6"].includes(String(s?.tableSize)),l=!!s?.freeaim,h=d=>{if(!c&&!l)return d;let p=d.emoji+(c?"\u{1F37C}":"")+(l?"\u2316":""),u=[c&&"mini",l&&"freeaim"].filter(Boolean).join(" ");return{emoji:p,title:u}};if(i)return{emoji:"\u2694\uFE0F",title:"arena"};if(t==="spectating")return{emoji:"\u{1F52D}",title:"spectator"};if(t==="playing")return h(a??{emoji:"\u{1F3AE}",title:"playing"});if(t==="available"&&e==="replay")return{emoji:"\u{1F440}",title:"replay"};if(a)return n.includes("veli")?h({emoji:"\u{1F393}",title:"study"}):n.includes("github")?h({emoji:a.emoji+"\u{1F419}",title:"github"}):n.includes("localhost")?h({emoji:a.emoji+"\u{1F3E0}",title:"localhost"}):h(a);if(e.includes("-bot")){let d=r[e.replace("-bot","")];if(d)return h({emoji:d.emoji+"\u{1F916}",title:"bot"})}if(e.includes("-exam")){let d=r[e.replace("-exam","")];if(d)return h({emoji:d.emoji+"\u{1F4DC}",title:"exam"})}if(e.includes("-speedrun")){let d=r[e.replace("-speedrun","")];if(d)return h({emoji:d.emoji+"\u{1F45F}",title:"speedrun"})}return n.startsWith("/")||n.includes("workers")?{emoji:"\u{1F464}",title:"vercel"}:n.includes("github")?{emoji:"\u{1F419}",title:"github"}:n.includes("vercel")?{emoji:"\u{1F465}",title:"vercel"}:n.includes("localhost")?{emoji:"\u{1F3E0}",title:"localhost"}:r[e]??{emoji:"\u{1F3AE}",title:"external"}}var w=n=>{if(n==="BOT")return{emoji:"\u{1F916}",title:"BOT"};if(!n)return{emoji:"\u{1F310}",title:""};let e=n.toUpperCase();return{emoji:[...e].map(s=>String.fromCodePoint(127397+s.charCodeAt(0))).join(""),title:e}},He=ue?`http://${window.location.hostname}:8080/`:"https://billiards.tailuge.workers.dev/",de=(n,e)=>e?Object.entries(e).reduce((t,[s,i])=>t+`&${encodeURIComponent(s)}=${encodeURIComponent(i)}`,n):n,Jt=(n,e,t)=>{for(let[s,i]of Object.entries(n)){let r=e?`${e}.${encodeURIComponent(s)}`:encodeURIComponent(s);i&&typeof i=="object"&&!Array.isArray(i)?Jt(i,r,t):i!=null&&t.push(`${r}=${encodeURIComponent(i)}`)}return t},Oe=(n,e,t)=>e&&typeof e=="object"?Jt(e,t,[]).reduce((s,i)=>s+`&${i}`,n):n,Gt=(n,e,t,s,i,r)=>{if(n.absolute)return n.url;let a=n.url?`${n.url}?userId=${encodeURIComponent(e)}&userName=${encodeURIComponent(t)}&lod=${s}`:`${He}?ruletype=${n.ruletype}&userId=${encodeURIComponent(e)}&userName=${encodeURIComponent(t)}&lod=${s}`;return ue&&(a+=`&lobbyUrl=${X}`),i&&(a+="&flip=true"),a=Oe(a,r,"custom"),n.url?a:de(a,n.options)},z=({tableId:n,userId:e,userName:t,ruleType:s,isFirst:i,options:r,localOptions:a,bot:c,lod:l,flip:h,custom:d,opponent:p})=>{let u=`${He}?websocketserver=${X}&userName=${encodeURIComponent(t)}&userId=${e}&ruletype=${s}`;return c||(u+=`&tableId=${n}`),i&&(u+="&first=true"),c&&(u+=`&bot=${encodeURIComponent(c)}`),l!==void 0&&(u+=`&lod=${l}`),h&&(u+="&flip=true"),u=de(u,r),u=de(u,a),u=Oe(u,d,"custom"),p?.userId&&(u+=`&opponent.userId=${encodeURIComponent(p.userId)}&opponent.userName=${encodeURIComponent(p.userName||"")}`,u=Oe(u,p.custom,"opponent.custom")),u},Yt=({tableId:n,userId:e,userName:t,ruleType:s,options:i})=>{let r=`${He}?websocketserver=${X}&tableId=${n}&userName=${encodeURIComponent(t)}&userId=${e}&ruletype=${s}&spectator=true`;return de(r,i)},Es={eightball:"eightball",snooker:"snooker",threecushion:"threecushion",nineball:"nineball",sagu:"sagu"},I=n=>{let e=Es[n];return e?o`<img src="assets/${e}.png" alt="${n}" title="${n}" width="18" height="18" style="vertical-align:middle">`:o`🎱`},Vt=(n,e={})=>o`<span title="${n}">
+`];var he=958,pe=n=>`v${Math.floor(n/100)}.${String(n%100).padStart(2,"0")}`,j="https://scoreboard-tailuge.vercel.app",O=typeof localStorage<"u"&&localStorage.getItem("useProxy")==="true"?"nchanproxy.tailuge.workers.dev":"billiards-network.onrender.com",ue=typeof window<"u"&&(window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"),X=ue?`ws://${window.location.hostname}:80`:`wss://${O}`,Ht=ue?"./active.html":"https://billiards-network.onrender.com/active.html",A=typeof window<"u"&&window.location.hostname.includes("vercel"),Dt=n=>{let e=Math.floor((Date.now()-n)/1e3);if(e<60)return`${e}s ago`;let t=Math.floor(e/60);if(t<60)return`${t}m ago`;let s=Math.floor(t/60);return s<24?`${s}h ago`:`${Math.floor(s/24)}d ago`},Bt={connected:!1,users:[],challenges:{},currentMatch:null};function Ft(n,e){let t={...n.challenges},s=i=>i.challengerId===e.myId?i.challengeeId:i.challengerId;switch(e.type){case"CONNECTED":return{...n,connected:e.payload};case"SETTLED":return{...n,settled:e.payload};case"USERS_UPDATE":return{...n,users:e.payload};case"CHALLENGE_SENT":return{...n,challenges:{...t,[e.payload.challengeeId]:{...e.payload,status:"pending"}}};case"CHALLENGE_MSG":{let i=e.payload,r=s(i);if(i.type==="offer"){if(n.currentMatch)return n;let a=t[i.challengerId];if(a&&a.challengerId===e.myId&&a.status==="pending"&&e.myId>i.challengerId)return n;(!t[i.challengerId]||t[i.challengerId].tableId!==i.tableId)&&(t[i.challengerId]={...i,status:"pending"})}else if(i.type==="accept"&&!n.currentMatch){let a=t[r];if(!a||a.tableId!==i.tableId)return n;let c=i.options||a.options,l=i.nextTurnId||a.nextTurnId,h=e.myId===i.challengerId,d=h?i.challengeeId:i.challengerId,p=h?i.custom||{}:a.custom||{},u=h?a.recipientName:a.challengerName;return delete t[r],{...n,challenges:t,currentMatch:{tableId:i.tableId,ruleType:i.ruleType,options:c,isFirst:l===i.challengerId||l===i.challengeeId?l===e.myId:i.challengerId===e.myId,opponentId:d,opponentName:u,opponentCustom:p}}}else i.type==="decline"?t[i.challengeeId]&&(t[i.challengeeId]={...t[i.challengeeId],status:"declined"}):i.type==="cancel"&&delete t[s(i)];return{...n,challenges:t}}case"CHALLENGE_DISMISS":return delete t[e.payload],{...n,challenges:t};default:return n}}function ze(n="",e="",t="",s={},i=void 0){let r={bot:{emoji:"\u{1F916}",title:"bot"},nineball:{emoji:"\u2468",title:"nineball"},eightball:{emoji:"\u{1F3B1}",title:"eightball"},snooker:{emoji:"\u{1F534}",title:"snooker"},threecushion:{emoji:"\u2462",title:"threecushion"},sagu:{emoji:"\u2463",title:"sagu"}},a=r[e],c=["5","6"].includes(String(s?.tableSize)),l=!!s?.freeaim,h=d=>{if(!c&&!l)return d;let p=d.emoji+(c?"\u{1F37C}":"")+(l?"\u2316":""),u=[c&&"mini",l&&"freeaim"].filter(Boolean).join(" ");return{emoji:p,title:u}};if(i)return{emoji:"\u2694\uFE0F",title:"arena"};if(t==="spectating")return{emoji:"\u{1F52D}",title:"spectator"};if(t==="playing")return h(a??{emoji:"\u{1F3AE}",title:"playing"});if(t==="available"&&e==="replay")return{emoji:"\u{1F440}",title:"replay"};if(a)return n.includes("veli")?h({emoji:"\u{1F393}",title:"study"}):n.includes("github")?h({emoji:a.emoji+"\u{1F419}",title:"github"}):n.includes("localhost")?h({emoji:a.emoji+"\u{1F3E0}",title:"localhost"}):h(a);if(e.includes("-bot")){let d=r[e.replace("-bot","")];if(d)return h({emoji:d.emoji+"\u{1F916}",title:"bot"})}if(e.includes("-exam")){let d=r[e.replace("-exam","")];if(d)return h({emoji:d.emoji+"\u{1F4DC}",title:"exam"})}if(e.includes("-speedrun")){let d=r[e.replace("-speedrun","")];if(d)return h({emoji:d.emoji+"\u{1F45F}",title:"speedrun"})}return n.startsWith("/")||n.includes("workers")?{emoji:"\u{1F464}",title:"vercel"}:n.includes("github")?{emoji:"\u{1F419}",title:"github"}:n.includes("vercel")?{emoji:"\u{1F465}",title:"vercel"}:n.includes("localhost")?{emoji:"\u{1F3E0}",title:"localhost"}:r[e]??{emoji:"\u{1F3AE}",title:"external"}}var w=n=>{if(n==="BOT")return{emoji:"\u{1F916}",title:"BOT"};if(!n)return{emoji:"\u{1F310}",title:""};let e=n.toUpperCase();return{emoji:[...e].map(s=>String.fromCodePoint(127397+s.charCodeAt(0))).join(""),title:e}},He=ue?`http://${window.location.hostname}:8080/`:"https://billiards.tailuge.workers.dev/",de=(n,e)=>e?Object.entries(e).reduce((t,[s,i])=>t+`&${encodeURIComponent(s)}=${encodeURIComponent(i)}`,n):n,Jt=(n,e,t)=>{for(let[s,i]of Object.entries(n)){let r=e?`${e}.${encodeURIComponent(s)}`:encodeURIComponent(s);i&&typeof i=="object"&&!Array.isArray(i)?Jt(i,r,t):i!=null&&t.push(`${r}=${encodeURIComponent(i)}`)}return t},Oe=(n,e,t)=>e&&typeof e=="object"?Jt(e,t,[]).reduce((s,i)=>s+`&${i}`,n):n,Gt=(n,e,t,s,i,r)=>{if(n.absolute)return n.url;let a=n.url?`${n.url}?userId=${encodeURIComponent(e)}&userName=${encodeURIComponent(t)}&lod=${s}`:`${He}?ruletype=${n.ruletype}&userId=${encodeURIComponent(e)}&userName=${encodeURIComponent(t)}&lod=${s}`;return ue&&(a+=`&lobbyUrl=${X}`),i&&(a+="&flip=true"),a=Oe(a,r,"custom"),n.url?a:de(a,n.options)},z=({tableId:n,userId:e,userName:t,ruleType:s,isFirst:i,options:r,localOptions:a,bot:c,lod:l,flip:h,custom:d,opponent:p})=>{let u=`${He}?websocketserver=${X}&userName=${encodeURIComponent(t)}&userId=${e}&ruletype=${s}`;return c||(u+=`&tableId=${n}`),i&&(u+="&first=true"),c&&(u+=`&bot=${encodeURIComponent(c)}`),l!==void 0&&(u+=`&lod=${l}`),h&&(u+="&flip=true"),u=de(u,r),u=de(u,a),u=Oe(u,d,"custom"),p?.userId&&(u+=`&opponent.userId=${encodeURIComponent(p.userId)}&opponent.userName=${encodeURIComponent(p.userName||"")}`,u=Oe(u,p.custom,"opponent.custom")),u},Yt=({tableId:n,userId:e,userName:t,ruleType:s,options:i})=>{let r=`${He}?websocketserver=${X}&tableId=${n}&userName=${encodeURIComponent(t)}&userId=${e}&ruletype=${s}&spectator=true`;return de(r,i)},Es={eightball:"eightball",snooker:"snooker",threecushion:"threecushion",nineball:"nineball",sagu:"sagu"},I=n=>{let e=Es[n];return e?o`<img src="assets/${e}.png" alt="${n}" title="${n}" width="18" height="18" style="vertical-align:middle">`:o`🎱`},Vt=(n,e={})=>o`<span title="${n}">
     ${I(n)}${e?.freeaim?"\u2316":""}${Number(e?.tableSize)<10?"\u{1F37C}":""}
 </span>`,De=n=>["\u{1F3C6}","\u{1F948}","\u{1F949}","\u{1F396}\uFE0F"][n]??"",me=n=>n?.freeaim?"\u2295":Object.values(n||{})[0],Be=(n,e,t)=>`${n}&userId=${encodeURIComponent(e)}&userName=${encodeURIComponent(t)}`;var qt=n=>{let e=(n||"user").slice(0,4),t=/Tauri/i.test(navigator.userAgent)?"-t-":"-";return e+t+Math.random().toString(36).slice(2,7)},Fe=class extends EventTarget{constructor(){super();let e=new URLSearchParams(window.location.search),t=(e.get("userId")||"").trim(),s=(e.get("userName")||"").trim();A&&(localStorage.removeItem("userId"),localStorage.removeItem("userName"),localStorage.removeItem("custom"));let i=(localStorage.getItem("userId")||"").trim(),r=(localStorage.getItem("userName")||"").trim();if(t.length>2)this.clientId=t,this.isForcedId=!0;else if(window.self!==window.top&&(location.hostname==="localhost"||location.hostname==="127.0.0.1")&&window.name.includes("-"))this.clientId=window.name,this.isForcedId=!0,s||(this.userName=window.name.split("-")[0]);else{let c=s||r||"",l=!c||i.split("-")[0].slice(0,4)===c.slice(0,4);this.clientId=i.length>2&&!i.startsWith("user-")&&l?i:qt(c),this.isForcedId=!1,this.clientId!==i&&localStorage.setItem("userId",this.clientId)}this.userName=s||this.userName||r||"Anonymous",this.lod=localStorage.getItem("lod")||"4",this.flip=localStorage.getItem("flip")==="true",this.useProxy=localStorage.getItem("useProxy")==="true";try{this.custom=JSON.parse(localStorage.getItem("custom"))||{}}catch{this.custom={}}window.addEventListener("storage",a=>{if(a.key==="custom"){try{this.custom=JSON.parse(a.newValue)||{}}catch{this.custom={}}this.dispatchEvent(new Event("change"))}}),console.log("UserStore identity:",this.userName,this.clientId)}setUseProxy(e){this.useProxy=!!e,localStorage.setItem("useProxy",this.useProxy),this.dispatchEvent(new Event("change")),window.location.reload()}set(e,t){this.clientId=e.trim().length>2?e.trim():qt(t),this.userName=t.trim(),localStorage.setItem("userId",this.clientId),localStorage.setItem("userName",this.userName),this.dispatchEvent(new Event("change"))}setLod(e){this.lod=e,localStorage.setItem("lod",e),this.dispatchEvent(new Event("change"))}setFlip(e){this.flip=!!e,localStorage.setItem("flip",this.flip),this.dispatchEvent(new Event("change"))}getCustom(){return{...this.custom}}setCustom(e,t){this.custom={...this.custom,[e]:t},localStorage.setItem("custom",JSON.stringify(this.custom)),this.dispatchEvent(new Event("change"))}},m=new Fe,S=class extends f{connectedCallback(){super.connectedCallback(),this._storeListener=()=>this.requestUpdate(),m.addEventListener("change",this._storeListener)}disconnectedCallback(){super.disconnectedCallback(),m.removeEventListener("change",this._storeListener)}};var Cs=[{label:"Nine Ball",img:"assets/nineball.png",ruletype:"nineball"},{label:"Snooker 6r",img:"assets/snooker.png",ruletype:"snooker",options:{reds:"6",tableSize:"12"}},{label:"Snooker 10r",img:"assets/snooker.png",ruletype:"snooker",options:{reds:"10",tableSize:"12"}},{label:"3-Cushion 5ft",img:"assets/baby.png",ruletype:"threecushion",options:{raceTo:"15",tableSize:"5"}},{label:"Snooker",img:"assets/snooker.png",ruletype:"snooker",options:{reds:"15",tableSize:"12"}},{label:"3-Cushion (7)",img:"assets/threecushion.png",ruletype:"threecushion",options:{raceTo:"7"}},{label:"Speedrun",img:"assets/speedrun.png",url:"speedrun/index.html"},{label:"3-Cushion analysis",img:"assets/drill.png",url:"https://velikodimov.github.io/billiards/dist/index.html?ruletype=threecushion&practice&drill",absolute:!0},{label:"Books",img:"assets/book.png",url:"book/index.html"},{label:"3-Cushion (40)",img:"assets/threecushion.png",ruletype:"threecushion",options:{raceTo:"40"}},{label:"3-Cushion (15)",img:"assets/threecushion.png",ruletype:"threecushion",options:{raceTo:"15"}},{label:"Sagu (5)",img:"assets/sagu.png",ruletype:"sagu",options:{raceTo:"5"}},{label:"Trickshot",img:"assets/practice.png",url:"https://billiards.tailuge.workers.dev/practice"},{label:"Research",img:"assets/research.png",url:"https://billiards.tailuge.workers.dev/diagrams/three"},{label:"Eight Ball",img:"assets/eightball.png",ruletype:"eightball"},{label:"Exam",img:"assets/cert.png",url:"exam/index.html",absolute:!0}],Je=class extends S{static styles=[Rt,ce];#e=[...Cs].sort(()=>Math.random()-.5);render(){let{clientId:e,userName:t,lod:s,flip:i}=m;return o`<div class="grid">
       ${this.#e.map(r=>o` <a
@@ -843,8 +843,8 @@
                     </div>
                 `:""}`:""}
         `}};customElements.define("settings-modal",st);var it=window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"?"":"https://billiards-network.onrender.com",Ns=3e4,Ms=5,ds=1800*1e3,Us=n=>(Math.floor(n/ds)+1)*ds,hs=[{name:"Three Cushion Mini Hourly Arena",ruleType:"threecushion",options:{raceTo:"7",tableSize:"5"}},{name:"Nine Ball Mini Hourly Arena",ruleType:"nineball",options:{tableSize:"6",freeaim:"true"}},{name:"Eight Ball Mini Hourly Arena",ruleType:"eightball",options:{tableSize:"6",freeaim:"true"}},{name:"Nine Ball Hourly Arena",ruleType:"nineball",options:{}},{name:"Eight Ball Hourly Arena",ruleType:"eightball",options:{}},{name:"Snooker Mini Hourly Arena",ruleType:"snooker",options:{tableSize:"6",reds:"3",freeaim:"true"}}],Rs=b`
-    .arena-list { display: flex; flex-direction: column; gap: .35rem; }
-    .arena-item { display: flex; align-items: center; gap: .5rem; padding: .45rem; border: 1px solid var(--border); border-radius: 4px; text-decoration: none; color: var(--text); }
+    .arena-list { display: flex; flex-direction: column; gap: .2rem; }
+    .arena-item { display: flex; align-items: center; gap: .35rem; padding: .25rem; border: 1px solid var(--border); border-radius: 4px; text-decoration: none; color: var(--text); }
     .arena-item.completed { opacity: .8; padding-top: .25rem; padding-bottom: .25rem; }
     .arena-item-main { min-width: 0; flex: 1; }
     .arena-item-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -860,19 +860,19 @@
         ${e||!s?"":o`<button class="arena-join btn-challenge" type="button" @click=${r}>Open</button>`}
     </a>`},nt=class extends f{static properties={heading:{type:String},_arenas:{state:!0},_error:{state:!0},selectable:{type:Boolean}};static styles=[Rs,b`
         :host { display: block; }
-        h2.title { margin: 0 0 .5rem; font-size: 1.1rem; font-weight: 600; }
+        h2.title { margin: 0 0 .25rem; font-size: .8rem; font-weight: 600; }
         .error { color: var(--text-muted); font-size: .75rem; text-align: center; padding: .5rem 0; }
     `];constructor(){super(),this.heading="",this._arenas=[],this._error="",this.selectable=!1,this._timer=null}connectedCallback(){super.connectedCallback(),this._load(),this._timer=setInterval(()=>this._load(),Ns)}disconnectedCallback(){this._timer&&(clearInterval(this._timer),this._timer=null),super.disconnectedCallback()}async load(){await this._load()}async _load(){try{let e=await fetch(`${it}/api/arena`),t=await e.json();if(!e.ok)throw new Error(t.error||`Unable to load Arenas (${e.status})`);let s=Date.now();if(!(t.arenas||[]).some(r=>r.endTime>s&&r.status!=="finished")){let r=Us(s);if(Math.floor((r-s)/6e4)>=Ms){let c=new Date(r),l=String(c.getUTCHours()).padStart(2,"0"),h=String(c.getUTCMinutes()).padStart(2,"0"),d=`${c.getUTCFullYear()}${String(c.getUTCMonth()+1).padStart(2,"0")}${String(c.getUTCDate()).padStart(2,"0")}-${l}${h}`,p=c.getUTCMinutes()>=30?1:0,u=(2*c.getUTCHours()+p)%hs.length,g=hs[u];if(await fetch(`${it}/api/arena`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:`arena-hourly-${d}`,creatorId:"hourly-arena",creatorName:g.name,ruleType:g.ruleType,options:g.options,endTime:r})}),e=await fetch(`${it}/api/arena`),t=await e.json(),!e.ok)throw new Error(t.error||`Unable to reload Arenas (${e.status})`)}}this._arenas=(t.arenas||[]).sort((r,a)=>a.createdAt-r.createdAt),this._error="",this.dispatchEvent(new CustomEvent("arenas-loaded",{detail:{arenas:this._arenas},bubbles:!0,composed:!0}))}catch(e){this._error=e.message||"Unable to load Arenas."}}get _activeArenas(){let e=Date.now();return this._arenas.filter(t=>t.endTime>e&&t.status!=="finished")}_onSelect(e){this.dispatchEvent(new CustomEvent("arena-select",{detail:{arenaId:e},bubbles:!0,composed:!0}))}render(){let e=this._activeArenas;return o`
             ${this.heading?o`<h2 class="title">${this.heading}</h2>`:""}
             ${this._error&&!e.length?o`<div class="error">Could not load arenas.</div>`:e.length?o`<div class="arena-list" aria-label="Active Arenas">${e.map(t=>js(t,!1,this.selectable?s=>this._onSelect(s):null))}</div>`:o`<div class="empty">No active Arenas.</div>`}
         `}};customElements.define("active-arenas",nt);var rt=class extends f{static properties={arenaId:{type:String},_messages:{state:!0},_hidden:{state:!0}};static styles=[v,b`
       :host { display: block; font-size: 0.8rem; }
-      .chat { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem; display: flex; flex-direction: column; gap: 0.3rem; }
+      .chat { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.25rem; display: flex; flex-direction: column; gap: 0.2rem; }
       .header { display: flex; justify-content: space-between; align-items: center; }
       .title { margin: 0 0 .5rem; font-size: 1.1rem; font-weight: 600; color: var(--text); }
       .messages {
         display: flex; flex-direction: column; gap: 2px;
-        height: calc(5 * 1.4rem); overflow-y: auto;
+        height: calc(2.5 * 1.4rem); overflow-y: auto;
         scrollbar-width: thin; scrollbar-color: var(--border) transparent;
       }
       .messages::-webkit-scrollbar { width: 4px; }
@@ -886,7 +886,6 @@
     `];constructor(){super(),this.arenaId="",this._messages=[],this._hidden=!1,this._ws=null}connectedCallback(){super.connectedCallback()}disconnectedCallback(){super.disconnectedCallback(),this._ws?.close()}updated(e){e.has("arenaId")&&this.arenaId&&(this._ws?.close(),this._messages=[],this._connect())}_connect(){let e=`${X}/subscribe/arena/${encodeURIComponent(this.arenaId)}`;this._ws=new WebSocket(e),this._ws.onmessage=t=>{try{let i=JSON.parse(t.data).message??t.data;this._messages=[...this._messages.slice(-4),String(i)]}catch{this._messages=[...this._messages.slice(-4),t.data]}}}_send(){let e=this.renderRoot.querySelector("input"),t=e.value.trim();if(!t||!this.arenaId)return;let s=location.hostname==="localhost"||location.hostname==="127.0.0.1"?`http://${location.hostname}:8080`:`https://${O}`;fetch(`${s}/publish/arena/${encodeURIComponent(this.arenaId)}`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:t})}),e.value=""}_onKeydown(e){e.key==="Enter"&&this._send()}render(){return o`
       <div class="chat">
         <div class="header">
-          <h2 class="title">Chat</h2>
           <button @click=${()=>this._hidden=!this._hidden} aria-label="toggle chat">
             ${this._hidden?"\u25B8":"\u25BE"}
           </button>
@@ -924,14 +923,17 @@
                 </div>`:o`<div class="step ${t[r]}" aria-hidden="true"><div class="block"></div></div>`)}
         </div>`:o`<div class="empty">No final standings available.</div>`}};customElements.define("arena-podium",at);var ot=class extends f{static properties={standings:{attribute:!1},players:{attribute:!1},onlineUsers:{attribute:!1},expired:{type:Boolean},countdown:{type:String}};static styles=[k,b`
         :host { display: block; }
-        .leaderboard-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
-        .title { margin: 0; font-size: 1.1rem; font-weight: 600; }
+        .leaderboard-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .25rem; }
+        .title { margin: 0; font-size: .8rem; font-weight: 600; }
         .meta { color: var(--text-muted); font-size: .75rem; line-height: 1.7; }
         .countdown { font-size: .85rem; font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+        .players-scroll { max-height: 14.85rem; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
         .players { width: 100%; border-collapse: collapse; }
-        th, td { padding: .4rem .25rem; border-bottom: 1px solid var(--border); text-align: left; }
+        thead { position: sticky; top: 0; background: transparent; z-index: 1; }
+        th, td { height: 1.35rem; box-sizing: border-box; padding: .15rem .25rem; border-bottom: none; line-height: 1.2; text-align: right; }
         th { color: var(--text-muted); font-size: .7rem; }
-        th:not(:first-child), td:not(:first-child) { text-align: right; }
+        th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+        th:first-child, td:first-child { width: 2rem; }
         .online-dot { display: inline-block; width: .45rem; height: .45rem; margin-right: .3rem; border-radius: 50%; background: #198754; vertical-align: middle; }
         .empty { color: var(--text-muted); text-align: center; padding: 1rem 0; }
     `];constructor(){super(),this.standings=[],this.players=[],this.onlineUsers=[],this.expired=!1,this.countdown=""}render(){return o`
@@ -940,18 +942,19 @@
                 ${this.countdown?o`<div class="countdown" aria-label="Time remaining">${this.countdown}</div>`:""}
             </div>
             ${this.expired?o`<arena-podium .standings=${this.standings}></arena-podium>`:""}
-            ${this.standings.length?o`<table class="players">
-                    <thead><tr><th>Player</th><th>Points</th><th>Wins</th><th>Games</th></tr></thead>
-                    <tbody>${this.standings.map(e=>{let t=this.players.find(i=>i.playerId===e.playerId),s=Os(e.playerId)?!0:this.onlineUsers.some(i=>i.userId===e.playerId);return o`<tr>
+            ${this.standings.length?o`<div class="players-scroll"><table class="players">
+                    <thead><tr><th>#</th><th>Player</th><th>Points</th><th>Wins</th><th>Games</th></tr></thead>
+                    <tbody>${this.standings.map((e,t)=>{let s=this.players.find(r=>r.playerId===e.playerId),i=Os(e.playerId)?!0:this.onlineUsers.some(r=>r.userId===e.playerId);return o`<tr>
+                            <td>#${t+1}</td>
                             <td>
-                                ${s?o`<span class="online-dot" aria-label="Online" title="Online"></span>`:""}
-                                ${e.name}${t?.active===!1?" (left)":""}
+                                ${i?o`<span class="online-dot" aria-label="Online" title="Online"></span>`:""}
+                                ${e.name}${s?.active===!1?" (left)":""}
                             </td>
                             <td>${e.points}</td>
                             <td>${e.wins}</td>
                             <td>${e.games}</td>
                         </tr>`})}</tbody>
-                </table>`:o`<div class="empty">No players have joined yet.</div>`}
+                </table></div>`:o`<div class="empty">No players have joined yet.</div>`}
         `}};function Os(n){return["bot-thefarjaw","bot-clawbreak"].includes(n)}customElements.define("arena-leaderboard",ot);var ps=window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"?"":"https://billiards-network.onrender.com",zs=new Set(["bot-thefarjaw","bot-clawbreak"]),Hs={"bot-thefarjaw":"TheFarJaw","bot-clawbreak":"ClawBreak"},lt=n=>zs.has(n),ct=10,Ds=5,us=2e3,dt=class extends f{static properties={arenaId:{type:String},lobby:{type:Object},theme:{type:String,reflect:!0},_arena:{state:!0},_leaderboard:{state:!0},_onlineUsers:{state:!0},_busy:{state:!0},_error:{state:!0},_pairingState:{state:!0},_pairingCountdown:{state:!0},_pairedName:{state:!0},_beserk:{state:!0}};static styles=[k,v,b`
         :host { display: block; box-sizing: border-box; background: var(--surface); color: var(--text); font-family: 'Exo', sans-serif; font-size: .85rem; }
         .container { max-width: 900px; margin: 0 auto; }
@@ -959,12 +962,12 @@
         .logo { width: 32px; height: 32px; opacity: .7; }
         h1 { flex: 1; margin: 0; font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
         h1 a { color: inherit; text-decoration: none; }
-        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: .7rem; margin-bottom: .5rem; }
-        .title { margin: 0 0 .5rem; font-size: 1.1rem; font-weight: 600; }
-        .meta { color: var(--text-muted); font-size: .75rem; line-height: 1.7; }
+        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: .35rem; margin-bottom: .25rem; }
+        .title { margin: 0 0 .25rem; font-size: .8rem; font-weight: 600; }
+        .meta { color: var(--text-muted); font-size: .75rem; line-height: 1.7; white-space: nowrap; }
         .error { padding: .45rem; color: #721c24; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; }
-        .actions { display: flex; gap: .35rem; margin-top: .6rem; }
-        .actions button { flex: 1; padding: .5rem; }
+        .actions { display: flex; gap: .25rem; margin-top: .3rem; }
+        .actions button { flex: 1; padding: .25rem; }
         .countdown { font-size: .85rem; font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 
         /* Pairing overlay — sits above the table, does not replace it */
@@ -1042,8 +1045,7 @@
                         <h2 class="title">${a?"Arena complete":"Arena"} ${I(e.ruleType)}</h2>
                     </div>
                     <div class="meta">
-                        Status: ${a?"complete":e.status} · Duration: ${e.durationMinutes} minutes<br />
-                        ${e.players.length} participant${e.players.length===1?"":"s"} · ${a?"Ended":"Ends"}: ${new Date(e.endTime).toLocaleString([],{year:"numeric",month:"numeric",day:"numeric",hour:"numeric",minute:"2-digit"})}
+                        Status: ${a?"complete":e.status} · ${e.durationMinutes} minutes · ${e.players.length} participant${e.players.length===1?"":"s"} · ${a?"Ended":"Ends"}: ${new Date(e.endTime).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}
                     </div>
                     ${a?"":o`<div class="actions">
                         <button type="button" ?disabled=${this._busy||h} @click=${this._load}>Refresh</button>
@@ -1067,18 +1069,17 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-bottom: .5rem;
-            margin-bottom: .5rem;
-            border-bottom: 1px solid var(--border);
+            padding-bottom: .25rem;
+            margin-bottom: .25rem;
         }
         .bar-left {
             display: flex;
             align-items: center;
-            gap: .5rem;
+            gap: .35rem;
         }
         .panel-heading {
             margin: 0;
-            font-size: 1.1rem;
+            font-size: .8rem;
             font-weight: 600;
         }
         .manage-link {
@@ -1096,7 +1097,7 @@
             border-radius: 4px;
             color: var(--text);
             cursor: pointer;
-            padding: .25rem .5rem;
+            padding: .15rem .4rem;
             font: inherit;
             font-size: .8rem;
         }
@@ -1106,7 +1107,7 @@
         .content {
             display: flex;
             flex-direction: column;
-            gap: .5rem;
+            gap: .25rem;
         }
     `];constructor(){super(),this.arenaId="",this.lobby=null,this.theme=""}_close(){this.dispatchEvent(new CustomEvent("close",{bubbles:!0,composed:!0}))}render(){return o`
             <div class="panel-bar">
