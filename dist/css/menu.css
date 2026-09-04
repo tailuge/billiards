@@ -95,12 +95,20 @@
   flex: 0 0 35px;
 }
 
+.menuButton[hidden] {
+  display: none;
+}
+
 .menuItems .menuButton[hidden] {
   display: none;
 }
 
 .menuDropdown:not([open]) .menuItems {
   display: none;
+}
+
+.menuButton:active {
+  transform: scale(0.97);
 }
 
 .menuDropdown > summary:focus-visible,
@@ -111,12 +119,4 @@
 
 .menuButton.half-height {
   height: 35px;
-}
-
-.menuButton[hidden] {
-  display: none;
-}
-
-.menuButton:active {
-  transform: scale(0.97);
 }

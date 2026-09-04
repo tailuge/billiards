@@ -220,6 +220,11 @@ label {
   height: 22px;
 }
 
+#analysisPanel button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 #botDebugOverlay header button:hover {
   background: #333;
   color: #fff;
@@ -380,12 +385,12 @@ label {
 
 /* The 44px spacer aligns Preview with the Hit button when centered; it is not
    needed once the stack is lifted above the elevation panel. */
-.drill-panel.elevation-open .drill-gap {
-  height: 0;
-}
-
 .drill-gap {
   height: 44px;
+}
+
+.drill-panel.elevation-open .drill-gap {
+  height: 0;
 }
 
 .drill-btn {
@@ -404,6 +409,11 @@ label {
     background 0.15s;
 }
 
+.drill-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
 .drill-btn:not(:disabled):hover {
   background: rgb(0 60 110 / 85%);
   border-color: rgb(255 255 255 / 50%);
@@ -411,11 +421,6 @@ label {
 
 .drill-btn:not(:disabled):active {
   transform: scale(0.96);
-}
-
-.drill-btn:disabled {
-  opacity: 0.3;
-  cursor: default;
 }
 
 /* ===========================================================================
@@ -446,6 +451,15 @@ body.analysis-mode #viewP1 {
 }
 
 /* The renderer sets an explicit pixel size on its canvas; cap it to the cell. */
+.analysis-content canvas {
+  background: #0d0d10;
+  border-radius: 6px;
+  display: block;
+  max-width: 100%;
+  height: auto;
+  image-rendering: auto;
+}
+
 body.analysis-mode #viewP1 > canvas {
   max-width: 100%;
 }
@@ -623,15 +637,6 @@ body.chromeless #panel .powerSliderContainer {
   max-width: 100%;
 }
 
-.analysis-content canvas {
-  background: #0d0d10;
-  border-radius: 6px;
-  display: block;
-  max-width: 100%;
-  height: auto;
-  image-rendering: auto;
-}
-
 .bars {
   margin-top: 14px;
 }
@@ -669,13 +674,13 @@ body.chromeless #panel .powerSliderContainer {
   background: #2f7d6e;
 }
 
-.bar-show:hover:not(:disabled) {
-  background: #3a988e;
-}
-
 .bar-show:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.bar-show:hover:not(:disabled) {
+  background: #3a988e;
 }
 
 /* The bar whose 1-D sweep is currently shown (blue = the live/active accent). */
@@ -833,14 +838,6 @@ body.chromeless #panel .powerSliderContainer {
   border-color: transparent transparent transparent #cdd1d6;
 }
 
-.bar-step--left:hover:not(:disabled)::before {
-  border-right-color: #fff;
-}
-
-.bar-step--right:hover:not(:disabled)::before {
-  border-left-color: #fff;
-}
-
 .bar-step:disabled {
   cursor: default;
 }
@@ -851,6 +848,14 @@ body.chromeless #panel .powerSliderContainer {
 
 .bar-step--right:disabled::before {
   border-left-color: #3a3a40;
+}
+
+.bar-step--left:hover:not(:disabled)::before {
+  border-right-color: #fff;
+}
+
+.bar-step--right:hover:not(:disabled)::before {
+  border-left-color: #fff;
 }
 
 /* The single white ring = the current shot's spin on the scatter. Positioned by
@@ -961,9 +966,4 @@ body.chromeless #panel .powerSliderContainer {
   padding: 7px 12px;
   font-size: 13px;
   cursor: pointer;
-}
-
-#analysisPanel button:disabled {
-  opacity: 0.5;
-  cursor: default;
 }

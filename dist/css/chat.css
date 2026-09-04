@@ -95,6 +95,30 @@
   }
 }
 
+#inputText {
+  /* Fill the available space between the spin column and the buttons */
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  padding: 1px 4px;
+  caret-color: white;
+  color: white;
+  background: transparent;
+  border: none;
+  outline: none;
+
+  /* .view3d sets cursor: none, which would hide the text caret over the input */
+  cursor: text;
+}
+
+#inputSend {
+  background: #2e8b57;
+}
+
+#inputSend:hover {
+  background: #3da066;
+}
+
 #inputTextDiv .chat-emoji {
   all: unset;
   display: block;
@@ -108,7 +132,7 @@
     transform 0.1s ease;
 }
 
-.chat-emoji:hover {
+#inputTextDiv .chat-emoji:hover {
   background: rgb(255 255 255 / 12%);
 }
 
@@ -127,22 +151,6 @@
 
 #inputTextDiv:not(.emoji-mode) .chat-emoji-mode-icon {
   display: none;
-}
-
-#inputText {
-  /* Fill the available space between the spin column and the buttons */
-  flex: 1;
-  min-width: 0;
-  font-size: 15px;
-  padding: 1px 4px;
-  caret-color: white;
-  color: white;
-  background: transparent;
-  border: none;
-  outline: none;
-
-  /* .view3d sets cursor: none, which would hide the text caret over the input */
-  cursor: text;
 }
 
 #inputText::placeholder {
@@ -177,14 +185,6 @@
 
 #toggleChatMode:hover {
   background: #666;
-}
-
-#inputSend {
-  background: #2e8b57;
-}
-
-#inputSend:hover {
-  background: #3da066;
 }
 
 #inputClose {
