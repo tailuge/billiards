@@ -13,7 +13,7 @@ export const LOBBY_URL = `${LOBBY_BASE_URL}/lobby.html`
 export function getLobbyUrl(tournamentId?: string): string {
   if (!tournamentId) return LOBBY_URL
 
-  const url = new URL(`${LOBBY_BASE_URL}/arena.html`)
+  const url = new URL(`${LOBBY_BASE_URL}/lobby.html`)
   url.searchParams.set("tournamentId", tournamentId)
   return url.toString()
 }

@@ -15,9 +15,9 @@ describe("gameOverButtons", () => {
   })
 
   describe("lobby URL", () => {
-    it("uses the arena page with the tournament id", () => {
+    it("uses the lobby page with the tournament id", () => {
       expect(getLobbyUrl("tournament/123")).toBe(
-        "http://localhost/arena.html?tournamentId=tournament%2F123"
+        "http://localhost/lobby.html?tournamentId=tournament%2F123"
       )
     })
 
