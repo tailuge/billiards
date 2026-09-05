@@ -1,6 +1,82 @@
 # rho parameter study — results
 
-Date: 2026-08-24
+## v2 — re-profile under the new scoring (2026-09-05)
+
+Question: with the **new RMSE scoring** (`results_new.md`: time-decay
+weights + 4 s cutoff) and **pure system defaults everywhere else**
+(`fit-shots.mjs` defaults, μw = 0.175), is `rho = 0.045` still optimal?
+The 2026-08-24 study predated the scoring change and pinned μw, so none of
+its numbers carry over; `result_bestsofar.md` also asked for a re-profile
+away from default constants.
+
+**Verdict: keep `rho = 0.045`** — no pin, no override, system default stands.
+No candidate clears the bar on either split; nothing was worth adopting.
+
+Protocol: `sweep-params.mjs` standard pass-pipeline, **no pin** (base is
+freshly-fitted pure defaults, as always), new scoring, dev/test split from
+`split-shots.mjs` (seed 42, id 25 excluded). rho is weakly identifiable
+(it only enters through Mz), and both splits show the same flat picture.
+
+### 1. Dev profile (24 shots)
+
+Base med 4.78 cm (mean 5.61). Δmedian RMSE (cm) vs fresh base:
+
+| rho | vs default | Δmedian | w/t/l | sign-p |
+|---|---|---|---|---|
+| 0.0375 | −17 % | +0.52 | 10/1/13 | 0.68 |
+| 0.04275 | −5 % | +0.09 | 12/2/10 | 0.83 |
+| 0.045 (base) | 0 | 0 | | |
+| 0.04725 | +5 % | +0.54 | 8/1/15 | 0.21 |
+| 0.0525 | +17 % | **+0.03** | 12/1/11 | 1.00 |
+
+Flat. The nearest neighbours are statistical ties; the best candidate
+(+17 %) improves exactly half the shots. The two large per-shot losses are
+regime-flipper noise (id 8: +10.9 cm at rho=0.0375, +10.6 at 0.04725 — its
+fit lands in a different local optimum), not a rho trend.
+
+### 2. Held-out confirmation (47 unseen shots)
+
+Both dev neighbours validated out-of-sample:
+
+| rho | median (cm) | Δmedian | wins | sign-p |
+|---|---|---|---|---|
+| base 0.045 (defaults) | 5.18 | — | | |
+| 0.04275 | 5.24 | +0.06 | 21/47 | 0.77 |
+| 0.0525 | 5.38 | +0.20 | 21/47 | 0.77 |
+
+No improvement replicates. Big per-shot swings are flippers again
+(id 109 −3.0 both cells, id 110 +2.9/−0.4, id 68 +1.2/+8.2) — inconsistent
+directions across the two candidates, i.e. noise.
+
+### 3. Interpretation
+
+Same conclusion as v1, now under the new scoring and away from any pin:
+`Mz ∝ mu·rho` keeps rho weakly identified; the objective surface is flat
+across ±17 % and the minimum sits at the default. Note the default `mu`
+(0.0055) × default rho is the only (mu, rho) pair ever fitted here — a
+joint (mu × rho) box remains the open question from `results_mus_muw_box.md`,
+but with rho this flat it is unlikely to resolve anything.
+
+### Reproducing
+
+```sh
+# Dev profile (24 shots, ~2 min)
+node dist/fit/sweep-params.mjs --param 'rho=0.0375|0.04275|0.04725|0.0525' \
+    --input dist/fit/sweep-dev.json --out-dir dist/fit/corners/rho-dev
+
+# Held-out confirmation (47 shots, ~1 min)
+node dist/fit/sweep-params.mjs --param 'rho=0.04275|0.0525' \
+    --input dist/fit/sweep-test.json --out-dir dist/fit/corners/rho-test
+```
+
+Machine-readable outputs:
+`dist/fit/corners/{rho-dev,rho-test}/sweep-results.json` (no `pin` block —
+every point ran at pure system defaults).
+
+---
+
+## v1 — original study (2026-08-24)
+
 Question: is the system spindown-rate constant `rho` (default `0.045`, Han
 sliding-spin torque `Mz = ((mu·m·g·2)/3)·rho`) optimal for fitting the
 recorded trajectory data, now that cushion friction is held at the adopted

@@ -1,5 +1,44 @@
 # ee parameter study — results (v2)
 
+## v3 — fine window under the new scoring (2026-09-05)
+
+Question: with the **new RMSE scoring** (`results_new.md`) and **pure
+system defaults everywhere else** (no pin; μw = 0.175), is there any gain
+in a tight ±3 % window around `ee = 0.85` — the resolution bracket the
+earlier adopter candidates (0.855–0.865) sat in under the old scoring?
+
+**Verdict: keep `ee = 0.85`.** Every point in the window is worse than the
+freshly-fitted base; the old adopter band does not return under the new
+scoring at defaults.
+
+Protocol: `sweep-params.mjs` pass-pipeline, no pin, dev set (24 shots).
+Base med 4.78 cm. Δmedian (cm) vs base:
+
+| ee | −3 % | −1.5 % | +1.5 % | +3 % |
+|---|---|---|---|---|
+| value | 0.8245 | 0.83725 | 0.86275 | 0.8755 |
+| Δmedian | +0.43 | **+0.29** | +0.92 | +0.36 |
+| w/t/l | 7/0/17 | 7/0/17 | 13/0/11 | 15/0/9 |
+
+No interior dip, no significant challenger (best sign-p 0.064, and it's a
+*loss*). Per-shot deltas are dominated by flipper noise again (id 8: +11.9
+at ee=0.86275). Nothing to send to held-out.
+
+```sh
+node dist/fit/sweep-params.mjs --param 'ee=0.8245|0.83725|0.86275|0.8755' \
+    --input dist/fit/sweep-dev.json \
+    --out-dir dist/fit/corners/ee-fine-dev   # ~1.5 min
+```
+
+Machine-readable output: `dist/fit/corners/ee-fine-dev/sweep-results.json`.
+
+See also `results_rho.md` v2 (same date): its ±1.5 %/±3 % rho probe is also
+flat — 0.044325 ties the default at +0.03 cm, p = 1.0.
+
+---
+
+## v2 — pinned-μw study (2026-08-24)
+
 Date: 2026-08-24 (v2 revises the morning study of the same date)
 Question: where is the Mathavan cushion-restitution optimum `ee` under the
 current protocol — cushion friction pinned at adopted **μw = 0.17**,
