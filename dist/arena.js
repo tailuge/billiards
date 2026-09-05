@@ -347,6 +347,7 @@
     .arena-item-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .arena-item-name { font-weight: 400; }
     .arena-item-meta { color: var(--text-muted); font-size: .72rem; font-weight: 400; white-space: nowrap; }
+    .arena-winner { margin-left: auto; max-width: 35%; overflow: hidden; text-overflow: ellipsis; color: var(--text-muted); font-size: .72rem; white-space: nowrap; flex-shrink: 0; }
     .arena-join { cursor: pointer; border: 1px solid #0d6efd; border-radius: 4px; background: #0d6efd; color: #fff; font: inherit; font-size: .75rem; padding: .15rem .4rem; flex-shrink: 0; }
     .arena-join:hover { background-color: #0b5ed7; border-color: #0a58ca; }
     .arena-join:active { background-color: #0a58ca; }
@@ -354,6 +355,7 @@
     .empty { color: var(--text-muted); text-align: center; padding: .5rem 0; }
 `,ne=(o,e=!1,t=null,r=!0)=>{let i=`lobby.html?tournamentId=${encodeURIComponent(o.id)}`,n=s=>{t?(s.preventDefault(),s.stopPropagation(),t(o.id)):s.currentTarget instanceof HTMLButtonElement&&(s.preventDefault(),window.location.href=s.currentTarget.closest("a").href)};return c`<a class="arena-item ${e?"completed":""}" href=${i} @click=${n}>
         <div class="arena-item-main"><div class="arena-item-title"><span class="arena-item-name">${Re(o.ruleType,o.options)}${o.creatorName?c` · ${o.creatorName}`:""}</span><span class="arena-item-meta"> 👥\uFE0E ${o.players.length} · ⏰\uFE0E ${e?"ended":"ends"} ${new Date(o.endTime).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}</span></div></div>
+        ${e&&o.winner?c`<span class="arena-winner" title="Winner: ${o.winner}">🏆 ${o.winner}</span>`:""}
         ${e||!r?"":c`<button class="arena-join btn-challenge" type="button" @click=${n}>Open</button>`}
     </a>`},ie=class extends b{static properties={heading:{type:String},_arenas:{state:!0},_error:{state:!0},selectable:{type:Boolean}};static styles=[oe,h`
         :host { display: block; }
