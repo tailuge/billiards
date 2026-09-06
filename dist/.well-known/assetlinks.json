@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "dev.tailuge.billiards",
+        "sha256_cert_fingerprints": ["82:38:91:6C:D6:0F:95:61:39:A6:E5:39:AD:B7:D0:E2:10:7F:B7:01:81:44:85:DC:3D:ED:AB:41:1F:AA:78:4C"]
+      }
+    }]
