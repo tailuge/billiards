@@ -31,7 +31,7 @@ async function submitResults(
     challengeId,
     result.winnerId,
     result.loserId,
-    result.winnerId?.startsWith("bot-") ? undefined : result.beserk
+    result.winnerId?.startsWith("bot-") ? undefined : result.berserk
   )
 }
 

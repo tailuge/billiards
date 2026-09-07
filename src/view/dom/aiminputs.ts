@@ -61,8 +61,8 @@ export class AimInputs {
       const baseDuration = shotClockSeconds
         ? Number(shotClockSeconds) * 1000
         : 20000
-      const beserk = params.get("beserk") === "true"
-      const duration = beserk ? baseDuration / 2 : baseDuration
+      const berserk = params.get("berserk") === "true"
+      const duration = berserk ? baseDuration / 2 : baseDuration
       this.timeoutButton = new TimeoutButton(
         this.cueHitElement,
         {

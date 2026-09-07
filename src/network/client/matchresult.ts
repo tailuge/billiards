@@ -22,7 +22,7 @@ export interface MatchResult {
   freeaim?: boolean
   tableSize?: number
   arenaId?: string
-  beserk?: boolean
+  berserk?: boolean
 }
 
 export class MatchResultHelper {
@@ -359,8 +359,8 @@ export class MatchResultHelper {
     if (tableSize < 10) {
       result.tableSize = tableSize
     }
-    if (params.get("beserk") === "true") {
-      result.beserk = true
+    if (params.get("berserk") === "true") {
+      result.berserk = true
     }
   }
 }

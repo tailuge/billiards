@@ -45,7 +45,7 @@ export class ScoreReporter {
     tableId: string,
     winnerId: string,
     loserId?: string,
-    beserk?: boolean
+    berserk?: boolean
   ): Promise<void> {
     const url = `${ARENA_BASE_URL}/api/arena/${encodeURIComponent(
       tournamentId
@@ -54,7 +54,7 @@ export class ScoreReporter {
       challengeId: string
       winnerId: string
       loserId?: string
-      beserk?: boolean
+      berserk?: boolean
     } = {
       challengeId: tableId,
       winnerId,
@@ -62,8 +62,8 @@ export class ScoreReporter {
     if (loserId) {
       payload.loserId = loserId
     }
-    if (beserk) {
-      payload.beserk = true
+    if (berserk) {
+      payload.berserk = true
     }
 
     console.log("Uploading tournament arena result:", {
