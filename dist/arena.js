@@ -297,7 +297,7 @@
     .topbar .logo { width: 32px; height: 32px; flex-shrink: 0; filter: grayscale(100%); opacity: 0.7; }
     .topbrand { display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; color: inherit; flex-shrink: 0; }
     .topbrand:hover { opacity: 0.85; }
-    .topbrand .logo { filter: none; opacity: 1; transition: opacity 0.2s; }
+    .topbrand .logo { opacity: 1; transition: opacity 0.2s; }
     .topbar h1 { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;}
     .topbar settings-modal { flex-shrink: 0; }
     .topbar user-badge { min-width: 0; }
@@ -413,7 +413,7 @@
         .logo { width: 32px; height: 32px; flex-shrink: 0; opacity: .7; }
         .topbrand { display: inline-flex; align-items: center; gap: .4rem; text-decoration: none; color: inherit; flex-shrink: 0; }
         .topbrand:hover { opacity: 0.85; }
-        .topbrand .logo { filter: none; opacity: 1; transition: opacity 0.2s; }
+        .topbrand .logo { opacity: 1; transition: opacity 0.2s; }
         h1 { flex: 1; margin: 0; font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
         h1 a { color: inherit; text-decoration: none; }
         .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: .4rem; margin-bottom: .25rem; }
