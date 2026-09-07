@@ -40,6 +40,16 @@ Demos run in all major desktop and mobile browsers and use WebGL
 * Deploys to GitHub Pages, Vercel and Render with GitHub Actions.
 * Runs on and was developed mostly on a potato e.g. Raspberry Pi 4.
 
+
+## Install
+
+You dont, you just play in your browser at [billiards.tailuge.workers.dev/lobby](https://billiards.tailuge.workers.dev/lobby)
+
+If you prefer, you can install a thin client wrapper:
+
+* **Windows / macOS / Linux** — [Download](https://github.com/tailuge/tbilliards/releases/latest)
+* **Android** — [Download](https://github.com/tailuge/wbilliards/releases/latest)
+
 ## Reference material
 
 * Papers on ball mechanics [Han 2005](https://billiards.colostate.edu/physics_articles/Han_paper.pdf)
