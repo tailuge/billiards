@@ -18,6 +18,7 @@ https://billard-aktuell.de/forum/viewtopic.php?t=59609
 
 https://www.appimagehub.com/p/2365428/
 
+
 ---
 
 snooker
@@ -28,3 +29,4 @@ https://billard-aktuell.de/forum/viewtopic.php?t=59628
 
 https://www.reddit.com/r/snooker/comments/1vgyywz/open_source_simulator/
 
+https://github.com/fmhy/FMHY/wiki/Gaming
