@@ -71,6 +71,40 @@ export class ScoreReporter {
       payload,
     })
 
+    // Retry once on connection failure (network error or timeout) or when
+    // the server looks slow/busy (5xx or 429). A definitive response — 2xx
+    // or a 4xx like 409 (already recorded) — means the result was handled
+    // and no retry is needed.
+    const maxRetries = 1
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      const completed = await this.attemptTournamentSubmission(url, payload)
+      if (completed) return
+
+      if (attempt < maxRetries) {
+        const delay = 1000
+        console.log(
+          `Retrying tournament arena result submission in ${delay}ms... (Attempt ${
+            attempt + 1
+          }/${maxRetries})`
+        )
+        await new Promise((resolve) => setTimeout(resolve, delay))
+      }
+    }
+  }
+
+  private async attemptTournamentSubmission(
+    url: string,
+    payload: {
+      challengeId: string
+      winnerId: string
+      loserId?: string
+      berserk?: boolean
+    }
+  ): Promise<boolean> {
+    const timeoutMs = 10000
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -79,7 +113,9 @@ export class ScoreReporter {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       })
+      clearTimeout(timeoutId)
       let responseBody: string
       try {
         responseBody = await response.text()
@@ -94,8 +130,17 @@ export class ScoreReporter {
         headers: response.headers,
         body: responseBody,
       })
+
+      // 2xx, or a 4xx other than 429 (e.g. 409 already recorded): the server
+      // handled the result — treat as final, no retry. 5xx and 429 mean the
+      // server was slow/busy, so one retry is worthwhile.
+      const { status } = response
+      return response.ok || (status >= 400 && status < 500 && status !== 429)
     } catch (error) {
+      clearTimeout(timeoutId)
+      // Connection failure or timeout — signal that a retry is worthwhile.
       console.error("Error submitting tournament result to", url, error)
+      return false
     }
   }
 

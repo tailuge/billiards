@@ -138,6 +138,7 @@ describe("ScoreReporter", () => {
           winnerId: "winner-1",
           loserId: "loser-1",
         }),
+        signal: expect.any(AbortSignal),
       }
     )
     expect(console.log).toHaveBeenCalledWith(
@@ -162,6 +163,189 @@ describe("ScoreReporter", () => {
         body: '{"recorded":true}',
       }
     )
+  })
+
+  it("should retry once on network failure for tournament result", async () => {
+    const reporter = new ScoreReporter()
+    const networkError = new Error("Network error")
+    mockFetch.mockRejectedValue(networkError)
+
+    const promise = reporter.submitTournamentResult(
+      "tournament/1",
+      "table-1",
+      "winner-1",
+      "loser-1"
+    )
+
+    // Attempt 0 fails, wait 1s
+    await flushPromises()
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    jest.advanceTimersByTime(1000)
+
+    // Attempt 1 fails, stop (single retry)
+    await flushPromises()
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+
+    await promise
+    expect(console.error).toHaveBeenCalledTimes(2)
+  })
+
+  it("should retry once on tournament result timeout", async () => {
+    const reporter = new ScoreReporter()
+    mockFetch.mockImplementation((url, { signal }) => {
+      return new Promise((resolve, reject) => {
+        if (signal) {
+          signal.addEventListener("abort", () => {
+            const error = new Error("The operation was aborted.")
+            error.name = "AbortError"
+            reject(error)
+          })
+        }
+      })
+    })
+
+    const promise = reporter.submitTournamentResult(
+      "tournament/1",
+      "table-1",
+      "winner-1",
+      "loser-1"
+    )
+
+    // Attempt 0 times out after 10s, wait 1s
+    await flushPromises()
+    jest.advanceTimersByTime(10000)
+    await flushPromises()
+    jest.advanceTimersByTime(1000)
+
+    // Attempt 1 times out after 10s, stop
+    await flushPromises()
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+    jest.advanceTimersByTime(10000)
+
+    await promise
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+  })
+
+  it("should not retry tournament result on a 409 response", async () => {
+    const reporter = new ScoreReporter()
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 409,
+      statusText: "Conflict",
+      headers: "arena-response-headers",
+      text: () => Promise.resolve('{"error":"already recorded"}'),
+    })
+
+    await reporter.submitTournamentResult(
+      "tournament/1",
+      "table-1",
+      "winner-1",
+      "loser-1"
+    )
+
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+  })
+
+  it("should retry once on a 5xx response for tournament result", async () => {
+    const reporter = new ScoreReporter()
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        statusText: "Service Unavailable",
+        headers: "arena-response-headers",
+        text: () => Promise.resolve("Server busy"),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        statusText: "OK",
+        headers: "arena-response-headers",
+        text: () => Promise.resolve('{"recorded":true}'),
+      })
+
+    const promise = reporter.submitTournamentResult(
+      "tournament/1",
+      "table-1",
+      "winner-1",
+      "loser-1"
+    )
+
+    // Attempt 0 returns 503, wait 1s
+    await flushPromises()
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    jest.advanceTimersByTime(1000)
+
+    // Attempt 1 succeeds
+    await flushPromises()
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+
+    await promise
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+  })
+
+  it("should retry once on a 429 response for tournament result", async () => {
+    const reporter = new ScoreReporter()
+    mockFetch
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 429,
+        statusText: "Too Many Requests",
+        headers: "arena-response-headers",
+        text: () => Promise.resolve("Rate limited"),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        statusText: "OK",
+        headers: "arena-response-headers",
+        text: () => Promise.resolve('{"recorded":true}'),
+      })
+
+    const promise = reporter.submitTournamentResult(
+      "tournament/1",
+      "table-1",
+      "winner-1",
+      "loser-1"
+    )
+
+    await flushPromises()
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    jest.advanceTimersByTime(1000)
+
+    await flushPromises()
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+
+    await promise
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+  })
+
+  it("should stop after a single retry when both attempts return 5xx", async () => {
+    const reporter = new ScoreReporter()
+    mockFetch.mockResolvedValue({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+      headers: "arena-response-headers",
+      text: () => Promise.resolve("Server error"),
+    })
+
+    const promise = reporter.submitTournamentResult(
+      "tournament/1",
+      "table-1",
+      "winner-1",
+      "loser-1"
+    )
+
+    await flushPromises()
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    jest.advanceTimersByTime(1000)
+
+    await flushPromises()
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+
+    await promise
+    expect(mockFetch).toHaveBeenCalledTimes(2)
   })
 
   it("should send the match result as a JSON POST request", async () => {
