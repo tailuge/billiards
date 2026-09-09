@@ -37,7 +37,7 @@
     "fflate": "^0.8.3",
     "interactjs": "1.10.28",
     "jsoncrush": "^1.1.8",
-    "three": "0.185.1"
+    "three": "0.186.0"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
