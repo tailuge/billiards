@@ -24,6 +24,7 @@ export class LobbyIndicator {
     userId: string
     userName: string
     ruleType: string
+    tournamentId?: string
   } | null = null
   private readonly rules: Rules
   private readonly ruleType: string
@@ -230,6 +231,7 @@ export class LobbyIndicator {
           userId: challenge.challengerId,
           userName: challenge.challengerName,
           ruleType: challenge.ruleType,
+          tournamentId: challenge.options?.tournamentId,
         }
       } else if (challenge.type === "decline" || challenge.type === "cancel") {
         this.challenger = null
@@ -360,6 +362,10 @@ export class LobbyIndicator {
     url.searchParams.set("ruletype", this.challenger.ruleType)
     url.searchParams.set("opponent.userId", this.challenger.userId)
     url.searchParams.set("opponent.userName", this.challenger.userName)
+
+    if (this.challenger.tournamentId) {
+      url.searchParams.set("tournamentId", this.challenger.tournamentId)
+    }
 
     return url.toString()
   }
