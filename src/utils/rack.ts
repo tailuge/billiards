@@ -299,6 +299,7 @@ export class Rack {
     Rack.swapBallPositions(triangle[4], triangle[8])
     Rack.swapBallPositions(triangle[3], triangle[11])
     Rack.swapBallPositions(triangle[6], triangle[14])
+    Rack.swapBallPositions(triangle[4], triangle[9])
     return triangle
   }
 
