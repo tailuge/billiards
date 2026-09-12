@@ -263,6 +263,16 @@
     .group { margin-bottom: 0.14rem; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.2rem; }
     .group-title { font-size: 0.75rem; font-weight: 600; color: var(--text-dim); padding: 0.1rem 0.25rem; text-align: center; }
     .group-body { display: flex; flex-wrap: wrap; justify-content: space-evenly; }
+    /* The trophy cabinet and the HiScore tables share the top row; stretch keeps
+       their bottom borders level. The match history / rankings row below spans
+       the full width. */
+    .top-row { display: flex; align-items: stretch; gap: 0.1rem; }
+    .top-row .cabinet { flex: 0 0 calc(230px * 0.75); min-width: 0; }
+    .top-row .hiscores { flex: 1 1 auto; min-width: 0; }
+    @media (max-width: 640px) {
+        .top-row { flex-direction: column; }
+        .top-row .cabinet { flex: 0 0 auto; }
+    }
     .bottom-row { display: flex; align-items: flex-start; gap: 0.1rem; }
     /* The bottom-row groups are the last thing in the panel; their .group
        margin-bottom left a ~2px gap that made the stretched online-panel
@@ -321,13 +331,12 @@
     .solo           { grid-area: 1 / 1 / 2 / 2; }
     online-panel    { grid-area: 1 / 2 / 2 / 3; }
     online-panel.panel { overflow-y: auto; max-height: calc(100vh - 6rem); align-self: stretch; }
-    .arenas-row     { grid-area: 2 / 1 / 3 / 3; display: grid; grid-template-columns: minmax(0, calc(230px * 0.75)) minmax(0, 1fr); column-gap: 0.1rem; align-items: stretch; }
-    .arenas-row .cabinet-col, .arenas-row .arena-col { min-width: 0; padding: 3px; }
-    .arenas-row.arena-details .arena-col { padding: 3px; }
+    .arenas-row     { grid-area: 2 / 1 / 3 / 3; display: flex; flex-direction: column; }
+    .arenas-row .arena-col { min-width: 0; padding: 3px; }
     .info-row       { grid-area: 3 / 1 / 4 / 3; }
 
     @media (max-width: 640px) {
-        .arenas-row { grid-template-columns: minmax(0, 1fr); row-gap: 0.1rem; }
+        .info-row { flex-direction: column; }
     }
 
     main.has-sidebar {
@@ -349,7 +358,7 @@
         grid-area: 3 / 1 / 4 / 2;
     }
     .container { max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 0.2rem; flex: 1; }
-`];var je=1015,Oe=i=>`v${Math.floor(i/100)}.${String(i%100).padStart(2,"0")}`;var lt=typeof localStorage<"u"&&localStorage.getItem("useProxy")==="true"?"nchanproxy.tailuge.workers.dev":"billiards-network.onrender.com",se=typeof window<"u"&&(window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"),Kt=se?`ws://${window.location.hostname}:80`:`wss://${lt}`;var _=se?"":"https://billiards-network.onrender.com",E=typeof window<"u"&&window.location.hostname.includes("vercel");var Jt=se?`http://${window.location.hostname}:8080/`:"https://billiards.tailuge.workers.dev/";var ct={eightball:"eightball",snooker:"snooker",threecushion:"threecushion",nineball:"nineball",sagu:"sagu"},dt=i=>{let e=ct[i];return e?a`<img src="assets/${e}.png" alt="${i}" title="${i}" width="18" height="18" style="vertical-align:middle">`:a`🎱`},He=(i,e={})=>a`<span title="${i}">
+`];var je=1018,Oe=i=>`v${Math.floor(i/100)}.${String(i%100).padStart(2,"0")}`;var lt=typeof localStorage<"u"&&localStorage.getItem("useProxy")==="true"?"nchanproxy.tailuge.workers.dev":"billiards-network.onrender.com",se=typeof window<"u"&&(window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"),Kt=se?`ws://${window.location.hostname}:80`:`wss://${lt}`;var _=se?"":"https://billiards-network.onrender.com",E=typeof window<"u"&&window.location.hostname.includes("vercel");var Jt=se?`http://${window.location.hostname}:8080/`:"https://billiards.tailuge.workers.dev/";var ct={eightball:"eightball",snooker:"snooker",threecushion:"threecushion",nineball:"nineball",sagu:"sagu"},dt=i=>{let e=ct[i];return e?a`<img src="assets/${e}.png" alt="${i}" title="${i}" width="18" height="18" style="vertical-align:middle">`:a`🎱`},He=(i,e={})=>a`<span title="${i}">
     ${dt(i)}${e?.freeaim?"\u2316":""}${Number(e?.tableSize)<10?"\u{1F37C}":""}
 </span>`;var Be=i=>{let e=(i||"user").slice(0,4),t=/Tauri/i.test(navigator.userAgent)?"-t-":"-";return e+t+Math.random().toString(36).slice(2,7)},ae=class extends EventTarget{constructor(){super();let e=new URLSearchParams(window.location.search),t=(e.get("userId")||"").trim(),r=(e.get("userName")||"").trim();E&&(localStorage.removeItem("userId"),localStorage.removeItem("userName"),localStorage.removeItem("custom"));let o=(localStorage.getItem("userId")||"").trim(),n=(localStorage.getItem("userName")||"").trim();if(t.length>2)this.clientId=t,this.isForcedId=!0;else if(window.self!==window.top&&(location.hostname==="localhost"||location.hostname==="127.0.0.1")&&window.name.includes("-"))this.clientId=window.name,this.isForcedId=!0,r||(this.userName=window.name.split("-")[0]);else{let c=r||n||"",l=!c||o.split("-")[0].slice(0,4)===c.slice(0,4);this.clientId=o.length>2&&!o.startsWith("user-")&&l?o:Be(c),this.isForcedId=!1,this.clientId!==o&&localStorage.setItem("userId",this.clientId)}this.userName=r||this.userName||n||"Anonymous",this.lod=localStorage.getItem("lod")||"4",this.flip=localStorage.getItem("flip")==="true",this.useProxy=localStorage.getItem("useProxy")==="true";try{this.custom=JSON.parse(localStorage.getItem("custom"))||{}}catch{this.custom={}}window.addEventListener("storage",s=>{if(s.key==="custom"){try{this.custom=JSON.parse(s.newValue)||{}}catch{this.custom={}}this.dispatchEvent(new Event("change"))}}),console.log("UserStore identity:",this.userName,this.clientId)}setUseProxy(e){this.useProxy=!!e,localStorage.setItem("useProxy",this.useProxy),this.dispatchEvent(new Event("change")),window.location.reload()}set(e,t){this.clientId=e.trim().length>2?e.trim():Be(t),this.userName=t.trim(),localStorage.setItem("userId",this.clientId),localStorage.setItem("userName",this.userName),this.dispatchEvent(new Event("change"))}setLod(e){this.lod=e,localStorage.setItem("lod",e),this.dispatchEvent(new Event("change"))}setFlip(e){this.flip=!!e,localStorage.setItem("flip",this.flip),this.dispatchEvent(new Event("change"))}getCustom(){return{...this.custom}}setCustom(e,t){this.custom={...this.custom,[e]:t},localStorage.setItem("custom",JSON.stringify(this.custom)),this.dispatchEvent(new Event("change"))}},f=new ae,T=class extends g{connectedCallback(){super.connectedCallback(),this._storeListener=()=>this.requestUpdate(),f.addEventListener("change",this._storeListener)}disconnectedCallback(){super.disconnectedCallback(),f.removeEventListener("change",this._storeListener)}};var ht=3e4,pt=5,Fe=1800*1e3,mt=i=>(Math.floor(i/Fe)+1)*Fe,De=[{name:"Nine Ball Mini Hourly Arena",ruleType:"nineball",options:{tableSize:"6",freeaim:"true"}},{name:"Eight Ball Mini Hourly Arena",ruleType:"eightball",options:{tableSize:"6",freeaim:"true"}},{name:"Snooker Mini Hourly Arena",ruleType:"snooker",options:{tableSize:"6",reds:"3",freeaim:"true"}}],ce=h`
     .arena-list { display: flex; flex-direction: column; gap: .2rem; }
