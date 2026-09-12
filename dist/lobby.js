@@ -269,9 +269,10 @@
     .top-row { display: flex; align-items: stretch; gap: 0.1rem; }
     .top-row .cabinet { flex: 0 0 calc(230px * 0.75); min-width: 0; }
     .top-row .hiscores { flex: 1 1 auto; min-width: 0; }
+    /* Narrow screens keep the cabinet beside the HiScores rather than stacking
+       it above; the cabinet shrinks so the tables still get room. */
     @media (max-width: 640px) {
-        .top-row { flex-direction: column; }
-        .top-row .cabinet { flex: 0 0 auto; }
+        .top-row .cabinet { flex: 0 0 calc(230px * 0.5); }
     }
     .bottom-row { display: flex; align-items: flex-start; gap: 0.1rem; }
     /* The bottom-row groups are the last thing in the panel; their .group
