@@ -244,6 +244,8 @@ angle-input .butt {
   border-radius: 50%;
   z-index: 10;
   position: absolute;
+  left: 50%;
+  top: 50%;
   pointer-events: none;
   transform: translate(-50%, -50%);
   box-shadow:
