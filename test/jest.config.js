@@ -42,6 +42,8 @@ module.exports = {
     ".*/sound": "<rootDir>/test/mocks/mocksound.ts",
     "^@tailuge/messaging$":
       "<rootDir>/node_modules/@tailuge/messaging/dist/index.js",
+    // three's CJS entry is a deprecated shim that emits a warning; use ESM build
+    "^three$": "<rootDir>/node_modules/three/build/three.module.js",
   },
   // Enable ESM support in Jest
   extensionsToTreatAsEsm: [".ts"],
