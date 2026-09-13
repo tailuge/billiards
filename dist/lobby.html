@@ -13,10 +13,7 @@
       content="billiards lobby, multiplayer pool, online billiards, snooker, 9-ball, 8-ball, pool, carom, three-cushion, free, open source, driebanden, ビリヤード, 9ボール, 3クッション, 無料, オンラインビリヤード, ビリヤードロビー, 당구, 스누커, 3쿠션, 온라인 당구, 당구 로비, 무료 당구, Bida 3 băng, bi-a trực tuyến, sảnh bi-a, chơi bi-a miễn phí, Biliar 3 bantalan, Üç bant, free game, open source"
     />
     <meta name="robots" content="index,follow" />
-    <link
-      rel="canonical"
-      href="https://tailuge.github.io/billiards/dist/lobby"
-    />
+    <link rel="canonical" href="https://tailuge.github.io/billiards/dist/lobby" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
     <meta property="og:title" content="Tailuge Billiards" />
@@ -95,6 +92,11 @@
         overflow: auto;
         scrollbar-width: none;
         background: #f5f5f5;
+        /* Opt out of mobile text autosizing (Chrome's font boosting, iOS text
+           inflation). It inflates font sizes inside text blocks, which widens
+           the HiScore tables enough to wrap the third one onto its own row. */
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
       }
 
       html::-webkit-scrollbar,
