@@ -48,7 +48,7 @@ You dont, you just play in your browser at [billiards.tailuge.workers.dev/lobby]
 If you prefer, you can install a thin client wrapper:
 
 * **Windows / macOS / Linux** — [Download](https://github.com/tailuge/tbilliards/releases/latest)
-* **Android** — [Download](https://github.com/tailuge/wbilliards/releases/latest)
+* **Android** — [Download](https://github.com/tailuge/wbilliards/releases/latest) | [APKPure](https://apkpure.com/billiards/dev.tailuge.billiards) | [Obtainium](https://apps.obtainium.im/add?r=https://github.com/tailuge/wbilliards)
 
 ## Reference material
 
