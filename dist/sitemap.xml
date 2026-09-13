@@ -95,4 +95,14 @@
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/chinese.html" />
     <lastmod>2026-08-23</lastmod>
   </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/spanish.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/spanish.html" />
+    <lastmod>2026-08-26</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dutch.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/dutch.html" />
+    <lastmod>2026-08-26</lastmod>
+  </url>
 </urlset>
