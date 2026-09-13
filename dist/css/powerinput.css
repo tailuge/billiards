@@ -50,7 +50,7 @@ input[type="range"].powerSlider {
   position: relative;
   z-index: 2;
 
-  --p: 75%;
+  --p: 65%;
   --p-inv: calc(100% - var(--p));
 }
 
