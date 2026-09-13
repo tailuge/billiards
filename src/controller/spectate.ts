@@ -63,19 +63,22 @@ export class Spectate extends ControllerBase {
 
     let changed = false
 
+    // BEGIN is broadcast by the non-first player (playerIndex 1), and the
+    // first WATCHAIM by the first player (playerIndex 0) in Init.handleBegin,
+    // so the slots are crossed relative to the senders.
     if (
       event.type === EventType.BEGIN &&
-      !session.spectatedP1Name &&
-      event.playername
-    ) {
-      session.spectatedP1Name = event.playername
-      changed = true
-    } else if (
-      event.type === EventType.WATCHAIM &&
       !session.spectatedP2Name &&
       event.playername
     ) {
       session.spectatedP2Name = event.playername
+      changed = true
+    } else if (
+      event.type === EventType.WATCHAIM &&
+      !session.spectatedP1Name &&
+      event.playername
+    ) {
+      session.spectatedP1Name = event.playername
       changed = true
     }
 

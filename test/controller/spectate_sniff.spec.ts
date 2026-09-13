@@ -43,26 +43,26 @@ describe("Spectate Name Sniffing", () => {
     expect(spectate).to.not.be.null
     const session = Session.getInstance()
 
-    // Simulate BEGIN event from P1 (Peter)
+    // Simulate BEGIN event from P2 (Peter) - broadcast by the non-first player
     const beginEvent = new BeginEvent()
-    beginEvent.clientId = "p1-id"
+    beginEvent.clientId = "p2-id"
     beginEvent.playername = "Peter"
     capturedCallback(EventUtil.serialise(beginEvent))
 
-    expect(session.spectatedP1Name).to.equal("Peter")
-    expect(session.spectatedP2Name).to.be.undefined
+    expect(session.spectatedP2Name).to.equal("Peter")
+    expect(session.spectatedP1Name).to.be.undefined
 
-    // Simulate WATCHAIM event from P2 (Yvette)
+    // Simulate WATCHAIM event from P1 (Yvette) - first WatchEvent is from the first player
     const watchEvent = new WatchEvent({})
-    watchEvent.clientId = "p2-id"
+    watchEvent.clientId = "p1-id"
     watchEvent.playername = "Yvette"
     capturedCallback(EventUtil.serialise(watchEvent))
 
-    expect(session.spectatedP2Name).to.equal("Yvette")
+    expect(session.spectatedP1Name).to.equal("Yvette")
 
     const names = session.orderedNamesForHud()
-    expect(names.p1Name).to.equal("Peter")
-    expect(names.p2Name).to.equal("Yvette")
+    expect(names.p1Name).to.equal("Yvette")
+    expect(names.p2Name).to.equal("Peter")
   })
 
   it("should not override names once set", () => {
@@ -71,7 +71,7 @@ describe("Spectate Name Sniffing", () => {
     const session = Session.getInstance()
 
     const begin1 = new BeginEvent()
-    begin1.clientId = "p1-id"
+    begin1.clientId = "p2-id"
     begin1.playername = "Peter"
     capturedCallback(EventUtil.serialise(begin1))
 
@@ -80,6 +80,6 @@ describe("Spectate Name Sniffing", () => {
     begin2.playername = "Imposter"
     capturedCallback(EventUtil.serialise(begin2))
 
-    expect(session.spectatedP1Name).to.equal("Peter")
+    expect(session.spectatedP2Name).to.equal("Peter")
   })
 })
