@@ -359,7 +359,7 @@
         grid-area: 3 / 1 / 4 / 2;
     }
     .container { max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 0.2rem; flex: 1; }
-`];var je=1018,Oe=i=>`v${Math.floor(i/100)}.${String(i%100).padStart(2,"0")}`;var lt=typeof localStorage<"u"&&localStorage.getItem("useProxy")==="true"?"nchanproxy.tailuge.workers.dev":"billiards-network.onrender.com",ne=typeof window<"u"&&(window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"),Kt=ne?`ws://${window.location.hostname}:80`:`wss://${lt}`;var _=ne?"":"https://billiards-network.onrender.com",E=typeof window<"u"&&window.location.hostname.includes("vercel");var Jt=ne?`http://${window.location.hostname}:8080/`:"https://billiards.tailuge.workers.dev/";var ct={eightball:"eightball",snooker:"snooker",threecushion:"threecushion",nineball:"nineball",sagu:"sagu"},dt=i=>{let e=ct[i];return e?a`<img src="assets/${e}.png" alt="${i}" title="${i}" width="18" height="18" style="vertical-align:middle">`:a`🎱`},He=(i,e={})=>a`<span title="${i}">
+`];var je=1024,Oe=i=>`v${Math.floor(i/100)}.${String(i%100).padStart(2,"0")}`;var lt=typeof localStorage<"u"&&localStorage.getItem("useProxy")==="true"?"nchanproxy.tailuge.workers.dev":"billiards-network.onrender.com",ne=typeof window<"u"&&(window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"),Kt=ne?`ws://${window.location.hostname}:80`:`wss://${lt}`;var _=ne?"":"https://billiards-network.onrender.com",E=typeof window<"u"&&window.location.hostname.includes("vercel");var Jt=ne?`http://${window.location.hostname}:8080/`:"https://billiards.tailuge.workers.dev/";var ct={eightball:"eightball",snooker:"snooker",threecushion:"threecushion",nineball:"nineball",sagu:"sagu"},dt=i=>{let e=ct[i];return e?a`<img src="assets/${e}.png" alt="${i}" title="${i}" width="18" height="18" style="vertical-align:middle">`:a`🎱`},He=(i,e={})=>a`<span title="${i}">
     ${dt(i)}${e?.freeaim?"\u2316":""}${Number(e?.tableSize)<10?"\u{1F37C}":""}
 </span>`;var Be=i=>{let e=(i||"user").slice(0,4),t=/Tauri/i.test(navigator.userAgent)?"-t-":"-";return e+t+Math.random().toString(36).slice(2,7)},ae=class extends EventTarget{constructor(){super();let e=new URLSearchParams(window.location.search),t=(e.get("userId")||"").trim(),r=(e.get("userName")||"").trim();E&&(localStorage.removeItem("userId"),localStorage.removeItem("userName"),localStorage.removeItem("custom"));let o=(localStorage.getItem("userId")||"").trim(),s=(localStorage.getItem("userName")||"").trim();if(t.length>2)this.clientId=t,this.isForcedId=!0;else if(window.self!==window.top&&(location.hostname==="localhost"||location.hostname==="127.0.0.1")&&window.name.includes("-"))this.clientId=window.name,this.isForcedId=!0,r||(this.userName=window.name.split("-")[0]);else{let c=r||s||"",l=!c||o.split("-")[0].slice(0,4)===c.slice(0,4);this.clientId=o.length>2&&!o.startsWith("user-")&&l?o:Be(c),this.isForcedId=!1,this.clientId!==o&&localStorage.setItem("userId",this.clientId)}this.userName=r||this.userName||s||"Anonymous",this.lod=localStorage.getItem("lod")||"4",this.flip=localStorage.getItem("flip")==="true",this.useProxy=localStorage.getItem("useProxy")==="true";try{this.custom=JSON.parse(localStorage.getItem("custom"))||{}}catch{this.custom={}}window.addEventListener("storage",n=>{if(n.key==="custom"){try{this.custom=JSON.parse(n.newValue)||{}}catch{this.custom={}}this.dispatchEvent(new Event("change"))}}),console.log("UserStore identity:",this.userName,this.clientId)}setUseProxy(e){this.useProxy=!!e,localStorage.setItem("useProxy",this.useProxy),this.dispatchEvent(new Event("change")),window.location.reload()}set(e,t){this.clientId=e.trim().length>2?e.trim():Be(t),this.userName=t.trim(),localStorage.setItem("userId",this.clientId),localStorage.setItem("userName",this.userName),this.dispatchEvent(new Event("change"))}setLod(e){this.lod=e,localStorage.setItem("lod",e),this.dispatchEvent(new Event("change"))}setFlip(e){this.flip=!!e,localStorage.setItem("flip",this.flip),this.dispatchEvent(new Event("change"))}getCustom(){return{...this.custom}}setCustom(e,t){this.custom={...this.custom,[e]:t},localStorage.setItem("custom",JSON.stringify(this.custom)),this.dispatchEvent(new Event("change"))}},f=new ae,T=class extends g{connectedCallback(){super.connectedCallback(),this._storeListener=()=>this.requestUpdate(),f.addEventListener("change",this._storeListener)}disconnectedCallback(){super.disconnectedCallback(),f.removeEventListener("change",this._storeListener)}};var ht=3e4,pt=5,Fe=1800*1e3,mt=i=>(Math.floor(i/Fe)+1)*Fe,De=[{name:"Nine Ball Mini Hourly Arena",ruleType:"nineball",options:{tableSize:"6",freeaim:"true"}},{name:"Eight Ball Mini Hourly Arena",ruleType:"eightball",options:{tableSize:"6",freeaim:"true"}},{name:"Snooker Mini Hourly Arena",ruleType:"snooker",options:{tableSize:"6",reds:"3",freeaim:"true"}}],ce=h`
     .arena-list { display: flex; flex-direction: column; gap: .2rem; }
@@ -496,7 +496,9 @@
       color: var(--text);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 0.75rem 0.9rem;
+      /* Side padding is kept minimal so the tiles, option rows and the action
+         button run nearly the full width of the dialog. */
+      padding: 2px;
       width: min(340px, 100%);
       max-width: calc(100vw - 1.5rem);
       max-height: calc(100dvh - 1.5rem);
@@ -571,7 +573,9 @@
 
     .variants {
       display: flex; flex-direction: column; gap: 0.35rem;
-      padding: 0.45rem 0.4rem;
+      /* Minimal inset, matching the dialog's own padding, so the option rows
+         run the full width of the panel instead of floating inside it. */
+      padding: 2px;
       background: var(--table-head);
       border: 1px solid var(--border-light);
       border-radius: 6px;
@@ -592,10 +596,11 @@
     /* Right-aligned so chips start at a common x and the rows line up. */
     .choice-label {
       color: var(--text-muted);
-      font-size: 0.68rem;
-      min-width: 56px;
+      font-size: 0.75rem;
+      min-width: 62px;
       text-align: right;
       line-height: 1;
+      white-space: nowrap;
     }
     .chip {
       min-height: 32px;
@@ -606,12 +611,15 @@
       line-height: 1;
     }
     .chip.toggle { min-width: 46px; }
+    /* Chips grow to fill whatever space is left in their row, so every row
+       ends flush at the right: rows with more options get narrower buttons. */
+    .choice-group .chip, .aim-group .chip { flex: 1 1 auto; }
 
     .languages {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 0 0.3rem;
       padding-top: 0.35rem;
       border-top: 1px solid var(--border-light);
-      font-size: 0.66rem;
+      font-size: 0.72rem;
     }
     /* Same link treatment as the lobby's settings modal (--link, underline
        only on hover). */
@@ -630,8 +638,9 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      /* Uppercase + letterspacing already give the label weight; the button
+         text stays at the modal's inherited weight rather than bold. */
       font-size: 0.95rem;
-      font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
@@ -658,10 +667,9 @@
     }
 
     @media (max-width: 380px) {
-      .modal { padding: 0.65rem 0.7rem; }
       .tile { padding: 0.3rem 0.15rem; }
       .tile img { width: 38px; height: 38px; }
-      .choice-label { min-width: 48px; font-size: 0.64rem; }
+      .choice-label { min-width: 56px; font-size: 0.72rem; }
       .chip { padding: 0 0.4rem; }
     }
   `;constructor(){super(),this.mode="solo",this.opponent="",this.open=!1,this.heading="",this.actionLabel="",this._size=v.get("size","full");let e=v.get("shotClock",qe);this._shotClock=We.includes(e)?e:qe,this._sel=v.get("game","threecushion"),j.some(t=>t.key===this._sel)||(this._sel="threecushion"),this.#o(this._sel),this._lang=this.#t.lang,this.#r=this.#t.onChange(t=>{this._lang=t})}connectedCallback(){super.connectedCallback(),window.addEventListener("keydown",this.#i)}disconnectedCallback(){super.disconnectedCallback(),window.removeEventListener("keydown",this.#i),this.#r?.()}#e(e,t){return this.#t.t(e,t)}get game(){return j.find(e=>e.key===this._sel)}get variant(){let e=this.game;return e.variants.find(t=>t.id===this._vid[this._sel])??e.variants[0]}#o(e){let t=j.find(o=>o.key===e),r=v.get(`v_${e}`,null);this._vid={...this._vid,[e]:t.variants.some(o=>o.id===r)?r:t.variants[0].id},this._freeaim=v.get("freeaim","false")==="true"&&!!t.freeaim,this._size=v.get(`size_${e}`,"full")}show(){this.open=!0}hide(){this.open=!1}_selectGame(e){this._sel!==e&&(this._sel=e,v.set("game",e),this.#o(e))}_selectVariant(e){this._vid={...this._vid,[this._sel]:e},v.set(`v_${this._sel}`,e)}_selectSize(e){this._size=e,v.set(`size_${this._sel}`,e),this._sel==="snooker"&&e==="mini"&&!["3","6"].includes(this._vid[this._sel])&&this._selectVariant("3")}_selectShotClock(e){this._shotClock=e,v.set("shotClock",e)}_toggleFreeaim(){this._freeaim=!this._freeaim,v.set("freeaim",String(this._freeaim))}_confirm(){let e={...this.variant.options};this._size==="mini"?e.tableSize=["snooker","nineball","eightball"].includes(this.game.key)?"6":"5":this.game.key==="snooker"&&(e.tableSize="12"),this.game.freeaim&&this._freeaim&&(e.freeaim="true"),e.shotClock=this._shotClock,ue(this,"confirm",{mode:this.mode,ruleType:this.game.key,options:e,opponent:this.opponent||void 0}),this.hide()}#s(e){let t=this.#e(e.label);return t==="Three Cushion"?"3-Cush.":t}_actionLabel(){return this.#e(this.actionLabel||"PLAY")}_title(){return this.heading?this.#e(this.heading):this.mode==="challenge"?this.#e("Challenge {name}",{name:this.opponent}):this.#e("Play Solo")}render(){if(!this.open)return a``;let e=this.game;return a`
