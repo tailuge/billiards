@@ -92,11 +92,10 @@
         overflow: auto;
         scrollbar-width: none;
         background: #f5f5f5;
-
         /* Opt out of mobile text autosizing (Chrome's font boosting, iOS text
            inflation). It inflates font sizes inside text blocks, which widens
            the HiScore tables enough to wrap the third one onto its own row. */
-        text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
       }
 
       html::-webkit-scrollbar,
