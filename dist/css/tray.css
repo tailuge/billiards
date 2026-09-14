@@ -17,6 +17,10 @@
   pointer-events: auto;
 }
 
+.tray-container[hidden] {
+  display: none;
+}
+
 .tray-timer {
   position: absolute;
   top: 0;
