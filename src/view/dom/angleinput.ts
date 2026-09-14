@@ -123,6 +123,7 @@ export class AngleInput extends HTMLElement {
     this._elevation = clamped
     const angleDeg = Math.round(clamped * (180 / Math.PI))
     this.style.setProperty("--angle", angleDeg.toString())
+    this.setAttribute("aria-valuenow", angleDeg.toString())
 
     this.dispatchEvent(new Event("input", { bubbles: true }))
   }

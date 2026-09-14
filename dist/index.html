@@ -12,10 +12,9 @@
     />
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta
       name="description"
-      content="Play free online billiards with realistic physics - open source browser game"
+      content="A free online billiard and pool simulator with realistic physics. Play 8-ball, 9-ball, snooker and three-cushion in your browser — open source, no download."
     />
     <meta
       name="keywords"
@@ -23,8 +22,7 @@
     />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href="https://billiards.tailuge.workers.dev/" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
@@ -35,13 +33,10 @@
     />
     <meta
       property="og:description"
-      content="Play free online billiards with realistic physics - open source browser game"
+      content="A free online billiard and pool simulator with realistic physics. Play 8-ball, 9-ball, snooker and three-cushion in your browser — open source, no download."
     />
     <meta property="og:type" content="website" />
-    <meta
-      property="og:url"
-      content="https://tailuge.github.io/billiards/dist/"
-    />
+    <meta property="og:url" content="https://billiards.tailuge.workers.dev/" />
     <meta
       property="og:image"
       content="https://tailuge.github.io/billiards/dist/images/billiards.png"
@@ -57,11 +52,15 @@
     />
     <meta
       name="twitter:title"
-      content="Billiards Pool and Snooker Game - Free"
+      content="Billiards + Pool Free Physics Simulator"
     />
     <meta
       name="twitter:description"
-      content="Play pool online with accurate physics. Open source and browser-based."
+      content="A free online billiard and pool simulator with realistic physics. Play 8-ball, 9-ball, snooker and three-cushion in your browser — open source, no download."
+    />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/images/billiards.png"
     />
     <script type="application/ld+json">
       {
@@ -156,7 +155,18 @@
             8-top, 9-top ve üç bant karambol oyunları. Açık kaynak, indirme
             gerekmez — hemen oynayın.
           </p>
-
+          <p class="seo-description">
+            Also available on
+            <a href="https://tailuge.itch.io">tailuge.itch.io</a> billiards io
+            billiardsio with a native download for
+            <a href="https://github.com/tailuge/tbilliards/releases/latest"
+              >Windows, Linux and macOS</a
+            >
+            and on android
+            <a href="https://apkpure.com/billiards/dev.tailuge.billiards"
+              >https://apkpure.com/billiards/dev.tailuge.billiards</a
+            >
+          </p>
           <iframe></iframe>
           <div class="help-footer">
             <button
@@ -207,7 +217,11 @@
               autocomplete="off"
               aria-label="Chat message input"
             />
-            <div id="chatEmojiList" aria-label="Emoji messages"></div>
+            <div
+              id="chatEmojiList"
+              role="group"
+              aria-label="Emoji messages"
+            ></div>
             <button id="inputSend" aria-label="Send chat message">➤</button>
             <button id="toggleChatMode" aria-label="Switch to emoji mode">
               <span class="chat-text-mode-icon">👾</span>
@@ -230,7 +244,14 @@
             </button>
           </div>
           <div id="tiltSliderContainer" class="tiltSliderContainer" hidden>
-            <angle-input id="cueTilt" aria-label="tilt angle"></angle-input>
+            <angle-input
+              id="cueTilt"
+              role="slider"
+              aria-label="tilt angle"
+              aria-valuemin="0"
+              aria-valuemax="72"
+              aria-valuenow="0"
+            ></angle-input>
           </div>
           <template id="angle-input-template">
             <div class="area" id="area">
