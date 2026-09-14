@@ -16,7 +16,6 @@ https://www.reddit.com/r/billiards/comments/1upm8vu/speedrun/
 
 https://billard-aktuell.de/forum/viewtopic.php?t=59609
 
-https://www.appimagehub.com/p/2365428/
 
 
 ---
@@ -29,4 +28,39 @@ https://billard-aktuell.de/forum/viewtopic.php?t=59628
 
 https://www.reddit.com/r/snooker/comments/1vgyywz/open_source_simulator/
 
+
+-- app
+
+
 https://github.com/fmhy/FMHY/wiki/Gaming
+
+https://www.appimagehub.com/p/2365428/
+
+https://github.com/tailuge/tbilliards/releases/latest
+
+https://apkpure.com/billiards/dev.tailuge.billiards
+
+https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/tailuge/wbilliards
+
+
+
+-- funnel pages
+
+https://billiards.tailuge.workers.dev/korean
+
+https://billiards.tailuge.workers.dev/spanish
+
+https://billiards.tailuge.workers.dev/german
+
+https://billiards.tailuge.workers.dev/chinese
+
+https://billiards.tailuge.workers.dev/japanese
+
+https://billiards.tailuge.workers.dev/vietnamese
+
+https://billiards.tailuge.workers.dev/dutch
+
+https://billiards.tailuge.workers.dev/turkish
+
+
+
