@@ -63,4 +63,14 @@ https://billiards.tailuge.workers.dev/dutch
 https://billiards.tailuge.workers.dev/turkish
 
 
+added sitemap.xml registration to 
+
+https://search.google.com/search-console?utm_source=about-page&resource_id=https://billiards.tailuge.workers.dev/
+
+https://www.bing.com/webmasters
+
+https://webmaster.yandex.com/site/https:billiards.tailuge.workers.dev:443/dashboard/
+
+https://searchadvisor.naver.com/console/site/summary?site=https%3A%2F%2Fbilliards.tailuge.workers.dev
+
 
