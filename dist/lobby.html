@@ -108,6 +108,125 @@
       html[theme="dark"] body {
         background: #1a1a1a;
       }
+
+      /* Site index. Static light-DOM markup, so crawlers see every link at
+         load; the <details> is collapsed only for layout, not for indexing.
+         Lives outside <lobby-app>, whose shadow root has no <slot>. */
+      .site-links {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0.35rem 0.5rem;
+        font-family: Exo, sans-serif;
+        font-weight: 200;
+        font-size: 0.7rem;
+        line-height: 1.35;
+        text-align: center;
+      }
+
+      .site-links a {
+        color: #05c;
+        text-decoration: none;
+      }
+
+      .site-links a:hover {
+        text-decoration: underline;
+      }
+
+      html[theme="dark"] .site-links a {
+        color: #6ba3f5;
+      }
+
+      .site-links-more summary {
+        cursor: pointer;
+        list-style: none;
+        color: #757575;
+        opacity: 0.85;
+      }
+
+      html[theme="dark"] .site-links-more summary {
+        color: #aaa;
+      }
+
+      .site-links-more summary::-webkit-details-marker {
+        display: none;
+      }
+
+      /* Keep an affordance once the default triangle is removed */
+      .site-links-more summary::after {
+        content: " ▾";
+      }
+
+      .site-links-more[open] summary::after {
+        content: " ▴";
+      }
+
+      /* Panel spreads sideways so it never becomes a tall wall. Pinned to two
+         columns: entries carry descriptive copy, and narrower columns would
+         wrap it into a ragged stack. */
+      .site-links-more {
+        width: 100%;
+        max-width: min(52rem, calc(100vw - 2rem));
+      }
+
+      .site-links-panel {
+        column-count: 2;
+        text-align: left;
+        white-space: normal;
+        padding: 0.75rem;
+      }
+
+      @media (width <= 30rem) {
+        .site-links-panel {
+          column-count: 1;
+        }
+      }
+
+      /* Spans both columns so the intro reads as an opening paragraph rather
+         than as the first item of the first column. */
+      .site-links-intro {
+        column-span: all;
+        margin: 0 0 0.6rem;
+        color: #757575;
+        font-size: 0.75rem;
+        line-height: 1.4;
+      }
+
+      html[theme="dark"] .site-links-intro {
+        color: #999;
+      }
+
+      .site-links-panel h2 {
+        font-size: 0.75rem;
+        margin: 0 0 0.25rem;
+        break-after: avoid;
+      }
+
+      .site-links-panel ul {
+        margin: 0 0 0.75rem;
+        padding-left: 1rem;
+        list-style: none;
+      }
+
+      /* One entry per link: the anchor, then its descriptive copy as a block
+         beneath it, so entries stay separable as the copy grows. The desc block
+         is what puts the copy on its own line, so the anchor needs no
+         display:block of its own (which stylelint flagged as descending
+         specificity against `.site-links a`). */
+      .site-links-panel li {
+        margin-bottom: 0.45rem;
+        break-inside: avoid;
+      }
+
+      .site-links-desc {
+        display: block;
+        margin-left: 0.7rem;
+        color: #757575;
+      }
+
+      html[theme="dark"] .site-links-desc {
+        color: #999;
+      }
     </style>
     <script>
       try {
@@ -134,6 +253,132 @@
         모바일과 데스크톱을 모두 지원합니다.
       </p>
     </noscript>
+
+    <nav class="site-links" aria-label="Billiards pages">
+      <details class="site-links-more">
+        <summary>
+          Thanks for playing at tailuge/billiards. Stick around and challenge
+          online for a free game or two.
+        </summary>
+
+        <div class="site-links-panel">
+          <p class="site-links-intro">
+            A free,
+            <a
+              href="https://github.com/tailuge/billiards"
+              target="_blank"
+              rel="noopener"
+              >open source</a
+            >
+            billiards simulator that runs entirely in the browser — nothing to
+            download or install. Play snooker, 9-ball, 8-ball, three-cushion
+            carom and Korean four-ball on a physics engine built to reproduce
+            real ball–cushion behaviour: solo practice, two players sharing one
+            device, or a live game against someone else in the lobby. Guides are
+            also published in eight other languages.
+          </p>
+
+          <h2>Play</h2>
+          <ul>
+            <li>
+              <a href="./snooker.html">Free online snooker</a>
+              <span class="site-links-desc">
+                Play snooker online for free, a nice open source alternative to
+                <a
+                  href="https://www.shooterspool.net/"
+                  target="_blank"
+                  rel="noopener"
+                  >ShootersPool</a
+                >,
+                <a
+                  href="https://www.flashsnooker.com/"
+                  target="_blank"
+                  rel="noopener"
+                  >Flash Snooker</a
+                >
+                and
+                <a
+                  href="https://realsnooker.club/"
+                  target="_blank"
+                  rel="noopener"
+                  >RealSnooker.Club</a
+                >.
+              </span>
+            </li>
+            <li><a href="./practice.html">Practice mode</a></li>
+            <li><a href="./exam/snooker.html">Snooker training course</a></li>
+            <li><a href="./exam/threecushion.html">Three-cushion exam</a></li>
+            <li><a href="./help.html">Usage guide</a></li>
+          </ul>
+
+          <h2>Read</h2>
+          <ul>
+            <li><a href="./blog1.html">Why most pool games feel wrong</a></li>
+            <li><a href="./blog2.html">Clearing the line-up</a></li>
+            <li><a href="./blog3.html">Implementing Mathavan physics</a></li>
+          </ul>
+
+          <h2>Physics and maths</h2>
+          <ul>
+            <li>
+              <a href="./diagrams/three.html">Three-cushion physics diagrams</a>
+              <span class="site-links-desc"
+                >Shot lines plotted from the published ball–cushion research —
+                the Mathavan high-speed-imaging study of real snooker impacts
+                and Stronge's inelastic impact model — with the geometry worked
+                through for two and three cushions.</span
+              >
+            </li>
+            <li>
+              <a href="./diagrams/mathavan.html">Mathavan cushion model</a>
+            </li>
+            <li>
+              <a href="./diagrams/diamond.html">Three-cushion diamond system</a>
+            </li>
+            <li>
+              <a href="./diagrams/stronge.html">Stronge ball-cushion model</a>
+            </li>
+          </ul>
+
+          <h2>Other ways to play</h2>
+          <ul>
+            <li><a href="./arena.html">Billiards arena and tournaments</a></li>
+            <li>
+              <a href="https://tailuge.itch.io/pool-speedrun"
+                >Speedrun challenge</a
+              >
+            </li>
+            <li><a href="./embed.html">Embed the game on your site</a></li>
+            <li><a href="./itch/itch-pool.html">Pool and 8-ball</a></li>
+            <li><a href="./itch/itch-three.html">Three-cushion carom</a></li>
+            <li><a href="./itch/itch-sagu.html">Korean four-ball (sagu)</a></li>
+            <li><a href="./itch/itch-speedrun.html">Speedrun billiards</a></li>
+          </ul>
+
+          <h2>Other languages</h2>
+          <ul>
+            <li><a href="./korean.html" lang="ko">무료 온라인 당구</a></li>
+            <li>
+              <a href="./japanese.html" lang="ja">無料オンラインビリヤード</a>
+            </li>
+            <li><a href="./chinese.html" lang="zh">免費線上斯諾克</a></li>
+            <li>
+              <a href="./turkish.html" lang="tr">Ücretsiz online bilardo</a>
+            </li>
+            <li>
+              <a href="./german.html" lang="de">Kostenloses 3-Band-Billard</a>
+            </li>
+            <li>
+              <a href="./spanish.html" lang="es">Billar a tres bandas gratis</a>
+            </li>
+            <li>
+              <a href="./dutch.html" lang="nl">Online driebanden spelen</a>
+            </li>
+            <li><a href="./vietnamese.html" lang="vi">Game bi-a 3 băng</a></li>
+          </ul>
+        </div>
+      </details>
+    </nav>
 
     <script src="lobby.js" type="module"></script>
     <script>
