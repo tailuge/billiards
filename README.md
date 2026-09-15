@@ -94,7 +94,7 @@ $M_{xy} = \frac{7}{5\sqrt{2}} R \mu m g$ , $M_z = \frac{2}{3} \mu m g \rho$
 
 #### collisions
 
-Based on paper by [Alciatore](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) incorporating throw effect due to the small amount of friction between balls. Figures to prove consistency between the [code](./src/model/physics/collisionthrow.ts) and paper [here](https://tailuge.github.io/billiards/dist/diagrams/mathavan.html).
+Based on paper by [Alciatore](https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf) incorporating throw effect due to the small amount of friction between balls. Figures to prove consistency between the [code](./src/model/physics/collisionthrow.ts) and paper can be found in the [Mathavan model validation diagram](https://tailuge.github.io/billiards/dist/diagrams/mathavan.html).
 
 For ball $a$:
 
@@ -225,7 +225,7 @@ $$\vec{\omega} \leftarrow \vec{\omega} + \frac{mR}{I} (-\hat{n} \times \Delta v_
 
 ## Useful commands
 
-### Install
+### Local setup and build
 
 ```shell
 nvm use v24.11.0
@@ -338,9 +338,9 @@ March 2021
 
 August 2023 (mobile)
 
-top | aim  
-:--:|:--:
-<kbd>![Top-down camera view for planning shots on a mobile screen](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile1.jpg)</kbd> | <kbd>![Aim view along the cue on a mobile touchscreen](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile2.jpg)</kbd>
+| top | aim |
+| :--: | :--: |
+| <kbd>![Top-down camera view for planning shots on a mobile screen](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile1.jpg)</kbd> | <kbd>![Aim view along the cue on a mobile touchscreen](https://raw.githubusercontent.com/tailuge/billiards/master/dist/images/mobile2.jpg)</kbd> |
 
 [![Billiards gameplay video from 2026](https://img.youtube.com/vi/jGNB_XLTjnU/0.jpg)](https://www.youtube.com/watch?v=jGNB_XLTjnU)
 
