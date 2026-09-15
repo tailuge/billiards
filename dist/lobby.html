@@ -270,12 +270,14 @@
               rel="noopener"
               >open source</a
             >
-            billiards simulator that runs entirely in the browser — nothing to
-            download or install. Play snooker, 9-ball, 8-ball, three-cushion
-            carom and Korean four-ball on a physics engine built to reproduce
-            real ball–cushion behaviour: solo practice, two players sharing one
-            device, or a live game against someone else in the lobby. Guides are
-            also published in eight other languages.
+            3D WebGL and Three.js billiards simulator written in TypeScript that
+            runs entirely in the browser — nothing to download or install. Play
+            snooker, 9-ball, 8-ball, three-cushion carom and Korean four-ball
+            (sagu) on a physics engine built to reproduce real ball–cushion
+            behaviour, spin mechanics, and collision throw: solo practice, play
+            vs AI bots (TheFarJaw, ClawBreak), two players sharing one device,
+            or live online multiplayer via nchan. Guides are also published in
+            eight other languages.
           </p>
 
           <h2>Play</h2>
@@ -302,15 +304,23 @@
                   target="_blank"
                   rel="noopener"
                   >RealSnooker.Club</a
-                >.
+                >. Aim for the maximum 147 break!
               </span>
             </li>
             <li>
-              <a href="./practice.html">Free 9-ball practice</a>
+              <a href="./practice.html">Free 9-ball practice & trick shots</a>
               <span class="site-links-desc">
-                Drag balls to build your own layouts, pick a drill preset, then
-                shoot — free 9-ball practice in the browser, no download or
-                sign-up.
+                Drag balls to build your own layouts, set up trick shots, pick a
+                drill preset, then shoot — free 9-ball practice with shareable
+                replay links in the browser, no download or sign-up.
+              </span>
+            </li>
+            <li>
+              <a href="./?bot=TheFarJaw">Play against AI bots</a>
+              <span class="site-links-desc">
+                Challenge computer AI opponents online: play 9-ball and
+                three-cushion against TheFarJaw or ClawBreak directly in your
+                browser.
               </span>
             </li>
             <li>
@@ -330,11 +340,11 @@
               </span>
             </li>
             <li>
-              <a href="./help.html">Aiming and spin guide</a>
+              <a href="./help.html">Aiming, spin, and cue guide</a>
               <span class="site-links-desc">
-                How aiming works here — fine versus coarse aim, power, and
-                topspin/backspin by drag or touch — worth a read if you are used
-                to cue control elsewhere.
+                How cue control and aiming work: fine versus coarse aim, shot
+                power, topspin, backspin, sidespin (English), and massé angle
+                shots.
               </span>
             </li>
           </ul>
@@ -377,11 +387,13 @@
               >
             </li>
             <li>
-              <a href="./diagrams/mathavan.html">Mathavan cushion model</a>
+              <a href="./diagrams/mathavan.html"
+                >Mathavan cushion model & ball throw</a
+              >
               <span class="site-links-desc">
                 Interactive graphs from the Mathavan high-speed-imaging study of
-                real snooker ball-cushion impacts — the measurements the
-                simulator is fitted to.
+                real snooker ball-cushion impacts, plus Alciatore cut-induced
+                ball-on-ball friction and throw effect.
               </span>
             </li>
             <li>
@@ -395,14 +407,28 @@
             <li>
               <a href="./diagrams/stronge.html">Stronge ball-cushion model</a>
               <span class="site-links-desc">
-                The Stronge inelastic impact model for ball-cushion collisions,
-                plotted to compare with the alternatives.
+                The Stronge inelastic impact model for compliant cushion
+                collisions resolving slip-stick-slip regimes.
+              </span>
+            </li>
+            <li>
+              <a href="./ww.html">Web Workers physics tuning</a>
+              <span class="site-links-desc">
+                Off-thread parallel physics parameter optimization and
+                trajectory calculations running in background Web Workers.
               </span>
             </li>
           </ul>
 
           <h2>Other ways to play</h2>
           <ul>
+            <li>
+              <a href="./multi.html">Two-player pass and play</a>
+              <span class="site-links-desc">
+                Local two-player mode on a shared screen, or two tabs linked
+                locally for practice and head-to-head match play.
+              </span>
+            </li>
             <li>
               <a href="./arena.html">Billiards arena and tournaments</a>
               <span class="site-links-desc">
