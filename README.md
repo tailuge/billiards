@@ -40,7 +40,6 @@ Demos run in all major desktop and mobile browsers and use WebGL
 * Deploys to GitHub Pages, Vercel and Render with GitHub Actions.
 * Runs on and was developed mostly on a potato e.g. Raspberry Pi 4.
 
-
 ## Install
 
 You dont, you just play in your browser at [billiards.tailuge.workers.dev/lobby](https://billiards.tailuge.workers.dev/lobby)
@@ -48,11 +47,10 @@ You dont, you just play in your browser at [billiards.tailuge.workers.dev/lobby]
 If you prefer, you can install a thin client wrapper:
 
 * **Windows / macOS / Linux** — [Download](https://github.com/tailuge/tbilliards/releases/latest)
-* **Android** 
+* **Android**
 — Driect [Download](https://github.com/tailuge/wbilliards/releases/latest)
- or via [APKPure](https://apkpure.com/billiards/dev.tailuge.billiards) 
+ or via [APKPure](https://apkpure.com/billiards/dev.tailuge.billiards)
  or [Obtainium](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/tailuge/wbilliards)
-
 
 ## Reference material
 
@@ -312,6 +310,18 @@ Use mouse, trackpad, touch screen or keyboard:
 
 <kbd style="border: 1px solid #aaa; border-radius: 0.2em; padding: 0.1em 0.3em; font-size: 0.85em;">dbl click</kbd> Hit
 
+### Trajectory Fitting, Machine Learning & Simulation
+
+The physics engine is lightweight and deterministic, making batch rollouts, parameter fitting, and simulation experiments practical:
+
+* **Throughput & batch execution:** Performs **~500 rollouts/sec on 4 CPU cores** in pure TypeScript, scaling across worker threads. Runs in-browser via Web Workers or headlessly via Node.js for parallel batch runs.
+* **System identification & real-to-sim calibration:** Designed for trajectory fitting and physics calibration against **recorded real-world shot data**. Used to estimate physical parameters such as rolling friction, sliding friction, spin decay, restitution, and cushion deflection.
+* **Reinforcement learning & planning:** Suitable as a fast test environment for RL agents, continuous control, Monte Carlo Tree Search (MCTS), trajectory forecasting, or synthetic dataset generation.
+* **Parameter optimization:** The [multi-shot physics optimiser](https://tailuge.github.io/billiards/dist/fit/common.html) provides a starting point for fitting parameters and exploring the loss landscape against recorded shots.
+* **Worker interface & headless runs:** The [Web Worker / simulation research page](https://tailuge.github.io/billiards/dist/ww.html) documents the worker protocol, parallel rollouts, headless Node.js scripts, batch processing, and runtime parameter overrides.
+
+Whether investigating Bayesian optimization, evolutionary algorithms, sim-to-real transfer, or neural surrogate models, contributions and experiments are welcome.
+
 ## Progress snapshots
 
 July 2018
@@ -341,4 +351,3 @@ Star History
 ## Licence
 
 This project is open source and licensed under the GNU General Public License - see the [LICENSE](LICENSE) file for details. Contributions welcome.
-
