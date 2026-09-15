@@ -273,7 +273,7 @@ then open <http://localhost:8080/multi.html> to see options, message server is p
 
 ## Controls
 
-Use mouse, touch screen or keyboard:
+Use mouse, trackpad, touch screen or keyboard:
 
 <kbd style="border: 1px solid #aaa; border-radius: 0.2em; padding: 0.1em 0.3em; font-size: 0.85em;">⇦</kbd>
 <kbd style="border: 1px solid #aaa; border-radius: 0.2em; padding: 0.1em 0.3em; font-size: 0.85em;">⇨</kbd> Aim
