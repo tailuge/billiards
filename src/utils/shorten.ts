@@ -47,5 +47,5 @@ export function share(url) {
     return `link shared`
   }
   navigator.clipboard?.writeText(url)
-  return `link copied to clipboard <a href="${url}">${url}</a>`
+  return `Replay link copied to clipboard <a href="${url}">${url}</a>`
 }

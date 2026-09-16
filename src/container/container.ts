@@ -410,7 +410,10 @@ export class Container {
    * the banner is about: the replay already loaded in replay mode, otherwise a
    * replay of the whole game recorded so far. Shortened when the shortening
    * service answers, and surfaced in chat (mobile browsers hand off to the OS
-   * share sheet) exactly like the Replay menu button.
+   * share sheet) exactly like the Replay menu button. The posted link is the
+   * one message that has to stay clickable while the banner is up, so the chat
+   * is marked `is-link` (see chat.css) to lift it over the notification
+   * overlay, which spans the top of the chat column while a banner is shown.
    */
   shareReplayLink() {
     const url = this.replayMode
@@ -418,6 +421,7 @@ export class Container {
       : this.linkFormatter.getReplayUri(this.recorder.wholeGame())
     shorten(url, (shortUrl) => {
       this.chat.showMessage(share(shortUrl))
+      this.chat.chatoutput?.parentElement?.classList.add("is-link")
     })
   }
 

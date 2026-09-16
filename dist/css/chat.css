@@ -28,6 +28,21 @@
   overflow-wrap: anywhere;
 }
 
+/* Set by shareReplayLink() once the replay link is posted. The end-of-game /
+   replay banner keeps #notificationOverlay (pointer-events: auto, z-index 2000)
+   across the top of the chat column, which would swallow clicks on the link;
+   lifting the chat above it also restores the text selection and cursor that
+   .view3d disables. */
+.chatarea.is-link {
+  z-index: 2500;
+  cursor: auto;
+  user-select: text;
+}
+
+.chatarea.is-link .chatoutput a {
+  cursor: pointer;
+}
+
 .chatoutput::-webkit-scrollbar {
   width: 8px;
 }

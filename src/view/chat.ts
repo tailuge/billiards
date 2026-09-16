@@ -45,6 +45,7 @@ export class Chat {
       }
 
       sanitize(content)
+      this.openLinksInNewTab(content)
       this.chatoutput.appendChild(content)
     } else {
       if (msg.length > 2) {
@@ -53,6 +54,20 @@ export class Chat {
       this.chatoutput.appendChild(document.createTextNode(msg))
     }
     this.updateScroll()
+  }
+
+  /** Chat lives inside #viewP1, which Keyboard makes contenteditable so it can
+   * hold focus for the game keys. Inside an editing host the browser treats a
+   * plain click as caret placement and never runs the anchor's default
+   * navigation, so open the link ourselves. The href is left in place for the
+   * status bar, context menu and any alt-click path that still works. */
+  private openLinksInNewTab(content: DocumentFragment) {
+    content.querySelectorAll<HTMLAnchorElement>("a[href]").forEach((anchor) => {
+      anchor.addEventListener("click", (event) => {
+        event.preventDefault()
+        globalThis.open(anchor.href, "_blank", "noopener")
+      })
+    })
   }
 
   updateScroll() {
