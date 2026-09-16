@@ -429,13 +429,6 @@
   height: 15px;
 }
 
-.notification-share:not(:disabled):hover {
-  background: var(--notification-white-25);
-  border-color: var(--notification-white-50);
-  box-shadow: var(--notification-shadow-md);
-  transform: translateY(-1px) scale(1.08);
-}
-
 /* Spent after the first press: same look, no longer interactive. */
 .notification-share:disabled {
   cursor: default;
@@ -447,19 +440,26 @@
   background: var(--notification-white-25);
 }
 
+.notification-share:not(:disabled):hover {
+  background: var(--notification-white-25);
+  border-color: var(--notification-white-50);
+  box-shadow: var(--notification-shadow-md);
+  transform: translateY(-1px) scale(1.08);
+}
+
 #notification.is-winner .notification-share,
 #notification.is-loser .notification-share {
   background: var(--notification-black-10);
   border-color: var(--notification-black-30);
 }
 
+#notification.is-winner .notification-share:focus-visible,
+#notification.is-loser .notification-share:focus-visible {
+  outline-color: var(--notification-black-40);
+}
+
 #notification.is-winner .notification-share:not(:disabled):hover,
 #notification.is-loser .notification-share:not(:disabled):hover {
   background: var(--notification-black-15);
   border-color: var(--notification-black-40);
-}
-
-#notification.is-winner .notification-share:focus-visible,
-#notification.is-loser .notification-share:focus-visible {
-  outline-color: var(--notification-black-40);
 }
