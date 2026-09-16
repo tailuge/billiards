@@ -168,6 +168,7 @@ export class Replay extends ControllerBase {
           type: "Info",
           title: "Replay Complete",
           extra: gameOverButtons.replay + " " + gameOverButtons.lobby,
+          share: true,
         },
         0,
         {

@@ -47,6 +47,7 @@ import { WatchShot } from "../controller/watchshot"
 import { BallTray } from "../view/ball-tray"
 import { ExportUtils } from "../utils/export-utils"
 import { ResumeStore } from "../utils/resumestore"
+import { share, shorten } from "../utils/shorten"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -157,6 +158,7 @@ export class Container {
     this.particles = new ParticleSystem({ tableSize })
     this.hud = new Hud()
     this.notification = new Notification()
+    this.notification.shareHandler = () => this.shareReplayLink()
     this.relay = relay
     this.scoreReporter = scoreReporter
     this.lobbyIndicator = new LobbyIndicator(
@@ -401,6 +403,22 @@ export class Container {
     actionHandlers?: NotificationActionHandlers
   ) {
     this.notification.show(data, duration, actionHandlers)
+  }
+
+  /**
+   * Backs the share button on end-of-game and replay banners. Shares the link
+   * the banner is about: the replay already loaded in replay mode, otherwise a
+   * replay of the whole game recorded so far. Shortened when the shortening
+   * service answers, and surfaced in chat (mobile browsers hand off to the OS
+   * share sheet) exactly like the Replay menu button.
+   */
+  shareReplayLink() {
+    const url = this.replayMode
+      ? globalThis.location.href
+      : this.linkFormatter.getReplayUri(this.recorder.wholeGame())
+    shorten(url, (shortUrl) => {
+      this.chat.showMessage(share(shortUrl))
+    })
   }
 
   advance(elapsed) {

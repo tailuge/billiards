@@ -125,6 +125,7 @@ export class MatchResultHelper {
       icon: "🏆",
       extraClass: "is-winner",
       extra: this.getGameOverButtons(container, rulename),
+      share: true,
       duration: 0,
     })
   }
@@ -142,6 +143,7 @@ export class MatchResultHelper {
       icon: "🥈",
       extraClass: "is-loser",
       extra: this.getGameOverButtons(container, rulename),
+      share: true,
       duration: 0,
     })
   }
@@ -155,6 +157,7 @@ export class MatchResultHelper {
       icon: "🏆",
       extraClass: "",
       extra: gameOverButtons.lobby,
+      share: true,
       duration: 0,
     })
   }
@@ -171,6 +174,7 @@ export class MatchResultHelper {
         icon: "🥈",
         extraClass: "is-loser",
         extra: this.getRemoteGameOverButtons(rulename),
+        share: true,
         duration: 0,
       })
     )
@@ -188,6 +192,7 @@ export class MatchResultHelper {
         icon: "🏆",
         extraClass: "is-winner",
         extra: this.getRemoteGameOverButtons(rulename),
+        share: true,
         duration: 0,
       })
     )

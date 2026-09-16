@@ -400,3 +400,66 @@
   background: var(--notification-black-15);
   border-color: var(--notification-black-30);
 }
+
+/* 5.4 Share Button (GameOver banner, top-right corner) */
+.notification-share {
+  position: absolute;
+  right: var(--notification-space-2);
+  top: var(--notification-space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--notification-text-clr-main);
+  background: var(--notification-white-15);
+  border: 1px solid var(--notification-white-30);
+  border-radius: var(--notification-radius-s);
+  box-shadow: var(--notification-shadow-sm);
+  transition:
+    transform var(--notification-dur-fast) var(--notification-ease-elastic),
+    box-shadow var(--notification-dur-fast) var(--notification-ease-out),
+    background var(--notification-dur-fast) var(--notification-ease-out);
+}
+
+.notification-share svg {
+  width: 15px;
+  height: 15px;
+}
+
+.notification-share:not(:disabled):hover {
+  background: var(--notification-white-25);
+  border-color: var(--notification-white-50);
+  box-shadow: var(--notification-shadow-md);
+  transform: translateY(-1px) scale(1.08);
+}
+
+/* Spent after the first press: same look, no longer interactive. */
+.notification-share:disabled {
+  cursor: default;
+}
+
+.notification-share:focus-visible {
+  outline: 2px solid var(--notification-white);
+  outline-offset: 2px;
+  background: var(--notification-white-25);
+}
+
+#notification.is-winner .notification-share,
+#notification.is-loser .notification-share {
+  background: var(--notification-black-10);
+  border-color: var(--notification-black-30);
+}
+
+#notification.is-winner .notification-share:not(:disabled):hover,
+#notification.is-loser .notification-share:not(:disabled):hover {
+  background: var(--notification-black-15);
+  border-color: var(--notification-black-40);
+}
+
+#notification.is-winner .notification-share:focus-visible,
+#notification.is-loser .notification-share:focus-visible {
+  outline-color: var(--notification-black-40);
+}

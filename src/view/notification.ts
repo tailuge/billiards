@@ -16,6 +16,8 @@ export interface NotificationData {
   duration?: number
   icon?: string
   extraClass?: string
+  /** Show the share button in the banner's top-right corner. */
+  share?: boolean
 }
 
 export type NotificationActionHandlers = Record<string, () => void>
@@ -25,6 +27,11 @@ export class Notification {
   overlay: HTMLDivElement | null
   timeoutId: number | null = null
   actionHandlers: NotificationActionHandlers = {}
+  /** Fallback for the banner share button, wired by the container so
+   * notifications delivered over the network (shown without a handler map)
+   * can share too. */
+  shareHandler?: () => void
+  private shareDone = false
 
   constructor() {
     this.overlay = id("notificationOverlay") as HTMLDivElement | null
@@ -102,10 +109,39 @@ export class Notification {
           ${data.matchScore ? `<div class="notification-match-score">${data.matchScore}</div>` : ""}
         </div>
         ${footerContentHtml}
+        ${data.share ? this.renderShareButton() : ""}
       </div>
     `
 
     return { content, typeClass }
+  }
+
+  private renderShareButton(): string {
+    return `
+      <button
+        type="button"
+        class="notification-share"
+        title="share"
+        aria-label="Share replay link"
+        data-notification-action="share"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+      </button>
+    `
   }
 
   private renderFooter(data: NotificationData): string {
@@ -186,6 +222,7 @@ export class Notification {
   private display(content: string, typeClass: string, duration: number) {
     if (!this.element) return
     this.element.innerHTML = content
+    this.shareDone = false
     this.element.className = "" // Clear previous classes
     this.element.classList.add(...typeClass.split(" "))
     this.element.style.display = "flex"
@@ -230,6 +267,11 @@ export class Notification {
       ) as HTMLElement | null
       const action = button?.dataset.notificationAction
       if (!action) return
+      if (action === "share") {
+        // One-shot: sharing is already under way, so ignore further presses on
+        // this banner (a later banner renders a fresh button).
+        button.setAttribute("disabled", "true")
+      }
       this.handleAction(action, button.dataset.notificationUrl)
     })
   }
@@ -258,6 +300,13 @@ export class Notification {
       case "rematch":
         if (url) {
           globalThis.location.href = url
+        }
+        break
+      case "share":
+        // One press per banner, however the click got here.
+        if (!this.shareDone) {
+          this.shareDone = true
+          this.shareHandler?.()
         }
         break
     }

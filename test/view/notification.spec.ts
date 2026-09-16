@@ -61,6 +61,25 @@ describe("Notification", () => {
     ).toContain("https://example.com/9")
   })
 
+  it("should only share once per banner", () => {
+    const onShare = jest.fn()
+    notification.shareHandler = onShare
+    notification.show({
+      type: "GameOver",
+      title: "YOU WON",
+      share: true,
+      duration: 0,
+    })
+
+    const button = document.querySelector(
+      ".notification-share"
+    ) as HTMLButtonElement
+    button.click()
+    button.click()
+
+    expect(onShare).toHaveBeenCalledTimes(1)
+  })
+
   it("should clear a message", () => {
     notification.show("Test Message")
     notification.clear()
