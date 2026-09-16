@@ -1828,6 +1828,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sonarsource/analyzer-commons-configurations@npm:^2.31.0-5284":
+  version: 2.31.0-5284
+  resolution: "@sonarsource/analyzer-commons-configurations@npm:2.31.0-5284"
+  checksum: 10c0/c644a72dceee7bd96667485b18c321c85d11668d5c4940409f869cb0131cafe0fbe3c8d519c0bdf749d39bdaefd63bfe4177726222634dd7785a109c7598b75a
+  languageName: node
+  linkType: hard
+
 "@swc/core-darwin-arm64@npm:1.16.2":
   version: 1.16.2
   resolution: "@swc/core-darwin-arm64@npm:1.16.2"
@@ -3224,7 +3231,7 @@ __metadata:
     concurrently: "npm:10.0.5"
     eslint: "npm:10.10.0"
     eslint-plugin-html: "npm:8.2.0"
-    eslint-plugin-sonarjs: "npm:4.2.0"
+    eslint-plugin-sonarjs: "npm:4.2.1"
     fflate: "npm:^0.8.3"
     http-server: "npm:^14.1.1"
     interactjs: "npm:1.10.28"
@@ -3233,7 +3240,7 @@ __metadata:
     jsoncrush: "npm:^1.1.8"
     node-notifier: "npm:^10.0.1"
     postcss-html: "npm:2.0.0"
-    prettier: "npm:3.9.6"
+    prettier: "npm:3.9.7"
     stylelint: "npm:17.15.0"
     stylelint-config-standard: "npm:^40.0.0"
     swc-loader: "npm:0.2.7"
@@ -4177,18 +4184,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-sonarjs@npm:4.2.0":
-  version: 4.2.0
-  resolution: "eslint-plugin-sonarjs@npm:4.2.0"
+"eslint-plugin-sonarjs@npm:4.2.1":
+  version: 4.2.1
+  resolution: "eslint-plugin-sonarjs@npm:4.2.1"
   dependencies:
     "@eslint-community/regexpp": "npm:^4.12.2"
+    "@sonarsource/analyzer-commons-configurations": "npm:^2.31.0-5284"
     builtin-modules: "npm:^3.3.0"
     bytes: "npm:^3.1.2"
     functional-red-black-tree: "npm:^1.0.1"
-    globals: "npm:^17.7.0"
+    globals: "npm:^17.12.0"
     jsx-ast-utils-x: "npm:^0.1.0"
     lodash.merge: "npm:^4.6.2"
-    minimatch: "npm:^10.2.5"
+    minimatch: "npm:^10.2.6"
     scslre: "npm:^0.3.0"
     semver: "npm:^7.8.5"
     ts-api-utils: "npm:^2.5.0"
@@ -4196,7 +4204,7 @@ __metadata:
     yaml: "npm:^2.9.0"
   peerDependencies:
     eslint: ^8.0.0 || ^9.0.0 || ^10.0.0
-  checksum: 10c0/2c4b00d42520fbefe64eed221901caa5986f231aed6713c10de8a7b37009dcc6103f1ae4eb2921e6b1e0fc178e15ec145934e1136500ccc8cc1f45bc0f7554ff
+  checksum: 10c0/38f91913fbcd33a253367fb372d1eb1931c513abc34bda1d38157afcd691756923ca746137ad8d039c9d93139263afce3d1eabc91b3a41076be7dba12772661e
   languageName: node
   linkType: hard
 
@@ -4820,10 +4828,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^17.7.0":
-  version: 17.9.0
-  resolution: "globals@npm:17.9.0"
-  checksum: 10c0/776116bffb916e462d548c26a44c9a5d8f4e551935a883991e9f5d68cbcb21b63e4c688e36bbc564f97d3025e304d8b2bb0a611ecf944825aeee164898dcfbdd
+"globals@npm:^17.12.0":
+  version: 17.12.0
+  resolution: "globals@npm:17.12.0"
+  checksum: 10c0/8325cf8818c848871d17c32974c2c74e9c5f09c1b0e04421886f64f21e77c3e95f3ba25586743895a73acd860ada151132481d87d44a1f12993ae7758a694d03
   languageName: node
   linkType: hard
 
@@ -6471,7 +6479,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^10.2.2, minimatch@npm:^10.2.4, minimatch@npm:^10.2.5":
+"minimatch@npm:^10.2.2, minimatch@npm:^10.2.4, minimatch@npm:^10.2.5, minimatch@npm:^10.2.6":
   version: 10.2.6
   resolution: "minimatch@npm:10.2.6"
   dependencies:
@@ -7113,12 +7121,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.9.6":
-  version: 3.9.6
-  resolution: "prettier@npm:3.9.6"
+"prettier@npm:3.9.7":
+  version: 3.9.7
+  resolution: "prettier@npm:3.9.7"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/9f7ddae234035868f3daab3dc34e6de7e54622185afb017378029f0c09a9c023248ccf6f34def0b17a0538e18c47aa1b3188bab72965d1bf735919baa0747e99
+  checksum: 10c0/3bb72e3fd0292695fe1b808a7a3b67a0d68842c780f01ebca7ff1cf2fe05055478dccb513a8d022be59b3494497b4a3b6dc059baee116c1debe69bded535567b
   languageName: node
   linkType: hard
 

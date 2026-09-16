@@ -477,8 +477,10 @@ export class BotEventHandler {
     }
 
     const cueball = table.cueball
-    cueball.pos.copy(
-      event.useStartPos ? event.pos : this.container.rules.placeBall()
+    Respot.respotBehind(
+      event.useStartPos ? event.pos : this.container.rules.placeBall(),
+      cueball,
+      table
     )
     cueball.setStationary()
     cueball.fround()
