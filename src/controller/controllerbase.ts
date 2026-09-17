@@ -130,6 +130,9 @@ export abstract class ControllerBase extends Controller {
         }
         return true
       case "KeyMUp":
+        if (document.body.classList.contains("chromeless")) {
+          this.container.menu.toggleChromeless()
+        }
         this.container.table.cue.aimInputs?.toggleTiltControl()
         return true
       case "KeyHUp":
