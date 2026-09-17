@@ -163,13 +163,13 @@ export class ThreeCushion implements Rules {
   }
 
   /** Deferring the win is a solo-mode nicety for long races with a break worth
-   * continuing: short races, modest breaks and every networked (two player) or
-   * bot game still end the moment the target is reached. */
+   * continuing: short races, breaks of 4 or less and every networked (two
+   * player) or bot game still end the moment the target is reached. */
   private canDeferWin(): boolean {
     if (!this.container.isSinglePlayer) {
       return false
     }
-    if (this.currentBreak <= 10) {
+    if (this.currentBreak <= 4) {
       return false
     }
     const session = Session.getInstance()

@@ -28,7 +28,10 @@ Demos run in all major desktop and mobile browsers and use WebGL
 * Tune three cushion [physics ⬀](https://tailuge.github.io/billiards/dist/diagrams/three.html) and [optimise ⬀](https://tailuge.github.io/billiards/dist/fit/viewer.html) parameters
 * Parallel [parameter ⬀](https://tailuge.github.io/billiards/dist/fit/common.html) tuning using [Web Workers ⬀](https://tailuge.github.io/billiards/dist/ww.html).
 * Three cushion trainer and [sensitivity analysis ⬀](https://velikodimov.github.io/billiards/dist/index.html?ruletype=threecushion&practice&drill) from an excellent [fork ⬀](https://github.com/velikodimov/billiards) of this project.
-* Another great spin off extension for [Italian 5 pin](https://gameland.altervista.org/italian_billiards/lobby.html).
+* Another great fork for [Italian 5 pin](https://gameland.altervista.org/italian_billiards/lobby.html).
+* Generate SVG and PNG [diagrams](https://billiards.tailuge.workers.dev/diagrams/export?ruletype=threecushion&init=%5B0.12664656341075897%2C-0.566656768321991%2C-0.8321752548217773%2C0.6028573513031006%2C0.2764659821987152%2C0.1675983965396881%5D&initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.2879289388656616%2C%22power%22%3A2.619999885559082%2C%22offset%22%3A%7B%22x%22%3A-0.28158292174339294%2C%22y%22%3A0.35101431608200073%7D%2C%22elevation%22%3A0%7D) of shots for blog posts.
+* Race again the clock to clear the table in a [speedrun](https://billiards.tailuge.workers.dev/speedrun/index.html).
+* Sit a hand curated [exam](https://billiards.tailuge.workers.dev/exam/index.html) to asses your level of play. 
 
 ## Features
 
@@ -314,13 +317,13 @@ Use mouse, trackpad, touch screen or keyboard:
 
 The physics engine is lightweight and deterministic, making batch rollouts, parameter fitting, and simulation experiments practical:
 
-* **Throughput & batch execution:** Performs **~500 rollouts/sec on 4 CPU cores** in pure TypeScript, scaling across worker threads. Runs in-browser via Web Workers or headlessly via Node.js for parallel batch runs.
-* **System identification & real-to-sim calibration:** Designed for trajectory fitting and physics calibration against **recorded real-world shot data**. Used to estimate physical parameters such as rolling friction, sliding friction, spin decay, restitution, and cushion deflection.
-* **Reinforcement learning & planning:** Suitable as a fast test environment for RL agents, continuous control, Monte Carlo Tree Search (MCTS), trajectory forecasting, or synthetic dataset generation.
-* **Parameter optimization:** The [multi-shot physics optimiser](https://tailuge.github.io/billiards/dist/fit/common.html) provides a starting point for fitting parameters and exploring the loss landscape against recorded shots.
-* **Worker interface & headless runs:** The [Web Worker / simulation research page](https://tailuge.github.io/billiards/dist/ww.html) documents the worker protocol, parallel rollouts, headless Node.js scripts, batch processing, and runtime parameter overrides.
+* Throughput & batch execution: Performs ~500 rollouts/sec on 4 CPU cores in pure TypeScript, scaling across worker threads. Runs in-browser via Web Workers or headlessly via Node.js for parallel batch runs.
+* System identification & real-to-sim calibration: Designed for trajectory fitting and physics calibration against recorded real-world shot trajectories. Used to estimate physical parameters such as rolling friction, sliding friction, spin decay, restitution, and cushion deflection.
+* Reinforcement learning & planning: Suitable as a fast test environment for RL agents, continuous control, Monte Carlo Tree Search (MCTS), trajectory forecasting, or synthetic dataset generation.
+* Parameter optimization: The [multi-shot physics optimiser](https://tailuge.github.io/billiards/dist/fit/common.html) provides a starting point for fitting parameters and exploring the loss landscape against recorded shots.
+* Worker interface & headless runs: The [Web Worker / simulation research page](https://tailuge.github.io/billiards/dist/ww.html) documents the worker protocol, parallel rollouts, headless Node.js scripts, batch processing, and runtime parameter overrides.
 
-Whether investigating Bayesian optimization, evolutionary algorithms, sim-to-real transfer, or neural surrogate models, contributions and experiments are welcome.
+Contributions and experiments are welcome.
 
 ## Progress snapshots
 

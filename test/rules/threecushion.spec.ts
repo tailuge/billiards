@@ -224,11 +224,11 @@ describe("ThreeCushion", () => {
       button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
     }
 
-    /** One point short of the target and already on a 10 point break, so the
-     * next scoring shot both wins the race and takes the break past 10. */
+    /** One point short of the target and already on a 4 point break, so the
+     * next scoring shot both wins the race and takes the break past 4. */
     const primeHotBreak = () => {
       Session.getInstance().updateScoresFromNetwork(19, 0, 0)
-      container.rules.currentBreak = 10
+      container.rules.currentBreak = 4
     }
 
     it("offers the choice and keeps the break alive when continued", (done) => {

@@ -260,6 +260,15 @@ export class MatchResultHelper {
     }
   }
 
+  /** Average points per inning, at most two decimals with trailing zeros
+   * removed (3.2, 0.67, 3, 10). */
+  private static formatAverage(score: number, innings: number): string {
+    if (innings <= 0) {
+      return "0"
+    }
+    return String(Math.round((score / innings) * 100) / 100)
+  }
+
   private static getScoreSubtext(
     container: Container,
     rulename: string
@@ -269,9 +278,8 @@ export class MatchResultHelper {
       if (container.isSinglePlayer) {
         const score = Session.getInstance().myScore()
         const totalInnings = stats.whiteInnings + stats.yellowInnings
-        const avg =
-          totalInnings > 0 ? (score / totalInnings).toFixed(2) : "0.00"
-        return `Score: ${score} (Avg: ${avg} over ${totalInnings} inn)`
+        const avg = this.formatAverage(score, totalInnings)
+        return `Score: ${score} (Avg: ${avg} - ${totalInnings} inn)`
       } else {
         const { p1, p2 } = Session.getInstance().orderedScoresForHud()
         const names = Session.getInstance().orderedNamesForHud()
@@ -281,12 +289,12 @@ export class MatchResultHelper {
         const p1Innings = stats.whiteInnings
         const p2Innings = stats.yellowInnings
 
-        const p1Avg = p1Innings > 0 ? (p1 / p1Innings).toFixed(2) : "0.00"
-        const p2Avg = p2Innings > 0 ? (p2 / p2Innings).toFixed(2) : "0.00"
+        const p1Avg = this.formatAverage(p1, p1Innings)
+        const p2Avg = this.formatAverage(p2, p2Innings)
 
         return (
-          `${p1Name}: ${p1} (Avg: ${p1Avg} over ${p1Innings} inn)\n` +
-          `${p2Name}: ${p2} (Avg: ${p2Avg} over ${p2Innings} inn)`
+          `${p1Name}: ${p1} (Avg: ${p1Avg} - ${p1Innings} inn)\n` +
+          `${p2Name}: ${p2} (Avg: ${p2Avg} - ${p2Innings} inn)`
         )
       }
     }
