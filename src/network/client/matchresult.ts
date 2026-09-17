@@ -260,13 +260,11 @@ export class MatchResultHelper {
     }
   }
 
-  /** Average points per inning, at most two decimals with trailing zeros
-   * removed (3.2, 0.67, 3, 10). */
   private static formatAverage(score: number, innings: number): string {
     if (innings <= 0) {
       return "0"
     }
-    return String(Math.round((score / innings) * 100) / 100)
+    return String((score / innings).toFixed(1))
   }
 
   private static getScoreSubtext(

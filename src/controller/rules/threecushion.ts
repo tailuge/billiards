@@ -181,7 +181,7 @@ export class ThreeCushion implements Rules {
       {
         type: "Info",
         icon: "🏆",
-        title: "RACE COMPLETE",
+        title: "Target Reached",
         subtext: "Declare win or continue break",
         extra:
           '<button type="button" class="notification-btn" data-notification-action="declarewin">Declare win</button>' +

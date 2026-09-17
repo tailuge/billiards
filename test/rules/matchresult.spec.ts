@@ -301,7 +301,7 @@ describe("MatchResult Construction", () => {
         container,
         "threecushion"
       )
-      expect(subtext).to.equal("Score: 2 (Avg: 0.67 - 3 inn)")
+      expect(subtext).to.equal("Score: 2 (Avg: 0.7 - 3 inn)")
     })
 
     it("should calculate correct innings and averages in multiplayer mode", () => {
@@ -347,8 +347,8 @@ describe("MatchResult Construction", () => {
         container,
         "threecushion"
       )
-      expect(subtext).to.contain("Player 1: 10 (Avg: 10 - 1 inn)")
-      expect(subtext).to.contain("Player 2: 5 (Avg: 5 - 1 inn)")
+      expect(subtext).to.contain("Player 1: 10 (Avg: 10.0 - 1 inn)")
+      expect(subtext).to.contain("Player 2: 5 (Avg: 5.0 - 1 inn)")
     })
   })
 })
