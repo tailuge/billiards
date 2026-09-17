@@ -26,6 +26,10 @@ export class ThreeCushion implements Rules {
   previousBreak = 0
   rulename = "threecushion"
 
+  /** Solo long-race latch: the race target was reached but the win is owed
+   * until the current break ends (the player chose to continue the break). */
+  private winDeferred = false
+
   constructor(container: Container) {
     this.container = container
   }
@@ -88,10 +92,21 @@ export class ThreeCushion implements Rules {
       this.currentBreak += scored
       Session.getInstance().addMyScore(scored)
 
-      if (this.isEndOfGame(outcomes)) {
-        return this.handleGameEnd(true)
+      if (this.isTargetReached()) {
+        if (!this.canDeferWin()) {
+          return this.handleGameEnd(true)
+        }
+        if (!this.winDeferred) {
+          this.winDeferred = true
+          this.promptWinOrContinueBreak()
+        }
       }
       return new Aim(this.container)
+    }
+
+    if (this.winDeferred) {
+      // Break is over: the deferred win is declared now.
+      return this.handleGameEnd(true)
     }
 
     this.startTurn()
@@ -119,6 +134,16 @@ export class ThreeCushion implements Rules {
   }
 
   isEndOfGame(_: Outcome[]): boolean {
+    // While a win is deferred the game is deliberately still in play, so the
+    // recorder treats post-target shots as ordinary break shots instead of
+    // flushing (and duplicating) the break into the tray.
+    if (this.winDeferred) {
+      return false
+    }
+    return this.isTargetReached()
+  }
+
+  private isTargetReached(): boolean {
     const session = Session.getInstance()
     const p1ClientId =
       session.playerIndex === 0
@@ -135,6 +160,43 @@ export class ThreeCushion implements Rules {
     const { p1: s1, p2: s2 } = session.orderedScoresForHud()
 
     return s1 >= p1Target || s2 >= p2Target
+  }
+
+  /** Deferring the win is a solo-mode nicety for long races with a break worth
+   * continuing: short races, modest breaks and every networked (two player) or
+   * bot game still end the moment the target is reached. */
+  private canDeferWin(): boolean {
+    if (!this.container.isSinglePlayer) {
+      return false
+    }
+    if (this.currentBreak <= 10) {
+      return false
+    }
+    const session = Session.getInstance()
+    return session.getRaceTargetForPlayer(session.clientId) >= 10
+  }
+
+  private promptWinOrContinueBreak(): void {
+    this.container.notifyLocal(
+      {
+        type: "Info",
+        icon: "🏆",
+        title: "RACE COMPLETE",
+        subtext: "Declare win or continue break",
+        extra:
+          '<button type="button" class="notification-btn" data-notification-action="declarewin">Declare win</button>' +
+          '<button type="button" class="notification-btn" data-notification-action="continuebreak">Continue break</button>',
+        duration: 0,
+      },
+      0,
+      {
+        declarewin: () => {
+          this.container.notification.clear()
+          this.container.updateController(this.handleGameEnd(true))
+        },
+        continuebreak: () => this.container.notification.clear(),
+      }
+    )
   }
 
   handleGameEnd(isWinner: boolean, endSubtext?: string): Controller {

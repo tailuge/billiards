@@ -19,11 +19,6 @@ export class ScoreReporter {
     const url = `https://${this.baseURL}/api/match-results`
     const maxRetries = 3
 
-    console.log(
-      "Submitting match result payload:",
-      JSON.stringify(result, null, 2)
-    )
-
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       const completed = await this.attemptSubmission(url, result)
       if (completed) return

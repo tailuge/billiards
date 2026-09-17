@@ -79,7 +79,6 @@ export class End extends Controller {
       void submitResults(this.container, this.result)
     }
     this.container.lobbyIndicator.setTableId(undefined)
-    console.log("table id cleared")
 
     const wasBotWin = !this.result && Session.isBotMode()
     if (wasBotWin) {

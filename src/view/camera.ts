@@ -64,7 +64,6 @@ export class Camera {
   private fovOffset = Camera.defaultFovOffset
   private aimzHeight = Camera.aimzHeight
   private aimzDistance = Camera.aimzDistance
-  private lastAimzDistance = -1
   private computedAimzDistance?: number
 
   elapsed: number
@@ -171,25 +170,10 @@ export class Camera {
         )
       )
       if (this.tableInView()) {
-        this.logAimzDistance(d)
         return d
       }
     }
-    this.logAimzDistance(R * 95)
     return R * 95
-  }
-
-  private logAimzDistance(d: number) {
-    if (d === this.lastAimzDistance) {
-      return
-    }
-    this.lastAimzDistance = d
-    const units = Math.round((d / R) * 100) / 100
-    console.log(
-      d >= R * 95
-        ? `aimz distance = max (${units}R)`
-        : `aimz distance = ${units}R`
-    )
   }
 
   private tableInView(): boolean {

@@ -176,6 +176,80 @@ describe("ThreeCushion", () => {
     done()
   })
 
+  describe("deferred win in solo long races", () => {
+    const originalRaceTo = ThreeCushionConfig.raceTo
+    let getHandicapsSpy: jest.SpyInstance
+
+    beforeEach(() => {
+      ThreeCushionConfig.raceTo = 20
+      getHandicapsSpy = jest.spyOn(Session.prototype, "getHandicaps")
+      getHandicapsSpy.mockReturnValue({})
+    })
+
+    afterEach(() => {
+      ThreeCushionConfig.raceTo = originalRaceTo
+      getHandicapsSpy.mockRestore()
+    })
+
+    const playScoringShot = () => {
+      container.controller = new PlayShot(container)
+      container.sendEvent(new HitEvent(container.table.serialiseHit()))
+      container.table.cueball.setStationary()
+      container.eventQueue.push(new StationaryEvent())
+      const balls = container.table.balls
+      container.table.outcome.push(
+        Outcome.collision(balls[0], balls[1], 1),
+        Outcome.cushion(balls[0], 1),
+        Outcome.cushion(balls[0], 1),
+        Outcome.cushion(balls[0], 1),
+        Outcome.collision(balls[0], balls[2], 1)
+      )
+      container.processEvents()
+    }
+
+    const playMiss = () => {
+      container.controller = new PlayShot(container)
+      container.sendEvent(new HitEvent(container.table.serialiseHit()))
+      container.table.cueball.setStationary()
+      container.eventQueue.push(new StationaryEvent())
+      const balls = container.table.balls
+      container.table.outcome.push(Outcome.cushion(balls[0], 1))
+      container.processEvents()
+    }
+
+    const clickNotificationAction = (action: string) => {
+      const button = container.notification.element.querySelector(
+        `[data-notification-action="${action}"]`
+      ) as HTMLElement
+      button.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    }
+
+    /** One point short of the target and already on a 10 point break, so the
+     * next scoring shot both wins the race and takes the break past 10. */
+    const primeHotBreak = () => {
+      Session.getInstance().updateScoresFromNetwork(19, 0, 0)
+      container.rules.currentBreak = 10
+    }
+
+    it("offers the choice and keeps the break alive when continued", (done) => {
+      primeHotBreak()
+      playScoringShot()
+      expect(container.controller).to.be.an.instanceof(Aim)
+      expect(container.rules.isEndOfGame([])).to.be.false
+      const html = container.notification.element.innerHTML
+      expect(html).to.contain("Declare win")
+      expect(html).to.contain("Continue break")
+
+      clickNotificationAction("continuebreak")
+      expect(container.controller).to.be.an.instanceof(Aim)
+      expect(container.notification.element.style.display).to.equal("none")
+
+      playMiss()
+      expect(container.controller).to.be.an.instanceof(End)
+      done()
+    })
+  })
+
   it("ThreeCushion properties and simple methods", (done) => {
     const rules = RuleFactory.create(rule, container)
     expect(rules.asset).to.equal("models/threecushion.min.gltf")
