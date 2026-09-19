@@ -120,6 +120,13 @@ export class LobbyIndicator {
         return
       }
 
+      // Two-player games stay put; only the status emoji (above) is clickable.
+      if (this.isTwoPlayerGame()) {
+        e.preventDefault()
+        e.stopPropagation()
+        return
+      }
+
       if (!(this.element instanceof HTMLAnchorElement)) {
         if (typeof globalThis.open === "function") {
           globalThis.open(this.getLobbyUrl(), "_self")
