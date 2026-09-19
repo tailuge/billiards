@@ -102,6 +102,63 @@ describe("MatchResult Construction", () => {
     expect(result.replayData!.length).to.be.greaterThan(0)
   })
 
+  it("skips scoreboard upload but reports tournament result when no shots taken", async () => {
+    Session.init(
+      "test-client",
+      "TestPlayer",
+      "test-table",
+      false,
+      false,
+      false,
+      false,
+      1,
+      false,
+      false,
+      "arena-1"
+    )
+    container = createNineBallContainer()
+    const reporter = {
+      submitMatchResult: jest.fn().mockResolvedValue(undefined),
+      submitTournamentResult: jest.fn().mockResolvedValue(undefined),
+    }
+    container.scoreReporter = reporter as any
+    setupNineBallTable(container)
+
+    const nineball = container.rules as NineBall
+    const endController = nineball.update(getNineBallOutcome(container)) as End
+    endController.onFirst()
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    const result = (endController as any).result as MatchResult
+    expect(result.replayData).to.be.a("string")
+    expect(reporter.submitMatchResult.mock.calls).to.have.lengthOf(0)
+    expect(reporter.submitTournamentResult.mock.calls).to.have.lengthOf(1)
+  })
+
+  it("uploads the scoreboard result when at least one shot was taken", async () => {
+    container = createNineBallContainer()
+    container.recorder.entries.push({
+      state: [],
+      event: { type: "AIM", i: 0 } as any,
+      pots: 0,
+      isPartOfBreak: false,
+      time: Date.now(),
+    })
+    const reporter = {
+      submitMatchResult: jest.fn().mockResolvedValue(undefined),
+      submitTournamentResult: jest.fn().mockResolvedValue(undefined),
+    }
+    container.scoreReporter = reporter as any
+    setupNineBallTable(container)
+
+    const nineball = container.rules as NineBall
+    const endController = nineball.update(getNineBallOutcome(container)) as End
+    endController.onFirst()
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    expect(reporter.submitMatchResult.mock.calls).to.have.lengthOf(1)
+  })
+
   it("NineBall should declare potter winner even if behind on points", () => {
     container = createNineBallContainer()
     const session = Session.getInstance()

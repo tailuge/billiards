@@ -7,6 +7,7 @@ import { Session } from "../network/client/session"
 import { ResumeStore } from "../utils/resumestore"
 import { BreakEvent } from "../events/breakevent"
 import { Replay } from "./replay"
+import { isFirstShot } from "../utils/utils"
 
 async function submitResults(
   container: Container,
@@ -16,7 +17,12 @@ async function submitResults(
   const session = Session.getInstance()
   if (!scoreReporter) return
 
-  await scoreReporter.submitMatchResult(result)
+  // A game with no shots recorded has nothing worth posting to the
+  // scoreboard, so skip that upload silently. Tournament results still go
+  // through so brackets keep advancing on instant forfeits/disconnects.
+  if (!isFirstShot(container.recorder)) {
+    await scoreReporter.submitMatchResult(result)
+  }
   if (!session.tournamentId || !result.winnerId) {
     return
   }
