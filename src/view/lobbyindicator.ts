@@ -392,11 +392,13 @@ export class LobbyIndicator {
   private isTwoPlayerGame(): boolean {
     const session = Session.getInstance()
     const opponentId = session.opponentClientId
+    // practiceMode defaults to true for every rule except nineball, so it
+    // cannot be used here — a real opponent is identified by opponentClientId.
     return (
       !!opponentId &&
       opponentId !== "bot" &&
       !session.botMode &&
-      !session.practiceMode &&
+      !session.spectator &&
       !this.replayMode
     )
   }

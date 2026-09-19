@@ -151,6 +151,33 @@ describe("LobbyIndicator", () => {
     globalThis.open = originalOpen
   })
 
+  it("keeps the player in game when clicking the indicator against a real opponent", async () => {
+    // practiceMode defaults to true for every rule except nineball, so a
+    // three-cushion match still has practiceMode set. The click must not
+    // bounce the player back to the lobby.
+    Session.init(
+      "p1",
+      "Player 1",
+      "table-1",
+      false,
+      false,
+      false,
+      true
+    )
+    Session.getInstance().setOpponentClientId("p2")
+
+    const mockRules = { rulename: "threecushion" } as any
+    const indicator = new LobbyIndicator(false, false, mockRules)
+    await indicator.init()
+
+    const element = document.getElementById("lobbyOverlay") as HTMLElement
+    const event = new MouseEvent("click", { bubbles: true, cancelable: true })
+    element.dispatchEvent(event)
+    expect(event.defaultPrevented).toBe(true)
+
+    await indicator.stop()
+  })
+
   it("uses canonical rule names while preserving tableSize in presence", async () => {
     const originalSearch = globalThis.location.search
     globalThis.history.replaceState({}, "", "?tableSize=5")
