@@ -426,15 +426,31 @@
 
       .hero-visual {
         position: relative;
+        max-width: 630px;
         margin: 0;
       }
 
       .hero-visual img {
         display: block;
         width: 100%;
+        height: auto;
+      }
+
+      .hero-visual .hero-shot {
         border-radius: 12px;
         border: 1px solid var(--line-strong);
         box-shadow: 0 20px 60px rgb(0 0 0 / 50%);
+      }
+
+      .hero-visual .hero-sticker {
+        position: absolute;
+        top: -14px;
+        right: 12px;
+        width: clamp(110px, 26%, 190px);
+        border-radius: 10px;
+        border: 1px solid rgb(255 255 255 / 40%);
+        box-shadow: 0 10px 28px rgb(0 0 0 / 55%);
+        transform: rotate(4deg);
       }
 
       .hero-visual figcaption {
@@ -802,10 +818,18 @@
 
         <figure class="hero-visual">
           <img
+            class="hero-shot"
             src="images/three630x500.png"
             alt="3 bant online bilardo oyununun gerçek oynanış ekranı"
             width="630"
             height="500"
+          />
+          <img
+            class="hero-sticker"
+            src="images/dm.jpg"
+            alt="Karambol bilardo masası - kuşbakışı görünüm"
+            width="1200"
+            height="800"
           />
           <figcaption>Gerçek oyun ekranı</figcaption>
         </figure>
