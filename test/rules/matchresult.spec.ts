@@ -243,6 +243,59 @@ describe("MatchResult Construction", () => {
     expect(notification?.querySelector(".notification-actions")).to.exist
   })
 
+  describe("Zero shots submit skip", () => {
+    it("End.onFirst should skip submitting results when zero shots were recorded", () => {
+      container = createNineBallContainer()
+      const reporter = new ScoreReporter()
+      const submitMatchResultSpy = jest.spyOn(reporter, "submitMatchResult")
+      const submitTournamentResultSpy = jest.spyOn(
+        reporter,
+        "submitTournamentResult"
+      )
+      container.scoreReporter = reporter
+
+      setupNineBallTable(container)
+
+      const nineball = container.rules as NineBall
+      const outcome = getNineBallOutcome(container)
+      const endController = nineball.update(outcome) as End
+
+      // At this point, container.recorder has 0 shots recorded.
+      endController.onFirst()
+
+      expect(submitMatchResultSpy.mock.calls.length).to.equal(0)
+      expect(submitTournamentResultSpy.mock.calls.length).to.equal(0)
+    })
+
+    it("End.onFirst should submit results when at least one shot was recorded", () => {
+      container = createNineBallContainer()
+      const reporter = new ScoreReporter()
+      const submitMatchResultSpy = jest
+        .spyOn(reporter, "submitMatchResult")
+        .mockResolvedValue()
+      container.scoreReporter = reporter
+
+      // Simulate a shot being recorded
+      container.recorder.entries.push({
+        state: [],
+        event: { type: "AIM" } as any,
+        pots: 0,
+        isPartOfBreak: false,
+        time: Date.now(),
+      })
+
+      setupNineBallTable(container)
+
+      const nineball = container.rules as NineBall
+      const outcome = getNineBallOutcome(container)
+      const endController = nineball.update(outcome) as End
+
+      endController.onFirst()
+
+      expect(submitMatchResultSpy.mock.calls.length).to.be.greaterThan(0)
+    })
+  })
+
   describe("ThreeCushion & Sagu Innings & Average Tracking", () => {
     it("should calculate correct innings and averages in single player mode", () => {
       container = new Container({

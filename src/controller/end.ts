@@ -7,6 +7,7 @@ import { Session } from "../network/client/session"
 import { ResumeStore } from "../utils/resumestore"
 import { BreakEvent } from "../events/breakevent"
 import { Replay } from "./replay"
+import { isFirstShot } from "../utils/utils"
 
 async function submitResults(
   container: Container,
@@ -15,6 +16,10 @@ async function submitResults(
   const scoreReporter = container.scoreReporter
   const session = Session.getInstance()
   if (!scoreReporter) return
+
+  if (isFirstShot(container.recorder)) {
+    return
+  }
 
   await scoreReporter.submitMatchResult(result)
   if (!session.tournamentId || !result.winnerId) {

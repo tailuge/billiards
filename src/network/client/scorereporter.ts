@@ -1,6 +1,8 @@
 // src/network/client/scorereporter.ts
 import { MatchResult } from "./matchresult"
 import { ARENA_BASE_URL } from "./constants"
+import { ReplayCodec } from "../../utils/replay-codec"
+import { EventType } from "../../events/eventtype"
 
 export class ScoreReporter {
   private readonly baseURL: string
@@ -13,7 +15,6 @@ export class ScoreReporter {
 
   async submitMatchResult(result: MatchResult): Promise<void> {
     if (this.shouldSkipUpload(result)) {
-      console.log("Skipping match result upload for Alice/Bob")
       return
     }
     const url = `https://${this.baseURL}/api/match-results`
@@ -140,6 +141,11 @@ export class ScoreReporter {
   }
 
   private shouldSkipUpload(result: MatchResult): boolean {
+    if (this.hasZeroShots(result)) {
+      console.log("Skipping match result upload for zero shots")
+      return true
+    }
+
     const players = [result.winner, result.loser]
       .filter((n): n is string => !!n)
       .map((n) => n.toLowerCase())
@@ -147,7 +153,35 @@ export class ScoreReporter {
     const hasAlice = players.some((n) => n.includes("alice"))
     const hasBob = players.some((n) => n.includes("bob"))
 
-    return hasAlice && hasBob
+    if (hasAlice && hasBob) {
+      console.log("Skipping match result upload for Alice/Bob")
+      return true
+    }
+
+    return false
+  }
+
+  private hasZeroShots(result: MatchResult): boolean {
+    if (!result.replayData) {
+      return false
+    }
+    try {
+      const decoded = ReplayCodec.decode(result.replayData)
+      if (decoded && Array.isArray(decoded.shots)) {
+        const shotEvents = decoded.shots.filter(
+          (s: any) =>
+            s &&
+            (s.type === EventType.AIM ||
+              s.type === EventType.HIT ||
+              s.type === "AIM" ||
+              s.type === "HIT")
+        )
+        return shotEvents.length === 0
+      }
+    } catch {
+      // Ignore decode error
+    }
+    return false
   }
 
   private async attemptSubmission(

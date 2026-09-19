@@ -3,6 +3,7 @@ import { ScoreReporter } from "../../../src/network/client/scorereporter"
 import { MatchResult } from "../../../src/network/client/matchresult"
 import { Session } from "../../../src/network/client/session"
 import { MatchResultHelper } from "../../../src/network/client/matchresult"
+import { ReplayEncoder } from "../../../src/utils/replay-encoder"
 
 describe("ScoreReporter", () => {
   let mockFetch: jest.Mock
@@ -587,6 +588,46 @@ describe("ScoreReporter", () => {
     expect(mockFetch).not.toHaveBeenCalled()
     expect(console.log).toHaveBeenCalledWith(
       "Skipping match result upload for Alice/Bob"
+    )
+  })
+
+  it("should skip upload if replayData contains zero shots", async () => {
+    const reporter = new ScoreReporter()
+    const zeroShotsReplay = ReplayEncoder.crush(
+      JSON.stringify(ReplayEncoder.createState([], []))
+    )
+    const zeroShotsResult: MatchResult = {
+      ...sampleMatchResult,
+      replayData: zeroShotsReplay,
+    }
+
+    await reporter.submitMatchResult(zeroShotsResult)
+    expect(mockFetch).not.toHaveBeenCalled()
+    expect(console.log).toHaveBeenCalledWith(
+      "Skipping match result upload for zero shots"
+    )
+  })
+
+  it("should upload match result if replayData contains at least one shot", async () => {
+    const reporter = new ScoreReporter()
+    mockFetch.mockResolvedValueOnce({ ok: true })
+    const oneShotReplay = ReplayEncoder.crush(
+      JSON.stringify(ReplayEncoder.createState([], [{ type: "AIM" }]))
+    )
+    const oneShotResult: MatchResult = {
+      ...sampleMatchResult,
+      replayData: oneShotReplay,
+    }
+
+    const promise = reporter.submitMatchResult(oneShotResult)
+    jest.runAllTimers()
+    await promise
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        body: JSON.stringify(oneShotResult),
+      })
     )
   })
 })
