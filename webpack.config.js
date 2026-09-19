@@ -62,7 +62,6 @@ module.exports = {
           },
           mangle: {
             keepClassNames: true,
-            keepFnNames: true,
           },
           safari10: true,
         },
