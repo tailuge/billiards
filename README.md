@@ -33,6 +33,7 @@ Demos run in all major desktop and mobile browsers and use WebGL
 * Race again the clock to clear the table in a [speedrun](https://billiards.tailuge.workers.dev/speedrun/index.html).
 * Customise your [cue](https://billiards.tailuge.workers.dev/cue) and [emblem](https://billiards.tailuge.workers.dev/wall) for other players to see
 * Sit a hand curated [exam](https://billiards.tailuge.workers.dev/exam/index.html) to asses your level of play. 
+* Invite friends and play to win as many games as you can in 30 mins in [hourly arenas](https://billiards.tailuge.workers.dev/arena.html) ([lichess.org](https://lichess.org/) style)
 
 ## Features
 
