@@ -162,7 +162,9 @@ export class LobbyIndicator {
     NetworkLogger.logLobby("init")
 
     const userId = Session.getInstance().clientId
-    const userName = Session.getInstance().playername
+    const userName = this.replayMode
+      ? "replay"
+      : Session.getInstance().playername
 
     this.messagingClient = new MessagingClient({
       baseUrl: this.messagingUrl,
