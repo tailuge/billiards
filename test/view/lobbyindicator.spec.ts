@@ -155,15 +155,7 @@ describe("LobbyIndicator", () => {
     // practiceMode defaults to true for every rule except nineball, so a
     // three-cushion match still has practiceMode set. The click must not
     // bounce the player back to the lobby.
-    Session.init(
-      "p1",
-      "Player 1",
-      "table-1",
-      false,
-      false,
-      false,
-      true
-    )
+    Session.init("p1", "Player 1", "table-1", false, false, false, true)
     Session.getInstance().setOpponentClientId("p2")
 
     const mockRules = { rulename: "threecushion" } as any
