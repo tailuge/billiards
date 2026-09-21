@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>Optimiser</title>
@@ -59,9 +59,9 @@
             max-width: 350px;
           "
         >
-          <button id="simBtn" disabled>View Shot</button>
-          <button id="saveBtn" disabled>Save JSON</button>
-          <button id="simplifyBtn" disabled>Simplify</button>
+          <button id="simBtn" type="button" disabled>View Shot</button>
+          <button id="saveBtn" type="button" disabled>Save JSON</button>
+          <button id="simplifyBtn" type="button" disabled>Simplify</button>
           <label class="tol-label"
             >MinDist(mm):<input
               type="range"
@@ -99,8 +99,8 @@
             <option value="nm">Nelder-Mead</option>
             <option value="pso">PSO</option>
           </select>
-          <button id="optBtn" disabled>Optimise</button>
-          <button id="stopBtn" disabled>Stop</button>
+          <button id="optBtn" type="button" disabled>Optimise</button>
+          <button id="stopBtn" type="button" disabled>Stop</button>
         </div>
         <span id="status">Click 'view shot' to see the simulated path</span>
         <span id="optStatus">Iterations:0</span>
@@ -131,6 +131,7 @@
       <canvas id="c" style="margin-top: 0; border: 1px solid #ccc"></canvas>
       <button
         id="playBtn"
+        type="button"
         style="position: absolute; bottom: 4px; right: 36px; font-size: 10px"
         disabled
       >
@@ -138,6 +139,7 @@
       </button>
       <button
         id="editBtn"
+        type="button"
         style="position: absolute; bottom: 4px; right: 4px; font-size: 10px"
         disabled
       >
