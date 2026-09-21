@@ -1012,12 +1012,15 @@
         <a href="https://github.com/tailuge/billiards">GitHub 프로젝트 페이지</a
         >에서, 리더보드는
         <a href="https://scoreboard-tailuge.vercel.app/leaderboard">여기</a>에서
-        확인할 수 있습니다.
+        확인할 수 있습니다. (<a
+          href="https://blog.naver.com/jasuil/224416229214"
+          target="_blank"
+          >네이버 블로그 소개글</a
+        >)
       </p>
     </footer>
 
     <script>
-      // Fire-and-forget usage tracking (skips localhost)
       if (!["localhost", "127.0.0.1"].includes(location.hostname)) {
         fetch("https://scoreboard-tailuge.vercel.app/api/usage/korean", {
           method: "PUT",
