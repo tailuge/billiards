@@ -426,7 +426,7 @@ async function runParallel(tasks) {
       const correlationId = task.id || `task-${i}-${Date.now()}`;
 
       const handler = (e) => {
-        if (e.data.id === correlationId && (e.data.type === 'COMPLETE' || e.data.type === 'ERROR')) {
+        if (e.data.id === correlationId &amp;&amp; (e.data.type === 'COMPLETE' || e.data.type === 'ERROR')) {
           worker.removeEventListener('message', handler);
           e.data.type === 'COMPLETE' ? resolve(e.data) : reject(e.data);
         }
@@ -441,7 +441,7 @@ async function runParallel(tasks) {
 }
 </pre>
 
-      <h3>8. Universal Runtime Architecture (Web & Node)</h3>
+      <h3>8. Universal Runtime Architecture (Web &amp; Node)</h3>
       <p>
         The core <code>worker.js</code> logic can be executed seamlessly in
         Node.js using <code>node:worker_threads</code> by injecting a tiny
@@ -468,7 +468,7 @@ const nodeFriendlyWrapper = `
 const worker = new Worker(nodeFriendlyWrapper, { eval: true });
 </pre>
 
-      <h3>9. High-Scale Parallelism & Search</h3>
+      <h3>9. High-Scale Parallelism &amp; Search</h3>
       <p>
         For optimization tasks (e.g., searching for a specific shot), use the
         multi-platform <code>ww.js</code> module. It provides a

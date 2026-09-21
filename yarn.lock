@@ -653,6 +653,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@html-validate/stylish@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@html-validate/stylish@npm:6.0.0"
+  checksum: 10c0/f0bd3b53ead31d7f4e911e399356b6c8760a69e6e54c9f593e8a7acdadbe9427be487ea7be3ab3e0c957a4f910a9a79bc41907772e00ce5199964e9125fd7418
+  languageName: node
+  linkType: hard
+
 "@humanfs/core@npm:^0.19.2":
   version: 0.19.2
   resolution: "@humanfs/core@npm:0.19.2"
@@ -1793,6 +1800,15 @@ __metadata:
   version: 0.3.6
   resolution: "@pkgr/core@npm:0.3.6"
   checksum: 10c0/153f0f4563f505faeba13c733efa0e05e467ce1c6b941055a5fd3b4560da60fbf1dff4b11da0075f034ddda11f2842b90395f60895dde5825875b616edccc11c
+  languageName: node
+  linkType: hard
+
+"@sidvind/better-ajv-errors@npm:7.0.0":
+  version: 7.0.0
+  resolution: "@sidvind/better-ajv-errors@npm:7.0.0"
+  peerDependencies:
+    ajv: ^8.0.0
+  checksum: 10c0/8ac190b8f956c4e19384d80b73eb9f2e0e9f10c9bda95a4e3b1fa2899cbd7967826248f6e01f4fcbcd5fc5e2615dcdf63fe688745027a89d3d66d2c6d9b5fa47
   languageName: node
   linkType: hard
 
@@ -3233,6 +3249,7 @@ __metadata:
     eslint-plugin-html: "npm:8.2.0"
     eslint-plugin-sonarjs: "npm:4.2.1"
     fflate: "npm:^0.8.3"
+    html-validate: "npm:^11.16.0"
     http-server: "npm:^14.1.1"
     interactjs: "npm:1.10.28"
     jest: "npm:30.5.2"
@@ -4990,6 +5007,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html-validate@npm:^11.16.0":
+  version: 11.16.0
+  resolution: "html-validate@npm:11.16.0"
+  dependencies:
+    "@html-validate/stylish": "npm:^6.0.0"
+    "@sidvind/better-ajv-errors": "npm:7.0.0"
+    ajv: "npm:^8.0.0"
+    kleur: "npm:^4.1.0"
+    prompts: "npm:^2.0.0"
+    semver: "npm:^7.0.0"
+  peerDependencies:
+    "@jest/globals": ^29.0.3 || ^30.0.0
+    "@vitest/expect": ^3.2.0 || ^4.0.1 || ^5.0.0
+    jest: ^29.0.3 || ^30.0.0
+    jest-snapshot: ^29.0.3 || ^30.0.0
+    vitest: ^3.2.0 || ^4.0.1 || ^5.0.0
+  peerDependenciesMeta:
+    "@jest/globals":
+      optional: true
+    "@vitest/expect":
+      optional: true
+    jest:
+      optional: true
+    jest-snapshot:
+      optional: true
+    vitest:
+      optional: true
+  bin:
+    html-validate: bin/html-validate.mjs
+  checksum: 10c0/7f055be6b0ff7174c2a801c5139c041551f677a4c2152fc18c3edf2225ed23854ca9368ad89eed43ca48329391959d54503edca2f3aa08b6b36d39d5717cf588
+  languageName: node
+  linkType: hard
+
 "htmlparser2@npm:^10.0.0":
   version: 10.1.0
   resolution: "htmlparser2@npm:10.1.0"
@@ -6178,6 +6228,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"kleur@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "kleur@npm:3.0.3"
+  checksum: 10c0/cd3a0b8878e7d6d3799e54340efe3591ca787d9f95f109f28129bdd2915e37807bf8918bb295ab86afb8c82196beec5a1adcaf29042ce3f2bd932b038fe3aa4b
+  languageName: node
+  linkType: hard
+
+"kleur@npm:^4.1.0":
+  version: 4.1.5
+  resolution: "kleur@npm:4.1.5"
+  checksum: 10c0/e9de6cb49657b6fa70ba2d1448fd3d691a5c4370d8f7bbf1c2f64c24d461270f2117e1b0afe8cb3114f13bbd8e51de158c2a224953960331904e636a5e4c0f2a
+  languageName: node
+  linkType: hard
+
 "launch-editor@npm:^2.14.1":
   version: 2.14.1
   resolution: "launch-editor@npm:2.14.1"
@@ -7173,6 +7237,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prompts@npm:^2.0.0":
+  version: 2.4.2
+  resolution: "prompts@npm:2.4.2"
+  dependencies:
+    kleur: "npm:^3.0.3"
+    sisteransi: "npm:^1.0.5"
+  checksum: 10c0/16f1ac2977b19fe2cf53f8411cc98db7a3c8b115c479b2ca5c82b5527cd937aa405fa04f9a5960abeb9daef53191b53b4d13e35c1f5d50e8718c76917c5f1ea4
+  languageName: node
+  linkType: hard
+
 "proxy-addr@npm:^2.0.7":
   version: 2.0.7
   resolution: "proxy-addr@npm:2.0.7"
@@ -7557,7 +7631,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.5, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.7.2, semver@npm:^7.7.3, semver@npm:^7.8.5":
+"semver@npm:^7.0.0, semver@npm:^7.3.5, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.7.2, semver@npm:^7.7.3, semver@npm:^7.8.5":
   version: 7.8.5
   resolution: "semver@npm:7.8.5"
   bin:
@@ -7742,6 +7816,13 @@ __metadata:
     once: "npm:^1.3.1"
     simple-concat: "npm:^1.0.0"
   checksum: 10c0/b0649a581dbca741babb960423248899203165769747142033479a7dc5e77d7b0fced0253c731cd57cf21e31e4d77c9157c3069f4448d558ebc96cf9e1eebcf0
+  languageName: node
+  linkType: hard
+
+"sisteransi@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "sisteransi@npm:1.0.5"
+  checksum: 10c0/230ac975cca485b7f6fe2b96a711aa62a6a26ead3e6fb8ba17c5a00d61b8bed0d7adc21f5626b70d7c33c62ff4e63933017a6462942c719d1980bb0b1207ad46
   languageName: node
   linkType: hard
 
