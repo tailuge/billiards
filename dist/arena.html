@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Billiards Arena</title>
+    <meta
+      name="description"
+      content="Free hourly billiards arenas for nine-ball, eight-ball and snooker. Join, play under the clock, compare scores and climb the leaderboard — no account needed."
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -37,10 +41,371 @@
         background: #1a1a1a;
         color: #e0e0e0;
       }
+
+      /* Site index footer. Sits outside <arena-app> (whose shadow root has no
+         <slot>) as static light-DOM markup so crawlers see every link at
+         load; the <details> is collapsed only for layout, not for indexing. */
+      .site-links {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0.35rem 0.5rem;
+        font-family: Exo, sans-serif;
+        font-weight: 200;
+        font-size: 0.7rem;
+        line-height: 1.35;
+        text-align: center;
+      }
+
+      .site-links a {
+        color: #05c;
+        text-decoration: none;
+      }
+
+      .site-links a:hover {
+        text-decoration: underline;
+      }
+
+      html[theme="dark"] .site-links a {
+        color: #6ba3f5;
+      }
+
+      .site-links-more summary {
+        cursor: pointer;
+        list-style: none;
+        color: #757575;
+        opacity: 0.85;
+      }
+
+      html[theme="dark"] .site-links-more summary {
+        color: #aaa;
+      }
+
+      .site-links-more summary::-webkit-details-marker {
+        display: none;
+      }
+
+      /* Keep an affordance once the default triangle is removed */
+      .site-links-more summary::after {
+        content: " ▾";
+      }
+
+      .site-links-more[open] summary::after {
+        content: " ▴";
+      }
+
+      .site-links-more {
+        width: 100%;
+        max-width: min(52rem, calc(100vw - 2rem));
+      }
+
+      .site-links-panel {
+        column-count: 2;
+        text-align: left;
+        white-space: normal;
+        padding: 0.75rem;
+      }
+
+      @media (width <= 30rem) {
+        .site-links-panel {
+          column-count: 1;
+        }
+      }
+
+      .site-links-panel h2 {
+        font-size: 0.75rem;
+        margin: 0 0 0.25rem;
+        color: #757575;
+        break-after: avoid;
+      }
+
+      html[theme="dark"] .site-links-panel h2 {
+        color: #999;
+      }
+
+      .site-links-panel ul {
+        margin: 0 0 0.75rem;
+        padding-left: 1rem;
+        list-style: none;
+      }
+
+      .site-links-panel li {
+        margin-bottom: 0.45rem;
+        break-inside: avoid;
+      }
+
+      .site-links-links {
+        margin: 0;
+        line-height: 1.9;
+      }
     </style>
   </head>
   <body>
+    <h1 hidden>Billiards Arena</h1>
     <arena-app></arena-app>
+
+    <nav class="site-links" aria-label="Billiards pages">
+      <details class="site-links-more">
+        <summary>
+          Thanks for playing on tailuge/billiards — tap to unfold every game
+          mode and feature.
+        </summary>
+
+        <div class="site-links-panel">
+          <h2>Play</h2>
+          <ul>
+            <li>
+              <a href="https://billiards.tailuge.workers.dev/?practice=true"
+                >Nine ball</a
+              >
+              make a break and share replay link with friends
+            </li>
+            <li>
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;lod=4"
+                >Three cushion billiards</a
+              >
+              the ultimate test of physics and player (average on both counts).
+              You need the
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;practice=true"
+                >beginner mode</a
+              >. Try the
+              <a
+                href="https://velikodimov.github.io/billiards/dist/index.html?ruletype=threecushion&amp;practice&amp;drill"
+                >practice mode</a
+              >
+              to drill specific shots.
+            </li>
+            <li>
+              <a href="https://billiards.tailuge.workers.dev/?ruletype=sagu"
+                >Sagu</a
+              >
+              Korean four-ball carom game. Try
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=sagu&amp;tableSize=5"
+                >sagu on a 5ft table</a
+              >.
+            </li>
+            <li>
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=snooker&amp;lod=4&amp;tableSize=12"
+                >Snooker</a
+              >
+              we await the first 147 submission to the leaderboard.
+            </li>
+            <li>
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=eightball&amp;lod=4"
+                >8-Ball</a
+              >
+              try it in Hi-Res mode!
+            </li>
+            <li>
+              Play vs the
+              <a href="https://billiards.tailuge.workers.dev/?bot=ClawBreak"
+                >Claw</a
+              >
+              and
+              <a href="https://billiards.tailuge.workers.dev/?bot=TheFarJaw"
+                >TheFarJaw</a
+              >.
+            </li>
+            <li>
+              Try
+              <a href="https://billiards.tailuge.workers.dev/lobby.html"
+                >Multiplayer online</a
+              >
+              pool lobby.
+            </li>
+            <li>
+              Try to get on the leaderboard of highest
+              <a href="https://scoreboard-tailuge.vercel.app/leaderboard"
+                >breaks</a
+              >
+              hosted on Vercel.
+            </li>
+            <li>
+              Inspect physics and tweak constants using
+              <a
+                href="https://tailuge.github.io/billiards/dist/diagrams/diagrams.html"
+                >diagrams</a
+              >.
+            </li>
+            <li>
+              Set up trick shots and
+              <a href="https://billiards.tailuge.workers.dev/practice.html"
+                >practice</a
+              >.
+            </li>
+            <li>
+              Tune three cushion
+              <a
+                href="https://tailuge.github.io/billiards/dist/diagrams/three.html"
+                >physics</a
+              >
+              and
+              <a href="https://tailuge.github.io/billiards/dist/fit/viewer.html"
+                >optimise</a
+              >
+              parameters.
+            </li>
+            <li>
+              Parallel
+              <a href="https://tailuge.github.io/billiards/dist/fit/common.html"
+                >parameter</a
+              >
+              tuning using
+              <a href="https://tailuge.github.io/billiards/dist/ww.html"
+                >Web Workers</a
+              >.
+            </li>
+            <li>
+              Three cushion trainer and
+              <a
+                href="https://velikodimov.github.io/billiards/dist/index.html?ruletype=threecushion&amp;practice&amp;drill"
+                >sensitivity analysis</a
+              >
+              from an excellent
+              <a href="https://github.com/velikodimov/billiards">fork</a>
+              of this project.
+            </li>
+            <li>
+              Another great fork for
+              <a
+                href="https://gameland.altervista.org/italian_billiards/lobby.html"
+                >Italian 5 pin</a
+              >.
+            </li>
+            <li>
+              Generate SVG and PNG
+              <a
+                href="https://billiards.tailuge.workers.dev/diagrams/export?ruletype=threecushion&amp;init=%5B0.12664656341075897%2C-0.566656768321991%2C-0.8321752548217773%2C0.6028573513031006%2C0.2764659821987152%2C0.1675983965396881%5D&amp;initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.2879289388656616%2C%22power%22%3A2.619999885559082%2C%22offset%22%3A%7B%22x%22%3A-0.28158292174339294%2C%22y%22%3A0.35101431608200073%7D%2C%22elevation%22%3A0%7D"
+                >diagrams</a
+              >
+              of shots for blog posts.
+            </li>
+            <li>
+              Race again the clock to clear the table in a
+              <a
+                href="https://billiards.tailuge.workers.dev/speedrun/index.html"
+                >speedrun</a
+              >.
+            </li>
+            <li>
+              Customise your
+              <a href="https://billiards.tailuge.workers.dev/cue">cue</a>
+              and
+              <a href="https://billiards.tailuge.workers.dev/wall">emblem</a>
+              for other players to see
+            </li>
+            <li>
+              Sit a hand curated
+              <a href="https://billiards.tailuge.workers.dev/exam/index.html"
+                >exam</a
+              >
+              to assess your level of play.
+            </li>
+            <li>
+              Invite friends and play to win as many games as you can in 30 mins
+              in
+              <a href="https://billiards.tailuge.workers.dev/arena.html"
+                >hourly arenas</a
+              >
+              (<a href="https://lichess.org/">lichess.org</a> style)
+            </li>
+          </ul>
+
+          <h2>Features</h2>
+          <ul>
+            <li>Backspin, sidespin and cushion bounces well modeled.</li>
+            <li>
+              Presentation using WebGL in any modern browser on mobile, linux,
+              mac or windows.
+            </li>
+            <li>Record and playback breaks.</li>
+            <li>Two player online mode with nchan nginx server.</li>
+            <li>Nine ball, snooker, three cushion and Sagu billiards rules.</li>
+            <li>
+              Deploys to GitHub Pages, Vercel and Render with GitHub Actions.
+            </li>
+            <li>
+              Runs on and was developed mostly on a potato e.g. Raspberry Pi 4.
+            </li>
+          </ul>
+
+          <h2>Elsewhere</h2>
+          <p class="site-links-links">
+            <a
+              href="https://forums.azbilliards.com/threads/open-source-three-cushion-simulator.587516/"
+              >AZBilliards</a
+            >
+            ·
+            <a
+              href="https://forums.azbilliards.com/threads/three-cushion-exam.588249/"
+              >AZBilliards</a
+            >
+            ·
+            <a
+              href="https://forums.azbilliards.com/threads/speedrun-open-source.588290/"
+              >AZBilliards</a
+            >
+            ·
+            <a href="https://tailuge.itch.io/">itch.io</a>
+            ·
+            <a
+              href="https://www.thesnookerforum.co.uk/board/forum/other-cuesports/billiards/1045334-3-cushion-billiards"
+              >SnookerForum</a
+            >
+            ·
+            <a href="https://gamejolt.com/games/billiards/1083832">GameJolt</a>
+            ·
+            <a
+              href="https://www.reddit.com/r/billiards/comments/1upm8vu/speedrun/"
+              >Reddit</a
+            >
+            ·
+            <a href="https://billard-aktuell.de/forum/viewtopic.php?t=59609"
+              >billard-aktuell</a
+            >
+            ·
+            <a href="https://blog.naver.com/jasuil/224416229214">Naver</a>
+            ·
+            <a
+              href="https://forums.azbilliards.com/threads/open-source-snooker-simulator.589056/"
+              >AZBilliards</a
+            >
+            ·
+            <a href="https://billard-aktuell.de/forum/viewtopic.php?t=59628"
+              >billard-aktuell</a
+            >
+            ·
+            <a
+              href="https://www.reddit.com/r/snooker/comments/1vgyywz/open_source_simulator/"
+              >Reddit</a
+            >
+            ·
+            <a href="https://github.com/fmhy/FMHY/wiki/Gaming">FMHY</a>
+            ·
+            <a href="https://www.appimagehub.com/p/2365428/">AppImageHub</a>
+            ·
+            <a href="https://github.com/tailuge/tbilliards/releases/latest"
+              >GitHub</a
+            >
+            ·
+            <a href="https://apkpure.com/billiards/dev.tailuge.billiards"
+              >APKPure</a
+            >
+            ·
+            <a
+              href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/tailuge/wbilliards"
+              >Obtainium</a
+            >
+          </p>
+        </div>
+      </details>
+    </nav>
+
     <script src="arena.js" type="module"></script>
   </body>
 </html>
