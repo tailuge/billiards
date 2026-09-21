@@ -277,24 +277,37 @@
     </div>
 
     <div class="mt-6 flex flex-wrap justify-center gap-2 max-w-2xl px-4">
-      <button class="btn" onclick="resetLayout()">Reset Table</button>
-      <span class="w-px h-6 bg-zinc-800 mx-2 hidden sm:block"></span>
-      <button class="btn btn-logic" onclick="showLogic('cornerDistance')">
+      <button class="btn" type="button" onclick="resetLayout()">Reset Table</button>
+      <span class="w-px h-6 bg-zinc-800 mx-2 hidden sm:block"></span><button
+        type="button"
+        class="btn btn-logic"
+        onclick="showLogic('cornerDistance')"
+      >
         Object Assignment
       </button>
       <button
+        type="button"
         class="btn btn-logic"
         onclick="showLogic('calculateGhostBallImpactPoint')"
       >
         Impact Math
-      </button>
-      <button class="btn btn-logic" onclick="showLogic('isLongCushion')">
+      </button><button
+        type="button"
+        class="btn btn-logic"
+        onclick="showLogic('isLongCushion')"
+      >
         isLongCushion
-      </button>
-      <button class="btn btn-logic" onclick="showLogic('naturalLongSelect')">
+      </button><button
+        type="button"
+        class="btn btn-logic"
+        onclick="showLogic('naturalLongSelect')"
+      >
         naturalLongSelect
-      </button>
-      <button class="btn btn-logic" onclick="showLogic('checkSpinDirection')">
+      </button><button
+        type="button"
+        class="btn btn-logic"
+        onclick="showLogic('checkSpinDirection')"
+      >
         Spin Logic
       </button>
     </div>
@@ -309,6 +322,7 @@
             Function Logic
           </h3>
           <button
+            type="button"
             onclick="toggleCodeModal(false)"
             class="text-zinc-500 hover:text-white text-xl leading-none"
           >
