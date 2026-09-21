@@ -16,7 +16,7 @@ https://www.reddit.com/r/billiards/comments/1upm8vu/speedrun/
 
 https://billard-aktuell.de/forum/viewtopic.php?t=59609
 
-
+https://blog.naver.com/jasuil/224416229214
 
 ---
 
