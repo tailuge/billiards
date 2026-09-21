@@ -1,5 +1,6 @@
 import { config, color, createTrace, layout } from "./plotlyconfig"
 import { CollisionThrowPlot } from "./throw_gpt4o"
+import { R } from "../model/physics/constants"
 
 export class ThrowPlot {
   private degToRad(x: number): number {
@@ -11,7 +12,6 @@ export class ThrowPlot {
   }
 
   public plotCutAngle() {
-    const R = CollisionThrowPlot.R
     this.plot("collision-throw-roll", [0.447, 1.341, 3.129], (k) => k / R)
     this.plot("collision-throw-stun", [0.447, 1.341, 3.129], (_) => 0)
 
