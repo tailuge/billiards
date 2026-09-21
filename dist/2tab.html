@@ -13,34 +13,34 @@
   <body>
     <p>Opening two player tabs...</p>
     <script>
-    const urlParams = new URLSearchParams(window.location.search)
-    const websocketserver =
-      urlParams.get("websocketserver") ??
-      (window.location.hostname === "localhost"
-        ? "ws://localhost"
-        : "wss://billiards-network.onrender.com")
-    const ruletype = urlParams.get("ruletype") ?? "nineball"
-    const shotClock = urlParams.get("shotClock")
-    const practice = urlParams.get("practice")
-    const unique = Math.floor(Math.random() * 0xffff).toString(16)
-    let url = `index.html?ruletype=${ruletype}&websocketserver=${websocketserver}&tableId=${unique}`
-    if (shotClock) {
-      url += `&shotClock=${shotClock}`
-    }
-    if (practice) {
-      url += `&practice=${practice}`
-    }
-    console.log(`${url}&userId=p1id&userName=P1&first=true`)
-    console.log(`${url}&userId=p2id&userName=P2`)
+      const urlParams = new URLSearchParams(window.location.search)
+      const websocketserver =
+        urlParams.get("websocketserver") ??
+        (window.location.hostname === "localhost"
+          ? "ws://localhost"
+          : "wss://billiards-network.onrender.com")
+      const ruletype = urlParams.get("ruletype") ?? "nineball"
+      const shotClock = urlParams.get("shotClock")
+      const practice = urlParams.get("practice")
+      const unique = Math.floor(Math.random() * 0xffff).toString(16)
+      let url = `index.html?ruletype=${ruletype}&websocketserver=${websocketserver}&tableId=${unique}`
+      if (shotClock) {
+        url += `&shotClock=${shotClock}`
+      }
+      if (practice) {
+        url += `&practice=${practice}`
+      }
+      console.log(`${url}&userId=p1id&userName=P1&first=true`)
+      console.log(`${url}&userId=p2id&userName=P2`)
 
-    window.open(
-      `${url}&userId=p1id&userName=P1&first=true&opponent.userId=p2id&opponent.userName=P2`,
-      "_blank"
-    )
-    window.open(
-      `${url}&userId=p2id&userName=P2&opponent.userId=p1id&opponent.userName=P1`,
-      "_blank"
-    )
-  </script>
+      window.open(
+        `${url}&userId=p1id&userName=P1&first=true&opponent.userId=p2id&opponent.userName=P2`,
+        "_blank"
+      )
+      window.open(
+        `${url}&userId=p2id&userName=P2&opponent.userId=p1id&opponent.userName=P1`,
+        "_blank"
+      )
+    </script>
   </body>
 </html>

@@ -133,8 +133,7 @@
             ball-on-ball collision throw. Enjoy 8-ball, 9-ball, snooker (with
             maximum 147 break tracking), three-cushion carom, Korean four-ball
             (sagu), and trick shot practice. Play solo, challenge computer AI
-            bots (TheFarJaw and ClawBreak), pass-and-play with two players, or
-            join live online multiplayer in the
+            bots or join live online multiplayer in the
             <a href="lobby.html">billiards lobby</a>. Open source, no download
             required — just play. Looking for snooker on its own?
             <a href="snooker.html">Free online snooker</a>. Also available in
@@ -180,7 +179,7 @@
             >
           </p>
           <p class="seo-description">
-            Sharpen your cue ball control with our
+            Sharpen your cue ball control with
             <a href="practice.html">9-ball practice table</a>, test your skills
             in the <a href="exam/snooker.html">snooker training course</a> or
             <a href="exam/threecushion.html">three-cushion exam</a>, and compete
@@ -195,6 +194,7 @@
           <div class="help-footer">
             <button
               class="lobby-btn"
+              type="button"
               onclick="
                 window.location.href =
                   'https://billiards.tailuge.workers.dev/lobby'
@@ -203,7 +203,7 @@
               Visit Lobby
             </button>
             <span class="help-text">to set graphics mode and player name </span>
-            <button id="helpClose">close</button>
+            <button id="helpClose" type="button">close</button>
           </div>
         </div>
         <div id="botDebugOverlay">
@@ -221,7 +221,11 @@
           </header>
           <pre id="botDebugLog" aria-live="polite">
           <!-- loading="lazy" avoids downloading this 143KB image on initial paint since botDebugOverlay starts hidden/closed -->
-          <img src="images/billiards.png" loading="lazy" alt="Billiards Pool Game Promo - Realistic Physics Simulation">
+          <img
+            src="images/billiards.png"
+            loading="lazy"
+            alt="Billiards Pool Game Promo - Realistic Physics Simulation"
+          />
           Play free realistic pool online with accurate physics. Open source billiards simulation in your browser.
           billiards, snooker, 9-ball, pool, carom, three-cushion, online game, free, open source, ビリヤード, スヌーカー, 9ボール, 3クッション, オンラインゲーム, 無料, 당구, 스누커, 9볼, 3쿠션, 온라인 게임, 무료
           Find it on <a href="https://github.com/tailuge/billiards">github</a>
@@ -246,12 +250,20 @@
               role="group"
               aria-label="Emoji messages"
             ></div>
-            <button id="inputSend" aria-label="Send chat message">➤</button>
-            <button id="toggleChatMode" aria-label="Switch to emoji mode">
+            <button id="inputSend" type="button" aria-label="Send chat message">
+              ➤
+            </button>
+            <button
+              id="toggleChatMode"
+              type="button"
+              aria-label="Switch to emoji mode"
+            >
               <span class="chat-text-mode-icon">👾</span>
               <span class="chat-emoji-mode-icon">⌨️</span>
             </button>
-            <button id="inputClose" aria-label="Close chat input">✖</button>
+            <button id="inputClose" type="button" aria-label="Close chat input">
+              ✖
+            </button>
           </div>
         </dialog>
       </div>
@@ -291,7 +303,9 @@
             </div>
           </template>
           <div id="ballContainerWrapper" class="ballContainerWrapper">
-            <button id="openElevation" class="openElevation">+</button>
+            <button id="openElevation" type="button" class="openElevation">
+              +
+            </button>
             <div id="ballContainer" class="ballContainer">
               <div id="objectBall" class="objectBall"></div>
               <div id="cueBall" class="cueBall">
@@ -441,13 +455,9 @@
               </button>
             </div>
           </details>
-          <canvas
-            id="minimap"
-            width="252"
-            height="136"
-            aria-label="Table minimap"
-            hidden
-          ></canvas>
+          <canvas id="minimap" width="252" height="136" hidden>
+            Table minimap
+          </canvas>
           <button
             class="menuButton aim"
             title="view"
