@@ -98,10 +98,13 @@
       <h1>Data Editor</h1>
       <div>
         <input type="file" id="fileInput" accept=".json" />
-        <button onclick="document.getElementById('fileInput').click()">
+        <button
+          type="button"
+          onclick="document.getElementById('fileInput').click()"
+        >
           Load JSON
         </button>
-        <button id="saveBtn" disabled>Save JSON</button>
+        <button id="saveBtn" type="button" disabled>Save JSON</button>
       </div>
     </header>
 

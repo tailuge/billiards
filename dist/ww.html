@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>web worker integration example</title>
@@ -189,8 +189,8 @@
       <div class="left-panel">
         <textarea id="inputJson"></textarea>
         <div class="btn-row">
-          <button id="runSim">Run Simulation</button>
-          <button id="clearLog">Clear Log</button>
+          <button id="runSim" type="button">Run Simulation</button>
+          <button id="clearLog" type="button">Clear Log</button>
         </div>
       </div>
 
@@ -198,7 +198,7 @@
       <div class="right-panel">
         <canvas id="plotCanvas"></canvas>
         <div class="btn-row">
-          <button id="showResponse" disabled>
+          <button id="showResponse" type="button" disabled>
             Show Response (first 5 frames)
           </button>
         </div>
@@ -250,29 +250,33 @@ worker.postMessage(configB);
 
       <h3>2. Message Types (Worker → UI)</h3>
       <table>
-        <tr>
-          <th>type</th>
-          <th>When</th>
-          <th>Key fields</th>
-        </tr>
-        <tr>
-          <td><code>CHECKPOINT</code></td>
-          <td>At each lifecycle stage</td>
-          <td><code>label</code>, <code>t</code> (performance.now)</td>
-        </tr>
-        <tr>
-          <td><code>COMPLETE</code></td>
-          <td>Simulation finished</td>
-          <td>
-            <code>frames[]</code>, <code>outcomes[]</code>,
-            <code>computeTime</code>, <code>tableX</code>, <code>tableY</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>ERROR</code></td>
-          <td>On failure</td>
-          <td><code>error</code>, <code>stack</code></td>
-        </tr>
+        <thead>
+          <tr>
+            <th>type</th>
+            <th>When</th>
+            <th>Key fields</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>CHECKPOINT</code></td>
+            <td>At each lifecycle stage</td>
+            <td><code>label</code>, <code>t</code> (performance.now)</td>
+          </tr>
+          <tr>
+            <td><code>COMPLETE</code></td>
+            <td>Simulation finished</td>
+            <td>
+              <code>frames[]</code>, <code>outcomes[]</code>,
+              <code>computeTime</code>, <code>tableX</code>, <code>tableY</code>
+            </td>
+          </tr>
+          <tr>
+            <td><code>ERROR</code></td>
+            <td>On failure</td>
+            <td><code>error</code>, <code>stack</code></td>
+          </tr>
+        </tbody>
       </table>
 
       <h3>3. Checkpoint Labels (in order)</h3>
@@ -314,71 +318,75 @@ worker.postMessage(configB);
         >.
       </p>
       <table>
-        <tr>
-          <th>Key</th>
-          <th>Default</th>
-          <th>Description</th>
-        </tr>
-        <tr>
-          <td><code>mu</code></td>
-          <td>0.007</td>
-          <td>Rolling friction (Han)</td>
-        </tr>
-        <tr>
-          <td><code>muS</code></td>
-          <td>0.136</td>
-          <td>Sliding friction (Han)</td>
-        </tr>
-        <tr>
-          <td><code>rho</code></td>
-          <td>0.035</td>
-          <td>Spindown rate (Han)</td>
-        </tr>
-        <tr>
-          <td><code>m</code></td>
-          <td>0.23</td>
-          <td>Ball mass (kg)</td>
-        </tr>
-        <tr>
-          <td><code>R</code></td>
-          <td>0.03275</td>
-          <td>Ball radius (m)</td>
-        </tr>
-        <tr>
-          <td><code>e</code></td>
-          <td>0.86</td>
-          <td>Ball-ball coefficient of restitution</td>
-        </tr>
-        <tr>
-          <td><code>ee</code></td>
-          <td>0.84</td>
-          <td>Cushion coefficient of restitution (Mathavan)</td>
-        </tr>
-        <tr>
-          <td><code>μs</code></td>
-          <td>0.2</td>
-          <td>Table friction coefficient (Mathavan)</td>
-        </tr>
-        <tr>
-          <td><code>μw</code></td>
-          <td>0.175</td>
-          <td>Cushion friction coefficient (Mathavan)</td>
-        </tr>
-        <tr>
-          <td><code>StrongeOmegaRatio</code></td>
-          <td>1.847</td>
-          <td>Stronge omega ratio</td>
-        </tr>
-        <tr>
-          <td><code>StrongeEN</code></td>
-          <td>0.979</td>
-          <td>Stronge normal restitution</td>
-        </tr>
-        <tr>
-          <td><code>StrongeMu</code></td>
-          <td>0.161</td>
-          <td>Stronge friction coefficient</td>
-        </tr>
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Default</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>mu</code></td>
+            <td>0.007</td>
+            <td>Rolling friction (Han)</td>
+          </tr>
+          <tr>
+            <td><code>muS</code></td>
+            <td>0.136</td>
+            <td>Sliding friction (Han)</td>
+          </tr>
+          <tr>
+            <td><code>rho</code></td>
+            <td>0.035</td>
+            <td>Spindown rate (Han)</td>
+          </tr>
+          <tr>
+            <td><code>m</code></td>
+            <td>0.23</td>
+            <td>Ball mass (kg)</td>
+          </tr>
+          <tr>
+            <td><code>R</code></td>
+            <td>0.03275</td>
+            <td>Ball radius (m)</td>
+          </tr>
+          <tr>
+            <td><code>e</code></td>
+            <td>0.86</td>
+            <td>Ball-ball coefficient of restitution</td>
+          </tr>
+          <tr>
+            <td><code>ee</code></td>
+            <td>0.84</td>
+            <td>Cushion coefficient of restitution (Mathavan)</td>
+          </tr>
+          <tr>
+            <td><code>μs</code></td>
+            <td>0.2</td>
+            <td>Table friction coefficient (Mathavan)</td>
+          </tr>
+          <tr>
+            <td><code>μw</code></td>
+            <td>0.175</td>
+            <td>Cushion friction coefficient (Mathavan)</td>
+          </tr>
+          <tr>
+            <td><code>StrongeOmegaRatio</code></td>
+            <td>1.847</td>
+            <td>Stronge omega ratio</td>
+          </tr>
+          <tr>
+            <td><code>StrongeEN</code></td>
+            <td>0.979</td>
+            <td>Stronge normal restitution</td>
+          </tr>
+          <tr>
+            <td><code>StrongeMu</code></td>
+            <td>0.161</td>
+            <td>Stronge friction coefficient</td>
+          </tr>
+        </tbody>
       </table>
 
       <h3>6. Best Practices</h3>

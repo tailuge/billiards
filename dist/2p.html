@@ -62,27 +62,27 @@
         style="float: right"
       ></iframe>
     </div>
-  </body>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search)
-    if (!urlParams.has("websocketserver")) {
-      urlParams.set(
-        "websocketserver",
-        window.location.hostname === "localhost"
-          ? "ws://localhost"
-          : "wss://billiards-network.onrender.com"
-      )
-    }
-    if (!urlParams.has("ruletype")) {
-      urlParams.set("ruletype", "nineball")
-    }
-    const unique = Math.floor(Math.random() * 0xffff).toString(16)
-    urlParams.set("tableId", unique)
-    const base = `index.html?${urlParams.toString()}`
-    document.getElementById("P1").src =
-      `${base}&userId=p1id&userName=P1&first=true&opponent.userId=p2id&opponent.userName=P2`
-    document.getElementById("P2").src =
-      `${base}&userId=p2id&userName=P2&opponent.userId=p1id&opponent.userName=P1`
-  </script>
+    <script>
+      const urlParams = new URLSearchParams(window.location.search)
+      if (!urlParams.has("websocketserver")) {
+        urlParams.set(
+          "websocketserver",
+          window.location.hostname === "localhost"
+            ? "ws://localhost"
+            : "wss://billiards-network.onrender.com"
+        )
+      }
+      if (!urlParams.has("ruletype")) {
+        urlParams.set("ruletype", "nineball")
+      }
+      const unique = Math.floor(Math.random() * 0xffff).toString(16)
+      urlParams.set("tableId", unique)
+      const base = `index.html?${urlParams.toString()}`
+      document.getElementById("P1").src =
+        `${base}&userId=p1id&userName=P1&first=true&opponent.userId=p2id&opponent.userName=P2`
+      document.getElementById("P2").src =
+        `${base}&userId=p2id&userName=P2&opponent.userId=p1id&opponent.userName=P1`
+    </script>
+  </body>
 </html>

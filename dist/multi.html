@@ -84,25 +84,25 @@
         >
       </li>
     </ul>
-  </body>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search)
-    const nonlocal = urlParams.has("nonlocal")
-    const wss =
-      window.location.hostname !== "localhost" || nonlocal
-        ? "wss://billiards-network.onrender.com"
-        : "ws://localhost"
-    const shotClock = urlParams.get("shotClock")
-    const wssparam = `websocketserver=${wss}`
-    const elts = document.getElementsByClassName("addwss")
-    for (const elt of elts) {
-      let href = elt.href
-      href += `&${wssparam}`
-      if (shotClock) {
-        href += `&shotClock=${shotClock}`
+    <script>
+      const urlParams = new URLSearchParams(window.location.search)
+      const nonlocal = urlParams.has("nonlocal")
+      const wss =
+        window.location.hostname !== "localhost" || nonlocal
+          ? "wss://billiards-network.onrender.com"
+          : "ws://localhost"
+      const shotClock = urlParams.get("shotClock")
+      const wssparam = `websocketserver=${wss}`
+      const elts = document.getElementsByClassName("addwss")
+      for (const elt of elts) {
+        let href = elt.href
+        href += `&${wssparam}`
+        if (shotClock) {
+          href += `&shotClock=${shotClock}`
+        }
+        elt.href = href
       }
-      elt.href = href
-    }
-  </script>
+    </script>
+  </body>
 </html>
