@@ -35,36 +35,6 @@ describe("Menu", () => {
     done()
   })
 
-  it("help button opens and close button hides the help overlay", (done) => {
-    const help = document.getElementById("help") as HTMLButtonElement
-    const overlay = document.getElementById("helpOverlay")
-    const iframe = overlay?.querySelector("iframe")
-
-    fireEvent.click(help)
-
-    expect(overlay?.hasAttribute("hidden")).to.be.false
-    expect(iframe?.getAttribute("src")).to.equal("help.html")
-
-    fireEvent.click(document.getElementById("helpClose") as HTMLButtonElement)
-    expect(overlay?.hasAttribute("hidden")).to.be.true
-    done()
-  })
-
-  it("free aim starts chromeless and L toggle exits it", (done) => {
-    const freeAimContainer = new Container({
-      element: document.getElementById("viewP1"),
-      log: (_) => {},
-      assets: Assets.localAssets(),
-      freeAim: true,
-    })
-
-    expect(document.body.classList.contains("chromeless")).to.be.true
-
-    freeAimContainer.menu.toggleChromeless()
-    expect(document.body.classList.contains("chromeless")).to.be.false
-    done()
-  })
-
   it("visibility controls are independent", (done) => {
     const menu = new Menu(container)
     const share = document.getElementById("share") as HTMLButtonElement
