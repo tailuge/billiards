@@ -149,18 +149,18 @@
     <svg class="billiards-table"></svg>
 
     <div id="controls">
-      <button id="play-btn" class="btn">Play in game</button>
-      <button id="analyze-btn" class="btn">Analyse</button>
-      <button id="setup-btn" class="btn">Setup</button>
-      <button id="edit-btn" class="btn">Edit</button>
-      <button id="png-btn" class="btn">Open PNG</button>
+      <button id="play-btn" class="btn" type="button">Play in game</button>
+      <button id="analyze-btn" class="btn" type="button">Analyse</button>
+      <button id="setup-btn" class="btn" type="button">Setup</button>
+      <button id="edit-btn" class="btn" type="button">Edit</button>
+      <button id="png-btn" class="btn" type="button">Open PNG</button>
     </div>
 
     <div id="panels">
       <div>
         <div class="panel-header">
           <h2>Simulation SVG</h2>
-          <button class="btn btn-sm" onclick="selectAll('simulation-json')">
+          <button class="btn btn-sm" type="button" onclick="selectAll('simulation-json')">
             Select All
           </button>
         </div>
@@ -169,7 +169,7 @@
       <div>
         <div class="panel-header">
           <h2>Computed SVG</h2>
-          <button class="btn btn-sm" onclick="selectAll('computed-svg')">
+          <button class="btn btn-sm" type="button" onclick="selectAll('computed-svg')">
             Select All
           </button>
         </div>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>Common Optimiser</title>
@@ -89,10 +89,10 @@
     <div class="container">
       <div class="controls">
         <div style="display: flex; gap: 1px; align-items: center">
-          <button id="loadBtn">Load shots.json</button>
-          <button id="clearBtn">Clear All</button>
-          <button id="resetBtn">Reset</button>
-          <button id="restoreBestBtn" disabled>Restore Best</button>
+          <button id="loadBtn" type="button">Load shots.json</button>
+          <button id="clearBtn" type="button">Clear All</button>
+          <button id="resetBtn" type="button">Reset</button>
+          <button id="restoreBestBtn" type="button" disabled>Restore Best</button>
         </div>
 
         <div class="file-list" id="fileList">
@@ -126,8 +126,8 @@
             <option value="nm">Nelder-Mead</option>
             <option value="pso">PSO</option>
           </select>
-          <button id="optBtn" disabled>Start Optimisation</button>
-          <button id="stopBtn" disabled>Stop</button>
+          <button id="optBtn" type="button" disabled>Start Optimisation</button>
+          <button id="stopBtn" type="button" disabled>Stop</button>
         </div>
 
         <div id="status" style="font-weight: bold; margin-top: 2px">
