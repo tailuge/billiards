@@ -16,6 +16,11 @@
     <lastmod>2026-08-23</lastmod>
   </url>
   <url>
+    <loc>https://tailuge.github.io/billiards/dist/arena.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/arena" />
+    <lastmod>2026-09-22</lastmod>
+  </url>
+  <url>
     <loc>https://tailuge.github.io/billiards/exam/index.html</loc>
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/exam/" />
     <lastmod>2026-08-23</lastmod>
