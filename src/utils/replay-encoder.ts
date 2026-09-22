@@ -20,7 +20,8 @@ export class ReplayEncoder {
     score: number = 0,
     wholeGame: boolean = false,
     players?: { player1: string; player2: string },
-    tableSize?: number
+    tableSize?: number,
+    image?: string
   ) {
     const state: any = {
       init: init,
@@ -36,6 +37,9 @@ export class ReplayEncoder {
     }
     if (tableSize !== undefined && tableSize !== 10) {
       state.tableSize = tableSize
+    }
+    if (image) {
+      state.image = image
     }
     return state
   }

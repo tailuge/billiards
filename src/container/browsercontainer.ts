@@ -172,20 +172,29 @@ export class BrowserContainer {
   }
 
   start() {
-    // If replay state embeds a non-default tableSize and the URL doesn't have
-    // one yet, add it and redirect so that TableGeometry, scaleTableModel, and
-    // Camera all see the correct value from the start.
+    // If replay state embeds a non-default tableSize or an image URL and the
+    // URL doesn't have them yet, add them and redirect so that all subsystems
+    // see the correct values from the start.
     if (this.replay) {
       try {
         const state = this.parse(this.replay)
+        const params = new URLSearchParams(globalThis.location.search)
         const stateTableSize = state.tableSize
-        if (
+        const stateImage: string | undefined = state.image
+        const needsTableSize =
           stateTableSize !== undefined &&
           stateTableSize !== 10 &&
-          !new URLSearchParams(globalThis.location.search).has("tableSize")
-        ) {
+          !params.has("tableSize")
+        const needsImage =
+          stateImage !== undefined && !params.has("image")
+        if (needsTableSize || needsImage) {
           const url = new URL(globalThis.location.href)
-          url.searchParams.set("tableSize", String(stateTableSize))
+          if (needsTableSize) {
+            url.searchParams.set("tableSize", String(stateTableSize))
+          }
+          if (needsImage) {
+            url.searchParams.set("image", stateImage)
+          }
           globalThis.location.href = url.toString()
           return
         }

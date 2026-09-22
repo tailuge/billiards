@@ -89,7 +89,8 @@ export class Recorder {
       Session.getInstance().myScore(),
       true,
       this.getPlayerNames(),
-      this.getTableSize()
+      this.getTableSize(),
+      this.getImage()
     )
   }
 
@@ -121,7 +122,8 @@ export class Recorder {
       0,
       false,
       this.getPlayerNames(),
-      this.getTableSize()
+      this.getTableSize(),
+      this.getImage()
     )
   }
 
@@ -135,7 +137,8 @@ export class Recorder {
         this.container.rules.previousBreak,
         false,
         this.getPlayerNames(),
-        this.getTableSize()
+        this.getTableSize(),
+        this.getImage()
       )
     }
     return undefined
@@ -251,5 +254,10 @@ export class Recorder {
   private getTableSize(): number {
     const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
     return parseFloat(urlParams.get("tableSize") || "10")
+  }
+
+  private getImage(): string | undefined {
+    const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
+    return urlParams.get("image") ?? undefined
   }
 }
