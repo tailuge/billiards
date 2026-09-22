@@ -139,7 +139,26 @@ export class Assets {
   }
 
   private customizeTableScene(scene, cfg: TableCustomization): void {
-    // Sync pass: fix cloth UVs, recolor cushions
+    this.applyClothColors(scene, cfg)
+
+    // Apply cloth texture: procedural solid color, or loaded from file
+    if (cfg.clothTextureColor !== undefined) {
+      this.applyCloth(scene, Assets.clothTexture(cfg.clothTextureColor), cfg)
+      return
+    }
+    if (cfg.texturePath === undefined) return
+    new TextureLoader().load(
+      cfg.texturePath,
+      (texture) => {
+        this.applyCloth(scene, texture, cfg)
+      },
+      undefined,
+      () => console.warn("Failed to load table cloth texture")
+    )
+  }
+
+  /** Recolour the cushions and the shadow band between cloth and cushions. */
+  applyClothColors(scene, cfg: TableCustomization = {}): void {
     scene.traverse((child) => {
       if (!child.isMesh) return
       const materials = Array.isArray(child.material)
@@ -151,8 +170,6 @@ export class Assets {
           if (cfg.clothshadeColor === undefined) continue
           mat.color.set(cfg.clothshadeColor)
           mat.needsUpdate = true
-        } else if (name.includes("cloth")) {
-          this.fixClothUVs(child)
         } else if (name.includes("cushion")) {
           if (cfg.cushionColor === undefined) continue
           mat.color.set(cfg.cushionColor)
@@ -160,25 +177,32 @@ export class Assets {
         }
       }
     })
+  }
 
-    // Apply cloth texture: procedural solid color, or loaded from file
-    if (cfg.clothTextureColor !== undefined) {
-      this.applyClothTexture(
-        scene,
-        Assets.clothTexture(cfg.clothTextureColor),
-        cfg
-      )
-      return
-    }
-    if (cfg.texturePath === undefined) return
-    new TextureLoader().load(
-      cfg.texturePath,
-      (texture) => {
-        this.applyClothTexture(scene, texture, cfg)
-      },
-      undefined,
-      () => console.warn("Failed to load table cloth texture")
-    )
+  /**
+   * Put a texture on the cloth. Models ship the cloth without usable UVs (and
+   * the planar fix only covers the model's long axis), so the repeat has to
+   * stretch V to fill the image - hence the textureRepeatV in the configs.
+   * Shared by the size customisations and the ?image= reveal.
+   */
+  applyCloth(scene, texture, cfg: TableCustomization = {}): void {
+    this.fixClothUVsInScene(scene)
+    this.applyClothTexture(scene, texture, cfg)
+  }
+
+  /** Cloth meshes the model ships without usable UVs get planar ones. */
+  private fixClothUVsInScene(scene): void {
+    scene.traverse((child) => {
+      if (!child.isMesh) return
+      const materials = Array.isArray(child.material)
+        ? child.material
+        : [child.material]
+      for (const mat of materials) {
+        const name = mat.name?.toLowerCase() ?? ""
+        if (name.includes("clothshade") || !name.includes("cloth")) continue
+        this.fixClothUVs(child)
+      }
+    })
   }
 
   private static clothTexture(color: number): CanvasTexture {
@@ -218,6 +242,7 @@ export class Assets {
     })
   }
 
+  /** Gives the cloth usable UVs when the model ships without them. */
   private fixClothUVs(mesh): void {
     const geometry = mesh.geometry as BufferGeometry
     if (!geometry) return

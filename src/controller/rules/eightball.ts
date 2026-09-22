@@ -282,6 +282,7 @@ export class EightBall implements Rules {
 
     this.currentBreak += pots.length
     session.addMyScore(pots.length)
+    this.updateReveal()
 
     this.container.sound.playSuccess(table.inPockets())
 
@@ -305,6 +306,15 @@ export class EightBall implements Rules {
 
     this.container.sendEvent(new WatchEvent(table.serialise()))
     return new Aim(this.container)
+  }
+
+  /**
+   * Advance the ?image= cloth reveal with the score. Levels only ever rise, so
+   * repeats cost nothing, and a missing or unloaded image is a no-op that
+   * leaves the cloth grey.
+   */
+  private updateReveal(): void {
+    this.container.view.reveal?.reveal(Session.getInstance().myScore() / 9)
   }
 
   private respotEightBallFoul(): Controller {

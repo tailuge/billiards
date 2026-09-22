@@ -180,6 +180,33 @@ export class View {
       this.portraitMode,
       this.assets.room?.xWall ?? 0
     )
+    this.applyRevealTexture()
+  }
+
+  /**
+   * ?image= takes over the eightball cloth on every table size. RevealTexture
+   * always supplies a full hidden texture, so this is safe to call while the
+   * image is still in flight; the reveal level is replayed once it arrives,
+   * and an unavailable image just leaves the cloth grey. The reveal itself is
+   * driven by the eightball rules as the score goes up.
+   *
+   * The cushions and shadow are greyed to match that placeholder cloth, using
+   * the same config the per-size cloth customisations feed.
+   */
+  private applyRevealTexture(): void {
+    const reveal = this.reveal
+    if (!reveal || this.assets.ruletype !== "eightball") return
+    this.assets.applyClothColors(this.assets.table, {
+      cushionColor: 0x6b6b6b,
+      clothshadeColor: 0x0d0d0d,
+    })
+    // Same recipe the per-size cloth textures use, so the reveal picks up the
+    // planar UV fix and the V repeat that fills the image.
+    this.assets.applyCloth(this.assets.table, reveal.texture, {
+      clothColor: 0xffffff,
+      textureRepeatU: 1,
+      textureRepeatV: 2,
+    })
   }
 
   ballToCheck = 0
