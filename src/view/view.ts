@@ -9,6 +9,7 @@ import { renderer } from "../utils/webgl"
 import { Assets } from "./assets"
 import { Snooker } from "../controller/rules/snooker"
 import { Minimap } from "./minimap"
+import { RevealTexture } from "./revealtexture"
 import { Portraits, PortraitMode } from "./portraits"
 
 export class View {
@@ -27,6 +28,8 @@ export class View {
   drawing: Drawing
   minimap: Minimap
   portraits: Portraits
+  /** ?image= source, loading in the background; not displayed yet. */
+  readonly reveal: RevealTexture | null
 
   private readonly portraitMode: PortraitMode
 
@@ -70,6 +73,7 @@ export class View {
       () => this.camera.camera
     )
     this.minimap = new Minimap(this.scene, this.renderer)
+    this.reveal = RevealTexture.fromLocation(this.renderer)
     this.initialiseScene()
     this.camera.tableMesh = this.table.mesh
   }

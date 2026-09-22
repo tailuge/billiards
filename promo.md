@@ -74,3 +74,8 @@ https://webmaster.yandex.com/site/https:billiards.tailuge.workers.dev:443/dashbo
 https://searchadvisor.naver.com/console/site/summary?site=https%3A%2F%2Fbilliards.tailuge.workers.dev
 
 
+backlinks
+
+https://webgames.me/play/billards-by-tailuge
+
+https://iogame.io/games/billards-by-tailuge
