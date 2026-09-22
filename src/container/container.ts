@@ -285,17 +285,20 @@ export class Container {
   }
 
   /**
-   * Advances the ?image= cloth reveal from the eightball score. The reveal is
-   * a pure function of the score (score / 8), so driving it from the single
-   * score-update funnel keeps live play, replay and resume consistent without
-   * the rules reaching into the view. `reveal` is null without ?image=, ignores
-   * regressions, and replays any level requested before the image loads.
+   * Advances the ?image= cloth reveal from the score, driving it from the
+   * single score-update funnel so live play, replay and resume stay consistent
+   * without the rules reaching into the view. Eightball fills the cloth per
+   * ball up to the 8-ball (score / 8); reveal mode counts every ball, so it
+   * fills on the last pot (score / 15). `reveal` is null without ?image=,
+   * ignores regressions, and replays levels requested before the image loads.
    */
   private updateReveal(session: Session): void {
-    if (this.rules.rulename !== "eightball") {
-      return
+    const score = session.myScore()
+    if (this.rules.rulename === "eightball") {
+      this.view.reveal?.reveal(score / 8)
+    } else if (this.rules.rulename === "reveal") {
+      this.view.reveal?.reveal(score / 15)
     }
-    this.view.reveal?.reveal(session.myScore() / 8)
   }
 
   private applyHandicapTargets(

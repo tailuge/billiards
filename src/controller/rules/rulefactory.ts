@@ -5,6 +5,7 @@ import { Snooker } from "./snooker"
 import { ThreeCushion } from "./threecushion"
 import { Drill } from "./drill"
 import { Sagu } from "./sagu"
+import { Reveal } from "./reveal"
 
 export class RuleFactory {
   static create(ruletype, container): Rules {
@@ -17,6 +18,8 @@ export class RuleFactory {
         return new Drill(container)
       case "eightball":
         return new EightBall(container)
+      case "reveal":
+        return new Reveal(container)
       case "snooker":
         return new Snooker(container)
       default:

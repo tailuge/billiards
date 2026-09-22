@@ -116,7 +116,9 @@ export class Aim extends ControllerBase {
     this.container.table.cue.aimInputs.setDisabled(true)
     const rulename = this.container.rules.rulename
     if (
-      (rulename === "eightball" || rulename === "nineball") &&
+      (rulename === "eightball" ||
+        rulename === "nineball" ||
+        rulename === "reveal") &&
       isFirstShot(this.container.recorder)
     ) {
       this.container.table.cue.aim.power = Math.fround(
