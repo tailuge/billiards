@@ -104,15 +104,4 @@ describe("Reveal Rules", () => {
     expect(reveal.update(outcome)).to.be.an.instanceof(End)
     expect(Session.getInstance().myScore()).to.equal(1)
   })
-
-  describe("?image= reveal", () => {
-    it("fills the cloth on the last pot (score / 15)", () => {
-      const captured: { value?: number } = {}
-      ;(container.view as any).reveal = {
-        reveal: (fraction: number) => (captured.value = fraction),
-      }
-      container.updateScoreHud(15, 0, 0)
-      expect(captured.value).to.equal(1)
-    })
-  })
 })

@@ -48,6 +48,7 @@ import { BallTray } from "../view/ball-tray"
 import { ExportUtils } from "../utils/export-utils"
 import { ResumeStore } from "../utils/resumestore"
 import { share, shorten } from "../utils/shorten"
+import { RevealTracker } from "../utils/revealtracker"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -99,6 +100,7 @@ export class Container {
   }
   private hudActivePlayer: ActivePlayer = 0
   private wasReplay: boolean = false
+  private revealTracker: RevealTracker | null = null
 
   lastShotInit?: string
   lastShotData?: string
@@ -132,6 +134,9 @@ export class Container {
     this.rules = RuleFactory.create(ruletype, this)
     this.table = this.rules.table()
     this.view = new View(element, this.table, assets, portraitMode)
+    if (this.rules.rulename === "reveal" && this.view.reveal) {
+      this.revealTracker = new RevealTracker(this.view.reveal, 15)
+    }
     this.table.cue.aimInputs = new AimInputs(this)
     if (keyboard) {
       this.keyboard = keyboard
@@ -285,20 +290,18 @@ export class Container {
   }
 
   /**
-   * Advances the ?image= cloth reveal from the score, driving it from the
-   * single score-update funnel so live play, replay and resume stay consistent
-   * without the rules reaching into the view. Eightball fills the cloth per
-   * ball up to the 8-ball (score / 8); reveal mode counts every ball, so it
-   * fills on the last pot (score / 15). `reveal` is null without ?image=,
-   * ignores regressions, and replays levels requested before the image loads.
+   * Advances the ?image= cloth reveal for eightball from the score funnel, so
+   * live play, replay and resume stay consistent without the rules reaching
+   * into the view: the cloth fills per ball up to the 8-ball (score / 8). The
+   * solo reveal ruletype is driven instead by RevealTracker from the live
+   * outcome stream (see advance). `reveal` is null without ?image=, ignores
+   * regressions, and replays levels requested before the image loads.
    */
   private updateReveal(session: Session): void {
-    const score = session.myScore()
-    if (this.rules.rulename === "eightball") {
-      this.view.reveal?.reveal(score / 8)
-    } else if (this.rules.rulename === "reveal") {
-      this.view.reveal?.reveal(score / 15)
+    if (this.rules.rulename !== "eightball") {
+      return
     }
+    this.view.reveal?.reveal(session.myScore() / 8)
   }
 
   private applyHandicapTargets(
@@ -461,6 +464,11 @@ export class Container {
       this.table.cue.hittingAnimation = false
     }
     this.sound.processOutcomes(this.table.outcome)
+    this.revealTracker?.update(
+      Session.getInstance().myScore(),
+      this.table.outcome,
+      this.table.cueball
+    )
   }
 
   processEvents() {
