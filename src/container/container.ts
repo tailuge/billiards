@@ -258,6 +258,7 @@ export class Container {
   updateScoreHud(p1: number, p2: number, b: number, active?: ActivePlayer) {
     const session = Session.getInstance()
     session.updateScoresFromNetwork(p1, p2, b)
+    this.updateReveal(session)
     const orderedScores = session.orderedScoresForHud()
     this.hudScores = orderedScores
     const orderedNames = session.orderedNamesForHud()
@@ -281,6 +282,20 @@ export class Container {
       p2Star
     )
     this.setHudActivePlayer(active ?? this.inferActivePlayer())
+  }
+
+  /**
+   * Advances the ?image= cloth reveal from the eightball score. The reveal is
+   * a pure function of the score (score / 8), so driving it from the single
+   * score-update funnel keeps live play, replay and resume consistent without
+   * the rules reaching into the view. `reveal` is null without ?image=, ignores
+   * regressions, and replays any level requested before the image loads.
+   */
+  private updateReveal(session: Session): void {
+    if (this.rules.rulename !== "eightball") {
+      return
+    }
+    this.view.reveal?.reveal(session.myScore() / 8)
   }
 
   private applyHandicapTargets(

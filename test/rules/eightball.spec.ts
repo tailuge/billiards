@@ -146,6 +146,45 @@ describe("EightBall Rules", () => {
     expect(nextController).to.be.an.instanceof(End)
   })
 
+  it("should score the winning 8-ball", () => {
+    Session.getInstance().p1type = 1 // Solids
+    container.table.balls.forEach((b) => {
+      if ((b.label || 0) >= 1 && (b.label || 0) <= 7) {
+        b.state = State.InPocket
+      }
+    })
+    const eightBall = container.table.balls.find((b) => b.label === 8)!
+    const outcome = [
+      Outcome.collision(container.table.cueball, eightBall, 1),
+      Outcome.pot(eightBall, 1),
+    ]
+    eightball.update(outcome)
+    expect(Session.getInstance().myScore()).to.equal(1)
+  })
+
+  describe("?image= reveal", () => {
+    const stubReveal = (): { value?: number } => {
+      const captured: { value?: number } = {}
+      ;(container.view as any).reveal = {
+        reveal: (fraction: number) => (captured.value = fraction),
+      }
+      return captured
+    }
+
+    it("advances with score / 8 from the score-update funnel", () => {
+      const revealed = stubReveal()
+      container.updateScoreHud(3, 1, 0)
+      expect(revealed.value).to.equal(3 / 8)
+    })
+
+    it("leaves non-eightball rules alone", () => {
+      const revealed = stubReveal()
+      ;(container.rules as any).rulename = "snooker"
+      container.updateScoreHud(3, 1, 0)
+      expect(revealed.value).to.be.undefined
+    })
+  })
+
   it("should lose if 8-ball potted on open table with no other balls remaining", () => {
     // Clear all non-8-ball, non-cue balls so it's a valid end-game foul
     container.table.balls.forEach((b) => {
