@@ -1005,10 +1005,9 @@
     <script>
       // Fire-and-forget usage tracking (skips localhost)
       if (!["localhost", "127.0.0.1"].includes(location.hostname)) {
-        fetch("https://scoreboard-tailuge.vercel.app/api/usage/turkish", {
+        fetch("https://billiards-network.onrender.com/api/usage/turkish", {
           method: "PUT",
           mode: "cors",
-          signal: AbortSignal.timeout(10000),
         }).catch(() => {})
       }
     </script>

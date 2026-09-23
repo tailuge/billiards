@@ -7,7 +7,7 @@ export function logusage() {
     return
   }
 
-  const url = `https://scoreboard-tailuge.vercel.app/api/usage/game`
+  const url = `https://billiards-network.onrender.com/api/usage/game`
 
   fetch(url, {
     method: "PUT",
