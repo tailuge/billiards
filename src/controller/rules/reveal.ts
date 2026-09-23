@@ -19,6 +19,7 @@ import { ScoreEvent } from "../../events/scoreevent"
 import { roundVec } from "../../utils/three-utils"
 import { Respot } from "../../utils/respot"
 import { scaleTableModel } from "../../utils/table-scaler"
+import { ReplayEncoder } from "../../utils/replay-encoder"
 
 /**
  * Solo reveal mode for the ?image= cloth. No groups, no fouls and no 8-ball
@@ -161,11 +162,61 @@ export class Reveal implements Rules {
   }
 
   handleGameEnd(isWinner: boolean, endSubtext?: string): Controller {
-    return MatchResultHelper.presentGameEnd(
+    const end = MatchResultHelper.presentGameEnd(
       this.container,
       this.rulename,
       isWinner,
       endSubtext
     )
+
+    const updateDeckButton = this.buildUpdateDeckButton(isWinner)
+    this.container.notifyLocal({
+      type: "GameOver",
+      title: isWinner ? "YOU WON" : "GAME OVER",
+      subtext: endSubtext ?? `Score: ${Session.getInstance().myScore()}`,
+      highBreaks: MatchResultHelper.getHighBreaks(this.container),
+      icon: isWinner ? "🏆" : "🎱",
+      extraClass: isWinner ? "is-winner" : "",
+      extra: updateDeckButton,
+      share: false,
+      duration: 0,
+    })
+
+    return end
+  }
+
+  private buildUpdateDeckButton(isWinner: boolean): string {
+    if (!isWinner) {
+      return `<button type="button" class="notification-btn" data-notification-action="rematch" data-notification-url="./reveal/index.html">Update Deck</button>`
+    }
+
+    const params = new URLSearchParams(
+      typeof globalThis.location !== "undefined"
+        ? globalThis.location.search
+        : ""
+    )
+    const image = params.get("image") ?? ""
+
+    let stateParam = ""
+    try {
+      const gameState = this.container.recorder.wholeGame()
+      const encoded = ReplayEncoder.crush(JSON.stringify(gameState))
+      stateParam = ReplayEncoder.fullyEncodeURI(encoded)
+    } catch (e) {
+      console.error("Failed to encode reveal replay state", e)
+    }
+
+    const targetParams = new URLSearchParams()
+    if (image) {
+      targetParams.set("image", image)
+    }
+    if (stateParam) {
+      targetParams.set("state", stateParam)
+    }
+    const query = targetParams.toString()
+    const suffix = query ? "?" + query : ""
+    const url = `./reveal/index.html${suffix}`
+
+    return `<button type="button" class="notification-btn" data-notification-action="rematch" data-notification-url="${url}">Update Deck</button>`
   }
 }
