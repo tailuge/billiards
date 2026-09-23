@@ -95,3 +95,5 @@ telemetry-id
 src/utils/version.ts
 
 dist/fit/corners/**
+
+package-lock.json
