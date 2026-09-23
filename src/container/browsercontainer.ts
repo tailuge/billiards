@@ -185,8 +185,7 @@ export class BrowserContainer {
           stateTableSize !== undefined &&
           stateTableSize !== 10 &&
           !params.has("tableSize")
-        const needsImage =
-          stateImage !== undefined && !params.has("image")
+        const needsImage = stateImage !== undefined && !params.has("image")
         if (needsTableSize || needsImage) {
           const url = new URL(globalThis.location.href)
           if (needsTableSize) {
