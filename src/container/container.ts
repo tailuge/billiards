@@ -160,7 +160,7 @@ export class Container {
       new URLSearchParams(globalThis.location?.search ?? "").get("tableSize") ||
         "10"
     )
-    this.particles = new ParticleSystem({ tableSize })
+    this.particles = new ParticleSystem({ tableSize, ruleType: ruletype })
     this.hud = new Hud()
     this.notification = new Notification()
     this.notification.shareHandler = () => this.shareReplayLink()
