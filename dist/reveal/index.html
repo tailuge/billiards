@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pot & Reveal — Play billiards to uncover hidden pictures</title>
+    <meta
+      name="description"
+      content="Play billiards to uncover hidden pictures. Pot balls to progressively reveal the photograph. Free online billiards picture-reveal game — no download."
+    />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://billiards.tailuge.workers.dev/reveal/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Exo:wght@200;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="../assets/threecushion.png" />
+    <meta name="theme-color" content="#1a1a1a" />
+    <script>
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const theme = params.get("theme") || localStorage.getItem("theme") || "dark";
+        document.documentElement.setAttribute("theme", theme);
+        document.documentElement.style.colorScheme = document.documentElement.getAttribute("theme");
+      } catch (_e) {
+        document.documentElement.setAttribute("theme", "dark");
+      }
+    </script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #f5f5f5;
+        color: #212121;
+      }
+      html[theme="dark"],
+      html[theme="dark"] body {
+        background: #1a1a1a;
+        color: #e0e0e0;
+      }
+      .site-links {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0.35rem 0.5rem;
+        font-family: Exo, sans-serif;
+        font-weight: 200;
+        font-size: 0.7rem;
+        line-height: 1.35;
+        text-align: center;
+      }
+      .site-links a {
+        color: #05c;
+        text-decoration: none;
+      }
+      .site-links a:hover {
+        text-decoration: underline;
+      }
+      html[theme="dark"] .site-links a {
+        color: #6ba3f5;
+      }
+      .site-links-more summary {
+        cursor: pointer;
+        list-style: none;
+        color: #757575;
+        opacity: 0.85;
+      }
+      html[theme="dark"] .site-links-more summary {
+        color: #aaa;
+      }
+      .site-links-more summary::-webkit-details-marker {
+        display: none;
+      }
+      .site-links-more summary::after {
+        content: " ▾";
+      }
+      .site-links-more[open] summary::after {
+        content: " ▴";
+      }
+      .site-links-more {
+        width: 100%;
+        max-width: min(52rem, calc(100vw - 2rem));
+      }
+      .site-links-panel {
+        column-count: 2;
+        text-align: left;
+        white-space: normal;
+        padding: 0.75rem;
+      }
+      @media (width <= 30rem) {
+        .site-links-panel {
+          column-count: 1;
+        }
+      }
+      .site-links-panel h2 {
+        font-size: 0.75rem;
+        margin: 0 0 0.25rem;
+        color: #757575;
+        break-after: avoid;
+      }
+      html[theme="dark"] .site-links-panel h2 {
+        color: #999;
+      }
+      .site-links-panel ul {
+        margin: 0 0 0.75rem;
+        padding-left: 1rem;
+        list-style: none;
+      }
+      .site-links-panel li {
+        margin-bottom: 0.45rem;
+        break-inside: avoid;
+      }
+      .site-links-links {
+        margin: 0;
+        line-height: 1.9;
+      }
+      /* Explanatory prose below the grid — the only copy, so a crawler without JS sees it.
+         Styled here (light DOM) rather than in the Lit shadow, so it is not duplicated. */
+      .seo-fallback {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0.4rem 0.5rem 0.2rem;
+        font-family: Exo, sans-serif;
+        font-weight: 200;
+        font-size: 0.8rem;
+        line-height: 1.45;
+        color: #212121;
+      }
+      html[theme="dark"] .seo-fallback {
+        color: #e0e0e0;
+      }
+      .seo-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.15rem 1.4rem;
+        background: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 6px;
+        padding: 0.5rem 0.7rem;
+      }
+      html[theme="dark"] .seo-grid {
+        background: #2a2a2a;
+        border-color: #444444;
+      }
+      @media (width >= 600px) {
+        .seo-grid {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+        }
+      }
+      .seo-col > :first-child {
+        margin-top: 0;
+      }
+      .seo-fallback h2 {
+        font-size: 0.78rem;
+        font-weight: 600;
+        margin: 0.5rem 0 0.25rem;
+        color: #555555;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      html[theme="dark"] .seo-fallback h2 {
+        color: #aaaaaa;
+      }
+      .seo-fallback h3 {
+        font-size: 0.78rem;
+        font-weight: 600;
+        margin: 0.45rem 0 0.05rem;
+      }
+      .seo-fallback p {
+        margin: 0 0 0.15rem;
+      }
+      .seo-fallback ol {
+        margin: 0;
+        padding-left: 1.1rem;
+      }
+      .seo-fallback li {
+        margin: 0 0 0.15rem;
+      }
+      .seo-fallback a {
+        color: #0055cc;
+        text-decoration: none;
+      }
+      .seo-fallback a:hover {
+        text-decoration: underline;
+      }
+      html[theme="dark"] .seo-fallback a {
+        color: #6ba3f5;
+      }
+      .seo-fallback .attribution {
+        font-size: 0.7rem;
+        color: #757575;
+        margin: 0.4rem 0 0;
+      }
+      html[theme="dark"] .seo-fallback .attribution {
+        color: #999999;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 hidden>Pot & Reveal — billiards picture-reveal game</h1>
+    <reveal-app></reveal-app>
+
+    <!-- Explanatory prose — real HTML directly in the page so crawlers without JS identify it.
+         This is the only copy: <reveal-app> renders the grid above and no prose below. -->
+    <section class="seo-fallback" aria-label="How to play and FAQ">
+      <div class="seo-grid">
+        <div class="seo-col">
+          <h2>How to play</h2>
+          <ol>
+            <li>Choose a mystery picture from the wall.</li>
+            <li>Tap the card to flip it, then press Play.</li>
+            <li>Pot balls in the billiards game to progressively reveal the photograph.</li>
+            <li>Complete the picture to keep it in your collection.</li>
+          </ol>
+        </div>
+        <div class="seo-col">
+          <h2>FAQ</h2>
+          <h3>What is Pot &amp; Reveal?</h3>
+          <p>
+            A free online billiards game where photographs are progressively uncovered as you
+            play.
+          </p>
+          <h3>How are pictures revealed?</h3>
+          <p>
+            Each successful pot reveals another section of the hidden photograph. The more you pot,
+            the more of the image you see.
+          </p>
+          <h3>Do I need to download anything?</h3>
+          <p>No. The game runs directly in the web browser on desktop or mobile.</p>
+          <h3>Can I share a reveal?</h3>
+          <p>
+            Yes. Flip a completed card to copy its replay link — sharing is for that individual
+            reveal, not the whole collection.
+          </p>
+          <h3>Is there a right order to play the pictures?</h3>
+          <p>
+            No. Pick any mystery card you like. The wall keeps a fixed order; solved pictures stay
+            in place and the rest remain mysteries until you solve them.
+          </p>
+        </div>
+      </div>
+      <p class="attribution">
+        Images from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> and linked
+        Wikipedia pages, individually attributed on the completed card. Played via the
+        tailuge/billiards engine.
+      </p>
+    </section>
+
+    <!-- Hidden challenge data — one <li> per entry, diff-friendly, not visible to the user but in the HTML for coders and for JS to build the grid. 47 seed entries. -->
+    <ul id="challenge-data" hidden aria-hidden="true">
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/BoA"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/9/95/180417_%EB%B3%B4%EC%95%84_03_%28cropped%29_02.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >BoA</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chae_Jung-an"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/3/3d/Chae_Jung-an_in_September_2025.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Chae Jung-an</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Eugene_(actress)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/b/b8/Eugene_in_Feb_2021.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Eugene (actress)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bada_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/3/33/Bada_%28SES%29_in_March_2024.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Bada (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Byul"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/3/36/20230112_%EB%B3%84_Byul.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Byul</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chae_Ri-na"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/0/03/%EC%B1%84%EB%A6%AC%EB%82%98.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Chae Ri-na</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bae_Seul-ki"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/d/d7/Bae_Seul-ki_in_2020.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Bae Seul-ki</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/CL_(rapper)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/7/78/CL_%EC%8A%A4%ED%83%80%EC%9D%BC_%EC%96%B4%EC%9B%8C%EC%A6%88_2024_%281%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >CL (rapper)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choi_Soo-young"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/250807_%EC%88%98%EC%98%81_%27%EC%95%85%EB%A7%88%EA%B0%80_%EC%9D%B4%EC%82%AC%EC%99%94%EB%8B%A4%27_VIP_Premiere_06_%28cropped%29.jpg/1280px-250807_%EC%88%98%EC%98%81_%27%EC%95%85%EB%A7%88%EA%B0%80_%EC%9D%B4%EC%82%AC%EC%99%94%EB%8B%A4%27_VIP_Premiere_06_%28cropped%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Choi Soo-young</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dana_(South_Korean_singer)"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Dana_Hong_at_the_Bonnie_%26_Clyde_Press_Conference.jpg/1280px-Dana_Hong_at_the_Bonnie_%26_Clyde_Press_Conference.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Dana (South Korean singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bae_Suzy"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Suzy_at_the_Longines_2026_new_product_presentation%2C_25_March_2026_04.png/1280px-Suzy_at_the_Longines_2026_new_product_presentation%2C_25_March_2026_04.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Bae Suzy</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Ahn_So-hee"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/20220519%E2%80%94Ahn_So-hee%2C_Interview%2C_Marie_Claire_Korea_%2800m32s%29.jpg/1280px-20220519%E2%80%94Ahn_So-hee%2C_Interview%2C_Marie_Claire_Korea_%2800m32s%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Ahn So-hee</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dia_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/4/4a/DIA_%28Lee_Ji-eun%29_from_Bella_at_the_Incheon_Festival%2C_May_2013_02.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Dia (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choi_Jung-in"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/6/62/Choi_Jung-in%2C_2014_%28cropped%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Choi Jung-in</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Baek_A-yeon"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/Baek_A-yeon_in_November_2021.png/1280px-Baek_A-yeon_in_November_2021.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Baek A-yeon</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Yerin_Baek"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/2/2e/Baek_Ye-rin_at_Slow_Life_Slow_Live_on_October_5%2C_2019.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Yerin Baek</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bang_Min-ah"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/3/3d/Bang_Minah_in_February_2023.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Bang Min-ah</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Ah_Young"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/%EB%8B%AC%EC%83%A4%EB%B2%B3_%40_Cyworld_Dream_Music_Festival_%EC%8B%B8%EC%9D%B4%EC%9B%94%EB%93%9C_%EB%93%9C%EB%A6%BC_%EB%AE%A4%EC%A7%81_%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_10.jpg/1280px-%EB%8B%AC%EC%83%A4%EB%B2%B3_%40_Cyworld_Dream_Music_Festival_%EC%8B%B8%EC%9D%B4%EC%9B%94%EB%93%9C_%EB%93%9C%EB%A6%BC_%EB%AE%A4%EC%A7%81_%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_10.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Ah Young</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Anda_(singer)"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/160326_18_F_W_%EC%84%9C%EC%9A%B8%ED%8C%A8%EC%85%98%EC%9C%84%ED%81%AC_%ED%8F%AC%ED%86%A0%EC%9B%94.jpg/1280px-160326_18_F_W_%EC%84%9C%EC%9A%B8%ED%8C%A8%EC%85%98%EC%9C%84%ED%81%AC_%ED%8F%AC%ED%86%A0%EC%9B%94.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Anda (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bae_Woo-hee"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/180223_%EC%9A%B0%ED%9D%AC_02.jpg/1280px-180223_%EC%9A%B0%ED%9D%AC_02.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Bae Woo-hee</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Elly_(rapper)"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/LE_at_a_fansigning_event_in_Mokdong_on_October_8%2C_2022_%283%29.jpg/1280px-LE_at_a_fansigning_event_in_Mokdong_on_October_8%2C_2022_%283%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Elly (rapper)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/An_Ye-seul"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/%EC%95%88%EC%98%88%EC%8A%AC.jpg/1280px-%EC%95%88%EC%98%88%EC%8A%AC.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >An Ye-seul</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Ben_(South_Korean_singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/7/7a/Ben_at_%27Bello%27_concert_on_January_11%2C_2019_%282%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Ben (South Korean singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Eunha_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/6/67/Eunha_August_2024_%283x4_cropped%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Eunha (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Cho_Seung-hee"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/e/ef/Cho_Seung-hee_in_December_2020.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Cho Seung-hee</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chung_Ha"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/3/30/CHUNG_HA_Shark_Ninja_PhotoCall_1.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Chung Ha</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bona_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/2/2d/Marie_Claire_Korea_Mterview_Kim_Ji-yeon_%26_Woo_Do-hwan_%282%29_%28cropped%29.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Bona (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dahyun"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/7/7a/260618_Kim_Dahyun.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Dahyun</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choi_Yoo-jung_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/5/56/Choi_Yoo-jung_in_October_2022.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Choi Yoo-jung (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Miyeon"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/082726_Miyeon_at_The_Whoo_photocall_03.jpg/1280px-082726_Miyeon_at_The_Whoo_photocall_03.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Miyeon</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choi_Ye-na"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/b/b6/CHOI_YENA_%28%EC%B5%9C%EC%98%88%EB%82%98%29_%E2%80%93_2024.09.30_%E2%80%93_P2_%28cropped%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Choi Ye-na</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chaeyoung"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Twice_in_Seattle_2026_-_TWICE._Chaeyoung_%2855045248379%29.jpg/1280px-Twice_in_Seattle_2026_-_TWICE._Chaeyoung_%2855045248379%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Chaeyoung</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/AleXa"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/00/AleXa%2C_Melodifestivalen_2026%2C_artists_press_conference-33_%28cropped%29.jpg/1280px-AleXa%2C_Melodifestivalen_2026%2C_artists_press_conference-33_%28cropped%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >AleXa</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/An_Yu-jin"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/f/f0/IVE_Yujin_2026_GDA.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >An Yu-jin</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Ahn_Sol-bin"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/4/42/170611_%EB%9D%BC%EB%B6%90_%EC%88%98%EC%9B%90_%EC%84%B8%EA%B3%84%EB%AC%B8%ED%99%94%EC%B6%95%EC%A0%9C_%282%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Ahn Sol-bin</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Arin_(singer)"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/241002_Oh_My_Girl_Arin_01_%28cropped%29.jpg/1280px-241002_Oh_My_Girl_Arin_01_%28cropped%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Arin (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Lee_Chae-yeon"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/9/9e/240712_Lee_Chaeyeon.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Lee Chae-yeon</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chuu"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/7/7a/20251002_Chuu_%EC%B8%84_03.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Chuu</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choerry"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/9/9f/Choerry.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Choerry</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dawon_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/6/6e/10%EC%9B%94_20%EC%9D%BC_U%2B%EC%95%84%EC%9D%B4%EB%8F%8CLive_%EB%9F%B0%EC%B9%AD%EC%BD%98%EC%84%9C%ED%8A%B8_%28103%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Dawon (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choi_Yu-jin"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/2/28/Kep1er_YUJIN_Seoul_Fashion_Week.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Choi Yu-jin</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chaeryeong"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/251110_Lee_Chaeryeong_from_ITZY.png/1280px-251110_Lee_Chaeryeong_from_ITZY.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail"
+          >Chaeryeong</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Danielle_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/8/8b/240910_NewJeans_Danielle.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Danielle (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bora_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/1/1f/Kim_Bo-ra_in_March_2023.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Bora (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Jo_Aram"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/8/85/170526_%EC%95%88%EC%82%B0_%EA%B7%BC%EB%A1%9C%EC%9E%90_%EB%AE%A4%EC%A7%81%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_%EA%B5%AC%EA%B5%AC%EB%8B%A8_%EC%A7%81%EC%B0%8D_%2814%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Jo Aram</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dayoung"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/c/c5/Dayoung_in_September_2025.png?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Dayoung</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Shannon_Bae"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/d/d3/03%EC%9B%94_25%EC%9D%BC_%ED%94%84%EB%A6%AC%EC%8A%A4%ED%8B%B4_%ED%8C%AC%EC%82%AC%EC%9D%B8%ED%9A%8C_%2825%29.jpg?utm_source=en.wikipedia.org&amp;utm_campaign=api&amp;utm_content=thumbnail_unscaled"
+          >Shannon Bae</a
+        >
+      </li>
+    </ul>
+
+    <nav class="site-links" aria-label="Billiards pages">
+      <details class="site-links-more">
+        <summary>Thanks for playing on tailuge/billiards</summary>
+        <div class="site-links-panel">
+          <h2>Play</h2>
+          <ul>
+            <li>
+              <a href="https://billiards.tailuge.workers.dev/?practice=true">Nine ball</a> make a
+              break and share replay link with friends
+            </li>
+            <li>
+              <a href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;lod=4"
+                >Three cushion billiards</a
+              >
+              the ultimate test of physics and player (average on both counts). You need the
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;practice=true"
+                >beginner mode</a
+              >.
+            </li>
+            <li>
+              <a href="https://billiards.tailuge.workers.dev/?ruletype=sagu">Sagu</a> Korean
+              four-ball carom game.
+            </li>
+            <li>
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=snooker&amp;lod=4&amp;tableSize=12"
+                >Snooker</a
+              >
+              we await the first 147.
+            </li>
+            <li>
+              <a href="https://billiards.tailuge.workers.dev/?ruletype=eightball&amp;lod=4"
+                >8-Ball</a
+              >
+              try it in Hi-Res mode!
+            </li>
+            <li>
+              Play vs the
+              <a href="https://billiards.tailuge.workers.dev/?bot=ClawBreak">Claw</a> and
+              <a href="https://billiards.tailuge.workers.dev/?bot=TheFarJaw">TheFarJaw</a>.
+            </li>
+            <li>
+              <a href="https://billiards.tailuge.workers.dev/lobby.html"
+                >Multiplayer online pool lobby</a
+              >.
+            </li>
+          </ul>
+          <h2>Features</h2>
+          <ul>
+            <li>Backspin, sidespin and cushion bounces well modeled.</li>
+            <li>Record and playback breaks.</li>
+            <li>Two player online mode with nchan nginx server.</li>
+            <li>Nine ball, snooker, three cushion and Sagu billiards rules.</li>
+            <li>
+              Presentation using WebGL in any modern browser on mobile, linux, mac or windows.
+            </li>
+          </ul>
+          <h2>Elsewhere</h2>
+          <p class="site-links-links">
+            <a
+              href="https://forums.azbilliards.com/threads/open-source-three-cushion-simulator.587516/"
+              >AZBilliards</a
+            >
+            · <a href="https://tailuge.itch.io/">itch.io</a> ·
+            <a href="https://gamejolt.com/games/billiards/1083832">GameJolt</a> ·
+            <a href="https://github.com/tailuge/tbilliards/releases/latest">GitHub</a>
+          </p>
+        </div>
+      </details>
+    </nav>
+
+    <script type="module" src="reveal.js"></script>
+  </body>
+</html>
