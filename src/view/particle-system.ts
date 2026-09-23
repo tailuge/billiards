@@ -23,6 +23,7 @@ export interface ParticleSystemConfig {
   baseRestitution?: number
   restitutionVariance?: number
   backgroundColor?: string
+  ruleType?: string
 }
 
 const DEFAULT_CONFIG: Required<ParticleSystemConfig> = {
@@ -37,6 +38,7 @@ const DEFAULT_CONFIG: Required<ParticleSystemConfig> = {
   baseRestitution: 0.45,
   restitutionVariance: 0.25,
   backgroundColor: "#040b9f",
+  ruleType: "",
 }
 
 export class ParticleSystem {
@@ -60,6 +62,10 @@ export class ParticleSystem {
     this.config = { ...DEFAULT_CONFIG, ...config }
     if (!config.backgroundColor) {
       this.config.backgroundColor = ParticleSystem.deriveBackgroundColor()
+    }
+    if (!config.ruleType) {
+      const urlParams = new URLSearchParams(globalThis.location?.search ?? "")
+      this.config.ruleType = urlParams.get("ruletype") ?? ""
     }
     const sizeScale = this.config.tableSize / 10
     this.config.scaleX *= sizeScale
@@ -192,6 +198,7 @@ export class ParticleSystem {
       this.pRot[i * 3 + 1],
       this.pRot[i * 3 + 2]
     )
+    this.dummy.scale.set(1, 1, 1)
     this.dummy.updateMatrix()
     this.instancedMesh!.setMatrixAt(i, this.dummy.matrix)
   }
@@ -264,6 +271,11 @@ export class ParticleSystem {
       this.pRot[i * 3 + 1],
       this.pRot[i * 3 + 2]
     )
+    if (this.config.ruleType === "reveal" && this.pState[i] === 2) {
+      this.dummy.scale.set(0, 0, 0)
+    } else {
+      this.dummy.scale.set(1, 1, 1)
+    }
     this.dummy.updateMatrix()
     this.instancedMesh!.setMatrixAt(i, this.dummy.matrix)
     return true
