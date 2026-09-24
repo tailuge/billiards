@@ -25,8 +25,17 @@ export class RevealTracker {
 
   constructor(
     private readonly reveal: RevealSurface,
-    private readonly total: number
+    private total: number
   ) {}
+
+  /**
+   * Override the total ball count. Used by replay to align the fraction with
+   * the actual number of pottable balls present in the init state, which may
+   * be less than the full rack when the replay starts mid-game.
+   */
+  resetTotal(total: number): void {
+    this.total = total
+  }
 
   update(score: number, outcome: Outcome[], cueball: Ball): void {
     if (outcome !== this.outcomeRef) {

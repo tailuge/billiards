@@ -39,6 +39,7 @@ export class Replay extends ControllerBase {
     this.delay = diagram ? 0 : delay
     this.container.table.showTraces(true)
     this.container.table.updateFromShortSerialised(this.init)
+    this.container.updateRevealTotal(this.init)
     console.log(`shots: ${this.shots.length}`)
     console.log(`shots: ${JSON.stringify(this.shots)}`)
     this.playNextShot(this.delay * 1.5)
@@ -192,6 +193,7 @@ export class Replay extends ControllerBase {
 
   override handleBreak(event: BreakEvent): Controller {
     this.container.table.updateFromShortSerialised(event.init)
+    this.container.updateRevealTotal(event.init)
     this.shots = [...event.shots]
     this.diagram = event.diagram
     this.container.table.showSpin(true)

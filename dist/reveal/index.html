@@ -9,7 +9,10 @@
       content="Play billiards to uncover hidden pictures. Pot balls to progressively reveal the photograph. Free online billiards picture-reveal game — no download."
     />
     <meta name="robots" content="index,follow" />
-    <link rel="canonical" href="https://billiards.tailuge.workers.dev/reveal/" />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/reveal/"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -20,12 +23,14 @@
     <meta name="theme-color" content="#1a1a1a" />
     <script>
       try {
-        const params = new URLSearchParams(window.location.search);
-        const theme = params.get("theme") || localStorage.getItem("theme") || "dark";
-        document.documentElement.setAttribute("theme", theme);
-        document.documentElement.style.colorScheme = document.documentElement.getAttribute("theme");
+        const params = new URLSearchParams(window.location.search)
+        const theme =
+          params.get("theme") || localStorage.getItem("theme") || "dark"
+        document.documentElement.setAttribute("theme", theme)
+        document.documentElement.style.colorScheme =
+          document.documentElement.getAttribute("theme")
       } catch (_e) {
-        document.documentElement.setAttribute("theme", "dark");
+        document.documentElement.setAttribute("theme", "dark")
       }
     </script>
     <style>
@@ -212,7 +217,10 @@
           <ol>
             <li>Choose a mystery picture from the wall.</li>
             <li>Tap the card to flip it, then press Play.</li>
-            <li>Pot balls in the billiards game to progressively reveal the photograph.</li>
+            <li>
+              Pot balls in the billiards game to progressively reveal the
+              photograph.
+            </li>
             <li>Complete the picture to keep it in your collection.</li>
           </ol>
         </div>
@@ -220,507 +228,511 @@
           <h2>FAQ</h2>
           <h3>What is Pot &amp; Reveal?</h3>
           <p>
-            A free online billiards game where photographs are progressively uncovered as you
-            play.
+            A free online billiards game where photographs are progressively
+            uncovered as you play.
           </p>
           <h3>How are pictures revealed?</h3>
           <p>
-            Each successful pot reveals another section of the hidden photograph. The more you pot,
-            the more of the image you see.
+            Each successful pot reveals another section of the hidden
+            photograph. The more you pot, the more of the image you see.
           </p>
           <h3>Do I need to download anything?</h3>
-          <p>No. The game runs directly in the web browser on desktop or mobile.</p>
+          <p>
+            No. The game runs directly in the web browser on desktop or mobile.
+          </p>
           <h3>Can I share a reveal?</h3>
           <p>
-            Yes. Flip a completed card to copy its replay link — sharing is for that individual
-            reveal, not the whole collection.
+            Yes. Flip a completed card to copy its replay link — sharing is for
+            that individual reveal, not the whole collection.
           </p>
           <h3>Is there a right order to play the pictures?</h3>
           <p>
-            No. Pick any mystery card you like. The wall keeps a fixed order; solved pictures stay
-            in place and the rest remain mysteries until you solve them.
+            No. Pick any mystery card you like. The wall keeps a fixed order;
+            solved pictures stay in place and the rest remain mysteries until
+            you solve them.
           </p>
         </div>
       </div>
       <p class="attribution">
-        Images from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> and linked
-        Wikipedia pages, individually attributed on the completed card. Played via the
-        tailuge/billiards engine.
+        Images from
+        <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> and
+        linked Wikipedia pages, individually attributed on the completed card.
+        Played via the tailuge/billiards engine.
       </p>
     </section>
 
     <!-- Hidden challenge data — one <li> per entry, diff-friendly, not visible to the user but in the HTML for coders and for JS to build the grid. 47 seed entries. -->
     <ul id="challenge-data" hidden aria-hidden="true">
       <li>
-  <a
-    href="https://en.wikipedia.org/wiki/Chae_Ri-na"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/0/03/%EC%B1%84%EB%A6%AC%EB%82%98.jpg"
-    data-bytes="4331"
-    data-rating="0.0313"
-    data-created="2026-09-24"
-    >Chae Ri-na</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/An_Ye-seul"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/%EC%95%88%EC%98%88%EC%8A%AC.jpg/1280px-%EC%95%88%EC%98%88%EC%8A%AC.jpg"
-    data-bytes="5566"
-    data-rating="0.04"
-    data-created="2026-09-24"
-    >An Ye-seul</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Dia_(singer)"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/4/4a/DIA_%28Lee_Ji-eun%29_from_Bella_at_the_Incheon_Festival%2C_May_2013_02.jpg"
-    data-bytes="9093"
-    data-rating="0.0652"
-    data-created="2026-09-24"
-    >Dia (singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Cho_Seung-hee"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/e/ef/Cho_Seung-hee_in_December_2020.png"
-    data-bytes="12279"
-    data-rating="0.0878"
-    data-created="2026-09-24"
-    >Cho Seung-hee</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Choerry"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/9/9f/Choerry.png"
-    data-bytes="13217"
-    data-rating="0.0945"
-    data-created="2026-09-24"
-    >Choerry</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Bora_(singer)"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/1/1f/Kim_Bo-ra_in_March_2023.jpg"
-    data-bytes="13678"
-    data-rating="0.0978"
-    data-created="2026-09-24"
-    >Bora (singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Ah_Young"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/%EB%8B%AC%EC%83%A4%EB%B2%B3_%40_Cyworld_Dream_Music_Festival_%EC%8B%B8%EC%9D%B4%EC%9B%94%EB%93%9C_%EB%93%9C%EB%A6%BC_%EB%AE%A4%EC%A7%81_%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_10.jpg/1280px-%EB%8B%AC%EC%83%A4%EB%B2%B3_%40_Cyworld_Dream_Music_Festival_%EC%8B%B8%EC%9D%B4%EC%9B%94%EB%93%9C_%EB%93%9C%EB%A6%BC_%EB%AE%A4%EC%A7%81_%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_10.jpg"
-    data-bytes="14141"
-    data-rating="0.1011"
-    data-created="2026-09-24"
-    >Ah Young</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Anda_(singer)"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/160326_18_F_W_%EC%84%9C%EC%9A%B8%ED%8C%A8%EC%85%98%EC%9C%84%ED%81%AC_%ED%8F%AC%ED%86%A0%EC%9B%94.jpg/1280px-160326_18_F_W_%EC%84%9C%EC%9A%B8%ED%8C%A8%EC%85%98%EC%9C%84%ED%81%AC_%ED%8F%AC%ED%86%A0%EC%9B%94.jpg"
-    data-bytes="14459"
-    data-rating="0.1034"
-    data-created="2026-09-24"
-    >Anda (singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Jo_Aram"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/8/85/170526_%EC%95%88%EC%82%B0_%EA%B7%BC%EB%A1%9C%EC%9E%90_%EB%AE%A4%EC%A7%81%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_%EA%B5%AC%EA%B5%AC%EB%8B%A8_%EC%A7%81%EC%B0%8D_%2814%29.jpg"
-    data-bytes="15559"
-    data-rating="0.1112"
-    data-created="2026-09-24"
-    >Jo Aram</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Ahn_Sol-bin"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/4/42/170611_%EB%9D%BC%EB%B6%90_%EC%88%98%EC%9B%90_%EC%84%B8%EA%B3%84%EB%AC%B8%ED%99%94%EC%B6%95%EC%A0%9C_%282%29.jpg"
-    data-bytes="16754"
-    data-rating="0.1197"
-    data-created="2026-09-24"
-    >Ahn Sol-bin</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Bae_Seul-ki"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/d/d7/Bae_Seul-ki_in_2020.png"
-    data-bytes="17414"
-    data-rating="0.1244"
-    data-created="2026-09-24"
-    >Bae Seul-ki</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Bae_Woo-hee"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/180223_%EC%9A%B0%ED%9D%AC_02.jpg/1280px-180223_%EC%9A%B0%ED%9D%AC_02.jpg"
-    data-bytes="18070"
-    data-rating="0.1291"
-    data-created="2026-09-24"
-    >Bae Woo-hee</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Dayoung"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/c/c5/Dayoung_in_September_2025.png"
-    data-bytes="18708"
-    data-rating="0.1336"
-    data-created="2026-09-24"
-    >Dayoung</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Dawon_(singer)"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/6/6e/10%EC%9B%94_20%EC%9D%BC_U%2B%EC%95%84%EC%9D%B4%EB%8F%8CLive_%EB%9F%B0%EC%B9%AD%EC%BD%98%EC%84%9C%ED%8A%B8_%28103%29.jpg"
-    data-bytes="21056"
-    data-rating="0.1503"
-    data-created="2026-09-24"
-    >Dawon (singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Chaeryeong"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/251110_Lee_Chaeryeong_from_ITZY.png/1280px-251110_Lee_Chaeryeong_from_ITZY.png"
-    data-bytes="23152"
-    data-rating="0.1652"
-    data-created="2026-09-24"
-    >Chaeryeong</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Ahn_So-hee"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/20220519%E2%80%94Ahn_So-hee%2C_Interview%2C_Marie_Claire_Korea_%2800m32s%29.jpg/1280px-20220519%E2%80%94Ahn_So-hee%2C_Interview%2C_Marie_Claire_Korea_%2800m32s%29.jpg"
-    data-bytes="23981"
-    data-rating="0.1711"
-    data-created="2026-09-24"
-    >Ahn So-hee</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Chae_Jung-an"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/3/3d/Chae_Jung-an_in_September_2025.png"
-    data-bytes="24020"
-    data-rating="0.1714"
-    data-created="2026-09-24"
-    >Chae Jung-an</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Byul"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/3/36/20230112_%EB%B3%84_Byul.png"
-    data-bytes="25111"
-    data-rating="0.1792"
-    data-created="2026-09-24"
-    >Byul</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Dana_(South_Korean_singer)"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Dana_Hong_at_the_Bonnie_%26_Clyde_Press_Conference.jpg/1280px-Dana_Hong_at_the_Bonnie_%26_Clyde_Press_Conference.jpg"
-    data-bytes="25127"
-    data-rating="0.1793"
-    data-created="2026-09-24"
-    >Dana (South Korean singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Shannon_Bae"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/d/d3/03%EC%9B%94_25%EC%9D%BC_%ED%94%84%EB%A6%AC%EC%8A%A4%ED%8B%B4_%ED%8C%AC%EC%82%AC%EC%9D%B8%ED%9A%8C_%2825%29.jpg"
-    data-bytes="25634"
-    data-rating="0.1829"
-    data-created="2026-09-24"
-    >Shannon Bae</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Danielle_(singer)"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/8/8b/240910_NewJeans_Danielle.jpg"
-    data-bytes="27575"
-    data-rating="0.1967"
-    data-created="2026-09-24"
-    >Danielle (singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Elly_(rapper)"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/LE_at_a_fansigning_event_in_Mokdong_on_October_8%2C_2022_%283%29.jpg/1280px-LE_at_a_fansigning_event_in_Mokdong_on_October_8%2C_2022_%283%29.jpg"
-    data-bytes="29158"
-    data-rating="0.208"
-    data-created="2026-09-24"
-    >Elly (rapper)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Choi_Jung-in"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/6/62/Choi_Jung-in%2C_2014_%28cropped%29.jpg"
-    data-bytes="30413"
-    data-rating="0.2169"
-    data-created="2026-09-24"
-    >Choi Jung-in</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Eunha_(singer)"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/6/67/Eunha_August_2024_%283x4_cropped%29.jpg"
-    data-bytes="32146"
-    data-rating="0.2293"
-    data-created="2026-09-24"
-    >Eunha (singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Choi_Yu-jin"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/2/28/Kep1er_YUJIN_Seoul_Fashion_Week.jpg"
-    data-bytes="34425"
-    data-rating="0.2455"
-    data-created="2026-09-24"
-    >Choi Yu-jin</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Bona_(singer)"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/2/2d/Marie_Claire_Korea_Mterview_Kim_Ji-yeon_%26_Woo_Do-hwan_%282%29_%28cropped%29.png"
-    data-bytes="36759"
-    data-rating="0.2621"
-    data-created="2026-09-24"
-    >Bona (singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Arin_(singer)"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/241002_Oh_My_Girl_Arin_01_%28cropped%29.jpg/1280px-241002_Oh_My_Girl_Arin_01_%28cropped%29.jpg"
-    data-bytes="37473"
-    data-rating="0.2672"
-    data-created="2026-09-24"
-    >Arin (singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Eugene_(actress)"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/b/b8/Eugene_in_Feb_2021.jpg"
-    data-bytes="44475"
-    data-rating="0.3171"
-    data-created="2026-09-24"
-    >Eugene (actress)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Lee_Chae-yeon"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/9/9e/240712_Lee_Chaeyeon.jpg"
-    data-bytes="47100"
-    data-rating="0.3357"
-    data-created="2026-09-24"
-    >Lee Chae-yeon</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Yerin_Baek"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/2/2e/Baek_Ye-rin_at_Slow_Life_Slow_Live_on_October_5%2C_2019.png"
-    data-bytes="47532"
-    data-rating="0.3388"
-    data-created="2026-09-24"
-    >Yerin Baek</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Bang_Min-ah"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/3/3d/Bang_Minah_in_February_2023.png"
-    data-bytes="50666"
-    data-rating="0.3611"
-    data-created="2026-09-24"
-    >Bang Min-ah</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Chaeyoung"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Twice_in_Seattle_2026_-_TWICE._Chaeyoung_%2855045248379%29.jpg/1280px-Twice_in_Seattle_2026_-_TWICE._Chaeyoung_%2855045248379%29.jpg"
-    data-bytes="52965"
-    data-rating="0.3775"
-    data-created="2026-09-24"
-    >Chaeyoung</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Choi_Soo-young"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/250807_%EC%88%98%EC%98%81_%27%EC%95%85%EB%A7%88%EA%B0%80_%EC%9D%B4%EC%82%AC%EC%99%94%EB%8B%A4%27_VIP_Premiere_06_%28cropped%29.jpg/1280px-250807_%EC%88%98%EC%98%81_%27%EC%95%85%EB%A7%88%EA%B0%80_%EC%9D%B4%EC%82%AC%EC%99%94%EB%8B%A4%27_VIP_Premiere_06_%28cropped%29.jpg"
-    data-bytes="54716"
-    data-rating="0.39"
-    data-created="2026-09-24"
-    >Choi Soo-young</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/AleXa"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/00/AleXa%2C_Melodifestivalen_2026%2C_artists_press_conference-33_%28cropped%29.jpg/1280px-AleXa%2C_Melodifestivalen_2026%2C_artists_press_conference-33_%28cropped%29.jpg"
-    data-bytes="56307"
-    data-rating="0.4013"
-    data-created="2026-09-24"
-    >AleXa</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Choi_Yoo-jung_(singer)"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/5/56/Choi_Yoo-jung_in_October_2022.png"
-    data-bytes="58101"
-    data-rating="0.4141"
-    data-created="2026-09-24"
-    >Choi Yoo-jung (singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/An_Yu-jin"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/f/f0/IVE_Yujin_2026_GDA.jpg"
-    data-bytes="59629"
-    data-rating="0.4249"
-    data-created="2026-09-24"
-    >An Yu-jin</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Dahyun"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/7/7a/260618_Kim_Dahyun.png"
-    data-bytes="60027"
-    data-rating="0.4278"
-    data-created="2026-09-24"
-    >Dahyun</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Ben_(South_Korean_singer)"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/7/7a/Ben_at_%27Bello%27_concert_on_January_11%2C_2019_%282%29.jpg"
-    data-bytes="62855"
-    data-rating="0.4479"
-    data-created="2026-09-24"
-    >Ben (South Korean singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Bada_(singer)"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/3/33/Bada_%28SES%29_in_March_2024.png"
-    data-bytes="64082"
-    data-rating="0.4566"
-    data-created="2026-09-24"
-    >Bada (singer)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Baek_A-yeon"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/Baek_A-yeon_in_November_2021.png/1280px-Baek_A-yeon_in_November_2021.png"
-    data-bytes="74072"
-    data-rating="0.5278"
-    data-created="2026-09-24"
-    >Baek A-yeon</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Miyeon"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/082726_Miyeon_at_The_Whoo_photocall_03.jpg/1280px-082726_Miyeon_at_The_Whoo_photocall_03.jpg"
-    data-bytes="84867"
-    data-rating="0.6046"
-    data-created="2026-09-24"
-    >Miyeon</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Chung_Ha"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/3/30/CHUNG_HA_Shark_Ninja_PhotoCall_1.jpg"
-    data-bytes="88699"
-    data-rating="0.6319"
-    data-created="2026-09-24"
-    >Chung Ha</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Bae_Suzy"
-    data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Suzy_at_the_Longines_2026_new_product_presentation%2C_25_March_2026_04.png/1280px-Suzy_at_the_Longines_2026_new_product_presentation%2C_25_March_2026_04.png"
-    data-bytes="95679"
-    data-rating="0.6816"
-    data-created="2026-09-24"
-    >Bae Suzy</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Choi_Ye-na"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/b/b6/CHOI_YENA_%28%EC%B5%9C%EC%98%88%EB%82%98%29_%E2%80%93_2024.09.30_%E2%80%93_P2_%28cropped%29.jpg"
-    data-bytes="96566"
-    data-rating="0.6879"
-    data-created="2026-09-24"
-    >Choi Ye-na</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/Chuu"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/7/7a/20251002_Chuu_%EC%B8%84_03.jpg"
-    data-bytes="109392"
-    data-rating="0.7792"
-    data-created="2026-09-24"
-    >Chuu</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/CL_(rapper)"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/7/78/CL_%EC%8A%A4%ED%83%80%EC%9D%BC_%EC%96%B4%EC%9B%8C%EC%A6%88_2024_%281%29.jpg"
-    data-bytes="110076"
-    data-rating="0.7841"
-    data-created="2026-09-24"
-    >CL (rapper)</a
-  >
-</li>
-<li>
-  <a
-    href="https://en.wikipedia.org/wiki/BoA"
-    data-image="https://upload.wikimedia.org/wikipedia/commons/9/95/180417_%EB%B3%B4%EC%95%84_03_%28cropped%29_02.png"
-    data-bytes="140402"
-    data-rating="1"
-    data-created="2026-09-24"
-    >BoA</a
-  >
-</li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chae_Ri-na"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/0/03/%EC%B1%84%EB%A6%AC%EB%82%98.jpg"
+          data-bytes="4331"
+          data-rating="0.0313"
+          data-created="2026-09-24"
+          >Chae Ri-na</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/An_Ye-seul"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/%EC%95%88%EC%98%88%EC%8A%AC.jpg/1280px-%EC%95%88%EC%98%88%EC%8A%AC.jpg"
+          data-bytes="5566"
+          data-rating="0.04"
+          data-created="2026-09-24"
+          >An Ye-seul</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dia_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/4/4a/DIA_%28Lee_Ji-eun%29_from_Bella_at_the_Incheon_Festival%2C_May_2013_02.jpg"
+          data-bytes="9093"
+          data-rating="0.0652"
+          data-created="2026-09-24"
+          >Dia (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Cho_Seung-hee"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/e/ef/Cho_Seung-hee_in_December_2020.png"
+          data-bytes="12279"
+          data-rating="0.0878"
+          data-created="2026-09-24"
+          >Cho Seung-hee</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choerry"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/9/9f/Choerry.png"
+          data-bytes="13217"
+          data-rating="0.0945"
+          data-created="2026-09-24"
+          >Choerry</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bora_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/1/1f/Kim_Bo-ra_in_March_2023.jpg"
+          data-bytes="13678"
+          data-rating="0.0978"
+          data-created="2026-09-24"
+          >Bora (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Ah_Young"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/%EB%8B%AC%EC%83%A4%EB%B2%B3_%40_Cyworld_Dream_Music_Festival_%EC%8B%B8%EC%9D%B4%EC%9B%94%EB%93%9C_%EB%93%9C%EB%A6%BC_%EB%AE%A4%EC%A7%81_%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_10.jpg/1280px-%EB%8B%AC%EC%83%A4%EB%B2%B3_%40_Cyworld_Dream_Music_Festival_%EC%8B%B8%EC%9D%B4%EC%9B%94%EB%93%9C_%EB%93%9C%EB%A6%BC_%EB%AE%A4%EC%A7%81_%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_10.jpg"
+          data-bytes="14141"
+          data-rating="0.1011"
+          data-created="2026-09-24"
+          >Ah Young</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Anda_(singer)"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/160326_18_F_W_%EC%84%9C%EC%9A%B8%ED%8C%A8%EC%85%98%EC%9C%84%ED%81%AC_%ED%8F%AC%ED%86%A0%EC%9B%94.jpg/1280px-160326_18_F_W_%EC%84%9C%EC%9A%B8%ED%8C%A8%EC%85%98%EC%9C%84%ED%81%AC_%ED%8F%AC%ED%86%A0%EC%9B%94.jpg"
+          data-bytes="14459"
+          data-rating="0.1034"
+          data-created="2026-09-24"
+          >Anda (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Jo_Aram"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/8/85/170526_%EC%95%88%EC%82%B0_%EA%B7%BC%EB%A1%9C%EC%9E%90_%EB%AE%A4%EC%A7%81%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_%EA%B5%AC%EA%B5%AC%EB%8B%A8_%EC%A7%81%EC%B0%8D_%2814%29.jpg"
+          data-bytes="15559"
+          data-rating="0.1112"
+          data-created="2026-09-24"
+          >Jo Aram</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Ahn_Sol-bin"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/4/42/170611_%EB%9D%BC%EB%B6%90_%EC%88%98%EC%9B%90_%EC%84%B8%EA%B3%84%EB%AC%B8%ED%99%94%EC%B6%95%EC%A0%9C_%282%29.jpg"
+          data-bytes="16754"
+          data-rating="0.1197"
+          data-created="2026-09-24"
+          >Ahn Sol-bin</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bae_Seul-ki"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/d/d7/Bae_Seul-ki_in_2020.png"
+          data-bytes="17414"
+          data-rating="0.1244"
+          data-created="2026-09-24"
+          >Bae Seul-ki</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bae_Woo-hee"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/180223_%EC%9A%B0%ED%9D%AC_02.jpg/1280px-180223_%EC%9A%B0%ED%9D%AC_02.jpg"
+          data-bytes="18070"
+          data-rating="0.1291"
+          data-created="2026-09-24"
+          >Bae Woo-hee</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dayoung"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/c/c5/Dayoung_in_September_2025.png"
+          data-bytes="18708"
+          data-rating="0.1336"
+          data-created="2026-09-24"
+          >Dayoung</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dawon_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/6/6e/10%EC%9B%94_20%EC%9D%BC_U%2B%EC%95%84%EC%9D%B4%EB%8F%8CLive_%EB%9F%B0%EC%B9%AD%EC%BD%98%EC%84%9C%ED%8A%B8_%28103%29.jpg"
+          data-bytes="21056"
+          data-rating="0.1503"
+          data-created="2026-09-24"
+          >Dawon (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chaeryeong"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/251110_Lee_Chaeryeong_from_ITZY.png/1280px-251110_Lee_Chaeryeong_from_ITZY.png"
+          data-bytes="23152"
+          data-rating="0.1652"
+          data-created="2026-09-24"
+          >Chaeryeong</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Ahn_So-hee"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8f/20220519%E2%80%94Ahn_So-hee%2C_Interview%2C_Marie_Claire_Korea_%2800m32s%29.jpg/1280px-20220519%E2%80%94Ahn_So-hee%2C_Interview%2C_Marie_Claire_Korea_%2800m32s%29.jpg"
+          data-bytes="23981"
+          data-rating="0.1711"
+          data-created="2026-09-24"
+          >Ahn So-hee</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chae_Jung-an"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/3/3d/Chae_Jung-an_in_September_2025.png"
+          data-bytes="24020"
+          data-rating="0.1714"
+          data-created="2026-09-24"
+          >Chae Jung-an</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Byul"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/3/36/20230112_%EB%B3%84_Byul.png"
+          data-bytes="25111"
+          data-rating="0.1792"
+          data-created="2026-09-24"
+          >Byul</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dana_(South_Korean_singer)"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Dana_Hong_at_the_Bonnie_%26_Clyde_Press_Conference.jpg/1280px-Dana_Hong_at_the_Bonnie_%26_Clyde_Press_Conference.jpg"
+          data-bytes="25127"
+          data-rating="0.1793"
+          data-created="2026-09-24"
+          >Dana (South Korean singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Shannon_Bae"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/d/d3/03%EC%9B%94_25%EC%9D%BC_%ED%94%84%EB%A6%AC%EC%8A%A4%ED%8B%B4_%ED%8C%AC%EC%82%AC%EC%9D%B8%ED%9A%8C_%2825%29.jpg"
+          data-bytes="25634"
+          data-rating="0.1829"
+          data-created="2026-09-24"
+          >Shannon Bae</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Danielle_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/8/8b/240910_NewJeans_Danielle.jpg"
+          data-bytes="27575"
+          data-rating="0.1967"
+          data-created="2026-09-24"
+          >Danielle (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Elly_(rapper)"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/LE_at_a_fansigning_event_in_Mokdong_on_October_8%2C_2022_%283%29.jpg/1280px-LE_at_a_fansigning_event_in_Mokdong_on_October_8%2C_2022_%283%29.jpg"
+          data-bytes="29158"
+          data-rating="0.208"
+          data-created="2026-09-24"
+          >Elly (rapper)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choi_Jung-in"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/6/62/Choi_Jung-in%2C_2014_%28cropped%29.jpg"
+          data-bytes="30413"
+          data-rating="0.2169"
+          data-created="2026-09-24"
+          >Choi Jung-in</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Eunha_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/6/67/Eunha_August_2024_%283x4_cropped%29.jpg"
+          data-bytes="32146"
+          data-rating="0.2293"
+          data-created="2026-09-24"
+          >Eunha (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choi_Yu-jin"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/2/28/Kep1er_YUJIN_Seoul_Fashion_Week.jpg"
+          data-bytes="34425"
+          data-rating="0.2455"
+          data-created="2026-09-24"
+          >Choi Yu-jin</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bona_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/2/2d/Marie_Claire_Korea_Mterview_Kim_Ji-yeon_%26_Woo_Do-hwan_%282%29_%28cropped%29.png"
+          data-bytes="36759"
+          data-rating="0.2621"
+          data-created="2026-09-24"
+          >Bona (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Arin_(singer)"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/241002_Oh_My_Girl_Arin_01_%28cropped%29.jpg/1280px-241002_Oh_My_Girl_Arin_01_%28cropped%29.jpg"
+          data-bytes="37473"
+          data-rating="0.2672"
+          data-created="2026-09-24"
+          >Arin (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Eugene_(actress)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/b/b8/Eugene_in_Feb_2021.jpg"
+          data-bytes="44475"
+          data-rating="0.3171"
+          data-created="2026-09-24"
+          >Eugene (actress)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Lee_Chae-yeon"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/9/9e/240712_Lee_Chaeyeon.jpg"
+          data-bytes="47100"
+          data-rating="0.3357"
+          data-created="2026-09-24"
+          >Lee Chae-yeon</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Yerin_Baek"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/2/2e/Baek_Ye-rin_at_Slow_Life_Slow_Live_on_October_5%2C_2019.png"
+          data-bytes="47532"
+          data-rating="0.3388"
+          data-created="2026-09-24"
+          >Yerin Baek</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bang_Min-ah"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/3/3d/Bang_Minah_in_February_2023.png"
+          data-bytes="50666"
+          data-rating="0.3611"
+          data-created="2026-09-24"
+          >Bang Min-ah</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chaeyoung"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Twice_in_Seattle_2026_-_TWICE._Chaeyoung_%2855045248379%29.jpg/1280px-Twice_in_Seattle_2026_-_TWICE._Chaeyoung_%2855045248379%29.jpg"
+          data-bytes="52965"
+          data-rating="0.3775"
+          data-created="2026-09-24"
+          >Chaeyoung</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choi_Soo-young"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/83/250807_%EC%88%98%EC%98%81_%27%EC%95%85%EB%A7%88%EA%B0%80_%EC%9D%B4%EC%82%AC%EC%99%94%EB%8B%A4%27_VIP_Premiere_06_%28cropped%29.jpg/1280px-250807_%EC%88%98%EC%98%81_%27%EC%95%85%EB%A7%88%EA%B0%80_%EC%9D%B4%EC%82%AC%EC%99%94%EB%8B%A4%27_VIP_Premiere_06_%28cropped%29.jpg"
+          data-bytes="54716"
+          data-rating="0.39"
+          data-created="2026-09-24"
+          >Choi Soo-young</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/AleXa"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/00/AleXa%2C_Melodifestivalen_2026%2C_artists_press_conference-33_%28cropped%29.jpg/1280px-AleXa%2C_Melodifestivalen_2026%2C_artists_press_conference-33_%28cropped%29.jpg"
+          data-bytes="56307"
+          data-rating="0.4013"
+          data-created="2026-09-24"
+          >AleXa</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choi_Yoo-jung_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/5/56/Choi_Yoo-jung_in_October_2022.png"
+          data-bytes="58101"
+          data-rating="0.4141"
+          data-created="2026-09-24"
+          >Choi Yoo-jung (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/An_Yu-jin"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/f/f0/IVE_Yujin_2026_GDA.jpg"
+          data-bytes="59629"
+          data-rating="0.4249"
+          data-created="2026-09-24"
+          >An Yu-jin</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dahyun"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/7/7a/260618_Kim_Dahyun.png"
+          data-bytes="60027"
+          data-rating="0.4278"
+          data-created="2026-09-24"
+          >Dahyun</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Ben_(South_Korean_singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/7/7a/Ben_at_%27Bello%27_concert_on_January_11%2C_2019_%282%29.jpg"
+          data-bytes="62855"
+          data-rating="0.4479"
+          data-created="2026-09-24"
+          >Ben (South Korean singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bada_(singer)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/3/33/Bada_%28SES%29_in_March_2024.png"
+          data-bytes="64082"
+          data-rating="0.4566"
+          data-created="2026-09-24"
+          >Bada (singer)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Baek_A-yeon"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/Baek_A-yeon_in_November_2021.png/1280px-Baek_A-yeon_in_November_2021.png"
+          data-bytes="74072"
+          data-rating="0.5278"
+          data-created="2026-09-24"
+          >Baek A-yeon</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Miyeon"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/082726_Miyeon_at_The_Whoo_photocall_03.jpg/1280px-082726_Miyeon_at_The_Whoo_photocall_03.jpg"
+          data-bytes="84867"
+          data-rating="0.6046"
+          data-created="2026-09-24"
+          >Miyeon</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chung_Ha"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/3/30/CHUNG_HA_Shark_Ninja_PhotoCall_1.jpg"
+          data-bytes="88699"
+          data-rating="0.6319"
+          data-created="2026-09-24"
+          >Chung Ha</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bae_Suzy"
+          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Suzy_at_the_Longines_2026_new_product_presentation%2C_25_March_2026_04.png/1280px-Suzy_at_the_Longines_2026_new_product_presentation%2C_25_March_2026_04.png"
+          data-bytes="95679"
+          data-rating="0.6816"
+          data-created="2026-09-24"
+          >Bae Suzy</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Choi_Ye-na"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/b/b6/CHOI_YENA_%28%EC%B5%9C%EC%98%88%EB%82%98%29_%E2%80%93_2024.09.30_%E2%80%93_P2_%28cropped%29.jpg"
+          data-bytes="96566"
+          data-rating="0.6879"
+          data-created="2026-09-24"
+          >Choi Ye-na</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Chuu"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/7/7a/20251002_Chuu_%EC%B8%84_03.jpg"
+          data-bytes="109392"
+          data-rating="0.7792"
+          data-created="2026-09-24"
+          >Chuu</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/CL_(rapper)"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/7/78/CL_%EC%8A%A4%ED%83%80%EC%9D%BC_%EC%96%B4%EC%9B%8C%EC%A6%88_2024_%281%29.jpg"
+          data-bytes="110076"
+          data-rating="0.7841"
+          data-created="2026-09-24"
+          >CL (rapper)</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/BoA"
+          data-image="https://upload.wikimedia.org/wikipedia/commons/9/95/180417_%EB%B3%B4%EC%95%84_03_%28cropped%29_02.png"
+          data-bytes="140402"
+          data-rating="1"
+          data-created="2026-09-24"
+          >BoA</a
+        >
+      </li>
     </ul>
 
     <nav class="site-links" aria-label="Billiards pages">
@@ -730,22 +742,28 @@
           <h2>Play</h2>
           <ul>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?practice=true">Nine ball</a> make a
-              break and share replay link with friends
+              <a href="https://billiards.tailuge.workers.dev/?practice=true"
+                >Nine ball</a
+              >
+              make a break and share replay link with friends
             </li>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;lod=4"
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;lod=4"
                 >Three cushion billiards</a
               >
-              the ultimate test of physics and player (average on both counts). You need the
+              the ultimate test of physics and player (average on both counts).
+              You need the
               <a
                 href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;practice=true"
                 >beginner mode</a
               >.
             </li>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?ruletype=sagu">Sagu</a> Korean
-              four-ball carom game.
+              <a href="https://billiards.tailuge.workers.dev/?ruletype=sagu"
+                >Sagu</a
+              >
+              Korean four-ball carom game.
             </li>
             <li>
               <a
@@ -755,15 +773,21 @@
               we await the first 147.
             </li>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?ruletype=eightball&amp;lod=4"
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=eightball&amp;lod=4"
                 >8-Ball</a
               >
               try it in Hi-Res mode!
             </li>
             <li>
               Play vs the
-              <a href="https://billiards.tailuge.workers.dev/?bot=ClawBreak">Claw</a> and
-              <a href="https://billiards.tailuge.workers.dev/?bot=TheFarJaw">TheFarJaw</a>.
+              <a href="https://billiards.tailuge.workers.dev/?bot=ClawBreak"
+                >Claw</a
+              >
+              and
+              <a href="https://billiards.tailuge.workers.dev/?bot=TheFarJaw"
+                >TheFarJaw</a
+              >.
             </li>
             <li>
               <a href="https://billiards.tailuge.workers.dev/lobby.html"
@@ -778,7 +802,8 @@
             <li>Two player online mode with nchan nginx server.</li>
             <li>Nine ball, snooker, three cushion and Sagu billiards rules.</li>
             <li>
-              Presentation using WebGL in any modern browser on mobile, linux, mac or windows.
+              Presentation using WebGL in any modern browser on mobile, linux,
+              mac or windows.
             </li>
           </ul>
           <h2>Elsewhere</h2>
@@ -788,8 +813,11 @@
               >AZBilliards</a
             >
             · <a href="https://tailuge.itch.io/">itch.io</a> ·
-            <a href="https://gamejolt.com/games/billiards/1083832">GameJolt</a> ·
-            <a href="https://github.com/tailuge/tbilliards/releases/latest">GitHub</a>
+            <a href="https://gamejolt.com/games/billiards/1083832">GameJolt</a>
+            ·
+            <a href="https://github.com/tailuge/tbilliards/releases/latest"
+              >GitHub</a
+            >
           </p>
         </div>
       </details>

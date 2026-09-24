@@ -50,6 +50,7 @@ import { ResumeStore } from "../utils/resumestore"
 import { share, shorten } from "../utils/shorten"
 import { RevealTracker } from "../utils/revealtracker"
 import { Rack } from "../utils/rack"
+import { TableGeometry } from "../view/tablegeometry"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -291,6 +292,35 @@ export class Container {
       p2Star
     )
     this.setHudActivePlayer(active ?? this.inferActivePlayer())
+  }
+
+  /**
+   * Re-initialise the RevealTracker total from a short-serialised init array.
+   * In replay the init state may represent a mid-game snapshot where some balls
+   * have already been potted, so the total must reflect the number of pottable
+   * balls actually present rather than the full rack size.
+   *
+   * Ball 0 is always the cue ball and is excluded. Balls whose stored position
+   * is outside the table play area (|x| > tableX or |y| > tableY) are already
+   * in a pocket and are also excluded.
+   */
+  updateRevealTotal(init: number[]): void {
+    if (!this.revealTracker) {
+      return
+    }
+    const { tableX, tableY } = TableGeometry
+    // init is [x0,y0, x1,y1, ...]; skip index 0 (cue ball = pair 0)
+    let count = 0
+    for (let i = 1; i < init.length / 2; i++) {
+      const x = init[i * 2]
+      const y = init[i * 2 + 1]
+      if (Math.abs(x) <= tableX && Math.abs(y) <= tableY) {
+        count++
+      }
+    }
+    if (count > 0) {
+      this.revealTracker.resetTotal(count)
+    }
   }
 
   /**
