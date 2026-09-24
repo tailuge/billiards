@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pot & Reveal — Play billiards to uncover hidden pictures</title>
+    <title>K-Pot Idol — Play billiards to uncover hidden pictures</title>
     <meta
       name="description"
-      content="Play billiards to uncover hidden pictures. Pot balls to progressively reveal the photograph. Free online billiards picture-reveal game — no download."
+      content="Play billiards to uncover hidden pictures. Pot balls to progressively reveal the photograph. Free online billiards picture-reveal game."
     />
     <meta name="robots" content="index,follow" />
     <link
@@ -202,20 +202,163 @@
       html[theme="dark"] .seo-fallback .attribution {
         color: #999999;
       }
+      /* Language tabs over the prose panel — no JS. The hidden radios sit before the
+         panel stack so plain `:checked ~` sibling selectors swap panels; every
+         language's copy stays in the DOM (only one is displayed) so crawlers see all
+         of it, each block tagged with its own lang code. */
+      .seo-lang-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        clip-path: inset(50%);
+        border: 0;
+      }
+      .seo-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0;
+        margin: 0;
+        padding-left: 0.6rem;
+        position: relative;
+        z-index: 1;
+      }
+      .seo-tab {
+        cursor: pointer;
+        padding: 0.22rem 0.65rem 0.26rem;
+        border: 1px solid transparent;
+        border-bottom: none;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        background: transparent;
+        color: #757575;
+        font-size: 0.72rem;
+        line-height: 1.4;
+        user-select: none;
+        margin-bottom: -1px;
+        transition:
+          color 0.15s,
+          background-color 0.15s;
+      }
+      html[theme="dark"] .seo-tab {
+        color: #999999;
+      }
+      .seo-tab:hover {
+        color: #0055cc;
+      }
+      html[theme="dark"] .seo-tab:hover {
+        color: #6ba3f5;
+      }
+      .seo-panel {
+        display: none;
+        border-top-left-radius: 0;
+      }
+      #seo-lang-en:focus-visible ~ .seo-tabs [for="seo-lang-en"],
+      #seo-lang-ko:focus-visible ~ .seo-tabs [for="seo-lang-ko"],
+      #seo-lang-tr:focus-visible ~ .seo-tabs [for="seo-lang-tr"],
+      #seo-lang-zh:focus-visible ~ .seo-tabs [for="seo-lang-zh"],
+      #seo-lang-vi:focus-visible ~ .seo-tabs [for="seo-lang-vi"],
+      #seo-lang-es:focus-visible ~ .seo-tabs [for="seo-lang-es"] {
+        outline: 2px solid #0055cc;
+        outline-offset: -1px;
+      }
+      #seo-lang-en:checked ~ .seo-tabs [for="seo-lang-en"],
+      #seo-lang-ko:checked ~ .seo-tabs [for="seo-lang-ko"],
+      #seo-lang-tr:checked ~ .seo-tabs [for="seo-lang-tr"],
+      #seo-lang-zh:checked ~ .seo-tabs [for="seo-lang-zh"],
+      #seo-lang-vi:checked ~ .seo-tabs [for="seo-lang-vi"],
+      #seo-lang-es:checked ~ .seo-tabs [for="seo-lang-es"] {
+        background: #ffffff;
+        border-color: #dddddd;
+        border-bottom: 1px solid #ffffff;
+        color: #0055cc;
+        font-weight: 600;
+      }
+      html[theme="dark"] #seo-lang-en:checked ~ .seo-tabs [for="seo-lang-en"],
+      html[theme="dark"] #seo-lang-ko:checked ~ .seo-tabs [for="seo-lang-ko"],
+      html[theme="dark"] #seo-lang-tr:checked ~ .seo-tabs [for="seo-lang-tr"],
+      html[theme="dark"] #seo-lang-zh:checked ~ .seo-tabs [for="seo-lang-zh"],
+      html[theme="dark"] #seo-lang-vi:checked ~ .seo-tabs [for="seo-lang-vi"],
+      html[theme="dark"] #seo-lang-es:checked ~ .seo-tabs [for="seo-lang-es"] {
+        background: #2a2a2a;
+        border-color: #444444;
+        border-bottom: 1px solid #2a2a2a;
+        color: #6ba3f5;
+        font-weight: 600;
+      }
+      #seo-lang-en:checked ~ .seo-panel--en,
+      #seo-lang-ko:checked ~ .seo-panel--ko,
+      #seo-lang-tr:checked ~ .seo-panel--tr,
+      #seo-lang-zh:checked ~ .seo-panel--zh,
+      #seo-lang-vi:checked ~ .seo-panel--vi,
+      #seo-lang-es:checked ~ .seo-panel--es {
+        display: grid;
+      }
     </style>
   </head>
   <body>
-    <h1 hidden>Pot & Reveal — billiards picture-reveal game</h1>
+    <h1 hidden>K-Pot Idol — billiards picture-reveal game</h1>
     <reveal-app></reveal-app>
 
     <!-- Explanatory prose — real HTML directly in the page so crawlers without JS identify it.
          This is the only copy: <reveal-app> renders the grid above and no prose below. -->
     <section class="seo-fallback" aria-label="How to play and FAQ">
-      <div class="seo-grid">
+      <!-- Language tabs, no JS: the hidden radios precede the panels so plain
+           `:checked ~` sibling selectors swap them. Every translation stays in the DOM
+           (only one is displayed) for crawlers, each tagged with its own lang code. -->
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-en"
+        checked
+      />
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-ko"
+      />
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-tr"
+      />
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-zh"
+      />
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-vi"
+      />
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-es"
+      />
+      <div class="seo-tabs" role="group" aria-label="Language">
+        <label class="seo-tab" for="seo-lang-en" lang="en">English</label>
+        <label class="seo-tab" for="seo-lang-ko" lang="ko">한국어</label>
+        <label class="seo-tab" for="seo-lang-tr" lang="tr">Türkçe</label>
+        <label class="seo-tab" for="seo-lang-zh" lang="zh">中文</label>
+        <label class="seo-tab" for="seo-lang-vi" lang="vi">Tiếng Việt</label>
+        <label class="seo-tab" for="seo-lang-es" lang="es">Español</label>
+      </div>
+      <div class="seo-grid seo-panel seo-panel--en" lang="en">
         <div class="seo-col">
           <h2>How to play</h2>
           <ol>
-            <li>Choose a mystery picture from the wall.</li>
+            <li>Choose a mystery picture from the deck.</li>
             <li>Tap the card to flip it, then press Play.</li>
             <li>
               Pot balls in the billiards game to progressively reveal the
@@ -226,9 +369,9 @@
         </div>
         <div class="seo-col">
           <h2>FAQ</h2>
-          <h3>What is Pot &amp; Reveal?</h3>
+          <h3>What is K-Pot Idol?</h3>
           <p>
-            A free online billiards game where photographs are progressively
+            A free online billiards game where images are progressively
             uncovered as you play.
           </p>
           <h3>How are pictures revealed?</h3>
@@ -236,183 +379,53 @@
             Each successful pot reveals another section of the hidden
             photograph. The more you pot, the more of the image you see.
           </p>
-          <h3>Do I need to download anything?</h3>
-          <p>
-            No. The game runs directly in the web browser on desktop or mobile.
-          </p>
           <h3>Can I share a reveal?</h3>
           <p>
-            Yes. Flip a completed card to copy its replay link — sharing is for
-            that individual reveal, not the whole collection.
+            Yes. Flip a completed card and click share icon. This shows your
+            friends your clearance and the image
           </p>
           <h3>Is there a right order to play the pictures?</h3>
           <p>
-            No. Pick any mystery card you like. The wall keeps a fixed order;
-            solved pictures stay in place and the rest remain mysteries until
-            you solve them.
+            No. Pick any mystery card you like. More stars are more difficult
+            with more balls to pot. Good luck!
           </p>
+        </div>
+      </div>
+      <!-- Translations are placeholders: replace each TBD with the translated copy. -->
+      <div class="seo-grid seo-panel seo-panel--ko" lang="ko">
+        <div class="seo-col">
+          <p>TBD</p>
+        </div>
+      </div>
+      <div class="seo-grid seo-panel seo-panel--tr" lang="tr">
+        <div class="seo-col">
+          <p>TBD</p>
+        </div>
+      </div>
+      <div class="seo-grid seo-panel seo-panel--zh" lang="zh">
+        <div class="seo-col">
+          <p>TBD</p>
+        </div>
+      </div>
+      <div class="seo-grid seo-panel seo-panel--vi" lang="vi">
+        <div class="seo-col">
+          <p>TBD</p>
+        </div>
+      </div>
+      <div class="seo-grid seo-panel seo-panel--es" lang="es">
+        <div class="seo-col">
+          <p>TBD</p>
         </div>
       </div>
       <p class="attribution">
         Images from
         <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> and
-        linked Wikipedia pages, individually attributed on the completed card.
-        Played via the tailuge/billiards engine.
+        linked Wikipedia pages, individually attributed.
       </p>
     </section>
 
-    <!-- Hidden challenge data — one <li> per entry, diff-friendly, not visible to the user but in the HTML for coders and for JS to build the grid. 47 seed entries. -->
+    <!-- Hidden challenge data — one <li> per entry, diff-friendly, not visible to the user but in the HTML for coders and for JS to build the grid. 32 seed entries. -->
     <ul id="challenge-data" hidden aria-hidden="true">
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Chae_Ri-na"
-          data-image="https://upload.wikimedia.org/wikipedia/commons/0/03/%EC%B1%84%EB%A6%AC%EB%82%98.jpg"
-          data-bytes="4331"
-          data-rating="0.0313"
-          data-created="2026-09-24"
-          >Chae Ri-na</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/An_Ye-seul"
-          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/%EC%95%88%EC%98%88%EC%8A%AC.jpg/1280px-%EC%95%88%EC%98%88%EC%8A%AC.jpg"
-          data-bytes="5566"
-          data-rating="0.04"
-          data-created="2026-09-24"
-          >An Ye-seul</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Dia_(singer)"
-          data-image="https://upload.wikimedia.org/wikipedia/commons/4/4a/DIA_%28Lee_Ji-eun%29_from_Bella_at_the_Incheon_Festival%2C_May_2013_02.jpg"
-          data-bytes="9093"
-          data-rating="0.0652"
-          data-created="2026-09-24"
-          >Dia (singer)</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Cho_Seung-hee"
-          data-image="https://upload.wikimedia.org/wikipedia/commons/e/ef/Cho_Seung-hee_in_December_2020.png"
-          data-bytes="12279"
-          data-rating="0.0878"
-          data-created="2026-09-24"
-          >Cho Seung-hee</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Choerry"
-          data-image="https://upload.wikimedia.org/wikipedia/commons/9/9f/Choerry.png"
-          data-bytes="13217"
-          data-rating="0.0945"
-          data-created="2026-09-24"
-          >Choerry</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Bora_(singer)"
-          data-image="https://upload.wikimedia.org/wikipedia/commons/1/1f/Kim_Bo-ra_in_March_2023.jpg"
-          data-bytes="13678"
-          data-rating="0.0978"
-          data-created="2026-09-24"
-          >Bora (singer)</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Ah_Young"
-          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/%EB%8B%AC%EC%83%A4%EB%B2%B3_%40_Cyworld_Dream_Music_Festival_%EC%8B%B8%EC%9D%B4%EC%9B%94%EB%93%9C_%EB%93%9C%EB%A6%BC_%EB%AE%A4%EC%A7%81_%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_10.jpg/1280px-%EB%8B%AC%EC%83%A4%EB%B2%B3_%40_Cyworld_Dream_Music_Festival_%EC%8B%B8%EC%9D%B4%EC%9B%94%EB%93%9C_%EB%93%9C%EB%A6%BC_%EB%AE%A4%EC%A7%81_%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_10.jpg"
-          data-bytes="14141"
-          data-rating="0.1011"
-          data-created="2026-09-24"
-          >Ah Young</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Anda_(singer)"
-          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/160326_18_F_W_%EC%84%9C%EC%9A%B8%ED%8C%A8%EC%85%98%EC%9C%84%ED%81%AC_%ED%8F%AC%ED%86%A0%EC%9B%94.jpg/1280px-160326_18_F_W_%EC%84%9C%EC%9A%B8%ED%8C%A8%EC%85%98%EC%9C%84%ED%81%AC_%ED%8F%AC%ED%86%A0%EC%9B%94.jpg"
-          data-bytes="14459"
-          data-rating="0.1034"
-          data-created="2026-09-24"
-          >Anda (singer)</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Jo_Aram"
-          data-image="https://upload.wikimedia.org/wikipedia/commons/8/85/170526_%EC%95%88%EC%82%B0_%EA%B7%BC%EB%A1%9C%EC%9E%90_%EB%AE%A4%EC%A7%81%ED%8E%98%EC%8A%A4%ED%8B%B0%EB%B2%8C_%EA%B5%AC%EA%B5%AC%EB%8B%A8_%EC%A7%81%EC%B0%8D_%2814%29.jpg"
-          data-bytes="15559"
-          data-rating="0.1112"
-          data-created="2026-09-24"
-          >Jo Aram</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Ahn_Sol-bin"
-          data-image="https://upload.wikimedia.org/wikipedia/commons/4/42/170611_%EB%9D%BC%EB%B6%90_%EC%88%98%EC%9B%90_%EC%84%B8%EA%B3%84%EB%AC%B8%ED%99%94%EC%B6%95%EC%A0%9C_%282%29.jpg"
-          data-bytes="16754"
-          data-rating="0.1197"
-          data-created="2026-09-24"
-          >Ahn Sol-bin</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Bae_Seul-ki"
-          data-image="https://upload.wikimedia.org/wikipedia/commons/d/d7/Bae_Seul-ki_in_2020.png"
-          data-bytes="17414"
-          data-rating="0.1244"
-          data-created="2026-09-24"
-          >Bae Seul-ki</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Bae_Woo-hee"
-          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/180223_%EC%9A%B0%ED%9D%AC_02.jpg/1280px-180223_%EC%9A%B0%ED%9D%AC_02.jpg"
-          data-bytes="18070"
-          data-rating="0.1291"
-          data-created="2026-09-24"
-          >Bae Woo-hee</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Dayoung"
-          data-image="https://upload.wikimedia.org/wikipedia/commons/c/c5/Dayoung_in_September_2025.png"
-          data-bytes="18708"
-          data-rating="0.1336"
-          data-created="2026-09-24"
-          >Dayoung</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Dawon_(singer)"
-          data-image="https://upload.wikimedia.org/wikipedia/commons/6/6e/10%EC%9B%94_20%EC%9D%BC_U%2B%EC%95%84%EC%9D%B4%EB%8F%8CLive_%EB%9F%B0%EC%B9%AD%EC%BD%98%EC%84%9C%ED%8A%B8_%28103%29.jpg"
-          data-bytes="21056"
-          data-rating="0.1503"
-          data-created="2026-09-24"
-          >Dawon (singer)</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Chaeryeong"
-          data-image="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/251110_Lee_Chaeryeong_from_ITZY.png/1280px-251110_Lee_Chaeryeong_from_ITZY.png"
-          data-bytes="23152"
-          data-rating="0.1652"
-          data-created="2026-09-24"
-          >Chaeryeong</a
-        >
-      </li>
       <li>
         <a
           href="https://en.wikipedia.org/wiki/Ahn_So-hee"
@@ -731,6 +744,461 @@
           data-rating="1"
           data-created="2026-09-24"
           >BoA</a
+        >
+      </li>
+    </ul>
+
+    <!-- Alternate deck — Pokemon (the "PokePot" wall). Same shape as #challenge-data above —
+         one <li> per entry, anchor text = display name, data-image = canonical image URL
+         (matched exactly on return), data-rating = 0-1, href = source page. 32 seed entries;
+         data-type / data-nature / data-base-exp are extra flavor metadata from the source data. -->
+    <ul id="pokemon-data" hidden aria-hidden="true">
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Arceus"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/493.png"
+          data-type="normal"
+          data-nature="Jolly (+Spe, -SpA)"
+          data-base-exp="324"
+          data-rating="1.0000"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Arceus</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Ho"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/250.png"
+          data-type="fire"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="306"
+          data-rating="0.9444"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Ho</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Rayquaza"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png"
+          data-type="dragon"
+          data-nature="Calm (+SpD, -Atk)"
+          data-base-exp="306"
+          data-rating="0.9444"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Rayquaza</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Lugia"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/249.png"
+          data-type="psychic"
+          data-nature="Jolly (+Spe, -SpA)"
+          data-base-exp="306"
+          data-rating="0.9444"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Lugia</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Mewtwo"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png"
+          data-type="psychic"
+          data-nature="Timid (+Spe, -Atk)"
+          data-base-exp="306"
+          data-rating="0.9444"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Mewtwo</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Giratina"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/487.png"
+          data-type="ghost"
+          data-nature="Calm (+SpD, -Atk)"
+          data-base-exp="306"
+          data-rating="0.9444"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Giratina</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Tyranitar"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/248.png"
+          data-type="rock"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="270"
+          data-rating="0.8333"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Tyranitar</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Metagross"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/376.png"
+          data-type="steel"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="270"
+          data-rating="0.8333"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Metagross</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dragonite"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png"
+          data-type="dragon"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="270"
+          data-rating="0.8333"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Dragonite</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Mew"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/151.png"
+          data-type="psychic"
+          data-nature="Jolly (+Spe, -SpA)"
+          data-base-exp="270"
+          data-rating="0.8333"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Mew</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Garchomp"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/445.png"
+          data-type="dragon"
+          data-nature="Jolly (+Spe, -SpA)"
+          data-base-exp="270"
+          data-rating="0.8333"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Garchomp</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Snorlax"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/143.png"
+          data-type="normal"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="189"
+          data-rating="0.7500"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Snorlax</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Lapras"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/131.png"
+          data-type="water"
+          data-nature="Calm (+SpD, -Atk)"
+          data-base-exp="187"
+          data-rating="0.7431"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Lapras</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Charizard"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png"
+          data-type="fire"
+          data-nature="Timid (+Spe, -Atk)"
+          data-base-exp="240"
+          data-rating="0.7417"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Charizard</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Greninja"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/658.png"
+          data-type="water"
+          data-nature="Timid (+Spe, -Atk)"
+          data-base-exp="239"
+          data-rating="0.7361"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Greninja</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Lucario"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png"
+          data-type="fighting"
+          data-nature="Modest (+SpA, -Atk)"
+          data-base-exp="184"
+          data-rating="0.7292"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Lucario</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Sylveon"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/700.png"
+          data-type="fairy"
+          data-nature="Modest (+SpA, -Atk)"
+          data-base-exp="184"
+          data-rating="0.7292"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Sylveon</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Umbreon"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/197.png"
+          data-type="dark"
+          data-nature="Calm (+SpD, -Atk)"
+          data-base-exp="184"
+          data-rating="0.7292"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Umbreon</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Gardevoir"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/282.png"
+          data-type="psychic"
+          data-nature="Modest (+SpA, -Atk)"
+          data-base-exp="233"
+          data-rating="0.7194"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Gardevoir</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Zoroark"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/571.png"
+          data-type="dark"
+          data-nature="Timid (+Spe, -Atk)"
+          data-base-exp="179"
+          data-rating="0.7083"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Zoroark</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Gengar"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png"
+          data-type="ghost"
+          data-nature="Timid (+Spe, -Atk)"
+          data-base-exp="225"
+          data-rating="0.6944"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Gengar</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Mimikyu"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/778.png"
+          data-type="ghost"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="167"
+          data-rating="0.6611"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Mimikyu</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Eevee"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png"
+          data-type="normal"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="65"
+          data-rating="0.4514"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Eevee</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Pikachu"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
+          data-type="electric"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="112"
+          data-rating="0.4444"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Pikachu</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Psyduck"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/54.png"
+          data-type="water"
+          data-nature="Modest (+SpA, -Atk)"
+          data-base-exp="64"
+          data-rating="0.4444"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Psyduck</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bulbasaur"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
+          data-type="grass"
+          data-nature="Modest (+SpA, -Atk)"
+          data-base-exp="64"
+          data-rating="0.4417"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Bulbasaur</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Squirtle"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
+          data-type="water"
+          data-nature="Impish (+Def, -SpA)"
+          data-base-exp="63"
+          data-rating="0.4361"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Squirtle</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Charmander"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"
+          data-type="fire"
+          data-nature="Modest (+SpA, -Atk)"
+          data-base-exp="62"
+          data-rating="0.4292"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Charmander</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Meowth"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/52.png"
+          data-type="normal"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="58"
+          data-rating="0.4028"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Meowth</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Ditto"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png"
+          data-type="normal"
+          data-nature="Calm (+SpD, -Atk)"
+          data-base-exp="101"
+          data-rating="0.4000"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Ditto</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Jigglypuff"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/39.png"
+          data-type="normal"
+          data-nature="Calm (+SpD, -Atk)"
+          data-base-exp="95"
+          data-rating="0.3750"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Jigglypuff</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Magikarp"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/129.png"
+          data-type="water"
+          data-nature="Impish (+Def, -SpA)"
+          data-base-exp="40"
+          data-rating="0.2778"
+          data-created="2026-09-24"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Magikarp</a
         >
       </li>
     </ul>
