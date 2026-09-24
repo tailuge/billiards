@@ -260,7 +260,7 @@ export class Rack {
     )
 
     const redsToPlay = Math.min(SnookerConfig.reds, 15)
-    const triangle = Rack.trianglePositions().slice(0, 15)
+    const triangle = Rack.trianglePositions().slice(0, redsToPlay)
     const pocketPos = PocketGeometry.pockets.pocketS.pocket.pos
     triangle.forEach((p, i) => {
       const ball = new Ball(
@@ -293,6 +293,10 @@ export class Rack {
     return positions
   }
 
+  static revealRedsToPlay(): number {
+    return Math.min(SnookerConfig.reds, 15)
+  }
+
   static eightBall() {
     const triangle = this.triangle()
     Rack.swapBallPositions(triangle[4], triangle[9])
@@ -315,5 +319,14 @@ export class Rack {
       b.pos.z = 0
     })
     return balls
+  }
+
+  /** Helper so the reveal rule can rack only part of the standard 15-ball
+   * triangle. The original eight-ball config reuses the same 15 labels, so
+   * reveal should sit in the rack in the same order but uses only RedsToPlay
+   * of them.
+   */
+  static restrictTriangle(triangle: Ball[], count: number): Ball[] {
+    return triangle.slice(0, count)
   }
 }

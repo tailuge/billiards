@@ -59,7 +59,11 @@ export class Reveal implements Rules {
   }
 
   rack(): Ball[] {
-    return Rack.fromInitParam(Rack.eightBall())
+    // Reds= controls how many numbered balls are racked at the start of the
+    // game (15 is the default), and reveals use the numbered break triangle.
+    const count = Rack.revealRedsToPlay()
+    const triangle = Rack.restrictTriangle(Rack.eightBall(), count)
+    return Rack.fromInitParam(triangle)
   }
 
   secondToPlay(): void {
