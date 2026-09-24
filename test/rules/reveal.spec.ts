@@ -12,11 +12,13 @@ import { End } from "../../src/controller/end"
 import { Session } from "../../src/network/client/session"
 import { HitEvent } from "../../src/controller/controller"
 import { maxPower } from "../../src/model/physics/constants"
+import { SnookerConfig } from "../../src/utils/snookerconfig"
 
 initDom()
 
 function initReveal(): { container: Container; reveal: Reveal } {
   Ball.id = 0
+  SnookerConfig.reds = 15
   Session.reset()
   Session.init("test-client", "TestPlayer", "test-table", false, false, false)
   const container = new Container({

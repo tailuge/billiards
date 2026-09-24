@@ -327,6 +327,6 @@ export class Rack {
    * of them.
    */
   static restrictTriangle(triangle: Ball[], count: number): Ball[] {
-    return triangle.slice(0, count)
+    return triangle.slice(0, count + 1)
   }
 }

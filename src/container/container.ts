@@ -49,6 +49,7 @@ import { ExportUtils } from "../utils/export-utils"
 import { ResumeStore } from "../utils/resumestore"
 import { share, shorten } from "../utils/shorten"
 import { RevealTracker } from "../utils/revealtracker"
+import { Rack } from "../utils/rack"
 
 type ActivePlayer = 0 | 1 | 2
 
@@ -135,7 +136,10 @@ export class Container {
     this.table = this.rules.table()
     this.view = new View(element, this.table, assets, portraitMode)
     if (this.rules.rulename === "reveal" && this.view.reveal) {
-      this.revealTracker = new RevealTracker(this.view.reveal, 15)
+      this.revealTracker = new RevealTracker(
+        this.view.reveal,
+        Rack.revealRedsToPlay()
+      )
     }
     this.table.cue.aimInputs = new AimInputs(this)
     if (keyboard) {

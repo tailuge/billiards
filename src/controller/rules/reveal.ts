@@ -200,6 +200,7 @@ export class Reveal implements Rules {
         : ""
     )
     const image = params.get("image") ?? ""
+    const reds = params.get("reds") ?? ""
 
     let stateParam = ""
     try {
@@ -213,6 +214,9 @@ export class Reveal implements Rules {
     const targetParams = new URLSearchParams()
     if (image) {
       targetParams.set("image", image)
+    }
+    if (reds) {
+      targetParams.set("reds", reds)
     }
     if (stateParam) {
       targetParams.set("state", stateParam)

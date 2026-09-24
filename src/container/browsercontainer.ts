@@ -393,7 +393,9 @@ export class BrowserContainer {
 
   setReplayLink() {
     const url = globalThis.location.href.split("?")[0]
-    const prefix = `${url}?ruletype=${this.ruletype}&state=`
+    const redsParam =
+      SnookerConfig.reds !== 15 ? `&reds=${SnookerConfig.reds}` : ""
+    const prefix = `${url}?ruletype=${this.ruletype}${redsParam}&state=`
     this.container.linkFormatter.replayUrl = prefix
   }
 
