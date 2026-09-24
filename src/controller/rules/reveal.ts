@@ -178,7 +178,7 @@ export class Reveal implements Rules {
       icon: isWinner ? "🏆" : "🎱",
       extraClass: isWinner ? "is-winner" : "",
       extra: updateDeckButton,
-      share: false,
+      share: true,
       duration: 0,
     })
 

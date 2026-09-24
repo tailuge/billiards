@@ -10,6 +10,8 @@ import { PlaceBall } from "../../src/controller/placeball"
 import { Aim } from "../../src/controller/aim"
 import { End } from "../../src/controller/end"
 import { Session } from "../../src/network/client/session"
+import { HitEvent } from "../../src/controller/controller"
+import { maxPower } from "../../src/model/physics/constants"
 
 initDom()
 
@@ -42,6 +44,22 @@ describe("Reveal Rules", () => {
   it("should be reveal with an eightball rack", () => {
     expect(reveal.rulename).to.equal("reveal")
     expect(container.table.balls).to.have.length(16)
+  })
+
+  it("should boost break shot power by 20%", () => {
+    const aim = new Aim(container)
+    const initialPower = maxPower * 0.5
+    container.table.cue.aim.power = initialPower
+    const sendEventSpy = jest
+      .spyOn(container, "sendEvent")
+      .mockImplementation(() => {})
+
+    aim.playShot()
+
+    const hitEvent = sendEventSpy.mock.calls[0][0] as HitEvent
+    expect(hitEvent.tablejson.aim.power).to.equal(
+      Math.fround(initialPower * 1.2)
+    )
   })
 
   it("should score one point for every ball potted", () => {
@@ -103,5 +121,7 @@ describe("Reveal Rules", () => {
     expect(reveal.isEndOfGame(outcome)).to.be.true
     expect(reveal.update(outcome)).to.be.an.instanceof(End)
     expect(Session.getInstance().myScore()).to.equal(1)
+    expect(container.notification.element.querySelector(".notification-share"))
+      .not.to.be.null
   })
 })

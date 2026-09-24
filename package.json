@@ -53,7 +53,7 @@
     "chai": "6.2.2",
     "concurrently": "10.0.5",
     "eslint": "10.11.0",
-    "eslint-plugin-html": "8.2.0",
+    "eslint-plugin-html": "8.2.1",
     "eslint-plugin-sonarjs": "4.2.1",
     "html-validate": "^11.16.0",
     "http-server": "^14.1.1",

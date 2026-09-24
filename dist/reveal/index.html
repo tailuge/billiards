@@ -9,7 +9,10 @@
       content="Play billiards to uncover hidden pictures. Pot balls to progressively reveal the photograph. Free online billiards picture-reveal game — no download."
     />
     <meta name="robots" content="index,follow" />
-    <link rel="canonical" href="https://billiards.tailuge.workers.dev/reveal/" />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/reveal/"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -20,12 +23,14 @@
     <meta name="theme-color" content="#1a1a1a" />
     <script>
       try {
-        const params = new URLSearchParams(window.location.search);
-        const theme = params.get("theme") || localStorage.getItem("theme") || "dark";
-        document.documentElement.setAttribute("theme", theme);
-        document.documentElement.style.colorScheme = document.documentElement.getAttribute("theme");
+        const params = new URLSearchParams(window.location.search)
+        const theme =
+          params.get("theme") || localStorage.getItem("theme") || "dark"
+        document.documentElement.setAttribute("theme", theme)
+        document.documentElement.style.colorScheme =
+          document.documentElement.getAttribute("theme")
       } catch (_e) {
-        document.documentElement.setAttribute("theme", "dark");
+        document.documentElement.setAttribute("theme", "dark")
       }
     </script>
     <style>
@@ -212,7 +217,10 @@
           <ol>
             <li>Choose a mystery picture from the wall.</li>
             <li>Tap the card to flip it, then press Play.</li>
-            <li>Pot balls in the billiards game to progressively reveal the photograph.</li>
+            <li>
+              Pot balls in the billiards game to progressively reveal the
+              photograph.
+            </li>
             <li>Complete the picture to keep it in your collection.</li>
           </ol>
         </div>
@@ -220,32 +228,36 @@
           <h2>FAQ</h2>
           <h3>What is Pot &amp; Reveal?</h3>
           <p>
-            A free online billiards game where photographs are progressively uncovered as you
-            play.
+            A free online billiards game where photographs are progressively
+            uncovered as you play.
           </p>
           <h3>How are pictures revealed?</h3>
           <p>
-            Each successful pot reveals another section of the hidden photograph. The more you pot,
-            the more of the image you see.
+            Each successful pot reveals another section of the hidden
+            photograph. The more you pot, the more of the image you see.
           </p>
           <h3>Do I need to download anything?</h3>
-          <p>No. The game runs directly in the web browser on desktop or mobile.</p>
+          <p>
+            No. The game runs directly in the web browser on desktop or mobile.
+          </p>
           <h3>Can I share a reveal?</h3>
           <p>
-            Yes. Flip a completed card to copy its replay link — sharing is for that individual
-            reveal, not the whole collection.
+            Yes. Flip a completed card to copy its replay link — sharing is for
+            that individual reveal, not the whole collection.
           </p>
           <h3>Is there a right order to play the pictures?</h3>
           <p>
-            No. Pick any mystery card you like. The wall keeps a fixed order; solved pictures stay
-            in place and the rest remain mysteries until you solve them.
+            No. Pick any mystery card you like. The wall keeps a fixed order;
+            solved pictures stay in place and the rest remain mysteries until
+            you solve them.
           </p>
         </div>
       </div>
       <p class="attribution">
-        Images from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> and linked
-        Wikipedia pages, individually attributed on the completed card. Played via the
-        tailuge/billiards engine.
+        Images from
+        <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> and
+        linked Wikipedia pages, individually attributed on the completed card.
+        Played via the tailuge/billiards engine.
       </p>
     </section>
 
@@ -589,22 +601,28 @@
           <h2>Play</h2>
           <ul>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?practice=true">Nine ball</a> make a
-              break and share replay link with friends
+              <a href="https://billiards.tailuge.workers.dev/?practice=true"
+                >Nine ball</a
+              >
+              make a break and share replay link with friends
             </li>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;lod=4"
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;lod=4"
                 >Three cushion billiards</a
               >
-              the ultimate test of physics and player (average on both counts). You need the
+              the ultimate test of physics and player (average on both counts).
+              You need the
               <a
                 href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;practice=true"
                 >beginner mode</a
               >.
             </li>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?ruletype=sagu">Sagu</a> Korean
-              four-ball carom game.
+              <a href="https://billiards.tailuge.workers.dev/?ruletype=sagu"
+                >Sagu</a
+              >
+              Korean four-ball carom game.
             </li>
             <li>
               <a
@@ -614,15 +632,21 @@
               we await the first 147.
             </li>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?ruletype=eightball&amp;lod=4"
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=eightball&amp;lod=4"
                 >8-Ball</a
               >
               try it in Hi-Res mode!
             </li>
             <li>
               Play vs the
-              <a href="https://billiards.tailuge.workers.dev/?bot=ClawBreak">Claw</a> and
-              <a href="https://billiards.tailuge.workers.dev/?bot=TheFarJaw">TheFarJaw</a>.
+              <a href="https://billiards.tailuge.workers.dev/?bot=ClawBreak"
+                >Claw</a
+              >
+              and
+              <a href="https://billiards.tailuge.workers.dev/?bot=TheFarJaw"
+                >TheFarJaw</a
+              >.
             </li>
             <li>
               <a href="https://billiards.tailuge.workers.dev/lobby.html"
@@ -637,7 +661,8 @@
             <li>Two player online mode with nchan nginx server.</li>
             <li>Nine ball, snooker, three cushion and Sagu billiards rules.</li>
             <li>
-              Presentation using WebGL in any modern browser on mobile, linux, mac or windows.
+              Presentation using WebGL in any modern browser on mobile, linux,
+              mac or windows.
             </li>
           </ul>
           <h2>Elsewhere</h2>
@@ -647,8 +672,11 @@
               >AZBilliards</a
             >
             · <a href="https://tailuge.itch.io/">itch.io</a> ·
-            <a href="https://gamejolt.com/games/billiards/1083832">GameJolt</a> ·
-            <a href="https://github.com/tailuge/tbilliards/releases/latest">GitHub</a>
+            <a href="https://gamejolt.com/games/billiards/1083832">GameJolt</a>
+            ·
+            <a href="https://github.com/tailuge/tbilliards/releases/latest"
+              >GitHub</a
+            >
           </p>
         </div>
       </details>

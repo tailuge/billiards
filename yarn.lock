@@ -3246,7 +3246,7 @@ __metadata:
     chai: "npm:6.2.2"
     concurrently: "npm:10.0.5"
     eslint: "npm:10.11.0"
-    eslint-plugin-html: "npm:8.2.0"
+    eslint-plugin-html: "npm:8.2.1"
     eslint-plugin-sonarjs: "npm:4.2.1"
     fflate: "npm:^0.8.3"
     html-validate: "npm:^11.16.0"
@@ -4192,12 +4192,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-html@npm:8.2.0":
-  version: 8.2.0
-  resolution: "eslint-plugin-html@npm:8.2.0"
+"eslint-plugin-html@npm:8.2.1":
+  version: 8.2.1
+  resolution: "eslint-plugin-html@npm:8.2.1"
   dependencies:
     htmlparser2: "npm:^10.0.0"
-  checksum: 10c0/09f1cff216a45c92f845d570d637fa6de515baa879791bb7888fa3842c3e3b24e590dd319c5f5ccce4ee0dc463afe1f963b8175caced7e6153d09338d6bdefbc
+  checksum: 10c0/f3f43c3f950438c9e1971e684dec3e848f840303376bac1fbffcb20bebb07ad3fd96886e5a14f373e33822eadf2a5fec5801bdf1640b2e2e9e67b208f8f7ef80
   languageName: node
   linkType: hard
 
