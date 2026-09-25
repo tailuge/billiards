@@ -389,7 +389,7 @@
         grid-area: 3 / 1 / 4 / 2;
     }
     .container { max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 0.2rem; flex: 1; }
-`];var xe=1122,we=r=>`v${Math.floor(r/100)}.${String(r%100).padStart(2,"0")}`,Pt="https://scoreboard-tailuge.vercel.app",T=typeof localStorage<"u"&&localStorage.getItem("useProxy")==="true"?"nchanproxy.tailuge.workers.dev":"billiards-network.onrender.com",te=typeof window<"u"&&(window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"),Tt=te?`ws://${window.location.hostname}:80`:`wss://${T}`;var it=te?"":"https://billiards-network.onrender.com",A=typeof window<"u"&&window.location.hostname.includes("vercel");var st=r=>{if(r==="BOT")return{emoji:"\u{1F916}",title:"BOT"};if(!r)return{emoji:"\u{1F310}",title:""};let e=r.toUpperCase();return{emoji:[...e].map(i=>String.fromCodePoint(127397+i.charCodeAt(0))).join(""),title:e}},rt=te?`http://${window.location.hostname}:8080/`:"https://billiards.tailuge.workers.dev/";var nt=(r,e,t)=>{for(let[i,s]of Object.entries(r)){let n=e?`${e}.${encodeURIComponent(i)}`:encodeURIComponent(i);s&&typeof s=="object"&&!Array.isArray(s)?nt(s,n,t):s!=null&&t.push(`${n}=${encodeURIComponent(s)}`)}return t},At=(r,e,t)=>e&&typeof e=="object"?nt(e,t,[]).reduce((i,s)=>i+`&${s}`,r):r;var ot=({imageUrl:r,userId:e,userName:t,lod:i,flip:s,rating:n,stars:o,custom:l})=>{let a=Math.min(1,Math.max(0,Number.isFinite(n)?n:0)),d=Math.min(15,Math.max(1,Math.round(a*15))),h=o??Math.min(5,Math.max(1,Math.ceil(a*5))),c=`${rt}?ruletype=reveal&image=${encodeURIComponent(r)}&userId=${encodeURIComponent(e)}&userName=${encodeURIComponent(t)}&lod=${i}&reds=${d}`;return h===1?c+="&tableSize=6":h===2?c+="&tableSize=6&freeaim=true":h===5&&(c+="&freeaim=true"),te&&(c+=`&lobbyUrl=${Tt}`),s&&(c+="&flip=true"),c=At(c,l,"custom"),c},J=({imageUrl:r,state:e})=>{if(!e)return"";let t=`${rt}?ruletype=reveal&state=${encodeURIComponent(e)}`;return r&&(t+=`&image=${encodeURIComponent(r)}`),t},at=(r,e=document.title)=>navigator.share&&/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)?navigator.share({title:e,url:r}).then(()=>"shared").catch(()=>"dismissed"):navigator.clipboard.writeText(r).then(()=>"copied").catch(()=>"dismissed"),lt=async r=>{try{return(await(await fetch(`${Pt}/api/shorten`,{method:"POST",mode:"cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({input:new URL(r).search})})).json()).shortUrl||r}catch(e){return console.error("reveal: could not shorten url",r,e),r}};var ct=r=>{let e=(r||"user").slice(0,4),t=/Tauri/i.test(navigator.userAgent)?"-t-":"-";return e+t+Math.random().toString(36).slice(2,7)},_e=class extends EventTarget{constructor(){super();let e=new URLSearchParams(window.location.search),t=(e.get("userId")||"").trim(),i=(e.get("userName")||"").trim();A&&(localStorage.removeItem("userId"),localStorage.removeItem("userName"),localStorage.removeItem("custom"));let s=(localStorage.getItem("userId")||"").trim(),n=(localStorage.getItem("userName")||"").trim();if(t.length>2)this.clientId=t,this.isForcedId=!0;else if(window.self!==window.top&&(location.hostname==="localhost"||location.hostname==="127.0.0.1")&&window.name.includes("-"))this.clientId=window.name,this.isForcedId=!0,i||(this.userName=window.name.split("-")[0]);else{let l=i||n||"",a=!l||s.split("-")[0].slice(0,4)===l.slice(0,4);this.clientId=s.length>2&&!s.startsWith("user-")&&a?s:ct(l),this.isForcedId=!1,this.clientId!==s&&localStorage.setItem("userId",this.clientId)}this.userName=i||this.userName||n||"Anonymous",this.lod=localStorage.getItem("lod")||"4",this.flip=localStorage.getItem("flip")==="true",this.useProxy=localStorage.getItem("useProxy")==="true";try{this.custom=JSON.parse(localStorage.getItem("custom"))||{}}catch{this.custom={}}window.addEventListener("storage",o=>{if(o.key==="custom"){try{this.custom=JSON.parse(o.newValue)||{}}catch{this.custom={}}this.dispatchEvent(new Event("change"))}}),console.log("UserStore identity:",this.userName,this.clientId)}setUseProxy(e){this.useProxy=!!e,localStorage.setItem("useProxy",this.useProxy),this.dispatchEvent(new Event("change")),window.location.reload()}set(e,t){this.clientId=e.trim().length>2?e.trim():ct(t),this.userName=t.trim(),localStorage.setItem("userId",this.clientId),localStorage.setItem("userName",this.userName),this.dispatchEvent(new Event("change"))}setLod(e){this.lod=e,localStorage.setItem("lod",e),this.dispatchEvent(new Event("change"))}setFlip(e){this.flip=!!e,localStorage.setItem("flip",this.flip),this.dispatchEvent(new Event("change"))}getCustom(){return{...this.custom}}setCustom(e,t){this.custom={...this.custom,[e]:t},localStorage.setItem("custom",JSON.stringify(this.custom)),this.dispatchEvent(new Event("change"))}},g=new _e,$=class extends y{connectedCallback(){super.connectedCallback(),this._storeListener=()=>this.requestUpdate(),g.addEventListener("change",this._storeListener)}disconnectedCallback(){super.disconnectedCallback(),g.removeEventListener("change",this._storeListener)}};var Mt=[[4352,4447,1],[11904,42191,1],[44032,55203,1],[63744,64255,1],[65040,65135,1],[65280,65376,1],[65504,65510,1],[127744,129791,1.25],[131072,195103,1]],dt=r=>{let e=0,t=0;for(let i of r){let s=i.codePointAt(0),n=Mt.find(([o,l])=>s>=o&&s<=l);n?t+=n[2]:e++}return!e&&!t&&(e=1),`calc(${e}ch + ${+t.toFixed(2)}em)`},ke=class extends ${static properties={_dotColor:{state:!0}};static styles=tt;constructor(){super(),this._clientId=g.clientId,this._name=g.userName,this._dotColor=g.isForcedId?"#9fca10ff":"#4caf50"}_commit(e){let t=e.trim().slice(0,12)||"Anonymous";this._name=t,g.set(this._clientId,t),this.dispatchEvent(new CustomEvent("user-name-changed",{bubbles:!0,composed:!0,detail:{userId:this._clientId,userName:t}}))}render(){return A?u``:u`
+`];var xe=1126,we=r=>`v${Math.floor(r/100)}.${String(r%100).padStart(2,"0")}`,Pt="https://scoreboard-tailuge.vercel.app",T=typeof localStorage<"u"&&localStorage.getItem("useProxy")==="true"?"nchanproxy.tailuge.workers.dev":"billiards-network.onrender.com",te=typeof window<"u"&&(window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"),Tt=te?`ws://${window.location.hostname}:80`:`wss://${T}`;var it=te?"":"https://billiards-network.onrender.com",A=typeof window<"u"&&window.location.hostname.includes("vercel");var st=r=>{if(r==="BOT")return{emoji:"\u{1F916}",title:"BOT"};if(!r)return{emoji:"\u{1F310}",title:""};let e=r.toUpperCase();return{emoji:[...e].map(i=>String.fromCodePoint(127397+i.charCodeAt(0))).join(""),title:e}},rt=te?`http://${window.location.hostname}:8080/`:"https://billiards.tailuge.workers.dev/";var nt=(r,e,t)=>{for(let[i,s]of Object.entries(r)){let n=e?`${e}.${encodeURIComponent(i)}`:encodeURIComponent(i);s&&typeof s=="object"&&!Array.isArray(s)?nt(s,n,t):s!=null&&t.push(`${n}=${encodeURIComponent(s)}`)}return t},At=(r,e,t)=>e&&typeof e=="object"?nt(e,t,[]).reduce((i,s)=>i+`&${s}`,r):r;var ot=({imageUrl:r,userId:e,userName:t,lod:i,flip:s,rating:n,stars:o,custom:l})=>{let a=Math.min(1,Math.max(0,Number.isFinite(n)?n:0)),d=Math.min(15,Math.max(1,Math.round(a*15))),h=o??Math.min(5,Math.max(1,Math.ceil(a*5))),c=`${rt}?ruletype=reveal&image=${encodeURIComponent(r)}&userId=${encodeURIComponent(e)}&userName=${encodeURIComponent(t)}&lod=${i}&reds=${d}`;return h===1?c+="&tableSize=6":h===2?c+="&tableSize=6&freeaim=true":h===5&&(c+="&freeaim=true"),te&&(c+=`&lobbyUrl=${Tt}`),s&&(c+="&flip=true"),c=At(c,l,"custom"),c},J=({imageUrl:r,state:e})=>{if(!e)return"";let t=`${rt}?ruletype=reveal&state=${encodeURIComponent(e)}`;return r&&(t+=`&image=${encodeURIComponent(r)}`),t},at=(r,e=document.title)=>navigator.share&&/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)?navigator.share({title:e,url:r}).then(()=>"shared").catch(()=>"dismissed"):navigator.clipboard.writeText(r).then(()=>"copied").catch(()=>"dismissed"),lt=async r=>{try{return(await(await fetch(`${Pt}/api/shorten`,{method:"POST",mode:"cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({input:new URL(r).search})})).json()).shortUrl||r}catch(e){return console.error("reveal: could not shorten url",r,e),r}};var ct=r=>{let e=(r||"user").slice(0,4),t=/Tauri/i.test(navigator.userAgent)?"-t-":"-";return e+t+Math.random().toString(36).slice(2,7)},_e=class extends EventTarget{constructor(){super();let e=new URLSearchParams(window.location.search),t=(e.get("userId")||"").trim(),i=(e.get("userName")||"").trim();A&&(localStorage.removeItem("userId"),localStorage.removeItem("userName"),localStorage.removeItem("custom"));let s=(localStorage.getItem("userId")||"").trim(),n=(localStorage.getItem("userName")||"").trim();if(t.length>2)this.clientId=t,this.isForcedId=!0;else if(window.self!==window.top&&(location.hostname==="localhost"||location.hostname==="127.0.0.1")&&window.name.includes("-"))this.clientId=window.name,this.isForcedId=!0,i||(this.userName=window.name.split("-")[0]);else{let l=i||n||"",a=!l||s.split("-")[0].slice(0,4)===l.slice(0,4);this.clientId=s.length>2&&!s.startsWith("user-")&&a?s:ct(l),this.isForcedId=!1,this.clientId!==s&&localStorage.setItem("userId",this.clientId)}this.userName=i||this.userName||n||"Anonymous",this.lod=localStorage.getItem("lod")||"4",this.flip=localStorage.getItem("flip")==="true",this.useProxy=localStorage.getItem("useProxy")==="true";try{this.custom=JSON.parse(localStorage.getItem("custom"))||{}}catch{this.custom={}}window.addEventListener("storage",o=>{if(o.key==="custom"){try{this.custom=JSON.parse(o.newValue)||{}}catch{this.custom={}}this.dispatchEvent(new Event("change"))}}),console.log("UserStore identity:",this.userName,this.clientId)}setUseProxy(e){this.useProxy=!!e,localStorage.setItem("useProxy",this.useProxy),this.dispatchEvent(new Event("change")),window.location.reload()}set(e,t){this.clientId=e.trim().length>2?e.trim():ct(t),this.userName=t.trim(),localStorage.setItem("userId",this.clientId),localStorage.setItem("userName",this.userName),this.dispatchEvent(new Event("change"))}setLod(e){this.lod=e,localStorage.setItem("lod",e),this.dispatchEvent(new Event("change"))}setFlip(e){this.flip=!!e,localStorage.setItem("flip",this.flip),this.dispatchEvent(new Event("change"))}getCustom(){return{...this.custom}}setCustom(e,t){this.custom={...this.custom,[e]:t},localStorage.setItem("custom",JSON.stringify(this.custom)),this.dispatchEvent(new Event("change"))}},g=new _e,$=class extends y{connectedCallback(){super.connectedCallback(),this._storeListener=()=>this.requestUpdate(),g.addEventListener("change",this._storeListener)}disconnectedCallback(){super.disconnectedCallback(),g.removeEventListener("change",this._storeListener)}};var Mt=[[4352,4447,1],[11904,42191,1],[44032,55203,1],[63744,64255,1],[65040,65135,1],[65280,65376,1],[65504,65510,1],[127744,129791,1.25],[131072,195103,1]],dt=r=>{let e=0,t=0;for(let i of r){let s=i.codePointAt(0),n=Mt.find(([o,l])=>s>=o&&s<=l);n?t+=n[2]:e++}return!e&&!t&&(e=1),`calc(${e}ch + ${+t.toFixed(2)}em)`},ke=class extends ${static properties={_dotColor:{state:!0}};static styles=tt;constructor(){super(),this._clientId=g.clientId,this._name=g.userName,this._dotColor=g.isForcedId?"#9fca10ff":"#4caf50"}_commit(e){let t=e.trim().slice(0,12)||"Anonymous";this._name=t,g.set(this._clientId,t),this.dispatchEvent(new CustomEvent("user-name-changed",{bubbles:!0,composed:!0,detail:{userId:this._clientId,userName:t}}))}render(){return A?u``:u`
             <div class="badge" style="--dot-color:${this._dotColor}">
                 <span class="dot"></span>
                 <input size="1" maxlength="12" .value=${this._name}
@@ -933,7 +933,7 @@
         line-height: 1.55;
         opacity: 0.82;
         color: #fff;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.45);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
       }
       /* No opacity on the pill itself: fading the whole element composited --text-dim down to
          ~2.6:1 against the card surface, failing WCAG 1.4.3 (needs 4.5:1). It stays visually
@@ -944,33 +944,75 @@
         font-size: 0.48rem;
         font-weight: 400;
         line-height: 1.55;
-        background: rgba(128,128,128,0.18);
+        background: rgba(128, 128, 128, 0.18);
         color: var(--text-dim);
-        border: 1px solid rgba(128,128,128,0.25);
+        border: 1px solid rgba(128, 128, 128, 0.25);
         white-space: nowrap;
         max-width: 5.5rem;
         overflow: hidden;
         text-overflow: ellipsis;
       }
       /* Authentic Pokémon type colours */
-      .type-pill[data-t="normal"]   { background: #9fa19f; }
-      .type-pill[data-t="fire"]     { background: #e62829; }
-      .type-pill[data-t="water"]    { background: #2980ef; }
-      .type-pill[data-t="electric"] { background: #fac000; color: #222; text-shadow: none; }
-      .type-pill[data-t="grass"]    { background: #3fa129; }
-      .type-pill[data-t="ice"]      { background: #3dcef3; color: #222; text-shadow: none; }
-      .type-pill[data-t="fighting"] { background: #ff8000; }
-      .type-pill[data-t="poison"]   { background: #9141cb; }
-      .type-pill[data-t="ground"]   { background: #915121; }
-      .type-pill[data-t="flying"]   { background: #81b9ef; color: #222; text-shadow: none; }
-      .type-pill[data-t="psychic"]  { background: #ef4179; }
-      .type-pill[data-t="bug"]      { background: #91a119; }
-      .type-pill[data-t="rock"]     { background: #afa981; }
-      .type-pill[data-t="ghost"]    { background: #704170; }
-      .type-pill[data-t="dragon"]   { background: #5060e1; }
-      .type-pill[data-t="dark"]     { background: #624d4e; }
-      .type-pill[data-t="steel"]    { background: #60a1b8; }
-      .type-pill[data-t="fairy"]    { background: #ef70ef; }
+      .type-pill[data-t="normal"] {
+        background: #9fa19f;
+      }
+      .type-pill[data-t="fire"] {
+        background: #e62829;
+      }
+      .type-pill[data-t="water"] {
+        background: #2980ef;
+      }
+      .type-pill[data-t="electric"] {
+        background: #fac000;
+        color: #222;
+        text-shadow: none;
+      }
+      .type-pill[data-t="grass"] {
+        background: #3fa129;
+      }
+      .type-pill[data-t="ice"] {
+        background: #3dcef3;
+        color: #222;
+        text-shadow: none;
+      }
+      .type-pill[data-t="fighting"] {
+        background: #ff8000;
+      }
+      .type-pill[data-t="poison"] {
+        background: #9141cb;
+      }
+      .type-pill[data-t="ground"] {
+        background: #915121;
+      }
+      .type-pill[data-t="flying"] {
+        background: #81b9ef;
+        color: #222;
+        text-shadow: none;
+      }
+      .type-pill[data-t="psychic"] {
+        background: #ef4179;
+      }
+      .type-pill[data-t="bug"] {
+        background: #91a119;
+      }
+      .type-pill[data-t="rock"] {
+        background: #afa981;
+      }
+      .type-pill[data-t="ghost"] {
+        background: #704170;
+      }
+      .type-pill[data-t="dragon"] {
+        background: #5060e1;
+      }
+      .type-pill[data-t="dark"] {
+        background: #624d4e;
+      }
+      .type-pill[data-t="steel"] {
+        background: #60a1b8;
+      }
+      .type-pill[data-t="fairy"] {
+        background: #ef70ef;
+      }
       .face-front img {
         position: absolute;
         inset: 0;
@@ -1150,9 +1192,11 @@
                     >${"\u2605".repeat(a)}</span
                   >
                   ${e.pokeType?u`<div class="poke-pills" aria-hidden="true">
-                        <span class="type-pill" data-t="${e.pokeType}">${e.pokeType}</span>
-                        ${d?u`<span class="nature-pill" title="${e.pokeNature}">${d}</span>`:""}
-                      </div>`:""}
+                          <span class="type-pill" data-t="${e.pokeType}">${e.pokeType}</span>
+                          ${d?u`<span class="nature-pill" title="${e.pokeNature}"
+                                  >${d}</span
+                                >`:""}
+                        </div>`:""}
                 </div>`}
           <div class="face face-back">
             ${s?u`
@@ -1272,11 +1316,10 @@
                     aria-label="Reset deck — clear all revealed cards and restore the full deck"
                     @click=${this._onResetClick}
                   >
-                    Reset deck
+                    Reset decks
                   </button>`:""}
           </div>
         </section>
-
       </div>
     `}};customElements.define("reveal-app",Ae);})();
 /*! Bundled license information:
