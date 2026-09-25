@@ -9,7 +9,10 @@
       content="Play billiards to uncover hidden pictures. Pot balls to progressively reveal the photograph. Free online billiards picture-reveal game."
     />
     <meta name="robots" content="index,follow" />
-    <link rel="canonical" href="https://billiards.tailuge.workers.dev/reveal/" />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/reveal/"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -20,12 +23,14 @@
     <meta name="theme-color" content="#1a1a1a" />
     <script>
       try {
-        const params = new URLSearchParams(window.location.search);
-        const theme = params.get("theme") || localStorage.getItem("theme") || "dark";
-        document.documentElement.setAttribute("theme", theme);
-        document.documentElement.style.colorScheme = document.documentElement.getAttribute("theme");
+        const params = new URLSearchParams(window.location.search)
+        const theme =
+          params.get("theme") || localStorage.getItem("theme") || "dark"
+        document.documentElement.setAttribute("theme", theme)
+        document.documentElement.style.colorScheme =
+          document.documentElement.getAttribute("theme")
       } catch (_e) {
-        document.documentElement.setAttribute("theme", "dark");
+        document.documentElement.setAttribute("theme", "dark")
       }
     </script>
     <style>
@@ -41,12 +46,14 @@
       @font-face {
         font-family: "Exo Fallback";
         src:
-          local("Arial"), local("Helvetica Neue"), local("Liberation Sans"), local("DejaVu Sans");
+          local("Arial"), local("Helvetica Neue"), local("Liberation Sans"),
+          local("DejaVu Sans");
         size-adjust: 101%;
         ascent-override: 99%;
         descent-override: 32.7%;
         line-gap-override: 0%;
       }
+
       /* Reserve a screen for the app until its element is upgraded.
          The grid renders after first paint (the module is deferred), so until then the prose below
          it sits at the top of the viewport — and when the grid appears it shoves that prose down.
@@ -58,26 +65,31 @@
       main:has(reveal-app:not(:defined)) {
         min-height: 100vh;
       }
+
       html,
       body {
         margin: 0;
         min-height: 100%;
         background: #f5f5f5;
         color: #212121;
+
         /* The grid grows taller than the viewport on narrow screens, which puts a
            scrollbar on the full-bleed layout. Hide the bar, keep the scrolling. */
         scrollbar-width: none;
         -ms-overflow-style: none;
       }
+
       html::-webkit-scrollbar,
       body::-webkit-scrollbar {
         display: none;
       }
+
       html[theme="dark"],
       html[theme="dark"] body {
         background: #1a1a1a;
         color: #e0e0e0;
       }
+
       .site-links {
         display: flex;
         justify-content: center;
@@ -89,6 +101,7 @@
         line-height: 1.35;
         text-align: center;
       }
+
       /* Underlined by default: a link inside a block of text must not rely on colour alone
          to be distinguishable (WCAG 1.4.1). */
       .site-links a {
@@ -96,64 +109,79 @@
         text-decoration: underline;
         text-underline-offset: 2px;
       }
+
       html[theme="dark"] .site-links a {
         color: #6ba3f5;
       }
+
       .site-links-more summary {
         cursor: pointer;
         list-style: none;
         color: #757575;
         opacity: 0.85;
       }
+
       html[theme="dark"] .site-links-more summary {
         color: #aaa;
       }
+
       .site-links-more summary::-webkit-details-marker {
         display: none;
       }
+
       .site-links-more summary::after {
         content: " ▾";
       }
+
       .site-links-more[open] summary::after {
         content: " ▴";
       }
+
       .site-links-more {
         width: 100%;
         max-width: min(52rem, calc(100vw - 2rem));
       }
+
       .site-links-panel {
         column-count: 2;
         text-align: left;
         white-space: normal;
         padding: 0.75rem;
       }
+
       @media (width <= 30rem) {
         .site-links-panel {
           column-count: 1;
         }
       }
+
       .site-links-panel h2 {
         font-size: 0.75rem;
         margin: 0 0 0.25rem;
         color: #757575;
         break-after: avoid;
       }
+
       html[theme="dark"] .site-links-panel h2 {
         color: #999;
       }
+
       .site-links-panel ul {
         margin: 0 0 0.75rem;
         padding-left: 1rem;
         list-style: none;
       }
+
       .site-links-panel li {
         margin-bottom: 0.45rem;
         break-inside: avoid;
       }
+
       .site-links-links {
         margin: 0;
         line-height: 1.9;
       }
+
       /* Explanatory prose below the grid — the only copy, so a crawler without JS sees it.
          Styled here (light DOM) rather than in the Lit shadow, so it is not duplicated. */
       .seo-fallback {
@@ -166,73 +194,89 @@
         line-height: 1.45;
         color: #212121;
       }
+
       html[theme="dark"] .seo-fallback {
         color: #e0e0e0;
       }
+
       .seo-grid {
         display: grid;
         grid-template-columns: 1fr;
         gap: 0.15rem 1.4rem;
-        background: #ffffff;
-        border: 1px solid #dddddd;
+        background: #fff;
+        border: 1px solid #ddd;
         border-radius: 6px;
         padding: 0.5rem 0.7rem;
       }
+
       html[theme="dark"] .seo-grid {
         background: #2a2a2a;
-        border-color: #444444;
+        border-color: #444;
       }
+
       @media (width >= 600px) {
         .seo-grid {
           grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
         }
       }
+
       .seo-col > :first-child {
         margin-top: 0;
       }
+
       .seo-fallback h2 {
         font-size: 0.78rem;
         font-weight: 600;
         margin: 0.5rem 0 0.25rem;
-        color: #555555;
+        color: #555;
         letter-spacing: 0.08em;
         text-transform: uppercase;
       }
+
       html[theme="dark"] .seo-fallback h2 {
-        color: #aaaaaa;
+        color: #aaa;
       }
+
       .seo-fallback h3 {
         font-size: 0.78rem;
         font-weight: 600;
         margin: 0.45rem 0 0.05rem;
       }
+
       .seo-fallback p {
         margin: 0 0 0.15rem;
       }
+
       .seo-fallback ol {
         margin: 0;
         padding-left: 1.1rem;
       }
+
       .seo-fallback li {
         margin: 0 0 0.15rem;
       }
+
       .seo-fallback a {
-        color: #0055cc;
+        color: #05c;
         text-decoration: underline;
         text-underline-offset: 2px;
       }
+
       html[theme="dark"] .seo-fallback a {
         color: #6ba3f5;
       }
+
       .seo-fallback .attribution {
         font-size: 0.7rem;
         color: #757575;
         margin: 0.4rem 0 0;
         text-align: center;
       }
+
       html[theme="dark"] .seo-fallback .attribution {
-        color: #999999;
+        color: #999;
       }
+
       /* Language tabs over the prose panel — no JS. The hidden radios sit before the
          panel stack so plain `:checked ~` sibling selectors swap panels; every
          language's copy stays in the DOM (only one is displayed) so crawlers see all
@@ -248,6 +292,7 @@
         clip-path: inset(50%);
         border: 0;
       }
+
       .seo-tabs {
         display: flex;
         flex-wrap: wrap;
@@ -257,6 +302,7 @@
         position: relative;
         z-index: 1;
       }
+
       .seo-tab {
         cursor: pointer;
         padding: 0.22rem 0.65rem 0.26rem;
@@ -274,40 +320,47 @@
           color 0.15s,
           background-color 0.15s;
       }
+
       html[theme="dark"] .seo-tab {
-        color: #999999;
+        color: #999;
       }
+
       .seo-tab:hover {
-        color: #0055cc;
+        color: #05c;
       }
+
       html[theme="dark"] .seo-tab:hover {
         color: #6ba3f5;
       }
+
       .seo-panel {
         display: none;
         border-top-left-radius: 0;
       }
+
       #seo-lang-en:focus-visible ~ .seo-tabs [for="seo-lang-en"],
       #seo-lang-ko:focus-visible ~ .seo-tabs [for="seo-lang-ko"],
       #seo-lang-tr:focus-visible ~ .seo-tabs [for="seo-lang-tr"],
       #seo-lang-zh:focus-visible ~ .seo-tabs [for="seo-lang-zh"],
       #seo-lang-vi:focus-visible ~ .seo-tabs [for="seo-lang-vi"],
       #seo-lang-es:focus-visible ~ .seo-tabs [for="seo-lang-es"] {
-        outline: 2px solid #0055cc;
+        outline: 2px solid #05c;
         outline-offset: -1px;
       }
+
       #seo-lang-en:checked ~ .seo-tabs [for="seo-lang-en"],
       #seo-lang-ko:checked ~ .seo-tabs [for="seo-lang-ko"],
       #seo-lang-tr:checked ~ .seo-tabs [for="seo-lang-tr"],
       #seo-lang-zh:checked ~ .seo-tabs [for="seo-lang-zh"],
       #seo-lang-vi:checked ~ .seo-tabs [for="seo-lang-vi"],
       #seo-lang-es:checked ~ .seo-tabs [for="seo-lang-es"] {
-        background: #ffffff;
-        border-color: #dddddd;
-        border-bottom: 1px solid #ffffff;
-        color: #0055cc;
+        background: #fff;
+        border-color: #ddd;
+        border-bottom: 1px solid #fff;
+        color: #05c;
         font-weight: 600;
       }
+
       html[theme="dark"] #seo-lang-en:checked ~ .seo-tabs [for="seo-lang-en"],
       html[theme="dark"] #seo-lang-ko:checked ~ .seo-tabs [for="seo-lang-ko"],
       html[theme="dark"] #seo-lang-tr:checked ~ .seo-tabs [for="seo-lang-tr"],
@@ -315,11 +368,12 @@
       html[theme="dark"] #seo-lang-vi:checked ~ .seo-tabs [for="seo-lang-vi"],
       html[theme="dark"] #seo-lang-es:checked ~ .seo-tabs [for="seo-lang-es"] {
         background: #2a2a2a;
-        border-color: #444444;
+        border-color: #444;
         border-bottom: 1px solid #2a2a2a;
         color: #6ba3f5;
         font-weight: 600;
       }
+
       #seo-lang-en:checked ~ .seo-panel--en,
       #seo-lang-ko:checked ~ .seo-panel--ko,
       #seo-lang-tr:checked ~ .seo-panel--tr,
@@ -342,12 +396,43 @@
       <!-- Language tabs, no JS: the hidden radios precede the panels so plain
            `:checked ~` sibling selectors swap them. Every translation stays in the DOM
            (only one is displayed) for crawlers, each tagged with its own lang code. -->
-      <input class="seo-lang-input" type="radio" name="seo-lang" id="seo-lang-en" checked />
-      <input class="seo-lang-input" type="radio" name="seo-lang" id="seo-lang-ko" />
-      <input class="seo-lang-input" type="radio" name="seo-lang" id="seo-lang-tr" />
-      <input class="seo-lang-input" type="radio" name="seo-lang" id="seo-lang-zh" />
-      <input class="seo-lang-input" type="radio" name="seo-lang" id="seo-lang-vi" />
-      <input class="seo-lang-input" type="radio" name="seo-lang" id="seo-lang-es" />
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-en"
+        checked
+      />
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-ko"
+      />
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-tr"
+      />
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-zh"
+      />
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-vi"
+      />
+      <input
+        class="seo-lang-input"
+        type="radio"
+        name="seo-lang"
+        id="seo-lang-es"
+      />
       <div class="seo-tabs" role="group" aria-label="Language">
         <label class="seo-tab" for="seo-lang-en" lang="en">English</label>
         <label class="seo-tab" for="seo-lang-ko" lang="ko">한국어</label>
@@ -360,42 +445,46 @@
         <div class="seo-col">
           <h2>How to play</h2>
           <p>
-            K-Pot Idol is a free online billiards game where you uncover hidden pictures by playing
-            billiards.
+            K-Pot Idol is a free online billiards game where you uncover hidden
+            pictures by playing billiards.
           </p>
           <ol>
             <li>Choose any mystery picture from the card deck.</li>
             <li>Tap a card to see its difficulty and press Play.</li>
-            <li>Pot balls in the billiards game to progressively reveal the hidden photograph.</li>
+            <li>
+              Pot balls in the billiards game to progressively reveal the hidden
+              photograph.
+            </li>
             <li>Complete the picture to add it to your collection.</li>
           </ol>
           <p>
-            Each card has a different difficulty. More stars mean more balls to pot before the
-            picture is fully revealed.
+            Each card has a different difficulty. More stars mean more balls to
+            pot before the picture is fully revealed.
           </p>
         </div>
         <div class="seo-col">
           <h2>FAQ</h2>
           <h3>What is K-Pot Idol?</h3>
           <p>
-            K-Pot Idol is a free online billiards game with a picture reveal mechanic. Play
-            billiards to uncover hidden photographs one section at a time and collect completed
-            pictures.
+            K-Pot Idol is a free online billiards game with a picture reveal
+            mechanic. Play billiards to uncover hidden photographs one section
+            at a time and collect completed pictures.
           </p>
           <h3>How are pictures revealed?</h3>
           <p>
-            Every successful pot reveals another section of the hidden picture. The more balls you
-            pot, the more of the photograph you uncover.
+            Every successful pot reveals another section of the hidden picture.
+            The more balls you pot, the more of the photograph you uncover.
           </p>
           <h3>Can I share a completed reveal?</h3>
           <p>
-            Yes. Complete a picture, flip the card and use the share button to show your friends the
-            finished reveal.
+            Yes. Complete a picture, flip the card and use the share button to
+            show your friends the finished reveal.
           </p>
           <h3>Do I have to play the pictures in order?</h3>
           <p>
-            No. Choose any mystery card from the deck. Cards have different difficulty levels, with
-            more difficult pictures requiring more successful pots.
+            No. Choose any mystery card from the deck. Cards have different
+            difficulty levels, with more difficult pictures requiring more
+            successful pots.
           </p>
         </div>
       </div>
@@ -404,40 +493,44 @@
         <div class="seo-col">
           <h2>플레이 방법</h2>
           <p>
-            K-Pot Idol은 당구를 치면서 숨겨진 그림을 하나씩 공개하는 무료 온라인 당구 게임입니다.
+            K-Pot Idol은 당구를 치면서 숨겨진 그림을 하나씩 공개하는 무료 온라인
+            당구 게임입니다.
           </p>
           <ol>
             <li>카드 덱에서 원하는 미스터리 그림을 고르세요.</li>
             <li>카드를 눌러 난이도를 확인하고 플레이를 누르세요.</li>
-            <li>당구 게임에서 공을 넣을 때마다 숨겨진 사진이 조금씩 드러납니다.</li>
+            <li>
+              당구 게임에서 공을 넣을 때마다 숨겨진 사진이 조금씩 드러납니다.
+            </li>
             <li>그림을 완성하면 컬렉션에 추가됩니다.</li>
           </ol>
           <p>
-            카드마다 난이도가 다릅니다. 별이 많을수록 그림이 완전히 드러날 때까지 넣어야 하는 공이
-            많아집니다.
+            카드마다 난이도가 다릅니다. 별이 많을수록 그림이 완전히 드러날
+            때까지 넣어야 하는 공이 많아집니다.
           </p>
         </div>
         <div class="seo-col">
           <h2>자주 묻는 질문</h2>
           <h3>K-Pot Idol이란 무엇인가요?</h3>
           <p>
-            K-Pot Idol은 그림 공개 방식을 사용하는 무료 온라인 당구 게임입니다. 당구를 치면서 숨겨진
-            사진을 한 부분씩 공개하고, 완성한 그림을 수집하세요.
+            K-Pot Idol은 그림 공개 방식을 사용하는 무료 온라인 당구 게임입니다.
+            당구를 치면서 숨겨진 사진을 한 부분씩 공개하고, 완성한 그림을
+            수집하세요.
           </p>
           <h3>그림은 어떻게 공개되나요?</h3>
           <p>
-            공을 하나 넣을 때마다 숨겨진 그림의 한 부분이 드러납니다. 공을 많이 넣을수록 사진이 더
-            많이 보입니다.
+            공을 하나 넣을 때마다 숨겨진 그림의 한 부분이 드러납니다. 공을 많이
+            넣을수록 사진이 더 많이 보입니다.
           </p>
           <h3>완성한 그림을 공유할 수 있나요?</h3>
           <p>
-            네. 그림을 완성한 뒤 카드를 뒤집고 공유 버튼을 누르면 친구에게 완성된 그림을 보여줄 수
-            있습니다.
+            네. 그림을 완성한 뒤 카드를 뒤집고 공유 버튼을 누르면 친구에게
+            완성된 그림을 보여줄 수 있습니다.
           </p>
           <h3>그림을 순서대로 플레이해야 하나요?</h3>
           <p>
-            아니요. 덱에서 원하는 미스터리 카드를 고르면 됩니다. 카드마다 난이도가 다르며, 어려운
-            그림일수록 더 많은 공을 넣어야 합니다.
+            아니요. 덱에서 원하는 미스터리 카드를 고르면 됩니다. 카드마다
+            난이도가 다르며, 어려운 그림일수록 더 많은 공을 넣어야 합니다.
           </p>
         </div>
       </div>
@@ -445,58 +538,64 @@
         <div class="seo-col">
           <h2>Nasıl oynanır</h2>
           <p>
-            K-Pot Idol, bilardo oynayarak gizli resimleri ortaya çıkardığınız ücretsiz bir çevrimiçi
-            bilardo oyunudur.
+            K-Pot Idol, bilardo oynayarak gizli resimleri ortaya çıkardığınız
+            ücretsiz bir çevrimiçi bilardo oyunudur.
           </p>
           <ol>
             <li>Kart destesinden istediğiniz gizemli resmi seçin.</li>
             <li>Bir karta dokunup zorluğunu görün ve Oyna'ya basın.</li>
             <li>
-              Bilardo oyununda topları deliğe soktukça gizli fotoğraf parça parça ortaya çıkar.
+              Bilardo oyununda topları deliğe soktukça gizli fotoğraf parça
+              parça ortaya çıkar.
             </li>
             <li>Resmi tamamlayın ve koleksiyonunuza ekleyin.</li>
           </ol>
           <p>
-            Her kartın zorluğu farklıdır. Daha fazla yıldız, resim tamamen açılana kadar daha fazla
-            top sokmanız gerektiği anlamına gelir.
+            Her kartın zorluğu farklıdır. Daha fazla yıldız, resim tamamen
+            açılana kadar daha fazla top sokmanız gerektiği anlamına gelir.
           </p>
         </div>
         <div class="seo-col">
           <h2>Sıkça sorulan sorular</h2>
           <h3>K-Pot Idol nedir?</h3>
           <p>
-            K-Pot Idol, resim açma mekaniğine sahip ücretsiz bir çevrimiçi bilardo oyunudur. Bilardo
-            oynayarak gizli fotoğrafları bölüm bölüm ortaya çıkarın ve tamamladığınız resimleri
-            toplayın.
+            K-Pot Idol, resim açma mekaniğine sahip ücretsiz bir çevrimiçi
+            bilardo oyunudur. Bilardo oynayarak gizli fotoğrafları bölüm bölüm
+            ortaya çıkarın ve tamamladığınız resimleri toplayın.
           </p>
           <h3>Resimler nasıl açılır?</h3>
           <p>
-            Deliğe sokulan her top, gizli resmin bir bölümünü daha açar. Ne kadar çok top sokarsanız
-            fotoğrafın o kadar çoğunu görürsünüz.
+            Deliğe sokulan her top, gizli resmin bir bölümünü daha açar. Ne
+            kadar çok top sokarsanız fotoğrafın o kadar çoğunu görürsünüz.
           </p>
           <h3>Tamamlanan bir resmi paylaşabilir miyim?</h3>
           <p>
-            Evet. Resmi tamamlayın, kartı çevirin ve paylaş düğmesini kullanarak bitmiş resmi
-            arkadaşlarınıza gösterin.
+            Evet. Resmi tamamlayın, kartı çevirin ve paylaş düğmesini kullanarak
+            bitmiş resmi arkadaşlarınıza gösterin.
           </p>
           <h3>Resimleri sırayla oynamam gerekiyor mu?</h3>
           <p>
-            Hayır. Desteden istediğiniz gizemli kartı seçebilirsiniz. Kartların zorluk seviyeleri
-            farklıdır; daha zor resimler daha fazla başarılı atış gerektirir.
+            Hayır. Desteden istediğiniz gizemli kartı seçebilirsiniz. Kartların
+            zorluk seviyeleri farklıdır; daha zor resimler daha fazla başarılı
+            atış gerektirir.
           </p>
         </div>
       </div>
       <div class="seo-grid seo-panel seo-panel--zh" lang="zh">
         <div class="seo-col">
           <h2>怎么玩</h2>
-          <p>K-Pot Idol 是一款免费的在线台球游戏，通过打台球来揭开隐藏的图片。</p>
+          <p>
+            K-Pot Idol 是一款免费的在线台球游戏，通过打台球来揭开隐藏的图片。
+          </p>
           <ol>
             <li>从卡牌牌组中选择任意一张神秘图片。</li>
             <li>点击卡牌查看它的难度，然后按 Play 开始。</li>
             <li>在台球游戏中把球打进袋，隐藏的照片就会逐步显现。</li>
             <li>完成整张图片后，它会被加入你的收藏。</li>
           </ol>
-          <p>每张卡牌的难度都不同。星星越多，在图片完全显现之前需要打进的球就越多。</p>
+          <p>
+            每张卡牌的难度都不同。星星越多，在图片完全显现之前需要打进的球就越多。
+          </p>
         </div>
         <div class="seo-col">
           <h2>常见问题</h2>
@@ -506,9 +605,13 @@
             是一款带有图片揭示玩法的免费在线台球游戏。打台球即可逐块揭开隐藏照片，并收藏已完成的图片。
           </p>
           <h3>图片是如何显现的？</h3>
-          <p>每成功打进一颗球，隐藏图片就会再显现一部分。打进的球越多，你看到的照片就越多。</p>
+          <p>
+            每成功打进一颗球，隐藏图片就会再显现一部分。打进的球越多，你看到的照片就越多。
+          </p>
           <h3>完成的图片可以分享吗？</h3>
-          <p>可以。完成一张图片后，翻开卡牌并使用分享按钮，把完成的图片展示给朋友。</p>
+          <p>
+            可以。完成一张图片后，翻开卡牌并使用分享按钮，把完成的图片展示给朋友。
+          </p>
           <h3>必须按顺序玩这些图片吗？</h3>
           <p>
             不必。你可以从牌组中任选一张神秘卡牌。卡牌的难度各不相同，越难的图片需要越多的成功进球。
@@ -519,8 +622,8 @@
         <div class="seo-col">
           <h2>Cách chơi</h2>
           <p>
-            K-Pot Idol là trò chơi bi-a trực tuyến miễn phí, nơi bạn mở ra những bức ảnh ẩn bằng
-            cách chơi bi-a.
+            K-Pot Idol là trò chơi bi-a trực tuyến miễn phí, nơi bạn mở ra những
+            bức ảnh ẩn bằng cách chơi bi-a.
           </p>
           <ol>
             <li>Chọn bất kỳ bức ảnh bí ẩn nào trong bộ thẻ.</li>
@@ -529,31 +632,34 @@
             <li>Hoàn thành bức ảnh để thêm nó vào bộ sưu tập của bạn.</li>
           </ol>
           <p>
-            Mỗi thẻ có độ khó khác nhau. Càng nhiều ngôi sao, bạn càng phải đưa nhiều bóng vào lỗ
-            trước khi bức ảnh hiện ra hoàn toàn.
+            Mỗi thẻ có độ khó khác nhau. Càng nhiều ngôi sao, bạn càng phải đưa
+            nhiều bóng vào lỗ trước khi bức ảnh hiện ra hoàn toàn.
           </p>
         </div>
         <div class="seo-col">
           <h2>Câu hỏi thường gặp</h2>
           <h3>K-Pot Idol là gì?</h3>
           <p>
-            K-Pot Idol là trò chơi bi-a trực tuyến miễn phí với cơ chế mở ảnh. Hãy chơi bi-a để hé
-            lộ những bức ảnh ẩn theo từng phần và sưu tầm những bức ảnh đã hoàn thành.
+            K-Pot Idol là trò chơi bi-a trực tuyến miễn phí với cơ chế mở ảnh.
+            Hãy chơi bi-a để hé lộ những bức ảnh ẩn theo từng phần và sưu tầm
+            những bức ảnh đã hoàn thành.
           </p>
           <h3>Ảnh được mở ra như thế nào?</h3>
           <p>
-            Mỗi lần đưa bóng vào lỗ thành công sẽ mở thêm một phần của bức ảnh ẩn. Bạn càng đưa
-            nhiều bóng vào lỗ, bạn càng thấy nhiều phần của bức ảnh.
+            Mỗi lần đưa bóng vào lỗ thành công sẽ mở thêm một phần của bức ảnh
+            ẩn. Bạn càng đưa nhiều bóng vào lỗ, bạn càng thấy nhiều phần của bức
+            ảnh.
           </p>
           <h3>Tôi có thể chia sẻ một bức ảnh đã hoàn thành không?</h3>
           <p>
-            Có. Hãy hoàn thành một bức ảnh, lật thẻ và dùng nút chia sẻ để cho bạn bè xem thành quả
-            đã hoàn thiện.
+            Có. Hãy hoàn thành một bức ảnh, lật thẻ và dùng nút chia sẻ để cho
+            bạn bè xem thành quả đã hoàn thiện.
           </p>
           <h3>Tôi có phải chơi theo thứ tự không?</h3>
           <p>
-            Không. Bạn có thể chọn bất kỳ thẻ bí ẩn nào trong bộ. Các thẻ có độ khó khác nhau, ảnh
-            càng khó càng cần nhiều lần đưa bóng vào lỗ thành công.
+            Không. Bạn có thể chọn bất kỳ thẻ bí ẩn nào trong bộ. Các thẻ có độ
+            khó khác nhau, ảnh càng khó càng cần nhiều lần đưa bóng vào lỗ thành
+            công.
           </p>
         </div>
       </div>
@@ -561,44 +667,46 @@
         <div class="seo-col">
           <h2>Cómo jugar</h2>
           <p>
-            K-Pot Idol es un juego de billar online gratis en el que descubres imágenes ocultas
-            jugando al billar.
+            K-Pot Idol es un juego de billar online gratis en el que descubres
+            imágenes ocultas jugando al billar.
           </p>
           <ol>
             <li>Elige cualquier imagen misteriosa de la baraja de cartas.</li>
             <li>Toca una carta para ver su dificultad y pulsa Jugar.</li>
             <li>
-              Emboca bolas en el juego de billar para revelar poco a poco la fotografía oculta.
+              Emboca bolas en el juego de billar para revelar poco a poco la
+              fotografía oculta.
             </li>
             <li>Completa la imagen para añadirla a tu colección.</li>
           </ol>
           <p>
-            Cada carta tiene una dificultad distinta. Más estrellas significan más bolas que embocar
-            antes de que la imagen se revele por completo.
+            Cada carta tiene una dificultad distinta. Más estrellas significan
+            más bolas que embocar antes de que la imagen se revele por completo.
           </p>
         </div>
         <div class="seo-col">
           <h2>Preguntas frecuentes</h2>
           <h3>¿Qué es K-Pot Idol?</h3>
           <p>
-            K-Pot Idol es un juego de billar online gratis con una mecánica de revelado de imágenes.
-            Juega al billar para descubrir fotografías ocultas sección a sección y colecciona las
-            imágenes completadas.
+            K-Pot Idol es un juego de billar online gratis con una mecánica de
+            revelado de imágenes. Juega al billar para descubrir fotografías
+            ocultas sección a sección y colecciona las imágenes completadas.
           </p>
           <h3>¿Cómo se revelan las imágenes?</h3>
           <p>
-            Cada bola embocada revela otra sección de la imagen oculta. Cuantas más bolas embocas,
-            más parte de la fotografía descubres.
+            Cada bola embocada revela otra sección de la imagen oculta. Cuantas
+            más bolas embocas, más parte de la fotografía descubres.
           </p>
           <h3>¿Puedo compartir un revelado completado?</h3>
           <p>
-            Sí. Completa una imagen, gira la carta y usa el botón de compartir para enseñarles a tus
-            amigos el revelado terminado.
+            Sí. Completa una imagen, gira la carta y usa el botón de compartir
+            para enseñarles a tus amigos el revelado terminado.
           </p>
           <h3>¿Tengo que jugar las imágenes en orden?</h3>
           <p>
-            No. Elige cualquier carta misteriosa de la baraja. Las cartas tienen distintos niveles
-            de dificultad, y las imágenes más difíciles requieren más bolas embocadas.
+            No. Elige cualquier carta misteriosa de la baraja. Las cartas tienen
+            distintos niveles de dificultad, y las imágenes más difíciles
+            requieren más bolas embocadas.
           </p>
         </div>
       </div>
@@ -607,27 +715,35 @@
     <nav class="site-links" aria-label="Billiards pages">
       <details class="site-links-more">
         <summary>
-          Images from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> and linked Wikipedia pages, individually attributed.
+          Images from
+          <a href="https://commons.wikimedia.org/">Wikimedia Commons</a> and
+          linked Wikipedia pages, individually attributed.
         </summary>
         <div class="site-links-panel">
           <h2>Play</h2>
           <ul>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?practice=true">Nine ball</a>
+              <a href="https://billiards.tailuge.workers.dev/?practice=true"
+                >Nine ball</a
+              >
               make a break and share replay link with friends
             </li>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;lod=4"
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;lod=4"
                 >Three cushion billiards</a
               >
-              the ultimate test of physics and player (average on both counts). You need the
+              the ultimate test of physics and player (average on both counts).
+              You need the
               <a
                 href="https://billiards.tailuge.workers.dev/?ruletype=threecushion&amp;practice=true"
                 >beginner mode</a
               >.
             </li>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?ruletype=sagu">Sagu</a>
+              <a href="https://billiards.tailuge.workers.dev/?ruletype=sagu"
+                >Sagu</a
+              >
               Korean four-ball carom game.
             </li>
             <li>
@@ -638,16 +754,21 @@
               we await the first 147.
             </li>
             <li>
-              <a href="https://billiards.tailuge.workers.dev/?ruletype=eightball&amp;lod=4"
+              <a
+                href="https://billiards.tailuge.workers.dev/?ruletype=eightball&amp;lod=4"
                 >8-Ball</a
               >
               try it in Hi-Res mode!
             </li>
             <li>
               Play vs the
-              <a href="https://billiards.tailuge.workers.dev/?bot=ClawBreak">Claw</a>
+              <a href="https://billiards.tailuge.workers.dev/?bot=ClawBreak"
+                >Claw</a
+              >
               and
-              <a href="https://billiards.tailuge.workers.dev/?bot=TheFarJaw">TheFarJaw</a>.
+              <a href="https://billiards.tailuge.workers.dev/?bot=TheFarJaw"
+                >TheFarJaw</a
+              >.
             </li>
             <li>
               <a href="https://billiards.tailuge.workers.dev/lobby.html"
@@ -662,7 +783,8 @@
             <li>Two player online mode with nchan nginx server.</li>
             <li>Nine ball, snooker, three cushion and Sagu billiards rules.</li>
             <li>
-              Presentation using WebGL in any modern browser on mobile, linux, mac or windows.
+              Presentation using WebGL in any modern browser on mobile, linux,
+              mac or windows.
             </li>
           </ul>
           <h2>K-idols</h2>
