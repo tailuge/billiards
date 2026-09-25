@@ -3262,7 +3262,7 @@ __metadata:
     stylelint-config-standard: "npm:^40.0.0"
     swc-loader: "npm:0.2.7"
     terser-webpack-plugin: "npm:^5.6.1"
-    three: "npm:0.186.0"
+    three: "npm:0.186.1"
     ts-jest: "npm:29.4.13"
     typescript: "npm:6.0.3"
     typescript-eslint: "npm:8.70.1"
@@ -8300,10 +8300,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:0.186.0":
-  version: 0.186.0
-  resolution: "three@npm:0.186.0"
-  checksum: 10c0/5c1e81ad9d4591c3582e484f5fd019830e42cf69a859241b3c6e7aaa216349accf4fd1bae8a9be2f6d7973fa3aef31812477c5eda694f505c0780d3ce3b385af
+"three@npm:0.186.1":
+  version: 0.186.1
+  resolution: "three@npm:0.186.1"
+  checksum: 10c0/8c8ed2d421da7cb4459bf3ad2961770d35173ef80885a594cb22fb44d275a9ba534b7ae92e93c99f50691b67febb913363ec5b64105fb7647289771d2bd32bc8
   languageName: node
   linkType: hard
 

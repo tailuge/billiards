@@ -69,6 +69,14 @@
         min-height: 100%;
         background: #f5f5f5;
         color: #212121;
+        /* The grid grows taller than the viewport on narrow screens, which puts a
+           scrollbar on the full-bleed layout. Hide the bar, keep the scrolling. */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        display: none;
       }
       html[theme="dark"],
       html[theme="dark"] body {
@@ -954,301 +962,93 @@
     <ul id="pokemon-data" hidden aria-hidden="true">
       <li>
         <a
-          href="https://en.wikipedia.org/wiki/Arceus"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/493.png"
-          data-type="normal"
-          data-nature="Jolly (+Spe, -SpA)"
-          data-base-exp="324"
-          data-rating="1.0000"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Arceus</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Ho"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/250.png"
-          data-type="fire"
-          data-nature="Adamant (+Atk, -SpA)"
-          data-base-exp="306"
-          data-rating="0.9444"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Ho</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Rayquaza"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png"
-          data-type="dragon"
-          data-nature="Calm (+SpD, -Atk)"
-          data-base-exp="306"
-          data-rating="0.9444"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Rayquaza</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Lugia"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/249.png"
-          data-type="psychic"
-          data-nature="Jolly (+Spe, -SpA)"
-          data-base-exp="306"
-          data-rating="0.9444"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Lugia</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Mewtwo"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png"
-          data-type="psychic"
-          data-nature="Timid (+Spe, -Atk)"
-          data-base-exp="306"
-          data-rating="0.9444"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Mewtwo</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Giratina"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/487.png"
-          data-type="ghost"
-          data-nature="Calm (+SpD, -Atk)"
-          data-base-exp="306"
-          data-rating="0.9444"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Giratina</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Tyranitar"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/248.png"
-          data-type="rock"
-          data-nature="Adamant (+Atk, -SpA)"
-          data-base-exp="270"
-          data-rating="0.8333"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Tyranitar</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Metagross"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/376.png"
-          data-type="steel"
-          data-nature="Adamant (+Atk, -SpA)"
-          data-base-exp="270"
-          data-rating="0.8333"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Metagross</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Dragonite"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png"
-          data-type="dragon"
-          data-nature="Adamant (+Atk, -SpA)"
-          data-base-exp="270"
-          data-rating="0.8333"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Dragonite</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Mew"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/151.png"
-          data-type="psychic"
-          data-nature="Jolly (+Spe, -SpA)"
-          data-base-exp="270"
-          data-rating="0.8333"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Mew</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Garchomp"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/445.png"
-          data-type="dragon"
-          data-nature="Jolly (+Spe, -SpA)"
-          data-base-exp="270"
-          data-rating="0.8333"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Garchomp</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Snorlax"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/143.png"
-          data-type="normal"
-          data-nature="Adamant (+Atk, -SpA)"
-          data-base-exp="189"
-          data-rating="0.7500"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Snorlax</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Lapras"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/131.png"
+          href="https://en.wikipedia.org/wiki/Magikarp"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/129.png"
           data-type="water"
+          data-nature="Impish (+Def, -SpA)"
+          data-base-exp="40"
+          data-rating="0.2778"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Magikarp</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Jigglypuff"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/39.png"
+          data-type="normal"
           data-nature="Calm (+SpD, -Atk)"
-          data-base-exp="187"
-          data-rating="0.7431"
+          data-base-exp="95"
+          data-rating="0.3750"
           data-created="2026-09-24"
           target="_blank" rel="noopener noreferrer"
-          >Lapras</a
+          >Jigglypuff</a
         >
       </li>
       <li>
         <a
-          href="https://en.wikipedia.org/wiki/Charizard"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png"
-          data-type="fire"
-          data-nature="Timid (+Spe, -Atk)"
-          data-base-exp="240"
-          data-rating="0.7417"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Charizard</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Greninja"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/658.png"
-          data-type="water"
-          data-nature="Timid (+Spe, -Atk)"
-          data-base-exp="239"
-          data-rating="0.7361"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Greninja</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Lucario"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png"
-          data-type="fighting"
-          data-nature="Modest (+SpA, -Atk)"
-          data-base-exp="184"
-          data-rating="0.7292"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Lucario</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Sylveon"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/700.png"
-          data-type="fairy"
-          data-nature="Modest (+SpA, -Atk)"
-          data-base-exp="184"
-          data-rating="0.7292"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Sylveon</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Umbreon"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/197.png"
-          data-type="dark"
+          href="https://en.wikipedia.org/wiki/Ditto"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png"
+          data-type="normal"
           data-nature="Calm (+SpD, -Atk)"
-          data-base-exp="184"
-          data-rating="0.7292"
+          data-base-exp="101"
+          data-rating="0.4000"
           data-created="2026-09-24"
           target="_blank" rel="noopener noreferrer"
-          >Umbreon</a
+          >Ditto</a
         >
       </li>
       <li>
         <a
-          href="https://en.wikipedia.org/wiki/Gardevoir"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/282.png"
-          data-type="psychic"
-          data-nature="Modest (+SpA, -Atk)"
-          data-base-exp="233"
-          data-rating="0.7194"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Gardevoir</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Zoroark"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/571.png"
-          data-type="dark"
-          data-nature="Timid (+Spe, -Atk)"
-          data-base-exp="179"
-          data-rating="0.7083"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Zoroark</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Gengar"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png"
-          data-type="ghost"
-          data-nature="Timid (+Spe, -Atk)"
-          data-base-exp="225"
-          data-rating="0.6944"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Gengar</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Mimikyu"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/778.png"
-          data-type="ghost"
-          data-nature="Adamant (+Atk, -SpA)"
-          data-base-exp="167"
-          data-rating="0.6611"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Mimikyu</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Eevee"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png"
+          href="https://en.wikipedia.org/wiki/Meowth"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/52.png"
           data-type="normal"
           data-nature="Adamant (+Atk, -SpA)"
-          data-base-exp="65"
-          data-rating="0.4514"
+          data-base-exp="58"
+          data-rating="0.4028"
           data-created="2026-09-24"
           target="_blank" rel="noopener noreferrer"
-          >Eevee</a
+          >Meowth</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Charmander"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"
+          data-type="fire"
+          data-nature="Modest (+SpA, -Atk)"
+          data-base-exp="62"
+          data-rating="0.4292"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Charmander</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Squirtle"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
+          data-type="water"
+          data-nature="Impish (+Def, -SpA)"
+          data-base-exp="63"
+          data-rating="0.4361"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Squirtle</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Bulbasaur"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
+          data-type="grass"
+          data-nature="Modest (+SpA, -Atk)"
+          data-base-exp="64"
+          data-rating="0.4417"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Bulbasaur</a
         >
       </li>
       <li>
@@ -1279,93 +1079,301 @@
       </li>
       <li>
         <a
-          href="https://en.wikipedia.org/wiki/Bulbasaur"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
-          data-type="grass"
-          data-nature="Modest (+SpA, -Atk)"
-          data-base-exp="64"
-          data-rating="0.4417"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Bulbasaur</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Squirtle"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
-          data-type="water"
-          data-nature="Impish (+Def, -SpA)"
-          data-base-exp="63"
-          data-rating="0.4361"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Squirtle</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Charmander"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"
-          data-type="fire"
-          data-nature="Modest (+SpA, -Atk)"
-          data-base-exp="62"
-          data-rating="0.4292"
-          data-created="2026-09-24"
-          target="_blank" rel="noopener noreferrer"
-          >Charmander</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://en.wikipedia.org/wiki/Meowth"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/52.png"
+          href="https://en.wikipedia.org/wiki/Eevee"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png"
           data-type="normal"
           data-nature="Adamant (+Atk, -SpA)"
-          data-base-exp="58"
-          data-rating="0.4028"
+          data-base-exp="65"
+          data-rating="0.4514"
           data-created="2026-09-24"
           target="_blank" rel="noopener noreferrer"
-          >Meowth</a
+          >Eevee</a
         >
       </li>
       <li>
         <a
-          href="https://en.wikipedia.org/wiki/Ditto"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png"
-          data-type="normal"
+          href="https://en.wikipedia.org/wiki/Mimikyu"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/778.png"
+          data-type="ghost"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="167"
+          data-rating="0.6611"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Mimikyu</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Gengar"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/94.png"
+          data-type="ghost"
+          data-nature="Timid (+Spe, -Atk)"
+          data-base-exp="225"
+          data-rating="0.6944"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Gengar</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Zoroark"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/571.png"
+          data-type="dark"
+          data-nature="Timid (+Spe, -Atk)"
+          data-base-exp="179"
+          data-rating="0.7083"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Zoroark</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Gardevoir"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/282.png"
+          data-type="psychic"
+          data-nature="Modest (+SpA, -Atk)"
+          data-base-exp="233"
+          data-rating="0.7194"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Gardevoir</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Umbreon"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/197.png"
+          data-type="dark"
           data-nature="Calm (+SpD, -Atk)"
-          data-base-exp="101"
-          data-rating="0.4000"
+          data-base-exp="184"
+          data-rating="0.7292"
           data-created="2026-09-24"
           target="_blank" rel="noopener noreferrer"
-          >Ditto</a
+          >Umbreon</a
         >
       </li>
       <li>
         <a
-          href="https://en.wikipedia.org/wiki/Jigglypuff"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/39.png"
-          data-type="normal"
-          data-nature="Calm (+SpD, -Atk)"
-          data-base-exp="95"
-          data-rating="0.3750"
+          href="https://en.wikipedia.org/wiki/Sylveon"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/700.png"
+          data-type="fairy"
+          data-nature="Modest (+SpA, -Atk)"
+          data-base-exp="184"
+          data-rating="0.7292"
           data-created="2026-09-24"
           target="_blank" rel="noopener noreferrer"
-          >Jigglypuff</a
+          >Sylveon</a
         >
       </li>
       <li>
         <a
-          href="https://en.wikipedia.org/wiki/Magikarp"
-          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/129.png"
+          href="https://en.wikipedia.org/wiki/Lucario"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/448.png"
+          data-type="fighting"
+          data-nature="Modest (+SpA, -Atk)"
+          data-base-exp="184"
+          data-rating="0.7292"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Lucario</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Greninja"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/658.png"
           data-type="water"
-          data-nature="Impish (+Def, -SpA)"
-          data-base-exp="40"
-          data-rating="0.2778"
+          data-nature="Timid (+Spe, -Atk)"
+          data-base-exp="239"
+          data-rating="0.7361"
           data-created="2026-09-24"
           target="_blank" rel="noopener noreferrer"
-          >Magikarp</a
+          >Greninja</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Charizard"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/6.png"
+          data-type="fire"
+          data-nature="Timid (+Spe, -Atk)"
+          data-base-exp="240"
+          data-rating="0.7417"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Charizard</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Lapras"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/131.png"
+          data-type="water"
+          data-nature="Calm (+SpD, -Atk)"
+          data-base-exp="187"
+          data-rating="0.7431"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Lapras</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Snorlax"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/143.png"
+          data-type="normal"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="189"
+          data-rating="0.7500"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Snorlax</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Garchomp"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/445.png"
+          data-type="dragon"
+          data-nature="Jolly (+Spe, -SpA)"
+          data-base-exp="270"
+          data-rating="0.8333"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Garchomp</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Mew"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/151.png"
+          data-type="psychic"
+          data-nature="Jolly (+Spe, -SpA)"
+          data-base-exp="270"
+          data-rating="0.8333"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Mew</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Dragonite"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/149.png"
+          data-type="dragon"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="270"
+          data-rating="0.8333"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Dragonite</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Metagross"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/376.png"
+          data-type="steel"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="270"
+          data-rating="0.8333"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Metagross</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Tyranitar"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/248.png"
+          data-type="rock"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="270"
+          data-rating="0.8333"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Tyranitar</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Giratina"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/487.png"
+          data-type="ghost"
+          data-nature="Calm (+SpD, -Atk)"
+          data-base-exp="306"
+          data-rating="0.9444"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Giratina</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Mewtwo"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png"
+          data-type="psychic"
+          data-nature="Timid (+Spe, -Atk)"
+          data-base-exp="306"
+          data-rating="0.9444"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Mewtwo</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Lugia"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/249.png"
+          data-type="psychic"
+          data-nature="Jolly (+Spe, -SpA)"
+          data-base-exp="306"
+          data-rating="0.9444"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Lugia</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Rayquaza"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/384.png"
+          data-type="dragon"
+          data-nature="Calm (+SpD, -Atk)"
+          data-base-exp="306"
+          data-rating="0.9444"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Rayquaza</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Ho"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/250.png"
+          data-type="fire"
+          data-nature="Adamant (+Atk, -SpA)"
+          data-base-exp="306"
+          data-rating="0.9444"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Ho</a
+        >
+      </li>
+      <li>
+        <a
+          href="https://en.wikipedia.org/wiki/Arceus"
+          data-image="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/493.png"
+          data-type="normal"
+          data-nature="Jolly (+Spe, -SpA)"
+          data-base-exp="324"
+          data-rating="1.0000"
+          data-created="2026-09-24"
+          target="_blank" rel="noopener noreferrer"
+          >Arceus</a
         >
       </li>
     </ul>
