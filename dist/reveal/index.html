@@ -110,6 +110,12 @@
         text-underline-offset: 2px;
       }
 
+      .seo-fallback a {
+        color: #05c;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
       html[theme="dark"] .site-links a {
         color: #6ba3f5;
       }
@@ -162,8 +168,21 @@
         break-after: avoid;
       }
 
+      .seo-fallback h2 {
+        font-size: 0.78rem;
+        font-weight: 600;
+        margin: 0.5rem 0 0.25rem;
+        color: #555;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
       html[theme="dark"] .site-links-panel h2 {
         color: #999;
+      }
+
+      html[theme="dark"] .seo-fallback h2 {
+        color: #aaa;
       }
 
       .site-links-panel ul {
@@ -224,19 +243,6 @@
         margin-top: 0;
       }
 
-      .seo-fallback h2 {
-        font-size: 0.78rem;
-        font-weight: 600;
-        margin: 0.5rem 0 0.25rem;
-        color: #555;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      html[theme="dark"] .seo-fallback h2 {
-        color: #aaa;
-      }
-
       .seo-fallback h3 {
         font-size: 0.78rem;
         font-weight: 600;
@@ -254,12 +260,6 @@
 
       .seo-fallback li {
         margin: 0 0 0.15rem;
-      }
-
-      .seo-fallback a {
-        color: #05c;
-        text-decoration: underline;
-        text-underline-offset: 2px;
       }
 
       html[theme="dark"] .seo-fallback a {
@@ -321,12 +321,12 @@
           background-color 0.15s;
       }
 
-      html[theme="dark"] .seo-tab {
-        color: #999;
-      }
-
       .seo-tab:hover {
         color: #05c;
+      }
+
+      html[theme="dark"] .seo-tab {
+        color: #999;
       }
 
       html[theme="dark"] .seo-tab:hover {
