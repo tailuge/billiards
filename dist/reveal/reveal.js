@@ -389,7 +389,7 @@
         grid-area: 3 / 1 / 4 / 2;
     }
     .container { max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 0.2rem; flex: 1; }
-`];var xe=1154,we=r=>`v${Math.floor(r/100)}.${String(r%100).padStart(2,"0")}`,Tt="https://scoreboard-tailuge.vercel.app",T=typeof localStorage<"u"&&localStorage.getItem("useProxy")==="true"?"nchanproxy.tailuge.workers.dev":"billiards-network.onrender.com",te=typeof window<"u"&&(window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"),At=te?`ws://${window.location.hostname}:80`:`wss://${T}`;var st=te?"":"https://billiards-network.onrender.com",A=typeof window<"u"&&window.location.hostname.includes("vercel");var rt=r=>{if(r==="BOT")return{emoji:"\u{1F916}",title:"BOT"};if(!r)return{emoji:"\u{1F310}",title:""};let e=r.toUpperCase();return{emoji:[...e].map(i=>String.fromCodePoint(127397+i.charCodeAt(0))).join(""),title:e}},nt=te?`http://${window.location.hostname}:8080/`:"https://billiards.tailuge.workers.dev/";var ot=(r,e,t)=>{for(let[i,s]of Object.entries(r)){let n=e?`${e}.${encodeURIComponent(i)}`:encodeURIComponent(i);s&&typeof s=="object"&&!Array.isArray(s)?ot(s,n,t):s!=null&&t.push(`${n}=${encodeURIComponent(s)}`)}return t},Mt=(r,e,t)=>e&&typeof e=="object"?ot(e,t,[]).reduce((i,s)=>i+`&${s}`,r):r;var at=({imageUrl:r,userId:e,userName:t,lod:i,flip:s,rating:n,stars:o,custom:l})=>{let a=Math.min(1,Math.max(0,Number.isFinite(n)?n:0)),d=Math.min(15,Math.max(1,Math.round(a*15))),h=o??Math.min(5,Math.max(1,Math.ceil(a*5))),c=`${nt}?ruletype=reveal&image=${encodeURIComponent(r)}&userId=${encodeURIComponent(e)}&userName=${encodeURIComponent(t)}&lod=${i}&reds=${d}`;return h===1?c+="&tableSize=6":h===2?c+="&tableSize=6&freeaim=true":h===5&&(c+="&freeaim=true"),te&&(c+=`&lobbyUrl=${At}`),s&&(c+="&flip=true"),c=Mt(c,l,"custom"),c},J=({imageUrl:r,state:e})=>{if(!e)return"";let t=`${nt}?ruletype=reveal&state=${encodeURIComponent(e)}`;return r&&(t+=`&image=${encodeURIComponent(r)}`),t},lt=(r,e=document.title)=>navigator.share&&/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)?navigator.share({title:e,url:r}).then(()=>"shared").catch(()=>"dismissed"):navigator.clipboard.writeText(r).then(()=>"copied").catch(()=>"dismissed"),ct=async r=>{try{return(await(await fetch(`${Tt}/api/shorten`,{method:"POST",mode:"cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({input:new URL(r).search})})).json()).shortUrl||r}catch(e){return console.error("reveal: could not shorten url",r,e),r}};var dt=r=>{let e=(r||"user").slice(0,4),t=/Tauri/i.test(navigator.userAgent)?"-t-":"-";return e+t+Math.random().toString(36).slice(2,7)},ke=()=>{let[r,...e]=(navigator.languages?.[0]||navigator.language||"en").split("-");return`Anon-${(e.find(s=>/^[A-Za-z]{2}$/.test(s))||r||"en").toUpperCase().slice(0,2)}`};var _e=class extends EventTarget{constructor(){super();let e=new URLSearchParams(window.location.search),t=(e.get("userId")||"").trim(),i=(e.get("userName")||"").trim();A&&(localStorage.removeItem("userId"),localStorage.removeItem("userName"),localStorage.removeItem("custom"));let s=(localStorage.getItem("userId")||"").trim(),n=(localStorage.getItem("userName")||"").trim();if(t.length>2)this.clientId=t,this.isForcedId=!0;else if(window.self!==window.top&&(location.hostname==="localhost"||location.hostname==="127.0.0.1")&&window.name.includes("-"))this.clientId=window.name,this.isForcedId=!0,i||(this.userName=window.name.split("-")[0]);else{let l=i||n||"",a=!l||s.split("-")[0].slice(0,4)===l.slice(0,4);this.clientId=s.length>2&&!s.startsWith("user-")&&a?s:dt(l),this.isForcedId=!1,this.clientId!==s&&localStorage.setItem("userId",this.clientId)}this.userName=i||this.userName||n||ke(),this.lod=localStorage.getItem("lod")||"4",this.flip=localStorage.getItem("flip")==="true",this.useProxy=localStorage.getItem("useProxy")==="true";try{this.custom=JSON.parse(localStorage.getItem("custom"))||{}}catch{this.custom={}}window.addEventListener("storage",o=>{if(o.key==="custom"){try{this.custom=JSON.parse(o.newValue)||{}}catch{this.custom={}}this.dispatchEvent(new Event("change"))}}),console.log("UserStore identity:",this.userName,this.clientId)}setUseProxy(e){this.useProxy=!!e,localStorage.setItem("useProxy",this.useProxy),this.dispatchEvent(new Event("change")),window.location.reload()}set(e,t){this.clientId=e.trim().length>2?e.trim():dt(t),this.userName=t.trim(),localStorage.setItem("userId",this.clientId),localStorage.setItem("userName",this.userName),this.dispatchEvent(new Event("change"))}setLod(e){this.lod=e,localStorage.setItem("lod",e),this.dispatchEvent(new Event("change"))}setFlip(e){this.flip=!!e,localStorage.setItem("flip",this.flip),this.dispatchEvent(new Event("change"))}getCustom(){return{...this.custom}}setCustom(e,t){this.custom={...this.custom,[e]:t},localStorage.setItem("custom",JSON.stringify(this.custom)),this.dispatchEvent(new Event("change"))}},g=new _e,$=class extends y{connectedCallback(){super.connectedCallback(),this._storeListener=()=>this.requestUpdate(),g.addEventListener("change",this._storeListener)}disconnectedCallback(){super.disconnectedCallback(),g.removeEventListener("change",this._storeListener)}};var Lt=[[4352,4447,1],[11904,42191,1],[44032,55203,1],[63744,64255,1],[65040,65135,1],[65280,65376,1],[65504,65510,1],[127744,129791,1.25],[131072,195103,1]],ht=r=>{let e=0,t=0;for(let i of r){let s=i.codePointAt(0),n=Lt.find(([o,l])=>s>=o&&s<=l);n?t+=n[2]:e++}return!e&&!t&&(e=1),`calc(${e}ch + ${+t.toFixed(2)}em)`},$e=class extends ${static properties={_dotColor:{state:!0}};static styles=it;constructor(){super(),this._clientId=g.clientId,this._name=g.userName,this._dotColor=g.isForcedId?"#9fca10ff":"#4caf50"}_commit(e){let t=e.trim().slice(0,12)||ke();this._name=t,g.set(this._clientId,t),this.dispatchEvent(new CustomEvent("user-name-changed",{bubbles:!0,composed:!0,detail:{userId:this._clientId,userName:t}}))}render(){return A?u``:u`
+`];var xe=1157,we=r=>`v${Math.floor(r/100)}.${String(r%100).padStart(2,"0")}`,Tt="https://scoreboard-tailuge.vercel.app",T=typeof localStorage<"u"&&localStorage.getItem("useProxy")==="true"?"nchanproxy.tailuge.workers.dev":"billiards-network.onrender.com",te=typeof window<"u"&&(window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"),At=te?`ws://${window.location.hostname}:80`:`wss://${T}`;var st=te?"":"https://billiards-network.onrender.com",A=typeof window<"u"&&window.location.hostname.includes("vercel");var rt=r=>{if(r==="BOT")return{emoji:"\u{1F916}",title:"BOT"};if(!r)return{emoji:"\u{1F310}",title:""};let e=r.toUpperCase();return{emoji:[...e].map(i=>String.fromCodePoint(127397+i.charCodeAt(0))).join(""),title:e}},nt=te?`http://${window.location.hostname}:8080/`:"https://billiards.tailuge.workers.dev/";var ot=(r,e,t)=>{for(let[i,s]of Object.entries(r)){let n=e?`${e}.${encodeURIComponent(i)}`:encodeURIComponent(i);s&&typeof s=="object"&&!Array.isArray(s)?ot(s,n,t):s!=null&&t.push(`${n}=${encodeURIComponent(s)}`)}return t},Mt=(r,e,t)=>e&&typeof e=="object"?ot(e,t,[]).reduce((i,s)=>i+`&${s}`,r):r;var at=({imageUrl:r,userId:e,userName:t,lod:i,flip:s,rating:n,stars:o,custom:l})=>{let a=Math.min(1,Math.max(0,Number.isFinite(n)?n:0)),d=Math.min(15,Math.max(1,Math.round(a*15))),h=o??Math.min(5,Math.max(1,Math.ceil(a*5))),c=`${nt}?ruletype=reveal&image=${encodeURIComponent(r)}&userId=${encodeURIComponent(e)}&userName=${encodeURIComponent(t)}&lod=${i}&reds=${d}`;return h===1?c+="&tableSize=6":h===2?c+="&tableSize=6&freeaim=true":h===5&&(c+="&freeaim=true"),te&&(c+=`&lobbyUrl=${At}`),s&&(c+="&flip=true"),c=Mt(c,l,"custom"),c},J=({imageUrl:r,state:e})=>{if(!e)return"";let t=`${nt}?ruletype=reveal&state=${encodeURIComponent(e)}`;return r&&(t+=`&image=${encodeURIComponent(r)}`),t},lt=(r,e=document.title)=>navigator.share&&/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)?navigator.share({title:e,url:r}).then(()=>"shared").catch(()=>"dismissed"):navigator.clipboard.writeText(r).then(()=>"copied").catch(()=>"dismissed"),ct=async r=>{try{return(await(await fetch(`${Tt}/api/shorten`,{method:"POST",mode:"cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({input:new URL(r).search})})).json()).shortUrl||r}catch(e){return console.error("reveal: could not shorten url",r,e),r}};var dt=r=>{let e=(r||"user").slice(0,4),t=/Tauri/i.test(navigator.userAgent)?"-t-":"-";return e+t+Math.random().toString(36).slice(2,7)},ke=()=>{let[r,...e]=(navigator.languages?.[0]||navigator.language||"en").split("-");return`Anon-${(e.find(s=>/^[A-Za-z]{2}$/.test(s))||r||"en").toUpperCase().slice(0,2)}`};var _e=class extends EventTarget{constructor(){super();let e=new URLSearchParams(window.location.search),t=(e.get("userId")||"").trim(),i=(e.get("userName")||"").trim();A&&(localStorage.removeItem("userId"),localStorage.removeItem("userName"),localStorage.removeItem("custom"));let s=(localStorage.getItem("userId")||"").trim(),n=(localStorage.getItem("userName")||"").trim();if(t.length>2)this.clientId=t,this.isForcedId=!0;else if(window.self!==window.top&&(location.hostname==="localhost"||location.hostname==="127.0.0.1")&&window.name.includes("-"))this.clientId=window.name,this.isForcedId=!0,i||(this.userName=window.name.split("-")[0]);else{let l=i||n||"",a=!l||s.split("-")[0].slice(0,4)===l.slice(0,4);this.clientId=s.length>2&&!s.startsWith("user-")&&a?s:dt(l),this.isForcedId=!1,this.clientId!==s&&localStorage.setItem("userId",this.clientId)}this.userName=i||this.userName||n||ke(),this.lod=localStorage.getItem("lod")||"4",this.flip=localStorage.getItem("flip")==="true",this.useProxy=localStorage.getItem("useProxy")==="true";try{this.custom=JSON.parse(localStorage.getItem("custom"))||{}}catch{this.custom={}}window.addEventListener("storage",o=>{if(o.key==="custom"){try{this.custom=JSON.parse(o.newValue)||{}}catch{this.custom={}}this.dispatchEvent(new Event("change"))}}),console.log("UserStore identity:",this.userName,this.clientId)}setUseProxy(e){this.useProxy=!!e,localStorage.setItem("useProxy",this.useProxy),this.dispatchEvent(new Event("change")),window.location.reload()}set(e,t){this.clientId=e.trim().length>2?e.trim():dt(t),this.userName=t.trim(),localStorage.setItem("userId",this.clientId),localStorage.setItem("userName",this.userName),this.dispatchEvent(new Event("change"))}setLod(e){this.lod=e,localStorage.setItem("lod",e),this.dispatchEvent(new Event("change"))}setFlip(e){this.flip=!!e,localStorage.setItem("flip",this.flip),this.dispatchEvent(new Event("change"))}getCustom(){return{...this.custom}}setCustom(e,t){this.custom={...this.custom,[e]:t},localStorage.setItem("custom",JSON.stringify(this.custom)),this.dispatchEvent(new Event("change"))}},g=new _e,$=class extends y{connectedCallback(){super.connectedCallback(),this._storeListener=()=>this.requestUpdate(),g.addEventListener("change",this._storeListener)}disconnectedCallback(){super.disconnectedCallback(),g.removeEventListener("change",this._storeListener)}};var Lt=[[4352,4447,1],[11904,42191,1],[44032,55203,1],[63744,64255,1],[65040,65135,1],[65280,65376,1],[65504,65510,1],[127744,129791,1.25],[131072,195103,1]],ht=r=>{let e=0,t=0;for(let i of r){let s=i.codePointAt(0),n=Lt.find(([o,l])=>s>=o&&s<=l);n?t+=n[2]:e++}return!e&&!t&&(e=1),`calc(${e}ch + ${+t.toFixed(2)}em)`},$e=class extends ${static properties={_dotColor:{state:!0}};static styles=it;constructor(){super(),this._clientId=g.clientId,this._name=g.userName,this._dotColor=g.isForcedId?"#9fca10ff":"#4caf50"}_commit(e){let t=e.trim().slice(0,12)||ke();this._name=t,g.set(this._clientId,t),this.dispatchEvent(new CustomEvent("user-name-changed",{bubbles:!0,composed:!0,detail:{userId:this._clientId,userName:t}}))}render(){return A?u``:u`
             <div class="badge" style="--dot-color:${this._dotColor}">
                 <span class="dot"></span>
                 <input size="1" maxlength="12" .value=${this._name}
@@ -616,7 +616,7 @@
                         </div>
                     </div>
                 `:""}`:""}
-        `}};customElements.define("settings-modal",Ce);var se="reveal:collection",Le="reveal:removed",mt="reveal:deck",re=20,x=[{id:"kids",label:"K-idols",title:"K-Pot Idol",mode:"k-idols",dataId:"challenge-data"},{id:"pokemon",label:"Pokemon",title:"Pok\xE9pot",mode:"pokepot",dataId:"pokemon-data"}];function gt(r){return r.toLowerCase().replace(/[()]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,48)}function Ee(r="challenge-data"){let e=document.getElementById(r);return e?[...e.querySelectorAll("a[data-image]")].map(i=>{let s=i.textContent.trim(),n=i.getAttribute("data-image")||"",o=i.getAttribute("href")||"",l=Number.parseFloat(i.getAttribute("data-rating")||""),a=Number.isFinite(l)?Math.min(1,Math.max(0,l)):0;return{name:s,imageUrl:n.trim(),wikipediaUrl:o.trim(),rating:a,id:gt(s),pokeType:i.getAttribute("data-type")||void 0,pokeNature:i.getAttribute("data-nature")||void 0}}).filter(i=>i.imageUrl):[]}function Nt(r){return()=>{r|=0,r=r+1831565813|0;let e=Math.imul(r^r>>>15,1|r);return e=e+Math.imul(e^e>>>7,61|e)^e,((e^e>>>14)>>>0)/4294967296}}function jt(r){let e=0;for(let t=0;t<r.length;t++)e=Math.imul(31,e)+r.charCodeAt(t)|0;return e>>>0}function Pe(r){if(!r.length)return r;let e=r.length,t=r.map((s,n)=>{let o=(n+1)/e;return{...s,normRating:o,stars:Math.min(5,Math.max(1,Math.ceil(o*5)))}}),i=Nt(jt(r[0].imageUrl));for(let s=t.length-1;s>0;s--){let n=Math.floor(i()*(s+1));[t[s],t[n]]=[t[n],t[s]]}return t}function Te(){try{let r=localStorage.getItem(se);if(!r)return[];let e=JSON.parse(r);return Array.isArray(e)?e:[]}catch{return[]}}function Ae(r){try{localStorage.setItem(se,JSON.stringify(r.slice(0,re)))}catch(e){if(e&&e.name==="QuotaExceededError"){console.log("reveal: localStorage quota exceeded, evicting oldest");try{r.pop(),localStorage.setItem(se,JSON.stringify(r.slice(0,re)))}catch{console.log("reveal: still over quota after eviction")}}else console.log("reveal: saveCollection failed",e)}}function Ot(){try{localStorage.removeItem(se),localStorage.removeItem(Le)}catch(r){console.log("reveal: clearCollection failed",r)}}function zt(){try{let r=localStorage.getItem(Le);if(!r)return[];let e=JSON.parse(r);return Array.isArray(e)?e.filter(t=>typeof t=="string"):[]}catch{return[]}}function pt(r){try{localStorage.setItem(Le,JSON.stringify(r))}catch(e){console.log("reveal: saveRemovedIds failed",e)}}function Dt(){try{let r=localStorage.getItem(mt);return x.some(e=>e.id===r)?r:x[0].id}catch{return x[0].id}}function Ht(r){try{localStorage.setItem(mt,r)}catch(e){console.log("reveal: saveDeckId failed",e)}}function Ft(){let r;try{r=new URLSearchParams(window.location.search).get("mode")}catch{return null}if(!r)return null;let e=r.trim().toLowerCase();return x.find(t=>t.mode===e)?.id??null}var Bt={normal:"#9fa19f",fire:"#e62829",water:"#2980ef",electric:"#fac000",grass:"#3fa129",ice:"#3dcef3",fighting:"#ff8000",poison:"#9141cb",ground:"#915121",flying:"#81b9ef",psychic:"#ef4179",bug:"#91a119",rock:"#afa981",ghost:"#704170",dragon:"#5060e1",dark:"#624d4e",steel:"#60a1b8",fairy:"#ef70ef"};function ut(r,e=42,t=22){let i=Number.parseInt(r.replace("#",""),16),s=(i>>16&255)/255,n=(i>>8&255)/255,o=(i&255)/255,l=Math.max(s,n,o),a=l-Math.min(s,n,o),d=0;a&&(l===s?d=((n-o)/a+6)%6:l===n?d=(o-s)/a+2:d=(s-n)/a+4,d*=60);let h=Math.min(1,a/.35);return`${d.toFixed(1)} ${(e*h).toFixed(1)}% ${t}%`}async function Jt(r,{targetEdge:e=180,type:t=""}={}){let i=new Image;i.crossOrigin="anonymous";let n=await new Promise((b,R)=>{i.onload=()=>b(i),i.onerror=()=>R(new Error("image load failed")),i.src=r}),o=Math.max(n.naturalWidth,n.naturalHeight);if(!o)throw new Error("zero size image");let l=Math.min(1,e/o),a=Math.max(1,Math.round(n.naturalWidth*l)),d=Math.max(1,Math.round(n.naturalHeight*l)),h=document.createElement("canvas");h.width=a,h.height=d;let c=h.getContext("2d");if(!c)throw new Error("no 2d context");let m=Bt[t];if(m){let b=c.createRadialGradient(a/2,d/2,0,a/2,d/2,Math.hypot(a,d)/2);b.addColorStop(0,`hsl(${ut(m)})`),b.addColorStop(1,`hsl(${ut(m,32,8)})`),c.fillStyle=b,c.fillRect(0,0,a,d)}c.drawImage(n,0,0,a,d);let p;try{p=h.toDataURL("image/webp",.6),p.startsWith("data:image/webp")||(p=h.toDataURL("image/jpeg",.7))}catch(b){throw console.log("reveal: thumb toDataURL failed (taint?)",b),b}return p}function S(r){return r.id||gt(r.name)}var Me=class extends y{static properties={_theme:{type:String,reflect:!0,attribute:"theme"},_flippedId:{state:!0},_sharingId:{state:!0},_sharedId:{state:!0},_completedIds:{state:!0},_removedIds:{state:!0},_collection:{state:!0},_challenges:{state:!0},_deckId:{state:!0},_lobby:{state:!0},_connected:{state:!0},_hasMessage:{state:!0}};static styles=[ye,ee,f`
+        `}};customElements.define("settings-modal",Ce);var se="reveal:collection",Le="reveal:removed",mt="reveal:deck",re=20,x=[{id:"kids",label:"K-idols",title:"K-Pot Idol",mode:"k-idols",dataId:"challenge-data"},{id:"taipei",label:"Taipei",title:"Taipei",mode:"taipei",dataId:"taipei-data"},{id:"cars",label:"SuperCars",title:"SuperCars",mode:"supercars",dataId:"cars-data"},{id:"pokemon",label:"Pokemon",title:"Pok\xE9pot",mode:"pokepot",dataId:"pokemon-data"}];function gt(r){return r.toLowerCase().replace(/[()]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,48)}function Ee(r="challenge-data"){let e=document.getElementById(r);return e?[...e.querySelectorAll("a[data-image]")].map(i=>{let s=i.textContent.trim(),n=i.getAttribute("data-image")||"",o=i.getAttribute("href")||"",l=Number.parseFloat(i.getAttribute("data-rating")||""),a=Number.isFinite(l)?Math.min(1,Math.max(0,l)):0;return{name:s,imageUrl:n.trim(),wikipediaUrl:o.trim(),rating:a,id:gt(s),pokeType:i.getAttribute("data-type")||void 0,pokeNature:i.getAttribute("data-nature")||void 0}}).filter(i=>i.imageUrl):[]}function Nt(r){return()=>{r|=0,r=r+1831565813|0;let e=Math.imul(r^r>>>15,1|r);return e=e+Math.imul(e^e>>>7,61|e)^e,((e^e>>>14)>>>0)/4294967296}}function jt(r){let e=0;for(let t=0;t<r.length;t++)e=Math.imul(31,e)+r.charCodeAt(t)|0;return e>>>0}function Pe(r){if(!r.length)return r;let e=r.length,t=r.map((s,n)=>{let o=(n+1)/e;return{...s,normRating:o,stars:Math.min(5,Math.max(1,Math.ceil(o*5)))}}),i=Nt(jt(r[0].imageUrl));for(let s=t.length-1;s>0;s--){let n=Math.floor(i()*(s+1));[t[s],t[n]]=[t[n],t[s]]}return t}function Te(){try{let r=localStorage.getItem(se);if(!r)return[];let e=JSON.parse(r);return Array.isArray(e)?e:[]}catch{return[]}}function Ae(r){try{localStorage.setItem(se,JSON.stringify(r.slice(0,re)))}catch(e){if(e&&e.name==="QuotaExceededError"){console.log("reveal: localStorage quota exceeded, evicting oldest");try{r.pop(),localStorage.setItem(se,JSON.stringify(r.slice(0,re)))}catch{console.log("reveal: still over quota after eviction")}}else console.log("reveal: saveCollection failed",e)}}function Ot(){try{localStorage.removeItem(se),localStorage.removeItem(Le)}catch(r){console.log("reveal: clearCollection failed",r)}}function zt(){try{let r=localStorage.getItem(Le);if(!r)return[];let e=JSON.parse(r);return Array.isArray(e)?e.filter(t=>typeof t=="string"):[]}catch{return[]}}function pt(r){try{localStorage.setItem(Le,JSON.stringify(r))}catch(e){console.log("reveal: saveRemovedIds failed",e)}}function Dt(){try{let r=localStorage.getItem(mt);return x.some(e=>e.id===r)?r:x[0].id}catch{return x[0].id}}function Ht(r){try{localStorage.setItem(mt,r)}catch(e){console.log("reveal: saveDeckId failed",e)}}function Ft(){let r;try{r=new URLSearchParams(window.location.search).get("mode")}catch{return null}if(!r)return null;let e=r.trim().toLowerCase();return x.find(t=>t.mode===e)?.id??null}var Bt={normal:"#9fa19f",fire:"#e62829",water:"#2980ef",electric:"#fac000",grass:"#3fa129",ice:"#3dcef3",fighting:"#ff8000",poison:"#9141cb",ground:"#915121",flying:"#81b9ef",psychic:"#ef4179",bug:"#91a119",rock:"#afa981",ghost:"#704170",dragon:"#5060e1",dark:"#624d4e",steel:"#60a1b8",fairy:"#ef70ef"};function ut(r,e=42,t=22){let i=Number.parseInt(r.replace("#",""),16),s=(i>>16&255)/255,n=(i>>8&255)/255,o=(i&255)/255,l=Math.max(s,n,o),a=l-Math.min(s,n,o),d=0;a&&(l===s?d=((n-o)/a+6)%6:l===n?d=(o-s)/a+2:d=(s-n)/a+4,d*=60);let h=Math.min(1,a/.35);return`${d.toFixed(1)} ${(e*h).toFixed(1)}% ${t}%`}async function Jt(r,{targetEdge:e=180,type:t=""}={}){let i=new Image;i.crossOrigin="anonymous";let n=await new Promise((b,R)=>{i.onload=()=>b(i),i.onerror=()=>R(new Error("image load failed")),i.src=r}),o=Math.max(n.naturalWidth,n.naturalHeight);if(!o)throw new Error("zero size image");let l=Math.min(1,e/o),a=Math.max(1,Math.round(n.naturalWidth*l)),d=Math.max(1,Math.round(n.naturalHeight*l)),h=document.createElement("canvas");h.width=a,h.height=d;let c=h.getContext("2d");if(!c)throw new Error("no 2d context");c.imageSmoothingQuality="high";let m=Bt[t];if(m){let b=c.createRadialGradient(a/2,d/2,0,a/2,d/2,Math.hypot(a,d)/2);b.addColorStop(0,`hsl(${ut(m)})`),b.addColorStop(1,`hsl(${ut(m,32,8)})`),c.fillStyle=b,c.fillRect(0,0,a,d)}c.drawImage(n,0,0,a,d);let p;try{p=h.toDataURL("image/webp",.6),p.startsWith("data:image/webp")||(p=h.toDataURL("image/jpeg",.7))}catch(b){throw console.log("reveal: thumb toDataURL failed (taint?)",b),b}return p}function S(r){return r.id||gt(r.name)}var Me=class extends y{static properties={_theme:{type:String,reflect:!0,attribute:"theme"},_flippedId:{state:!0},_sharingId:{state:!0},_sharedId:{state:!0},_completedIds:{state:!0},_removedIds:{state:!0},_collection:{state:!0},_challenges:{state:!0},_deckId:{state:!0},_lobby:{state:!0},_connected:{state:!0},_hasMessage:{state:!0}};static styles=[ye,ee,f`
       :host {
         display: block;
         box-sizing: border-box;
@@ -699,12 +699,12 @@
       .topbar settings-modal {
         flex-shrink: 0;
       }
-      /* Shown only when a chat message or challenge arrives while the player is on this
-         page. It carries no detail on purpose: clicking hands control back to the lobby,
-         where the chat window and challenge banner already know how to present it.
-         Centred over the top bar (absolute, out of the flex flow) so it never shoves or
-         overlaps the trophy cups and other header controls. */
-      .msg-alert {
+      /* Always shown, centred over the top bar (absolute, out of the flex flow) so it never
+         shoves or overlaps the trophy cups and other header controls. By default it is the
+         only route back to the lobby; when a chat message or challenge arrives it swaps to
+         a pulsing icon. Either state is just a link to the lobby, which owns the chat window
+         and challenge banner and knows how to present them. */
+      .top-link {
         position: absolute;
         left: 50%;
         top: 50%;
@@ -714,23 +714,33 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 28px;
+        min-width: 28px;
         height: 28px;
+        padding: 0 0.55rem;
         background: var(--bg);
-        font-size: 1rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
         line-height: 1;
         text-decoration: none;
         border: 1px solid var(--border);
         border-radius: 6px;
         color: inherit;
-        animation: msg-pulse 2s ease-in-out infinite;
       }
-      .msg-alert:hover {
-        background: var(--bg);
+      .top-link:hover {
+        border-color: var(--text-dim);
       }
-      .msg-alert:focus-visible {
+      .top-link:focus-visible {
         outline: 2px solid #007bff;
         outline-offset: 1px;
+      }
+      /* Message/challenge state: the width collapses back to a square icon. */
+      .top-link--alert {
+        width: 28px;
+        min-width: 0;
+        padding: 0;
+        font-size: 1rem;
+        animation: msg-pulse 2s ease-in-out infinite;
       }
       @keyframes msg-pulse {
         0%,
@@ -742,7 +752,7 @@
         }
       }
       @media (prefers-reduced-motion: reduce) {
-        .msg-alert {
+        .top-link--alert {
           animation: none;
         }
       }
@@ -839,13 +849,19 @@
       /* Dense card grid — the central element */
       .card-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(max(88px, calc((100% - 42px) / 8)), 1fr));
+        grid-template-columns: repeat(
+          auto-fill,
+          minmax(max(88px, calc((100% - 42px) / 8)), 1fr)
+        );
         /* Just wide enough for the card shadows to read between neighbours */
         gap: 6px;
       }
       @media (width <= 380px) {
         .card-grid {
-          grid-template-columns: repeat(auto-fill, minmax(max(76px, calc((100% - 35px) / 8)), 1fr));
+          grid-template-columns: repeat(
+            auto-fill,
+            minmax(max(76px, calc((100% - 35px) / 8)), 1fr)
+          );
           gap: 5px;
         }
       }
@@ -1235,12 +1251,19 @@
                   <img src="${t.thumb}" alt="" loading="lazy" />
                 </div>`:u`<div class="face face-front">
                   <span class="q" aria-hidden="true">?</span>
-                  <span class="rating" role="img" aria-label="${a} out of 5 stars"
+                  <span
+                    class="rating"
+                    role="img"
+                    aria-label="${a} out of 5 stars"
                     >${"\u2605".repeat(a)}</span
                   >
                   ${e.pokeType?u`<div class="poke-pills" aria-hidden="true">
-                          <span class="type-pill" data-t="${e.pokeType}">${e.pokeType}</span>
-                          ${d?u`<span class="nature-pill" title="${e.pokeNature}"
+                          <span class="type-pill" data-t="${e.pokeType}"
+                            >${e.pokeType}</span
+                          >
+                          ${d?u`<span
+                                  class="nature-pill"
+                                  title="${e.pokeNature}"
                                   >${d}</span
                                 >`:""}
                         </div>`:""}
@@ -1264,7 +1287,9 @@
                       ?disabled=${this._sharingId===i}
                       @click=${p=>this._onShare(p,e)}
                     >
-                      ${this._sharedId===i?u`<span class="shared-tick" aria-hidden="true">✓</span>`:u`<svg viewBox="0 0 24 24" aria-hidden="true">
+                      ${this._sharedId===i?u`<span class="shared-tick" aria-hidden="true"
+                              >✓</span
+                            >`:u`<svg viewBox="0 0 24 24" aria-hidden="true">
                               <path
                                 d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"
                               />
@@ -1318,13 +1343,13 @@
               >${we(xe)}</a
             >
           </h1>
-          ${this._hasMessage?u`<a
-                  class="msg-alert"
-                  href="../lobby"
-                  aria-label="New message — open the lobby"
-                  title="New message"
-                  >💬</a
-                >`:""}
+          <a
+            class="top-link ${this._hasMessage?"top-link--alert":""}"
+            href="../lobby"
+            aria-label=${this._hasMessage?"New message \u2014 open the lobby":"Back to the lobby"}
+            title=${this._hasMessage?"New message":"Back to the lobby"}
+            >${this._hasMessage?"\u{1F4AC}":"Lobby"}</a
+          >
           <trophy-item></trophy-item>
           <user-badge></user-badge>
           <settings-modal
@@ -1337,8 +1362,8 @@
             <h2>${this._deck().title}</h2>
           </div>
           <p>
-            Play billiards to uncover hidden pictures. Each successful pot reveals another part of
-            the mystery image.
+            Play billiards to uncover hidden pictures. Each successful pot
+            reveals another part of the mystery image.
           </p>
         </section>
 
