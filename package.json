@@ -31,7 +31,9 @@
     "start-server": "http-server dist -p 8080 -c-1",
     "watch": "webpack --watch",
     "deps": "npx yarn-check --skip-unused",
-    "gltfpack": "npx gltfpack -i dist/models/p8.gltf -o dist/models/p8.min.gltf && npx gltfpack -i dist/models/threecushion.gltf -o dist/models/threecushion.min.gltf && npx gltfpack -i dist/models/snooker.gltf -o dist/models/snooker.min.gltf"
+    "gltfpack": "npx gltfpack -i dist/models/p8.gltf -o dist/models/p8.min.gltf && npx gltfpack -i dist/models/threecushion.gltf -o dist/models/threecushion.min.gltf && npx gltfpack -i dist/models/snooker.gltf -o dist/models/snooker.min.gltf",
+    "indexnow": "node test/indexnow.mjs",
+    "indexnow:test": "node test/indexnow.mjs --test"
   },
   "dependencies": {
     "@tailuge/messaging": "1.42.0",
