@@ -21,12 +21,21 @@
 }
 
 .lobby-count {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   font-size: 16px;
 }
 
 .status-emoji {
   font-size: 0.5em;
+}
+
+.lobby-icon {
+  /* The color emoji glyph is drawn low inside its em box, so flex centring of
+     the line box still leaves it a couple of pixels below the text. Optical
+     nudge; transform avoids shifting the rest of the row. */
+  transform: translateY(-2px);
 }
 
 .lobby-count.is-hidden {

@@ -305,13 +305,18 @@ export class LobbyIndicator {
       }
     }
     const statusEmoji = ` <span class='status-emoji' title='Network Logs'>${status}</span>`
+    // Own element so .lobby-count (a flex row) centers it separately from the
+    // name; bare text would be glued to the name in one anonymous flex item.
+    // Deliberately not .status-emoji: that class is the click target opening
+    // the network log overlay.
+    const lobbyIcon = `<span class="lobby-icon">${this.isSpectator ? "👀" : "👥"}</span>`
 
     // if replay mode then set name from queryparam userName
     const params = new URLSearchParams(globalThis.location?.search ?? "")
     const name = this.replayMode
       ? (params.get("userName") ?? "Anon")
       : session.playername
-    this.countElement.innerHTML = `${name} ${this.isSpectator ? "👀" : "👥"}${this.count}${statusEmoji}`
+    this.countElement.innerHTML = `${name} ${lobbyIcon}${this.count}${statusEmoji}`
 
     const otherUsers = Array.from(
       new Set(
