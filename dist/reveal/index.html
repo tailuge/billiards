@@ -79,12 +79,7 @@
       }
     </script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Exo:wght@200;600&display=swap"
-      rel="stylesheet"
-    />
     <link rel="icon" type="image/png" href="../assets/threecushion.png" />
     <link rel="manifest" href="../manifest.json" />
     <meta name="theme-color" content="#1a1a1a" />
@@ -101,6 +96,21 @@
       }
     </script>
     <style>
+      @font-face {
+        font-family: 'Exo';
+        font-style: normal;
+        font-weight: 200;
+        font-display: swap;
+        src: url(https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4tM3CwM.ttf) format('truetype');
+      }
+      @font-face {
+        font-family: 'Exo';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url(https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4o0wCwM.ttf) format('truetype');
+      }
+
       /* Metric-matched fallback for Exo.
          Every text block on this page is Exo, so when the web font arrives the whole page reflows
          at once — that swap is the page's entire CLS (0.63, by far its biggest performance
