@@ -29,11 +29,51 @@
 - After making changes, run `yarn lint` and `yarn test`.
 
 ## Configuration Notes
-- Node/Yarn usage matches the README instructions (Yarn 1.x; see `package.json` engines).
-
-## Basic Quality Checks
+- Node/Yarn usage matches the README instructions (Yarn 1.x; see `package.json` engines).## Basic Quality Checks
 
 Before submitting changes, ensure the following commands pass:
+
 - **Build:** `yarn dev`
 - **Test:** `yarn test`
 - **Format:** `yarn prettify`
+
+## Browser / Chrome DevTools
+
+The `chrome-devtools` MCP server is configured in `~/.agents/mcp.json`
+(`npx -y chrome-devtools-mcp@latest`). On this machine the MCP process starts
+without `DISPLAY`, so every call fails with
+*"Missing X server to start the headful browser"* — the display cannot be fixed
+from the shell because it is the MCP process's environment that is empty.
+Two ways forward:
+
+1. **Make the MCP usable** — add a mode flag to the server args and restart the
+   MCP connection:
+
+   ```json
+   { "mcpServers": { "chrome-devtools": { "command": "npx",
+     "args": ["-y", "chrome-devtools-mcp@latest", "--headless"] } } }
+   ```
+
+   or attach to a browser you started yourself with
+   `"--browserUrl", "http://127.0.0.1:9222"` while Chrome runs with
+   `--remote-debugging-port=9222`.
+
+2. **Drive Chrome over CDP from Node** (needed for profiling anyway — the MCP
+   exposes no `HeapProfiler` sampling or CPU profiler):
+
+   ```bash
+   setsid nohup /usr/bin/google-chrome-stable --headless=new \
+     --remote-debugging-port=9223 --no-sandbox \
+     --user-data-dir=/tmp/prof-chrome-profile --js-flags=--expose-gc \
+     --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader \
+     about:blank >/tmp/chrome.log 2>&1 </dev/null &
+   ```
+
+   Then `fetch("http://127.0.0.1:9223/json/version")` for the browser
+   WebSocket and speak CDP over it (`ws` is already in `node_modules`).
+   Always launch background servers with `setsid` so they survive the tool
+   shell, use `127.0.0.1` (not `localhost`) in URLs, and kill what you start.
+
+   Attribute frames with `@jridgewell/trace-mapping` against a `dist/*.js.map`
+   from an **unminified** build — the shipped minified bundle has no usable
+   map. See `profile-sim-loop.md` for the full profiling recipe.
