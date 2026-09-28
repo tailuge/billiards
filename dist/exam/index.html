@@ -39,6 +39,23 @@
         overflow: hidden;
       }
 
+      /*
+       * <main> wraps the exam paper. body is a flex column with
+       * overflow: hidden, and .paper depends on flex-grow to fill the viewport
+       * and scroll internally, so main has to reproduce that flex context or
+       * .paper stops stretching. min-height: 0 keeps it shrinkable so
+       * overflow-y: auto on .paper still works. Scoped to screen so print
+       * falls back to ordinary block flow.
+       */
+      @media screen {
+        main {
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
+          min-height: 0;
+        }
+      }
+
       .serif {
         font-family: "Playfair Display", Georgia, serif;
       }
@@ -424,165 +441,167 @@
       </a>
     </div>
 
-    <div class="paper">
-      <div class="text-center mb-3 shrink-0">
-        <h1 class="serif font-bold">University Billiards Exam</h1>
-        <p
-          class="text-xs tracking-widest uppercase text-slate-500 font-semibold mt-0\.5"
-        >
-          Faculty of Mathematical Recreation
-        </p>
-        <div class="divider"></div>
-      </div>
-
-      <div
-        class="grid grid-cols-2 border-y border-slate-200 py-2 mb-3 text-xs text-slate-700 shrink-0"
-      >
-        <div>
+    <main>
+      <div class="paper">
+        <div class="text-center mb-3 shrink-0">
+          <h1 class="serif font-bold">University Billiards Exam</h1>
           <p
-            class="font-bold uppercase text-xs tracking-wider text-slate-400 label-xs"
+            class="text-xs tracking-widest uppercase text-slate-500 font-semibold mt-0\.5"
           >
-            Examination Period
+            Faculty of Mathematical Recreation
           </p>
-          <p class="serif font-semibold text-slate-900">Trinity Term 2026</p>
+          <div class="divider"></div>
         </div>
-        <div class="text-right">
+
+        <div
+          class="grid grid-cols-2 border-y border-slate-200 py-2 mb-3 text-xs text-slate-700 shrink-0"
+        >
+          <div>
+            <p
+              class="font-bold uppercase text-xs tracking-wider text-slate-500 label-xs"
+            >
+              Examination Period
+            </p>
+            <p class="serif font-semibold text-slate-900">Trinity Term 2026</p>
+          </div>
+          <div class="text-right">
+            <p
+              class="font-bold uppercase text-xs tracking-wider text-slate-500 label-xs"
+            >
+              Paper Reference
+            </p>
+            <p class="serif font-semibold text-slate-900">UB-MEC-402X</p>
+          </div>
+        </div>
+
+        <div class="text-center mb-3 shrink-0">
+          <h2 class="serif font-bold">PHYSICS OF INCOMPRESSIBLE SPHERES</h2>
+          <p class="text-xs italic text-slate-500 mt-0\.5">
+            Mathematical Analysis
+          </p>
+        </div>
+
+        <div
+          class="mb-3 text-xs shrink-0 bg-slate-50 p-2\.5 rounded border border-slate-200"
+        >
+          <table>
+            <tbody>
+              <tr class="border-b border-slate-200">
+                <td class="pb-1\.5 font-semibold text-slate-600 w-1-3">
+                  Time Allowed:
+                </td>
+                <td class="pb-1\.5 text-slate-900">Three (3) Hours</td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="py-1\.5 font-semibold text-slate-600">
+                  Reading Time:
+                </td>
+                <td class="py-1\.5 text-slate-900">
+                  Candidates are allocated 10 minutes of reading time before
+                  writing.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div
+          class="text-xs text-slate-700 leading-relaxed overflow-y-auto pr-1 mb-4 mt-0"
+        >
+          <h3
+            class="serif text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-1 mb-2"
+          >
+            Instructions to Candidates
+          </h3>
+
+          <div class="mt-2">
+            <p>
+              <span class="font-semibold text-slate-900">1. Commencement:</span>
+              Candidates must not commence the examination until instructed to
+              do so by the Invigilator. Adequate time should be taken beforehand
+              to read all instructions and verify that equipment is functioning
+              correctly.
+            </p>
+          </div>
+
+          <div class="mt-2">
+            <p>
+              <span class="font-semibold text-slate-900"
+                >2. Silence and Conduct:</span
+              >
+              Examination conditions are strictly silent. Candidates must
+              neither communicate with nor assist any other candidate. Any
+              conduct liable to distract, inconvenience, or confer an unfair
+              advantage is prohibited.
+            </p>
+          </div>
+
+          <div class="mt-2">
+            <p>
+              <span class="font-semibold text-slate-900"
+                >3. Examination Conditions:</span
+              >
+              Candidates must complete the examination independently in a quiet
+              environment free from interruption. Mobile telephones and all
+              external reference materials are strictly forbidden unless
+              expressly authorised by the Examiner.
+            </p>
+          </div>
+
+          <div class="mt-2">
+            <p>
+              <span class="font-semibold text-slate-900"
+                >4. Dress and Equipment:</span
+              >
+              Candidates are expected to present themselves in attire
+              appropriate to a formal academic assessment. A regulation cue,
+              reliable internet connection, and a pointing device capable of
+              accurate shot selection are required.
+            </p>
+          </div>
+
+          <div class="mt-2">
+            <p>
+              <span class="font-semibold text-slate-900">5. Assessment:</span>
+              Unless otherwise stated, exercises may be attempted multiple
+              times. Credit will be awarded only where the stated objective has
+              been achieved. Accuracy, judgement, cue-ball control, positional
+              play, and consistency form part of the assessment.
+            </p>
+          </div>
+
+          <div class="mt-2">
+            <p>
+              <span class="font-semibold text-slate-900">6. Conclusion:</span>
+              Upon the instruction to conclude the examination, candidates must
+              immediately cease play, refrain from further interaction with the
+              examination interface, and remain seated until all submissions
+              have been received and verified by the Invigilator.
+            </p>
+          </div>
+        </div>
+
+        <div class="border border-slate-300 p-3 shrink-0 rounded-sm">
           <p
-            class="font-bold uppercase text-xs tracking-wider text-slate-400 label-xs"
+            class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 text-center label-sm"
           >
-            Paper Reference
+            To be completed by the Candidate: Select Examination Discipline
           </p>
-          <p class="serif font-semibold text-slate-900">UB-MEC-402X</p>
+          <div class="btn-group">
+            <a href="threecushion.html" class="btn">Three-Cushion</a>
+            <a href="snooker.html" class="btn">Snooker</a>
+          </div>
         </div>
-      </div>
 
-      <div class="text-center mb-3 shrink-0">
-        <h2 class="serif font-bold">PHYSICS OF INCOMPRESSIBLE SPHERES</h2>
-        <p class="text-xs italic text-slate-500 mt-0\.5">
-          Mathematical Analysis
-        </p>
-      </div>
-
-      <div
-        class="mb-3 text-xs shrink-0 bg-slate-50 p-2\.5 rounded border border-slate-200"
-      >
-        <table>
-          <tbody>
-            <tr class="border-b border-slate-200">
-              <td class="pb-1\.5 font-semibold text-slate-600 w-1-3">
-                Time Allowed:
-              </td>
-              <td class="pb-1\.5 text-slate-900">Three (3) Hours</td>
-            </tr>
-            <tr class="border-b border-slate-200">
-              <td class="py-1\.5 font-semibold text-slate-600">
-                Reading Time:
-              </td>
-              <td class="py-1\.5 text-slate-900">
-                Candidates are allocated 10 minutes of reading time before
-                writing.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div
-        class="text-xs text-slate-700 leading-relaxed overflow-y-auto pr-1 mb-4 mt-0"
-      >
-        <h3
-          class="serif text-sm font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-1 mb-2"
+        <div
+          class="mt-4 pt-2 border-t border-slate-100 text-center text-xs text-slate-700 shrink-0 label-sm"
         >
-          Instructions to Candidates
-        </h3>
-
-        <div class="mt-2">
           <p>
-            <span class="font-semibold text-slate-900">1. Commencement:</span>
-            Candidates must not commence the examination until instructed to do
-            so by the Invigilator. Adequate time should be taken beforehand to
-            read all instructions and verify that equipment is functioning
-            correctly.
-          </p>
-        </div>
-
-        <div class="mt-2">
-          <p>
-            <span class="font-semibold text-slate-900"
-              >2. Silence and Conduct:</span
-            >
-            Examination conditions are strictly silent. Candidates must neither
-            communicate with nor assist any other candidate. Any conduct liable
-            to distract, inconvenience, or confer an unfair advantage is
-            prohibited.
-          </p>
-        </div>
-
-        <div class="mt-2">
-          <p>
-            <span class="font-semibold text-slate-900"
-              >3. Examination Conditions:</span
-            >
-            Candidates must complete the examination independently in a quiet
-            environment free from interruption. Mobile telephones and all
-            external reference materials are strictly forbidden unless expressly
-            authorised by the Examiner.
-          </p>
-        </div>
-
-        <div class="mt-2">
-          <p>
-            <span class="font-semibold text-slate-900"
-              >4. Dress and Equipment:</span
-            >
-            Candidates are expected to present themselves in attire appropriate
-            to a formal academic assessment. A regulation cue, reliable internet
-            connection, and a pointing device capable of accurate shot selection
-            are required.
-          </p>
-        </div>
-
-        <div class="mt-2">
-          <p>
-            <span class="font-semibold text-slate-900">5. Assessment:</span>
-            Unless otherwise stated, exercises may be attempted multiple times.
-            Credit will be awarded only where the stated objective has been
-            achieved. Accuracy, judgement, cue-ball control, positional play,
-            and consistency form part of the assessment.
-          </p>
-        </div>
-
-        <div class="mt-2">
-          <p>
-            <span class="font-semibold text-slate-900">6. Conclusion:</span>
-            Upon the instruction to conclude the examination, candidates must
-            immediately cease play, refrain from further interaction with the
-            examination interface, and remain seated until all submissions have
-            been received and verified by the Invigilator.
+            &copy; University Examinations Registry. DO NOT TURN OVER THIS PAGE
+            UNTIL AUTHORIZED BY THE INVIGILATOR.
           </p>
         </div>
       </div>
-
-      <div class="border border-slate-300 p-3 shrink-0 rounded-sm">
-        <p
-          class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 text-center label-sm"
-        >
-          To be completed by the Candidate: Select Examination Discipline
-        </p>
-        <div class="btn-group">
-          <a href="threecushion.html" class="btn">Three-Cushion</a>
-          <a href="snooker.html" class="btn">Snooker</a>
-        </div>
-      </div>
-
-      <div
-        class="mt-4 pt-2 border-t border-slate-100 text-center text-xs text-slate-700 shrink-0 label-sm"
-      >
-        <p>
-          &copy; University Examinations Registry. DO NOT TURN OVER THIS PAGE
-          UNTIL AUTHORIZED BY THE INVIGILATOR.
-        </p>
-      </div>
-    </div>
+    </main>
   </body>
 </html>
