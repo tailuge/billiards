@@ -131,12 +131,26 @@ body > h2 {
 #shotList {
   list-style: none;
   font-size: 0.85rem;
+
+  /*
+   * buildSummaryList() appends one <li> per .question-block, and it runs from
+   * a deferred module script, so it lands after first paint. Without a
+   * reserved height the Shot List card grows by ~513px and pushes every
+   * question block down the page, which is the whole of this page's CLS.
+   * Sized for the 20 blocks in threecushion.html:
+   * 20 x (0.85rem x 1.6 + 0.4rem padding + 1px border) = 20 x 25.64px.
+   * Update these if a page gains shots.
+   */
+  min-height: 520px;
 }
 
 @media (width >= 600px) {
   #shotList {
     columns: 2;
     column-gap: 8rem;
+
+    /* Two columns, so 10 rows instead of 20. */
+    min-height: 265px;
   }
 }
 
