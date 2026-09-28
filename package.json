@@ -57,7 +57,7 @@
     "eslint": "10.11.0",
     "eslint-plugin-html": "8.2.1",
     "eslint-plugin-sonarjs": "4.2.1",
-    "html-validate": "^11.16.0",
+    "html-validate": "11.16.1",
     "http-server": "^14.1.1",
     "jest": "30.5.2",
     "jest-environment-jsdom": "30.5.2",
