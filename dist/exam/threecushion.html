@@ -25,510 +25,518 @@
       </h1>
     </header>
 
-    <div class="assessment-line">
-      <span id="assessmentLevel" class="assessment-item assessment unknown"
-        >Assessment: Unknown</span
-      >
-      <span id="completionPct" class="assessment-item">—</span>
-      <span id="scorePct" class="assessment-item">—</span>
-      <div>
-        <a href="https://billiards.tailuge.workers.dev/lobby" class="lobby-btn"
-          >Lobby</a
+    <main>
+      <div class="assessment-line">
+        <span id="assessmentLevel" class="assessment-item assessment unknown"
+          >Assessment: Unknown</span
         >
-        <button id="resetExam" class="reset-btn" type="button">Reset</button>
-      </div>
-    </div>
-
-    <section class="summary">
-      <h2>Shot List</h2>
-      <ul id="shotList"></ul>
-    </section>
-
-    <h2>Basic</h2>
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Big ball in the corner</h3>
-        <p>
-          An easy shot with many variations of thickness and spin all leading to
-          the corner. This is the primary pattern in three cushion, played with
-          running side.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
-      </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":0.372531,"y":-0.380924,"z":0}},{"id":1,"pos":{"x":-1.386778,"y":0.62601,"z":0}},{"id":2,"pos":{"x":0.367725,"y":0.38964,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.511797,"power":2.3056,"offset":{"x":-0.444248,"y":0.07172,"z":0},"elevation":0}}]'
-          data-figure="2.31 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
-
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Ticky</h3>
-        <p>
-          An easy shot with many
-          <a href="https://www.youtube.com/watch?v=0vucuJi_N78" target="_blank"
-            >variations</a
+        <span id="completionPct" class="assessment-item">—</span>
+        <span id="scorePct" class="assessment-item">—</span>
+        <div>
+          <a
+            href="https://billiards.tailuge.workers.dev/lobby"
+            class="lobby-btn"
+            >Lobby</a
           >
-          of thickness and spin all leading to success. Once you can judge the
-          cushion angle then you can vary spin and speed for position play.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+          <button id="resetExam" class="reset-btn" type="button">Reset</button>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":0.031245,"y":0.616555,"z":0}},{"id":1,"pos":{"x":-1.362744,"y":0.503098,"z":0}},{"id":2,"pos":{"x":-0.858024,"y":0.644919,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":2.984635,"power":1.2576,"offset":{"x":0.219184,"y":0.235677,"z":0},"elevation":0}}]'
-          data-figure="1.26 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Making it long</h3>
-        <p>
-          The ball will naturally head for the corner, so learn how to make it
-          go long by hitting fuller ball or thinner.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
-      </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.88996,"y":0.468878,"z":0}},{"id":1,"pos":{"x":-1.07703,"y":0.67565,"z":0}},{"id":2,"pos":{"x":-0.13721,"y":0.402134,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":6.242986,"power":2.8296,"offset":{"x":-0.342547,"y":0.291825,"z":0},"elevation":0}}]'
-          data-figure="2.83 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
+      <section class="summary">
+        <h2>Shot List</h2>
+        <ul id="shotList"></ul>
+      </section>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Short angle</h3>
-        <p>
-          A very important
-          <a href="https://www.youtube.com/watch?v=abjONr-AOY4" target="_blank"
-            >pattern</a
-          >, a supposedly easy shot, but watch out to avoid the cue ball curving
-          after the first cushion if hit too hard.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <h2>Basic</h2>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Big ball in the corner</h3>
+          <p>
+            An easy shot with many variations of thickness and spin all leading
+            to the corner. This is the primary pattern in three cushion, played
+            with running side.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":0.372531,"y":-0.380924,"z":0}},{"id":1,"pos":{"x":-1.386778,"y":0.62601,"z":0}},{"id":2,"pos":{"x":0.367725,"y":0.38964,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.511797,"power":2.3056,"offset":{"x":-0.444248,"y":0.07172,"z":0},"elevation":0}}]'
+            data-figure="2.31 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.00721,"y":-0.376197,"z":0}},{"id":1,"pos":{"x":-1.112787,"y":-0.541655,"z":0}},{"id":2,"pos":{"x":-0.026438,"y":0.574008,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.647869,"power":1.9912,"offset":{"x":0.225827,"y":0.389233,"z":0},"elevation":0}}]'
-          data-figure="1.99 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <h2>Intermediate</h2>
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Short angle with draw</h3>
-        <p>
-          Finding the right amount of backspin takes some practice, when you get
-          the feel for this shot it becomes more forgiving.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Ticky</h3>
+          <p>
+            An easy shot with many
+            <a
+              href="https://www.youtube.com/watch?v=0vucuJi_N78"
+              target="_blank"
+              >variations</a
+            >
+            of thickness and spin all leading to success. Once you can judge the
+            cushion angle then you can vary spin and speed for position play.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":0.031245,"y":0.616555,"z":0}},{"id":1,"pos":{"x":-1.362744,"y":0.503098,"z":0}},{"id":2,"pos":{"x":-0.858024,"y":0.644919,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":2.984635,"power":1.2576,"offset":{"x":0.219184,"y":0.235677,"z":0},"elevation":0}}]'
+            data-figure="1.26 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.759483,"y":-0.376197,"z":0}},{"id":1,"pos":{"x":-1.112787,"y":-0.541655,"z":0}},{"id":2,"pos":{"x":-0.026438,"y":0.574008,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.946372,"power":2.62,"offset":{"x":0.38515,"y":-0.232723,"z":0},"elevation":0}}]'
-          data-figure="2.62 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Rail first double rail</h3>
-        <p>
-          Can be an easy shot when it is at max spin, practice how much spin you
-          need depending on the angle of attack.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Making it long</h3>
+          <p>
+            The ball will naturally head for the corner, so learn how to make it
+            go long by hitting fuller ball or thinner.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.88996,"y":0.468878,"z":0}},{"id":1,"pos":{"x":-1.07703,"y":0.67565,"z":0}},{"id":2,"pos":{"x":-0.13721,"y":0.402134,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":6.242986,"power":2.8296,"offset":{"x":-0.342547,"y":0.291825,"z":0},"elevation":0}}]'
+            data-figure="2.83 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.900828,"y":-0.673094,"z":0}},{"id":1,"pos":{"x":-1.421922,"y":-0.700355,"z":0}},{"id":2,"pos":{"x":-1.316595,"y":-0.645833,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":2.000926,"power":2.096,"offset":{"x":0.444696,"y":0.068887,"z":0},"elevation":0}}]'
-          data-figure="2.10 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Three-Cushion Break</h3>
-        <p>
-          Half ball, medium pace and not too much spin, you will get good at
-          this in no time, but it takes some patience to learn a repeatable
-          setup.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Short angle</h3>
+          <p>
+            A very important
+            <a
+              href="https://www.youtube.com/watch?v=abjONr-AOY4"
+              target="_blank"
+              >pattern</a
+            >, a supposedly easy shot, but watch out to avoid the cue ball
+            curving after the first cushion if hit too hard.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.00721,"y":-0.376197,"z":0}},{"id":1,"pos":{"x":-1.112787,"y":-0.541655,"z":0}},{"id":2,"pos":{"x":-0.026438,"y":0.574008,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.647869,"power":1.9912,"offset":{"x":0.225827,"y":0.389233,"z":0},"elevation":0}}]'
+            data-figure="1.99 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.7565101981163025,"y":-0.18902233242988586,"z":0}},{"id":1,"pos":{"x":-0.7557149529457092,"y":0.00011609036300797015,"z":0}},{"id":2,"pos":{"x":0.7561767101287842,"y":0.0005143382586538792,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.144347682595253,"power":3.4059998989105225,"offset":{"x":-0.2149321287870407,"y":0.16968326270580292},"elevation":0}}]'
-          data-figure="3.41 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <line
-            x1="0.5671481250000001"
-            y1="0.8561975000000001"
-            x2="-1.6123950000000002"
-            y2="-0.5671481250000001"
-            class="manual-line"
-          ></line>
-          <line
-            x1="0.7561975000000001"
-            y1="0.8561975000000001"
-            x2="-1.6123950000000002"
-            y2="-0.7561975000000001"
-            class="manual-line"
-          ></line>
-          <line
-            x1="0.37809875000000004"
-            y1="0.8561975000000001"
-            x2="-1.6123950000000002"
-            y2="-0.37809875000000004"
-            class="manual-line"
-          ></line>
-        </svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Standard rail first</h3>
-        <p>
-          All players love this shot, all players will have made this shot, but
-          if you want to make it reliable you will need to learn a system.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <h2>Intermediate</h2>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Short angle with draw</h3>
+          <p>
+            Finding the right amount of backspin takes some practice, when you
+            get the feel for this shot it becomes more forgiving.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.759483,"y":-0.376197,"z":0}},{"id":1,"pos":{"x":-1.112787,"y":-0.541655,"z":0}},{"id":2,"pos":{"x":-0.026438,"y":0.574008,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.946372,"power":2.62,"offset":{"x":0.38515,"y":-0.232723,"z":0},"elevation":0}}]'
+            data-figure="2.62 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.421922,"y":0.629987,"z":0}},{"id":1,"pos":{"x":-1.288877,"y":-0.716711,"z":0}},{"id":2,"pos":{"x":-1.311051,"y":-0.624024,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":5.596309,"power":2.3056,"offset":{"x":0.335355,"y":0.300062,"z":0},"elevation":0}}]'
-          data-figure="2.31 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Long cushion double rail</h3>
-        <p>
-          Avoid hitting the long cushion too near the corner as it makes it
-          sensitive to spin. Top spin helps make short cushion less wild.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Rail first double rail</h3>
+          <p>
+            Can be an easy shot when it is at max spin, practice how much spin
+            you need depending on the angle of attack.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.900828,"y":-0.673094,"z":0}},{"id":1,"pos":{"x":-1.421922,"y":-0.700355,"z":0}},{"id":2,"pos":{"x":-1.316595,"y":-0.645833,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":2.000926,"power":2.096,"offset":{"x":0.444696,"y":0.068887,"z":0},"elevation":0}}]'
+            data-figure="2.10 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.5218247771263123,"y":0.22758601605892181,"z":0}},{"id":1,"pos":{"x":-0.20023885369300842,"y":0.64029461145401,"z":0}},{"id":2,"pos":{"x":0.16916613280773163,"y":0.5044416785240173,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.834856390953064,"power":3.1440000534057617,"offset":{"x":0.36672988533973694,"y":0.26078569889068604},"elevation":0}}]'
-          data-figure="3.14 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Outside plain ball</h3>
-        <p>
-          Best played with pure topspin, the final cushion will pick up side
-          from the trajectory.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Three-Cushion Break</h3>
+          <p>
+            Half ball, medium pace and not too much spin, you will get good at
+            this in no time, but it takes some patience to learn a repeatable
+            setup.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.7565101981163025,"y":-0.18902233242988586,"z":0}},{"id":1,"pos":{"x":-0.7557149529457092,"y":0.00011609036300797015,"z":0}},{"id":2,"pos":{"x":0.7561767101287842,"y":0.0005143382586538792,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.144347682595253,"power":3.4059998989105225,"offset":{"x":-0.2149321287870407,"y":0.16968326270580292},"elevation":0}}]'
+            data-figure="3.41 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line
+              x1="0.5671481250000001"
+              y1="0.8561975000000001"
+              x2="-1.6123950000000002"
+              y2="-0.5671481250000001"
+              class="manual-line"
+            ></line>
+            <line
+              x1="0.7561975000000001"
+              y1="0.8561975000000001"
+              x2="-1.6123950000000002"
+              y2="-0.7561975000000001"
+              class="manual-line"
+            ></line>
+            <line
+              x1="0.37809875000000004"
+              y1="0.8561975000000001"
+              x2="-1.6123950000000002"
+              y2="-0.37809875000000004"
+              class="manual-line"
+            ></line>
+          </svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.164939,"y":0.493795,"z":0}},{"id":1,"pos":{"x":-0.607717,"y":0.53737,"z":0}},{"id":2,"pos":{"x":0.253727,"y":0.461062,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":6.219835,"power":2.358,"offset":{"x":-0.084556,"y":0.441985,"z":0},"elevation":0}}]'
-          data-figure="2.36 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Five cushion</h3>
-        <p>
-          An easy shot if you can avoid the kiss. Often in three cushion it is
-          easier to find a five cushion solution.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Standard rail first</h3>
+          <p>
+            All players love this shot, all players will have made this shot,
+            but if you want to make it reliable you will need to learn a system.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.421922,"y":0.629987,"z":0}},{"id":1,"pos":{"x":-1.288877,"y":-0.716711,"z":0}},{"id":2,"pos":{"x":-1.311051,"y":-0.624024,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":5.596309,"power":2.3056,"offset":{"x":0.335355,"y":0.300062,"z":0},"elevation":0}}]'
+            data-figure="2.31 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.26901,"y":-0.55111,"z":0}},{"id":1,"pos":{"x":1.196907,"y":-0.579474,"z":0}},{"id":2,"pos":{"x":-0.927723,"y":0.493643,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.216637,"power":4.8208,"offset":{"x":-0.449608,"y":0.018769,"z":0},"elevation":0}}]'
-          data-figure="4.82 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <h2>Advanced</h2>
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Long plain ball</h3>
-        <p>
-          Taken from a
-          <a href="https://www.youtube.com/shorts/EG-me1-3Mb8" target="_blank"
-            >Korean system video</a
-          >, speed is all important here, slower makes it longer.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Long cushion double rail</h3>
+          <p>
+            Avoid hitting the long cushion too near the corner as it makes it
+            sensitive to spin. Top spin helps make short cushion less wild.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.5218247771263123,"y":0.22758601605892181,"z":0}},{"id":1,"pos":{"x":-0.20023885369300842,"y":0.64029461145401,"z":0}},{"id":2,"pos":{"x":0.16916613280773163,"y":0.5044416785240173,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.834856390953064,"power":3.1440000534057617,"offset":{"x":0.36672988533973694,"y":0.26078569889068604},"elevation":0}}]'
+            data-figure="3.14 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.401199,"y":-0.286376,"z":0}},{"id":1,"pos":{"x":-1.479545,"y":-0.723348,"z":0}},{"id":2,"pos":{"x":-1.458881,"y":-0.622021,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.358968,"power":2,"offset":{"x":-0.004,"y":0.449437,"z":0},"elevation":0}}]'
-          data-figure="2.15 m/s"
-          viewBox="-1.872395 -1.116197 3.744790 2.232395"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <line
-            x1="-1.6123950000000002"
-            y1="0.37809875000000004"
-            x2="1.5123950000000002"
-            y2="-0.8561975000000001"
-            class="manual-line"
-          ></line>
-          <line
-            x1="-1.6123950000000002"
-            y1="0.18904937500000002"
-            x2="1.1342962500000002"
-            y2="-0.8561975000000001"
-            class="manual-line"
-          ></line>
-          <line
-            x1="-1.6123950000000002"
-            y1="0"
-            x2="0.7561975000000001"
-            y2="-0.8561975000000001"
-            class="manual-line"
-          ></line>
-          <line
-            x1="-1.6123950000000002"
-            y1="-0.18904937500000002"
-            x2="0.37809875000000004"
-            y2="-0.8561975000000001"
-            class="manual-line"
-          ></line>
-          <line
-            x1="-1.6123950000000002"
-            y1="-0.37809875000000004"
-            x2="0"
-            y2="-0.8561975000000001"
-            class="manual-line"
-          ></line>
-        </svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Full ball short angle</h3>
-        <p>
-          Sometimes it is easier to hit a fuller ball with more spin to create
-          more angle on the final cushion.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Outside plain ball</h3>
+          <p>
+            Best played with pure topspin, the final cushion will pick up side
+            from the trajectory.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.164939,"y":0.493795,"z":0}},{"id":1,"pos":{"x":-0.607717,"y":0.53737,"z":0}},{"id":2,"pos":{"x":0.253727,"y":0.461062,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":6.219835,"power":2.358,"offset":{"x":-0.084556,"y":0.441985,"z":0},"elevation":0}}]'
+            data-figure="2.36 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.9322190880775452,"y":0.5709037184715271,"z":0}},{"id":1,"pos":{"x":-1.427808403968811,"y":-0.22052742540836334,"z":0}},{"id":2,"pos":{"x":-1.0246834754943848,"y":0.6204782724380493,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":-2.0863635540008545,"power":2.3580000400543213,"offset":{"x":-0.33201244473457336,"y":0.30375605821609497},"elevation":0}}]'
-          data-figure="2.36 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Force follow double rail</h3>
-        <p>Lots of top spin and the cue ball will hug the rail</p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Five cushion</h3>
+          <p>
+            An easy shot if you can avoid the kiss. Often in three cushion it is
+            easier to find a five cushion solution.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.26901,"y":-0.55111,"z":0}},{"id":1,"pos":{"x":1.196907,"y":-0.579474,"z":0}},{"id":2,"pos":{"x":-0.927723,"y":0.493643,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.216637,"power":4.8208,"offset":{"x":-0.449608,"y":0.018769,"z":0},"elevation":0}}]'
+            data-figure="4.82 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.378362,"y":-0.458027,"z":0}},{"id":1,"pos":{"x":-1.479545,"y":-0.012093,"z":0}},{"id":2,"pos":{"x":-1.044825,"y":-0.723348,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.790691,"power":3.4584,"offset":{"x":0.243756,"y":0.378263,"z":0},"elevation":0}}]'
-          data-figure="3.46 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Draw to long cushion</h3>
-        <p>Force the cue ball onto the natural line with draw</p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <h2>Advanced</h2>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Long plain ball</h3>
+          <p>
+            Taken from a
+            <a href="https://www.youtube.com/shorts/EG-me1-3Mb8" target="_blank"
+              >Korean system video</a
+            >, speed is all important here, slower makes it longer.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.401199,"y":-0.286376,"z":0}},{"id":1,"pos":{"x":-1.479545,"y":-0.723348,"z":0}},{"id":2,"pos":{"x":-1.458881,"y":-0.622021,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.358968,"power":2,"offset":{"x":-0.004,"y":0.449437,"z":0},"elevation":0}}]'
+            data-figure="2.15 m/s"
+            viewBox="-1.872395 -1.116197 3.744790 2.232395"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line
+              x1="-1.6123950000000002"
+              y1="0.37809875000000004"
+              x2="1.5123950000000002"
+              y2="-0.8561975000000001"
+              class="manual-line"
+            ></line>
+            <line
+              x1="-1.6123950000000002"
+              y1="0.18904937500000002"
+              x2="1.1342962500000002"
+              y2="-0.8561975000000001"
+              class="manual-line"
+            ></line>
+            <line
+              x1="-1.6123950000000002"
+              y1="0"
+              x2="0.7561975000000001"
+              y2="-0.8561975000000001"
+              class="manual-line"
+            ></line>
+            <line
+              x1="-1.6123950000000002"
+              y1="-0.18904937500000002"
+              x2="0.37809875000000004"
+              y2="-0.8561975000000001"
+              class="manual-line"
+            ></line>
+            <line
+              x1="-1.6123950000000002"
+              y1="-0.37809875000000004"
+              x2="0"
+              y2="-0.8561975000000001"
+              class="manual-line"
+            ></line>
+          </svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.786485,"y":0.420462,"z":0}},{"id":1,"pos":{"x":-1.377597,"y":0.481902,"z":0}},{"id":2,"pos":{"x":-0.615407,"y":0.165973,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":5.402737,"power":4.5064,"offset":{"x":-0.230385,"y":-0.386553,"z":0},"elevation":0}}]'
-          data-figure="4.51 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Short-long-short center table</h3>
-        <p>
-          This frequently occurring shot is very sensitive to aim. Ideally you
-          want to hit the long cushion perpendicularly and allow the spin to
-          hold to the third cushion. When aiming pick a target on the third
-          cushion with a big angle into the target ball.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Full ball short angle</h3>
+          <p>
+            Sometimes it is easier to hit a fuller ball with more spin to create
+            more angle on the final cushion.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.9322190880775452,"y":0.5709037184715271,"z":0}},{"id":1,"pos":{"x":-1.427808403968811,"y":-0.22052742540836334,"z":0}},{"id":2,"pos":{"x":-1.0246834754943848,"y":0.6204782724380493,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":-2.0863635540008545,"power":2.3580000400543213,"offset":{"x":-0.33201244473457336,"y":0.30375605821609497},"elevation":0}}]'
+            data-figure="2.36 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.1837007999420166,"y":0.7175940871238708,"z":0}},{"id":1,"pos":{"x":-1.2907791137695312,"y":0.15399974584579468,"z":0}},{"id":2,"pos":{"x":0.309480756521225,"y":-0.14280053973197937,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":-0.49672016501426697,"power":2.3055999279022217,"offset":{"x":-0.39896318316459656,"y":0.20815470814704895},"elevation":0}}]'
-          data-figure="2.31 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Rail first shallow angle</h3>
-        <p>For shallow angles top spin will make it more reliable.</p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Force follow double rail</h3>
+          <p>Lots of top spin and the cue ball will hug the rail</p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.378362,"y":-0.458027,"z":0}},{"id":1,"pos":{"x":-1.479545,"y":-0.012093,"z":0}},{"id":2,"pos":{"x":-1.044825,"y":-0.723348,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.790691,"power":3.4584,"offset":{"x":0.243756,"y":0.378263,"z":0},"elevation":0}}]'
+            data-figure="3.46 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.366487,"y":-0.264177,"z":0}},{"id":1,"pos":{"x":-1.421922,"y":-0.700355,"z":0}},{"id":2,"pos":{"x":-1.316595,"y":-0.645833,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.754765,"power":1.572,"offset":{"x":0.261621,"y":0.366134,"z":0},"elevation":0}}]'
-          data-figure="1.57 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>The drop in</h3>
-        <p>
-          A very difficult starting position, this shot is hard to judge but
-          nice when you do
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Draw to long cushion</h3>
+          <p>Force the cue ball onto the natural line with draw</p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.786485,"y":0.420462,"z":0}},{"id":1,"pos":{"x":-1.377597,"y":0.481902,"z":0}},{"id":2,"pos":{"x":-0.615407,"y":0.165973,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":5.402737,"power":4.5064,"offset":{"x":-0.230385,"y":-0.386553,"z":0},"elevation":0}}]'
+            data-figure="4.51 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.922917,"y":0.214727,"z":0}},{"id":1,"pos":{"x":1.196907,"y":-0.579474,"z":0}},{"id":2,"pos":{"x":-1.331499,"y":0.470006,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":5.943185,"power":2.1484,"offset":{"x":0.129675,"y":0.430911,"z":0},"elevation":0}}]'
-          data-figure="2.15 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Big ball with position</h3>
-        <p>
-          An easy shot with many variations of thickness and spin all leading to
-          the corner. Try to get the red into the opposite corner to improve
-          positional chances for the next shot. (positional bonus)
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Short-long-short center table</h3>
+          <p>
+            This frequently occurring shot is very sensitive to aim. Ideally you
+            want to hit the long cushion perpendicularly and allow the spin to
+            hold to the third cushion. When aiming pick a target on the third
+            cushion with a big angle into the target ball.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.1837007999420166,"y":0.7175940871238708,"z":0}},{"id":1,"pos":{"x":-1.2907791137695312,"y":0.15399974584579468,"z":0}},{"id":2,"pos":{"x":0.309480756521225,"y":-0.14280053973197937,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":-0.49672016501426697,"power":2.3055999279022217,"offset":{"x":-0.39896318316459656,"y":0.20815470814704895},"elevation":0}}]'
+            data-figure="2.31 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":0.372531,"y":-0.380924,"z":0}},{"id":1,"pos":{"x":-1.386778,"y":0.62601,"z":0}},{"id":2,"pos":{"x":0.367725,"y":0.38964,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.511797,"power":2.3056,"offset":{"x":-0.444248,"y":0.07172,"z":0},"elevation":0}}]'
-          data-figure="2.31 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <ellipse
-            data-id="2"
-            cx="-1.2310925126075745"
-            cy="0.588749885559082"
-            rx="0.45045727491378784"
-            ry="0.3372533321380615"
-            class="fine-stroke"
-          ></ellipse>
-        </svg>
-      </div>
-    </div>
 
-    <div class="question-block">
-      <div class="question-text">
-        <h3>Three-Cushion break positional</h3>
-        <p>
-          Half ball, medium pace and not too much spin, you will get good at
-          this in no time, but it takes some time to learn the setup. Try to get
-          the red around to the same side of the table as the yellow for perfect
-          position.
-        </p>
-        <button class="play-btn" type="button">Play Shot</button>
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Rail first shallow angle</h3>
+          <p>For shallow angles top spin will make it more reliable.</p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-1.366487,"y":-0.264177,"z":0}},{"id":1,"pos":{"x":-1.421922,"y":-0.700355,"z":0}},{"id":2,"pos":{"x":-1.316595,"y":-0.645833,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.754765,"power":1.572,"offset":{"x":0.261621,"y":0.366134,"z":0},"elevation":0}}]'
+            data-figure="1.57 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-      <div class="question-diagram">
-        <svg
-          class="billiards-table"
-          data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.7565101981163025,"y":-0.18902233242988586,"z":0}},{"id":1,"pos":{"x":-0.7557149529457092,"y":0.00011609036300797015,"z":0}},{"id":2,"pos":{"x":0.7561767101287842,"y":0.0005143382586538792,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.144347682595253,"power":3.4059998989105225,"offset":{"x":-0.2149321287870407,"y":0.16968326270580292},"elevation":0}}]'
-          data-figure="3.41 m/s"
-          viewBox="-1.792395 -1.036198 3.584790 2.172395"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <ellipse
-            data-id="2"
-            cx="0.29008516669273376"
-            cy="-0.3994259834289551"
-            rx="1.0518530905246735"
-            ry="0.5141344666481018"
-            class="fine-stroke"
-          ></ellipse>
-        </svg>
+
+      <div class="question-block">
+        <div class="question-text">
+          <h3>The drop in</h3>
+          <p>
+            A very difficult starting position, this shot is hard to judge but
+            nice when you do
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.922917,"y":0.214727,"z":0}},{"id":1,"pos":{"x":1.196907,"y":-0.579474,"z":0}},{"id":2,"pos":{"x":-1.331499,"y":0.470006,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":5.943185,"power":2.1484,"offset":{"x":0.129675,"y":0.430911,"z":0},"elevation":0}}]'
+            data-figure="2.15 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
-    </div>
+
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Big ball with position</h3>
+          <p>
+            An easy shot with many variations of thickness and spin all leading
+            to the corner. Try to get the red into the opposite corner to
+            improve positional chances for the next shot. (positional bonus)
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":0.372531,"y":-0.380924,"z":0}},{"id":1,"pos":{"x":-1.386778,"y":0.62601,"z":0}},{"id":2,"pos":{"x":0.367725,"y":0.38964,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":1.511797,"power":2.3056,"offset":{"x":-0.444248,"y":0.07172,"z":0},"elevation":0}}]'
+            data-figure="2.31 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <ellipse
+              data-id="2"
+              cx="-1.2310925126075745"
+              cy="0.588749885559082"
+              rx="0.45045727491378784"
+              ry="0.3372533321380615"
+              class="fine-stroke"
+            ></ellipse>
+          </svg>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-text">
+          <h3>Three-Cushion break positional</h3>
+          <p>
+            Half ball, medium pace and not too much spin, you will get good at
+            this in no time, but it takes some time to learn the setup. Try to
+            get the red around to the same side of the table as the yellow for
+            perfect position.
+          </p>
+          <button class="play-btn" type="button">Play Shot</button>
+        </div>
+        <div class="question-diagram">
+          <svg
+            class="billiards-table"
+            data-json-shots='[{"balls":[{"id":0,"pos":{"x":-0.7565101981163025,"y":-0.18902233242988586,"z":0}},{"id":1,"pos":{"x":-0.7557149529457092,"y":0.00011609036300797015,"z":0}},{"id":2,"pos":{"x":0.7561767101287842,"y":0.0005143382586538792,"z":0}}],"cushionModel":"mathavan","ruleType":"threecushion","shot":{"cueBallId":0,"angle":0.144347682595253,"power":3.4059998989105225,"offset":{"x":-0.2149321287870407,"y":0.16968326270580292},"elevation":0}}]'
+            data-figure="3.41 m/s"
+            viewBox="-1.792395 -1.036198 3.584790 2.172395"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <ellipse
+              data-id="2"
+              cx="0.29008516669273376"
+              cy="-0.3994259834289551"
+              rx="1.0518530905246735"
+              ry="0.5141344666481018"
+              class="fine-stroke"
+            ></ellipse>
+          </svg>
+        </div>
+      </div>
+    </main>
 
     <div id="gameOverlay">
       <button class="close-btn" id="closeGame" type="button">Quit</button>
