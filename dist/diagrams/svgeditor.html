@@ -147,6 +147,64 @@
         font-size: 0.75rem;
       }
 
+      .spin {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.5rem 0 0;
+      }
+
+      /* The ball as the cue sees it: one user unit is one ball radius, so an
+         offset reads at its true size. */
+      .spin-widget {
+        flex: none;
+
+        /* 1.05x the ball's 6rem, so padding the viewBox above did not shrink
+           the ball itself. */
+        width: 6.3rem;
+        height: 6.3rem;
+        cursor: crosshair;
+        touch-action: none;
+      }
+
+      .spin-widget .spin-ball {
+        fill: #fff;
+        stroke: #333;
+        stroke-width: 0.02;
+      }
+
+      .spin-widget .spin-limit {
+        fill: none;
+        stroke: #b91c1c;
+        stroke-width: 0.016;
+        stroke-dasharray: 0.06 0.05;
+        stroke-opacity: 0.5;
+      }
+
+      /* Pinned to the miscue limit: the strike is no longer reproducible. */
+      .spin-widget.at-limit .spin-limit {
+        stroke-opacity: 1;
+      }
+
+      .spin-widget .spin-axis {
+        stroke: #bbb;
+        stroke-width: 0.016;
+      }
+
+      .spin-widget .spin-dot {
+        fill: #c2410c;
+        fill-opacity: 0.85;
+        stroke: #7c2d12;
+        stroke-width: 0.016;
+      }
+
+      .spin-readout {
+        margin: 0;
+        color: #555;
+        font-size: 0.75rem;
+      }
+
       button {
         padding: 0.15rem 0.5rem;
         border: 1px solid #bbb;
@@ -184,6 +242,26 @@
         </table>
         <p class="init">init <code id="init-state"></code></p>
         <p class="aim">cue ball 0 · aim <span id="aim-angle"></span></p>
+        <div class="spin">
+          <!-- ViewBox is padded past the ball so the ball's outline, which is
+               stroked across r=1, is not clipped by the viewport edge. -->
+          <svg
+            class="spin-widget"
+            viewBox="-1.05 -1.05 2.1 2.1"
+            role="img"
+            aria-label="Cue tip contact point on the cue ball"
+          >
+            <circle class="spin-ball" r="1" />
+            <circle class="spin-limit" r="0.45" />
+            <line class="spin-axis" x1="-0.5" y1="0" x2="0.5" y2="0" />
+            <line class="spin-axis" x1="0" y1="-0.5" x2="0" y2="0.5" />
+            <circle class="spin-dot" r="0.15" />
+          </svg>
+          <p class="spin-readout">
+            spin <code id="spin-offset"></code>
+            <button id="reset-spin" type="button">reset spin</button>
+          </p>
+        </div>
         <p class="view">
           zoom <span id="zoom-level">×1.0</span>
           <button id="reset-view" type="button">reset view</button>
@@ -237,7 +315,7 @@
       svg.setAttribute("viewBox", table.viewBox)
       tableGroup.innerHTML = table.content
       statusEl.textContent =
-        "drag a ball · drag the aim dot · scroll to zoom · drag cloth to pan"
+        "drag a ball · drag the aim dot · drag the spin dot · scroll to zoom · drag cloth to pan"
 
       renderBallPositions(ballsGroup, {
         balls: balls.map(({ id, x, y }) => ({ id, pos: { x, y } })),
@@ -430,6 +508,94 @@
         renderAim()
       }
 
+      // --- spin: where the cue tip contacts the cue ball ---
+
+      // Offset is in units of R, the same as three.html's shots[].offset, and
+      // lives in the cue's own frame: y is the vertical hit (follow or draw),
+      // x the lateral one. It is therefore unaffected by the aim direction or
+      // the cue ball's position. x is mirrored on screen, the same way
+      // three.html places its cue tip and svg.js draws renderInset.
+      const SPIN_LIMIT = 0.45
+      const spin = { x: 0, y: 0 }
+      const spinWidget = document.querySelector(".spin-widget")
+      const spinDot = spinWidget.querySelector(".spin-dot")
+      const spinOffset = document.getElementById("spin-offset")
+
+      function clampSpin(x, y) {
+        const length = Math.hypot(x, y)
+        if (length <= SPIN_LIMIT || length === 0) return { x, y }
+        const scale = SPIN_LIMIT / length
+        return { x: x * scale, y: y * scale }
+      }
+
+      function signed(value) {
+        return `${value < 0 ? "-" : "+"}${Math.abs(value).toFixed(3)}`
+      }
+
+      function renderSpin() {
+        spinDot.setAttribute("cx", String(-spin.x))
+        spinDot.setAttribute("cy", String(-spin.y))
+        const atLimit = Math.hypot(spin.x, spin.y) >= SPIN_LIMIT - 1e-9
+        spinWidget.classList.toggle("at-limit", atLimit)
+        spinOffset.textContent = `x ${signed(spin.x)}R · y ${signed(spin.y)}R`
+      }
+
+      function setSpin(x, y) {
+        const next = clampSpin(x, y)
+        spin.x = next.x
+        spin.y = next.y
+        renderSpin()
+      }
+
+      let draggingSpin = false
+
+      // Widget space is the viewBox, in units of R with y down, so both axes
+      // are negated on the way to the model offset. Reading the viewBox rather
+      // than assuming -1..1 keeps the mapping right despite its padding.
+      function spinFromPointer(event) {
+        const rect = spinWidget.getBoundingClientRect()
+        const view = spinWidget.viewBox.baseVal
+        if (rect.width === 0 || rect.height === 0 || view.width === 0) return
+        const userX =
+          view.x + ((event.clientX - rect.left) / rect.width) * view.width
+        const userY =
+          view.y + ((event.clientY - rect.top) / rect.height) * view.height
+        setSpin(-userX, -userY)
+      }
+
+      spinWidget.addEventListener("pointerdown", (event) => {
+        draggingSpin = true
+        spinWidget.setPointerCapture(event.pointerId)
+        spinFromPointer(event)
+        event.preventDefault()
+      })
+
+      spinWidget.addEventListener("pointermove", (event) => {
+        if (!draggingSpin) return
+        spinFromPointer(event)
+        event.preventDefault()
+      })
+
+      function endSpin(event) {
+        if (!draggingSpin) return
+        draggingSpin = false
+        if (spinWidget.hasPointerCapture(event.pointerId)) {
+          spinWidget.releasePointerCapture(event.pointerId)
+        }
+      }
+
+      spinWidget.addEventListener("pointerup", endSpin)
+      spinWidget.addEventListener("pointercancel", endSpin)
+
+      function resetSpin() {
+        setSpin(0, 0)
+      }
+
+      spinWidget.addEventListener("dblclick", resetSpin)
+      document
+        .getElementById("reset-spin")
+        ?.addEventListener("click", resetSpin)
+
       // Balls may touch, with centres exactly MIN_GAP apart, but never overlap.
       function collides(index, x, y) {
         return balls.some((ball, other) => {
@@ -576,6 +742,7 @@
 
       updateReadout()
       renderAim()
+      renderSpin()
       applyView()
     </script>
   </body>
