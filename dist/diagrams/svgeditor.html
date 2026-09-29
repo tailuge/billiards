@@ -15,33 +15,55 @@
         --cue-blue: #2b7bb9;
 
         /* The drawn extent of the table diagram: its 2:1 play area plus the
-           rails, the viewBox generateBilliardTable() sets in svg.js. Both
-           table panels use it so the two are the same shape. */
+           rails, the viewBox generateBilliardTable() sets in svg.js. The table
+           is drawn at this shape inside the 2:1 media body, so it is
+           letterboxed left and right. */
         --table-aspect: 3.5848 / 2.1724;
 
-        /* Half of that: the shape of a pair of stacked tables, used to work out
-           how wide the pair may be and still fit the window's height. */
-        --table-half-aspect: calc(var(--table-aspect) / 2);
+        /* Panel frame width. A variable so the height budget below can
+           subtract the borders it adds. */
+        --bw: 1px;
 
-        /* Fixed heights, so the tables can fill exactly what the window has
+        /* Fixed heights, so the two tables can fill exactly what the window has
            left over rather than what a guess leaves over. */
         --header-height: 2.5rem;
         --title-height: 1.5rem;
+        --gap: 0.75rem;
 
-        /* Height of everything that is not one of the two tables: the header,
-           plus 5rem covering both panel titles, the two row gaps and the panel
-           borders. */
-        --chrome-height: calc(var(--header-height) + 5rem);
+        /* Viewport height. dvh where supported, so a mobile browser's
+           collapsing/expanding chrome is tracked; vh everywhere else. */
+        --vh: 100vh;
+
+        /* Height main.layout works with: the viewport minus the fixed header. */
+        --main-h: calc(var(--vh) - var(--header-height));
+
+        /* Everything in the stack that is not media body: the two panel
+           titles, the row gap and the panels' four horizontal borders. */
+        --chrome-h: calc(2 * var(--title-height) + var(--gap) + 4 * var(--bw));
+
+        /* Each media body is half of what is left. It is 2:1, so twice this
+           height is the width the pair needs to fill --main-h. */
+        --media-h: calc((var(--main-h) - var(--chrome-h)) / 2);
+
+        /* The panel width that makes the two stacked panels exactly fill
+           --main-h, plus their left/right borders. The panels take 100% of the
+           window instead when that is narrower, so they never overflow. */
+        --panel-w: calc(2 * var(--media-h) + 2 * var(--bw));
+      }
+
+      @supports (height: 100dvh) {
+        :root {
+          --vh: 100dvh;
+        }
       }
 
       /* The visible height of the window is the budget: the page is exactly one
-         window tall and never scrolls, and the layout width is capped below so
-         that two stacked tables are exactly as tall as the height left over.
-         Their width therefore follows from the window height, whatever the
-         window's aspect ratio. */
+         window tall and never scrolls, and the two panels below are sized from
+         the height left over so they fill it. Their width follows from that
+         height, capped at the window's own width. */
       html,
       body {
-        height: 100vh;
+        height: var(--vh);
         overflow: hidden;
       }
 
@@ -60,12 +82,12 @@
           sans-serif;
       }
 
-      /* Fixed height, and a grid item, so the title lines up with the panels
-         below it and the height budget above is exact. */
+      /* Fixed height, and a direct child of body, so the height budget above
+         is exact: the two panels get everything below the header. */
       header {
         display: flex;
+        flex: none;
         align-items: center;
-        grid-area: 1 / 1 / span 1 / -1;
         height: var(--header-height);
       }
 
@@ -76,34 +98,33 @@
       }
 
       main.layout {
-        display: grid;
+        display: flex;
         flex: 1;
+        flex-direction: column;
+        align-items: center;
         min-height: 0;
-        grid-template-columns: minmax(0, 1fr);
-        gap: 0.75rem;
-        place-content: start center;
-        align-items: start;
-        margin: 0 auto;
-
-        /* Half the table shape x the height left over: at this width the two
-           stacked tables are exactly as tall as the space they are given, so
-           they fill the window's height whenever the window is wide enough,
-           and never exceed it. */
-        max-width: calc(
-          var(--table-half-aspect) * (100vh - var(--chrome-height))
-        );
+        gap: var(--gap);
       }
 
       .panel {
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         min-width: 0;
         background: #fff;
-        border: 1px solid #ddd;
+        border: var(--bw) solid #ddd;
         border-radius: 0.25rem;
       }
 
+      /* The two media panels take the width that makes them exactly fill the
+         height budget, or the window's width when that is narrower. */
+      .panel-output,
+      .panel-input {
+        width: min(100%, var(--panel-w));
+      }
+
       .panel > h2 {
+        box-sizing: border-box;
         margin: 0;
         padding: 0 0.6rem;
         border-bottom: 1px solid #eee;
@@ -116,9 +137,17 @@
         text-transform: uppercase;
       }
 
+      /* The 2:1 media box: everything below the title. Its width sets its
+         height, and the two panels are sized so these fill the window. */
       .panel-body {
-        padding: 0.6rem;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 2 / 1;
+        padding: 0;
         min-width: 0;
+        overflow: hidden;
       }
 
       /* Parked: as a third panel it would take a share of the height, and the
@@ -128,12 +157,7 @@
         display: none;
       }
 
-      /* The input table fills its panel edge to edge. */
-      .panel-input .panel-body {
-        padding: 0;
-      }
-
-      /* Empty until the replay and 3D view move in. Sized like the table so the
+      /* Empty until the replay and 3D view move in. Fills the 2:1 body so the
          two panels are the same shape, with no padding to inset it. */
       .placeholder {
         display: flex;
@@ -146,12 +170,9 @@
         font-size: 0.75rem;
       }
 
-      .panel-output .panel-body {
-        padding: 0;
-      }
-
       .panel-output .placeholder {
-        aspect-ratio: var(--table-aspect);
+        width: 100%;
+        height: 100%;
       }
 
       #page-buttons .placeholder {
@@ -161,13 +182,18 @@
       }
 
       .table-panel {
+        display: flex;
         min-width: 0;
+        height: 100%;
       }
 
+      /* The table at its own ~1.65:1 shape, centred in the 2:1 media body, so
+         it is as tall as the body allows and letterboxed left and right. */
       svg.billiards-table {
         display: block;
-        width: 100%;
-        height: auto;
+        height: 100%;
+        width: auto;
+        max-width: 100%;
         aspect-ratio: var(--table-aspect);
         background: #fff;
         border-radius: 0.25rem;
@@ -403,13 +429,15 @@
         }
 
         header {
-          grid-area: auto;
           height: auto;
           padding: 0.5rem 0 0;
         }
 
-        main.layout {
-          max-width: none;
+        /* The page scrolls, so the tables drop the height budget and simply
+           take the full width of the window, staying 2:1. */
+        .panel-output,
+        .panel-input {
+          width: 100%;
         }
 
         /* A phone scrolls, so the shot inputs can take their own panel again. */
@@ -430,13 +458,13 @@
     />
     <input type="radio" id="tab-buttons" name="sidebar" class="sidebar-tab" />
 
-    <main class="layout">
-      <header>
-        <h1>Three cushion ball editor</h1>
-      </header>
+    <header>
+      <h1>Three cushion ball editor</h1>
+    </header>
 
+    <main class="layout">
       <!-- Order matters: the simulation output sits above the table it is
-           plotted from, and the grid follows the markup. -->
+           plotted from, and the flow follows the markup. -->
       <section class="panel panel-output" aria-label="Simulation output">
         <h2>simulation output</h2>
         <div class="panel-body">
