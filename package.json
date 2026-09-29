@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@swc/core": "1.16.2",
+    "@swc/core": "1.16.12",
     "@swc/jest": "0.2.39",
     "@testing-library/dom": "10.4.2",
     "@types/chai": "5.2.3",
@@ -56,7 +56,7 @@
     "concurrently": "10.0.5",
     "eslint": "10.11.0",
     "eslint-plugin-html": "8.2.1",
-    "eslint-plugin-sonarjs": "4.2.1",
+    "eslint-plugin-sonarjs": "4.2.2",
     "html-validate": "11.16.1",
     "http-server": "^14.1.1",
     "jest": "30.5.2",
@@ -70,7 +70,7 @@
     "terser-webpack-plugin": "^5.6.1",
     "ts-jest": "29.4.14",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.70.1",
+    "typescript-eslint": "8.71.0",
     "webpack": "5.111.1",
     "webpack-cli": "7.2.3",
     "webpack-dev-server": "6.0.0"
