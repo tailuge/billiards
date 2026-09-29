@@ -10,6 +10,11 @@
     />
     <link rel="stylesheet" href="../css/ball-colors.css" />
     <style>
+      :root {
+        /* Shared by the power slider and the cue tip. */
+        --cue-blue: #2b7bb9;
+      }
+
       body {
         margin: 0;
         padding: 0 1rem 1rem;
@@ -147,7 +152,7 @@
         font-size: 0.75rem;
       }
 
-      .spin {
+      .shot-inputs {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -193,14 +198,47 @@
       }
 
       .spin-widget .spin-dot {
-        fill: #c2410c;
+        fill: var(--cue-blue);
         fill-opacity: 0.85;
-        stroke: #7c2d12;
+        stroke: #1d5886;
         stroke-width: 0.016;
       }
 
-      .spin-readout {
+      /* Vertical and full at the top, as in three.html. Matched to the ball's
+         height so the two read as one control. */
+      #power {
+        accent-color: var(--cue-blue);
+        writing-mode: vertical-lr;
+        direction: rtl;
+        flex: none;
+        width: 1.1rem;
+        height: 6.3rem;
         margin: 0;
+      }
+
+      /* The cue seen from the side: one line pivoting about the bottom-left,
+         the same drag the main game's angle-input uses. 0deg is a flat cue and
+         the widget's own bottom edge is the cloth it is measured against. */
+      .elevation-widget {
+        flex: none;
+        width: 6.3rem;
+        height: 6.3rem;
+        cursor: grab;
+        touch-action: none;
+      }
+
+      .elevation-widget:active {
+        cursor: grabbing;
+      }
+
+      .elevation-widget .elevation-line {
+        stroke: #333;
+        stroke-width: 1.2;
+        stroke-linecap: round;
+      }
+
+      .shot-readout {
+        margin: 0.35rem 0 0;
         color: #555;
         font-size: 0.75rem;
       }
@@ -242,7 +280,18 @@
         </table>
         <p class="init">init <code id="init-state"></code></p>
         <p class="aim">cue ball 0 · aim <span id="aim-angle"></span></p>
-        <div class="spin">
+        <div class="shot-inputs">
+          <svg
+            class="elevation-widget"
+            viewBox="0 0 100 100"
+            role="slider"
+            aria-label="Cue elevation in degrees"
+            aria-valuemin="0"
+            aria-valuemax="72"
+            aria-valuenow="0"
+          >
+            <line class="elevation-line" x1="12" y1="88" x2="97" y2="88" />
+          </svg>
           <!-- ViewBox is padded past the ball so the ball's outline, which is
                stroked across r=1, is not clipped by the viewport edge. -->
           <svg
@@ -257,11 +306,23 @@
             <line class="spin-axis" x1="0" y1="-0.5" x2="0" y2="0.5" />
             <circle class="spin-dot" r="0.15" />
           </svg>
-          <p class="spin-readout">
-            spin <code id="spin-offset"></code>
-            <button id="reset-spin" type="button">reset spin</button>
-          </p>
+          <input
+            id="power"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            aria-label="Power"
+          />
         </div>
+        <p class="shot-readout">
+          spin <code id="spin-offset"></code>
+          <button id="reset-spin" type="button">reset spin</button>
+        </p>
+        <p class="shot-readout">
+          power <code id="power-value"></code> · elevation
+          <code id="elevation-value"></code>
+        </p>
         <p class="view">
           zoom <span id="zoom-level">×1.0</span>
           <button id="reset-view" type="button">reset view</button>
@@ -315,7 +376,7 @@
       svg.setAttribute("viewBox", table.viewBox)
       tableGroup.innerHTML = table.content
       statusEl.textContent =
-        "drag a ball · drag the aim dot · drag the spin dot · scroll to zoom · drag cloth to pan"
+        "drag a ball · drag the aim dot · drag the spin dot · drag the elevation line · scroll to zoom · drag cloth to pan"
 
       renderBallPositions(ballsGroup, {
         balls: balls.map(({ id, x, y }) => ({ id, pos: { x, y } })),
@@ -590,11 +651,112 @@
       function resetSpin() {
         setSpin(0, 0)
       }
-
       spinWidget.addEventListener("dblclick", resetSpin)
       document
         .getElementById("reset-spin")
         ?.addEventListener("click", resetSpin)
+
+      // --- power: how fast the cue ball leaves the tip ---
+
+      // The slider is a fraction of three.html's MAX_POWER, so a given slider
+      // position is the same shot in both pages. The value is metres per
+      // second, matching the power field in the ?state= shots.
+      const MAX_POWER = 160 * R
+      const DEFAULT_POWER = 2.62
+      const powerInput = document.getElementById("power")
+      const powerValue = document.getElementById("power-value")
+      let power = DEFAULT_POWER
+
+      function renderPower() {
+        powerInput.value = String(power / MAX_POWER)
+        powerValue.textContent = `${power.toFixed(2)} m/s`
+      }
+
+      // The handler reads the slider without writing it back, so it cannot
+      // fight the thumb while the pointer is driving it.
+      powerInput.addEventListener("input", (event) => {
+        power = clamp(Number(event.target.value) * MAX_POWER, 0, MAX_POWER)
+        powerValue.textContent = `${power.toFixed(2)} m/s`
+      })
+
+      // --- elevation: how far the cue is raised off the cloth ---
+
+      // Same drag as the main game's angle-input: the pointer's bearing from a
+      // pivot inset 12% from the bottom-left of the widget, y measured upwards.
+      // Clamped to the 72 degrees that input advertises as its maximum, and
+      // held in radians, the unit cueStrike and the ?state= shots both take.
+      const MAX_ELEVATION = (2 * Math.PI) / 5
+      const ELEVATION_PIVOT = { x: 12, y: 88 }
+      const ELEVATION_LENGTH = 85
+      const elevationWidget = document.querySelector(".elevation-widget")
+      const elevationLine = elevationWidget.querySelector(".elevation-line")
+      const elevationValue = document.getElementById("elevation-value")
+      let elevation = 0
+
+      function renderElevation() {
+        elevationLine.setAttribute(
+          "x2",
+          String(ELEVATION_PIVOT.x + Math.cos(elevation) * ELEVATION_LENGTH)
+        )
+        elevationLine.setAttribute(
+          "y2",
+          String(ELEVATION_PIVOT.y - Math.sin(elevation) * ELEVATION_LENGTH)
+        )
+        const degrees = Math.round((elevation * 180) / Math.PI)
+        elevationValue.textContent = `${degrees}°`
+        elevationWidget.setAttribute("aria-valuenow", String(degrees))
+      }
+
+      function setElevation(radians) {
+        elevation = clamp(radians, 0, MAX_ELEVATION)
+        renderElevation()
+      }
+
+      let draggingElevation = false
+
+      // Widget space is the viewBox, read rather than assumed so it stays in
+      // step with the markup. The pivot is the bottom-left of the area, so the
+      // bearing to the pointer is the angle the cue is raised to.
+      function elevationFromPointer(event) {
+        const rect = elevationWidget.getBoundingClientRect()
+        const view = elevationWidget.viewBox.baseVal
+        if (rect.width === 0 || rect.height === 0 || view.width === 0) return
+        const userX =
+          view.x + ((event.clientX - rect.left) / rect.width) * view.width
+        const userY =
+          view.y + ((event.clientY - rect.top) / rect.height) * view.height
+        setElevation(
+          Math.atan2(ELEVATION_PIVOT.y - userY, userX - ELEVATION_PIVOT.x)
+        )
+      }
+
+      elevationWidget.addEventListener("pointerdown", (event) => {
+        draggingElevation = true
+        elevationWidget.setPointerCapture(event.pointerId)
+        elevationFromPointer(event)
+        event.preventDefault()
+      })
+
+      elevationWidget.addEventListener("pointermove", (event) => {
+        if (!draggingElevation) return
+        elevationFromPointer(event)
+        event.preventDefault()
+      })
+
+      function endElevation(event) {
+        if (!draggingElevation) return
+        draggingElevation = false
+        if (elevationWidget.hasPointerCapture(event.pointerId)) {
+          elevationWidget.releasePointerCapture(event.pointerId)
+        }
+      }
+
+      elevationWidget.addEventListener("pointerup", endElevation)
+      elevationWidget.addEventListener("pointercancel", endElevation)
+
+      // Double-click lays the cue back on the cloth, as double-clicking the
+      // spin widget centres it.
+      elevationWidget.addEventListener("dblclick", () => setElevation(0))
 
       // Balls may touch, with centres exactly MIN_GAP apart, but never overlap.
       function collides(index, x, y) {
@@ -743,6 +905,8 @@
       updateReadout()
       renderAim()
       renderSpin()
+      renderPower()
+      renderElevation()
       applyView()
     </script>
   </body>
