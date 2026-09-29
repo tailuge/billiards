@@ -34,10 +34,14 @@
         --title-height: 1rem;
         --gap: 2px;
 
-        /* The spin and elevation widgets' box, and the power slider's length:
-           the two widgets stacked with the row gap between them. */
+        /* The spin and elevation widgets' box. --side-h is the length of the
+           power slider beside them: the two widgets and the action row under
+           them, stacked with the row gap between. */
         --widget-size: 6.3rem;
-        --side-h: calc(2 * var(--widget-size) + var(--gap));
+        --action-height: 1.5rem;
+        --side-h: calc(
+          2 * var(--widget-size) + var(--action-height) + 2 * var(--gap)
+        );
 
         /* Viewport height. dvh where supported, so a mobile browser's
            collapsing/expanding chrome is tracked; vh everywhere else. */
@@ -180,24 +184,6 @@
         overflow: hidden;
       }
 
-      /* Empty until the replay and 3D view move in. Fills the 2:1 body so the
-         two panels are the same shape, with no padding to inset it. */
-      .placeholder {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0;
-        border-radius: 0.25rem;
-        background: #f5f5f5;
-        color: #595959;
-        font-size: 0.75rem;
-      }
-
-      .panel-output .placeholder {
-        width: 100%;
-        height: 100%;
-      }
-
       .table-panel {
         display: flex;
         min-width: 0;
@@ -217,6 +203,101 @@
         background: #fff;
         touch-action: none;
         user-select: none;
+      }
+
+      /* The 3D replay. diagram.js drives it from the .topview's data-state and
+         sizes its canvas to the .topview box, so both fill this 2:1 body. */
+      .replaydiagram,
+      .topview {
+        width: 100%;
+        height: 100%;
+        line-height: 0;
+      }
+
+      .replaydiagram {
+        overflow: hidden;
+        background: #000;
+      }
+
+      .topview canvas {
+        display: block;
+      }
+
+      /* The action panel: the last row of the controls column, so its buttons
+         sit centred below the elevation widget. */
+      .action-panel {
+        box-sizing: border-box;
+        display: flex;
+        flex: none;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        height: var(--action-height);
+      }
+
+      /* A plain button, as the diagram pages use. */
+      .action-button {
+        font: inherit;
+        font-size: 0.7rem;
+        line-height: 1.2;
+        padding: 0.2rem 0.8rem;
+        background: #fff;
+        color: #111;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .action-button:hover {
+        background: #f5f5f5;
+      }
+
+      .modal-backdrop {
+        box-sizing: border-box;
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgb(0 0 0 / 35%);
+      }
+
+      /* hidden beats the flex above, so the closed dialog takes no clicks. */
+      .modal-backdrop[hidden] {
+        display: none;
+      }
+
+      .modal {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        min-width: 12rem;
+        padding: 0.6rem 0.7rem;
+        background: #fff;
+        border: var(--bw) solid #ddd;
+        border-radius: 0.25rem;
+        box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+        font-size: 0.7rem;
+      }
+
+      .modal-title {
+        margin: 0;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #666;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .modal-placeholder {
+        margin: 0;
+        padding: 0.8rem 0;
+        border-radius: 0.25rem;
+        background: #f5f5f5;
+        color: #595959;
+        text-align: center;
       }
 
       /* Shot input: the table takes the left, the vertical power slider sits
@@ -343,8 +424,8 @@
       }
 
       /* Vertical and full at the top, as in three.html. Its length matches the
-         spin and elevation widgets stacked beside it, so the three controls
-         read as one column of the same height. */
+         controls column beside it, so the slider and the stack read as one
+         column of the same height. */
       #power {
         box-sizing: border-box;
         accent-color: var(--cue-blue);
@@ -446,8 +527,13 @@
            plotted from, and the flow follows the markup. -->
       <section class="panel panel-output" aria-label="Simulation output">
         <h2>simulation output</h2>
+        <!-- The diagram bundle's contract, as three.html writes it: a
+             .replaydiagram holding a .topview whose data-state it reads. The
+             editor fills that state in; the bundle owns everything below. -->
         <div class="panel-body">
-          <p class="placeholder">replay, trajectory and 3D view</p>
+          <div class="replaydiagram">
+            <div class="topview"></div>
+          </div>
         </div>
       </section>
 
@@ -506,15 +592,51 @@
                 aria-hidden="true"
               />
             </svg>
+            <!-- Centred under the elevation widget, as the bottom row of the
+                 controls column. -->
+            <div class="action-panel">
+              <button
+                id="action"
+                class="action-button"
+                type="button"
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls="action-modal"
+              >
+                action
+              </button>
+              <!-- The diagram bundle relabels this and binds the re-run once
+                   its assets are in, so it is the editor's only way to replay. -->
+              <button id="replay" class="action-button" type="button">
+                replay
+              </button>
+            </div>
           </div>
         </div>
       </section>
     </main>
 
+    <div class="modal-backdrop" id="action-modal" hidden>
+      <div class="modal" role="dialog" aria-modal="true" aria-label="Action">
+        <h2 class="modal-title">action</h2>
+        <p class="modal-placeholder">placeholder</p>
+      </div>
+    </div>
+
     <footer>
       <a href="../lobby.html">lobby</a>
       <a href="https://github.com/tailuge/billiards">github</a>
     </footer>
+
+    <!-- The 3D replay's bundle and the chunks it shares globals with. Deferred
+         and in document order, so they are in place before the editor's own
+         module runs and before DOMContentLoaded fires their listener.
+         interact.js is in three.html's list but the build does not emit it. -->
+    <script defer src="../three_core.js"></script>
+    <script defer src="../three_module.js"></script>
+    <script defer src="../three_examples.js"></script>
+    <script defer src="../messaging.js"></script>
+    <script defer src="../diagram.js"></script>
 
     <script type="module">
       import {
@@ -527,14 +649,16 @@
         X,
         Y,
       } from "./svg.js"
+      import { readState, serializeState } from "./editor-state.js"
 
-      // Table coordinates in metres with y pointing up, the same convention
-      // three.html uses in its ?state=init. svg.js renders a ball at (x, -y).
-      const balls = [
-        { id: 0, x: -1.305026, y: -0.634005 },
-        { id: 1, x: -1.434758, y: 0.601475 },
-        { id: 2, x: -1.310215, y: 0.685593 },
-      ]
+      // The shot to open on: the editor's own default, or the one a launch
+      // parameter or a share link carries. editor-state.js owns the shape,
+      // which is the one three.html carries in its data-state, so the same
+      // string can later drive the replay and the launch links.
+      // Table coordinates are in metres with y pointing up; svg.js renders a
+      // ball at (x, -y).
+      const state = readState(new URLSearchParams(window.location.search))
+      const balls = state.balls.map((ball, id) => ({ id, ...ball }))
 
       const BOUND_X = X - R
       const BOUND_Y = Y - R
@@ -674,7 +798,7 @@
 
       // --- aim: the dot at the tip of the line sets the direction ---
 
-      let aimAngle = 0.63687
+      let aimAngle = normalizeAngle(state.shot.angle)
       let aimLength = DEFAULT_AIM_LENGTH
       let aimTip = { x: 0, y: 0 }
       let draggingAim = false
@@ -725,6 +849,7 @@
         aimHead.setAttribute("cy", String(-aimTip.y))
         const degrees = (normalizeAngle(aimAngle) * 180) / Math.PI
         renderStatus()
+        syncDiagram()
       }
 
       // The pointer target is the aim point; the angle is measured from the cue
@@ -746,7 +871,7 @@
       // the cue ball's position. x is mirrored on screen, the same way
       // three.html places its cue tip and svg.js draws renderInset.
       const SPIN_LIMIT = 0.45
-      const spin = { x: 0, y: 0 }
+      const spin = clampSpin(state.shot.offset.x, state.shot.offset.y)
       const spinWidget = document.querySelector(".spin-widget")
       const spinDot = spinWidget.querySelector(".spin-dot")
       const spinReadout = spinWidget.querySelector(".spin-readout")
@@ -797,6 +922,7 @@
         spinLines[1].setAttribute("dy", String(READOUT_LEADING))
         spinLines[1].textContent = yLabel
         spinReadout.setAttribute("y", String(top - READOUT_LEADING))
+        syncDiagram()
       }
 
       function setSpin(x, y) {
@@ -857,13 +983,14 @@
       // position is the same shot in both pages. The value is metres per
       // second, matching the power field in the ?state= shots.
       const MAX_POWER = 160 * R
-      const DEFAULT_POWER = 2.62
+      const DEFAULT_POWER = state.shot.power
       const powerInput = document.getElementById("power")
       let power = DEFAULT_POWER
 
       function renderPower() {
         powerInput.value = String(power / MAX_POWER)
         renderStatus()
+        syncDiagram()
       }
 
       // The handler reads the slider without writing it back, so it cannot
@@ -871,6 +998,7 @@
       powerInput.addEventListener("input", (event) => {
         power = clamp(Number(event.target.value) * MAX_POWER, 0, MAX_POWER)
         renderStatus()
+        syncDiagram()
       })
 
       // --- elevation: how far the cue is raised off the cloth ---
@@ -888,7 +1016,7 @@
       const elevationMax = elevationWidget.querySelector(".elevation-max")
       const elevationReadout =
         elevationWidget.querySelector(".elevation-readout")
-      let elevation = 0
+      let elevation = clamp(state.shot.elevation, 0, MAX_ELEVATION)
 
       // The sweep guide and the cap line never move, so they are placed once
       // from the same pivot, length and cap that drive the cue.
@@ -924,6 +1052,7 @@
           String(Math.round(degrees))
         )
         elevationReadout.textContent = `${degrees.toFixed(1)}°`
+        syncDiagram()
       }
 
       function setElevation(radians) {
@@ -1163,6 +1292,7 @@
         const ball = balls[dragIndex]
         circles[dragIndex].setAttribute("cx", String(ball.x))
         circles[dragIndex].setAttribute("cy", String(-ball.y))
+        syncDiagram()
       })
 
       function endDrag(event) {
@@ -1184,6 +1314,63 @@
 
       svg.addEventListener("dblclick", (event) => {
         if (findBall(toModelPoint(event)) === null) resetView()
+      })
+
+      // --- the 3D replay: the diagram bundle reads a state string, not the
+      // widgets ---
+
+      // diagram.js takes over #replay once its assets are in: it relabels the
+      // button and re-reads the .topview's data-state whenever it is pressed.
+      // So the editor's part is to keep that string current and to press the
+      // button; this is the one place the shot crosses into the replay.
+      const topview = document.querySelector(".topview")
+      const replayButton = document.getElementById("replay")
+
+      // The click is ignored while a shot is still running, so it waits for the
+      // input to go quiet and the last state of a drag is the one that plays.
+      const REPLAY_DELAY = 250
+      let replayTimer = null
+
+      function syncDiagram() {
+        if (!topview) return
+        const next = serializeState({
+          ruleType: state.ruleType,
+          cushionModel: state.cushionModel,
+          practice: state.practice,
+          balls,
+          shot: {
+            angle: aimAngle,
+            power,
+            offset: { x: spin.x, y: spin.y },
+            elevation,
+            i: CUE_BALL,
+          },
+        })
+        topview.dataset.state = next
+        topview.setAttribute("data-state", next)
+        clearTimeout(replayTimer)
+        replayTimer = setTimeout(() => replayButton?.click(), REPLAY_DELAY)
+      }
+
+      // --- action: the floating panel's button and the dialog it opens ---
+      // The dialog is hidden in the markup, so it is only ever in the document
+      // when the button has been pressed. Escape and a click on the backdrop
+      // both close it; the button stays the only opener.
+      const actionButton = document.getElementById("action")
+      const actionModal = document.getElementById("action-modal")
+
+      function setActionModal(open) {
+        if (!actionModal) return
+        actionModal.hidden = !open
+        actionButton?.setAttribute("aria-expanded", String(open))
+      }
+
+      actionButton?.addEventListener("click", () => setActionModal(true))
+      actionModal?.addEventListener("click", (event) => {
+        if (event.target === actionModal) setActionModal(false)
+      })
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") setActionModal(false)
       })
 
       renderAim()

@@ -57,6 +57,14 @@ const MARKUP = `
     <line class="elevation-line" />
     <text class="elevation-readout"></text>
   </svg>
+  <div class="replaydiagram"><div class="topview"></div></div>
+  <button id="action" class="action-button" aria-expanded="false">action</button>
+  <button id="replay" type="button">replay</button>
+  <div class="modal-backdrop" id="action-modal" hidden>
+    <div class="modal" role="dialog">
+      <p class="modal-placeholder">placeholder</p>
+    </div>
+  </div>
 `
 
 // jsdom has no layout, so every widget reports the same 200px square and the
@@ -71,7 +79,19 @@ function stubWidget(widget: SVGSVGElement) {
   return widget
 }
 
-// Loads the page's module script with its svg.js import swapped for a stub.
+// editor-state.js is plain ESM, so the spec inlines it instead of importing it:
+// dropping the export keywords leaves the names the page imports in scope.
+function editorStateSource() {
+  return fs
+    .readFileSync(
+      path.resolve(__dirname, "../../dist/diagrams/editor-state.js"),
+      "utf-8"
+    )
+    .replace(/^export /gm, "")
+}
+
+// Loads the page's module script with its svg.js import swapped for a stub and
+// its editor-state.js import inlined.
 function loadEditor() {
   const html = fs.readFileSync(
     path.resolve(__dirname, "../../dist/diagrams/svgeditor.html"),
@@ -79,10 +99,12 @@ function loadEditor() {
   )
   const match = html.match(/<script type="module">([\s\S]*?)<\/script>/)
   expect(match).not.toBeNull()
-  const code = match![1].replace(
-    /import\s+\{[\s\S]*?\}\s+from\s+["']\.\/svg\.js["']/,
-    SVG_JS_STUB
-  )
+  const code = match![1]
+    .replace(/import\s+\{[\s\S]*?\}\s+from\s+["']\.\/svg\.js["']/, SVG_JS_STUB)
+    .replace(
+      /import\s+\{[\s\S]*?\}\s+from\s+["']\.\/editor-state\.js["']/,
+      editorStateSource()
+    )
   Function(code)()
 }
 
@@ -216,5 +238,78 @@ describe("svgeditor shot input", () => {
     expect(document.querySelector(".panel-side")).toBeNull()
     expect(document.getElementById("reset-view")).toBeNull()
     expect(document.getElementById("reset-spin")).toBeNull()
+  })
+
+  it("opens and closes the action dialog from the action panel", () => {
+    document.body.innerHTML = MARKUP
+    loadEditor()
+
+    const actionButton = document.getElementById("action")!
+    const actionModal = document.getElementById("action-modal")!
+
+    // The dialog ships closed, and the button says so for assistive tech.
+    expect(actionModal.hidden).toBe(true)
+    expect(actionButton.getAttribute("aria-expanded")).toBe("false")
+
+    actionButton.dispatchEvent(new Event("click", { bubbles: true }))
+    expect(actionModal.hidden).toBe(false)
+    expect(actionButton.getAttribute("aria-expanded")).toBe("true")
+    expect(actionModal.querySelector(".modal-placeholder")!.textContent).toBe(
+      "placeholder"
+    )
+
+    // Escape closes it, from the document rather than the dialog.
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
+    expect(actionModal.hidden).toBe(true)
+    expect(actionButton.getAttribute("aria-expanded")).toBe("false")
+
+    // A click on the backdrop closes it too; a click inside it does not.
+    actionButton.dispatchEvent(new Event("click", { bubbles: true }))
+    actionModal
+      .querySelector(".modal-placeholder")!
+      .dispatchEvent(new Event("click", { bubbles: true }))
+    expect(actionModal.hidden).toBe(false)
+
+    actionModal.dispatchEvent(new Event("click", { bubbles: true }))
+    expect(actionModal.hidden).toBe(true)
+  })
+
+  it("feeds the 3D replay the shot it is reading", () => {
+    jest.useFakeTimers()
+    try {
+      document.body.innerHTML = MARKUP
+      loadEditor()
+
+      const topview = document.querySelector(".topview") as HTMLElement
+      const replay = document.getElementById("replay") as HTMLButtonElement
+      const click = jest.spyOn(replay, "click")
+      // The state the diagram bundle reads back off the .topview.
+      const replayed = () =>
+        JSON.parse(
+          new URLSearchParams(topview.dataset.state!.slice(1)).get("state")!
+        )
+
+      // The opening shot arrives in three.html's own data-state shape.
+      expect(replayed().init).toEqual([
+        -1.305026, -0.634005, -1.434758, 0.601475, -1.310215, 0.685593,
+      ])
+      expect(replayed().shots[0].angle).toBeCloseTo(0.63687)
+      expect(replayed().shots[0].type).toBe("AIM")
+      // Without this the replay starts on the aim view instead of the top.
+      expect(replayed().diagram).toBe(true)
+
+      // A control change is written through at once, but the replay button is
+      // only pressed once the input goes quiet: it is ignored mid-shot anyway.
+      const powerInput = document.getElementById("power") as HTMLInputElement
+      powerInput.value = "0.25"
+      powerInput.dispatchEvent(new Event("input", { bubbles: true }))
+      expect(replayed().shots[0].power).toBeCloseTo(1.31)
+      expect(click).not.toHaveBeenCalled()
+
+      jest.advanceTimersByTime(300)
+      expect(click).toHaveBeenCalled()
+    } finally {
+      jest.useRealTimers()
+    }
   })
 })
