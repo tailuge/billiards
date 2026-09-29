@@ -1,13 +1,16 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Three cushion research</title>
+    <link rel="icon" type="image/png" href="../favicon.png" />
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta
       name="description"
       content="Set up a three cushion shot: move the balls, aim, and choose the spin, power and elevation."
     />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="../css/ball-colors.css" />
     <style>
       :root {
@@ -27,6 +30,7 @@
         /* Fixed heights, so the two tables can fill exactly what the window has
            left over rather than what a guess leaves over. */
         --header-height: 1.25rem;
+        --footer-height: 1rem;
         --title-height: 1rem;
         --gap: 2px;
 
@@ -39,8 +43,9 @@
            collapsing/expanding chrome is tracked; vh everywhere else. */
         --vh: 100vh;
 
-        /* Height main.layout works with: the viewport minus the fixed header. */
-        --main-h: calc(var(--vh) - var(--header-height));
+        /* Height main.layout works with: the viewport minus the fixed header
+           and footer. */
+        --main-h: calc(var(--vh) - var(--header-height) - var(--footer-height));
 
         /* Everything in the stack that is not media body: the two panel
            titles, the row gap and the panels' four horizontal borders. */
@@ -106,6 +111,22 @@
         text-align: center;
       }
 
+      /* Same fixed height as the header, and a direct child of body, so the
+         height budget above stays exact. */
+      footer {
+        display: flex;
+        flex: none;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        height: var(--footer-height);
+        font-size: 0.6rem;
+      }
+
+      footer a {
+        color: #1d5886;
+      }
+
       main.layout {
         display: flex;
         flex: 1;
@@ -168,7 +189,7 @@
         margin: 0;
         border-radius: 0.25rem;
         background: #f5f5f5;
-        color: #888;
+        color: #595959;
         font-size: 0.75rem;
       }
 
@@ -489,6 +510,11 @@
         </div>
       </section>
     </main>
+
+    <footer>
+      <a href="../lobby.html">lobby</a>
+      <a href="https://github.com/tailuge/billiards">github</a>
+    </footer>
 
     <script type="module">
       import {
