@@ -82,4 +82,25 @@ export default tseslint.config(
       "no-undef": "off",
     }
   },
+  {
+    // Standalone Node scripts run by an npm script, e.g. test/indexnow.mjs.
+    // They are not modules loaded by the app, so the browser globals do not
+    // apply; they get the Node ones instead.
+    name: 'billiards/node-scripts',
+    files: ["test/**/*.mjs"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        process: "readonly",
+        console: "readonly",
+        fetch: "readonly",
+        URL: "readonly",
+        URLSearchParams: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        Buffer: "readonly",
+      },
+    },
+  },
 );

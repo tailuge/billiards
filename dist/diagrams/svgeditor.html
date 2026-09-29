@@ -26,9 +26,14 @@
 
         /* Fixed heights, so the two tables can fill exactly what the window has
            left over rather than what a guess leaves over. */
-        --header-height: 2.5rem;
-        --title-height: 1.5rem;
-        --gap: 0.75rem;
+        --header-height: 1.25rem;
+        --title-height: 1rem;
+        --gap: 2px;
+
+        /* The spin and elevation widgets' box, and the power slider's length:
+           the two widgets stacked with the row gap between them. */
+        --widget-size: 6.3rem;
+        --side-h: calc(2 * var(--widget-size) + var(--gap));
 
         /* Viewport height. dvh where supported, so a mobile browser's
            collapsing/expanding chrome is tracked; vh everywhere else. */
@@ -88,14 +93,17 @@
         display: flex;
         flex: none;
         align-items: center;
+        justify-content: center;
         height: var(--header-height);
       }
 
       h1 {
         margin: 0;
-        padding: 2px 0;
-        font-size: 0.55rem;
+        padding: 0;
+        font-size: 0.6rem;
+        line-height: 1.1;
         font-weight: 400;
+        text-align: center;
       }
 
       main.layout {
@@ -175,9 +183,9 @@
         height: 100%;
       }
 
-      /* The table at its own ~1.65:1 shape inside the 2:1 media body. The hairline
-         border is diagnostic: it outlines the SVG box so the letterbox margins
-         the viewBox leaves around the cloth are visible. */
+      /* The table at its own ~1.65:1 shape inside the 2:1 media body. The
+         letterbox margins the viewBox leaves around the cloth are left
+         unframed, so the table reads as the cloth alone. */
       svg.billiards-table {
         box-sizing: border-box;
         display: block;
@@ -186,15 +194,13 @@
         max-width: 100%;
         aspect-ratio: var(--table-aspect);
         background: #fff;
-        border: 0.5px solid #9aa0a6;
-        border-radius: 0.25rem;
         touch-action: none;
         user-select: none;
       }
 
-      /* Shot input: the vertical power slider hugs the left edge, the table
-         takes the middle, and the spin and elevation widgets stack down the
-         right. The table viewBox letterboxes inside whatever room is left. */
+      /* Shot input: the table takes the left, the vertical power slider sits
+         beside it, and the spin and elevation widgets stack down the right. The
+         table viewBox letterboxes inside whatever room is left. */
       .panel-input .panel-body {
         justify-content: space-between;
         gap: 2px;
@@ -214,7 +220,7 @@
         flex: none;
         flex-direction: column;
         align-items: center;
-        gap: 2px;
+        gap: var(--gap);
       }
 
       /* Carom ball colours; ball-colors.css is keyed to pool/snooker ids. */
@@ -266,9 +272,9 @@
         flex: none;
 
         /* 1.05x the ball's 6rem, so padding the viewBox above did not shrink
-           the ball itself. The hairline border is diagnostic, like the table's. */
-        width: 6.3rem;
-        height: 6.3rem;
+           the ball itself. The hairline border outlines the widget's box. */
+        width: var(--widget-size);
+        height: var(--widget-size);
         border: 0.5px solid #9aa0a6;
         cursor: crosshair;
         touch-action: none;
@@ -316,8 +322,9 @@
         pointer-events: none;
       }
 
-      /* Vertical and full at the top, as in three.html. Stretched to the full
-         height of the media body so its length matches the table beside it. */
+      /* Vertical and full at the top, as in three.html. Its length matches the
+         spin and elevation widgets stacked beside it, so the three controls
+         read as one column of the same height. */
       #power {
         box-sizing: border-box;
         accent-color: var(--cue-blue);
@@ -325,7 +332,7 @@
         direction: rtl;
         flex: none;
         width: 1.1rem;
-        height: 100%;
+        height: var(--side-h);
         margin: 0;
       }
 
@@ -335,8 +342,8 @@
       .elevation-widget {
         box-sizing: border-box;
         flex: none;
-        width: 6.3rem;
-        height: 6.3rem;
+        width: var(--widget-size);
+        height: var(--widget-size);
         border: 0.5px solid #9aa0a6;
         cursor: grab;
         touch-action: none;
@@ -392,7 +399,7 @@
         }
 
         body {
-          padding-bottom: 1rem;
+          padding-bottom: 2px;
         }
 
         header {
@@ -428,6 +435,9 @@
       <section class="panel panel-input" aria-label="Shot input">
         <h2>shot input</h2>
         <div class="panel-body">
+          <div class="table-panel">
+            <svg class="billiards-table threecushion"></svg>
+          </div>
           <input
             id="power"
             type="range"
@@ -436,9 +446,6 @@
             step="0.01"
             aria-label="Power"
           />
-          <div class="table-panel">
-            <svg class="billiards-table threecushion"></svg>
-          </div>
           <div class="shot-side">
             <!-- ViewBox is padded past the ball so the ball's outline, which is
                  stroked across r=1, is not clipped by the viewport edge. -->
