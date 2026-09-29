@@ -228,6 +228,34 @@
       const ruletype = params.get("ruletype") || "threecushion"
       const tableSizeParam = parseFloat(params.get("tableSize") || "10")
 
+      // Physics constants forwarded by the editor. Names must match the
+      // Constants setters the worker calls as `set${key}`.
+      const CONSTANT_KEYS = [
+        "R",
+        "m",
+        "e",
+        "mu",
+        "muS",
+        "muC",
+        "rho",
+        "μs",
+        "μw",
+        "ee",
+        "stronge_omega_ratio",
+        "stronge_e_n",
+        "stronge_μ",
+      ]
+
+      // Only pass through constants that are present and numeric, so absent
+      // ones keep the worker defaults instead of becoming NaN.
+      const constantParams = {}
+      for (const key of CONSTANT_KEYS) {
+        const raw = params.get(key)
+        if (raw === null || raw.trim() === "") continue
+        const value = Number(raw)
+        if (Number.isFinite(value)) constantParams[key] = value
+      }
+
       let config = null
 
       if (!initRaw || !initShotRaw) {
@@ -259,6 +287,7 @@
           },
           params: {
             tableSize: tableSizeParam,
+            ...constantParams,
           },
         }
 

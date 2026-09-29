@@ -50,13 +50,16 @@ export const SVG_NS = "http://www.w3.org/2000/svg";
 
 // ——— Table rendering ———
 
-export function generateBilliardTable() {
+export function generateBilliardTable(options = {}) {
   const width = X * 2;
   const height = Y * 2;
 
   const maxOffset = Math.max(fOffset, dOffset + 0.015);
-  const pad = 0.2;
-  const halfPad = pad / 2;
+  // The viewBox over-scans the frame by this much on the left, right and top,
+  // and by `pad` below it, where the status line sits (see STATUS_TEXT_DROP).
+  // Overridable so a page that needs the room can ask for less without
+  // changing what every other consumer of this module draws.
+  const { pad = 0.2, halfPad = pad / 2 } = options;
   const viewBoxWidth = (X + maxOffset + halfPad) * 2;
   const viewBoxHeight = (Y + maxOffset + halfPad) + (Y + maxOffset + pad);
   const viewBoxX = -viewBoxWidth / 2;
@@ -393,8 +396,13 @@ export function setupSvgRoot(el) {
   };
 }
 
+// How far below the frame the status line's baseline sits. The bottom pad of
+// the viewBox has to clear this plus the text's descenders, so a caller that
+// tightens `pad` must not tighten it past this.
+export const STATUS_TEXT_DROP = 0.12;
+
 function createSvgStatusText(svg) {
-  const textY = Y + fOffset + 0.12;
+  const textY = Y + fOffset + STATUS_TEXT_DROP;
   const text = document.createElementNS(SVG_NS, "text");
   text.classList.add("worker-status");
   text.setAttribute("text-anchor", "middle");

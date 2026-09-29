@@ -18,7 +18,7 @@
            rails, the viewBox generateBilliardTable() sets in svg.js. The table
            is drawn at this shape inside the 2:1 media body, so it is
            letterboxed left and right. */
-        --table-aspect: 3.5848 / 2.1724;
+        --table-aspect: 3.4048 / 2.0824;
 
         /* Panel frame width. A variable so the height budget below can
            subtract the borders it adds. */
@@ -530,7 +530,11 @@
       const svg = document.querySelector(".billiards-table")
       const { tableGroup, trajectoriesGroup, ballsGroup, statusEl } =
         setupSvgRoot(svg)
-      const table = generateBilliardTable()
+      // Tighter than the shared default so the cloth fills more of the canvas.
+      // The bottom pad still has to clear the status line, whose baseline is
+      // STATUS_TEXT_DROP below the frame, so it stays at the default 0.2 and
+      // only the left/right/top margin is cut.
+      const table = generateBilliardTable({ pad: 0.2, halfPad: 0.01 })
 
       const baseView = parseViewBox(table.viewBox)
       let view = { ...baseView }
