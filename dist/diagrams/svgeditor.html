@@ -88,6 +88,19 @@
         cursor: grab;
       }
 
+      svg.billiards-table .aim-line {
+        stroke: #c2410c;
+        stroke-width: 0.0025;
+        stroke-linecap: round;
+        stroke-opacity: 0.75;
+      }
+
+      svg.billiards-table .aim-head {
+        fill: none;
+        stroke: #c2410c;
+        stroke-width: 0.002;
+      }
+
       .coords-panel {
         flex: 0 1 18rem;
       }
@@ -113,7 +126,8 @@
         text-align: left;
       }
 
-      .init {
+      .init,
+      .aim {
         margin: 0.5rem 0 0;
         color: #555;
         font-size: 0.75rem;
@@ -169,6 +183,7 @@
           <tbody id="coord-body"></tbody>
         </table>
         <p class="init">init <code id="init-state"></code></p>
+        <p class="aim">cue ball 0 · aim <span id="aim-angle"></span></p>
         <p class="view">
           zoom <span id="zoom-level">×1.0</span>
           <button id="reset-view" type="button">reset view</button>
@@ -183,6 +198,7 @@
         setupSvgRoot,
         toSvgCoords,
         R,
+        SVG_NS,
         X,
         Y,
       } from "./svg.js"
@@ -199,6 +215,11 @@
       const BOUND_Y = Y - R
       const MIN_GAP = 2 * R
 
+      // Aim is a direction plus a drawn length, as in three.html. The length is
+      // cosmetic: the tip is held at the cushion whatever the pointer distance.
+      const CUE_BALL = 0
+      const DEFAULT_AIM_LENGTH = 86 * R
+
       // Grabbing keeps ~16 screen px of slack around a ball when zoomed out and
       // narrows to the ball's own radius once the ball is large on screen.
       const HIT_PX = 16
@@ -206,7 +227,8 @@
       const ZOOM_STEP = 0.0015
 
       const svg = document.querySelector(".billiards-table")
-      const { tableGroup, ballsGroup, statusEl } = setupSvgRoot(svg)
+      const { tableGroup, trajectoriesGroup, ballsGroup, statusEl } =
+        setupSvgRoot(svg)
       const table = generateBilliardTable()
 
       const baseView = parseViewBox(table.viewBox)
@@ -215,7 +237,7 @@
       svg.setAttribute("viewBox", table.viewBox)
       tableGroup.innerHTML = table.content
       statusEl.textContent =
-        "drag a ball · scroll to zoom · drag the cloth to pan"
+        "drag a ball · drag the aim dot · scroll to zoom · drag cloth to pan"
 
       renderBallPositions(ballsGroup, {
         balls: balls.map(({ id, x, y }) => ({ id, pos: { x, y } })),
@@ -225,6 +247,7 @@
       const coordBody = document.getElementById("coord-body")
       const initState = document.getElementById("init-state")
       const zoomLevel = document.getElementById("zoom-level")
+      const aimAngleReadout = document.getElementById("aim-angle")
 
       const rows = balls.map((ball) => {
         const row = document.createElement("tr")
@@ -338,7 +361,73 @@
             found = { index, distance }
           }
         })
-        return found === null ? null : found.index
+        return found
+      }
+
+      // --- aim: the dot at the tip of the line sets the direction ---
+
+      let aimAngle = 0.63687
+      let aimLength = DEFAULT_AIM_LENGTH
+      let aimTip = { x: 0, y: 0 }
+      let draggingAim = false
+      let aimGrab = { x: 0, y: 0 }
+
+      const aimLine = document.createElementNS(SVG_NS, "line")
+      aimLine.setAttribute("class", "aim-line")
+      const aimHead = document.createElementNS(SVG_NS, "circle")
+      aimHead.setAttribute("class", "aim-head")
+      aimHead.setAttribute("r", String(R))
+      // Drawn under the balls so the cue ball stays visible on top of the line.
+      trajectoriesGroup.append(aimLine, aimHead)
+
+      function normalizeAngle(angle) {
+        const tau = Math.PI * 2
+        return ((angle % tau) + tau) % tau
+      }
+
+      // Distance from (x, y) to the edge of a box along `angle`. Measuring
+      // against the play area inset by R gives the point where the cue ball is
+      // just touching a rail, so the aim dot marks real contact.
+      function distanceToEdge(x, y, angle, halfWidth, halfHeight) {
+        const dx = Math.cos(angle)
+        const dy = Math.sin(angle)
+        const distances = []
+        if (dx > 0) distances.push((halfWidth - x) / dx)
+        else if (dx < 0) distances.push((-halfWidth - x) / dx)
+        if (dy > 0) distances.push((halfHeight - y) / dy)
+        else if (dy < 0) distances.push((-halfHeight - y) / dy)
+        const positive = distances.filter((distance) => distance >= 0)
+        if (positive.length === 0) return 0
+        return Math.min(...positive)
+      }
+
+      function renderAim() {
+        const cue = balls[CUE_BALL]
+        const limit = distanceToEdge(cue.x, cue.y, aimAngle, BOUND_X, BOUND_Y)
+        const length = Math.min(aimLength, limit)
+        aimTip = {
+          x: cue.x + Math.cos(aimAngle) * length,
+          y: cue.y + Math.sin(aimAngle) * length,
+        }
+        aimLine.setAttribute("x1", String(cue.x))
+        aimLine.setAttribute("y1", String(-cue.y))
+        aimLine.setAttribute("x2", String(aimTip.x))
+        aimLine.setAttribute("y2", String(-aimTip.y))
+        aimHead.setAttribute("cx", String(aimTip.x))
+        aimHead.setAttribute("cy", String(-aimTip.y))
+        const degrees = (normalizeAngle(aimAngle) * 180) / Math.PI
+        aimAngleReadout.textContent = `${degrees.toFixed(1)}°`
+      }
+
+      // The pointer target is the aim point; the angle is measured from the cue
+      // ball in model space, so it matches three.html's shot angle.
+      function setAim(point) {
+        const cue = balls[CUE_BALL]
+        const dx = point.x - cue.x
+        const dy = point.y - cue.y
+        aimAngle = normalizeAngle(Math.atan2(dy, dx))
+        aimLength = Math.hypot(dx, dy)
+        renderAim()
       }
 
       // Balls may touch, with centres exactly MIN_GAP apart, but never overlap.
@@ -398,8 +487,23 @@
 
       svg.addEventListener("pointerdown", (event) => {
         const point = toModelPoint(event)
-        const index = findBall(point)
-        if (index === null) {
+        const radius = hitRadius()
+        const nearest = findBall(point)
+        const toAim = Math.hypot(point.x - aimTip.x, point.y - aimTip.y)
+
+        // Whichever target the pointer is closest to wins, so a ball resting
+        // near the aim dot is still reachable.
+        if (
+          toAim <= radius &&
+          (nearest === null || toAim <= nearest.distance)
+        ) {
+          draggingAim = true
+          aimGrab = { x: aimTip.x - point.x, y: aimTip.y - point.y }
+          beginPointer(event)
+          return
+        }
+
+        if (nearest === null) {
           const matrix = svg.getScreenCTM()
           if (!matrix) return
           pan = {
@@ -413,29 +517,39 @@
           beginPointer(event)
           return
         }
-        dragIndex = index
+
+        dragIndex = nearest.index
         grabOffset = {
-          x: balls[index].x - point.x,
-          y: balls[index].y - point.y,
+          x: balls[nearest.index].x - point.x,
+          y: balls[nearest.index].y - point.y,
         }
         beginPointer(event)
       })
 
       svg.addEventListener("pointermove", (event) => {
-        if (dragIndex === null && pan === null) return
+        if (!draggingAim && dragIndex === null && pan === null) return
         event.preventDefault()
+
+        if (draggingAim) {
+          const point = toModelPoint(event)
+          setAim({ x: point.x + aimGrab.x, y: point.y + aimGrab.y })
+          return
+        }
+
         if (pan) {
           view.x = pan.viewX - (event.clientX - pan.clientX) / pan.scaleX
           view.y = pan.viewY - (event.clientY - pan.clientY) / pan.scaleY
           applyView()
           return
         }
+
         const point = toModelPoint(event)
         placeBall(
           dragIndex,
           clamp(point.x + grabOffset.x, -BOUND_X, BOUND_X),
           clamp(point.y + grabOffset.y, -BOUND_Y, BOUND_Y)
         )
+        if (dragIndex === CUE_BALL) renderAim()
         const ball = balls[dragIndex]
         circles[dragIndex].setAttribute("cx", String(ball.x))
         circles[dragIndex].setAttribute("cy", String(-ball.y))
@@ -443,7 +557,8 @@
       })
 
       function endDrag(event) {
-        if (dragIndex === null && pan === null) return
+        if (!draggingAim && dragIndex === null && pan === null) return
+        draggingAim = false
         dragIndex = null
         pan = null
         svg.classList.remove("dragging")
@@ -460,6 +575,7 @@
       })
 
       updateReadout()
+      renderAim()
       applyView()
     </script>
   </body>
