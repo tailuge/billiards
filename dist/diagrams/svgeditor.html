@@ -635,7 +635,7 @@
 
       svg.setAttribute("viewBox", table.viewBox)
       tableGroup.innerHTML = table.content
-      statusEl.textContent = "drag balls, scroll to zoom"
+      statusEl.textContent = "drag balls, scroll or pinch to zoom"
 
       renderBallPositions(ballsGroup, {
         balls: balls.map(({ id, x, y }) => ({ id, pos: { x, y } })),
@@ -1059,13 +1059,46 @@
       let grabOffset = { x: 0, y: 0 }
       let pan = null
 
+      const activePointers = new Map()
+      let pinchDistance = null
+      let pinchMid = null
+      let isPinching = false
+
       function beginPointer(event) {
         svg.classList.add("dragging")
-        svg.setPointerCapture(event.pointerId)
+        if (event.pointerId !== undefined) {
+          try {
+            svg.setPointerCapture(event.pointerId)
+          } catch (_) {}
+        }
         event.preventDefault()
       }
 
       svg.addEventListener("pointerdown", (event) => {
+        activePointers.set(event.pointerId, {
+          clientX: event.clientX,
+          clientY: event.clientY,
+        })
+
+        if (activePointers.size >= 2) {
+          draggingAim = false
+          dragIndex = null
+          pan = null
+          isPinching = true
+
+          const [p1, p2] = Array.from(activePointers.values())
+          pinchDistance = Math.hypot(
+            p1.clientX - p2.clientX,
+            p1.clientY - p2.clientY
+          )
+          pinchMid = {
+            clientX: (p1.clientX + p2.clientX) / 2,
+            clientY: (p1.clientY + p2.clientY) / 2,
+          }
+          beginPointer(event)
+          return
+        }
+
         const point = toModelPoint(event)
         const radius = hitRadius()
         const nearest = findBall(point)
@@ -1107,6 +1140,53 @@
       })
 
       svg.addEventListener("pointermove", (event) => {
+        if (activePointers.has(event.pointerId)) {
+          activePointers.set(event.pointerId, {
+            clientX: event.clientX,
+            clientY: event.clientY,
+          })
+        }
+
+        if (activePointers.size >= 2) {
+          event.preventDefault()
+          const [p1, p2] = Array.from(activePointers.values())
+          const currDistance = Math.hypot(
+            p1.clientX - p2.clientX,
+            p1.clientY - p2.clientY
+          )
+          const currMid = {
+            clientX: (p1.clientX + p2.clientX) / 2,
+            clientY: (p1.clientY + p2.clientY) / 2,
+          }
+
+          if (
+            pinchDistance !== null &&
+            pinchMid !== null &&
+            pinchDistance > 0 &&
+            currDistance > 0
+          ) {
+            const factor = currDistance / pinchDistance
+            const midSvg = toSvgCoords(svg, pinchMid)
+            zoomAt(midSvg, factor)
+
+            const matrix = svg.getScreenCTM()
+            if (matrix) {
+              const dx =
+                (currMid.clientX - pinchMid.clientX) / Math.abs(matrix.a)
+              const dy =
+                (currMid.clientY - pinchMid.clientY) / Math.abs(matrix.d)
+              view.x -= dx
+              view.y -= dy
+              applyView()
+            }
+          }
+          pinchDistance = currDistance
+          pinchMid = currMid
+          return
+        }
+
+        if (isPinching) return
+
         if (!draggingAim && dragIndex === null && pan === null) return
         event.preventDefault()
 
@@ -1136,18 +1216,37 @@
       })
 
       function endDrag(event) {
-        if (!draggingAim && dragIndex === null && pan === null) return
-        draggingAim = false
-        dragIndex = null
-        pan = null
-        svg.classList.remove("dragging")
-        if (svg.hasPointerCapture(event.pointerId)) {
-          svg.releasePointerCapture(event.pointerId)
+        if (
+          event.pointerId !== undefined &&
+          svg.hasPointerCapture(event.pointerId)
+        ) {
+          try {
+            svg.releasePointerCapture(event.pointerId)
+          } catch (_) {}
+        }
+        activePointers.delete(event.pointerId)
+
+        if (activePointers.size < 2) {
+          pinchDistance = null
+          pinchMid = null
+        }
+
+        if (activePointers.size === 0) {
+          draggingAim = false
+          dragIndex = null
+          pan = null
+          isPinching = false
+          svg.classList.remove("dragging")
         }
       }
 
       svg.addEventListener("pointerup", endDrag)
       svg.addEventListener("pointercancel", endDrag)
+      svg.addEventListener("pointerleave", (event) => {
+        if (!svg.hasPointerCapture(event.pointerId)) {
+          endDrag(event)
+        }
+      })
 
       svg.addEventListener("dblclick", (event) => {
         if (findBall(toModelPoint(event)) === null) resetView()
