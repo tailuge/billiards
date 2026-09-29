@@ -13,6 +13,17 @@ export const β_n = 1.0
 export const β_t = 3.5
 export const k_n = 1e3
 
+/**
+ * The open interval `omega_ratio` has to lie in, exported so that the UI which
+ * edits it cannot offer a value the solver will reject.
+ *
+ * The bounds are exclusive: `resolve` throws on anything `<= 1` or `>= 2`, so a
+ * control that lets the user reach either endpoint turns the first cushion
+ * contact into an uncaught error. Anything driving this constant -- a slider, a
+ * launch parameter, a hand-edited URL -- has to respect that.
+ */
+export const omega_ratio_bounds = { min: 1, max: 2 }
+
 export type StrongeParams = {
   m: number
   R: number
@@ -124,8 +135,13 @@ export function resolve(
 ): [number, number] {
   const { m: mass, e_n, μ, omega_ratio } = params
 
-  if (omega_ratio <= 1 || omega_ratio >= 2) {
-    throw new Error(`omega_ratio must be in (1, 2), got ${omega_ratio}`)
+  if (
+    omega_ratio <= omega_ratio_bounds.min ||
+    omega_ratio >= omega_ratio_bounds.max
+  ) {
+    throw new Error(
+      `omega_ratio must be in (${omega_ratio_bounds.min}, ${omega_ratio_bounds.max}), got ${omega_ratio}`
+    )
   }
 
   const beta_ratio = β_t / β_n

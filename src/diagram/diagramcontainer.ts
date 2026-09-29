@@ -15,6 +15,24 @@ import { id, getButton, getCanvas } from "../utils/dom"
 import { Session } from "../network/client/session"
 
 /**
+ * Resolve the `cushionModel` value carried in a diagram state url to its
+ * adapter. `mathavan` is the fallback for a state that names none, and for one
+ * that names something unrecognised.
+ */
+function cushionAdapter(model: string | null) {
+  if (model == "bounceHan") {
+    return bounceHan
+  }
+  if (model == "bounceHanBlend") {
+    return bounceHanBlend
+  }
+  if (model == "stronge") {
+    return strongeAdapter
+  }
+  return mathavanAdapter
+}
+
+/**
  * Integrate billiards container into diagram html page
  */
 export class DiagramContainer {
@@ -116,6 +134,15 @@ export class DiagramContainer {
             this.replay = replay
             this.breakState = JSON.parse(decodeURIComponent(replay))
           }
+          // The state url is the single source of truth for the model on a
+          // re-run, exactly as it is at construction. Without this the model
+          // was fixed when the page loaded, so an editor that republishes the
+          // state with a different `cushionModel` replays the identical shot
+          // through the original adapter and the toggle looks inert. The table
+          // reads the property per bounce, so reassigning it here takes effect
+          // on the shot about to be queued.
+          this.cushionModel = cushionAdapter(params.get("cushionModel"))
+          this.container.table.cushionModel = this.cushionModel
         }
         this.container.table.updateFromShortSerialised(this.breakState.init)
         this.container.table.freezeTraces(this.container.view.scene)
@@ -154,16 +181,7 @@ export class DiagramContainer {
     )
     diagramcontainer.practiceMode = params.has("practice")
     diagramcontainer.replayButton(replaybutton)
-    const model = params.get("cushionModel")
-    if (model == "bounceHan") {
-      diagramcontainer.cushionModel = bounceHan
-    } else if (model == "bounceHanBlend") {
-      diagramcontainer.cushionModel = bounceHanBlend
-    } else if (model == "stronge") {
-      diagramcontainer.cushionModel = strongeAdapter
-    } else {
-      diagramcontainer.cushionModel = mathavanAdapter
-    }
+    diagramcontainer.cushionModel = cushionAdapter(params.get("cushionModel"))
 
     return diagramcontainer
   }

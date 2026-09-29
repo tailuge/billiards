@@ -58,45 +58,74 @@ const MARKUP = `
     <text class="elevation-readout"></text>
   </svg>
   <div class="replaydiagram"><div class="topview"></div></div>
+  <button id="open-constants" class="action-button" aria-expanded="false">constants</button>
   <button id="action" class="action-button" aria-expanded="false">action</button>
+  <button id="open-presets" class="action-button" aria-expanded="false">presets</button>
   <button id="replay" type="button">replay</button>
+  <button id="cleartraces" type="button">clear traces</button>
+  <div class="modal-backdrop" id="constants-modal" hidden>
+    <div class="modal" role="dialog">
+      <div class="modal-panel">
+        <fieldset class="model-toggle">
+          <input type="radio" name="cushionModel" value="mathavan" checked />
+          <input type="radio" name="cushionModel" value="stronge" />
+        </fieldset>
+        <div id="constants" class="constants">
+          <div class="constant-group">
+            <input type="checkbox" id="mathavan-toggle" class="collapse-toggle" />
+            <div class="collapse-content">
+              <input id="μs" type="range" />
+              <div class="constant-row"><label for="μs"></label></div>
+              <input id="μw" type="range" />
+              <div class="constant-row"><label for="μw"></label></div>
+              <input id="ee" type="range" />
+              <div class="constant-row"><label for="ee"></label></div>
+            </div>
+          </div>
+          <div class="constant-group">
+            <input type="checkbox" id="han-toggle" class="collapse-toggle" />
+            <div class="collapse-content">
+              <input id="mu" type="range" />
+              <div class="constant-row"><label for="mu"></label></div>
+              <input id="muS" type="range" />
+              <div class="constant-row"><label for="muS"></label></div>
+            </div>
+          </div>
+          <div class="constant-group">
+            <input type="checkbox" id="stronge-toggle" class="collapse-toggle" />
+            <div class="collapse-content">
+              <input id="stronge_omega_ratio" type="range" />
+              <div class="constant-row"><label for="stronge_omega_ratio"></label></div>
+              <input id="stronge_e_n" type="range" />
+              <div class="constant-row"><label for="stronge_e_n"></label></div>
+              <input id="stronge_μ" type="range" />
+              <div class="constant-row"><label for="stronge_μ"></label></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="modal-backdrop" id="action-modal" hidden>
     <div class="modal" role="dialog">
-      <fieldset class="model-toggle">
-        <input type="radio" name="cushionModel" value="mathavan" checked />
-        <input type="radio" name="cushionModel" value="stronge" />
-      </fieldset>
-      <div id="constants" class="constants">
-        <div class="constant-group">
-          <input type="checkbox" id="mathavan-toggle" class="collapse-toggle" />
-          <div class="collapse-content">
-            <input id="μs" type="range" />
-            <div class="constant-row"><label for="μs"></label></div>
-            <input id="μw" type="range" />
-            <div class="constant-row"><label for="μw"></label></div>
-            <input id="ee" type="range" />
-            <div class="constant-row"><label for="ee"></label></div>
-          </div>
+      <div class="modal-panel">
+        <div class="action-list">
+          <button id="play" class="action-button" type="button">play in game</button>
+          <button id="solution" class="action-button" type="button">computer search solutions</button>
+          <button id="svg" class="action-button" type="button">svg diagram</button>
         </div>
-        <div class="constant-group">
-          <input type="checkbox" id="han-toggle" class="collapse-toggle" />
-          <div class="collapse-content">
-            <input id="mu" type="range" />
-            <div class="constant-row"><label for="mu"></label></div>
-            <input id="muS" type="range" />
-            <div class="constant-row"><label for="muS"></label></div>
-          </div>
-        </div>
-        <div class="constant-group">
-          <input type="checkbox" id="stronge-toggle" class="collapse-toggle" />
-          <div class="collapse-content">
-            <input id="stronge_omega_ratio" type="range" />
-            <div class="constant-row"><label for="stronge_omega_ratio"></label></div>
-            <input id="stronge_e_n" type="range" />
-            <div class="constant-row"><label for="stronge_e_n"></label></div>
-            <input id="stronge_μ" type="range" />
-            <div class="constant-row"><label for="stronge_μ"></label></div>
-          </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="presets-modal" hidden>
+    <div class="modal" role="dialog">
+      <div class="modal-panel">
+        <div id="presets-list" class="presets-list"></div>
+        <p id="presets-empty" class="presets-empty">No presets yet.</p>
+        <div class="action-list">
+          <button id="add-preset" class="action-button" type="button">save this shot</button>
+          <button id="share-presets" class="action-button" type="button">share presets</button>
+          <button id="reset-presets" class="action-button destructive" type="button">reset presets</button>
         </div>
       </div>
     </div>
@@ -276,20 +305,20 @@ describe("svgeditor shot input", () => {
     expect(document.getElementById("reset-spin")).toBeNull()
   })
 
-  it("opens and closes the action dialog from the action panel", () => {
+  it("opens and closes the constants dialog from the action panel", () => {
     document.body.innerHTML = MARKUP
     loadEditor()
 
-    const actionButton = document.getElementById("action")!
-    const actionModal = document.getElementById("action-modal")!
+    const constantsButton = document.getElementById("open-constants")!
+    const constantsModal = document.getElementById("constants-modal")!
 
     // The dialog ships closed, and the button says so for assistive tech.
-    expect(actionModal.hidden).toBe(true)
-    expect(actionButton.getAttribute("aria-expanded")).toBe("false")
+    expect(constantsModal.hidden).toBe(true)
+    expect(constantsButton.getAttribute("aria-expanded")).toBe("false")
 
-    actionButton.dispatchEvent(new Event("click", { bubbles: true }))
-    expect(actionModal.hidden).toBe(false)
-    expect(actionButton.getAttribute("aria-expanded")).toBe("true")
+    constantsButton.dispatchEvent(new Event("click", { bubbles: true }))
+    expect(constantsModal.hidden).toBe(false)
+    expect(constantsButton.getAttribute("aria-expanded")).toBe("true")
 
     // The dialog holds the constant sliders, each found by the diagram bundle
     // under its own name, so an input missing here is a slider that never binds.
@@ -303,23 +332,23 @@ describe("svgeditor shot input", () => {
       "stronge_e_n",
       "stronge_μ",
     ].forEach((id) =>
-      expect(actionModal.querySelector(`input#${id}`)).not.toBeNull()
+      expect(constantsModal.querySelector(`input#${id}`)).not.toBeNull()
     )
 
     // Escape closes it, from the document rather than the dialog.
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
-    expect(actionModal.hidden).toBe(true)
-    expect(actionButton.getAttribute("aria-expanded")).toBe("false")
+    expect(constantsModal.hidden).toBe(true)
+    expect(constantsButton.getAttribute("aria-expanded")).toBe("false")
 
     // A click on the backdrop closes it too; a click inside it does not.
-    actionButton.dispatchEvent(new Event("click", { bubbles: true }))
-    actionModal
+    constantsButton.dispatchEvent(new Event("click", { bubbles: true }))
+    constantsModal
       .querySelector(".constant-row")!
       .dispatchEvent(new Event("click", { bubbles: true }))
-    expect(actionModal.hidden).toBe(false)
+    expect(constantsModal.hidden).toBe(false)
 
-    actionModal.dispatchEvent(new Event("click", { bubbles: true }))
-    expect(actionModal.hidden).toBe(true)
+    constantsModal.dispatchEvent(new Event("click", { bubbles: true }))
+    expect(constantsModal.hidden).toBe(true)
   })
 
   it("feeds the 3D replay the shot it is reading", () => {
@@ -430,5 +459,469 @@ describe("svgeditor shot input", () => {
     } finally {
       jest.useRealTimers()
     }
+  })
+})
+
+describe("svgeditor dialogs and launch links", () => {
+  // jsdom has no window.open, so the launch links are captured rather than
+  // followed: the url each button builds is the whole of what it is for.
+  let opened: string[]
+
+  function load() {
+    document.body.innerHTML = MARKUP
+    opened = []
+    window.open = ((url: string) => {
+      opened.push(url)
+      return null
+    }) as typeof window.open
+    loadEditor()
+  }
+
+  const byId = (id: string) => document.getElementById(id)!
+  const click = (id: string) =>
+    byId(id).dispatchEvent(new Event("click", { bubbles: true }))
+  const params = (url: string) => new URL(url).searchParams
+
+  afterEach(() => {
+    document.body.innerHTML = ""
+    // The page writes its own state back into the query string -- the cushion
+    // model, the constants -- so a test that touches either leaves a url that
+    // readState() then reads at the start of the next one. Without this a
+    // preset applied in one test silently becomes the default in the next.
+    window.history.replaceState(null, "", "/")
+    localStorage.clear()
+  })
+
+  it("opens each button's own dialog, and no other", () => {
+    load()
+    const constants = byId("constants-modal")
+    const actions = byId("action-modal")
+
+    // Two dialogs, both shipped closed. There is no section to be left on.
+    expect(constants.hidden).toBe(true)
+    expect(actions.hidden).toBe(true)
+
+    click("open-constants")
+    expect(constants.hidden).toBe(false)
+    expect(actions.hidden).toBe(true)
+    expect(byId("open-constants").getAttribute("aria-expanded")).toBe("true")
+    expect(byId("action").getAttribute("aria-expanded")).toBe("false")
+
+    click("action")
+    expect(actions.hidden).toBe(false)
+    expect(byId("action").getAttribute("aria-expanded")).toBe("true")
+
+    // Escape closes, from the document rather than from the dialog.
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
+    expect(actions.hidden).toBe(true)
+    expect(constants.hidden).toBe(true)
+    expect(byId("open-constants").getAttribute("aria-expanded")).toBe("false")
+    expect(byId("action").getAttribute("aria-expanded")).toBe("false")
+  })
+
+  it("opens one dialog at a time: the second closes the first", () => {
+    load()
+    const constants = byId("constants-modal")
+    const actions = byId("action-modal")
+
+    // Two backdrops stacked over the same panel is the state to rule out: with
+    // both up, the one underneath is unreachable and pressing its button looks
+    // like it did nothing.
+    click("open-constants")
+    expect([constants.hidden, actions.hidden]).toEqual([false, true])
+
+    click("action")
+    expect([constants.hidden, actions.hidden]).toEqual([true, false])
+    expect(byId("open-constants").getAttribute("aria-expanded")).toBe("false")
+    expect(byId("action").getAttribute("aria-expanded")).toBe("true")
+
+    // And back the other way, so the rule is not just about document order.
+    click("open-constants")
+    expect([constants.hidden, actions.hidden]).toEqual([false, true])
+  })
+
+  it("puts a dialog away when its own button is pressed again", () => {
+    load()
+    const actions = byId("action-modal")
+
+    click("action")
+    expect(actions.hidden).toBe(false)
+    click("action")
+    expect(actions.hidden).toBe(true)
+    expect(byId("action").getAttribute("aria-expanded")).toBe("false")
+
+    click("open-constants")
+    click("open-constants")
+    expect(byId("constants-modal").hidden).toBe(true)
+  })
+
+  it("holds the launch links in the actions dialog, not the constants one", () => {
+    load()
+    // The two dialogs are separate elements rather than two sections of one, so
+    // each holds only its own: a button landing in the wrong one is a link the
+    // user has to go looking for.
+    ;["play", "solution", "svg"].forEach((id) => {
+      expect(byId("action-modal").querySelector(`#${id}`)).not.toBeNull()
+      expect(byId("constants-modal").querySelector(`#${id}`)).toBeNull()
+    })
+    // And the sliders and the model toggle stay in the constants one.
+    expect(
+      byId("constants-modal").querySelector(".model-toggle")
+    ).not.toBeNull()
+    expect(byId("action-modal").querySelector(".model-toggle")).toBeNull()
+  })
+
+  it("keeps the panel's id for the bundle and off the button", () => {
+    load()
+    // The diagram bundle's Sliders finds the constants panel by this id, so a
+    // button borrowing it would be found first in document order and leave the
+    // sliders without a panel.
+    const panels = document.querySelectorAll("#constants")
+    expect(panels).toHaveLength(1)
+    expect(byId("constants").tagName).toBe("DIV")
+  })
+
+  it("carries the ids the diagram bundle binds by itself", () => {
+    load()
+    // DiagramContainer.onAssetsReady looks two of these up with getButton and
+    // wires them: "replay" for the re-run and "cleartraces" for the trails a
+    // replay leaves behind. A renamed or missing one is a button that renders,
+    // sits there and silently does nothing, so the ids are pinned here.
+    expect(byId("replay")).not.toBeNull()
+    expect(byId("cleartraces")).not.toBeNull()
+    expect(byId("cleartraces").textContent).toBe("clear traces")
+    // The other three open the dialogs, which the page's own script binds.
+    expect(byId("open-constants")).not.toBeNull()
+    expect(byId("action")).not.toBeNull()
+    expect(byId("open-presets")).not.toBeNull()
+  })
+
+  describe("presets", () => {
+    // The editor's own storage key, not three.html's, so the two lists stay
+    // separate: a preset here carries elevation and the cushion model, which
+    // three.html's shape has nowhere to put.
+    const KEY = "svgeditor_presets"
+
+    const stored = () => JSON.parse(localStorage.getItem(KEY)!)
+
+    // A preset applied back has to move the whole page, not just the replay, so
+    // the assertions read the state the replay is actually fed.
+    const live = () => {
+      const params = new URLSearchParams(
+        document.querySelector(".topview")!.getAttribute("data-state")!.slice(1)
+      )
+      return {
+        params,
+        state: JSON.parse(params.get("state")!),
+      }
+    }
+
+    beforeEach(() => {
+      localStorage.clear()
+    })
+
+    // An explicitly emptied list, as distinct from never having saved one:
+    // without this the built-in library is the starting point and every count
+    // below is out by 36.
+    const startEmpty = () => localStorage.setItem(KEY, "[]")
+
+    it("starts new users with three.html's own library", () => {
+      load()
+      // A first visit has to have something to load, or the library is only
+      // ever what the user already had in three.html. The count is pinned
+      // rather than read from the module, which is function-scoped inside the
+      // page script: regenerating the library should show up in review.
+      const names = [...document.querySelectorAll(".preset-name")].map(
+        (n) => n.textContent
+      )
+      expect(names).toHaveLength(36)
+      expect(names).toContain("0->3 plain")
+      expect(names).toContain("crosstable-vid")
+      // Sorted for display, and nothing claims to be an empty list.
+      expect([...names].sort((a, b) => a.localeCompare(b))).toEqual(names)
+      expect(byId("presets-empty").hidden).toBe(true)
+    })
+
+    it("gives up the library only once the user has deleted it", () => {
+      // Saving an empty list is not the same as never having saved one: the
+      // built-ins come back on every load until the user removes them.
+      localStorage.setItem(KEY, "[]")
+      load()
+      expect(document.querySelectorAll(".preset-row")).toHaveLength(0)
+      expect(byId("presets-empty").hidden).toBe(false)
+    })
+
+    it("saves the shot it is on, and nothing about the constants", () => {
+      startEmpty()
+      load()
+      window.prompt = () => "my shot"
+      click("add-preset")
+
+      expect(stored()).toHaveLength(1)
+      const [preset] = stored()
+      expect(preset.name).toBe("my shot")
+      expect(preset.state.balls).toEqual([
+        { x: -1.305026, y: -0.634005 },
+        { x: -1.434758, y: 0.601475 },
+        { x: -1.310215, y: 0.685593 },
+      ])
+      expect(preset.state.shot.angle).toBeCloseTo(0.63687, 5)
+      // Applying a preset must never move a slider the user did not set.
+      expect(preset.state).not.toHaveProperty("constants")
+      expect(JSON.stringify(preset)).not.toContain("μs")
+    })
+
+    it("applies a saved shot back to the whole page", () => {
+      // A preset that differs from the default in every field, including the
+      // two three.html's own preset shape cannot carry. Seeded before the
+      // editor runs, so this also covers the list being read on load.
+      localStorage.setItem(
+        KEY,
+        JSON.stringify([
+          {
+            name: "loaded",
+            state: {
+              ruleType: "threecushion",
+              cushionModel: "stronge",
+              practice: false,
+              balls: [
+                { x: 0.5, y: 0.2 },
+                { x: -0.9, y: -0.4 },
+                { x: 1.1, y: 0.6 },
+              ],
+              shot: {
+                angle: 1.2,
+                power: 3.5,
+                offset: { x: -0.3, y: 0.25 },
+                elevation: 0.5,
+                i: 0,
+              },
+            },
+          },
+        ])
+      )
+      load()
+
+      click("open-presets")
+      expect(byId("presets-empty").hidden).toBe(true)
+      document.querySelector<HTMLElement>(".preset-name")!.click()
+
+      const { params, state } = live()
+      expect(state.init).toEqual([0.5, 0.2, -0.9, -0.4, 1.1, 0.6])
+      expect(state.shots[0].angle).toBeCloseTo(1.2)
+      expect(state.shots[0].power).toBeCloseTo(3.5)
+      expect(state.shots[0].offset.x).toBeCloseTo(-0.3)
+      // The elevation and the model came back with it.
+      expect(state.shots[0].elevation).toBeCloseTo(0.5)
+      expect(params.get("cushionModel")).toBe("stronge")
+      // The toggle follows the model even though the pointer never touched it.
+      expect(
+        (
+          document.querySelector(
+            'input[name="cushionModel"][value="stronge"]'
+          ) as HTMLInputElement
+        ).checked
+      ).toBe(true)
+      // And the dialog put itself away.
+      expect(byId("presets-modal").hidden).toBe(true)
+    })
+
+    it("deletes a preset behind a confirmation", () => {
+      startEmpty()
+      load()
+      window.prompt = () => "doomed"
+      click("add-preset")
+      expect(stored()).toHaveLength(1)
+
+      let asked = ""
+      window.confirm = (message?: string) => {
+        asked = message ?? ""
+        return false
+      }
+      document.querySelector<HTMLElement>(".preset-delete")!.click()
+      // Declined, so nothing is lost.
+      expect(asked).toContain("doomed")
+      expect(stored()).toHaveLength(1)
+
+      window.confirm = () => true
+      document.querySelector<HTMLElement>(".preset-delete")!.click()
+      expect(stored()).toHaveLength(0)
+      // The empty message comes back with the empty list.
+      expect(byId("presets-empty").hidden).toBe(false)
+    })
+
+    it("resets a saved list back to the built-in one", () => {
+      // The way back from a list the user has made worse, without opening dev
+      // tools and without deleting 36 rows one at a time.
+      load()
+      window.prompt = () => "mine"
+      click("open-presets")
+      click("add-preset")
+      click("add-preset")
+      expect(stored()).toHaveLength(38)
+
+      // Declined, so nothing is lost.
+      let asked = ""
+      window.confirm = (message?: string) => {
+        asked = message ?? ""
+        return false
+      }
+      click("reset-presets")
+      expect(asked).toContain("2 saved presets")
+      expect(stored()).toHaveLength(38)
+
+      window.confirm = () => true
+      click("reset-presets")
+      // Back to the library, in the list and in storage: an emptied key is
+      // what the built-ins are the fallback for.
+      expect(document.querySelectorAll(".preset-row")).toHaveLength(36)
+      expect(localStorage.getItem(KEY)).toBeNull()
+      expect(byId("presets-empty").hidden).toBe(true)
+    })
+
+    it("does not count the built-in library against the user on a reset", () => {
+      // Asking someone to confirm throwing away 36 presets they never saved
+      // would be a lie, so the count is only what they actually added.
+      load()
+      let asked = ""
+      window.confirm = (message?: string) => {
+        asked = message ?? ""
+        return true
+      }
+      click("open-presets")
+      click("reset-presets")
+      expect(asked).toContain("restores the built-in set")
+      expect(asked).not.toContain("36")
+    })
+
+    it("copies the list as a ps parameter and says so", async () => {
+      jest.useFakeTimers()
+      try {
+        startEmpty()
+        load()
+        window.prompt = () => "shared"
+        click("add-preset")
+
+        // The share sheet where the platform has one, the clipboard where it
+        // does not -- jsdom has neither share nor clipboard by default, so the
+        // clipboard is the branch under test.
+        const writeText = jest.fn().mockResolvedValue(undefined)
+        Object.defineProperty(navigator, "clipboard", {
+          value: { writeText },
+          configurable: true,
+        })
+        const reported = jest
+          .spyOn(console, "error")
+          .mockImplementation(() => {})
+
+        click("open-presets")
+        click("share-presets")
+        await Promise.resolve()
+
+        expect(writeText).toHaveBeenCalledTimes(1)
+        const href = writeText.mock.calls[0][0] as string
+        // Opening this url would run the import, so it is handed over and not
+        // navigated to: a new tab is exactly what this must not do.
+        expect(opened).toHaveLength(0)
+        // What is shared is the list, and nothing else the url was carrying.
+        const url = new URL(href)
+        expect(url.searchParams.get("ps")).toBe(JSON.stringify(stored()))
+        expect(url.searchParams.get("state")).toBeNull()
+        expect(url.searchParams.get("mu")).toBeNull()
+
+        // Confirmed on the button, then put back so it does not lie later.
+        await Promise.resolve()
+        expect(byId("share-presets").textContent).toBe("copied!")
+        jest.advanceTimersByTime(2000)
+        expect(byId("share-presets").textContent).toBe("share presets")
+        reported.mockRestore()
+      } finally {
+        jest.useRealTimers()
+      }
+    })
+  })
+
+  it("opens the live game on this shot with the constants it is holding", () => {
+    load()
+
+    // A constant the editor exposes, moved off its default. The link has to
+    // carry what is on screen rather than what is in the url.
+    const mu = byId("mu") as HTMLInputElement
+    mu.value = "0.006"
+
+    click("play")
+    const url = new URL(opened[0])
+    expect(url.pathname).toMatch(/index\.html$/)
+    expect(url.searchParams.get("ruletype")).toBe("threecushion")
+    expect(url.searchParams.get("practice")).toBe("true")
+    expect(url.searchParams.get("cushionModel")).toBe("mathavan")
+    expect(url.searchParams.get("mu")).toBe("0.006")
+    expect(url.searchParams.get("μs")).not.toBeNull()
+
+    // The balls travel as the flat [x, y, ...] list the live game reads.
+    expect(JSON.parse(url.searchParams.get("init")!)).toEqual([
+      -1.305026, -0.634005, -1.434758, 0.601475, -1.310215, 0.685593,
+    ])
+
+    const shot = JSON.parse(url.searchParams.get("initShot")!)
+    expect(shot.cueBallId).toBe(0)
+    expect(shot.angle).toBeCloseTo(0.63687, 5)
+    expect(shot.power).toBeCloseTo(2.62, 2)
+    expect(shot.elevation).toBe(0)
+  })
+
+  it("carries the elevation the editor is showing, unlike three.html's play", () => {
+    load()
+    const widget = stubWidget(
+      document.querySelector(".elevation-widget") as unknown as SVGSVGElement
+    )
+    // The bearing is measured from the pivot at (12, 88) up to the pointer, so
+    // this is atan2(28.6, 39.4) = 36 degrees.
+    press(widget, 102.8, 118.8)
+
+    click("play")
+    const shot = JSON.parse(params(opened[0]).get("initShot")!)
+    expect(shot.elevation).toBeCloseTo((36 * Math.PI) / 180, 2)
+  })
+
+  it("sends the layout and the constants, and no shot, to the fitter", () => {
+    load()
+    const mu = byId("mu") as HTMLInputElement
+    mu.value = "0.006"
+
+    click("solution")
+    const url = new URL(opened[0])
+    expect(url.pathname).toMatch(/fit\/solution\.html$/)
+    expect(url.searchParams.get("init")).not.toBeNull()
+    expect(url.searchParams.get("mu")).toBe("0.006")
+    // The fit pages solve for an aim rather than replaying one, so there is
+    // deliberately no initShot here, as in three.html.
+    expect(url.searchParams.get("initShot")).toBeNull()
+  })
+
+  it("draws the shot as a diagram", () => {
+    load()
+    click("svg")
+    const url = new URL(opened[0])
+    expect(url.pathname).toMatch(/export\.html$/)
+    expect(url.searchParams.get("ruletype")).toBe("threecushion")
+    expect(url.searchParams.get("cushionModel")).toBe("mathavan")
+    expect(JSON.parse(url.searchParams.get("init")!)).toHaveLength(6)
+    expect(JSON.parse(url.searchParams.get("initShot")!).angle).toBeCloseTo(
+      0.63687,
+      5
+    )
+  })
+
+  it("carries the cushion model the toggle is on", () => {
+    load()
+    const stronge = document.querySelector(
+      'input[name="cushionModel"][value="stronge"]'
+    ) as HTMLInputElement
+    stronge.checked = true
+    stronge.dispatchEvent(new Event("change", { bubbles: true }))
+
+    click("play")
+    expect(params(opened[0]).get("cushionModel")).toBe("stronge")
   })
 })

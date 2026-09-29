@@ -198,3 +198,177 @@ export function readConstants(params = new URLSearchParams()) {
   });
   return values;
 }
+
+// --- presets ---
+
+/**
+ * Where the editor keeps its saved shots.
+ *
+ * Deliberately not three.html's `three_cushion_presets`. A preset here is the
+ * editor's own state, so it carries the elevation and the cushion model, which
+ * that shape has nowhere to put -- so the two lists stay separate rather than
+ * trading presets that quietly lose half of themselves.
+ */
+export const PRESETS_KEY = "svgeditor_presets";
+
+/** Names are shown in a narrow list, and capped as three.html caps them. */
+export const MAX_PRESET_NAME = 16;
+
+/**
+ * The built-in library, so a first visit has something to load.
+ *
+ * Converted from three.html's own `DEFAULT_PRESETS` -- the same 36 shots, which
+ * are a three-cushion research set worth having. Every field maps across one for
+ * one except two: three.html's shape has no elevation and no cushion model, so
+ * both come out here at the editor's defaults. That is the whole of what the
+ * separate list gives up, and the whole of what these gain over three.html's
+ * own, where an elevation is simply lost.
+ *
+ * Held as [name, positions, angle, power, offsetX, offsetY] and expanded by
+ * `toPreset` below, because 36 full preset objects would be a wall of
+ * boilerplate nobody ever reads. Regenerate with the conversion script rather
+ * than editing these by hand.
+ */
+const PRESET_LIBRARY = [
+  ["0->3 plain", [[-1.43725,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.97278, 2.1484, -0.016348, 0.026548],
+  ["0->3 max", [[-1.43725,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.97278, 2.1484, -0.298654, 0.028383],
+  ["0->4 plain", [[-1.398795,-0.711841],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.834095, 2.1484, -0.032914, 0.068287],
+  ["0->4 max", [[-1.398795,-0.711841],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.834095, 2.1484, -0.299159, 0.022451],
+  ["0->5 plain", [[-1.379568,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.727616, 2.6724, -0.032914, 0.068287],
+  ["0->5 max", [[-1.379568,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.727616, 2.6724, -0.297669, 0.037322],
+  ["0->6 plain", [[-1.360341,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.640387, 2.6724, -0.032914, 0.068287],
+  ["0->6 max", [[-1.360341,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.640387, 2.6724, -0.299432, 0.018458],
+  ["0->7 plain", [[-1.350727,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.558663, 2.6724, -0.032914, 0.068287],
+  ["0->7 max", [[-1.350727,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.558663, 2.6724, -0.298575, 0.029203],
+  ["0->8 plain", [[-1.326693,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.501812, 2.6724, -0.010489, 0.080802],
+  ["0->8 max", [[-1.326693,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.501812, 2.6724, -0.298776, 0.027072],
+  ["holdup", [[-0.372531,-0.371469],[0.747466,-0.395106],[0.704205,-0.574747]], 0.004992, 3.93, -0.240914, -0.178774],
+  ["screw", [[-0.771501,-0.376197],[0.742659,0.49837],[0.704205,-0.574747]], 0.524251, 5.24, -0.031442, -0.298348],
+  ["doubleRail", [[0.603261,0.053996],[1.415619,0.110724],[1.127208,-0.139827]], 0.093624, 3.8776, -0.121388, 0.274344],
+  ["break", [[-0.756,-0.189],[-0.756,0],[0.756,0]], 0.147099, 3.7204, -0.252932, 0.161324],
+  ["doubleRail2", [[-1.160856,0.181635],[-1.347367,0.611996],[-1.412751,0.687701]], 0.250141, 2.096, 0.246853, 0.170481],
+  ["outside", [[-0.773558,0.555247],[-1.313599,-0.101375],[1.364066,0.481371]], 3.970485, 2.2532, 0.257684, 0.153619],
+  ["2->6 max", [[-0.634505,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.848993, 2.6724, -0.297669, 0.037322],
+  ["4->7 max", [[0.07691,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 0.984702, 2.6724, -0.297669, 0.037322],
+  ["6->8 max", [[0.797938,-0.723348],[-1.479545,-0.338378],[-1.479545,-0.437653]], 1.142182, 2.6724, -0.297669, 0.037322],
+  ["S->S max", [[-0.781114,-0.631476],[-1.478109,-0.035825],[-1.479545,-0.149282]], 0.002101, 3.2488, 0.288315, -0.082912],
+  ["crosstable", [[0.761887,-0.560565],[1.112787,0.068178],[1.357937,0.465278]], 1.127747, 3.2488, -0.163669, 0.251421],
+  ["crosstable2", [[0.761887,-0.560565],[1.112787,0.068178],[1.439654,-0.645658]], 1.137206, 5.24, -0.163669, 0.251421],
+  ["L->L max", [[-0.00721,-0.380924],[1.479545,0.17218],[1.479545,-0.158737]], 1.570796, 2.096, -0.299665, -0.014179],
+  ["eightC", [[-1.132015,-0.00746],[-1.300255,0.597645],[-1.300255,0.493643]], 0.326251, 5.24, -0.284128, 0.096287],
+  ["screw2", [[-1.136822,-0.390379],[-0.829183,0.659101],[-0.983002,-0.002733]], 1.188073, 5.24, -0.102683, -0.28188],
+  ["fiveC", [[-0.444634,-0.24383],[-0.829183,0.659101],[-1.18489,-0.55111]], 2.029754, 5.24, 0.257474, -0.153972],
+  ["doubleRail3", [[-0.910899,0.252546],[-1.420426,0.366003],[-1.372358,-0.55111]], 2.858948, 5.24, -0.110817, 0.278782],
+  ["cornermax", [[-0.761887,0.370731],[-1.479545,0.588191],[-1.479545,0.723348]], 5.835231, 3.3012, -0.299863, -0.009066],
+  ["reverse", [[-0.769,-0.192],[0.769,0],[1.07,0]], 5.495572, 3, -0.201901, 0.221892],
+  ["i02", [[-0.90532,-0.644583],[1.091042,0.485176],[1.379607,0.384451]], 0.003509, 3.3012, 0.299737, -0.012553],
+  ["i03", [[-0.992616,0.663829],[0.795535,-0.215466],[0.441922,-0.442376]], -0.015876, 3.3012, -0.299715, 0.013084],
+  ["doubleRail3->1", [[-1.479545,-0.338378],[-1.434758,0.601475],[-1.310215,0.685593]], 0.360142, 2.62, 0.284801, -0.094279],
+  ["kshot", [[-1.218538,-0.555837],[1.479545,0.723348],[1.132015,0.723348]], 0.501502, 5.24, 0.118015, -0.485873],
+  ["crosstable-vid", [[0.362918,-0.012188],[-1.343517,0.375458],[-0.463862,0.644919]], 2.429575, 5.24, 0.013723, 0.449791],
+];
+
+/** Expand one library entry into a preset, supplying the two fields it lacks. */
+function toPreset([name, positions, angle, power, offsetX, offsetY]) {
+  return {
+    name,
+    state: {
+      ruleType: DEFAULT_RULETYPE,
+      cushionModel: DEFAULT_CUSHION_MODEL,
+      practice: false,
+      balls: positions.map(([x, y]) => ({ x, y })),
+      shot: {
+        angle,
+        power,
+        offset: { x: offsetX, y: offsetY },
+        elevation: 0,
+        i: 0,
+      },
+    },
+  };
+}
+
+export const DEFAULT_PRESETS = PRESET_LIBRARY.map(toPreset);
+
+/**
+ * A preset is a shot and nothing else: the balls, the aim, the spin, the power,
+ * the elevation and the cushion model. Deliberately NOT the physics constants,
+ * so applying a preset can never move a constant the user did not go and change
+ * themselves -- the sliders stay where the user left them.
+ */
+export function capturePreset(state, name) {
+  const shot = state.shot ?? {};
+  const offset = shot.offset ?? {};
+  return {
+    name: String(name).slice(0, MAX_PRESET_NAME),
+    state: {
+      ruleType: state.ruleType ?? DEFAULT_RULETYPE,
+      cushionModel: state.cushionModel ?? DEFAULT_CUSHION_MODEL,
+      practice: state.practice ?? false,
+      balls: (state.balls ?? []).map(({ x, y }) => ({ x, y })),
+      shot: {
+        angle: shot.angle ?? 0,
+        power: shot.power ?? 0,
+        offset: { x: offset.x ?? 0, y: offset.y ?? 0 },
+        elevation: shot.elevation ?? 0,
+        i: shot.i ?? 0,
+      },
+    },
+  };
+}
+
+/**
+ * The saved list, newest storage winning. A first visit falls back to the
+ * built-in library below, so there is something to load before the user has
+ * saved anything of their own.
+ *
+ * Anything unreadable in storage is treated as no list at all rather than
+ * allowed to throw on load -- a corrupt entry should cost the user their
+ * presets, not the page.
+ */
+export function loadPresets() {
+  let saved = null;
+  try {
+    saved = localStorage.getItem(PRESETS_KEY);
+  } catch {
+    // Private browsing, or storage disabled. Presets are a convenience, so an
+    // editor that cannot fall back to nothing, and an editor that cannot reach
+    // the built-ins are both still working editors.
+    return DEFAULT_PRESETS.slice();
+  }
+  if (!saved) return DEFAULT_PRESETS.slice();
+  try {
+    const parsed = JSON.parse(saved);
+    return Array.isArray(parsed) ? parsed : DEFAULT_PRESETS.slice();
+  } catch (e) {
+    console.error("Failed to load presets", e);
+    return DEFAULT_PRESETS.slice();
+  }
+}
+
+export function savePresets(presets) {
+  try {
+    localStorage.setItem(PRESETS_KEY, JSON.stringify(presets));
+    return true;
+  } catch (e) {
+    console.error("Failed to save presets", e);
+    return false;
+  }
+}
+
+/**
+ * Forget the saved list, so the built-in library is what loads next.
+ *
+ * Removing the key is the whole of it: `loadPresets` already falls back to the
+ * library when there is nothing stored, so there is nothing to write back and
+ * nothing to reload. A page reload would only throw away the shot on the table.
+ */
+export function clearPresets() {
+  try {
+    localStorage.removeItem(PRESETS_KEY);
+    return true;
+  } catch (e) {
+    console.error("Failed to clear presets", e);
+    return false;
+  }
+}

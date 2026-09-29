@@ -35,10 +35,21 @@
         --gap: 2px;
 
         /* The spin and elevation widgets' box. --side-h is the length of the
-           power slider beside them: the two widgets and the action row under
+           power slider beside them: the two widgets and the button column under
            them, stacked with the row gap between. */
         --widget-size: 6.3rem;
-        --action-height: 1.5rem;
+
+        /* The panel's buttons stack down the column, so the column is as tall
+           as the four of them plus the gaps between. The count is a variable
+           because --action-height is its sum, so a fifth button is a change
+           here and nowhere else. */
+        --action-button-h: 1.25rem;
+        --action-gap: 2px;
+        --action-count: 5;
+        --action-height: calc(
+          var(--action-count) * var(--action-button-h) +
+            (var(--action-count) - 1) * var(--action-gap)
+        );
         --side-h: calc(
           2 * var(--widget-size) + var(--action-height) + 2 * var(--gap)
         );
@@ -205,8 +216,8 @@
         user-select: none;
       }
 
-      /* The input panel is the positioning context for the dialog laid over it,
-         so the dialog stays off the replay panel above. */
+      /* The input panel is the positioning context for the dialogs laid over
+         it, so they stay off the replay panel above. */
       .panel-input {
         position: relative;
       }
@@ -229,16 +240,33 @@
         display: block;
       }
 
-      /* The action panel: the last row of the controls column, so its buttons
-         sit centred below the elevation widget. */
+      /* The action panel: the last part of the controls column, so its buttons
+         stack down it beneath the elevation widget, each one below the last.
+
+         Above the backdrop, not under it. The backdrop covers the whole input
+         panel to make a click outside the dialog close it, and the buttons sit
+         inside that panel -- so without this the open dialog's backdrop
+         swallows the click on the other button and the pair look mutually
+         exclusive without being usable as such. They do not overlap the dialog
+         itself, which is centred over the table. */
       .action-panel {
         box-sizing: border-box;
         display: flex;
         flex: none;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--action-gap);
         height: var(--action-height);
+        position: relative;
+        z-index: 11;
+      }
+
+      /* A fixed height, so the column above is the sum of the four buttons and
+         its foot lands level with the foot of the power slider beside it. */
+      .action-panel .action-button {
+        box-sizing: border-box;
+        height: var(--action-button-h);
+        padding: 0 0.4rem;
       }
 
       /* A plain button, as the diagram pages use. */
@@ -282,7 +310,12 @@
         display: flex;
         flex-direction: column;
         gap: 0.4rem;
-        width: min(20rem, 80%);
+        width: min(24rem, 80%);
+
+        /* Never taller than the panel it is laid over, so a short window
+           shrinks the dialog rather than letting it spill out of the input
+           panel and over the replay above. */
+        max-height: calc(100% - 0.6rem);
         padding: 0.6rem 0.7rem;
         background: #fff;
         border: var(--bw) solid #ddd;
@@ -298,6 +331,123 @@
         color: #666;
         letter-spacing: 0.06em;
         text-transform: uppercase;
+      }
+
+      /* The dialog's body. The constants one is tall, and the presets one holds
+         a wrapping library, so both get the scroll; the launch links are three
+         buttons and never need it. */
+      .modal-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+
+        /* Tall enough for the whole 36-shot library at the dialog's width, and
+           `flex` so it gives the height back when the window is short. */
+        max-height: 22rem;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+      }
+
+      /* The launch links, stacked to the dialog's width rather than left at
+         their content width, so the three read as one column of choices. */
+      .action-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .action-list .action-button {
+        text-align: center;
+      }
+
+      /* The saved shots. Wrapping, and each entry only as wide as its own name,
+         as three.html lays its list out: a library of 36 is then a few rows of
+         names rather than 36 rows to scroll past. */
+      .presets-list {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        align-content: flex-start;
+        gap: 3px;
+
+        /* Its own wrapped height, not a share of the panel's: a flex item
+           shrinks by default, which squashed the box and let the chips spill
+           out below it. The panel is the scroll container, so the list keeps
+           its natural height and the panel scrolls when it has to. */
+        flex: none;
+      }
+
+      .preset-row {
+        display: inline-flex;
+        align-items: stretch;
+        gap: 2px;
+      }
+
+      .preset-name {
+        font: inherit;
+        font-size: 0.7rem;
+        line-height: 1.2;
+        padding: 0.2rem 0.4rem;
+        background: #fff;
+        color: #111;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+
+        /* Sized by its name, and never wrapping one: names are capped at 16
+           characters, which fits the dialog on any window worth using. */
+        white-space: nowrap;
+      }
+
+      .preset-name:hover {
+        background: #f5f5f5;
+      }
+
+      .preset-name:focus-visible {
+        outline: 2px solid #1d5886;
+        outline-offset: 1px;
+      }
+
+      .preset-delete {
+        flex: none;
+        font: inherit;
+        font-size: 0.7rem;
+        line-height: 1.2;
+        padding: 0 0.4rem;
+        background: #fff;
+        color: #666;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .preset-delete:hover {
+        background: #f5f5f5;
+        color: #111;
+      }
+
+      .preset-delete:focus-visible {
+        outline: 2px solid #1d5886;
+        outline-offset: 1px;
+      }
+
+      /* Only while the list is empty; renderPresets owns both of them. */
+      .presets-empty {
+        margin: 0;
+        color: #666;
+        font-size: 0.65rem;
+      }
+
+      /* The one control in the dialog that cannot be undone, so it does not sit
+         in the same ink as the two beside it. */
+      .action-button.destructive {
+        color: #8a1f1f;
+        border-color: #e0bcbc;
+      }
+
+      .action-button.destructive:hover {
+        background: #fdf3f3;
       }
 
       /* Which cushion the shot is played on: a pair of radios drawn as one
@@ -344,6 +494,7 @@
         outline: 2px solid #1d5886;
         outline-offset: 1px;
       }
+
       /* The constant groups, as three.html writes them. The diagram bundle's
          Sliders finds each input by id, seeds it from the launch parameters and
          drives the physics setters, so these need markup and nothing else --
@@ -701,9 +852,22 @@
                 aria-hidden="true"
               />
             </svg>
-            <!-- Centred under the elevation widget, as the bottom row of the
-                 controls column. -->
+            <!-- Under the elevation widget, down the bottom of the controls
+                 column: one button above the next. -->
             <div class="action-panel">
+              <!-- Named open-constants rather than constants: the constants
+                   panel below is id="constants", which the diagram bundle's
+                   Sliders looks the panel up by, so the id is not free. -->
+              <button
+                id="open-constants"
+                class="action-button"
+                type="button"
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls="constants-modal"
+              >
+                constants
+              </button>
               <button
                 id="action"
                 class="action-button"
@@ -714,10 +878,25 @@
               >
                 action
               </button>
+              <button
+                id="open-presets"
+                class="action-button"
+                type="button"
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls="presets-modal"
+              >
+                presets
+              </button>
               <!-- The diagram bundle relabels this and binds the re-run once
                    its assets are in, so it is the editor's only way to replay. -->
               <button id="replay" class="action-button" type="button">
                 replay
+              </button>
+              <!-- Also bound by the bundle, which looks the button up by this id
+                   and clears the ghost trails the replay leaves behind. -->
+              <button id="cleartraces" class="action-button" type="button">
+                clear traces
               </button>
             </div>
           </div>
@@ -726,123 +905,198 @@
         <!-- Inside the input panel rather than over the window: absolute
              against this panel, so opening the dialog leaves the replay above
              it untouched. -->
+        <!-- Two dialogs, one per button, rather than one dialog with two
+             sections in it: neither has to remember which section it was left
+             on, and each title can name what it actually holds. Both ship
+             hidden and share the open/close wiring in the script below. -->
+        <div class="modal-backdrop" id="constants-modal" hidden>
+          <div
+            class="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Constants"
+          >
+            <h2 class="modal-title">constants</h2>
+            <div class="modal-panel">
+              <!-- Which cushion the shot is played on. It rides in the state, so
+                   the replay, a share link and the launch links all follow it;
+                   the constants below are left for the sliders to set. -->
+              <fieldset class="model-toggle">
+                <legend class="visually-hidden">Cushion model</legend>
+                <label>
+                  <input
+                    type="radio"
+                    name="cushionModel"
+                    value="mathavan"
+                    checked
+                  />
+                  <span>Mathavan</span>
+                </label>
+                <label>
+                  <input type="radio" name="cushionModel" value="stronge" />
+                  <span>Stronge</span>
+                </label>
+              </fieldset>
+              <!-- The physics constants, grouped as three.html groups them. The
+                 empty labels are filled in by the bundle with each constant's
+                 name and current value. -->
+              <div id="constants" class="constants">
+                <div class="constant-group">
+                  <input
+                    type="checkbox"
+                    id="mathavan-toggle"
+                    class="collapse-toggle"
+                  />
+                  <label for="mathavan-toggle" class="collapse-label"
+                    >Mathavan</label
+                  >
+                  <div class="collapse-content">
+                    <input id="μs" type="range" aria-label="Mathavan μs" />
+                    <div class="constant-row">
+                      Mathavan <label for="μs"></label>
+                    </div>
+                    <input id="μw" type="range" aria-label="Mathavan μw" />
+                    <div class="constant-row">
+                      Mathavan <label for="μw"></label>
+                    </div>
+                    <input
+                      id="ee"
+                      type="range"
+                      aria-label="Cushion restitution"
+                    />
+                    <div class="constant-row">
+                      Cushion restitution <label for="ee"></label>
+                    </div>
+                  </div>
+                </div>
+                <div class="constant-group">
+                  <input
+                    type="checkbox"
+                    id="han-toggle"
+                    class="collapse-toggle"
+                  />
+                  <label for="han-toggle" class="collapse-label">Han</label>
+                  <div class="collapse-content">
+                    <input
+                      id="mu"
+                      type="range"
+                      aria-label="Han rolling friction"
+                    />
+                    <div class="constant-row">
+                      Han rolling friction <label for="mu"></label>
+                    </div>
+                    <input
+                      id="muS"
+                      type="range"
+                      aria-label="Han sliding friction"
+                    />
+                    <div class="constant-row">
+                      Han sliding friction <label for="muS"></label>
+                    </div>
+                  </div>
+                </div>
+                <div class="constant-group">
+                  <input
+                    type="checkbox"
+                    id="stronge-toggle"
+                    class="collapse-toggle"
+                  />
+                  <label for="stronge-toggle" class="collapse-label"
+                    >Stronge</label
+                  >
+                  <div class="collapse-content">
+                    <input
+                      id="stronge_omega_ratio"
+                      type="range"
+                      aria-label="Stronge ω ratio"
+                    />
+                    <div class="constant-row">
+                      Stronge ω ratio <label for="stronge_omega_ratio"></label>
+                    </div>
+                    <input
+                      id="stronge_e_n"
+                      type="range"
+                      aria-label="Stronge normal restitution"
+                    />
+                    <div class="constant-row">
+                      Stronge eₙ <label for="stronge_e_n"></label>
+                    </div>
+                    <input id="stronge_μ" type="range" aria-label="Stronge μ" />
+                    <div class="constant-row">
+                      Stronge μ <label for="stronge_μ"></label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="modal-backdrop" id="action-modal" hidden>
           <div
             class="modal"
             role="dialog"
             aria-modal="true"
-            aria-label="Action"
+            aria-label="Actions"
           >
-            <h2 class="modal-title">action</h2>
-            <!-- Which cushion the shot is played on. It rides in the state, so
-                 the replay, a share link and the launch links all follow it;
-                 the constants below are left for the sliders to set. -->
-            <fieldset class="model-toggle">
-              <legend class="visually-hidden">Cushion model</legend>
-              <label>
-                <input
-                  type="radio"
-                  name="cushionModel"
-                  value="mathavan"
-                  checked
-                />
-                <span>Mathavan</span>
-              </label>
-              <label>
-                <input type="radio" name="cushionModel" value="stronge" />
-                <span>Stronge</span>
-              </label>
-            </fieldset>
-            <!-- The physics constants, grouped as three.html groups them. The
-                 empty labels are filled in by the bundle with each constant's
-                 name and current value. -->
-            <div id="constants" class="constants">
-              <div class="constant-group">
-                <input
-                  type="checkbox"
-                  id="mathavan-toggle"
-                  class="collapse-toggle"
-                />
-                <label for="mathavan-toggle" class="collapse-label"
-                  >Mathavan</label
+            <h2 class="modal-title">actions</h2>
+            <!-- Where the shot goes next. Each one builds a link out of the
+                 table as it stands now: the ball positions, the aim, the spin,
+                 the power and the elevation, plus the constants the sliders
+                 are holding. Same three buttons and the same targets as
+                 three.html, so a shot set up here opens the same way there. -->
+            <div class="modal-panel">
+              <div class="action-list">
+                <button id="play" class="action-button" type="button">
+                  play in game
+                </button>
+                <button id="solution" class="action-button" type="button">
+                  computer search solutions
+                </button>
+                <button id="svg" class="action-button" type="button">
+                  svg diagram
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-backdrop" id="presets-modal" hidden>
+          <div
+            class="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Presets"
+          >
+            <h2 class="modal-title">presets</h2>
+            <div class="modal-panel">
+              <!-- What you can do to the list, above the list itself: the
+                   library is the thing being acted on, and it wraps, so
+                   burying the controls under it would mean scrolling to reach
+                   them. -->
+              <div class="action-list">
+                <button id="add-preset" class="action-button" type="button">
+                  save this shot
+                </button>
+                <button id="share-presets" class="action-button" type="button">
+                  share presets
+                </button>
+                <!-- Destructive, and marked as such: it throws away every
+                     preset the user has saved and cannot be undone. -->
+                <button
+                  id="reset-presets"
+                  class="action-button destructive"
+                  type="button"
                 >
-                <div class="collapse-content">
-                  <input id="μs" type="range" aria-label="Mathavan μs" />
-                  <div class="constant-row">
-                    Mathavan <label for="μs"></label>
-                  </div>
-                  <input id="μw" type="range" aria-label="Mathavan μw" />
-                  <div class="constant-row">
-                    Mathavan <label for="μw"></label>
-                  </div>
-                  <input
-                    id="ee"
-                    type="range"
-                    aria-label="Cushion restitution"
-                  />
-                  <div class="constant-row">
-                    Cushion restitution <label for="ee"></label>
-                  </div>
-                </div>
+                  reset presets
+                </button>
               </div>
-              <div class="constant-group">
-                <input
-                  type="checkbox"
-                  id="han-toggle"
-                  class="collapse-toggle"
-                />
-                <label for="han-toggle" class="collapse-label">Han</label>
-                <div class="collapse-content">
-                  <input
-                    id="mu"
-                    type="range"
-                    aria-label="Han rolling friction"
-                  />
-                  <div class="constant-row">
-                    Han rolling friction <label for="mu"></label>
-                  </div>
-                  <input
-                    id="muS"
-                    type="range"
-                    aria-label="Han sliding friction"
-                  />
-                  <div class="constant-row">
-                    Han sliding friction <label for="muS"></label>
-                  </div>
-                </div>
-              </div>
-              <div class="constant-group">
-                <input
-                  type="checkbox"
-                  id="stronge-toggle"
-                  class="collapse-toggle"
-                />
-                <label for="stronge-toggle" class="collapse-label"
-                  >Stronge</label
-                >
-                <div class="collapse-content">
-                  <input
-                    id="stronge_omega_ratio"
-                    type="range"
-                    aria-label="Stronge ω ratio"
-                  />
-                  <div class="constant-row">
-                    Stronge ω ratio <label for="stronge_omega_ratio"></label>
-                  </div>
-                  <input
-                    id="stronge_e_n"
-                    type="range"
-                    aria-label="Stronge normal restitution"
-                  />
-                  <div class="constant-row">
-                    Stronge eₙ <label for="stronge_e_n"></label>
-                  </div>
-                  <input id="stronge_μ" type="range" aria-label="Stronge μ" />
-                  <div class="constant-row">
-                    Stronge μ <label for="stronge_μ"></label>
-                  </div>
-                </div>
-              </div>
+              <!-- The list itself, built by renderPresets. Wraps rather than
+                   stacking, and each entry is only as wide as its name, so a
+                   36-shot library is several rows of names instead of 36 rows
+                   to scroll through. -->
+              <div id="presets-list" class="presets-list"></div>
+              <p id="presets-empty" class="presets-empty">
+                No presets yet. Set up a shot and save it.
+              </p>
             </div>
           </div>
         </div>
@@ -879,6 +1133,11 @@
         DEFAULT_CUSHION_MODEL,
         readState,
         serializeState,
+        capturePreset,
+        loadPresets,
+        savePresets,
+        clearPresets,
+        DEFAULT_PRESETS,
       } from "./editor-state.js"
 
       // The shot to open on: the editor's own default, or the one a launch
@@ -1566,9 +1825,12 @@
         replayTimer = setTimeout(() => replayButton?.click(), REPLAY_DELAY)
       }
 
-      function syncDiagram() {
-        if (!topview) return
-        const next = serializeState({
+      // The shot as it stands, in the same shape serializeState and the presets
+      // both take. Kept in one place because a preset that captured a slightly
+      // different shape from the one the replay reads would come back subtly
+      // wrong, and only on the fields nothing else touches.
+      function currentState() {
+        return {
           ruleType: state.ruleType,
           cushionModel: state.cushionModel,
           practice: state.practice,
@@ -1580,7 +1842,12 @@
             elevation,
             i: CUE_BALL,
           },
-        })
+        }
+      }
+
+      function syncDiagram() {
+        if (!topview) return
+        const next = serializeState(currentState())
         topview.dataset.state = next
         topview.setAttribute("data-state", next)
         scheduleReplay()
@@ -1593,6 +1860,12 @@
 
       function setCushionModel(model) {
         state.cushionModel = model
+        // The toggle is the one place the model changes, so it is also the one
+        // place the radios have to follow: a preset applied from the list moves
+        // the model without the pointer ever touching them.
+        modelRadios.forEach((radio) => {
+          radio.checked = radio.value === model
+        })
         const url = new URL(window.location.href)
         if (model === DEFAULT_CUSHION_MODEL) {
           url.searchParams.delete("cushionModel")
@@ -1641,26 +1914,313 @@
         })
       )
 
-      // --- action: the floating panel's button and the dialog it opens ---
-      // The dialog is hidden in the markup, so it is only ever in the document
-      // when the button has been pressed. Escape and a click on the backdrop
-      // both close it; the button stays the only opener.
-      const actionButton = document.getElementById("action")
-      const actionModal = document.getElementById("action-modal")
+      // --- the two dialogs ---
+      // One per button rather than one with two sections: each is hidden in the
+      // markup, so neither has to remember which section it was left on, and
+      // its title can name what it holds. Only one is ever open, so opening
+      // either closes the other, and pressing a button that is already open
+      // puts its dialog away again -- a popover, rather than a dialog that can
+      // only be dismissed by clicking somewhere else.
+      const dialogs = [
+        {
+          button: document.getElementById("open-constants"),
+          modal: document.getElementById("constants-modal"),
+        },
+        {
+          button: document.getElementById("action"),
+          modal: document.getElementById("action-modal"),
+        },
+        {
+          button: document.getElementById("open-presets"),
+          modal: document.getElementById("presets-modal"),
+        },
+      ]
 
-      function setActionModal(open) {
-        if (!actionModal) return
-        actionModal.hidden = !open
-        actionButton?.setAttribute("aria-expanded", String(open))
+      // Every dialog is set on every call, not just the one named, so the two
+      // can never both be open. `open` only says whether the target stays up.
+      function setDialogOpen(target, open) {
+        dialogs.forEach((dialog) => {
+          if (!dialog.modal) return
+          const isOpen = dialog === target && open
+          dialog.modal.hidden = !isOpen
+          // Each button owns its own dialog and carries the state for it.
+          dialog.button?.setAttribute("aria-expanded", String(isOpen))
+        })
       }
 
-      actionButton?.addEventListener("click", () => setActionModal(true))
-      actionModal?.addEventListener("click", (event) => {
-        if (event.target === actionModal) setActionModal(false)
+      dialogs.forEach((dialog) => {
+        dialog.button?.addEventListener("click", () =>
+          setDialogOpen(dialog, dialog.modal?.hidden ?? true)
+        )
+        // A click on the backdrop closes it; a click inside it does not.
+        dialog.modal?.addEventListener("click", (event) => {
+          if (event.target === dialog.modal) setDialogOpen(dialog, false)
+        })
       })
+
+      // Escape closes, from the document rather than from the dialog, so it
+      // works whichever one is open.
       document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") setActionModal(false)
+        if (event.key !== "Escape") return
+        dialogs.forEach((dialog) => setDialogOpen(dialog, false))
       })
+
+      // --- the launch links ---
+      // The three buttons the actions dialog carries, each opening a page that
+      // takes this shot as its starting point. They are built the way three.html
+      // builds its own: the flat `init` list of ball positions, the `initShot`
+      // aim, and the constants. A shot has to survive the round trip through a
+      // URL, so everything is rounded to six decimals as three.html rounds it.
+      const round6 = (value) => +value.toFixed(6)
+
+      // The ball positions, as the flat [x, y, x, y, ...] list the live game
+      // and the exporter both read.
+      const initCoords = () =>
+        balls.flatMap(({ x, y }) => [round6(x), round6(y)])
+
+      // The aim. `cueBallId` is the cue ball's index in the balls array, which
+      // is the CUE_BALL constant the editor already aims with.
+      const initShot = () =>
+        JSON.stringify({
+          cueBallId: CUE_BALL,
+          angle: round6(aimAngle),
+          power: round6(power),
+          offset: { x: round6(spin.x), y: round6(spin.y), z: 0 },
+          // three.html's play link leaves the elevation out, so a shot set up
+          // with a raised cue launches flat there. Every target reads it --
+          // aim.ts, export.html and the fit pages all take it off the same
+          // `initShot` -- so the editor sends it rather than lose the setting.
+          elevation: round6(elevation),
+        })
+
+      // The constants the sliders are holding right now, read off the inputs
+      // rather than off the URL so a link always carries what is on screen.
+      // Which constants those are is whatever the constants panel exposes; the
+      // ones it does not show keep the physics defaults, as they do on load.
+      function addConstants(url) {
+        constantInputs.forEach((input) =>
+          url.searchParams.set(input.id, input.value)
+        )
+        return url
+      }
+
+      // Play the shot in the live game. `practice` puts it in the practice
+      // trainer, which is the mode three.html's own play button opens.
+      document.getElementById("play")?.addEventListener("click", () => {
+        const url = addConstants(new URL("../index.html", window.location.href))
+        url.searchParams.set("ruletype", state.ruleType)
+        url.searchParams.set("practice", "true")
+        url.searchParams.set("cushionModel", state.cushionModel)
+        url.searchParams.set("init", JSON.stringify(initCoords()))
+        url.searchParams.set("initShot", initShot())
+        window.open(url.toString(), "_blank")
+      })
+
+      // Fit a shot to this layout. The fit pages solve for the aim rather than
+      // replaying one, so this link carries the balls and the constants and
+      // deliberately no `initShot` -- the same as three.html's.
+      document.getElementById("solution")?.addEventListener("click", () => {
+        const url = addConstants(
+          new URL("../fit/solution.html", window.location.href)
+        )
+        url.searchParams.set("init", JSON.stringify(initCoords()))
+        window.open(url.toString(), "_blank")
+      })
+
+      // Draw the shot as a diagram, the way three.html's svg button does.
+      document.getElementById("svg")?.addEventListener("click", () => {
+        const url = addConstants(new URL("export.html", window.location.href))
+        url.searchParams.set("ruletype", state.ruleType)
+        url.searchParams.set("cushionModel", state.cushionModel)
+        url.searchParams.set("init", JSON.stringify(initCoords()))
+        url.searchParams.set("initShot", initShot())
+        window.open(url.toString(), "_blank")
+      })
+
+      // --- presets: shots worth keeping ---
+      // Its own dialog rather than a section of the actions one, because the two
+      // are opposite verbs: the action links take this shot and go somewhere
+      // with it, a preset brings a saved one back. And its own storage, under
+      // its own key, so the list here is never three.html's -- a preset is the
+      // editor state, which carries the elevation and the cushion model that
+      // three.html's shape has nowhere to put.
+      const presetsDialog = dialogs.find(
+        (dialog) => dialog.button?.id === "open-presets"
+      )
+      const presetsList = document.getElementById("presets-list")
+      const presetsEmpty = document.getElementById("presets-empty")
+      let presets = loadPresets()
+
+      // The built-in names, so the reset can say how many presets are actually
+      // the user's own rather than counting the library back at them.
+      const BUILT_IN_NAMES = new Set(DEFAULT_PRESETS.map((p) => p.name))
+
+      // A shared list replaces the saved one outright, as three.html's `ps` does.
+      // It is a link someone chose to open, so it is asked about rather than
+      // merged in silently -- and a bad payload costs the list nothing.
+      const sharedPresets = new URLSearchParams(window.location.search).get(
+        "ps"
+      )
+      if (sharedPresets) {
+        try {
+          const incoming = JSON.parse(sharedPresets)
+          if (
+            Array.isArray(incoming) &&
+            incoming.length &&
+            confirm(`Import ${incoming.length} shared presets?`)
+          ) {
+            presets = incoming
+            savePresets(presets)
+          }
+        } catch (e) {
+          console.error("Failed to import presets", e)
+        }
+      }
+
+      function renderPresets() {
+        if (!presetsList) return
+        presetsList.innerHTML = ""
+        if (presetsEmpty) presetsEmpty.hidden = presets.length > 0
+
+        // Sorted by name, as three.html sorts, so the list does not reshuffle
+        // every time one is added or removed.
+        const sorted = [...presets].sort((a, b) => a.name.localeCompare(b.name))
+
+        sorted.forEach((preset) => {
+          const row = document.createElement("div")
+          row.className = "preset-row"
+
+          const name = document.createElement("button")
+          name.className = "preset-name"
+          name.type = "button"
+          name.textContent = preset.name
+          name.title = `${preset.name} — load this shot`
+          name.addEventListener("click", () => applyPreset(preset))
+          row.appendChild(name)
+
+          const remove = document.createElement("button")
+          remove.className = "preset-delete"
+          remove.type = "button"
+          remove.textContent = "×"
+          remove.title = `Delete ${preset.name}`
+          remove.setAttribute("aria-label", `Delete ${preset.name}`)
+          remove.addEventListener("click", () => deletePreset(preset))
+          row.appendChild(remove)
+
+          presetsList.appendChild(row)
+        })
+      }
+
+      function addPreset() {
+        const name = window.prompt("Preset name (max 16 chars):")
+        if (!name) return
+        // Captured from currentState, so a preset is exactly what the replay is
+        // being run on right now -- and the constants are left out on purpose,
+        // so loading one never moves a slider the user did not set themselves.
+        presets = [...presets, capturePreset(currentState(), name)]
+        if (savePresets(presets)) renderPresets()
+      }
+
+      function deletePreset(preset) {
+        if (!confirm(`Delete preset "${preset.name}"?`)) return
+        presets = presets.filter((p) => p !== preset)
+        if (savePresets(presets)) renderPresets()
+      }
+
+      // Back to the built-in library, for anyone whose saved list has become
+      // something they would rather not have to delete one row at a time --
+      // which is the only other way to get rid of it, short of dev tools.
+      //
+      // No page reload, unlike three.html's reset: there is nothing here that
+      // only a reload can rebuild, and reloading would throw away the shot on
+      // the table as well. Clearing the key is the whole of it, because
+      // loadPresets() already falls back to the library when nothing is stored.
+      document
+        .getElementById("reset-presets")
+        ?.addEventListener("click", () => {
+          const saved = presets.filter((p) => !BUILT_IN_NAMES.has(p.name))
+          const warning = saved.length
+            ? `Reset all presets? This clears your ${saved.length} saved ${
+                saved.length === 1 ? "preset" : "presets"
+              } and restores the built-in set.`
+            : "Reset all presets? This restores the built-in set."
+          if (!confirm(warning)) return
+          if (!clearPresets()) return
+          presets = loadPresets()
+          renderPresets()
+        })
+
+      // Load a saved shot. Each of these has its own setter and re-renders, and
+      // each render republishes the state, so the whole page and the 3D replay
+      // end up on the preset without this having to say so itself.
+      function applyPreset(preset) {
+        const next = preset?.state
+        if (!next) return
+        setDialogOpen(presetsDialog, false)
+
+        ;(next.balls ?? []).forEach(({ x, y }, index) => {
+          const ball = balls[index]
+          if (!ball) return
+          ball.x = x
+          ball.y = y
+          circles[index]?.setAttribute("cx", String(x))
+          circles[index]?.setAttribute("cy", String(-y))
+        })
+
+        setCushionModel(next.cushionModel ?? DEFAULT_CUSHION_MODEL)
+
+        const shot = next.shot ?? {}
+        aimAngle = normalizeAngle(shot.angle ?? 0)
+        renderAim()
+        setSpin(shot.offset?.x ?? 0, shot.offset?.y ?? 0)
+        power = clamp(shot.power ?? 0, 0, MAX_POWER)
+        renderPower()
+        setElevation(shot.elevation ?? 0)
+      }
+
+      document
+        .getElementById("add-preset")
+        ?.addEventListener("click", addPreset)
+
+      // Handing a link over, as three.html's shareUrl does: the share sheet
+      // where the platform has one, the clipboard where it does not. Never
+      // `window.open` -- these urls are imports, so opening one would run the
+      // very import the user is only trying to pass on.
+      function shareUrl(url, button) {
+        const href = url.toString()
+        if (navigator.share) {
+          navigator
+            .share({ title: document.title, url: href })
+            .catch(console.error)
+          return
+        }
+        navigator.clipboard
+          .writeText(href)
+          .then(() => {
+            // Confirmed on the button itself, which is where the user is
+            // looking, and put back after a moment so it does not lie later.
+            const original = button.innerHTML
+            button.textContent = "copied!"
+            setTimeout(() => {
+              button.innerHTML = original
+            }, 2000)
+          })
+          .catch(console.error)
+      }
+
+      // The query is emptied first so the link carries the list and not
+      // whatever shot and constants this page happens to be holding.
+      document
+        .getElementById("share-presets")
+        ?.addEventListener("click", (event) => {
+          if (!presets.length) return
+          const url = new URL(window.location.href)
+          url.search = ""
+          url.searchParams.set("ps", JSON.stringify(presets))
+          shareUrl(url, event.currentTarget)
+        })
+
+      renderPresets()
 
       renderAim()
       renderSpin()

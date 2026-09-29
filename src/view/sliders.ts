@@ -1,4 +1,5 @@
 import { id, getInput } from "../utils/dom"
+import { omega_ratio_bounds } from "../model/physics/stronge"
 import {
   R,
   e,
@@ -28,6 +29,31 @@ import {
   setstronge_μ,
 } from "../model/physics/constants"
 
+/**
+ * The span a slider is allowed to move over, when the default
+ * `min(step, 4 x seeded, 2)` rule is not wide enough or is in fact invalid for
+ * the constant behind it.
+ *
+ * The bounds are inclusive as far as the DOM is concerned, so a caller with a
+ * genuinely exclusive domain has to inset it itself; `stronge_omega_ratio` is
+ * the case in point, and the solver throws on values outside its open interval.
+ */
+type SliderDomain = { min: number; max: number }
+
+/** Range input granularity, shared by every constant slider. */
+const step = 0.0001
+
+/**
+ * Inclusive slider domain for `stronge_omega_ratio`, inset by one step from the
+ * open interval `resolve` enforces, so that no reachable position of the slider
+ * -- including either end stop -- can be handed to the solver as an invalid
+ * value and throw at the next cushion contact.
+ */
+const omega_ratio_domain: SliderDomain = {
+  min: omega_ratio_bounds.min + step,
+  max: omega_ratio_bounds.max - step,
+}
+
 export class Sliders {
   style
   notify
@@ -56,7 +82,8 @@ export class Sliders {
     this.initialiseSlider(
       "stronge_omega_ratio",
       get("stronge_omega_ratio", stronge_omega_ratio),
-      setstronge_omega_ratio
+      setstronge_omega_ratio,
+      omega_ratio_domain
     )
     this.initialiseSlider(
       "stronge_e_n",
@@ -79,17 +106,23 @@ export class Sliders {
     return getInput(id)
   }
 
-  initialiseSlider(id, initialValue, setter) {
+  initialiseSlider(id, initialValue, setter, domain?: SliderDomain) {
     const slider = this.getInputElement(id)
     if (!slider) {
       return
     }
-    slider.step = "0.0001"
-    slider.min = slider.step
-    slider.max = `${Math.min(initialValue * 4, 2)}`
+    slider.step = `${step}`
+    slider.min = `${domain?.min ?? step}`
+    slider.max = `${domain?.max ?? Math.min(initialValue * 4, 2)}`
     slider.value = initialValue
-    setter(initialValue)
-    this.showValue(id, initialValue)
+    // A launch parameter or a hand-edited URL can name a value outside the
+    // domain, and assigning to `value` does not change the number we were
+    // handed. Reading it back lets the browser clamp it, so the constant and
+    // the label agree with what the control is actually showing instead of
+    // pushing a value the model will reject into the physics.
+    const seeded = Number.parseFloat(slider.value)
+    setter(seeded)
+    this.showValue(id, seeded)
     slider.oninput = (e) => {
       const val = Number.parseFloat((e.target as HTMLInputElement).value)
       setter(val)
