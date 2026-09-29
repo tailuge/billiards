@@ -205,6 +205,12 @@
         user-select: none;
       }
 
+      /* The input panel is the positioning context for the dialog laid over it,
+         so the dialog stays off the replay panel above. */
+      .panel-input {
+        position: relative;
+      }
+
       /* The 3D replay. diagram.js drives it from the .topview's data-state and
          sizes its canvas to the .topview box, so both fill this 2:1 body. */
       .replaydiagram,
@@ -252,9 +258,12 @@
         background: #f5f5f5;
       }
 
+      /* The dialog is scoped to the input panel: absolute against it, so it
+         dims and centres over the shot input without covering the replay
+         above. */
       .modal-backdrop {
         box-sizing: border-box;
-        position: fixed;
+        position: absolute;
         inset: 0;
         z-index: 10;
         display: flex;
@@ -273,7 +282,7 @@
         display: flex;
         flex-direction: column;
         gap: 0.4rem;
-        min-width: 12rem;
+        width: min(20rem, 80%);
         padding: 0.6rem 0.7rem;
         background: #fff;
         border: var(--bw) solid #ddd;
@@ -291,13 +300,113 @@
         text-transform: uppercase;
       }
 
-      .modal-placeholder {
+      /* Which cushion the shot is played on: a pair of radios drawn as one
+         control, so the arrow keys move between them as radios should. */
+      .model-toggle {
+        display: flex;
         margin: 0;
-        padding: 0.8rem 0;
-        border-radius: 0.25rem;
-        background: #f5f5f5;
-        color: #595959;
+        padding: 0;
+        border: 0;
+      }
+
+      .model-toggle label {
+        flex: 1;
+        cursor: pointer;
+      }
+
+      .model-toggle span {
+        display: block;
+        padding: 2px 0;
+        border: 1px solid #ddd;
+        background: #fff;
+        color: #111;
+        font-size: 0.7rem;
         text-align: center;
+      }
+
+      /* Joined in the middle, so the pair reads as one control. */
+      .model-toggle label:first-of-type span {
+        border-radius: 3px 0 0 3px;
+      }
+
+      .model-toggle label:last-of-type span {
+        border-left: 0;
+        border-radius: 0 3px 3px 0;
+      }
+
+      .model-toggle input:checked + span {
+        border-color: #1d5886;
+        background: var(--cue-blue);
+        color: #fff;
+      }
+
+      .model-toggle input:focus-visible + span {
+        outline: 2px solid #1d5886;
+        outline-offset: 1px;
+      }
+      /* The constant groups, as three.html writes them. The diagram bundle's
+         Sliders finds each input by id, seeds it from the launch parameters and
+         drives the physics setters, so these need markup and nothing else --
+         which is why the ids below are the constants' own names. */
+      .constants {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      /* Hidden but still focusable, so a keyboard can open a group; the label
+         is what the pointer and the keyboard both work against. The same trick
+         hides the cushion model's radios and this legend. */
+      .visually-hidden,
+      .collapse-toggle,
+      .model-toggle input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      .collapse-label {
+        display: block;
+        padding: 2px 4px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background: #f5f5f5;
+        color: #111;
+        font-size: 0.7rem;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .collapse-toggle:focus-visible + .collapse-label {
+        outline: 2px solid var(--cue-blue);
+        outline-offset: 1px;
+      }
+
+      .collapse-content {
+        display: none;
+        padding-top: 2px;
+      }
+
+      .collapse-toggle:checked + .collapse-label + .collapse-content {
+        display: block;
+      }
+
+      /* Sliders sets step 0.0001 and a range up from the value it seeds, so
+         only the shape is styled here. */
+      .constants input[type="range"] {
+        width: 100%;
+        height: 2px;
+        margin: 1px 0;
+        accent-color: var(--cue-blue);
+      }
+
+      .constant-row {
+        color: #595959;
+        font-size: 0.65rem;
       }
 
       /* Shot input: the table takes the left, the vertical power slider sits
@@ -613,15 +722,132 @@
             </div>
           </div>
         </div>
+
+        <!-- Inside the input panel rather than over the window: absolute
+             against this panel, so opening the dialog leaves the replay above
+             it untouched. -->
+        <div class="modal-backdrop" id="action-modal" hidden>
+          <div
+            class="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Action"
+          >
+            <h2 class="modal-title">action</h2>
+            <!-- Which cushion the shot is played on. It rides in the state, so
+                 the replay, a share link and the launch links all follow it;
+                 the constants below are left for the sliders to set. -->
+            <fieldset class="model-toggle">
+              <legend class="visually-hidden">Cushion model</legend>
+              <label>
+                <input
+                  type="radio"
+                  name="cushionModel"
+                  value="mathavan"
+                  checked
+                />
+                <span>Mathavan</span>
+              </label>
+              <label>
+                <input type="radio" name="cushionModel" value="stronge" />
+                <span>Stronge</span>
+              </label>
+            </fieldset>
+            <!-- The physics constants, grouped as three.html groups them. The
+                 empty labels are filled in by the bundle with each constant's
+                 name and current value. -->
+            <div id="constants" class="constants">
+              <div class="constant-group">
+                <input
+                  type="checkbox"
+                  id="mathavan-toggle"
+                  class="collapse-toggle"
+                />
+                <label for="mathavan-toggle" class="collapse-label"
+                  >Mathavan</label
+                >
+                <div class="collapse-content">
+                  <input id="μs" type="range" aria-label="Mathavan μs" />
+                  <div class="constant-row">
+                    Mathavan <label for="μs"></label>
+                  </div>
+                  <input id="μw" type="range" aria-label="Mathavan μw" />
+                  <div class="constant-row">
+                    Mathavan <label for="μw"></label>
+                  </div>
+                  <input
+                    id="ee"
+                    type="range"
+                    aria-label="Cushion restitution"
+                  />
+                  <div class="constant-row">
+                    Cushion restitution <label for="ee"></label>
+                  </div>
+                </div>
+              </div>
+              <div class="constant-group">
+                <input
+                  type="checkbox"
+                  id="han-toggle"
+                  class="collapse-toggle"
+                />
+                <label for="han-toggle" class="collapse-label">Han</label>
+                <div class="collapse-content">
+                  <input
+                    id="mu"
+                    type="range"
+                    aria-label="Han rolling friction"
+                  />
+                  <div class="constant-row">
+                    Han rolling friction <label for="mu"></label>
+                  </div>
+                  <input
+                    id="muS"
+                    type="range"
+                    aria-label="Han sliding friction"
+                  />
+                  <div class="constant-row">
+                    Han sliding friction <label for="muS"></label>
+                  </div>
+                </div>
+              </div>
+              <div class="constant-group">
+                <input
+                  type="checkbox"
+                  id="stronge-toggle"
+                  class="collapse-toggle"
+                />
+                <label for="stronge-toggle" class="collapse-label"
+                  >Stronge</label
+                >
+                <div class="collapse-content">
+                  <input
+                    id="stronge_omega_ratio"
+                    type="range"
+                    aria-label="Stronge ω ratio"
+                  />
+                  <div class="constant-row">
+                    Stronge ω ratio <label for="stronge_omega_ratio"></label>
+                  </div>
+                  <input
+                    id="stronge_e_n"
+                    type="range"
+                    aria-label="Stronge normal restitution"
+                  />
+                  <div class="constant-row">
+                    Stronge eₙ <label for="stronge_e_n"></label>
+                  </div>
+                  <input id="stronge_μ" type="range" aria-label="Stronge μ" />
+                  <div class="constant-row">
+                    Stronge μ <label for="stronge_μ"></label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
-
-    <div class="modal-backdrop" id="action-modal" hidden>
-      <div class="modal" role="dialog" aria-modal="true" aria-label="Action">
-        <h2 class="modal-title">action</h2>
-        <p class="modal-placeholder">placeholder</p>
-      </div>
-    </div>
 
     <footer>
       <a href="../lobby.html">lobby</a>
@@ -649,7 +875,11 @@
         X,
         Y,
       } from "./svg.js"
-      import { readState, serializeState } from "./editor-state.js"
+      import {
+        DEFAULT_CUSHION_MODEL,
+        readState,
+        serializeState,
+      } from "./editor-state.js"
 
       // The shot to open on: the editor's own default, or the one a launch
       // parameter or a share link carries. editor-state.js owns the shape,
@@ -1331,6 +1561,11 @@
       const REPLAY_DELAY = 250
       let replayTimer = null
 
+      function scheduleReplay() {
+        clearTimeout(replayTimer)
+        replayTimer = setTimeout(() => replayButton?.click(), REPLAY_DELAY)
+      }
+
       function syncDiagram() {
         if (!topview) return
         const next = serializeState({
@@ -1348,9 +1583,63 @@
         })
         topview.dataset.state = next
         topview.setAttribute("data-state", next)
-        clearTimeout(replayTimer)
-        replayTimer = setTimeout(() => replayButton?.click(), REPLAY_DELAY)
+        scheduleReplay()
       }
+
+      // Which cushion the shot is played on. The model rides in the state, so
+      // it reaches the replay, a share link and the launch links at once; the
+      // constants behind it stay with the sliders below.
+      const modelRadios = [...document.querySelectorAll(".model-toggle input")]
+
+      function setCushionModel(model) {
+        state.cushionModel = model
+        const url = new URL(window.location.href)
+        if (model === DEFAULT_CUSHION_MODEL) {
+          url.searchParams.delete("cushionModel")
+        } else {
+          url.searchParams.set("cushionModel", model)
+        }
+        window.history.replaceState(null, "", url)
+        syncDiagram()
+      }
+
+      modelRadios.forEach((radio) =>
+        radio.addEventListener("change", () => {
+          if (radio.checked) setCushionModel(radio.value)
+        })
+      )
+
+      // A launch parameter or a share link may name a model, so the toggle
+      // opens on the one the state actually holds.
+      modelRadios.forEach((radio) => {
+        radio.checked = radio.value === state.cushionModel
+      })
+
+      // The constant sliders belong to the bundle: Sliders owns each value, the
+      // physics setter it drives and the readout, all keyed on the input's id.
+      // So the editor only has to notice the change. It writes the values back
+      // to the URL, which is where Sliders seeds from and so what a shared link
+      // carries -- and which readConstants() will put on the launch links.
+      const constantInputs = [
+        ...document.querySelectorAll("#constants input[type=range]"),
+      ]
+
+      function syncConstants() {
+        const url = new URL(window.location.href)
+        constantInputs.forEach((input) =>
+          url.searchParams.set(input.id, input.value)
+        )
+        window.history.replaceState(null, "", url)
+      }
+
+      constantInputs.forEach((input) =>
+        input.addEventListener("input", () => {
+          syncConstants()
+          // A replay already drawn its shot against the old constants, and the
+          // bundle's own Sliders has no re-run of its own, so ask for one here.
+          scheduleReplay()
+        })
+      )
 
       // --- action: the floating panel's button and the dialog it opens ---
       // The dialog is hidden in the markup, so it is only ever in the document

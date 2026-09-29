@@ -62,7 +62,43 @@ const MARKUP = `
   <button id="replay" type="button">replay</button>
   <div class="modal-backdrop" id="action-modal" hidden>
     <div class="modal" role="dialog">
-      <p class="modal-placeholder">placeholder</p>
+      <fieldset class="model-toggle">
+        <input type="radio" name="cushionModel" value="mathavan" checked />
+        <input type="radio" name="cushionModel" value="stronge" />
+      </fieldset>
+      <div id="constants" class="constants">
+        <div class="constant-group">
+          <input type="checkbox" id="mathavan-toggle" class="collapse-toggle" />
+          <div class="collapse-content">
+            <input id="μs" type="range" />
+            <div class="constant-row"><label for="μs"></label></div>
+            <input id="μw" type="range" />
+            <div class="constant-row"><label for="μw"></label></div>
+            <input id="ee" type="range" />
+            <div class="constant-row"><label for="ee"></label></div>
+          </div>
+        </div>
+        <div class="constant-group">
+          <input type="checkbox" id="han-toggle" class="collapse-toggle" />
+          <div class="collapse-content">
+            <input id="mu" type="range" />
+            <div class="constant-row"><label for="mu"></label></div>
+            <input id="muS" type="range" />
+            <div class="constant-row"><label for="muS"></label></div>
+          </div>
+        </div>
+        <div class="constant-group">
+          <input type="checkbox" id="stronge-toggle" class="collapse-toggle" />
+          <div class="collapse-content">
+            <input id="stronge_omega_ratio" type="range" />
+            <div class="constant-row"><label for="stronge_omega_ratio"></label></div>
+            <input id="stronge_e_n" type="range" />
+            <div class="constant-row"><label for="stronge_e_n"></label></div>
+            <input id="stronge_μ" type="range" />
+            <div class="constant-row"><label for="stronge_μ"></label></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 `
@@ -254,8 +290,20 @@ describe("svgeditor shot input", () => {
     actionButton.dispatchEvent(new Event("click", { bubbles: true }))
     expect(actionModal.hidden).toBe(false)
     expect(actionButton.getAttribute("aria-expanded")).toBe("true")
-    expect(actionModal.querySelector(".modal-placeholder")!.textContent).toBe(
-      "placeholder"
+
+    // The dialog holds the constant sliders, each found by the diagram bundle
+    // under its own name, so an input missing here is a slider that never binds.
+    ;[
+      "μs",
+      "μw",
+      "ee",
+      "mu",
+      "muS",
+      "stronge_omega_ratio",
+      "stronge_e_n",
+      "stronge_μ",
+    ].forEach((id) =>
+      expect(actionModal.querySelector(`input#${id}`)).not.toBeNull()
     )
 
     // Escape closes it, from the document rather than the dialog.
@@ -266,7 +314,7 @@ describe("svgeditor shot input", () => {
     // A click on the backdrop closes it too; a click inside it does not.
     actionButton.dispatchEvent(new Event("click", { bubbles: true }))
     actionModal
-      .querySelector(".modal-placeholder")!
+      .querySelector(".constant-row")!
       .dispatchEvent(new Event("click", { bubbles: true }))
     expect(actionModal.hidden).toBe(false)
 
@@ -308,6 +356,77 @@ describe("svgeditor shot input", () => {
 
       jest.advanceTimersByTime(300)
       expect(click).toHaveBeenCalled()
+    } finally {
+      jest.useRealTimers()
+    }
+  })
+
+  it("keeps a moved constant in the url and replays the shot", () => {
+    jest.useFakeTimers()
+    try {
+      document.body.innerHTML = MARKUP
+      loadEditor()
+
+      const replay = document.getElementById("replay") as HTMLButtonElement
+      const click = jest.spyOn(replay, "click")
+      // The bundle owns the slider's own value; it seeds from the url, so that
+      // is where a moved constant has to be recorded.
+      const mu = document.getElementById("mu") as HTMLInputElement
+      mu.value = "0.006"
+      mu.dispatchEvent(new Event("input", { bubbles: true }))
+
+      expect(new URLSearchParams(window.location.search).get("mu")).toBe(
+        "0.006"
+      )
+      expect(click).not.toHaveBeenCalled()
+
+      jest.advanceTimersByTime(300)
+      expect(click).toHaveBeenCalled()
+    } finally {
+      jest.useRealTimers()
+    }
+  })
+
+  it("switches the cushion model the replay is played on", () => {
+    jest.useFakeTimers()
+    try {
+      document.body.innerHTML = MARKUP
+      loadEditor()
+
+      const topview = document.querySelector(".topview") as HTMLElement
+      const stronge = document.querySelector(
+        'input[name="cushionModel"][value="stronge"]'
+      ) as HTMLInputElement
+      const replay = document.getElementById("replay") as HTMLButtonElement
+      const click = jest.spyOn(replay, "click")
+      const replayed = () =>
+        new URLSearchParams(topview.dataset.state!.slice(1))
+
+      // Mathavan is the default, so it is left out of the state entirely.
+      expect(replayed().get("cushionModel")).toBeNull()
+
+      stronge.checked = true
+      stronge.dispatchEvent(new Event("change", { bubbles: true }))
+
+      // It rides in the state, so the replay and any share link both follow.
+      expect(replayed().get("cushionModel")).toBe("stronge")
+      expect(
+        new URLSearchParams(window.location.search).get("cushionModel")
+      ).toBe("stronge")
+
+      jest.advanceTimersByTime(300)
+      expect(click).toHaveBeenCalled()
+
+      // The constants are left to the sliders: whatever mu was stays as it was.
+      const mu = new URLSearchParams(window.location.search).get("mu")
+      const mathavan = document.querySelector(
+        'input[value="mathavan"]'
+      ) as HTMLInputElement
+      mathavan.checked = true
+      mathavan.dispatchEvent(new Event("change", { bubbles: true }))
+      expect(new URLSearchParams(window.location.search).get("mu")).toBe(mu)
+      // Back to the default, so it drops out of the URL as well.
+      expect(replayed().get("cushionModel")).toBeNull()
     } finally {
       jest.useRealTimers()
     }
