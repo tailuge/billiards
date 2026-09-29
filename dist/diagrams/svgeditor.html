@@ -151,14 +151,6 @@
         overflow: hidden;
       }
 
-      /* Parked: as a third panel it would take a share of the height, and the
-         two tables are what have to fill the window for now. It keeps hold of
-         the numeric readouts and comes back on a phone, where the page
-         scrolls. */
-      .panel-side {
-        display: none;
-      }
-
       /* Empty until the replay and 3D view move in. Fills the 2:1 body so the
          two panels are the same shape, with no padding to inset it. */
       .placeholder {
@@ -175,12 +167,6 @@
       .panel-output .placeholder {
         width: 100%;
         height: 100%;
-      }
-
-      #page-buttons .placeholder {
-        min-height: 6rem;
-        border: 1px dashed #bbb;
-        background: #fafafa;
       }
 
       .table-panel {
@@ -273,76 +259,6 @@
         stroke-width: 0.002;
       }
 
-      /* Controls sidebar. The two tabs keep the presets and export away from
-         the readouts, which are the only text wanted while editing. */
-      .tabs {
-        display: flex;
-        gap: 0.25rem;
-        padding: 2px 0.6rem;
-      }
-
-      .tabs label {
-        padding: 2px 0.6rem;
-        border: 1px solid #ccc;
-        border-radius: 0.25rem;
-        background: #ececec;
-        color: #555;
-        font-size: 0.8rem;
-        cursor: pointer;
-      }
-
-      #tab-shot:checked ~ .layout [for="tab-shot"],
-      #tab-buttons:checked ~ .layout [for="tab-buttons"] {
-        border-color: #999;
-        background: #fff;
-        color: #111;
-      }
-
-      #tab-shot:focus-visible ~ .layout [for="tab-shot"],
-      #tab-buttons:focus-visible ~ .layout [for="tab-buttons"] {
-        outline: 2px solid var(--cue-blue);
-        outline-offset: 1px;
-      }
-
-      #tab-shot:checked ~ .layout #page-buttons,
-      #tab-buttons:checked ~ .layout #page-shot {
-        display: none;
-      }
-
-      .tab-page {
-        padding: 2px 0.6rem;
-      }
-
-      /* Kept focusable but out of sight, with the labels as the visible tabs. */
-      .sidebar-tab {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        margin: 0;
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .aim {
-        margin: 2px 0 0;
-        color: #555;
-        font-size: 0.75rem;
-      }
-
-      code {
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        word-break: break-all;
-      }
-
-      .view {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin: 2px 0 0;
-        color: #555;
-        font-size: 0.75rem;
-      }
-
       /* The ball as the cue sees it: one user unit is one ball radius, so an
          offset reads at its true size. */
       .spin-widget {
@@ -387,6 +303,17 @@
         fill-opacity: 0.85;
         stroke: #1d5886;
         stroke-width: 0.016;
+      }
+
+      /* The measured offset, one coordinate per line, riding above and to the
+         right of the tip and flipping to its left near the widget edge so it
+         never clips. The padding in the viewBox is what gives it the room to
+         sit outside the ball. */
+      .spin-widget .spin-readout {
+        fill: #333;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.15px;
+        pointer-events: none;
       }
 
       /* Vertical and full at the top, as in three.html. Stretched to the full
@@ -440,20 +367,18 @@
         stroke-linecap: round;
       }
 
-      .shot-readout {
-        margin: 2px 0 0;
-        color: #555;
-        font-size: 0.75rem;
-      }
-
-      button {
-        padding: 2px 0.5rem;
-        border: 1px solid #bbb;
-        border-radius: 0.25rem;
-        background: #fff;
-        color: #111;
-        font: inherit;
-        cursor: pointer;
+      /* The measured angle, centred in the widget. Stroked white underneath so
+         it stays legible where the cue line crosses it. */
+      .elevation-widget .elevation-readout {
+        fill: #111;
+        stroke: #fff;
+        stroke-width: 3px;
+        stroke-linejoin: round;
+        paint-order: stroke;
+        font-size: 12px;
+        text-anchor: middle;
+        dominant-baseline: central;
+        pointer-events: none;
       }
 
       /* Phones: one column in the reading order above, natural height and
@@ -481,25 +406,11 @@
         .panel-input {
           width: 100%;
         }
-
-        /* A phone scrolls, so the shot inputs can take their own panel again. */
-        .panel-side {
-          display: flex;
-        }
       }
     </style>
   </head>
 
   <body>
-    <input
-      type="radio"
-      id="tab-shot"
-      name="sidebar"
-      class="sidebar-tab"
-      checked
-    />
-    <input type="radio" id="tab-buttons" name="sidebar" class="sidebar-tab" />
-
     <header>
       <h1>Three cushion ball editor</h1>
     </header>
@@ -542,6 +453,10 @@
               <line class="spin-axis" x1="-0.5" y1="0" x2="0.5" y2="0" />
               <line class="spin-axis" x1="0" y1="-0.5" x2="0" y2="0.5" />
               <circle class="spin-dot" r="0.15" />
+              <text class="spin-readout" aria-hidden="true">
+                <tspan></tspan>
+                <tspan></tspan>
+              </text>
             </svg>
             <svg
               class="elevation-widget"
@@ -558,34 +473,14 @@
               <path class="elevation-arc" />
               <line class="elevation-max" x1="12" y1="88" />
               <line class="elevation-line" x1="12" y1="88" x2="92.75" y2="88" />
+              <text
+                class="elevation-readout"
+                x="50"
+                y="50"
+                aria-hidden="true"
+              />
             </svg>
           </div>
-        </div>
-      </section>
-
-      <section class="panel panel-side" aria-label="Controls">
-        <h2>controls</h2>
-        <nav class="tabs" aria-label="Controls">
-          <label for="tab-shot">shot</label>
-          <label for="tab-buttons">buttons</label>
-        </nav>
-        <div class="tab-page" id="page-shot">
-          <p class="aim">cue ball 0 · aim <span id="aim-angle"></span></p>
-          <p class="shot-readout">
-            spin <code id="spin-offset"></code>
-            <button id="reset-spin" type="button">reset spin</button>
-          </p>
-          <p class="shot-readout">
-            power <code id="power-value"></code> · elevation
-            <code id="elevation-value"></code>
-          </p>
-          <p class="view">
-            zoom <span id="zoom-level">×1.0</span>
-            <button id="reset-view" type="button">reset view</button>
-          </p>
-        </div>
-        <div class="tab-page" id="page-buttons">
-          <p class="placeholder">presets, replay and export</p>
         </div>
       </section>
     </main>
@@ -635,17 +530,25 @@
 
       svg.setAttribute("viewBox", table.viewBox)
       tableGroup.innerHTML = table.content
-      statusEl.textContent = "drag balls, scroll or pinch to zoom"
 
       renderBallPositions(ballsGroup, {
         balls: balls.map(({ id, x, y }) => ({ id, pos: { x, y } })),
       })
 
       const circles = [...ballsGroup.querySelectorAll(".ball")]
-      const zoomLevel = document.getElementById("zoom-level")
-      const aimAngleReadout = document.getElementById("aim-angle")
-
       const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
+
+      // The status line under the table doubles as the readout: the hint, then
+      // the two numbers a shot is defined by once spin and elevation are set on
+      // their own widgets.
+      const STATUS_HINT = "drag balls, scroll or pinch to zoom"
+
+      function renderStatus() {
+        const degrees = (normalizeAngle(aimAngle) * 180) / Math.PI
+        statusEl.textContent =
+          `${STATUS_HINT} · ${degrees.toFixed(1)} deg, ` +
+          `${power.toFixed(2)} m/s`
+      }
 
       // --- view: wheel zoom about the pointer, cloth drag to pan ---
 
@@ -675,7 +578,6 @@
           `${view.x} ${view.y} ${view.width} ${view.height}`
         )
         svg.classList.toggle("zoomed", zoom > 1)
-        zoomLevel.textContent = `×${zoom.toFixed(1)}`
       }
 
       function zoomAt(point, factor) {
@@ -705,9 +607,8 @@
         { passive: false }
       )
 
-      document
-        .getElementById("reset-view")
-        ?.addEventListener("click", resetView)
+      // The controls panel is gone, so the table's own double-tap is the only
+      // way back to the full table. It fires on touch as well as with a mouse.
 
       // --- moving balls ---
 
@@ -788,7 +689,7 @@
         aimHead.setAttribute("cx", String(aimTip.x))
         aimHead.setAttribute("cy", String(-aimTip.y))
         const degrees = (normalizeAngle(aimAngle) * 180) / Math.PI
-        aimAngleReadout.textContent = `${degrees.toFixed(1)}°`
+        renderStatus()
       }
 
       // The pointer target is the aim point; the angle is measured from the cue
@@ -813,7 +714,7 @@
       const spin = { x: 0, y: 0 }
       const spinWidget = document.querySelector(".spin-widget")
       const spinDot = spinWidget.querySelector(".spin-dot")
-      const spinOffset = document.getElementById("spin-offset")
+      const spinReadout = spinWidget.querySelector(".spin-readout")
 
       function clampSpin(x, y) {
         const length = Math.hypot(x, y)
@@ -823,15 +724,44 @@
       }
 
       function signed(value) {
-        return `${value < 0 ? "-" : "+"}${Math.abs(value).toFixed(3)}`
+        return `${value < 0 ? "-" : "+"}${Math.abs(value).toFixed(2)}`
       }
+
+      // The readout rides just off the tip, on whichever side has room inside
+      // the padded viewBox, so it never clips against the widget edge. The
+      // monospace advance is 0.6em, which is what the offset maths needs.
+      const READOUT_FONT = 0.15
+      const READOUT_ADVANCE = 0.6
+      const READOUT_GAP = 0.2
+      const READOUT_LEADING = 0.2
+      const spinLines = [...spinReadout.querySelectorAll("tspan")]
 
       function renderSpin() {
         spinDot.setAttribute("cx", String(-spin.x))
         spinDot.setAttribute("cy", String(-spin.y))
         const atLimit = Math.hypot(spin.x, spin.y) >= SPIN_LIMIT - 1e-9
         spinWidget.classList.toggle("at-limit", atLimit)
-        spinOffset.textContent = `x ${signed(spin.x)}R · y ${signed(spin.y)}R`
+
+        // The dot is drawn at (-x, -y): x is mirrored, y is not.
+        const tipX = -spin.x
+        const tipY = -spin.y
+        const xLabel = `x ${signed(spin.x)}`
+        const yLabel = `y ${signed(spin.y)}`
+        // The padded viewBox runs to 1.05; the longest label sets the fit.
+        const width = xLabel.length * READOUT_FONT * READOUT_ADVANCE
+        const onRight = tipX + READOUT_GAP + width <= 1.05
+        const left = tipX + (onRight ? READOUT_GAP : -READOUT_GAP)
+        const top = clamp(tipY - READOUT_GAP, -1.05 + READOUT_LEADING, 1.05)
+        spinReadout.setAttribute("x", String(left))
+        spinReadout.setAttribute("text-anchor", onRight ? "start" : "end")
+        // Each line carries its own x, so the second wraps rather than
+        // continuing on from the first.
+        spinLines[0].setAttribute("x", String(left))
+        spinLines[0].textContent = xLabel
+        spinLines[1].setAttribute("x", String(left))
+        spinLines[1].setAttribute("dy", String(READOUT_LEADING))
+        spinLines[1].textContent = yLabel
+        spinReadout.setAttribute("y", String(top - READOUT_LEADING))
       }
 
       function setSpin(x, y) {
@@ -885,9 +815,6 @@
         setSpin(0, 0)
       }
       spinWidget.addEventListener("dblclick", resetSpin)
-      document
-        .getElementById("reset-spin")
-        ?.addEventListener("click", resetSpin)
 
       // --- power: how fast the cue ball leaves the tip ---
 
@@ -897,19 +824,18 @@
       const MAX_POWER = 160 * R
       const DEFAULT_POWER = 2.62
       const powerInput = document.getElementById("power")
-      const powerValue = document.getElementById("power-value")
       let power = DEFAULT_POWER
 
       function renderPower() {
         powerInput.value = String(power / MAX_POWER)
-        powerValue.textContent = `${power.toFixed(2)} m/s`
+        renderStatus()
       }
 
       // The handler reads the slider without writing it back, so it cannot
       // fight the thumb while the pointer is driving it.
       powerInput.addEventListener("input", (event) => {
         power = clamp(Number(event.target.value) * MAX_POWER, 0, MAX_POWER)
-        powerValue.textContent = `${power.toFixed(2)} m/s`
+        renderStatus()
       })
 
       // --- elevation: how far the cue is raised off the cloth ---
@@ -925,7 +851,8 @@
       const elevationLine = elevationWidget.querySelector(".elevation-line")
       const elevationArc = elevationWidget.querySelector(".elevation-arc")
       const elevationMax = elevationWidget.querySelector(".elevation-max")
-      const elevationValue = document.getElementById("elevation-value")
+      const elevationReadout =
+        elevationWidget.querySelector(".elevation-readout")
       let elevation = 0
 
       // The sweep guide and the cap line never move, so they are placed once
@@ -954,9 +881,14 @@
           "y2",
           String(ELEVATION_PIVOT.y - Math.sin(elevation) * ELEVATION_LENGTH)
         )
-        const degrees = Math.round((elevation * 180) / Math.PI)
-        elevationValue.textContent = `${degrees}°`
-        elevationWidget.setAttribute("aria-valuenow", String(degrees))
+        // elevation is held in radians, the unit cueStrike takes; the widget
+        // shows degrees to a tenth.
+        const degrees = (elevation * 180) / Math.PI
+        elevationWidget.setAttribute(
+          "aria-valuenow",
+          String(Math.round(degrees))
+        )
+        elevationReadout.textContent = `${degrees.toFixed(1)}°`
       }
 
       function setElevation(radians) {
