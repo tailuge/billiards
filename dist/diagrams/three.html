@@ -20,21 +20,33 @@
         --table-ball-border: 1px;
         --table-surface-width: 92%;
         --table-surface-height: 84%;
-        --ball-size-base: 120px;
+        --ball-size-base: 99px;
         --ball-size-small: 70px;
       }
 
       h1 {
         text-align: center;
-        font-size: 1rem;
+        font-size: 0.8rem;
+        line-height: 1.1;
         font-family: Exo, sans-serif;
         font-weight: 300;
         margin-top: 0;
-        margin-bottom: -20px;
-        padding-top: 4px;
+        margin-bottom: -15px;
+        padding-top: 2px;
         padding-bottom: 0;
         position: relative;
         z-index: 10;
+      }
+
+      html,
+      body {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        display: none;
       }
 
       body {
@@ -52,7 +64,7 @@
         margin: 0 auto;
         display: flex;
         flex-direction: column;
-        gap: 1px;
+        gap: 0;
       }
 
       .replaydiagram {
@@ -62,6 +74,8 @@
         background-color: #000;
         aspect-ratio: 2 / 1.1;
         position: relative;
+        line-height: 0;
+        overflow: hidden;
       }
 
       .diagram {
@@ -89,7 +103,7 @@
         height: 2px;
         accent-color: #888;
         display: block;
-        margin: 2px auto;
+        margin: 1px auto;
         appearance: none;
         background: #555;
         outline: none;
@@ -140,7 +154,7 @@
       }
 
       #constants {
-        line-height: 1.4;
+        line-height: 1.2;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -167,6 +181,11 @@
       .topview {
         width: 100%;
         height: 100%;
+        line-height: 0;
+      }
+
+      .topview canvas {
+        display: block;
       }
 
       #table-wrap {
@@ -280,18 +299,18 @@
 
       .collapse-label {
         display: block;
-        padding: 5px;
+        padding: 2px 4px;
         background: #333;
         color: white;
         cursor: pointer;
         text-align: center;
         border: 1px solid #444;
-        margin: 2px 0;
+        margin: 1px 0;
       }
 
       .collapse-content {
         display: none;
-        padding-top: 6px;
+        padding-top: 2px;
       }
 
       .collapse-toggle:checked + .collapse-label + .collapse-content {
@@ -309,14 +328,21 @@
         margin: 0 auto;
         box-sizing: border-box;
         overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
         position: relative;
         top: 0;
         z-index: 10;
       }
 
+      .controls-row::-webkit-scrollbar {
+        display: none;
+      }
+
       #spin-power-wrap {
         display: flex;
         align-items: center;
+        align-self: flex-start;
         width: min-content;
         flex-shrink: 0;
       }
@@ -353,19 +379,19 @@
       #power {
         writing-mode: vertical-lr;
         direction: rtl;
-        height: 110px;
-        width: 24px;
+        height: 92px;
+        width: 22px;
         margin: 0;
       }
 
       #presets-row {
         display: flex;
         flex-flow: row wrap;
-        gap: 4px;
+        gap: 3px;
         align-items: center;
         width: 92%;
         margin: 0 auto;
-        padding: 4px 0;
+        padding: 0;
       }
 
       #presets-popover {
@@ -448,9 +474,9 @@
       }
 
       .cueBall {
-        height: 90%;
-        width: 90%;
-        margin: auto;
+        height: 100%;
+        width: 100%;
+        margin: 0;
         opacity: 1;
         background: radial-gradient(
           circle at 35% 35%,
@@ -463,8 +489,8 @@
         );
         border-radius: 50%;
         position: absolute;
-        top: 5%;
-        left: 5%;
+        top: 0;
+        left: 0;
         z-index: 5;
         box-shadow:
           3px 4px 8px rgb(82 82 82 / 70%),
@@ -501,8 +527,8 @@
       }
 
       .cueTip {
-        height: 24px;
-        width: 24px;
+        height: 22px;
+        width: 22px;
         background-color: #357abd;
         border-radius: 50%;
         z-index: 10;

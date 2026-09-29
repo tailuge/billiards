@@ -39,6 +39,8 @@ Before submitting changes, ensure the following commands pass:
 
 ## Browser / Chrome DevTools
 
+Only use on request.
+
 The `chrome-devtools` MCP server (`~/.agents/mcp.json`) works: it launches a
 headful Chrome on native Wayland with hardware GL, so screenshots and traces
 reflect the real GPU. Verify with `list_pages`. `--no-page-id-routing` is
