@@ -50,7 +50,7 @@ export const SVG_NS = "http://www.w3.org/2000/svg";
 
 // ——— Table rendering ———
 
-function generateBilliardTable() {
+export function generateBilliardTable() {
   const width = X * 2;
   const height = Y * 2;
 
@@ -300,7 +300,7 @@ function renderInset(insetGroup, configs) {
   insetGroup.innerHTML = svgContent;
 }
 
-function renderBallPositions(ballsGroup, config) {
+export function renderBallPositions(ballsGroup, config) {
   if (!config.balls || config.balls.length === 0) return;
 
   let svgContent = "";

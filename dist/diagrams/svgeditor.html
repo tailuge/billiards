@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Three cushion ball editor</title>
+    <meta
+      name="description"
+      content="Move the three cushion balls with the pointer and read their exact table coordinates in metres."
+    />
+    <link rel="stylesheet" href="../css/ball-colors.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0 1rem 1rem;
+        background: #f0f0f0;
+        color: #111;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+
+      header {
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 0.5rem 0;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      main {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-start;
+        max-width: 72rem;
+        margin: 0 auto;
+      }
+
+      .table-panel {
+        flex: 1 1 22rem;
+        min-width: 0;
+      }
+
+      svg.billiards-table {
+        display: block;
+        width: 100%;
+        height: auto;
+        background: #fff;
+        border-radius: 0.25rem;
+        touch-action: none;
+        user-select: none;
+      }
+
+      /* Carom ball colours; ball-colors.css is keyed to pool/snooker ids. */
+
+      svg.billiards-table .ball-0 {
+        --ball-fill: #fff;
+        --ball-stroke: #333;
+      }
+
+      svg.billiards-table .ball-1 {
+        --ball-fill: #ffd700;
+        --ball-stroke: #a67c00;
+      }
+
+      svg.billiards-table .ball-2 {
+        --ball-fill: #e63946;
+        --ball-stroke: #8d1b25;
+      }
+
+      svg.billiards-table .ball {
+        cursor: grab;
+      }
+
+      svg.billiards-table.dragging {
+        cursor: grabbing;
+      }
+
+      svg.billiards-table.zoomed {
+        cursor: grab;
+      }
+
+      .coords-panel {
+        flex: 0 1 18rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        font-variant-numeric: tabular-nums;
+      }
+
+      caption {
+        padding-bottom: 0.25rem;
+        color: #555;
+        font-size: 0.8rem;
+        text-align: left;
+      }
+
+      th,
+      td {
+        padding: 0.1rem 0.5rem 0.1rem 0;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+      }
+
+      .init {
+        margin: 0.5rem 0 0;
+        color: #555;
+        font-size: 0.75rem;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        word-break: break-all;
+      }
+
+      .view {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.5rem 0 0;
+        color: #555;
+        font-size: 0.75rem;
+      }
+
+      button {
+        padding: 0.15rem 0.5rem;
+        border: 1px solid #bbb;
+        border-radius: 0.25rem;
+        background: #fff;
+        color: #111;
+        font: inherit;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>Three cushion ball editor</h1>
+    </header>
+
+    <main>
+      <div class="table-panel">
+        <svg class="billiards-table threecushion"></svg>
+      </div>
+      <section class="coords-panel" aria-label="Ball positions">
+        <table>
+          <caption>
+            Ball positions in metres
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Ball</th>
+              <th scope="col">x</th>
+              <th scope="col">y</th>
+            </tr>
+          </thead>
+          <tbody id="coord-body"></tbody>
+        </table>
+        <p class="init">init <code id="init-state"></code></p>
+        <p class="view">
+          zoom <span id="zoom-level">×1.0</span>
+          <button id="reset-view" type="button">reset view</button>
+        </p>
+      </section>
+    </main>
+
+    <script type="module">
+      import {
+        generateBilliardTable,
+        renderBallPositions,
+        setupSvgRoot,
+        toSvgCoords,
+        R,
+        X,
+        Y,
+      } from "./svg.js"
+
+      // Table coordinates in metres with y pointing up, the same convention
+      // three.html uses in its ?state=init. svg.js renders a ball at (x, -y).
+      const balls = [
+        { id: 0, x: -1.305026, y: -0.634005 },
+        { id: 1, x: -1.434758, y: 0.601475 },
+        { id: 2, x: -1.310215, y: 0.685593 },
+      ]
+
+      const BOUND_X = X - R
+      const BOUND_Y = Y - R
+      const MIN_GAP = 2 * R
+
+      // Grabbing keeps ~16 screen px of slack around a ball when zoomed out and
+      // narrows to the ball's own radius once the ball is large on screen.
+      const HIT_PX = 16
+      const MAX_ZOOM = 12
+      const ZOOM_STEP = 0.0015
+
+      const svg = document.querySelector(".billiards-table")
+      const { tableGroup, ballsGroup, statusEl } = setupSvgRoot(svg)
+      const table = generateBilliardTable()
+
+      const baseView = parseViewBox(table.viewBox)
+      let view = { ...baseView }
+
+      svg.setAttribute("viewBox", table.viewBox)
+      tableGroup.innerHTML = table.content
+      statusEl.textContent =
+        "drag a ball · scroll to zoom · drag the cloth to pan"
+
+      renderBallPositions(ballsGroup, {
+        balls: balls.map(({ id, x, y }) => ({ id, pos: { x, y } })),
+      })
+
+      const circles = [...ballsGroup.querySelectorAll(".ball")]
+      const coordBody = document.getElementById("coord-body")
+      const initState = document.getElementById("init-state")
+      const zoomLevel = document.getElementById("zoom-level")
+
+      const rows = balls.map((ball) => {
+        const row = document.createElement("tr")
+        const label = document.createElement("th")
+        label.scope = "row"
+        label.textContent = `ball ${ball.id}`
+        const xCell = document.createElement("td")
+        const yCell = document.createElement("td")
+        row.append(label, xCell, yCell)
+        coordBody.append(row)
+        return { xCell, yCell }
+      })
+
+      function updateReadout() {
+        balls.forEach(({ x, y }, index) => {
+          rows[index].xCell.textContent = x.toFixed(6)
+          rows[index].yCell.textContent = y.toFixed(6)
+        })
+        const init = balls.flatMap(({ x, y }) => [
+          Number(x.toFixed(6)),
+          Number(y.toFixed(6)),
+        ])
+        initState.textContent = JSON.stringify(init)
+      }
+
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
+
+      // --- view: wheel zoom about the pointer, cloth drag to pan ---
+
+      function parseViewBox(value) {
+        const [x, y, width, height] = value.split(/\s+/).map(Number)
+        return { x, y, width, height }
+      }
+
+      function clampView() {
+        view.x = clamp(
+          view.x,
+          baseView.x,
+          baseView.x + baseView.width - view.width
+        )
+        view.y = clamp(
+          view.y,
+          baseView.y,
+          baseView.y + baseView.height - view.height
+        )
+      }
+
+      function applyView() {
+        clampView()
+        const zoom = baseView.width / view.width
+        svg.setAttribute(
+          "viewBox",
+          `${view.x} ${view.y} ${view.width} ${view.height}`
+        )
+        svg.classList.toggle("zoomed", zoom > 1)
+        zoomLevel.textContent = `×${zoom.toFixed(1)}`
+      }
+
+      function zoomAt(point, factor) {
+        const zoom = baseView.width / view.width
+        const next = clamp(zoom * factor, 1, MAX_ZOOM)
+        const ratio = zoom / next
+        view.width = baseView.width / next
+        view.height = baseView.height / next
+        view.x = point.x + (view.x - point.x) * ratio
+        view.y = point.y + (view.y - point.y) * ratio
+        applyView()
+      }
+
+      function resetView() {
+        view = { ...baseView }
+        applyView()
+      }
+
+      svg.addEventListener(
+        "wheel",
+        (event) => {
+          event.preventDefault()
+          // deltaMode 1 counts lines instead of pixels (Firefox, some mice).
+          const delta = event.deltaMode === 1 ? event.deltaY * 33 : event.deltaY
+          zoomAt(toSvgCoords(svg, event), Math.exp(-delta * ZOOM_STEP))
+        },
+        { passive: false }
+      )
+
+      document
+        .getElementById("reset-view")
+        ?.addEventListener("click", resetView)
+
+      // --- moving balls ---
+
+      // toSvgCoords returns SVG user space (y down); the model keeps y up.
+      function toModelPoint(event) {
+        const { x, y } = toSvgCoords(svg, event)
+        return { x, y: -y }
+      }
+
+      function hitRadius() {
+        const matrix = svg.getScreenCTM()
+        if (!matrix) return R
+        return Math.max(R, HIT_PX / Math.abs(matrix.a))
+      }
+
+      function findBall(point) {
+        const radius = hitRadius()
+        let found = null
+        balls.forEach((ball, index) => {
+          const distance = Math.hypot(ball.x - point.x, ball.y - point.y)
+          if (distance > radius) return
+          if (found === null || distance < found.distance) {
+            found = { index, distance }
+          }
+        })
+        return found === null ? null : found.index
+      }
+
+      // Balls may touch, with centres exactly MIN_GAP apart, but never overlap.
+      function collides(index, x, y) {
+        return balls.some((ball, other) => {
+          if (other === index) return false
+          return Math.hypot(ball.x - x, ball.y - y) < MIN_GAP
+        })
+      }
+
+      // Walk the whole path from the ball's current spot to the pointer target
+      // and stop at the first contact, so neither a fast drag nor a jump can
+      // overlap a ball or pass straight through it.
+      function placeBall(index, x, y) {
+        const { x: fromX, y: fromY } = balls[index]
+        const span = Math.hypot(x - fromX, y - fromY)
+        if (span === 0) return
+
+        const blockAt = (t) =>
+          collides(index, fromX + (x - fromX) * t, fromY + (y - fromY) * t)
+
+        const steps = Math.max(1, Math.ceil(span / (MIN_GAP / 4)))
+        let free = 0
+        let blocked = 1
+        for (let i = 1; i <= steps; i += 1) {
+          const t = i / steps
+          if (blockAt(t)) {
+            blocked = t
+            break
+          }
+          free = t
+        }
+
+        // Close in on the exact contact point along the path.
+        for (let i = 0; i < 12 && blocked - free > 1e-6; i += 1) {
+          const t = (free + blocked) / 2
+          if (blockAt(t)) {
+            blocked = t
+          } else {
+            free = t
+          }
+        }
+
+        balls[index].x = fromX + (x - fromX) * free
+        balls[index].y = fromY + (y - fromY) * free
+      }
+
+      let dragIndex = null
+      let grabOffset = { x: 0, y: 0 }
+      let pan = null
+
+      function beginPointer(event) {
+        svg.classList.add("dragging")
+        svg.setPointerCapture(event.pointerId)
+        event.preventDefault()
+      }
+
+      svg.addEventListener("pointerdown", (event) => {
+        const point = toModelPoint(event)
+        const index = findBall(point)
+        if (index === null) {
+          const matrix = svg.getScreenCTM()
+          if (!matrix) return
+          pan = {
+            clientX: event.clientX,
+            clientY: event.clientY,
+            scaleX: Math.abs(matrix.a),
+            scaleY: Math.abs(matrix.d),
+            viewX: view.x,
+            viewY: view.y,
+          }
+          beginPointer(event)
+          return
+        }
+        dragIndex = index
+        grabOffset = {
+          x: balls[index].x - point.x,
+          y: balls[index].y - point.y,
+        }
+        beginPointer(event)
+      })
+
+      svg.addEventListener("pointermove", (event) => {
+        if (dragIndex === null && pan === null) return
+        event.preventDefault()
+        if (pan) {
+          view.x = pan.viewX - (event.clientX - pan.clientX) / pan.scaleX
+          view.y = pan.viewY - (event.clientY - pan.clientY) / pan.scaleY
+          applyView()
+          return
+        }
+        const point = toModelPoint(event)
+        placeBall(
+          dragIndex,
+          clamp(point.x + grabOffset.x, -BOUND_X, BOUND_X),
+          clamp(point.y + grabOffset.y, -BOUND_Y, BOUND_Y)
+        )
+        const ball = balls[dragIndex]
+        circles[dragIndex].setAttribute("cx", String(ball.x))
+        circles[dragIndex].setAttribute("cy", String(-ball.y))
+        updateReadout()
+      })
+
+      function endDrag(event) {
+        if (dragIndex === null && pan === null) return
+        dragIndex = null
+        pan = null
+        svg.classList.remove("dragging")
+        if (svg.hasPointerCapture(event.pointerId)) {
+          svg.releasePointerCapture(event.pointerId)
+        }
+      }
+
+      svg.addEventListener("pointerup", endDrag)
+      svg.addEventListener("pointercancel", endDrag)
+
+      svg.addEventListener("dblclick", (event) => {
+        if (findBall(toModelPoint(event)) === null) resetView()
+      })
+
+      updateReadout()
+      applyView()
+    </script>
+  </body>
+</html>
