@@ -6,18 +6,50 @@
     <title>Three cushion ball editor</title>
     <meta
       name="description"
-      content="Move the three cushion balls with the pointer and read their exact table coordinates in metres."
+      content="Set up a three cushion shot: move the balls, aim, and choose the spin, power and elevation."
     />
     <link rel="stylesheet" href="../css/ball-colors.css" />
     <style>
       :root {
         /* Shared by the power slider and the cue tip. */
         --cue-blue: #2b7bb9;
+
+        /* The drawn extent of the table diagram: its 2:1 play area plus the
+           rails, the viewBox generateBilliardTable() sets in svg.js. Both
+           table panels use it so the two are the same shape. */
+        --table-aspect: 3.5848 / 2.1724;
+
+        /* Half of that: the shape of a pair of stacked tables, used to work out
+           how wide the pair may be and still fit the window's height. */
+        --table-half-aspect: calc(var(--table-aspect) / 2);
+
+        /* Fixed heights, so the tables can fill exactly what the window has
+           left over rather than what a guess leaves over. */
+        --header-height: 2.5rem;
+        --title-height: 1.5rem;
+
+        /* Height of everything that is not one of the two tables: the header,
+           plus 5rem covering both panel titles, the two row gaps and the panel
+           borders. */
+        --chrome-height: calc(var(--header-height) + 5rem);
+      }
+
+      /* The visible height of the window is the budget: the page is exactly one
+         window tall and never scrolls, and the layout width is capped below so
+         that two stacked tables are exactly as tall as the height left over.
+         Their width therefore follows from the window height, whatever the
+         window's aspect ratio. */
+      html,
+      body {
+        height: 100vh;
+        overflow: hidden;
       }
 
       body {
+        display: flex;
+        flex-direction: column;
         margin: 0;
-        padding: 0 1rem 1rem;
+        padding: 0 1rem;
         background: #f0f0f0;
         color: #111;
         font-family:
@@ -28,10 +60,13 @@
           sans-serif;
       }
 
+      /* Fixed height, and a grid item, so the title lines up with the panels
+         below it and the height budget above is exact. */
       header {
-        max-width: 72rem;
-        margin: 0 auto;
-        padding: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        grid-area: 1 / 1 / span 1 / -1;
+        height: var(--header-height);
       }
 
       h1 {
@@ -40,17 +75,92 @@
         font-weight: 600;
       }
 
-      main {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        align-items: flex-start;
-        max-width: 72rem;
+      main.layout {
+        display: grid;
+        flex: 1;
+        min-height: 0;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.75rem;
+        place-content: start center;
+        align-items: start;
         margin: 0 auto;
+
+        /* Half the table shape x the height left over: at this width the two
+           stacked tables are exactly as tall as the space they are given, so
+           they fill the window's height whenever the window is wide enough,
+           and never exceed it. */
+        max-width: calc(
+          var(--table-half-aspect) * (100vh - var(--chrome-height))
+        );
+      }
+
+      .panel {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 0.25rem;
+      }
+
+      .panel > h2 {
+        margin: 0;
+        padding: 0 0.6rem;
+        border-bottom: 1px solid #eee;
+        color: #666;
+        font-size: 0.7rem;
+        font-weight: 600;
+        height: var(--title-height);
+        letter-spacing: 0.06em;
+        line-height: var(--title-height);
+        text-transform: uppercase;
+      }
+
+      .panel-body {
+        padding: 0.6rem;
+        min-width: 0;
+      }
+
+      /* Parked: as a third panel it would take a share of the height, and the
+         two tables are what have to fill the window for now. It keeps hold of
+         the shot inputs and comes back on a phone, where the page scrolls. */
+      .panel-side {
+        display: none;
+      }
+
+      /* The input table fills its panel edge to edge. */
+      .panel-input .panel-body {
+        padding: 0;
+      }
+
+      /* Empty until the replay and 3D view move in. Sized like the table so the
+         two panels are the same shape, with no padding to inset it. */
+      .placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        border-radius: 0.25rem;
+        background: #f5f5f5;
+        color: #888;
+        font-size: 0.75rem;
+      }
+
+      .panel-output .panel-body {
+        padding: 0;
+      }
+
+      .panel-output .placeholder {
+        aspect-ratio: var(--table-aspect);
+      }
+
+      #page-buttons .placeholder {
+        min-height: 6rem;
+        border: 1px dashed #bbb;
+        background: #fafafa;
       }
 
       .table-panel {
-        flex: 1 1 22rem;
         min-width: 0;
       }
 
@@ -58,6 +168,7 @@
         display: block;
         width: 100%;
         height: auto;
+        aspect-ratio: var(--table-aspect);
         background: #fff;
         border-radius: 0.25rem;
         touch-action: none;
@@ -106,32 +217,56 @@
         stroke-width: 0.002;
       }
 
-      .coords-panel {
-        flex: 0 1 18rem;
+      /* Controls sidebar. The two tabs keep the buttons away from the shot
+         inputs, which are the only controls wanted while editing. */
+      .tabs {
+        display: flex;
+        gap: 0.25rem;
+        padding: 0.5rem 0.6rem 0;
       }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.85rem;
-        font-variant-numeric: tabular-nums;
-      }
-
-      caption {
-        padding-bottom: 0.25rem;
+      .tabs label {
+        padding: 0.2rem 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        background: #ececec;
         color: #555;
         font-size: 0.8rem;
-        text-align: left;
+        cursor: pointer;
       }
 
-      th,
-      td {
-        padding: 0.1rem 0.5rem 0.1rem 0;
-        border-bottom: 1px solid #ddd;
-        text-align: left;
+      #tab-shot:checked ~ .layout [for="tab-shot"],
+      #tab-buttons:checked ~ .layout [for="tab-buttons"] {
+        border-color: #999;
+        background: #fff;
+        color: #111;
       }
 
-      .init,
+      #tab-shot:focus-visible ~ .layout [for="tab-shot"],
+      #tab-buttons:focus-visible ~ .layout [for="tab-buttons"] {
+        outline: 2px solid var(--cue-blue);
+        outline-offset: 1px;
+      }
+
+      #tab-shot:checked ~ .layout #page-buttons,
+      #tab-buttons:checked ~ .layout #page-shot {
+        display: none;
+      }
+
+      .tab-page {
+        padding: 0.6rem;
+      }
+
+      /* Kept focusable but out of sight, with the labels as the visible tabs. */
+      .sidebar-tab {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+
       .aim {
         margin: 0.5rem 0 0;
         color: #555;
@@ -252,81 +387,131 @@
         font: inherit;
         cursor: pointer;
       }
+
+      /* Phones: one column in the reading order above, natural height and
+         normal scrolling. Narrower than this the pair cannot usefully fit a
+         window anyway. */
+      @media (width <= 40rem) {
+        html,
+        body {
+          height: auto;
+          overflow: visible;
+        }
+
+        body {
+          padding-bottom: 1rem;
+        }
+
+        header {
+          grid-area: auto;
+          height: auto;
+          padding: 0.5rem 0 0;
+        }
+
+        main.layout {
+          max-width: none;
+        }
+
+        /* A phone scrolls, so the shot inputs can take their own panel again. */
+        .panel-side {
+          display: flex;
+        }
+      }
     </style>
   </head>
 
   <body>
-    <header>
-      <h1>Three cushion ball editor</h1>
-    </header>
+    <input
+      type="radio"
+      id="tab-shot"
+      name="sidebar"
+      class="sidebar-tab"
+      checked
+    />
+    <input type="radio" id="tab-buttons" name="sidebar" class="sidebar-tab" />
 
-    <main>
-      <div class="table-panel">
-        <svg class="billiards-table threecushion"></svg>
-      </div>
-      <section class="coords-panel" aria-label="Ball positions">
-        <table>
-          <caption>
-            Ball positions in metres
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Ball</th>
-              <th scope="col">x</th>
-              <th scope="col">y</th>
-            </tr>
-          </thead>
-          <tbody id="coord-body"></tbody>
-        </table>
-        <p class="init">init <code id="init-state"></code></p>
-        <p class="aim">cue ball 0 · aim <span id="aim-angle"></span></p>
-        <div class="shot-inputs">
-          <svg
-            class="elevation-widget"
-            viewBox="0 0 100 100"
-            role="slider"
-            aria-label="Cue elevation in degrees"
-            aria-valuemin="0"
-            aria-valuemax="72"
-            aria-valuenow="0"
-          >
-            <line class="elevation-line" x1="12" y1="88" x2="97" y2="88" />
-          </svg>
-          <!-- ViewBox is padded past the ball so the ball's outline, which is
-               stroked across r=1, is not clipped by the viewport edge. -->
-          <svg
-            class="spin-widget"
-            viewBox="-1.05 -1.05 2.1 2.1"
-            role="img"
-            aria-label="Cue tip contact point on the cue ball"
-          >
-            <circle class="spin-ball" r="1" />
-            <circle class="spin-limit" r="0.45" />
-            <line class="spin-axis" x1="-0.5" y1="0" x2="0.5" y2="0" />
-            <line class="spin-axis" x1="0" y1="-0.5" x2="0" y2="0.5" />
-            <circle class="spin-dot" r="0.15" />
-          </svg>
-          <input
-            id="power"
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            aria-label="Power"
-          />
+    <main class="layout">
+      <header>
+        <h1>Three cushion ball editor</h1>
+      </header>
+
+      <!-- Order matters: the simulation output sits above the table it is
+           plotted from, and the grid follows the markup. -->
+      <section class="panel panel-output" aria-label="Simulation output">
+        <h2>simulation output</h2>
+        <div class="panel-body">
+          <p class="placeholder">replay, trajectory and 3D view</p>
         </div>
-        <p class="shot-readout">
-          spin <code id="spin-offset"></code>
-          <button id="reset-spin" type="button">reset spin</button>
-        </p>
-        <p class="shot-readout">
-          power <code id="power-value"></code> · elevation
-          <code id="elevation-value"></code>
-        </p>
-        <p class="view">
-          zoom <span id="zoom-level">×1.0</span>
-          <button id="reset-view" type="button">reset view</button>
-        </p>
+      </section>
+
+      <section class="panel panel-input" aria-label="Shot input">
+        <h2>shot input</h2>
+        <div class="panel-body">
+          <div class="table-panel">
+            <svg class="billiards-table threecushion"></svg>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel-side" aria-label="Controls">
+        <h2>controls</h2>
+        <nav class="tabs" aria-label="Controls">
+          <label for="tab-shot">shot</label>
+          <label for="tab-buttons">buttons</label>
+        </nav>
+        <div class="tab-page" id="page-shot">
+          <p class="aim">cue ball 0 · aim <span id="aim-angle"></span></p>
+          <div class="shot-inputs">
+            <svg
+              class="elevation-widget"
+              viewBox="0 0 100 100"
+              role="slider"
+              aria-label="Cue elevation in degrees"
+              aria-valuemin="0"
+              aria-valuemax="72"
+              aria-valuenow="0"
+            >
+              <line class="elevation-line" x1="12" y1="88" x2="97" y2="88" />
+            </svg>
+            <!-- ViewBox is padded past the ball so the ball's outline, which is
+               stroked across r=1, is not clipped by the viewport edge. -->
+            <svg
+              class="spin-widget"
+              viewBox="-1.05 -1.05 2.1 2.1"
+              role="img"
+              aria-label="Cue tip contact point on the cue ball"
+            >
+              <circle class="spin-ball" r="1" />
+              <circle class="spin-limit" r="0.45" />
+              <line class="spin-axis" x1="-0.5" y1="0" x2="0.5" y2="0" />
+              <line class="spin-axis" x1="0" y1="-0.5" x2="0" y2="0.5" />
+              <circle class="spin-dot" r="0.15" />
+            </svg>
+            <input
+              id="power"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              aria-label="Power"
+            />
+          </div>
+          <p class="shot-readout">
+            spin <code id="spin-offset"></code>
+            <button id="reset-spin" type="button">reset spin</button>
+          </p>
+          <p class="shot-readout">
+            power <code id="power-value"></code> · elevation
+            <code id="elevation-value"></code>
+          </p>
+          <p class="view">
+            zoom <span id="zoom-level">×1.0</span>
+            <button id="reset-view" type="button">reset view</button>
+          </p>
+        </div>
+        <div class="tab-page" id="page-buttons">
+          <p class="placeholder">presets, replay and export</p>
+        </div>
       </section>
     </main>
 
@@ -383,34 +568,8 @@
       })
 
       const circles = [...ballsGroup.querySelectorAll(".ball")]
-      const coordBody = document.getElementById("coord-body")
-      const initState = document.getElementById("init-state")
       const zoomLevel = document.getElementById("zoom-level")
       const aimAngleReadout = document.getElementById("aim-angle")
-
-      const rows = balls.map((ball) => {
-        const row = document.createElement("tr")
-        const label = document.createElement("th")
-        label.scope = "row"
-        label.textContent = `ball ${ball.id}`
-        const xCell = document.createElement("td")
-        const yCell = document.createElement("td")
-        row.append(label, xCell, yCell)
-        coordBody.append(row)
-        return { xCell, yCell }
-      })
-
-      function updateReadout() {
-        balls.forEach(({ x, y }, index) => {
-          rows[index].xCell.textContent = x.toFixed(6)
-          rows[index].yCell.textContent = y.toFixed(6)
-        })
-        const init = balls.flatMap(({ x, y }) => [
-          Number(x.toFixed(6)),
-          Number(y.toFixed(6)),
-        ])
-        initState.textContent = JSON.stringify(init)
-      }
 
       const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
 
@@ -881,7 +1040,6 @@
         const ball = balls[dragIndex]
         circles[dragIndex].setAttribute("cx", String(ball.x))
         circles[dragIndex].setAttribute("cy", String(-ball.y))
-        updateReadout()
       })
 
       function endDrag(event) {
@@ -902,7 +1060,6 @@
         if (findBall(toModelPoint(event)) === null) resetView()
       })
 
-      updateReadout()
       renderAim()
       renderSpin()
       renderPower()
