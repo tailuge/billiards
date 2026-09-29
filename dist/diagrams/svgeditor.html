@@ -93,8 +93,9 @@
 
       h1 {
         margin: 0;
-        font-size: 1.1rem;
-        font-weight: 600;
+        padding: 2px 0;
+        font-size: 0.55rem;
+        font-weight: 400;
       }
 
       main.layout {
@@ -152,7 +153,8 @@
 
       /* Parked: as a third panel it would take a share of the height, and the
          two tables are what have to fill the window for now. It keeps hold of
-         the shot inputs and comes back on a phone, where the page scrolls. */
+         the numeric readouts and comes back on a phone, where the page
+         scrolls. */
       .panel-side {
         display: none;
       }
@@ -187,18 +189,46 @@
         height: 100%;
       }
 
-      /* The table at its own ~1.65:1 shape, centred in the 2:1 media body, so
-         it is as tall as the body allows and letterboxed left and right. */
+      /* The table at its own ~1.65:1 shape inside the 2:1 media body. The hairline
+         border is diagnostic: it outlines the SVG box so the letterbox margins
+         the viewBox leaves around the cloth are visible. */
       svg.billiards-table {
+        box-sizing: border-box;
         display: block;
         height: 100%;
         width: auto;
         max-width: 100%;
         aspect-ratio: var(--table-aspect);
         background: #fff;
+        border: 0.5px solid #9aa0a6;
         border-radius: 0.25rem;
         touch-action: none;
         user-select: none;
+      }
+
+      /* Shot input: the vertical power slider hugs the left edge, the table
+         takes the middle, and the spin and elevation widgets stack down the
+         right. The table viewBox letterboxes inside whatever room is left. */
+      .panel-input .panel-body {
+        justify-content: space-between;
+        gap: 2px;
+      }
+
+      .panel-input .table-panel {
+        flex: 1 1 auto;
+      }
+
+      .panel-input svg.billiards-table {
+        width: 100%;
+        height: 100%;
+      }
+
+      .shot-side {
+        display: flex;
+        flex: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
       }
 
       /* Carom ball colours; ball-colors.css is keyed to pool/snooker ids. */
@@ -243,16 +273,16 @@
         stroke-width: 0.002;
       }
 
-      /* Controls sidebar. The two tabs keep the buttons away from the shot
-         inputs, which are the only controls wanted while editing. */
+      /* Controls sidebar. The two tabs keep the presets and export away from
+         the readouts, which are the only text wanted while editing. */
       .tabs {
         display: flex;
         gap: 0.25rem;
-        padding: 0.5rem 0.6rem 0;
+        padding: 2px 0.6rem;
       }
 
       .tabs label {
-        padding: 0.2rem 0.6rem;
+        padding: 2px 0.6rem;
         border: 1px solid #ccc;
         border-radius: 0.25rem;
         background: #ececec;
@@ -280,7 +310,7 @@
       }
 
       .tab-page {
-        padding: 0.6rem;
+        padding: 2px 0.6rem;
       }
 
       /* Kept focusable but out of sight, with the labels as the visible tabs. */
@@ -294,7 +324,7 @@
       }
 
       .aim {
-        margin: 0.5rem 0 0;
+        margin: 2px 0 0;
         color: #555;
         font-size: 0.75rem;
       }
@@ -308,28 +338,22 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        margin: 0.5rem 0 0;
+        margin: 2px 0 0;
         color: #555;
         font-size: 0.75rem;
-      }
-
-      .shot-inputs {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 0.5rem;
-        margin: 0.5rem 0 0;
       }
 
       /* The ball as the cue sees it: one user unit is one ball radius, so an
          offset reads at its true size. */
       .spin-widget {
+        box-sizing: border-box;
         flex: none;
 
         /* 1.05x the ball's 6rem, so padding the viewBox above did not shrink
-           the ball itself. */
+           the ball itself. The hairline border is diagnostic, like the table's. */
         width: 6.3rem;
         height: 6.3rem;
+        border: 0.5px solid #9aa0a6;
         cursor: crosshair;
         touch-action: none;
       }
@@ -365,15 +389,16 @@
         stroke-width: 0.016;
       }
 
-      /* Vertical and full at the top, as in three.html. Matched to the ball's
-         height so the two read as one control. */
+      /* Vertical and full at the top, as in three.html. Stretched to the full
+         height of the media body so its length matches the table beside it. */
       #power {
+        box-sizing: border-box;
         accent-color: var(--cue-blue);
         writing-mode: vertical-lr;
         direction: rtl;
         flex: none;
         width: 1.1rem;
-        height: 6.3rem;
+        height: 100%;
         margin: 0;
       }
 
@@ -381,9 +406,11 @@
          the same drag the main game's angle-input uses. 0deg is a flat cue and
          the widget's own bottom edge is the cloth it is measured against. */
       .elevation-widget {
+        box-sizing: border-box;
         flex: none;
         width: 6.3rem;
         height: 6.3rem;
+        border: 0.5px solid #9aa0a6;
         cursor: grab;
         touch-action: none;
       }
@@ -398,14 +425,29 @@
         stroke-linecap: round;
       }
 
+      /* The cue's full sweep, always shown, and the cue held at its 72 degree
+         cap as a dashed line, so the drag's range is visible up front. */
+      .elevation-widget .elevation-arc {
+        fill: none;
+        stroke: #c0c6cc;
+        stroke-width: 1;
+      }
+
+      .elevation-widget .elevation-max {
+        stroke: #8a9199;
+        stroke-width: 1;
+        stroke-dasharray: 3 2;
+        stroke-linecap: round;
+      }
+
       .shot-readout {
-        margin: 0.35rem 0 0;
+        margin: 2px 0 0;
         color: #555;
         font-size: 0.75rem;
       }
 
       button {
-        padding: 0.15rem 0.5rem;
+        padding: 2px 0.5rem;
         border: 1px solid #bbb;
         border-radius: 0.25rem;
         background: #fff;
@@ -430,7 +472,7 @@
 
         header {
           height: auto;
-          padding: 0.5rem 0 0;
+          padding: 2px 0 0;
         }
 
         /* The page scrolls, so the tables drop the height budget and simply
@@ -475,34 +517,20 @@
       <section class="panel panel-input" aria-label="Shot input">
         <h2>shot input</h2>
         <div class="panel-body">
+          <input
+            id="power"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            aria-label="Power"
+          />
           <div class="table-panel">
             <svg class="billiards-table threecushion"></svg>
           </div>
-        </div>
-      </section>
-
-      <section class="panel panel-side" aria-label="Controls">
-        <h2>controls</h2>
-        <nav class="tabs" aria-label="Controls">
-          <label for="tab-shot">shot</label>
-          <label for="tab-buttons">buttons</label>
-        </nav>
-        <div class="tab-page" id="page-shot">
-          <p class="aim">cue ball 0 · aim <span id="aim-angle"></span></p>
-          <div class="shot-inputs">
-            <svg
-              class="elevation-widget"
-              viewBox="0 0 100 100"
-              role="slider"
-              aria-label="Cue elevation in degrees"
-              aria-valuemin="0"
-              aria-valuemax="72"
-              aria-valuenow="0"
-            >
-              <line class="elevation-line" x1="12" y1="88" x2="97" y2="88" />
-            </svg>
+          <div class="shot-side">
             <!-- ViewBox is padded past the ball so the ball's outline, which is
-               stroked across r=1, is not clipped by the viewport edge. -->
+                 stroked across r=1, is not clipped by the viewport edge. -->
             <svg
               class="spin-widget"
               viewBox="-1.05 -1.05 2.1 2.1"
@@ -515,15 +543,34 @@
               <line class="spin-axis" x1="0" y1="-0.5" x2="0" y2="0.5" />
               <circle class="spin-dot" r="0.15" />
             </svg>
-            <input
-              id="power"
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              aria-label="Power"
-            />
+            <svg
+              class="elevation-widget"
+              viewBox="0 0 100 100"
+              role="slider"
+              aria-label="Cue elevation in degrees"
+              aria-valuemin="0"
+              aria-valuemax="72"
+              aria-valuenow="0"
+            >
+              <!-- The path the cue tip sweeps, and the cue at its 72 degree cap.
+                   Both are placed from the same pivot, length and cap that drive
+                   the cue line, so they follow the constants. -->
+              <path class="elevation-arc" />
+              <line class="elevation-max" x1="12" y1="88" />
+              <line class="elevation-line" x1="12" y1="88" x2="92.75" y2="88" />
+            </svg>
           </div>
+        </div>
+      </section>
+
+      <section class="panel panel-side" aria-label="Controls">
+        <h2>controls</h2>
+        <nav class="tabs" aria-label="Controls">
+          <label for="tab-shot">shot</label>
+          <label for="tab-buttons">buttons</label>
+        </nav>
+        <div class="tab-page" id="page-shot">
+          <p class="aim">cue ball 0 · aim <span id="aim-angle"></span></p>
           <p class="shot-readout">
             spin <code id="spin-offset"></code>
             <button id="reset-spin" type="button">reset spin</button>
@@ -588,8 +635,7 @@
 
       svg.setAttribute("viewBox", table.viewBox)
       tableGroup.innerHTML = table.content
-      statusEl.textContent =
-        "drag a ball · drag the aim dot · drag the spin dot · drag the elevation line · scroll to zoom · drag cloth to pan"
+      statusEl.textContent = "drag balls, scroll to zoom"
 
       renderBallPositions(ballsGroup, {
         balls: balls.map(({ id, x, y }) => ({ id, pos: { x, y } })),
@@ -874,11 +920,30 @@
       // held in radians, the unit cueStrike and the ?state= shots both take.
       const MAX_ELEVATION = (2 * Math.PI) / 5
       const ELEVATION_PIVOT = { x: 12, y: 88 }
-      const ELEVATION_LENGTH = 85
+      const ELEVATION_LENGTH = 80.75
       const elevationWidget = document.querySelector(".elevation-widget")
       const elevationLine = elevationWidget.querySelector(".elevation-line")
+      const elevationArc = elevationWidget.querySelector(".elevation-arc")
+      const elevationMax = elevationWidget.querySelector(".elevation-max")
       const elevationValue = document.getElementById("elevation-value")
       let elevation = 0
+
+      // The sweep guide and the cap line never move, so they are placed once
+      // from the same pivot, length and cap that drive the cue.
+      function renderElevationGuides() {
+        const flatTipX = ELEVATION_PIVOT.x + ELEVATION_LENGTH
+        const maxTipX =
+          ELEVATION_PIVOT.x + Math.cos(MAX_ELEVATION) * ELEVATION_LENGTH
+        const maxTipY =
+          ELEVATION_PIVOT.y - Math.sin(MAX_ELEVATION) * ELEVATION_LENGTH
+        // Sweep flag 0 draws counter-clockwise on screen, as the cue rises.
+        elevationArc.setAttribute(
+          "d",
+          `M ${flatTipX} ${ELEVATION_PIVOT.y} A ${ELEVATION_LENGTH} ${ELEVATION_LENGTH} 0 0 0 ${maxTipX} ${maxTipY}`
+        )
+        elevationMax.setAttribute("x2", String(maxTipX))
+        elevationMax.setAttribute("y2", String(maxTipY))
+      }
 
       function renderElevation() {
         elevationLine.setAttribute(
@@ -1091,6 +1156,7 @@
       renderAim()
       renderSpin()
       renderPower()
+      renderElevationGuides()
       renderElevation()
       applyView()
     </script>
