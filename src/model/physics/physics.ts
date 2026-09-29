@@ -199,15 +199,20 @@ export function restitutionCushion(v: Vector3) {
 }
 
 // Scratch state for cartesionToBallCentric, which runs on every cushion
-// bounce. Mathavan's constructor args are all module constants, so a single
-// instance is equivalent to a fresh one per call. `c2bcDelta` is deliberately
-// separate from the shared `delta` above so the cushion models cannot alias
-// each other's results; callers read the returned vectors before the next
-// bounce, so reusing it is safe.
+// bounce. The instance is hoisted to keep the allocation off that path -- which
+// means it also outlives every change to the constants it was built from, so it
+// is handed the current values before each solve. Without that re-read it keeps
+// the module-load defaults forever and the m/R/ee/μs/μw controls (sliders, URL
+// params, the worker's configureSimulation) are silently inert for every bounce
+// that goes through here. `c2bcDelta` is deliberately separate from the shared
+// `delta` above so the cushion models cannot alias each other's results;
+// callers read the returned vectors before the next bounce, so reusing it is
+// safe.
 const c2bcMathavan = new Mathavan(m, R, ee, μs, μw)
 const c2bcDelta = { v: new Vector3(), w: new Vector3() }
 
 function cartesionToBallCentric(v, w) {
+  c2bcMathavan.configure(m, R, ee, μs, μw)
   c2bcMathavan.solve(v.x, v.y, w.x, w.y, w.z)
 
   c2bcDelta.v.set(c2bcMathavan.vx, c2bcMathavan.vy, 0).sub(v)

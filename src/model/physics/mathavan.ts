@@ -38,6 +38,20 @@ export class Mathavan {
   ee: number
 
   constructor(M, R, ee, μs, μw) {
+    this.configure(M, R, ee, μs, μw)
+  }
+
+  /**
+   * Take the physical constants for the next solve.
+   *
+   * The constants are module bindings (`constants.ts`) that the sliders, the
+   * launch parameters and the worker's `configureSimulation` all mutate after
+   * this module is loaded, so an instance that caches them has to be handed
+   * them again before it solves -- see the hoisted instance in `physics.ts`.
+   * The constructor goes through here too, which keeps the parameter list in
+   * one place: a new constant is added here and nowhere else.
+   */
+  public configure(M: number, R: number, ee: number, μs: number, μw: number) {
     this.M = M
     this.R = R
     this.ee = ee
