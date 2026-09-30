@@ -1,13 +1,56 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Three cushion research</title>
+    <title>Three Cushion Billiards Physics Research &amp; Simulation</title>
     <link rel="icon" type="image/png" href="../favicon.png" />
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta
       name="description"
-      content="Set up a three cushion shot: move the balls, aim, and choose the spin, power and elevation."
+      content="Explore three-cushion billiards physics with an interactive simulator. Test Han, Mathavan and Stronge cushion models, spin, power, elevation and shot trajectories."
+    />
+    <!-- The page is served from the workers.dev route, so that is the
+         canonical address and the base every card URL is absolute against. -->
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/diagrams/three"
+    />
+    <!-- Link-preview cards (Discord, Slack, X): the title, the same
+         description, and the microscope artwork as the image. -->
+    <meta
+      property="og:title"
+      content="Three Cushion Billiards Physics Research &amp; Simulation"
+    />
+    <meta
+      property="og:description"
+      content="Explore three-cushion billiards physics with an interactive simulator. Test Han, Mathavan and Stronge cushion models, spin, power, elevation and shot trajectories."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://billiards.tailuge.workers.dev/diagrams/three"
+    />
+    <meta
+      property="og:image"
+      content="https://billiards.tailuge.workers.dev/assets/research.png"
+    />
+    <meta
+      property="og:image:alt"
+      content="Pixel-art microscope over red felt: three-cushion billiards physics research"
+    />
+    <meta property="og:site_name" content="Break Builder" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Three Cushion Billiards Physics Research &amp; Simulation"
+    />
+    <meta
+      name="twitter:description"
+      content="Explore three-cushion billiards physics with an interactive simulator. Test Han, Mathavan and Stronge cushion models, spin, power, elevation and shot trajectories."
+    />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/assets/research.png"
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -124,22 +167,113 @@
         line-height: 1.1;
         font-weight: 400;
         text-align: center;
+
+        /* One line, always: the header height is part of the budget above, and
+           a wrapped heading would break out of it. The long research title is
+           clipped with an ellipsis on the narrowest windows instead. */
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       /* Same fixed height as the header, and a direct child of body, so the
-         height budget above stays exact. */
+         height budget above stays exact. It also holds the research details'
+         fold-out panel, which is why it is the positioning context below. */
       footer {
         display: flex;
         flex: none;
         align-items: center;
         justify-content: center;
-        gap: 0.5rem;
+        position: relative;
         height: var(--footer-height);
         font-size: 0.6rem;
       }
 
       footer a {
         color: #1d5886;
+      }
+
+      /* The one line the footer shows: the details' summary, at the footer's
+         own fixed height. Clicking it folds out the research panel. */
+      footer summary {
+        cursor: pointer;
+        color: #1d5886;
+        user-select: none;
+      }
+
+      footer summary:hover {
+        text-decoration: underline;
+      }
+
+      footer summary:focus-visible {
+        outline: 2px solid #1d5886;
+        outline-offset: 1px;
+      }
+
+      /* The research text the summary folds out. Absolutely laid over the
+         panels above the footer rather than in the flow: every word of it is
+         in the DOM whether open or closed -- that is the point of it -- but
+         the page is exactly one window tall and cannot grow to hold it. Above
+         the dialogs' z-index, so opening it covers the tool instead of being
+         buried under a button column. */
+      .research-body {
+        position: absolute;
+        bottom: calc(100% + 2px);
+        left: 50%;
+        z-index: 20;
+        box-sizing: border-box;
+        width: min(46rem, 100%);
+        max-height: calc(
+          var(--vh) - var(--header-height) - var(--footer-height) - 4px
+        );
+        padding: 0.6rem 0.8rem;
+        overflow-y: auto;
+        transform: translateX(-50%);
+        background: #fff;
+        border: var(--bw) solid #ddd;
+        border-radius: 0.25rem;
+        box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+        color: #333;
+        font-size: 0.7rem;
+        line-height: 1.5;
+      }
+
+      .research-body h2 {
+        margin: 0.8rem 0 0.25rem;
+        color: #111;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      /* Each block's own first element starts at its top, which is always its
+         heading. Scoped as a first child rather than an h2 so the rule never
+         collides with the panel titles' own h2 styling further down. */
+      .research-body section > :first-child {
+        margin-top: 0;
+      }
+
+      .research-body p {
+        margin: 0 0 0.35rem;
+      }
+
+      .research-body ul {
+        margin: 0 0 0.35rem;
+        padding-left: 1.1rem;
+      }
+
+      /* The Korean, German and Turkish copies follow the English, each ruled
+         off from what is above it so the four languages read as four blocks. */
+      .research-body section + section {
+        margin-top: 0.8rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #eee;
+      }
+
+      /* The two links, at the foot of the English text. */
+      .research-body .research-links {
+        display: flex;
+        gap: 0.5rem;
       }
 
       main.layout {
@@ -823,7 +957,7 @@
 
   <body>
     <header>
-      <h1>Three cushion research</h1>
+      <h1>Three Cushion Billiards Physics Research &amp; Simulation</h1>
     </header>
 
     <main class="layout">
@@ -1186,9 +1320,159 @@
       </section>
     </main>
 
+    <!-- The research section, folded shut by default and folded out by its
+         summary. All of it is in the DOM either way, so a crawler reads the
+         whole document while the tool keeps its one-window layout. -->
     <footer>
-      <a href="../lobby.html">lobby</a>
-      <a href="https://github.com/tailuge/billiards">github</a>
+      <details class="research">
+        <summary>Three cushion research details</summary>
+        <div class="research-body">
+          <section>
+            <h2>Three-cushion billiards physics</h2>
+            <p>
+              This interactive simulator explores the physics of three-cushion
+              billiards, including ball motion, cushion rebounds, spin, power
+              and cue elevation. Set up a shot and compare the simulated ball
+              trajectory using different cushion models.
+            </p>
+
+            <h2>Cushion physics models</h2>
+            <p>
+              The simulator includes the Han, Mathavan and Stronge cushion
+              physics models. The adjustable parameters include rolling and
+              sliding friction, coefficient of restitution, spin and other
+              variables affecting ball-cushion interaction. They can be tuned in
+              the constants panel to investigate how they affect the rebound
+              angle and speed.
+            </p>
+
+            <h2>Three-cushion shot simulation</h2>
+            <p>
+              Move the balls on the table, set the aim, spin, power and cue
+              elevation, then replay the shot or export its trajectory. Shots
+              can also be sent to the computer search tool to find possible
+              solutions.
+            </p>
+
+            <h2>Physics references</h2>
+            <ul>
+              <li>
+                Han —
+                <cite>Dynamics in Carom and Three Cushion Billiards</cite>
+                (
+                <a
+                  href="https://billiards.colostate.edu/physics_articles/Han_paper.pdf"
+                  >Han 2005 paper</a
+                >
+                )
+              </li>
+              <li>
+                Mathavan, Jackson &amp; Parkin —
+                <cite
+                  >A theoretical analysis of billiard ball dynamics under
+                  cushion impacts</cite
+                >
+                (
+                <a
+                  href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
+                  >Mathavan paper</a
+                >
+                )
+              </li>
+              <li>
+                Model diagrams in this project:
+                <a href="./mathavan.html">Mathavan</a> and
+                <a href="./stronge.html">Stronge</a>
+              </li>
+            </ul>
+            <p class="research-links">
+              <a href="../lobby.html">lobby</a>
+              <a href="https://github.com/tailuge/billiards">github</a>
+            </p>
+          </section>
+
+          <section lang="ko">
+            <h2>삼쿠션 당구 물리학</h2>
+            <p>
+              이 인터랙티브 시뮬레이터는 볼의 운동, 쿠션 반발, 스핀, 파워, 큐
+              엘리베이션을 포함한 삼쿠션 당구의 물리학을 탐구합니다. 샷을
+              설정하고 다양한 쿠션 모델로 시뮬레이션한 궤적을 비교해 보세요.
+            </p>
+
+            <h2>쿠션 물리 모델</h2>
+            <p>
+              시뮬레이터는 Han, Mathavan, Stronge 쿠션 물리 모델을 모두
+              포함합니다. 조절 가능한 매개변수에는 구르는 마찰과 미끄러지는
+              마찰, 반발 계수, 스핀, 볼과 쿠션의 상호작용에 영향을 미치는 기타
+              변수가 포함됩니다. 상수 패널에서 이 매개변수들을 조절해 반발
+              각도와 속도에 미치는 영향을 확인할 수 있습니다.
+            </p>
+
+            <h2>삼쿠션 샷 시뮬레이션</h2>
+            <p>
+              테이블 위에서 볼을 옮기고 조준, 스핀, 파워, 큐 엘리베이션을 설정한
+              뒤 샷을 리플레이하거나 궤적을 내보낼 수 있습니다. 샷은 컴퓨터 검색
+              도구로 보내 가능한 해결책을 찾는 데 사용할 수도 있습니다.
+            </p>
+          </section>
+
+          <section lang="de">
+            <h2>Physik des Dreiband-Billiards</h2>
+            <p>
+              Dieser interaktive Simulator untersucht die Physik des
+              Dreiband-Billiards: Ballbewegung, Bandenabprall, Spin, Kraft und
+              Queuelevation. Richten Sie einen Stoß ein und vergleichen Sie die
+              simulierte Ballbahn mit verschiedenen Bandenmodellen.
+            </p>
+
+            <h2>Banden-Physikmodelle</h2>
+            <p>
+              Der Simulator enthält die Han-, Mathavan- und
+              Stronge-Bandenphysikmodelle. Die einstellbaren Parameter umfassen
+              Roll- und Gleitreibung, den Restitutionskoeffizienten, Spin und
+              andere Variablen, die die Ball-Banden-Wechselwirkung beeinflussen.
+              Sie lassen sich im Konstanten-Panel verstellen, um ihren Einfluss
+              auf Abprallwinkel und -geschwindigkeit zu untersuchen.
+            </p>
+
+            <h2>Simulation von Dreiband-Stößen</h2>
+            <p>
+              Bewegen Sie die Bälle auf dem Tisch, stellen Sie Zielrichtung,
+              Spin, Kraft und Queuelevation ein und spielen Sie den Stoß ab oder
+              exportieren Sie seine Ballbahn. Stöße können auch an die
+              Computersuche gesendet werden, um mögliche Lösungen zu finden.
+            </p>
+          </section>
+
+          <section lang="tr">
+            <h2>Üç bant bilardo fiziği</h2>
+            <p>
+              Bu interaktif simülatör, top hareketi, bant sekmesi, spin, güç ve
+              isteka yüksekliği dahil olmak üzere üç bant bilardonun fiziğini
+              inceler. Bir vuruş ayarlayın ve farklı bant modelleriyle simüle
+              edilmiş top yörüngesini karşılaştırın.
+            </p>
+
+            <h2>Bant fizik modelleri</h2>
+            <p>
+              Simülatör, Han, Mathavan ve Stronge bant fizik modellerini içerir.
+              Ayarlanabilir parametreler arasında yuvarlanma ve kayma
+              sürtünmesi, geri sekme katsayısı, spin ve top-bant etkileşimini
+              etkileyen diğer değişkenler bulunur. Sabitler panelinden bu
+              parametreleri ayarlayarak sekme açısı ve hızı üzerindeki
+              etkilerini inceleyebilirsiniz.
+            </p>
+
+            <h2>Üç bant vuruş simülasyonu</h2>
+            <p>
+              Masadaki topları hareket ettirin, nişanı, spini, gücü ve isteka
+              yüksekliğini ayarlayın, ardından vuruşu tekrar oynatın veya
+              yörüngesini dışa aktarın. Vuruşlar, olası çözümleri bulmak için
+              bilgisayar arama aracına da gönderilebilir.
+            </p>
+          </section>
+        </div>
+      </details>
     </footer>
 
     <!-- The 3D replay's bundle and the chunks it shares globals with. Deferred
