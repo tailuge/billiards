@@ -65,6 +65,11 @@ const MARKUP = `
   <button id="cleartraces" type="button">clear traces</button>
   <div class="modal-backdrop" id="constants-modal" hidden>
     <div class="modal" role="dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">constants</h2>
+        <button id="reset-constants" class="action-button modal-reset" type="button">reset</button>
+        <button class="modal-close" type="button" data-close aria-label="Close constants">×</button>
+      </div>
       <div class="modal-panel">
         <fieldset class="model-toggle">
           <input type="radio" name="cushionModel" value="mathavan" checked />
@@ -108,6 +113,10 @@ const MARKUP = `
   </div>
   <div class="modal-backdrop" id="action-modal" hidden>
     <div class="modal" role="dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">actions</h2>
+        <button class="modal-close" type="button" data-close aria-label="Close actions">×</button>
+      </div>
       <div class="modal-panel">
         <div class="action-list">
           <button id="play" class="action-button" type="button">play in game</button>
@@ -119,6 +128,10 @@ const MARKUP = `
   </div>
   <div class="modal-backdrop" id="presets-modal" hidden>
     <div class="modal" role="dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">presets</h2>
+        <button class="modal-close" type="button" data-close aria-label="Close presets">×</button>
+      </div>
       <div class="modal-panel">
         <div id="presets-list" class="presets-list"></div>
         <p id="presets-empty" class="presets-empty">No presets yet.</p>
@@ -553,6 +566,90 @@ describe("svgeditor dialogs and launch links", () => {
     click("open-constants")
     click("open-constants")
     expect(byId("constants-modal").hidden).toBe(true)
+  })
+
+  it("closes each dialog from the x in its own title row", () => {
+    load()
+    // Every dialog carries the same close, in the row that names it, so the
+    // user is never left with only the backdrop and Escape to dismiss with.
+    const dialogs = [
+      ["open-constants", "constants-modal"],
+      ["action", "action-modal"],
+      ["open-presets", "presets-modal"],
+    ] as const
+
+    dialogs.forEach(([button, modal]) => {
+      click(button)
+      expect(byId(modal).hidden).toBe(false)
+
+      const close = byId(modal).querySelector("[data-close]")
+      expect(close).not.toBeNull()
+      close!.dispatchEvent(new Event("click", { bubbles: true }))
+
+      expect(byId(modal).hidden).toBe(true)
+      expect(byId(button).getAttribute("aria-expanded")).toBe("false")
+    })
+  })
+
+  it("puts every constant back to its default from the reset button", () => {
+    jest.useFakeTimers()
+    try {
+      load()
+      const replay = document.getElementById("replay") as HTMLButtonElement
+      const clickReplay = jest.spyOn(replay, "click")
+      const mu = byId("mu") as HTMLInputElement
+      const stronge = document.querySelector(
+        'input[name="cushionModel"][value="stronge"]'
+      ) as HTMLInputElement
+
+      mu.value = "0.006"
+      mu.dispatchEvent(new Event("input", { bubbles: true }))
+      stronge.checked = true
+      stronge.dispatchEvent(new Event("change", { bubbles: true }))
+
+      click("open-constants")
+      click("reset-constants")
+
+      // Sliders owns the value, so the reset travels the same road a drag does:
+      // the input and the url both follow from the one event, rather than the
+      // page writing each of them itself.
+      expect(mu.value).toBe("0.0055")
+      expect(new URLSearchParams(window.location.search).get("mu")).toBe(
+        "0.0055"
+      )
+
+      // And the model the same dialog opens on, which is a value too.
+      expect(
+        (
+          document.querySelector(
+            'input[name="cushionModel"][value="mathavan"]'
+          ) as HTMLInputElement
+        ).checked
+      ).toBe(true)
+      expect(window.location.search).not.toContain("cushionModel")
+
+      // A replay drawn against the old constants is stale, same as after a drag.
+      jest.advanceTimersByTime(300)
+      expect(clickReplay).toHaveBeenCalled()
+    } finally {
+      jest.useRealTimers()
+    }
+  })
+
+  it("resets a constant the link narrowed the slider around", () => {
+    load()
+    const mu = byId("mu") as HTMLInputElement
+
+    // The bundle sets each span from the value it seeded, so a link that
+    // arrived with a small constant leaves a range the default cannot reach.
+    mu.value = "0.0005"
+    mu.max = "0.001"
+    mu.dispatchEvent(new Event("input", { bubbles: true }))
+
+    click("open-constants")
+    click("reset-constants")
+
+    expect(mu.value).toBe("0.0055")
   })
 
   it("holds the launch links in the actions dialog, not the constants one", () => {

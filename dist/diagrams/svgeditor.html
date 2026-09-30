@@ -324,13 +324,57 @@
         font-size: 0.7rem;
       }
 
+      /* The dialog's title row: the name on the left, its own controls on the
+         right. Above the panel rather than inside it, so the close is where it
+         is on a long list of constants as well as on three buttons. */
+      .modal-header {
+        display: flex;
+        flex: none;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
       .modal-title {
+        flex: 1;
         margin: 0;
         font-size: 0.7rem;
         font-weight: 600;
         color: #666;
         letter-spacing: 0.06em;
         text-transform: uppercase;
+      }
+
+      /* The dialog's own close, in the same ink and shape as the × the preset
+         rows use to delete one, so the gesture is already known. */
+      .modal-close {
+        flex: none;
+        font: inherit;
+        font-size: 0.75rem;
+        line-height: 1;
+        padding: 0.15rem 0.4rem;
+        background: #fff;
+        color: #666;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .modal-close:hover {
+        background: #f5f5f5;
+        color: #111;
+      }
+
+      .modal-close:focus-visible {
+        outline: 2px solid #1d5886;
+        outline-offset: 1px;
+      }
+
+      /* Resetting is a button like any other, only smaller to leave the title
+         the row. */
+      .modal-reset {
+        flex: none;
+        padding: 0 0.5rem;
+        font-size: 0.65rem;
       }
 
       /* The dialog's body. The constants one is tall, and the presets one holds
@@ -905,10 +949,11 @@
         <!-- Inside the input panel rather than over the window: absolute
              against this panel, so opening the dialog leaves the replay above
              it untouched. -->
-        <!-- Two dialogs, one per button, rather than one dialog with two
-             sections in it: neither has to remember which section it was left
-             on, and each title can name what it actually holds. Both ship
-             hidden and share the open/close wiring in the script below. -->
+        <!-- One dialog per button, rather than one dialog with a section per
+             button: none of them has to remember which section it was left on,
+             and each title can name what it actually holds. All ship hidden and
+             share the open/close wiring in the script below, the × in the title
+             row included. -->
         <div class="modal-backdrop" id="constants-modal" hidden>
           <div
             class="modal"
@@ -916,7 +961,25 @@
             aria-modal="true"
             aria-label="Constants"
           >
-            <h2 class="modal-title">constants</h2>
+            <div class="modal-header">
+              <h2 class="modal-title">constants</h2>
+              <button
+                id="reset-constants"
+                class="action-button modal-reset"
+                type="button"
+                title="Restore every constant to its system default"
+              >
+                reset
+              </button>
+              <button
+                class="modal-close"
+                type="button"
+                data-close
+                aria-label="Close constants"
+              >
+                &times;
+              </button>
+            </div>
             <div class="modal-panel">
               <!-- Which cushion the shot is played on. It rides in the state, so
                    the replay, a share link and the launch links all follow it;
@@ -1038,7 +1101,17 @@
             aria-modal="true"
             aria-label="Actions"
           >
-            <h2 class="modal-title">actions</h2>
+            <div class="modal-header">
+              <h2 class="modal-title">actions</h2>
+              <button
+                class="modal-close"
+                type="button"
+                data-close
+                aria-label="Close actions"
+              >
+                &times;
+              </button>
+            </div>
             <!-- Where the shot goes next. Each one builds a link out of the
                  table as it stands now: the ball positions, the aim, the spin,
                  the power and the elevation, plus the constants the sliders
@@ -1066,7 +1139,17 @@
             aria-modal="true"
             aria-label="Presets"
           >
-            <h2 class="modal-title">presets</h2>
+            <div class="modal-header">
+              <h2 class="modal-title">presets</h2>
+              <button
+                class="modal-close"
+                type="button"
+                data-close
+                aria-label="Close presets"
+              >
+                &times;
+              </button>
+            </div>
             <div class="modal-panel">
               <!-- What you can do to the list, above the list itself: the
                    library is the thing being acted on, and it wraps, so
@@ -1138,6 +1221,7 @@
         savePresets,
         clearPresets,
         DEFAULT_PRESETS,
+        PHYSICS_DEFAULTS,
       } from "./editor-state.js"
 
       // The shot to open on: the editor's own default, or the one a launch
@@ -1914,6 +1998,31 @@
         })
       )
 
+      // Every value in this dialog back to the one the physics starts from, for
+      // a shot that was set up against constants that turned out to be wrong --
+      // a shared link's, most often. No reload, unlike a hand edit of the URL:
+      // the shot on the table survives, and the sliders beside the button are
+      // the undo, one drag away.
+      document
+        .getElementById("reset-constants")
+        ?.addEventListener("click", () => {
+          setCushionModel(DEFAULT_CUSHION_MODEL)
+          constantInputs.forEach((input) => {
+            const fallback = PHYSICS_DEFAULTS[input.id]
+            if (fallback === undefined) return
+            // Sliders sets each span from the value it seeded, so a link that
+            // arrived with a small constant has a range the default would not fit
+            // in. Widened just enough to reach it; the rest of the slider alone.
+            input.max = `${Math.max(Number(input.max), fallback)}`
+            input.value = `${fallback}`
+            // Dispatched rather than assigned: the bundle's Sliders owns the
+            // physics setter and the readout, and only hears of a move through the
+            // event it binds above -- so the reset travels the same road a drag
+            // does, and the label and the URL follow without this having to say so.
+            input.dispatchEvent(new Event("input", { bubbles: true }))
+          })
+        })
+
       // --- the two dialogs ---
       // One per button rather than one with two sections: each is hidden in the
       // markup, so neither has to remember which section it was left on, and
@@ -1956,6 +2065,13 @@
         dialog.modal?.addEventListener("click", (event) => {
           if (event.target === dialog.modal) setDialogOpen(dialog, false)
         })
+        // The × in the title row, so a dialog can be shut from where the eye
+        // already is rather than only from the backdrop or the keyboard.
+        dialog.modal
+          ?.querySelectorAll("[data-close]")
+          .forEach((close) =>
+            close.addEventListener("click", () => setDialogOpen(dialog, false))
+          )
       })
 
       // Escape closes, from the document rather than from the dialog, so it
