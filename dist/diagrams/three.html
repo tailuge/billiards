@@ -1,311 +1,584 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Three cushion physics</title>
+    <title>Three cushion research</title>
     <link rel="icon" type="image/png" href="../favicon.png" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Exo:wght@300&display=swap"
-    />
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta
       name="description"
-      content="Interactive three-cushion billiards shot editor. Adjust physics constants, drag balls, set spin and power, then replay or share the shot."
+      content="Set up a three cushion shot: move the balls, aim, and choose the spin, power and elevation."
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../css/ball-colors.css" />
     <style>
       :root {
-        --table-ball-border: 1px;
-        --table-surface-width: 92%;
-        --table-surface-height: 84%;
-        --ball-size-base: 99px;
-        --ball-size-small: 70px;
+        /* Shared by the power slider and the cue tip. */
+        --cue-blue: #2b7bb9;
+
+        /* The drawn extent of the table diagram: its 2:1 play area plus the
+           rails, the viewBox generateBilliardTable() sets in svg.js. The table
+           is drawn at this shape inside the 2:1 media body, so it is
+           letterboxed left and right. */
+        --table-aspect: 3.4048 / 2.0824;
+
+        /* Panel frame width. A variable so the height budget below can
+           subtract the borders it adds. */
+        --bw: 1px;
+
+        /* Fixed heights, so the two tables can fill exactly what the window has
+           left over rather than what a guess leaves over. */
+        --header-height: 1.25rem;
+        --footer-height: 1rem;
+        --title-height: 1rem;
+        --gap: 2px;
+
+        /* The spin and elevation widgets' box. --side-h is the length of the
+           power slider beside them: the two widgets and the button column under
+           them, stacked with the row gap between. */
+        --widget-size: 6.3rem;
+
+        /* The panel's buttons stack down the column, so the column is as tall
+           as the four of them plus the gaps between. The count is a variable
+           because --action-height is its sum, so a fifth button is a change
+           here and nowhere else. */
+        --action-button-h: 1.25rem;
+        --action-gap: 2px;
+        --action-count: 5;
+        --action-height: calc(
+          var(--action-count) * var(--action-button-h) +
+            (var(--action-count) - 1) * var(--action-gap)
+        );
+        --side-h: calc(
+          2 * var(--widget-size) + var(--action-height) + 2 * var(--gap)
+        );
+
+        /* Viewport height. dvh where supported, so a mobile browser's
+           collapsing/expanding chrome is tracked; vh everywhere else. */
+        --vh: 100vh;
+
+        /* Height main.layout works with: the viewport minus the fixed header
+           and footer. */
+        --main-h: calc(var(--vh) - var(--header-height) - var(--footer-height));
+
+        /* Everything in the stack that is not media body: the two panel
+           titles, the row gap and the panels' four horizontal borders. */
+        --chrome-h: calc(2 * var(--title-height) + var(--gap) + 4 * var(--bw));
+
+        /* Each media body is half of what is left. It is 2:1, so twice this
+           height is the width the pair needs to fill --main-h. */
+        --media-h: calc((var(--main-h) - var(--chrome-h)) / 2);
+
+        /* The panel width that makes the two stacked panels exactly fill
+           --main-h, plus their left/right borders. The panels take 100% of the
+           window instead when that is narrower, so they never overflow. */
+        --panel-w: calc(2 * var(--media-h) + 2 * var(--bw));
       }
 
-      h1 {
-        text-align: center;
-        font-size: 0.8rem;
-        line-height: 1.1;
-        font-family: Exo, sans-serif;
-        font-weight: 300;
-        margin-top: 0;
-        margin-bottom: -15px;
-        padding-top: 2px;
-        padding-bottom: 0;
-        position: relative;
-        z-index: 10;
+      @supports (height: 100dvh) {
+        :root {
+          --vh: 100dvh;
+        }
       }
 
+      /* The visible height of the window is the budget: the page is exactly one
+         window tall and never scrolls, and the two panels below are sized from
+         the height left over so they fill it. Their width follows from that
+         height, capped at the window's own width. */
       html,
       body {
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-      }
-
-      html::-webkit-scrollbar,
-      body::-webkit-scrollbar {
-        display: none;
-      }
-
-      body {
-        background-color: black;
-        color: white;
-        font-family: sans-serif;
-        font-size: x-small;
-        margin: 0;
-        padding: 0;
-      }
-
-      #page {
-        width: 100%;
-        max-width: 760px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-      }
-
-      .replaydiagram {
-        width: 100%;
-        padding: 0;
-        margin: 0;
-        background-color: #000;
-        aspect-ratio: 2 / 1.1;
-        position: relative;
-        line-height: 0;
+        height: var(--vh);
         overflow: hidden;
       }
 
-      .diagram {
-        flex: 1 1 auto;
-        min-width: 0;
-        max-width: 60%;
-        padding: 0;
-        margin: 0;
-      }
-
-      #R,
-      #m,
-      #e,
-      #mu,
-      #muS,
-      #muC,
-      #μs,
-      #μw,
-      #ee,
-      #rho,
-      #stronge_omega_ratio,
-      #stronge_e_n,
-      #stronge_μ {
-        width: 90%;
-        height: 2px;
-        accent-color: #888;
-        display: block;
-        margin: 1px auto;
-        appearance: none;
-        background: #555;
-        outline: none;
-        border-radius: 0;
-      }
-
-      #R::-webkit-slider-thumb,
-      #m::-webkit-slider-thumb,
-      #e::-webkit-slider-thumb,
-      #mu::-webkit-slider-thumb,
-      #muS::-webkit-slider-thumb,
-      #muC::-webkit-slider-thumb,
-      #μs::-webkit-slider-thumb,
-      #μw::-webkit-slider-thumb,
-      #ee::-webkit-slider-thumb,
-      #rho::-webkit-slider-thumb,
-      #stronge_omega_ratio::-webkit-slider-thumb,
-      #stronge_e_n::-webkit-slider-thumb,
-      #stronge_μ::-webkit-slider-thumb {
-        appearance: none;
-        width: 14px;
-        height: 10px;
-        background: #bbb;
-        border: 1px solid #fff;
-        border-radius: 2px;
-        cursor: pointer;
-      }
-
-      #R::-moz-range-thumb,
-      #m::-moz-range-thumb,
-      #e::-moz-range-thumb,
-      #mu::-moz-range-thumb,
-      #muS::-moz-range-thumb,
-      #muC::-moz-range-thumb,
-      #μs::-moz-range-thumb,
-      #μw::-moz-range-thumb,
-      #ee::-moz-range-thumb,
-      #rho::-moz-range-thumb,
-      #stronge_omega_ratio::-moz-range-thumb,
-      #stronge_e_n::-moz-range-thumb,
-      #stronge_μ::-moz-range-thumb {
-        width: 14px;
-        height: 10px;
-        background: #bbb;
-        border: 1px solid #fff;
-        border-radius: 2px;
-        cursor: pointer;
-      }
-
-      #constants {
-        line-height: 1.2;
+      body {
         display: flex;
         flex-direction: column;
+        margin: 0;
+        padding: 0 4px;
+        background: #f0f0f0;
+        color: #111;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+
+      /* Fixed height, and a direct child of body, so the height budget above
+         is exact: the two panels get everything below the header. */
+      header {
+        display: flex;
+        flex: none;
+        align-items: center;
         justify-content: center;
+        height: var(--header-height);
+      }
+
+      h1 {
+        margin: 0;
+        padding: 0;
+        font-size: 0.6rem;
+        line-height: 1.1;
+        font-weight: 400;
         text-align: center;
-        box-sizing: border-box;
+      }
+
+      /* Same fixed height as the header, and a direct child of body, so the
+         height budget above stays exact. */
+      footer {
+        display: flex;
+        flex: none;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        height: var(--footer-height);
+        font-size: 0.6rem;
+      }
+
+      footer a {
+        color: #1d5886;
+      }
+
+      main.layout {
+        display: flex;
         flex: 1;
+        flex-direction: column;
+        align-items: center;
+        min-height: 0;
+        gap: var(--gap);
       }
 
-      p {
-        text-align: center;
-        margin: 0 auto;
+      .panel {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        background: #fff;
+        border: var(--bw) solid #ddd;
+        border-radius: 0.25rem;
       }
 
-      input {
-        width: 6ch;
-        block-size: fit-content;
-        font-size: 12px;
+      /* The two media panels take the width that makes them exactly fill the
+         height budget, or the window's width when that is narrower. */
+      .panel-output,
+      .panel-input {
+        width: min(100%, var(--panel-w));
       }
 
-      button {
-        font-size: 12px;
+      .panel > h2 {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0 0.6rem;
+        border-bottom: 1px solid #eee;
+        color: #666;
+        font-size: 0.7rem;
+        font-weight: 600;
+        height: var(--title-height);
+        letter-spacing: 0.06em;
+        line-height: var(--title-height);
+        text-transform: uppercase;
       }
 
+      /* The 2:1 media box: everything below the title. Its width sets its
+         height, and the two panels are sized so these fill the window. */
+      .panel-body {
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 2 / 1;
+        padding: 0;
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .table-panel {
+        display: flex;
+        min-width: 0;
+        height: 100%;
+      }
+
+      /* The table at its own ~1.65:1 shape inside the 2:1 media body. The
+         letterbox margins the viewBox leaves around the cloth are left
+         unframed, so the table reads as the cloth alone. */
+      svg.billiards-table {
+        box-sizing: border-box;
+        display: block;
+        height: 100%;
+        width: auto;
+        max-width: 100%;
+        aspect-ratio: var(--table-aspect);
+        background: #fff;
+        touch-action: none;
+        user-select: none;
+      }
+
+      /* The input panel is the positioning context for the dialogs laid over
+         it, so they stay off the replay panel above. */
+      .panel-input {
+        position: relative;
+      }
+
+      /* The 3D replay. diagram.js drives it from the .topview's data-state and
+         sizes its canvas to the .topview box, so both fill this 2:1 body. */
+      .replaydiagram,
       .topview {
         width: 100%;
         height: 100%;
         line-height: 0;
       }
 
+      .replaydiagram {
+        overflow: hidden;
+        background: #fff;
+      }
+
       .topview canvas {
         display: block;
       }
 
-      #table-wrap {
+      /* The action panel: the last part of the controls column, so its buttons
+         stack down it beneath the elevation widget, each one below the last.
+
+         Above the backdrop, not under it. The backdrop covers the whole input
+         panel to make a click outside the dialog close it, and the buttons sit
+         inside that panel -- so without this the open dialog's backdrop
+         swallows the click on the other button and the pair look mutually
+         exclusive without being usable as such. They do not overlap the dialog
+         itself, which is centred over the table. */
+      .action-panel {
+        box-sizing: border-box;
+        display: flex;
+        flex: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--action-gap);
+        height: var(--action-height);
         position: relative;
-        width: 90%;
-        aspect-ratio: 616 / 343;
-        padding: 0;
-        margin: 0 auto;
-        background-color: black;
+        z-index: 11;
       }
 
-      #table-bg,
-      #table-surface {
+      /* A plain button, as the diagram pages use. */
+      .action-button {
+        font: inherit;
+        font-size: 0.7rem;
+        line-height: 1.2;
+        padding: 0.2rem 0.8rem;
+        background: #fff;
+        color: #111;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .action-button:hover {
+        background: #f5f5f5;
+      }
+
+      /* A fixed height, so the column above is the sum of the four buttons and
+         its foot lands level with the foot of the power slider beside it. */
+      .action-panel .action-button {
+        box-sizing: border-box;
+        height: var(--action-button-h);
+        padding: 0 0.4rem;
+      }
+
+      /* The dialog is scoped to the input panel: absolute against it, so it
+         dims and centres over the shot input without covering the replay
+         above. */
+      .modal-backdrop {
+        box-sizing: border-box;
         position: absolute;
         inset: 0;
-      }
-
-      #table-bg {
-        overflow: hidden;
-        border-radius: 2px;
-      }
-
-      #table-bg img {
-        width: 100%;
-        height: 100%;
-        display: block;
-      }
-
-      #table-surface {
-        inset: auto;
-        width: var(--table-surface-width);
-        height: var(--table-surface-height);
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1;
-      }
-
-      .ball {
-        position: absolute;
-        transform: translate(-50%, -50%);
-        cursor: grab;
-        user-select: none;
-        touch-action: none;
         z-index: 10;
         display: flex;
-        justify-content: center;
         align-items: center;
-        filter: drop-shadow(2px 2px 0 rgb(0 0 0 / 30%));
-        will-change: left, top;
-        border-radius: 50%;
-        overflow: hidden;
-        box-shadow: inset -2px -2px 0 rgb(0 0 0 / 30%);
-        border: var(--table-ball-border) solid #000;
-        box-sizing: content-box;
+        justify-content: center;
+        background: rgb(0 0 0 / 35%);
       }
 
-      .ball.dragging,
-      .ball:active {
-        cursor: grabbing;
-        z-index: 100;
-        filter: drop-shadow(6px 6px 0 rgb(0 0 0 / 60%));
-      }
-
-      .ball::after {
-        content: "";
-        position: absolute;
-        top: 15%;
-        left: 15%;
-        width: 25%;
-        height: 25%;
-        background: rgb(255 255 255 / 80%);
-        border-radius: 50%;
-        pointer-events: none;
-      }
-
-      #aim-layer {
-        position: absolute;
-        inset: 0;
-        z-index: 5;
-        pointer-events: none;
-        overflow: visible;
-      }
-
-      #aim-arrow-line {
-        stroke: rgb(255 255 255 / 10%);
-        stroke-linecap: round;
-      }
-
-      #aim-arrow-head {
-        fill: none;
-        stroke: rgb(255 255 255 / 65%);
-        stroke-width: 1.25;
-        pointer-events: none;
-      }
-
-      #aim-arrow-hit {
-        fill: transparent;
-        stroke: transparent;
-        cursor: grab;
-        pointer-events: auto;
-      }
-
-      #aim-arrow-hit.dragging {
-        cursor: grabbing;
-      }
-
-      .collapse-toggle {
+      /* hidden beats the flex above, so the closed dialog takes no clicks. */
+      .modal-backdrop[hidden] {
         display: none;
+      }
+
+      .modal {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        width: min(24rem, 80%);
+
+        /* Never taller than the panel it is laid over, so a short window
+           shrinks the dialog rather than letting it spill out of the input
+           panel and over the replay above. */
+        max-height: calc(100% - 0.6rem);
+        padding: 0.6rem 0.7rem;
+        background: #fff;
+        border: var(--bw) solid #ddd;
+        border-radius: 0.25rem;
+        box-shadow: 0 10px 30px rgb(0 0 0 / 25%);
+        font-size: 0.7rem;
+      }
+
+      /* The dialog's title row: the name on the left, its own controls on the
+         right. Above the panel rather than inside it, so the close is where it
+         is on a long list of constants as well as on three buttons. */
+      .modal-header {
+        display: flex;
+        flex: none;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .modal-title {
+        flex: 1;
+        margin: 0;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #666;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      /* The dialog's own close, in the same ink and shape as the × the preset
+         rows use to delete one, so the gesture is already known. */
+      .modal-close {
+        flex: none;
+        font: inherit;
+        font-size: 0.75rem;
+        line-height: 1;
+        padding: 0.15rem 0.4rem;
+        background: #fff;
+        color: #666;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .modal-close:hover {
+        background: #f5f5f5;
+        color: #111;
+      }
+
+      .modal-close:focus-visible {
+        outline: 2px solid #1d5886;
+        outline-offset: 1px;
+      }
+
+      /* Resetting is a button like any other, only smaller to leave the title
+         the row. */
+      .modal-reset {
+        flex: none;
+        padding: 0 0.5rem;
+        font-size: 0.65rem;
+      }
+
+      /* The dialog's body. The constants one is tall, and the presets one holds
+         a wrapping library, so both get the scroll; the launch links are three
+         buttons and never need it. */
+      .modal-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+
+        /* Tall enough for the whole 36-shot library at the dialog's width, and
+           `flex` so it gives the height back when the window is short. */
+        max-height: 22rem;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+      }
+
+      /* The launch links, stacked to the dialog's width rather than left at
+         their content width, so the three read as one column of choices. */
+      .action-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .action-list .action-button {
+        text-align: center;
+      }
+
+      /* The saved shots. Wrapping, and each entry only as wide as its own name,
+         as three.html lays its list out: a library of 36 is then a few rows of
+         names rather than 36 rows to scroll past. */
+      .presets-list {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        align-content: flex-start;
+        gap: 3px;
+
+        /* Its own wrapped height, not a share of the panel's: a flex item
+           shrinks by default, which squashed the box and let the chips spill
+           out below it. The panel is the scroll container, so the list keeps
+           its natural height and the panel scrolls when it has to. */
+        flex: none;
+      }
+
+      .preset-row {
+        display: inline-flex;
+        align-items: stretch;
+        gap: 2px;
+      }
+
+      .preset-name {
+        font: inherit;
+        font-size: 0.7rem;
+        line-height: 1.2;
+        padding: 0.2rem 0.4rem;
+        background: #fff;
+        color: #111;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+
+        /* Sized by its name, and never wrapping one: names are capped at 16
+           characters, which fits the dialog on any window worth using. */
+        white-space: nowrap;
+      }
+
+      .preset-name:hover {
+        background: #f5f5f5;
+      }
+
+      .preset-name:focus-visible {
+        outline: 2px solid #1d5886;
+        outline-offset: 1px;
+      }
+
+      .preset-delete {
+        flex: none;
+        font: inherit;
+        font-size: 0.7rem;
+        line-height: 1.2;
+        padding: 0 0.4rem;
+        background: #fff;
+        color: #666;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      .preset-delete:hover {
+        background: #f5f5f5;
+        color: #111;
+      }
+
+      .preset-delete:focus-visible {
+        outline: 2px solid #1d5886;
+        outline-offset: 1px;
+      }
+
+      /* Only while the list is empty; renderPresets owns both of them. */
+      .presets-empty {
+        margin: 0;
+        color: #666;
+        font-size: 0.65rem;
+      }
+
+      /* The one control in the dialog that cannot be undone, so it does not sit
+         in the same ink as the two beside it. */
+      .action-button.destructive {
+        color: #8a1f1f;
+        border-color: #e0bcbc;
+      }
+
+      .action-button.destructive:hover {
+        background: #fdf3f3;
+      }
+
+      /* Which cushion the shot is played on: a pair of radios drawn as one
+         control, so the arrow keys move between them as radios should. */
+      .model-toggle {
+        display: flex;
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+
+      .model-toggle label {
+        flex: 1;
+        cursor: pointer;
+      }
+
+      .model-toggle span {
+        display: block;
+        padding: 2px 0;
+        border: 1px solid #ddd;
+        background: #fff;
+        color: #111;
+        font-size: 0.7rem;
+        text-align: center;
+      }
+
+      /* Joined in the middle, so the pair reads as one control. */
+      .model-toggle label:first-of-type span {
+        border-radius: 3px 0 0 3px;
+      }
+
+      .model-toggle label:last-of-type span {
+        border-left: 0;
+        border-radius: 0 3px 3px 0;
+      }
+
+      .model-toggle input:checked + span {
+        border-color: #1d5886;
+        background: var(--cue-blue);
+        color: #fff;
+      }
+
+      .model-toggle input:focus-visible + span {
+        outline: 2px solid #1d5886;
+        outline-offset: 1px;
+      }
+
+      /* The constant groups, as three.html writes them. The diagram bundle's
+         Sliders finds each input by id, seeds it from the launch parameters and
+         drives the physics setters, so these need markup and nothing else --
+         which is why the ids below are the constants' own names. */
+      .constants {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      /* Hidden but still focusable, so a keyboard can open a group; the label
+         is what the pointer and the keyboard both work against. The same trick
+         hides the cushion model's radios and this legend. */
+      .visually-hidden,
+      .collapse-toggle,
+      .model-toggle input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
       }
 
       .collapse-label {
         display: block;
         padding: 2px 4px;
-        background: #333;
-        color: white;
-        cursor: pointer;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background: #f5f5f5;
+        color: #111;
+        font-size: 0.7rem;
         text-align: center;
-        border: 1px solid #444;
-        margin: 1px 0;
+        cursor: pointer;
+      }
+
+      .collapse-toggle:focus-visible + .collapse-label {
+        outline: 2px solid var(--cue-blue);
+        outline-offset: 1px;
       }
 
       .collapse-content {
@@ -317,1338 +590,1761 @@
         display: block;
       }
 
-      /* --- spin input styles --- */
-
-      .controls-row {
-        display: flex;
-        flex-wrap: nowrap;
-        align-items: stretch;
-        gap: 0;
-        width: 92%;
-        margin: 0 auto;
-        box-sizing: border-box;
-        overflow-x: auto;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        position: relative;
-        top: 0;
-        z-index: 10;
+      /* Sliders sets step 0.0001 and a range up from the value it seeds, so
+         only the shape is styled here. */
+      .constants input[type="range"] {
+        width: 100%;
+        height: 2px;
+        margin: 1px 0;
+        accent-color: var(--cue-blue);
       }
 
-      .controls-row::-webkit-scrollbar {
-        display: none;
+      .constant-row {
+        color: #595959;
+        font-size: 0.65rem;
       }
 
-      #spin-power-wrap {
-        display: flex;
-        align-items: center;
-        align-self: flex-start;
-        width: min-content;
-        flex-shrink: 0;
+      /* Shot input: the table takes the left, the vertical power slider sits
+         beside it, and the spin and elevation widgets stack down the right. The
+         table viewBox letterboxes inside whatever room is left. */
+      .panel-input .panel-body {
+        justify-content: space-between;
+        gap: 2px;
       }
 
-      .ballContainerWrapper {
-        width: var(--ball-size-base);
-        height: var(--ball-size-base);
-        flex-shrink: 0;
-        position: relative;
-        z-index: 20;
+      .panel-input .table-panel {
+        flex: 1 1 auto;
       }
 
-      #objectBallOverlap {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        background: transparent;
-        z-index: 1000;
-      }
-
-      .ballContainer {
-        position: relative;
+      .panel-input svg.billiards-table {
         width: 100%;
         height: 100%;
-        border-radius: 0 12px 0 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 20;
-        box-sizing: border-box;
-        overflow: hidden;
       }
 
+      .shot-side {
+        display: flex;
+        flex: none;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--gap);
+      }
+
+      /* Carom ball colours; ball-colors.css is keyed to pool/snooker ids. */
+
+      svg.billiards-table .ball-0 {
+        --ball-fill: #fff;
+        --ball-stroke: #333;
+      }
+
+      svg.billiards-table .ball-1 {
+        --ball-fill: #ffd700;
+        --ball-stroke: #a67c00;
+      }
+
+      svg.billiards-table .ball-2 {
+        --ball-fill: #e63946;
+        --ball-stroke: #8d1b25;
+      }
+
+      svg.billiards-table .ball {
+        cursor: grab;
+      }
+
+      svg.billiards-table.dragging {
+        cursor: grabbing;
+      }
+
+      svg.billiards-table.zoomed {
+        cursor: grab;
+      }
+
+      svg.billiards-table .aim-line {
+        stroke: #c2410c;
+        stroke-width: 0.0025;
+        stroke-linecap: round;
+        stroke-opacity: 0.75;
+      }
+
+      svg.billiards-table .aim-head {
+        fill: none;
+        stroke: #c2410c;
+        stroke-width: 0.002;
+      }
+
+      /* The ball as the cue sees it: one user unit is one ball radius, so an
+         offset reads at its true size. */
+      .spin-widget {
+        box-sizing: border-box;
+        flex: none;
+
+        /* 1.05x the ball's 6rem, so padding the viewBox above did not shrink
+           the ball itself. */
+        width: var(--widget-size);
+        height: var(--widget-size);
+        cursor: crosshair;
+        touch-action: none;
+      }
+
+      .spin-widget .spin-ball {
+        fill: #fff;
+        stroke: #333;
+        stroke-width: 0.02;
+      }
+
+      .spin-widget .spin-limit {
+        fill: none;
+        stroke: #b91c1c;
+        stroke-width: 0.016;
+        stroke-dasharray: 0.06 0.05;
+        stroke-opacity: 0.5;
+      }
+
+      /* Pinned to the miscue limit: the strike is no longer reproducible. */
+      .spin-widget.at-limit .spin-limit {
+        stroke-opacity: 1;
+      }
+
+      .spin-widget .spin-axis {
+        stroke: #bbb;
+        stroke-width: 0.016;
+      }
+
+      .spin-widget .spin-dot {
+        fill: var(--cue-blue);
+        fill-opacity: 0.85;
+        stroke: #1d5886;
+        stroke-width: 0.016;
+      }
+
+      /* The measured offset, one coordinate per line, riding above and to the
+         right of the tip and flipping to its left near the widget edge so it
+         never clips. The padding in the viewBox is what gives it the room to
+         sit outside the ball. */
+      .spin-widget .spin-readout {
+        fill: #333;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.15px;
+        pointer-events: none;
+      }
+
+      /* Vertical and full at the top, as in three.html. Its length matches the
+         controls column beside it, so the slider and the stack read as one
+         column of the same height. */
       #power {
+        box-sizing: border-box;
+        accent-color: var(--cue-blue);
         writing-mode: vertical-lr;
         direction: rtl;
-        height: 92px;
-        width: 22px;
+        flex: none;
+        width: 1.1rem;
+        height: var(--side-h);
         margin: 0;
       }
 
-      #presets-row {
-        display: flex;
-        flex-flow: row wrap;
-        gap: 3px;
-        align-items: center;
-        width: 92%;
-        margin: 0 auto;
-        padding: 0;
-      }
-
-      #presets-popover {
-        background-color: #222;
-        color: #eee;
-        border: 1px solid #444;
-        border-radius: 4px;
-        padding: 8px;
-        box-shadow: 0 4px 12px rgb(0 0 0 / 50%);
-        max-width: 500px;
-      }
-
-      #presets-popover::backdrop {
-        background: rgb(0 0 0 / 30%);
-      }
-
-      #presets-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-      }
-
-      [popovertarget="presets-popover"] {
-        cursor: pointer;
-        font-size: 11px;
-        color: #aaa;
-        user-select: none;
-        padding: 2px 6px;
-        border: 1px solid #444;
-        border-radius: 2px;
-        background: #000;
-      }
-
-      [popovertarget="presets-popover"]::before {
-        content: "▶ ";
-        font-size: 9px;
-      }
-
-      .preset-btn-container {
-        display: inline-flex;
-        align-items: center;
-      }
-
-      .preset-action {
-        background-color: #f0c8c8;
-        padding: 2px 6px;
-        border-radius: 2px;
-        transition:
-          filter 0.15s ease,
-          transform 0.15s ease;
-      }
-
-      .preset-action:hover {
-        filter: brightness(0.88);
-        transform: translateY(-1px) scale(1.05);
-      }
-
-      .preset-action:active {
-        filter: brightness(0.75);
-        transform: translateY(1px) scale(0.97);
-      }
-
-      #replay {
-        background-color: #c8f0c8;
-        padding: 2px 6px;
-        border-radius: 2px;
-        transition:
-          filter 0.15s ease,
-          transform 0.15s ease;
-      }
-
-      #replay:hover {
-        filter: brightness(0.88);
-        transform: translateY(-1px) scale(1.05);
-      }
-
-      #replay:active {
-        filter: brightness(0.75);
-        transform: translateY(1px) scale(0.97);
-      }
-
-      .cueBall {
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        opacity: 1;
-        background: radial-gradient(
-          circle at 35% 35%,
-          #fff 0%,
-          rgb(255 255 255) 10%,
-          rgb(220 220 220) 30%,
-          #a0a0a0 65%,
-          #606060 90%,
-          #404040 100%
-        );
-        border-radius: 50%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 5;
-        box-shadow:
-          3px 4px 8px rgb(82 82 82 / 70%),
-          inset -4px -6px 12px rgb(0 0 0 / 40%),
-          inset 8px 10px 15px rgb(255 255 255 / 20%);
-      }
-
-      .cueBall::before {
-        content: "";
-        position: absolute;
-        top: 18%;
-        left: 18%;
-        width: 25%;
-        height: 25%;
-        background: radial-gradient(
-          circle,
-          rgb(255 255 255 / 90%) 0%,
-          transparent 80%
-        );
-        border-radius: 50%;
-        pointer-events: none;
-      }
-
-      .objectBall {
-        height: 88%;
-        width: 88%;
-        border: 0.5px solid rgb(0 44 64);
-        border-radius: 50%;
-        z-index: 3;
-        position: absolute;
-        top: 6%;
-        left: 6%;
-        pointer-events: none;
-      }
-
-      .cueTip {
-        height: 22px;
-        width: 22px;
-        background-color: #357abd;
-        border-radius: 50%;
-        z-index: 10;
-        position: absolute;
-        pointer-events: auto;
+      /* The cue seen from the side: one line pivoting about the bottom-left,
+         the same drag the main game's angle-input uses. 0deg is a flat cue and
+         the widget's own bottom edge is the cloth it is measured against. */
+      .elevation-widget {
+        box-sizing: border-box;
+        flex: none;
+        width: var(--widget-size);
+        height: var(--widget-size);
         cursor: grab;
-        transform: translate(-50%, -50%);
-        box-shadow:
-          0 0 2px rgb(0 0 0 / 60%),
-          inset 0 1px 1px rgb(255 255 255 / 30%);
+        touch-action: none;
       }
 
-      #aim-params {
-        font-size: 11px;
-        color: #ccc;
-        margin: 0 4px;
-        font-family: monospace;
-        white-space: pre-wrap;
+      .elevation-widget:active {
+        cursor: grabbing;
       }
 
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip-path: inset(50%);
-        white-space: nowrap;
-        border: 0;
+      .elevation-widget .elevation-line {
+        stroke: #333;
+        stroke-width: 1.2;
+        stroke-linecap: round;
+      }
+
+      /* The cue's full sweep, always shown, and the cue held at its 72 degree
+         cap as a dashed line, so the drag's range is visible up front. */
+      .elevation-widget .elevation-arc {
+        fill: none;
+        stroke: #c0c6cc;
+        stroke-width: 1;
+      }
+
+      .elevation-widget .elevation-max {
+        stroke: #8a9199;
+        stroke-width: 1;
+        stroke-dasharray: 3 2;
+        stroke-linecap: round;
+      }
+
+      /* The measured angle, centred in the widget. Stroked white underneath so
+         it stays legible where the cue line crosses it. */
+      .elevation-widget .elevation-readout {
+        fill: #111;
+        stroke: #fff;
+        stroke-width: 3px;
+        stroke-linejoin: round;
+        paint-order: stroke;
+        font-size: 12px;
+        text-anchor: middle;
+        dominant-baseline: central;
+        pointer-events: none;
+      }
+
+      /* Phones: one column in the reading order above, natural height and
+         normal scrolling. Narrower than this the pair cannot usefully fit a
+         window anyway. */
+      @media (width <= 40rem) {
+        html,
+        body {
+          height: auto;
+          overflow: visible;
+        }
+
+        body {
+          padding-bottom: 2px;
+        }
+
+        header {
+          height: auto;
+          padding: 2px 0 0;
+        }
+
+        /* The page scrolls, so the tables drop the height budget and simply
+           take the full width of the window, staying 2:1. */
+        .panel-output,
+        .panel-input {
+          width: 100%;
+        }
       }
     </style>
   </head>
 
   <body>
-    <div id="page">
-      <h1 id="page-title">Carom research</h1>
-      <div class="replaydiagram">
-        <div
-          class="topview"
-          data-state="?ruletype=threecushion&state=%7B%22diagram%22:true,%22init%22:%5B-1.305026,-0.634005,-1.434758,0.601475,-1.310215,0.685593%5D,%22shots%22:%5B%7B%22type%22:%22AIM%22,%22offset%22:%7B%22x%22:-0.201901,%22y%22:0.221892,%22z%22:0%7D,%22angle%22:0.63687,%22power%22:2.62,%22pos%22:%7B%22x%22:-1.305026,%22y%22:-0.634005,%22z%22:0%7D,%22i%22:0%7D%5D%7D"
-        ></div>
-      </div>
+    <header>
+      <h1>Three cushion research</h1>
+    </header>
 
-      <div id="presets-row">
-        <button popovertarget="presets-popover" type="button">presets</button>
-        <div id="presets-popover" popover>
-          <div id="presets-list"></div>
+    <main class="layout">
+      <!-- Order matters: the simulation output sits above the table it is
+           plotted from, and the flow follows the markup. -->
+      <section class="panel panel-output" aria-label="Simulation output">
+        <h2>simulation output</h2>
+        <!-- The diagram bundle's contract, as three.html writes it: a
+             .replaydiagram holding a .topview whose data-state it reads. The
+             editor fills that state in; the bundle owns everything below. -->
+        <div class="panel-body">
+          <div class="replaydiagram">
+            <div class="topview"></div>
+          </div>
         </div>
-        <button id="add-preset" type="button" title="Add current as preset">
-          +
-        </button>
-        <button id="share-all" type="button">share presets</button>
-        <button id="share-shot" type="button">share shot</button>
-        <button id="play-btn" type="button">play</button>
-        <button id="svg-btn" type="button">svg</button>
-        <button id="cleartraces" type="button">clear traces</button>
-        <button id="solution-btn" type="button">solution</button>
-        <button
-          id="stronge-btn"
-          type="button"
-          onclick="
-            var p = new URLSearchParams(location.search)
-            p.set('cushionModel', 'stronge')
-            p.set('mu', '0.006')
-            p.set('muS', '0.25')
-            location.href = location.href.split('?')[0] + '?' + p.toString()
-          "
-        >
-          Stronge
-        </button>
-        <button id="reset-presets" type="button" class="preset-action">
-          reset
-        </button>
-        <button id="replay" type="button">replay</button>
-      </div>
+      </section>
 
-      <div class="controls-row">
-        <div id="spin-power-wrap">
-          <div id="ballContainerWrapper" class="ballContainerWrapper">
-            <div id="ballContainer" class="ballContainer">
-              <div id="objectBall" class="objectBall"></div>
-              <div id="cueBall" class="cueBall">
-                <div id="cueTip" class="cueTip"></div>
-              </div>
-            </div>
-            <div id="objectBallOverlap"></div>
+      <section class="panel panel-input" aria-label="Shot input">
+        <h2>shot input</h2>
+        <div class="panel-body">
+          <div class="table-panel">
+            <svg class="billiards-table threecushion"></svg>
           </div>
-          <label for="power" class="sr-only">Power</label>
-          <input id="power" type="range" />
-        </div>
-        <div id="constants">
-          <div class="constant-group">
-            <input
-              type="checkbox"
-              id="mathavan-toggle"
-              class="collapse-toggle"
-            />
-            <label for="mathavan-toggle" class="collapse-label">Mathavan</label>
-            <div class="collapse-content">
-              <input id="μs" type="range" />
-              <div>Mathavan <label for="μs"></label></div>
-              <input id="μw" type="range" />
-              <div>Mathavan <label for="μw"></label></div>
-              <input id="ee" type="range" />
-              <div>Cushion restitution <label for="ee"></label></div>
-            </div>
-          </div>
-          <div class="constant-group">
-            <input type="checkbox" id="han-toggle" class="collapse-toggle" />
-            <label for="han-toggle" class="collapse-label">Han</label>
-            <div class="collapse-content">
-              <input id="mu" type="range" />
-              <div>Han rolling friction <label for="mu"></label></div>
-              <input id="muS" type="range" />
-              <div>Han sliding friction <label for="muS"></label></div>
-            </div>
-          </div>
-          <div class="constant-group">
-            <input
-              type="checkbox"
-              id="stronge-toggle"
-              class="collapse-toggle"
-            />
-            <label for="stronge-toggle" class="collapse-label">Stronge</label>
-            <div class="collapse-content">
-              <input id="stronge_omega_ratio" type="range" />
-              <div>
-                Stronge ω ratio <label for="stronge_omega_ratio"></label>
-              </div>
-              <input id="stronge_e_n" type="range" />
-              <div>Stronge eₙ <label for="stronge_e_n"></label></div>
-              <input id="stronge_μ" type="range" />
-              <div>Stronge μ <label for="stronge_μ"></label></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="table-wrap">
-        <div id="table-bg">
-          <img
-            src="../images/3ctopnew.jpg"
-            alt="Three-cushion billiards table"
+          <input
+            id="power"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            aria-label="Power"
           />
+          <div class="shot-side">
+            <!-- ViewBox is padded past the ball so the ball's outline, which is
+                 stroked across r=1, is not clipped by the viewport edge. -->
+            <svg
+              class="spin-widget"
+              viewBox="-1.05 -1.05 2.1 2.1"
+              role="img"
+              aria-label="Cue tip contact point on the cue ball"
+            >
+              <circle class="spin-ball" r="1" />
+              <circle class="spin-limit" r="0.45" />
+              <line class="spin-axis" x1="-0.5" y1="0" x2="0.5" y2="0" />
+              <line class="spin-axis" x1="0" y1="-0.5" x2="0" y2="0.5" />
+              <circle class="spin-dot" r="0.15" />
+              <text class="spin-readout" aria-hidden="true">
+                <tspan></tspan>
+                <tspan></tspan>
+              </text>
+            </svg>
+            <svg
+              class="elevation-widget"
+              viewBox="0 0 100 100"
+              role="slider"
+              aria-label="Cue elevation in degrees"
+              aria-valuemin="0"
+              aria-valuemax="72"
+              aria-valuenow="0"
+            >
+              <!-- The path the cue tip sweeps, and the cue at its 72 degree cap.
+                   Both are placed from the same pivot, length and cap that drive
+                   the cue line, so they follow the constants. -->
+              <path class="elevation-arc" />
+              <line class="elevation-max" x1="12" y1="88" />
+              <line class="elevation-line" x1="12" y1="88" x2="92.75" y2="88" />
+              <text
+                class="elevation-readout"
+                x="50"
+                y="50"
+                aria-hidden="true"
+              />
+            </svg>
+            <!-- Under the elevation widget, down the bottom of the controls
+                 column: one button above the next. -->
+            <div class="action-panel">
+              <!-- Named open-constants rather than constants: the constants
+                   panel below is id="constants", which the diagram bundle's
+                   Sliders looks the panel up by, so the id is not free. -->
+              <button
+                id="open-constants"
+                class="action-button"
+                type="button"
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls="constants-modal"
+              >
+                constants
+              </button>
+              <button
+                id="action"
+                class="action-button"
+                type="button"
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls="action-modal"
+              >
+                action
+              </button>
+              <button
+                id="open-presets"
+                class="action-button"
+                type="button"
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls="presets-modal"
+              >
+                presets
+              </button>
+              <!-- The diagram bundle relabels this and binds the re-run once
+                   its assets are in, so it is the editor's only way to replay. -->
+              <button id="replay" class="action-button" type="button">
+                replay
+              </button>
+              <!-- Also bound by the bundle, which looks the button up by this id
+                   and clears the ghost trails the replay leaves behind. -->
+              <button id="cleartraces" class="action-button" type="button">
+                clear traces
+              </button>
+            </div>
+          </div>
         </div>
-        <div id="table-surface">
-          <svg id="aim-layer" aria-hidden="true">
-            <line id="aim-arrow-line" x1="0" y1="0" x2="0" y2="0"></line>
-            <circle id="aim-arrow-head" cx="0" cy="0" r="8"></circle>
-            <circle id="aim-arrow-hit" cx="0" cy="0" r="18"></circle>
-          </svg>
-        </div>
-      </div>
-    </div>
 
+        <!-- Inside the input panel rather than over the window: absolute
+             against this panel, so opening the dialog leaves the replay above
+             it untouched. -->
+        <!-- One dialog per button, rather than one dialog with a section per
+             button: none of them has to remember which section it was left on,
+             and each title can name what it actually holds. All ship hidden and
+             share the open/close wiring in the script below, the × in the title
+             row included. -->
+        <div class="modal-backdrop" id="constants-modal" hidden>
+          <div
+            class="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Constants"
+          >
+            <div class="modal-header">
+              <h2 class="modal-title">constants</h2>
+              <button
+                id="reset-constants"
+                class="action-button modal-reset"
+                type="button"
+                title="Restore every constant to its system default"
+              >
+                reset
+              </button>
+              <button
+                class="modal-close"
+                type="button"
+                data-close
+                aria-label="Close constants"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-panel">
+              <!-- Which cushion the shot is played on. It rides in the state, so
+                   the replay, a share link and the launch links all follow it;
+                   the constants below are left for the sliders to set. -->
+              <fieldset class="model-toggle">
+                <legend class="visually-hidden">Cushion model</legend>
+                <label>
+                  <input
+                    type="radio"
+                    name="cushionModel"
+                    value="mathavan"
+                    checked
+                  />
+                  <span>Mathavan</span>
+                </label>
+                <label>
+                  <input type="radio" name="cushionModel" value="stronge" />
+                  <span>Stronge</span>
+                </label>
+              </fieldset>
+              <!-- The physics constants, grouped as three.html groups them. The
+                 empty labels are filled in by the bundle with each constant's
+                 name and current value. -->
+              <div id="constants" class="constants">
+                <div class="constant-group">
+                  <input
+                    type="checkbox"
+                    id="mathavan-toggle"
+                    class="collapse-toggle"
+                  />
+                  <label for="mathavan-toggle" class="collapse-label"
+                    >Mathavan</label
+                  >
+                  <div class="collapse-content">
+                    <input id="μs" type="range" aria-label="Mathavan μs" />
+                    <div class="constant-row">
+                      Mathavan <label for="μs"></label>
+                    </div>
+                    <input id="μw" type="range" aria-label="Mathavan μw" />
+                    <div class="constant-row">
+                      Mathavan <label for="μw"></label>
+                    </div>
+                    <input
+                      id="ee"
+                      type="range"
+                      aria-label="Cushion restitution"
+                    />
+                    <div class="constant-row">
+                      Cushion restitution <label for="ee"></label>
+                    </div>
+                  </div>
+                </div>
+                <div class="constant-group">
+                  <input
+                    type="checkbox"
+                    id="han-toggle"
+                    class="collapse-toggle"
+                  />
+                  <label for="han-toggle" class="collapse-label">Han</label>
+                  <div class="collapse-content">
+                    <input
+                      id="mu"
+                      type="range"
+                      aria-label="Han rolling friction"
+                    />
+                    <div class="constant-row">
+                      Han rolling friction <label for="mu"></label>
+                    </div>
+                    <input
+                      id="muS"
+                      type="range"
+                      aria-label="Han sliding friction"
+                    />
+                    <div class="constant-row">
+                      Han sliding friction <label for="muS"></label>
+                    </div>
+                  </div>
+                </div>
+                <div class="constant-group">
+                  <input
+                    type="checkbox"
+                    id="stronge-toggle"
+                    class="collapse-toggle"
+                  />
+                  <label for="stronge-toggle" class="collapse-label"
+                    >Stronge</label
+                  >
+                  <div class="collapse-content">
+                    <input
+                      id="stronge_omega_ratio"
+                      type="range"
+                      aria-label="Stronge ω ratio"
+                    />
+                    <div class="constant-row">
+                      Stronge ω ratio <label for="stronge_omega_ratio"></label>
+                    </div>
+                    <input
+                      id="stronge_e_n"
+                      type="range"
+                      aria-label="Stronge normal restitution"
+                    />
+                    <div class="constant-row">
+                      Stronge eₙ <label for="stronge_e_n"></label>
+                    </div>
+                    <input id="stronge_μ" type="range" aria-label="Stronge μ" />
+                    <div class="constant-row">
+                      Stronge μ <label for="stronge_μ"></label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-backdrop" id="action-modal" hidden>
+          <div
+            class="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Actions"
+          >
+            <div class="modal-header">
+              <h2 class="modal-title">actions</h2>
+              <button
+                class="modal-close"
+                type="button"
+                data-close
+                aria-label="Close actions"
+              >
+                &times;
+              </button>
+            </div>
+            <!-- Where the shot goes next. Each one builds a link out of the
+                 table as it stands now: the ball positions, the aim, the spin,
+                 the power and the elevation, plus the constants the sliders
+                 are holding. Same three buttons and the same targets as
+                 three.html, so a shot set up here opens the same way there. -->
+            <div class="modal-panel">
+              <div class="action-list">
+                <button id="play" class="action-button" type="button">
+                  play in game
+                </button>
+                <button id="solution" class="action-button" type="button">
+                  computer search solutions
+                </button>
+                <button id="svg" class="action-button" type="button">
+                  svg diagram
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-backdrop" id="presets-modal" hidden>
+          <div
+            class="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Presets"
+          >
+            <div class="modal-header">
+              <h2 class="modal-title">presets</h2>
+              <button
+                class="modal-close"
+                type="button"
+                data-close
+                aria-label="Close presets"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="modal-panel">
+              <!-- What you can do to the list, above the list itself: the
+                   library is the thing being acted on, and it wraps, so
+                   burying the controls under it would mean scrolling to reach
+                   them. -->
+              <div class="action-list">
+                <button id="add-preset" class="action-button" type="button">
+                  save this shot
+                </button>
+                <button id="share-presets" class="action-button" type="button">
+                  share presets
+                </button>
+                <!-- Destructive, and marked as such: it throws away every
+                     preset the user has saved and cannot be undone. -->
+                <button
+                  id="reset-presets"
+                  class="action-button destructive"
+                  type="button"
+                >
+                  reset presets
+                </button>
+              </div>
+              <!-- The list itself, built by renderPresets. Wraps rather than
+                   stacking, and each entry is only as wide as its name, so a
+                   36-shot library is several rows of names instead of 36 rows
+                   to scroll through. -->
+              <div id="presets-list" class="presets-list"></div>
+              <p id="presets-empty" class="presets-empty">
+                No presets yet. Set up a shot and save it.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <a href="../lobby.html">lobby</a>
+      <a href="https://github.com/tailuge/billiards">github</a>
+    </footer>
+
+    <!-- The 3D replay's bundle and the chunks it shares globals with. Deferred
+         and in document order, so they are in place before the editor's own
+         module runs and before DOMContentLoaded fires their listener.
+         interact.js is in three.html's list but the build does not emit it. -->
     <script defer src="../three_core.js"></script>
     <script defer src="../three_module.js"></script>
     <script defer src="../three_examples.js"></script>
     <script defer src="../messaging.js"></script>
-    <script defer src="../interact.js"></script>
-    <script>
-      const BALL_RADIUS = 0.03275
-      const UMB_TABLE_X = 92.36
-      const UMB_TABLE_Y = 46.18
-      const TABLE_HALF_WIDTH = (BALL_RADIUS * UMB_TABLE_X) / 2
-      const TABLE_HALF_HEIGHT = (BALL_RADIUS * UMB_TABLE_Y) / 2
-      const DEFAULT_AIM_LENGTH = 86 * BALL_RADIUS
-      const OFF_CENTER_LIMIT = 0.45
-      const MAX_POWER = 160 * BALL_RADIUS
-      const urlParams = new URLSearchParams(window.location.search)
-      const ruletype = urlParams.get("ruletype") || "threecushion"
-      const BALL_COLORS =
-        ruletype === "sagu"
-          ? ["#ffffff", "#ffd700", "#ef4444", "#ef4444"]
-          : ["#ffffff", "#ffd700", "#ef4444"]
-      const DEFAULT_PRESETS_PARAM =
-        "%5B%7B%22name%22%3A%220-%3E3+plain%22%2C%22positions%22%3A%5B%5B-1.43725%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.97278%2C%22power%22%3A2.1484%2C%22offset%22%3A%7B%22x%22%3A-0.016348%2C%22y%22%3A0.026548%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E3+max%22%2C%22positions%22%3A%5B%5B-1.43725%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.97278%2C%22power%22%3A2.1484%2C%22offset%22%3A%7B%22x%22%3A-0.298654%2C%22y%22%3A0.028383%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E4+plain%22%2C%22positions%22%3A%5B%5B-1.398795%2C-0.711841%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.834095%2C%22power%22%3A2.1484%2C%22offset%22%3A%7B%22x%22%3A-0.032914%2C%22y%22%3A0.068287%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E4+max%22%2C%22positions%22%3A%5B%5B-1.398795%2C-0.711841%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.834095%2C%22power%22%3A2.1484%2C%22offset%22%3A%7B%22x%22%3A-0.299159%2C%22y%22%3A0.022451%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E5+plain%22%2C%22positions%22%3A%5B%5B-1.379568%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.727616%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.032914%2C%22y%22%3A0.068287%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E5+max%22%2C%22positions%22%3A%5B%5B-1.379568%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.727616%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.297669%2C%22y%22%3A0.037322%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E6+plain%22%2C%22positions%22%3A%5B%5B-1.360341%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.640387%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.032914%2C%22y%22%3A0.068287%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E6+max%22%2C%22positions%22%3A%5B%5B-1.360341%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.640387%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.299432%2C%22y%22%3A0.018458%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E7+plain%22%2C%22positions%22%3A%5B%5B-1.350727%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.558663%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.032914%2C%22y%22%3A0.068287%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E7+max%22%2C%22positions%22%3A%5B%5B-1.350727%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.558663%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.298575%2C%22y%22%3A0.029203%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E8+plain%22%2C%22positions%22%3A%5B%5B-1.326693%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.501812%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.010489%2C%22y%22%3A0.080802%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%220-%3E8+max%22%2C%22positions%22%3A%5B%5B-1.326693%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.501812%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.298776%2C%22y%22%3A0.027072%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22holdup%22%2C%22positions%22%3A%5B%5B-0.372531%2C-0.371469%5D%2C%5B0.747466%2C-0.395106%5D%2C%5B0.704205%2C-0.574747%5D%5D%2C%22angle%22%3A0.004992%2C%22power%22%3A3.93%2C%22offset%22%3A%7B%22x%22%3A-0.240914%2C%22y%22%3A-0.178774%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22screw%22%2C%22positions%22%3A%5B%5B-0.771501%2C-0.376197%5D%2C%5B0.742659%2C0.49837%5D%2C%5B0.704205%2C-0.574747%5D%5D%2C%22angle%22%3A0.524251%2C%22power%22%3A5.24%2C%22offset%22%3A%7B%22x%22%3A-0.031442%2C%22y%22%3A-0.298348%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22doubleRail%22%2C%22positions%22%3A%5B%5B0.603261%2C0.053996%5D%2C%5B1.415619%2C0.110724%5D%2C%5B1.127208%2C-0.139827%5D%5D%2C%22angle%22%3A0.093624%2C%22power%22%3A3.8776%2C%22offset%22%3A%7B%22x%22%3A-0.121388%2C%22y%22%3A0.274344%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22break%22%2C%22positions%22%3A%5B%5B-0.756%2C-0.189%5D%2C%5B-0.756%2C0%5D%2C%5B0.756%2C0%5D%5D%2C%22angle%22%3A0.147099%2C%22power%22%3A3.7204%2C%22offset%22%3A%7B%22x%22%3A-0.252932%2C%22y%22%3A0.161324%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22doubleRail2%22%2C%22positions%22%3A%5B%5B-1.160856%2C0.181635%5D%2C%5B-1.347367%2C0.611996%5D%2C%5B-1.412751%2C0.687701%5D%5D%2C%22angle%22%3A0.250141%2C%22power%22%3A2.096%2C%22offset%22%3A%7B%22x%22%3A0.246853%2C%22y%22%3A0.170481%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22outside%22%2C%22positions%22%3A%5B%5B-0.773558%2C0.555247%5D%2C%5B-1.313599%2C-0.101375%5D%2C%5B1.364066%2C0.481371%5D%5D%2C%22angle%22%3A3.970485%2C%22power%22%3A2.2532%2C%22offset%22%3A%7B%22x%22%3A0.257684%2C%22y%22%3A0.153619%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%222-%3E6+max%22%2C%22positions%22%3A%5B%5B-0.634505%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.848993%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.297669%2C%22y%22%3A0.037322%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%224-%3E7+max%22%2C%22positions%22%3A%5B%5B0.07691%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A0.984702%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.297669%2C%22y%22%3A0.037322%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%226-%3E8+max%22%2C%22positions%22%3A%5B%5B0.797938%2C-0.723348%5D%2C%5B-1.479545%2C-0.338378%5D%2C%5B-1.479545%2C-0.437653%5D%5D%2C%22angle%22%3A1.142182%2C%22power%22%3A2.6724%2C%22offset%22%3A%7B%22x%22%3A-0.297669%2C%22y%22%3A0.037322%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22S-%3ES+max%22%2C%22positions%22%3A%5B%5B-0.781114%2C-0.631476%5D%2C%5B-1.478109%2C-0.035825%5D%2C%5B-1.479545%2C-0.149282%5D%5D%2C%22angle%22%3A0.002101%2C%22power%22%3A3.2488%2C%22offset%22%3A%7B%22x%22%3A0.288315%2C%22y%22%3A-0.082912%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22crosstable%22%2C%22positions%22%3A%5B%5B0.761887%2C-0.560565%5D%2C%5B1.112787%2C0.068178%5D%2C%5B1.357937%2C0.465278%5D%5D%2C%22angle%22%3A1.127747%2C%22power%22%3A3.2488%2C%22offset%22%3A%7B%22x%22%3A-0.163669%2C%22y%22%3A0.251421%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22crosstable2%22%2C%22positions%22%3A%5B%5B0.761887%2C-0.560565%5D%2C%5B1.112787%2C0.068178%5D%2C%5B1.439654%2C-0.645658%5D%5D%2C%22angle%22%3A1.137206%2C%22power%22%3A5.24%2C%22offset%22%3A%7B%22x%22%3A-0.163669%2C%22y%22%3A0.251421%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22L-%3EL+max%22%2C%22positions%22%3A%5B%5B-0.00721%2C-0.380924%5D%2C%5B1.479545%2C0.17218%5D%2C%5B1.479545%2C-0.158737%5D%5D%2C%22angle%22%3A1.570796%2C%22power%22%3A2.096%2C%22offset%22%3A%7B%22x%22%3A-0.299665%2C%22y%22%3A-0.014179%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22eightC%22%2C%22positions%22%3A%5B%5B-1.132015%2C-0.00746%5D%2C%5B-1.300255%2C0.597645%5D%2C%5B-1.300255%2C0.493643%5D%5D%2C%22angle%22%3A0.326251%2C%22power%22%3A5.24%2C%22offset%22%3A%7B%22x%22%3A-0.284128%2C%22y%22%3A0.096287%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22screw2%22%2C%22positions%22%3A%5B%5B-1.136822%2C-0.390379%5D%2C%5B-0.829183%2C0.659101%5D%2C%5B-0.983002%2C-0.002733%5D%5D%2C%22angle%22%3A1.188073%2C%22power%22%3A5.24%2C%22offset%22%3A%7B%22x%22%3A-0.102683%2C%22y%22%3A-0.28188%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22fiveC%22%2C%22positions%22%3A%5B%5B-0.444634%2C-0.24383%5D%2C%5B-0.829183%2C0.659101%5D%2C%5B-1.18489%2C-0.55111%5D%5D%2C%22angle%22%3A2.029754%2C%22power%22%3A5.24%2C%22offset%22%3A%7B%22x%22%3A0.257474%2C%22y%22%3A-0.153972%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22doubleRail3%22%2C%22positions%22%3A%5B%5B-0.910899%2C0.252546%5D%2C%5B-1.420426%2C0.366003%5D%2C%5B-1.372358%2C-0.55111%5D%5D%2C%22angle%22%3A2.858948%2C%22power%22%3A5.24%2C%22offset%22%3A%7B%22x%22%3A-0.110817%2C%22y%22%3A0.278782%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22cornermax%22%2C%22positions%22%3A%5B%5B-0.761887%2C0.370731%5D%2C%5B-1.479545%2C0.588191%5D%2C%5B-1.479545%2C0.723348%5D%5D%2C%22angle%22%3A5.835231%2C%22power%22%3A3.3012%2C%22offset%22%3A%7B%22x%22%3A-0.299863%2C%22y%22%3A-0.009066%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22reverse%22%2C%22positions%22%3A%5B%5B-0.769%2C-0.192%5D%2C%5B0.769%2C0%5D%2C%5B1.07%2C0%5D%5D%2C%22angle%22%3A5.495572%2C%22power%22%3A3%2C%22offset%22%3A%7B%22x%22%3A-0.201901%2C%22y%22%3A0.221892%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22i02%22%2C%22positions%22%3A%5B%5B-0.90532%2C-0.644583%5D%2C%5B1.091042%2C0.485176%5D%2C%5B1.379607%2C0.384451%5D%5D%2C%22angle%22%3A0.003509%2C%22power%22%3A3.3012%2C%22offset%22%3A%7B%22x%22%3A0.299737%2C%22y%22%3A-0.012553%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22i03%22%2C%22positions%22%3A%5B%5B-0.992616%2C0.663829%5D%2C%5B0.795535%2C-0.215466%5D%2C%5B0.441922%2C-0.442376%5D%5D%2C%22angle%22%3A-0.015876%2C%22power%22%3A3.3012%2C%22offset%22%3A%7B%22x%22%3A-0.299715%2C%22y%22%3A0.013084%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22doubleRail3-%3E1%22%2C%22positions%22%3A%5B%5B-1.479545%2C-0.338378%5D%2C%5B-1.434758%2C0.601475%5D%2C%5B-1.310215%2C0.685593%5D%5D%2C%22angle%22%3A0.360142%2C%22power%22%3A2.62%2C%22offset%22%3A%7B%22x%22%3A0.284801%2C%22y%22%3A-0.094279%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22kshot%22%2C%22positions%22%3A%5B%5B-1.218538%2C-0.555837%5D%2C%5B1.479545%2C0.723348%5D%2C%5B1.132015%2C0.723348%5D%5D%2C%22angle%22%3A0.501502%2C%22power%22%3A5.24%2C%22offset%22%3A%7B%22x%22%3A0.118015%2C%22y%22%3A-0.485873%2C%22z%22%3A0%7D%7D%2C%7B%22name%22%3A%22crosstable-vid%22%2C%22positions%22%3A%5B%5B0.362918%2C-0.012188%5D%2C%5B-1.343517%2C0.375458%5D%2C%5B-0.463862%2C0.644919%5D%5D%2C%22angle%22%3A2.429575%2C%22power%22%3A5.24%2C%22offset%22%3A%7B%22x%22%3A0.013723%2C%22y%22%3A0.449791%2C%22z%22%3A0%7D%7D%5D"
-      const DEFAULT_PRESETS = JSON.parse(
-        decodeURIComponent(DEFAULT_PRESETS_PARAM.replaceAll("+", "%20"))
-      )
-      console.log(DEFAULT_PRESETS)
-      // To update defaults: copy the `ps=` query param value from the share-all URL and paste it above
+    <script defer src="../diagram.js"></script>
 
-      let tableBalls = []
-      let presets = []
-      let cueBallId = 0
-      let draggingBall = null
-      let draggingAim = false
-      let draggingSpin = false
-      let aimAngle = 0
-      let aimLength = DEFAULT_AIM_LENGTH
-      let aimOffset = { x: 0, y: 0, z: 0 }
-      let aimPower = 0.75 * MAX_POWER
+    <script type="module">
+      import {
+        generateBilliardTable,
+        renderBallPositions,
+        setupSvgRoot,
+        toSvgCoords,
+        R,
+        SVG_NS,
+        X,
+        Y,
+      } from "./svg.js"
+      import {
+        DEFAULT_CUSHION_MODEL,
+        readState,
+        serializeState,
+        capturePreset,
+        loadPresets,
+        savePresets,
+        clearPresets,
+        DEFAULT_PRESETS,
+        PHYSICS_DEFAULTS,
+      } from "./editor-state.js"
 
-      function clamp(value, min, max) {
-        return Math.max(min, Math.min(max, value))
+      // The shot to open on: the editor's own default, or the one a launch
+      // parameter or a share link carries. editor-state.js owns the shape,
+      // which is the one three.html carries in its data-state, so the same
+      // string can later drive the replay and the launch links.
+      // Table coordinates are in metres with y pointing up; svg.js renders a
+      // ball at (x, -y).
+      const state = readState(new URLSearchParams(window.location.search))
+      const balls = state.balls.map((ball, id) => ({ id, ...ball }))
+
+      const BOUND_X = X - R
+      const BOUND_Y = Y - R
+      const MIN_GAP = 2 * R
+
+      // Aim is a direction plus a drawn length, as in three.html. The length is
+      // cosmetic: the tip is held at the cushion whatever the pointer distance.
+      const CUE_BALL = 0
+      const DEFAULT_AIM_LENGTH = 86 * R
+
+      // Grabbing keeps ~16 screen px of slack around a ball when zoomed out and
+      // narrows to the ball's own radius once the ball is large on screen.
+      const HIT_PX = 16
+      const MAX_ZOOM = 12
+      const ZOOM_STEP = 0.0015
+
+      const svg = document.querySelector(".billiards-table")
+      const { tableGroup, trajectoriesGroup, ballsGroup, statusEl } =
+        setupSvgRoot(svg)
+      // Tighter than the shared default so the cloth fills more of the canvas.
+      // The bottom pad still has to clear the status line, whose baseline is
+      // STATUS_TEXT_DROP below the frame, so it stays at the default 0.2 and
+      // only the left/right/top margin is cut.
+      const table = generateBilliardTable({ pad: 0.2, halfPad: 0.01 })
+
+      const baseView = parseViewBox(table.viewBox)
+      let view = { ...baseView }
+
+      svg.setAttribute("viewBox", table.viewBox)
+      tableGroup.innerHTML = table.content
+
+      renderBallPositions(ballsGroup, {
+        balls: balls.map(({ id, x, y }) => ({ id, pos: { x, y } })),
+      })
+
+      const circles = [...ballsGroup.querySelectorAll(".ball")]
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value))
+
+      // The status line under the table doubles as the readout: the hint, then
+      // the two numbers a shot is defined by once spin and elevation are set on
+      // their own widgets.
+      const STATUS_HINT = "drag balls, scroll or pinch to zoom"
+
+      function renderStatus() {
+        const degrees = (normalizeAngle(aimAngle) * 180) / Math.PI
+        statusEl.textContent =
+          `${STATUS_HINT} · ${degrees.toFixed(1)} deg, ` +
+          `${power.toFixed(2)} m/s`
       }
 
-      function tableToCSS(x, y) {
-        return {
-          left: ((x + TABLE_HALF_WIDTH) / (TABLE_HALF_WIDTH * 2)) * 100,
-          top: ((TABLE_HALF_HEIGHT - y) / (TABLE_HALF_HEIGHT * 2)) * 100,
-        }
+      // --- view: wheel zoom about the pointer, cloth drag to pan ---
+
+      function parseViewBox(value) {
+        const [x, y, width, height] = value.split(/\s+/).map(Number)
+        return { x, y, width, height }
       }
 
-      function tableToSurfacePx(surface, x, y) {
-        const rect = surface.getBoundingClientRect()
-        return {
-          x: ((x + TABLE_HALF_WIDTH) / (TABLE_HALF_WIDTH * 2)) * rect.width,
-          y: ((TABLE_HALF_HEIGHT - y) / (TABLE_HALF_HEIGHT * 2)) * rect.height,
-        }
-      }
-
-      function clientToTable(surface, clientX, clientY) {
-        const rect = surface.getBoundingClientRect()
-        return {
-          x:
-            ((clientX - rect.left) / rect.width) * (TABLE_HALF_WIDTH * 2) -
-            TABLE_HALF_WIDTH,
-          y:
-            TABLE_HALF_HEIGHT -
-            ((clientY - rect.top) / rect.height) * (TABLE_HALF_HEIGHT * 2),
-        }
-      }
-
-      function ballPx(surface) {
-        return (
-          (surface.getBoundingClientRect().width * (BALL_RADIUS * 2)) /
-          (TABLE_HALF_WIDTH * 2)
+      function clampView() {
+        view.x = clamp(
+          view.x,
+          baseView.x,
+          baseView.x + baseView.width - view.width
+        )
+        view.y = clamp(
+          view.y,
+          baseView.y,
+          baseView.y + baseView.height - view.height
         )
       }
+
+      function applyView() {
+        clampView()
+        const zoom = baseView.width / view.width
+        svg.setAttribute(
+          "viewBox",
+          `${view.x} ${view.y} ${view.width} ${view.height}`
+        )
+        svg.classList.toggle("zoomed", zoom > 1)
+      }
+
+      function zoomAt(point, factor) {
+        const zoom = baseView.width / view.width
+        const next = clamp(zoom * factor, 1, MAX_ZOOM)
+        const ratio = zoom / next
+        view.width = baseView.width / next
+        view.height = baseView.height / next
+        view.x = point.x + (view.x - point.x) * ratio
+        view.y = point.y + (view.y - point.y) * ratio
+        applyView()
+      }
+
+      function resetView() {
+        view = { ...baseView }
+        applyView()
+      }
+
+      svg.addEventListener(
+        "wheel",
+        (event) => {
+          event.preventDefault()
+          // deltaMode 1 counts lines instead of pixels (Firefox, some mice).
+          const delta = event.deltaMode === 1 ? event.deltaY * 33 : event.deltaY
+          zoomAt(toSvgCoords(svg, event), Math.exp(-delta * ZOOM_STEP))
+        },
+        { passive: false }
+      )
+
+      // The controls panel is gone, so the table's own double-tap is the only
+      // way back to the full table. It fires on touch as well as with a mouse.
+
+      // --- moving balls ---
+
+      // toSvgCoords returns SVG user space (y down); the model keeps y up.
+      function toModelPoint(event) {
+        const { x, y } = toSvgCoords(svg, event)
+        return { x, y: -y }
+      }
+
+      function hitRadius() {
+        const matrix = svg.getScreenCTM()
+        if (!matrix) return R
+        return Math.max(R, HIT_PX / Math.abs(matrix.a))
+      }
+
+      function findBall(point) {
+        const radius = hitRadius()
+        let found = null
+        balls.forEach((ball, index) => {
+          const distance = Math.hypot(ball.x - point.x, ball.y - point.y)
+          if (distance > radius) return
+          if (found === null || distance < found.distance) {
+            found = { index, distance }
+          }
+        })
+        return found
+      }
+
+      // --- aim: the dot at the tip of the line sets the direction ---
+
+      let aimAngle = normalizeAngle(state.shot.angle)
+      let aimLength = DEFAULT_AIM_LENGTH
+      let aimTip = { x: 0, y: 0 }
+      let draggingAim = false
+      let aimGrab = { x: 0, y: 0 }
+
+      const aimLine = document.createElementNS(SVG_NS, "line")
+      aimLine.setAttribute("class", "aim-line")
+      const aimHead = document.createElementNS(SVG_NS, "circle")
+      aimHead.setAttribute("class", "aim-head")
+      aimHead.setAttribute("r", String(R))
+      // Drawn under the balls so the cue ball stays visible on top of the line.
+      trajectoriesGroup.append(aimLine, aimHead)
 
       function normalizeAngle(angle) {
         const tau = Math.PI * 2
         return ((angle % tau) + tau) % tau
       }
 
-      function distanceToEdge(x, y, angle) {
+      // Distance from (x, y) to the edge of a box along `angle`. Measuring
+      // against the play area inset by R gives the point where the cue ball is
+      // just touching a rail, so the aim dot marks real contact.
+      function distanceToEdge(x, y, angle, halfWidth, halfHeight) {
         const dx = Math.cos(angle)
         const dy = Math.sin(angle)
         const distances = []
-
-        if (dx > 0) {
-          distances.push((TABLE_HALF_WIDTH - x) / dx)
-        } else if (dx < 0) {
-          distances.push((-TABLE_HALF_WIDTH - x) / dx)
-        }
-
-        if (dy > 0) {
-          distances.push((TABLE_HALF_HEIGHT - y) / dy)
-        } else if (dy < 0) {
-          distances.push((-TABLE_HALF_HEIGHT - y) / dy)
-        }
-
-        const positiveDistances = distances.filter((distance) => distance >= 0)
-        if (!positiveDistances.length) return 0
-        return Math.min(...positiveDistances)
+        if (dx > 0) distances.push((halfWidth - x) / dx)
+        else if (dx < 0) distances.push((-halfWidth - x) / dx)
+        if (dy > 0) distances.push((halfHeight - y) / dy)
+        else if (dy < 0) distances.push((-halfHeight - y) / dy)
+        const positive = distances.filter((distance) => distance >= 0)
+        if (positive.length === 0) return 0
+        return Math.min(...positive)
       }
 
-      function collides(ball, x, y) {
-        return tableBalls.some((other) => {
-          if (other === ball) return false
-          const dx = x - other.x
-          const dy = y - other.y
-          return dx * dx + dy * dy < (BALL_RADIUS * 2) ** 2
+      function renderAim() {
+        const cue = balls[CUE_BALL]
+        const limit = distanceToEdge(cue.x, cue.y, aimAngle, BOUND_X, BOUND_Y)
+        const length = Math.min(aimLength, limit)
+        aimTip = {
+          x: cue.x + Math.cos(aimAngle) * length,
+          y: cue.y + Math.sin(aimAngle) * length,
+        }
+        aimLine.setAttribute("x1", String(cue.x))
+        aimLine.setAttribute("y1", String(-cue.y))
+        aimLine.setAttribute("x2", String(aimTip.x))
+        aimLine.setAttribute("y2", String(-aimTip.y))
+        aimHead.setAttribute("cx", String(aimTip.x))
+        aimHead.setAttribute("cy", String(-aimTip.y))
+        const degrees = (normalizeAngle(aimAngle) * 180) / Math.PI
+        renderStatus()
+        syncDiagram()
+      }
+
+      // The pointer target is the aim point; the angle is measured from the cue
+      // ball in model space, so it matches three.html's shot angle.
+      function setAim(point) {
+        const cue = balls[CUE_BALL]
+        const dx = point.x - cue.x
+        const dy = point.y - cue.y
+        aimAngle = normalizeAngle(Math.atan2(dy, dx))
+        aimLength = Math.hypot(dx, dy)
+        renderAim()
+      }
+
+      // --- spin: where the cue tip contacts the cue ball ---
+
+      // Offset is in units of R, the same as three.html's shots[].offset, and
+      // lives in the cue's own frame: y is the vertical hit (follow or draw),
+      // x the lateral one. It is therefore unaffected by the aim direction or
+      // the cue ball's position. x is mirrored on screen, the same way
+      // three.html places its cue tip and svg.js draws renderInset.
+      const SPIN_LIMIT = 0.45
+      const spin = clampSpin(state.shot.offset.x, state.shot.offset.y)
+      const spinWidget = document.querySelector(".spin-widget")
+      const spinDot = spinWidget.querySelector(".spin-dot")
+      const spinReadout = spinWidget.querySelector(".spin-readout")
+
+      function clampSpin(x, y) {
+        const length = Math.hypot(x, y)
+        if (length <= SPIN_LIMIT || length === 0) return { x, y }
+        const scale = SPIN_LIMIT / length
+        return { x: x * scale, y: y * scale }
+      }
+
+      function signed(value) {
+        return `${value < 0 ? "-" : "+"}${Math.abs(value).toFixed(2)}`
+      }
+
+      // The readout rides just off the tip, on whichever side has room inside
+      // the padded viewBox, so it never clips against the widget edge. The
+      // monospace advance is 0.6em, which is what the offset maths needs.
+      const READOUT_FONT = 0.15
+      const READOUT_ADVANCE = 0.6
+      const READOUT_GAP = 0.2
+      const READOUT_LEADING = 0.2
+      const spinLines = [...spinReadout.querySelectorAll("tspan")]
+
+      function renderSpin() {
+        spinDot.setAttribute("cx", String(-spin.x))
+        spinDot.setAttribute("cy", String(-spin.y))
+        const atLimit = Math.hypot(spin.x, spin.y) >= SPIN_LIMIT - 1e-9
+        spinWidget.classList.toggle("at-limit", atLimit)
+
+        // The dot is drawn at (-x, -y): x is mirrored, y is not.
+        const tipX = -spin.x
+        const tipY = -spin.y
+        const xLabel = `x ${signed(spin.x)}`
+        const yLabel = `y ${signed(spin.y)}`
+        // The padded viewBox runs to 1.05; the longest label sets the fit.
+        const width = xLabel.length * READOUT_FONT * READOUT_ADVANCE
+        const onRight = tipX + READOUT_GAP + width <= 1.05
+        const left = tipX + (onRight ? READOUT_GAP : -READOUT_GAP)
+        const top = clamp(tipY - READOUT_GAP, -1.05 + READOUT_LEADING, 1.05)
+        spinReadout.setAttribute("x", String(left))
+        spinReadout.setAttribute("text-anchor", onRight ? "start" : "end")
+        // Each line carries its own x, so the second wraps rather than
+        // continuing on from the first.
+        spinLines[0].setAttribute("x", String(left))
+        spinLines[0].textContent = xLabel
+        spinLines[1].setAttribute("x", String(left))
+        spinLines[1].setAttribute("dy", String(READOUT_LEADING))
+        spinLines[1].textContent = yLabel
+        spinReadout.setAttribute("y", String(top - READOUT_LEADING))
+        syncDiagram()
+      }
+
+      function setSpin(x, y) {
+        const next = clampSpin(x, y)
+        spin.x = next.x
+        spin.y = next.y
+        renderSpin()
+      }
+
+      let draggingSpin = false
+
+      // Widget space is the viewBox, in units of R with y down, so both axes
+      // are negated on the way to the model offset. Reading the viewBox rather
+      // than assuming -1..1 keeps the mapping right despite its padding.
+      function spinFromPointer(event) {
+        const rect = spinWidget.getBoundingClientRect()
+        const view = spinWidget.viewBox.baseVal
+        if (rect.width === 0 || rect.height === 0 || view.width === 0) return
+        const userX =
+          view.x + ((event.clientX - rect.left) / rect.width) * view.width
+        const userY =
+          view.y + ((event.clientY - rect.top) / rect.height) * view.height
+        setSpin(-userX, -userY)
+      }
+
+      spinWidget.addEventListener("pointerdown", (event) => {
+        draggingSpin = true
+        spinWidget.setPointerCapture(event.pointerId)
+        spinFromPointer(event)
+        event.preventDefault()
+      })
+
+      spinWidget.addEventListener("pointermove", (event) => {
+        if (!draggingSpin) return
+        spinFromPointer(event)
+        event.preventDefault()
+      })
+
+      function endSpin(event) {
+        if (!draggingSpin) return
+        draggingSpin = false
+        if (spinWidget.hasPointerCapture(event.pointerId)) {
+          spinWidget.releasePointerCapture(event.pointerId)
+        }
+      }
+
+      spinWidget.addEventListener("pointerup", endSpin)
+      spinWidget.addEventListener("pointercancel", endSpin)
+
+      function resetSpin() {
+        setSpin(0, 0)
+      }
+      spinWidget.addEventListener("dblclick", resetSpin)
+
+      // --- power: how fast the cue ball leaves the tip ---
+
+      // The slider is a fraction of three.html's MAX_POWER, so a given slider
+      // position is the same shot in both pages. The value is metres per
+      // second, matching the power field in the ?state= shots.
+      const MAX_POWER = 160 * R
+      const DEFAULT_POWER = state.shot.power
+      const powerInput = document.getElementById("power")
+      let power = DEFAULT_POWER
+
+      function renderPower() {
+        powerInput.value = String(power / MAX_POWER)
+        renderStatus()
+        syncDiagram()
+      }
+
+      // The handler reads the slider without writing it back, so it cannot
+      // fight the thumb while the pointer is driving it.
+      powerInput.addEventListener("input", (event) => {
+        power = clamp(Number(event.target.value) * MAX_POWER, 0, MAX_POWER)
+        renderStatus()
+        syncDiagram()
+      })
+
+      // --- elevation: how far the cue is raised off the cloth ---
+
+      // Same drag as the main game's angle-input: the pointer's bearing from a
+      // pivot inset 12% from the bottom-left of the widget, y measured upwards.
+      // Clamped to the 72 degrees that input advertises as its maximum, and
+      // held in radians, the unit cueStrike and the ?state= shots both take.
+      const MAX_ELEVATION = (2 * Math.PI) / 5
+      const ELEVATION_PIVOT = { x: 12, y: 88 }
+      const ELEVATION_LENGTH = 80.75
+      const elevationWidget = document.querySelector(".elevation-widget")
+      const elevationLine = elevationWidget.querySelector(".elevation-line")
+      const elevationArc = elevationWidget.querySelector(".elevation-arc")
+      const elevationMax = elevationWidget.querySelector(".elevation-max")
+      const elevationReadout =
+        elevationWidget.querySelector(".elevation-readout")
+      let elevation = clamp(state.shot.elevation, 0, MAX_ELEVATION)
+
+      // The sweep guide and the cap line never move, so they are placed once
+      // from the same pivot, length and cap that drive the cue.
+      function renderElevationGuides() {
+        const flatTipX = ELEVATION_PIVOT.x + ELEVATION_LENGTH
+        const maxTipX =
+          ELEVATION_PIVOT.x + Math.cos(MAX_ELEVATION) * ELEVATION_LENGTH
+        const maxTipY =
+          ELEVATION_PIVOT.y - Math.sin(MAX_ELEVATION) * ELEVATION_LENGTH
+        // Sweep flag 0 draws counter-clockwise on screen, as the cue rises.
+        elevationArc.setAttribute(
+          "d",
+          `M ${flatTipX} ${ELEVATION_PIVOT.y} A ${ELEVATION_LENGTH} ${ELEVATION_LENGTH} 0 0 0 ${maxTipX} ${maxTipY}`
+        )
+        elevationMax.setAttribute("x2", String(maxTipX))
+        elevationMax.setAttribute("y2", String(maxTipY))
+      }
+
+      function renderElevation() {
+        elevationLine.setAttribute(
+          "x2",
+          String(ELEVATION_PIVOT.x + Math.cos(elevation) * ELEVATION_LENGTH)
+        )
+        elevationLine.setAttribute(
+          "y2",
+          String(ELEVATION_PIVOT.y - Math.sin(elevation) * ELEVATION_LENGTH)
+        )
+        // elevation is held in radians, the unit cueStrike takes; the widget
+        // shows degrees to a tenth.
+        const degrees = (elevation * 180) / Math.PI
+        elevationWidget.setAttribute(
+          "aria-valuenow",
+          String(Math.round(degrees))
+        )
+        elevationReadout.textContent = `${degrees.toFixed(1)}°`
+        syncDiagram()
+      }
+
+      function setElevation(radians) {
+        elevation = clamp(radians, 0, MAX_ELEVATION)
+        renderElevation()
+      }
+
+      let draggingElevation = false
+
+      // Widget space is the viewBox, read rather than assumed so it stays in
+      // step with the markup. The pivot is the bottom-left of the area, so the
+      // bearing to the pointer is the angle the cue is raised to.
+      function elevationFromPointer(event) {
+        const rect = elevationWidget.getBoundingClientRect()
+        const view = elevationWidget.viewBox.baseVal
+        if (rect.width === 0 || rect.height === 0 || view.width === 0) return
+        const userX =
+          view.x + ((event.clientX - rect.left) / rect.width) * view.width
+        const userY =
+          view.y + ((event.clientY - rect.top) / rect.height) * view.height
+        setElevation(
+          Math.atan2(ELEVATION_PIVOT.y - userY, userX - ELEVATION_PIVOT.x)
+        )
+      }
+
+      elevationWidget.addEventListener("pointerdown", (event) => {
+        draggingElevation = true
+        elevationWidget.setPointerCapture(event.pointerId)
+        elevationFromPointer(event)
+        event.preventDefault()
+      })
+
+      elevationWidget.addEventListener("pointermove", (event) => {
+        if (!draggingElevation) return
+        elevationFromPointer(event)
+        event.preventDefault()
+      })
+
+      function endElevation(event) {
+        if (!draggingElevation) return
+        draggingElevation = false
+        if (elevationWidget.hasPointerCapture(event.pointerId)) {
+          elevationWidget.releasePointerCapture(event.pointerId)
+        }
+      }
+
+      elevationWidget.addEventListener("pointerup", endElevation)
+      elevationWidget.addEventListener("pointercancel", endElevation)
+
+      // Double-click lays the cue back on the cloth, as double-clicking the
+      // spin widget centres it.
+      elevationWidget.addEventListener("dblclick", () => setElevation(0))
+
+      // Balls may touch, with centres exactly MIN_GAP apart, but never overlap.
+      function collides(index, x, y) {
+        return balls.some((ball, other) => {
+          if (other === index) return false
+          return Math.hypot(ball.x - x, ball.y - y) < MIN_GAP
         })
       }
 
-      function round6(value) {
-        return +value.toFixed(6)
-      }
+      // Walk the whole path from the ball's current spot to the pointer target
+      // and stop at the first contact, so neither a fast drag nor a jump can
+      // overlap a ball or pass straight through it.
+      function placeBall(index, x, y) {
+        const { x: fromX, y: fromY } = balls[index]
+        const span = Math.hypot(x - fromX, y - fromY)
+        if (span === 0) return
 
-      function setPowerSliderValue() {
-        const power = document.getElementById("power")
-        if (!power) return
-        power.min = "0"
-        power.max = "1"
-        power.step = "0.01"
-        power.value = clamp(aimPower / MAX_POWER, 0, 1).toFixed(2)
-      }
+        const blockAt = (t) =>
+          collides(index, fromX + (x - fromX) * t, fromY + (y - fromY) * t)
 
-      function updateAimParamsText() {}
-
-      function normalizeSpinOffset(offsetX, offsetY) {
-        const length = Math.hypot(offsetX, offsetY)
-        if (length > OFF_CENTER_LIMIT) {
-          const scale = OFF_CENTER_LIMIT / length
-          return { x: offsetX * scale, y: offsetY * scale, z: 0 }
+        const steps = Math.max(1, Math.ceil(span / (MIN_GAP / 4)))
+        let free = 0
+        let blocked = 1
+        for (let i = 1; i <= steps; i += 1) {
+          const t = i / steps
+          if (blockAt(t)) {
+            blocked = t
+            break
+          }
+          free = t
         }
-        return { x: offsetX, y: offsetY, z: 0 }
-      }
 
-      function updateSpinVisualState() {
-        const cueTip = document.getElementById("cueTip")
-        if (!cueTip) return
-        cueTip.style.left = `${(-aimOffset.x / 2 + 0.5) * 100}%`
-        cueTip.style.top = `${(-aimOffset.y / 2 + 0.5) * 100}%`
-        cueTip.style.transform = "translate(-50%, -50%)"
-
-        const cueBallEl = document.getElementById("cueBall")
-        if (cueBallEl) {
-          if (cueBallId === 1) {
-            cueBallEl.style.background = `radial-gradient(
-              circle at 35% 35%,
-              #fff 0%,
-              #ffd700 10%,
-              #e6c300 30%,
-              #ccae00 65%,
-              #b39800 90%,
-              #998200 100%
-            )`
+        // Close in on the exact contact point along the path.
+        for (let i = 0; i < 12 && blocked - free > 1e-6; i += 1) {
+          const t = (free + blocked) / 2
+          if (blockAt(t)) {
+            blocked = t
           } else {
-            cueBallEl.style.background = `radial-gradient(
-              circle at 35% 35%,
-              #fff 0%,
-              rgb(255 255 255) 10%,
-              rgb(220 220 220) 30%,
-              #a0a0a0 65%,
-              #606060 90%,
-              #404040 100%
-            )`
+            free = t
           }
+        }
+
+        balls[index].x = fromX + (x - fromX) * free
+        balls[index].y = fromY + (y - fromY) * free
+      }
+
+      let dragIndex = null
+      let grabOffset = { x: 0, y: 0 }
+      let pan = null
+
+      // Fingers on the table. pinch is the previous frame's spread and
+      // midpoint, the baseline every move is measured against.
+      const pointers = new Map()
+      let pinch = null
+
+      function beginPointer(event) {
+        svg.classList.add("dragging")
+        svg.setPointerCapture(event.pointerId)
+        event.preventDefault()
+      }
+
+      // Spread and midpoint of the two oldest pointers, or null below two.
+      function pinchState() {
+        const [a, b] = [...pointers.values()]
+        if (!a || !b) return null
+        return {
+          distance: Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY),
+          mid: {
+            clientX: (a.clientX + b.clientX) / 2,
+            clientY: (a.clientY + b.clientY) / 2,
+          },
         }
       }
 
-      function setSpinFromPointer(pointerEvent) {
-        const cueBall = document.getElementById("cueBall")
-        if (!cueBall) return
-        const rect = cueBall.getBoundingClientRect()
-        const spinX =
-          -(pointerEvent.clientX - rect.left - rect.width / 2) /
-          (rect.width / 2)
-        const spinY =
-          -(pointerEvent.clientY - rect.top - rect.height / 2) /
-          (rect.height / 2)
-        aimOffset = normalizeSpinOffset(spinX, spinY)
-        updateSpinVisualState()
-        updateAimParamsText()
+      // One pinch is a slide then a zoom: the world point under the current
+      // midpoint is the one the zoom then holds fixed, so the fingers never
+      // slide off the cloth. Reusing zoomAt keeps the wheel, the pinch and the
+      // zoom readout on exactly the same maths.
+      function zoomPan(prev, next) {
+        if (prev.distance === 0 || next.distance === 0) return
+        const matrix = svg.getScreenCTM()
+        if (!matrix) return
+        view.x -= (next.mid.clientX - prev.mid.clientX) / Math.abs(matrix.a)
+        view.y -= (next.mid.clientY - prev.mid.clientY) / Math.abs(matrix.d)
+        applyView()
+        zoomAt(toSvgCoords(svg, next.mid), next.distance / prev.distance)
       }
 
-      function positionBall(surface, ball) {
-        const size = ballPx(surface)
-        const { left, top } = tableToCSS(ball.x, ball.y)
-        ball.el.style.width = `${size}px`
-        ball.el.style.height = `${size}px`
-        ball.el.style.aspectRatio = "1 / 1"
-        ball.el.style.left = `${left}%`
-        ball.el.style.top = `${top}%`
-      }
-
-      function positionAimArrow(surface) {
-        const cueBall = tableBalls[cueBallId]
-        const aimLayer = document.getElementById("aim-layer")
-        const aimLine = document.getElementById("aim-arrow-line")
-        const aimHead = document.getElementById("aim-arrow-head")
-        const aimHit = document.getElementById("aim-arrow-hit")
-
-        if (!cueBall || !aimLayer || !aimLine || !aimHead || !aimHit) return
-
-        const rect = surface.getBoundingClientRect()
-        aimLayer.setAttribute("viewBox", `0 0 ${rect.width} ${rect.height}`)
-        aimLayer.setAttribute("width", rect.width)
-        aimLayer.setAttribute("height", rect.height)
-
-        const maxArrowLength = Math.max(
-          0,
-          distanceToEdge(cueBall.x, cueBall.y, aimAngle) - BALL_RADIUS
-        )
-        const arrowLength = Math.min(aimLength, maxArrowLength)
-        const headRadius = ballPx(surface) / 2
-        const lineWidth = ballPx(surface)
-        const start = tableToSurfacePx(surface, cueBall.x, cueBall.y)
-        const end = tableToSurfacePx(
-          surface,
-          cueBall.x + Math.cos(aimAngle) * arrowLength,
-          cueBall.y + Math.sin(aimAngle) * arrowLength
-        )
-
-        aimLine.setAttribute("stroke-width", lineWidth)
-        aimLine.setAttribute("x1", start.x)
-        aimLine.setAttribute("y1", start.y)
-        aimLine.setAttribute("x2", end.x)
-        aimLine.setAttribute("y2", end.y)
-        aimHead.setAttribute("cx", end.x)
-        aimHead.setAttribute("cy", end.y)
-        aimHead.setAttribute("r", headRadius)
-        aimHit.setAttribute("cx", end.x)
-        aimHit.setAttribute("cy", end.y)
-        aimHit.setAttribute("r", Math.max(headRadius * 2.25, 18))
-      }
-
-      function syncDiagramState(topview) {
-        if (!topview || !topview.dataset.state) return
-        const params = new URLSearchParams(topview.dataset.state)
-        const state = JSON.parse(params.get("state"))
-        state.init = tableBalls.flatMap((ball) => [
-          round6(ball.x),
-          round6(ball.y),
-        ])
-        if (state.shots?.[0]) {
-          state.shots[0].pos.x = state.init[cueBallId * 2]
-          state.shots[0].pos.y = state.init[cueBallId * 2 + 1]
-          state.shots[0].i = cueBallId
-          state.shots[0].angle = round6(aimAngle)
-          state.shots[0].power = round6(aimPower)
-          state.shots[0].offset = {
-            x: round6(aimOffset.x),
-            y: round6(aimOffset.y),
-            z: 0,
-          }
-        }
-        params.set("state", JSON.stringify(state))
-        const nextStateUrl = `?${params.toString()}`
-        topview.dataset.state = nextStateUrl
-        topview.setAttribute("data-state", nextStateUrl)
-        updateAimParamsText()
-        document.getElementById("replay").click()
-      }
-
-      function hitfacts() {
-        const objectBallEl = document.getElementById("objectBall")
-        const speed = aimPower.toFixed(3)
-        const objX = window.getComputedStyle(objectBallEl).left
-        const parsedObjX = parseFloat(objX) - 6.2
-        const overlap = (100 - Math.abs(parsedObjX)).toFixed(1)
-        console.log(`Speed: ${speed} m/s
-Spin X: ${(aimOffset.x * -1).toFixed(3)} of R
-Spin Y: ${aimOffset.y.toFixed(3)} of R
-Overlap: ${overlap}%`)
-      }
-
-      function buildBall(surface, ball) {
-        const el = document.createElement("div")
-        el.className = "ball"
-        el.style.backgroundColor = ball.color
-        surface.appendChild(el)
-        ball.el = el
-        positionBall(surface, ball)
-      }
-
-      function initDraggableTable() {
-        const surface = document.getElementById("table-surface")
-        const topview = document.querySelector(".topview")
-        if (!surface || !topview?.dataset.state) return
-
-        const urlParams = new URLSearchParams(window.location.search)
-        const cushionModel = (
-          urlParams.get("cushionModel") || "mathavan"
-        ).toLowerCase()
-        const researchLabel =
-          ruletype === "sagu" ? "Sagu research" : "Three cushion research"
-        document.getElementById("page-title").textContent =
-          `${researchLabel} (${cushionModel})`
-        const diagramParams = new URLSearchParams(topview.dataset.state)
-        let changed = false
-
-        urlParams.forEach((value, key) => {
-          if (key === "s") {
-            diagramParams.set("state", value)
-            changed = true
-          } else if (key !== "ps") {
-            diagramParams.set(key, value)
-            changed = true
-          }
+      svg.addEventListener("pointerdown", (event) => {
+        pointers.set(event.pointerId, {
+          clientX: event.clientX,
+          clientY: event.clientY,
         })
 
-        if (changed) {
-          const nextState = `?${diagramParams.toString()}`
-          topview.dataset.state = nextState
-          topview.setAttribute("data-state", nextState)
-        }
-
-        const sharedPresets = urlParams.get("ps")
-        if (sharedPresets) {
-          try {
-            const newPresets = JSON.parse(sharedPresets)
-            if (confirm(`Import ${newPresets.length} shared presets?`)) {
-              presets = newPresets
-              savePresets(presets)
-            }
-          } catch (e) {
-            console.error("Failed to import presets", e)
-          }
-        }
-
-        const params = new URLSearchParams(topview.dataset.state)
-        const state = JSON.parse(params.get("state"))
-        const init = state.init ?? []
-        const shot = state.shots?.[0] ?? {}
-        cueBallId = shot.i ?? 0
-        aimAngle = normalizeAngle(shot.angle ?? 0)
-        aimLength = DEFAULT_AIM_LENGTH
-        aimOffset = normalizeSpinOffset(
-          shot.offset?.x ?? 0,
-          shot.offset?.y ?? 0
-        )
-        aimPower = clamp(shot.power ?? 0.75 * MAX_POWER, 0, MAX_POWER)
-
-        tableBalls = BALL_COLORS.map((color, index) => ({
-          color,
-          x: init[index * 2] ?? 0,
-          y: init[index * 2 + 1] ?? 0,
-          el: null,
-        }))
-
-        tableBalls.forEach((ball) => buildBall(surface, ball))
-        positionAimArrow(surface)
-        updateSpinVisualState()
-        setPowerSliderValue()
-
-        presets = loadPresets()
-        renderPresets()
-        document
-          .getElementById("add-preset")
-          ?.addEventListener("click", addNewPreset)
-
-        syncDiagramState(topview)
-
-        function pointerDown(event) {
-          if (draggingAim || draggingSpin) return
-          const pointer = event.touches ? event.touches[0] : event
-          const pos = clientToTable(surface, pointer.clientX, pointer.clientY)
-
-          for (let index = tableBalls.length - 1; index >= 0; index -= 1) {
-            const ball = tableBalls[index]
-            const dx = pos.x - ball.x
-            const dy = pos.y - ball.y
-            if (dx * dx + dy * dy < (BALL_RADIUS * 2) ** 2) {
-              draggingBall = ball
-              ball.el.classList.add("dragging")
-              event.preventDefault()
-              break
-            }
-          }
-        }
-
-        function pointerMove(event) {
-          if (!draggingBall) return
-          event.preventDefault()
-
-          const pointer = event.touches ? event.touches[0] : event
-          const pos = clientToTable(surface, pointer.clientX, pointer.clientY)
-          const nextX = clamp(
-            pos.x,
-            -(TABLE_HALF_WIDTH - BALL_RADIUS - 1e-4),
-            TABLE_HALF_WIDTH - BALL_RADIUS - 1e-4
-          )
-          const nextY = clamp(
-            pos.y,
-            -(TABLE_HALF_HEIGHT - BALL_RADIUS - 1e-4),
-            TABLE_HALF_HEIGHT - BALL_RADIUS - 1e-4
-          )
-
-          if (!collides(draggingBall, nextX, nextY)) {
-            draggingBall.x = nextX
-            draggingBall.y = nextY
-          } else {
-            if (!collides(draggingBall, nextX, draggingBall.y))
-              draggingBall.x = nextX
-            if (!collides(draggingBall, draggingBall.x, nextY))
-              draggingBall.y = nextY
-          }
-
-          positionBall(surface, draggingBall)
-          positionAimArrow(surface)
-          syncDiagramState(topview)
-        }
-
-        function pointerUp() {
-          if (!draggingBall) return
-          draggingBall.el.classList.remove("dragging")
-          draggingBall = null
-        }
-
-        function aimPointerDown(event) {
-          draggingAim = true
-          event.currentTarget.classList.add("dragging")
-          event.preventDefault()
-          event.stopPropagation()
-        }
-
-        function aimPointerMove(event) {
-          if (!draggingAim) return
-          event.preventDefault()
-
-          const cueBall = tableBalls[cueBallId]
-          if (!cueBall) return
-
-          const pointer = event.touches ? event.touches[0] : event
-          const pos = clientToTable(surface, pointer.clientX, pointer.clientY)
-          const dx = pos.x - cueBall.x
-          const dy = pos.y - cueBall.y
-          aimAngle = normalizeAngle(Math.atan2(dy, dx))
-          aimLength = Math.sqrt(dx * dx + dy * dy)
-          positionAimArrow(surface)
-          syncDiagramState(topview)
-        }
-
-        function aimPointerUp() {
-          if (!draggingAim) return
+        if (pointers.size >= 2) {
+          // A second finger takes over. Dropping the drag modes also means the
+          // finger left over cannot resume a ball or a pan when it lifts.
           draggingAim = false
-          document.getElementById("aim-arrow-hit")?.classList.remove("dragging")
+          dragIndex = null
+          pan = null
+          // Seed the baseline only on entry, so a third finger cannot jump it.
+          if (!pinch) pinch = pinchState()
+          beginPointer(event)
+          return
         }
 
-        function spinPointerDown(event) {
-          draggingSpin = true
-          event.currentTarget?.setPointerCapture?.(event.pointerId)
-          setSpinFromPointer(event)
-          syncDiagramState(topview)
-          event.preventDefault()
-          event.stopPropagation()
+        const point = toModelPoint(event)
+        const radius = hitRadius()
+        const nearest = findBall(point)
+        const toAim = Math.hypot(point.x - aimTip.x, point.y - aimTip.y)
+
+        // Whichever target the pointer is closest to wins, so a ball resting
+        // near the aim dot is still reachable.
+        if (
+          toAim <= radius &&
+          (nearest === null || toAim <= nearest.distance)
+        ) {
+          draggingAim = true
+          aimGrab = { x: aimTip.x - point.x, y: aimTip.y - point.y }
+          beginPointer(event)
+          return
         }
 
-        function spinPointerMove(event) {
-          if (!draggingSpin) return
-          setSpinFromPointer(event)
-          syncDiagramState(topview)
-          event.preventDefault()
-        }
-
-        function spinPointerUp() {
-          draggingSpin = false
-        }
-
-        surface.addEventListener("mousedown", pointerDown)
-        surface.addEventListener("touchstart", pointerDown, { passive: false })
-        document
-          .getElementById("ballContainer")
-          ?.addEventListener("pointerdown", spinPointerDown)
-        document
-          .getElementById("cueBall")
-          ?.addEventListener("pointerdown", spinPointerDown)
-        document
-          .getElementById("cueTip")
-          ?.addEventListener("pointerdown", spinPointerDown)
-        document
-          .getElementById("aim-arrow-hit")
-          ?.addEventListener("mousedown", aimPointerDown)
-        document
-          .getElementById("aim-arrow-hit")
-          ?.addEventListener("touchstart", aimPointerDown, { passive: false })
-        window.addEventListener("mousemove", pointerMove)
-        window.addEventListener("mousemove", aimPointerMove)
-        window.addEventListener("touchmove", pointerMove, { passive: false })
-        window.addEventListener("touchmove", aimPointerMove, {
-          passive: false,
-        })
-        window.addEventListener("pointermove", spinPointerMove)
-        window.addEventListener("mouseup", pointerUp)
-        window.addEventListener("mouseup", aimPointerUp)
-        window.addEventListener("pointerup", spinPointerUp)
-        window.addEventListener("touchend", pointerUp)
-        window.addEventListener("touchend", aimPointerUp)
-        window.addEventListener("resize", () => {
-          tableBalls.forEach((ball) => positionBall(surface, ball))
-          positionAimArrow(surface)
-          updateSpinVisualState()
-        })
-        document.getElementById("power")?.addEventListener("input", (event) => {
-          aimPower = Number(event.target.value) * MAX_POWER
-          syncDiagramState(topview)
-        })
-
-        document.getElementById("svg-btn")?.addEventListener("click", () => {
-          const coords = tableBalls.flatMap((b) => [round6(b.x), round6(b.y)])
-          const url = new URL("export.html", window.location.href)
-          url.searchParams.set("ruletype", ruletype)
-          url.searchParams.set("cushionModel", cushionModel)
-          const CONSTANTS = [
-            "R",
-            "m",
-            "e",
-            "mu",
-            "muS",
-            "muC",
-            "rho",
-            "μs",
-            "μw",
-            "ee",
-            "stronge_omega_ratio",
-            "stronge_e_n",
-            "stronge_μ",
-          ]
-          CONSTANTS.forEach((key) => {
-            const input = document.getElementById(key)
-            if (input && input.value !== "") {
-              url.searchParams.set(key, input.value)
-            }
-          })
-          url.searchParams.set("init", JSON.stringify(coords))
-          url.searchParams.set(
-            "initShot",
-            JSON.stringify({
-              cueBallId,
-              angle: round6(aimAngle),
-              power: round6(aimPower),
-              offset: {
-                x: round6(aimOffset.x),
-                y: round6(aimOffset.y),
-                z: 0,
-              },
-            })
-          )
-          window.open(url.toString(), "_blank")
-        })
-
-        document.getElementById("play-btn")?.addEventListener("click", () => {
-          const coords = tableBalls.flatMap((b) => [round6(b.x), round6(b.y)])
-          const url = new URL("../index.html", window.location.href)
-          url.searchParams.set("ruletype", ruletype)
-          url.searchParams.set("practice", "true")
-          url.searchParams.set("cushionModel", cushionModel)
-          const CONSTANTS = [
-            "R",
-            "m",
-            "e",
-            "mu",
-            "muS",
-            "muC",
-            "rho",
-            "μs",
-            "μw",
-            "ee",
-            "stronge_omega_ratio",
-            "stronge_e_n",
-            "stronge_μ",
-          ]
-          CONSTANTS.forEach((key) => {
-            const input = document.getElementById(key)
-            if (input && input.value !== "") {
-              url.searchParams.set(key, input.value)
-            }
-          })
-          url.searchParams.set("init", JSON.stringify(coords))
-          url.searchParams.set(
-            "initShot",
-            JSON.stringify({
-              cueBallId,
-              angle: round6(aimAngle),
-              power: round6(aimPower),
-              offset: {
-                x: round6(aimOffset.x),
-                y: round6(aimOffset.y),
-                z: 0,
-              },
-            })
-          )
-          window.open(url.toString(), "_blank")
-        })
-
-        document
-          .getElementById("solution-btn")
-          ?.addEventListener("click", () => {
-            const coords = tableBalls.flatMap((b) => [round6(b.x), round6(b.y)])
-            const url = new URL("../fit/solution.html", window.location.href)
-            url.searchParams.set("init", JSON.stringify(coords))
-            const CONSTANTS = [
-              "R",
-              "m",
-              "e",
-              "mu",
-              "muS",
-              "muC",
-              "rho",
-              "μs",
-              "μw",
-              "ee",
-              "stronge_omega_ratio",
-              "stronge_e_n",
-              "stronge_μ",
-            ]
-            CONSTANTS.forEach((key) => {
-              const input = document.getElementById(key)
-              if (input && input.value !== "") {
-                url.searchParams.set(key, input.value)
-              }
-            })
-            window.open(url.toString(), "_blank")
-          })
-        function shareUrl(url) {
-          const shareUrl = url.toString()
-          if (navigator.share) {
-            navigator
-              .share({
-                title: document.title,
-                url: shareUrl,
-              })
-              .catch(console.error)
-          } else {
-            navigator.clipboard.writeText(shareUrl).then(() => {
-              const btn = document.activeElement
-              const originalText = btn.innerHTML
-              btn.innerText = "copied!"
-              setTimeout(() => {
-                btn.innerHTML = originalText
-              }, 2000)
-            })
+        if (nearest === null) {
+          const matrix = svg.getScreenCTM()
+          if (!matrix) return
+          pan = {
+            clientX: event.clientX,
+            clientY: event.clientY,
+            scaleX: Math.abs(matrix.a),
+            scaleY: Math.abs(matrix.d),
+            viewX: view.x,
+            viewY: view.y,
           }
+          beginPointer(event)
+          return
         }
 
-        document.getElementById("share-shot")?.addEventListener("click", () => {
-          const topview = document.querySelector(".topview")
-          const stateParams = new URLSearchParams(topview.dataset.state)
-          const state = stateParams.get("state")
+        dragIndex = nearest.index
+        grabOffset = {
+          x: balls[nearest.index].x - point.x,
+          y: balls[nearest.index].y - point.y,
+        }
+        beginPointer(event)
+      })
 
-          const url = new URL(window.location.href)
-          url.search = ""
-          if (state) url.searchParams.set("s", state)
-
-          const CONSTANTS = ["m", "e", "mu", "rho", "μs", "μw", "ee"]
-          CONSTANTS.forEach((key) => {
-            const input = document.getElementById(key)
-            if (input) {
-              url.searchParams.set(key, input.value)
-            }
-          })
-          shareUrl(url)
+      svg.addEventListener("pointermove", (event) => {
+        if (!pointers.has(event.pointerId)) return
+        pointers.set(event.pointerId, {
+          clientX: event.clientX,
+          clientY: event.clientY,
         })
 
-        document.getElementById("share-all")?.addEventListener("click", () => {
-          const url = new URL(window.location.href)
-          url.search = ""
-          url.searchParams.set("ps", JSON.stringify(presets))
-          shareUrl(url)
-        })
+        if (pointers.size >= 2) {
+          event.preventDefault()
+          const next = pinchState()
+          if (pinch) zoomPan(pinch, next)
+          pinch = next
+          return
+        }
 
-        setTimeout(() => {
-          if (window.location.search) {
-            window.history.replaceState(null, "", window.location.pathname)
-          }
-        }, 1)
+        if (!draggingAim && dragIndex === null && pan === null) return
+        event.preventDefault()
 
-        const objectBallTarget = document.getElementById("objectBall")
-        if (objectBallTarget) {
-          const observer = new MutationObserver(() => {
-            updateAimParamsText()
-          })
-          observer.observe(objectBallTarget, {
-            attributes: true,
-            attributeFilter: ["style"],
-          })
+        if (draggingAim) {
+          const point = toModelPoint(event)
+          setAim({ x: point.x + aimGrab.x, y: point.y + aimGrab.y })
+          return
+        }
+
+        if (pan) {
+          view.x = pan.viewX - (event.clientX - pan.clientX) / pan.scaleX
+          view.y = pan.viewY - (event.clientY - pan.clientY) / pan.scaleY
+          applyView()
+          return
+        }
+
+        const point = toModelPoint(event)
+        placeBall(
+          dragIndex,
+          clamp(point.x + grabOffset.x, -BOUND_X, BOUND_X),
+          clamp(point.y + grabOffset.y, -BOUND_Y, BOUND_Y)
+        )
+        if (dragIndex === CUE_BALL) renderAim()
+        const ball = balls[dragIndex]
+        circles[dragIndex].setAttribute("cx", String(ball.x))
+        circles[dragIndex].setAttribute("cy", String(-ball.y))
+        syncDiagram()
+      })
+
+      function endDrag(event) {
+        pointers.delete(event.pointerId)
+        if (svg.hasPointerCapture(event.pointerId)) {
+          svg.releasePointerCapture(event.pointerId)
+        }
+        if (pointers.size < 2) pinch = null
+        if (pointers.size === 0) {
+          draggingAim = false
+          dragIndex = null
+          pan = null
+          svg.classList.remove("dragging")
         }
       }
 
-      function loadPresets() {
-        const saved = localStorage.getItem("three_cushion_presets")
-        if (saved) {
-          try {
-            return JSON.parse(saved)
-          } catch (e) {
-            console.error("Failed to load presets", e)
-          }
-        }
-        return JSON.parse(JSON.stringify(DEFAULT_PRESETS))
+      svg.addEventListener("pointerup", endDrag)
+      svg.addEventListener("pointercancel", endDrag)
+
+      svg.addEventListener("dblclick", (event) => {
+        if (findBall(toModelPoint(event)) === null) resetView()
+      })
+
+      // --- the 3D replay: the diagram bundle reads a state string, not the
+      // widgets ---
+
+      // diagram.js takes over #replay once its assets are in: it relabels the
+      // button and re-reads the .topview's data-state whenever it is pressed.
+      // So the editor's part is to keep that string current and to press the
+      // button; this is the one place the shot crosses into the replay.
+      const topview = document.querySelector(".topview")
+      const replayButton = document.getElementById("replay")
+
+      // The click is ignored while a shot is still running, so it waits for the
+      // input to go quiet and the last state of a drag is the one that plays.
+      const REPLAY_DELAY = 250
+      let replayTimer = null
+
+      function scheduleReplay() {
+        clearTimeout(replayTimer)
+        replayTimer = setTimeout(() => replayButton?.click(), REPLAY_DELAY)
       }
 
-      function savePresets(presets) {
-        localStorage.setItem("three_cushion_presets", JSON.stringify(presets))
+      // The shot as it stands, in the same shape serializeState and the presets
+      // both take. Kept in one place because a preset that captured a slightly
+      // different shape from the one the replay reads would come back subtly
+      // wrong, and only on the fields nothing else touches.
+      function currentState() {
+        return {
+          ruleType: state.ruleType,
+          cushionModel: state.cushionModel,
+          practice: state.practice,
+          balls,
+          shot: {
+            angle: aimAngle,
+            power,
+            offset: { x: spin.x, y: spin.y },
+            elevation,
+            i: CUE_BALL,
+          },
+        }
+      }
+
+      function syncDiagram() {
+        if (!topview) return
+        const next = serializeState(currentState())
+        topview.dataset.state = next
+        topview.setAttribute("data-state", next)
+        scheduleReplay()
+      }
+
+      // Which cushion the shot is played on. The model rides in the state, so
+      // it reaches the replay, a share link and the launch links at once; the
+      // constants behind it stay with the sliders below.
+      const modelRadios = [...document.querySelectorAll(".model-toggle input")]
+
+      function setCushionModel(model) {
+        state.cushionModel = model
+        // The toggle is the one place the model changes, so it is also the one
+        // place the radios have to follow: a preset applied from the list moves
+        // the model without the pointer ever touching them.
+        modelRadios.forEach((radio) => {
+          radio.checked = radio.value === model
+        })
+        syncDiagram()
+      }
+
+      modelRadios.forEach((radio) =>
+        radio.addEventListener("change", () => {
+          if (radio.checked) setCushionModel(radio.value)
+        })
+      )
+
+      // A launch parameter or a share link may name a model, so the toggle
+      // opens on the one the state actually holds.
+      modelRadios.forEach((radio) => {
+        radio.checked = radio.value === state.cushionModel
+      })
+
+      // The constant sliders belong to the bundle: Sliders owns each value, the
+      // physics setter it drives and the readout, all keyed on the input's id.
+      // So the editor only has to notice the change. The values are read back
+      // off the inputs when a link is built, so the URL is never written to --
+      // a shot is carried by the launch and share links, not by this page's own
+      // address, which is emptied again once the launch parameters are read.
+      const constantInputs = [
+        ...document.querySelectorAll("#constants input[type=range]"),
+      ]
+
+      constantInputs.forEach((input) =>
+        input.addEventListener("input", () => {
+          // A replay already drawn its shot against the old constants, and the
+          // bundle's own Sliders has no re-run of its own, so ask for one here.
+          scheduleReplay()
+        })
+      )
+
+      // Every value in this dialog back to the one the physics starts from, for
+      // a shot that was set up against constants that turned out to be wrong --
+      // a shared link's, most often. No reload, unlike a hand edit of the URL:
+      // the shot on the table survives, and the sliders beside the button are
+      // the undo, one drag away.
+      document
+        .getElementById("reset-constants")
+        ?.addEventListener("click", () => {
+          setCushionModel(DEFAULT_CUSHION_MODEL)
+          constantInputs.forEach((input) => {
+            const fallback = PHYSICS_DEFAULTS[input.id]
+            if (fallback === undefined) return
+            // Sliders sets each span from the value it seeded, so a link that
+            // arrived with a small constant has a range the default would not fit
+            // in. Widened just enough to reach it; the rest of the slider alone.
+            input.max = `${Math.max(Number(input.max), fallback)}`
+            input.value = `${fallback}`
+            // Dispatched rather than assigned: the bundle's Sliders owns the
+            // physics setter and the readout, and only hears of a move through the
+            // event it binds above -- so the reset travels the same road a drag
+            // does, and the label follows without this having to say so.
+            input.dispatchEvent(new Event("input", { bubbles: true }))
+          })
+        })
+
+      // --- the two dialogs ---
+      // One per button rather than one with two sections: each is hidden in the
+      // markup, so neither has to remember which section it was left on, and
+      // its title can name what it holds. Only one is ever open, so opening
+      // either closes the other, and pressing a button that is already open
+      // puts its dialog away again -- a popover, rather than a dialog that can
+      // only be dismissed by clicking somewhere else.
+      const dialogs = [
+        {
+          button: document.getElementById("open-constants"),
+          modal: document.getElementById("constants-modal"),
+        },
+        {
+          button: document.getElementById("action"),
+          modal: document.getElementById("action-modal"),
+        },
+        {
+          button: document.getElementById("open-presets"),
+          modal: document.getElementById("presets-modal"),
+        },
+      ]
+
+      // Every dialog is set on every call, not just the one named, so the two
+      // can never both be open. `open` only says whether the target stays up.
+      function setDialogOpen(target, open) {
+        dialogs.forEach((dialog) => {
+          if (!dialog.modal) return
+          const isOpen = dialog === target && open
+          dialog.modal.hidden = !isOpen
+          // Each button owns its own dialog and carries the state for it.
+          dialog.button?.setAttribute("aria-expanded", String(isOpen))
+        })
+      }
+
+      dialogs.forEach((dialog) => {
+        dialog.button?.addEventListener("click", () =>
+          setDialogOpen(dialog, dialog.modal?.hidden ?? true)
+        )
+        // A click on the backdrop closes it; a click inside it does not.
+        dialog.modal?.addEventListener("click", (event) => {
+          if (event.target === dialog.modal) setDialogOpen(dialog, false)
+        })
+        // The × in the title row, so a dialog can be shut from where the eye
+        // already is rather than only from the backdrop or the keyboard.
+        dialog.modal
+          ?.querySelectorAll("[data-close]")
+          .forEach((close) =>
+            close.addEventListener("click", () => setDialogOpen(dialog, false))
+          )
+      })
+
+      // Escape closes, from the document rather than from the dialog, so it
+      // works whichever one is open.
+      document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return
+        dialogs.forEach((dialog) => setDialogOpen(dialog, false))
+      })
+
+      // --- the launch links ---
+      // The three buttons the actions dialog carries, each opening a page that
+      // takes this shot as its starting point. They are built the way three.html
+      // builds its own: the flat `init` list of ball positions, the `initShot`
+      // aim, and the constants. A shot has to survive the round trip through a
+      // URL, so everything is rounded to six decimals as three.html rounds it.
+      const round6 = (value) => +value.toFixed(6)
+
+      // The ball positions, as the flat [x, y, x, y, ...] list the live game
+      // and the exporter both read.
+      const initCoords = () =>
+        balls.flatMap(({ x, y }) => [round6(x), round6(y)])
+
+      // The aim. `cueBallId` is the cue ball's index in the balls array, which
+      // is the CUE_BALL constant the editor already aims with.
+      const initShot = () =>
+        JSON.stringify({
+          cueBallId: CUE_BALL,
+          angle: round6(aimAngle),
+          power: round6(power),
+          offset: { x: round6(spin.x), y: round6(spin.y), z: 0 },
+          // three.html's play link leaves the elevation out, so a shot set up
+          // with a raised cue launches flat there. Every target reads it --
+          // aim.ts, export.html and the fit pages all take it off the same
+          // `initShot` -- so the editor sends it rather than lose the setting.
+          elevation: round6(elevation),
+        })
+
+      // The constants the sliders are holding right now, read off the inputs
+      // rather than off the URL so a link always carries what is on screen.
+      // Which constants those are is whatever the constants panel exposes; the
+      // ones it does not show keep the physics defaults, as they do on load.
+      function addConstants(url) {
+        constantInputs.forEach((input) =>
+          url.searchParams.set(input.id, input.value)
+        )
+        return url
+      }
+
+      // Play the shot in the live game. `practice` puts it in the practice
+      // trainer, which is the mode three.html's own play button opens.
+      document.getElementById("play")?.addEventListener("click", () => {
+        const url = addConstants(new URL("../index.html", window.location.href))
+        url.searchParams.set("ruletype", state.ruleType)
+        url.searchParams.set("practice", "true")
+        url.searchParams.set("cushionModel", state.cushionModel)
+        url.searchParams.set("init", JSON.stringify(initCoords()))
+        url.searchParams.set("initShot", initShot())
+        window.open(url.toString(), "_blank")
+      })
+
+      // Fit a shot to this layout. The fit pages solve for the aim rather than
+      // replaying one, so this link carries the balls and the constants and
+      // deliberately no `initShot` -- the same as three.html's.
+      document.getElementById("solution")?.addEventListener("click", () => {
+        const url = addConstants(
+          new URL("../fit/solution.html", window.location.href)
+        )
+        url.searchParams.set("init", JSON.stringify(initCoords()))
+        window.open(url.toString(), "_blank")
+      })
+
+      // Draw the shot as a diagram, the way three.html's svg button does.
+      document.getElementById("svg")?.addEventListener("click", () => {
+        const url = addConstants(new URL("export.html", window.location.href))
+        url.searchParams.set("ruletype", state.ruleType)
+        url.searchParams.set("cushionModel", state.cushionModel)
+        url.searchParams.set("init", JSON.stringify(initCoords()))
+        url.searchParams.set("initShot", initShot())
+        window.open(url.toString(), "_blank")
+      })
+
+      // --- presets: shots worth keeping ---
+      // Its own dialog rather than a section of the actions one, because the two
+      // are opposite verbs: the action links take this shot and go somewhere
+      // with it, a preset brings a saved one back. And its own storage, under
+      // its own key, so the list here is never three.html's -- a preset is the
+      // editor state, which carries the elevation and the cushion model that
+      // three.html's shape has nowhere to put.
+      const presetsDialog = dialogs.find(
+        (dialog) => dialog.button?.id === "open-presets"
+      )
+      const presetsList = document.getElementById("presets-list")
+      const presetsEmpty = document.getElementById("presets-empty")
+      let presets = loadPresets()
+
+      // The built-in names, so the reset can say how many presets are actually
+      // the user's own rather than counting the library back at them.
+      const BUILT_IN_NAMES = new Set(DEFAULT_PRESETS.map((p) => p.name))
+
+      // A shared list replaces the saved one outright, as three.html's `ps` does.
+      // It is a link someone chose to open, so it is asked about rather than
+      // merged in silently -- and a bad payload costs the list nothing.
+      const sharedPresets = new URLSearchParams(window.location.search).get(
+        "ps"
+      )
+      if (sharedPresets) {
+        try {
+          const incoming = JSON.parse(sharedPresets)
+          if (
+            Array.isArray(incoming) &&
+            incoming.length &&
+            confirm(`Import ${incoming.length} shared presets?`)
+          ) {
+            presets = incoming
+            savePresets(presets)
+          }
+        } catch (e) {
+          console.error("Failed to import presets", e)
+        }
       }
 
       function renderPresets() {
-        const list = document.getElementById("presets-list")
-        if (!list) return
-        list.innerHTML = ""
-        const sortedPresets = [...presets].sort((a, b) =>
-          a.name.localeCompare(b.name)
-        )
-        sortedPresets.forEach((preset) => {
-          const container = document.createElement("div")
-          container.className = "preset-btn-container"
+        if (!presetsList) return
+        presetsList.innerHTML = ""
+        if (presetsEmpty) presetsEmpty.hidden = presets.length > 0
 
-          const btn = document.createElement("button")
-          btn.className = "preset-btn"
-          btn.textContent = preset.name
-          btn.onclick = () => applyPreset(preset)
-          container.appendChild(btn)
+        // Sorted by name, as three.html sorts, so the list does not reshuffle
+        // every time one is added or removed.
+        const sorted = [...presets].sort((a, b) => a.name.localeCompare(b.name))
 
-          const deleteBtn = document.createElement("button")
-          deleteBtn.className = "preset-action"
-          deleteBtn.innerHTML = "×"
-          deleteBtn.title = "Delete"
-          deleteBtn.onclick = () => deletePreset(preset)
-          container.appendChild(deleteBtn)
+        sorted.forEach((preset) => {
+          const row = document.createElement("div")
+          row.className = "preset-row"
 
-          list.appendChild(container)
+          const name = document.createElement("button")
+          name.className = "preset-name"
+          name.type = "button"
+          name.textContent = preset.name
+          name.title = `${preset.name} — load this shot`
+          name.addEventListener("click", () => applyPreset(preset))
+          row.appendChild(name)
+
+          const remove = document.createElement("button")
+          remove.className = "preset-delete"
+          remove.type = "button"
+          remove.textContent = "×"
+          remove.title = `Delete ${preset.name}`
+          remove.setAttribute("aria-label", `Delete ${preset.name}`)
+          remove.addEventListener("click", () => deletePreset(preset))
+          row.appendChild(remove)
+
+          presetsList.appendChild(row)
         })
       }
 
-      function addNewPreset() {
+      function addPreset() {
         const name = window.prompt("Preset name (max 16 chars):")
         if (!name) return
-        const newPreset = {
-          name: name.slice(0, 16),
-          positions: tableBalls.map((b) => [round6(b.x), round6(b.y)]),
-          i: cueBallId,
-          angle: round6(aimAngle),
-          power: round6(aimPower),
-          offset: {
-            x: round6(aimOffset.x),
-            y: round6(aimOffset.y),
-            z: 0,
-          },
-        }
-        presets.push(newPreset)
-        savePresets(presets)
-        renderPresets()
+        // Captured from currentState, so a preset is exactly what the replay is
+        // being run on right now -- and the constants are left out on purpose,
+        // so loading one never moves a slider the user did not set themselves.
+        presets = [...presets, capturePreset(currentState(), name)]
+        if (savePresets(presets)) renderPresets()
       }
 
       function deletePreset(preset) {
-        const index = presets.findIndex((p) => p === preset)
-        if (index === -1) return
-        if (confirm(`Delete preset "${preset.name}"?`)) {
-          presets.splice(index, 1)
-          savePresets(presets)
-          renderPresets()
-          document.getElementById("presets-popover")?.hidePopover()
-        }
+        if (!confirm(`Delete preset "${preset.name}"?`)) return
+        presets = presets.filter((p) => p !== preset)
+        if (savePresets(presets)) renderPresets()
       }
 
-      function updatePreset(index) {
-        if (
-          confirm(`Update preset "${presets[index].name}" with current state?`)
-        ) {
-          presets[index] = {
-            ...presets[index],
-            positions: tableBalls.map((b) => [round6(b.x), round6(b.y)]),
-            angle: round6(aimAngle),
-            power: round6(aimPower),
-            offset: {
-              x: round6(aimOffset.x),
-              y: round6(aimOffset.y),
-              z: 0,
-            },
-          }
-          savePresets(presets)
-          renderPresets()
-        }
-      }
-
-      function renamePreset(index) {
-        const newName = window.prompt("New name:", presets[index].name)
-        if (newName) {
-          presets[index].name = newName.slice(0, 16)
-          savePresets(presets)
-          renderPresets()
-        }
-      }
-
-      function applyPreset(preset) {
-        document.getElementById("presets-popover")?.hidePopover()
-        const { positions, i, angle, power, offset, constants } = preset
-        const surface = document.getElementById("table-surface")
-        const topview = document.querySelector(".topview")
-        if (!surface || !topview) return
-        positions.forEach(([x, y], i) => {
-          tableBalls[i].x = x
-          tableBalls[i].y = y
-        })
-        cueBallId = i ?? 0
-        aimAngle = normalizeAngle(angle)
-        aimPower = clamp(power, 0, MAX_POWER)
-        aimOffset = offset ?? { x: 0, y: 0, z: 0 }
-
-        if (constants) {
-          Object.entries(constants).forEach(([id, value]) => {
-            const input = document.getElementById(id)
-            if (input) {
-              input.value = value
-              input.dispatchEvent(new Event("input", { bubbles: true }))
-              input.dispatchEvent(new Event("change", { bubbles: true }))
-            }
-          })
-        }
-
-        tableBalls.forEach((ball) => positionBall(surface, ball))
-        positionAimArrow(surface)
-        updateSpinVisualState()
-        setPowerSliderValue()
-        syncDiagramState(topview)
-      }
-
+      // Back to the built-in library, for anyone whose saved list has become
+      // something they would rather not have to delete one row at a time --
+      // which is the only other way to get rid of it, short of dev tools.
+      //
+      // No page reload, unlike three.html's reset: there is nothing here that
+      // only a reload can rebuild, and reloading would throw away the shot on
+      // the table as well. Clearing the key is the whole of it, because
+      // loadPresets() already falls back to the library when nothing is stored.
       document
         .getElementById("reset-presets")
         ?.addEventListener("click", () => {
-          if (
-            confirm(
-              "Reset all presets? This will clear your saved presets and reload the page."
-            )
-          ) {
-            localStorage.removeItem("three_cushion_presets")
-            location.reload()
-          }
+          const saved = presets.filter((p) => !BUILT_IN_NAMES.has(p.name))
+          const warning = saved.length
+            ? `Reset all presets? This clears your ${saved.length} saved ${
+                saved.length === 1 ? "preset" : "presets"
+              } and restores the built-in set.`
+            : "Reset all presets? This restores the built-in set."
+          if (!confirm(warning)) return
+          if (!clearPresets()) return
+          presets = loadPresets()
+          renderPresets()
         })
 
-      document.addEventListener("DOMContentLoaded", initDraggableTable)
+      // Load a saved shot. Each of these has its own setter and re-renders, and
+      // each render republishes the state, so the whole page and the 3D replay
+      // end up on the preset without this having to say so itself.
+      function applyPreset(preset) {
+        const next = preset?.state
+        if (!next) return
+        setDialogOpen(presetsDialog, false)
+
+        ;(next.balls ?? []).forEach(({ x, y }, index) => {
+          const ball = balls[index]
+          if (!ball) return
+          ball.x = x
+          ball.y = y
+          circles[index]?.setAttribute("cx", String(x))
+          circles[index]?.setAttribute("cy", String(-y))
+        })
+
+        setCushionModel(next.cushionModel ?? DEFAULT_CUSHION_MODEL)
+
+        const shot = next.shot ?? {}
+        aimAngle = normalizeAngle(shot.angle ?? 0)
+        renderAim()
+        setSpin(shot.offset?.x ?? 0, shot.offset?.y ?? 0)
+        power = clamp(shot.power ?? 0, 0, MAX_POWER)
+        renderPower()
+        setElevation(shot.elevation ?? 0)
+      }
+
+      document
+        .getElementById("add-preset")
+        ?.addEventListener("click", addPreset)
+
+      // Handing a link over, as three.html's shareUrl does: the share sheet
+      // where the platform has one, the clipboard where it does not. Never
+      // `window.open` -- these urls are imports, so opening one would run the
+      // very import the user is only trying to pass on.
+      function shareUrl(url, button) {
+        const href = url.toString()
+        if (navigator.share) {
+          navigator
+            .share({ title: document.title, url: href })
+            .catch(console.error)
+          return
+        }
+        navigator.clipboard
+          .writeText(href)
+          .then(() => {
+            // Confirmed on the button itself, which is where the user is
+            // looking, and put back after a moment so it does not lie later.
+            const original = button.innerHTML
+            button.textContent = "copied!"
+            setTimeout(() => {
+              button.innerHTML = original
+            }, 2000)
+          })
+          .catch(console.error)
+      }
+
+      // The query is emptied first so the link carries the list and not
+      // whatever shot and constants this page happens to be holding.
+      document
+        .getElementById("share-presets")
+        ?.addEventListener("click", (event) => {
+          if (!presets.length) return
+          const url = new URL(window.location.href)
+          url.search = ""
+          url.searchParams.set("ps", JSON.stringify(presets))
+          shareUrl(url, event.currentTarget)
+        })
+
+      // The launch parameters -- the state, the cushion model, the constants and
+      // a shared preset list -- have all been read by now, so the query has
+      // done its work and is dropped. Nothing is re-read from the URL after
+      // this: the page keeps its own copy of the state, and every link it
+      // builds is assembled from the inputs rather than from the address. So a
+      // reload lands on the default shot instead of re-importing whatever was
+      // last pasted in, and the address bar holds a link that can be shared
+      // without dragging a stale query along with it.
+      if (window.location.search) {
+        window.history.replaceState(
+          null,
+          "",
+          window.location.pathname + window.location.hash
+        )
+      }
+
+      renderPresets()
+
+      renderAim()
+      renderSpin()
+      renderPower()
+      renderElevationGuides()
+      renderElevation()
+      applyView()
     </script>
-    <script src="../diagram.js"></script>
-    <section
-      style="
-        max-width: 720px;
-        margin: 32px auto 0;
-        padding: 0 0 24px;
-        font-family: sans-serif;
-        font-size: 0.7rem;
-        color: #888;
-        display: flex;
-        gap: 16px;
-        align-items: flex-start;
-      "
-    >
-      <img
-        src="../images/mh.jpg"
-        alt="Forces on ball at cushion"
-        width="192"
-        height="192"
-        style="flex-shrink: 0; opacity: 0.8"
-      />
-      <div style="margin: 0; line-height: 1.6">
-        <p style="margin: 0 0 6px"><strong>Mathavan</strong></p>
-        <ul style="margin: 0 0 10px; padding-left: 16px">
-          <li>
-            <strong style="color: #aaa">μs (ball-table sliding friction)</strong
-            ><br />
-            Lower → topspin/backspin/corkscrew take longer to wear off and
-            transition to natural roll.
-          </li>
-          <li style="margin-top: 6px">
-            <strong style="color: #aaa">μw (ball-cushion friction)</strong
-            ><br />
-            Lower → sidespin has less effect changing the rebound angle off the
-            rail, and more sidespin remains on the cueball.
-          </li>
-        </ul>
-        <p style="margin: 0 0 6px"><strong>Stronge</strong></p>
-        <ul style="margin: 0 0 6px; padding-left: 16px">
-          <li>
-            <strong style="color: #aaa"
-              >stronge_e_n (Normal restitution)</strong
-            >
-            — higher = springier cushion, less energy lost on direct impacts.
-          </li>
-          <li style="margin-top: 6px">
-            <strong style="color: #aaa">stronge_μ (Cushion friction)</strong> —
-            lower = slippery cushion, sidespin alters rebound angle less.
-          </li>
-          <li style="margin-top: 6px">
-            <strong style="color: #aaa"
-              >stronge_omega_ratio (Stiffness ratio)</strong
-            >
-            — controls normal/tangential frequency ratio; higher = smoother,
-            more delayed spin transfer.
-          </li>
-        </ul>
-        <p style="margin: 6px 0 4px"><strong>Han</strong></p>
-        <ul style="margin: 0 0 6px; padding-left: 16px">
-          <li>
-            <strong style="color: #aaa">muS (sliding friction)</strong> —
-            controls how fast the cue ball "grabs" the cloth with spin.
-          </li>
-          <li style="margin-top: 6px">
-            <strong style="color: #aaa">mu (rolling friction)</strong> —
-            controls how quickly a rolling ball stops.
-          </li>
-        </ul>
-        <p style="margin: 6px 0 0">
-          Adjust the parameters and share results to discuss. Presets are saved
-          to your browser's local storage. Suggestions? Please open an issue on
-          my
-          <a href="https://github.com/tailuge/billiards">GitHub repo</a>.
-        </p>
-      </div>
-    </section>
-    <nav
-      style="
-        max-width: 720px;
-        margin: 32px auto 0;
-        padding: 24px 0;
-        border-top: 1px solid #222;
-        font-family: sans-serif;
-        font-size: 0.7rem;
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-        justify-content: center;
-      "
-      aria-label="Site navigation"
-    >
-      <a href="../index.html" style="color: #888; text-decoration: none"
-        >Play</a
-      >
-      <a href="../practice.html" style="color: #888; text-decoration: none"
-        >Practice</a
-      >
-      <a
-        href="https://billiards.tailuge.workers.dev/lobby.html"
-        rel="noopener noreferrer"
-        style="color: #888; text-decoration: none"
-        >Lobby</a
-      >
-      <a
-        href="https://scoreboard-tailuge.vercel.app/leaderboard"
-        rel="noopener noreferrer"
-        style="color: #888; text-decoration: none"
-        >Leaderboard</a
-      >
-      <a
-        href="https://github.com/tailuge/billiards"
-        rel="noopener noreferrer"
-        style="color: #888; text-decoration: none"
-        >GitHub</a
-      >
-      <a href="../blog1.html" style="color: #888; text-decoration: none"
-        >Blog: Cushion Physics</a
-      >
-      <a href="../blog2.html" style="color: #888; text-decoration: none"
-        >Blog: Line Up</a
-      >
-      <a href="../blog3.html" style="color: #888; text-decoration: none"
-        >Blog: Mathavan</a
-      >
-    </nav>
   </body>
 </html>
