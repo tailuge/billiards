@@ -54,7 +54,6 @@ export class DiagramContainer {
     this.replay = replay
     this.ruletype = ruletype
     this.canvas3d = canvas3d
-    CameraTop.zoomFactor = 0.88
   }
 
   start() {
@@ -83,6 +82,17 @@ export class DiagramContainer {
     }
     this.container = new Container(config)
     this.container.init()
+    // The diagram framing, and only here. Written after the Container rather
+    // than in the constructor because building it runs rules.table(), which
+    // calls Camera.configureForRule and resets this to the game's 0.92 -- so an
+    // earlier write is silently discarded and the page renders exactly as it
+    // would without this line. rules.table() has one call site, so nothing
+    // re-runs it later and this holds for the life of the page.
+    //
+    // Linear in the top view's camera height, so this is a zoom: 0.92 is the
+    // game's threecushion value, and 1.15 sits about a quarter closer, with the
+    // table still whole in the frame.
+    CameraTop.zoomFactor = 0.84
     if (this.cushionModel) {
       this.container.table.cushionModel = this.cushionModel
     }
