@@ -233,7 +233,7 @@
 
       .replaydiagram {
         overflow: hidden;
-        background: #000;
+        background: #fff;
       }
 
       .topview canvas {
@@ -261,14 +261,6 @@
         z-index: 11;
       }
 
-      /* A fixed height, so the column above is the sum of the four buttons and
-         its foot lands level with the foot of the power slider beside it. */
-      .action-panel .action-button {
-        box-sizing: border-box;
-        height: var(--action-button-h);
-        padding: 0 0.4rem;
-      }
-
       /* A plain button, as the diagram pages use. */
       .action-button {
         font: inherit;
@@ -284,6 +276,14 @@
 
       .action-button:hover {
         background: #f5f5f5;
+      }
+
+      /* A fixed height, so the column above is the sum of the four buttons and
+         its foot lands level with the foot of the power slider beside it. */
+      .action-panel .action-button {
+        box-sizing: border-box;
+        height: var(--action-button-h);
+        padding: 0 0.4rem;
       }
 
       /* The dialog is scoped to the input panel: absolute against it, so it
