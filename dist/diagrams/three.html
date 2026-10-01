@@ -79,7 +79,7 @@
 
         /* The spin and elevation widgets' box. --side-h is the length of the
            power slider beside them: the two widgets and the button column under
-           them, stacked with the row gap between. */
+           them, stacked with --stack-gap between. */
         --widget-size: 6.3rem;
 
         /* The panel's buttons stack down the column, so the column is as tall
@@ -87,14 +87,30 @@
            because --action-height is its sum, so a sixth button is a change
            here and nowhere else. */
         --action-button-h: 1.25rem;
-        --action-gap: 2px;
+        --action-gap: 1px;
         --action-count: 6;
         --action-height: calc(
           var(--action-count) * var(--action-button-h) +
             (var(--action-count) - 1) * var(--action-gap)
         );
+
+        /* The gaps inside the controls column, and they are tight on purpose:
+           every pixel between the widgets and the buttons is a pixel the link
+           text below does not get, and the widgets are sized by --widget-size
+           rather than by the room they sit in. --side-h and .shot-side both
+           read it, so the power slider stays the length of the column beside
+           it. */
+        --stack-gap: 1px;
         --side-h: calc(
-          2 * var(--widget-size) + var(--action-height) + 2 * var(--gap)
+          2 * var(--widget-size) + var(--action-height) + 2 * var(--stack-gap)
+        );
+
+        /* The width the controls take off the shot input row: the power slider,
+           the widget stack beside it, the gap between, and the controls box's
+           own padding and border. The row gives up this much so the table keeps
+           clear of them, as it did when they were children of it. */
+        --controls-w: calc(
+          1.1rem + var(--widget-size) + var(--gap) + 0.4rem + 2px
         );
 
         /* Viewport height. dvh where supported, so a mobile browser's
@@ -779,12 +795,11 @@
         font-size: 0.65rem;
       }
 
-      /* Shot input: the table takes the left, the vertical power slider sits
-         beside it, and the spin and elevation widgets stack down the right. The
-         table viewBox letterboxes inside whatever room is left. */
+      /* Shot input: the table takes the row, and the controls sit in a box over the
+         panel's right edge -- so the row is only the table, giving up the width
+         the controls take. The table viewBox letterboxes inside what is left. */
       .panel-input .panel-body {
-        justify-content: space-between;
-        gap: 2px;
+        padding-right: var(--controls-w);
       }
 
       .panel-input .table-panel {
@@ -796,12 +811,90 @@
         height: 100%;
       }
 
+      /* The controls as one box: the power slider beside the spin and elevation
+         widgets, the buttons under them, and the shot link under those.
+         min-height is the slider's own height, which is what the widgets and
+         buttons add up to, so the box is never shorter than what it holds. A
+         short window cannot make it shorter either -- this panel clips nothing,
+         so the box runs on past the panel's bottom edge instead, because a
+         clipped button is one that cannot be pressed. Pinned under the title
+         rather than centred on the row, since what spills goes below. */
+      .controls-panel {
+        box-sizing: border-box;
+        position: absolute;
+        top: calc(var(--title-height) + var(--bw));
+        right: 0;
+
+        /* Spanning the row it sits over, so the link below takes whatever is
+           left once the widgets and buttons have had theirs: a taller window
+           shows more of the link rather than more empty box. min-height still
+           wins over that span, which is the spill on a short window. */
+        bottom: 0;
+
+        /* The width the shot input row gives up, stated rather than left to
+           fit: the link text is a few hundred characters with nothing to break
+           it, so a shrink-to-fit box would take the whole panel's width. */
+        width: var(--controls-w);
+        display: flex;
+        flex-direction: column;
+        gap: var(--gap);
+        min-height: var(--side-h);
+        gap: 1px;
+        padding: 0.2rem;
+        background: #f7f7f7;
+        border: 1px solid #e2e2e2;
+        border-radius: 0.25rem;
+      }
+
+      /* The slider and the widget stack side by side, the link box under both:
+         it wants the full width of the box rather than the width of the widgets
+         alone, being a long string either way. */
+      .controls-row {
+        display: flex;
+        flex: none;
+        align-items: flex-start;
+        gap: var(--gap);
+      }
+
+      /* The link that opens the shot on the table, as text rather than as a link
+         to follow -- following it would throw this shot away. A very small size
+         because the box is narrow and a share link is long, so it wraps.
+         Takes the height the widgets and buttons leave it, down to a few rows:
+         min-height is what the box will not go below, and the controls box's own
+         min-height is what keeps that from costing the page its layout. */
+      .share-output {
+        box-sizing: border-box;
+        flex: 1 1 auto;
+        min-height: 3rem;
+        padding: 2px 3px;
+        overflow-y: auto;
+        overflow-wrap: anywhere;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 2px;
+        color: #444;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.4rem;
+        line-height: 1.25;
+        user-select: all;
+
+        /* No scrollbar: on a box this small it would take a third of the
+           width for a scroll the wheel does anyway. The text still scrolls,
+           and one click selects all of it -- including what is out of view --
+           so nothing here is only reachable by scrolling to it. */
+        scrollbar-width: none;
+      }
+
+      .share-output::-webkit-scrollbar {
+        display: none;
+      }
+
       .shot-side {
         display: flex;
         flex: none;
         flex-direction: column;
         align-items: center;
-        gap: var(--gap);
+        gap: var(--stack-gap);
       }
 
       /* Carom ball colours; ball-colors.css is keyed to pool/snooker ids. */
@@ -967,6 +1060,22 @@
         pointer-events: none;
       }
 
+      /* Not enough height for the controls to sit beside the table, so the box
+         spills past the bottom of the panel as it always could -- and the page
+         is allowed to scroll by exactly that spill, which is the only way to
+         reach what it hid. Nothing else moves: the panels are still sized from
+         the height budget, so a short window costs a few pixels of scroll
+         rather than a second layout. The threshold is the arithmetic above:
+         the controls want --side-h plus the link box, and the row is half the
+         window's height less the chrome. */
+      @media (height < 54rem) {
+        html,
+        body {
+          height: auto;
+          overflow: visible;
+        }
+      }
+
       /* Phones: one column in the reading order above, natural height and
          normal scrolling. Narrower than this the pair cannot usefully fit a
          window anyway. */
@@ -1031,108 +1140,128 @@
           <div class="table-panel">
             <svg class="billiards-table threecushion"></svg>
           </div>
-          <input
-            id="power"
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            aria-label="Power"
-          />
-          <div class="shot-side">
-            <!-- ViewBox is padded past the ball so the ball's outline, which is
+        </div>
+
+        <!-- The controls as one box over this panel's right edge, rather than
+             children of the row above: that row clips what it cannot fit, and
+             on a short window these are taller than it. Out here the box keeps
+             its own height and runs on below the panel instead. All it asks of
+             the row is the width to stay clear of. -->
+        <div class="controls-panel">
+          <div class="controls-row">
+            <input
+              id="power"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              aria-label="Power"
+            />
+            <div class="shot-side">
+              <!-- ViewBox is padded past the ball so the ball's outline, which is
                  stroked across r=1, is not clipped by the viewport edge. -->
-            <svg
-              class="spin-widget"
-              viewBox="-1.05 -1.05 2.1 2.1"
-              role="img"
-              aria-label="Cue tip contact point on the cue ball"
-            >
-              <circle class="spin-ball" r="1" />
-              <circle class="spin-limit" r="0.45" />
-              <line class="spin-axis" x1="-0.5" y1="0" x2="0.5" y2="0" />
-              <line class="spin-axis" x1="0" y1="-0.5" x2="0" y2="0.5" />
-              <circle class="spin-dot" r="0.15" />
-              <text class="spin-readout" aria-hidden="true">
-                <tspan></tspan>
-                <tspan></tspan>
-              </text>
-            </svg>
-            <svg
-              class="elevation-widget"
-              viewBox="0 0 100 100"
-              role="slider"
-              aria-label="Cue elevation in degrees"
-              aria-valuemin="0"
-              aria-valuemax="72"
-              aria-valuenow="0"
-            >
-              <!-- The path the cue tip sweeps, and the cue at its 72 degree cap.
+              <svg
+                class="spin-widget"
+                viewBox="-1.05 -1.05 2.1 2.1"
+                role="img"
+                aria-label="Cue tip contact point on the cue ball"
+              >
+                <circle class="spin-ball" r="1" />
+                <circle class="spin-limit" r="0.45" />
+                <line class="spin-axis" x1="-0.5" y1="0" x2="0.5" y2="0" />
+                <line class="spin-axis" x1="0" y1="-0.5" x2="0" y2="0.5" />
+                <circle class="spin-dot" r="0.15" />
+                <text class="spin-readout" aria-hidden="true">
+                  <tspan></tspan>
+                  <tspan></tspan>
+                </text>
+              </svg>
+              <svg
+                class="elevation-widget"
+                viewBox="0 0 100 100"
+                role="slider"
+                aria-label="Cue elevation in degrees"
+                aria-valuemin="0"
+                aria-valuemax="72"
+                aria-valuenow="0"
+              >
+                <!-- The path the cue tip sweeps, and the cue at its 72 degree cap.
                    Both are placed from the same pivot, length and cap that drive
                    the cue line, so they follow the constants. -->
-              <path class="elevation-arc" />
-              <line class="elevation-max" x1="12" y1="88" />
-              <line class="elevation-line" x1="12" y1="88" x2="92.75" y2="88" />
-              <text
-                class="elevation-readout"
-                x="50"
-                y="50"
-                aria-hidden="true"
-              />
-            </svg>
-            <!-- Under the elevation widget, down the bottom of the controls
+                <path class="elevation-arc" />
+                <line class="elevation-max" x1="12" y1="88" />
+                <line
+                  class="elevation-line"
+                  x1="12"
+                  y1="88"
+                  x2="92.75"
+                  y2="88"
+                />
+                <text
+                  class="elevation-readout"
+                  x="50"
+                  y="50"
+                  aria-hidden="true"
+                />
+              </svg>
+              <!-- Under the elevation widget, down the bottom of the controls
                  column: one button above the next. -->
-            <div class="action-panel">
-              <!-- Named open-constants rather than constants: the constants
+              <div class="action-panel">
+                <!-- Named open-constants rather than constants: the constants
                    panel below is id="constants", which the diagram bundle's
                    Sliders looks the panel up by, so the id is not free. -->
-              <button
-                id="open-constants"
-                class="action-button"
-                type="button"
-                aria-haspopup="dialog"
-                aria-expanded="false"
-                aria-controls="constants-modal"
-              >
-                constants
-              </button>
-              <button
-                id="action"
-                class="action-button"
-                type="button"
-                aria-haspopup="dialog"
-                aria-expanded="false"
-                aria-controls="action-modal"
-              >
-                action
-              </button>
-              <button
-                id="open-presets"
-                class="action-button"
-                type="button"
-                aria-haspopup="dialog"
-                aria-expanded="false"
-                aria-controls="presets-modal"
-              >
-                presets
-              </button>
-              <!-- The diagram bundle relabels this and binds the re-run once
+                <button
+                  id="open-constants"
+                  class="action-button"
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-expanded="false"
+                  aria-controls="constants-modal"
+                >
+                  constants
+                </button>
+                <button
+                  id="action"
+                  class="action-button"
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-expanded="false"
+                  aria-controls="action-modal"
+                >
+                  action
+                </button>
+                <button
+                  id="open-presets"
+                  class="action-button"
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-expanded="false"
+                  aria-controls="presets-modal"
+                >
+                  presets
+                </button>
+                <!-- The diagram bundle relabels this and binds the re-run once
                    its assets are in, so it is the editor's only way to replay. -->
-              <button id="replay" class="action-button" type="button">
-                replay
-              </button>
-              <!-- Also bound by the bundle, which looks the button up by this id
+                <button id="replay" class="action-button" type="button">
+                  replay
+                </button>
+                <!-- Also bound by the bundle, which looks the button up by this id
                    and clears the ghost trails the replay leaves behind. -->
-              <button id="cleartraces" class="action-button" type="button">
-                clear traces
-              </button>
-              <!-- Bound here, not by the bundle: it hands the shot on the table
+                <button id="cleartraces" class="action-button" type="button">
+                  clear traces
+                </button>
+                <!-- Bound here, not by the bundle: it hands the shot on the table
                    to someone else as a link, rather than playing it anywhere. -->
-              <button id="share-shot" class="action-button" type="button">
-                share shot
-              </button>
+                <button id="share-shot" class="action-button" type="button">
+                  share shot
+                </button>
+              </div>
             </div>
           </div>
+          <!-- The link that opens the shot on the table, kept in step with it:
+               shown as well as shared, so it can be read and copied by hand
+               where there is no share sheet to hand it to. -->
+          <div class="share-output" id="share-output"></div>
         </div>
 
         <!-- Inside the input panel rather than over the window: absolute
@@ -2284,6 +2413,9 @@
         const next = serializeState(currentState())
         topview.dataset.state = next
         topview.setAttribute("data-state", next)
+        // The link quotes the shot as it stands, so it is rebuilt alongside the
+        // state the replay reads.
+        scheduleShotLink()
         scheduleReplay()
       }
 
@@ -2330,6 +2462,11 @@
           // A replay already drawn its shot against the old constants, and the
           // bundle's own Sliders has no re-run of its own, so ask for one here.
           scheduleReplay()
+          // And the share link, which carries the constants a slider has moved
+          // and leaves the rest out. syncDiagram runs for the shot rather than
+          // for a constant, so the link is refreshed from here -- otherwise it
+          // goes on quoting a physics the table has already stopped running.
+          scheduleShotLink()
         })
       )
 
@@ -2633,6 +2770,24 @@
         .getElementById("add-preset")
         ?.addEventListener("click", addPreset)
 
+      // Putting a link on the clipboard, and saying so on the button that asked
+      // for it -- which is where the user is looking. Both shares go through
+      // here, so the two never disagree about what a click did.
+      function copyHref(href, button) {
+        navigator.clipboard
+          .writeText(href)
+          .then(() => {
+            // Confirmed on the button itself, and put back after a moment so it
+            // does not lie later.
+            const original = button.innerHTML
+            button.textContent = "copied!"
+            setTimeout(() => {
+              button.innerHTML = original
+            }, 2000)
+          })
+          .catch(console.error)
+      }
+
       // Handing a link over, as three.html's shareUrl does: the share sheet
       // where the platform has one, the clipboard where it does not. Never
       // `window.open` -- these urls are imports, so opening one would run the
@@ -2645,37 +2800,45 @@
             .catch(console.error)
           return
         }
-        navigator.clipboard
-          .writeText(href)
-          .then(() => {
-            // Confirmed on the button itself, which is where the user is
-            // looking, and put back after a moment so it does not lie later.
-            const original = button.innerHTML
-            button.textContent = "copied!"
-            setTimeout(() => {
-              button.innerHTML = original
-            }, 2000)
-          })
-          .catch(console.error)
+        copyHref(href, button)
       }
 
-      // The shot on the table, as a link that opens it. The constants go on it
-      // read off the sliders rather than off the URL, so it carries what is on
-      // screen -- and only the ones a slider has actually moved, which
-      // shareShotUrl decides against the defaults the reader is already on.
-      // Never `window.open`: this url is a destination for someone else, not
-      // one this page should follow, so it goes out through the share sheet or
-      // the clipboard like the preset list below.
+      // The link that opens the shot on the table. Shown under the buttons as
+      // well as handed over on a click, because a share sheet is not everywhere
+      // and a link nobody can read is a link nobody can check. Built from the
+      // same state the launch links use, so what it opens is what the table is
+      // showing, and from the same sliders -- with only the constants a slider
+      // has actually moved, which shareShotUrl decides against the defaults.
+      const shareOutput = document.getElementById("share-output")
+
+      const shotLink = () =>
+        shareShotUrl(
+          window.location.href,
+          currentState(),
+          Object.fromEntries(
+            constantInputs.map((input) => [input.id, input.value])
+          )
+        ).toString()
+
+      // Kept in step with the shot on a timer rather than on every pointermove:
+      // a drag publishes state dozens of times a second, and the text under the
+      // buttons only has to be right by the time someone reads it.
+      let shareTimer = null
+      function scheduleShotLink() {
+        clearTimeout(shareTimer)
+        shareTimer = setTimeout(() => {
+          if (shareOutput) shareOutput.textContent = shotLink()
+        }, REPLAY_DELAY)
+      }
+
       document
         .getElementById("share-shot")
         ?.addEventListener("click", (event) => {
-          const constants = Object.fromEntries(
-            constantInputs.map((input) => [input.id, input.value])
-          )
-          shareUrl(
-            shareShotUrl(window.location.href, currentState(), constants),
-            event.currentTarget
-          )
+          const href = shotLink()
+          // Written out first, so the link is on show whether or not the
+          // clipboard takes it.
+          if (shareOutput) shareOutput.textContent = href
+          copyHref(href, event.currentTarget)
         })
 
       // The query is emptied first so the link carries the list and not
