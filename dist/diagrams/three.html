@@ -30,16 +30,21 @@
       property="og:url"
       content="https://billiards.tailuge.workers.dev/diagrams/three"
     />
+    <!-- A small square icon (48x48) so chat clients render it as a compact
+         preview thumbnail instead of a full-width banner. Point og:image at a
+         dedicated small file; most crawlers ignore og:image:width/height. -->
     <meta
       property="og:image"
-      content="https://billiards.tailuge.workers.dev/assets/research.png"
+      content="https://billiards.tailuge.workers.dev/assets/icon48.png"
     />
+    <meta property="og:image:width" content="48" />
+    <meta property="og:image:height" content="48" />
     <meta
       property="og:image:alt"
-      content="Pixel-art microscope over red felt: three-cushion billiards physics research"
+      content="Pixel-art billiards icon: three-cushion physics research"
     />
     <meta property="og:site_name" content="Three Cushion Research" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta
       name="twitter:title"
       content="Three Cushion Billiards Physics Research &amp; Simulation"
@@ -50,7 +55,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://billiards.tailuge.workers.dev/assets/research.png"
+      content="https://billiards.tailuge.workers.dev/assets/icon48.png"
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -485,6 +490,22 @@
 
       .action-button:hover {
         background: #f5f5f5;
+      }
+
+      /* A button that carries an icon instead of a label, the way the share
+         button in the game's menu does: the icon centred in the same fixed
+         height, so the column of buttons is no taller for it. Written with
+         .action-panel in the selector to outrank the padding the fixed-height
+         rule above sets for the buttons in this column. */
+      .action-panel .action-button.icon-only {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .action-button.icon-only svg {
+        display: block;
       }
 
       /* A fixed height, so the column above is the sum of the buttons in it and
@@ -1227,8 +1248,15 @@
                 />
               </svg>
               <!-- Under the elevation widget, down the bottom of the controls
-                 column: one button above the next. -->
+                   column: one button above the next. Replay is first, as the
+                   thing the panel exists to do, before the three dialogs and
+                   the tidy-up. -->
               <div class="action-panel">
+                <!-- The diagram bundle relabels this and binds the re-run once
+                   its assets are in, so it is the editor's only way to replay. -->
+                <button id="replay" class="action-button" type="button">
+                  replay
+                </button>
                 <!-- Named open-constants rather than constants: the constants
                    panel below is id="constants", which the diagram bundle's
                    Sliders looks the panel up by, so the id is not free. -->
@@ -1262,20 +1290,43 @@
                 >
                   presets
                 </button>
-                <!-- The diagram bundle relabels this and binds the re-run once
-                   its assets are in, so it is the editor's only way to replay. -->
-                <button id="replay" class="action-button" type="button">
-                  replay
-                </button>
                 <!-- Also bound by the bundle, which looks the button up by this id
                    and clears the ghost trails the replay leaves behind. -->
                 <button id="cleartraces" class="action-button" type="button">
                   clear traces
                 </button>
                 <!-- Bound here, not by the bundle: it hands the shot on the table
-                   to someone else as a link, rather than playing it anywhere. -->
-                <button id="share-shot" class="action-button" type="button">
-                  share shot
+                   to someone else as a link, rather than playing it anywhere.
+                     An icon rather than the words, as the other share affordances
+                     in the app are: the link it copies is on show under the
+                     panel whatever the button says. data-confirm-icon tells
+                     copyHref how to confirm it -- see the tick below. -->
+                <button
+                  id="share-shot"
+                  class="action-button icon-only"
+                  type="button"
+                  title="Share shot"
+                  aria-label="Share shot link"
+                  data-confirm-icon
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                  </svg>
                 </button>
               </div>
             </div>
@@ -1539,7 +1590,12 @@
               This interactive simulator explores the physics of three-cushion
               billiards, including ball motion, cushion rebounds, spin, power
               and cue elevation. Set up a shot and compare the simulated ball
-              trajectory using different cushion models.
+              trajectory using different cushion models. Explore this project
+              <a href="https://billiards.tailuge.workers.dev/lobby">lobby</a>
+              and
+              <a href="https://github.com/tailuge/billiards"
+                >github.com/tailuge/billiards</a
+              >
             </p>
 
             <h2>Cushion physics models</h2>
@@ -1591,8 +1647,9 @@
                 <a href="./stronge.html">Stronge</a>
               </li>
               <li>
+                Also see
                 <a href="https://github.com/ekiefl/pooltool">pooltool</a> — a
-                related open source Python billiards simulator using similar
+                related open source Python billiards simulator with rigorous
                 physics
               </li>
               <li>
@@ -1601,10 +1658,6 @@
                 good place to discuss billiards physics
               </li>
             </ul>
-            <p class="research-links">
-              <a href="../lobby.html">lobby</a>
-              <a href="https://github.com/tailuge/billiards">github</a>
-            </p>
           </section>
 
           <section lang="ko">
@@ -2800,11 +2853,25 @@
           .writeText(href)
           .then(() => {
             // Confirmed on the button itself, and put back after a moment so it
-            // does not lie later.
+            // does not lie later. A button that has opted into the icon
+            // confirm gets a tick in place of its icon: the words would not
+            // fit, and an icon-only button has no room to grow.
             const original = button.innerHTML
-            button.textContent = "copied!"
+            const label = button.getAttribute("aria-label")
+            const tick =
+              '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"' +
+              ' viewBox="0 0 24 24" fill="none" stroke="currentColor"' +
+              ' stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"' +
+              ' aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+            if (button.hasAttribute("data-confirm-icon")) {
+              button.innerHTML = tick
+              button.setAttribute("aria-label", "Copied")
+            } else {
+              button.textContent = "copied!"
+            }
             setTimeout(() => {
               button.innerHTML = original
+              if (label) button.setAttribute("aria-label", label)
             }, 2000)
           })
           .catch(console.error)
