@@ -75,7 +75,9 @@ function toShot(json) {
       y: number(shot?.offset?.y, 0),
     },
     elevation: number(shot?.elevation, 0),
-    i: number(shot?.i, 0),
+    // `i` is the state document's name for it and `cueBallId` the launch links'
+    // -- the same ball, so either key reads the same shot.
+    i: number(shot?.i ?? shot?.cueBallId, 0),
   };
 }
 
@@ -91,21 +93,55 @@ function toState(shot, balls, params) {
 }
 
 /**
+ * The shot the `init`/`initShot` pair carries, which is how the launch links
+ * hand a shot to the game and the exporter: ?init= is the flat list of ball
+ * positions and ?initShot= is the aim, each the JSON string a URL holds. They
+ * arrive as two parameters rather than one document, so each is read on its own
+ * and a broken one costs only what it held. Null when the URL carries neither,
+ * which is what tells the caller there was nothing here to read.
+ */
+function readLaunchParams(params) {
+  const init = params.get("init");
+  const shot = params.get("initShot");
+  if (init === null && shot === null) return null;
+
+  let balls = [];
+  try {
+    balls = init === null ? [] : toBalls(JSON.parse(init));
+  } catch (error) {
+    console.warn("editor state: unreadable init, using the default layout", error);
+  }
+
+  let aim = {};
+  try {
+    aim = shot === null ? {} : JSON.parse(shot);
+  } catch (error) {
+    console.warn("editor state: unreadable initShot, using the default shot", error);
+  }
+
+  // The launch links' `initShot` is the shot itself rather than a state
+  // document holding one, so it is wrapped to come through the same reader.
+  return toState({ shot: aim }, balls, params);
+}
+
+/**
  * The shot to open on. ?s= is the share form three.html writes; ?state= is the
- * same document in the form the diagram's data-state carries it. Anything
- * unparseable falls back to the default rather than leaving the editor shotless.
+ * same document in the form the diagram's data-state carries it; ?init= and
+ * ?initShot= are the pair a launch link writes, so a shot can be handed back to
+ * this page the same way it is handed to the game. Anything unparseable falls
+ * back to the default rather than leaving the editor shotless.
  */
 export function readState(params = new URLSearchParams()) {
   const raw = params.get("s") ?? params.get("state");
-  let parsed = null;
   if (raw) {
     try {
-      parsed = JSON.parse(raw);
+      const parsed = JSON.parse(raw) ?? {};
+      return toState(parsed, toBalls(parsed?.init), params);
     } catch (error) {
       console.warn("editor state: unreadable, using the default shot", error);
     }
   }
-  return toState(parsed ?? {}, toBalls(parsed?.init), params);
+  return readLaunchParams(params) ?? toState({}, [], params);
 }
 
 /**
@@ -197,6 +233,66 @@ export function readConstants(params = new URLSearchParams()) {
     values[key] = Number.isFinite(given) ? given : PHYSICS_DEFAULTS[key];
   });
   return values;
+}
+
+/**
+ * A link back to this page with one shot on it.
+ *
+ * The `init`/`initShot` pair is the same one the launch links write, so a shot
+ * that opens here opens the same way in the game and in the exporter. What the
+ * reader already has is left out: the cushion model and the rule type only when
+ * they are not the defaults, and a constant only once a slider has moved it off
+ * its default. Otherwise a link is mostly a dozen numbers repeating the physics
+ * the reader is already running.
+ *
+ * `constants` is the raw slider values, keyed as the inputs are, so the caller
+ * can hand over whatever is on screen without deciding what counts as changed.
+ */
+export function shareShotUrl(base, state, constants = {}) {
+  const shot = state.shot ?? DEFAULT_STATE.shot;
+  const url = new URL(base);
+  // Whatever this page was opened with: the link carries the shot, not the
+  // query it arrived on.
+  url.search = "";
+
+  if ((state.ruleType ?? DEFAULT_RULETYPE) !== DEFAULT_RULETYPE) {
+    url.searchParams.set("ruletype", state.ruleType);
+  }
+  const cushionModel = state.cushionModel ?? DEFAULT_CUSHION_MODEL;
+  if (cushionModel !== DEFAULT_CUSHION_MODEL) {
+    url.searchParams.set("cushionModel", cushionModel);
+  }
+
+  url.searchParams.set(
+    "init",
+    JSON.stringify(
+      (state.balls ?? []).flatMap((ball) => [round(ball.x), round(ball.y)])
+    )
+  );
+  url.searchParams.set(
+    "initShot",
+    JSON.stringify({
+      cueBallId: shot.i ?? 0,
+      angle: round(shot.angle),
+      power: round(shot.power),
+      offset: {
+        x: round(shot.offset?.x ?? 0),
+        y: round(shot.offset?.y ?? 0),
+        z: 0,
+      },
+      elevation: round(shot.elevation ?? 0),
+    })
+  );
+
+  Object.entries(constants).forEach(([key, value]) => {
+    // A constant that is not one the panel exposes has no default to compare
+    // against, so it goes on the link as it stands.
+    const fallback = PHYSICS_DEFAULTS[key];
+    if (fallback !== undefined && Number(value) === fallback) return;
+    url.searchParams.set(key, String(value));
+  });
+
+  return url;
 }
 
 // --- presets ---

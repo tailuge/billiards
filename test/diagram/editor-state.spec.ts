@@ -11,6 +11,7 @@ import {
   MAX_PRESET_NAME,
   readState,
   serializeState,
+  shareShotUrl,
   toStateJson,
 } from "../../dist/diagrams/editor-state.js"
 
@@ -89,6 +90,109 @@ describe("editor state", () => {
     expect(readConstants(params("mu=0.006&muS=0.25")).mu).toBeCloseTo(0.006)
     expect(readConstants(params("mu=0.006&muS=0.25")).muS).toBeCloseTo(0.25)
     expect(readConstants(params("mu=nonsense")).mu).toBeCloseTo(0.0055)
+  })
+
+  describe("share links", () => {
+    const shotState = {
+      ...DEFAULT_STATE,
+      cushionModel: "stronge",
+      balls: [
+        { x: 0.5, y: 0.2 },
+        { x: -0.9, y: -0.4 },
+        { x: 1.1, y: 0.6 },
+      ],
+      shot: {
+        angle: 1.234567,
+        power: 3.5,
+        offset: { x: -0.3, y: 0.25 },
+        elevation: 0.5,
+        i: 1,
+      },
+    }
+
+    const href = "https://billiards.example/diagrams/three.html"
+
+    it("carries the shot as the init params the launch links write", () => {
+      const url = shareShotUrl(href, shotState)
+
+      expect(url.searchParams.get("init")).toBe(
+        JSON.stringify([0.5, 0.2, -0.9, -0.4, 1.1, 0.6])
+      )
+      const shot = JSON.parse(url.searchParams.get("initShot")!)
+      expect(shot.cueBallId).toBe(1)
+      expect(shot.angle).toBeCloseTo(1.234567, 6)
+      expect(shot.power).toBeCloseTo(3.5, 6)
+      expect(shot.offset).toEqual({ x: -0.3, y: 0.25, z: 0 })
+      expect(shot.elevation).toBeCloseTo(0.5, 6)
+
+      // It is a link back to this page, not a launch somewhere else.
+      expect(url.href).toContain("/diagrams/three.html")
+    })
+
+    it("omits the defaults the reader is already running", () => {
+      const url = shareShotUrl(href, DEFAULT_STATE, {
+        μs: PHYSICS_DEFAULTS["μs"],
+        mu: String(PHYSICS_DEFAULTS.mu),
+      })
+
+      // threecushion and mathavan are what the page opens on anyway.
+      expect(url.searchParams.get("cushionModel")).toBeNull()
+      expect(url.searchParams.get("ruletype")).toBeNull()
+      // And a constant still sitting on its default says nothing the reader
+      // does not already know, which is most of what a link would carry.
+      expect(url.searchParams.get("μs")).toBeNull()
+      expect(url.searchParams.get("mu")).toBeNull()
+    })
+
+    it("carries the cushion model and the constants that were moved", () => {
+      const url = shareShotUrl(href, shotState, { mu: "0.006", μs: "0.25" })
+
+      expect(url.searchParams.get("cushionModel")).toBe("stronge")
+      expect(url.searchParams.get("mu")).toBe("0.006")
+      expect(url.searchParams.get("μs")).toBe("0.25")
+    })
+
+    it("drops the query it was built from", () => {
+      const url = shareShotUrl(`${href}?ps=[{"name":"x"}]`, DEFAULT_STATE)
+      expect(url.searchParams.get("ps")).toBeNull()
+      expect(url.searchParams.get("init")).not.toBeNull()
+    })
+
+    it("reopens the shot it wrote", () => {
+      const url = shareShotUrl(href, shotState, { mu: "0.006" })
+      // The link is only worth having if opening it puts the same shot on the
+      // table, so this is a round trip rather than a look at the parameters.
+      const state = readState(new URLSearchParams(url.search))
+
+      expect(state.balls).toEqual(shotState.balls)
+      expect(state.shot).toEqual(shotState.shot)
+      expect(state.cushionModel).toBe("stronge")
+    })
+
+    it("reads the launch params, and the defaults where one is missing", () => {
+      const state = readState(
+        params(
+          "init=[0.5,0.2,-0.9,-0.4]&initShot=" +
+            encodeURIComponent(JSON.stringify({ cueBallId: 1, angle: 0.5 }))
+        )
+      )
+
+      expect(state.balls).toEqual([
+        { x: 0.5, y: 0.2 },
+        { x: -0.9, y: -0.4 },
+      ])
+      expect(state.shot.angle).toBeCloseTo(0.5)
+      // `cueBallId` is the launch links' name for the shot's `i`.
+      expect(state.shot.i).toBe(1)
+      expect(state.shot.power).toBe(DEFAULT_STATE.shot.power)
+      expect(state.shot.elevation).toBe(0)
+
+      // A broken pair, like a broken document, still opens on a shot rather
+      // than none: a link someone pasted is not worth losing the page over.
+      expect(readState(params("init=not-json&initShot=not-json"))).toEqual(
+        DEFAULT_STATE
+      )
+    })
   })
 
   describe("presets", () => {

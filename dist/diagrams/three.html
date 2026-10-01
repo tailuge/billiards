@@ -83,12 +83,12 @@
         --widget-size: 6.3rem;
 
         /* The panel's buttons stack down the column, so the column is as tall
-           as the four of them plus the gaps between. The count is a variable
-           because --action-height is its sum, so a fifth button is a change
+           as the buttons in it plus the gaps between. The count is a variable
+           because --action-height is its sum, so a sixth button is a change
            here and nowhere else. */
         --action-button-h: 1.25rem;
         --action-gap: 2px;
-        --action-count: 5;
+        --action-count: 6;
         --action-height: calc(
           var(--action-count) * var(--action-button-h) +
             (var(--action-count) - 1) * var(--action-gap)
@@ -453,8 +453,8 @@
         background: #f5f5f5;
       }
 
-      /* A fixed height, so the column above is the sum of the four buttons and
-         its foot lands level with the foot of the power slider beside it. */
+      /* A fixed height, so the column above is the sum of the buttons in it and
+           its foot lands level with the foot of the power slider beside it. */
       .action-panel .action-button {
         box-sizing: border-box;
         height: var(--action-button-h);
@@ -1126,6 +1126,11 @@
               <button id="cleartraces" class="action-button" type="button">
                 clear traces
               </button>
+              <!-- Bound here, not by the bundle: it hands the shot on the table
+                   to someone else as a link, rather than playing it anywhere. -->
+              <button id="share-shot" class="action-button" type="button">
+                share shot
+              </button>
             </div>
           </div>
         </div>
@@ -1560,6 +1565,7 @@
         DEFAULT_CUSHION_MODEL,
         readState,
         serializeState,
+        shareShotUrl,
         capturePreset,
         loadPresets,
         savePresets,
@@ -2652,6 +2658,25 @@
           })
           .catch(console.error)
       }
+
+      // The shot on the table, as a link that opens it. The constants go on it
+      // read off the sliders rather than off the URL, so it carries what is on
+      // screen -- and only the ones a slider has actually moved, which
+      // shareShotUrl decides against the defaults the reader is already on.
+      // Never `window.open`: this url is a destination for someone else, not
+      // one this page should follow, so it goes out through the share sheet or
+      // the clipboard like the preset list below.
+      document
+        .getElementById("share-shot")
+        ?.addEventListener("click", (event) => {
+          const constants = Object.fromEntries(
+            constantInputs.map((input) => [input.id, input.value])
+          )
+          shareUrl(
+            shareShotUrl(window.location.href, currentState(), constants),
+            event.currentTarget
+          )
+        })
 
       // The query is emptied first so the link carries the list and not
       // whatever shot and constants this page happens to be holding.
