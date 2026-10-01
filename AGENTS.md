@@ -39,7 +39,9 @@ Before submitting changes, ensure the following commands pass:
 
 ## Browser / Chrome DevTools
 
-Only use on request.
+**Do not open or drive a browser unless the user asks for it.** Verify page
+changes from the markup, the CSS and the project's own linters; reach for the
+`chrome-devtools` MCP server only once the request comes first.
 
 The `chrome-devtools` MCP server (`~/.agents/mcp.json`) works: it launches a
 headful Chrome on native Wayland with hardware GL, so screenshots and traces

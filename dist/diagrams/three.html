@@ -151,24 +151,18 @@
       }
 
       /* Fixed height, and a direct child of body, so the height budget above
-         is exact: the two panels get everything below the header. The
-         positioning context for the lobby button pinned to its right. */
+         is exact: the two panels get everything below the header. */
       header {
         display: flex;
         flex: none;
         align-items: center;
         justify-content: center;
-        position: relative;
         height: var(--header-height);
       }
 
       h1 {
         box-sizing: border-box;
         margin: 0;
-
-        /* Symmetric side room, so the centred title never runs under the lobby
-           button pinned to the header's right edge. */
-        padding: 0 3.5rem;
         font-size: 0.6rem;
         line-height: 1.1;
         font-weight: 400;
@@ -183,20 +177,30 @@
         white-space: nowrap;
       }
 
-      /* The lobby link, top right at the title's own size: a subtle grey
-         button, absolute so the centred title is undisturbed. */
+      /* The lobby link, a subtle grey button at the panel title's own size,
+         pinned to the right end of the simulation output panel's title bar.
+         Absolute against that title bar rather than the header: the panels are
+         centred and narrower than the window, so a link pinned to the header
+         drifts out into the empty margin on a wide screen. */
       .lobby-button {
         position: absolute;
-        right: 0;
+        top: 0;
+        right: 0.4rem;
         box-sizing: border-box;
-        padding: 0.12rem 0.5rem;
+        display: flex;
+        align-items: center;
+        height: var(--title-height);
+        padding: 0 0.5rem;
         background: #f5f5f5;
         color: #666;
         border: 1px solid #ccc;
         border-radius: 2px;
         font-size: 0.6rem;
-        line-height: 1.1;
+        line-height: 1;
         text-decoration: none;
+
+        /* The title bar it sits in is uppercased; the link is not. */
+        text-transform: none;
       }
 
       .lobby-button:hover {
@@ -332,6 +336,11 @@
       .panel-output,
       .panel-input {
         width: min(100%, var(--panel-w));
+      }
+
+      /* The positioning context for the lobby button in its title bar. */
+      .panel-output > h2 {
+        position: relative;
       }
 
       .panel > h2 {
@@ -990,16 +999,22 @@
   <body>
     <header>
       <h1>Three Cushion Billiards Physics Research &amp; Simulation</h1>
-      <a class="lobby-button" href="https://billiards.tailuge.workers.dev/lobby"
-        >lobby</a
-      >
     </header>
 
     <main class="layout">
       <!-- Order matters: the simulation output sits above the table it is
            plotted from, and the flow follows the markup. -->
       <section class="panel panel-output" aria-label="Simulation output">
-        <h2>simulation output</h2>
+        <!-- The lobby link rides the title bar's right end rather than the
+             header's, so it stays with the panel on a wide screen. -->
+        <h2>
+          simulation output
+          <a
+            class="lobby-button"
+            href="https://billiards.tailuge.workers.dev/lobby"
+            >lobby</a
+          >
+        </h2>
         <!-- The diagram bundle's contract, as three.html writes it: a
              .replaydiagram holding a .topview whose data-state it reads. The
              editor fills that state in; the bundle owns everything below. -->
