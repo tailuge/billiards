@@ -80,7 +80,7 @@
         /* The spin and elevation widgets' box. --side-h is the length of the
            power slider beside them: the two widgets and the button column under
            them, stacked with --stack-gap between. */
-        --widget-size: 6.3rem;
+        --widget-size: 5.6rem;
 
         /* The panel's buttons stack down the column, so the column is as tall
            as the buttons in it plus the gaps between. The count is a variable
@@ -100,9 +100,26 @@
            rather than by the room they sit in. --side-h and .shot-side both
            read it, so the power slider stays the length of the column beside
            it. */
-        --stack-gap: 1px;
+        --stack-gap: 2px;
         --side-h: calc(
           2 * var(--widget-size) + var(--action-height) + 2 * var(--stack-gap)
+        );
+
+        /* How much of the link text the controls box shows before the page
+           finds more room for it, and part of that box's own minimum: the
+           column, this gap and this much text is the least it can hold, so a
+           short window grows the box past the panel rather than spilling the
+           text out of its own border. */
+        --share-h: 3rem;
+
+        /* The controls box's own frame, and the minimum that has to hold the
+           column and the link text inside it -- padding and border included,
+           or the text spills out of the frame rather than growing it. */
+        --controls-pad: 0.2rem;
+        --controls-border: 1px;
+        --controls-min-h: calc(
+          var(--side-h) + var(--stack-gap) + var(--share-h) + 2 *
+            var(--controls-pad) + 2 * var(--controls-border)
         );
 
         /* The width the controls take off the shot input row: the power slider,
@@ -110,7 +127,8 @@
            own padding and border. The row gives up this much so the table keeps
            clear of them, as it did when they were children of it. */
         --controls-w: calc(
-          1.1rem + var(--widget-size) + var(--gap) + 0.4rem + 2px
+          1.1rem + var(--widget-size) + var(--gap) + 2 * var(--controls-pad) +
+            2 * var(--controls-border)
         );
 
         /* Viewport height. dvh where supported, so a mobile browser's
@@ -823,12 +841,17 @@
         box-sizing: border-box;
         position: absolute;
         top: calc(var(--title-height) + var(--bw));
-        right: 0;
+
+        /* A hair off the panel's own edge, so the box reads as inside it rather
+           than butted up against the border it sits within. */
+        right: 1px;
 
         /* Spanning the row it sits over, so the link below takes whatever is
            left once the widgets and buttons have had theirs: a taller window
-           shows more of the link rather than more empty box. min-height still
-           wins over that span, which is the spill on a short window. */
+           shows more of the link rather than more empty box. min-height wins
+           over that span, and carries the link's own floor with it -- which is
+           what keeps the text inside this border on a short window, where the
+           box spills past the panel instead. */
         bottom: 0;
 
         /* The width the shot input row gives up, stated rather than left to
@@ -837,12 +860,11 @@
         width: var(--controls-w);
         display: flex;
         flex-direction: column;
-        gap: var(--gap);
-        min-height: var(--side-h);
-        gap: 1px;
-        padding: 0.2rem;
+        gap: var(--stack-gap);
+        min-height: var(--controls-min-h);
+        padding: var(--controls-pad);
         background: #f7f7f7;
-        border: 1px solid #e2e2e2;
+        border: var(--controls-border) solid #e2e2e2;
         border-radius: 0.25rem;
       }
 
@@ -865,7 +887,7 @@
       .share-output {
         box-sizing: border-box;
         flex: 1 1 auto;
-        min-height: 3rem;
+        min-height: var(--share-h);
         padding: 2px 3px;
         overflow-y: auto;
         overflow-wrap: anywhere;
