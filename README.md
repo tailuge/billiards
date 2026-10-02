@@ -351,7 +351,7 @@ August 2023 (mobile)
 
 Star History
 
-[![RepoStars](https://repostars.dev/api/embed?repo=tailuge%2Fbilliards&theme=light)](https://repostars.dev/?repos=tailuge%2Fbilliards&theme=light)
+[![RepoStars](https://www.repostars.dev/api/og?repos=tailuge/billiards&theme=light)](https://www.repostars.dev/api/og?repos=tailuge/billiards&theme=light)
 
 ## Licence
 
