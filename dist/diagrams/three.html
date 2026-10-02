@@ -1506,8 +1506,8 @@
             <!-- Where the shot goes next. Each one builds a link out of the
                  table as it stands now: the ball positions, the aim, the spin,
                  the power and the elevation, plus the constants the sliders
-                 are holding. Same three buttons and the same targets as
-                 three.html, so a shot set up here opens the same way there. -->
+                 are holding. Same targets as export.html's, so a shot set up
+                 here opens the same way there. -->
             <div class="modal-panel">
               <div class="action-list">
                 <button id="play" class="action-button" type="button">
@@ -1518,6 +1518,9 @@
                 </button>
                 <button id="svg" class="action-button" type="button">
                   svg diagram
+                </button>
+                <button id="analysis" class="action-button" type="button">
+                  analysis tool
                 </button>
               </div>
             </div>
@@ -2629,7 +2632,7 @@
       })
 
       // --- the launch links ---
-      // The three buttons the actions dialog carries, each opening a page that
+      // The buttons the actions dialog carries, each opening a page that
       // takes this shot as its starting point. They are built the way three.html
       // builds its own: the flat `init` list of ball positions, the `initShot`
       // aim, and the constants. A shot has to survive the round trip through a
@@ -2694,6 +2697,21 @@
       document.getElementById("svg")?.addEventListener("click", () => {
         const url = addConstants(new URL("export.html", window.location.href))
         url.searchParams.set("ruletype", state.ruleType)
+        url.searchParams.set("cushionModel", state.cushionModel)
+        url.searchParams.set("init", JSON.stringify(initCoords()))
+        url.searchParams.set("initShot", initShot())
+        window.open(url.toString(), "_blank")
+      })
+
+      // Open the shot in the analysis tool rather than in the game. Same
+      // target and the same shot export.html's analyse button opens, which is
+      // the live game with the analysis view on: `practice` is emptied to get
+      // out of the trainer and `analysis` is what selects the view.
+      document.getElementById("analysis")?.addEventListener("click", () => {
+        const url = addConstants(new URL("../index.html", window.location.href))
+        url.searchParams.set("ruletype", state.ruleType)
+        url.searchParams.set("practice", "")
+        url.searchParams.set("analysis", "")
         url.searchParams.set("cushionModel", state.cushionModel)
         url.searchParams.set("init", JSON.stringify(initCoords()))
         url.searchParams.set("initShot", initShot())
