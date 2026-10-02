@@ -351,7 +351,7 @@ August 2023 (mobile)
 
 Star History
 
-[![Star History Chart](https://star-history.dera.page/svg?repos=tailuge/billiards)](https://star-history.dera.page/#tailuge/billiards)
+[![RepoStars](https://repostars.dev/api/embed?repo=tailuge%2Fbilliards&theme=light)](https://repostars.dev/?repos=tailuge%2Fbilliards&theme=light)
 
 ## Licence
 
