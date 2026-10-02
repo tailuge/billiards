@@ -56,6 +56,44 @@ describe("Cue", () => {
     expect(cue.intersectsAnything(table)).to.be.false
   })
 
+  test("cue does not lift while the struck ball sits on the strike point", () => {
+    const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.hit(table.cueball)
+    cue.update(t)
+    expect(cue.hitLift).to.equal(0)
+  })
+
+  test("cue lifts when the struck ball comes back to the strike point", () => {
+    const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
+    cue.hit(table.cueball)
+    cue.update(t)
+    expect(cue.hitLift).to.equal(0) // on the strike point, moving away
+
+    table.cueball.pos.x += 5 * R
+    cue.update(t)
+    expect(cue.hitLift).to.equal(0) // far away
+
+    // Within a radius but still moving away: still no lift.
+    table.cueball.pos.x = R * 0.5
+    table.cueball.vel.set(1, 0, 0)
+    cue.update(t)
+    expect(cue.hitLift).to.equal(0)
+
+    // Within a radius and moving back towards the strike point: lift.
+    table.cueball.vel.set(-1, 0, 0)
+    cue.update(t)
+    expect(cue.hitLift).to.equal(Cue.maxHitLift)
+
+    // Runs on past the strike point down the cue: the lift stays up.
+    table.cueball.pos.x = -5 * R
+    cue.update(t)
+    expect(cue.hitLift).to.equal(Cue.maxHitLift)
+
+    cue.hittingAnimation = false
+    cue.update(t)
+    expect(cue.hitLift).to.equal(0)
+  })
+
   test("topspin applied", () => {
     const { cue, table } = createCueAndTable(new Vector3(0, 1, 0))
     cue.aimInputs = {

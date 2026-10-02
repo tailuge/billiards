@@ -58,6 +58,15 @@ export class Cue {
   private readonly tempVec2 = new Vector3()
   private readonly tempVec3 = new Vector3()
   hitAnimationWeight: number = 0
+  /** Vertical lift (table +z, in units of R) applied while the struck ball
+   * runs back into the cue tip. Visual only: aim.elevation, the tilt slider,
+   * the networked AimEvent and cueStrike() are all untouched, so the shot that
+   * has already been struck is unaffected. Hard-zeroed whenever the animation
+   * is not running, so it is inert outside a hit animation. */
+  hitLift = 0
+  /** The ball struck by the current shot (the cue ball), captured in `hit()`
+   * so the returning-ball check has something to read. */
+  private struckBall?: Ball
 
   constructor(opts?: CueParams, opponentOpts?: CueParams) {
     if (typeof document !== "undefined") {
@@ -132,6 +141,8 @@ export class Cue {
   hit(ball: Ball) {
     const { angle, power, offset, elevation } = this.aim
     this.t = 0
+    this.hitLift = 0
+    this.struckBall = ball
     this.hittingAnimation = true
     ball.state = State.Sliding
     const strike = cueStrike(angle, power, offset, elevation)
@@ -230,8 +241,10 @@ export class Cue {
   private applyHitAnimation(swing: number) {
     if (this.hittingAnimation) {
       this.hitAnimationWeight = 1
+      this.updateHitLift()
     } else {
       this.hitAnimationWeight *= 0.97
+      this.hitLift = 0
     }
 
     let curveVal = this.hitAnimationCurve(this.t)
@@ -248,7 +261,7 @@ export class Cue {
       c.cueBody.position.set(
         -this.length / 2 - R * 1.1 + strokeX,
         this.aim.offset.x * R,
-        Math.max(-0.5 * R, strokeZ + this.aim.offset.y * R)
+        Math.max(-0.5 * R, strokeZ + this.aim.offset.y * R + this.hitLift * R)
       )
       // Visual-only squirt: rotate the cue about its tip by the squirt angle
       // so the butt deflects while the tip stays on the contact point. The
@@ -267,6 +280,30 @@ export class Cue {
     return strokeX
   }
 
+  /** Cheap, raycast-free clip guard for the one case that matters: the struck
+   * ball running back into the cue tip. `aim.pos` is the strike point (frozen
+   * for the whole animation), so "coming back" is a distance test against it,
+   * gated on the ball's *velocity* pointing back at it. The direction, not a
+   * distance latch, is what tells a return apart from the strike itself: at
+   * contact the ball is moving away. No iteration, no state. */
+  private updateHitLift() {
+    const ball = this.struckBall
+    if (!ball) return
+    const toStrikeX = this.aim.pos.x - ball.pos.x
+    const toStrikeY = this.aim.pos.y - ball.pos.y
+    const distSq = toStrikeX * toStrikeX + toStrikeY * toStrikeY
+    const returning = ball.vel.x * toStrikeX + ball.vel.y * toStrikeY > 0
+    const lifting =
+      returning && distSq < Cue.hitLiftReturn * R * (Cue.hitLiftReturn * R)
+    // Sticky: a ball that comes back runs on down the length of the cue, so it
+    // is deepest in the way when it is furthest from the strike point. Hold
+    // the lift once raised rather than dropping it as the ball rolls past.
+    if (lifting) {
+      if (this.hitLift === 0) console.log("Raise")
+      this.hitLift = Cue.maxHitLift
+    }
+  }
+
   private updateCuePosition(pos: Vector3, strokeX: number) {
     if (this.root) this.root.position.copy(pos)
 
@@ -274,7 +311,9 @@ export class Cue {
     const elevation = this.tiltMesh ? (this.tiltMesh.rotation.y as number) : 0
 
     const localX = strokeX - R
-    const localZ = this.cueBody ? this.cueBody.position.z : 0
+    // Take the hit-animation lift back out so the shadow stays flat on the
+    // table at the aim elevation rather than hopping with the cue.
+    const localZ = this.cueBody ? this.cueBody.position.z - this.hitLift * R : 0
     const projectedX =
       localX * Math.cos(elevation) + localZ * Math.sin(elevation)
 
@@ -383,6 +422,12 @@ export class Cue {
   /** Multiplies the cue retraction while the CueHit drag gesture is active, so
    * pull-back is more pronounced than the idle power-scaled swing. Tuneable. */
   static readonly dragPullAmplifier = 2.5
+
+  /** Ceiling for the returning-ball lift, in ball radii. */
+  static readonly maxHitLift = 2
+  /** How close (in ball radii) the struck ball must be to the strike point
+   * while moving back toward it before the cue lifts. */
+  static readonly hitLiftReturn = 1
 
   static helperEnabled = true
 
