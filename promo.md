@@ -79,3 +79,7 @@ backlinks
 https://webgames.me/play/billards-by-tailuge
 
 https://iogame.io/games/billards-by-tailuge
+
+https://pbc-molbergen.de/Simulator.html
+
+https://www.bored.com/link/tailuge-github-io-billiards/
