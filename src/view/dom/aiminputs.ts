@@ -9,6 +9,7 @@ import { TimeoutButton } from "../timeoutbutton"
 import { AngleInput } from "./angleinput"
 import { maxPower } from "../../model/physics/constants"
 import { PlaceBall } from "../../controller/placeball"
+import { t } from "../../i18n"
 import { Cue } from "../cue"
 
 export class AimInputs {
@@ -104,10 +105,12 @@ export class AimInputs {
     document.addEventListener("wheel", this.mousewheel, { passive: false })
   }
 
+  /** Callers pass the English source string; it doubles as the i18n key. */
   setButtonText(text) {
     if (this.cueHitElement) {
-      this.cueHitElement.innerText = text
-      this.cueHitElement.setAttribute("aria-label", text)
+      const label = t(text)
+      this.cueHitElement.innerText = label
+      this.cueHitElement.setAttribute("aria-label", label)
     }
   }
 

@@ -192,6 +192,23 @@ describe("AimInput", () => {
     done()
   })
 
+  it("setButtonText localises the label and keeps aria-label in sync", (done) => {
+    globalThis.history.replaceState({}, "", "?locale=ko")
+    try {
+      aiminputs.setButtonText("Hit")
+      expect(aiminputs.cueHitElement.innerText).to.equal("공 치기")
+      expect(aiminputs.cueHitElement.getAttribute("aria-label")).to.equal(
+        "공 치기"
+      )
+
+      aiminputs.setButtonText("Place\nBall")
+      expect(aiminputs.cueHitElement.innerText).to.equal("공\n놓기")
+    } finally {
+      globalThis.history.replaceState({}, "", "?")
+    }
+    done()
+  })
+
   it("viewportHit allows hit during Aim mode on non-touch devices", (done) => {
     aiminputs.setDisabled(false)
     container.inputQueue = []
