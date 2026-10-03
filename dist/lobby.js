@@ -624,7 +624,7 @@
            wraps mid-word on a long city or a long user agent. */
         .loc-city, .loc-ua { display: block; white-space: nowrap; }
         .loc-ua { opacity: 0.75; }
-        .name-wrap:hover .loc-tip { opacity: 1; transition: opacity 0.2s ease 0.1s; }
+        .name-wrap:hover .loc-tip { opacity: 1; transition: opacity 0.2s ease 4s; }
         .status-link { text-decoration: none; color: inherit; }
     `];_renderStatus(e){return o`<span aria-label="${e.title}" role="img">${e.emoji}</span>`}async autoExpandIfSupported(){if(this.#e)return;if((this.slots||[]).filter(t=>t.status==="online").length>4){await this.updateComplete;let t=this.renderRoot.querySelector(".expand-toggle");t&&getComputedStyle(t).visibility!=="hidden"&&(this.#e=!0,W(this,"user-list-toggle",{expanded:this.#e}),this.requestUpdate())}}updated(){if(!this.#e)return;let e=this.renderRoot.querySelector("ul");if(!e)return;let t=e.scrollHeight;t>0&&e.style.setProperty("--ul-expanded-height",t+"px")}#s(){this.#e=!this.#e,W(this,"user-list-toggle",{expanded:this.#e}),this.requestUpdate()}render(){let e=this.slots||[];if(e.filter(i=>i.status==="online").length===0)return o`<div class="empty">No other players online yet. Invite a friend!</div>`;let s=new Set(Ce(this.users||[]).filter(i=>i.players.length>1).map(i=>i.tableId));return o`
             <ul class="${this.#e?"expanded":""}" aria-label="Online players">
