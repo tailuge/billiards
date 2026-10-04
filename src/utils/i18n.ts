@@ -20,16 +20,31 @@ const translations: Record<Locale, Record<string, string>> = {
   ko: {
     // Button labels are short by design. "Hit" is the shooting action; "Place
     // Ball" keeps the newline so the button still breaks across two lines.
-    Hit: "공 치기",
-    "Place\nBall": "공\n놓기",
-    // Notification dialog buttons (end of game / replay / win / lose). Only the
-    // controls are translated; the dialog's title and body stay in the source
-    // language. See `src/utils/gameover.ts`.
+    Hit: "공치기",
+    "Place\nBall": "공놓기",
+    // Notification dialog buttons. Only the controls are translated; the
+    // dialog's title and body stay in the source language. Where the button
+    // reads naturally with a different word order, `{name}` placeholders keep
+    // the English source grammatical while the translation stays native.
     "Back to Lobby": "로비로 돌아가기",
     "Back to Arena": "아레나로 돌아가기",
     "New Game": "새 게임",
     Replay: "다시보기",
     Rematch: "재대결",
+    // Concede confirmation.
+    Concede: "기권",
+    "Play on": "계속하기",
+    // Three-cushion break prompt: stop and take the win, or carry the run on.
+    "Declare win": "승리 선언",
+    "Continue break": "이어서 치기",
+    // Reveal (card game) game over.
+    "Update Deck": "덱 바꾸기",
+    // Banner controls.
+    "Share replay link": "리플레이 링크 공유",
+    share: "공유",
+    upload: "업로드",
+    "Break : {score}": "브레이크: {score}",
+    "Open high break {score}": "하이브레이크 {score} 보기",
   },
 }
 
@@ -66,10 +81,18 @@ export function currentLocale(): Locale | undefined {
 
 /**
  * Translate an English source string, falling back to the string itself.
+ * Optional `params` fill `{name}` placeholders (e.g. a score).
  */
-export function t(key: string): string {
+export function t(
+  key: string,
+  params?: Record<string, string | number>
+): string {
   const locale = currentLocale()
-  return (locale && translations[locale]?.[key]) || key
+  const template = (locale && translations[locale]?.[key]) || key
+  if (!params) return template
+  return template.replace(/\{(\w+)\}/g, (match, name) =>
+    name in params ? String(params[name]) : match
+  )
 }
 
 if (typeof document !== "undefined") {

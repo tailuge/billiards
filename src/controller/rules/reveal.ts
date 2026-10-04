@@ -18,6 +18,7 @@ import { PlaceBallEvent } from "../../events/placeballevent"
 import { ScoreEvent } from "../../events/scoreevent"
 import { roundVec } from "../../utils/three-utils"
 import { Respot } from "../../utils/respot"
+import { t } from "../../utils/i18n"
 import { scaleTableModel } from "../../utils/table-scaler"
 import { ReplayEncoder } from "../../utils/replay-encoder"
 
@@ -191,7 +192,7 @@ export class Reveal implements Rules {
 
   private buildUpdateDeckButton(isWinner: boolean): string {
     if (!isWinner) {
-      return `<button type="button" class="notification-btn" data-notification-action="rematch" data-notification-url="./reveal/index.html">Update Deck</button>`
+      return `<button type="button" class="notification-btn" data-notification-action="rematch" data-notification-url="./reveal/index.html">${t("Update Deck")}</button>`
     }
 
     const params = new URLSearchParams(
@@ -225,6 +226,6 @@ export class Reveal implements Rules {
     const suffix = query ? "?" + query : ""
     const url = `./reveal/index.html${suffix}`
 
-    return `<button type="button" class="notification-btn" data-notification-action="rematch" data-notification-url="${url}">Update Deck</button>`
+    return `<button type="button" class="notification-btn" data-notification-action="rematch" data-notification-url="${url}">${t("Update Deck")}</button>`
   }
 }

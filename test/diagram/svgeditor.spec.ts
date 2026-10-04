@@ -183,6 +183,11 @@ function loadEditor() {
       /import\s+\{[\s\S]*?\}\s+from\s+["']\.\/editor-state\.js["']/,
       editorStateSource()
     )
+  // Executing the page's own script is the point of this spec, so dynamic
+  // evaluation is unavoidable; the source is a repo file, never user input.
+  // Function (not vm) is used deliberately: each call gets a fresh function
+  // scope, so reloading the editor does not collide on top-level `const`s.
+  // eslint-disable-next-line sonarjs/code-eval
   Function(code)()
 }
 

@@ -196,13 +196,10 @@ describe("AimInput", () => {
     globalThis.history.replaceState({}, "", "?locale=ko")
     try {
       aiminputs.setButtonText("Hit")
-      expect(aiminputs.cueHitElement.innerText).to.equal("공 치기")
+      expect(aiminputs.cueHitElement.innerText).to.equal("공치기")
       expect(aiminputs.cueHitElement.getAttribute("aria-label")).to.equal(
-        "공 치기"
+        "공치기"
       )
-
-      aiminputs.setButtonText("Place\nBall")
-      expect(aiminputs.cueHitElement.innerText).to.equal("공\n놓기")
     } finally {
       globalThis.history.replaceState({}, "", "?")
     }

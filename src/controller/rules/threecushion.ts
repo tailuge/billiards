@@ -17,6 +17,7 @@ import { Respot } from "../../utils/respot"
 import { StartAimEvent } from "../../events/startaimevent"
 import { MatchResultHelper } from "../../network/client/matchresult"
 import { Session } from "../../network/client/session"
+import { t } from "../../utils/i18n"
 
 export class ThreeCushion implements Rules {
   readonly container: Container
@@ -184,8 +185,12 @@ export class ThreeCushion implements Rules {
         title: "Target Reached",
         subtext: "Declare win or continue break",
         extra:
-          '<button type="button" class="notification-btn" data-notification-action="declarewin">Declare win</button>' +
-          '<button type="button" class="notification-btn" data-notification-action="continuebreak">Continue break</button>',
+          '<button type="button" class="notification-btn" data-notification-action="declarewin">' +
+          t("Declare win") +
+          "</button>" +
+          '<button type="button" class="notification-btn" data-notification-action="continuebreak">' +
+          t("Continue break") +
+          "</button>",
         duration: 0,
       },
       0,

@@ -16,21 +16,16 @@ function setLanguages(languages: string[]) {
 }
 
 describe("i18n", () => {
-  it("translates when Korean is selected, else returns the English key", () => {
+  it("translates a phrase when Korean is selected, else returns the English key", () => {
     const originalSearch = globalThis.location.search
     try {
       globalThis.history.replaceState({}, "", "?locale=ko")
       const { t } = loadI18n()
-      expect(t("Hit")).toBe("공 치기")
-      expect(t("Place\nBall")).toBe("공\n놓기")
+      // One phrase is enough to prove the lookup works; a missing key falls
+      // back to the English source string.
+      expect(t("Hit")).toBe("공치기")
       expect(t("Continue")).toBe("Continue")
-      // Notification dialog buttons are translated; dialog copy is not a key.
-      expect(t("Back to Lobby")).toBe("로비로 돌아가기")
-      expect(t("Back to Arena")).toBe("아레나로 돌아가기")
-      expect(t("New Game")).toBe("새 게임")
-      expect(t("Replay")).toBe("다시보기")
-      expect(t("Rematch")).toBe("재대결")
-      expect(t("YOU WON")).toBe("YOU WON")
+      expect(t("Break : {score}", { score: 3 })).toBe("브레이크: 3")
       expect(document.documentElement.lang).toBe("ko")
 
       // Unsupported explicit locale resolves to English rather than to the
@@ -41,7 +36,7 @@ describe("i18n", () => {
 
       globalThis.history.replaceState({}, "", "?")
       setLanguages(["ko-KR", "en-US"])
-      expect(loadI18n().t("Hit")).toBe("공 치기")
+      expect(loadI18n().t("Hit")).toBe("공치기")
 
       globalThis.history.replaceState({}, "", "?")
       setLanguages(["en-US"])

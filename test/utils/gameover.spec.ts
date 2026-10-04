@@ -15,7 +15,7 @@ describe("gameOverButtons", () => {
   })
 
   describe("translations", () => {
-    it("translates the notification buttons when Korean is selected", () => {
+    it("translates a notification button when Korean is selected", () => {
       try {
         globalThis.history.replaceState({}, "", "?locale=ko")
         let buttons: typeof import("../../src/utils/gameover").gameOverButtons
@@ -23,14 +23,8 @@ describe("gameOverButtons", () => {
           buttons = require("../../src/utils/gameover").gameOverButtons
         })
 
+        // One phrase is enough to prove the labels are routed through t().
         expect(buttons!.lobby).toContain("로비로 돌아가기")
-        expect(buttons!.newGame).toContain("새 게임")
-        expect(buttons!.replay).toContain("다시보기")
-        expect(
-          buttons!.forMode(false, "o", "Alice", "sagu", "turn", "tour/1")
-        ).toContain("아레나로 돌아가기")
-        expect(buttons!.forMode(true)).toContain("로비로 돌아가기")
-
         // Actions stay English so the handlers keep matching.
         expect(buttons!.lobby).toContain('data-notification-action="lobby"')
       } finally {

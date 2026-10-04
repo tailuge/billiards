@@ -1,5 +1,6 @@
 import { id } from "../utils/dom"
 import { getLobbyUrl } from "../network/client/constants"
+import { t } from "../utils/i18n"
 
 export interface NotificationHighBreak {
   score: number
@@ -121,8 +122,8 @@ export class Notification {
       <button
         type="button"
         class="notification-share"
-        title="share"
-        aria-label="Share replay link"
+        title="${t("share")}"
+        aria-label="${t("Share replay link")}"
         data-notification-action="share"
       >
         <svg
@@ -190,11 +191,11 @@ export class Notification {
         type="button"
         class="notification-high-break"
         data-notification-upload-url="${highBreak.url}"
-        title="Open high break ${highBreak.score}"
+        title="${t("Open high break {score}", { score: highBreak.score })}"
       >
-        <span class="notification-high-break-label">Break : ${highBreak.score}</span>
+        <span class="notification-high-break-label">${t("Break : {score}", { score: highBreak.score })}</span>
         <span class="notification-high-break-icon">${medals}</span>
-        <span class="notification-high-break-upload">upload⇗</span>
+        <span class="notification-high-break-upload">${t("upload")}⇗</span>
       </button>
     `
   }

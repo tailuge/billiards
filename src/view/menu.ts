@@ -4,6 +4,7 @@ import { getButton } from "../utils/dom"
 import { Session } from "../network/client/session"
 import { ConcedeEvent } from "../events/concedeevent"
 import { ExportUtils } from "../utils/export-utils"
+import { t } from "../utils/i18n"
 
 export class Menu {
   container: Container
@@ -122,8 +123,12 @@ export class Menu {
               ? "game will end"
               : "opponent will win",
             extra:
-              '<button class="notification-btn" data-notification-action="concede-confirm">Concede</button>' +
-              '<button class="notification-btn" data-notification-action="concede-cancel">Play on</button>',
+              '<button class="notification-btn" data-notification-action="concede-confirm">' +
+              t("Concede") +
+              "</button>" +
+              '<button class="notification-btn" data-notification-action="concede-cancel">' +
+              t("Play on") +
+              "</button>",
             duration: 0,
           },
           0,
