@@ -13,6 +13,12 @@ export function logusage() {
     method: "PUT",
     mode: "cors",
   }).catch(() => {
-    /* silent */
+    // Retry once if the first attempt fails.
+    fetch(url, {
+      method: "PUT",
+      mode: "cors",
+    }).catch(() => {
+      /* silent */
+    })
   })
 }
