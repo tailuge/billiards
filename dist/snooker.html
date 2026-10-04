@@ -1690,5 +1690,14 @@
         <li><a href="/vietnamese" hreflang="vi">Bida tiếng Việt</a></li>
       </ul>
     </footer>
+
+    <script>
+      if (!["localhost", "127.0.0.1"].includes(location.hostname)) {
+        fetch("https://billiards-network.onrender.com/api/usage/snooker", {
+          method: "PUT",
+          mode: "cors",
+        }).catch(() => {})
+      }
+    </script>
   </body>
 </html>
