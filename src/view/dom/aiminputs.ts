@@ -9,7 +9,7 @@ import { TimeoutButton } from "../timeoutbutton"
 import { AngleInput } from "./angleinput"
 import { maxPower } from "../../model/physics/constants"
 import { PlaceBall } from "../../controller/placeball"
-import { t } from "../../i18n"
+import { t } from "../../utils/i18n"
 import { Cue } from "../cue"
 
 export class AimInputs {

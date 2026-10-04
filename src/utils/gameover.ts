@@ -1,9 +1,19 @@
 import { getLobbyUrl } from "../network/client/constants"
+import { t } from "./i18n"
+
+/**
+ * Builds a notification footer button. The label is passed as the English
+ * source string and translated, while the action and any extra attributes stay
+ * locale-independent.
+ */
+function button(action: string, label: string, attributes = ""): string {
+  return `<button type="button" class="notification-btn" data-notification-action="${action}"${attributes}>${t(label)}</button>`
+}
 
 export const gameOverButtons = {
-  lobby: `<button type="button" class="notification-btn" data-notification-action="lobby">Back to Lobby</button>`,
-  newGame: `<button type="button" class="notification-btn" data-notification-action="reload">New Game</button>`,
-  replay: `<button type="button" class="notification-btn" data-notification-action="replay">Replay</button>`,
+  lobby: button("lobby", "Back to Lobby"),
+  newGame: button("reload", "New Game"),
+  replay: button("replay", "Replay"),
 
   rematch(
     opponentId: string | undefined,
@@ -47,7 +57,11 @@ export const gameOverButtons = {
       }
     }
 
-    return `<button type="button" class="notification-btn" data-notification-action="rematch" data-notification-url="${url.toString()}">Rematch</button>`
+    return button(
+      "rematch",
+      "Rematch",
+      ` data-notification-url="${url.toString()}"`
+    )
   },
 
   forMode(
@@ -59,7 +73,7 @@ export const gameOverButtons = {
     tournamentId?: string
   ): string {
     if (tournamentId) {
-      return this.lobby.replace("Back to Lobby", "Back to Arena")
+      return button("lobby", "Back to Arena")
     }
     if (isSinglePlayer) {
       return this.newGame + " " + this.lobby

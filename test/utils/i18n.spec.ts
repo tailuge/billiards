@@ -1,9 +1,9 @@
 // The locale is resolved once and memoised in module scope, so load a fresh
 // copy after resetting the module.
 function loadI18n() {
-  let mod: typeof import("../../src/i18n")
+  let mod: typeof import("../../src/utils/i18n")
   jest.isolateModules(() => {
-    mod = require("../../src/i18n")
+    mod = require("../../src/utils/i18n")
   })
   return mod!
 }
@@ -24,6 +24,13 @@ describe("i18n", () => {
       expect(t("Hit")).toBe("공 치기")
       expect(t("Place\nBall")).toBe("공\n놓기")
       expect(t("Continue")).toBe("Continue")
+      // Notification dialog buttons are translated; dialog copy is not a key.
+      expect(t("Back to Lobby")).toBe("로비로 돌아가기")
+      expect(t("Back to Arena")).toBe("아레나로 돌아가기")
+      expect(t("New Game")).toBe("새 게임")
+      expect(t("Replay")).toBe("다시보기")
+      expect(t("Rematch")).toBe("재대결")
+      expect(t("YOU WON")).toBe("YOU WON")
       expect(document.documentElement.lang).toBe("ko")
 
       // Unsupported explicit locale resolves to English rather than to the

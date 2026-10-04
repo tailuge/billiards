@@ -22,6 +22,14 @@ const translations: Record<Locale, Record<string, string>> = {
     // Ball" keeps the newline so the button still breaks across two lines.
     Hit: "공 치기",
     "Place\nBall": "공\n놓기",
+    // Notification dialog buttons (end of game / replay / win / lose). Only the
+    // controls are translated; the dialog's title and body stay in the source
+    // language. See `src/utils/gameover.ts`.
+    "Back to Lobby": "로비로 돌아가기",
+    "Back to Arena": "아레나로 돌아가기",
+    "New Game": "새 게임",
+    Replay: "다시보기",
+    Rematch: "재대결",
   },
 }
 
