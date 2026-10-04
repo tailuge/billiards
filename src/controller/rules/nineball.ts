@@ -22,6 +22,7 @@ import { Session } from "../../network/client/session"
 import { isFirstShot } from "../../utils/utils"
 import { roundVec } from "../../utils/three-utils"
 import { scaleTableModel } from "../../utils/table-scaler"
+import { t } from "../../utils/i18n"
 
 export class NineBall implements Rules {
   readonly container: Container
@@ -100,9 +101,9 @@ export class NineBall implements Rules {
   private handleFoul(outcome: Outcome[], reason: string): Controller {
     this.container.notify({
       type: "Foul",
-      title: "FOUL",
+      title: t("FOUL"),
       subtext: reason,
-      extra: "Ball in hand",
+      extra: t("Ball in hand"),
     })
     this.startTurn()
     const pots = Outcome.pots(outcome)

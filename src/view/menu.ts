@@ -118,7 +118,7 @@ export class Menu {
         this.container.notification.show(
           {
             type: "Info",
-            title: "Concede Game",
+            title: t("Concede Game"),
             subtext: this.container.isSinglePlayer
               ? "game will end"
               : "opponent will win",

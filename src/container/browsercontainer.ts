@@ -28,6 +28,7 @@ import { AnalysisPanel } from "../view/analysispanel"
 import { applyPhysicsParams } from "../utils/physicsparams"
 import { ResumeStore } from "../utils/resumestore"
 import { ResumeHandler } from "./resumehandler"
+import { t } from "../utils/i18n"
 
 /**
  * Integrate game container into HTML page
@@ -225,7 +226,7 @@ export class BrowserContainer {
       type: "Info",
       title: this.ruletype,
       subtext: `Playing vs 🦞 ${this.botName}`,
-      extra: "You first",
+      extra: t("You first"),
     } as const)
   }
 
@@ -373,7 +374,7 @@ export class BrowserContainer {
           title: `${this.ruletype}, ${names.p1Name} vs ${names.p2Name}`,
           extra:
             this.ruletype === "threecushion"
-              ? `Race to: ${ThreeCushionConfig.raceTo}`
+              ? t("Race to: {score}", { score: ThreeCushionConfig.raceTo })
               : undefined,
         })
         session.vsNotificationShown = true

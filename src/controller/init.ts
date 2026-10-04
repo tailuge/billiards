@@ -9,6 +9,7 @@ import { Replay } from "../controller/replay"
 import { Session } from "../network/client/session"
 import { Spectate } from "./spectate"
 import { Aim } from "./aim"
+import { t } from "../utils/i18n"
 
 /**
  * Initial state of controller.
@@ -29,7 +30,7 @@ export class Init extends ControllerBase {
       !this.container.replayMode
     ) {
       this.container.notification.show(
-        { type: "Info", title: "Waiting for opponent to join" },
+        { type: "Info", title: t("Waiting for opponent to join") },
         0
       )
     }

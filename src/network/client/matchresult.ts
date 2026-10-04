@@ -4,6 +4,7 @@ import { ScoreEvent } from "../../events/scoreevent"
 import { End } from "../../controller/end"
 import { Session } from "./session"
 import { gameOverButtons } from "../../utils/gameover"
+import { t } from "../../utils/i18n"
 import { VERSION } from "../../utils/version"
 import { NotificationHighBreak } from "../../view/notification"
 
@@ -119,7 +120,7 @@ export class MatchResultHelper {
   ) {
     container.notifyLocal({
       type: "GameOver",
-      title: "YOU WON",
+      title: t("YOU WON"),
       subtext: subtext,
       highBreaks: this.getHighBreaks(container),
       icon: "🏆",
@@ -137,7 +138,7 @@ export class MatchResultHelper {
   ) {
     container.notifyLocal({
       type: "GameOver",
-      title: "YOU LOST",
+      title: t("YOU LOST"),
       subtext: Session.isBotMode() ? "Lostber 🦞" : subtext,
       highBreaks: this.getHighBreaks(container),
       icon: "🥈",
@@ -151,7 +152,7 @@ export class MatchResultHelper {
   private static notifySpectator(container: Container, subtext: string) {
     container.notifyLocal({
       type: "GameOver",
-      title: "GAME OVER",
+      title: t("GAME OVER"),
       subtext: subtext,
       highBreaks: this.getHighBreaks(container),
       icon: "🏆",
@@ -170,7 +171,7 @@ export class MatchResultHelper {
     container.sendEvent(
       new NotificationEvent({
         type: "GameOver",
-        title: "YOU LOST",
+        title: t("YOU LOST"),
         icon: "🥈",
         extraClass: "is-loser",
         extra: this.getRemoteGameOverButtons(rulename),
@@ -188,7 +189,7 @@ export class MatchResultHelper {
     container.sendEvent(
       new NotificationEvent({
         type: "GameOver",
-        title: "YOU WON",
+        title: t("YOU WON"),
         icon: "🏆",
         extraClass: "is-winner",
         extra: this.getRemoteGameOverButtons(rulename),

@@ -22,15 +22,33 @@ const translations: Record<Locale, Record<string, string>> = {
     // Ball" keeps the newline so the button still breaks across two lines.
     Hit: "공치기",
     "Place\nBall": "공놓기",
-    // Notification dialog buttons. Only the controls are translated; the
-    // dialog's title and body stay in the source language. Where the button
-    // reads naturally with a different word order, `{name}` placeholders keep
-    // the English source grammatical while the translation stays native.
+    // Notification dialog buttons and title headings. Dialog bodies (the
+    // subtext) still stay in the source language. Where a label reads
+    // naturally with a different word order, `{name}` placeholders keep the
+    // English source grammatical while the translation stays native.
     "Back to Lobby": "로비로 돌아가기",
     "Back to Arena": "아레나로 돌아가기",
     "New Game": "새 게임",
     Replay: "다시보기",
     Rematch: "재대결",
+    // Foul badge: the opponent may place the cue ball anywhere before the
+    // next shot. "자유구" is the established Korean billiards term.
+    "Ball in hand": "자유구",
+    // Bot-mode info badge: the player breaks/shoots first (선공 vs 선후공).
+    "You first": "선공",
+    // Points-race length (three-cushion/sagu): first to reach {score} points
+    // wins, written in the Korean "선취 N점" style.
+    "Race to: {score}": "선취 {score}점",
+    // Notification titles (dialog headings). "파울" is the term Korean
+    // billiards players actually use for a foul; "경기" (match) reads better
+    // than "게임" for these headings.
+    FOUL: "파울",
+    "YOU WON": "승리",
+    "YOU LOST": "패배",
+    "GAME OVER": "경기 종료",
+    "Concede Game": "경기 기권",
+    "Replay Complete": "다시보기 완료",
+    "Waiting for opponent to join": "상대 입장 대기 중",
     // Concede confirmation.
     Concede: "기권",
     "Play on": "계속하기",

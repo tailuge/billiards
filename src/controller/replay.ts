@@ -14,6 +14,7 @@ import { ChatEvent } from "../events/chatevent"
 import { share, shorten } from "../utils/shorten"
 import { getLobbyUrl } from "../network/client/constants"
 import { gameOverButtons } from "../utils/gameover"
+import { t } from "../utils/i18n"
 
 export class Replay extends ControllerBase {
   override get name() {
@@ -167,7 +168,7 @@ export class Replay extends ControllerBase {
       this.container.notifyLocal(
         {
           type: "Info",
-          title: "Replay Complete",
+          title: t("Replay Complete"),
           extra: gameOverButtons.replay + " " + gameOverButtons.lobby,
           share: true,
         },

@@ -26,6 +26,19 @@ describe("i18n", () => {
       expect(t("Hit")).toBe("공치기")
       expect(t("Continue")).toBe("Continue")
       expect(t("Break : {score}", { score: 3 })).toBe("브레이크: 3")
+      // Billiards-native terms: 자유구 (ball in hand), 선공 (you break),
+      // 선취 N점 (points race length).
+      expect(t("Ball in hand")).toBe("자유구")
+      expect(t("You first")).toBe("선공")
+      expect(t("Race to: {score}", { score: 20 })).toBe("선취 20점")
+      // Notification titles.
+      expect(t("FOUL")).toBe("파울")
+      expect(t("YOU WON")).toBe("승리")
+      expect(t("YOU LOST")).toBe("패배")
+      expect(t("GAME OVER")).toBe("경기 종료")
+      expect(t("Concede Game")).toBe("경기 기권")
+      expect(t("Replay Complete")).toBe("다시보기 완료")
+      expect(t("Waiting for opponent to join")).toBe("상대 입장 대기 중")
       expect(document.documentElement.lang).toBe("ko")
 
       // Unsupported explicit locale resolves to English rather than to the

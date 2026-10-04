@@ -177,7 +177,7 @@ export class Reveal implements Rules {
     const updateDeckButton = this.buildUpdateDeckButton(isWinner)
     this.container.notifyLocal({
       type: "GameOver",
-      title: isWinner ? "YOU WON" : "GAME OVER",
+      title: isWinner ? t("YOU WON") : t("GAME OVER"),
       subtext: endSubtext ?? `Score: ${Session.getInstance().myScore()}`,
       highBreaks: MatchResultHelper.getHighBreaks(this.container),
       icon: isWinner ? "🏆" : "🎱",
