@@ -26,7 +26,7 @@ export class LinkFormatter {
       this.container.rules.rulename
     }&state=${ReplayEncoder.fullyEncodeURI(compressed)}&userId=${
       session.clientId
-    }&userName=${encodeURIComponent(session.playername)}`
+    }&userName=${encodeURIComponent(session.playername)}&score=${score}&v=1`
   }
 
   wholeGameLink(game: any) {

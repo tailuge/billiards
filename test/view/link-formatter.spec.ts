@@ -1,7 +1,6 @@
 import { Container } from "../../src/container/container"
 import { EventType } from "../../src/events/eventtype"
 import { Assets } from "../../src/view/assets"
-import { ReplayCodec } from "../../src/utils/replay-codec"
 import { canvas3d, initDom } from "./dom"
 
 initDom()
@@ -47,15 +46,14 @@ describe("LinkFormatter", () => {
     expect(uri).toContain("ruletype=")
   })
 
-  it("getHiScoreUri should include score", () => {
+  it("getHiScoreUri should include score and version params", () => {
     const state = { test: 1 }
     const score = 10
     const uri = container.linkFormatter.getHiScoreUri(state, score)
 
     const url = new URL(uri)
-    const compressed = url.searchParams.get("state")!
-    const payload = ReplayCodec.decode(compressed)
 
-    expect(payload.score).toBe(10)
+    expect(url.searchParams.get("score")).toBe("10")
+    expect(url.searchParams.get("v")).toBe("1")
   })
 })

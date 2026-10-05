@@ -39,7 +39,7 @@ describe("solution.html resolution parameters and logic", () => {
   describe("angle generation math", () => {
     it("generates 180 general angles for resAngle = 1 with 2 deg steps", () => {
       const angles = generateGeneralAngles(1)
-      expect(angles.length).toBe(180)
+      expect(angles).toHaveLength(180)
       expect(angles[0]).toBe(0)
       expect(angles[1]).toBeCloseTo(Math.PI / 90) // 2 degrees
       expect(angles[1] - angles[0]).toBeCloseTo(Math.PI / 90)
@@ -47,7 +47,7 @@ describe("solution.html resolution parameters and logic", () => {
 
     it("doubles general angles to 360 for resAngle = 2 with 1 deg steps (half angular increment)", () => {
       const angles = generateGeneralAngles(2)
-      expect(angles.length).toBe(360)
+      expect(angles).toHaveLength(360)
       expect(angles[0]).toBe(0)
       expect(angles[1]).toBeCloseTo(Math.PI / 180) // 1 degree (half increment)
       expect(angles[1] - angles[0]).toBeCloseTo(Math.PI / 180)
@@ -58,7 +58,7 @@ describe("solution.html resolution parameters and logic", () => {
       const targetBalls = [{ pos: { x: 1, y: 0 } }]
       const angles = generateBallAimAngles(cueBall, targetBalls, 1)
 
-      expect(angles.length).toBe(10)
+      expect(angles).toHaveLength(10)
       const aimAngle = Math.atan2(0, 1) // 0
       const halfAngle = Math.asin((2 * R) / 1)
       expect(angles[0]).toBeCloseTo(aimAngle - halfAngle)
@@ -71,7 +71,7 @@ describe("solution.html resolution parameters and logic", () => {
       const angles1 = generateBallAimAngles(cueBall, targetBalls, 1)
       const angles2 = generateBallAimAngles(cueBall, targetBalls, 2)
 
-      expect(angles2.length).toBe(20)
+      expect(angles2).toHaveLength(20)
       const step1 = angles1[1] - angles1[0]
       const step2 = angles2[1] - angles2[0]
       expect(step2 * 2).toBeCloseTo(step1 * (19 / 18)) // 19 steps vs 9 steps
