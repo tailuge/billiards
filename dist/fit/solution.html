@@ -22,6 +22,31 @@
       h2 {
         font-size: 0.9rem;
         margin: 2px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .res-btn {
+        font-size: 0.7rem;
+        padding: 1px 4px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        background: #f8f9fa;
+        color: #333;
+        font-weight: normal;
+      }
+
+      .res-btn:hover {
+        background: #e2e6ea;
+      }
+
+      .res-btn.active {
+        font-weight: bold;
+        border-color: #007bff;
+        color: #007bff;
+        background: #e7f1ff;
       }
 
       #status-area {
@@ -192,7 +217,17 @@
 
     <div class="main-grid">
       <div class="tables-col">
-        <h2>Ball first</h2>
+        <h2>
+          <span>Ball first</span>
+          <button
+            id="res-ball-btn"
+            class="res-btn"
+            type="button"
+            title="Ball first angular search resolution (click to change)"
+          >
+            1x
+          </button>
+        </h2>
         <table>
           <thead>
             <tr>
@@ -210,7 +245,17 @@
           </tbody>
         </table>
 
-        <h2>Cushion first</h2>
+        <h2>
+          <span>Cushion first</span>
+          <button
+            id="res-angle-btn"
+            class="res-btn"
+            type="button"
+            title="General angle search resolution (click to change)"
+          >
+            1x
+          </button>
+        </h2>
         <table>
           <thead>
             <tr>
@@ -428,6 +473,51 @@
       const initParam = urlParams.get("init")
       const cushionModel = urlParams.get("cushionModel") || "mathavan"
 
+      const resBallParam = urlParams.get("resBall") || urlParams.get("ballRes")
+      const resBall = Math.max(1, parseInt(resBallParam || "1", 10) || 1)
+
+      const resAngleParam =
+        urlParams.get("resAngle") ||
+        urlParams.get("angleRes") ||
+        urlParams.get("resGen")
+      const resAngle = Math.max(1, parseInt(resAngleParam || "1", 10) || 1)
+
+      const resBallBtn = document.getElementById("res-ball-btn")
+      const resAngleBtn = document.getElementById("res-angle-btn")
+
+      if (resBallBtn) {
+        resBallBtn.textContent = `${resBall}x`
+        if (resBall > 1) resBallBtn.classList.add("active")
+        resBallBtn.addEventListener("click", () => {
+          const params = new URLSearchParams(window.location.search)
+          const nextRes = resBall >= 3 ? 1 : resBall + 1
+          if (nextRes === 1) {
+            params.delete("resBall")
+            params.delete("ballRes")
+          } else {
+            params.set("resBall", nextRes.toString())
+          }
+          window.location.search = params.toString()
+        })
+      }
+
+      if (resAngleBtn) {
+        resAngleBtn.textContent = `${resAngle}x`
+        if (resAngle > 1) resAngleBtn.classList.add("active")
+        resAngleBtn.addEventListener("click", () => {
+          const params = new URLSearchParams(window.location.search)
+          const nextRes = resAngle >= 3 ? 1 : resAngle + 1
+          if (nextRes === 1) {
+            params.delete("resAngle")
+            params.delete("angleRes")
+            params.delete("resGen")
+          } else {
+            params.set("resAngle", nextRes.toString())
+          }
+          window.location.search = params.toString()
+        })
+      }
+
       let ballPositions = []
       if (initParam) {
         try {
@@ -459,15 +549,18 @@
         }
 
         const angles = []
-        for (let i = 0; i < 180; i++) {
-          angles.push((i * Math.PI) / 90)
+        const numGeneralAngles = 180 * resAngle
+        for (let i = 0; i < numGeneralAngles; i++) {
+          angles.push((i * Math.PI) / (90 * resAngle))
         }
 
         // Inject collision-window angles aimed at each non-cueball ball.
         // Triangle: base = distance between centers, opposite = 2R → halfAngle = asin(2R/d).
-        // Generate 10 angles spanning the collision cone around the direct aim line.
-        function generateBallAimAngles(cueBall, targetBalls) {
+        // Generate (10 * resBall) angles spanning the collision cone around the direct aim line.
+        function generateBallAimAngles(cueBall, targetBalls, mult = 1) {
           const extra = []
+          const count = 10 * mult
+          const denom = count > 1 ? count - 1 : 1
           for (const target of targetBalls) {
             const dx = target.pos.x - cueBall.pos.x
             const dy = target.pos.y - cueBall.pos.y
@@ -475,14 +568,14 @@
             if (dist <= 2 * R) continue
             const aimAngle = Math.atan2(dy, dx)
             const halfAngle = Math.asin((2 * R) / dist)
-            for (let k = 0; k < 10; k++) {
-              const offset = -halfAngle + (k * (2 * halfAngle)) / 9
+            for (let k = 0; k < count; k++) {
+              const offset = -halfAngle + (k * (2 * halfAngle)) / denom
               extra.push(aimAngle + offset)
             }
           }
           return extra
         }
-        const extraAngles = generateBallAimAngles(balls[0], balls.slice(1))
+        const extraAngles = generateBallAimAngles(balls[0], balls.slice(1), resBall)
         for (const a of extraAngles) angles.push(a)
 
         const powerPercents = [0.5, 0.9]
