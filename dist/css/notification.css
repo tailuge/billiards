@@ -17,6 +17,8 @@
   --notification-clr-winner-end: #daa520;
   --notification-clr-loser-start: #e0e0e0;
   --notification-clr-loser-end: #a0a0a0;
+  --notification-clr-upload-ok: #1f9d55;
+  --notification-clr-upload-fail: #c0392b;
 
   /* Neutrals & Opacity Layers */
   --notification-white: #fff;
@@ -399,6 +401,20 @@
 #notification.is-loser .notification-actions .button {
   background: var(--notification-black-15);
   border-color: var(--notification-black-30);
+}
+
+/* Arena result upload outcome on the "Back to Arena" button. Scoped with
+   #notification so it outranks the is-winner/is-loser button background. */
+#notification #arenabutton.is-upload-ok,
+#notification #arenabutton.is-upload-ok:hover {
+  background: var(--notification-clr-upload-ok);
+  border-color: var(--notification-clr-upload-ok);
+}
+
+#notification #arenabutton.is-upload-fail,
+#notification #arenabutton.is-upload-fail:hover {
+  background: var(--notification-clr-upload-fail);
+  border-color: var(--notification-clr-upload-fail);
 }
 
 /* 5.4 Share Button (GameOver banner, top-right corner) */

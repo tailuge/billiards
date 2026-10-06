@@ -130,13 +130,29 @@ export class ScoreReporter {
       // handled the result — treat as final, no retry. 5xx and 429 mean the
       // server was slow/busy, so one retry is worthwhile.
       const { status } = response
+      this.updateArenaResultButton(response.ok)
       return response.ok || (status >= 400 && status < 500 && status !== 429)
     } catch (error) {
       clearTimeout(timeoutId)
       // Connection failure or timeout — signal that a retry is worthwhile.
       console.error("Error submitting tournament result to", url, error)
+      this.updateArenaResultButton(false)
       return false
     }
+  }
+
+  /**
+   * Colours the "Back to Arena" button in the game-over banner (rendered with
+   * id="arenabutton" by gameover.ts) to reflect the arena result upload: green
+   * on success (2xx), red otherwise. No-ops outside the browser or when the
+   * banner is no longer on screen.
+   */
+  private updateArenaResultButton(ok: boolean): void {
+    if (typeof document === "undefined") return
+    const button = document.getElementById("arenabutton")
+    if (!button) return
+    button.classList.toggle("is-upload-ok", ok)
+    button.classList.toggle("is-upload-fail", !ok)
   }
 
   private shouldSkipUpload(result: MatchResult): boolean {

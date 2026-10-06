@@ -73,7 +73,7 @@ export const gameOverButtons = {
     tournamentId?: string
   ): string {
     if (tournamentId) {
-      return button("lobby", "Back to Arena")
+      return button("lobby", "Back to Arena", ' id="arenabutton"')
     }
     if (isSinglePlayer) {
       return this.newGame + " " + this.lobby
