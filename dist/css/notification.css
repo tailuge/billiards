@@ -417,6 +417,12 @@
   border-color: var(--notification-clr-upload-fail);
 }
 
+/* Inert while the arena result upload is in flight. */
+#notification #arenabutton:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
 /* 5.4 Share Button (GameOver banner, top-right corner) */
 .notification-share {
   position: absolute;

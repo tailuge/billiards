@@ -70,20 +70,29 @@ export class ScoreReporter {
     // the server looks slow/busy (5xx or 429). A definitive response — 2xx
     // or a 4xx like 409 (already recorded) — means the result was handled
     // and no retry is needed.
-    const maxRetries = 1
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      const completed = await this.attemptTournamentSubmission(url, payload)
-      if (completed) return
+    //
+    // Keep the button inert until the upload resolves so a click can't
+    // navigate away and cancel the request. Only the uploading client reaches
+    // this path, so the non-uploading opponent's button stays active.
+    this.setArenaButtonDisabled(true)
+    try {
+      const maxRetries = 1
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        const completed = await this.attemptTournamentSubmission(url, payload)
+        if (completed) return
 
-      if (attempt < maxRetries) {
-        const delay = 1000
-        console.log(
-          `Retrying tournament arena result submission in ${delay}ms... (Attempt ${
-            attempt + 1
-          }/${maxRetries})`
-        )
-        await new Promise((resolve) => setTimeout(resolve, delay))
+        if (attempt < maxRetries) {
+          const delay = 1000
+          console.log(
+            `Retrying tournament arena result submission in ${delay}ms... (Attempt ${
+              attempt + 1
+            }/${maxRetries})`
+          )
+          await new Promise((resolve) => setTimeout(resolve, delay))
+        }
       }
+    } finally {
+      this.setArenaButtonDisabled(false)
     }
   }
 
@@ -141,6 +150,11 @@ export class ScoreReporter {
     }
   }
 
+  private getArenaButton(): HTMLButtonElement | null {
+    if (typeof document === "undefined") return null
+    return document.getElementById("arenabutton") as HTMLButtonElement | null
+  }
+
   /**
    * Colours the "Back to Arena" button in the game-over banner (rendered with
    * id="arenabutton" by gameover.ts) to reflect the arena result upload: green
@@ -148,11 +162,22 @@ export class ScoreReporter {
    * banner is no longer on screen.
    */
   private updateArenaResultButton(ok: boolean): void {
-    if (typeof document === "undefined") return
-    const button = document.getElementById("arenabutton")
+    const button = this.getArenaButton()
     if (!button) return
     button.classList.toggle("is-upload-ok", ok)
     button.classList.toggle("is-upload-fail", !ok)
+  }
+
+  /**
+   * Makes the arena result button inert while the upload is in flight so a
+   * click can't navigate away and cancel the request. Only the uploading
+   * client runs this, so the opponent's button is unaffected.
+   */
+  private setArenaButtonDisabled(disabled: boolean): void {
+    const button = this.getArenaButton()
+    if (button) {
+      button.disabled = disabled
+    }
   }
 
   private shouldSkipUpload(result: MatchResult): boolean {
