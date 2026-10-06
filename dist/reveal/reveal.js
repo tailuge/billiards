@@ -602,7 +602,7 @@
                         <div class="row"><a href="./arena.html">Arenas</a></div>
                         <div class="row"><a href="https://github.com/tailuge/billiards/issues" target="_blank" rel="noopener">Support</a></div>
                         <div class="row"><a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener">Contribute</a></div>
-                        <div class="row"><a href="./stats.html">Feeds</a></div>
+                        <div class="row"><a href="https://billiards-network.onrender.com/stats.html">Feeds</a></div>
                         <div class="row"><a href="https://billiards-network.onrender.com/usage.html" target="_blank" rel="noopener">Usage</a></div>
 
                         <div><strong style="font-size:0.82rem">Recent visitors</strong><stats-panel></stats-panel></div>
