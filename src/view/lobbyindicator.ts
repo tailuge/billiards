@@ -24,6 +24,7 @@ export class LobbyIndicator {
     userId: string
     userName: string
     ruleType: string
+    options?: Record<string, string>
     tournamentId?: string
   } | null = null
   private readonly rules: Rules
@@ -240,6 +241,7 @@ export class LobbyIndicator {
           userId: challenge.challengerId,
           userName: challenge.challengerName,
           ruleType: challenge.ruleType,
+          options: challenge.options,
           tournamentId: challenge.options?.tournamentId,
         }
       } else if (challenge.type === "decline" || challenge.type === "cancel") {
@@ -376,6 +378,33 @@ export class LobbyIndicator {
     url.searchParams.set("ruletype", this.challenger.ruleType)
     url.searchParams.set("opponent.userId", this.challenger.userId)
     url.searchParams.set("opponent.userName", this.challenger.userName)
+
+    // Forward the rule options (tableSize, reds, raceTo, shotClock, freeaim,
+    // collaboration, practice, ...) so the lobby can re-issue the challenge with
+    // the same settings. Without these the accepted game falls back to defaults
+    // (e.g. full-size snooker with 15 reds). Keys that would clobber the
+    // handoff/system params set above are ignored, since options originate from
+    // the challenger and must not redirect this session elsewhere.
+    const reserved = new Set([
+      "action",
+      "ruletype",
+      "opponent.userId",
+      "opponent.userName",
+      "tournamentId",
+      "userId",
+      "userName",
+      "tableId",
+      "first",
+      "spectator",
+      "lod",
+      "flip",
+      "nextTurnId",
+    ])
+    for (const [key, value] of Object.entries(this.challenger.options ?? {})) {
+      if (!reserved.has(key)) {
+        url.searchParams.set(key, String(value))
+      }
+    }
 
     if (this.challenger.tournamentId) {
       url.searchParams.set("tournamentId", this.challenger.tournamentId)

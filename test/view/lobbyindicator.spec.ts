@@ -120,6 +120,69 @@ describe("LobbyIndicator", () => {
     expect(element?.getAttribute("href")).toBe(LOBBY_URL)
   })
 
+  it("forwards challenge options to the lobby URL", async () => {
+    const mockRules = { rulename: "snooker" } as any
+    const indicator = new LobbyIndicator(false, false, mockRules)
+    await indicator.init()
+
+    const mockLobby = (indicator as any).lobby
+    const onChallengeCallback = mockLobby.onChallenge.mock.calls[0][0]
+
+    // Snooker 3 reds on the small table: the options must survive the handoff
+    // so the lobby can re-issue the challenge with the same settings.
+    onChallengeCallback({
+      type: "offer",
+      challengerId: "u2",
+      challengerName: "Bob",
+      challengeeId: "default",
+      ruleType: "snooker",
+      options: { reds: "3", tableSize: "6" },
+    })
+
+    const element = document.getElementById("lobbyOverlay")
+    const params = new URL(element?.getAttribute("href") ?? "").searchParams
+    expect(params.get("reds")).toBe("3")
+    expect(params.get("tableSize")).toBe("6")
+    expect(params.get("opponent.userId")).toBe("u2")
+    expect(params.get("ruletype")).toBe("snooker")
+
+    await indicator.stop()
+  })
+
+  it("does not let challenge options clobber handoff params", async () => {
+    const mockRules = { rulename: "snooker" } as any
+    const indicator = new LobbyIndicator(false, false, mockRules)
+    await indicator.init()
+
+    const mockLobby = (indicator as any).lobby
+    const onChallengeCallback = mockLobby.onChallenge.mock.calls[0][0]
+
+    // Options come from the (remote) challenger, so they must not be able to
+    // redirect this session to a different opponent/rule.
+    onChallengeCallback({
+      type: "offer",
+      challengerId: "u2",
+      challengerName: "Bob",
+      challengeeId: "default",
+      ruleType: "snooker",
+      options: {
+        "opponent.userId": "attacker",
+        ruletype: "eightball",
+        userId: "attacker",
+        tableSize: "6",
+      } as any,
+    })
+
+    const element = document.getElementById("lobbyOverlay")
+    const params = new URL(element?.getAttribute("href") ?? "").searchParams
+    expect(params.get("opponent.userId")).toBe("u2")
+    expect(params.get("ruletype")).toBe("snooker")
+    expect(params.get("userId")).toBeNull()
+    expect(params.get("tableSize")).toBe("6")
+
+    await indicator.stop()
+  })
+
   it("handles non-anchor elements and click events", async () => {
     // Create a div instead of a link
     const div = document.createElement("div")
