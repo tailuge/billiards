@@ -17,28 +17,42 @@ async function submitResults(
   const session = Session.getInstance()
   if (!scoreReporter) return
 
-  // A game with no shots recorded has nothing worth posting to the
-  // scoreboard, so skip that upload silently. Tournament results still go
-  // through so brackets keep advancing on instant forfeits/disconnects.
-  if (!isFirstShot(container.recorder)) {
-    await scoreReporter.submitMatchResult(result)
-  }
-  if (!session.tournamentId || !result.winnerId) {
-    return
-  }
+  const uploadsArenaResult = !!session.tournamentId && !!result.winnerId
 
-  const challengeId =
-    Session.isBotMode() && session.tableId === "default"
-      ? `G_${Date.now().toString()}`
-      : session.tableId
+  // Keep the "Back to Arena" button inert for the whole upload — the scoreboard
+  // post first, then the arena result — so a click can't navigate away and
+  // cancel either. Only the uploading client runs this.
+  if (uploadsArenaResult) {
+    scoreReporter.setArenaButtonUploading(true)
+  }
+  try {
+    // A game with no shots recorded has nothing worth posting to the
+    // scoreboard, so skip that upload silently. Tournament results still go
+    // through so brackets keep advancing on instant forfeits/disconnects.
+    if (!isFirstShot(container.recorder)) {
+      await scoreReporter.submitMatchResult(result)
+    }
+    if (!uploadsArenaResult) {
+      return
+    }
 
-  await scoreReporter.submitTournamentResult(
-    session.tournamentId,
-    challengeId,
-    result.winnerId,
-    result.loserId,
-    result.winnerId?.startsWith("bot-") ? undefined : result.berserk
-  )
+    const challengeId =
+      Session.isBotMode() && session.tableId === "default"
+        ? `G_${Date.now().toString()}`
+        : session.tableId
+
+    await scoreReporter.submitTournamentResult(
+      session.tournamentId!,
+      challengeId,
+      result.winnerId!,
+      result.loserId,
+      result.winnerId?.startsWith("bot-") ? undefined : result.berserk
+    )
+  } finally {
+    if (uploadsArenaResult) {
+      scoreReporter.setArenaButtonUploading(false)
+    }
+  }
 }
 
 export class End extends Controller {

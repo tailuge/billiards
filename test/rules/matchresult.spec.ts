@@ -120,6 +120,7 @@ describe("MatchResult Construction", () => {
     const reporter = {
       submitMatchResult: jest.fn().mockResolvedValue(undefined),
       submitTournamentResult: jest.fn().mockResolvedValue(undefined),
+      setArenaButtonUploading: jest.fn(),
     }
     container.scoreReporter = reporter as any
     setupNineBallTable(container)
@@ -147,6 +148,7 @@ describe("MatchResult Construction", () => {
     const reporter = {
       submitMatchResult: jest.fn().mockResolvedValue(undefined),
       submitTournamentResult: jest.fn().mockResolvedValue(undefined),
+      setArenaButtonUploading: jest.fn(),
     }
     container.scoreReporter = reporter as any
     setupNineBallTable(container)
@@ -157,6 +159,90 @@ describe("MatchResult Construction", () => {
     await new Promise((resolve) => setTimeout(resolve, 0))
 
     expect(reporter.submitMatchResult.mock.calls).to.have.lengthOf(1)
+  })
+
+  it("keeps the Back to Arena button inert for the whole arena upload", async () => {
+    Session.init(
+      "test-client",
+      "TestPlayer",
+      "test-table",
+      false,
+      false,
+      false,
+      false,
+      1,
+      false,
+      false,
+      "arena-1"
+    )
+    const session = Session.getInstance()
+    session.opponentName = "TestOpponent"
+    session.setOpponentClientId("opponent")
+
+    container = createNineBallContainer()
+    container.scoreReporter = new ScoreReporter()
+    // at least one shot so the scoreboard upload runs before the arena one
+    container.recorder.entries.push({
+      state: [],
+      event: { type: "AIM", i: 0 } as any,
+      pots: 0,
+      isPartOfBreak: false,
+      time: Date.now(),
+    })
+    setupNineBallTable(container)
+
+    let resolveArena: (() => void) | undefined
+    const originalFetch = globalThis.fetch
+    globalThis.fetch = jest.fn((url: string) => {
+      if (String(url).includes("/api/match-results")) {
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: "OK",
+          headers: {},
+          text: () => Promise.resolve("{}"),
+        })
+      }
+      return new Promise((resolve) => {
+        resolveArena = () =>
+          resolve({
+            ok: true,
+            status: 200,
+            statusText: "OK",
+            headers: {},
+            text: () => Promise.resolve('{"recorded":true}'),
+          } as any)
+      })
+    }) as any
+
+    try {
+      const nineball = container.rules as NineBall
+      const endController = nineball.update(
+        getNineBallOutcome(container)
+      ) as End
+      const button = document.getElementById("arenabutton") as HTMLButtonElement
+      expect(button).to.exist
+
+      endController.onFirst()
+
+      // inert straight away, before the scoreboard upload resolves
+      expect(button.disabled).to.be.true
+      expect(button.textContent).to.equal("Uploading result…")
+
+      // scoreboard resolved, arena request in flight — still inert
+      await new Promise((resolve) => setTimeout(resolve, 0))
+      expect(button.disabled).to.be.true
+
+      resolveArena?.()
+      await new Promise((resolve) => setTimeout(resolve, 0))
+      await new Promise((resolve) => setTimeout(resolve, 0))
+
+      expect(button.disabled).to.be.false
+      expect(button.textContent).to.equal("Back to Arena")
+      expect(button.classList.contains("is-upload-ok")).to.be.true
+    } finally {
+      globalThis.fetch = originalFetch
+    }
   })
 
   it("NineBall should declare potter winner even if behind on points", () => {

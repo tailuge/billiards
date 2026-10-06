@@ -28,6 +28,8 @@ const translations: Record<Locale, Record<string, string>> = {
     // English source grammatical while the translation stays native.
     "Back to Lobby": "로비로 돌아가기",
     "Back to Arena": "아레나로 돌아가기",
+    // Arena upload in flight: the button is inert until the result is sent.
+    "Uploading result…": "결과 업로드 중…",
     "New Game": "새 게임",
     Replay: "다시보기",
     Rematch: "재대결",

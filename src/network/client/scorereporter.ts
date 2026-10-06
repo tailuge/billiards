@@ -1,6 +1,7 @@
 // src/network/client/scorereporter.ts
 import { MatchResult } from "./matchresult"
 import { ARENA_BASE_URL } from "./constants"
+import { t } from "../../utils/i18n"
 
 export class ScoreReporter {
   private readonly baseURL: string
@@ -70,29 +71,20 @@ export class ScoreReporter {
     // the server looks slow/busy (5xx or 429). A definitive response — 2xx
     // or a 4xx like 409 (already recorded) — means the result was handled
     // and no retry is needed.
-    //
-    // Keep the button inert until the upload resolves so a click can't
-    // navigate away and cancel the request. Only the uploading client reaches
-    // this path, so the non-uploading opponent's button stays active.
-    this.setArenaButtonDisabled(true)
-    try {
-      const maxRetries = 1
-      for (let attempt = 0; attempt <= maxRetries; attempt++) {
-        const completed = await this.attemptTournamentSubmission(url, payload)
-        if (completed) return
+    const maxRetries = 1
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      const completed = await this.attemptTournamentSubmission(url, payload)
+      if (completed) return
 
-        if (attempt < maxRetries) {
-          const delay = 1000
-          console.log(
-            `Retrying tournament arena result submission in ${delay}ms... (Attempt ${
-              attempt + 1
-            }/${maxRetries})`
-          )
-          await new Promise((resolve) => setTimeout(resolve, delay))
-        }
+      if (attempt < maxRetries) {
+        const delay = 1000
+        console.log(
+          `Retrying tournament arena result submission in ${delay}ms... (Attempt ${
+            attempt + 1
+          }/${maxRetries})`
+        )
+        await new Promise((resolve) => setTimeout(resolve, delay))
       }
-    } finally {
-      this.setArenaButtonDisabled(false)
     }
   }
 
@@ -169,15 +161,17 @@ export class ScoreReporter {
   }
 
   /**
-   * Makes the arena result button inert while the upload is in flight so a
-   * click can't navigate away and cancel the request. Only the uploading
-   * client runs this, so the opponent's button is unaffected.
+   * Puts the "Back to Arena" button into an inert "Uploading result…" state for
+   * the whole end-of-game upload, then restores its label so it can be clicked
+   * again. Only the client doing the uploading runs this, so the opponent's
+   * button is unaffected. Covers the scoreboard upload that precedes the arena
+   * request too, so a click can't navigate away and cancel either one.
    */
-  private setArenaButtonDisabled(disabled: boolean): void {
+  setArenaButtonUploading(uploading: boolean): void {
     const button = this.getArenaButton()
-    if (button) {
-      button.disabled = disabled
-    }
+    if (!button) return
+    button.disabled = uploading
+    button.textContent = uploading ? t("Uploading result…") : t("Back to Arena")
   }
 
   private shouldSkipUpload(result: MatchResult): boolean {

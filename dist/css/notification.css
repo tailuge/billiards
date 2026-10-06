@@ -423,6 +423,14 @@
   opacity: 0.6;
 }
 
+/* The losing player in a 2-player match never uploads the arena result, so
+   their "Back to Arena" button keeps the success colour instead of the muted
+   default that reads as disabled. Upload outcome classes still take over. */
+#notification.is-loser #arenabutton:not(.is-upload-ok, .is-upload-fail) {
+  background: var(--notification-clr-upload-ok);
+  border-color: var(--notification-clr-upload-ok);
+}
+
 /* 5.4 Share Button (GameOver banner, top-right corner) */
 .notification-share {
   position: absolute;
