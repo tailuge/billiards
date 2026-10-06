@@ -2,21 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Free Online 8-Ball &amp; Eightball Pool Game | 3D Three.js Browser Pool Simulator</title>
+    <title>Free 8 Ball Pool – Play Online in Your Browser, No Download</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta
       name="description"
-      content="Play free online 8-ball (eightball) pool in your browser. Realistic 3D Three.js pool simulator with solids, stripes, calling pocket, practice AI, and free multiplayer."
+      content="Play free 8 ball (eightball) pool online in your browser. Real 3D physics, solids and stripes, no download or sign-up — play friends or AI bots."
     />
     <meta
       name="keywords"
-      content="free 8 ball pool, eightball pool, play 8 ball pool online, 3d pool simulator, online pool game, 8ball pool browser, solids and stripes, free billiards game, threejs pool"
+      content="8 ball pool, 8 ball pool online, free 8 ball pool, play 8 ball pool, eightball pool, 8ball pool, 8 ball pool no download, 8 ball pool 2 player, 8 ball pool rules, solids and stripes, online pool game, 3d pool game, billiards online"
     />
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
+    <meta name="theme-color" content="#0b1611" />
     <link
       rel="canonical"
       href="https://billiards.tailuge.workers.dev/eightball"
@@ -24,10 +25,14 @@
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Free Online 8-Ball &amp; Eightball Pool Game | 3D Three.js Pool Simulator" />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:title"
+      content="Free 8 Ball Pool — Play Online in Your Browser, No Download"
+    />
     <meta
       property="og:description"
-      content="Play free online 8-ball and eightball pool with realistic 3D Three.js physics. Solids, stripes, practice bots, and multiplayer with friends — no registration or download."
+      content="Play free 8 ball (eightball) pool online in 3D — solids, stripes, AI bots and free multiplayer with friends. No download and no sign-up."
     />
     <meta property="og:site_name" content="Tailuge Billiards" />
     <meta
@@ -40,6 +45,7 @@
     />
     <meta property="og:image:width" content="1120" />
     <meta property="og:image:height" content="707" />
+    <meta property="og:image:type" content="image/png" />
     <meta
       property="og:image:alt"
       content="Free online 3D 8-ball and eightball pool simulator running in a browser with Three.js"
@@ -47,11 +53,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="Free Online 8-Ball &amp; Eightball Pool Game | 3D Three.js Pool Simulator"
+      content="Free 8 Ball Pool — Play Online in Your Browser, No Download"
     />
     <meta
       name="twitter:description"
-      content="Play free online 8-ball and eightball pool with friends in your browser. Real 3D Three.js physics, no downloads, zero sign-up."
+      content="Play free 8 ball (eightball) pool online in 3D — solids, stripes, AI bots and free multiplayer. No download, no sign-up."
     />
     <meta
       name="twitter:image"
@@ -64,33 +70,89 @@
         "@context": "https://schema.org",
         "@graph": [
           {
-            "@type": "SoftwareApplication",
+            "@type": "VideoGame",
             "@id": "https://billiards.tailuge.workers.dev/eightball#game",
-            "name": "Free Online 8-Ball & Eightball Pool Game",
+            "name": "Free 8 Ball Pool Online",
             "alternateName": [
-              "8-Ball Pool Simulator",
-              "Eightball Pool Game",
-              "8ball Online Game",
+              "8 Ball Pool",
+              "Eightball",
+              "Eightball Pool",
+              "8ball Pool",
+              "8 Ball Pool Online",
               "Free 8 Ball Pool",
+              "Play 8 Ball Pool",
               "Browser Eightball Pool"
             ],
-            "operatingSystem": "Web Browser",
+            "url": "https://billiards.tailuge.workers.dev/eightball",
+            "image": "https://billiards.tailuge.workers.dev/images/promo.png",
+            "description": "Play free 8 ball (eightball) pool online in a browser. A Three.js 3D pool simulator with solids and stripes rules, realistic cushion physics, AI bots and free multiplayer — no download and no sign-up.",
+            "inLanguage": "en",
+            "genre": ["Sports Game", "Pool Game", "Simulation Game"],
             "applicationCategory": "GameApplication",
-            "applicationSubCategory": "Sports Game",
-            "genre": ["Sports Simulator", "Pool Game"],
+            "applicationSubCategory": "8-Ball Pool",
+            "operatingSystem": "Web Browser",
+            "gamePlatform": [
+              "Web Browser",
+              "Windows PC",
+              "Mac",
+              "Linux",
+              "Android",
+              "iOS"
+            ],
+            "isAccessibleForFree": true,
+            "dateModified": "2026-10-06",
             "offers": {
               "@type": "Offer",
               "price": "0",
               "priceCurrency": "USD"
             },
-            "url": "https://billiards.tailuge.workers.dev/eightball",
-            "image": "https://billiards.tailuge.workers.dev/images/promo.png",
-            "description": "An open-source Three.js 3D 8-ball and eightball pool game with solids and stripes rules, realistic cushion physics, practice bots, and multiplayer.",
             "creator": {
-              "@type": "Person",
-              "name": "tailuge"
+              "@id": "https://billiards.tailuge.workers.dev/#organization"
             },
-            "sameAs": "https://github.com/tailuge/billiards"
+            "publisher": {
+              "@id": "https://billiards.tailuge.workers.dev/#organization"
+            },
+            "sameAs": "https://github.com/tailuge/billiards",
+            "subjectOf": {
+              "@id": "https://billiards.tailuge.workers.dev/eightball#video"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://billiards.tailuge.workers.dev/#website",
+            "url": "https://billiards.tailuge.workers.dev/",
+            "name": "Tailuge Billiards",
+            "alternateName": [
+              "Three.js Billiards",
+              "Tailuge Billiards Simulator"
+            ],
+            "inLanguage": "en"
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://billiards.tailuge.workers.dev/#organization",
+            "name": "Tailuge Billiards",
+            "url": "https://billiards.tailuge.workers.dev/",
+            "logo": "https://billiards.tailuge.workers.dev/favicon.png",
+            "sameAs": [
+              "https://github.com/tailuge/billiards",
+              "https://tailuge.itch.io"
+            ]
+          },
+          {
+            "@type": "VideoObject",
+            "@id": "https://billiards.tailuge.workers.dev/eightball#video",
+            "name": "Free 8 Ball Pool Gameplay — Three.js 3D Billiards",
+            "description": "Gameplay of the free 8 ball (eightball) pool game: break, solids and stripes and the winning 8 ball on a Three.js 3D pool table in the browser.",
+            "thumbnailUrl": [
+              "https://billiards.tailuge.workers.dev/images/promo.png"
+            ],
+            "contentUrl": "https://youtu.be/bAeiRQcQuyg",
+            "embedUrl": "https://www.youtube.com/embed/bAeiRQcQuyg",
+            "uploadDate": "2026-04-30T00:00:00+00:00",
+            "publisher": {
+              "@id": "https://billiards.tailuge.workers.dev/#organization"
+            }
           },
           {
             "@type": "FAQPage",
@@ -98,26 +160,42 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "How do 8-ball (eightball) pool rules work in this game?",
+                "name": "How do 8 ball pool rules work?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Eightball (8-ball) pool is played with 15 object balls (1-7 solids, 9-15 stripes, and the 8-ball). One player clears solids while the other clears stripes. Pocketing the 8-ball legally after clearing your set wins the frame."
+                  "text": "8 ball pool is played with 15 object balls: 1-7 solids, 9-15 stripes and the 8 ball. One player clears solids while the other clears stripes, then pockets the 8 ball legally into a called pocket to win the rack."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Can I play eightball and 8-ball pool with friends online for free?",
+                "name": "Can I play 8 ball (eightball) pool with friends online for free?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes! Enter the online lobby, select a connected player to send a challenge, or invite a friend to play eightball pool online for free with no account registration."
+                  "text": "Yes. Enter the online lobby, challenge a connected player, or invite a friend to play 8 ball pool online for free — no account registration is required."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Is there any software download or installation needed?",
+                "name": "Do I need to download or install anything?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No installation is required. The entire game runs with Three.js graphics inside any desktop or mobile web browser."
+                  "text": "No. The whole 8 ball pool game runs with Three.js 3D rendering inside any desktop or mobile web browser."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do you win at 8 ball pool?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Clear all seven balls in your group (solids or stripes), then pot the 8 ball into a pocket you have called. Potting the 8 early, or on a foul, loses the rack."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is 8 ball or 9 ball more popular?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "8 ball is the most widely played pool game in the world, especially in pubs and leagues, while 9 ball is the standard for professional and televised tournaments because its rotation rules make frames faster and less predictable."
                 }
               }
             ]
@@ -134,7 +212,7 @@
               {
                 "@type": "ListItem",
                 "position": 2,
-                "name": "8-Ball & Eightball Pool",
+                "name": "8 Ball Pool",
                 "item": "https://billiards.tailuge.workers.dev/eightball"
               }
             ]
@@ -721,15 +799,21 @@
     <a class="skip-link" href="#content">Skip to main content</a>
 
     <header class="site">
-      <a class="brand" href="/eightball" aria-label="Free open source eightball pool home">
+      <a class="brand" href="/eightball" aria-label="Free 8 ball pool home">
         <span class="brand-mark">🎱</span>
-        <span>Three.js 8-Ball &amp; Eightball Pool</span>
+        <span>Three.js 8 Ball Pool</span>
       </a>
       <nav class="site-nav" aria-label="Main menu">
+        <a href="#how-to-play">How to Play</a>
         <a href="#rules">Rules</a>
-        <a href="#physics">Physics &amp; Tech</a>
+        <a href="#compare">8 Ball vs 9 Ball</a>
         <a href="#faq">FAQ</a>
-        <a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener">GitHub Source</a>
+        <a
+          href="https://github.com/tailuge/billiards"
+          target="_blank"
+          rel="noopener"
+          >GitHub Source</a
+        >
         <a class="nav-lobby" href="/lobby">Lobby</a>
       </nav>
     </header>
@@ -740,18 +824,22 @@
         <div>
           <p class="hero-tag">100% Free &amp; Open Source</p>
           <h1 id="hero-title">
-            Free Open Source <em>8-Ball &amp; Eightball Pool</em> Simulator
+            Free <em>8 Ball Pool</em> (Eightball) — Play Online in 3D
           </h1>
           <p class="hero-desc">
-            Play classic solids &amp; stripes 8-ball (eightball) pool online in full 3D with Three.js. Real ball collisions, spin mechanics, AI bots, and live multiplayer with no downloads or sign-ups.
+            Play free 8 ball pool (eightball) online in your browser, alongside
+            9 ball, snooker and carom billiards. Classic solids and stripes with
+            real 3D Three.js physics — no download, no sign-up.
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="/?ruletype=eightball&amp;lod=4">Play 8-Ball Online Now &rarr;</a>
-            <a class="btn btn-secondary" href="/lobby">Enter Lobby</a>
+            <a class="btn btn-primary" href="/?ruletype=eightball&amp;lod=4"
+              >Play 8 Ball Pool Online &rarr;</a
+            >
+            <a class="btn btn-secondary" href="/lobby">Play With a Friend</a>
           </div>
           <ul class="hero-note">
             <li>Solids &amp; Stripes</li>
-            <li>No Download Needed</li>
+            <li>No Download or Sign-up</li>
             <li>Free Multiplayer</li>
           </ul>
         </div>
@@ -760,7 +848,7 @@
           <img
             class="hero-shot"
             src="images/promo.png"
-            alt="Free online 3D 8-ball and eightball pool game in a browser, Three.js 3D table viewed from behind cue ball"
+            alt="Free online 3D 8 ball pool game in a browser — Three.js table viewed from behind the cue ball"
             width="1120"
             height="707"
             fetchpriority="high"
@@ -768,12 +856,14 @@
           <img
             class="hero-sticker"
             src="images/dm.jpg"
-            alt="Billiards title overlay sticker"
+            alt=""
             width="1200"
             height="800"
+            loading="lazy"
+            decoding="async"
           />
           <figcaption>
-            Realistic 3D Three.js 8-ball (eightball) pool table directly inside your browser
+            Realistic 3D Three.js 8 ball pool table directly inside your browser
           </figcaption>
         </figure>
       </section>
@@ -785,19 +875,22 @@
           <div class="feature-card">
             <h3>Solids &amp; Stripes Physics</h3>
             <p>
-              Accurate 3D ball dynamics, cushion deflection, and cue spin transfer engineered for authentic 8-ball (eightball) pool play.
+              Accurate 3D ball dynamics, cushion deflection and cue spin
+              transfer engineered for authentic 8 ball pool (eightball) play.
             </p>
           </div>
           <div class="feature-card">
-            <h3>Zero Installation</h3>
+            <h3>No Download or Sign-up</h3>
             <p>
-              Instant browser play on PC, Mac, mobile, or tablet with smooth touch and mouse control options.
+              Instant browser play on PC, Mac, Android or iPhone with touch and
+              mouse controls — nothing to install and no account to create.
             </p>
           </div>
           <div class="feature-card">
             <h3>Three.js 3D Engine</h3>
             <p>
-              Built in TypeScript and Three.js. Fully open-source on GitHub with continuous community improvements.
+              Built in TypeScript and Three.js. Fully open-source on GitHub with
+              continuous community improvements.
             </p>
           </div>
         </div>
@@ -805,44 +898,153 @@
 
       <!-- ── Informational Section (Rules) ────────── -->
       <section id="rules" class="section" aria-labelledby="rules-title">
-        <p class="section-label">Game Rules</p>
-        <h2 id="rules-title">Classic 8-Ball &amp; Eightball Pool Rules &amp; Strategy</h2>
+        <p class="section-label">8 Ball Rules</p>
+        <h2 id="rules-title">8 Ball Pool Rules &amp; Strategy</h2>
         <div class="prose">
           <p>
-            <strong>8-Ball Pool</strong> (also known as <strong>eightball</strong>) is a call-shot game played with a cue ball and 15 object balls (numbered 1 to 15). One player assigned to <strong>solids</strong> (balls 1–7) and the other to <strong>stripes</strong> (balls 9–15) must clear their group before pocketing the 8-ball to win.
+            <strong>8 ball pool</strong> (also known as
+            <strong>eightball</strong>) is a call-shot game played with a cue
+            ball and 15 object balls numbered 1 to 15. One player takes
+            <strong>solids</strong> (balls 1–7) and the other
+            <strong>stripes</strong> (balls 9–15), and each must clear their
+            group before potting the 8 ball to win.
           </p>
           <ul>
-            <li><strong>Opening Break:</strong> The 8-ball is racked in the center of the triangle. The table remains open until a group is established by legally potting a ball after the break.</li>
-            <li><strong>Legal Shots:</strong> On every shot, the cue ball must hit a ball from your assigned group first, and at least one ball must hit a cushion or be pocketed.</li>
-            <li><strong>Winning the Game:</strong> Pocket the 8-ball into a called pocket after clearing all your group balls. Pocketing the 8-ball early or on a foul results in a loss.</li>
+            <li>
+              <strong>Opening break:</strong> the 8 ball is racked in the centre
+              of the triangle. The table stays open until a group is established
+              by legally potting a ball after the break.
+            </li>
+            <li>
+              <strong>Legal shots:</strong> on every shot the cue ball must hit
+              a ball from your assigned group first, and some ball must then hit
+              a cushion or be pocketed.
+            </li>
+            <li>
+              <strong>Winning the rack:</strong> pot the 8 ball into a called
+              pocket after clearing your group. Potting the 8 ball early, or on
+              a foul, loses the rack.
+            </li>
           </ul>
+        </div>
+      </section>
+
+      <!-- ── How to Play ─────────────────────────── -->
+      <section
+        id="how-to-play"
+        class="section"
+        aria-labelledby="how-to-play-title"
+      >
+        <p class="section-label">How to Play</p>
+        <h2 id="how-to-play-title">
+          How to Play 8 Ball Pool — Beginner's Guide
+        </h2>
+        <div class="prose">
+          <p>New to eightball? The whole game comes down to six steps.</p>
+          <ol>
+            <li>
+              <strong>Break the rack:</strong> hit the head ball hard and try to
+              spread the fifteen balls across the table.
+            </li>
+            <li>
+              <strong>Claim a group:</strong> the table is open after the break,
+              so the first ball you legally pot decides whether you shoot solids
+              or stripes.
+            </li>
+            <li>
+              <strong>Clear your group:</strong> pot all seven of your balls.
+              Call your pocket on the 8 ball if you are playing call-shot rules.
+            </li>
+            <li>
+              <strong>Keep the cue ball controlled:</strong> position — not
+              power — wins 8 ball. Think one shot ahead and leave a simple next
+              pot.
+            </li>
+            <li>
+              <strong>Play safe when you cannot pot:</strong> hiding the cue
+              ball behind a ball you cannot legally hit leaves your opponent
+              snookered.
+            </li>
+            <li>
+              <strong>Pot the 8 to win:</strong> once your group is cleared, put
+              the 8 ball into the pocket you called without fouling.
+            </li>
+          </ol>
+          <p>
+            Practise the shots you keep missing on the free
+            <a href="/practice">pool practice table</a> — drag balls into any
+            layout and hit play.
+          </p>
         </div>
       </section>
 
       <!-- ── Technical & Game Modes ──────────────── -->
       <section id="physics" class="section" aria-labelledby="physics-title">
         <p class="section-label">More Game Modes</p>
-        <h2 id="physics-title">Explore Other Billiards Disciplines</h2>
+        <h2 id="physics-title">Play 9 Ball, Snooker and Carom Billiards Too</h2>
         <p class="section-lede">
-          Switch anytime between eightball pool and our other 3D Three.js billiards game modes:
+          The same free browser engine runs every classic cue sport — switch
+          discipline at any time, with nothing extra to download:
         </p>
         <div class="modes-grid">
           <div class="mode-box">
-            <h3><a href="/nineball">Nineball (9-Ball) Pool</a></h3>
-            <p>Fast-paced rotation pool where hitting the lowest-numbered ball first is required.</p>
+            <h3><a href="/nineball">9 Ball Pool (Nineball)</a></h3>
+            <p>
+              Fast-paced rotation pool where hitting the lowest-numbered ball
+              first is required.
+            </p>
           </div>
           <div class="mode-box">
             <h3><a href="/snooker">Snooker</a></h3>
-            <p>Full 12ft match table and 6-red snooker variants with official scoring.</p>
+            <p>
+              Full 12ft match table and 6-red snooker variants with official
+              scoring.
+            </p>
           </div>
           <div class="mode-box">
-            <h3><a href="/?ruletype=threecushion&amp;lod=4">Three-Cushion Carom</a></h3>
+            <h3>
+              <a href="/?ruletype=threecushion&amp;lod=4"
+                >Three-Cushion Carom</a
+              >
+            </h3>
             <p>Pure cushion-first precision carom without pockets.</p>
           </div>
           <div class="mode-box">
             <h3><a href="/korean">Sagu (4-Ball)</a></h3>
             <p>Traditional Korean four-ball carom billiards mode.</p>
           </div>
+        </div>
+      </section>
+
+      <!-- ── Comparison ──────────────────────────── -->
+      <section id="compare" class="section" aria-labelledby="compare-title">
+        <p class="section-label">8 Ball vs 9 Ball vs Snooker</p>
+        <h2 id="compare-title">Which Pool Game Should You Play?</h2>
+        <div class="prose">
+          <p>
+            <strong>8 ball pool</strong> is the classic pub and league game and
+            the most widely played pool game in the world: fifteen balls split
+            into solids and stripes, then a called 8 ball to finish. It is the
+            most tactical of the three.
+          </p>
+          <p>
+            <strong><a href="/nineball">9 ball (nine ball)</a></strong> is
+            faster. Only nine balls, no groups, and the lowest ball must be hit
+            first — so frames are short and anyone can steal the rack by potting
+            the 9.
+          </p>
+          <p>
+            <strong><a href="/snooker">Snooker</a></strong> is the most
+            technical cue sport of all, played on a twelve-foot table where
+            scoring, safety play and break building decide the match.
+          </p>
+          <p>
+            Not sure which to try? All three run on the same free Three.js
+            engine, so you can jump between
+            <a href="/?ruletype=eightball&amp;lod=4">8 ball</a>,
+            <a href="/?ruletype=nineball&amp;lod=4">9 ball</a> and snooker
+            without installing anything.
+          </p>
         </div>
       </section>
 
@@ -854,25 +1056,54 @@
         <ul class="faq-list">
           <li>
             <details open>
-              <summary>How do 8-ball (eightball) pool rules work in this game?</summary>
+              <summary>How do 8 ball pool rules work?</summary>
               <p class="faq-answer">
-                Eightball (8-ball) pool is played with 15 object balls (1-7 solids, 9-15 stripes, and the 8-ball). One player clears solids while the other clears stripes. Pocketing the 8-ball legally after clearing your set wins the frame.
+                8 ball pool is played with 15 object balls: 1-7 solids, 9-15
+                stripes and the 8 ball. One player clears solids while the other
+                clears stripes, then pockets the 8 ball legally into a called
+                pocket to win the rack.
               </p>
             </details>
           </li>
           <li>
             <details>
-              <summary>Can I play eightball and 8-ball pool with friends online for free?</summary>
+              <summary>
+                Can I play 8 ball (eightball) pool with friends online for free?
+              </summary>
               <p class="faq-answer">
-                Yes! Enter the <a href="/lobby">online lobby</a>, select a connected player to send a challenge, or invite a friend to play eightball pool online for free with no account registration.
+                Yes. Enter the <a href="/lobby">online lobby</a>, challenge a
+                connected player, or invite a friend to play 8 ball pool online
+                for free — no account registration is required.
               </p>
             </details>
           </li>
           <li>
             <details>
-              <summary>Is there any software download or installation needed?</summary>
+              <summary>Do I need to download or install anything?</summary>
               <p class="faq-answer">
-                No installation is required. The entire game runs with Three.js 3D rendering inside any desktop or mobile web browser.
+                No. The whole 8 ball pool game runs with Three.js 3D rendering
+                inside any desktop or mobile web browser.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>How do you win at 8 ball pool?</summary>
+              <p class="faq-answer">
+                Clear all seven balls in your group (solids or stripes), then
+                pot the 8 ball into a pocket you have called. Potting the 8
+                early, or on a foul, loses the rack.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>Is 8 ball or 9 ball more popular?</summary>
+              <p class="faq-answer">
+                8 ball is the most widely played pool game in the world,
+                especially in pubs and leagues, while 9 ball is the standard for
+                professional and televised tournaments because its rotation
+                rules make frames faster and less predictable.
               </p>
             </details>
           </li>
@@ -881,11 +1112,13 @@
 
       <!-- ── Bottom CTA ──────────────────────────── -->
       <section class="final-cta" aria-labelledby="final-title">
-        <h2 id="final-title">Ready to rack the 8-ball?</h2>
-        <p>Step up to the table now — free browser eightball pool, realistic 3D Three.js physics, no signup.</p>
+        <h2 id="final-title">Ready to play 8 ball pool?</h2>
+        <p>Free 3D pool in your browser — no download, no sign-up, no ads.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="/?ruletype=eightball&amp;lod=4">Play 8-Ball Now</a>
-          <a class="btn btn-secondary" href="/lobby">Enter Billiards Lobby</a>
+          <a class="btn btn-primary" href="/?ruletype=eightball&amp;lod=4"
+            >Play 8 Ball Pool Free</a
+          >
+          <a class="btn btn-secondary" href="/lobby">Play With a Friend</a>
         </div>
       </section>
     </main>
@@ -893,10 +1126,21 @@
     <!-- Footer -->
     <footer class="site">
       <p>
-        &copy; Open Source Billiards Simulator. Built with Three.js and TypeScript. Source code available on <a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener">GitHub</a>.
+        &copy; Open Source Billiards Simulator. Built with Three.js and
+        TypeScript. Source code available on
+        <a
+          href="https://github.com/tailuge/billiards"
+          target="_blank"
+          rel="noopener"
+          >GitHub</a
+        >.
       </p>
       <p>
-        Explore other game modes: <a href="/nineball">9-Ball Pool</a>, <a href="/snooker">Snooker</a>, <a href="/korean">3-Cushion &amp; Sagu</a>, <a href="/lobby">Online Lobby</a>, <a href="/practice">Practice Mode</a>.
+        Explore other game modes: <a href="/nineball">9 Ball Pool</a>,
+        <a href="/snooker">Snooker</a>,
+        <a href="/korean">3-Cushion &amp; Sagu</a>,
+        <a href="/lobby">Online Lobby</a>,
+        <a href="/practice">Pool Practice</a>.
       </p>
     </footer>
 

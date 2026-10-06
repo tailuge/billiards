@@ -2,21 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Free Open Source Nineball (9-Ball) Pool Simulator | 3D Three.js Browser Game</title>
+    <title>Free 9 Ball Pool – Play Online in Your Browser, No Download</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta
       name="description"
-      content="Play free open-source 9-ball (nineball) pool online directly in your browser. Realistic 3D Three.js physics, no downloads or registration required."
+      content="Play free 9 ball pool online in your browser. Real 3D physics, no download and no sign-up — practice, play AI bots, or challenge real friends in multiplayer."
     />
     <meta
       name="keywords"
-      content="free open source nineball, 9-ball pool online, open source billiards, 3d pool simulator, browser snooker, eightball pool, three cushion carom, play 9 ball free, threejs pool"
+      content="9 ball pool, 9 ball pool online, free 9 ball pool, play 9 ball, nine ball pool, 9 ball pool no download, 9 ball rules, 9 ball practice, online pool game, 3d pool game, billiards online, threejs pool"
     />
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
+    <meta name="theme-color" content="#0b1611" />
     <link
       rel="canonical"
       href="https://billiards.tailuge.workers.dev/nineball"
@@ -24,10 +25,14 @@
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Free Open Source Nineball (9-Ball) Pool Simulator | 3D Three.js Game" />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:title"
+      content="Free 9 Ball Pool — Play Online in Your Browser, No Download"
+    />
     <meta
       property="og:description"
-      content="Play free open-source 9-ball pool online directly in your browser with real 3D Three.js physics. No registration or download required."
+      content="Play free 9 ball pool online in 3D — practice, beat the AI bots, or challenge friends in multiplayer. No download and no sign-up."
     />
     <meta property="og:site_name" content="Tailuge Billiards" />
     <meta
@@ -40,6 +45,7 @@
     />
     <meta property="og:image:width" content="1120" />
     <meta property="og:image:height" content="707" />
+    <meta property="og:image:type" content="image/png" />
     <meta
       property="og:image:alt"
       content="Free online 3D pool and billiards simulator running in a browser with Three.js"
@@ -47,11 +53,11 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="Free Open Source Nineball (9-Ball) Pool Simulator | 3D Three.js Game"
+      content="Free 9 Ball Pool — Play Online in Your Browser, No Download"
     />
     <meta
       name="twitter:description"
-      content="Play free open-source 9-ball pool online in your browser. Real 3D Three.js physics, zero download, multiplayer available."
+      content="Play free 9 ball pool online in 3D — practice, beat the AI bots, or challenge friends in multiplayer. No download, no sign-up."
     />
     <meta
       name="twitter:image"
@@ -64,32 +70,88 @@
         "@context": "https://schema.org",
         "@graph": [
           {
-            "@type": "SoftwareApplication",
+            "@type": "VideoGame",
             "@id": "https://billiards.tailuge.workers.dev/nineball#game",
-            "name": "Free Open Source Nineball (9-Ball) Pool Simulator",
+            "name": "Free 9 Ball Pool Online",
             "alternateName": [
-              "Nineball Pool Simulator",
-              "9-Ball Online Game",
-              "Free Open Source 9 Ball",
-              "Browser 9-Ball Pool"
+              "9 Ball Pool",
+              "Nine Ball Pool",
+              "Nineball",
+              "9 Ball Pool Online",
+              "Free 9 Ball Pool",
+              "Play 9 Ball",
+              "Browser 9 Ball Pool"
             ],
-            "operatingSystem": "Web Browser",
+            "url": "https://billiards.tailuge.workers.dev/nineball",
+            "image": "https://billiards.tailuge.workers.dev/images/promo.png",
+            "description": "Play free 9 ball pool (nine ball) online in a browser. A Three.js 3D pool simulator with realistic collision physics, practice mode, AI bots and free multiplayer — no download and no sign-up.",
+            "inLanguage": "en",
+            "genre": ["Sports Game", "Pool Game", "Simulation Game"],
             "applicationCategory": "GameApplication",
-            "applicationSubCategory": "Sports Game",
-            "genre": ["Sports Simulator", "Pool Game"],
+            "applicationSubCategory": "9-Ball Pool",
+            "operatingSystem": "Web Browser",
+            "gamePlatform": [
+              "Web Browser",
+              "Windows PC",
+              "Mac",
+              "Linux",
+              "Android",
+              "iOS"
+            ],
+            "isAccessibleForFree": true,
+            "dateModified": "2026-10-06",
             "offers": {
               "@type": "Offer",
               "price": "0",
               "priceCurrency": "USD"
             },
-            "url": "https://billiards.tailuge.workers.dev/nineball",
-            "image": "https://billiards.tailuge.workers.dev/images/promo.png",
-            "description": "An open-source Three.js 3D billiards and 9-ball pool simulator running directly in the browser with realistic collision physics.",
             "creator": {
-              "@type": "Person",
-              "name": "tailuge"
+              "@id": "https://billiards.tailuge.workers.dev/#organization"
             },
-            "sameAs": "https://github.com/tailuge/billiards"
+            "publisher": {
+              "@id": "https://billiards.tailuge.workers.dev/#organization"
+            },
+            "sameAs": "https://github.com/tailuge/billiards",
+            "subjectOf": {
+              "@id": "https://billiards.tailuge.workers.dev/nineball#video"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://billiards.tailuge.workers.dev/#website",
+            "url": "https://billiards.tailuge.workers.dev/",
+            "name": "Tailuge Billiards",
+            "alternateName": [
+              "Three.js Billiards",
+              "Tailuge Billiards Simulator"
+            ],
+            "inLanguage": "en"
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://billiards.tailuge.workers.dev/#organization",
+            "name": "Tailuge Billiards",
+            "url": "https://billiards.tailuge.workers.dev/",
+            "logo": "https://billiards.tailuge.workers.dev/favicon.png",
+            "sameAs": [
+              "https://github.com/tailuge/billiards",
+              "https://tailuge.itch.io"
+            ]
+          },
+          {
+            "@type": "VideoObject",
+            "@id": "https://billiards.tailuge.workers.dev/nineball#video",
+            "name": "Free 9 Ball Pool Gameplay — Three.js 3D Billiards",
+            "description": "Gameplay of the free 9 ball pool simulator: break, rotations and combination shots on a Three.js 3D pool table in the browser.",
+            "thumbnailUrl": [
+              "https://billiards.tailuge.workers.dev/images/promo.png"
+            ],
+            "contentUrl": "https://youtu.be/bAeiRQcQuyg",
+            "embedUrl": "https://www.youtube.com/embed/bAeiRQcQuyg",
+            "uploadDate": "2026-04-30T00:00:00+00:00",
+            "publisher": {
+              "@id": "https://billiards.tailuge.workers.dev/#organization"
+            }
           },
           {
             "@type": "FAQPage",
@@ -97,26 +159,42 @@
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "Is this 9-ball pool game free to play?",
+                "name": "Is 9 ball pool free to play?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes, it is 100% free and open-source. You can play directly in any modern browser on PC, Mac, Linux, Android, or iOS with no fees, ads, or subscriptions."
+                  "text": "Yes — 9 ball pool here is 100% free, with no fees, ads or subscriptions. It runs in any modern browser on PC, Mac, Linux, Android or iOS."
                 }
               },
               {
                 "@type": "Question",
-                "name": "Do I need to install software or register an account?",
+                "name": "Do I need to download anything or register an account?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No registration or download is needed. Click the play button to immediately load the 3D Three.js table and start playing single-player practice, playing against AI bots, or joining multiplayer games."
+                  "text": "No download and no account are needed. Hit play and the 3D table loads immediately — practice solo, take on AI bots, or join a free multiplayer game in the lobby."
                 }
               },
               {
                 "@type": "Question",
-                "name": "How do 9-ball pool rules work in this simulator?",
+                "name": "How do 9 ball pool rules work?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "9-ball is a rotation pool game. On every shot, the cue ball must contact the lowest-numbered ball remaining on the table first. The player who legally pockets the 9-ball wins the game."
+                  "text": "9 ball is a rotation game: on every shot the cue ball must contact the lowest-numbered ball remaining on the table first, but balls can be potted in any order. Pot the 9 ball legally and you win the game."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What is the difference between 9 ball and 8 ball?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "8 ball splits fifteen balls into solids and stripes, so you must clear your group before potting the 8. 9 ball uses only nine balls, has no groups, only requires you to hit the lowest ball first, and ends the moment the 9 is potted — which makes it faster and more unpredictable."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is 9 ball harder than 8 ball?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Different rather than simply harder. 9 ball punishes loose safety play and rewards precise cue-ball control and combination shots, and because any legally potted 9 ends the rack, runs of luck can decide games that 8 ball would not."
                 }
               }
             ]
@@ -133,7 +211,7 @@
               {
                 "@type": "ListItem",
                 "position": 2,
-                "name": "Nineball Pool",
+                "name": "9 Ball Pool",
                 "item": "https://billiards.tailuge.workers.dev/nineball"
               }
             ]
@@ -720,15 +798,21 @@
     <a class="skip-link" href="#content">Skip to main content</a>
 
     <header class="site">
-      <a class="brand" href="/nineball" aria-label="Free open source nineball pool home">
+      <a class="brand" href="/nineball" aria-label="Free 9 ball pool home">
         <span class="brand-mark">🎱</span>
-        <span>Three.js Nineball</span>
+        <span>Three.js 9 Ball Pool</span>
       </a>
       <nav class="site-nav" aria-label="Main menu">
+        <a href="#how-to-play">How to Play</a>
         <a href="#rules">Rules</a>
-        <a href="#physics">Physics &amp; Tech</a>
+        <a href="#compare">8 Ball vs 9 Ball</a>
         <a href="#faq">FAQ</a>
-        <a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener">GitHub Source</a>
+        <a
+          href="https://github.com/tailuge/billiards"
+          target="_blank"
+          rel="noopener"
+          >GitHub Source</a
+        >
         <a class="nav-lobby" href="/lobby">Lobby</a>
       </nav>
     </header>
@@ -738,19 +822,21 @@
       <section class="hero" aria-labelledby="hero-title">
         <div>
           <p class="hero-tag">100% Free &amp; Open Source</p>
-          <h1 id="hero-title">
-            Free Open Source <em>Nineball (9-Ball)</em> Pool Simulator
-          </h1>
+          <h1 id="hero-title">Free <em>9 Ball Pool</em> — Play Online in 3D</h1>
           <p class="hero-desc">
-            Play realistic 9-ball, 8-ball (eightball), snooker, and carom billiards right in your browser. Powered by 3D Three.js physics with zero installation or sign-ups required.
+            Play free 9 ball pool (nine ball) online in your browser, alongside
+            8 ball, snooker and carom billiards. Real 3D Three.js physics with
+            no download, no sign-up and free multiplayer.
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="/?ruletype=nineball&amp;lod=4">Play 9-Ball Online Now &rarr;</a>
-            <a class="btn btn-secondary" href="/lobby">Enter Lobby</a>
+            <a class="btn btn-primary" href="/?ruletype=nineball&amp;lod=4"
+              >Play 9 Ball Pool Online &rarr;</a
+            >
+            <a class="btn btn-secondary" href="/lobby">Play With a Friend</a>
           </div>
           <ul class="hero-note">
             <li>3D Three.js Physics</li>
-            <li>No Download</li>
+            <li>No Download or Sign-up</li>
             <li>Multiplayer &amp; AI Bots</li>
           </ul>
         </div>
@@ -759,7 +845,7 @@
           <img
             class="hero-shot"
             src="images/promo.png"
-            alt="Free online 3D 9-ball pool game in a browser, Three.js 3D table viewed from behind cue ball"
+            alt="Free online 3D 9 ball pool game in a browser — Three.js table viewed from behind the cue ball"
             width="1120"
             height="707"
             fetchpriority="high"
@@ -767,12 +853,15 @@
           <img
             class="hero-sticker"
             src="images/dm.jpg"
-            alt="Billiards title overlay sticker"
+            alt=""
             width="1200"
             height="800"
+            loading="lazy"
+            decoding="async"
           />
           <figcaption>
-            High-precision Three.js 3D pool table running directly in browser
+            High-precision Three.js 9 ball pool table running directly in your
+            browser
           </figcaption>
         </figure>
       </section>
@@ -784,19 +873,23 @@
           <div class="feature-card">
             <h3>Three.js 3D Engine</h3>
             <p>
-              Experience smooth, high-precision ball collision and cue physics rendered in full 3D directly inside HTML5 canvas with Three.js.
+              Experience smooth, high-precision ball collision and cue physics
+              rendered in full 3D directly inside HTML5 canvas with Three.js.
             </p>
           </div>
           <div class="feature-card">
-            <h3>No Download Required</h3>
+            <h3>No Download or Sign-up</h3>
             <p>
-              Instant web application access. Open the URL on desktop or mobile and enter the lobby to start playing immediately.
+              Instant browser access on PC, Mac, Android or iPhone. Open the
+              URL, hit play and you are straight into a 9 ball pool game —
+              nothing to install and no account to create.
             </p>
           </div>
           <div class="feature-card">
             <h3>Open Source Core</h3>
             <p>
-              Transparent TypeScript architecture hosted on GitHub. Community-driven development and rules implementation.
+              Transparent TypeScript architecture hosted on GitHub.
+              Community-driven development and rules implementation.
             </p>
           </div>
         </div>
@@ -804,44 +897,156 @@
 
       <!-- ── Informational Section (Rules) ────────── -->
       <section id="rules" class="section" aria-labelledby="rules-title">
-        <p class="section-label">Game Rules</p>
-        <h2 id="rules-title">Nineball (9-Ball) Pool Rules &amp; Mechanics</h2>
+        <p class="section-label">9 Ball Rules</p>
+        <h2 id="rules-title">9 Ball Pool Rules &amp; Mechanics</h2>
         <div class="prose">
           <p>
-            <strong>Nineball (9-ball)</strong> is a rotation pool game played with nine object balls numbered 1 through 9 and a cue ball. On every shot, the cue ball must contact the lowest-numbered ball on the table first, but balls do not need to be pocketed in numerical order.
+            <strong>9 ball pool</strong> (also written
+            <strong>nine ball</strong> or <strong>nineball</strong>) is a
+            rotation pool game played with nine object balls numbered 1 to 9
+            plus the cue ball. On every shot the cue ball must contact the
+            lowest-numbered ball on the table first, but balls do not need to be
+            pocketed in numerical order.
           </p>
           <ul>
-            <li><strong>The Opening Break:</strong> The 1-ball is placed at the apex of the diamond rack, and the 9-ball is placed in the center.</li>
-            <li><strong>Legal Contact:</strong> Failing to strike the lowest-numbered ball first results in a foul, granting your opponent ball-in-hand anywhere on the table.</li>
-            <li><strong>Winning Condition:</strong> The player who legally pockets the 9-ball at any point during the frame wins the game.</li>
+            <li>
+              <strong>The opening break:</strong> the 1 ball sits at the apex of
+              the diamond rack and the 9 ball in the centre.
+            </li>
+            <li>
+              <strong>Legal contact:</strong> failing to strike the
+              lowest-numbered ball first is a foul, giving your opponent
+              ball-in-hand anywhere on the table.
+            </li>
+            <li>
+              <strong>Winning the rack:</strong> the player who legally pockets
+              the 9 ball at any point wins the game — there is no need to clear
+              the table first.
+            </li>
           </ul>
+        </div>
+      </section>
+
+      <!-- ── How to Play ─────────────────────────── -->
+      <section
+        id="how-to-play"
+        class="section"
+        aria-labelledby="how-to-play-title"
+      >
+        <p class="section-label">How to Play</p>
+        <h2 id="how-to-play-title">
+          How to Play 9 Ball Pool — Beginner's Guide
+        </h2>
+        <div class="prose">
+          <p>
+            Never played nine ball before? It is one of the easiest pool games
+            to pick up. Here is the whole game in five steps.
+          </p>
+          <ol>
+            <li>
+              <strong>Break the rack:</strong> aim at the 1 ball at the head of
+              the diamond and strike with power. Potting any ball on the break
+              is legal.
+            </li>
+            <li>
+              <strong>Always hit the lowest ball first:</strong> the cue ball
+              must contact the lowest-numbered ball remaining on the table
+              before anything else.
+            </li>
+            <li>
+              <strong>Any pocket counts:</strong> you do not have to pot balls
+              in order — so long as the lowest ball is contacted first,
+              combinations and caroms are legal.
+            </li>
+            <li>
+              <strong>Play safe when you cannot win:</strong> a foul hands your
+              opponent ball-in-hand, so a well-judged safety often beats a
+              low-percentage shot.
+            </li>
+            <li>
+              <strong>Pot the 9 to win:</strong> sink the 9 ball legally,
+              including by combination, and the rack is yours.
+            </li>
+          </ol>
+          <p>
+            Want to drill your break and position play before a match? Open the
+            free
+            <a href="/practice">9 ball practice table</a>, drag the balls into
+            any layout, and hit play.
+          </p>
         </div>
       </section>
 
       <!-- ── Technical & Game Modes ──────────────── -->
       <section id="physics" class="section" aria-labelledby="physics-title">
-        <p class="section-label">Supported Disciplines</p>
-        <h2 id="physics-title">Supported Game Modes</h2>
+        <p class="section-label">More Game Modes</p>
+        <h2 id="physics-title">Play 8 Ball, Snooker and Carom Billiards Too</h2>
         <p class="section-lede">
-          In addition to 9-ball pool, our open-source browser engine supports multiple classic billiards disciplines:
+          The same free browser engine runs every classic cue sport — switch
+          discipline at any time, with nothing extra to download:
         </p>
         <div class="modes-grid">
           <div class="mode-box">
-            <h3><a href="/eightball">8-Ball &amp; Eightball Pool</a></h3>
-            <p>Full solids and stripes rule mechanics with calling pocket options.</p>
+            <h3><a href="/eightball">8 Ball Pool (Eightball)</a></h3>
+            <p>
+              Classic solids and stripes pool with call-the-pocket rules, AI
+              bots and free multiplayer.
+            </p>
           </div>
           <div class="mode-box">
-            <h3><a href="/?ruletype=threecushion&amp;lod=4">Three-Cushion Carom</a></h3>
-            <p>Precision cushion-first angle calculation and cushion deflection physics.</p>
+            <h3>
+              <a href="/?ruletype=threecushion&amp;lod=4"
+                >Three-Cushion Carom</a
+              >
+            </h3>
+            <p>
+              Precision cushion-first angle calculation and cushion deflection
+              physics.
+            </p>
           </div>
           <div class="mode-box">
             <h3><a href="/snooker">Snooker</a></h3>
-            <p>Full-size table simulation with red and colored ball rotation scoring.</p>
+            <p>
+              Full-size table simulation with red and colored ball rotation
+              scoring.
+            </p>
           </div>
           <div class="mode-box">
             <h3><a href="/korean">Sagu / 4-Ball Billiards</a></h3>
             <p>Traditional Asian carom variants with accurate scorekeeping.</p>
           </div>
+        </div>
+      </section>
+
+      <!-- ── Comparison ──────────────────────────── -->
+      <section id="compare" class="section" aria-labelledby="compare-title">
+        <p class="section-label">9 Ball vs 8 Ball vs Snooker</p>
+        <h2 id="compare-title">Which Pool Game Should You Play?</h2>
+        <div class="prose">
+          <p>
+            <strong>9 ball pool</strong> is the fastest of the three. Frames are
+            short, the lowest ball must be hit first, and anyone can steal the
+            rack by potting the 9 — so it rewards aggressive, creative
+            shot-making.
+          </p>
+          <p>
+            <strong><a href="/eightball">8 ball (eightball)</a></strong> is the
+            classic pub and league game: fifteen balls split into solids and
+            stripes, then a called 8 ball to finish. Slower, more tactical, and
+            the most widely played pool game in the world.
+          </p>
+          <p>
+            <strong><a href="/snooker">Snooker</a></strong> is the most
+            technical cue sport, played on a twelve-foot table where scoring,
+            safety play and break building decide the match.
+          </p>
+          <p>
+            Not sure which to try? All three run on the same free Three.js
+            engine, so you can jump between
+            <a href="/?ruletype=nineball&amp;lod=4">9 ball</a>,
+            <a href="/?ruletype=eightball&amp;lod=4">8 ball</a> and snooker
+            without installing anything.
+          </p>
         </div>
       </section>
 
@@ -853,25 +1058,59 @@
         <ul class="faq-list">
           <li>
             <details open>
-              <summary>Is this 9-ball pool game free to play?</summary>
+              <summary>Is 9 ball pool free to play?</summary>
               <p class="faq-answer">
-                Yes, it is 100% free and open-source. You can play directly in any modern browser on PC, Mac, Linux, Android, or iOS with no fees, ads, or subscriptions.
+                Yes — 9 ball pool here is 100% free, with no fees, ads or
+                subscriptions. It runs in any modern browser on PC, Mac, Linux,
+                Android or iOS.
               </p>
             </details>
           </li>
           <li>
             <details>
-              <summary>Do I need to install software or register an account?</summary>
+              <summary>
+                Do I need to download anything or register an account?
+              </summary>
               <p class="faq-answer">
-                No registration or download is needed. Click the play button to immediately load the 3D Three.js table and start playing single-player practice, playing against AI bots, or joining <a href="/lobby">multiplayer games in the lobby</a>.
+                No download and no account are needed. Hit play and the 3D table
+                loads immediately — practice solo, take on AI bots, or join
+                <a href="/lobby">a free multiplayer game in the lobby</a>.
               </p>
             </details>
           </li>
           <li>
             <details>
-              <summary>How do 9-ball pool rules work in this simulator?</summary>
+              <summary>How do 9 ball pool rules work?</summary>
               <p class="faq-answer">
-                9-ball is a rotation pool game. On every shot, the cue ball must contact the lowest-numbered ball remaining on the table first. The player who legally pockets the 9-ball wins the game.
+                9 ball is a rotation game: on every shot the cue ball must
+                contact the lowest-numbered ball remaining on the table first,
+                but balls can be potted in any order. Pot the 9 ball legally and
+                you win the game.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>
+                What is the difference between 9 ball and 8 ball?
+              </summary>
+              <p class="faq-answer">
+                8 ball splits fifteen balls into solids and stripes, so you must
+                clear your group before potting the 8. 9 ball uses only nine
+                balls, has no groups, only requires you to hit the lowest ball
+                first, and ends the moment the 9 is potted — which makes it
+                faster and more unpredictable.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>Is 9 ball harder than 8 ball?</summary>
+              <p class="faq-answer">
+                Different rather than simply harder. 9 ball punishes loose
+                safety play and rewards precise cue-ball control and combination
+                shots, and because any legally potted 9 ends the rack, runs of
+                luck can decide games that 8 ball would not.
               </p>
             </details>
           </li>
@@ -880,11 +1119,13 @@
 
       <!-- ── Bottom CTA ──────────────────────────── -->
       <section class="final-cta" aria-labelledby="final-title">
-        <h2 id="final-title">Ready to play 9-ball?</h2>
-        <p>Experience real 3D Three.js physics in your browser with zero download or signup.</p>
+        <h2 id="final-title">Ready to play 9 ball pool?</h2>
+        <p>Free 3D pool in your browser — no download, no sign-up, no ads.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="/?ruletype=nineball&amp;lod=4">Play 9-Ball Now</a>
-          <a class="btn btn-secondary" href="/lobby">Enter Billiards Lobby</a>
+          <a class="btn btn-primary" href="/?ruletype=nineball&amp;lod=4"
+            >Play 9 Ball Pool Free</a
+          >
+          <a class="btn btn-secondary" href="/lobby">Play With a Friend</a>
         </div>
       </section>
     </main>
@@ -892,10 +1133,22 @@
     <!-- Footer -->
     <footer class="site">
       <p>
-        &copy; Open Source Billiards Simulator. Built with Three.js and TypeScript. Source code available on <a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener">GitHub</a>.
+        &copy; Open Source Billiards Simulator. Built with Three.js and
+        TypeScript. Source code available on
+        <a
+          href="https://github.com/tailuge/billiards"
+          target="_blank"
+          rel="noopener"
+          >GitHub</a
+        >.
       </p>
       <p>
-        Explore other game modes: <a href="/eightball">8-Ball &amp; Eightball Pool</a>, <a href="/snooker">Snooker</a>, <a href="/korean">3-Cushion &amp; Sagu</a>, <a href="/lobby">Online Lobby</a>, <a href="/practice">Practice Mode</a>.
+        Explore other game modes:
+        <a href="/eightball">8 Ball Pool &amp; Eightball</a>,
+        <a href="/snooker">Snooker</a>,
+        <a href="/korean">3-Cushion &amp; Sagu</a>,
+        <a href="/lobby">Online Lobby</a>,
+        <a href="/practice">9 Ball Practice</a>.
       </p>
     </footer>
 
