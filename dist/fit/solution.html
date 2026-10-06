@@ -575,7 +575,11 @@
           }
           return extra
         }
-        const extraAngles = generateBallAimAngles(balls[0], balls.slice(1), resBall)
+        const extraAngles = generateBallAimAngles(
+          balls[0],
+          balls.slice(1),
+          resBall
+        )
         for (const a of extraAngles) angles.push(a)
 
         const powerPercents = [0.5, 0.9]
