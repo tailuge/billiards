@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Free Open Source Nineball (9-Ball) Pool Simulator | Online Browser Game</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta
+      name="description"
+      content="Play free open-source 9-ball (nineball) pool online directly in your browser. Realistic 3D WebGL physics, no downloads or registration required."
+    />
+    <meta
+      name="keywords"
+      content="free open source nineball, 9-ball pool online, open source billiards, 3d pool simulator, browser snooker, three cushion carom, play 9 ball free"
+    />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/nineball"
+    />
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Free Open Source Nineball (9-Ball) Pool Simulator" />
+    <meta
+      property="og:description"
+      content="Play free open-source 9-ball pool online directly in your browser with real 3D WebGL physics. No registration or download required."
+    />
+    <meta property="og:site_name" content="Tailuge Billiards" />
+    <meta
+      property="og:url"
+      content="https://billiards.tailuge.workers.dev/nineball"
+    />
+    <meta
+      property="og:image"
+      content="https://billiards.tailuge.workers.dev/images/promo.png"
+    />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="707" />
+    <meta
+      property="og:image:alt"
+      content="Free online 3D pool and billiards simulator running in a browser"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Free Open Source Nineball (9-Ball) Pool Simulator"
+    />
+    <meta
+      name="twitter:description"
+      content="Play free open-source 9-ball pool online in your browser. Real 3D WebGL physics, zero download, multiplayer available."
+    />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/images/promo.png"
+    />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://billiards.tailuge.workers.dev/nineball#game",
+            "name": "Free Open Source Nineball (9-Ball) Pool Simulator",
+            "alternateName": [
+              "Nineball Pool Simulator",
+              "9-Ball Online Game",
+              "Free Open Source 9 Ball",
+              "Browser 9-Ball Pool"
+            ],
+            "operatingSystem": "Web Browser",
+            "applicationCategory": "GameApplication",
+            "applicationSubCategory": "Sports Game",
+            "genre": ["Sports Simulator", "Pool Game"],
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "url": "https://billiards.tailuge.workers.dev/nineball",
+            "image": "https://billiards.tailuge.workers.dev/images/promo.png",
+            "description": "An open-source WebGL 3D billiards and 9-ball pool simulator running directly in the browser with realistic collision physics.",
+            "creator": {
+              "@type": "Person",
+              "name": "tailuge"
+            },
+            "sameAs": "https://github.com/tailuge/billiards"
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://billiards.tailuge.workers.dev/nineball#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is this 9-ball pool game free to play?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes, it is 100% free and open-source. You can play directly in any modern browser on PC, Mac, Linux, Android, or iOS with no fees, ads, or subscriptions."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Do I need to install software or register an account?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No registration or download is needed. Click the play button to immediately load the 3D WebGL table and start playing single-player practice, playing against AI bots, or joining multiplayer games."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do 9-ball pool rules work in this simulator?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "9-ball is a rotation pool game. On every shot, the cue ball must contact the lowest-numbered ball remaining on the table first. The player who legally pockets the 9-ball wins the game."
+                }
+              }
+            ]
+          },
+          {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Billiards",
+                "item": "https://billiards.tailuge.workers.dev/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Nineball Pool",
+                "item": "https://billiards.tailuge.workers.dev/nineball"
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+
+    <style>
+      :root {
+        --bg: #0b1611;
+        --bg-deep: #08110d;
+        --panel: #10231a;
+        --green: #1a6b44;
+        --line: rgb(255 255 255 / 8%);
+        --line-strong: rgb(255 255 255 / 16%);
+        --accent: #10b981;
+        --accent-bright: #34d399;
+        --text: #f1eee4;
+        --text-soft: #bac3b8;
+        --text-dim: #828d83;
+
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background: var(--bg);
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
+        font-size: 16px;
+        line-height: 1.75;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: #064e3b;
+      }
+
+      a {
+        color: var(--accent-bright);
+        text-underline-offset: 3px;
+      }
+
+      a:hover {
+        color: #a7f3d0;
+      }
+
+      a:focus-visible,
+      button:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 4px;
+      }
+
+      .skip-link {
+        position: absolute;
+        top: -100px;
+        left: 16px;
+        z-index: 10;
+        padding: 8px 14px;
+        background: var(--accent);
+        color: #064e3b;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .skip-link:focus {
+        top: 16px;
+      }
+
+      header.site,
+      main,
+      footer.site {
+        width: calc(100% - 40px);
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+        line-break: strict;
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      /* ── Buttons ─────────────────────────── */
+
+      .btn {
+        display: inline-flex;
+        min-height: 50px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 26px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-size: 0.98rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1.25;
+        text-align: center;
+        text-decoration: none;
+        transition:
+          transform 140ms ease,
+          background-color 140ms ease,
+          border-color 140ms ease,
+          color 140ms ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        text-decoration: none;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #064e3b;
+        box-shadow: 0 6px 22px rgb(16 185 129 / 25%);
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-bright);
+        color: #064e3b;
+      }
+
+      .btn-secondary {
+        border-color: var(--line-strong);
+        background: rgb(255 255 255 / 5%);
+        color: var(--text);
+      }
+
+      .btn-secondary:hover {
+        border-color: rgb(255 255 255 / 34%);
+        background: rgb(255 255 255 / 10%);
+        color: #fff;
+      }
+
+      /* ── Header ──────────────────────────── */
+
+      header.site {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 64px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        font-size: 0.88rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 30px;
+        height: 30px;
+        place-items: center;
+        border-radius: 7px;
+        background: var(--green);
+        color: #fff;
+        font-size: 0.76rem;
+        font-weight: 900;
+        letter-spacing: 0;
+      }
+
+      .site-nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      .site-nav a:not(.nav-lobby) {
+        display: none;
+        color: var(--text-soft);
+        text-decoration: none;
+      }
+
+      .site-nav a:not(.nav-lobby):hover {
+        color: var(--text);
+      }
+
+      .nav-lobby {
+        padding: 8px 16px;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #064e3b !important;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .nav-lobby:hover {
+        background: var(--accent-bright);
+        color: #064e3b !important;
+      }
+
+      main {
+        overflow: hidden;
+      }
+
+      /* ── Hero ────────────────────────────── */
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1fr;
+        align-items: center;
+        gap: 40px;
+        padding: 52px 0 64px;
+      }
+
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgb(16 185 129 / 20%);
+        color: var(--accent-bright);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .hero-tag::before {
+        display: block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent-bright);
+        content: "";
+      }
+
+      .hero h1 {
+        margin-bottom: 16px;
+        font-size: clamp(1.65rem, 4.5vw, 2.55rem);
+        font-weight: 900;
+        letter-spacing: -0.01em;
+        line-height: 1.35;
+      }
+
+      .hero h1 em {
+        color: var(--accent-bright);
+        font-style: normal;
+      }
+
+      .hero-desc {
+        max-width: 520px;
+        margin-bottom: 30px;
+        color: var(--text-soft);
+        font-size: 1rem;
+      }
+
+      .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .hero-actions .btn {
+        min-height: 56px;
+        font-size: 1.05rem;
+      }
+
+      .hero-note {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        margin: 22px 0 0;
+        padding: 0;
+        color: var(--text-dim);
+        font-size: 0.82rem;
+        font-weight: 600;
+        list-style: none;
+      }
+
+      .hero-visual {
+        position: relative;
+        max-width: 630px;
+        margin: 0;
+      }
+
+      .hero-visual img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .hero-visual .hero-shot {
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+        box-shadow: 0 20px 60px rgb(0 0 0 / 50%);
+      }
+
+      .hero-visual .hero-sticker {
+        position: absolute;
+        top: -14px;
+        right: 12px;
+        width: clamp(110px, 26%, 190px);
+        border-radius: 10px;
+        border: 1px solid rgb(255 255 255 / 40%);
+        box-shadow: 0 10px 28px rgb(0 0 0 / 55%);
+        transform: rotate(4deg);
+      }
+
+      .hero-visual figcaption {
+        margin-top: 10px;
+        color: var(--text-dim);
+        font-size: 0.78rem;
+        text-align: right;
+      }
+
+      /* ── Sections ────────────────────────── */
+
+      .section {
+        padding: 64px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-label {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--accent);
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+
+      .section h2 {
+        max-width: 680px;
+        margin-bottom: 16px;
+        font-size: clamp(1.35rem, 3vw, 2rem);
+        font-weight: 900;
+        letter-spacing: -0.01em;
+        line-height: 1.4;
+      }
+
+      .section-lede {
+        max-width: 620px;
+        margin-bottom: 36px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      .prose {
+        max-width: 680px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      /* ── Grid ────────────────────────────── */
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .feature-card {
+        padding: 24px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .feature-card h3 {
+        margin-bottom: 8px;
+        color: var(--text);
+        font-size: 1.15rem;
+        font-weight: 800;
+      }
+
+      .feature-card p {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 0.9rem;
+      }
+
+      /* ── Game Modes ──────────────────────── */
+
+      .modes-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .mode-box {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: var(--bg-deep);
+      }
+
+      .mode-box h3 {
+        margin-bottom: 6px;
+        color: var(--accent-bright);
+        font-size: 1.05rem;
+        font-weight: 800;
+      }
+
+      .mode-box p {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 0.88rem;
+      }
+
+      /* ── FAQ ─────────────────────────────── */
+
+      .faq-list {
+        max-width: 780px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid var(--line);
+      }
+
+      .faq-list details {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .faq-list summary {
+        padding: 18px 4px;
+        color: var(--text);
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .faq-list summary::marker {
+        color: var(--accent);
+      }
+
+      .faq-list details[open] summary {
+        color: var(--accent-bright);
+      }
+
+      .faq-list .faq-answer {
+        margin: 0 0 18px;
+        padding-right: 8px;
+        color: var(--text-soft);
+        font-size: 0.9rem;
+      }
+
+      /* ── Final CTA ───────────────────────── */
+
+      .final-cta {
+        padding: 88px 0 96px;
+        border-top: 1px solid var(--line);
+        background:
+          radial-gradient(
+            90% 130% at 50% 115%,
+            rgb(16 185 129 / 25%) 0%,
+            transparent 70%
+          ),
+          var(--bg-deep);
+        text-align: center;
+      }
+
+      .final-cta h2 {
+        max-width: none;
+        margin: 0 auto 14px;
+        font-size: clamp(1.5rem, 3.6vw, 2.2rem);
+      }
+
+      .final-cta p {
+        max-width: 520px;
+        margin: 0 auto 32px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      .final-cta .hero-actions {
+        justify-content: center;
+        grid-template-columns: 1fr;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+
+      /* ── Footer ──────────────────────────── */
+
+      footer.site {
+        padding: 32px 0 48px;
+        border-top: 1px solid var(--line);
+        color: var(--text-dim);
+        font-size: 0.8rem;
+      }
+
+      footer.site p {
+        max-width: 760px;
+        margin-bottom: 12px;
+      }
+
+      footer.site p:last-child {
+        margin-bottom: 0;
+      }
+
+      /* ── Responsive ──────────────────────── */
+
+      @media (width >= 640px) {
+        .hero-actions,
+        .final-cta .hero-actions {
+          grid-template-columns: auto auto;
+          justify-content: start;
+        }
+
+        .final-cta .hero-actions {
+          justify-content: center;
+        }
+
+        .card-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .modes-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (width >= 900px) {
+        .site-nav a:not(.nav-lobby) {
+          display: inline-block;
+        }
+
+        .hero {
+          grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+          gap: 56px;
+          padding: 72px 0 80px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .btn {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to main content</a>
+
+    <header class="site">
+      <a class="brand" href="/nineball" aria-label="Free open source nineball pool home">
+        <span class="brand-mark">🎱</span>
+        <span>WebGL Nineball</span>
+      </a>
+      <nav class="site-nav" aria-label="Main menu">
+        <a href="#rules">Rules</a>
+        <a href="#physics">Physics &amp; Tech</a>
+        <a href="#faq">FAQ</a>
+        <a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener">GitHub Source</a>
+        <a class="nav-lobby" href="/lobby">Lobby</a>
+      </nav>
+    </header>
+
+    <main id="content">
+      <!-- ── Hero Section ────────────────────────── -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <p class="hero-tag">100% Free &amp; Open Source</p>
+          <h1 id="hero-title">
+            Free Open Source <em>Nineball (9-Ball)</em> Pool Simulator
+          </h1>
+          <p class="hero-desc">
+            Play realistic 9-ball, 8-ball, snooker, and carom billiards right in your browser. Powered by 3D WebGL physics with zero installation or sign-ups required.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="/?ruletype=nineball&amp;lod=4">Play 9-Ball Online Now &rarr;</a>
+            <a class="btn btn-secondary" href="/lobby">Enter Lobby</a>
+          </div>
+          <ul class="hero-note">
+            <li>3D WebGL Physics</li>
+            <li>No Download</li>
+            <li>Multiplayer &amp; AI Bots</li>
+          </ul>
+        </div>
+
+        <figure class="hero-visual">
+          <img
+            class="hero-shot"
+            src="images/promo.png"
+            alt="Free online 3D 9-ball pool game in a browser, WebGL table viewed from behind cue ball"
+            width="1120"
+            height="707"
+            fetchpriority="high"
+          />
+          <img
+            class="hero-sticker"
+            src="images/dm.jpg"
+            alt="Billiards title overlay sticker"
+            width="1200"
+            height="800"
+          />
+          <figcaption>
+            High-precision WebGL 3D pool table running directly in browser
+          </figcaption>
+        </figure>
+      </section>
+
+      <!-- ── Feature Grid ────────────────────────── -->
+      <section class="section" aria-labelledby="features-title">
+        <h2 id="features-title" class="visually-hidden">Key Features</h2>
+        <div class="card-grid">
+          <div class="feature-card">
+            <h3>3D WebGL Engine</h3>
+            <p>
+              Experience smooth, high-precision ball collision and cue physics rendered in full 3D directly inside HTML5 canvas.
+            </p>
+          </div>
+          <div class="feature-card">
+            <h3>No Download Required</h3>
+            <p>
+              Instant web application access. Open the URL on desktop or mobile and enter the lobby to start playing immediately.
+            </p>
+          </div>
+          <div class="feature-card">
+            <h3>Open Source Core</h3>
+            <p>
+              Transparent TypeScript architecture hosted on GitHub. Community-driven development and rules implementation.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Informational Section (Rules) ────────── -->
+      <section id="rules" class="section" aria-labelledby="rules-title">
+        <p class="section-label">Game Rules</p>
+        <h2 id="rules-title">Nineball (9-Ball) Pool Rules &amp; Mechanics</h2>
+        <div class="prose">
+          <p>
+            <strong>Nineball (9-ball)</strong> is a rotation pool game played with nine object balls numbered 1 through 9 and a cue ball. On every shot, the cue ball must contact the lowest-numbered ball on the table first, but balls do not need to be pocketed in numerical order.
+          </p>
+          <ul>
+            <li><strong>The Opening Break:</strong> The 1-ball is placed at the apex of the diamond rack, and the 9-ball is placed in the center.</li>
+            <li><strong>Legal Contact:</strong> Failing to strike the lowest-numbered ball first results in a foul, granting your opponent ball-in-hand anywhere on the table.</li>
+            <li><strong>Winning Condition:</strong> The player who legally pockets the 9-ball at any point during the frame wins the game.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ── Technical & Game Modes ──────────────── -->
+      <section id="physics" class="section" aria-labelledby="physics-title">
+        <p class="section-label">Supported Disciplines</p>
+        <h2 id="physics-title">Supported Game Modes</h2>
+        <p class="section-lede">
+          In addition to 9-ball pool, our open-source browser engine supports multiple classic billiards disciplines:
+        </p>
+        <div class="modes-grid">
+          <div class="mode-box">
+            <h3><a href="/eightball">Classic 8-Ball Pool</a></h3>
+            <p>Full solids and stripes rule mechanics with calling pocket options.</p>
+          </div>
+          <div class="mode-box">
+            <h3><a href="/?ruletype=threecushion&amp;lod=4">Three-Cushion Carom</a></h3>
+            <p>Precision cushion-first angle calculation and cushion deflection physics.</p>
+          </div>
+          <div class="mode-box">
+            <h3><a href="/snooker">Snooker</a></h3>
+            <p>Full-size table simulation with red and colored ball rotation scoring.</p>
+          </div>
+          <div class="mode-box">
+            <h3><a href="/korean">Sagu / 4-Ball Billiards</a></h3>
+            <p>Traditional Asian carom variants with accurate scorekeeping.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── FAQ Section ─────────────────────────── -->
+      <section id="faq" class="section" aria-labelledby="faq-title">
+        <p class="section-label">FAQ</p>
+        <h2 id="faq-title">Frequently Asked Questions</h2>
+
+        <ul class="faq-list">
+          <li>
+            <details open>
+              <summary>Is this 9-ball pool game free to play?</summary>
+              <p class="faq-answer">
+                Yes, it is 100% free and open-source. You can play directly in any modern browser on PC, Mac, Linux, Android, or iOS with no fees, ads, or subscriptions.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>Do I need to install software or register an account?</summary>
+              <p class="faq-answer">
+                No registration or download is needed. Click the play button to immediately load the 3D WebGL table and start playing single-player practice, playing against AI bots, or joining <a href="/lobby">multiplayer games in the lobby</a>.
+              </p>
+            </details>
+          </li>
+          <li>
+            <details>
+              <summary>How do 9-ball pool rules work in this simulator?</summary>
+              <p class="faq-answer">
+                9-ball is a rotation pool game. On every shot, the cue ball must contact the lowest-numbered ball remaining on the table first. The player who legally pockets the 9-ball wins the game.
+              </p>
+            </details>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ── Bottom CTA ──────────────────────────── -->
+      <section class="final-cta" aria-labelledby="final-title">
+        <h2 id="final-title">Ready to play 9-ball?</h2>
+        <p>Experience real 3D physics in your browser with zero download or signup.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/?ruletype=nineball&amp;lod=4">Play 9-Ball Now</a>
+          <a class="btn btn-secondary" href="/lobby">Enter Billiards Lobby</a>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site">
+      <p>
+        &copy; Open Source Billiards Simulator. Built with WebGL and TypeScript. Source code available on <a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener">GitHub</a>.
+      </p>
+      <p>
+        Explore other game modes: <a href="/eightball">8-Ball Pool</a>, <a href="/snooker">Snooker</a>, <a href="/korean">3-Cushion &amp; Sagu</a>, <a href="/lobby">Online Lobby</a>, <a href="/practice">Practice Mode</a>.
+      </p>
+    </footer>
+
+    <script>
+      if (!["localhost", "127.0.0.1"].includes(location.hostname)) {
+        fetch("https://billiards-network.onrender.com/api/usage/nineball", {
+          method: "PUT",
+          mode: "cors",
+        }).catch(() => {})
+      }
+    </script>
+  </body>
+</html>

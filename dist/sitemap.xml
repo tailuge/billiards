@@ -125,4 +125,14 @@
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/snooker" />
     <lastmod>2026-09-14</lastmod>
   </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/nineball.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/nineball" />
+    <lastmod>2026-10-06</lastmod>
+  </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/eightball.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/eightball" />
+    <lastmod>2026-10-06</lastmod>
+  </url>
 </urlset>
