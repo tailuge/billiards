@@ -2,15 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Free Open Source Nineball (9-Ball) Pool Simulator | Online Browser Game</title>
+    <title>Free Open Source Nineball (9-Ball) Pool Simulator | 3D Three.js Browser Game</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta
       name="description"
-      content="Play free open-source 9-ball (nineball) pool online directly in your browser. Realistic 3D WebGL physics, no downloads or registration required."
+      content="Play free open-source 9-ball (nineball) pool online directly in your browser. Realistic 3D Three.js physics, no downloads or registration required."
     />
     <meta
       name="keywords"
-      content="free open source nineball, 9-ball pool online, open source billiards, 3d pool simulator, browser snooker, three cushion carom, play 9 ball free"
+      content="free open source nineball, 9-ball pool online, open source billiards, 3d pool simulator, browser snooker, eightball pool, three cushion carom, play 9 ball free, threejs pool"
     />
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <meta
@@ -24,10 +24,10 @@
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Free Open Source Nineball (9-Ball) Pool Simulator" />
+    <meta property="og:title" content="Free Open Source Nineball (9-Ball) Pool Simulator | 3D Three.js Game" />
     <meta
       property="og:description"
-      content="Play free open-source 9-ball pool online directly in your browser with real 3D WebGL physics. No registration or download required."
+      content="Play free open-source 9-ball pool online directly in your browser with real 3D Three.js physics. No registration or download required."
     />
     <meta property="og:site_name" content="Tailuge Billiards" />
     <meta
@@ -42,16 +42,16 @@
     <meta property="og:image:height" content="707" />
     <meta
       property="og:image:alt"
-      content="Free online 3D pool and billiards simulator running in a browser"
+      content="Free online 3D pool and billiards simulator running in a browser with Three.js"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="Free Open Source Nineball (9-Ball) Pool Simulator"
+      content="Free Open Source Nineball (9-Ball) Pool Simulator | 3D Three.js Game"
     />
     <meta
       name="twitter:description"
-      content="Play free open-source 9-ball pool online in your browser. Real 3D WebGL physics, zero download, multiplayer available."
+      content="Play free open-source 9-ball pool online in your browser. Real 3D Three.js physics, zero download, multiplayer available."
     />
     <meta
       name="twitter:image"
@@ -84,7 +84,7 @@
             },
             "url": "https://billiards.tailuge.workers.dev/nineball",
             "image": "https://billiards.tailuge.workers.dev/images/promo.png",
-            "description": "An open-source WebGL 3D billiards and 9-ball pool simulator running directly in the browser with realistic collision physics.",
+            "description": "An open-source Three.js 3D billiards and 9-ball pool simulator running directly in the browser with realistic collision physics.",
             "creator": {
               "@type": "Person",
               "name": "tailuge"
@@ -108,7 +108,7 @@
                 "name": "Do I need to install software or register an account?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No registration or download is needed. Click the play button to immediately load the 3D WebGL table and start playing single-player practice, playing against AI bots, or joining multiplayer games."
+                  "text": "No registration or download is needed. Click the play button to immediately load the 3D Three.js table and start playing single-player practice, playing against AI bots, or joining multiplayer games."
                 }
               },
               {
@@ -283,13 +283,13 @@
 
       .btn-primary {
         background: var(--accent);
-        color: #064e3b;
+        color: #08110d;
         box-shadow: 0 6px 22px rgb(16 185 129 / 25%);
       }
 
       .btn-primary:hover {
         background: var(--accent-bright);
-        color: #064e3b;
+        color: #08110d;
       }
 
       .btn-secondary {
@@ -362,14 +362,14 @@
         padding: 8px 16px;
         border-radius: 7px;
         background: var(--accent);
-        color: #064e3b !important;
+        color: #08110d !important;
         font-weight: 800;
         text-decoration: none;
       }
 
       .nav-lobby:hover {
         background: var(--accent-bright);
-        color: #064e3b !important;
+        color: #08110d !important;
       }
 
       main {
@@ -722,7 +722,7 @@
     <header class="site">
       <a class="brand" href="/nineball" aria-label="Free open source nineball pool home">
         <span class="brand-mark">🎱</span>
-        <span>WebGL Nineball</span>
+        <span>Three.js Nineball</span>
       </a>
       <nav class="site-nav" aria-label="Main menu">
         <a href="#rules">Rules</a>
@@ -742,14 +742,14 @@
             Free Open Source <em>Nineball (9-Ball)</em> Pool Simulator
           </h1>
           <p class="hero-desc">
-            Play realistic 9-ball, 8-ball, snooker, and carom billiards right in your browser. Powered by 3D WebGL physics with zero installation or sign-ups required.
+            Play realistic 9-ball, 8-ball (eightball), snooker, and carom billiards right in your browser. Powered by 3D Three.js physics with zero installation or sign-ups required.
           </p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="/?ruletype=nineball&amp;lod=4">Play 9-Ball Online Now &rarr;</a>
             <a class="btn btn-secondary" href="/lobby">Enter Lobby</a>
           </div>
           <ul class="hero-note">
-            <li>3D WebGL Physics</li>
+            <li>3D Three.js Physics</li>
             <li>No Download</li>
             <li>Multiplayer &amp; AI Bots</li>
           </ul>
@@ -759,7 +759,7 @@
           <img
             class="hero-shot"
             src="images/promo.png"
-            alt="Free online 3D 9-ball pool game in a browser, WebGL table viewed from behind cue ball"
+            alt="Free online 3D 9-ball pool game in a browser, Three.js 3D table viewed from behind cue ball"
             width="1120"
             height="707"
             fetchpriority="high"
@@ -772,7 +772,7 @@
             height="800"
           />
           <figcaption>
-            High-precision WebGL 3D pool table running directly in browser
+            High-precision Three.js 3D pool table running directly in browser
           </figcaption>
         </figure>
       </section>
@@ -782,9 +782,9 @@
         <h2 id="features-title" class="visually-hidden">Key Features</h2>
         <div class="card-grid">
           <div class="feature-card">
-            <h3>3D WebGL Engine</h3>
+            <h3>Three.js 3D Engine</h3>
             <p>
-              Experience smooth, high-precision ball collision and cue physics rendered in full 3D directly inside HTML5 canvas.
+              Experience smooth, high-precision ball collision and cue physics rendered in full 3D directly inside HTML5 canvas with Three.js.
             </p>
           </div>
           <div class="feature-card">
@@ -827,7 +827,7 @@
         </p>
         <div class="modes-grid">
           <div class="mode-box">
-            <h3><a href="/eightball">Classic 8-Ball Pool</a></h3>
+            <h3><a href="/eightball">8-Ball &amp; Eightball Pool</a></h3>
             <p>Full solids and stripes rule mechanics with calling pocket options.</p>
           </div>
           <div class="mode-box">
@@ -863,7 +863,7 @@
             <details>
               <summary>Do I need to install software or register an account?</summary>
               <p class="faq-answer">
-                No registration or download is needed. Click the play button to immediately load the 3D WebGL table and start playing single-player practice, playing against AI bots, or joining <a href="/lobby">multiplayer games in the lobby</a>.
+                No registration or download is needed. Click the play button to immediately load the 3D Three.js table and start playing single-player practice, playing against AI bots, or joining <a href="/lobby">multiplayer games in the lobby</a>.
               </p>
             </details>
           </li>
@@ -881,7 +881,7 @@
       <!-- ── Bottom CTA ──────────────────────────── -->
       <section class="final-cta" aria-labelledby="final-title">
         <h2 id="final-title">Ready to play 9-ball?</h2>
-        <p>Experience real 3D physics in your browser with zero download or signup.</p>
+        <p>Experience real 3D Three.js physics in your browser with zero download or signup.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="/?ruletype=nineball&amp;lod=4">Play 9-Ball Now</a>
           <a class="btn btn-secondary" href="/lobby">Enter Billiards Lobby</a>
@@ -892,10 +892,10 @@
     <!-- Footer -->
     <footer class="site">
       <p>
-        &copy; Open Source Billiards Simulator. Built with WebGL and TypeScript. Source code available on <a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener">GitHub</a>.
+        &copy; Open Source Billiards Simulator. Built with Three.js and TypeScript. Source code available on <a href="https://github.com/tailuge/billiards" target="_blank" rel="noopener">GitHub</a>.
       </p>
       <p>
-        Explore other game modes: <a href="/eightball">8-Ball Pool</a>, <a href="/snooker">Snooker</a>, <a href="/korean">3-Cushion &amp; Sagu</a>, <a href="/lobby">Online Lobby</a>, <a href="/practice">Practice Mode</a>.
+        Explore other game modes: <a href="/eightball">8-Ball &amp; Eightball Pool</a>, <a href="/snooker">Snooker</a>, <a href="/korean">3-Cushion &amp; Sagu</a>, <a href="/lobby">Online Lobby</a>, <a href="/practice">Practice Mode</a>.
       </p>
     </footer>
 
