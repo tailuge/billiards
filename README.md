@@ -33,6 +33,8 @@ Demos run in all major desktop and mobile browsers and use WebGL
 * Race again the clock to clear the table in a [speedrun](https://billiards.tailuge.workers.dev/speedrun/index.html).
 * Customise your [cue](https://billiards.tailuge.workers.dev/cue) and [emblem](https://billiards.tailuge.workers.dev/wall) for other players to see
 * Sit a hand curated [exam](https://billiards.tailuge.workers.dev/exam/index.html) to asses your level of play. 
+* Measure your progress in rated games by tracking your [ELO](https://scoreboard-tailuge.vercel.app/elo) (Glicko2). 
+* Reveal [textures](https://billiards.tailuge.workers.dev/reveal/) on the table cloth by potting balls in straight pool.
 * Invite friends and play to win as many games as you can in 30 mins in [hourly arenas](https://billiards.tailuge.workers.dev/arena.html) ([lichess.org](https://lichess.org/) style)
 
 ## Features
