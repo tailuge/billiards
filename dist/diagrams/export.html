@@ -18,6 +18,17 @@
         padding: 1px;
       }
 
+      html,
+      body {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        display: none;
+      }
+
       body {
         font-family:
           system-ui,
@@ -142,6 +153,14 @@
         white-space: pre-wrap;
         word-break: break-all;
         max-height: 40vh;
+
+        /* No visible scrollbar in the code panels: the wheel and keyboard
+           still scroll them, the bar just isn't drawn. */
+        scrollbar-width: none;
+      }
+
+      #panels pre::-webkit-scrollbar {
+        display: none;
       }
     </style>
   </head>
@@ -156,7 +175,7 @@
       <button id="play-btn" class="btn" type="button">Play in game</button>
       <button id="analyze-btn" class="btn" type="button">Analyse</button>
       <button id="setup-btn" class="btn" type="button">Setup</button>
-      <button id="edit-btn" class="btn" type="button">Edit</button>
+      <button id="edit-btn" class="btn" type="button">Edit SVG</button>
       <button id="png-btn" class="btn" type="button">Open PNG</button>
     </div>
 

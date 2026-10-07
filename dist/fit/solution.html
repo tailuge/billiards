@@ -341,7 +341,7 @@
             cushionModel,
             ruleType: "threecushion",
             shot: {
-              cueBallId: 0,
+              cueBallId: cueBallId,
               angle: +t.angle.toFixed(6),
               power: +t.power.toFixed(6),
               offset: {
@@ -527,6 +527,28 @@
         }
       }
 
+      // Which ball the search is played from: an index into the layout, the
+      // same one the exporter, the editor and the live game carry. It rides in
+      // `initShot` -- the pair `init` and `initShot` are what every launch link
+      // hands a shot over as -- of which this page reads only the ball, because
+      // the aim is the thing the search is solving for. A link that names no
+      // ball in the layout searches from the first one, as a single-ball or
+      // stale layout has to.
+      function readCueBallId() {
+        const count = Math.floor(ballPositions.length / 2)
+        let index = null
+        try {
+          index = JSON.parse(urlParams.get("initShot") ?? "{}")?.cueBallId
+        } catch (e) {
+          index = null
+        }
+        return Number.isInteger(index) && index >= 0 && index < count
+          ? index
+          : 0
+      }
+
+      const cueBallId = readCueBallId()
+
       if (
         initParam &&
         ballPositions.length >= 6 &&
@@ -576,8 +598,8 @@
           return extra
         }
         const extraAngles = generateBallAimAngles(
-          balls[0],
-          balls.slice(1),
+          balls[cueBallId],
+          balls.filter((ball) => ball.id !== cueBallId),
           resBall
         )
         for (const a of extraAngles) angles.push(a)
@@ -671,7 +693,7 @@
             cushionModel: cushionModel,
             balls: balls,
             shot: {
-              cueBallId: 0,
+              cueBallId: cueBallId,
               angle: task.angle,
               power: task.power,
               offset: { x: task.ox, y: task.oy },
@@ -724,15 +746,18 @@
           return prefix + ".*◉"
         }
         function processResult(task, data) {
-          const cutoff = getScoringCutoff(data.outcomes, 0)
+          const cutoff = getScoringCutoff(data.outcomes, cueBallId)
           if (cutoff >= 0) {
             foundCount++
             const contacted = new Set()
             let patternEnd = cutoff + 1
             for (let i = 0; i <= cutoff; i++) {
               const o = data.outcomes[i]
-              if (o.type === "Collision" && (o.ballA === 0 || o.ballB === 0)) {
-                contacted.add(o.ballA === 0 ? o.ballB : o.ballA)
+              if (
+                o.type === "Collision" &&
+                (o.ballA === cueBallId || o.ballB === cueBallId)
+              ) {
+                contacted.add(o.ballA === cueBallId ? o.ballB : o.ballA)
                 if (contacted.size >= 2) {
                   patternEnd = i + 1
                   break
@@ -741,11 +766,11 @@
             }
             const patternStr = data.outcomes
               .slice(0, patternEnd)
-              .filter((o) => o.ballA === 0 || o.ballB === 0)
+              .filter((o) => o.ballA === cueBallId || o.ballB === cueBallId)
               .map((o) => {
                 if (o.type === "Cushion") return o.cushion ?? "⌻"
                 if (o.type === "Collision") {
-                  const otherId = o.ballA === 0 ? o.ballB : o.ballA
+                  const otherId = o.ballA === cueBallId ? o.ballB : o.ballA
                   return `◉${otherId}`
                 }
                 return o.type.toLowerCase()

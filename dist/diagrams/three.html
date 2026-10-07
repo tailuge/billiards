@@ -1796,7 +1796,17 @@
 
       // Aim is a direction plus a drawn length, as in three.html. The length is
       // cosmetic: the tip is held at the cushion whatever the pointer distance.
-      const CUE_BALL = 0
+      //
+      // Which ball the shot is played from is the state's to say, not this
+      // page's. The `init`/`initShot` pair carries it as an index into the same
+      // list the exporter and the live game read -- player 1's white ball is 0,
+      // player 2's yellow one is 1 in threecushion's rack -- and the live game
+      // already aims from `balls[shot.cueBallId]`. So a state that names the
+      // second ball is aimed and handed on as the second ball. Anything that
+      // names no ball that exists falls back to the first rather than aiming
+      // from a ball that is not on the table.
+      const CUE_BALL =
+        Number.isInteger(state.shot.i) && balls[state.shot.i] ? state.shot.i : 0
       const DEFAULT_AIM_LENGTH = 86 * R
 
       // Grabbing keeps ~16 screen px of slack around a ball when zoomed out and
@@ -2682,14 +2692,18 @@
         window.open(url.toString(), "_blank")
       })
 
-      // Fit a shot to this layout. The fit pages solve for the aim rather than
-      // replaying one, so this link carries the balls and the constants and
-      // deliberately no `initShot` -- the same as three.html's.
+      // Fit a shot to this layout. The fit page solves for the aim rather than
+      // replaying one, so the aim in `initShot` means nothing to it -- but the
+      // ball it is played from does, so the pair goes along and the fit reads
+      // the one field it needs. Sent whole because `init` and `initShot` are
+      // the pair every other link here hands a shot over as, and a search that
+      // resumed on the wrong ball would be solving the wrong shot.
       document.getElementById("solution")?.addEventListener("click", () => {
         const url = addConstants(
           new URL("../fit/solution.html", window.location.href)
         )
         url.searchParams.set("init", JSON.stringify(initCoords()))
+        url.searchParams.set("initShot", initShot())
         window.open(url.toString(), "_blank")
       })
 
