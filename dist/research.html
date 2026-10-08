@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Interactive Billiards Shot Analysis &amp; Training | Billiards Simulator</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta
+      name="description"
+      content="Analyse billiard shots with interactive aim, spin, power and elevation sensitivity. Create printable SVG diagrams and explore shots for training."
+    />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0b1611" />
+    <link rel="canonical" href="https://billiards.tailuge.workers.dev/research" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:title"
+      content="Interactive Billiards Shot Analysis &amp; Training | Billiards Simulator"
+    />
+    <meta
+      property="og:description"
+      content="Analyse billiard shots with interactive aim, spin, power and elevation sensitivity. Create printable SVG diagrams and explore shots for training."
+    />
+    <meta property="og:site_name" content="Tailuge Billiards" />
+    <meta
+      property="og:url"
+      content="https://billiards.tailuge.workers.dev/research"
+    />
+    <meta
+      property="og:image"
+      content="https://billiards.tailuge.workers.dev/images/shoteditor.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Interactive billiards shot sensitivity analysis displaying variation trajectories and tolerance bounds"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Interactive Billiards Shot Analysis &amp; Training | Billiards Simulator"
+    />
+    <meta
+      name="twitter:description"
+      content="Analyse billiard shots with interactive aim, spin, power and elevation sensitivity. Create printable SVG diagrams and explore shots for training."
+    />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/images/shoteditor.png"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://billiards.tailuge.workers.dev/research#page",
+            "url": "https://billiards.tailuge.workers.dev/research",
+            "name": "Interactive Billiards Shot Analysis & Training",
+            "description": "Analyse billiard shots with interactive aim, spin, power and elevation sensitivity. Create printable SVG diagrams and explore shots for training.",
+            "inLanguage": "en",
+            "isPartOf": {
+              "@id": "https://billiards.tailuge.workers.dev/#website"
+            },
+            "breadcrumb": {
+              "@id": "https://billiards.tailuge.workers.dev/research#breadcrumb"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://billiards.tailuge.workers.dev/#website",
+            "url": "https://billiards.tailuge.workers.dev/",
+            "name": "Tailuge Billiards",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://billiards.tailuge.workers.dev/research#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Billiards",
+                "item": "https://billiards.tailuge.workers.dev/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Research & Sensitivity Analysis",
+                "item": "https://billiards.tailuge.workers.dev/research"
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+
+    <style>
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 200;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4tM3CwM.ttf")
+          format("truetype");
+      }
+
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4o0wCwM.ttf")
+          format("truetype");
+      }
+
+      :root {
+        --bg: #0b1611;
+        --panel: #10231a;
+        --green: #1a6b44;
+        --line: rgb(255 255 255 / 8%);
+        --line-strong: rgb(255 255 255 / 16%);
+        --accent: #10b981;
+        --accent-bright: #34d399;
+        --text: #f1eee4;
+        --text-soft: #bac3b8;
+        --text-dim: #828d83;
+
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background: var(--bg);
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Exo, system-ui, sans-serif;
+        font-size: 16.5px;
+        font-weight: 200;
+        line-height: 1.75;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: #064e3b;
+      }
+
+      a {
+        color: var(--accent-bright);
+        text-underline-offset: 3px;
+      }
+
+      a:hover {
+        color: #a7f3d0;
+      }
+
+      a:focus-visible,
+      button:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 4px;
+      }
+
+      .skip-link {
+        position: absolute;
+        top: -100px;
+        left: 16px;
+        z-index: 10;
+        padding: 8px 14px;
+        background: var(--accent);
+        color: #064e3b;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .skip-link:focus {
+        top: 16px;
+      }
+
+      header.site,
+      main,
+      footer.site {
+        width: calc(100% - 40px);
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+        line-break: strict;
+      }
+
+      /* ── Header ──────────────────────────── */
+
+      header.site {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 64px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        font-size: 0.88rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 30px;
+        height: 30px;
+        place-items: center;
+        border-radius: 7px;
+        background: var(--green);
+        color: #fff;
+        font-size: 0.76rem;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+
+      .site-nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .site-nav a:not(.nav-lobby) {
+        display: none;
+        color: var(--text-soft);
+        text-decoration: none;
+      }
+
+      .site-nav a:not(.nav-lobby):hover {
+        color: var(--text);
+      }
+
+      .nav-lobby {
+        padding: 8px 16px;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #08110d !important;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .nav-lobby:hover {
+        background: var(--accent-bright);
+        color: #08110d !important;
+      }
+
+      /* ── Intro ───────────────────────────── */
+
+      .intro {
+        padding: 48px 0 8px;
+      }
+
+      h1 {
+        margin-bottom: 18px;
+        font-size: clamp(1.6rem, 4.2vw, 2.3rem);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.35;
+      }
+
+      .lead-quote {
+        margin-bottom: 18px;
+        padding-left: 16px;
+        border-left: 3px solid var(--accent);
+        color: var(--accent-bright);
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+
+      .intro-text {
+        max-width: 680px;
+        color: var(--text-soft);
+        font-size: 1.02rem;
+      }
+
+      .intro-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 26px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .btn {
+        display: inline-flex;
+        min-height: 46px;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 22px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #08110d;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-bright);
+        color: #08110d;
+      }
+
+      .btn-secondary {
+        border-color: var(--line-strong);
+        background: rgb(255 255 255 / 5%);
+        color: var(--text);
+      }
+
+      .btn-secondary:hover {
+        border-color: rgb(255 255 255 / 34%);
+        background: rgb(255 255 255 / 10%);
+        color: #fff;
+      }
+
+      figure.screenshot {
+        margin: 34px 0 0;
+      }
+
+      figure.screenshot img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+      }
+
+      figure.screenshot figcaption {
+        margin-top: 8px;
+        color: var(--text-dim);
+        font-size: 0.82rem;
+      }
+
+      /* ── Sections ────────────────────────── */
+
+      .section {
+        padding: 52px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .section h2 {
+        margin-bottom: 18px;
+        font-size: clamp(1.3rem, 3vw, 1.75rem);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.4;
+      }
+
+      .section h3 {
+        margin: 28px 0 10px;
+        color: var(--accent-bright);
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+
+      .prose {
+        max-width: 700px;
+        color: var(--text-soft);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin: 24px 0 12px;
+      }
+
+      .card {
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid var(--line-strong);
+        background: var(--panel);
+      }
+
+      .card h3 {
+        margin-top: 0;
+      }
+
+      .card p {
+        margin-bottom: 0;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      ul.plain {
+        max-width: 700px;
+        margin: 0 0 18px;
+        padding-left: 1.2em;
+        color: var(--text-soft);
+      }
+
+      ul.plain li {
+        margin-bottom: 10px;
+      }
+
+      /* ── Footer ──────────────────────────── */
+
+      footer.site {
+        padding: 32px 0 56px;
+        border-top: 1px solid var(--line);
+        color: var(--text-dim);
+        font-size: 0.82rem;
+      }
+
+      footer.site p {
+        max-width: 720px;
+        margin-bottom: 14px;
+      }
+
+      .lang-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 16px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      /* ── Responsive ──────────────────────── */
+
+      @media (width >= 640px) {
+        .grid-2 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (width >= 820px) {
+        .site-nav a:not(.nav-lobby) {
+          display: inline-block;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to main content</a>
+
+    <header class="site">
+      <a class="brand" href="index.html" aria-label="Billiards simulator home">
+        <span class="brand-mark">🎱</span>
+        <span>TAILUGE BILLIARDS</span>
+      </a>
+      <nav class="site-nav" aria-label="Main menu">
+        <a href="about.html">About</a>
+        <a href="practice.html">Practice</a>
+        <a href="exam/index.html">Exam</a>
+        <a href="diagrams/three.html">Physics</a>
+        <a class="nav-lobby" href="lobby.html">Lobby</a>
+      </nav>
+    </header>
+
+    <main id="content">
+      <section class="intro" aria-labelledby="research-title">
+        <h1 id="research-title">Interactive Billiards Shot Analysis &amp; Training</h1>
+        <div class="lead-quote">
+          Understand why a shot works — and how much room you have for error.
+        </div>
+        <p class="intro-text">
+          This interactive shot analysis tool lets you study billiard shots in
+          much more detail than simply drawing a predicted trajectory. Set up a
+          position, choose the shot, and explore how changes in aim, spin,
+          power and elevation affect the result. The simulator can show
+          successful and unsuccessful variations around the original shot,
+          allowing you to see which parts of your technique the shot is most
+          sensitive to.
+        </p>
+        <ul class="intro-actions">
+          <li>
+            <a class="btn btn-primary" href="practice.html">Try Shot Analysis in Practice</a>
+          </li>
+          <li>
+            <a class="btn btn-secondary" href="exam/threecushion.html">Three-Cushion Exam</a>
+          </li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="key-idea-title">
+        <h2 id="key-idea-title">The key idea: How sensitive is your shot?</h2>
+        <div class="lead-quote">
+          A shot is not simply &quot;right&quot; or &quot;wrong&quot;.
+        </div>
+        <div class="prose">
+          <p>
+            Some shots have a large margin for error. A small change in aim or
+            speed still produces a successful result. Other shots are extremely
+            sensitive: a tiny change in the contact point, spin or power sends
+            the cue ball somewhere completely different.
+          </p>
+          <p>
+            Shot analysis lets you explore this sensitivity interactively. For
+            example, hold the position constant and vary the aim slightly. Then
+            vary the speed. Then experiment with spin or cue elevation. The
+            analysis shows how these changes affect the resulting path and
+            whether the shot still succeeds.
+          </p>
+          <p>
+            This gives you a practical way to understand what you need to control
+            when playing the shot on a real table.
+          </p>
+        </div>
+
+        <figure class="screenshot">
+          <img
+            src="images/shoteditor.png"
+            alt="Shot sensitivity analysis diagram displaying trajectory variations around a target shot"
+            width="1120"
+            height="707"
+            fetchpriority="high"
+          />
+          <figcaption>
+            Shot sensitivity analysis showing how variations in spin, aim and
+            other shot parameters affect the outcome.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section" aria-labelledby="tolerance-title">
+        <h2 id="tolerance-title">Explore the shot, not just the answer</h2>
+        <div class="prose">
+          <p>
+            The analysis view displays the original shot together with
+            variations around it. Green results indicate successful outcomes and
+            red results indicate misses.
+          </p>
+          <p>
+            The result is effectively a map of the shot's tolerance: you can
+            see where the playable region is and how quickly the outcome changes
+            as you move away from the ideal shot.
+          </p>
+        </div>
+
+        <h3>Learn what matters</h3>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Aim</h3>
+            <p>
+              See how far you can shift the aiming line before the shot stops
+              working. This can help distinguish a shot that requires
+              extremely precise alignment from one where a small aiming error is
+              acceptable.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Spin</h3>
+            <p>
+              Explore how changing side, follow or draw affects the resulting
+              path. Rather than memorising a single setting, experiment with the
+              range of spin that produces a useful result.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Power</h3>
+            <p>
+              Test how sensitive a position is to speed. Some shots depend on
+              arriving at a particular point with the correct speed, while
+              others remain successful over a much wider range.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Elevation</h3>
+            <p>
+              Investigate how changes in cue elevation affect the trajectory and
+              outcome, particularly for shots where elevation is an important
+              part of the technique.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="study-title">
+        <h2 id="study-title">Turn practice into something you can study</h2>
+        <div class="prose">
+          <p>
+            The simulator can be used as a laboratory for your own billiards. Find
+            an interesting position from a game, recreate it, and investigate it.
+            Try different approaches. Find the range of aim, spin and power that
+            works. Then save the result as a diagram you can return to later.
+          </p>
+          <p>
+            Instead of simply being told &quot;use this shot&quot;, you can
+            investigate why it works and what happens when you get it slightly
+            wrong.
+          </p>
+        </div>
+
+        <h3>Create diagrams for teaching and sharing</h3>
+        <div class="prose">
+          <p>
+            Shot positions can also be turned into diagrams for your own notes,
+            training material or billiards articles. Generate SVG diagrams from
+            analysed positions, making it possible to print them, include them
+            in documents, or use them when writing about billiards techniques
+            and systems.
+          </p>
+          <p>
+            This makes the simulator useful not only for practising shots, but
+            also for creating and communicating billiards knowledge — expanding
+            its audience to teachers, bloggers, forum users, and researchers.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="notes-title">
+        <h2 id="notes-title">From the table to your training notes</h2>
+        <div class="prose">
+          <p>
+            A useful training position doesn't have to disappear after you play
+            it. Analyse a shot, record what you discovered, and use the
+            resulting diagram as a reference for future practice. You can build
+            your own collection of positions and experiments — including
+            difficult shots from real games, system experiments and shots you
+            want to understand better.
+          </p>
+          <p>
+            The goal is not to replace practice on a real table. It is to make
+            the time between practice sessions more useful by giving you a way
+            to experiment, visualise and reason about shots.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="deeper-title">
+        <h2 id="deeper-title">For players who want to go deeper</h2>
+        <div class="prose">
+          <p>
+            The simulator is based on a physics model of billiard balls,
+            cushions, friction and spin. That makes it possible to investigate
+            questions that are difficult to answer with a static diagram alone:
+          </p>
+          <ul class="plain">
+            <li>How much does the path change if the speed is reduced?</li>
+            <li>
+              How much side spin can be removed before the shot no longer
+              reaches the target?
+            </li>
+            <li>How accurate does the aim need to be?</li>
+            <li>
+              Which parameter is actually responsible for the difficult part of
+              the shot?
+            </li>
+          </ul>
+          <p>Experiment with the shot and find out.</p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="training-system-title">
+        <h2 id="training-system-title">Training is more than making the shot</h2>
+        <div class="prose">
+          <p>
+            A good training tool should help you understand what to practise. A
+            shot with a narrow tolerance tells you that precision matters. A
+            shot with a wide tolerance tells you that you may be able to
+            concentrate on another part of your technique.
+          </p>
+          <p>
+            Combined with the site's shot exams and practice modes, shot
+            analysis provides a coherent way to move from
+            <strong>playing a shot → analysing it → practising it → testing yourself on it</strong>.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site">
+      <p>
+        An open source billiards project built on published ball and cushion
+        physics. Source code on
+        <a
+          href="https://github.com/tailuge/billiards"
+          target="_blank"
+          rel="noopener"
+          >GitHub</a
+        >. Explore: <a href="about.html">About</a>,
+        <a href="practice.html">Practice</a>,
+        <a href="exam/index.html">Billiards Exam</a>,
+        <a href="diagrams/three.html">Physics Diagrams</a>, and
+        <a href="lobby.html">Online Lobby</a>.
+      </p>
+      <ul class="lang-list" aria-label="Other languages">
+        <li><a href="chinese.html" hreflang="zh-Hant">中文 斯诺克</a></li>
+        <li><a href="spanish.html" hreflang="es">Billar español</a></li>
+        <li><a href="dutch.html" hreflang="nl">Biljart Nederlands</a></li>
+        <li><a href="korean.html" hreflang="ko">당구 한국어</a></li>
+        <li><a href="japanese.html" hreflang="ja">ビリヤード 日本語</a></li>
+        <li><a href="turkish.html" hreflang="tr">Bilardo Türkçe</a></li>
+        <li><a href="german.html" hreflang="de">Billard Deutsch</a></li>
+        <li><a href="vietnamese.html" hreflang="vi">Bida tiếng Việt</a></li>
+      </ul>
+    </footer>
+  </body>
+</html>
