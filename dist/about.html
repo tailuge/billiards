@@ -550,11 +550,12 @@
           An open-source billiards simulator that runs in the browser
         </h1>
         <p class="intro-text">
-          This is a free billiards and pool simulation written in TypeScript and
-          rendered with WebGL. It runs in any modern desktop or mobile browser
-          with nothing to install and no account to create — you open a page and
-          play. Behind it is a small physics engine built from published work on
-          ball motion, collisions and cushion impacts.
+          This is a free billiards and pool simulation written in TypeScript. It
+          runs in any modern desktop or mobile browser with nothing to install
+          and no account to create — you open a page and play. Behind it is a
+          small physics engine built from published work on ball motion,
+          collisions and cushion impacts, and the table is drawn in 3D with
+          WebGL and three.js.
         </p>
         <p class="intro-text">
           The project began in 2018 and has been developed in public ever since,
@@ -670,15 +671,15 @@
               rel="noopener"
               >Alciatore</a
             >, including the small throw effect caused by friction between the
-            balls; cushion impacts follow
+            balls; cushion impacts use
             <a
               href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
               target="_blank"
               rel="noopener"
               >Mathavan (2010)</a
             >
-            and, for a compliant cushion, the analytical model in Stronge's
-            <cite>Impact Mechanics</cite>.
+            by default, with the analytical compliant-cushion model from
+            Stronge's <cite>Impact Mechanics</cite> available as an alternative.
           </p>
         </div>
 
@@ -720,11 +721,43 @@
 
         <h3>Ball-to-cushion collisions</h3>
         <p class="prose">
-          Cushion behaviour is the hardest part to get right, and it has two
-          implementations. The Mathavan model solves the compression and
-          restitution phases numerically, tracking slip at both the cushion and
-          cloth contact points; the contact velocity for the Stronge model is
-          simply the velocity at the cushion contact point:
+          Cushion behaviour is the hardest part to get right. Play uses the
+          numerical model from Mathavan (2010) by default: the compression and
+          restitution phases are solved step by step, tracking slip at both the
+          cushion contact point \(I\) and the cloth contact point \(C\). At the
+          cushion that slip velocity is the surface velocity there:
+        </p>
+        <div class="equation">
+          \[ \dot{x}_I = \dot{v}_x + \dot{\omega}_y R \sin\theta -
+          \dot{\omega}_z R \cos\theta \] \[ \dot{y}'_I = -\dot{v}_y \sin\theta +
+          \dot{\omega}_x R \]
+        </div>
+        <p class="prose">
+          The slip direction at each contact \(\phi\) (cushion) and \(\phi'\)
+          (cloth), together with its magnitude \(s\), sets the friction acting
+          over each increment of normal impulse \(\Delta P_I\), which is what
+          advances the centroid velocity through the collision:
+        </p>
+        <div class="equation">
+          \[ (\dot{v}_x)_{n+1} - (\dot{v}_x)_n = -\frac{1}{M}\left[\mu_w
+          \cos\phi + \mu_s \cos\phi'\cdot(\sin\theta + \mu_w \sin\phi
+          \cos\theta)\right]\Delta P_I \]
+        </div>
+        <p class="prose">
+          Compression iterates until the ball stops approaching the cushion
+          (\(\dot{v}_y \le 0\)); restitution continues until the work done on
+          the cushion reaches \(e_e^2\) times the work done in compression.
+          Equations the paper leaves out had to be inferred to close that
+          numerical solution; that is documented rather than hidden.
+        </p>
+
+        <h3>The Stronge compliant cushion model</h3>
+        <p class="prose">
+          The engine can instead use the analytical compliant-cushion model from
+          Stronge's <cite>Impact Mechanics</cite>, selectable on the
+          <a href="diagrams/three.html">three-cushion physics page</a> or with
+          <code>cushionModel=stronge</code> in the URL. There the contact
+          velocity is simply the velocity at the cushion contact point:
         </p>
         <div class="equation">
           \[ \vec{V}_c = \vec{v} - (\vec{\omega} \times R \hat{n}) \]
@@ -759,10 +792,7 @@
           </tbody>
         </table>
         <p class="prose">
-          Where the Mathavan paper does not supply an equation needed to close
-          the numerical solution, this project inferred the missing steps; that
-          is documented rather than hidden. Everything above can be inspected
-          and re-tuned yourself: the
+          Both models can be inspected and re-tuned yourself: the
           <a href="diagrams/three.html">three-cushion physics page</a> exposes
           the constants, and the
           <a href="diagrams/mathavan.html">Mathavan</a> and
@@ -946,7 +976,8 @@
               rel="noopener"
               >Mathavan (2010)</a
             >
-            — ball–cushion interaction, recreated in the
+            — ball–cushion interaction, the model used by default in play and
+            recreated in the
             <a href="diagrams/mathavan.html">model validation diagrams</a>.
           </li>
           <li>
@@ -956,7 +987,8 @@
               rel="noopener"
               >Stronge, <cite>Impact Mechanics</cite></a
             >
-            — the compliant cushion model, with
+            — the analytical compliant cushion model, selectable as an
+            alternative, with
             <a href="diagrams/stronge.html">its own diagram page</a>.
           </li>
           <li>

@@ -52,8 +52,40 @@
       }
 
       header {
+        /* Positioning context for the lobby link, and full width so the link
+           lands at the right edge of the page rather than at the edge of the
+           centred title. */
+        position: relative;
+        width: 100%;
         text-align: center;
         margin-bottom: 0.2rem;
+      }
+
+      /* Discrete lobby link, top right, matching the one the other diagram
+         pages carry (three.html's lobby-button, mathavan.html's lobby-link). */
+      .lobby-link {
+        position: absolute;
+        top: 0;
+        right: 0.4rem;
+        padding: 2px 6px;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        background: #f5f5f5;
+        color: #666;
+        font-size: 0.7rem;
+        line-height: 1.2;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .lobby-link:hover {
+        background: #ececec;
+        color: #111;
+      }
+
+      .lobby-link:focus-visible {
+        outline: 2px solid #1d5886;
+        outline-offset: 1px;
       }
 
       h1 {
@@ -167,6 +199,9 @@
   <body>
     <header>
       <h1>Diagram Export</h1>
+      <a class="lobby-link" href="https://billiards.tailuge.workers.dev/lobby"
+        >lobby</a
+      >
     </header>
 
     <svg class="billiards-table"></svg>
