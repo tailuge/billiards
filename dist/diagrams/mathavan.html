@@ -31,6 +31,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <link rel="stylesheet" type="text/css" href="../css/diagrams.css" />
+    <link rel="preconnect" href="https://cdn.plot.ly" crossorigin />
     <style>
       .paper-note {
         flex: 0 0 100%;
@@ -59,7 +60,13 @@
       }
 
       .paper-note-text a {
-        color: #007bff;
+        color: #0056b3;
+      }
+
+      .mathavan-plots {
+        flex: 0 0 100%;
+        display: flex;
+        flex-wrap: wrap;
       }
 
       .lobby-link {
@@ -76,8 +83,8 @@
       }
 
       .lobby-link:hover {
-        border-color: #007bff;
-        color: #007bff;
+        border-color: #0056b3;
+        color: #0056b3;
       }
     </style>
   </head>
@@ -103,15 +110,17 @@
         >lobby</a
       >
     </div>
-    <div id="mathavan-impulse" class="mathavandiagram"></div>
-    <div id="mathavan-figure9-speed" class="mathavandiagram"></div>
-    <div id="mathavan-figure9-angle" class="mathavandiagram"></div>
-    <div id="mathavan-figure10-speed" class="mathavandiagram"></div>
-    <div id="mathavan-figure10-angle" class="mathavandiagram"></div>
-    <div id="collision-throw-roll" class="mathavandiagram"></div>
-    <div id="collision-throw-stun" class="mathavandiagram"></div>
-    <div id="collision-throw-varying-roll" class="mathavandiagram"></div>
-    <div id="collision-throw-varying-side" class="mathavandiagram"></div>
+    <main class="mathavan-plots">
+      <div id="mathavan-impulse" class="mathavandiagram"></div>
+      <div id="mathavan-figure9-speed" class="mathavandiagram"></div>
+      <div id="mathavan-figure9-angle" class="mathavandiagram"></div>
+      <div id="mathavan-figure10-speed" class="mathavandiagram"></div>
+      <div id="mathavan-figure10-angle" class="mathavandiagram"></div>
+      <div id="collision-throw-roll" class="mathavandiagram"></div>
+      <div id="collision-throw-stun" class="mathavandiagram"></div>
+      <div id="collision-throw-varying-roll" class="mathavandiagram"></div>
+      <div id="collision-throw-varying-side" class="mathavandiagram"></div>
+    </main>
 
     <script
       src="https://cdn.plot.ly/plotly-cartesian-3.0.0-rc.0.min.js"

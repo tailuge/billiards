@@ -1,0 +1,1147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>About — Open Source Billiards &amp; Pool Physics Simulator</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <meta
+      name="description"
+      content="Inside this open-source billiards project: the pool, snooker and carom games it plays, the published physics behind the shots, and where to read the code."
+    />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0b1611" />
+    <link rel="canonical" href="https://billiards.tailuge.workers.dev/about" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:title"
+      content="About — Open Source Billiards &amp; Pool Physics Simulator"
+    />
+    <meta
+      property="og:description"
+      content="A free browser billiards and pool simulator built on published ball and cushion physics. What it plays, how it works, and how to run and contribute to the source."
+    />
+    <meta property="og:site_name" content="Tailuge Billiards" />
+    <meta
+      property="og:url"
+      content="https://billiards.tailuge.workers.dev/about"
+    />
+    <meta
+      property="og:image"
+      content="https://billiards.tailuge.workers.dev/images/billiards.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="WebGL pool table in a browser with the cue ball behind the cue"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="About — Open Source Billiards &amp; Pool Physics Simulator"
+    />
+    <meta
+      name="twitter:description"
+      content="A free browser billiards and pool simulator built on published ball and cushion physics. What it plays, how it works, and how to run the source."
+    />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/images/billiards.png"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "AboutPage",
+            "@id": "https://billiards.tailuge.workers.dev/about#page",
+            "url": "https://billiards.tailuge.workers.dev/about",
+            "name": "About the Billiards Physics Simulator",
+            "description": "An overview of this open-source browser billiards and pool project: the rule sets it plays, the physics models behind it, online play, and where to find the source code.",
+            "inLanguage": "en",
+            "isPartOf": {
+              "@id": "https://billiards.tailuge.workers.dev/#website"
+            },
+            "breadcrumb": {
+              "@id": "https://billiards.tailuge.workers.dev/about#breadcrumb"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://billiards.tailuge.workers.dev/#website",
+            "url": "https://billiards.tailuge.workers.dev/",
+            "name": "Tailuge Billiards",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://billiards.tailuge.workers.dev/about#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Billiards",
+                "item": "https://billiards.tailuge.workers.dev/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "About",
+                "item": "https://billiards.tailuge.workers.dev/about"
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+
+    <!-- Same LaTeX helper already used by blog3.html, so inline maths here
+         renders the same way it does on the physics write-ups. -->
+    <script
+      id="MathJax-script"
+      defer
+      src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
+      integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
+      crossorigin="anonymous"
+    ></script>
+
+    <style>
+      /* Match index.html and lobby.html: Exo 200 for body copy, 600 for
+         headings. Loaded straight from the gstatic TTFs those pages use. */
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 200;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4tM3CwM.ttf")
+          format("truetype");
+      }
+
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4o0wCwM.ttf")
+          format("truetype");
+      }
+
+      :root {
+        --bg: #0b1611;
+        --bg-deep: #08110d;
+        --panel: #10231a;
+        --green: #1a6b44;
+        --line: rgb(255 255 255 / 8%);
+        --line-strong: rgb(255 255 255 / 16%);
+        --accent: #10b981;
+        --accent-bright: #34d399;
+        --text: #f1eee4;
+        --text-soft: #bac3b8;
+        --text-dim: #828d83;
+
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background: var(--bg);
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Exo, system-ui, sans-serif;
+        font-size: 16.5px;
+        font-weight: 200;
+        line-height: 1.75;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: #064e3b;
+      }
+
+      a {
+        color: var(--accent-bright);
+        text-underline-offset: 3px;
+      }
+
+      a:hover {
+        color: #a7f3d0;
+      }
+
+      a:focus-visible,
+      button:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 4px;
+      }
+
+      .skip-link {
+        position: absolute;
+        top: -100px;
+        left: 16px;
+        z-index: 10;
+        padding: 8px 14px;
+        background: var(--accent);
+        color: #064e3b;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .skip-link:focus {
+        top: 16px;
+      }
+
+      header.site,
+      main,
+      footer.site {
+        width: calc(100% - 40px);
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+        line-break: strict;
+      }
+
+      /* ── Header ──────────────────────────── */
+
+      header.site {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 64px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        font-size: 0.88rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 30px;
+        height: 30px;
+        place-items: center;
+        border-radius: 7px;
+        background: var(--green);
+        color: #fff;
+        font-size: 0.76rem;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+
+      .site-nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .site-nav a:not(.nav-lobby) {
+        display: none;
+        color: var(--text-soft);
+        text-decoration: none;
+      }
+
+      .site-nav a:not(.nav-lobby):hover {
+        color: var(--text);
+      }
+
+      .nav-lobby {
+        padding: 8px 16px;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #08110d !important;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .nav-lobby:hover {
+        background: var(--accent-bright);
+        color: #08110d !important;
+      }
+
+      /* ── Intro ───────────────────────────── */
+
+      .intro {
+        padding: 48px 0 8px;
+      }
+
+      h1 {
+        margin-bottom: 18px;
+        font-size: clamp(1.6rem, 4.2vw, 2.3rem);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.35;
+      }
+
+      .intro-text {
+        max-width: 680px;
+        color: var(--text-soft);
+        font-size: 1.02rem;
+      }
+
+      .intro-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 26px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .btn {
+        display: inline-flex;
+        min-height: 46px;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 22px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #08110d;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-bright);
+        color: #08110d;
+      }
+
+      .btn-secondary {
+        border-color: var(--line-strong);
+        background: rgb(255 255 255 / 5%);
+        color: var(--text);
+      }
+
+      .btn-secondary:hover {
+        border-color: rgb(255 255 255 / 34%);
+        background: rgb(255 255 255 / 10%);
+        color: #fff;
+      }
+
+      figure.screenshot {
+        margin: 34px 0 0;
+      }
+
+      figure.screenshot img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+      }
+
+      figure.screenshot figcaption {
+        margin-top: 8px;
+        color: var(--text-dim);
+        font-size: 0.8rem;
+      }
+
+      /* ── Sections ────────────────────────── */
+
+      .section {
+        padding: 52px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .section h2 {
+        margin-bottom: 18px;
+        font-size: clamp(1.3rem, 3vw, 1.75rem);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.4;
+      }
+
+      .section h3 {
+        margin: 32px 0 10px;
+        color: var(--accent-bright);
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+
+      .prose {
+        max-width: 700px;
+        color: var(--text-soft);
+      }
+
+      .links {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        max-width: 700px;
+      }
+
+      .links li {
+        padding: 9px 0;
+        border-bottom: 1px solid var(--line);
+        color: var(--text-soft);
+      }
+
+      ul.plain,
+      ol.plain {
+        max-width: 700px;
+        margin: 0 0 18px;
+        padding-left: 1.2em;
+        color: var(--text-soft);
+      }
+
+      ul.plain li,
+      ol.plain li {
+        margin-bottom: 10px;
+      }
+
+      .links li:last-child {
+        border-bottom: 0;
+      }
+
+      .links .what {
+        color: var(--text-dim);
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      /* ── Equations ───────────────────────── */
+
+      .equation {
+        position: relative;
+        margin: 18px 0;
+        padding: 14px 18px;
+        border-left: 3px solid var(--green);
+        border-radius: 0 8px 8px 0;
+        background: var(--panel);
+        overflow-x: auto;
+        font-size: 0.95rem;
+      }
+
+      .equation-note {
+        margin: 0 0 6px;
+        color: var(--text-dim);
+        font-size: 0.8rem;
+      }
+
+      table.regimes {
+        width: 100%;
+        max-width: 700px;
+        margin: 18px 0;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+
+      table.regimes th,
+      table.regimes td {
+        padding: 9px 12px;
+        border: 1px solid var(--line-strong);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      table.regimes th {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      table.regimes td {
+        color: var(--text-soft);
+      }
+
+      /* ── Footer ──────────────────────────── */
+
+      footer.site {
+        padding: 32px 0 56px;
+        border-top: 1px solid var(--line);
+        color: var(--text-dim);
+        font-size: 0.82rem;
+      }
+
+      footer.site p {
+        max-width: 720px;
+        margin-bottom: 14px;
+      }
+
+      .lang-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 16px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      /* ── Responsive ──────────────────────── */
+
+      @media (width >= 820px) {
+        .site-nav a:not(.nav-lobby) {
+          display: inline-block;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to main content</a>
+
+    <header class="site">
+      <a class="brand" href="index.html" aria-label="Billiards simulator home">
+        <span class="brand-mark">🎱</span>
+        <span>TAILUGE BILLIARDS</span>
+      </a>
+      <nav class="site-nav" aria-label="Main menu">
+        <a href="#play">Play</a>
+        <a href="#physics">Physics</a>
+        <a href="#online">Online play</a>
+        <a href="#open-source">Open source</a>
+        <a href="#research">Research</a>
+        <a href="#more">More</a>
+        <a class="nav-lobby" href="lobby.html">Lobby</a>
+      </nav>
+    </header>
+
+    <main id="content">
+      <section class="intro" aria-labelledby="about-title">
+        <h1 id="about-title">
+          An open-source billiards simulator that runs in the browser
+        </h1>
+        <p class="intro-text">
+          This is a free billiards and pool simulation written in TypeScript and
+          rendered with WebGL. It runs in any modern desktop or mobile browser
+          with nothing to install and no account to create — you open a page and
+          play. Behind it is a small physics engine built from published work on
+          ball motion, collisions and cushion impacts.
+        </p>
+        <p class="intro-text">
+          The project began in 2018 and has been developed in public ever since,
+          mostly on a Raspberry Pi 4. It is maintained by an independent
+          developer, not a studio, and contributions are welcome.
+        </p>
+        <ul class="intro-actions">
+          <li>
+            <a class="btn btn-primary" href="index.html"
+              >Play in your browser</a
+            >
+          </li>
+          <li>
+            <a
+              class="btn btn-secondary"
+              href="https://github.com/tailuge/billiards"
+              target="_blank"
+              rel="noopener"
+              >Source on GitHub</a
+            >
+          </li>
+        </ul>
+
+        <figure class="screenshot">
+          <img
+            src="images/promo.png"
+            alt="A 3D WebGL pool table viewed from behind the cue ball, ready for a shot"
+            width="1120"
+            height="707"
+            fetchpriority="high"
+          />
+          <figcaption>
+            The 8-ball table in Hi-Res mode, running in a browser.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section id="play" class="section" aria-labelledby="play-title">
+        <h2 id="play-title">What you can play</h2>
+        <div class="prose">
+          <p>
+            Five rule sets share the same tables and physics, so you can move
+            between them without changing anything on your device.
+          </p>
+          <ul class="plain">
+            <li>
+              <a href="nineball.html">Nine-ball</a> — the fast rotation game.
+              Practice mode lets you build a layout and share a replay link of a
+              break with whoever you like.
+            </li>
+            <li>
+              <a href="eightball.html">8-ball</a> — solids and stripes, with a
+              Hi-Res rendering mode.
+            </li>
+            <li>
+              <a href="snooker.html">Snooker</a> — full-size 12-foot tables with
+              15 reds, plus shorter games on a 6-foot table.
+            </li>
+            <li>
+              <a href="index.html?ruletype=threecushion&amp;lod=4"
+                >Three-cushion carom</a
+              >
+              — the discipline the cushion model has been tuned hardest against.
+              A beginner mode is available, and drills can be set up in
+              practice.
+            </li>
+            <li>
+              <a href="index.html?ruletype=sagu">Sagu</a> — the Korean four-ball
+              carom game, also playable on a small 5-foot table.
+            </li>
+          </ul>
+          <p>
+            Two practice bots, ClawBreak and TheFarJaw, will play you when
+            nobody else is around. For deliberate practice there is a
+            <a href="practice.html">table where you can place balls freely</a>,
+            a set of <a href="exam/index.html">graded exam shots</a> that score
+            your level of play, and
+            <a href="speedrun/index.html">a speedrun challenge</a> against the
+            clock. The <a href="reveal/index.html">reveal game</a> uses straight
+            pool potting to uncover hidden pictures.
+          </p>
+        </div>
+      </section>
+
+      <section id="physics" class="section" aria-labelledby="physics-title">
+        <h2 id="physics-title">How the physics works</h2>
+        <div class="prose">
+          <p>
+            The engine is deliberately lightweight and deterministic rather than
+            exhaustive; the project's own README calls the physics
+            “unsophisticated”. The intention is to model the effects a player
+            actually notices — spin, throw, and how the ball leaves a cushion —
+            from published, checkable models rather than from tuning by feel.
+          </p>
+          <p>
+            Ball motion follows
+            <a
+              href="https://billiards.colostate.edu/physics_articles/Han_paper.pdf"
+              target="_blank"
+              rel="noopener"
+              >Han (2005)</a
+            >
+            with
+            <a
+              href="https://ekiefl.github.io/2020/04/24/pooltool-theory/#3-han-2005"
+              target="_blank"
+              rel="noopener"
+              >corrections noted by Kiefl</a
+            >; ball-to-ball collisions follow
+            <a
+              href="https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf"
+              target="_blank"
+              rel="noopener"
+              >Alciatore</a
+            >, including the small throw effect caused by friction between the
+            balls; cushion impacts follow
+            <a
+              href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
+              target="_blank"
+              rel="noopener"
+              >Mathavan (2010)</a
+            >
+            and, for a compliant cushion, the analytical model in Stronge's
+            <cite>Impact Mechanics</cite>.
+          </p>
+        </div>
+
+        <h3>Ball motion on the cloth</h3>
+        <p class="prose">
+          The engine tracks the ball's velocity and angular velocity, and the
+          relative velocity at the point where the ball touches the cloth tells
+          it whether the ball is sliding or rolling. That surface velocity is
+          built from linear velocity and spin:
+        </p>
+        <div class="equation">
+          \[ \vec{v}_a = \vec{v} + (\vec{up} \times R\vec{\omega}) \]
+        </div>
+        <p class="prose">
+          While contact is slipping, friction opposes the slip direction and
+          slows both the ball and its spin:
+        </p>
+        <div class="equation">
+          \[ \dot{v} = -\mu g \frac{\vec{v}_a}{|\vec{v}_a|} \]
+        </div>
+        <p class="prose">
+          Once contact rolls, a smaller deceleration sets in, and the ball
+          curves as spin carries it off line:
+        </p>
+        <div class="equation">
+          \[ \dot{v} = -\frac{5}{7}\frac{M_{xy}}{mR} \frac{\vec{up} \times
+          \vec{\omega}}{|\vec{\omega}|} \]
+        </div>
+
+        <h3>Ball-to-ball collisions</h3>
+        <p class="prose">
+          On contact, a normal impulse separates the balls and a tangential
+          impulse applies the throw effect. For the striking ball:
+        </p>
+        <div class="equation">
+          \[ \vec{v}_a \leftarrow \vec{v}_a + \frac{J_{\text{normal}}}{m}\hat{n}
+          + \frac{J_{\text{tangential}}}{m}\hat{t} \]
+        </div>
+
+        <h3>Ball-to-cushion collisions</h3>
+        <p class="prose">
+          Cushion behaviour is the hardest part to get right, and it has two
+          implementations. The Mathavan model solves the compression and
+          restitution phases numerically, tracking slip at both the cushion and
+          cloth contact points; the contact velocity for the Stronge model is
+          simply the velocity at the cushion contact point:
+        </p>
+        <div class="equation">
+          \[ \vec{V}_c = \vec{v} - (\vec{\omega} \times R \hat{n}) \]
+        </div>
+        <p class="prose">
+          The Stronge solution then classifies the impact into one of three slip
+          regimes before reconstructing the outgoing velocity:
+        </p>
+        <table class="regimes">
+          <caption class="visually-hidden">
+            Slip regimes in the Stronge compliant cushion model
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Regime</th>
+              <th scope="col">Condition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Gross slip</td>
+              <td>High tangential-to-normal velocity ratio</td>
+            </tr>
+            <tr>
+              <td>Initial stick</td>
+              <td>Low tangential-to-normal velocity ratio</td>
+            </tr>
+            <tr>
+              <td>Slip–stick–slip</td>
+              <td>Between the two — the contact sticks, then slips again</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="prose">
+          Where the Mathavan paper does not supply an equation needed to close
+          the numerical solution, this project inferred the missing steps; that
+          is documented rather than hidden. Everything above can be inspected
+          and re-tuned yourself: the
+          <a href="diagrams/three.html">three-cushion physics page</a> exposes
+          the constants, and the
+          <a href="diagrams/mathavan.html">Mathavan</a> and
+          <a href="diagrams/stronge.html">Stronge</a> diagram pages recreate
+          figures from the papers to check the code against them.
+        </p>
+      </section>
+
+      <section id="features" class="section" aria-labelledby="features-title">
+        <h2 id="features-title">Features</h2>
+        <ul class="plain">
+          <li>Backspin, sidespin and cushion bounces are modelled.</li>
+          <li>
+            Presentation uses WebGL in any modern browser on mobile, Linux, Mac
+            or Windows.
+          </li>
+          <li>Breaks can be recorded and played back.</li>
+          <li>
+            A two-player online mode served by an nchan nginx server, with
+            public lobbies.
+          </li>
+          <li>
+            Nine-ball, 8-ball, snooker, three-cushion and Sagu (four-ball)
+            rules.
+          </li>
+          <li>
+            Aim, spin, power, elevation and camera are all reachable by mouse,
+            trackpad, touch or keyboard; press <kbd>H</kbd> in-game for the full
+            control list.
+          </li>
+          <li>
+            Deploys to GitHub Pages, Vercel and Render through GitHub Actions.
+          </li>
+          <li>
+            Runs on modest hardware — it was developed mostly on a Raspberry Pi
+            4.
+          </li>
+        </ul>
+      </section>
+
+      <section id="online" class="section" aria-labelledby="online-title">
+        <h2 id="online-title">Playing against other people</h2>
+        <div class="prose">
+          <p>
+            The <a href="lobby.html">lobby</a> lists who is online so you can
+            challenge someone directly; the session runs over a public nchan
+            server. There is also a <a href="2tab.html">two-tab mode</a> for
+            playing across two windows on one machine, and
+            <a href="arena.html">hourly arenas</a> in the style of lichess,
+            where you try to win as many games as possible in half an hour.
+          </p>
+          <p>
+            Long-running progress is tracked outside the game: the highest
+            breaks go to a
+            <a
+              href="https://scoreboard-tailuge.vercel.app/leaderboard"
+              target="_blank"
+              rel="noopener"
+              >leaderboard</a
+            >
+            on Vercel, and rated games contribute to an
+            <a
+              href="https://scoreboard-tailuge.vercel.app/elo"
+              target="_blank"
+              rel="noopener"
+              >ELO rating using Glicko2</a
+            >. If you would rather not play in a browser at all, thin client
+            wrappers are published for
+            <a
+              href="https://github.com/tailuge/tbilliards/releases/latest"
+              target="_blank"
+              rel="noopener"
+              >Windows, macOS and Linux</a
+            >
+            and for
+            <a
+              href="https://github.com/tailuge/wbilliards/releases/latest"
+              target="_blank"
+              rel="noopener"
+              >Android</a
+            >.
+          </p>
+        </div>
+      </section>
+
+      <section id="open-source" class="section" aria-labelledby="os-title">
+        <h2 id="os-title">Open source and licence</h2>
+        <div class="prose">
+          <p>
+            The project is open source under the GNU General Public License —
+            the full text is in the
+            <a
+              href="https://github.com/tailuge/billiards/blob/master/LICENSE"
+              target="_blank"
+              rel="noopener"
+              >LICENSE file</a
+            >. The code lives at
+            <a
+              href="https://github.com/tailuge/billiards"
+              target="_blank"
+              rel="noopener"
+              >github.com/tailuge/billiards</a
+            >
+            and contributions are welcome, whether that is a bug, a physics
+            tweak, a translation or a new rule set.
+          </p>
+          <p>
+            Local development uses Node and Yarn: <code>yarn install</code>,
+            <code>yarn build</code>, then <code>yarn serve</code> to play at
+            <code>localhost:8080</code>. <code>yarn test</code> runs the Jest
+            suite and <code>yarn coverage</code> reports on it. The README in
+            the repository has the up-to-date commands and the exact tool
+            versions.
+          </p>
+        </div>
+      </section>
+
+      <section id="tech" class="section" aria-labelledby="tech-title">
+        <h2 id="tech-title">Development and technology</h2>
+        <div class="prose">
+          <p>
+            The simulation itself is plain TypeScript with no engine dependency;
+            <a href="https://threejs.org/">three.js</a> handles the 3D
+            rendering. Because the engine is deterministic and light, a single
+            run can be rolled forward thousands of times — about 500 rollouts
+            per second on four CPU cores — which makes it usable for shot
+            analysis and optimisation as well as play.
+          </p>
+          <p>
+            Those rollouts run either in the browser through Web Workers or
+            headlessly under Node.js. That is what supports
+            <a href="fit/common.html">multi-shot parameter fitting</a>,
+            <a href="fit/viewer.html">physics optimiser runs</a>, and
+            calibration against recorded real-world trajectories for friction,
+            spin decay, restitution and cushion deflection. The
+            <a href="ww.html">worker and simulation research page</a> documents
+            the protocol and the runtime parameter overrides.
+          </p>
+        </div>
+      </section>
+
+      <section id="research" class="section" aria-labelledby="research-title">
+        <h2 id="research-title">Research and references</h2>
+        <div class="prose">
+          <p>
+            The models implemented here are not presented as new research; they
+            are implementations of other people's published work, with the
+            validation figures kept alongside the code so the results can be
+            compared with the papers.
+          </p>
+        </div>
+        <ul class="links">
+          <li>
+            <a
+              href="https://billiards.colostate.edu/physics_articles/Han_paper.pdf"
+              target="_blank"
+              rel="noopener"
+              >Han (2005)</a
+            >
+            — ball mechanics, with
+            <a
+              href="https://ekiefl.github.io/2020/04/24/pooltool-theory/#3-han-2005"
+              target="_blank"
+              rel="noopener"
+              >Kiefl's corrections</a
+            >. <span class="what">Surface velocity, sliding and rolling.</span>
+          </li>
+          <li>
+            <a
+              href="https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf"
+              target="_blank"
+              rel="noopener"
+              >Alciatore</a
+            >
+            — collision impulse and throw.
+          </li>
+          <li>
+            <a
+              href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
+              target="_blank"
+              rel="noopener"
+              >Mathavan (2010)</a
+            >
+            — ball–cushion interaction, recreated in the
+            <a href="diagrams/mathavan.html">model validation diagrams</a>.
+          </li>
+          <li>
+            <a
+              href="https://doi.org/10.1017/9781139050227"
+              target="_blank"
+              rel="noopener"
+              >Stronge, <cite>Impact Mechanics</cite></a
+            >
+            — the compliant cushion model, with
+            <a href="diagrams/stronge.html">its own diagram page</a>.
+          </li>
+          <li>
+            <a
+              href="https://billiards.colostate.edu/technical_proofs/new/TP_B-17.pdf"
+              target="_blank"
+              rel="noopener"
+              >Maximum spin</a
+            >
+            — limits on how much spin a cue can impart.
+          </li>
+        </ul>
+        <div class="prose">
+          <p>
+            Two forks have taken the simulation in their own directions: a
+            <a
+              href="https://github.com/velikodimov/billiards"
+              target="_blank"
+              rel="noopener"
+              >three-cushion trainer with sensitivity analysis</a
+            >
+            and an
+            <a
+              href="https://gameland.altervista.org/italian_billiards/lobby.html"
+              target="_blank"
+              rel="noopener"
+              >Italian five-pin game</a
+            >. The <a href="blog1.html">writing</a> covers how the physics feels
+            and how the models were implemented, in
+            <a href="blog3.html">more depth for the cushion work</a>.
+          </p>
+        </div>
+      </section>
+
+      <section id="more" class="section" aria-labelledby="more-title">
+        <h2 id="more-title">More</h2>
+        <div class="prose">
+          <p>Everything else the project ships, in one place.</p>
+        </div>
+
+        <h3>Play and practise</h3>
+        <ul class="links">
+          <li><a href="index.html">Play in the browser</a></li>
+          <li><a href="lobby.html">Online lobby</a></li>
+          <li><a href="practice.html">Practice table</a></li>
+          <li><a href="arena.html">Hourly arenas</a></li>
+          <li><a href="speedrun/index.html">Speedrun challenge</a></li>
+          <li><a href="exam/index.html">Billiards exam</a></li>
+          <li><a href="reveal/index.html">Picture-reveal game</a></li>
+          <li><a href="2tab.html">Two-player, two tabs</a></li>
+          <li><a href="cue.html">Customise your cue</a></li>
+          <li><a href="wall.html">Customise your emblem</a></li>
+        </ul>
+
+        <h3>Physics and analysis</h3>
+        <ul class="links">
+          <li>
+            <a href="diagrams/diagrams.html">Interactive physics diagrams</a>
+          </li>
+          <li>
+            <a href="diagrams/three.html">Three-cushion physics page</a> — tune
+            the constants yourself
+          </li>
+          <li>
+            <a href="diagrams/mathavan.html">Mathavan model validation</a>
+          </li>
+          <li><a href="diagrams/stronge.html">Stronge cushion model</a></li>
+          <li>
+            <a href="diagrams/diamond.html">Three-cushion diamond system</a>
+          </li>
+          <li><a href="diagrams/nineball.html">Nine-ball shot diagrams</a></li>
+          <li>
+            <a href="diagrams/export.html"
+              >Export shot diagrams as SVG or PNG</a
+            >
+          </li>
+          <li><a href="ww.html">Web Worker simulation research</a></li>
+          <li><a href="fit/viewer.html">Physics optimiser</a></li>
+          <li><a href="fit/common.html">Multi-shot parameter fitting</a></li>
+        </ul>
+
+        <h3>Writing</h3>
+        <ul class="links">
+          <li>
+            <a href="blog1.html">Why most pool games feel wrong</a>
+          </li>
+          <li><a href="blog2.html">Clearing the line-up — practice log</a></li>
+          <li>
+            <a href="blog3.html">Implementing Mathavan cushion physics</a>
+          </li>
+          <li>
+            <a href="blog4.html">Snooker and three-cushion notes</a>
+          </li>
+        </ul>
+
+        <h3>Source, scores and downloads</h3>
+        <ul class="links">
+          <li>
+            <a
+              href="https://github.com/tailuge/billiards"
+              target="_blank"
+              rel="noopener"
+              >Source code on GitHub</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://scoreboard-tailuge.vercel.app/leaderboard"
+              target="_blank"
+              rel="noopener"
+              >Break leaderboard</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://scoreboard-tailuge.vercel.app/elo"
+              target="_blank"
+              rel="noopener"
+              >ELO ratings</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://github.com/tailuge/tbilliards/releases/latest"
+              target="_blank"
+              rel="noopener"
+              >Desktop client for Windows, macOS and Linux</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://github.com/tailuge/wbilliards/releases/latest"
+              target="_blank"
+              rel="noopener"
+              >Android client</a
+            >
+            (also on
+            <a
+              href="https://apkpure.com/billiards/dev.tailuge.billiards"
+              target="_blank"
+              rel="noopener"
+              >APKPure</a
+            >
+            and via
+            <a
+              href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/tailuge/wbilliards"
+              target="_blank"
+              rel="noopener"
+              >Obtainium</a
+            >)
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="site">
+      <p>
+        An open source billiards project built on published ball and cushion
+        physics. Source code on
+        <a
+          href="https://github.com/tailuge/billiards"
+          target="_blank"
+          rel="noopener"
+          >GitHub</a
+        >, scores on the
+        <a
+          href="https://scoreboard-tailuge.vercel.app/leaderboard"
+          target="_blank"
+          rel="noopener"
+          >leaderboard</a
+        >. Other game modes: <a href="nineball.html">9-ball pool</a>,
+        <a href="eightball.html">8-ball pool</a>,
+        <a href="snooker.html">snooker</a> and
+        <a href="index.html">all billiards games</a>.
+      </p>
+      <ul class="lang-list" aria-label="Other languages">
+        <li><a href="chinese.html" hreflang="zh-Hant">中文 斯诺克</a></li>
+        <li><a href="spanish.html" hreflang="es">Billar español</a></li>
+        <li><a href="dutch.html" hreflang="nl">Biljart Nederlands</a></li>
+        <li><a href="korean.html" hreflang="ko">당구 한국어</a></li>
+        <li><a href="japanese.html" hreflang="ja">ビリヤード 日本語</a></li>
+        <li><a href="turkish.html" hreflang="tr">Bilardo Türkçe</a></li>
+        <li><a href="german.html" hreflang="de">Billard Deutsch</a></li>
+        <li><a href="vietnamese.html" hreflang="vi">Bida tiếng Việt</a></li>
+      </ul>
+    </footer>
+  </body>
+</html>

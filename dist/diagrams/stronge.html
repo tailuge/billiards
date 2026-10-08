@@ -27,6 +27,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <link rel="stylesheet" type="text/css" href="../css/diagrams.css" />
+    <link rel="preconnect" href="https://cdn.plot.ly" crossorigin />
     <style>
       .controls {
         padding: 20px;
@@ -49,29 +50,91 @@
         border: 1px solid #ddd;
         border-radius: 8px;
       }
+
+      .paper-note {
+        flex: 0 0 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 2px 8px;
+        padding: 2px 6px;
+        font-size: 11px;
+        line-height: 1.2;
+        color: #444;
+      }
+
+      .paper-note-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: #222;
+      }
+
+      .paper-note-text {
+        flex: 1 1 auto;
+        margin: 0;
+        text-align: left;
+        font-size: 11px;
+      }
+
+      .lobby-link {
+        flex: 0 0 auto;
+        padding: 0 6px;
+        border: 1px solid #bbb;
+        border-radius: 3px;
+        background: #fff;
+        color: #555;
+        font-size: 10px;
+        line-height: 16px;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .lobby-link:hover {
+        border-color: #0056b3;
+        color: #0056b3;
+      }
+
+      .stronge-main {
+        flex: 0 0 100%;
+        display: flex;
+        flex-wrap: wrap;
+      }
     </style>
   </head>
 
   <body>
     <h1 hidden>Stronge Physics Model — Ball-Cushion Interaction</h1>
-    <div class="controls">
-      <label for="interp-slider">Interpolation (x): </label>
-      <input
-        id="interp-slider"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0.5"
-        style="width: 300px"
-      />
+    <div class="paper-note">
+      <span class="paper-note-title">Stronge reference plots</span>
+      <p class="paper-note-text">
+        Recreated from the Stronge impact model to check the simulation matches
+        the source.
+      </p>
+      <a class="lobby-link" href="https://billiards.tailuge.workers.dev/lobby"
+        >lobby</a
+      >
     </div>
+    <main class="stronge-main">
+      <div class="controls">
+        <label for="interp-slider">Interpolation (x): </label>
+        <input
+          id="interp-slider"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0.5"
+          style="width: 300px"
+        />
+      </div>
 
-    <div class="plot-container">
-      <div id="initial-stick-force" class="plot"></div>
-      <div id="initial-slip-force" class="plot"></div>
-      <div id="initial-slip-velocity" class="plot"></div>
-    </div>
+      <div class="plot-container">
+        <div id="initial-stick-force" class="plot"></div>
+        <div id="initial-slip-force" class="plot"></div>
+        <div id="initial-slip-velocity" class="plot"></div>
+      </div>
+    </main>
 
     <script
       src="https://cdn.plot.ly/plotly-cartesian-3.0.0-rc.0.min.js"
