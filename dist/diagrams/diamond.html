@@ -7,9 +7,15 @@
     <link rel="icon" type="image/png" href="../favicon.png" />
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
     <meta
       name="description"
-      content="Learn and visualize the billiards diamond system with interactive diagrams and physics simulation."
+      content="Learn and visualize the three-cushion billiards diamond system with interactive top-view diagrams and a physics simulation of the same shots."
+    />
+    <link
+      rel="canonical"
+      href="https://tailuge.github.io/billiards/dist/diagrams/diamond.html"
     />
     <meta
       property="og:title"
@@ -17,7 +23,7 @@
     />
     <meta
       property="og:description"
-      content="Learn and visualize the billiards diamond system with interactive diagrams and physics simulation."
+      content="Learn and visualize the three-cushion billiards diamond system with interactive top-view diagrams and a physics simulation of the same shots."
     />
     <meta property="og:type" content="website" />
     <meta
@@ -28,30 +34,107 @@
       property="og:image"
       content="https://tailuge.github.io/billiards/dist/images/billiards.png"
     />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="600" />
+    <meta property="og:image:type" content="image/png" />
+    <meta
+      property="og:image:alt"
+      content="Three-cushion billiards table with a simulated diamond-system shot drawn on it"
+    />
+    <meta property="og:site_name" content="Break Builder" />
+    <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Three-Cushion Diamond System - Interactive Guide | Break Builder"
+    />
+    <meta
+      name="twitter:description"
+      content="Learn and visualize the three-cushion billiards diamond system with interactive top-view diagrams and a physics simulation of the same shots."
+    />
+    <meta
+      name="twitter:image"
+      content="https://tailuge.github.io/billiards/dist/images/billiards.png"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Three-Cushion Diamond System - Interactive Guide",
+        "description": "Learn and visualize the three-cushion billiards diamond system with interactive top-view diagrams and a physics simulation of the same shots.",
+        "url": "https://tailuge.github.io/billiards/dist/diagrams/diamond.html",
+        "inLanguage": "en",
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Break Builder",
+          "url": "https://tailuge.github.io/billiards/dist/"
+        }
+      }
+    </script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <link rel="stylesheet" type="text/css" href="../css/diagrams.css" />
+    <style>
+      /* A visible masthead. The heading is this page's only h1, and it now
+         reads on screen instead of being hidden from readers. */
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+
+      header {
+        flex: 1 1 100%;
+        margin: 4px 4px 0;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        line-height: 1.2;
+        color: #111;
+      }
+
+      /* diagrams.css centres every paragraph and auto-margins it, so the stand
+         first is overridden here. */
+      header p {
+        margin: 2px 0 0;
+        font-size: 0.85rem;
+        line-height: 1.4;
+        color: #555;
+        text-align: left;
+      }
+    </style>
   </head>
 
   <body>
-    <h1 hidden>Three-Cushion Diamond System — Interactive Guide</h1>
+    <header>
+      <h1>Three-Cushion Diamond System — Interactive Guide</h1>
+      <p>
+        Learn the three-cushion diamond system with interactive top-view
+        diagrams and a physics simulation of the same shots.
+      </p>
+    </header>
     <div class="parent diagram">
       <div class="replaydiagram child">
         <div
           class="topview"
-          data-state="?ruletype=threecushion&state=%7B%22init%22%3A%5B-1.489%2C-0.763%2C-1.4330625000000001%2C0%2C-1.4330625000000001%2C-0.09825%5D%2C%22shots%22%3A%5B%7B%22type%22%3A%22AIM%22%2C%22offset%22%3A%7B%22x%22%3A-0.35%2C%22y%22%3A0%2C%22z%22%3A0%7D%2C%22angle%22%3A0.717%2C%22power%22%3A2.6%2C%22pos%22%3A%7B%22x%22%3A-1.489%2C%22y%22%3A-0.763%2C%22z%22%3A0%7D%2C%22i%22%3A0%7D%5D%7D"
+          data-state="?ruletype=threecushion&state=%7B%22diagram%22%3Atrue%2C%22init%22%3A%5B-1.489%2C-0.763%2C-1.4330625000000001%2C0%2C-1.4330625000000001%2C-0.09825%5D%2C%22shots%22%3A%5B%7B%22type%22%3A%22AIM%22%2C%22offset%22%3A%7B%22x%22%3A-0.35%2C%22y%22%3A0%2C%22z%22%3A0%7D%2C%22angle%22%3A0.717%2C%22power%22%3A2.6%2C%22pos%22%3A%7B%22x%22%3A-1.489%2C%22y%22%3A-0.763%2C%22z%22%3A0%7D%2C%22i%22%3A0%7D%5D%7D"
         ></div>
       </div>
       <div class="replaydiagram child">
         <div
           class="topview"
-          data-state="?ruletype=threecushion&state=%7B%22init%22%3A%5B-0.686%2C-0.748%2C-1.4330625000000001%2C0%2C-1.4330625000000001%2C-0.09825%5D%2C%22shots%22%3A%5B%7B%22type%22%3A%22AIM%22%2C%22offset%22%3A%7B%22x%22%3A-0.35%2C%22y%22%3A0%2C%22z%22%3A0%7D%2C%22angle%22%3A0.828%2C%22power%22%3A2.6%2C%22pos%22%3A%7B%22x%22%3A-0.686%2C%22y%22%3A-0.748%2C%22z%22%3A0%7D%2C%22i%22%3A0%7D%5D%7D"
+          data-state="?ruletype=threecushion&state=%7B%22diagram%22%3Atrue%2C%22init%22%3A%5B-0.686%2C-0.748%2C-1.4330625000000001%2C0%2C-1.4330625000000001%2C-0.09825%5D%2C%22shots%22%3A%5B%7B%22type%22%3A%22AIM%22%2C%22offset%22%3A%7B%22x%22%3A-0.35%2C%22y%22%3A0%2C%22z%22%3A0%7D%2C%22angle%22%3A0.828%2C%22power%22%3A2.6%2C%22pos%22%3A%7B%22x%22%3A-0.686%2C%22y%22%3A-0.748%2C%22z%22%3A0%7D%2C%22i%22%3A0%7D%5D%7D"
         ></div>
       </div>
       <div class="replaydiagram child">
         <div
           class="topview"
-          data-state="?ruletype=threecushion&state=%7B%22init%22%3A%5B0.111%2C-0.731%2C-1.4330625000000001%2C0%2C-1.4330625000000001%2C-0.09825%5D%2C%22shots%22%3A%5B%7B%22type%22%3A%22AIM%22%2C%22offset%22%3A%7B%22x%22%3A-0.35%2C%22y%22%3A0%2C%22z%22%3A0%7D%2C%22angle%22%3A0.968%2C%22power%22%3A2.6%2C%22pos%22%3A%7B%22x%22%3A0.111%2C%22y%22%3A-0.731%2C%22z%22%3A0%7D%2C%22i%22%3A0%7D%5D%7D"
+          data-state="?ruletype=threecushion&state=%7B%22diagram%22%3Atrue%2C%22init%22%3A%5B0.111%2C-0.731%2C-1.4330625000000001%2C0%2C-1.4330625000000001%2C-0.09825%5D%2C%22shots%22%3A%5B%7B%22type%22%3A%22AIM%22%2C%22offset%22%3A%7B%22x%22%3A-0.35%2C%22y%22%3A0%2C%22z%22%3A0%7D%2C%22angle%22%3A0.968%2C%22power%22%3A2.6%2C%22pos%22%3A%7B%22x%22%3A0.111%2C%22y%22%3A-0.731%2C%22z%22%3A0%7D%2C%22i%22%3A0%7D%5D%7D"
         ></div>
       </div>
     </div>
