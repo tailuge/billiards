@@ -36,12 +36,17 @@
           format("truetype");
       }
 
+      /* Palette, radii and spacing follow the lobby's dark theme: a #1a1a1a
+         page, #2a2a2a surfaces outlined with a 1px #444 border, a subtle 6px
+         radius and 2px gutters between the rounded panels. */
       :root {
-        --bg: #111;
-        --panel: #181818;
-        --line: #2a2a2a;
-        --text: #f0f0f0;
-        --muted: #8a8a8a;
+        --bg: #1a1a1a;
+        --surface: #2a2a2a;
+        --border: #444;
+        --border-light: #333;
+        --hover: #444;
+        --text: #e0e0e0;
+        --muted: #aaa;
         --accent: #6ba3f5;
 
         color-scheme: dark;
@@ -60,6 +65,11 @@
         margin: 0;
         display: flex;
         flex-direction: column;
+        gap: 0.4rem;
+
+        /* Gutter between the panel and the viewport, matching the lobby's
+           inset content column. */
+        padding: 0 1rem 1rem;
         background: var(--bg);
         color: var(--text);
         font-family: Exo, system-ui, sans-serif;
@@ -69,8 +79,7 @@
 
       header {
         flex: 0 0 auto;
-        padding: 14px 20px;
-        border-bottom: 1px solid var(--line);
+        padding: 0.4rem 0.2rem;
       }
 
       h1 {
@@ -85,39 +94,67 @@
         font-size: 0.85rem;
       }
 
+      /* Title and panel share one centred, width-capped column so the layout
+         reads like the lobby page rather than edge-to-edge. */
+      header,
+      main {
+        width: 100%;
+        max-width: min(80rem, 100%);
+        margin-inline: auto;
+      }
+
       main {
         flex: 1 1 auto;
         display: flex;
+        gap: 2px;
         min-height: 0;
+        padding: 2px;
+        overflow: hidden;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
       }
 
       #list {
+        display: flex;
         flex: 0 0 auto;
+        flex-direction: column;
+        gap: 2px;
         width: 16rem;
         margin: 0;
-        padding: 0;
+        padding: 2px;
         overflow-y: auto;
         list-style: none;
-        border-right: 1px solid var(--line);
+        background: var(--surface);
       }
 
       #list li {
-        padding: 10px 16px;
-        border-bottom: 1px solid var(--line);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 6px 10px;
+        border: 1px solid var(--border-light);
+        border-radius: 4px;
         color: var(--muted);
         font-size: 0.82rem;
         cursor: pointer;
       }
 
       #list li:hover {
-        background: var(--panel);
+        background: var(--hover);
         color: var(--text);
       }
 
       #list li.active {
-        background: var(--panel);
+        background: var(--hover);
         box-shadow: inset 3px 0 0 var(--accent);
         color: var(--text);
+      }
+
+      #list li .hall {
+        flex: 1 1 auto;
+        min-width: 0;
       }
 
       #list li b {
@@ -127,21 +164,81 @@
         font-weight: 600;
       }
 
+      /* Japanese name and ward on one muted metadata line. */
+      #list li .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        color: var(--muted);
+      }
+
+      /* Progress star: hollow by default, filled once the hall is marked
+         visited. Nothing sets .is-visited yet, so every hall starts empty. */
+      #list li .star {
+        flex: 0 0 auto;
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1;
+      }
+
+      #list li .star::before {
+        content: "☆";
+      }
+
+      #list li.is-visited .star::before {
+        content: "★";
+        color: var(--accent);
+      }
+
+      /* Selected halls unfold to reveal the rest of the entry. Basis 100%
+         wraps the block onto its own line under the name and star. */
+      #list li .details {
+        display: none;
+        flex: 1 0 100%;
+        grid-template-columns: auto 1fr;
+        gap: 2px 0.5rem;
+        margin: 0;
+        padding-top: 4px;
+        border-top: 1px solid var(--border-light);
+        font-size: 0.75rem;
+        line-height: 1.35;
+      }
+
+      #list li.active .details {
+        display: grid;
+      }
+
+      #list li .details dt {
+        color: var(--muted);
+      }
+
+      #list li .details dd {
+        margin: 0;
+        color: var(--text);
+      }
+
       #map {
         flex: 1 1 auto;
         min-height: 0;
+        overflow: hidden;
+        border-radius: 4px;
       }
 
       .leaflet-container {
-        background: var(--bg);
+        background: var(--surface);
         font-family: inherit;
       }
 
       .leaflet-popup-content-wrapper,
       .leaflet-popup-tip {
-        background: var(--panel);
+        background: var(--hover);
         color: var(--text);
         box-shadow: none;
+      }
+
+      .leaflet-popup-content-wrapper {
+        border: 1px solid var(--border);
+        border-radius: 6px;
       }
 
       .leaflet-popup-content {
@@ -150,6 +247,10 @@
       }
 
       @media (width <= 700px) {
+        body {
+          padding: 0 0.5rem 0.5rem;
+        }
+
         main {
           flex-direction: column;
         }
@@ -157,8 +258,6 @@
         #list {
           width: 100%;
           max-height: 40%;
-          border-right: 0;
-          border-bottom: 1px solid var(--line);
         }
       }
     </style>
@@ -361,8 +460,26 @@
       halls.forEach(function (hall) {
         const item = document.createElement("li")
         item.dataset.id = hall.id
-        item.innerHTML =
-          "<b>" + hall.name + "</b><span>" + hall.district + "</span>"
+        item.innerHTML = `
+          <span class="hall">
+            <b>${hall.name}</b>
+            <span class="meta">
+              <span lang="ja">${hall.japaneseName}</span>
+              <span>${hall.district}</span>
+            </span>
+          </span>
+          <span class="star" aria-hidden="true"></span>
+          <dl class="details">
+            <dt>Address</dt>
+            <dd>${hall.address}</dd>
+            <dt>Hours</dt>
+            <dd>${hall.hours}</dd>
+            <dt>Tables</dt>
+            <dd>${hall.tables}</dd>
+            <dt>Rating</dt>
+            <dd>${hall.rating}</dd>
+          </dl>
+        `
         item.addEventListener("click", function () {
           select(hall.id, true)
         })
