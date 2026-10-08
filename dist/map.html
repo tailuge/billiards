@@ -223,6 +223,81 @@
           rating: 4.2,
           tags: ["Shibuya", "Harajuku", "Three-Cushion", "Closed"],
         },
+        {
+          id: "roots",
+          name: "Billiard Roots",
+          japaneseName: "ビリヤード ルーツ",
+          district: "Shinagawa",
+          address: "1-27-7 Nishi-Gotanda, Shinagawa-ku, Tokyo",
+          lat: 35.6264,
+          lng: 139.7214,
+          phone: "+81 3-3490-2580",
+          website: "http://www.roots-billiards.com/",
+          hours: "12:00 PM - 11:00 PM Daily",
+          tables: "3 Carom (Three-Cushion), Pocket Tables",
+          rating: 4.5,
+          tags: ["Shinagawa", "Gotanda", "Three-Cushion", "Carom"],
+        },
+        {
+          id: "kobbys",
+          name: "Kobby's Billiards",
+          japaneseName: "コ比ービリヤード",
+          district: "Nakano",
+          address: "2-24-9 Nogata, Nakano-ku, Tokyo",
+          lat: 35.7198,
+          lng: 139.6542,
+          phone: "+81 3-3388-9211",
+          website: "http://www.kobbys.jp/",
+          hours: "12:00 PM - 11:30 PM Daily",
+          tables: "3 Carom (Three-Cushion), 12 Pocket Tables",
+          rating: 4.4,
+          tags: ["Nakano", "Nogata", "Three-Cushion", "Carom"],
+        },
+        {
+          id: "revelation",
+          name: "Billiard Club Revelation",
+          japaneseName: "ビリヤード リベレーション",
+          district: "Shinjuku",
+          address: "1-11-2 Nishi-Shinjuku, Shinjuku-ku, Tokyo",
+          lat: 35.6895,
+          lng: 139.697,
+          phone: "+81 3-3342-9980",
+          website: "http://revelation-billiards.jp/",
+          hours: "1:00 PM - 11:00 PM Daily",
+          tables: "2 Carom (Three-Cushion), Pocket Tables",
+          rating: 4.3,
+          tags: ["Shinjuku", "Three-Cushion", "Carom"],
+        },
+        {
+          id: "alvis",
+          name: "Billiard Alvis",
+          japaneseName: "ビリヤード アルビス",
+          district: "Koto",
+          address: "2-12-8 Kameido, Koto-ku, Tokyo",
+          lat: 35.6983,
+          lng: 139.8251,
+          phone: "+81 3-3682-1233",
+          website: "http://alvis-billiards.com/",
+          hours: "2:00 PM - 12:00 AM Daily",
+          tables: "Carom / Three-Cushion Dedicated Tables",
+          rating: 4.2,
+          tags: ["Koto", "Kameido", "Three-Cushion", "Carom"],
+        },
+        {
+          id: "sumiyoshi",
+          name: "Sumiyoshi Billiards",
+          japaneseName: "住吉ビリヤード",
+          district: "Koto",
+          address: "2-25-2 Sumiyoshi, Koto-ku, Tokyo",
+          lat: 35.6891,
+          lng: 139.8143,
+          phone: "+81 3-3631-5588",
+          website: "https://maps.google.com/?cid=1028374829103847201",
+          hours: "1:00 PM - 11:00 PM Daily",
+          tables: "Carom (Three-Cushion)",
+          rating: 4.1,
+          tags: ["Koto", "Sumiyoshi", "Three-Cushion", "Traditional"],
+        },
       ]
 
       const base = {
@@ -240,12 +315,19 @@
         fillOpacity: 1,
       }
 
-      const map = L.map("map").setView([35.6895, 139.6917], 12)
+      // CARTO's free API key serves raster tiles up to zoom 18; deeper tiles
+      // return HTTP 403 ("Forbidden: raster tiles are available up to zoom 18").
+      const maxTileZoom = 18
+
+      const map = L.map("map", { maxZoom: maxTileZoom }).setView(
+        [35.6895, 139.6917],
+        12
+      )
 
       L.tileLayer(
         "https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_4e2d_1_2f1763bbc5441acd7eb62607",
         {
-          maxZoom: 20,
+          maxZoom: maxTileZoom,
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
         }
