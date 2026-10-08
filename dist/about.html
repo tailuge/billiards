@@ -6,7 +6,7 @@
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta
       name="description"
-      content="Inside this open-source billiards project: the pool, snooker and carom games it plays, the published physics behind the shots, and where to read the code."
+      content="Inside this open-source billiards simulator: the pool, snooker and carom games it plays, the published billiards physics behind the shots, the practice table and three-cushion exam, and where to read the code."
     />
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <meta
@@ -24,7 +24,7 @@
     />
     <meta
       property="og:description"
-      content="A free browser billiards and pool simulator built on published ball and cushion physics. What it plays, how it works, and how to run and contribute to the source."
+      content="A free browser billiards and pool simulator built on published ball and cushion physics. What it plays, how to practise, and how to run and contribute to the source."
     />
     <meta property="og:site_name" content="Tailuge Billiards" />
     <meta
@@ -48,7 +48,7 @@
     />
     <meta
       name="twitter:description"
-      content="A free browser billiards and pool simulator built on published ball and cushion physics. What it plays, how it works, and how to run the source."
+      content="A free browser billiards and pool simulator built on published ball and cushion physics. What it plays, how to practise, and how to run the source."
     />
     <meta
       name="twitter:image"
@@ -64,7 +64,7 @@
             "@id": "https://billiards.tailuge.workers.dev/about#page",
             "url": "https://billiards.tailuge.workers.dev/about",
             "name": "About the Billiards Physics Simulator",
-            "description": "An overview of this open-source browser billiards and pool project: the rule sets it plays, the physics models behind it, online play, and where to find the source code.",
+            "description": "An overview of this open-source browser billiards and pool project: the rule sets it plays, the reference physics models behind it, practice, the three-cushion exam, online play, and where to find the source code.",
             "inLanguage": "en",
             "isPartOf": {
               "@id": "https://billiards.tailuge.workers.dev/#website"
@@ -550,12 +550,13 @@
           An open-source billiards simulator that runs in the browser
         </h1>
         <p class="intro-text">
-          This is a free billiards and pool simulation written in TypeScript. It
-          runs in any modern desktop or mobile browser with nothing to install
-          and no account to create — you open a page and play. Behind it is a
-          small physics engine built from published work on ball motion,
-          collisions and cushion impacts, and the table is drawn in 3D with
-          WebGL and three.js.
+          This is a free, open-source billiards and pool physics simulator
+          written in TypeScript. It runs in any modern desktop or mobile browser
+          with nothing to install and no account to create — open a page and
+          play, practise, analyse shots or explore how billiards physics works.
+          Behind it is a small physics engine built from published work on ball
+          motion, collisions and cushion impacts, and the table is drawn in 3D
+          with WebGL and three.js.
         </p>
         <p class="intro-text">
           The project began in 2018 and has been developed in public ever since,
@@ -591,6 +592,46 @@
             The 8-ball table in Hi-Res mode, running in a browser.
           </figcaption>
         </figure>
+      </section>
+
+      <section id="explore" class="section" aria-labelledby="explore-title">
+        <h2 id="explore-title">Explore</h2>
+        <div class="prose">
+          <p>
+            A few pages worth knowing about, depending on what you came for.
+          </p>
+        </div>
+        <ul class="links">
+          <li>
+            <a href="diagrams/three.html">Three-cushion physics</a> —
+            <span class="what"
+              >tune the cushion constants and watch the models respond.</span
+            >
+          </li>
+          <li>
+            <a href="diagrams/diagrams.html">Interactive physics diagrams</a> —
+            <span class="what"
+              >the published models recreated as live figures.</span
+            >
+          </li>
+          <li>
+            <a href="practice.html">Practice table</a> and
+            <a href="exam/index.html">three-cushion exam</a> —
+            <span class="what"
+              >set up shots, then grade your level of play.</span
+            >
+          </li>
+          <li>
+            <a href="nineball.html">Nine-ball</a>,
+            <a href="eightball.html">8-ball</a> and
+            <a href="snooker.html">snooker</a> —
+            <span class="what">the main game modes.</span>
+          </li>
+          <li>
+            <a href="#research">Research and references</a> —
+            <span class="what">the papers the simulation is built from.</span>
+          </li>
+        </ul>
       </section>
 
       <section id="play" class="section" aria-labelledby="play-title">
@@ -629,13 +670,26 @@
           </ul>
           <p>
             Two practice bots, ClawBreak and TheFarJaw, will play you when
-            nobody else is around. For deliberate practice there is a
-            <a href="practice.html">table where you can place balls freely</a>,
-            a set of <a href="exam/index.html">graded exam shots</a> that score
-            your level of play, and
-            <a href="speedrun/index.html">a speedrun challenge</a> against the
-            clock. The <a href="reveal/index.html">reveal game</a> uses straight
-            pool potting to uncover hidden pictures.
+            nobody else is around, and a
+            <a href="speedrun/index.html">speedrun challenge</a> races you
+            against the clock. The <a href="reveal/index.html">reveal game</a>
+            uses straight pool potting to uncover hidden pictures.
+          </p>
+        </div>
+
+        <h3>Practice and the three-cushion exam</h3>
+        <div class="prose">
+          <p>
+            For deliberate billiards practice, the
+            <a href="practice.html">practice table</a> lets you set up any shot
+            or position and repeat it, with no opponent and no clock. When you
+            want to measure progress rather than just practise, the
+            <a href="exam/index.html">three-cushion exam</a> works through a
+            graded list of three-cushion billiards shots and marks each attempt,
+            reporting an assessment level, completion and score. It stays an
+            exam on purpose, but it is also this project's structured training:
+            accuracy, cue-ball control, positional play and consistency all
+            count towards the result.
           </p>
         </div>
       </section>
@@ -648,7 +702,9 @@
             exhaustive; the project's own README calls the physics
             “unsophisticated”. The intention is to model the effects a player
             actually notices — spin, throw, and how the ball leaves a cushion —
-            from published, checkable models rather than from tuning by feel.
+            and each of those behaviours follows a specific published model that
+            acts as its reference, rather than being tuned by feel until it
+            looks realistic.
           </p>
           <p>
             Ball motion follows
@@ -938,10 +994,10 @@
         <h2 id="research-title">Research and references</h2>
         <div class="prose">
           <p>
-            The models implemented here are not presented as new research; they
-            are implementations of other people's published work, with the
-            validation figures kept alongside the code so the results can be
-            compared with the papers.
+            The models implemented here are not presented as new research; each
+            is a published model used as the reference for that part of the
+            engine, with validation figures kept alongside the code so the
+            results can be compared with the papers.
           </p>
         </div>
         <ul class="links">

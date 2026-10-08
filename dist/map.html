@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tokyo billiards challenge</title>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin
+    ></script>
+
+    <style>
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 200;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4tM3CwM.ttf")
+          format("truetype");
+      }
+
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4o0wCwM.ttf")
+          format("truetype");
+      }
+
+      :root {
+        --bg: #111;
+        --panel: #181818;
+        --line: #2a2a2a;
+        --text: #f0f0f0;
+        --muted: #8a8a8a;
+        --accent: #6ba3f5;
+
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Exo, system-ui, sans-serif;
+        font-weight: 200;
+        font-size: 15px;
+      }
+
+      header {
+        flex: 0 0 auto;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+
+      header p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      main {
+        flex: 1 1 auto;
+        display: flex;
+        min-height: 0;
+      }
+
+      #list {
+        flex: 0 0 auto;
+        width: 16rem;
+        margin: 0;
+        padding: 0;
+        overflow-y: auto;
+        list-style: none;
+        border-right: 1px solid var(--line);
+      }
+
+      #list li {
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.82rem;
+        cursor: pointer;
+      }
+
+      #list li:hover {
+        background: var(--panel);
+        color: var(--text);
+      }
+
+      #list li.active {
+        background: var(--panel);
+        box-shadow: inset 3px 0 0 var(--accent);
+        color: var(--text);
+      }
+
+      #list li b {
+        display: block;
+        color: var(--text);
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      #map {
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+
+      .leaflet-container {
+        background: var(--bg);
+        font-family: inherit;
+      }
+
+      .leaflet-popup-content-wrapper,
+      .leaflet-popup-tip {
+        background: var(--panel);
+        color: var(--text);
+        box-shadow: none;
+      }
+
+      .leaflet-popup-content {
+        margin: 8px 12px;
+        font-size: 0.82rem;
+      }
+
+      @media (width <= 700px) {
+        main {
+          flex-direction: column;
+        }
+
+        #list {
+          width: 100%;
+          max-height: 40%;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Tokyo billiards challenge</h1>
+      <p>Can you visit all the billiard halls in Tokyo?</p>
+    </header>
+
+    <main>
+      <ul id="list"></ul>
+      <div id="map"></div>
+    </main>
+
+    <script>
+      // Billiard halls in Tokyo. Kept in full for the later game integration;
+      // the list only shows the name and district.
+      const halls = [
+        {
+          id: "rosa",
+          name: "Billiard Rosa",
+          japaneseName: "ビリヤード ロサ",
+          district: "Toshima",
+          address: "1-37-12 Nishi-Ikebukuro 5F, Toshima-ku, Tokyo",
+          lat: 35.7314,
+          lng: 139.7107,
+          phone: "+81 3-3988-8411",
+          website: "http://billiards-rosa.com/charge/",
+          hours: "11:00 AM - 11:00 PM Daily",
+          tables: "28 Pool Tables, 3 Carom",
+          rating: 4.3,
+          reviewsCount: 240,
+          tags: ["Toshima", "Historic", "Pool", "Carom"],
+          description:
+            "One of Tokyo's iconic and largest billiard halls located in Ikebukuro with over 28 high-grade Brunswick pool tables.",
+        },
+        {
+          id: "cue-shibuya",
+          name: "CUE Billiards (Shibuya EST)",
+          japaneseName: "CUE 渋谷エスト",
+          district: "Shibuya",
+          address: "1-14-14 Shibuya EST Bldg 6F, Shibuya-ku, Tokyo",
+          lat: 35.6598,
+          lng: 139.7032,
+          phone: "+81 3-3409-2451",
+          website: "http://www.shibuyaest.co.jp/",
+          hours: "12:00 PM - 11:00 PM Daily",
+          tables: "30 Pocket Tables",
+          rating: 4.2,
+          reviewsCount: 310,
+          tags: ["Shibuya", "Pool", "Central"],
+          description:
+            "Located right next to Shibuya station inside EST bowling complex. Features ~30 well-maintained pool tables and hourly packages.",
+        },
+        {
+          id: "bagus-dogenzaka",
+          name: "BAGUS Dogenzaka",
+          japaneseName: "バグース 道玄坂店",
+          district: "Shibuya",
+          address: "2-29-5 Dogenzaka 3F The Prime, Shibuya-ku, Tokyo",
+          lat: 35.6586,
+          lng: 139.6981,
+          phone: "+81 3-3463-6669",
+          website: "http://www.bagus-99.com/shops/b_dougenzaka/",
+          hours: "Open 24 Hours",
+          tables: "14 Premium Pool Tables, Darts & Lounge",
+          rating: 3.9,
+          reviewsCount: 185,
+          tags: ["Shibuya", "24 Hours", "Luxury Lounge", "Darts"],
+          description:
+            "Stylish 24-hour luxury billiards and darts lounge in the heart of Dogenzaka, Shibuya. Perfect for night outs.",
+        },
+        {
+          id: "pub-q",
+          name: "PUB Q Billiard & Darts Bar",
+          japaneseName: "PUB Q ビリヤード&ダーツ",
+          district: "Shinjuku",
+          address: "2-31-3 Kabukicho 2F, Shinjuku-ku, Tokyo",
+          lat: 35.7001,
+          lng: 139.7028,
+          phone: "+81 3-6457-3382",
+          website: "https://www.instagram.com/pubq_shinokubo/",
+          hours: "3:00 PM - 5:00 AM",
+          tables: "4 Pool Tables, Bar Lounge",
+          rating: 4.7,
+          reviewsCount: 92,
+          tags: ["Shinjuku", "Late Night", "Bar"],
+          description:
+            "Friendly, intimate international atmosphere in Kabukicho with late-night drinks, darts, and pool.",
+        },
+        {
+          id: "bee-kabukicho",
+          name: "Dining Darts Bar Bee KABUKICHO",
+          japaneseName: "ダイニングダーツバー Bee 歌舞伎町店",
+          district: "Shinjuku",
+          address: "1-27-5 Kabukicho APM Bldg 6F, Shinjuku-ku, Tokyo",
+          lat: 35.6958,
+          lng: 139.7019,
+          phone: "+81 3-6205-9501",
+          website: "https://www.bee-style.jp/shop/bee/kabukicho.html",
+          hours: "3:00 PM - 5:00 AM",
+          tables: "Pool & Darts Entertainment",
+          rating: 4.9,
+          reviewsCount: 150,
+          tags: ["Shinjuku", "Late Night", "Cocktails"],
+          description:
+            "High-energy entertainment venue offering billiards, darts, foods, and specialty cocktails.",
+        },
+        {
+          id: "glanz-hatagaya",
+          name: "Billiards Café GLANZ",
+          japaneseName: "ビリヤード カフェ グランス",
+          district: "Shibuya",
+          address: "1-23-20 Hatagaya Km Bldg 1F, Shibuya-ku, Tokyo",
+          lat: 35.6811,
+          lng: 139.6765,
+          phone: "+81 3-6323-2376",
+          website: "http://dreiband.wix.com/glanz",
+          hours: "2:00 PM - 11:00 PM",
+          tables: "Three-Cushion Carom Tables",
+          rating: 4.6,
+          reviewsCount: 64,
+          tags: ["Shibuya", "Carom", "3-Cushion"],
+          description:
+            "A refined, dedicated carom / 3-cushion billiards hall with superb table condition and quiet focus.",
+        },
+        {
+          id: "bagus-shinjuku-west",
+          name: "BAGUS Shinjuku Nishiguchi",
+          japaneseName: "バグース 新宿西口店",
+          district: "Shinjuku",
+          address: "1-3-3 Nishi-Shinjuku 5F, Shinjuku-ku, Tokyo",
+          lat: 35.6908,
+          lng: 139.6985,
+          phone: "+81 3-5321-6810",
+          website: "http://www.bagus-99.com/shops/b_shinjuku_nishiguchi/",
+          hours: "12:00 PM - 5:00 AM",
+          tables: "12 Pool Tables, Golf & Darts",
+          rating: 4.1,
+          reviewsCount: 112,
+          tags: ["Shinjuku", "Luxury Lounge", "Near Station"],
+          description:
+            "Upscale adult amusement venue right outside Shinjuku West exit, combining pool, simulation golf, and darts.",
+        },
+        {
+          id: "billiard-yamate",
+          name: "Billiard Yamate",
+          japaneseName: "ビリヤード ヤマテ",
+          district: "Meguro",
+          address: "2-16-13 Kamimeguro, Meguro-ku, Tokyo",
+          lat: 35.6335,
+          lng: 139.6882,
+          phone: "+81 3-3714-3882",
+          website: "https://billiard-yamate.com/",
+          hours: "1:00 PM - 11:00 PM",
+          tables: "8 Pool Tables",
+          rating: 4.4,
+          reviewsCount: 78,
+          tags: ["Meguro", "Classic", "Local Favorite"],
+          description:
+            "Classic neighborhood billiard hall near Nakameguro with relaxed local charm and veteran staff.",
+        },
+      ]
+
+      const base = {
+        radius: 7,
+        weight: 2,
+        color: "#6ba3f5",
+        fillColor: "#6ba3f5",
+        fillOpacity: 0.7,
+      }
+      const chosen = {
+        radius: 9,
+        weight: 3,
+        color: "#fff",
+        fillColor: "#6ba3f5",
+        fillOpacity: 1,
+      }
+
+      const map = L.map("map").setView([35.6895, 139.6917], 12)
+
+      L.tileLayer(
+        "https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_4e2d_1_2f1763bbc5441acd7eb62607",
+        {
+          maxZoom: 20,
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        }
+      ).addTo(map)
+
+      const list = document.getElementById("list")
+      const markers = {}
+
+      function select(id, pan) {
+        list.querySelectorAll("li").forEach(function (item) {
+          item.classList.toggle("active", item.dataset.id === id)
+        })
+        Object.keys(markers).forEach(function (mid) {
+          markers[mid].setStyle(mid === id ? chosen : base)
+        })
+
+        const item = list.querySelector('li[data-id="' + id + '"]')
+        if (item) {
+          item.scrollIntoView({ block: "nearest" })
+        }
+
+        if (pan) {
+          const hall = halls.find(function (h) {
+            return h.id === id
+          })
+          map.flyTo([hall.lat, hall.lng], 15, { duration: 0.8 })
+          markers[id].openPopup()
+        }
+      }
+
+      halls.forEach(function (hall) {
+        const item = document.createElement("li")
+        item.dataset.id = hall.id
+        item.innerHTML =
+          "<b>" + hall.name + "</b><span>" + hall.district + "</span>"
+        item.addEventListener("click", function () {
+          select(hall.id, true)
+        })
+        list.appendChild(item)
+
+        const marker = L.circleMarker([hall.lat, hall.lng], base)
+          .addTo(map)
+          .bindPopup("<b>" + hall.name + "</b><br>" + hall.japaneseName)
+        marker.addEventListener("click", function () {
+          select(hall.id, false)
+        })
+        markers[hall.id] = marker
+      })
+    </script>
+  </body>
+</html>
