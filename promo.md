@@ -83,3 +83,10 @@ https://iogame.io/games/billards-by-tailuge
 https://pbc-molbergen.de/Simulator.html
 
 https://www.bored.com/link/tailuge-github-io-billiards/
+
+https://reporank.net/en/repo/tailuge-billiards.html#repo-feedback
+
+https://indexpage.org/search?q=billiards
+
+https://slowden.com/games/tailuge-billiards/
+
