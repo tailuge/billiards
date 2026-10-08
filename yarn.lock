@@ -3244,7 +3244,7 @@ __metadata:
     "@types/three": "npm:0.186.0"
     canvas: "npm:3.2.3"
     chai: "npm:6.3.0"
-    concurrently: "npm:10.0.5"
+    concurrently: "npm:10.0.6"
     eslint: "npm:10.12.0"
     eslint-plugin-html: "npm:8.2.1"
     eslint-plugin-sonarjs: "npm:4.2.2"
@@ -3672,20 +3672,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"concurrently@npm:10.0.5":
-  version: 10.0.5
-  resolution: "concurrently@npm:10.0.5"
+"concurrently@npm:10.0.6":
+  version: 10.0.6
+  resolution: "concurrently@npm:10.0.6"
   dependencies:
     chalk: "npm:5.6.2"
     rxjs: "npm:7.8.2"
-    shell-quote: "npm:1.9.0"
+    shell-quote: "npm:1.12.0"
     supports-color: "npm:10.2.2"
     tree-kill: "npm:1.2.2"
     yargs: "npm:18.0.0"
   bin:
     conc: dist/bin/index.js
     concurrently: dist/bin/index.js
-  checksum: 10c0/2e66ece2f2a016b4f8b175f88f67d84bbedc8eff864310d37fe8c82e58459a40cfe69c5f0fe8ce9fc97f028157d7adb1c71629433e305e95f447a7840e417ad9
+  checksum: 10c0/08b03d53f81c0e159ac92f80005a04ed9c970b6ed4875e99fbf27f4a2f3ae142b83a76cc30580c8c9f4d75942b501cba2c6f8ae433709e045efbaa5f8faeb743
   languageName: node
   linkType: hard
 
@@ -7718,10 +7718,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shell-quote@npm:1.9.0":
-  version: 1.9.0
-  resolution: "shell-quote@npm:1.9.0"
-  checksum: 10c0/a39960107eb086b02394cfceb3c732bd3bf567b568719ff47101448fc3f1bf4a59ecfdd8960ff7ea564d749ef8bda70f2c82a768f22d8c7aeeabf2b64f53b7e8
+"shell-quote@npm:1.12.0":
+  version: 1.12.0
+  resolution: "shell-quote@npm:1.12.0"
+  checksum: 10c0/1605a4ed6a758bf13de7cb8197a4184d8015f7a4dbdcd6cd4a717d5b30b3ae7666300cc4ae7f3155cf80ace9739e9e82061ee5aa1a648f53f5fab31a220816d0
   languageName: node
   linkType: hard
 
