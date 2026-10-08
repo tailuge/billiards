@@ -225,7 +225,7 @@
       }
 
       .leaflet-container {
-        background: var(--surface);
+        background: var(--bg);
         font-family: inherit;
       }
 
@@ -244,6 +244,47 @@
       .leaflet-popup-content {
         margin: 8px 12px;
         font-size: 0.82rem;
+      }
+
+      /* Permanent Japanese name labels beside each marker. Leaflet's tooltip
+         defaults to a white chip; recolour it to sit on the dark tiles. */
+      .leaflet-tooltip.hall-label {
+        padding: 1px 5px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: var(--bg);
+        color: var(--text);
+        box-shadow: none;
+        font-size: 0.75rem;
+      }
+
+      /* direction:auto flips labels left or right, so recolour both arrows. */
+      .leaflet-tooltip-left.hall-label::before {
+        border-left-color: var(--bg);
+      }
+
+      .leaflet-tooltip-right.hall-label::before {
+        border-right-color: var(--bg);
+      }
+
+      /* Leaflet's chrome defaults to light; darken it to sit on the dark tiles. */
+      .leaflet-control-attribution {
+        background: rgb(26 26 26 / 80%);
+        color: var(--muted);
+      }
+
+      .leaflet-control-attribution a {
+        color: var(--accent);
+      }
+
+      .leaflet-bar a {
+        background: var(--surface);
+        border-bottom-color: var(--border);
+        color: var(--text);
+      }
+
+      .leaflet-bar a:hover {
+        background: var(--hover);
       }
 
       @media (width <= 700px) {
@@ -423,8 +464,10 @@
         12
       )
 
+      // CARTO "Dark Matter" tiles, so the map matches the dark page. The
+      // keyless dark_all URL only returns a watermark placeholder, hence the key.
       L.tileLayer(
-        "https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_4e2d_1_2f1763bbc5441acd7eb62607",
+        "https://basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?key=cb1_4e2d_1_2f1763bbc5441acd7eb62607",
         {
           maxZoom: maxTileZoom,
           attribution:
@@ -487,7 +530,15 @@
 
         const marker = L.circleMarker([hall.lat, hall.lng], base)
           .addTo(map)
-          .bindPopup("<b>" + hall.name + "</b><br>" + hall.japaneseName)
+          .bindPopup(
+            `<b>${hall.name}</b><br><span lang="ja">${hall.japaneseName}</span>`
+          )
+          .bindTooltip(`<span lang="ja">${hall.japaneseName}</span>`, {
+            permanent: true,
+            direction: "auto",
+            offset: [10, 0],
+            className: "hall-label",
+          })
         marker.addEventListener("click", function () {
           select(hall.id, false)
         })
