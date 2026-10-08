@@ -31,10 +31,78 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <link rel="stylesheet" type="text/css" href="../css/diagrams.css" />
+    <style>
+      .paper-note {
+        flex: 0 0 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 2px 8px;
+        padding: 2px 6px;
+        font-size: 11px;
+        line-height: 1.2;
+        color: #444;
+      }
+
+      .paper-note-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: #222;
+      }
+
+      .paper-note-text {
+        flex: 1 1 auto;
+        margin: 0;
+        text-align: left;
+        font-size: 11px;
+      }
+
+      .paper-note-text a {
+        color: #007bff;
+      }
+
+      .lobby-link {
+        flex: 0 0 auto;
+        padding: 0 6px;
+        border: 1px solid #bbb;
+        border-radius: 3px;
+        background: #fff;
+        color: #555;
+        font-size: 10px;
+        line-height: 16px;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .lobby-link:hover {
+        border-color: #007bff;
+        color: #007bff;
+      }
+    </style>
   </head>
 
   <body>
     <h1 hidden>Mathavan Physics Model — Ball-Cushion Interaction</h1>
+    <div class="paper-note">
+      <span class="paper-note-title">Recreated reference plots</span>
+      <p class="paper-note-text">
+        These plots are recreated from the
+        <a
+          href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
+          >Mathavan</a
+        >
+        and
+        <a
+          href="https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf"
+          >Alciatore</a
+        >
+        papers to prove the simulation matches the source papers accurately.
+      </p>
+      <a class="lobby-link" href="https://billiards.tailuge.workers.dev/lobby"
+        >lobby</a
+      >
+    </div>
     <div id="mathavan-impulse" class="mathavandiagram"></div>
     <div id="mathavan-figure9-speed" class="mathavandiagram"></div>
     <div id="mathavan-figure9-angle" class="mathavandiagram"></div>

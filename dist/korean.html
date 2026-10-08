@@ -1021,12 +1021,10 @@
     </footer>
 
     <script>
-      if (!["localhost", "127.0.0.1"].includes(location.hostname)) {
-        fetch("https://billiards-network.onrender.com/api/usage/korean", {
-          method: "PUT",
-          mode: "cors",
-        }).catch(() => {})
-      }
+      fetch("https://billiards-network.onrender.com/api/usage/korean", {
+        method: "PUT",
+        mode: "cors",
+      }).catch(() => {})
     </script>
   </body>
 </html>
