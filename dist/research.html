@@ -2,7 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Interactive Billiards Shot Analysis &amp; Training | Billiards Simulator</title>
+    <title>
+      Interactive Billiards Shot Analysis &amp; Training | Billiards Simulator
+    </title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta
       name="description"
@@ -14,7 +16,10 @@
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <meta name="theme-color" content="#0b1611" />
-    <link rel="canonical" href="https://billiards.tailuge.workers.dev/research" />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/research"
+    />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
@@ -33,10 +38,10 @@
     />
     <meta
       property="og:image"
-      content="https://billiards.tailuge.workers.dev/images/shoteditor.png"
+      content="https://billiards.tailuge.workers.dev/images/analysis.png"
     />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content="1235" />
+    <meta property="og:image:height" content="796" />
     <meta
       property="og:image:alt"
       content="Interactive billiards shot sensitivity analysis displaying variation trajectories and tolerance bounds"
@@ -52,7 +57,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://billiards.tailuge.workers.dev/images/shoteditor.png"
+      content="https://billiards.tailuge.workers.dev/images/analysis.png"
     />
 
     <script type="application/ld+json">
@@ -367,6 +372,33 @@
         font-size: 0.82rem;
       }
 
+      figure.screenshot.narrow {
+        max-width: 470px;
+        margin: 34px auto 0;
+      }
+
+      figure.diagram {
+        margin: 34px auto 0;
+        text-align: center;
+      }
+
+      figure.diagram img {
+        display: block;
+        width: 100%;
+        max-width: 256px;
+        height: auto;
+        margin: 0 auto;
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+      }
+
+      figure.diagram figcaption {
+        max-width: 560px;
+        margin: 8px auto 0;
+        color: var(--text-dim);
+        font-size: 0.82rem;
+      }
+
       /* ── Sections ────────────────────────── */
 
       .section {
@@ -492,25 +524,32 @@
 
     <main id="content">
       <section class="intro" aria-labelledby="research-title">
-        <h1 id="research-title">Interactive Billiards Shot Analysis &amp; Training</h1>
+        <h1 id="research-title">
+          Interactive Billiards Shot Analysis &amp; Training
+        </h1>
         <div class="lead-quote">
           Understand why a shot works — and how much room you have for error.
         </div>
         <p class="intro-text">
           This interactive shot analysis tool lets you study billiard shots in
           much more detail than simply drawing a predicted trajectory. Set up a
-          position, choose the shot, and explore how changes in aim, spin,
-          power and elevation affect the result. The simulator can show
-          successful and unsuccessful variations around the original shot,
-          allowing you to see which parts of your technique the shot is most
-          sensitive to.
+          position, choose the shot, and explore how changes in aim, spin, power
+          and elevation affect the result. The analysis panel beside the table
+          can show the successful and unsuccessful variations around the
+          original shot — a scatter across the cue ball's face, plus a tolerance
+          bar for aim shift, speed and elevation — so you can see which parts of
+          your technique the shot is most sensitive to.
         </p>
         <ul class="intro-actions">
           <li>
-            <a class="btn btn-primary" href="practice.html">Try Shot Analysis in Practice</a>
+            <a class="btn btn-primary" href="practice.html"
+              >Try Shot Analysis in Practice</a
+            >
           </li>
           <li>
-            <a class="btn btn-secondary" href="exam/threecushion.html">Three-Cushion Exam</a>
+            <a class="btn btn-secondary" href="exam/threecushion.html"
+              >Three-Cushion Exam</a
+            >
           </li>
         </ul>
       </section>
@@ -535,22 +574,28 @@
             whether the shot still succeeds.
           </p>
           <p>
-            This gives you a practical way to understand what you need to control
-            when playing the shot on a real table.
+            This gives you a practical way to understand what you need to
+            control when playing the shot on a real table.
           </p>
         </div>
 
         <figure class="screenshot">
-          <img
-            src="images/shoteditor.png"
-            alt="Shot sensitivity analysis diagram displaying trajectory variations around a target shot"
-            width="1120"
-            height="707"
-            fetchpriority="high"
-          />
+          <a
+            href="./?%CE%BCs=0.2&amp;%CE%BCw=0.175&amp;ee=0.85&amp;mu=0.0055&amp;muS=0.126&amp;stronge_omega_ratio=1.76&amp;stronge_e_n=0.77&amp;stronge_%CE%BC=0.25&amp;ruletype=threecushion&amp;practice=&amp;analysis=&amp;cushionModel=mathavan&amp;init=%5B-0.101954%2C-0.32315%2C-0.449043%2C0.575213%2C1.382942%2C0.588419%5D&amp;initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.999694%2C%22power%22%3A2.9868%2C%22offset%22%3A%7B%22x%22%3A0.321556%2C%22y%22%3A0.292531%2C%22z%22%3A0%7D%2C%22elevation%22%3A0%7D"
+          >
+            <img
+              src="images/analysis.png"
+              alt="Split view of the table beside the shot analysis panel, showing a spin scatter of scored and missed variations next to aim shift, speed and elevation tolerance bars"
+              width="1235"
+              height="796"
+              fetchpriority="high"
+            />
+          </a>
           <figcaption>
-            Shot sensitivity analysis showing how variations in spin, aim and
-            other shot parameters affect the outcome.
+            The table alongside the shot analysis panel: green dots are the
+            variations that score, red dots are the misses, and the white ring
+            marks the shot as it is currently set up. Click to open this shot in
+            the analysis view.
           </figcaption>
         </figure>
       </section>
@@ -559,38 +604,45 @@
         <h2 id="tolerance-title">Explore the shot, not just the answer</h2>
         <div class="prose">
           <p>
-            The analysis view displays the original shot together with
-            variations around it. Green results indicate successful outcomes and
-            red results indicate misses.
+            The analysis panel displays the shot together with variations around
+            it: green marks a variation that scores, red an outcome that misses,
+            and a white marker shows where the shot currently sits. The spin
+            scatter maps this over the cue ball's face — left and right english
+            across, follow and draw up and down — while a white tick on each bar
+            marks the original shot parameters.
           </p>
           <p>
-            The result is effectively a map of the shot's tolerance: you can
-            see where the playable region is and how quickly the outcome changes
-            as you move away from the ideal shot.
+            The result is effectively a map of the shot's tolerance: you can see
+            where the playable region is and how quickly the outcome changes as
+            you move away from the ideal shot. Only one display shows a full
+            scan at a time, so Show on a bar replaces the scatter with that
+            bar's one-dimensional sweep. Every variation that was evaluated can
+            be downloaded as a CSV.
           </p>
         </div>
 
         <h3>Learn what matters</h3>
         <div class="grid-2">
           <div class="card">
-            <h3>Aim</h3>
+            <h3>Aim shift (ball widths)</h3>
             <p>
-              See how far you can shift the aiming line before the shot stops
-              working. This can help distinguish a shot that requires
+              See how far you can shift the ghost-ball line before the shot
+              stops working, measured in ball widths and labelled left and right
+              to match the table. This can help distinguish a shot that requires
               extremely precise alignment from one where a small aiming error is
               acceptable.
             </p>
           </div>
           <div class="card">
-            <h3>Spin</h3>
+            <h3>Spin (side vs top/back)</h3>
             <p>
-              Explore how changing side, follow or draw affects the resulting
-              path. Rather than memorising a single setting, experiment with the
-              range of spin that produces a useful result.
+              Explore how side, follow and draw change the outcome across the
+              cue ball's face. Rather than memorising a single setting,
+              experiment with the range of spin that produces a useful result.
             </p>
           </div>
           <div class="card">
-            <h3>Power</h3>
+            <h3>Speed</h3>
             <p>
               Test how sensitive a position is to speed. Some shots depend on
               arriving at a particular point with the correct speed, while
@@ -601,8 +653,10 @@
             <h3>Elevation</h3>
             <p>
               Investigate how changes in cue elevation affect the trajectory and
-              outcome, particularly for shots where elevation is an important
-              part of the technique.
+              outcome, from a level cue to a steeply raised one. This is
+              particularly useful for shots where elevation is an important part
+              of the technique — Show on the elevation bar also opens the cue
+              tilt control.
             </p>
           </div>
         </div>
@@ -612,10 +666,11 @@
         <h2 id="study-title">Turn practice into something you can study</h2>
         <div class="prose">
           <p>
-            The simulator can be used as a laboratory for your own billiards. Find
-            an interesting position from a game, recreate it, and investigate it.
-            Try different approaches. Find the range of aim, spin and power that
-            works. Then save the result as a diagram you can return to later.
+            The simulator can be used as a laboratory for your own billiards.
+            Find an interesting position from a game, recreate it, and
+            investigate it. Try different approaches. Find the range of aim,
+            spin and power that works. Then save the result as a diagram you can
+            return to later.
           </p>
           <p>
             Instead of simply being told &quot;use this shot&quot;, you can
@@ -624,14 +679,34 @@
           </p>
         </div>
 
+        <figure class="screenshot narrow">
+          <a
+            href="diagrams/three.html?init=%5B-0.101954%2C-0.32315%2C-0.449043%2C0.575213%2C1.382942%2C0.588419%5D&amp;initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.999694%2C%22power%22%3A2.9868%2C%22offset%22%3A%7B%22x%22%3A0.321556%2C%22y%22%3A0.292531%2C%22z%22%3A0%7D%2C%22elevation%22%3A0%7D"
+          >
+            <img
+              src="images/sim.png"
+              alt="Simulation output for a three-cushion shot shown above the shot input panel with aim, spin and elevation controls"
+              loading="lazy"
+              width="744"
+              height="844"
+            />
+          </a>
+          <figcaption>
+            Simulation output above the shot input for the same shot. Change the
+            aim, spin, power or elevation and watch how the paths develop. Click
+            to open this shot on the physics page.
+          </figcaption>
+        </figure>
+
         <h3>Create diagrams for teaching and sharing</h3>
         <div class="prose">
           <p>
             Shot positions can also be turned into diagrams for your own notes,
-            training material or billiards articles. Generate SVG diagrams from
-            analysed positions, making it possible to print them, include them
-            in documents, or use them when writing about billiards techniques
-            and systems.
+            training material or billiards articles. The
+            <a href="diagrams/export.html">diagram export</a> turns an analysed
+            position into a clean SVG chart for blog posts and documentation —
+            vector artwork that stays sharp at any size and can be dropped
+            straight into a page or printed for a training folder.
           </p>
           <p>
             This makes the simulator useful not only for practising shots, but
@@ -639,6 +714,33 @@
             its audience to teachers, bloggers, forum users, and researchers.
           </p>
         </div>
+
+        <figure class="screenshot">
+          <a
+            href="diagrams/export.html?%CE%BCs=0.2&amp;%CE%BCw=0.175&amp;ee=0.85&amp;mu=0.0055&amp;muS=0.126&amp;stronge_omega_ratio=1.76&amp;stronge_e_n=0.77&amp;stronge_%CE%BC=0.25&amp;ruletype=threecushion&amp;cushionModel=mathavan&amp;init=%5B-0.101954%2C-0.32315%2C-0.449043%2C0.575213%2C1.382942%2C0.588419%5D&amp;initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.999694%2C%22power%22%3A2.9868%2C%22offset%22%3A%7B%22x%22%3A0.321556%2C%22y%22%3A0.292531%2C%22z%22%3A0%7D%2C%22elevation%22%3A0%7D"
+          >
+            <img
+              src="images/threecushion-diagram.svg"
+              alt="Exported three-cushion diagram showing the cue ball, both object balls and every cushion contact of their paths on a table of grid squares"
+              loading="lazy"
+              width="896"
+              height="543"
+            />
+          </a>
+          <figcaption>
+            A three-cushion shot exported as an SVG diagram at 2.99 m/s: the cue
+            ball, both object balls and each cushion contact along the way.
+            Click to open the same shot in the export tool.
+          </figcaption>
+        </figure>
+
+        <ul class="intro-actions">
+          <li>
+            <a class="btn btn-secondary" href="diagrams/export.html"
+              >Create a diagram for your blog</a
+            >
+          </li>
+        </ul>
       </section>
 
       <section class="section" aria-labelledby="notes-title">
@@ -680,12 +782,35 @@
               the shot?
             </li>
           </ul>
+
+          <figure class="diagram">
+            <a href="blog3.html">
+              <img
+                src="images/mh.jpg"
+                alt="Forces on a ball at the cushion"
+                loading="lazy"
+                width="256"
+                height="256"
+              />
+            </a>
+            <figcaption>
+              Forces on the ball at the cushion. (Source:
+              <a
+                href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
+                rel="noopener noreferrer"
+                >Mathavan et al. (2010)</a
+              >) — see <a href="blog3.html">how the cushion model works</a>.
+            </figcaption>
+          </figure>
+
           <p>Experiment with the shot and find out.</p>
         </div>
       </section>
 
       <section class="section" aria-labelledby="training-system-title">
-        <h2 id="training-system-title">Training is more than making the shot</h2>
+        <h2 id="training-system-title">
+          Training is more than making the shot
+        </h2>
         <div class="prose">
           <p>
             A good training tool should help you understand what to practise. A
@@ -696,7 +821,10 @@
           <p>
             Combined with the site's shot exams and practice modes, shot
             analysis provides a coherent way to move from
-            <strong>playing a shot → analysing it → practising it → testing yourself on it</strong>.
+            <strong
+              >playing a shot → analysing it → practising it → testing yourself
+              on it</strong
+            >.
           </p>
         </div>
       </section>
