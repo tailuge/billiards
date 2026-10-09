@@ -267,6 +267,36 @@
         border-right-color: var(--bg);
       }
 
+      /* Hall markers are HTML divIcons rather than L.circleMarker: Leaflet
+         scales a vector renderer's container during the zoom animation, so a
+         circle marker balloons on the way to max zoom and snaps back at the
+         end. A marker icon is only repositioned, so the dot keeps its size the
+         whole way. The box is the selected size, so the anchor stays centred
+         while the visible dot grows from 16px (r=7 + 2px stroke) to 21px
+         (r=9 + 3px stroke). */
+      .hall-dot {
+        display: grid;
+        place-items: center;
+      }
+
+      .hall-dot::before {
+        content: "";
+        box-sizing: border-box;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--accent);
+        border-radius: 50%;
+        background: rgb(107 163 245 / 70%);
+      }
+
+      .hall-dot.is-chosen::before {
+        width: 21px;
+        height: 21px;
+        border-width: 3px;
+        border-color: #fff;
+        background: var(--accent);
+      }
+
       /* Leaflet's chrome defaults to light; darken it to sit on the dark tiles. */
       .leaflet-control-attribution {
         background: rgb(26 26 26 / 80%);
@@ -545,20 +575,14 @@
         },
       ]
 
-      const base = {
-        radius: 7,
-        weight: 2,
-        color: "#6ba3f5",
-        fillColor: "#6ba3f5",
-        fillOpacity: 0.7,
-      }
-      const chosen = {
-        radius: 9,
-        weight: 3,
-        color: "#fff",
-        fillColor: "#6ba3f5",
-        fillOpacity: 1,
-      }
+      // Markers are HTML divIcons (see .hall-dot) so the dot keeps a constant
+      // pixel size while the map zooms; a scaled vector circle would balloon.
+      // The icon is the selected size, keeping the anchor centred as it grows.
+      const dotIcon = L.divIcon({
+        className: "hall-dot",
+        iconSize: [21, 21],
+        iconAnchor: [10.5, 10.5],
+      })
 
       // CARTO's free API key serves raster tiles up to zoom 18; deeper tiles
       // return HTTP 403 ("Forbidden: raster tiles are available up to zoom 18").
@@ -588,7 +612,7 @@
           item.classList.toggle("active", item.dataset.id === id)
         })
         Object.keys(markers).forEach(function (mid) {
-          markers[mid].setStyle(mid === id ? chosen : base)
+          markers[mid].getElement().classList.toggle("is-chosen", mid === id)
         })
 
         const item = list.querySelector('li[data-id="' + id + '"]')
@@ -633,7 +657,7 @@
         })
         list.appendChild(item)
 
-        const marker = L.circleMarker([hall.lat, hall.lng], base)
+        const marker = L.marker([hall.lat, hall.lng], { icon: dotIcon })
           .addTo(map)
           .bindPopup(
             `<b>${hall.name}</b><br><span lang="ja">${hall.japaneseName}</span>`
