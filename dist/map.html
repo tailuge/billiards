@@ -217,6 +217,17 @@
         color: var(--text);
       }
 
+      /* Website link in the expanded entry. URLs are long, so let them break
+         anywhere rather than overflow the narrow panel. */
+      #list li .details .site {
+        color: var(--accent);
+        overflow-wrap: anywhere;
+      }
+
+      #list li .details .site:hover {
+        text-decoration: underline;
+      }
+
       #map {
         flex: 1 1 auto;
         min-height: 0;
@@ -246,9 +257,10 @@
         font-size: 0.82rem;
       }
 
-      /* Permanent Japanese name labels beside each marker. Leaflet's tooltip
-         defaults to a white chip; recolour it to sit on the dark tiles. */
-      .leaflet-tooltip.hall-label {
+      /* Permanent name labels beside the markers. Leaflet's tooltip defaults to
+         a white chip; recolour it to sit on the dark tiles. */
+      .leaflet-tooltip.hall-label,
+      .leaflet-tooltip.station-label {
         padding: 1px 5px;
         border: 1px solid var(--border);
         border-radius: 4px;
@@ -259,12 +271,28 @@
       }
 
       /* direction:auto flips labels left or right, so recolour both arrows. */
-      .leaflet-tooltip-left.hall-label::before {
+      .leaflet-tooltip-left.hall-label::before,
+      .leaflet-tooltip-left.station-label::before {
         border-left-color: var(--bg);
       }
 
-      .leaflet-tooltip-right.hall-label::before {
+      .leaflet-tooltip-right.hall-label::before,
+      .leaflet-tooltip-right.station-label::before {
         border-right-color: var(--bg);
+      }
+
+      /* The halls are what the page is about, so their labels carry the same
+         accent blue as the hall dots. On the label background that is 6.78:1,
+         comfortably above the 4.5:1 WCAG AA threshold for body text. */
+      .leaflet-tooltip.hall-label {
+        color: var(--accent);
+      }
+
+      /* The line's stations are context rather than the point of the page, so
+         they stay muted against the blue hall labels. */
+      .leaflet-tooltip.station-label {
+        font-size: 0.7rem;
+        color: var(--muted);
       }
 
       /* Hall markers are HTML divIcons rather than L.circleMarker: Leaflet
@@ -295,6 +323,14 @@
         border-width: 3px;
         border-color: #fff;
         background: var(--accent);
+      }
+
+      /* Station dots reuse the constant-size divIcon trick the hall dots use,
+         drawn in the line's yellow-green. */
+      .station-dot {
+        border: 1px solid var(--bg);
+        border-radius: 50%;
+        background: #9acd32;
       }
 
       /* Leaflet's chrome defaults to light; darken it to sit on the dark tiles. */
@@ -575,6 +611,112 @@
         },
       ]
 
+      // The Yamanote line, baked from OpenStreetMap (relation 1972920, the outer
+      // loop) rather than fetched at runtime, so the page stays static and the
+      // public OSM API is not hit on every page view. The relation concatenates
+      // cleanly: 223 route ways, 904 points, no gaps, and the loop closes on
+      // itself. Douglas-Peucker at ~0.0002 degrees leaves these 63 points.
+      const yamanoteLine = [
+        [35.62865, 139.73851],
+        [35.62506, 139.7387],
+        [35.61964, 139.73726],
+        [35.61854, 139.7367],
+        [35.61744, 139.7354],
+        [35.61688, 139.73358],
+        [35.61697, 139.73173],
+        [35.61767, 139.73025],
+        [35.62693, 139.72297],
+        [35.62808, 139.72144],
+        [35.62979, 139.71784],
+        [35.63068, 139.71685],
+        [35.63183, 139.71628],
+        [35.63825, 139.71465],
+        [35.65018, 139.70815],
+        [35.65802, 139.70159],
+        [35.65984, 139.70117],
+        [35.67022, 139.70237],
+        [35.67608, 139.70397],
+        [35.67844, 139.70375],
+        [35.68152, 139.70292],
+        [35.68946, 139.70016],
+        [35.6925, 139.69997],
+        [35.69518, 139.69934],
+        [35.70323, 139.70044],
+        [35.72121, 139.70641],
+        [35.73195, 139.71185],
+        [35.73368, 139.71328],
+        [35.7345, 139.71527],
+        [35.73461, 139.71732],
+        [35.73112, 139.7308],
+        [35.73105, 139.73349],
+        [35.7376, 139.74951],
+        [35.74027, 139.75483],
+        [35.74048, 139.75685],
+        [35.73943, 139.75931],
+        [35.73514, 139.76429],
+        [35.72879, 139.76955],
+        [35.7254, 139.77389],
+        [35.72061, 139.77905],
+        [35.71953, 139.77969],
+        [35.71835, 139.77972],
+        [35.71735, 139.7793],
+        [35.71425, 139.77662],
+        [35.71142, 139.7748],
+        [35.70843, 139.77491],
+        [35.70146, 139.77346],
+        [35.69588, 139.77269],
+        [35.68198, 139.76689],
+        [35.6774, 139.76533],
+        [35.67602, 139.76442],
+        [35.67298, 139.76073],
+        [35.66856, 139.7582],
+        [35.66728, 139.758],
+        [35.66333, 139.75858],
+        [35.6613, 139.75856],
+        [35.65155, 139.75599],
+        [35.64985, 139.75491],
+        [35.64846, 139.75328],
+        [35.64501, 139.74624],
+        [35.64328, 139.74385],
+        [35.63066, 139.73867],
+        [35.62865, 139.73851],
+      ]
+
+      // The line's stations in route order: [English name, Japanese name, lat,
+      // lng], read from the relation's stop nodes.
+      const yamanoteStations = [
+        ["Shinagawa", "品川", 35.62865, 139.73851],
+        ["Osaki", "大崎", 35.61947, 139.72866],
+        ["Gotanda", "五反田", 35.62622, 139.72356],
+        ["Meguro", "目黒", 35.63406, 139.71567],
+        ["Ebisu", "恵比寿", 35.6464, 139.7101],
+        ["Shibuya", "渋谷", 35.65802, 139.70159],
+        ["Harajuku", "原宿", 35.67022, 139.70237],
+        ["Yoyogi", "代々木", 35.68394, 139.70199],
+        ["Shinjuku", "新宿", 35.68896, 139.70029],
+        ["Shin-Ōkubo", "新大久保", 35.7013, 139.70019],
+        ["Takadanobaba", "高田馬場", 35.7127, 139.70359],
+        ["Mejiro", "目白", 35.72121, 139.70641],
+        ["Ikebukuro", "池袋", 35.73026, 139.71095],
+        ["Otsuka", "大塚", 35.73173, 139.72861],
+        ["Sugamo", "巣鴨", 35.73346, 139.7394],
+        ["Komagome", "駒込", 35.73662, 139.74722],
+        ["Tabata", "田端", 35.73738, 139.76172],
+        ["Nishi-Nippori", "西日暮里", 35.73222, 139.7667],
+        ["Nippori", "日暮里", 35.72799, 139.77043],
+        ["Uguisudani", "鶯谷", 35.72171, 139.77793],
+        ["Ueno", "上野", 35.71358, 139.77614],
+        ["Okachimachi", "御徒町", 35.70695, 139.77465],
+        ["Akihabara", "秋葉原", 35.69836, 139.77306],
+        ["Kanda", "神田", 35.69177, 139.77101],
+        ["Tokyo", "東京", 35.68124, 139.76661],
+        ["Yurakucho", "有楽町", 35.67494, 139.76306],
+        ["Shimbashi", "新橋", 35.66616, 139.75814],
+        ["Hamamatsucho", "浜松町", 35.65511, 139.75708],
+        ["Tamachi", "田町", 35.64572, 139.7477],
+        ["Takanawa Gateway", "高輪ゲートウェイ", 35.63541, 139.74064],
+      ]
+
       // Markers are HTML divIcons (see .hall-dot) so the dot keeps a constant
       // pixel size while the map zooms; a scaled vector circle would balloon.
       // The icon is the selected size, keeping the anchor centred as it grows.
@@ -603,6 +745,34 @@
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
         }
       ).addTo(map)
+
+      // The line draws in Leaflet's overlay pane, below the marker pane the
+      // dots live in, so the halls stay on top and keep their clicks.
+      L.polyline(yamanoteLine, {
+        color: "#9acd32",
+        opacity: 0.6,
+        weight: 3,
+      }).addTo(map)
+
+      // Station dots are divIcons for the same reason as the hall dots: Leaflet
+      // scales an SVG renderer during the zoom animation, so a circleMarker
+      // would balloon on the way to max zoom. One icon serves all 30 markers.
+      const stationDot = L.divIcon({
+        className: "station-dot",
+        iconSize: [9, 9],
+        iconAnchor: [4.5, 4.5],
+      })
+
+      yamanoteStations.forEach(function (station) {
+        L.marker([station[2], station[3]], { icon: stationDot })
+          .addTo(map)
+          .bindTooltip(station[0] + " " + station[1], {
+            permanent: true,
+            direction: "right",
+            offset: [6, 0],
+            className: "station-label",
+          })
+      })
 
       const list = document.getElementById("list")
       const markers = {}
@@ -644,12 +814,16 @@
           <dl class="details">
             <dt>Address</dt>
             <dd>${hall.address}</dd>
-            <dt>Hours</dt>
-            <dd>${hall.hours}</dd>
-            <dt>Tables</dt>
-            <dd>${hall.tables}</dd>
-            <dt>Rating</dt>
-            <dd>${hall.rating}</dd>
+            <dt>Website</dt>
+            <dd>
+              <a
+                class="site"
+                href="${hall.website}"
+                target="_blank"
+                rel="noopener"
+                >${hall.website}</a
+              >
+            </dd>
           </dl>
         `
         item.addEventListener("click", function () {
