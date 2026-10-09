@@ -173,7 +173,7 @@
       }
 
       /* Progress star: hollow by default, filled once the hall is marked
-         visited. Nothing sets .is-visited yet, so every hall starts empty. */
+         visited, which the localStorage record below applies on load. */
       #list li .star {
         flex: 0 0 auto;
         color: var(--muted);
@@ -494,6 +494,7 @@
       const halls = [
         {
           id: "matsuyama",
+          raceTo: 7,
           name: "Matsuyama Billiards",
           japaneseName: "松山ビリヤード",
           district: "Setagaya",
@@ -512,6 +513,7 @@
         },
         {
           id: "nabbi",
+          raceTo: 8,
           name: "Billiard Club Nabbi",
           japaneseName: "ビリヤードクラブナビー",
           district: "Toshima",
@@ -529,6 +531,7 @@
         },
         {
           id: "soma",
+          raceTo: 9,
           name: "Billiard Soma",
           japaneseName: "ビリヤード相馬",
           district: "Shibuya",
@@ -546,6 +549,7 @@
         },
         {
           id: "roots",
+          raceTo: 10,
           name: "Billiard Cafe Roots",
           japaneseName: "ビリヤード カフェ ルーツ",
           district: "Suginami",
@@ -564,6 +568,7 @@
         },
         {
           id: "kobbys",
+          raceTo: 12,
           name: "Kobby's Billiards",
           japaneseName: "コビービリヤード",
           district: "Nakano",
@@ -579,6 +584,7 @@
         },
         {
           id: "reve-mizue",
+          raceTo: 14,
           name: "billiard club reve",
           japaneseName: "ビリヤードクラブ レーヴ",
           district: "Edogawa",
@@ -595,6 +601,7 @@
         },
         {
           id: "alvis",
+          raceTo: 16,
           name: "Billiard Alvis",
           japaneseName: "ビリヤード アルビス",
           district: "Koto",
@@ -610,6 +617,7 @@
         },
         {
           id: "arai",
+          raceTo: 18,
           name: "ARAI Billiards Headquarters",
           japaneseName: "ビリヤード ARAI 本店",
           district: "Nishitokyo",
@@ -625,6 +633,7 @@
         },
         {
           id: "sansui",
+          raceTo: 20,
           name: "Billiard Sansui",
           japaneseName: "山水ビリヤード",
           district: "Shinjuku",
@@ -640,6 +649,7 @@
         },
         {
           id: "kobayashi",
+          raceTo: 22,
           name: "Kobayashi Billiards (Bright)",
           japaneseName: "ビリヤード小林",
           district: "Shinjuku",
@@ -657,6 +667,7 @@
         },
         {
           id: "e-place",
+          raceTo: 24,
           name: "Billiards E-place",
           japaneseName: "ビリヤード イープレイス",
           district: "Bunkyo",
@@ -672,6 +683,7 @@
         },
         {
           id: "yamate",
+          raceTo: 26,
           name: "Billiard Yamate",
           japaneseName: "ビリヤード山手",
           district: "Meguro",
@@ -688,6 +700,7 @@
         },
         {
           id: "alice",
+          raceTo: 28,
           name: "ALICE Billiards",
           japaneseName: "ビリヤードALICE",
           district: "Ota",
@@ -703,6 +716,7 @@
         },
         {
           id: "lupin-kameido",
+          raceTo: 30,
           name: "Billiard Lupin Kameido",
           japaneseName: "ビリヤード亀戸ルパン",
           district: "Koto",
@@ -890,6 +904,7 @@
       const storyTitle = document.getElementById("story-title")
       const storyText = document.getElementById("story-text")
       const storyPlayName = document.getElementById("story-play-name")
+      const storyPlay = document.getElementById("story-play")
       const storyLink = document.getElementById("story-link")
       const storyPath = storyLink.querySelector("path")
       const storyTip = storyLink.querySelector("circle")
@@ -955,11 +970,47 @@
         // rendered as HTML rather than text — empty for a club without one.
         storyText.innerHTML = hall.story || ""
         storyPlayName.textContent = hall.japaneseName
+        // Launch a three-cushion race sized for this club. The club id rides
+        // along so the game can hand it straight back (?club=) and the star
+        // can be filled when the race target is reached; clubName is the label
+        // the game puts on the wall plaque as "player @ club" (Japanese name,
+        // the club's own signage).
+        storyPlay.href =
+          "./index.html?ruletype=threecushion&raceTo=" +
+          hall.raceTo +
+          "&club=" +
+          encodeURIComponent(hall.id) +
+          "&clubName=" +
+          encodeURIComponent(hall.japaneseName)
         drawStoryLink()
 
         if (pan) {
           map.flyTo([hall.lat, hall.lng], maxTileZoom, { duration: 0.8 })
           markers[id].openPopup()
+        }
+      }
+
+      // A cleared club comes back from the game as ?club=<id>&won=1 on this
+      // page's URL. The ids are persisted so every completed club keeps its
+      // filled star on later visits.
+      const STORAGE_KEY = "map:visited"
+      const query = new URLSearchParams(window.location.search)
+      const visited = new Set()
+      try {
+        JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]").forEach(
+          function (id) {
+            visited.add(id)
+          }
+        )
+      } catch (e) {
+        console.log("map: could not read visited clubs", e)
+      }
+      if (query.get("won") === "1" && query.get("club")) {
+        visited.add(query.get("club"))
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(visited)))
+        } catch (e) {
+          console.log("map: could not save visited clubs", e)
         }
       }
 
@@ -978,6 +1029,8 @@
           <dl class="details">
             <dt>Address</dt>
             <dd>${hall.address}</dd>
+            <dt>Race to</dt>
+            <dd>${hall.raceTo} points</dd>
             <dt>Website</dt>
             <dd>
               <a
@@ -994,8 +1047,9 @@
           select(hall.id, true)
         })
         // The hollow/filled star pair is the progress hook: both the side-list
-        // row and the map marker fill once the club's challenge is completed,
-        // which will set hall.visited. Nothing sets it yet.
+        // row and the map marker fill once the club's challenge is completed.
+        // `visited` holds every club id recorded in localStorage above.
+        hall.visited = visited.has(hall.id)
         item.classList.toggle("is-visited", Boolean(hall.visited))
         list.appendChild(item)
 
@@ -1036,6 +1090,18 @@
         }
         markers[hall.id] = marker
       })
+
+      // Hand focus back to the club the game was started from, so its panel and
+      // (on a win) its freshly filled star are on screen immediately.
+      const returnClub = query.get("club")
+      if (
+        returnClub &&
+        halls.some(function (h) {
+          return h.id === returnClub
+        })
+      ) {
+        select(returnClub, true)
+      }
     </script>
   </body>
 </html>

@@ -315,9 +315,16 @@ export class Portrait {
     ctx.textAlign = "center"
     ctx.textBaseline = "middle"
 
-    // Names are capped at 12 chars, which fits comfortably at 20px on the
-    // 256px canvas (widest case ~220px vs the 244px limit).
+    // 20px on the 256px canvas fits a 12-char name (~220px vs the 244px
+    // limit). A map run appends " @ club" to the plaque, so shrink the font
+    // (down to 11px) instead of clipping the ends off the wall text.
     ctx.font = "700 20px 'Exo', sans-serif"
+    const maxWidth = this.plateCanvas.width - 12
+    let size = 20
+    while (size > 11 && ctx.measureText(this.state.name).width > maxWidth) {
+      size -= 1
+      ctx.font = `700 ${size}px 'Exo', sans-serif`
+    }
 
     // Transparent plaque: no background fill, just the text and a hard drop
     // shadow. The canvas alpha channel carries both, so the quad stays

@@ -61,6 +61,64 @@ describe("gameOverButtons", () => {
     })
   })
 
+  describe("map club", () => {
+    afterEach(() => {
+      if (globalThis.history) {
+        globalThis.history.replaceState({}, "", "?")
+      }
+    })
+
+    it("sends a single Update map button back to the club on a win", () => {
+      globalThis.history.replaceState({}, "", "?club=matsuyama&raceTo=7")
+
+      const html = gameOverButtons.forMode(
+        true,
+        undefined,
+        undefined,
+        "threecushion",
+        undefined,
+        undefined,
+        true
+      )
+
+      expect(html).toContain("Update map")
+      expect(html).toContain('data-notification-action="rematch"')
+      expect(html).toContain("club=matsuyama")
+      expect(html).toContain("won=1")
+      expect(html.match(/<button\b/g)).toHaveLength(1)
+    })
+
+    it("reports won=0 when the run ends without a win", () => {
+      globalThis.history.replaceState({}, "", "?club=matsuyama")
+
+      const html = gameOverButtons.forMode(
+        true,
+        undefined,
+        undefined,
+        "threecushion"
+      )
+
+      expect(html).toContain("Update map")
+      expect(html).toContain("won=0")
+    })
+
+    it("keeps the ordinary single player buttons when no club id was sent", () => {
+      if (globalThis.history) {
+        globalThis.history.replaceState({}, "", "?")
+      }
+
+      const html = gameOverButtons.forMode(
+        true,
+        undefined,
+        undefined,
+        "threecushion"
+      )
+
+      expect(html).not.toContain("Update map")
+      expect(html).toContain("New Game")
+    })
+  })
+
   describe("rematch", () => {
     it("should include standard rematch parameters", () => {
       if (globalThis.history) {

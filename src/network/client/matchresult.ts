@@ -125,7 +125,7 @@ export class MatchResultHelper {
       highBreaks: this.getHighBreaks(container),
       icon: "🏆",
       extraClass: "is-winner",
-      extra: this.getGameOverButtons(container, rulename),
+      extra: this.getGameOverButtons(container, rulename, true),
       share: true,
       duration: 0,
     })
@@ -201,7 +201,8 @@ export class MatchResultHelper {
 
   private static getGameOverButtons(
     container: Container,
-    rulename: string
+    rulename: string,
+    won = false
   ): string {
     const session = Session.getInstance()
     const isSinglePlayer = container.isSinglePlayer || Session.isBotMode()
@@ -214,7 +215,8 @@ export class MatchResultHelper {
       session.opponentName,
       rulename,
       nextTurnId,
-      session.tournamentId
+      session.tournamentId,
+      won
     )
   }
 

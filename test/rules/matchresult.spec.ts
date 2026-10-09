@@ -349,6 +349,26 @@ describe("MatchResult Construction", () => {
     expect(notification?.innerHTML).to.contain("New Game")
   })
 
+  it("hands the club id back to the map with won=1 after a win", () => {
+    if (globalThis.history) {
+      globalThis.history.replaceState({}, "", "?club=matsuyama&raceTo=7")
+    }
+    try {
+      container = createNineBallContainer()
+      const result = (container.rules as any).handleGameEnd(true)
+      expect(result.name).to.equal("End")
+
+      const html = document.getElementById("notification")?.innerHTML ?? ""
+      expect(html).to.contain("Update map")
+      expect(html).to.contain("club=matsuyama")
+      expect(html).to.contain("won=1")
+    } finally {
+      if (globalThis.history) {
+        globalThis.history.replaceState({}, "", "?")
+      }
+    }
+  })
+
   it("MatchResult should include bot flag when playing against bot", () => {
     Session.init("test-client", "TestPlayer", "test-table", false, true) // botMode: true
     container = createNineBallContainer()

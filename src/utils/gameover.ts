@@ -10,6 +10,17 @@ function button(action: string, label: string, attributes = ""): string {
   return `<button type="button" class="notification-btn" data-notification-action="${action}"${attributes}>${t(label)}</button>`
 }
 
+/**
+ * Club id forwarded from the map page's play link (`?club=`), or null when the
+ * game was not started from a map challenge.
+ */
+function clubIdFromUrl(): string | null {
+  if (typeof globalThis === "undefined" || !globalThis.location) {
+    return null
+  }
+  return new URLSearchParams(globalThis.location.search).get("club")
+}
+
 export const gameOverButtons = {
   lobby: button("lobby", "Back to Lobby"),
   newGame: button("reload", "New Game"),
@@ -70,8 +81,21 @@ export const gameOverButtons = {
     opponentName?: string,
     ruletype?: string,
     nextTurnId?: string,
-    tournamentId?: string
+    tournamentId?: string,
+    won?: boolean
   ): string {
+    // Single-player map run: hand control straight back to the map page with
+    // the club id it sent us, so it can fill that club's progress star.
+    const club = clubIdFromUrl()
+    if (club) {
+      return button(
+        "rematch",
+        "Update map",
+        ` data-notification-url="./map.html?club=${encodeURIComponent(club)}&won=${
+          won ? 1 : 0
+        }"`
+      )
+    }
     if (tournamentId) {
       return button("lobby", "Back to Arena", ' id="arenabutton"')
     }

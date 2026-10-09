@@ -48,6 +48,20 @@ export interface PortraitSpec {
 }
 
 /**
+ * Wall plaque text: the player name, plus " @ club" when the game was started
+ * from a map club (?clubName=). The player name itself is never rewritten, so
+ * match results keep reporting it unchanged. Resolves to undefined when there
+ * is nothing to draw, which hides the plaque.
+ */
+function plaqueName(playername: string): string | undefined {
+  const club = new URLSearchParams(globalThis.location?.search ?? "").get(
+    "clubName"
+  )
+  const name = playername + (club ? ` @ ${club}` : "")
+  return name || undefined
+}
+
+/**
  * Decides which portraits to show for the current mode, separated from how
  * they are rendered. In single-player `mine` sits on the +X wall; in live
  * two-player the portraits swap walls (`mine` on −X, opponent on +X). Emoji
@@ -87,7 +101,7 @@ export function portraitSpecs(
     : session.customParams["emoji"] || localeFlagEmoji()
   const mine: PortraitSpec = {
     emoji: myEmoji,
-    name: session.playername || undefined,
+    name: plaqueName(session.playername),
     placement: plusXWall(wallX),
   }
   if (mode.singlePlayer) return [mine]
