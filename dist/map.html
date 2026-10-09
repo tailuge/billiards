@@ -369,6 +369,10 @@
         line-height: 1.4;
       }
 
+      #story a {
+        color: var(--accent);
+      }
+
       /* Bezier link from the panel back to the club's dot. It draws above the
          markers but under Leaflet's labels, and never eats a map drag. */
       #story-link {
@@ -505,7 +509,7 @@
           rating: 4.2,
           tags: ["Shibuya", "Harajuku", "Three-Cushion", "Closed"],
           story:
-            "This was only one stop from my home on the Yamanote line and became my 'home club' when I worked in Tokyo. I would always try to pop in after work and it was the most friendly place to play three cushion. I played there as 'ルーク' they probably long forgotten me but I still remember them so well and have some of my happiest three cushion memories there, and the thrill of playing pro 米山先生. Is this club closed now, thats so sad?",
+            "This was only one stop from my home on the Yamanote line and became my 'home club' when I worked in Tokyo. I would always try to pop in after work and it was the most friendly place to play three cushion. I played there as 'ルーク' they probably long forgotten me but I still remember them so well and have some of my happiest three cushion memories there, and the thrill of playing pro <a href=\"https://jpbf.net/player-detail/?seq_id=58\">米山先生</a>. Is this club closed now, thats so sad?",
         },
         {
           id: "roots",
@@ -523,7 +527,7 @@
           tables: "4 Three-Cushion & 3 Pocket Tables",
           tags: ["Suginami", "Asagaya", "Three-Cushion", "Carom"],
           story:
-            "Did I play here? I have the feeling that some days I would sneak out of work for a long dinner break and pop in for a quick game of 3-cushion. One of the regulars taught me about short angle shots and I still rememebr it- thank you!",
+            "Did I play here, maybe not, maybe it was a club in Gotanda long closed down? I have the feeling that some days I would sneak out of work for a long dinner break and pop in for a quick game of 3-cushion. One of the regulars taught me about short angle shots and I still rememebr it- thank you!",
         },
         {
           id: "kobbys",
@@ -913,7 +917,9 @@
         map.getContainer().classList.toggle("has-story", Boolean(selectedHall))
         if (selectedHall) {
           storyTitle.textContent = selectedHall.name
-          storyText.textContent = selectedHall.story
+          // Stories are local, trusted data and may carry a link, so they are
+          // rendered as HTML rather than text.
+          storyText.innerHTML = selectedHall.story
           drawStoryLink()
         }
 
