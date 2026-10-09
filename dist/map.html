@@ -228,7 +228,10 @@
         text-decoration: underline;
       }
 
+      /* position: relative anchors the story panel and its link overlay, which
+         are children of the map container rather than Leaflet panes. */
       #map {
+        position: relative;
         flex: 1 1 auto;
         min-height: 0;
         overflow: hidden;
@@ -333,6 +336,66 @@
         background: #9acd32;
       }
 
+      /* Story panel for the selected club: pinned to the map's bottom right,
+         clear of Leaflet's attribution. Hidden until a club that has a story
+         is selected, which puts has-story on the map container. */
+      #story {
+        position: absolute;
+        right: 10px;
+        bottom: 26px;
+        z-index: 810;
+        display: none;
+        width: 18rem;
+        max-width: calc(100% - 20px);
+        max-height: 45%;
+        overflow-y: auto;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: rgb(26 26 26 / 92%);
+      }
+
+      #story h2 {
+        margin: 0 0 3px;
+        color: var(--accent);
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      #story p {
+        margin: 0;
+        color: var(--text);
+        font-size: 0.78rem;
+        line-height: 1.4;
+      }
+
+      /* Bezier link from the panel back to the club's dot. It draws above the
+         markers but under Leaflet's labels, and never eats a map drag. */
+      #story-link {
+        position: absolute;
+        inset: 0;
+        z-index: 620;
+        display: none;
+        overflow: visible;
+        pointer-events: none;
+      }
+
+      #story-link path {
+        fill: none;
+        stroke: var(--accent);
+        stroke-dasharray: 5 4;
+        stroke-width: 1.5;
+      }
+
+      #story-link circle {
+        fill: var(--accent);
+      }
+
+      #map.has-story #story,
+      #map.has-story #story-link {
+        display: block;
+      }
+
       /* Leaflet's chrome defaults to light; darken it to sit on the dark tiles. */
       .leaflet-control-attribution {
         background: rgb(26 26 26 / 80%);
@@ -377,7 +440,16 @@
 
     <main>
       <ul id="list"></ul>
-      <div id="map"></div>
+      <div id="map">
+        <div id="story">
+          <h2 id="story-title">Story</h2>
+          <p id="story-text"></p>
+        </div>
+        <svg id="story-link" aria-hidden="true">
+          <path />
+          <circle r="3.5" />
+        </svg>
+      </div>
     </main>
 
     <script>
@@ -413,6 +485,8 @@
           tables: "Three-Cushion & Pocket Tables",
           rating: 3.5,
           tags: ["Toshima", "Otsuka", "Sugamo", "Three-Cushion"],
+          story:
+            "This was the first club I tried playing three cushion billiards. What a revalation after years of only ever knownig snooker this game blew my mind - the dye was cast, I was hooked. Many thanks to the friendly staff there who helped me through my first few shots on my vacation in Japan.",
         },
         {
           id: "soma",
@@ -777,6 +851,50 @@
       const list = document.getElementById("list")
       const markers = {}
 
+      // The panel and its link live in the map container rather than in a
+      // Leaflet pane, so the panes can animate underneath without moving them.
+      const storyPanel = document.getElementById("story")
+      const storyTitle = document.getElementById("story-title")
+      const storyText = document.getElementById("story-text")
+      const storyLink = document.getElementById("story-link")
+      const storyPath = storyLink.querySelector("path")
+      const storyTip = storyLink.querySelector("circle")
+
+      // The club whose story is on screen, or null when the selection has none.
+      let selectedHall = null
+
+      // A cubic bezier from the club's dot to the top edge of the panel. It
+      // leaves the dot horizontally and arrives vertically, so it reads as a
+      // connector rather than a straight line across the map.
+      function drawStoryLink() {
+        if (!selectedHall) {
+          return
+        }
+        const point = map.latLngToContainerPoint([
+          selectedHall.lat,
+          selectedHall.lng,
+        ])
+        const box = map.getContainer().getBoundingClientRect()
+        const panel = storyPanel.getBoundingClientRect()
+        const x = panel.left - box.left + panel.width / 2
+        const y = panel.top - box.top
+        const dx = x - point.x
+        const dy = y - point.y
+
+        storyPath.setAttribute(
+          "d",
+          `M ${point.x} ${point.y} C ${point.x + dx * 0.5} ${point.y} ${x} ${y - dy * 0.5} ${x} ${y}`
+        )
+        storyTip.setAttribute("cx", point.x)
+        storyTip.setAttribute("cy", point.y)
+      }
+
+      // The dot travels with the map while the panel stays put, so the curve is
+      // recomputed on every change of view. The end events matter too: the last
+      // step of a flyTo is a CSS zoom animation, under which a fresh
+      // latLngToContainerPoint would not match the dot on screen.
+      map.on("move zoom viewreset resize moveend zoomend", drawStoryLink)
+
       function select(id, pan) {
         list.querySelectorAll("li").forEach(function (item) {
           item.classList.toggle("active", item.dataset.id === id)
@@ -790,10 +908,20 @@
           item.scrollIntoView({ block: "nearest" })
         }
 
+        const hall = halls.find(function (h) {
+          return h.id === id
+        })
+
+        // Only clubs that carry a story get the panel and its link.
+        selectedHall = hall.story ? hall : null
+        map.getContainer().classList.toggle("has-story", Boolean(selectedHall))
+        if (selectedHall) {
+          storyTitle.textContent = selectedHall.name
+          storyText.textContent = selectedHall.story
+          drawStoryLink()
+        }
+
         if (pan) {
-          const hall = halls.find(function (h) {
-            return h.id === id
-          })
           map.flyTo([hall.lat, hall.lng], maxTileZoom, { duration: 0.8 })
           markers[id].openPopup()
         }
@@ -842,8 +970,9 @@
             offset: [10, 0],
             className: "hall-label",
           })
+        // Clicking the dot zooms to it, same as clicking its row in the panel.
         marker.addEventListener("click", function () {
-          select(hall.id, false)
+          select(hall.id, true)
         })
         markers[hall.id] = marker
       })
