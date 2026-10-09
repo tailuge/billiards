@@ -376,12 +376,6 @@
         line-height: 1.4;
       }
 
-      /* Scoped to the prose: the play button below is a link too, and must not
-         inherit the accent link colour onto its accent background. */
-      #story p a {
-        color: var(--accent);
-      }
-
       /* The panel's one call to action, so it takes the accent fill and the
          panel's full width. Measured 7.1:1 for the dark label on the accent
          blue, well clear of the 4.5:1 WCAG AA threshold. */
@@ -448,6 +442,14 @@
 
       .leaflet-bar a:hover {
         background: var(--hover);
+      }
+
+      /* Scoped to the prose: the play button above is a link too, and must not
+         inherit the accent link colour onto its accent background. It sits
+         after the Leaflet chrome on purpose: every `a` rule in this sheet
+         needs ascending specificity (stylelint no-descending-specificity). */
+      #story p a {
+        color: var(--accent);
       }
 
       @media (width <= 700px) {
@@ -974,14 +976,17 @@
         // along so the game can hand it straight back (?club=) and the star
         // can be filled when the race target is reached; clubName is the label
         // the game puts on the wall plaque as "player @ club" (Japanese name,
-        // the club's own signage).
+        // the club's own signage), and custom.emoji forces the wall portrait's
+        // flag to Japan instead of the browser locale's.
         storyPlay.href =
           "./index.html?ruletype=threecushion&raceTo=" +
           hall.raceTo +
           "&club=" +
           encodeURIComponent(hall.id) +
           "&clubName=" +
-          encodeURIComponent(hall.japaneseName)
+          encodeURIComponent(hall.japaneseName) +
+          "&custom.emoji=" +
+          encodeURIComponent("\u{1F1EF}\u{1F1F5}")
         drawStoryLink()
 
         if (pan) {
