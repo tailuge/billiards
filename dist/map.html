@@ -300,32 +300,38 @@
 
       /* Hall markers are HTML divIcons rather than L.circleMarker: Leaflet
          scales a vector renderer's container during the zoom animation, so a
-         circle marker balloons on the way to max zoom and snaps back at the
-         end. A marker icon is only repositioned, so the dot keeps its size the
-         whole way. The box is the selected size, so the anchor stays centred
-         while the visible dot grows from 16px (r=7 + 2px stroke) to 21px
-         (r=9 + 3px stroke). */
+         SVG shape balloons on the way to max zoom and snaps back at the end. A
+         marker icon is only repositioned, so the star keeps its size the whole
+         way. The box is the largest star, so the anchor stays centred while
+         the star grows from 18px to 21px.
+
+         The star is the same ☆/★ progress pair as the side list: hollow until
+         the club has been visited. Filled is reserved for a completed
+         challenge, so the selected state only grows and whitens the hollow
+         star — see the is-visited rules below. */
       .hall-dot {
         display: grid;
         place-items: center;
+        color: var(--accent);
       }
 
       .hall-dot::before {
-        content: "";
-        box-sizing: border-box;
-        width: 16px;
-        height: 16px;
-        border: 2px solid var(--accent);
-        border-radius: 50%;
-        background: rgb(107 163 245 / 70%);
+        content: "☆";
+        font-size: 18px;
+        line-height: 1;
       }
 
       .hall-dot.is-chosen::before {
-        width: 21px;
-        height: 21px;
-        border-width: 3px;
-        border-color: #fff;
-        background: var(--accent);
+        content: "☆";
+        color: #fff;
+        font-size: 21px;
+      }
+
+      /* Filled star, the same is-visited hook the side list uses. Both rules
+         are listed so the filled glyph cannot depend on rule order. */
+      .hall-dot.is-visited::before,
+      .hall-dot.is-visited.is-chosen::before {
+        content: "★";
       }
 
       /* Station dots reuse the constant-size divIcon trick the hall dots use,
@@ -337,8 +343,9 @@
       }
 
       /* Story panel for the selected club: pinned to the map's bottom right,
-         clear of Leaflet's attribution. Hidden until a club that has a story
-         is selected, which puts has-story on the map container. */
+         clear of Leaflet's attribution. Hidden until a club is selected,
+         which puts has-selection on the map container. Clubs without a story
+         still get the panel — a title and the play button. */
       #story {
         position: absolute;
         right: 10px;
@@ -369,8 +376,31 @@
         line-height: 1.4;
       }
 
-      #story a {
+      /* Scoped to the prose: the play button below is a link too, and must not
+         inherit the accent link colour onto its accent background. */
+      #story p a {
         color: var(--accent);
+      }
+
+      /* The panel's one call to action, so it takes the accent fill and the
+         panel's full width. Measured 7.1:1 for the dark label on the accent
+         blue, well clear of the 4.5:1 WCAG AA threshold. */
+      #story-play {
+        display: block;
+        margin-top: 8px;
+        padding: 7px 10px;
+        border-radius: 6px;
+        background: var(--accent);
+        color: #0f1620;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      #story-play:hover,
+      #story-play:focus-visible {
+        background: #8ab6f8;
       }
 
       /* Bezier link from the panel back to the club's dot. It draws above the
@@ -395,8 +425,8 @@
         fill: var(--accent);
       }
 
-      #map.has-story #story,
-      #map.has-story #story-link {
+      #map.has-selection #story,
+      #map.has-selection #story-link {
         display: block;
       }
 
@@ -448,6 +478,9 @@
         <div id="story">
           <h2 id="story-title">Story</h2>
           <p id="story-text"></p>
+          <a id="story-play" href="./index.html">
+            Play at <span id="story-play-name" lang="ja"></span>
+          </a>
         </div>
         <svg id="story-link" aria-hidden="true">
           <path />
@@ -791,8 +824,8 @@
         ["Takanawa Gateway", "高輪ゲートウェイ", 35.63541, 139.74064],
       ]
 
-      // Markers are HTML divIcons (see .hall-dot) so the dot keeps a constant
-      // pixel size while the map zooms; a scaled vector circle would balloon.
+      // Markers are HTML divIcons (see .hall-dot) so the star keeps a constant
+      // pixel size while the map zooms; a scaled vector shape would balloon.
       // The icon is the selected size, keeping the anchor centred as it grows.
       const dotIcon = L.divIcon({
         className: "hall-dot",
@@ -856,11 +889,12 @@
       const storyPanel = document.getElementById("story")
       const storyTitle = document.getElementById("story-title")
       const storyText = document.getElementById("story-text")
+      const storyPlayName = document.getElementById("story-play-name")
       const storyLink = document.getElementById("story-link")
       const storyPath = storyLink.querySelector("path")
       const storyTip = storyLink.querySelector("circle")
 
-      // The club whose story is on screen, or null when the selection has none.
+      // The club whose panel is on screen, or null before anything is picked.
       let selectedHall = null
 
       // A cubic bezier from the club's dot to the top edge of the panel. It
@@ -912,16 +946,16 @@
           return h.id === id
         })
 
-        // Only clubs that carry a story get the panel and its link.
-        selectedHall = hall.story ? hall : null
-        map.getContainer().classList.toggle("has-story", Boolean(selectedHall))
-        if (selectedHall) {
-          storyTitle.textContent = selectedHall.name
-          // Stories are local, trusted data and may carry a link, so they are
-          // rendered as HTML rather than text.
-          storyText.innerHTML = selectedHall.story
-          drawStoryLink()
-        }
+        // Every club opens the panel: the title and the play button are always
+        // useful, so a club without a story simply gets no prose between them.
+        selectedHall = hall
+        map.getContainer().classList.add("has-selection")
+        storyTitle.textContent = hall.name
+        // Stories are local, trusted data and may carry a link, so they are
+        // rendered as HTML rather than text — empty for a club without one.
+        storyText.innerHTML = hall.story || ""
+        storyPlayName.textContent = hall.japaneseName
+        drawStoryLink()
 
         if (pan) {
           map.flyTo([hall.lat, hall.lng], maxTileZoom, { duration: 0.8 })
@@ -959,6 +993,10 @@
         item.addEventListener("click", function () {
           select(hall.id, true)
         })
+        // The hollow/filled star pair is the progress hook: both the side-list
+        // row and the map marker fill once the club's challenge is completed,
+        // which will set hall.visited. Nothing sets it yet.
+        item.classList.toggle("is-visited", Boolean(hall.visited))
         list.appendChild(item)
 
         const marker = L.marker([hall.lat, hall.lng], { icon: dotIcon })
@@ -971,11 +1009,31 @@
             direction: "auto",
             offset: [10, 0],
             className: "hall-label",
+            // Leaflet gives tooltips pointer-events:none; interactive opts the
+            // label back in as a click target (Leaflet's own CSS supplies the
+            // pointer cursor). Station labels stay inert — context, not links.
+            interactive: true,
           })
         // Clicking the dot zooms to it, same as clicking its row in the panel.
         marker.addEventListener("click", function () {
           select(hall.id, true)
         })
+        // The permanent name label is part of the hall's click target too: it
+        // sits beside the dot and reads as the club's name on the map. The
+        // element only exists because the tooltip is permanent and the marker
+        // is already on the map, hence the optional call.
+        const label = marker.getTooltip()?.getElement?.()
+        if (label) {
+          label.addEventListener("click", function () {
+            select(hall.id, true)
+          })
+        }
+        // Fill the map star for a completed club, the marker's half of the same
+        // visited state the row above carries.
+        const star = marker.getElement()
+        if (star) {
+          star.classList.toggle("is-visited", Boolean(hall.visited))
+        }
         markers[hall.id] = marker
       })
     </script>
