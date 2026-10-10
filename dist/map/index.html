@@ -1911,6 +1911,17 @@
       const storyLink = document.getElementById("story-link")
       const storyPath = storyLink.querySelector("path")
 
+      // The panel is a child of the map container, so its pointer events reached
+      // Leaflet's drag handler — and a drag turns text selection off for the
+      // whole document as it starts (Draggable._onDown calls disableTextSelection
+      // before the browser can open a selection), which is why nothing in a
+      // story could be selected. Leaflet's own popup keeps its events to itself
+      // for the same reason, so do the same here: the story then selects and
+      // copies like any other page text, dragging in it no longer pans the map,
+      // and a wheel over it scrolls the story instead of zooming the map.
+      L.DomEvent.disableClickPropagation(storyPanel)
+      L.DomEvent.disableScrollPropagation(storyPanel)
+
       // The club whose panel is on screen, or null before anything is picked.
       let selectedHall = null
 
@@ -2060,7 +2071,7 @@
             <dd lang="en">${hall.address}</dd>
             <dt>目標</dt>
             <dd lang="en">${hall.raceTo} points</dd>
-            <dt>ウェブサイト</dt>
+            <dt>サイト</dt>
             <dd>
               <a
                 class="site"
