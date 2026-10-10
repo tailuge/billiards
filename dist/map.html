@@ -398,41 +398,45 @@
       }
 
       /* Permanent name labels beside the markers. Leaflet's tooltip defaults to
-         a white chip; recolour it to sit on the dark tiles. */
-      .leaflet-tooltip.hall-label,
-      .leaflet-tooltip.station-label {
+         a white chip; recolour it to sit on the dark tiles. The halls are what
+         the page is about, so their labels carry the same accent blue as the
+         hall dots. On the label background that is 6.78:1, comfortably above
+         the 4.5:1 WCAG AA threshold for body text. */
+      .leaflet-tooltip.hall-label {
         padding: 1px 5px;
         border: 1px solid var(--border);
         border-radius: 4px;
         background: var(--bg);
-        color: var(--text);
+        color: var(--accent);
         box-shadow: none;
         font-size: 0.75rem;
       }
 
+      /* The line's stations are context rather than the point of the page, so
+         their labels are bare text — no chip, border or arrow — in the line's
+         own yellow-green. Against the dark tiles that green is 9.2:1,
+         comfortably above the 4.5:1 WCAG AA threshold for body text. */
+      .leaflet-tooltip.station-label {
+        padding: 0;
+        border: none;
+        background: none;
+        color: #9acd32;
+        box-shadow: none;
+        font-size: 0.7rem;
+      }
+
       /* direction:auto flips labels left or right, so recolour both arrows. */
-      .leaflet-tooltip-left.hall-label::before,
-      .leaflet-tooltip-left.station-label::before {
+      .leaflet-tooltip-left.hall-label::before {
         border-left-color: var(--bg);
       }
 
-      .leaflet-tooltip-right.hall-label::before,
-      .leaflet-tooltip-right.station-label::before {
+      .leaflet-tooltip-right.hall-label::before {
         border-right-color: var(--bg);
       }
 
-      /* The halls are what the page is about, so their labels carry the same
-         accent blue as the hall dots. On the label background that is 6.78:1,
-         comfortably above the 4.5:1 WCAG AA threshold for body text. */
-      .leaflet-tooltip.hall-label {
-        color: var(--accent);
-      }
-
-      /* The line's stations are context rather than the point of the page, so
-         they stay muted against the blue hall labels. */
-      .leaflet-tooltip.station-label {
-        font-size: 0.7rem;
-        color: var(--muted);
+      /* A bare-text label has no chip for an arrow to sit against. */
+      .leaflet-tooltip.station-label::before {
+        display: none;
       }
 
       /* Hall markers are HTML divIcons rather than L.circleMarker: Leaflet
@@ -1471,10 +1475,14 @@
         iconAnchor: [4.5, 4.5],
       })
 
+      // The label carries the English name only: the Japanese name is kept in
+      // the data for reference, but the page reads in English and the two
+      // scripts together made every label twice as wide as the station it
+      // marks.
       yamanoteStations.forEach(function (station) {
         L.marker([station[2], station[3]], { icon: stationDot })
           .addTo(map)
-          .bindTooltip(station[0] + " " + station[1], {
+          .bindTooltip(station[0], {
             permanent: true,
             direction: "right",
             offset: [6, 0],

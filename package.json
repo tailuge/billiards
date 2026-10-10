@@ -61,7 +61,6 @@
     "http-server": "^14.1.1",
     "jest": "30.5.2",
     "jest-environment-jsdom": "30.5.2",
-    "node-notifier": "^10.0.1",
     "postcss-html": "2.0.0",
     "prettier": "3.9.9",
     "stylelint": "17.16.0",
