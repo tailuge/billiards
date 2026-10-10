@@ -62,6 +62,16 @@
          lobby's site index behaves. */
       html {
         height: 100%;
+
+        /* The page still scrolls to reach the foot of the directory fold-out,
+           but without a scrollbar — the same hidden bar the side list uses.
+           Wheel, touch, keyboard and scrolling all still work. */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      html::-webkit-scrollbar {
+        display: none;
       }
 
       body {
@@ -619,13 +629,21 @@
           padding: 0 0.5rem 0.5rem;
         }
 
+        /* On a narrow screen the two panels stack, so the column fills the
+           viewport and the list is capped below it; that pins the map to at
+           least 60% of the screen height and lets the list scroll instead. */
         main {
           flex-direction: column;
+          min-height: 100vh;
         }
 
         #list {
           width: 100%;
-          max-height: 40%;
+          max-height: 40vh;
+        }
+
+        #map {
+          min-height: 60vh;
         }
 
         .clubs-panel {
