@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tokyo billiards challenge</title>
 
+    <!-- The page's three subresource origins, warmed up before the parser
+         reaches the Leaflet tags below: unpkg serves the stylesheet and the
+         blocking script (on the critical path), basemaps serves the tiles the
+         map paints, and fonts.gstatic is only discovered once the inline CSS
+         is parsed. The crossorigin attribute matches each origin's request
+         mode — the Leaflet CSS/JS and the @font-face fetches are CORS reads,
+         Leaflet's tile <img>s are not — because a mismatch opens a second
+         connection instead of reusing the preconnected one. -->
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="preconnect" href="https://basemaps.cartocdn.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -79,7 +91,7 @@
         margin: 0;
         display: flex;
         flex-direction: column;
-        gap: 0.4rem;
+        gap: 0.2rem;
 
         /* Gutter between the panel and the viewport, matching the lobby's
            inset content column. */
@@ -91,9 +103,16 @@
         font-size: 15px;
       }
 
+      /* Title and tagline share one shallow row; the tagline stays quiet (and
+         wraps under the title on narrow screens) so it never crowds the map. */
       header {
         flex: 0 0 auto;
-        padding: 0.4rem 0.2rem;
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0 0.5rem;
+        padding: 0;
       }
 
       h1 {
@@ -103,14 +122,15 @@
       }
 
       header p {
-        margin: 3px 0 0;
+        margin: 0;
         color: var(--muted);
-        font-size: 0.85rem;
+        font-size: 0.72rem;
       }
 
-      /* Title, panel and the directory line below share one centred,
-         width-capped column so the layout reads like the lobby page rather
-         than edge-to-edge. */
+      /* The site header, the panel and the directory line below share one
+         centred, width-capped column so the layout reads like the lobby page
+         rather than edge-to-edge. */
+      app-topbar,
       header,
       footer,
       main {
@@ -252,6 +272,36 @@
         line-height: 1.4;
       }
 
+      /* The Japanese instructions that close the directory. Same prose size as
+         the stories, but they span both columns under a rule, so they read as a
+         closing note rather than another hall's entry. The block itself carries
+         lang="ja" (see the markup), so a screen reader voices the list in
+         Japanese instead of reading kanji with an English voice. */
+      .clubs-note {
+        column-span: all;
+        margin-top: 0.6rem;
+        padding-top: 0.6rem;
+        border-top: 1px solid var(--border-light);
+      }
+
+      /* Japanese reads better with looser leading than the stories' 1.4, and
+         the measure is capped because the note spans both columns. */
+      .clubs-note p,
+      .clubs-note ol {
+        max-width: 42rem;
+        margin: 0;
+        font-size: 0.75rem;
+        line-height: 1.6;
+      }
+
+      .clubs-note ol {
+        padding-left: 1.3rem;
+      }
+
+      .clubs-note li + li {
+        margin-top: 0.2rem;
+      }
+
       #list {
         display: flex;
         flex: 0 0 auto;
@@ -280,7 +330,7 @@
         flex-wrap: wrap;
         align-items: center;
         gap: 0.4rem;
-        padding: 6px 10px;
+        padding: 6px;
         border: 1px solid var(--border-light);
         border-radius: 4px;
         color: var(--muted);
@@ -317,6 +367,9 @@
         flex-wrap: wrap;
         gap: 0.4rem;
         color: var(--muted);
+
+        /* Japanese name and ward line sits quieter than the hall name. */
+        font-size: 0.72rem;
       }
 
       /* Progress star: hollow by default, filled once the hall is marked
@@ -653,6 +706,8 @@
     </style>
   </head>
   <body>
+    <app-topbar rule-type="map"></app-topbar>
+
     <header>
       <h1>Tokyo billiards challenge</h1>
       <p>Can you visit all the billiard halls in Tokyo?</p>
@@ -721,8 +776,6 @@
               <dd data-field="tables">
                 Carom / Three-Cushion &amp; Pocket Tables
               </dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">4.3 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">
                 Setagaya, Shimokitazawa, Three-Cushion, Carom
@@ -767,8 +820,6 @@
               <dd data-field="hours">Varies</dd>
               <dt>Tables</dt>
               <dd data-field="tables">Three-Cushion &amp; Pocket Tables</dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">3.5 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">Toshima, Otsuka, Sugamo, Three-Cushion</dd>
             </dl>
@@ -813,23 +864,21 @@
               <dd data-field="hours">Permanently Closed</dd>
               <dt>Tables</dt>
               <dd data-field="tables">Carom / Three-Cushion</dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">4.2 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">
                 Shibuya, Harajuku, Three-Cushion, Closed
               </dd>
             </dl>
             <p class="club-story" data-field="story">
-              This was only one stop from me on the Yamanote line and
-              became my 'home club' when I worked in Tokyo. I would always try
-              to pop in after work and it was the most friendly place to play
-              three cushion. I played there as 'ルーク' they probably long
-              forgotten me but I still remember them so well and have some of my
-              happiest three cushion memories there, and the thrill of playing
-              pro
+              This was only one stop from me on the Yamanote line and became my
+              'home club' when I worked in Tokyo. I would always try to pop in
+              after work and it was the most friendly place to play three
+              cushion. I played there as 'ルーク' they probably long forgotten
+              me but I still remember them so well and have some of my happiest
+              three cushion memories there, and the thrill of playing pro
               <a href="https://jpbf.net/player-detail/?seq_id=58">米山先生</a>.
-              Is this club closed now? That's so sad, but we can still find Yoneyama-san!
+              Is this club closed now? That's so sad, but we can still find
+              Yoneyama-san!
             </p>
           </article>
           <article
@@ -919,8 +968,6 @@
               <dd data-field="tables">
                 4 Carom (Three-Cushion), 5 Pocket Tables
               </dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">4.4 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">Nakano, Nogata, Three-Cushion, Carom</dd>
             </dl>
@@ -996,8 +1043,6 @@
               <dd data-field="tables">
                 Carom / Three-Cushion Dedicated Tables
               </dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">4.2 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">Koto, Kameido, Three-Cushion, Carom</dd>
             </dl>
@@ -1035,8 +1080,6 @@
               <dd data-field="hours">12:00 PM - 12:00 AM Daily</dd>
               <dt>Tables</dt>
               <dd data-field="tables">5 Three-Cushion &amp; 3 Pocket Tables</dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">4.5 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">
                 Nishitokyo, Seibu-Yagisawa, Three-Cushion, Carom
@@ -1074,8 +1117,6 @@
               <dd data-field="hours">10:00 AM - 11:00 PM Daily</dd>
               <dt>Tables</dt>
               <dd data-field="tables">Three-Cushion &amp; Pocket Tables</dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">4.1 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">
                 Shinjuku, Takadanobaba, Three-Cushion, Carom
@@ -1115,8 +1156,6 @@
               <dd data-field="hours">12:00 PM - 4:30 AM Daily</dd>
               <dt>Tables</dt>
               <dd data-field="tables">4 Three-Cushion &amp; Pocket Tables</dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">3.4 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">
                 Shinjuku, Shin-Okubo, Three-Cushion, Carom
@@ -1160,8 +1199,6 @@
               <dd data-field="hours">2:00 PM - 12:00 AM Daily</dd>
               <dt>Tables</dt>
               <dd data-field="tables">4 Three-Cushion Tables</dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">4.1 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">
                 Bunkyo, Yushima, Ochanomizu, Three-Cushion
@@ -1202,8 +1239,6 @@
               <dd data-field="hours">3:00 PM - 1:00 AM Daily</dd>
               <dt>Tables</dt>
               <dd data-field="tables">1 Three-Cushion &amp; 4 Pocket Tables</dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">4.5 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">Meguro, Three-Cushion, Carom</dd>
             </dl>
@@ -1244,8 +1279,6 @@
                 2 Three-Cushion (Verhoeven &amp; Van Laere) &amp; 8 Pocket
                 Tables
               </dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">4.7 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">Ota, Haneda, Three-Cushion, Carom</dd>
             </dl>
@@ -1287,14 +1320,38 @@
               <dd data-field="tables">
                 3 Three-Cushion (Carom) / 4 Pocket Tables
               </dd>
-              <dt>Rating</dt>
-              <dd data-field="rating">4.1 / 5</dd>
               <dt>Tags</dt>
               <dd data-field="tags">
                 Koto, Kameido, Three-Cushion, Carom, Pocket
               </dd>
             </dl>
           </article>
+
+          <!-- How the challenge works, in Japanese. The halls are
+               Japanese-named and the buttons quoted are the ones the game
+               shows ("Play at <club>" here, "Update map" at the end of a
+               game), so the reader meets the same wording they will click.
+               lang="ja" is on the whole block rather than each line. -->
+          <section class="clubs-note" lang="ja">
+            <h2>遊び方</h2>
+            <p>
+              東京の一流スリークッション・ビリヤード場をすべて訪ねる旅です。
+            </p>
+            <ol>
+              <li>一覧または地図からクラブを選びます。</li>
+              <li>
+                「Play at ○○」ボタンを押すと、そのクラブでのゲームが始まります。
+              </li>
+              <li>指定された得点を先取してください。</li>
+              <li>
+                終了後に「Update
+                map」ボタンを押すと地図に戻り、そのクラブのスターが表示されます。
+              </li>
+              <li>
+                これを繰り返し、最後にルパン（ビリヤード亀戸ルパン）で米山先生がプレイしているところまでたどり着けば完成です。
+              </li>
+            </ol>
+          </section>
         </div>
       </details>
     </footer>
@@ -1740,5 +1797,7 @@
         select(returnClub, true)
       }
     </script>
+
+    <script type="module" src="map.js"></script>
   </body>
 </html>
