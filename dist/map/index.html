@@ -1,9 +1,36 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tokyo billiards challenge</title>
+
+    <!-- Japanese is this page's only language, so the head carries the search
+         metadata the site's other pages already have (see
+         src/client/index.html), written in Japanese: the <html lang> above, a
+         title, description, keywords, a robots line and an og block. There is
+         deliberately no canonical or og:url — the map ships from more than one
+         host (the Docker image, ../billiards/dist, the scoreboard), so there is
+         no single URL for this page to claim as its own. -->
+    <title>東京ビリヤード場めぐり｜スリークッション・チャレンジ</title>
+    <meta
+      name="description"
+      content="東京のスリークッション・ビリヤード場を地図でめぐるチャレンジ。各店の住所・営業時間と、その店にまつわる思い出をたどりながら、ブラウザで三クッションのゲームが遊べます。"
+    />
+    <meta
+      name="keywords"
+      content="ビリヤード, スリークッション, 三クッション, カラム, 撞球, 東京, ビリヤード場, ビリヤード 東京, ビリヤード 地図"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta
+      property="og:title"
+      content="東京ビリヤード場めぐり｜スリークッション・チャレンジ"
+    />
+    <meta
+      property="og:description"
+      content="東京のスリークッション・ビリヤード場を地図でめぐるチャレンジ。各店の住所・営業時間と、その店にまつわる思い出をたどりながら、ブラウザで三クッションのゲームが遊べます。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
 
     <!-- The page's three subresource origins, warmed up before the parser
          reaches the Leaflet tags below: unpkg serves the stylesheet and the
@@ -127,6 +154,32 @@
         font-size: 0.72rem;
       }
 
+      /* The tagline's help button. The instructions live inside the folded
+         directory, so this is the one visible route to them; it is kept small
+         and muted so it sits beside the tagline without competing with the
+         title for attention. */
+      /* min-height 24px and the wider padding give this a tap target of at
+         least 24x24, the WCAG minimum Lighthouse checks for; inline-flex keeps
+         the label centred in the taller pill. */
+      .help {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 0 12px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: none;
+        color: var(--muted);
+        font-family: inherit;
+        font-size: 0.68rem;
+        cursor: pointer;
+      }
+
+      .help:hover {
+        background: var(--hover);
+        color: var(--text);
+      }
+
       /* The site header, the panel and the directory line below share one
          centred, width-capped column so the layout reads like the lobby page
          rather than edge-to-edge. */
@@ -171,7 +224,9 @@
       /* The disclosure marker goes: the line is centred, and the ▾/▴ arrow
          below carries the open state instead of a triangle at the margin. */
       .clubs-more summary {
-        padding: 0.25rem 0.2rem;
+        /* Tall enough (about 28px) that the disclosure line clears the 24px
+           minimum tap-target size. */
+        padding: 0.4rem 0.2rem;
         color: var(--muted);
         font-size: 0.78rem;
         text-align: center;
@@ -272,16 +327,15 @@
         line-height: 1.4;
       }
 
-      /* The Japanese instructions that close the directory. Same prose size as
-         the stories, but they span both columns under a rule, so they read as a
-         closing note rather than another hall's entry. The block itself carries
-         lang="ja" (see the markup), so a screen reader voices the list in
-         Japanese instead of reading kanji with an English voice. */
+      /* The instructions that open the directory: same prose size as the
+         stories, but they span both columns under a rule, so they read as a
+         preface to the index rather than another hall's entry. The rule sits
+         below them, since they now come before the halls rather than after. */
       .clubs-note {
         column-span: all;
-        margin-top: 0.6rem;
-        padding-top: 0.6rem;
-        border-top: 1px solid var(--border-light);
+        margin-bottom: 0.6rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--border-light);
       }
 
       /* Japanese reads better with looser leading than the stories' 1.4, and
@@ -300,6 +354,71 @@
 
       .clubs-note li + li {
         margin-top: 0.2rem;
+      }
+
+      /* The "how to play three-cushion" primer that follows the challenge
+         instructions: the same spanned, two-column preface treatment as
+         .clubs-note, plus the game's own screenshot. flow-root contains the
+         floated figure so the section's rule and padding sit below the image
+         rather than beside it. */
+      .clubs-howto {
+        display: flow-root;
+        column-span: all;
+        margin-bottom: 0.6rem;
+        padding-bottom: 0.6rem;
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      /* Japanese reads better with looser leading than the stories' 1.4, and
+         the measure is capped because the note spans both columns. */
+      .clubs-howto p,
+      .clubs-howto ol {
+        max-width: 42rem;
+        margin: 0;
+        font-size: 0.75rem;
+        line-height: 1.6;
+      }
+
+      .clubs-howto ol {
+        padding-left: 1.3rem;
+      }
+
+      .clubs-howto li + li {
+        margin-top: 0.2rem;
+      }
+
+      /* The game's own screenshot, served from the same host as the game the
+         primer links to, so it shows the real table rather than a drawing. It
+         floats right on a wide panel and drops below the steps on a narrow one
+         (see the media query). */
+      .clubs-howto figure {
+        float: right;
+        width: 18rem;
+        max-width: 45%;
+        margin: 0 0 0.6rem 0.8rem;
+      }
+
+      .clubs-howto img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+      }
+
+      .clubs-howto figcaption {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.7rem;
+        text-align: right;
+      }
+
+      /* The help button scrolls the instructions to the top of the viewport,
+         where the sticky top bar would cover the 遊び方 heading; the margin
+         holds them clear of it. Placed after the .clubs-note rules so the id
+         does not precede them in the specificity ladder. */
+      #instructions {
+        scroll-margin-top: 3rem;
       }
 
       #list {
@@ -443,6 +562,35 @@
         font-family: inherit;
       }
 
+      /* CARTO's Dark Matter tiles are extremely low-key: on a sampled z12 tile
+         (3637/1612, central Tokyo) the brightest pixel is only #444 and the
+         90th percentile is #1e, so the whole image lives below mid-grey. That
+         rules out plain contrast(): it pivots at sRGB 0.5, so on a tile with no
+         light pixels it drags the roads and water *down* toward black instead
+         of separating them — the opposite of what is wanted.
+
+         Lifting the tile first and adding a little contrast is the equivalent
+         levels adjustment: out = 2.625·in − 0.025, a 2.6x lift whose pivot sits
+         down at #04, so everything above near-black gets lighter and only the
+         deepest shadow is pushed down. Measured on the same tile, the land goes
+         #09 -> #11, the roads #1e -> #48 and the brightest pixels #44 -> #ac,
+         with no pixel clipped to black; the base stays darker than this page's
+         #1a1a1a panel, so the map still reads as an inset rather than a glowing
+         slab. brightness is the overall lift — raise it to lift the whole tile,
+         lower it to sink it — and contrast is the separation on top; past about
+         1.1 the land starts clipping to black (16% of the tile by 1.1).
+
+         The filter sits on the tile images themselves, not on
+         .leaflet-tile-pane or the tile container: those are the elements
+         Leaflet rescales during the zoom animation, and filtering them would
+         filter the resampled output on every frame. Filtering each image keeps
+         the effect to the raster tiles' own pixels — the markers, labels,
+         popups and Leaflet's chrome are separate panes painted on top and keep
+         the exact colours their contrast ratios were measured against. */
+      .leaflet-tile {
+        filter: brightness(2.5) contrast(1.05);
+      }
+
       .leaflet-popup-content-wrapper,
       .leaflet-popup-tip {
         background: var(--hover);
@@ -470,7 +618,9 @@
          with the station labels, which carry no z-index, so hall names come out
          on top of station names wherever the two overlap. */
       .leaflet-tooltip.hall-label {
-        padding: 1px 5px;
+        /* The chip is clickable (interactive tooltip), so its padding is set
+           to bring it to about 24px tall for the same tap-target audit. */
+        padding: 4px 8px;
         border: 1px solid var(--border);
         border-radius: 4px;
         background: var(--bg);
@@ -526,14 +676,14 @@
 
       .hall-dot::before {
         content: "☆";
-        font-size: 18px;
+        font-size: 26px;
         line-height: 1;
       }
 
       .hall-dot.is-chosen::before {
         content: "☆";
         color: #fff;
-        font-size: 21px;
+        font-size: 30px;
       }
 
       /* Filled star, the same is-visited hook the side list uses. Both rules
@@ -583,6 +733,21 @@
         color: var(--text);
         font-size: 0.78rem;
         line-height: 1.4;
+      }
+
+      /* The hall's target: the points to score there for its star. A pill, so it
+         reads as a badge on the panel rather than one more line of prose, and it
+         sits between the story and the button it applies to. */
+      #story .goal {
+        display: inline-block;
+        margin: 6px 0 0;
+        padding: 1px 8px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 0.72rem;
+        font-weight: 600;
       }
 
       /* The panel's one call to action, so it takes the accent fill and the
@@ -702,6 +867,15 @@
         .clubs-panel {
           column-count: 1;
         }
+
+        /* The panel is one narrow column here, so the screenshot drops below
+           the steps at full width instead of squeezing the prose beside it. */
+        .clubs-howto figure {
+          float: none;
+          width: auto;
+          max-width: 100%;
+          margin: 0.5rem 0 0;
+        }
       }
     </style>
   </head>
@@ -709,18 +883,32 @@
     <app-topbar rule-type="map"></app-topbar>
 
     <header>
-      <h1>Tokyo billiards challenge</h1>
-      <p>Can you visit all the billiard halls in Tokyo?</p>
+      <h1>東京ビリヤード場めぐり</h1>
+      <p>東京のビリヤード場をすべて訪ねられますか？</p>
+      <!-- Opens the directory at the instructions (see the click handler).
+           title, not aria-label, so the visible ヘルプ stays the accessible
+           name (WCAG 2.5.3). -->
+      <button
+        type="button"
+        class="help"
+        id="help"
+        aria-controls="clubs"
+        title="遊び方を見る"
+      >ヘルプ</button>
     </header>
 
     <main>
       <ul id="list"></ul>
       <div id="map">
         <div id="story">
-          <h2 id="story-title">Story</h2>
+          <!-- The heading is only ever seen before a club is picked (the panel is
+               hidden until then); select() replaces it with the club's English
+               name, which it tags lang="en" for. -->
+          <h2 id="story-title">ストーリー</h2>
           <p id="story-text"></p>
+          <p class="goal" id="story-goal"></p>
           <a id="story-play" href="../index.html">
-            Play at <span id="story-play-name" lang="ja"></span>
+            <span id="story-play-name" lang="ja"></span>でプレイ
           </a>
         </div>
         <svg id="story-link" aria-hidden="true">
@@ -738,10 +926,81 @@
     <footer>
       <details class="clubs-more" id="clubs">
         <summary>
-          Tokyo billiard halls — addresses, opening times and stories
+          東京のビリヤード場 — 住所・営業時間・思い出
         </summary>
         <div class="clubs-panel">
-          <h2>Billiard hall directory</h2>
+          <h2>ビリヤード場一覧</h2>
+
+          <!-- How the challenge works. It opens the directory, above the halls
+               it describes. tabindex="-1" is there for the tagline's help
+               button, which scrolls this section into view and focuses it.
+               The button quoted in step 2 is this page's own; the game's
+               "Update map" in step 4 lives on ../index.html and is the game's
+               own English label, so it is quoted as the reader will see it. -->
+          <section class="clubs-note" lang="ja" id="instructions" tabindex="-1">
+            <h2>遊び方</h2>
+            <p>
+              東京の一流スリークッション・ビリヤード場をすべて訪ねる旅です。各店には、その店をクリアするための目標得点が1つずつ決まっています。
+            </p>
+            <ol>
+              <li>
+                一覧または地図から店を選びます。ストーリーの下に「目標 ◯点」と表示されます。
+              </li>
+              <li>
+                「◯◯でプレイ」ボタンを押すと、その店でのスリークッションが始まります。
+              </li>
+              <li>相手はいません。1ゲームのうちに目標の得点を取ればクリアです。</li>
+              <li>
+                ゲームが終わったら「Update
+                map」ボタンで地図に戻ります。クリアしていれば、その店のスターが☆から★に変わります。
+              </li>
+              <li>
+                目標に届かなかった場合は何も記録されません。同じ店に何度でも挑戦できます。
+              </li>
+              <li>すべての店のスターを★にすれば、東京制覇です。</li>
+            </ol>
+          </section>
+
+          <!-- How to play the game itself, as opposed to how the map challenge
+               above works. The steps name the touch controls explicitly (drag
+               to aim, then set spin and power) and reassure that a near miss
+               still scores, because the game credits a hit within a ball's
+               width — the point the game's own Japanese page makes, and the
+               reason a miss is less stressful than it sounds. The screenshot
+               is the same one that page uses, served from the game's host. -->
+          <section class="clubs-howto" lang="ja">
+            <h2>スリークッションの遊び方</h2>
+            <p>
+              スリークッションは、手玉で的玉に当てて得点を重ねるキャロム・ビリヤードです。手玉がクッションに3回以上当たってから2つ目の的玉に当てれば1点。送り出しや引き球、サイドスピンまで、本物の台と同じように効きます。
+            </p>
+            <figure>
+              <img
+                src="https://billiards.tailuge.workers.dev/images/three630x500.png"
+                alt="3クッション オンラインビリヤードの実際のプレイ画面"
+                width="630"
+                height="500"
+              />
+              <figcaption>実際のゲーム画面</figcaption>
+            </figure>
+            <ol>
+              <li>
+                スマホでは、まず画面をドラッグして狙いを決めます。指を離した方向に狙いが定まります。
+              </li>
+              <li>
+                次にスピン（撞点）とパワーを調整し、最後に玉を撞きます。強さと回転で、玉の走りが変わります。
+              </li>
+              <li>
+                狙いが多少ずれても大丈夫です。玉1個分以内のニアミスなら得点になり、失敗が減るので気軽に楽しめます。
+              </li>
+              <li>
+                パソコンでは、マウスかキーボードで同じように狙って撞けます。アプリのインストールも会員登録も不要です。
+              </li>
+              <li>
+                初めての方は、小さめの台の練習モードで感覚をつかんでから、正規サイズの台に挑戦しましょう。
+              </li>
+            </ol>
+          </section>
+
           <article
             class="club"
             id="club-matsuyama"
@@ -751,7 +1010,7 @@
             data-lng="139.6671216"
           >
             <h3 class="club-name">
-              <span data-field="name">Matsuyama Billiards</span>
+              <span lang="en" data-field="name">Matsuyama Billiards</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >松山ビリヤード</span
               >
@@ -782,9 +1041,7 @@
               </dd>
             </dl>
             <p class="club-story" data-field="story">
-              Maybe the most quaint and picturesque billiards hall in Tokyo. I
-              could cycle to this one when it wasnt too hot and even won a small
-              amateur three cushion competition there ~2010.
+              東京でいちばん趣のある、絵になるビリヤード場かもしれません。暑くない日は自転車で通っていました。2010年ごろには、ここで開かれた小さなアマチュアのスリークッション大会で優勝したこともあります。
             </p>
           </article>
           <article
@@ -796,7 +1053,7 @@
             data-lng="139.7306202"
           >
             <h3 class="club-name">
-              <span data-field="name">Billiard Club Nabbi</span>
+              <span lang="en" data-field="name">Billiard Club Nabbi</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >ビリヤードクラブナビー</span
               >
@@ -824,11 +1081,7 @@
               <dd data-field="tags">Toshima, Otsuka, Sugamo, Three-Cushion</dd>
             </dl>
             <p class="club-story" data-field="story">
-              This was the first club I tried playing three cushion billiards.
-              What a revalation after years of only ever knownig snooker this
-              game blew my mind - the die was cast, I was hooked. Many thanks to
-              the friendly staff there who helped me through my first few shots
-              on my vacation in Japan.
+              スリークッションを初めてプレーしたのがこの店でした。スヌーカーしか知らなかった自分には衝撃で、すっかり虜になってしまいました。日本旅行中、最初の数ショットを手ほどきしてくれた気さくなスタッフの方々には本当に感謝しています。
             </p>
           </article>
           <article
@@ -840,7 +1093,7 @@
             data-lng="139.7032234"
           >
             <h3 class="club-name">
-              <span data-field="name">Billiard Soma</span>
+              <span lang="en" data-field="name">Billiard Soma</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >ビリヤード相馬</span
               >
@@ -870,15 +1123,7 @@
               </dd>
             </dl>
             <p class="club-story" data-field="story">
-              This was only one stop from me on the Yamanote line and became my
-              'home club' when I worked in Tokyo. I would always try to pop in
-              after work and it was the most friendly place to play three
-              cushion. I played there as 'ルーク' they probably long forgotten
-              me but I still remember them so well and have some of my happiest
-              three cushion memories there, and the thrill of playing pro
-              <a href="https://jpbf.net/player-detail/?seq_id=58">米山先生</a>.
-              Is this club closed now? That's so sad, but we can still find
-              Yoneyama-san!
+              山手線で一駅という近さで、東京で働いていたころの「ホームクラブ」でした。仕事帰りに必ず寄っていて、スリークッションを楽しむのにいちばん温かい場所でした。私は「ルーク」として通っていました。向こうはもう忘れてしまったでしょうが、私は今でもよく覚えていますし、最高のスリークッションの思い出と、プロの<a href="https://jpbf.net/player-detail/?seq_id=58">米山先生</a>と対戦した興奮もここにあります。この店はもう閉店してしまったのでしょうか。とても残念ですが、米山さんには今も会えます！
             </p>
           </article>
           <article
@@ -890,7 +1135,7 @@
             data-lng="139.6381"
           >
             <h3 class="club-name">
-              <span data-field="name">Billiard Cafe Roots</span>
+              <span lang="en" data-field="name">Billiard Cafe Roots</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >ビリヤード カフェ ルーツ</span
               >
@@ -924,11 +1169,7 @@
               <dd data-field="tags">Suginami, Asagaya, Three-Cushion, Carom</dd>
             </dl>
             <p class="club-story" data-field="story">
-              Did I play here, maybe not, maybe it was a club in Gotanda long
-              closed down? I have the feeling that some days I would sneak out
-              of work for a long dinner break and pop in for a quick game of
-              3-cushion. One of the regulars taught me about short angle shots
-              and I still rememebr it- thank you!
+              ここでプレーしたかというと、たぶんしていないかもしれません。もしかすると五反田にあった、とっくに閉店した店だったのかも。仕事を抜け出して長めの夕食休憩を取り、3クッションを1ゲームだけ撞きに寄った日のことを覚えています。常連のひとりがショートアングルの撞き方を教えてくれて、それは今でも覚えています。ありがとう！
             </p>
           </article>
           <article
@@ -940,7 +1181,7 @@
             data-lng="139.6521"
           >
             <h3 class="club-name">
-              <span data-field="name">Kobby's Billiards</span>
+              <span lang="en" data-field="name">Kobby's Billiards</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >コビービリヤード</span
               >
@@ -981,7 +1222,7 @@
             data-lng="139.8981"
           >
             <h3 class="club-name">
-              <span data-field="name">billiard club reve</span>
+              <span lang="en" data-field="name">billiard club reve</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >ビリヤードクラブ レーヴ</span
               >
@@ -1021,7 +1262,7 @@
             data-lng="139.8251"
           >
             <h3 class="club-name">
-              <span data-field="name">Billiard Alvis</span>
+              <span lang="en" data-field="name">Billiard Alvis</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >ビリヤード アルビス</span
               >
@@ -1056,7 +1297,7 @@
             data-lng="139.5513"
           >
             <h3 class="club-name">
-              <span data-field="name">ARAI Billiards Headquarters</span>
+              <span lang="en" data-field="name">ARAI Billiards Headquarters</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >ビリヤード ARAI 本店</span
               >
@@ -1095,7 +1336,7 @@
             data-lng="139.7042"
           >
             <h3 class="club-name">
-              <span data-field="name">Billiard Sansui</span>
+              <span lang="en" data-field="name">Billiard Sansui</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >山水ビリヤード</span
               >
@@ -1132,7 +1373,7 @@
             data-lng="139.6996667"
           >
             <h3 class="club-name">
-              <span data-field="name">Kobayashi Billiards (Bright)</span>
+              <span lang="en" data-field="name">Kobayashi Billiards (Bright)</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >ビリヤード小林</span
               >
@@ -1162,8 +1403,7 @@
               </dd>
             </dl>
             <p class="club-story" data-field="story">
-              I lived in Shinokubo for a month or two and played here - even
-              said hello to the legendary Mr Kobayashi once.
+              新大久保に1〜2か月住んでいた時期があり、ここで撞いていました。伝説の小林さんに一度ご挨拶できたこともあります。
             </p>
           </article>
           <article
@@ -1175,7 +1415,7 @@
             data-lng="139.7651"
           >
             <h3 class="club-name">
-              <span data-field="name">Billiards E-place</span>
+              <span lang="en" data-field="name">Billiards E-place</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >ビリヤード イープレイス</span
               >
@@ -1214,7 +1454,7 @@
             data-lng="139.7153"
           >
             <h3 class="club-name">
-              <span data-field="name">Billiard Yamate</span>
+              <span lang="en" data-field="name">Billiard Yamate</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >ビリヤード山手</span
               >
@@ -1252,7 +1492,7 @@
             data-lng="139.7408"
           >
             <h3 class="club-name">
-              <span data-field="name">ALICE Billiards</span>
+              <span lang="en" data-field="name">ALICE Billiards</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >ビリヤードALICE</span
               >
@@ -1292,7 +1532,7 @@
             data-lng="139.8258"
           >
             <h3 class="club-name">
-              <span data-field="name">Billiard Lupin Kameido</span>
+              <span lang="en" data-field="name">Billiard Lupin Kameido</span>
               <span class="club-ja" lang="ja" data-field="japaneseName"
                 >ビリヤード亀戸ルパン</span
               >
@@ -1327,31 +1567,6 @@
             </dl>
           </article>
 
-          <!-- How the challenge works, in Japanese. The halls are
-               Japanese-named and the buttons quoted are the ones the game
-               shows ("Play at <club>" here, "Update map" at the end of a
-               game), so the reader meets the same wording they will click.
-               lang="ja" is on the whole block rather than each line. -->
-          <section class="clubs-note" lang="ja">
-            <h2>遊び方</h2>
-            <p>
-              東京の一流スリークッション・ビリヤード場をすべて訪ねる旅です。
-            </p>
-            <ol>
-              <li>一覧または地図からクラブを選びます。</li>
-              <li>
-                「Play at ○○」ボタンを押すと、そのクラブでのゲームが始まります。
-              </li>
-              <li>指定された得点を先取してください。</li>
-              <li>
-                終了後に「Update
-                map」ボタンを押すと地図に戻り、そのクラブのスターが表示されます。
-              </li>
-              <li>
-                これを繰り返し、最後にルパン（ビリヤード亀戸ルパン）で米山先生がプレイしているところまでたどり着けば完成です。
-              </li>
-            </ol>
-          </section>
         </div>
       </details>
     </footer>
@@ -1388,7 +1603,10 @@
           // Local, trusted data that may carry a link, so the story is read —
           // and later rendered into the panel — as HTML rather than text. The
           // pretty-printer's line breaks around the prose and its link go, so
-          // the panel's markup reads like the array it replaced.
+          // the panel's markup reads like the array it replaced. That is also
+          // why the Japanese stories are written on one unwrapped line each: a
+          // wrap inside a sentence would come back as a space the text never
+          // had.
           story: story
             ? story.innerHTML.replace(/\s*\n\s*/g, " ").replace(/ {2,}/g, " ")
             : "",
@@ -1503,11 +1721,13 @@
 
       // Markers are HTML divIcons (see .hall-dot) so the star keeps a constant
       // pixel size while the map zooms; a scaled vector shape would balloon.
-      // The icon is the selected size, keeping the anchor centred as it grows.
+      // The box is 32px — comfortably past the 24px minimum tap target — while
+      // the star itself stays a little smaller inside it and grows from 26px to
+      // 30px when chosen, with the anchor kept centred.
       const dotIcon = L.divIcon({
         className: "hall-dot",
-        iconSize: [21, 21],
-        iconAnchor: [10.5, 10.5],
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
       })
 
       // CARTO's free API key serves raster tiles up to zoom 18; deeper tiles
@@ -1524,7 +1744,23 @@
         // is wanted.
         zoomSnap: 0.25,
         zoomDelta: 0.5,
+
+        // Leaflet's own control is added below instead of here, so its buttons
+        // can be given Japanese accessible names: the defaults are the English
+        // "Zoom in"/"Zoom out", which the page's language would mispronounce.
+        zoomControl: false,
       }).setView([35.6895, 139.6917], 12.5)
+
+      L.control.zoom({ zoomInTitle: "拡大", zoomOutTitle: "縮小" }).addTo(map)
+
+      // Leaflet hardcodes the popup close button's accessible name as "Close
+      // popup" (1.9) with no option to change it, so relabel it as each popup
+      // opens rather than leaving one English control on a Japanese page.
+      map.on("popupopen", function () {
+        document
+          .querySelector(".leaflet-popup-close-button")
+          ?.setAttribute("aria-label", "閉じる")
+      })
 
       // CARTO "Dark Matter" tiles, so the map matches the dark page. The
       // keyless dark_all URL only returns a watermark placeholder, hence the key.
@@ -1549,8 +1785,25 @@
       // which takes height off this container. Leaflet only re-measures its
       // container on a window resize, so re-measure here too and the map
       // redraws to the size the fold leaves it.
-      document.getElementById("clubs").addEventListener("toggle", function () {
+      const clubs = document.getElementById("clubs")
+      clubs.addEventListener("toggle", function () {
         map.invalidateSize()
+      })
+
+      // The tagline's help button. The instructions sit inside the folded
+      // directory, so opening the dropdown is what puts them in the page's flow;
+      // the section is then scrolled to and focused (it carries tabindex="-1"),
+      // so a keyboard visitor picks up where the page just moved them.
+      const instructions = document.getElementById("instructions")
+      document.getElementById("help").addEventListener("click", function () {
+        clubs.open = true
+        // A visitor who asked for less motion gets the jump without the glide.
+        const motion = window.matchMedia("(prefers-reduced-motion: reduce)")
+        instructions.scrollIntoView({
+          block: "start",
+          behavior: motion.matches ? "auto" : "smooth",
+        })
+        instructions.focus({ preventScroll: true })
       })
 
       // Station dots are divIcons for the same reason as the hall dots: Leaflet
@@ -1567,7 +1820,16 @@
       // scripts together made every label twice as wide as the station it
       // marks.
       yamanoteStations.forEach(function (station) {
-        L.marker([station[2], station[3]], { icon: stationDot })
+        L.marker([station[2], station[3]], {
+          icon: stationDot,
+          // Station dots are context, not controls: they mark the Yamanote
+          // line's stops on the map but do nothing when clicked. Leaflet makes
+          // every interactive marker role="button", which would leave 30
+          // unnamed buttons in the accessibility tree — and 9px tap targets —
+          // so both pointer and keyboard interaction are switched off here.
+          interactive: false,
+          keyboard: false,
+        })
           .addTo(map)
           .bindTooltip(station[0], {
             permanent: true,
@@ -1585,6 +1847,7 @@
       const storyPanel = document.getElementById("story")
       const storyTitle = document.getElementById("story-title")
       const storyText = document.getElementById("story-text")
+      const storyGoal = document.getElementById("story-goal")
       const storyPlayName = document.getElementById("story-play-name")
       const storyPlay = document.getElementById("story-play")
       const storyLink = document.getElementById("story-link")
@@ -1647,10 +1910,16 @@
         // useful, so a club without a story simply gets no prose between them.
         selectedHall = hall
         map.getContainer().classList.add("has-selection")
+        // The club names stay English (only the prose is Japanese), so the
+        // heading they land in carries its own language.
         storyTitle.textContent = hall.name
+        storyTitle.lang = "en"
         // Stories are local, trusted data and may carry a link, so they are
         // rendered as HTML rather than text — empty for a club without one.
         storyText.innerHTML = hall.story || ""
+        // The hall's target, and the condition for its star: a solo game to this
+        // many points, in one game (the 遊び方 section spells this out).
+        storyGoal.textContent = "目標 " + hall.raceTo + "点"
         storyPlayName.textContent = hall.japaneseName
         // Launch a three-cushion race sized for this club. The club id rides
         // along so the game can hand it straight back (?club=) and the star
@@ -1704,14 +1973,14 @@
         item.dataset.id = hall.id
         item.innerHTML = `
           <span class="hall">
-            <b>${hall.name}</b>
+            <b lang="en">${hall.name}</b>
             <span class="meta">
               <span lang="ja">${hall.japaneseName}</span>
-              <span>${hall.district}</span>
+              <span lang="en">${hall.district}</span>
             </span>
           </span>
           <span class="star" aria-hidden="true"></span>
-          <dl class="details">
+          <dl class="details" lang="en">
             <dt>Address</dt>
             <dd>${hall.address}</dd>
             <dt>Race to</dt>
@@ -1750,7 +2019,7 @@
         })
           .addTo(map)
           .bindPopup(
-            `<b>${hall.name}</b><br><span lang="ja">${hall.japaneseName}</span>`
+            `<b lang="en">${hall.name}</b><br><span lang="ja">${hall.japaneseName}</span>`
           )
           .bindTooltip(`<span lang="ja">${hall.japaneseName}</span>`, {
             permanent: true,
@@ -1780,6 +2049,11 @@
         // visited state the row above carries.
         const star = marker.getElement()
         if (star) {
+          // Leaflet gives an interactive marker role="button", but no name, so
+          // name it with the club it selects. The club names are English on a
+          // Japanese page, so the element is tagged lang="en" for the reader.
+          star.setAttribute("aria-label", hall.name)
+          star.lang = "en"
           star.classList.toggle("is-visited", Boolean(hall.visited))
         }
         markers[hall.id] = marker
