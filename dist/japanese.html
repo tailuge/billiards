@@ -649,6 +649,80 @@
         font-size: 0.86rem;
       }
 
+      /* ── Tokyo Map ───────────────────────── */
+
+      .map-panel {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 32px;
+        align-items: center;
+        padding: 32px 26px;
+        border-radius: 14px;
+        border: 1px solid var(--line-strong);
+        background:
+          radial-gradient(
+            120% 160% at 0% 100%,
+            rgb(217 164 65 / 15%) 0%,
+            transparent 60%
+          ),
+          var(--panel);
+      }
+
+      .map-content p {
+        margin-bottom: 16px;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      .map-action {
+        margin-top: 24px;
+      }
+
+      .map-action .btn {
+        width: fit-content;
+      }
+
+      .map-visual {
+        position: relative;
+        margin: 0;
+        text-align: center;
+      }
+
+      .map-visual-link {
+        display: inline-block;
+        overflow: hidden;
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        box-shadow: 0 16px 48px rgb(0 0 0 / 50%);
+        transition:
+          transform 140ms ease,
+          border-color 140ms ease,
+          box-shadow 140ms ease;
+      }
+
+      .map-visual-link:hover {
+        border-color: var(--accent);
+        box-shadow:
+          0 20px 52px rgb(0 0 0 / 60%),
+          0 0 18px rgb(217 164 65 / 25%);
+        transform: translateY(-3px);
+      }
+
+      .map-visual img {
+        display: block;
+        width: 100%;
+        max-width: 280px;
+        height: auto;
+        margin: 0 auto;
+      }
+
+      .map-visual figcaption {
+        margin-top: 10px;
+        color: var(--text-dim);
+        font-size: 0.78rem;
+        text-align: center;
+      }
+
       /* ── Final CTA ───────────────────────── */
 
       .final-cta {
@@ -746,6 +820,25 @@
         .feature-list li:nth-last-child(-n + 2) {
           border-bottom: 0;
         }
+
+        .map-panel {
+          grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+          gap: 44px;
+          padding: 40px;
+        }
+
+        .map-visual {
+          text-align: right;
+        }
+
+        .map-visual img {
+          margin-right: 0;
+          margin-left: auto;
+        }
+
+        .map-visual figcaption {
+          text-align: right;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -753,7 +846,8 @@
           scroll-behavior: auto;
         }
 
-        .btn {
+        .btn,
+        .map-visual-link {
           transition: none;
         }
       }
@@ -775,6 +869,7 @@
         <a href="#threecushion">3クッション</a>
         <a href="#multiplayer">オンライン対戦</a>
         <a href="#features">特徴</a>
+        <a href="#map">東京マップ</a>
         <a class="nav-lobby" href="/lobby">オンラインロビー</a>
       </nav>
     </header>
@@ -956,6 +1051,56 @@
         </p>
       </section>
 
+      <!-- ── Tokyo Map ───────────────────────────── -->
+      <section class="section" id="map" aria-labelledby="map-title">
+        <p class="section-label">東京マップ · 制作の原点</p>
+        <h2 id="map-title">
+          作者がスリークッションを学んだ場所 — 東京ビリヤード場めぐり
+        </h2>
+        <div class="map-panel">
+          <div class="map-content">
+            <p>
+              このゲームが生まれた背景には、作者が日本で過ごした大切な思い出があります。
+              東京で働きながらスリークッションビリヤードの魅力に出会い、仕事帰りに
+              山手線沿線などのビリヤード場へ通い詰めて撞き方を学びました。
+            </p>
+            <p>
+              イギリスへ帰国後、本物のキャロム台で撞ける場所が近くになく、
+              寂しさの中で「手軽にスリークッションを撞き続けたい」という想いから、
+              リアルな物理挙動を再現したこのゲームの開発が始まりました。
+            </p>
+            <p>
+              <a href="map/index.html">東京ビリヤード場めぐり</a>では、
+              作者が腕を磨いた思い出のビリヤード場や都内の名店を、住所・営業時間・
+              当時の思い出とともにインタラクティブな地図で紹介しています。
+              各店の課題玉に挑むスリークッション・チャレンジもプレイできます。
+            </p>
+            <div class="map-action">
+              <a class="btn btn-primary" href="map/index.html"
+                >東京ビリヤード場マップを見る</a
+              >
+            </div>
+          </div>
+
+          <figure class="map-visual">
+            <a
+              class="map-visual-link"
+              href="map/index.html"
+              aria-label="東京ビリヤード場マップを開く"
+            >
+              <img
+                src="images/map.png"
+                alt="東京ビリヤード場めぐり スリークッション・チャレンジの画面"
+                width="360"
+                height="636"
+                loading="lazy"
+              />
+            </a>
+            <figcaption>東京ビリヤード場めぐり (map/index.html)</figcaption>
+          </figure>
+        </div>
+      </section>
+
       <!-- ── Final CTA ──────────────────────────── -->
       <section class="final-cta" aria-labelledby="final-title">
         <h2 id="final-title">台の準備は、いつでも整っています</h2>
@@ -983,7 +1128,8 @@
         ソースコードは
         <a href="https://github.com/tailuge/billiards"
           >GitHubプロジェクトページ</a
-        >から、リーダーボードは
+        >から、東京のビリヤード場ガイドは
+        <a href="map/index.html">東京マップ</a>から、リーダーボードは
         <a href="https://scoreboard-tailuge.vercel.app/leaderboard">こちら</a
         >から ご覧いただけます。
       </p>
