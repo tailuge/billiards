@@ -56,12 +56,16 @@
         box-sizing: border-box;
       }
 
-      html,
-      body {
+      /* html keeps the viewport height and body is only as tall as its content,
+         so folding the directory at the foot of the page open makes the
+         document taller than the screen and the page scrolls — the way the
+         lobby's site index behaves. */
+      html {
         height: 100%;
       }
 
       body {
+        min-height: 100%;
         margin: 0;
         display: flex;
         flex-direction: column;
@@ -94,9 +98,11 @@
         font-size: 0.85rem;
       }
 
-      /* Title and panel share one centred, width-capped column so the layout
-         reads like the lobby page rather than edge-to-edge. */
+      /* Title, panel and the directory line below share one centred,
+         width-capped column so the layout reads like the lobby page rather
+         than edge-to-edge. */
       header,
+      footer,
       main {
         width: 100%;
         max-width: min(80rem, 100%);
@@ -107,12 +113,133 @@
         flex: 1 1 auto;
         display: flex;
         gap: 2px;
-        min-height: 0;
+
+        /* A floor under the map: the directory below grows the page rather than
+           squeezing the map flat, and the map still keeps 70vh of screen. */
+        min-height: 70vh;
         padding: 2px;
         overflow: hidden;
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 6px;
+      }
+
+      /* The hall directory: every club the map plots, kept in the page as real
+         HTML (see the footer) so a crawler that runs no script still reads
+         each name, address, opening time and story. Collapsed it is one muted
+         line; folded out it opens downwards below that line, in the page's
+         own flow, the way the lobby's site index does.
+
+         It sits above the side list because it is the sheet's first section to
+         reach h2, dt, dd and a: the id-scoped list and story rules below are
+         more specific, so those keys have to start here (stylelint
+         no-descending-specificity). */
+      footer {
+        flex: 0 0 auto;
+      }
+
+      /* The disclosure marker goes: the line is centred, and the ▾/▴ arrow
+         below carries the open state instead of a triangle at the margin. */
+      .clubs-more summary {
+        padding: 0.25rem 0.2rem;
+        color: var(--muted);
+        font-size: 0.78rem;
+        text-align: center;
+        list-style: none;
+        cursor: pointer;
+      }
+
+      .clubs-more summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .clubs-more summary::after {
+        content: " ▾";
+      }
+
+      .clubs-more summary:hover {
+        color: var(--text);
+      }
+
+      .clubs-more[open] summary::after {
+        content: " ▴";
+      }
+
+      /* Two columns so the 14 entries read as a wide index rather than one long
+         wall to scroll; they balance themselves with no height set. */
+      .clubs-panel {
+        column-count: 2;
+        column-gap: 1rem;
+        margin-top: 0.4rem;
+        padding: 0.6rem 0.7rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg);
+      }
+
+      .clubs-panel h2 {
+        /* Spans both columns, so it heads the index instead of opening the
+           first column. */
+        column-span: all;
+        margin: 0 0 0.5rem;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .club {
+        margin: 0 0 0.5rem;
+
+        /* An entry never splits across the two columns. */
+        break-inside: avoid;
+        padding: 0.5rem 0.6rem;
+        border: 1px solid var(--border-light);
+        border-radius: 4px;
+        background: var(--surface);
+      }
+
+      .club:last-child {
+        margin-bottom: 0;
+      }
+
+      .club h3 {
+        margin: 0 0 0.3rem;
+        color: var(--accent);
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .club .club-ja {
+        color: var(--text);
+        font-weight: 200;
+      }
+
+      .club dl {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1px 0.6rem;
+        margin: 0;
+        font-size: 0.75rem;
+        line-height: 1.4;
+      }
+
+      .club dt {
+        color: var(--muted);
+      }
+
+      .club dd {
+        margin: 0;
+
+        /* Long URLs break anywhere rather than widen the panel. */
+        overflow-wrap: anywhere;
+      }
+
+      .clubs-panel .club-story {
+        margin: 0.4rem 0 0;
+        font-size: 0.75rem;
+        line-height: 1.4;
       }
 
       #list {
@@ -123,9 +250,19 @@
         width: 16rem;
         margin: 0;
         padding: 2px;
+
+        /* The 14 halls overflow the column, so it scrolls — but without a
+           scrollbar: the bar would sit inside the panel's border and eat the
+           row padding. Wheel, touch, keyboard and scrolling still work. */
         overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
         list-style: none;
         background: var(--surface);
+      }
+
+      #list::-webkit-scrollbar {
+        display: none;
       }
 
       #list li {
@@ -424,8 +561,11 @@
         display: block;
       }
 
-      /* Leaflet's chrome defaults to light; darken it to sit on the dark tiles. */
-      .leaflet-control-attribution {
+      /* Leaflet's chrome defaults to light; darken it to sit on the dark tiles.
+         Its own attribution rule is `.leaflet-container .leaflet-control-
+         attribution` — a white 80% box — so a bare `.leaflet-control-
+         attribution` here would never out-specify it. */
+      .leaflet-container .leaflet-control-attribution {
         background: rgb(26 26 26 / 80%);
         color: var(--muted);
       }
@@ -442,6 +582,19 @@
 
       .leaflet-bar a:hover {
         background: var(--hover);
+      }
+
+      /* The directory's two links join the sheet's `a` ladder here, between
+         the chrome above and `#story p a` below: every `a` rule needs
+         ascending specificity (stylelint no-descending-specificity). */
+      .clubs-panel .club-meta a,
+      .clubs-panel .club-story a {
+        color: var(--accent);
+
+        /* Underlined because a link beside prose must not rely on colour alone
+           to be distinguishable (WCAG 1.4.1). */
+        text-decoration: underline;
+        text-underline-offset: 2px;
       }
 
       /* Scoped to the prose: the play button above is a link too, and must not
@@ -464,6 +617,10 @@
         #list {
           width: 100%;
           max-height: 40%;
+        }
+
+        .clubs-panel {
+          column-count: 1;
         }
       }
     </style>
@@ -491,248 +648,668 @@
       </div>
     </main>
 
+    <!-- The hall directory: every club the map plots, as real HTML rather than
+         a script array, so a crawler that runs no script still reads each
+         name, address, opening time and story. Folded down behind one line at
+         the foot of the page until a reader opens it; the map's script reads
+         it from here. -->
+    <footer>
+      <details class="clubs-more" id="clubs">
+        <summary>
+          Tokyo billiard halls — addresses, opening times and stories
+        </summary>
+        <div class="clubs-panel">
+          <h2>Billiard hall directory</h2>
+          <article
+            class="club"
+            id="club-matsuyama"
+            data-id="matsuyama"
+            data-race-to="7"
+            data-lat="35.6611294"
+            data-lng="139.6671216"
+          >
+            <h3 class="club-name">
+              <span data-field="name">Matsuyama Billiards</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >松山ビリヤード</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a
+                  href="https://japantravel.navitime.com/en/area/jp/guide/NTJarea0027-en/"
+                  >https://japantravel.navitime.com/en/area/jp/guide/NTJarea0027-en/</a
+                >
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Setagaya</dd>
+              <dt>Address</dt>
+              <dd data-field="address">2-20-14 Kitazawa, Setagaya-ku, Tokyo</dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-3412-2921</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">2:00 PM - 12:00 AM Daily</dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">
+                Carom / Three-Cushion &amp; Pocket Tables
+              </dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">4.3 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">
+                Setagaya, Shimokitazawa, Three-Cushion, Carom
+              </dd>
+            </dl>
+            <p class="club-story" data-field="story">
+              Maybe the most quaint and picturesque billiards hall in Tokyo. I
+              could cycle to this one when it wasnt too hot and even won a small
+              amateur three cushion competition there ~2010.
+            </p>
+          </article>
+          <article
+            class="club"
+            id="club-nabbi"
+            data-id="nabbi"
+            data-race-to="8"
+            data-lat="35.732634"
+            data-lng="139.7306202"
+          >
+            <h3 class="club-name">
+              <span data-field="name">Billiard Club Nabbi</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >ビリヤードクラブナビー</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="https://bc-nabbi.jimdofree.com/"
+                  >https://bc-nabbi.jimdofree.com/</a
+                >
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Toshima</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                1-18-11 Kita-Otsuka, Otsuka KY Bldg, Toshima-ku, Tokyo
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-3576-1226</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">Varies</dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">Three-Cushion &amp; Pocket Tables</dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">3.5 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">Toshima, Otsuka, Sugamo, Three-Cushion</dd>
+            </dl>
+            <p class="club-story" data-field="story">
+              This was the first club I tried playing three cushion billiards.
+              What a revalation after years of only ever knownig snooker this
+              game blew my mind - the die was cast, I was hooked. Many thanks to
+              the friendly staff there who helped me through my first few shots
+              on my vacation in Japan.
+            </p>
+          </article>
+          <article
+            class="club"
+            id="club-soma"
+            data-id="soma"
+            data-race-to="9"
+            data-lat="35.6708"
+            data-lng="139.7028"
+          >
+            <h3 class="club-name">
+              <span data-field="name">Billiard Soma</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >ビリヤード相馬</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="https://www.facebook.com/443685878991152/"
+                  >https://www.facebook.com/443685878991152/</a
+                >
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Shibuya</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                1-17-1 Jingumae 3F, Shibuya-ku, Tokyo
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-3401-8818</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">Permanently Closed</dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">Carom / Three-Cushion</dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">4.2 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">
+                Shibuya, Harajuku, Three-Cushion, Closed
+              </dd>
+            </dl>
+            <p class="club-story" data-field="story">
+              This was only one stop from my home on the Yamanote line and
+              became my 'home club' when I worked in Tokyo. I would always try
+              to pop in after work and it was the most friendly place to play
+              three cushion. I played there as 'ルーク' they probably long
+              forgotten me but I still remember them so well and have some of my
+              happiest three cushion memories there, and the thrill of playing
+              pro
+              <a href="https://jpbf.net/player-detail/?seq_id=58">米山先生</a>.
+              Is this club closed now, thats so sad?
+            </p>
+          </article>
+          <article
+            class="club"
+            id="club-roots"
+            data-id="roots"
+            data-race-to="10"
+            data-lat="35.6987"
+            data-lng="139.6381"
+          >
+            <h3 class="club-name">
+              <span data-field="name">Billiard Cafe Roots</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >ビリヤード カフェ ルーツ</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="https://roots-asagaya.wixsite.com/roots"
+                  >https://roots-asagaya.wixsite.com/roots</a
+                >
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Suginami</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                3F Dai-7 Sky Bldg, 1-18-6 Asagayaminami, Suginami-ku, Tokyo
+              </dd>
+              <dt>Address (JA)</dt>
+              <dd data-field="japaneseAddress">
+                東京都杉並区阿佐谷南1-18-6 第7スカイビル3F
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-5378-2778</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">
+                12:00 PM - 3:00 AM (Fri/Sat until 5:00 AM)
+              </dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">4 Three-Cushion &amp; 3 Pocket Tables</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">Suginami, Asagaya, Three-Cushion, Carom</dd>
+            </dl>
+            <p class="club-story" data-field="story">
+              Did I play here, maybe not, maybe it was a club in Gotanda long
+              closed down? I have the feeling that some days I would sneak out
+              of work for a long dinner break and pop in for a quick game of
+              3-cushion. One of the regulars taught me about short angle shots
+              and I still rememebr it- thank you!
+            </p>
+          </article>
+          <article
+            class="club"
+            id="club-kobbys"
+            data-id="kobbys"
+            data-race-to="12"
+            data-lat="35.7231"
+            data-lng="139.6521"
+          >
+            <h3 class="club-name">
+              <span data-field="name">Kobby's Billiards</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >コビービリヤード</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="https://kobbybilliards.com/"
+                  >https://kobbybilliards.com/</a
+                >
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Nakano</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                6-50-10 Nogata, MT Nogata B1F, Nakano-ku, Tokyo 165-0027
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-3336-6030</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">
+                1:00 PM - 3:00 AM (Fri/Sat until 5:00 AM)
+              </dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">
+                4 Carom (Three-Cushion), 5 Pocket Tables
+              </dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">4.4 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">Nakano, Nogata, Three-Cushion, Carom</dd>
+            </dl>
+          </article>
+          <article
+            class="club"
+            id="club-reve-mizue"
+            data-id="reve-mizue"
+            data-race-to="14"
+            data-lat="35.6926"
+            data-lng="139.8981"
+          >
+            <h3 class="club-name">
+              <span data-field="name">billiard club reve</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >ビリヤードクラブ レーヴ</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="https://club-reve.jp/">https://club-reve.jp/</a>
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Edogawa</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                5F Daini Tanaka Kogyosho Bldg, 2-3-5 Mizue, Edogawa-ku, Tokyo
+              </dd>
+              <dt>Address (JA)</dt>
+              <dd data-field="japaneseAddress">
+                東京都江戸川区瑞江2-3-5 第二田中工業所ビル5F
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-5243-3175</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">
+                Mon-Fri: 2:00 PM - Late / Sat-Sun &amp; Holidays: 12:00 PM -
+                Late
+              </dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">Edogawa, Mizue, Pocket, Darts</dd>
+            </dl>
+          </article>
+          <article
+            class="club"
+            id="club-alvis"
+            data-id="alvis"
+            data-race-to="16"
+            data-lat="35.6983"
+            data-lng="139.8251"
+          >
+            <h3 class="club-name">
+              <span data-field="name">Billiard Alvis</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >ビリヤード アルビス</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="http://www.alvis.cc/">http://www.alvis.cc/</a>
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Koto</dd>
+              <dt>Address</dt>
+              <dd data-field="address">2-12-8 Kameido, Koto-ku, Tokyo</dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-3682-1233</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">2:00 PM - 12:00 AM Daily</dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">
+                Carom / Three-Cushion Dedicated Tables
+              </dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">4.2 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">Koto, Kameido, Three-Cushion, Carom</dd>
+            </dl>
+          </article>
+          <article
+            class="club"
+            id="club-arai"
+            data-id="arai"
+            data-race-to="18"
+            data-lat="35.7272"
+            data-lng="139.5513"
+          >
+            <h3 class="club-name">
+              <span data-field="name">ARAI Billiards Headquarters</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >ビリヤード ARAI 本店</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="http://araiyagisawa.mitolabo.jp/"
+                  >http://araiyagisawa.mitolabo.jp/</a
+                >
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Nishitokyo</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                1-1-22 Yagisawa, Nishitokyo City, Tokyo 202-0022, Japan
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 42-467-8331</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">12:00 PM - 12:00 AM Daily</dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">5 Three-Cushion &amp; 3 Pocket Tables</dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">4.5 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">
+                Nishitokyo, Seibu-Yagisawa, Three-Cushion, Carom
+              </dd>
+            </dl>
+          </article>
+          <article
+            class="club"
+            id="club-sansui"
+            data-id="sansui"
+            data-race-to="20"
+            data-lat="35.7132"
+            data-lng="139.7042"
+          >
+            <h3 class="club-name">
+              <span data-field="name">Billiard Sansui</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >山水ビリヤード</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="http://sansui-cup.com/">http://sansui-cup.com/</a>
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Shinjuku</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                2-18-11 Takadanobaba, Shinjuku City, Tokyo 169-0075, Japan
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-3209-6047</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">10:00 AM - 11:00 PM Daily</dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">Three-Cushion &amp; Pocket Tables</dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">4.1 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">
+                Shinjuku, Takadanobaba, Three-Cushion, Carom
+              </dd>
+            </dl>
+          </article>
+          <article
+            class="club"
+            id="club-kobayashi"
+            data-id="kobayashi"
+            data-race-to="22"
+            data-lat="35.7011"
+            data-lng="139.7001"
+          >
+            <h3 class="club-name">
+              <span data-field="name">Kobayashi Billiards (Bright)</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >ビリヤード小林</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="https://kobayashi.silver-dice.com/"
+                  >https://kobayashi.silver-dice.com/</a
+                >
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Shinjuku</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                2-10-1 Hyakunincho 4F, Shinjuku-ku, Tokyo 169-0073
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-3371-4589</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">12:00 PM - 4:30 AM Daily</dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">4 Three-Cushion &amp; Pocket Tables</dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">3.4 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">
+                Shinjuku, Shin-Okubo, Three-Cushion, Carom
+              </dd>
+            </dl>
+            <p class="club-story" data-field="story">
+              I lived in Shinokubo for a month or two and played here - even
+              said hello to the legendary Mr Kobayashi once.
+            </p>
+          </article>
+          <article
+            class="club"
+            id="club-e-place"
+            data-id="e-place"
+            data-race-to="24"
+            data-lat="35.7018"
+            data-lng="139.7651"
+          >
+            <h3 class="club-name">
+              <span data-field="name">Billiards E-place</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >ビリヤード イープレイス</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="https://e-place.storeinfo.jp/"
+                  >https://e-place.storeinfo.jp/</a
+                >
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Bunkyo</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                1-9-10 Yushima B2F, Bunkyo-ku, Tokyo 113-0034
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-3815-3912</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">2:00 PM - 12:00 AM Daily</dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">4 Three-Cushion Tables</dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">4.1 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">
+                Bunkyo, Yushima, Ochanomizu, Three-Cushion
+              </dd>
+            </dl>
+          </article>
+          <article
+            class="club"
+            id="club-yamate"
+            data-id="yamate"
+            data-race-to="26"
+            data-lat="35.6339"
+            data-lng="139.7153"
+          >
+            <h3 class="club-name">
+              <span data-field="name">Billiard Yamate</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >ビリヤード山手</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a
+                  href="https://billi-walker.jp/bwpoolhall/index.php?mode=show_detail&amp;g_id=13195"
+                  >https://billi-walker.jp/bwpoolhall/index.php?mode=show_detail&amp;g_id=13195</a
+                >
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Meguro</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                1-5-16 Meguro B2F, Meguro-ku, Tokyo 153-0063
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-3493-6162</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">3:00 PM - 1:00 AM Daily</dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">1 Three-Cushion &amp; 4 Pocket Tables</dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">4.5 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">Meguro, Three-Cushion, Carom</dd>
+            </dl>
+          </article>
+          <article
+            class="club"
+            id="club-alice"
+            data-id="alice"
+            data-race-to="28"
+            data-lat="35.5451"
+            data-lng="139.7408"
+          >
+            <h3 class="club-name">
+              <span data-field="name">ALICE Billiards</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >ビリヤードALICE</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="http://billiard-alice.com/"
+                  >http://billiard-alice.com/</a
+                >
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Ota</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                2-9-8 Honhaneda, Ota-ku, Tokyo 144-0044
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-3743-3192</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">3:00 PM - 2:00 AM Daily</dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">
+                2 Three-Cushion (Verhoeven &amp; Van Laere) &amp; 8 Pocket
+                Tables
+              </dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">4.7 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">Ota, Haneda, Three-Cushion, Carom</dd>
+            </dl>
+          </article>
+          <article
+            class="club"
+            id="club-lupin-kameido"
+            data-id="lupin-kameido"
+            data-race-to="30"
+            data-lat="35.6999"
+            data-lng="139.8258"
+          >
+            <h3 class="club-name">
+              <span data-field="name">Billiard Lupin Kameido</span>
+              <span class="club-ja" lang="ja" data-field="japaneseName"
+                >ビリヤード亀戸ルパン</span
+              >
+            </h3>
+            <dl class="club-meta">
+              <dt>Website</dt>
+              <dd data-field="website">
+                <a href="https://www.billiards-lupin.com/"
+                  >https://www.billiards-lupin.com/</a
+                >
+              </dd>
+              <dt>Ward</dt>
+              <dd data-field="district">Koto</dd>
+              <dt>Address</dt>
+              <dd data-field="address">
+                4F T.V.C. Building, 5-15-2 Kameido, Koto-ku, Tokyo
+              </dd>
+              <dt>Phone</dt>
+              <dd data-field="phone">+81 3-3685-3471</dd>
+              <dt>Opening hours</dt>
+              <dd data-field="hours">
+                2:00 PM - 11:00 PM (Sun-Mon) / 2:00 PM - 2:00 AM (Tue-Sat)
+              </dd>
+              <dt>Tables</dt>
+              <dd data-field="tables">
+                3 Three-Cushion (Carom) / 4 Pocket Tables
+              </dd>
+              <dt>Rating</dt>
+              <dd data-field="rating">4.1 / 5</dd>
+              <dt>Tags</dt>
+              <dd data-field="tags">
+                Koto, Kameido, Three-Cushion, Carom, Pocket
+              </dd>
+            </dl>
+          </article>
+        </div>
+      </details>
+    </footer>
+
     <script>
-      // Billiard halls in Tokyo.
-      const halls = [
-        {
-          id: "matsuyama",
-          raceTo: 7,
-          name: "Matsuyama Billiards",
-          japaneseName: "松山ビリヤード",
-          district: "Setagaya",
-          address: "2-20-14 Kitazawa, Setagaya-ku, Tokyo",
-          lat: 35.6611294,
-          lng: 139.6671216,
-          phone: "+81 3-3412-2921",
-          website:
-            "https://japantravel.navitime.com/en/area/jp/guide/NTJarea0027-en/",
-          hours: "2:00 PM - 12:00 AM Daily",
-          tables: "Carom / Three-Cushion & Pocket Tables",
-          rating: 4.3,
-          tags: ["Setagaya", "Shimokitazawa", "Three-Cushion", "Carom"],
-          story:
-            "Maybe the most quaint and picturesque billiards hall in Tokyo. I could cycle to this one when it wasnt too hot and even won a small amateur three cushion competition there ~2010.",
-        },
-        {
-          id: "nabbi",
-          raceTo: 8,
-          name: "Billiard Club Nabbi",
-          japaneseName: "ビリヤードクラブナビー",
-          district: "Toshima",
-          address: "1-18-11 Kita-Otsuka, Otsuka KY Bldg, Toshima-ku, Tokyo",
-          lat: 35.732634,
-          lng: 139.7306202,
-          phone: "+81 3-3576-1226",
-          website: "https://bc-nabbi.jimdofree.com/",
-          hours: "Varies",
-          tables: "Three-Cushion & Pocket Tables",
-          rating: 3.5,
-          tags: ["Toshima", "Otsuka", "Sugamo", "Three-Cushion"],
-          story:
-            "This was the first club I tried playing three cushion billiards. What a revalation after years of only ever knownig snooker this game blew my mind - the die was cast, I was hooked. Many thanks to the friendly staff there who helped me through my first few shots on my vacation in Japan.",
-        },
-        {
-          id: "soma",
-          raceTo: 9,
-          name: "Billiard Soma",
-          japaneseName: "ビリヤード相馬",
-          district: "Shibuya",
-          address: "1-17-1 Jingumae 3F, Shibuya-ku, Tokyo",
-          lat: 35.6708,
-          lng: 139.7028,
-          phone: "+81 3-3401-8818",
-          website: "https://www.facebook.com/443685878991152/",
-          hours: "Permanently Closed",
-          tables: "Carom / Three-Cushion",
-          rating: 4.2,
-          tags: ["Shibuya", "Harajuku", "Three-Cushion", "Closed"],
-          story:
-            "This was only one stop from my home on the Yamanote line and became my 'home club' when I worked in Tokyo. I would always try to pop in after work and it was the most friendly place to play three cushion. I played there as 'ルーク' they probably long forgotten me but I still remember them so well and have some of my happiest three cushion memories there, and the thrill of playing pro <a href=\"https://jpbf.net/player-detail/?seq_id=58\">米山先生</a>. Is this club closed now, thats so sad?",
-        },
-        {
-          id: "roots",
-          raceTo: 10,
-          name: "Billiard Cafe Roots",
-          japaneseName: "ビリヤード カフェ ルーツ",
-          district: "Suginami",
-          address:
-            "3F Dai-7 Sky Bldg, 1-18-6 Asagayaminami, Suginami-ku, Tokyo",
-          japaneseAddress: "東京都杉並区阿佐谷南1-18-6 第7スカイビル3F",
-          lat: 35.6987,
-          lng: 139.6381,
-          phone: "+81 3-5378-2778",
-          website: "https://roots-asagaya.wixsite.com/roots",
-          hours: "12:00 PM - 3:00 AM (Fri/Sat until 5:00 AM)",
-          tables: "4 Three-Cushion & 3 Pocket Tables",
-          tags: ["Suginami", "Asagaya", "Three-Cushion", "Carom"],
-          story:
-            "Did I play here, maybe not, maybe it was a club in Gotanda long closed down? I have the feeling that some days I would sneak out of work for a long dinner break and pop in for a quick game of 3-cushion. One of the regulars taught me about short angle shots and I still rememebr it- thank you!",
-        },
-        {
-          id: "kobbys",
-          raceTo: 12,
-          name: "Kobby's Billiards",
-          japaneseName: "コビービリヤード",
-          district: "Nakano",
-          address: "6-50-10 Nogata, MT Nogata B1F, Nakano-ku, Tokyo 165-0027",
-          lat: 35.7231,
-          lng: 139.6521,
-          phone: "+81 3-3336-6030",
-          website: "https://kobbybilliards.com/",
-          hours: "1:00 PM - 3:00 AM (Fri/Sat until 5:00 AM)",
-          tables: "4 Carom (Three-Cushion), 5 Pocket Tables",
-          rating: 4.4,
-          tags: ["Nakano", "Nogata", "Three-Cushion", "Carom"],
-        },
-        {
-          id: "reve-mizue",
-          raceTo: 14,
-          name: "billiard club reve",
-          japaneseName: "ビリヤードクラブ レーヴ",
-          district: "Edogawa",
-          address:
-            "5F Daini Tanaka Kogyosho Bldg, 2-3-5 Mizue, Edogawa-ku, Tokyo",
-          japaneseAddress: "東京都江戸川区瑞江2-3-5 第二田中工業所ビル5F",
-          lat: 35.6926,
-          lng: 139.8981,
-          phone: "+81 3-5243-3175",
-          website: "https://club-reve.jp/",
-          hours:
-            "Mon-Fri: 2:00 PM - Late / Sat-Sun & Holidays: 12:00 PM - Late",
-          tags: ["Edogawa", "Mizue", "Pocket", "Darts"],
-        },
-        {
-          id: "alvis",
-          raceTo: 16,
-          name: "Billiard Alvis",
-          japaneseName: "ビリヤード アルビス",
-          district: "Koto",
-          address: "2-12-8 Kameido, Koto-ku, Tokyo",
-          lat: 35.6983,
-          lng: 139.8251,
-          phone: "+81 3-3682-1233",
-          website: "http://www.alvis.cc/",
-          hours: "2:00 PM - 12:00 AM Daily",
-          tables: "Carom / Three-Cushion Dedicated Tables",
-          rating: 4.2,
-          tags: ["Koto", "Kameido", "Three-Cushion", "Carom"],
-        },
-        {
-          id: "arai",
-          raceTo: 18,
-          name: "ARAI Billiards Headquarters",
-          japaneseName: "ビリヤード ARAI 本店",
-          district: "Nishitokyo",
-          address: "1-1-22 Yagisawa, Nishitokyo City, Tokyo 202-0022, Japan",
-          lat: 35.7272,
-          lng: 139.5513,
-          phone: "+81 42-467-8331",
-          website: "http://araiyagisawa.mitolabo.jp/",
-          hours: "12:00 PM - 12:00 AM Daily",
-          tables: "5 Three-Cushion & 3 Pocket Tables",
-          rating: 4.5,
-          tags: ["Nishitokyo", "Seibu-Yagisawa", "Three-Cushion", "Carom"],
-        },
-        {
-          id: "sansui",
-          raceTo: 20,
-          name: "Billiard Sansui",
-          japaneseName: "山水ビリヤード",
-          district: "Shinjuku",
-          address: "2-18-11 Takadanobaba, Shinjuku City, Tokyo 169-0075, Japan",
-          lat: 35.7132,
-          lng: 139.7042,
-          phone: "+81 3-3209-6047",
-          website: "http://sansui-cup.com/",
-          hours: "10:00 AM - 11:00 PM Daily",
-          tables: "Three-Cushion & Pocket Tables",
-          rating: 4.1,
-          tags: ["Shinjuku", "Takadanobaba", "Three-Cushion", "Carom"],
-        },
-        {
-          id: "kobayashi",
-          raceTo: 22,
-          name: "Kobayashi Billiards (Bright)",
-          japaneseName: "ビリヤード小林",
-          district: "Shinjuku",
-          address: "2-10-1 Hyakunincho 4F, Shinjuku-ku, Tokyo 169-0073",
-          lat: 35.7011,
-          lng: 139.7001,
-          phone: "+81 3-3371-4589",
-          website: "https://kobayashi.silver-dice.com/",
-          hours: "12:00 PM - 4:30 AM Daily",
-          tables: "4 Three-Cushion & Pocket Tables",
-          rating: 3.4,
-          tags: ["Shinjuku", "Shin-Okubo", "Three-Cushion", "Carom"],
-          story:
-            "I lived in Shinokubo for a month or two and played here - even said hello to the legendary Mr Kobayashi once.",
-        },
-        {
-          id: "e-place",
-          raceTo: 24,
-          name: "Billiards E-place",
-          japaneseName: "ビリヤード イープレイス",
-          district: "Bunkyo",
-          address: "1-9-10 Yushima B2F, Bunkyo-ku, Tokyo 113-0034",
-          lat: 35.7018,
-          lng: 139.7651,
-          phone: "+81 3-3815-3912",
-          website: "https://e-place.storeinfo.jp/",
-          hours: "2:00 PM - 12:00 AM Daily",
-          tables: "4 Three-Cushion Tables",
-          rating: 4.1,
-          tags: ["Bunkyo", "Yushima", "Ochanomizu", "Three-Cushion"],
-        },
-        {
-          id: "yamate",
-          raceTo: 26,
-          name: "Billiard Yamate",
-          japaneseName: "ビリヤード山手",
-          district: "Meguro",
-          address: "1-5-16 Meguro B2F, Meguro-ku, Tokyo 153-0063",
-          lat: 35.6339,
-          lng: 139.7153,
-          phone: "+81 3-3493-6162",
-          website:
-            "https://billi-walker.jp/bwpoolhall/index.php?mode=show_detail&g_id=13195",
-          hours: "3:00 PM - 1:00 AM Daily",
-          tables: "1 Three-Cushion & 4 Pocket Tables",
-          rating: 4.5,
-          tags: ["Meguro", "Three-Cushion", "Carom"],
-        },
-        {
-          id: "alice",
-          raceTo: 28,
-          name: "ALICE Billiards",
-          japaneseName: "ビリヤードALICE",
-          district: "Ota",
-          address: "2-9-8 Honhaneda, Ota-ku, Tokyo 144-0044",
-          lat: 35.5451,
-          lng: 139.7408,
-          phone: "+81 3-3743-3192",
-          website: "http://billiard-alice.com/",
-          hours: "3:00 PM - 2:00 AM Daily",
-          tables: "2 Three-Cushion (Verhoeven & Van Laere) & 8 Pocket Tables",
-          rating: 4.7,
-          tags: ["Ota", "Haneda", "Three-Cushion", "Carom"],
-        },
-        {
-          id: "lupin-kameido",
-          raceTo: 30,
-          name: "Billiard Lupin Kameido",
-          japaneseName: "ビリヤード亀戸ルパン",
-          district: "Koto",
-          address: "4F T.V.C. Building, 5-15-2 Kameido, Koto-ku, Tokyo",
-          lat: 35.6999,
-          lng: 139.8258,
-          phone: "+81 3-3685-3471",
-          website: "https://www.billiards-lupin.com/",
-          hours: "2:00 PM - 11:00 PM (Sun-Mon) / 2:00 PM - 2:00 AM (Tue-Sat)",
-          tables: "3 Three-Cushion (Carom) / 4 Pocket Tables",
-          rating: 4.1,
-          tags: ["Koto", "Kameido", "Three-Cushion", "Carom", "Pocket"],
-        },
-      ]
+      // The halls are real HTML in the page — the directory in the footer below
+      // — rather than a script array, so a crawler that runs no script still
+      // reads every name, address, opening time and story. The map, the side
+      // list and the story panel are all built from that markup.
+      const clubElements = document.querySelectorAll("#clubs .club")
+
+      // One field of a hall's directory entry, found by its data-field hook; an
+      // empty string when the club has no such field.
+      function hallField(club, name) {
+        const node = club.querySelector('[data-field="' + name + '"]')
+        // Runs of whitespace collapse to one space on read: the markup wraps
+        // long fields across lines.
+        return node ? node.textContent.replace(/\s+/g, " ").trim() : ""
+      }
+
+      const halls = Array.from(clubElements, function (club) {
+        const site = club.querySelector(".club-meta a[href]")
+        const story = club.querySelector(".club-story")
+        return {
+          id: club.dataset.id,
+          raceTo: Number(club.dataset.raceTo),
+          lat: Number(club.dataset.lat),
+          lng: Number(club.dataset.lng),
+          name: hallField(club, "name"),
+          japaneseName: hallField(club, "japaneseName"),
+          district: hallField(club, "district"),
+          address: hallField(club, "address"),
+          website: site ? site.getAttribute("href") : "",
+          // Local, trusted data that may carry a link, so the story is read —
+          // and later rendered into the panel — as HTML rather than text. The
+          // pretty-printer's line breaks around the prose and its link go, so
+          // the panel's markup reads like the array it replaced.
+          story: story
+            ? story.innerHTML.replace(/\s*\n\s*/g, " ").replace(/ {2,}/g, " ")
+            : "",
+        }
+      })
 
       // The Yamanote line, baked from OpenStreetMap (relation 1972920, the outer
       // loop) rather than fetched at runtime, so the page stays static and the
@@ -876,6 +1453,14 @@
         opacity: 0.6,
         weight: 3,
       }).addTo(map)
+
+      // The directory at the foot of the page folds out in the page's flow,
+      // which takes height off this container. Leaflet only re-measures its
+      // container on a window resize, so re-measure here too and the map
+      // redraws to the size the fold leaves it.
+      document.getElementById("clubs").addEventListener("toggle", function () {
+        map.invalidateSize()
+      })
 
       // Station dots are divIcons for the same reason as the hall dots: Leaflet
       // scales an SVG renderer during the zoom animation, so a circleMarker
