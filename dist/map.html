@@ -401,7 +401,11 @@
          a white chip; recolour it to sit on the dark tiles. The halls are what
          the page is about, so their labels carry the same accent blue as the
          hall dots. On the label background that is 6.78:1, comfortably above
-         the 4.5:1 WCAG AA threshold for body text. */
+         the 4.5:1 WCAG AA threshold for body text.
+
+         The labels share the tooltip pane (650, above the line's overlay pane)
+         with the station labels, which carry no z-index, so hall names come out
+         on top of station names wherever the two overlap. */
       .leaflet-tooltip.hall-label {
         padding: 1px 5px;
         border: 1px solid var(--border);
@@ -410,6 +414,7 @@
         color: var(--accent);
         box-shadow: none;
         font-size: 0.75rem;
+        z-index: 1;
       }
 
       /* The line's stations are context rather than the point of the page, so
@@ -1651,7 +1656,16 @@
         item.classList.toggle("is-visited", Boolean(hall.visited))
         list.appendChild(item)
 
-        const marker = L.marker([hall.lat, hall.lng], { icon: dotIcon })
+        // The star outranks the whole Yamanote layer. The drawn line is a pane
+        // below this one (overlay 400 against the marker pane's 600), but the
+        // station dots share the marker pane, where Leaflet stacks markers by
+        // their screen position — so a dot south of a hall would paint over its
+        // star. The offset is far larger than any container height, which puts
+        // every hall star above every station dot at any zoom.
+        const marker = L.marker([hall.lat, hall.lng], {
+          icon: dotIcon,
+          zIndexOffset: 10000,
+        })
           .addTo(map)
           .bindPopup(
             `<b>${hall.name}</b><br><span lang="ja">${hall.japaneseName}</span>`
