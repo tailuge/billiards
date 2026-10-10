@@ -785,8 +785,8 @@
             id="club-soma"
             data-id="soma"
             data-race-to="9"
-            data-lat="35.6708"
-            data-lng="139.7028"
+            data-lat="35.6713378"
+            data-lng="139.7032234"
           >
             <h3 class="club-name">
               <span data-field="name">Billiard Soma</span>
@@ -1087,8 +1087,8 @@
             id="club-kobayashi"
             data-id="kobayashi"
             data-race-to="22"
-            data-lat="35.7011"
-            data-lng="139.7001"
+            data-lat="35.7017778"
+            data-lng="139.6996667"
           >
             <h3 class="club-name">
               <span data-field="name">Kobayashi Billiards (Bright)</span>
@@ -1457,10 +1457,17 @@
       // return HTTP 403 ("Forbidden: raster tiles are available up to zoom 18").
       const maxTileZoom = 18
 
-      const map = L.map("map", { maxZoom: maxTileZoom }).setView(
-        [35.6895, 139.6917],
-        12
-      )
+      const map = L.map("map", {
+        maxZoom: maxTileZoom,
+
+        // Wheel zoom in half steps: zoomDelta 0.5 moves the view by half a
+        // level per wheel step instead of a full one, and zoomSnap 0.25 lets
+        // that half step stick rather than rounding back to a whole level.
+        // Raise wheelPxPerZoomLevel (default 60) too if more scroll per step
+        // is wanted.
+        zoomSnap: 0.25,
+        zoomDelta: 0.5,
+      }).setView([35.6895, 139.6917], 12.5)
 
       // CARTO "Dark Matter" tiles, so the map matches the dark page. The
       // keyless dark_all URL only returns a watermark placeholder, hence the key.
