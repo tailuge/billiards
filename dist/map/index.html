@@ -192,6 +192,18 @@
         margin-inline: auto;
       }
 
+      /* The top bar is a custom element, so it upgrades only when the deferred
+         map.js module runs — after the first paint on a slow load. Until then
+         it has no height, and when it renders it shoves the header, the map
+         and the directory down by its own 40px (a 32px logo plus 0.25rem
+         padding above and below). Reserving that height here holds the layout
+         still and lets Leaflet measure the map at its final size instead of a
+         40px-taller one. */
+      app-topbar {
+        display: block;
+        min-height: 40px;
+      }
+
       main {
         flex: 1 1 auto;
         display: flex;
