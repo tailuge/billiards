@@ -24,6 +24,7 @@ export interface MatchResult {
   tableSize?: number
   arenaId?: string
   berserk?: boolean
+  club?: string
 }
 
 export class MatchResultHelper {
@@ -375,6 +376,10 @@ export class MatchResultHelper {
     }
     if (params.get("berserk") === "true") {
       result.berserk = true
+    }
+    const clubName = params.get("clubName")
+    if (clubName) {
+      result.club = clubName
     }
   }
 }

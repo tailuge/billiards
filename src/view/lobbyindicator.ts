@@ -84,6 +84,12 @@ export class LobbyIndicator {
     } else {
       this.ruleType = this.rules.rulename
     }
+    const clubName = new URLSearchParams(globalThis.location?.search ?? "").get(
+      "clubName"
+    )
+    if (clubName) {
+      this.ruleType = `${this.ruleType}-${clubName}`
+    }
     this.element = id("lobbyOverlay")
     this.countElement = this.element?.querySelector(
       ".lobby-count"
