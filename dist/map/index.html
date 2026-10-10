@@ -2020,17 +2020,30 @@
         // along so the game can hand it straight back (?club=) and the star
         // can be filled when the race target is reached; clubName is the label
         // the game puts on the wall plaque as "player @ club" (Japanese name,
-        // the club's own signage), and custom.emoji forces the wall portrait's
-        // flag to Japan instead of the browser locale's.
-        storyPlay.href =
-          "../index.html?ruletype=threecushion&raceTo=" +
-          hall.raceTo +
-          "&club=" +
-          encodeURIComponent(hall.id) +
-          "&clubName=" +
-          encodeURIComponent(hall.japaneseName) +
-          "&custom.emoji=" +
-          encodeURIComponent("\u{1F1EF}\u{1F1F5}")
+        // the club's own signage). window.mapGameUrl (from the deferred map.js
+        // module) adds the user's stored userId, userName, lod, flip and
+        // custom.* settings, and always forces custom.emoji to 🇯🇵 so the wall
+        // portrait shows the Japan flag regardless of the player's locale.
+        if (window.mapGameUrl) {
+          storyPlay.href = window.mapGameUrl({
+            raceTo: hall.raceTo,
+            clubId: hall.id,
+            clubJapaneseName: hall.japaneseName,
+          })
+        } else {
+          // map.js not yet loaded (first paint, slow load): fall back to the
+          // bare URL; the module will update the panel href when select() is
+          // called again, or the user will navigate with the fallback.
+          storyPlay.href =
+            "../index.html?ruletype=threecushion&raceTo=" +
+            hall.raceTo +
+            "&club=" +
+            encodeURIComponent(hall.id) +
+            "&clubName=" +
+            encodeURIComponent(hall.japaneseName) +
+            "&custom.emoji=" +
+            encodeURIComponent("\u{1F1EF}\u{1F1F5}")
+        }
         drawStoryLink()
 
         if (pan) {

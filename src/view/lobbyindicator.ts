@@ -88,7 +88,7 @@ export class LobbyIndicator {
       "clubName"
     )
     if (clubName) {
-      this.ruleType = `${this.ruleType}-${clubName}`
+      this.ruleType = `${this.ruleType}-club`
     }
     this.element = id("lobbyOverlay")
     this.countElement = this.element?.querySelector(
