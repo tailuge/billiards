@@ -658,6 +658,61 @@
         font-size: 0.86rem;
       }
 
+      /* ── Shot analysis ───────────────────── */
+
+      .analysis-section {
+        background: var(--bg);
+      }
+
+      .analysis-card {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 24px;
+        align-items: center;
+        max-width: 820px;
+        padding: 24px;
+        border-radius: 14px;
+        border: 1px solid var(--line-strong);
+        background:
+          radial-gradient(
+            120% 160% at 0% 0%,
+            rgb(26 107 68 / 26%) 0%,
+            transparent 60%
+          ),
+          var(--panel);
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .analysis-card img {
+        display: block;
+        width: 100%;
+        max-width: 340px;
+        height: auto;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+      }
+
+      .analysis-card strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--accent-bright);
+        font-size: 1.05rem;
+        letter-spacing: -0.01em;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      .analysis-card:hover strong {
+        text-decoration-thickness: 2px;
+      }
+
+      .analysis-card p {
+        margin: 0;
+        color: var(--text-soft);
+        font-size: 0.9rem;
+      }
+
       /* ── Tokyo Map ───────────────────────── */
 
       .map-panel {
@@ -830,6 +885,12 @@
           border-bottom: 0;
         }
 
+        .analysis-card {
+          grid-template-columns: 340px minmax(0, 1fr);
+          gap: 32px;
+          padding: 28px;
+        }
+
         .map-panel {
           grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
           gap: 44px;
@@ -880,6 +941,7 @@
         <a href="#threecushion">3クッション</a>
         <a href="#multiplayer">オンライン対戦</a>
         <a href="#features">特徴</a>
+        <a href="#analysis">ショット分析</a>
         <a href="#map">東京マップ</a>
         <a class="nav-lobby" href="/lobby">オンラインロビー</a>
       </nav>
@@ -1062,6 +1124,39 @@
         </p>
       </section>
 
+      <!-- ── Shot analysis ──────────────────────── -->
+      <section
+        class="section analysis-section"
+        id="analysis"
+        aria-labelledby="analysis-title"
+      >
+        <p class="section-label">ショット分析</p>
+        <h2 id="analysis-title">なぜあるショットは少しずれただけで外れるのでしょうか？</h2>
+        <p class="section-lede">
+          同じ配置でも狙いがわずかにずれるだけで、結果はまったく変わってしまいます。
+          狙いや撞点、力加減、キューの傾きを少しずつ変えて、どのショットがどれほど繊細かを実際に確認してみましょう。
+        </p>
+        <a
+          class="analysis-card"
+          href="fit/research-japanese.html"
+        >
+          <img
+            src="images/analysis480x309.png"
+            alt="ビリヤード台の横にあるショット分析パネル。成功・失敗したショットの撞点分布と、狙い・力加減・キューの傾きの許容範囲を表示"
+            width="480"
+            height="309"
+            loading="lazy"
+            decoding="async"
+          />
+          <div>
+            <strong>3クッションのショット分析と練習ツール</strong>
+            <p>
+              狙いの誤差や撞点、力加減、キューの傾きの許容範囲をインタラクティブに分析し、練習用のダイアグラム（図）として保存できます。
+            </p>
+          </div>
+        </a>
+      </section>
+
       <!-- ── Tokyo Map ───────────────────────────── -->
       <section class="section" id="map" aria-labelledby="map-title">
         <p class="section-label">東京マップ · 制作の原点</p>
@@ -1139,7 +1234,8 @@
         ソースコードは
         <a href="https://github.com/tailuge/billiards"
           >GitHubプロジェクトページ</a
-        >から、東京のビリヤード場ガイドは
+        >から、ショット分析は
+        <a href="fit/research-japanese.html">ショット分析</a>から、東京のビリヤード場ガイドは
         <a href="map/index.html">東京マップ</a>から、リーダーボードは
         <a href="https://scoreboard-tailuge.vercel.app/leaderboard">こちら</a
         >から ご覧いただけます。
