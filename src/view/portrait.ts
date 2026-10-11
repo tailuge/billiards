@@ -316,8 +316,9 @@ export class Portrait {
     ctx.textBaseline = "middle"
 
     // 20px on the 256px canvas fits a 12-char name (~220px vs the 244px
-    // limit). A map run appends " @ club" to the plaque, so shrink the font
-    // (down to 11px) instead of clipping the ends off the wall text.
+    // limit). A map run puts the club's (Japanese) name on the plaque, so
+    // shrink the font (down to 11px) instead of clipping the ends off the
+    // wall text.
     ctx.font = "700 20px 'Exo', sans-serif"
     const maxWidth = this.plateCanvas.width - 12
     let size = 20

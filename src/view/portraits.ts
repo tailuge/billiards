@@ -48,16 +48,17 @@ export interface PortraitSpec {
 }
 
 /**
- * Wall plaque text: the player name, plus " @ club" when the game was started
- * from a map club (?clubName=). The player name itself is never rewritten, so
- * match results keep reporting it unchanged. Resolves to undefined when there
- * is nothing to draw, which hides the plaque.
+ * Wall plaque text: the club name when the game was started from a map club
+ * (?clubName=), so the plaque reads as the club's own signage; otherwise the
+ * player name. The player name itself is never rewritten, so match results
+ * keep reporting it unchanged. Resolves to undefined when there is nothing to
+ * draw, which hides the plaque.
  */
 function plaqueName(playername: string): string | undefined {
   const club = new URLSearchParams(globalThis.location?.search ?? "").get(
     "clubName"
   )
-  const name = playername + (club ? ` @ ${club}` : "")
+  const name = club || playername
   return name || undefined
 }
 

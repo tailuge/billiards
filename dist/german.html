@@ -303,16 +303,25 @@
       }
 
       .brand-mark {
-        display: grid;
+        display: block;
         width: 30px;
         height: 30px;
-        place-items: center;
-        border-radius: 7px;
-        background: var(--green);
-        color: #fff;
-        font-size: 0.76rem;
-        font-weight: 900;
-        letter-spacing: 0;
+        overflow: hidden;
+        border-radius: 5px;
+
+        /* Matches the badge fill of assets/icon48.png, so the clipped corners
+           of the icon's own rounded frame blend in. */
+        background: #2b407f;
+      }
+
+      /* The asset carries a white border around its badge; scale it up and
+         pull it back inside a 30px box so only the badge shows on the dark
+         header instead of a white tile. */
+      .brand-mark img {
+        display: block;
+        width: 36px;
+        height: 36px;
+        margin: -3px;
       }
 
       .site-nav {
@@ -786,7 +795,9 @@
 
     <header class="site">
       <a class="brand" href="/german" aria-label="Online Billard Startseite">
-        <span class="brand-mark">B</span>
+        <span class="brand-mark" aria-hidden="true">
+          <img src="assets/icon48.png" alt="" width="36" height="36" />
+        </span>
         <span>TAILUGE BILLIARDS</span>
       </a>
       <nav class="site-nav" aria-label="Hauptmenü">

@@ -7,10 +7,14 @@
     <!-- Japanese is this page's only language, so the head carries the search
          metadata the site's other pages already have (see
          src/client/index.html), written in Japanese: the <html lang> above, a
-         title, description, keywords, a robots line and an og block. There is
-         deliberately no canonical or og:url — the map ships from more than one
-         host (the Docker image, ../billiards/dist, the scoreboard), so there is
-         no single URL for this page to claim as its own. -->
+         title, description, keywords, a robots line, an og block with a
+         social card image, and the matching twitter card. The card image is an
+         absolute URL on the game host, as the Open Graph protocol requires
+         (unlike the page body's screenshot, which is a different asset). There
+         is deliberately no
+         canonical or og:url — the map ships from more than one host (the Docker
+         image, ../billiards/dist, the scoreboard), so there is no single URL
+         for this page to claim as its own. -->
     <title>東京ビリヤード場めぐり｜スリークッション・チャレンジ</title>
     <meta
       name="description"
@@ -31,6 +35,34 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ja_JP" />
+    <meta
+      property="og:image"
+      content="https://billiards.tailuge.workers.dev/images/map.png"
+    />
+    <meta property="og:image:width" content="360" />
+    <meta property="og:image:height" content="636" />
+    <meta
+      property="og:image:alt"
+      content="東京のスリークッション・ビリヤード場を地図でめぐるチャレンジ"
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="東京ビリヤード場めぐり｜スリークッション・チャレンジ"
+    />
+    <meta
+      name="twitter:description"
+      content="東京のスリークッション・ビリヤード場を地図でめぐるチャレンジ。各店の住所・営業時間と、その店にまつわる思い出をたどりながら、ブラウザで三クッションのゲームが遊べます。"
+    />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/images/map.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="東京のスリークッション・ビリヤード場を地図でめぐるチャレンジ"
+    />
 
     <!-- The page's three subresource origins, warmed up before the parser
          reaches the Leaflet tags below: unpkg serves the stylesheet and the
@@ -1132,6 +1164,8 @@
             id="club-soma"
             data-id="soma"
             data-race-to="9"
+            data-emoji="🏇"
+            data-table-size="5"
             data-lat="35.6713378"
             data-lng="139.7032234"
           >
@@ -1668,6 +1702,13 @@
         return {
           id: club.dataset.id,
           raceTo: Number(club.dataset.raceTo),
+          // Optional per-club game settings. Most clubs carry neither and fall
+          // back to the shared defaults (Japan-flag plaque, full-size table).
+          // `emoji` rides along as custom.emoji for the game's wall plaque and
+          // `tableSize` as a real game option, so neither is rendered in the
+          // club's row or details — they live only in the launch URL.
+          emoji: club.dataset.emoji || "",
+          tableSize: club.dataset.tableSize || "",
           lat: Number(club.dataset.lat),
           lng: Number(club.dataset.lng),
           name: hallField(club, "name"),
@@ -2019,16 +2060,21 @@
         // Launch a three-cushion race sized for this club. The club id rides
         // along so the game can hand it straight back (?club=) and the star
         // can be filled when the race target is reached; clubName is the label
-        // the game puts on the wall plaque as "player @ club" (Japanese name,
-        // the club's own signage). window.mapGameUrl (from the deferred map.js
-        // module) adds the user's stored userId, userName, lod, flip and
-        // custom.* settings, and always forces custom.emoji to 🇯🇵 so the wall
-        // portrait shows the Japan flag regardless of the player's locale.
+        // the game puts on the wall plaque instead of the player's name
+        // (Japanese name, the club's own signage). window.mapGameUrl (from the
+        // deferred map.js module) adds the user's stored userId, userName,
+        // lod, flip and custom.* settings. custom.emoji defaults to 🇯🇵 so the
+        // wall portrait shows the Japan flag regardless of the player's
+        // locale, unless the club carries its own data-emoji; a data-table-size,
+        // when present, is sent as a real game option.
+        const plaqueEmoji = hall.emoji || "\u{1F1EF}\u{1F1F5}"
         if (window.mapGameUrl) {
           storyPlay.href = window.mapGameUrl({
             raceTo: hall.raceTo,
             clubId: hall.id,
             clubJapaneseName: hall.japaneseName,
+            emoji: hall.emoji,
+            tableSize: hall.tableSize,
           })
         } else {
           // map.js not yet loaded (first paint, slow load): fall back to the
@@ -2037,12 +2083,15 @@
           storyPlay.href =
             "../index.html?ruletype=threecushion&raceTo=" +
             hall.raceTo +
+            (hall.tableSize
+              ? "&tableSize=" + encodeURIComponent(hall.tableSize)
+              : "") +
             "&club=" +
             encodeURIComponent(hall.id) +
             "&clubName=" +
             encodeURIComponent(hall.japaneseName) +
             "&custom.emoji=" +
-            encodeURIComponent("\u{1F1EF}\u{1F1F5}")
+            encodeURIComponent(plaqueEmoji)
         }
         drawStoryLink()
 
