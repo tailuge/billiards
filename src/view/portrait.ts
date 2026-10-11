@@ -34,6 +34,7 @@ export interface PortraitOptions {
   position?: Vector3
   orientation: PortraitOrientation
   scale?: number
+  clubPlaque?: boolean
 }
 
 interface InstanceData {
@@ -176,6 +177,8 @@ export class Portrait {
       Portrait.createWallQuadGeometry(1.08, 0.135),
       plateMat
     )
+    // Club signage is drawn at double size so it reads from further away.
+    if (options.clubPlaque) this.plate.scale.setScalar(2)
     // Mount the plaque below the portrait.
     this.plate.position.set(-0.055, 0, -0.55)
     this.group.add(this.plate)

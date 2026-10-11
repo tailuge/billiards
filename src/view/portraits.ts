@@ -45,6 +45,7 @@ export interface PortraitSpec {
   name?: string
   placement: PortraitPlacement
   scale?: number
+  clubPlaque?: boolean
 }
 
 /**
@@ -54,11 +55,14 @@ export interface PortraitSpec {
  * keep reporting it unchanged. Resolves to undefined when there is nothing to
  * draw, which hides the plaque.
  */
-function plaqueName(playername: string): string | undefined {
-  const club = new URLSearchParams(globalThis.location?.search ?? "").get(
-    "clubName"
+function clubFromQuery(): string {
+  return (
+    new URLSearchParams(globalThis.location?.search ?? "").get("clubName") ?? ""
   )
-  const name = club || playername
+}
+
+function plaqueName(playername: string): string | undefined {
+  const name = clubFromQuery() || playername
   return name || undefined
 }
 
@@ -103,6 +107,7 @@ export function portraitSpecs(
   const mine: PortraitSpec = {
     emoji: myEmoji,
     name: plaqueName(session.playername),
+    clubPlaque: clubFromQuery().length > 0,
     placement: plusXWall(wallX),
   }
   if (mode.singlePlayer) return [mine]
@@ -142,6 +147,7 @@ export class Portraits {
           position: spec.placement.position,
           orientation: spec.placement.orientation,
           scale: spec.scale ?? PORTRAIT_SCALE,
+          clubPlaque: spec.clubPlaque,
         })
     )
   }
