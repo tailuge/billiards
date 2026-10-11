@@ -150,4 +150,9 @@
     <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/fit/research-korean" />
     <lastmod>2026-10-08</lastmod>
   </url>
+  <url>
+    <loc>https://tailuge.github.io/billiards/dist/fit/research-japanese.html</loc>
+    <xhtml:link rel="alternate" href="https://billiards.tailuge.workers.dev/fit/research-japanese" />
+    <lastmod>2026-10-11</lastmod>
+  </url>
 </urlset>

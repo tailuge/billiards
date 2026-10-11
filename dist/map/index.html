@@ -619,9 +619,20 @@
       }
 
       /* position: relative anchors the story panel and its link overlay, which
-         are children of the map container rather than Leaflet panes. */
+         are children of the map container rather than Leaflet panes.
+
+         isolation is load-bearing rather than cosmetic: #map carries no
+         z-index, so without it Leaflet's panes (200-700) and the story panel
+         (810) were weighed against the page's other children in the root
+         stacking context — and there the sticky top bar sits at z-index 2. A
+         child can never paint above its own stacking context, so the bar's
+         chat popover came out behind the tiles and the story panel. Isolated,
+         the map and all of its chrome paint as one layer under the bar, which
+         keeps the popover in front and also stops the tiles sliding over the
+         bar when the page scrolls. */
       #map {
         position: relative;
+        isolation: isolate;
         flex: 1 1 auto;
         min-height: 0;
         overflow: hidden;
@@ -1156,7 +1167,7 @@
               </dd>
             </dl>
             <p class="club-story" data-field="story">
-              東京でいちばん趣のある、絵になるビリヤード場かもしれません。暑くない日は自転車で通っていました。2010年ごろには、ここで開かれた小さなアマチュアのスリークッション大会で優勝したこともあります。
+              東京でいちばん趣のある、絵になるビリヤード場かもしれません。暑くない日は自転車で通っていました。2009年ごろには、ここで開かれた小さなアマチュアのスリークッション大会で優勝したこともあります。
             </p>
           </article>
           <article
@@ -1411,6 +1422,12 @@
                 Nishitokyo, Seibu-Yagisawa, Three-Cushion, Carom
               </dd>
             </dl>
+            <p class="club-story" data-field="story">
+              ここには大会を見に来たか、あるいは予選を撞いたのだと思います。東京の中心から少し離れた、いい小旅行でした。あのころ、もっとスリークッションのことを調べておけばよかった。このような<a
+                href="https://billiards.tailuge.workers.dev/fit/research-japanese"
+                >ツール</a
+              >があれば、きっと役に立ったはずです。
+            </p>
           </article>
           <article
             class="club"
@@ -2060,13 +2077,13 @@
         // Launch a three-cushion race sized for this club. The club id rides
         // along so the game can hand it straight back (?club=) and the star
         // can be filled when the race target is reached; clubName is the label
-        // the game puts on the wall plaque instead of the player's name
-        // (Japanese name, the club's own signage). window.mapGameUrl (from the
-        // deferred map.js module) adds the user's stored userId, userName,
-        // lod, flip and custom.* settings. custom.emoji defaults to 🇯🇵 so the
-        // wall portrait shows the Japan flag regardless of the player's
-        // locale, unless the club carries its own data-emoji; a data-table-size,
-        // when present, is sent as a real game option.
+        // the game puts on the wall plaque as "player @ club" (Japanese name,
+        // the club's own signage). window.mapGameUrl (from the deferred map.js
+        // module) adds the user's stored userId, userName, lod, flip and
+        // custom.* settings. custom.emoji defaults to 🇯🇵 so the wall portrait
+        // shows the Japan flag regardless of the player's locale, unless the
+        // club carries its own data-emoji; a data-table-size, when present, is
+        // sent as a real game option.
         const plaqueEmoji = hall.emoji || "\u{1F1EF}\u{1F1F5}"
         if (window.mapGameUrl) {
           storyPlay.href = window.mapGameUrl({

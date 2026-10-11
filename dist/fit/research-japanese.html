@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>スリークッションのショット分析と練習 | ビリヤードシミュレーター</title>
+    <link rel="icon" type="image/png" href="../favicon.png" />
+    <meta
+      name="description"
+      content="狙い・撞点・力加減・キューの傾きがスリークッションの結果にどう影響するかを分析。練習用SVG図も作成できます。"
+    />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0b1611" />
+    <link
+      rel="canonical"
+      href="https://billiards.tailuge.workers.dev/fit/research-japanese"
+    />
+    <link
+      rel="alternate"
+      hreflang="ja"
+      href="https://billiards.tailuge.workers.dev/fit/research-japanese"
+    />
+    <link
+      rel="alternate"
+      hreflang="en"
+      href="https://billiards.tailuge.workers.dev/fit/research"
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta
+      property="og:title"
+      content="スリークッションのショット分析と練習 | ビリヤードシミュレーター"
+    />
+    <meta
+      property="og:description"
+      content="狙い・撞点・力加減・キューの傾きがスリークッションの結果にどう影響するかを分析。練習用SVG図も作成できます。"
+    />
+    <meta property="og:site_name" content="Tailuge Billiards" />
+    <meta
+      property="og:url"
+      content="https://billiards.tailuge.workers.dev/fit/research-japanese"
+    />
+    <meta
+      property="og:image"
+      content="https://billiards.tailuge.workers.dev/images/analysis.png"
+    />
+    <meta property="og:image:width" content="1235" />
+    <meta property="og:image:height" content="796" />
+    <meta
+      property="og:image:alt"
+      content="ビリヤード台の横にあるショット分析パネル。成功・失敗したショットの撞点分布と、狙い・力加減・キューの傾きの許容範囲を表示"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="スリークッションのショット分析と練習 | ビリヤードシミュレーター"
+    />
+    <meta
+      name="twitter:description"
+      content="狙い・撞点・力加減・キューの傾きがスリークッションの結果にどう影響するかを分析。練習用SVG図も作成できます。"
+    />
+    <meta
+      name="twitter:image"
+      content="https://billiards.tailuge.workers.dev/images/analysis.png"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://billiards.tailuge.workers.dev/fit/research-japanese#page",
+            "url": "https://billiards.tailuge.workers.dev/fit/research-japanese",
+            "name": "スリークッションのショット分析と練習",
+            "description": "狙い・撞点・力加減・キューの傾きがスリークッションの結果にどう影響するかを分析。練習用SVG図も作成できます。",
+            "inLanguage": "ja",
+            "isPartOf": {
+              "@id": "https://billiards.tailuge.workers.dev/#website"
+            },
+            "breadcrumb": {
+              "@id": "https://billiards.tailuge.workers.dev/fit/research-japanese#breadcrumb"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://billiards.tailuge.workers.dev/#website",
+            "url": "https://billiards.tailuge.workers.dev/",
+            "name": "Tailuge Billiards"
+          },
+          {
+            "@type": "BreadcrumbList",
+            "@id": "https://billiards.tailuge.workers.dev/fit/research-japanese#breadcrumb",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "ビリヤード",
+                "item": "https://billiards.tailuge.workers.dev/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "スリークッション研究・ショット感度分析",
+                "item": "https://billiards.tailuge.workers.dev/fit/research-japanese"
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+
+    <style>
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 200;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4tM3CwM.ttf")
+          format("truetype");
+      }
+
+      @font-face {
+        font-family: Exo;
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url("https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4o0wCwM.ttf")
+          format("truetype");
+      }
+
+      :root {
+        --bg: #0b1611;
+        --panel: #10231a;
+        --green: #1a6b44;
+        --line: rgb(255 255 255 / 8%);
+        --line-strong: rgb(255 255 255 / 16%);
+        --accent: #10b981;
+        --accent-bright: #34d399;
+        --text: #f1eee4;
+        --text-soft: #bac3b8;
+        --text-dim: #828d83;
+
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        background: var(--bg);
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Exo, system-ui, sans-serif;
+        font-size: 16.5px;
+        font-weight: 200;
+        line-height: 1.75;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: #064e3b;
+      }
+
+      a {
+        color: var(--accent-bright);
+        text-underline-offset: 3px;
+      }
+
+      a:hover {
+        color: #a7f3d0;
+      }
+
+      a:focus-visible,
+      button:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 4px;
+      }
+
+      .skip-link {
+        position: absolute;
+        top: -100px;
+        left: 16px;
+        z-index: 10;
+        padding: 8px 14px;
+        background: var(--accent);
+        color: #064e3b;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .skip-link:focus {
+        top: 16px;
+      }
+
+      header.site,
+      main,
+      footer.site {
+        width: calc(100% - 40px);
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+        line-break: strict;
+      }
+
+      /* ── Header ──────────────────────────── */
+
+      header.site {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 64px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text);
+        font-size: 0.88rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 30px;
+        height: 30px;
+        place-items: center;
+        border-radius: 7px;
+        background: var(--green);
+        color: #fff;
+        font-size: 0.76rem;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+
+      .site-nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .site-nav a:not(.nav-lobby) {
+        display: none;
+        color: var(--text-soft);
+        text-decoration: none;
+      }
+
+      .site-nav a:not(.nav-lobby):hover {
+        color: var(--text);
+      }
+
+      .nav-lobby {
+        padding: 8px 16px;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #08110d !important;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .nav-lobby:hover {
+        background: var(--accent-bright);
+        color: #08110d !important;
+      }
+
+      /* ── Intro ───────────────────────────── */
+
+      .intro {
+        padding: 48px 0 8px;
+      }
+
+      h1 {
+        margin-bottom: 18px;
+        font-size: clamp(1.6rem, 4.2vw, 2.3rem);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.35;
+      }
+
+      .lead-quote {
+        margin-bottom: 18px;
+        padding-left: 16px;
+        border-left: 3px solid var(--accent);
+        color: var(--accent-bright);
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+
+      .intro-text {
+        max-width: 680px;
+        color: var(--text-soft);
+        font-size: 1.02rem;
+      }
+
+      .intro-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 26px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .btn {
+        display: inline-flex;
+        min-height: 46px;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 22px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #08110d;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-bright);
+        color: #08110d;
+      }
+
+      .btn-secondary {
+        border-color: var(--line-strong);
+        background: rgb(255 255 255 / 5%);
+        color: var(--text);
+      }
+
+      .btn-secondary:hover {
+        border-color: rgb(255 255 255 / 34%);
+        background: rgb(255 255 255 / 10%);
+        color: #fff;
+      }
+
+      figure.screenshot {
+        margin: 34px 0 0;
+      }
+
+      figure.screenshot img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+      }
+
+      figure.screenshot figcaption {
+        margin-top: 8px;
+        color: var(--text-dim);
+        font-size: 0.82rem;
+      }
+
+      figure.screenshot.narrow {
+        max-width: 470px;
+        margin: 34px auto 0;
+      }
+
+      figure.diagram {
+        margin: 34px auto 0;
+        text-align: center;
+      }
+
+      figure.diagram img {
+        display: block;
+        width: 100%;
+        max-width: 256px;
+        height: auto;
+        margin: 0 auto;
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+      }
+
+      figure.diagram figcaption {
+        max-width: 560px;
+        margin: 8px auto 0;
+        color: var(--text-dim);
+        font-size: 0.82rem;
+      }
+
+      /* ── Sections ────────────────────────── */
+
+      .section {
+        padding: 52px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .section h2 {
+        margin-bottom: 18px;
+        font-size: clamp(1.3rem, 3vw, 1.75rem);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.4;
+      }
+
+      .section h3 {
+        margin: 28px 0 10px;
+        color: var(--accent-bright);
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+
+      .prose {
+        max-width: 700px;
+        color: var(--text-soft);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin: 24px 0 12px;
+      }
+
+      .card {
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid var(--line-strong);
+        background: var(--panel);
+      }
+
+      .card h3 {
+        margin-top: 0;
+      }
+
+      .card p {
+        margin-bottom: 0;
+        color: var(--text-soft);
+        font-size: 0.95rem;
+      }
+
+      ul.plain {
+        max-width: 700px;
+        margin: 0 0 18px;
+        padding-left: 1.2em;
+        color: var(--text-soft);
+      }
+
+      ul.plain li {
+        margin-bottom: 10px;
+      }
+
+      /* ── Footer ──────────────────────────── */
+
+      footer.site {
+        padding: 32px 0 56px;
+        border-top: 1px solid var(--line);
+        color: var(--text-dim);
+        font-size: 0.82rem;
+      }
+
+      footer.site p {
+        max-width: 720px;
+        margin-bottom: 14px;
+      }
+
+      .lang-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 16px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      /* ── Responsive ──────────────────────── */
+
+      @media (width >= 640px) {
+        .grid-2 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (width >= 820px) {
+        .site-nav a:not(.nav-lobby) {
+          display: inline-block;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">本文へ移動</a>
+
+    <header class="site">
+      <a class="brand" href="../index.html" aria-label="ビリヤードシミュレーターのホーム">
+        <span class="brand-mark">🎱</span>
+        <span>TAILUGE BILLIARDS</span>
+      </a>
+      <nav class="site-nav" aria-label="メインメニュー">
+        <a href="../about.html">サイト紹介</a>
+        <a
+          href="https://billiards.tailuge.workers.dev/diagrams/three?init=%5B-0.101954%2C-0.32315%2C-0.449043%2C0.575213%2C1.382942%2C0.588419%5D&amp;initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.999694%2C%22power%22%3A2.9868%2C%22offset%22%3A%7B%22x%22%3A0.321556%2C%22y%22%3A0.292531%2C%22z%22%3A0%7D%2C%22elevation%22%3A0%7D"
+          >練習</a
+        >
+        <a href="../exam/index.html">試験</a>
+        <a href="../diagrams/three.html">物理</a>
+        <a class="nav-lobby" href="../lobby.html">ロビー</a>
+      </nav>
+    </header>
+
+    <main id="content">
+      <section class="intro" aria-labelledby="research-title">
+        <h1 id="research-title">インタラクティブなスリークッションのショット分析と練習</h1>
+        <div class="lead-quote">
+          なぜこのショットが決まるのか、どれほど許容範囲があるのかを理解しましょう。
+        </div>
+        <p class="intro-text">
+          このツールでは、予想経路を一本描くだけでは分からないほど詳しく、スリークッションのショットを調べられます。配置を決めてショットを選び、狙い・撞点・力加減・キューの傾きを少しずつ変えて、結果の違いを確認してください。台の横にある分析パネルには、元のショットの周辺で成功した例と失敗した例が表示されます。手球の表面に広がる撞点の分布と、狙い・力加減・キューの傾きの許容範囲を見ることで、どの要素が結果に最も影響するかが分かります。
+        </p>
+        <ul class="intro-actions">
+          <li>
+            <a
+              class="btn btn-primary"
+              href="https://billiards.tailuge.workers.dev/?%CE%BCs=0.2&amp;%CE%BCw=0.175&amp;ee=0.85&amp;mu=0.0055&amp;muS=0.126&amp;stronge_omega_ratio=1.76&amp;stronge_e_n=0.77&amp;stronge_%CE%BC=0.25&amp;ruletype=threecushion&amp;practice=&amp;analysis=&amp;cushionModel=mathavan&amp;init=%5B-0.101954%2C-0.32315%2C-0.449043%2C0.575213%2C1.382942%2C0.588419%5D&amp;initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.999694%2C%22power%22%3A2.9868%2C%22offset%22%3A%7B%22x%22%3A0.321556%2C%22y%22%3A0.292531%2C%22z%22%3A0%7D%2C%22elevation%22%3A0%7D"
+              >ショット分析を始める</a>
+            >
+          </li>
+          <li>
+            <a class="btn btn-secondary" href="../exam/threecushion.html"
+              >スリークッションの試験</a
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="key-idea-title">
+        <h2 id="key-idea-title">
+          重要な考え方：このショットはどれほど繊細なのか？
+        </h2>
+        <div class="lead-quote">
+          ショットの結果は「成功」か「失敗」だけではありません。
+        </div>
+        <div class="prose">
+          <p>
+            少し狙いや力加減がずれても成功する、許容範囲の広いショットがあります。一方で、非常に繊細なショットもあります。撞点や厚み、力加減がほんの少し変わるだけで、手球はまったく違う方向へ進みます。
+          </p>
+        </div>
+
+        <figure class="screenshot">
+          <a
+            href="../?%CE%BCs=0.2&amp;%CE%BCw=0.175&amp;ee=0.85&amp;mu=0.0055&amp;muS=0.126&amp;stronge_omega_ratio=1.76&amp;stronge_e_n=0.77&amp;stronge_%CE%BC=0.25&amp;ruletype=threecushion&amp;practice=&amp;analysis=&amp;cushionModel=mathavan&amp;init=%5B-0.101954%2C-0.32315%2C-0.449043%2C0.575213%2C1.382942%2C0.588419%5D&amp;initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.999694%2C%22power%22%3A2.9868%2C%22offset%22%3A%7B%22x%22%3A0.321556%2C%22y%22%3A0.292531%2C%22z%22%3A0%7D%2C%22elevation%22%3A0%7D"
+          >
+            <img
+              src="../images/analysis.png"
+              alt="ビリヤード台とショット分析パネルの画面。成功・失敗したショットの撞点分布と、狙い・力加減・キューの傾きの許容範囲を表示"
+              width="1235"
+              height="796"
+              fetchpriority="high"
+            />
+          </a>
+          <figcaption>
+            台の横にあるショット分析パネル。緑の点は成功例、赤い点は失敗例、白い輪は現在のショット設定です。クリックすると、このショットを分析画面で開きます。
+          </figcaption>
+        </figure>
+
+        <div class="prose">
+          <p>
+            ショット分析を使えば、この繊細さを実際に確かめられます。配置はそのままに、まず狙いを少しずつ動かしてみましょう。次に力加減を変え、その後で撞点やキューの傾きを変えます。それぞれの変化が軌道や成功率にどう影響するかを確認できます。
+          </p>
+          <p>
+            実際の台でこのショットを撞く際、何を調整すべきかを理解するための実践的な方法です。
+          </p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="tolerance-title">
+        <h2 id="tolerance-title">結果だけでなく、ショット全体を見ましょう</h2>
+        <div class="prose">
+          <p>
+            分析パネルには、元のショットと、その周辺で設定を変えたショットが表示されます。緑は成功、赤は失敗、白い印は現在のショットです。分布図は手球表面全体に撞点を展開して示します。左右は横回転、上下は押し球と引き球を表し、各バーの白い目盛りは元のショットの値です。
+          </p>
+          <p>
+            結果は、このショットの許容範囲マップです。どこまでが成功範囲なのか、理想的なショットから外れると結果がどれほど早く変わるのかを確認できます。一度に全範囲をスキャンするのは一項目だけです。バーの目盛りを選ぶと、分布図の代わりにその項目の一次元スキャンが表示されます。評価したすべての設定はCSVでダウンロードできます。
+          </p>
+        </div>
+
+        <h3>調整すべき要素を学ぶ</h3>
+        <div class="grid-2">
+          <div class="card">
+            <h3>狙いの誤差（ボール幅単位）</h3>
+            <p>
+              ショットが決まらなくなるまで、仮想ボールのラインをどれだけ動かせるかをボール幅単位で示します。左右の表示は台の向きに対応しています。正確な狙いが必要なショットと、多少ずれても成功するショットを見分けられます。
+            </p>
+          </div>
+          <div class="card">
+            <h3>撞点（横回転・押し球／引き球）</h3>
+            <p>
+              手球表面のどこを撞くかによって、横回転・押し球・引き球の結果がどう変わるかを調べます。一つの撞点を暗記するのではなく、実用的な結果が得られる撞点の範囲を見つけましょう。
+            </p>
+          </div>
+          <div class="card">
+            <h3>力加減</h3>
+            <p>
+              この配置が力加減にどれほど敏感かを試します。正確な力で所定の位置に到達する必要があるショットもあれば、かなり広い範囲で成功するショットもあります。
+            </p>
+          </div>
+          <div class="card">
+            <h3>キューの傾き</h3>
+            <p>
+              キューを水平に近い状態から立てた状態まで変え、傾きが軌道と結果に与える影響を確認します。キューの傾きが重要なショットで特に役立ちます。傾きのバーを選ぶと、キューの傾き調整も開きます。
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="study-title">
+        <h2 id="study-title">練習を学びにつなげる</h2>
+        <div class="prose">
+          <p>
+            このシミュレーターは、スリークッションを研究するための実験室です。試合で見つけた興味深い配置を再現し、詳しく調べてみましょう。別の方法を試し、狙い・撞点・力加減の成功範囲を探します。結果を図として保存しておけば、あとで見返せます。
+          </p>
+          <p>
+            「このショットをこう撞く」と覚えるだけでなく、なぜ決まるのか、少しずれたらどうなるのかを自分で確かめられます。
+          </p>
+        </div>
+
+        <figure class="screenshot narrow">
+          <a
+            href="../diagrams/three.html?init=%5B-0.101954%2C-0.32315%2C-0.449043%2C0.575213%2C1.382942%2C0.588419%5D&amp;initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.999694%2C%22power%22%3A2.9868%2C%22offset%22%3A%7B%22x%22%3A0.321556%2C%22y%22%3A0.292531%2C%22z%22%3A0%7D%2C%22elevation%22%3A0%7D"
+          >
+            <img
+              src="../images/sim.png"
+              alt="狙い・撞点・キューの傾きの入力パネルと、スリークッションのシミュレーション結果"
+              loading="lazy"
+              width="744"
+              height="844"
+            />
+          </a>
+          <figcaption>
+            同じショットのシミュレーション結果と入力パネル。狙い・撞点・力加減・キューの傾きを変えて、軌道がどう変化するか確認しましょう。クリックすると物理ページでこのショットが開きます。
+          </figcaption>
+        </figure>
+
+        <h3>説明・共有用の図を作る</h3>
+        <div class="prose">
+          <p>
+            ショットの配置は、自分のノートや練習資料、ビリヤードの記事に使う図として作成できます。
+            <a
+              href="../diagrams/export.html?ruletype=threecushion&amp;init=%5B-0.7562330961227417%2C-0.18876893818378448%2C-0.7564183473587036%2C-0.00021069881040602922%2C0.7565630078315735%2C-0.00045614209375344217%5D&amp;initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A0.14280466735363007%2C%22power%22%3A2.7248001098632812%2C%22offset%22%3A%7B%22x%22%3A-0.2615571916103363%2C%22y%22%3A0.36618006229400635%7D%2C%22elevation%22%3A0%7D"
+              >図をエクスポート</a
+            >を使うと、分析した配置をきれいなSVG画像に変換できます。拡大しても鮮明なベクター画像なので、ページに掲載したり、練習用に印刷したりできます。
+          </p>
+          <p>
+            このシミュレーターはショット練習だけでなく、スリークッションの知識を作り、共有するためにも使えます。指導者、ブロガー、コミュニティのメンバー、研究者など、幅広い人に役立ちます。
+          </p>
+        </div>
+
+        <figure class="screenshot">
+          <a
+            href="../diagrams/export.html?%CE%BCs=0.2&amp;%CE%BCw=0.175&amp;ee=0.85&amp;mu=0.0055&amp;muS=0.126&amp;stronge_omega_ratio=1.76&amp;stronge_e_n=0.77&amp;stronge_%CE%BC=0.25&amp;ruletype=threecushion&amp;cushionModel=mathavan&amp;init=%5B-0.101954%2C-0.32315%2C-0.449043%2C0.575213%2C1.382942%2C0.588419%5D&amp;initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A1.999694%2C%22power%22%3A2.9868%2C%22offset%22%3A%7B%22x%22%3A0.321556%2C%22y%22%3A0.292531%2C%22z%22%3A0%7D%2C%22elevation%22%3A0%7D"
+          >
+            <img
+              src="../images/threecushion-diagram.svg"
+              alt="スリークッションのショット図。格子状の台に手球と2つの的球、軌道上のクッション接点を表示"
+              loading="lazy"
+              width="896"
+              height="543"
+            />
+          </a>
+          <figcaption>
+            2.99 m/sで撞いたスリークッションのショットをSVG図として出力した例です。手球と2つの的球、軌道上のクッション接点がすべて表示されています。クリックすると同じショットがエクスポートツールで開きます。
+          </figcaption>
+        </figure>
+
+        <ul class="intro-actions">
+          <li>
+            <a
+              class="btn btn-secondary"
+              href="../diagrams/export.html?ruletype=threecushion&amp;init=%5B-0.7562330961227417%2C-0.18876893818378448%2C-0.7564183473587036%2C-0.00021069881040602922%2C0.7565630078315735%2C-0.00045614209375344217%5D&amp;initShot=%7B%22cueBallId%22%3A0%2C%22angle%22%3A0.14280466735363007%2C%22power%22%3A2.7248001098632812%2C%22offset%22%3A%7B%22x%22%3A-0.2615571916103363%2C%22y%22%3A0.36618006229400635%7D%2C%22elevation%22%3A0%7D"
+              >ブログ用の図を作る</a
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="notes-title">
+        <h2 id="notes-title">ビリヤード台から練習ノートへ</h2>
+        <div class="prose">
+          <p>
+            役立つ配置を、一度撞いただけで忘れてしまう必要はありません。ショットを分析して分かったことを記録し、結果の図を次の練習の参考にしましょう。試合で出会った難球、システムショットの配置、もっと理解したいショットなど、自分だけの配置集を作れます。
+          </p>
+          <p>
+            実際の台での練習を置き換えることが目的ではありません。練習と練習の合間をより有意義にし、ショットを試し、図にし、考えられるようにすることが目的です。
+          </p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="deeper-title">
+        <h2 id="deeper-title">さらに深く研究したい方へ</h2>
+        <div class="prose">
+          <p>
+            このシミュレーターは、ボール・クッション・摩擦・回転の物理モデルに基づいています。そのため、静止画だけでは答えにくい疑問も調べられます。
+          </p>
+          <ul class="plain">
+            <li>力を弱めると軌道はどれほど変わるのか？</li>
+            <li>
+              的球に届かなくなるまで、横回転をどれだけ減らせるのか？
+            </li>
+            <li>どれほど正確に狙う必要があるのか？</li>
+            <li>このショットの難しさを実際に決めている要素は何か？</li>
+          </ul>
+
+          <figure class="diagram">
+            <a href="../blog3.html">
+              <img
+                src="../images/mh.jpg"
+                alt="クッションがボールに及ぼす力"
+                loading="lazy"
+                width="256"
+                height="256"
+              />
+            </a>
+            <figcaption>
+              クッションがボールに及ぼす力。（出典：
+              <a
+                href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
+                rel="noopener noreferrer"
+                >Mathavan et al. (2010)</a
+              >) — クッションモデルの仕組みは
+              <a href="../blog3.html">こちら</a>で確認できます。
+            </figcaption>
+          </figure>
+
+          <p>ショットの値を変えて再実行し、結果を確認してみましょう。</p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="training-system-title">
+        <h2 id="training-system-title">ショットを決めるだけでは練習になりません</h2>
+        <div class="prose">
+          <p>
+            優れた練習ツールは、何を練習すべきかを教えてくれます。許容範囲の狭いショットは精度が重要だと示し、許容範囲の広いショットなら技術の別の要素に集中できると教えてくれます。
+          </p>
+          <p>
+            サイトのスリークッション試験や練習モードと組み合わせると、ショット分析によって
+            <strong>ショットを撞く → 分析する → 練習する → 自分で試す</strong>という
+            一貫した流れを作れます。
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site">
+      <p>
+        公開されているボールとクッションの物理研究に基づく、オープンソースのビリヤードプロジェクトです。
+        ソースコードは
+        <a
+          href="https://github.com/tailuge/billiards"
+          target="_blank"
+          rel="noopener"
+          >GitHub</a
+        >にあります。リンク： <a href="../about.html">サイト紹介</a>,
+        <a href="../practice.html">練習</a>,
+        <a href="../exam/index.html">ビリヤード試験</a>,
+        <a href="../diagrams/three.html">物理図</a>,
+        <a href="../lobby.html">オンラインロビー</a>.
+      </p>
+      <ul class="lang-list" aria-label="他の言語">
+        <li><a href="research.html" hreflang="en">English</a></li>
+        <li><a href="research-korean.html" hreflang="ko">한국어</a></li>
+      </ul>
+    </footer>
+  </body>
+</html>
