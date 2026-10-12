@@ -36,6 +36,14 @@ export class LobbyIndicator {
   private currentTableId: string | null = null
   private readonly replayMode: boolean
   private readonly isSpectator: boolean
+  /**
+   * The session's own name — the URL-seeded `?userName=`, or "Anon" — captured
+   * once at construction. `BrowserContainer.startReplay()` later overwrites
+   * `Session.playername` with the replay footage's player 1, and this indicator
+   * re-renders on every presence change, so reading the session at render time
+   * would label the watcher with the recorded player's name.
+   */
+  private readonly userName: string
   private opponentOnline: boolean | null = null
   private users: PresenceMessage[] = []
   private readonly onChatMessage: ((msg: string) => void) | undefined
@@ -64,6 +72,7 @@ export class LobbyIndicator {
       ? `${httpProtocol}://${messagingUrl.replace(/^(https?|wss?):\/\//, "")}`
       : LobbyIndicator.NCHAN_URL
     this.isSpectator = Session.getInstance().spectator
+    this.userName = Session.getInstance().playername || "Anon"
     this.tableSize = parseFloat(
       new URLSearchParams(globalThis.location?.search ?? "").get("tableSize") ||
         "10"
@@ -169,9 +178,6 @@ export class LobbyIndicator {
     NetworkLogger.logLobby("init")
 
     const userId = Session.getInstance().clientId
-    const userName = this.replayMode
-      ? "replay"
-      : Session.getInstance().playername
 
     this.messagingClient = new MessagingClient({
       baseUrl: this.messagingUrl,
@@ -197,7 +203,7 @@ export class LobbyIndicator {
       messageType: "presence",
       type: "join",
       userId,
-      userName,
+      userName: this.userName,
       ruleType: this.ruleType,
       options: {
         tableSize: String(this.tableSize),
@@ -319,11 +325,9 @@ export class LobbyIndicator {
     // the network log overlay.
     const lobbyIcon = `<span class="lobby-icon">${this.isSpectator ? "👀" : "👥"}</span>`
 
-    // if replay mode then set name from queryparam userName
-    const params = new URLSearchParams(globalThis.location?.search ?? "")
-    const name = this.replayMode
-      ? (params.get("userName") ?? "Anon")
-      : session.playername
+    // Not session.playername: in replay that has already been overwritten with
+    // the footage's player 1 (see the userName field).
+    const name = this.userName
     this.countElement.innerHTML = `${name} ${lobbyIcon}${this.count}${statusEmoji}`
 
     const otherUsers = Array.from(

@@ -334,14 +334,37 @@ describe("LobbyIndicator", () => {
     expect(countElement?.textContent).toContain("Player 1")
     await indicator.stop()
 
-    // Replay mode
+    // Replay mode: the chip shows the watcher's own name (session.playername at
+    // construction), which is seeded from ?userName= ("Anon" when absent).
     Session.reset()
     Session.init("p1", "Player 1", "table-1", false)
     const indicator2 = new LobbyIndicator(false, true, mockRules)
     await indicator2.init()
     const countElement2 = element?.querySelector(".lobby-count") as HTMLElement
-    expect(countElement2?.textContent).toContain("Anon")
+    expect(countElement2?.textContent).toContain("Player 1")
     await indicator2.stop()
+  })
+
+  it("keeps the watcher's name when replay playback overwrites the session name", async () => {
+    const mockRules = { rulename: "nineball" } as any
+    Session.init("p1", "Player 1", "table-1", false)
+    const indicator = new LobbyIndicator(false, true, mockRules)
+    await indicator.init()
+
+    // What BrowserContainer.startReplay() does once the replay is parsed.
+    Session.getInstance().playername = "Recorder"
+
+    // Any later presence update re-renders the chip.
+    const mockLobby = (indicator as any).lobby
+    mockLobby.onUsersChange.mock.calls[0][0]([])
+
+    const countElement = document
+      .getElementById("lobbyOverlay")
+      ?.querySelector(".lobby-count") as HTMLElement
+    expect(countElement?.textContent).toContain("Player 1")
+    expect(countElement?.textContent).not.toContain("Recorder")
+
+    await indicator.stop()
   })
 
   it("uses custom messaging URL when provided", async () => {
