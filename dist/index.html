@@ -20,6 +20,172 @@
         src: url("https://fonts.gstatic.com/s/exo/v25/4UaZrEtFpBI4f1ZSIK9d4LjJ4o0wCwM.ttf")
           format("truetype");
       }
+
+      /* A tiny "About" chip pinned to the bottom centre of the screen. It is
+         a <details> in the served HTML, not something the script injects, so a
+         crawler that runs no JS still reads the prose inside it when opened
+         (native disclosure content stays in the DOM and in view-source).
+
+         The panel is centred over the table and kept out of flow, so opening it
+         never resizes the canvas or the 70px control bar.
+
+         While open the chip stretches into a full-screen scrim, so a click
+         anywhere outside the panel closes the disclosure. The chip, the close
+         label and the click-outside target are all the one <summary> — clicking
+         a summary toggles it — which is why closing needs no script and no
+         element beyond the ones already here. */
+      .about-more {
+        /* A full-viewport, click-through layer, so the chip and the panel can
+           be positioned against the viewport rather than against each other.
+           inset:0 and no transform keep them out of the game's layout. */
+        position: fixed;
+        inset: 0;
+        z-index: 500;
+
+        /* Out of the game's way: only the chip (which becomes the scrim while
+           open) and the panel take clicks, everything else passes through to
+           the table. */
+        pointer-events: none;
+      }
+
+      /* A tiny "About" button: 8px type inside a 1px border, so it reads as a
+         small control rather than a caption. The background is a light,
+         mostly transparent wash rather than a dark fill, so it stays quiet
+         over the table without reading as a black slab. */
+      .about-more summary {
+        position: absolute;
+        left: 50%;
+
+        /* 1px clear of the very bottom edge. */
+        bottom: 1px;
+        display: block;
+        padding: 1px 5px;
+        border: 1px solid #555;
+        border-radius: 4px;
+        background: rgb(255 255 255 / 10%);
+        color: #b0b0b0;
+        font-size: 8px;
+        line-height: 1;
+        list-style: none;
+        cursor: pointer;
+        transform: translateX(-50%);
+        pointer-events: auto;
+      }
+
+      .about-more summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .about-more summary:hover {
+        border-color: #888;
+        color: #fff;
+      }
+
+      /* Open: the chip stretches to cover the viewport, turning itself into a
+         click-outside target. Dimming the table is the usual hint that a click
+         dismisses. font-size:0 drops the chip's own label, which the ::after
+         below replaces. */
+      .about-more[open] summary {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: auto;
+        font-size: 0;
+        background: rgb(0 0 0 / 40%);
+        border: 0;
+        border-radius: 0;
+        transform: none;
+        cursor: default;
+      }
+
+      /* The close label sits where the chip was, and is part of the same
+         summary, so a click on it closes the panel as well. */
+      .about-more[open] summary::after {
+        content: "✕ close";
+        position: absolute;
+        left: 50%;
+        bottom: 1px;
+        padding: 1px 5px;
+        border: 1px solid #888;
+        border-radius: 4px;
+        background: rgb(255 255 255 / 10%);
+        color: #fff;
+        font-size: 8px;
+        line-height: 1;
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      /* Chromeless mode (L key toggles body.chromeless) hides the lower control
+         panel; the chip goes with it so the screen is just the table. */
+      body.chromeless .about-more {
+        display: none;
+      }
+
+      /* Centred over the table. Capped in height and scrollable, with the
+         scrollbar hidden (the page's own convention — see index.css), so a
+         long panel never swallows the whole screen. */
+      .about-more .about-panel {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(38rem, calc(100vw - 1rem));
+        max-height: min(72vh, 42rem);
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding: 10px 12px;
+        border: 1px solid #444;
+        border-radius: 6px;
+        background: rgb(26 26 26 / 97%);
+        color: #e0e0e0;
+        font-size: 0.78rem;
+        line-height: 1.5;
+        transform: translate(-50%, -50%);
+        pointer-events: auto;
+      }
+
+      .about-more .about-panel::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* A real heading hierarchy for search engines: one h1 for the page, then
+         h2 sections. The headings carry the terms a crawler reads. */
+      .about-more .about-panel h1 {
+        margin: 0 0 6px;
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+
+      .about-more .about-panel h2 {
+        margin: 12px 0 4px;
+        color: #8ab6f8;
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .about-more .about-panel p {
+        margin: 0 0 6px;
+      }
+
+      .about-more .about-panel ul {
+        margin: 0 0 6px;
+        padding-left: 1.1em;
+      }
+
+      .about-more .about-panel li {
+        margin: 0 0 3px;
+      }
+
+      /* Underlined, because a link inside prose must not rely on colour alone. */
+      .about-more .about-panel a {
+        color: #8ab6f8;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
     </style>
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta charset="UTF-8" />
@@ -124,7 +290,212 @@
   </head>
 
   <body>
-    <h1 hidden>Free Pool, Billiards and Snooker</h1>
+    <!-- The page's single h1 and its supporting prose live here, high in the
+         source where a crawler expects to find them, rather than in the canvas
+         the script draws. The <details> keeps the copy in the served HTML (a
+         crawler that runs no JS still reads it); CSS pins the tiny "About"
+         chip to the bottom centre (see .about-more above) and centres the panel
+         on open. Content compresses about.html. -->
+    <details class="about-more" id="about-more">
+      <summary>About</summary>
+      <div class="about-panel">
+        <h1>Free online pool, snooker and three-cushion billiards</h1>
+        <p>
+          Tailuge Billiards is a free, open-source billiards, pool and snooker
+          simulator that runs in any modern desktop or mobile browser — nothing
+          to install, no account to create. Play, practise, analyse shots or
+          explore how billiards physics works. The table is drawn in 3D with
+          WebGL and three.js on a physics engine built from published work on
+          ball motion, collisions and cushion impacts.
+        </p>
+
+        <h2>What you can play</h2>
+        <ul>
+          <li>
+            <a href="nineball.html">Nine-ball</a> — the fast rotation game, with
+            a build-a-layout practice mode and shareable replay links.
+          </li>
+          <li>
+            <a href="eightball.html">8-ball</a> — solids and stripes, with a
+            Hi-Res rendering mode.
+          </li>
+          <li>
+            <a href="snooker.html">Snooker</a> — full-size 12-foot tables with
+            15 reds, plus shorter games on a 6-foot table.
+          </li>
+          <li>
+            <a href="index.html?ruletype=threecushion&amp;lod=4"
+              >Three-cushion carom</a
+            >
+            — the discipline the cushion model is tuned hardest against, with a
+            beginner mode.
+          </li>
+          <li>
+            <a href="index.html?ruletype=sagu">Sagu</a> — the Korean four-ball
+            carom game, also playable on a small 5-foot table.
+          </li>
+        </ul>
+        <p>
+          Two practice bots, ClawBreak and TheFarJaw, play when nobody else is
+          around; the <a href="speedrun/index.html">speedrun challenge</a> races
+          you against the clock, and the
+          <a href="reveal/index.html">reveal game</a> uncovers pictures with
+          straight-pool potting.
+        </p>
+
+        <h2>Realistic billiards physics</h2>
+        <p>
+          The engine is deliberately lightweight and deterministic; each effect
+          a player notices follows a specific published model rather than being
+          tuned by feel. Ball motion follows
+          <a
+            href="https://billiards.colostate.edu/physics_articles/Han_paper.pdf"
+            target="_blank"
+            rel="noopener"
+            >Han (2005)</a
+          >
+          with corrections noted by
+          <a
+            href="https://ekiefl.github.io/2020/04/24/pooltool-theory/#3-han-2005"
+            target="_blank"
+            rel="noopener"
+            >Kiefl</a
+          >; ball-to-ball collisions follow
+          <a
+            href="https://billiards.colostate.edu/technical_proofs/new/TP_A-14.pdf"
+            target="_blank"
+            rel="noopener"
+            >Alciatore</a
+          >, including the throw effect; and cushion impacts use
+          <a
+            href="https://billiards.colostate.edu/physics_articles/Mathavan_IMechE_2010.pdf"
+            target="_blank"
+            rel="noopener"
+            >Mathavan (2010)</a
+          >, with Stronge's compliant-cushion model available as an alternative.
+          Spin, throw and cushion rebound can all be inspected and re-tuned on
+          the <a href="diagrams/three.html">three-cushion physics page</a>.
+        </p>
+
+        <h2>Practise and measure your game</h2>
+        <ul>
+          <li>
+            <a href="practice.html">Practice table</a> — set up any shot or
+            position and repeat it, with no opponent and no clock.
+          </li>
+          <li>
+            <a href="exam/index.html">Billiards exam</a> — a graded shot list
+            with a front sheet that reports an assessment level, completion and
+            score.
+          </li>
+          <li>
+            <a href="exam/snooker.html">Snooker exam</a> — the same course on a
+            snooker table, from basic pots to awkward positions.
+          </li>
+          <li>
+            <a href="exam/threecushion.html">Three-cushion exam</a> — the shot
+            list for carom, graded from basic to advanced.
+          </li>
+          <li>
+            <a href="fit/research.html">Shot sensitivity analysis</a> — see how
+            aim, spin, power and elevation change the result.
+          </li>
+          <li>
+            <a href="diagrams/diamond.html">The diamond system</a> for
+            three-cushion cue-ball paths.
+          </li>
+        </ul>
+
+        <h2>Play against other people</h2>
+        <p>
+          The <a href="lobby.html">lobby</a> lists who is online so you can
+          challenge someone directly, there is a
+          <a href="2tab.html">two-tab mode</a> for playing across two windows on
+          one machine, and <a href="arena.html">hourly arenas</a> run
+          lichess-style half-hour tournaments. Highest breaks go to a
+          <a
+            href="https://scoreboard-tailuge.vercel.app/leaderboard"
+            target="_blank"
+            rel="noopener"
+            >leaderboard</a
+          >
+          and rated games feed a
+          <a
+            href="https://scoreboard-tailuge.vercel.app/elo"
+            target="_blank"
+            rel="noopener"
+            >Glicko2 ELO rating</a
+          >.
+        </p>
+
+        <h2>Guides and write-ups</h2>
+        <ul>
+          <li>
+            <a href="blog1.html">Why most pool games feel wrong</a> — what makes
+            a physics engine read as real, and where the cheap ones cheat.
+          </li>
+          <li>
+            <a href="blog2.html">Clearing the line-up</a> — a practice log on
+            running the balls, and how to drill it on the practice table.
+          </li>
+          <li>
+            <a href="blog3.html">Implementing Mathavan cushion physics</a> — the
+            maths behind the cushion model, written up in the open.
+          </li>
+        </ul>
+
+        <h2>Open source</h2>
+        <p>
+          Plain TypeScript with <a href="https://threejs.org/">three.js</a> for
+          rendering, open source under the GNU GPL. The code is on
+          <a
+            href="https://github.com/tailuge/billiards"
+            target="_blank"
+            rel="noopener"
+            >GitHub</a
+          >, and contributions — bugs, physics tweaks, translations, new rule
+          sets — are welcome. Read more on the
+          <a href="about.html">about page</a>.
+        </p>
+
+        <h2>Other languages</h2>
+        <ul>
+          <li>
+            <a href="./korean.html" lang="ko">무료 온라인 당구</a> — 3쿠션과
+            사구(4구)를 설치 없이 브라우저에서.
+          </li>
+          <li>
+            <a href="./japanese.html" lang="ja">無料オンラインビリヤード</a> —
+            3クッションと9ボールを登録なしで。
+          </li>
+          <li>
+            <a href="./chinese.html" lang="zh">免費線上斯諾克</a> —
+            免安裝、免註冊，手機也能玩。
+          </li>
+          <li>
+            <a href="./turkish.html" lang="tr">Ücretsiz online bilardo</a> — 3
+            bant karambol, gerçekçi fizik, kayıt gerekmez.
+          </li>
+          <li>
+            <a href="./german.html" lang="de">Kostenloses 3-Band-Billard</a> —
+            ohne Download und Anmeldung im Browser.
+          </li>
+          <li>
+            <a href="./spanish.html" lang="es">Billar a tres bandas gratis</a>
+            — sin descargas ni registro, también en el móvil.
+          </li>
+          <li>
+            <a href="./dutch.html" lang="nl">Online driebanden spelen</a> —
+            gratis carambole in je browser.
+          </li>
+          <li>
+            <a href="./vietnamese.html" lang="vi">Game bi-a 3 băng</a> — miễn
+            phí, không cần cài đặt hay đăng ký.
+          </li>
+        </ul>
+      </div>
+    </details>
+
     <main>
       <div id="viewP1" class="view3d">
         <div id="snookerScoreOverlay">
@@ -137,75 +508,6 @@
         </div>
         <div id="helpOverlay" hidden>
           <iframe title="Help"></iframe>
-          <p class="seo-description">
-            Play free online billiards, 3D pool and snooker with realistic
-            physics simulation in your browser. Built with WebGL, Three.js, and
-            TypeScript, featuring accurate ball–cushion rebound dynamics
-            (Mathavan &amp; Stronge models), sidespin (English), backspin, and
-            ball-on-ball collision throw. Enjoy 8-ball, 9-ball, snooker (with
-            maximum 147 break tracking), three-cushion carom, Korean four-ball
-            (sagu), and trick shot practice.
-            <a href="./about.html">About this project</a>
-            Play solo, challenge computer AI bots or join live online
-            multiplayer in the
-            <a href="lobby.html">billiards lobby</a>. Open source, no download
-            required — just play. Looking for snooker on its own?
-            <a href="snooker.html">Free online snooker</a>. Also available in
-            <a href="korean.html">Korean 당구</a>,
-            <a href="spanish.html">Spanish Billar</a>,
-            <a href="dutch.html">Dutch Biljart</a>,
-            <a href="turkish.html">Turkish Bilardo</a>,
-            <a href="japanese.html">Japanese ビリヤード</a>,
-            <a href="chinese.html">Chinese 台球</a>,
-            <a href="german.html">German Billard</a>,
-            <a href="vietnamese.html">Vietnamese Bida</a>.
-          </p>
-          <p class="seo-description" lang="ko">
-            <a href="korean.html"
-              >사실적인 물리 시뮬레이션으로 무료 온라인 당구, 풀, 스누커를
-              브라우저에서 즐기세요.</a
-            >
-            8볼, 9볼, 3쿠션 캐롬 게임. 오픈 소스, 다운로드 불필요 — 바로
-            플레이하세요. 확인할 수 있습니다. (<a
-              href="https://blog.naver.com/jasuil/224416229214"
-              target="_blank"
-              >네이버 블로그 소개글</a
-            >)
-          </p>
-          <p class="seo-description" lang="tr">
-            <a href="turkish.html"
-              >Gerçekçi fizik simülasyonu ile ücretsiz çevrimiçi bilardo, havuz
-              ve snooker oynayın.</a
-            >
-            8-top, 9-top ve üç bant karambol oyunları. Açık kaynak, indirme
-            gerekmez — hemen oynayın.
-          </p>
-          <p class="seo-description">
-            Also available on
-            <a href="https://tailuge.itch.io">tailuge.itch.io</a> billiards io
-            billiardsio with a native download for
-            <a href="https://github.com/tailuge/tbilliards/releases/latest"
-              >Windows, Linux and macOS</a
-            >
-            and on android
-            <a href="https://apkpure.com/billiards/dev.tailuge.billiards"
-              >https://apkpure.com/billiards/dev.tailuge.billiards</a
-            >
-          </p>
-          <p class="seo-description">
-            Sharpen your cue ball control with
-            <a href="practice.html">9-ball practice table</a>, test your skills
-            in the <a href="exam/snooker.html">snooker training course</a> or
-            <a href="exam/threecushion.html">three-cushion exam</a>, and compete
-            in hourly <a href="arena.html">mini tournaments</a>. Read how our
-            physics engine was built in
-            <a href="reveal/index.html">billiards collectables game</a>.
-            <a href="blog1.html">Why most pool games feel wrong</a>, follow our
-            guide on <a href="blog2.html">clearing the line-up</a>, learn about
-            <a href="blog3.html">implementing Mathavan cushion physics</a>, or
-            master cue-ball paths with the
-            <a href="diagrams/diamond.html">three-cushion diamond system</a>.
-          </p>
           <div class="help-footer">
             <button
               class="lobby-btn"

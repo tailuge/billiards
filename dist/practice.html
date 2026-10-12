@@ -309,10 +309,169 @@
         height: 12px;
         stroke-width: 2.5;
       }
+
+      /* Top-left "About" disclosure and top-right lobby link. Both are fixed so
+         they sit over the table without disturbing its centred layout, and the
+         <details> keeps the how-to copy in the served HTML for crawlers. */
+      .about-more {
+        position: fixed;
+        top: 8px;
+        left: 8px;
+        z-index: 200;
+      }
+
+      .about-more summary {
+        display: block;
+        padding: 6px 12px;
+        border: 1px solid #333;
+        border-radius: 6px;
+        background: #1e1e1e;
+        color: #aaa;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        list-style: none;
+        cursor: pointer;
+      }
+
+      .about-more summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .about-more summary:hover,
+      .about-more[open] summary {
+        background: #2a2a2a;
+        color: #eee;
+        border-color: #555;
+      }
+
+      .lobby-link {
+        position: fixed;
+        top: 8px;
+        right: 8px;
+        z-index: 200;
+        padding: 6px 14px;
+        border: 1px solid #333;
+        border-radius: 6px;
+        background: #1e1e1e;
+        color: #eee;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-decoration: none;
+      }
+
+      .lobby-link:hover {
+        background: #2a2a2a;
+        border-color: #555;
+      }
+
+      /* Opens downwards from the chip; height-capped and scrolled (scrollbar
+         hidden, this page's own convention). */
+      .about-more .about-panel {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: min(34rem, calc(100vw - 1rem));
+        max-height: min(72vh, 40rem);
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        margin-top: 4px;
+        padding: 12px 14px;
+        border: 1px solid #333;
+        border-radius: 8px;
+        background: rgb(13 13 13 / 97%);
+        color: #eee;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        text-align: left;
+      }
+
+      .about-more .about-panel::-webkit-scrollbar {
+        display: none;
+      }
+
+      .about-more .about-panel h1 {
+        margin: 0 0 6px;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+
+      .about-more .about-panel h2 {
+        margin: 12px 0 4px;
+        color: #10b981;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .about-more .about-panel p {
+        margin: 0 0 6px;
+      }
+
+      .about-more .about-panel ol,
+      .about-more .about-panel ul {
+        margin: 0 0 6px;
+        padding-left: 1.2em;
+      }
+
+      .about-more .about-panel li {
+        margin: 0 0 4px;
+      }
+
+      .about-more .about-panel a {
+        color: #10b981;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
     </style>
   </head>
   <body>
-    <h1 hidden>Free Pool, Billiards and Snooker</h1>
+    <!-- The page's single h1 and its how-to copy live in this disclosure, in
+         the served HTML so a crawler reads them without running the script;
+         CSS pins the "About" chip to the top-left corner. -->
+    <details class="about-more" id="about-more">
+      <summary>About</summary>
+      <div class="about-panel">
+        <h1>Set up, play and share 9-ball practice layouts</h1>
+        <p>
+          Tailuge Billiards' practice table lets you place every ball exactly
+          where you want it, then play that shot as many times as you like — in
+          the browser, with no download and no account.
+        </p>
+
+        <h2>Set up a shot</h2>
+        <p>
+          Drag any ball anywhere on the table, or start from a preset. The cue
+          ball and every object ball can be repositioned, so you can rebuild a
+          break, a safety or a stubborn position you keep missing.
+        </p>
+
+        <h2>Play the layout</h2>
+        <p>
+          Hit <strong>Play</strong> to open the layout in the full 9-ball game
+          exactly as you set it. Pot it or miss it, then return and play the
+          same shot again — a repeatable drill rather than a fresh table each
+          time.
+        </p>
+
+        <h2>Share the setup with someone else</h2>
+        <p>
+          Press <strong>Share</strong> to copy a link that carries your table
+          setup. Anyone who opens it gets the same balls in the same positions,
+          so you can hand out homework, compare approaches or challenge a friend
+          to the same drill.
+        </p>
+        <p>
+          Ready to play against someone?
+          <a href="lobby.html">Find a game in the lobby</a>, or read the
+          <a href="blog2.html">practice log</a> on clearing the line-up.
+        </p>
+      </div>
+    </details>
+    <a class="lobby-link" href="lobby.html">Lobby</a>
     <div id="table-wrap">
       <div id="table-bg"></div>
       <div id="table-surface"></div>
