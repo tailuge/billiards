@@ -382,6 +382,9 @@ This project is open source and licensed under the GNU General Public License - 
 담고 있습니다. 2018년부터 GitHub에서 공개적으로 발전해 온 오픈소스 당구
 프로젝트입니다.
 
+[네이버 블로그](https://blog.naver.com/jasuil/224416229214)
+[티스토리 블로그](https://news11213.tistory.com/1)
+
 ### 中文
 
 免費線上斯諾克遊戲，免安裝、免註冊，打開瀏覽器就能直接開打。PC 與手機的網頁
