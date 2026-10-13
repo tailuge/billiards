@@ -90,3 +90,10 @@ https://indexpage.org/search?q=billiards
 
 https://slowden.com/games/tailuge-billiards/
 
+https://foundplay.io/games/billiards
+
+https://askmatchbox.com/solutions/billiards-tailuge
+
+https://arcadebloom.com/game/billiards/
+
+
