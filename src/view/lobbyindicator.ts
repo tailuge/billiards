@@ -10,7 +10,7 @@ import { id } from "../utils/dom"
 import { LOBBY_URL } from "../network/client/constants"
 import { VERSION } from "../utils/version"
 import { NetworkLogger } from "../utils/network-logger"
-import { getRuleEmoji } from "../utils/utils"
+import { getRuleEmoji, ruleTypeMap } from "../utils/utils"
 
 export class LobbyIndicator {
   private readonly element: HTMLElement | null
@@ -330,16 +330,21 @@ export class LobbyIndicator {
     const name = this.userName
     this.countElement.innerHTML = `${name} ${lobbyIcon}${this.count}${statusEmoji}`
 
-    const otherUsers = Array.from(
-      new Set(
-        this.users
-          .filter((u) => u.userId !== session.clientId)
-          .map((u) => u.userName)
-      )
-    ).sort()
+    // One entry per name; a name playing a game carries its rule emoji so the
+    // tooltip shows e.g. "veli ④" for a sagu player. ruleType is absent for
+    // users idling in the lobby, and unknown bases (replay, spectator) are
+    // left unadorned rather than printed as text.
+    const otherUsers = new Map<string, string>()
+    for (const u of this.users) {
+      if (u.userId === session.clientId || otherUsers.has(u.userName)) continue
+      const base = u.ruleType?.split("-")[0]
+      const emoji = base ? ruleTypeMap[base]?.emoji : undefined
+      otherUsers.set(u.userName, emoji ? `${u.userName} ${emoji}` : u.userName)
+    }
+    const entries = [...otherUsers.values()].sort()
 
-    if (otherUsers.length > 0) {
-      this.countElement.title = `Online:\n${otherUsers.join("\n")}`
+    if (entries.length > 0) {
+      this.countElement.title = `Online:\n${entries.join("\n")}`
     } else {
       this.countElement.removeAttribute("title")
     }
