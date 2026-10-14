@@ -66,6 +66,10 @@
         max-height: min(72vh, 42rem);
         overflow-y: auto;
         scrollbar-width: none;
+
+        /* index.css sets `div { touch-action: none }` to keep table drags off
+           the page; without this the panel only wheels, never finger-scrolls. */
+        touch-action: pan-y;
         padding: 10px 12px;
         background: #000;
         color: #e0e0e0;
