@@ -21,13 +21,6 @@
           format("truetype");
       }
 
-      /* A tiny "About" chip pinned to the bottom centre of the screen. It is a
-         <details> in the served HTML, not something the script injects, so a
-         crawler that runs no JS still reads the prose inside it when opened.
-
-         A full-viewport but click-through layer, so the chip and the panel can
-         be placed against the viewport without ever resizing the canvas or the
-         70px control bar. */
       .about-more {
         position: fixed;
         inset: 0;
@@ -53,9 +46,6 @@
         display: none;
       }
 
-      /* Open: the chip stretches into a full-screen scrim, dimming the table
-         and turning itself into a click-outside target. font-size:0 drops the
-         chip's own label, so the dimming is also the hint for how to close. */
       .about-more[open] summary {
         inset: 0;
         font-size: 0;
@@ -64,15 +54,10 @@
         transform: none;
       }
 
-      /* Chromeless mode (L key toggles body.chromeless) hides the lower control
-         panel; the chip goes with it so the screen is just the table. */
       body.chromeless .about-more {
         display: none;
       }
 
-      /* Centred over the table: black, in the page font, scrolling when the
-         prose outgrows the height cap (scrollbar hidden, the page's own
-         convention). Headings and prose keep their browser defaults. */
       .about-more .about-panel {
         position: absolute;
         left: 50%;
@@ -89,7 +74,6 @@
         pointer-events: auto;
       }
 
-      /* Kept for legibility only: the default link blue vanishes on black. */
       .about-more .about-panel a {
         color: #8ab6f8;
       }
@@ -142,7 +126,7 @@
       name="twitter:image"
       content="https://billiards.tailuge.workers.dev/images/billiards.png"
     />
-    <meta name="foundplay-verify" content="foundplay-verify-c4b4d827e235e075">
+    <meta name="foundplay-verify" content="foundplay-verify-c4b4d827e235e075" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -194,12 +178,6 @@
   </head>
 
   <body>
-    <!-- The page's single h1 and its supporting prose live here, high in the
-         source where a crawler expects to find them, rather than in the canvas
-         the script draws. The <details> keeps the copy in the served HTML (a
-         crawler that runs no JS still reads it); CSS pins the tiny "About"
-         chip to the bottom centre (see .about-more above) and centres the panel
-         on open. Content compresses about.html. -->
     <details class="about-more" id="about-more">
       <summary>About</summary>
       <div class="about-panel">
@@ -464,7 +442,6 @@
             </div>
           </header>
           <pre id="botDebugLog" aria-live="polite">
-          <!-- loading="lazy" avoids downloading this 143KB image on initial paint since botDebugOverlay starts hidden/closed -->
           <img
             src="images/billiards.png"
             loading="lazy"
