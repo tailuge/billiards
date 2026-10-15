@@ -1,6 +1,5 @@
 import { Container } from "../container/container"
 import { ReplayEncoder } from "../utils/replay-encoder"
-import { Session } from "../network/client/session"
 
 export class LinkFormatter {
   container: Container
@@ -21,12 +20,11 @@ export class LinkFormatter {
     state.score = score
     const serialised = JSON.stringify(state)
     const compressed = ReplayEncoder.crush(serialised)
-    const session = Session.getInstance()
+    // Identity (userId/userName) is deliberately omitted: the hi-score replay
+    // is shared publicly and must not expose the recorder's name.
     return `${this.hiScoreUrl}?ruletype=${
       this.container.rules.rulename
-    }&state=${ReplayEncoder.fullyEncodeURI(compressed)}&userId=${
-      session.clientId
-    }&userName=${encodeURIComponent(session.playername)}&score=${score}&v=1`
+    }&state=${ReplayEncoder.fullyEncodeURI(compressed)}&score=${score}&v=1`
   }
 
   wholeGameLink(game: any) {

@@ -56,4 +56,12 @@ describe("LinkFormatter", () => {
     expect(url.searchParams.get("score")).toBe("10")
     expect(url.searchParams.get("v")).toBe("1")
   })
+
+  it("getHiScoreUri should not include the recorder's identity", () => {
+    const uri = container.linkFormatter.getHiScoreUri({ test: 1 }, 10)
+    const url = new URL(uri)
+
+    expect(url.searchParams.has("userName")).toBe(false)
+    expect(url.searchParams.has("userId")).toBe(false)
+  })
 })
