@@ -58,12 +58,14 @@ export class Cue {
   private readonly tempVec2 = new Vector3()
   private readonly tempVec3 = new Vector3()
   hitAnimationWeight: number = 0
-  /** Vertical lift (table +z, in units of R) applied while the struck ball
+  /** Non-zero (cue placed at maxHitLift * R) while the struck ball
    * runs back into the cue tip. Visual only: aim.elevation, the tilt slider,
    * the networked AimEvent and cueStrike() are all untouched, so the shot that
    * has already been struck is unaffected. Hard-zeroed whenever the animation
    * is not running, so it is inert outside a hit animation. */
   hitLift = 0
+  /** Cue body height (table +z) when not lifted, used by the shadow. */
+  private restZ = 0
   /** The ball struck by the current shot (the cue ball), captured in `hit()`
    * so the returning-ball check has something to read. */
   private struckBall?: Ball
@@ -257,11 +259,13 @@ export class Cue {
     const strokeX = (1 - this.hitAnimationWeight) * swing - hitOffset
     const strokeZ = (0.15 + Math.min(this.t / 5, 0.25)) * hitOffset
 
+    this.restZ = Math.max(-0.5 * R, strokeZ + this.aim.offset.y * R)
+    const z = this.hitLift !== 0 ? Cue.maxHitLift * R : this.restZ
     for (const c of this.cues) {
       c.cueBody.position.set(
         -this.length / 2 - R * 1.1 + strokeX,
         this.aim.offset.x * R,
-        Math.max(-0.5 * R, strokeZ + this.aim.offset.y * R + this.hitLift * R)
+        z
       )
       // Visual-only squirt: rotate the cue about its tip by the squirt angle
       // so the butt deflects while the tip stays on the contact point. The
@@ -311,9 +315,9 @@ export class Cue {
     const elevation = this.tiltMesh ? (this.tiltMesh.rotation.y as number) : 0
 
     const localX = strokeX - R
-    // Take the hit-animation lift back out so the shadow stays flat on the
-    // table at the aim elevation rather than hopping with the cue.
-    const localZ = this.cueBody ? this.cueBody.position.z - this.hitLift * R : 0
+    // Use the rest height, not the lifted body height, so the shadow stays
+    // flat on the table at the aim elevation rather than hopping with the cue.
+    const localZ = this.restZ
     const projectedX =
       localX * Math.cos(elevation) + localZ * Math.sin(elevation)
 
@@ -423,8 +427,9 @@ export class Cue {
    * pull-back is more pronounced than the idle power-scaled swing. Tuneable. */
   static readonly dragPullAmplifier = 2.5
 
-  /** Ceiling for the returning-ball lift, in ball radii. */
-  static readonly maxHitLift = 2
+  /** Absolute height of the cue body (table +z, in ball radii) while the
+   * returning ball is over the cue. */
+  static readonly maxHitLift = 1.2
   /** How close (in ball radii) the struck ball must be to the strike point
    * while moving back toward it before the cue lifts. */
   static readonly hitLiftReturn = 1
